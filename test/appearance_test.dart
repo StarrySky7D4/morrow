@@ -8,11 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 class NoBackground extends DesktopBackground {
   @override
-  Future<void> apply({
-    required bool transparent,
-    required bool dark,
-    required Color color,
-  }) async {}
+  Future<void> apply() async {}
 }
 
 void main() {

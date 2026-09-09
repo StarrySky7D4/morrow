@@ -178,26 +178,8 @@ class _DaemonAppState extends State<DaemonApp> {
   }
 
   Future<void> applyWindowBackground() async {
-    final palette = Palette(
-      theme,
-      mode,
-      background,
-      solidTint,
-      frostedOpacity,
-      customColor,
-      texture,
-      mediaPlaying,
-      cornerRadius,
-      grayscale,
-      themeLightness,
-      windowRadius,
-    );
     try {
-      await widget.nativeBackground?.apply(
-        transparent: background == BackgroundMode.transparent,
-        dark: palette.dark,
-        color: palette.background,
-      );
+      await widget.nativeBackground?.apply();
     } catch (_) {
       if (mounted) {
         messages.currentState?.showSnackBar(
@@ -723,6 +705,17 @@ class _StudioState extends State<Studio> {
       child: Scaffold(
         body: Stack(
           children: [
+            // Keep opaque modes opaque while their foregrounds crossfade.
+            // This fill is inside DesktopFrame's clip, never in the native host.
+            Positioned.fill(
+              child: ColoredBox(
+                color: p.backdrop == BackgroundMode.transparent
+                    ? Colors.transparent
+                    : p.backdrop == BackgroundMode.solid
+                    ? p.solidColor
+                    : p.background,
+              ),
+            ),
             Positioned.fill(
               child: AnimatedSwitcher(
                 duration: MediaQuery.disableAnimationsOf(context)
