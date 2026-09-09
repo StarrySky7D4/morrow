@@ -1,0 +1,36 @@
+daemon — Third-party software notices
+
+The application bundles Flutter, Dart packages, Microsoft Visual C++ runtime,
+libmpv and ANGLE. Native library notices are in licenses/. Dart package, Flutter
+engine and framework notices are included in data/flutter_assets/NOTICES.Z
+(Windows) or assets/NOTICES (Web, possibly compressed as NOTICES.Z).
+
+media_kit and its Flutter integration are MIT licensed. The distributed libmpv
+is the unmodified media-kit Windows build dated 2023-09-24, git 652a1dd:
+https://github.com/media-kit/libmpv-win32-video-build/releases/tag/2023-09-24
+Source of the mpv core:
+https://github.com/mpv-player/mpv/tree/652a1dd
+Build recipes, dependency source locations and configuration:
+https://github.com/media-kit/libmpv-win32-video-build
+This build disables GPL components in mpv and FFmpeg. See the enclosed mpv
+Copyright, LGPL and GPL texts and build recipe copies for upstream terms.
+FFmpeg and other linked components retain their own licenses; upstream source
+locations are listed in the build repository's packages directory.
+libmpv is dynamically loaded from libmpv-2.dll. You may replace it with a
+compatible modified library; reverse engineering for debugging modifications
+to LGPL-covered components is not restricted by daemon.
+
+ANGLE sources and license:
+https://github.com/google/angle
+The bundled ANGLE binaries are from:
+https://github.com/alexmercerind/flutter-windows-ANGLE-OpenGL-ES/releases/tag/v1.0.1
+See licenses/ANGLE-LICENSE.txt. This runtime also contains SwiftShader, Vulkan
+loader and zlib components; their notices are included with the Flutter engine
+notices where applicable and in the additional native license files.
+
+Microsoft Visual C++ runtime DLLs are unmodified redistributable files from
+the installed Visual Studio 2022 x64 Microsoft.VC143.CRT redist directory.
+They are Microsoft software, distributed for use with this application.
+https://learn.microsoft.com/cpp/windows/redistributing-visual-cpp-files
+
+No external image, animation or movie used during development is bundled.
