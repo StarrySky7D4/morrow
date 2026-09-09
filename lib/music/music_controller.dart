@@ -1,4 +1,8 @@
 import 'dart:async';
+import 'package:file_selector/file_selector.dart';
+import 'lyrics_service.dart';
+import 'track_metadata_native.dart'
+    if (dart.library.js_interop) 'track_metadata_web.dart';
 import 'package:flutter/foundation.dart';
 import 'package:media_kit/media_kit.dart';
 import '../media/texture_repository.dart';
@@ -36,15 +40,52 @@ List<LyricLine> parseLyrics(String input) {
 }
 
 class MusicTrack {
-  MusicTrack({required this.source, this.cover, this.lyrics = ''});
+  MusicTrack({
+    required this.source,
+    this.cover,
+    this.lyrics = '',
+    this.lyricSource = '',
+    this.trackTitle = '',
+    this.artist = '',
+    this.trackDuration = 0,
+    this.metadataRead = false,
+  });
   final TextureSource source;
   TextureSource? cover;
-  String lyrics;
-  String get title => source.name.replaceFirst(RegExp(r'\.[^.]+$'), '');
+  String lyrics, lyricSource, trackTitle, artist;
+  double trackDuration;
+  bool metadataRead;
+  String get title => trackTitle.isNotEmpty
+      ? trackTitle
+      : source.name.replaceFirst(RegExp(r'\.[^.]+$'), '');
+  static Future<MusicTrack> import(XFile file) async {
+    final source = await TextureRepository.importFile(file);
+    final metadata = await readTrackMetadata(file);
+    final sidecar = metadata.fileLyrics.trim();
+    return MusicTrack(
+      source: source,
+      metadataRead: true,
+      trackTitle: metadata.title,
+      artist: metadata.artist,
+      trackDuration: metadata.duration,
+      lyrics: sidecar.isNotEmpty ? sidecar : metadata.embeddedLyrics,
+      lyricSource: sidecar.isNotEmpty
+          ? '歌词文件'
+          : metadata.embeddedLyrics.isNotEmpty
+          ? '音频内嵌'
+          : '',
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'source': source.toJson(),
     'cover': cover?.toJson(),
     'lyrics': lyrics,
+    'lyricSource': lyricSource,
+    'trackTitle': trackTitle,
+    'artist': artist,
+    'trackDuration': trackDuration,
+    'metadataRead': metadataRead,
   };
   factory MusicTrack.fromJson(Map<String, dynamic> data) => MusicTrack(
     source: TextureSource.fromJson(data['source'] as Map<String, dynamic>),
@@ -52,6 +93,13 @@ class MusicTrack {
         ? null
         : TextureSource.fromJson(data['cover'] as Map<String, dynamic>),
     lyrics: data['lyrics'] as String? ?? '',
+    lyricSource:
+        data['lyricSource'] as String? ??
+        ((data['lyrics'] as String? ?? '').isNotEmpty ? '歌词文件' : ''),
+    trackTitle: data['trackTitle'] as String? ?? '',
+    artist: data['artist'] as String? ?? '',
+    trackDuration: (data['trackDuration'] as num?)?.toDouble() ?? 0,
+    metadataRead: data['metadataRead'] as bool? ?? false,
   );
 }
 
@@ -105,10 +153,13 @@ class MusicController extends ChangeNotifier {
     List<MusicTrack>? tracks,
     int index = 0,
     this.showLyrics = false,
+    this.onlineLyrics = false,
+    LyricsService? lyricsService,
     this.onSave,
     MusicTransport Function()? createTransport,
     Future<ResolvedTexture> Function(TextureSource)? resolve,
-  }) : tracks = tracks ?? [],
+  }) : lyricsService = lyricsService ?? LyricsService(),
+       tracks = tracks ?? [],
        _createTransport = createTransport ?? MediaKitMusicTransport.new,
        _resolve = resolve ?? TextureRepository.resolve {
     this.index = this.tracks.isEmpty
@@ -117,6 +168,15 @@ class MusicController extends ChangeNotifier {
     _readLyrics();
   }
   final List<MusicTrack> tracks;
+  final LyricsService lyricsService;
+  bool onlineLyrics;
+  final _lyricRequests = <MusicTrack>{};
+  final _lyricAttempted = <MusicTrack>{};
+  final lyricMessages = <MusicTrack, String>{};
+  bool get lyricsLoading => _lyricRequests.contains(current);
+  String get lyricStatus => lyricsLoading
+      ? '正在读取歌词…'
+      : lyricMessages[current] ?? current?.lyricSource ?? '';
   late int index;
   bool showLyrics, playing = false, loading = false, blocked = false;
   Duration position = Duration.zero, duration = Duration.zero;
@@ -133,7 +193,11 @@ class MusicController extends ChangeNotifier {
   Future<void> _pending = Future.value();
   MusicTrack? get current => tracks.isEmpty ? null : tracks[index];
   String? get lyric {
-    if (_lyrics.isEmpty) return null;
+    if (_lyrics.isEmpty) {
+      final plain = current?.lyrics.trim() ?? '';
+      if (plain.isEmpty) return null;
+      return '${plain.split('\n').first} · 无时间轴';
+    }
     String line = '♪ ${current?.title ?? ''}';
     for (final item in _lyrics) {
       if (item.time > position) break;
@@ -152,8 +216,12 @@ class MusicController extends ChangeNotifier {
     _notify();
   }
 
-  void setLyrics(String value) {
-    current?.lyrics = value;
+  void setLyrics(String value, {MusicTrack? track, String source = '歌词文件'}) {
+    final selected = track ?? current;
+    if (selected == null || !tracks.contains(selected)) return;
+    selected.lyrics = value;
+    selected.lyricSource = source;
+    lyricMessages.remove(selected);
     _readLyrics();
     save();
   }
@@ -173,7 +241,98 @@ class MusicController extends ChangeNotifier {
     'tracks': tracks.map((t) => t.toJson()).toList(),
     'index': index,
     'showLyrics': showLyrics,
+    'onlineLyrics': onlineLyrics,
   };
+
+  void setOnlineLyrics(bool value) {
+    onlineLyrics = value;
+    save();
+    if (value && current != null) unawaited(loadLyrics(current!, retry: true));
+  }
+
+  Future<void> loadLyrics(MusicTrack track, {bool retry = false}) async {
+    if (_disposed ||
+        track.lyrics.trim().isNotEmpty ||
+        _lyricRequests.contains(track) ||
+        (!retry && _lyricAttempted.contains(track))) {
+      return;
+    }
+    _lyricRequests.add(track);
+    _lyricAttempted.add(track);
+    _notify();
+    try {
+      if (!track.metadataRead && track.source.local) {
+        final resolved = await _resolve(track.source);
+        try {
+          final metadata = await readTrackMetadata(
+            XFile(
+              resolved.uri.startsWith('file:')
+                  ? Uri.parse(resolved.uri).toFilePath()
+                  : resolved.uri,
+              name: track.source.name,
+            ),
+          );
+          if (_disposed || !tracks.contains(track)) return;
+          track.metadataRead = true;
+          track.trackTitle = metadata.title;
+          track.artist = metadata.artist;
+          track.trackDuration = metadata.duration;
+          final value = metadata.fileLyrics.trim().isNotEmpty
+              ? metadata.fileLyrics
+              : metadata.embeddedLyrics;
+          if (value.trim().isNotEmpty && track.lyrics.trim().isEmpty) {
+            setLyrics(
+              value,
+              track: track,
+              source: metadata.fileLyrics.trim().isNotEmpty ? '歌词文件' : '音频内嵌',
+            );
+          }
+        } finally {
+          resolved.release?.call();
+        }
+      }
+      if (_disposed ||
+          !tracks.contains(track) ||
+          track.lyrics.trim().isNotEmpty ||
+          !onlineLyrics) {
+        return;
+      }
+      final results = await lyricsService.search(track.title, track.artist);
+      if (_disposed ||
+          !tracks.contains(track) ||
+          !onlineLyrics ||
+          track.lyrics.trim().isNotEmpty) {
+        return;
+      }
+      final match = LyricsService.exactMatch(
+        results,
+        track.title,
+        track.artist,
+        track.trackDuration,
+      );
+      if (match != null) {
+        setLyrics(
+          match.lyrics,
+          track: track,
+          source: 'LRCLIB · ${match.artist}',
+        );
+      } else {
+        lyricMessages[track] = results.isEmpty
+            ? '未找到歌词，可导入或重新搜索'
+            : '存在多个版本，请在搜索中选择';
+      }
+    } catch (_) {
+      if (!_disposed && tracks.contains(track)) {
+        lyricMessages[track] = '歌词读取失败，可手动导入或重试';
+      }
+    } finally {
+      _lyricRequests.remove(track);
+      if (!_disposed) {
+        _readLyrics();
+        save();
+      }
+    }
+  }
 
   Future<void> _run(Future<void> Function() work) {
     _pending = _pending.then((_) async {
@@ -238,6 +397,7 @@ class MusicController extends ChangeNotifier {
     position = duration = Duration.zero;
     _readLyrics();
     save();
+    unawaited(loadLyrics(track));
     return _run(() async {
       if (revision != _revision) return;
       final engine = _engine();

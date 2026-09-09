@@ -18,7 +18,7 @@ Future<TextureSource> store(XFile file, TextureKind kind) async {
   await file.saveTo(target);
   return TextureSource(
     location: target,
-    name: file.name,
+    name: file.name.split(RegExp(r'[/\\]')).last,
     kind: kind,
     local: true,
   );
@@ -33,4 +33,18 @@ Future<ResolvedTexture> resolve(TextureSource source) async {
         ? null
         : await file.readAsBytes(),
   );
+}
+
+Future<void> remove(TextureSource source) async {
+  final root = Directory(
+    '${(await getApplicationSupportDirectory()).path}/textures',
+  ).absolute.path;
+  final target = File(source.location).absolute;
+  if (!target.path.toLowerCase().startsWith(
+        '${root.toLowerCase()}${Platform.pathSeparator}',
+      ) &&
+      !target.path.toLowerCase().startsWith('${root.toLowerCase()}/')) {
+    return;
+  }
+  if (await target.exists()) await target.delete();
 }

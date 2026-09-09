@@ -1,3 +1,10 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:super_clipboard/super_clipboard.dart';
+import 'attachments/attachment.dart';
+import 'attachments/attachment_view.dart';
+import 'attachments/clipboard_import.dart';
 import 'music/music_controller.dart';
 import 'music/music_panel.dart';
 import 'little_tips.dart';
@@ -16,6 +23,8 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'storage.dart';
 import 'window_effects.dart';
+
+part 'pages/workspace_pages.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -360,11 +369,23 @@ class Idea {
     this.todos = const [],
     String? id,
     Set<String>? completed,
+    this.attachments = const [],
+    String? stage,
+    this.hypothesis = '',
+    this.conclusion = '',
   }) : id = id ?? '${DateTime.now().microsecondsSinceEpoch}-${_sequence++}',
-       completed = completed ?? {};
+       completed = completed ?? {},
+       stage =
+           stage ??
+           (category == '进行中'
+               ? '推进中'
+               : category == '实验'
+               ? '待验证'
+               : '待整理');
   static int _sequence = 0;
   final String id;
-  String title, description, category;
+  String title, description, category, stage, hypothesis, conclusion;
+  final List<IdeaAttachment> attachments;
   final String time;
   final IconData icon;
   final Color color;
@@ -388,6 +409,10 @@ class Idea {
     'favorite': favorite,
     'todos': todos,
     'completed': completed.toList(),
+    'stage': stage,
+    'hypothesis': hypothesis,
+    'conclusion': conclusion,
+    'attachments': attachments.map((a) => a.toJson()).toList(),
   };
   factory Idea.fromJson(Map<String, dynamic> data) => Idea(
     data['title'] as String,
@@ -400,6 +425,18 @@ class Idea {
     favorite: data['favorite'] as bool,
     todos: List<String>.from(data['todos'] as List),
     completed: Set<String>.from(data['completed'] as List),
+    stage:
+        data['stage'] as String? ??
+        (data['category'] == '进行中'
+            ? '推进中'
+            : data['category'] == '实验'
+            ? '待验证'
+            : '待整理'),
+    hypothesis: data['hypothesis'] as String? ?? '',
+    conclusion: data['conclusion'] as String? ?? '',
+    attachments: (data['attachments'] as List? ?? [])
+        .map((a) => IdeaAttachment.fromJson(a as Map<String, dynamic>))
+        .toList(),
   );
 }
 
@@ -606,6 +643,7 @@ class _StudioState extends State<Studio> {
           .toList(),
       index: savedMusic?['index'] as int? ?? 0,
       showLyrics: savedMusic?['showLyrics'] as bool? ?? false,
+      onlineLyrics: savedMusic?['onlineLyrics'] as bool? ?? true,
       onSave: persist,
     );
     if (widget.restored != null) {
@@ -629,6 +667,7 @@ class _StudioState extends State<Studio> {
     'music': music.toJson(),
   };
   void persist() => widget.onSave(snapshot());
+  void refreshPage(VoidCallback update) => setState(update);
 
   @override
   void dispose() {
@@ -660,10 +699,10 @@ class _StudioState extends State<Studio> {
         _ => true,
       };
       return sectionMatches &&
-          (filter == '全部' || idea.category == filter) &&
-          '${idea.title} ${idea.description}'.toLowerCase().contains(
-            query.toLowerCase(),
-          );
+          matchesPageFilter(idea) &&
+          '${idea.title} ${idea.description} ${idea.hypothesis} ${idea.conclusion} ${idea.attachments.map((a) => a.source.name).join(' ')}'
+              .toLowerCase()
+              .contains(query.toLowerCase());
     }).toList();
     if (sort == '标题排序') result.sort((a, b) => a.title.compareTo(b.title));
     if (sort == '收藏优先') {
@@ -1376,7 +1415,7 @@ class _StudioState extends State<Studio> {
       ),
       Row(
         mainAxisSize: MainAxisSize.min,
-        children: ['全部', '灵感', '进行中', '实验']
+        children: pageFilters
             .map(
               (label) => Padding(
                 padding: const EdgeInsets.only(left: 4),
@@ -1440,6 +1479,7 @@ class _StudioState extends State<Studio> {
         ),
       );
     }
+    if (section != '概览') return specializedCards(items);
     return LayoutBuilder(
       builder: (_, constraints) {
         final columns = constraints.maxWidth >= 460 ? 2 : 1;
@@ -1536,6 +1576,16 @@ class _StudioState extends State<Studio> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 11, color: p.muted, height: 1.8),
               ),
+              if (idea.attachments.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    '附件 ${idea.attachments.length} · ${idea.attachments.first.source.name}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 10, color: p.accent),
+                  ),
+                ),
               const SizedBox(height: 19),
               Row(
                 children: [
@@ -1613,13 +1663,17 @@ class _StudioState extends State<Studio> {
         Idea(
           text,
           '从一个小小的念头开始。',
-          '灵感',
+          section == '小项目'
+              ? '进行中'
+              : section == '实验室'
+              ? '实验'
+              : '灵感',
           Icons.auto_awesome_outlined,
           const Color(0xFF9D87D4),
+          favorite: section == '已收藏',
         ),
       );
       quickNote.clear();
-      section = '概览';
       filter = '全部';
       query = '';
       search.clear();
@@ -2222,33 +2276,6 @@ class _StudioState extends State<Studio> {
     );
   }
 
-  Widget pageIntro() {
-    final (icon, text) = switch (section) {
-      '灵感收件箱' => (Icons.inbox_outlined, '先收集，再慢慢整理。每个念头都值得被接住。'),
-      '小项目' => (Icons.folder_open_rounded, '把想法拆成小步，让一点点进展看得见。'),
-      '实验室' => (Icons.science_outlined, '不预设结果，只为探索一种新的可能。'),
-      _ => (Icons.bookmark_border_rounded, '把喜欢的留下，下次从这里继续。'),
-    };
-    return Glass(
-      p: p,
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Row(
-          children: [
-            Icon(icon, color: p.accent, size: 28),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                text,
-                style: TextStyle(color: p.muted, height: 1.8, fontSize: 12),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget modeOption(GlassMode mode, String title, IconData icon) {
     final selected = p.mode == mode;
     return Semantics(
@@ -2478,7 +2505,7 @@ class _StudioState extends State<Studio> {
     if (result == null || !mounted) return;
     setState(() {
       ideas.insert(0, result);
-      section = '概览';
+      if (section == '已收藏') result.favorite = true;
       filter = '全部';
       query = '';
       search.clear();
@@ -2510,6 +2537,28 @@ class _StudioState extends State<Studio> {
                     idea.description,
                     style: const TextStyle(height: 1.8),
                   ),
+                  if (idea.attachments.isNotEmpty) ...[
+                    const SizedBox(height: 18),
+                    Text(
+                      '附件 · ${idea.attachments.length}',
+                      style: TextStyle(color: p.accent),
+                    ),
+                    ...idea.attachments.map(
+                      (item) => AttachmentTile(attachment: item),
+                    ),
+                  ],
+                  if (idea.category == '实验') ...[
+                    const SizedBox(height: 18),
+                    Text('假设', style: TextStyle(color: p.accent)),
+                    SelectableText(
+                      idea.hypothesis.isEmpty ? '还没有写下假设' : idea.hypothesis,
+                    ),
+                    const SizedBox(height: 12),
+                    Text('观察与结论', style: TextStyle(color: p.accent)),
+                    SelectableText(
+                      idea.conclusion.isEmpty ? '等待一次新的发现' : idea.conclusion,
+                    ),
+                  ],
                   if (idea.todos.isNotEmpty) ...[
                     const SizedBox(height: 22),
                     Text(
@@ -2644,9 +2693,13 @@ class NewIdeaDialog extends StatefulWidget {
     super.key,
     this.initialIdea,
     this.initialCategory = '灵感',
+    this.readClipboard,
+    this.importAttachment,
   });
   final Idea? initialIdea;
   final String initialCategory;
+  final Future<PastedContent> Function()? readClipboard;
+  final Future<IdeaAttachment> Function(XFile)? importAttachment;
   @override
   State<NewIdeaDialog> createState() => _NewIdeaDialogState();
 }
@@ -2657,9 +2710,117 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   String category = '灵感';
   bool invalid = false;
   final todos = TextEditingController();
+  final hypothesis = TextEditingController(),
+      conclusion = TextEditingController();
+  final titleFocus = FocusNode(),
+      descriptionFocus = FocusNode(),
+      todosFocus = FocusNode(),
+      hypothesisFocus = FocusNode(),
+      conclusionFocus = FocusNode();
+  final attachments = <IdeaAttachment>[];
+  final created = <IdeaAttachment>[];
+  bool importing = false, saved = false;
+  String stage = '待整理';
+  void webPaste(ClipboardReadEvent event) {
+    if (ModalRoute.of(context)?.isCurrent != true) return;
+    unawaited(
+      safely(() async => insertPaste(await event.getClipboardReader())),
+    );
+  }
+
+  Future<void> importFiles(List<XFile> files) async {
+    for (final file in files) {
+      if (attachments.length >= 20) {
+        throw const FormatException('每条记录最多保存 20 个附件。');
+      }
+      final item = await (widget.importAttachment ?? IdeaAttachment.import)(
+        file,
+      );
+      created.add(item);
+      if (!mounted) {
+        await TextureRepository.remove(item.source);
+        return;
+      }
+      setState(() => attachments.add(item));
+      if (title.text.trim().isEmpty) {
+        title.text = item.source.name.length > 60
+            ? item.source.name.substring(0, 60)
+            : item.source.name;
+      }
+    }
+  }
+
+  Future<void> safely(Future<void> Function() work) async {
+    if (importing) return;
+    setState(() => importing = true);
+    try {
+      await work();
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error is FormatException
+                  ? error.message
+                  : '无法读取内容，请使用导入文件，或检查文件与剪贴板权限。',
+            ),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => importing = false);
+    }
+  }
+
+  Future<void> paste([ClipboardReader? reader]) =>
+      safely(() => insertPaste(reader));
+
+  Future<void> insertPaste(ClipboardReader? reader) async {
+    final target = titleFocus.hasFocus
+        ? title
+        : todosFocus.hasFocus
+        ? todos
+        : hypothesisFocus.hasFocus
+        ? hypothesis
+        : conclusionFocus.hasFocus
+        ? conclusion
+        : description;
+    final content = reader == null && widget.readClipboard != null
+        ? await widget.readClipboard!()
+        : await readPaste(reader);
+    if (!mounted) return;
+    if (content.text.isNotEmpty) {
+      final selection = target.selection;
+      final start = selection.isValid ? selection.start : target.text.length;
+      final end = selection.isValid ? selection.end : target.text.length;
+      final value = target.text.replaceRange(start, end, content.text);
+      target.value = TextEditingValue(
+        text: value,
+        selection: TextSelection.collapsed(offset: start + content.text.length),
+      );
+    }
+    await importFiles(content.files);
+    if (content.text.isEmpty && content.files.isEmpty && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('剪贴板中没有可读取的文本或文件。请从资源管理器复制文件，或使用导入文件。')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    if (kIsWeb) ClipboardEvents.instance?.registerPasteEventListener(webPaste);
+    attachments.addAll(widget.initialIdea?.attachments ?? []);
+    stage =
+        widget.initialIdea?.stage ??
+        (widget.initialCategory == '进行中'
+            ? '推进中'
+            : widget.initialCategory == '实验'
+            ? '待验证'
+            : '待整理');
+    hypothesis.text = widget.initialIdea?.hypothesis ?? '';
+    conclusion.text = widget.initialIdea?.conclusion ?? '';
     final idea = widget.initialIdea;
     title.text = idea?.title ?? '';
     description.text = idea?.description ?? '';
@@ -2669,6 +2830,21 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
 
   @override
   void dispose() {
+    if (kIsWeb) {
+      ClipboardEvents.instance?.unregisterPasteEventListener(webPaste);
+    }
+    for (final item in created) {
+      if (!saved || !attachments.contains(item)) {
+        unawaited(TextureRepository.remove(item.source).catchError((_) {}));
+      }
+    }
+    titleFocus.dispose();
+    descriptionFocus.dispose();
+    todosFocus.dispose();
+    hypothesisFocus.dispose();
+    conclusionFocus.dispose();
+    hypothesis.dispose();
+    conclusion.dispose();
     title.dispose();
     description.dispose();
     todos.dispose();
@@ -2676,103 +2852,200 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => StudioDialog(
-    title: widget.initialIdea == null ? '接住一个新想法' : '让想法更清晰',
-    subtitle: '先写下来，再慢慢让它成形。',
-    content: SizedBox(
-      width: 390,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              key: const ValueKey('idea-title'),
-              controller: title,
-              autofocus: true,
-              maxLength: 60,
-              decoration: InputDecoration(
-                labelText: '给它起个名字',
-                errorText: invalid ? '先写下你的想法吧' : null,
+  Widget build(BuildContext context) => Actions(
+    actions: <Type, Action<Intent>>{
+      PasteTextIntent: CallbackAction<PasteTextIntent>(
+        onInvoke: (_) {
+          unawaited(paste());
+          return null;
+        },
+      ),
+    },
+    child: StudioDialog(
+      title: widget.initialIdea == null ? '接住一个新想法' : '让想法更清晰',
+      subtitle: '先写下来，再慢慢让它成形。',
+      content: SizedBox(
+        width: 390,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                key: const ValueKey('idea-title'),
+                controller: title,
+                focusNode: titleFocus,
+                autofocus: true,
+                maxLength: 60,
+                decoration: InputDecoration(
+                  labelText: '给它起个名字',
+                  errorText: invalid ? '先写下你的想法吧' : null,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              key: const ValueKey('idea-description'),
-              controller: description,
-              maxLines: 3,
-              maxLength: 500,
-              decoration: const InputDecoration(
-                labelText: '再多说一点（可选）',
-                alignLabelWithHint: true,
+              const SizedBox(height: 12),
+              TextField(
+                key: const ValueKey('idea-description'),
+                controller: description,
+                focusNode: descriptionFocus,
+                maxLines: 3,
+                maxLength: 20000,
+                decoration: const InputDecoration(
+                  labelText: '再多说一点（可选）',
+                  alignLabelWithHint: true,
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            DropdownButtonFormField<String>(
-              initialValue: category,
-              decoration: const InputDecoration(labelText: '放在哪里'),
-              items: [
-                '灵感',
-                '进行中',
-                '实验',
-              ].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-              onChanged: (v) => category = v!,
-            ),
-            const SizedBox(height: 18),
-            TextField(
-              key: const ValueKey('idea-todos'),
-              controller: todos,
-              minLines: 2,
-              maxLines: 4,
-              maxLength: 1000,
-              decoration: const InputDecoration(
-                labelText: '下一小步（每行一项，可选）',
-                alignLabelWithHint: true,
+              const SizedBox(height: 14),
+              DropdownButtonFormField<String>(
+                initialValue: category,
+                decoration: const InputDecoration(labelText: '放在哪里'),
+                items: ['灵感', '进行中', '实验']
+                    .map(
+                      (s) => DropdownMenuItem(
+                        value: s,
+                        child: Text(
+                          s == '灵感'
+                              ? '灵感收件箱'
+                              : s == '进行中'
+                              ? '小项目'
+                              : '实验室',
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (v) => setState(() {
+                  category = v!;
+                  stage = category == '进行中'
+                      ? '推进中'
+                      : category == '实验'
+                      ? '待验证'
+                      : '待整理';
+                }),
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    key: const ValueKey('idea-paste'),
+                    onPressed: importing ? null : () => paste(),
+                    icon: const Icon(Icons.content_paste, size: 16),
+                    label: const Text('粘贴内容'),
+                  ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('idea-add-files'),
+                    onPressed: importing
+                        ? null
+                        : () => safely(
+                            () async => importFiles(await openFiles()),
+                          ),
+                    icon: const Icon(Icons.attach_file, size: 16),
+                    label: const Text('导入文件'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                '可粘贴文本、截图或复制的文件；支持图片、音视频、CAD、Blender 等附件。单个文件不超过 200 MB。',
+                style: TextStyle(fontSize: 11),
+              ),
+              if (importing) const LinearProgressIndicator(),
+              ...attachments.map(
+                (item) => AttachmentTile(
+                  attachment: item,
+                  onRemove: importing
+                      ? null
+                      : () => setState(() => attachments.remove(item)),
+                ),
+              ),
+              if (category == '实验') ...[
+                const SizedBox(height: 16),
+                TextField(
+                  key: const ValueKey('experiment-hypothesis'),
+                  controller: hypothesis,
+                  focusNode: hypothesisFocus,
+                  minLines: 2,
+                  maxLines: 4,
+                  maxLength: 5000,
+                  decoration: const InputDecoration(labelText: '想验证的假设'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  key: const ValueKey('experiment-conclusion'),
+                  controller: conclusion,
+                  focusNode: conclusionFocus,
+                  minLines: 2,
+                  maxLines: 5,
+                  maxLength: 10000,
+                  decoration: const InputDecoration(labelText: '观察、过程与结论'),
+                ),
+              ],
+              const SizedBox(height: 18),
+              TextField(
+                key: const ValueKey('idea-todos'),
+                controller: todos,
+                focusNode: todosFocus,
+                minLines: 2,
+                maxLines: 4,
+                maxLength: 1000,
+                decoration: const InputDecoration(
+                  labelText: '下一小步（每行一项，可选）',
+                  alignLabelWithHint: true,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: importing ? null : () => Navigator.pop(context),
+          child: const Text('再想想'),
+        ),
+        FilledButton(
+          onPressed: importing
+              ? null
+              : () {
+                  if (title.text.trim().isEmpty) {
+                    setState(() => invalid = true);
+                    return;
+                  }
+                  saved = true;
+                  Navigator.pop(
+                    context,
+                    Idea(
+                      title.text.trim(),
+                      description.text.trim().isEmpty
+                          ? '从一个小小的念头开始。'
+                          : description.text.trim(),
+                      category,
+                      widget.initialIdea?.icon ?? Icons.auto_awesome_outlined,
+                      widget.initialIdea?.color ?? const Color(0xFF9D87D4),
+                      attachments: List.of(attachments),
+                      stage: stage,
+                      hypothesis: hypothesis.text.trim(),
+                      conclusion: conclusion.text.trim(),
+                      id: widget.initialIdea?.id,
+                      favorite: widget.initialIdea?.favorite ?? false,
+                      time: widget.initialIdea?.time ?? '刚刚',
+                      todos: todos.text
+                          .split('\n')
+                          .map((line) => line.trim())
+                          .where((line) => line.isNotEmpty)
+                          .toSet()
+                          .toList(),
+                      completed: (widget.initialIdea?.completed ?? <String>{})
+                          .intersection(
+                            todos.text
+                                .split('\n')
+                                .map((line) => line.trim())
+                                .toSet(),
+                          ),
+                    ),
+                  );
+                },
+          child: const Text('保存灵感'),
+        ),
+      ],
     ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('再想想'),
-      ),
-      FilledButton(
-        onPressed: () {
-          if (title.text.trim().isEmpty) {
-            setState(() => invalid = true);
-            return;
-          }
-          Navigator.pop(
-            context,
-            Idea(
-              title.text.trim(),
-              description.text.trim().isEmpty
-                  ? '从一个小小的念头开始。'
-                  : description.text.trim(),
-              category,
-              widget.initialIdea?.icon ?? Icons.auto_awesome_outlined,
-              widget.initialIdea?.color ?? const Color(0xFF9D87D4),
-              id: widget.initialIdea?.id,
-              favorite: widget.initialIdea?.favorite ?? false,
-              time: widget.initialIdea?.time ?? '刚刚',
-              todos: todos.text
-                  .split('\n')
-                  .map((line) => line.trim())
-                  .where((line) => line.isNotEmpty)
-                  .toSet()
-                  .toList(),
-              completed: (widget.initialIdea?.completed ?? <String>{})
-                  .intersection(
-                    todos.text.split('\n').map((line) => line.trim()).toSet(),
-                  ),
-            ),
-          );
-        },
-        child: const Text('保存灵感'),
-      ),
-    ],
   );
 }
 

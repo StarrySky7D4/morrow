@@ -1,3 +1,5 @@
+import 'lyrics_dialog.dart';
+import 'lyrics_service.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import '../appearance.dart';
@@ -25,20 +27,54 @@ class _MusicPanelState extends State<MusicPanel> {
           acceptedTypeGroups: const [
             XTypeGroup(
               label: '音乐',
-              extensions: ['mp3', 'wav', 'flac', 'm4a', 'aac', 'ogg', 'opus'],
+              extensions: [
+                'mp3',
+                'wav',
+                'flac',
+                'm4a',
+                'aac',
+                'ogg',
+                'opus',
+                'lrc',
+              ],
             ),
           ],
         );
-        for (final file in files) {
-          final source = await TextureRepository.importFile(file);
+        final lyrics = <String, String>{};
+        for (final file in files.where(
+          (f) => f.name.toLowerCase().endsWith('.lrc'),
+        )) {
+          if (await file.length() <= 1024 * 1024) {
+            lyrics[file.name
+                .split(RegExp(r'[/\\]'))
+                .last
+                .replaceFirst(RegExp(r'\.[^.]+$'), '')
+                .toLowerCase()] = await file
+                .readAsString();
+          }
+        }
+        for (final file in files.where(
+          (f) => !f.name.toLowerCase().endsWith('.lrc'),
+        )) {
+          final track = await MusicTrack.import(file);
+          final sidecar =
+              lyrics[file.name
+                  .split(RegExp(r'[/\\]'))
+                  .last
+                  .replaceFirst(RegExp(r'\.[^.]+$'), '')
+                  .toLowerCase()];
+          if (sidecar != null && sidecar.trim().isNotEmpty) {
+            track.lyrics = sidecar;
+            track.lyricSource = '歌词文件';
+          }
           if (!mounted) return;
-          music.add([MusicTrack(source: source)]);
+          music.add([track]);
         }
       } else if (selected != null) {
         final file = await openFile(
           acceptedTypeGroups: [
             type == 'lyrics'
-                ? const XTypeGroup(label: 'LRC 歌词', extensions: ['lrc'])
+                ? const XTypeGroup(label: '歌词文件', extensions: ['lrc', 'txt'])
                 : const XTypeGroup(
                     label: '歌曲封面',
                     extensions: ['png', 'jpg', 'jpeg', 'webp'],
@@ -51,13 +87,9 @@ class _MusicPanelState extends State<MusicPanel> {
             throw const FormatException('歌词文件请控制在 1 MB 以内。');
           }
           final lyrics = await file.readAsString();
-          if (parseLyrics(lyrics).isEmpty) {
-            throw const FormatException('未找到时间标签，请导入 UTF-8 编码的 LRC 歌词。');
-          }
+          if (lyrics.trim().isEmpty) throw const FormatException('歌词文件为空。');
           if (!mounted || !music.tracks.contains(selected)) return;
-          selected.lyrics = lyrics;
-          if (music.current == selected) music.setLyrics(lyrics);
-          music.save();
+          music.setLyrics(lyrics, track: selected);
         } else {
           final cover = await TextureRepository.importFile(file);
           if (!mounted || !music.tracks.contains(selected)) return;
@@ -78,6 +110,52 @@ class _MusicPanelState extends State<MusicPanel> {
     } finally {
       if (mounted) setState(() => importing = false);
     }
+  }
+
+  Future<void> searchLyrics() async {
+    final selected = music.current;
+    if (selected == null) return;
+    final match = await showStudioDialog<LyricMatch>(
+      context: context,
+      builder: (_) => LyricsSearchDialog(
+        title: selected.title,
+        artist: selected.artist,
+        service: music.lyricsService,
+      ),
+    );
+    if (!mounted || match == null || !music.tracks.contains(selected)) return;
+    music.setLyrics(
+      match.lyrics,
+      track: selected,
+      source: 'LRCLIB · ${match.artist}',
+    );
+  }
+
+  Future<void> showAllLyrics() async {
+    final track = music.current;
+    if (track == null) return;
+    await showStudioDialog<void>(
+      context: context,
+      builder: (_) => StudioDialog(
+        title: track.title,
+        subtitle: track.lyricSource.isEmpty ? '尚未读取到歌词' : track.lyricSource,
+        content: SizedBox(
+          width: 420,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              track.lyrics.isEmpty ? '可导入歌词文件，或联网搜索。' : track.lyrics,
+              style: const TextStyle(height: 1.8),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('关闭'),
+          ),
+        ],
+      ),
+    );
   }
 
   String clock(Duration value) =>
@@ -341,6 +419,27 @@ class _MusicPanelState extends State<MusicPanel> {
                               ),
                             ),
                           ),
+                          SwitchListTile.adaptive(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: const Text(
+                              '自动联网补全歌词',
+                              style: TextStyle(fontSize: 10),
+                            ),
+                            subtitle: const Text(
+                              '本地文件 → 内嵌 → LRCLIB',
+                              style: TextStyle(fontSize: 9),
+                            ),
+                            value: music.onlineLyrics,
+                            onChanged: music.setOnlineLyrics,
+                          ),
+                          if (music.current != null)
+                            Text(
+                              music.lyricStatus.isEmpty
+                                  ? '播放时自动读取歌词'
+                                  : music.lyricStatus,
+                              style: TextStyle(fontSize: 10, color: p.muted),
+                            ),
                           if (music.current != null)
                             Wrap(
                               spacing: 4,
@@ -355,6 +454,26 @@ class _MusicPanelState extends State<MusicPanel> {
                                   ),
                                   label: const Text(
                                     '封面',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  key: const ValueKey('music-search-lyrics'),
+                                  onPressed: searchLyrics,
+                                  icon: const Icon(
+                                    Icons.travel_explore,
+                                    size: 14,
+                                  ),
+                                  label: const Text(
+                                    '搜索歌词',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed: showAllLyrics,
+                                  icon: const Icon(Icons.subject, size: 14),
+                                  label: const Text(
+                                    '查看歌词',
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 ),

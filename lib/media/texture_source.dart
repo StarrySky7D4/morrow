@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-enum TextureKind { image, gif, video, audio }
+enum TextureKind { image, gif, video, audio, file }
 
 class TextureSource {
   const TextureSource({

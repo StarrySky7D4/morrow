@@ -1,0 +1,511 @@
+part of '../main.dart';
+
+extension _PageContent on _StudioState {
+  List<String> get pageFilters => switch (section) {
+    '灵感收件箱' => ['全部', '待整理', '已整理'],
+    '小项目' => ['全部', '计划中', '推进中', '已完成'],
+    '实验室' => ['全部', '待验证', '验证中', '已记录'],
+    '已收藏' => ['全部', '图像', '音视频', '文件', '文字'],
+    _ => ['全部', '有待办', '含附件', '仅收藏'],
+  };
+  String projectStage(Idea idea) =>
+      idea.todos.isNotEmpty && idea.completed.length >= idea.todos.length
+      ? '已完成'
+      : ['计划中', '推进中', '已完成'].contains(idea.stage)
+      ? idea.stage
+      : '推进中';
+  bool matchesPageFilter(Idea idea) => switch (filter) {
+    '全部' => true,
+    '有待办' => idea.todos.any((todo) => !idea.completed.contains(todo)),
+    '含附件' => idea.attachments.isNotEmpty,
+    '仅收藏' => idea.favorite,
+    '图像' => idea.attachments.any(
+      (a) => [TextureKind.image, TextureKind.gif].contains(a.source.kind),
+    ),
+    '音视频' => idea.attachments.any(
+      (a) => [TextureKind.video, TextureKind.audio].contains(a.source.kind),
+    ),
+    '文件' => idea.attachments.any((a) => a.source.kind == TextureKind.file),
+    '文字' => idea.attachments.isEmpty,
+    _ => (section == '小项目' ? projectStage(idea) : idea.stage) == filter,
+  };
+  void changeStage(Idea idea, String stage) {
+    refreshPage(() {
+      idea.stage = stage;
+      if (idea.category == '进行中') {
+        if (stage == '已完成') {
+          idea.completed.addAll(idea.todos);
+        } else if (idea.todos.isNotEmpty &&
+            idea.completed.length == idea.todos.length) {
+          idea.completed.remove(idea.todos.last);
+        }
+      }
+    });
+    persist();
+  }
+
+  void moveToProject(Idea idea) {
+    refreshPage(() {
+      idea.category = '进行中';
+      idea.stage = '计划中';
+    });
+    persist();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('「${idea.title}」已放入小项目'),
+        action: SnackBarAction(
+          label: '查看',
+          onPressed: () => selectSection('小项目'),
+        ),
+      ),
+    );
+  }
+
+  Widget stageMenu(Idea idea, List<String> stages) => PopupMenuButton<String>(
+    tooltip: '修改状态 ${idea.title}',
+    onSelected: (value) => changeStage(idea, value),
+    itemBuilder: (_) => stages
+        .map((stage) => PopupMenuItem(value: stage, child: Text(stage)))
+        .toList(),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            idea.category == '进行中' ? projectStage(idea) : idea.stage,
+            style: TextStyle(color: p.accent, fontSize: 11),
+          ),
+          Icon(Icons.expand_more, size: 16, color: p.accent),
+        ],
+      ),
+    ),
+  );
+  Widget bookmark(Idea idea) => IconButton(
+    tooltip: '${idea.favorite ? '取消收藏' : '收藏'} ${idea.title}',
+    onPressed: () {
+      refreshPage(() => idea.favorite = !idea.favorite);
+      persist();
+    },
+    icon: Icon(
+      idea.favorite ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+      size: 18,
+      color: p.accent,
+    ),
+  );
+  Widget recordTitle(Idea idea) => Text(
+    idea.title,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.ink),
+  );
+  Widget recordSummary(Idea idea) => Padding(
+    padding: const EdgeInsets.only(top: 8),
+    child: Text(
+      idea.description,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(fontSize: 12, height: 1.7, color: p.muted),
+    ),
+  );
+  Widget attachmentHint(Idea idea) => idea.attachments.isEmpty
+      ? const SizedBox.shrink()
+      : Padding(
+          padding: const EdgeInsets.only(top: 12),
+          child: Row(
+            children: [
+              Icon(Icons.attach_file, size: 14, color: p.accent),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  '${idea.attachments.length} 个附件 · ${idea.attachments.first.source.name}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 10, color: p.accent),
+                ),
+              ),
+            ],
+          ),
+        );
+  Widget recordShell(Idea idea, Widget child, {Key? key}) => Glass(
+    key: key,
+    p: p,
+    radius: 20,
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => openIdea(idea),
+        borderRadius: p.borderRadius(20),
+        child: Padding(padding: const EdgeInsets.all(18), child: child),
+      ),
+    ),
+  );
+
+  Widget specializedCards(List<Idea> items) => switch (section) {
+    '灵感收件箱' => Column(
+      key: const ValueKey('inbox-list'),
+      children: items
+          .map(
+            (idea) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: recordShell(
+                idea,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.inbox_outlined, size: 19, color: p.accent),
+                        const SizedBox(width: 12),
+                        Expanded(child: recordTitle(idea)),
+                        bookmark(idea),
+                      ],
+                    ),
+                    recordSummary(idea),
+                    attachmentHint(idea),
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => changeStage(
+                            idea,
+                            idea.stage == '已整理' ? '待整理' : '已整理',
+                          ),
+                          icon: Icon(
+                            idea.stage == '已整理'
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                            size: 16,
+                          ),
+                          label: Text(idea.stage == '已整理' ? '已整理' : '标记已整理'),
+                        ),
+                        OutlinedButton.icon(
+                          key: ValueKey('promote-${idea.id}'),
+                          onPressed: () => moveToProject(idea),
+                          icon: const Icon(Icons.arrow_forward, size: 16),
+                          label: const Text('转为项目'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    ),
+    '小项目' => LayoutBuilder(
+      builder: (_, constraints) {
+        final columns = constraints.maxWidth >= 660 ? 2 : 1;
+        return Wrap(
+          key: const ValueKey('project-board'),
+          spacing: 14,
+          runSpacing: 14,
+          children: items
+              .map(
+                (idea) => SizedBox(
+                  width: (constraints.maxWidth - (columns - 1) * 14) / columns,
+                  child: recordShell(
+                    idea,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.folder_open, color: p.accent, size: 20),
+                            const SizedBox(width: 10),
+                            Expanded(child: recordTitle(idea)),
+                            bookmark(idea),
+                          ],
+                        ),
+                        recordSummary(idea),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            stageMenu(idea, ['计划中', '推进中', '已完成']),
+                            const Spacer(),
+                            Text(
+                              '${idea.completed.length}/${idea.todos.length} 步',
+                              style: TextStyle(fontSize: 11, color: p.muted),
+                            ),
+                          ],
+                        ),
+                        ClipRRect(
+                          borderRadius: p.borderRadius(8),
+                          child: LinearProgressIndicator(
+                            value: idea.todos.isEmpty
+                                ? (projectStage(idea) == '已完成' ? 1 : 0)
+                                : idea.completed.length / idea.todos.length,
+                            minHeight: 5,
+                            backgroundColor: p.line,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        if (idea.todos.isEmpty)
+                          TextButton(
+                            onPressed: () => openIdea(idea),
+                            child: const Text('打开项目，编辑下一步'),
+                          ),
+                        ...idea.todos
+                            .take(3)
+                            .map(
+                              (todo) => LittleTask(
+                                title: todo,
+                                done: idea.completed.contains(todo),
+                                onChanged: (done) {
+                                  refreshPage(() {
+                                    if (done) {
+                                      idea.completed.add(todo);
+                                    } else {
+                                      idea.completed.remove(todo);
+                                      idea.stage = '推进中';
+                                    }
+                                  });
+                                  persist();
+                                },
+                              ),
+                            ),
+                        if (idea.todos.length > 3)
+                          Text(
+                            '另有 ${idea.todos.length - 3} 步，打开查看',
+                            style: TextStyle(fontSize: 10, color: p.muted),
+                          ),
+                        attachmentHint(idea),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        );
+      },
+    ),
+    '实验室' => Column(
+      key: const ValueKey('experiment-journal'),
+      children: items.asMap().entries.map((entry) {
+        final idea = entry.value;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: recordShell(
+            idea,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'EXP ${(entry.key + 1).toString().padLeft(2, '0')}',
+                      style: TextStyle(
+                        letterSpacing: 2,
+                        color: p.accent,
+                        fontSize: 11,
+                      ),
+                    ),
+                    const Spacer(),
+                    stageMenu(idea, ['待验证', '验证中', '已记录']),
+                    bookmark(idea),
+                  ],
+                ),
+                recordTitle(idea),
+                recordSummary(idea),
+                Divider(height: 28, color: p.line),
+                Text(
+                  '假设 / 想试什么',
+                  style: TextStyle(color: p.accent, fontSize: 10),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  idea.hypothesis.isEmpty
+                      ? '打开记录，写下这次想验证的问题。'
+                      : idea.hypothesis,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: p.ink, height: 1.7, fontSize: 12),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '观察 / 留下发现',
+                  style: TextStyle(color: p.accent, fontSize: 10),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  idea.conclusion.isEmpty ? '结果还未发生，过程也值得记录。' : idea.conclusion,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: p.muted, height: 1.7, fontSize: 12),
+                ),
+                attachmentHint(idea),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    ),
+    _ => Column(
+      key: const ValueKey('favorites-library'),
+      children: items
+          .map(
+            (idea) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: recordShell(
+                idea,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 56,
+                      height: 56,
+                      child: ClipRRect(
+                        borderRadius: p.borderRadius(12),
+                        child:
+                            idea.attachments.any(
+                              (a) => [
+                                TextureKind.image,
+                                TextureKind.gif,
+                              ].contains(a.source.kind),
+                            )
+                            ? TrackCover(
+                                source: idea.attachments
+                                    .firstWhere(
+                                      (a) => [
+                                        TextureKind.image,
+                                        TextureKind.gif,
+                                      ].contains(a.source.kind),
+                                    )
+                                    .source,
+                              )
+                            : ColoredBox(
+                                color: p.accent.withValues(alpha: .12),
+                                child: Icon(
+                                  idea.attachments.isEmpty
+                                      ? Icons.notes
+                                      : Icons.folder_copy_outlined,
+                                  color: p.accent,
+                                ),
+                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          recordTitle(idea),
+                          recordSummary(idea),
+                          attachmentHint(idea),
+                        ],
+                      ),
+                    ),
+                    bookmark(idea),
+                  ],
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    ),
+  };
+
+  Widget pageIntro() {
+    final (icon, text, stats) = switch (section) {
+      '灵感收件箱' => (
+        Icons.inbox_outlined,
+        '先接住，再整理。把值得继续的念头转成小项目。',
+        <(String, int)>[
+          (
+            '等待整理',
+            ideas.where((i) => i.category == '灵感' && i.stage != '已整理').length,
+          ),
+          (
+            '已经整理',
+            ideas.where((i) => i.category == '灵感' && i.stage == '已整理').length,
+          ),
+        ],
+      ),
+      '小项目' => (
+        Icons.folder_open,
+        '用清单推动进展。每一个完成的小步，都在靠近结果。',
+        <(String, int)>[
+          (
+            '正在推进',
+            ideas
+                .where((i) => i.category == '进行中' && projectStage(i) != '已完成')
+                .length,
+          ),
+          (
+            '已经完成',
+            ideas
+                .where((i) => i.category == '进行中' && projectStage(i) == '已完成')
+                .length,
+          ),
+        ],
+      ),
+      '实验室' => (
+        Icons.science_outlined,
+        '从一个假设开始，保留尝试、观察和意外发现。',
+        <(String, int)>[
+          (
+            '等待验证',
+            ideas.where((i) => i.category == '实验' && i.stage == '待验证').length,
+          ),
+          (
+            '已有记录',
+            ideas
+                .where((i) => i.category == '实验' && i.conclusion.isNotEmpty)
+                .length,
+          ),
+        ],
+      ),
+      _ => (
+        Icons.bookmarks_outlined,
+        '喜欢的文字、图像与文件，集中收在这里。',
+        <(String, int)>[
+          ('收藏记录', ideas.where((i) => i.favorite).length),
+          (
+            '收藏附件',
+            ideas
+                .where((i) => i.favorite)
+                .fold<int>(0, (n, i) => n + i.attachments.length),
+          ),
+        ],
+      ),
+    };
+    return Glass(
+      p: p,
+      child: Padding(
+        padding: const EdgeInsets.all(22),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: p.accent, size: 28),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(color: p.muted, height: 1.8, fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Wrap(
+              spacing: 24,
+              runSpacing: 10,
+              children: stats
+                  .map(
+                    (stat) => Text(
+                      '${stat.$1}  ${stat.$2}',
+                      style: TextStyle(color: p.ink, fontSize: 12),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

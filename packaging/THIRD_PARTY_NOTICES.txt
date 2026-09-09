@@ -1,7 +1,7 @@
 daemon — Third-party software notices
 
 The application bundles Flutter, Dart packages, Microsoft Visual C++ runtime,
-libmpv and ANGLE. Native library notices are in licenses/. Dart package, Flutter
+libmpv, ANGLE and Super Native Extensions. Native library notices are in licenses/. Dart package, Flutter
 engine and framework notices are included in data/flutter_assets/NOTICES.Z
 (Windows) or assets/NOTICES (Web, possibly compressed as NOTICES.Z).
 
@@ -32,5 +32,11 @@ Microsoft Visual C++ runtime DLLs are unmodified redistributable files from
 the installed Visual Studio 2022 x64 Microsoft.VC143.CRT redist directory.
 They are Microsoft software, distributed for use with this application.
 https://learn.microsoft.com/cpp/windows/redistributing-visual-cpp-files
+
+Super Native Extensions 0.9.1 is MIT licensed. The Windows build uses its
+upstream signature-verified precompiled Rust library through Cargokit.
+Source and build configuration: https://github.com/superlistapp/super_native_extensions
+See licenses/super_native_extensions-LICENSE.txt. The Dart plugin license is
+also included in Flutter's generated NOTICES.
 
 No external image, animation or movie used during development is bundled.

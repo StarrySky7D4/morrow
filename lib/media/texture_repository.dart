@@ -41,6 +41,10 @@ class TextureRepository {
     return platform.store(file, kind);
   }
 
+  static Future<void> remove(TextureSource source) async {
+    if (source.local) await platform.remove(source);
+  }
+
   static Future<ResolvedTexture> resolve(TextureSource source) async {
     if (!source.local) return ResolvedTexture(uri: source.location);
     return platform.resolve(source);

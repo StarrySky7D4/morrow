@@ -63,3 +63,14 @@ Future<ResolvedTexture> resolve(TextureSource source) async {
   );
   return ResolvedTexture(uri: url, release: () => web.URL.revokeObjectURL(url));
 }
+
+Future<void> remove(TextureSource source) async {
+  final database = await _open();
+  try {
+    final transaction = database.transaction('textures', idbModeReadWrite);
+    await transaction.objectStore('textures').delete(source.location);
+    await transaction.completed;
+  } finally {
+    database.close();
+  }
+}

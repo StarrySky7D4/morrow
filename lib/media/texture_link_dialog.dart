@@ -50,7 +50,10 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
           initialValue: kind,
           decoration: const InputDecoration(labelText: '素材类型'),
           items: TextureKind.values
-              .where((value) => value != TextureKind.audio)
+              .where(
+                (value) =>
+                    value != TextureKind.audio && value != TextureKind.file,
+              )
               .map(
                 (value) => DropdownMenuItem(
                   value: value,
@@ -59,6 +62,7 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
                     TextureKind.gif => 'GIF 动图',
                     TextureKind.video => '视频',
                     TextureKind.audio => '音频',
+                    TextureKind.file => '文件',
                   }),
                 ),
               )
