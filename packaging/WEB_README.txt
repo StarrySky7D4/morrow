@@ -1,6 +1,6 @@
-daemon — Web 预构建包
+Morrow — Web 预构建包
 
-解压后，将 daemon-web 文件夹中的全部内容部署到静态网站根目录。
+解压后，将 morrow-web 文件夹中的全部内容部署到静态网站根目录。
 保留 assets、canvaskit、图标以及 LICENSE / NOTICE 等文件。
 请通过 HTTP / HTTPS 访问，不要直接双击 index.html 使用 file:// 打开。
 本地预览可在此目录运行 Python 3：python -m http.server 8765

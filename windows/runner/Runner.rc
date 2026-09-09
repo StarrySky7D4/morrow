@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "dev.daemon" "\0"
-            VALUE "FileDescription", "daemon - 灵感工作台" "\0"
+            VALUE "CompanyName", "dev.morrow" "\0"
+            VALUE "FileDescription", "Morrow - 灵感工作台" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "daemon_studio" "\0"
+            VALUE "InternalName", "morrow_studio" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 StarrySky7D4 and contributors. Apache-2.0." "\0"
-            VALUE "OriginalFilename", "daemon_studio.exe" "\0"
-            VALUE "ProductName", "daemon_studio" "\0"
+            VALUE "OriginalFilename", "morrow_studio.exe" "\0"
+            VALUE "ProductName", "morrow_studio" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:daemon_studio/desktop_frame.dart';
-import 'package:daemon_studio/main.dart';
-import 'package:daemon_studio/media/texture_backdrop.dart';
+import 'package:morrow_studio/desktop_frame.dart';
+import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/media/texture_backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:daemon_studio/storage.dart';
+import 'package:morrow_studio/storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:daemon_studio/media/texture_source.dart';
+import 'package:morrow_studio/media/texture_source.dart';
 
 void main() {
   testWidgets(
@@ -18,7 +18,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       for (final width in [1440.0, 800.0, 390.0]) {
         tester.view.physicalSize = Size(width, 1000);
-        await tester.pumpWidget(const DaemonApp());
+        await tester.pumpWidget(const MorrowApp());
         await tester.pumpAndSettle();
         final settings = find.byKey(const ValueKey('appearance-toggle'));
         final search = find.byKey(const ValueKey('header-search'));
@@ -107,7 +107,7 @@ void main() {
       FlutterError.dumpErrorToConsole(details);
       previousHandler?.call(details);
     };
-    await tester.pumpWidget(const DaemonApp());
+    await tester.pumpWidget(const MorrowApp());
     await tester.pumpAndSettle();
   }
 
@@ -228,7 +228,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(DaemonApp(storage: storage));
+    await tester.pumpWidget(MorrowApp(storage: storage));
     await tester.pumpAndSettle();
     await tester.tap(find.text('一个安静的数字花园'));
     await tester.pumpAndSettle();
@@ -264,7 +264,7 @@ void main() {
     }
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(
-      DaemonApp(storage: LocalStorage(await SharedPreferences.getInstance())),
+      MorrowApp(storage: LocalStorage(await SharedPreferences.getInstance())),
     );
     await tester.pumpAndSettle();
     final palette = tester.widget<Studio>(find.byType(Studio)).palette;
@@ -286,7 +286,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       final slider = find.byKey(const ValueKey('frosted-opacity'));
       await tester.ensureVisible(slider);
@@ -326,7 +326,7 @@ void main() {
         const Color(0xFF2468AB),
       );
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       expect(
         tester.widget<Studio>(find.byType(Studio)).palette.customColor,
@@ -410,7 +410,7 @@ void main() {
           ).toJson(),
         };
       await tester.runAsync(() async {
-        await tester.pumpWidget(DaemonApp(storage: storage));
+        await tester.pumpWidget(MorrowApp(storage: storage));
         await precacheImage(
           FileImage(File('test/fixtures/texture.png')),
           tester.element(find.byType(Studio)),

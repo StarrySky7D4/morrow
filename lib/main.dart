@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'storage.dart';
+import 'storage_migration.dart';
 import 'window_effects.dart';
 
 part 'pages/workspace_pages.dart';
@@ -32,13 +33,14 @@ Future<void> main() async {
   StudioStorage storage;
   String? warning;
   try {
+    await migrateLegacyStorage();
     storage = LocalStorage(await SharedPreferences.getInstance());
   } catch (_) {
     storage = MemoryStorage();
     warning = '本地存储暂不可用，当前改动仅保留在本次会话。';
   }
   runApp(
-    DaemonApp(
+    MorrowApp(
       storage: storage,
       nativeBackground: DesktopBackground(),
       initialWarning: warning,
@@ -46,8 +48,8 @@ Future<void> main() async {
   );
 }
 
-class DaemonApp extends StatefulWidget {
-  const DaemonApp({
+class MorrowApp extends StatefulWidget {
+  const MorrowApp({
     super.key,
     this.storage,
     this.nativeBackground,
@@ -57,10 +59,10 @@ class DaemonApp extends StatefulWidget {
   final DesktopBackground? nativeBackground;
   final String? initialWarning;
   @override
-  State<DaemonApp> createState() => _DaemonAppState();
+  State<MorrowApp> createState() => _MorrowAppState();
 }
 
-class _DaemonAppState extends State<DaemonApp> {
+class _MorrowAppState extends State<MorrowApp> {
   StudioTheme theme = StudioTheme.white;
   GlassMode mode = GlassMode.frosted;
   BackgroundMode background = BackgroundMode.ambient;
@@ -216,14 +218,25 @@ class _DaemonAppState extends State<DaemonApp> {
       windowRadius,
     );
     return MaterialApp(
-      title: 'daemon — 留一点空间给灵感',
+      title: 'Morrow — 留一点空间给灵感',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: messages,
       builder: (_, child) => AppearanceScope(
         palette: palette,
-        child: widget.nativeBackground != null && isWindowsDesktop
-            ? DesktopFrame(palette: palette, child: child!)
-            : child!,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value:
+              (palette.dark
+                      ? SystemUiOverlayStyle.light
+                      : SystemUiOverlayStyle.dark)
+                  .copyWith(
+                    statusBarColor: Colors.transparent,
+                    systemNavigationBarColor: Colors.transparent,
+                    systemNavigationBarContrastEnforced: false,
+                  ),
+          child: widget.nativeBackground != null && isWindowsDesktop
+              ? DesktopFrame(palette: palette, child: child!)
+              : child!,
+        ),
       ),
       theme: ThemeData(
         useMaterial3: true,
@@ -710,7 +723,10 @@ class _StudioState extends State<Studio> {
             Positioned.fill(
               child: ColoredBox(
                 color: p.backdrop == BackgroundMode.transparent
-                    ? Colors.transparent
+                    ? (!kIsWeb &&
+                              defaultTargetPlatform == TargetPlatform.android
+                          ? p.background
+                          : Colors.transparent)
                     : p.backdrop == BackgroundMode.solid
                     ? p.solidColor
                     : p.background,
@@ -990,7 +1006,7 @@ class _StudioState extends State<Studio> {
                     fit: BoxFit.scaleDown,
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'daemon',
+                      'Morrow',
                       style: TextStyle(
                         fontSize: 23,
                         color: p.ink,
@@ -2198,7 +2214,10 @@ class _StudioState extends State<Studio> {
             BackgroundMode.ambient => '流动的光晕，为灵感留一点色彩。',
             BackgroundMode.solid => '一张安静的纯色画布。',
             BackgroundMode.texture => '细密的纸感网点，让空间多一点触感。',
-            BackgroundMode.transparent => '透出窗口背后的空间；网页透出宿主背景。',
+            BackgroundMode.transparent =>
+              !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                  ? '保留通透面板，以当前主题作为底色。'
+                  : '透出窗口背后的空间；网页透出宿主背景。',
           }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
           const SizedBox(height: 13),
           Row(

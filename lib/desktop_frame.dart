@@ -25,7 +25,7 @@ class DesktopFrame extends StatefulWidget {
 }
 
 class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
-  static const shapeChannel = MethodChannel('daemon/window_shape');
+  static const shapeChannel = MethodChannel('morrow/window_shape');
   bool maximized = false;
   Future<void> applyShape() async {
     if (!isWindowsDesktop) return;
@@ -36,7 +36,7 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
       );
     } on PlatformException catch (error) {
       FlutterError.reportError(
-        FlutterErrorDetails(exception: error, library: 'daemon window shape'),
+        FlutterErrorDetails(exception: error, library: 'morrow window shape'),
       );
     }
   }
@@ -93,7 +93,7 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
                 children: [
                   Icon(Icons.all_inclusive_rounded, size: 17, color: p.accent),
                   const SizedBox(width: 8),
-                  Text('daemon', style: TextStyle(fontSize: 12, color: p.ink)),
+                  Text('Morrow', style: TextStyle(fontSize: 12, color: p.ink)),
                 ],
               ),
             ),

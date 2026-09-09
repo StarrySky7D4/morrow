@@ -1,8 +1,8 @@
-daemon — 杂事有序，奇想自由
+Morrow — 杂事有序，奇想自由
 
 系统要求：Windows 10 1809 或更高版本，x64。推荐 Windows 11。
 
-完整解压 ZIP，进入 daemon 文件夹，双击 daemon_studio.exe。
+完整解压 ZIP，进入 morrow 文件夹，双击 morrow_studio.exe。
 请保留同目录所有 DLL 和 data 文件夹，不要只复制 EXE，也不要在压缩包内直接运行。
 应用已附带 Flutter 引擎、视频解码库和 Visual C++ 运行库，无需安装开发工具。
 

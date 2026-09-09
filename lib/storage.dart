@@ -21,6 +21,7 @@ class MemoryStorage implements StudioStorage {
 class LocalStorage implements StudioStorage {
   LocalStorage(this.preferences);
   final SharedPreferences preferences;
+  // Persisted schema identity survives the Morrow product rename.
   static const key = 'daemon.studio.v1';
   Future<void> _pending = Future.value();
 

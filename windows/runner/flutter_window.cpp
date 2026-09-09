@@ -31,7 +31,7 @@ bool FlutterWindow::OnCreate() {
   RegisterPlugins(flutter_controller_->engine());
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
   shape_channel_ = std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-      flutter_controller_->engine()->messenger(), "daemon/window_shape",
+      flutter_controller_->engine()->messenger(), "morrow/window_shape",
       &flutter::StandardMethodCodec::GetInstance());
   shape_channel_->SetMethodCallHandler(
       [this](const auto& call, auto result) {

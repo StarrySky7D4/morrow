@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:daemon_studio/attachments/attachment.dart';
-import 'package:daemon_studio/media/texture_repository.dart';
+import 'package:morrow_studio/attachments/attachment.dart';
+import 'package:morrow_studio/media/texture_repository.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:daemon_studio/desktop_frame.dart';
-import 'package:daemon_studio/main.dart';
-import 'package:daemon_studio/storage.dart';
-import 'package:daemon_studio/window_effects.dart';
+import 'package:morrow_studio/desktop_frame.dart';
+import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/storage.dart';
+import 'package:morrow_studio/window_effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,7 +18,7 @@ void main() {
     tester,
   ) async {
     final folder = await Directory.systemTemp.createTemp(
-      'daemon-attachment-test-',
+      'morrow-attachment-test-',
     );
     try {
       for (final name in ['设计.dwg', '模型.blend', '截图.png', '片段.mp4', '声音.wav']) {
@@ -48,13 +48,13 @@ void main() {
     (tester) async {
       await initializeDesktopFrame();
       await tester.pumpWidget(
-        DaemonApp(
+        MorrowApp(
           storage: MemoryStorage(),
           nativeBackground: DesktopBackground(),
         ),
       );
       await tester.pumpAndSettle();
-      const channel = MethodChannel('daemon/window_shape');
+      const channel = MethodChannel('morrow/window_shape');
       for (final radius in [32.0, 0.0, 20.0]) {
         final slider = tester.widget<Slider>(
           find.byKey(const ValueKey('window-radius')),

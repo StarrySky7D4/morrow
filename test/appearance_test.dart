@@ -1,7 +1,7 @@
-import 'package:daemon_studio/main.dart';
-import 'package:daemon_studio/desktop_frame.dart';
-import 'package:daemon_studio/storage.dart';
-import 'package:daemon_studio/window_effects.dart';
+import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/desktop_frame.dart';
+import 'package:morrow_studio/storage.dart';
+import 'package:morrow_studio/window_effects.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -42,7 +42,7 @@ void main() {
     (tester) async {
       await size(tester, 1440);
       final storage = MemoryStorage();
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('theme-mist')), findsNothing);
       expect(find.byKey(const ValueKey('corners-square')), findsNothing);
@@ -81,7 +81,7 @@ void main() {
       expect(storage.data!['cornerRadius'], 0);
       expect(storage.data!.containsKey('rounded'), isFalse);
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       expect(palette(tester).background, custom.background);
       expect(palette(tester).borderRadius(20), BorderRadius.zero);
@@ -98,13 +98,13 @@ void main() {
     (tester) async {
       await size(tester, 1440);
       final storage = MemoryStorage();
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       await slide(tester, 'corner-radius', 32);
       final count = (storage.data!['ideas'] as List).length;
       storage.data!.addAll({'theme': 'mist', 'rounded': false});
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(DaemonApp(storage: storage));
+      await tester.pumpWidget(MorrowApp(storage: storage));
       await tester.pumpAndSettle();
       expect(palette(tester).theme, StudioTheme.custom);
       expect(palette(tester).cornerRadius, 0);
@@ -122,7 +122,7 @@ void main() {
       await size(tester, 1440);
       for (final width in [1440.0, 800.0, 390.0]) {
         tester.view.physicalSize = Size(width, 900);
-        await tester.pumpWidget(const DaemonApp());
+        await tester.pumpWidget(const MorrowApp());
         await tester.pumpAndSettle();
         final footer = find.byKey(const ValueKey('footer-dock'));
         final rect = tester.getRect(footer);
@@ -158,7 +158,7 @@ void main() {
       await size(tester, 1440);
       final calls = <MethodCall>[];
       final messenger = tester.binding.defaultBinaryMessenger;
-      const shape = MethodChannel('daemon/window_shape');
+      const shape = MethodChannel('morrow/window_shape');
       const manager = MethodChannel('window_manager');
       messenger.setMockMethodCallHandler(shape, (call) async {
         calls.add(call);
@@ -171,7 +171,7 @@ void main() {
       });
       final storage = MemoryStorage();
       await tester.pumpWidget(
-        DaemonApp(storage: storage, nativeBackground: NoBackground()),
+        MorrowApp(storage: storage, nativeBackground: NoBackground()),
       );
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 20.0);
@@ -191,7 +191,7 @@ void main() {
       expect(storage.data!['windowRadius'], 12);
       await tester.pumpWidget(const SizedBox());
       await tester.pumpWidget(
-        DaemonApp(storage: storage, nativeBackground: NoBackground()),
+        MorrowApp(storage: storage, nativeBackground: NoBackground()),
       );
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 12.0);

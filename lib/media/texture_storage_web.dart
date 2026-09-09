@@ -6,6 +6,7 @@ import 'package:web/web.dart' as web;
 import 'texture_source.dart';
 
 Future<Database> _open() => idbFactoryWeb.open(
+  // Keep the existing browser database so saved media remains available.
   'daemon-media',
   version: 1,
   onUpgradeNeeded: (event) {

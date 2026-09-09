@@ -18,4 +18,4 @@ http.createServer((req, res) => {
     stream.on('error', () => res.destroy());
     stream.pipe(res);
   });
-}).listen(port, '127.0.0.1', () => console.log(`daemon preview: http://127.0.0.1:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`morrow preview: http://127.0.0.1:${port}`));

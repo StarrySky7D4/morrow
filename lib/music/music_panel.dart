@@ -2,6 +2,7 @@ import 'lyrics_dialog.dart';
 import 'lyrics_service.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../appearance.dart';
 import '../media/texture_repository.dart';
 import '../media/texture_source.dart';
@@ -15,6 +16,8 @@ class MusicPanel extends StatefulWidget {
 }
 
 class _MusicPanelState extends State<MusicPanel> {
+  bool get androidPicker =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
   bool expanded = false, importing = false;
   MusicController get music => widget.controller;
   Future<void> pick(String type) async {
@@ -24,22 +27,41 @@ class _MusicPanelState extends State<MusicPanel> {
     try {
       if (type == 'songs') {
         final files = await openFiles(
-          acceptedTypeGroups: const [
-            XTypeGroup(
-              label: '音乐',
-              extensions: [
-                'mp3',
-                'wav',
-                'flac',
-                'm4a',
-                'aac',
-                'ogg',
-                'opus',
-                'lrc',
-              ],
-            ),
-          ],
+          // Android providers frequently have no MIME mapping for .lrc.
+          // Show all files there, then validate names before importing.
+          acceptedTypeGroups: androidPicker
+              ? const []
+              : const [
+                  XTypeGroup(
+                    label: '音乐',
+                    extensions: [
+                      'mp3',
+                      'wav',
+                      'flac',
+                      'm4a',
+                      'aac',
+                      'ogg',
+                      'opus',
+                      'lrc',
+                    ],
+                  ),
+                ],
         );
+        const allowed = [
+          'mp3',
+          'wav',
+          'flac',
+          'm4a',
+          'aac',
+          'ogg',
+          'opus',
+          'lrc',
+        ];
+        if (files.any(
+          (file) => !allowed.contains(file.name.toLowerCase().split('.').last),
+        )) {
+          throw const FormatException('请选择音频或同名 LRC 歌词文件。');
+        }
         final lyrics = <String, String>{};
         for (final file in files.where(
           (f) => f.name.toLowerCase().endsWith('.lrc'),
@@ -72,17 +94,28 @@ class _MusicPanelState extends State<MusicPanel> {
         }
       } else if (selected != null) {
         final file = await openFile(
-          acceptedTypeGroups: [
-            type == 'lyrics'
-                ? const XTypeGroup(label: '歌词文件', extensions: ['lrc', 'txt'])
-                : const XTypeGroup(
-                    label: '歌曲封面',
-                    extensions: ['png', 'jpg', 'jpeg', 'webp'],
-                  ),
-          ],
+          acceptedTypeGroups: androidPicker && type == 'lyrics'
+              ? const []
+              : [
+                  type == 'lyrics'
+                      ? const XTypeGroup(
+                          label: '歌词文件',
+                          extensions: ['lrc', 'txt'],
+                        )
+                      : const XTypeGroup(
+                          label: '歌曲封面',
+                          extensions: ['png', 'jpg', 'jpeg', 'webp'],
+                        ),
+                ],
         );
         if (file == null || !mounted) return;
         if (type == 'lyrics') {
+          if (![
+            'lrc',
+            'txt',
+          ].contains(file.name.toLowerCase().split('.').last)) {
+            throw const FormatException('请选择 LRC 或 TXT 歌词文件。');
+          }
           if (await file.length() > 1024 * 1024) {
             throw const FormatException('歌词文件请控制在 1 MB 以内。');
           }

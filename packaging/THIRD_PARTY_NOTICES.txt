@@ -1,4 +1,4 @@
-daemon — Third-party software notices
+Morrow — Third-party software notices
 
 The Windows application bundles Flutter, Dart packages, Microsoft Visual C++ runtime,
 libmpv, ANGLE and Super Native Extensions. Native library notices are in licenses/. Dart package, Flutter
@@ -21,7 +21,7 @@ FFmpeg and other linked components retain their own licenses; upstream source
 locations are listed in the build repository's packages directory.
 libmpv is dynamically loaded from libmpv-2.dll. You may replace it with a
 compatible modified library; reverse engineering for debugging modifications
-to LGPL-covered components is not restricted by daemon.
+to LGPL-covered components is not restricted by Morrow.
 
 ANGLE sources and license:
 https://github.com/google/angle

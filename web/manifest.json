@@ -1,6 +1,6 @@
 {
-  "name": "daemon",
-  "short_name": "daemon",
+  "name": "Morrow",
+  "short_name": "Morrow",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#F9F8FC",

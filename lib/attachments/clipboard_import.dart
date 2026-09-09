@@ -19,7 +19,7 @@ Future<PastedContent> readPaste([ClipboardReader? reader]) async {
   for (final item in reader.items.take(20)) {
     if (!kIsWeb && item.canProvide(Formats.fileUri)) {
       final uri = await item.readValue(Formats.fileUri);
-      if (uri != null) {
+      if (uri != null && uri.scheme == 'file') {
         files.add(XFile(uri.toFilePath()));
         hasFilePaths = true;
         continue;

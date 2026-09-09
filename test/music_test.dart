@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:daemon_studio/little_tips.dart';
-import 'package:daemon_studio/main.dart';
-import 'package:daemon_studio/media/texture_source.dart';
-import 'package:daemon_studio/music/music_controller.dart';
-import 'package:daemon_studio/music/music_panel.dart';
+import 'package:morrow_studio/little_tips.dart';
+import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/media/texture_source.dart';
+import 'package:morrow_studio/music/music_controller.dart';
+import 'package:morrow_studio/music/music_panel.dart';
 
 class FakeAudio implements MusicTransport {
   final playingEvents = StreamController<bool>.broadcast(sync: true);

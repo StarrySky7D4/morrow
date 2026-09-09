@@ -254,7 +254,7 @@ class StudioDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'DAEMON / A LITTLE POSSIBILITY',
+                            'MORROW / A LITTLE POSSIBILITY',
                             style: TextStyle(
                               color: p.muted,
                               fontSize: 8,
