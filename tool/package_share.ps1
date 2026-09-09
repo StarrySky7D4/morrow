@@ -1,11 +1,12 @@
 param(
   [string]$CrtDirectory = 'C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.44.35112\x64\Microsoft.VC143.CRT',
-  [switch]$IncludeWeb
+  [switch]$IncludeWeb,
+  [string]$WindowsBuildDirectory
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 $version = [regex]::Match((Get-Content -Raw "$repo/pubspec.yaml"), '(?m)^version:\s*([0-9.]+)').Groups[1].Value
-$build = Join-Path $repo 'build/windows/x64/runner/Release'
+$build = if ($WindowsBuildDirectory) { (Resolve-Path -LiteralPath $WindowsBuildDirectory).Path } else { Join-Path $repo 'build/windows/x64/runner/Release' }
 $output = Join-Path $repo "dist/morrow-$version-windows-x64.zip"
 if (Test-Path $output) { throw "Already exists: $output" }
 $webOutput = Join-Path $repo "dist/morrow-$version-web.zip"

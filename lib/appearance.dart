@@ -1,8 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'media/texture_source.dart';
+import 'liquid_glass.dart';
 
-enum GlassMode { frosted, clear }
+enum GlassMode { frosted, clear, liquid }
 
 enum StudioTheme { white, custom, dark }
 
@@ -22,6 +22,7 @@ class Palette {
     this.grayscale = 0,
     this.themeLightness,
     this.windowRadius = 20,
+    this.liquidCanvas = false,
   ]);
   final StudioTheme theme;
   final GlassMode mode;
@@ -31,6 +32,7 @@ class Palette {
   final Color? customColor;
   final TextureSource? texture;
   final bool mediaPlaying;
+  final bool liquidCanvas;
   final double cornerRadius, grayscale, windowRadius;
   final double? themeLightness;
   BorderRadius borderRadius(double base) =>
@@ -52,6 +54,7 @@ class Palette {
   };
   bool get dark => isCustom ? lightness < .46 : theme == StudioTheme.dark;
   bool get clear => mode == GlassMode.clear;
+  bool get liquid => mode == GlassMode.liquid;
   Color get ink => isCustom
       ? (dark ? Colors.white : Colors.black)
       : tone(dark ? const Color(0xFFF0EDF8) : const Color(0xFF302D43));
@@ -119,58 +122,64 @@ class Glass extends StatelessWidget {
   final Widget child;
   final double radius;
   final bool dialog;
+
   @override
-  Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      borderRadius: p.borderRadius(radius),
-      boxShadow: [
-        BoxShadow(
-          color: (p.dark ? Colors.black : const Color(0xFF716386)).withValues(
-            alpha: p.clear ? .07 : .035,
-          ),
-          blurRadius: p.clear ? 24 : 18,
-          offset: const Offset(0, 8),
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: p.borderRadius(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(
-          sigmaX: p.clear ? 4 : 22,
-          sigmaY: p.clear ? 4 : 22,
-        ),
-        child: AnimatedContainer(
-          duration: motionDuration(context, 220),
-          decoration: BoxDecoration(
-            borderRadius: p.borderRadius(radius),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                (dialog && p.backdrop == BackgroundMode.solid
-                        ? p.solidColor
-                        : p.surface)
-                    .withValues(
-                      alpha: p.clear
-                          ? (p.dark ? .23 : .28)
-                          : p.frostedOpacity.clamp(.2, 1),
-                    ),
-                (dialog && p.backdrop == BackgroundMode.solid
-                        ? p.solidColor
-                        : p.surface)
-                    .withValues(
-                      alpha: p.clear ? .07 : p.frostedOpacity.clamp(.2, 1),
-                    ),
+  Widget build(BuildContext context) {
+    final tint = dialog && p.backdrop == BackgroundMode.solid
+        ? p.solidColor
+        : p.surface;
+    final borderRadius = p.borderRadius(radius);
+    final top = p.clear
+        ? (p.dark ? .23 : .28)
+        : p.frostedOpacity.clamp(.2, 1).toDouble();
+    final bottom = p.clear ? .07 : p.frostedOpacity.clamp(.2, 1).toDouble();
+    final target = p.liquid
+        ? GlassMaterial.liquid(
+            tint: tint,
+            dark: p.dark,
+            readable: dialog || MediaQuery.highContrastOf(context),
+            borderRadius: borderRadius,
+          )
+        : GlassMaterial(
+            blur: p.clear ? 4 : 22,
+            liquid: 0,
+            decoration: BoxDecoration(
+              borderRadius: borderRadius,
+              boxShadow: [
+                BoxShadow(
+                  color: (p.dark ? Colors.black : const Color(0xFF716386))
+                      .withValues(alpha: p.clear ? .07 : .035),
+                  blurRadius: p.clear ? 24 : 18,
+                  offset: const Offset(0, 8),
+                ),
               ],
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  tint.withValues(alpha: top),
+                  tint.withValues(alpha: (top + bottom) / 2),
+                  tint.withValues(alpha: bottom),
+                ],
+              ),
+              border: Border.all(color: p.glassEdge, width: p.clear ? 1.2 : 1),
             ),
-            border: Border.all(color: p.glassEdge, width: p.clear ? 1.2 : 1),
-          ),
-          child: child,
-        ),
+          );
+    return TweenAnimationBuilder<GlassMaterial>(
+      tween: GlassMaterialTween(end: target),
+      duration: motionDuration(context, 360),
+      curve: Curves.easeInOutCubic,
+      child: child,
+      builder: (context, material, child) => LiquidGlassSurface(
+        material: material,
+        tint: tint,
+        dark: p.dark,
+        readable: dialog,
+        borderRadius: material.decoration.borderRadius! as BorderRadius,
+        child: child!,
       ),
-    ),
-  );
+    );
+  }
 }
 
 Duration motionDuration(BuildContext context, int milliseconds) =>

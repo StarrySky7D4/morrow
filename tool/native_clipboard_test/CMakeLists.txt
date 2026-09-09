@@ -1,0 +1,8 @@
+cmake_minimum_required(VERSION 3.14)
+project(morrow_clipboard_test LANGUAGES CXX)
+add_executable(morrow_clipboard_test main.cpp)
+target_compile_features(morrow_clipboard_test PRIVATE cxx_std_17)
+target_compile_definitions(morrow_clipboard_test PRIVATE NOMINMAX UNICODE _UNICODE)
+target_compile_options(morrow_clipboard_test PRIVATE /utf-8 /W4)
+target_include_directories(morrow_clipboard_test PRIVATE "../../windows/flutter/ephemeral/cpp_client_wrapper/include" "../../windows/flutter/ephemeral")
+target_link_libraries(morrow_clipboard_test PRIVATE ole32 gdiplus gdi32 user32)

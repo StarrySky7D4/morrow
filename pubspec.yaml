@@ -1,15 +1,18 @@
 name: morrow_studio
 description: A glass-inspired playground for little tasks and big ideas.
 publish_to: none
-version: 0.1.7+8
+version: 0.1.8+9
 environment:
   sdk: ^3.12.0
 dependencies:
   audio_metadata_reader: ^1.8.0
+  cupertino_icons: ^1.0.9
   file_selector: ^1.1.0
   flutter:
     sdk: flutter
   flutter_acrylic: ^1.1.4
+  flutter_markdown_plus: ^1.0.12
+  html: ^0.15.7
   http: ^1.6.0
   idb_shim: ^2.9.8
   media_kit: ^1.2.6
@@ -21,6 +24,7 @@ dependencies:
   url_launcher: ^6.3.2
   web: ^1.1.1
   window_manager: ^0.5.2
+  xml: ^7.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -29,3 +33,5 @@ dev_dependencies:
     sdk: flutter
 flutter:
   uses-material-design: true
+  shaders:
+    - shaders/liquid_glass.frag

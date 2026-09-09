@@ -10,6 +10,9 @@ import 'music/music_panel.dart';
 import 'little_tips.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
+import 'collapsible_panel.dart';
+import 'liquid_glass.dart';
+import 'content/idea_markdown.dart';
 export 'appearance.dart';
 import 'color_compass.dart';
 import 'desktop_frame.dart';
@@ -73,6 +76,7 @@ class _MorrowAppState extends State<MorrowApp> {
   Color? customColor;
   TextureSource? texture;
   bool mediaPlaying = true;
+  bool liquidCanvas = false;
   late final StudioStorage storage;
   Map<String, dynamic>? restored;
   String? warning;
@@ -102,6 +106,7 @@ class _MorrowAppState extends State<MorrowApp> {
             ? null
             : TextureSource.fromJson(data['texture'] as Map<String, dynamic>);
         mediaPlaying = data['mediaPlaying'] as bool? ?? true;
+        liquidCanvas = data['liquidCanvas'] as bool? ?? false;
         themeLightness = (data['themeLightness'] as num?)?.toDouble().clamp(
           0,
           1,
@@ -158,6 +163,7 @@ class _MorrowAppState extends State<MorrowApp> {
         'customColor': customColor?.toARGB32(),
         'texture': texture?.toJson(),
         'mediaPlaying': mediaPlaying,
+        'liquidCanvas': liquidCanvas,
         'themeLightness': themeLightness,
         'windowRadius': windowRadius,
         'cornerRadius': cornerRadius,
@@ -216,6 +222,7 @@ class _MorrowAppState extends State<MorrowApp> {
       grayscale,
       themeLightness,
       windowRadius,
+      liquidCanvas,
     );
     return MaterialApp(
       title: 'Morrow — 留一点空间给灵感',
@@ -327,6 +334,8 @@ class _MorrowAppState extends State<MorrowApp> {
           appearanceChanged(() => grayscale = value, save: false);
         },
         onMode: (value) => appearanceChanged(() => mode = value),
+        onLiquidCanvas: (value) =>
+            appearanceChanged(() => liquidCanvas = value),
         onBackground: (value) =>
             appearanceChanged(() => background = value, native: true),
         onTint: (value) => appearanceChanged(() {
@@ -441,6 +450,7 @@ class Studio extends StatefulWidget {
     required this.palette,
     required this.onTheme,
     required this.onMode,
+    required this.onLiquidCanvas,
     required this.onWindowRadius,
     required this.onRadius,
     required this.onGrayscale,
@@ -461,6 +471,7 @@ class Studio extends StatefulWidget {
   final Palette palette;
   final ValueChanged<StudioTheme> onTheme;
   final ValueChanged<GlassMode> onMode;
+  final ValueChanged<bool> onLiquidCanvas;
   final ValueChanged<double> onRadius, onWindowRadius, onGrayscale, onLightness;
   final ValueChanged<BackgroundMode> onBackground;
   final ValueChanged<int> onTint;
@@ -483,6 +494,7 @@ class _StudioState extends State<Studio> {
   final quickNote = TextEditingController();
   final searchFocus = FocusNode();
   bool showAppearance = true;
+  bool sidebarExpanded = true;
   bool showCustomTone = false;
   late final MusicController music;
   bool backgroundSound = false;
@@ -631,6 +643,8 @@ class _StudioState extends State<Studio> {
   @override
   void initState() {
     super.initState();
+    sidebarExpanded = widget.restored?['sidebarExpanded'] as bool? ?? true;
+    showAppearance = widget.restored?['appearanceExpanded'] as bool? ?? true;
     final savedMusic = widget.restored?['music'] as Map<String, dynamic>?;
     music = MusicController(
       tracks: (savedMusic?['tracks'] as List? ?? [])
@@ -660,6 +674,8 @@ class _StudioState extends State<Studio> {
     'ideas': ideas.map((idea) => idea.toJson()).toList(),
     'completed': completed.toList(),
     'music': music.toJson(),
+    'sidebarExpanded': sidebarExpanded,
+    'appearanceExpanded': showAppearance,
   };
   void persist() => widget.onSave(snapshot());
   void refreshPage(VoidCallback update) => setState(update);
@@ -748,6 +764,20 @@ class _StudioState extends State<Studio> {
               ),
             ),
             Positioned.fill(child: mediaCanvas()),
+            if (p.liquidCanvas)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: LiquidGlassSurface(
+                    key: const ValueKey('liquid-canvas'),
+                    canvas: true,
+                    transparentCanvas: p.backdrop == BackgroundMode.transparent,
+                    tint: p.surface,
+                    dark: p.dark,
+                    borderRadius: BorderRadius.circular(p.windowRadius),
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+              ),
             SafeArea(
               minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
               child: LayoutBuilder(
@@ -759,13 +789,19 @@ class _StudioState extends State<Studio> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (sidebar) ...[
-                          SizedBox(
-                            width: desktop ? 208 : 176,
-                            child: navigation(),
+                        if (sidebar)
+                          CollapsiblePanel(
+                            key: const ValueKey('sidebar-panel'),
+                            expanded: sidebarExpanded,
+                            axis: Axis.horizontal,
+                            extent: desktop ? 234 : 192,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: desktop ? 26 : 16,
+                              ),
+                              child: navigation(),
+                            ),
                           ),
-                          SizedBox(width: desktop ? 26 : 16),
-                        ],
                         Expanded(
                           child: Column(
                             children: [
@@ -816,15 +852,29 @@ class _StudioState extends State<Studio> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              if (!desktop &&
-                                                  showAppearance) ...[
-                                                appearance(),
-                                                const SizedBox(height: 20),
-                                                scratchpad(),
-                                                const SizedBox(height: 20),
-                                                musicPanel(),
-                                                const SizedBox(height: 20),
-                                              ],
+                                              if (!desktop)
+                                                CollapsiblePanel(
+                                                  key: const ValueKey(
+                                                    'settings-inline-panel',
+                                                  ),
+                                                  expanded: showAppearance,
+                                                  child: Column(
+                                                    children: [
+                                                      appearance(),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      scratchpad(),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      musicPanel(),
+                                                      const SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
                                               greeting(),
                                               const SizedBox(height: 24),
                                               if (section == '概览')
@@ -937,25 +987,33 @@ class _StudioState extends State<Studio> {
                                         ),
                                       ),
                                     ),
-                                    if (desktop && showAppearance) ...[
-                                      const SizedBox(width: 24),
-                                      SizedBox(
-                                        width: 252,
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            children: [
-                                              appearance(),
-                                              const SizedBox(height: 20),
-                                              scratchpad(),
-                                              const SizedBox(height: 20),
-                                              musicPanel(),
-                                              const SizedBox(height: 20),
-                                              smallQuote(),
-                                            ],
+                                    if (desktop)
+                                      CollapsiblePanel(
+                                        key: const ValueKey(
+                                          'settings-side-panel',
+                                        ),
+                                        expanded: showAppearance,
+                                        axis: Axis.horizontal,
+                                        extent: 276,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 24,
+                                          ),
+                                          child: SingleChildScrollView(
+                                            child: Column(
+                                              children: [
+                                                appearance(),
+                                                const SizedBox(height: 20),
+                                                scratchpad(),
+                                                const SizedBox(height: 20),
+                                                musicPanel(),
+                                                const SizedBox(height: 20),
+                                                smallQuote(),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ],
                                   ],
                                 ),
                               ),
@@ -1188,6 +1246,19 @@ class _StudioState extends State<Studio> {
           ].map((s) => PopupMenuItem(value: s, child: Text(s))).toList(),
         )
       else ...[
+        IconButton(
+          key: const ValueKey('sidebar-toggle'),
+          tooltip: sidebarExpanded ? '收起侧边栏' : '展开侧边栏',
+          onPressed: () {
+            setState(() => sidebarExpanded = !sidebarExpanded);
+            persist();
+          },
+          icon: AnimatedRotation(
+            turns: sidebarExpanded ? 0 : .5,
+            duration: motionDuration(context, 340),
+            child: Icon(Icons.chevron_left_rounded, size: 19, color: p.muted),
+          ),
+        ),
         Icon(Icons.space_dashboard_outlined, size: 16, color: p.muted),
         const SizedBox(width: 9),
         Text('工作台', style: TextStyle(color: p.muted, fontSize: 11)),
@@ -1205,7 +1276,10 @@ class _StudioState extends State<Studio> {
       IconButton(
         key: const ValueKey('appearance-toggle'),
         tooltip: showAppearance ? '收起外观设置' : '显示外观设置',
-        onPressed: () => setState(() => showAppearance = !showAppearance),
+        onPressed: () {
+          setState(() => showAppearance = !showAppearance);
+          persist();
+        },
         icon: Icon(Icons.tune_rounded, size: 19, color: p.muted),
       ),
     ],
@@ -1740,6 +1814,10 @@ class _StudioState extends State<Studio> {
                   Icons.water_drop_outlined,
                 ),
               ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: modeOption(GlassMode.liquid, '液体玻璃', Icons.lens_blur),
+              ),
             ],
           ),
           SoftSize(
@@ -1747,7 +1825,7 @@ class _StudioState extends State<Studio> {
             alignment: Alignment.topCenter,
             child: Column(
               children: [
-                if (!p.clear) ...[
+                if (p.mode == GlassMode.frosted) ...[
                   const SizedBox(height: 16),
                   Row(
                     children: [
@@ -1873,7 +1951,11 @@ class _StudioState extends State<Studio> {
                               ),
                               const SizedBox(height: 5),
                               Text(
-                                p.clear ? 'Crystal clear' : 'Softly frosted',
+                                p.liquid
+                                    ? 'Liquid glass'
+                                    : p.clear
+                                    ? 'Crystal clear'
+                                    : 'Softly frosted',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: p.ink,
@@ -1892,7 +1974,11 @@ class _StudioState extends State<Studio> {
           ),
           const SizedBox(height: 10),
           Text(
-            p.clear ? '通透轻盈，让光与色彩穿过界面。' : '柔化背景，让思绪安静地浮现。',
+            p.liquid
+                ? '流动的高光、柔和折射，让面板像一滴凝住的水。'
+                : p.clear
+                ? '通透轻盈，让光与色彩穿过界面。'
+                : '柔化背景，让思绪安静地浮现。',
             style: TextStyle(fontSize: 9, color: p.muted),
           ),
           const SizedBox(height: 22),
@@ -2022,6 +2108,17 @@ class _StudioState extends State<Studio> {
                   )
                   .toList(),
             ),
+          ),
+          SwitchListTile.adaptive(
+            key: const ValueKey('canvas-liquid-toggle'),
+            contentPadding: EdgeInsets.zero,
+            title: const Text('液体玻璃效果', style: TextStyle(fontSize: 12)),
+            subtitle: const Text(
+              '独立于背景类型，四种画布均可开启',
+              style: TextStyle(fontSize: 10),
+            ),
+            value: p.liquidCanvas,
+            onChanged: widget.onLiquidCanvas,
           ),
           SoftSize(
             duration: motionDuration(context, 240),
@@ -2299,7 +2396,7 @@ class _StudioState extends State<Studio> {
         borderRadius: p.borderRadius(10),
         child: AnimatedContainer(
           duration: motionDuration(context, 220),
-          height: 38,
+          height: 56,
           decoration: BoxDecoration(
             color: selected
                 ? p.accent.withValues(alpha: .14)
@@ -2309,11 +2406,11 @@ class _StudioState extends State<Studio> {
             ),
             borderRadius: p.borderRadius(10),
           ),
-          child: Row(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 15, color: selected ? p.accent : p.muted),
-              const SizedBox(width: 6),
+              const SizedBox(height: 5),
               Text(
                 title,
                 style: TextStyle(
@@ -2545,9 +2642,9 @@ class _StudioState extends State<Studio> {
                     style: TextStyle(color: p.accent, fontSize: 12),
                   ),
                   const SizedBox(height: 18),
-                  SelectableText(
-                    idea.description,
-                    style: const TextStyle(height: 1.8),
+                  IdeaMarkdown(
+                    data: idea.description,
+                    attachments: idea.attachments,
                   ),
                   if (idea.attachments.isNotEmpty) ...[
                     const SizedBox(height: 18),
@@ -2731,7 +2828,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       conclusionFocus = FocusNode();
   final attachments = <IdeaAttachment>[];
   final created = <IdeaAttachment>[];
-  bool importing = false, saved = false;
+  bool importing = false, saved = false, preview = false;
+  String pasteNotice = '';
   String stage = '待整理';
   void webPaste(ClipboardReadEvent event) {
     if (ModalRoute.of(context)?.isCurrent != true) return;
@@ -2784,6 +2882,100 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     }
   }
 
+  Widget _bodyEditor(BuildContext context) {
+    final p = AppearanceScope.of(context);
+    final editor = TextField(
+      key: const ValueKey('idea-description'),
+      controller: description,
+      focusNode: descriptionFocus,
+      minLines: 4,
+      maxLines: 8,
+      style: TextStyle(fontSize: 13, height: 1.7, color: p.ink),
+      maxLength: 20000,
+      decoration: const InputDecoration(
+        hintText: '写下思路，或粘贴一段内容…\n\n支持 # 标题、列表、表格和代码块',
+        border: InputBorder.none,
+        alignLabelWithHint: true,
+      ),
+    );
+    final rendered = ValueListenableBuilder<TextEditingValue>(
+      valueListenable: description,
+      builder: (context, value, _) => ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 160, maxHeight: 350),
+        child: SingleChildScrollView(
+          key: const ValueKey('idea-markdown-preview'),
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: value.text.trim().isEmpty
+                ? Text('预览会显示在这里', style: TextStyle(color: p.muted))
+                : IdeaMarkdown(data: value.text, attachments: attachments),
+          ),
+        ),
+      ),
+    );
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: p.ink.withValues(alpha: .025),
+        border: Border.all(color: p.line),
+        borderRadius: p.borderRadius(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Icon(Icons.notes_rounded, size: 18, color: p.accent),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    '正文 · Markdown',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                IconButton(
+                  key: const ValueKey('idea-preview-toggle'),
+                  tooltip: preview ? '收起预览' : '实时预览',
+                  isSelected: preview,
+                  onPressed: () => setState(() => preview = !preview),
+                  icon: const Icon(Icons.visibility_outlined, size: 19),
+                ),
+              ],
+            ),
+            const Divider(height: 12),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                if (!preview) return editor;
+                if (constraints.maxWidth < 590) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Offstage(offstage: true, child: editor),
+                      rendered,
+                    ],
+                  );
+                }
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: editor),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: rendered,
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> paste([ClipboardReader? reader]) =>
       safely(() => insertPaste(reader));
 
@@ -2801,18 +2993,57 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         ? await widget.readClipboard!()
         : await readPaste(reader);
     if (!mounted) return;
-    if (content.text.isNotEmpty) {
+    final inserted = target == description && content.markdown.isNotEmpty
+        ? content.markdown
+        : content.text;
+    if (inserted.isNotEmpty) {
       final selection = target.selection;
       final start = selection.isValid ? selection.start : target.text.length;
       final end = selection.isValid ? selection.end : target.text.length;
-      final value = target.text.replaceRange(start, end, content.text);
+      final value = target.text.replaceRange(start, end, inserted);
+      final limit = target == title
+          ? 60
+          : target == todos
+          ? 1000
+          : target == hypothesis
+          ? 5000
+          : target == conclusion
+          ? 10000
+          : 20000;
+      if (value.characters.length > limit) {
+        throw FormatException('此输入框最多 $limit 个字符，请缩短内容或将其作为文件导入。');
+      }
       target.value = TextEditingValue(
         text: value,
-        selection: TextSelection.collapsed(offset: start + content.text.length),
+        selection: TextSelection.collapsed(offset: start + inserted.length),
       );
     }
     await importFiles(content.files);
-    if (content.text.isEmpty && content.files.isEmpty && mounted) {
+    if (!mounted) return;
+    // Images remain portable: Markdown refers to persisted attachments by name.
+    if (target == description && inserted.isEmpty) {
+      final images = attachments.where(
+        (a) =>
+            a.source.kind == TextureKind.image &&
+            content.files.any((f) => f.name == a.source.name),
+      );
+      for (final item in images) {
+        final uri = 'attachment:${Uri.encodeComponent(item.source.location)}';
+        if (!description.text.contains(uri)) {
+          final link = '\n\n![图片]($uri)';
+          if ((description.text + link).characters.length <= 20000) {
+            description.text += link;
+          }
+        }
+      }
+    }
+    setState(() {
+      preview = target == description && description.text.isNotEmpty;
+      pasteNotice = content.warnings.isEmpty
+          ? '已读取内容${content.files.isEmpty ? '' : '，保留 ${content.files.length} 个附件'}'
+          : content.warnings.join('\n');
+    });
+    if (inserted.isEmpty && content.files.isEmpty && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('剪贴板中没有可读取的文本或文件。请从资源管理器复制文件，或使用导入文件。')),
       );
@@ -2874,10 +3105,11 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       ),
     },
     child: StudioDialog(
+      width: 820,
       title: widget.initialIdea == null ? '接住一个新想法' : '让想法更清晰',
-      subtitle: '先写下来，再慢慢让它成形。',
+      subtitle: '文字、表格、图片，先放在这里。让一个念头慢慢成形。',
       content: SizedBox(
-        width: 390,
+        width: 740,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -2888,23 +3120,60 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                 focusNode: titleFocus,
                 autofocus: true,
                 maxLength: 60,
+                style: const TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.w600,
+                ),
                 decoration: InputDecoration(
-                  labelText: '给它起个名字',
+                  hintText: '给它起个名字',
                   errorText: invalid ? '先写下你的想法吧' : null,
                 ),
               ),
               const SizedBox(height: 12),
-              TextField(
-                key: const ValueKey('idea-description'),
-                controller: description,
-                focusNode: descriptionFocus,
-                maxLines: 3,
-                maxLength: 20000,
-                decoration: const InputDecoration(
-                  labelText: '再多说一点（可选）',
-                  alignLabelWithHint: true,
-                ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.tonalIcon(
+                    key: const ValueKey('idea-paste'),
+                    onPressed: importing ? null : () => paste(),
+                    icon: const Icon(Icons.content_paste, size: 16),
+                    label: const Text('粘贴内容'),
+                  ),
+                  OutlinedButton.icon(
+                    key: const ValueKey('idea-add-files'),
+                    onPressed: importing
+                        ? null
+                        : () => safely(
+                            () async => importFiles(await openFiles()),
+                          ),
+                    icon: const Icon(Icons.attach_file, size: 16),
+                    label: const Text('导入文件'),
+                  ),
+                ],
               ),
+              const SizedBox(height: 6),
+              const Text(
+                '支持 Markdown、Office 富文本与表格、截图及文件。复杂对象保留原始附件；最多 20 个附件，单个不超过 200 MB。',
+                style: TextStyle(fontSize: 11),
+              ),
+              if (pasteNotice.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      pasteNotice,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              if (importing) const LinearProgressIndicator(),
+              const SizedBox(height: 12),
+              _bodyEditor(context),
               const SizedBox(height: 14),
               DropdownButtonFormField<String>(
                 initialValue: category,
@@ -2933,33 +3202,6 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                 }),
               ),
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                children: [
-                  OutlinedButton.icon(
-                    key: const ValueKey('idea-paste'),
-                    onPressed: importing ? null : () => paste(),
-                    icon: const Icon(Icons.content_paste, size: 16),
-                    label: const Text('粘贴内容'),
-                  ),
-                  OutlinedButton.icon(
-                    key: const ValueKey('idea-add-files'),
-                    onPressed: importing
-                        ? null
-                        : () => safely(
-                            () async => importFiles(await openFiles()),
-                          ),
-                    icon: const Icon(Icons.attach_file, size: 16),
-                    label: const Text('导入文件'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                '可粘贴文本、截图或复制的文件；支持图片、音视频、CAD、Blender 等附件。单个文件不超过 200 MB。',
-                style: TextStyle(fontSize: 11),
-              ),
-              if (importing) const LinearProgressIndicator(),
               ...attachments.map(
                 (item) => AttachmentTile(
                   attachment: item,

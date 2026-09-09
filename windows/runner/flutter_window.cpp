@@ -74,6 +74,8 @@ bool FlutterWindow::OnCreate() {
         else result->Error("window_shape", "Could not update the window region.");
       });
 
+  office_clipboard_ = std::make_unique<OfficeClipboard>(flutter_controller_->engine()->messenger());
+
   flutter_controller_->engine()->SetNextFrameCallback([&]() {
     this->Show();
   });
@@ -87,6 +89,7 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  office_clipboard_ = nullptr;
   shape_channel_ = nullptr;
   if (flutter_controller_) {
     flutter_controller_ = nullptr;

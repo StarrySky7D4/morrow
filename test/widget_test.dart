@@ -16,7 +16,7 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      for (final width in [1440.0, 800.0, 390.0]) {
+      for (final width in [1440.0, 1050.0, 800.0, 760.0, 390.0]) {
         tester.view.physicalSize = Size(width, 1000);
         await tester.pumpWidget(const MorrowApp());
         await tester.pumpAndSettle();
@@ -111,7 +111,7 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('All 24 appearance combinations render on desktop and mobile', (
+  testWidgets('All 36 appearance combinations render on desktop and mobile', (
     tester,
   ) async {
     await launch(tester, const Size(1440, 1000));

@@ -20,6 +20,8 @@ class DesktopBackground {
         // Flutter paints every background inside its rounded canvas. A native
         // solid accent creates a second, rectangular fill behind that canvas,
         // exposed most clearly at the corners of a playing video texture.
+        // Canvas materials must not change the native composition mode:
+        // Aero blur can replace per-pixel desktop transparency on Windows.
         effect: acrylic.WindowEffect.transparent,
         color: Colors.transparent,
       );

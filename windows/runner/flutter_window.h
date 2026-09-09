@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "win32_window.h"
+#include "office_clipboard.h"
 
 // A window that does nothing but host a Flutter view.
 class FlutterWindow : public Win32Window {
@@ -31,6 +32,7 @@ class FlutterWindow : public Win32Window {
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> shape_channel_;
+  std::unique_ptr<OfficeClipboard> office_clipboard_;
   double corner_radius_ = 20;
   bool applying_shape_ = false;
   bool ApplyWindowShape();
