@@ -1,9 +1,12 @@
 daemon — Third-party software notices
 
-The application bundles Flutter, Dart packages, Microsoft Visual C++ runtime,
+The Windows application bundles Flutter, Dart packages, Microsoft Visual C++ runtime,
 libmpv, ANGLE and Super Native Extensions. Native library notices are in licenses/. Dart package, Flutter
 engine and framework notices are included in data/flutter_assets/NOTICES.Z
 (Windows) or assets/NOTICES (Web, possibly compressed as NOTICES.Z).
+
+The Web package includes the Flutter web runtime and generated package notices;
+it does not bundle the Windows native DLLs described below.
 
 media_kit and its Flutter integration are MIT licensed. The distributed libmpv
 is the unmodified media-kit Windows build dated 2023-09-24, git 652a1dd:

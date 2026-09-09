@@ -1,5 +1,7 @@
 # daemon
 
+[下载预构建版本](https://github.com/StarrySky7D4/daemon/releases/latest) · [Apache-2.0](LICENSE)
+
 用 Flutter 构建的灵感工作台。支持 Windows 与 Web，界面由 Flutter 绘制，使用 shared_preferences 保存本地内容、flutter_acrylic 实现 Windows 原生透明窗口。
 
 - 玻璃材质：磨砂（22px 背景模糊）与超透（4px 模糊、低遮罩、明亮边缘）。磨砂提供 20%–100% 不透明度滑条，实时预览、松手保存。
@@ -43,7 +45,7 @@ flutter build web --no-web-resources-cdn
 构建后可用 `node tool/preview.cjs` 启动本机预览，地址为 `http://127.0.0.1:8765`。
 Windows 构建：`flutter build windows`，运行 `build/windows/x64/runner/Release/daemon_studio.exe`，分发时需保留整个 Release 目录。
 
-个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/daemon-0.1.5-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
+个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/daemon-0.1.6-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
 
 ## 歌词与附件
 
@@ -72,3 +74,7 @@ Windows 数据由平台插件保存在当前用户的应用支持目录，导入
 新增插件后若增量构建使用了旧插件注册文件，可关闭运行中的应用后执行 `flutter clean`、`flutter pub get` 再构建；发布前应检查实际导入流程。
 
 实现参考：[flutter_acrylic](https://pub.dev/packages/flutter_acrylic)、[shared_preferences](https://pub.dev/packages/shared_preferences)。
+
+## 许可证
+
+本仓库原创代码、文档、配置和素材统一采用 [Apache License 2.0](LICENSE)，版权声明见 [NOTICE](NOTICE)。第三方依赖和引入的第三方内容保留原许可证，详见 [第三方许可声明](packaging/THIRD_PARTY_NOTICES.txt)。预构建包附带相同许可证与声明。

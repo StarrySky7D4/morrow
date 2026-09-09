@@ -1,0 +1,12 @@
+daemon
+Copyright 2026 StarrySky7D4 and contributors
+
+The original source code, documentation, configuration and artwork in this
+repository are licensed under the Apache License, Version 2.0.
+See LICENSE for the full license text.
+
+Third-party software and incorporated third-party material retain their
+respective copyright notices and licenses. The project's Apache-2.0 license
+does not replace those licenses. See packaging/THIRD_PARTY_NOTICES.txt and
+packaging/licenses/ in source distributions, or THIRD_PARTY_NOTICES.txt,
+licenses/ and Flutter's generated NOTICES in binary distributions.
