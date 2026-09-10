@@ -1,3 +1,5 @@
+apply(from = "cargokit_gradle9_compat.gradle")
+
 allprojects {
     repositories {
         google()

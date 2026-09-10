@@ -1,0 +1,50 @@
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
+import org.gradle.util.GradleVersion
+
+abstract class CargokitExecServices {
+    @Inject
+    abstract ExecOperations getExecOperations()
+}
+
+// Cargokit bundled by these pinned plugins still calls Project.exec, removed in
+// Gradle 9. Keep this bridge local until both plugins migrate to ExecOperations.
+if (GradleVersion.current() >= GradleVersion.version('9.0')) {
+    subprojects { target ->
+        if (target.name in ['irondash_engine_context', 'super_native_extensions']) {
+            def operations = target.objects.newInstance(CargokitExecServices).execOperations
+            target.extensions.extraProperties.set('exec', { Closure action ->
+                operations.exec { spec ->
+                    spec.workingDir(target.projectDir)
+                    target.configure(spec, action)
+                    def local = new Properties()
+                    target.rootProject.file('local.properties').withInputStream { local.load(it) }
+                    def flutterRoot = local.getProperty('flutter.sdk')
+                    if (!flutterRoot || !new File(flutterRoot, 'bin/cache/dart-sdk').isDirectory()) {
+                        throw new GradleException('Cargokit requires flutter.sdk in android/local.properties.')
+                    }
+                    spec.environment('FLUTTER_ROOT', flutterRoot)
+                }
+            })
+            target.tasks.configureEach { task ->
+                if (task.name.startsWith('cargokitCargoBuild')) {
+                    task.doFirst {
+                        // The Windows launcher writes here before running pub get.
+                        new File(task.buildDir, 'build_tool/.dart_tool').mkdirs()
+                    }
+                    task.doLast {
+                        def abiNames = ['android-arm64': 'arm64-v8a', 'android-arm': 'armeabi-v7a',
+                                        'android-x64': 'x86_64', 'android-x86': 'x86']
+                        task.targetPlatforms.unique().each { platform ->
+                            def abi = abiNames[platform]
+                            def library = new File(task.outputDir, "${abi}/lib${target.cargokit.libname}.so")
+                            if (abi == null || !library.isFile() || library.length() == 0) {
+                                throw new GradleException("Cargokit did not produce required native library: ${library}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

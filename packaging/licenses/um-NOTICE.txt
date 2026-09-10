@@ -1,0 +1,24 @@
+# Source provenance
+
+This library is a Rust port of algorithm code distributed in the user-supplied
+`cli-main.zip`, containing Unlock Music Project - CLI Edition.
+
+- Module: `unlock-music.dev/cli`
+- Upstream URL recorded by the supplied README: https://git.unlock-music.dev/um/cli
+- Source archive SHA-256: `324d3246c7e8b8219ed6918051f7bf0cbf4103405f8608ecb59edc1d6617bddd`
+- Original copyright: Copyright (c) 2020-2021 Unlock Music
+- Original license: MIT; included verbatim in `LICENSE`.
+- No upstream revision or current upstream compatibility is inferred from the archive name.
+
+Ported components: NCM, QMC, KGM, KWM, TM, Xiami and Ximalaya audio algorithms;
+QMC static table and Ximalaya binary permutation tables. The QMC binary test
+fixtures are copied unchanged from `cli/algo/qmc/testdata`.
+
+The new Rust API, C ABI, Dart wrapper, bounds checks and additional tests are
+distributed under the same MIT license. See `docs/architecture.md` for deliberate
+differences from the supplied Go implementation.
+
+Rust dependencies retain their own licenses: `aes` (MIT OR Apache-2.0),
+`base64` (MIT OR Apache-2.0), and `md-5` (MIT OR Apache-2.0). Transitive dependency
+versions are recorded in Cargo.lock. Dart has no third-party runtime dependencies;
+its test-only dependencies and resolved versions are recorded in pubspec.lock.

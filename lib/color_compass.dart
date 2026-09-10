@@ -3,8 +3,15 @@ import 'package:flutter/material.dart';
 import 'appearance.dart';
 
 class ColorCompassDialog extends StatefulWidget {
-  const ColorCompassDialog({super.key, required this.initial});
+  const ColorCompassDialog({
+    super.key,
+    required this.initial,
+    this.title = '给空间一点颜色',
+    this.onChanged,
+  });
   final Color initial;
+  final String title;
+  final ValueChanged<Color>? onChanged;
   @override
   State<ColorCompassDialog> createState() => _ColorCompassDialogState();
 }
@@ -32,6 +39,7 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
     hsv = value;
     invalid = false;
     syncHex();
+    widget.onChanged?.call(hsv.toColor());
   });
   void wheel(Offset point, double size) {
     final delta = point - Offset(size / 2, size / 2);
@@ -58,7 +66,7 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
     return StudioDialog(
-      title: '给空间一点颜色',
+      title: widget.title,
       subtitle: '拖动罗盘选取色相与饱和度，再调整明暗。也可以直接输入色值。',
       icon: Icons.palette_outlined,
       content: Column(

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'audio_import.dart';
+import 'prepared_audio.dart';
 import 'package:file_selector/file_selector.dart';
 import 'lyrics_service.dart';
 import 'track_metadata_native.dart'
@@ -58,23 +60,37 @@ class MusicTrack {
   String get title => trackTitle.isNotEmpty
       ? trackTitle
       : source.name.replaceFirst(RegExp(r'\.[^.]+$'), '');
-  static Future<MusicTrack> import(XFile file) async {
-    final source = await TextureRepository.importFile(file);
-    final metadata = await readTrackMetadata(file);
-    final sidecar = metadata.fileLyrics.trim();
-    return MusicTrack(
-      source: source,
-      metadataRead: true,
-      trackTitle: metadata.title,
-      artist: metadata.artist,
-      trackDuration: metadata.duration,
-      lyrics: sidecar.isNotEmpty ? sidecar : metadata.embeddedLyrics,
-      lyricSource: sidecar.isNotEmpty
-          ? '歌词文件'
-          : metadata.embeddedLyrics.isNotEmpty
-          ? '音频内嵌'
-          : '',
-    );
+  static Future<MusicTrack> import(
+    XFile file, {
+    Future<PreparedAudio> Function(XFile)? prepare,
+  }) async {
+    final audio = await (prepare ?? prepareMusicAudio)(file);
+    try {
+      final original = await readTrackMetadata(file);
+      final metadata = identical(audio.file, file)
+          ? original
+          : await readTrackMetadata(audio.file);
+      final sidecar = original.fileLyrics.trim();
+      final embedded = metadata.embeddedLyrics.isNotEmpty
+          ? metadata.embeddedLyrics
+          : original.embeddedLyrics;
+      final source = await TextureRepository.importFile(audio.file);
+      return MusicTrack(
+        source: source,
+        metadataRead: true,
+        trackTitle: metadata.title.isNotEmpty ? metadata.title : original.title,
+        artist: metadata.artist.isNotEmpty ? metadata.artist : original.artist,
+        trackDuration: metadata.duration,
+        lyrics: sidecar.isNotEmpty ? sidecar : embedded,
+        lyricSource: sidecar.isNotEmpty
+            ? '歌词文件'
+            : embedded.isNotEmpty
+            ? '音频内嵌'
+            : '',
+      );
+    } finally {
+      await audio.dispose();
+    }
   }
 
   Map<String, dynamic> toJson() => {

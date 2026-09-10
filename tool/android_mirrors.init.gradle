@@ -1,0 +1,28 @@
+// Explicitly opt in with: gradlew -I <path-to-this-file> ...
+// Rewrites only known public repositories; private/custom repositories stay scoped.
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+
+def mirrorRepository = { repository ->
+    if (!(repository instanceof MavenArtifactRepository)) return
+    def address = repository.url.toString().replaceAll('/+$', '')
+    def replacement = null
+    if (address in ['https://dl.google.com/dl/android/maven2', 'https://maven.google.com']) {
+        replacement = 'https://maven.aliyun.com/repository/google'
+    } else if (address in ['https://repo.maven.apache.org/maven2', 'https://repo1.maven.org/maven2', 'https://jcenter.bintray.com']) {
+        replacement = 'https://maven.aliyun.com/repository/public'
+    } else if (address == 'https://plugins.gradle.org/m2') {
+        replacement = 'https://maven.aliyun.com/repository/gradle-plugin'
+    }
+    if (replacement != null) {
+        repository.setUrl(replacement)
+        logger.lifecycle('[morrow mirror] ' + address + ' -> ' + replacement)
+    }
+}
+gradle.beforeSettings { settings ->
+    settings.pluginManagement.repositories.all(mirrorRepository)
+    settings.dependencyResolutionManagement.repositories.all(mirrorRepository)
+}
+gradle.beforeProject { project ->
+    project.buildscript.repositories.all(mirrorRepository)
+    project.repositories.all(mirrorRepository)
+}

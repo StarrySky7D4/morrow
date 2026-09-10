@@ -7,6 +7,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $projectDirectory = Split-Path $PSScriptRoot -Parent
+$previousJavaToolOptions = $env:JAVA_TOOL_OPTIONS
 Push-Location $projectDirectory
 try {
     if (-not $Jdk) {
@@ -34,18 +35,28 @@ try {
     if ($Release -and -not (Test-Path -LiteralPath 'android/key.properties')) {
         throw 'Release signing requires android/key.properties. Omit -Release for a debug preview.'
     }
+    # Avoid the Windows AF_UNIX failure observed with the default Java temp path.
+    # JAVA_TOOL_OPTIONS reaches both the Gradle client and its daemon process.
+    if ($env:JAVA_TOOL_OPTIONS -notmatch 'jdk\.net\.unixdomain\.tmpdir=') {
+        $javaSocketDirectory = Join-Path $projectDirectory 'build/android-env-check'
+        New-Item -ItemType Directory -Force -Path $javaSocketDirectory | Out-Null
+        $socketOption = '-Djdk.net.unixdomain.tmpdir="' + $javaSocketDirectory + '"'
+        $env:JAVA_TOOL_OPTIONS = ($env:JAVA_TOOL_OPTIONS + ' ' + $socketOption).Trim()
+    }
     $mode = if ($Release) { 'release' } else { 'debug' }
-    & flutter build apk "--$mode" --target-platform $Architecture
+    & flutter build apk "--$mode" --target-platform $Architecture --split-per-abi
     if ($LASTEXITCODE -ne 0) { throw "Android build failed ($LASTEXITCODE)." }
     $versionLine = Get-Content -LiteralPath pubspec.yaml | Where-Object { $_ -match '^version:' }
     $version = (($versionLine -split ':', 2)[1].Trim() -split '\+')[0]
     New-Item -ItemType Directory -Force dist | Out-Null
     $destination = "dist/morrow-$version-$Architecture-$mode.apk"
-    Copy-Item -LiteralPath "build/app/outputs/flutter-apk/app-$mode.apk" -Destination $destination
+    $abi = @{'android-arm64'='arm64-v8a'; 'android-arm'='armeabi-v7a'; 'android-x64'='x86_64'}[$Architecture]
+    Copy-Item -LiteralPath "build/app/outputs/flutter-apk/app-$abi-$mode.apk" -Destination $destination
     $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $destination).Hash.ToLowerInvariant()
     "$hash  $(Split-Path $destination -Leaf)" | Set-Content -Encoding ascii -LiteralPath "$destination.sha256"
     Write-Output "APK: $destination"
     Write-Output "SHA256: $hash"
 } finally {
+    $env:JAVA_TOOL_OPTIONS = $previousJavaToolOptions
     Pop-Location
 }

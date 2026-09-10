@@ -5,7 +5,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
-$version = [regex]::Match((Get-Content -Raw "$repo/pubspec.yaml"), '(?m)^version:\s*([0-9.]+)').Groups[1].Value
+$version = [regex]::Match((Get-Content -Raw "$repo/pubspec.yaml"), '(?m)^version:\s*([^\s+]+)').Groups[1].Value
 $build = if ($WindowsBuildDirectory) { (Resolve-Path -LiteralPath $WindowsBuildDirectory).Path } else { Join-Path $repo 'build/windows/x64/runner/Release' }
 $output = Join-Path $repo "dist/morrow-$version-windows-x64.zip"
 if (Test-Path $output) { throw "Already exists: $output" }
@@ -13,6 +13,8 @@ $webOutput = Join-Path $repo "dist/morrow-$version-web.zip"
 if ($IncludeWeb) {
   if (Test-Path $webOutput) { throw "Already exists: $webOutput" }
   if (!(Test-Path "$repo/build/web/main.dart.js")) { throw 'Build the Web release first.' }
+  $webVersion = Get-Content -Raw "$repo/build/web/version.json" | ConvertFrom-Json
+  if ($webVersion.version -ne $version) { throw "Web build version differs from pubspec: $($webVersion.version)" }
 }
 foreach ($file in @('LICENSE', 'NOTICE')) {
   if (!(Test-Path "$repo/$file")) { throw "Missing license file: $file" }
@@ -29,7 +31,8 @@ Get-ChildItem -LiteralPath $build |
 Copy-Item "$CrtDirectory/*.dll" $stage
 Copy-Item "$repo/packaging/USER_GUIDE.txt" "$stage/使用说明.txt"
 Copy-Item "$repo/packaging/THIRD_PARTY_NOTICES.txt" $stage
-Copy-Item "$repo/packaging/licenses" "$stage/licenses" -Recurse
+New-Item -ItemType Directory -Force "$stage/licenses" | Out-Null
+Copy-Item "$repo/packaging/licenses/*" "$stage/licenses" -Recurse -Force
 Copy-Item "$repo/LICENSE", "$repo/NOTICE" $stage
 Compress-Archive -LiteralPath $stage -DestinationPath $output -CompressionLevel Optimal
 Write-Output "Package: $output"

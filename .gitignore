@@ -53,3 +53,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated Android diagnostics and local DevTools settings
+/android/build/
+/devtools_options.yaml

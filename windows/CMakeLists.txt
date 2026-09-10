@@ -87,6 +87,12 @@ if(PLUGIN_BUNDLED_LIBRARIES)
     COMPONENT Runtime)
 endif()
 
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../third_party/um_decrypt/native/windows/um_decrypt_ffi.dll"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../packaging/licenses/um-MIT.txt"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../packaging/licenses/um-NOTICE.txt"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/licenses" COMPONENT Runtime)
+
 # Copy the native assets provided by the build.dart from all packages.
 set(NATIVE_ASSETS_DIR "${PROJECT_BUILD_DIR}native_assets/windows/")
 install(DIRECTORY "${NATIVE_ASSETS_DIR}"

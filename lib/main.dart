@@ -74,6 +74,8 @@ class _MorrowAppState extends State<MorrowApp> {
   double cornerRadius = 20, windowRadius = 20, grayscale = 0;
   double? themeLightness;
   Color? customColor;
+  Color? themeColor;
+  Color? committedThemeColor;
   TextureSource? texture;
   bool mediaPlaying = true;
   bool liquidCanvas = false;
@@ -102,6 +104,14 @@ class _MorrowAppState extends State<MorrowApp> {
         customColor = data['customColor'] == null
             ? null
             : Color(data['customColor'] as int);
+        final savedThemeColor = data['themeColor'];
+        themeColor =
+            savedThemeColor is int &&
+                savedThemeColor >= 0 &&
+                savedThemeColor <= 0xffffffff
+            ? Color(savedThemeColor).withValues(alpha: 1)
+            : null;
+        committedThemeColor = themeColor;
         texture = data['texture'] == null
             ? null
             : TextureSource.fromJson(data['texture'] as Map<String, dynamic>);
@@ -161,6 +171,7 @@ class _MorrowAppState extends State<MorrowApp> {
         'solidTint': solidTint,
         'frostedOpacity': frostedOpacity,
         'customColor': customColor?.toARGB32(),
+        'themeColor': committedThemeColor?.toARGB32(),
         'texture': texture?.toJson(),
         'mediaPlaying': mediaPlaying,
         'liquidCanvas': liquidCanvas,
@@ -223,6 +234,7 @@ class _MorrowAppState extends State<MorrowApp> {
       themeLightness,
       windowRadius,
       liquidCanvas,
+      themeColor,
     );
     return MaterialApp(
       title: 'Morrow — 留一点空间给灵感',
@@ -305,6 +317,12 @@ class _MorrowAppState extends State<MorrowApp> {
         colorScheme: ColorScheme.fromSeed(
           seedColor: palette.accent,
           primary: palette.accent,
+          onPrimary: palette.onAccent,
+          secondary: palette.accent,
+          onSecondary: palette.onAccent,
+          tertiary: palette.accent,
+          onTertiary: palette.onAccent,
+          surface: palette.surface,
           onSurface: palette.ink,
           brightness: palette.dark ? Brightness.dark : Brightness.light,
         ),
@@ -347,10 +365,13 @@ class _MorrowAppState extends State<MorrowApp> {
           save: false,
         ),
         onAppearanceCommit: () {
+          committedThemeColor = themeColor;
           saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
           applyWindowBackground();
         },
         onColor: (value) => appearanceChanged(() => customColor = value),
+        onThemeColor: (value) =>
+            appearanceChanged(() => themeColor = value, save: false),
         onTexture: (value) => appearanceChanged(() => texture = value),
         onPlaying: (value) => appearanceChanged(() => mediaPlaying = value),
         restored: restored,
@@ -460,6 +481,7 @@ class Studio extends StatefulWidget {
     required this.onOpacity,
     required this.onAppearanceCommit,
     required this.onColor,
+    required this.onThemeColor,
     required this.onTexture,
     required this.onPlaying,
     required this.onSave,
@@ -478,6 +500,7 @@ class Studio extends StatefulWidget {
   final ValueChanged<double> onOpacity;
   final VoidCallback onAppearanceCommit;
   final ValueChanged<Color> onColor;
+  final ValueChanged<Color?> onThemeColor;
   final ValueChanged<TextureSource?> onTexture;
   final ValueChanged<bool> onPlaying;
   final ValueChanged<Map<String, dynamic>> onSave, onReady;
@@ -630,6 +653,21 @@ class _StudioState extends State<Studio> {
     } finally {
       if (mounted) setState(() => importing = false);
     }
+  }
+
+  Future<void> chooseThemeColor() async {
+    final previous = p.themeColor;
+    final color = await showStudioDialog<Color>(
+      context: context,
+      builder: (_) => ColorCompassDialog(
+        initial: previous ?? p.accent,
+        title: '主题色彩色罗盘',
+        onChanged: widget.onThemeColor,
+      ),
+    );
+    if (!mounted) return;
+    widget.onThemeColor(color ?? previous);
+    if (color != null) widget.onAppearanceCommit();
   }
 
   Future<void> chooseColor() async {
@@ -1168,11 +1206,7 @@ class _StudioState extends State<Studio> {
       color: p.accent,
       borderRadius: p.borderRadius(size * .34),
     ),
-    child: const Icon(
-      Icons.all_inclusive_rounded,
-      size: 23,
-      color: Colors.white,
-    ),
+    child: Icon(Icons.all_inclusive_rounded, size: 23, color: p.onAccent),
   );
 
   Widget navItem(String title, IconData icon, {int? count}) {
@@ -1357,10 +1391,8 @@ class _StudioState extends State<Studio> {
       FilledButton.icon(
         onPressed: createIdea,
         style: FilledButton.styleFrom(
-          backgroundColor: p.dark
-              ? const Color(0xFF9F8AD6)
-              : const Color(0xFF8070AD),
-          foregroundColor: Colors.white,
+          backgroundColor: p.accent,
+          foregroundColor: p.onAccent,
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 17),
           shape: RoundedRectangleBorder(borderRadius: p.borderRadius(12)),
         ),
@@ -1601,14 +1633,20 @@ class _StudioState extends State<Studio> {
                     width: 34,
                     height: 34,
                     decoration: BoxDecoration(
-                      color: p.tone(idea.color).withValues(alpha: .15),
+                      color: p
+                          .componentColor(idea.color)
+                          .withValues(alpha: .15),
                       borderRadius: p.borderRadius(11),
                     ),
                     child: Icon(
                       idea.icon,
                       color: p.dark
-                          ? Color.lerp(p.tone(idea.color), Colors.white, .3)
-                          : p.tone(idea.color),
+                          ? Color.lerp(
+                              p.componentColor(idea.color),
+                              Colors.white,
+                              .3,
+                            )
+                          : p.componentColor(idea.color),
                       size: 19,
                     ),
                   ),
@@ -1678,7 +1716,7 @@ class _StudioState extends State<Studio> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: p.tone(idea.color).withValues(alpha: .1),
+                      color: p.componentColor(idea.color).withValues(alpha: .1),
                       borderRadius: p.borderRadius(5),
                     ),
                     child: Text(
@@ -1686,8 +1724,16 @@ class _StudioState extends State<Studio> {
                       style: TextStyle(
                         fontSize: 9,
                         color: p.dark
-                            ? Color.lerp(p.tone(idea.color), Colors.white, .4)
-                            : Color.lerp(p.tone(idea.color), Colors.black, .16),
+                            ? Color.lerp(
+                                p.componentColor(idea.color),
+                                Colors.white,
+                                .4,
+                              )
+                            : Color.lerp(
+                                p.componentColor(idea.color),
+                                Colors.black,
+                                .16,
+                              ),
                       ),
                     ),
                   ),
@@ -1894,14 +1940,14 @@ class _StudioState extends State<Studio> {
                           end: Alignment.bottomRight,
                           colors: p.dark
                               ? [
-                                  const Color(0xFF424260),
-                                  const Color(0xFF736381),
-                                  const Color(0xFF343E45),
+                                  p.themeTint(const Color(0xFF424260), .6),
+                                  p.themeTint(const Color(0xFF736381), .6),
+                                  p.themeTint(const Color(0xFF343E45), .6),
                                 ]
                               : [
-                                  const Color(0xFFD9E5DB),
-                                  const Color(0xFFD6C3E5),
-                                  const Color(0xFFEDDED6),
+                                  p.themeTint(const Color(0xFFD9E5DB), .6),
+                                  p.themeTint(const Color(0xFFD6C3E5), .6),
+                                  p.themeTint(const Color(0xFFEDDED6), .6),
                                 ],
                         ),
                       ),
@@ -1913,8 +1959,8 @@ class _StudioState extends State<Studio> {
                     child: Container(
                       width: 58,
                       height: 58,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFA18AC7),
+                      decoration: BoxDecoration(
+                        color: p.themeTint(const Color(0xFFA18AC7), .6),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -1925,8 +1971,8 @@ class _StudioState extends State<Studio> {
                     child: Container(
                       width: 70,
                       height: 70,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFDBC1A6),
+                      decoration: BoxDecoration(
+                        color: p.themeTint(const Color(0xFFDBC1A6), .6),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -1988,6 +2034,35 @@ class _StudioState extends State<Studio> {
             children: StudioTheme.values
                 .map((theme) => Expanded(child: themeOption(theme)))
                 .toList(),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const ValueKey('theme-color-compass'),
+            onPressed: chooseThemeColor,
+            icon: Icon(Icons.color_lens_outlined, color: p.accent, size: 19),
+            label: const Text('主题色彩色罗盘'),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  p.themeColor == null
+                      ? '默认主题色 · 全局控件'
+                      : '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()} · 全局控件',
+                  style: TextStyle(color: p.muted, fontSize: 10),
+                ),
+              ),
+              TextButton(
+                key: const ValueKey('theme-color-reset'),
+                onPressed: p.themeColor == null
+                    ? null
+                    : () {
+                        widget.onThemeColor(null);
+                        widget.onAppearanceCommit();
+                      },
+                child: const Text('恢复默认'),
+              ),
+            ],
           ),
           if (p.isCustom) ...[
             const SizedBox(height: 12),
@@ -3336,7 +3411,7 @@ class AmbientPainter extends CustomPainter {
         Paint()
           ..shader = RadialGradient(
             colors: [
-              p.tone(color).withValues(alpha: p.dark ? .25 : .42),
+              p.themeTint(color, .6).withValues(alpha: p.dark ? .25 : .42),
               color.withValues(alpha: 0),
             ],
           ).createShader(Rect.fromCircle(center: center, radius: radius)),
@@ -3385,7 +3460,8 @@ class AmbientPainter extends CustomPainter {
       oldDelegate.p.solidTint != p.solidTint ||
       oldDelegate.p.grayscale != p.grayscale ||
       oldDelegate.p.lightness != p.lightness ||
-      oldDelegate.p.customColor != p.customColor;
+      oldDelegate.p.customColor != p.customColor ||
+      oldDelegate.p.themeColor != p.themeColor;
 }
 
 class OrbPainter extends CustomPainter {
@@ -3401,7 +3477,9 @@ class OrbPainter extends CustomPainter {
     canvas.drawOval(
       rect.shift(const Offset(0, 19)),
       Paint()
-        ..color = const Color(0xFF706283).withValues(alpha: .15)
+        ..color = p
+            .themeTint(const Color(0xFF706283), .6)
+            .withValues(alpha: .15)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 21),
     );
     for (var i = 0; i < 48; i++) {
@@ -3418,12 +3496,12 @@ class OrbPainter extends CustomPainter {
           ..strokeWidth = 2.3
           ..shader = SweepGradient(
             colors: [
-              const Color(0xFFE5DBF0).withValues(alpha: .65),
-              const Color(0xFF967CAF).withValues(alpha: .48),
-              const Color(0xFFD8E4DC).withValues(alpha: .83),
+              p.themeTint(const Color(0xFFE5DBF0), .6).withValues(alpha: .65),
+              p.themeTint(const Color(0xFF967CAF), .6).withValues(alpha: .48),
+              p.themeTint(const Color(0xFFD8E4DC), .6).withValues(alpha: .83),
               Colors.white.withValues(alpha: .94),
-              const Color(0xFFB1A1CA).withValues(alpha: .6),
-              const Color(0xFFE5DBF0).withValues(alpha: .65),
+              p.themeTint(const Color(0xFFB1A1CA), .6).withValues(alpha: .6),
+              p.themeTint(const Color(0xFFE5DBF0), .6).withValues(alpha: .65),
             ],
             transform: GradientRotation(t * .7),
           ).createShader(ring),
@@ -3447,5 +3525,9 @@ class OrbPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(OrbPainter oldDelegate) =>
-      oldDelegate.p.theme != p.theme || oldDelegate.p.mode != p.mode;
+      oldDelegate.p.theme != p.theme ||
+      oldDelegate.p.mode != p.mode ||
+      oldDelegate.p.themeColor != p.themeColor ||
+      oldDelegate.p.grayscale != p.grayscale ||
+      oldDelegate.p.lightness != p.lightness;
 }

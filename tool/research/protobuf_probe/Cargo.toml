@@ -1,0 +1,10 @@
+[package]
+name = "morrow-protobuf-research-probe"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+prost = "=0.14.4"
+
+[workspace]

@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import '../music/audio_formats.dart';
 
 enum TextureKind { image, gif, video, audio, file }
 
@@ -27,15 +28,7 @@ class TextureSource {
   static TextureKind kindFor(String name) {
     final extension = name.toLowerCase().split('.').last;
     if (extension == 'gif') return TextureKind.gif;
-    if ([
-      'mp3',
-      'wav',
-      'flac',
-      'm4a',
-      'aac',
-      'ogg',
-      'opus',
-    ].contains(extension)) {
+    if (standardAudioExtensions.contains(extension)) {
       return TextureKind.audio;
     }
     if (['mp4', 'webm', 'mov', 'mkv', 'm4v'].contains(extension)) {

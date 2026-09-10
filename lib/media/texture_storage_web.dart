@@ -54,6 +54,8 @@ Future<ResolvedTexture> resolve(TextureSource source) async {
           'm4a' => 'audio/mp4',
           'aac' => 'audio/aac',
           'ogg' || 'opus' => 'audio/ogg',
+          'wma' => 'audio/x-ms-wma',
+          'aif' || 'aiff' => 'audio/aiff',
           _ => 'application/octet-stream',
         }
       : extension == 'webm'

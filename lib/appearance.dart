@@ -23,6 +23,7 @@ class Palette {
     this.themeLightness,
     this.windowRadius = 20,
     this.liquidCanvas = false,
+    this.themeColor,
   ]);
   final StudioTheme theme;
   final GlassMode mode;
@@ -30,6 +31,7 @@ class Palette {
   final int solidTint;
   final double frostedOpacity;
   final Color? customColor;
+  final Color? themeColor;
   final TextureSource? texture;
   final bool mediaPlaying;
   final bool liquidCanvas;
@@ -55,28 +57,74 @@ class Palette {
   bool get dark => isCustom ? lightness < .46 : theme == StudioTheme.dark;
   bool get clear => mode == GlassMode.clear;
   bool get liquid => mode == GlassMode.liquid;
+  Color themeTint(Color color, [double amount = .08]) => tone(
+    themeColor == null
+        ? color
+        : Color.lerp(color, themeColor!.withValues(alpha: 1), amount)!,
+  );
+  Color componentColor(Color original) =>
+      themeColor == null ? tone(original) : accent;
+  static double _contrast(Color a, Color b) {
+    final x = a.computeLuminance(), y = b.computeLuminance();
+    return ((x > y ? x : y) + .05) / ((x > y ? y : x) + .05);
+  }
+
+  Color get onAccent =>
+      _contrast(accent, Colors.white) >= _contrast(accent, Colors.black)
+      ? Colors.white
+      : Colors.black;
   Color get ink => isCustom
-      ? (dark ? Colors.white : Colors.black)
-      : tone(dark ? const Color(0xFFF0EDF8) : const Color(0xFF302D43));
+      ? themeTint(dark ? Colors.white : Colors.black)
+      : themeTint(dark ? const Color(0xFFF0EDF8) : const Color(0xFF302D43));
   Color get muted => isCustom
       ? Color.lerp(ink, background, .12)!
-      : tone(dark ? const Color(0xFFB4AEC5) : const Color(0xFF777184));
-  Color get accent =>
-      tone(dark ? const Color(0xFFC0AFFA) : const Color(0xFF7662BA));
+      : themeTint(dark ? const Color(0xFFB4AEC5) : const Color(0xFF777184));
+  Color get accent {
+    if (themeColor == null) {
+      return tone(dark ? const Color(0xFFC0AFFA) : const Color(0xFF7662BA));
+    }
+    final selected = tone(themeColor!.withValues(alpha: 1));
+    final base = background;
+    if (_contrast(selected, base) >= 4.5) return selected;
+    final target = _contrast(Colors.white, base) > _contrast(Colors.black, base)
+        ? Colors.white
+        : Colors.black;
+    var low = 0.0, high = 1.0;
+    for (var i = 0; i < 12; i++) {
+      final mid = (low + high) / 2;
+      if (_contrast(Color.lerp(selected, target, mid)!, base) >= 4.5) {
+        high = mid;
+      } else {
+        low = mid;
+      }
+    }
+    return Color.lerp(selected, target, high)!;
+  }
+
   Color get background => isCustom
-      ? Color.from(alpha: 1, red: lightness, green: lightness, blue: lightness)
-      : tone(switch (theme) {
+      ? themeTint(
+          Color.from(
+            alpha: 1,
+            red: lightness,
+            green: lightness,
+            blue: lightness,
+          ),
+          .04,
+        )
+      : themeTint(switch (theme) {
           StudioTheme.white => const Color(0xFFF9F8FC),
           StudioTheme.custom => const Color(0xFFE1E3E9),
           StudioTheme.dark => const Color(0xFF181720),
         });
   Color get surface => isCustom
-      ? Color.lerp(
-          background,
-          dark ? Colors.white : Colors.black,
-          dark ? .065 : .015,
-        )!
-      : tone(dark ? const Color(0xFF292634) : Colors.white);
+      ? themeTint(
+          Color.lerp(
+            background,
+            dark ? Colors.white : Colors.black,
+            dark ? .065 : .015,
+          )!,
+        )
+      : themeTint(dark ? const Color(0xFF292634) : Colors.white);
   Color get solidColor =>
       customColor ??
       (solidTint == 0
@@ -95,18 +143,24 @@ class Palette {
                     Color(0xFFF0E3D8),
                   ])[solidTint]);
   Color get line => ink.withValues(alpha: dark ? .13 : .075);
-  Color get glassEdge => Color.lerp(
-    backdrop == BackgroundMode.solid ? solidColor : surface,
-    ink,
-    .18,
-  )!.withValues(alpha: clear ? .22 : .32 * frostedOpacity.clamp(.2, 1));
+  Color get glassEdge => clear
+      ? Color.lerp(
+          surface,
+          Colors.white,
+          .75,
+        )!.withValues(alpha: dark ? .28 : .50)
+      : Color.lerp(
+          backdrop == BackgroundMode.solid ? solidColor : surface,
+          ink,
+          .18,
+        )!.withValues(alpha: .32 * frostedOpacity.clamp(.2, 1));
 
   Color get captionColor =>
       backdrop == BackgroundMode.transparent ||
           backdrop == BackgroundMode.texture
       ? Colors.transparent
       : (backdrop == BackgroundMode.solid ? solidColor : surface).withValues(
-          alpha: clear ? .12 : frostedOpacity.clamp(.2, 1),
+          alpha: clear ? .06 : frostedOpacity.clamp(.2, 1),
         );
 }
 
@@ -129,28 +183,32 @@ class Glass extends StatelessWidget {
         ? p.solidColor
         : p.surface;
     final borderRadius = p.borderRadius(radius);
+    // Editors need a reading surface even when surrounding cards are clear.
+    final readable = dialog || MediaQuery.highContrastOf(context);
     final top = p.clear
-        ? (p.dark ? .23 : .28)
+        ? (readable ? .86 : (p.dark ? .12 : .10))
         : p.frostedOpacity.clamp(.2, 1).toDouble();
-    final bottom = p.clear ? .07 : p.frostedOpacity.clamp(.2, 1).toDouble();
+    final bottom = p.clear
+        ? (readable ? .80 : .025)
+        : p.frostedOpacity.clamp(.2, 1).toDouble();
     final target = p.liquid
         ? GlassMaterial.liquid(
             tint: tint,
             dark: p.dark,
-            readable: dialog || MediaQuery.highContrastOf(context),
+            readable: readable,
             borderRadius: borderRadius,
           )
         : GlassMaterial(
-            blur: p.clear ? 4 : 22,
+            blur: p.clear ? 1 : 22,
             liquid: 0,
             decoration: BoxDecoration(
               borderRadius: borderRadius,
               boxShadow: [
                 BoxShadow(
                   color: (p.dark ? Colors.black : const Color(0xFF716386))
-                      .withValues(alpha: p.clear ? .07 : .035),
-                  blurRadius: p.clear ? 24 : 18,
-                  offset: const Offset(0, 8),
+                      .withValues(alpha: p.clear ? .025 : .035),
+                  blurRadius: p.clear ? 14 : 18,
+                  offset: Offset(0, p.clear ? 4 : 8),
                 ),
               ],
               gradient: LinearGradient(
@@ -162,7 +220,7 @@ class Glass extends StatelessWidget {
                   tint.withValues(alpha: bottom),
                 ],
               ),
-              border: Border.all(color: p.glassEdge, width: p.clear ? 1.2 : 1),
+              border: Border.all(color: p.glassEdge, width: 1),
             ),
           );
     return TweenAnimationBuilder<GlassMaterial>(

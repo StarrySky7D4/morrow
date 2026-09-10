@@ -1,3 +1,4 @@
+import 'audio_formats.dart';
 import 'lyrics_dialog.dart';
 import 'lyrics_service.dart';
 import 'package:file_selector/file_selector.dart';
@@ -18,6 +19,12 @@ class MusicPanel extends StatefulWidget {
 class _MusicPanelState extends State<MusicPanel> {
   bool get androidPicker =>
       !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+  List<String> get audioExtensions => [
+    ...standardAudioExtensions,
+    if (kIsWeb || defaultTargetPlatform == TargetPlatform.windows)
+      ...containerAudioFormats.keys,
+    'lrc',
+  ];
   bool expanded = false, importing = false;
   MusicController get music => widget.controller;
   Future<void> pick(String type) async {
@@ -31,32 +38,9 @@ class _MusicPanelState extends State<MusicPanel> {
           // Show all files there, then validate names before importing.
           acceptedTypeGroups: androidPicker
               ? const []
-              : const [
-                  XTypeGroup(
-                    label: '音乐',
-                    extensions: [
-                      'mp3',
-                      'wav',
-                      'flac',
-                      'm4a',
-                      'aac',
-                      'ogg',
-                      'opus',
-                      'lrc',
-                    ],
-                  ),
-                ],
+              : [XTypeGroup(label: '音乐', extensions: audioExtensions)],
         );
-        const allowed = [
-          'mp3',
-          'wav',
-          'flac',
-          'm4a',
-          'aac',
-          'ogg',
-          'opus',
-          'lrc',
-        ];
+        final allowed = audioExtensions;
         if (files.any(
           (file) => !allowed.contains(file.name.toLowerCase().split('.').last),
         )) {
@@ -89,7 +73,10 @@ class _MusicPanelState extends State<MusicPanel> {
             track.lyrics = sidecar;
             track.lyricSource = '歌词文件';
           }
-          if (!mounted) return;
+          if (!mounted) {
+            await TextureRepository.remove(track.source);
+            return;
+          }
           music.add([track]);
         }
       } else if (selected != null) {
