@@ -2039,8 +2039,13 @@ class _StudioState extends State<Studio> {
           OutlinedButton.icon(
             key: const ValueKey('theme-color-compass'),
             onPressed: chooseThemeColor,
-            icon: Icon(Icons.color_lens_outlined, color: p.accent, size: 19),
-            label: const Text('主题色彩色罗盘'),
+            icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
+            label: const Text('主题色彩色罗盘', style: TextStyle(fontSize: 11)),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(38),
+              side: BorderSide(color: p.line),
+              shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+            ),
           ),
           Row(
             children: [
