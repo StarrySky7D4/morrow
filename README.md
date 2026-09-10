@@ -2,11 +2,11 @@
 
 留一点空间给明天的想法。项目原名 daemon，现统一命名为 Morrow；代码包名为 `morrow_studio`。改名兼容策略见 [重命名说明](docs/RENAMING.md)。历史发布附件保留原名，新构建使用 `morrow-*`。
 
-[下载预构建版本](https://github.com/StarrySky7D4/morrow/releases/latest) · [Apache-2.0](LICENSE)
+[下载稳定版本](https://github.com/StarrySky7D4/morrow/releases/latest) · [下载 0.1.9-test.1 测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [Apache-2.0](LICENSE)
 
 用 Flutter 构建的灵感工作台。支持 Windows 与 Web，界面由 Flutter 绘制，使用 shared_preferences 保存本地内容、flutter_acrylic 实现 Windows 原生透明窗口。
 
-Android 工程与移动端文件适配已加入，正在准备首个 Android 版本；构建方法与当前验证范围见 [Android 构建说明](docs/ANDROID.md)。
+Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测试包；构建方法与当前验证范围见 [Android 构建说明](docs/ANDROID.md)。
 
 - 玻璃材质：磨砂（22px 背景模糊）、超透（1px 轻微模糊、常规组件 2.5%–12% 遮罩、细亮边缘；编辑弹窗保留阅读衬底）与液体玻璃，三种材质支持 360ms 连续过渡。磨砂提供 20%–100% 不透明度滑条，实时预览、松手保存。
 - 主题：白色、自定义、深色，与三种玻璃材质独立搭配。设置中的「主题色彩色罗盘」统一调整按钮、开关、滑条、选中态、卡片图标和面板色调，支持拖动选色、明暗与 HEX 输入、实时预览、取消还原、应用保存和恢复默认；深浅主题自动调整控件颜色明暗，画布自定义色单独保留。
@@ -20,7 +20,7 @@ Android 工程与移动端文件适配已加入，正在准备首个 Android 版
 - 保留搜索、收藏、清单勾选、快速记录，以及最近添加／收藏优先／标题排序。搜索包含附件名与实验记录。
 - 删除后 8 秒内可撤销；编辑时保留收藏和仍存在的清单完成状态。
 - 自动保存：灵感、收藏、清单、日常小事，以及主题／材质／背景／自定义色／不透明度／素材选择和播放开关，在刷新或重启后恢复。保存失败会提示重试；无法读取的原数据不会被自动覆盖。
-- 自适应布局：宽屏三栏，平板两栏，手机单栏与菜单导航。
+- 自适应布局：宽屏三栏，平板两栏，手机单栏与菜单导航。小于 1050 像素时设置默认关闭，点击设置进入独立页面，通过返回按钮或系统返回回到原内容与滚动位置；窄屏设置的打开状态不影响宽屏侧栏偏好。进入和返回采用 320ms 顺序淡出／淡入与轻微滑移，两页不重叠；减少动画时立即切换。
 - 快捷键：`Ctrl+K` 搜索，`Ctrl+N` 新建灵感。
 - Windows 标题栏与边框跟随主题、纯色色值和透明背景；保留拖动、双击最大化、边缘缩放及窗口按钮。搜索框与设置按钮固定右对齐。
 
@@ -57,7 +57,7 @@ flutter build web --no-web-resources-cdn
 构建后可用 `node tool/preview.cjs` 启动本机预览，地址为 `http://127.0.0.1:8765`。
 Windows 构建：`flutter build windows`，运行 `build/windows/x64/runner/Release/morrow_studio.exe`，分发时需保留整个 Release 目录。
 
-个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-0.1.8-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
+个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-0.1.9-test.1-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
 
 ## 歌词与附件
 
@@ -77,12 +77,12 @@ Windows 数据由平台插件保存在当前用户的应用支持目录，导入
 
 ## 验证
 
-v0.1.8 的构建、测试和分发校验见 [发布验证记录](reports/0.1.8-release.md)。下述实窗与媒体交互检查包含此前版本的验证，本次未重新进行实窗集成测试。
+v0.1.9-test.1 的构建、测试和分发校验见 [发布验证记录](reports/0.1.9-test.1-release.md)，历史记录见 [v0.1.8](reports/0.1.8-release.md)。下述实窗与媒体交互检查包含此前版本的验证，本次未重新进行实窗集成测试。
 
 - `flutter analyze`：无问题。
 - `flutter test`：桌面／手机的 36 种外观组合、搜索与收藏、新建与编辑、清单恢复、删除撤销、快速页面切换、减少动画设置、20% 不透明度下限、自定义色恢复、紧凑弹窗、媒体地址校验、图片铺满画布与背景切换。
 - Web 发布构建与 Windows Release 构建已完成；Windows 原生透明背景已通过实际窗口检查。
-- 当前共 51 项单元／组件测试通过（含四种画布独立液体效果、材质过渡、透明像素、富内容粘贴、更名数据迁移和 Android 布局测试），另有 Windows 实窗集成测试验证四角在圆角 0／20／32、缩放和最大化恢复后的区域；包含音频互斥、切歌竞态、播放列表、歌词同步、提示轮换、圆角和灰度恢复，以及宽屏／窄屏控件对齐和标题栏外观检查。Windows 实机验证了深色标题栏、桌面透明、最大化与还原。
+- 当前共 71 项单元／组件测试通过（含四种画布独立液体效果、材质过渡、透明像素、富内容粘贴、更名数据迁移和 Android 布局测试），另有 Windows 实窗集成测试验证四角在圆角 0／20／32、缩放和最大化恢复后的区域；包含音频互斥、切歌竞态、播放列表、歌词同步、提示轮换、圆角和灰度恢复，以及宽屏／窄屏控件对齐和标题栏外观检查。Windows 实机验证了深色标题栏、桌面透明、最大化与还原。
 - 此前 Windows 实机验证了图片、GIF、MP4 导入、播放／暂停和视频重启恢复；Web 验证了 GIF 本地导入与刷新恢复、MP4 直链播放／暂停、视频背景上的材质切换。已修复图片未铺满画布和 Web 视频拦截鼠标点击的问题。
 
 新增插件后若增量构建使用了旧插件注册文件，可关闭运行中的应用后执行 `flutter clean`、`flutter pub get` 再构建；发布前应检查实际导入流程。

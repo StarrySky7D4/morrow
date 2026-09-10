@@ -95,6 +95,7 @@ void main() {
     (t) async {
       final storage = MemoryStorage();
       await setup(t, storage, width: 390);
+      await tap(t, 'appearance-toggle');
       await tap(t, 'theme-color-compass');
       await preview(t, '#NOTHEX');
       expect(find.text('请输入 6 位十六进制色值'), findsOneWidget);

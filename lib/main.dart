@@ -11,6 +11,7 @@ import 'little_tips.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
 import 'collapsible_panel.dart';
+import 'settings_page_transition.dart';
 import 'liquid_glass.dart';
 import 'content/idea_markdown.dart';
 export 'appearance.dart';
@@ -517,6 +518,7 @@ class _StudioState extends State<Studio> {
   final quickNote = TextEditingController();
   final searchFocus = FocusNode();
   bool showAppearance = true;
+  bool compactSettingsOpen = false;
   bool sidebarExpanded = true;
   bool showCustomTone = false;
   late final MusicController music;
@@ -708,6 +710,67 @@ class _StudioState extends State<Studio> {
     widget.onReady(snapshot());
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final width =
+        MediaQuery.sizeOf(context).width -
+        MediaQuery.paddingOf(context).horizontal;
+    if (width >= 1050) compactSettingsOpen = false;
+  }
+
+  void closeCompactSettings() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => compactSettingsOpen = false);
+  }
+
+  Widget compactSettings() => Focus(
+    autofocus: true,
+    child: Padding(
+      key: const ValueKey('compact-settings-page'),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              IconButton(
+                key: const ValueKey('compact-settings-back'),
+                tooltip: '返回工作台',
+                onPressed: closeCompactSettings,
+                icon: Icon(Icons.arrow_back_rounded, color: p.ink),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '设置',
+                style: TextStyle(
+                  color: p.ink,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: SingleChildScrollView(
+              key: const PageStorageKey('compact-settings-scroll'),
+              child: Column(
+                children: [
+                  appearance(),
+                  const SizedBox(height: 20),
+                  scratchpad(),
+                  const SizedBox(height: 20),
+                  musicPanel(),
+                  const SizedBox(height: 20),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+
   Map<String, dynamic> snapshot() => {
     'ideas': ideas.map((idea) => idea.toJson()).toList(),
     'completed': completed.toList(),
@@ -762,322 +825,335 @@ class _StudioState extends State<Studio> {
 
   @override
   Widget build(BuildContext context) {
-    return CallbackShortcuts(
-      bindings: {
-        const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
-            searchFocus.requestFocus(),
-        const SingleActivator(LogicalKeyboardKey.keyN, control: true):
-            createIdea,
+    return PopScope(
+      canPop: !compactSettingsOpen,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && compactSettingsOpen) closeCompactSettings();
       },
-      child: Scaffold(
-        body: Stack(
-          children: [
-            // Keep opaque modes opaque while their foregrounds crossfade.
-            // This fill is inside DesktopFrame's clip, never in the native host.
-            Positioned.fill(
-              child: ColoredBox(
-                color: p.backdrop == BackgroundMode.transparent
-                    ? (!kIsWeb &&
-                              defaultTargetPlatform == TargetPlatform.android
-                          ? p.background
-                          : Colors.transparent)
-                    : p.backdrop == BackgroundMode.solid
-                    ? p.solidColor
-                    : p.background,
-              ),
-            ),
-            Positioned.fill(
-              child: AnimatedSwitcher(
-                duration: MediaQuery.disableAnimationsOf(context)
-                    ? Duration.zero
-                    : const Duration(milliseconds: 360),
-                child: RepaintBoundary(
-                  key: ValueKey(
-                    '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
-                  ),
-                  child: SizedBox.expand(
-                    child: CustomPaint(painter: AmbientPainter(p)),
-                  ),
-                ),
-              ),
-            ),
-            Positioned.fill(child: mediaCanvas()),
-            if (p.liquidCanvas)
+      child: CallbackShortcuts(
+        bindings: {
+          if (compactSettingsOpen)
+            const SingleActivator(LogicalKeyboardKey.escape):
+                closeCompactSettings,
+          if (!compactSettingsOpen) ...{
+            const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
+                searchFocus.requestFocus(),
+            const SingleActivator(LogicalKeyboardKey.keyN, control: true):
+                createIdea,
+          },
+        },
+        child: Scaffold(
+          body: Stack(
+            children: [
+              // Keep opaque modes opaque while their foregrounds crossfade.
+              // This fill is inside DesktopFrame's clip, never in the native host.
               Positioned.fill(
-                child: IgnorePointer(
-                  child: LiquidGlassSurface(
-                    key: const ValueKey('liquid-canvas'),
-                    canvas: true,
-                    transparentCanvas: p.backdrop == BackgroundMode.transparent,
-                    tint: p.surface,
-                    dark: p.dark,
-                    borderRadius: BorderRadius.circular(p.windowRadius),
-                    child: const SizedBox.expand(),
+                child: ColoredBox(
+                  color: p.backdrop == BackgroundMode.transparent
+                      ? (!kIsWeb &&
+                                defaultTargetPlatform == TargetPlatform.android
+                            ? p.background
+                            : Colors.transparent)
+                      : p.backdrop == BackgroundMode.solid
+                      ? p.solidColor
+                      : p.background,
+                ),
+              ),
+              Positioned.fill(
+                child: AnimatedSwitcher(
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 360),
+                  child: RepaintBoundary(
+                    key: ValueKey(
+                      '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
+                    ),
+                    child: SizedBox.expand(
+                      child: CustomPaint(painter: AmbientPainter(p)),
+                    ),
                   ),
                 ),
               ),
-            SafeArea(
-              minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final desktop = constraints.maxWidth >= 1050;
-                  final sidebar = constraints.maxWidth >= 760;
-                  return Padding(
-                    padding: EdgeInsets.all(desktop ? 24 : 12),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (sidebar)
-                          CollapsiblePanel(
-                            key: const ValueKey('sidebar-panel'),
-                            expanded: sidebarExpanded,
-                            axis: Axis.horizontal,
-                            extent: desktop ? 234 : 192,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                right: desktop ? 26 : 16,
+              Positioned.fill(child: mediaCanvas()),
+              if (p.liquidCanvas)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: LiquidGlassSurface(
+                      key: const ValueKey('liquid-canvas'),
+                      canvas: true,
+                      transparentCanvas:
+                          p.backdrop == BackgroundMode.transparent,
+                      tint: p.surface,
+                      dark: p.dark,
+                      borderRadius: BorderRadius.circular(p.windowRadius),
+                      child: const SizedBox.expand(),
+                    ),
+                  ),
+                ),
+              SafeArea(
+                minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final desktop = constraints.maxWidth >= 1050;
+                    final sidebar = constraints.maxWidth >= 760;
+                    return SettingsPageTransition(
+                      showSettings: !desktop && compactSettingsOpen,
+                      duration: desktop
+                          ? Duration.zero
+                          : motionDuration(context, 320),
+                      settings: compactSettings(),
+                      content: Padding(
+                        padding: EdgeInsets.all(desktop ? 24 : 12),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (sidebar)
+                              CollapsiblePanel(
+                                key: const ValueKey('sidebar-panel'),
+                                expanded: sidebarExpanded,
+                                axis: Axis.horizontal,
+                                extent: desktop ? 234 : 192,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    right: desktop ? 26 : 16,
+                                  ),
+                                  child: navigation(),
+                                ),
                               ),
-                              child: navigation(),
-                            ),
-                          ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              header(sidebar),
-                              const SizedBox(height: 22),
-                              Expanded(
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: AnimatedSwitcher(
-                                        duration:
-                                            MediaQuery.disableAnimationsOf(
-                                              context,
-                                            )
-                                            ? Duration.zero
-                                            : const Duration(milliseconds: 300),
-                                        switchInCurve: Curves.easeOutCubic,
-                                        switchOutCurve: Curves.easeInCubic,
-                                        layoutBuilder: (current, previous) =>
-                                            Stack(
-                                              alignment: Alignment.topCenter,
-                                              children: [
-                                                ...previous.map(
-                                                  (child) => IgnorePointer(
-                                                    child: ExcludeSemantics(
-                                                      child: child,
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  header(sidebar, desktop),
+                                  const SizedBox(height: 22),
+                                  Expanded(
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: AnimatedSwitcher(
+                                            duration:
+                                                MediaQuery.disableAnimationsOf(
+                                                  context,
+                                                )
+                                                ? Duration.zero
+                                                : const Duration(
+                                                    milliseconds: 300,
+                                                  ),
+                                            switchInCurve: Curves.easeOutCubic,
+                                            switchOutCurve: Curves.easeInCubic,
+                                            layoutBuilder:
+                                                (current, previous) => Stack(
+                                                  alignment:
+                                                      Alignment.topCenter,
+                                                  children: [
+                                                    ...previous.map(
+                                                      (child) => IgnorePointer(
+                                                        child: ExcludeSemantics(
+                                                          child: child,
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    ?current,
+                                                  ],
                                                 ),
-                                                ?current,
-                                              ],
-                                            ),
-                                        transitionBuilder: (child, animation) =>
-                                            FadeTransition(
-                                              opacity: animation,
-                                              child: SlideTransition(
-                                                position: Tween<Offset>(
-                                                  begin: const Offset(0, .025),
-                                                  end: Offset.zero,
-                                                ).animate(animation),
-                                                child: child,
-                                              ),
-                                            ),
-                                        child: SingleChildScrollView(
-                                          key: ValueKey('page-$section'),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              if (!desktop)
-                                                CollapsiblePanel(
-                                                  key: const ValueKey(
-                                                    'settings-inline-panel',
-                                                  ),
-                                                  expanded: showAppearance,
-                                                  child: Column(
-                                                    children: [
-                                                      appearance(),
-                                                      const SizedBox(
-                                                        height: 20,
+                                            transitionBuilder:
+                                                (child, animation) =>
+                                                    FadeTransition(
+                                                      opacity: animation,
+                                                      child: SlideTransition(
+                                                        position: Tween<Offset>(
+                                                          begin: const Offset(
+                                                            0,
+                                                            .025,
+                                                          ),
+                                                          end: Offset.zero,
+                                                        ).animate(animation),
+                                                        child: child,
                                                       ),
-                                                      scratchpad(),
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      musicPanel(),
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              greeting(),
-                                              const SizedBox(height: 24),
-                                              if (section == '概览')
-                                                hero()
-                                              else
-                                                pageIntro(),
-                                              const SizedBox(height: 28),
-                                              collectionHeader(),
-                                              const SizedBox(height: 6),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: PopupMenuButton<String>(
-                                                  tooltip: '排列想法',
-                                                  initialValue: sort,
-                                                  onSelected: (value) =>
-                                                      setState(
-                                                        () => sort = value,
-                                                      ),
-                                                  itemBuilder: (_) =>
-                                                      ['最近添加', '收藏优先', '标题排序']
-                                                          .map(
-                                                            (label) =>
-                                                                PopupMenuItem(
+                                                    ),
+                                            child: SingleChildScrollView(
+                                              key: ValueKey('page-$section'),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  greeting(),
+                                                  const SizedBox(height: 24),
+                                                  if (section == '概览')
+                                                    hero()
+                                                  else
+                                                    pageIntro(),
+                                                  const SizedBox(height: 28),
+                                                  collectionHeader(),
+                                                  const SizedBox(height: 6),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: PopupMenuButton<String>(
+                                                      tooltip: '排列想法',
+                                                      initialValue: sort,
+                                                      onSelected: (value) =>
+                                                          setState(
+                                                            () => sort = value,
+                                                          ),
+                                                      itemBuilder: (_) =>
+                                                          [
+                                                                '最近添加',
+                                                                '收藏优先',
+                                                                '标题排序',
+                                                              ]
+                                                              .map(
+                                                                (
+                                                                  label,
+                                                                ) => PopupMenuItem(
                                                                   value: label,
                                                                   child: Text(
                                                                     label,
                                                                   ),
                                                                 ),
-                                                          )
-                                                          .toList(),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(6),
-                                                    child: Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Icon(
-                                                          Icons.sort_rounded,
-                                                          size: 13,
-                                                          color: p.muted,
-                                                        ),
-                                                        const SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          sort,
-                                                          style: TextStyle(
-                                                            fontSize: 10,
-                                                            color: p.muted,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 16),
-                                              SoftSize(
-                                                duration: motionDuration(
-                                                  context,
-                                                  240,
-                                                ),
-                                                alignment: Alignment.topCenter,
-                                                child: AnimatedSwitcher(
-                                                  key: const ValueKey(
-                                                    'cards-transition',
-                                                  ),
-                                                  duration: motionDuration(
-                                                    context,
-                                                    220,
-                                                  ),
-                                                  layoutBuilder:
-                                                      (
-                                                        current,
-                                                        previous,
-                                                      ) => Stack(
-                                                        alignment:
-                                                            Alignment.topCenter,
-                                                        children: [
-                                                          ...previous.map(
-                                                            (
-                                                              child,
-                                                            ) => IgnorePointer(
-                                                              child:
-                                                                  ExcludeSemantics(
-                                                                    child:
-                                                                        child,
-                                                                  ),
+                                                              )
+                                                              .toList(),
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets.all(
+                                                              6,
                                                             ),
-                                                          ),
-                                                          ?current,
-                                                        ],
+                                                        child: Row(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Icon(
+                                                              Icons
+                                                                  .sort_rounded,
+                                                              size: 13,
+                                                              color: p.muted,
+                                                            ),
+                                                            const SizedBox(
+                                                              width: 5,
+                                                            ),
+                                                            Text(
+                                                              sort,
+                                                              style: TextStyle(
+                                                                fontSize: 10,
+                                                                color: p.muted,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                  child: KeyedSubtree(
-                                                    key: ValueKey(
-                                                      '$filter/$sort/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
                                                     ),
-                                                    child: cards(),
                                                   ),
-                                                ),
+                                                  const SizedBox(height: 16),
+                                                  SoftSize(
+                                                    duration: motionDuration(
+                                                      context,
+                                                      240,
+                                                    ),
+                                                    alignment:
+                                                        Alignment.topCenter,
+                                                    child: AnimatedSwitcher(
+                                                      key: const ValueKey(
+                                                        'cards-transition',
+                                                      ),
+                                                      duration: motionDuration(
+                                                        context,
+                                                        220,
+                                                      ),
+                                                      layoutBuilder:
+                                                          (
+                                                            current,
+                                                            previous,
+                                                          ) => Stack(
+                                                            alignment: Alignment
+                                                                .topCenter,
+                                                            children: [
+                                                              ...previous.map(
+                                                                (
+                                                                  child,
+                                                                ) => IgnorePointer(
+                                                                  child:
+                                                                      ExcludeSemantics(
+                                                                        child:
+                                                                            child,
+                                                                      ),
+                                                                ),
+                                                              ),
+                                                              ?current,
+                                                            ],
+                                                          ),
+                                                      child: KeyedSubtree(
+                                                        key: ValueKey(
+                                                          '$filter/$sort/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
+                                                        ),
+                                                        child: cards(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 22),
+                                                  quickCapture(),
+                                                  const SizedBox(height: 22),
+                                                  const SizedBox(height: 8),
+                                                ],
                                               ),
-                                              const SizedBox(height: 22),
-                                              quickCapture(),
-                                              const SizedBox(height: 22),
-                                              const SizedBox(height: 8),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    if (desktop)
-                                      CollapsiblePanel(
-                                        key: const ValueKey(
-                                          'settings-side-panel',
-                                        ),
-                                        expanded: showAppearance,
-                                        axis: Axis.horizontal,
-                                        extent: 276,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 24,
-                                          ),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              children: [
-                                                appearance(),
-                                                const SizedBox(height: 20),
-                                                scratchpad(),
-                                                const SizedBox(height: 20),
-                                                musicPanel(),
-                                                const SizedBox(height: 20),
-                                                smallQuote(),
-                                              ],
                                             ),
                                           ),
                                         ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Glass(
-                                key: const ValueKey('footer-dock'),
-                                p: p,
-                                radius: 14,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 4,
+                                        if (desktop)
+                                          CollapsiblePanel(
+                                            key: const ValueKey(
+                                              'settings-side-panel',
+                                            ),
+                                            expanded: showAppearance,
+                                            axis: Axis.horizontal,
+                                            extent: 276,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 24,
+                                              ),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    appearance(),
+                                                    const SizedBox(height: 20),
+                                                    scratchpad(),
+                                                    const SizedBox(height: 20),
+                                                    musicPanel(),
+                                                    const SizedBox(height: 20),
+                                                    smallQuote(),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                  child: MusicFooter(music: music),
-                                ),
+                                  const SizedBox(height: 12),
+                                  Glass(
+                                    key: const ValueKey('footer-dock'),
+                                    p: p,
+                                    radius: 14,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 4,
+                                      ),
+                                      child: MusicFooter(music: music),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -1264,7 +1340,7 @@ class _StudioState extends State<Studio> {
     filter = '全部';
   });
 
-  Widget header(bool sidebar) => Row(
+  Widget header(bool sidebar, bool desktop) => Row(
     children: [
       if (!sidebar)
         PopupMenuButton<String>(
@@ -1309,10 +1385,15 @@ class _StudioState extends State<Studio> {
       const SizedBox(width: 8),
       IconButton(
         key: const ValueKey('appearance-toggle'),
-        tooltip: showAppearance ? '收起外观设置' : '显示外观设置',
+        tooltip: desktop && showAppearance ? '收起外观设置' : '显示外观设置',
         onPressed: () {
-          setState(() => showAppearance = !showAppearance);
-          persist();
+          if (desktop) {
+            setState(() => showAppearance = !showAppearance);
+            persist();
+          } else {
+            FocusManager.instance.primaryFocus?.unfocus();
+            setState(() => compactSettingsOpen = true);
+          }
         },
         icon: Icon(Icons.tune_rounded, size: 19, color: p.muted),
       ),

@@ -21,6 +21,8 @@ void main() {
         greaterThanOrEqualTo(28),
       );
       expect(find.byKey(const ValueKey('window-radius')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
+      await tester.pumpAndSettle();
       for (final theme in ['dark', 'white']) {
         final button = find.byKey(ValueKey('theme-$theme'));
         await tester.ensureVisible(button);
@@ -34,6 +36,8 @@ void main() {
           theme == 'dark' ? Brightness.light : Brightness.dark,
         );
       }
+      await tester.tap(find.byKey(const ValueKey('compact-settings-back')));
+      await tester.pumpAndSettle();
       tester.view.viewInsets = const FakeViewPadding(bottom: 280);
       tester.view.padding = const FakeViewPadding(top: 28);
       await tester.pumpAndSettle();

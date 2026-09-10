@@ -30,7 +30,16 @@ void main() {
         );
         await tester.tap(settings);
         await tester.pumpAndSettle();
-        expect(tester.getRect(settings).right, closeTo(width - inset, .1));
+        if (width < 1050) {
+          expect(settings, findsNothing);
+          expect(
+            find.byKey(const ValueKey('compact-settings-back')),
+            findsOneWidget,
+          );
+          expect(find.byTooltip('关闭设置'), findsNothing);
+        } else {
+          expect(tester.getRect(settings).right, closeTo(width - inset, .1));
+        }
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       }
@@ -118,6 +127,10 @@ void main() {
     for (final size in [const Size(1440, 1000), const Size(390, 844)]) {
       tester.view.physicalSize = size;
       await tester.pumpAndSettle();
+      if (size.width < 1050) {
+        await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
+        await tester.pumpAndSettle();
+      }
       for (final theme in StudioTheme.values) {
         for (final mode in GlassMode.values) {
           final themeControl = find.byKey(ValueKey('theme-${theme.name}'));
@@ -363,6 +376,8 @@ void main() {
     'Compact dialogs remain usable and invalid media addresses are rejected',
     (tester) async {
       await launch(tester, const Size(390, 844));
+      await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(
         find.byKey(const ValueKey('background-texture')),
       );
@@ -380,6 +395,8 @@ void main() {
       expect(find.text('请输入有效且不含登录信息的 HTTP / HTTPS 地址'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.tap(find.byTooltip('关闭弹窗'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('compact-settings-back')));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('新建灵感'));
       await tester.tap(find.text('新建灵感'));

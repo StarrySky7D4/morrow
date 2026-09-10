@@ -145,6 +145,11 @@ void main() {
         }
         await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
         await tester.pumpAndSettle();
+        if (width < 1050) {
+          expect(footer, findsNothing);
+          await tester.tap(find.byKey(const ValueKey('compact-settings-back')));
+          await tester.pumpAndSettle();
+        }
         expect(tester.getRect(footer), rect);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());

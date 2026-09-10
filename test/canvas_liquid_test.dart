@@ -16,6 +16,10 @@ void main() {
         final storage = MemoryStorage();
         await tester.pumpWidget(MorrowApp(storage: storage));
         await tester.pumpAndSettle();
+        if (width < 1050) {
+          await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
+          await tester.pumpAndSettle();
+        }
         final toggle = find.byKey(const ValueKey('canvas-liquid-toggle'));
         final layer = find.byKey(const ValueKey('liquid-canvas'));
         Palette palette() => tester.widget<Studio>(find.byType(Studio)).palette;
@@ -59,6 +63,10 @@ void main() {
         await tester.pumpWidget(const SizedBox());
         await tester.pumpWidget(MorrowApp(storage: storage));
         await tester.pumpAndSettle();
+        if (width < 1050) {
+          await tester.tap(find.byKey(const ValueKey('appearance-toggle')));
+          await tester.pumpAndSettle();
+        }
         expect(palette().backdrop, BackgroundMode.texture);
         expect(palette().mode, GlassMode.clear);
         expect(palette().liquidCanvas, isTrue);
