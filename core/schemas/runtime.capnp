@@ -3,6 +3,8 @@
 struct Request {
   protocolVersion @0 :UInt16;
   operationId @1 :Text;
+  runtimeDigest @4 :Data;
+  contentDigest @5 :Data;
   union {
     unsupported @2 :Void;
     renameCard @3 :RenameCard;

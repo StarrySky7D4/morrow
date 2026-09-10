@@ -1,6 +1,10 @@
 #![deny(unsafe_code)]
 
 pub mod content;
+pub mod lifecycle;
+// Export attributes mark the reviewed native/Wasm ABI boundary.
+#[allow(unsafe_code)]
+pub mod bridge;
 pub mod envelope;
 pub mod runtime;
 // The pinned Cap'n Proto generator emits unsafe schema metadata constructors.

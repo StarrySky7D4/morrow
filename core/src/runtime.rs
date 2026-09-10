@@ -4,6 +4,19 @@ use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
+pub const PROTOCOL_VERSION: u16 = 2;
+pub fn schema_digest(source: &[u8]) -> [u8; 32] {
+    use sha2::{Digest, Sha256};
+    // Git checkout line endings do not change the contract identity.
+    let canonical = String::from_utf8_lossy(source).replace("\r\n", "\n");
+    Sha256::digest(canonical.as_bytes()).into()
+}
+pub fn runtime_digest() -> [u8; 32] {
+    schema_digest(RUNTIME_SCHEMA)
+}
+pub fn content_digest() -> [u8; 32] {
+    schema_digest(crate::content::CONTENT_SCHEMA)
+}
 pub const MAX_MESSAGE_BYTES: usize = 64 * 1024;
 pub const RUNTIME_SCHEMA: &[u8] = include_bytes!("../schemas/runtime.capnp");
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -35,7 +48,9 @@ impl RenameRequest {
         self.validate()?;
         let mut message = Builder::new_default();
         let mut root = message.init_root::<runtime_capnp::request::Builder>();
-        root.set_protocol_version(1);
+        root.set_protocol_version(PROTOCOL_VERSION);
+        root.set_runtime_digest(&runtime_digest());
+        root.set_content_digest(&content_digest());
         root.set_operation_id(self.operation_id.as_str());
         let mut rename = root.init_rename_card();
         rename.set_card_id(self.card_id.as_str());
@@ -64,7 +79,18 @@ impl RenameRequest {
         let root = message
             .get_root::<runtime_capnp::request::Reader>()
             .map_err(|_| Error::Invalid("request"))?;
-        if root.get_protocol_version() != 1 {
+        if root.get_protocol_version() != PROTOCOL_VERSION {
+            return Err(Error::UnsupportedVersion);
+        }
+        if root
+            .get_runtime_digest()
+            .map_err(|_| Error::Invalid("runtime digest"))?
+            != runtime_digest()
+            || root
+                .get_content_digest()
+                .map_err(|_| Error::Invalid("content digest"))?
+                != content_digest()
+        {
             return Err(Error::UnsupportedVersion);
         }
         let operation_id = root

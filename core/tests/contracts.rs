@@ -243,14 +243,16 @@ fn capnp_truncation_trailing_and_unsupported_operations_fail() {
     assert!(RenameRequest::decode(&twice).is_err());
     let mut message = Builder::new_default();
     let mut root = message.init_root::<runtime_capnp::request::Builder>();
-    root.set_protocol_version(1);
+    root.set_protocol_version(morrow_core::runtime::PROTOCOL_VERSION);
+    root.set_runtime_digest(&morrow_core::runtime::runtime_digest());
+    root.set_content_digest(&morrow_core::runtime::content_digest());
     root.set_operation_id("op-1");
     root.set_unsupported(());
     assert!(RenameRequest::decode(&serialize::write_message_to_words(&message)).is_err());
     root = message
         .get_root::<runtime_capnp::request::Builder>()
         .unwrap();
-    root.set_protocol_version(2);
+    root.set_protocol_version(morrow_core::runtime::PROTOCOL_VERSION + 1);
     assert!(matches!(
         RenameRequest::decode(&serialize::write_message_to_words(&message)),
         Err(Error::UnsupportedVersion)
@@ -264,7 +266,9 @@ fn capnp_multisegment_messages_are_accepted_within_budget() {
         .allocation_strategy(AllocationStrategy::FixedSize);
     let mut message = Builder::new(allocator);
     let mut root = message.init_root::<runtime_capnp::request::Builder>();
-    root.set_protocol_version(1);
+    root.set_protocol_version(morrow_core::runtime::PROTOCOL_VERSION);
+    root.set_runtime_digest(&morrow_core::runtime::runtime_digest());
+    root.set_content_digest(&morrow_core::runtime::content_digest());
     root.set_operation_id("op-1");
     let mut rename = root.init_rename_card();
     rename.set_card_id("legacy-123");
@@ -315,4 +319,20 @@ fn capnp_impossible_segment_or_far_pointer_is_rejected() {
     let mut bytes = request(1).encode().unwrap();
     bytes[0..4].copy_from_slice(&u32::MAX.to_le_bytes());
     assert!(RenameRequest::decode(&bytes).is_err());
+}
+
+#[test]
+fn altered_contract_digest_is_rejected_before_accepting_command() {
+    let mut bytes = request(1).encode().unwrap();
+    let digest = morrow_core::runtime::runtime_digest();
+    let index = bytes.windows(32).position(|part| part == digest).unwrap();
+    bytes[index] ^= 1;
+    assert!(matches!(
+        RenameRequest::decode(&bytes),
+        Err(Error::UnsupportedVersion)
+    ));
+    assert_eq!(
+        morrow_core::runtime::schema_digest(b"line\r\n"),
+        morrow_core::runtime::schema_digest(b"line\n")
+    );
 }

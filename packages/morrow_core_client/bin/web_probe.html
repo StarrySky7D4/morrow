@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>Morrow core protocol probe</title>
+<script type="module">
+import { compileStreaming } from './probe.mjs';
+const worker = new Worker('./core_worker.mjs', { type: 'module' });
+let chain = Promise.resolve();
+globalThis.coreFixture = async name => {
+  if (!['one','above-js','max','multisegment'].includes(name)) throw new Error('Unknown vector');
+  const response = await fetch('./vectors/' + name + '.capnp');
+  if (!response.ok) throw new Error('Missing vector');
+  return new Uint8Array(await response.arrayBuffer());
+};
+globalThis.coreRoundTrip = bytes => {
+  const run = () => new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => { worker.terminate(); reject(new Error('Worker timeout')); }, 10000);
+    worker.onmessage = ({ data }) => {
+      clearTimeout(timeout);
+      if (data instanceof ArrayBuffer) resolve(new Uint8Array(data));
+      else reject(new Error('Core rejection: ' + data));
+    };
+    worker.onerror = event => { clearTimeout(timeout); reject(new Error(event.message)); };
+    const copy = bytes.slice(); worker.postMessage(copy.buffer, [copy.buffer]);
+  });
+  const result = chain.then(run); chain = result.catch(() => {}); return result;
+};
+try {
+  const module = await compileStreaming(fetch('./probe.wasm'));
+  const instance = await module.instantiate({});
+  await instance.invokeMain();
+} catch (error) { globalThis.coreProbeResult = 'FAIL: ' + error; }
+</script>

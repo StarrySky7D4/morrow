@@ -1,6 +1,6 @@
-# Morrow core — test.2
+# Morrow core — test.3
 
-这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.2`。阶段为 M0／M1 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；本核心没有数据库、自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
+这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.3`。阶段为 M0／M1 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；本核心没有数据库、自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
 
 ## 已实现
 
@@ -11,6 +11,14 @@
 - `morrow-core-check self-check` 运行内存中的协议→纯编辑→容器往返；`verify <file>` 只读验证指定容器。诊断文本不是正式记录。
 
 Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作或草稿持久化。BlobRef 只描述引用，未验证文件存在性、原子发布或回收。卡片预览无需插件即可读取，但 Flutter 展示及附件导出尚未接入。
+
+## test.3 边界与宿主状态
+
+`bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。它只验证固定副本的版本与摘要并往返内部请求，尚不分派到持久化或权限执行。运行期协议已升到 2，test.2 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。普通 Dart JavaScript 编译仍有精确整数限制。
+
+`lifecycle.rs` 提供纯内存 HostPolicy：宿主分配不可自报的实例身份与代次、对象级重命名授权和到期时刻；接单固定请求，完成前再次核对身份／授权／期限。正常停止不接新任务、等待已有任务，达到排空期限则撤权；安全停止先撤权后取消。宿主须用单调时钟调用 expire_drains，迟到完成也会检查期限。停止／退休后旧实例、授权与任务不可复用。
+
+CommitState 区分未提交、结果待核对、本地已提交、封存、见证和查证未提交。超时不会改成未提交，撤权也不回滚已提交内容。这只是状态转换约束，没有真实事务、封存证明、外部见证或生产授权 UI。权限提案与数据库之间的原子边界仍待 M2；依赖、共享对象、运行后端与取消外部效果仍待 M3。
 
 ## 容器与资源边界
 
@@ -29,9 +37,9 @@ pwsh -File tool/verify_core.ps1
 # 安装目标后检查 Web 核心；此命令不会自动安装工具链：
 rustup target add wasm32-unknown-unknown
 pwsh -File tool/verify_core.ps1 -Web
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.2 --bin morrow-core-check -- verify path/to/card.morrow
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.3 --bin morrow-core-check -- verify path/to/card.morrow
 ```
 
-Wasm 目标的 `cargo check --lib` 仅证明编译检查通过，不证明已导出 Wasm API、接入浏览器 Worker、实现 Dart 互操作或浏览器存储。原生 FFI、共享内存、权限、提交事务、审计和插件执行仍未实现。具体协议与库仍需后续跨边界验证，不因本轮通过而冻结全平台实现。
+test.3 已导出原生／Wasm ABI 并在 Chrome Worker 中实测协议往返；浏览器存储、实际授权执行、共享内存、提交事务、审计与插件运行仍未实现。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
 
 参考：[prost-reflect 未知字段 API](https://docs.rs/prost-reflect/0.16.5/prost_reflect/struct.DynamicMessage.html#method.unknown_fields)、[LZ4 有界解压 API](https://docs.rs/lz4_flex/0.14.0/lz4_flex/block/fn.decompress_into.html)。本轮兼容性结论以仓库中的演进测试为依据，不把普通 prost 生成类型直接作为无损编辑载体。
