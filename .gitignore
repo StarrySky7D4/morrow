@@ -57,3 +57,6 @@ app.*.map.json
 # Generated Android diagnostics and local DevTools settings
 /android/build/
 /devtools_options.yaml
+
+# Isolated Rust core build output
+/core/target/

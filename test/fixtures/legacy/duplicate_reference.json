@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "theme": "white",
+  "glass": "clear",
+  "background": "ambient",
+  "ideas": [
+    {
+      "id": "synthetic-1",
+      "title": "合成灵感",
+      "description": "# 正文\n保留原文",
+      "category": "收件箱",
+      "time": "刚刚",
+      "icon": 0,
+      "color": 4286148607,
+      "favorite": true,
+      "todos": [
+        "样本事项"
+      ],
+      "completed": [
+        "样本事项"
+      ],
+      "stage": "待整理",
+      "hypothesis": "",
+      "conclusion": "",
+      "attachments": [
+        {
+          "source": {
+            "location": "fixtures/shared.bin",
+            "local": true,
+            "kind": "file",
+            "name": "shared.bin"
+          },
+          "size": 3
+        },
+        {
+          "source": {
+            "location": "fixtures/shared.bin",
+            "local": true,
+            "kind": "file",
+            "name": "shared.bin"
+          },
+          "size": 3
+        }
+      ]
+    }
+  ],
+  "completed": [
+    "今日事项"
+  ]
+}

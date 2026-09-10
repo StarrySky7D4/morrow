@@ -35,7 +35,9 @@ Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测�
 
 ## 测试版推进
 
-当前开发版本为 `0.1.9-test.1+10`，后续以 `0.1.9-test.x` 持续迭代，直到插件系统完成完整验收。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。
+当前开发版本为 `0.1.9-test.2+11`。`test.1` 是 `0.1.x` 最后一个兼容现有数据类型的测试版；从 `test.2` 起以 `0.1.9-test.x` 逐步推进大规模重写，后续可能包含破坏性数据变更。核心架构与数据模型锚定、插件系统及声明支持的平台完成验收后发布 `0.2.0`。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。
+
+`test.2` 已建立独立 [Rust 内容核心与协议验证工具](core/README.md)，包含 Protobuf＋LZ4 记录、Cap’n Proto 请求及未知字段保留测试；工作台尚未切换至新核心，当前不会自动迁移旧资料。阶段证据与下一步见 [test.2 重构记录](reports/0.1.9-test.2-refactor.md)。
 
 ## 运行
 
@@ -57,7 +59,7 @@ flutter build web --no-web-resources-cdn
 构建后可用 `node tool/preview.cjs` 启动本机预览，地址为 `http://127.0.0.1:8765`。
 Windows 构建：`flutter build windows`，运行 `build/windows/x64/runner/Release/morrow_studio.exe`，分发时需保留整个 Release 目录。
 
-个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-0.1.9-test.1-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
+个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-<当前版本>-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
 
 ## 歌词与附件
 
