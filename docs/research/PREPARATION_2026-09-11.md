@@ -172,7 +172,7 @@ cargo run --offline --locked --manifest-path tool/research/protobuf_probe/Cargo.
 | P-03 / M1-02、M1-03 | 待执行，P0 | Rust↔Dart／Web 相同 Cap’n Proto 向量；Protobuf 新旧字段往返对照 | 决定绑定库、表示及生成链 |
 | P-04 / M1-03、M2-02 | 待执行，P0 | Rust 原生存储与两种 Web 适配执行相同提交、配额、重开、竞争向量 | 决定后端和能力差异 |
 | P-05 / M3-01、M3-02 | 待执行，P0 | mmap 固定发布、旧映射回收、身份伪造、撤权及迟到结果 | 决定共享对象实现和必要复制位置 |
-| P-06 / M1-03、M3-03 | 后续部分完成，P0 | Windows Wasmi 执行 Rust SDK 示例，死循环／内存／宿主调用限额通过；其他候选及跨平台对照仍待做 | [执行证据](../../plugin_runtime/README.md)；不提前锁定全平台 |
+| P-06 / M1-03、M3-03 | 后续部分完成，P0 | Windows Wasmi 执行 C／C++／Rust SDK 示例，死循环／内存／宿主调用限额通过；其他候选及跨平台对照仍待做 | [执行证据](../../plugin_runtime/README.md)；不提前锁定全平台 |
 | P-07 / M0-03、M6-01 | 待执行，P0 | 六类迁移样本、工作树归档与恢复、全链性能基线 | 固定模型迁移边界和测量基线 |
 | P-08 / M4、M5 | 待执行，P0 | 固定原件签名、幂等封存、独立检查点、隔离重放 | 完成 A/B 贯通验收最后一段 |
 

@@ -2,12 +2,30 @@
 #define MORROW_PLUGIN_CODEC_HPP
 #include "morrow_plugin_codec.h"
 #include "morrow_plugin_sdk.h"
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
 namespace morrow {
+namespace detail {
+[[noreturn]] inline void codec_length_error() {
+#if defined(__cpp_exceptions) || defined(_CPPUNWIND)
+  throw std::length_error("SDK text exceeds ABI length");
+#else
+  std::abort();
+#endif
+}
+[[noreturn]] inline void codec_logic_error() {
+#if defined(__cpp_exceptions) || defined(_CPPUNWIND)
+  throw std::logic_error("SDK reply has no decoded value");
+#else
+  std::abort();
+#endif
+}
+} // namespace detail
+
 struct encoded_request {
   uint32_t status;
   std::vector<uint8_t> bytes;
@@ -27,7 +45,7 @@ class request {
         length_(length) {}
   static mp_span span(const std::string &s) {
     if (s.size() > std::numeric_limits<uint32_t>::max())
-      throw std::length_error("SDK text exceeds ABI length");
+      detail::codec_length_error();
     return {reinterpret_cast<const uint8_t *>(s.data()),
             static_cast<uint32_t>(s.size())};
   }
@@ -122,7 +140,7 @@ public:
     mp_reply_view v{};
     if (status_ != MP_CODEC_OK ||
         mp_reply_get(handle_, &v, sizeof(v)) != MP_CODEC_OK)
-      throw std::logic_error("SDK reply has no decoded value");
+      detail::codec_logic_error();
     return v;
   }
 };

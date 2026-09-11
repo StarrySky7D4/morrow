@@ -1,6 +1,6 @@
 # 可替换 Wasm 执行后端原型
 
-基于 0.1.9-test.10，消息协议仍为 v6；新增实验 Wasm guest ABI v1。本轮在 Windows x64 上运行了使用 SDK 的实际 Rust Wasm 模块，并通过可信适配器接入 HostRuntime 与 SQLite。应用版本、数据库格式和 Flutter 工作台未切换。
+基于 0.1.9-test.10，消息协议仍为 v6；新增实验 Wasm guest ABI v1。本轮在 Windows x64 上运行了使用 SDK 的实际 C／C++／Rust Wasm 模块，并通过可信适配器接入 HostRuntime 与 SQLite。应用版本、数据库格式和 Flutter 工作台未切换。
 
 ## 执行与权限边界
 
@@ -35,18 +35,22 @@ Wasmi 1.1.0 的 fuel 和 StoreLimits 用于验证可替换解释后端，锁定�
 ## 验证
 
 ```powershell
+pwsh -File tool/prepare_plugin_c_wasm.ps1
 pwsh -File tool/verify_plugin_runtime.ps1
 ```
 
-需要 Rust、Cap’n Proto 编译器、Python 3、PowerShell 7 和 wasm32-unknown-unknown 目标。实际插件来自 [Rust 示例](../sdk/examples/rust-rename/src/lib.rs)，使用 wasm-guest feature 的 SDK，而非直接拼装测试消息。
+需要 Rust、Cap’n Proto 编译器、Python 3、PowerShell 7、LLVM 22 Clang 及 wasm32-unknown-unknown 目标；C/C++ 标准库由准备脚本获取。实际插件来自 [Rust 示例](../sdk/examples/rust-rename/src/lib.rs)、[C 示例](../sdk/examples/c-rename/plugin.c) 和 [C++ 示例](../sdk/examples/cpp-rename/plugin.cpp)，都使用类型化 SDK。每次请求还与核心独立编码的消息逐字节对照。
 
 本轮通过：
 
-- 格式检查、Clippy -D warnings；运行库 12 项测试，原 SDK 12 项回归测试。
+- 格式检查、Clippy -D warnings；运行库 12 项测试，SDK 14 项回归测试。
 - 无效模块／导入／入口、禁止 start、初始内存超限、运行期内存增长／越界、死循环、宿主调用洪泛、缓冲区预检、取消和无效回复。
-- 实际 Rust SDK Wasm 模块：无权限拒绝、授权提交、重复请求、跨连接拒绝、撤权与停止后拒绝，以及取消后的结果核对。
+- 实际 C／C++／Rust SDK Wasm 模块：无权限拒绝、授权提交、重复请求、跨连接拒绝、撤权与停止后拒绝，以及取消后的结果核对。
 - 三类首次提交后故障：取消、trap、fuel 耗尽；重开库均保留修订 2 和两条原子事件（初始创建与本次修改）。
 
-产物：build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm，78,312 字节；本轮 SHA-256：71a1d55351ec17527240bb3960a9501284b7a61e55e750bf1c5f566e2fac3c1d。编译工具链或源码变化后应重新生成摘要。日志：build/plugin-runtime/verification.log。
+- C++ 字符串／向量与 Rust 编解码共同分配期间保留数据、calloc 清零、realloc 保留数据及 256 字节对齐分配通过。
+- C++ 访问无效回复与 128 MiB 分配失败均为 guest 内 trap、零宿主提交；OOM 样例将存储传给独立编译函数，避免被编译器消除分配。
 
-当前只证明 Windows 上该解释后端与 Rust 示例的执行结果。C／C++ Wasm SDK、包校验和安装、签名／依赖锁定、长驻服务、异步任务、mmap、审计封存、UI 对接及其余平台仍待完成。实验 ABI 尚未锚定；未发布插件包或 Release。
+产物和 SHA-256 见 [三语言运行记录](../reports/plugin-sdk-wasm-three-languages.md)。日志：build/plugin-runtime/verification.log；最终去除调试符号的模块已重新执行同一链路与错误路径。编译工具链或源码变化后应重新生成摘要。
+
+当前只证明 Windows 上该解释后端与三语言示例的执行结果。包校验和安装、签名／依赖锁定、长驻服务、异步任务、mmap、审计封存、UI 对接及其余平台仍待完成。实验 ABI 尚未锚定；未发布插件包或 Release。

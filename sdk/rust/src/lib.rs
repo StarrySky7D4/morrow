@@ -3,6 +3,8 @@ mod ffi;
 pub mod protocol;
 #[cfg(all(target_arch = "wasm32", feature = "wasm-guest"))]
 pub mod wasm;
+#[cfg(any(test, all(target_arch = "wasm32", feature = "wasm-c")))]
+mod wasm_alloc;
 #[allow(clippy::all)]
 pub mod runtime_capnp {
     include!(concat!(env!("OUT_DIR"), "/runtime_capnp.rs"));

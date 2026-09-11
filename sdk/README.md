@@ -1,6 +1,6 @@
 # Morrow 第三方插件 SDK 原型
 
-基于 0.1.9-test.10，运行期协议 v6，实验本地 ABI v1。当前提供 **传输接口与四类内容命令的类型化编解码**，已增加 Rust Wasm guest 导入原型，但尚未建立正式插件加载器、完整内容／UI API 或稳定 ABI。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
+基于 0.1.9-test.10，运行期协议 v6，实验本地 ABI v1。当前提供 **传输接口与四类内容命令的类型化编解码**，已增加 C／C++／Rust Wasm guest 适配原型，但尚未建立正式插件加载器、完整内容／UI API 或稳定 ABI。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
 
 | 语言 | 入口 | 使用方式 |
 | --- | --- | --- |
@@ -43,11 +43,11 @@ pwsh -File tool/verify_plugin_sdk.ps1
 
 ## 本轮验证结果
 
-Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **12 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。Rust wasm32-unknown-unknown 仅编译检查通过。
+Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **14 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。上述原生测试之外，三语言 Wasm 实际执行结果见下一节和执行后端说明。
 
 真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
 
-后续已增加 [Rust Wasm 实际执行验证](../plugin_runtime/README.md)：独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；C／C++ Wasm、其他系统和插件 UI 仍未验证。通用记录命令、包工具、示例插件、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
+后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、包工具、示例插件、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
 
 ## Rust Wasm 示例
 
@@ -59,3 +59,19 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ```
 
 Wasm guest ABI v1 与原生本地回调 ABI v1 分别管理，两者不共享指针或身份；运行消息仍为固定 Cap’n Proto v6。取消／执行错误不自动重试，已提交状态由核心查询确定。
+
+## C／C++ Wasm 示例
+
+C 示例使用 morrow_plugin_wasm.h 的 mp_wasm_host()、既有 mp_exchange 和类型化编解码；C++ 示例继续使用 std::string／std::vector、morrow::request／client／decoded_reply，不需改写成 C 接口。示例分别位于 examples/c-rename 和 examples/cpp-rename。该 profile 暂不支持 C++ 异常和 RTTI；禁用异常时，SDK 错误访问及标准库致命错误会在 guest 内 trap，宿主随后按操作 ID 核对结果。
+
+```powershell
+pwsh -File tool/prepare_plugin_c_wasm.ps1
+pwsh -File tool/build_plugin_c_wasm.ps1
+pwsh -File tool/verify_plugin_runtime.ps1
+```
+
+准备脚本将固定的官方 WASI SDK 34 sysroot 下载到 build/tools，并验证 SHA-256。采用现有 LLVM 22 的 Clang，显式选择 wasm32-wasip1/noeh 的头文件和库；WASI 只作为标准库构建来源，最终模块不获得 WASI 导入。C++ 标准库的终止诊断钩子改为 guest 内 trap，权限边界不随库链接扩大。依据：[官方工具链](https://github.com/WebAssembly/wasi-sdk)、[无异常标准库说明](https://github.com/WebAssembly/wasi-sdk/blob/wasi-sdk-34/CppExceptions.md)。
+
+Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其与 C／C++ 源码、固定消息导入和 guest 运行支持一起链接。malloc／calloc／realloc／free 和对齐分配统一交给同一 guest 内的 Rust 分配器，不能混用两套堆。C++ 标准分配失败在此 profile 中终止 guest；C malloc 失败返回 NULL。分配器指针仅在该模块内部使用，不是跨进程句柄或宿主能力。
+
+最终 C／C++ 示例位于 build/plugin-c-guest，默认去除调试符号；构建时使用 -DebugSymbols 可保留符号。这些是实验执行模块，尚不包含正式 manifest、签名、安装器或 UI。文件、网络、时钟、线程等接口仍须通过后续明确的宿主能力提供；不能把部分标准库成功运行宣称为完整 WASI 或全 C++ 标准库支持。

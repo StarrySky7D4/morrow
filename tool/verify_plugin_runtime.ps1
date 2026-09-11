@@ -1,4 +1,4 @@
-param([string]$Python='python')
+param([string]$Python='python',[string]$Sysroot='build/tools/wasi-34/wasi-sysroot-34.0')
 $ErrorActionPreference='Stop'
 $repo=Split-Path $PSScriptRoot -Parent
 function Checked([string]$Program,[string[]]$Arguments){ & $Program @Arguments; if($LASTEXITCODE -ne 0){throw "Plugin runtime verification failed: $Program"} }
@@ -11,9 +11,13 @@ try {
  Checked cargo @('clippy','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--all-targets','--','-D','warnings')
  Checked cargo @('test','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime')
  Checked cargo @('clippy','--locked','--manifest-path','sdk/rust/Cargo.toml','--features','wasm-guest','--target','wasm32-unknown-unknown','--target-dir','build/plugin-sdk/rust','--','-D','warnings')
+ Checked cargo @('clippy','--locked','--manifest-path','sdk/rust/Cargo.toml','--features','wasm-c','--target','wasm32-unknown-unknown','--target-dir','build/plugin-sdk/rust','--','-D','warnings')
  Checked cargo @('test','--locked','--manifest-path','sdk/rust/Cargo.toml','--target-dir','build/plugin-sdk/rust')
  Checked cargo @('clippy','--locked','--manifest-path','sdk/examples/rust-rename/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest','--','-D','warnings')
  Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-rename/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
- Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify','--','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm')
+ & ./tool/build_plugin_c_wasm.ps1 -Sysroot $Sysroot
+ Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify','--','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm','build/plugin-c-guest/c_rename.wasm','build/plugin-c-guest/cpp_rename.wasm','build/plugin-c-guest/cpp_allocator.wasm')
+ Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify_trap','--','build/plugin-c-guest/cpp_abort.wasm','build/plugin-c-guest/cpp_oom.wasm')
+ Get-ChildItem -LiteralPath build/plugin-c-guest -Filter '*.wasm' | Get-FileHash -Algorithm SHA256
  Get-FileHash -Algorithm SHA256 -LiteralPath 'build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm'
 } finally {Pop-Location}

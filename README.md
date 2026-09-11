@@ -39,7 +39,7 @@ Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测�
 
 `test.10` 将工作区、视图位置与既有卡片的草稿保存接入同一 Rust 存储核心，各自维护修订，内容修改与操作结果／待封存事件原子提交。一卡可被多个工作区引用，布局和草稿修改不覆盖正式正文。当前通过可信本地 API／CLI 和浏览器实验适配访问，尚未接入插件命令或工作台。实验数据库升至格式 4，旧实验库没有自动迁移。[本轮记录](reports/0.1.9-test.10-refactor.md)。
 
-第三方插件开发新增 [C／C++／Rust SDK 原型](sdk/README.md) 与 [插件 UI 对接设计](docs/PLUGIN_SDK_AND_UI.md)：首期通过声明式界面接入 Flutter，暂不要求 Dart 动态插件。当前 SDK 已验证传输接口、四类内容命令的类型化编解码及 C 到真实核心的链路，后续已运行 [Rust SDK Wasm 示例](plugin_runtime/README.md)，验证限额、授权与提交后故障。完整插件执行与 UI 渲染器继续建设。
+第三方插件开发新增 [C／C++／Rust SDK 原型](sdk/README.md) 与 [插件 UI 对接设计](docs/PLUGIN_SDK_AND_UI.md)：首期通过声明式界面接入 Flutter，暂不要求 Dart 动态插件。当前 SDK 已验证传输接口、四类内容命令的类型化编解码及 C 到真实核心的链路，后续已运行 [C／C++／Rust SDK Wasm 示例](plugin_runtime/README.md)，验证限额、授权与提交后故障。完整插件执行与 UI 渲染器继续建设。
 
 ## 运行
 
