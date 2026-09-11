@@ -80,4 +80,6 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 
 已提供 C 的 morrow_plugin_task.h、C++ 的 morrow_plugin_task.hpp 与 Rust task／wasm API，接收宿主提供的任务、读取类型化命令并构造关联完成消息。实际例子位于 examples/c-task、cpp-task、rust-task。完整说明见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)，结果见 [三语言动态任务验证](../reports/plugin-task-contract-validation.md)。
 
-内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。正式 handler 注册、类型化错误、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
+内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。跨包 handler 选择、类型协商、类型化错误、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
+
+纯转换示例现在必须用 `pack-transform` 声明处理器名称、输入／输出类型及各自上限，见 [统一打包入口](../docs/PLUGIN_PACKAGE.md#纯转换处理器声明)。声明由宿主验证，不需要给三语言 guest 导出授予权限或核心注册函数。仅改用旧 pack-task 打包不能绕过注册检查。

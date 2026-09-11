@@ -106,6 +106,11 @@ impl PreparedPackage {
         } else {
             None
         };
+        let registration = input.transform().map(|t| self.package.transform_handler(t));
+        let fault = fault.or(match &registration {
+            Some(Err(_)) => Some(Fault::TaskProtocol),
+            _ => None,
+        });
         if let Some(fault) = fault {
             return TaskReport {
                 execution: Report {
@@ -145,7 +150,15 @@ impl PreparedPackage {
         let response = if execution.outcome.is_ok() && input.transform().is_some() {
             match run.completion {
                 Some(completion) if !protocol_fault => match input.verify_output(&completion) {
-                    Ok(value) => output = Some(value),
+                    Ok(value)
+                        if registration
+                            .as_ref()
+                            .and_then(|r| r.as_ref().ok())
+                            .is_some_and(|h| value.bytes.len() <= h.max_output_bytes as usize) =>
+                    {
+                        output = Some(value)
+                    }
+                    Ok(_) => execution.outcome = Err(Fault::TaskProtocol),
                     Err(_) => execution.outcome = Err(Fault::TaskProtocol),
                 },
                 _ => execution.outcome = Err(Fault::TaskProtocol),

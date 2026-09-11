@@ -272,3 +272,105 @@ fn task_abi_requires_exact_task_contract_and_cannot_be_mislabelled_legacy() {
     future.guest_abi_version = 3;
     assert!(Package::build(future, MODULE).is_err());
 }
+
+fn handler() -> proto::TransformHandler {
+    proto::TransformHandler {
+        handler: "bytes.reverse".into(),
+        input_type: "bytes".into(),
+        output_type: "bytes".into(),
+        max_input_bytes: 65536,
+        max_output_bytes: 65536,
+    }
+}
+#[test]
+fn transform_declarations_require_supported_feature_and_unique_bounded_handlers() {
+    let good = Package::manifest_for_transform("transforms", "1.0.0", MODULE, vec![handler()]);
+    let package = Package::build(good.clone(), MODULE).unwrap();
+    assert_eq!(
+        Package::decode(package.archive())
+            .unwrap()
+            .manifest()
+            .transform_handlers,
+        good.transform_handlers
+    );
+    for case in 0..11 {
+        let mut m = good.clone();
+        match case {
+            0 => m.required_features.clear(),
+            1 => m.transform_handlers.clear(),
+            2 => {
+                m.guest_abi_version = 1;
+                m.task_schema_sha256.clear();
+            }
+            3 => m.required_features.push("transform-handlers-v1".into()),
+            4 => m.transform_handlers.push(handler()),
+            5 => m.transform_handlers[0].handler = "../bad".into(),
+            6 => m.transform_handlers[0].input_type.clear(),
+            7 => m.transform_handlers[0].output_type = "bad:type".into(),
+            8 => m.transform_handlers[0].max_input_bytes = 65537,
+            9 => m.transform_handlers[0].max_output_bytes = 65537,
+            _ => {
+                m.transform_handlers = (0..17)
+                    .map(|n| {
+                        let mut h = handler();
+                        h.handler = format!("h{n}");
+                        h
+                    })
+                    .collect();
+            }
+        }
+        assert!(Package::build(m, MODULE).is_err(), "case {case}");
+    }
+    let mut max = good;
+    max.transform_handlers = (0..16)
+        .map(|n| {
+            let mut h = handler();
+            h.handler = format!("h{n}");
+            h
+        })
+        .collect();
+    assert!(Package::build(max, MODULE).is_ok());
+}
+#[test]
+fn transform_resolution_is_package_scoped_and_enforces_declared_input() {
+    use morrow_core::task::Transform;
+    let mut h = handler();
+    h.max_input_bytes = 0;
+    h.max_output_bytes = 0;
+    let p = Package::build(
+        Package::manifest_for_transform("empty", "1.0.0", MODULE, vec![h]),
+        MODULE,
+    )
+    .unwrap();
+    let mut input = Transform {
+        handler: "bytes.reverse".into(),
+        input_type: "bytes".into(),
+        output_type: "bytes".into(),
+        input: vec![],
+    };
+    assert_eq!(p.transform_handler(&input).unwrap().max_output_bytes, 0);
+    input.input.push(1);
+    assert!(p.transform_handler(&input).is_err());
+    input.input.clear();
+    input.output_type = "other".into();
+    assert!(p.transform_handler(&input).is_err());
+    input.output_type = "bytes".into();
+    input.input_type = "other".into();
+    assert!(p.transform_handler(&input).is_err());
+    input.input_type = "bytes".into();
+    input.handler = "unknown".into();
+    assert!(p.transform_handler(&input).is_err());
+    input.handler = "bytes.reverse".into();
+    let legacy = Package::build(
+        Package::manifest_for_task("legacy", "1.0.0", MODULE, vec![]),
+        MODULE,
+    )
+    .unwrap();
+    assert!(legacy.transform_handler(&input).is_err());
+    let mut changed = p.manifest().clone();
+    changed.transform_handlers[0].max_input_bytes = 1;
+    assert_ne!(
+        Package::build(changed, MODULE).unwrap().digest(),
+        p.digest()
+    );
+}

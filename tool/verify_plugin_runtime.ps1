@@ -48,7 +48,7 @@ try {
  $transformPackages=@()
  foreach($guest in @(@('rust-transform','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_transform.wasm'),@('c-transform','build/plugin-c-guest/c_transform.wasm'),@('cpp-transform','build/plugin-c-guest/cpp_transform.wasm'))) {
   $package=Join-Path $packageDir ($guest[0]+'.mplugin')
-  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-task',$guest[1],$package,('org.morrow.example.'+$guest[0]),'0.1.9-test.10','none')
+  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-transform',$guest[1],$package,('org.morrow.example.'+$guest[0]),'0.1.9-test.10','bytes.reverse,bytes,bytes,65536,65536;bytes.ascii-uppercase,bytes,bytes,65536,65536')
   $transformPackages+=$package
  }
  Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_transforms','--')+$transformPackages)

@@ -28,7 +28,7 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 | 运行准备 | 验证 Wasm、禁止 start、检查固定导入和入口；将清单预算与宿主上限取较小值 | 编译／准备本身不执行插件；初始化内存限额在实例化时强制执行 |
 | 连接与调用 | 每次连接生成新实例，绑定包摘要与能力上限；实际调用仍检查对象授权 | 同名或新版本不继承旧实例权限；更换包必须重新连接 |
 
-原始 manifest 与整个归档字节被保留，未知可选字段不因解析丢失。未知必需语义必须声明在 `required_features` 中；当前不支持任何此类功能，遇到非空列表拒绝。未知能力、重复能力、缺少预算、错误摘要或版本均拒绝。后续依赖、入口扩展等不能仅追加未知字段并让旧宿主静默忽略。
+原始 manifest 与整个归档字节被保留，未知可选字段不因解析丢失。未知必需语义必须声明在 `required_features` 中；当前仅支持 `transform-handlers-v1`，其他名称、重复名称均拒绝。未知能力、重复能力、缺少预算、错误摘要或版本均拒绝。后续依赖、入口扩展等不能仅追加未知字段并让旧宿主静默忽略。
 
 `Catalog` 只接受宿主提供的根目录；包内名称不参与路径拼接。相同包重复／并发安装收敛到同一文件，已存在内容损坏时拒绝且不覆盖。这里假定目录归可信宿主管理，不宣称能隔离一个可任意修改宿主目录的外部进程。
 
@@ -42,11 +42,32 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 
 下一阶段按以下依赖推进：
 
-1. 在已验证的原生后台队列、版本化内容／转换输入与结果上，完善 handler 注册、多实例调度、生产停止与撤权协调。
+1. 在已验证的原生后台队列、版本化内容／转换输入与结果上，完善类型版本协商、多实例调度、生产停止与撤权协调。
 2. 包注册／启用状态、作者信任、签名与撤销、依赖接口和锁定；更新不能复活旧授权。
 3. 声明式 UI schema、事件代次、Flutter 有界渲染器及三语言 UI 构造器；先贯通同一编辑表单，再扩展专业渲染。
 4. 共享对象租约、审计封存、证据和 A/B 贯通，逐平台完成资格验证。
 
 上述工作继续纳入 M1-05、M3-03／04／06、M6-06，M5 仍是首轮贯通门槛。Windows 上的包执行和 Web 核心编译不能代替浏览器插件安装、设备运行或全平台支持。
 
-ABI v2 内容命令和纯转换任务使用 `pack-task`，额外校验任务 schema 摘要，详见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。旧包仍按其声明的 ABI 准备，不自动升级。
+ABI v2 内容命令任务使用 `pack-task`；纯转换任务使用下述 `pack-transform`，额外校验任务 schema 摘要，详见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。旧包仍按其声明的 ABI 准备，不自动升级。
+
+## 纯转换处理器声明
+
+每个包最多声明 16 个 `TransformHandler`，名称在该包内唯一。固定字段为 handler、input_type、output_type、max_input_bytes 和 max_output_bytes。输入／输出上限分别为 0–65536 字节，0 表示仅允许空数据；三个名称沿用非空、至多 256 字节且不能包含控制字符和路径分隔字符的标识规则。当前类型通过名称精确匹配，尚未实现类型 schema 摘要或版本协商；`bytes` 仅表示有界原字节。
+
+声明保存在 Protobuf manifest 内并随包摘要绑定，需同时声明必需功能 `transform-handlers-v1`，仅允许 guest ABI v2。只有声明字段或只有功能标记均拒绝加载。不认识该功能的旧宿主会拒绝新包。当前宿主仍能加载无处理器的旧内容任务包，但不会启动其中的纯转换任务；此前转换示例需重新打包，Wasm 任务契约和编解码 API 不变。
+
+```powershell
+# 声明列表是一个参数；多条声明之间用分号分隔。
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- pack-transform build/plugin-c-guest/c_transform.wasm build/registered-transform.mplugin org.morrow.example.c-transform 0.1.9-test.10 'bytes.reverse,bytes,bytes,65536,65536;bytes.ascii-uppercase,bytes,bytes,65536,65536'
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- inspect build/registered-transform.mplugin
+cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/plugin-runtime --features packages --example qualify_transforms -- build/registered-transform.mplugin
+```
+
+`pack-transform` 不申请内容能力，并自动写入必需功能；此示例验证器要求上述两个处理器。可信开发工具也可使用 `Package::manifest_for_transform` 构造清单。C／C++／Rust 开发者共享此打包入口，不需要在 guest 中调用核心注册 API。`inspect` 输出每项声明；检查不会运行插件。
+
+`PreparedPackage::run_task`（包括 Worker 调用）从所绑定的不可变包查找 handler；未注册、类型不匹配或输入超过声明时，返回 TaskProtocol，零 guest 指令、零宿主调用。输出先通过任务关联和全局有界校验，再检查处理器声明的输出上限，超限不交付结果。漏写声明不能回退到无限制转换入口。低层 Runner 仍是可信适配构件，不替代这层包策略。
+
+此注册是**单包内部的任务能力声明**，不选择默认处理器、不自动启用插件，也不证明模块实际实现或正确计算了该功能。跨包选择、冲突处理、类型版本协商、启用／更新状态与 UI 扩展点注册继续独立推进。结果仍是插件数据，不能用声明绕过内容授权或直接保存为权威事务。
+
+证据见 [处理器注册验证](../reports/plugin-handler-validation.md)。

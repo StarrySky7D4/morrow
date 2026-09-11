@@ -33,6 +33,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
         let mut host = HostRuntime::new(store)?;
         let c = p.connect(&mut host)?;
+        assert_eq!(p.package().manifest().transform_handlers.len(), 2);
+        for (handler, input_type, output_type) in [
+            ("missing", "bytes", "bytes"),
+            ("bytes.reverse", "other", "bytes"),
+            ("bytes.reverse", "bytes", "other"),
+        ] {
+            let bad = Invocation::new_transform(
+                "invalid",
+                Transform {
+                    handler: handler.into(),
+                    input_type: input_type.into(),
+                    output_type: output_type.into(),
+                    input: vec![1],
+                },
+            )?;
+            let result = p.run_task(
+                &mut host,
+                &c,
+                &bad,
+                || panic!("invalid task entered core"),
+                Default::default(),
+            );
+            assert_eq!(
+                result.execution.outcome,
+                Err(morrow_plugin_runtime::Fault::TaskProtocol)
+            );
+            assert_eq!(result.execution.fuel_remaining, p.limits().fuel);
+            assert_eq!(result.execution.host_calls, 0);
+            assert!(result.output.is_none() && result.response.is_none());
+        }
         let mut worker = Worker::spawn(
             p,
             host,
@@ -101,7 +131,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         assert_eq!(store.card("card")?.unwrap().summary().title, "untouched");
         store.integrity_check()?;
         println!(
-            "PASS: {path}: 8 pure transformations, empty/Unicode bytes/all byte values/64KiB; independently verified output, zero core calls, no content or event changes"
+            "PASS: {path}: 3 registration rejections before guest; 8 pure transformations, empty/Unicode bytes/all byte values/64KiB; independently verified output, zero core calls, no content or event changes"
         );
     }
     Ok(())

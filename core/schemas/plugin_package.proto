@@ -13,6 +13,14 @@ message ExecutionBudget {
   uint64 memory_bytes = 2;
   uint32 host_calls = 3;
 }
+// Fixed pure-transform declarations, scoped to the immutable package digest.
+message TransformHandler {
+  string handler = 1;
+  string input_type = 2;
+  string output_type = 3;
+  uint32 max_input_bytes = 4;
+  uint32 max_output_bytes = 5;
+}
 message Manifest {
   uint32 schema_version = 1;
   string package_id = 2;
@@ -29,6 +37,7 @@ message Manifest {
   // Future mandatory semantics must be named here; unsupported names reject load.
   repeated string required_features = 13;
   bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
+  repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
 }
 message Package {
   uint32 schema_version = 1;

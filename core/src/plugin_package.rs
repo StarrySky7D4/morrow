@@ -7,6 +7,8 @@ use std::{collections::BTreeSet, sync::OnceLock};
 pub mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.plugin.v1.rs"));
 }
+pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
+pub const MAX_TRANSFORM_HANDLERS: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
 const MAX_RAW_BYTES: usize = MAX_MODULE_BYTES + MAX_MANIFEST_BYTES + 256;
@@ -70,6 +72,7 @@ impl Package {
             }),
             required_features: vec![],
             task_schema_sha256: vec![],
+            transform_handlers: vec![],
         }
     }
     pub fn manifest_for_task(
@@ -82,6 +85,38 @@ impl Package {
         manifest.guest_abi_version = 2;
         manifest.task_schema_sha256 = crate::task::schema_digest().to_vec();
         manifest
+    }
+    pub fn manifest_for_transform(
+        id: &str,
+        version: &str,
+        module: &[u8],
+        handlers: Vec<proto::TransformHandler>,
+    ) -> proto::Manifest {
+        let mut manifest = Self::manifest_for_task(id, version, module, vec![]);
+        manifest
+            .required_features
+            .push(TRANSFORM_HANDLERS_FEATURE.into());
+        manifest.transform_handlers = handlers;
+        manifest
+    }
+    /// Package declarations are not grants or proof that the guest implements the handler.
+    pub fn transform_handler(
+        &self,
+        input: &crate::task::Transform,
+    ) -> Result<&proto::TransformHandler> {
+        let handler = self
+            .manifest
+            .transform_handlers
+            .iter()
+            .find(|h| h.handler == input.handler)
+            .ok_or(Error::Invalid("unregistered transform handler"))?;
+        if handler.input_type != input.input_type || handler.output_type != input.output_type {
+            return Err(Error::Invalid("transform type mismatch"));
+        }
+        if input.input.len() > handler.max_input_bytes as usize {
+            return Err(Error::Limit);
+        }
+        Ok(handler)
     }
     pub fn build(manifest: proto::Manifest, module: &[u8]) -> Result<Self> {
         Self::from_parts(&manifest.encode_to_vec(), module)
@@ -118,7 +153,11 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || !manifest.required_features.is_empty()
+            || manifest.required_features.len() > 1
+            || manifest
+                .required_features
+                .iter()
+                .any(|f| f != TRANSFORM_HANDLERS_FEATURE)
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -127,6 +166,29 @@ impl Package {
                 && manifest.task_schema_sha256 != crate::task::schema_digest())
         {
             return Err(Error::UnsupportedVersion);
+        }
+        let registered = !manifest.required_features.is_empty();
+        if registered == manifest.transform_handlers.is_empty()
+            || (registered && manifest.guest_abi_version != 2)
+        {
+            return Err(Error::Invalid("transform registration feature"));
+        }
+        if manifest.transform_handlers.len() > MAX_TRANSFORM_HANDLERS {
+            return Err(Error::Limit);
+        }
+        let mut handlers = BTreeSet::new();
+        for handler in &manifest.transform_handlers {
+            identity(&handler.handler)?;
+            identity(&handler.input_type)?;
+            identity(&handler.output_type)?;
+            if !handlers.insert(&handler.handler) {
+                return Err(Error::Invalid("duplicate transform handler"));
+            }
+            if handler.max_input_bytes as usize > crate::task::MAX_VALUE_BYTES
+                || handler.max_output_bytes as usize > crate::task::MAX_VALUE_BYTES
+            {
+                return Err(Error::Limit);
+            }
         }
         identity(&manifest.package_id)?;
         if manifest.package_version.len() > 128

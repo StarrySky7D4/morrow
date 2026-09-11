@@ -43,7 +43,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 本轮通过：
 
-- 格式检查、Clippy -D warnings；运行库启用 packages 共 32 项测试，SDK 14 项回归测试。
+- 格式检查、Clippy -D warnings；运行库启用 packages 共 33 项测试，SDK 14 项回归测试。
 - 无效模块／导入／入口、禁止 start、初始内存超限、运行期内存增长／越界、死循环、宿主调用洪泛、缓冲区预检、取消和无效回复。
 - 实际 C／C++／Rust SDK Wasm 模块：无权限拒绝、授权提交、重复请求、跨连接拒绝、撤权与停止后拒绝，以及取消后的结果核对。
 - 三类首次提交后故障：取消、trap、fuel 耗尽；重开库均保留修订 2 和两条原子事件（初始创建与本次修改）。
@@ -60,3 +60,5 @@ pwsh -File tool/verify_plugin_runtime.ps1
 后续已增加 guest ABI v2 动态任务导入和有界完成结果，三语言各 8 项宿主输入任务通过，见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)。新 profile 使用 `run_task`／`submit_task`，旧 run 不接收任务字节；原有 ABI v1 示例继续回归。内容任务历史产物摘要见 [任务验证记录](../reports/plugin-task-contract-validation.md)，早期报告对应其记录的构建。
 
 任务契约 v2 新增纯转换 profile：固定输入和输出类型、64 KiB 数据上限、零内容调用，结果仅为插件数据。三语言真实转换、32 项 packages 测试及本次重建摘要见 [纯转换验证](../reports/plugin-transform-validation.md)。旧 task schema 包需重建；guest ABI v2 承载接口和主 Flutter 存储不变。
+
+后续单包处理器注册及其验证见 [处理器验证](../reports/plugin-handler-validation.md)。纯转换任务在 guest 执行前匹配包内处理器、类型与输入长度；输出超过声明上限也不交付。当前共 33 项 packages 测试，包含执行前零指令拒绝和执行后输出拦截。
