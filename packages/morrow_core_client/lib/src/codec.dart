@@ -106,3 +106,179 @@ class RenameCommand {
     );
   }
 }
+
+class ReadSummaryCommand {
+  ReadSummaryCommand({required this.requestId, required this.cardId}) {
+    _identity(requestId);
+    _identity(cardId);
+  }
+  final String requestId, cardId;
+  Uint8List encode() => _query(requestId, (root) => root.readSummary = cardId);
+}
+
+class QueryOperationCommand {
+  QueryOperationCommand({
+    required this.requestId,
+    required this.cardId,
+    required this.operationId,
+  }) {
+    _identity(requestId);
+    _identity(cardId);
+    _identity(operationId);
+  }
+  final String requestId, cardId, operationId;
+  Uint8List encode() => _query(requestId, (root) {
+    final query = root.initQueryOperation();
+    query.cardId = cardId;
+    query.operationId = operationId;
+  });
+}
+
+Uint8List _query(String id, void Function(RequestBuilder) fill) {
+  final message = MessageBuilder();
+  final root = message.initRoot(requestFactory);
+  root.protocolVersion = contract.protocolVersion;
+  root.runtimeDigest = Uint8List.fromList(contract.runtimeDigest);
+  root.contentDigest = Uint8List.fromList(contract.contentDigest);
+  root.operationId = id;
+  fill(root);
+  final bytes = message.serialize();
+  _frame(bytes);
+  return bytes;
+}
+
+class RuntimeReply {
+  RuntimeReply._({
+    required this.kind,
+    this.revision,
+    this.cardId,
+    this.typeId,
+    this.formatVersion,
+    this.title,
+    this.previewText,
+    this.failure,
+    this.operationId,
+    this.eventId,
+    this.contentSha256,
+    this.resultState,
+  });
+  final String kind;
+  final BigInt? revision;
+  final String? cardId,
+      typeId,
+      title,
+      previewText,
+      failure,
+      operationId,
+      eventId,
+      resultState;
+  final int? formatVersion;
+  final Uint8List? contentSha256;
+  static RuntimeReply decode(Uint8List bytes, {required String requestId}) {
+    _frame(bytes);
+    _identity(requestId);
+    final root = MessageReader.deserialize(
+      bytes,
+      const MessageReaderOptions(
+        traversalLimitInWords: 8192,
+        nestingLimit: 16,
+        maxSegments: 512,
+      ),
+    ).getRoot(responseFactory);
+    if (root.protocolVersion != contract.protocolVersion ||
+        !_sameBytes(root.runtimeDigest, contract.runtimeDigest) ||
+        !_sameBytes(root.contentDigest, contract.contentDigest))
+      throw const FormatException('Contract mismatch');
+    if (root.requestId != requestId)
+      throw const FormatException('Response correlation mismatch');
+    switch (root.which) {
+      case 1:
+        return _receipt(root.renamed, kind: 'renamed', operationId: requestId);
+      case 2:
+        final summary = root.summary;
+        if (summary == null ||
+            summary.protocolVersion != contract.protocolVersion)
+          throw const FormatException('Summary contract');
+        final id = summary.cardId ?? '',
+            type = summary.typeId ?? '',
+            title = summary.title ?? '',
+            preview = summary.previewText ?? '';
+        _identity(id);
+        _identity(type);
+        final revision = BigInt.from(summary.revision).toUnsigned(64);
+        if (revision == BigInt.zero ||
+            summary.formatVersion == 0 ||
+            utf8.encode(title).length > 16384 ||
+            utf8.encode(preview).length > 16384)
+          throw const FormatException('Summary limit');
+        return RuntimeReply._(
+          kind: 'summary',
+          cardId: id,
+          typeId: type,
+          formatVersion: summary.formatVersion,
+          revision: revision,
+          title: title,
+          previewText: preview,
+        );
+      case 3:
+        final failure = root.rejected;
+        if (failure == null) throw const FormatException('Unknown failure');
+        return RuntimeReply._(
+          kind: 'rejected',
+          failure: failure.name[0].toUpperCase() + failure.name.substring(1),
+        );
+      case 4:
+        final result = root.operationResult;
+        if (result == null)
+          throw const FormatException('Missing operation result');
+        final card = result.cardId ?? '', operation = result.operationId ?? '';
+        _identity(card);
+        _identity(operation);
+        if (result.which == 0)
+          return RuntimeReply._(
+            kind: 'operationResult',
+            cardId: card,
+            operationId: operation,
+            resultState: 'absentSnapshot',
+          );
+        if (result.which != 1)
+          throw const FormatException('Unknown operation state');
+        return _receipt(
+          result.locallyCommitted,
+          kind: 'operationResult',
+          operationId: operation,
+          cardId: card,
+        );
+      default:
+        throw const FormatException('Unsupported response');
+    }
+  }
+
+  static RuntimeReply _receipt(
+    CommitReceiptReader? receipt, {
+    required String kind,
+    required String operationId,
+    String? cardId,
+  }) {
+    if (receipt == null) throw const FormatException('Missing receipt');
+    final card = receipt.cardId ?? '', event = receipt.eventId ?? '';
+    _identity(card);
+    _identity(event);
+    final revision = BigInt.from(receipt.revision).toUnsigned(64),
+        digest = receipt.contentSha256;
+    if (receipt.operationId != operationId ||
+        (cardId != null && card != cardId) ||
+        revision == BigInt.zero ||
+        digest?.length != 32)
+      throw const FormatException('Receipt mismatch');
+    return RuntimeReply._(
+      kind: kind,
+      cardId: card,
+      operationId: operationId,
+      eventId: event,
+      revision: revision,
+      contentSha256: Uint8List.fromList(digest!),
+      resultState: kind == 'operationResult' ? 'locallyCommitted' : null,
+    );
+  }
+}

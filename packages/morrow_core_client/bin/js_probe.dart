@@ -66,6 +66,17 @@ Future<void> main() async {
     );
     if (readReply.kind != 'rejected' || readReply.failure != 'Denied')
       throw StateError('Read permission separation failed');
+    final query = QueryOperationCommand(
+      requestId: 'query-denied',
+      cardId: 'card',
+      operationId: 'js-edit',
+    );
+    final queryReply = RuntimeReply.decode(
+      (await _rename(query.encode().toJS).toDart).toDart,
+      requestId: query.requestId,
+    );
+    if (queryReply.failure != 'Denied')
+      throw StateError('Query authorization missing');
     _result =
         'PASS: ordinary Dart/JavaScript, exact UInt64, native vectors, OPFS commit and dedup.'
             .toJS;

@@ -34,6 +34,7 @@ pub struct Permit {
 pub enum GrantKind {
     Rename,
     ReadSummary,
+    QueryOperation,
 }
 struct GrantRecord {
     kind: GrantKind,
@@ -301,6 +302,39 @@ impl HostPolicy {
             false,
         )?;
         result?.ok_or(Error::NotFound)
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn query_operation(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        target: (&str, &str),
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Lookup> {
+        let (card_id, operation_id) = target;
+        identity(card_id)?;
+        identity(operation_id)?;
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::QueryOperation, card_id),
+            now,
+            false,
+        )?;
+        let result = store.lookup_for_card(card_id, operation_id);
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::QueryOperation, card_id),
+            now,
+            false,
+        )?;
+        result
     }
     pub fn revoke(&mut self, grant: Grant) -> Result<()> {
         self.record_mut(grant.instance)?

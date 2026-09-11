@@ -91,6 +91,7 @@ impl HostRuntime {
         let kind = match command {
             Command::Rename(_) => GrantKind::Rename,
             Command::ReadSummary { .. } => GrantKind::ReadSummary,
+            Command::QueryOperation { .. } => GrantKind::QueryOperation,
         };
         let result = (|| {
             self.policy.phase(connection.instance)?;
@@ -107,6 +108,24 @@ impl HostRuntime {
                         .commit_rename(permit, &mut self.store, &mut clock)
                         .map(Outcome::Renamed)
                 }
+                Command::QueryOperation {
+                    card_id,
+                    operation_id,
+                    ..
+                } => self
+                    .policy
+                    .query_operation(
+                        connection.instance,
+                        grant,
+                        &self.store,
+                        (card_id, operation_id),
+                        &mut clock,
+                    )
+                    .map(|result| Outcome::OperationResult {
+                        card_id: card_id.clone(),
+                        operation_id: operation_id.clone(),
+                        result,
+                    }),
                 Command::ReadSummary { card_id, .. } => self
                     .policy
                     .read_summary(connection.instance, grant, &self.store, card_id, &mut clock)

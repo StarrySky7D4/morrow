@@ -115,3 +115,6 @@ pub extern "C" fn morrow_buffer_live() -> u32 {
         .lock()
         .map_or(255, |registry| registry.buffers.len() as u32)
 }
+
+#[cfg(not(target_arch = "wasm32"))]
+pub mod native;

@@ -58,6 +58,11 @@ final class RequestReader extends StructReader {
   );
 
   String? get readSummary => getTextField(1);
+
+  QueryOperationReader? get queryOperation => getStructFieldWith(
+    1,
+    (r) => QueryOperationReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -99,6 +104,13 @@ final class RequestBuilder extends StructBuilder {
     setUint16Field(2, 2);
     setTextField(1, v);
   }
+
+  QueryOperationBuilder initQueryOperation() {
+    setUint16Field(2, 3);
+    return initStructFieldWith(1, (r) => QueryOperationBuilder(r), 0, 2);
+  }
+
+  bool hasQueryOperation() => hasPointerField(1);
 }
 
 final class _RequestFactory
@@ -126,7 +138,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   shortName: 'Request',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 3,
+  discriminantCount: 4,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -186,6 +198,15 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'queryOperation',
+      codeOrder: 7,
+      discriminantValue: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xb21162be27e7f2b3),
       ),
     ),
   ],
@@ -448,6 +469,11 @@ final class ResponseReader extends StructReader {
   );
 
   Failure? get rejected => failureFromUint16(getUint16Field(4));
+
+  OperationResultReader? get operationResult => getStructFieldWith(
+    3,
+    (r) => OperationResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -496,6 +522,13 @@ final class ResponseBuilder extends StructBuilder {
     setUint16Field(2, 3);
     setUint16Field(4, failureToUint16(v));
   }
+
+  OperationResultBuilder initOperationResult() {
+    setUint16Field(2, 4);
+    return initStructFieldWith(3, (r) => OperationResultBuilder(r), 1, 3);
+  }
+
+  bool hasOperationResult() => hasPointerField(3);
 }
 
 final class _ResponseFactory
@@ -523,7 +556,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   shortName: 'Response',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 4,
+  discriminantCount: 5,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -592,6 +625,15 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 2,
         type: EnumRefTypeSchemaInfo(0xeb796af5be051862),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationResult',
+      codeOrder: 8,
+      discriminantValue: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xa9229664ea36f23c),
       ),
     ),
   ],
@@ -714,3 +756,190 @@ const StructSchemaInfo commitReceiptSchema = StructSchemaInfo(
 );
 
 final commitReceiptFactory = _CommitReceiptFactory();
+
+final class QueryOperationReader extends StructReader {
+  QueryOperationReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = queryOperationSchema;
+
+  String? get cardId => getTextField(0);
+
+  String? get operationId => getTextField(1);
+}
+
+final class QueryOperationBuilder extends StructBuilder {
+  QueryOperationBuilder(super.raw);
+
+  @override
+  QueryOperationReader asReader() => QueryOperationReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(1, v);
+  }
+}
+
+final class _QueryOperationFactory
+    extends StructFactory<QueryOperationReader, QueryOperationBuilder> {
+  @override
+  StructSchemaInfo get schema => queryOperationSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  QueryOperationReader fromRawReader(RawStructReader r) =>
+      QueryOperationReader(r);
+  @override
+  QueryOperationReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => QueryOperationReader(r, capabilities: capabilities);
+  @override
+  QueryOperationBuilder fromRawBuilder(RawStructBuilder r) =>
+      QueryOperationBuilder(r);
+}
+
+const StructSchemaInfo queryOperationSchema = StructSchemaInfo(
+  id: 0xb21162be27e7f2b3,
+  displayName: 'runtime.capnp:QueryOperation',
+  shortName: 'QueryOperation',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final queryOperationFactory = _QueryOperationFactory();
+
+final class OperationResultReader extends StructReader {
+  OperationResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = operationResultSchema;
+
+  int get which => getUint16Field(0);
+
+  String? get cardId => getTextField(0);
+
+  String? get operationId => getTextField(1);
+
+  CommitReceiptReader? get locallyCommitted => getStructFieldWith(
+    2,
+    (r) => CommitReceiptReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class OperationResultBuilder extends StructBuilder {
+  OperationResultBuilder(super.raw);
+
+  @override
+  OperationResultReader asReader() => OperationResultReader(rawToReader());
+
+  void _setWhich(int v) => setUint16Field(0, v);
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(1, v);
+  }
+
+  void selectAbsentSnapshot() {
+    setUint16Field(0, 0);
+  }
+
+  CommitReceiptBuilder initLocallyCommitted() {
+    setUint16Field(0, 1);
+    return initStructFieldWith(2, (r) => CommitReceiptBuilder(r), 1, 4);
+  }
+
+  bool hasLocallyCommitted() => hasPointerField(2);
+}
+
+final class _OperationResultFactory
+    extends StructFactory<OperationResultReader, OperationResultBuilder> {
+  @override
+  StructSchemaInfo get schema => operationResultSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  OperationResultReader fromRawReader(RawStructReader r) =>
+      OperationResultReader(r);
+  @override
+  OperationResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OperationResultReader(r, capabilities: capabilities);
+  @override
+  OperationResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      OperationResultBuilder(r);
+}
+
+const StructSchemaInfo operationResultSchema = StructSchemaInfo(
+  id: 0xa9229664ea36f23c,
+  displayName: 'runtime.capnp:OperationResult',
+  shortName: 'OperationResult',
+  dataWords: 1,
+  pointerWords: 3,
+  discriminantCount: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'absentSnapshot',
+      codeOrder: 2,
+      discriminantValue: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Void'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'locallyCommitted',
+      codeOrder: 3,
+      discriminantValue: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0xaf56e78418a30c17),
+      ),
+    ),
+  ],
+);
+
+final operationResultFactory = _OperationResultFactory();

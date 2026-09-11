@@ -217,6 +217,39 @@ impl Store {
             None => Ok(Lookup::Absent),
         }
     }
+    /// Scoped before payload access: a receipt for another card is indistinguishable from absence.
+    pub fn lookup_for_card(&self, card_id: &str, operation_id: &str) -> Result<Lookup> {
+        identity(card_id)?;
+        identity(operation_id)?;
+        let mut statement = sql(self
+            .connection
+            .prepare("SELECT payload FROM operations WHERE id=?1 AND card_id=?2"))?;
+        let value = sql(statement
+            .query_row(params![operation_id, card_id], |row| {
+                let bytes = row.get_ref(0)?.as_blob()?;
+                Ok(
+                    if bytes.len()
+                        <= transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128
+                    {
+                        Some(bytes.to_vec())
+                    } else {
+                        None
+                    },
+                )
+            })
+            .optional())?;
+        match value {
+            None => Ok(Lookup::Absent),
+            Some(None) => Err(Error::Limit),
+            Some(Some(bytes)) => {
+                let (_, receipt) = transaction::decode_commit(&bytes)?;
+                if receipt.card_id != card_id || receipt.operation_id != operation_id {
+                    return Err(Error::Integrity);
+                }
+                Ok(Lookup::Committed(receipt))
+            }
+        }
+    }
     /// Host-local creation only. Not a public plugin command or migration entry point.
     /// Every attachment must already exist as a verified staged payload.
     pub fn create_local(&mut self, operation_id: &str, card: &CardRecord) -> Result<Receipt> {

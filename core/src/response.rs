@@ -9,6 +9,11 @@ pub enum Outcome {
     Renamed(Receipt),
     Summary(CardSummary),
     Rejected(Failure),
+    OperationResult {
+        card_id: String,
+        operation_id: String,
+        result: crate::transaction::Lookup,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Response {
@@ -35,6 +40,20 @@ impl Response {
                 }
                 if v.preview_text.len() > 16 * 1024 {
                     return Err(Error::Limit);
+                }
+            }
+            Outcome::OperationResult {
+                card_id,
+                operation_id,
+                result,
+            } => {
+                identity(card_id)?;
+                identity(operation_id)?;
+                if let crate::transaction::Lookup::Committed(v) = result {
+                    identity(&v.event_id)?;
+                    if v.card_id != *card_id || v.operation_id != *operation_id || v.revision == 0 {
+                        return Err(Error::Integrity);
+                    }
                 }
             }
             Outcome::Rejected(_) => {}
@@ -67,6 +86,26 @@ impl Response {
                 out.set_revision(v.revision);
                 out.set_title(v.title.as_str());
                 out.set_preview_text(v.preview_text.as_str());
+            }
+            Outcome::OperationResult {
+                card_id,
+                operation_id,
+                result,
+            } => {
+                let mut out = root.init_operation_result();
+                out.set_card_id(card_id.as_str());
+                out.set_operation_id(operation_id.as_str());
+                match result {
+                    crate::transaction::Lookup::Absent => out.set_absent_snapshot(()),
+                    crate::transaction::Lookup::Committed(v) => {
+                        let mut receipt = out.init_locally_committed();
+                        receipt.set_operation_id(v.operation_id.as_str());
+                        receipt.set_card_id(v.card_id.as_str());
+                        receipt.set_revision(v.revision);
+                        receipt.set_content_sha256(&v.content_sha256);
+                        receipt.set_event_id(v.event_id.as_str());
+                    }
+                }
             }
             Outcome::Rejected(v) => root.set_rejected(*v),
         }
@@ -114,6 +153,36 @@ impl Response {
             }
             runtime_capnp::response::Rejected(value) => {
                 Outcome::Rejected(value.map_err(|_| Error::Invalid("failure code"))?)
+            }
+            runtime_capnp::response::OperationResult(value) => {
+                let value = value.map_err(|_| Error::Invalid("operation result"))?;
+                let result = match value
+                    .which()
+                    .map_err(|_| Error::Invalid("operation state"))?
+                {
+                    runtime_capnp::operation_result::AbsentSnapshot(()) => {
+                        crate::transaction::Lookup::Absent
+                    }
+                    runtime_capnp::operation_result::LocallyCommitted(v) => {
+                        let v = v.map_err(|_| Error::Invalid("receipt"))?;
+                        crate::transaction::Lookup::Committed(Receipt {
+                            card_id: read_text(v.get_card_id())?,
+                            operation_id: read_text(v.get_operation_id())?,
+                            revision: v.get_revision(),
+                            event_id: read_text(v.get_event_id())?,
+                            content_sha256: v
+                                .get_content_sha256()
+                                .map_err(|_| Error::Integrity)?
+                                .try_into()
+                                .map_err(|_| Error::Integrity)?,
+                        })
+                    }
+                };
+                Outcome::OperationResult {
+                    card_id: read_text(value.get_card_id())?,
+                    operation_id: read_text(value.get_operation_id())?,
+                    result,
+                }
             }
             _ => return Err(Error::Invalid("response kind")),
         };

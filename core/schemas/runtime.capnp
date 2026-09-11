@@ -9,6 +9,7 @@ struct Request {
     unsupported @2 :Void;
     renameCard @3 :RenameCard;
     readSummary @6 :Text;
+    queryOperation @7 :QueryOperation;
   }
 }
 struct RenameCard {
@@ -38,6 +39,7 @@ struct Response {
     renamed @5 :CommitReceipt;
     summary @6 :CardSummary;
     rejected @7 :Failure;
+    operationResult @8 :OperationResult;
   }
 }
 struct CommitReceipt {
@@ -57,4 +59,18 @@ enum Failure {
   storage @6;
   commitUnknown @7;
   limit @8;
+}
+
+struct QueryOperation {
+  cardId @0 :Text;
+  operationId @1 :Text;
+}
+struct OperationResult {
+  cardId @0 :Text;
+  operationId @1 :Text;
+  union {
+    # Absence is only the current scoped snapshot, never proof of no in-flight commit.
+    absentSnapshot @2 :Void;
+    locallyCommitted @3 :CommitReceipt;
+  }
 }

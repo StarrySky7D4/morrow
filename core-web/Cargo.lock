@@ -544,7 +544,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "morrow-core"
-version = "0.1.9-test.7"
+version = "0.1.9-test.8"
 dependencies = [
  "capnp",
  "capnpc",
@@ -561,7 +561,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-web-core"
-version = "0.1.9-test.7"
+version = "0.1.9-test.8"
 dependencies = [
  "js-sys",
  "morrow-core",

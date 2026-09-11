@@ -23,6 +23,9 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
    case 'read':result=store.card_title('card');break;
    case 'check':store.check();result='ok';break;
    case 'second-connection':{let denied=false;try{new core.BrowserStore('another',true,10);}catch(error){if(!String(error).includes('already open'))throw error;denied=true;}if(!denied)throw Error('Second store accepted');store.check();result='single-owner';break;}
+   case 'grant-query':store.grant_query('card',60000);result='query-granted';break;
+   case 'revoke-query':store.revoke_query('card');result='query-revoked';break;
+   case 'expire-query':store.grant_query('card',1);await new Promise(r=>setTimeout(r,30));result='query-expired';break;
    case 'grant-read':store.grant_read('card',60000);result='read-granted';break;
    case 'revoke-read':store.revoke_read('card');result='read-revoked';break;
    case 'expire-read':store.grant_read('card',1);await new Promise(r=>setTimeout(r,30));result='read-expired';break;

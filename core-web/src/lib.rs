@@ -33,7 +33,7 @@ pub async fn install_opfs() -> Result<(), JsValue> {
     use sqlite_wasm_vfs::sahpool::{OpfsSAHPoolCfgBuilder, install};
     let config = OpfsSAHPoolCfgBuilder::new()
         .vfs_name("morrow-opfs")
-        .directory("morrow-test7")
+        .directory("morrow-test8")
         .initial_capacity(64)
         .clear_on_init(false)
         .build();
@@ -222,6 +222,23 @@ impl BrowserStore {
             .revoke(&mut self.connection, GrantKind::ReadSummary, id)
             .map_err(error)
     }
+    pub fn grant_query(&mut self, id: &str, ttl: u32) -> Result<(), JsValue> {
+        let now = clock();
+        self.runtime
+            .grant(
+                &mut self.connection,
+                GrantKind::QueryOperation,
+                id,
+                now.saturating_add(ttl as u64),
+                now,
+            )
+            .map_err(error)
+    }
+    pub fn revoke_query(&mut self, id: &str) -> Result<(), JsValue> {
+        self.runtime
+            .revoke(&mut self.connection, GrantKind::QueryOperation, id)
+            .map_err(error)
+    }
     pub fn dispatch(&mut self, bytes: &[u8]) -> Result<Vec<u8>, JsValue> {
         self.runtime
             .dispatch(&self.connection, bytes, clock)
@@ -379,6 +396,7 @@ impl DecodedResponse {
             Outcome::Renamed(_) => "renamed",
             Outcome::Summary(_) => "summary",
             Outcome::Rejected(_) => "rejected",
+            Outcome::OperationResult { .. } => "operationResult",
         }
         .into()
     }
@@ -387,6 +405,10 @@ impl DecodedResponse {
         match &self.response.outcome {
             Outcome::Renamed(v) => Some(v.revision),
             Outcome::Summary(v) => Some(v.revision),
+            Outcome::OperationResult {
+                result: Lookup::Committed(v),
+                ..
+            } => Some(v.revision),
             _ => None,
         }
     }
@@ -394,6 +416,36 @@ impl DecodedResponse {
     pub fn title(&self) -> Option<String> {
         match &self.response.outcome {
             Outcome::Summary(v) => Some(v.title.clone()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn result_state(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::OperationResult { result, .. } => Some(
+                match result {
+                    Lookup::Absent => "absentSnapshot",
+                    Lookup::Committed(_) => "locallyCommitted",
+                }
+                .into(),
+            ),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn card_id(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::OperationResult { card_id, .. } => Some(card_id.clone()),
+            Outcome::Summary(v) => Some(v.id.clone()),
+            Outcome::Renamed(v) => Some(v.card_id.clone()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn operation_id(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::OperationResult { operation_id, .. } => Some(operation_id.clone()),
+            Outcome::Renamed(v) => Some(v.operation_id.clone()),
             _ => None,
         }
     }
@@ -410,4 +462,19 @@ pub fn response_decode(bytes: &[u8]) -> Result<DecodedResponse, JsValue> {
     Ok(DecodedResponse {
         response: Response::decode(bytes).map_err(error)?,
     })
+}
+
+#[wasm_bindgen]
+pub fn query_encode(
+    request_id: &str,
+    card_id: &str,
+    operation_id: &str,
+) -> Result<Vec<u8>, JsValue> {
+    morrow_core::runtime::Command::QueryOperation {
+        request_id: request_id.into(),
+        card_id: card_id.into(),
+        operation_id: operation_id.into(),
+    }
+    .encode()
+    .map_err(error)
 }

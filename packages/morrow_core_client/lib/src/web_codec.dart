@@ -97,6 +97,9 @@ extension type _Reply._(JSObject _) implements JSObject {
   external JSBigInt? get revision;
   external JSString? get title;
   external JSString? get failure;
+  external JSString? get result_state;
+  external JSString? get operation_id;
+  external JSString? get card_id;
   external void free();
 }
 
@@ -111,10 +114,18 @@ class ReadSummaryCommand {
 }
 
 class RuntimeReply {
-  RuntimeReply._(this.kind, this.revision, this.title, this.failure);
+  RuntimeReply._(
+    this.kind,
+    this.revision,
+    this.title,
+    this.failure,
+    this.resultState,
+    this.operationId,
+    this.cardId,
+  );
   final String kind;
   final BigInt? revision;
-  final String? title, failure;
+  final String? title, failure, resultState, operationId, cardId;
   static RuntimeReply decode(Uint8List bytes, {required String requestId}) {
     if (bytes.isEmpty || bytes.length > maxMessageBytes)
       throw const FormatException('Response length');
@@ -129,9 +140,35 @@ class RuntimeReply {
             : BigInt.parse(_string(reply.revision!).toDart),
         reply.title?.toDart,
         reply.failure?.toDart,
+        reply.result_state?.toDart,
+        reply.operation_id?.toDart,
+        reply.card_id?.toDart,
       );
     } finally {
       reply.free();
     }
   }
+}
+
+@JS('morrowCodec.query_encode')
+external JSUint8Array _queryEncode(
+  JSString requestId,
+  JSString cardId,
+  JSString operationId,
+);
+
+class QueryOperationCommand {
+  QueryOperationCommand({
+    required this.requestId,
+    required this.cardId,
+    required this.operationId,
+  }) {
+    _identity(requestId);
+    _identity(cardId);
+    _identity(operationId);
+  }
+  final String requestId, cardId, operationId;
+  Uint8List encode() => Uint8List.fromList(
+    _queryEncode(requestId.toJS, cardId.toJS, operationId.toJS).toDart,
+  );
 }

@@ -4,7 +4,7 @@ use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-pub const PROTOCOL_VERSION: u16 = 3;
+pub const PROTOCOL_VERSION: u16 = 4;
 pub fn schema_digest(source: &[u8]) -> [u8; 32] {
     use sha2::{Digest, Sha256};
     // Git checkout line endings do not change the contract identity.
@@ -57,19 +57,29 @@ impl RenameRequest {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
     Rename(RenameRequest),
-    ReadSummary { request_id: String, card_id: String },
+    ReadSummary {
+        request_id: String,
+        card_id: String,
+    },
+    QueryOperation {
+        request_id: String,
+        card_id: String,
+        operation_id: String,
+    },
 }
 impl Command {
     pub fn request_id(&self) -> &str {
         match self {
             Self::Rename(v) => &v.operation_id,
-            Self::ReadSummary { request_id, .. } => request_id,
+            Self::ReadSummary { request_id, .. } | Self::QueryOperation { request_id, .. } => {
+                request_id
+            }
         }
     }
     pub fn card_id(&self) -> &str {
         match self {
             Self::Rename(v) => &v.card_id,
-            Self::ReadSummary { card_id, .. } => card_id,
+            Self::ReadSummary { card_id, .. } | Self::QueryOperation { card_id, .. } => card_id,
         }
     }
     pub fn validate(&self) -> Result<()> {
@@ -77,6 +87,7 @@ impl Command {
         identity(self.card_id())?;
         match self {
             Self::Rename(v) => v.validate(),
+            Self::QueryOperation { operation_id, .. } => identity(operation_id),
             _ => Ok(()),
         }
     }
@@ -96,6 +107,15 @@ impl Command {
                 rename.set_title(value.title.as_str());
             }
             Self::ReadSummary { card_id, .. } => root.set_read_summary(card_id.as_str()),
+            Self::QueryOperation {
+                card_id,
+                operation_id,
+                ..
+            } => {
+                let mut out = root.init_query_operation();
+                out.set_card_id(card_id.as_str());
+                out.set_operation_id(operation_id.as_str());
+            }
         }
         bounded_message(&message)
     }
@@ -124,6 +144,14 @@ impl Command {
                 request_id,
                 card_id: read_text(value)?,
             },
+            runtime_capnp::request::QueryOperation(value) => {
+                let value = value.map_err(|_| Error::Invalid("query operation"))?;
+                Self::QueryOperation {
+                    request_id,
+                    card_id: read_text(value.get_card_id())?,
+                    operation_id: read_text(value.get_operation_id())?,
+                }
+            }
             _ => return Err(Error::Invalid("operation")),
         };
         value.validate()?;

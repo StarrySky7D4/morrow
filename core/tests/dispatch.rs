@@ -237,3 +237,82 @@ fn response_roundtrip_is_bounded_and_keeps_full_uint64() {
     }
     assert_eq!(changed.encode(), Err(Error::Limit));
 }
+
+fn query(card: &str, operation: &str) -> Vec<u8> {
+    Command::QueryOperation {
+        request_id: "query-result".into(),
+        card_id: card.into(),
+        operation_id: operation.into(),
+    }
+    .encode()
+    .unwrap()
+}
+#[test]
+fn operation_query_is_scoped_and_separately_authorized() {
+    use morrow_core::transaction::Lookup;
+    let (_dir, mut host, mut connection) = setup();
+    host.grant(&mut connection, GrantKind::ReadSummary, "card", 100, 0)
+        .unwrap();
+    assert_eq!(
+        run(&mut host, &connection, &query("card", "seed"), 1).outcome,
+        Outcome::Rejected(Failure::Denied)
+    );
+    host.grant(&mut connection, GrantKind::QueryOperation, "card", 100, 1)
+        .unwrap();
+    let result = run(&mut host, &connection, &query("card", "seed"), 2);
+    assert!(matches!(
+        result.outcome,
+        Outcome::OperationResult {
+            result: Lookup::Committed(_),
+            ..
+        }
+    ));
+    host.store_local_mut()
+        .create_local(
+            "other-op",
+            &CardRecord::new("other", "type", 1, "secret", vec![]).unwrap(),
+        )
+        .unwrap();
+    let wrong_card = run(&mut host, &connection, &query("card", "other-op"), 2);
+    let absent = run(&mut host, &connection, &query("card", "missing"), 2);
+    assert!(matches!(
+        wrong_card.outcome,
+        Outcome::OperationResult {
+            result: Lookup::Absent,
+            ..
+        }
+    ));
+    assert!(matches!(
+        absent.outcome,
+        Outcome::OperationResult {
+            result: Lookup::Absent,
+            ..
+        }
+    ));
+    assert_eq!(
+        run(&mut host, &connection, &query("other", "other-op"), 2).outcome,
+        Outcome::Rejected(Failure::Denied)
+    );
+    host.revoke(&mut connection, GrantKind::QueryOperation, "card")
+        .unwrap();
+    assert_eq!(
+        run(&mut host, &connection, &query("card", "seed"), 3).outcome,
+        Outcome::Rejected(Failure::Denied)
+    );
+}
+#[test]
+fn query_expiry_during_lookup_does_not_deliver_a_receipt() {
+    let (_dir, mut host, mut connection) = setup();
+    host.grant(&mut connection, GrantKind::QueryOperation, "card", 10, 0)
+        .unwrap();
+    let mut ticks = [9, 10].into_iter();
+    let bytes = host
+        .dispatch(&connection, &query("card", "seed"), || {
+            ticks.next().unwrap()
+        })
+        .unwrap();
+    assert_eq!(
+        Response::decode(&bytes).unwrap().outcome,
+        Outcome::Rejected(Failure::Denied)
+    );
+}

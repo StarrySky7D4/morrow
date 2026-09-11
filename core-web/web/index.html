@@ -44,6 +44,12 @@ try{
  await call(worker,'grant-read');if(await call(worker,query())!=='普通 JS 已提交 🧭')throw Error('Authorized summary mismatch');
  await call(worker,'revoke-read');readDenied=false;try{await call(worker,query());}catch(error){if(!String(error).includes('Denied'))throw error;readDenied=true;}if(!readDenied)throw Error('Revoked read accepted');
  await call(worker,'expire-read');readDenied=false;try{await call(worker,query());}catch(error){if(!String(error).includes('Denied'))throw error;readDenied=true;}if(!readDenied)throw Error('Expired read accepted');
+ async function operationQuery(operation){const requestId='query-operation';const bytes=await call(worker,core.query_encode(requestId,'card',operation).buffer,true);const reply=core.response_decode(new Uint8Array(bytes));try{if(reply.request_id!==requestId)throw Error('Query correlation');return {kind:reply.kind,state:reply.result_state,revision:reply.revision,failure:reply.failure};}finally{reply.free();}}
+ if((await operationQuery('js-edit')).failure!=='Denied')throw Error('Query lacked independent permission');
+ await call(worker,'grant-query');const found=await operationQuery('js-edit');if(found.state!=='locallyCommitted'||found.revision!==2n)throw Error('Lost commit result');
+ if((await operationQuery('missing')).state!=='absentSnapshot')throw Error('Missing query overclaimed');
+ await call(worker,'revoke-query');if((await operationQuery('js-edit')).failure!=='Denied')throw Error('Revoked query leaked');
+ await call(worker,'expire-query');if((await operationQuery('js-edit')).failure!=='Denied')throw Error('Expired query leaked');
  await call(worker,'revoke');let denied=false;try{await call(worker,core.rename_encode('denied','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('Denied'))throw error;denied=true;}if(!denied)throw Error('Revoked write accepted');
  await call(worker,'expiry');denied=false;try{await call(worker,core.rename_encode('expired','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('Denied'))throw error;denied=true;}if(!denied)throw Error('Expired write accepted');
  await call(worker,'attachments');await call(worker,'check');
@@ -113,7 +119,7 @@ try{
   if(await call(worker,'gc-run')!==remaining||await call(worker,'gc-run')!==0)throw Error('GC recovery');
   await call(worker,'check');worker.terminate();await delay(100);
  }
- globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 28 Worker termination boundaries (7 rename, 4 staging, 14 attachment changes, 3 GC), capability-separated summary reads and binary responses.';
+ globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 28 Worker termination boundaries (7 rename, 4 staging, 14 attachment changes, 3 GC), capability-separated summary reads, scoped operation queries and binary responses.';
  }
 }catch(error){globalThis.coreProbeResult='FAIL at '+globalThis.coreProbePhase+': '+error;}
 finally{worker?.terminate();}
