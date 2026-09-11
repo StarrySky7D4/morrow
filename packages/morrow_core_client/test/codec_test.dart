@@ -73,7 +73,7 @@ void main() {
     );
   });
   test('Rust generated vectors and multi-segment data decode in Dart', () {
-    final root = Directory('../../build/core-test.6/vectors');
+    final root = Directory('../../build/core-test.7/vectors');
     for (final pair in [
       ('one', BigInt.one),
       ('above-js', (BigInt.one << 53) + BigInt.one),

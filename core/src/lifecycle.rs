@@ -30,7 +30,13 @@ pub struct Permit {
     instance: Instance,
     serial: u64,
 }
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum GrantKind {
+    Rename,
+    ReadSummary,
+}
 struct GrantRecord {
+    kind: GrantKind,
     card_id: String,
     expires_at: u64,
 }
@@ -125,6 +131,16 @@ impl HostPolicy {
         expires_at: u64,
         now: u64,
     ) -> Result<Grant> {
+        self.grant(instance, GrantKind::Rename, card_id, expires_at, now)
+    }
+    pub fn grant(
+        &mut self,
+        instance: Instance,
+        kind: GrantKind,
+        card_id: &str,
+        expires_at: u64,
+        now: u64,
+    ) -> Result<Grant> {
         self.tick(now)?;
         identity(card_id)?;
         let record = self.record(instance)?;
@@ -138,6 +154,7 @@ impl HostPolicy {
         self.record_mut(instance)?.grants.insert(
             serial,
             GrantRecord {
+                kind,
                 card_id: card_id.into(),
                 expires_at,
             },
@@ -152,6 +169,23 @@ impl HostPolicy {
         now: u64,
         completing: bool,
     ) -> Result<()> {
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::Rename, &request.card_id),
+            now,
+            completing,
+        )
+    }
+    fn authorize_scope(
+        &self,
+        instance: Instance,
+        grant: Grant,
+        target: (GrantKind, &str),
+        now: u64,
+        completing: bool,
+    ) -> Result<()> {
+        let (kind, card_id) = target;
         if grant.instance != instance {
             return Err(Error::Invalid("grant owner"));
         }
@@ -165,7 +199,7 @@ impl HostPolicy {
             .grants
             .get(&grant.serial)
             .ok_or(Error::Invalid("revoked grant"))?;
-        if scope.expires_at <= now || scope.card_id != request.card_id {
+        if scope.expires_at <= now || scope.card_id != card_id || scope.kind != kind {
             return Err(Error::Invalid("grant scope or expiry"));
         }
         Ok(())
@@ -232,6 +266,41 @@ impl HostPolicy {
             self.expire_drains(now)?;
             self.authorize(permit.instance, task.grant, &task.request, now, true)
         })
+    }
+    /// Read permission is checked before lookup and again before releasing the projection.
+    /// Caller holds the trusted host exclusively; clock is host-owned, never plugin code.
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn read_summary(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        card_id: &str,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::content::CardSummary> {
+        identity(card_id)?;
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::ReadSummary, card_id),
+            now,
+            false,
+        )?;
+        let result = store
+            .card(card_id)
+            .map(|card| card.map(|value| value.summary()));
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::ReadSummary, card_id),
+            now,
+            false,
+        )?;
+        result?.ok_or(Error::NotFound)
     }
     pub fn revoke(&mut self, grant: Grant) -> Result<()> {
         self.record_mut(grant.instance)?

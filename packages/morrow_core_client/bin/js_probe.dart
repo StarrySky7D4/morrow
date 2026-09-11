@@ -3,11 +3,9 @@ import 'dart:typed_data';
 import 'package:morrow_core_client/web.dart';
 
 @JS('morrowStoreRename')
-external JSPromise<JSBigInt> _rename(JSUint8Array input);
+external JSPromise<JSUint8Array> _rename(JSUint8Array input);
 @JS('morrowFixture')
 external JSPromise<JSUint8Array> _fixture(JSString name);
-@JS('String')
-external JSString _string(JSAny value);
 @JS('jsCodecProbeResult')
 external set _result(JSString value);
 Future<void> main() async {
@@ -49,12 +47,25 @@ Future<void> main() async {
       title: '普通 JS 已提交 🧭',
     );
     for (var attempt = 0; attempt < 2; attempt++) {
-      final revision = BigInt.parse(
-        _string(await _rename(request.encode().toJS).toDart).toDart,
-      );
-      if (revision != BigInt.two)
+      final bytes = (await _rename(request.encode().toJS).toDart).toDart;
+      final reply = RuntimeReply.decode(bytes, requestId: request.operationId);
+      if (reply.kind != 'renamed' || reply.revision != BigInt.two)
         throw StateError('Persistent duplicate result mismatch');
+      var mismatch = false;
+      try {
+        RuntimeReply.decode(bytes, requestId: 'another-request');
+      } catch (_) {
+        mismatch = true;
+      }
+      if (!mismatch) throw StateError('Response correlation accepted');
     }
+    final read = ReadSummaryCommand(requestId: 'read-denied', cardId: 'card');
+    final readReply = RuntimeReply.decode(
+      (await _rename(read.encode().toJS).toDart).toDart,
+      requestId: read.requestId,
+    );
+    if (readReply.kind != 'rejected' || readReply.failure != 'Denied')
+      throw StateError('Read permission separation failed');
     _result =
         'PASS: ordinary Dart/JavaScript, exact UInt64, native vectors, OPFS commit and dedup.'
             .toJS;

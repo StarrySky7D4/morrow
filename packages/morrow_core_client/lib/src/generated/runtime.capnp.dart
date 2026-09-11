@@ -4,6 +4,39 @@
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 
+enum Failure {
+  denied,
+  notFound,
+  revisionConflict,
+  operationConflict,
+  capacity,
+  busy,
+  storage,
+  commitUnknown,
+  limit,
+}
+
+const EnumSchemaInfo failureSchema = EnumSchemaInfo(
+  id: 0xeb796af5be051862,
+  displayName: 'runtime.capnp:Failure',
+  shortName: 'Failure',
+  enumerants: [
+    EnumerantSchemaInfo(name: 'denied', codeOrder: 0, ordinal: 0),
+    EnumerantSchemaInfo(name: 'notFound', codeOrder: 1, ordinal: 1),
+    EnumerantSchemaInfo(name: 'revisionConflict', codeOrder: 2, ordinal: 2),
+    EnumerantSchemaInfo(name: 'operationConflict', codeOrder: 3, ordinal: 3),
+    EnumerantSchemaInfo(name: 'capacity', codeOrder: 4, ordinal: 4),
+    EnumerantSchemaInfo(name: 'busy', codeOrder: 5, ordinal: 5),
+    EnumerantSchemaInfo(name: 'storage', codeOrder: 6, ordinal: 6),
+    EnumerantSchemaInfo(name: 'commitUnknown', codeOrder: 7, ordinal: 7),
+    EnumerantSchemaInfo(name: 'limit', codeOrder: 8, ordinal: 8),
+  ],
+);
+
+Failure? failureFromUint16(int v) =>
+    v < Failure.values.length ? Failure.values[v] : null;
+int failureToUint16(Failure v) => v.index;
+
 final class RequestReader extends StructReader {
   RequestReader(super.raw, {super.capabilities});
 
@@ -23,6 +56,8 @@ final class RequestReader extends StructReader {
     1,
     (r) => RenameCardReader(r, capabilities: capabilityTable),
   );
+
+  String? get readSummary => getTextField(1);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -59,6 +94,11 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasRenameCard() => hasPointerField(1);
+
+  set readSummary(String? v) {
+    setUint16Field(2, 2);
+    setTextField(1, v);
+  }
 }
 
 final class _RequestFactory
@@ -86,7 +126,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   shortName: 'Request',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 2,
+  discriminantCount: 3,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -137,6 +177,15 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: StructRefTypeSchemaInfo(0xf8c657215ee8cab5),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'readSummary',
+      codeOrder: 6,
+      discriminantValue: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
       ),
     ),
   ],
@@ -372,3 +421,296 @@ const StructSchemaInfo cardSummarySchema = StructSchemaInfo(
 );
 
 final cardSummaryFactory = _CardSummaryFactory();
+
+final class ResponseReader extends StructReader {
+  ResponseReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = responseSchema;
+
+  int get which => getUint16Field(2);
+
+  int get protocolVersion => getUint16Field(0);
+
+  String? get requestId => getTextField(0);
+
+  Uint8List? get runtimeDigest => getDataField(1);
+
+  Uint8List? get contentDigest => getDataField(2);
+
+  CommitReceiptReader? get renamed => getStructFieldWith(
+    3,
+    (r) => CommitReceiptReader(r, capabilities: capabilityTable),
+  );
+
+  CardSummaryReader? get summary => getStructFieldWith(
+    3,
+    (r) => CardSummaryReader(r, capabilities: capabilityTable),
+  );
+
+  Failure? get rejected => failureFromUint16(getUint16Field(4));
+}
+
+final class ResponseBuilder extends StructBuilder {
+  ResponseBuilder(super.raw);
+
+  @override
+  ResponseReader asReader() => ResponseReader(rawToReader());
+
+  void _setWhich(int v) => setUint16Field(2, v);
+
+  set protocolVersion(int v) {
+    setUint16Field(0, v);
+  }
+
+  set requestId(String? v) {
+    setTextField(0, v);
+  }
+
+  set runtimeDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set contentDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  void selectUnsupported() {
+    setUint16Field(2, 0);
+  }
+
+  CommitReceiptBuilder initRenamed() {
+    setUint16Field(2, 1);
+    return initStructFieldWith(3, (r) => CommitReceiptBuilder(r), 1, 4);
+  }
+
+  bool hasRenamed() => hasPointerField(3);
+
+  CardSummaryBuilder initSummary() {
+    setUint16Field(2, 2);
+    return initStructFieldWith(3, (r) => CardSummaryBuilder(r), 2, 4);
+  }
+
+  bool hasSummary() => hasPointerField(3);
+
+  set rejected(Failure v) {
+    setUint16Field(2, 3);
+    setUint16Field(4, failureToUint16(v));
+  }
+}
+
+final class _ResponseFactory
+    extends StructFactory<ResponseReader, ResponseBuilder> {
+  @override
+  StructSchemaInfo get schema => responseSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
+  @override
+  ResponseReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ResponseReader(r, capabilities: capabilities);
+  @override
+  ResponseBuilder fromRawBuilder(RawStructBuilder r) => ResponseBuilder(r);
+}
+
+const StructSchemaInfo responseSchema = StructSchemaInfo(
+  id: 0xf088a2b03b7ab8f2,
+  displayName: 'runtime.capnp:Response',
+  shortName: 'Response',
+  dataWords: 1,
+  pointerWords: 4,
+  discriminantCount: 4,
+  discriminantOffset: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'protocolVersion',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'requestId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'runtimeDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentDigest',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'unsupported',
+      codeOrder: 4,
+      discriminantValue: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Void'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'renamed',
+      codeOrder: 5,
+      discriminantValue: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xaf56e78418a30c17),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'summary',
+      codeOrder: 6,
+      discriminantValue: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xba5ff7394121cb48),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'rejected',
+      codeOrder: 7,
+      discriminantValue: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: EnumRefTypeSchemaInfo(0xeb796af5be051862),
+      ),
+    ),
+  ],
+);
+
+final responseFactory = _ResponseFactory();
+
+final class CommitReceiptReader extends StructReader {
+  CommitReceiptReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = commitReceiptSchema;
+
+  String? get operationId => getTextField(0);
+
+  String? get cardId => getTextField(1);
+
+  int get revision => getUint64Field(0);
+
+  Uint8List? get contentSha256 => getDataField(2);
+
+  String? get eventId => getTextField(3);
+}
+
+final class CommitReceiptBuilder extends StructBuilder {
+  CommitReceiptBuilder(super.raw);
+
+  @override
+  CommitReceiptReader asReader() => CommitReceiptReader(rawToReader());
+
+  set operationId(String? v) {
+    setTextField(0, v);
+  }
+
+  set cardId(String? v) {
+    setTextField(1, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set eventId(String? v) {
+    setTextField(3, v);
+  }
+}
+
+final class _CommitReceiptFactory
+    extends StructFactory<CommitReceiptReader, CommitReceiptBuilder> {
+  @override
+  StructSchemaInfo get schema => commitReceiptSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  CommitReceiptReader fromRawReader(RawStructReader r) =>
+      CommitReceiptReader(r);
+  @override
+  CommitReceiptReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => CommitReceiptReader(r, capabilities: capabilities);
+  @override
+  CommitReceiptBuilder fromRawBuilder(RawStructBuilder r) =>
+      CommitReceiptBuilder(r);
+}
+
+const StructSchemaInfo commitReceiptSchema = StructSchemaInfo(
+  id: 0xaf56e78418a30c17,
+  displayName: 'runtime.capnp:CommitReceipt',
+  shortName: 'CommitReceipt',
+  dataWords: 1,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentSha256',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'eventId',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final commitReceiptFactory = _CommitReceiptFactory();

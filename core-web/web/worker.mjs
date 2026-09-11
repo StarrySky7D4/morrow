@@ -11,7 +11,7 @@ let chain=Promise.resolve();
 self.onmessage=({data})=>{chain=chain.then(async()=>{
  try{
   await ready;
-  if(data instanceof ArrayBuffer){if(data.byteLength>65536)throw Error('Message limit');self.postMessage(store.rename(new Uint8Array(data)));return;}
+  if(data instanceof ArrayBuffer){if(data.byteLength>65536)throw Error('Message limit');const reply=store.dispatch(new Uint8Array(data));self.postMessage(reply.buffer,[reply.buffer]);return;}
   if(typeof data==='string'&&data.startsWith('arm:')){faultPoint=data.slice(4);self.postMessage('armed');return;}
   let result;
   switch(data){
@@ -23,6 +23,15 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
    case 'read':result=store.card_title('card');break;
    case 'check':store.check();result='ok';break;
    case 'second-connection':{let denied=false;try{new core.BrowserStore('another',true,10);}catch(error){if(!String(error).includes('already open'))throw error;denied=true;}if(!denied)throw Error('Second store accepted');store.check();result='single-owner';break;}
+   case 'grant-read':store.grant_read('card',60000);result='read-granted';break;
+   case 'revoke-read':store.revoke_read('card');result='read-revoked';break;
+   case 'expire-read':store.grant_read('card',1);await new Promise(r=>setTimeout(r,30));result='read-expired';break;
+   case 'publish':{const id=store.stage(Uint8Array.from({length:100000},(_,i)=>i&255),0n);result=store.create_attachment('publish','files',id);break;}
+   case 'remove':result=store.clear_attachments('remove','files',1n);break;
+   case 'publish-state':result=store.lookup_revision('publish')===undefined?'absent':store.attachment_count('files');break;
+   case 'remove-state':result=store.lookup_revision('remove')===undefined?'absent':store.attachment_count('files');break;
+   case 'gc-seed':{const id=store.stage(Uint8Array.from({length:100000},(_,i)=>i&255),0n);store.retire(id,2n);result='retired';break;}
+   case 'gc-run':result=store.collect(60002n);break;
    case 'grant':store.grant_rename('card',60000);result='granted';break;
    case 'revoke':store.revoke_rename('card');result='revoked';break;
    case 'expiry':store.grant_rename('card',1);await new Promise(r=>setTimeout(r,30));result='expired';break;
@@ -36,7 +45,7 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
    }
    case 'capacity':{
     store.free();store=new core.BrowserStore('capacity',true,1);store.create_local('only','card','only');store.grant_rename('card',60000);
-    const request=core.rename_encode('over','card',1n,'must rollback');let rejected=false;try{store.rename(request);}catch(error){if(!String(error).includes('EventCapacity'))throw error;rejected=true;}
+    const request=core.rename_encode('over','card',1n,'must rollback');let rejected=false;try{store.rename(request);}catch(error){if(!String(error).includes('Capacity'))throw error;rejected=true;}
     if(!rejected||store.card_revision('card')!==1n||store.lookup_revision('over')!==undefined)throw Error('Capacity boundary failed');store.check();result='capacity-ok';break;
    }
    case 'close':store.free();store=undefined;result='closed';break;

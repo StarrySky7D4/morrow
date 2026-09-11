@@ -8,6 +8,7 @@ struct Request {
   union {
     unsupported @2 :Void;
     renameCard @3 :RenameCard;
+    readSummary @6 :Text;
   }
 }
 struct RenameCard {
@@ -24,4 +25,36 @@ struct CardSummary {
   revision @4 :UInt64;
   title @5 :Text;
   previewText @6 :Text;
+}
+
+# Replies are runtime projections/results, never persistence records or grants.
+struct Response {
+  protocolVersion @0 :UInt16;
+  requestId @1 :Text;
+  runtimeDigest @2 :Data;
+  contentDigest @3 :Data;
+  union {
+    unsupported @4 :Void;
+    renamed @5 :CommitReceipt;
+    summary @6 :CardSummary;
+    rejected @7 :Failure;
+  }
+}
+struct CommitReceipt {
+  operationId @0 :Text;
+  cardId @1 :Text;
+  revision @2 :UInt64;
+  contentSha256 @3 :Data;
+  eventId @4 :Text;
+}
+enum Failure {
+  denied @0;
+  notFound @1;
+  revisionConflict @2;
+  operationConflict @3;
+  capacity @4;
+  busy @5;
+  storage @6;
+  commitUnknown @7;
+  limit @8;
 }

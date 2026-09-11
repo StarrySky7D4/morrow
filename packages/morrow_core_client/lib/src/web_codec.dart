@@ -86,3 +86,52 @@ class RenameCommand {
     }
   }
 }
+
+@JS('morrowCodec.read_encode')
+external JSUint8Array _readEncode(JSString requestId, JSString cardId);
+@JS('morrowCodec.response_decode')
+external _Reply _replyDecode(JSUint8Array bytes);
+extension type _Reply._(JSObject _) implements JSObject {
+  external JSString get request_id;
+  external JSString get kind;
+  external JSBigInt? get revision;
+  external JSString? get title;
+  external JSString? get failure;
+  external void free();
+}
+
+class ReadSummaryCommand {
+  ReadSummaryCommand({required this.requestId, required this.cardId}) {
+    _identity(requestId);
+    _identity(cardId);
+  }
+  final String requestId, cardId;
+  Uint8List encode() =>
+      Uint8List.fromList(_readEncode(requestId.toJS, cardId.toJS).toDart);
+}
+
+class RuntimeReply {
+  RuntimeReply._(this.kind, this.revision, this.title, this.failure);
+  final String kind;
+  final BigInt? revision;
+  final String? title, failure;
+  static RuntimeReply decode(Uint8List bytes, {required String requestId}) {
+    if (bytes.isEmpty || bytes.length > maxMessageBytes)
+      throw const FormatException('Response length');
+    final reply = _replyDecode(bytes.toJS);
+    try {
+      if (reply.request_id.toDart != requestId)
+        throw const FormatException('Response correlation mismatch');
+      return RuntimeReply._(
+        reply.kind.toDart,
+        reply.revision == null
+            ? null
+            : BigInt.parse(_string(reply.revision!).toDart),
+        reply.title?.toDart,
+        reply.failure?.toDart,
+      );
+    } finally {
+      reply.free();
+    }
+  }
+}

@@ -2,7 +2,10 @@
 
 pub mod attachment;
 pub mod content;
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+pub mod dispatch;
 pub mod lifecycle;
+pub mod response;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod store;
 pub mod transaction;

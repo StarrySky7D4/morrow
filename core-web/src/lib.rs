@@ -1,13 +1,15 @@
 //! Trusted first-party browser adapter. No third-party plugin is hosted here.
 use morrow_core::{
     content::{Attachment, CardRecord},
+    dispatch::{Connection, HostRuntime},
     envelope,
-    lifecycle::{Grant, HostPolicy, Instance},
+    lifecycle::GrantKind,
+    response::{Outcome, Response},
     runtime::RenameRequest,
     store::{EventBudget, Store},
     transaction::Lookup,
 };
-use std::{cell::Cell, collections::BTreeMap, io::Cursor, path::Path};
+use std::{cell::Cell, io::Cursor, path::Path};
 thread_local! { static STORE_ACTIVE: Cell<bool> = const { Cell::new(false) }; }
 use wasm_bindgen::prelude::*;
 fn error(value: impl std::fmt::Display) -> JsValue {
@@ -31,8 +33,8 @@ pub async fn install_opfs() -> Result<(), JsValue> {
     use sqlite_wasm_vfs::sahpool::{OpfsSAHPoolCfgBuilder, install};
     let config = OpfsSAHPoolCfgBuilder::new()
         .vfs_name("morrow-opfs")
-        .directory("morrow-test6")
-        .initial_capacity(32)
+        .directory("morrow-test7")
+        .initial_capacity(64)
         .clear_on_init(false)
         .build();
     install::<sqlite_wasm_rs::WasmOsCallback>(&config, false)
@@ -94,10 +96,8 @@ pub fn rename_decode(bytes: &[u8]) -> Result<DecodedRename, JsValue> {
 }
 #[wasm_bindgen]
 pub struct BrowserStore {
-    store: Store,
-    host: HostPolicy,
-    instance: Instance,
-    grants: BTreeMap<String, Grant>,
+    runtime: HostRuntime,
+    connection: Connection,
 }
 #[wasm_bindgen]
 impl BrowserStore {
@@ -122,21 +122,20 @@ impl BrowserStore {
             create,
         )
         .map_err(error)?;
-        let mut host = HostPolicy::new().map_err(error)?;
-        let instance = host.activate().map_err(error)?;
-        host.ready(instance).map_err(error)?;
+        let mut runtime = HostRuntime::new(store).map_err(error)?;
+        let connection = runtime.connect().map_err(error)?;
         STORE_ACTIVE.set(true);
         Ok(Self {
-            store,
-            host,
-            instance,
-            grants: BTreeMap::new(),
+            runtime,
+            connection,
         })
     }
+
     pub fn import_card(&mut self, operation: &str, container: &[u8]) -> Result<u64, JsValue> {
         let card = envelope::decode(container).map_err(error)?;
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .create_local(operation, &card)
             .map_err(error)?
             .revision)
@@ -144,7 +143,8 @@ impl BrowserStore {
     pub fn create_local(&mut self, operation: &str, id: &str, title: &str) -> Result<u64, JsValue> {
         let card = CardRecord::new(id, "morrow.text", 1, title, vec![]).map_err(error)?;
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .create_local(operation, &card)
             .map_err(error)?
             .revision)
@@ -152,7 +152,8 @@ impl BrowserStore {
     pub fn export_card(&self, id: &str) -> Result<Vec<u8>, JsValue> {
         envelope::encode(
             &self
-                .store
+                .runtime
+                .store_local()
                 .card(id)
                 .map_err(error)?
                 .ok_or_else(|| error("NotFound"))?,
@@ -161,7 +162,8 @@ impl BrowserStore {
     }
     pub fn card_title(&self, id: &str) -> Result<String, JsValue> {
         Ok(self
-            .store
+            .runtime
+            .store_local()
             .card(id)
             .map_err(error)?
             .ok_or_else(|| error("NotFound"))?
@@ -170,7 +172,8 @@ impl BrowserStore {
     }
     pub fn card_revision(&self, id: &str) -> Result<u64, JsValue> {
         Ok(self
-            .store
+            .runtime
+            .store_local()
             .card(id)
             .map_err(error)?
             .ok_or_else(|| error("NotFound"))?
@@ -178,54 +181,77 @@ impl BrowserStore {
             .revision)
     }
     pub fn lookup_revision(&self, id: &str) -> Result<Option<u64>, JsValue> {
-        Ok(match self.store.lookup(id).map_err(error)? {
-            Lookup::Committed(receipt) => Some(receipt.revision),
-            Lookup::Absent => None,
-        })
+        Ok(
+            match self.runtime.store_local().lookup(id).map_err(error)? {
+                Lookup::Committed(receipt) => Some(receipt.revision),
+                Lookup::Absent => None,
+            },
+        )
     }
     pub fn grant_rename(&mut self, id: &str, ttl: u32) -> Result<(), JsValue> {
         let now = clock();
-        let expiry = now
-            .checked_add(u64::from(ttl))
-            .ok_or_else(|| error("Invalid expiry"))?;
-        if let Some(old) = self.grants.remove(id) {
-            self.host.revoke(old).map_err(error)?;
-        }
-        let grant = self
-            .host
-            .grant_rename(self.instance, id, expiry, now)
-            .map_err(error)?;
-        self.grants.insert(id.into(), grant);
-        Ok(())
+        self.runtime
+            .grant(
+                &mut self.connection,
+                GrantKind::Rename,
+                id,
+                now.saturating_add(ttl as u64),
+                now,
+            )
+            .map_err(error)
     }
     pub fn revoke_rename(&mut self, id: &str) -> Result<(), JsValue> {
-        let grant = self.grants.remove(id).ok_or_else(|| error("No grant"))?;
-        self.host.revoke(grant).map_err(error)
+        self.runtime
+            .revoke(&mut self.connection, GrantKind::Rename, id)
+            .map_err(error)
     }
-    /// Both decoding and permission checking use the fixed binary request. No caller id on wire.
+    pub fn grant_read(&mut self, id: &str, ttl: u32) -> Result<(), JsValue> {
+        let now = clock();
+        self.runtime
+            .grant(
+                &mut self.connection,
+                GrantKind::ReadSummary,
+                id,
+                now.saturating_add(ttl as u64),
+                now,
+            )
+            .map_err(error)
+    }
+    pub fn revoke_read(&mut self, id: &str) -> Result<(), JsValue> {
+        self.runtime
+            .revoke(&mut self.connection, GrantKind::ReadSummary, id)
+            .map_err(error)
+    }
+    pub fn dispatch(&mut self, bytes: &[u8]) -> Result<Vec<u8>, JsValue> {
+        self.runtime
+            .dispatch(&self.connection, bytes, clock)
+            .map_err(error)
+    }
+    /// Trusted local convenience; routes through the same binary dispatch path.
     pub fn rename(&mut self, bytes: &[u8]) -> Result<u64, JsValue> {
-        let start = clock();
-        let request = RenameRequest::decode(bytes).map_err(error)?;
-        let grant = *self
-            .grants
-            .get(&request.card_id)
-            .ok_or_else(|| error("No grant"))?;
-        let permit = self
-            .host
-            .begin(self.instance, grant, &request, start)
-            .map_err(error)?;
+        let response = Response::decode(&self.dispatch(bytes)?).map_err(error)?;
+        match response.outcome {
+            Outcome::Renamed(value) => Ok(value.revision),
+            other => Err(error(format!("{other:?}"))),
+        }
+    }
+    pub fn attachment_count(&self, id: &str) -> Result<u32, JsValue> {
         Ok(self
-            .host
-            .commit_rename(permit, &mut self.store, clock)
+            .runtime
+            .store_local()
+            .card(id)
             .map_err(error)?
-            .revision)
+            .ok_or_else(|| error("NotFound"))?
+            .attachments()
+            .len() as u32)
     }
     pub fn stage(&mut self, bytes: &[u8], now: i64) -> Result<String, JsValue> {
         if bytes.len() > 4 * 1024 * 1024 {
             return Err(error("Web transfer limit"));
         }
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .stage_blob(&mut Cursor::new(bytes), bytes.len() as u64, None, now)
             .map_err(error)?
             .id)
@@ -236,7 +262,11 @@ impl BrowserStore {
         id: &str,
         blob: &str,
     ) -> Result<u64, JsValue> {
-        let info = self.store.blob_info_local(blob).map_err(error)?;
+        let info = self
+            .runtime
+            .store_local()
+            .blob_info_local(blob)
+            .map_err(error)?;
         let attachment = Attachment {
             id: "file".into(),
             display_name: "原件.bin".into(),
@@ -254,7 +284,8 @@ impl BrowserStore {
         )
         .map_err(error)?;
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .create_local(operation, &card)
             .map_err(error)?
             .revision)
@@ -266,36 +297,54 @@ impl BrowserStore {
         revision: u64,
     ) -> Result<u64, JsValue> {
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .set_attachments_local(operation, id, revision, &[])
             .map_err(error)?
             .revision)
     }
     pub fn first_blob_page_count(&self) -> Result<u32, JsValue> {
-        Ok(self.store.list_blobs_local("", 128).map_err(error)?.len() as u32)
+        Ok(self
+            .runtime
+            .store_local()
+            .list_blobs_local("", 128)
+            .map_err(error)?
+            .len() as u32)
     }
     pub fn export_blob(&self, id: &str) -> Result<Vec<u8>, JsValue> {
-        if self.store.blob_info_local(id).map_err(error)?.byte_length > 4 * 1024 * 1024 {
+        if self
+            .runtime
+            .store_local()
+            .blob_info_local(id)
+            .map_err(error)?
+            .byte_length
+            > 4 * 1024 * 1024
+        {
             return Err(error("Web transfer limit"));
         }
         let mut bytes = vec![];
-        self.store
+        self.runtime
+            .store_local()
             .export_blob_local(id, &mut bytes)
             .map_err(error)?;
         Ok(bytes)
     }
     pub fn retire(&mut self, id: &str, now: i64) -> Result<(), JsValue> {
-        self.store.retire_blob_local(id, now).map_err(error)
+        self.runtime
+            .store_local_mut()
+            .retire_blob_local(id, now)
+            .map_err(error)
     }
     pub fn collect(&mut self, now: i64) -> Result<u32, JsValue> {
         Ok(self
-            .store
+            .runtime
+            .store_local_mut()
             .collect_retired_local(now, 60_000)
             .map_err(error)?
             .len() as u32)
     }
     pub fn check(&self) -> Result<(), JsValue> {
-        self.store.integrity_check().map_err(error)
+        self.runtime.store_local().integrity_check().map_err(error)
     }
 }
 
@@ -303,4 +352,62 @@ impl Drop for BrowserStore {
     fn drop(&mut self) {
         STORE_ACTIVE.set(false);
     }
+}
+
+#[wasm_bindgen]
+pub fn read_encode(request_id: &str, card_id: &str) -> Result<Vec<u8>, JsValue> {
+    morrow_core::runtime::Command::ReadSummary {
+        request_id: request_id.into(),
+        card_id: card_id.into(),
+    }
+    .encode()
+    .map_err(error)
+}
+#[wasm_bindgen]
+pub struct DecodedResponse {
+    response: Response,
+}
+#[wasm_bindgen]
+impl DecodedResponse {
+    #[wasm_bindgen(getter)]
+    pub fn request_id(&self) -> String {
+        self.response.request_id.clone()
+    }
+    #[wasm_bindgen(getter)]
+    pub fn kind(&self) -> String {
+        match &self.response.outcome {
+            Outcome::Renamed(_) => "renamed",
+            Outcome::Summary(_) => "summary",
+            Outcome::Rejected(_) => "rejected",
+        }
+        .into()
+    }
+    #[wasm_bindgen(getter)]
+    pub fn revision(&self) -> Option<u64> {
+        match &self.response.outcome {
+            Outcome::Renamed(v) => Some(v.revision),
+            Outcome::Summary(v) => Some(v.revision),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn title(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::Summary(v) => Some(v.title.clone()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn failure(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::Rejected(v) => Some(format!("{v:?}")),
+            _ => None,
+        }
+    }
+}
+#[wasm_bindgen]
+pub fn response_decode(bytes: &[u8]) -> Result<DecodedResponse, JsValue> {
+    Ok(DecodedResponse {
+        response: Response::decode(bytes).map_err(error)?,
+    })
 }
