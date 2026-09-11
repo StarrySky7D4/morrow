@@ -137,6 +137,17 @@ impl HostRuntime {
         self.policy.stop(connection.instance)?;
         self.policy.retire(connection.instance)
     }
+    /// Trusted one-way stop signal; commit/read boundaries observe it without sharing the Store.
+    pub fn revocation(&self, connection: &Connection) -> Result<crate::lifecycle::Revocation> {
+        self.policy.revocation(connection.instance)
+    }
+    /// Trusted status check; a foreign or retired connection cannot start new guest work.
+    pub fn connection_phase(
+        &self,
+        connection: &Connection,
+    ) -> Result<crate::lifecycle::InstancePhase> {
+        self.policy.phase(connection.instance)
+    }
     pub fn store_local(&self) -> &Store {
         &self.store
     }

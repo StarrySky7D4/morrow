@@ -62,6 +62,13 @@ impl PreparedPackage {
                 fuel_remaining: self.limits.fuel,
             };
         }
+        if host.connection_phase(connection) != Ok(morrow_core::lifecycle::InstancePhase::Ready) {
+            return Report {
+                outcome: Err(Fault::InactiveConnection),
+                host_calls: 0,
+                fuel_remaining: self.limits.fuel,
+            };
+        }
         self.runner.run(
             &mut |input| host.dispatch(connection, input, &mut clock).map_err(|_| ()),
             cancel,

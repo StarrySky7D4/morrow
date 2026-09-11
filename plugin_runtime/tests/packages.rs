@@ -128,3 +128,30 @@ fn preparation_rejects_executable_start_and_noncontract_imports() {
         Err(Fault::UnsupportedAbi)
     ));
 }
+
+#[test]
+fn stopped_and_foreign_connections_never_execute_guest_code() {
+    let p = PreparedPackage::new(package(SIMPLE, "1.0.0"), Limits::default()).unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let mut h = host(&dir);
+    let c = p.connect(&mut h).unwrap();
+    let other_dir = tempfile::tempdir().unwrap();
+    let mut other = host(&other_dir);
+    let r = p.run(
+        &mut other,
+        &c,
+        || panic!("foreign host"),
+        Cancellation::default(),
+    );
+    assert_eq!(r.outcome, Err(Fault::InactiveConnection));
+    assert_eq!(r.host_calls, 0);
+    h.disconnect(&c).unwrap();
+    let r = p.run(
+        &mut h,
+        &c,
+        || panic!("stopped instance"),
+        Cancellation::default(),
+    );
+    assert_eq!(r.outcome, Err(Fault::InactiveConnection));
+    assert_eq!(r.host_calls, 0);
+}

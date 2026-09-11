@@ -33,6 +33,7 @@ try {
   $packages+=$package
  }
  Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_package','--')+$packages)
+ Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_worker','--')+$packages)
  Get-FileHash -Algorithm SHA256 -LiteralPath $packages
  Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify_trap','--','build/plugin-c-guest/cpp_abort.wasm','build/plugin-c-guest/cpp_oom.wasm')
  Get-ChildItem -LiteralPath build/plugin-c-guest -Filter '*.wasm' | Get-FileHash -Algorithm SHA256

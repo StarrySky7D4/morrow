@@ -101,7 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             prepared
                 .run(&mut host, &a, &mut clock, Cancellation::default())
                 .outcome,
-            Ok(10)
+            Err(Fault::InactiveConnection)
         );
         host.disconnect(&b)?;
         host.store_local().integrity_check()?;

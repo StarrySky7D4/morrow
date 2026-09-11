@@ -34,7 +34,7 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 
 运行库默认仍独立于内容核心。启用原生 `packages` feature 后提供 `PreparedPackage`，拥有已校验归档与编译模块；其 `run` 只接受可信 HostRuntime、Connection 和宿主时钟。包摘要不一致时在执行前返回 PackageBinding，宿主调用为零。低层 Runner 仍用于受控适配与故障测试，不是第三方自行选择宿主连接的入口。
 
-能力声明是上限，实际授权是另一层：例如只声明 rename 的包不能被授予摘要查询或附件读取；声明了 rename 也必须获得具体卡片授权才能修改。安装、连接、包升级都不自动产生授权。断开后核心拒绝旧连接的新操作；完整异步取消和进程／Worker 终止仍属后续生命周期工作。
+能力声明是上限，实际授权是另一层：例如只声明 rename 的包不能被授予摘要查询或附件读取；声明了 rename 也必须获得具体卡片授权才能修改。安装、连接、包升级都不自动产生授权。断开后核心拒绝旧连接的新操作，PreparedPackage 还会在 guest 执行前检查连接的真实宿主与 Ready 状态。已增加原生后台任务队列，见 [任务与生命周期](PLUGIN_TASKS.md)；进程／浏览器 Worker 强制终止仍待完成。
 
 ## 验证与后续任务
 
@@ -42,7 +42,7 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 
 下一阶段按以下依赖推进：
 
-1. 版本化任务输入／结果与受控异步调度，实例停止、撤权和已提交结果核对；替换固定示例任务。
+1. 在已验证的原生后台队列上实现版本化任务输入／结果、多实例调度、实例停止与撤权协调；替换固定示例任务。
 2. 包注册／启用状态、作者信任、签名与撤销、依赖接口和锁定；更新不能复活旧授权。
 3. 声明式 UI schema、事件代次、Flutter 有界渲染器及三语言 UI 构造器；先贯通同一编辑表单，再扩展专业渲染。
 4. 共享对象租约、审计封存、证据和 A/B 贯通，逐平台完成资格验证。

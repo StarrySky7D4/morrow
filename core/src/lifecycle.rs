@@ -2,7 +2,10 @@
 //! Ticks must come from the host's monotonic clock, not a plugin request.
 use crate::{Error, Result, content::CardRecord, identity, runtime::RenameRequest};
 use std::collections::{BTreeMap, BTreeSet};
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{
+    Arc,
+    atomic::{AtomicBool, AtomicU64, Ordering},
+};
 static NEXT_HOST: AtomicU64 = AtomicU64::new(1);
 const MAX_INSTANCES: usize = 128;
 const MAX_GRANTS: usize = 1024;
@@ -37,6 +40,17 @@ pub enum GrantKind {
     QueryOperation,
     ReadAttachment,
 }
+/// One-way trusted revocation signal. Never serialized or exported to guest SDKs.
+#[derive(Clone)]
+pub struct Revocation(Arc<AtomicBool>);
+impl Revocation {
+    pub fn revoke(&self) {
+        self.0.store(true, Ordering::Release);
+    }
+    fn revoked(&self) -> bool {
+        self.0.load(Ordering::Acquire)
+    }
+}
 struct GrantRecord {
     attachment_id: Option<String>,
     kind: GrantKind,
@@ -44,6 +58,7 @@ struct GrantRecord {
     expires_at: u64,
 }
 struct InstanceRecord {
+    revocation: Revocation,
     phase: InstancePhase,
     drain_deadline: Option<u64>,
     grants: BTreeMap<u64, GrantRecord>,
@@ -105,6 +120,7 @@ impl HostPolicy {
         self.instances.insert(
             generation,
             InstanceRecord {
+                revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 phase: InstancePhase::Preparing,
                 drain_deadline: None,
                 grants: BTreeMap::new(),
@@ -118,14 +134,25 @@ impl HostPolicy {
     }
     pub fn ready(&mut self, instance: Instance) -> Result<()> {
         let record = self.record_mut(instance)?;
-        if record.phase != InstancePhase::Preparing {
+        if record.phase != InstancePhase::Preparing || record.revocation.revoked() {
             return Err(Error::Invalid("ready transition"));
         }
         record.phase = InstancePhase::Ready;
         Ok(())
     }
     pub fn phase(&self, instance: Instance) -> Result<InstancePhase> {
-        Ok(self.record(instance)?.phase)
+        let record = self.record(instance)?;
+        Ok(
+            if record.revocation.revoked() && record.phase != InstancePhase::Stopped {
+                InstancePhase::Revoked
+            } else {
+                record.phase
+            },
+        )
+    }
+    /// Host control plane only. Existing operations recheck this before commit or response release.
+    pub fn revocation(&self, instance: Instance) -> Result<Revocation> {
+        Ok(self.record(instance)?.revocation.clone())
     }
     pub fn grant_rename(
         &mut self,
@@ -179,7 +206,8 @@ impl HostPolicy {
         self.tick(now)?;
         identity(card_id)?;
         let record = self.record(instance)?;
-        if record.phase != InstancePhase::Ready || expires_at <= now {
+        if record.phase != InstancePhase::Ready || record.revocation.revoked() || expires_at <= now
+        {
             return Err(Error::Invalid("grant context"));
         }
         if record.grants.len() >= MAX_GRANTS {
@@ -226,8 +254,9 @@ impl HostPolicy {
             return Err(Error::Invalid("grant owner"));
         }
         let record = self.record(instance)?;
-        if record.phase != InstancePhase::Ready
-            && !(completing && record.phase == InstancePhase::Draining)
+        if record.revocation.revoked()
+            || (record.phase != InstancePhase::Ready
+                && !(completing && record.phase == InstancePhase::Draining))
         {
             return Err(Error::Invalid("inactive instance"));
         }
@@ -409,7 +438,7 @@ impl HostPolicy {
     pub fn drain(&mut self, instance: Instance, deadline: u64, now: u64) -> Result<()> {
         self.tick(now)?;
         let record = self.record_mut(instance)?;
-        if record.phase != InstancePhase::Ready || deadline <= now {
+        if record.phase != InstancePhase::Ready || record.revocation.revoked() || deadline <= now {
             return Err(Error::Invalid("drain transition"));
         }
         record.phase = InstancePhase::Draining;
@@ -452,6 +481,7 @@ impl HostPolicy {
             return Ok(());
         }
         // Revoke access before releasing task records. No plugin callback is involved.
+        record.revocation.revoke();
         record.phase = InstancePhase::Revoked;
         record.grants.clear();
         let tasks = std::mem::take(&mut record.tasks);

@@ -21,3 +21,7 @@ tempfile = "=3.27.0"
 [[example]]
 name = "qualify_package"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_worker"
+required-features = ["packages"]

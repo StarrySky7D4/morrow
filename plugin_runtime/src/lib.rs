@@ -1,15 +1,18 @@
 #![forbid(unsafe_code)]
 //! Replaceable synchronous Wasm backend probe. No WASI, filesystem or identity imports.
 use std::sync::{
-    Arc,
+    Arc, Mutex,
     atomic::{AtomicBool, Ordering},
 };
+use std::time::Instant;
 use wasmi::{
     Caller, Config, EnforcedLimits, Engine, ExternType, Linker, Module, Store, StoreLimits,
     StoreLimitsBuilder, ValType,
 };
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod worker;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 #[derive(Debug, Clone, Copy)]
@@ -28,18 +31,44 @@ impl Default for Limits {
     }
 }
 #[derive(Clone, Default)]
-pub struct Cancellation(Arc<AtomicBool>);
+pub struct Cancellation {
+    signal: Arc<AtomicBool>,
+    deadline: Arc<Mutex<Option<Instant>>>,
+}
 impl Cancellation {
     pub fn cancel(&self) {
-        self.0.store(true, Ordering::Release);
+        self.signal.store(true, Ordering::Release);
     }
-    fn cancelled(&self) -> bool {
-        self.0.load(Ordering::Acquire)
+    /// Host monotonic deadline; checked at execution/import boundaries, not an OS interrupt.
+    pub fn until(deadline: Instant) -> Self {
+        let token = Self::default();
+        token.limit_deadline(deadline);
+        token
+    }
+    pub(crate) fn limit_deadline(&self, deadline: Instant) {
+        let mut current = self.deadline.lock().unwrap_or_else(|e| e.into_inner());
+        *current = Some(current.map_or(deadline, |old| old.min(deadline)));
+    }
+    fn fault(&self) -> Option<Fault> {
+        if self.signal.load(Ordering::Acquire) {
+            return Some(Fault::Cancelled);
+        }
+        if self
+            .deadline
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .is_some_and(|v| Instant::now() >= v)
+        {
+            return Some(Fault::Deadline);
+        }
+        None
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Fault {
+    Deadline,
     PackageBinding,
+    InactiveConnection,
     InvalidModule,
     UnsupportedAbi,
     Limits,
@@ -136,9 +165,9 @@ impl Runner {
     /// Cancellation gates imports and checks before/after execution; a pure loop is
     /// bounded by fuel, not immediately interrupted by the cancellation flag.
     pub fn run(&self, exchange: Exchange<'_>, cancel: Cancellation) -> Report {
-        if cancel.cancelled() {
+        if let Some(fault) = cancel.fault() {
             return Report {
-                outcome: Err(Fault::Cancelled),
+                outcome: Err(fault),
                 host_calls: 0,
                 fuel_remaining: self.limits.fuel,
             };
@@ -182,8 +211,8 @@ impl Runner {
         })();
         let outcome = if let Some(f) = &store.data().stopped {
             Err(f.clone())
-        } else if store.data().cancel.cancelled() {
-            Err(Fault::Cancelled)
+        } else if let Some(fault) = store.data().cancel.fault() {
+            Err(fault)
         } else {
             outcome
         };
@@ -205,8 +234,8 @@ fn host_exchange(
     output: i32,
     capacity: i32,
 ) -> Result<i32, wasmi::Error> {
-    if caller.data().cancel.cancelled() {
-        return Err(trap(caller.data_mut(), Fault::Cancelled));
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
     }
     if caller.data().calls >= caller.data().max_calls {
         return Err(trap(caller.data_mut(), Fault::Limits));
@@ -244,8 +273,8 @@ fn host_exchange(
     let fixed = memory.data(&caller)[input..input_end].to_vec();
     caller.data_mut().calls += 1;
     let response = (caller.data_mut().exchange)(&fixed);
-    if caller.data().cancel.cancelled() {
-        return Err(trap(caller.data_mut(), Fault::Cancelled));
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
     }
     let response = match response {
         Ok(v) => v,
