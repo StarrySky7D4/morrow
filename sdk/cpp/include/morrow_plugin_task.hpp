@@ -14,6 +14,11 @@ public:
   static task decode(const std::vector<uint8_t>& bytes){task t;if(bytes.size()>MP_MAX_TASK_BYTES){t.status_=MP_CODEC_LIMIT;return t;}t.status_=mp_task_decode(bytes.data(),static_cast<uint32_t>(bytes.size()),&t.value_);return t;}
   uint32_t status() const {return status_;}
   mp_task_view view() const {mp_task_view v{};if(status_!=MP_CODEC_OK||mp_task_get(value_,&v,sizeof(v))!=MP_CODEC_OK)detail::codec_logic_error();return v;}
+  mp_transform_view transform() const {mp_transform_view v{};if(status_!=MP_CODEC_OK||mp_task_get_transform(value_,&v,sizeof(v))!=MP_CODEC_OK)detail::codec_logic_error();return v;}
+  encoded_request output(const std::vector<uint8_t>& value) const {
+    encoded_request out{status_,{}};if(status_!=MP_CODEC_OK)return out;if(value.size()>MP_MAX_TASK_VALUE_BYTES){out.status=MP_CODEC_LIMIT;return out;}
+    out.bytes.resize(MP_MAX_TASK_BYTES);uint32_t length=0;out.status=mp_task_output(value_,value.data(),static_cast<uint32_t>(value.size()),out.bytes.data(),MP_MAX_TASK_BYTES,&length);out.bytes.resize(out.status==MP_CODEC_OK?length:0);return out;
+  }
   encoded_request complete(const std::vector<uint8_t>& response) const {
     encoded_request out{status_,{}};if(status_!=MP_CODEC_OK)return out;
     if(response.size()>MP_MAX_MESSAGE_BYTES){out.status=MP_CODEC_LIMIT;return out;}

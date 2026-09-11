@@ -60,3 +60,13 @@ pub fn complete_task(task: &crate::task::Invocation, response: &[u8]) -> Result<
     }
     Ok(())
 }
+
+/// Return correlated computed data, never a core receipt or direct content write.
+pub fn complete_output(task: &crate::task::Invocation, output: &[u8]) -> Result<(), crate::Error> {
+    let bytes = task.output(output).map_err(|_| crate::Error::BadReply)?;
+    // SAFETY: owned completion remains live for the synchronous bounded import.
+    if unsafe { complete(bytes.as_ptr(), bytes.len() as u32) } != 0 {
+        return Err(crate::Error::TransportFailure);
+    }
+    Ok(())
+}

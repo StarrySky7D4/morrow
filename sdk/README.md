@@ -47,7 +47,7 @@ Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings �
 
 真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
 
-后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、完整包管理、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
+后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、完整包管理、多实例持久任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
 
 ## Rust Wasm 示例
 
@@ -80,4 +80,4 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 
 已提供 C 的 morrow_plugin_task.h、C++ 的 morrow_plugin_task.hpp 与 Rust task／wasm API，接收宿主提供的任务、读取类型化命令并构造关联完成消息。实际例子位于 examples/c-task、cpp-task、rust-task。完整说明见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)，结果见 [三语言动态任务验证](../reports/plugin-task-contract-validation.md)。
 
-此 profile 校验固定内容命令与实际核心回复，支持四类已实现内容接口；通用计算／转换提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
+内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。正式 handler 注册、类型化错误、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。

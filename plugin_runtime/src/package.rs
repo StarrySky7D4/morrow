@@ -84,6 +84,7 @@ impl PreparedPackage {
 pub struct TaskReport {
     pub execution: Report,
     pub response: Option<morrow_core::response::Response>,
+    pub output: Option<morrow_core::task::TransformOutput>,
 }
 impl PreparedPackage {
     pub fn run_task(
@@ -113,6 +114,7 @@ impl PreparedPackage {
                     fuel_remaining: self.limits.fuel,
                 },
                 response: None,
+                output: None,
             };
         }
         let mut actual = None;
@@ -121,7 +123,11 @@ impl PreparedPackage {
         let run = self.runner.run_task(
             input.bytes(),
             &mut |command| {
-                if called || protocol_fault || command != input.command_bytes() {
+                if input.transform().is_some()
+                    || called
+                    || protocol_fault
+                    || command != input.command_bytes()
+                {
                     protocol_fault = true;
                     return Err(());
                 }
@@ -135,7 +141,17 @@ impl PreparedPackage {
             cancel,
         );
         let mut execution = run.report;
-        let response = if execution.outcome.is_ok() {
+        let mut output = None;
+        let response = if execution.outcome.is_ok() && input.transform().is_some() {
+            match run.completion {
+                Some(completion) if !protocol_fault => match input.verify_output(&completion) {
+                    Ok(value) => output = Some(value),
+                    Err(_) => execution.outcome = Err(Fault::TaskProtocol),
+                },
+                _ => execution.outcome = Err(Fault::TaskProtocol),
+            };
+            None
+        } else if execution.outcome.is_ok() {
             match (run.completion, actual) {
                 (Some(completion), Some(actual)) if !protocol_fault => {
                     match input.verify_completion(&completion, &actual) {
@@ -157,6 +173,7 @@ impl PreparedPackage {
         TaskReport {
             execution,
             response,
+            output,
         }
     }
 }

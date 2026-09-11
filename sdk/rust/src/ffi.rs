@@ -311,7 +311,7 @@ pub unsafe extern "C" fn mp_task_get(raw: *const c_void, out: *mut TaskView, siz
             return Err(CodecError::Limit);
         }
         let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
-        let r = task.request();
+        let r = task.request().ok_or(CodecError::Invalid)?;
         let mut request = CRequest {
             abi_version: 1,
             struct_size: size_of::<CRequest>() as u32,
@@ -400,4 +400,81 @@ pub unsafe extern "C" fn mp_task_free(raw: *mut c_void) {
             drop(Box::from_raw(raw.cast::<crate::task::Invocation>()));
         }
     }
+}
+
+#[repr(C)]
+pub struct TransformView {
+    handler: Span,
+    input_type: Span,
+    output_type: Span,
+    input: Span,
+}
+/// # Safety
+/// SDK task and aligned disjoint writable view. Returned spans expire when the task is freed.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_get_transform(
+    raw: *const c_void,
+    out: *mut TransformView,
+    size: u32,
+) -> u32 {
+    guard(|| {
+        if raw.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if size < size_of::<TransformView>() as u32 {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let t = task.transform().ok_or(CodecError::Invalid)?;
+        unsafe {
+            out.write(TransformView {
+                handler: span(t.handler.as_bytes()),
+                input_type: span(t.input_type.as_bytes()),
+                output_type: span(t.output_type.as_bytes()),
+                input: span(&t.input),
+            });
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// SDK task; readable bytes (null allowed only for zero length); disjoint writable output/control slots.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_output(
+    raw: *const c_void,
+    bytes: *const u8,
+    size: u32,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if raw.is_null() || out.is_null() || (bytes.is_null() && size != 0) {
+            return Err(CodecError::Invalid);
+        }
+        if size as usize > crate::task::MAX_VALUE_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let input = if size == 0 {
+            &[]
+        } else {
+            unsafe { std::slice::from_raw_parts(bytes, size as usize) }
+        };
+        let result = task.output(input)?;
+        if result.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(result.as_ptr(), out, result.len());
+            *length = result.len() as u32;
+        }
+        Ok(())
+    })
 }

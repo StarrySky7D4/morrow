@@ -339,6 +339,7 @@ fn execute(
                         crate::package::TaskReport {
                             execution,
                             response: None,
+                            output: None,
                         }
                     } else {
                         package.run_task(host, connection, &input, &mut clock, job.cancel)

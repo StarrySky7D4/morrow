@@ -31,3 +31,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_tasks"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_transforms"
+required-features = ["packages"]

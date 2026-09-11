@@ -16,6 +16,11 @@ files = {
     for name in ("runtime.capnp", "content.proto", "task.capnp")
 }
 files["version.txt"] = match.group(1) + "\n"
+task_source = (root / "core/src/task.rs").read_text(encoding="utf-8")
+task_match = re.search(r"VERSION: u16 = (\d+)", task_source)
+if task_match is None:
+    raise SystemExit("Host task version not found")
+files["task-version.txt"] = task_match.group(1) + "\n"
 for name, body in files.items():
     target = root / "sdk/rust/contracts" / name
     if args.check:

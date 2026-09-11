@@ -1,6 +1,6 @@
 # 原生插件后台任务与生命周期
 
-基于 0.1.9-test.10。原生 `packages` feature 增加 `Worker`：一个后台线程独占已准备插件包、连接和 HostRuntime，调用方通过非阻塞任务句柄收取结果。原有队列支持 ABI v1；后续已接入 ABI v2 的动态内容命令任务，Cap’n Proto v6 与资料库格式保持不变。
+基于 0.1.9-test.10。原生 `packages` feature 增加 `Worker`：一个后台线程独占已准备插件包、连接和 HostRuntime，调用方通过非阻塞任务句柄收取结果。原有队列支持 ABI v1；后续已接入 ABI v2 的动态内容命令及纯转换任务，Cap’n Proto v6 与资料库格式保持不变。
 
 ## 调用与所有权
 
@@ -9,7 +9,7 @@
 | 接口 | 行为 |
 | --- | --- |
 | `Worker::spawn` | 创建一个原生线程，容量设为 1–64 个未完成任务（包含正在执行者）；创建失败明确返回 |
-| `submit_task(input, timeout)` | 提交已校验的动态内容命令任务，返回包含权威 Response 的类型化结果句柄 |
+| `submit_task(input, timeout)` | 提交已校验的内容或纯转换输入；结果分别为核心 Response 或插件产出的 TransformOutput |
 | `submit(timeout)` | 有界非阻塞提交，队列满返回 Busy；超时必须大于零且不超过一小时，包含排队时间 |
 | `TaskHandle::try_result` | 非阻塞轮询；完成结果只消费一次；Unavailable 不表示没有提交 |
 | `TaskHandle::cancel` | 取消该任务；不停止其他任务，不自动重试 |

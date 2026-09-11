@@ -69,7 +69,10 @@ fn independent_host_and_guest_task_codecs_agree_for_all_content_commands() {
         let guest = Guest::decode(input.bytes()).unwrap();
         assert_eq!(guest.task_id(), input.task_id());
         assert_eq!(guest.command_bytes(), input.command_bytes());
-        assert_eq!(guest.request().encode().unwrap(), command.encode().unwrap());
+        assert_eq!(
+            guest.request().unwrap().encode().unwrap(),
+            command.encode().unwrap()
+        );
         let response = Response {
             request_id: command.request_id().into(),
             outcome,
@@ -130,7 +133,7 @@ fn task_contract_and_provenance_reject_changed_ids_payloads_and_forged_success()
             .completion(&wrong)
             .is_err()
     );
-    for version in [0, 2] {
+    for version in [0, 3] {
         let mut m = capnp::message::Builder::new_default();
         let mut r = m.init_root::<morrow_core::task_capnp::invocation::Builder>();
         r.set_version(version);

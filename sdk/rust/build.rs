@@ -5,7 +5,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .trim()
         .parse::<u16>()?;
     println!("cargo:rerun-if-changed=contracts/version.txt");
-    let mut source = format!("pub const VERSION:u16={version};\n");
+    let task_version = std::fs::read_to_string("contracts/task-version.txt")?
+        .trim()
+        .parse::<u16>()?;
+    println!("cargo:rerun-if-changed=contracts/task-version.txt");
+    let mut source =
+        format!("pub const VERSION:u16={version};\npub const TASK_VERSION:u16={task_version};\n");
     for (name, file) in [
         ("RUNTIME_DIGEST", "runtime.capnp"),
         ("CONTENT_DIGEST", "content.proto"),

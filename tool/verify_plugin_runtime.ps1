@@ -5,7 +5,7 @@ function Checked([string]$Program,[string[]]$Arguments){ & $Program @Arguments; 
 Push-Location $repo
 try {
  Checked $Python @('tool/sync_plugin_sdk_contracts.py','--check')
- foreach($manifest in @('plugin_runtime/Cargo.toml','sdk/rust/Cargo.toml','sdk/examples/rust-rename/Cargo.toml','sdk/examples/rust-task/Cargo.toml')) {
+ foreach($manifest in @('plugin_runtime/Cargo.toml','sdk/rust/Cargo.toml','sdk/examples/rust-rename/Cargo.toml','sdk/examples/rust-task/Cargo.toml','sdk/examples/rust-transform/Cargo.toml')) {
   Checked cargo @('fmt','--manifest-path',$manifest,'--check')
  }
  Checked cargo @('clippy','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--all-targets','--all-features','--','-D','warnings')
@@ -17,6 +17,8 @@ try {
  Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-rename/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
  Checked cargo @('clippy','--locked','--manifest-path','sdk/examples/rust-task/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest','--','-D','warnings')
  Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-task/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
+ Checked cargo @('clippy','--locked','--manifest-path','sdk/examples/rust-transform/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest','--','-D','warnings')
+ Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-transform/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
  & ./tool/build_plugin_c_wasm.ps1 -Sysroot $Sysroot
  Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify','--','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm','build/plugin-c-guest/c_rename.wasm','build/plugin-c-guest/cpp_rename.wasm','build/plugin-c-guest/cpp_allocator.wasm')
  # Each verification owns a fresh output directory; pack never overwrites existing files.
@@ -43,6 +45,14 @@ try {
   $taskPackages+=$package
  }
  Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_tasks','--')+$taskPackages)
+ $transformPackages=@()
+ foreach($guest in @(@('rust-transform','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_transform.wasm'),@('c-transform','build/plugin-c-guest/c_transform.wasm'),@('cpp-transform','build/plugin-c-guest/cpp_transform.wasm'))) {
+  $package=Join-Path $packageDir ($guest[0]+'.mplugin')
+  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-task',$guest[1],$package,('org.morrow.example.'+$guest[0]),'0.1.9-test.10','none')
+  $transformPackages+=$package
+ }
+ Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_transforms','--')+$transformPackages)
+ Get-FileHash -Algorithm SHA256 -LiteralPath $transformPackages
  Get-FileHash -Algorithm SHA256 -LiteralPath $taskPackages
  Get-FileHash -Algorithm SHA256 -LiteralPath $packages
  Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify_trap','--','build/plugin-c-guest/cpp_abort.wasm','build/plugin-c-guest/cpp_oom.wasm')
