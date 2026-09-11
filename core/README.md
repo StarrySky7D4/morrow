@@ -1,6 +1,6 @@
-# Morrow core — test.5
+# Morrow core — test.6
 
-这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.5`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
+这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.6`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
 
 ## 已实现
 
@@ -14,7 +14,7 @@ Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作
 
 ## test.5 边界与宿主状态
 
-`bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。它只验证固定副本的版本与摘要并往返内部请求，尚不分派到持久化或权限执行。运行期协议已升到 2，test.2 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。普通 Dart JavaScript 编译仍有精确整数限制。
+`bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。它只验证固定副本的版本与摘要并往返内部请求，尚不分派到持久化或权限执行。运行期协议已升到 2，test.2 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。test.6 通过独立 web.dart／Rust 编解码入口解决普通 Dart JavaScript 的精确整数接入；旧生成绑定主入口仍受该限制。
 
 `lifecycle.rs` 提供纯内存 HostPolicy：宿主分配不可自报的实例身份与代次、对象级重命名授权和到期时刻；接单固定请求，完成前再次核对身份／授权／期限。正常停止不接新任务、等待已有任务，达到排空期限则撤权；安全停止先撤权后取消。宿主须用单调时钟调用 expire_drains，迟到完成也会检查期限。停止／退休后旧实例、授权与任务不可复用。
 
@@ -35,11 +35,11 @@ CommitState 区分未提交、结果待核对、本地已提交、封存、见�
 实验 CLI：
 
 ```powershell
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- init build/example.db
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- query build/example.db operation-2
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- check build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-store -- init build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-store -- query build/example.db operation-2
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-store -- check build/example.db
 ```
 
 CLI 的 local 操作是可信本地操作者入口，不能直接暴露给插件；lookup/card 同样需要传输层的读取授权。`fault-injection` 只用于子进程恢复测试，默认构建不响应故障注入环境变量。进程直接退出覆盖提交前后边界，不等于断电或全平台验收。
@@ -55,7 +55,7 @@ CLI 的 local 操作是可信本地操作者入口，不能直接暴露给插件
 - Undo／Snapshot／Evidence 是保留原语，不表示完整撤销、快照或证据系统已经实现。宿主维护持久时间下界，时钟倒退拒绝回收；等待时间不能代替引用检查。
 - 导出使用数据库读快照；并发回收后，已开始的读取仍能完成。CLI 先写同目录临时文件，摘要核对并同步后才发布目标，拒绝覆盖已有文件。通用 Write 接口的调用者也必须等成功后才发布输出。
 - 当前上限：单件 200 MiB、数据库原始附件总量 2 GiB／2048 个。数据库和 WAL 的实际磁盘用量可能更高。这些是原型资源上限，不是性能结论。
-- 打开时完整扫描原始附件并检查摘要、外键、当前与历史引用；未完成大规模启动性能优化。SQLite 原生路径已验证，Web 仅共享可编译的元数据契约，尚无浏览器持久化实现。
+- 打开时完整扫描原始附件并检查摘要、外键、当前与历史引用；未完成大规模启动性能优化。SQLite 原生路径已验证；test.6 增加命名 OPFS VFS，共用 Store 事务，采用独占 DELETE journal／FULL 配置。Web 当前只开放 4 MiB 的附件复制适配，详情见 [Web 核心](../core-web/README.md)。
 
 CLI 新增 stage-file-local、list-blobs-local、create-attachment-local、clear-attachments-local、export-attachment-local、retire-blob-local 和 collect-retired-local。完整参数可运行 morrow-core-store 查看。所有 local 入口只供可信宿主／本地操作者，尚未接到插件的逐次授权与传输分派。
 
@@ -78,7 +78,7 @@ pwsh -File tool/verify_core.ps1
 # 安装目标后检查 Web 核心；此命令不会自动安装工具链：
 rustup target add wasm32-unknown-unknown
 pwsh -File tool/verify_core.ps1 -Web
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-check -- verify path/to/card.morrow
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.6 --bin morrow-core-check -- verify path/to/card.morrow
 ```
 
 test.5 已导出原生／Wasm ABI 并在 Chrome Worker 中实测协议往返；浏览器存储、共享内存、审计与插件运行仍未实现；原生事务仅在实验 CLI／Rust API 中可用，FFI 仍是协议往返探针。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。

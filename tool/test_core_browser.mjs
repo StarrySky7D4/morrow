@@ -1,6 +1,6 @@
 // Local test-only HTTP server + headless Chrome CDP runner, no npm dependencies.
 import { createServer } from 'node:http';
-import { readFile, mkdtemp, access } from 'node:fs/promises';
+import { readFile, writeFile, mkdtemp, access } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -15,15 +15,21 @@ let chrome;
 for (const file of candidates) { try { await access(file); chrome = file; break; } catch { /* Try next explicit path. */ } }
 if (!chrome) throw new Error('Set CHROME_BIN to a Chrome/Chromium executable');
 
+const webFolder=process.argv.includes('--store')?'build/core-test.6/web-store':'build/core-test.6/web';
 const allowed = ['/preview/'];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
   '.wasm': 'application/wasm', '.json': 'application/json', '.bin': 'application/octet-stream' };
 const server = createServer(async (request, response) => {
   try {
     const route = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    if(process.argv.includes('--store')&&request.method==='POST'&&route==='/capture/browser-card.morrow'){
+      const chunks=[];let size=0;
+      for await(const chunk of request){size+=chunk.length;if(size>9*1024*1024){response.writeHead(413).end();return;}chunks.push(chunk);}
+      await writeFile(path.join(root,'build/core-test.6/browser-card.morrow'),Buffer.concat(chunks));response.writeHead(204).end();return;
+    }
     if (!allowed.some((p) => p.endsWith('/') ? route.startsWith(p) : route === p)) { response.writeHead(404).end(); return; }
-    const target = path.resolve(root, 'build/core-test.5/web', route.slice('/preview/'.length) || 'index.html');
-    const relative = path.relative(path.join(root, 'build/core-test.5/web'), target);
+    const target = path.resolve(root, webFolder, route.slice('/preview/'.length) || 'index.html');
+    const relative = path.relative(path.join(root, webFolder), target);
     if (relative.startsWith('..') || path.isAbsolute(relative)) { response.writeHead(403).end(); return; }
     response.setHeader('Content-Type', mime[path.extname(target)] ?? 'application/octet-stream');
     response.setHeader('Cache-Control', 'no-store');
@@ -70,11 +76,11 @@ try {
     else waiter.resolve(reply.result);
   });
   const version = await call('Browser.getVersion');
-  for (const mode of ['worker']) {
+  for (const mode of (process.argv.includes('--store')?['store','restore']:['worker'])) {
     const { targetId } = await call('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await call('Target.attachToTarget', { targetId, flatten: true });
     await call('Page.enable', {}, sessionId);
-    await call('Page.navigate', { url: `${base}/preview/` }, sessionId);
+    await call('Page.navigate', { url: `${base}/preview/${mode==='restore'?'?restore=1':''}` }, sessionId);
     let result;
     const deadline = Date.now() + 60000;
     while (Date.now() < deadline) {

@@ -218,7 +218,7 @@ impl HostPolicy {
     }
     /// Sole plugin rename write entry. Hold this host exclusively until commit returns.
     /// The trusted host clock must be fresh/monotonic; no plugin callback is accepted.
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
     pub fn commit_rename(
         &mut self,
         permit: Permit,

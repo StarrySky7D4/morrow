@@ -3,7 +3,7 @@ resolver = "2"
 
 [package]
 name = "morrow-core"
-version = "0.1.9-test.5"
+version = "0.1.9-test.6"
 edition = "2024"
 publish = false
 license = "Apache-2.0"
@@ -22,7 +22,14 @@ sha2 = "=0.10.9"
 rusqlite = { version = "=0.40.2", features = ["bundled", "blob"] }
 tempfile = "=3.27.0"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+rusqlite = { version = "=0.40.2", features = ["blob"], optional = true }
+
+wasm-bindgen = { version = "=0.2.128", optional = true }
+
 [features]
+web-test-hooks = ["web-storage", "dep:wasm-bindgen"]
+web-storage = ["dep:rusqlite"]
 # Explicitly opt in only for the subprocess crash harness.
 fault-injection = []
 

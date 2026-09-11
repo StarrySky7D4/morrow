@@ -1,4 +1,4 @@
-//! Native single-database storage. Only a trusted host owns Store and HostPolicy.
+//! Shared single-database storage with native and explicitly selected OPFS adapters. Only a trusted host owns Store and HostPolicy.
 //! SQLite pages/indices are engine-owned; business payloads are Protobuf + LZ4.
 use crate::{
     Error, Result,
@@ -38,7 +38,15 @@ fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
     })
 }
 // Failpoints are excluded from default production builds and require an explicit feature.
+#[cfg(all(target_arch = "wasm32", feature = "web-test-hooks"))]
+#[wasm_bindgen::prelude::wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen::prelude::wasm_bindgen(js_name=__morrowFaultBoundary)]
+    fn web_boundary(name: &str);
+}
 fn boundary(_name: &str) {
+    #[cfg(all(target_arch = "wasm32", feature = "web-test-hooks"))]
+    web_boundary(_name);
     #[cfg(feature = "fault-injection")]
     if std::env::var("MORROW_TEST_CRASH_AT").as_deref() == Ok(_name) {
         // No stack unwinding or connection drop; tests recover in a fresh process.
@@ -89,23 +97,74 @@ fn read_commit(connection: &Connection, id: &str) -> Result<Option<Vec<u8>>> {
     )
 }
 impl Store {
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn open(path: &Path, budget: EventBudget) -> Result<Self> {
         Self::open_mode(path, budget, true)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn open_existing(path: &Path, budget: EventBudget) -> Result<Self> {
         Self::open_mode(path, budget, false)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     fn open_mode(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
+        Self::open_adapter(path, budget, create, None, false)
+    }
+    /// Host-selected OPFS adapter; missing named VFS is an error, never memory fallback.
+    #[cfg(all(target_arch = "wasm32", feature = "web-storage"))]
+    pub fn open_opfs(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
+        Self::open_adapter(path, budget, create, Some("morrow-opfs"), true)
+    }
+    /// Native qualification of the exclusive rollback-journal transaction profile.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn open_exclusive(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
+        Self::open_adapter(path, budget, create, None, true)
+    }
+    fn open_adapter(
+        path: &Path,
+        budget: EventBudget,
+        create: bool,
+        vfs: Option<&str>,
+        exclusive: bool,
+    ) -> Result<Self> {
         let mut flags =
             rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX;
         if create {
             flags |= rusqlite::OpenFlags::SQLITE_OPEN_CREATE;
         }
-        let mut connection = sql(Connection::open_with_flags(path, flags))?;
+        let mut connection = sql(match vfs {
+            Some(name) => Connection::open_with_flags_and_vfs(path, flags, name),
+            None => Connection::open_with_flags(path, flags),
+        })?;
         sql(connection.busy_timeout(Duration::ZERO))?;
         // Reject unrelated and future databases before changing their pragmas/schema.
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 2) {
+            return Err(Error::UnsupportedVersion);
+        }
+        if app == 0 && version == 0 && create {
+            let tables: i64 = sql(connection.query_row(
+                "SELECT count(*) FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'",
+                [],
+                |r| r.get(0),
+            ))?;
+            if tables != 0 {
+                return Err(Error::Invalid("unrelated database"));
+            }
+        }
+        if exclusive {
+            let locking: String =
+                sql(connection.query_row("PRAGMA locking_mode=EXCLUSIVE", [], |r| r.get(0)))?;
+            if locking != "exclusive" {
+                return Err(Error::Invalid("exclusive locking unavailable"));
+            }
+            let journal: String =
+                sql(connection.query_row("PRAGMA journal_mode=DELETE", [], |r| r.get(0)))?;
+            if journal != "delete" {
+                return Err(Error::Invalid("rollback journal unavailable"));
+            }
+        }
+        sql(connection.pragma_update(None, "synchronous", "FULL"))?;
         if app == 0 && version == 0 && create {
             let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
             let tables: i64 = sql(tx.query_row(
@@ -128,9 +187,12 @@ impl Store {
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
-        let mode: String = sql(connection.query_row("PRAGMA journal_mode=WAL", [], |r| r.get(0)))?;
-        if mode != "wal" {
-            return Err(Error::Invalid("WAL unavailable"));
+        if !exclusive {
+            let mode: String =
+                sql(connection.query_row("PRAGMA journal_mode=WAL", [], |r| r.get(0)))?;
+            if mode != "wal" {
+                return Err(Error::Invalid("WAL unavailable"));
+            }
         }
         sql(connection.pragma_update(None, "synchronous", "FULL"))?;
         let store = Self { connection, budget };

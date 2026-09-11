@@ -1,0 +1,84 @@
+<!doctype html><meta charset="utf-8"><title>Morrow browser storage qualification</title>
+<script type="module">
+import init,* as core from './main/morrow_web_core.js';
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+function call(worker,data){return new Promise((resolve,reject)=>{
+ const timer=setTimeout(()=>{worker.terminate();reject(Error('Worker timeout: '+(typeof data==='string'?data:'binary')+' at '+(globalThis.coreProbePhase??'base')));},20000);
+ worker.onmessage=({data})=>{clearTimeout(timer);data?.error?reject(Error(data.error)):resolve(data);};
+ worker.onerror=e=>{clearTimeout(timer);reject(Error(e.message));};
+ worker.postMessage(data,data instanceof ArrayBuffer?[data]:[]);
+});}
+async function reopen(url){
+ const deadline=Date.now()+5000;
+ while(true){const candidate=new Worker(url,{type:'module'});
+  try{await call(candidate,'check');return candidate;}catch(error){candidate.terminate();
+   if(!String(error).includes('creating sync access handle')||Date.now()>=deadline)throw error;
+   await delay(100);
+  }
+ }
+}
+let worker;
+try{
+ await init();globalThis.morrowCodec=core;
+ worker=await reopen('./worker.mjs');
+ if(new URL(location.href).searchParams.has('restore')){
+  if(await call(worker,'read')!=='普通 JS 已提交 🧭')throw Error('Page restart lost persisted data');await call(worker,'check');
+  globalThis.coreProbeResult='PASS: independent page reopen preserved OPFS data and attachment history.';
+ }else{
+ await call(worker,'seed');await call(worker,'second-connection');
+ globalThis.morrowStoreRename=bytes=>call(worker,bytes.slice().buffer);
+ globalThis.morrowFixture=async name=>new Uint8Array(await(await fetch('./vectors/'+name+'.capnp')).arrayBuffer());
+ const script=document.createElement('script');script.src='./js_probe.js';document.body.append(script);
+ let waited=0;while(!globalThis.jsCodecProbeResult&&waited++<300)await delay(50);
+ if(!globalThis.jsCodecProbeResult?.startsWith('PASS:'))throw Error(globalThis.jsCodecProbeResult??'Dart JS probe timeout');
+ await call(worker,'revoke');let denied=false;try{await call(worker,core.rename_encode('denied','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('No grant'))throw error;denied=true;}if(!denied)throw Error('Revoked write accepted');
+ await call(worker,'expiry');denied=false;try{await call(worker,core.rename_encode('expired','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('grant scope or expiry'))throw error;denied=true;}if(!denied)throw Error('Expired write accepted');
+ await call(worker,'attachments');await call(worker,'check');
+ await call(worker,'high-seed');
+ if(await call(worker,core.rename_encode('high-edit','high',(1n<<64n)-2n,'网页提交 🧭').buffer)!==(1n<<64n)-1n)throw Error('Persistent UInt64 mismatch');
+ const exported=await call(worker,'export-high');
+ const capture=await fetch('/capture/browser-card.morrow',{method:'POST',body:exported});if(!capture.ok)throw Error('Capture failed');
+ globalThis.coreProbePhase='contender';
+ const contender=new Worker('./worker.mjs',{type:'module'});
+ let locked=false;try{await call(contender,'check');}catch(error){if(!String(error).includes('creating sync access handle'))throw error;locked=true;}finally{contender.terminate();}
+ if(!locked)throw Error('Competing OPFS owner was accepted');
+ if(await call(worker,'read')!=='普通 JS 已提交 🧭')throw Error('Competing owner altered data');
+
+ globalThis.coreProbePhase='reopen';
+ worker.terminate();await delay(100);
+ worker=await reopen('./worker.mjs');
+ if(await call(worker,'read')!=='普通 JS 已提交 🧭')throw Error('OPFS restart lost committed content');
+ await call(worker,'check');await call(worker,'capacity');
+ worker.terminate();await delay(100);
+ globalThis.coreProbePhase='unsupported';
+ const unsupported=new Worker('./worker.mjs?unsupported=1',{type:'module'});let unavailable=false;
+ try{await call(unsupported,'check');}catch(error){if(!String(error).includes('OPFS unavailable'))throw error;unavailable=true;}finally{unsupported.terminate();}
+ if(!unavailable)throw Error('Missing OPFS fell back to memory');
+ const points=['after-begin','after-card','after-operation','after-event','after-blob-references','before-commit','after-commit'];
+ for(let index=0;index<points.length;index++){
+  globalThis.coreProbePhase='fault '+points[index];
+  const point=points[index],url='./worker.mjs?fault=1&db=crash'+index;
+  globalThis.coreProbePhase='seed '+point;worker=await reopen(url);await call(worker,'seed');await call(worker,'arm:'+point);
+  const request=core.rename_encode('interrupted','card',1n,'committed after recovery');
+  const signal=await call(worker,request.slice().buffer);if(signal?.boundary!==point)throw Error('Missed fault boundary '+point);
+  globalThis.coreProbePhase='recover '+point;worker.terminate();worker=await reopen(url);
+  const expected=point==='after-commit'?'committed after recovery':'old';if(await call(worker,'read')!==expected)throw Error('Half commit at '+point);
+  await call(worker,'check');await call(worker,'grant');
+  for(let attempt=0;attempt<2;attempt++)if(await call(worker,request.slice().buffer)!==2n)throw Error('Recovery dedup '+point);
+  worker.terminate();await delay(100);
+ }
+ const stagePoints=['stage-after-allocation','stage-after-chunk','stage-before-commit','stage-after-commit'];
+ for(let index=0;index<stagePoints.length;index++){
+  const point=stagePoints[index],url='./worker.mjs?fault=1&db=stage'+index;
+  globalThis.coreProbePhase=point;worker=await reopen(url);await call(worker,'arm:'+point);
+  const signal=await call(worker,'stage-only');if(signal?.boundary!==point)throw Error('Missed stage boundary '+point);
+  worker.terminate();worker=await reopen(url);
+  if(await call(worker,'blob-count')!==(point==='stage-after-commit'?1:0))throw Error('Half staged object '+point);
+  const id=await call(worker,'stage-only');if(await call(worker,'stage-only')!==id||await call(worker,'blob-count')!==1)throw Error('Stage recovery dedup');
+  await call(worker,'check');worker.terminate();await delay(100);
+ }
+ globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 11 Worker termination boundaries (7 commit, 4 raw staging).';
+ }
+}catch(error){globalThis.coreProbeResult='FAIL at '+globalThis.coreProbePhase+': '+error;}
+finally{worker?.terminate();}
+</script><body></body>

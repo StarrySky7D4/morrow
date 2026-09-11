@@ -3,7 +3,7 @@
 pub mod attachment;
 pub mod content;
 pub mod lifecycle;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod store;
 pub mod transaction;
 // Export attributes mark the reviewed native/Wasm ABI boundary.

@@ -332,3 +332,52 @@ fn drain_deadline_between_sql_writes_and_commit_rolls_back() {
     assert_eq!(store.lookup("edit").unwrap(), Lookup::Absent);
     host.stop(instance).unwrap();
 }
+
+#[test]
+fn exclusive_profile_reopens_deduplicates_and_rolls_back_capacity() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("exclusive.db");
+    let budget = EventBudget {
+        max_count: 2,
+        ..EventBudget::default()
+    };
+    let mut store = Store::open_exclusive(&path, budget, true).unwrap();
+    store.create_local("seed", &card()).unwrap();
+    assert!(matches!(
+        Store::open_exclusive(&path, budget, false),
+        Err(Error::StorageBusy)
+    ));
+    let receipt = rename(&mut store, &request("edit", 1)).unwrap();
+    assert_eq!(
+        rename(&mut store, &request("overflow", 2)),
+        Err(Error::EventCapacity)
+    );
+    drop(store);
+    let mut store = Store::open_exclusive(&path, budget, false).unwrap();
+    assert_eq!(rename(&mut store, &request("edit", 1)).unwrap(), receipt);
+    assert_eq!(store.lookup("overflow").unwrap(), Lookup::Absent);
+    assert_eq!(store.card("card-1").unwrap().unwrap().summary().revision, 2);
+    assert_eq!(store.pending(0, 10).unwrap().len(), 2);
+    store.integrity_check().unwrap();
+    drop(store);
+    let db = Connection::open(&path).unwrap();
+    let mode: String = db
+        .query_row("PRAGMA journal_mode", [], |row| row.get(0))
+        .unwrap();
+    assert_eq!(mode, "delete");
+}
+#[test]
+fn exclusive_profile_does_not_change_an_unrelated_database() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("unrelated.db");
+    let db = Connection::open(&path).unwrap();
+    db.execute_batch("CREATE TABLE unrelated(value TEXT); INSERT INTO unrelated VALUES ('keep');")
+        .unwrap();
+    drop(db);
+    let before = std::fs::read(&path).unwrap();
+    assert!(matches!(
+        Store::open_exclusive(&path, EventBudget::default(), true),
+        Err(Error::Invalid("unrelated database"))
+    ));
+    assert_eq!(std::fs::read(path).unwrap(), before);
+}

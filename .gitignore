@@ -60,3 +60,5 @@ app.*.map.json
 
 # Isolated Rust core build output
 /core/target/
+
+/core-web/target/

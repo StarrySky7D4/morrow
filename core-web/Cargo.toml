@@ -1,0 +1,19 @@
+[workspace]
+[package]
+name = "morrow-web-core"
+version = "0.1.9-test.6"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+[lib]
+crate-type = ["cdylib", "rlib"]
+[dependencies]
+morrow-core = { path = "../core", features = ["web-storage"] }
+wasm-bindgen = "=0.2.128"
+wasm-bindgen-futures = "=0.4.78"
+sqlite-wasm-rs = "=0.5.5"
+sqlite-wasm-vfs = "=0.2.0"
+js-sys = "=0.3.105"
+
+[features]
+fault-injection = ["morrow-core/web-test-hooks"]
