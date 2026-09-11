@@ -219,3 +219,62 @@ mod tests {
         assert!(with_clock(&clock, 3).is_err());
     }
 }
+
+pub const STORAGE_CHUNK_BYTES: usize = 64 * 1024;
+pub const MAX_READ_BYTES: u32 = 32 * 1024;
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AttachmentChunk {
+    pub card_id: String,
+    pub attachment_id: String,
+    pub revision: u64,
+    pub offset: u64,
+    pub total_length: u64,
+    pub content_sha256: [u8; 32],
+    pub bytes: Vec<u8>,
+}
+impl AttachmentChunk {
+    pub fn validate(&self) -> Result<()> {
+        identity(&self.card_id)?;
+        identity(&self.attachment_id)?;
+        if self.revision == 0
+            || self.total_length > MAX_BLOB_BYTES
+            || self.offset > self.total_length
+            || self.bytes.len() > MAX_READ_BYTES as usize
+            || self.bytes.len() as u64 > self.total_length - self.offset
+            || (self.bytes.is_empty() && self.offset != self.total_length)
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
+}
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+pub(crate) fn encode_chunk(blob_id: &str, offset: u64, bytes: &[u8]) -> Result<Vec<u8>> {
+    use sha2::{Digest, Sha256};
+    let value = proto::Chunk {
+        schema_version: 1,
+        blob_id: blob_id.into(),
+        offset,
+        byte_length: bytes.len() as u32,
+        sha256: Sha256::digest(bytes).to_vec(),
+    };
+    let raw = envelope::pack(b"MORROWK1", &value.encode_to_vec(), MAX_METADATA)?;
+    decode_chunk(&raw)?;
+    Ok(raw)
+}
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+pub(crate) fn decode_chunk(raw: &[u8]) -> Result<proto::Chunk> {
+    let bytes = envelope::unpack(b"MORROWK1", raw, MAX_METADATA)?;
+    let value = proto::Chunk::decode(bytes.as_slice()).map_err(|_| Error::Integrity)?;
+    identity(&value.blob_id)?;
+    if value.schema_version != 1
+        || value.offset % STORAGE_CHUNK_BYTES as u64 != 0
+        || value.offset >= MAX_BLOB_BYTES
+        || value.byte_length == 0
+        || value.byte_length > STORAGE_CHUNK_BYTES as u32
+        || value.sha256.len() != 32
+    {
+        return Err(Error::Integrity);
+    }
+    Ok(value)
+}

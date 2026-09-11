@@ -9,10 +9,11 @@ use crate::{
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, blob::ZeroBlob, params};
 use sha2::{Digest, Sha256};
 use std::io::{Read, Write};
-const CHUNK: usize = 64 * 1024;
+const CHUNK: usize = attachment::STORAGE_CHUNK_BYTES;
 const MAX_TOTAL: i64 = 2 * 1024 * 1024 * 1024;
 pub(super) const SCHEMA: &str = "
 CREATE TABLE blobs (row INTEGER PRIMARY KEY, id TEXT NOT NULL UNIQUE, digest BLOB NOT NULL, size INTEGER NOT NULL, retired INTEGER, metadata BLOB NOT NULL, payload BLOB NOT NULL) STRICT;
+CREATE TABLE blob_chunks (blob_id TEXT NOT NULL REFERENCES blobs(id) ON DELETE CASCADE, offset INTEGER NOT NULL, metadata BLOB NOT NULL, PRIMARY KEY(blob_id,offset)) STRICT;
 CREATE INDEX blob_digest ON blobs(digest);
 CREATE INDEX blob_retired ON blobs(retired);
 CREATE TABLE card_blobs (card_id TEXT NOT NULL REFERENCES cards(id), attachment_id TEXT NOT NULL, blob_id TEXT NOT NULL REFERENCES blobs(id), PRIMARY KEY(card_id,attachment_id)) STRICT;
@@ -83,12 +84,45 @@ fn save_metadata(connection: &Connection, info: &BlobInfo) -> Result<()> {
 fn retained(connection: &Connection, id: &str) -> Result<bool> {
     sql(connection.query_row("SELECT EXISTS(SELECT 1 FROM card_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM event_blobs WHERE blob_id=?1) OR EXISTS(SELECT 1 FROM retentions WHERE blob_id=?1)", [id], |r| r.get(0)))
 }
+fn verify_chunk(connection: &Connection, id: &str, offset: usize, bytes: &[u8]) -> Result<()> {
+    let mut statement =
+        sql(connection.prepare("SELECT metadata FROM blob_chunks WHERE blob_id=?1 AND offset=?2"))?;
+    let raw = sql(statement
+        .query_row(params![id, offset as i64], |row| {
+            let raw = row.get_ref(0)?.as_blob()?;
+            Ok(if raw.len() <= 8192 {
+                Some(raw.to_vec())
+            } else {
+                None
+            })
+        })
+        .optional())?
+    .flatten()
+    .ok_or(Error::Integrity)?;
+    let value = attachment::decode_chunk(&raw)?;
+    if value.blob_id != id
+        || value.offset != offset as u64
+        || value.byte_length != bytes.len() as u32
+        || value.sha256.as_slice() != Sha256::digest(bytes).as_slice()
+    {
+        return Err(Error::Integrity);
+    }
+    Ok(())
+}
 fn stream(
     connection: &Connection,
     row: i64,
     info: &BlobInfo,
     writer: &mut impl Write,
 ) -> Result<()> {
+    let count: i64 = sql(connection.query_row(
+        "SELECT count(*) FROM blob_chunks WHERE blob_id=?1",
+        [&info.id],
+        |row| row.get(0),
+    ))?;
+    if count as u64 != info.byte_length.div_ceil(CHUNK as u64) {
+        return Err(Error::Integrity);
+    }
     let handle = sql(connection.blob_open("main", "blobs", "payload", row, true))?;
     let mut hash = Sha256::new();
     let mut buffer = vec![0; CHUNK];
@@ -96,6 +130,7 @@ fn stream(
     while offset < info.byte_length as usize {
         let length = CHUNK.min(info.byte_length as usize - offset);
         sql(handle.read_at_exact(&mut buffer[..length], offset))?;
+        verify_chunk(connection, &info.id, offset, &buffer[..length])?;
         hash.update(&buffer[..length]);
         writer.write_all(&buffer[..length]).map_err(|_| Error::Io)?;
         offset += length;
@@ -149,6 +184,15 @@ impl Store {
                 .map_err(|_| Error::Io)?;
             sql(handle.write_at(&buffer[..length], offset))?;
             hash.update(&buffer[..length]);
+            boundary("stage-after-payload");
+            sql(tx.execute(
+                "INSERT INTO blob_chunks(blob_id,offset,metadata) VALUES(?1,?2,?3)",
+                params![
+                    id,
+                    offset as i64,
+                    attachment::encode_chunk(&id, offset as u64, &buffer[..length])?
+                ],
+            ))?;
             offset += length;
             boundary("stage-after-chunk");
         }
@@ -248,6 +292,63 @@ impl Store {
         }
         stream(&snapshot, row, &value, writer)?;
         Ok(value)
+    }
+    /// Resolve the live card reference and verify storage blocks in one read snapshot.
+    pub fn read_attachment_chunk(
+        &self,
+        request: &crate::runtime::ReadAttachment,
+    ) -> Result<attachment::AttachmentChunk> {
+        request.validate()?;
+        let snapshot = sql(self.connection.unchecked_transaction())?;
+        let card = super::read_card(&snapshot, &request.card_id)?.ok_or(Error::NotFound)?;
+        if card.summary().revision != request.expected_revision {
+            return Err(Error::RevisionConflict);
+        }
+        let item = card
+            .attachments()
+            .into_iter()
+            .find(|v| v.id == request.attachment_id)
+            .ok_or(Error::NotFound)?;
+        let id: String = sql(snapshot.query_row(
+            "SELECT blob_id FROM card_blobs WHERE card_id=?1 AND attachment_id=?2",
+            params![request.card_id, request.attachment_id],
+            |row| row.get(0),
+        ))?;
+        let (row, value) = info(&snapshot, &id)?;
+        if value.sha256 != item.sha256 || value.byte_length != item.byte_length {
+            return Err(Error::Integrity);
+        }
+        if request.offset > value.byte_length {
+            return Err(Error::Limit);
+        }
+        let end = value
+            .byte_length
+            .min(request.offset + request.length as u64);
+        let handle = sql(snapshot.blob_open("main", "blobs", "payload", row, true))?;
+        let mut bytes = Vec::with_capacity((end - request.offset) as usize);
+        let mut block_start = request.offset as usize / CHUNK * CHUNK;
+        while (block_start as u64) < end {
+            let length = CHUNK.min(value.byte_length as usize - block_start);
+            let mut block = vec![0; length];
+            sql(handle.read_at_exact(&mut block, block_start))?;
+            verify_chunk(&snapshot, &id, block_start, &block)?;
+            let from = (request.offset as usize).saturating_sub(block_start);
+            let to = (end as usize - block_start).min(length);
+            bytes.extend_from_slice(&block[from..to]);
+            block_start += length;
+        }
+        sql(handle.close())?;
+        let chunk = attachment::AttachmentChunk {
+            card_id: request.card_id.clone(),
+            attachment_id: request.attachment_id.clone(),
+            revision: request.expected_revision,
+            offset: request.offset,
+            total_length: value.byte_length,
+            content_sha256: value.sha256,
+            bytes,
+        };
+        chunk.validate()?;
+        Ok(chunk)
     }
     pub fn retain_blob_local(&mut self, id: &str, owner: &str, kind: RetentionKind) -> Result<()> {
         let metadata = attachment::encode_retention(owner, id, kind)?;

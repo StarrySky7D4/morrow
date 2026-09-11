@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../attachment_transfer.dart';
 import 'dart:js_interop';
 import 'dart:typed_data';
 
@@ -100,6 +101,11 @@ extension type _Reply._(JSObject _) implements JSObject {
   external JSString? get result_state;
   external JSString? get operation_id;
   external JSString? get card_id;
+  external JSString? get attachment_id;
+  external JSBigInt? get offset;
+  external JSBigInt? get total_length;
+  external JSUint8Array? get content_sha256;
+  external JSUint8Array? get bytes;
   external void free();
 }
 
@@ -122,10 +128,12 @@ class RuntimeReply {
     this.resultState,
     this.operationId,
     this.cardId,
+    this.attachmentPart,
   );
   final String kind;
   final BigInt? revision;
   final String? title, failure, resultState, operationId, cardId;
+  final AttachmentPart? attachmentPart;
   static RuntimeReply decode(Uint8List bytes, {required String requestId}) {
     if (bytes.isEmpty || bytes.length > maxMessageBytes)
       throw const FormatException('Response length');
@@ -143,6 +151,17 @@ class RuntimeReply {
         reply.result_state?.toDart,
         reply.operation_id?.toDart,
         reply.card_id?.toDart,
+        reply.kind.toDart == 'attachmentChunk'
+            ? AttachmentPart(
+                cardId: reply.card_id!.toDart,
+                attachmentId: reply.attachment_id!.toDart,
+                revision: BigInt.parse(_string(reply.revision!).toDart),
+                offset: BigInt.parse(_string(reply.offset!).toDart),
+                totalLength: BigInt.parse(_string(reply.total_length!).toDart),
+                contentSha256: reply.content_sha256!.toDart,
+                bytes: reply.bytes!.toDart,
+              )
+            : null,
       );
     } finally {
       reply.free();
@@ -170,5 +189,50 @@ class QueryOperationCommand {
   final String requestId, cardId, operationId;
   Uint8List encode() => Uint8List.fromList(
     _queryEncode(requestId.toJS, cardId.toJS, operationId.toJS).toDart,
+  );
+}
+
+@JS('morrowCodec.attachment_encode')
+external JSUint8Array _attachmentEncode(
+  JSString requestId,
+  JSString cardId,
+  JSString attachmentId,
+  JSBigInt revision,
+  JSBigInt offset,
+  JSNumber length,
+);
+
+class ReadAttachmentCommand {
+  ReadAttachmentCommand({
+    required this.requestId,
+    required this.cardId,
+    required this.attachmentId,
+    required this.expectedRevision,
+    required this.offset,
+    this.length = maxAttachmentPartBytes,
+  }) {
+    _identity(requestId);
+    _identity(cardId);
+    _identity(attachmentId);
+    if (expectedRevision <= BigInt.zero ||
+        expectedRevision > (BigInt.one << 64) - BigInt.one ||
+        offset < BigInt.zero ||
+        offset > maxAttachmentBytes ||
+        length <= 0 ||
+        length > maxAttachmentPartBytes)
+      throw const FormatException('Attachment request bounds');
+  }
+  final String requestId, cardId, attachmentId;
+  final BigInt expectedRevision, offset;
+  final int length;
+  Uint8List encode() => Uint8List.fromList(
+    _attachmentEncode(
+      requestId.toJS,
+      cardId.toJS,
+      attachmentId.toJS,
+      _bigInt(expectedRevision.toString().toJS),
+      _bigInt(offset.toString().toJS),
+      length.toJS,
+    ).toDart,
   );
 }

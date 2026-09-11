@@ -35,8 +35,10 @@ pub enum GrantKind {
     Rename,
     ReadSummary,
     QueryOperation,
+    ReadAttachment,
 }
 struct GrantRecord {
+    attachment_id: Option<String>,
     kind: GrantKind,
     card_id: String,
     expires_at: u64,
@@ -142,6 +144,38 @@ impl HostPolicy {
         expires_at: u64,
         now: u64,
     ) -> Result<Grant> {
+        if kind == GrantKind::ReadAttachment {
+            return Err(Error::Invalid("attachment scope required"));
+        }
+        self.grant_to(instance, kind, card_id, None, expires_at, now)
+    }
+    pub fn grant_attachment(
+        &mut self,
+        instance: Instance,
+        card_id: &str,
+        attachment_id: &str,
+        expires_at: u64,
+        now: u64,
+    ) -> Result<Grant> {
+        identity(attachment_id)?;
+        self.grant_to(
+            instance,
+            GrantKind::ReadAttachment,
+            card_id,
+            Some(attachment_id),
+            expires_at,
+            now,
+        )
+    }
+    fn grant_to(
+        &mut self,
+        instance: Instance,
+        kind: GrantKind,
+        card_id: &str,
+        attachment_id: Option<&str>,
+        expires_at: u64,
+        now: u64,
+    ) -> Result<Grant> {
         self.tick(now)?;
         identity(card_id)?;
         let record = self.record(instance)?;
@@ -155,6 +189,7 @@ impl HostPolicy {
         self.record_mut(instance)?.grants.insert(
             serial,
             GrantRecord {
+                attachment_id: attachment_id.map(str::to_owned),
                 kind,
                 card_id: card_id.into(),
                 expires_at,
@@ -173,7 +208,7 @@ impl HostPolicy {
         self.authorize_scope(
             instance,
             grant,
-            (GrantKind::Rename, &request.card_id),
+            (GrantKind::Rename, &request.card_id, None),
             now,
             completing,
         )
@@ -182,11 +217,11 @@ impl HostPolicy {
         &self,
         instance: Instance,
         grant: Grant,
-        target: (GrantKind, &str),
+        target: (GrantKind, &str, Option<&str>),
         now: u64,
         completing: bool,
     ) -> Result<()> {
-        let (kind, card_id) = target;
+        let (kind, card_id, attachment_id) = target;
         if grant.instance != instance {
             return Err(Error::Invalid("grant owner"));
         }
@@ -200,7 +235,11 @@ impl HostPolicy {
             .grants
             .get(&grant.serial)
             .ok_or(Error::Invalid("revoked grant"))?;
-        if scope.expires_at <= now || scope.card_id != card_id || scope.kind != kind {
+        if scope.expires_at <= now
+            || scope.card_id != card_id
+            || scope.kind != kind
+            || scope.attachment_id.as_deref() != attachment_id
+        {
             return Err(Error::Invalid("grant scope or expiry"));
         }
         Ok(())
@@ -285,7 +324,7 @@ impl HostPolicy {
         self.authorize_scope(
             instance,
             grant,
-            (GrantKind::ReadSummary, card_id),
+            (GrantKind::ReadSummary, card_id, None),
             now,
             false,
         )?;
@@ -297,7 +336,7 @@ impl HostPolicy {
         self.authorize_scope(
             instance,
             grant,
-            (GrantKind::ReadSummary, card_id),
+            (GrantKind::ReadSummary, card_id, None),
             now,
             false,
         )?;
@@ -320,7 +359,7 @@ impl HostPolicy {
         self.authorize_scope(
             instance,
             grant,
-            (GrantKind::QueryOperation, card_id),
+            (GrantKind::QueryOperation, card_id, None),
             now,
             false,
         )?;
@@ -330,10 +369,34 @@ impl HostPolicy {
         self.authorize_scope(
             instance,
             grant,
-            (GrantKind::QueryOperation, card_id),
+            (GrantKind::QueryOperation, card_id, None),
             now,
             false,
         )?;
+        result
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn read_attachment(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        request: &crate::runtime::ReadAttachment,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::attachment::AttachmentChunk> {
+        request.validate()?;
+        let target = (
+            GrantKind::ReadAttachment,
+            request.card_id.as_str(),
+            Some(request.attachment_id.as_str()),
+        );
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(instance, grant, target, now, false)?;
+        let result = store.read_attachment_chunk(request);
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(instance, grant, target, now, false)?;
         result
     }
     pub fn revoke(&mut self, grant: Grant) -> Result<()> {

@@ -4,6 +4,8 @@ import 'package:morrow_core_client/web.dart';
 
 @JS('morrowStoreRename')
 external JSPromise<JSUint8Array> _rename(JSUint8Array input);
+@JS('morrowAttachmentControl')
+external JSPromise<JSString> _attachmentControl(JSString action);
 @JS('morrowFixture')
 external JSPromise<JSUint8Array> _fixture(JSString name);
 @JS('jsCodecProbeResult')
@@ -77,8 +79,81 @@ Future<void> main() async {
     );
     if (queryReply.failure != 'Denied')
       throw StateError('Query authorization missing');
+    await _attachmentControl('attachment-seed'.toJS).toDart;
+    Future<RuntimeReply> readPart({
+      BigInt? offset,
+      BigInt? revision,
+      String attachment = 'file',
+    }) async {
+      final command = ReadAttachmentCommand(
+        requestId: 'read-part',
+        cardId: 'payload',
+        attachmentId: attachment,
+        expectedRevision: revision ?? BigInt.one,
+        offset: offset ?? BigInt.zero,
+      );
+      return RuntimeReply.decode(
+        (await _rename(command.encode().toJS).toDart).toDart,
+        requestId: command.requestId,
+      );
+    }
+
+    if ((await readPart()).failure != 'Denied')
+      throw StateError('Attachment missing authorization');
+    await _attachmentControl('attachment-grant'.toJS).toDart;
+    if ((await readPart(attachment: 'other')).failure != 'Denied')
+      throw StateError('Attachment grant too broad');
+    final transfer = AttachmentTransferVerifier(
+      cardId: 'payload',
+      attachmentId: 'file',
+      revision: BigInt.one,
+    );
+    var packets = 0;
+    while (transfer.nextOffset < BigInt.from(100000)) {
+      final reply = await readPart(offset: transfer.nextOffset);
+      final part = reply.attachmentPart;
+      if (reply.kind != 'attachmentChunk' || part == null)
+        throw StateError('Missing attachment part: ${reply.failure}');
+      if (part.totalLength != BigInt.from(100000))
+        throw StateError('Attachment length mismatch');
+      for (var index = 0; index < part.bytes.length; index++) {
+        if (part.bytes[index] != (part.offset.toInt() + index) % 251)
+          throw StateError('Raw attachment mismatch');
+      }
+      transfer.add(part);
+      packets++;
+    }
+    transfer.finish();
+    if (packets != 4) throw StateError('Expected four bounded packets');
+    await _attachmentControl('attachment-revoke'.toJS).toDart;
+    if ((await readPart()).failure != 'Denied')
+      throw StateError('Revoked attachment leaked');
+    await _attachmentControl('attachment-expire'.toJS).toDart;
+    if ((await readPart()).failure != 'Denied')
+      throw StateError('Expired attachment leaked');
+    await _attachmentControl('attachment-grant'.toJS).toDart;
+    final partial = AttachmentTransferVerifier(
+      cardId: 'payload',
+      attachmentId: 'file',
+      revision: BigInt.one,
+    );
+    partial.add((await readPart()).attachmentPart!);
+    await _attachmentControl('attachment-change'.toJS).toDart;
+    if ((await readPart(offset: partial.nextOffset)).failure !=
+        'RevisionConflict')
+      throw StateError('Stale attachment revision accepted');
+    var incomplete = false;
+    try {
+      partial.finish();
+    } on FormatException {
+      incomplete = true;
+    }
+    if (!incomplete ||
+        (await readPart(revision: BigInt.two)).attachmentPart?.revision !=
+            BigInt.two)
+      throw StateError('Revision-bound transfer failed');
     _result =
-        'PASS: ordinary Dart/JavaScript, exact UInt64, native vectors, OPFS commit and dedup.'
+        'PASS: ordinary Dart/JavaScript, exact UInt64, native vectors, OPFS commit/dedup, four attachment packets, whole-file SHA256, revoke/expiry and revision pinning.'
             .toJS;
   } catch (error) {
     _result = 'FAIL: $error'.toJS;

@@ -26,6 +26,20 @@ Future<void> main(List<String> args) async {
   cli(['init', db]);
   cli(['create-local', db, 'seed', 'card', 'original']);
   cli(['import-container-local', db, 'high-seed', args[2]]);
+  final rawPath = '${folder.path}/large original.bin';
+  final rawLength = 5 * 1024 * 1024 + 17;
+  File(rawPath).writeAsBytesSync(List<int>.generate(rawLength, (i) => i % 251));
+  final staged = Process.runSync(args[1], ['stage-file-local', db, rawPath]);
+  check(staged.exitCode == 0, 'Stage fixture failed');
+  cli([
+    'create-attachment-local',
+    db,
+    'attachment-seed',
+    'payload',
+    'raw',
+    staged.stdout.toString().trim(),
+    'original.bin',
+  ]);
   final missing = '${folder.path}/missing.db';
   var rejected = false;
   try {
@@ -239,6 +253,77 @@ Future<void> main(List<String> args) async {
       }
       check(bad && session.liveBuffers == 0, 'Invalid input leaked');
     }
+    ReadAttachmentCommand attachment(
+      BigInt offset, {
+      String id = 'attachment-1',
+      BigInt? revision,
+    }) => ReadAttachmentCommand(
+      requestId: 'attachment-read',
+      cardId: 'payload',
+      attachmentId: id,
+      expectedRevision: revision ?? BigInt.one,
+      offset: offset,
+    );
+    RuntimeReply packet(ReadAttachmentCommand command) => RuntimeReply.decode(
+      c.dispatch(command.encode()),
+      requestId: command.requestId,
+    );
+    check(
+      packet(attachment(BigInt.zero)).failure == 'Denied',
+      'Attachment lacked independent permission',
+    );
+    c.grantAttachment('payload', 'attachment-1');
+    check(
+      packet(attachment(BigInt.zero, id: 'sibling')).failure == 'Denied',
+      'Attachment scope widened',
+    );
+    final verifier = AttachmentTransferVerifier(
+      cardId: 'payload',
+      attachmentId: 'attachment-1',
+      revision: BigInt.one,
+    );
+    var blocks = 0;
+    do {
+      final value = packet(attachment(verifier.nextOffset)).attachmentPart!;
+      verifier.add(value);
+      for (var i = 0; i < value.bytes.length; i++) {
+        check(
+          value.bytes[i] == (value.offset.toInt() + i) % 251,
+          'Attachment bytes changed',
+        );
+      }
+      blocks++;
+    } while (verifier.nextOffset < BigInt.from(rawLength));
+    verifier.finish();
+    check(blocks > 160, 'Large file did not use bounded packets');
+    c.revokeAttachment('payload', 'attachment-1');
+    check(
+      packet(attachment(BigInt.zero)).failure == 'Denied',
+      'Revoked attachment read accepted',
+    );
+    c.grantAttachment(
+      'payload',
+      'attachment-1',
+      ttl: const Duration(milliseconds: 1),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 25));
+    check(
+      packet(attachment(BigInt.zero)).failure == 'Denied',
+      'Expired attachment read accepted',
+    );
+    c.grantAttachment('payload', 'attachment-1');
+    cli(['rename-local', db, 'change-payload', 'payload', '1', 'new title']);
+    check(
+      packet(attachment(BigInt.zero)).failure == 'RevisionConflict',
+      'Mixed attachment revision accepted',
+    );
+    check(
+      packet(
+            attachment(BigInt.zero, revision: BigInt.two),
+          ).attachmentPart!.revision ==
+          BigInt.two,
+      'Explicit new revision failed',
+    );
     // Exercise opaque host/connection limits directly, without exposing ids in app wrappers.
     final rawHosts = <int>[];
     try {
@@ -329,6 +414,6 @@ Future<void> main(List<String> args) async {
     'Reopen cleanup leaked',
   );
   print(
-    'PASS: actual Dart FFI dispatch, scoped query, lost-response recovery, full UInt64, expiry/revocation, precommit response reservation, host/connection bounds, stale handles and zero leaks.',
+    'PASS: actual Dart FFI dispatch, scoped query, lost-response recovery, full UInt64, expiry/revocation, precommit response reservation, host/connection bounds, stale handles, 5 MiB attachment transfer with SHA verification and zero leaks.',
   );
 }

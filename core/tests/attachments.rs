@@ -390,7 +390,7 @@ fn new_storage_refuses_old_database_version_without_upgrade() {
     let path = dir.path().join("old.db");
     let conn = rusqlite::Connection::open(&path).unwrap();
     conn.execute_batch(
-        "CREATE TABLE keep(value TEXT); PRAGMA application_id=1297044050; PRAGMA user_version=1;",
+        "CREATE TABLE keep(value TEXT); PRAGMA application_id=1297044050; PRAGMA user_version=2;",
     )
     .unwrap();
     assert!(matches!(
@@ -400,6 +400,6 @@ fn new_storage_refuses_old_database_version_without_upgrade() {
     assert_eq!(
         conn.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
             .unwrap(),
-        1
+        2
     );
 }

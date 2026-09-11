@@ -15,6 +15,11 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
   if(typeof data==='string'&&data.startsWith('arm:')){faultPoint=data.slice(4);self.postMessage('armed');return;}
   let result;
   switch(data){
+   case 'attachment-seed':{const bytes=Uint8Array.from({length:100000},(_,i)=>i%251);const id=store.stage(bytes,0n);store.create_attachment('attachment-seed','payload',id);result='attachment-ready';break;}
+   case 'attachment-grant':store.grant_attachment('payload','file',60000);result='granted';break;
+   case 'attachment-revoke':store.revoke_attachment('payload','file');result='revoked';break;
+   case 'attachment-expire':store.grant_attachment('payload','file',1);await new Promise(r=>setTimeout(r,30));result='expired';break;
+   case 'attachment-change':store.grant_rename('payload',60000);store.rename(core.rename_encode('attachment-change','payload',1n,'changed'));store.revoke_rename('payload');result='changed';break;
    case 'high-seed':{const bytes=new Uint8Array(await(await fetch('./vectors/high.morrow')).arrayBuffer());store.import_card('import-high',bytes);store.grant_rename('high',60000);result='high-ready';break;}
    case 'export-high':{const bytes=store.export_card('high');self.postMessage(bytes.buffer,[bytes.buffer]);return;}
    case 'blob-count':result=store.first_blob_page_count();break;

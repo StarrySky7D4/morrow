@@ -10,6 +10,7 @@ struct Request {
     renameCard @3 :RenameCard;
     readSummary @6 :Text;
     queryOperation @7 :QueryOperation;
+    readAttachment @8 :ReadAttachment;
   }
 }
 struct RenameCard {
@@ -40,6 +41,7 @@ struct Response {
     summary @6 :CardSummary;
     rejected @7 :Failure;
     operationResult @8 :OperationResult;
+    attachmentChunk @9 :AttachmentChunk;
   }
 }
 struct CommitReceipt {
@@ -73,4 +75,21 @@ struct OperationResult {
     absentSnapshot @2 :Void;
     locallyCommitted @3 :CommitReceipt;
   }
+}
+
+struct ReadAttachment {
+  cardId @0 :Text;
+  attachmentId @1 :Text;
+  expectedRevision @2 :UInt64;
+  offset @3 :UInt64;
+  length @4 :UInt32;
+}
+struct AttachmentChunk {
+  cardId @0 :Text;
+  attachmentId @1 :Text;
+  revision @2 :UInt64;
+  offset @3 :UInt64;
+  totalLength @4 :UInt64;
+  contentSha256 @5 :Data;
+  bytes @6 :Data;
 }

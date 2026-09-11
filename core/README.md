@@ -1,6 +1,6 @@
-# Morrow core — test.8
+# Morrow core — test.9
 
-这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.8`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
+这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.9`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
 
 ## 已实现
 
@@ -11,6 +11,18 @@
 - `morrow-core-check self-check` 运行内存中的协议→纯编辑→容器往返；`verify <file>` 只读验证指定容器。诊断文本不是正式记录。
 
 Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作或草稿持久化。BlobRef 保持可移植引用；test.5 原生 Store 在提交中核对暂存原字节、建立当前／历史引用，并提供受保护回收。卡片预览无需插件即可读取；原始附件可从实验 CLI 导出，Flutter 展示与导出入口尚未接入。
+
+## test.9 附件分块读取
+
+ReadAttachment 是独立能力，精确限定 card_id 与 attachment_id。读取摘要、重命名或同卡片的另一个附件授权均不能代替；相同原件被多个逻辑附件引用也不共享授权。原生 C／Dart 与 BrowserStore 提供独立的附件授权和撤权管理入口，业务消息不携带权限句柄。
+
+- 请求绑定预期修订、偏移和 1–32768 字节长度；单次返回最多 32 KiB，整个协议消息仍限 64 KiB。查询前与交付前复核授权，每包在同一 SQLite 读事务内解析当前卡片及附件引用。修订变化返回 RevisionConflict；不自动切换到新修订。
+- 每个 64 KiB 存储块的摘要以预编译 Chunk Protobuf＋LZ4 写入 blob_chunks，和原始字节一起暂存提交、去重及回收。范围读取最多核验覆盖的两个存储块，避免每包扫描整件文件；原件保持原字节。启动、发布和完整导出仍执行整件校验。
+- 每包包含身份、修订、偏移、总长度、整件 SHA-256 和字节。Dart 的 AttachmentTransferVerifier 只维护递增摘要与进度；拒绝混合修订、乱序和元数据变化。调用者须先写私有临时目标，finish 成功后才能发布，失败后不应暴露半成品。
+- 撤权阻止后续授权读取，不能收回已经交付的字节。分块和整件摘要用于损坏检测，不能替代签名或审计封存。没有跨包持久读会话，也未实现异步调度或插件隔离。
+- 实验数据库格式 3 增加分块索引，拒绝格式 2；没有跨测试版迁移入口。Web 使用 morrow-test9 独立 OPFS 命名空间，不读取旧命名空间。
+
+实际验证见 [test.9 记录](../reports/0.1.9-test.9-refactor.md)。
 
 ## test.8 原生宿主与结果查询
 
@@ -28,15 +40,15 @@ Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作
 
 `dispatch::HostRuntime` 持有唯一 Store 和 HostPolicy；可信传输持有由宿主创建的 Connection，请求不能自报实例、授权、时钟或数据库路径。每次请求先复制到有界缓冲区，再解码、授权并执行。连接失效后不能复用；另一宿主或连接不能借用其能力。第一方本地初始化入口 `store_local[_mut]` 只供宿主管理，不可映射为插件命令。
 
-- Rename 与 ReadSummary 是独立的对象级授权；操作结果查询在 test.8 加入独立授权；创建、导入、附件和搜索尚未扩展成完整的授权命令。
+- Rename 与 ReadSummary 是独立的对象级授权；操作结果查询在 test.8 加入独立授权；test.9 附件读取按卡片与附件单独授权；创建、导入、附件写入和搜索尚未扩展成完整的授权命令。
 - 读取在查询前与交付投影前检查身份、能力、对象及期限；过期、撤权、排空或旧实例均拒绝。无读取权限时，存在与不存在的目标返回同类 Denied，不先查询内容。授权读取返回基础摘要，不返回正文或附件名。
-- 响应为带请求关联 ID、契约摘要的 Cap’n Proto v4：提交回执、摘要或稳定错误枚举。失败响应不夹带私有标题、路径或内部异常文本；CommitUnknown 单独表达，不当成确定未提交。
+- 响应为带请求关联 ID、契约摘要的 Cap’n Proto v5：提交回执、摘要或稳定错误枚举。失败响应不夹带私有标题、路径或内部异常文本；CommitUnknown 单独表达，不当成确定未提交。
 - 运行期单消息最多 64 KiB；摘要预览文本最多 16 KiB，超限返回 Limit，不把裁剪后的摘要保存回记录。这里的授权是同步独占宿主的线性化检查，数据交付后不能追溯收回已复制的字节。
 - Rust 原生集成和 Web Worker 接入使用同一分派器；test.8 原生 Dart 已经实际 DLL 接入分派；原有 morrow_buffer_process／Dart-Wasm 探针仍保留协议往返用途。完整跨进程隔离、授权配置持久化、审计和插件执行待后续阶段。
 
 ## test.5 边界与宿主状态
 
-`bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。旧 morrow_buffer_process 仍只验证并往返协议；新增的原生 morrow_host_* 管理接口与 morrow_host_dispatch 则接入 HostRuntime。运行期协议已升到 4，test.2–test.7 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。test.6 通过独立 web.dart／Rust 编解码入口解决普通 Dart JavaScript 的精确整数接入；旧生成绑定主入口仍受该限制。
+`bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。旧 morrow_buffer_process 仍只验证并往返协议；新增的原生 morrow_host_* 管理接口与 morrow_host_dispatch 则接入 HostRuntime。运行期协议已升到 5，test.2–test.8 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。test.6 通过独立 web.dart／Rust 编解码入口解决普通 Dart JavaScript 的精确整数接入；旧生成绑定主入口仍受该限制。
 
 `lifecycle.rs` 提供纯内存 HostPolicy：宿主分配不可自报的实例身份与代次、对象级重命名授权和到期时刻；接单固定请求，完成前再次核对身份／授权／期限。正常停止不接新任务、等待已有任务，达到排空期限则撤权；安全停止先撤权后取消。宿主须用单调时钟调用 expire_drains，迟到完成也会检查期限。停止／退休后旧实例、授权与任务不可复用。
 
@@ -52,16 +64,16 @@ CommitState 区分未提交、结果待核对、本地已提交、封存、见�
 - 重命名持有宿主的独占借用，事务内及 COMMIT 前重新核对授权；最后一次核对是授权线性化点。排空期限或授权在准备过程中到期会回滚。最终磁盘同步期间到期不追溯撤销已线性化的提交。多个独立进程／宿主的权限同步仍待实现。
 - 默认待封存队列上限 1024 条／64 MiB；先检查容量再写入，事件插入失败同时回滚内容与操作。M4 封存机制建立前没有清空／确认队列入口，达到上限会拒绝新操作。
 - 打开数据库检查归属、版本、SQLite 完整性、卡片摘要与操作／事件对应关系。未来版本和无关数据库被拒绝，`open_existing` 不创建缺失文件。这是损坏检测，不是防御已控制宿主和数据库的攻击者。
-- 当前支持带已暂存附件的卡片创建、标题修改、附件列表替换、结果查询和原件导出；缺失或损坏的载荷被拒绝。关系、草稿、工作区的实际事务待实现。数据库格式已升为 2，不自动打开或迁移 test.4 的格式 1；需要新建实验数据库，不切换旧 Flutter 保存路径。
+- 当前支持带已暂存附件的卡片创建、标题修改、附件列表替换、结果查询和原件导出；缺失或损坏的载荷被拒绝。关系、草稿、工作区的实际事务待实现。数据库格式已升为 3，不自动打开或迁移 test.4–test.8 的格式 1／2；需要新建实验数据库，不切换旧 Flutter 保存路径。
 
 实验 CLI：
 
 ```powershell
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-store -- init build/example.db
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-store -- query build/example.db operation-2
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-store -- check build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-store -- init build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-store -- query build/example.db operation-2
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-store -- check build/example.db
 ```
 
 CLI 的 local 操作是可信本地操作者入口，不能直接暴露给插件；lookup/card 同样需要传输层的读取授权。`fault-injection` 只用于子进程恢复测试，默认构建不响应故障注入环境变量。进程直接退出覆盖提交前后边界，不等于断电或全平台验收。
@@ -100,9 +112,9 @@ pwsh -File tool/verify_core.ps1
 # 安装目标后检查 Web 核心；此命令不会自动安装工具链：
 rustup target add wasm32-unknown-unknown
 pwsh -File tool/verify_core.ps1 -Web
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.8 --bin morrow-core-check -- verify path/to/card.morrow
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.9 --bin morrow-core-check -- verify path/to/card.morrow
 ```
 
-test.5 已导出原生／Wasm ABI 并在 Chrome Worker 中实测协议往返；浏览器存储、共享内存、审计与插件运行仍未实现；原生事务仅在实验 CLI／Rust API 中可用，FFI 仍是协议往返探针。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
+当前原生 Dart FFI 与 Chrome Worker 已接入同一持久化分派，并提供受授权的附件分块读取；共享内存、审计与插件运行仍未实现，工作台保存路径未切换。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
 
 参考：[prost-reflect 未知字段 API](https://docs.rs/prost-reflect/0.16.5/prost_reflect/struct.DynamicMessage.html#method.unknown_fields)、[LZ4 有界解压 API](https://docs.rs/lz4_flex/0.14.0/lz4_flex/block/fn.decompress_into.html)。本轮兼容性结论以仓库中的演进测试为依据，不把普通 prost 生成类型直接作为无损编辑载体。

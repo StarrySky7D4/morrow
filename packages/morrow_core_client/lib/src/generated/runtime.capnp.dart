@@ -63,6 +63,11 @@ final class RequestReader extends StructReader {
     1,
     (r) => QueryOperationReader(r, capabilities: capabilityTable),
   );
+
+  ReadAttachmentReader? get readAttachment => getStructFieldWith(
+    1,
+    (r) => ReadAttachmentReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -111,6 +116,13 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasQueryOperation() => hasPointerField(1);
+
+  ReadAttachmentBuilder initReadAttachment() {
+    setUint16Field(2, 4);
+    return initStructFieldWith(1, (r) => ReadAttachmentBuilder(r), 3, 2);
+  }
+
+  bool hasReadAttachment() => hasPointerField(1);
 }
 
 final class _RequestFactory
@@ -138,7 +150,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   shortName: 'Request',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 4,
+  discriminantCount: 5,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -207,6 +219,15 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: StructRefTypeSchemaInfo(0xb21162be27e7f2b3),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'readAttachment',
+      codeOrder: 8,
+      discriminantValue: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xb95a3d94eb59a5ca),
       ),
     ),
   ],
@@ -474,6 +495,11 @@ final class ResponseReader extends StructReader {
     3,
     (r) => OperationResultReader(r, capabilities: capabilityTable),
   );
+
+  AttachmentChunkReader? get attachmentChunk => getStructFieldWith(
+    3,
+    (r) => AttachmentChunkReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -529,6 +555,13 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasOperationResult() => hasPointerField(3);
+
+  AttachmentChunkBuilder initAttachmentChunk() {
+    setUint16Field(2, 5);
+    return initStructFieldWith(3, (r) => AttachmentChunkBuilder(r), 3, 4);
+  }
+
+  bool hasAttachmentChunk() => hasPointerField(3);
 }
 
 final class _ResponseFactory
@@ -556,7 +589,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   shortName: 'Response',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 5,
+  discriminantCount: 6,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -634,6 +667,15 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 3,
         type: StructRefTypeSchemaInfo(0xa9229664ea36f23c),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'attachmentChunk',
+      codeOrder: 9,
+      discriminantValue: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xd73e968f67bcb0e3),
       ),
     ),
   ],
@@ -943,3 +985,263 @@ const StructSchemaInfo operationResultSchema = StructSchemaInfo(
 );
 
 final operationResultFactory = _OperationResultFactory();
+
+final class ReadAttachmentReader extends StructReader {
+  ReadAttachmentReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = readAttachmentSchema;
+
+  String? get cardId => getTextField(0);
+
+  String? get attachmentId => getTextField(1);
+
+  int get expectedRevision => getUint64Field(0);
+
+  int get offset => getUint64Field(8);
+
+  int get length => getUint32Field(16);
+}
+
+final class ReadAttachmentBuilder extends StructBuilder {
+  ReadAttachmentBuilder(super.raw);
+
+  @override
+  ReadAttachmentReader asReader() => ReadAttachmentReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set attachmentId(String? v) {
+    setTextField(1, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set length(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _ReadAttachmentFactory
+    extends StructFactory<ReadAttachmentReader, ReadAttachmentBuilder> {
+  @override
+  StructSchemaInfo get schema => readAttachmentSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  ReadAttachmentReader fromRawReader(RawStructReader r) =>
+      ReadAttachmentReader(r);
+  @override
+  ReadAttachmentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ReadAttachmentReader(r, capabilities: capabilities);
+  @override
+  ReadAttachmentBuilder fromRawBuilder(RawStructBuilder r) =>
+      ReadAttachmentBuilder(r);
+}
+
+const StructSchemaInfo readAttachmentSchema = StructSchemaInfo(
+  id: 0xb95a3d94eb59a5ca,
+  displayName: 'runtime.capnp:ReadAttachment',
+  shortName: 'ReadAttachment',
+  dataWords: 3,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'attachmentId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'length',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final readAttachmentFactory = _ReadAttachmentFactory();
+
+final class AttachmentChunkReader extends StructReader {
+  AttachmentChunkReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = attachmentChunkSchema;
+
+  String? get cardId => getTextField(0);
+
+  String? get attachmentId => getTextField(1);
+
+  int get revision => getUint64Field(0);
+
+  int get offset => getUint64Field(8);
+
+  int get totalLength => getUint64Field(16);
+
+  Uint8List? get contentSha256 => getDataField(2);
+
+  Uint8List? get bytes => getDataField(3);
+}
+
+final class AttachmentChunkBuilder extends StructBuilder {
+  AttachmentChunkBuilder(super.raw);
+
+  @override
+  AttachmentChunkReader asReader() => AttachmentChunkReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set attachmentId(String? v) {
+    setTextField(1, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set totalLength(int v) {
+    setUint64Field(16, v);
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(3, v);
+  }
+}
+
+final class _AttachmentChunkFactory
+    extends StructFactory<AttachmentChunkReader, AttachmentChunkBuilder> {
+  @override
+  StructSchemaInfo get schema => attachmentChunkSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 4;
+  @override
+  AttachmentChunkReader fromRawReader(RawStructReader r) =>
+      AttachmentChunkReader(r);
+  @override
+  AttachmentChunkReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => AttachmentChunkReader(r, capabilities: capabilities);
+  @override
+  AttachmentChunkBuilder fromRawBuilder(RawStructBuilder r) =>
+      AttachmentChunkBuilder(r);
+}
+
+const StructSchemaInfo attachmentChunkSchema = StructSchemaInfo(
+  id: 0xd73e968f67bcb0e3,
+  displayName: 'runtime.capnp:AttachmentChunk',
+  shortName: 'AttachmentChunk',
+  dataWords: 3,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'attachmentId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'totalLength',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentSha256',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final attachmentChunkFactory = _AttachmentChunkFactory();

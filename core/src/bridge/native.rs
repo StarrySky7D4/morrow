@@ -236,3 +236,72 @@ pub extern "C" fn morrow_host_live() -> u32 {
         .lock()
         .map_or(u32::MAX, |hosts| hosts.hosts.len() as u32)
 }
+
+fn with_pair(
+    first: u32,
+    second: u32,
+    action: impl FnOnce(&[u8], &[u8]) -> Result<u32, u32>,
+) -> u32 {
+    let Ok(mut arena) = REGISTRY.lock() else {
+        return 0;
+    };
+    let copied = arena
+        .buffers
+        .get(&first)
+        .zip(arena.buffers.get(&second))
+        .map(|(a, b)| (a.bytes.to_vec(), b.bytes.to_vec()));
+    let result = match copied {
+        Some((a, b)) => action(&a, &b),
+        None => Err(255),
+    };
+    let (value, status) = match result {
+        Ok(v) => (v, 0),
+        Err(code) => (0, code),
+    };
+    if let Some(input) = arena.buffers.get_mut(&first) {
+        input.status = status;
+    }
+    value
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn morrow_host_grant_attachment(
+    host: u32,
+    connection: u32,
+    card_buffer: u32,
+    attachment_buffer: u32,
+    ttl_ms: u32,
+) -> u32 {
+    with_pair(card_buffer, attachment_buffer, |card, attachment| {
+        let mut hosts = HOSTS.lock().map_err(|_| 4u32)?;
+        let host = hosts.hosts.get_mut(&host).ok_or(255u32)?;
+        let connection = host.connections.get_mut(&connection).ok_or(255u32)?;
+        let now = tick(host.started);
+        host.runtime
+            .grant_attachment(
+                connection,
+                text(card)?,
+                text(attachment)?,
+                now.checked_add(ttl_ms as u64).ok_or(3u32)?,
+                now,
+            )
+            .map_err(code)?;
+        Ok(1)
+    })
+}
+#[unsafe(no_mangle)]
+pub extern "C" fn morrow_host_revoke_attachment(
+    host: u32,
+    connection: u32,
+    card_buffer: u32,
+    attachment_buffer: u32,
+) -> u32 {
+    with_pair(card_buffer, attachment_buffer, |card, attachment| {
+        let mut hosts = HOSTS.lock().map_err(|_| 4u32)?;
+        let host = hosts.hosts.get_mut(&host).ok_or(255u32)?;
+        let connection = host.connections.get_mut(&connection).ok_or(255u32)?;
+        host.runtime
+            .revoke_attachment(connection, text(card)?, text(attachment)?)
+            .map_err(code)?;
+        Ok(1)
+    })
+}

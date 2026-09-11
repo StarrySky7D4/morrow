@@ -33,7 +33,7 @@ pub async fn install_opfs() -> Result<(), JsValue> {
     use sqlite_wasm_vfs::sahpool::{OpfsSAHPoolCfgBuilder, install};
     let config = OpfsSAHPoolCfgBuilder::new()
         .vfs_name("morrow-opfs")
-        .directory("morrow-test8")
+        .directory("morrow-test9")
         .initial_capacity(64)
         .clear_on_init(false)
         .build();
@@ -239,6 +239,28 @@ impl BrowserStore {
             .revoke(&mut self.connection, GrantKind::QueryOperation, id)
             .map_err(error)
     }
+    pub fn grant_attachment(
+        &mut self,
+        card: &str,
+        attachment: &str,
+        ttl: u32,
+    ) -> Result<(), JsValue> {
+        let now = clock();
+        self.runtime
+            .grant_attachment(
+                &mut self.connection,
+                card,
+                attachment,
+                now.saturating_add(ttl as u64),
+                now,
+            )
+            .map_err(error)
+    }
+    pub fn revoke_attachment(&mut self, card: &str, attachment: &str) -> Result<(), JsValue> {
+        self.runtime
+            .revoke_attachment(&mut self.connection, card, attachment)
+            .map_err(error)
+    }
     pub fn dispatch(&mut self, bytes: &[u8]) -> Result<Vec<u8>, JsValue> {
         self.runtime
             .dispatch(&self.connection, bytes, clock)
@@ -395,6 +417,7 @@ impl DecodedResponse {
         match &self.response.outcome {
             Outcome::Renamed(_) => "renamed",
             Outcome::Summary(_) => "summary",
+            Outcome::AttachmentChunk(_) => "attachmentChunk",
             Outcome::Rejected(_) => "rejected",
             Outcome::OperationResult { .. } => "operationResult",
         }
@@ -405,6 +428,7 @@ impl DecodedResponse {
         match &self.response.outcome {
             Outcome::Renamed(v) => Some(v.revision),
             Outcome::Summary(v) => Some(v.revision),
+            Outcome::AttachmentChunk(v) => Some(v.revision),
             Outcome::OperationResult {
                 result: Lookup::Committed(v),
                 ..
@@ -437,6 +461,7 @@ impl DecodedResponse {
         match &self.response.outcome {
             Outcome::OperationResult { card_id, .. } => Some(card_id.clone()),
             Outcome::Summary(v) => Some(v.id.clone()),
+            Outcome::AttachmentChunk(v) => Some(v.card_id.clone()),
             Outcome::Renamed(v) => Some(v.card_id.clone()),
             _ => None,
         }
@@ -446,6 +471,41 @@ impl DecodedResponse {
         match &self.response.outcome {
             Outcome::OperationResult { operation_id, .. } => Some(operation_id.clone()),
             Outcome::Renamed(v) => Some(v.operation_id.clone()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn attachment_id(&self) -> Option<String> {
+        match &self.response.outcome {
+            Outcome::AttachmentChunk(v) => Some(v.attachment_id.clone()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn offset(&self) -> Option<u64> {
+        match &self.response.outcome {
+            Outcome::AttachmentChunk(v) => Some(v.offset),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn total_length(&self) -> Option<u64> {
+        match &self.response.outcome {
+            Outcome::AttachmentChunk(v) => Some(v.total_length),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn content_sha256(&self) -> Option<Vec<u8>> {
+        match &self.response.outcome {
+            Outcome::AttachmentChunk(v) => Some(v.content_sha256.to_vec()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
+    pub fn bytes(&self) -> Option<Vec<u8>> {
+        match &self.response.outcome {
+            Outcome::AttachmentChunk(v) => Some(v.bytes.clone()),
             _ => None,
         }
     }
@@ -475,6 +535,36 @@ pub fn query_encode(
         card_id: card_id.into(),
         operation_id: operation_id.into(),
     }
+    .encode()
+    .map_err(error)
+}
+
+#[wasm_bindgen]
+pub fn attachment_encode(
+    request_id: &str,
+    card_id: &str,
+    attachment_id: &str,
+    revision: &js_sys::BigInt,
+    offset: &js_sys::BigInt,
+    length: u32,
+) -> Result<Vec<u8>, JsValue> {
+    fn number(value: &js_sys::BigInt) -> Result<u64, JsValue> {
+        value
+            .to_string(10)
+            .map_err(JsValue::from)?
+            .as_string()
+            .ok_or_else(|| error("Invalid integer"))?
+            .parse::<u64>()
+            .map_err(error)
+    }
+    morrow_core::runtime::Command::ReadAttachment(morrow_core::runtime::ReadAttachment {
+        request_id: request_id.into(),
+        card_id: card_id.into(),
+        attachment_id: attachment_id.into(),
+        expected_revision: number(revision)?,
+        offset: number(offset)?,
+        length,
+    })
     .encode()
     .map_err(error)
 }

@@ -38,10 +38,11 @@ fn card(file: &BlobInfo) -> CardRecord {
     .unwrap()
 }
 #[test]
-fn stage_recovers_at_four_exit_boundaries() {
+fn stage_recovers_at_five_exit_boundaries() {
     for point in [
         "stage-after-allocation",
         "stage-after-chunk",
+        "stage-after-payload",
         "stage-before-commit",
         "stage-after-commit",
     ] {

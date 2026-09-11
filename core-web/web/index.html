@@ -35,6 +35,7 @@ try{
  }else{
  await call(worker,'seed');await call(worker,'second-connection');
  globalThis.morrowStoreRename=async bytes=>new Uint8Array(await call(worker,bytes.slice().buffer,true));
+ globalThis.morrowAttachmentControl=async action=>call(worker,action);
  globalThis.morrowFixture=async name=>new Uint8Array(await(await fetch('./vectors/'+name+'.capnp')).arrayBuffer());
  const script=document.createElement('script');script.src='./js_probe.js';document.body.append(script);
  let waited=0;while(!globalThis.jsCodecProbeResult&&waited++<300)await delay(50);
@@ -86,7 +87,7 @@ try{
   for(let attempt=0;attempt<2;attempt++)if(await call(worker,request.slice().buffer)!==2n)throw Error('Recovery dedup '+point);
   worker.terminate();await delay(100);
  }
- const stagePoints=['stage-after-allocation','stage-after-chunk','stage-before-commit','stage-after-commit'];
+ const stagePoints=['stage-after-allocation','stage-after-chunk','stage-after-payload','stage-before-commit','stage-after-commit'];
  for(let index=0;index<stagePoints.length;index++){
   const point=stagePoints[index],url='./worker.mjs?fault=1&db=stage'+index;
   globalThis.coreProbePhase=point;worker=await reopen(url);await call(worker,'arm:'+point);
@@ -119,7 +120,7 @@ try{
   if(await call(worker,'gc-run')!==remaining||await call(worker,'gc-run')!==0)throw Error('GC recovery');
   await call(worker,'check');worker.terminate();await delay(100);
  }
- globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 28 Worker termination boundaries (7 rename, 4 staging, 14 attachment changes, 3 GC), capability-separated summary reads, scoped operation queries and binary responses.';
+ globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 29 Worker termination boundaries (7 rename, 5 staging, 14 attachment changes, 3 GC), capability-separated summary reads, scoped operation queries, binary responses and revision-bound attachment transfer with whole-file SHA256.';
  }
 }catch(error){globalThis.coreProbeResult='FAIL at '+globalThis.coreProbePhase+': '+error;}
 finally{worker?.terminate();}

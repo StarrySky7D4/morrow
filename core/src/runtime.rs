@@ -4,7 +4,7 @@ use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-pub const PROTOCOL_VERSION: u16 = 4;
+pub const PROTOCOL_VERSION: u16 = 5;
 pub fn schema_digest(source: &[u8]) -> [u8; 32] {
     use sha2::{Digest, Sha256};
     // Git checkout line endings do not change the contract identity.
@@ -55,8 +55,33 @@ impl RenameRequest {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReadAttachment {
+    pub request_id: String,
+    pub card_id: String,
+    pub attachment_id: String,
+    pub expected_revision: u64,
+    pub offset: u64,
+    pub length: u32,
+}
+impl ReadAttachment {
+    pub fn validate(&self) -> Result<()> {
+        identity(&self.request_id)?;
+        identity(&self.card_id)?;
+        identity(&self.attachment_id)?;
+        if self.expected_revision == 0
+            || self.offset > crate::attachment::MAX_BLOB_BYTES
+            || self.length == 0
+            || self.length > crate::attachment::MAX_READ_BYTES
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
     Rename(RenameRequest),
+    ReadAttachment(ReadAttachment),
     ReadSummary {
         request_id: String,
         card_id: String,
@@ -71,6 +96,7 @@ impl Command {
     pub fn request_id(&self) -> &str {
         match self {
             Self::Rename(v) => &v.operation_id,
+            Self::ReadAttachment(v) => &v.request_id,
             Self::ReadSummary { request_id, .. } | Self::QueryOperation { request_id, .. } => {
                 request_id
             }
@@ -79,6 +105,7 @@ impl Command {
     pub fn card_id(&self) -> &str {
         match self {
             Self::Rename(v) => &v.card_id,
+            Self::ReadAttachment(v) => &v.card_id,
             Self::ReadSummary { card_id, .. } | Self::QueryOperation { card_id, .. } => card_id,
         }
     }
@@ -87,6 +114,7 @@ impl Command {
         identity(self.card_id())?;
         match self {
             Self::Rename(v) => v.validate(),
+            Self::ReadAttachment(v) => v.validate(),
             Self::QueryOperation { operation_id, .. } => identity(operation_id),
             _ => Ok(()),
         }
@@ -105,6 +133,14 @@ impl Command {
                 rename.set_card_id(value.card_id.as_str());
                 rename.set_expected_revision(value.expected_revision);
                 rename.set_title(value.title.as_str());
+            }
+            Self::ReadAttachment(v) => {
+                let mut out = root.init_read_attachment();
+                out.set_card_id(v.card_id.as_str());
+                out.set_attachment_id(v.attachment_id.as_str());
+                out.set_expected_revision(v.expected_revision);
+                out.set_offset(v.offset);
+                out.set_length(v.length);
             }
             Self::ReadSummary { card_id, .. } => root.set_read_summary(card_id.as_str()),
             Self::QueryOperation {
@@ -151,6 +187,17 @@ impl Command {
                     card_id: read_text(value.get_card_id())?,
                     operation_id: read_text(value.get_operation_id())?,
                 }
+            }
+            runtime_capnp::request::ReadAttachment(value) => {
+                let v = value.map_err(|_| Error::Invalid("attachment read"))?;
+                Self::ReadAttachment(ReadAttachment {
+                    request_id,
+                    card_id: read_text(v.get_card_id())?,
+                    attachment_id: read_text(v.get_attachment_id())?,
+                    expected_revision: v.get_expected_revision(),
+                    offset: v.get_offset(),
+                    length: v.get_length(),
+                })
             }
             _ => return Err(Error::Invalid("operation")),
         };

@@ -10,7 +10,7 @@ use std::collections::BTreeMap;
 /// Opaque host-owned endpoint; never serialize or let an untrusted caller select another endpoint.
 pub struct Connection {
     instance: Instance,
-    grants: BTreeMap<(GrantKind, String), Grant>,
+    grants: BTreeMap<(GrantKind, String, Option<String>), Grant>,
 }
 pub struct HostRuntime {
     policy: HostPolicy,
@@ -41,7 +41,7 @@ impl HostRuntime {
         now: u64,
     ) -> Result<()> {
         self.policy.phase(connection.instance)?;
-        let key = (kind, card.to_owned());
+        let key = (kind, card.to_owned(), None);
         if let Some(old) = connection.grants.remove(&key) {
             self.policy.revoke(old)?;
         }
@@ -60,7 +60,47 @@ impl HostRuntime {
         self.policy.phase(connection.instance)?;
         let grant = connection
             .grants
-            .remove(&(kind, card.into()))
+            .remove(&(kind, card.into(), None))
+            .ok_or(Error::Invalid("missing grant"))?;
+        self.policy.revoke(grant)
+    }
+    pub fn grant_attachment(
+        &mut self,
+        connection: &mut Connection,
+        card: &str,
+        attachment: &str,
+        expires: u64,
+        now: u64,
+    ) -> Result<()> {
+        self.policy.phase(connection.instance)?;
+        let key = (
+            GrantKind::ReadAttachment,
+            card.into(),
+            Some(attachment.into()),
+        );
+        if let Some(old) = connection.grants.remove(&key) {
+            self.policy.revoke(old)?;
+        }
+        let grant =
+            self.policy
+                .grant_attachment(connection.instance, card, attachment, expires, now)?;
+        connection.grants.insert(key, grant);
+        Ok(())
+    }
+    pub fn revoke_attachment(
+        &mut self,
+        connection: &mut Connection,
+        card: &str,
+        attachment: &str,
+    ) -> Result<()> {
+        self.policy.phase(connection.instance)?;
+        let grant = connection
+            .grants
+            .remove(&(
+                GrantKind::ReadAttachment,
+                card.into(),
+                Some(attachment.into()),
+            ))
             .ok_or(Error::Invalid("missing grant"))?;
         self.policy.revoke(grant)
     }
@@ -90,14 +130,19 @@ impl HostRuntime {
         let command = Command::decode(&fixed)?;
         let kind = match command {
             Command::Rename(_) => GrantKind::Rename,
+            Command::ReadAttachment(_) => GrantKind::ReadAttachment,
             Command::ReadSummary { .. } => GrantKind::ReadSummary,
             Command::QueryOperation { .. } => GrantKind::QueryOperation,
+        };
+        let attachment = match &command {
+            Command::ReadAttachment(v) => Some(v.attachment_id.clone()),
+            _ => None,
         };
         let result = (|| {
             self.policy.phase(connection.instance)?;
             let grant = *connection
                 .grants
-                .get(&(kind, command.card_id().to_owned()))
+                .get(&(kind, command.card_id().to_owned(), attachment))
                 .ok_or(Error::Invalid("missing grant"))?;
             match &command {
                 Command::Rename(request) => {
@@ -108,6 +153,10 @@ impl HostRuntime {
                         .commit_rename(permit, &mut self.store, &mut clock)
                         .map(Outcome::Renamed)
                 }
+                Command::ReadAttachment(request) => self
+                    .policy
+                    .read_attachment(connection.instance, grant, &self.store, request, &mut clock)
+                    .map(Outcome::AttachmentChunk),
                 Command::QueryOperation {
                     card_id,
                     operation_id,

@@ -15,7 +15,7 @@ let chrome;
 for (const file of candidates) { try { await access(file); chrome = file; break; } catch { /* Try next explicit path. */ } }
 if (!chrome) throw new Error('Set CHROME_BIN to a Chrome/Chromium executable');
 
-const webFolder=process.argv.includes('--store')?'build/core-test.8/web-store':'build/core-test.8/web';
+const webFolder=process.argv.includes('--store')?'build/core-test.9/web-store':'build/core-test.9/web';
 const allowed = ['/preview/'];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
   '.wasm': 'application/wasm', '.json': 'application/json', '.bin': 'application/octet-stream' };
@@ -25,7 +25,7 @@ const server = createServer(async (request, response) => {
     if(process.argv.includes('--store')&&request.method==='POST'&&route==='/capture/browser-card.morrow'){
       const chunks=[];let size=0;
       for await(const chunk of request){size+=chunk.length;if(size>9*1024*1024){response.writeHead(413).end();return;}chunks.push(chunk);}
-      await writeFile(path.join(root,'build/core-test.8/browser-card.morrow'),Buffer.concat(chunks));response.writeHead(204).end();return;
+      await writeFile(path.join(root,'build/core-test.9/browser-card.morrow'),Buffer.concat(chunks));response.writeHead(204).end();return;
     }
     if (!allowed.some((p) => p.endsWith('/') ? route.startsWith(p) : route === p)) { response.writeHead(404).end(); return; }
     const target = path.resolve(root, webFolder, route.slice('/preview/'.length) || 'index.html');

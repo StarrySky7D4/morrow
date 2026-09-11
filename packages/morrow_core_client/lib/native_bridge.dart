@@ -110,6 +110,16 @@ class NativeHostSession {
     _live = library.lookupFunction<Uint32 Function(), int Function()>(
       'morrow_host_live',
     );
+    _grantAttachment = library
+        .lookupFunction<
+          Uint32 Function(Uint32, Uint32, Uint32, Uint32, Uint32),
+          int Function(int, int, int, int, int)
+        >('morrow_host_grant_attachment');
+    _revokeAttachment = library
+        .lookupFunction<
+          Uint32 Function(Uint32, Uint32, Uint32, Uint32),
+          int Function(int, int, int, int)
+        >('morrow_host_revoke_attachment');
     _host = _control(
       'open',
       Uint8List.fromList(utf8.encode(databasePath)),
@@ -123,6 +133,8 @@ class NativeHostSession {
   late final int Function(int, int, int, int) _revoke;
   late final int Function(int, int, int) _dispatch;
   late final int Function() _live;
+  late final int Function(int, int, int, int, int) _grantAttachment;
+  late final int Function(int, int, int, int) _revokeAttachment;
   int _host = 0;
   int get liveHosts => _live();
   int get liveBuffers => _bridge.liveBuffers;
@@ -222,6 +234,53 @@ class NativeHostConnection {
     }
   }
 
+  void _attachmentControl(
+    String operation,
+    String card,
+    String attachment,
+    int Function(int, int) action,
+  ) {
+    _ensureOpen();
+    final bytes = utf8.encode(attachment);
+    if (bytes.isEmpty || bytes.length > 256)
+      throw const FormatException('Attachment identity');
+    final input = _owner._bridge._new(bytes.length);
+    if (input == 0) throw StateError('Core buffer limit');
+    try {
+      final ptr = _owner._bridge._ptr(input);
+      if (ptr == nullptr) throw StateError('Invalid input');
+      ptr.asTypedList(bytes.length).setAll(0, bytes);
+      _owner._control(
+        operation,
+        Uint8List.fromList(utf8.encode(card)),
+        (cardInput) => action(cardInput, input),
+      );
+    } finally {
+      _owner._bridge._free(input);
+    }
+  }
+
+  void grantAttachment(
+    String card,
+    String attachment, {
+    Duration ttl = const Duration(minutes: 1),
+  }) {
+    final ms = ttl.inMilliseconds;
+    if (ms <= 0 || ms > 0xffffffff) throw ArgumentError('TTL limit');
+    _attachmentControl(
+      'grant attachment',
+      card,
+      attachment,
+      (a, b) => _owner._grantAttachment(_owner._host, _id, a, b, ms),
+    );
+  }
+
+  void revokeAttachment(String card, String attachment) => _attachmentControl(
+    'revoke attachment',
+    card,
+    attachment,
+    (a, b) => _owner._revokeAttachment(_owner._host, _id, a, b),
+  );
   void close() {
     if (_id != 0) {
       if (_owner._host != 0) _owner._disconnect(_owner._host, _id);

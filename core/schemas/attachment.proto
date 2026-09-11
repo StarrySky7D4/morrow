@@ -17,3 +17,11 @@ message Retention {
   string blob_id = 3;
   RetentionKind kind = 4;
 }
+
+message Chunk {
+  uint32 schema_version = 1;
+  string blob_id = 2;
+  uint64 offset = 3;
+  uint32 byte_length = 4;
+  bytes sha256 = 5;
+}

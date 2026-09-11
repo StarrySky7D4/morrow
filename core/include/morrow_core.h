@@ -40,6 +40,12 @@ uint32_t morrow_host_disconnect(uint32_t host, uint32_t connection);
 uint32_t morrow_host_grant(uint32_t host, uint32_t connection, uint32_t capability, uint32_t card_buffer, uint32_t ttl_ms);
 uint32_t morrow_host_revoke(uint32_t host, uint32_t connection, uint32_t capability, uint32_t card_buffer);
 uint32_t morrow_host_dispatch(uint32_t host, uint32_t connection, uint32_t input);
+/* Exact attachment grants require BOTH card and attachment identities.
+ * A revision-bound binary read yields at most 32768 raw bytes. Reassemble only
+ * matching identities/revision/digest in offset order; verify whole SHA-256 before publishing.
+ */
+uint32_t morrow_host_grant_attachment(uint32_t host, uint32_t connection, uint32_t card_buffer, uint32_t attachment_buffer, uint32_t ttl_ms);
+uint32_t morrow_host_revoke_attachment(uint32_t host, uint32_t connection, uint32_t card_buffer, uint32_t attachment_buffer);
 uint32_t morrow_host_live(void);
 #ifdef __cplusplus
 }

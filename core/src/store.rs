@@ -139,7 +139,7 @@ impl Store {
         // Reject unrelated and future databases before changing their pragmas/schema.
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 2) {
+        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 3) {
             return Err(Error::UnsupportedVersion);
         }
         if app == 0 && version == 0 && create {
@@ -179,10 +179,10 @@ impl Store {
                 CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, payload BLOB NOT NULL) STRICT;
                 CREATE INDEX operation_card ON operations(card_id);
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
-                PRAGMA application_id=1297044050; PRAGMA user_version=2;"))?;
+                PRAGMA application_id=1297044050; PRAGMA user_version=3;"))?;
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || version != 2 {
+        } else if app != APPLICATION_ID || version != 3 {
             return Err(Error::UnsupportedVersion);
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;

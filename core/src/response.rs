@@ -8,6 +8,7 @@ pub use runtime_capnp::Failure;
 pub enum Outcome {
     Renamed(Receipt),
     Summary(CardSummary),
+    AttachmentChunk(crate::attachment::AttachmentChunk),
     Rejected(Failure),
     OperationResult {
         card_id: String,
@@ -56,6 +57,7 @@ impl Response {
                     }
                 }
             }
+            Outcome::AttachmentChunk(v) => v.validate()?,
             Outcome::Rejected(_) => {}
         }
         Ok(())
@@ -106,6 +108,16 @@ impl Response {
                         receipt.set_event_id(v.event_id.as_str());
                     }
                 }
+            }
+            Outcome::AttachmentChunk(v) => {
+                let mut out = root.init_attachment_chunk();
+                out.set_card_id(v.card_id.as_str());
+                out.set_attachment_id(v.attachment_id.as_str());
+                out.set_revision(v.revision);
+                out.set_offset(v.offset);
+                out.set_total_length(v.total_length);
+                out.set_content_sha256(&v.content_sha256);
+                out.set_bytes(&v.bytes);
             }
             Outcome::Rejected(v) => root.set_rejected(*v),
         }
@@ -183,6 +195,22 @@ impl Response {
                     operation_id: read_text(value.get_operation_id())?,
                     result,
                 }
+            }
+            runtime_capnp::response::AttachmentChunk(value) => {
+                let v = value.map_err(|_| Error::Invalid("attachment chunk"))?;
+                Outcome::AttachmentChunk(crate::attachment::AttachmentChunk {
+                    card_id: read_text(v.get_card_id())?,
+                    attachment_id: read_text(v.get_attachment_id())?,
+                    revision: v.get_revision(),
+                    offset: v.get_offset(),
+                    total_length: v.get_total_length(),
+                    content_sha256: v
+                        .get_content_sha256()
+                        .map_err(|_| Error::Integrity)?
+                        .try_into()
+                        .map_err(|_| Error::Integrity)?,
+                    bytes: v.get_bytes().map_err(|_| Error::Integrity)?.to_vec(),
+                })
             }
             _ => return Err(Error::Invalid("response kind")),
         };

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../attachment_transfer.dart';
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'generated/runtime.capnp.dart';
@@ -161,6 +162,7 @@ class RuntimeReply {
     this.eventId,
     this.contentSha256,
     this.resultState,
+    this.attachmentPart,
   });
   final String kind;
   final BigInt? revision;
@@ -174,6 +176,7 @@ class RuntimeReply {
       resultState;
   final int? formatVersion;
   final Uint8List? contentSha256;
+  final AttachmentPart? attachmentPart;
   static RuntimeReply decode(Uint8List bytes, {required String requestId}) {
     _frame(bytes);
     _identity(requestId);
@@ -249,6 +252,26 @@ class RuntimeReply {
           operationId: operation,
           cardId: card,
         );
+      case 5:
+        final value = root.attachmentChunk;
+        if (value == null)
+          throw const FormatException('Missing attachment chunk');
+        final part = AttachmentPart(
+          cardId: value.cardId ?? '',
+          attachmentId: value.attachmentId ?? '',
+          revision: BigInt.from(value.revision).toUnsigned(64),
+          offset: BigInt.from(value.offset).toUnsigned(64),
+          totalLength: BigInt.from(value.totalLength).toUnsigned(64),
+          contentSha256: value.contentSha256 ?? Uint8List(0),
+          bytes: value.bytes ?? Uint8List(0),
+        );
+        return RuntimeReply._(
+          kind: 'attachmentChunk',
+          cardId: part.cardId,
+          revision: part.revision,
+          contentSha256: part.contentSha256,
+          attachmentPart: part,
+        );
       default:
         throw const FormatException('Unsupported response');
     }
@@ -281,4 +304,37 @@ class RuntimeReply {
       resultState: kind == 'operationResult' ? 'locallyCommitted' : null,
     );
   }
+}
+
+class ReadAttachmentCommand {
+  ReadAttachmentCommand({
+    required this.requestId,
+    required this.cardId,
+    required this.attachmentId,
+    required this.expectedRevision,
+    required this.offset,
+    this.length = maxAttachmentPartBytes,
+  }) {
+    _identity(requestId);
+    _identity(cardId);
+    _identity(attachmentId);
+    if (expectedRevision <= BigInt.zero ||
+        expectedRevision > _maxRevision ||
+        offset < BigInt.zero ||
+        offset > maxAttachmentBytes ||
+        length <= 0 ||
+        length > maxAttachmentPartBytes)
+      throw const FormatException('Attachment request bounds');
+  }
+  final String requestId, cardId, attachmentId;
+  final BigInt expectedRevision, offset;
+  final int length;
+  Uint8List encode() => _query(requestId, (root) {
+    final value = root.initReadAttachment();
+    value.cardId = cardId;
+    value.attachmentId = attachmentId;
+    value.expectedRevision = expectedRevision.toSigned(64).toInt();
+    value.offset = offset.toInt();
+    value.length = length;
+  });
 }
