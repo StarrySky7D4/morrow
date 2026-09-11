@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
         let mut host = HostRuntime::new(store)?;
         let c = p.connect(&mut host)?;
-        assert_eq!(p.package().manifest().transform_handlers.len(), 2);
+        assert_eq!(p.package().manifest().transform_handlers.len(), 3);
         for (handler, input_type, output_type) in [
             ("missing", "bytes", "bytes"),
             ("bytes.reverse", "other", "bytes"),
@@ -76,16 +76,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut tasks = vec![];
         let samples = [
             vec![],
+            b"Ascii 123".to_vec(),
             "Hello 世界🌈".as_bytes().to_vec(),
             (0..=255).collect::<Vec<u8>>(),
             (0..MAX_VALUE_BYTES).map(|n| (n % 256) as u8).collect(),
         ];
-        for handler in ["bytes.reverse", "bytes.ascii-uppercase"] {
+        for handler in [
+            "bytes.reverse",
+            "bytes.ascii-uppercase",
+            "bytes.require-ascii",
+        ] {
             for input in &samples {
                 let mut expected = input.clone();
                 if handler == "bytes.reverse" {
                     expected.reverse();
-                } else {
+                } else if handler == "bytes.ascii-uppercase" {
                     expected.make_ascii_uppercase();
                 }
                 let invocation = Invocation::new_transform(
@@ -97,11 +102,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         input: input.clone(),
                     },
                 )?;
-                tasks.push((worker.submit_task(invocation, timeout).unwrap(), expected));
+                tasks.push((
+                    worker.submit_task(invocation, timeout).unwrap(),
+                    expected,
+                    handler == "bytes.require-ascii" && !input.is_ascii(),
+                ));
             }
         }
         worker.drain(timeout).unwrap();
-        for (task, expected) in &mut tasks {
+        for (task, expected, should_fail) in &mut tasks {
             let result = loop {
                 if let Some(r) = task.try_result().unwrap() {
                     break r;
@@ -112,6 +121,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             assert_eq!(result.execution.outcome, Ok(0));
             assert_eq!(result.execution.host_calls, 0);
             assert!(result.response.is_none());
+            if *should_fail {
+                assert!(result.output.is_none());
+                let failure = result.failure.expect("correlated plugin failure");
+                assert_eq!(
+                    failure.code,
+                    morrow_core::task::FailureCode::UnsupportedInput
+                );
+                assert_eq!(failure.message, "Input contains non-ASCII bytes");
+                continue;
+            }
+            assert!(result.failure.is_none());
             let output = result.output.expect("correlated produced data");
             assert_eq!(output.type_id, "bytes");
             assert_eq!(&output.bytes, expected);
@@ -131,7 +151,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         assert_eq!(store.card("card")?.unwrap().summary().title, "untouched");
         store.integrity_check()?;
         println!(
-            "PASS: {path}: 3 registration rejections before guest; 8 pure transformations, empty/Unicode bytes/all byte values/64KiB; independently verified output, zero core calls, no content or event changes"
+            "PASS: {path}: 3 registration rejections before guest; 15 pure tasks (12 outputs, 3 structured failures), empty/Unicode bytes/all byte values/64KiB; independently verified output, zero core calls, no content or event changes"
         );
     }
     Ok(())

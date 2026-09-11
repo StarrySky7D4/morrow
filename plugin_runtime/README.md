@@ -43,7 +43,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 本轮通过：
 
-- 格式检查、Clippy -D warnings；运行库启用 packages 共 33 项测试，SDK 14 项回归测试。
+- 格式检查、Clippy -D warnings；运行库启用 packages 共 37 项测试，SDK 15 项回归测试。
 - 无效模块／导入／入口、禁止 start、初始内存超限、运行期内存增长／越界、死循环、宿主调用洪泛、缓冲区预检、取消和无效回复。
 - 实际 C／C++／Rust SDK Wasm 模块：无权限拒绝、授权提交、重复请求、跨连接拒绝、撤权与停止后拒绝，以及取消后的结果核对。
 - 三类首次提交后故障：取消、trap、fuel 耗尽；重开库均保留修订 2 和两条原子事件（初始创建与本次修改）。
@@ -61,4 +61,6 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 任务契约 v2 新增纯转换 profile：固定输入和输出类型、64 KiB 数据上限、零内容调用，结果仅为插件数据。三语言真实转换、32 项 packages 测试及本次重建摘要见 [纯转换验证](../reports/plugin-transform-validation.md)。旧 task schema 包需重建；guest ABI v2 承载接口和主 Flutter 存储不变。
 
-后续单包处理器注册及其验证见 [处理器验证](../reports/plugin-handler-validation.md)。纯转换任务在 guest 执行前匹配包内处理器、类型与输入长度；输出超过声明上限也不交付。当前共 33 项 packages 测试，包含执行前零指令拒绝和执行后输出拦截。
+后续单包处理器注册及其验证见 [处理器验证](../reports/plugin-handler-validation.md)。纯转换任务在 guest 执行前匹配包内处理器、类型与输入长度；输出超过声明上限也不交付。当前共 37 项 packages 测试，包含执行前零指令拒绝和执行后输出拦截。
+
+任务契约 v3 增加 TaskReport.failure。业务失败完整执行时 execution=Ok(0)，只有 failure 有值；trap／取消／协议失败时三种结果均为空。内容任务不能以插件错误替代核心回复。三语言实际路径见 [错误验证](../reports/plugin-failure-validation.md)。

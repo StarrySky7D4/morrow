@@ -340,6 +340,7 @@ fn execute(
                             execution,
                             response: None,
                             output: None,
+                            failure: None,
                         }
                     } else {
                         package.run_task(host, connection, &input, &mut clock, job.cancel)

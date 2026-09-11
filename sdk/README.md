@@ -43,7 +43,7 @@ pwsh -File tool/verify_plugin_sdk.ps1
 
 ## 本轮验证结果
 
-Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **14 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。上述原生测试之外，三语言 Wasm 实际执行结果见下一节和执行后端说明。
+Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **15 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。上述原生测试之外，三语言 Wasm 实际执行结果见下一节和执行后端说明。
 
 真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
 
@@ -80,6 +80,8 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 
 已提供 C 的 morrow_plugin_task.h、C++ 的 morrow_plugin_task.hpp 与 Rust task／wasm API，接收宿主提供的任务、读取类型化命令并构造关联完成消息。实际例子位于 examples/c-task、cpp-task、rust-task。完整说明见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)，结果见 [三语言动态任务验证](../reports/plugin-task-contract-validation.md)。
 
-内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。跨包 handler 选择、类型协商、类型化错误、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
+内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。跨包 handler 选择、类型协商、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
 
 纯转换示例现在必须用 `pack-transform` 声明处理器名称、输入／输出类型及各自上限，见 [统一打包入口](../docs/PLUGIN_PACKAGE.md#纯转换处理器声明)。声明由宿主验证，不需要给三语言 guest 导出授予权限或核心注册函数。仅改用旧 pack-task 打包不能绕过注册检查。
+
+任务契约 v3 提供 Rust complete_failure、C mp_task_fail、C++ task::fail，错误含固定代码及最多 1024 字节纯文本。bytes.require-ascii 示例贯通三语言业务失败返回；须区分完整执行与业务成功。见 [结果协议](../docs/PLUGIN_TASK_PROTOCOL.md)。旧任务 schema 的包需同步 SDK 后重建。

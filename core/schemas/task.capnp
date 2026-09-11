@@ -1,5 +1,5 @@
 @0xc37bfe813a120b94;
-# Runtime task profile v2. Correlation does not confer authority.
+# Runtime task profile v3. Correlation does not confer authority.
 enum Kind { contentCommand @0; transform @1; }
 struct Transform {
   handler @0 :Text;
@@ -7,6 +7,8 @@ struct Transform {
   outputType @2 :Text;
   input @3 :Data;
 }
+enum FailureCode { invalidInput @0; unsupportedInput @1; resourceLimit @2; failed @3; }
+struct Failure { code @0 :FailureCode; message @1 :Text; }
 struct Output { typeId @0 :Text; bytes @1 :Data; }
 struct Invocation {
   version @0 :UInt16;
@@ -24,4 +26,5 @@ struct Completion {
   response @4 :Data;
   kind @5 :Kind;
   output @6 :Output;
+  failure @7 :Failure;
 }

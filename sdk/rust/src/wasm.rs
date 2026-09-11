@@ -70,3 +70,19 @@ pub fn complete_output(task: &crate::task::Invocation, output: &[u8]) -> Result<
     }
     Ok(())
 }
+
+/// Complete execution with a plugin-reported business failure. This does not retry the task.
+pub fn complete_failure(
+    task: &crate::task::Invocation,
+    code: crate::task::FailureCode,
+    message: &str,
+) -> Result<(), crate::Error> {
+    let bytes = task
+        .failure(code, message)
+        .map_err(|_| crate::Error::BadReply)?;
+    // SAFETY: the owned bounded completion remains live for this synchronous import.
+    if unsafe { complete(bytes.as_ptr(), bytes.len() as u32) } != 0 {
+        return Err(crate::Error::TransportFailure);
+    }
+    Ok(())
+}

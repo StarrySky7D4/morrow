@@ -15,6 +15,21 @@ pub extern "C" fn morrow_run() -> i32 {
     match t.handler.as_str() {
         "bytes.reverse" => output.reverse(),
         "bytes.ascii-uppercase" => output.make_ascii_uppercase(),
+        "bytes.require-ascii" => {
+            if !output.is_ascii() {
+                return if wasm::complete_failure(
+                    &task,
+                    morrow_plugin_sdk::task::FailureCode::UnsupportedInput,
+                    "Input contains non-ASCII bytes",
+                )
+                .is_ok()
+                {
+                    0
+                } else {
+                    -1
+                };
+            }
+        }
         _ => return -1,
     };
     if wasm::complete_output(&task, &output).is_ok() {

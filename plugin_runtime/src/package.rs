@@ -85,6 +85,7 @@ pub struct TaskReport {
     pub execution: Report,
     pub response: Option<morrow_core::response::Response>,
     pub output: Option<morrow_core::task::TransformOutput>,
+    pub failure: Option<morrow_core::task::PluginFailure>,
 }
 impl PreparedPackage {
     pub fn run_task(
@@ -120,6 +121,7 @@ impl PreparedPackage {
                 },
                 response: None,
                 output: None,
+                failure: None,
             };
         }
         let mut actual = None;
@@ -147,10 +149,14 @@ impl PreparedPackage {
         );
         let mut execution = run.report;
         let mut output = None;
+        let mut failure = None;
+        use morrow_core::task::TransformResult;
         let response = if execution.outcome.is_ok() && input.transform().is_some() {
             match run.completion {
-                Some(completion) if !protocol_fault => match input.verify_output(&completion) {
-                    Ok(value)
+                Some(completion) if !protocol_fault => match input
+                    .verify_transform_result(&completion)
+                {
+                    Ok(TransformResult::Output(value))
                         if registration
                             .as_ref()
                             .and_then(|r| r.as_ref().ok())
@@ -158,6 +164,7 @@ impl PreparedPackage {
                     {
                         output = Some(value)
                     }
+                    Ok(TransformResult::Failure(value)) => failure = Some(value),
                     Ok(_) => execution.outcome = Err(Fault::TaskProtocol),
                     Err(_) => execution.outcome = Err(Fault::TaskProtocol),
                 },
@@ -187,6 +194,7 @@ impl PreparedPackage {
             execution,
             response,
             output,
+            failure,
         }
     }
 }

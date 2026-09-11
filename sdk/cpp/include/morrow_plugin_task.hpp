@@ -19,6 +19,12 @@ public:
     encoded_request out{status_,{}};if(status_!=MP_CODEC_OK)return out;if(value.size()>MP_MAX_TASK_VALUE_BYTES){out.status=MP_CODEC_LIMIT;return out;}
     out.bytes.resize(MP_MAX_TASK_BYTES);uint32_t length=0;out.status=mp_task_output(value_,value.data(),static_cast<uint32_t>(value.size()),out.bytes.data(),MP_MAX_TASK_BYTES,&length);out.bytes.resize(out.status==MP_CODEC_OK?length:0);return out;
   }
+  encoded_request fail(uint32_t code,const std::string& message) const {
+    encoded_request out{status_,{}};if(status_!=MP_CODEC_OK)return out;
+    if(message.size()>MP_MAX_TASK_FAILURE_MESSAGE_BYTES){out.status=MP_CODEC_LIMIT;return out;}
+    out.bytes.resize(MP_MAX_TASK_BYTES);uint32_t length=0;
+    out.status=mp_task_fail(value_,code,reinterpret_cast<const uint8_t*>(message.data()),static_cast<uint32_t>(message.size()),out.bytes.data(),MP_MAX_TASK_BYTES,&length);out.bytes.resize(out.status==MP_CODEC_OK?length:0);return out;
+  }
   encoded_request complete(const std::vector<uint8_t>& response) const {
     encoded_request out{status_,{}};if(status_!=MP_CODEC_OK)return out;
     if(response.size()>MP_MAX_MESSAGE_BYTES){out.status=MP_CODEC_LIMIT;return out;}

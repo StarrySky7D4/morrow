@@ -1,6 +1,6 @@
 # 内容命令与纯转换任务契约、三语言 SDK
 
-基于 0.1.9-test.10，任务契约已扩展为 v2，Wasm guest ABI 仍为 v2。它们独立于原有内容消息 Cap’n Proto v6、包 schema v1 和资料库格式。旧 ABI v1 固定输入样例继续用于回归；新例子从宿主读取动态输入。
+基于 0.1.9-test.10，任务契约已扩展为 v3，Wasm guest ABI 仍为 v2。它们独立于原有内容消息 Cap’n Proto v6、包 schema v1 和资料库格式。旧 ABI v1 固定输入样例继续用于回归；新例子从宿主读取动态输入。
 
 ## 输入、执行和结果
 
@@ -10,7 +10,7 @@
 | --- | --- |
 | Invocation | 任务契约版本、schema 摘要、task_id、完整原始内容命令字节；内容命令自身继续校验 v6 与两个 schema 摘要 |
 | Completion | 契约版本、schema 摘要、task_id、完整 Invocation 原字节 SHA-256、核心响应原字节 |
-| TaskReport | 执行状态，以及按任务类型互斥的可选 Response／TransformOutput；失败时两者均不交付 |
+| TaskReport | 执行状态，以及按任务类型互斥的可选 Response／TransformOutput／PluginFailure；执行或协议失败时三者均不交付 |
 
 输入和完成消息至多 128 KiB，内层内容消息仍至多 64 KiB；Cap’n Proto 解析限定访问预算、深度，并拒绝尾随消息。输入由可信调度方创建并以所有权移入队列，guest 的内存改写不会修改宿主固定输入。task_id 用于任务结果关联，operation_id 用于内容事务去重，两者都不是权限。生产任务身份生成与持久恢复仍需由后续调度器统一管理。
 
@@ -26,7 +26,7 @@
 
 转换任务的交换请求在进入核心之前拒绝，即使该实例另有内容授权也不能调用内容接口。宿主核验完成消息的版本、schema 摘要、任务 ID、固定输入 SHA-256、输出类型和长度后，交付 `TaskReport.output`；`response` 为空。输出是**插件产出的数据**，不是核心回执，也不是算法正确性证明。结果展示或保存前仍需相应类型解析和业务验证；将结果写入卡片须另走授权、修订和事务提交，不能将输出字节直接当作命令执行。
 
-内容任务继续只交付匹配实际核心回复的 `response`，`output` 为空。取消、trap、重复完成或协议失败均不交付转换结果。单包 handler 声明与输入／输出约束已建立，见 [处理器声明](PLUGIN_PACKAGE.md#纯转换处理器声明)。宿主在执行前检查名称、类型和输入上限，完成后复核输出上限；插件内部仍自行分派。跨包选择、类型版本协商、类型化插件错误、修改提案、持久恢复与 UI 任务仍待实现。
+内容任务继续只交付匹配实际核心回复的 `response`，`output` 为空。取消、trap、重复完成或协议失败均不交付转换结果。单包 handler 声明与输入／输出约束已建立，见 [处理器声明](PLUGIN_PACKAGE.md#纯转换处理器声明)。宿主在执行前检查名称、类型和输入上限，完成后复核输出上限；插件内部仍自行分派。跨包选择、类型版本协商、修改提案、持久恢复与 UI 任务仍待实现；结构化插件错误按下节实现。
 
 | 语言 | 纯转换 API | 可编译示例 |
 | --- | --- | --- |
@@ -36,9 +36,35 @@
 
 C 的空输出允许 data 为 NULL 且 length 为 0；非空数据遵守既有缓冲区约定。转换 view 借用 task 所有的数据，在释放 task 后失效；C++ view 也不延长 task 生命周期。
 
-任务契约 v1 的实验包携带旧 schema 摘要，会被当前加载器拒绝；需要同步 SDK 并重新构建、打包。guest ABI v2 的承载接口没有改变，包 schema 仍为 v1，内容消息仍为 v6。此变化不迁移主 Flutter 资料，也不自动升级历史包。
+任务契约 v1／v2 的实验包携带旧 schema 摘要，会被当前加载器拒绝；需要同步 SDK 并重新构建、打包。guest ABI v2 的承载接口没有改变，包 schema 仍为 v1，内容消息仍为 v6。此变化不迁移主 Flutter 资料，也不自动升级历史包。
 
 实际三语言执行及产物摘要见 [纯转换验证记录](../reports/plugin-transform-validation.md)。
+
+## 插件业务错误（任务契约 v3）
+
+纯转换完成时恰好选择 Output 或 Failure。两者同时存在、均缺失或夹带内容 Response 均拒绝。Failure 绑定版本、schema 摘要、task_id 和完整输入 SHA-256，含固定错误码和消息：
+
+| 错误码 | C 常量 | 含义 |
+| --- | --- | --- |
+| invalidInput | MP_TASK_INVALID_INPUT | 输入格式或参数不合法 |
+| unsupportedInput | MP_TASK_UNSUPPORTED_INPUT | 处理器不支持该输入 |
+| resourceLimit | MP_TASK_RESOURCE_LIMIT | 插件报告业务处理资源不足 |
+| failed | MP_TASK_FAILED | 其他业务失败 |
+
+消息是非空 UTF-8 纯文本，最多 1024 字节，拒绝控制字符；未知错误码拒绝。resourceLimit 是插件声明，不等于宿主确认 fuel／内存耗尽。消息仍属于插件数据，未来 UI 应显示来源并按普通文本呈现，不作为 Markdown、命令或宿主权威诊断使用。
+
+| 情况 | execution | response | output | failure |
+| --- | --- | --- | --- | --- |
+| 内容任务完成 | Ok(0) | 实际核心回复 | 空 | 空 |
+| 纯转换成功 | Ok(0) | 空 | 插件输出 | 空 |
+| 插件报告业务失败 | Ok(0) | 空 | 空 | 关联后的插件错误 |
+| 取消、trap、非零返回或协议失败 | Err(...) | 空 | 空 | 空 |
+
+Ok(0) 表示 guest 完整执行完成协议，不代表业务成功。内容任务不能用 Failure 替代实际核心回复；先前提交不能因错误或取消回滚。纯转换没有内容提交，不自动重试。错误消息使用独立的 1024 字节上限，因此成功输出上限为 0 的处理器仍可报告错误。
+
+Rust 使用 `wasm::complete_failure(task, FailureCode, message)`；C 使用 `mp_task_fail` 编码后调用 `mp_wasm_task_complete`；C++ 使用 `task::fail`。三者在完成导入成功后返回 0，编码或传输失败仍按执行错误处理。
+
+示例新增 `bytes.require-ascii`：保留 ASCII 原字节，非 ASCII 返回 unsupportedInput。宿主同时检查执行状态和业务结果。此次任务契约升为 v3，guest ABI v2 的导入不变；旧任务包因 schema 摘要不匹配而拒绝，需同步 SDK、重建并打包。实际证据见 [结构化错误验证](../reports/plugin-failure-validation.md)。
 
 ## Guest ABI v2
 

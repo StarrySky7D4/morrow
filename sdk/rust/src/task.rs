@@ -9,6 +9,8 @@ use capnp::{
     serialize,
 };
 use sha2::{Digest, Sha256};
+pub const MAX_FAILURE_MESSAGE_BYTES: usize = 1024;
+pub use wire::FailureCode;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;
 pub const MAX_VALUE_BYTES: usize = 64 * 1024;
 type Result<T> = std::result::Result<T, CodecError>;
@@ -161,6 +163,27 @@ impl Invocation {
             return Err(CodecError::Limit);
         }
         Ok(bytes)
+    }
+    /// Plugin-originated business failure; never a core receipt or authority decision.
+    pub fn failure(&self, code: FailureCode, message: &str) -> Result<Vec<u8>> {
+        self.transform().ok_or(CodecError::Invalid)?;
+        if message.is_empty()
+            || message.len() > MAX_FAILURE_MESSAGE_BYTES
+            || message.chars().any(char::is_control)
+        {
+            return Err(CodecError::Invalid);
+        }
+        let mut m = Builder::new_default();
+        let mut r = m.init_root::<wire::completion::Builder>();
+        r.set_version(contract::TASK_VERSION);
+        r.set_schema_digest(&contract::TASK_DIGEST);
+        r.set_task_id(self.task_id());
+        r.set_input_digest(&self.digest);
+        r.set_kind(wire::Kind::Transform);
+        let mut failure = r.init_failure();
+        failure.set_code(code);
+        failure.set_message(message);
+        Ok(serialize::write_message_to_words(&m))
     }
     pub fn output(&self, bytes: &[u8]) -> Result<Vec<u8>> {
         let t = self.transform().ok_or(CodecError::Invalid)?;

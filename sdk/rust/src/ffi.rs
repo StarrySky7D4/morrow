@@ -478,3 +478,130 @@ pub unsafe extern "C" fn mp_task_output(
         Ok(())
     })
 }
+
+/// # Safety
+/// Live SDK task; readable message; disjoint writable output and aligned length slot.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_fail(
+    raw: *const c_void,
+    code: u32,
+    message: *const u8,
+    size: u32,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if raw.is_null() || out.is_null() || message.is_null() || size == 0 {
+            return Err(CodecError::Invalid);
+        }
+        if size as usize > crate::task::MAX_FAILURE_MESSAGE_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let code = match code {
+            0 => crate::task::FailureCode::InvalidInput,
+            1 => crate::task::FailureCode::UnsupportedInput,
+            2 => crate::task::FailureCode::ResourceLimit,
+            3 => crate::task::FailureCode::Failed,
+            _ => return Err(CodecError::Invalid),
+        };
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let message =
+            std::str::from_utf8(unsafe { std::slice::from_raw_parts(message, size as usize) })
+                .map_err(|_| CodecError::Invalid)?;
+        let result = task.failure(code, message)?;
+        if result.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(result.as_ptr(), out, result.len());
+            *length = result.len() as u32;
+        }
+        Ok(())
+    })
+}
+
+#[cfg(test)]
+mod task_failure_tests {
+    use super::*;
+    #[test]
+    fn c_failure_api_rejects_invalid_codes_utf8_lengths_and_short_buffers() {
+        let mut m = capnp::message::Builder::new_default();
+        let mut r = m.init_root::<crate::task_capnp::invocation::Builder>();
+        r.set_version(crate::contract::TASK_VERSION);
+        r.set_schema_digest(&crate::contract::TASK_DIGEST);
+        r.set_task_id("task");
+        r.set_kind(crate::task_capnp::Kind::Transform);
+        let mut t = r.init_transform();
+        t.set_handler("validate");
+        t.set_input_type("bytes");
+        t.set_output_type("bytes");
+        t.set_input(&[]);
+        let task =
+            crate::task::Invocation::decode(&capnp::serialize::write_message_to_words(&m)).unwrap();
+        let ptr = (&task as *const crate::task::Invocation).cast::<c_void>();
+        let mut output = vec![0xa5; crate::task::MAX_TASK_BYTES];
+        for code in 0..4 {
+            let mut length = 0;
+            let status = unsafe {
+                mp_task_fail(
+                    ptr,
+                    code,
+                    b"failure".as_ptr(),
+                    7,
+                    output.as_mut_ptr(),
+                    output.len() as u32,
+                    &mut length,
+                )
+            };
+            assert_eq!(status, 0);
+            assert!(length > 0);
+        }
+        for (code, bytes, capacity) in [
+            (99, b"failure".as_slice(), 131072),
+            (0, &[0xff][..], 131072),
+            (0, &[][..], 131072),
+            (0, b"failure".as_slice(), 1),
+        ] {
+            output.fill(0xa5);
+            let mut length = 999;
+            let status = unsafe {
+                mp_task_fail(
+                    ptr,
+                    code,
+                    bytes.as_ptr(),
+                    bytes.len() as u32,
+                    output.as_mut_ptr(),
+                    capacity,
+                    &mut length,
+                )
+            };
+            assert_ne!(status, 0);
+            assert_eq!(length, 0);
+            assert!(output.iter().all(|b| *b == 0xa5));
+        }
+        let too_long = vec![b'x'; 1025];
+        let mut length = 999;
+        assert_ne!(
+            unsafe {
+                mp_task_fail(
+                    ptr,
+                    0,
+                    too_long.as_ptr(),
+                    1025,
+                    output.as_mut_ptr(),
+                    output.len() as u32,
+                    &mut length,
+                )
+            },
+            0
+        );
+        assert_eq!(length, 0);
+    }
+}

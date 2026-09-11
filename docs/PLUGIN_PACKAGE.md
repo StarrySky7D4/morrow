@@ -55,16 +55,16 @@ ABI v2 内容命令任务使用 `pack-task`；纯转换任务使用下述 `pack-
 
 每个包最多声明 16 个 `TransformHandler`，名称在该包内唯一。固定字段为 handler、input_type、output_type、max_input_bytes 和 max_output_bytes。输入／输出上限分别为 0–65536 字节，0 表示仅允许空数据；三个名称沿用非空、至多 256 字节且不能包含控制字符和路径分隔字符的标识规则。当前类型通过名称精确匹配，尚未实现类型 schema 摘要或版本协商；`bytes` 仅表示有界原字节。
 
-声明保存在 Protobuf manifest 内并随包摘要绑定，需同时声明必需功能 `transform-handlers-v1`，仅允许 guest ABI v2。只有声明字段或只有功能标记均拒绝加载。不认识该功能的旧宿主会拒绝新包。当前宿主仍能加载无处理器的旧内容任务包，但不会启动其中的纯转换任务；此前转换示例需重新打包，Wasm 任务契约和编解码 API 不变。
+声明保存在 Protobuf manifest 内并随包摘要绑定，需同时声明必需功能 `transform-handlers-v1`，仅允许 guest ABI v2。只有声明字段或只有功能标记均拒绝加载。不认识该功能的旧宿主会拒绝新包。无处理器的内容任务包不能启动纯转换。当前任务契约为 v3，带旧任务 schema 摘要的实验包需同步 SDK 后重建。
 
 ```powershell
 # 声明列表是一个参数；多条声明之间用分号分隔。
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- pack-transform build/plugin-c-guest/c_transform.wasm build/registered-transform.mplugin org.morrow.example.c-transform 0.1.9-test.10 'bytes.reverse,bytes,bytes,65536,65536;bytes.ascii-uppercase,bytes,bytes,65536,65536'
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- pack-transform build/plugin-c-guest/c_transform.wasm build/registered-transform.mplugin org.morrow.example.c-transform 0.1.9-test.10 'bytes.reverse,bytes,bytes,65536,65536;bytes.ascii-uppercase,bytes,bytes,65536,65536;bytes.require-ascii,bytes,bytes,65536,65536'
 cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- inspect build/registered-transform.mplugin
 cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/plugin-runtime --features packages --example qualify_transforms -- build/registered-transform.mplugin
 ```
 
-`pack-transform` 不申请内容能力，并自动写入必需功能；此示例验证器要求上述两个处理器。可信开发工具也可使用 `Package::manifest_for_transform` 构造清单。C／C++／Rust 开发者共享此打包入口，不需要在 guest 中调用核心注册 API。`inspect` 输出每项声明；检查不会运行插件。
+`pack-transform` 不申请内容能力，并自动写入必需功能；此示例验证器要求上述三个处理器。可信开发工具也可使用 `Package::manifest_for_transform` 构造清单。C／C++／Rust 开发者共享此打包入口，不需要在 guest 中调用核心注册 API。`inspect` 输出每项声明；检查不会运行插件。
 
 `PreparedPackage::run_task`（包括 Worker 调用）从所绑定的不可变包查找 handler；未注册、类型不匹配或输入超过声明时，返回 TaskProtocol，零 guest 指令、零宿主调用。输出先通过任务关联和全局有界校验，再检查处理器声明的输出上限，超限不交付结果。漏写声明不能回退到无限制转换入口。低层 Runner 仍是可信适配构件，不替代这层包策略。
 

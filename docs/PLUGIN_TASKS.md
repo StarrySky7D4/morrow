@@ -9,7 +9,7 @@
 | 接口 | 行为 |
 | --- | --- |
 | `Worker::spawn` | 创建一个原生线程，容量设为 1–64 个未完成任务（包含正在执行者）；创建失败明确返回 |
-| `submit_task(input, timeout)` | 提交已校验的内容或纯转换输入；结果分别为核心 Response 或插件产出的 TransformOutput |
+| `submit_task(input, timeout)` | 提交已校验的内容或纯转换输入；结果分别为核心 Response、插件产出的 TransformOutput 或插件报告的 PluginFailure |
 | `submit(timeout)` | 有界非阻塞提交，队列满返回 Busy；超时必须大于零且不超过一小时，包含排队时间 |
 | `TaskHandle::try_result` | 非阻塞轮询；完成结果只消费一次；Unavailable 不表示没有提交 |
 | `TaskHandle::cancel` | 取消该任务；不停止其他任务，不自动重试 |

@@ -10,7 +10,9 @@ use capnp::{
     serialize,
 };
 use sha2::{Digest, Sha256};
-pub const VERSION: u16 = 2;
+pub const VERSION: u16 = 3;
+pub const MAX_FAILURE_MESSAGE_BYTES: usize = 1024;
+pub use wire::FailureCode;
 pub const MAX_VALUE_BYTES: usize = 64 * 1024;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;
 pub fn schema_digest() -> [u8; 32] {
@@ -18,6 +20,27 @@ pub fn schema_digest() -> [u8; 32] {
 }
 fn invalid<T>(_: T) -> Error {
     Error::Invalid("task message")
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PluginFailure {
+    pub code: FailureCode,
+    pub message: String,
+}
+impl PluginFailure {
+    fn validate(&self) -> Result<()> {
+        if self.message.is_empty()
+            || self.message.len() > MAX_FAILURE_MESSAGE_BYTES
+            || self.message.chars().any(char::is_control)
+        {
+            return Err(Error::Invalid("plugin failure message"));
+        }
+        Ok(())
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum TransformResult {
+    Output(TransformOutput),
+    Failure(PluginFailure),
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Transform {
@@ -267,6 +290,7 @@ impl Invocation {
             || root.get_input_digest().map_err(invalid)? != self.digest
             || root.get_kind().map_err(invalid)? != wire::Kind::ContentCommand
             || root.has_output()
+            || root.has_failure()
             || root.get_response().map_err(invalid)? != actual_response
         {
             return Err(Error::Invalid("task correlation"));
@@ -295,7 +319,29 @@ impl Invocation {
         }
         Ok(result)
     }
+    /// Host fixture helper; the message is plugin-supplied, not a core failure receipt.
+    pub fn failure_completion(&self, failure: &PluginFailure) -> Result<Vec<u8>> {
+        self.transform().ok_or(Error::Invalid("wrong task kind"))?;
+        failure.validate()?;
+        let mut message = Builder::new_default();
+        let mut root = message.init_root::<wire::completion::Builder>();
+        root.set_version(VERSION);
+        root.set_schema_digest(&schema_digest());
+        root.set_task_id(self.task_id());
+        root.set_input_digest(&self.digest);
+        root.set_kind(wire::Kind::Transform);
+        let mut f = root.init_failure();
+        f.set_code(failure.code);
+        f.set_message(failure.message.as_str());
+        Ok(serialize::write_message_to_words(&message))
+    }
     pub fn verify_output(&self, bytes: &[u8]) -> Result<TransformOutput> {
+        match self.verify_transform_result(bytes)? {
+            TransformResult::Output(output) => Ok(output),
+            TransformResult::Failure(_) => Err(Error::Invalid("plugin reported failure")),
+        }
+    }
+    pub fn verify_transform_result(&self, bytes: &[u8]) -> Result<TransformResult> {
         let t = self.transform().ok_or(Error::Invalid("wrong task kind"))?;
         if bytes.len() > MAX_TASK_BYTES {
             return Err(Error::Limit);
@@ -320,7 +366,7 @@ impl Invocation {
             return Err(Error::UnsupportedVersion);
         }
         if r.get_kind().map_err(invalid)? != wire::Kind::Transform
-            || !r.has_output()
+            || r.has_output() == r.has_failure()
             || !r.get_response().map_err(invalid)?.is_empty()
             || r.get_task_id()
                 .map_err(invalid)?
@@ -330,6 +376,20 @@ impl Invocation {
             || r.get_input_digest().map_err(invalid)? != self.digest
         {
             return Err(Error::Invalid("task correlation"));
+        }
+        if r.has_failure() {
+            let f = r.get_failure().map_err(invalid)?;
+            let failure = PluginFailure {
+                code: f.get_code().map_err(invalid)?,
+                message: f
+                    .get_message()
+                    .map_err(invalid)?
+                    .to_str()
+                    .map_err(invalid)?
+                    .into(),
+            };
+            failure.validate()?;
+            return Ok(TransformResult::Failure(failure));
         }
         let output = r.get_output().map_err(invalid)?;
         let type_id = output
@@ -344,9 +404,9 @@ impl Invocation {
         if bytes.len() > MAX_VALUE_BYTES {
             return Err(Error::Limit);
         }
-        Ok(TransformOutput {
+        Ok(TransformResult::Output(TransformOutput {
             type_id: type_id.into(),
             bytes: bytes.into(),
-        })
+        }))
     }
 }

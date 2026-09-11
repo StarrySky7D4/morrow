@@ -133,7 +133,7 @@ fn task_contract_and_provenance_reject_changed_ids_payloads_and_forged_success()
             .completion(&wrong)
             .is_err()
     );
-    for version in [0, 3] {
+    for version in [0, 4] {
         let mut m = capnp::message::Builder::new_default();
         let mut r = m.init_root::<morrow_core::task_capnp::invocation::Builder>();
         r.set_version(version);

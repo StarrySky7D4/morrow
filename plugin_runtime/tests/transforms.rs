@@ -174,6 +174,7 @@ fn pure_transform_cannot_write_even_with_instance_grants_or_expose_output_after_
             Cancellation::default(),
         );
         assert!(result.response.is_none());
+        assert!(result.failure.is_none());
         if let Some(fault) = expected {
             assert_eq!(result.execution.outcome, Err(fault));
             assert!(result.output.is_none());
@@ -194,6 +195,7 @@ fn pure_transform_cannot_write_even_with_instance_grants_or_expose_output_after_
         assert_eq!(result.execution.outcome, Err(Fault::Cancelled));
         assert!(result.output.is_none());
         assert!(result.response.is_none());
+        assert!(result.failure.is_none());
     }
 }
 
@@ -259,6 +261,7 @@ fn registrations_reject_before_guest_and_bound_completed_output() {
             Cancellation::default(),
         );
         assert!(result.response.is_none());
+        assert!(result.failure.is_none());
         assert_eq!(result.execution.host_calls, 0);
         if case < 6 {
             assert_eq!(result.execution.outcome, Err(Fault::TaskProtocol));
