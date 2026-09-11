@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let args: Vec<_> = std::env::args().skip(1).collect();
     let package=match args.first().map(String::as_str) {
-        Some("pack") if args.len()==6 => {
+        Some("pack"|"pack-task") if args.len()==6 => {
             let mut module=Vec::new();
             File::open(&args[1])?.take(MAX_MODULE_BYTES as u64+1).read_to_end(&mut module)?;
             if module.len()>MAX_MODULE_BYTES {return Err("module too large".into());}
@@ -21,7 +21,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "rename"=>Ok(Capability::RenameCard),"summary"=>Ok(Capability::ReadSummary),
                 "operation"=>Ok(Capability::QueryOperation),"attachment"=>Ok(Capability::ReadAttachment),
                 _=>Err("unknown capability")}).collect::<Result<Vec<_>,_>>()?};
-            let package=Package::build(Package::manifest_for(&args[3],&args[4],&module,caps),&module)?;
+            let manifest=if args[0]=="pack-task"{Package::manifest_for_task(&args[3],&args[4],&module,caps)}else{Package::manifest_for(&args[3],&args[4],&module,caps)};
+            let package=Package::build(manifest,&module)?;
             let target=Path::new(&args[2]);
             let parent=target.parent().filter(|p|!p.as_os_str().is_empty()).unwrap_or(Path::new("."));
             let mut staged=tempfile::NamedTempFile::new_in(parent)?;
@@ -37,7 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("installed {}",path.display());
             catalog.load(package.digest())?
         },
-        _=>return Err("usage: plugin_package pack module.wasm output.mplugin id semver rename,summary,operation,attachment|none; inspect package; install package catalog".into())
+        _=>return Err("usage: plugin_package pack|pack-task module.wasm output.mplugin id semver rename,summary,operation,attachment|none; inspect package; install package catalog".into())
     };
     let digest = package
         .digest()

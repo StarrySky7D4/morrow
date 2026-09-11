@@ -1,11 +1,9 @@
+use crate::contract;
 use crate::{MAX_MESSAGE_BYTES, runtime_capnp as wire};
 use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-mod contract {
-    include!(concat!(env!("OUT_DIR"), "/contract.rs"));
-}
 pub const PROTOCOL_VERSION: u16 = contract::VERSION;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CodecError {
@@ -128,6 +126,75 @@ impl Request {
             return Err(CodecError::Limit);
         }
         Ok(bytes)
+    }
+    pub fn decode(bytes: &[u8]) -> Result<Self> {
+        if bytes.len() > MAX_MESSAGE_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let mut input = bytes;
+        let message = serialize::read_message_from_flat_slice(
+            &mut input,
+            ReaderOptions {
+                traversal_limit_in_words: Some(MAX_MESSAGE_BYTES / 8),
+                nesting_limit: 16,
+            },
+        )
+        .map_err(invalid)?;
+        if !input.is_empty() {
+            return Err(CodecError::Invalid);
+        }
+        let root = message
+            .get_root::<wire::request::Reader>()
+            .map_err(invalid)?;
+        if root.get_protocol_version() != contract::VERSION
+            || root.get_runtime_digest().map_err(invalid)? != contract::RUNTIME_DIGEST
+            || root.get_content_digest().map_err(invalid)? != contract::CONTENT_DIGEST
+        {
+            return Err(CodecError::Contract);
+        }
+        let request_id = text(root.get_operation_id())?;
+        let (card_id, action) = match root.which().map_err(invalid)? {
+            wire::request::RenameCard(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::Rename {
+                        revision: v.get_expected_revision(),
+                        title: text(v.get_title())?,
+                    },
+                )
+            }
+            wire::request::ReadSummary(v) => (text(v)?, Action::ReadSummary),
+            wire::request::QueryOperation(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::QueryOperation {
+                        operation_id: text(v.get_operation_id())?,
+                    },
+                )
+            }
+            wire::request::ReadAttachment(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::ReadAttachment {
+                        attachment_id: text(v.get_attachment_id())?,
+                        revision: v.get_expected_revision(),
+                        offset: v.get_offset(),
+                        length: v.get_length(),
+                    },
+                )
+            }
+            _ => return Err(CodecError::Invalid),
+        };
+        let request = Self {
+            request_id,
+            card_id,
+            action,
+        };
+        request.validate()?;
+        Ok(request)
     }
     pub fn decode_reply(&self, bytes: &[u8]) -> Result<Reply> {
         self.validate()?;

@@ -69,7 +69,19 @@ impl Package {
                 host_calls: 16,
             }),
             required_features: vec![],
+            task_schema_sha256: vec![],
         }
+    }
+    pub fn manifest_for_task(
+        id: &str,
+        version: &str,
+        module: &[u8],
+        capabilities: Vec<proto::Capability>,
+    ) -> proto::Manifest {
+        let mut manifest = Self::manifest_for(id, version, module, capabilities);
+        manifest.guest_abi_version = 2;
+        manifest.task_schema_sha256 = crate::task::schema_digest().to_vec();
+        manifest
     }
     pub fn build(manifest: proto::Manifest, module: &[u8]) -> Result<Self> {
         Self::from_parts(&manifest.encode_to_vec(), module)
@@ -102,11 +114,17 @@ impl Package {
         let manifest = proto::Manifest::decode(package.manifest.as_slice())
             .map_err(|_| Error::Invalid("manifest protobuf"))?;
         if manifest.schema_version != 1
-            || manifest.guest_abi_version != 1
+            || !matches!(manifest.guest_abi_version, 1 | 2)
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
             || !manifest.required_features.is_empty()
+        {
+            return Err(Error::UnsupportedVersion);
+        }
+        if (manifest.guest_abi_version == 1 && !manifest.task_schema_sha256.is_empty())
+            || (manifest.guest_abi_version == 2
+                && manifest.task_schema_sha256 != crate::task::schema_digest())
         {
             return Err(Error::UnsupportedVersion);
         }

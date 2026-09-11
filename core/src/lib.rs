@@ -16,6 +16,11 @@ pub mod transaction;
 pub mod bridge;
 pub mod envelope;
 pub mod runtime;
+pub mod task;
+#[allow(clippy::all, unsafe_code)]
+pub mod task_capnp {
+    include!(concat!(env!("OUT_DIR"), "/task_capnp.rs"));
+}
 // The pinned Cap'n Proto generator emits unsafe schema metadata constructors.
 #[allow(clippy::all, unsafe_code)]
 pub mod runtime_capnp {

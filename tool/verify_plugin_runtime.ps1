@@ -5,7 +5,7 @@ function Checked([string]$Program,[string[]]$Arguments){ & $Program @Arguments; 
 Push-Location $repo
 try {
  Checked $Python @('tool/sync_plugin_sdk_contracts.py','--check')
- foreach($manifest in @('plugin_runtime/Cargo.toml','sdk/rust/Cargo.toml','sdk/examples/rust-rename/Cargo.toml')) {
+ foreach($manifest in @('plugin_runtime/Cargo.toml','sdk/rust/Cargo.toml','sdk/examples/rust-rename/Cargo.toml','sdk/examples/rust-task/Cargo.toml')) {
   Checked cargo @('fmt','--manifest-path',$manifest,'--check')
  }
  Checked cargo @('clippy','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--all-targets','--all-features','--','-D','warnings')
@@ -15,6 +15,8 @@ try {
  Checked cargo @('test','--locked','--manifest-path','sdk/rust/Cargo.toml','--target-dir','build/plugin-sdk/rust')
  Checked cargo @('clippy','--locked','--manifest-path','sdk/examples/rust-rename/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest','--','-D','warnings')
  Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-rename/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
+ Checked cargo @('clippy','--locked','--manifest-path','sdk/examples/rust-task/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest','--','-D','warnings')
+ Checked cargo @('build','--locked','--manifest-path','sdk/examples/rust-task/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/plugin-guest')
  & ./tool/build_plugin_c_wasm.ps1 -Sysroot $Sysroot
  Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify','--','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_rename.wasm','build/plugin-c-guest/c_rename.wasm','build/plugin-c-guest/cpp_rename.wasm','build/plugin-c-guest/cpp_allocator.wasm')
  # Each verification owns a fresh output directory; pack never overwrites existing files.
@@ -34,6 +36,14 @@ try {
  }
  Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_package','--')+$packages)
  Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_worker','--')+$packages)
+ $taskPackages=@()
+ foreach($guest in @(@('rust-task','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_task.wasm'),@('c-task','build/plugin-c-guest/c_task.wasm'),@('cpp-task','build/plugin-c-guest/cpp_task.wasm'))) {
+  $package=Join-Path $packageDir ($guest[0]+'.mplugin')
+  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-task',$guest[1],$package,('org.morrow.example.'+$guest[0]),'0.1.9-test.10','rename,summary,operation,attachment')
+  $taskPackages+=$package
+ }
+ Checked cargo (@('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--features','packages','--example','qualify_tasks','--')+$taskPackages)
+ Get-FileHash -Algorithm SHA256 -LiteralPath $taskPackages
  Get-FileHash -Algorithm SHA256 -LiteralPath $packages
  Checked cargo @('run','--locked','--manifest-path','plugin_runtime/Cargo.toml','--target-dir','build/plugin-runtime','--example','qualify_trap','--','build/plugin-c-guest/cpp_abort.wasm','build/plugin-c-guest/cpp_oom.wasm')
  Get-ChildItem -LiteralPath build/plugin-c-guest -Filter '*.wasm' | Get-FileHash -Algorithm SHA256

@@ -75,3 +75,9 @@ pwsh -File tool/verify_plugin_runtime.ps1
 Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其与 C／C++ 源码、固定消息导入和 guest 运行支持一起链接。malloc／calloc／realloc／free 和对齐分配统一交给同一 guest 内的 Rust 分配器，不能混用两套堆。C++ 标准分配失败在此 profile 中终止 guest；C malloc 失败返回 NULL。分配器指针仅在该模块内部使用，不是跨进程句柄或宿主能力。
 
 最终 C／C++ 示例位于 build/plugin-c-guest，默认去除调试符号；构建时使用 -DebugSymbols 可保留符号。构建产生裸模块；统一的实验打包工具另行封装 manifest 并支持不可变安装，见 [插件包开发流程](../docs/PLUGIN_PACKAGE.md)。作者签名、启用／更新管理与 UI 仍未完成。文件、网络、时钟、线程等接口仍须通过后续明确的宿主能力提供；不能把部分标准库成功运行宣称为完整 WASI 或全 C++ 标准库支持。
+
+## 动态任务 SDK（guest ABI v2）
+
+已提供 C 的 morrow_plugin_task.h、C++ 的 morrow_plugin_task.hpp 与 Rust task／wasm API，接收宿主提供的任务、读取类型化命令并构造关联完成消息。实际例子位于 examples/c-task、cpp-task、rust-task。完整说明见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)，结果见 [三语言动态任务验证](../reports/plugin-task-contract-validation.md)。
+
+此 profile 校验固定内容命令与实际核心回复，支持四类已实现内容接口；通用计算／转换提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。

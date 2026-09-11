@@ -14,6 +14,8 @@ wasmparser = {version = "=0.239.0", default-features = false, features = ["std"]
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 morrow-core = {path = "../core", optional = true}
 [dev-dependencies]
+capnp = "=0.24.1"
+morrow-plugin-sdk = {path = "../sdk/rust"}
 wat = "=1.239.0"
 morrow-core = {path = "../core"}
 tempfile = "=3.27.0"
@@ -24,4 +26,8 @@ required-features = ["packages"]
 
 [[example]]
 name = "qualify_worker"
+required-features = ["packages"]
+
+[[example]]
+name = "qualify_tasks"
 required-features = ["packages"]

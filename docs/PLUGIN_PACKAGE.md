@@ -1,6 +1,6 @@
 # 实验插件包与 SDK 开发流程
 
-基于 0.1.9-test.10；包 schema v1、guest ABI v1、运行消息 Cap’n Proto v6 分别管理。本阶段使 C／C++／Rust 示例经过统一打包、不可变安装和受限执行，尚未建立完整插件管理器。
+基于 0.1.9-test.10；包 schema v1、guest ABI v1／v2、运行消息 Cap’n Proto v6 分别管理。本阶段使 C／C++／Rust 示例经过统一打包、不可变安装和受限执行，尚未建立完整插件管理器。
 
 ## 开发者入口
 
@@ -48,3 +48,5 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 4. 共享对象租约、审计封存、证据和 A/B 贯通，逐平台完成资格验证。
 
 上述工作继续纳入 M1-05、M3-03／04／06、M6-06，M5 仍是首轮贯通门槛。Windows 上的包执行和 Web 核心编译不能代替浏览器插件安装、设备运行或全平台支持。
+
+ABI v2 内容命令任务使用 `pack-task`，额外校验任务 schema 摘要，详见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。旧包仍按其声明的 ABI 准备，不自动升级。

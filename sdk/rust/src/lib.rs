@@ -1,6 +1,14 @@
 //! Guest transport and typed protocol. No trusted core linkage or loader.
 mod ffi;
 pub mod protocol;
+pub mod task;
+mod contract {
+    include!(concat!(env!("OUT_DIR"), "/contract.rs"));
+}
+#[allow(clippy::all)]
+pub mod task_capnp {
+    include!(concat!(env!("OUT_DIR"), "/task_capnp.rs"));
+}
 #[cfg(all(target_arch = "wasm32", feature = "wasm-guest"))]
 pub mod wasm;
 #[cfg(any(test, all(target_arch = "wasm32", feature = "wasm-c")))]

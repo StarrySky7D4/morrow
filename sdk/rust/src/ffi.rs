@@ -8,6 +8,7 @@ pub struct Span {
     length: u32,
 }
 #[repr(C)]
+#[derive(Default)]
 pub struct CRequest {
     abi_version: u32,
     struct_size: u32,
@@ -258,6 +259,145 @@ pub unsafe extern "C" fn mp_reply_free(raw: *mut c_void) {
     if !raw.is_null() {
         unsafe {
             drop(Box::from_raw(raw.cast::<Handle>()));
+        }
+    }
+}
+
+#[repr(C)]
+pub struct TaskView {
+    task_id: Span,
+    command: Span,
+    request: CRequest,
+}
+/// # Safety
+/// Readable input and disjoint writable handle slot. Successful opaque handle is freed once.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_decode(
+    bytes: *const u8,
+    length: u32,
+    out: *mut *mut c_void,
+) -> u32 {
+    if out.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+    }
+    guard(|| {
+        if bytes.is_null() || length == 0 {
+            return Err(CodecError::Invalid);
+        }
+        if length as usize > crate::task::MAX_TASK_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let task = crate::task::Invocation::decode(unsafe {
+            std::slice::from_raw_parts(bytes, length as usize)
+        })?;
+        unsafe {
+            *out = Box::into_raw(Box::new(task)).cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Valid SDK task; aligned disjoint writable view. All returned spans expire on task free.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_get(raw: *const c_void, out: *mut TaskView, size: u32) -> u32 {
+    guard(|| {
+        if raw.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if size < size_of::<TaskView>() as u32 {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let r = task.request();
+        let mut request = CRequest {
+            abi_version: 1,
+            struct_size: size_of::<CRequest>() as u32,
+            request_id: span(r.request_id.as_bytes()),
+            card_id: span(r.card_id.as_bytes()),
+            ..Default::default()
+        };
+        match &r.action {
+            Action::Rename { revision, title } => {
+                request.kind = 1;
+                request.revision = *revision;
+                request.title = span(title.as_bytes());
+            }
+            Action::ReadSummary => request.kind = 2,
+            Action::QueryOperation { operation_id } => {
+                request.kind = 3;
+                request.operation_id = span(operation_id.as_bytes());
+            }
+            Action::ReadAttachment {
+                attachment_id,
+                revision,
+                offset,
+                length,
+            } => {
+                request.kind = 4;
+                request.attachment_id = span(attachment_id.as_bytes());
+                request.revision = *revision;
+                request.offset = *offset;
+                request.length = *length;
+            }
+        };
+        unsafe {
+            out.write(TaskView {
+                task_id: span(task.task_id().as_bytes()),
+                command: span(task.command_bytes()),
+                request,
+            });
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// SDK task and readable response; disjoint output/length slots with stated capacity.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_complete(
+    raw: *const c_void,
+    response: *const u8,
+    response_length: u32,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if raw.is_null() || response.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if response_length as usize > crate::MAX_MESSAGE_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let bytes = task.completion(unsafe {
+            std::slice::from_raw_parts(response, response_length as usize)
+        })?;
+        if bytes.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out, bytes.len());
+            *length = bytes.len() as u32;
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Null or live SDK task, freed exactly once after all borrowed views expire.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_free(raw: *mut c_void) {
+    if !raw.is_null() {
+        unsafe {
+            drop(Box::from_raw(raw.cast::<crate::task::Invocation>()));
         }
     }
 }

@@ -257,3 +257,18 @@ mod native {
         );
     }
 }
+
+#[test]
+fn task_abi_requires_exact_task_contract_and_cannot_be_mislabelled_legacy() {
+    let m = Package::manifest_for_task("tasks", "1.0.0", MODULE, vec![Capability::RenameCard]);
+    assert!(Package::build(m.clone(), MODULE).is_ok());
+    let mut bad = m.clone();
+    bad.task_schema_sha256[0] ^= 1;
+    assert!(Package::build(bad, MODULE).is_err());
+    let mut legacy = m.clone();
+    legacy.guest_abi_version = 1;
+    assert!(Package::build(legacy, MODULE).is_err());
+    let mut future = m;
+    future.guest_abi_version = 3;
+    assert!(Package::build(future, MODULE).is_err());
+}

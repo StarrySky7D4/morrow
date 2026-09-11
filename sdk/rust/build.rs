@@ -9,6 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (name, file) in [
         ("RUNTIME_DIGEST", "runtime.capnp"),
         ("CONTENT_DIGEST", "content.proto"),
+        ("TASK_DIGEST", "task.capnp"),
     ] {
         println!("cargo:rerun-if-changed=contracts/{file}");
         let text = std::fs::read_to_string(format!("contracts/{file}"))?.replace("\r\n", "\n");
@@ -22,6 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     capnpc::CompilerCommand::new()
         .src_prefix("contracts")
         .file("contracts/runtime.capnp")
+        .file("contracts/task.capnp")
         .run()?;
     Ok(())
 }

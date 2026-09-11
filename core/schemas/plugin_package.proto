@@ -28,6 +28,7 @@ message Manifest {
   ExecutionBudget budget = 12;
   // Future mandatory semantics must be named here; unsupported names reject load.
   repeated string required_features = 13;
+  bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
 }
 message Package {
   uint32 schema_version = 1;

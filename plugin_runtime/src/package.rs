@@ -30,7 +30,11 @@ impl PreparedPackage {
             memory_bytes: host_limits.memory_bytes.min(budget.memory_bytes as usize),
             host_calls: host_limits.host_calls.min(budget.host_calls),
         };
-        let runner = Runner::new(package.module(), limits)?;
+        let runner = if package.manifest().guest_abi_version == 2 {
+            Runner::new_task(package.module(), limits)?
+        } else {
+            Runner::new(package.module(), limits)?
+        };
         Ok(Self {
             package,
             runner,
@@ -73,5 +77,86 @@ impl PreparedPackage {
             &mut |input| host.dispatch(connection, input, &mut clock).map_err(|_| ()),
             cancel,
         )
+    }
+}
+
+#[derive(Debug)]
+pub struct TaskReport {
+    pub execution: Report,
+    pub response: Option<morrow_core::response::Response>,
+}
+impl PreparedPackage {
+    pub fn run_task(
+        &self,
+        host: &mut HostRuntime,
+        connection: &Connection,
+        input: &morrow_core::task::Invocation,
+        mut clock: impl FnMut() -> u64,
+        cancel: Cancellation,
+    ) -> TaskReport {
+        let fault = if connection.package_digest() != Some(self.package.digest()) {
+            Some(Fault::PackageBinding)
+        } else if host.connection_phase(connection)
+            != Ok(morrow_core::lifecycle::InstancePhase::Ready)
+        {
+            Some(Fault::InactiveConnection)
+        } else if self.package.manifest().guest_abi_version != 2 {
+            Some(Fault::UnsupportedAbi)
+        } else {
+            None
+        };
+        if let Some(fault) = fault {
+            return TaskReport {
+                execution: Report {
+                    outcome: Err(fault),
+                    host_calls: 0,
+                    fuel_remaining: self.limits.fuel,
+                },
+                response: None,
+            };
+        }
+        let mut actual = None;
+        let mut protocol_fault = false;
+        let mut called = false;
+        let run = self.runner.run_task(
+            input.bytes(),
+            &mut |command| {
+                if called || protocol_fault || command != input.command_bytes() {
+                    protocol_fault = true;
+                    return Err(());
+                }
+                called = true;
+                let response = host
+                    .dispatch(connection, command, &mut clock)
+                    .map_err(|_| ())?;
+                actual = Some(response.clone());
+                Ok(response)
+            },
+            cancel,
+        );
+        let mut execution = run.report;
+        let response = if execution.outcome.is_ok() {
+            match (run.completion, actual) {
+                (Some(completion), Some(actual)) if !protocol_fault => {
+                    match input.verify_completion(&completion, &actual) {
+                        Ok(v) => Some(v),
+                        Err(_) => {
+                            execution.outcome = Err(Fault::TaskProtocol);
+                            None
+                        }
+                    }
+                }
+                _ => {
+                    execution.outcome = Err(Fault::TaskProtocol);
+                    None
+                }
+            }
+        } else {
+            None
+        };
+        TaskReport {
+            execution,
+            response,
+        }
     }
 }

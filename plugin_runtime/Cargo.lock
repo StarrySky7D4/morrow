@@ -343,11 +343,22 @@ dependencies = [
 name = "morrow-plugin-runtime"
 version = "0.1.9-test.10"
 dependencies = [
+ "capnp",
  "morrow-core",
+ "morrow-plugin-sdk",
  "tempfile",
  "wasmi",
  "wasmparser",
  "wat",
+]
+
+[[package]]
+name = "morrow-plugin-sdk"
+version = "0.1.9-test.10"
+dependencies = [
+ "capnp",
+ "capnpc",
+ "sha2",
 ]
 
 [[package]]

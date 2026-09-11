@@ -66,10 +66,17 @@ impl Control {
         }
     }
 }
+enum Work {
+    Legacy(SyncSender<Report>),
+    Task(
+        Box<morrow_core::task::Invocation>,
+        SyncSender<crate::package::TaskReport>,
+    ),
+}
 struct Job {
     serial: u64,
     cancel: Cancellation,
-    result: SyncSender<Report>,
+    work: Work,
 }
 enum Message {
     Job(Job),
@@ -77,13 +84,13 @@ enum Message {
 }
 /// Opaque local task handle. TaskId is diagnostic only, never a runtime authority.
 /// Dropping a handle requests cancellation; it does not prove rollback or completion.
-pub struct TaskHandle {
+pub struct TaskHandle<T = Report> {
     id: TaskId,
     cancel: Cancellation,
-    result: Receiver<Report>,
+    result: Receiver<T>,
     consumed: bool,
 }
-impl TaskHandle {
+impl<T> TaskHandle<T> {
     pub fn id(&self) -> TaskId {
         self.id
     }
@@ -91,7 +98,7 @@ impl TaskHandle {
         self.cancel.cancel();
     }
     /// Nonblocking and exactly-once result consumption. Unavailable means outcome needs reconciliation.
-    pub fn try_result(&mut self) -> Result<Option<Report>, WorkerError> {
+    pub fn try_result(&mut self) -> Result<Option<T>, WorkerError> {
         if self.consumed {
             return Err(WorkerError::Consumed);
         }
@@ -108,7 +115,7 @@ impl TaskHandle {
         }
     }
 }
-impl Drop for TaskHandle {
+impl<T> Drop for TaskHandle<T> {
     fn drop(&mut self) {
         if !self.consumed {
             self.cancel();
@@ -191,6 +198,20 @@ impl Worker {
     }
     /// Queue + running count is bounded; no blocking send, auto-retry or task replay.
     pub fn submit(&self, timeout: Duration) -> Result<TaskHandle, WorkerError> {
+        self.enqueue(timeout, Work::Legacy)
+    }
+    pub fn submit_task(
+        &self,
+        input: morrow_core::task::Invocation,
+        timeout: Duration,
+    ) -> Result<TaskHandle<crate::package::TaskReport>, WorkerError> {
+        self.enqueue(timeout, |result| Work::Task(Box::new(input), result))
+    }
+    fn enqueue<T>(
+        &self,
+        timeout: Duration,
+        work: impl FnOnce(SyncSender<T>) -> Work,
+    ) -> Result<TaskHandle<T>, WorkerError> {
         if timeout.is_zero() || timeout > MAX_TIMEOUT {
             return Err(WorkerError::InvalidOptions);
         }
@@ -214,7 +235,7 @@ impl Worker {
             .try_send(Message::Job(Job {
                 serial,
                 cancel: cancel.clone(),
-                result,
+                work: work(result),
             }))
             .is_err()
         {
@@ -302,16 +323,29 @@ fn execute(
             Err(_) => break,
         };
         if let Message::Job(job) = message {
-            let report = match job.cancel.fault() {
-                Some(fault) => Report {
-                    outcome: Err(fault),
-                    host_calls: 0,
-                    fuel_remaining: package.limits().fuel,
-                },
-                None => package.run(host, connection, &mut clock, job.cancel),
-            };
-            // A dropped UI handle never blocks shutdown or another job's result.
-            let _ = job.result.try_send(report);
+            let cancelled = job.cancel.fault().map(|fault| Report {
+                outcome: Err(fault),
+                host_calls: 0,
+                fuel_remaining: package.limits().fuel,
+            });
+            match job.work {
+                Work::Legacy(result) => {
+                    let report = cancelled
+                        .unwrap_or_else(|| package.run(host, connection, &mut clock, job.cancel));
+                    let _ = result.try_send(report);
+                }
+                Work::Task(input, result) => {
+                    let report = if let Some(execution) = cancelled {
+                        crate::package::TaskReport {
+                            execution,
+                            response: None,
+                        }
+                    } else {
+                        package.run_task(host, connection, &input, &mut clock, job.cancel)
+                    };
+                    let _ = result.try_send(report);
+                }
+            }
             control.lock().tasks.remove(&job.serial);
         }
     }

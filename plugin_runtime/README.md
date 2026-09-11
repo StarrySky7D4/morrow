@@ -43,7 +43,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 本轮通过：
 
-- 格式检查、Clippy -D warnings；运行库默认 12 项测试，启用 packages 共 24 项测试，SDK 14 项回归测试。
+- 格式检查、Clippy -D warnings；运行库默认 16 项测试，启用 packages 共 29 项测试，SDK 14 项回归测试。
 - 无效模块／导入／入口、禁止 start、初始内存超限、运行期内存增长／越界、死循环、宿主调用洪泛、缓冲区预检、取消和无效回复。
 - 实际 C／C++／Rust SDK Wasm 模块：无权限拒绝、授权提交、重复请求、跨连接拒绝、撤权与停止后拒绝，以及取消后的结果核对。
 - 三类首次提交后故障：取消、trap、fuel 耗尽；重开库均保留修订 2 和两条原子事件（初始创建与本次修改）。
@@ -56,3 +56,5 @@ pwsh -File tool/verify_plugin_runtime.ps1
 当前只证明 Windows 上该解释后端与三语言示例的执行结果。已增加原生实验包校验、不可变安装与绑定执行，见 [插件包说明](../docs/PLUGIN_PACKAGE.md)。启用／更新状态、签名／依赖锁定、长驻服务、异步任务、mmap、审计封存、UI 对接及其余平台仍待完成。实验 ABI 尚未锚定；未发布插件包或 Release。
 
 原生 Worker 已通过四个实际包的后台任务／排空执行，并覆盖队列满、取消隔离、排空期限、旧连接拒绝和宿主线程故障。结果见 [验证记录](../reports/plugin-worker-validation.md)。版本化任务输入和 Flutter 主界面接入尚未完成。
+
+后续已增加 guest ABI v2 动态任务导入和有界完成结果，三语言各 8 项宿主输入任务通过，见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)。新 profile 使用 `run_task`／`submit_task`，旧 run 不接收任务字节；原有 ABI v1 示例继续回归。当前重建产物摘要以 [任务验证记录](../reports/plugin-task-contract-validation.md) 为准，早期报告对应其记录的构建。
