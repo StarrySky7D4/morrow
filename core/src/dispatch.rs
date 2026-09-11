@@ -6,11 +6,24 @@ use crate::{
     runtime::{Command, MAX_MESSAGE_BYTES},
     store::Store,
 };
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 /// Opaque host-owned endpoint; never serialize or let an untrusted caller select another endpoint.
 pub struct Connection {
     instance: Instance,
+    package_digest: Option<[u8; 32]>,
+    ceiling: Option<BTreeSet<GrantKind>>,
     grants: BTreeMap<(GrantKind, String, Option<String>), Grant>,
+}
+impl Connection {
+    pub fn package_digest(&self) -> Option<[u8; 32]> {
+        self.package_digest
+    }
+    fn permits_kind(&self, kind: GrantKind) -> Result<()> {
+        if self.ceiling.as_ref().is_some_and(|v| !v.contains(&kind)) {
+            return Err(Error::Invalid("undeclared package capability"));
+        }
+        Ok(())
+    }
 }
 pub struct HostRuntime {
     policy: HostPolicy,
@@ -28,8 +41,21 @@ impl HostRuntime {
         self.policy.ready(instance)?;
         Ok(Connection {
             instance,
+            package_digest: None,
+            ceiling: None,
             grants: BTreeMap::new(),
         })
+    }
+    /// Bind a fresh instance to immutable package identity and declared capability ceiling.
+    /// Package validity is not author trust; caller prepares/approves code before connecting.
+    pub fn connect_package(
+        &mut self,
+        package: &crate::plugin_package::Package,
+    ) -> Result<Connection> {
+        let mut connection = self.connect()?;
+        connection.package_digest = Some(package.digest());
+        connection.ceiling = Some(package.capabilities().clone());
+        Ok(connection)
     }
     /// Administrative control plane, never a dispatch command.
     pub fn grant(
@@ -40,6 +66,7 @@ impl HostRuntime {
         expires: u64,
         now: u64,
     ) -> Result<()> {
+        connection.permits_kind(kind)?;
         self.policy.phase(connection.instance)?;
         let key = (kind, card.to_owned(), None);
         if let Some(old) = connection.grants.remove(&key) {
@@ -72,6 +99,7 @@ impl HostRuntime {
         expires: u64,
         now: u64,
     ) -> Result<()> {
+        connection.permits_kind(GrantKind::ReadAttachment)?;
         self.policy.phase(connection.instance)?;
         let key = (
             GrantKind::ReadAttachment,
@@ -139,6 +167,7 @@ impl HostRuntime {
             _ => None,
         };
         let result = (|| {
+            connection.permits_kind(kind)?;
             self.policy.phase(connection.instance)?;
             let grant = *connection
                 .grants

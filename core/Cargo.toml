@@ -17,6 +17,7 @@ prost = "=0.14.4"
 prost-reflect = { version = "=0.16.5", default-features = false }
 lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
 sha2 = "=0.10.9"
+semver = "=1.0.28"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 rusqlite = { version = "=0.40.2", features = ["bundled", "blob"] }

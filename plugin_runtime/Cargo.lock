@@ -334,6 +334,7 @@ dependencies = [
  "prost-reflect",
  "protoc-bin-vendored",
  "rusqlite",
+ "semver",
  "sha2",
  "tempfile",
 ]

@@ -47,7 +47,7 @@ Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings �
 
 真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
 
-后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、包工具、示例插件、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
+后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、完整包管理、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
 
 ## Rust Wasm 示例
 
@@ -74,4 +74,4 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其与 C／C++ 源码、固定消息导入和 guest 运行支持一起链接。malloc／calloc／realloc／free 和对齐分配统一交给同一 guest 内的 Rust 分配器，不能混用两套堆。C++ 标准分配失败在此 profile 中终止 guest；C malloc 失败返回 NULL。分配器指针仅在该模块内部使用，不是跨进程句柄或宿主能力。
 
-最终 C／C++ 示例位于 build/plugin-c-guest，默认去除调试符号；构建时使用 -DebugSymbols 可保留符号。这些是实验执行模块，尚不包含正式 manifest、签名、安装器或 UI。文件、网络、时钟、线程等接口仍须通过后续明确的宿主能力提供；不能把部分标准库成功运行宣称为完整 WASI 或全 C++ 标准库支持。
+最终 C／C++ 示例位于 build/plugin-c-guest，默认去除调试符号；构建时使用 -DebugSymbols 可保留符号。构建产生裸模块；统一的实验打包工具另行封装 manifest 并支持不可变安装，见 [插件包开发流程](../docs/PLUGIN_PACKAGE.md)。作者签名、启用／更新管理与 UI 仍未完成。文件、网络、时钟、线程等接口仍须通过后续明确的宿主能力提供；不能把部分标准库成功运行宣称为完整 WASI 或全 C++ 标准库支持。

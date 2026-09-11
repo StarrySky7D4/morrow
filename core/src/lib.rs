@@ -5,6 +5,7 @@ pub mod content;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
 pub mod lifecycle;
+pub mod plugin_package;
 pub mod records;
 pub mod response;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]

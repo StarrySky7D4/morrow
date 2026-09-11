@@ -8,6 +8,8 @@ use wasmi::{
     Caller, Config, EnforcedLimits, Engine, ExternType, Linker, Module, Store, StoreLimits,
     StoreLimitsBuilder, ValType,
 };
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod package;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 #[derive(Debug, Clone, Copy)]
@@ -37,6 +39,7 @@ impl Cancellation {
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Fault {
+    PackageBinding,
     InvalidModule,
     UnsupportedAbi,
     Limits,

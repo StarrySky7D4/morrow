@@ -6,10 +6,18 @@ version = "0.1.9-test.10"
 edition = "2024"
 publish = false
 license = "Apache-2.0"
+[features]
+packages = ["dep:morrow-core"]
 [dependencies]
 wasmi = {version = "=1.1.0", default-features = false, features = ["std", "extra-checks"]}
 wasmparser = {version = "=0.239.0", default-features = false, features = ["std"]}
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+morrow-core = {path = "../core", optional = true}
 [dev-dependencies]
 wat = "=1.239.0"
 morrow-core = {path = "../core"}
 tempfile = "=3.27.0"
+
+[[example]]
+name = "qualify_package"
+required-features = ["packages"]
