@@ -1,0 +1,26 @@
+Morrow Windows Stage Demo 0.1.9-test.10
+
+Morrow source and artwork: Apache-2.0; see LICENSE and NOTICE.
+
+Flutter, Dart, the Flutter engine and its incorporated dependencies:
+see data/flutter_assets/NOTICES.Z (gzip-compressed generated license notices).
+
+Rust standard library and incorporated third-party code:
+see licenses/Rust-COPYRIGHT-library.html.
+Rust dependency license declarations and source-provided notices:
+see licenses/cargo-dependencies.txt and licenses/cargo/.
+This inventory includes resolved build and test dependencies, not only code
+linked into the executable. It is not a binary composition or SBOM claim.
+
+C/C++ example modules link the WASI sysroot C/C++ libraries. Their upstream
+source and license notices are available in the corresponding wasi-sdk,
+wasi-libc and LLVM source distributions:
+https://github.com/WebAssembly/wasi-sdk/releases/tag/wasi-sdk-34
+https://github.com/WebAssembly/wasi-libc
+https://github.com/llvm/llvm-project/tree/main/libcxx
+
+The app-local Microsoft Visual C++ runtime DLLs are distributed from the
+Visual Studio 2022 x64 redistributable directory. They remain subject to
+Microsoft's runtime redistribution terms, not Morrow's Apache-2.0 license.
+
+This standalone demo contains no main-application media playback libraries.

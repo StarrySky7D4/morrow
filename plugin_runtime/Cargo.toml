@@ -39,3 +39,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_ui"
 required-features = ["packages"]
+
+[[example]]
+name = "stage_demo_host"
+required-features = ["packages"]
