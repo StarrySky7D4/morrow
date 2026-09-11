@@ -1,6 +1,6 @@
 # Morrow 第三方插件 SDK 原型
 
-基于 0.1.9-test.10，运行期协议 v6，实验本地 ABI v1。当前提供 **传输接口与四类内容命令的类型化编解码**，尚未建立正式插件加载器、Wasm guest imports、完整内容／UI API 或稳定 ABI。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
+基于 0.1.9-test.10，运行期协议 v6，实验本地 ABI v1。当前提供 **传输接口与四类内容命令的类型化编解码**，已增加 Rust Wasm guest 导入原型，但尚未建立正式插件加载器、完整内容／UI API 或稳定 ABI。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
 
 | 语言 | 入口 | 使用方式 |
 | --- | --- | --- |
@@ -47,4 +47,15 @@ Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings �
 
 真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
 
-当前未验证 C／C++ Wasm 编译、Rust Wasm 实际执行、其他系统或插件 UI；C++／Rust 用例不代表其真实第三方插件已加载。通用记录命令、包工具、示例插件、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
+后续已增加 [Rust Wasm 实际执行验证](../plugin_runtime/README.md)：独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；C／C++ Wasm、其他系统和插件 UI 仍未验证。通用记录命令、包工具、示例插件、异步任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
+
+## Rust Wasm 示例
+
+启用 rust/Cargo.toml 的 wasm-guest feature，使用 wasm::host() 构造固定导入的 HostV1，再调用现有 Client 和类型化协议 API。可编译样例位于 examples/rust-rename；当前固定操作 ID 仅用于合成去重测试，正式插件必须从宿主管理的任务契约取得并保存操作身份。
+
+```powershell
+cargo build --locked --manifest-path sdk/examples/rust-rename/Cargo.toml --target wasm32-unknown-unknown --release --target-dir build/plugin-guest
+pwsh -File tool/verify_plugin_runtime.ps1
+```
+
+Wasm guest ABI v1 与原生本地回调 ABI v1 分别管理，两者不共享指针或身份；运行消息仍为固定 Cap’n Proto v6。取消／执行错误不自动重试，已提交状态由核心查询确定。
