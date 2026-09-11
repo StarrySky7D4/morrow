@@ -5,7 +5,7 @@ use morrow_core::{
     plugin_package::catalog,
     store::{EventBudget, Store},
     task::{Invocation, Transform},
-    ui::{Document, Kind, Session},
+    ui::{Document, Session},
 };
 use morrow_plugin_runtime::{Limits, package::PreparedPackage};
 use std::io::{Read, Write};
@@ -68,20 +68,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         if output.type_id != "morrow.ui.document.v1" {
             return Err("Unexpected UI type".into());
         }
-        let document = Document::decode(&output.bytes)?;
-        // These sample handlers implement text edits only. Expose other controls as
-        // disabled previews, applying the same policy to every returned snapshot.
-        let mut nodes = document.nodes().to_vec();
-        for n in &mut nodes {
-            if matches!(n.kind, Kind::Button | Kind::Toggle) {
-                n.enabled = false;
-            }
-        }
-        Ok(Document::new(nodes)?)
+        Ok(Document::decode(&output.bytes)?)
     };
-    let first = produce("ui.form", "text.utf8", "写下新的灵感".as_bytes().to_vec())?;
-    let revision = session.replace(0, first.clone())?;
-    frame(revision, &first)?;
+    let mut current = produce("demo.open", "text.utf8", Vec::new())?;
+    let revision = session.replace(0, current.clone())?;
+    frame(revision, &current)?;
     let mut input = std::io::stdin().lock();
     loop {
         let mut header = [0u8; 5];
@@ -100,9 +91,20 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         let mut bytes = vec![0; length];
         input.read_exact(&mut bytes)?;
         session.accept(&bytes)?;
-        let next = produce("ui.edit", "morrow.ui.event.v1", bytes)?;
+        // Demo-only framing around two existing Cap'n Proto messages. Snapshot
+        // comes from this host session, never from an untrusted UI caller.
+        let snapshot = current.encode()?;
+        let mut payload = (snapshot.len() as u32).to_le_bytes().to_vec();
+        payload.extend(0u32.to_le_bytes()); // Preserve Cap'n Proto word alignment.
+        payload.extend(snapshot);
+        payload.extend(bytes);
+        if payload.len() > 65536 {
+            return Err("Demo update exceeds task budget".into());
+        }
+        let next = produce("demo.update", "morrow.demo.update.v1", payload)?;
         let revision = session.replace(session.revision(), next.clone())?;
         frame(revision, &next)?;
+        current = next;
     }
     session.close();
     Ok(())

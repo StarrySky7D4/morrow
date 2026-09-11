@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-demo-text"
+version = "0.1.9-test.10"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+morrow-plugin-sdk = {path = "../../../../sdk/rust", features = ["wasm-guest"]}
+[profile.release]
+opt-level = "s"
+panic = "abort"
+strip = true

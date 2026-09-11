@@ -7,18 +7,18 @@ $repo=Split-Path $PSScriptRoot -Parent
 function Checked([string]$Program,[string[]]$Arguments){& $Program @Arguments;if($LASTEXITCODE -ne 0){throw "Stage demo build failed: $Program"}}
 Push-Location $repo
 try{
- $bundle=Join-Path $repo 'dist/morrow-0.1.9-test.10-demo-windows'
- $evidence=Join-Path $repo 'build/stage-demo-evidence'
+ $bundle=Join-Path $repo 'dist/morrow-0.1.9-test.10-demo2-windows'
+ $evidence=Join-Path $repo 'build/stage-demo2-evidence'
  New-Item -ItemType Directory -Force $bundle,$evidence,(Join-Path $bundle 'plugins') | Out-Null
  Checked cargo @('clippy','--locked','--manifest-path','plugin_runtime/Cargo.toml','--features','packages','--example','stage_demo_host','--target-dir','build/plugin-runtime','--','-D','warnings')
  Checked cargo @('build','--locked','--release','--manifest-path','plugin_runtime/Cargo.toml','--features','packages','--example','stage_demo_host','--target-dir','build/plugin-runtime')
- Checked cargo @('build','--locked','--release','--manifest-path','sdk/examples/rust-ui/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest')
- & ./tool/build_plugin_c_wasm.ps1 -Sysroot $Sysroot
+ Checked cargo @('build','--locked','--release','--manifest-path','demos/plugin_stage_windows/plugins/rust/Cargo.toml','--target','wasm32-unknown-unknown','--target-dir','build/plugin-guest')
+ & ./tool/build_stage_plugins.ps1 -Sysroot $Sysroot
  $packages=Join-Path 'build/stage-demo-packages' ([guid]::NewGuid().ToString('N'))
  New-Item -ItemType Directory -Force $packages | Out-Null
- foreach($guest in @(@('rust','build/plugin-guest/wasm32-unknown-unknown/release/morrow_example_ui.wasm'),@('c','build/plugin-c-guest/c_ui.wasm'),@('cpp','build/plugin-c-guest/cpp_ui.wasm'))){
+ foreach($guest in @(@('rust','build/plugin-guest/wasm32-unknown-unknown/release/morrow_demo_text.wasm'),@('c','build/plugin-stage-guest/c_units.wasm'),@('cpp','build/plugin-stage-guest/cpp_tasks.wasm'))){
   $package=Join-Path $packages ($guest[0]+'.mplugin')
-  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-transform',$guest[1],$package,('org.morrow.example.'+$guest[0]+'-ui'),'0.1.9-test.10','ui.form,text.utf8,morrow.ui.document.v1,32,65536;ui.edit,morrow.ui.event.v1,morrow.ui.document.v1,65536,65536')
+  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/core-test.10','--example','plugin_package','--','pack-transform',$guest[1],$package,('org.morrow.example.'+$guest[0]+'-stage'),'0.1.9-test.10','demo.open,text.utf8,morrow.ui.document.v1,32,65536;demo.update,morrow.demo.update.v1,morrow.ui.document.v1,65536,65536')
   Copy-Item -LiteralPath $package -Destination (Join-Path $bundle ('plugins/'+$guest[0]+'.mplugin')) -Force
  }
  Push-Location demos/plugin_stage_windows
@@ -33,7 +33,7 @@ try{
  $priorRoot=$env:MORROW_STAGE_DEMO_ROOT
  $env:MORROW_STAGE_DEMO_ROOT=$bundle
  Push-Location demos/plugin_stage_windows
- try{Checked flutter @('test','--no-pub','test/demo_test.dart')}finally{Pop-Location;$env:MORROW_STAGE_DEMO_ROOT=$priorRoot}
+ try{Checked flutter @('test','--no-pub')}finally{Pop-Location;$env:MORROW_STAGE_DEMO_ROOT=$priorRoot}
  $app=Start-Process -FilePath (Join-Path $bundle 'MorrowStageDemo.exe') -ArgumentList ('--showcase="'+$evidence+'"') -WorkingDirectory $bundle -PassThru
  if(-not $app.WaitForExit(60000)){throw "Demo is still running (PID $($app.Id)); inspect before rebuilding"}
  if($app.ExitCode -ne 0){throw 'Actual release self-check failed'}

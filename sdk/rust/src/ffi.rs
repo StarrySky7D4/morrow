@@ -777,9 +777,162 @@ pub unsafe extern "C" fn mp_ui_event_free(handle: *mut c_void) {
     }
 }
 
+/// # Safety
+/// Input is readable; out/count are aligned, writable and disjoint. The returned
+/// handle owns decoded values and must be freed after all borrowed spans expire.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_document_decode(
+    bytes: *const u8,
+    length: u32,
+    out: *mut *mut c_void,
+    count: *mut u32,
+) -> u32 {
+    if out.is_null() || count.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+        *count = 0;
+    }
+    guard(|| {
+        if length as usize > crate::ui::MAX_BYTES {
+            return Err(CodecError::Limit);
+        }
+        if bytes.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        // The public byte-pointer API also accepts unaligned source buffers.
+        let mut words = capnp::Word::allocate_zeroed_vec((length as usize).div_ceil(8));
+        let aligned = capnp::Word::words_to_bytes_mut(&mut words);
+        aligned[..length as usize]
+            .copy_from_slice(unsafe { std::slice::from_raw_parts(bytes, length as usize) });
+        let value = crate::ui::Document::decode(&aligned[..length as usize])?;
+        unsafe {
+            *count = value.nodes().len() as u32;
+            *out = Box::into_raw(Box::new(value)).cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Handle is live and created by mp_ui_document_decode. out is writable,
+/// aligned and disjoint. Its spans borrow the handle, not the input buffer.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_document_node(
+    handle: *const c_void,
+    index: u32,
+    out: *mut UiNode,
+    size: u32,
+) -> u32 {
+    if out.is_null() || size != size_of::<UiNode>() as u32 {
+        return 16;
+    }
+    unsafe {
+        *out = UiNode::default();
+    }
+    guard(|| {
+        if handle.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let d = unsafe { &*handle.cast::<crate::ui::Document>() };
+        let n = d.nodes().get(index as usize).ok_or(CodecError::Invalid)?;
+        unsafe {
+            *out = UiNode {
+                id: span(n.id.as_bytes()),
+                parent: span(n.parent.as_bytes()),
+                label: span(n.label.as_bytes()),
+                text: span(n.text.as_bytes()),
+                action: span(n.action.as_bytes()),
+                kind: n.kind as u32,
+                tone: n.tone as u32,
+                enabled: n.enabled as u32,
+                checked: n.checked as u32,
+                max_bytes: n.max_bytes,
+            };
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Free a decoded document exactly once; no borrowed spans may outlive it.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_document_free(handle: *mut c_void) {
+    if !handle.is_null() {
+        unsafe {
+            drop(Box::from_raw(handle.cast::<crate::ui::Document>()));
+        }
+    }
+}
+
 #[cfg(test)]
 mod ui_tests {
     use super::*;
+    #[test]
+    fn document_readback_owns_data_and_rejects_invalid_indices_and_frames() {
+        let mut n = crate::ui::Node::new("source", "root", crate::ui::Kind::TextInput);
+        n.label = "正文".into();
+        n.text = "你好🌱".into();
+        n.action = "edit".into();
+        n.max_bytes = 32;
+        let mut bytes = crate::ui::Document::new(vec![
+            crate::ui::Node::new("root", "", crate::ui::Kind::Column),
+            n,
+        ])
+        .unwrap()
+        .encode()
+        .unwrap();
+        let mut handle = std::ptr::null_mut();
+        let mut count = 99;
+        let mut out = UiNode::default();
+        unsafe {
+            assert_eq!(
+                mp_ui_document_decode(bytes.as_ptr(), bytes.len() as u32, &mut handle, &mut count),
+                0
+            );
+            assert_eq!(count, 2);
+            let mut prefixed = vec![0];
+            prefixed.extend(&bytes);
+            let mut unaligned_handle = std::ptr::null_mut();
+            let mut unaligned_count = 0;
+            assert_eq!(
+                mp_ui_document_decode(
+                    prefixed.as_ptr().add(1),
+                    bytes.len() as u32,
+                    &mut unaligned_handle,
+                    &mut unaligned_count
+                ),
+                0
+            );
+            assert_eq!(unaligned_count, 2);
+            mp_ui_document_free(unaligned_handle);
+            bytes.fill(0);
+            assert_eq!(
+                mp_ui_document_node(handle, 1, &mut out, size_of::<UiNode>() as u32),
+                0
+            );
+            assert_eq!(
+                std::slice::from_raw_parts(out.text.data, out.text.length as usize),
+                "你好🌱".as_bytes()
+            );
+            assert_eq!(
+                mp_ui_document_node(handle, 2, &mut out, size_of::<UiNode>() as u32),
+                16
+            );
+            assert_eq!(out.text.length, 0);
+            mp_ui_document_free(handle);
+            assert_ne!(
+                mp_ui_document_decode(bytes.as_ptr(), 1, &mut handle, &mut count),
+                0
+            );
+            assert!(handle.is_null());
+            assert_eq!(count, 0);
+            assert_eq!(
+                mp_ui_document_decode(bytes.as_ptr(), 65537, &mut handle, &mut count),
+                17
+            );
+            mp_ui_document_free(handle);
+        }
+    }
     #[test]
     fn ui_encode_bounds_flags_and_failure_atomicity() {
         let node = UiNode {

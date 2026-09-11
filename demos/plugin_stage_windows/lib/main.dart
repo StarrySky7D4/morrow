@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:morrow_core_client/ui.dart' show UiDocument;
 import 'package:morrow_plugin_ui/morrow_plugin_ui.dart';
 import 'demo_bridge.dart';
@@ -28,11 +29,51 @@ class _StageDemoState extends State<StageDemo> {
   String _language = 'rust';
   String? _failure;
   bool _loading = true, _dark = true, _narrow = false;
-  int _epoch = 0, _updates = 0, _editTicket = 0;
+  int _epoch = 0, _updates = 0, _editTicket = 0, _pending = 0;
+  bool _commandPending = false;
   Color _accent = const Color(0xff69dfc5);
   Future<void> _queue = Future.value();
   final _log = <String>[];
   static const labels = {'rust': 'Rust', 'c': 'C', 'cpp': 'C++'};
+  static const names = {'rust': '文字工坊', 'c': '单位换算', 'cpp': '清单助手'};
+  static const descriptions = {
+    'rust': '整理段落、合并空白，实时查看文字统计。',
+    'c': '温度与长度双向换算，直接修改数值即可得到结果。',
+    'cpp': '把多行文字变成清单，勾选、排序，再清除已完成项。',
+  };
+  static const icons = {
+    'rust': Icons.notes_rounded,
+    'c': Icons.swap_horiz_rounded,
+    'cpp': Icons.checklist_rounded,
+  };
+  String _value(String id) =>
+      _document?.nodes.where((n) => n.id == id).firstOrNull?.text ?? '';
+  UiDocumentModel get _controls => UiDocumentModel(
+    _document!.nodes
+        .where((n) => !{'result', 'detail', 'caption'}.contains(n.id))
+        .map(
+          (n) => UiNode(
+            id: n.id,
+            parent: n.parent,
+            kind: n.kind,
+            label: n.label,
+            text: n.text,
+            action: n.action,
+            checked: n.checked,
+            maxBytes: n.maxBytes,
+            tone: n.tone,
+            enabled:
+                n.enabled &&
+                (n.kind == Kind.textInput
+                    ? !_commandPending
+                    : [Kind.button, Kind.toggle].contains(n.kind)
+                    ? _pending == 0
+                    : true),
+          ),
+        )
+        .toList(),
+  );
+
   String get _folder =>
       widget.bundleFolder ?? File(Platform.resolvedExecutable).parent.path;
   @override
@@ -50,10 +91,17 @@ class _StageDemoState extends State<StageDemo> {
     _bridge = null;
     setState(() {
       _language = language;
+      _accent = switch (language) {
+        'c' => const Color(0xffe1b774),
+        'cpp' => const Color(0xffb4a3f3),
+        _ => const Color(0xff69dfc5),
+      };
       _loading = true;
       _failure = null;
       _document = null;
       _updates = 0;
+      _pending = 0;
+      _commandPending = false;
     });
     _queue = Future.value();
     await old?.close();
@@ -85,6 +133,16 @@ class _StageDemoState extends State<StageDemo> {
   }
 
   void _intent(UiIntent intent) {
+    // Text edits can queue, but semantic actions wait for the acknowledged view.
+    // In particular a checkbox from before a sort cannot target a different item.
+    if (_commandPending ||
+        (intent.kind != EventKind.editText && _pending > 0)) {
+      return;
+    }
+    setState(() {
+      _pending++;
+      _commandPending = intent.kind != EventKind.editText;
+    });
     final epoch = _epoch;
     final ticket = ++_editTicket;
     _queue = _queue.then((_) async {
@@ -103,6 +161,13 @@ class _StageDemoState extends State<StageDemo> {
           setState(() => _failure = '连接已中断，可重新连接开始新会话。');
         }
         _log.add('$_language: $e');
+      } finally {
+        if (mounted && epoch == _epoch) {
+          setState(() {
+            _pending--;
+            _commandPending = false;
+          });
+        }
       }
     });
   }
@@ -122,30 +187,87 @@ class _StageDemoState extends State<StageDemo> {
 
   Future<void> _showcase() async {
     try {
-      for (final lang in ['rust', 'c', 'cpp']) {
-        await _select(lang);
-        if (_bridge == null) throw StateError('Plugin unavailable: $lang');
-        final title = switch (lang) {
-          'rust' => '灵感，从这里开始',
-          'c' => '把想法变成卡片',
-          _ => '同一界面，三种能力',
-        };
+      Future<void> send(
+        String node,
+        String action,
+        EventKind kind, {
+        String text = '',
+        bool checked = false,
+      }) async {
         _intent(
           UiIntent(
-            node: 'title',
-            action: 'title.edit',
-            kind: EventKind.editText,
-            text: title,
+            node: node,
+            action: action,
+            kind: kind,
+            text: text,
+            checked: checked,
           ),
         );
         await _queue;
-        if (_failure != null ||
-            _document!.nodes.firstWhere((n) => n.id == 'title').text != title ||
-            _bridge!.revision != BigInt.from(2)) {
-          throw StateError('Live round trip failed: $lang');
-        }
-        await _screenshot('$lang-dark');
+        if (_failure != null) throw StateError('$_language: $_failure');
       }
+
+      void expectValue(String id, String expected) {
+        if (_value(id) != expected) {
+          throw StateError(
+            '$_language $id: expected "$expected", got "${_value(id)}"',
+          );
+        }
+      }
+
+      await _select('rust');
+      await send(
+        'title',
+        'edit',
+        EventKind.editText,
+        text: '  alpha   beta  \n gamma \n',
+      );
+      expectValue('result', 'alpha   beta\ngamma');
+      await send('option', 'compact', EventKind.setToggle, checked: true);
+      expectValue('result', 'alpha beta gamma');
+      await send('apply', 'tidy', EventKind.activate);
+      expectValue('title', 'alpha beta gamma');
+      await send('reset', 'clear', EventKind.activate);
+      expectValue('result', '');
+      await send(
+        'title',
+        'edit',
+        EventKind.editText,
+        text: '  Morrow   灵感工坊  \n  写下每一个想法  ',
+      );
+      await send('option', 'compact', EventKind.setToggle, checked: false);
+      await _screenshot('rust-dark');
+      await _select('c');
+      await send('title', 'edit', EventKind.editText, text: '100');
+      expectValue('result', '212.000 °F');
+      await send('reverse', 'reverse', EventKind.setToggle, checked: true);
+      expectValue('result', '37.778 °C');
+      await send('mode', 'mode', EventKind.setToggle, checked: true);
+      expectValue('result', '30.480 米');
+      await send('reverse', 'reverse', EventKind.setToggle, checked: false);
+      await send('title', 'edit', EventKind.editText, text: 'abc');
+      expectValue('result', '等待有效数值');
+      await send('example', 'example', EventKind.activate);
+      expectValue('result', '3.281 英尺');
+      await _screenshot('c-dark');
+      await _select('cpp');
+      await send(
+        'title',
+        'edit',
+        EventKind.editText,
+        text: 'Zebra\nAlpha\nBeta',
+      );
+      await send('item0', 'item0', EventKind.setToggle, checked: true);
+      await send('sort', 'sort', EventKind.activate);
+      expectValue('result', '○ Alpha\n○ Beta\n✓ Zebra');
+      await send('option', 'hide', EventKind.setToggle, checked: true);
+      expectValue('result', '○ Alpha\n○ Beta');
+      await send('clear', 'clear', EventKind.activate);
+      expectValue('title', 'Alpha\nBeta');
+      expectValue('detail', '已完成 0 / 2 · 0%');
+      await send('reset', 'reset', EventKind.activate);
+      await send('item0', 'item0', EventKind.setToggle, checked: true);
+      await _screenshot('cpp-dark');
       setState(() {
         _dark = false;
         _accent = const Color(0xffab6c46);
@@ -155,7 +277,7 @@ class _StageDemoState extends State<StageDemo> {
       await _screenshot('narrow');
       await _bridge?.close();
       await File('${widget.captureFolder}/runtime-check.txt').writeAsString(
-        'PASS: actual Windows release; 3 live plugin sessions and title round trips; theme and narrow presentation captures.\n${_log.join('\n')}\n',
+        'PASS: actual Windows release; 3 distinct live plugins; text tidy/clear, bidirectional units and invalid input recovery, checklist toggle/sort/filter/clear; theme and narrow captures.\n${_log.join('\n')}\n',
       );
       exit(0);
     } catch (e) {
@@ -183,7 +305,7 @@ class _StageDemoState extends State<StageDemo> {
     );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Morrow · 阶段展示',
+      title: 'Morrow · 差异化展示 Demo 02',
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: scheme,
@@ -277,7 +399,7 @@ class _StageDemoState extends State<StageDemo> {
                                             ),
                                           ),
                                           Text(
-                                            '阶段展示  /  Windows',
+                                            '差异化展示 02  /  Windows',
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: s.onSurfaceVariant,
@@ -308,7 +430,7 @@ class _StageDemoState extends State<StageDemo> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 34),
+                                const SizedBox(height: 22),
                                 Text(
                                   '让能力，长在卡片上。',
                                   style: TextStyle(
@@ -321,7 +443,7 @@ class _StageDemoState extends State<StageDemo> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  '三种语言，共用一套界面。编辑标题，看看插件如何即时回应。',
+                                  '三个插件，三种用法。让文字、数值与待办，都有自己的工作方式。',
                                   style: TextStyle(
                                     fontSize: 14,
                                     height: 1.8,
@@ -335,7 +457,9 @@ class _StageDemoState extends State<StageDemo> {
                                   children: [
                                     for (final item in labels.entries)
                                       ChoiceChip(
-                                        label: Text('${item.value} 插件'),
+                                        label: Text(
+                                          '${names[item.key]} · ${item.value}',
+                                        ),
                                         selected: _language == item.key,
                                         onSelected: (_) => _select(item.key),
                                         showCheckmark: false,
@@ -482,7 +606,7 @@ class _StageDemoState extends State<StageDemo> {
                                 ),
                                 const SizedBox(height: 20),
                                 Text(
-                                  '0.1.9-test.10  ·  独立演示数据  ·  不保存到正式资料库',
+                                  '0.1.9-test.10 / Demo 02  ·  独立会话  ·  不保存到正式资料库',
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: s.onSurfaceVariant,
@@ -490,7 +614,7 @@ class _StageDemoState extends State<StageDemo> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '当前展示插件表单与标题交互；插件安装管理、持久草稿和正式保存仍在建设。',
+                                  '切换工具会开启新会话。文字整理、单位换算与清单管理均由真实插件处理。',
                                   style: TextStyle(
                                     fontSize: 11,
                                     height: 1.6,
@@ -545,7 +669,7 @@ class _StageDemoState extends State<StageDemo> {
             children: [
               Expanded(
                 child: Text(
-                  '插件工作区',
+                  names[_language]!,
                   style: TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -561,12 +685,15 @@ class _StageDemoState extends State<StageDemo> {
           ),
           const SizedBox(height: 7),
           Text(
-            '标题可实时编辑，其他控件仅作样式预览。',
+            descriptions[_language]!,
             style: TextStyle(fontSize: 11, color: s.onSurfaceVariant),
           ),
           const SizedBox(height: 23),
-          SizedBox(
-            height: 255,
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: 245,
+              maxHeight: _language == 'cpp' ? 560 : 420,
+            ),
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _failure != null
@@ -583,10 +710,22 @@ class _StageDemoState extends State<StageDemo> {
                       ],
                     ),
                   )
-                : PluginForm(
-                    document: _document!,
-                    viewIdentity: _epoch,
-                    onIntent: _intent,
+                : TweenAnimationBuilder<double>(
+                    key: ValueKey(_epoch),
+                    tween: Tween(begin: 0, end: 1),
+                    duration: const Duration(milliseconds: 300),
+                    builder: (context, t, child) => Opacity(
+                      opacity: t,
+                      child: Transform.translate(
+                        offset: Offset(0, 10 * (1 - t)),
+                        child: child,
+                      ),
+                    ),
+                    child: PluginForm(
+                      document: _controls,
+                      viewIdentity: _epoch,
+                      onIntent: _intent,
+                    ),
                   ),
           ),
         ],
@@ -596,57 +735,134 @@ class _StageDemoState extends State<StageDemo> {
 
   Widget _preview(BuildContext context) {
     final s = Theme.of(context).colorScheme;
-    final title =
-        _document?.nodes.firstWhere((n) => n.id == 'title').text ?? '等待新的灵感';
+    final result = _value('result');
+    final title = switch (_language) {
+      'c' => '换算结果',
+      'cpp' => '我的清单',
+      _ => '整理后的文字',
+    };
     return _panel(
       context,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '卡片预览',
-            style: TextStyle(fontSize: 12, color: s.onSurfaceVariant),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 13, color: s.onSurfaceVariant),
+                ),
+              ),
+              IconButton(
+                tooltip: '重新开始当前工具',
+                onPressed: _loading ? null : () => _select(_language),
+                icon: const Icon(Icons.restart_alt_rounded),
+              ),
+              IconButton(
+                tooltip: '复制结果',
+                onPressed: result.isEmpty || _loading || _failure != null
+                    ? null
+                    : () async {
+                        await Clipboard.setData(ClipboardData(text: result));
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('结果已复制')),
+                          );
+                        }
+                      },
+                icon: const Icon(Icons.copy_rounded, size: 19),
+              ),
+            ],
           ),
-          const SizedBox(height: 27),
+          const SizedBox(height: 20),
           Container(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(
               color: s.primaryContainer,
-              borderRadius: BorderRadius.circular(19),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: Icon(
-              Icons.lightbulb_outline_rounded,
+              icons[_language],
               color: s.onPrimaryContainer,
-              size: 26,
+              size: 28,
             ),
           ),
           const SizedBox(height: 22),
-          Text(
-            title.isEmpty ? '未命名灵感' : title,
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w600,
-              height: 1.5,
-              color: s.onSurface,
+          if (_language == 'cpp' && result.isNotEmpty)
+            ...result
+                .split('\n')
+                .map(
+                  (line) => Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: s.primaryContainer.withValues(alpha: .25),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      line,
+                      style: TextStyle(
+                        fontSize: 16,
+                        height: 1.6,
+                        color: s.onSurface,
+                      ),
+                    ),
+                  ),
+                )
+          else
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 230),
+              child: SingleChildScrollView(
+                child: SelectableText(
+                  _loading
+                      ? '正在连接…'
+                      : result.isEmpty
+                      ? '等待新的文字'
+                      : result,
+                  style: TextStyle(
+                    fontSize: _language == 'c' ? 34 : 21,
+                    fontWeight: _language == 'c'
+                        ? FontWeight.w700
+                        : FontWeight.w500,
+                    height: 1.65,
+                    color: s.onSurface,
+                  ),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(height: 13),
+          const SizedBox(height: 20),
           Text(
-            '这张卡片的标题来自插件返回的界面。\n你可以切换语言，体验相同的交互。',
+            _value('detail'),
+            key: const ValueKey('plugin-detail'),
+            style: TextStyle(fontSize: 12, color: s.primary, height: 1.7),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            _value('caption'),
             style: TextStyle(
-              fontSize: 12,
-              height: 1.8,
+              fontSize: 11,
               color: s.onSurfaceVariant,
+              height: 1.7,
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 20),
           Row(
             children: [
-              Icon(Icons.circle, size: 6, color: s.primary),
+              Icon(
+                Icons.circle,
+                size: 6,
+                color: _failure == null ? s.primary : s.error,
+              ),
               const SizedBox(width: 7),
               Text(
-                _updates == 0 ? '等待你的第一笔' : '已收到插件回应',
-                style: TextStyle(fontSize: 11, color: s.primary),
+                _failure != null
+                    ? '连接中断，结果为上次返回'
+                    : _updates == 0
+                    ? '试试左侧的工具'
+                    : '已收到插件回应',
+                style: TextStyle(fontSize: 11, color: s.onSurfaceVariant),
               ),
             ],
           ),

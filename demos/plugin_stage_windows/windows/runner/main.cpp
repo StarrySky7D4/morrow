@@ -26,8 +26,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   FlutterWindow window(project);
   Win32Window::Point origin(140, 80);
-  Win32Window::Size size(1180, 800);
-  if (!window.Create(L"Morrow · 阶段展示", origin, size)) {
+  Win32Window::Size size(1280, 940);
+  if (!window.Create(L"Morrow \u00b7 \u5dee\u5f02\u5316\u5c55\u793a Demo 02", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);

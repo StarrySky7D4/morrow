@@ -89,3 +89,5 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 ## 三语言 UI 增量
 
 已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。
+
+Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_node`／`mp_ui_document_free` 读取有所有权的上次 UI 快照；输出 spans 随文档句柄释放而失效，读取接口不授予宿主权限。三种差异化工具及专用会话帧见 [Demo 02](../demos/plugin_stage_windows/README.md)。原有 `examples/*-ui` 仍保留简洁的标题编辑示例。

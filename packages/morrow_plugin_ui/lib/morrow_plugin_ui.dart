@@ -178,6 +178,9 @@ class _PluginFormState extends State<PluginForm> {
     type: MaterialType.transparency,
     child: FocusTraversalGroup(
       child: SingleChildScrollView(
+        // Floating input labels extend above their border; leave room before
+        // clipping the scrolling viewport so the first label remains readable.
+        padding: const EdgeInsets.symmetric(vertical: 8),
         primary: false,
         child: _node(widget.document.nodes.first),
       ),

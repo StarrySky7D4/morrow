@@ -30,6 +30,13 @@ typedef struct mp_ui_node_v1 {
 uint32_t mp_ui_document_encode(uint32_t abi, uint32_t node_size,
                                const mp_ui_node_v1 *, uint32_t count, uint8_t *,
                                uint32_t capacity, uint32_t *length);
+/* Owned document readback. Decode zeros out_handle/count on failure.
+ * node() borrows UTF-8 spans from the handle until document_free(); its output
+ * is zeroed on invalid index when node_size is correct. No host authorization. */
+typedef struct mp_ui_document mp_ui_document;
+uint32_t mp_ui_document_decode(const uint8_t *, uint32_t, mp_ui_document **, uint32_t *count);
+uint32_t mp_ui_document_node(const mp_ui_document *, uint32_t index, mp_ui_node_v1 *, uint32_t node_size);
+void mp_ui_document_free(mp_ui_document *);
 typedef struct mp_ui_event mp_ui_event;
 typedef struct mp_ui_event_view {
   mp_span view, node, action, text;
