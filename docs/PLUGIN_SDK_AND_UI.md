@@ -114,8 +114,10 @@ Flutter 的 deferred components 主要解决既有应用内容的延迟交付，
 
 原生后台队列与取消／排空已有可运行增量，见 [任务接口](PLUGIN_TASKS.md)。目前由可信 Rust 宿主使用，已接入三语言统一任务输入契约，仍缺 Flutter UI 事件桥接，不能把后台示例当作 UI 对接完成。
 
-动态内容命令任务及 C／C++／Rust 输入／完成 API 已建立，见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。纯转换输入与输出已接通；跨包 handler 选择、类型协商、修改提案及声明式 UI schema、渲染器和事件桥接仍未完成，首期语言边界保持不变。
+动态内容命令任务及 C／C++／Rust 输入／完成 API 已建立，见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。纯转换输入与输出已接通；跨包 handler 选择、类型协商、修改提案、渲染器和实际插件事件桥接仍未完成；基础 UI schema 见下方新增协议，首期语言边界保持不变。
 
 单包纯转换处理器注册已实现，三语言共用打包工具声明类型和上限；宿主执行前匹配、输出后复核。见 [插件包声明](PLUGIN_PACKAGE.md#纯转换处理器声明)。这不等于 UI 扩展点注册或 Flutter 渲染器已经完成。
 
 三语言结构化业务错误已接通（任务契约 v3），可为后续 UI 提供有界代码和纯文本消息；宿主执行故障与插件业务失败分别处理。界面应标明插件来源，不将其报告当作核心回执。见 [错误协议及证据](PLUGIN_TASK_PROTOCOL.md)。
+
+声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](PLUGIN_UI_PROTOCOL.md)。目前没有 Flutter 渲染器、三语言 guest UI 构造器和实际插件事件调度，M6 尚未完成。

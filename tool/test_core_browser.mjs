@@ -15,7 +15,7 @@ let chrome;
 for (const file of candidates) { try { await access(file); chrome = file; break; } catch { /* Try next explicit path. */ } }
 if (!chrome) throw new Error('Set CHROME_BIN to a Chrome/Chromium executable');
 
-const webFolder=process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
+const webFolder=process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
 const allowed = ['/preview/'];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
   '.wasm': 'application/wasm', '.json': 'application/json', '.bin': 'application/octet-stream' };
@@ -91,6 +91,12 @@ try {
     }
     if (!result?.startsWith('PASS:')) throw new Error(result ?? 'Core protocol probe timed out');
     console.log(version.product + ': ' + result);
+    if(process.argv.includes('--ui')){
+      const response=await call('Runtime.evaluate',{expression:'Array.from(globalThis.uiEvent)',returnByValue:true},sessionId);
+      const bytes=response.result?.value;
+      if(!Array.isArray(bytes)||bytes.length<8||bytes.length>65536||bytes.some(n=>!Number.isInteger(n)||n<0||n>255))throw Error('Invalid browser event bytes');
+      await writeFile(path.join(root,'build/ui-protocol/browser-event.capnp'),Buffer.from(bytes));
+    }
     await call('Target.closeTarget', { targetId });
   }
 } finally {

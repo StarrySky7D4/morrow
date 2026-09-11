@@ -69,3 +69,5 @@ NativeHostException 表示传输／控制面失败；RuntimeReply 的 rejected �
 ## test.10 契约同步
 
 内容契约为工作区、视图位置和草稿补充独立修订，运行期版本升为 v6 并更新固定摘要。既有原生／Web 客户端命令回归保留；三类新记录目前由 Rust 可信本地事务 API、CLI 和 BrowserStore 管理入口访问，尚未加入 Dart 通用分派接口。实验数据库格式 4，没有旧实验库自动迁移。
+
+声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](../../docs/PLUGIN_UI_PROTOCOL.md)。目前没有 Flutter 渲染器、三语言 guest UI 构造器和实际插件事件调度，M6 尚未完成。

@@ -17,6 +17,11 @@ pub mod bridge;
 pub mod envelope;
 pub mod runtime;
 pub mod task;
+pub mod ui;
+#[allow(clippy::all, unsafe_code)]
+pub mod ui_capnp {
+    include!(concat!(env!("OUT_DIR"), "/ui_capnp.rs"));
+}
 #[allow(clippy::all, unsafe_code)]
 pub mod task_capnp {
     include!(concat!(env!("OUT_DIR"), "/task_capnp.rs"));
