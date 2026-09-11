@@ -10,6 +10,7 @@ use crate::{
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
 mod blobs;
+mod records;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
@@ -29,12 +30,16 @@ pub struct Store {
     budget: EventBudget,
 }
 fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
-    value.map_err(|error| match error.sqlite_error_code() {
-        Some(rusqlite::ErrorCode::DiskFull) => Error::StorageFull,
-        Some(rusqlite::ErrorCode::DatabaseBusy | rusqlite::ErrorCode::DatabaseLocked) => {
-            Error::StorageBusy
+    value.map_err(|error| {
+        #[cfg(all(target_arch = "wasm32", feature = "web-test-hooks"))]
+        web_boundary(&format!("sqlite-error:{error:?}"));
+        match error.sqlite_error_code() {
+            Some(rusqlite::ErrorCode::DiskFull) => Error::StorageFull,
+            Some(rusqlite::ErrorCode::DatabaseBusy | rusqlite::ErrorCode::DatabaseLocked) => {
+                Error::StorageBusy
+            }
+            _ => Error::Storage,
         }
-        _ => Error::Storage,
     })
 }
 // Failpoints are excluded from default production builds and require an explicit feature.
@@ -139,7 +144,7 @@ impl Store {
         // Reject unrelated and future databases before changing their pragmas/schema.
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 3) {
+        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 4) {
             return Err(Error::UnsupportedVersion);
         }
         if app == 0 && version == 0 && create {
@@ -176,13 +181,14 @@ impl Store {
                 return Err(Error::Invalid("unrelated database"));
             }
             sql(tx.execute_batch("CREATE TABLE cards (id TEXT PRIMARY KEY, payload BLOB NOT NULL) STRICT;
-                CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, payload BLOB NOT NULL) STRICT;
+                CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, object_kind INTEGER NOT NULL DEFAULT 0, payload BLOB NOT NULL) STRICT;
                 CREATE INDEX operation_card ON operations(card_id);
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
-                PRAGMA application_id=1297044050; PRAGMA user_version=3;"))?;
+                PRAGMA application_id=1297044050; PRAGMA user_version=4;"))?;
             sql(tx.execute_batch(blobs::SCHEMA))?;
+            sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || version != 3 {
+        } else if app != APPLICATION_ID || version != 4 {
             return Err(Error::UnsupportedVersion);
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -221,9 +227,9 @@ impl Store {
     pub fn lookup_for_card(&self, card_id: &str, operation_id: &str) -> Result<Lookup> {
         identity(card_id)?;
         identity(operation_id)?;
-        let mut statement = sql(self
-            .connection
-            .prepare("SELECT payload FROM operations WHERE id=?1 AND card_id=?2"))?;
+        let mut statement = sql(self.connection.prepare(
+            "SELECT payload FROM operations WHERE id=?1 AND card_id=?2 AND object_kind=0",
+        ))?;
         let value = sql(statement
             .query_row(params![operation_id, card_id], |row| {
                 let bytes = row.get_ref(0)?.as_blob()?;
@@ -319,6 +325,9 @@ impl Store {
         boundary("after-begin");
         authorize()?;
         if let Some(raw) = read_commit(&tx, operation_id)? {
+            if !raw.starts_with(b"MORROWT1") {
+                return Err(Error::OperationConflict);
+            }
             let (previous, receipt) = transaction::decode_commit(&raw)?;
             if previous.operation_id != operation_id {
                 return Err(Error::Integrity);
@@ -387,7 +396,11 @@ impl Store {
             if total > 32 * 1024 * 1024 {
                 return Err(Error::Limit);
             }
-            transaction::decode_commit(value)?;
+            if value.starts_with(b"MORROWR1") {
+                crate::records::decode_commit(value)?;
+            } else {
+                transaction::decode_commit(value)?;
+            }
             result.push((sql(row.get(0))?, value.to_vec()));
         }
         Ok(result)
@@ -407,12 +420,24 @@ impl Store {
         if broken != 0 || orphans != 0 {
             return Err(Error::Integrity);
         }
-        let mut operations = sql(snapshot.prepare("SELECT id,card_id,payload FROM operations"))?;
+        let mut operations =
+            sql(snapshot.prepare("SELECT id,card_id,payload,object_kind FROM operations"))?;
         let mut rows = sql(operations.query([]))?;
         while let Some(row) = sql(rows.next())? {
             let raw = sql(row.get_ref(2))?
                 .as_blob()
                 .map_err(|_| Error::Integrity)?;
+            let kind: i64 = sql(row.get(3))?;
+            if kind != 0 {
+                records::verify_operation(
+                    &snapshot,
+                    kind,
+                    &sql(row.get::<_, String>(0))?,
+                    &sql(row.get::<_, String>(1))?,
+                    raw,
+                )?;
+                continue;
+            }
             let (event, receipt) = transaction::decode_commit(raw)?;
             blobs::verify_event(&snapshot, &receipt.operation_id, &event.attachment_sha256)?;
             if receipt.operation_id != sql(row.get::<_, String>(0))?
@@ -432,7 +457,7 @@ impl Store {
             let card = envelope::decode(raw)?;
             blobs::verify_card(&snapshot, &card)?;
             let event = blob(&snapshot,
-                "SELECT o.payload FROM operations o JOIN outbox e ON o.id=e.id WHERE o.card_id=?1 ORDER BY e.sequence DESC LIMIT 1", &id,
+                "SELECT o.payload FROM operations o JOIN outbox e ON o.id=e.id WHERE o.card_id=?1 AND o.object_kind=0 ORDER BY e.sequence DESC LIMIT 1", &id,
                 transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128)?.ok_or(Error::Integrity)?;
             let (_, receipt) = transaction::decode_commit(&event)?;
             if card.summary().id != id
@@ -443,10 +468,11 @@ impl Store {
                 return Err(Error::Integrity);
             }
         }
-        let missing: i64 = sql(snapshot.query_row("SELECT count(*) FROM operations o LEFT JOIN cards c ON o.card_id=c.id WHERE c.id IS NULL", [], |r| r.get(0)))?;
+        let missing: i64 = sql(snapshot.query_row("SELECT count(*) FROM operations o LEFT JOIN cards c ON o.card_id=c.id WHERE o.object_kind=0 AND c.id IS NULL", [], |r| r.get(0)))?;
         if missing != 0 {
             return Err(Error::Integrity);
         }
+        records::verify(&snapshot)?;
         blobs::verify(&snapshot)?;
         Ok(())
     }

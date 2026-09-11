@@ -35,6 +35,7 @@ message Workspace {
   uint32 schema_version = 1;
   string id = 2;
   string title = 3;
+  uint64 revision = 4;
 }
 // A placement refers to content without owning or duplicating it.
 message ViewPlacement {
@@ -45,6 +46,7 @@ message ViewPlacement {
   sint64 order_key = 5;
   bool collapsed = 6;
   uint32 width_units = 7;
+  uint64 revision = 8;
 }
 message Draft {
   uint32 schema_version = 1;
@@ -54,4 +56,5 @@ message Draft {
   string type_id = 5;
   uint32 format_version = 6;
   bytes body = 7;
+  uint64 revision = 8;
 }

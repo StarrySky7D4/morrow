@@ -4,6 +4,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         content::CardRecord,
         envelope,
         lifecycle::HostPolicy,
+        records::{Kind, Record, proto::Patch},
         runtime::RenameRequest,
         store::{EventBudget, Store},
         transaction::Lookup,
@@ -18,6 +19,44 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         [command, db] if command == "init" => {
             Store::open(Path::new(db), budget)?.integrity_check()?;
             println!("Ready: experimental transaction database");
+        }
+        [command,db,op,id,revision,title] if command=="workspace-local"=>{
+            let mut store=Store::open_existing(Path::new(db),budget)?;let revision:u64=revision.parse()?;
+            let r=if revision==0{store.create_record_local(op,&Record::workspace(id,title)?)?}else{store.patch_record_local(op,Kind::Workspace,id,revision,Patch{title:Some(title.clone()),..Default::default()})?};
+            println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id);
+        }
+        [command,db,op,id,workspace,card,order] if command=="placement-local"=>{
+            let mut store=Store::open_existing(Path::new(db),budget)?;
+            let r=store.create_record_local(op,&Record::placement(id,workspace,card,order.parse()?)?)?;
+            println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id);
+        }
+        [command,db,op,id,revision,order,collapsed,width] if command=="layout-local"=>{
+            let mut store=Store::open_existing(Path::new(db),budget)?;
+            let r=store.patch_record_local(op,Kind::Placement,id,revision.parse()?,Patch{order_key:Some(order.parse()?),collapsed:Some(collapsed.parse()?),width_units:Some(width.parse()?),..Default::default()})?;
+            println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id);
+        }
+        [command,db,op,id,card,base,type_id,format,path] if command=="draft-local"=>{
+            let mut body=Vec::new();std::fs::File::open(path)?.take(morrow_core::content::MAX_RECORD_BYTES as u64+1).read_to_end(&mut body)?;
+            let mut store=Store::open_existing(Path::new(db),budget)?;
+            let r=store.create_record_local(op,&Record::draft(id,card,base.parse()?,type_id,format.parse()?,body)?)?;
+            println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id);
+        }
+        [command,db,op,id,revision,path] if command=="draft-save-local"=>{
+            let mut body=Vec::new();std::fs::File::open(path)?.take(morrow_core::content::MAX_RECORD_BYTES as u64+1).read_to_end(&mut body)?;
+            let mut store=Store::open_existing(Path::new(db),budget)?;
+            let r=store.patch_record_local(op,Kind::Draft,id,revision.parse()?,Patch{body:Some(body),..Default::default()})?;
+            println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id);
+        }
+        [command,db,kind,id,op] if command=="record-query-local"=>{
+            let store=Store::open_existing(Path::new(db),budget)?;
+            match store.lookup_record_local(Kind::try_from(kind.parse::<u32>()?)?,id,op)? {Some(r)=>println!("LocallyCommitted revision={} event={}",r.revision,r.operation_id),None=>println!("Absent at scoped query snapshot")}
+        }
+        [command,db,kind,id,path] if command=="record-export-local"=>{
+            let store=Store::open_existing(Path::new(db),budget)?;
+            let r=store.record_local(Kind::try_from(kind.parse::<u32>()?)?,id)?.ok_or("record not found")?;
+            let destination=Path::new(path);let parent=destination.parent().filter(|v|!v.as_os_str().is_empty()).unwrap_or(Path::new("."));
+            let mut staged=tempfile::NamedTempFile::new_in(parent)?;staged.write_all(&r.container()?)?;staged.as_file().sync_all()?;staged.persist_noclobber(destination)?;
+            println!("Exported complete record container");
         }
         [command, db, source] if command == "stage-file-local" => {
             let mut file = std::fs::File::open(source)?;
@@ -113,7 +152,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             Store::open_existing(Path::new(db), budget)?.integrity_check()?;
             println!("PASS: SQLite integrity, content digest and atomic operation/outbox associations");
         }
-        _ => return Err("usage: morrow-core-store init <db> | create-local <db> <op> <card> <title> | import-container-local <db> <op> <container> | rename-local <db> <op> <card> <revision> <title> | query <db> <op> | export <db> <card> <new-file> | check <db> | stage-file-local <db> <source> | list-blobs-local <db> | create-attachment-local <db> <op> <card> <title> <blob> <name> | clear-attachments-local <db> <op> <card> <revision> | export-attachment-local <db> <card> <attachment> <new-file> | retire-blob-local <db> <blob> <host-unix-ms> | collect-retired-local <db> <host-unix-ms> <grace-ms>".into()),
+        _ => return Err("usage: morrow-core-store workspace-local <db> <op> <id> <expected-or-zero> <title> | placement-local <db> <op> <id> <workspace> <card> <order> | layout-local <db> <op> <id> <revision> <order> <collapsed> <width> | draft-local <db> <op> <id> <card> <base> <type> <format> <body-file> | draft-save-local <db> <op> <id> <revision> <body-file> | record-query-local <db> <kind> <id> <op> | record-export-local <db> <kind> <id> <new-file> | init <db> | create-local <db> <op> <card> <title> | import-container-local <db> <op> <container> | rename-local <db> <op> <card> <revision> <title> | query <db> <op> | export <db> <card> <new-file> | check <db> | stage-file-local <db> <source> | list-blobs-local <db> | create-attachment-local <db> <op> <card> <title> <blob> <name> | clear-attachments-local <db> <op> <card> <revision> | export-attachment-local <db> <card> <attachment> <new-file> | retire-blob-local <db> <blob> <host-unix-ms> | collect-retired-local <db> <host-unix-ms> <grace-ms>".into()),
     }
     Ok(())
 }

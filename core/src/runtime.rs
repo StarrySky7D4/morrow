@@ -4,7 +4,7 @@ use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-pub const PROTOCOL_VERSION: u16 = 5;
+pub const PROTOCOL_VERSION: u16 = 6;
 pub fn schema_digest(source: &[u8]) -> [u8; 32] {
     use sha2::{Digest, Sha256};
     // Git checkout line endings do not change the contract identity.

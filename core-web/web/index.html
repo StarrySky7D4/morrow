@@ -31,6 +31,7 @@ try{
  worker=await reopen('./worker.mjs');
  if(new URL(location.href).searchParams.has('restore')){
   if(await call(worker,'read')!=='普通 JS 已提交 🧭')throw Error('Page restart lost persisted data');await call(worker,'check');
+  await call(worker,'records-restored');
   globalThis.coreProbeResult='PASS: independent page reopen preserved OPFS data and attachment history.';
  }else{
  await call(worker,'seed');await call(worker,'second-connection');
@@ -53,6 +54,7 @@ try{
  await call(worker,'expire-query');if((await operationQuery('js-edit')).failure!=='Denied')throw Error('Expired query leaked');
  await call(worker,'revoke');let denied=false;try{await call(worker,core.rename_encode('denied','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('Denied'))throw error;denied=true;}if(!denied)throw Error('Revoked write accepted');
  await call(worker,'expiry');denied=false;try{await call(worker,core.rename_encode('expired','card',2n,'deny').buffer);}catch(error){if(!String(error).includes('Denied'))throw error;denied=true;}if(!denied)throw Error('Expired write accepted');
+ await call(worker,'records');
  await call(worker,'attachments');await call(worker,'check');
  await call(worker,'high-seed');
  if(await call(worker,core.rename_encode('high-edit','high',(1n<<64n)-2n,'网页提交 🧭').buffer)!==(1n<<64n)-1n)throw Error('Persistent UInt64 mismatch');
@@ -120,7 +122,17 @@ try{
   if(await call(worker,'gc-run')!==remaining||await call(worker,'gc-run')!==0)throw Error('GC recovery');
   await call(worker,'check');worker.terminate();await delay(100);
  }
- globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 29 Worker termination boundaries (7 rename, 5 staging, 14 attachment changes, 3 GC), capability-separated summary reads, scoped operation queries, binary responses and revision-bound attachment transfer with whole-file SHA256.';
+ const recordPoints=['record-after-begin','record-after-content','record-after-operation','record-after-event','record-before-commit','record-after-commit'];
+ for(const kind of [1,2,3])for(let index=0;index<recordPoints.length;index++){
+  const point=recordPoints[index],url='./worker.mjs?fault=1&db=record'+kind+'-'+index+'&recordkind='+kind;
+  globalThis.coreProbePhase='record '+kind+' '+point;worker=await reopen(url);await call(worker,'record-seed');await call(worker,'arm:'+point);
+  const signal=await call(worker,'record-write');if(signal?.boundary!==point)throw Error('Missed record boundary');worker.terminate();globalThis.coreProbePhase='recover record '+kind+' '+point;worker=await reopen(url);
+  if(await call(worker,'record-state')!==(point==='record-after-commit'?2n:1n))throw Error('Half record commit');
+  globalThis.coreProbePhase='retry record '+kind+' '+point;
+  for(let attempt=0;attempt<2;attempt++)if(await call(worker,'record-write')!==2n)throw Error('Record dedup failed');
+  await call(worker,'check');worker.terminate();await delay(100);
+ }
+ globalThis.coreProbeResult='PASS: ordinary Dart JS exact UInt64, shared Rust OPFS commit/dedup, revoke/expiry, raw attachments/history, restart, event capacity, OPFS ownership/unavailable checks, 47 Worker termination boundaries (7 rename, 5 staging, 14 attachment changes, 3 GC, 18 records), capability-separated summary reads, scoped operation queries, binary responses and revision-bound attachment transfer with whole-file SHA256, independent workspace/placement/draft transactions.';
  }
 }catch(error){globalThis.coreProbeResult='FAIL at '+globalThis.coreProbePhase+': '+error;}
 finally{worker?.terminate();}

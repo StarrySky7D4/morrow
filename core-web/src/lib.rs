@@ -4,6 +4,7 @@ use morrow_core::{
     dispatch::{Connection, HostRuntime},
     envelope,
     lifecycle::GrantKind,
+    records::{Kind, Record, proto::Patch},
     response::{Outcome, Response},
     runtime::RenameRequest,
     store::{EventBudget, Store},
@@ -30,16 +31,34 @@ fn clock() -> u64 {
 }
 #[wasm_bindgen]
 pub async fn install_opfs() -> Result<(), JsValue> {
+    install_opfs_at("morrow-test10").await
+}
+/// Isolated fault fixtures keep the production 64-slot pool unchanged.
+#[cfg(feature = "fault-injection")]
+#[wasm_bindgen]
+pub async fn install_record_test_opfs() -> Result<(), JsValue> {
+    install_opfs_at("morrow-test10-record-tests").await
+}
+async fn install_opfs_at(directory: &str) -> Result<(), JsValue> {
     use sqlite_wasm_vfs::sahpool::{OpfsSAHPoolCfgBuilder, install};
     let config = OpfsSAHPoolCfgBuilder::new()
         .vfs_name("morrow-opfs")
-        .directory("morrow-test9")
+        .directory(directory)
         .initial_capacity(64)
         .clear_on_init(false)
         .build();
-    install::<sqlite_wasm_rs::WasmOsCallback>(&config, false)
+    let _pool = install::<sqlite_wasm_rs::WasmOsCallback>(&config, false)
         .await
         .map_err(error)?;
+    #[cfg(feature = "fault-injection")]
+    {
+        #[wasm_bindgen]
+        extern "C" {
+            #[wasm_bindgen(js_name=__morrowFaultBoundary)]
+            fn snapshot(value: &str);
+        }
+        snapshot(&format!("pool:{}/{}", _pool.count(), _pool.get_capacity()));
+    }
     Ok(())
 }
 #[wasm_bindgen]
@@ -294,6 +313,139 @@ impl BrowserStore {
             .stage_blob(&mut Cursor::new(bytes), bytes.len() as u64, None, now)
             .map_err(error)?
             .id)
+    }
+    /// Trusted local control only; not a wire command or plugin permission bypass.
+    pub fn workspace_local(
+        &mut self,
+        op: &str,
+        id: &str,
+        revision: u64,
+        title: &str,
+    ) -> Result<u64, JsValue> {
+        let store = self.runtime.store_local_mut();
+        let r = if revision == 0 {
+            store.create_record_local(op, &Record::workspace(id, title).map_err(error)?)
+        } else {
+            store.patch_record_local(
+                op,
+                Kind::Workspace,
+                id,
+                revision,
+                Patch {
+                    title: Some(title.into()),
+                    ..Default::default()
+                },
+            )
+        }
+        .map_err(error)?;
+        Ok(r.revision)
+    }
+    pub fn placement_local(
+        &mut self,
+        op: &str,
+        id: &str,
+        workspace: &str,
+        card: &str,
+        order: i64,
+    ) -> Result<u64, JsValue> {
+        Ok(self
+            .runtime
+            .store_local_mut()
+            .create_record_local(
+                op,
+                &Record::placement(id, workspace, card, order).map_err(error)?,
+            )
+            .map_err(error)?
+            .revision)
+    }
+    pub fn layout_local(
+        &mut self,
+        op: &str,
+        id: &str,
+        revision: u64,
+        order: i64,
+        collapsed: bool,
+        width: u32,
+    ) -> Result<u64, JsValue> {
+        Ok(self
+            .runtime
+            .store_local_mut()
+            .patch_record_local(
+                op,
+                Kind::Placement,
+                id,
+                revision,
+                Patch {
+                    order_key: Some(order),
+                    collapsed: Some(collapsed),
+                    width_units: Some(width),
+                    ..Default::default()
+                },
+            )
+            .map_err(error)?
+            .revision)
+    }
+    /// Caller retains the same immutable base container across retries.
+    pub fn draft_local(
+        &mut self,
+        op: &str,
+        id: &str,
+        base_card: &[u8],
+        body: &[u8],
+    ) -> Result<u64, JsValue> {
+        if body.len() > 4 * 1024 * 1024 {
+            return Err(error("Web copy limit"));
+        }
+        let summary = envelope::decode(base_card).map_err(error)?.summary();
+        let record = Record::draft(
+            id,
+            &summary.id,
+            summary.revision,
+            &summary.type_id,
+            summary.format_version,
+            body.to_vec(),
+        )
+        .map_err(error)?;
+        Ok(self
+            .runtime
+            .store_local_mut()
+            .create_record_local(op, &record)
+            .map_err(error)?
+            .revision)
+    }
+    pub fn draft_save_local(
+        &mut self,
+        op: &str,
+        id: &str,
+        revision: u64,
+        body: &[u8],
+    ) -> Result<u64, JsValue> {
+        if body.len() > 4 * 1024 * 1024 {
+            return Err(error("Web copy limit"));
+        }
+        Ok(self
+            .runtime
+            .store_local_mut()
+            .patch_record_local(
+                op,
+                Kind::Draft,
+                id,
+                revision,
+                Patch {
+                    body: Some(body.to_vec()),
+                    ..Default::default()
+                },
+            )
+            .map_err(error)?
+            .revision)
+    }
+    pub fn record_revision_local(&self, kind: u32, id: &str) -> Result<Option<u64>, JsValue> {
+        Ok(self
+            .runtime
+            .store_local()
+            .record_local(Kind::try_from(kind).map_err(error)?, id)
+            .map_err(error)?
+            .map(|v| v.revision()))
     }
     pub fn create_attachment(
         &mut self,

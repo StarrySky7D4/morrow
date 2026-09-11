@@ -1,6 +1,6 @@
 name: morrow_core_client
 description: Internal typed binary client for the experimental Morrow core.
-version: 0.1.9-test.9
+version: 0.1.9-test.10
 publish_to: none
 environment:
   sdk: ^3.12.0

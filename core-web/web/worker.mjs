@@ -1,11 +1,13 @@
 const parameters=new URL(self.location.href).searchParams;
 let core;
 let faultPoint;
-self.__morrowFaultBoundary=name=>{if(name===faultPoint){self.postMessage({boundary:name});for(;;){/* Wait for parent termination at this exact boundary. */}}};
+let sqlDiagnostic;
+let poolDiagnostic;
+self.__morrowFaultBoundary=name=>{if(name.startsWith('pool:'))poolDiagnostic=name;if(name.startsWith('sqlite-error:'))sqlDiagnostic=name;if(name===faultPoint){self.postMessage({boundary:name});for(;;){/* Wait for parent termination at this exact boundary. */}}};
 if(parameters.has('unsupported'))Object.defineProperty(navigator,'storage',{value:undefined});
 let store;
 const db=parameters.get('db')??'qualification';
-const ready=(async()=>{core=await import(parameters.has('fault')?'./fault/morrow_web_core.js':'./main/morrow_web_core.js');await core.default();if(!navigator.storage?.getDirectory)throw Error('OPFS unavailable');await core.install_opfs();store=new core.BrowserStore(db,true,1024);})();
+const ready=(async()=>{core=await import(parameters.has('fault')?'./fault/morrow_web_core.js':'./main/morrow_web_core.js');await core.default();if(!navigator.storage?.getDirectory)throw Error('OPFS unavailable');if(parameters.has('recordkind')&&parameters.has('fault'))await core.install_record_test_opfs();else await core.install_opfs();store=new core.BrowserStore(db,true,1024);})();
 ready.catch(()=>{}); // The queued request reports initialization failures.
 let chain=Promise.resolve();
 self.onmessage=({data})=>{chain=chain.then(async()=>{
@@ -20,6 +22,24 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
    case 'attachment-revoke':store.revoke_attachment('payload','file');result='revoked';break;
    case 'attachment-expire':store.grant_attachment('payload','file',1);await new Promise(r=>setTimeout(r,30));result='expired';break;
    case 'attachment-change':store.grant_rename('payload',60000);store.rename(core.rename_encode('attachment-change','payload',1n,'changed'));store.revoke_rename('payload');result='changed';break;
+   case 'records':{
+    const before=store.export_card('card');
+    for(const id of ['w1','w2']){store.workspace_local('workspace-'+id,id,0n,id);store.placement_local('place-'+id,id,id,'card',-5n);}
+    for(let i=0;i<2;i++)store.layout_local('layout','w1',1n,7n,true,3);
+    store.draft_local('draft-create','draft',before,new Uint8Array([0,255,1]));
+    for(let i=0;i<2;i++)store.draft_save_local('draft-save','draft',1n,new Uint8Array([3,2,1]));
+    const after=store.export_card('card');if(after.length!==before.length||after.some((v,i)=>v!==before[i]))throw Error('Records changed card');
+    if(store.record_revision_local(2,'w1')!==2n||store.record_revision_local(2,'w2')!==1n||store.record_revision_local(3,'draft')!==2n)throw Error('Independent revisions');
+    let conflict=false;try{store.draft_save_local('stale','draft',1n,new Uint8Array([9]));}catch(e){if(!String(e).includes('RevisionConflict'))throw e;conflict=true;}if(!conflict)throw Error('Stale draft overwrite');
+    store.grant_rename('card',60000);store.rename(core.rename_encode('record-base-change','card',store.card_revision('card'),'base updated'));store.revoke_rename('card');
+    if(store.draft_local('draft-create','draft',before,new Uint8Array([0,255,1]))!==1n)throw Error('Draft creation retry changed with base');
+    store.grant_rename('card',60000);store.rename(core.rename_encode('record-title-restore','card',store.card_revision('card'),'普通 JS 已提交 🧭'));store.revoke_rename('card');
+    store.check();result='records-ok';break;
+   }
+   case 'records-restored':if(store.record_revision_local(1,'w1')!==1n||store.record_revision_local(2,'w1')!==2n||store.record_revision_local(3,'draft')!==2n)throw Error('Lost record after reopen');result='records-restored';break;
+   case 'record-seed':store.create_local('card','card','original');store.workspace_local('w','w',0n,'old');store.placement_local('p','p','w','card',0n);store.draft_local('d','d',store.export_card('card'),new Uint8Array([0]));result='seeded';break;
+   case 'record-write':switch(parameters.get('recordkind')){case '1':result=store.workspace_local('edit','w',1n,'new');break;case '2':result=store.layout_local('edit','p',1n,3n,true,2);break;case '3':result=store.draft_save_local('edit','d',1n,new Uint8Array([1,2,3]));break;default:throw Error('Record kind');}break;
+   case 'record-state':{const kind=Number(parameters.get('recordkind'));result=store.record_revision_local(kind,kind===1?'w':kind===2?'p':'d');break;}
    case 'high-seed':{const bytes=new Uint8Array(await(await fetch('./vectors/high.morrow')).arrayBuffer());store.import_card('import-high',bytes);store.grant_rename('high',60000);result='high-ready';break;}
    case 'export-high':{const bytes=store.export_card('high');self.postMessage(bytes.buffer,[bytes.buffer]);return;}
    case 'blob-count':result=store.first_blob_page_count();break;
@@ -59,5 +79,5 @@ self.onmessage=({data})=>{chain=chain.then(async()=>{
    case 'close':store.free();store=undefined;result='closed';break;
    default:throw Error('Unknown test control');
   }self.postMessage(result);
- }catch(error){self.postMessage({error:String(error)});}
+ }catch(error){self.postMessage({error:String(error)+(sqlDiagnostic?' ['+sqlDiagnostic+']':'')+(poolDiagnostic?' ['+poolDiagnostic+']':'')});}
 });};
