@@ -15,13 +15,21 @@ let chrome;
 for (const file of candidates) { try { await access(file); chrome = file; break; } catch { /* Try next explicit path. */ } }
 if (!chrome) throw new Error('Set CHROME_BIN to a Chrome/Chromium executable');
 
-const webFolder=process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
+const webFolder=process.argv.includes('--renderer')?'build/ui-renderer/web':process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
 const allowed = ['/preview/'];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
   '.wasm': 'application/wasm', '.json': 'application/json', '.bin': 'application/octet-stream' };
 const server = createServer(async (request, response) => {
   try {
     const route = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    if(process.argv.includes('--renderer')&&route.startsWith('/preview/assets/test-fonts/')){
+      const fonts={'text':process.env.MORROW_UI_TEST_FONT??'C:/Windows/Fonts/msyh.ttc',
+        'emoji':process.env.MORROW_UI_TEST_EMOJI_FONT??'C:/Windows/Fonts/seguiemj.ttf'};
+      const font=fonts[route.slice('/preview/assets/test-fonts/'.length)];
+      if(!font){response.writeHead(404).end();return;}
+      response.setHeader('Content-Type','application/octet-stream');
+      response.end(await readFile(font));return;
+    }
     if(process.argv.includes('--store')&&request.method==='POST'&&route==='/capture/browser-card.morrow'){
       const chunks=[];let size=0;
       for await(const chunk of request){size+=chunk.length;if(size>9*1024*1024){response.writeHead(413).end();return;}chunks.push(chunk);}
@@ -80,6 +88,7 @@ try {
     const { targetId } = await call('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await call('Target.attachToTarget', { targetId, flatten: true });
     await call('Page.enable', {}, sessionId);
+    if(process.argv.includes('--renderer')) await call('Emulation.setDeviceMetricsOverride',{width:360,height:640,deviceScaleFactor:1,mobile:false},sessionId);
     await call('Page.navigate', { url: `${base}/preview/${mode==='restore'?'?restore=1':''}` }, sessionId);
     let result;
     const deadline = Date.now() + (process.argv.includes('--store') ? 300000 : 60000);
@@ -88,6 +97,42 @@ try {
       result = evaluation.result?.value;
       if (result) break;
       await delay(150);
+    }
+    if(process.argv.includes('--renderer') && result==='READY'){
+      const evaluate=async expression=>(await call('Runtime.evaluate',{expression,returnByValue:true},sessionId)).result?.value;
+      const clickLabel=async label=>{
+        let rect; const until=Date.now()+10000;
+        while(Date.now()<until){
+          rect=await evaluate(`(()=>{
+            const matches=[...document.querySelectorAll('[aria-label], [role=button], [role=switch]')]
+              .filter(e=>(e.getAttribute('aria-label')??e.textContent??'').includes(${JSON.stringify(label)}));
+            const e=matches.find(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.height>0;});
+            if(!e)return null;
+            const r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2};
+          })()`);
+          if(rect)break; await delay(100);
+        }
+        if(!rect){
+          await writeFile(path.join(root,'build/ui-renderer/browser-dom.html'),await evaluate('document.body.outerHTML'));
+          const shot=await call('Page.captureScreenshot',{format:'png'},sessionId);
+          await writeFile(path.join(root,'build/ui-renderer/browser-debug.png'),Buffer.from(shot.data,'base64'));
+          throw Error('Missing rendered control: '+label);
+        }
+        await call('Input.dispatchMouseEvent',{type:'mousePressed',x:rect.x,y:rect.y,button:'left',clickCount:1},sessionId);
+        await call('Input.dispatchMouseEvent',{type:'mouseReleased',x:rect.x,y:rect.y,button:'left',clickCount:1},sessionId);
+      };
+      await clickLabel('标题');
+      await call('Input.dispatchKeyEvent',{type:'keyDown',key:'a',code:'KeyA',modifiers:2,windowsVirtualKeyCode:65},sessionId);
+      await call('Input.dispatchKeyEvent',{type:'keyUp',key:'a',code:'KeyA',modifiers:2,windowsVirtualKeyCode:65},sessionId);
+      await call('Input.insertText',{text:'浏览器编辑'},sessionId);
+      await delay(200);await clickLabel('置顶');await delay(200);await clickLabel('应用');await delay(200);
+      const records=await evaluate('globalThis.rendererEdits??[]');
+      for(const expected of ['editText|title|浏览器编辑|false','setToggle|pinned||true','activate|apply||false'])
+        if(!records.includes(expected))throw Error('Missing real widget event '+expected+': '+JSON.stringify(records));
+      const state=await evaluate('globalThis.coreProbeResult');if(state!=='READY')throw Error(state);
+      const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
+      await writeFile(path.join(root,'build/ui-renderer/browser-narrow.png'),Buffer.from(screenshot.data,'base64'));
+      result='PASS: actual Flutter Web form, Unicode keyboard edit, toggle and button events at 360px';
     }
     if (!result?.startsWith('PASS:')) throw new Error(result ?? 'Core protocol probe timed out');
     console.log(version.product + ': ' + result);

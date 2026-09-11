@@ -42,10 +42,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             std::fs::write(path.join("expected-event.capnp"), e.encode()?)?;
             println!("PASS: generated independent Rust UI document and full-width event");
         }
-        "check" | "check-web" => {
+        "check" | "check-web" | "check-widget" => {
             let mut session = Session::new("view", u64::MAX)?;
             session.replace(0, document())?;
-            let actual = std::fs::read(path.join(if args[0] == "check-web" {
+            let actual = std::fs::read(path.join(if args[0] == "check-widget" {
+                "widget-event.capnp"
+            } else if args[0] == "check-web" {
                 "browser-event.capnp"
             } else {
                 "dart-event.capnp"

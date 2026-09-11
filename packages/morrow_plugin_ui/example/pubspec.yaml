@@ -1,0 +1,12 @@
+name: morrow_plugin_ui_example
+publish_to: none
+version: 0.1.9-test.10+19
+environment:
+  sdk: ^3.12.0
+dependencies:
+  flutter:
+    sdk: flutter
+  morrow_plugin_ui:
+    path: ..
+dev_dependencies:
+  flutter_lints: ^6.0.0

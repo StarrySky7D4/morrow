@@ -1,12 +1,12 @@
 # 声明式 UI 消息与视图事件
 
-基于 0.1.9-test.10。新增独立 Cap’n Proto UI 契约 v1，与内容消息 v6、任务契约 v3、guest ABI v2 分别管理。当前已实现 Rust／Dart 消息与 Rust 视图事件校验；尚未实现 Flutter 控件渲染、C／C++／Rust guest UI 构造器、包 UI 扩展点注册或真实插件到视图的调度桥接。
+基于 0.1.9-test.10。新增独立 Cap’n Proto UI 契约 v1，与内容消息 v6、任务契约 v3、guest ABI v2 分别管理。当前已实现 Rust／Dart 消息与 Rust 视图事件校验；已补充 [Flutter 基础渲染器](PLUGIN_UI_RENDERER.md)，C／C++／Rust guest UI 构造器、包 UI 扩展点注册及真实插件到视图的调度桥接仍待实现。
 
 ## 描述与边界
 
 `core/schemas/ui.capnp` 为唯一 UI schema，Rust 与 Dart 从同源生成绑定并校验版本及摘要。Document 是按父节点在前排列的扁平节点列表，节点 ID 唯一；第一个节点必须为根 column，后续节点必须引用已出现的 row／column。文本和交互节点不能充当父节点。前向引用、自环、重复节点和额外根均拒绝。
 
-| 节点 | 当前字段 | 宿主未来呈现方式 |
+| 节点 | 当前字段 | 基础宿主呈现方式 |
 | --- | --- | --- |
 | column／row | ID、父节点 | 宿主有界行列布局 |
 | text | 文本、normal／muted／emphasis 色彩角色 | 主题映射的普通文本 |
@@ -45,4 +45,4 @@ pwsh -File tool/verify_plugin_ui.ps1 -Web
 
 UI 验证脚本重建 Rust 向量、比对已提交的二进制样本、运行 Dart 测试及原生双向探针，并在 -Web 下编译 Dart/Wasm、运行无界面浏览器、回收其进程后校验浏览器事件。具体结果见 [验证记录](../reports/plugin-ui-protocol-validation.md)。
 
-下一步：三语言 guest UI 构造器和包级 UI 类型契约 → 实际任务输出交付 UI 文档 → Flutter 有界渲染与主题／窄屏／输入法测试 → 用户事件绑定任务及核心权威提交。长期 UI 设计与 M6 门槛继续保留。
+基础 Flutter 有界渲染及独立主题／窄屏／输入法测试已补充，见 [渲染器说明](PLUGIN_UI_RENDERER.md)。下一步：三语言 guest UI 构造器和包级 UI 类型契约 → 实际任务输出交付 UI 文档 → 用户事件绑定任务及核心权威提交。长期 UI 设计与 M6 门槛继续保留。

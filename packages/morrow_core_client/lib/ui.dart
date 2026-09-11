@@ -6,7 +6,8 @@ import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'src/generated/ui.capnp.dart' as wire;
 import 'src/generated/contract_identity.dart' as contract;
-export 'src/generated/ui.capnp.dart' show Kind, Tone, EventKind;
+import 'ui_models.dart';
+export 'ui_models.dart';
 
 const maxUiBytes = 65536;
 final _maxUint64 = (BigInt.one << 64) - BigInt.one;
@@ -67,93 +68,28 @@ void _contract(int version, List<int>? digest) {
   }
 }
 
-final class UiNode {
-  UiNode._(wire.NodeReader r)
-    : id = r.id ?? '',
-      parent = r.parent ?? '',
-      kind = r.kind ?? _bad(),
-      label = r.label ?? '',
-      text = r.text ?? '',
-      action = r.action ?? '',
-      enabled = r.enabled,
-      checked = r.checked,
-      maxBytes = r.maxBytes,
-      tone = r.tone ?? _bad() {
-    _id(id);
-    if (parent.isNotEmpty) _id(parent);
-    _text(label, 512);
-    _text(text, 4096);
-    final interactive = [
-      wire.Kind.button,
-      wire.Kind.textInput,
-      wire.Kind.toggle,
-    ].contains(kind);
-    if (interactive) {
-      _id(action);
-      if (label.isEmpty) _bad();
-    } else if (action.isNotEmpty || label.isNotEmpty || !enabled) {
-      _bad();
-    }
-    if (kind != wire.Kind.text && tone != wire.Tone.normal) _bad();
-    if (kind != wire.Kind.toggle && checked) _bad();
-    if (kind == wire.Kind.textInput) {
-      if (maxBytes < 1 ||
-          maxBytes > 4096 ||
-          utf8.encode(text).length > maxBytes)
-        _bad();
-    } else if (maxBytes != 0) {
-      _bad();
-    }
-    if (kind != wire.Kind.text &&
-        kind != wire.Kind.textInput &&
-        text.isNotEmpty)
-      _bad();
-  }
-  final String id, parent, label, text, action;
-  final wire.Kind kind;
-  final wire.Tone tone;
-  final bool enabled, checked;
-  final int maxBytes;
-}
-
-final class UiDocument {
-  UiDocument._(this.nodes);
-  final List<UiNode> nodes;
+final class UiDocument extends UiDocumentModel {
+  UiDocument._(super.nodes);
   static UiDocument decode(Uint8List bytes) {
     final root = _reader(bytes).getRoot(wire.documentFactory);
     _contract(root.version, root.schemaDigest);
     final list = root.nodes;
     if (list == null || list.length < 1 || list.length > 128) _bad();
-    final nodes = <UiNode>[];
-    var totalTextBytes = 0;
-    final seen = <String, (int, wire.Kind)>{};
-    for (var i = 0; i < list.length; i++) {
-      final n = UiNode._(list[i]);
-      totalTextBytes += [
-        n.id,
-        n.parent,
-        n.label,
-        n.text,
-        n.action,
-      ].fold<int>(0, (total, s) => total + utf8.encode(s).length);
-      if (totalTextBytes > 32768) _bad();
-      int depth;
-      if (i == 0) {
-        if (n.parent.isNotEmpty || n.kind != wire.Kind.column) _bad();
-        depth = 1;
-      } else {
-        final parent = seen[n.parent];
-        if (parent == null ||
-            !(parent.$2 == wire.Kind.column || parent.$2 == wire.Kind.row))
-          _bad();
-        depth = parent.$1 + 1;
-      }
-      if (depth > 8 || seen.containsKey(n.id)) _bad();
-      seen[n.id] = (depth, n.kind);
-      nodes.add(n);
-    }
-    return UiDocument._(List.unmodifiable(nodes));
+    return UiDocument._([for (var i = 0; i < list.length; i++) _node(list[i])]);
   }
+
+  static UiNode _node(wire.NodeReader n) => UiNode(
+    id: n.id ?? '',
+    parent: n.parent ?? '',
+    kind: Kind.values[(n.kind ?? _bad()).index],
+    label: n.label ?? '',
+    text: n.text ?? '',
+    action: n.action ?? '',
+    enabled: n.enabled,
+    checked: n.checked,
+    maxBytes: n.maxBytes,
+    tone: Tone.values[(n.tone ?? _bad()).index],
+  );
 }
 
 final class UiEvent {
@@ -172,7 +108,7 @@ final class UiEvent {
   }
   final String view, node, action, text;
   final BigInt generation, revision, serial;
-  final wire.EventKind kind;
+  final EventKind kind;
   final bool checked;
   void _validate() {
     _id(view);
@@ -182,8 +118,8 @@ final class UiEvent {
     _uint64(revision);
     _uint64(serial);
     _text(text, 4096);
-    if (kind != wire.EventKind.editText && text.isNotEmpty) _bad();
-    if (kind != wire.EventKind.setToggle && checked) _bad();
+    if (kind != EventKind.editText && text.isNotEmpty) _bad();
+    if (kind != EventKind.setToggle && checked) _bad();
   }
 
   Uint8List encode() {
@@ -198,7 +134,7 @@ final class UiEvent {
     r.serial = serial.toSigned(64).toInt();
     r.node = node;
     r.action = action;
-    r.kind = kind;
+    r.kind = wire.EventKind.values[kind.index];
     r.text = text;
     r.checked = checked;
     final bytes = m.serialize();
@@ -216,7 +152,7 @@ final class UiEvent {
       serial: BigInt.from(r.serial).toUnsigned(64),
       node: r.node ?? '',
       action: r.action ?? '',
-      kind: r.kind ?? _bad(),
+      kind: EventKind.values[(r.kind ?? _bad()).index],
       text: r.text ?? '',
       checked: r.checked,
     );

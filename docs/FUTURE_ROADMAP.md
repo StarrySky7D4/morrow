@@ -271,4 +271,4 @@ M1-05／M3-06 增量：纯转换处理器在不可变包内声明并强制匹配
 
 任务契约 v3 增量：三语言提供关联的业务错误，与成功输出、核心回复和执行故障分离；示例可报告不支持的输入。见 [任务协议](PLUGIN_TASK_PROTOCOL.md) 和 [验证记录](../reports/plugin-failure-validation.md)。错误展示 UI 尚未接通，跨包选择、类型协商和 M6 事件／渲染继续推进。
 
-声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](PLUGIN_UI_PROTOCOL.md)。目前没有 Flutter 渲染器、三语言 guest UI 构造器和实际插件事件调度，M6 尚未完成。
+声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](PLUGIN_UI_PROTOCOL.md)。基础 Flutter 渲染器已建立，见 [控件渲染与接入边界](PLUGIN_UI_RENDERER.md)；三语言 guest UI 构造器、包 UI 注册和实际插件事件调度仍待实现，M6 尚未完成。

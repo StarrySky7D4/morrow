@@ -45,12 +45,12 @@ void main() {
       r.schemaDigest = Uint8List.fromList(contract.uiDigest);
       final ns = r.initNodes(2);
       ns[0].id = 'root';
-      ns[0].kind = Kind.column;
+      ns[0].kind = wire.Kind.column;
       ns[1].id = mode == 0 ? 'root' : 'child';
       ns[1].parent = mode == 1 ? 'child' : 'root';
-      ns[1].kind = mode == 2 ? Kind.button : Kind.text;
+      ns[1].kind = mode == 2 ? wire.Kind.button : wire.Kind.text;
       if (mode == 3) ns[1].checked = true;
-      if (mode == 4) ns[1].tone = Tone.emphasis;
+      if (mode == 4) ns[1].tone = wire.Tone.emphasis;
       final encoded = m.serialize();
       if (mode == 4) {
         expect(UiDocument.decode(encoded).nodes[1].tone, Tone.emphasis);
@@ -87,11 +87,11 @@ void main() {
     r.schemaDigest = Uint8List.fromList(contract.uiDigest);
     final nodes = r.initNodes(10);
     nodes[0].id = 'root';
-    nodes[0].kind = Kind.column;
+    nodes[0].kind = wire.Kind.column;
     for (var i = 1; i < 10; i++) {
       nodes[i].id = 'n$i';
       nodes[i].parent = 'root';
-      nodes[i].kind = Kind.text;
+      nodes[i].kind = wire.Kind.text;
       nodes[i].text = 'x' * 4096;
     }
     final bytes = m.serialize();
