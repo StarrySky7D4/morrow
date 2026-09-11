@@ -1,0 +1,130 @@
+#ifndef MORROW_PLUGIN_CODEC_HPP
+#define MORROW_PLUGIN_CODEC_HPP
+#include "morrow_plugin_codec.h"
+#include "morrow_plugin_sdk.h"
+#include <limits>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+namespace morrow {
+struct encoded_request {
+  uint32_t status;
+  std::vector<uint8_t> bytes;
+};
+class decoded_reply;
+// Own strings; borrowed C spans are constructed only for a synchronous call.
+class request {
+  uint32_t kind_;
+  std::string id_, card_, extra_;
+  uint64_t revision_ = 0, offset_ = 0;
+  uint32_t length_ = 0;
+  request(uint32_t kind, std::string id, std::string card,
+          std::string extra = {}, uint64_t revision = 0, uint64_t offset = 0,
+          uint32_t length = 0)
+      : kind_(kind), id_(std::move(id)), card_(std::move(card)),
+        extra_(std::move(extra)), revision_(revision), offset_(offset),
+        length_(length) {}
+  static mp_span span(const std::string &s) {
+    if (s.size() > std::numeric_limits<uint32_t>::max())
+      throw std::length_error("SDK text exceeds ABI length");
+    return {reinterpret_cast<const uint8_t *>(s.data()),
+            static_cast<uint32_t>(s.size())};
+  }
+  mp_request_v1 descriptor() const {
+    mp_request_v1 r{};
+    r.abi_version = 1;
+    r.struct_size = sizeof(r);
+    r.kind = kind_;
+    r.request_id = span(id_);
+    r.card_id = span(card_);
+    if (kind_ == MP_REQUEST_RENAME)
+      r.title = span(extra_);
+    if (kind_ == MP_REQUEST_QUERY)
+      r.operation_id = span(extra_);
+    if (kind_ == MP_REQUEST_ATTACHMENT)
+      r.attachment_id = span(extra_);
+    r.revision = revision_;
+    r.offset = offset_;
+    r.length = length_;
+    return r;
+  }
+  friend class decoded_reply;
+
+public:
+  static request rename(std::string id, std::string card, uint64_t revision,
+                        std::string title) {
+    return request(MP_REQUEST_RENAME, std::move(id), std::move(card),
+                   std::move(title), revision);
+  }
+  static request summary(std::string id, std::string card) {
+    return request(MP_REQUEST_SUMMARY, std::move(id), std::move(card));
+  }
+  static request query(std::string id, std::string card,
+                       std::string operation) {
+    return request(MP_REQUEST_QUERY, std::move(id), std::move(card),
+                   std::move(operation));
+  }
+  static request attachment(std::string id, std::string card,
+                            std::string attachment, uint64_t revision,
+                            uint64_t offset, uint32_t length) {
+    return request(MP_REQUEST_ATTACHMENT, std::move(id), std::move(card),
+                   std::move(attachment), revision, offset, length);
+  }
+  encoded_request encode() const {
+    auto r = descriptor();
+    encoded_request out{MP_CODEC_OK,
+                        std::vector<uint8_t>(MP_MAX_MESSAGE_BYTES)};
+    uint32_t length = 0;
+    out.status =
+        mp_request_encode(&r, out.bytes.data(), MP_MAX_MESSAGE_BYTES, &length);
+    out.bytes.resize(out.status == MP_CODEC_OK ? length : 0);
+    return out;
+  }
+};
+// Move-only reply owner. view() spans remain borrowed until this owner is
+// destroyed or replaced; copy fields to retain them independently. No automatic
+// host retry.
+class decoded_reply {
+  mp_reply *handle_ = nullptr;
+  uint32_t status_ = MP_CODEC_INVALID;
+
+public:
+  decoded_reply() = default;
+  ~decoded_reply() { mp_reply_free(handle_); }
+  decoded_reply(const decoded_reply &) = delete;
+  decoded_reply &operator=(const decoded_reply &) = delete;
+  decoded_reply(decoded_reply &&v) noexcept
+      : handle_(std::exchange(v.handle_, nullptr)),
+        status_(std::exchange(v.status_, MP_CODEC_INVALID)) {}
+  decoded_reply &operator=(decoded_reply &&v) noexcept {
+    if (this != &v) {
+      mp_reply_free(handle_);
+      handle_ = std::exchange(v.handle_, nullptr);
+      status_ = std::exchange(v.status_, MP_CODEC_INVALID);
+    }
+    return *this;
+  }
+  static decoded_reply decode(const request &expected,
+                              const std::vector<uint8_t> &bytes) {
+    decoded_reply result;
+    if (bytes.size() > MP_MAX_MESSAGE_BYTES) {
+      result.status_ = MP_CODEC_LIMIT;
+      return result;
+    }
+    auto r = expected.descriptor();
+    result.status_ = mp_reply_decode(
+        bytes.data(), static_cast<uint32_t>(bytes.size()), &r, &result.handle_);
+    return result;
+  }
+  uint32_t status() const { return status_; }
+  mp_reply_view view() const {
+    mp_reply_view v{};
+    if (status_ != MP_CODEC_OK ||
+        mp_reply_get(handle_, &v, sizeof(v)) != MP_CODEC_OK)
+      throw std::logic_error("SDK reply has no decoded value");
+    return v;
+  }
+};
+} // namespace morrow
+#endif

@@ -1,4 +1,10 @@
-//! Experimental guest transport only. No core linkage, grants, filesystem or loader.
+//! Guest transport and typed protocol. No trusted core linkage or loader.
+mod ffi;
+pub mod protocol;
+#[allow(clippy::all)]
+pub mod runtime_capnp {
+    include!(concat!(env!("OUT_DIR"), "/runtime_capnp.rs"));
+}
 use std::{ffi::c_void, marker::PhantomData};
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 #[repr(C)]

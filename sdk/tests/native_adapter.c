@@ -1,5 +1,6 @@
 /* Trusted Windows qualification host. This file is NOT included in the guest
  * SDK. */
+#include "morrow_plugin_codec.h"
 #include "morrow_plugin_sdk.h"
 #include <assert.h>
 #include <stdio.h>
@@ -62,9 +63,10 @@ int main(int argc, char **argv) {
   mp_host_v1 guest;
   uint8_t *request, *output, *first;
   uint32_t handle, length, written, first_length;
-  long bytes;
-  FILE *f;
-  assert(argc == 5);
+  mp_request_v1 typed = {0};
+  mp_reply *decoded = NULL;
+  mp_reply_view view;
+  assert(argc == 4);
   dll = LoadLibraryA(argv[1]);
   assert(dll);
   memset(&a, 0, sizeof(a));
@@ -91,17 +93,18 @@ int main(int argc, char **argv) {
   assert(a.host);
   a.connection = connect(a.host);
   assert(a.connection);
-  assert(fopen_s(&f, argv[3], "rb") == 0);
-  assert(f);
-  assert(fseek(f, 0, SEEK_END) == 0);
-  bytes = ftell(f);
-  assert(bytes > 0 && bytes <= (long)MP_MAX_MESSAGE_BYTES);
-  rewind(f);
-  length = (uint32_t)bytes;
-  request = (uint8_t *)malloc(length);
+  typed.abi_version = 1;
+  typed.struct_size = sizeof(typed);
+  typed.kind = MP_REQUEST_RENAME;
+  typed.request_id = (mp_span){(const uint8_t *)"vector-op", 9};
+  typed.card_id = (mp_span){(const uint8_t *)"legacy-123", 10};
+  typed.title = (mp_span){(const uint8_t *)"SDK typed rename", 16};
+  typed.revision = 1;
+  request = (uint8_t *)malloc(MP_MAX_MESSAGE_BYTES);
   assert(request);
-  assert(fread(request, 1, length, f) == length);
-  fclose(f);
+  assert(mp_request_encode(&typed, request, MP_MAX_MESSAGE_BYTES, &length) ==
+         MP_CODEC_OK);
+  write_reply(argv[3], "request.capnp", request, length);
   output = (uint8_t *)malloc(MP_MAX_MESSAGE_BYTES);
   first = (uint8_t *)malloc(MP_MAX_MESSAGE_BYTES);
   assert(output && first);
@@ -111,7 +114,12 @@ int main(int argc, char **argv) {
   guest.exchange = dispatch;
   assert(mp_exchange(&guest, request, length, output, MP_MAX_MESSAGE_BYTES,
                      &written) == MP_OK);
-  write_reply(argv[4], "denied.capnp", output, written);
+  write_reply(argv[3], "denied.capnp", output, written);
+  assert(mp_reply_decode(output, written, &typed, &decoded) == MP_CODEC_OK);
+  assert(mp_reply_get(decoded, &view, sizeof(view)) == MP_CODEC_OK);
+  assert(view.kind == MP_REPLY_REJECTED && view.failure == 0);
+  mp_reply_free(decoded);
+  decoded = NULL;
   handle = a.alloc(10);
   assert(handle);
   memcpy(a.ptr(handle), "legacy-123", 10);
@@ -119,7 +127,14 @@ int main(int argc, char **argv) {
   a.free_buffer(handle);
   assert(mp_exchange(&guest, request, length, output, MP_MAX_MESSAGE_BYTES,
                      &written) == MP_OK);
-  write_reply(argv[4], "committed.capnp", output, written);
+  write_reply(argv[3], "committed.capnp", output, written);
+  assert(mp_reply_decode(output, written, &typed, &decoded) == MP_CODEC_OK);
+  assert(mp_reply_get(decoded, &view, sizeof(view)) == MP_CODEC_OK);
+  assert(view.kind == MP_REPLY_RENAMED && view.revision == 2);
+  assert(view.card_id.length == 10 &&
+         memcmp(view.card_id.data, "legacy-123", 10) == 0);
+  mp_reply_free(decoded);
+  decoded = NULL;
   first_length = written;
   memcpy(first, output, written);
   assert(mp_exchange(&guest, request, length, output, MP_MAX_MESSAGE_BYTES,
