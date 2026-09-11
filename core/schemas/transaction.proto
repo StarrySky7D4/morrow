@@ -7,12 +7,20 @@ message Command {
   oneof action {
     bytes create_card = 3; // exact original Card Protobuf bytes
     Rename rename = 4;
+    SetAttachments set_attachments = 5;
   }
 }
 message Rename {
   string card_id = 1;
   uint64 expected_revision = 2;
   string title = 3;
+}
+message AttachmentRef {
+  string id = 1; string display_name = 2; string media_type = 3;
+  uint64 byte_length = 4; bytes sha256 = 5;
+}
+message SetAttachments {
+  string card_id = 1; uint64 expected_revision = 2; repeated AttachmentRef attachments = 3;
 }
 // Immutable result and pending event. event_id is operation_id in this database scope.
 // Not a signature or a sealed audit segment.
@@ -25,4 +33,5 @@ message Commit {
   uint64 revision = 6;
   bytes content_sha256 = 7;
   string event_id = 8;
+  repeated bytes attachment_sha256 = 9;
 }

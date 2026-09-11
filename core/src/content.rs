@@ -32,7 +32,7 @@ fn revision(message: &DynamicMessage) -> u64 {
         .unwrap()
 }
 // Bound allocations before reflection decoding. Opaque byte fields are not parsed.
-fn preflight(
+pub(crate) fn preflight(
     mut bytes: &[u8],
     desc: &prost_reflect::MessageDescriptor,
     budget: &mut usize,
@@ -95,10 +95,15 @@ fn validate(message: &DynamicMessage) -> Result<()> {
         if list.len() > 1024 {
             return Err(Error::Limit);
         }
+        let mut ids = std::collections::BTreeSet::new();
         for value in list {
             let item = value.as_message().unwrap();
             if name == "attachments" {
-                identity(&string(item, "id"))?;
+                let id = string(item, "id");
+                identity(&id)?;
+                if !ids.insert(id) {
+                    return Err(Error::Invalid("duplicate attachment id"));
+                }
                 let digest = item.get_field_by_name("sha256").unwrap();
                 if digest.as_bytes().unwrap().len() != 32 {
                     return Err(Error::Invalid("blob digest"));
@@ -130,6 +135,23 @@ pub struct CardSummary {
     pub revision: u64,
     pub title: String,
     pub preview_text: String,
+}
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Attachment {
+    pub id: String,
+    pub display_name: String,
+    pub media_type: String,
+    pub byte_length: u64,
+    pub sha256: [u8; 32],
+}
+impl Attachment {
+    pub fn validate(&self) -> Result<()> {
+        identity(&self.id)?;
+        if self.display_name.len() > 16 * 1024 || self.media_type.len() > 1024 {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
 }
 impl CardRecord {
     pub fn new(
@@ -197,14 +219,115 @@ impl CardRecord {
             preview_text: string(preview.as_message().unwrap(), "plain_text"),
         }
     }
+    pub fn attachments(&self) -> Vec<Attachment> {
+        self.message
+            .get_field_by_name("attachments")
+            .unwrap()
+            .as_list()
+            .unwrap()
+            .iter()
+            .map(|v| {
+                let item = v.as_message().unwrap();
+                Attachment {
+                    id: string(item, "id"),
+                    display_name: string(item, "display_name"),
+                    media_type: string(item, "media_type"),
+                    byte_length: item
+                        .get_field_by_name("byte_length")
+                        .unwrap()
+                        .as_u64()
+                        .unwrap(),
+                    sha256: item
+                        .get_field_by_name("sha256")
+                        .unwrap()
+                        .as_bytes()
+                        .unwrap()
+                        .as_ref()
+                        .try_into()
+                        .unwrap(),
+                }
+            })
+            .collect()
+    }
     pub fn has_attachments(&self) -> bool {
-        !self
+        !self.attachments().is_empty()
+    }
+    fn set_attachment_fields(&mut self, attachments: &[Attachment]) -> Result<()> {
+        if attachments.len() > 1024 {
+            return Err(Error::Limit);
+        }
+        let mut ids = std::collections::BTreeSet::new();
+        let old = self
             .message
             .get_field_by_name("attachments")
             .unwrap()
             .as_list()
             .unwrap()
-            .is_empty()
+            .to_vec();
+        let desc = descriptor().get_field_by_name("attachments").unwrap();
+        let prost_reflect::Kind::Message(desc) = desc.kind() else {
+            unreachable!()
+        };
+        let mut values = Vec::new();
+        for item in attachments {
+            item.validate()?;
+            if !ids.insert(&item.id) {
+                return Err(Error::Invalid("duplicate attachment id"));
+            }
+            // Editing known fields of a retained logical attachment preserves its unknown fields.
+            let mut value = old
+                .iter()
+                .find(|v| string(v.as_message().unwrap(), "id") == item.id)
+                .map(|v| v.as_message().unwrap().clone())
+                .unwrap_or_else(|| DynamicMessage::new(desc.clone()));
+            for (key, field) in [
+                ("id", Value::String(item.id.clone())),
+                ("display_name", Value::String(item.display_name.clone())),
+                ("media_type", Value::String(item.media_type.clone())),
+                ("byte_length", Value::U64(item.byte_length)),
+                ("sha256", Value::Bytes(item.sha256.to_vec().into())),
+            ] {
+                value.set_field_by_name(key, field);
+            }
+            values.push(Value::Message(value));
+        }
+        self.message
+            .set_field_by_name("attachments", Value::List(values));
+        self.edited = true;
+        validate(&self.message)
+    }
+    pub fn new_with_attachments(
+        id: &str,
+        type_id: &str,
+        format_version: u32,
+        title_text: &str,
+        body: Vec<u8>,
+        attachments: &[Attachment],
+    ) -> Result<Self> {
+        let mut card = Self::new(id, type_id, format_version, title_text, body)?;
+        card.set_attachment_fields(attachments)?;
+        card.original = card.message.encode_to_vec();
+        card.edited = false;
+        Ok(card)
+    }
+    pub fn with_attachments(
+        &self,
+        expected_revision: u64,
+        attachments: &[Attachment],
+    ) -> Result<Self> {
+        if expected_revision != revision(&self.message) {
+            return Err(Error::RevisionConflict);
+        }
+        let next = expected_revision
+            .checked_add(1)
+            .ok_or(Error::Invalid("revision overflow"))?;
+        let mut edited = self.clone();
+        edited.set_attachment_fields(attachments)?;
+        edited
+            .message
+            .set_field_by_name("revision", Value::U64(next));
+        validate(&edited.message)?;
+        Ok(edited)
     }
     pub fn body(&self) -> Vec<u8> {
         self.message

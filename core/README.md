@@ -1,6 +1,6 @@
-# Morrow core — test.4
+# Morrow core — test.5
 
-这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.4`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
+这是独立于 Flutter 的 Rust 契约实现，当前版本 `0.1.9-test.5`。阶段为 M0／M1／M2 的部分交付，**尚未成为工作台的数据后端**。旧 Flutter 保存路径仍是旧应用唯一权威；新 SQLite 数据库仅由明确指定路径的实验 CLI／可信宿主访问，没有自动迁移或写入旧资料的入口。构建不运行应用、不读取用户资料。
 
 ## 已实现
 
@@ -10,17 +10,17 @@
 - Protobuf＋LZ4 容器、解压前限额和 SHA-256 损坏检测；不经过 JSON。SHA-256 不提供签名、来源认证或审计封存。
 - `morrow-core-check self-check` 运行内存中的协议→纯编辑→容器往返；`verify <file>` 只读验证指定容器。诊断文本不是正式记录。
 
-Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作或草稿持久化。BlobRef 只描述引用，未验证文件存在性、原子发布或回收。卡片预览无需插件即可读取，但 Flutter 展示及附件导出尚未接入。
+Workspace／ViewPlacement／Draft 本轮仅有 schema，未实现工作区操作或草稿持久化。BlobRef 保持可移植引用；test.5 原生 Store 在提交中核对暂存原字节、建立当前／历史引用，并提供受保护回收。卡片预览无需插件即可读取；原始附件可从实验 CLI 导出，Flutter 展示与导出入口尚未接入。
 
-## test.4 边界与宿主状态
+## test.5 边界与宿主状态
 
 `bridge.rs` 与 [C 头文件](include/morrow_core.h) 提供同一原生／Wasm 缓冲区 ABI。它只验证固定副本的版本与摘要并往返内部请求，尚不分派到持久化或权限执行。运行期协议已升到 2，test.2 的旧协议请求被明确拒绝；Protobuf 卡片容器仍为 1。Dart 原生与 Chrome Dart/Wasm 实测见 [客户端说明](../packages/morrow_core_client/README.md)。普通 Dart JavaScript 编译仍有精确整数限制。
 
 `lifecycle.rs` 提供纯内存 HostPolicy：宿主分配不可自报的实例身份与代次、对象级重命名授权和到期时刻；接单固定请求，完成前再次核对身份／授权／期限。正常停止不接新任务、等待已有任务，达到排空期限则撤权；安全停止先撤权后取消。宿主须用单调时钟调用 expire_drains，迟到完成也会检查期限。停止／退休后旧实例、授权与任务不可复用。
 
-CommitState 区分未提交、结果待核对、本地已提交、封存、见证和查证未提交。超时不会改成未提交，撤权也不回滚已提交内容。状态枚举本身没有封存证明、外部见证或生产授权 UI。test.4 新增的 HostPolicy.commit_rename 在独占宿主期间，将固定请求、提交前的新时钟授权核对与实际 SQLite 事务串联；依赖、共享对象、运行后端与取消外部效果仍待 M3。
+CommitState 区分未提交、结果待核对、本地已提交、封存、见证和查证未提交。超时不会改成未提交，撤权也不回滚已提交内容。状态枚举本身没有封存证明、外部见证或生产授权 UI。test.5 新增的 HostPolicy.commit_rename 在独占宿主期间，将固定请求、提交前的新时钟授权核对与实际 SQLite 事务串联；依赖、共享对象、运行后端与取消外部效果仍待 M3。
 
-## test.4 原生事务存储
+## test.5 原生事务存储
 
 `store.rs` 使用固定 rusqlite 0.40.2／bundled SQLite，WAL＋synchronous=FULL＋BEGIN IMMEDIATE；写锁冲突立即报告存储错误，由宿主查询或重试。卡片、操作结果及待封存事件在同一事务中写入。SQLite 页／索引由引擎管理，业务内容保持 Protobuf＋LZ4。[SQLite 同步设置](https://sqlite.org/pragma.html#pragma_synchronous)、[事务行为](https://docs.rs/rusqlite/0.40.2/rusqlite/enum.TransactionBehavior.html)。
 
@@ -30,19 +30,36 @@ CommitState 区分未提交、结果待核对、本地已提交、封存、见�
 - 重命名持有宿主的独占借用，事务内及 COMMIT 前重新核对授权；最后一次核对是授权线性化点。排空期限或授权在准备过程中到期会回滚。最终磁盘同步期间到期不追溯撤销已线性化的提交。多个独立进程／宿主的权限同步仍待实现。
 - 默认待封存队列上限 1024 条／64 MiB；先检查容量再写入，事件插入失败同时回滚内容与操作。M4 封存机制建立前没有清空／确认队列入口，达到上限会拒绝新操作。
 - 打开数据库检查归属、版本、SQLite 完整性、卡片摘要与操作／事件对应关系。未来版本和无关数据库被拒绝，`open_existing` 不创建缺失文件。这是损坏检测，不是防御已控制宿主和数据库的攻击者。
-- 当前仅支持无附件卡片创建、标题修改、结果查询和容器导出；含 BlobRef 的新记录被拒绝，直至 M2-03 建立附件事务。关系、草稿、工作区的实际事务待实现。默认写入只接触明确传入的新数据库，不切换旧 Flutter 保存路径。
+- 当前支持带已暂存附件的卡片创建、标题修改、附件列表替换、结果查询和原件导出；缺失或损坏的载荷被拒绝。关系、草稿、工作区的实际事务待实现。数据库格式已升为 2，不自动打开或迁移 test.4 的格式 1；需要新建实验数据库，不切换旧 Flutter 保存路径。
 
 实验 CLI：
 
 ```powershell
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-store -- init build/example.db
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-store -- query build/example.db operation-2
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-store -- check build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- init build/example.db
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- create-local build/example.db operation-1 card-1 示例
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- rename-local build/example.db operation-2 card-1 1 新标题
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- query build/example.db operation-2
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-store -- check build/example.db
 ```
 
 CLI 的 local 操作是可信本地操作者入口，不能直接暴露给插件；lookup/card 同样需要传输层的读取授权。`fault-injection` 只用于子进程恢复测试，默认构建不响应故障注入环境变量。进程直接退出覆盖提交前后边界，不等于断电或全平台验收。
+
+## test.5 附件与回收
+
+原始附件按 64 KiB 块写入 SQLite BLOB，字节不转码、不压缩；元数据、退休时刻、保留记录和宿主时钟使用 attachment.proto＋LZ4。暂存、校验与完成标记是同一事务，半成品不会在中断后变成可引用对象。长度变化、读取失败、摘要不符或 SQLite 容量耗尽都会回滚。相同内容重新暂存会核对已有原件并返回既有 ID。
+
+卡片／当前附件引用／操作结果／事件／事件附件保留在同一内容事务提交。发布前在事务内验证原始字节；去重操作不会重复创建引用。移除当前附件仍保留历史事件所需原件。修改已有附件已知字段或附件元数据退休时刻时，未知字段继续保留。
+
+- stage_blob 返回的就绪对象持续保留，列出它不等于可以回收；显式 retire_blob_local 或最后一个可释放保留记录的释放，才开始退休等待。
+- 回收至少等待 60 秒，并在同一写事务重新检查当前卡片、历史事件、撤销／快照／证据保留；每批最多 16 个。证据及历史事件保留当前没有普通释放入口，等待 M4 的封存规则。
+- Undo／Snapshot／Evidence 是保留原语，不表示完整撤销、快照或证据系统已经实现。宿主维护持久时间下界，时钟倒退拒绝回收；等待时间不能代替引用检查。
+- 导出使用数据库读快照；并发回收后，已开始的读取仍能完成。CLI 先写同目录临时文件，摘要核对并同步后才发布目标，拒绝覆盖已有文件。通用 Write 接口的调用者也必须等成功后才发布输出。
+- 当前上限：单件 200 MiB、数据库原始附件总量 2 GiB／2048 个。数据库和 WAL 的实际磁盘用量可能更高。这些是原型资源上限，不是性能结论。
+- 打开时完整扫描原始附件并检查摘要、外键、当前与历史引用；未完成大规模启动性能优化。SQLite 原生路径已验证，Web 仅共享可编译的元数据契约，尚无浏览器持久化实现。
+
+CLI 新增 stage-file-local、list-blobs-local、create-attachment-local、clear-attachments-local、export-attachment-local、retire-blob-local 和 collect-retired-local。完整参数可运行 morrow-core-store 查看。所有 local 入口只供可信宿主／本地操作者，尚未接到插件的逐次授权与传输分派。
+
+设计依据：[SQLite 增量 BLOB I/O](https://www.sqlite.org/c3ref/blob_open.html)、[WAL 隔离语义](https://www.sqlite.org/isolation.html)。实际并发与中断结论以 [test.5 记录](../reports/0.1.9-test.5-refactor.md) 的本机测试为准，不作为断电、原生 mmap 或插件隔离证据。
 
 ## 容器与资源边界
 
@@ -61,9 +78,9 @@ pwsh -File tool/verify_core.ps1
 # 安装目标后检查 Web 核心；此命令不会自动安装工具链：
 rustup target add wasm32-unknown-unknown
 pwsh -File tool/verify_core.ps1 -Web
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.4 --bin morrow-core-check -- verify path/to/card.morrow
+cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.5 --bin morrow-core-check -- verify path/to/card.morrow
 ```
 
-test.4 已导出原生／Wasm ABI 并在 Chrome Worker 中实测协议往返；浏览器存储、共享内存、审计与插件运行仍未实现；原生事务仅在实验 CLI／Rust API 中可用，FFI 仍是协议往返探针。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
+test.5 已导出原生／Wasm ABI 并在 Chrome Worker 中实测协议往返；浏览器存储、共享内存、审计与插件运行仍未实现；原生事务仅在实验 CLI／Rust API 中可用，FFI 仍是协议往返探针。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
 
 参考：[prost-reflect 未知字段 API](https://docs.rs/prost-reflect/0.16.5/prost_reflect/struct.DynamicMessage.html#method.unknown_fields)、[LZ4 有界解压 API](https://docs.rs/lz4_flex/0.14.0/lz4_flex/block/fn.decompress_into.html)。本轮兼容性结论以仓库中的演进测试为依据，不把普通 prost 生成类型直接作为无损编辑载体。

@@ -1,5 +1,6 @@
 #![deny(unsafe_code)]
 
+pub mod attachment;
 pub mod content;
 pub mod lifecycle;
 #[cfg(not(target_arch = "wasm32"))]
@@ -25,6 +26,8 @@ pub enum Error {
     RevisionConflict,
     Integrity,
     Storage,
+    Io,
+    Retained,
     StorageBusy,
     StorageFull,
     OperationConflict,

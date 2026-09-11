@@ -287,7 +287,7 @@ fn missing_outbox_event_blocks_reopen_and_existing_query_does_not_create_file() 
     ));
 }
 #[test]
-fn attachments_are_refused_until_blob_transactions_exist() {
+fn missing_attachment_payload_is_refused() {
     use prost::Message;
     let pool = prost_reflect::DescriptorPool::decode(morrow_core::content::DESCRIPTOR).unwrap();
     let mut record = prost_reflect::DynamicMessage::decode(

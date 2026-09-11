@@ -9,6 +9,7 @@ use crate::{
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
+mod blobs;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
@@ -119,9 +120,10 @@ impl Store {
                 CREATE TABLE operations (id TEXT PRIMARY KEY, card_id TEXT NOT NULL, payload BLOB NOT NULL) STRICT;
                 CREATE INDEX operation_card ON operations(card_id);
                 CREATE TABLE outbox (sequence INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE NOT NULL REFERENCES operations(id), payload BLOB NOT NULL) STRICT;
-                PRAGMA application_id=1297044050; PRAGMA user_version=1;"))?;
+                PRAGMA application_id=1297044050; PRAGMA user_version=2;"))?;
+            sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || version != 1 {
+        } else if app != APPLICATION_ID || version != 2 {
             return Err(Error::UnsupportedVersion);
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -154,11 +156,8 @@ impl Store {
         }
     }
     /// Host-local creation only. Not a public plugin command or migration entry point.
-    /// Attachment references are rejected until the blob transaction protocol exists.
+    /// Every attachment must already exist as a verified staged payload.
     pub fn create_local(&mut self, operation_id: &str, card: &CardRecord) -> Result<Receipt> {
-        if card.has_attachments() {
-            return Err(Error::Invalid("blob storage not established"));
-        }
         let command = transaction::create_command(operation_id, card)?;
         let id = card.summary().id;
         self.apply(
@@ -168,6 +167,31 @@ impl Store {
             |_| Ok(card.clone()),
             || Ok(()),
             true,
+        )
+    }
+    pub fn set_attachments_local(
+        &mut self,
+        operation_id: &str,
+        card_id: &str,
+        expected_revision: u64,
+        attachments: &[crate::content::Attachment],
+    ) -> Result<Receipt> {
+        let command = transaction::set_attachments_command(
+            operation_id,
+            card_id,
+            expected_revision,
+            attachments,
+        )?;
+        self.apply(
+            operation_id,
+            card_id,
+            command,
+            |card| {
+                card.ok_or(Error::NotFound)?
+                    .with_attachments(expected_revision, attachments)
+            },
+            || Ok(()),
+            false,
         )
     }
     pub(crate) fn rename(
@@ -240,6 +264,7 @@ impl Store {
             params![operation_id, event],
         ))?;
         boundary("after-event");
+        blobs::bind(&tx, &next, operation_id)?;
         // The host is exclusively borrowed throughout. Revocation and commit are serialized.
         // A fresh host clock tick rejects expiry during synchronous preparation/I/O.
         authorize()?;
@@ -293,7 +318,8 @@ impl Store {
             let raw = sql(row.get_ref(2))?
                 .as_blob()
                 .map_err(|_| Error::Integrity)?;
-            let (_, receipt) = transaction::decode_commit(raw)?;
+            let (event, receipt) = transaction::decode_commit(raw)?;
+            blobs::verify_event(&snapshot, &receipt.operation_id, &event.attachment_sha256)?;
             if receipt.operation_id != sql(row.get::<_, String>(0))?
                 || receipt.card_id != sql(row.get::<_, String>(1))?
             {
@@ -309,6 +335,7 @@ impl Store {
                 .as_blob()
                 .map_err(|_| Error::Integrity)?;
             let card = envelope::decode(raw)?;
+            blobs::verify_card(&snapshot, &card)?;
             let event = blob(&snapshot,
                 "SELECT o.payload FROM operations o JOIN outbox e ON o.id=e.id WHERE o.card_id=?1 ORDER BY e.sequence DESC LIMIT 1", &id,
                 transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128)?.ok_or(Error::Integrity)?;
@@ -325,6 +352,7 @@ impl Store {
         if missing != 0 {
             return Err(Error::Integrity);
         }
+        blobs::verify(&snapshot)?;
         Ok(())
     }
 }
@@ -332,6 +360,24 @@ impl Store {
 #[cfg(test)]
 mod disk_tests {
     use super::*;
+    #[test]
+    fn sqlite_full_during_raw_stage_leaves_no_partial_blob() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open(&dir.path().join("full.db"), EventBudget::default()).unwrap();
+        let pages: i64 = store
+            .connection
+            .query_row("PRAGMA page_count", [], |r| r.get(0))
+            .unwrap();
+        store
+            .connection
+            .pragma_update(None, "max_page_count", pages)
+            .unwrap();
+        let result = store.stage_blob(&mut std::io::repeat(7), 1024 * 1024, None, 0);
+        assert!(matches!(result, Err(Error::StorageFull)));
+        assert!(store.list_blobs_local("", 128).unwrap().is_empty());
+        store.integrity_check().unwrap();
+    }
+
     #[test]
     fn sqlite_full_rolls_back_all_three_records() {
         let dir = tempfile::tempdir().unwrap();

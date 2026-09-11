@@ -54,3 +54,54 @@ fn query_missing_database_is_not_a_creation_command() {
     assert!(!result.status.success());
     assert!(!path.exists());
 }
+
+#[test]
+fn cli_attachment_export_preserves_original_and_refuses_overwrite() {
+    let dir = tempfile::tempdir().unwrap();
+    let db = dir.path().join("db");
+    let source = dir.path().join("source.bin");
+    let destination = dir.path().join("export.bin");
+    let bytes: Vec<u8> = (0..100_000).map(|i| (i * 37) as u8).collect();
+    std::fs::write(&source, &bytes).unwrap();
+    let call = |action: &str, args: &[&str]| {
+        Command::new(EXE)
+            .arg(action)
+            .arg(&db)
+            .args(args)
+            .output()
+            .unwrap()
+    };
+    assert!(call("init", &[]).status.success());
+    let result = call("stage-file-local", &[source.to_str().unwrap()]);
+    assert!(result.status.success());
+    let id = String::from_utf8(result.stdout).unwrap();
+    let id = id.trim();
+    assert!(
+        call(
+            "create-attachment-local",
+            &["create", "card", "title", id, "source.bin"]
+        )
+        .status
+        .success()
+    );
+    assert!(
+        call(
+            "export-attachment-local",
+            &["card", "attachment-1", destination.to_str().unwrap()]
+        )
+        .status
+        .success()
+    );
+    assert_eq!(std::fs::read(&destination).unwrap(), bytes);
+    assert_eq!(std::fs::read(&source).unwrap(), bytes);
+    assert!(
+        !call(
+            "export-attachment-local",
+            &["card", "attachment-1", destination.to_str().unwrap()]
+        )
+        .status
+        .success()
+    );
+    assert_eq!(std::fs::read(&destination).unwrap(), bytes);
+    assert!(call("check", &[]).status.success());
+}

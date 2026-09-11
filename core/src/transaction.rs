@@ -1,5 +1,10 @@
 //! Portable persistent transaction contract, shared by native and future Web storage.
-use crate::{Error, Result, content::CardRecord, envelope, identity, runtime::RenameRequest};
+use crate::{
+    Error, Result,
+    content::{Attachment, CardRecord},
+    envelope, identity,
+    runtime::RenameRequest,
+};
 use prost::Message;
 use sha2::{Digest, Sha256};
 pub mod proto {
@@ -43,10 +48,86 @@ pub fn rename_command(request: &RenameRequest) -> Result<Vec<u8>> {
     }
     .encode_to_vec())
 }
+pub fn set_attachments_command(
+    operation_id: &str,
+    card_id: &str,
+    expected_revision: u64,
+    attachments: &[Attachment],
+) -> Result<Vec<u8>> {
+    identity(operation_id)?;
+    identity(card_id)?;
+    if expected_revision == 0 || attachments.len() > 1024 {
+        return Err(Error::Invalid("attachment command"));
+    }
+    let mut ids = std::collections::BTreeSet::new();
+    for item in attachments {
+        item.validate()?;
+        if !ids.insert(&item.id) {
+            return Err(Error::Invalid("duplicate attachment id"));
+        }
+    }
+    Ok(proto::Command {
+        schema_version: 1,
+        operation_id: operation_id.into(),
+        action: Some(proto::command::Action::SetAttachments(
+            proto::SetAttachments {
+                card_id: card_id.into(),
+                expected_revision,
+                attachments: attachments
+                    .iter()
+                    .map(|v| proto::AttachmentRef {
+                        id: v.id.clone(),
+                        display_name: v.display_name.clone(),
+                        media_type: v.media_type.clone(),
+                        byte_length: v.byte_length,
+                        sha256: v.sha256.to_vec(),
+                    })
+                    .collect(),
+            },
+        )),
+    }
+    .encode_to_vec())
+}
+fn attachment_values(values: &[proto::AttachmentRef]) -> Result<Vec<Attachment>> {
+    values
+        .iter()
+        .map(|v| {
+            Ok(Attachment {
+                id: v.id.clone(),
+                display_name: v.display_name.clone(),
+                media_type: v.media_type.clone(),
+                byte_length: v.byte_length,
+                sha256: v
+                    .sha256
+                    .as_slice()
+                    .try_into()
+                    .map_err(|_| Error::Integrity)?,
+            })
+        })
+        .collect()
+}
+fn preflight(type_name: &str, bytes: &[u8]) -> Result<()> {
+    static POOL: std::sync::OnceLock<prost_reflect::DescriptorPool> = std::sync::OnceLock::new();
+    let pool = POOL.get_or_init(|| {
+        prost_reflect::DescriptorPool::decode(
+            include_bytes!(concat!(env!("OUT_DIR"), "/transaction.descriptor.bin")).as_slice(),
+        )
+        .expect("compiled transaction descriptor")
+    });
+    crate::content::preflight(
+        bytes,
+        &pool
+            .get_message_by_name(type_name)
+            .expect("compiled message"),
+        &mut 8192,
+        0,
+    )
+}
 pub fn decode_command(raw: &[u8]) -> Result<proto::Command> {
     if raw.len() > MAX_EVENT_BYTES {
         return Err(Error::Limit);
     }
+    preflight("morrow.transaction.v1.Command", raw)?;
     let value = proto::Command::decode(raw).map_err(|_| Error::Invalid("stored command"))?;
     if value.schema_version != 1 {
         return Err(Error::UnsupportedVersion);
@@ -65,6 +146,14 @@ pub fn decode_command(raw: &[u8]) -> Result<proto::Command> {
             }
             .validate()?;
         }
+        Some(proto::command::Action::SetAttachments(change)) => {
+            set_attachments_command(
+                &value.operation_id,
+                &change.card_id,
+                change.expected_revision,
+                &attachment_values(&change.attachments)?,
+            )?;
+        }
         None => return Err(Error::Invalid("stored action")),
     }
     Ok(value)
@@ -77,8 +166,18 @@ pub fn encode_commit(command: Vec<u8>, card: &CardRecord) -> Result<Vec<u8>> {
     {
         return Err(Error::Integrity);
     }
+    if let Some(proto::command::Action::SetAttachments(change)) = &value.action
+        && card.attachments() != attachment_values(&change.attachments)?
+    {
+        return Err(Error::Integrity);
+    }
     let commit = proto::Commit {
         schema_version: 1,
+        attachment_sha256: card
+            .attachments()
+            .iter()
+            .map(|v| v.sha256.to_vec())
+            .collect(),
         command_sha256: Sha256::digest(&command).to_vec(),
         command,
         event_id: value.operation_id.clone(),
@@ -93,6 +192,7 @@ pub fn encode_commit(command: Vec<u8>, card: &CardRecord) -> Result<Vec<u8>> {
 }
 pub fn decode_commit(bytes: &[u8]) -> Result<(proto::Commit, Receipt)> {
     let raw = envelope::unpack(MAGIC, bytes, MAX_EVENT_BYTES)?;
+    preflight("morrow.transaction.v1.Commit", &raw)?;
     let commit =
         proto::Commit::decode(raw.as_slice()).map_err(|_| Error::Invalid("stored commit"))?;
     if commit.schema_version != 1 {
@@ -107,10 +207,21 @@ pub fn decode_commit(bytes: &[u8]) -> Result<(proto::Commit, Receipt)> {
         return Err(Error::Integrity);
     }
     identity(&commit.card_id)?;
+    if commit.attachment_sha256.len() > 1024
+        || commit.attachment_sha256.iter().any(|v| v.len() != 32)
+    {
+        return Err(Error::Integrity);
+    }
     match command.action.unwrap() {
         proto::command::Action::CreateCard(raw) => {
             let card = CardRecord::decode(&raw)?;
-            if card.summary().id != commit.card_id
+            if card
+                .attachments()
+                .iter()
+                .map(|v| v.sha256.to_vec())
+                .collect::<Vec<_>>()
+                != commit.attachment_sha256
+                || card.summary().id != commit.card_id
                 || card.summary().revision != commit.revision
                 || commit.content_sha256 != Sha256::digest(&raw).as_slice()
             {
@@ -120,6 +231,19 @@ pub fn decode_commit(bytes: &[u8]) -> Result<(proto::Commit, Receipt)> {
         proto::command::Action::Rename(rename) => {
             if rename.card_id != commit.card_id
                 || rename.expected_revision.checked_add(1) != Some(commit.revision)
+            {
+                return Err(Error::Integrity);
+            }
+        }
+        proto::command::Action::SetAttachments(change) => {
+            if change.card_id != commit.card_id
+                || change.expected_revision.checked_add(1) != Some(commit.revision)
+                || change
+                    .attachments
+                    .iter()
+                    .map(|v| v.sha256.clone())
+                    .collect::<Vec<_>>()
+                    != commit.attachment_sha256
             {
                 return Err(Error::Integrity);
             }
@@ -141,6 +265,26 @@ mod tests {
     fn sample() -> Vec<u8> {
         let card = CardRecord::new("card", "unknown", 1, "old", vec![255]).unwrap();
         encode_commit(create_command("op", &card).unwrap(), &card).unwrap()
+    }
+    #[test]
+    fn repeated_attachments_are_bounded_before_protobuf_allocation() {
+        let command = proto::Command {
+            schema_version: 1,
+            operation_id: "op".into(),
+            action: Some(proto::command::Action::SetAttachments(
+                proto::SetAttachments {
+                    card_id: "card".into(),
+                    expected_revision: 1,
+                    attachments: vec![proto::AttachmentRef::default(); 1025],
+                },
+            )),
+        }
+        .encode_to_vec();
+        assert!(matches!(decode_command(&command), Err(Error::Limit)));
+        let (mut record, _) = decode_commit(&sample()).unwrap();
+        record.attachment_sha256 = vec![vec![0; 32]; 1025];
+        let bytes = envelope::pack(MAGIC, &record.encode_to_vec(), MAX_EVENT_BYTES).unwrap();
+        assert!(matches!(decode_commit(&bytes), Err(Error::Limit)));
     }
     #[test]
     fn transaction_framing_and_decompression_limits_reject_damaged_input() {

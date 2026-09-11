@@ -3,7 +3,7 @@ resolver = "2"
 
 [package]
 name = "morrow-core"
-version = "0.1.9-test.4"
+version = "0.1.9-test.5"
 edition = "2024"
 publish = false
 license = "Apache-2.0"
@@ -19,14 +19,14 @@ lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "
 sha2 = "=0.10.9"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-rusqlite = { version = "=0.40.2", features = ["bundled"] }
+rusqlite = { version = "=0.40.2", features = ["bundled", "blob"] }
+tempfile = "=3.27.0"
 
 [features]
 # Explicitly opt in only for the subprocess crash harness.
 fault-injection = []
 
 [dev-dependencies]
-tempfile = "=3.27.0"
 
 [build-dependencies]
 capnpc = "=0.24.0"
