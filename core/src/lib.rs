@@ -2,6 +2,9 @@
 
 pub mod content;
 pub mod lifecycle;
+#[cfg(not(target_arch = "wasm32"))]
+pub mod store;
+pub mod transaction;
 // Export attributes mark the reviewed native/Wasm ABI boundary.
 #[allow(unsafe_code)]
 pub mod bridge;
@@ -21,6 +24,13 @@ pub enum Error {
     UnsupportedVersion,
     RevisionConflict,
     Integrity,
+    Storage,
+    StorageBusy,
+    StorageFull,
+    OperationConflict,
+    NotFound,
+    EventCapacity,
+    CommitUnknown,
 }
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

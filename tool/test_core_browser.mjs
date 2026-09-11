@@ -22,8 +22,8 @@ const server = createServer(async (request, response) => {
   try {
     const route = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
     if (!allowed.some((p) => p.endsWith('/') ? route.startsWith(p) : route === p)) { response.writeHead(404).end(); return; }
-    const target = path.resolve(root, 'build/core-test.3/web', route.slice('/preview/'.length) || 'index.html');
-    const relative = path.relative(path.join(root, 'build/core-test.3/web'), target);
+    const target = path.resolve(root, 'build/core-test.4/web', route.slice('/preview/'.length) || 'index.html');
+    const relative = path.relative(path.join(root, 'build/core-test.4/web'), target);
     if (relative.startsWith('..') || path.isAbsolute(relative)) { response.writeHead(403).end(); return; }
     response.setHeader('Content-Type', mime[path.extname(target)] ?? 'application/octet-stream');
     response.setHeader('Cache-Control', 'no-store');

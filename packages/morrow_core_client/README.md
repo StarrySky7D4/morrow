@@ -1,4 +1,4 @@
-# Morrow core client — test.3
+# Morrow core client — test.4
 
 这是独立实验客户端包，尚未加入 Flutter 工作台依赖。它使用从 `core/schemas/runtime.capnp` 生成的类型绑定，正式消息只传 Cap’n Proto 二进制。`BigInt` 承载完整无符号 64 位修订；编码时按同一 64 位补码位模式传给生成器，解码时恢复无符号值，不经过 JSON、double 或 JavaScript Number。
 
@@ -24,7 +24,7 @@ pwsh -File tool/verify_core.ps1 -Web
 pwsh -File tool/verify_core_client.ps1 -Web -Python python
 ```
 
-需要 Flutter／Dart 3.12、Rust、Cap’n Proto compiler 1.4.0、Rust wasm32-unknown-unknown 目标、Node 和 Chrome／Chromium（可指定 CHROME_BIN）。编译和探针文件均落入 build/core-test.3。生成绑定纳入版本控制；`--check` 在临时目录生成并比较，不修改已有绑定。
+需要 Flutter／Dart 3.12、Rust、Cap’n Proto compiler 1.4.0、Rust wasm32-unknown-unknown 目标、Node 和 Chrome／Chromium（可指定 CHROME_BIN）。编译和探针文件均落入 build/core-test.4。生成绑定纳入版本控制；`--check` 在临时目录生成并比较，不修改已有绑定。
 
 验证脚本通过 Flutter 分析入口检查本包，以避开本机 Dart 3.12 独立 analyze 在退出时清理 perf socket 的竞态。编译、分析和测试任一失败仍中止，不跳过错误。
 

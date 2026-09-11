@@ -1,0 +1,28 @@
+syntax = "proto3";
+package morrow.transaction.v1;
+// Owned persistent commands. Runtime Cap'n Proto is never stored as the business record.
+message Command {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  oneof action {
+    bytes create_card = 3; // exact original Card Protobuf bytes
+    Rename rename = 4;
+  }
+}
+message Rename {
+  string card_id = 1;
+  uint64 expected_revision = 2;
+  string title = 3;
+}
+// Immutable result and pending event. event_id is operation_id in this database scope.
+// Not a signature or a sealed audit segment.
+message Commit {
+  uint32 schema_version = 1;
+  bytes command = 2;
+  bytes command_sha256 = 3;
+  string operation_id = 4;
+  string card_id = 5;
+  uint64 revision = 6;
+  bytes content_sha256 = 7;
+  string event_id = 8;
+}

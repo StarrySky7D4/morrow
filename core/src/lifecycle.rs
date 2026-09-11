@@ -197,21 +197,41 @@ impl HostPolicy {
     /// Rechecks scope on the same fixed request, consumes the task even on failure.
     /// Returns an in-memory proposal; database commit/audit are not implemented here.
     pub fn complete(&mut self, permit: Permit, card: &CardRecord, now: u64) -> Result<CardRecord> {
+        let task = self.take_task(permit, now)?;
+        self.authorize(permit.instance, task.grant, &task.request, now, true)?;
+        task.request.propose(card)
+    }
+    fn take_task(&mut self, permit: Permit, now: u64) -> Result<Task> {
         self.tick(now)?;
         self.expire_drains(now)?;
         self.record(permit.instance)?;
-        if !self.record(permit.instance)?.tasks.contains(&permit.serial) {
-            return Err(Error::Invalid("stale task"));
-        }
-        self.record_mut(permit.instance)?
-            .tasks
-            .remove(&permit.serial);
-        let task = self
+        if !self
+            .record_mut(permit.instance)?
             .tasks
             .remove(&permit.serial)
-            .ok_or(Error::Invalid("stale task"))?;
-        self.authorize(permit.instance, task.grant, &task.request, now, true)?;
-        task.request.propose(card)
+        {
+            return Err(Error::Invalid("stale task"));
+        }
+        self.tasks
+            .remove(&permit.serial)
+            .ok_or(Error::Invalid("stale task"))
+    }
+    /// Sole plugin rename write entry. Hold this host exclusively until commit returns.
+    /// The trusted host clock must be fresh/monotonic; no plugin callback is accepted.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn commit_rename(
+        &mut self,
+        permit: Permit,
+        store: &mut crate::store::Store,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        let task = self.take_task(permit, clock())?;
+        store.rename(&task.request, || {
+            let now = clock();
+            self.tick(now)?;
+            self.expire_drains(now)?;
+            self.authorize(permit.instance, task.grant, &task.request, now, true)
+        })
     }
     pub fn revoke(&mut self, grant: Grant) -> Result<()> {
         self.record_mut(grant.instance)?

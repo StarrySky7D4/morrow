@@ -11,6 +11,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .file_descriptor_set_path(out.join("future.descriptor.bin"))
         .compile_protos(&["tests/schemas/future.proto"], &["tests/schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/transaction.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/transaction.proto"], &["schemas"])?;
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")

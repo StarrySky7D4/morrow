@@ -197,6 +197,15 @@ impl CardRecord {
             preview_text: string(preview.as_message().unwrap(), "plain_text"),
         }
     }
+    pub fn has_attachments(&self) -> bool {
+        !self
+            .message
+            .get_field_by_name("attachments")
+            .unwrap()
+            .as_list()
+            .unwrap()
+            .is_empty()
+    }
     pub fn body(&self) -> Vec<u8> {
         self.message
             .get_field_by_name("body")
