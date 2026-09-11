@@ -605,3 +605,304 @@ mod task_failure_tests {
         assert_eq!(length, 0);
     }
 }
+
+#[repr(C)]
+#[derive(Clone, Copy, Default)]
+pub struct UiNode {
+    id: Span,
+    parent: Span,
+    label: Span,
+    text: Span,
+    action: Span,
+    kind: u32,
+    tone: u32,
+    enabled: u32,
+    checked: u32,
+    max_bytes: u32,
+}
+#[repr(C)]
+#[derive(Default)]
+pub struct UiEventView {
+    view: Span,
+    node: Span,
+    action: Span,
+    text: Span,
+    generation: u64,
+    revision: u64,
+    serial: u64,
+    kind: u32,
+    checked: u32,
+}
+/// # Safety
+/// All pointers are live, aligned, disjoint and valid for their stated lengths.
+/// Nodes and spans are borrowed only during this pure codec call.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_document_encode(
+    abi: u32,
+    node_size: u32,
+    nodes: *const UiNode,
+    count: u32,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if abi != 1 || node_size != size_of::<UiNode>() as u32 {
+            return Err(CodecError::Contract);
+        }
+        if count == 0 || count as usize > crate::ui::MAX_NODES {
+            return Err(CodecError::Limit);
+        }
+        if nodes.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let nodes = unsafe { std::slice::from_raw_parts(nodes, count as usize) };
+        let mut values = Vec::new();
+        for n in nodes {
+            if n.enabled > 1 || n.checked > 1 {
+                return Err(CodecError::Invalid);
+            }
+            let kind =
+                crate::ui::Kind::try_from(u16::try_from(n.kind).map_err(|_| CodecError::Invalid)?)
+                    .map_err(|_| CodecError::Invalid)?;
+            let tone =
+                crate::ui::Tone::try_from(u16::try_from(n.tone).map_err(|_| CodecError::Invalid)?)
+                    .map_err(|_| CodecError::Invalid)?;
+            values.push(unsafe {
+                crate::ui::Node {
+                    id: read_text(n.id, 256)?,
+                    parent: read_text(n.parent, 256)?,
+                    label: read_text(n.label, 512)?,
+                    text: read_text(n.text, 4096)?,
+                    action: read_text(n.action, 256)?,
+                    kind,
+                    tone,
+                    enabled: n.enabled == 1,
+                    checked: n.checked == 1,
+                    max_bytes: n.max_bytes,
+                }
+            });
+        }
+        let bytes = crate::ui::Document::new(values)?.encode()?;
+        if bytes.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out, bytes.len());
+            *length = bytes.len() as u32;
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Input bytes are readable, and output is a disjoint aligned writable pointer slot.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_event_decode(
+    bytes: *const u8,
+    length: u32,
+    out: *mut *mut c_void,
+) -> u32 {
+    if out.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+    }
+    guard(|| {
+        if length as usize > crate::ui::MAX_BYTES {
+            return Err(CodecError::Limit);
+        }
+        if bytes.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let value = crate::ui::Event::decode(unsafe {
+            std::slice::from_raw_parts(bytes, length as usize)
+        })?;
+        unsafe {
+            *out = Box::into_raw(Box::new(value)).cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Handle must come from mp_ui_event_decode and remain live. View is aligned,
+/// writable and disjoint; returned spans expire when this handle is freed.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_event_get(
+    handle: *const c_void,
+    out: *mut UiEventView,
+    size: u32,
+) -> u32 {
+    if out.is_null() || size != size_of::<UiEventView>() as u32 {
+        return 16;
+    }
+    unsafe {
+        *out = UiEventView::default();
+    }
+    guard(|| {
+        if handle.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let e = unsafe { &*handle.cast::<crate::ui::Event>() };
+        unsafe {
+            *out = UiEventView {
+                view: span(e.view.as_bytes()),
+                node: span(e.node.as_bytes()),
+                action: span(e.action.as_bytes()),
+                text: span(e.text.as_bytes()),
+                generation: e.generation,
+                revision: e.revision,
+                serial: e.serial,
+                kind: e.kind as u32,
+                checked: e.checked as u32,
+            };
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Free a handle from mp_ui_event_decode exactly once, after all borrowed spans expire.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_ui_event_free(handle: *mut c_void) {
+    if !handle.is_null() {
+        unsafe {
+            drop(Box::from_raw(handle.cast::<crate::ui::Event>()));
+        }
+    }
+}
+
+#[cfg(test)]
+mod ui_tests {
+    use super::*;
+    #[test]
+    fn ui_encode_bounds_flags_and_failure_atomicity() {
+        let node = UiNode {
+            id: span(b"root"),
+            enabled: 1,
+            ..Default::default()
+        };
+        let mut bytes = [0xabu8; 65536];
+        let mut length = 999;
+        unsafe {
+            assert_eq!(
+                mp_ui_document_encode(
+                    1,
+                    size_of::<UiNode>() as u32,
+                    &node,
+                    1,
+                    bytes.as_mut_ptr(),
+                    1,
+                    &mut length
+                ),
+                17
+            );
+            assert_eq!(length, 0);
+            assert!(bytes.iter().all(|b| *b == 0xab));
+            assert_eq!(
+                mp_ui_document_encode(1, 0, &node, 1, bytes.as_mut_ptr(), 65536, &mut length),
+                18
+            );
+            assert_eq!(
+                mp_ui_document_encode(
+                    1,
+                    size_of::<UiNode>() as u32,
+                    std::ptr::null(),
+                    129,
+                    bytes.as_mut_ptr(),
+                    65536,
+                    &mut length
+                ),
+                17
+            );
+            for bad in [
+                UiNode { enabled: 2, ..node },
+                UiNode { checked: 2, ..node },
+                UiNode {
+                    kind: 65536,
+                    ..node
+                },
+                UiNode {
+                    tone: 65536,
+                    ..node
+                },
+                UiNode {
+                    id: Span {
+                        data: std::ptr::null(),
+                        length: 1,
+                    },
+                    ..node
+                },
+            ] {
+                assert_eq!(
+                    mp_ui_document_encode(
+                        1,
+                        size_of::<UiNode>() as u32,
+                        &bad,
+                        1,
+                        bytes.as_mut_ptr(),
+                        65536,
+                        &mut length
+                    ),
+                    16
+                );
+                assert_eq!(length, 0);
+            }
+            assert_eq!(
+                mp_ui_document_encode(
+                    1,
+                    size_of::<UiNode>() as u32,
+                    &node,
+                    1,
+                    bytes.as_mut_ptr(),
+                    65536,
+                    &mut length
+                ),
+                0
+            );
+        }
+        assert_eq!(
+            crate::ui::Document::decode(&bytes[..length as usize])
+                .unwrap()
+                .nodes()
+                .len(),
+            1
+        );
+    }
+    #[test]
+    fn ui_event_ownership_and_exact_u64() {
+        let bytes = include_bytes!("../../tests/ui_fixtures/event.capnp");
+        let mut handle = std::ptr::null_mut();
+        unsafe {
+            assert_eq!(
+                mp_ui_event_decode(bytes.as_ptr(), bytes.len() as u32, &mut handle),
+                0
+            );
+            assert!(!handle.is_null());
+            let mut view = UiEventView::default();
+            assert_eq!(
+                mp_ui_event_get(handle, &mut view, size_of::<UiEventView>() as u32),
+                0
+            );
+            assert_eq!(view.generation, u64::MAX);
+            assert_eq!((view.revision, view.serial), (1, 1));
+            assert_eq!(read_text(view.text, 4096).unwrap(), "从 Dart 编辑🌈");
+            mp_ui_event_free(handle);
+            handle = std::ptr::dangling_mut();
+            assert_eq!(mp_ui_event_decode(bytes.as_ptr(), 1, &mut handle), 16);
+            assert!(handle.is_null());
+            assert_eq!(
+                mp_ui_event_get(handle, &mut view, size_of::<UiEventView>() as u32),
+                16
+            );
+            assert_eq!(view.generation, 0);
+            assert!(view.text.data.is_null());
+            mp_ui_event_free(handle);
+        }
+    }
+}

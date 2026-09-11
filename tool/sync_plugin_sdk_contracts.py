@@ -13,7 +13,7 @@ if match is None:
     raise SystemExit("Host protocol version not found")
 files = {
     name: (root / "core/schemas" / name).read_text(encoding="utf-8")
-    for name in ("runtime.capnp", "content.proto", "task.capnp")
+    for name in ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp")
 }
 files["version.txt"] = match.group(1) + "\n"
 task_source = (root / "core/src/task.rs").read_text(encoding="utf-8")
@@ -21,6 +21,11 @@ task_match = re.search(r"VERSION: u16 = (\d+)", task_source)
 if task_match is None:
     raise SystemExit("Host task version not found")
 files["task-version.txt"] = task_match.group(1) + "\n"
+ui_source = (root / "core/src/ui.rs").read_text(encoding="utf-8")
+ui_match = re.search(r"VERSION: u16 = (\d+)", ui_source)
+if ui_match is None:
+    raise SystemExit("Host UI version not found")
+files["ui-version.txt"] = ui_match.group(1) + "\n"
 for name, body in files.items():
     target = root / "sdk/rust/contracts" / name
     if args.check:

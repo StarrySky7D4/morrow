@@ -36,4 +36,4 @@ pwsh -File tool/verify_plugin_renderer.ps1 -Web
 
 本地截图测试使用系统字体，默认 Windows `msyh.ttc` 和 `seguiemj.ttf`；可以用 `MORROW_UI_TEST_FONT`／`MORROW_UI_TEST_EMOJI_FONT` 指定可读字体。Web 验证服务器仅监听回环地址，从指定本机文件提供测试字体，仓库和构建产物不复制这些字体；example 需要此测试服务器，不是可独立发布的产品页面。其他平台需提供适当字体并另行验收。
 
-见 [界面接入说明](../../docs/PLUGIN_UI_RENDERER.md) 和 [验证记录](../../reports/plugin-ui-renderer-validation.md)。三语言 UI 构造器、包 UI 注册、实际插件事件桥接、主应用接入及持久草稿尚未完成。
+见 [界面接入说明](../../docs/PLUGIN_UI_RENDERER.md) 和 [验证记录](../../reports/plugin-ui-renderer-validation.md)。三语言 UI 构造器和 guest 输出渲染验证已建立，见 [UI SDK](../../docs/PLUGIN_UI_SDK.md)。包 UI 注册、主应用事件会话及持久草稿尚未完成。

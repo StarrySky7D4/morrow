@@ -1,6 +1,6 @@
 # 声明式 UI 消息与视图事件
 
-基于 0.1.9-test.10。新增独立 Cap’n Proto UI 契约 v1，与内容消息 v6、任务契约 v3、guest ABI v2 分别管理。当前已实现 Rust／Dart 消息与 Rust 视图事件校验；已补充 [Flutter 基础渲染器](PLUGIN_UI_RENDERER.md)，C／C++／Rust guest UI 构造器、包 UI 扩展点注册及真实插件到视图的调度桥接仍待实现。
+基于 0.1.9-test.10。新增独立 Cap’n Proto UI 契约 v1，与内容消息 v6、任务契约 v3、guest ABI v2 分别管理。当前已实现 Rust／Dart 消息与 Rust 视图事件校验；已补充 [Flutter 基础渲染器](PLUGIN_UI_RENDERER.md)，三语言 [guest UI SDK](PLUGIN_UI_SDK.md) 与实际任务实验也已补充；包 UI 扩展点和主应用在线会话仍待实现。
 
 ## 描述与边界
 
@@ -45,4 +45,4 @@ pwsh -File tool/verify_plugin_ui.ps1 -Web
 
 UI 验证脚本重建 Rust 向量、比对已提交的二进制样本、运行 Dart 测试及原生双向探针，并在 -Web 下编译 Dart/Wasm、运行无界面浏览器、回收其进程后校验浏览器事件。具体结果见 [验证记录](../reports/plugin-ui-protocol-validation.md)。
 
-基础 Flutter 有界渲染及独立主题／窄屏／输入法测试已补充，见 [渲染器说明](PLUGIN_UI_RENDERER.md)。下一步：三语言 guest UI 构造器和包级 UI 类型契约 → 实际任务输出交付 UI 文档 → 用户事件绑定任务及核心权威提交。长期 UI 设计与 M6 门槛继续保留。
+基础 Flutter 有界渲染及独立主题／窄屏／输入法测试已补充，见 [渲染器说明](PLUGIN_UI_RENDERER.md)。三语言构造及实际任务交付 UI 文档已在独立实验中验证，见 [UI SDK](PLUGIN_UI_SDK.md)。下一步为包 UI 扩展点、主应用会话绑定与核心权威提交。长期 UI 设计与 M6 门槛继续保留。

@@ -85,3 +85,7 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 纯转换示例现在必须用 `pack-transform` 声明处理器名称、输入／输出类型及各自上限，见 [统一打包入口](../docs/PLUGIN_PACKAGE.md#纯转换处理器声明)。声明由宿主验证，不需要给三语言 guest 导出授予权限或核心注册函数。仅改用旧 pack-task 打包不能绕过注册检查。
 
 任务契约 v3 提供 Rust complete_failure、C mp_task_fail、C++ task::fail，错误含固定代码及最多 1024 字节纯文本。bytes.require-ascii 示例贯通三语言业务失败返回；须区分完整执行与业务成功。见 [结果协议](../docs/PLUGIN_TASK_PROTOCOL.md)。旧任务 schema 的包需同步 SDK 后重建。
+
+## 三语言 UI 增量
+
+已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。

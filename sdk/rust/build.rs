@@ -9,12 +9,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .trim()
         .parse::<u16>()?;
     println!("cargo:rerun-if-changed=contracts/task-version.txt");
+    let ui_version = std::fs::read_to_string("contracts/ui-version.txt")?
+        .trim()
+        .parse::<u16>()?;
+    println!("cargo:rerun-if-changed=contracts/ui-version.txt");
     let mut source =
         format!("pub const VERSION:u16={version};\npub const TASK_VERSION:u16={task_version};\n");
+    source.push_str(&format!("pub const UI_VERSION:u16={ui_version};\n"));
     for (name, file) in [
         ("RUNTIME_DIGEST", "runtime.capnp"),
         ("CONTENT_DIGEST", "content.proto"),
         ("TASK_DIGEST", "task.capnp"),
+        ("UI_DIGEST", "ui.capnp"),
     ] {
         println!("cargo:rerun-if-changed=contracts/{file}");
         let text = std::fs::read_to_string(format!("contracts/{file}"))?.replace("\r\n", "\n");
@@ -29,6 +35,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .src_prefix("contracts")
         .file("contracts/runtime.capnp")
         .file("contracts/task.capnp")
+        .file("contracts/ui.capnp")
         .run()?;
     Ok(())
 }

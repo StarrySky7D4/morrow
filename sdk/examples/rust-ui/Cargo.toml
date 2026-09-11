@@ -1,0 +1,15 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-example-ui"
+version = "0.1.9-test.10"
+edition = "2024"
+publish = false
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+morrow-plugin-sdk = {path = "../../rust", features = ["wasm-guest"]}
+[profile.release]
+opt-level = "s"
+panic = "abort"
+strip = true

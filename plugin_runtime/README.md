@@ -64,3 +64,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 后续单包处理器注册及其验证见 [处理器验证](../reports/plugin-handler-validation.md)。纯转换任务在 guest 执行前匹配包内处理器、类型与输入长度；输出超过声明上限也不交付。当前共 37 项 packages 测试，包含执行前零指令拒绝和执行后输出拦截。
 
 任务契约 v3 增加 TaskReport.failure。业务失败完整执行时 execution=Ok(0)，只有 failure 有值；trap／取消／协议失败时三种结果均为空。内容任务不能以插件错误替代核心回复。三语言实际路径见 [错误验证](../reports/plugin-failure-validation.md)。
+
+## 三语言 UI 增量
+
+已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。

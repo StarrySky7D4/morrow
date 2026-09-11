@@ -110,7 +110,7 @@ Flutter 的 deferred components 主要解决既有应用内容的延迟交付，
 
 任务纳入 M1-05（契约与 SDK）、M3-06（执行后端接入）、M6-06（声明式 UI）与 M6-07（专业渲染／Dart 可行性）。现有记录授权、分页和草稿发布任务继续保留。首轮最终门槛仍是 M5 全链验证，不用 SDK 目录或样例编译替代。
 
-实验包已补充统一打包、校验、不可变安装与包绑定执行，见 [插件包与开发流程](PLUGIN_PACKAGE.md)。这只是包加载原型；签名、依赖、启用／更新状态和 UI 构造器仍待实现。
+实验包已补充统一打包、校验、不可变安装与包绑定执行，见 [插件包与开发流程](PLUGIN_PACKAGE.md)。这只是包加载原型；签名、依赖、启用／更新状态和包 UI 扩展点仍待实现。
 
 原生后台队列与取消／排空已有可运行增量，见 [任务接口](PLUGIN_TASKS.md)。目前由可信 Rust 宿主使用，已接入三语言统一任务输入契约，仍缺 Flutter UI 事件桥接，不能把后台示例当作 UI 对接完成。
 
@@ -120,4 +120,4 @@ Flutter 的 deferred components 主要解决既有应用内容的延迟交付，
 
 三语言结构化业务错误已接通（任务契约 v3），可为后续 UI 提供有界代码和纯文本消息；宿主执行故障与插件业务失败分别处理。界面应标明插件来源，不将其报告当作核心回执。见 [错误协议及证据](PLUGIN_TASK_PROTOCOL.md)。
 
-声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](PLUGIN_UI_PROTOCOL.md)。基础 Flutter 渲染器已建立，见 [控件渲染与接入边界](PLUGIN_UI_RENDERER.md)；三语言 guest UI 构造器、包 UI 注册和实际插件事件调度仍待实现，M6 尚未完成。
+声明式 UI 契约 v1 增量：Rust／Dart 共用有界表单和事件 schema，Rust 宿主检查视图代次、修订、序号、节点和动作；原生及浏览器 Dart/Wasm 消息往返通过。见 [UI 消息协议](PLUGIN_UI_PROTOCOL.md)。基础 Flutter 渲染器已建立，见 [控件渲染与接入边界](PLUGIN_UI_RENDERER.md)；三语言 guest UI 构造器及真实任务实验已建立，见 [UI SDK](PLUGIN_UI_SDK.md)；包 UI 注册和主应用事件会话仍待实现，M6 尚未完成。

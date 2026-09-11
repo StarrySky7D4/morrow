@@ -1,10 +1,29 @@
 // Exercise libc++ allocations while the Rust codec allocates and frees replies.
+#pragma push_macro("morrow_run")
+#undef morrow_run
 #define morrow_run rename_and_decode
 #include "../examples/cpp-rename/plugin.cpp"
 #undef morrow_run
+#pragma pop_macro("morrow_run")
 #include <cstdlib>
 #include <cstring>
+static unsigned initialized = 0;
+struct RuntimeInit {
+  RuntimeInit() { ++initialized; }
+};
+static RuntimeInit runtime_init;
 extern "C" int32_t morrow_run() {
+  if (initialized != 1)
+    return 99;
+  unsigned destroyed = 0;
+  {
+    struct Local {
+      unsigned &flag;
+      ~Local() { ++flag; }
+    } local{destroyed};
+  }
+  if (destroyed != 1)
+    return 99;
   struct alignas(256) Aligned {
     unsigned char bytes[512];
   };

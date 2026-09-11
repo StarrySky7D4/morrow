@@ -2,6 +2,11 @@
 mod ffi;
 pub mod protocol;
 pub mod task;
+pub mod ui;
+#[allow(clippy::all)]
+pub mod ui_capnp {
+    include!(concat!(env!("OUT_DIR"), "/ui_capnp.rs"));
+}
 mod contract {
     include!(concat!(env!("OUT_DIR"), "/contract.rs"));
 }
