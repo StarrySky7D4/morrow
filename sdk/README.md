@@ -115,3 +115,7 @@ Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_nod
 ## 许可
 
 从 test.1 之后的重构版本起，Morrow 第一方 C／C++／Rust SDK、示例和界面客户端统一使用 [AGPL-3.0-only](LICENSE)，完整声明见仓库 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。
+
+## test.30 主动依赖调用
+
+新增独立 `dependency-calls-v1` 特性与固定Cap’n Proto契约。SDK在Rust、C和C++提供请求构造、完整原请求帧关联校验和Wasm导入适配；Runtime通过Manager当前批准锁路由，不接受guest自选提供者或授权。调用者最终结果可进入保留所有依赖撤权状态的EditProposal，内容提交仍由核心授权。当前仅单层纯转换，默认8次、可信策略硬上限16次。边界与用法见 [设计说明](../docs/PLUGIN_DYNAMIC_DEPENDENCIES.md)；实际验证与尚未完成项见 [test.30记录](../reports/test.30-dynamic-dependencies.md)。

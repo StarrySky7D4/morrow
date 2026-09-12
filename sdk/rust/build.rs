@@ -21,6 +21,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("CONTENT_DIGEST", "content.proto"),
         ("TASK_DIGEST", "task.capnp"),
         ("UI_DIGEST", "ui.capnp"),
+        ("DEPENDENCY_CALL_DIGEST", "dependency_call.capnp"),
     ] {
         println!("cargo:rerun-if-changed=contracts/{file}");
         let text = std::fs::read_to_string(format!("contracts/{file}"))?.replace("\r\n", "\n");
@@ -36,6 +37,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("contracts/runtime.capnp")
         .file("contracts/task.capnp")
         .file("contracts/ui.capnp")
+        .file("contracts/dependency_call.capnp")
         .run()?;
     Ok(())
 }

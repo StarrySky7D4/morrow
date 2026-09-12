@@ -9,6 +9,7 @@ pub mod proto {
 }
 pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
+pub const DEPENDENCY_CALLS_FEATURE: &str = "dependency-calls-v1";
 pub const DEPENDENCIES_FEATURE: &str = "dependencies-v1";
 pub const MAX_DEPENDENCIES: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
@@ -79,6 +80,7 @@ impl Package {
             task_schema_sha256: vec![],
             transform_handlers: vec![],
             dependencies: vec![],
+            dependency_schema_sha256: vec![],
         }
     }
     pub fn manifest_for_task(
@@ -189,11 +191,12 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 2
-            || manifest
-                .required_features
-                .iter()
-                .any(|f| f != TRANSFORM_HANDLERS_FEATURE && f != DEPENDENCIES_FEATURE)
+            || manifest.required_features.len() > 3
+            || manifest.required_features.iter().any(|f| {
+                f != TRANSFORM_HANDLERS_FEATURE
+                    && f != DEPENDENCIES_FEATURE
+                    && f != DEPENDENCY_CALLS_FEATURE
+            })
             || manifest
                 .required_features
                 .iter()
@@ -221,6 +224,21 @@ impl Package {
             || (dependencies_feature && manifest.guest_abi_version != 2)
         {
             return Err(Error::Invalid("dependency registration feature"));
+        }
+        let dependency_calls = manifest
+            .required_features
+            .iter()
+            .any(|f| f == DEPENDENCY_CALLS_FEATURE);
+        if dependency_calls {
+            if manifest.guest_abi_version != 2
+                || !dependencies_feature
+                || !registered
+                || manifest.dependency_schema_sha256 != crate::dependency_call::schema_digest()
+            {
+                return Err(Error::Invalid("dependency call feature"));
+            }
+        } else if !manifest.dependency_schema_sha256.is_empty() {
+            return Err(Error::Invalid("unexpected dependency schema"));
         }
         if manifest.dependencies.len() > MAX_DEPENDENCIES {
             return Err(Error::Limit);

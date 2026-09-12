@@ -73,3 +73,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## test.24 在线 UI 会话增量
 
 `ui_session::UiSession` 将固定包、连接、视图与 core UI Session 接入真实后台任务；单事件背压、接纳失败回执与迟到结果丢弃已验证。Rust／C／C++ Wasm 各完成连续 27 个有效快照，见 [验证记录](../reports/plugin-ui-online-session-validation.md)。主应用的包 UI 注册、Flutter 控件在线接入、共享调度与内容保存仍待完成。
+
+## test.30 主动依赖调用
+
+新增独立 `dependency-calls-v1` 特性与固定Cap’n Proto契约。SDK在Rust、C和C++提供请求构造、完整原请求帧关联校验和Wasm导入适配；Runtime通过Manager当前批准锁路由，不接受guest自选提供者或授权。调用者最终结果可进入保留所有依赖撤权状态的EditProposal，内容提交仍由核心授权。当前仅单层纯转换，默认8次、可信策略硬上限16次。边界与用法见 [设计说明](../docs/PLUGIN_DYNAMIC_DEPENDENCIES.md)；实际验证与尚未完成项见 [test.30记录](../reports/test.30-dynamic-dependencies.md)。

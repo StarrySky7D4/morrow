@@ -4,6 +4,7 @@ pub mod attachment;
 pub mod audit;
 pub mod content;
 pub mod content_change;
+pub mod dependency_call;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
 pub mod lifecycle;
@@ -23,6 +24,10 @@ pub mod shared_transfer;
 pub mod task;
 pub mod ui;
 // The fixed Cap'n Proto generator emits unsafe schema metadata; hand-written validation does not.
+#[allow(clippy::all, unsafe_code)]
+pub mod dependency_call_capnp {
+    include!(concat!(env!("OUT_DIR"), "/dependency_call_capnp.rs"));
+}
 #[allow(clippy::all, unsafe_code)]
 pub mod shared_transfer_capnp {
     include!(concat!(env!("OUT_DIR"), "/shared_transfer_capnp.rs"));

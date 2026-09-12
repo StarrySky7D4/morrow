@@ -1,5 +1,5 @@
 //! Host-created edit intent over an authentic dependency result, never a guest-selected command.
-use crate::dependency::DependencyOutput;
+use crate::{dependency::DependencyOutput, dynamic_dependencies::RoutedOutput};
 use morrow_core::{
     Error, Result,
     content_change::ContentChange,
@@ -18,11 +18,12 @@ pub struct EditTarget<'a> {
 /// Retains the authentic output and its dependency revocation state across preview and commit.
 /// The stable operation ID permits explicit receipt lookup/retry; no automatic task rerun occurs.
 pub struct EditProposal {
-    output: DependencyOutput,
+    output: VerifiedOutput,
     change: ContentChange,
 }
 impl EditProposal {
-    pub fn new(output: DependencyOutput, target: EditTarget<'_>) -> Result<Self> {
+    pub fn new(output: impl Into<VerifiedOutput>, target: EditTarget<'_>) -> Result<Self> {
+        let output = output.into();
         if output.output_type() != target.accepted_output_type {
             return Err(Error::Invalid("dependency output type"));
         }
@@ -58,5 +59,52 @@ impl EditProposal {
                 .validate_liveness(now)
                 .map_err(|_| Error::Invalid("inactive dependency result"))
         })
+    }
+}
+
+/// Closed set of runtime-issued proofs; no guest-implementable proof trait.
+pub enum VerifiedOutput {
+    Dependency(DependencyOutput),
+    Routed(RoutedOutput),
+}
+impl From<DependencyOutput> for VerifiedOutput {
+    fn from(value: DependencyOutput) -> Self {
+        Self::Dependency(value)
+    }
+}
+impl From<RoutedOutput> for VerifiedOutput {
+    fn from(value: RoutedOutput) -> Self {
+        Self::Routed(value)
+    }
+}
+impl VerifiedOutput {
+    fn bytes(&self) -> &[u8] {
+        match self {
+            Self::Dependency(v) => v.bytes(),
+            Self::Routed(v) => v.bytes(),
+        }
+    }
+    fn output_type(&self) -> &str {
+        match self {
+            Self::Dependency(v) => v.output_type(),
+            Self::Routed(v) => v.output_type(),
+        }
+    }
+    fn validate(
+        &self,
+        host: &HostRuntime,
+        caller: &Connection,
+        now: u64,
+    ) -> crate::dependency::Result<()> {
+        match self {
+            Self::Dependency(v) => v.validate(host, caller, now),
+            Self::Routed(v) => v.validate(host, caller, now),
+        }
+    }
+    fn validate_liveness(&self, now: u64) -> crate::dependency::Result<()> {
+        match self {
+            Self::Dependency(v) => v.validate_liveness(now),
+            Self::Routed(v) => v.validate_liveness(now),
+        }
     }
 }

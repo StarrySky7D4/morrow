@@ -51,6 +51,7 @@ message Manifest {
   bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
   repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
   repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
+  bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
 }
 message Package {
   uint32 schema_version = 1;

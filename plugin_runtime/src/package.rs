@@ -30,7 +30,14 @@ impl PreparedPackage {
             memory_bytes: host_limits.memory_bytes.min(budget.memory_bytes as usize),
             host_calls: host_limits.host_calls.min(budget.host_calls),
         };
-        let runner = if package.manifest().guest_abi_version == 2 {
+        let runner = if package
+            .manifest()
+            .required_features
+            .iter()
+            .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE)
+        {
+            Runner::new_dependency_task(package.module(), limits)?
+        } else if package.manifest().guest_abi_version == 2 {
             Runner::new_task(package.module(), limits)?
         } else {
             Runner::new(package.module(), limits)?
@@ -203,6 +210,75 @@ impl PreparedPackage {
             response,
             output,
             failure,
+        }
+    }
+}
+
+impl PreparedPackage {
+    /// Only the managed router supplies this callback; ordinary content exchange is denied.
+    pub(crate) fn run_dependency_transform(
+        &self,
+        input: &morrow_core::task::Invocation,
+        dependency: crate::Exchange<'_>,
+        cancel: Cancellation,
+    ) -> TaskReport {
+        let registration = input
+            .transform()
+            .and_then(|t| self.package.transform_handler(t).ok());
+        let Some(registration) = registration else {
+            return TaskReport {
+                execution: Report {
+                    outcome: Err(Fault::TaskProtocol),
+                    host_calls: 0,
+                    fuel_remaining: self.limits.fuel,
+                },
+                response: None,
+                output: None,
+                failure: None,
+            };
+        };
+        let forbidden_exchange = std::cell::Cell::new(false);
+        let run = self.runner.run_task_with_dependencies(
+            input.bytes(),
+            &mut |_| {
+                forbidden_exchange.set(true);
+                Err(())
+            },
+            &mut |bytes| {
+                if forbidden_exchange.get() {
+                    Err(())
+                } else {
+                    dependency(bytes)
+                }
+            },
+            cancel,
+        );
+        let mut execution = run.report;
+        // A guest cannot ignore a denied content exchange and manufacture a successful intent.
+        if forbidden_exchange.get() && execution.outcome.is_ok() {
+            execution.outcome = Err(Fault::TaskProtocol);
+        }
+        let mut output = None;
+        let mut failure = None;
+        if execution.outcome.is_ok() {
+            match run
+                .completion
+                .and_then(|c| input.verify_transform_result(&c).ok())
+            {
+                Some(morrow_core::task::TransformResult::Output(value))
+                    if value.bytes.len() <= registration.max_output_bytes as usize =>
+                {
+                    output = Some(value)
+                }
+                Some(morrow_core::task::TransformResult::Failure(value)) => failure = Some(value),
+                _ => execution.outcome = Err(Fault::TaskProtocol),
+            }
+        }
+        TaskReport {
+            execution,
+            output,
+            failure,
+            response: None,
         }
     }
 }

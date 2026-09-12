@@ -80,6 +80,9 @@ impl ManagedInstance {
     pub fn parts_mut(&mut self) -> (&PreparedPackage, &mut Connection) {
         (&self.package, &mut self.connection)
     }
+    pub(crate) fn cancellation(&self) -> Cancellation {
+        self.control.cancel.clone()
+    }
     pub fn stop(&self) {
         self.control.stop();
     }
@@ -198,6 +201,25 @@ impl Manager {
                         .filter_map(Weak::upgrade)
                         .any(|control| Arc::ptr_eq(&control, &instance.control))
                 })
+    }
+    pub(crate) fn validate_instance(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+    ) -> Result<()> {
+        if !self.owns(instance)
+            || host.connection_phase(instance.connection())
+                != Ok(morrow_core::lifecycle::InstancePhase::Ready)
+        {
+            return Err(Error::Invalid("inactive managed instance").into());
+        }
+        let (package, _) = self
+            .registry
+            .resolve_enabled(&instance.package.package().manifest().package_id)?;
+        if package.digest() != instance.package.package().digest() {
+            return Err(Error::Invalid("stale managed package").into());
+        }
+        Ok(())
     }
     fn prune(&mut self) -> usize {
         self.instances.retain(|_, controls| {

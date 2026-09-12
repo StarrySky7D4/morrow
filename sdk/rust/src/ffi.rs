@@ -1301,3 +1301,168 @@ pub unsafe extern "C" fn mp_task_get_command(raw: *const c_void, out: *mut Span,
         Ok(())
     })
 }
+
+/// Additive local dependency codec ABI. A request's identity is correlation, never authority.
+#[repr(C)]
+#[derive(Default)]
+pub struct CDependencyRequest {
+    abi_version: u32,
+    struct_size: u32,
+    call_id: Span,
+    slot: Span,
+    input: Span,
+}
+#[repr(C)]
+#[derive(Default)]
+pub struct DependencyOutputView {
+    output_type: Span,
+    bytes: Span,
+}
+unsafe fn dependency_request(
+    raw: *const CDependencyRequest,
+) -> Result<crate::dependency_call::Request, CodecError> {
+    if raw.is_null() {
+        return Err(CodecError::Invalid);
+    }
+    // SAFETY: caller provides a live aligned descriptor and bounded readable spans.
+    let raw = unsafe { &*raw };
+    if raw.abi_version != 1 || raw.struct_size < size_of::<CDependencyRequest>() as u32 {
+        return Err(CodecError::Contract);
+    }
+    if raw.input.length as usize > 65536 {
+        return Err(CodecError::Limit);
+    }
+    if raw.input.length == 0 || raw.input.data.is_null() {
+        return Err(CodecError::Invalid);
+    }
+    let call_id = unsafe { read_text(raw.call_id, 256) }?;
+    let slot = unsafe { read_text(raw.slot, 256) }?;
+    let input = unsafe { std::slice::from_raw_parts(raw.input.data, raw.input.length as usize) };
+    crate::dependency_call::Request::new(&call_id, &slot, input)
+}
+/// # Safety
+/// All descriptors, input spans, output buffer and length are live, aligned and disjoint.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_dependency_request_encode(
+    raw: *const CDependencyRequest,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let request = unsafe { dependency_request(raw) }?;
+        let bytes = request.bytes();
+        if bytes.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out, bytes.len());
+            *length = bytes.len() as u32;
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// out is writable for capacity bytes. Exactly 32 digest bytes are written on success.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_dependency_schema_digest(out: *mut u8, capacity: u32) -> u32 {
+    guard(|| {
+        if out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if capacity < 32 {
+            return Err(CodecError::Limit);
+        }
+        let digest = crate::dependency_call::schema_digest();
+        unsafe {
+            std::ptr::copy_nonoverlapping(digest.as_ptr(), out, digest.len());
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Response and exact original request frame are readable; out is a disjoint writable slot.
+/// The returned SDK-owned output is freed exactly once, after all borrowed views expire.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_dependency_response_decode(
+    bytes: *const u8,
+    length: u32,
+    request_bytes: *const u8,
+    request_length: u32,
+    out: *mut *mut c_void,
+) -> u32 {
+    if out.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+    }
+    guard(|| {
+        if bytes.is_null() || length == 0 || request_bytes.is_null() || request_length == 0 {
+            return Err(CodecError::Invalid);
+        }
+        if length as usize > 128 * 1024 || request_length as usize > 128 * 1024 {
+            return Err(CodecError::Limit);
+        }
+        let request = crate::dependency_call::Request::decode(unsafe {
+            std::slice::from_raw_parts(request_bytes, request_length as usize)
+        })?;
+        let bytes = unsafe { std::slice::from_raw_parts(bytes, length as usize) };
+        let result = request.verify_response(bytes)?;
+        unsafe {
+            *out = Box::into_raw(Box::new(result)).cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// raw is a live output handle; out is disjoint/aligned and writable for size bytes.
+/// Borrowed view spans expire at output_free. View is reset on failure when size permits.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_dependency_output_get(
+    raw: *const c_void,
+    out: *mut DependencyOutputView,
+    size: u32,
+) -> u32 {
+    guard(|| {
+        if out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if size < size_of::<DependencyOutputView>() as u32 {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            out.write(DependencyOutputView::default());
+        }
+        if raw.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let result = unsafe { &*raw.cast::<crate::dependency_call::Output>() };
+        unsafe {
+            out.write(DependencyOutputView {
+                output_type: span(result.output_type.as_bytes()),
+                bytes: span(&result.bytes),
+            });
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// A nonnull raw pointer is a live SDK dependency output, freed exactly once and unborrowed.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_dependency_output_free(raw: *mut c_void) {
+    if !raw.is_null() {
+        unsafe {
+            drop(Box::from_raw(raw.cast::<crate::dependency_call::Output>()));
+        }
+    }
+}

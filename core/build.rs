@@ -43,6 +43,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=schemas/task.capnp");
     println!("cargo:rerun-if-changed=schemas/shared_object.capnp");
     println!("cargo:rerun-if-changed=schemas/shared_transfer.capnp");
+    println!("cargo:rerun-if-changed=schemas/dependency_call.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")
@@ -50,6 +51,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("schemas/ui.capnp")
         .file("schemas/shared_object.capnp")
         .file("schemas/shared_transfer.capnp")
+        .file("schemas/dependency_call.capnp")
         .run()?;
     Ok(())
 }

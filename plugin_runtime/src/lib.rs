@@ -12,6 +12,8 @@ use wasmi::{
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod dependency;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod dynamic_dependencies;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod inline_ui;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod manager;
@@ -53,6 +55,7 @@ impl Default for Limits {
 pub struct Cancellation {
     signal: Arc<AtomicBool>,
     deadline: Arc<Mutex<Option<Instant>>>,
+    parents: Option<Arc<[Cancellation; 2]>>,
 }
 impl Cancellation {
     pub fn cancel(&self) {
@@ -68,7 +71,20 @@ impl Cancellation {
         let mut current = self.deadline.lock().unwrap_or_else(|e| e.into_inner());
         *current = Some(current.map_or(deadline, |old| old.min(deadline)));
     }
+    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    pub(crate) fn linked(first: Self, second: Self) -> Self {
+        Self {
+            parents: Some(Arc::new([first, second])),
+            ..Self::default()
+        }
+    }
     fn fault(&self) -> Option<Fault> {
+        if let Some(parents) = &self.parents
+            && let Some(fault) = parents.iter().find_map(Self::fault)
+        {
+            return Some(fault);
+        }
+
         if self.signal.load(Ordering::Acquire) {
             return Some(Fault::Cancelled);
         }
@@ -118,6 +134,7 @@ type Exchange<'a> = &'a mut dyn FnMut(&[u8]) -> Result<Vec<u8>, ()>;
 struct State<'a> {
     task: Option<TaskState<'a>>,
     exchange: Exchange<'a>,
+    dependency: Option<Exchange<'a>>,
     limits: StoreLimits,
     cancel: Cancellation,
     calls: u32,
@@ -126,18 +143,29 @@ struct State<'a> {
 }
 pub struct Runner {
     task_abi: bool,
+    dependency_abi: bool,
     engine: Engine,
     module: Module,
     limits: Limits,
 }
 impl Runner {
     pub fn new(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, false)
+        Self::prepare(bytes, limits, false, false)
     }
     pub fn new_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true)
+        Self::prepare(bytes, limits, true, false)
     }
-    fn prepare(bytes: &[u8], limits: Limits, task_abi: bool) -> Result<Self, Fault> {
+    /// Task ABI with one additional fixed dependency import. The callback is host-routed;
+    /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
+    pub fn new_dependency_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        Self::prepare(bytes, limits, true, true)
+    }
+    fn prepare(
+        bytes: &[u8],
+        limits: Limits,
+        task_abi: bool,
+        dependency_abi: bool,
+    ) -> Result<Self, Fault> {
         if bytes.len() > MAX_MODULE_BYTES
             || limits.fuel == 0
             || limits.fuel > 100_000_000
@@ -169,6 +197,7 @@ impl Runner {
             };
             let arity = match (import.module(), import.name()) {
                 ("morrow_v1", "exchange") => 4,
+                ("morrow_dependency_v1", "call") if dependency_abi => 4,
                 ("morrow_task_v1", "read_input" | "complete") if task_abi => 2,
                 _ => return Err(Fault::UnsupportedAbi),
             };
@@ -197,6 +226,7 @@ impl Runner {
         }
         Ok(Self {
             task_abi,
+            dependency_abi,
             engine,
             module,
             limits,
@@ -206,7 +236,7 @@ impl Runner {
     /// Cancellation gates imports and checks before/after execution; a pure loop is
     /// bounded by fuel, not immediately interrupted by the cancellation flag.
     pub fn run(&self, exchange: Exchange<'_>, cancel: Cancellation) -> Report {
-        self.execute(exchange, cancel, None).report
+        self.execute(exchange, None, cancel, None).report
     }
     pub fn run_task<'a>(
         &self,
@@ -214,21 +244,34 @@ impl Runner {
         exchange: Exchange<'a>,
         cancel: Cancellation,
     ) -> TaskRun {
-        self.execute(exchange, cancel, Some(input))
+        self.execute(exchange, None, cancel, Some(input))
+    }
+    /// Dependency and core exchange calls share the same bounded import-call counter.
+    /// That counter is not a transaction count: a later error cannot imply rollback.
+    pub fn run_task_with_dependencies<'a>(
+        &self,
+        input: &'a [u8],
+        exchange: Exchange<'a>,
+        dependency: Exchange<'a>,
+        cancel: Cancellation,
+    ) -> TaskRun {
+        self.execute(exchange, Some(dependency), cancel, Some(input))
     }
     fn execute<'a>(
         &self,
         exchange: Exchange<'a>,
+        dependency: Option<Exchange<'a>>,
         cancel: Cancellation,
         input: Option<&'a [u8]>,
     ) -> TaskRun {
-        let fault = if self.task_abi != input.is_some() {
-            Some(Fault::UnsupportedAbi)
-        } else if input.is_some_and(|b| b.is_empty() || b.len() > MAX_TASK_BYTES) {
-            Some(Fault::Limits)
-        } else {
-            cancel.fault()
-        };
+        let fault =
+            if self.task_abi != input.is_some() || self.dependency_abi != dependency.is_some() {
+                Some(Fault::UnsupportedAbi)
+            } else if input.is_some_and(|b| b.is_empty() || b.len() > MAX_TASK_BYTES) {
+                Some(Fault::Limits)
+            } else {
+                cancel.fault()
+            };
         if let Some(fault) = fault {
             return TaskRun {
                 report: Report {
@@ -246,6 +289,7 @@ impl Runner {
                 completion: None,
             }),
             exchange,
+            dependency,
             limits: StoreLimitsBuilder::new()
                 .memory_size(self.limits.memory_bytes)
                 .memories(1)
@@ -273,6 +317,11 @@ impl Runner {
             linker
                 .func_wrap("morrow_task_v1", "complete", task_complete)
                 .expect("task result import");
+        }
+        if self.dependency_abi {
+            linker
+                .func_wrap("morrow_dependency_v1", "call", dependency_call)
+                .expect("dependency call import");
         }
         let outcome = (|| {
             let instance = linker
@@ -467,4 +516,75 @@ fn task_complete(
     let bytes = memory.data(&caller)[start..end].to_vec();
     caller.data_mut().task.as_mut().unwrap().completion = Some(bytes);
     Ok(0)
+}
+
+// Fixed byte exchange only. Authorization and dependency routing belong to the trusted callback.
+fn dependency_call(
+    mut caller: Caller<'_, State<'_>>,
+    input: i32,
+    length: i32,
+    output: i32,
+    capacity: i32,
+) -> Result<i32, wasmi::Error> {
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    if caller.data().dependency.is_none()
+        || caller
+            .data()
+            .task
+            .as_ref()
+            .is_none_or(|t| !t.read || t.completion.is_some())
+    {
+        return Err(trap(caller.data_mut(), Fault::TaskProtocol));
+    }
+    if input < 0
+        || output < 0
+        || length <= 0
+        || length as usize > MAX_TASK_BYTES
+        || capacity as usize != MAX_TASK_BYTES
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    let memory = caller
+        .get_export("memory")
+        .and_then(|v| v.into_memory())
+        .ok_or_else(|| wasmi::Error::new("missing memory"))?;
+    let input = input as usize;
+    let output = output as usize;
+    let Some(input_end) = input.checked_add(length as usize) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let Some(output_end) = output.checked_add(MAX_TASK_BYTES) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let memory_len = memory.data(&caller).len();
+    if input_end > memory_len
+        || output_end > memory_len
+        || (input < output_end && output < input_end)
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    if caller.data().calls >= caller.data().max_calls {
+        return Err(trap(caller.data_mut(), Fault::Limits));
+    }
+    let fixed = memory.data(&caller)[input..input_end].to_vec();
+    caller.data_mut().calls += 1;
+    let response = (caller
+        .data_mut()
+        .dependency
+        .as_mut()
+        .expect("checked callback"))(&fixed);
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    let response = match response {
+        Ok(bytes) if !bytes.is_empty() && bytes.len() <= MAX_TASK_BYTES => bytes,
+        _ => return Err(trap(caller.data_mut(), Fault::TaskProtocol)),
+    };
+    // No memory view is held across the callback. Reacquire it for the bounded response write.
+    memory
+        .write(&mut caller, output, &response)
+        .map_err(|_| wasmi::Error::new("dependency response write failed"))?;
+    Ok(response.len() as i32)
 }

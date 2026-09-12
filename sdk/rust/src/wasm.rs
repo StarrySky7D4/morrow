@@ -86,3 +86,36 @@ pub fn complete_failure(
     }
     Ok(())
 }
+
+#[link(wasm_import_module = "morrow_dependency_v1")]
+unsafe extern "C" {
+    #[link_name = "call"]
+    fn dependency_call(input: *const u8, length: u32, output: *mut u8, capacity: u32) -> i32;
+}
+/// Explicit dependency transport. Requires the host's dependency task mode and a declared,
+/// locked slot; this call does not choose the provider, grant scope, or commit content.
+pub fn call_dependency(
+    request: &crate::dependency_call::Request,
+) -> Result<crate::dependency_call::Output, crate::Error> {
+    let input = request.bytes();
+    if input.is_empty() || input.len() > 128 * 1024 {
+        return Err(crate::Error::Limit);
+    }
+    let mut response = vec![0; 128 * 1024];
+    // SAFETY: owned disjoint buffers remain live for the synchronous import. No memory view
+    // crosses a host boundary; the backend validates full ranges before routing the request.
+    let size = unsafe {
+        dependency_call(
+            input.as_ptr(),
+            input.len() as u32,
+            response.as_mut_ptr(),
+            response.len() as u32,
+        )
+    };
+    if size <= 0 || size as usize > response.len() {
+        return Err(crate::Error::TransportFailure);
+    }
+    request
+        .verify_response(&response[..size as usize])
+        .map_err(|_| crate::Error::BadReply)
+}
