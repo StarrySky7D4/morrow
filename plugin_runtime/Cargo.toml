@@ -65,3 +65,7 @@ required-features = ["packages"]
 name = "morrow-shared-reader"
 path = "src/bin/shared_reader.rs"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_dependency"
+required-features = ["packages"]

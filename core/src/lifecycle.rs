@@ -50,7 +50,8 @@ impl Revocation {
     pub fn revoke(&self) {
         self.0.store(true, Ordering::Release);
     }
-    fn revoked(&self) -> bool {
+    /// Read-only observation; this does not renew authority or undo revocation.
+    pub fn is_revoked(&self) -> bool {
         self.0.load(Ordering::Acquire)
     }
 }
@@ -141,7 +142,7 @@ impl HostPolicy {
     }
     pub fn ready(&mut self, instance: Instance) -> Result<()> {
         let record = self.record_mut(instance)?;
-        if record.phase != InstancePhase::Preparing || record.revocation.revoked() {
+        if record.phase != InstancePhase::Preparing || record.revocation.is_revoked() {
             return Err(Error::Invalid("ready transition"));
         }
         record.phase = InstancePhase::Ready;
@@ -150,7 +151,7 @@ impl HostPolicy {
     pub fn phase(&self, instance: Instance) -> Result<InstancePhase> {
         let record = self.record(instance)?;
         Ok(
-            if record.revocation.revoked() && record.phase != InstancePhase::Stopped {
+            if record.revocation.is_revoked() && record.phase != InstancePhase::Stopped {
                 InstancePhase::Revoked
             } else {
                 record.phase
@@ -213,7 +214,9 @@ impl HostPolicy {
         self.tick(now)?;
         identity(card_id)?;
         let record = self.record(instance)?;
-        if record.phase != InstancePhase::Ready || record.revocation.revoked() || expires_at <= now
+        if record.phase != InstancePhase::Ready
+            || record.revocation.is_revoked()
+            || expires_at <= now
         {
             return Err(Error::Invalid("grant context"));
         }
@@ -261,7 +264,7 @@ impl HostPolicy {
             return Err(Error::Invalid("grant owner"));
         }
         let record = self.record(instance)?;
-        if record.revocation.revoked()
+        if record.revocation.is_revoked()
             || (record.phase != InstancePhase::Ready
                 && !(completing && record.phase == InstancePhase::Draining))
         {
@@ -476,12 +479,31 @@ impl HostPolicy {
         grant: Grant,
         store: &mut crate::store::Store,
         change: &crate::content_change::ContentChange,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.edit_content_guarded(instance, grant, store, change, clock, |_| Ok(()))
+    }
+    /// Additional trusted proposal constraints, checked at every Store authorization
+    /// boundary, including duplicate receipt delivery and the final pre-commit check.
+    /// The guard sees the same clock value as scope authorization and cannot replace it.
+    /// Once committed, later denial cannot roll back the recorded operation.
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn edit_content_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        change: &crate::content_change::ContentChange,
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Receipt> {
         change.validate()?;
         store.edit_content(change, || {
             let now = clock();
             self.expire_drains(now)?;
+            guard(now)?;
+            // Retain the original scope check after the guard, so even a trusted guard
+            // that triggers connection revocation cannot authorize the content itself.
             self.authorize_scope(
                 instance,
                 grant,
@@ -525,7 +547,8 @@ impl HostPolicy {
     pub fn drain(&mut self, instance: Instance, deadline: u64, now: u64) -> Result<()> {
         self.tick(now)?;
         let record = self.record_mut(instance)?;
-        if record.phase != InstancePhase::Ready || record.revocation.revoked() || deadline <= now {
+        if record.phase != InstancePhase::Ready || record.revocation.is_revoked() || deadline <= now
+        {
             return Err(Error::Invalid("drain transition"));
         }
         record.phase = InstancePhase::Draining;

@@ -214,9 +214,26 @@ impl HostRuntime {
         change: &crate::content_change::ContentChange,
         clock: impl FnMut() -> u64,
     ) -> Result<crate::transaction::Receipt> {
+        self.edit_content_guarded(connection, change, clock, |_| Ok(()))
+    }
+    /// Trusted extra constraints supplement the package ceiling, connection and content
+    /// grant. They run at every Store authorization boundary, not only at admission.
+    pub fn edit_content_guarded(
+        &mut self,
+        connection: &Connection,
+        change: &crate::content_change::ContentChange,
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
         let grant = self.content_grant(connection, GrantKind::EditContent, &change.card_id)?;
-        self.policy
-            .edit_content(connection.instance, grant, &mut self.store, change, clock)
+        self.policy.edit_content_guarded(
+            connection.instance,
+            grant,
+            &mut self.store,
+            change,
+            clock,
+            guard,
+        )
     }
     pub fn create_content(
         &mut self,

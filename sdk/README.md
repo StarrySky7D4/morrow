@@ -104,6 +104,10 @@ Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_nod
 复验：先构建 `sdk/examples/rust-task` 和执行 `tool/build_plugin_c_wasm.ps1`，再运行 `plugin_runtime/examples/qualify_content_sdk.rs`，传入三份 task Wasm 文件。宿主测试、完整功能与平台限制见 [本轮对照记录](../docs/TEST1_RUST_PARITY.md)。
 
 
+## test.28 宿主依赖资格
+
+新增 `examples/rust-chain-provider`，与现有 `rust-transform` 独立编译，使用既有任务 ABI v2／契约 v3。可信宿主固定 A 的输出后调用 B，结果提案经过原内容权限及修订检查写入。该示例不增加 guest 自选依赖、句柄或内容权限接口，C／C++／Rust 通用依赖 SDK 与持久锁定仍待建设。见 [依赖设计](../docs/PLUGIN_DEPENDENCIES.md) 与 [实际验证](../reports/test.28-dependency-proposal.md)。
+
 ## 许可
 
 从 test.1 之后的重构版本起，Morrow 第一方 C／C++／Rust SDK、示例和界面客户端统一使用 [AGPL-3.0-only](LICENSE)，完整声明见仓库 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。

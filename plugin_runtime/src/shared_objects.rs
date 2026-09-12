@@ -358,6 +358,25 @@ impl SharedObjects {
         self.usage();
         Ok(())
     }
+    /// Admission preflight for a trusted dependency route; invalid input must not move broker time.
+    pub(crate) fn check_mapping_scope(
+        &self,
+        host: &HostRuntime,
+        consumer: &Connection,
+        mapping: &Mapping,
+        scope: &str,
+        now: u64,
+    ) -> Result<()> {
+        let value = self.admitted(host, consumer, &mapping.lease, now)?;
+        if now < self.last_tick
+            || value.scope != scope
+            || !Arc::ptr_eq(&value.allocation, &mapping.allocation)
+            || host.binding_phase(value.producer) != Ok(InstancePhase::Ready)
+        {
+            return Err(Error::Denied);
+        }
+        Ok(())
+    }
     pub(crate) fn validate_mapping(
         &mut self,
         host: &HostRuntime,
