@@ -3,10 +3,9 @@
 use morrow_core::{
     content::{Attachment, CardRecord},
     content_change::ContentChange,
-    dispatch::{Connection, HostRuntime},
+    dispatch::Connection,
     lifecycle::GrantKind,
     plugin_package::Package,
-    store::{EventBudget, Store},
     task::{Invocation, Transform},
 };
 use morrow_plugin_runtime::{Limits, package::PreparedPackage};
@@ -17,6 +16,7 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+mod storage;
 pub mod transfer;
 
 pub struct Record {
@@ -33,7 +33,7 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
-    host: HostRuntime,
+    host: storage::Storage,
     plugin: Option<PreparedPackage>,
     connection: Option<Connection>,
     start: Instant,
@@ -63,9 +63,7 @@ fn now(start: Instant) -> u64 {
 }
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
-        let store = Store::open(path, EventBudget::default())?;
-        store.integrity_check()?;
-        let mut host = HostRuntime::new(store)?;
+        let mut host = storage::Storage::open(path)?;
         let plugin = package
             .map(|p| {
                 PreparedPackage::new(p, Limits::default())
@@ -83,6 +81,12 @@ impl Workbench {
             staged: BTreeMap::new(),
             transfers: transfer::Transfers::default(),
         })
+    }
+    pub fn maintenance_warning(&self) -> Option<&str> {
+        self.host.warning()
+    }
+    pub fn finish(&mut self) -> Result<()> {
+        self.host.flush_pending()
     }
     pub fn writable(&self) -> bool {
         self.plugin.is_some()
@@ -189,6 +193,7 @@ impl Workbench {
         reader: &mut impl std::io::Read,
         size: u64,
     ) -> Result<Asset> {
+        self.host.prepare_write()?;
         if !self.writable() {
             return Err("plugin unavailable".into());
         }
@@ -252,6 +257,7 @@ impl Workbench {
             .collect()
     }
     pub fn create(&mut self, operation: &str, draft: Idea) -> Result<Record> {
+        self.host.prepare_write()?;
         let id = draft.id.clone();
         let mut req = command(Action::Create);
         req.proposed = draft;
@@ -283,6 +289,7 @@ impl Workbench {
         self.read(&id)
     }
     pub fn apply(&mut self, mutation: Mutation<'_>) -> Result<Record> {
+        self.host.prepare_write()?;
         let Mutation {
             operation,
             id,
@@ -489,6 +496,7 @@ impl Workbench {
         Ok(Some(morrow_workbench_plugin::preferences::encode_wire(&p)?))
     }
     pub fn save_preferences(&mut self, operation: &str, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.host.prepare_write()?;
         use morrow_workbench_plugin::preferences;
         let p = preferences::decode_wire(&input)?;
         let pages = preferences::validation_pages(&p)?;

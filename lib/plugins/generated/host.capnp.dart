@@ -363,6 +363,8 @@ final class ResponseReader extends StructReader {
   int get totalLength => getUint64Field(24);
 
   Uint8List? get sha256 => getDataField(6);
+
+  String? get maintenanceWarning => getTextField(7);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -418,6 +420,10 @@ final class ResponseBuilder extends StructBuilder {
   set sha256(Uint8List? v) {
     setDataField(6, v);
   }
+
+  set maintenanceWarning(String? v) {
+    setTextField(7, v);
+  }
 }
 
 final class _ResponseFactory
@@ -427,7 +433,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 4;
   @override
-  int get ptrWords => 7;
+  int get ptrWords => 8;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -444,7 +450,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 4,
-  pointerWords: 7,
+  pointerWords: 8,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -540,6 +546,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 6,
         type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maintenanceWarning',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Text'),
       ),
     ),
   ],

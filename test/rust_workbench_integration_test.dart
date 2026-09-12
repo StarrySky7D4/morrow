@@ -269,4 +269,65 @@ void main() {
         : false,
     timeout: const Timeout(Duration(minutes: 2)),
   );
+  test(
+    'protected workbench reports missing keys and restores with the original key',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('morrow-key-ui-');
+      RustWorkbench? backend;
+      try {
+        backend = await RustWorkbench.open(
+          executable: executable!,
+          package: package!,
+          directory: directory,
+        );
+        final saved = await backend.apply(
+          PluginAction.create,
+          Idea(
+            '保留原记录',
+            '原内容',
+            '灵感',
+            Idea.icons[0],
+            const Color(0xff8866aa),
+            id: 'retained-card',
+          ),
+        );
+        await backend.close();
+        backend = null;
+        final key = File('${directory.path}/workbench.db.audit-key');
+        final original = await key.readAsBytes();
+        final retained = await key.rename('${directory.path}/retained-key');
+        await expectLater(
+          RustWorkbench.open(
+            executable: executable,
+            package: package,
+            directory: directory,
+          ),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.toString(),
+              'message',
+              contains('保护密钥缺失'),
+            ),
+          ),
+        );
+        expect(await key.exists(), isFalse);
+        await retained.rename(key.path);
+        backend = await RustWorkbench.open(
+          executable: executable,
+          package: package,
+          directory: directory,
+        );
+        expect(backend.maintenanceWarning, isNull);
+        final restored = await backend.load();
+        expect(restored.single.id, saved.id);
+        expect(restored.single.description, saved.description);
+        expect(await key.readAsBytes(), original);
+      } finally {
+        await backend?.close();
+        await directory.delete(recursive: true);
+      }
+    },
+    skip: executable == null || package == null || !Platform.isWindows,
+    timeout: const Timeout(Duration(minutes: 1)),
+  );
 }

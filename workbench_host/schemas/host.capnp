@@ -13,4 +13,5 @@ struct Response {
  revision @3 :UInt64; ids @4 :List(Text); cursor @5 :Text;
  readOnly @6 :Bool; error @7 :Text;
  transfer @8 :Text; offset @9 :UInt64; totalLength @10 :UInt64; sha256 @11 :Data;
+ maintenanceWarning @12 :Text;
 }

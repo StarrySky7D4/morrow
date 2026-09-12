@@ -517,6 +517,18 @@ impl Store {
         boundary("after-commit");
         Ok(receipt)
     }
+    /// Host-local queue pressure without reading or allocating event payloads.
+    pub fn pending_usage(&self) -> Result<(u64, u64)> {
+        let (events, bytes): (i64, i64) = sql(self.connection.query_row(
+            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
+            [],
+            |row| Ok((row.get(0)?, row.get(1)?)),
+        ))?;
+        Ok((
+            u64::try_from(events).map_err(|_| Error::Integrity)?,
+            u64::try_from(bytes).map_err(|_| Error::Integrity)?,
+        ))
+    }
     /// Bounded immutable events that have not yet been atomically sealed.
     pub fn pending(&self, after_sequence: i64, limit: u32) -> Result<Vec<(i64, Vec<u8>)>> {
         if after_sequence < 0 || limit == 0 || limit > 128 {

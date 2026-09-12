@@ -27,6 +27,9 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     if let Err(e) = handle(host, bytes, out.reborrow()) {
         out.set_error(e.to_string().as_str());
     }
+    if let Some(warning) = host.maintenance_warning() {
+        out.set_maintenance_warning(warning);
+    }
     let bytes = serialize::write_message_to_words(&output);
     if bytes.len() > 128 * 1024 {
         return Err("response frame budget".into());

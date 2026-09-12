@@ -62,7 +62,9 @@ Future<void> main(List<String> arguments) async {
           storage: storage,
           workbench: backend,
           nativeBackground: DesktopBackground(),
-          initialWarning: backend.writable ? null : '工作台插件不可用，已有内容仍可查看和导出。',
+          initialWarning:
+              backend.maintenanceWarning ??
+              (backend.writable ? null : '工作台插件不可用，已有内容仍可查看和导出。'),
         ),
       ),
     );
@@ -87,15 +89,20 @@ Future<void> main(List<String> arguments) async {
       ).writeAsString('Startup failed: $error\n$stack');
       exit(1);
     }
+    const hostPrefix = 'Morrow workbench host: ';
+    final detail = error is StateError ? error.message.toString() : '';
+    final message = detail.startsWith(hostPrefix)
+        ? detail.substring(hostPrefix.length)
+        : '工作台暂时无法打开。请检查插件文件与数据目录，然后重新启动。原有资料未被覆盖。';
     runApp(
       MaterialApp(
         home: Scaffold(
           body: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 400),
-              child: const Padding(
-                padding: EdgeInsets.all(24),
-                child: Text('工作台暂时无法打开。请检查插件文件与数据目录，然后重新启动。原有资料未被覆盖。'),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(message),
               ),
             ),
           ),

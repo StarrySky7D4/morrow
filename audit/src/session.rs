@@ -155,6 +155,9 @@ impl Session {
     pub fn trust(&self) -> TrustedLog {
         self.sealer.trust()
     }
+    pub fn runtime_ref(&self) -> &HostRuntime {
+        &self.host
+    }
     pub fn runtime(&mut self) -> &mut HostRuntime {
         &mut self.host
     }

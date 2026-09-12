@@ -42,5 +42,6 @@ fn run() -> morrow_workbench_host::Result<()> {
         output.write_all(&response)?;
         output.flush()?;
     }
+    host.finish()?;
     Ok(())
 }

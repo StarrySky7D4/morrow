@@ -1,5 +1,6 @@
 import 'studio_native.dart';
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
@@ -15,14 +16,24 @@ import 'generated/identity.dart' as contract;
 
 class RustWorkbench implements WorkbenchBackend {
   RustWorkbench._(this.process, this.cache) {
-    process.stdout.listen(
-      _receive,
-      onError: _fail,
-      onDone: () => _fail(StateError('内容服务已停止')),
-    );
-    process.stderr.listen((_) {});
-    process.exitCode.then((code) => _fail(StateError('内容服务已退出 ($code)')));
+    process.stdout.listen(_receive, onError: _fail, onDone: _ended);
+    _stderrDone = process.stderr.listen((bytes) {
+      final remaining = 4096 - _stderr.length;
+      if (remaining > 0) _stderr.addAll(bytes.take(remaining));
+    }).asFuture<void>();
   }
+  final _stderr = <int>[];
+  late final Future<void> _stderrDone;
+  String? maintenanceWarning;
+  Future<void> _ended() async {
+    try {
+      await _stderrDone;
+    } catch (_) {}
+    final code = await process.exitCode;
+    final detail = utf8.decode(_stderr, allowMalformed: true).trim();
+    _fail(StateError(detail.isEmpty ? '内容服务已退出 ($code)' : detail));
+  }
+
   final Process process;
   final Directory cache;
   final _revisions = <String, int>{};
@@ -154,6 +165,8 @@ class RustWorkbench implements WorkbenchBackend {
           throw const FormatException('内容服务版本不匹配');
         }
         writable = !reply.readOnly;
+        final notice = reply.maintenanceWarning ?? '';
+        maintenanceWarning = notice.isEmpty ? null : notice;
         if ((reply.error ?? '').isNotEmpty) throw StateError(reply.error!);
         completion.complete(reply);
       } catch (e, stack) {

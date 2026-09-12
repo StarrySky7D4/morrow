@@ -1,10 +1,10 @@
-# Morrow core — test.18
+# Morrow core — test.19
 
-这是独立于 Flutter 的可信 Rust 核心，当前版本 `0.1.9-test.18`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows 应用包仍为 test.14，生产审计密钥和自动封存服务尚未接入；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
+这是独立于 Flutter 的可信 Rust 核心，当前版本 `0.1.9-test.19`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
 
 ## test.18 日志身份绑定
 
-数据库格式 6 在独立的 `audit_identity` 表持久绑定日志身份和公钥。即使还没有封存事件，已绑定库也要求宿主提供匹配的外部可信身份；数据库内的公开绑定记录不能自行建立信任。`audit_binding_status` 只读检查状态，不创建或迁移数据库。Windows 显式初始化与恢复入口见 [审计工具](../audit/README.md)，工作台尚未自动调用。
+数据库格式 6 在独立的 `audit_identity` 表持久绑定日志身份和公钥。即使还没有封存事件，已绑定库也要求宿主提供匹配的外部可信身份；数据库内的公开绑定记录不能自行建立信任。`audit_binding_status` 只读检查状态，不创建或迁移数据库。Windows 显式初始化与恢复入口见 [审计工具](../audit/README.md)；test.19 默认 Windows 工作台已调用，其他平台后端仍待接入。
 
 ## test.16 核心原子封存
 

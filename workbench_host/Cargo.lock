@@ -548,8 +548,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
+name = "morrow-audit"
+version = "0.1.9-test.19"
+dependencies = [
+ "lz4_flex",
+ "morrow-core",
+ "prost",
+ "prost-build",
+ "protoc-bin-vendored",
+ "rusqlite",
+ "sha2 0.10.9",
+ "tempfile",
+ "windows-sys",
+ "zeroize",
+]
+
+[[package]]
 name = "morrow-core"
-version = "0.1.9-test.18"
+version = "0.1.9-test.19"
 dependencies = [
  "capnp",
  "capnpc",
@@ -585,10 +601,11 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-host"
-version = "0.1.9-test.13"
+version = "0.1.9-test.19"
 dependencies = [
  "capnp",
  "capnpc",
+ "morrow-audit",
  "morrow-core",
  "morrow-plugin-runtime",
  "morrow-workbench-plugin",
