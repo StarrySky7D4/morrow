@@ -60,3 +60,8 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_shared_objects"
 required-features = ["packages"]
+
+[[bin]]
+name = "morrow-shared-reader"
+path = "src/bin/shared_reader.rs"
+required-features = ["packages"]

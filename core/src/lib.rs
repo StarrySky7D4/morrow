@@ -19,9 +19,14 @@ pub mod bridge;
 pub mod envelope;
 pub mod runtime;
 pub mod shared_object;
+pub mod shared_transfer;
 pub mod task;
 pub mod ui;
 // The fixed Cap'n Proto generator emits unsafe schema metadata; hand-written validation does not.
+#[allow(clippy::all, unsafe_code)]
+pub mod shared_transfer_capnp {
+    include!(concat!(env!("OUT_DIR"), "/shared_transfer_capnp.rs"));
+}
 #[allow(clippy::all, unsafe_code)]
 pub mod shared_object_capnp {
     include!(concat!(env!("OUT_DIR"), "/shared_object_capnp.rs"));

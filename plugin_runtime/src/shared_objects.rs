@@ -98,6 +98,10 @@ pub struct Mapping {
     active: Arc<AtomicUsize>,
 }
 impl Mapping {
+    #[cfg(windows)]
+    pub(crate) fn duplicate_readonly(&self, child: &std::process::Child) -> std::io::Result<u64> {
+        self.allocation.region.duplicate_readonly(child)
+    }
     pub fn bytes(&self) -> &[u8] {
         self.allocation.region.bytes()
     }
@@ -354,7 +358,7 @@ impl SharedObjects {
         self.usage();
         Ok(())
     }
-    fn validate_mapping(
+    pub(crate) fn validate_mapping(
         &mut self,
         host: &HostRuntime,
         consumer: &Connection,
@@ -366,6 +370,21 @@ impl SharedObjects {
             return Err(Error::Denied);
         }
         self.tick(now)
+    }
+    /// Only a host-selected trusted reader may receive this raw mapping. No guest chooses the command.
+    #[cfg(windows)]
+    pub fn start_reader(
+        &mut self,
+        host: &HostRuntime,
+        consumer: &Connection,
+        lease: &Lease,
+        command: &mut std::process::Command,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::remote_reader::RemoteReader> {
+        let mapping = self.map(host, consumer, lease, clock())?;
+        crate::remote_reader::RemoteReader::spawn(command, mapping, |mapping| {
+            self.validate_mapping(host, consumer, mapping, clock())
+        })
     }
     /// Pure guest transform over fixed bytes, followed by final authorization before result delivery.
     /// The Wasm copy is intentional: native mappings are not guest linear-memory addresses.

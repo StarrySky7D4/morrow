@@ -20,6 +20,8 @@ pub mod ui_session;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod worker;
 // User-approved native boundary; other runtime modules still reject unsafe code.
+#[cfg(all(feature = "packages", windows))]
+pub mod remote_reader;
 #[cfg(not(target_arch = "wasm32"))]
 #[allow(unsafe_code)]
 pub mod shared_memory;

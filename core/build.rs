@@ -42,12 +42,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=schemas/ui.capnp");
     println!("cargo:rerun-if-changed=schemas/task.capnp");
     println!("cargo:rerun-if-changed=schemas/shared_object.capnp");
+    println!("cargo:rerun-if-changed=schemas/shared_transfer.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")
         .file("schemas/task.capnp")
         .file("schemas/ui.capnp")
         .file("schemas/shared_object.capnp")
+        .file("schemas/shared_transfer.capnp")
         .run()?;
     Ok(())
 }
