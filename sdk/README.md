@@ -108,6 +108,10 @@ Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_nod
 
 新增 `examples/rust-chain-provider`，与现有 `rust-transform` 独立编译，使用既有任务 ABI v2／契约 v3。可信宿主固定 A 的输出后调用 B，结果提案经过原内容权限及修订检查写入。该示例不增加 guest 自选依赖、句柄或内容权限接口，C／C++／Rust 通用依赖 SDK 与持久锁定仍待建设。见 [依赖设计](../docs/PLUGIN_DEPENDENCIES.md) 与 [实际验证](../reports/test.28-dependency-proposal.md)。
 
+## test.29 依赖声明与宿主管理
+
+包可通过核心打包API声明依赖slot、接口类型、版本范围及optional，宿主批准具体提供者并持久锁定；guest ABI／任务契约保持不变。`qualify_locked_dependency`复验真实双Rust模块经登记重开、运行期重绑定及提供者升级撤权。C／C++／Rust动态guest依赖调用入口与默认UI配置仍待提供。见 [依赖锁](../docs/PLUGIN_DEPENDENCY_LOCKS.md)。
+
 ## 许可
 
 从 test.1 之后的重构版本起，Morrow 第一方 C／C++／Rust SDK、示例和界面客户端统一使用 [AGPL-3.0-only](LICENSE)，完整声明见仓库 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。

@@ -24,6 +24,15 @@ message TransformHandler {
   uint32 max_input_bytes = 4;
   uint32 max_output_bytes = 5;
 }
+// A portable interface requirement, never approval or a provider identity/handle.
+message DependencyRequirement {
+  string slot = 1;
+  string handler = 2;
+  string input_type = 3;
+  string output_type = 4;
+  string provider_version = 5; // SemVer VersionReq for the selected provider package.
+  bool optional = 6;
+}
 message Manifest {
   uint32 schema_version = 1;
   string package_id = 2;
@@ -41,6 +50,7 @@ message Manifest {
   repeated string required_features = 13;
   bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
   repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
+  repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
 }
 message Package {
   uint32 schema_version = 1;

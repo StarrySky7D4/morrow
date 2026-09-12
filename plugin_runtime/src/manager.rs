@@ -2,15 +2,16 @@
 //! A successful operation past its final authorization boundary is never promised rollback.
 use crate::{
     Cancellation, Fault, Limits, Report,
+    dependency::{Dependency, Endpoint, Spec},
     package::{PreparedPackage, TaskReport},
 };
 use morrow_core::{
     Error,
-    dispatch::{Connection, HostRuntime},
+    dispatch::{Connection, ConnectionBinding, HostRuntime},
     lifecycle::{GrantKind, Revocation},
     plugin_package::{
         Package,
-        registry::{Registry, Selection},
+        registry::{LockedDependency, Registry, Selection},
     },
 };
 use std::{
@@ -23,12 +24,14 @@ const MAX_INSTANCES: usize = 128;
 pub enum ManagerError {
     Core(Error),
     Prepare(Fault),
+    Dependency(crate::dependency::Error),
 }
 impl std::fmt::Display for ManagerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::Core(e) => write!(f, "{e}"),
             Self::Prepare(e) => write!(f, "{e:?}"),
+            Self::Dependency(e) => write!(f, "{e}"),
         }
     }
 }
@@ -45,6 +48,7 @@ impl From<Fault> for ManagerError {
 }
 pub type Result<T> = std::result::Result<T, ManagerError>;
 struct Control {
+    binding: ConnectionBinding,
     revocation: Revocation,
     cancel: Cancellation,
 }
@@ -63,6 +67,9 @@ pub struct ManagedInstance {
     control: Arc<Control>,
 }
 impl ManagedInstance {
+    fn binding_matches(&self) -> bool {
+        self.connection.binding() == self.control.binding
+    }
     pub fn package(&self) -> &PreparedPackage {
         &self.package
     }
@@ -79,9 +86,19 @@ impl ManagedInstance {
     /// Release the host's bounded instance record. Stop still applies if a wrong host is supplied.
     pub fn close(&self, host: &mut HostRuntime) -> morrow_core::Result<()> {
         self.stop();
+        if !self.binding_matches() {
+            return Err(Error::Invalid("replaced managed connection"));
+        }
         host.disconnect(&self.connection)
     }
     pub fn run(&self, host: &mut HostRuntime, clock: impl FnMut() -> u64) -> Report {
+        if !self.binding_matches() {
+            return Report {
+                outcome: Err(Fault::PackageBinding),
+                host_calls: 0,
+                fuel_remaining: self.package.limits().fuel,
+            };
+        }
         self.package
             .run(host, &self.connection, clock, self.control.cancel.clone())
     }
@@ -91,6 +108,18 @@ impl ManagedInstance {
         input: &morrow_core::task::Invocation,
         clock: impl FnMut() -> u64,
     ) -> TaskReport {
+        if !self.binding_matches() {
+            return TaskReport {
+                execution: Report {
+                    outcome: Err(Fault::PackageBinding),
+                    host_calls: 0,
+                    fuel_remaining: self.package.limits().fuel,
+                },
+                response: None,
+                output: None,
+                failure: None,
+            };
+        }
         self.package.run_task(
             host,
             &self.connection,
@@ -150,6 +179,26 @@ impl Manager {
             }
         }
     }
+    fn revoke_required_tree(&mut self, id: &str) {
+        // Snapshot the old graph before registry mutation removes or replaces its edges.
+        let callers = self.registry.required_dependents(id);
+        for caller in callers {
+            self.revoke(&caller);
+        }
+        self.revoke(id);
+    }
+    fn owns(&self, instance: &ManagedInstance) -> bool {
+        instance.binding_matches()
+            && self
+                .instances
+                .get(&instance.package.package().manifest().package_id)
+                .is_some_and(|controls| {
+                    controls
+                        .iter()
+                        .filter_map(Weak::upgrade)
+                        .any(|control| Arc::ptr_eq(&control, &instance.control))
+                })
+    }
     fn prune(&mut self) -> usize {
         self.instances.retain(|_, controls| {
             controls.retain(|w| w.strong_count() != 0);
@@ -168,7 +217,7 @@ impl Manager {
         {
             return Ok(());
         }
-        self.revoke(id);
+        self.revoke_required_tree(id);
         self.registry.select(package.digest(), revision)?;
         Ok(())
     }
@@ -184,7 +233,7 @@ impl Manager {
             return Ok(());
         }
         // Even widening approvals requires a fresh connection, never mutating a live ceiling.
-        self.revoke(id);
+        self.revoke_required_tree(id);
         self.registry.approve(id, digest, approved, revision)?;
         Ok(())
     }
@@ -199,7 +248,7 @@ impl Manager {
         if selection.enabled == enabled {
             return Ok(());
         }
-        self.revoke(id);
+        self.revoke_required_tree(id);
         self.registry.set_enabled(id, digest, enabled, revision)?;
         Ok(())
     }
@@ -208,9 +257,102 @@ impl Manager {
         if self.selection(id).is_none() {
             return Err(Error::NotFound.into());
         }
-        self.revoke(id);
+        self.revoke_required_tree(id);
         self.registry.remove(id, revision)?;
         Ok(())
+    }
+    pub fn dependency(&self, caller: &str, slot: &str) -> Option<&LockedDependency> {
+        self.registry.dependency(caller, slot)
+    }
+    /// Explicit host approval of an immutable provider for a declared caller slot.
+    /// Approval stores no scope, expiry, process identity or reusable execution authority.
+    #[allow(clippy::too_many_arguments)]
+    pub fn approve_dependency(
+        &mut self,
+        caller: &str,
+        caller_digest: [u8; 32],
+        slot: &str,
+        provider: &str,
+        provider_digest: [u8; 32],
+        revision: u64,
+    ) -> Result<()> {
+        self.checked_selection(caller, caller_digest, revision)?;
+        self.checked_selection(provider, provider_digest, revision)?;
+        if self.registry.dependency(caller, slot).is_some_and(|lock| {
+            lock.caller_digest == caller_digest
+                && lock.provider_id == provider
+                && lock.provider_digest == provider_digest
+        }) {
+            return Ok(());
+        }
+        self.revoke_required_tree(caller);
+        self.registry.approve_dependency(
+            caller,
+            caller_digest,
+            slot,
+            provider,
+            provider_digest,
+            revision,
+        )?;
+        Ok(())
+    }
+    pub fn remove_dependency(&mut self, caller: &str, slot: &str, revision: u64) -> Result<()> {
+        self.check_revision(revision)?;
+        if self.registry.dependency(caller, slot).is_none() {
+            return Err(Error::NotFound.into());
+        }
+        self.revoke_required_tree(caller);
+        self.registry.remove_dependency(caller, slot, revision)?;
+        Ok(())
+    }
+    /// Restored records select immutable code only. A fresh live route requires actual managed
+    /// endpoints from this manager and a new trusted scope/deadline in the current host.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_locked_dependency(
+        &self,
+        host: &HostRuntime,
+        caller: &ManagedInstance,
+        provider: &ManagedInstance,
+        slot: &str,
+        scope: &str,
+        expires: u64,
+        now: u64,
+    ) -> Result<Dependency> {
+        if !self.owns(caller) || !self.owns(provider) {
+            return Err(Error::Invalid("foreign managed dependency instance").into());
+        }
+        let caller_package = caller.package.package();
+        let provider_package = provider.package.package();
+        let (lock, _, _) = self
+            .registry
+            .resolve_dependency(&caller_package.manifest().package_id, slot)?;
+        if lock.caller_digest != caller_package.digest()
+            || lock.provider_digest != provider_package.digest()
+            || lock.provider_id != provider_package.manifest().package_id
+        {
+            return Err(Error::RevisionConflict.into());
+        }
+        let required = caller_package.dependency(slot)?;
+        Dependency::bind(
+            host,
+            Endpoint {
+                package: &caller.package,
+                connection: &caller.connection,
+            },
+            Endpoint {
+                package: &provider.package,
+                connection: &provider.connection,
+            },
+            Spec {
+                handler: &required.handler,
+                input_type: &required.input_type,
+                output_type: &required.output_type,
+                scope,
+                expires,
+            },
+            now,
+        )
+        .map_err(ManagerError::Dependency)
     }
     /// Validate current enabled state and package bytes, then bind the stored approved ceiling.
     pub fn connect(&mut self, id: &str, host: &mut HostRuntime) -> Result<ManagedInstance> {
@@ -228,6 +370,7 @@ impl Manager {
             }
         };
         let control = Arc::new(Control {
+            binding: connection.binding(),
             revocation,
             cancel: Cancellation::default(),
         });

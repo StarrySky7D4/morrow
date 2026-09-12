@@ -9,6 +9,8 @@ pub mod proto {
 }
 pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
+pub const DEPENDENCIES_FEATURE: &str = "dependencies-v1";
+pub const MAX_DEPENDENCIES: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
 const MAX_RAW_BYTES: usize = MAX_MODULE_BYTES + MAX_MANIFEST_BYTES + 256;
@@ -76,6 +78,7 @@ impl Package {
             required_features: vec![],
             task_schema_sha256: vec![],
             transform_handlers: vec![],
+            dependencies: vec![],
         }
     }
     pub fn manifest_for_task(
@@ -121,6 +124,36 @@ impl Package {
         }
         Ok(handler)
     }
+    /// Resolve a declared slot only. The declaration neither selects nor authorizes a provider.
+    pub fn dependency(&self, slot: &str) -> Result<&proto::DependencyRequirement> {
+        self.manifest
+            .dependencies
+            .iter()
+            .find(|d| d.slot == slot)
+            .ok_or(Error::Invalid("undeclared dependency slot"))
+    }
+    /// Check one selected provider's package version and exact transform contract.
+    /// Optional slots may be unbound by the host; a bound optional slot still must be compatible.
+    pub fn check_dependency(&self, slot: &str, provider: &Package) -> Result<()> {
+        let requirement = self.dependency(slot)?;
+        if provider.manifest.guest_abi_version != 2 {
+            return Err(Error::UnsupportedVersion);
+        }
+        let version = semver::Version::parse(&provider.manifest.package_version)
+            .map_err(|_| Error::Invalid("package version"))?;
+        let requested = semver::VersionReq::parse(&requirement.provider_version)
+            .map_err(|_| Error::Invalid("dependency version requirement"))?;
+        if !requested.matches(&version) {
+            return Err(Error::Invalid("dependency provider version"));
+        }
+        provider.transform_handler(&crate::task::Transform {
+            handler: requirement.handler.clone(),
+            input_type: requirement.input_type.clone(),
+            output_type: requirement.output_type.clone(),
+            input: vec![],
+        })?;
+        Ok(())
+    }
     pub fn build(manifest: proto::Manifest, module: &[u8]) -> Result<Self> {
         Self::from_parts(&manifest.encode_to_vec(), module)
     }
@@ -156,11 +189,17 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 1
+            || manifest.required_features.len() > 2
             || manifest
                 .required_features
                 .iter()
-                .any(|f| f != TRANSFORM_HANDLERS_FEATURE)
+                .any(|f| f != TRANSFORM_HANDLERS_FEATURE && f != DEPENDENCIES_FEATURE)
+            || manifest
+                .required_features
+                .iter()
+                .collect::<BTreeSet<_>>()
+                .len()
+                != manifest.required_features.len()
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -170,7 +209,40 @@ impl Package {
         {
             return Err(Error::UnsupportedVersion);
         }
-        let registered = !manifest.required_features.is_empty();
+        let registered = manifest
+            .required_features
+            .iter()
+            .any(|f| f == TRANSFORM_HANDLERS_FEATURE);
+        let dependencies_feature = manifest
+            .required_features
+            .iter()
+            .any(|f| f == DEPENDENCIES_FEATURE);
+        if (!manifest.dependencies.is_empty() && !dependencies_feature)
+            || (dependencies_feature && manifest.guest_abi_version != 2)
+        {
+            return Err(Error::Invalid("dependency registration feature"));
+        }
+        if manifest.dependencies.len() > MAX_DEPENDENCIES {
+            return Err(Error::Limit);
+        }
+        let mut slots = BTreeSet::new();
+        for dependency in &manifest.dependencies {
+            identity(&dependency.slot)?;
+            identity(&dependency.handler)?;
+            identity(&dependency.input_type)?;
+            identity(&dependency.output_type)?;
+            if !slots.insert(&dependency.slot) {
+                return Err(Error::Invalid("duplicate dependency slot"));
+            }
+            if dependency.provider_version.trim().is_empty()
+                || dependency.provider_version.len() > 128
+                || dependency.provider_version.chars().any(char::is_control)
+            {
+                return Err(Error::Invalid("dependency version requirement"));
+            }
+            semver::VersionReq::parse(&dependency.provider_version)
+                .map_err(|_| Error::Invalid("dependency version requirement"))?;
+        }
         if registered == manifest.transform_handlers.is_empty()
             || (registered && manifest.guest_abi_version != 2)
         {

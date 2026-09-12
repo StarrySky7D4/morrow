@@ -28,7 +28,7 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 | 运行准备 | 验证 Wasm、禁止 start、检查固定导入和入口；将清单预算与宿主上限取较小值 | 编译／准备本身不执行插件；初始化内存限额在实例化时强制执行 |
 | 连接与调用 | 每次连接生成新实例，绑定包摘要与能力上限；实际调用仍检查对象授权 | 同名或新版本不继承旧实例权限；更换包必须重新连接 |
 
-原始 manifest 与整个归档字节被保留，未知可选字段不因解析丢失。未知必需语义必须声明在 `required_features` 中；当前仅支持 `transform-handlers-v1`，其他名称、重复名称均拒绝。未知能力、重复能力、缺少预算、错误摘要或版本均拒绝。后续依赖、入口扩展等不能仅追加未知字段并让旧宿主静默忽略。
+原始 manifest 与整个归档字节被保留，未知可选字段不因解析丢失。未知必需语义必须声明在 `required_features` 中；当前支持 `transform-handlers-v1` 与 `dependencies-v1`，其他名称、重复名称均拒绝。未知能力、重复能力、缺少预算、错误摘要或版本均拒绝。后续依赖、入口扩展等不能仅追加未知字段并让旧宿主静默忽略。
 
 `Catalog` 只接受宿主提供的根目录；包内名称不参与路径拼接。相同包重复／并发安装收敛到同一文件，已存在内容损坏时拒绝且不覆盖。这里假定目录归可信宿主管理，不宣称能隔离一个可任意修改宿主目录的外部进程。
 
@@ -76,3 +76,8 @@ cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/
 ## test.24 选择与批准持久化增量
 
 已新增独立 [插件注册表](PLUGIN_REGISTRY.md)，持久保存选中包、启用状态及批准上限，升级默认禁用，所有变更校验预期修订。该增量还未与实际实例启停和运行门控整合，不能据此宣称完整安装管理已完成。
+
+
+## test.29 依赖声明
+
+Manifest字段16可声明至多16个DependencyRequirement，以唯一slot、handler、输入／输出类型、提供者包SemVer范围和optional区分必需／可选接口。使用guest ABI v2；实际依赖必须标记 `dependencies-v1`，旧宿主会拒绝不认识的必需功能。声明不是批准，也不决定提供者身份；宿主核对候选包后记录具体摘要。当前打包CLI未增加依赖参数，可用Package API构造。详情见 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。

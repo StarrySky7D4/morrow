@@ -40,3 +40,8 @@ cargo clippy --offline --locked --manifest-path plugin_runtime/Cargo.toml --feat
 ## test.25 工作台接入
 
 Windows 主应用已通过此入口连接随包工作台，设置页支持启停和在线文字工具。批准状态位于活动库登记根，恢复内容快照不回滚该策略。首次安装策略、故障只读语义及实际运行范围见 [test.25 记录](../reports/test.25-managed-plugin-ui.md)。
+
+
+## test.29 依赖批准与原连接钉定
+
+Manager将Registry中的依赖批准重新绑定到自身创建且仍活跃的caller/provider。Control保存原ConnectionBinding；通过parts_mut错误替换连接后，归属、run、run_task和close检查拒绝错配，避免旧控制对象被误用于新连接。持久变更前按旧图停止传递必需消费者，可选消费者可保留但旧provider撤权仍使相关route／输出失效。记录不包含scope、期限或运行句柄，重启必须重新建立。见 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。

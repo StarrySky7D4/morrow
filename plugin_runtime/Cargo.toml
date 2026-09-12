@@ -69,3 +69,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_dependency"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_locked_dependency"
+required-features = ["packages"]
