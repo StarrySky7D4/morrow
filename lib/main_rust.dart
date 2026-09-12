@@ -1,3 +1,5 @@
+import 'package:file_selector/file_selector.dart';
+import 'plugins/workbench_recovery.dart';
 import 'plugins/workbench_self_check.dart';
 import 'plugins/canvas_self_check.dart';
 import 'dart:io';
@@ -19,6 +21,9 @@ Future<void> main(List<String> arguments) async {
     await qualifyCanvas(canvasCheck.substring('--canvas-check='.length));
     return;
   }
+  Directory? recoveryDirectory;
+  RustWorkbench? opened;
+  final executable = File(Platform.resolvedExecutable).parent.path;
   try {
     final check = arguments
         .where((v) => v.startsWith('--self-check='))
@@ -31,7 +36,6 @@ Future<void> main(List<String> arguments) async {
         original?.call(details);
       };
     }
-    final executable = File(Platform.resolvedExecutable).parent.path;
     final selected = arguments
         .where((v) => v.startsWith('--data-directory='))
         .firstOrNull;
@@ -40,6 +44,7 @@ Future<void> main(List<String> arguments) async {
           ? '${(await getApplicationSupportDirectory()).path}/rust-workbench'
           : selected.substring('--data-directory='.length),
     );
+    recoveryDirectory = directory;
     if (check != null &&
         (selected == null ||
             await File('${directory.path}/workbench.db').exists())) {
@@ -52,6 +57,7 @@ Future<void> main(List<String> arguments) async {
       package: '$executable/plugins/workbench.morrowplugin',
       directory: directory,
     );
+    opened = backend;
     if (check != null) await seedQualification(backend, directory);
     final storage = await RustStudioStorage.open(backend);
     final boundary = GlobalKey();
@@ -80,6 +86,7 @@ Future<void> main(List<String> arguments) async {
       });
     }
   } catch (error, stack) {
+    await opened?.close();
     final check = arguments
         .where((v) => v.startsWith('--self-check='))
         .firstOrNull;
@@ -89,24 +96,31 @@ Future<void> main(List<String> arguments) async {
       ).writeAsString('Startup failed: $error\n$stack');
       exit(1);
     }
-    const hostPrefix = 'Morrow workbench host: ';
-    final detail = error is StateError ? error.message.toString() : '';
-    final message = detail.startsWith(hostPrefix)
-        ? detail.substring(hostPrefix.length)
-        : '工作台暂时无法打开。请检查插件文件与数据目录，然后重新启动。原有资料未被覆盖。';
+    final targetDirectory = recoveryDirectory;
     runApp(
-      MaterialApp(
-        home: Scaffold(
-          body: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(message),
-              ),
-            ),
-          ),
-        ),
+      WorkbenchRecovery(
+        message: workbenchFailureMessage(error),
+        onRetry: () => main(arguments),
+        onRestore: targetDirectory == null
+            ? null
+            : () async {
+                final selected = await openFile(
+                  acceptedTypeGroups: const [
+                    XTypeGroup(
+                      label: '内容库保护文件',
+                      extensions: ['audit-key', 'backup'],
+                    ),
+                    XTypeGroup(label: '所有文件'),
+                  ],
+                );
+                if (selected == null) return;
+                await RustWorkbench.restoreKey(
+                  executable: '$executable/morrow-workbench-host.exe',
+                  directory: targetDirectory,
+                  selected: selected.path,
+                );
+                await main(arguments);
+              },
       ),
     );
   }

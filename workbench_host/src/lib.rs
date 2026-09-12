@@ -633,3 +633,18 @@ pub mod protocol;
 pub mod host_capnp {
     include!(concat!(env!("OUT_DIR"), "/host_capnp.rs"));
 }
+
+/// Trusted desktop control path; never exposed to a plugin guest.
+pub fn restore_key(database: &Path, selected: &Path) -> Result<()> {
+    #[cfg(target_os = "windows")]
+    {
+        morrow_audit::recovery::restore_key(database, selected)
+            .map_err(storage::session_message)?;
+        Ok(())
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = (database, selected);
+        Err("此平台的内容库密钥保护后端尚未接入。".into())
+    }
+}

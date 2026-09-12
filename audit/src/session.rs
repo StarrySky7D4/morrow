@@ -29,6 +29,8 @@ pub enum SessionError {
     KeyWithoutDatabase,
     KeyMismatch,
     InitializationRequired,
+    RecoveryRequiresBinding,
+    RecoveryPublishUnknown,
 }
 impl std::fmt::Display for SessionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -68,7 +70,7 @@ fn sibling(database: &Path, suffix: &str) -> Result<PathBuf> {
 pub fn key_path(database: &Path) -> Result<PathBuf> {
     sibling(database, ".audit-key")
 }
-fn reject_link(path: &Path) -> Result<()> {
+pub(crate) fn reject_link(path: &Path) -> Result<()> {
     match std::fs::symlink_metadata(path) {
         Ok(m) if m.file_type().is_symlink() => Err(SessionError::InvalidPath),
         Ok(_) => Ok(()),
@@ -76,29 +78,34 @@ fn reject_link(path: &Path) -> Result<()> {
         Err(e) => Err(e.into()),
     }
 }
+pub(crate) fn locked_database(database: &Path) -> Result<(PathBuf, File)> {
+    let parent = database
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or(Path::new("."))
+        .canonicalize()?;
+    let database = parent.join(database.file_name().ok_or(SessionError::InvalidPath)?);
+    let key_path = key_path(&database)?;
+    let lock_path = sibling(&database, ".audit-lock")?;
+    for path in [&database, &key_path, &lock_path] {
+        reject_link(path)?;
+    }
+    let lease = File::options()
+        .read(true)
+        .write(true)
+        .create(true)
+        .truncate(false)
+        .open(lock_path)?;
+    lease.try_lock().map_err(|e| match e {
+        std::fs::TryLockError::WouldBlock => SessionError::Busy,
+        std::fs::TryLockError::Error(e) => SessionError::Io(e),
+    })?;
+    Ok((database, lease))
+}
 impl Session {
     pub fn open(database: &Path, budget: EventBudget, mode: OpenMode) -> Result<Self> {
-        let parent = database
-            .parent()
-            .filter(|p| !p.as_os_str().is_empty())
-            .unwrap_or(Path::new("."))
-            .canonicalize()?;
-        let database = parent.join(database.file_name().ok_or(SessionError::InvalidPath)?);
+        let (database, lease) = locked_database(database)?;
         let key_path = key_path(&database)?;
-        let lock_path = sibling(&database, ".audit-lock")?;
-        for path in [&database, &key_path, &lock_path] {
-            reject_link(path)?;
-        }
-        let lease = File::options()
-            .read(true)
-            .write(true)
-            .create(true)
-            .truncate(false)
-            .open(lock_path)?;
-        lease.try_lock().map_err(|e| match e {
-            std::fs::TryLockError::WouldBlock => SessionError::Busy,
-            std::fs::TryLockError::Error(e) => SessionError::Io(e),
-        })?;
         if !database.try_exists()? {
             if key_path.try_exists()? {
                 return Err(SessionError::KeyWithoutDatabase);

@@ -108,13 +108,15 @@ impl Key {
         Self::load(path)
     }
     pub fn load(path: &Path) -> Result<Self> {
-        let file = std::fs::File::open(path)?;
-        let meta = file.metadata()?;
-        if !meta.is_file() || meta.len() > MAX_FILE as u64 {
-            return Err(KeyError::Format);
-        }
-        let mut bytes = Vec::new();
-        file.take(MAX_FILE as u64 + 1).read_to_end(&mut bytes)?;
+        let bytes = read_protected(path)?;
+        Self::from_protected(&bytes)
+    }
+    /// Read once; the validated ciphertext is exactly what recovery publishes.
+    pub(crate) fn validated_copy(path: &Path) -> Result<(Self, Vec<u8>)> {
+        let bytes = read_protected(path)?;
+        Ok((Self::from_protected(&bytes)?, bytes))
+    }
+    fn from_protected(bytes: &[u8]) -> Result<Self> {
         if bytes.len() > MAX_FILE || bytes.len() < 44 || !bytes.starts_with(MAGIC) {
             return Err(KeyError::Format);
         }
@@ -153,6 +155,19 @@ impl Key {
         };
         Ok(Self { signing, trust })
     }
+}
+pub(crate) fn read_protected(path: &Path) -> Result<Vec<u8>> {
+    let file = std::fs::File::open(path)?;
+    let meta = file.metadata()?;
+    if !meta.is_file() || meta.len() > MAX_FILE as u64 {
+        return Err(KeyError::Format);
+    }
+    let mut bytes = Vec::new();
+    file.take(MAX_FILE as u64 + 1).read_to_end(&mut bytes)?;
+    if bytes.len() > MAX_FILE {
+        return Err(KeyError::Format);
+    }
+    Ok(bytes)
 }
 fn unpack(bytes: &[u8], limit: usize) -> Result<Vec<u8>> {
     if bytes.len() < 4 || u32::from_le_bytes(bytes[..4].try_into().unwrap()) as usize > limit {

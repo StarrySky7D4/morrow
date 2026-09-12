@@ -19,18 +19,8 @@ pub struct Storage {
 impl Storage {
     #[cfg(target_os = "windows")]
     pub fn open(path: &Path) -> Result<Self> {
-        let session =
-            Session::open(path, Default::default(), OpenMode::Initialize).map_err(|e| match e {
-                SessionError::MissingKey => "内容库保护密钥缺失，请恢复原 .audit-key 文件后重试。",
-                SessionError::KeyMismatch | SessionError::Key(_) => {
-                    "内容库保护密钥不匹配或无法解密，请使用原文件及原系统账户。"
-                }
-                SessionError::KeyWithoutDatabase => {
-                    "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。"
-                }
-                SessionError::Busy => "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
-                _ => "内容库无法验证或打开，请保留原内容库与保护密钥后重试。",
-            })?;
+        let session = Session::open(path, Default::default(), OpenMode::Initialize)
+            .map_err(session_message)?;
         let mut storage = Self {
             session,
             warning: None,
@@ -102,5 +92,24 @@ impl DerefMut for Storage {
         {
             &mut self.host
         }
+    }
+}
+
+#[cfg(target_os = "windows")]
+pub(crate) fn session_message(e: SessionError) -> &'static str {
+    match e {
+        SessionError::MissingKey => "内容库保护密钥缺失，请恢复原 .audit-key 文件后重试。",
+        SessionError::KeyMismatch | SessionError::Key(_) => {
+            "内容库保护密钥不匹配或无法解密，请使用原文件及原系统账户。"
+        }
+        SessionError::KeyWithoutDatabase => "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。",
+        SessionError::Busy => "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
+        SessionError::RecoveryRequiresBinding => {
+            "此内容库尚未绑定保护文件，无法核对所选文件的归属。"
+        }
+        SessionError::RecoveryPublishUnknown => {
+            "恢复结果需要核对，请重试打开；原保护文件副本已保留（若此前存在）。"
+        }
+        _ => "内容库无法验证或打开，请保留原内容库与保护密钥后重试。",
     }
 }

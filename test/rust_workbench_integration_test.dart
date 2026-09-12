@@ -311,7 +311,23 @@ void main() {
           ),
         );
         expect(await key.exists(), isFalse);
-        await retained.rename(key.path);
+        final invalid = File('${directory.path}/invalid-backup');
+        await invalid.writeAsString('not a protected file');
+        await expectLater(
+          RustWorkbench.restoreKey(
+            executable: executable,
+            directory: directory,
+            selected: invalid.path,
+          ),
+          throwsStateError,
+        );
+        expect(await key.exists(), isFalse);
+        await RustWorkbench.restoreKey(
+          executable: executable,
+          directory: directory,
+          selected: retained.path,
+        );
+        expect(await retained.readAsBytes(), original);
         backend = await RustWorkbench.open(
           executable: executable,
           package: package,

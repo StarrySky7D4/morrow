@@ -9,6 +9,17 @@ fn main() {
 fn run() -> morrow_workbench_host::Result<()> {
     let mut args = std::env::args().skip(1);
     let database = args.next().ok_or("database path")?;
+    if database == "--restore-key" {
+        let database = args.next().ok_or("database path")?;
+        let selected = args.next().ok_or("original protected key path")?;
+        if args.next().is_some() {
+            return Err("unexpected recovery arguments".into());
+        }
+        return morrow_workbench_host::restore_key(
+            std::path::Path::new(&database),
+            std::path::Path::new(&selected),
+        );
+    }
     let package = args.next().ok_or("package path")?;
     let package = if std::path::Path::new(&package).is_file() {
         Some(morrow_core::plugin_package::catalog::read_file(

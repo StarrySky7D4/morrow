@@ -69,6 +69,23 @@ class RustWorkbench implements WorkbenchBackend {
     }
   }
 
+  /// The host verifies and restores protected bytes. Dart never loads secret material.
+  static Future<void> restoreKey({
+    required String executable,
+    required Directory directory,
+    required String selected,
+  }) async {
+    final result = await Process.run(executable, [
+      '--restore-key',
+      '${directory.path}/workbench.db',
+      selected,
+    ]);
+    if (result.exitCode != 0) {
+      final detail = result.stderr.toString().trim();
+      throw StateError(detail.isEmpty ? '恢复未完成，请重新打开内容库核对。' : detail);
+    }
+  }
+
   void _fail(Object error) {
     _failure ??= error;
     final pending = _response;
