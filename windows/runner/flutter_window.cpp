@@ -35,6 +35,38 @@ bool FlutterWindow::OnCreate() {
       &flutter::StandardMethodCodec::GetInstance());
   shape_channel_->SetMethodCallHandler(
       [this](const auto& call, auto result) {
+        if (call.method_name() == "startCanvasProbe") {
+          if (canvas_probe_.Start(GetHandle())) result->Success();
+          else result->Error("probe_unavailable", "Use the explicit canvas qualification mode.");
+          return;
+        }
+        if (call.method_name() == "sampleCanvasProbe") {
+          auto pixels = canvas_probe_.Sample();
+          if (pixels.size() == 63) result->Success(flutter::EncodableValue(pixels));
+          else result->Error("probe_occluded", "The owned fixture is occluded or unavailable.");
+          return;
+        }
+        if (call.method_name() == "setCanvasBlur") {
+          const auto* value = call.arguments() ? std::get_if<double>(call.arguments()) : nullptr;
+          double top_inset = 0;
+          if (const auto* map = call.arguments() ? std::get_if<flutter::EncodableMap>(call.arguments()) : nullptr) {
+            auto blur = map->find(flutter::EncodableValue("blur"));
+            auto inset = map->find(flutter::EncodableValue("topInset"));
+            if (blur != map->end()) value = std::get_if<double>(&blur->second);
+            if (inset != map->end()) {
+              if (const auto* number = std::get_if<double>(&inset->second)) top_inset = *number;
+            }
+          }
+          if (!value || !std::isfinite(*value) || *value < 0 || *value > 40 ||
+              !std::isfinite(top_inset) || top_inset < 0 || top_inset > 256) {
+            result->Error("invalid_blur", "Expected a finite blur from 0 to 40.");
+          } else if (canvas_backdrop_.Set(GetHandle(), *value, top_inset)) {
+            result->Success();
+          } else {
+            result->Error("backdrop_unavailable", "Desktop composition blur is unavailable.");
+          }
+          return;
+        }
         if (call.method_name() == "inspectRegion") {
           // Read-only diagnostics used by the native window regression test.
           RECT frame, client;
@@ -89,6 +121,7 @@ bool FlutterWindow::OnCreate() {
 }
 
 void FlutterWindow::OnDestroy() {
+  canvas_backdrop_.Reset();
   office_clipboard_ = nullptr;
   shape_channel_ = nullptr;
   if (flutter_controller_) {
@@ -129,6 +162,7 @@ bool FlutterWindow::ApplyWindowShape() {
     }
   }
   applying_shape_ = false;
+  canvas_backdrop_.UpdateBounds(hwnd);
   return success;
 }
 
@@ -136,6 +170,8 @@ LRESULT
 FlutterWindow::MessageHandler(HWND hwnd, UINT const message,
                               WPARAM const wparam,
                               LPARAM const lparam) noexcept {
+  if (message == WM_SIZE || message == WM_DPICHANGED || message == WM_WINDOWPOSCHANGED ||
+      message == WM_SHOWWINDOW || message == WM_ACTIVATE) canvas_backdrop_.UpdateBounds(hwnd);
   // Give Flutter, including plugins, an opportunity to handle window messages.
   if (flutter_controller_) {
     std::optional<LRESULT> result =

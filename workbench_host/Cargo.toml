@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-workbench-host"
+version = "0.1.9-test.13"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+[dependencies]
+morrow-core = {path = "../core"}
+morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
+morrow-workbench-plugin = {path = "../plugins/workbench"}
+capnp = "=0.24.1"
+sha2 = "=0.10.9"
+[build-dependencies]
+capnpc = "=0.24.0"
+[dev-dependencies]
+tempfile = "=3.27.0"

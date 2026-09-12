@@ -234,3 +234,72 @@ fn request_bounds_prevent_invalid_submissions() {
         );
     }
 }
+
+#[test]
+fn content_matches_independent_host_fixtures_and_binds_body_parts() {
+    let edit = req(Action::EditContent {
+        revision: u64::MAX - 1,
+        title: "消息 🪷".into(),
+        body: vec![0, 255, 42],
+        preview: "preview".into(),
+    });
+    let create = req(Action::CreateContent {
+        type_id: "morrow.note".into(),
+        format_version: 1,
+        title: "消息 🪷".into(),
+        body: vec![0, 255, 42],
+    });
+    let read = req(Action::ReadContent {
+        revision: u64::MAX,
+        offset: 2,
+        length: 3,
+    });
+    for (r, bytes) in [
+        (
+            &edit,
+            include_bytes!("../../tests/fixtures/content-edit-request.capnp").as_slice(),
+        ),
+        (
+            &create,
+            include_bytes!("../../tests/fixtures/content-create-request.capnp").as_slice(),
+        ),
+        (
+            &read,
+            include_bytes!("../../tests/fixtures/content-read-request.capnp").as_slice(),
+        ),
+    ] {
+        assert_eq!(r.encode().unwrap(), bytes);
+        Request::decode(bytes).unwrap();
+    }
+    let committed = include_bytes!("../../tests/fixtures/content-committed-reply.capnp");
+    assert!(matches!(
+        edit.decode_reply(committed).unwrap(),
+        Reply::ContentCommitted(_)
+    ));
+    assert_eq!(create.decode_reply(committed), Err(CodecError::Correlation));
+    let bytes = include_bytes!("../../tests/fixtures/content-reply.capnp");
+    let Reply::Content(part) = read.decode_reply(bytes).unwrap() else {
+        panic!()
+    };
+    assert_eq!(part.bytes, [0, 255, 42]);
+    assert_eq!(part.sha256, [9; 32]);
+    for wrong in [
+        req(Action::ReadContent {
+            revision: u64::MAX - 1,
+            offset: 2,
+            length: 3,
+        }),
+        req(Action::ReadContent {
+            revision: u64::MAX,
+            offset: 1,
+            length: 3,
+        }),
+        req(Action::ReadContent {
+            revision: u64::MAX,
+            offset: 2,
+            length: 2,
+        }),
+    ] {
+        assert_eq!(wrong.decode_reply(bytes), Err(CodecError::Correlation));
+    }
+}

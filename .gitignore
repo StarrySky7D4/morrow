@@ -62,3 +62,10 @@ app.*.map.json
 /core/target/
 
 /core-web/target/
+
+# Local build outputs of independent SDK/workbench crates.
+/sdk/rust/target/
+/plugins/workbench/target/
+/workbench_host/target/
+
+/audit/target/

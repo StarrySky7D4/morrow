@@ -1,0 +1,57 @@
+use morrow_core::plugin_package::{
+    Package, catalog,
+    proto::{Capability, TransformHandler},
+};
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut args = std::env::args().skip(1);
+    let module = std::fs::read(args.next().ok_or("module")?)?;
+    let destination = args.next().ok_or("archive")?;
+    let handlers = [
+        (
+            "capture.convert",
+            "morrow.capture.request.v1",
+            "morrow.capture.response.v1",
+        ),
+        (
+            "workbench.command",
+            "morrow.workbench.request.v1",
+            "morrow.workbench.response.v1",
+        ),
+        (
+            "studio.command",
+            "morrow.studio.request.v1",
+            "morrow.studio.response.v1",
+        ),
+        (
+            "studio.preferences",
+            "morrow.studio.preferences.v1",
+            "morrow.studio.preferences.v1",
+        ),
+    ]
+    .into_iter()
+    .map(|(handler, input_type, output_type)| TransformHandler {
+        handler: handler.into(),
+        input_type: input_type.into(),
+        output_type: output_type.into(),
+        max_input_bytes: 65536,
+        max_output_bytes: 65536,
+    })
+    .collect();
+    let mut manifest = Package::manifest_for_transform(
+        "org.morrow.workbench",
+        env!("CARGO_PKG_VERSION"),
+        &module,
+        handlers,
+    );
+    manifest.requested_capabilities = vec![
+        Capability::CreateContent as i32,
+        Capability::EditContent as i32,
+        Capability::ReadContent as i32,
+    ];
+    let package = Package::build(manifest, &module)?;
+    std::fs::write(&destination, package.archive())?;
+    let loaded = catalog::read_file(std::path::Path::new(&destination))?;
+    assert_eq!(loaded.digest(), package.digest());
+    println!("Bundled immutable Rust workbench package verified");
+    Ok(())
+}

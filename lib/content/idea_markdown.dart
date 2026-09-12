@@ -62,8 +62,10 @@ class IdeaMarkdown extends StatelessWidget {
           final name = uri.pathSegments.join('/');
           final matches = attachments.where(
             (a) =>
-                (a.source.name == name || a.source.location == name) &&
-                a.source.kind == TextureKind.image,
+                (a.source.name == name ||
+                    a.source.location == name ||
+                    a.pluginId == name) &&
+                [TextureKind.image, TextureKind.gif].contains(a.source.kind),
           );
           if (matches.isNotEmpty) {
             return _InlineAttachment(

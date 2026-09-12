@@ -100,6 +100,46 @@ public:
     return out;
   }
 };
+// Owns both text and binary body; no foreign spans escape encode/decode calls.
+class content_request {
+  uint32_t kind_ = 0, format_ = 0, length_ = 0;
+  uint64_t revision_ = 0, offset_ = 0;
+  std::string id_, card_, type_, title_, preview_;
+  std::vector<uint8_t> body_;
+  static mp_span span(const std::string& text) {
+    if (text.size() > UINT32_MAX) detail::codec_length_error();
+    return {reinterpret_cast<const uint8_t*>(text.data()), static_cast<uint32_t>(text.size())};
+  }
+  mp_content_request_v1 descriptor() const {
+    if (body_.size() > UINT32_MAX) detail::codec_length_error();
+    mp_content_request_v1 v{}; v.abi_version = 1; v.struct_size = sizeof(v);
+    v.kind = kind_; v.format_version = format_; v.request_id = span(id_); v.card_id = span(card_);
+    v.type_id = span(type_); v.title = span(title_); v.preview = span(preview_);
+    v.body = {body_.data(), static_cast<uint32_t>(body_.size())};
+    v.revision = revision_; v.offset = offset_; v.length = length_; return v;
+  }
+  friend class decoded_reply;
+ public:
+  static content_request create(std::string id, std::string card, std::string type,
+      uint32_t format, std::string title, std::vector<uint8_t> body) {
+    content_request v; v.kind_ = MP_CONTENT_CREATE; v.id_ = std::move(id); v.card_ = std::move(card);
+    v.type_ = std::move(type); v.format_ = format; v.title_ = std::move(title); v.body_ = std::move(body); return v;
+  }
+  static content_request edit(std::string id, std::string card, uint64_t revision,
+      std::string title, std::vector<uint8_t> body, std::string preview) {
+    content_request v; v.kind_ = MP_CONTENT_EDIT; v.id_ = std::move(id); v.card_ = std::move(card);
+    v.revision_ = revision; v.title_ = std::move(title); v.body_ = std::move(body); v.preview_ = std::move(preview); return v;
+  }
+  static content_request read(std::string id, std::string card, uint64_t revision, uint64_t offset, uint32_t length) {
+    content_request v; v.kind_ = MP_CONTENT_READ; v.id_ = std::move(id); v.card_ = std::move(card);
+    v.revision_ = revision; v.offset_ = offset; v.length_ = length; return v;
+  }
+  encoded_request encode() const {
+    auto v = descriptor(); encoded_request out{MP_CODEC_OK, std::vector<uint8_t>(MP_MAX_MESSAGE_BYTES)};
+    uint32_t length = 0; out.status = mp_content_request_encode(&v, out.bytes.data(), MP_MAX_MESSAGE_BYTES, &length);
+    out.bytes.resize(out.status == MP_CODEC_OK ? length : 0); return out;
+  }
+};
 // Move-only reply owner. view() spans remain borrowed until this owner is
 // destroyed or replaced; copy fields to retain them independently. No automatic
 // host retry.
@@ -133,6 +173,13 @@ public:
     auto r = expected.descriptor();
     result.status_ = mp_reply_decode(
         bytes.data(), static_cast<uint32_t>(bytes.size()), &r, &result.handle_);
+    return result;
+  }
+  static decoded_reply decode(const content_request &expected, const std::vector<uint8_t>& bytes) {
+    decoded_reply result;
+    if (bytes.size() > MP_MAX_MESSAGE_BYTES) { result.status_ = MP_CODEC_LIMIT; return result; }
+    auto v = expected.descriptor();
+    result.status_ = mp_content_reply_decode(bytes.data(), static_cast<uint32_t>(bytes.size()), &v, &result.handle_);
     return result;
   }
   uint32_t status() const { return status_; }

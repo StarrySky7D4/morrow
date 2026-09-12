@@ -204,6 +204,20 @@ pub unsafe extern "C" fn mp_reply_get(raw: *const c_void, out: *mut View, size: 
             ..Default::default()
         };
         match &h.reply {
+            Reply::ContentCommitted(r) => {
+                v.kind = 6;
+                v.state = 1;
+                receipt(&mut v, r);
+            }
+            Reply::Content(r) => {
+                v.kind = 7;
+                v.card_id = span(r.card_id.as_bytes());
+                v.revision = r.revision;
+                v.offset = r.offset;
+                v.total_length = r.total_length;
+                v.sha256 = span(&r.sha256);
+                v.bytes = span(&r.bytes);
+            }
             Reply::Renamed(r) => {
                 v.kind = 1;
                 v.state = 1;
@@ -320,6 +334,9 @@ pub unsafe extern "C" fn mp_task_get(raw: *const c_void, out: *mut TaskView, siz
             ..Default::default()
         };
         match &r.action {
+            Action::CreateContent { .. }
+            | Action::EditContent { .. }
+            | Action::ReadContent { .. } => return Err(CodecError::Contract),
             Action::Rename { revision, title } => {
                 request.kind = 1;
                 request.revision = *revision;
@@ -1058,4 +1075,229 @@ mod ui_tests {
             mp_ui_event_free(handle);
         }
     }
+}
+
+/// Independent additive ABI: existing request and task structures retain their layouts.
+#[repr(C)]
+#[derive(Default)]
+pub struct CContentRequest {
+    abi_version: u32,
+    struct_size: u32,
+    kind: u32,
+    format_version: u32,
+    request_id: Span,
+    card_id: Span,
+    type_id: Span,
+    title: Span,
+    body: Span,
+    preview: Span,
+    revision: u64,
+    offset: u64,
+    length: u32,
+}
+unsafe fn content_request(raw: *const CContentRequest) -> Result<Request, CodecError> {
+    if raw.is_null() {
+        return Err(CodecError::Invalid);
+    }
+    let v = unsafe { &*raw };
+    if v.abi_version != 1 || v.struct_size < size_of::<CContentRequest>() as u32 {
+        return Err(CodecError::Contract);
+    }
+    let r = unsafe {
+        Request {
+            request_id: read_text(v.request_id, 256)?,
+            card_id: read_text(v.card_id, 256)?,
+            action: match v.kind {
+                1 | 2 => {
+                    if v.body.length > 32768 {
+                        return Err(CodecError::Limit);
+                    }
+                    if v.body.length != 0 && v.body.data.is_null() {
+                        return Err(CodecError::Invalid);
+                    }
+                    let body = if v.body.length == 0 {
+                        Vec::new()
+                    } else {
+                        std::slice::from_raw_parts(v.body.data, v.body.length as usize).to_vec()
+                    };
+                    let title = read_text(v.title, 16384)?;
+                    if v.kind == 1 {
+                        Action::CreateContent {
+                            type_id: read_text(v.type_id, 256)?,
+                            format_version: v.format_version,
+                            title,
+                            body,
+                        }
+                    } else {
+                        Action::EditContent {
+                            revision: v.revision,
+                            title,
+                            body,
+                            preview: read_text(v.preview, 16384)?,
+                        }
+                    }
+                }
+                3 => Action::ReadContent {
+                    revision: v.revision,
+                    offset: v.offset,
+                    length: v.length,
+                },
+                _ => return Err(CodecError::Invalid),
+            },
+        }
+    };
+    r.validate()?;
+    Ok(r)
+}
+/// # Safety
+/// All pointers are aligned, disjoint and valid for their declared lengths for this call.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_content_request_encode(
+    raw: *const CContentRequest,
+    out: *mut u8,
+    capacity: u32,
+    length: *mut u32,
+) -> u32 {
+    if length.is_null() {
+        return 16;
+    }
+    unsafe {
+        *length = 0;
+    }
+    guard(|| {
+        if out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        let bytes = unsafe { content_request(raw) }?.encode()?;
+        if bytes.len() > capacity as usize {
+            return Err(CodecError::Limit);
+        }
+        unsafe {
+            std::ptr::copy_nonoverlapping(bytes.as_ptr(), out, bytes.len());
+            *length = bytes.len() as u32;
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Inputs are readable and aligned; out is a disjoint writable handle slot.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_content_reply_decode(
+    bytes: *const u8,
+    length: u32,
+    raw: *const CContentRequest,
+    out: *mut *mut c_void,
+) -> u32 {
+    if out.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+    }
+    guard(|| {
+        if bytes.is_null() || length == 0 {
+            return Err(CodecError::Invalid);
+        }
+        if length as usize > crate::MAX_MESSAGE_BYTES {
+            return Err(CodecError::Limit);
+        }
+        let request = unsafe { content_request(raw) }?;
+        let reply =
+            request.decode_reply(unsafe { std::slice::from_raw_parts(bytes, length as usize) })?;
+        unsafe {
+            *out = Box::into_raw(Box::new(Handle {
+                request_id: request.request_id,
+                reply,
+            }))
+            .cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// raw is a live SDK task and out is a disjoint aligned writable view.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_get_content(
+    raw: *const c_void,
+    out: *mut CContentRequest,
+    size: u32,
+) -> u32 {
+    guard(|| {
+        if raw.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if size < size_of::<CContentRequest>() as u32 {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        let r = task.request().ok_or(CodecError::Invalid)?;
+        let mut v = CContentRequest {
+            abi_version: 1,
+            struct_size: size_of::<CContentRequest>() as u32,
+            request_id: span(r.request_id.as_bytes()),
+            card_id: span(r.card_id.as_bytes()),
+            ..Default::default()
+        };
+        match &r.action {
+            Action::CreateContent {
+                type_id,
+                format_version,
+                title,
+                body,
+            } => {
+                v.kind = 1;
+                v.type_id = span(type_id.as_bytes());
+                v.format_version = *format_version;
+                v.title = span(title.as_bytes());
+                v.body = span(body);
+            }
+            Action::EditContent {
+                revision,
+                title,
+                body,
+                preview,
+            } => {
+                v.kind = 2;
+                v.revision = *revision;
+                v.title = span(title.as_bytes());
+                v.body = span(body);
+                v.preview = span(preview.as_bytes());
+            }
+            Action::ReadContent {
+                revision,
+                offset,
+                length,
+            } => {
+                v.kind = 3;
+                v.revision = *revision;
+                v.offset = *offset;
+                v.length = *length;
+            }
+            _ => return Err(CodecError::Contract),
+        }
+        unsafe {
+            out.write(v);
+        }
+        Ok(())
+    })
+}
+
+/// # Safety
+/// raw is a live SDK task; out is disjoint, aligned and writable. The returned span borrows the task.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_task_get_command(raw: *const c_void, out: *mut Span, size: u32) -> u32 {
+    guard(|| {
+        if raw.is_null() || out.is_null() {
+            return Err(CodecError::Invalid);
+        }
+        if size < size_of::<Span>() as u32 {
+            return Err(CodecError::Limit);
+        }
+        let task = unsafe { &*raw.cast::<crate::task::Invocation>() };
+        task.request().ok_or(CodecError::Contract)?;
+        unsafe {
+            out.write(span(task.command_bytes()));
+        }
+        Ok(())
+    })
 }

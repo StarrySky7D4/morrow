@@ -7,6 +7,9 @@ enum Capability {
   READ_SUMMARY = 2;
   QUERY_OPERATION = 3;
   READ_ATTACHMENT = 4;
+  CREATE_CONTENT = 5;
+  EDIT_CONTENT = 6;
+  READ_CONTENT = 7;
 }
 message ExecutionBudget {
   uint64 fuel = 1;

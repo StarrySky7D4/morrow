@@ -1,6 +1,6 @@
 # Morrow 第三方插件 SDK 原型
 
-基于 0.1.9-test.10，运行期协议 v6，实验本地 ABI v1。当前提供 **传输接口与四类内容命令的类型化编解码**，已增加 C／C++／Rust Wasm guest 适配原型，但尚未建立正式插件加载器、完整内容／UI API 或稳定 ABI。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
+基于 0.1.9-test.11，运行期协议 v7，实验本地 ABI v1。当前提供 **传输、七类内容命令、任务完成／失败、转换与声明式 UI 编解码**，C／C++／Rust 均可编译为 Wasm guest。插件包、能力上限、实际实例授权和有界任务执行已接通；完整安装升级管理与稳定 ABI 仍在推进。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
 
 | 语言 | 入口 | 使用方式 |
 | --- | --- | --- |
@@ -18,6 +18,11 @@ SDK 不链接可信核心，不提供创建宿主、授予权限、直接打开 
 | 读取摘要 | 请求 ID、卡片 ID | 类型、格式版本、修订、标题和预览 |
 | 查询操作结果 | 请求 ID、卡片 ID、被查询操作 ID | 当前快照不存在／本地已提交回执 |
 | 读取附件片段 | 请求 ID、卡片／附件 ID、预期修订、偏移和长度 | 有界字节、总长度和完整附件摘要 |
+| 创建正文 | 操作 ID、卡片 ID、类型、格式版本、标题、二进制正文 | 修订 1 的提交回执 |
+| 编辑正文 | 操作 ID、卡片 ID、预期修订、标题、正文、预览 | 保留附件与未知外层字段的提交回执 |
+| 读取正文片段 | 请求 ID、卡片 ID、预期修订、偏移、长度 | 正文字节、总长度和完整正文 SHA-256 |
+
+新接口用法与边界见 [正文 API](CONTENT_API.md)。v7 改变运行期契约摘要，旧 v6 插件需要重新构建和打包；不把更新头文件视为旧二进制兼容。C ABI 增加独立结构与函数，原 `mp_request_v1` 和 `mp_task_view` 布局不变。
 
 修订和偏移保持无损 UInt64。SDK 校验版本与两份 Schema 摘要、请求 ID、响应类型、目标，以及适用的操作 ID、修订和偏移。附件响应仅是片段；必须核对完整长度与 SHA-256 后才可作为完整附件发布。当前 SDK 尚未封装整文件装配与摘要验证。
 
@@ -37,11 +42,11 @@ C 返回不透明 mp_reply；mp_reply_get 的视图由该响应拥有，释放�
 pwsh -File tool/verify_plugin_sdk.ps1
 ```
 
-固定契约随 Rust SDK 保存，可脱离宿主源码独立构建。修改核心 Schema 后运行 tool/sync_plugin_sdk_contracts.py 更新快照；验证脚本以 --check 防止契约漂移。十份二进制样本由 core/examples/sdk_codec_vectors.rs 独立生成并与提交样本比对，不允许只靠 SDK 自身编码／解码互证。
+固定契约随 Rust SDK 保存，可脱离宿主源码独立构建。修改核心 Schema 后运行 tool/sync_plugin_sdk_contracts.py 更新快照；验证脚本以 --check 防止契约漂移。十五份二进制样本由 core/examples/sdk_codec_vectors.rs 独立生成并与提交样本比对，不允许只靠 SDK 自身编码／解码互证。
 
 产物位于 build/plugin-sdk：morrow_plugin_sdk.lib 为 C 传输库；rust/debug/morrow_plugin_sdk.dll 与 .dll.lib 为编解码动态库及导入库；C／C++ 测试程序位于上层。测试数据库和请求／回复全部采用独立合成资料。本轮日志保存在 build/plugin-sdk/verification.log。
 
-## 本轮验证结果
+## 原生传输初始阶段验证记录
 
 Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **15 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。上述原生测试之外，三语言 Wasm 实际执行结果见下一节和执行后端说明。
 
@@ -91,3 +96,9 @@ Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其�
 已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。
 
 Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_node`／`mp_ui_document_free` 读取有所有权的上次 UI 快照；输出 spans 随文档句柄释放而失效，读取接口不授予宿主权限。三种差异化工具及专用会话帧见 [Demo 02](../demos/plugin_stage_windows/README.md)。原有 `examples/*-ui` 仍保留简洁的标题编辑示例。
+
+## test.11 增量验证
+
+七种请求与新正文回复由独立核心生成样本，Rust SDK 和 C++ 经 C ABI 对照验证。真实 Rust、C、C++ Wasm 模块均已在 Wasmi 宿主完成创建、编辑、读取二进制正文尾片段和撤销拒绝；每次任务仅一次 host call，完成记录与核心权威响应绑定。命令通用视图使用 `mp_task_get_command`／`task.command()`；需要新命令参数时使用 `mp_task_get_content`／`task.content()`。旧 `mp_task_get` 对新类型明确返回协议不适用，不返回空参数冒充旧命令。
+
+复验：先构建 `sdk/examples/rust-task` 和执行 `tool/build_plugin_c_wasm.ps1`，再运行 `plugin_runtime/examples/qualify_content_sdk.rs`，传入三份 task Wasm 文件。宿主测试、完整功能与平台限制见 [本轮对照记录](../docs/TEST1_RUST_PARITY.md)。

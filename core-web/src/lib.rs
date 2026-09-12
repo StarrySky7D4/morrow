@@ -568,6 +568,8 @@ impl DecodedResponse {
     pub fn kind(&self) -> String {
         match &self.response.outcome {
             Outcome::Renamed(_) => "renamed",
+            Outcome::ContentCommitted(_) => "contentCommitted",
+            Outcome::ContentChunk(_) => "contentChunk",
             Outcome::Summary(_) => "summary",
             Outcome::AttachmentChunk(_) => "attachmentChunk",
             Outcome::Rejected(_) => "rejected",
@@ -578,7 +580,8 @@ impl DecodedResponse {
     #[wasm_bindgen(getter)]
     pub fn revision(&self) -> Option<u64> {
         match &self.response.outcome {
-            Outcome::Renamed(v) => Some(v.revision),
+            Outcome::Renamed(v) | Outcome::ContentCommitted(v) => Some(v.revision),
+            Outcome::ContentChunk(v) => Some(v.revision),
             Outcome::Summary(v) => Some(v.revision),
             Outcome::AttachmentChunk(v) => Some(v.revision),
             Outcome::OperationResult {
@@ -614,7 +617,8 @@ impl DecodedResponse {
             Outcome::OperationResult { card_id, .. } => Some(card_id.clone()),
             Outcome::Summary(v) => Some(v.id.clone()),
             Outcome::AttachmentChunk(v) => Some(v.card_id.clone()),
-            Outcome::Renamed(v) => Some(v.card_id.clone()),
+            Outcome::Renamed(v) | Outcome::ContentCommitted(v) => Some(v.card_id.clone()),
+            Outcome::ContentChunk(v) => Some(v.card_id.clone()),
             _ => None,
         }
     }
@@ -622,7 +626,7 @@ impl DecodedResponse {
     pub fn operation_id(&self) -> Option<String> {
         match &self.response.outcome {
             Outcome::OperationResult { operation_id, .. } => Some(operation_id.clone()),
-            Outcome::Renamed(v) => Some(v.operation_id.clone()),
+            Outcome::Renamed(v) | Outcome::ContentCommitted(v) => Some(v.operation_id.clone()),
             _ => None,
         }
     }
@@ -637,6 +641,7 @@ impl DecodedResponse {
     pub fn offset(&self) -> Option<u64> {
         match &self.response.outcome {
             Outcome::AttachmentChunk(v) => Some(v.offset),
+            Outcome::ContentChunk(v) => Some(v.offset),
             _ => None,
         }
     }
@@ -644,6 +649,7 @@ impl DecodedResponse {
     pub fn total_length(&self) -> Option<u64> {
         match &self.response.outcome {
             Outcome::AttachmentChunk(v) => Some(v.total_length),
+            Outcome::ContentChunk(v) => Some(v.total_length),
             _ => None,
         }
     }
@@ -655,9 +661,17 @@ impl DecodedResponse {
         }
     }
     #[wasm_bindgen(getter)]
+    pub fn body_sha256(&self) -> Option<Vec<u8>> {
+        match &self.response.outcome {
+            Outcome::ContentChunk(v) => Some(v.body_sha256.to_vec()),
+            _ => None,
+        }
+    }
+    #[wasm_bindgen(getter)]
     pub fn bytes(&self) -> Option<Vec<u8>> {
         match &self.response.outcome {
             Outcome::AttachmentChunk(v) => Some(v.bytes.clone()),
+            Outcome::ContentChunk(v) => Some(v.bytes.clone()),
             _ => None,
         }
     }

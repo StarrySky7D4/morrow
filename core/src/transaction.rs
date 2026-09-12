@@ -35,6 +35,54 @@ pub fn create_command(operation_id: &str, card: &CardRecord) -> Result<Vec<u8>> 
     }
     .encode_to_vec())
 }
+pub fn content_command(change: &crate::content_change::ContentChange) -> Result<Vec<u8>> {
+    change.validate()?;
+    Ok(proto::Command {
+        schema_version: 1,
+        operation_id: change.operation_id.clone(),
+        action: Some(proto::command::Action::SetContent(proto::SetContent {
+            card_id: change.card_id.clone(),
+            expected_revision: change.expected_revision,
+            title: change.title.clone(),
+            body: change.body.clone(),
+            preview_text: change.preview_text.clone(),
+            attachments: change
+                .attachments
+                .as_ref()
+                .map(|items| proto::AttachmentList {
+                    items: items
+                        .iter()
+                        .map(|v| proto::AttachmentRef {
+                            id: v.id.clone(),
+                            display_name: v.display_name.clone(),
+                            media_type: v.media_type.clone(),
+                            byte_length: v.byte_length,
+                            sha256: v.sha256.to_vec(),
+                        })
+                        .collect(),
+                }),
+        })),
+    }
+    .encode_to_vec())
+}
+fn content_value(
+    operation_id: &str,
+    value: &proto::SetContent,
+) -> Result<crate::content_change::ContentChange> {
+    Ok(crate::content_change::ContentChange {
+        operation_id: operation_id.into(),
+        card_id: value.card_id.clone(),
+        expected_revision: value.expected_revision,
+        title: value.title.clone(),
+        body: value.body.clone(),
+        preview_text: value.preview_text.clone(),
+        attachments: value
+            .attachments
+            .as_ref()
+            .map(|v| attachment_values(&v.items))
+            .transpose()?,
+    })
+}
 pub fn rename_command(request: &RenameRequest) -> Result<Vec<u8>> {
     request.validate()?;
     Ok(proto::Command {
@@ -154,6 +202,9 @@ pub fn decode_command(raw: &[u8]) -> Result<proto::Command> {
                 &attachment_values(&change.attachments)?,
             )?;
         }
+        Some(proto::command::Action::SetContent(change)) => {
+            content_value(&value.operation_id, change)?.validate()?
+        }
         None => return Err(Error::Invalid("stored action")),
     }
     Ok(value)
@@ -168,6 +219,19 @@ pub fn encode_commit(command: Vec<u8>, card: &CardRecord) -> Result<Vec<u8>> {
     }
     if let Some(proto::command::Action::SetAttachments(change)) = &value.action
         && card.attachments() != attachment_values(&change.attachments)?
+    {
+        return Err(Error::Integrity);
+    }
+    if let Some(proto::command::Action::SetContent(change)) = &value.action
+        && let Some(items) = &change.attachments
+        && card.attachments() != attachment_values(&items.items)?
+    {
+        return Err(Error::Integrity);
+    }
+    if let Some(proto::command::Action::SetContent(change)) = &value.action
+        && (summary.title != change.title
+            || card.body() != change.body
+            || summary.preview_text != change.preview_text)
     {
         return Err(Error::Integrity);
     }
@@ -213,6 +277,13 @@ pub fn decode_commit(bytes: &[u8]) -> Result<(proto::Commit, Receipt)> {
         return Err(Error::Integrity);
     }
     match command.action.unwrap() {
+        proto::command::Action::SetContent(change) => {
+            if change.card_id != commit.card_id
+                || change.expected_revision.checked_add(1) != Some(commit.revision)
+            {
+                return Err(Error::Integrity);
+            }
+        }
         proto::command::Action::CreateCard(raw) => {
             let card = CardRecord::decode(&raw)?;
             if card

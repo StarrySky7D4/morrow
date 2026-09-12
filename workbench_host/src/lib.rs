@@ -1,0 +1,627 @@
+//! Trusted application host. Guests have ordinary package-bound tasks and exact
+//! object grants. UI reads remain available when the package is unavailable.
+use morrow_core::{
+    content::{Attachment, CardRecord},
+    content_change::ContentChange,
+    dispatch::{Connection, HostRuntime},
+    lifecycle::GrantKind,
+    plugin_package::Package,
+    store::{EventBudget, Store},
+    task::{Invocation, Transform},
+};
+use morrow_plugin_runtime::{Limits, package::PreparedPackage};
+use morrow_workbench_plugin::{Action, Asset, Idea, Request, Response, codec, persistence};
+use std::{
+    collections::BTreeMap,
+    path::Path,
+    time::{Instant, SystemTime, UNIX_EPOCH},
+};
+pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+pub mod transfer;
+
+pub struct Record {
+    pub idea: Idea,
+    pub revision: u64,
+}
+pub struct Mutation<'a> {
+    pub operation: &'a str,
+    pub id: &'a str,
+    pub revision: u64,
+    pub action: Action,
+    pub proposed: Option<Idea>,
+    pub text: &'a str,
+    pub flag: bool,
+}
+pub struct Workbench {
+    host: HostRuntime,
+    plugin: Option<PreparedPackage>,
+    connection: Option<Connection>,
+    start: Instant,
+    counter: u64,
+    undo: BTreeMap<String, (u64, u64)>,
+    staged: BTreeMap<(String, String), Attachment>,
+    transfers: transfer::Transfers,
+}
+fn command(action: Action) -> Request {
+    Request {
+        action,
+        current: Idea::default(),
+        proposed: Idea::default(),
+        text: String::new(),
+        flag: false,
+        now_ms: 0,
+        ideas: vec![],
+        section: "概览".into(),
+        filter: "全部".into(),
+        sort: "最近添加".into(),
+    }
+}
+fn now(start: Instant) -> u64 {
+    u64::try_from(start.elapsed().as_millis())
+        .unwrap_or(u64::MAX - 1)
+        .saturating_add(1)
+}
+impl Workbench {
+    pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
+        let store = Store::open(path, EventBudget::default())?;
+        store.integrity_check()?;
+        let mut host = HostRuntime::new(store)?;
+        let plugin = package
+            .map(|p| {
+                PreparedPackage::new(p, Limits::default())
+                    .map_err(|e| format!("plugin preparation: {e:?}"))
+            })
+            .transpose()?;
+        let connection = plugin.as_ref().map(|p| p.connect(&mut host)).transpose()?;
+        Ok(Self {
+            host,
+            plugin,
+            connection,
+            start: Instant::now(),
+            counter: 0,
+            undo: BTreeMap::new(),
+            staged: BTreeMap::new(),
+            transfers: transfer::Transfers::default(),
+        })
+    }
+    pub fn writable(&self) -> bool {
+        self.plugin.is_some()
+    }
+    fn grant(&mut self, id: &str, kind: GrantKind) -> Result<()> {
+        let time = now(self.start);
+        self.host.grant(
+            self.connection.as_mut().ok_or("plugin unavailable")?,
+            kind,
+            id,
+            time.saturating_add(5000),
+            time,
+        )?;
+        Ok(())
+    }
+    fn revoke(&mut self, id: &str, kind: GrantKind) -> Result<()> {
+        self.host.revoke(
+            self.connection.as_mut().ok_or("plugin unavailable")?,
+            kind,
+            id,
+        )?;
+        Ok(())
+    }
+    fn run(&mut self, input: Request) -> Result<Response> {
+        self.counter = self
+            .counter
+            .checked_add(1)
+            .ok_or("task counter exhausted")?;
+        let task = Invocation::new_transform(
+            &format!("workbench-{}", self.counter),
+            Transform {
+                handler: "workbench.command".into(),
+                input_type: "morrow.workbench.request.v1".into(),
+                output_type: "morrow.workbench.response.v1".into(),
+                input: codec::encode_request(&input)?,
+            },
+        )?;
+        let start = self.start;
+        let r = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
+            &mut self.host,
+            self.connection.as_ref().ok_or("plugin unavailable")?,
+            &task,
+            || now(start),
+            Default::default(),
+        );
+        if r.execution.outcome != Ok(0) || r.execution.host_calls != 0 || r.response.is_some() {
+            return Err(format!("plugin failed: {:?}", r.execution.outcome).into());
+        }
+        if let Some(f) = r.failure {
+            return Err(f.message.into());
+        }
+        let out = r.output.ok_or("missing plugin output")?;
+        if out.type_id != "morrow.workbench.response.v1" {
+            return Err("unexpected plugin result".into());
+        }
+        Ok(codec::decode_response(&out.bytes)?)
+    }
+    fn decode(card: &CardRecord) -> Result<Record> {
+        let s = card.summary();
+        if s.type_id != "org.morrow.idea" || s.format_version != 1 {
+            return Err("unsupported content type".into());
+        }
+        Ok(Record {
+            idea: persistence::decode(&s.id, &s.title, &card.body())?,
+            revision: s.revision,
+        })
+    }
+    /// Trusted local UI projection, independent of plugin availability. No mutation.
+    pub fn read(&self, id: &str) -> Result<Record> {
+        Self::decode(&self.host.store_local().card(id)?.ok_or("card not found")?)
+    }
+    pub fn page(&self, after: &str, limit: u32) -> Result<(Vec<Record>, String)> {
+        let ids = self.host.store_local().card_ids_local(after, limit)?;
+        let cursor = ids.last().cloned().unwrap_or_default();
+        let mut result = Vec::new();
+        for id in ids {
+            let card = self
+                .host
+                .store_local()
+                .card(&id)?
+                .ok_or("card disappeared")?;
+            if card.summary().type_id == "org.morrow.idea" {
+                result.push(Self::decode(&card)?);
+            }
+        }
+        Ok((result, cursor))
+    }
+    fn authorized_read(&mut self, id: &str) -> Result<CardRecord> {
+        self.grant(id, GrantKind::ReadContent)?;
+        let start = self.start;
+        let result = self
+            .host
+            .read_content(self.connection.as_ref().unwrap(), id, || now(start));
+        self.revoke(id, GrantKind::ReadContent)?;
+        Ok(result?)
+    }
+    /// Called only with a platform-selected stream, never a guest path. A staged
+    /// attachment is scoped to the destination card and survives failed commits.
+    pub fn import(
+        &mut self,
+        card: &str,
+        name: &str,
+        kind: &str,
+        reader: &mut impl std::io::Read,
+        size: u64,
+    ) -> Result<Asset> {
+        if !self.writable() {
+            return Err("plugin unavailable".into());
+        }
+        let probe = Idea {
+            id: card.into(),
+            title: "attachment".into(),
+            category: "灵感".into(),
+            stage: "待整理".into(),
+            assets: vec![Asset {
+                id: "pending".into(),
+                name: name.into(),
+                kind: kind.into(),
+                bytes: size,
+            }],
+            ..Default::default()
+        };
+        probe.validate()?;
+        let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+        let blob = self
+            .host
+            .store_local_mut()
+            .stage_blob(reader, size, None, clock)?;
+        let id = format!("asset-{}", blob.id);
+        let item = Attachment {
+            id: id.clone(),
+            display_name: name.into(),
+            media_type: match kind {
+                "image" => "image/*",
+                "gif" => "image/gif",
+                "video" => "video/*",
+                "audio" => "audio/*",
+                _ => "application/octet-stream",
+            }
+            .into(),
+            byte_length: size,
+            sha256: blob.sha256,
+        };
+        self.staged.insert((card.into(), id.clone()), item);
+        Ok(Asset {
+            id,
+            name: name.into(),
+            kind: kind.into(),
+            bytes: size,
+        })
+    }
+    fn attachments(&self, next: &Idea, old: Option<&CardRecord>) -> Result<Vec<Attachment>> {
+        let existing = old.map(CardRecord::attachments).unwrap_or_default();
+        next.assets
+            .iter()
+            .map(|a| {
+                let item = self
+                    .staged
+                    .get(&(next.id.clone(), a.id.clone()))
+                    .or_else(|| existing.iter().find(|v| v.id == a.id))
+                    .ok_or("attachment outside selected card")?;
+                if a.bytes != item.byte_length || a.name != item.display_name {
+                    return Err("attachment metadata mismatch".into());
+                }
+                Ok(item.clone())
+            })
+            .collect()
+    }
+    pub fn create(&mut self, operation: &str, draft: Idea) -> Result<Record> {
+        let id = draft.id.clone();
+        let mut req = command(Action::Create);
+        req.proposed = draft;
+        let next = self.run(req)?.idea;
+        next.validate()?;
+        if next.id != id {
+            return Err("plugin changed identity".into());
+        }
+        let attachments = self.attachments(&next, None)?;
+        let record = CardRecord::new_with_attachments(
+            &id,
+            "org.morrow.idea",
+            1,
+            &next.title,
+            persistence::encode(&next, None)?,
+            &attachments,
+        )?;
+        self.grant(&id, GrantKind::CreateContent)?;
+        let start = self.start;
+        let result = self.host.create_content(
+            self.connection.as_ref().unwrap(),
+            operation,
+            &record,
+            || now(start),
+        );
+        self.revoke(&id, GrantKind::CreateContent)?;
+        result?;
+        self.staged.retain(|(card, _), _| card != &id);
+        self.read(&id)
+    }
+    pub fn apply(&mut self, mutation: Mutation<'_>) -> Result<Record> {
+        let Mutation {
+            operation,
+            id,
+            revision,
+            action,
+            proposed,
+            text,
+            flag,
+        } = mutation;
+        if matches!(action, Action::Create | Action::Query) {
+            return Err("wrong command route".into());
+        }
+        let prior = self.authorized_read(id)?;
+        let old = Self::decode(&prior)?;
+        if old.revision != revision {
+            return Err("revision conflict".into());
+        }
+        let time = now(self.start);
+        if action == Action::Restore
+            && !self
+                .undo
+                .get(id)
+                .is_some_and(|&(r, deadline)| r == revision && time < deadline)
+        {
+            return Err("undo expired".into());
+        }
+        let mut req = command(action);
+        req.current = old.idea;
+        if action == Action::Edit {
+            req.current.description.clear();
+            req.current.hypothesis.clear();
+            req.current.conclusion.clear();
+        }
+        req.proposed = proposed.unwrap_or_default();
+        req.text = text.into();
+        req.flag = flag;
+        req.now_ms = time;
+        let next = self.run(req)?.idea;
+        next.validate()?;
+        if next.id != id {
+            return Err("plugin changed identity".into());
+        }
+        let attachments = self.attachments(&next, Some(&prior))?;
+        let mut preview = next.description.clone();
+        if preview.len() > 16384 {
+            let mut n = 16384;
+            while !preview.is_char_boundary(n) {
+                n -= 1;
+            }
+            preview.truncate(n);
+        }
+        let change = ContentChange {
+            operation_id: operation.into(),
+            card_id: id.into(),
+            expected_revision: revision,
+            title: next.title.clone(),
+            body: persistence::encode(&next, Some(&prior.body()))?,
+            preview_text: preview,
+            attachments: Some(attachments),
+        };
+        self.grant(id, GrantKind::EditContent)?;
+        let start = self.start;
+        let result = self
+            .host
+            .edit_content(self.connection.as_ref().unwrap(), &change, || now(start));
+        self.revoke(id, GrantKind::EditContent)?;
+        let receipt = result?;
+        if action == Action::Delete {
+            self.undo
+                .insert(id.into(), (receipt.revision, time.saturating_add(8000)));
+        } else {
+            self.undo.remove(id);
+        }
+        self.staged.retain(|(card, _), _| card != id);
+        self.read(id)
+    }
+    pub fn export(
+        &self,
+        card: &str,
+        attachment: &str,
+        writer: &mut impl std::io::Write,
+    ) -> Result<()> {
+        self.host
+            .store_local()
+            .export_attachment_local(card, attachment, writer)?;
+        Ok(())
+    }
+    /// Batches are limited by both record count and encoded bytes. Sorting runs
+    /// use compact keys, so large body text is not repeatedly copied for ordering.
+    pub fn query(
+        &mut self,
+        section: &str,
+        filter: &str,
+        text: &str,
+        sort: &str,
+    ) -> Result<Vec<String>> {
+        let mut cursor = String::new();
+        let mut input = command(Action::Query);
+        input.section = section.into();
+        input.filter = filter.into();
+        input.text = text.into();
+        let mut keys = BTreeMap::new();
+        let mut found = Vec::new();
+        loop {
+            let (records, next) = self.page(&cursor, 128)?;
+            if next.is_empty() {
+                break;
+            }
+            cursor = next;
+            for record in records {
+                let card = self.authorized_read(&record.idea.id)?;
+                let idea = Self::decode(&card)?.idea;
+                input.ideas.push(idea.clone());
+                if input.ideas.len() > 128 || codec::encode_request(&input).is_err() {
+                    input.ideas.pop();
+                    if input.ideas.is_empty() {
+                        return Err("card exceeds query message budget".into());
+                    }
+                    found.extend(self.run(input.clone())?.ids);
+                    input.ideas = vec![idea.clone()];
+                }
+                let mut key = idea;
+                key.description.clear();
+                key.hypothesis.clear();
+                key.conclusion.clear();
+                key.assets.clear();
+                key.todos.clear();
+                key.completed.clear();
+                if key.title.trim().is_empty() {
+                    key.assets.push(Asset {
+                        id: "sort-key".into(),
+                        name: String::new(),
+                        kind: "file".into(),
+                        bytes: 0,
+                    });
+                }
+                keys.insert(key.id.clone(), key);
+            }
+        }
+        if !input.ideas.is_empty() {
+            found.extend(self.run(input)?.ids);
+        }
+        found.reverse();
+        if sort == "最近添加" {
+            return Ok(found);
+        }
+        let mut runs = Vec::new();
+        let mut r = command(Action::Query);
+        r.sort = sort.into();
+        for id in found {
+            let key = keys.get(&id).ok_or("missing sort key")?.clone();
+            r.ideas.push(key.clone());
+            if r.ideas.len() > 128 || codec::encode_request(&r).is_err() {
+                r.ideas.pop();
+                if r.ideas.is_empty() {
+                    return Err("sort key budget".into());
+                }
+                runs.push(self.run(r.clone())?.ids);
+                r.ideas = vec![key];
+            }
+        }
+        if !r.ideas.is_empty() {
+            runs.push(self.run(r)?.ids);
+        }
+        while runs.len() > 1 {
+            let mut next = Vec::new();
+            let mut it = runs.into_iter();
+            while let Some(a) = it.next() {
+                let Some(b) = it.next() else {
+                    next.push(a);
+                    break;
+                };
+                let (mut i, mut j) = (0, 0);
+                let mut merged = Vec::with_capacity(a.len() + b.len());
+                while i < a.len() && j < b.len() {
+                    let mut r = command(Action::Query);
+                    r.sort = sort.into();
+                    r.ideas = vec![keys[&a[i]].clone(), keys[&b[j]].clone()];
+                    let ids = self.run(r)?.ids;
+                    if ids.first() == Some(&a[i]) {
+                        merged.push(a[i].clone());
+                        i += 1;
+                    } else {
+                        merged.push(b[j].clone());
+                        j += 1;
+                    }
+                }
+                merged.extend_from_slice(&a[i..]);
+                merged.extend_from_slice(&b[j..]);
+                next.push(merged);
+            }
+            runs = next;
+        }
+        Ok(runs.pop().unwrap_or_default())
+    }
+    pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
+        let Some(card) = self.host.store_local().card("morrow-studio-preferences")? else {
+            return Ok(None);
+        };
+        if card.summary().type_id != "org.morrow.studio" || card.summary().format_version != 1 {
+            return Err("preferences type".into());
+        }
+        let p = morrow_workbench_plugin::preferences::decode_persistent(&card.body())?;
+        Ok(Some(morrow_workbench_plugin::preferences::encode_wire(&p)?))
+    }
+    pub fn save_preferences(&mut self, operation: &str, input: Vec<u8>) -> Result<Vec<u8>> {
+        use morrow_workbench_plugin::preferences;
+        let p = preferences::decode_wire(&input)?;
+        let pages = preferences::validation_pages(&p)?;
+        for page in pages {
+            let expected = preferences::decode_wire(&page)?;
+            let output = self.transform(
+                "studio.preferences",
+                "morrow.studio.preferences.v1",
+                "morrow.studio.preferences.v1",
+                page,
+            )?;
+            if preferences::decode_wire(&output)? != expected {
+                return Err("plugin altered preference validation page".into());
+            }
+        }
+        let output = preferences::encode_wire(&p)?;
+        let id = "morrow-studio-preferences";
+        let prior = self.host.store_local().card(id)?;
+        let body = morrow_workbench_plugin::preferences::encode_persistent(
+            &p,
+            prior.as_ref().map(|v| v.body()).as_deref(),
+        )?;
+        if let Some(prior) = prior {
+            if prior.summary().type_id != "org.morrow.studio" || prior.summary().format_version != 1
+            {
+                return Err("preferences type".into());
+            }
+            if prior.body() == body {
+                return Ok(output);
+            }
+            self.grant(id, GrantKind::EditContent)?;
+            let start = self.start;
+            let change = ContentChange {
+                operation_id: operation.into(),
+                card_id: id.into(),
+                expected_revision: prior.summary().revision,
+                title: "工作台设置".into(),
+                body,
+                preview_text: "外观、日常小事与随身听设置".into(),
+                attachments: None,
+            };
+            let result = self
+                .host
+                .edit_content(self.connection.as_ref().unwrap(), &change, || now(start));
+            self.revoke(id, GrantKind::EditContent)?;
+            result?;
+        } else {
+            let card = CardRecord::new(id, "org.morrow.studio", 1, "工作台设置", body)?;
+            self.grant(id, GrantKind::CreateContent)?;
+            let start = self.start;
+            let result = self.host.create_content(
+                self.connection.as_ref().unwrap(),
+                operation,
+                &card,
+                || now(start),
+            );
+            self.revoke(id, GrantKind::CreateContent)?;
+            result?;
+        }
+        Ok(output)
+    }
+    pub fn capture(&mut self, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.transform(
+            "capture.convert",
+            "morrow.capture.request.v1",
+            "morrow.capture.response.v1",
+            input,
+        )
+    }
+    /// Non-persistent portable service task, still constrained by the registered
+    /// handler, package budget and ordinary guest task ABI.
+    pub fn service(&mut self, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.transform(
+            "studio.command",
+            "morrow.studio.request.v1",
+            "morrow.studio.response.v1",
+            input,
+        )
+    }
+    fn transform(
+        &mut self,
+        handler: &str,
+        input_type: &str,
+        output_type: &str,
+        input: Vec<u8>,
+    ) -> Result<Vec<u8>> {
+        self.counter = self
+            .counter
+            .checked_add(1)
+            .ok_or("task counter exhausted")?;
+        let task = Invocation::new_transform(
+            &format!("studio-{}", self.counter),
+            Transform {
+                handler: handler.into(),
+                input_type: input_type.into(),
+                output_type: output_type.into(),
+                input,
+            },
+        )?;
+        let start = self.start;
+        let result = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
+            &mut self.host,
+            self.connection.as_ref().ok_or("plugin unavailable")?,
+            &task,
+            || now(start),
+            Default::default(),
+        );
+        if result.execution.outcome != Ok(0)
+            || result.execution.host_calls != 0
+            || result.response.is_some()
+        {
+            return Err(format!("studio plugin failed: {:?}", result.execution.outcome).into());
+        }
+        if let Some(f) = result.failure {
+            return Err(f.message.into());
+        }
+        let out = result.output.ok_or("missing studio output")?;
+        if out.type_id != output_type {
+            return Err("unexpected studio result".into());
+        }
+        Ok(out.bytes)
+    }
+}
+impl Drop for Workbench {
+    fn drop(&mut self) {
+        if let Some(connection) = &self.connection {
+            let _ = self.host.disconnect(connection);
+        }
+    }
+}
+
+pub mod protocol;
+#[allow(clippy::all)]
+pub mod host_capnp {
+    include!(concat!(env!("OUT_DIR"), "/host_capnp.rs"));
+}

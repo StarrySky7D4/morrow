@@ -15,6 +15,18 @@ int main(int argc, char **argv) {
   const std::string dir = argv[1];
   static_assert(!std::is_copy_constructible_v<morrow::decoded_reply>);
   static_assert(std::is_nothrow_move_constructible_v<morrow::decoded_reply>);
+  auto content_create = morrow::content_request::create("vector-op", "legacy-123", "morrow.note", 1, u8"消息 🪷", {0,255,42});
+  auto content_edit = morrow::content_request::edit("vector-op", "legacy-123", UINT64_MAX - 1, u8"消息 🪷", {0,255,42}, "preview");
+  auto content_read = morrow::content_request::read("vector-op", "legacy-123", UINT64_MAX, 2, 3);
+  assert(content_create.encode().bytes == fixture(dir, "content-create-request"));
+  assert(content_edit.encode().bytes == fixture(dir, "content-edit-request"));
+  assert(content_read.encode().bytes == fixture(dir, "content-read-request"));
+  auto body = morrow::decoded_reply::decode(content_read, fixture(dir, "content-reply"));
+  assert(body.status() == MP_CODEC_OK && body.view().kind == MP_REPLY_CONTENT);
+  assert(body.view().bytes.length == 3 && body.view().bytes.data[1] == 255);
+  auto edited = morrow::decoded_reply::decode(content_edit, fixture(dir, "content-committed-reply"));
+  assert(edited.status() == MP_CODEC_OK && edited.view().revision == UINT64_MAX);
+  assert(morrow::decoded_reply::decode(content_create, fixture(dir, "content-committed-reply")).status() == MP_CODEC_CORRELATION);
   auto rename = morrow::request::rename("vector-op", "legacy-123",
                                         UINT64_MAX - 1, u8"消息 🪷");
   // Request ownership survives copy/move; no spans into a moved small string.

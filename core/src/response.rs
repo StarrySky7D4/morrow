@@ -7,6 +7,8 @@ pub use runtime_capnp::Failure;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Outcome {
     Renamed(Receipt),
+    ContentCommitted(Receipt),
+    ContentChunk(ContentChunk),
     Summary(CardSummary),
     AttachmentChunk(crate::attachment::AttachmentChunk),
     Rejected(Failure),
@@ -25,7 +27,7 @@ impl Response {
     fn validate(&self) -> Result<()> {
         identity(&self.request_id)?;
         match &self.outcome {
-            Outcome::Renamed(v) => {
+            Outcome::Renamed(v) | Outcome::ContentCommitted(v) => {
                 identity(&v.card_id)?;
                 identity(&v.event_id)?;
                 if v.operation_id != self.request_id || v.revision == 0 {
@@ -58,6 +60,7 @@ impl Response {
                 }
             }
             Outcome::AttachmentChunk(v) => v.validate()?,
+            Outcome::ContentChunk(v) => v.validate()?,
             Outcome::Rejected(_) => {}
         }
         Ok(())
@@ -71,8 +74,12 @@ impl Response {
         root.set_content_digest(&content_digest());
         root.set_request_id(self.request_id.as_str());
         match &self.outcome {
-            Outcome::Renamed(v) => {
-                let mut out = root.init_renamed();
+            Outcome::Renamed(v) | Outcome::ContentCommitted(v) => {
+                let mut out = if matches!(self.outcome, Outcome::ContentCommitted(_)) {
+                    root.init_content_committed()
+                } else {
+                    root.init_renamed()
+                };
                 out.set_operation_id(v.operation_id.as_str());
                 out.set_card_id(v.card_id.as_str());
                 out.set_revision(v.revision);
@@ -119,6 +126,15 @@ impl Response {
                 out.set_content_sha256(&v.content_sha256);
                 out.set_bytes(&v.bytes);
             }
+            Outcome::ContentChunk(v) => {
+                let mut b = root.init_content_chunk();
+                b.set_card_id(v.card_id.as_str());
+                b.set_revision(v.revision);
+                b.set_offset(v.offset);
+                b.set_total_length(v.total_length);
+                b.set_body_sha256(&v.body_sha256);
+                b.set_bytes(&v.bytes);
+            }
             Outcome::Rejected(v) => root.set_rejected(*v),
         }
         bounded_message(&message)
@@ -135,6 +151,35 @@ impl Response {
         )?;
         let request_id = read_text(root.get_request_id())?;
         let outcome = match root.which().map_err(|_| Error::Invalid("response kind"))? {
+            runtime_capnp::response::ContentChunk(value) => {
+                let v = value.map_err(|_| Error::Invalid("body part"))?;
+                Outcome::ContentChunk(ContentChunk {
+                    card_id: read_text(v.get_card_id())?,
+                    revision: v.get_revision(),
+                    offset: v.get_offset(),
+                    total_length: v.get_total_length(),
+                    body_sha256: v
+                        .get_body_sha256()
+                        .map_err(|_| Error::Integrity)?
+                        .try_into()
+                        .map_err(|_| Error::Integrity)?,
+                    bytes: v.get_bytes().map_err(|_| Error::Integrity)?.to_vec(),
+                })
+            }
+            runtime_capnp::response::ContentCommitted(value) => {
+                let v = value.map_err(|_| Error::Invalid("receipt"))?;
+                Outcome::ContentCommitted(Receipt {
+                    operation_id: read_text(v.get_operation_id())?,
+                    card_id: read_text(v.get_card_id())?,
+                    revision: v.get_revision(),
+                    event_id: read_text(v.get_event_id())?,
+                    content_sha256: v
+                        .get_content_sha256()
+                        .map_err(|_| Error::Integrity)?
+                        .try_into()
+                        .map_err(|_| Error::Integrity)?,
+                })
+            }
             runtime_capnp::response::Renamed(value) => {
                 let v = value.map_err(|_| Error::Invalid("receipt"))?;
                 Outcome::Renamed(Receipt {

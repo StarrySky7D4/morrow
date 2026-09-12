@@ -1,3 +1,4 @@
+import '../plugins/studio_backend.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -58,7 +59,16 @@ Future<XFile?> _readFile(
   return result.future.timeout(const Duration(seconds: 30));
 }
 
-Future<PastedContent> readPaste([ClipboardReader? reader]) async {
+Future<PastedContent> readPaste([
+  ClipboardReader? reader,
+  StudioBackend? plugin,
+]) async {
+  Future<String> plain(String text) async => plugin == null
+      ? plainTextToMarkdown(text)
+      : (await plugin.capture("plain", text)).markdown;
+  Future<String> convertRtf(String text) async => plugin == null
+      ? rtfToPlainText(text)
+      : (await plugin.capture("rtf", text)).markdown;
   final systemRead = reader == null;
   final sequence = systemRead ? await clipboardSequence() : null;
   reader ??= await SystemClipboard.instance?.read();
@@ -111,20 +121,26 @@ Future<PastedContent> readPaste([ClipboardReader? reader]) async {
       if (text.isNotEmpty) texts.add(text);
       final html = await item.readValue(Formats.htmlText);
       if (html != null && html.isNotEmpty) {
+        await addFile(textFile(html, 'html', 'rich-$index'));
         try {
-          final fragment = htmlToMarkdown(html, imagePrefix: '$prefix-$index');
+          final fragment = plugin == null
+              ? htmlToMarkdown(html, imagePrefix: '$prefix-$index')
+              : await plugin.capture(
+                  'html',
+                  html,
+                  imagePrefix: '$prefix-$index',
+                );
           if (fragment.markdown.isNotEmpty) rich.add(fragment.markdown);
           warnings.addAll(fragment.warnings);
           for (final file in fragment.files) {
             await addFile(file);
           }
-          await addFile(textFile(html, 'html', 'rich-$index'));
         } catch (_) {
-          if (text.isNotEmpty) rich.add(plainTextToMarkdown(text));
+          if (text.isNotEmpty) rich.add(await plain(text));
           warnings.add('富文本排版无法完整转换，已保留可读文字。');
         }
       } else if (text.isNotEmpty) {
-        final table = plainTextToMarkdown(text);
+        final table = await plain(text);
         rich.add(table);
         if (table != text) {
           await addFile(textFile(text, 'tsv', 'table-$index'));
@@ -178,14 +194,14 @@ Future<PastedContent> readPaste([ClipboardReader? reader]) async {
       if (item.canProvide(Formats.rtf)) {
         final rtf = await _readFile(item, Formats.rtf, '$prefix-$index.rtf');
         if (rtf != null) {
+          await addFile(rtf);
           if (text.isEmpty && (html == null || html.isEmpty)) {
-            final rtfText = rtfToPlainText(
+            final rtfText = await convertRtf(
               decodeClipboardText(await rtf.readAsBytes()),
             );
             texts.add(rtfText);
-            rich.add(plainTextToMarkdown(rtfText));
+            rich.add(await plain(rtfText));
           }
-          await addFile(rtf);
         }
       }
     } catch (error) {
@@ -215,9 +231,15 @@ Future<PastedContent> readPaste([ClipboardReader? reader]) async {
             )) {
           continue;
         }
+        await addFile(XFile.fromData(bytes, name: name, path: name));
         if (name.endsWith('.xml')) {
           try {
-            final fragment = spreadsheetToMarkdown(decodeClipboardText(bytes));
+            final fragment = plugin == null
+                ? spreadsheetToMarkdown(decodeClipboardText(bytes))
+                : await plugin.capture(
+                    'spreadsheet',
+                    decodeClipboardText(bytes),
+                  );
             if (fragment.markdown.isNotEmpty) officeText = fragment.markdown;
             warnings.addAll(fragment.warnings);
           } catch (_) {
@@ -225,10 +247,9 @@ Future<PastedContent> readPaste([ClipboardReader? reader]) async {
           }
         }
         if (name.endsWith('.rtf') && texts.isEmpty && rich.isEmpty) {
-          officeText = rtfToPlainText(decodeClipboardText(bytes));
+          officeText = await convertRtf(decodeClipboardText(bytes));
           texts.add(officeText);
         }
-        await addFile(XFile.fromData(bytes, name: name, path: name));
       }
       if (officeText.isNotEmpty) {
         rich

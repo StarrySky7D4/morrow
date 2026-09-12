@@ -1,0 +1,5 @@
+syntax = "proto3";
+package morrow.keys.v1;
+// This message exists only inside OS-protected encrypted bytes. Never log it.
+message SecretKey { uint32 version = 1; string log_id = 2; bytes seed = 3; bytes public_key = 4; }
+message ProtectedKey { uint32 version = 1; string provider = 2; bytes ciphertext = 3; }

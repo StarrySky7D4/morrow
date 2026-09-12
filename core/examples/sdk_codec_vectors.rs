@@ -18,6 +18,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
     let commands = [
         (
+            "content-create",
+            Command::CreateContent(morrow_core::runtime::CreateContent {
+                operation_id: "vector-op".into(),
+                card_id: "legacy-123".into(),
+                type_id: "morrow.note".into(),
+                format_version: 1,
+                title: "消息 🪷".into(),
+                body: vec![0, 255, 42],
+            }),
+        ),
+        (
+            "content-edit",
+            Command::EditContent(morrow_core::content_change::ContentChange {
+                operation_id: "vector-op".into(),
+                card_id: "legacy-123".into(),
+                expected_revision: u64::MAX - 1,
+                title: "消息 🪷".into(),
+                body: vec![0, 255, 42],
+                preview_text: "preview".into(),
+                attachments: None,
+            }),
+        ),
+        (
+            "content-read",
+            Command::ReadContent(morrow_core::runtime::ReadContent {
+                request_id: "vector-op".into(),
+                card_id: "legacy-123".into(),
+                expected_revision: u64::MAX,
+                offset: 2,
+                length: 3,
+            }),
+        ),
+        (
             "rename",
             Command::Rename(RenameRequest {
                 operation_id: "vector-op".into(),
@@ -57,6 +90,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         std::fs::write(dir.join(format!("{name}-request.capnp")), value.encode()?)?;
     }
     let outcomes = [
+        (
+            "content-committed",
+            Outcome::ContentCommitted(receipt.clone()),
+        ),
+        (
+            "content",
+            Outcome::ContentChunk(morrow_core::runtime::ContentChunk {
+                card_id: "legacy-123".into(),
+                revision: u64::MAX,
+                offset: 2,
+                total_length: 5,
+                body_sha256: [9; 32],
+                bytes: vec![0, 255, 42],
+            }),
+        ),
         ("renamed", Outcome::Renamed(receipt.clone())),
         (
             "summary",
@@ -109,6 +157,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .encode()?,
         )?;
     }
-    println!("Wrote ten independent host codec fixtures");
+    println!("Wrote fifteen independent host codec fixtures");
     Ok(())
 }

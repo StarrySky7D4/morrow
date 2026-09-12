@@ -9,7 +9,7 @@ try {
   if ($LASTEXITCODE -ne 0) { throw 'Rust analysis failed' }
   & cargo test --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10
   if ($LASTEXITCODE -ne 0) { throw 'Rust tests failed' }
-  & cargo test --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --features fault-injection --test storage_crash --test attachment_crash --test record_crash
+  & cargo test --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --features fault-injection --test storage_crash --test attachment_crash --test record_crash --test sealing
   if ($LASTEXITCODE -ne 0) { throw 'Storage crash recovery failed' }
   & cargo build --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --bin morrow-core-store
   if ($LASTEXITCODE -ne 0) { throw 'Default storage CLI build failed' }

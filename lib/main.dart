@@ -1,3 +1,8 @@
+import 'plugins/bootstrap_stub.dart'
+    if (dart.library.io) 'plugins/bootstrap_native.dart'
+    as bootstrap;
+import 'plugins/studio_backend.dart';
+import 'plugins/workbench_backend.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:file_selector/file_selector.dart';
@@ -10,6 +15,7 @@ import 'music/music_panel.dart';
 import 'little_tips.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
+import 'component_material_page.dart';
 import 'collapsible_panel.dart';
 import 'settings_page_transition.dart';
 import 'liquid_glass.dart';
@@ -31,7 +37,8 @@ import 'window_effects.dart';
 
 part 'pages/workspace_pages.dart';
 
-Future<void> main() async {
+Future<void> main(List<String> arguments) async {
+  if (await bootstrap.startRustWorkbench(arguments)) return;
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDesktopFrame();
   StudioStorage storage;
@@ -58,10 +65,12 @@ class MorrowApp extends StatefulWidget {
     this.storage,
     this.nativeBackground,
     this.initialWarning,
+    this.workbench,
   });
   final StudioStorage? storage;
   final DesktopBackground? nativeBackground;
   final String? initialWarning;
+  final WorkbenchBackend? workbench;
   @override
   State<MorrowApp> createState() => _MorrowAppState();
 }
@@ -80,6 +89,8 @@ class _MorrowAppState extends State<MorrowApp> {
   TextureSource? texture;
   bool mediaPlaying = true;
   bool liquidCanvas = false;
+  SurfaceSettings surfaces = const SurfaceSettings();
+  SurfaceSettings committedSurfaces = const SurfaceSettings();
   late final StudioStorage storage;
   Map<String, dynamic>? restored;
   String? warning;
@@ -118,6 +129,8 @@ class _MorrowAppState extends State<MorrowApp> {
             : TextureSource.fromJson(data['texture'] as Map<String, dynamic>);
         mediaPlaying = data['mediaPlaying'] as bool? ?? true;
         liquidCanvas = data['liquidCanvas'] as bool? ?? false;
+        surfaces = SurfaceSettings.fromJson(data);
+        committedSurfaces = surfaces;
         themeLightness = (data['themeLightness'] as num?)?.toDouble().clamp(
           0,
           1,
@@ -176,6 +189,7 @@ class _MorrowAppState extends State<MorrowApp> {
         'texture': texture?.toJson(),
         'mediaPlaying': mediaPlaying,
         'liquidCanvas': liquidCanvas,
+        ...committedSurfaces.toJson(),
         'themeLightness': themeLightness,
         'windowRadius': windowRadius,
         'cornerRadius': cornerRadius,
@@ -197,13 +211,26 @@ class _MorrowAppState extends State<MorrowApp> {
     }
   }
 
+  bool backgroundWarningShown = false;
   Future<void> applyWindowBackground() async {
     try {
-      await widget.nativeBackground?.apply();
-    } catch (_) {
-      if (mounted) {
+      await widget.nativeBackground?.apply(
+        frost: background == BackgroundMode.transparent
+            ? surfaces.canvasBlur
+            : 0,
+      );
+      backgroundWarningShown = false;
+    } catch (error) {
+      if (mounted && !backgroundWarningShown) {
+        backgroundWarningShown = true;
         messages.currentState?.showSnackBar(
-          const SnackBar(content: Text('系统透明效果未能启用，可切换到默认背景继续使用。')),
+          SnackBar(
+            content: Text(
+              error is PlatformException && error.code == 'backdrop_unavailable'
+                  ? '当前系统无法启用桌面磨砂，染色和透明度仍可调整。'
+                  : '系统透明效果未能启用，可切换到默认背景继续使用。',
+            ),
+          ),
         );
       }
     }
@@ -236,6 +263,7 @@ class _MorrowAppState extends State<MorrowApp> {
       windowRadius,
       liquidCanvas,
       themeColor,
+      surfaces,
     );
     return MaterialApp(
       title: 'Morrow — 留一点空间给灵感',
@@ -353,6 +381,11 @@ class _MorrowAppState extends State<MorrowApp> {
           appearanceChanged(() => grayscale = value, save: false);
         },
         onMode: (value) => appearanceChanged(() => mode = value),
+        onSurfaces: (value) => appearanceChanged(
+          () => surfaces = value,
+          save: false,
+          native: true,
+        ),
         onLiquidCanvas: (value) =>
             appearanceChanged(() => liquidCanvas = value),
         onBackground: (value) =>
@@ -367,6 +400,7 @@ class _MorrowAppState extends State<MorrowApp> {
         ),
         onAppearanceCommit: () {
           committedThemeColor = themeColor;
+          committedSurfaces = surfaces;
           saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
           applyWindowBackground();
         },
@@ -375,6 +409,7 @@ class _MorrowAppState extends State<MorrowApp> {
             appearanceChanged(() => themeColor = value, save: false),
         onTexture: (value) => appearanceChanged(() => texture = value),
         onPlaying: (value) => appearanceChanged(() => mediaPlaying = value),
+        workbench: widget.workbench,
         restored: restored,
         onSave: saveContent,
         onReady: (data) => restored = data,
@@ -488,8 +523,12 @@ class Studio extends StatefulWidget {
     required this.onSave,
     required this.onReady,
     this.restored,
+    this.workbench,
     this.desktopCaption = false,
+    this.onSurfaces,
   });
+  final ValueChanged<SurfaceSettings>? onSurfaces;
+  final WorkbenchBackend? workbench;
   final bool desktopCaption;
   final Palette palette;
   final ValueChanged<StudioTheme> onTheme;
@@ -687,6 +726,7 @@ class _StudioState extends State<Studio> {
     showAppearance = widget.restored?['appearanceExpanded'] as bool? ?? true;
     final savedMusic = widget.restored?['music'] as Map<String, dynamic>?;
     music = MusicController(
+      plugin: widget.workbench?.studio,
       tracks: (savedMusic?['tracks'] as List? ?? [])
           .map((raw) => MusicTrack.fromJson(raw as Map<String, dynamic>))
           .toList(),
@@ -801,7 +841,92 @@ class _StudioState extends State<Studio> {
     }
   }
 
+  bool _pluginBusy = false;
+  int _contentGeneration = 0;
+  String? _projectionKey;
+  List<String>? _projection;
+  Future<Idea?> pluginChange(
+    PluginAction action,
+    Idea idea, {
+    String text = '',
+    bool flag = false,
+    int? position,
+  }) async {
+    final backend = widget.workbench;
+    if (backend == null || _pluginBusy) return null;
+    _pluginBusy = true;
+    try {
+      final result = await backend.apply(action, idea, text: text, flag: flag);
+      if (!mounted) return result;
+      setState(() {
+        final index = ideas.indexWhere((item) => item.id == result.id);
+        if (action == PluginAction.delete) {
+          if (index >= 0) ideas.removeAt(index);
+        } else if (index >= 0) {
+          ideas[index] = result;
+        } else {
+          ideas.insert((position ?? 0).clamp(0, ideas.length), result);
+        }
+        _contentGeneration++;
+      });
+      persist();
+      return result;
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('这次修改未能保存，草稿保留，可重试。'),
+            duration: const Duration(seconds: 30),
+            action: SnackBarAction(
+              label: '重试',
+              onPressed: () => pluginChange(
+                action,
+                idea,
+                text: text,
+                flag: flag,
+                position: position,
+              ),
+            ),
+          ),
+        );
+      }
+      return null;
+    } finally {
+      _pluginBusy = false;
+    }
+  }
+
+  void pluginProjection() {
+    final backend = widget.workbench;
+    if (backend == null || !backend.writable) return;
+    final key = '$_contentGeneration|$section|$filter|$query|$sort';
+    if (_projectionKey == key) return;
+    _projectionKey = key;
+    final page = section, selection = filter, text = query, order = sort;
+    Future<void>(() async {
+      try {
+        final ids = await backend.query(page, selection, text, order);
+        if (mounted && _projectionKey == key) setState(() => _projection = ids);
+      } catch (_) {
+        if (mounted && _projectionKey == key) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('筛选暂时未完成，请重试。')));
+        }
+      }
+    });
+  }
+
   List<Idea> get visibleIdeas {
+    if (widget.workbench?.writable ?? false) {
+      pluginProjection();
+      final byId = {for (final idea in ideas) idea.id: idea};
+      return [
+        for (final id in _projection ?? ideas.map((i) => i.id))
+          if (byId[id] != null) byId[id]!,
+      ];
+    }
+
     final result = ideas.where((idea) {
       final sectionMatches = switch (section) {
         '灵感收件箱' => idea.category == '灵感',
@@ -875,6 +1000,18 @@ class _StudioState extends State<Studio> {
                 ),
               ),
               Positioned.fill(child: mediaCanvas()),
+              if (p.backdrop == BackgroundMode.transparent)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: AnimatedContainer(
+                      key: const ValueKey('transparent-canvas-tint'),
+                      duration: motionDuration(context, 280),
+                      color: (p.surfaces.canvasColor ?? p.surface).withValues(
+                        alpha: p.surfaces.canvasOpacity,
+                      ),
+                    ),
+                  ),
+                ),
               if (p.liquidCanvas)
                 Positioned.fill(
                   child: IgnorePointer(
@@ -1132,6 +1269,7 @@ class _StudioState extends State<Studio> {
                                   const SizedBox(height: 12),
                                   Glass(
                                     key: const ValueKey('footer-dock'),
+                                    componentId: 'footer',
                                     p: p,
                                     radius: 14,
                                     child: Padding(
@@ -1160,6 +1298,7 @@ class _StudioState extends State<Studio> {
   }
 
   Widget navigation() => Glass(
+    componentId: 'navigation',
     p: p,
     radius: 26,
     child: Padding(
@@ -1404,6 +1543,7 @@ class _StudioState extends State<Studio> {
     key: const ValueKey('header-search'),
     height: 38,
     child: Glass(
+      componentId: 'search',
       p: p,
       radius: 12,
       child: TextField(
@@ -1485,6 +1625,7 @@ class _StudioState extends State<Studio> {
 
   Widget hero() => LayoutBuilder(
     builder: (context, constraints) => Glass(
+      componentId: 'hero',
       p: p,
       radius: 23,
       child: SizedBox(
@@ -1650,6 +1791,7 @@ class _StudioState extends State<Studio> {
     final items = visibleIdeas;
     if (items.isEmpty) {
       return Glass(
+        componentId: 'empty',
         p: p,
         child: SizedBox(
           height: 160,
@@ -1696,6 +1838,7 @@ class _StudioState extends State<Studio> {
   }
 
   Widget ideaCard(Idea idea) => Glass(
+    componentId: 'card:${idea.id}',
     p: p,
     radius: 19,
     child: Material(
@@ -1742,6 +1885,14 @@ class _StudioState extends State<Studio> {
                     ),
                     padding: EdgeInsets.zero,
                     onPressed: () {
+                      if (widget.workbench != null) {
+                        pluginChange(
+                          PluginAction.favorite,
+                          idea,
+                          flag: !idea.favorite,
+                        );
+                        return;
+                      }
                       setState(() => idea.favorite = !idea.favorite);
                       persist();
                     },
@@ -1834,6 +1985,7 @@ class _StudioState extends State<Studio> {
   );
 
   Widget quickCapture() => Glass(
+    componentId: 'quick-capture',
     p: p,
     radius: 17,
     child: Padding(
@@ -1864,9 +2016,35 @@ class _StudioState extends State<Studio> {
     ),
   );
 
-  void saveQuickNote() {
+  Future<void> saveQuickNote() async {
     final text = quickNote.text.trim();
     if (text.isEmpty) return;
+    if (widget.workbench != null) {
+      final result = await pluginChange(
+        PluginAction.create,
+        Idea(
+          text,
+          '从一个小小的念头开始。',
+          section == '小项目'
+              ? '进行中'
+              : section == '实验室'
+              ? '实验'
+              : '灵感',
+          Icons.auto_awesome_outlined,
+          const Color(0xFF9D87D4),
+          favorite: section == '已收藏',
+        ),
+      );
+      if (result != null && mounted) {
+        setState(() {
+          quickNote.clear();
+          filter = '全部';
+          query = '';
+          search.clear();
+        });
+      }
+      return;
+    }
     setState(() {
       ideas.insert(
         0,
@@ -1894,7 +2072,150 @@ class _StudioState extends State<Studio> {
     );
   }
 
+  void updateSurfaces(SurfaceSettings value) => widget.onSurfaces?.call(value);
+
+  Widget materialSlider(
+    String key,
+    String title,
+    double value,
+    double max,
+    ValueChanged<double> onChanged, {
+    bool enabled = true,
+  }) => Column(
+    children: [
+      Row(
+        children: [
+          Text(title, style: TextStyle(fontSize: 10, color: p.muted)),
+          const Spacer(),
+          Text(
+            '${(value / max * 100).round()}%',
+            style: TextStyle(fontSize: 11, color: p.accent),
+          ),
+        ],
+      ),
+      SliderTheme(
+        data: SliderTheme.of(context).copyWith(
+          trackHeight: 3,
+          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+        ),
+        child: Slider(
+          key: ValueKey(key),
+          value: value,
+          min: 0,
+          max: max,
+          divisions: 100,
+          onChanged: enabled ? onChanged : null,
+          onChangeEnd: (_) => widget.onAppearanceCommit(),
+        ),
+      ),
+    ],
+  );
+
+  Future<void> chooseSurfaceColor(bool canvas) async {
+    final before = p.surfaces;
+    final chosen = await showStudioDialog<Color>(
+      context: context,
+      builder: (_) => ColorCompassDialog(
+        title: canvas ? '画布染色罗盘' : '组件染色罗盘',
+        initial:
+            (canvas ? before.canvasColor : before.componentColor) ?? p.surface,
+        onChanged: (color) => updateSurfaces(
+          canvas
+              ? before.copyWith(canvasColor: color)
+              : before.copyWith(componentColor: color),
+        ),
+      ),
+    );
+    if (!mounted) return;
+    updateSurfaces(
+      chosen == null
+          ? before
+          : canvas
+          ? before.copyWith(canvasColor: chosen)
+          : before.copyWith(componentColor: chosen),
+    );
+    if (chosen != null) widget.onAppearanceCommit();
+  }
+
+  Widget surfaceColorButton(bool canvas) => OutlinedButton.icon(
+    key: ValueKey(canvas ? 'canvas-color' : 'component-color'),
+    onPressed: () => chooseSurfaceColor(canvas),
+    icon: Icon(Icons.palette_outlined, size: 16, color: p.accent),
+    label: const Text('调色罗盘 · 自定义', style: TextStyle(fontSize: 11)),
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size.fromHeight(38),
+      side: BorderSide(color: p.line),
+      shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+    ),
+  );
+
+  Widget transparentMaterialSettings() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      const SizedBox(height: 12),
+      materialSlider(
+        'canvas-blur',
+        '磨砂效果',
+        p.surfaces.canvasBlur,
+        40,
+        (value) => updateSurfaces(p.surfaces.copyWith(canvasBlur: value)),
+        enabled: isWindowsDesktop,
+      ),
+      materialSlider(
+        'canvas-opacity',
+        '染色不透明度',
+        p.surfaces.canvasOpacity,
+        1,
+        (value) => updateSurfaces(p.surfaces.copyWith(canvasOpacity: value)),
+      ),
+      surfaceColorButton(true),
+      if (!isWindowsDesktop)
+        Text(
+          '桌面磨砂仅在 Windows 版可用',
+          style: TextStyle(fontSize: 10, color: p.muted),
+        ),
+    ],
+  );
+
+  Widget componentMaterialSettings() => OutlinedButton.icon(
+    key: const ValueKey('component-settings'),
+    onPressed: () => Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => ComponentMaterialListPage(
+          palette: p,
+          entries: {
+            'navigation': '侧边导航',
+            'search': '搜索栏',
+            'hero': '概览卡片',
+            'quick-capture': '快速记录',
+            'appearance': '空间外观',
+            'daily': '此刻的小事',
+            'music': '随身听',
+            'footer': '底部提示与歌词',
+            'empty': '空白提示',
+            for (final name in ['灵感收件箱', '小项目', '实验室', '已收藏'])
+              'summary:$name': '$name · 概览',
+            for (final idea in ideas) 'card:${idea.id}': idea.title,
+          },
+          onChanged: (value) {
+            if (!mounted) return;
+            updateSurfaces(value);
+            widget.onAppearanceCommit();
+          },
+        ),
+      ),
+    ),
+    icon: Icon(Icons.tune_rounded, size: 16, color: p.accent),
+    label: const Text('组件与卡片 · 独立设置', style: TextStyle(fontSize: 11)),
+    style: OutlinedButton.styleFrom(
+      minimumSize: const Size.fromHeight(38),
+      side: BorderSide(color: p.line),
+      shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+    ),
+  );
+
   Widget appearance() => Glass(
+    componentId: 'appearance',
     p: p,
     radius: 22,
     child: Padding(
@@ -2005,6 +2326,7 @@ class _StudioState extends State<Studio> {
               ],
             ),
           ),
+          componentMaterialSettings(),
           const SizedBox(height: 14),
           SizedBox(
             height: 108,
@@ -2290,6 +2612,8 @@ class _StudioState extends State<Studio> {
                 key: ValueKey(p.backdrop),
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  if (p.backdrop == BackgroundMode.transparent)
+                    transparentMaterialSettings(),
                   if (p.backdrop == BackgroundMode.solid) ...[
                     const SizedBox(height: 12),
                     Row(
@@ -2664,6 +2988,7 @@ class _StudioState extends State<Studio> {
   }
 
   Widget scratchpad() => Glass(
+    componentId: 'daily',
     p: p,
     radius: 22,
     child: Padding(
@@ -2765,6 +3090,7 @@ class _StudioState extends State<Studio> {
     final result = await showStudioDialog<Idea>(
       context: context,
       builder: (_) => NewIdeaDialog(
+        plugin: widget.workbench?.studio,
         initialCategory: switch (section) {
           '小项目' => '进行中',
           '实验室' => '实验',
@@ -2773,6 +3099,18 @@ class _StudioState extends State<Studio> {
       ),
     );
     if (result == null || !mounted) return;
+    if (widget.workbench != null) {
+      if (section == '已收藏') result.favorite = true;
+      final saved = await pluginChange(PluginAction.create, result);
+      if (saved != null && mounted) {
+        setState(() {
+          filter = '全部';
+          query = '';
+          search.clear();
+        });
+      }
+      return;
+    }
     setState(() {
       ideas.insert(0, result);
       if (section == '已收藏') result.favorite = true;
@@ -2840,7 +3178,19 @@ class _StudioState extends State<Studio> {
                       (todo) => LittleTask(
                         title: todo,
                         done: idea.completed.contains(todo),
-                        onChanged: (done) {
+                        onChanged: (done) async {
+                          if (widget.workbench != null) {
+                            final updated = await pluginChange(
+                              PluginAction.todo,
+                              idea,
+                              text: todo,
+                              flag: done,
+                            );
+                            if (updated != null && dialogContext.mounted) {
+                              refresh(() => idea = updated);
+                            }
+                            return;
+                          }
                           setState(() {
                             if (done) {
                               idea.completed.add(todo);
@@ -2882,9 +3232,14 @@ class _StudioState extends State<Studio> {
     if (action == 'edit') {
       final edited = await showStudioDialog<Idea>(
         context: context,
-        builder: (_) => NewIdeaDialog(initialIdea: idea),
+        builder: (_) =>
+            NewIdeaDialog(initialIdea: idea, plugin: widget.workbench?.studio),
       );
       if (edited == null || !mounted) return;
+      if (widget.workbench != null) {
+        await pluginChange(PluginAction.edit, edited);
+        return;
+      }
       setState(() {
         final index = ideas.indexWhere((item) => item.id == idea.id);
         if (index >= 0) ideas[index] = edited;
@@ -2892,8 +3247,14 @@ class _StudioState extends State<Studio> {
       persist();
     } else if (action == 'delete') {
       final index = ideas.indexOf(idea);
-      setState(() => ideas.remove(idea));
-      persist();
+      if (widget.workbench != null) {
+        if (await pluginChange(PluginAction.delete, idea) == null || !mounted) {
+          return;
+        }
+      } else {
+        setState(() => ideas.remove(idea));
+        persist();
+      }
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -2903,6 +3264,10 @@ class _StudioState extends State<Studio> {
             label: '撤销',
             onPressed: () {
               if (!mounted || ideas.any((item) => item.id == idea.id)) return;
+              if (widget.workbench != null) {
+                pluginChange(PluginAction.restore, idea, position: index);
+                return;
+              }
               setState(() => ideas.insert(index.clamp(0, ideas.length), idea));
               persist();
             },
@@ -2965,11 +3330,13 @@ class NewIdeaDialog extends StatefulWidget {
     this.initialCategory = '灵感',
     this.readClipboard,
     this.importAttachment,
+    this.plugin,
   });
   final Idea? initialIdea;
   final String initialCategory;
   final Future<PastedContent> Function()? readClipboard;
   final Future<IdeaAttachment> Function(XFile)? importAttachment;
+  final StudioBackend? plugin;
   @override
   State<NewIdeaDialog> createState() => _NewIdeaDialogState();
 }
@@ -3004,6 +3371,11 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       if (attachments.length >= 20) {
         throw const FormatException('每条记录最多保存 20 个附件。');
       }
+      await widget.plugin?.validateImport(
+        IdeaAttachment.kindFor(file.name).name,
+        await file.length(),
+        attachment: true,
+      );
       final item = await (widget.importAttachment ?? IdeaAttachment.import)(
         file,
       );
@@ -3152,7 +3524,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         : description;
     final content = reader == null && widget.readClipboard != null
         ? await widget.readClipboard!()
-        : await readPaste(reader);
+        : await readPaste(reader, widget.plugin);
     if (!mounted) return;
     final inserted = target == description && content.markdown.isNotEmpty
         ? content.markdown

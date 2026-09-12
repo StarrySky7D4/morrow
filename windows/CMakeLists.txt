@@ -58,6 +58,15 @@ add_subdirectory("runner")
 include(flutter/generated_plugins.cmake)
 
 
+# The ordinary Windows build includes the same package/host as the release tool.
+add_custom_target(morrow_workbench_bundle
+  COMMAND powershell.exe -NoProfile -ExecutionPolicy Bypass -File
+    "${CMAKE_CURRENT_SOURCE_DIR}/../tool/build_workbench_bundle.ps1"
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/.."
+  VERBATIM
+)
+add_dependencies(${BINARY_NAME} morrow_workbench_bundle)
+
 # === Installation ===
 # Support files are copied into place next to the executable, so that it can
 # run in place. This is done instead of making a separate bundle (as on Linux)
@@ -112,3 +121,8 @@ install(DIRECTORY "${PROJECT_BUILD_DIR}/${FLUTTER_ASSET_DIR_NAME}"
 install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   CONFIGURATIONS Profile;Release
   COMPONENT Runtime)
+
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/release/morrow-workbench-host.exe"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/bundle/workbench.morrowplugin"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/plugins" COMPONENT Runtime)

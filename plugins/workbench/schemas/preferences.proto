@@ -1,0 +1,37 @@
+syntax = "proto3";
+package morrow.studio.v1;
+message Appearance {
+ string theme = 1;
+ string glass = 2;
+ string background = 3;
+ uint32 solid_tint = 4;
+ double opacity = 5;
+ double corner_radius = 6;
+ double window_radius = 7;
+ double grayscale = 8;
+ double lightness = 9;
+ bool has_lightness = 10;
+ uint32 custom_color = 11;
+ bool has_custom_color = 12;
+ uint32 theme_color = 13;
+ bool has_theme_color = 14;
+ bool liquid_canvas = 15;
+ bool media_playing = 16;
+ bool sidebar_expanded = 17;
+ bool appearance_expanded = 18;
+ double canvas_blur = 19;
+ double canvas_opacity = 20;
+ uint32 canvas_color = 21;
+ bool has_canvas_color = 22;
+ bool component_custom = 23;
+ double component_blur = 24;
+ double component_opacity = 25;
+ uint32 component_color = 26;
+ bool has_component_color = 27;
+ uint32 material_version = 28;
+}
+message Source { string location = 1; string name = 2; string kind = 3; bool local = 4; }
+message Track { Source source = 1; Source cover = 2; string lyrics = 3; string lyric_source = 4; string title = 5; string artist = 6; double duration = 7; bool metadata_read = 8; }
+message Preferences { uint32 version = 1; Appearance appearance = 2; Source texture = 3; repeated Track tracks = 4; int32 index = 5; bool show_lyrics = 6; bool online_lyrics = 7; repeated string completed = 8; repeated ComponentMaterial components = 9; }
+
+message ComponentMaterial { string id = 1; bool enabled = 2; double blur = 3; double opacity = 4; uint32 color = 5; bool has_color = 6; }

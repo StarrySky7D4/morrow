@@ -68,6 +68,21 @@ final class RequestReader extends StructReader {
     1,
     (r) => ReadAttachmentReader(r, capabilities: capabilityTable),
   );
+
+  CreateContentReader? get createContent => getStructFieldWith(
+    1,
+    (r) => CreateContentReader(r, capabilities: capabilityTable),
+  );
+
+  EditContentReader? get editContent => getStructFieldWith(
+    1,
+    (r) => EditContentReader(r, capabilities: capabilityTable),
+  );
+
+  ReadContentReader? get readContent => getStructFieldWith(
+    1,
+    (r) => ReadContentReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -123,6 +138,27 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasReadAttachment() => hasPointerField(1);
+
+  CreateContentBuilder initCreateContent() {
+    setUint16Field(2, 5);
+    return initStructFieldWith(1, (r) => CreateContentBuilder(r), 1, 4);
+  }
+
+  bool hasCreateContent() => hasPointerField(1);
+
+  EditContentBuilder initEditContent() {
+    setUint16Field(2, 6);
+    return initStructFieldWith(1, (r) => EditContentBuilder(r), 1, 4);
+  }
+
+  bool hasEditContent() => hasPointerField(1);
+
+  ReadContentBuilder initReadContent() {
+    setUint16Field(2, 7);
+    return initStructFieldWith(1, (r) => ReadContentBuilder(r), 3, 1);
+  }
+
+  bool hasReadContent() => hasPointerField(1);
 }
 
 final class _RequestFactory
@@ -150,7 +186,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   shortName: 'Request',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 5,
+  discriminantCount: 8,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -228,6 +264,33 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: StructRefTypeSchemaInfo(0xb95a3d94eb59a5ca),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'createContent',
+      codeOrder: 9,
+      discriminantValue: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0x8a23c90837791d33),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'editContent',
+      codeOrder: 10,
+      discriminantValue: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xdaa25af6f4d94bf8),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'readContent',
+      codeOrder: 11,
+      discriminantValue: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xe043bebd14ba9e80),
       ),
     ),
   ],
@@ -500,6 +563,16 @@ final class ResponseReader extends StructReader {
     3,
     (r) => AttachmentChunkReader(r, capabilities: capabilityTable),
   );
+
+  CommitReceiptReader? get contentCommitted => getStructFieldWith(
+    3,
+    (r) => CommitReceiptReader(r, capabilities: capabilityTable),
+  );
+
+  ContentChunkReader? get contentChunk => getStructFieldWith(
+    3,
+    (r) => ContentChunkReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -562,6 +635,20 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasAttachmentChunk() => hasPointerField(3);
+
+  CommitReceiptBuilder initContentCommitted() {
+    setUint16Field(2, 6);
+    return initStructFieldWith(3, (r) => CommitReceiptBuilder(r), 1, 4);
+  }
+
+  bool hasContentCommitted() => hasPointerField(3);
+
+  ContentChunkBuilder initContentChunk() {
+    setUint16Field(2, 7);
+    return initStructFieldWith(3, (r) => ContentChunkBuilder(r), 3, 3);
+  }
+
+  bool hasContentChunk() => hasPointerField(3);
 }
 
 final class _ResponseFactory
@@ -589,7 +676,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   shortName: 'Response',
   dataWords: 1,
   pointerWords: 4,
-  discriminantCount: 6,
+  discriminantCount: 8,
   discriminantOffset: 1,
   fields: [
     FieldSchemaInfo(
@@ -676,6 +763,24 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 3,
         type: StructRefTypeSchemaInfo(0xd73e968f67bcb0e3),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentCommitted',
+      codeOrder: 10,
+      discriminantValue: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xaf56e78418a30c17),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentChunk',
+      codeOrder: 11,
+      discriminantValue: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0x9c283ef9defa619e),
       ),
     ),
   ],
@@ -1245,3 +1350,464 @@ const StructSchemaInfo attachmentChunkSchema = StructSchemaInfo(
 );
 
 final attachmentChunkFactory = _AttachmentChunkFactory();
+
+final class CreateContentReader extends StructReader {
+  CreateContentReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = createContentSchema;
+
+  String? get cardId => getTextField(0);
+
+  String? get typeId => getTextField(1);
+
+  int get formatVersion => getUint32Field(0);
+
+  String? get title => getTextField(2);
+
+  Uint8List? get body => getDataField(3);
+}
+
+final class CreateContentBuilder extends StructBuilder {
+  CreateContentBuilder(super.raw);
+
+  @override
+  CreateContentReader asReader() => CreateContentReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set typeId(String? v) {
+    setTextField(1, v);
+  }
+
+  set formatVersion(int v) {
+    setUint32Field(0, v);
+  }
+
+  set title(String? v) {
+    setTextField(2, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(3, v);
+  }
+}
+
+final class _CreateContentFactory
+    extends StructFactory<CreateContentReader, CreateContentBuilder> {
+  @override
+  StructSchemaInfo get schema => createContentSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  CreateContentReader fromRawReader(RawStructReader r) =>
+      CreateContentReader(r);
+  @override
+  CreateContentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => CreateContentReader(r, capabilities: capabilities);
+  @override
+  CreateContentBuilder fromRawBuilder(RawStructBuilder r) =>
+      CreateContentBuilder(r);
+}
+
+const StructSchemaInfo createContentSchema = StructSchemaInfo(
+  id: 0x8a23c90837791d33,
+  displayName: 'runtime.capnp:CreateContent',
+  shortName: 'CreateContent',
+  dataWords: 1,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'typeId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'formatVersion',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final createContentFactory = _CreateContentFactory();
+
+final class EditContentReader extends StructReader {
+  EditContentReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = editContentSchema;
+
+  String? get cardId => getTextField(0);
+
+  int get expectedRevision => getUint64Field(0);
+
+  String? get title => getTextField(1);
+
+  Uint8List? get body => getDataField(2);
+
+  String? get previewText => getTextField(3);
+}
+
+final class EditContentBuilder extends StructBuilder {
+  EditContentBuilder(super.raw);
+
+  @override
+  EditContentReader asReader() => EditContentReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set title(String? v) {
+    setTextField(1, v);
+  }
+
+  set body(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set previewText(String? v) {
+    setTextField(3, v);
+  }
+}
+
+final class _EditContentFactory
+    extends StructFactory<EditContentReader, EditContentBuilder> {
+  @override
+  StructSchemaInfo get schema => editContentSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  EditContentReader fromRawReader(RawStructReader r) => EditContentReader(r);
+  @override
+  EditContentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EditContentReader(r, capabilities: capabilities);
+  @override
+  EditContentBuilder fromRawBuilder(RawStructBuilder r) =>
+      EditContentBuilder(r);
+}
+
+const StructSchemaInfo editContentSchema = StructSchemaInfo(
+  id: 0xdaa25af6f4d94bf8,
+  displayName: 'runtime.capnp:EditContent',
+  shortName: 'EditContent',
+  dataWords: 1,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'previewText',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final editContentFactory = _EditContentFactory();
+
+final class ReadContentReader extends StructReader {
+  ReadContentReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = readContentSchema;
+
+  String? get cardId => getTextField(0);
+
+  int get expectedRevision => getUint64Field(0);
+
+  int get offset => getUint64Field(8);
+
+  int get length => getUint32Field(16);
+}
+
+final class ReadContentBuilder extends StructBuilder {
+  ReadContentBuilder(super.raw);
+
+  @override
+  ReadContentReader asReader() => ReadContentReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set length(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _ReadContentFactory
+    extends StructFactory<ReadContentReader, ReadContentBuilder> {
+  @override
+  StructSchemaInfo get schema => readContentSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 1;
+  @override
+  ReadContentReader fromRawReader(RawStructReader r) => ReadContentReader(r);
+  @override
+  ReadContentReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ReadContentReader(r, capabilities: capabilities);
+  @override
+  ReadContentBuilder fromRawBuilder(RawStructBuilder r) =>
+      ReadContentBuilder(r);
+}
+
+const StructSchemaInfo readContentSchema = StructSchemaInfo(
+  id: 0xe043bebd14ba9e80,
+  displayName: 'runtime.capnp:ReadContent',
+  shortName: 'ReadContent',
+  dataWords: 3,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'length',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final readContentFactory = _ReadContentFactory();
+
+final class ContentChunkReader extends StructReader {
+  ContentChunkReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = contentChunkSchema;
+
+  String? get cardId => getTextField(0);
+
+  int get revision => getUint64Field(0);
+
+  int get offset => getUint64Field(8);
+
+  int get totalLength => getUint64Field(16);
+
+  Uint8List? get bodySha256 => getDataField(1);
+
+  Uint8List? get bytes => getDataField(2);
+}
+
+final class ContentChunkBuilder extends StructBuilder {
+  ContentChunkBuilder(super.raw);
+
+  @override
+  ContentChunkReader asReader() => ContentChunkReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set totalLength(int v) {
+    setUint64Field(16, v);
+  }
+
+  set bodySha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _ContentChunkFactory
+    extends StructFactory<ContentChunkReader, ContentChunkBuilder> {
+  @override
+  StructSchemaInfo get schema => contentChunkSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 3;
+  @override
+  ContentChunkReader fromRawReader(RawStructReader r) => ContentChunkReader(r);
+  @override
+  ContentChunkReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ContentChunkReader(r, capabilities: capabilities);
+  @override
+  ContentChunkBuilder fromRawBuilder(RawStructBuilder r) =>
+      ContentChunkBuilder(r);
+}
+
+const StructSchemaInfo contentChunkSchema = StructSchemaInfo(
+  id: 0x9c283ef9defa619e,
+  displayName: 'runtime.capnp:ContentChunk',
+  shortName: 'ContentChunk',
+  dataWords: 3,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'totalLength',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bodySha256',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final contentChunkFactory = _ContentChunkFactory();

@@ -35,6 +35,9 @@ fn capability(raw: i32) -> Result<GrantKind> {
         proto::Capability::ReadSummary => Ok(GrantKind::ReadSummary),
         proto::Capability::QueryOperation => Ok(GrantKind::QueryOperation),
         proto::Capability::ReadAttachment => Ok(GrantKind::ReadAttachment),
+        proto::Capability::CreateContent => Ok(GrantKind::CreateContent),
+        proto::Capability::EditContent => Ok(GrantKind::EditContent),
+        proto::Capability::ReadContent => Ok(GrantKind::ReadContent),
         proto::Capability::Unspecified => Err(Error::Invalid("unspecified capability")),
     }
 }
@@ -222,7 +225,7 @@ impl Package {
         {
             return Err(Error::Limit);
         }
-        if manifest.requested_capabilities.len() > 4 {
+        if manifest.requested_capabilities.len() > 7 {
             return Err(Error::Limit);
         }
         let mut ceiling = BTreeSet::new();

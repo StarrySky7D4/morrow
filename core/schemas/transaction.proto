@@ -8,6 +8,7 @@ message Command {
     bytes create_card = 3; // exact original Card Protobuf bytes
     Rename rename = 4;
     SetAttachments set_attachments = 5;
+    SetContent set_content = 6;
   }
 }
 message Rename {
@@ -35,3 +36,12 @@ message Commit {
   string event_id = 8;
   repeated bytes attachment_sha256 = 9;
 }
+
+// Full content edits retain outer unknown fields, identity and existing relations.
+message SetContent {
+  string card_id = 1; uint64 expected_revision = 2;
+  string title = 3; bytes body = 4; string preview_text = 5;
+  AttachmentList attachments = 6; // absent retains references; present replaces atomically
+}
+
+message AttachmentList { repeated AttachmentRef items = 1; }

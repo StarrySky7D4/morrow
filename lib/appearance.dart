@@ -8,6 +8,134 @@ enum StudioTheme { white, custom, dark }
 
 enum BackgroundMode { ambient, solid, texture, transparent }
 
+@immutable
+class ComponentMaterial {
+  const ComponentMaterial({
+    this.enabled = false,
+    this.blur = 22,
+    this.opacity = .76,
+    this.color,
+  });
+  final bool enabled;
+  final double blur, opacity;
+  final Color? color;
+  ComponentMaterial copyWith({
+    bool? enabled,
+    double? blur,
+    double? opacity,
+    Color? color,
+  }) => ComponentMaterial(
+    enabled: enabled ?? this.enabled,
+    blur: blur ?? this.blur,
+    opacity: opacity ?? this.opacity,
+    color: color ?? this.color,
+  );
+  Map<String, dynamic> toJson() => {
+    'enabled': enabled,
+    'blur': blur,
+    'opacity': opacity,
+    'color': color?.toARGB32(),
+  };
+  factory ComponentMaterial.fromJson(Map<String, dynamic> data) {
+    final blur = (data['blur'] as num?)?.toDouble() ?? 22;
+    final opacity = (data['opacity'] as num?)?.toDouble() ?? .76;
+    if (!blur.isFinite ||
+        !opacity.isFinite ||
+        blur < 0 ||
+        blur > 40 ||
+        opacity < 0 ||
+        opacity > 1) {
+      throw const FormatException('Invalid component material');
+    }
+    return ComponentMaterial(
+      enabled: data['enabled'] as bool? ?? false,
+      blur: blur,
+      opacity: opacity,
+      color: data['color'] == null ? null : Color(data['color'] as int),
+    );
+  }
+}
+
+/// Independent material parameters; theme values remain authoritative by default.
+@immutable
+class SurfaceSettings {
+  const SurfaceSettings({
+    this.components = const {},
+    this.canvasBlur = 0,
+    this.canvasOpacity = 0,
+    this.canvasColor,
+    this.componentCustom = false,
+    this.componentBlur = 22,
+    this.componentOpacity = .76,
+    this.componentColor,
+  });
+  final Map<String, ComponentMaterial> components;
+  final double canvasBlur, canvasOpacity, componentBlur, componentOpacity;
+  final Color? canvasColor, componentColor;
+  final bool componentCustom;
+  SurfaceSettings copyWith({
+    Map<String, ComponentMaterial>? components,
+    double? canvasBlur,
+    double? canvasOpacity,
+    Color? canvasColor,
+    bool? componentCustom,
+    double? componentBlur,
+    double? componentOpacity,
+    Color? componentColor,
+  }) => SurfaceSettings(
+    components: components ?? this.components,
+    canvasBlur: canvasBlur ?? this.canvasBlur,
+    canvasOpacity: canvasOpacity ?? this.canvasOpacity,
+    canvasColor: canvasColor ?? this.canvasColor,
+    componentCustom: componentCustom ?? this.componentCustom,
+    componentBlur: componentBlur ?? this.componentBlur,
+    componentOpacity: componentOpacity ?? this.componentOpacity,
+    componentColor: componentColor ?? this.componentColor,
+  );
+  Map<String, dynamic> toJson() => {
+    'componentMaterials': components.map(
+      (key, value) => MapEntry(key, value.toJson()),
+    ),
+    'canvasBlur': canvasBlur,
+    'canvasOpacity': canvasOpacity,
+    'canvasColor': canvasColor?.toARGB32(),
+    'componentCustom': componentCustom,
+    'componentBlur': componentBlur,
+    'componentOpacity': componentOpacity,
+    'componentColor': componentColor?.toARGB32(),
+  };
+  factory SurfaceSettings.fromJson(Map<String, dynamic> data) {
+    double value(String key, double fallback, double max) {
+      final v = (data[key] as num?)?.toDouble() ?? fallback;
+      if (!v.isFinite) throw const FormatException('Invalid material value');
+      return v.clamp(0, max);
+    }
+
+    Color? color(String key) =>
+        data[key] == null ? null : Color(data[key] as int).withValues(alpha: 1);
+    return SurfaceSettings(
+      components: (data['componentMaterials'] as Map<String, dynamic>? ?? {})
+          .map(
+            (key, value) => MapEntry(
+              key,
+              ComponentMaterial.fromJson(value as Map<String, dynamic>),
+            ),
+          ),
+      canvasBlur: value('canvasBlur', 0, 40),
+      canvasOpacity: value('canvasOpacity', 0, 1),
+      canvasColor: color('canvasColor'),
+      componentCustom: data['componentCustom'] as bool? ?? false,
+      componentBlur: value('componentBlur', 22, 40),
+      componentOpacity: value(
+        'componentOpacity',
+        (data['frostedOpacity'] as num?)?.toDouble() ?? .76,
+        1,
+      ),
+      componentColor: color('componentColor'),
+    );
+  }
+}
+
 class Palette {
   const Palette(
     this.theme,
@@ -24,7 +152,27 @@ class Palette {
     this.windowRadius = 20,
     this.liquidCanvas = false,
     this.themeColor,
+    this.surfaces = const SurfaceSettings(),
   ]);
+  final SurfaceSettings surfaces;
+  Palette withSurfaces(SurfaceSettings value) => Palette(
+    theme,
+    mode,
+    backdrop,
+    solidTint,
+    frostedOpacity,
+    customColor,
+    texture,
+    mediaPlaying,
+    cornerRadius,
+    grayscale,
+    themeLightness,
+    windowRadius,
+    liquidCanvas,
+    themeColor,
+    value,
+  );
+
   final StudioTheme theme;
   final GlassMode mode;
   final BackgroundMode backdrop;
@@ -171,17 +319,22 @@ class Glass extends StatelessWidget {
     required this.child,
     this.radius = 20,
     this.dialog = false,
+    this.componentId,
   });
   final Palette p;
   final Widget child;
   final double radius;
   final bool dialog;
+  final String? componentId;
 
   @override
   Widget build(BuildContext context) {
-    final tint = dialog && p.backdrop == BackgroundMode.solid
+    final local = p.surfaces.components[componentId];
+    final custom = local?.enabled ?? false;
+    final inheritedTint = dialog && p.backdrop == BackgroundMode.solid
         ? p.solidColor
         : p.surface;
+    final tint = custom ? local!.color ?? inheritedTint : inheritedTint;
     final borderRadius = p.borderRadius(radius);
     // Editors need a reading surface even when surrounding cards are clear.
     final readable = dialog || MediaQuery.highContrastOf(context);
@@ -191,7 +344,7 @@ class Glass extends StatelessWidget {
     final bottom = p.clear
         ? (readable ? .80 : .025)
         : p.frostedOpacity.clamp(.2, 1).toDouble();
-    final target = p.liquid
+    final inherited = p.liquid
         ? GlassMaterial.liquid(
             tint: tint,
             dark: p.dark,
@@ -223,6 +376,30 @@ class Glass extends StatelessWidget {
               border: Border.all(color: p.glassEdge, width: 1),
             ),
           );
+    final target = custom
+        ? GlassMaterial(
+            blur: local!.blur,
+            liquid: inherited.liquid,
+            decoration: inherited.decoration.copyWith(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  tint.withValues(
+                    alpha: readable
+                        ? local.opacity.clamp(.8, 1)
+                        : local.opacity,
+                  ),
+                  tint.withValues(
+                    alpha: readable
+                        ? local.opacity.clamp(.8, 1)
+                        : local.opacity,
+                  ),
+                ],
+              ),
+            ),
+          )
+        : inherited;
     return TweenAnimationBuilder<GlassMaterial>(
       tween: GlassMaterialTween(end: target),
       duration: motionDuration(context, 360),

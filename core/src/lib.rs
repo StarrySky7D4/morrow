@@ -1,7 +1,9 @@
 #![deny(unsafe_code)]
 
 pub mod attachment;
+pub mod audit;
 pub mod content;
+pub mod content_change;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
 pub mod lifecycle;

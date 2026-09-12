@@ -1,0 +1,13 @@
+syntax = "proto3";
+package morrow.audit.v1;
+// raw_segment is signed BEFORE compression and retained verbatim on verification.
+message SignedFrame { uint32 version = 1; bytes raw_segment = 2; bytes signature = 3; }
+message Segment {
+ uint32 version = 1; string log_id = 2; bytes signer_public_key = 3;
+ uint64 index = 4; bytes previous_sha256 = 5; repeated Event events = 6;
+}
+// Sequence is the immutable local outbox sequence, not a plugin supplied clock.
+message Event { uint64 sequence = 1; string operation_id = 2; bytes original_commit = 3; }
+
+// Pinned identity is an association, never its own source of trust.
+message LogIdentity { uint32 version = 1; string log_id = 2; bytes public_key = 3; }

@@ -5,19 +5,29 @@ import '../media/texture_storage_native.dart'
     as storage;
 
 class IdeaAttachment {
-  const IdeaAttachment({required this.source, required this.size});
+  const IdeaAttachment({
+    required this.source,
+    required this.size,
+    this.pluginId,
+  });
   final TextureSource source;
   final int size;
+  final String? pluginId;
   static const maxSize = 200 * 1024 * 1024;
   String get extension => source.name.toLowerCase().split('.').last;
   bool get previewable => source.kind != TextureKind.file;
   String get sizeLabel => size >= 1024 * 1024
       ? '${(size / 1024 / 1024).toStringAsFixed(1)} MB'
       : '${(size / 1024).ceil()} KB';
-  Map<String, dynamic> toJson() => {'source': source.toJson(), 'size': size};
+  Map<String, dynamic> toJson() => {
+    'source': source.toJson(),
+    'size': size,
+    if (pluginId != null) 'pluginId': pluginId,
+  };
   factory IdeaAttachment.fromJson(Map<String, dynamic> data) => IdeaAttachment(
     source: TextureSource.fromJson(data['source'] as Map<String, dynamic>),
     size: data['size'] as int? ?? 0,
+    pluginId: data['pluginId'] as String?,
   );
   static TextureKind kindFor(String name) {
     final ext = name.toLowerCase().split('.').last;

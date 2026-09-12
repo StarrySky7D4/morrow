@@ -11,6 +11,9 @@ struct Request {
     readSummary @6 :Text;
     queryOperation @7 :QueryOperation;
     readAttachment @8 :ReadAttachment;
+    createContent @9 :CreateContent;
+    editContent @10 :EditContent;
+    readContent @11 :ReadContent;
   }
 }
 struct RenameCard {
@@ -42,6 +45,8 @@ struct Response {
     rejected @7 :Failure;
     operationResult @8 :OperationResult;
     attachmentChunk @9 :AttachmentChunk;
+    contentCommitted @10 :CommitReceipt;
+    contentChunk @11 :ContentChunk;
   }
 }
 struct CommitReceipt {
@@ -92,4 +97,22 @@ struct AttachmentChunk {
   totalLength @4 :UInt64;
   contentSha256 @5 :Data;
   bytes @6 :Data;
+}
+
+# Inline mutations share the 64 KiB message budget; file references stay host-owned.
+struct CreateContent {
+  cardId @0 :Text; typeId @1 :Text; formatVersion @2 :UInt32;
+  title @3 :Text; body @4 :Data;
+}
+struct EditContent {
+  cardId @0 :Text; expectedRevision @1 :UInt64; title @2 :Text;
+  body @3 :Data; previewText @4 :Text;
+}
+# Pin every part to one revision. The digest covers the whole body, not the Card.
+struct ReadContent {
+  cardId @0 :Text; expectedRevision @1 :UInt64; offset @2 :UInt64; length @3 :UInt32;
+}
+struct ContentChunk {
+  cardId @0 :Text; revision @1 :UInt64; offset @2 :UInt64; totalLength @3 :UInt64;
+  bodySha256 @4 :Data; bytes @5 :Data;
 }

@@ -3,7 +3,7 @@ resolver = "2"
 
 [package]
 name = "morrow-core"
-version = "0.1.9-test.10"
+version = "0.1.9-test.18"
 edition = "2024"
 publish = false
 license = "Apache-2.0"
@@ -12,6 +12,7 @@ license = "Apache-2.0"
 crate-type = ["rlib", "cdylib"]
 
 [dependencies]
+ed25519-dalek = "=3.0.0"
 capnp = "=0.24.1"
 prost = "=0.14.4"
 prost-reflect = { version = "=0.16.5", default-features = false }

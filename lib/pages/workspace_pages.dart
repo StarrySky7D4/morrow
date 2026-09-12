@@ -30,6 +30,10 @@ extension _PageContent on _StudioState {
     _ => (section == '小项目' ? projectStage(idea) : idea.stage) == filter,
   };
   void changeStage(Idea idea, String stage) {
+    if (widget.workbench != null) {
+      pluginChange(PluginAction.stage, idea, text: stage);
+      return;
+    }
     refreshPage(() {
       idea.stage = stage;
       if (idea.category == '进行中') {
@@ -45,6 +49,10 @@ extension _PageContent on _StudioState {
   }
 
   void moveToProject(Idea idea) {
+    if (widget.workbench != null) {
+      pluginChange(PluginAction.toProject, idea);
+      return;
+    }
     refreshPage(() {
       idea.category = '进行中';
       idea.stage = '计划中';
@@ -84,6 +92,10 @@ extension _PageContent on _StudioState {
   Widget bookmark(Idea idea) => IconButton(
     tooltip: '${idea.favorite ? '取消收藏' : '收藏'} ${idea.title}',
     onPressed: () {
+      if (widget.workbench != null) {
+        pluginChange(PluginAction.favorite, idea, flag: !idea.favorite);
+        return;
+      }
       refreshPage(() => idea.favorite = !idea.favorite);
       persist();
     },
@@ -128,6 +140,7 @@ extension _PageContent on _StudioState {
           ),
         );
   Widget recordShell(Idea idea, Widget child, {Key? key}) => Glass(
+    componentId: 'card:${idea.id}',
     key: key,
     p: p,
     radius: 20,
@@ -254,6 +267,15 @@ extension _PageContent on _StudioState {
                                 title: todo,
                                 done: idea.completed.contains(todo),
                                 onChanged: (done) {
+                                  if (widget.workbench != null) {
+                                    pluginChange(
+                                      PluginAction.todo,
+                                      idea,
+                                      text: todo,
+                                      flag: done,
+                                    );
+                                    return;
+                                  }
                                   refreshPage(() {
                                     if (done) {
                                       idea.completed.add(todo);
@@ -472,6 +494,7 @@ extension _PageContent on _StudioState {
       ),
     };
     return Glass(
+      componentId: 'summary:$section',
       p: p,
       child: Padding(
         padding: const EdgeInsets.all(22),

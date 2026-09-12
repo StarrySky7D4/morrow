@@ -10,6 +10,58 @@ use morrow_plugin_sdk::task::Invocation as Guest;
 fn independent_host_and_guest_task_codecs_agree_for_all_content_commands() {
     let pairs = vec![
         (
+            Command::CreateContent(morrow_core::runtime::CreateContent {
+                operation_id: "create".into(),
+                card_id: "card".into(),
+                type_id: "note".into(),
+                format_version: 1,
+                title: "hello".into(),
+                body: vec![0, 255],
+            }),
+            Outcome::ContentCommitted(morrow_core::transaction::Receipt {
+                operation_id: "create".into(),
+                card_id: "card".into(),
+                revision: 1,
+                event_id: "create".into(),
+                content_sha256: [9; 32],
+            }),
+        ),
+        (
+            Command::EditContent(morrow_core::content_change::ContentChange {
+                operation_id: "edit".into(),
+                card_id: "card".into(),
+                expected_revision: 1,
+                title: "hello".into(),
+                body: vec![0, 255],
+                preview_text: "preview".into(),
+                attachments: None,
+            }),
+            Outcome::ContentCommitted(morrow_core::transaction::Receipt {
+                operation_id: "edit".into(),
+                card_id: "card".into(),
+                revision: 2,
+                event_id: "edit".into(),
+                content_sha256: [9; 32],
+            }),
+        ),
+        (
+            Command::ReadContent(morrow_core::runtime::ReadContent {
+                request_id: "body".into(),
+                card_id: "card".into(),
+                expected_revision: 2,
+                offset: 0,
+                length: 2,
+            }),
+            Outcome::ContentChunk(morrow_core::runtime::ContentChunk {
+                card_id: "card".into(),
+                revision: 2,
+                offset: 0,
+                total_length: 2,
+                body_sha256: [9; 32],
+                bytes: vec![0, 255],
+            }),
+        ),
+        (
             Command::Rename(RenameRequest {
                 operation_id: "操作-1".into(),
                 card_id: "卡片-A".into(),

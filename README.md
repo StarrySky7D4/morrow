@@ -2,9 +2,11 @@
 
 留一点空间给明天的想法。项目原名 daemon，现统一命名为 Morrow；代码包名为 `morrow_studio`。改名兼容策略见 [重命名说明](docs/RENAMING.md)。历史发布附件保留原名，新构建使用 `morrow-*`。
 
-[下载稳定版本](https://github.com/StarrySky7D4/morrow/releases/latest) · [下载 0.1.9-test.1 测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [Apache-2.0](LICENSE)
+[下载 test.14 Windows 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.14) · [下载 test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [Apache-2.0](LICENSE)
 
-用 Flutter 构建的灵感工作台。支持 Windows 与 Web，界面由 Flutter 绘制，使用 shared_preferences 保存本地内容、flutter_acrylic 实现 Windows 原生透明窗口。
+用 Flutter 构建的灵感工作台。当前重构版为 **0.1.9-test.14**：Windows 默认启动 Rust 工作台插件与独立核心数据库，Flutter 负责界面和平台媒体承载；Web／Android 暂保留原路径。旧 test.1 数据不会自动导入或覆盖。当前迁移结果与容量边界见 [test.1 功能对照](docs/TEST1_RUST_PARITY.md)。
+
+test.14 平滑透明画布低强度磨砂，并将模糊和染色覆盖到标题栏背景。test.13 将材质自定义改为每个组件与内容卡片独立设置，修正透明画布模糊与零不透明度黑底。test.12 将工作台偏好保存改为有界分段传输，支持最多 4 MiB 的整份配置，失败保留原设置。此前增加透明画布的磨砂、不透明度与染色罗盘，以及默认跟随主题、可独立启用的组件材质设置。插件 SDK 已扩展为运行期 v7，提供 C／C++／Rust 的正文创建、编辑与分段读取；见 [SDK](sdk/README.md)。以下清单保留产品功能基线，具体重构验收以对照记录为准。
 
 Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测试包；构建方法与当前验证范围见 [Android 构建说明](docs/ANDROID.md)。
 
@@ -35,9 +37,9 @@ Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测�
 
 ## 测试版推进
 
-当前开发版本为 `0.1.9-test.10+19`。`test.1` 是 `0.1.x` 最后一个兼容现有数据类型的测试版；从 `test.2` 起以 `0.1.9-test.x` 逐步推进大规模重写，后续可能包含破坏性数据变更。核心架构与数据模型锚定、插件系统及声明支持的平台完成验收后发布 `0.2.0`。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。
+当前应用版本为 `0.1.9-test.14+23`，仅发布 Windows x64 测试预览构建，不是稳定版。`test.1` 是 `0.1.x` 最后一个兼容现有数据类型的测试版；从 `test.2` 起以 `0.1.9-test.x` 逐步推进大规模重写，后续可能包含破坏性数据变更。核心架构与数据模型锚定、插件系统及声明支持的平台完成验收后发布 `0.2.0`。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。
 
-`test.10` 将工作区、视图位置与既有卡片的草稿保存接入同一 Rust 存储核心，各自维护修订，内容修改与操作结果／待封存事件原子提交。一卡可被多个工作区引用，布局和草稿修改不覆盖正式正文。当前通过可信本地 API／CLI 和浏览器实验适配访问，尚未接入插件命令或工作台。实验数据库升至格式 4，旧实验库没有自动迁移。[本轮记录](reports/0.1.9-test.10-refactor.md)。
+`test.10` 将工作区、视图位置与既有卡片的草稿保存接入同一 Rust 存储核心，各自维护修订，内容修改与操作结果／待封存事件原子提交。一卡可被多个工作区引用，布局和草稿修改不覆盖正式正文。当前通过可信本地 API／CLI 和浏览器实验适配访问，尚未接入插件命令或工作台。该阶段实验数据库升至格式 4；当前核心使用格式 6，可校验并迁移格式 4／5，不导入 test.1 旧数据。[本轮记录](reports/0.1.9-test.10-refactor.md)。
 
 第三方插件开发新增 [C／C++／Rust SDK 原型](sdk/README.md) 与 [插件 UI 对接设计](docs/PLUGIN_SDK_AND_UI.md)：首期通过声明式界面接入 Flutter，暂不要求 Dart 动态插件。当前 SDK 已验证传输接口、四类内容命令的类型化编解码及 C 到真实核心的链路，后续已运行 [C／C++／Rust SDK Wasm 示例](plugin_runtime/README.md)，验证限额、授权与提交后故障。完整插件执行与 UI 渲染器继续建设。
 
@@ -61,7 +63,9 @@ flutter build web --no-web-resources-cdn
 构建后可用 `node tool/preview.cjs` 启动本机预览，地址为 `http://127.0.0.1:8765`。
 Windows 构建：`flutter build windows`，运行 `build/windows/x64/runner/Release/morrow_studio.exe`，分发时需保留整个 Release 目录。
 
-个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-<当前版本>-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
+Windows Rust 工作台完整构建与打包使用 `pwsh -File tool/build_rust_workbench_windows.ps1`，会构建核心宿主与 Rust 插件、验证集成并打包运行依赖。需要 Rust 的 `wasm32-unknown-unknown` 目标和 Flutter Windows 构建环境。已有同名产物默认保留，明确替换时使用 `-RefreshArtifact`。
+
+旧路径个人分享打包：构建后运行 `pwsh -File tool/package_share.ps1`，生成 `dist/morrow-<当前版本>-windows-x64.zip`。它包含全部运行依赖，接收者完整解压后双击应用即可。同时构建 Web 后，加上 `-IncludeWeb` 可生成 Web ZIP 和 SHA-256 校验文件。脚本的 `-CrtDirectory` 参数可以指定本机 Visual Studio 的 x64 CRT redist 目录。
 
 ## 歌词与附件
 
@@ -80,6 +84,8 @@ Windows 数据由平台插件保存在当前用户的应用支持目录，导入
 网络采集使用媒体文件直链，普通网页分享地址需要先找到原始媒体地址；远端服务必须允许访问，Web 图片还需允许跨域加载。视频编码支持取决于播放平台，Web 优先使用浏览器支持的 MP4 或 WebM。素材失效、浏览器容量不足或格式不可用时会提示错误；无法加载的背景回退到内置纹理。播放开关会保存，播放进度不保存。未连接后台守护进程或云端服务。
 
 ## 验证
+
+当前 test.14 预发布的源码、Windows 构建及验证范围见 [发布记录](reports/0.1.9-test.14-release.md)。独立核心与审计原型已推进至内部 test.18；工作台尚未接入自动审计封存、密钥恢复和轮换，不能据此认定插件系统已经完成。以下为历史版本记录。
 
 v0.1.9-test.1 的构建、测试和分发校验见 [发布验证记录](reports/0.1.9-test.1-release.md)，历史记录见 [v0.1.8](reports/0.1.8-release.md)。下述实窗与媒体交互检查包含此前版本的验证，本次未重新进行实窗集成测试。
 

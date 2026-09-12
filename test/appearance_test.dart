@@ -1,4 +1,6 @@
 import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/liquid_glass.dart';
+import 'package:morrow_studio/component_material_page.dart';
 import 'package:morrow_studio/desktop_frame.dart';
 import 'package:morrow_studio/storage.dart';
 import 'package:morrow_studio/window_effects.dart';
@@ -8,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 class NoBackground extends DesktopBackground {
   @override
-  Future<void> apply() async {}
+  Future<void> apply({double frost = 0}) async {}
 }
 
 void main() {
@@ -30,12 +32,183 @@ void main() {
   Future<void> slide(WidgetTester tester, String key, double value) async {
     final slider = tester.widget<Slider>(find.byKey(ValueKey(key)));
     slider.onChanged!(value);
-    slider.onChangeEnd!(value);
+    slider.onChangeEnd?.call(value);
     await tester.pumpAndSettle();
   }
 
   Palette palette(WidgetTester tester) =>
       tester.widget<Studio>(find.byType(Studio)).palette;
+
+  testWidgets('Per-card material changes only its own glass shell', (
+    tester,
+  ) async {
+    await size(tester, 390);
+    const surfaces = SurfaceSettings(
+      componentCustom: true,
+      componentBlur: 40,
+      componentOpacity: 1,
+      components: {
+        'card:a': ComponentMaterial(
+          enabled: true,
+          blur: 2,
+          opacity: 0,
+          color: Colors.red,
+        ),
+        'card:b': ComponentMaterial(
+          enabled: false,
+          blur: 40,
+          opacity: 1,
+          color: Colors.blue,
+        ),
+      },
+    );
+    const p = Palette(
+      StudioTheme.white,
+      GlassMode.clear,
+      BackgroundMode.transparent,
+      0,
+      .76,
+      null,
+      null,
+      true,
+      20,
+      0,
+      null,
+      20,
+      false,
+      null,
+      surfaces,
+    );
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Row(
+          children: [
+            Glass(
+              p: p,
+              componentId: 'card:a',
+              child: SizedBox(width: 100, height: 100),
+            ),
+            Glass(
+              p: p,
+              componentId: 'card:b',
+              child: SizedBox(width: 100, height: 100),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final materials = tester
+        .widgetList<LiquidGlassSurface>(find.byType(LiquidGlassSurface))
+        .toList();
+    expect(materials[0].material!.blur, 2);
+    expect(
+      (materials[0].material!.decoration.gradient! as LinearGradient)
+          .colors
+          .first
+          .a,
+      0,
+    );
+    expect(materials[1].material!.blur, 1);
+    expect(materials[1].tint, isNot(Colors.red));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ComponentMaterialPage(
+          palette: p,
+          id: 'card:a',
+          title: '很长的卡片标题，也应在窄屏内完整操作',
+          initial: surfaces.components['card:a']!,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('component-apply')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'Canvas tint is independent and component override survives theme and reload',
+    (tester) async {
+      await size(tester, 1440);
+      final storage = MemoryStorage();
+      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpAndSettle();
+      expect(palette(tester).surfaces.componentCustom, isFalse);
+      await tap(tester, 'background-transparent');
+      await slide(tester, 'canvas-opacity', .3);
+      await slide(tester, 'canvas-blur', 12);
+      var studio = tester.widget<Studio>(find.byType(Studio));
+      studio.onSurfaces!(
+        palette(tester).surfaces.copyWith(canvasColor: const Color(0xff44aa99)),
+      );
+      studio.onAppearanceCommit();
+      await tester.pumpAndSettle();
+      final canvas = tester.widget<AnimatedContainer>(
+        find.byKey(const ValueKey('transparent-canvas-tint')),
+      );
+      expect(
+        (canvas.decoration! as BoxDecoration).color,
+        const Color(0xff44aa99).withValues(alpha: .3),
+      );
+      // A background autosave must not commit a still-open color preview.
+      studio = tester.widget<Studio>(find.byType(Studio));
+      final before = palette(tester).surfaces;
+      studio.onSurfaces!(before.copyWith(canvasColor: Colors.red));
+      studio.onSave({'ideas': <dynamic>[], 'completed': <String>[]});
+      await tester.pumpAndSettle();
+      expect(storage.read()!['canvasColor'], 0xff44aa99);
+      studio.onSurfaces!(before);
+      await tester.pumpAndSettle();
+      await tap(tester, 'component-settings');
+      await tap(tester, 'component-entry:hero');
+      await tap(tester, 'component-custom-toggle');
+      await slide(tester, 'component-blur', 1);
+      await slide(tester, 'component-opacity', .18);
+      await tap(tester, 'component-apply');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(palette(tester).surfaces.components['hero']!.blur, 1);
+      expect(palette(tester).surfaces.components['hero']!.enabled, isTrue);
+      expect(palette(tester).surfaces.components['navigation'], isNull);
+      await tap(tester, 'theme-dark');
+      expect(palette(tester).surfaces.components['hero']!.opacity, .18);
+      expect(palette(tester).surfaces.canvasOpacity, .3);
+      await tap(tester, 'component-settings');
+      await tap(tester, 'component-entry:hero');
+      await tap(tester, 'component-custom-toggle');
+      await tap(tester, 'component-apply');
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(palette(tester).surfaces.components['hero']!.enabled, isFalse);
+      expect(palette(tester).surfaces.components['hero']!.blur, 1);
+      await tap(tester, 'component-settings');
+      await tap(tester, 'component-entry:navigation');
+      await tap(tester, 'component-custom-toggle');
+      await slide(tester, 'component-opacity', .8);
+      await tester.pageBack(); // cancel: no live or persisted mutation
+      await tester.pumpAndSettle();
+      await tester.pageBack();
+      await tester.pumpAndSettle();
+      expect(palette(tester).surfaces.components['navigation'], isNull);
+      await slide(tester, 'canvas-opacity', 0);
+      final zeroCanvas = tester.widget<AnimatedContainer>(
+        find.byKey(const ValueKey('transparent-canvas-tint')),
+      );
+      expect((zeroCanvas.decoration! as BoxDecoration).color!.a, 0);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpAndSettle();
+      expect(palette(tester).surfaces.components['hero']!.enabled, isFalse);
+      expect(palette(tester).surfaces.components['hero']!.opacity, .18);
+      expect(palette(tester).surfaces.components['navigation'], isNull);
+      expect(palette(tester).surfaces.canvasColor, const Color(0xff44aa99));
+      expect(palette(tester).surfaces.canvasBlur, 12);
+      expect(palette(tester).surfaces.canvasOpacity, 0);
+      expect(tester.takeException(), isNull);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.windows),
+  );
 
   testWidgets(
     'Custom controls are collapsed, presets locked, values and zero radius persist',
@@ -201,6 +374,17 @@ void main() {
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 12.0);
       expect(find.byType(DesktopFrame), findsOneWidget);
+      await tap(tester, 'background-transparent');
+      await slide(tester, 'canvas-opacity', .3);
+      final tintRect = tester.getRect(
+        find.byKey(const ValueKey('transparent-canvas-tint')),
+      );
+      final captionRect = tester.getRect(
+        find.byKey(const ValueKey('desktop-caption')),
+      );
+      expect(tintRect.top, captionRect.top);
+      expect(tintRect.bottom, greaterThan(captionRect.bottom));
+      expect(palette(tester).captionColor, Colors.transparent);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
     },

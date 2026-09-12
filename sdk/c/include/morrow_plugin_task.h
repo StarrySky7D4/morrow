@@ -18,6 +18,8 @@ typedef struct mp_task_view { mp_span task_id, command; mp_request_v1 request; }
 /* Same disjoint buffer and live-pointer requirements as the codec API. */
 uint32_t mp_task_decode(const uint8_t*,uint32_t,mp_task**);
 uint32_t mp_task_get(const mp_task*,mp_task_view*,uint32_t);
+/* Generic bounded command view, including v7 content commands. Borrows task. */
+uint32_t mp_task_get_command(const mp_task*,mp_span*,uint32_t);
 uint32_t mp_task_complete(const mp_task*,const uint8_t*,uint32_t,uint8_t*,uint32_t,uint32_t*);
 uint32_t mp_task_get_transform(const mp_task*,mp_transform_view*,uint32_t);
 uint32_t mp_task_output(const mp_task*,const uint8_t*,uint32_t,uint8_t*,uint32_t,uint32_t*);

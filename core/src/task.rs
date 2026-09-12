@@ -208,6 +208,20 @@ impl Invocation {
         }
         let matched = match (command, &response.outcome) {
             (_, Outcome::Rejected(_)) => true,
+            (Command::CreateContent(q), Outcome::ContentCommitted(r)) => {
+                q.card_id == r.card_id && q.operation_id == r.operation_id && r.revision == 1
+            }
+            (Command::EditContent(q), Outcome::ContentCommitted(r)) => {
+                q.card_id == r.card_id
+                    && q.operation_id == r.operation_id
+                    && q.expected_revision.checked_add(1) == Some(r.revision)
+            }
+            (Command::ReadContent(q), Outcome::ContentChunk(r)) => {
+                q.card_id == r.card_id
+                    && q.expected_revision == r.revision
+                    && q.offset == r.offset
+                    && r.bytes.len() <= q.length as usize
+            }
             (Command::Rename(q), Outcome::Renamed(r)) => {
                 q.card_id == r.card_id
                     && q.operation_id == r.operation_id

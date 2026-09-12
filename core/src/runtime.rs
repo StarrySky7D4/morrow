@@ -4,7 +4,7 @@ use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-pub const PROTOCOL_VERSION: u16 = 6;
+pub const PROTOCOL_VERSION: u16 = 7;
 pub fn schema_digest(source: &[u8]) -> [u8; 32] {
     use sha2::{Digest, Sha256};
     // Git checkout line endings do not change the contract identity.
@@ -79,7 +79,51 @@ impl ReadAttachment {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CreateContent {
+    pub operation_id: String,
+    pub card_id: String,
+    pub type_id: String,
+    pub format_version: u32,
+    pub title: String,
+    pub body: Vec<u8>,
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReadContent {
+    pub request_id: String,
+    pub card_id: String,
+    pub expected_revision: u64,
+    pub offset: u64,
+    pub length: u32,
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ContentChunk {
+    pub card_id: String,
+    pub revision: u64,
+    pub offset: u64,
+    pub total_length: u64,
+    pub body_sha256: [u8; 32],
+    pub bytes: Vec<u8>,
+}
+impl ContentChunk {
+    pub fn validate(&self) -> Result<()> {
+        identity(&self.card_id)?;
+        if self.revision == 0
+            || self.total_length > 8 * 1024 * 1024
+            || self.offset > self.total_length
+            || self.bytes.len() > 32768
+            || self.bytes.len() as u64 > self.total_length - self.offset
+            || self.bytes.is_empty() && self.offset != self.total_length
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Command {
+    CreateContent(CreateContent),
+    EditContent(crate::content_change::ContentChange),
+    ReadContent(ReadContent),
     Rename(RenameRequest),
     ReadAttachment(ReadAttachment),
     ReadSummary {
@@ -95,6 +139,9 @@ pub enum Command {
 impl Command {
     pub fn request_id(&self) -> &str {
         match self {
+            Self::CreateContent(v) => &v.operation_id,
+            Self::EditContent(v) => &v.operation_id,
+            Self::ReadContent(v) => &v.request_id,
             Self::Rename(v) => &v.operation_id,
             Self::ReadAttachment(v) => &v.request_id,
             Self::ReadSummary { request_id, .. } | Self::QueryOperation { request_id, .. } => {
@@ -104,6 +151,9 @@ impl Command {
     }
     pub fn card_id(&self) -> &str {
         match self {
+            Self::CreateContent(v) => &v.card_id,
+            Self::EditContent(v) => &v.card_id,
+            Self::ReadContent(v) => &v.card_id,
             Self::Rename(v) => &v.card_id,
             Self::ReadAttachment(v) => &v.card_id,
             Self::ReadSummary { card_id, .. } | Self::QueryOperation { card_id, .. } => card_id,
@@ -113,6 +163,34 @@ impl Command {
         identity(self.request_id())?;
         identity(self.card_id())?;
         match self {
+            Self::CreateContent(v) => {
+                identity(&v.type_id)?;
+                title(&v.title)?;
+                if v.format_version == 0 {
+                    return Err(Error::Invalid("format version"));
+                }
+                if v.body.len() > 32768 {
+                    return Err(Error::Limit);
+                }
+                Ok(())
+            }
+            Self::EditContent(v) => {
+                v.validate()?;
+                if v.attachments.is_some() || v.body.len() > 32768 {
+                    return Err(Error::Limit);
+                }
+                Ok(())
+            }
+            Self::ReadContent(v) => {
+                if v.expected_revision == 0
+                    || v.offset > 8 * 1024 * 1024
+                    || v.length == 0
+                    || v.length > 32768
+                {
+                    return Err(Error::Limit);
+                }
+                Ok(())
+            }
             Self::Rename(v) => v.validate(),
             Self::ReadAttachment(v) => v.validate(),
             Self::QueryOperation { operation_id, .. } => identity(operation_id),
@@ -128,6 +206,29 @@ impl Command {
         root.set_content_digest(&content_digest());
         root.set_operation_id(self.request_id());
         match self {
+            Self::CreateContent(v) => {
+                let mut b = root.init_create_content();
+                b.set_card_id(v.card_id.as_str());
+                b.set_type_id(v.type_id.as_str());
+                b.set_format_version(v.format_version);
+                b.set_title(v.title.as_str());
+                b.set_body(&v.body);
+            }
+            Self::EditContent(v) => {
+                let mut b = root.init_edit_content();
+                b.set_card_id(v.card_id.as_str());
+                b.set_expected_revision(v.expected_revision);
+                b.set_title(v.title.as_str());
+                b.set_body(&v.body);
+                b.set_preview_text(v.preview_text.as_str());
+            }
+            Self::ReadContent(v) => {
+                let mut b = root.init_read_content();
+                b.set_card_id(v.card_id.as_str());
+                b.set_expected_revision(v.expected_revision);
+                b.set_offset(v.offset);
+                b.set_length(v.length);
+            }
             Self::Rename(value) => {
                 let mut rename = root.init_rename_card();
                 rename.set_card_id(value.card_id.as_str());
@@ -167,6 +268,39 @@ impl Command {
         )?;
         let request_id = read_text(root.get_operation_id())?;
         let value = match root.which().map_err(|_| Error::Invalid("operation"))? {
+            runtime_capnp::request::CreateContent(v) => {
+                let v = v.map_err(|_| Error::Invalid("create content"))?;
+                Self::CreateContent(CreateContent {
+                    operation_id: request_id,
+                    card_id: read_text(v.get_card_id())?,
+                    type_id: read_text(v.get_type_id())?,
+                    format_version: v.get_format_version(),
+                    title: read_text(v.get_title())?,
+                    body: v.get_body().map_err(|_| Error::Invalid("body"))?.to_vec(),
+                })
+            }
+            runtime_capnp::request::EditContent(v) => {
+                let v = v.map_err(|_| Error::Invalid("edit content"))?;
+                Self::EditContent(crate::content_change::ContentChange {
+                    operation_id: request_id,
+                    card_id: read_text(v.get_card_id())?,
+                    expected_revision: v.get_expected_revision(),
+                    title: read_text(v.get_title())?,
+                    preview_text: read_text(v.get_preview_text())?,
+                    body: v.get_body().map_err(|_| Error::Invalid("body"))?.to_vec(),
+                    attachments: None,
+                })
+            }
+            runtime_capnp::request::ReadContent(v) => {
+                let v = v.map_err(|_| Error::Invalid("read content"))?;
+                Self::ReadContent(ReadContent {
+                    request_id,
+                    card_id: read_text(v.get_card_id())?,
+                    expected_revision: v.get_expected_revision(),
+                    offset: v.get_offset(),
+                    length: v.get_length(),
+                })
+            }
             runtime_capnp::request::RenameCard(value) => {
                 let value = value.map_err(|_| Error::Invalid("rename"))?;
                 Self::Rename(RenameRequest {

@@ -41,6 +41,23 @@ pub struct Request {
 }
 #[derive(Debug, Clone)]
 pub enum Action {
+    CreateContent {
+        type_id: String,
+        format_version: u32,
+        title: String,
+        body: Vec<u8>,
+    },
+    EditContent {
+        revision: u64,
+        title: String,
+        body: Vec<u8>,
+        preview: String,
+    },
+    ReadContent {
+        revision: u64,
+        offset: u64,
+        length: u32,
+    },
     Rename {
         revision: u64,
         title: String,
@@ -61,6 +78,42 @@ impl Request {
         id(&self.request_id)?;
         id(&self.card_id)?;
         match &self.action {
+            Action::CreateContent {
+                type_id,
+                format_version,
+                title,
+                body,
+            } => {
+                id(type_id)?;
+                if *format_version == 0 {
+                    return Err(CodecError::Invalid);
+                }
+                if title.len() > 16384 || body.len() > 32768 {
+                    return Err(CodecError::Limit);
+                }
+            }
+            Action::EditContent {
+                revision,
+                title,
+                body,
+                preview,
+            } => {
+                if *revision == 0 {
+                    return Err(CodecError::Invalid);
+                }
+                if title.len() > 16384 || preview.len() > 16384 || body.len() > 32768 {
+                    return Err(CodecError::Limit);
+                }
+            }
+            Action::ReadContent {
+                revision,
+                offset,
+                length,
+            } => {
+                if *revision == 0 || *offset > 8 * 1024 * 1024 || *length == 0 || *length > 32768 {
+                    return Err(CodecError::Limit);
+                }
+            }
             Action::Rename { revision, title } => {
                 if *revision == 0 {
                     return Err(CodecError::Invalid);
@@ -95,6 +148,43 @@ impl Request {
         root.set_content_digest(&contract::CONTENT_DIGEST);
         root.set_operation_id(self.request_id.as_str());
         match &self.action {
+            Action::CreateContent {
+                type_id,
+                format_version,
+                title,
+                body,
+            } => {
+                let mut b = root.init_create_content();
+                b.set_card_id(self.card_id.as_str());
+                b.set_type_id(type_id.as_str());
+                b.set_format_version(*format_version);
+                b.set_title(title.as_str());
+                b.set_body(body);
+            }
+            Action::EditContent {
+                revision,
+                title,
+                body,
+                preview,
+            } => {
+                let mut b = root.init_edit_content();
+                b.set_card_id(self.card_id.as_str());
+                b.set_expected_revision(*revision);
+                b.set_title(title.as_str());
+                b.set_body(body);
+                b.set_preview_text(preview.as_str());
+            }
+            Action::ReadContent {
+                revision,
+                offset,
+                length,
+            } => {
+                let mut b = root.init_read_content();
+                b.set_card_id(self.card_id.as_str());
+                b.set_expected_revision(*revision);
+                b.set_offset(*offset);
+                b.set_length(*length);
+            }
             Action::Rename { revision, title } => {
                 let mut v = root.init_rename_card();
                 v.set_card_id(self.card_id.as_str());
@@ -154,6 +244,41 @@ impl Request {
         }
         let request_id = text(root.get_operation_id())?;
         let (card_id, action) = match root.which().map_err(invalid)? {
+            wire::request::CreateContent(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::CreateContent {
+                        type_id: text(v.get_type_id())?,
+                        format_version: v.get_format_version(),
+                        title: text(v.get_title())?,
+                        body: v.get_body().map_err(invalid)?.to_vec(),
+                    },
+                )
+            }
+            wire::request::EditContent(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::EditContent {
+                        revision: v.get_expected_revision(),
+                        title: text(v.get_title())?,
+                        preview: text(v.get_preview_text())?,
+                        body: v.get_body().map_err(invalid)?.to_vec(),
+                    },
+                )
+            }
+            wire::request::ReadContent(v) => {
+                let v = v.map_err(invalid)?;
+                (
+                    text(v.get_card_id())?,
+                    Action::ReadContent {
+                        revision: v.get_expected_revision(),
+                        offset: v.get_offset(),
+                        length: v.get_length(),
+                    },
+                )
+            }
             wire::request::RenameCard(v) => {
                 let v = v.map_err(invalid)?;
                 (
@@ -275,6 +400,31 @@ impl Request {
                     result,
                 }
             }
+            wire::response::ContentCommitted(v) => {
+                Reply::ContentCommitted(receipt(v.map_err(invalid)?)?)
+            }
+            wire::response::ContentChunk(v) => {
+                let v = v.map_err(invalid)?;
+                let p = ContentPart {
+                    card_id: text(v.get_card_id())?,
+                    revision: v.get_revision(),
+                    offset: v.get_offset(),
+                    total_length: v.get_total_length(),
+                    sha256: digest(v.get_body_sha256())?,
+                    bytes: v.get_bytes().map_err(invalid)?.to_vec(),
+                };
+                id(&p.card_id)?;
+                if p.revision == 0
+                    || p.total_length > 8 * 1024 * 1024
+                    || p.offset > p.total_length
+                    || p.bytes.len() > 32768
+                    || p.bytes.len() as u64 > p.total_length - p.offset
+                    || p.bytes.is_empty() && p.offset != p.total_length
+                {
+                    return Err(CodecError::Limit);
+                }
+                Reply::Content(p)
+            }
             wire::response::AttachmentChunk(v) => {
                 let v = v.map_err(invalid)?;
                 let p = AttachmentPart {
@@ -303,6 +453,27 @@ impl Request {
         };
         let matches = match (&self.action, &reply) {
             (_, Reply::Rejected(_)) => true,
+            (Action::CreateContent { .. }, Reply::ContentCommitted(v)) => {
+                v.card_id == self.card_id && v.operation_id == self.request_id && v.revision == 1
+            }
+            (Action::EditContent { revision, .. }, Reply::ContentCommitted(v)) => {
+                v.card_id == self.card_id
+                    && v.operation_id == self.request_id
+                    && revision.checked_add(1) == Some(v.revision)
+            }
+            (
+                Action::ReadContent {
+                    revision,
+                    offset,
+                    length,
+                },
+                Reply::Content(v),
+            ) => {
+                v.card_id == self.card_id
+                    && v.revision == *revision
+                    && v.offset == *offset
+                    && v.bytes.len() <= *length as usize
+            }
             (Action::Rename { revision, .. }, Reply::Renamed(v)) => {
                 v.card_id == self.card_id
                     && v.operation_id == self.request_id
@@ -385,7 +556,19 @@ pub struct AttachmentPart {
     pub bytes: Vec<u8>,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ContentPart {
+    pub card_id: String,
+    pub revision: u64,
+    pub offset: u64,
+    pub total_length: u64,
+    /// SHA-256 of the entire body, not of this part or the Card envelope.
+    pub sha256: [u8; 32],
+    pub bytes: Vec<u8>,
+}
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Reply {
+    ContentCommitted(Receipt),
+    Content(ContentPart),
     Renamed(Receipt),
     Summary(Summary),
     Rejected(Failure),

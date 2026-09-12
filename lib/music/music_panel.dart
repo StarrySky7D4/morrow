@@ -62,6 +62,7 @@ class _MusicPanelState extends State<MusicPanel> {
         for (final file in files.where(
           (f) => !f.name.toLowerCase().endsWith('.lrc'),
         )) {
+          await music.plugin?.validateImport('audio', await file.length());
           final track = await MusicTrack.import(file);
           final sidecar =
               lyrics[file.name
@@ -111,6 +112,7 @@ class _MusicPanelState extends State<MusicPanel> {
           if (!mounted || !music.tracks.contains(selected)) return;
           music.setLyrics(lyrics, track: selected);
         } else {
+          await music.plugin?.validateImport('image', await file.length());
           final cover = await TextureRepository.importFile(file);
           if (!mounted || !music.tracks.contains(selected)) return;
           selected.cover = cover;
@@ -186,6 +188,7 @@ class _MusicPanelState extends State<MusicPanel> {
     return ListenableBuilder(
       listenable: music,
       builder: (context, _) => Glass(
+        componentId: 'music',
         p: p,
         radius: 22,
         child: Padding(

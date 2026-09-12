@@ -1,0 +1,27 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-workbench-plugin"
+version = "0.1.9-test.13"
+edition = "2024"
+publish = false
+license = "Apache-2.0"
+[lib]
+crate-type = ["rlib", "cdylib"]
+[dependencies]
+morrow-plugin-sdk = {path = "../../sdk/rust", features = ["wasm-guest"]}
+capnp = "=0.24.1"
+sha2 = "=0.10.9"
+prost = "=0.14.4"
+prost-reflect = {version = "=0.16.5", default-features = false}
+regex = "=1.13.1"
+url = "=2.5.8"
+
+[build-dependencies]
+capnpc = "=0.24.0"
+prost-build = "=0.14.4"
+protoc-bin-vendored = "=3.2.0"
+[profile.release]
+opt-level = "s"
+panic = "abort"
+strip = true

@@ -154,6 +154,53 @@ impl HostRuntime {
     pub fn store_local_mut(&mut self) -> &mut Store {
         &mut self.store
     }
+    fn content_grant(&self, connection: &Connection, kind: GrantKind, card: &str) -> Result<Grant> {
+        connection.permits_kind(kind)?;
+        self.policy.phase(connection.instance)?;
+        connection
+            .grants
+            .get(&(kind, card.into(), None))
+            .copied()
+            .ok_or(Error::Invalid("missing grant"))
+    }
+    /// Safe host-side proposal entry. This does not expose administrative grants.
+    pub fn edit_content(
+        &mut self,
+        connection: &Connection,
+        change: &crate::content_change::ContentChange,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        let grant = self.content_grant(connection, GrantKind::EditContent, &change.card_id)?;
+        self.policy
+            .edit_content(connection.instance, grant, &mut self.store, change, clock)
+    }
+    pub fn create_content(
+        &mut self,
+        connection: &Connection,
+        operation: &str,
+        card: &crate::content::CardRecord,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        let grant = self.content_grant(connection, GrantKind::CreateContent, &card.summary().id)?;
+        self.policy.create_content(
+            connection.instance,
+            grant,
+            &mut self.store,
+            operation,
+            card,
+            clock,
+        )
+    }
+    pub fn read_content(
+        &mut self,
+        connection: &Connection,
+        card: &str,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::content::CardRecord> {
+        let grant = self.content_grant(connection, GrantKind::ReadContent, card)?;
+        self.policy
+            .read_content(connection.instance, grant, &self.store, card, clock)
+    }
     /// Hold the runtime exclusively through response creation. Transport owns the connection.
     /// Clock is a trusted monotonic host function; errors before command decoding have no response id.
     pub fn dispatch(
@@ -168,6 +215,9 @@ impl HostRuntime {
         let fixed = input.to_vec();
         let command = Command::decode(&fixed)?;
         let kind = match command {
+            Command::CreateContent(_) => GrantKind::CreateContent,
+            Command::EditContent(_) => GrantKind::EditContent,
+            Command::ReadContent(_) => GrantKind::ReadContent,
             Command::Rename(_) => GrantKind::Rename,
             Command::ReadAttachment(_) => GrantKind::ReadAttachment,
             Command::ReadSummary { .. } => GrantKind::ReadSummary,
@@ -185,6 +235,43 @@ impl HostRuntime {
                 .get(&(kind, command.card_id().to_owned(), attachment))
                 .ok_or(Error::Invalid("missing grant"))?;
             match &command {
+                Command::CreateContent(v) => {
+                    let card = crate::content::CardRecord::new(
+                        &v.card_id,
+                        &v.type_id,
+                        v.format_version,
+                        &v.title,
+                        v.body.clone(),
+                    )?;
+                    self.create_content(connection, &v.operation_id, &card, &mut clock)
+                        .map(Outcome::ContentCommitted)
+                }
+                Command::EditContent(v) => self
+                    .edit_content(connection, v, &mut clock)
+                    .map(Outcome::ContentCommitted),
+                Command::ReadContent(v) => {
+                    use sha2::{Digest, Sha256};
+                    let card = self.read_content(connection, &v.card_id, &mut clock)?;
+                    if card.summary().revision != v.expected_revision {
+                        return Err(Error::RevisionConflict);
+                    }
+                    let body = card.body();
+                    if v.offset > body.len() as u64 {
+                        return Err(Error::Limit);
+                    }
+                    let start = v.offset as usize;
+                    let part = crate::runtime::ContentChunk {
+                        card_id: v.card_id.clone(),
+                        revision: v.expected_revision,
+                        offset: v.offset,
+                        total_length: body.len() as u64,
+                        body_sha256: Sha256::digest(&body).into(),
+                        bytes: body[start..(start + v.length as usize).min(body.len())].to_vec(),
+                    };
+                    // Hashing/copying can be substantial; recheck authorization immediately before delivery.
+                    self.read_content(connection, &v.card_id, &mut clock)?;
+                    Ok(Outcome::ContentChunk(part))
+                }
                 Command::Rename(request) => {
                     let permit = self
                         .policy

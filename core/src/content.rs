@@ -337,6 +337,51 @@ impl CardRecord {
             .unwrap()
             .to_vec()
     }
+    /// Replace owned business content while preserving outer unknown fields,
+    /// attachment identities, relations, creation time and type identity.
+    pub fn with_content(
+        &self,
+        expected_revision: u64,
+        new_title: &str,
+        body: &[u8],
+        preview: &str,
+    ) -> Result<Self> {
+        self.with_content_and_attachments(expected_revision, new_title, body, preview, None)
+    }
+    pub fn with_content_and_attachments(
+        &self,
+        expected_revision: u64,
+        new_title: &str,
+        body: &[u8],
+        preview: &str,
+        attachments: Option<&[Attachment]>,
+    ) -> Result<Self> {
+        if body.len() > MAX_RECORD_BYTES || preview.len() > 16 * 1024 {
+            return Err(Error::Limit);
+        }
+        let mut edited = self.with_title(expected_revision, new_title)?;
+        edited
+            .message
+            .set_field_by_name("body", Value::Bytes(body.to_vec().into()));
+        let mut value = edited
+            .message
+            .get_field_by_name("preview")
+            .unwrap()
+            .into_owned();
+        value
+            .as_message_mut()
+            .unwrap()
+            .set_field_by_name("plain_text", Value::String(preview.into()));
+        edited.message.set_field_by_name("preview", value);
+        if let Some(items) = attachments {
+            edited.set_attachment_fields(items)?;
+        }
+        validate(&edited.message)?;
+        if edited.encode().len() > MAX_RECORD_BYTES {
+            return Err(Error::Limit);
+        }
+        Ok(edited)
+    }
     /// Pure edit proposal. This does not persist, authorize, audit, or deduplicate.
     pub fn with_title(&self, expected_revision: u64, new_title: &str) -> Result<Self> {
         if expected_revision != revision(&self.message) {

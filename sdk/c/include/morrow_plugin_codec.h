@@ -49,6 +49,24 @@ typedef struct mp_reply_view {
   mp_span request_id, card_id, operation_id, event_id, type_id, title, preview,
       attachment_id, sha256, bytes;
 } mp_reply_view;
+#define MP_CONTENT_CREATE 1u
+#define MP_CONTENT_EDIT 2u
+#define MP_CONTENT_READ 3u
+#define MP_REPLY_CONTENT_COMMITTED 6u
+#define MP_REPLY_CONTENT 7u
+/* Additive ABI. Body is <= 32768 bytes, each message <= 65536 bytes.
+ * Edit preserves existing attachments, type, relations and unknown envelope fields.
+ * Content reply sha256 covers the complete body. No paths or grants travel here. */
+typedef struct mp_content_request_v1 {
+  uint32_t abi_version, struct_size, kind, format_version;
+  mp_span request_id, card_id, type_id, title, body, preview;
+  uint64_t revision, offset;
+  uint32_t length;
+} mp_content_request_v1;
+uint32_t mp_content_request_encode(const mp_content_request_v1*, uint8_t*, uint32_t, uint32_t*);
+uint32_t mp_content_reply_decode(const uint8_t*, uint32_t, const mp_content_request_v1*, mp_reply**);
+/* Returned spans borrow the SDK task; release them before mp_task_free. */
+uint32_t mp_task_get_content(const void *task, mp_content_request_v1*, uint32_t);
 /* All buffer/control objects must be disjoint, properly aligned and
  * caller-owned. No host call or persistence occurs in these pure codec
  * operations.

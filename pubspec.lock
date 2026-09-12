@@ -41,6 +41,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  capnproto_dart:
+    dependency: "direct main"
+    description:
+      name: capnproto_dart
+      sha256: "3393ffdbb2c1aa8d2d902394c34102229d1f6a79571e4af238dd79bd429c70bb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   characters:
     dependency: transitive
     description:

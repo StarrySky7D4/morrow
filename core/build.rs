@@ -1,4 +1,8 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-changed=schemas/audit.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/audit.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/content.proto");
     println!("cargo:rerun-if-changed=schemas/runtime.capnp");
     println!("cargo:rerun-if-changed=tests/schemas/future.proto");

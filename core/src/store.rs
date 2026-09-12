@@ -9,8 +9,11 @@ use crate::{
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
+mod binding;
 mod blobs;
+pub use binding::{AuditBinding, AuditBindingState};
 mod records;
+mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
@@ -28,6 +31,7 @@ impl Default for EventBudget {
 pub struct Store {
     connection: Connection,
     budget: EventBudget,
+    audit_trust: Option<crate::audit::TrustedLog>,
 }
 fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
     value.map_err(|error| {
@@ -112,17 +116,57 @@ impl Store {
     }
     #[cfg(not(target_arch = "wasm32"))]
     fn open_mode(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
-        Self::open_adapter(path, budget, create, None, false)
+        Self::open_adapter(path, budget, create, None, false, None)
+    }
+    /// Independent native verification: no creation, migration or journal changes.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn open_read_only_audited(path: &Path, trust: crate::audit::TrustedLog) -> Result<Self> {
+        let connection = sql(Connection::open_with_flags(
+            path,
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        ))?;
+        sql(connection.busy_timeout(Duration::ZERO))?;
+        let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
+        let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+        if app != APPLICATION_ID || !matches!(version, 5 | 6) {
+            return Err(Error::UnsupportedVersion);
+        }
+        let store = Self {
+            connection,
+            budget: EventBudget::default(),
+            audit_trust: Some(trust),
+        };
+        store.integrity_check()?;
+        Ok(store)
     }
     /// Host-selected OPFS adapter; missing named VFS is an error, never memory fallback.
     #[cfg(all(target_arch = "wasm32", feature = "web-storage"))]
     pub fn open_opfs(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
-        Self::open_adapter(path, budget, create, Some("morrow-opfs"), true)
+        Self::open_adapter(path, budget, create, Some("morrow-opfs"), true, None)
     }
     /// Native qualification of the exclusive rollback-journal transaction profile.
     #[cfg(not(target_arch = "wasm32"))]
     pub fn open_exclusive(path: &Path, budget: EventBudget, create: bool) -> Result<Self> {
-        Self::open_adapter(path, budget, create, None, true)
+        Self::open_adapter(path, budget, create, None, true, None)
+    }
+    /// Host-pinned identity for reading or sealing an audited database.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn open_audited(
+        path: &Path,
+        budget: EventBudget,
+        create: bool,
+        trust: crate::audit::TrustedLog,
+    ) -> Result<Self> {
+        Self::open_adapter(path, budget, create, None, false, Some(trust))
+    }
+    #[cfg(all(target_arch = "wasm32", feature = "web-storage"))]
+    pub fn open_opfs_audited(
+        path: &Path,
+        budget: EventBudget,
+        create: bool,
+        trust: crate::audit::TrustedLog,
+    ) -> Result<Self> {
+        Self::open_adapter(path, budget, create, Some("morrow-opfs"), true, Some(trust))
     }
     fn open_adapter(
         path: &Path,
@@ -130,6 +174,7 @@ impl Store {
         create: bool,
         vfs: Option<&str>,
         exclusive: bool,
+        audit_trust: Option<crate::audit::TrustedLog>,
     ) -> Result<Self> {
         let mut flags =
             rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX;
@@ -144,7 +189,9 @@ impl Store {
         // Reject unrelated and future databases before changing their pragmas/schema.
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if !(app == 0 && version == 0 && create) && (app != APPLICATION_ID || version != 4) {
+        if !(app == 0 && version == 0 && create)
+            && (app != APPLICATION_ID || !matches!(version, 4..=6))
+        {
             return Err(Error::UnsupportedVersion);
         }
         if app == 0 && version == 0 && create {
@@ -188,8 +235,44 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || version != 4 {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=6) {
             return Err(Error::UnsupportedVersion);
+        }
+        if version == 4 || (app == 0 && version == 0 && create) {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            sql(tx.execute_batch(seals::SCHEMA))?;
+            sql(tx.execute(
+                "INSERT INTO operation_events(sequence,id) SELECT sequence,id FROM outbox",
+                [],
+            ))?;
+            boundary("seal-migration-after-index");
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.pragma_update(None, "user_version", 5))?;
+            boundary("seal-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("seal-migration-after-commit");
+        }
+        // Bind identity before any audited caller can publish a content event.
+        // A v5 signed database must first verify with caller-supplied trust.
+        if version < 6 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(binding::SCHEMA))?;
+            if let Some(trust) = audit_trust.as_ref() {
+                binding::bind(&tx, trust)?;
+            }
+            sql(tx.pragma_update(None, "user_version", 6))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("binding-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("binding-after-commit");
+        } else if let Some(trust) = audit_trust.as_ref() {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, Some(trust))?;
+            binding::bind(&tx, trust)?;
+            boundary("binding-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("binding-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -201,7 +284,11 @@ impl Store {
             }
         }
         sql(connection.pragma_update(None, "synchronous", "FULL"))?;
-        let store = Self { connection, budget };
+        let store = Self {
+            connection,
+            budget,
+            audit_trust,
+        };
         store.integrity_check()?;
         Ok(store)
     }
@@ -295,6 +382,55 @@ impl Store {
             false,
         )
     }
+    pub(crate) fn create_authorized(
+        &mut self,
+        operation_id: &str,
+        card: &CardRecord,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Receipt> {
+        if card.summary().revision != 1 {
+            return Err(Error::Invalid("creation revision"));
+        }
+        let command = transaction::create_command(operation_id, card)?;
+        self.apply(
+            operation_id,
+            &card.summary().id,
+            command,
+            |_| Ok(card.clone()),
+            authorize,
+            true,
+        )
+    }
+    pub(crate) fn edit_content(
+        &mut self,
+        change: &crate::content_change::ContentChange,
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Receipt> {
+        let command = transaction::content_command(change)?;
+        self.apply(
+            &change.operation_id,
+            &change.card_id,
+            command,
+            |card| change.propose(card.ok_or(Error::NotFound)?),
+            authorize,
+            false,
+        )
+    }
+    /// Trusted bounded index for host discovery. Returning IDs does not grant
+    /// plugins read access; each resulting object still needs authorization.
+    pub fn card_ids_local(&self, after: &str, limit: u32) -> Result<Vec<String>> {
+        if limit == 0 || limit > 128 {
+            return Err(Error::Limit);
+        }
+        if !after.is_empty() {
+            identity(after)?;
+        }
+        let mut stmt = sql(self
+            .connection
+            .prepare("SELECT id FROM cards WHERE id>?1 ORDER BY id LIMIT ?2"))?;
+        let rows = sql(stmt.query_map(params![after, limit], |r| r.get(0)))?;
+        rows.map(sql).collect()
+    }
     pub(crate) fn rename(
         &mut self,
         request: &RenameRequest,
@@ -367,6 +503,10 @@ impl Store {
             "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
             params![operation_id, event],
         ))?;
+        sql(tx.execute(
+            "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
+            [operation_id],
+        ))?;
         boundary("after-event");
         blobs::bind(&tx, &next, operation_id)?;
         // The host is exclusively borrowed throughout. Revocation and commit are serialized.
@@ -377,7 +517,7 @@ impl Store {
         boundary("after-commit");
         Ok(receipt)
     }
-    /// Bounded, immutable pending records for the future sealer. No deletion/ack until M4.
+    /// Bounded immutable events that have not yet been atomically sealed.
     pub fn pending(&self, after_sequence: i64, limit: u32) -> Result<Vec<(i64, Vec<u8>)>> {
         if after_sequence < 0 || limit == 0 || limit > 128 {
             return Err(Error::Limit);
@@ -407,19 +547,18 @@ impl Store {
     }
     pub fn integrity_check(&self) -> Result<()> {
         let snapshot = sql(self.connection.unchecked_transaction())?;
+        Self::integrity_connection(&snapshot, self.audit_trust.as_ref())
+    }
+    fn integrity_connection(
+        snapshot: &Connection,
+        trust: Option<&crate::audit::TrustedLog>,
+    ) -> Result<()> {
         let result: String = sql(snapshot.query_row("PRAGMA integrity_check", [], |r| r.get(0)))?;
         if result != "ok" {
             return Err(Error::Integrity);
         }
-        let broken: i64 = sql(snapshot.query_row("SELECT count(*) FROM operations o LEFT JOIN outbox e ON o.id=e.id WHERE e.id IS NULL OR o.payload != e.payload", [], |r| r.get(0)))?;
-        let orphans: i64 = sql(snapshot.query_row(
-            "SELECT count(*) FROM outbox e LEFT JOIN operations o ON o.id=e.id WHERE o.id IS NULL",
-            [],
-            |r| r.get(0),
-        ))?;
-        if broken != 0 || orphans != 0 {
-            return Err(Error::Integrity);
-        }
+        binding::verify(snapshot, trust)?;
+        seals::verify(snapshot, trust)?;
         let mut operations =
             sql(snapshot.prepare("SELECT id,card_id,payload,object_kind FROM operations"))?;
         let mut rows = sql(operations.query([]))?;
@@ -430,7 +569,7 @@ impl Store {
             let kind: i64 = sql(row.get(3))?;
             if kind != 0 {
                 records::verify_operation(
-                    &snapshot,
+                    snapshot,
                     kind,
                     &sql(row.get::<_, String>(0))?,
                     &sql(row.get::<_, String>(1))?,
@@ -439,7 +578,7 @@ impl Store {
                 continue;
             }
             let (event, receipt) = transaction::decode_commit(raw)?;
-            blobs::verify_event(&snapshot, &receipt.operation_id, &event.attachment_sha256)?;
+            blobs::verify_event(snapshot, &receipt.operation_id, &event.attachment_sha256)?;
             if receipt.operation_id != sql(row.get::<_, String>(0))?
                 || receipt.card_id != sql(row.get::<_, String>(1))?
             {
@@ -455,9 +594,9 @@ impl Store {
                 .as_blob()
                 .map_err(|_| Error::Integrity)?;
             let card = envelope::decode(raw)?;
-            blobs::verify_card(&snapshot, &card)?;
-            let event = blob(&snapshot,
-                "SELECT o.payload FROM operations o JOIN outbox e ON o.id=e.id WHERE o.card_id=?1 AND o.object_kind=0 ORDER BY e.sequence DESC LIMIT 1", &id,
+            blobs::verify_card(snapshot, &card)?;
+            let event = blob(snapshot,
+                "SELECT o.payload FROM operations o JOIN operation_events e ON o.id=e.id WHERE o.card_id=?1 AND o.object_kind=0 ORDER BY e.sequence DESC LIMIT 1", &id,
                 transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128)?.ok_or(Error::Integrity)?;
             let (_, receipt) = transaction::decode_commit(&event)?;
             if card.summary().id != id
@@ -472,8 +611,8 @@ impl Store {
         if missing != 0 {
             return Err(Error::Integrity);
         }
-        records::verify(&snapshot)?;
-        blobs::verify(&snapshot)?;
+        records::verify(snapshot)?;
+        blobs::verify(snapshot)?;
         Ok(())
     }
 }

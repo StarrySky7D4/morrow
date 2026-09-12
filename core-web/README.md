@@ -9,7 +9,7 @@
 - 固定依赖 rusqlite 0.40.2、sqlite-wasm-rs 0.5.5、sqlite-wasm-vfs 0.2.0、wasm-bindgen 0.2.128，独立 Cargo.lock 纳入版本控制。
 - 明确安装 `morrow-opfs` 命名 VFS，目录为同源 OPFS 下的实验池 `morrow-test10`，初始 64 个同步访问句柄。库默认内存 VFS 不被 Store 选择。没有 OPFS 时明确失败。
 - Worker 独占池，同一 Rust/Wasm 实例只允许一个 BrowserStore，其他 Worker 争用同一池会失败。连接释放后可在同一 Worker 打开另一数据库；池句柄随 Worker 生命周期释放。不要把虚拟数据库文件当作独立普通 OPFS 文件直接改写。
-- 原生默认 WAL／FULL 保留；浏览器选用 EXCLUSIVE／DELETE journal／FULL。业务写入仍走同一 IMMEDIATE 事务、操作去重和原子事件写入。数据库格式升至 4，拒绝旧格式；OPFS 使用独立 morrow-test10 命名空间，不自动迁移旧数据。
+- 原生默认 WAL／FULL 保留；浏览器选用 EXCLUSIVE／DELETE journal／FULL。业务写入仍走同一 IMMEDIATE 事务、操作去重和原子事件写入。共享核心格式已升至 5，事务迁移格式 4，拒绝更旧格式；OPFS 使用独立 morrow-test10 命名空间，不自动迁移旧数据。
 - 浏览器 Worker 终止不代表 OPFS 文件锁立即释放。验证器仅对创建同步访问句柄失败进行最多 5 秒的重新打开尝试，每次关闭失败 Worker；不重放未知结果的写命令、不自动删库或退回内存。
 - Web 适配当前单次暂存／导出上限 4 MiB，输入输出有复制；核心内部按 64 KiB 分块。新增附件读取每包至多 32 KiB，按预期修订解析当前引用，接收端须完成整件 SHA-256 校验后发布。完整 200 MiB Web 流式导入、配额恢复、浏览器持久存储授权与用户界面仍待实现。
 
@@ -39,3 +39,5 @@ test.10 提供 workspace_local、placement_local、layout_local、draft_local／
 草稿创建携带固定的基准卡片容器，重试必须使用同一容器和正文；不在每次重试时重新读取卡片生成命令。浏览器探针验证正式卡片修订变化后原创建命令仍幂等。草稿正文复制限制 4 MiB；草稿提交、附件、生产编辑 UI、列表及全平台资格仍待实现。
 
 故障探针的工作区／视图／草稿矩阵使用独立 morrow-test10-record-tests 测试池，仍限 64 个槽位。扩展矩阵曾在同一池达到 64／64 时被 SQLite CannotOpen 拒绝；分离测试数据集避免场景数量耗尽池，不增加默认应用容量、不删数据库或退回内存。仅 fault 构建包含该测试安装入口与 SQL／池占用诊断，默认构建不导出它。此资源边界不代表浏览器磁盘配额耗尽已验收。
+
+核心 test.16 已提供 open_opfs_audited 与原子封存 API，但 BrowserStore 尚未绑定可信审计身份或暴露封存流程。普通 OPFS 存储回归不等于浏览器审计端到端验收。

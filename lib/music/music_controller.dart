@@ -1,3 +1,4 @@
+import '../plugins/studio_backend.dart';
 import 'dart:async';
 import 'audio_import.dart';
 import 'prepared_audio.dart';
@@ -172,6 +173,7 @@ class MusicController extends ChangeNotifier {
     this.onlineLyrics = false,
     LyricsService? lyricsService,
     this.onSave,
+    this.plugin,
     MusicTransport Function()? createTransport,
     Future<ResolvedTexture> Function(TextureSource)? resolve,
   }) : lyricsService = lyricsService ?? LyricsService(),
@@ -198,6 +200,8 @@ class MusicController extends ChangeNotifier {
   Duration position = Duration.zero, duration = Duration.zero;
   String? error;
   final VoidCallback? onSave;
+  final StudioBackend? plugin;
+  int _lyricGeneration = 0, _selectionIntent = 0;
   final MusicTransport Function() _createTransport;
   final Future<ResolvedTexture> Function(TextureSource) _resolve;
   MusicTransport? _transport;
@@ -222,7 +226,51 @@ class MusicController extends ChangeNotifier {
     return line;
   }
 
-  void _readLyrics() => _lyrics = parseLyrics(current?.lyrics ?? '');
+  void _readLyrics() {
+    final text = current?.lyrics ?? '';
+    final service = plugin;
+    if (service == null) {
+      _lyrics = parseLyrics(text);
+      return;
+    }
+    final generation = ++_lyricGeneration;
+    _lyrics = [];
+    service
+        .parseLyrics(text)
+        .then(
+          (value) {
+            if (!_disposed && generation == _lyricGeneration) {
+              _lyrics = value;
+              _notify();
+            }
+          },
+          onError: (Object _) {
+            if (!_disposed &&
+                generation == _lyricGeneration &&
+                current != null) {
+              lyricMessages[current!] = '歌词解析未完成，可重新导入';
+              _notify();
+            }
+          },
+        );
+  }
+
+  Future<PlaybackDecision> _policy(
+    String action, {
+    int value = 0,
+    bool flag = false,
+  }) => plugin!.playback(
+    action,
+    count: tracks.length,
+    index: index,
+    playing: playing,
+    blocked: blocked,
+    positionMs: position.inMilliseconds,
+    durationMs: duration.inMilliseconds,
+    value: value,
+    flag: flag,
+  );
+
   void _notify() {
     if (!_disposed) notifyListeners();
   }
@@ -320,12 +368,30 @@ class MusicController extends ChangeNotifier {
           track.lyrics.trim().isNotEmpty) {
         return;
       }
-      final match = LyricsService.exactMatch(
-        results,
-        track.title,
-        track.artist,
-        track.trackDuration,
-      );
+      final candidateIndex = plugin == null
+          ? null
+          : await plugin!.matchLyrics(
+              results,
+              track.title,
+              track.artist,
+              track.trackDuration,
+            );
+      if (_disposed ||
+          !tracks.contains(track) ||
+          !onlineLyrics ||
+          track.lyrics.trim().isNotEmpty) {
+        return;
+      }
+      final match = plugin == null
+          ? LyricsService.exactMatch(
+              results,
+              track.title,
+              track.artist,
+              track.trackDuration,
+            )
+          : candidateIndex == null
+          ? null
+          : results[candidateIndex];
       if (match != null) {
         setLyrics(
           match.lyrics,
@@ -401,9 +467,23 @@ class MusicController extends ChangeNotifier {
     return engine;
   }
 
-  Future<void> select(int value, {bool play = true}) {
-    if (tracks.isEmpty || _disposed) return Future.value();
-    index = value % tracks.length;
+  Future<void> select(int value, {bool play = true}) async {
+    if (tracks.isEmpty || _disposed) return;
+    final intent = ++_selectionIntent;
+    if (plugin != null) {
+      try {
+        final decision = await _policy('select', value: value, flag: play);
+        if (_disposed || intent != _selectionIntent || tracks.isEmpty) return;
+        index = decision.index;
+        play = decision.playing;
+      } catch (_) {
+        error = '播放请求未能完成，请重试。';
+        _notify();
+        return;
+      }
+    } else {
+      index = value % tracks.length;
+    }
     final track = current!;
     final revision = ++_revision;
     loading = true;
@@ -435,9 +515,23 @@ class MusicController extends ChangeNotifier {
     });
   }
 
-  Future<void> toggle() {
-    if (blocked || current == null) return Future.value();
-    if (playing) return pause();
+  Future<void> toggle() async {
+    if (blocked || current == null) return;
+    if (plugin != null) {
+      try {
+        final decision = await _policy('toggle');
+        if (!decision.playing) {
+          await pause();
+          return;
+        }
+      } catch (_) {
+        error = '播放请求未能完成，请重试。';
+        _notify();
+        return;
+      }
+    } else if (playing) {
+      return pause();
+    }
     if (!_opened) return select(index);
     return _run(() async {
       if (!blocked) await _engine().play();
@@ -452,23 +546,56 @@ class MusicController extends ChangeNotifier {
     });
   }
 
-  Future<void> setBlocked(bool value) {
+  Future<void> setBlocked(bool value) async {
     blocked = value;
-    if (value) return pause();
+    if (value) await pause();
+    if (plugin != null) {
+      try {
+        await _policy('block', flag: value);
+      } catch (_) {
+        if (!_disposed) {
+          error = '声音状态未能确认，请重试。';
+        }
+      }
+    }
     _notify();
-    return Future.value();
   }
 
   Future<void> next() => select(index + 1);
   Future<void> previous() => select(index - 1);
   Future<void> seek(Duration value) => _run(() async {
+    if (plugin != null) {
+      final decision = await _policy('seek', value: value.inMilliseconds);
+      value = Duration(milliseconds: decision.positionMs);
+    }
     await _transport?.seek(value);
   });
   Future<void> remove(int value) async {
     if (value < 0 || value >= tracks.length) return;
     final wasCurrent = value == index, resume = playing;
+    final target = tracks[value];
+    final previousTracks = List<MusicTrack>.of(tracks);
+    PlaybackDecision? decision;
+    if (plugin != null) {
+      try {
+        decision = await _policy('remove', value: value);
+      } catch (_) {
+        error = '播放列表未能更新，请重试。';
+        _notify();
+        return;
+      }
+      if (_disposed ||
+          value >= tracks.length ||
+          !identical(tracks[value], target) ||
+          !listEquals(tracks, previousTracks)) {
+        return;
+      }
+    }
+    ++_selectionIntent;
     tracks.removeAt(value);
-    if (value < index || index >= tracks.length) {
+    if (decision != null) {
+      index = decision.index;
+    } else if (value < index || index >= tracks.length) {
       index = (index - 1).clamp(0, tracks.isEmpty ? 0 : tracks.length - 1);
     }
     if (wasCurrent) {

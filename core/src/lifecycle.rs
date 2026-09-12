@@ -39,6 +39,9 @@ pub enum GrantKind {
     ReadSummary,
     QueryOperation,
     ReadAttachment,
+    CreateContent,
+    EditContent,
+    ReadContent,
 }
 /// One-way trusted revocation signal. Never serialized or exported to guest SDKs.
 #[derive(Clone)]
@@ -427,6 +430,86 @@ impl HostPolicy {
         self.expire_drains(now)?;
         self.authorize_scope(instance, grant, target, now, false)?;
         result
+    }
+    /// Read complete owned content only for this exact granted object.
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn read_content(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        card: &str,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<CardRecord> {
+        identity(card)?;
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::ReadContent, card, None),
+            now,
+            false,
+        )?;
+        let value = store.card(card);
+        let now = clock();
+        self.expire_drains(now)?;
+        self.authorize_scope(
+            instance,
+            grant,
+            (GrantKind::ReadContent, card, None),
+            now,
+            false,
+        )?;
+        value?.ok_or(Error::NotFound)
+    }
+    /// Proposal is host-routed after guest completion; no privileged plugin shortcut.
+    /// Recheck the grant inside the transaction and immediately before commit.
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn edit_content(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        change: &crate::content_change::ContentChange,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        change.validate()?;
+        store.edit_content(change, || {
+            let now = clock();
+            self.expire_drains(now)?;
+            self.authorize_scope(
+                instance,
+                grant,
+                (GrantKind::EditContent, &change.card_id, None),
+                now,
+                false,
+            )
+        })
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub fn create_content(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        operation: &str,
+        card: &CardRecord,
+        mut clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        identity(operation)?;
+        let id = card.summary().id;
+        store.create_authorized(operation, card, || {
+            let now = clock();
+            self.expire_drains(now)?;
+            self.authorize_scope(
+                instance,
+                grant,
+                (GrantKind::CreateContent, &id, None),
+                now,
+                false,
+            )
+        })
     }
     pub fn revoke(&mut self, grant: Grant) -> Result<()> {
         self.record_mut(grant.instance)?

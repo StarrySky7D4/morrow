@@ -147,6 +147,10 @@ impl Store {
             "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
             params![command.operation_id, event],
         ))?;
+        sql(tx.execute(
+            "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
+            [&command.operation_id],
+        ))?;
         boundary("record-after-event");
         boundary("record-before-commit");
         tx.commit().map_err(|_| Error::CommitUnknown)?;
@@ -183,7 +187,7 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         references(connection, &record)?;
         // Kind is a checked enum, interpolated only as an integer; identity remains parameterized.
         let query = format!(
-            "SELECT o.payload FROM operations o JOIN outbox e ON o.id=e.id WHERE o.object_kind={} AND o.card_id=?1 ORDER BY e.sequence DESC LIMIT 1",
+            "SELECT o.payload FROM operations o JOIN operation_events e ON o.id=e.id WHERE o.object_kind={} AND o.card_id=?1 ORDER BY e.sequence DESC LIMIT 1",
             kind as u32
         );
         let event = blob(
