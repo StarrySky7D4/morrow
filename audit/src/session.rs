@@ -23,6 +23,7 @@ pub enum SessionError {
     Core(morrow_core::Error),
     Key(KeyError),
     Busy,
+    IdentityBusy,
     InvalidPath,
     MissingDatabase,
     MissingKey,
@@ -56,6 +57,14 @@ impl From<morrow_core::Error> for SessionError {
 impl From<KeyError> for SessionError {
     fn from(e: KeyError) -> Self {
         Self::Key(e)
+    }
+}
+impl From<crate::identity::LeaseError> for SessionError {
+    fn from(e: crate::identity::LeaseError) -> Self {
+        match e {
+            crate::identity::LeaseError::Busy => Self::IdentityBusy,
+            crate::identity::LeaseError::Io(e) => Self::Io(e),
+        }
     }
 }
 pub type Result<T> = std::result::Result<T, SessionError>;
@@ -156,7 +165,7 @@ impl Session {
             boundary("bootstrap-after-key");
             key
         };
-        let sealer = Sealer::new(key);
+        let sealer = Sealer::new(key)?;
         let store = Store::open_audited(&database, budget, false, sealer.trust())?;
         boundary("bootstrap-after-binding");
         Ok(Self {

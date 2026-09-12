@@ -132,6 +132,9 @@ pub(crate) fn session_message(e: SessionError) -> &'static str {
             "内容库保护密钥不匹配或无法解密，请使用原文件及原系统账户。"
         }
         SessionError::KeyWithoutDatabase => "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。",
+        SessionError::IdentityBusy => {
+            "同一内容库身份的另一份副本正在使用中，请先关闭原工作台再打开此副本。"
+        }
         SessionError::Busy => "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
         SessionError::SnapshotDestinationExists => "恢复目标已存在，请选择尚不存在的新目录。",
         SessionError::SnapshotPublishUnknown => {

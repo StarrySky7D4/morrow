@@ -56,19 +56,19 @@ fn bounded_sealer_resumes_after_reopen_and_rejects_wrong_key() {
     let d = tempfile::tempdir().unwrap();
     let key = d.path().join("key");
     let db = d.path().join("db");
-    let sealer = Sealer::new(Key::create(&key).unwrap());
+    let sealer = Sealer::new(Key::create(&key).unwrap()).unwrap();
     let mut store = Store::open_audited(&db, EventBudget::default(), true, sealer.trust()).unwrap();
     fill(&mut store, 130);
     assert!(sealer.flush(&mut store, 0).is_err());
     let one = sealer.flush(&mut store, 1).unwrap();
     assert_eq!(one.events, 128);
     assert!(one.more_pending);
-    let wrong = Sealer::new(Key::create(&d.path().join("other")).unwrap());
+    let wrong = Sealer::new(Key::create(&d.path().join("other")).unwrap()).unwrap();
     assert!(wrong.flush(&mut store, 1).is_err());
     assert_eq!(store.pending(0, 10).unwrap().len(), 2);
     drop(store);
     drop(sealer);
-    let sealer = Sealer::new(Key::load(&key).unwrap());
+    let sealer = Sealer::new(Key::load(&key).unwrap()).unwrap();
     let mut store =
         Store::open_audited(&db, EventBudget::default(), false, sealer.trust()).unwrap();
     let two = sealer.flush(&mut store, 1).unwrap();
@@ -135,7 +135,7 @@ fn key_child() {
     };
     let root = std::path::Path::new(&root);
     if std::env::var("MORROW_AUDIT_CRASH_AT").unwrap() == "sealer-after-batch" {
-        let sealer = Sealer::new(Key::load(&root.join("key")).unwrap());
+        let sealer = Sealer::new(Key::load(&root.join("key")).unwrap()).unwrap();
         let mut store = Store::open_audited(
             &root.join("db"),
             EventBudget::default(),
@@ -187,7 +187,7 @@ fn publication_and_batch_crashes_recover_without_rotating_identity() {
         if let Some(original) = original {
             assert_eq!(loaded.trust().key, original.key);
             assert_eq!(loaded.trust().id, original.id);
-            let sealer = Sealer::new(loaded);
+            let sealer = Sealer::new(loaded).unwrap();
             let mut store =
                 Store::open_audited(&db, EventBudget::default(), false, sealer.trust()).unwrap();
             assert_eq!(store.pending(0, 10).unwrap().len(), 2);
@@ -201,7 +201,7 @@ fn publication_and_batch_crashes_recover_without_rotating_identity() {
 #[test]
 fn oversized_pending_group_shrinks_without_skipping_events() {
     let d = tempfile::tempdir().unwrap();
-    let sealer = Sealer::new(Key::create(&d.path().join("key")).unwrap());
+    let sealer = Sealer::new(Key::create(&d.path().join("key")).unwrap()).unwrap();
     let mut store = Store::open_audited(
         &d.path().join("db"),
         EventBudget::default(),

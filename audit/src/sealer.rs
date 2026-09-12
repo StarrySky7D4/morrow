@@ -4,6 +4,7 @@ use morrow_core::store::Store;
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub struct Sealer {
     key: Key,
+    _identity: crate::identity::Lease,
 }
 #[derive(Debug, PartialEq, Eq)]
 pub struct Progress {
@@ -12,8 +13,12 @@ pub struct Progress {
     pub more_pending: bool,
 }
 impl Sealer {
-    pub fn new(key: Key) -> Self {
-        Self { key }
+    pub fn new(key: Key) -> std::result::Result<Self, crate::identity::LeaseError> {
+        let identity = crate::identity::Lease::acquire(&key.trust())?;
+        Ok(Self {
+            key,
+            _identity: identity,
+        })
     }
     pub fn trust(&self) -> TrustedLog {
         self.key.trust()

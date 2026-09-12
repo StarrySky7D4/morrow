@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if args.next().is_some() {
             return Err("unexpected argument".into());
         }
-        let sealer = Sealer::new(Key::load(Path::new(&first))?);
+        let sealer = Sealer::new(Key::load(Path::new(&first))?)?;
         let mut store = Store::open_audited(
             Path::new(&database),
             EventBudget::default(),

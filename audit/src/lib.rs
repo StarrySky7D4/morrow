@@ -20,3 +20,6 @@ mod backup;
 
 #[cfg(target_os = "windows")]
 pub mod snapshot;
+
+#[cfg(target_os = "windows")]
+pub mod identity;

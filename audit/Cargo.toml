@@ -2,7 +2,7 @@
 resolver = "2"
 [package]
 name = "morrow-audit"
-version = "0.1.9-test.22"
+version = "0.1.9-test.23"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
@@ -25,7 +25,7 @@ rusqlite = { version = "=0.40.2", features = ["bundled"] }
 fault-injection = ["morrow-core/fault-injection"]
 
 [target.'cfg(target_os = "windows")'.dependencies]
-windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+windows-sys = { version = "=0.61.2", features = ["Win32_Foundation", "Win32_Security_Cryptography", "Win32_UI_Shell", "Win32_System_Threading"] }
 zeroize = "=1.9.0"
 tempfile = "=3.27.0"
 

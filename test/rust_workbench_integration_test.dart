@@ -268,6 +268,20 @@ void main() {
           archive: snapshotPath,
           destination: destination,
         );
+        await expectLater(
+          RustWorkbench.open(
+            executable: executable,
+            package: package,
+            directory: destination,
+          ),
+          throwsA(
+            isA<StateError>().having(
+              (e) => e.toString(),
+              'identity conflict',
+              contains('另一份副本正在使用中'),
+            ),
+          ),
+        );
         await backend.close();
         backend = null;
         final copy = await RustWorkbench.open(

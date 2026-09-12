@@ -75,6 +75,18 @@ fn consistent_multichunk_snapshot_preserves_attachments_history_pending_and_iden
     let restored = d.path().join("restored");
     snapshot::restore(&archive, &restored).unwrap();
     let restored_db = restored.join("workbench.db");
+    assert!(matches!(
+        Session::open(&restored_db, EventBudget::default(), OpenMode::Existing),
+        Err(morrow_audit::session::SessionError::IdentityBusy)
+    ));
+    assert!(
+        session
+            .store()
+            .snapshot_to(&d.path().join("too-small"), 1)
+            .is_err()
+    );
+    assert!(!d.path().join("too-small").exists());
+    drop(session);
     let restored_session = open(&restored_db);
     assert!(restored_session.store().card("later").unwrap().is_none());
     assert!(restored_session.store().card("pending").unwrap().is_some());
@@ -97,13 +109,6 @@ fn consistent_multichunk_snapshot_preserves_attachments_history_pending_and_iden
         original_key
     );
     assert!(snapshot::restore(&archive, &restored).is_err());
-    assert!(
-        session
-            .store()
-            .snapshot_to(&d.path().join("too-small"), 1)
-            .is_err()
-    );
-    assert!(!d.path().join("too-small").exists());
 }
 #[test]
 fn malformed_truncated_trailing_and_foreign_identity_archives_never_publish() {
