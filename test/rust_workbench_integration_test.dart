@@ -291,11 +291,19 @@ void main() {
             id: 'retained-card',
           ),
         );
+        final backupPath = '${directory.path}/retained-key.backup';
+        await backend.backupProtection(backupPath);
+        await expectLater(
+          backend.backupProtection(backupPath),
+          throwsStateError,
+        );
         await backend.close();
         backend = null;
         final key = File('${directory.path}/workbench.db.audit-key');
         final original = await key.readAsBytes();
-        final retained = await key.rename('${directory.path}/retained-key');
+        final retained = File(backupPath);
+        expect(await retained.readAsBytes(), original);
+        await key.delete();
         await expectLater(
           RustWorkbench.open(
             executable: executable,
@@ -338,6 +346,17 @@ void main() {
         expect(restored.single.id, saved.id);
         expect(restored.single.description, saved.description);
         expect(await key.readAsBytes(), original);
+        await backend.close();
+        backend = null;
+        backend = await RustWorkbench.open(
+          executable: executable,
+          package: '${directory.path}/not-installed.morrowplugin',
+          directory: directory,
+        );
+        expect(backend.writable, isFalse);
+        final withoutPlugin = '${directory.path}/without-plugin.backup';
+        await backend.backupProtection(withoutPlugin);
+        expect(await File(withoutPlugin).readAsBytes(), original);
       } finally {
         await backend?.close();
         await directory.delete(recursive: true);

@@ -31,6 +31,8 @@ pub enum SessionError {
     InitializationRequired,
     RecoveryRequiresBinding,
     RecoveryPublishUnknown,
+    BackupAlreadyExists,
+    BackupPublishUnknown,
 }
 impl std::fmt::Display for SessionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -58,6 +60,7 @@ pub struct Session {
     host: HostRuntime,
     sealer: Sealer,
     _lease: File,
+    key_path: PathBuf,
 }
 fn sibling(database: &Path, suffix: &str) -> Result<PathBuf> {
     let mut name = database
@@ -157,7 +160,13 @@ impl Session {
             host: HostRuntime::new(store)?,
             sealer,
             _lease: lease,
+            key_path,
         })
+    }
+    /// Backup only ciphertext validated against this live session's pinned identity.
+    pub fn backup_key(&self, destination: &Path) -> Result<()> {
+        self.store().integrity_check()?;
+        crate::backup::write(&self.key_path, destination, &self.trust())
     }
     pub fn trust(&self) -> TrustedLog {
         self.sealer.trust()

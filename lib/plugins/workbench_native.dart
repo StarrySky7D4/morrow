@@ -14,7 +14,7 @@ import 'generated/host.capnp.dart' as host;
 import 'generated/workbench.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 
-class RustWorkbench implements WorkbenchBackend {
+class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = process.stderr.listen((bytes) {
@@ -67,6 +67,14 @@ class RustWorkbench implements WorkbenchBackend {
       await result.close();
       rethrow;
     }
+  }
+
+  @override
+  Future<void> backupProtection(String destination) async {
+    await _call(
+      host.Action.backupProtection,
+      configure: (r) => r.selectedPath = destination,
+    );
   }
 
   /// The host verifies and restores protected bytes. Dart never loads secret material.

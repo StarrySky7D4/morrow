@@ -14,3 +14,6 @@ pub mod session;
 
 #[cfg(target_os = "windows")]
 pub mod recovery;
+
+#[cfg(target_os = "windows")]
+mod backup;

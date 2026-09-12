@@ -33,6 +33,21 @@ impl Storage {
     pub fn open(_path: &Path) -> Result<Self> {
         Err("此平台的内容库密钥保护后端尚未接入。".into())
     }
+    pub fn backup_key(&self, destination: &Path) -> Result<()> {
+        #[cfg(target_os = "windows")]
+        {
+            self.session.backup_key(destination).map_err(|e| match e {
+                SessionError::Io(_) => "备份未完成，请检查保存位置是否可写。",
+                other => session_message(other),
+            })?;
+            Ok(())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            let _ = destination;
+            Err("此平台的内容库密钥保护后端尚未接入。".into())
+        }
+    }
     pub fn warning(&self) -> Option<&str> {
         self.warning.as_deref()
     }
@@ -104,6 +119,8 @@ pub(crate) fn session_message(e: SessionError) -> &'static str {
         }
         SessionError::KeyWithoutDatabase => "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。",
         SessionError::Busy => "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
+        SessionError::BackupAlreadyExists => "备份位置已有文件，请选择新的文件名。",
+        SessionError::BackupPublishUnknown => "备份结果需要核对，请保留当前文件并检查保存位置。",
         SessionError::RecoveryRequiresBinding => {
             "此内容库尚未绑定保护文件，无法核对所选文件的归属。"
         }

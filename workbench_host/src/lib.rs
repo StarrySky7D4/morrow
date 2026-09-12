@@ -82,6 +82,9 @@ impl Workbench {
             transfers: transfer::Transfers::default(),
         })
     }
+    pub fn backup_key(&self, destination: &Path) -> Result<()> {
+        self.host.backup_key(destination)
+    }
     pub fn maintenance_warning(&self) -> Option<&str> {
         self.host.warning()
     }

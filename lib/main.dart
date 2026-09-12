@@ -1,3 +1,4 @@
+import 'plugins/protection_backup.dart';
 import 'plugins/bootstrap_stub.dart'
     if (dart.library.io) 'plugins/bootstrap_native.dart'
     as bootstrap;
@@ -2189,6 +2190,8 @@ class _StudioState extends State<Studio> {
             'hero': '概览卡片',
             'quick-capture': '快速记录',
             'appearance': '空间外观',
+            if (widget.workbench is WorkbenchProtectionBackup)
+              'protection-backup': '内容保护',
             'daily': '此刻的小事',
             'music': '随身听',
             'footer': '底部提示与歌词',
@@ -2214,7 +2217,32 @@ class _StudioState extends State<Studio> {
     ),
   );
 
-  Widget appearance() => Glass(
+  Widget appearance() {
+    final backend = widget.workbench;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        appearanceControls(),
+        if (backend is WorkbenchProtectionBackup) ...[
+          const SizedBox(height: 14),
+          Glass(
+            componentId: 'protection-backup',
+            p: p,
+            radius: 22,
+            child: ProtectionBackup(
+              onBackup: (backend as WorkbenchProtectionBackup).backupProtection,
+              ink: p.ink,
+              muted: p.muted,
+              line: p.line,
+              radius: p.borderRadius(11),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget appearanceControls() => Glass(
     componentId: 'appearance',
     p: p,
     radius: 22,

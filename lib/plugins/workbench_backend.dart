@@ -29,3 +29,8 @@ abstract class WorkbenchBackend {
     String sort,
   );
 }
+
+/// Optional trusted-host capability, independent of business plugin availability.
+abstract interface class WorkbenchProtectionBackup {
+  Future<void> backupProtection(String destination);
+}
