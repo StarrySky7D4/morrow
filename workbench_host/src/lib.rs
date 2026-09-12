@@ -63,7 +63,12 @@ fn now(start: Instant) -> u64 {
 }
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
-        let mut host = storage::Storage::open(path)?;
+        Self::with_storage(storage::Storage::open(path)?, package)
+    }
+    pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
+        Self::with_storage(storage::Storage::open_managed(root)?, package)
+    }
+    fn with_storage(mut host: storage::Storage, package: Option<Package>) -> Result<Self> {
         let plugin = package
             .map(|p| {
                 PreparedPackage::new(p, Limits::default())
@@ -665,5 +670,39 @@ pub fn restore_snapshot(archive: &Path, destination: &Path) -> Result<()> {
     {
         let _ = (archive, destination);
         Err("此平台的内容库快照后端尚未接入。".into())
+    }
+}
+
+/// Trusted startup recovery, serialized with the entire managed host lifetime.
+pub fn activate_library(root: &Path, directory: &Path) -> Result<()> {
+    #[cfg(target_os = "windows")]
+    {
+        let mut registry =
+            morrow_audit::library::Registry::open(root).map_err(storage::library_message)?;
+        registry
+            .activate(directory)
+            .map_err(storage::library_message)?;
+        Ok(())
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = (root, directory);
+        Err("此平台的活动内容库管理尚未接入。".into())
+    }
+}
+pub fn restore_active_key(root: &Path, selected: &Path) -> Result<()> {
+    #[cfg(target_os = "windows")]
+    {
+        let registry =
+            morrow_audit::library::Registry::open(root).map_err(storage::library_message)?;
+        registry
+            .restore_key(selected)
+            .map_err(storage::library_message)?;
+        Ok(())
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = (root, selected);
+        Err("此平台的活动内容库管理尚未接入。".into())
     }
 }

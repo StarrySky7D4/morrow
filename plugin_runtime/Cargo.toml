@@ -52,3 +52,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_content_sdk"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_ui_session"
+required-features = ["packages"]

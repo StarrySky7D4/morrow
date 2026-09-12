@@ -1,0 +1,11 @@
+syntax = "proto3";
+package morrow.library;
+// Windows local adapter routing only; never a portable plugin capability.
+message Selection {
+  uint32 version = 1;
+  uint64 generation = 2;
+  string directory = 3;
+  string log_id = 4;
+  bytes public_key = 5;
+  string previous_directory = 6;
+}

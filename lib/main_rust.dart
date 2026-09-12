@@ -21,6 +21,9 @@ Future<void> main(List<String> arguments) async {
     await qualifyCanvas(canvasCheck.substring('--canvas-check='.length));
     return;
   }
+  final managed =
+      !arguments.any((v) => v.startsWith('--data-directory=')) ||
+      arguments.contains('--managed-library');
   Directory? recoveryDirectory;
   RustWorkbench? opened;
   final executable = File(Platform.resolvedExecutable).parent.path;
@@ -56,6 +59,7 @@ Future<void> main(List<String> arguments) async {
       executable: '$executable/morrow-workbench-host.exe',
       package: '$executable/plugins/workbench.morrowplugin',
       directory: directory,
+      managed: managed,
     );
     opened = backend;
     if (check != null) await seedQualification(backend, directory);
@@ -101,6 +105,38 @@ Future<void> main(List<String> arguments) async {
       WorkbenchRecovery(
         message: workbenchFailureMessage(error),
         onRetry: () => main(arguments),
+        onRestoreSnapshot: !managed || targetDirectory == null
+            ? null
+            : () async {
+                final selected = await openFile(
+                  acceptedTypeGroups: const [
+                    XTypeGroup(label: '内容库备份', extensions: ['morrowbackup']),
+                  ],
+                );
+                if (selected == null) return;
+                final parent = Directory('${targetDirectory.path}/recovered');
+                await parent.create(recursive: true);
+                final destination = Directory(
+                  '${parent.path}/library-${DateTime.now().microsecondsSinceEpoch}',
+                );
+                await RustWorkbench.restoreSnapshot(
+                  executable: '$executable/morrow-workbench-host.exe',
+                  archive: selected.path,
+                  destination: destination,
+                );
+                try {
+                  await RustWorkbench.activateLibrary(
+                    executable: '$executable/morrow-workbench-host.exe',
+                    root: targetDirectory,
+                    selected: destination,
+                  );
+                } catch (_) {
+                  throw StateError(
+                    'Morrow workbench host: 备份已恢复至 ${destination.path}，切换结果未确认，请保留此目录并重新打开工作台核对。',
+                  );
+                }
+                await main(arguments);
+              },
         onRestore: targetDirectory == null
             ? null
             : () async {
@@ -118,6 +154,7 @@ Future<void> main(List<String> arguments) async {
                   executable: '$executable/morrow-workbench-host.exe',
                   directory: targetDirectory,
                   selected: selected.path,
+                  managed: managed,
                 );
                 await main(arguments);
               },

@@ -15,10 +15,12 @@ class WorkbenchRecovery extends StatefulWidget {
     required this.message,
     required this.onRetry,
     this.onRestore,
+    this.onRestoreSnapshot,
   });
   final String message;
   final Future<void> Function() onRetry;
   final Future<void> Function()? onRestore;
+  final Future<void> Function()? onRestoreSnapshot;
   @override
   State<WorkbenchRecovery> createState() => _WorkbenchRecoveryState();
 }
@@ -94,6 +96,25 @@ class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
                       ),
                       const SizedBox(height: 12),
                       Text(widget.message, style: const TextStyle(height: 1.6)),
+                      if (widget.onRestoreSnapshot != null) ...[
+                        const SizedBox(height: 12),
+                        const Text(
+                          '也可从内容库备份恢复到新目录并切换工作台。原目录会保留；恢复的是备份时的内容，仍需原系统账户。',
+                          style: TextStyle(fontSize: 12, height: 1.6),
+                        ),
+                        const SizedBox(height: 10),
+                        OutlinedButton.icon(
+                          key: const ValueKey('restore-library-snapshot'),
+                          onPressed: _busy
+                              ? null
+                              : () => _run(widget.onRestoreSnapshot!),
+                          icon: const Icon(
+                            Icons.inventory_2_outlined,
+                            size: 18,
+                          ),
+                          label: const Text('从内容库备份恢复'),
+                        ),
+                      ],
                       if (widget.onRestore != null) ...[
                         const SizedBox(height: 12),
                         const Text(

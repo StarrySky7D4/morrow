@@ -8,7 +8,25 @@ fn main() {
 }
 fn run() -> morrow_workbench_host::Result<()> {
     let mut args = std::env::args().skip(1);
-    let database = args.next().ok_or("database path")?;
+    let mut database = args.next().ok_or("database path")?;
+    if database == "--activate-library" || database == "--restore-active-key" {
+        let root = args.next().ok_or("library root")?;
+        let selected = args.next().ok_or("selected path")?;
+        if args.next().is_some() {
+            return Err("unexpected library arguments".into());
+        }
+        return if database == "--activate-library" {
+            morrow_workbench_host::activate_library(
+                std::path::Path::new(&root),
+                std::path::Path::new(&selected),
+            )
+        } else {
+            morrow_workbench_host::restore_active_key(
+                std::path::Path::new(&root),
+                std::path::Path::new(&selected),
+            )
+        };
+    }
     if database == "--restore-snapshot" {
         let archive = args.next().ok_or("snapshot archive")?;
         let destination = args.next().ok_or("new restore directory")?;
@@ -31,7 +49,14 @@ fn run() -> morrow_workbench_host::Result<()> {
             std::path::Path::new(&selected),
         );
     }
+    let managed = database == "--managed";
+    if managed {
+        database = args.next().ok_or("library root")?;
+    }
     let package = args.next().ok_or("package path")?;
+    if args.next().is_some() {
+        return Err("unexpected host arguments".into());
+    }
     let package = if std::path::Path::new(&package).is_file() {
         Some(morrow_core::plugin_package::catalog::read_file(
             std::path::Path::new(&package),
@@ -39,8 +64,11 @@ fn run() -> morrow_workbench_host::Result<()> {
     } else {
         None
     };
-    let mut host =
-        morrow_workbench_host::Workbench::open(std::path::Path::new(&database), package)?;
+    let mut host = if managed {
+        morrow_workbench_host::Workbench::open_managed(std::path::Path::new(&database), package)?
+    } else {
+        morrow_workbench_host::Workbench::open(std::path::Path::new(&database), package)?
+    };
     let mut input = std::io::stdin().lock();
     let mut output = std::io::stdout().lock();
     loop {

@@ -51,12 +51,14 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
     required String executable,
     required String package,
     required Directory directory,
+    bool managed = false,
   }) async {
     await directory.create(recursive: true);
     final cache = Directory('${directory.path}/preview-cache');
     await cache.create(recursive: true);
     final process = await Process.start(executable, [
-      '${directory.path}/workbench.db',
+      if (managed) '--managed',
+      managed ? directory.path : '${directory.path}/workbench.db',
       package,
     ]);
     final result = RustWorkbench._(process, cache);
@@ -99,15 +101,29 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
     if (result.exitCode != 0) throw StateError(result.stderr.toString().trim());
   }
 
+  static Future<void> activateLibrary({
+    required String executable,
+    required Directory root,
+    required Directory selected,
+  }) async {
+    final result = await Process.run(executable, [
+      '--activate-library',
+      root.path,
+      selected.path,
+    ]);
+    if (result.exitCode != 0) throw StateError(result.stderr.toString().trim());
+  }
+
   /// The host verifies and restores protected bytes. Dart never loads secret material.
   static Future<void> restoreKey({
     required String executable,
     required Directory directory,
     required String selected,
+    bool managed = false,
   }) async {
     final result = await Process.run(executable, [
-      '--restore-key',
-      '${directory.path}/workbench.db',
+      managed ? '--restore-active-key' : '--restore-key',
+      managed ? directory.path : '${directory.path}/workbench.db',
       selected,
     ]);
     if (result.exitCode != 0) {

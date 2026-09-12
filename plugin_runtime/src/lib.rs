@@ -12,6 +12,8 @@ use wasmi::{
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod ui_session;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod worker;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;

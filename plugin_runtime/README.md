@@ -68,3 +68,8 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## 三语言 UI 增量
 
 已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。
+
+
+## test.24 在线 UI 会话增量
+
+`ui_session::UiSession` 将固定包、连接、视图与 core UI Session 接入真实后台任务；单事件背压、接纳失败回执与迟到结果丢弃已验证。Rust／C／C++ Wasm 各完成连续 27 个有效快照，见 [验证记录](../reports/plugin-ui-online-session-validation.md)。主应用的包 UI 注册、Flutter 控件在线接入、共享调度与内容保存仍待完成。

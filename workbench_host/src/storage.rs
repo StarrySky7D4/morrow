@@ -15,6 +15,8 @@ pub struct Storage {
     #[cfg(not(target_os = "windows"))]
     host: HostRuntime,
     warning: Option<String>,
+    #[cfg(target_os = "windows")]
+    _registry: Option<morrow_audit::library::Registry>,
 }
 impl Storage {
     #[cfg(target_os = "windows")]
@@ -24,6 +26,7 @@ impl Storage {
         let mut storage = Self {
             session,
             warning: None,
+            _registry: None,
         };
         // A maintenance failure must not hide already durable content.
         let _ = storage.flush_pending();
@@ -32,6 +35,24 @@ impl Storage {
     #[cfg(not(target_os = "windows"))]
     pub fn open(_path: &Path) -> Result<Self> {
         Err("此平台的内容库密钥保护后端尚未接入。".into())
+    }
+    #[cfg(target_os = "windows")]
+    pub fn open_managed(root: &Path) -> Result<Self> {
+        let mut registry = morrow_audit::library::Registry::open(root).map_err(library_message)?;
+        let session = registry
+            .open_session(Default::default())
+            .map_err(library_message)?;
+        let mut storage = Self {
+            session,
+            warning: None,
+            _registry: Some(registry),
+        };
+        let _ = storage.flush_pending();
+        Ok(storage)
+    }
+    #[cfg(not(target_os = "windows"))]
+    pub fn open_managed(_root: &Path) -> Result<Self> {
+        Err("此平台的活动内容库管理尚未接入。".into())
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
         #[cfg(target_os = "windows")]
@@ -150,5 +171,18 @@ pub(crate) fn session_message(e: SessionError) -> &'static str {
             "恢复结果需要核对，请重试打开；原保护文件副本已保留（若此前存在）。"
         }
         _ => "内容库无法验证或打开，请保留原内容库与保护密钥后重试。",
+    }
+}
+
+#[cfg(target_os = "windows")]
+pub(crate) fn library_message(e: morrow_audit::library::Error) -> &'static str {
+    use morrow_audit::library::Error;
+    match e {
+        Error::Busy => "工作台仍在运行，请先关闭后再切换内容库。",
+        Error::IdentityMismatch => "已登记的内容库身份不匹配，请保留原资料并选择正确备份恢复。",
+        Error::Invalid => "活动内容库登记已损坏或不受支持，已停止打开以保护资料。",
+        Error::PublishUnknown => "内容库切换结果尚未确认，请重新打开工作台核对。",
+        Error::Io(_) => "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。",
+        Error::Session(e) => session_message(e),
     }
 }

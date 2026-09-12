@@ -35,6 +35,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .file_descriptor_set_path(out.join("plugin_package.descriptor.bin"))
         .compile_protos(&["schemas/plugin_package.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/plugin_registry.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/plugin_registry.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/ui.capnp");
     println!("cargo:rerun-if-changed=schemas/task.capnp");
     capnpc::CompilerCommand::new()

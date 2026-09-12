@@ -119,6 +119,23 @@ pub(crate) fn locked_database(database: &Path) -> Result<(PathBuf, File)> {
 }
 impl Session {
     pub fn open(database: &Path, budget: EventBudget, mode: OpenMode) -> Result<Self> {
+        Self::open_impl(database, budget, mode, None)
+    }
+    /// Compare the independently selected identity while holding the database lease,
+    /// before migration/binding or any audited writable open.
+    pub fn open_expected(
+        database: &Path,
+        budget: EventBudget,
+        expected: &TrustedLog,
+    ) -> Result<Self> {
+        Self::open_impl(database, budget, OpenMode::Existing, Some(expected))
+    }
+    fn open_impl(
+        database: &Path,
+        budget: EventBudget,
+        mode: OpenMode,
+        expected: Option<&TrustedLog>,
+    ) -> Result<Self> {
         let (database, lease) = locked_database(database)?;
         let key_path = key_path(&database)?;
         if !database.try_exists()? {
@@ -165,6 +182,12 @@ impl Session {
             boundary("bootstrap-after-key");
             key
         };
+        if let Some(expected) = expected {
+            let actual = key.trust();
+            if actual.id != expected.id || actual.key != expected.key {
+                return Err(SessionError::KeyMismatch);
+            }
+        }
         let sealer = Sealer::new(key)?;
         let store = Store::open_audited(&database, budget, false, sealer.trust())?;
         boundary("bootstrap-after-binding");

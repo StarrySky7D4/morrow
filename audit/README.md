@@ -1,4 +1,4 @@
-# Morrow 审计封存底座 · test.23
+# Morrow 审计封存底座 · test.24
 
 本模块提供宿主提交事件的原始字节签名、事务式归档、分段封装和独立核验。它是 M4 的前置实现，**Windows test.19 开发版已将系统保护密钥、身份绑定与分批封存接入默认工作台**。启动恢复待封存队列，每次写入前检查压力，正常关闭封存余量；队列上限仍生效，已封存历史的存储配额尚待实现。
 
@@ -145,3 +145,14 @@ Windows `Sealer::new(key)` 现在返回 `Result<Sealer, identity::LeaseError>`�
 目录通过当前进程账户令牌查询实际用户配置目录，再定位 `AppData/Local/Morrow/audit-identities-v1`，不读取 `USERPROFILE` 或 `LOCALAPPDATA` 环境变量。文件名为带域标识的身份摘要，文件为空、不保存私钥或资料。打开时允许其他参与者查询锁，但不允许删除或重命名正在使用的锁文件；所有权取决于系统文件锁，而非文件存在、PID 或时间戳。正常关闭或进程结束后系统释放锁，空文件可以保留。所有权可随 Sealer 在线程间转移。
 
 这是遵守当前 Sealer／Session 接口的 Windows 服务之间的协作机制；不阻止旧版本、直接使用可信核心写入接口或控制同账户的其他程序绕过。它不提供跨设备协调、顺序写入副本的分叉检测、历史回滚检测或完整的恢复激活协议。独立检查点与活动库选择仍须继续实现。测试与真实客户端证据见 [test.23 记录](../reports/test.23-identity-ownership.md)。
+
+
+## 活动内容库登记与启动恢复（test.24）
+
+Windows 默认入口以 `--managed ROOT PACKAGE` 启动可信宿主，`audit::library::Registry` 在宿主存活期间持有根目录独占文件锁。首次成功打开原根目录的内容库后登记规范化绝对目录、原日志身份、递增代次及上一目录；以后必须从登记位置加载，缺失／损坏／身份错配不能变成首次初始化。登记文件使用固定 Protobuf＋LZ4 与摘要，未知或非规范编码拒绝并保留原文件。它是 Windows 本地适配器状态，不是可携带权限的插件协议。
+
+`Session::open_expected` 在数据库租约内固定加载保护文件并比对预期身份，随后才打开可写审计库。登记发布结果未知时 Registry 停止后续操作，必须重新打开核对。`--activate-library ROOT DIRECTORY` 只选择已完整验证且可独占打开的现有内容库，原子发布新的登记；`--restore-active-key ROOT ORIGINAL_KEY` 按实际登记目录恢复原保护文件。受控命令不向 guest 开放。
+
+启动失败页可选择 `.morrowbackup`，恢复到根目录内一个新的 `recovered/library-*` 目录，再显式激活并重开。原目录保留，选择旧备份恢复到备份时点；此机制仍不证明没有顺序分叉或回滚。正常工作台的运行中切换尚未开放，避免保存队列未排空时切换；任意 `--data-directory` 显式模式仍为独立实验库，资格验证可增加 `--managed-library` 使用登记路径。
+
+验证与限制见 [test.24 记录](../reports/test.24-library-and-plugin-foundations.md)。登记文件本身未纳入 test.22 内容快照（快照仍可恢复到新登记根）；无独立检查点、跨账户保护、物理断电或注册表丢失防回滚保证。
