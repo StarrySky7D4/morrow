@@ -1,3 +1,4 @@
+import 'plugins/plugin_tools.dart';
 import 'plugins/protection_backup.dart';
 import 'plugins/bootstrap_stub.dart'
     if (dart.library.io) 'plugins/bootstrap_native.dart'
@@ -2190,6 +2191,8 @@ class _StudioState extends State<Studio> {
             'hero': '概览卡片',
             'quick-capture': '快速记录',
             'appearance': '空间外观',
+            if (widget.workbench is WorkbenchPluginControl)
+              'plugin-tools': '工作台插件',
             if (widget.workbench is WorkbenchProtectionBackup)
               'protection-backup': '内容保护',
             'daily': '此刻的小事',
@@ -2223,6 +2226,24 @@ class _StudioState extends State<Studio> {
       mainAxisSize: MainAxisSize.min,
       children: [
         appearanceControls(),
+        if (backend is WorkbenchPluginControl) ...[
+          const SizedBox(height: 14),
+          Glass(
+            componentId: 'plugin-tools',
+            p: p,
+            radius: 22,
+            child: PluginTools(
+              backend: backend,
+              onChanged: () {
+                if (mounted) setState(() {});
+              },
+              ink: p.ink,
+              muted: p.muted,
+              line: p.line,
+              radius: p.borderRadius(11),
+            ),
+          ),
+        ],
         if (backend is WorkbenchProtectionBackup) ...[
           const SizedBox(height: 14),
           Glass(

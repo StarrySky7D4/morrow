@@ -1,3 +1,5 @@
+import 'plugin_tools.dart';
+import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -14,7 +16,11 @@ import 'generated/host.capnp.dart' as host;
 import 'generated/workbench.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 
-class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
+class RustWorkbench
+    implements
+        WorkbenchBackend,
+        WorkbenchProtectionBackup,
+        WorkbenchPluginControl {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = process.stderr.listen((bytes) {
@@ -70,6 +76,35 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
       rethrow;
     }
   }
+
+  PluginManagementState _pluginState(host.ResponseReader r) =>
+      PluginManagementState(
+        revision: BigInt.from(r.revision).toUnsigned(64),
+        digest: Uint8List.fromList(r.sha256 ?? []),
+        enabled: r.pluginEnabled,
+        approved: r.pluginApproved,
+        available: r.pluginAvailable,
+        writable: !r.readOnly,
+      );
+  @override
+  Future<PluginManagementState> pluginState() async =>
+      _pluginState(await _call(host.Action.pluginState));
+  @override
+  Future<PluginManagementState> configurePlugin(
+    PluginManagementState expected,
+    bool enable,
+  ) async => _pluginState(
+    await _call(
+      host.Action.pluginConfigure,
+      configure: (r) {
+        r.revision = expected.revision.toSigned(64).toInt();
+        r.sha256 = expected.digest;
+        r.limit = enable ? 1 : 0;
+      },
+    ),
+  );
+  @override
+  PluginUiTransport createPluginUi() => _WorkbenchUiTransport(this);
 
   @override
   Future<void> backupProtection(String destination) async {
@@ -618,6 +653,77 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
     } on TimeoutException {
       process.kill();
       await process.exitCode;
+    }
+  }
+}
+
+class _WorkbenchUiTransport implements PluginUiTransport {
+  _WorkbenchUiTransport(this.backend);
+  final RustWorkbench backend;
+  BigInt? _generation;
+  Future<PluginUiReply>? _opening;
+  Future<void>? _closing;
+  bool _closed = false;
+  PluginUiReply _reply(host.ResponseReader r) {
+    final generation = BigInt.from(r.uiGeneration).toUnsigned(64);
+    _generation ??= generation;
+    if (_generation != generation) throw const FormatException('表单代次不匹配');
+    final failure = switch (r.uiCode) {
+      0 => null,
+      1 => PluginUiFailureKind.rejected,
+      2 => PluginUiFailureKind.plugin,
+      3 => PluginUiFailureKind.execution,
+      4 => PluginUiFailureKind.unavailable,
+      _ => throw const FormatException('未知表单状态'),
+    };
+    return PluginUiReply(
+      view: r.uiView ?? '',
+      generation: generation,
+      revision: BigInt.from(r.revision).toUnsigned(64),
+      serial: BigInt.from(r.uiSerial).toUnsigned(64),
+      documentBytes: failure == null ? r.payload : null,
+      failure: failure == null
+          ? null
+          : PluginUiFailure(failure, r.uiFailure ?? '插件操作未完成'),
+    );
+  }
+
+  @override
+  Future<PluginUiReply> open(String seed) {
+    if (_closed || _opening != null) throw StateError('表单已打开或关闭');
+    return _opening = backend
+        ._call(host.Action.uiOpen, configure: (r) => r.name = seed)
+        .then(_reply);
+  }
+
+  @override
+  Future<PluginUiReply> event(Uint8List bytes) async {
+    if (_closed || _generation == null) throw StateError('表单不可用');
+    return _reply(
+      await backend._call(
+        host.Action.uiEvent,
+        configure: (r) {
+          r.offset = _generation!.toSigned(64).toInt();
+          r.payload = bytes;
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<void> close() => _closing ??= _close();
+  Future<void> _close() async {
+    _closed = true;
+    try {
+      await _opening;
+    } catch (_) {
+      return;
+    }
+    if (_generation != null) {
+      await backend._call(
+        host.Action.uiClose,
+        configure: (r) => r.offset = _generation!.toSigned(64).toInt(),
+      );
     }
   }
 }

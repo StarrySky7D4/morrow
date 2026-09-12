@@ -58,9 +58,13 @@ fn run() -> morrow_workbench_host::Result<()> {
         return Err("unexpected host arguments".into());
     }
     let package = if std::path::Path::new(&package).is_file() {
-        Some(morrow_core::plugin_package::catalog::read_file(
-            std::path::Path::new(&package),
-        )?)
+        match morrow_core::plugin_package::catalog::read_file(std::path::Path::new(&package)) {
+            Ok(package) => Some(package),
+            Err(error) => {
+                eprintln!("工作台插件包未通过校验，将以只读方式打开已有内容。{error}");
+                None
+            }
+        }
     } else {
         None
     };

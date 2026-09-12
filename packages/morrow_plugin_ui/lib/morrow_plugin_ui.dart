@@ -30,10 +30,14 @@ class PluginForm extends StatefulWidget {
     required this.document,
     required this.viewIdentity,
     required this.onIntent,
+    this.actionsEnabled = true,
   });
   final UiDocumentModel document;
   final Object viewIdentity;
   final ValueChanged<UiIntent> onIntent;
+
+  /// Disable discrete actions while preserving text/IME editing during async work.
+  final bool actionsEnabled;
   @override
   State<PluginForm> createState() => _PluginFormState();
 }
@@ -70,7 +74,11 @@ class _PluginFormState extends State<PluginForm> {
     String text = '',
     bool checked = false,
   }) {
-    if (!mounted || epoch != _epoch) return;
+    if (!mounted ||
+        epoch != _epoch ||
+        (kind != EventKind.editText && !widget.actionsEnabled)) {
+      return;
+    }
     final current = _nodes[original.id];
     if (current == null ||
         !current.enabled ||
@@ -151,7 +159,7 @@ class _PluginFormState extends State<PluginForm> {
           key: key,
           alignment: AlignmentDirectional.centerStart,
           child: FilledButton(
-            onPressed: n.enabled
+            onPressed: n.enabled && widget.actionsEnabled
                 ? () => _emit(n, epoch, EventKind.activate)
                 : null,
             child: Text(n.label, softWrap: true),
@@ -167,6 +175,7 @@ class _PluginFormState extends State<PluginForm> {
         return _Toggle(
           key: key,
           node: n,
+          actionsEnabled: widget.actionsEnabled,
           onToggle: (value) =>
               _emit(n, epoch, EventKind.setToggle, checked: value),
         );
@@ -205,6 +214,7 @@ class _InputState extends State<_Input> {
   late TextEditingValue _lastValid;
   late String _emitted;
   bool _applying = false;
+  String? _deferredExternal;
   @override
   void initState() {
     super.initState();
@@ -219,6 +229,12 @@ class _InputState extends State<_Input> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.node.text != widget.node.text ||
         oldWidget.node.maxBytes != widget.node.maxBytes) {
+      // A host reply must not replace an active input-method composition.
+      final composing = _controller.value.composing;
+      if (composing.isValid && !composing.isCollapsed) {
+        _deferredExternal = widget.node.text;
+        return;
+      }
       // Only explicit field-value/budget changes replace the local editing buffer.
       _applying = true;
       final text = widget.node.text;
@@ -238,6 +254,19 @@ class _InputState extends State<_Input> {
     if (_applying || !mounted) return;
     final value = _controller.value;
     if (value.composing.isValid && !value.composing.isCollapsed) return;
+    final deferred = _deferredExternal;
+    _deferredExternal = null;
+    if (deferred != null && value.text == _emitted) {
+      _applying = true;
+      _controller.value = TextEditingValue(
+        text: deferred,
+        selection: TextSelection.collapsed(offset: deferred.length),
+      );
+      _lastValid = _controller.value;
+      _emitted = deferred;
+      _applying = false;
+      return;
+    }
     if (!_validText(value.text, widget.node.maxBytes)) return;
     _lastValid = value;
     if (value.text != _emitted) {
@@ -270,7 +299,13 @@ class _InputState extends State<_Input> {
 }
 
 class _Toggle extends StatefulWidget {
-  const _Toggle({super.key, required this.node, required this.onToggle});
+  const _Toggle({
+    super.key,
+    required this.node,
+    required this.onToggle,
+    required this.actionsEnabled,
+  });
+  final bool actionsEnabled;
   final UiNode node;
   final ValueChanged<bool> onToggle;
   @override
@@ -298,7 +333,7 @@ class _ToggleState extends State<_Toggle> {
     contentPadding: EdgeInsets.zero,
     title: Text(widget.node.label),
     value: _value,
-    onChanged: widget.node.enabled
+    onChanged: widget.node.enabled && widget.actionsEnabled
         ? (value) {
             setState(() => _value = value);
             widget.onToggle(value);

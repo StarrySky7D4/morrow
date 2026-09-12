@@ -559,6 +559,20 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  morrow_core_client:
+    dependency: "direct main"
+    description:
+      path: "packages/morrow_core_client"
+      relative: true
+    source: path
+    version: "0.1.9-test.11"
+  morrow_plugin_ui:
+    dependency: "direct main"
+    description:
+      path: "packages/morrow_plugin_ui"
+      relative: true
+    source: path
+    version: "0.1.9-test.10"
   objective_c:
     dependency: transitive
     description:

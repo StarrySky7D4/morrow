@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -14,4 +14,7 @@ struct Response {
  readOnly @6 :Bool; error @7 :Text;
  transfer @8 :Text; offset @9 :UInt64; totalLength @10 :UInt64; sha256 @11 :Data;
  maintenanceWarning @12 :Text;
+ uiView @13 :Text; uiGeneration @14 :UInt64; uiSerial @15 :UInt64;
+ uiFailure @16 :Text; uiCode @17 :UInt16;
+ pluginEnabled @18 :Bool; pluginApproved @19 :Bool; pluginAvailable @20 :Bool;
 }

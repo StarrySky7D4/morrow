@@ -10,6 +10,10 @@ use wasmi::{
     StoreLimitsBuilder, ValType,
 };
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod inline_ui;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod manager;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod ui_session;

@@ -107,6 +107,7 @@ fn audit_child() {
         "seal" => panic!("Crash hook missed"),
         "failure" => {
             assert!(host.maintenance_warning().is_some());
+            assert!(!host.writable());
             assert_eq!(host.read("saved").unwrap().revision, 1);
             assert!(host.create("refused", idea("refused")).is_err());
             assert!(host.read("refused").is_err());
@@ -129,6 +130,7 @@ fn audit_child() {
                 .unwrap();
             assert_eq!(r.get_revision(), 1);
             assert_eq!(r.get_error().unwrap().to_str().unwrap(), "");
+            assert!(r.get_read_only());
             assert!(
                 !r.get_maintenance_warning()
                     .unwrap()
@@ -136,6 +138,32 @@ fn audit_child() {
                     .unwrap()
                     .is_empty()
             );
+            // A refresh while the actual failure remains must not advertise restored writes.
+            host.refresh_plugin_state();
+            assert!(!host.writable());
+            assert!(host.maintenance_warning().is_some());
+            // This test runs as its own Windows child process, with this one selected test.
+            // Windows environment mutation is safe; no other process's injection is changed.
+            unsafe { std::env::remove_var("MORROW_WORKBENCH_FAIL_SEAL") };
+            host.refresh_plugin_state();
+            assert!(host.writable());
+            assert!(host.maintenance_warning().is_none());
+            assert_eq!(host.read("saved").unwrap().revision, 1);
+            assert!(host.read("refused").is_err());
+            assert_eq!(inspect(&db).pending_usage().unwrap(), (0, 0));
+            let recovered = morrow_workbench_host::protocol::respond(
+                &mut host,
+                &capnp::serialize::write_message_to_words(&request),
+            )
+            .unwrap();
+            let message =
+                capnp::serialize::read_message(&mut &recovered[..], Default::default()).unwrap();
+            let r = message
+                .get_root::<morrow_workbench_host::host_capnp::response::Reader>()
+                .unwrap();
+            assert!(!r.get_read_only());
+            assert_eq!(r.get_revision(), 1);
+            assert_eq!(r.get_maintenance_warning().unwrap().to_str().unwrap(), "");
         }
         _ => panic!("unknown mode"),
     }
@@ -164,7 +192,8 @@ fn crashes_and_maintenance_failures_preserve_committed_results() {
         assert_eq!(status.code(), Some(expected_exit), "{mode}");
         if mode == "failure" {
             assert!(inspect(&db).card("refused").unwrap().is_none());
-            assert_eq!(inspect(&db).pending_usage().unwrap().0, 1);
+            // The failure child explicitly refreshes after removing its injected seal fault.
+            assert_eq!(inspect(&db).pending_usage().unwrap().0, 0);
         }
         let recovered = Workbench::open(&db, None).unwrap();
         assert_eq!(recovered.read("saved").unwrap().revision, 1);

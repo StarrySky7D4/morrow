@@ -7,6 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let module = std::fs::read(args.next().ok_or("module")?)?;
     let destination = args.next().ok_or("archive")?;
     let handlers = [
+        ("ui.form", "text.utf8", "morrow.ui.document.v1"),
+        ("ui.edit", "morrow.ui.event.v1", "morrow.ui.document.v1"),
         (
             "capture.convert",
             "morrow.capture.request.v1",

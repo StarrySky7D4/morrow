@@ -51,6 +51,14 @@ impl PreparedPackage {
     pub fn connect(&self, host: &mut HostRuntime) -> morrow_core::Result<Connection> {
         host.connect_package(&self.package)
     }
+    /// Bind a previously approved ceiling to a fresh instance; individual grants remain separate.
+    pub fn connect_approved(
+        &self,
+        host: &mut HostRuntime,
+        approved: &std::collections::BTreeSet<morrow_core::lifecycle::GrantKind>,
+    ) -> morrow_core::Result<Connection> {
+        host.connect_package_approved(&self.package, approved)
+    }
     /// Clock belongs to the trusted host. No guest-selected identity or callback is accepted.
     pub fn run(
         &self,

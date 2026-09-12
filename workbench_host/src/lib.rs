@@ -3,12 +3,14 @@
 use morrow_core::{
     content::{Attachment, CardRecord},
     content_change::ContentChange,
-    dispatch::Connection,
     lifecycle::GrantKind,
     plugin_package::Package,
     task::{Invocation, Transform},
 };
-use morrow_plugin_runtime::{Limits, package::PreparedPackage};
+use morrow_plugin_runtime::{
+    Limits,
+    manager::{ManagedInstance, Manager},
+};
 use morrow_workbench_plugin::{Action, Asset, Idea, Request, Response, codec, persistence};
 use std::{
     collections::BTreeMap,
@@ -34,8 +36,12 @@ pub struct Mutation<'a> {
 }
 pub struct Workbench {
     host: storage::Storage,
-    plugin: Option<PreparedPackage>,
-    connection: Option<Connection>,
+    plugin: Option<ManagedInstance>,
+    manager: Option<Manager>,
+    bundle: Option<Package>,
+    ui: Option<morrow_plugin_runtime::inline_ui::InlineUi>,
+    ui_generation: u64,
+    plugin_warning: Option<String>,
     start: Instant,
     counter: u64,
     undo: BTreeMap<String, (u64, u64)>,
@@ -63,23 +69,75 @@ fn now(start: Instant) -> u64 {
 }
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
-        Self::with_storage(storage::Storage::open(path)?, package)
+        Self::with_storage(
+            storage::Storage::open(path)?,
+            path.parent().unwrap_or(Path::new(".")),
+            package,
+        )
     }
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
-        Self::with_storage(storage::Storage::open_managed(root)?, package)
+        Self::with_storage(storage::Storage::open_managed(root)?, root, package)
     }
-    fn with_storage(mut host: storage::Storage, package: Option<Package>) -> Result<Self> {
-        let plugin = package
-            .map(|p| {
-                PreparedPackage::new(p, Limits::default())
-                    .map_err(|e| format!("plugin preparation: {e:?}"))
-            })
-            .transpose()?;
-        let connection = plugin.as_ref().map(|p| p.connect(&mut host)).transpose()?;
+    fn with_storage(
+        mut host: storage::Storage,
+        root: &Path,
+        package: Option<Package>,
+    ) -> Result<Self> {
+        use morrow_core::plugin_package::{catalog::Catalog, registry::Registry};
+        let initialize = || -> Result<Option<Manager>> {
+            let Some(bundle) = &package else {
+                return Ok(None);
+            };
+            let catalog = Catalog::open(&root.join("plugin-manager/packages"))?;
+            catalog.install(bundle)?;
+            let registry = Registry::open(&root.join("plugin-manager/state"), catalog)?;
+            let mut manager = Manager::new(registry, Limits::default());
+            let id = &bundle.manifest().package_id;
+            let first = manager.revision() == 0 && manager.selection(id).is_none();
+            manager.select(bundle, manager.revision())?;
+            if first {
+                // Explicit bundled-install policy for the existing content API only.
+                // Later upgrades remain disabled until the user approves the new digest.
+                let approved = default_approval()
+                    .intersection(bundle.capabilities())
+                    .copied()
+                    .collect();
+                manager.approve(id, bundle.digest(), approved, manager.revision())?;
+                manager.set_enabled(id, bundle.digest(), true, manager.revision())?;
+            }
+            Ok(Some(manager))
+        };
+        let (mut manager, mut plugin_warning) = match initialize() {
+            Ok(manager) => (manager, None),
+            Err(error) => (
+                None,
+                Some(format!("插件管理暂不可用，已有内容仍可读取。{error}")),
+            ),
+        };
+        let plugin = match (&mut manager, &package) {
+            (Some(manager), Some(bundle))
+                if manager
+                    .selection(&bundle.manifest().package_id)
+                    .is_some_and(|s| s.enabled) =>
+            {
+                match manager.connect(&bundle.manifest().package_id, &mut host) {
+                    Ok(instance) => Some(instance),
+                    Err(error) => {
+                        plugin_warning = Some(format!("插件暂不可用，已有内容仍可读取。{error}"));
+                        None
+                    }
+                }
+            }
+            _ => None,
+        };
         Ok(Self {
             host,
             plugin,
-            connection,
+            manager,
+            bundle: package,
+            ui: None,
+            ui_generation: 0,
+            plugin_warning,
             start: Instant::now(),
             counter: 0,
             undo: BTreeMap::new(),
@@ -94,18 +152,34 @@ impl Workbench {
         self.host.backup_key(destination)
     }
     pub fn maintenance_warning(&self) -> Option<&str> {
-        self.host.warning()
+        self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
         self.host.flush_pending()
     }
     pub fn writable(&self) -> bool {
-        self.plugin.is_some()
+        self.host.warning().is_none()
+            && self.plugin_status().approved
+            && self.plugin.as_ref().is_some_and(|p| {
+                self.host.connection_phase(p.connection())
+                    == Ok(morrow_core::lifecycle::InstancePhase::Ready)
+            })
+    }
+    fn prepare_write(&mut self) -> Result<()> {
+        self.host.prepare_write()?;
+        if !self.writable() {
+            return Err("工作台当前只读，请检查插件权限和内容库状态。".into());
+        }
+        Ok(())
     }
     fn grant(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         let time = now(self.start);
         self.host.grant(
-            self.connection.as_mut().ok_or("plugin unavailable")?,
+            self.plugin
+                .as_mut()
+                .ok_or("plugin unavailable")?
+                .parts_mut()
+                .1,
             kind,
             id,
             time.saturating_add(5000),
@@ -115,7 +189,11 @@ impl Workbench {
     }
     fn revoke(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         self.host.revoke(
-            self.connection.as_mut().ok_or("plugin unavailable")?,
+            self.plugin
+                .as_mut()
+                .ok_or("plugin unavailable")?
+                .parts_mut()
+                .1,
             kind,
             id,
         )?;
@@ -138,10 +216,8 @@ impl Workbench {
         let start = self.start;
         let r = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
             &mut self.host,
-            self.connection.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
-            Default::default(),
         );
         if r.execution.outcome != Ok(0) || r.execution.host_calls != 0 || r.response.is_some() {
             return Err(format!("plugin failed: {:?}", r.execution.outcome).into());
@@ -190,7 +266,9 @@ impl Workbench {
         let start = self.start;
         let result = self
             .host
-            .read_content(self.connection.as_ref().unwrap(), id, || now(start));
+            .read_content(self.plugin.as_ref().unwrap().connection(), id, || {
+                now(start)
+            });
         self.revoke(id, GrantKind::ReadContent)?;
         Ok(result?)
     }
@@ -204,7 +282,7 @@ impl Workbench {
         reader: &mut impl std::io::Read,
         size: u64,
     ) -> Result<Asset> {
-        self.host.prepare_write()?;
+        self.prepare_write()?;
         if !self.writable() {
             return Err("plugin unavailable".into());
         }
@@ -268,7 +346,7 @@ impl Workbench {
             .collect()
     }
     pub fn create(&mut self, operation: &str, draft: Idea) -> Result<Record> {
-        self.host.prepare_write()?;
+        self.prepare_write()?;
         let id = draft.id.clone();
         let mut req = command(Action::Create);
         req.proposed = draft;
@@ -289,7 +367,7 @@ impl Workbench {
         self.grant(&id, GrantKind::CreateContent)?;
         let start = self.start;
         let result = self.host.create_content(
-            self.connection.as_ref().unwrap(),
+            self.plugin.as_ref().unwrap().connection(),
             operation,
             &record,
             || now(start),
@@ -300,7 +378,7 @@ impl Workbench {
         self.read(&id)
     }
     pub fn apply(&mut self, mutation: Mutation<'_>) -> Result<Record> {
-        self.host.prepare_write()?;
+        self.prepare_write()?;
         let Mutation {
             operation,
             id,
@@ -363,9 +441,11 @@ impl Workbench {
         };
         self.grant(id, GrantKind::EditContent)?;
         let start = self.start;
-        let result = self
-            .host
-            .edit_content(self.connection.as_ref().unwrap(), &change, || now(start));
+        let result =
+            self.host
+                .edit_content(self.plugin.as_ref().unwrap().connection(), &change, || {
+                    now(start)
+                });
         self.revoke(id, GrantKind::EditContent)?;
         let receipt = result?;
         if action == Action::Delete {
@@ -507,7 +587,7 @@ impl Workbench {
         Ok(Some(morrow_workbench_plugin::preferences::encode_wire(&p)?))
     }
     pub fn save_preferences(&mut self, operation: &str, input: Vec<u8>) -> Result<Vec<u8>> {
-        self.host.prepare_write()?;
+        self.prepare_write()?;
         use morrow_workbench_plugin::preferences;
         let p = preferences::decode_wire(&input)?;
         let pages = preferences::validation_pages(&p)?;
@@ -549,9 +629,11 @@ impl Workbench {
                 preview_text: "外观、日常小事与随身听设置".into(),
                 attachments: None,
             };
-            let result = self
-                .host
-                .edit_content(self.connection.as_ref().unwrap(), &change, || now(start));
+            let result =
+                self.host
+                    .edit_content(self.plugin.as_ref().unwrap().connection(), &change, || {
+                        now(start)
+                    });
             self.revoke(id, GrantKind::EditContent)?;
             result?;
         } else {
@@ -559,7 +641,7 @@ impl Workbench {
             self.grant(id, GrantKind::CreateContent)?;
             let start = self.start;
             let result = self.host.create_content(
-                self.connection.as_ref().unwrap(),
+                self.plugin.as_ref().unwrap().connection(),
                 operation,
                 &card,
                 || now(start),
@@ -610,10 +692,8 @@ impl Workbench {
         let start = self.start;
         let result = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
             &mut self.host,
-            self.connection.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
-            Default::default(),
         );
         if result.execution.outcome != Ok(0)
             || result.execution.host_calls != 0
@@ -633,8 +713,8 @@ impl Workbench {
 }
 impl Drop for Workbench {
     fn drop(&mut self) {
-        if let Some(connection) = &self.connection {
-            let _ = self.host.disconnect(connection);
+        if let Some(plugin) = &self.plugin {
+            let _ = plugin.close(&mut self.host);
         }
     }
 }
@@ -706,3 +786,14 @@ pub fn restore_active_key(root: &Path, selected: &Path) -> Result<()> {
         Err("此平台的活动内容库管理尚未接入。".into())
     }
 }
+
+fn default_approval() -> std::collections::BTreeSet<GrantKind> {
+    [
+        GrantKind::CreateContent,
+        GrantKind::EditContent,
+        GrantKind::ReadContent,
+    ]
+    .into_iter()
+    .collect()
+}
+mod plugin_control;

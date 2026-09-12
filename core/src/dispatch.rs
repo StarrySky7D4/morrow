@@ -7,6 +7,14 @@ use crate::{
     store::Store,
 };
 use std::collections::{BTreeMap, BTreeSet};
+/// Opaque in-process identity for trusted adapters. No guest-selected identity or numeric handle.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct ConnectionBinding(Instance);
+impl std::fmt::Debug for ConnectionBinding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("ConnectionBinding(..)")
+    }
+}
 /// Opaque host-owned endpoint; never serialize or let an untrusted caller select another endpoint.
 pub struct Connection {
     instance: Instance,
@@ -15,6 +23,9 @@ pub struct Connection {
     grants: BTreeMap<(GrantKind, String, Option<String>), Grant>,
 }
 impl Connection {
+    pub fn binding(&self) -> ConnectionBinding {
+        ConnectionBinding(self.instance)
+    }
     pub fn package_digest(&self) -> Option<[u8; 32]> {
         self.package_digest
     }
@@ -55,6 +66,21 @@ impl HostRuntime {
         let mut connection = self.connect()?;
         connection.package_digest = Some(package.digest());
         connection.ceiling = Some(package.capabilities().clone());
+        Ok(connection)
+    }
+    /// Bind the explicit approved subset to the actual connection, before any grant exists.
+    /// Declarations remain ceilings; this trusted entry does not create object authorization.
+    pub fn connect_package_approved(
+        &mut self,
+        package: &crate::plugin_package::Package,
+        approved: &BTreeSet<GrantKind>,
+    ) -> Result<Connection> {
+        if !approved.is_subset(package.capabilities()) {
+            return Err(Error::Invalid("approval exceeds declaration"));
+        }
+        let mut connection = self.connect()?;
+        connection.package_digest = Some(package.digest());
+        connection.ceiling = Some(approved.clone());
         Ok(connection)
     }
     /// Administrative control plane, never a dispatch command.

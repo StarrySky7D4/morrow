@@ -22,6 +22,11 @@ enum Action {
   readPreferencesPart,
   backupProtection,
   backupSnapshot,
+  pluginState,
+  pluginConfigure,
+  uiOpen,
+  uiEvent,
+  uiClose,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -50,6 +55,11 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     ),
     EnumerantSchemaInfo(name: 'backupProtection', codeOrder: 15, ordinal: 15),
     EnumerantSchemaInfo(name: 'backupSnapshot', codeOrder: 16, ordinal: 16),
+    EnumerantSchemaInfo(name: 'pluginState', codeOrder: 17, ordinal: 17),
+    EnumerantSchemaInfo(name: 'pluginConfigure', codeOrder: 18, ordinal: 18),
+    EnumerantSchemaInfo(name: 'uiOpen', codeOrder: 19, ordinal: 19),
+    EnumerantSchemaInfo(name: 'uiEvent', codeOrder: 20, ordinal: 20),
+    EnumerantSchemaInfo(name: 'uiClose', codeOrder: 21, ordinal: 21),
   ],
 );
 
@@ -369,6 +379,22 @@ final class ResponseReader extends StructReader {
   Uint8List? get sha256 => getDataField(6);
 
   String? get maintenanceWarning => getTextField(7);
+
+  String? get uiView => getTextField(8);
+
+  int get uiGeneration => getUint64Field(32);
+
+  int get uiSerial => getUint64Field(40);
+
+  String? get uiFailure => getTextField(9);
+
+  int get uiCode => getUint16Field(4);
+
+  bool get pluginEnabled => getBoolField(17);
+
+  bool get pluginApproved => getBoolField(18);
+
+  bool get pluginAvailable => getBoolField(19);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -428,6 +454,38 @@ final class ResponseBuilder extends StructBuilder {
   set maintenanceWarning(String? v) {
     setTextField(7, v);
   }
+
+  set uiView(String? v) {
+    setTextField(8, v);
+  }
+
+  set uiGeneration(int v) {
+    setUint64Field(32, v);
+  }
+
+  set uiSerial(int v) {
+    setUint64Field(40, v);
+  }
+
+  set uiFailure(String? v) {
+    setTextField(9, v);
+  }
+
+  set uiCode(int v) {
+    setUint16Field(4, v);
+  }
+
+  set pluginEnabled(bool v) {
+    setBoolField(17, v);
+  }
+
+  set pluginApproved(bool v) {
+    setBoolField(18, v);
+  }
+
+  set pluginAvailable(bool v) {
+    setBoolField(19, v);
+  }
 }
 
 final class _ResponseFactory
@@ -435,9 +493,9 @@ final class _ResponseFactory
   @override
   StructSchemaInfo get schema => responseSchema;
   @override
-  int get dataWords => 4;
+  int get dataWords => 6;
   @override
-  int get ptrWords => 8;
+  int get ptrWords => 10;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -453,8 +511,8 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   id: 0xccbd3dd94b141a74,
   displayName: 'host.capnp:Response',
   shortName: 'Response',
-  dataWords: 4,
-  pointerWords: 8,
+  dataWords: 6,
+  pointerWords: 10,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -558,6 +616,70 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 7,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiView',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiGeneration',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiSerial',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiFailure',
+      codeOrder: 16,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiCode',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'pluginEnabled',
+      codeOrder: 18,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'pluginApproved',
+      codeOrder: 19,
+      body: SlotFieldSchemaInfo(
+        offset: 18,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'pluginAvailable',
+      codeOrder: 20,
+      body: SlotFieldSchemaInfo(
+        offset: 19,
+        type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
   ],

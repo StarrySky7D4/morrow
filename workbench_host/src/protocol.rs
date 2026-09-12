@@ -23,10 +23,10 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut out = output.init_root::<wire::response::Builder>();
     out.set_version(1);
     out.set_digest(&digest());
-    out.set_read_only(!host.writable());
     if let Err(e) = handle(host, bytes, out.reborrow()) {
         out.set_error(e.to_string().as_str());
     }
+    out.set_read_only(!host.writable());
     if let Some(warning) = host.maintenance_warning() {
         out.set_maintenance_warning(warning);
     }
@@ -57,6 +57,30 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match r.get_action()? {
+        wire::Action::PluginState => {
+            host.refresh_plugin_state();
+            plugin_status(host, out.reborrow());
+        }
+        wire::Action::PluginConfigure => {
+            if r.get_limit() > 1 {
+                return Err("invalid enable decision".into());
+            }
+            host.configure_plugin(r.get_revision(), r.get_sha256()?, r.get_limit() == 1)?;
+            plugin_status(host, out.reborrow());
+        }
+        wire::Action::UiOpen => {
+            ui_reply(host.ui_open(&text(r.get_name())?)?, out.reborrow());
+        }
+        wire::Action::UiEvent => {
+            ui_reply(
+                host.ui_event(r.get_offset(), r.get_payload()?)?,
+                out.reborrow(),
+            );
+        }
+        wire::Action::UiClose => {
+            host.ui_close(r.get_offset());
+        }
+
         wire::Action::BackupSnapshot => {
             host.backup_snapshot(std::path::Path::new(&text(r.get_selected_path())?))?;
         }
@@ -232,4 +256,33 @@ fn write_chunk(mut out: wire::response::Builder<'_>, part: &crate::transfer::Chu
     out.set_total_length(part.total as u64);
     out.set_sha256(&part.sha);
     out.set_payload(&part.bytes);
+}
+
+fn plugin_status(host: &Workbench, mut out: wire::response::Builder<'_>) {
+    let s = host.plugin_status();
+    out.set_revision(s.revision);
+    out.set_sha256(&s.digest);
+    out.set_plugin_enabled(s.enabled);
+    out.set_plugin_approved(s.approved);
+    out.set_plugin_available(s.available);
+}
+fn ui_reply(reply: morrow_plugin_runtime::inline_ui::Reply, mut out: wire::response::Builder<'_>) {
+    use morrow_plugin_runtime::inline_ui::Failure;
+    out.set_ui_view(reply.view.as_str());
+    out.set_ui_generation(reply.generation);
+    out.set_revision(reply.revision);
+    out.set_ui_serial(reply.serial);
+    if let Some(document) = reply.document {
+        out.set_payload(&document);
+    }
+    if let Some(failure) = reply.failure {
+        let (code, message) = match failure {
+            Failure::Plugin(f) => (2, f.message),
+            Failure::Execution(_) => (3, "插件未能完成这次操作，当前内容已保留。".into()),
+            Failure::InvalidDocument => (1, "表单操作或返回内容无效，请检查输入。".into()),
+            Failure::Revoked => (4, "插件已停用，请重新打开表单。".into()),
+        };
+        out.set_ui_code(code);
+        out.set_ui_failure(message.as_str());
+    }
 }

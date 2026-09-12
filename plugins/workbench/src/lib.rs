@@ -6,6 +6,7 @@ pub mod capture;
 pub mod codec;
 pub mod persistence;
 pub mod preferences;
+pub mod ui;
 #[allow(clippy::all)]
 pub mod capture_capnp {
     include!(concat!(env!("OUT_DIR"), "/capture_capnp.rs"));
@@ -314,7 +315,11 @@ pub extern "C" fn morrow_run() -> i32 {
     let Some(t) = task.transform() else {
         return -1;
     };
-    let result = if t.handler == "workbench.command"
+    let result = if t.output_type == "morrow.ui.document.v1"
+        && (t.handler == "ui.form" || t.handler == "ui.edit")
+    {
+        ui::process(&t.handler, &t.input_type, &t.input)
+    } else if t.handler == "workbench.command"
         && t.input_type == "morrow.workbench.request.v1"
         && t.output_type == "morrow.workbench.response.v1"
     {
