@@ -79,6 +79,10 @@ pub struct HostPolicy {
     tasks: BTreeMap<u64, Task>,
 }
 impl HostPolicy {
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn identity(&self) -> u64 {
+        self.id
+    }
     pub fn new() -> Result<Self> {
         let id = NEXT_HOST
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))

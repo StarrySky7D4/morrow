@@ -15,6 +15,14 @@ impl std::fmt::Debug for ConnectionBinding {
         f.write_str("ConnectionBinding(..)")
     }
 }
+/// Process-local host identity for trusted resource brokers, never a wire capability.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct HostBinding(u64);
+impl std::fmt::Debug for HostBinding {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("HostBinding(..)")
+    }
+}
 /// Opaque host-owned endpoint; never serialize or let an untrusted caller select another endpoint.
 pub struct Connection {
     instance: Instance,
@@ -41,6 +49,9 @@ pub struct HostRuntime {
     store: Store,
 }
 impl HostRuntime {
+    pub fn binding(&self) -> HostBinding {
+        HostBinding(self.policy.identity())
+    }
     pub fn new(store: Store) -> Result<Self> {
         Ok(Self {
             policy: HostPolicy::new()?,
@@ -173,6 +184,13 @@ impl HostRuntime {
         connection: &Connection,
     ) -> Result<crate::lifecycle::InstancePhase> {
         self.policy.phase(connection.instance)
+    }
+    /// Trusted resource owners can check a previously bound instance without recreating a connection.
+    pub fn binding_phase(
+        &self,
+        binding: ConnectionBinding,
+    ) -> Result<crate::lifecycle::InstancePhase> {
+        self.policy.phase(binding.0)
     }
     pub fn store_local(&self) -> &Store {
         &self.store

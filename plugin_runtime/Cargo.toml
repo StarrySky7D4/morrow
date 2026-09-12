@@ -56,3 +56,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_ui_session"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_shared_objects"
+required-features = ["packages"]

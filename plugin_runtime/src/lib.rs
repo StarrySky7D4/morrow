@@ -1,4 +1,4 @@
-#![forbid(unsafe_code)]
+#![deny(unsafe_code)]
 //! Replaceable synchronous Wasm backend probe. No WASI, filesystem or identity imports.
 use std::sync::{
     Arc, Mutex,
@@ -19,6 +19,12 @@ pub mod package;
 pub mod ui_session;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod worker;
+// User-approved native boundary; other runtime modules still reject unsafe code.
+#[cfg(not(target_arch = "wasm32"))]
+#[allow(unsafe_code)]
+pub mod shared_memory;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod shared_objects;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;

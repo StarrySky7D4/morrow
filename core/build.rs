@@ -41,11 +41,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .compile_protos(&["schemas/plugin_registry.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/ui.capnp");
     println!("cargo:rerun-if-changed=schemas/task.capnp");
+    println!("cargo:rerun-if-changed=schemas/shared_object.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")
         .file("schemas/task.capnp")
         .file("schemas/ui.capnp")
+        .file("schemas/shared_object.capnp")
         .run()?;
     Ok(())
 }
