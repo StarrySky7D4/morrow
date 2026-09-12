@@ -102,3 +102,8 @@ Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_nod
 七种请求与新正文回复由独立核心生成样本，Rust SDK 和 C++ 经 C ABI 对照验证。真实 Rust、C、C++ Wasm 模块均已在 Wasmi 宿主完成创建、编辑、读取二进制正文尾片段和撤销拒绝；每次任务仅一次 host call，完成记录与核心权威响应绑定。命令通用视图使用 `mp_task_get_command`／`task.command()`；需要新命令参数时使用 `mp_task_get_content`／`task.content()`。旧 `mp_task_get` 对新类型明确返回协议不适用，不返回空参数冒充旧命令。
 
 复验：先构建 `sdk/examples/rust-task` 和执行 `tool/build_plugin_c_wasm.ps1`，再运行 `plugin_runtime/examples/qualify_content_sdk.rs`，传入三份 task Wasm 文件。宿主测试、完整功能与平台限制见 [本轮对照记录](../docs/TEST1_RUST_PARITY.md)。
+
+
+## 许可
+
+从 test.1 之后的重构版本起，Morrow 第一方 C／C++／Rust SDK、示例和界面客户端统一使用 [AGPL-3.0-only](LICENSE)，完整声明见仓库 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。

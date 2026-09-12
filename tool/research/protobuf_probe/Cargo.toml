@@ -1,4 +1,5 @@
 [package]
+license = "AGPL-3.0-only"
 name = "morrow-protobuf-research-probe"
 version = "0.0.0"
 edition = "2021"

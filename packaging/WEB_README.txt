@@ -17,5 +17,5 @@ Windows 原生 Office OLE／矢量对象提取仅桌面版提供；Web 可使用
 浏览器无法自动寻找音频旁的歌词文件，请同时选择音频和同名 LRC，
 或在播放列表手动导入。音视频格式支持取决于浏览器。
 
-本项目原创内容采用 Apache License 2.0，见 LICENSE 和 NOTICE。
+本项目原创内容采用 GNU Affero General Public License v3.0 only，见 LICENSE 和 NOTICE。
 第三方依赖保留各自许可证，见 THIRD_PARTY_NOTICES.txt 和生成的 NOTICES。

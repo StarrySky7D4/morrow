@@ -1,12 +1,22 @@
 Morrow
 Copyright 2026 StarrySky7D4 and contributors
 
-The original source code, documentation, configuration and artwork in this
-repository are licensed under the Apache License, Version 2.0.
-See LICENSE for the full license text.
+Licensing change: 2026-09-12.
+The first-party source code, documentation, configuration and artwork in
+Morrow refactoring versions after 0.1.9-test.1 (starting with test.2) are
+licensed under the GNU Affero General Public License, version 3 only.
+SPDX-License-Identifier: AGPL-3.0-only
+See LICENSE for the complete, unmodified license text.
 
-Third-party software and incorporated third-party material retain their
-respective copyright notices and licenses. The project's Apache-2.0 license
-does not replace those licenses. See packaging/THIRD_PARTY_NOTICES.txt and
-packaging/licenses/ in source distributions, or THIRD_PARTY_NOTICES.txt,
+Morrow is distributed without any warranty; without even the implied
+warranty of merchantability or fitness for a particular purpose.
+You may redistribute and modify Morrow under the terms of AGPL version 3.
+Source code and build instructions: https://github.com/StarrySky7D4/morrow
+Release-specific source locations are provided in SOURCE.txt where supplied.
+
+Historical test.1 and earlier releases retain their original Apache-2.0
+license. Existing third-party software and incorporated third-party material
+retain their respective copyright notices and licenses; this licensing
+change does not replace those licenses. See packaging/THIRD_PARTY_NOTICES.txt
+and packaging/licenses/ in source distributions, or THIRD_PARTY_NOTICES.txt,
 licenses/ and Flutter's generated NOTICES in binary distributions.

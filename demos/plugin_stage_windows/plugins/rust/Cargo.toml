@@ -5,7 +5,7 @@ name = "morrow-demo-text"
 version = "0.1.9-test.10"
 edition = "2024"
 publish = false
-license = "Apache-2.0"
+license = "AGPL-3.0-only"
 [lib]
 crate-type = ["cdylib"]
 [dependencies]

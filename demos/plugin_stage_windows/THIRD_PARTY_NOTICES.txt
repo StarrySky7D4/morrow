@@ -1,6 +1,6 @@
 Morrow Windows Stage Demo 0.1.9-test.10
 
-Morrow source and artwork: Apache-2.0; see LICENSE and NOTICE.
+Morrow source and artwork: AGPL-3.0-only; see LICENSE and NOTICE.
 
 Flutter, Dart, the Flutter engine and its incorporated dependencies:
 see data/flutter_assets/NOTICES.Z (gzip-compressed generated license notices).
@@ -21,6 +21,6 @@ https://github.com/llvm/llvm-project/tree/main/libcxx
 
 The app-local Microsoft Visual C++ runtime DLLs are distributed from the
 Visual Studio 2022 x64 redistributable directory. They remain subject to
-Microsoft's runtime redistribution terms, not Morrow's Apache-2.0 license.
+Microsoft's runtime redistribution terms, not Morrow's AGPL-3.0-only license.
 
 This standalone demo contains no main-application media playback libraries.

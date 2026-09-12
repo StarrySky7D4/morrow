@@ -39,6 +39,6 @@ Morrow — 杂事有序，奇想自由
 - 网络素材须为有效直链；Web 素材受浏览器编码及跨域策略限制。
 - 素材加载失败会提示并回退内置纹理。
 
-本项目原创内容采用 Apache License 2.0，见 LICENSE 和 NOTICE。
+本项目原创内容采用 GNU Affero General Public License v3.0 only，见 LICENSE 和 NOTICE。
 第三方组件保留各自许可证，见 THIRD_PARTY_NOTICES.txt 及 licenses 目录。
 此个人分享版未进行代码签名；首次运行时 Windows 可能提示未验证的发布者。

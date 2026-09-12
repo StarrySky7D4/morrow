@@ -33,6 +33,19 @@ Copy-Item -LiteralPath build/workbench-host/bundle/workbench.morrowplugin -Desti
 $archive = "$destination.zip"
 if ((Test-Path -LiteralPath $archive) -and -not $RefreshArtifact) {throw "Preserving existing archive: $archive"}
 Copy-Item -LiteralPath LICENSE,NOTICE -Destination $destination -Force
+Copy-Item -LiteralPath packaging/THIRD_PARTY_NOTICES.txt -Destination $destination -Force
+$sourceNotice = @"
+Morrow $version - AGPL-3.0-only
+Corresponding source and build scripts:
+https://github.com/StarrySky7D4/morrow/tree/v$version
+Source archive:
+https://github.com/StarrySky7D4/morrow/archive/refs/tags/v$version.zip
+Build instructions: README.md and tool/build_rust_workbench_windows.ps1
+The source is available at no charge. Third-party source locations and
+license notices are listed in THIRD_PARTY_NOTICES.txt and licenses/.
+"@
+[IO.File]::WriteAllText((Join-Path $destination 'SOURCE.txt'), $sourceNotice, [Text.UTF8Encoding]::new($false))
+
 $licenses = Join-Path $destination licenses
 New-Item -ItemType Directory -Force -Path $licenses | Out-Null
 $toolchain = & rustc --print sysroot

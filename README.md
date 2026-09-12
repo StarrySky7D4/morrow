@@ -2,7 +2,7 @@
 
 留一点空间给明天的想法。项目原名 daemon，现统一命名为 Morrow；代码包名为 `morrow_studio`。改名兼容策略见 [重命名说明](docs/RENAMING.md)。历史发布附件保留原名，新构建使用 `morrow-*`。
 
-[下载 test.14 Windows 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.14) · [下载 test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [Apache-2.0](LICENSE)
+[下载 test.14 Windows 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.14) · [下载 test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [AGPL-3.0-only](LICENSE)
 
 用 Flutter 构建的灵感工作台。当前重构版为 **0.1.9-test.14**：Windows 默认启动 Rust 工作台插件与独立核心数据库，Flutter 负责界面和平台媒体承载；Web／Android 暂保留原路径。旧 test.1 数据不会自动导入或覆盖。当前迁移结果与容量边界见 [test.1 功能对照](docs/TEST1_RUST_PARITY.md)。
 
@@ -101,4 +101,4 @@ v0.1.9-test.1 的构建、测试和分发校验见 [发布验证记录](reports/
 
 ## 许可证
 
-本仓库原创代码、文档、配置和素材统一采用 [Apache License 2.0](LICENSE)，版权声明见 [NOTICE](NOTICE)。第三方依赖和引入的第三方内容保留原许可证，详见 [第三方许可声明](packaging/THIRD_PARTY_NOTICES.txt)。预构建包附带相同许可证与声明。
+从 `0.1.9-test.2` 起（即 test.1 之后）的重构版本，原创代码、文档、配置和素材统一采用 [GNU Affero General Public License v3.0 only](LICENSE)，版权声明见 [NOTICE](NOTICE)。第三方依赖和引入的第三方内容保留原许可证，详见 [第三方许可声明](packaging/THIRD_PARTY_NOTICES.txt)。test.1 及更早的历史发行版保留原 Apache-2.0 许可。预构建包附带许可证、版权声明与对应源码入口。

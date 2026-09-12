@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 [package]
+license = "AGPL-3.0-only"
 name = "morrow-example-task"
 version = "0.1.9-test.10"
 edition = "2024"
