@@ -33,6 +33,20 @@ impl Storage {
     pub fn open(_path: &Path) -> Result<Self> {
         Err("此平台的内容库密钥保护后端尚未接入。".into())
     }
+    pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
+        #[cfg(target_os = "windows")]
+        {
+            self.session
+                .backup_snapshot(destination)
+                .map_err(session_message)?;
+            Ok(())
+        }
+        #[cfg(not(target_os = "windows"))]
+        {
+            let _ = destination;
+            Err("此平台的内容库快照后端尚未接入。".into())
+        }
+    }
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
         #[cfg(target_os = "windows")]
         {
@@ -119,6 +133,11 @@ pub(crate) fn session_message(e: SessionError) -> &'static str {
         }
         SessionError::KeyWithoutDatabase => "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。",
         SessionError::Busy => "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
+        SessionError::SnapshotDestinationExists => "恢复目标已存在，请选择尚不存在的新目录。",
+        SessionError::SnapshotPublishUnknown => {
+            "内容库恢复结果需要核对，请检查目标目录；原内容库未被替换。"
+        }
+        SessionError::SnapshotFormat => "内容库备份格式或校验不正确，请保留原备份文件。",
         SessionError::BackupAlreadyExists => "备份位置已有文件，请选择新的文件名。",
         SessionError::BackupPublishUnknown => "备份结果需要核对，请保留当前文件并检查保存位置。",
         SessionError::RecoveryRequiresBinding => {

@@ -9,6 +9,17 @@ fn main() {
 fn run() -> morrow_workbench_host::Result<()> {
     let mut args = std::env::args().skip(1);
     let database = args.next().ok_or("database path")?;
+    if database == "--restore-snapshot" {
+        let archive = args.next().ok_or("snapshot archive")?;
+        let destination = args.next().ok_or("new restore directory")?;
+        if args.next().is_some() {
+            return Err("unexpected snapshot arguments".into());
+        }
+        return morrow_workbench_host::restore_snapshot(
+            std::path::Path::new(&archive),
+            std::path::Path::new(&destination),
+        );
+    }
     if database == "--restore-key" {
         let database = args.next().ok_or("database path")?;
         let selected = args.next().ok_or("original protected key path")?;

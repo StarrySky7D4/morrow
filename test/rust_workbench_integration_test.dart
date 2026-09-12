@@ -259,6 +259,35 @@ void main() {
           ).readAsBytes(),
           [0, 1, 127, 255],
         );
+        final snapshotPath = '${directory.path}/library.morrowbackup';
+        final frozenPreferences = await backend.readPreferences();
+        await backend.backupSnapshot(snapshotPath);
+        final destination = Directory('${directory.path}/restored-library');
+        await RustWorkbench.restoreSnapshot(
+          executable: executable,
+          archive: snapshotPath,
+          destination: destination,
+        );
+        await backend.close();
+        backend = null;
+        final copy = await RustWorkbench.open(
+          executable: executable,
+          package: package,
+          directory: destination,
+        );
+        try {
+          expect(await copy.readPreferences(), frozenPreferences);
+          final restoredCards = await copy.load();
+          expect(restoredCards.single.description, cards.single.description);
+          expect(
+            await File(
+              restoredCards.single.attachments.single.source.location,
+            ).readAsBytes(),
+            [0, 1, 127, 255],
+          );
+        } finally {
+          await copy.close();
+        }
       } finally {
         await backend?.close();
         await directory.delete(recursive: true);

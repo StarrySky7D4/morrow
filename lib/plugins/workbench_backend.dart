@@ -33,4 +33,5 @@ abstract class WorkbenchBackend {
 /// Optional trusted-host capability, independent of business plugin availability.
 abstract interface class WorkbenchProtectionBackup {
   Future<void> backupProtection(String destination);
+  Future<void> backupSnapshot(String destination);
 }

@@ -17,3 +17,6 @@ pub mod recovery;
 
 #[cfg(target_os = "windows")]
 mod backup;
+
+#[cfg(target_os = "windows")]
+pub mod snapshot;

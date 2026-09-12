@@ -77,6 +77,28 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
     );
   }
 
+  @override
+  Future<void> backupSnapshot(String destination) async {
+    await _call(
+      host.Action.backupSnapshot,
+      requestTimeout: const Duration(minutes: 30),
+      configure: (r) => r.selectedPath = destination,
+    );
+  }
+
+  static Future<void> restoreSnapshot({
+    required String executable,
+    required String archive,
+    required Directory destination,
+  }) async {
+    final result = await Process.run(executable, [
+      '--restore-snapshot',
+      archive,
+      destination.path,
+    ]);
+    if (result.exitCode != 0) throw StateError(result.stderr.toString().trim());
+  }
+
   /// The host verifies and restores protected bytes. Dart never loads secret material.
   static Future<void> restoreKey({
     required String executable,
@@ -158,6 +180,7 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
   Future<host.ResponseReader> _call(
     host.Action action, {
     void Function(host.RequestBuilder)? configure,
+    Duration requestTimeout = const Duration(seconds: 60),
   }) {
     final completion = Completer<host.ResponseReader>();
     _queue = _queue.then((_) async {
@@ -177,7 +200,7 @@ class RustWorkbench implements WorkbenchBackend, WorkbenchProtectionBackup {
         process.stdin.add(payload);
         await process.stdin.flush();
         final bytes = await response.future.timeout(
-          const Duration(seconds: 60),
+          requestTimeout,
           onTimeout: () {
             final error = TimeoutException('内容服务响应超时');
             _fail(error);

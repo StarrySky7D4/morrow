@@ -3,7 +3,7 @@ resolver = "2"
 
 [package]
 name = "morrow-core"
-version = "0.1.9-test.19"
+version = "0.1.9-test.22"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
@@ -21,7 +21,7 @@ sha2 = "=0.10.9"
 semver = "=1.0.28"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-rusqlite = { version = "=0.40.2", features = ["bundled", "blob"] }
+rusqlite = { version = "=0.40.2", features = ["bundled", "blob", "backup"] }
 tempfile = "=3.27.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

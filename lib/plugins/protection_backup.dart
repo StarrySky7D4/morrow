@@ -10,8 +10,12 @@ class ProtectionBackup extends StatefulWidget {
     required this.line,
     required this.radius,
     this.chooseDestination,
+    this.onSnapshot,
+    this.chooseSnapshotDestination,
   });
   final Future<void> Function(String) onBackup;
+  final Future<void> Function(String)? onSnapshot;
+  final Future<String?> Function()? chooseSnapshotDestination;
   final Future<String?> Function()? chooseDestination;
   final Color ink, muted, line;
   final BorderRadius radius;
@@ -23,7 +27,7 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
   bool _busy = false;
   String? _message;
   bool _failed = false;
-  Future<void> _save() async {
+  Future<void> _save({bool snapshot = false}) async {
     if (_busy) return;
     setState(() {
       _busy = true;
@@ -32,25 +36,35 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
     });
     try {
       final String? path;
-      if (widget.chooseDestination != null) {
-        path = await widget.chooseDestination!();
+      final choose = snapshot
+          ? widget.chooseSnapshotDestination
+          : widget.chooseDestination;
+      if (choose != null) {
+        path = await choose();
       } else {
         final stamp = DateTime.now()
             .toIso8601String()
             .replaceAll(':', '-')
             .replaceAll('.', '-');
         path = (await getSaveLocation(
-          suggestedName: 'morrow-protection-$stamp.backup',
-          acceptedTypeGroups: const [
-            XTypeGroup(label: '内容库保护文件', extensions: ['backup']),
+          suggestedName: snapshot
+              ? 'morrow-library-$stamp.morrowbackup'
+              : 'morrow-protection-$stamp.backup',
+          acceptedTypeGroups: [
+            XTypeGroup(
+              label: snapshot ? '内容库备份' : '内容库保护文件',
+              extensions: [snapshot ? 'morrowbackup' : 'backup'],
+            ),
           ],
         ))?.path;
       }
       if (path == null || !mounted) return;
-      await widget.onBackup(path);
+      await (snapshot ? widget.onSnapshot! : widget.onBackup)(path);
       if (mounted) {
         setState(() {
-          _message = '保护文件已备份，可在启动失败时选择此文件恢复。';
+          _message = snapshot
+              ? '内容库已备份，包含库内附件与原保护文件。'
+              : '保护文件已备份，可在启动失败时选择此文件恢复。';
         });
       }
     } catch (error) {
@@ -94,6 +108,26 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
           style: TextStyle(fontSize: 11, height: 1.6, color: widget.muted),
         ),
         const SizedBox(height: 12),
+        if (widget.onSnapshot != null) ...[
+          Text(
+            '内容库备份包含库内卡片、附件和审计记录；外部素材保留引用，恢复仍需原系统账户。',
+            style: TextStyle(fontSize: 11, height: 1.6, color: widget.muted),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            key: const ValueKey('backup-snapshot'),
+            onPressed: _busy ? null : () => _save(snapshot: true),
+            icon: const Icon(Icons.inventory_2_outlined, size: 16),
+            label: const Text('备份内容库', style: TextStyle(fontSize: 11)),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: widget.ink,
+              minimumSize: const Size.fromHeight(38),
+              side: BorderSide(color: widget.line),
+              shape: RoundedRectangleBorder(borderRadius: widget.radius),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
         OutlinedButton.icon(
           key: const ValueKey('backup-protection'),
           onPressed: _busy ? null : _save,

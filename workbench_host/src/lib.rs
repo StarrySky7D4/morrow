@@ -82,6 +82,9 @@ impl Workbench {
             transfers: transfer::Transfers::default(),
         })
     }
+    pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
+        self.host.backup_snapshot(destination)
+    }
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
         self.host.backup_key(destination)
     }
@@ -649,5 +652,18 @@ pub fn restore_key(database: &Path, selected: &Path) -> Result<()> {
     {
         let _ = (database, selected);
         Err("此平台的内容库密钥保护后端尚未接入。".into())
+    }
+}
+
+pub fn restore_snapshot(archive: &Path, destination: &Path) -> Result<()> {
+    #[cfg(target_os = "windows")]
+    {
+        morrow_audit::snapshot::restore(archive, destination).map_err(storage::session_message)?;
+        Ok(())
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = (archive, destination);
+        Err("此平台的内容库快照后端尚未接入。".into())
     }
 }

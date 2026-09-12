@@ -517,6 +517,46 @@ impl Store {
         boundary("after-commit");
         Ok(receipt)
     }
+    /// Engine-consistent snapshot into a new staging file. A failed partial file
+    /// must never be published by the caller; this does not modify the source.
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn snapshot_to(&self, path: &Path, max_bytes: u64) -> Result<()> {
+        let pinned = sql(self.connection.unchecked_transaction())?;
+        let _: i64 = sql(pinned.query_row("SELECT count(*) FROM sqlite_schema", [], |r| r.get(0)))?;
+        let pages: u64 = u64::try_from(sql(
+            pinned.query_row("PRAGMA page_count", [], |r| r.get::<_, i64>(0))
+        )?)
+        .map_err(|_| Error::Integrity)?;
+        let page_size: u64 = u64::try_from(sql(
+            pinned.query_row("PRAGMA page_size", [], |r| r.get::<_, i64>(0))
+        )?)
+        .map_err(|_| Error::Integrity)?;
+        if pages.checked_mul(page_size).ok_or(Error::Limit)? > max_bytes {
+            return Err(Error::Limit);
+        }
+        let created = std::fs::File::options()
+            .write(true)
+            .create_new(true)
+            .open(path)
+            .map_err(|_| Error::Io)?;
+        drop(created);
+        let mut target = sql(Connection::open_with_flags(
+            path,
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_WRITE,
+        ))?;
+        let backup = sql(rusqlite::backup::Backup::new(&pinned, &mut target))?;
+        for _ in 0..=pages.div_ceil(128) {
+            match sql(backup.step(128))? {
+                rusqlite::backup::StepResult::Done => return Ok(()),
+                rusqlite::backup::StepResult::More => {}
+                rusqlite::backup::StepResult::Busy | rusqlite::backup::StepResult::Locked => {
+                    return Err(Error::StorageBusy);
+                }
+                _ => return Err(Error::Storage),
+            }
+        }
+        Err(Error::Limit)
+    }
     /// Host-local queue pressure without reading or allocating event payloads.
     pub fn pending_usage(&self) -> Result<(u64, u64)> {
         let (events, bytes): (i64, i64) = sql(self.connection.query_row(

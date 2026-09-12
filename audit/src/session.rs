@@ -33,6 +33,9 @@ pub enum SessionError {
     RecoveryPublishUnknown,
     BackupAlreadyExists,
     BackupPublishUnknown,
+    SnapshotFormat,
+    SnapshotDestinationExists,
+    SnapshotPublishUnknown,
 }
 impl std::fmt::Display for SessionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -167,6 +170,9 @@ impl Session {
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
         self.store().integrity_check()?;
         crate::backup::write(&self.key_path, destination, &self.trust())
+    }
+    pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
+        crate::snapshot::write(self.store(), &self.key_path, destination, &self.trust())
     }
     pub fn trust(&self) -> TrustedLog {
         self.sealer.trust()

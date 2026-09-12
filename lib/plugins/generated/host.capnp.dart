@@ -21,6 +21,7 @@ enum Action {
   abortPreferences,
   readPreferencesPart,
   backupProtection,
+  backupSnapshot,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -48,6 +49,7 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       ordinal: 14,
     ),
     EnumerantSchemaInfo(name: 'backupProtection', codeOrder: 15, ordinal: 15),
+    EnumerantSchemaInfo(name: 'backupSnapshot', codeOrder: 16, ordinal: 16),
   ],
 );
 

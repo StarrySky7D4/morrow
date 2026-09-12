@@ -57,6 +57,9 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match r.get_action()? {
+        wire::Action::BackupSnapshot => {
+            host.backup_snapshot(std::path::Path::new(&text(r.get_selected_path())?))?;
+        }
         wire::Action::BackupProtection => {
             host.backup_key(std::path::Path::new(&text(r.get_selected_path())?))?;
         }

@@ -2218,7 +2218,7 @@ class _StudioState extends State<Studio> {
   );
 
   Widget appearance() {
-    final backend = widget.workbench;
+    final Object? backend = widget.workbench;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -2230,7 +2230,8 @@ class _StudioState extends State<Studio> {
             p: p,
             radius: 22,
             child: ProtectionBackup(
-              onBackup: (backend as WorkbenchProtectionBackup).backupProtection,
+              onBackup: backend.backupProtection,
+              onSnapshot: backend.backupSnapshot,
               ink: p.ink,
               muted: p.muted,
               line: p.line,

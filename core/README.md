@@ -1,6 +1,6 @@
-# Morrow core — test.19
+# Morrow core — test.22
 
-这是独立于 Flutter 的可信 Rust 核心，当前版本 `0.1.9-test.19`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
+这是独立于 Flutter 的可信 Rust 核心，当前版本 `0.1.9-test.22`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
 
 ## test.18 日志身份绑定
 
@@ -146,3 +146,8 @@ cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.
 当前原生 Dart FFI 与 Chrome Worker 已接入同一持久化分派，并提供受授权的附件分块读取；共享内存、审计与插件运行仍未实现，工作台保存路径未切换。具体协议与库仍需其他平台、性能和主应用接入验证，不因本轮通过而冻结全平台实现。
 
 参考：[prost-reflect 未知字段 API](https://docs.rs/prost-reflect/0.16.5/prost_reflect/struct.DynamicMessage.html#method.unknown_fields)、[LZ4 有界解压 API](https://docs.rs/lz4_flex/0.14.0/lz4_flex/block/fn.decompress_into.html)。本轮兼容性结论以仓库中的演进测试为依据，不把普通 prost 生成类型直接作为无损编辑载体。
+
+
+## 原生一致性快照（test.22）
+
+`Store::snapshot_to` 固定源读取事务，通过 SQLite backup API 有界复制到新的暂存文件，不直接复制正在运行的数据库文件。页面数量与大小检查调用方的字节上限；现有目标拒绝，锁竞争返回错误，不无限重试。失败的暂存文件不得发布。Windows 审计适配随后核验快照完整性并封装为 PB＋LZ4 分块备份；该方法本身不是对用户的备份文件格式，也不复制库外文件。

@@ -116,7 +116,7 @@ impl Key {
         let bytes = read_protected(path)?;
         Ok((Self::from_protected(&bytes)?, bytes))
     }
-    fn from_protected(bytes: &[u8]) -> Result<Self> {
+    pub(crate) fn from_protected(bytes: &[u8]) -> Result<Self> {
         if bytes.len() > MAX_FILE || bytes.len() < 44 || !bytes.starts_with(MAGIC) {
             return Err(KeyError::Format);
         }

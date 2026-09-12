@@ -60,4 +60,38 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'snapshot uses its own picker and callback in a narrow settings card',
+    (tester) async {
+      var snapshotWrites = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: SizedBox(
+                width: 230,
+                child: ProtectionBackup(
+                  ink: Colors.black,
+                  muted: Colors.grey,
+                  line: Colors.grey,
+                  radius: BorderRadius.circular(11),
+                  onBackup: (_) => throw StateError('wrong action'),
+                  onSnapshot: (path) async {
+                    expect(path, 'library.morrowbackup');
+                    snapshotWrites++;
+                  },
+                  chooseSnapshotDestination: () async => 'library.morrowbackup',
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.byKey(const ValueKey('backup-snapshot')));
+      await tester.pumpAndSettle();
+      expect(snapshotWrites, 1);
+      expect(find.textContaining('内容库已备份'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

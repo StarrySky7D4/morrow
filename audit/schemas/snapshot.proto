@@ -1,0 +1,12 @@
+syntax = "proto3";
+package morrow.snapshot.v1;
+message Manifest {
+  uint32 version = 1;
+  uint64 database_bytes = 2;
+  bytes database_sha256 = 3;
+  uint32 chunk_bytes = 4;
+  bytes protected_key = 5;
+  string log_id = 6;
+  bytes public_key = 7;
+}
+message Chunk { uint32 index = 1; bytes payload = 2; }
