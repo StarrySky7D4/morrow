@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-example-graph-middle"
+version = "0.1.9-test.31"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+morrow-plugin-sdk = {path = "../../rust", features = ["wasm-guest"]}
+[profile.release]
+opt-level = "s"
+panic = "abort"
+strip = true

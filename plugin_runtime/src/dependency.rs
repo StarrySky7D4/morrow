@@ -2,7 +2,7 @@
 //! Runtime bindings and outputs are local authority; descriptions are not transferable grants.
 use crate::{
     Cancellation, Fault,
-    package::PreparedPackage,
+    package::{PreparedPackage, TaskReport},
     shared_objects::{self, Lease, Mapping, SharedObjects, TransformRequest},
 };
 use morrow_core::{
@@ -93,6 +93,7 @@ struct State {
     output_type: String,
     scope: String,
     max_input: usize,
+    max_output: usize,
 }
 impl State {
     fn check_liveness(&self, now: u64) -> Result<()> {
@@ -152,6 +153,17 @@ impl DependencyOutput {
     }
     pub fn validate(&self, host: &HostRuntime, caller: &Connection, now: u64) -> Result<()> {
         self.state.validate(host, caller, now)
+    }
+    /// Internal graph proof validation; the graph separately verifies its public root caller.
+    /// Both endpoint identities remain the opaque bindings captured by this edge's actual run.
+    pub(crate) fn validate_host(&self, host: &HostRuntime, now: u64) -> Result<()> {
+        if host.binding() != self.state.host
+            || host.binding_phase(self.state.caller) != Ok(InstancePhase::Ready)
+            || host.binding_phase(self.state.provider) != Ok(InstancePhase::Ready)
+        {
+            return Err(Error::Denied);
+        }
+        self.state.validate_liveness(now)
     }
     /// No HostRuntime borrow: usable inside the core's final content authorization callback.
     pub fn validate_liveness(&self, now: u64) -> Result<()> {
@@ -219,6 +231,7 @@ impl Dependency {
                 output_type: spec.output_type.into(),
                 scope: spec.scope.into(),
                 max_input: registration.max_input_bytes as usize,
+                max_output: registration.max_output_bytes as usize,
             }),
         })
     }
@@ -249,8 +262,79 @@ impl Dependency {
         provider: Endpoint<'_>,
         input: &Mapping,
         task_id: &str,
+        clock: impl FnMut() -> u64,
+        cancel: Cancellation,
+    ) -> Result<DependencyOutput> {
+        self.run_impl(
+            objects,
+            host,
+            caller,
+            provider,
+            input,
+            task_id,
+            clock,
+            cancel,
+            true,
+            |objects, host, mapping, request, clock, cancel| {
+                objects.run_transform(
+                    host,
+                    provider.connection,
+                    provider.package,
+                    mapping,
+                    request,
+                    clock,
+                    cancel,
+                )
+            },
+        )
+    }
+    /// Crate-trusted graph executor only. The adapter must execute the actual provider's pure
+    /// task path, rejecting core exchange and retaining nested output proofs. It cannot expose
+    /// this callback to guests or treat a caller-supplied TaskReport as execution evidence.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn run_with_executor(
+        &self,
+        objects: &mut SharedObjects,
+        host: &mut HostRuntime,
+        caller: Endpoint<'_>,
+        provider: Endpoint<'_>,
+        input: &Mapping,
+        task_id: &str,
+        clock: impl FnMut() -> u64,
+        cancel: Cancellation,
+        executor: impl FnOnce(
+            &mut SharedObjects,
+            &mut HostRuntime,
+            &Mapping,
+            TransformRequest<'_>,
+            &mut dyn FnMut() -> u64,
+            Cancellation,
+        ) -> shared_objects::Result<TaskReport>,
+    ) -> Result<DependencyOutput> {
+        self.run_impl(
+            objects, host, caller, provider, input, task_id, clock, cancel, false, executor,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn run_impl(
+        &self,
+        objects: &mut SharedObjects,
+        host: &mut HostRuntime,
+        caller: Endpoint<'_>,
+        provider: Endpoint<'_>,
+        input: &Mapping,
+        task_id: &str,
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
+        leaf: bool,
+        executor: impl FnOnce(
+            &mut SharedObjects,
+            &mut HostRuntime,
+            &Mapping,
+            TransformRequest<'_>,
+            &mut dyn FnMut() -> u64,
+            Cancellation,
+        ) -> shared_objects::Result<TaskReport>,
     ) -> Result<DependencyOutput> {
         let admission = clock();
         self.check_endpoints(host, caller, provider, admission)?;
@@ -293,10 +377,9 @@ impl Dependency {
             &temporary.lease,
             clock(),
         )?);
-        let report = temporary.objects.run_transform(
+        let report = executor(
+            temporary.objects,
             host,
-            provider.connection,
-            provider.package,
             temporary.mapping.as_ref().expect("created mapping"),
             TransformRequest {
                 task_id,
@@ -316,11 +399,24 @@ impl Dependency {
             &self.state.scope,
             completed,
         )?;
+        temporary.objects.check_mapping_scope(
+            host,
+            provider.connection,
+            temporary.mapping.as_ref().expect("created mapping"),
+            &self.state.scope,
+            completed,
+        )?;
         self.state.validate_liveness(completed)?;
         temporary
             .objects
             .validate_mapping(host, caller.connection, input, completed)?;
-        if report.execution.host_calls != 0 || report.response.is_some() {
+        temporary.objects.validate_mapping(
+            host,
+            provider.connection,
+            temporary.mapping.as_ref().expect("created mapping"),
+            completed,
+        )?;
+        if (leaf && report.execution.host_calls != 0) || report.response.is_some() {
             return Err(Error::Denied);
         }
         match report.execution.outcome {
@@ -334,6 +430,11 @@ impl Dependency {
         let output = report.output.ok_or(Error::Execution(Fault::TaskProtocol))?;
         if output.type_id != self.state.output_type {
             return Err(Error::Denied);
+        }
+        if output.bytes.len() > self.state.max_output
+            || output.bytes.len() > morrow_core::task::MAX_VALUE_BYTES
+        {
+            return Err(Error::Limit);
         }
         let result = DependencyOutput {
             state: Arc::clone(&self.state),

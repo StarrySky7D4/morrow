@@ -77,3 +77,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## test.30 主动依赖调用
 
 新增独立 `dependency-calls-v1` 特性与固定Cap’n Proto契约。SDK在Rust、C和C++提供请求构造、完整原请求帧关联校验和Wasm导入适配；Runtime通过Manager当前批准锁路由，不接受guest自选提供者或授权。调用者最终结果可进入保留所有依赖撤权状态的EditProposal，内容提交仍由核心授权。当前仅单层纯转换，默认8次、可信策略硬上限16次。边界与用法见 [设计说明](../docs/PLUGIN_DYNAMIC_DEPENDENCIES.md)；实际验证与尚未完成项见 [test.30记录](../reports/test.30-dynamic-dependencies.md)。
+
+## test.31 多层依赖图
+
+新增可信run_graph入口：默认边深度4／全图16次，硬上限8／64；局部任务额度独立保留。拒绝活动包重入，允许顺序分支复用。根结果保存全部真实边和节点取消信号，提交时完整检查。原run仍为单层。见 [设计与边界](../docs/PLUGIN_DEPENDENCY_GRAPH.md) 和 [验证记录](../reports/test.31-dependency-graph.md)。

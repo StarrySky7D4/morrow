@@ -77,3 +77,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_dynamic_dependency"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_dependency_graph"
+required-features = ["packages"]
