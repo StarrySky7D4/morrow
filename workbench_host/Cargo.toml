@@ -2,7 +2,7 @@
 resolver = "2"
 [package]
 name = "morrow-workbench-host"
-version = "0.1.9-test.36"
+version = "0.1.9-test.37"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
@@ -15,6 +15,7 @@ sha2 = "=0.10.9"
 [build-dependencies]
 capnpc = "=0.24.0"
 [dev-dependencies]
+rusqlite = "=0.40.2"
 tempfile = "=3.27.0"
 
 [target.'cfg(target_os = "windows")'.dependencies]
@@ -22,3 +23,6 @@ morrow-audit = {path = "../audit"}
 
 [features]
 fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection"]
+
+[[example]]
+name = "qualify_shared_evidence"

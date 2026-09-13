@@ -12,6 +12,7 @@ use std::{path::Path, time::Duration};
 mod binding;
 mod blobs;
 mod evidence;
+mod evidence_chunks;
 pub use binding::{AuditBinding, AuditBindingState};
 mod records;
 mod seals;
@@ -129,7 +130,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=7) {
+        if app != APPLICATION_ID || !matches!(version, 5..=8) {
             return Err(Error::UnsupportedVersion);
         }
         let store = Self {
@@ -191,7 +192,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=7))
+            && (app != APPLICATION_ID || !matches!(version, 4..=8))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -236,7 +237,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=7) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=8) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -284,6 +285,16 @@ impl Store {
             boundary("evidence-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("evidence-migration-after-commit");
+        }
+        if version < 8 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            evidence_chunks::migrate(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 8))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("evidence-chunks-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("evidence-chunks-migration-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -646,6 +657,7 @@ impl Store {
             return Err(Error::Integrity);
         }
         evidence::verify_schema(snapshot)?;
+        evidence_chunks::verify_schema(snapshot)?;
         binding::verify(snapshot, trust)?;
         seals::verify(snapshot, trust)?;
         let mut operations =

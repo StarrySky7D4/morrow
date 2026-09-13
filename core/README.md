@@ -1,10 +1,10 @@
-# Morrow core — test.36 存储进度
+# Morrow core — test.37 存储进度
 
-这是独立于 Flutter 的可信 Rust 核心，当前应用开发版本为 `0.1.9-test.36+41`；核心 crate 的 Cargo 版本仍为 `0.1.9-test.22`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
+这是独立于 Flutter 的可信 Rust 核心，当前应用开发版本为 `0.1.9-test.37+42`；核心 crate 的 Cargo 版本仍为 `0.1.9-test.22`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
 
 ## test.35 内容与纯任务证据同事务
 
-当前内容数据库格式为 **7**。`task_evidence` 保存以原始 Protobuf SHA-256 标识的证据容器；`operation_evidence` 保存操作内有序引用。可信宿主的 `create_content_with_evidence`／`edit_content_with_evidence` 接口仍须通过真实连接的内容权限及最后一次授权检查。Store 在同一事务写入内容、原始证据、引用、可恢复回执的原始 Commit、永久事件索引及待封存队列；没有提交后补写的旁路。旧公开内容接口继续传空集合。
+test.35 引入的内容数据库格式为 **7**；当前格式8的物理共享表示见下节。`task_evidence` 保存以原始 Protobuf SHA-256 标识的证据容器；`operation_evidence` 保存操作内有序引用。可信宿主的 `create_content_with_evidence`／`edit_content_with_evidence` 接口仍须通过真实连接的内容权限及最后一次授权检查。Store 在同一事务写入内容、原始证据、引用、可恢复回执的原始 Commit、永久事件索引及待封存队列；没有提交后补写的旁路。旧公开内容接口继续传空集合。
 
 有证据时 Commit 使用 schema 2，无证据时保留 schema 1。每操作最多 16 份，按每一引用对应的原始 PB 与容器之和累计不超过 64 MiB；重复引用也计入。按摘要去重仍核对原始 PB，保留首次容器。幂等重试必须同时匹配原命令与有序摘要，已存原件必须完整；不会用新捕获替换历史证据。授权失效会回滚本次全部写入，提交结果不明仍需查询核对。
 
@@ -20,7 +20,7 @@
 
 默认 Windows 工作台 create／apply 已从实际 `Pool::record_transform` 获得原件后调用 with_evidence 内容接口。已提交重试核对存储原请求中的用户意图和预期基准修订，复用原 command／evidence，重新取得当前对象 grant 并让核心返回原回执。返回该次操作的历史 Record，不改写当前最新内容，也不刷新撤销期限；新操作仍做修订 CAS。CreateCard 原命令包含完整历史卡；编辑命令保存正文／标题等修改字段，不能据此宣称所有类型的完整历史 Card 均可重建。
 
-这些实现的 test.36 验证尚在进行，见[本轮记录](../reports/test.36-workbench-evidence.md)。设置多页、capture→create 因果关联、查询证据、通用宿主投影、依赖图与全局证据配额／GC 不在本次完成范围。
+这些实现的 test.36 相关回归与实际Windows自检已通过，见[本轮记录](../reports/test.36-workbench-evidence.md)。设置多页、capture→create 因果关联、查询证据、通用宿主投影、依赖图与全局证据配额／GC 不在本次完成范围。
 
 ## test.18 日志身份绑定
 
@@ -32,8 +32,8 @@ test.18 引入的数据库格式 6 在独立的 `audit_identity` 表持久绑定
 
 - `Store::open_audited` / `open_opfs_audited` 接收可信日志身份，`seal_pending` 验证签名、链连续性和每条原始事件与本库对应关系，将签名原件、永久事件关联、待封存队列确认放在同一事务。返回 true 表示本次封存，false 表示已封存的幂等重试。
 - 原始 operations、永久 operation_events 顺序、内容和历史附件关系不会被队列确认删除。容量只计算待封存事件；归档存储与历史保留配额仍需实现。
-- 格式 4／5／6 经校验后按阶段原子事务迁移至当前格式 7；已签名旧库要求外部可信身份。损坏旧库拒绝迁移；格式 3 及更旧库继续拒绝。格式 7 不应交给旧核心写入。没有自动接入 test.1 旧资料迁移。
-- `sealed_segment` 返回核心保留的签名原件。`open_read_only_audited` 供独立验证器读取格式 5／6／7，不创建、不迁移数据库。
+- 格式 4／5／6／7 经校验后按阶段原子事务迁移至当前格式 8；已签名旧库要求外部可信身份。损坏旧库拒绝迁移；格式 3 及更旧库继续拒绝。格式 8 不应交给旧核心写入。没有自动接入 test.1 旧资料迁移。
+- `sealed_segment` 返回核心保留的签名原件。`open_read_only_audited` 供独立验证器读取格式 5／6／7／8，不创建、不迁移数据库。
 - 核心验签与索引核对覆盖本地已封存状态，不表示已独立见证。生产签名密钥管理、自动封存调度、完整宿主事实与重放继续推进。test.16 当时的 Windows 应用尚未启用队列确认；test.19 起的默认接入情况见本文开头及审计文档。
 
 
@@ -171,3 +171,7 @@ cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.
 ## 原生一致性快照（test.22）
 
 `Store::snapshot_to` 固定源读取事务；test.35 起在该事务内先核对包含任务证据引用的完整性，再通过 SQLite backup API 有界复制到新的暂存文件，不直接复制正在运行的数据库文件。页面数量与大小检查调用方的字节上限；现有目标拒绝，锁竞争返回错误，不无限重试。失败的暂存文件不得发布。Windows 审计适配随后核验快照完整性并封装为 PB＋LZ4 分块备份；该方法本身不是对用户的备份文件格式，也不复制库外文件。
+
+## test.37 共享证据存储
+
+格式8已接入证据原容器的32KiB物理分块共享；原容器、原始PB、Commit及签名保持不变，逻辑证据配额不放宽。格式7原件在同一迁移事务转换，旧格式只读保持可用。本轮相关回归、真实工作台重放与Windows自检已通过，见[共享存储设计](../docs/PLUGIN_SHARED_EVIDENCE_STORAGE.md)。设置批量存证、全局配额与GC继续推进。

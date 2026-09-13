@@ -1,0 +1,15 @@
+syntax = "proto3";
+package morrow.evidence_storage.v1;
+// Physical storage only. The reconstructed original Evidence container remains authoritative.
+message Recipe {
+  uint32 schema_version = 1;
+  bytes evidence_sha256 = 2;
+  bytes container_sha256 = 3;
+  uint64 container_length = 4;
+  repeated bytes chunk_sha256 = 5;
+}
+message Chunk {
+  uint32 schema_version = 1;
+  bytes sha256 = 2;
+  bytes payload = 3;
+}

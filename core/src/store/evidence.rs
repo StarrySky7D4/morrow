@@ -37,6 +37,10 @@ pub(super) fn digests(evidence: &[Evidence]) -> Result<Vec<[u8; 32]>> {
         .collect()
 }
 fn payload(connection: &Connection, digest: [u8; 32]) -> Result<Option<Evidence>> {
+    let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+    if version >= 8 {
+        return super::evidence_chunks::read(connection, digest);
+    }
     let mut statement =
         sql(connection.prepare("SELECT CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM task_evidence WHERE digest=?1"))?;
     let raw = sql(statement
@@ -66,6 +70,13 @@ pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidenc
     digests(evidence)?;
     let mut stored_total = 0;
     for (ordinal, item) in evidence.iter().enumerate() {
+        // Reject an orphan before decoding its storage representation. New writes cannot
+        // adopt existing data that was never linked to a committed content operation.
+        let orphan: bool = sql(connection.query_row(
+            "SELECT EXISTS(SELECT 1 FROM task_evidence t WHERE t.digest=?1 AND NOT EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest))",
+            [item.digest().as_slice()], |r| r.get(0),
+        ))?;
+        if orphan { return Err(Error::Integrity); }
         match payload(connection, item.digest())? {
             Some(previous) if previous.raw() != item.raw() => return Err(Error::Integrity),
             Some(previous) => {
@@ -81,10 +92,7 @@ pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidenc
             }
             None => {
                 add_size(&mut stored_total, item)?;
-                sql(connection.execute(
-                    "INSERT INTO task_evidence(digest,payload) VALUES(?1,?2)",
-                    params![item.digest().as_slice(), item.container()],
-                ))?;
+                super::evidence_chunks::insert(connection, item)?;
             }
         }
         sql(connection.execute(
@@ -179,6 +187,13 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
     let invalid:i64=sql(connection.query_row("SELECT count(*) FROM operation_evidence e LEFT JOIN operations o ON e.operation_id=o.id LEFT JOIN task_evidence t ON e.digest=t.digest WHERE o.id IS NULL OR o.object_kind!=0 OR t.digest IS NULL",[],|r|r.get(0)))?;
     if invalid != 0 {
         return Err(Error::Integrity);
+    }
+    if version >= 8 {
+        let orphan: bool = sql(connection.query_row(
+            "SELECT EXISTS(SELECT 1 FROM task_evidence t WHERE NOT EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest))", [], |r| r.get(0),
+        ))?;
+        if orphan { return Err(Error::Integrity); }
+        return super::evidence_chunks::verify(connection);
     }
     let mut statement=sql(connection.prepare("SELECT digest,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest) FROM task_evidence t"))?;
     let mut rows = sql(statement.query([task_evidence::MAX_CONTAINER_BYTES as i64]))?;
