@@ -72,8 +72,13 @@ fn validate_input(value: &Input) -> Result<()> {
     Ok(())
 }
 fn validate(value: &proto::ReadObservation) -> Result<()> {
-    if value.schema_version != VERSION {
+    if !matches!(value.schema_version, 1 | 2) {
         return Err(Error::UnsupportedVersion);
+    }
+    if (value.schema_version == 1 && !value.archive_sha256.is_empty())
+        || (value.schema_version == 2 && value.archive_sha256.len() != 32)
+    {
+        return Err(Error::Integrity);
     }
     for name in [
         &value.operation_id,
@@ -101,7 +106,7 @@ fn validate(value: &proto::ReadObservation) -> Result<()> {
 // remain in raw bytes; groups and duplicate known singular fields are rejected.
 fn preflight(mut raw: &[u8]) -> Result<()> {
     use prost::encoding::{DecodeContext, WireType, decode_key, decode_varint, skip_field};
-    let mut seen = [0usize; 11];
+    let mut seen = [0usize; 12];
     let mut count = 0usize;
     while !raw.is_empty() {
         count += 1;
@@ -110,7 +115,7 @@ fn preflight(mut raw: &[u8]) -> Result<()> {
         }
         let (number, wire) =
             decode_key(&mut raw).map_err(|_| Error::Invalid("read journal field"))?;
-        if number <= 10 {
+        if number <= 11 {
             seen[number as usize] += 1;
             if seen[number as usize] > if number == 10 { MAX_EVIDENCE } else { 1 } {
                 return Err(Error::Invalid("duplicate read journal field"));
@@ -129,7 +134,7 @@ fn preflight(mut raw: &[u8]) -> Result<()> {
             let max = match number {
                 2..=4 | 7 => 256,
                 5 | 8 => MAX_VALUE_BYTES,
-                6 | 9 | 10 => 32,
+                6 | 9 | 10 | 11 => 32,
                 _ => MAX_RAW_BYTES,
             };
             if len > max as u64 {
@@ -142,7 +147,7 @@ fn preflight(mut raw: &[u8]) -> Result<()> {
         } else if number == 1 {
             let version =
                 decode_varint(&mut raw).map_err(|_| Error::Invalid("read journal version"))?;
-            if version != u64::from(VERSION) {
+            if !matches!(version, 1 | 2) {
                 return Err(Error::UnsupportedVersion);
             }
         } else {
@@ -156,12 +161,26 @@ fn preflight(mut raw: &[u8]) -> Result<()> {
     Ok(())
 }
 pub fn encode(input: &Input, evidence: &[[u8; 32]]) -> Result<ReadObservation> {
+    encode_inner(input, evidence, None)
+}
+pub fn encode_archived(
+    input: &Input,
+    evidence: &[[u8; 32]],
+    archive: [u8; 32],
+) -> Result<ReadObservation> {
+    encode_inner(input, evidence, Some(archive))
+}
+fn encode_inner(
+    input: &Input,
+    evidence: &[[u8; 32]],
+    archive: Option<[u8; 32]>,
+) -> Result<ReadObservation> {
     validate_input(input)?;
     if evidence.len() > MAX_EVIDENCE {
         return Err(Error::Limit);
     }
     let data = proto::ReadObservation {
-        schema_version: VERSION,
+        schema_version: if archive.is_some() { 2 } else { VERSION },
         operation_id: input.operation_id.clone(),
         subject: input.subject.clone(),
         request_type: input.request_type.clone(),
@@ -171,6 +190,7 @@ pub fn encode(input: &Input, evidence: &[[u8; 32]]) -> Result<ReadObservation> {
         response: input.response.clone(),
         response_sha256: Sha256::digest(&input.response).to_vec(),
         task_evidence_sha256: evidence.iter().map(|d| d.to_vec()).collect(),
+        archive_sha256: archive.map(|v| v.to_vec()).unwrap_or_default(),
     };
     let raw = data.encode_to_vec();
     if raw.len() > MAX_RAW_BYTES {

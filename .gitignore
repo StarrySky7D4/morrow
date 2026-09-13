@@ -69,3 +69,5 @@ app.*.map.json
 /workbench_host/target/
 
 /audit/target/
+
+/plugin_runtime/target/

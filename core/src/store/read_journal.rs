@@ -41,6 +41,7 @@ fn verify_observation(
     if observed.data().operation_id != operation || observed.data().subject != subject {
         return Err(Error::Integrity);
     }
+    super::read_archive::verify_observation(connection, observed)?;
     super::blobs::verify_event(connection, operation, &[])?;
     super::evidence::verify_event(connection, operation, &observed.data().task_evidence_sha256)
 }
@@ -70,7 +71,7 @@ impl Store {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         boundary("read-after-begin");
-        if version(&tx)? != 11 {
+        if version(&tx)? != 12 {
             return Err(Error::UnsupportedVersion);
         }
         let digests = super::evidence::digests(evidence)?;

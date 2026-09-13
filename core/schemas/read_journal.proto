@@ -12,4 +12,5 @@ message ReadObservation {
   bytes response = 8;
   bytes response_sha256 = 9;
   repeated bytes task_evidence_sha256 = 10;
+  bytes archive_sha256 = 11;
 }

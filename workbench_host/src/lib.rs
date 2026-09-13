@@ -653,3 +653,10 @@ fn default_approval() -> std::collections::BTreeSet<GrantKind> {
     .collect()
 }
 mod plugin_control;
+
+#[cfg(all(test, target_os = "windows"))]
+mod query_archive_tests;
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "../tests/common/mod.rs"]
+mod test_common;

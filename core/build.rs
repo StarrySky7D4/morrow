@@ -1,4 +1,8 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-changed=schemas/read_archive.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/read_archive.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/read_journal.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)

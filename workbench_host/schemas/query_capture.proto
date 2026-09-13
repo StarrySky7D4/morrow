@@ -1,0 +1,24 @@
+syntax = "proto3";
+package morrow.workbench.query_capture.v1;
+// Provisional qualification contract. No default persistent-query adapter uses it yet.
+// These are host claims; independent replay also verifies every original card and actual call.
+message SourceFact {
+  string operation_id = 1;
+  uint64 sequence = 2;
+  bytes commit_sha256 = 3;
+}
+message CaptureEnd {
+  uint32 schema_version = 1;
+  uint32 plan_version = 2;
+  uint32 database_version = 3;
+  uint64 operation_sequence = 4;
+  optional bytes operation_sha256 = 5;
+  uint64 source_count = 6;
+  bytes source_sha256 = 7;
+  bytes package_sha256 = 8;
+  uint64 fuel_budget = 9;
+  uint64 observation_count = 10;
+}
+
+// The host result may exceed a single guest response (128 IDs).
+message QueryResult { uint32 schema_version = 1; repeated string ids = 2; }

@@ -16,6 +16,7 @@ mod blobs;
 mod evidence;
 mod evidence_chunks;
 pub use binding::{AuditBinding, AuditBindingState};
+mod read_archive;
 mod read_journal;
 mod records;
 mod seals;
@@ -135,7 +136,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=11) {
+        if app != APPLICATION_ID || !matches!(version, 5..=12) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
@@ -200,7 +201,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=11))
+            && (app != APPLICATION_ID || !matches!(version, 4..=12))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -245,7 +246,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=11) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=12) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -330,6 +331,16 @@ impl Store {
             boundary("read-journal-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("read-journal-migration-after-commit");
+        }
+        if version < 12 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(read_archive::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 12))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("read-archive-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("read-archive-migration-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -687,7 +698,11 @@ impl Store {
                 if version < 11 {
                     return Err(Error::UnsupportedVersion);
                 }
-                crate::read_journal::decode(value)?;
+                let observation = crate::read_journal::decode(value)?;
+                if version < 12 && observation.data().schema_version >= 2 {
+                    return Err(Error::UnsupportedVersion);
+                }
+                read_archive::verify_observation(&self.connection, &observation)?;
             } else if value.starts_with(b"MORROWR1") {
                 crate::records::decode_commit(value)?;
             } else {
@@ -709,10 +724,12 @@ impl Store {
         if result != "ok" {
             return Err(Error::Integrity);
         }
+        read_archive::verify_schema(snapshot)?;
         evidence::verify_schema(snapshot)?;
         evidence_chunks::verify_schema(snapshot)?;
         binding::verify(snapshot, trust)?;
         seals::verify(snapshot, trust)?;
+        read_archive::verify(snapshot)?;
         let mut operations = sql(snapshot.prepare(
             "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
         ))?;

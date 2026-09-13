@@ -344,6 +344,51 @@ fn validate_observation_inner(
 pub fn validate_observation(package: &Package, data: &proto::Observation) -> Result<()> {
     validate_observation_inner(package, data.into(), true)
 }
+/// A bounded original observation protobuf. It carries neither package bytes nor authority.
+/// The surrounding archive must bind its package digest, ordering and total fuel policy.
+#[derive(Debug, Clone)]
+pub struct ObservationRecord {
+    raw: Vec<u8>,
+    data: proto::Observation,
+}
+impl ObservationRecord {
+    pub fn raw(&self) -> &[u8] {
+        &self.raw
+    }
+    pub fn data(&self) -> &proto::Observation {
+        &self.data
+    }
+}
+pub const MAX_OBSERVATION_BYTES: usize = 2 * MAX_TASK_BYTES + 1024;
+/// Encode one successful observation; this validates its shape, not its provenance.
+pub fn encode_observation(
+    package: &Package,
+    data: proto::Observation,
+) -> Result<ObservationRecord> {
+    if data.encoded_len() > MAX_OBSERVATION_BYTES {
+        return Err(Error::Limit);
+    }
+    validate_observation(package, &data)?;
+    Ok(ObservationRecord {
+        raw: data.encode_to_vec(),
+        data,
+    })
+}
+/// Preflight before protobuf allocation and retain all original optional fields.
+/// The caller must verify the surrounding archive's digest before replaying these bytes.
+pub fn decode_observation(package: &Package, raw: &[u8]) -> Result<ObservationRecord> {
+    if raw.len() > MAX_OBSERVATION_BYTES {
+        return Err(Error::Limit);
+    }
+    let mut fields = MAX_FIELDS;
+    preflight(raw, Kind::Observation, &mut fields)?;
+    let data = proto::Observation::decode(raw).map_err(invalid)?;
+    validate_observation(package, &data)?;
+    Ok(ObservationRecord {
+        raw: raw.to_vec(),
+        data,
+    })
+}
 fn validate(data: &proto::TaskEvidence) -> Result<()> {
     raw_limit(data.schema_version)?;
     if data.package_archive.len() > MAX_PACKAGE_BYTES {

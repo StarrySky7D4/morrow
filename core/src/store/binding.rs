@@ -119,7 +119,7 @@ impl Store {
                 return Ok(AuditBindingState::Uninitialized);
             }
         }
-        if app != APPLICATION_ID || !matches!(version, 4..=11) {
+        if app != APPLICATION_ID || !matches!(version, 4..=12) {
             return Err(Error::UnsupportedVersion);
         }
         if version >= 6

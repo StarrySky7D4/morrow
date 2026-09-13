@@ -3,7 +3,7 @@ resolver = "2"
 
 [package]
 name = "morrow-core"
-version = "0.1.9-test.43"
+version = "0.1.9-test.44"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"

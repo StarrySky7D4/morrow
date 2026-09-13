@@ -44,6 +44,27 @@ impl CapturedTransform {
         (self.report, self.evidence)
     }
 }
+/// One successful actual call without copying its package into every record.
+/// This is not a complete query, signed evidence, or an authorization grant.
+pub struct CapturedObservation {
+    pub(crate) report: TaskReport,
+    pub(crate) package_digest: [u8; 32],
+    pub(crate) observation: task_evidence::ObservationRecord,
+}
+impl CapturedObservation {
+    pub fn report(&self) -> &TaskReport {
+        &self.report
+    }
+    pub fn package_digest(&self) -> [u8; 32] {
+        self.package_digest
+    }
+    pub fn observation(&self) -> &task_evidence::ObservationRecord {
+        &self.observation
+    }
+    pub fn into_parts(self) -> (TaskReport, [u8; 32], task_evidence::ObservationRecord) {
+        (self.report, self.package_digest, self.observation)
+    }
+}
 pub struct ReplayResult {
     pub matches: bool,
     pub report: TaskReport,
@@ -330,4 +351,43 @@ pub fn replay_batch(
         matches: true,
         reports,
     })
+}
+
+/// Replay one bounded successful observation using the separately archived package.
+/// No host/database/grant is restored. The caller accounts for sequence-wide fuel
+/// and verifies package/archive identity before invoking this isolated runner.
+pub fn replay_observation(
+    package: &Package,
+    observation: &task_evidence::ObservationRecord,
+    policy: Limits,
+) -> Result<ReplayResult> {
+    let data = observation.data();
+    task_evidence::validate_observation(package, data)?;
+    if data.backend != task_evidence::BACKEND {
+        return Err(Error::UnsupportedBackend);
+    }
+    let budget = data.budget.as_ref().ok_or(Error::Policy)?;
+    if !policy_valid(policy)
+        || budget.fuel > policy.fuel
+        || budget.memory_bytes > policy.memory_bytes as u64
+        || budget.host_calls > policy.host_calls
+    {
+        return Err(Error::Policy);
+    }
+    let limits = Limits {
+        fuel: budget.fuel,
+        memory_bytes: usize::try_from(budget.memory_bytes).map_err(|_| Error::Policy)?,
+        host_calls: budget.host_calls,
+    };
+    let input = Invocation::decode(&data.invocation)?;
+    let prepared = PreparedCapture::new_observation(package, &input, limits)?;
+    let (report, completion) = prepared.execute(Cancellation::default());
+    let matches = report.execution.outcome == Ok(0)
+        && report.response.is_none()
+        && report.failure.is_none()
+        && report.output.is_some()
+        && completion == data.completion
+        && report.execution.host_calls == data.observed_host_calls
+        && report.execution.fuel_remaining == data.fuel_remaining;
+    Ok(ReplayResult { matches, report })
 }

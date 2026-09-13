@@ -564,7 +564,7 @@ fn format_ten_migration_preserves_original_content_evidence_and_signed_segment()
     drop(host);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("PRAGMA user_version=10;")
+        .execute_batch("DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=10;")
         .unwrap();
     let old = Store::open_read_only_audited(&path, trust.clone()).unwrap();
     assert_eq!(old.sealed_segment(1).unwrap().unwrap(), signed);
@@ -589,7 +589,7 @@ fn format_ten_migration_preserves_original_content_evidence_and_signed_segment()
     assert_eq!(restored.digest(), ev.digest());
     migrated.integrity_check().unwrap();
     drop(migrated);
-    assert_eq!(version(&path), 11);
+    assert_eq!(version(&path), 12);
 }
 #[test]
 fn read_event_cannot_be_smuggled_into_old_format_ten() {
@@ -600,7 +600,7 @@ fn read_event_cannot_be_smuggled_into_old_format_ten() {
     drop(store);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("PRAGMA user_version=10;")
+        .execute_batch("DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=10;")
         .unwrap();
     assert!(matches!(
         Store::open_existing(&path, Default::default()),
@@ -729,7 +729,7 @@ fn migration_crashes_keep_whole_ten_or_eleven_and_original_content() {
         drop(store);
         rusqlite::Connection::open(&path)
             .unwrap()
-            .execute_batch("PRAGMA user_version=10;")
+            .execute_batch("DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=10;")
             .unwrap();
         assert_eq!(child(&path, "migrate", point).code(), Some(86));
         assert_eq!(
@@ -747,7 +747,7 @@ fn migration_crashes_keep_whole_ten_or_eleven_and_original_content() {
             card.encode()
         );
         reopened.integrity_check().unwrap();
-        assert_eq!(version(&path), 11);
+        assert_eq!(version(&path), 12);
     }
 }
 

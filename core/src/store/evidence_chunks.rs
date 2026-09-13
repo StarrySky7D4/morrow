@@ -231,9 +231,13 @@ pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evide
     if version < 9 && evidence.data().schema_version != task_evidence::VERSION {
         return Err(Error::UnsupportedVersion);
     }
-    if version < 10 && evidence.data().batch.as_ref().is_some_and(|batch| {
-        batch.intent.len() > task_evidence::MAX_LEGACY_BATCH_INTENT_BYTES
-    }) {
+    if version < 10
+        && evidence
+            .data()
+            .batch
+            .as_ref()
+            .is_some_and(|batch| batch.intent.len() > task_evidence::MAX_LEGACY_BATCH_INTENT_BYTES)
+    {
         return Err(Error::UnsupportedVersion);
     }
     Ok(Some(evidence))

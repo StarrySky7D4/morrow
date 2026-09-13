@@ -693,3 +693,109 @@ fn batch_replay_checks_all_page_policies_and_stops_at_first_observation_mismatch
     assert!(!result.matches);
     assert_eq!(result.reports.len(), 1);
 }
+
+#[test]
+fn incremental_observation_retains_original_bytes_and_replays_without_host() {
+    let mut f = Fixture::new(Mode::Success);
+    let package = package(Mode::Success);
+    let captured = f
+        .pool
+        .record_transform_observation(&f.manager, &mut f.host, &f.session, &input(), limits().fuel)
+        .unwrap();
+    assert_eq!(captured.package_digest(), package.digest());
+    assert_eq!(captured.report().execution.outcome, Ok(0));
+    assert!(captured.observation().raw().len() < package.archive().len());
+    let mut raw = captured.observation().raw().to_vec();
+    // Optional field 100 survives decoding instead of being silently re-encoded away.
+    raw.extend_from_slice(&[0xa0, 0x06, 0x01]);
+    let observation = task_evidence::decode_observation(&package, &raw).unwrap();
+    assert_eq!(observation.raw(), raw);
+    f.unchanged();
+    drop(f);
+    assert!(
+        replay::replay_observation(&package, &observation, limits())
+            .unwrap()
+            .matches
+    );
+    let mut edited = observation.data().clone();
+    edited.fuel_remaining = edited.fuel_remaining.checked_sub(1).unwrap();
+    let changed = task_evidence::encode_observation(&package, edited).unwrap();
+    assert!(
+        !replay::replay_observation(&package, &changed, limits())
+            .unwrap()
+            .matches
+    );
+    assert!(
+        replay::replay_observation(
+            &package,
+            &observation,
+            Limits {
+                fuel: 1,
+                ..limits()
+            }
+        )
+        .is_err()
+    );
+    // Duplicate completion and a wrapping u32 field are rejected before prost allocation.
+    let mut duplicate = raw.clone();
+    duplicate.extend_from_slice(&[0x22, 0]);
+    assert!(task_evidence::decode_observation(&package, &duplicate).is_err());
+    let mut overflow = raw.clone();
+    overflow.extend_from_slice(&[0x38, 0x80, 0x80, 0x80, 0x80, 0x10]);
+    assert!(task_evidence::decode_observation(&package, &overflow).is_err());
+    assert!(
+        task_evidence::decode_observation(
+            &package,
+            &vec![0; task_evidence::MAX_OBSERVATION_BYTES + 1]
+        )
+        .is_err()
+    );
+}
+
+#[test]
+fn incremental_capture_rejects_failure_and_revoked_current_binding() {
+    for mode in [
+        Mode::Business,
+        Mode::Trap,
+        Mode::AfterCompletionTrap,
+        Mode::Missing,
+        Mode::Fuel,
+        Mode::Exchange,
+    ] {
+        let mut f = Fixture::new(mode);
+        assert!(
+            f.pool
+                .record_transform_observation(
+                    &f.manager,
+                    &mut f.host,
+                    &f.session,
+                    &input(),
+                    limits().fuel
+                )
+                .is_err()
+        );
+        f.unchanged();
+    }
+    let mut f = Fixture::new(Mode::Success);
+    assert!(
+        f.pool
+            .record_transform_observation(&f.manager, &mut f.host, &f.session, &input(), 0)
+            .is_err()
+    );
+    let digest = package(Mode::Success).digest();
+    f.manager
+        .set_enabled(ID, digest, false, f.manager.revision())
+        .unwrap();
+    assert!(
+        f.pool
+            .record_transform_observation(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &input(),
+                limits().fuel
+            )
+            .is_err()
+    );
+    f.unchanged();
+}

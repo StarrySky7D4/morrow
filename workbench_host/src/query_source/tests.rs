@@ -1,6 +1,5 @@
 #![cfg(target_os = "windows")]
-#[path = "../../tests/common/mod.rs"]
-mod common;
+use crate::test_common as common;
 use crate::{Workbench, query_plan::Conditions};
 use morrow_core::{
     content::CardRecord,

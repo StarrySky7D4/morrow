@@ -151,7 +151,8 @@ fn audit_child() {
             assert!(!host.writable());
             assert!(host.maintenance_warning().is_none());
             let status = host.plugin_status();
-            host.configure_plugin(status.revision, &status.digest, true).unwrap();
+            host.configure_plugin(status.revision, &status.digest, true)
+                .unwrap();
             assert!(host.writable());
             assert_eq!(host.read("saved").unwrap().revision, 1);
             assert!(host.read("refused").is_err());

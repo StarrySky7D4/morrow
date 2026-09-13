@@ -9,6 +9,7 @@ pub mod dependency_call;
 pub mod dispatch;
 pub mod lifecycle;
 pub mod plugin_package;
+pub mod read_archive;
 pub mod read_journal;
 pub mod records;
 pub mod response;

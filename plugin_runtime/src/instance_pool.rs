@@ -312,6 +312,63 @@ impl Pool {
         }
         prepared.finish(report, completion).map_err(Error::Evidence)
     }
+    /// Capture a single successful actual call with a separately bound package.
+    /// `fuel_budget` caps this invocation only; the caller must account for the
+    /// complete query and stop instead of publishing an incomplete transcript.
+    pub fn record_transform_observation(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        session: &Session,
+        input: &Invocation,
+        fuel_budget: u64,
+    ) -> Result<crate::replay::CapturedObservation> {
+        use morrow_core::task_evidence;
+        self.maintain(manager, host)?;
+        if fuel_budget == 0 {
+            return Err(Error::Limit);
+        }
+        let root = self.root(session)?;
+        let package_digest = root.package().package().digest();
+        let limits = crate::Limits {
+            fuel: root.package().limits().fuel.min(fuel_budget),
+            ..root.package().limits()
+        };
+        let prepared = crate::replay::PreparedCapture::new_observation(
+            root.package().package(),
+            input,
+            limits,
+        )
+        .map_err(Error::Evidence)?;
+        let (report, completion) = prepared.execute(root.cancellation());
+        if matches!(
+            report.execution.outcome,
+            Err(Fault::Trap | Fault::TaskProtocol | Fault::Limits)
+        ) {
+            self.entry(session)?.stop();
+        }
+        self.maintain(manager, host)?;
+        let root = self.root(session)?;
+        if root.package().package().digest() != package_digest {
+            return Err(Error::Denied);
+        }
+        if report.execution.outcome != Ok(0)
+            || report.response.is_some()
+            || report.failure.is_some()
+            || report.output.is_none()
+        {
+            return Err(Error::Evidence(crate::replay::Error::UnsupportedOutcome));
+        }
+        let observation = task_evidence::encode_observation(
+            root.package().package(),
+            prepared.observation(&report, completion),
+        )?;
+        Ok(crate::replay::CapturedObservation {
+            report,
+            package_digest,
+            observation,
+        })
+    }
     /// Capture a complete ordered batch. No partial evidence is returned after a failed page.
     #[allow(clippy::too_many_arguments)]
     pub fn record_transform_batch(
