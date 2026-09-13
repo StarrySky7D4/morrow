@@ -20,6 +20,8 @@ pub mod manager;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod instance_pool;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod replay;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod proposal;

@@ -23,6 +23,7 @@ pub enum Error {
     Core(morrow_core::Error),
     Manager(ManagerError),
     Execution(crate::dependency::Error),
+    Evidence(crate::replay::Error),
     Denied,
     Limit,
     RetryBudget,
@@ -276,6 +277,40 @@ impl Pool {
             }
         }
         Ok(report)
+    }
+    /// Capture one actual pure transform under the current managed root. The history
+    /// does not confer authority and cannot represent a content commit or dependency graph.
+    pub fn record_transform(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        session: &Session,
+        input: &Invocation,
+    ) -> Result<crate::replay::CapturedTransform> {
+        self.maintain(manager, host)?;
+        let root = self.root(session)?;
+        let prepared = crate::replay::PreparedCapture::new(
+            root.package().package(),
+            input,
+            root.package().limits(),
+        )
+        .map_err(Error::Evidence)?;
+        let (mut report, completion) = prepared.execute(root.cancellation());
+        if matches!(
+            report.execution.outcome,
+            Err(Fault::Trap | Fault::TaskProtocol | Fault::Limits)
+        ) {
+            self.entry(session)?.stop();
+        }
+        self.maintain(manager, host)?;
+        if self.root(session).is_err() {
+            report.output = None;
+            report.failure = None;
+            if report.execution.outcome.is_ok() {
+                report.execution.outcome = Err(Fault::InactiveConnection);
+            }
+        }
+        prepared.finish(report, completion).map_err(Error::Evidence)
     }
     pub fn start(
         &mut self,

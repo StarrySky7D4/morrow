@@ -89,3 +89,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## test.33 普通任务池接入
 
 Pool新增普通Task监督与按根撤销对象授权；默认Windows工作台使用池会话，实际执行故障后停止根并保持已有内容可读。没有放宽依赖导入或自动任务重试，详细边界见 [实例池设计](../docs/PLUGIN_INSTANCE_POOL.md) 与 [工作台接入记录](../reports/test.33-workbench-pool.md)。
+
+## test.34 纯转换捕获与重放
+
+Pool.record_transform实际执行并保留自包含PB＋LZ4历史证据；morrow-transform-replay独立工具只在无生产宿主的Runner中比较原始观察。旧包与注册表不再存在时仍可复现，不恢复旧授权，不代表签名审计或内容提交。详见 [设计](../docs/PLUGIN_TASK_EVIDENCE.md)。

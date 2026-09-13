@@ -22,6 +22,7 @@ pub mod runtime;
 pub mod shared_object;
 pub mod shared_transfer;
 pub mod task;
+pub mod task_evidence;
 pub mod ui;
 // The fixed Cap'n Proto generator emits unsafe schema metadata; hand-written validation does not.
 #[allow(clippy::all, unsafe_code)]

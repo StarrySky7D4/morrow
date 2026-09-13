@@ -85,3 +85,12 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_instance_pool"
 required-features = ["packages"]
+
+[[bin]]
+name = "morrow-transform-replay"
+path = "src/bin/transform_replay.rs"
+required-features = ["packages"]
+
+[[example]]
+name = "qualify_transform_replay"
+required-features = ["packages"]

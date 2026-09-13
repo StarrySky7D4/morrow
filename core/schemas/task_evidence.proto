@@ -1,0 +1,32 @@
+syntax = "proto3";
+package morrow.task_evidence.v1;
+// Historical observation, never a signature, runtime grant, or content transaction.
+enum StableFault {
+  UNSPECIFIED = 0;
+  TASK_PROTOCOL = 1;
+  DEADLINE = 2;
+  PACKAGE_BINDING = 3;
+  INACTIVE_CONNECTION = 4;
+  INVALID_MODULE = 5;
+  UNSUPPORTED_ABI = 6;
+  LIMITS = 7;
+  CANCELLED = 8;
+  TRAP = 9;
+}
+message ExecutionBudget {
+  uint64 fuel = 1;
+  uint64 memory_bytes = 2;
+  uint32 host_calls = 3;
+}
+message TaskEvidence {
+  uint32 schema_version = 1;
+  bytes package_archive = 2;
+  bytes invocation = 3;
+  ExecutionBudget budget = 4;
+  string backend = 5;
+  bytes completion = 6;
+  StableFault fault = 7;
+  optional sint32 exit_code = 8;
+  uint32 observed_host_calls = 9;
+  uint64 fuel_remaining = 10;
+}
