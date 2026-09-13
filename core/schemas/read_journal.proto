@@ -1,0 +1,15 @@
+syntax = "proto3";
+package morrow.read_journal.v1;
+// Completed host-local reading computation. No content revision, grant, or delivery claim.
+message ReadObservation {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  string request_type = 4;
+  bytes request = 5;
+  bytes request_sha256 = 6;
+  string response_type = 7;
+  bytes response = 8;
+  bytes response_sha256 = 9;
+  repeated bytes task_evidence_sha256 = 10;
+}

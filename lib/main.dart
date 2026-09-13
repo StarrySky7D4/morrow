@@ -1,3 +1,4 @@
+import 'plugins/query_coordinator.dart';
 import 'plugins/editor_session.dart';
 import 'plugins/plugin_tools.dart';
 import 'plugins/protection_backup.dart';
@@ -727,6 +728,17 @@ class _StudioState extends State<Studio> {
   @override
   void initState() {
     super.initState();
+    search.addListener(() {
+      final composing = search.value.composing;
+      final active = composing.isValid && !composing.isCollapsed;
+      if (query != search.text || _searchComposing != active) {
+        setState(() {
+          query = search.text;
+          _searchComposing = active;
+          pluginProjection();
+        });
+      }
+    });
     sidebarExpanded = widget.restored?['sidebarExpanded'] as bool? ?? true;
     showAppearance = widget.restored?['appearanceExpanded'] as bool? ?? true;
     final savedMusic = widget.restored?['music'] as Map<String, dynamic>?;
@@ -828,6 +840,7 @@ class _StudioState extends State<Studio> {
 
   @override
   void dispose() {
+    _queries.dispose();
     music.dispose();
     search.dispose();
     quickNote.dispose();
@@ -848,8 +861,12 @@ class _StudioState extends State<Studio> {
 
   bool _pluginBusy = false;
   int _contentGeneration = 0;
-  String? _projectionKey;
-  List<String>? _projection;
+  late final _queries = QueryCoordinator(
+    onChanged: () {
+      if (mounted) setState(() {});
+    },
+  );
+  bool _searchComposing = false;
   Future<Idea?> pluginChange(
     PluginAction action,
     Idea idea, {
@@ -902,32 +919,21 @@ class _StudioState extends State<Studio> {
   }
 
   void pluginProjection() {
-    final backend = widget.workbench;
-    if (backend == null || !backend.writable) return;
-    final key = '$_contentGeneration|$section|$filter|$query|$sort';
-    if (_projectionKey == key) return;
-    _projectionKey = key;
-    final page = section, selection = filter, text = query, order = sort;
-    Future<void>(() async {
-      try {
-        final ids = await backend.query(page, selection, text, order);
-        if (mounted && _projectionKey == key) setState(() => _projection = ids);
-      } catch (_) {
-        if (mounted && _projectionKey == key) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('筛选暂时未完成，请重试。')));
-        }
-      }
-    });
+    _queries.select(widget.workbench, (
+      contentGeneration: _contentGeneration,
+      section: section,
+      filter: filter,
+      text: query,
+      sort: sort,
+    ), deferred: _searchComposing);
   }
 
   List<Idea> get visibleIdeas {
+    pluginProjection();
     if (widget.workbench?.writable ?? false) {
-      pluginProjection();
       final byId = {for (final idea in ideas) idea.id: idea};
       return [
-        for (final id in _projection ?? ideas.map((i) => i.id))
+        for (final id in _queries.ids)
           if (byId[id] != null) byId[id]!,
       ];
     }
@@ -1554,7 +1560,6 @@ class _StudioState extends State<Studio> {
       child: TextField(
         controller: search,
         focusNode: searchFocus,
-        onChanged: (value) => setState(() => query = value),
         style: TextStyle(fontSize: 11, color: p.ink),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search, size: 17, color: p.muted),
@@ -1750,7 +1755,10 @@ class _StudioState extends State<Studio> {
           ),
           const SizedBox(width: 8),
           Text(
-            visibleIdeas.length.toString().padLeft(2, '0'),
+            (widget.workbench?.writable ?? false) &&
+                    _queries.phase != QueryPhase.ready
+                ? '…'
+                : visibleIdeas.length.toString().padLeft(2, '0'),
             style: TextStyle(fontSize: 10, color: p.muted),
           ),
         ],
@@ -1794,6 +1802,41 @@ class _StudioState extends State<Studio> {
 
   Widget cards() {
     final items = visibleIdeas;
+    if ((widget.workbench?.writable ?? false) &&
+        _queries.phase != QueryPhase.ready) {
+      final failed = _queries.phase == QueryPhase.failed;
+      return Glass(
+        componentId: 'query-status',
+        p: p,
+        child: SizedBox(
+          height: 160,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!failed)
+                  SizedBox(
+                    width: 100,
+                    child: LinearProgressIndicator(color: p.accent),
+                  ),
+                const SizedBox(height: 12),
+                Text(
+                  failed ? '筛选未完成' : '正在筛选…',
+                  key: ValueKey(failed ? 'query-error' : 'query-loading'),
+                  style: TextStyle(color: p.muted),
+                ),
+                if (failed)
+                  TextButton(
+                    key: const ValueKey('query-retry'),
+                    onPressed: _queries.retry,
+                    child: const Text('重试筛选'),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     if (items.isEmpty) {
       return Glass(
         componentId: 'empty',
@@ -2238,7 +2281,7 @@ class _StudioState extends State<Studio> {
             child: PluginTools(
               backend: backend,
               onChanged: () {
-                if (mounted) setState(() {});
+                if (mounted) setState(() => _queries.invalidate());
               },
               ink: p.ink,
               muted: p.muted,

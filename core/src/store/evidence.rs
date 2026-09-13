@@ -65,9 +65,11 @@ fn payload(connection: &Connection, digest: [u8; 32]) -> Result<Option<Evidence>
         Some(None) => Err(Error::Limit),
         Some(Some(raw)) => {
             let evidence = task_evidence::decode(&raw, digest)?;
-            if evidence.data().schema_version != task_evidence::VERSION { return Err(Error::UnsupportedVersion); }
+            if evidence.data().schema_version != task_evidence::VERSION {
+                return Err(Error::UnsupportedVersion);
+            }
             Ok(Some(evidence))
-        },
+        }
     }
 }
 pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidence]) -> Result<()> {
@@ -80,7 +82,9 @@ pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidenc
             "SELECT EXISTS(SELECT 1 FROM task_evidence t WHERE t.digest=?1 AND NOT EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest))",
             [item.digest().as_slice()], |r| r.get(0),
         ))?;
-        if orphan { return Err(Error::Integrity); }
+        if orphan {
+            return Err(Error::Integrity);
+        }
         match payload(connection, item.digest())? {
             Some(previous) if previous.raw() != item.raw() => return Err(Error::Integrity),
             Some(previous) => {
@@ -106,7 +110,7 @@ pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidenc
     }
     Ok(())
 }
-fn read_refs(
+pub(super) fn read_refs(
     connection: &Connection,
     operation: &str,
     expected: &[Vec<u8>],
@@ -188,7 +192,7 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
     if version < 7 {
         return Ok(());
     }
-    let invalid:i64=sql(connection.query_row("SELECT count(*) FROM operation_evidence e LEFT JOIN operations o ON e.operation_id=o.id LEFT JOIN task_evidence t ON e.digest=t.digest WHERE o.id IS NULL OR o.object_kind!=0 OR t.digest IS NULL",[],|r|r.get(0)))?;
+    let invalid:i64=sql(connection.query_row("SELECT count(*) FROM operation_evidence e LEFT JOIN operations o ON e.operation_id=o.id LEFT JOIN task_evidence t ON e.digest=t.digest WHERE o.id IS NULL OR (o.object_kind!=0 AND NOT (?1>=11 AND o.object_kind=4)) OR t.digest IS NULL",[version],|r|r.get(0)))?;
     if invalid != 0 {
         return Err(Error::Integrity);
     }
@@ -196,7 +200,9 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         let orphan: bool = sql(connection.query_row(
             "SELECT EXISTS(SELECT 1 FROM task_evidence t WHERE NOT EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest))", [], |r| r.get(0),
         ))?;
-        if orphan { return Err(Error::Integrity); }
+        if orphan {
+            return Err(Error::Integrity);
+        }
         return super::evidence_chunks::verify(connection);
     }
     let mut statement=sql(connection.prepare("SELECT digest,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest) FROM task_evidence t"))?;
@@ -215,7 +221,9 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         }
         let bytes = value.as_blob().map_err(|_| Error::Integrity)?;
         // decode checks bounds before decompression or owned allocation.
-        if task_evidence::decode(bytes, digest)?.data().schema_version != task_evidence::VERSION { return Err(Error::UnsupportedVersion); }
+        if task_evidence::decode(bytes, digest)?.data().schema_version != task_evidence::VERSION {
+            return Err(Error::UnsupportedVersion);
+        }
     }
     Ok(())
 }

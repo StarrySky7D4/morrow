@@ -96,7 +96,9 @@ fn preflight(mut raw: &[u8], level: u8, budget: &mut usize) -> Result<()> {
     Ok(())
 }
 fn operation_id(raw: &[u8]) -> Result<String> {
-    if raw.starts_with(b"MORROWR1") {
+    if raw.starts_with(crate::read_journal::MAGIC) {
+        crate::read_journal::decode(raw).map(|v| v.data().operation_id.clone())
+    } else if raw.starts_with(b"MORROWR1") {
         crate::records::decode_commit(raw).map(|v| v.1.operation_id)
     } else {
         crate::transaction::decode_commit(raw).map(|v| v.1.operation_id)
@@ -168,12 +170,7 @@ fn validate(segment: &proto::Segment, trusted: &TrustedLog) -> Result<()> {
         {
             return Err(AuditError::Event);
         }
-        let id = if event.original_commit.starts_with(b"MORROWR1") {
-            crate::records::decode_commit(&event.original_commit).map(|v| v.1.operation_id)
-        } else {
-            crate::transaction::decode_commit(&event.original_commit).map(|v| v.1.operation_id)
-        }
-        .map_err(|_| AuditError::Event)?;
+        let id = operation_id(&event.original_commit)?;
         if id != event.operation_id {
             return Err(AuditError::Event);
         }

@@ -549,7 +549,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "morrow-audit"
-version = "0.1.9-test.40"
+version = "0.1.9-test.41"
 dependencies = [
  "lz4_flex",
  "morrow-core",
@@ -565,7 +565,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-core"
-version = "0.1.9-test.22"
+version = "0.1.9-test.41"
 dependencies = [
  "capnp",
  "capnpc",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-host"
-version = "0.1.9-test.40"
+version = "0.1.9-test.41"
 dependencies = [
  "capnp",
  "capnpc",

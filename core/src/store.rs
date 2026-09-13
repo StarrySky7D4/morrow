@@ -14,6 +14,7 @@ mod blobs;
 mod evidence;
 mod evidence_chunks;
 pub use binding::{AuditBinding, AuditBindingState};
+mod read_journal;
 mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
@@ -130,7 +131,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=10) {
+        if app != APPLICATION_ID || !matches!(version, 5..=11) {
             return Err(Error::UnsupportedVersion);
         }
         let store = Self {
@@ -192,7 +193,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=10))
+            && (app != APPLICATION_ID || !matches!(version, 4..=11))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -237,7 +238,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=10) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=11) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -313,6 +314,15 @@ impl Store {
             boundary("projection-evidence-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("projection-evidence-migration-after-commit");
+        }
+        if version < 11 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.pragma_update(None, "user_version", 11))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("read-journal-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("read-journal-migration-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -640,20 +650,35 @@ impl Store {
             return Err(Error::Limit);
         }
         let mut statement = sql(self.connection.prepare(
-            "SELECT sequence,payload FROM outbox WHERE sequence>?1 ORDER BY sequence LIMIT ?2",
+            "SELECT sequence,CASE WHEN length(payload)<=?3 THEN payload ELSE NULL END FROM outbox WHERE sequence>?1 ORDER BY sequence LIMIT ?2",
         ))?;
-        let mut rows = sql(statement.query(params![after_sequence, limit]))?;
+        let mut rows = sql(statement.query(params![
+            after_sequence,
+            limit,
+            crate::read_journal::MAX_CONTAINER_BYTES as i64
+        ]))?;
         let mut result = Vec::new();
         let mut total = 0usize;
         while let Some(row) = sql(rows.next())? {
-            let value = sql(row.get_ref(1))?
-                .as_blob()
-                .map_err(|_| Error::Integrity)?;
+            let raw = sql(row.get_ref(1))?;
+            if matches!(raw, rusqlite::types::ValueRef::Null) {
+                return Err(Error::Limit);
+            }
+            let value = raw.as_blob().map_err(|_| Error::Integrity)?;
             total = total.checked_add(value.len()).ok_or(Error::Limit)?;
             if total > 32 * 1024 * 1024 {
                 return Err(Error::Limit);
             }
-            if value.starts_with(b"MORROWR1") {
+            if value.starts_with(crate::read_journal::MAGIC) {
+                let version: i64 =
+                    sql(self
+                        .connection
+                        .query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+                if version < 11 {
+                    return Err(Error::UnsupportedVersion);
+                }
+                crate::read_journal::decode(value)?;
+            } else if value.starts_with(b"MORROWR1") {
                 crate::records::decode_commit(value)?;
             } else {
                 transaction::decode_commit(value)?;
@@ -678,14 +703,26 @@ impl Store {
         evidence_chunks::verify_schema(snapshot)?;
         binding::verify(snapshot, trust)?;
         seals::verify(snapshot, trust)?;
-        let mut operations =
-            sql(snapshot.prepare("SELECT id,card_id,payload,object_kind FROM operations"))?;
-        let mut rows = sql(operations.query([]))?;
+        let mut operations = sql(snapshot.prepare(
+            "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
+        ))?;
+        let mut rows = sql(operations.query([crate::read_journal::MAX_CONTAINER_BYTES as i64]))?;
         while let Some(row) = sql(rows.next())? {
-            let raw = sql(row.get_ref(2))?
-                .as_blob()
-                .map_err(|_| Error::Integrity)?;
+            let value = sql(row.get_ref(2))?;
+            if matches!(value, rusqlite::types::ValueRef::Null) {
+                return Err(Error::Limit);
+            }
+            let raw = value.as_blob().map_err(|_| Error::Integrity)?;
             let kind: i64 = sql(row.get(3))?;
+            if kind == 4 {
+                read_journal::verify_operation(
+                    snapshot,
+                    &sql(row.get::<_, String>(0))?,
+                    &sql(row.get::<_, String>(1))?,
+                    raw,
+                )?;
+                continue;
+            }
             if kind != 0 {
                 records::verify_operation(
                     snapshot,

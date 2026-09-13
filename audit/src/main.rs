@@ -76,7 +76,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         chain.finish()?
     };
-    println!("Verified {segments} signed segments and {events} commit events.");
+    println!("Verified {segments} signed segments and {events} audit events.");
     println!(
         "Checkpoint supplied: {pinned}. Its independence must be established outside this tool; signatures do not prove a witness or replay correctness."
     );
