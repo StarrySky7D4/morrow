@@ -15,8 +15,10 @@ Future<RichFragment> captureWithPlugin(
   RustWorkbench host,
   String format,
   String source,
-  String prefix,
-) async {
+  String prefix, {
+  String? scope,
+  String? parent,
+}) async {
   if (source.length > 2 * 1024 * 1024) {
     throw const FormatException('内容过大，请导入原始文件。');
   }
@@ -141,9 +143,13 @@ Future<RichFragment> captureWithPlugin(
   if (request.length > 65536) {
     throw const FormatException('内容较长，请使用保留的原始附件。');
   }
-  final response = await host.capture(request);
+  final response = await host.captureResult(
+    request,
+    scope: scope,
+    parent: parent,
+  );
   final result = RustWorkbench.readMessage(
-    response,
+    response.payload,
   ).getRoot(wire.responseFactory);
   if (result.version != 1 ||
       result.digest == null ||
@@ -157,6 +163,7 @@ Future<RichFragment> captureWithPlugin(
   return RichFragment(
     result.markdown ?? '',
     files: files,
+    ticket: response.ticket,
     warnings: [
       ...warnings,
       ...[...?result.warnings].whereType<String>(),

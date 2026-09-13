@@ -234,6 +234,14 @@ pub fn prepare_intent(
 /// Derive the exact original command and complete resulting Card without a Store or latest state.
 /// Evidence integrity/guest replay/signatures are separate checks, not implied by this projection.
 pub fn derive(evidence: &Evidence) -> Result<Projection> {
+    if evidence
+        .data()
+        .batch
+        .as_ref()
+        .is_some_and(|b| b.intent_type == crate::projection_v2::INTENT_TYPE)
+    {
+        return crate::projection_v2::derive(evidence);
+    }
     if evidence.data().schema_version != task_evidence::BATCH_VERSION {
         return Err("projection requires batch evidence".into());
     }
@@ -257,7 +265,7 @@ pub fn derive(evidence: &Evidence) -> Result<Projection> {
 }
 // Frozen V1 dispatch target. Do not modify its output rules to match a future host version;
 // add a new contract/version and retain this implementation and compatible persistence helpers.
-fn derive_v1(
+pub(super) fn derive_v1(
     facts: proto::HostProjection,
     observation: &task_evidence::proto::Observation,
 ) -> Result<Projection> {
@@ -412,4 +420,14 @@ pub fn verify_commit(
         return Err("host projection differs from original commit".into());
     }
     Ok(projection)
+}
+
+pub(super) fn decode_intent_v1(raw: &[u8]) -> Result<proto::HostProjection> {
+    if raw.len() > MAX_FACT_BYTES {
+        return Err("projection intent limit".into());
+    }
+    preflight(raw, Kind::Facts, &mut 8192)?;
+    let facts = proto::HostProjection::decode(raw)?;
+    validate_facts(&facts)?;
+    Ok(facts)
 }

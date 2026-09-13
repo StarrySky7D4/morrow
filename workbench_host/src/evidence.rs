@@ -32,6 +32,16 @@ impl Workbench {
         if evidence.len() != 1 {
             return Err("existing operation has no supported original workbench intent".into());
         }
+        if evidence[0]
+            .data()
+            .batch
+            .as_ref()
+            .is_some_and(|b| b.intent_type == crate::projection_v2::INTENT_TYPE)
+        {
+            return Err(
+                "captured operation retry requires its original scope and editor endpoint".into(),
+            );
+        }
         if evidence[0].data().schema_version == morrow_core::task_evidence::BATCH_VERSION {
             return self.retry_projected(
                 id,

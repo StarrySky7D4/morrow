@@ -1,3 +1,4 @@
+import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
@@ -20,7 +21,8 @@ class RustWorkbench
     implements
         WorkbenchBackend,
         WorkbenchProtectionBackup,
-        WorkbenchPluginControl {
+        WorkbenchPluginControl,
+        WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = process.stderr.listen((bytes) {
@@ -44,6 +46,7 @@ class RustWorkbench
   final Directory cache;
   final _revisions = <String, int>{};
   final _assets = <String, IdeaAttachment>{};
+  final _importAliases = <String, Set<String>>{};
   final _buffer = <int>[];
   Completer<Uint8List>? _response;
   Object? _failure;
@@ -284,14 +287,22 @@ class RustWorkbench
     return r;
   }
 
-  Future<Idea> _idea(host.ResponseReader reply) async {
+  Future<Idea> _idea(
+    host.ResponseReader reply, {
+    bool trackRevision = true,
+  }) async {
     final r = _payload(reply.payload).idea!;
     final id = r.id!;
-    _revisions[id] = reply.revision;
     final attachments = <IdeaAttachment>[];
     for (final a in r.assets ?? <wire.AssetReader>[]) {
       final key = '$id/${a.id}';
       var item = _assets[key];
+      if (item != null &&
+          item.source.local &&
+          !await File(item.source.location).exists()) {
+        _assets.remove(key);
+        item = null;
+      }
       if (item == null) {
         final extension = (a.name ?? '')
             .split('.')
@@ -326,7 +337,7 @@ class RustWorkbench
       }
       attachments.add(item);
     }
-    return Idea(
+    final idea = Idea(
       r.title ?? '',
       r.description ?? '',
       r.category!,
@@ -341,10 +352,13 @@ class RustWorkbench
       conclusion: r.conclusion ?? '',
       attachments: attachments,
     );
+    if (trackRevision) _revisions[id] = reply.revision;
+    return idea;
   }
 
   Future<List<Idea>> load() async {
     final ideas = <Idea>[];
+    final revisions = <String, int>{};
     var cursor = '';
     do {
       final page = await _call(
@@ -361,18 +375,20 @@ class RustWorkbench
           configure: (r) => r.id = id,
         );
         final data = _payload(record.payload).idea!;
-        _revisions[id!] = record.revision;
-        if (!data.deleted) ideas.add(await _idea(record));
+        revisions[id!] = record.revision;
+        if (!data.deleted) ideas.add(await _idea(record, trackRevision: false));
       }
     } while (cursor.isNotEmpty);
+    _revisions.addAll(revisions);
     return ideas.reversed.toList();
   }
 
   void _writeIdea(
     wire.IdeaBuilder b,
     Idea idea,
-    List<IdeaAttachment> attachments,
-  ) {
+    List<IdeaAttachment> attachments, {
+    bool includeImportAliases = false,
+  }) {
     b.id = idea.id;
     b.title = idea.title;
     var description = idea.description;
@@ -384,6 +400,8 @@ class RustWorkbench
         old.name,
         Uri.encodeComponent(old.location),
         Uri.encodeComponent(old.name),
+        if (includeImportAliases)
+          ...?_importAliases['${idea.id}/${attachments[i].pluginId}'],
       }.toList()..sort((a, b) => b.length.compareTo(a.length));
       for (final name in names) {
         description = description.replaceAll(
@@ -420,6 +438,109 @@ class RustWorkbench
     }
   }
 
+  Future<IdeaAttachment> _importAttachment(
+    String target,
+    IdeaAttachment a,
+  ) async {
+    if (a.pluginId != null) return a;
+    final r = await _call(
+      host.Action.importFile,
+      configure: (r) {
+        r.id = target;
+        r.selectedPath = a.source.location;
+        r.name = a.source.name;
+        r.kind = a.source.kind.name;
+      },
+    );
+    final asset = _payload(r.payload).idea!.assets![0];
+    final item = IdeaAttachment(
+      source: a.source,
+      size: asset.bytes,
+      pluginId: asset.id,
+    );
+    _importAliases['$target/${asset.id}'] = {
+      a.source.location,
+      a.source.name,
+      Uri.encodeComponent(a.source.location),
+      Uri.encodeComponent(a.source.name),
+    };
+    // Keep aliases as text only; they never own the read cache.
+    // A selected editor file is a staging source, not a durable read cache.
+    // Materialize confirmed content through _idea's host export instead.
+    return item;
+  }
+
+  @override
+  Future<List<Idea>> refreshEditorContent() => load();
+
+  @override
+  Future<WorkbenchEditorSession> openEditor(
+    String target, {
+    required bool create,
+  }) async {
+    final revision = create ? 0 : _revisions[target] ?? 0;
+    if (!create && revision == 0) throw StateError('请先重新读取要编辑的卡片。');
+    final response = await _call(
+      host.Action.openCaptureScope,
+      configure: (r) {
+        r.id = target;
+        r.revision = revision;
+      },
+    );
+    final scope = response.captureScope ?? '';
+    if (scope.isEmpty) throw const FormatException('缺少编辑器会话标识');
+    return _NativeEditorSession(this, target, revision, scope, create);
+  }
+
+  Future<host.ResponseReader> _captureUpload(
+    String correlation,
+    Uint8List value,
+    host.Action finish,
+  ) async {
+    final bytes = Uint8List.fromList(value);
+    if (bytes.isEmpty || bytes.length > 4 * 1024 * 1024) {
+      throw const FormatException('编辑器记录超过 4 MiB，请减少本次粘贴内容。');
+    }
+    final begin = await _call(
+      host.Action.beginCaptureUpload,
+      configure: (r) {
+        r.operation = correlation;
+        r.totalLength = bytes.length;
+        r.sha256 = Uint8List.fromList(sha256.convert(bytes).bytes);
+      },
+    );
+    final token = begin.transfer ?? '';
+    if (token.isEmpty) throw const FormatException('缺少编辑器传输标识');
+    try {
+      for (var offset = 0; offset < bytes.length;) {
+        final end = (offset + _partBytes).clamp(0, bytes.length);
+        final reply = await _call(
+          host.Action.appendCaptureUpload,
+          configure: (r) {
+            r.transfer = token;
+            r.offset = offset;
+            r.payload = Uint8List.sublistView(bytes, offset, end);
+          },
+        );
+        if (reply.transfer != token || reply.offset != end) {
+          throw const FormatException('编辑器上传确认不匹配');
+        }
+        offset = end;
+      }
+      return await _call(finish, configure: (r) => r.transfer = token);
+    } catch (_) {
+      try {
+        await _call(
+          host.Action.abortCaptureUpload,
+          configure: (r) => r.transfer = token,
+        );
+      } catch (_) {
+        /* Connection failure drops the host's bounded staging buffers. */
+      }
+      rethrow;
+    }
+  }
+
   @override
   Future<Idea> apply(
     PluginAction action,
@@ -431,27 +552,7 @@ class RustWorkbench
     final attachments = <IdeaAttachment>[];
     if (action == PluginAction.create || action == PluginAction.edit) {
       for (final a in idea.attachments) {
-        if (a.pluginId != null) {
-          attachments.add(a);
-          continue;
-        }
-        final r = await _call(
-          host.Action.importFile,
-          configure: (r) {
-            r.id = idea.id;
-            r.selectedPath = a.source.location;
-            r.name = a.source.name;
-            r.kind = a.source.kind.name;
-          },
-        );
-        final asset = _payload(r.payload).idea!.assets![0];
-        final item = IdeaAttachment(
-          source: a.source,
-          size: asset.bytes,
-          pluginId: asset.id,
-        );
-        attachments.add(item);
-        _assets['${idea.id}/${asset.id}'] = item;
+        attachments.add(await _importAttachment(idea.id, a));
       }
     }
     final builder = MessageBuilder();
@@ -462,7 +563,12 @@ class RustWorkbench
     r.text = text;
     r.flag = flag;
     if (action == PluginAction.create || action == PluginAction.edit) {
-      _writeIdea(r.initProposed(), idea, attachments);
+      _writeIdea(
+        r.initProposed(),
+        idea,
+        attachments,
+        includeImportAliases: true,
+      );
     }
     final bytes = builder.serialize();
     if (bytes.length > 65536) {
@@ -510,10 +616,33 @@ class RustWorkbench
     host.Action.service,
     configure: (r) => r.payload = bytes,
   )).payload!;
-  Future<Uint8List> capture(Uint8List bytes) async => (await _call(
-    host.Action.capture,
-    configure: (r) => r.payload = bytes,
-  )).payload!;
+  Future<Uint8List> capture(Uint8List bytes) async =>
+      (await captureResult(bytes)).payload;
+  Future<({Uint8List payload, String? ticket})> captureResult(
+    Uint8List bytes, {
+    String? scope,
+    String? parent,
+  }) async {
+    final reply = await _call(
+      host.Action.capture,
+      configure: (r) {
+        r.payload = bytes;
+        r.captureScope = scope ?? '';
+        r.captureParent = parent ?? '';
+      },
+    );
+    final payload = reply.payload;
+    final ticket = reply.captureTicket;
+    if (payload == null ||
+        (scope != null && (ticket == null || ticket.isEmpty))) {
+      throw const FormatException('内容转换缺少结果或票据');
+    }
+    return (
+      payload: payload,
+      ticket: ticket == null || ticket.isEmpty ? null : ticket,
+    );
+  }
+
   static const maxPreferencesBytes = 4 * 1024 * 1024;
   static const _partBytes = 32768;
   Future<void> _preferencesQueue = Future.value();
@@ -725,5 +854,177 @@ class _WorkbenchUiTransport implements PluginUiTransport {
         configure: (r) => r.offset = _generation!.toSigned(64).toInt(),
       );
     }
+  }
+}
+
+class _NativeEditorSession implements WorkbenchEditorSession {
+  _NativeEditorSession(
+    this.owner,
+    this.targetId,
+    this.revision,
+    this.scope,
+    this.create,
+  );
+  final RustWorkbench owner;
+  @override
+  final String targetId;
+  final int revision;
+  final String scope;
+  final bool create;
+  @override
+  late final RustStudioPlugin studio = RustStudioPlugin(
+    owner,
+    captureScope: scope,
+  );
+  bool _closed = false;
+  Future<void>? _closing;
+  String? _operation, _fingerprint;
+  Idea? _draft;
+  EditorFields? _fields;
+  final _attachments = <IdeaAttachment>[];
+  Uint8List? _pendingBytes;
+  Future<Idea>? _inFlight;
+
+  @override
+  Future<void> recordPaste(PasteInsertion insertion) async {
+    if (_closed || _operation != null) throw StateError('此编辑会话已结束或正在等待提交确认。');
+    final message = MessageBuilder();
+    final upload = message.initRoot(host.pasteUploadFactory);
+    upload.scope = scope;
+    final event = upload.initEvent();
+    event.id = insertion.id;
+    event.field = insertion.field;
+    event.before = insertion.before;
+    event.startUtf16 = insertion.startUtf16;
+    event.endUtf16 = insertion.endUtf16;
+    event.after = insertion.after;
+    final parts = event.initParts(insertion.parts.length);
+    for (var i = 0; i < insertion.parts.length; i++) {
+      final part = insertion.parts[i];
+      parts[i].ticket = part.ticket;
+      parts[i].literal = part.literal;
+      parts[i].selection = part.selection;
+    }
+    await owner._captureUpload(
+      insertion.id,
+      message.serialize(),
+      host.Action.finishPaste,
+    );
+  }
+
+  @override
+  Future<Idea> save(Idea draft, EditorFields fields) {
+    if (_closed) return Future.error(StateError('编辑器会话已关闭。'));
+    final fingerprint = jsonEncode([
+      draft.toJson(),
+      fields.title,
+      fields.description,
+      fields.hypothesis,
+      fields.conclusion,
+      fields.todos,
+    ]);
+    if (_fingerprint != null && _fingerprint != fingerprint) {
+      return Future.error(StateError('上次提交尚未确认，请先重试原提交，不能更换其内容。'));
+    }
+    if (draft.id != targetId) return Future.error(StateError('编辑器目标不匹配。'));
+    _fingerprint ??= fingerprint;
+    _operation ??=
+        'editor-${DateTime.now().microsecondsSinceEpoch}-${owner._sequence++}';
+    _fields ??= fields;
+    _draft ??= Idea(
+      draft.title,
+      draft.description,
+      draft.category,
+      draft.icon,
+      draft.color,
+      id: draft.id,
+      favorite: draft.favorite,
+      time: draft.time,
+      stage: draft.stage,
+      hypothesis: draft.hypothesis,
+      conclusion: draft.conclusion,
+      attachments: List.unmodifiable(draft.attachments),
+      todos: List.unmodifiable(draft.todos),
+      completed: Set.unmodifiable(draft.completed),
+    );
+    return _inFlight ??= _save().whenComplete(() => _inFlight = null);
+  }
+
+  Future<Idea> _save() async {
+    final draft = _draft!;
+    final fields = _fields!;
+    if (_pendingBytes == null) {
+      try {
+        while (_attachments.length < draft.attachments.length) {
+          _attachments.add(
+            await owner._importAttachment(
+              targetId,
+              draft.attachments[_attachments.length],
+            ),
+          );
+        }
+        final request = MessageBuilder();
+        final r = request.initRoot(wire.requestFactory);
+        r.version = 1;
+        r.digest = Uint8List.fromList(contract.workbenchDigest);
+        r.action = create ? wire.Action.create : wire.Action.edit;
+        owner._writeIdea(r.initProposed(), draft, _attachments);
+        final payload = request.serialize();
+        if (payload.length > 65536) {
+          throw const FormatException('当前插件消息容量不足，请缩短正文或改为附件。');
+        }
+        final message = MessageBuilder();
+        final save = message.initRoot(host.capturedSaveFactory);
+        save.scope = scope;
+        save.operation = _operation;
+        save.target = targetId;
+        save.revision = revision;
+        save.payload = payload;
+        final snapshot = save.initSnapshot();
+        snapshot.title = fields.title;
+        snapshot.description = fields.description;
+        snapshot.hypothesis = fields.hypothesis;
+        snapshot.conclusion = fields.conclusion;
+        snapshot.todos = fields.todos;
+        final aliases = snapshot.initAliases(_attachments.length);
+        for (var i = 0; i < _attachments.length; i++) {
+          aliases[i].id = _attachments[i].pluginId;
+          aliases[i].location = draft.attachments[i].source.location;
+          aliases[i].name = draft.attachments[i].source.name;
+        }
+        _pendingBytes = message.serialize();
+        if (_pendingBytes!.length > 4 * 1024 * 1024) {
+          throw const FormatException('编辑器记录超过 4 MiB，请减少本次粘贴内容。');
+        }
+      } catch (error) {
+        _operation = null;
+        _fingerprint = null;
+        _draft = null;
+        _fields = null;
+        _pendingBytes = null;
+        _attachments.clear();
+        throw EditorPreparationException(error);
+      }
+    }
+    final reply = await owner._captureUpload(
+      _operation!,
+      _pendingBytes!,
+      host.Action.finishCapturedSave,
+    );
+    // Decoding/export can fail after a successful commit. Keep the exact operation and
+    // payload so another save asks for its historical receipt, never a new mutation.
+    return owner._idea(reply);
+  }
+
+  @override
+  Future<void> close() {
+    if (_closing != null) return _closing!;
+    _closed = true;
+    return _closing = owner
+        ._call(
+          host.Action.closeCaptureScope,
+          configure: (r) => r.captureScope = scope,
+        )
+        .then((_) {});
   }
 }

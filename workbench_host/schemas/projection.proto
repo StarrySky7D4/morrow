@@ -21,3 +21,37 @@ message Undo {
   uint64 revision = 1;
   uint64 deadline = 2;
 }
+
+// V2 keeps the complete V1 host facts as opaque original bytes and adds adopted paste facts.
+message ContentProjectionV2 {
+  uint32 schema_version = 1;
+  bytes content = 2;
+  string scope = 3;
+  repeated CaptureParent captures = 4;
+  repeated PasteApplication applications = 5;
+  EditorSnapshot snapshot = 6;
+}
+message CaptureParent { optional uint32 parent = 1; }
+message PasteApplication {
+  string id = 1;
+  string field = 2;
+  string before = 3;
+  uint32 start_utf16 = 4;
+  uint32 end_utf16 = 5;
+  repeated PastePart parts = 6;
+  string after = 7;
+}
+message PastePart {
+  optional uint32 observation = 1;
+  string literal = 2;
+  string selection = 3;
+}
+message EditorSnapshot {
+  string title = 1;
+  string description = 2;
+  string hypothesis = 3;
+  string conclusion = 4;
+  string todos = 5;
+  repeated AttachmentAlias aliases = 6;
+}
+message AttachmentAlias { string id = 1; string location = 2; string name = 3; }

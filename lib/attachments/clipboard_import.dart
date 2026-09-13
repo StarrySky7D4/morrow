@@ -1,3 +1,4 @@
+import '../plugins/capture_models.dart';
 import '../plugins/studio_backend.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -17,10 +18,38 @@ class PastedContent {
     this.files = const [],
     this.warnings = const [],
     this.formats = const [],
+    this.textParts = const [],
+    this.markdownParts = const [],
   });
   final String text, markdown;
   final List<XFile> files;
   final List<String> warnings, formats;
+  final List<PastePart> textParts, markdownParts;
+}
+
+class _PasteText {
+  const _PasteText(this.value, [this.ticket]);
+  final String value;
+  final String? ticket;
+  List<PastePart> get parts => value.isEmpty
+      ? []
+      : [
+          if (ticket case final ticket?)
+            PastePart.ticket(ticket)
+          else
+            PastePart.literal(value),
+        ];
+}
+
+List<PastePart> _joinParts(Iterable<List<PastePart>> entries) {
+  final result = <PastePart>[];
+  var first = true;
+  for (final entry in entries) {
+    if (!first) result.add(const PastePart.literal('\n\n'));
+    first = false;
+    result.addAll(entry);
+  }
+  return List.unmodifiable(result);
 }
 
 Future<XFile?> _readFile(
@@ -63,18 +92,30 @@ Future<PastedContent> readPaste([
   ClipboardReader? reader,
   StudioBackend? plugin,
 ]) async {
-  Future<String> plain(String text) async => plugin == null
-      ? plainTextToMarkdown(text)
-      : (await plugin.capture("plain", text)).markdown;
-  Future<String> convertRtf(String text) async => plugin == null
-      ? rtfToPlainText(text)
-      : (await plugin.capture("rtf", text)).markdown;
+  Future<_PasteText> plain(String text, {String? parent}) async {
+    if (plugin == null) return _PasteText(plainTextToMarkdown(text));
+    final result = await plugin.capture('plain', text, parentTicket: parent);
+    return _PasteText(result.markdown, result.ticket);
+  }
+
+  Future<_PasteText> convertRtf(String text) async {
+    if (plugin == null) return _PasteText(rtfToPlainText(text));
+    final result = await plugin.capture('rtf', text);
+    return _PasteText(result.markdown, result.ticket);
+  }
+
   final systemRead = reader == null;
   final sequence = systemRead ? await clipboardSequence() : null;
   reader ??= await SystemClipboard.instance?.read();
   if (reader == null) throw const FormatException('此环境不支持读取剪贴板，请使用导入文件。');
   final files = <XFile>[];
-  final texts = <String>[], rich = <String>[];
+  final texts = <String>[], textParts = <List<PastePart>>[];
+  final rich = <_PasteText>[];
+  void addText(String value, [List<PastePart>? parts]) {
+    texts.add(value);
+    textParts.add(parts ?? [PastePart.literal(value)]);
+  }
+
   final warnings = <String>{}, formats = <String>{};
   final prefix = 'clipboard-${DateTime.now().microsecondsSinceEpoch}';
   var memoryBytes = 0;
@@ -118,7 +159,7 @@ Future<PastedContent> readPaste([
       if (text.length > 2 * 1024 * 1024) {
         throw const FormatException('文本超过 2 MB，请作为文件导入。');
       }
-      if (text.isNotEmpty) texts.add(text);
+      if (text.isNotEmpty) addText(text);
       final html = await item.readValue(Formats.htmlText);
       if (html != null && html.isNotEmpty) {
         await addFile(textFile(html, 'html', 'rich-$index'));
@@ -130,27 +171,42 @@ Future<PastedContent> readPaste([
                   html,
                   imagePrefix: '$prefix-$index',
                 );
-          if (fragment.markdown.isNotEmpty) rich.add(fragment.markdown);
+          if (fragment.markdown.isNotEmpty) {
+            rich.add(_PasteText(fragment.markdown, fragment.ticket));
+          }
           warnings.addAll(fragment.warnings);
           for (final file in fragment.files) {
             await addFile(file);
           }
         } catch (_) {
-          if (text.isNotEmpty) rich.add(await plain(text));
+          if (text.isNotEmpty) {
+            final fallback = await plain(text);
+            rich.add(fallback);
+            if (fallback.ticket case final ticket?) {
+              textParts.last = [
+                PastePart.ticket(ticket, selection: 'inputPlainText'),
+              ];
+            }
+          }
           warnings.add('富文本排版无法完整转换，已保留可读文字。');
         }
       } else if (text.isNotEmpty) {
         final table = await plain(text);
         rich.add(table);
-        if (table != text) {
+        if (table.ticket case final ticket?) {
+          textParts.last = [
+            PastePart.ticket(ticket, selection: 'inputPlainText'),
+          ];
+        }
+        if (table.value != text) {
           await addFile(textFile(text, 'tsv', 'table-$index'));
           warnings.add('表格已转换为 Markdown，完整数据保留在 TSV 附件中。');
         }
       } else if (item.canProvide(Formats.uri)) {
         final uri = await item.readValue(Formats.uri);
         if (uri != null) {
-          texts.add(uri.uri.toString());
-          rich.add(uri.uri.toString());
+          addText(uri.uri.toString());
+          rich.add(_PasteText(uri.uri.toString()));
         }
       }
       // Preserve the original downloadable item; rich text flavors are handled above.
@@ -199,8 +255,8 @@ Future<PastedContent> readPaste([
             final rtfText = await convertRtf(
               decodeClipboardText(await rtf.readAsBytes()),
             );
-            texts.add(rtfText);
-            rich.add(await plain(rtfText));
+            addText(rtfText.value, rtfText.parts);
+            rich.add(await plain(rtfText.value, parent: rtfText.ticket));
           }
         }
       }
@@ -216,7 +272,7 @@ Future<PastedContent> readPaste([
       final office = await readOfficeClipboard(sequence);
       warnings.addAll((office['warnings'] as List? ?? []).cast<String>());
       formats.addAll((office['formats'] as List? ?? []).cast<String>());
-      var officeText = '';
+      _PasteText? officeText;
       for (final raw in (office['files'] as List? ?? [])) {
         final entry = raw as Map;
         final bytes = entry['bytes'] as Uint8List;
@@ -240,7 +296,9 @@ Future<PastedContent> readPaste([
                     'spreadsheet',
                     decodeClipboardText(bytes),
                   );
-            if (fragment.markdown.isNotEmpty) officeText = fragment.markdown;
+            if (fragment.markdown.isNotEmpty) {
+              officeText = _PasteText(fragment.markdown, fragment.ticket);
+            }
             warnings.addAll(fragment.warnings);
           } catch (_) {
             warnings.add('Excel 原始表格已保留为 XML 附件。');
@@ -248,10 +306,10 @@ Future<PastedContent> readPaste([
         }
         if (name.endsWith('.rtf') && texts.isEmpty && rich.isEmpty) {
           officeText = await convertRtf(decodeClipboardText(bytes));
-          texts.add(officeText);
+          addText(officeText.value, officeText.parts);
         }
       }
-      if (officeText.isNotEmpty) {
+      if (officeText != null && officeText.value.isNotEmpty) {
         rich
           ..clear()
           ..add(officeText);
@@ -266,7 +324,9 @@ Future<PastedContent> readPaste([
   }
   return PastedContent(
     text: texts.join('\n\n'),
-    markdown: rich.join('\n\n'),
+    markdown: rich.map((entry) => entry.value).join('\n\n'),
+    textParts: _joinParts(textParts),
+    markdownParts: _joinParts(rich.map((entry) => entry.parts)),
     files: files,
     warnings: warnings.toList(),
     formats: formats.toList(),

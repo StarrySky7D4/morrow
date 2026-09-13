@@ -10,14 +10,23 @@ import 'generated/studio.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 
 class RustStudioPlugin implements StudioBackend {
-  RustStudioPlugin(this.host);
+  RustStudioPlugin(this.host, {this.captureScope});
+  final String? captureScope;
   final RustWorkbench host;
   @override
   Future<RichFragment> capture(
     String format,
     String source, {
     String imagePrefix = "clipboard",
-  }) => captureWithPlugin(host, format, source, imagePrefix);
+    String? parentTicket,
+  }) => captureWithPlugin(
+    host,
+    format,
+    source,
+    imagePrefix,
+    scope: captureScope,
+    parent: parentTicket,
+  );
   Future<wire.ServiceResponseReader> _call(
     wire.ServiceAction action,
     void Function(wire.ServiceRequestBuilder) configure,

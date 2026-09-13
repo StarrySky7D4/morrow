@@ -27,6 +27,13 @@ enum Action {
   uiOpen,
   uiEvent,
   uiClose,
+  openCaptureScope,
+  closeCaptureScope,
+  beginCaptureUpload,
+  appendCaptureUpload,
+  finishPaste,
+  finishCapturedSave,
+  abortCaptureUpload,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -60,6 +67,17 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'uiOpen', codeOrder: 19, ordinal: 19),
     EnumerantSchemaInfo(name: 'uiEvent', codeOrder: 20, ordinal: 20),
     EnumerantSchemaInfo(name: 'uiClose', codeOrder: 21, ordinal: 21),
+    EnumerantSchemaInfo(name: 'openCaptureScope', codeOrder: 22, ordinal: 22),
+    EnumerantSchemaInfo(name: 'closeCaptureScope', codeOrder: 23, ordinal: 23),
+    EnumerantSchemaInfo(name: 'beginCaptureUpload', codeOrder: 24, ordinal: 24),
+    EnumerantSchemaInfo(
+      name: 'appendCaptureUpload',
+      codeOrder: 25,
+      ordinal: 25,
+    ),
+    EnumerantSchemaInfo(name: 'finishPaste', codeOrder: 26, ordinal: 26),
+    EnumerantSchemaInfo(name: 'finishCapturedSave', codeOrder: 27, ordinal: 27),
+    EnumerantSchemaInfo(name: 'abortCaptureUpload', codeOrder: 28, ordinal: 28),
   ],
 );
 
@@ -105,6 +123,10 @@ final class RequestReader extends StructReader {
   int get totalLength => getUint64Field(24);
 
   Uint8List? get sha256 => getDataField(10);
+
+  String? get captureScope => getTextField(11);
+
+  String? get captureParent => getTextField(12);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -180,6 +202,14 @@ final class RequestBuilder extends StructBuilder {
   set sha256(Uint8List? v) {
     setDataField(10, v);
   }
+
+  set captureScope(String? v) {
+    setTextField(11, v);
+  }
+
+  set captureParent(String? v) {
+    setTextField(12, v);
+  }
 }
 
 final class _RequestFactory
@@ -189,7 +219,7 @@ final class _RequestFactory
   @override
   int get dataWords => 4;
   @override
-  int get ptrWords => 11;
+  int get ptrWords => 13;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -206,7 +236,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 4,
-  pointerWords: 11,
+  pointerWords: 13,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -344,6 +374,22 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'captureScope',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'captureParent',
+      codeOrder: 18,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
   ],
 );
 
@@ -395,6 +441,10 @@ final class ResponseReader extends StructReader {
   bool get pluginApproved => getBoolField(18);
 
   bool get pluginAvailable => getBoolField(19);
+
+  String? get captureScope => getTextField(10);
+
+  String? get captureTicket => getTextField(11);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -486,6 +536,14 @@ final class ResponseBuilder extends StructBuilder {
   set pluginAvailable(bool v) {
     setBoolField(19, v);
   }
+
+  set captureScope(String? v) {
+    setTextField(10, v);
+  }
+
+  set captureTicket(String? v) {
+    setTextField(11, v);
+  }
 }
 
 final class _ResponseFactory
@@ -495,7 +553,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 10;
+  int get ptrWords => 12;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -512,7 +570,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 10,
+  pointerWords: 12,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -682,7 +740,693 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'captureScope',
+      codeOrder: 21,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'captureTicket',
+      codeOrder: 22,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
   ],
 );
 
 final responseFactory = _ResponseFactory();
+
+final class PastePartReader extends StructReader {
+  PastePartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pastePartSchema;
+
+  String? get ticket => getTextField(0);
+
+  String? get literal => getTextField(1);
+
+  String? get selection => getTextField(2);
+}
+
+final class PastePartBuilder extends StructBuilder {
+  PastePartBuilder(super.raw);
+
+  @override
+  PastePartReader asReader() => PastePartReader(rawToReader());
+
+  set ticket(String? v) {
+    setTextField(0, v);
+  }
+
+  set literal(String? v) {
+    setTextField(1, v);
+  }
+
+  set selection(String? v) {
+    setTextField(2, v);
+  }
+}
+
+final class _PastePartFactory
+    extends StructFactory<PastePartReader, PastePartBuilder> {
+  @override
+  StructSchemaInfo get schema => pastePartSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  PastePartReader fromRawReader(RawStructReader r) => PastePartReader(r);
+  @override
+  PastePartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PastePartReader(r, capabilities: capabilities);
+  @override
+  PastePartBuilder fromRawBuilder(RawStructBuilder r) => PastePartBuilder(r);
+}
+
+const StructSchemaInfo pastePartSchema = StructSchemaInfo(
+  id: 0xf320065c6b2cfc3f,
+  displayName: 'host.capnp:PastePart',
+  shortName: 'PastePart',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'ticket',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'literal',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selection',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pastePartFactory = _PastePartFactory();
+
+final class PasteEventReader extends StructReader {
+  PasteEventReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pasteEventSchema;
+
+  String? get id => getTextField(0);
+
+  String? get field => getTextField(1);
+
+  String? get before => getTextField(2);
+
+  int get startUtf16 => getUint32Field(0);
+
+  int get endUtf16 => getUint32Field(4);
+
+  ListReader<PastePartReader>? get parts => getStructListFieldWith(
+    3,
+    (r) => PastePartReader(r, capabilities: capabilityTable),
+  );
+
+  String? get after => getTextField(4);
+}
+
+final class PasteEventBuilder extends StructBuilder {
+  PasteEventBuilder(super.raw);
+
+  @override
+  PasteEventReader asReader() => PasteEventReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set field(String? v) {
+    setTextField(1, v);
+  }
+
+  set before(String? v) {
+    setTextField(2, v);
+  }
+
+  set startUtf16(int v) {
+    setUint32Field(0, v);
+  }
+
+  set endUtf16(int v) {
+    setUint32Field(4, v);
+  }
+
+  ListBuilder<PastePartBuilder> initParts(int length) {
+    return initStructListFieldWith(3, length, (r) => PastePartBuilder(r), 0, 3);
+  }
+
+  set after(String? v) {
+    setTextField(4, v);
+  }
+}
+
+final class _PasteEventFactory
+    extends StructFactory<PasteEventReader, PasteEventBuilder> {
+  @override
+  StructSchemaInfo get schema => pasteEventSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 5;
+  @override
+  PasteEventReader fromRawReader(RawStructReader r) => PasteEventReader(r);
+  @override
+  PasteEventReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PasteEventReader(r, capabilities: capabilities);
+  @override
+  PasteEventBuilder fromRawBuilder(RawStructBuilder r) => PasteEventBuilder(r);
+}
+
+const StructSchemaInfo pasteEventSchema = StructSchemaInfo(
+  id: 0xadd75dfc6d710809,
+  displayName: 'host.capnp:PasteEvent',
+  shortName: 'PasteEvent',
+  dataWords: 1,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'field',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'before',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'startUtf16',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endUtf16',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'parts',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xf320065c6b2cfc3f)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'after',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pasteEventFactory = _PasteEventFactory();
+
+final class PasteUploadReader extends StructReader {
+  PasteUploadReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pasteUploadSchema;
+
+  String? get scope => getTextField(0);
+
+  PasteEventReader? get event => getStructFieldWith(
+    1,
+    (r) => PasteEventReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class PasteUploadBuilder extends StructBuilder {
+  PasteUploadBuilder(super.raw);
+
+  @override
+  PasteUploadReader asReader() => PasteUploadReader(rawToReader());
+
+  set scope(String? v) {
+    setTextField(0, v);
+  }
+
+  PasteEventBuilder initEvent() {
+    return initStructFieldWith(1, (r) => PasteEventBuilder(r), 1, 5);
+  }
+
+  bool hasEvent() => hasPointerField(1);
+}
+
+final class _PasteUploadFactory
+    extends StructFactory<PasteUploadReader, PasteUploadBuilder> {
+  @override
+  StructSchemaInfo get schema => pasteUploadSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  PasteUploadReader fromRawReader(RawStructReader r) => PasteUploadReader(r);
+  @override
+  PasteUploadReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PasteUploadReader(r, capabilities: capabilities);
+  @override
+  PasteUploadBuilder fromRawBuilder(RawStructBuilder r) =>
+      PasteUploadBuilder(r);
+}
+
+const StructSchemaInfo pasteUploadSchema = StructSchemaInfo(
+  id: 0xc3f75fa89b47accb,
+  displayName: 'host.capnp:PasteUpload',
+  shortName: 'PasteUpload',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'scope',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'event',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xadd75dfc6d710809),
+      ),
+    ),
+  ],
+);
+
+final pasteUploadFactory = _PasteUploadFactory();
+
+final class AttachmentAliasReader extends StructReader {
+  AttachmentAliasReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = attachmentAliasSchema;
+
+  String? get id => getTextField(0);
+
+  String? get location => getTextField(1);
+
+  String? get name => getTextField(2);
+}
+
+final class AttachmentAliasBuilder extends StructBuilder {
+  AttachmentAliasBuilder(super.raw);
+
+  @override
+  AttachmentAliasReader asReader() => AttachmentAliasReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set location(String? v) {
+    setTextField(1, v);
+  }
+
+  set name(String? v) {
+    setTextField(2, v);
+  }
+}
+
+final class _AttachmentAliasFactory
+    extends StructFactory<AttachmentAliasReader, AttachmentAliasBuilder> {
+  @override
+  StructSchemaInfo get schema => attachmentAliasSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  AttachmentAliasReader fromRawReader(RawStructReader r) =>
+      AttachmentAliasReader(r);
+  @override
+  AttachmentAliasReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => AttachmentAliasReader(r, capabilities: capabilities);
+  @override
+  AttachmentAliasBuilder fromRawBuilder(RawStructBuilder r) =>
+      AttachmentAliasBuilder(r);
+}
+
+const StructSchemaInfo attachmentAliasSchema = StructSchemaInfo(
+  id: 0x9623e4010f0f75ab,
+  displayName: 'host.capnp:AttachmentAlias',
+  shortName: 'AttachmentAlias',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'location',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final attachmentAliasFactory = _AttachmentAliasFactory();
+
+final class EditorSnapshotReader extends StructReader {
+  EditorSnapshotReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = editorSnapshotSchema;
+
+  String? get title => getTextField(0);
+
+  String? get description => getTextField(1);
+
+  String? get hypothesis => getTextField(2);
+
+  String? get conclusion => getTextField(3);
+
+  String? get todos => getTextField(4);
+
+  ListReader<AttachmentAliasReader>? get aliases => getStructListFieldWith(
+    5,
+    (r) => AttachmentAliasReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class EditorSnapshotBuilder extends StructBuilder {
+  EditorSnapshotBuilder(super.raw);
+
+  @override
+  EditorSnapshotReader asReader() => EditorSnapshotReader(rawToReader());
+
+  set title(String? v) {
+    setTextField(0, v);
+  }
+
+  set description(String? v) {
+    setTextField(1, v);
+  }
+
+  set hypothesis(String? v) {
+    setTextField(2, v);
+  }
+
+  set conclusion(String? v) {
+    setTextField(3, v);
+  }
+
+  set todos(String? v) {
+    setTextField(4, v);
+  }
+
+  ListBuilder<AttachmentAliasBuilder> initAliases(int length) {
+    return initStructListFieldWith(
+      5,
+      length,
+      (r) => AttachmentAliasBuilder(r),
+      0,
+      3,
+    );
+  }
+}
+
+final class _EditorSnapshotFactory
+    extends StructFactory<EditorSnapshotReader, EditorSnapshotBuilder> {
+  @override
+  StructSchemaInfo get schema => editorSnapshotSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 6;
+  @override
+  EditorSnapshotReader fromRawReader(RawStructReader r) =>
+      EditorSnapshotReader(r);
+  @override
+  EditorSnapshotReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EditorSnapshotReader(r, capabilities: capabilities);
+  @override
+  EditorSnapshotBuilder fromRawBuilder(RawStructBuilder r) =>
+      EditorSnapshotBuilder(r);
+}
+
+const StructSchemaInfo editorSnapshotSchema = StructSchemaInfo(
+  id: 0xc12df185fc53d9c0,
+  displayName: 'host.capnp:EditorSnapshot',
+  shortName: 'EditorSnapshot',
+  dataWords: 0,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'description',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hypothesis',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'conclusion',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'todos',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'aliases',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x9623e4010f0f75ab)),
+      ),
+    ),
+  ],
+);
+
+final editorSnapshotFactory = _EditorSnapshotFactory();
+
+final class CapturedSaveReader extends StructReader {
+  CapturedSaveReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = capturedSaveSchema;
+
+  String? get scope => getTextField(0);
+
+  String? get operation => getTextField(1);
+
+  String? get target => getTextField(2);
+
+  int get revision => getUint64Field(0);
+
+  Uint8List? get payload => getDataField(3);
+
+  EditorSnapshotReader? get snapshot => getStructFieldWith(
+    4,
+    (r) => EditorSnapshotReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class CapturedSaveBuilder extends StructBuilder {
+  CapturedSaveBuilder(super.raw);
+
+  @override
+  CapturedSaveReader asReader() => CapturedSaveReader(rawToReader());
+
+  set scope(String? v) {
+    setTextField(0, v);
+  }
+
+  set operation(String? v) {
+    setTextField(1, v);
+  }
+
+  set target(String? v) {
+    setTextField(2, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set payload(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  EditorSnapshotBuilder initSnapshot() {
+    return initStructFieldWith(4, (r) => EditorSnapshotBuilder(r), 0, 6);
+  }
+
+  bool hasSnapshot() => hasPointerField(4);
+}
+
+final class _CapturedSaveFactory
+    extends StructFactory<CapturedSaveReader, CapturedSaveBuilder> {
+  @override
+  StructSchemaInfo get schema => capturedSaveSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 5;
+  @override
+  CapturedSaveReader fromRawReader(RawStructReader r) => CapturedSaveReader(r);
+  @override
+  CapturedSaveReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => CapturedSaveReader(r, capabilities: capabilities);
+  @override
+  CapturedSaveBuilder fromRawBuilder(RawStructBuilder r) =>
+      CapturedSaveBuilder(r);
+}
+
+const StructSchemaInfo capturedSaveSchema = StructSchemaInfo(
+  id: 0xa95f9bc2619c5db5,
+  displayName: 'host.capnp:CapturedSave',
+  shortName: 'CapturedSave',
+  dataWords: 1,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'scope',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operation',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'target',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'payload',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'snapshot',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: StructRefTypeSchemaInfo(0xc12df185fc53d9c0),
+      ),
+    ),
+  ],
+);
+
+final capturedSaveFactory = _CapturedSaveFactory();

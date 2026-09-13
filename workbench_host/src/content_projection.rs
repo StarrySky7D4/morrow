@@ -193,7 +193,9 @@ impl Workbench {
             .batch
             .as_ref()
             .ok_or("missing batch")?
-            .observations[0];
+            .observations
+            .last()
+            .ok_or("missing final workbench observation")?;
         let invocation = Invocation::decode(&observation.invocation)?;
         let transform = invocation
             .transform()

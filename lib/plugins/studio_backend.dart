@@ -19,6 +19,7 @@ abstract class StudioBackend {
     String format,
     String source, {
     String imagePrefix = "clipboard",
+    String? parentTicket,
   });
   Future<List<LyricLine>> parseLyrics(String text);
   Future<int?> matchLyrics(

@@ -448,6 +448,7 @@ class StudioDialog extends StatelessWidget {
     this.icon = Icons.auto_awesome_outlined,
     this.actions = const [],
     this.width = 460,
+    this.canClose = true,
   });
   final String title;
   final String? subtitle;
@@ -455,6 +456,7 @@ class StudioDialog extends StatelessWidget {
   final Widget content;
   final List<Widget> actions;
   final double width;
+  final bool canClose;
   @override
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
@@ -519,7 +521,7 @@ class StudioDialog extends StatelessWidget {
                     ),
                     IconButton(
                       tooltip: '关闭弹窗',
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: canClose ? () => Navigator.pop(context) : null,
                       icon: Icon(Icons.close_rounded, size: 18, color: p.muted),
                     ),
                   ],

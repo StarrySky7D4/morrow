@@ -10,8 +10,10 @@ class RichFragment {
     this.markdown, {
     this.files = const [],
     this.warnings = const [],
+    this.ticket,
   });
   final String markdown;
+  final String? ticket;
   final List<XFile> files;
   final List<String> warnings;
 }

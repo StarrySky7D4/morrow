@@ -104,6 +104,9 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             }
         }
         wire::Action::Mutate => {
+            if !text(r.get_capture_scope())?.is_empty() {
+                return Err("captured saves require their complete editor metadata".into());
+            }
             let req = codec::decode_request(r.get_payload()?)?;
             let operation = text(r.get_operation())?;
             let record = if req.action == Action::Create {
@@ -240,8 +243,102 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             }
             out.set_payload(&host.save_preferences(&text(r.get_operation())?, input.to_vec())?);
         }
+        wire::Action::OpenCaptureScope => {
+            let scope = host.open_capture_scope(&id, r.get_revision())?;
+            out.set_capture_scope(&scope);
+        }
+        wire::Action::CloseCaptureScope => {
+            host.close_capture_scope(&text(r.get_capture_scope())?);
+        }
+        wire::Action::BeginCaptureUpload => {
+            host.prepare_write()?;
+            let token = host.capture_transfers.begin(
+                text(r.get_operation())?,
+                r.get_total_length(),
+                r.get_sha256()?,
+                crate::now(host.start),
+            )?;
+            out.set_transfer(&token);
+        }
+        wire::Action::AppendCaptureUpload => {
+            let token = text(r.get_transfer())?;
+            let offset = host.capture_transfers.append(
+                &token,
+                r.get_offset(),
+                r.get_payload()?,
+                crate::now(host.start),
+            )?;
+            out.set_transfer(&token);
+            out.set_offset(offset as u64);
+        }
+        wire::Action::AbortCaptureUpload => {
+            host.capture_transfers.abort(&text(r.get_transfer())?);
+        }
+        wire::Action::FinishPaste => {
+            let (operation, bytes) = host
+                .capture_transfers
+                .finish(&text(r.get_transfer())?, crate::now(host.start))?;
+            let message = editor_message(&bytes)?;
+            let upload = message.get_root::<wire::paste_upload::Reader>()?;
+            let event = paste_event(upload.get_event()?)?;
+            if event.id != operation {
+                return Err("paste upload identity mismatch".into());
+            }
+            host.record_paste(&text(upload.get_scope())?, event)?;
+        }
+        wire::Action::FinishCapturedSave => {
+            let (operation, bytes) = host
+                .capture_transfers
+                .finish(&text(r.get_transfer())?, crate::now(host.start))?;
+            let message = editor_message(&bytes)?;
+            let upload = message.get_root::<wire::captured_save::Reader>()?;
+            if text(upload.get_operation())? != operation {
+                return Err("save upload identity mismatch".into());
+            }
+            let target = text(upload.get_target())?;
+            let scope = text(upload.get_scope())?;
+            let revision = upload.get_revision();
+            let req = codec::decode_request(upload.get_payload()?)?;
+            let snapshot = editor_snapshot(upload.get_snapshot()?)?;
+            let record = match req.action {
+                Action::Create if revision == 0 && req.proposed.id == target => {
+                    host.create_captured(&operation, req.proposed, &scope, snapshot)?
+                }
+                Action::Edit if revision > 0 && req.proposed.id == target => host.apply_captured(
+                    crate::Mutation {
+                        operation: &operation,
+                        id: &target,
+                        revision,
+                        action: req.action,
+                        proposed: Some(req.proposed),
+                        text: &req.text,
+                        flag: req.flag,
+                    },
+                    &scope,
+                    snapshot,
+                )?,
+                _ => return Err("captured save target or route".into()),
+            };
+            out.set_revision(record.revision);
+            out.set_payload(&codec::encode_response(&Response {
+                idea: record.idea,
+                ids: vec![],
+            })?);
+        }
         wire::Action::Capture => {
-            out.set_payload(&host.capture(r.get_payload()?.to_vec())?);
+            let scope = text(r.get_capture_scope())?;
+            let parent = text(r.get_capture_parent())?;
+            if scope.is_empty() {
+                if !parent.is_empty() {
+                    return Err("capture parent requires an editor scope".into());
+                }
+                out.set_payload(&host.capture(r.get_payload()?.to_vec())?);
+            } else {
+                let (ticket, bytes) =
+                    host.capture_scoped(&scope, r.get_payload()?.to_vec(), &parent)?;
+                out.set_capture_ticket(&ticket);
+                out.set_payload(&bytes);
+            }
         }
         wire::Action::Service => {
             out.set_payload(&host.service(r.get_payload()?.to_vec())?);
@@ -285,4 +382,77 @@ fn ui_reply(reply: morrow_plugin_runtime::inline_ui::Reply, mut out: wire::respo
         out.set_ui_code(code);
         out.set_ui_failure(message.as_str());
     }
+}
+
+// Large editor metadata uses the same bounded ordered transfer primitive in a separate lane.
+// It remains runtime Cap'n Proto; the host produces the persistent Protobuf projection itself.
+fn editor_message(bytes: &[u8]) -> Result<capnp::message::Reader<capnp::serialize::OwnedSegments>> {
+    if bytes.is_empty() || bytes.len() > 4 * 1024 * 1024 {
+        return Err("editor upload bounds".into());
+    }
+    let mut cursor = std::io::Cursor::new(bytes);
+    let message = serialize::read_message(
+        &mut cursor,
+        ReaderOptions {
+            traversal_limit_in_words: Some(1024 * 1024),
+            nesting_limit: 20,
+        },
+    )?;
+    if cursor.position() != bytes.len() as u64 {
+        return Err("trailing editor upload bytes".into());
+    }
+    Ok(message)
+}
+fn paste_event(r: wire::paste_event::Reader<'_>) -> Result<crate::capture_provenance::PasteEvent> {
+    use crate::capture_provenance::{PasteEvent, PastePart};
+    let raw = r.get_parts()?;
+    if raw.len() > 1024 {
+        return Err("paste part budget".into());
+    }
+    let parts = raw
+        .iter()
+        .map(|v| {
+            Ok(PastePart {
+                ticket: text(v.get_ticket())?,
+                literal: text(v.get_literal())?,
+                selection: text(v.get_selection())?,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(PasteEvent {
+        id: text(r.get_id())?,
+        field: text(r.get_field())?,
+        before: text(r.get_before())?,
+        start_utf16: r.get_start_utf16(),
+        end_utf16: r.get_end_utf16(),
+        parts,
+        after: text(r.get_after())?,
+    })
+}
+fn editor_snapshot(
+    r: wire::editor_snapshot::Reader<'_>,
+) -> Result<crate::capture_provenance::EditorSnapshot> {
+    use crate::capture_provenance::{AttachmentAlias, EditorSnapshot};
+    let raw = r.get_aliases()?;
+    if raw.len() > 1024 {
+        return Err("editor alias budget".into());
+    }
+    let aliases = raw
+        .iter()
+        .map(|v| {
+            Ok(AttachmentAlias {
+                id: text(v.get_id())?,
+                location: text(v.get_location())?,
+                name: text(v.get_name())?,
+            })
+        })
+        .collect::<Result<Vec<_>>>()?;
+    Ok(EditorSnapshot {
+        title: text(r.get_title())?,
+        description: text(r.get_description())?,
+        hypothesis: text(r.get_hypothesis())?,
+        conclusion: text(r.get_conclusion())?,
+        todos: text(r.get_todos())?,
+        aliases,
+    })
 }

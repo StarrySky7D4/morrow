@@ -19,11 +19,13 @@ use std::{
     time::{Instant, SystemTime, UNIX_EPOCH},
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-mod storage;
-mod evidence;
+pub mod capture_provenance;
 mod content_projection;
-pub mod projection;
+mod evidence;
 mod preferences_evidence;
+pub mod projection;
+pub mod projection_v2;
+mod storage;
 pub mod transfer;
 
 pub struct Record {
@@ -53,6 +55,8 @@ pub struct Workbench {
     undo: BTreeMap<String, (u64, u64)>,
     staged: BTreeMap<(String, String), Attachment>,
     transfers: transfer::Transfers,
+    pub(crate) capture_transfers: transfer::Transfers,
+    capture_scopes: capture_provenance::CaptureScopes,
 }
 fn command(action: Action) -> Request {
     Request {
@@ -158,6 +162,8 @@ impl Workbench {
             undo: BTreeMap::new(),
             staged: BTreeMap::new(),
             transfers: transfer::Transfers::default(),
+            capture_transfers: transfer::Transfers::default(),
+            capture_scopes: capture_provenance::CaptureScopes::default(),
         })
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
@@ -175,6 +181,7 @@ impl Workbench {
         }
         let closed = self.pool.close_all(&mut self.host);
         self.plugin = None;
+        self.capture_scopes.clear();
         // Disconnecting instances must not prevent a pending durable audit flush attempt.
         let flushed = self.host.flush_pending();
         closed?;
@@ -234,7 +241,11 @@ impl Workbench {
     fn run(&mut self, input: Request) -> Result<Response> {
         Ok(self.run_observed(input, false)?.0)
     }
-    fn run_observed(&mut self, input: Request, capture: bool) -> Result<(Response, Option<morrow_core::task_evidence::Evidence>)> {
+    fn run_observed(
+        &mut self,
+        input: Request,
+        capture: bool,
+    ) -> Result<(Response, Option<morrow_core::task_evidence::Evidence>)> {
         self.counter = self
             .counter
             .checked_add(1)
@@ -250,20 +261,27 @@ impl Workbench {
         )?;
         let start = self.start;
         let result = if capture {
-            self.pool.record_transform(
-                self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                &mut self.host,
-                self.plugin.as_ref().ok_or("plugin unavailable")?,
-                &task,
-            ).map(|captured| { let (report, evidence) = captured.into_parts(); (report, Some(evidence)) })
+            self.pool
+                .record_transform(
+                    self.manager.as_ref().ok_or("plugin manager unavailable")?,
+                    &mut self.host,
+                    self.plugin.as_ref().ok_or("plugin unavailable")?,
+                    &task,
+                )
+                .map(|captured| {
+                    let (report, evidence) = captured.into_parts();
+                    (report, Some(evidence))
+                })
         } else {
-            self.pool.run_task(
-                self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                &mut self.host,
-                self.plugin.as_ref().ok_or("plugin unavailable")?,
-                &task,
-                || now(start),
-            ).map(|report| (report, None))
+            self.pool
+                .run_task(
+                    self.manager.as_ref().ok_or("plugin manager unavailable")?,
+                    &mut self.host,
+                    self.plugin.as_ref().ok_or("plugin unavailable")?,
+                    &task,
+                    || now(start),
+                )
+                .map(|report| (report, None))
         };
         self.finish_stopped_session();
         let (r, evidence) = result?;
@@ -438,10 +456,9 @@ impl Workbench {
         req.flag = flag;
         req.now_ms = time;
         let undo = if action == Action::Restore {
-            self.undo.get(id).map(|&(revision, deadline)| projection::Undo {
-                revision,
-                deadline,
-            })
+            self.undo
+                .get(id)
+                .map(|&(revision, deadline)| projection::Undo { revision, deadline })
         } else {
             None
         };
@@ -660,6 +677,7 @@ impl Drop for Workbench {
         }
         let _ = self.pool.close_all(&mut self.host);
         self.plugin = None;
+        self.capture_scopes.clear();
     }
 }
 
