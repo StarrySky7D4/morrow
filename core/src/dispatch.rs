@@ -225,12 +225,34 @@ impl HostRuntime {
         clock: impl FnMut() -> u64,
         guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Receipt> {
+        self.edit_content_guarded_with_evidence(connection, change, &[], clock, guard)
+    }
+    pub fn edit_content_with_evidence(
+        &mut self,
+        connection: &Connection,
+        change: &crate::content_change::ContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.edit_content_guarded_with_evidence(connection, change, evidence, clock, |_| Ok(()))
+    }
+    /// Historical material is saved in the same transaction as content; grants and optional
+    /// live proof checks remain mandatory at every original authorization boundary.
+    pub fn edit_content_guarded_with_evidence(
+        &mut self,
+        connection: &Connection,
+        change: &crate::content_change::ContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
         let grant = self.content_grant(connection, GrantKind::EditContent, &change.card_id)?;
-        self.policy.edit_content_guarded(
+        self.policy.edit_content_guarded_with_evidence(
             connection.instance,
             grant,
             &mut self.store,
             change,
+            evidence,
             clock,
             guard,
         )
@@ -242,13 +264,24 @@ impl HostRuntime {
         card: &crate::content::CardRecord,
         clock: impl FnMut() -> u64,
     ) -> Result<crate::transaction::Receipt> {
+        self.create_content_with_evidence(connection, operation, card, &[], clock)
+    }
+    pub fn create_content_with_evidence(
+        &mut self,
+        connection: &Connection,
+        operation: &str,
+        card: &crate::content::CardRecord,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
         let grant = self.content_grant(connection, GrantKind::CreateContent, &card.summary().id)?;
-        self.policy.create_content(
+        self.policy.create_content_with_evidence(
             connection.instance,
             grant,
             &mut self.store,
             operation,
             card,
+            evidence,
             clock,
         )
     }

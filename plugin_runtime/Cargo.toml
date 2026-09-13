@@ -94,3 +94,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_transform_replay"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_committed_evidence"
+required-features = ["packages"]

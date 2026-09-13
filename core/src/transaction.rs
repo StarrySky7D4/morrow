@@ -12,6 +12,7 @@ pub mod proto {
 }
 const MAGIC: &[u8; 8] = b"MORROWT1";
 pub const MAX_EVENT_BYTES: usize = 16 * 1024 * 1024;
+pub const MAX_TASK_EVIDENCE: usize = 16;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Receipt {
     pub operation_id: String,
@@ -210,6 +211,17 @@ pub fn decode_command(raw: &[u8]) -> Result<proto::Command> {
     Ok(value)
 }
 pub fn encode_commit(command: Vec<u8>, card: &CardRecord) -> Result<Vec<u8>> {
+    encode_commit_with_evidence(command, card, &[])
+}
+/// Ordered evidence digests are host-supplied historical associations, not restored grants.
+pub fn encode_commit_with_evidence(
+    command: Vec<u8>,
+    card: &CardRecord,
+    evidence: &[[u8; 32]],
+) -> Result<Vec<u8>> {
+    if evidence.len() > MAX_TASK_EVIDENCE {
+        return Err(Error::Limit);
+    }
     let value = decode_command(&command)?;
     let summary = card.summary();
     if let Some(proto::command::Action::Rename(rename)) = &value.action
@@ -236,7 +248,8 @@ pub fn encode_commit(command: Vec<u8>, card: &CardRecord) -> Result<Vec<u8>> {
         return Err(Error::Integrity);
     }
     let commit = proto::Commit {
-        schema_version: 1,
+        schema_version: if evidence.is_empty() { 1 } else { 2 },
+        task_evidence_sha256: evidence.iter().map(|d| d.to_vec()).collect(),
         attachment_sha256: card
             .attachments()
             .iter()
@@ -259,8 +272,14 @@ pub fn decode_commit(bytes: &[u8]) -> Result<(proto::Commit, Receipt)> {
     preflight("morrow.transaction.v1.Commit", &raw)?;
     let commit =
         proto::Commit::decode(raw.as_slice()).map_err(|_| Error::Invalid("stored commit"))?;
-    if commit.schema_version != 1 {
+    if !matches!(commit.schema_version, 1 | 2) {
         return Err(Error::UnsupportedVersion);
+    }
+    if (commit.schema_version == 1) != commit.task_evidence_sha256.is_empty()
+        || commit.task_evidence_sha256.len() > MAX_TASK_EVIDENCE
+        || commit.task_evidence_sha256.iter().any(|v| v.len() != 32)
+    {
+        return Err(Error::Integrity);
     }
     let command = decode_command(&commit.command)?;
     if commit.command_sha256 != Sha256::digest(&commit.command).as_slice()

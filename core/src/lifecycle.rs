@@ -494,11 +494,25 @@ impl HostPolicy {
         grant: Grant,
         store: &mut crate::store::Store,
         change: &crate::content_change::ContentChange,
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
+        self.edit_content_guarded_with_evidence(instance, grant, store, change, &[], clock, guard)
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
+    pub fn edit_content_guarded_with_evidence(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        change: &crate::content_change::ContentChange,
+        evidence: &[crate::task_evidence::Evidence],
         mut clock: impl FnMut() -> u64,
         mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Receipt> {
         change.validate()?;
-        store.edit_content(change, || {
+        store.edit_content_with_evidence(change, evidence, || {
             let now = clock();
             self.expire_drains(now)?;
             guard(now)?;
@@ -521,11 +535,25 @@ impl HostPolicy {
         store: &mut crate::store::Store,
         operation: &str,
         card: &CardRecord,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.create_content_with_evidence(instance, grant, store, operation, card, &[], clock)
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
+    pub fn create_content_with_evidence(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        operation: &str,
+        card: &CardRecord,
+        evidence: &[crate::task_evidence::Evidence],
         mut clock: impl FnMut() -> u64,
     ) -> Result<crate::transaction::Receipt> {
         identity(operation)?;
         let id = card.summary().id;
-        store.create_authorized(operation, card, || {
+        store.create_authorized_with_evidence(operation, card, evidence, || {
             let now = clock();
             self.expire_drains(now)?;
             self.authorize_scope(

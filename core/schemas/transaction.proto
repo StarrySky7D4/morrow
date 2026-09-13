@@ -35,6 +35,8 @@ message Commit {
   bytes content_sha256 = 7;
   string event_id = 8;
   repeated bytes attachment_sha256 = 9;
+  // v2: ordered immutable evidence references; raw payloads live in the same content transaction.
+  repeated bytes task_evidence_sha256 = 10;
 }
 
 // Full content edits retain outer unknown fields, identity and existing relations.

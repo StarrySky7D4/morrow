@@ -119,10 +119,10 @@ impl Store {
                 return Ok(AuditBindingState::Uninitialized);
             }
         }
-        if app != APPLICATION_ID || !matches!(version, 4..=6) {
+        if app != APPLICATION_ID || !matches!(version, 4..=7) {
             return Err(Error::UnsupportedVersion);
         }
-        if version == 6
+        if version >= 6
             && let Some(binding) = read(&snapshot)?
         {
             return Ok(AuditBindingState::Bound(binding));

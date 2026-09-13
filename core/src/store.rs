@@ -11,6 +11,7 @@ use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
 mod binding;
 mod blobs;
+mod evidence;
 pub use binding::{AuditBinding, AuditBindingState};
 mod records;
 mod seals;
@@ -128,7 +129,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5 | 6) {
+        if app != APPLICATION_ID || !matches!(version, 5..=7) {
             return Err(Error::UnsupportedVersion);
         }
         let store = Self {
@@ -190,7 +191,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=6))
+            && (app != APPLICATION_ID || !matches!(version, 4..=7))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -235,7 +236,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=6) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=7) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -273,6 +274,16 @@ impl Store {
             boundary("binding-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("binding-after-commit");
+        }
+        if version < 7 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(evidence::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 7))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("evidence-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("evidence-migration-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -352,6 +363,7 @@ impl Store {
             operation_id,
             &id,
             command,
+            &[],
             |_| Ok(card.clone()),
             || Ok(()),
             true,
@@ -374,6 +386,7 @@ impl Store {
             operation_id,
             card_id,
             command,
+            &[],
             |card| {
                 card.ok_or(Error::NotFound)?
                     .with_attachments(expected_revision, attachments)
@@ -382,10 +395,11 @@ impl Store {
             false,
         )
     }
-    pub(crate) fn create_authorized(
+    pub(crate) fn create_authorized_with_evidence(
         &mut self,
         operation_id: &str,
         card: &CardRecord,
+        evidence: &[crate::task_evidence::Evidence],
         authorize: impl FnMut() -> Result<()>,
     ) -> Result<Receipt> {
         if card.summary().revision != 1 {
@@ -396,14 +410,16 @@ impl Store {
             operation_id,
             &card.summary().id,
             command,
+            evidence,
             |_| Ok(card.clone()),
             authorize,
             true,
         )
     }
-    pub(crate) fn edit_content(
+    pub(crate) fn edit_content_with_evidence(
         &mut self,
         change: &crate::content_change::ContentChange,
+        evidence: &[crate::task_evidence::Evidence],
         authorize: impl FnMut() -> Result<()>,
     ) -> Result<Receipt> {
         let command = transaction::content_command(change)?;
@@ -411,6 +427,7 @@ impl Store {
             &change.operation_id,
             &change.card_id,
             command,
+            evidence,
             |card| change.propose(card.ok_or(Error::NotFound)?),
             authorize,
             false,
@@ -441,16 +458,19 @@ impl Store {
             &request.operation_id,
             &request.card_id,
             command,
+            &[],
             |current| request.propose(current.ok_or(Error::NotFound)?),
             authorize,
             false,
         )
     }
+    #[allow(clippy::too_many_arguments)]
     fn apply(
         &mut self,
         operation_id: &str,
         card_id: &str,
         command: Vec<u8>,
+        task_evidence: &[crate::task_evidence::Evidence],
         propose: impl FnOnce(Option<&CardRecord>) -> Result<CardRecord>,
         mut authorize: impl FnMut() -> Result<()>,
         create: bool,
@@ -460,6 +480,7 @@ impl Store {
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         boundary("after-begin");
         authorize()?;
+        let evidence_digests = evidence::digests(task_evidence)?;
         if let Some(raw) = read_commit(&tx, operation_id)? {
             if !raw.starts_with(b"MORROWT1") {
                 return Err(Error::OperationConflict);
@@ -468,9 +489,21 @@ impl Store {
             if previous.operation_id != operation_id {
                 return Err(Error::Integrity);
             }
-            if previous.command != command {
+            if previous.command != command
+                || previous
+                    .task_evidence_sha256
+                    .iter()
+                    .map(Vec::as_slice)
+                    .ne(evidence_digests.iter().map(|d| d.as_slice()))
+            {
                 return Err(Error::OperationConflict);
             }
+            evidence::verify_retry(
+                &tx,
+                operation_id,
+                &previous.task_evidence_sha256,
+                task_evidence,
+            )?;
             authorize()?;
             return Ok(receipt);
         }
@@ -479,7 +512,7 @@ impl Store {
             return Err(Error::RevisionConflict);
         }
         let next = propose(current.as_ref())?;
-        let event = transaction::encode_commit(command, &next)?;
+        let event = transaction::encode_commit_with_evidence(command, &next, &evidence_digests)?;
         let receipt = transaction::decode_commit(&event)?.1;
         let (count, bytes): (i64, i64) = sql(tx.query_row(
             "SELECT count(*), coalesce(sum(length(payload)),0) FROM outbox",
@@ -509,6 +542,8 @@ impl Store {
         ))?;
         boundary("after-event");
         blobs::bind(&tx, &next, operation_id)?;
+        evidence::bind(&tx, operation_id, task_evidence)?;
+        boundary("after-task-evidence");
         // The host is exclusively borrowed throughout. Revocation and commit are serialized.
         // A fresh host clock tick rejects expiry during synchronous preparation/I/O.
         authorize()?;
@@ -523,6 +558,7 @@ impl Store {
     pub fn snapshot_to(&self, path: &Path, max_bytes: u64) -> Result<()> {
         let pinned = sql(self.connection.unchecked_transaction())?;
         let _: i64 = sql(pinned.query_row("SELECT count(*) FROM sqlite_schema", [], |r| r.get(0)))?;
+        Self::integrity_connection(&pinned, self.audit_trust.as_ref())?;
         let pages: u64 = u64::try_from(sql(
             pinned.query_row("PRAGMA page_count", [], |r| r.get::<_, i64>(0))
         )?)
@@ -609,6 +645,7 @@ impl Store {
         if result != "ok" {
             return Err(Error::Integrity);
         }
+        evidence::verify_schema(snapshot)?;
         binding::verify(snapshot, trust)?;
         seals::verify(snapshot, trust)?;
         let mut operations =
@@ -631,6 +668,7 @@ impl Store {
             }
             let (event, receipt) = transaction::decode_commit(raw)?;
             blobs::verify_event(snapshot, &receipt.operation_id, &event.attachment_sha256)?;
+            evidence::verify_event(snapshot, &receipt.operation_id, &event.task_evidence_sha256)?;
             if receipt.operation_id != sql(row.get::<_, String>(0))?
                 || receipt.card_id != sql(row.get::<_, String>(1))?
             {
@@ -665,6 +703,7 @@ impl Store {
         }
         records::verify(snapshot)?;
         blobs::verify(snapshot)?;
+        evidence::verify(snapshot)?;
         Ok(())
     }
 }
