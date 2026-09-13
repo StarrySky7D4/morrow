@@ -136,8 +136,12 @@ fn feed_text(hash: &mut Sha256, text: &str) {
 }
 fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u64)> {
     let observation = store.lookup_read(SUBJECT, OPERATION)?.unwrap();
-    let manifest = store.read_archive_manifest(SUBJECT, OPERATION)?.unwrap();
-    assert_eq!(observation.data().archive_sha256, manifest.digest());
+    // Pin comes from the retained observation, never from an unverified manifest.
+    let expected_root: [u8; 32] = observation.data().archive_sha256.as_slice().try_into()?;
+    let mut cursor = store.open_read_archive_cursor(SUBJECT, OPERATION, expected_root)?;
+    store.validate_read_archive_cursor(&cursor)?;
+    let manifest = cursor.manifest().clone();
+    assert_eq!(expected_root, manifest.digest());
     let end = proto::CaptureEnd::decode(manifest.metadata().unwrap())?;
     assert_eq!(end.schema_version, 1);
     assert_eq!(end.fuel_budget, TOTAL_FUEL);
@@ -155,7 +159,12 @@ fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u6
         text: request.text,
         sort: request.sort,
     };
-    let first = store.read_archive_part(SUBJECT, OPERATION, 0)?.unwrap();
+    assert!(cursor.finish().is_err(), "no success before archive EOF");
+    let first_page = cursor.next_page(1, 32 * 1024 * 1024)?;
+    assert_eq!(first_page.parts.len(), 1);
+    let mut done = first_page.done;
+    let first = &first_page.parts[0];
+    assert_eq!(first.ordinal(), 0);
     assert_eq!(first.type_id(), "test.query.package.v1");
     let package = Package::decode(first.data())?;
     assert_eq!(end.package_sha256, package.digest());
@@ -167,73 +176,84 @@ fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u6
     let mut candidates = Vec::new();
     let mut observations = Vec::new();
     let mut remaining = end.fuel_budget;
-    for ordinal in 1..manifest.status().count {
-        let part = store
-            .read_archive_part(SUBJECT, OPERATION, ordinal)?
-            .unwrap();
-        match part.type_id() {
-            "test.query.source-fact.v1" => {
-                assert!(fact.is_none());
-                fact = Some(proto::SourceFact::decode(part.data())?);
-            }
-            "test.query.card.v1" => {
-                let fact = fact.take().ok_or("missing source fact")?;
-                let card = CardRecord::decode(part.data())?;
-                let s = card.summary();
-                assert!(s.id > last_id);
-                last_id = s.id.clone();
-                assert!(fact.sequence > 0 && fact.sequence <= end.operation_sequence);
-                assert_eq!(fact.commit_sha256.len(), 32);
-                source.update(source_count.to_le_bytes());
-                feed_text(&mut source, &s.id);
-                feed_text(&mut source, &s.type_id);
-                source.update(s.format_version.to_le_bytes());
-                source.update(s.revision.to_le_bytes());
-                source.update((part.data().len() as u64).to_le_bytes());
-                source.update(Sha256::digest(part.data()));
-                feed_text(&mut source, &fact.operation_id);
-                source.update(fact.sequence.to_le_bytes());
-                source.update(fact.commit_sha256);
-                source_count += 1;
-                if s.type_id == "org.morrow.idea" {
-                    candidates.push(Workbench::decode(&card)?.idea);
+    let mut ordinal = 1;
+    while !done {
+        // One owned snapshot supplies the entire transcript; no per-part Store reopen.
+        let page = cursor.next_page(7, 32 * 1024 * 1024)?;
+        assert!(!page.parts.is_empty());
+        done = page.done;
+        for part in page.parts {
+            assert_eq!(part.ordinal(), ordinal);
+            ordinal += 1;
+            match part.type_id() {
+                "test.query.source-fact.v1" => {
+                    assert!(fact.is_none());
+                    fact = Some(proto::SourceFact::decode(part.data())?);
                 }
-            }
-            kind => {
-                assert!(fact.is_none());
-                let phase = match kind {
-                    "test.query.filter.v2" => query_plan::Phase::Filter,
-                    "test.query.sort.v2" => query_plan::Phase::SortRun,
-                    "test.query.merge.v2" => query_plan::Phase::Merge,
-                    _ => return Err("unknown query part".into()),
-                };
-                let record = task_evidence::decode_observation(&package, part.data())?;
-                let budget = record.data().budget.as_ref().unwrap();
-                if budget.fuel > remaining {
-                    return Err("replay total fuel exhausted".into());
+                "test.query.card.v1" => {
+                    let fact = fact.take().ok_or("missing source fact")?;
+                    let card = CardRecord::decode(part.data())?;
+                    let s = card.summary();
+                    assert!(s.id > last_id);
+                    last_id = s.id.clone();
+                    assert!(fact.sequence > 0 && fact.sequence <= end.operation_sequence);
+                    assert_eq!(fact.commit_sha256.len(), 32);
+                    source.update(source_count.to_le_bytes());
+                    feed_text(&mut source, &s.id);
+                    feed_text(&mut source, &s.type_id);
+                    source.update(s.format_version.to_le_bytes());
+                    source.update(s.revision.to_le_bytes());
+                    source.update((part.data().len() as u64).to_le_bytes());
+                    source.update(Sha256::digest(part.data()));
+                    feed_text(&mut source, &fact.operation_id);
+                    source.update(fact.sequence.to_le_bytes());
+                    source.update(fact.commit_sha256);
+                    source_count += 1;
+                    if s.type_id == "org.morrow.idea" {
+                        candidates.push(Workbench::decode(&card)?.idea);
+                    }
                 }
-                let replayed = replay::replay_observation(
-                    &package,
-                    &record,
-                    Limits {
-                        fuel: 100_000_000,
-                        memory_bytes: 64 * 1024 * 1024,
-                        host_calls: 1024,
-                    },
-                )?;
-                assert!(replayed.matches);
-                remaining = remaining
-                    .checked_sub(budget.fuel - replayed.report.execution.fuel_remaining)
-                    .ok_or("replay total fuel exhausted")?;
-                let invocation = Invocation::decode(&record.data().invocation)?;
-                observations.push(query_plan::Observation {
-                    phase,
-                    request: invocation.transform().unwrap().input.clone(),
-                    response: replayed.report.output.unwrap().bytes,
-                });
+                kind => {
+                    assert!(fact.is_none());
+                    let phase = match kind {
+                        "test.query.filter.v2" => query_plan::Phase::Filter,
+                        "test.query.sort.v2" => query_plan::Phase::SortRun,
+                        "test.query.merge.v2" => query_plan::Phase::Merge,
+                        _ => return Err("unknown query part".into()),
+                    };
+                    let record = task_evidence::decode_observation(&package, part.data())?;
+                    let budget = record.data().budget.as_ref().unwrap();
+                    if budget.fuel > remaining {
+                        return Err("replay total fuel exhausted".into());
+                    }
+                    let replayed = replay::replay_observation(
+                        &package,
+                        &record,
+                        Limits {
+                            fuel: 100_000_000,
+                            memory_bytes: 64 * 1024 * 1024,
+                            host_calls: 1024,
+                        },
+                    )?;
+                    assert!(replayed.matches);
+                    remaining = remaining
+                        .checked_sub(budget.fuel - replayed.report.execution.fuel_remaining)
+                        .ok_or("replay total fuel exhausted")?;
+                    let invocation = Invocation::decode(&record.data().invocation)?;
+                    observations.push(query_plan::Observation {
+                        phase,
+                        request: invocation.transform().unwrap().input.clone(),
+                        response: replayed.report.output.unwrap().bytes,
+                    });
+                }
             }
         }
     }
+    assert_eq!(ordinal, manifest.status().count);
+    cursor.finish()?;
+    let exhausted = cursor.next_page(7, 32 * 1024 * 1024)?;
+    assert!(exhausted.done && exhausted.parts.is_empty());
+    cursor.close()?;
     assert!(fact.is_none());
     source.update(b"\0end");
     source.update(source_count.to_le_bytes());

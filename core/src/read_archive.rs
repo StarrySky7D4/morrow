@@ -12,6 +12,41 @@ pub const MAX_LOGICAL_BYTES: u64 = 4 * 1024 * 1024 * 1024;
 pub const MAX_METADATA_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_RAW_BYTES: usize = 8 * 1024 * 1024 + 4096;
 pub const MAX_CONTAINER_BYTES: usize = MAX_RAW_BYTES + MAX_RAW_BYTES / 255 + 128;
+/// Hard admission ceilings for all unpublished archives in one database.
+/// These do not cap retained published history or reserve filesystem capacity.
+pub const MAX_PREPARATIONS: u32 = 32;
+pub const MAX_PREPARATION_BYTES: u64 = 8 * 1024 * 1024 * 1024;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct PreparationBudget {
+    pub max_archives: u32,
+    pub max_bytes: u64,
+}
+impl Default for PreparationBudget {
+    fn default() -> Self {
+        Self {
+            max_archives: MAX_PREPARATIONS,
+            max_bytes: MAX_PREPARATION_BYTES,
+        }
+    }
+}
+impl PreparationBudget {
+    pub(crate) fn validate(self) -> Result<()> {
+        if self.max_archives == 0
+            || self.max_archives > MAX_PREPARATIONS
+            || self.max_bytes == 0
+            || self.max_bytes > MAX_PREPARATION_BYTES
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct PreparationUsage {
+    pub archives: u32,
+    /// Manifest original + container, plus every Part original + container.
+    pub logical_bytes: u64,
+}
 const PART_MAGIC: &[u8; 8] = b"MRWAPRT1";
 const MANIFEST_MAGIC: &[u8; 8] = b"MRWAMNF1";
 #[derive(Clone, Debug, PartialEq, Eq)]

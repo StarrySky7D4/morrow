@@ -17,6 +17,9 @@ mod evidence;
 mod evidence_chunks;
 pub use binding::{AuditBinding, AuditBindingState};
 mod read_archive;
+mod read_archive_budget;
+mod read_archive_cursor;
+pub use read_archive_cursor::{ArchivePage, MAX_ARCHIVE_PAGE_BYTES, ReadArchiveCursor};
 mod read_journal;
 mod records;
 mod seals;
@@ -342,6 +345,8 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("read-archive-migration-after-commit");
         }
+        // Rebuildable SQLite access index; no business-payload or DB-version change.
+        sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
         if !exclusive {

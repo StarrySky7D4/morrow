@@ -27,7 +27,7 @@ pub(super) fn verify_schema(c: &Connection) -> Result<()> {
     }
     Ok(())
 }
-fn load(c: &Connection, subject: &str, operation: &str) -> Result<Option<Manifest>> {
+pub(super) fn load(c: &Connection, subject: &str, operation: &str) -> Result<Option<Manifest>> {
     require(c)?;
     identity(subject)?;
     identity(operation)?;
@@ -66,7 +66,7 @@ fn part(c: &Connection, operation: &str, ordinal: u32) -> Result<Option<Part>> {
     }
     Ok(Some(p))
 }
-fn verify_parts(c: &Connection, m: &Manifest) -> Result<()> {
+pub(super) fn verify_parts(c: &Connection, m: &Manifest) -> Result<()> {
     let state = m.status();
     let mut count = 0u32;
     let mut total = 0u64;
@@ -106,7 +106,7 @@ fn verify_parts(c: &Connection, m: &Manifest) -> Result<()> {
     }
     Ok(())
 }
-fn verify_association(c: &Connection, m: &Manifest) -> Result<()> {
+pub(super) fn verify_association(c: &Connection, m: &Manifest) -> Result<()> {
     let state = m.status();
     let linked:Option<Vec<u8>>=sql(c.query_row("SELECT CASE WHEN length(root)=32 THEN root ELSE NULL END FROM operation_read_archives WHERE operation_id=?1",[&state.plan.operation_id],|r|r.get(0)).optional())?;
     if let Some(root) = state.root {
@@ -216,6 +216,16 @@ pub(super) fn verify(c: &Connection) -> Result<()> {
 impl Store {
     /// Preparation is not a global operation reservation and creates no audit event.
     pub fn begin_read_archive(&mut self, plan: &Plan) -> Result<Status> {
+        self.begin_read_archive_with_admission_budget(plan, Default::default())
+    }
+    /// Apply a stricter budget to this admission, not a persistent per-library policy.
+    /// Exact no-growth retries remain available after a budget reduction.
+    pub fn begin_read_archive_with_admission_budget(
+        &mut self,
+        plan: &Plan,
+        budget: read_archive::PreparationBudget,
+    ) -> Result<Status> {
+        budget.validate()?;
         let initial = Manifest::new(plan)?;
         let tx = sql(self
             .connection
@@ -233,6 +243,7 @@ impl Store {
         if used {
             return Err(Error::OperationConflict);
         }
+        super::read_archive_budget::admit(&tx, None, &initial, budget)?;
         sql(tx.execute(
             "INSERT INTO read_archives(operation_id,subject,published,payload) VALUES(?1,?2,0,?3)",
             params![plan.operation_id, plan.subject, initial.container()],
@@ -250,6 +261,28 @@ impl Store {
         type_id: &str,
         data: &[u8],
     ) -> Result<Status> {
+        self.append_read_archive_with_admission_budget(
+            subject,
+            operation,
+            ordinal,
+            type_id,
+            data,
+            Default::default(),
+        )
+    }
+    /// Every writer uses the database-wide counters in the same IMMEDIATE transaction.
+    /// The optional stricter budget applies to this call; hard global ceilings cannot be raised.
+    #[allow(clippy::too_many_arguments)]
+    pub fn append_read_archive_with_admission_budget(
+        &mut self,
+        subject: &str,
+        operation: &str,
+        ordinal: u32,
+        type_id: &str,
+        data: &[u8],
+        budget: read_archive::PreparationBudget,
+    ) -> Result<Status> {
+        budget.validate()?;
         identity(type_id)?;
         if data.len() > read_archive::MAX_PART_BYTES {
             return Err(Error::Limit);
@@ -281,6 +314,7 @@ impl Store {
         }
         let p = Part::new(ordinal, type_id, data, state.chain_sha256)?;
         let next = m.append(&p)?;
+        super::read_archive_budget::admit(&tx, Some(&m), &next, budget)?;
         sql(tx.execute(
             "INSERT INTO read_archive_parts(operation_id,ordinal,payload) VALUES(?1,?2,?3)",
             params![operation, ordinal, p.container()],
