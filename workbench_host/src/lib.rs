@@ -25,6 +25,7 @@ mod evidence;
 mod preferences_evidence;
 pub mod projection;
 pub mod projection_v2;
+pub mod query_plan;
 mod storage;
 pub mod transfer;
 
@@ -485,8 +486,8 @@ impl Workbench {
             .export_attachment_local(card, attachment, writer)?;
         Ok(())
     }
-    /// Batches are limited by both record count and encoded bytes. Sorting runs
-    /// use compact keys, so large body text is not repeatedly copied for ordering.
+    /// Versioned query scheduling; every actual guest result is validated before it advances
+    /// filtering or merge cursors. Durable read-source capture is a separate adapter.
     pub fn query(
         &mut self,
         section: &str,
@@ -494,104 +495,66 @@ impl Workbench {
         text: &str,
         sort: &str,
     ) -> Result<Vec<String>> {
-        let mut cursor = String::new();
-        let mut input = command(Action::Query);
-        input.section = section.into();
-        input.filter = filter.into();
-        input.text = text.into();
-        let mut keys = BTreeMap::new();
-        let mut found = Vec::new();
-        loop {
-            let (records, next) = self.page(&cursor, 128)?;
-            if next.is_empty() {
-                break;
-            }
-            cursor = next;
-            for record in records {
-                let card = self.authorized_read(&record.idea.id)?;
-                let idea = Self::decode(&card)?.idea;
-                input.ideas.push(idea.clone());
-                if input.ideas.len() > 128 || codec::encode_request(&input).is_err() {
-                    input.ideas.pop();
-                    if input.ideas.is_empty() {
-                        return Err("card exceeds query message budget".into());
+        let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
+        self.pool.maintain(manager, &mut self.host)?;
+        let root = self
+            .pool
+            .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
+        let bundle = self.bundle.as_ref().ok_or("plugin unavailable")?;
+        let selection = manager
+            .selection(&bundle.manifest().package_id)
+            .ok_or("plugin unavailable")?;
+        if !selection.enabled
+            || selection.digest != bundle.digest()
+            || !selection.approved.contains(&GrantKind::ReadContent)
+            || self.host.connection_phase(root.connection())?
+                != morrow_core::lifecycle::InstancePhase::Ready
+        {
+            return Err("query read capability unavailable".into());
+        }
+        struct Live<'a> {
+            workbench: &'a mut Workbench,
+            cursor: String,
+            pending: std::vec::IntoIter<Record>,
+            finished: bool,
+        }
+        impl query_plan::Backend for Live<'_> {
+            fn next_candidate(&mut self) -> Result<Option<Idea>> {
+                loop {
+                    if let Some(record) = self.pending.next() {
+                        let card = self.workbench.authorized_read(&record.idea.id)?;
+                        return Ok(Some(Workbench::decode(&card)?.idea));
                     }
-                    found.extend(self.run(input.clone())?.ids);
-                    input.ideas = vec![idea.clone()];
-                }
-                let mut key = idea;
-                key.description.clear();
-                key.hypothesis.clear();
-                key.conclusion.clear();
-                key.assets.clear();
-                key.todos.clear();
-                key.completed.clear();
-                if key.title.trim().is_empty() {
-                    key.assets.push(Asset {
-                        id: "sort-key".into(),
-                        name: String::new(),
-                        kind: "file".into(),
-                        bytes: 0,
-                    });
-                }
-                keys.insert(key.id.clone(), key);
-            }
-        }
-        if !input.ideas.is_empty() {
-            found.extend(self.run(input)?.ids);
-        }
-        found.reverse();
-        if sort == "最近添加" {
-            return Ok(found);
-        }
-        let mut runs = Vec::new();
-        let mut r = command(Action::Query);
-        r.sort = sort.into();
-        for id in found {
-            let key = keys.get(&id).ok_or("missing sort key")?.clone();
-            r.ideas.push(key.clone());
-            if r.ideas.len() > 128 || codec::encode_request(&r).is_err() {
-                r.ideas.pop();
-                if r.ideas.is_empty() {
-                    return Err("sort key budget".into());
-                }
-                runs.push(self.run(r.clone())?.ids);
-                r.ideas = vec![key];
-            }
-        }
-        if !r.ideas.is_empty() {
-            runs.push(self.run(r)?.ids);
-        }
-        while runs.len() > 1 {
-            let mut next = Vec::new();
-            let mut it = runs.into_iter();
-            while let Some(a) = it.next() {
-                let Some(b) = it.next() else {
-                    next.push(a);
-                    break;
-                };
-                let (mut i, mut j) = (0, 0);
-                let mut merged = Vec::with_capacity(a.len() + b.len());
-                while i < a.len() && j < b.len() {
-                    let mut r = command(Action::Query);
-                    r.sort = sort.into();
-                    r.ideas = vec![keys[&a[i]].clone(), keys[&b[j]].clone()];
-                    let ids = self.run(r)?.ids;
-                    if ids.first() == Some(&a[i]) {
-                        merged.push(a[i].clone());
-                        i += 1;
-                    } else {
-                        merged.push(b[j].clone());
-                        j += 1;
+                    if self.finished {
+                        return Ok(None);
                     }
+                    let (records, next) = self.workbench.page(&self.cursor, 128)?;
+                    if next.is_empty() {
+                        self.finished = true;
+                        return Ok(None);
+                    }
+                    self.cursor = next;
+                    self.pending = records.into_iter();
                 }
-                merged.extend_from_slice(&a[i..]);
-                merged.extend_from_slice(&b[j..]);
-                next.push(merged);
             }
-            runs = next;
+            fn invoke(&mut self, _phase: query_plan::Phase, request: Request) -> Result<Response> {
+                self.workbench.run(request)
+            }
         }
-        Ok(runs.pop().unwrap_or_default())
+        query_plan::execute(
+            &query_plan::Conditions {
+                section: section.into(),
+                filter: filter.into(),
+                text: text.into(),
+                sort: sort.into(),
+            },
+            &mut Live {
+                workbench: self,
+                cursor: String::new(),
+                pending: vec![].into_iter(),
+                finished: false,
+            },
+        )
     }
     pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
         let Some(card) = self.host.store_local().card("morrow-studio-preferences")? else {

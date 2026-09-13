@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-host"
-version = "0.1.9-test.41"
+version = "0.1.9-test.42"
 dependencies = [
  "capnp",
  "capnpc",

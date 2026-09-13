@@ -32,7 +32,16 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     }
     let bytes = serialize::write_message_to_words(&output);
     if bytes.len() > 128 * 1024 {
-        return Err("response frame budget".into());
+        // Clearing pointers on the old builder leaves its oversized allocation in
+        // the serialized segments. Use a fresh message and deliver no partial result.
+        // The request may already have executed; this is a delivery error only.
+        let mut bounded = Builder::new_default();
+        let mut error = bounded.init_root::<wire::response::Builder>();
+        error.set_version(1);
+        error.set_digest(&digest());
+        error.set_read_only(!host.writable());
+        error.set_error("response exceeds 128 KiB frame budget; no result delivered; verify any operation before retrying");
+        return Ok(serialize::write_message_to_words(&bounded));
     }
     Ok(bytes)
 }
