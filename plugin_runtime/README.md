@@ -85,3 +85,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## test.32 自动准备与共享实例
 
 新增只读ActivationPlan及绑定实际Host／Manager的实例池。独立root会话共享非根提供者，按真实失效传播必需关系；恢复须明确调用且有次数／间隔上限，不重试业务或恢复旧对象grant。见 [设计与边界](../docs/PLUGIN_INSTANCE_POOL.md) 及 [验证记录](../reports/test.32-instance-pool.md)。
+
+## test.33 普通任务池接入
+
+Pool新增普通Task监督与按根撤销对象授权；默认Windows工作台使用池会话，实际执行故障后停止根并保持已有内容可读。没有放宽依赖导入或自动任务重试，详细边界见 [实例池设计](../docs/PLUGIN_INSTANCE_POOL.md) 与 [工作台接入记录](../reports/test.33-workbench-pool.md)。

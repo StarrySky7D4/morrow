@@ -272,6 +272,7 @@ impl Registry {
     /// Returns a fresh validated package and a ceiling snapshot, not an execution permit.
     /// Every required edge must resolve; optional edges never gate starting the caller.
     pub fn resolve_enabled(&self, id: &str) -> Result<(Package, Selection)> {
+        let mut root_package = None;
         let mut active = BTreeSet::new();
         let mut complete = BTreeSet::new();
         let mut pending = vec![(id.to_owned(), false)];
@@ -303,9 +304,14 @@ impl Registry {
                 self.load_dependency(lock)?;
                 pending.push((lock.provider_id.clone(), false));
             }
+            if current == id {
+                // Reuse only within this traversal. Each new resolution still reads and
+                // validates catalog bytes; no cross-call cache or file metadata shortcut.
+                root_package = Some(package);
+            }
         }
         let selection = self.selections.get(id).ok_or(Error::NotFound)?;
-        Ok((self.load(selection)?, selection.clone()))
+        Ok((root_package.ok_or(Error::NotFound)?, selection.clone()))
     }
     /// Explicit slot resolution also requires a usable caller and provider required closure.
     pub fn resolve_dependency(

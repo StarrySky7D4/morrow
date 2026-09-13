@@ -558,3 +558,71 @@ fn shared_required_subgraph_and_unresolvable_optional_provider_are_distinct() {
     assert!(f.registry.resolve_enabled("a").is_ok());
     assert_eq!(f.registry.required_dependents("d"), vec!["a", "b", "c"]);
 }
+
+#[test]
+fn every_resolution_revalidates_root_and_required_provider_after_prior_success() {
+    let mut f = Fixture::new();
+    let caller = package("fresh-caller", "1.0.0", vec![dep("worker", false)]);
+    let provider = package("fresh-provider", "1.0.0", vec![]);
+    let replacement = package("different-valid-package", "1.0.0", vec![]);
+    f.install(&caller);
+    f.install(&provider);
+    f.approve("fresh-caller", "worker", "fresh-provider")
+        .unwrap();
+    f.enable("fresh-caller", true);
+    f.enable("fresh-provider", true);
+    let revision = f.registry.revision();
+    let state = fs::read(f.path()).unwrap();
+    let catalog = Catalog::open(&f.dir.path().join("packages")).unwrap();
+
+    for selected in [&caller, &provider] {
+        // Keep the previously resolved package alive: it must never serve as a
+        // cache authorizing a later resolution after its catalog bytes change.
+        let (prior, _) = f.registry.resolve_enabled("fresh-caller").unwrap();
+        assert_eq!(prior.digest(), caller.digest());
+        let path = catalog.install(selected).unwrap();
+        for invalid in [&b"corrupt selected archive"[..], replacement.archive()] {
+            fs::write(&path, invalid).unwrap();
+            assert!(f.registry.resolve_enabled("fresh-caller").is_err());
+            assert!(
+                f.registry
+                    .resolve_dependency("fresh-caller", "worker")
+                    .is_err()
+            );
+            assert_eq!(fs::read(&path).unwrap(), invalid);
+            fs::write(&path, selected.archive()).unwrap();
+            assert_eq!(
+                f.registry
+                    .resolve_enabled("fresh-caller")
+                    .unwrap()
+                    .0
+                    .digest(),
+                caller.digest()
+            );
+        }
+        fs::remove_file(&path).unwrap();
+        assert!(f.registry.resolve_enabled("fresh-caller").is_err());
+        assert!(
+            f.registry
+                .resolve_dependency("fresh-caller", "worker")
+                .is_err()
+        );
+        assert!(
+            !path.exists(),
+            "resolution must not recreate a missing package"
+        );
+        fs::write(&path, selected.archive()).unwrap();
+        assert_eq!(
+            f.registry
+                .resolve_dependency("fresh-caller", "worker")
+                .unwrap()
+                .1
+                .digest(),
+            provider.digest()
+        );
+        assert_eq!(prior.digest(), caller.digest());
+        assert_eq!(prior.archive(), caller.archive());
+        assert_eq!(f.registry.revision(), revision);
+        assert_eq!(fs::read(f.path()).unwrap(), state);
+    }
+}

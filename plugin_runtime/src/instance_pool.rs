@@ -1,8 +1,9 @@
 //! Trusted automatic activation and shared provider ownership. No task is automatically retried.
 use crate::{
-    Cancellation,
+    Cancellation, Fault,
     dynamic_dependencies::{self, Context, GraphLimits, RoutedOutput},
     manager::{ActivationPlan, ManagedInstance, Manager, ManagerError, OptionalDependency},
+    package::TaskReport,
     shared_objects::SharedObjects,
 };
 use morrow_core::{
@@ -219,6 +220,62 @@ impl Pool {
             now,
         )?;
         Ok(())
+    }
+    /// Revoke only a scope on this actual session root; no mutable connection escapes.
+    pub fn revoke_root(
+        &mut self,
+        host: &mut HostRuntime,
+        session: &Session,
+        kind: GrantKind,
+        scope: &str,
+    ) -> Result<()> {
+        self.check_host(host)?;
+        self.root(session)?;
+        host.revoke(
+            self.sessions
+                .get_mut(&session.id)
+                .ok_or(Error::Denied)?
+                .root
+                .parts_mut()
+                .1,
+            kind,
+            scope,
+        )?;
+        Ok(())
+    }
+    /// Ordinary package-bound command or pure transform, with pool lifecycle supervision.
+    /// Actual command responses are retained even if stopping follows a successful commit.
+    /// This does not opt a task into dependency imports or automatically retry it.
+    pub fn run_task(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        session: &Session,
+        input: &Invocation,
+        clock: impl FnMut() -> u64,
+    ) -> Result<TaskReport> {
+        self.maintain(manager, host)?;
+        let root = self.root(session)?;
+        if let Some(transform) = input.transform() {
+            // A bad trusted request is not evidence that the guest execution failed.
+            root.package().package().transform_handler(transform)?;
+        }
+        let mut report = root.run_task(host, input, clock);
+        if matches!(
+            report.execution.outcome,
+            Err(Fault::Trap | Fault::TaskProtocol | Fault::Limits)
+        ) {
+            self.entry(session)?.stop();
+        }
+        self.maintain(manager, host)?;
+        if self.root(session).is_err() && report.response.is_none() {
+            report.output = None;
+            report.failure = None;
+            if report.execution.outcome.is_ok() {
+                report.execution.outcome = Err(Fault::InactiveConnection);
+            }
+        }
+        Ok(report)
     }
     pub fn start(
         &mut self,

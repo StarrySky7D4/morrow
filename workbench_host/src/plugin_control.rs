@@ -14,6 +14,11 @@ impl Workbench {
         if self.host.warning().is_some() {
             let _ = self.host.flush_pending();
         }
+        if let Some(manager) = &self.manager
+            && let Err(error) = self.pool.maintain(manager, &mut self.host)
+        {
+            self.plugin_warning = Some(format!("插件会话暂不可用，已有内容仍可读取。{error}"));
+        }
     }
     pub fn plugin_status(&self) -> PluginStatus {
         let selection = self.manager.as_ref().and_then(|m| {
@@ -50,12 +55,16 @@ impl Workbench {
         } else {
             manager.set_enabled(id, bundle.digest(), false, manager.revision())
         };
-        if let Some(previous) = self.plugin.take() {
-            let _ = previous.close(&mut self.host);
-        }
+        let closed = self.pool.close_all(&mut self.host);
+        self.plugin = None;
         result?;
+        closed?;
         if enable {
-            self.plugin = Some(manager.connect(id, &mut self.host)?);
+            let revision = manager.revision();
+            self.plugin = Some(
+                self.pool
+                    .start(manager, &mut self.host, id, &[], revision)?,
+            );
         }
         self.plugin_warning = None;
         Ok(())
@@ -64,7 +73,13 @@ impl Workbench {
         if self.ui.is_some() {
             return Err("已有插件表单，请先关闭后重开。".into());
         }
-        let instance = self.plugin.as_ref().ok_or("请先启用工作台插件。")?;
+        self.pool.maintain(
+            self.manager.as_ref().ok_or("插件管理不可用。")?,
+            &mut self.host,
+        )?;
+        let instance = self
+            .pool
+            .root(self.plugin.as_ref().ok_or("请先启用工作台插件。")?)?;
         self.ui_generation = self.ui_generation.checked_add(1).ok_or("界面代次耗尽")?;
         let mut ui = InlineUi::new(
             instance.package(),
@@ -81,6 +96,7 @@ impl Workbench {
             seed,
         )?;
         self.ui = Some(ui);
+        self.supervise_ui_reply(&reply);
         Ok(reply)
     }
     pub fn ui_event(&mut self, generation: u64, input: &[u8]) -> Result<Reply> {
@@ -88,14 +104,23 @@ impl Workbench {
         if ui.generation() != generation {
             return Err("插件表单已更换，请重新打开。".into());
         }
-        let instance = self.plugin.as_ref().ok_or("插件已停用。")?;
+        self.pool.maintain(
+            self.manager.as_ref().ok_or("插件管理不可用。")?,
+            &mut self.host,
+        )?;
+        let instance = self
+            .pool
+            .root(self.plugin.as_ref().ok_or("插件已停用。")?)?;
         match ui.event(
             instance.package(),
             &mut self.host,
             instance.connection(),
             input,
         ) {
-            Ok(reply) => Ok(reply),
+            Ok(reply) => {
+                self.supervise_ui_reply(&reply);
+                Ok(reply)
+            }
             Err(error) => {
                 use morrow_plugin_runtime::inline_ui::Error;
                 if matches!(error, Error::Core(_)) {
@@ -111,6 +136,30 @@ impl Workbench {
                     Err(error.into())
                 }
             }
+        }
+    }
+    // Inline UI uses the same root connection. Execution faults must stop that root,
+    // while preserving the original UI failure reply and never retrying the event.
+    fn supervise_ui_reply(&mut self, reply: &Reply) {
+        use morrow_plugin_runtime::Fault;
+        if !matches!(
+            &reply.failure,
+            Some(Failure::Execution(
+                Fault::Trap | Fault::TaskProtocol | Fault::Limits
+            ))
+        ) {
+            return;
+        }
+        if let Some(session) = &self.plugin
+            && let Ok(instance) = self.pool.root(session)
+        {
+            instance.stop();
+        }
+        self.finish_stopped_session();
+        if let Some(manager) = &self.manager
+            && let Err(error) = self.pool.maintain(manager, &mut self.host)
+        {
+            self.plugin_warning = Some(format!("插件会话已停止，清理暂未完成。{error}"));
         }
     }
     pub fn ui_close(&mut self, generation: u64) {

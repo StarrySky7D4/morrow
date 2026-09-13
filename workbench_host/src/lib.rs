@@ -9,7 +9,8 @@ use morrow_core::{
 };
 use morrow_plugin_runtime::{
     Limits,
-    manager::{ManagedInstance, Manager},
+    instance_pool::{Pool, Session},
+    manager::Manager,
 };
 use morrow_workbench_plugin::{Action, Asset, Idea, Request, Response, codec, persistence};
 use std::{
@@ -36,7 +37,8 @@ pub struct Mutation<'a> {
 }
 pub struct Workbench {
     host: storage::Storage,
-    plugin: Option<ManagedInstance>,
+    plugin: Option<Session>,
+    pool: Pool,
     manager: Option<Manager>,
     bundle: Option<Package>,
     ui: Option<morrow_plugin_runtime::inline_ui::InlineUi>,
@@ -114,13 +116,21 @@ impl Workbench {
                 Some(format!("插件管理暂不可用，已有内容仍可读取。{error}")),
             ),
         };
+        let mut pool = Pool::new(&host, Default::default())?;
         let plugin = match (&mut manager, &package) {
             (Some(manager), Some(bundle))
                 if manager
                     .selection(&bundle.manifest().package_id)
                     .is_some_and(|s| s.enabled) =>
             {
-                match manager.connect(&bundle.manifest().package_id, &mut host) {
+                let revision = manager.revision();
+                match pool.start(
+                    manager,
+                    &mut host,
+                    &bundle.manifest().package_id,
+                    &[],
+                    revision,
+                ) {
                     Ok(instance) => Some(instance),
                     Err(error) => {
                         plugin_warning = Some(format!("插件暂不可用，已有内容仍可读取。{error}"));
@@ -133,6 +143,7 @@ impl Workbench {
         Ok(Self {
             host,
             plugin,
+            pool,
             manager,
             bundle: package,
             ui: None,
@@ -155,15 +166,38 @@ impl Workbench {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
-        self.host.flush_pending()
+        if let Some(mut ui) = self.ui.take() {
+            ui.close();
+        }
+        let closed = self.pool.close_all(&mut self.host);
+        self.plugin = None;
+        // Disconnecting instances must not prevent a pending durable audit flush attempt.
+        let flushed = self.host.flush_pending();
+        closed?;
+        flushed
     }
     pub fn writable(&self) -> bool {
         self.host.warning().is_none()
             && self.plugin_status().approved
-            && self.plugin.as_ref().is_some_and(|p| {
-                self.host.connection_phase(p.connection())
-                    == Ok(morrow_core::lifecycle::InstancePhase::Ready)
+            && self.plugin.as_ref().is_some_and(|session| {
+                self.pool.root(session).is_ok_and(|instance| {
+                    self.host.connection_phase(instance.connection())
+                        == Ok(morrow_core::lifecycle::InstancePhase::Ready)
+                })
             })
+    }
+    fn finish_stopped_session(&mut self) {
+        if self
+            .plugin
+            .as_ref()
+            .is_none_or(|session| self.pool.root(session).is_ok())
+        {
+            return;
+        }
+        if let Some(mut ui) = self.ui.take() {
+            ui.close();
+        }
+        self.plugin_warning = Some("插件会话已停止；已有内容仍可读取，请显式重新启用插件。".into());
     }
     fn prepare_write(&mut self) -> Result<()> {
         self.host.prepare_write()?;
@@ -174,12 +208,9 @@ impl Workbench {
     }
     fn grant(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         let time = now(self.start);
-        self.host.grant(
-            self.plugin
-                .as_mut()
-                .ok_or("plugin unavailable")?
-                .parts_mut()
-                .1,
+        self.pool.grant_root(
+            &mut self.host,
+            self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
             time.saturating_add(5000),
@@ -188,12 +219,9 @@ impl Workbench {
         Ok(())
     }
     fn revoke(&mut self, id: &str, kind: GrantKind) -> Result<()> {
-        self.host.revoke(
-            self.plugin
-                .as_mut()
-                .ok_or("plugin unavailable")?
-                .parts_mut()
-                .1,
+        self.pool.revoke_root(
+            &mut self.host,
+            self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
         )?;
@@ -214,11 +242,15 @@ impl Workbench {
             },
         )?;
         let start = self.start;
-        let r = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
+        let r = self.pool.run_task(
+            self.manager.as_ref().ok_or("plugin manager unavailable")?,
             &mut self.host,
+            self.plugin.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
         );
+        self.finish_stopped_session();
+        let r = r?;
         if r.execution.outcome != Ok(0) || r.execution.host_calls != 0 || r.response.is_some() {
             return Err(format!("plugin failed: {:?}", r.execution.outcome).into());
         }
@@ -264,11 +296,13 @@ impl Workbench {
     fn authorized_read(&mut self, id: &str) -> Result<CardRecord> {
         self.grant(id, GrantKind::ReadContent)?;
         let start = self.start;
-        let result = self
-            .host
-            .read_content(self.plugin.as_ref().unwrap().connection(), id, || {
-                now(start)
-            });
+        let result = self.host.read_content(
+            self.pool
+                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                .connection(),
+            id,
+            || now(start),
+        );
         self.revoke(id, GrantKind::ReadContent)?;
         Ok(result?)
     }
@@ -367,7 +401,9 @@ impl Workbench {
         self.grant(&id, GrantKind::CreateContent)?;
         let start = self.start;
         let result = self.host.create_content(
-            self.plugin.as_ref().unwrap().connection(),
+            self.pool
+                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                .connection(),
             operation,
             &record,
             || now(start),
@@ -441,11 +477,13 @@ impl Workbench {
         };
         self.grant(id, GrantKind::EditContent)?;
         let start = self.start;
-        let result =
-            self.host
-                .edit_content(self.plugin.as_ref().unwrap().connection(), &change, || {
-                    now(start)
-                });
+        let result = self.host.edit_content(
+            self.pool
+                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                .connection(),
+            &change,
+            || now(start),
+        );
         self.revoke(id, GrantKind::EditContent)?;
         let receipt = result?;
         if action == Action::Delete {
@@ -629,11 +667,13 @@ impl Workbench {
                 preview_text: "外观、日常小事与随身听设置".into(),
                 attachments: None,
             };
-            let result =
-                self.host
-                    .edit_content(self.plugin.as_ref().unwrap().connection(), &change, || {
-                        now(start)
-                    });
+            let result = self.host.edit_content(
+                self.pool
+                    .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                    .connection(),
+                &change,
+                || now(start),
+            );
             self.revoke(id, GrantKind::EditContent)?;
             result?;
         } else {
@@ -641,7 +681,9 @@ impl Workbench {
             self.grant(id, GrantKind::CreateContent)?;
             let start = self.start;
             let result = self.host.create_content(
-                self.plugin.as_ref().unwrap().connection(),
+                self.pool
+                    .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                    .connection(),
                 operation,
                 &card,
                 || now(start),
@@ -690,11 +732,15 @@ impl Workbench {
             },
         )?;
         let start = self.start;
-        let result = self.plugin.as_ref().ok_or("plugin unavailable")?.run_task(
+        let result = self.pool.run_task(
+            self.manager.as_ref().ok_or("plugin manager unavailable")?,
             &mut self.host,
+            self.plugin.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
         );
+        self.finish_stopped_session();
+        let result = result?;
         if result.execution.outcome != Ok(0)
             || result.execution.host_calls != 0
             || result.response.is_some()
@@ -713,9 +759,11 @@ impl Workbench {
 }
 impl Drop for Workbench {
     fn drop(&mut self) {
-        if let Some(plugin) = &self.plugin {
-            let _ = plugin.close(&mut self.host);
+        if let Some(mut ui) = self.ui.take() {
+            ui.close();
         }
+        let _ = self.pool.close_all(&mut self.host);
+        self.plugin = None;
     }
 }
 
