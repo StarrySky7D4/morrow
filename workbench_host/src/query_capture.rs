@@ -27,6 +27,7 @@ pub struct QueryFailure {
     pub message: String,
     /// Only a confirmed terminal capture or immutable operation conflict sets this.
     pub terminal: bool,
+    pub capacity: bool,
 }
 impl std::fmt::Display for QueryFailure {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -38,6 +39,14 @@ fn failure(message: impl Into<String>, terminal: bool) -> Box<dyn std::error::Er
     Box::new(QueryFailure {
         message: message.into(),
         terminal,
+        capacity: false,
+    })
+}
+fn capacity_failure(terminal: bool) -> Box<dyn std::error::Error> {
+    Box::new(QueryFailure {
+        message: "查询历史容量已满；已有内容已保留，此版本尚不支持清理查询历史。".into(),
+        terminal,
+        capacity: true,
     })
 }
 fn part_type(phase: query_plan::Phase) -> &'static str {
@@ -287,6 +296,9 @@ impl Workbench {
                     )?;
                     return Err(failure("此前筛选已中断，请重新筛选。", true));
                 }
+                _ if state.reason() == "query_archive_capacity" => {
+                    return Err(capacity_failure(true));
+                }
                 _ => return Err(failure("此次筛选已终止，请重新筛选。", true)),
             }
         }
@@ -300,6 +312,8 @@ impl Workbench {
         match result {
             Ok(ids) => Ok(ids),
             Err(error) => {
+                let capacity = error.downcast_ref::<morrow_core::Error>()
+                    == Some(&morrow_core::Error::ArchiveCapacity);
                 // Resolve even CommitUnknown before deciding whether a fresh ID is safe.
                 // Ready is never demoted because transport/audit flush/permission failed.
                 let lookup = self
@@ -318,7 +332,11 @@ impl Workbench {
                                 operation,
                                 &state.token(),
                                 Phase::Failed,
-                                "query_execution_failed",
+                                if capacity {
+                                    "query_archive_capacity"
+                                } else {
+                                    "query_execution_failed"
+                                },
                             )
                             .is_ok()
                     }
@@ -326,6 +344,7 @@ impl Workbench {
                         state.phase(),
                         Phase::Failed | Phase::Cancelled | Phase::Interrupted
                     ),
+                    Ok(None) if capacity => true,
                     Ok(None)
                         if error.downcast_ref::<morrow_core::Error>()
                             == Some(&morrow_core::Error::OperationConflict) =>
@@ -334,7 +353,11 @@ impl Workbench {
                     }
                     _ => false,
                 };
-                Err(failure(error.to_string(), terminal))
+                if capacity {
+                    Err(capacity_failure(terminal))
+                } else {
+                    Err(failure(error.to_string(), terminal))
+                }
             }
         }
     }

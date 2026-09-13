@@ -14,9 +14,14 @@ String newQueryOperationId() {
 
 /// Only a typed host terminal response permits replacing an uncertain operation.
 class QueryFailure implements Exception {
-  const QueryFailure(this.message, {required this.terminal});
+  const QueryFailure(
+    this.message, {
+    required this.terminal,
+    this.capacity = false,
+  });
   final String message;
   final bool terminal;
+  final bool capacity;
   @override
   String toString() => message;
 }

@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if !matches!(version(c)?, 12 | 13) {
+    if !matches!(version(c)?, 12..=14) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())
@@ -230,7 +230,7 @@ impl Store {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         super::read_capture::reject_tracked(&tx, &plan.operation_id)?;
-        let value = begin_in(&tx, &Manifest::new(plan)?, budget)?;
+        let value = begin_in(&tx, &Manifest::new(plan)?, budget, self.retention_budget)?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("archive-after-begin-commit");
         Ok(value)
@@ -268,7 +268,16 @@ impl Store {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         super::read_capture::reject_tracked(&tx, operation)?;
-        let value = append_in(&tx, subject, operation, ordinal, type_id, data, budget)?;
+        let value = append_in(
+            &tx,
+            subject,
+            operation,
+            ordinal,
+            type_id,
+            data,
+            budget,
+            self.retention_budget,
+        )?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("archive-after-append-commit");
         Ok(value)
@@ -294,6 +303,7 @@ impl Store {
             end,
             evidence,
             self.budget,
+            self.retention_budget,
             authorize,
         )?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
@@ -368,6 +378,7 @@ pub(super) fn begin_in(
     tx: &Connection,
     initial: &Manifest,
     budget: read_archive::PreparationBudget,
+    retention: read_archive::RetentionBudget,
 ) -> Result<Status> {
     budget.validate()?;
     let plan = &initial.status().plan;
@@ -389,6 +400,7 @@ pub(super) fn begin_in(
         "INSERT INTO read_archives(operation_id,subject,published,payload) VALUES(?1,?2,0,?3)",
         params![plan.operation_id, plan.subject, initial.container()],
     ))?;
+    super::read_archive_retention::change(tx, None, Some(initial), retention)?;
     boundary("archive-after-begin");
     Ok(initial.status())
 }
@@ -401,6 +413,7 @@ pub(super) fn append_in(
     type_id: &str,
     data: &[u8],
     budget: read_archive::PreparationBudget,
+    retention: read_archive::RetentionBudget,
 ) -> Result<Status> {
     budget.validate()?;
     identity(type_id)?;
@@ -432,6 +445,7 @@ pub(super) fn append_in(
     let p = Part::new(ordinal, type_id, data, state.chain_sha256)?;
     let next = m.append(&p)?;
     super::read_archive_budget::admit(tx, Some(&m), &next, budget)?;
+    super::read_archive_retention::change(tx, Some(&m), Some(&next), retention)?;
     sql(tx.execute(
         "INSERT INTO read_archive_parts(operation_id,ordinal,payload) VALUES(?1,?2,?3)",
         params![operation, ordinal, p.container()],
@@ -444,6 +458,7 @@ pub(super) fn append_in(
     boundary("archive-before-append-commit");
     Ok(next.status())
 }
+#[allow(clippy::too_many_arguments)]
 pub(super) fn finish_in(
     tx: &Connection,
     subject: &str,
@@ -451,6 +466,7 @@ pub(super) fn finish_in(
     end: &Finish,
     evidence: &[Evidence],
     event_budget: super::EventBudget,
+    retention: read_archive::RetentionBudget,
     authorize: impl FnOnce() -> Result<()>,
 ) -> Result<Receipt> {
     let m = load(tx, subject, operation)?.ok_or(Error::NotFound)?;
@@ -491,6 +507,7 @@ pub(super) fn finish_in(
     if m.status().root.is_some() {
         return Err(Error::Integrity);
     }
+    super::read_archive_retention::change(tx, Some(&m), Some(&finalized), retention)?;
     let (count, bytes): (i64, i64) = sql(tx.query_row(
         "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
         [],
@@ -535,6 +552,7 @@ pub(super) fn abort_in(tx: &Connection, subject: &str, operation: &str) -> Resul
         return Err(Error::OperationConflict);
     }
     verify_association(tx, &m)?;
+    super::read_archive_retention::change(tx, Some(&m), None, Default::default())?;
     sql(tx.execute(
         "DELETE FROM read_archive_parts WHERE operation_id=?1",
         [operation],

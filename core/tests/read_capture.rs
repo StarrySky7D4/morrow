@@ -1073,7 +1073,7 @@ fn version(path: &Path) -> i64 {
 fn downgrade_to_twelve(path: &Path) {
     rusqlite::Connection::open(path)
         .unwrap()
-        .execute_batch("DROP TABLE read_captures;PRAGMA user_version=12;")
+        .execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures;PRAGMA user_version=12;")
         .unwrap();
 }
 #[test]
@@ -1134,7 +1134,7 @@ fn migration_preserves_legacy_read_archive_originals_and_sealed_signature() {
     drop(old);
     assert_eq!(version(&path), 12);
     let mut store = Store::open_audited(&path, Default::default(), false, trust.clone()).unwrap();
-    assert_eq!(version(&path), 13);
+    assert_eq!(version(&path), 14);
     assert_eq!(
         store
             .lookup_read("review.query", "legacy")

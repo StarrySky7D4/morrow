@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if version(c)? != 13 {
+    if !matches!(version(c)?, 13 | 14) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())
@@ -277,6 +277,7 @@ impl Store {
             &tx,
             &Manifest::for_capture(plan, state.binding())?,
             budget.preparation,
+            self.retention_budget,
         )?;
         verify_state(&tx, &state)?;
         boundary("capture-before-begin-commit");
@@ -364,6 +365,7 @@ impl Store {
             type_id,
             data,
             Default::default(),
+            self.retention_budget,
         )?;
         let state = if after.count == before.count {
             old
@@ -405,15 +407,23 @@ impl Store {
         } else {
             old.advance(Phase::Ready, Some(finalized.digest()), "")?
         };
-        let receipt =
-            read_archive::finish_in(&tx, subject, operation, end, evidence, self.budget, || {
+        let receipt = read_archive::finish_in(
+            &tx,
+            subject,
+            operation,
+            end,
+            evidence,
+            self.budget,
+            self.retention_budget,
+            || {
                 if advancing {
                     save(&tx, &state)?;
                 }
                 boundary("capture-after-ready-state");
                 verify_state(&tx, &state)?;
                 authorize()
-            })?;
+            },
+        )?;
         boundary("capture-before-finish-commit");
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("capture-after-finish-commit");

@@ -19,6 +19,7 @@ pub use binding::{AuditBinding, AuditBindingState};
 mod read_archive;
 mod read_archive_budget;
 mod read_archive_cursor;
+mod read_archive_retention;
 pub use read_archive_cursor::{ArchivePage, MAX_ARCHIVE_PAGE_BYTES, ReadArchiveCursor};
 mod read_capture;
 mod read_journal;
@@ -41,6 +42,7 @@ impl Default for EventBudget {
 pub struct Store {
     connection: Connection,
     budget: EventBudget,
+    retention_budget: crate::read_archive::RetentionBudget,
     audit_trust: Option<crate::audit::TrustedLog>,
     snapshot_origin: Option<std::path::PathBuf>,
     snapshot_identity: std::sync::Arc<()>,
@@ -140,13 +142,14 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=13) {
+        if app != APPLICATION_ID || !matches!(version, 5..=14) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
         let store = Self {
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
+            retention_budget: Default::default(),
             connection,
             budget: EventBudget::default(),
             audit_trust: Some(trust),
@@ -205,7 +208,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=13))
+            && (app != APPLICATION_ID || !matches!(version, 4..=14))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -250,7 +253,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=13) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=14) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -356,6 +359,16 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("capture-migration-after-commit");
         }
+        if version < 14 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            read_archive_retention::migrate(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 14))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("retention-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("retention-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -372,6 +385,7 @@ impl Store {
         let store = Self {
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
+            retention_budget: Default::default(),
             connection,
             budget,
             audit_trust,
@@ -741,6 +755,7 @@ impl Store {
         if result != "ok" {
             return Err(Error::Integrity);
         }
+        read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;
         evidence::verify_schema(snapshot)?;
@@ -749,6 +764,7 @@ impl Store {
         seals::verify(snapshot, trust)?;
         read_archive::verify(snapshot)?;
         read_capture::verify(snapshot)?;
+        read_archive_retention::verify(snapshot)?;
         let mut operations = sql(snapshot.prepare(
             "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
         ))?;

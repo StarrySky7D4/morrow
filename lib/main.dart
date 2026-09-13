@@ -1805,6 +1805,7 @@ class _StudioState extends State<Studio> {
     if ((widget.workbench?.writable ?? false) &&
         _queries.phase != QueryPhase.ready) {
       final failed = _queries.phase == QueryPhase.failed;
+      final capacity = failed && (_queries.failure?.capacity ?? false);
       return Glass(
         componentId: 'query-status',
         p: p,
@@ -1822,19 +1823,37 @@ class _StudioState extends State<Studio> {
                 const SizedBox(height: 12),
                 Text(
                   failed
-                      ? (_queries.failure?.terminal ?? false)
+                      ? capacity
+                            ? '查询历史容量已满'
+                            : (_queries.failure?.terminal ?? false)
                             ? '此次筛选已终止'
                             : '尚未确认筛选结果'
                       : '正在筛选…',
                   key: ValueKey(failed ? 'query-error' : 'query-loading'),
                   style: TextStyle(color: p.muted),
                 ),
+                if (capacity)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: Text(
+                      '已有内容已保留。此版本尚不支持清理查询历史。',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: p.muted, fontSize: 12),
+                    ),
+                  ),
                 if (failed)
                   TextButton(
                     key: const ValueKey('query-retry'),
                     onPressed: _queries.retry,
                     child: Text(
-                      (_queries.failure?.terminal ?? false) ? '重新筛选' : '重试筛选',
+                      capacity
+                          ? '重新检查'
+                          : (_queries.failure?.terminal ?? false)
+                          ? '重新筛选'
+                          : '重试筛选',
                     ),
                   ),
               ],

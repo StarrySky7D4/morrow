@@ -70,6 +70,7 @@ pub enum Error {
     OperationConflict,
     NotFound,
     EventCapacity,
+    ArchiveCapacity,
     CommitUnknown,
 }
 impl fmt::Display for Error {

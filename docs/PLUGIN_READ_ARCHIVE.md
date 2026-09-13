@@ -1,4 +1,4 @@
-# 分片读取归档契约（test.46）
+# 分片读取归档契约（test.47）
 
 `core::read_archive` 保存有序不透明分片，`Store` 在内容库格式12管理准备与发布。它提供字节完整性和原子引用闭包；应用适配器另行证明EOF、来源、实际执行、授权与结果语义。普通卡片及其修订不因归档改变。
 
@@ -22,7 +22,7 @@
 | 请求、响应、最终元数据 | 各4 MiB，独立有界；封装有固定总量限制 |
 | 原TaskEvidence | 每操作最多16份、原PB＋容器64 MiB；单证据PB24 MiB、batch最多1024观察，保持旧规则 |
 
-超过预算明确拒绝，暂存仍未发布；不删观察或截断候选后声称成功。分片没有引用绕过旧Evidence计费，它是独立类型化归档政策。物理去重不降低逻辑计费。test.45加入全库暂存准入硬上限，已发布归档的总容量、保留期限与GC仍未建立；test.46 已将 Windows 默认查询接入下述持久捕获。
+超过预算明确拒绝，暂存仍未发布；不删观察或截断候选后声称成功。分片没有引用绕过旧Evidence计费，它是独立类型化归档政策。物理去重不降低逻辑计费。test.45加入全库暂存准入硬上限，test.47另加全部归档总容量；保留期限与GC仍未建立。test.46 已将 Windows 默认查询接入下述持久捕获。
 
 既有`read_archive_manifest` 与 `read_archive_part`仍在各自事务内完整核验，逐片遍历会重复扫描。test.45的`open_read_archive_cursor(subject,operation,expected_root)`用于完整读取：仅接受已发布归档，将调用方预期根与原始Manifest、逻辑来源及audit identity核对，在独立只读WAL事务中先验证全部分片和关联，再允许返回任何一片。不能把未验证的目录自报根当成外部可信根，也不宣称完成OS文件身份认证。
 
@@ -44,7 +44,7 @@
 
 ## 实际执行原件与回放
 
-`Pool::record_transform_observation` 检查当前管理器与实例绑定，在新runner实际执行一个纯转换，返回包摘要、TaskReport及保留原始PB的ObservationRecord。它不复制整个包，不接受宿主调用，失败或撤权不返回成功记录。每次fuel取当前限制与调用方剩余预算的较小值；完整序列总预算由适配器累计。本版本只支持成功观察，错误／取消的持久终结协议仍待设计。
+`Pool::record_transform_observation` 检查当前管理器与实例绑定，在新runner实际执行一个纯转换，返回包摘要、TaskReport及保留原始PB的ObservationRecord。它不复制整个包，不接受宿主调用，失败或撤权不返回成功记录。每次fuel取当前限制与调用方剩余预算的较小值；完整序列总预算由适配器累计。逐调用Observation仍只记录成功执行；捕获整体的失败／取消／中断由test.46持久状态保存，不伪造成功调用。
 
 `task_evidence::decode_observation` 在Protobuf分配前限制帧长、字段数、嵌套预算、重复字段和u32范围。`replay_observation` 使用单独归档的包在隔离runner重放原输入，比较完成原帧、退出状态、host call与剩余fuel。调用方须验证包和归档根，并按自己的策略限制整个序列燃料；结构合法不等于历史真实执行。
 
@@ -54,7 +54,7 @@
 
 签名证明既定身份封存了这些原始读取事件；分片哈希证明字节关联，census重算证明所给有序材料一致。它们不独立证明从未遗漏来源、不恢复历史授权，也不证明用户收到结果。独立audit CLI核验签名及完整数据库引用；尚无独立查询回放CLI。
 
-下一步：默认查询的稳定上下文和全部调用存证、全程及交付权限、结果历史修订映射、失败／取消终结、持久恢复／过期及已发布历史GC、Web来源适配。第一方代码保持AGPL-3.0-only，本阶段无新增unsafe。
+下一步：结果历史修订映射、UI实时取消／过期、已发布历史GC、独立查询回放CLI与Web来源适配。第一方代码保持AGPL-3.0-only，本阶段无新增unsafe。
 
 
 ## 持久捕获状态与默认查询（test.46）
@@ -63,7 +63,7 @@
 
 核心接口 `begin_read_capture`、`append_read_capture`、`finish_read_capture_local_authorized`、`end_read_capture` 强制owner／revision及状态转移；`lookup_read_capture`和有界`list_read_captures`用于确认与恢复。owner是可信宿主的随机32字节会话标记，不是插件权限。终态ID不可复用；普通归档及其他内容／记录写入口不能占用tracked ID。Manifest的capture_binding钉定原意图及owner，与State双向检查；旧无标记归档保持原件不变。
 
-最多4096个持久状态、256 MiB状态计费；每状态在begin保留原PB＋容器及额外4 KiB，支持容量满时写入有界终态原因。Preparing状态费用也计入全库32档／8 GiB暂存。低预算接口仅允许更低的此次准入，非持久策略。状态与已发布原件不自动删除：当前尚无完整保留、过期、GC或已发布总字节政策，达到硬限需明确拒绝，不能静默覆盖旧结果。
+最多4096个持久状态、256 MiB状态计费；每状态在begin保留原PB＋容器及额外4 KiB，支持容量满时写入有界终态原因。Preparing状态费用也计入全库32档／8 GiB暂存。低预算接口仅允许更低的此次准入，非持久策略。状态与已发布原件不自动删除：已发布总容量现按test.47执行，完整保留、过期与GC仍未实现；达到硬限需明确拒绝，不能静默覆盖旧结果。
 
 Windows `Workbench::query` 默认创建唯一operation；`query_with_operation`允许保留调用者ID。源快照readpoint、调度器版本、实际包摘要与100亿总fuel预算先保存；随后记录原包、全部类型的原Card PB与来源事实，以及每次实际Filter／SortRun／Merge执行观察。单个任务预算仍受运行时限制，总归档65536片／4 GiB；这些是显式资源限制，不是候选截断。结果最多4096个ID，超限结束失败，无部分成功。
 
@@ -72,3 +72,16 @@ Windows `Workbench::query` 默认创建唯一operation；`query_with_operation`�
 同ID同条件的Ready重试返回原读取观察中的结果，不重新读取当前卡片或执行guest；改条件必须新ID。同步宿主重启时把自己的Preparing标记Interrupted；再次遇到丢失快照的Preparing也中断，不能换到新来源继续。同一ID的终态保留，明确终态重试使用新ID。任何写入或最终交付结果未知时先查询持久状态，不能把Ready改为Failed。
 
 Flutter查询协调器在条件、内容generation或backend变化时新建128位随机ID；未知传输失败重试保留ID，宿主明确终态则新ID。私有Cap’n Proto保持原schema，query复用已有operation；仅query错误的uiCode=100表示明确终态，其余错误保守视为未确认。宿主响应帧仍128 KiB，超大结果交付失败不撤销Ready。超时后无自动重连，也不恢复旧授权。ID结果目前映射当前UI缓存；完整历史修订展示、UI实时取消、Web对应存储和独立查询CLI仍待接入。
+
+
+## 全部归档的保留容量（test.47）
+
+格式14新增派生 `read_archive_costs` 与 `read_archive_totals`，共同记录Preparing与published归档的逻辑原件成本。全库硬上限8192档／64 GiB，与32档／8 GiB暂存限制、4096状态／256 MiB状态限制分别成立。计费是Manifest原PB＋完整容器与各Part原PB＋完整容器，物理去重不折扣；不包括已独立限制的State、普通Card、读取事件/签名日志、WAL、SQLite索引和其他应用数据，不宣称预留磁盘空间或限制全部物理占用。
+
+begin、append、finalize和abort与账本增减同一写事务提交，published也继续占用；最终Manifest的新增元数据必须纳入正增长准入，不能只在开始时检查后无上限发布。精确无增长重试、减少费用的操作不因当前更低政策被阻止。账本是派生的加速信息，原PB／分片仍是成本依据，完整性检查及快照验证核对二者，不以SQLite缓存取代完整原件验证。
+
+`RetentionBudget { max_archives, max_bytes }`、`set_read_archive_retention_budget`只收紧当前Store的运行期政策，既有普通与tracked归档写入口都执行，不新增旁路append API。另一Store默认仍执行硬上限，双方共享同一数据库事务账本；较低policy不会自动传播或成为全库用户配置。`read_archive_retention_usage`报告实际计费，包括已超限旧库。迁移回填账本，不改变旧PB或签名，也不因超限拒绝只读历史；正增长会返回类型化ArchiveCapacity。
+
+宿主把ArchiveCapacity与任务/帧Limit分开。开始前容量失败不产生半条捕获，部分捕获容量失败尝试原子结束并保存query_archive_capacity原因。若终止无法确认，保留Preparing和原operation，不伪称失败已完成。query专用uiCode101表示容量且明确终态，102表示容量且结果未确认；100和0保留旧含义，Cap’n Proto schema/digest不变。Flutter显示容量已满、已有内容保留、当前版尚不支持清理历史；只有用户点击重新检查才重试，不暗示备份本身会释放容量。
+
+Ready原结果在预算收紧后仍可按当前读取权限交付，同ID不重新执行guest。自动清理、历史删除或State压缩尚未实现。后续需要合法清理记录、材料可用性与签名验证分开报告；精确设计见[归档保留与清理](PLUGIN_ARCHIVE_RETENTION.md)。

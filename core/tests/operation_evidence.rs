@@ -460,7 +460,7 @@ fn v6_migration_crash_is_atomic_and_preserves_existing_content() {
         drop(h);
         let sql = rusqlite::Connection::open(&path).unwrap();
         sql.execute_batch(
-            "DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; PRAGMA user_version=6;",
+            "DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; PRAGMA user_version=6;",
         )
         .unwrap();
         drop(sql);

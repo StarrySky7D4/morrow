@@ -640,3 +640,154 @@ fn existing_content_operation_cannot_become_a_query_retry_loop() {
     );
     host.finish().unwrap();
 }
+
+fn retention_limit(host: &mut Workbench, count: u32, bytes: u64) {
+    host.host
+        .store_local_mut()
+        .set_read_archive_retention_budget(morrow_core::read_archive::RetentionBudget {
+            max_archives: count,
+            max_bytes: bytes,
+        })
+        .unwrap();
+}
+fn query_wire(host: &mut Workbench, operation: &str) -> (u16, String) {
+    use capnp::{message::Builder, serialize};
+    let mut builder = Builder::new_default();
+    let mut request = builder.init_root::<crate::host_capnp::request::Builder>();
+    request.set_version(1);
+    request.set_digest(&crate::protocol::digest());
+    request.set_action(crate::host_capnp::Action::Query);
+    request.set_operation(operation);
+    request.set_payload(&codec::encode_request(&command(Action::Query)).unwrap());
+    let bytes =
+        crate::protocol::respond(host, &serialize::write_message_to_words(&builder)).unwrap();
+    let response =
+        serialize::read_message(&mut std::io::Cursor::new(bytes), Default::default()).unwrap();
+    let r = response
+        .get_root::<crate::host_capnp::response::Reader>()
+        .unwrap();
+    (
+        r.get_ui_code(),
+        r.get_error().unwrap().to_str().unwrap().to_owned(),
+    )
+}
+#[test]
+fn retained_history_blocks_new_capture_but_delivers_original_ready_with_current_permission() {
+    let dir = tempfile::tempdir().unwrap();
+    let db = dir.path().join("workbench.db");
+    let mut host = Workbench::open(&db, Some(common::package())).unwrap();
+    seed(&mut host, "a", "A", "body");
+    assert_eq!(query(&mut host, "retained-ready").unwrap(), ["a"]);
+    let ready = state(&host, "retained-ready");
+    let usage = host
+        .host
+        .store_local()
+        .read_archive_retention_usage()
+        .unwrap();
+    assert_eq!(usage.archives, 1);
+    retention_limit(&mut host, 1, morrow_core::read_archive::MAX_RETAINED_BYTES);
+    let before = host.counter;
+    let error = query(&mut host, "over-capacity").unwrap_err();
+    let failure = error.downcast_ref::<QueryFailure>().unwrap();
+    assert!(failure.capacity && failure.terminal);
+    assert_eq!(host.counter, before);
+    assert!(
+        host.host
+            .store_local()
+            .lookup_read_capture(SUBJECT, "over-capacity")
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(query_wire(&mut host, "wire-over-capacity").0, 101);
+    assert_eq!(query(&mut host, "retained-ready").unwrap(), ["a"]);
+    assert_eq!(
+        state(&host, "retained-ready").container(),
+        ready.container()
+    );
+    assert_eq!(
+        host.host
+            .store_local()
+            .read_archive_retention_usage()
+            .unwrap(),
+        usage
+    );
+    host.finish().unwrap();
+}
+#[test]
+fn partial_capture_capacity_failure_releases_archive_and_remembers_terminal_reason() {
+    let dir = tempfile::tempdir().unwrap();
+    let db = dir.path().join("workbench.db");
+    let mut host = Workbench::open(&db, Some(common::package())).unwrap();
+    seed(&mut host, "a", "A", "body");
+    host.host.flush_pending().unwrap();
+    // Intent fits; the actual first-party package cannot fit in this local policy.
+    retention_limit(&mut host, 4, 64 * 1024);
+    let (code, text) = query_wire(&mut host, "package-capacity");
+    assert_eq!(code, 101);
+    assert!(text.contains("查询历史容量已满"));
+    let failed = state(&host, "package-capacity");
+    assert_eq!(failed.phase(), Phase::Failed);
+    assert_eq!(failed.reason(), "query_archive_capacity");
+    assert!(
+        host.host
+            .store_local()
+            .lookup_read(SUBJECT, "package-capacity")
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(
+        host.host
+            .store_local()
+            .read_archive_retention_usage()
+            .unwrap()
+            .archives,
+        0
+    );
+    assert_eq!(query_wire(&mut host, "package-capacity").0, 101);
+    assert_eq!(
+        state(&host, "package-capacity").container(),
+        failed.container()
+    );
+    retention_limit(&mut host, 4, morrow_core::read_archive::MAX_RETAINED_BYTES);
+    assert_eq!(query(&mut host, "after-capacity").unwrap(), ["a"]);
+    assert_eq!(
+        state(&host, "package-capacity").container(),
+        failed.container()
+    );
+    host.finish().unwrap();
+}
+#[test]
+fn capacity_with_unconfirmed_cleanup_preserves_operation_and_reports_unknown_wire_status() {
+    let dir = tempfile::tempdir().unwrap();
+    let db = dir.path().join("workbench.db");
+    let mut host = Workbench::open(&db, Some(common::package())).unwrap();
+    retention_limit(&mut host, 4, 64 * 1024);
+    let sql = rusqlite::Connection::open(&db).unwrap();
+    sql.execute_batch("CREATE TRIGGER fail_capture_cleanup BEFORE DELETE ON read_archives BEGIN SELECT RAISE(ABORT,'test cleanup unavailable'); END;").unwrap();
+    let (code, _) = query_wire(&mut host, "uncertain-capacity");
+    assert_eq!(code, 102);
+    assert_eq!(state(&host, "uncertain-capacity").phase(), Phase::Preparing);
+    assert!(
+        host.host
+            .store_local()
+            .lookup_read(SUBJECT, "uncertain-capacity")
+            .unwrap()
+            .is_none()
+    );
+    sql.execute_batch("DROP TRIGGER fail_capture_cleanup;")
+        .unwrap();
+    assert_eq!(query_wire(&mut host, "uncertain-capacity").0, 100);
+    assert_eq!(
+        state(&host, "uncertain-capacity").phase(),
+        Phase::Interrupted
+    );
+    assert_eq!(
+        host.host
+            .store_local()
+            .read_archive_retention_usage()
+            .unwrap()
+            .archives,
+        0
+    );
+    host.finish().unwrap();
+}

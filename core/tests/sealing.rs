@@ -139,7 +139,7 @@ fn legacy(path: &std::path::Path) {
     drop(s);
     let c = rusqlite::Connection::open(path).unwrap();
     c.execute_batch(
-        "DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; DROP TABLE audit_identity; DROP TABLE operation_events; DROP TABLE sealed_segments; PRAGMA user_version=4;",
+        "DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; DROP TABLE audit_identity; DROP TABLE operation_events; DROP TABLE sealed_segments; PRAGMA user_version=4;",
     )
     .unwrap();
 }
@@ -156,7 +156,7 @@ fn migration_preserves_v4_records_and_corrupt_migration_rolls_back() {
     assert_eq!(
         c.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
             .unwrap(),
-        13
+        14
     );
     let bad = d.path().join("bad");
     legacy(&bad);

@@ -272,7 +272,11 @@ class RustWorkbench
         if ((reply.error ?? '').isNotEmpty) {
           if (action == host.Action.query) {
             // 100 is query-specific; an unknown code never proves termination.
-            throw QueryFailure(reply.error!, terminal: reply.uiCode == 100);
+            throw QueryFailure(
+              reply.error!,
+              terminal: reply.uiCode == 100 || reply.uiCode == 101,
+              capacity: reply.uiCode == 101 || reply.uiCode == 102,
+            );
           }
           throw StateError(reply.error!);
         }

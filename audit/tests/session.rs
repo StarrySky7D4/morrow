@@ -203,7 +203,7 @@ fn legacy_signed_store_requires_original_key_and_migrates_binding_atomically() {
     drop(session);
     let connection = rusqlite::Connection::open(&db).unwrap();
     connection
-        .execute_batch("DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; DROP TABLE audit_identity; PRAGMA user_version=5;")
+        .execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; DROP TABLE operation_evidence; DROP TABLE task_evidence; DROP TABLE audit_identity; PRAGMA user_version=5;")
         .unwrap();
     drop(connection);
     assert!(matches!(

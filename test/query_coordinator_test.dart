@@ -244,4 +244,48 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+  testWidgets(
+    'capacity status preserves contents and distinguishes uncertain retry',
+    (tester) async {
+      tester.view.physicalSize = const Size(1440, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final backend = QueryBackend();
+      await tester.pumpWidget(
+        MorrowApp(storage: MemoryStorage(), workbench: backend),
+      );
+      await tester.pump(const Duration(milliseconds: 250));
+      backend.requests.last.completeError(
+        const QueryFailure('capacity', terminal: true, capacity: true),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('查询历史容量已满'), findsOneWidget);
+      expect(find.text('已有内容已保留。此版本尚不支持清理查询历史。'), findsOneWidget);
+      expect(find.text('重新检查'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(backend.requests, hasLength(1));
+      final retry = find.byKey(const ValueKey('query-retry'));
+      await tester.ensureVisible(retry);
+      await tester.tap(retry);
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(backend.operations[1], isNot(backend.operations[0]));
+      backend.requests.last.completeError(
+        const QueryFailure(
+          'capacity uncertain',
+          terminal: false,
+          capacity: true,
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.ensureVisible(retry);
+      await tester.tap(retry);
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(backend.operations[2], backend.operations[1]);
+      backend.requests.last.complete([]);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

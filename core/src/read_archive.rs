@@ -47,6 +47,40 @@ pub struct PreparationUsage {
     /// Manifest original + container, plus every Part original + container.
     pub logical_bytes: u64,
 }
+/// All pending and published archive originals, independent of capture-State quotas.
+pub const MAX_RETAINED_ARCHIVES: u32 = 8192;
+pub const MAX_RETAINED_BYTES: u64 = 64 * 1024 * 1024 * 1024;
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct RetentionBudget {
+    pub max_archives: u32,
+    pub max_bytes: u64,
+}
+impl Default for RetentionBudget {
+    fn default() -> Self {
+        Self {
+            max_archives: MAX_RETAINED_ARCHIVES,
+            max_bytes: MAX_RETAINED_BYTES,
+        }
+    }
+}
+impl RetentionBudget {
+    pub(crate) fn validate(self) -> Result<()> {
+        if self.max_archives == 0
+            || self.max_archives > MAX_RETAINED_ARCHIVES
+            || self.max_bytes == 0
+            || self.max_bytes > MAX_RETAINED_BYTES
+        {
+            return Err(Error::Limit);
+        }
+        Ok(())
+    }
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct RetentionUsage {
+    pub archives: u64,
+    /// Every Manifest and Part original protobuf plus its complete container.
+    pub logical_bytes: u64,
+}
 const PART_MAGIC: &[u8; 8] = b"MRWAPRT1";
 const MANIFEST_MAGIC: &[u8; 8] = b"MRWAMNF1";
 #[derive(Clone, Debug, PartialEq, Eq)]

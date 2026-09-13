@@ -24,10 +24,13 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     out.set_version(1);
     out.set_digest(&digest());
     if let Err(e) = handle(host, bytes, out.reborrow()) {
-        if e.downcast_ref::<crate::query_capture::QueryFailure>()
-            .is_some_and(|e| e.terminal)
-        {
-            out.set_ui_code(100);
+        if let Some(query) = e.downcast_ref::<crate::query_capture::QueryFailure>() {
+            out.set_ui_code(match (query.capacity, query.terminal) {
+                (true, true) => 101,
+                (true, false) => 102,
+                (false, true) => 100,
+                (false, false) => 0,
+            });
         }
         out.set_error(e.to_string().as_str());
     }
