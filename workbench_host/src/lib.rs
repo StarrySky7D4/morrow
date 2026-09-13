@@ -20,6 +20,7 @@ use std::{
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 mod storage;
+mod evidence;
 pub mod transfer;
 
 pub struct Record {
@@ -228,6 +229,9 @@ impl Workbench {
         Ok(())
     }
     fn run(&mut self, input: Request) -> Result<Response> {
+        Ok(self.run_observed(input, false)?.0)
+    }
+    fn run_observed(&mut self, input: Request, capture: bool) -> Result<(Response, Option<morrow_core::task_evidence::Evidence>)> {
         self.counter = self
             .counter
             .checked_add(1)
@@ -242,15 +246,24 @@ impl Workbench {
             },
         )?;
         let start = self.start;
-        let r = self.pool.run_task(
-            self.manager.as_ref().ok_or("plugin manager unavailable")?,
-            &mut self.host,
-            self.plugin.as_ref().ok_or("plugin unavailable")?,
-            &task,
-            || now(start),
-        );
+        let result = if capture {
+            self.pool.record_transform(
+                self.manager.as_ref().ok_or("plugin manager unavailable")?,
+                &mut self.host,
+                self.plugin.as_ref().ok_or("plugin unavailable")?,
+                &task,
+            ).map(|captured| { let (report, evidence) = captured.into_parts(); (report, Some(evidence)) })
+        } else {
+            self.pool.run_task(
+                self.manager.as_ref().ok_or("plugin manager unavailable")?,
+                &mut self.host,
+                self.plugin.as_ref().ok_or("plugin unavailable")?,
+                &task,
+                || now(start),
+            ).map(|report| (report, None))
+        };
         self.finish_stopped_session();
-        let r = r?;
+        let (r, evidence) = result?;
         if r.execution.outcome != Ok(0) || r.execution.host_calls != 0 || r.response.is_some() {
             return Err(format!("plugin failed: {:?}", r.execution.outcome).into());
         }
@@ -261,7 +274,7 @@ impl Workbench {
         if out.type_id != "morrow.workbench.response.v1" {
             return Err("unexpected plugin result".into());
         }
-        Ok(codec::decode_response(&out.bytes)?)
+        Ok((codec::decode_response(&out.bytes)?, evidence))
     }
     fn decode(card: &CardRecord) -> Result<Record> {
         let s = card.summary();
@@ -384,7 +397,12 @@ impl Workbench {
         let id = draft.id.clone();
         let mut req = command(Action::Create);
         req.proposed = draft;
-        let next = self.run(req)?.idea;
+        if let Some(record) = self.retry_observed(operation, &id, &req, None)? {
+            return Ok(record);
+        }
+        let (response, evidence) = self.run_observed(req, true)?;
+        let evidence = evidence.ok_or("missing captured evidence")?;
+        let next = response.idea;
         next.validate()?;
         if next.id != id {
             return Err("plugin changed identity".into());
@@ -400,12 +418,13 @@ impl Workbench {
         )?;
         self.grant(&id, GrantKind::CreateContent)?;
         let start = self.start;
-        let result = self.host.create_content(
+        let result = self.host.create_content_with_evidence(
             self.pool
                 .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                 .connection(),
             operation,
             &record,
+            &[evidence],
             || now(start),
         );
         self.revoke(&id, GrantKind::CreateContent)?;
@@ -426,6 +445,13 @@ impl Workbench {
         } = mutation;
         if matches!(action, Action::Create | Action::Query) {
             return Err("wrong command route".into());
+        }
+        let mut intent = command(action);
+        intent.proposed = proposed.clone().unwrap_or_default();
+        intent.text = text.into();
+        intent.flag = flag;
+        if let Some(record) = self.retry_observed(operation, id, &intent, Some(revision))? {
+            return Ok(record);
         }
         let prior = self.authorized_read(id)?;
         let old = Self::decode(&prior)?;
@@ -452,7 +478,9 @@ impl Workbench {
         req.text = text.into();
         req.flag = flag;
         req.now_ms = time;
-        let next = self.run(req)?.idea;
+        let (response, evidence) = self.run_observed(req, true)?;
+        let evidence = evidence.ok_or("missing captured evidence")?;
+        let next = response.idea;
         next.validate()?;
         if next.id != id {
             return Err("plugin changed identity".into());
@@ -477,11 +505,12 @@ impl Workbench {
         };
         self.grant(id, GrantKind::EditContent)?;
         let start = self.start;
-        let result = self.host.edit_content(
+        let result = self.host.edit_content_with_evidence(
             self.pool
                 .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                 .connection(),
             &change,
+            &[evidence],
             || now(start),
         );
         self.revoke(id, GrantKind::EditContent)?;

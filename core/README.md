@@ -1,6 +1,6 @@
-# Morrow core — test.35 存储进度
+# Morrow core — test.36 存储进度
 
-这是独立于 Flutter 的可信 Rust 核心，当前应用开发版本为 `0.1.9-test.35+40`；核心 crate 的 Cargo 版本仍为 `0.1.9-test.22`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
+这是独立于 Flutter 的可信 Rust 核心，当前应用开发版本为 `0.1.9-test.36+41`；核心 crate 的 Cargo 版本仍为 `0.1.9-test.22`。Windows 重构工作台已通过 Rust 宿主使用本核心；Web 实验适配复用同一 Store。Windows test.19 开发版通过审计 Session 接入系统保护密钥与分批封存；构建与测试不读取用户资料。以下旧阶段章节保留历史范围，当前封存与数据库格式以本节为准。
 
 ## test.35 内容与纯任务证据同事务
 
@@ -12,7 +12,15 @@
 
 4／5／6 按既有阶段迁移至 7；6→7 先验证旧库，再将建表、版本更新和新格式校验放入单一事务。旧格式不能携带未受支持的证据引用或孤立新表来绕过迁移验证。`evidence-migration-before-commit`／`after-commit` 与内容事务 `after-task-evidence` 为显式测试故障点。
 
-签名封存覆盖包含摘要的原始 Commit，从而关联证据原件；它不证明插件输出正确或最终正文必然由该输出推导。默认 UI 自动捕获、版本化宿主投影重建、依赖图证据、全库证据配额和 GC 仍待实现。见[关联设计](../docs/PLUGIN_COMMITTED_EVIDENCE.md)与[test.35 验证](../reports/test.35-committed-evidence.md)。
+签名封存覆盖包含摘要的原始 Commit，从而关联证据原件；它不证明插件输出正确或最终正文必然由该输出推导。test.35 时默认 UI 尚未自动捕获；test.36 已接入默认工作台 create／apply，见下节。设置分页、版本化宿主投影重建、依赖图证据、全库证据配额和 GC 仍待实现。见[关联设计](../docs/PLUGIN_COMMITTED_EVIDENCE.md)与[test.35 验证](../reports/test.35-committed-evidence.md)。
+
+## test.36 原操作查询与工作台重试
+
+`Store::operation_commit(card_id, operation_id)` 在固定读取事务中按卡片和内容操作类型筛选原始提交，SQL 先检查载荷长度，再解码校验 ID 与全部证据引用。返回 `Option<(Commit, Receipt)>`；不存在、其他卡片或非内容操作为 None，超限／损坏／引用不一致为错误。它只供可信宿主恢复历史命令，不新增 guest 授权，内容库格式仍为 7。
+
+默认 Windows 工作台 create／apply 已从实际 `Pool::record_transform` 获得原件后调用 with_evidence 内容接口。已提交重试核对存储原请求中的用户意图和预期基准修订，复用原 command／evidence，重新取得当前对象 grant 并让核心返回原回执。返回该次操作的历史 Record，不改写当前最新内容，也不刷新撤销期限；新操作仍做修订 CAS。CreateCard 原命令包含完整历史卡；编辑命令保存正文／标题等修改字段，不能据此宣称所有类型的完整历史 Card 均可重建。
+
+这些实现的 test.36 验证尚在进行，见[本轮记录](../reports/test.36-workbench-evidence.md)。设置多页、capture→create 因果关联、查询证据、通用宿主投影、依赖图与全局证据配额／GC 不在本次完成范围。
 
 ## test.18 日志身份绑定
 

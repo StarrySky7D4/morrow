@@ -201,6 +201,45 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
     Ok(())
 }
 impl Store {
+    /// Host-local immutable command and receipt for retry reconciliation, never a guest grant.
+    /// A missing operation, another card, or a non-content operation is indistinguishable from absence.
+    /// The returned commit is parsed from its original container; do not re-encode it for signatures.
+    pub fn operation_commit(
+        &self,
+        card_id: &str,
+        operation_id: &str,
+    ) -> Result<Option<(transaction::proto::Commit, transaction::Receipt)>> {
+        identity(card_id)?;
+        identity(operation_id)?;
+        let snapshot = sql(self.connection.unchecked_transaction())?;
+        let limit = transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128;
+        let mut statement = sql(snapshot.prepare(
+            "SELECT CASE WHEN length(payload)<=?3 THEN payload ELSE NULL END FROM operations WHERE id=?1 AND card_id=?2 AND object_kind=0",
+        ))?;
+        let raw = sql(statement
+            .query_row(params![operation_id, card_id, limit as i64], |row| {
+                let value = row.get_ref(0)?;
+                if matches!(value, rusqlite::types::ValueRef::Null) {
+                    return Ok(None);
+                }
+                let bytes = value.as_blob()?;
+                Ok(if bytes.len() > limit {
+                    None
+                } else {
+                    Some(bytes.to_vec())
+                })
+            })
+            .optional())?;
+        let Some(raw) = raw else {
+            return Ok(None);
+        };
+        let (commit, receipt) = transaction::decode_commit(&raw.ok_or(Error::Limit)?)?;
+        if receipt.card_id != card_id || receipt.operation_id != operation_id {
+            return Err(Error::Integrity);
+        }
+        verify_event(&snapshot, operation_id, &commit.task_evidence_sha256)?;
+        Ok(Some((commit, receipt)))
+    }
     /// Host-local historical evidence. This does not grant plugins access or replay authority.
     /// Missing operations, a different card and non-content operations all return NotFound.
     pub fn operation_evidence(&self, card_id: &str, operation_id: &str) -> Result<Vec<Evidence>> {
@@ -211,22 +250,32 @@ impl Store {
             "SELECT CASE WHEN length(payload)<=?3 THEN payload ELSE NULL END FROM operations WHERE id=?1 AND card_id=?2 AND object_kind=0",
         ))?;
         let raw = sql(statement
-            .query_row(params![operation_id, card_id, (transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128) as i64], |row| {
-                let value = row.get_ref(0)?;
-                if matches!(value, rusqlite::types::ValueRef::Null) {
-                    return Ok(None);
-                }
-                let bytes = value.as_blob()?;
-                Ok(
-                    if bytes.len()
-                        > transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128
-                    {
-                        None
-                    } else {
-                        Some(bytes.to_vec())
-                    },
-                )
-            })
+            .query_row(
+                params![
+                    operation_id,
+                    card_id,
+                    (transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128)
+                        as i64
+                ],
+                |row| {
+                    let value = row.get_ref(0)?;
+                    if matches!(value, rusqlite::types::ValueRef::Null) {
+                        return Ok(None);
+                    }
+                    let bytes = value.as_blob()?;
+                    Ok(
+                        if bytes.len()
+                            > transaction::MAX_EVENT_BYTES
+                                + transaction::MAX_EVENT_BYTES / 255
+                                + 128
+                        {
+                            None
+                        } else {
+                            Some(bytes.to_vec())
+                        },
+                    )
+                },
+            )
             .optional())?
         .ok_or(Error::NotFound)?
         .ok_or(Error::Limit)?;

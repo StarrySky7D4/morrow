@@ -146,8 +146,13 @@ fn audit_child() {
             // Windows environment mutation is safe; no other process's injection is changed.
             unsafe { std::env::remove_var("MORROW_WORKBENCH_FAIL_SEAL") };
             host.refresh_plugin_state();
-            assert!(host.writable());
+            // finish() already closed this root even though sealing failed. Clearing
+            // the storage fault must not implicitly revive a terminated plugin session.
+            assert!(!host.writable());
             assert!(host.maintenance_warning().is_none());
+            let status = host.plugin_status();
+            host.configure_plugin(status.revision, &status.digest, true).unwrap();
+            assert!(host.writable());
             assert_eq!(host.read("saved").unwrap().revision, 1);
             assert!(host.read("refused").is_err());
             assert_eq!(inspect(&db).pending_usage().unwrap(), (0, 0));
