@@ -151,6 +151,7 @@ pub fn run(
     };
     execute(
         manager, host, objects, caller, providers, input, context, limits, false, clock, cancel,
+        None,
     )
 }
 /// The host opts into multi-level execution. No guest can change graph budgets or select identities.
@@ -169,6 +170,38 @@ pub fn run_graph(
 ) -> Result<RoutedOutput> {
     execute(
         manager, host, objects, caller, providers, input, context, limits, true, clock, cancel,
+        None,
+    )
+}
+/// Internal supervisor evidence: only the first directly failing actual execution node is recorded.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn run_graph_tracking(
+    manager: &Manager,
+    host: &mut HostRuntime,
+    objects: &mut SharedObjects,
+    caller: &ManagedInstance,
+    providers: &[&ManagedInstance],
+    input: &Invocation,
+    context: Context<'_>,
+    limits: GraphLimits,
+    clock: impl FnMut() -> u64,
+    cancel: Cancellation,
+    failed: &mut Option<ConnectionBinding>,
+) -> Result<RoutedOutput> {
+    *failed = None;
+    execute(
+        manager,
+        host,
+        objects,
+        caller,
+        providers,
+        input,
+        context,
+        limits,
+        true,
+        clock,
+        cancel,
+        Some(failed),
     )
 }
 fn dynamic(instance: &ManagedInstance) -> bool {
@@ -189,6 +222,7 @@ struct Execution<'a> {
     active: Vec<String>,
     node_cancellations: Vec<Cancellation>,
     total: u32,
+    failed: Option<ConnectionBinding>,
     last_tick: u64,
     routes: Vec<(Dependency, DependencyOutput)>,
 }
@@ -227,6 +261,16 @@ impl Execution<'_> {
         self.node_cancellations.push(cancel.clone());
         // Always unwind the active path on ordinary failures; a panic unwinds the whole task.
         let result = self.node_body(host, objects, caller, input, clock, cancel);
+        if self.failed.is_none()
+            && matches!(
+                &result,
+                Err(Error::Execution(
+                    Fault::Trap | Fault::TaskProtocol | Fault::Limits
+                ))
+            )
+        {
+            self.failed = Some(caller.connection().binding());
+        }
         self.active.pop();
         result
     }
@@ -430,6 +474,7 @@ fn execute(
     graph: bool,
     mut clock: impl FnMut() -> u64,
     cancel: Cancellation,
+    failed: Option<&mut Option<ConnectionBinding>>,
 ) -> Result<RoutedOutput> {
     if context.max_calls == 0
         || context.max_calls > 16
@@ -470,10 +515,15 @@ fn execute(
         active: Vec::new(),
         node_cancellations: Vec::new(),
         total: 0,
+        failed: None,
         last_tick: now,
         routes: Vec::new(),
     };
-    let report = execution.node(host, objects, caller, input, &mut clock, cancel.clone())?;
+    let report = execution.node(host, objects, caller, input, &mut clock, cancel.clone());
+    if let Some(failed) = failed {
+        *failed = execution.failed;
+    }
+    let report = report?;
     let value = report.output.ok_or(Error::Execution(Fault::TaskProtocol))?;
     let completed = clock();
     execution.tick(completed)?;

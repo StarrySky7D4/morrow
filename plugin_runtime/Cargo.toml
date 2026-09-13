@@ -81,3 +81,7 @@ required-features = ["packages"]
 [[example]]
 name = "qualify_dependency_graph"
 required-features = ["packages"]
+
+[[example]]
+name = "qualify_instance_pool"
+required-features = ["packages"]

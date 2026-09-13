@@ -81,3 +81,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 ## test.31 多层依赖图
 
 新增可信run_graph入口：默认边深度4／全图16次，硬上限8／64；局部任务额度独立保留。拒绝活动包重入，允许顺序分支复用。根结果保存全部真实边和节点取消信号，提交时完整检查。原run仍为单层。见 [设计与边界](../docs/PLUGIN_DEPENDENCY_GRAPH.md) 和 [验证记录](../reports/test.31-dependency-graph.md)。
+
+## test.32 自动准备与共享实例
+
+新增只读ActivationPlan及绑定实际Host／Manager的实例池。独立root会话共享非根提供者，按真实失效传播必需关系；恢复须明确调用且有次数／间隔上限，不重试业务或恢复旧对象grant。见 [设计与边界](../docs/PLUGIN_INSTANCE_POOL.md) 及 [验证记录](../reports/test.32-instance-pool.md)。

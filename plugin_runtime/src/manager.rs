@@ -47,6 +47,51 @@ impl From<Fault> for ManagerError {
     }
 }
 pub type Result<T> = std::result::Result<T, ManagerError>;
+/// An explicit host request to include one already approved optional slot.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct OptionalDependency {
+    pub caller: String,
+    pub slot: String,
+}
+#[derive(Clone, Debug)]
+pub struct PlannedPackage {
+    pub id: String,
+    pub digest: [u8; 32],
+}
+/// Read-only exact-selection snapshot, not permission to connect or restore object grants.
+/// All execution paths must revalidate the current manager before consuming the plan.
+#[derive(Clone)]
+pub struct ActivationPlan {
+    root: String,
+    revision: u64,
+    packages: Vec<PlannedPackage>,
+    required: BTreeSet<String>,
+    required_edges: Vec<(String, String)>,
+    optionals: Vec<OptionalDependency>,
+}
+impl ActivationPlan {
+    pub fn root(&self) -> &str {
+        &self.root
+    }
+    pub fn revision(&self) -> u64 {
+        self.revision
+    }
+    /// Providers precede dependents along required edges only, with deterministic ID tie-breaking.
+    pub fn packages(&self) -> &[PlannedPackage] {
+        &self.packages
+    }
+    /// Root and packages reachable from it using required edges exclusively.
+    pub fn required(&self) -> &BTreeSet<String> {
+        &self.required
+    }
+    /// (caller, provider) required edges among all selected plan nodes, including optional subtrees.
+    pub fn required_edges(&self) -> &[(String, String)] {
+        &self.required_edges
+    }
+    pub fn optionals(&self) -> &[OptionalDependency] {
+        &self.optionals
+    }
+}
 struct Control {
     binding: ConnectionBinding,
     revocation: Revocation,
@@ -140,6 +185,7 @@ impl Drop for ManagedInstance {
 /// One manager owns registry mutation. No mutable registry or unchecked connection factory escapes.
 /// Existing low-level trusted APIs remain available; this is not isolation from the trusted host.
 pub struct Manager {
+    identity: Arc<()>,
     registry: Registry,
     limits: Limits,
     instances: BTreeMap<String, Vec<Weak<Control>>>,
@@ -147,10 +193,14 @@ pub struct Manager {
 impl Manager {
     pub fn new(registry: Registry, limits: Limits) -> Self {
         Self {
+            identity: Arc::new(()),
             registry,
             limits,
             instances: BTreeMap::new(),
         }
+    }
+    pub(crate) fn identity(&self) -> Weak<()> {
+        Arc::downgrade(&self.identity)
     }
     pub fn revision(&self) -> u64 {
         self.registry.revision()
@@ -160,6 +210,139 @@ impl Manager {
     }
     pub fn selections(&self) -> impl Iterator<Item = &Selection> {
         self.registry.selections()
+    }
+    /// Plan only: validates approved immutable selections without connecting, enabling or writing.
+    /// Optional requests are followed only after their caller becomes reachable from the root.
+    pub fn activation_plan(
+        &self,
+        root: &str,
+        optional: &[OptionalDependency],
+        expected_revision: u64,
+    ) -> Result<ActivationPlan> {
+        self.check_revision(expected_revision)?;
+        let valid_identity = |value: &str| {
+            !value.is_empty()
+                && value.len() <= 256
+                && !value
+                    .chars()
+                    .any(|c| c.is_control() || matches!(c, '/' | ':' | '\\'))
+        };
+        if !valid_identity(root) {
+            return Err(Error::Invalid("activation root").into());
+        }
+        // At most 64 packages, each declaring at most 16 slots; reject before copying requests.
+        if optional.len() > 64 * morrow_core::plugin_package::MAX_DEPENDENCIES {
+            return Err(Error::Limit.into());
+        }
+        let mut requests = BTreeSet::new();
+        for request in optional {
+            if !valid_identity(&request.caller)
+                || !valid_identity(&request.slot)
+                || !requests.insert((request.caller.clone(), request.slot.clone()))
+            {
+                return Err(Error::Invalid("invalid or duplicate optional dependency").into());
+            }
+        }
+        let mut pending = BTreeSet::from([root.to_owned()]);
+        let mut packages = BTreeMap::new();
+        let mut edges = BTreeSet::new();
+        let mut followed = BTreeSet::new();
+        while let Some(id) = pending.pop_first() {
+            if packages.contains_key(&id) {
+                continue;
+            }
+            if packages.len() >= 64 {
+                return Err(Error::Limit.into());
+            }
+            let (package, selection) = self.registry.resolve_enabled(&id)?;
+            if package.manifest().guest_abi_version != 2 {
+                return Err(Error::UnsupportedVersion.into());
+            }
+            packages.insert(id.clone(), selection.digest);
+            for declaration in &package.manifest().dependencies {
+                let key = (id.clone(), declaration.slot.clone());
+                if requests.contains(&key) {
+                    if !declaration.optional {
+                        return Err(Error::Invalid("explicit slot is not optional").into());
+                    }
+                    followed.insert(key);
+                } else if declaration.optional {
+                    continue;
+                }
+                let (lock, provider, provider_selection) =
+                    self.registry.resolve_dependency(&id, &declaration.slot)?;
+                // resolve_dependency checks both current digests, declarations and provider closure.
+                if lock.caller_digest != package.digest()
+                    || lock.provider_digest != provider.digest()
+                    || lock.provider_digest != provider_selection.digest
+                {
+                    return Err(Error::RevisionConflict.into());
+                }
+                if !declaration.optional {
+                    edges.insert((id.clone(), lock.provider_id.clone()));
+                }
+                if !packages.contains_key(&lock.provider_id) {
+                    pending.insert(lock.provider_id);
+                }
+            }
+            if packages.len() + pending.len() > 64 {
+                return Err(Error::Limit.into());
+            }
+        }
+        if followed != requests {
+            return Err(Error::Invalid("optional slot caller unreachable or undeclared").into());
+        }
+        let mut required = BTreeSet::from([root.to_owned()]);
+        let mut frontier = vec![root.to_owned()];
+        while let Some(caller) = frontier.pop() {
+            for (_, provider) in edges.iter().filter(|(from, _)| from == &caller) {
+                if required.insert(provider.clone()) {
+                    frontier.push(provider.clone());
+                }
+            }
+        }
+        let mut remaining: BTreeMap<String, usize> =
+            packages.keys().map(|id| (id.clone(), 0)).collect();
+        let mut dependents: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        for (caller, provider) in &edges {
+            *remaining.get_mut(caller).expect("included caller") += 1;
+            dependents
+                .entry(provider.clone())
+                .or_default()
+                .insert(caller.clone());
+        }
+        let mut ready: BTreeSet<_> = remaining
+            .iter()
+            .filter(|(_, count)| **count == 0)
+            .map(|(id, _)| id.clone())
+            .collect();
+        let mut ordered = Vec::new();
+        while let Some(id) = ready.pop_first() {
+            ordered.push(PlannedPackage {
+                id: id.clone(),
+                digest: packages[&id],
+            });
+            if let Some(callers) = dependents.get(&id) {
+                for caller in callers {
+                    let count = remaining.get_mut(caller).expect("included dependent");
+                    *count -= 1;
+                    if *count == 0 {
+                        ready.insert(caller.clone());
+                    }
+                }
+            }
+        }
+        if ordered.len() != packages.len() {
+            return Err(Error::Invalid("required activation cycle").into());
+        }
+        Ok(ActivationPlan {
+            root: root.into(),
+            revision: expected_revision,
+            packages: ordered,
+            required,
+            required_edges: edges.into_iter().collect(),
+            optionals: optional.to_vec(),
+        })
     }
     fn check_revision(&self, revision: u64) -> Result<()> {
         if revision != self.revision() {
