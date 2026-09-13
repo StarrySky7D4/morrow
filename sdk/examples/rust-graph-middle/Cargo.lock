@@ -95,7 +95,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-plugin-sdk"
-version = "0.1.9-test.48"
+version = "0.1.9-test.49"
 dependencies = [
  "capnp",
  "capnpc",

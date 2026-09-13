@@ -2,7 +2,7 @@
 resolver = "2"
 [package]
 name = "morrow-plugin-runtime"
-version = "0.1.9-test.48"
+version = "0.1.9-test.49"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
@@ -99,4 +99,13 @@ required-features = ["packages"]
 
 [[example]]
 name = "qualify_committed_evidence"
+required-features = ["packages"]
+
+[[example]]
+name = "plugin_check"
+required-features = ["packages"]
+test = true
+
+[[example]]
+name = "qualify_sdk_projects"
 required-features = ["packages"]

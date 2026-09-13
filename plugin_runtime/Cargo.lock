@@ -555,7 +555,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "morrow-core"
-version = "0.1.9-test.48"
+version = "0.1.9-test.49"
 dependencies = [
  "capnp",
  "capnpc",
@@ -573,7 +573,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-plugin-runtime"
-version = "0.1.9-test.48"
+version = "0.1.9-test.49"
 dependencies = [
  "capnp",
  "morrow-core",
@@ -589,7 +589,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-plugin-sdk"
-version = "0.1.9-test.48"
+version = "0.1.9-test.49"
 dependencies = [
  "capnp",
  "capnpc",

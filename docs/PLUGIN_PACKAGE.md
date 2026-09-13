@@ -1,83 +1,76 @@
-# 实验插件包与 SDK 开发流程
+# 插件包与开发流程
 
-基于 0.1.9-test.10；包 schema v1、guest ABI v1／v2、运行消息 Cap’n Proto v6 分别管理。本阶段使 C／C++／Rust 示例经过统一打包、不可变安装和受限执行，尚未建立完整插件管理器。
+本文描述 test.49 的当前工具合同，实际验证范围见 [test.49 开发者工具记录](../reports/test.49-sdk-project-tools.md)。包 Schema v1、guest ABI、运行协议和 SDK 源码版本分别管理；新项目使用 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。固定旧二进制的兼容规则见 [SDK 兼容基线](PLUGIN_SDK_COMPATIBILITY.md)，不得通过重建旧原件使兼容检查通过。
 
-## 开发者入口
+## 当前开发入口
 
-三种语言继续使用 [SDK](../sdk/README.md) 构建 Wasm。模块字节与版本化 manifest 统一封装为 `.mplugin`，持久格式为 Protobuf＋LZ4。界面接口按 [SDK 与 UI 设计](PLUGIN_SDK_AND_UI.md) 推进：插件提交有界界面描述与动作，Flutter 渲染。首期没有 TS／JS guest；第三方不需要编写 Dart，动态 Dart SDK 不阻断 0.2.0。
+使用仓库内的 Python 3.11+ 工具创建、构建和打包 C11、C++17、Rust 项目。以下命令在 Morrow 仓库根目录运行，目标项目目录必须不存在：
 
 ```powershell
-# 先按 SDK 说明构建 C 示例。目标文件必须不存在；工具不会覆盖已有包。
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- pack build/plugin-c-guest/c_rename.wasm build/example.mplugin org.morrow.example.c-rename 0.1.9-test.10 rename
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- inspect build/example.mplugin
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- install build/example.mplugin build/example-catalog
-cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/plugin-runtime --features packages --example qualify_package -- build/example.mplugin
+python tool/morrow_plugin.py doctor --language rust
+python tool/morrow_plugin.py new "build/我的转换插件" --language rust --kind transform --id org.example.reverse
+python tool/morrow_plugin.py build "build/我的转换插件"
+python tool/morrow_plugin.py pack "build/我的转换插件"
+# 将下列 <sha256> 替换为 pack 输出的 SHA256；不要任取目录中的旧包。
+python tool/morrow_plugin.py check "build/我的转换插件/dist/<sha256>.mplugin"
+python tool/morrow_plugin.py transform "build/我的转换插件/dist/<sha256>.mplugin" bytes.reverse bytes bytes "input.bin" "output.bin"
 ```
 
-最后一条是合成重命名示例的资格工具，仅适用于返回约定测试状态的示例，不能作为任意业务插件启动器。它使用隔离临时资料库，不修改 Flutter 现有资料。
+`input.bin` 必须已存在，`output.bin` 必须不存在。`pack` 自行重新构建；单独执行 `build` 用于开发检查，不是打包的前置必需步骤。命令、配置、依赖模板及路径规则见 [项目工具](PLUGIN_PROJECT_TOOLS.md)。
 
-打包工具接受 `rename,summary,operation,attachment` 的逗号列表或 `none`。模块最多 4 MiB；检查前有界读取。默认 fuel 为 2000 万、内存 16 MiB、宿主调用 16 次；其他实验限额可通过核心 Package API 构造 manifest。当前 CLI 不提供依赖、资源或 UI 清单输入，不把未实现字段伪装为有效功能。
+`plugin.toml` 是人可读编译输入，不是应用运行期配置。正式 `.mplugin` 仍仅使用 Protobuf＋LZ4，保留原始 Manifest 与模块字节，并以完整归档 SHA-256 命名。应用不能在加载包后再读取 TOML 覆盖清单，使二者成为两套权威来源。
 
-## 校验、安装与执行
+## 校验、发布与授权
 
-| 阶段 | 当前实现 | 不代表什么 |
+| 阶段 | 实际行为 | 验证边界 |
 | --- | --- | --- |
-| 容器校验 | 固定 magic／版本、长度、LZ4 输出上限、原文 SHA-256、Protobuf 字段预算 | 摘要不是作者签名或信任证明 |
-| 清单校验 | ID、SemVer、显示名、入口、guest ABI、运行版本、两份消息 schema 摘要、模块摘要、能力和预算 | 合法清单不授予权限，也不证明 Wasm 可运行 |
-| 不可变安装 | 宿主管理目录中暂存、同步、无覆盖发布；文件名由整个包的 SHA-256 生成；加载重新校验 | 没有启用状态、版本指针、升级事务或断电持久性资格 |
-| 运行准备 | 验证 Wasm、禁止 start、检查固定导入和入口；将清单预算与宿主上限取较小值 | 编译／准备本身不执行插件；初始化内存限额在实例化时强制执行 |
-| 连接与调用 | 每次连接生成新实例，绑定包摘要与能力上限；实际调用仍检查对象授权 | 同名或新版本不继承旧实例权限；更换包必须重新连接 |
+| `new` | 复制经过维护的 SDK 示例源码，生成项目配置、说明及许可；Rust 另带 Cargo 配置与锁 | 12 个模板是起点，不是 12 个完整业务插件 |
+| `build` | 使用可信本机工具链编译当前源文件 | 不验证业务功能，不是本机源码执行沙箱 |
+| 容器与清单校验 | 校验有界 PB＋LZ4、原文摘要、模块摘要、版本、能力、处理器、依赖与预算 | SHA-256 不是作者签名；声明不是授权或功能证明 |
+| `check` | 静态准备 Wasm，禁止 start，验证导入、导出和入口，报告声明及实际宿主预算 | 不执行 guest，不解析实际依赖锁，不安装、不启用、不授权 |
+| `pack` | 本次构建成功后生成临时候选，运行 `check`，再发布到项目 `dist`，核对发布字节 | 不修改生产插件注册表，不获得内容权限 |
+| `transform` | 在合成临时资料库中执行一次纯转换；空批准上限且无内容授权，核对关联输出 | 不提供依赖提供者，不是任意内容任务或 UI 会话启动器 |
+| 宿主连接与执行 | Manager／Pool 管理实际实例、批准上限与生命周期；每次业务调用继续校验权限 | 同名、新版本或新实例不能恢复旧连接权限 |
 
-原始 manifest 与整个归档字节被保留，未知可选字段不因解析丢失。未知必需语义必须声明在 `required_features` 中；当前支持 `transform-handlers-v1` 与 `dependencies-v1`，其他名称、重复名称均拒绝。未知能力、重复能力、缺少预算、错误摘要或版本均拒绝。后续依赖、入口扩展等不能仅追加未知字段并让旧宿主静默忽略。
+Catalog 安装采用暂存、同步与无覆盖发布，相同归档收敛到同一摘要文件；目标损坏时拒绝，不静默覆盖。Catalog 仅管理不可变包文件。实际选择、启用、批准与依赖锁由独立 [Registry](PLUGIN_REGISTRY.md) 管理，已接入 [实例池](PLUGIN_INSTANCE_POOL.md) 和默认 Windows 工作台。升级默认禁用；配置变更撤销相关旧实例，重新启用建立新实例。通用多插件管理界面、作者信任与签名分发仍需分别建设。
 
-`Catalog` 只接受宿主提供的根目录；包内名称不参与路径拼接。相同包重复／并发安装收敛到同一文件，已存在内容损坏时拒绝且不覆盖。这里假定目录归可信宿主管理，不宣称能隔离一个可任意修改宿主目录的外部进程。
+原件位于可信宿主管理的目录；这不构成对可修改整个目录的外部进程的隔离。已提交事务也不因随后取消、Trap 或回执丢失而自动回滚，重试应保留原操作身份。
 
-运行库默认仍独立于内容核心。启用原生 `packages` feature 后提供 `PreparedPackage`，拥有已校验归档与编译模块；其 `run` 只接受可信 HostRuntime、Connection 和宿主时钟。包摘要不一致时在执行前返回 PackageBinding，宿主调用为零。低层 Runner 仍用于受控适配与故障测试，不是第三方自行选择宿主连接的入口。
+## 清单能力与限额
 
-能力声明是上限，实际授权是另一层：例如只声明 rename 的包不能被授予摘要查询或附件读取；声明了 rename 也必须获得具体卡片授权才能修改。安装、连接、包升级都不自动产生授权。断开后核心拒绝旧连接的新操作，PreparedPackage 还会在 guest 执行前检查连接的真实宿主与 Ready 状态。已增加原生后台任务队列，见 [任务与生命周期](PLUGIN_TASKS.md)；进程／浏览器 Worker 强制终止仍待完成。
+新入口支持全部七种能力：`rename`、`summary`、`operation`、`attachment`、`create-content`、`edit-content`、`read-content`。清单声明限定能力上限，实际每卡片、操作与期限授权由宿主另行提供。
 
-## 验证与后续任务
+模块最多 4 MiB。默认预算为 2000 万 fuel、16 MiB 内存、16 次宿主调用；清单允许 fuel 1–1 亿、内存 64 KiB–64 MiB（64 KiB 的整数倍）、调用 0–1024。运行时取清单与宿主政策的较小值，增加清单预算不保证宿主提供全部资源。
 
-复现命令：`tool/verify_core.ps1 -Web` 与 `tool/verify_plugin_runtime.ps1`。后者创建独立输出目录，将 Rust、C、C++ 与 C++ 分配器示例打包为四个 `.mplugin`，安装、重新加载后运行；同时保留独立核心消息对照和提交后故障测试。实际结果见 [插件包验证记录](../reports/plugin-package-validation.md)。
+每包最多 16 个纯转换处理器，名称唯一；每项绑定 handler、输入类型、输出类型及各 0–65536 字节的限额，0 表示仅接受空数据。当前类型名称精确匹配，尚不等于类型 Schema 协商。调用前校验注册、类型与输入；完成后再核对关联、输出类型和输出上限。低层 Runner 不替代包策略。
 
-下一阶段按以下依赖推进：
+每包最多 16 个依赖声明，以唯一 slot、处理器、输入／输出类型、提供者 SemVer 范围及 optional 描述接口。提供者身份和实际摘要由宿主批准并写入 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)，不能由 guest 自选。主动调用与有界多层执行见 [依赖图](PLUGIN_DEPENDENCY_GRAPH.md)。
 
-1. 在已验证的原生后台队列、版本化内容／转换输入与结果上，完善类型版本协商、多实例调度、生产停止与撤权协调。
-2. 包注册／启用状态、作者信任、签名与撤销、依赖接口和锁定；更新不能复活旧授权。
-3. 声明式 UI schema、事件代次、Flutter 有界渲染器及三语言 UI 构造器；先贯通同一编辑表单，再扩展专业渲染。
-4. 共享对象租约、审计封存、证据和 A/B 贯通，逐平台完成资格验证。
+当前必需功能为 `transform-handlers-v1`、`dependencies-v1`、`dependency-calls-v1`，工具按声明组合生成。未知或重复必需功能、能力、错误版本和摘要均拒绝。未知可选字段随原始包保留；新增必需语义不能仅追加未知字段让旧宿主静默忽略。
 
-上述工作继续纳入 M1-05、M3-03／04／06、M6-06，M5 仍是首轮贯通门槛。Windows 上的包执行和 Web 核心编译不能代替浏览器插件安装、设备运行或全平台支持。
+UI 通过处理器输出有界文档、接收关联事件；三语言 SDK、Flutter 渲染器与在线会话已有实现，见 [UI SDK](PLUGIN_UI_SDK.md) 和 [渲染器](PLUGIN_UI_RENDERER.md)。会话检查代次、修订及事件序号；专业编辑器、完整扩展点和持久草稿不能由一次文档往返推断完成。没有 TS／JS guest；第三方不需要编写 Dart Widget。
 
-ABI v2 内容命令任务使用 `pack-task`；纯转换任务使用下述 `pack-transform`，额外校验任务 schema 摘要，详见 [任务契约](PLUGIN_TASK_PROTOCOL.md)。旧包仍按其声明的 ABI 准备，不自动升级。
+## 底层与历史兼容命令
 
-## 纯转换处理器声明
+当前底层 `core/examples/plugin_package.rs` 提供 `pack-v2`（新文件）与 `pack-v2-catalog`（摘要目录），支持重复 `--capability`、`--handler`、`--dependency` 及预算参数；不执行 guest。Python `pack` 在此之上增加当前源码构建和实际准备检查。`inspect` 仅做容器／清单校验；它不同于运行时 `check`。
 
-每个包最多声明 16 个 `TransformHandler`，名称在该包内唯一。固定字段为 handler、input_type、output_type、max_input_bytes 和 max_output_bytes。输入／输出上限分别为 0–65536 字节，0 表示仅允许空数据；三个名称沿用非空、至多 256 字节且不能包含控制字符和路径分隔字符的标识规则。当前类型通过名称精确匹配，尚未实现类型 schema 摘要或版本协商；`bytes` 仅表示有界原字节。
-
-声明保存在 Protobuf manifest 内并随包摘要绑定，需同时声明必需功能 `transform-handlers-v1`，仅允许 guest ABI v2。只有声明字段或只有功能标记均拒绝加载。不认识该功能的旧宿主会拒绝新包。无处理器的内容任务包不能启动纯转换。当前任务契约为 v3，带旧任务 schema 摘要的实验包需同步 SDK 后重建。
+以下是 test.10 起保留的低层命令形式，不是当前推荐的项目流程，也不会自动迁移既有旧包：
 
 ```powershell
-# 声明列表是一个参数；多条声明之间用分号分隔。
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- pack-transform build/plugin-c-guest/c_transform.wasm build/registered-transform.mplugin org.morrow.example.c-transform 0.1.9-test.10 'bytes.reverse,bytes,bytes,65536,65536;bytes.ascii-uppercase,bytes,bytes,65536,65536;bytes.require-ascii,bytes,bytes,65536,65536'
-cargo run --locked --manifest-path core/Cargo.toml --target-dir build/core-test.10 --example plugin_package -- inspect build/registered-transform.mplugin
-cargo run --locked --manifest-path plugin_runtime/Cargo.toml --target-dir build/plugin-runtime --features packages --example qualify_transforms -- build/registered-transform.mplugin
+# ABI v1 旧入口；MODULE 与 OUTPUT 为待替换的实际路径，OUTPUT 必须不存在。
+cargo run --locked --offline --manifest-path core/Cargo.toml --example plugin_package -- pack MODULE OUTPUT org.example.legacy 0.1.0 rename
+# ABI v2 内容任务；CAPS 保留逗号列表或 none 的旧形式，当前解析器支持七种能力。
+cargo run --locked --offline --manifest-path core/Cargo.toml --example plugin_package -- pack-task MODULE OUTPUT org.example.task 0.1.0 rename,summary
+# 旧转换声明列表仍是一个参数；无内容能力。
+cargo run --locked --offline --manifest-path core/Cargo.toml --example plugin_package -- pack-transform MODULE OUTPUT org.example.transform 0.1.0 'bytes.reverse,bytes,bytes,65536,65536'
 ```
 
-`pack-transform` 不申请内容能力，并自动写入必需功能；此示例验证器要求上述三个处理器。可信开发工具也可使用 `Package::manifest_for_transform` 构造清单。C／C++／Rust 开发者共享此打包入口，不需要在 guest 中调用核心注册 API。`inspect` 输出每项声明；检查不会运行插件。
+`qualify_package`、`qualify_transforms` 是匹配特定样例协议的历史资格工具，不能作为任意插件启动器。历史结果分别见 [test.10 包验证](../reports/plugin-package-validation.md) 和 [处理器验证](../reports/plugin-handler-validation.md)。当前工具合同与本轮结果见 [test.49 记录](../reports/test.49-sdk-project-tools.md)；Windows 结果、静态准备和 Web 编译各有独立边界，不能代替全平台产品验收。
 
-`PreparedPackage::run_task`（包括 Worker 调用）从所绑定的不可变包查找 handler；未注册、类型不匹配或输入超过声明时，返回 TaskProtocol，零 guest 指令、零宿主调用。输出先通过任务关联和全局有界校验，再检查处理器声明的输出上限，超限不交付结果。漏写声明不能回退到无限制转换入口。低层 Runner 仍是可信适配构件，不替代这层包策略。
+## 当前项目流程验证
 
-此注册是**单包内部的任务能力声明**，不选择默认处理器、不自动启用插件，也不证明模块实际实现或正确计算了该功能。跨包选择、冲突处理、类型版本协商、启用／更新状态与 UI 扩展点注册继续独立推进。结果仍是插件数据，不能用声明绕过内容授权或直接保存为权威事务。
+```powershell
+python -B -X utf8 tool/verify_plugin_projects.py
+```
 
-证据见 [处理器注册验证](../reports/plugin-handler-validation.md)。
-
-
-## test.24 选择与批准持久化增量
-
-已新增独立 [插件注册表](PLUGIN_REGISTRY.md)，持久保存选中包、启用状态及批准上限，升级默认禁用，所有变更校验预期修订。该增量还未与实际实例启停和运行门控整合，不能据此宣称完整安装管理已完成。
-
-
-## test.29 依赖声明
-
-Manifest字段16可声明至多16个DependencyRequirement，以唯一slot、handler、输入／输出类型、提供者包SemVer范围和optional区分必需／可选接口。使用guest ABI v2；实际依赖必须标记 `dependencies-v1`，旧宿主会拒绝不认识的必需功能。声明不是批准，也不决定提供者身份；宿主核对候选包后记录具体摘要。当前打包CLI未增加依赖参数，可用Package API构造。详情见 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。
+该入口在新的 `build/SDK projects 空间 <UUID>` 下保留日志和生成项目，覆盖元数据测试、doctor、12 个模板打包、原包实际执行及三语言转换 CLI 的失败与无覆盖行为。它还检查同源重编译摘要、坏源不能复用旧产物、损坏既有包不被覆盖。可用 `--output-root` 指定一个尚不存在的目录。此流程会执行可信本机构建及受限 guest；当前完整资格范围为 Windows，实际是否通过以本轮报告及保留日志为准。

@@ -1,10 +1,22 @@
 # Morrow 第三方插件 SDK
 
-SDK 源码包版本 `0.1.9-test.48`，当前处于测试开发阶段，提供 C11、C++17、Rust 的受限 Wasm 插件接口。test.48 建立 **guest-v1-rc1 二进制兼容候选基线**；实际 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。该基线与 SDK crate 版本分别管理，不宣称完整 SDK、原生动态库 ABI 或全平台已经稳定。详见 [兼容边界与演进规则](../docs/PLUGIN_SDK_COMPATIBILITY.md)。
+SDK 源码包版本 `0.1.9-test.49`，当前处于测试开发阶段，提供 C11、C++17、Rust 的受限 Wasm 插件接口。test.48 建立 **guest-v1-rc1 二进制兼容候选基线**；实际 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。该基线与 SDK crate 版本分别管理，不宣称完整 SDK、原生动态库 ABI 或全平台已经稳定。详见 [兼容边界与演进规则](../docs/PLUGIN_SDK_COMPATIBILITY.md)。
 
 Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求编写 Dart 插件。当前不提供 TS／JS guest。主应用默认 Windows 工作台已经使用 Rust 宿主和受限 Wasm 业务插件；通用多插件安装管理和全平台接入仍在推进。
 
 ## 开发入口
+
+新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖四类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
+
+```powershell
+python -B -X utf8 tool/morrow_plugin.py doctor --language rust
+python -B -X utf8 tool/morrow_plugin.py new "build/My plugin" --language rust --kind transform --id org.example.my-plugin
+python -B -X utf8 tool/morrow_plugin.py pack "build/My plugin"
+# 独立新目录保留全部生成项目与日志，运行三语言四类完整包及失败保护检查。
+python -B -X utf8 tool/verify_plugin_projects.py
+```
+
+项目工具需要 Python 3.11+，默认 Cargo 离线构建，使用受信任的本地工具链；它不是源码沙箱。当前打包与诊断仍依赖本仓库的核心／运行时工具，尚非完整独立预编译 SDK 分发。
 
 | 语言 | 入口 | 说明 |
 | --- | --- | --- |
@@ -45,7 +57,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 三语言内容／转换／UI／依赖样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
 
-历史 test.11 的原生和正文增量、test.28–31 的依赖增量是当时的阶段结果；最新范围以源码、[路线](../docs/FUTURE_ROADMAP.md)及各版本报告为准。SDK 源码 API、本地回调 ABI、预编译库分发、脚手架和完整开发者工具仍在推进。
+历史 test.11 的原生和正文增量、test.28–31 的依赖增量是当时的阶段结果；最新范围以源码、[路线](../docs/FUTURE_ROADMAP.md)及各版本报告为准。SDK 源码 API、本地回调 ABI、预编译库分发及更多开发诊断仍在推进；test.49 已补充项目模板和完整包验证入口。
 
 ## 许可
 
