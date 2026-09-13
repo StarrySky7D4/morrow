@@ -10,15 +10,18 @@ class QueryBackend extends WorkbenchBackend {
   @override
   bool writable = true;
   final texts = <String>[];
+  final operations = <String?>[];
   final requests = <Completer<List<String>>>[];
   @override
   Future<List<String>> query(
     String section,
     String filter,
     String text,
-    String sort,
-  ) {
+    String sort, {
+    String? operation,
+  }) {
     texts.add(text);
+    operations.add(operation);
     final request = Completer<List<String>>();
     requests.add(request);
     return request.future;
@@ -61,6 +64,8 @@ void main() {
     expect(q.ids, isEmpty);
     expect(changes, 0);
     expect(backend.texts, ['A', 'A']);
+    expect(backend.operations[0], isNotNull);
+    expect(backend.operations[1], isNot(backend.operations[0]));
     backend.requests[1].complete(['new']);
     await tester.pump(const Duration(milliseconds: 1));
     expect(q.ids, ['new']);
@@ -90,6 +95,7 @@ void main() {
       expect(backend.requests, hasLength(1));
       q.retry();
       await tester.pump(const Duration(milliseconds: 1));
+      expect(backend.operations[1], backend.operations[0]);
       backend.requests[1].complete(['retry']);
       await tester.pump(const Duration(milliseconds: 1));
       backend.writable = false;
@@ -99,11 +105,13 @@ void main() {
       q.select(backend, conditions('x'));
       await tester.pump(const Duration(milliseconds: 1));
       expect(backend.requests, hasLength(3));
+      expect(backend.operations[2], isNot(backend.operations[1]));
       q.select(backend, conditions('x', generation: 1));
       await tester.pump(const Duration(milliseconds: 1));
       backend.requests[2].complete(['stale-content']);
       await tester.pump(const Duration(milliseconds: 1));
       expect(q.ids, isEmpty);
+      expect(backend.operations[3], isNot(backend.operations[2]));
       backend.requests[3].complete(['fresh']);
       await tester.pump(const Duration(milliseconds: 1));
       q.invalidate(); // successful package configuration also invalidates same conditions
@@ -117,6 +125,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1));
       expect(q.ids, isEmpty);
       expect(replacement.requests, hasLength(1));
+      expect(replacement.operations.single, isNot(backend.operations.last));
       q.dispose();
       replacement.requests.single.completeError(StateError('late failure'));
       await tester.pump(const Duration(milliseconds: 1));
@@ -200,6 +209,18 @@ void main() {
       await tester.tap(retry);
       await tester.pump(const Duration(milliseconds: 250));
       expect(backend.requests, hasLength(2));
+      expect(backend.operations[1], backend.operations[0]);
+      backend.requests.last.completeError(
+        const QueryFailure('confirmed failed', terminal: true),
+      );
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('此次筛选已终止'), findsOneWidget);
+      expect(find.text('重新筛选'), findsOneWidget);
+      await tester.ensureVisible(retry);
+      await tester.tap(retry);
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(backend.requests, hasLength(3));
+      expect(backend.operations[2], isNot(backend.operations[1]));
       backend.requests.last.complete(['confirmed']);
       await tester.pump(const Duration(milliseconds: 1));
       await tester.pump(const Duration(milliseconds: 300));
@@ -213,7 +234,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
       await tester.enterText(field, 'ab');
       await tester.pump(const Duration(milliseconds: 250));
-      expect(backend.texts, ['', '', 'ab']);
+      expect(backend.texts, ['', '', '', 'ab']);
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.text('Confirmed card'), findsNothing);
       expect(find.byKey(const ValueKey('query-loading')), findsOneWidget);

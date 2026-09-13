@@ -141,7 +141,7 @@ impl Plan {
         }
         .encode_to_vec())
     }
-    fn decode(raw: &[u8]) -> Result<Self> {
+    pub(crate) fn decode(raw: &[u8]) -> Result<Self> {
         preflight(raw, Kind::Plan)?;
         let v = proto::Plan::decode(raw).map_err(|_| Error::Integrity)?;
         if v.schema_version != 1 {
@@ -280,7 +280,16 @@ impl Manifest {
             part_count: 0,
             logical_bytes: 0,
             finalized: None,
+            capture_binding: Vec::new(),
         })
+    }
+    pub(crate) fn for_capture(plan: &Plan, binding: [u8; 32]) -> Result<Self> {
+        let mut value = Self::new(plan)?.value;
+        value.capture_binding = binding.to_vec();
+        Self::from_value(value)
+    }
+    pub fn capture_binding(&self) -> Option<[u8; 32]> {
+        self.value.capture_binding.as_slice().try_into().ok()
     }
     pub(crate) fn append(&self, part: &Part) -> Result<Self> {
         if self.value.finalized.is_some() {
@@ -322,6 +331,9 @@ impl Manifest {
     fn validate(value: &proto::Manifest) -> Result<Plan> {
         if value.schema_version != 1 {
             return Err(Error::UnsupportedVersion);
+        }
+        if !value.capture_binding.is_empty() && value.capture_binding.len() != 32 {
+            return Err(Error::Integrity);
         }
         let plan = Plan::decode(&value.plan)?;
         if value.part_count > plan.budget.max_parts || value.logical_bytes > plan.budget.max_bytes {
@@ -393,7 +405,8 @@ fn preflight(mut raw: &[u8], kind: Kind) -> Result<()> {
         let (n, w) = decode_key(&mut raw).map_err(|_| Error::Integrity)?;
         let fields = match kind {
             Kind::Plan => 8,
-            Kind::Part | Kind::Manifest => 6,
+            Kind::Part => 6,
+            Kind::Manifest => 7,
             Kind::Final => 3,
         };
         if n <= fields {
@@ -421,7 +434,7 @@ fn preflight(mut raw: &[u8], kind: Kind) -> Result<()> {
                 (Kind::Plan, 2 | 3 | 4 | 6) | (Kind::Part, 3) | (Kind::Final, 1) => 256,
                 (Kind::Plan, 5) | (Kind::Final, 2) => MAX_METADATA_BYTES,
                 (Kind::Part, 4) => MAX_PART_BYTES,
-                (Kind::Part, 5 | 6) | (Kind::Manifest, 5) | (Kind::Final, 3) => 32,
+                (Kind::Part, 5 | 6) | (Kind::Manifest, 5 | 7) | (Kind::Final, 3) => 32,
                 (Kind::Manifest, 2) => MAX_METADATA_BYTES + 2048,
                 (Kind::Manifest, 6) => MAX_METADATA_BYTES + 1024,
                 _ => MAX_RAW_BYTES,

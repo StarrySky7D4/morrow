@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if version(c)? != 12 {
+    if !matches!(version(c)?, 12 | 13) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())
@@ -55,6 +55,7 @@ pub(super) fn load(c: &Connection, subject: &str, operation: &str) -> Result<Opt
     {
         return Err(Error::Integrity);
     }
+    super::read_capture::verify_binding(c, &m)?;
     Ok(Some(m))
 }
 fn part(c: &Connection, operation: &str, ordinal: u32) -> Result<Option<Part>> {
@@ -225,33 +226,14 @@ impl Store {
         plan: &Plan,
         budget: read_archive::PreparationBudget,
     ) -> Result<Status> {
-        budget.validate()?;
-        let initial = Manifest::new(plan)?;
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        require(&tx)?;
-        if let Some(m) = load(&tx, &plan.subject, &plan.operation_id)? {
-            if m.status().plan != *plan {
-                return Err(Error::OperationConflict);
-            }
-            verify_parts(&tx, &m)?;
-            verify_association(&tx, &m)?;
-            return Ok(m.status());
-        }
-        let used:bool=sql(tx.query_row("SELECT EXISTS(SELECT 1 FROM operations WHERE id=?1) OR EXISTS(SELECT 1 FROM read_archives WHERE operation_id=?1)",[&plan.operation_id],|r|r.get(0)))?;
-        if used {
-            return Err(Error::OperationConflict);
-        }
-        super::read_archive_budget::admit(&tx, None, &initial, budget)?;
-        sql(tx.execute(
-            "INSERT INTO read_archives(operation_id,subject,published,payload) VALUES(?1,?2,0,?3)",
-            params![plan.operation_id, plan.subject, initial.container()],
-        ))?;
-        boundary("archive-after-begin");
+        super::read_capture::reject_tracked(&tx, &plan.operation_id)?;
+        let value = begin_in(&tx, &Manifest::new(plan)?, budget)?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("archive-after-begin-commit");
-        Ok(initial.status())
+        Ok(value)
     }
     pub fn append_read_archive(
         &mut self,
@@ -282,52 +264,14 @@ impl Store {
         data: &[u8],
         budget: read_archive::PreparationBudget,
     ) -> Result<Status> {
-        budget.validate()?;
-        identity(type_id)?;
-        if data.len() > read_archive::MAX_PART_BYTES {
-            return Err(Error::Limit);
-        }
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        let m = load(&tx, subject, operation)?.ok_or(Error::NotFound)?;
-        let state = m.status();
-        if state.root.is_some() {
-            return Err(Error::OperationConflict);
-        }
-        verify_association(&tx, &m)?;
-        if ordinal < state.count {
-            let old = part(&tx, operation, ordinal)?.ok_or(Error::Integrity)?;
-            if old.type_id() != type_id || old.data() != data {
-                return Err(Error::OperationConflict);
-            }
-            return Ok(state);
-        }
-        if ordinal != state.count {
-            return Err(Error::OperationConflict);
-        }
-        if ordinal > 0 {
-            let prev = part(&tx, operation, ordinal - 1)?.ok_or(Error::Integrity)?;
-            if prev.digest() != state.chain_sha256 {
-                return Err(Error::Integrity);
-            }
-        }
-        let p = Part::new(ordinal, type_id, data, state.chain_sha256)?;
-        let next = m.append(&p)?;
-        super::read_archive_budget::admit(&tx, Some(&m), &next, budget)?;
-        sql(tx.execute(
-            "INSERT INTO read_archive_parts(operation_id,ordinal,payload) VALUES(?1,?2,?3)",
-            params![operation, ordinal, p.container()],
-        ))?;
-        sql(tx.execute(
-            "UPDATE read_archives SET payload=?2 WHERE operation_id=?1",
-            params![operation, next.container()],
-        ))?;
-        boundary("archive-after-part");
-        boundary("archive-before-append-commit");
+        super::read_capture::reject_tracked(&tx, operation)?;
+        let value = append_in(&tx, subject, operation, ordinal, type_id, data, budget)?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("archive-after-append-commit");
-        Ok(next.status())
+        Ok(value)
     }
     /// End metadata is a trusted adapter's claim of completeness; the store validates
     /// exact bounded bytes, ordered closure and current guard, not application semantics.
@@ -342,88 +286,19 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        let m = load(&tx, subject, operation)?.ok_or(Error::NotFound)?;
-        verify_parts(&tx, &m)?;
-        verify_association(&tx, &m)?;
-        let finalized = m.finalize(end)?;
-        let state = finalized.status();
-        let refs = super::evidence::digests(evidence)?;
-        let input = read_journal::Input {
-            operation_id: operation.into(),
-            subject: subject.into(),
-            request_type: state.plan.request_type,
-            request: state.plan.request,
-            response_type: state.plan.response_type,
-            response: end.response.clone(),
-        };
-        let observed = read_journal::encode_archived(&input, &refs, finalized.digest())?;
-        let existing: Option<(String, i64)> = sql(tx
-            .query_row(
-                "SELECT card_id,object_kind FROM operations WHERE id=?1",
-                [operation],
-                |r| Ok((r.get(0)?, r.get(1)?)),
-            )
-            .optional())?;
-        if let Some((id, kind)) = existing {
-            if m.status().root.is_none() || id != subject || kind != 4 || m.raw() != finalized.raw()
-            {
-                return Err(Error::OperationConflict);
-            }
-            let raw:Option<Vec<u8>>=sql(tx.query_row("SELECT CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM operations WHERE id=?1",params![operation,read_journal::MAX_CONTAINER_BYTES as i64],|r|r.get(0)))?;
-            let old = read_journal::decode(&raw.ok_or(Error::Limit)?)?;
-            if old.raw() != observed.raw() {
-                return Err(Error::OperationConflict);
-            }
-            super::evidence::verify_retry(
-                &tx,
-                operation,
-                &old.data().task_evidence_sha256,
-                evidence,
-            )?;
-            authorize()?;
-            return Ok(old.receipt());
-        }
-        if m.status().root.is_some() {
-            return Err(Error::Integrity);
-        }
-        let (count, bytes): (i64, i64) = sql(tx.query_row(
-            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
-        if count >= i64::from(self.budget.max_count)
-            || (bytes as u64).saturating_add(observed.container().len() as u64)
-                > self.budget.max_bytes
-        {
-            return Err(Error::EventCapacity);
-        }
-        sql(tx.execute(
-            "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,4,?3)",
-            params![operation, subject, observed.container()],
-        ))?;
-        super::evidence::bind(&tx, operation, evidence)?;
-        sql(tx.execute(
-            "UPDATE read_archives SET published=1,payload=?2 WHERE operation_id=?1",
-            params![operation, finalized.container()],
-        ))?;
-        sql(tx.execute(
-            "INSERT INTO operation_read_archives(operation_id,root) VALUES(?1,?2)",
-            params![operation, finalized.digest().as_slice()],
-        ))?;
-        sql(tx.execute(
-            "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
-            params![operation, observed.container()],
-        ))?;
-        sql(tx.execute(
-            "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
-            [operation],
-        ))?;
-        boundary("archive-after-publish");
-        authorize()?;
-        boundary("archive-before-commit");
+        super::read_capture::reject_tracked(&tx, operation)?;
+        let value = finish_in(
+            &tx,
+            subject,
+            operation,
+            end,
+            evidence,
+            self.budget,
+            authorize,
+        )?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("archive-after-commit");
-        Ok(observed.receipt())
+        Ok(value)
     }
     pub fn lookup_read_archive(&self, subject: &str, operation: &str) -> Result<Option<Status>> {
         Ok(self
@@ -481,24 +356,193 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        let Some(m) = load(&tx, subject, operation)? else {
-            return Ok(false);
-        };
-        if m.status().root.is_some() {
-            return Err(Error::OperationConflict);
-        }
-        verify_association(&tx, &m)?;
-        sql(tx.execute(
-            "DELETE FROM read_archive_parts WHERE operation_id=?1",
-            [operation],
-        ))?;
-        sql(tx.execute(
-            "DELETE FROM read_archives WHERE operation_id=?1",
-            [operation],
-        ))?;
-        boundary("read-archive-abort-before-commit");
+        super::read_capture::reject_tracked(&tx, operation)?;
+        let value = abort_in(&tx, subject, operation)?;
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("read-archive-abort-after-commit");
-        Ok(true)
+        Ok(value)
     }
+}
+
+pub(super) fn begin_in(
+    tx: &Connection,
+    initial: &Manifest,
+    budget: read_archive::PreparationBudget,
+) -> Result<Status> {
+    budget.validate()?;
+    let plan = &initial.status().plan;
+    require(tx)?;
+    if let Some(m) = load(tx, &plan.subject, &plan.operation_id)? {
+        if m.status().plan != *plan {
+            return Err(Error::OperationConflict);
+        }
+        verify_parts(tx, &m)?;
+        verify_association(tx, &m)?;
+        return Ok(m.status());
+    }
+    let used:bool=sql(tx.query_row("SELECT EXISTS(SELECT 1 FROM operations WHERE id=?1) OR EXISTS(SELECT 1 FROM read_archives WHERE operation_id=?1)",[&plan.operation_id],|r|r.get(0)))?;
+    if used {
+        return Err(Error::OperationConflict);
+    }
+    super::read_archive_budget::admit(tx, None, initial, budget)?;
+    sql(tx.execute(
+        "INSERT INTO read_archives(operation_id,subject,published,payload) VALUES(?1,?2,0,?3)",
+        params![plan.operation_id, plan.subject, initial.container()],
+    ))?;
+    boundary("archive-after-begin");
+    Ok(initial.status())
+}
+#[allow(clippy::too_many_arguments)]
+pub(super) fn append_in(
+    tx: &Connection,
+    subject: &str,
+    operation: &str,
+    ordinal: u32,
+    type_id: &str,
+    data: &[u8],
+    budget: read_archive::PreparationBudget,
+) -> Result<Status> {
+    budget.validate()?;
+    identity(type_id)?;
+    if data.len() > read_archive::MAX_PART_BYTES {
+        return Err(Error::Limit);
+    }
+    let m = load(tx, subject, operation)?.ok_or(Error::NotFound)?;
+    let state = m.status();
+    if state.root.is_some() {
+        return Err(Error::OperationConflict);
+    }
+    verify_association(tx, &m)?;
+    if ordinal < state.count {
+        let old = part(tx, operation, ordinal)?.ok_or(Error::Integrity)?;
+        if old.type_id() != type_id || old.data() != data {
+            return Err(Error::OperationConflict);
+        }
+        return Ok(state);
+    }
+    if ordinal != state.count {
+        return Err(Error::OperationConflict);
+    }
+    if ordinal > 0 {
+        let prev = part(tx, operation, ordinal - 1)?.ok_or(Error::Integrity)?;
+        if prev.digest() != state.chain_sha256 {
+            return Err(Error::Integrity);
+        }
+    }
+    let p = Part::new(ordinal, type_id, data, state.chain_sha256)?;
+    let next = m.append(&p)?;
+    super::read_archive_budget::admit(tx, Some(&m), &next, budget)?;
+    sql(tx.execute(
+        "INSERT INTO read_archive_parts(operation_id,ordinal,payload) VALUES(?1,?2,?3)",
+        params![operation, ordinal, p.container()],
+    ))?;
+    sql(tx.execute(
+        "UPDATE read_archives SET payload=?2 WHERE operation_id=?1",
+        params![operation, next.container()],
+    ))?;
+    boundary("archive-after-part");
+    boundary("archive-before-append-commit");
+    Ok(next.status())
+}
+pub(super) fn finish_in(
+    tx: &Connection,
+    subject: &str,
+    operation: &str,
+    end: &Finish,
+    evidence: &[Evidence],
+    event_budget: super::EventBudget,
+    authorize: impl FnOnce() -> Result<()>,
+) -> Result<Receipt> {
+    let m = load(tx, subject, operation)?.ok_or(Error::NotFound)?;
+    verify_parts(tx, &m)?;
+    verify_association(tx, &m)?;
+    let finalized = m.finalize(end)?;
+    let state = finalized.status();
+    let refs = super::evidence::digests(evidence)?;
+    let input = read_journal::Input {
+        operation_id: operation.into(),
+        subject: subject.into(),
+        request_type: state.plan.request_type,
+        request: state.plan.request,
+        response_type: state.plan.response_type,
+        response: end.response.clone(),
+    };
+    let observed = read_journal::encode_archived(&input, &refs, finalized.digest())?;
+    let existing: Option<(String, i64)> = sql(tx
+        .query_row(
+            "SELECT card_id,object_kind FROM operations WHERE id=?1",
+            [operation],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .optional())?;
+    if let Some((id, kind)) = existing {
+        if m.status().root.is_none() || id != subject || kind != 4 || m.raw() != finalized.raw() {
+            return Err(Error::OperationConflict);
+        }
+        let raw:Option<Vec<u8>>=sql(tx.query_row("SELECT CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM operations WHERE id=?1",params![operation,read_journal::MAX_CONTAINER_BYTES as i64],|r|r.get(0)))?;
+        let old = read_journal::decode(&raw.ok_or(Error::Limit)?)?;
+        if old.raw() != observed.raw() {
+            return Err(Error::OperationConflict);
+        }
+        super::evidence::verify_retry(tx, operation, &old.data().task_evidence_sha256, evidence)?;
+        authorize()?;
+        return Ok(old.receipt());
+    }
+    if m.status().root.is_some() {
+        return Err(Error::Integrity);
+    }
+    let (count, bytes): (i64, i64) = sql(tx.query_row(
+        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
+        [],
+        |r| Ok((r.get(0)?, r.get(1)?)),
+    ))?;
+    if count >= i64::from(event_budget.max_count)
+        || (bytes as u64).saturating_add(observed.container().len() as u64) > event_budget.max_bytes
+    {
+        return Err(Error::EventCapacity);
+    }
+    sql(tx.execute(
+        "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,4,?3)",
+        params![operation, subject, observed.container()],
+    ))?;
+    super::evidence::bind(tx, operation, evidence)?;
+    sql(tx.execute(
+        "UPDATE read_archives SET published=1,payload=?2 WHERE operation_id=?1",
+        params![operation, finalized.container()],
+    ))?;
+    sql(tx.execute(
+        "INSERT INTO operation_read_archives(operation_id,root) VALUES(?1,?2)",
+        params![operation, finalized.digest().as_slice()],
+    ))?;
+    sql(tx.execute(
+        "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
+        params![operation, observed.container()],
+    ))?;
+    sql(tx.execute(
+        "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
+        [operation],
+    ))?;
+    boundary("archive-after-publish");
+    authorize()?;
+    boundary("archive-before-commit");
+    Ok(observed.receipt())
+}
+pub(super) fn abort_in(tx: &Connection, subject: &str, operation: &str) -> Result<bool> {
+    let Some(m) = load(tx, subject, operation)? else {
+        return Ok(false);
+    };
+    if m.status().root.is_some() {
+        return Err(Error::OperationConflict);
+    }
+    verify_association(tx, &m)?;
+    sql(tx.execute(
+        "DELETE FROM read_archive_parts WHERE operation_id=?1",
+        [operation],
+    ))?;
+    sql(tx.execute(
+        "DELETE FROM read_archives WHERE operation_id=?1",
+        [operation],
+    ))?;
+    boundary("read-archive-abort-before-commit");
+    Ok(true)
 }

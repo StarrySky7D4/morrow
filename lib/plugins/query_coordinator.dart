@@ -21,6 +21,8 @@ class QueryCoordinator {
   final Duration debounce;
   WorkbenchBackend? _backend;
   QueryConditions? _conditions;
+  String? _operation;
+  QueryFailure? failure;
   Timer? _timer;
   int _serial = 0;
   bool _disposed = false, _running = false, _due = false, _deferred = false;
@@ -47,6 +49,7 @@ class QueryCoordinator {
     invalidate();
     _backend = backend;
     _conditions = conditions;
+    _operation = newQueryOperationId();
     _deferred = deferred;
     phase = QueryPhase.loading;
     if (!deferred) _schedule();
@@ -57,6 +60,8 @@ class QueryCoordinator {
     _timer?.cancel();
     _timer = null;
     _conditions = null;
+    _operation = null;
+    failure = null;
     _due = false;
     ids = const [];
     phase = QueryPhase.idle;
@@ -65,6 +70,8 @@ class QueryCoordinator {
   void retry() {
     if (_disposed || phase != QueryPhase.failed || _backend == null) return;
     _serial++;
+    if (failure?.terminal ?? false) _operation = newQueryOperationId();
+    failure = null;
     ids = const [];
     phase = QueryPhase.loading;
     _schedule();
@@ -83,7 +90,8 @@ class QueryCoordinator {
     if (_disposed || _running || !_due) return;
     final backend = _backend;
     final conditions = _conditions;
-    if (backend == null || conditions == null) return;
+    final operation = _operation;
+    if (backend == null || conditions == null || operation == null) return;
     _due = false;
     _running = true;
     final serial = _serial;
@@ -93,14 +101,16 @@ class QueryCoordinator {
         conditions.filter,
         conditions.text,
         conditions.sort,
+        operation: operation,
       );
       if (!_disposed && serial == _serial) {
         ids = List.unmodifiable(result);
         phase = QueryPhase.ready;
         onChanged();
       }
-    } catch (_) {
+    } catch (error) {
       if (!_disposed && serial == _serial) {
+        failure = error is QueryFailure ? error : null;
         phase = QueryPhase.failed;
         onChanged();
       }

@@ -97,6 +97,7 @@ impl Store {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         boundary("record-after-begin");
+        super::read_capture::reject_tracked(&tx, &command.operation_id)?;
         if let Some(raw) = read_commit(&tx, &command.operation_id)? {
             if !raw.starts_with(b"MORROWR1") {
                 return Err(Error::OperationConflict);

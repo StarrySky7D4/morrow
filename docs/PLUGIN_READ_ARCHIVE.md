@@ -1,4 +1,4 @@
-# 分片读取归档契约（test.45）
+# 分片读取归档契约（test.46）
 
 `core::read_archive` 保存有序不透明分片，`Store` 在内容库格式12管理准备与发布。它提供字节完整性和原子引用闭包；应用适配器另行证明EOF、来源、实际执行、授权与结果语义。普通卡片及其修订不因归档改变。
 
@@ -22,7 +22,7 @@
 | 请求、响应、最终元数据 | 各4 MiB，独立有界；封装有固定总量限制 |
 | 原TaskEvidence | 每操作最多16份、原PB＋容器64 MiB；单证据PB24 MiB、batch最多1024观察，保持旧规则 |
 
-超过预算明确拒绝，暂存仍未发布；不删观察或截断候选后声称成功。分片没有引用绕过旧Evidence计费，它是独立类型化归档政策。物理去重不降低逻辑计费。test.45加入全库暂存准入硬上限，已发布归档的总容量、保留期限与GC仍未建立；默认查询尚未自动持久化。
+超过预算明确拒绝，暂存仍未发布；不删观察或截断候选后声称成功。分片没有引用绕过旧Evidence计费，它是独立类型化归档政策。物理去重不降低逻辑计费。test.45加入全库暂存准入硬上限，已发布归档的总容量、保留期限与GC仍未建立；test.46 已将 Windows 默认查询接入下述持久捕获。
 
 既有`read_archive_manifest` 与 `read_archive_part`仍在各自事务内完整核验，逐片遍历会重复扫描。test.45的`open_read_archive_cursor(subject,operation,expected_root)`用于完整读取：仅接受已发布归档，将调用方预期根与原始Manifest、逻辑来源及audit identity核对，在独立只读WAL事务中先验证全部分片和关联，再允许返回任何一片。不能把未验证的目录自报根当成外部可信根，也不宣称完成OS文件身份认证。
 
@@ -55,3 +55,20 @@
 签名证明既定身份封存了这些原始读取事件；分片哈希证明字节关联，census重算证明所给有序材料一致。它们不独立证明从未遗漏来源、不恢复历史授权，也不证明用户收到结果。独立audit CLI核验签名及完整数据库引用；尚无独立查询回放CLI。
 
 下一步：默认查询的稳定上下文和全部调用存证、全程及交付权限、结果历史修订映射、失败／取消终结、持久恢复／过期及已发布历史GC、Web来源适配。第一方代码保持AGPL-3.0-only，本阶段无新增unsafe。
+
+
+## 持久捕获状态与默认查询（test.46）
+
+数据库格式13新增 `read_captures`，保留版本化原Plan、context、owner nonce、CAS revision和阶段。Preparing只表示未完成意图；Ready与原分片发布、读取观察、根关联和审计outbox在同一事务提交。Failed／Cancelled／Interrupted保留意图，原子释放未发布目录和分片。Ready不等于结果已收到或已显示。
+
+核心接口 `begin_read_capture`、`append_read_capture`、`finish_read_capture_local_authorized`、`end_read_capture` 强制owner／revision及状态转移；`lookup_read_capture`和有界`list_read_captures`用于确认与恢复。owner是可信宿主的随机32字节会话标记，不是插件权限。终态ID不可复用；普通归档及其他内容／记录写入口不能占用tracked ID。Manifest的capture_binding钉定原意图及owner，与State双向检查；旧无标记归档保持原件不变。
+
+最多4096个持久状态、256 MiB状态计费；每状态在begin保留原PB＋容器及额外4 KiB，支持容量满时写入有界终态原因。Preparing状态费用也计入全库32档／8 GiB暂存。低预算接口仅允许更低的此次准入，非持久策略。状态与已发布原件不自动删除：当前尚无完整保留、过期、GC或已发布总字节政策，达到硬限需明确拒绝，不能静默覆盖旧结果。
+
+Windows `Workbench::query` 默认创建唯一operation；`query_with_operation`允许保留调用者ID。源快照readpoint、调度器版本、实际包摘要与100亿总fuel预算先保存；随后记录原包、全部类型的原Card PB与来源事实，以及每次实际Filter／SortRun／Merge执行观察。单个任务预算仍受运行时限制，总归档65536片／4 GiB；这些是显式资源限制，不是候选截断。结果最多4096个ID，超限结束失败，无部分成功。
+
+每次来源读取、实际调用、最终提交之前和结果交付检查当前插件选择／ReadContent许可与会话状态；读取Idea仍逐张授予并撤销对象权限。未宣称跨进程的持续撤权、原生实时抢占或UI已收讫。每次重试的授权来自当前会话，绝不从原owner或原包恢复旧grant。
+
+同ID同条件的Ready重试返回原读取观察中的结果，不重新读取当前卡片或执行guest；改条件必须新ID。同步宿主重启时把自己的Preparing标记Interrupted；再次遇到丢失快照的Preparing也中断，不能换到新来源继续。同一ID的终态保留，明确终态重试使用新ID。任何写入或最终交付结果未知时先查询持久状态，不能把Ready改为Failed。
+
+Flutter查询协调器在条件、内容generation或backend变化时新建128位随机ID；未知传输失败重试保留ID，宿主明确终态则新ID。私有Cap’n Proto保持原schema，query复用已有operation；仅query错误的uiCode=100表示明确终态，其余错误保守视为未确认。宿主响应帧仍128 KiB，超大结果交付失败不撤销Ready。超时后无自动重连，也不恢复旧授权。ID结果目前映射当前UI缓存；完整历史修订展示、UI实时取消、Web对应存储和独立查询CLI仍待接入。

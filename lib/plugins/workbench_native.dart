@@ -269,7 +269,13 @@ class RustWorkbench
         writable = !reply.readOnly;
         final notice = reply.maintenanceWarning ?? '';
         maintenanceWarning = notice.isEmpty ? null : notice;
-        if ((reply.error ?? '').isNotEmpty) throw StateError(reply.error!);
+        if ((reply.error ?? '').isNotEmpty) {
+          if (action == host.Action.query) {
+            // 100 is query-specific; an unknown code never proves termination.
+            throw QueryFailure(reply.error!, terminal: reply.uiCode == 100);
+          }
+          throw StateError(reply.error!);
+        }
         completion.complete(reply);
       } catch (e, stack) {
         completion.completeError(e, stack);
@@ -594,8 +600,9 @@ class RustWorkbench
     String section,
     String filter,
     String text,
-    String sort,
-  ) async {
+    String sort, {
+    String? operation,
+  }) async {
     final builder = MessageBuilder();
     final r = builder.initRoot(wire.requestFactory);
     r.version = 1;
@@ -607,7 +614,10 @@ class RustWorkbench
     r.sort = sort;
     final result = await _call(
       host.Action.query,
-      configure: (r) => r.payload = builder.serialize(),
+      configure: (r) {
+        r.operation = operation ?? newQueryOperationId();
+        r.payload = builder.serialize();
+      },
     );
     return [...?result.ids].whereType<String>().toList();
   }

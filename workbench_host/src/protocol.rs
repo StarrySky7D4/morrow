@@ -24,6 +24,11 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     out.set_version(1);
     out.set_digest(&digest());
     if let Err(e) = handle(host, bytes, out.reborrow()) {
+        if e.downcast_ref::<crate::query_capture::QueryFailure>()
+            .is_some_and(|e| e.terminal)
+        {
+            out.set_ui_code(100);
+        }
         out.set_error(e.to_string().as_str());
     }
     out.set_read_only(!host.writable());
@@ -145,7 +150,18 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             if req.action != Action::Query {
                 return Err("query route".into());
             }
-            let result = host.query(&req.section, &req.filter, &req.text, &req.sort)?;
+            let operation = text(r.get_operation())?;
+            let result = if operation.is_empty() {
+                host.query(&req.section, &req.filter, &req.text, &req.sort)?
+            } else {
+                host.query_with_operation(
+                    &operation,
+                    &req.section,
+                    &req.filter,
+                    &req.text,
+                    &req.sort,
+                )?
+            };
             if result.len() > 4096 {
                 return Err("query response pagination required".into());
             }

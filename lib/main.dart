@@ -1821,7 +1821,11 @@ class _StudioState extends State<Studio> {
                   ),
                 const SizedBox(height: 12),
                 Text(
-                  failed ? '筛选未完成' : '正在筛选…',
+                  failed
+                      ? (_queries.failure?.terminal ?? false)
+                            ? '此次筛选已终止'
+                            : '尚未确认筛选结果'
+                      : '正在筛选…',
                   key: ValueKey(failed ? 'query-error' : 'query-loading'),
                   style: TextStyle(color: p.muted),
                 ),
@@ -1829,7 +1833,9 @@ class _StudioState extends State<Studio> {
                   TextButton(
                     key: const ValueKey('query-retry'),
                     onPressed: _queries.retry,
-                    child: const Text('重试筛选'),
+                    child: Text(
+                      (_queries.failure?.terminal ?? false) ? '重新筛选' : '重试筛选',
+                    ),
                   ),
               ],
             ),

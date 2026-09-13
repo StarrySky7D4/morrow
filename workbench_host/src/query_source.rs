@@ -1,3 +1,4 @@
+#![cfg(test)]
 //! One owned SQLite read view supplies every candidate and body for a live query.
 //! Snapshot completeness is local evidence; durable recording/independent source proof is a
 //! separate adapter. No latest-store body lookup is allowed after this snapshot is pinned.
@@ -52,25 +53,6 @@ impl query_plan::Backend for Live<'_> {
     }
 }
 impl Workbench {
-    pub fn query(
-        &mut self,
-        section: &str,
-        filter: &str,
-        text: &str,
-        sort: &str,
-    ) -> Result<Vec<String>> {
-        let snapshot = self.host.store_local().open_card_snapshot()?;
-        self.query_snapshot(
-            snapshot,
-            &query_plan::Conditions {
-                section: section.into(),
-                filter: filter.into(),
-                text: text.into(),
-                sort: sort.into(),
-            },
-        )
-        .map(|(ids, _)| ids)
-    }
     fn query_snapshot(
         &mut self,
         snapshot: CardReadSnapshot,

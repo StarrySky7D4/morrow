@@ -2,7 +2,7 @@
 resolver = "2"
 [package]
 name = "morrow-workbench-host"
-version = "0.1.9-test.45"
+version = "0.1.9-test.46"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"

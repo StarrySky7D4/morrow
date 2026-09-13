@@ -1,5 +1,25 @@
+import 'dart:math';
 import 'studio_backend.dart';
 import '../main.dart' show Idea;
+
+/// Query operation identity is independent of transport serials and content revisions.
+String newQueryOperationId() {
+  final random = Random.secure();
+  final bytes = List.generate(
+    16,
+    (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0'),
+  );
+  return 'query-${bytes.join()}';
+}
+
+/// Only a typed host terminal response permits replacing an uncertain operation.
+class QueryFailure implements Exception {
+  const QueryFailure(this.message, {required this.terminal});
+  final String message;
+  final bool terminal;
+  @override
+  String toString() => message;
+}
 
 enum PluginAction {
   create,
@@ -12,7 +32,7 @@ enum PluginAction {
   restore,
 }
 
-/// Flutter owns the visible projection. Implementations commit before returning.
+/// Flutter owns the visible projection. Mutations commit before returning.
 abstract class WorkbenchBackend {
   bool get writable;
   StudioBackend? get studio => null;
@@ -22,12 +42,16 @@ abstract class WorkbenchBackend {
     String text = '',
     bool flag = false,
   });
+
+  /// Reuse an operation only for the identical intent. A stored ready result is
+  /// computation evidence; only a received response can update this UI.
   Future<List<String>> query(
     String section,
     String filter,
     String text,
-    String sort,
-  );
+    String sort, {
+    String? operation,
+  });
 }
 
 /// Optional trusted-host capability, independent of business plugin availability.

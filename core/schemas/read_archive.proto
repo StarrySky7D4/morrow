@@ -4,4 +4,4 @@ package morrow.read_archive.v1;
 message Plan { uint32 schema_version = 1; string operation_id = 2; string subject = 3; string request_type = 4; bytes request = 5; string response_type = 6; uint32 max_parts = 7; uint64 max_bytes = 8; }
 message Part { uint32 schema_version = 1; uint32 ordinal = 2; string type_id = 3; bytes data = 4; bytes data_sha256 = 5; bytes previous_sha256 = 6; }
 message Final { string metadata_type = 1; bytes metadata = 2; bytes response_sha256 = 3; }
-message Manifest { uint32 schema_version = 1; bytes plan = 2; uint32 part_count = 3; uint64 logical_bytes = 4; bytes chain_sha256 = 5; Final finalized = 6; }
+message Manifest { uint32 schema_version = 1; bytes plan = 2; uint32 part_count = 3; uint64 logical_bytes = 4; bytes chain_sha256 = 5; Final finalized = 6; bytes capture_binding = 7; }

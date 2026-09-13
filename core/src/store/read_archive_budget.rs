@@ -52,6 +52,10 @@ fn usage(connection: &Connection) -> Result<PreparationUsage> {
             .checked_add(cost(&manifest)?)
             .ok_or(Error::Limit)?;
     }
+    total.logical_bytes = total
+        .logical_bytes
+        .checked_add(super::read_capture::preparing_charge(connection)?)
+        .ok_or(Error::Limit)?;
     Ok(total)
 }
 pub(super) fn admit(
@@ -86,7 +90,7 @@ impl Store {
     pub fn read_archive_preparation_usage(&self) -> Result<PreparationUsage> {
         let tx = sql(self.connection.unchecked_transaction())?;
         let version: i64 = sql(tx.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if version != 12 {
+        if !matches!(version, 12 | 13) {
             return Err(Error::UnsupportedVersion);
         }
         usage(&tx)

@@ -25,6 +25,7 @@ mod evidence;
 mod preferences_evidence;
 pub mod projection;
 pub mod projection_v2;
+pub mod query_capture;
 pub mod query_plan;
 mod query_source;
 mod storage;
@@ -54,6 +55,7 @@ pub struct Workbench {
     plugin_warning: Option<String>,
     start: Instant,
     counter: u64,
+    query_owner: [u8; 32],
     undo: BTreeMap<String, (u64, u64)>,
     staged: BTreeMap<(String, String), Attachment>,
     transfers: transfer::Transfers,
@@ -150,7 +152,9 @@ impl Workbench {
             }
             _ => None,
         };
-        Ok(Self {
+        let mut query_owner = [0; 32];
+        getrandom::fill(&mut query_owner)?;
+        let mut workbench = Self {
             host,
             plugin,
             pool,
@@ -161,12 +165,15 @@ impl Workbench {
             plugin_warning,
             start: Instant::now(),
             counter: 0,
+            query_owner,
             undo: BTreeMap::new(),
             staged: BTreeMap::new(),
             transfers: transfer::Transfers::default(),
             capture_transfers: transfer::Transfers::default(),
             capture_scopes: capture_provenance::CaptureScopes::default(),
-        })
+        };
+        workbench.recover_queries()?;
+        Ok(workbench)
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
         self.host.backup_snapshot(destination)
@@ -240,6 +247,7 @@ impl Workbench {
         )?;
         Ok(())
     }
+    #[cfg(test)]
     fn run(&mut self, input: Request) -> Result<Response> {
         Ok(self.run_observed(input, false)?.0)
     }

@@ -15,6 +15,8 @@ pub struct Storage {
     #[cfg(not(target_os = "windows"))]
     host: HostRuntime,
     warning: Option<String>,
+    #[cfg(all(test, feature = "fault-injection"))]
+    fail_next_seal: bool,
     #[cfg(target_os = "windows")]
     _registry: Option<morrow_audit::library::Registry>,
 }
@@ -26,6 +28,8 @@ impl Storage {
         let mut storage = Self {
             session,
             warning: None,
+            #[cfg(all(test, feature = "fault-injection"))]
+            fail_next_seal: false,
             _registry: None,
         };
         // A maintenance failure must not hide already durable content.
@@ -45,6 +49,8 @@ impl Storage {
         let mut storage = Self {
             session,
             warning: None,
+            #[cfg(all(test, feature = "fault-injection"))]
+            fail_next_seal: false,
             _registry: Some(registry),
         };
         let _ = storage.flush_pending();
@@ -103,8 +109,16 @@ impl Storage {
         self.warning = None;
         Ok(())
     }
+    #[cfg(all(test, feature = "fault-injection"))]
+    pub(crate) fn fail_next_seal_for_test(&mut self) {
+        self.fail_next_seal = true;
+    }
     #[cfg(target_os = "windows")]
     fn flush_impl(&mut self) -> Result<()> {
+        #[cfg(all(test, feature = "fault-injection"))]
+        if std::mem::take(&mut self.fail_next_seal) {
+            return Err("injected one-shot seal failure".into());
+        }
         #[cfg(feature = "fault-injection")]
         if std::env::var("MORROW_WORKBENCH_FAIL_SEAL").as_deref() == Ok("1") {
             return Err("injected seal failure".into());

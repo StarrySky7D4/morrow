@@ -342,7 +342,7 @@ fn pending_scan_uses_rebuildable_sqlite_index_without_schema_or_signature_change
     assert_eq!(
         sql.query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))
             .unwrap(),
-        12
+        13
     );
     assert_eq!(
         sql.query_row(

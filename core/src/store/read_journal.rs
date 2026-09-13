@@ -71,7 +71,8 @@ impl Store {
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         boundary("read-after-begin");
-        if version(&tx)? != 12 {
+        super::read_capture::reject_tracked(&tx, &input.operation_id)?;
+        if !matches!(version(&tx)?, 12 | 13) {
             return Err(Error::UnsupportedVersion);
         }
         let digests = super::evidence::digests(evidence)?;
