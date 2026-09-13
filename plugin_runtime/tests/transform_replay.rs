@@ -517,3 +517,179 @@ fn foreign_or_revoked_session_cannot_issue_an_execution_capture() {
     original.unchanged();
     foreign.unchanged();
 }
+
+#[test]
+fn complete_batch_uses_one_package_and_replays_in_order_with_total_policy() {
+    let mut f = Fixture::new(Mode::Success);
+    let captured = f
+        .pool
+        .record_transform_batch(
+            &f.manager,
+            &mut f.host,
+            &f.session,
+            &[input(), input()],
+            "test.intent",
+            b"whole intent",
+            200_000,
+        )
+        .unwrap();
+    assert_eq!(captured.reports().len(), 2);
+    let evidence = roundtrip(captured.evidence());
+    assert_eq!(evidence.data().schema_version, task_evidence::BATCH_VERSION);
+    let batch = evidence.data().batch.as_ref().unwrap();
+    assert_eq!(batch.intent, b"whole intent");
+    assert_eq!(batch.observations.len(), 2);
+    assert!(evidence.data().invocation.is_empty());
+    assert!(replay::replay_batch(&evidence, limits(), 199_999).is_err());
+    let replayed = replay::replay_batch(&evidence, limits(), 200_000).unwrap();
+    assert!(replayed.matches);
+    assert_eq!(replayed.reports.len(), 2);
+    f.unchanged();
+    drop(f);
+    assert!(
+        replay::replay_batch(&evidence, limits(), 200_000)
+            .unwrap()
+            .matches
+    );
+}
+#[test]
+fn batch_second_actual_trap_produces_no_partial_evidence_or_content() {
+    let mut f = Fixture::new(Mode::Success);
+    let mut changed = input().transform().unwrap().clone();
+    changed.input.push(7);
+    let second = Invocation::new_transform("different", changed).unwrap();
+    assert!(
+        f.pool
+            .record_transform_batch(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &[input(), second],
+                "test.intent",
+                b"intent",
+                200_000
+            )
+            .is_err()
+    );
+    assert!(f.pool.root(&f.session).is_err());
+    f.unchanged();
+    assert_eq!(f.host.store_local().pending_usage().unwrap().0, 1);
+}
+#[test]
+fn batch_total_fuel_exhaustion_stops_execution_and_business_failure_does_not_poison_root() {
+    let mut baseline = Fixture::new(Mode::Success);
+    let captured = baseline.capture().unwrap();
+    let used = limits().fuel - captured.report().execution.fuel_remaining;
+    let mut f = Fixture::new(Mode::Success);
+    assert!(
+        f.pool
+            .record_transform_batch(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &[input(), input()],
+                "test.intent",
+                b"intent",
+                used + 1
+            )
+            .is_err()
+    );
+    assert!(f.pool.root(&f.session).is_err());
+    f.unchanged();
+    let mut business = Fixture::new(Mode::Business);
+    assert!(
+        business
+            .pool
+            .record_transform_batch(
+                &business.manager,
+                &mut business.host,
+                &business.session,
+                &[input()],
+                "test.intent",
+                b"intent",
+                100_000
+            )
+            .is_err()
+    );
+    assert!(business.pool.root(&business.session).is_ok());
+    business.unchanged();
+}
+#[test]
+fn batch_preflights_later_input_before_executing_trapping_first_page() {
+    let mut f = Fixture::new(Mode::Trap);
+    let mut other = input().transform().unwrap().clone();
+    other.handler = "not.registered".into();
+    let other = Invocation::new_transform("other", other).unwrap();
+    assert!(
+        f.pool
+            .record_transform_batch(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &[input(), other],
+                "test.intent",
+                b"intent",
+                200_000
+            )
+            .is_err()
+    );
+    assert!(f.pool.root(&f.session).is_ok());
+    assert!(
+        f.pool
+            .record_transform_batch(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &[],
+                "test.intent",
+                b"intent",
+                200_000
+            )
+            .is_err()
+    );
+    assert!(
+        f.pool
+            .record_transform_batch(
+                &f.manager,
+                &mut f.host,
+                &f.session,
+                &vec![input(); task_evidence::MAX_BATCH_OBSERVATIONS + 1],
+                "test.intent",
+                b"intent",
+                200_000
+            )
+            .is_err()
+    );
+    assert!(f.pool.root(&f.session).is_ok());
+}
+#[test]
+fn batch_replay_checks_all_page_policies_and_stops_at_first_observation_mismatch() {
+    let mut f = Fixture::new(Mode::Success);
+    let captured = f
+        .pool
+        .record_transform_batch(
+            &f.manager,
+            &mut f.host,
+            &f.session,
+            &[input(), input()],
+            "test.intent",
+            b"intent",
+            200_000,
+        )
+        .unwrap();
+    let mut data = captured.evidence().data().clone();
+    data.batch.as_mut().unwrap().observations[1].backend = "future-backend".into();
+    let unsupported = task_evidence::encode(data).unwrap();
+    assert!(matches!(
+        replay::replay_batch(&unsupported, limits(), 200_000),
+        Err(replay::Error::UnsupportedBackend)
+    ));
+    let mut data = captured.evidence().data().clone();
+    data.batch.as_mut().unwrap().observations[0].completion = input()
+        .output_completion(b"forged but structurally valid")
+        .unwrap();
+    let changed = task_evidence::encode(data).unwrap();
+    let result = replay::replay_batch(&changed, limits(), 200_000).unwrap();
+    assert!(!result.matches);
+    assert_eq!(result.reports.len(), 1);
+}

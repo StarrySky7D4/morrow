@@ -29,4 +29,24 @@ message TaskEvidence {
   optional sint32 exit_code = 8;
   uint32 observed_host_calls = 9;
   uint64 fuel_remaining = 10;
+  // Present only in schema version 2; fields 3..10 must then be empty/default.
+  Batch batch = 11;
+}
+// One archive is shared by all observations. Intent bytes retain the caller's original intent.
+message Batch {
+  string intent_type = 1;
+  bytes intent = 2;
+  uint64 total_fuel = 3;
+  repeated Observation observations = 4;
+}
+// Version 2 admits only successful Output completions with exit code zero.
+message Observation {
+  bytes invocation = 1;
+  ExecutionBudget budget = 2;
+  string backend = 3;
+  bytes completion = 4;
+  StableFault fault = 5;
+  optional sint32 exit_code = 6;
+  uint32 observed_host_calls = 7;
+  uint64 fuel_remaining = 8;
 }

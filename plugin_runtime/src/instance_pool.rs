@@ -312,6 +312,119 @@ impl Pool {
         }
         prepared.finish(report, completion).map_err(Error::Evidence)
     }
+    /// Capture a complete ordered batch. No partial evidence is returned after a failed page.
+    #[allow(clippy::too_many_arguments)]
+    pub fn record_transform_batch(
+        &mut self,
+        manager: &Manager,
+        host: &mut HostRuntime,
+        session: &Session,
+        inputs: &[Invocation],
+        intent_type: &str,
+        intent: &[u8],
+        total_fuel: u64,
+    ) -> Result<crate::replay::CapturedBatch> {
+        use morrow_core::{
+            plugin_package::Package,
+            task_evidence::{
+                self,
+                proto::{Batch, ExecutionBudget, TaskEvidence},
+            },
+        };
+        use prost::Message;
+        self.maintain(manager, host)?;
+        if inputs.is_empty() || inputs.len() > task_evidence::MAX_BATCH_OBSERVATIONS {
+            return Err(Error::Limit);
+        }
+        let root = self.root(session)?;
+        let package = Package::decode(root.package().package().archive())?;
+        let limits = root.package().limits();
+        task_evidence::validate_batch_plan(&package, intent_type, intent, total_fuel)?;
+        let mut bytes = package
+            .archive()
+            .len()
+            .checked_add(intent.len())
+            .ok_or(Error::Limit)?;
+        for input in inputs {
+            task_evidence::validate_plan(
+                &package,
+                input,
+                &ExecutionBudget {
+                    fuel: limits.fuel.min(total_fuel),
+                    memory_bytes: limits.memory_bytes as u64,
+                    host_calls: limits.host_calls,
+                },
+            )?;
+            bytes = bytes.checked_add(input.bytes().len()).ok_or(Error::Limit)?;
+            if bytes > task_evidence::MAX_RAW_BYTES {
+                return Err(Error::Limit);
+            }
+        }
+        let mut data = TaskEvidence {
+            schema_version: task_evidence::BATCH_VERSION,
+            package_archive: package.archive().to_vec(),
+            batch: Some(Batch {
+                intent_type: intent_type.into(),
+                intent: intent.to_vec(),
+                total_fuel,
+                observations: vec![],
+            }),
+            ..Default::default()
+        };
+        let mut remaining = total_fuel;
+        let mut reports = Vec::with_capacity(inputs.len());
+        for input in inputs {
+            self.maintain(manager, host)?;
+            let root = self.root(session)?;
+            if root.package().package().digest() != package.digest() {
+                return Err(Error::Denied);
+            }
+            if remaining == 0 {
+                return Err(Error::Limit);
+            }
+            let page_limits = crate::Limits {
+                fuel: limits.fuel.min(remaining),
+                ..limits
+            };
+            let prepared =
+                crate::replay::PreparedCapture::new_observation(&package, input, page_limits)
+                    .map_err(Error::Evidence)?;
+            let (report, completion) = prepared.execute(root.cancellation());
+            if matches!(
+                report.execution.outcome,
+                Err(Fault::Trap | Fault::TaskProtocol | Fault::Limits)
+            ) {
+                self.entry(session)?.stop();
+            }
+            self.maintain(manager, host)?;
+            self.root(session)?;
+            if report.execution.outcome != Ok(0)
+                || report.response.is_some()
+                || report.failure.is_some()
+                || report.output.is_none()
+            {
+                return Err(Error::Evidence(crate::replay::Error::UnsupportedOutcome));
+            }
+            let consumed = page_limits
+                .fuel
+                .checked_sub(report.execution.fuel_remaining)
+                .ok_or(Error::Limit)?;
+            remaining = remaining.checked_sub(consumed).ok_or(Error::Limit)?;
+            let observation = prepared.observation(&report, completion);
+            task_evidence::validate_observation(&package, &observation)?;
+            data.batch
+                .as_mut()
+                .expect("batch initialized")
+                .observations
+                .push(observation);
+            if data.encoded_len() > task_evidence::MAX_RAW_BYTES {
+                return Err(Error::Limit);
+            }
+            reports.push(report);
+        }
+        let evidence = task_evidence::encode(data)?;
+        Ok(crate::replay::CapturedBatch { reports, evidence })
+    }
     pub fn start(
         &mut self,
         manager: &mut Manager,

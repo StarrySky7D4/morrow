@@ -115,6 +115,7 @@ fn evidence(label: &str, module_bytes: usize) -> Evidence {
         exit_code: Some(0),
         observed_host_calls: 0,
         fuel_remaining: 90000,
+        batch: None,
     })
     .unwrap()
 }
@@ -198,7 +199,7 @@ fn legacy_seven(path: &Path, originals: &[Evidence]) {
 fn same_package_observations_share_real_blocks_and_rebuild_exact_original_containers() {
     let (_dir, path, a, b) = fixture();
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 8);
+    assert_eq!(version(&sql), 9);
     let mut all = BTreeSet::new();
     let mut per = Vec::new();
     let mut logical = 0;
@@ -356,7 +357,7 @@ fn chunk_recipe_link_and_size_corruption_fail_closed_without_repair() {
             "accepted corruption {case}"
         );
         let sql = rusqlite::Connection::open(&path).unwrap();
-        assert_eq!(version(&sql), 8);
+        assert_eq!(version(&sql), 9);
     }
 }
 #[test]
@@ -417,7 +418,7 @@ fn legacy_migration_preserves_raw_unknown_fields_exact_container_and_commit_byte
     assert_eq!(restored.digest(), e.digest());
     drop(s);
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 8);
+    assert_eq!(version(&sql), 9);
     let after: Vec<u8> = sql
         .query_row(
             "SELECT payload FROM operations WHERE id='create'",
@@ -471,7 +472,7 @@ fn audited_readonly_v7_does_not_migrate_and_v8_preserves_existing_signature() {
     h.store_local().integrity_check().unwrap();
     drop(h);
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 8);
+    assert_eq!(version(&sql), 9);
     assert!(counts(&sql).0 > 0);
 }
 #[cfg(feature = "fault-injection")]
@@ -625,7 +626,7 @@ fn signed_snapshot_contains_complete_shared_chunks_after_original_database_is_re
         rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
     )
     .unwrap();
-    assert_eq!(version(&sql), 8);
+    assert_eq!(version(&sql), 9);
     let (physical, links) = counts(&sql);
     assert!(
         physical > 0 && physical < links,
@@ -646,4 +647,179 @@ fn signed_snapshot_contains_complete_shared_chunks_after_original_database_is_re
     assert_eq!(store.card("card").unwrap().unwrap().summary().revision, 1);
     assert!(store.pending(0, 10).unwrap().is_empty());
     assert!(!original.exists());
+}
+
+// Version 8 and 9 share physical tables, but only 9 may contain batch observations.
+fn schema_eight(path: &Path) {
+    let sql = rusqlite::Connection::open(path).unwrap();
+    assert_eq!(version(&sql), 9);
+    sql.execute_batch("PRAGMA user_version=8;").unwrap();
+}
+fn operation_payload(path: &Path) -> Vec<u8> {
+    rusqlite::Connection::open(path)
+        .unwrap()
+        .query_row(
+            "SELECT payload FROM operations WHERE id='create'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap()
+}
+fn stored_chunks(path: &Path) -> Vec<(Vec<u8>, Vec<u8>)> {
+    let sql = rusqlite::Connection::open(path).unwrap();
+    let mut statement = sql
+        .prepare("SELECT digest,payload FROM evidence_chunks ORDER BY digest")
+        .unwrap();
+    statement
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+        .unwrap()
+        .collect::<Result<_, _>>()
+        .unwrap()
+}
+fn signed_fixture(items: &[Evidence]) -> (tempfile::TempDir, PathBuf, TrustedLog, Vec<u8>) {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("signed.db");
+    let key = SigningKey::from_bytes(&[38; 32]);
+    let trust = TrustedLog {
+        id: "batch-migration-review".into(),
+        key: key.verifying_key(),
+    };
+    let store = Store::open_audited(&path, Default::default(), true, trust.clone()).unwrap();
+    let mut h = HostRuntime::new(store).unwrap();
+    commit(&mut h, "create", "card", items);
+    let segment = audit::sign(
+        &audit::from_pending(&trust, 1, [0; 32], &h.store_local().pending(0, 10).unwrap()).unwrap(),
+        &trust,
+        &key,
+    )
+    .unwrap();
+    h.store_local_mut().seal_pending(&segment).unwrap();
+    drop(h);
+    (dir, path, trust, segment)
+}
+#[test]
+fn format_eight_readonly_then_migration_preserve_unknown_v1_bytes_and_signed_history() {
+    let base = evidence("old-single", 128 * 1024);
+    let mut raw = base.raw().to_vec();
+    raw.extend([0xa0, 0x06, 42]);
+    let e = task_evidence::decode(&pack(b"MORROWE1", &raw), Sha256::digest(&raw).into()).unwrap();
+    let (_dir, path, trust, segment) = signed_fixture(std::slice::from_ref(&e));
+    schema_eight(&path);
+    let commit_before = operation_payload(&path);
+    let chunks_before = stored_chunks(&path);
+    let read = Store::open_read_only_audited(&path, trust.clone()).unwrap();
+    assert_eq!(
+        read.operation_evidence("card", "create").unwrap()[0].raw(),
+        raw
+    );
+    assert_eq!(read.sealed_segment(1).unwrap().unwrap(), segment);
+    drop(read);
+    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 8);
+    let migrated = Store::open_audited(&path, Default::default(), false, trust).unwrap();
+    migrated.integrity_check().unwrap();
+    let original = migrated
+        .operation_evidence("card", "create")
+        .unwrap()
+        .remove(0);
+    assert_eq!(original.raw(), e.raw());
+    assert_eq!(original.container(), e.container());
+    assert_eq!(original.digest(), e.digest());
+    assert_eq!(migrated.sealed_segment(1).unwrap().unwrap(), segment);
+    assert_eq!(
+        migrated.card("card").unwrap().unwrap().summary().revision,
+        1
+    );
+    drop(migrated);
+    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 9);
+    assert_eq!(operation_payload(&path), commit_before);
+    assert_eq!(stored_chunks(&path), chunks_before);
+}
+#[cfg(feature = "fault-injection")]
+#[test]
+fn format_eight_batch_migration_crashes_publish_only_whole_version_transition() {
+    for point in [
+        "batch-evidence-migration-before-commit",
+        "batch-evidence-migration-after-commit",
+    ] {
+        let (_dir, path, a, b) = fixture();
+        schema_eight(&path);
+        let commit_before = operation_payload(&path);
+        let chunks_before = stored_chunks(&path);
+        assert_eq!(child(&path, "migrate", point).code(), Some(86));
+        assert_eq!(
+            version(&rusqlite::Connection::open(&path).unwrap()),
+            if point.ends_with("after-commit") {
+                9
+            } else {
+                8
+            }
+        );
+        assert_eq!(operation_payload(&path), commit_before);
+        assert_eq!(stored_chunks(&path), chunks_before);
+        let reopened = Store::open_existing(&path, Default::default()).unwrap();
+        reopened.integrity_check().unwrap();
+        let originals = reopened.operation_evidence("card", "create").unwrap();
+        for (actual, expected) in originals.iter().zip([&a, &b]) {
+            assert_eq!(actual.container(), expected.container());
+            assert_eq!(actual.raw(), expected.raw());
+            assert_eq!(actual.digest(), expected.digest());
+        }
+        assert_eq!(originals.len(), 2);
+        assert_eq!(
+            reopened.card("card").unwrap().unwrap().summary().revision,
+            1
+        );
+        drop(reopened);
+        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 9);
+        assert_eq!(operation_payload(&path), commit_before);
+        assert_eq!(stored_chunks(&path), chunks_before);
+    }
+}
+#[test]
+fn schema_two_hidden_in_format_eight_is_rejected_without_version_repair() {
+    let single = evidence("batch-page", 128 * 1024);
+    let o = single.data();
+    let batch = task_evidence::encode(TaskEvidence {
+        schema_version: 2,
+        package_archive: o.package_archive.clone(),
+        batch: Some(task_evidence::proto::Batch {
+            intent_type: "test.intent".into(),
+            intent: b"synthetic intent".to_vec(),
+            total_fuel: 100000,
+            observations: vec![task_evidence::proto::Observation {
+                invocation: o.invocation.clone(),
+                budget: o.budget,
+                backend: o.backend.clone(),
+                completion: o.completion.clone(),
+                fault: o.fault,
+                exit_code: o.exit_code,
+                observed_host_calls: o.observed_host_calls,
+                fuel_remaining: o.fuel_remaining,
+            }],
+        }),
+        ..Default::default()
+    })
+    .unwrap();
+    let (_dir, path, trust, segment) = signed_fixture(std::slice::from_ref(&batch));
+    let valid = Store::open_read_only_audited(&path, trust.clone()).unwrap();
+    assert_eq!(
+        valid.operation_evidence("card", "create").unwrap()[0].container(),
+        batch.container()
+    );
+    assert_eq!(valid.sealed_segment(1).unwrap().unwrap(), segment);
+    drop(valid);
+    schema_eight(&path);
+    let commit_before = operation_payload(&path);
+    let chunks_before = stored_chunks(&path);
+    assert!(matches!(
+        Store::open_read_only_audited(&path, trust.clone()),
+        Err(morrow_core::Error::UnsupportedVersion)
+    ));
+    assert!(matches!(
+        Store::open_audited(&path, Default::default(), false, trust),
+        Err(morrow_core::Error::UnsupportedVersion)
+    ));
+    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 8);
+    assert_eq!(operation_payload(&path), commit_before);
+    assert_eq!(stored_chunks(&path), chunks_before);
 }

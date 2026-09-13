@@ -59,6 +59,7 @@ fn evidence(task: &str) -> Evidence {
         exit_code: Some(0),
         observed_host_calls: 0,
         fuel_remaining: 90000,
+        batch: None,
     })
     .unwrap()
 }

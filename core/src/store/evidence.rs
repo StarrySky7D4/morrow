@@ -63,7 +63,11 @@ fn payload(connection: &Connection, digest: [u8; 32]) -> Result<Option<Evidence>
     match raw {
         None => Ok(None),
         Some(None) => Err(Error::Limit),
-        Some(Some(raw)) => task_evidence::decode(&raw, digest).map(Some),
+        Some(Some(raw)) => {
+            let evidence = task_evidence::decode(&raw, digest)?;
+            if evidence.data().schema_version != task_evidence::VERSION { return Err(Error::UnsupportedVersion); }
+            Ok(Some(evidence))
+        },
     }
 }
 pub(super) fn bind(connection: &Connection, operation: &str, evidence: &[Evidence]) -> Result<()> {
@@ -211,7 +215,7 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         }
         let bytes = value.as_blob().map_err(|_| Error::Integrity)?;
         // decode checks bounds before decompression or owned allocation.
-        task_evidence::decode(bytes, digest)?;
+        if task_evidence::decode(bytes, digest)?.data().schema_version != task_evidence::VERSION { return Err(Error::UnsupportedVersion); }
     }
     Ok(())
 }

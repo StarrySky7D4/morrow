@@ -23,12 +23,31 @@ fn run() -> Result<bool, Box<dyn std::error::Error>> {
         return Err("evidence file too large".into());
     }
     let evidence = task_evidence::decode(&container, digest)?;
-    let result = replay::replay(&evidence, Limits::default())?;
+    // This is verifier policy, never a limit supplied by the evidence itself.
+    const BATCH_TOTAL_FUEL: u64 = 1_000_000_000;
+    let (matches, observed, expected) = match evidence.data().schema_version {
+        task_evidence::VERSION => {
+            let result = replay::replay(&evidence, Limits::default())?;
+            (result.matches, 1, 1)
+        }
+        task_evidence::BATCH_VERSION => {
+            let expected = evidence
+                .data()
+                .batch
+                .as_ref()
+                .ok_or("missing evidence batch")?
+                .observations
+                .len();
+            let result = replay::replay_batch(&evidence, Limits::default(), BATCH_TOTAL_FUEL)?;
+            (result.matches, result.reports.len(), expected)
+        }
+        _ => return Err("unsupported evidence version".into()),
+    };
     println!(
-        "{}: pure-transform observation; integrity pin checked; unsigned evidence, no commit or authorization claim",
-        if result.matches { "MATCH" } else { "MISMATCH" }
+        "{}: pure-transform observations={observed}/{expected}; integrity pin checked; unsigned evidence, no commit or authorization claim",
+        if matches { "MATCH" } else { "MISMATCH" }
     );
-    Ok(result.matches)
+    Ok(matches)
 }
 fn main() -> ExitCode {
     match run() {

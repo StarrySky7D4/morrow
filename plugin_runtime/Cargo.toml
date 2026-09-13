@@ -7,12 +7,13 @@ edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [features]
-packages = ["dep:morrow-core"]
+packages = ["dep:morrow-core", "dep:prost"]
 [dependencies]
 wasmi = {version = "=1.1.0", default-features = false, features = ["std", "extra-checks"]}
 wasmparser = {version = "=0.239.0", default-features = false, features = ["std"]}
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 morrow-core = {path = "../core", optional = true}
+prost = {version = "=0.14.4", optional = true}
 [dev-dependencies]
 morrow-workbench-plugin = {path = "../plugins/workbench"}
 capnp = "=0.24.1"

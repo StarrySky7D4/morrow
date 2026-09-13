@@ -16,7 +16,7 @@ mod proto {
 }
 pub(super) const CHUNK_BYTES: usize = 32 * 1024;
 const MAX_CHUNKS: usize = task_evidence::MAX_CONTAINER_BYTES.div_ceil(CHUNK_BYTES);
-const MAX_RECIPE_RAW: usize = 16 * 1024;
+const MAX_RECIPE_RAW: usize = 64 * 1024;
 const MAX_RECIPE_CONTAINER: usize = MAX_RECIPE_RAW + MAX_RECIPE_RAW / 255 + 128;
 const MAX_CHUNK_RAW: usize = CHUNK_BYTES + 256;
 const MAX_CHUNK_CONTAINER: usize = MAX_CHUNK_RAW + MAX_CHUNK_RAW / 255 + 128;
@@ -226,7 +226,12 @@ pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evide
     {
         return Err(Error::Integrity);
     }
-    task_evidence::decode(&container, digest(&recipe.evidence_sha256)?).map(Some)
+    let evidence = task_evidence::decode(&container, digest(&recipe.evidence_sha256)?)?;
+    let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+    if version < 9 && evidence.data().schema_version != task_evidence::VERSION {
+        return Err(Error::UnsupportedVersion);
+    }
+    Ok(Some(evidence))
 }
 fn write(connection: &Connection, evidence: &Evidence, replace: bool) -> Result<()> {
     transaction(connection)?;

@@ -1,5 +1,5 @@
 //! Windows qualification using the actual bundled Rust guest and an owned temporary workbench.
-//! Compares physical format-8 storage against the exact equivalent format-7 container payloads.
+//! Compares physical format-9 storage against the exact equivalent format-7 container payloads.
 #[cfg(target_os = "windows")]
 mod windows {
     use morrow_core::{plugin_package::catalog, task_evidence::Evidence};
@@ -61,7 +61,7 @@ mod windows {
         )?;
         let version: i64 = db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
         assert_eq!(
-            version, 8,
+            version, 9,
             "physical sharing must be the real production format"
         );
         let (recipes, recipe_bytes) = db.query_row(

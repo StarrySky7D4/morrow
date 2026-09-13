@@ -57,6 +57,7 @@ fn data() -> TaskEvidence {
         exit_code: Some(0),
         observed_host_calls: 0,
         fuel_remaining: 90000,
+        batch: None,
     }
 }
 fn pack_raw(raw: &[u8]) -> (Vec<u8>, [u8; 32]) {
@@ -156,7 +157,7 @@ fn unknown_optional_fields_are_retained_but_unknown_versions_and_faults_rejected
     let e = raw_result(&raw).unwrap();
     assert_eq!(e.raw(), raw);
     assert_ne!(e.raw(), e.data().encode_to_vec());
-    for version in [0, 2, u32::MAX] {
+    for version in [0, 3, u32::MAX] {
         let mut d = data();
         d.schema_version = version;
         assert!(matches!(

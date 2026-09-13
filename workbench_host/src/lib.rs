@@ -21,6 +21,7 @@ use std::{
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 mod storage;
 mod evidence;
+mod preferences_evidence;
 pub mod transfer;
 
 pub struct Record {
@@ -654,73 +655,7 @@ impl Workbench {
         Ok(Some(morrow_workbench_plugin::preferences::encode_wire(&p)?))
     }
     pub fn save_preferences(&mut self, operation: &str, input: Vec<u8>) -> Result<Vec<u8>> {
-        self.prepare_write()?;
-        use morrow_workbench_plugin::preferences;
-        let p = preferences::decode_wire(&input)?;
-        let pages = preferences::validation_pages(&p)?;
-        for page in pages {
-            let expected = preferences::decode_wire(&page)?;
-            let output = self.transform(
-                "studio.preferences",
-                "morrow.studio.preferences.v1",
-                "morrow.studio.preferences.v1",
-                page,
-            )?;
-            if preferences::decode_wire(&output)? != expected {
-                return Err("plugin altered preference validation page".into());
-            }
-        }
-        let output = preferences::encode_wire(&p)?;
-        let id = "morrow-studio-preferences";
-        let prior = self.host.store_local().card(id)?;
-        let body = morrow_workbench_plugin::preferences::encode_persistent(
-            &p,
-            prior.as_ref().map(|v| v.body()).as_deref(),
-        )?;
-        if let Some(prior) = prior {
-            if prior.summary().type_id != "org.morrow.studio" || prior.summary().format_version != 1
-            {
-                return Err("preferences type".into());
-            }
-            if prior.body() == body {
-                return Ok(output);
-            }
-            self.grant(id, GrantKind::EditContent)?;
-            let start = self.start;
-            let change = ContentChange {
-                operation_id: operation.into(),
-                card_id: id.into(),
-                expected_revision: prior.summary().revision,
-                title: "工作台设置".into(),
-                body,
-                preview_text: "外观、日常小事与随身听设置".into(),
-                attachments: None,
-            };
-            let result = self.host.edit_content(
-                self.pool
-                    .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
-                    .connection(),
-                &change,
-                || now(start),
-            );
-            self.revoke(id, GrantKind::EditContent)?;
-            result?;
-        } else {
-            let card = CardRecord::new(id, "org.morrow.studio", 1, "工作台设置", body)?;
-            self.grant(id, GrantKind::CreateContent)?;
-            let start = self.start;
-            let result = self.host.create_content(
-                self.pool
-                    .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
-                    .connection(),
-                operation,
-                &card,
-                || now(start),
-            );
-            self.revoke(id, GrantKind::CreateContent)?;
-            result?;
-        }
-        Ok(output)
+        self.save_preferences_observed(operation, input)
     }
     pub fn capture(&mut self, input: Vec<u8>) -> Result<Vec<u8>> {
         self.transform(
