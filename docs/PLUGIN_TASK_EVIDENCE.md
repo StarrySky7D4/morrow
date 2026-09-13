@@ -1,6 +1,6 @@
-# 纯转换历史证据与隔离重放：test.34–test.38
+# 纯转换历史证据与隔离重放：test.34–test.39
 
-test.34 建立实际捕获、可保存原件和独立执行验证；当前应用版本为 `0.1.9-test.38+43`，已建立[原子内容关联](PLUGIN_COMMITTED_EVIDENCE.md)，默认工作台 create／apply 和设置保存均接入实际捕获。本文单观察说明保留 schema 1 的历史及现行语义；schema 2 的共用包批次见[批量证据](PLUGIN_BATCH_EVIDENCE.md)。捕获本身不提交内容或签名，完整多包流程仍不可由此重放。
+test.34 建立实际捕获、可保存原件和独立执行验证；当前应用版本为 `0.1.9-test.39+44`，已建立[原子内容关联](PLUGIN_COMMITTED_EVIDENCE.md)，默认工作台 create／apply 和设置保存均接入实际捕获。本文单观察说明保留 schema 1 的历史及现行语义；schema 2 的共用包批次见[批量证据](PLUGIN_BATCH_EVIDENCE.md)。捕获本身不提交内容或签名，完整多包流程仍不可由此重放。
 
 ## 证据和完整性
 
@@ -42,6 +42,12 @@ test.35 时，默认工作台 `run/transform` 仍主要返回解码数据，创�
 
 多层 A/B 调用证据、宿主响应录制、全局证据配额、保留与 GC、完整隔离重放及六平台验收继续推进。历史纯任务验证见[test.34](../reports/test.34-transform-replay.md)，内容关联验证见[test.35](../reports/test.35-committed-evidence.md)。
 
-## test.38 当前扩展
+## test.38 批次扩展
 
-schema 1 的原字段、故障记录规则、原始 PB 上限及既有容器字节保留。schema 2 使用相同有界 PB＋LZ4 容器并增加批次字段，旧顶层观察字段必须为空；它仅保存完整成功的有序纯转换，不用失败或部分页冒充完整批次。当前内容库格式 9 可以原子关联两类证据；隔离重放入口分别为 `replay` 和 `replay_batch`。后者逐项使用原预算及共同总燃料，没有宿主、存储、授权恢复或依赖调用。见[批次设计](PLUGIN_BATCH_EVIDENCE.md)及[专项验证](../reports/test.38-settings-batch-evidence.md)。
+schema 1 的原字段、故障记录规则、原始 PB 上限及既有容器字节保留。schema 2 使用相同有界 PB＋LZ4 容器并增加批次字段，旧顶层观察字段必须为空；它仅保存完整成功的有序纯转换，不用失败或部分页冒充完整批次。test.38 的内容库格式 9 可以原子关联两类证据；隔离重放入口分别为 `replay` 和 `replay_batch`。后者逐项使用原预算及共同总燃料，没有宿主、存储、授权恢复或依赖调用。见[批次设计](PLUGIN_BATCH_EVIDENCE.md)及[专项验证](../reports/test.38-settings-batch-evidence.md)。
+
+## test.39 内容投影
+
+当前内容库格式10、批次intent上限12 MiB，原始批次24 MiB与每操作16份／64 MiB预算保留。默认create／apply的新证据携带固定HostProjection v1，保留完整prior与宿主事实，从历史实际观察精确导出原command和完整结果CardRecord；设置继续使用test.38批次，尚未接入该投影。旧schema1证据和重试规则不被改写。
+
+独立`morrow-content-replay`接受`<commit-file> <commit-container-sha256> <evidence-file> <raw-evidence-sha256>`四个参数，先核对有界输入的外部摘要及`verify_commit`，再以默认逐页Limits和固定1B总燃料调用`replay_batch`。退出0表示投影及观察匹配，2表示实际重放不匹配，1表示格式／摘要／投影／策略拒绝；这不是签名验证或来源认证。该新CLI专项结果待最终记录，不沿用旧纯任务CLI通过结论。准确契约、版本冻结及因果链边界见[内容投影](PLUGIN_CONTENT_PROJECTION.md)和[阶段报告](../reports/test.39-content-projection.md)。

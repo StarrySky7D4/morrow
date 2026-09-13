@@ -156,7 +156,7 @@ fn migration_preserves_v4_records_and_corrupt_migration_rolls_back() {
     assert_eq!(
         c.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
             .unwrap(),
-        9
+        10
     );
     let bad = d.path().join("bad");
     legacy(&bad);

@@ -20,7 +20,9 @@ pub const MAX_SINGLE_RAW_BYTES: usize = MAX_PACKAGE_BYTES + 2 * MAX_TASK_BYTES +
 pub const MAX_RAW_BYTES: usize = 24 * 1024 * 1024;
 pub const MAX_CONTAINER_BYTES: usize = MAX_RAW_BYTES + MAX_RAW_BYTES / 255 + 128;
 pub const MAX_BATCH_OBSERVATIONS: usize = 1024;
-pub const MAX_INTENT_BYTES: usize = 4 * 1024 * 1024;
+pub const MAX_LEGACY_BATCH_INTENT_BYTES: usize = 4 * 1024 * 1024;
+// A full prior CardRecord can be 8 MiB; reserve room for bounded host facts.
+pub const MAX_INTENT_BYTES: usize = 12 * 1024 * 1024;
 pub const MAX_TOTAL_FUEL: u64 = 10_000_000_000;
 const MAX_FIELDS: usize = 128;
 const MAX_BATCH_FIELDS: usize = MAX_FIELDS * (MAX_BATCH_OBSERVATIONS + 2);

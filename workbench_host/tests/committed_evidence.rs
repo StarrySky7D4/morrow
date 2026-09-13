@@ -4,6 +4,24 @@ use morrow_core::{plugin_package::Package, task::Invocation};
 use morrow_plugin_runtime::{Limits, replay};
 use morrow_workbench_host::{Mutation, Workbench};
 use morrow_workbench_plugin::{Action, Idea, codec};
+fn observation(e: &morrow_core::task_evidence::Evidence) -> (&[u8], &[u8]) {
+    if let Some(batch) = &e.data().batch {
+        assert_eq!(batch.observations.len(), 1);
+        let o = &batch.observations[0];
+        (&o.invocation, &o.completion)
+    } else {
+        (&e.data().invocation, &e.data().completion)
+    }
+}
+fn replay_matches(e: &morrow_core::task_evidence::Evidence) -> bool {
+    if let Some(batch) = &e.data().batch {
+        replay::replay_batch(e, Limits::default(), batch.total_fuel)
+            .unwrap()
+            .matches
+    } else {
+        replay::replay(e, Limits::default()).unwrap().matches
+    }
+}
 fn edit<'a>(operation: &'a str, revision: u64, proposed: Idea) -> Mutation<'a> {
     Mutation {
         operation,
@@ -55,33 +73,27 @@ fn actual_rust_create_and_edit_store_replayable_original_tasks_with_content() {
     h.create("create", draft.clone()).unwrap();
     let create = original_evidence(&h, "create");
     assert_eq!(create.data().package_archive, archive);
-    let invocation = Invocation::decode(&create.data().invocation).unwrap();
+    let invocation = Invocation::decode(observation(&create).0).unwrap();
     let request = codec::decode_request(&invocation.transform().unwrap().input).unwrap();
     assert_eq!(request.action, Action::Create);
     assert_eq!(request.proposed, draft);
-    assert!(replay::replay(&create, Limits::default()).unwrap().matches);
+    assert!(replay_matches(&create));
     let mut proposed = draft;
     proposed.title = "edited title".into();
     proposed.description = "actual **Markdown**".into();
     let saved = h.apply(edit("edit", 1, proposed.clone())).unwrap();
     assert_eq!(saved.revision, 2);
     let evidence = original_evidence(&h, "edit");
-    let invocation = Invocation::decode(&evidence.data().invocation).unwrap();
+    let invocation = Invocation::decode(observation(&evidence).0).unwrap();
     let request = codec::decode_request(&invocation.transform().unwrap().input).unwrap();
     assert_eq!(request.action, Action::Edit);
     assert_eq!(request.proposed, proposed);
-    let output = invocation
-        .verify_output(&evidence.data().completion)
-        .unwrap();
+    let output = invocation.verify_output(observation(&evidence).1).unwrap();
     assert_eq!(
         codec::decode_response(&output.bytes).unwrap().idea,
         saved.idea
     );
-    assert!(
-        replay::replay(&evidence, Limits::default())
-            .unwrap()
-            .matches
-    );
+    assert!(replay_matches(&evidence));
     h.finish().unwrap();
     drop(h);
     let h = Workbench::open_managed(dir.path(), Some(common::package())).unwrap();
@@ -424,7 +436,7 @@ fn process_crash_and_lost_receipt_retry_preserve_original_committed_evidence() {
             let committed = point == "after-commit";
             let original = if committed {
                 let e = original_evidence(&h, operation);
-                let task = Invocation::decode(&e.data().invocation).unwrap();
+                let task = Invocation::decode(observation(&e).0).unwrap();
                 let request = codec::decode_request(&task.transform().unwrap().input).unwrap();
                 assert_eq!(
                     request.action,
@@ -435,7 +447,7 @@ fn process_crash_and_lost_receipt_retry_preserve_original_committed_evidence() {
                     }
                 );
                 assert_eq!(request.proposed.title, "after crash");
-                let output = task.verify_output(&e.data().completion).unwrap();
+                let output = task.verify_output(observation(&e).1).unwrap();
                 assert_eq!(
                     codec::decode_response(&output.bytes).unwrap().idea,
                     h.read("card").unwrap().idea

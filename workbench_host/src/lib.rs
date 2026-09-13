@@ -21,6 +21,8 @@ use std::{
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 mod storage;
 mod evidence;
+mod content_projection;
+pub mod projection;
 mod preferences_evidence;
 pub mod transfer;
 
@@ -376,23 +378,6 @@ impl Workbench {
             bytes: size,
         })
     }
-    fn attachments(&self, next: &Idea, old: Option<&CardRecord>) -> Result<Vec<Attachment>> {
-        let existing = old.map(CardRecord::attachments).unwrap_or_default();
-        next.assets
-            .iter()
-            .map(|a| {
-                let item = self
-                    .staged
-                    .get(&(next.id.clone(), a.id.clone()))
-                    .or_else(|| existing.iter().find(|v| v.id == a.id))
-                    .ok_or("attachment outside selected card")?;
-                if a.bytes != item.byte_length || a.name != item.display_name {
-                    return Err("attachment metadata mismatch".into());
-                }
-                Ok(item.clone())
-            })
-            .collect()
-    }
     pub fn create(&mut self, operation: &str, draft: Idea) -> Result<Record> {
         self.prepare_write()?;
         let id = draft.id.clone();
@@ -401,35 +386,8 @@ impl Workbench {
         if let Some(record) = self.retry_observed(operation, &id, &req, None)? {
             return Ok(record);
         }
-        let (response, evidence) = self.run_observed(req, true)?;
-        let evidence = evidence.ok_or("missing captured evidence")?;
-        let next = response.idea;
-        next.validate()?;
-        if next.id != id {
-            return Err("plugin changed identity".into());
-        }
-        let attachments = self.attachments(&next, None)?;
-        let record = CardRecord::new_with_attachments(
-            &id,
-            "org.morrow.idea",
-            1,
-            &next.title,
-            persistence::encode(&next, None)?,
-            &attachments,
-        )?;
-        self.grant(&id, GrantKind::CreateContent)?;
-        let start = self.start;
-        let result = self.host.create_content_with_evidence(
-            self.pool
-                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
-                .connection(),
-            operation,
-            &record,
-            &[evidence],
-            || now(start),
-        );
-        self.revoke(&id, GrantKind::CreateContent)?;
-        result?;
+        let (projection, evidence) = self.project_content(operation, &id, req, None, None)?;
+        self.commit_projection(&projection, std::slice::from_ref(&evidence))?;
         self.staged.retain(|(card, _), _| card != &id);
         self.read(&id)
     }
@@ -479,43 +437,17 @@ impl Workbench {
         req.text = text.into();
         req.flag = flag;
         req.now_ms = time;
-        let (response, evidence) = self.run_observed(req, true)?;
-        let evidence = evidence.ok_or("missing captured evidence")?;
-        let next = response.idea;
-        next.validate()?;
-        if next.id != id {
-            return Err("plugin changed identity".into());
-        }
-        let attachments = self.attachments(&next, Some(&prior))?;
-        let mut preview = next.description.clone();
-        if preview.len() > 16384 {
-            let mut n = 16384;
-            while !preview.is_char_boundary(n) {
-                n -= 1;
-            }
-            preview.truncate(n);
-        }
-        let change = ContentChange {
-            operation_id: operation.into(),
-            card_id: id.into(),
-            expected_revision: revision,
-            title: next.title.clone(),
-            body: persistence::encode(&next, Some(&prior.body()))?,
-            preview_text: preview,
-            attachments: Some(attachments),
+        let undo = if action == Action::Restore {
+            self.undo.get(id).map(|&(revision, deadline)| projection::Undo {
+                revision,
+                deadline,
+            })
+        } else {
+            None
         };
-        self.grant(id, GrantKind::EditContent)?;
-        let start = self.start;
-        let result = self.host.edit_content_with_evidence(
-            self.pool
-                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
-                .connection(),
-            &change,
-            &[evidence],
-            || now(start),
-        );
-        self.revoke(id, GrantKind::EditContent)?;
-        let receipt = result?;
+        let (projection, evidence) =
+            self.project_content(operation, id, req, Some(&prior), undo)?;
+        let receipt = self.commit_projection(&projection, std::slice::from_ref(&evidence))?;
         if action == Action::Delete {
             self.undo
                 .insert(id.into(), (receipt.revision, time.saturating_add(8000)));

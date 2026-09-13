@@ -130,7 +130,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=9) {
+        if app != APPLICATION_ID || !matches!(version, 5..=10) {
             return Err(Error::UnsupportedVersion);
         }
         let store = Self {
@@ -192,7 +192,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=9))
+            && (app != APPLICATION_ID || !matches!(version, 4..=10))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -237,7 +237,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=9) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=10) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -304,6 +304,15 @@ impl Store {
             boundary("batch-evidence-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("batch-evidence-migration-after-commit");
+        }
+        if version < 10 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.pragma_update(None, "user_version", 10))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("projection-evidence-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("projection-evidence-migration-after-commit");
         }
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;

@@ -549,7 +549,7 @@ checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
 name = "morrow-audit"
-version = "0.1.9-test.38"
+version = "0.1.9-test.39"
 dependencies = [
  "lz4_flex",
  "morrow-core",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-host"
-version = "0.1.9-test.38"
+version = "0.1.9-test.39"
 dependencies = [
  "capnp",
  "capnpc",
@@ -610,6 +610,9 @@ dependencies = [
  "morrow-core",
  "morrow-plugin-runtime",
  "morrow-workbench-plugin",
+ "prost",
+ "prost-build",
+ "protoc-bin-vendored",
  "rusqlite",
  "sha2 0.10.9",
  "tempfile",

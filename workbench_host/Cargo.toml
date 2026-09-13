@@ -2,17 +2,20 @@
 resolver = "2"
 [package]
 name = "morrow-workbench-host"
-version = "0.1.9-test.38"
+version = "0.1.9-test.39"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [dependencies]
+prost = "=0.14.4"
 morrow-core = {path = "../core"}
 morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
 morrow-workbench-plugin = {path = "../plugins/workbench"}
 capnp = "=0.24.1"
 sha2 = "=0.10.9"
 [build-dependencies]
+prost-build = "=0.14.4"
+protoc-bin-vendored = "=3.2.0"
 capnpc = "=0.24.0"
 [dev-dependencies]
 rusqlite = "=0.40.2"
@@ -26,3 +29,7 @@ fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection"
 
 [[example]]
 name = "qualify_shared_evidence"
+
+[[bin]]
+name = "morrow-content-replay"
+path = "src/bin/content_replay.rs"

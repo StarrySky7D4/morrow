@@ -1,5 +1,5 @@
 //! Windows qualification using the actual bundled Rust guest and an owned temporary workbench.
-//! Compares physical format-9 storage against the exact equivalent format-7 container payloads.
+//! Compares physical format-10 storage against the exact equivalent format-7 container payloads.
 #[cfg(target_os = "windows")]
 mod windows {
     use morrow_core::{plugin_package::catalog, task_evidence::Evidence};
@@ -61,7 +61,7 @@ mod windows {
         )?;
         let version: i64 = db.query_row("PRAGMA user_version", [], |r| r.get(0))?;
         assert_eq!(
-            version, 9,
+            version, 10,
             "physical sharing must be the real production format"
         );
         let (recipes, recipe_bytes) = db.query_row(
@@ -219,9 +219,21 @@ mod windows {
         // Remove the actual source DB, package catalog and generated test key before replay.
         temporary.close()?;
         for item in &originals {
-            let result = replay::replay(&item.evidence, Limits::default())?;
-            assert!(result.matches);
-            assert_eq!(result.report.execution.host_calls, 0);
+            if let Some(batch) = &item.evidence.data().batch {
+                let result =
+                    replay::replay_batch(&item.evidence, Limits::default(), batch.total_fuel)?;
+                assert!(result.matches);
+                assert!(
+                    result
+                        .reports
+                        .iter()
+                        .all(|report| report.execution.host_calls == 0)
+                );
+            } else {
+                let result = replay::replay(&item.evidence, Limits::default())?;
+                assert!(result.matches);
+                assert_eq!(result.report.execution.host_calls, 0);
+            }
         }
         println!(
             "PASS_SCOPED actual default Rust Workbench: 30 creates + 1 edit; exact raw/container/digest recovery; audited reopen; historical retries unchanged; all 31 observations replay after source host/database/catalog deletion."
