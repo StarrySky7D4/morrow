@@ -16,6 +16,30 @@ type Result<T> = std::result::Result<T, CodecError>;
 fn invalid<T>(_: T) -> CodecError {
     CodecError::Invalid
 }
+/// Byte transports impose no alignment contract. OwnedSegments allocates aligned
+/// words safely after Capnp's segment-size/traversal checks; limits and exact frame
+/// consumption remain identical to the former flat-slice reader.
+pub(crate) fn read_message(
+    bytes: &[u8],
+    max_bytes: usize,
+) -> Result<capnp::message::Reader<serialize::OwnedSegments>> {
+    if bytes.len() > max_bytes {
+        return Err(CodecError::Limit);
+    }
+    let mut input = bytes;
+    let message = serialize::read_message(
+        &mut input,
+        ReaderOptions {
+            traversal_limit_in_words: Some(max_bytes / 8),
+            nesting_limit: 16,
+        },
+    )
+    .map_err(invalid)?;
+    if !input.is_empty() {
+        return Err(CodecError::Invalid);
+    }
+    Ok(message)
+}
 fn id(v: &str) -> Result<()> {
     if v.is_empty()
         || v.len() > 256
@@ -218,21 +242,7 @@ impl Request {
         Ok(bytes)
     }
     pub fn decode(bytes: &[u8]) -> Result<Self> {
-        if bytes.len() > MAX_MESSAGE_BYTES {
-            return Err(CodecError::Limit);
-        }
-        let mut input = bytes;
-        let message = serialize::read_message_from_flat_slice(
-            &mut input,
-            ReaderOptions {
-                traversal_limit_in_words: Some(MAX_MESSAGE_BYTES / 8),
-                nesting_limit: 16,
-            },
-        )
-        .map_err(invalid)?;
-        if !input.is_empty() {
-            return Err(CodecError::Invalid);
-        }
+        let message = read_message(bytes, MAX_MESSAGE_BYTES)?;
         let root = message
             .get_root::<wire::request::Reader>()
             .map_err(invalid)?;
@@ -323,21 +333,7 @@ impl Request {
     }
     pub fn decode_reply(&self, bytes: &[u8]) -> Result<Reply> {
         self.validate()?;
-        if bytes.len() > MAX_MESSAGE_BYTES {
-            return Err(CodecError::Limit);
-        }
-        let mut input = bytes;
-        let message = serialize::read_message_from_flat_slice(
-            &mut input,
-            ReaderOptions {
-                traversal_limit_in_words: Some(MAX_MESSAGE_BYTES / 8),
-                nesting_limit: 16,
-            },
-        )
-        .map_err(invalid)?;
-        if !input.is_empty() {
-            return Err(CodecError::Invalid);
-        }
+        let message = read_message(bytes, MAX_MESSAGE_BYTES)?;
         let root = message
             .get_root::<wire::response::Reader>()
             .map_err(invalid)?;

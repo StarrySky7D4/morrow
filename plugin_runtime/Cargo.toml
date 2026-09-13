@@ -2,7 +2,7 @@
 resolver = "2"
 [package]
 name = "morrow-plugin-runtime"
-version = "0.1.9-test.44"
+version = "0.1.9-test.48"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
@@ -15,6 +15,7 @@ wasmparser = {version = "=0.239.0", default-features = false, features = ["std"]
 morrow-core = {path = "../core", optional = true}
 prost = {version = "=0.14.4", optional = true}
 [dev-dependencies]
+sha2 = "=0.10.9"
 morrow-workbench-plugin = {path = "../plugins/workbench"}
 capnp = "=0.24.1"
 morrow-plugin-sdk = {path = "../sdk/rust"}

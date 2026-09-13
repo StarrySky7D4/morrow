@@ -4,6 +4,7 @@ $repo=Split-Path $PSScriptRoot -Parent
 function Checked([string]$Program,[string[]]$Arguments){ & $Program @Arguments; if($LASTEXITCODE -ne 0){throw "Plugin runtime verification failed: $Program"} }
 Push-Location $repo
 try {
+ & ./tool/verify_plugin_sdk_compat.ps1 -Python $Python
  Checked $Python @('tool/sync_plugin_sdk_contracts.py','--check')
  foreach($manifest in @('plugin_runtime/Cargo.toml','sdk/rust/Cargo.toml','sdk/examples/rust-rename/Cargo.toml','sdk/examples/rust-task/Cargo.toml','sdk/examples/rust-transform/Cargo.toml')) {
   Checked cargo @('fmt','--manifest-path',$manifest,'--check')

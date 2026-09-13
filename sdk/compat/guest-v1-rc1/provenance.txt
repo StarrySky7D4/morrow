@@ -1,0 +1,31 @@
+baseline=guest-v1-rc1
+sdk_source_commit=19fa955d9b7a4eed1cd9b40fb0f787defbe4a33b
+sdk_crate=0.1.9-test.11
+package_semver=1.0.0 (fixture identity only)
+guest_abi=2
+runtime_protocol=7
+task_protocol=3
+ui_protocol=1
+dependency_call_protocol=1
+host_at_capture=Windows x64 test.47; canonical contract snapshots use LF
+capture=Fresh guest builds; no deterministic/reproducible-build claim
+rustc:
+rustc 1.95.0 (59807616e 2026-04-14)
+binary: rustc
+commit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860
+commit-date: 2026-04-14
+host: x86_64-pc-windows-msvc
+release: 1.95.0
+LLVM version: 22.1.2
+cargo: cargo 1.95.0 (f2d3ce0bd 2026-03-21)
+clang:
+clang version 22.1.0 (https://github.com/llvm/llvm-project 4434dabb69916856b824f68a64b029c67175e532)
+Target: x86_64-pc-windows-msvc
+Thread model: posix
+InstalledDir: C:\Program Files\LLVM\bin
+capnp: Cap'n Proto version 1.4.0
+wasi_sysroot=34.0; C++ no exceptions/no RTTI; no WASI runtime imports
+build=tool/build_plugin_c_wasm.ps1; tool/build_plugin_dependency_wasm.ps1
+rust_build=cargo build --offline --locked --manifest-path sdk/examples/rust-{task,transform,ui,dependency-caller,chain-provider}/Cargo.toml --target wasm32-unknown-unknown --release --target-dir build/plugin-guest
+pack=cargo run --offline --locked --release --manifest-path core/Cargo.toml --example capture_sdk_baseline -- NEW_DIRECTORY
+seal=python tool/seal_plugin_sdk_baseline.py NEW_DIRECTORY

@@ -4,6 +4,7 @@ $repo=Split-Path $PSScriptRoot -Parent
 function Checked([string]$Program,[string[]]$Arguments){& $Program @Arguments;if($LASTEXITCODE -ne 0){throw "UI SDK verification failed: $Program"}}
 Push-Location $repo
 try {
+ & ./tool/verify_plugin_sdk_compat.ps1 -Python $Python
  Checked $Python @('tool/sync_plugin_sdk_contracts.py','--check')
  foreach($manifest in @('sdk/rust/Cargo.toml','sdk/examples/rust-ui/Cargo.toml','plugin_runtime/Cargo.toml')){Checked cargo @('fmt','--manifest-path',$manifest,'--check')}
  Checked cargo @('clippy','--locked','--manifest-path','sdk/rust/Cargo.toml','--target-dir','build/plugin-sdk/rust','--all-targets','--','-D','warnings')

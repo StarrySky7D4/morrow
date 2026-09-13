@@ -4,6 +4,7 @@ $repo=Split-Path $PSScriptRoot -Parent
 function Checked([string]$Program,[string[]]$Arguments){ & $Program @Arguments; if($LASTEXITCODE -ne 0){throw "SDK verification failed: $Program"} }
 Push-Location $repo
 try {
+ & ./tool/verify_plugin_sdk_compat.ps1 -Python $Python
  New-Item -ItemType Directory -Force build/plugin-sdk | Out-Null
  Checked $Python @('tool/sync_plugin_sdk_contracts.py','--check')
  Checked cargo @('fmt','--manifest-path','sdk/rust/Cargo.toml','--check')

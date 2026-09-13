@@ -1,121 +1,52 @@
-# Morrow 第三方插件 SDK 原型
+# Morrow 第三方插件 SDK
 
-基于 0.1.9-test.11，运行期协议 v7，实验本地 ABI v1。当前提供 **传输、七类内容命令、任务完成／失败、转换与声明式 UI 编解码**，C／C++／Rust 均可编译为 Wasm guest。插件包、能力上限、实际实例授权和有界任务执行已接通；完整安装升级管理与稳定 ABI 仍在推进。设计见 [插件 SDK 与 UI](../docs/PLUGIN_SDK_AND_UI.md)。
+SDK 源码包版本 `0.1.9-test.48`，当前处于测试开发阶段，提供 C11、C++17、Rust 的受限 Wasm 插件接口。test.48 建立 **guest-v1-rc1 二进制兼容候选基线**；实际 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。该基线与 SDK crate 版本分别管理，不宣称完整 SDK、原生动态库 ABI 或全平台已经稳定。详见 [兼容边界与演进规则](../docs/PLUGIN_SDK_COMPATIBILITY.md)。
 
-| 语言 | 入口 | 使用方式 |
+Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求编写 Dart 插件。当前不提供 TS／JS guest。主应用默认 Windows 工作台已经使用 Rust 宿主和受限 Wasm 业务插件；通用多插件安装管理和全平台接入仍在推进。
+
+## 开发入口
+
+| 语言 | 入口 | 说明 |
 | --- | --- | --- |
-| C11 | c/include/morrow_plugin_sdk.h、morrow_plugin_codec.h | C 传输静态库＋Rust 实现的独立编解码动态库；宿主适配器提供消息交换回调 |
-| C++17 | cpp/include/morrow_plugin_sdk.hpp、morrow_plugin_codec.hpp | 链接上述两库；request 拥有字符串，decoded_reply 自动释放响应，STL 不跨 ABI |
-| Rust | rust/Cargo.toml | 路径依赖 morrow-plugin-sdk；protocol::Request／Action／Reply 与 Client 配合使用 |
+| C11 | `c/include/morrow_plugin_*.h` | 类型化命令、任务、UI、依赖调用；编解码复用 Rust 库 |
+| C++17 | `cpp/include/morrow_plugin_*.hpp` | RAII 包装；STL 不跨本地 ABI；当前 Wasm profile 无异常、无 RTTI |
+| Rust | `rust/Cargo.toml` | 路径依赖 `morrow-plugin-sdk`；`wasm-guest` 启用 guest 导入 |
 
-SDK 不链接可信核心，不提供创建宿主、授予权限、直接打开 Store 或选择插件身份的入口。C／C++ 编解码复用同一 Rust 实现，因此构建编解码库需要 Rust 工具链；当前没有单独的纯 C 协议实现。Rust 运行期依赖锁定的 capnp，构建使用 capnpc、sha2 和 Cap’n Proto 编译器。当前在 Windows x64 验证，尚未分发各平台预编译包。
+SDK 不链接可信核心，不提供自建宿主、打开 Store、自选身份或授予权限的接口。权限由宿主绑定实际实例后核验。SDK 校验不构成对绕过 SDK 的不可信代码的安全边界。
 
-## 内容接口
+## 当前接口
 
-| 命令 | 类型化输入 | 成功响应 |
-| --- | --- | --- |
-| 重命名卡片 | 请求／操作 ID、卡片 ID、预期修订、标题 | 已提交回执 |
-| 读取摘要 | 请求 ID、卡片 ID | 类型、格式版本、修订、标题和预览 |
-| 查询操作结果 | 请求 ID、卡片 ID、被查询操作 ID | 当前快照不存在／本地已提交回执 |
-| 读取附件片段 | 请求 ID、卡片／附件 ID、预期修订、偏移和长度 | 有界字节、总长度和完整附件摘要 |
-| 创建正文 | 操作 ID、卡片 ID、类型、格式版本、标题、二进制正文 | 修订 1 的提交回执 |
-| 编辑正文 | 操作 ID、卡片 ID、预期修订、标题、正文、预览 | 保留附件与未知外层字段的提交回执 |
-| 读取正文片段 | 请求 ID、卡片 ID、预期修订、偏移、长度 | 正文字节、总长度和完整正文 SHA-256 |
+七种内容命令包括重命名、读取摘要、查询操作结果、读取附件片段、创建正文、编辑正文、读取正文片段。类型化输入／响应保留 UInt64 修订与偏移，响应必须与原请求及适用的操作 ID、目标、修订和片段范围关联。详细用法见 [正文 API](CONTENT_API.md)。
 
-新接口用法与边界见 [正文 API](CONTENT_API.md)。v7 改变运行期契约摘要，旧 v6 插件需要重新构建和打包；不把更新头文件视为旧二进制兼容。C ABI 增加独立结构与函数，原 `mp_request_v1` 和 `mp_task_view` 布局不变。
+消息有界传递；运行消息上限 64 KiB，附件片段上限 32 KiB。调用成功不等于业务成功：`MP_OK`／`MP_CODEC_OK` 仍须检查响应类型和业务拒绝。取消、传输错误或失去完成响应不能推断提交已回滚，重试需保留操作身份并查询权威结果。整文件组装与摘要核对仍需由调用者完成。
 
-修订和偏移保持无损 UInt64。SDK 校验版本与两份 Schema 摘要、请求 ID、响应类型、目标，以及适用的操作 ID、修订和偏移。附件响应仅是片段；必须核对完整长度与 SHA-256 后才可作为完整附件发布。当前 SDK 尚未封装整文件装配与摘要验证。
+任务接口接收宿主管理的命令和纯转换输入，返回关联完成、输出或固定业务失败代码。纯转换 handlers 必须在包中声明类型和限额；不能把计算成功当作获准修改内容。见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md) 和 [包格式](../docs/PLUGIN_PACKAGE.md)。
 
-消息上限 64 KiB，附件片段上限 32 KiB。请求在回调前复制，完整输出空间在提交前准备。业务拒绝也属于正常协议响应：MP_OK／MP_CODEC_OK 不代表获准或提交成功，应检查 Reply／mp_reply_view.kind。查询的“快照不存在”不能证明没有正在执行的操作。
+UI 提供有界文档节点、事件和三语言样例；宿主验证会话、代次、修订及事件序号，再绘制或分派。当前通用协议含 column、row、text、button、textInput、toggle。基础文档往返不代表专业编辑器、全部视图扩展点或持久草稿已完整接入。见 [UI SDK](../docs/PLUGIN_UI_SDK.md)。
 
-典型调用顺序：构造类型化请求 → encode → Client／mp_exchange → 用原请求 decode_reply／mp_reply_decode → 检查结果。传输或响应校验失败不自动重试，也不能推断回滚；需要按固定操作 ID 查询权威结果。请求 ID 的产生与跨重试保存仍由调用方负责。
+依赖 SDK 通过批准的 slot 发送字节输入并接收关联输出，不能自行选择提供者或扩张授权。宿主已有锁定和有界多层执行支持；完整异步服务及依赖图证据仍需建设。见 [主动依赖调用](../docs/PLUGIN_DYNAMIC_DEPENDENCIES.md)、[依赖图](../docs/PLUGIN_DEPENDENCY_GRAPH.md)。
 
-C 返回不透明 mp_reply；mp_reply_get 的视图由该响应拥有，释放后不能继续使用。C++ decoded_reply 不可复制，可移动；移动赋值会释放此前响应。Rust 返回自有值。调用示例见 [C 实际核心测试](tests/native_adapter.c)、[C++ 类型化用例](tests/cpp_codec.cpp)、[Rust 协议用例](rust/tests/codec.rs)。C 测试中的宿主打开／授权／缓冲区管理只属于可信测试适配器，不属于 guest SDK。
+C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可复制、可移动；Rust 返回自有值。指针和回调仅在其本地适配器生命周期有效，不是可序列化身份或能力。
 
-上下文／回调指针只在适配器本地使用，不是可序列化身份或权限。执行器必须依据实际通道绑定实例并独立校验权限；不可信代码能够绕过 SDK，因此 SDK 校验不是安全边界。同步接口用于测试及后端原型，后续接入有界异步调度，不能阻塞 Flutter 输入线程。
+## 编译与验证
 
-## 构建与验证
-
-需要 Rust、Cap’n Proto 编译器、Python 3、PowerShell 7、Clang／LLVM 以及 wasm32-unknown-unknown 目标。脚本允许用 -Python、-Clang、-ClangXX、-Ar 指定路径。
+需要 Rust、Cap’n Proto 编译器、Python 3、PowerShell、LLVM/Clang，以及 `wasm32-unknown-unknown` Rust 目标。C/C++ Wasm 使用固定 WASI sysroot 构建标准库，最终 guest 不获得 WASI 文件、网络、时钟等导入。准备脚本和支持限制见 [执行后端](../plugin_runtime/README.md)。
 
 ```powershell
+# 先检查旧 SDK 原件能否在当前宿主运行，不重新编译或重打包 guest。
+pwsh -File tool/verify_plugin_sdk_compat.ps1
+# 当前源码、本地编解码器、类型化 C/C++ 与真实核心适配验证。
 pwsh -File tool/verify_plugin_sdk.ps1
-```
-
-固定契约随 Rust SDK 保存，可脱离宿主源码独立构建。修改核心 Schema 后运行 tool/sync_plugin_sdk_contracts.py 更新快照；验证脚本以 --check 防止契约漂移。十五份二进制样本由 core/examples/sdk_codec_vectors.rs 独立生成并与提交样本比对，不允许只靠 SDK 自身编码／解码互证。
-
-产物位于 build/plugin-sdk：morrow_plugin_sdk.lib 为 C 传输库；rust/debug/morrow_plugin_sdk.dll 与 .dll.lib 为编解码动态库及导入库；C／C++ 测试程序位于上层。测试数据库和请求／回复全部采用独立合成资料。本轮日志保存在 build/plugin-sdk/verification.log。
-
-## 原生传输初始阶段验证记录
-
-Windows 本机 C11／C++17 严格警告编译、Rust fmt、Clippy -D warnings 与 **15 项 Rust 测试**通过。C++ 用例通过 C ABI 检查四种请求与六种响应、UInt64 最大值、响应所有权、移动语义及非法输入；Rust 检查错误契约、请求关联、截断／超限和嵌套回执。上述原生测试之外，三语言 Wasm 实际执行结果见下一节和执行后端说明。
-
-真实链路已验证：**C 类型化 SDK → 可信测试适配器 → Rust DLL → HostRuntime → SQLite**。C 自行编码请求并解码真实回复；缺权限时收到 Denied，授权后提交修订 2，重复提交返回完全一致的回执。独立核心解码器再次检查请求和响应，关闭后核心缓冲区为零，SQLite 完整性检查通过。响应句柄释放路径已执行，未进行专门的内存泄漏检测。
-
-后续已增加 [C／C++／Rust Wasm 实际执行验证](../plugin_runtime/README.md)：三种语言独立编译的 SDK 示例在 Windows Wasmi 后端运行并接入核心。本节原生测试本身不证明 Wasm 执行；其他系统、其他后端和插件 UI 仍未验证。通用记录命令、完整包管理、多实例持久任务与执行后端在 M1-05／M3-06 补齐，UI 渲染器在 M6-06 推进。应用版本、消息协议与 ABI 分别管理兼容性；本轮不修改应用版本或发布 Release。
-
-## Rust Wasm 示例
-
-启用 rust/Cargo.toml 的 wasm-guest feature，使用 wasm::host() 构造固定导入的 HostV1，再调用现有 Client 和类型化协议 API。可编译样例位于 examples/rust-rename；当前固定操作 ID 仅用于合成去重测试，正式插件必须从宿主管理的任务契约取得并保存操作身份。
-
-```powershell
-cargo build --locked --manifest-path sdk/examples/rust-rename/Cargo.toml --target wasm32-unknown-unknown --release --target-dir build/plugin-guest
+# 当前三语言 Wasm 构建与运行验证（内部也先执行旧原件兼容检查）。
 pwsh -File tool/verify_plugin_runtime.ps1
 ```
 
-Wasm guest ABI v1 与原生本地回调 ABI v1 分别管理，两者不共享指针或身份；运行消息仍为固定 Cap’n Proto v6。取消／执行错误不自动重试，已提交状态由核心查询确定。
+固定契约随 SDK 分发，可脱离宿主源码构建。`tool/sync_plugin_sdk_contracts.py --check` 核对包括依赖调用在内的契约；更新它们之前必须遵守兼容规则，不能为消除检查失败而直接覆盖旧契约。
 
-## C／C++ Wasm 示例
+三语言内容／转换／UI／依赖样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
 
-C 示例使用 morrow_plugin_wasm.h 的 mp_wasm_host()、既有 mp_exchange 和类型化编解码；C++ 示例继续使用 std::string／std::vector、morrow::request／client／decoded_reply，不需改写成 C 接口。示例分别位于 examples/c-rename 和 examples/cpp-rename。该 profile 暂不支持 C++ 异常和 RTTI；禁用异常时，SDK 错误访问及标准库致命错误会在 guest 内 trap，宿主随后按操作 ID 核对结果。
-
-```powershell
-pwsh -File tool/prepare_plugin_c_wasm.ps1
-pwsh -File tool/build_plugin_c_wasm.ps1
-pwsh -File tool/verify_plugin_runtime.ps1
-```
-
-准备脚本将固定的官方 WASI SDK 34 sysroot 下载到 build/tools，并验证 SHA-256。采用现有 LLVM 22 的 Clang，显式选择 wasm32-wasip1/noeh 的头文件和库；WASI 只作为标准库构建来源，最终模块不获得 WASI 导入。C++ 标准库的终止诊断钩子改为 guest 内 trap，权限边界不随库链接扩大。依据：[官方工具链](https://github.com/WebAssembly/wasi-sdk)、[无异常标准库说明](https://github.com/WebAssembly/wasi-sdk/blob/wasi-sdk-34/CppExceptions.md)。
-
-Rust SDK 的 wasm-c feature 可构建为静态编解码库；构建脚本将其与 C／C++ 源码、固定消息导入和 guest 运行支持一起链接。malloc／calloc／realloc／free 和对齐分配统一交给同一 guest 内的 Rust 分配器，不能混用两套堆。C++ 标准分配失败在此 profile 中终止 guest；C malloc 失败返回 NULL。分配器指针仅在该模块内部使用，不是跨进程句柄或宿主能力。
-
-最终 C／C++ 示例位于 build/plugin-c-guest，默认去除调试符号；构建时使用 -DebugSymbols 可保留符号。构建产生裸模块；统一的实验打包工具另行封装 manifest 并支持不可变安装，见 [插件包开发流程](../docs/PLUGIN_PACKAGE.md)。作者签名、启用／更新管理与 UI 仍未完成。文件、网络、时钟、线程等接口仍须通过后续明确的宿主能力提供；不能把部分标准库成功运行宣称为完整 WASI 或全 C++ 标准库支持。
-
-## 动态任务 SDK（guest ABI v2）
-
-已提供 C 的 morrow_plugin_task.h、C++ 的 morrow_plugin_task.hpp 与 Rust task／wasm API，接收宿主提供的任务、读取类型化命令并构造关联完成消息。实际例子位于 examples/c-task、cpp-task、rust-task。完整说明见 [任务契约](../docs/PLUGIN_TASK_PROTOCOL.md)，结果见 [三语言动态任务验证](../reports/plugin-task-contract-validation.md)。
-
-内容 profile 校验固定命令与实际核心回复，支持四类内容接口。任务契约 v2 还提供纯转换输入／输出：Rust transform／complete_output、C get_transform／output、C++ task::transform／output；示例见 examples/rust-transform、c-transform、cpp-transform。三语言各 8 次真实转换与新产物摘要见 [转换验证](../reports/plugin-transform-validation.md)。旧任务 schema 摘要的包须重建。跨包 handler 选择、类型协商、修改提案、UI 动作和持久恢复仍需扩展。不要求第三方编写 Dart，暂不提供 TS／JS guest。
-
-纯转换示例现在必须用 `pack-transform` 声明处理器名称、输入／输出类型及各自上限，见 [统一打包入口](../docs/PLUGIN_PACKAGE.md#纯转换处理器声明)。声明由宿主验证，不需要给三语言 guest 导出授予权限或核心注册函数。仅改用旧 pack-task 打包不能绕过注册检查。
-
-任务契约 v3 提供 Rust complete_failure、C mp_task_fail、C++ task::fail，错误含固定代码及最多 1024 字节纯文本。bytes.require-ascii 示例贯通三语言业务失败返回；须区分完整执行与业务成功。见 [结果协议](../docs/PLUGIN_TASK_PROTOCOL.md)。旧任务 schema 的包需同步 SDK 后重建。
-
-## 三语言 UI 增量
-
-已提供有界节点构造、事件读取与真实 UI 任务示例，见 [UI SDK 与接入边界](../docs/PLUGIN_UI_SDK.md)。C++ Wasm 入口显式初始化构造器，保留局部析构，不执行 WASI 命令退出清理或全局析构／atexit；每次任务的实例内存由宿主回收。主应用 UI 扩展点、在线会话、持久草稿与核心提交仍待接通。
-
-Windows Demo 02 另外使用 C 的 `mp_ui_document_decode`／`mp_ui_document_node`／`mp_ui_document_free` 读取有所有权的上次 UI 快照；输出 spans 随文档句柄释放而失效，读取接口不授予宿主权限。三种差异化工具及专用会话帧见 [Demo 02](../demos/plugin_stage_windows/README.md)。原有 `examples/*-ui` 仍保留简洁的标题编辑示例。
-
-## test.11 增量验证
-
-七种请求与新正文回复由独立核心生成样本，Rust SDK 和 C++ 经 C ABI 对照验证。真实 Rust、C、C++ Wasm 模块均已在 Wasmi 宿主完成创建、编辑、读取二进制正文尾片段和撤销拒绝；每次任务仅一次 host call，完成记录与核心权威响应绑定。命令通用视图使用 `mp_task_get_command`／`task.command()`；需要新命令参数时使用 `mp_task_get_content`／`task.content()`。旧 `mp_task_get` 对新类型明确返回协议不适用，不返回空参数冒充旧命令。
-
-复验：先构建 `sdk/examples/rust-task` 和执行 `tool/build_plugin_c_wasm.ps1`，再运行 `plugin_runtime/examples/qualify_content_sdk.rs`，传入三份 task Wasm 文件。宿主测试、完整功能与平台限制见 [本轮对照记录](../docs/TEST1_RUST_PARITY.md)。
-
-
-## test.28 宿主依赖资格
-
-新增 `examples/rust-chain-provider`，与现有 `rust-transform` 独立编译，使用既有任务 ABI v2／契约 v3。可信宿主固定 A 的输出后调用 B，结果提案经过原内容权限及修订检查写入。该示例不增加 guest 自选依赖、句柄或内容权限接口，C／C++／Rust 通用依赖 SDK 与持久锁定仍待建设。见 [依赖设计](../docs/PLUGIN_DEPENDENCIES.md) 与 [实际验证](../reports/test.28-dependency-proposal.md)。
-
-## test.29 依赖声明与宿主管理
-
-包可通过核心打包API声明依赖slot、接口类型、版本范围及optional，宿主批准具体提供者并持久锁定；guest ABI／任务契约保持不变。`qualify_locked_dependency`复验真实双Rust模块经登记重开、运行期重绑定及提供者升级撤权。C／C++／Rust动态guest依赖调用入口与默认UI配置仍待提供。见 [依赖锁](../docs/PLUGIN_DEPENDENCY_LOCKS.md)。
+历史 test.11 的原生和正文增量、test.28–31 的依赖增量是当时的阶段结果；最新范围以源码、[路线](../docs/FUTURE_ROADMAP.md)及各版本报告为准。SDK 源码 API、本地回调 ABI、预编译库分发、脚手架和完整开发者工具仍在推进。
 
 ## 许可
 
-从 test.1 之后的重构版本起，Morrow 第一方 C／C++／Rust SDK、示例和界面客户端统一使用 [AGPL-3.0-only](LICENSE)，完整声明见仓库 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。
-
-## test.30 主动依赖调用
-
-新增独立 `dependency-calls-v1` 特性与固定Cap’n Proto契约。SDK在Rust、C和C++提供请求构造、完整原请求帧关联校验和Wasm导入适配；Runtime通过Manager当前批准锁路由，不接受guest自选提供者或授权。调用者最终结果可进入保留所有依赖撤权状态的EditProposal，内容提交仍由核心授权。当前仅单层纯转换，默认8次、可信策略硬上限16次。边界与用法见 [设计说明](../docs/PLUGIN_DYNAMIC_DEPENDENCIES.md)；实际验证与尚未完成项见 [test.30记录](../reports/test.30-dynamic-dependencies.md)。
+test.1 之后的第一方 SDK、示例和界面客户端使用 [AGPL-3.0-only](LICENSE)，详见 [NOTICE](../NOTICE)。第三方依赖保留各自许可；test.1 及更早历史发行版保留原许可。

@@ -4,10 +4,7 @@ use crate::{
     protocol::{CodecError, Request},
     task_capnp as wire,
 };
-use capnp::{
-    message::{Builder, ReaderOptions},
-    serialize,
-};
+use capnp::{message::Builder, serialize};
 use sha2::{Digest, Sha256};
 pub const MAX_FAILURE_MESSAGE_BYTES: usize = 1024;
 pub use wire::FailureCode;
@@ -46,21 +43,7 @@ pub struct Invocation {
 }
 impl Invocation {
     pub fn decode(bytes: &[u8]) -> Result<Self> {
-        if bytes.len() > MAX_TASK_BYTES {
-            return Err(CodecError::Limit);
-        }
-        let mut rest = bytes;
-        let reader = serialize::read_message_from_flat_slice(
-            &mut rest,
-            ReaderOptions {
-                traversal_limit_in_words: Some(MAX_TASK_BYTES / 8),
-                nesting_limit: 16,
-            },
-        )
-        .map_err(invalid)?;
-        if !rest.is_empty() {
-            return Err(CodecError::Invalid);
-        }
+        let reader = crate::protocol::read_message(bytes, MAX_TASK_BYTES)?;
         let root = reader
             .get_root::<wire::invocation::Reader>()
             .map_err(invalid)?;

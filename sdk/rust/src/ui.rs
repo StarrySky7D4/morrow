@@ -1,10 +1,7 @@
 //! Guest UI values and fixed-schema codec. No host sessions, permissions or content writes.
 use crate::{protocol::CodecError as Error, ui_capnp as wire};
 type Result<T> = std::result::Result<T, Error>;
-use capnp::{
-    message::{Builder, ReaderOptions},
-    serialize,
-};
+use capnp::{message::Builder, serialize};
 use std::collections::BTreeMap;
 pub use wire::{EventKind, Kind, Tone};
 pub const VERSION: u16 = crate::contract::UI_VERSION;
@@ -38,23 +35,8 @@ fn text(s: &str, max: usize) -> Result<()> {
     }
     Ok(())
 }
-fn reader(bytes: &[u8]) -> Result<capnp::message::Reader<serialize::BufferSegments<&[u8]>>> {
-    if bytes.len() > MAX_BYTES {
-        return Err(Error::Limit);
-    }
-    let mut rest = bytes;
-    let r = serialize::read_message_from_flat_slice(
-        &mut rest,
-        ReaderOptions {
-            traversal_limit_in_words: Some(MAX_BYTES / 8),
-            nesting_limit: 16,
-        },
-    )
-    .map_err(invalid)?;
-    if !rest.is_empty() {
-        return Err(invalid(()));
-    }
-    Ok(r)
+fn reader(bytes: &[u8]) -> Result<capnp::message::Reader<serialize::OwnedSegments>> {
+    crate::protocol::read_message(bytes, MAX_BYTES)
 }
 fn bounded(m: &Builder<capnp::message::HeapAllocator>) -> Result<Vec<u8>> {
     let bytes = serialize::write_message_to_words(m);
