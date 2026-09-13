@@ -22,6 +22,7 @@ pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod capture_provenance;
 mod content_projection;
 mod evidence;
+pub mod plugin_catalog;
 mod preferences_evidence;
 pub mod projection;
 pub mod projection_v2;
@@ -50,6 +51,10 @@ pub struct Workbench {
     pool: Pool,
     manager: Option<Manager>,
     bundle: Option<Package>,
+    catalog: Option<morrow_core::plugin_package::catalog::Catalog>,
+    external_ui: Option<plugin_catalog::ExternalUi>,
+    external_ui_generation: u64,
+    external_ui_closed: std::collections::VecDeque<(String, u64)>,
     ui: Option<morrow_plugin_runtime::inline_ui::InlineUi>,
     ui_generation: u64,
     plugin_warning: Option<String>,
@@ -98,32 +103,35 @@ impl Workbench {
         package: Option<Package>,
     ) -> Result<Self> {
         use morrow_core::plugin_package::{catalog::Catalog, registry::Registry};
-        let initialize = || -> Result<Option<Manager>> {
-            let Some(bundle) = &package else {
-                return Ok(None);
-            };
+        let initialize = || -> Result<(Manager, Catalog)> {
             let catalog = Catalog::open(&root.join("plugin-manager/packages"))?;
-            catalog.install(bundle)?;
+            if let Some(bundle) = &package {
+                catalog.install(bundle)?;
+            }
+            let reader = Catalog::open(&root.join("plugin-manager/packages"))?;
             let registry = Registry::open(&root.join("plugin-manager/state"), catalog)?;
             let mut manager = Manager::new(registry, Limits::default());
-            let id = &bundle.manifest().package_id;
-            let first = manager.revision() == 0 && manager.selection(id).is_none();
-            manager.select(bundle, manager.revision())?;
-            if first {
-                // Explicit bundled-install policy for the existing content API only.
-                // Later upgrades remain disabled until the user approves the new digest.
-                let approved = default_approval()
-                    .intersection(bundle.capabilities())
-                    .copied()
-                    .collect();
-                manager.approve(id, bundle.digest(), approved, manager.revision())?;
-                manager.set_enabled(id, bundle.digest(), true, manager.revision())?;
+            if let Some(bundle) = &package {
+                let id = &bundle.manifest().package_id;
+                let first = manager.revision() == 0 && manager.selection(id).is_none();
+                manager.select(bundle, manager.revision())?;
+                if first {
+                    // Explicit bundled-install policy for the existing content API only.
+                    // Later upgrades remain disabled until the user approves the new digest.
+                    let approved = default_approval()
+                        .intersection(bundle.capabilities())
+                        .copied()
+                        .collect();
+                    manager.approve(id, bundle.digest(), approved, manager.revision())?;
+                    manager.set_enabled(id, bundle.digest(), true, manager.revision())?;
+                }
             }
-            Ok(Some(manager))
+            Ok((manager, reader))
         };
-        let (mut manager, mut plugin_warning) = match initialize() {
-            Ok(manager) => (manager, None),
+        let (mut manager, catalog, mut plugin_warning) = match initialize() {
+            Ok((manager, catalog)) => (Some(manager), Some(catalog), None),
             Err(error) => (
+                None,
                 None,
                 Some(format!("插件管理暂不可用，已有内容仍可读取。{error}")),
             ),
@@ -160,6 +168,10 @@ impl Workbench {
             pool,
             manager,
             bundle: package,
+            catalog,
+            external_ui: None,
+            external_ui_generation: u64::from_le_bytes(query_owner[..8].try_into().unwrap()) >> 1,
+            external_ui_closed: Default::default(),
             ui: None,
             ui_generation: 0,
             plugin_warning,
@@ -185,6 +197,9 @@ impl Workbench {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
+        if let Some(mut external) = self.external_ui.take() {
+            external.ui.close();
+        }
         if let Some(mut ui) = self.ui.take() {
             ui.close();
         }

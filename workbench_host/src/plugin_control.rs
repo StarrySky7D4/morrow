@@ -55,10 +55,15 @@ impl Workbench {
         } else {
             manager.set_enabled(id, bundle.digest(), false, manager.revision())
         };
-        let closed = self.pool.close_all(&mut self.host);
-        self.plugin = None;
+        let closed = if let Some(session) = self.plugin.take() {
+            self.pool.close(&mut self.host, &session)
+        } else {
+            Ok(())
+        };
+        let maintained = self.pool.maintain(manager, &mut self.host);
         result?;
         closed?;
+        maintained?;
         if enable {
             let revision = manager.revision();
             self.plugin = Some(

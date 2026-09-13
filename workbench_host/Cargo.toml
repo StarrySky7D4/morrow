@@ -2,11 +2,12 @@
 resolver = "2"
 [package]
 name = "morrow-workbench-host"
-version = "0.1.9-test.49"
+version = "0.1.9-test.50"
 edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [dependencies]
+semver = "=1.0.28"
 getrandom = "=0.4.3"
 prost = "=0.14.4"
 morrow-core = {path = "../core"}

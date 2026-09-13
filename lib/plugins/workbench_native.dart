@@ -1,5 +1,6 @@
 import 'editor_session.dart';
 import 'plugin_tools.dart';
+import 'plugin_library.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
@@ -22,6 +23,7 @@ class RustWorkbench
         WorkbenchBackend,
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
+        ExternalPluginControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
@@ -108,6 +110,151 @@ class RustWorkbench
   );
   @override
   PluginUiTransport createPluginUi() => _WorkbenchUiTransport(this);
+
+  PluginLibraryPage _libraryPage(host.ResponseReader response) {
+    final rows = response.plugins;
+    if (rows != null && rows.length > 2) {
+      throw const FormatException('插件目录超出分页范围');
+    }
+    List<String> texts(Iterable<String?>? values) => [
+      for (final value in values ?? <String?>[])
+        if (value != null) value else throw const FormatException('插件资料不完整'),
+    ];
+    return PluginLibraryPage(
+      revision: BigInt.from(response.revision).toUnsigned(64),
+      cursor: response.cursor ?? '',
+      entries: [
+        for (final row in rows ?? <host.PluginEntryReader>[])
+          PluginLibraryEntry(
+            id: row.packageId ?? '',
+            name: row.name ?? '',
+            version: row.packageVersion ?? '',
+            digest: Uint8List.fromList(row.digest ?? []),
+            enabled: row.enabled,
+            builtin: row.builtin,
+            available: row.available,
+            declared: texts(row.declared),
+            approved: texts(row.approved),
+            dependencies: texts(row.dependencies),
+            issue: row.issue ?? '',
+            handlers: [
+              for (final handler
+                  in row.handlers ?? <host.PluginHandlerReader>[])
+                PluginTransformHandler(
+                  name: handler.name ?? '',
+                  inputType: handler.inputType ?? '',
+                  outputType: handler.outputType ?? '',
+                  maxInputBytes: handler.maxInputBytes,
+                  maxOutputBytes: handler.maxOutputBytes,
+                ),
+            ],
+          ),
+      ],
+    );
+  }
+
+  @override
+  Future<PluginLibraryPage> pluginPage({
+    String cursor = '',
+    BigInt? revision,
+  }) async => _libraryPage(
+    await _call(
+      host.Action.pluginCatalog,
+      configure: (r) {
+        r.cursor = cursor;
+        r.catalogRevisionBound = revision != null;
+        if (revision != null) r.revision = revision.toSigned(64).toInt();
+      },
+    ),
+  );
+
+  @override
+  Future<PluginLibraryPage> inspectPlugin(String path) async => _libraryPage(
+    await _call(
+      host.Action.pluginInspect,
+      configure: (r) => r.selectedPath = path,
+    ),
+  );
+
+  @override
+  Future<void> importPlugin(
+    String path,
+    Uint8List digest,
+    BigInt revision,
+  ) async {
+    await _call(
+      host.Action.pluginImport,
+      configure: (r) {
+        r.selectedPath = path;
+        r.sha256 = digest;
+        r.revision = revision.toSigned(64).toInt();
+      },
+    );
+  }
+
+  void _externalSelection(
+    host.RequestBuilder r,
+    PluginLibraryEntry entry,
+    BigInt revision,
+  ) {
+    r.id = entry.id;
+    r.sha256 = entry.digest;
+    r.revision = revision.toSigned(64).toInt();
+  }
+
+  @override
+  Future<void> configureExternal(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    List<String> approved,
+    bool enable,
+  ) async {
+    await _call(
+      host.Action.pluginApprove,
+      configure: (r) {
+        _externalSelection(r, entry, revision);
+        r.limit = enable ? 1 : 0;
+        final decisions = r.initApprovedCapabilities(approved.length);
+        for (var index = 0; index < approved.length; index++) {
+          decisions[index] = approved[index];
+        }
+      },
+    );
+  }
+
+  @override
+  Future<void> removeExternal(PluginLibraryEntry entry, BigInt revision) async {
+    await _call(
+      host.Action.pluginRemove,
+      configure: (r) => _externalSelection(r, entry, revision),
+    );
+  }
+
+  @override
+  Future<Uint8List> transformExternal(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    PluginTransformHandler handler,
+    Uint8List input,
+  ) async {
+    final response = await _call(
+      host.Action.pluginTransform,
+      configure: (r) {
+        _externalSelection(r, entry, revision);
+        r.handler = handler.name;
+        r.inputType = handler.inputType;
+        r.outputType = handler.outputType;
+        r.payload = input;
+      },
+    );
+    return Uint8List.fromList(response.payload ?? []);
+  }
+
+  @override
+  PluginUiTransport createExternalPluginUi(
+    PluginLibraryEntry entry,
+    BigInt revision,
+  ) => _WorkbenchUiTransport(this, entry: entry, expectedRevision: revision);
 
   @override
   Future<void> backupProtection(String destination) async {
@@ -801,8 +948,10 @@ class RustWorkbench
 }
 
 class _WorkbenchUiTransport implements PluginUiTransport {
-  _WorkbenchUiTransport(this.backend);
+  _WorkbenchUiTransport(this.backend, {this.entry, this.expectedRevision});
   final RustWorkbench backend;
+  final PluginLibraryEntry? entry;
+  final BigInt? expectedRevision;
   BigInt? _generation;
   Future<PluginUiReply>? _opening;
   Future<void>? _closing;
@@ -835,7 +984,15 @@ class _WorkbenchUiTransport implements PluginUiTransport {
   Future<PluginUiReply> open(String seed) {
     if (_closed || _opening != null) throw StateError('表单已打开或关闭');
     return _opening = backend
-        ._call(host.Action.uiOpen, configure: (r) => r.name = seed)
+        ._call(
+          entry == null ? host.Action.uiOpen : host.Action.externalUiOpen,
+          configure: (r) {
+            r.name = seed;
+            if (entry != null) {
+              backend._externalSelection(r, entry!, expectedRevision!);
+            }
+          },
+        )
         .then(_reply);
   }
 
@@ -844,8 +1001,9 @@ class _WorkbenchUiTransport implements PluginUiTransport {
     if (_closed || _generation == null) throw StateError('表单不可用');
     return _reply(
       await backend._call(
-        host.Action.uiEvent,
+        entry == null ? host.Action.uiEvent : host.Action.externalUiEvent,
         configure: (r) {
+          if (entry != null) r.id = entry!.id;
           r.offset = _generation!.toSigned(64).toInt();
           r.payload = bytes;
         },
@@ -854,7 +1012,20 @@ class _WorkbenchUiTransport implements PluginUiTransport {
   }
 
   @override
-  Future<void> close() => _closing ??= _close();
+  Future<void> close() {
+    final current = _closing;
+    if (current != null) return current;
+    late Future<void> observed;
+    observed = _close().then<void>(
+      (_) {},
+      onError: (Object error, StackTrace stack) {
+        if (identical(_closing, observed)) _closing = null;
+        Error.throwWithStackTrace(error, stack);
+      },
+    );
+    return _closing = observed;
+  }
+
   Future<void> _close() async {
     _closed = true;
     try {
@@ -864,8 +1035,11 @@ class _WorkbenchUiTransport implements PluginUiTransport {
     }
     if (_generation != null) {
       await backend._call(
-        host.Action.uiClose,
-        configure: (r) => r.offset = _generation!.toSigned(64).toInt(),
+        entry == null ? host.Action.uiClose : host.Action.externalUiClose,
+        configure: (r) {
+          if (entry != null) r.id = entry!.id;
+          r.offset = _generation!.toSigned(64).toInt();
+        },
       );
     }
   }

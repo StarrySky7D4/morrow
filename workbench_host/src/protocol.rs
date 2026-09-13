@@ -74,6 +74,77 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match r.get_action()? {
+        wire::Action::PluginCatalog => {
+            let expected = r.get_catalog_revision_bound().then_some(r.get_revision());
+            plugin_catalog_reply(
+                host.catalog_page(&text(r.get_cursor())?, expected)?,
+                out.reborrow(),
+            );
+        }
+        wire::Action::PluginInspect => {
+            plugin_catalog_reply(
+                host.inspect_plugin(std::path::Path::new(&text(r.get_selected_path())?))?,
+                out.reborrow(),
+            );
+        }
+        wire::Action::PluginImport => {
+            host.import_plugin(
+                std::path::Path::new(&text(r.get_selected_path())?),
+                r.get_sha256()?,
+                r.get_revision(),
+            )?;
+        }
+        wire::Action::PluginApprove => {
+            if r.get_limit() > 1 {
+                return Err("invalid enable decision".into());
+            }
+            let values = r.get_approved_capabilities()?;
+            if values.len() > 7 {
+                return Err("capability decision budget".into());
+            }
+            let approved = values.iter().map(text).collect::<Result<Vec<_>>>()?;
+            host.configure_external(
+                &id,
+                r.get_sha256()?,
+                r.get_revision(),
+                &approved,
+                r.get_limit() == 1,
+            )?;
+        }
+        wire::Action::PluginRemove => {
+            host.remove_external(&id, r.get_sha256()?, r.get_revision())?;
+        }
+        wire::Action::PluginTransform => {
+            out.set_payload(&host.run_external_transform(
+                &id,
+                r.get_sha256()?,
+                r.get_revision(),
+                &text(r.get_handler())?,
+                &text(r.get_input_type())?,
+                &text(r.get_output_type())?,
+                r.get_payload()?,
+            )?);
+        }
+        wire::Action::ExternalUiOpen => {
+            ui_reply(
+                host.external_ui_open(
+                    &id,
+                    r.get_sha256()?,
+                    r.get_revision(),
+                    &text(r.get_name())?,
+                )?,
+                out.reborrow(),
+            );
+        }
+        wire::Action::ExternalUiEvent => {
+            ui_reply(
+                host.external_ui_event(&id, r.get_offset(), r.get_payload()?)?,
+                out.reborrow(),
+            );
+        }
+        wire::Action::ExternalUiClose => {
+            host.external_ui_close(&id, r.get_offset())?;
+        }
         wire::Action::PluginState => {
             host.refresh_plugin_state();
             plugin_status(host, out.reborrow());
@@ -483,4 +554,61 @@ fn editor_snapshot(
         todos: text(r.get_todos())?,
         aliases,
     })
+}
+
+fn plugin_catalog_reply(
+    page: crate::plugin_catalog::PluginCatalogPage,
+    mut out: wire::response::Builder<'_>,
+) {
+    out.set_revision(page.revision);
+    out.set_cursor(page.cursor.as_str());
+    let mut entries = out.init_plugins(page.entries.len() as u32);
+    for (index, entry) in page.entries.into_iter().enumerate() {
+        let mut row = entries.reborrow().get(index as u32);
+        row.set_package_id(entry.id.as_str());
+        row.set_name(entry.name.as_str());
+        row.set_package_version(entry.version.as_str());
+        row.set_digest(&entry.digest);
+        row.set_enabled(entry.enabled);
+        row.set_builtin(entry.builtin);
+        row.set_available(entry.available);
+        row.set_issue(entry.issue.as_str());
+        for (index, value) in entry.declared.iter().enumerate() {
+            if index == 0 {
+                row.reborrow().init_declared(entry.declared.len() as u32);
+            }
+            row.reborrow()
+                .get_declared()
+                .expect("initialized list")
+                .set(index as u32, value.as_str());
+        }
+        for (index, value) in entry.approved.iter().enumerate() {
+            if index == 0 {
+                row.reborrow().init_approved(entry.approved.len() as u32);
+            }
+            row.reborrow()
+                .get_approved()
+                .expect("initialized list")
+                .set(index as u32, value.as_str());
+        }
+        for (index, value) in entry.dependencies.iter().enumerate() {
+            if index == 0 {
+                row.reborrow()
+                    .init_dependencies(entry.dependencies.len() as u32);
+            }
+            row.reborrow()
+                .get_dependencies()
+                .expect("initialized list")
+                .set(index as u32, value.as_str());
+        }
+        let mut handlers = row.init_handlers(entry.handlers.len() as u32);
+        for (index, value) in entry.handlers.into_iter().enumerate() {
+            let mut handler = handlers.reborrow().get(index as u32);
+            handler.set_name(value.name.as_str());
+            handler.set_input_type(value.input_type.as_str());
+            handler.set_output_type(value.output_type.as_str());
+            handler.set_max_input_bytes(value.max_input_bytes);
+            handler.set_max_output_bytes(value.max_output_bytes);
+        }
+    }
 }

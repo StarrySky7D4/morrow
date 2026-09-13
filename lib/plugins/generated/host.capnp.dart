@@ -34,6 +34,15 @@ enum Action {
   finishPaste,
   finishCapturedSave,
   abortCaptureUpload,
+  pluginCatalog,
+  pluginInspect,
+  pluginImport,
+  pluginApprove,
+  pluginRemove,
+  pluginTransform,
+  externalUiOpen,
+  externalUiEvent,
+  externalUiClose,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -78,6 +87,15 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'finishPaste', codeOrder: 26, ordinal: 26),
     EnumerantSchemaInfo(name: 'finishCapturedSave', codeOrder: 27, ordinal: 27),
     EnumerantSchemaInfo(name: 'abortCaptureUpload', codeOrder: 28, ordinal: 28),
+    EnumerantSchemaInfo(name: 'pluginCatalog', codeOrder: 29, ordinal: 29),
+    EnumerantSchemaInfo(name: 'pluginInspect', codeOrder: 30, ordinal: 30),
+    EnumerantSchemaInfo(name: 'pluginImport', codeOrder: 31, ordinal: 31),
+    EnumerantSchemaInfo(name: 'pluginApprove', codeOrder: 32, ordinal: 32),
+    EnumerantSchemaInfo(name: 'pluginRemove', codeOrder: 33, ordinal: 33),
+    EnumerantSchemaInfo(name: 'pluginTransform', codeOrder: 34, ordinal: 34),
+    EnumerantSchemaInfo(name: 'externalUiOpen', codeOrder: 35, ordinal: 35),
+    EnumerantSchemaInfo(name: 'externalUiEvent', codeOrder: 36, ordinal: 36),
+    EnumerantSchemaInfo(name: 'externalUiClose', codeOrder: 37, ordinal: 37),
   ],
 );
 
@@ -127,6 +145,16 @@ final class RequestReader extends StructReader {
   String? get captureScope => getTextField(11);
 
   String? get captureParent => getTextField(12);
+
+  ListReader<String?>? get approvedCapabilities => getTextListField(13);
+
+  String? get handler => getTextField(14);
+
+  String? get inputType => getTextField(15);
+
+  String? get outputType => getTextField(16);
+
+  bool get catalogRevisionBound => getBoolField(256);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -210,6 +238,26 @@ final class RequestBuilder extends StructBuilder {
   set captureParent(String? v) {
     setTextField(12, v);
   }
+
+  ListBuilder<String?> initApprovedCapabilities(int length) {
+    return initTextListField(13, length);
+  }
+
+  set handler(String? v) {
+    setTextField(14, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(15, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(16, v);
+  }
+
+  set catalogRevisionBound(bool v) {
+    setBoolField(256, v);
+  }
 }
 
 final class _RequestFactory
@@ -217,9 +265,9 @@ final class _RequestFactory
   @override
   StructSchemaInfo get schema => requestSchema;
   @override
-  int get dataWords => 4;
+  int get dataWords => 5;
   @override
-  int get ptrWords => 13;
+  int get ptrWords => 17;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -235,8 +283,8 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   id: 0x98af3617e14b2953,
   displayName: 'host.capnp:Request',
   shortName: 'Request',
-  dataWords: 4,
-  pointerWords: 13,
+  dataWords: 5,
+  pointerWords: 17,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -390,6 +438,46 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Text'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'approvedCapabilities',
+      codeOrder: 19,
+      body: SlotFieldSchemaInfo(
+        offset: 13,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 20,
+      body: SlotFieldSchemaInfo(
+        offset: 14,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'inputType',
+      codeOrder: 21,
+      body: SlotFieldSchemaInfo(
+        offset: 15,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outputType',
+      codeOrder: 22,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'catalogRevisionBound',
+      codeOrder: 23,
+      body: SlotFieldSchemaInfo(
+        offset: 256,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
   ],
 );
 
@@ -445,6 +533,11 @@ final class ResponseReader extends StructReader {
   String? get captureScope => getTextField(10);
 
   String? get captureTicket => getTextField(11);
+
+  ListReader<PluginEntryReader>? get plugins => getStructListFieldWith(
+    12,
+    (r) => PluginEntryReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -544,6 +637,16 @@ final class ResponseBuilder extends StructBuilder {
   set captureTicket(String? v) {
     setTextField(11, v);
   }
+
+  ListBuilder<PluginEntryBuilder> initPlugins(int length) {
+    return initStructListFieldWith(
+      12,
+      length,
+      (r) => PluginEntryBuilder(r),
+      1,
+      9,
+    );
+  }
 }
 
 final class _ResponseFactory
@@ -553,7 +656,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 12;
+  int get ptrWords => 13;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -570,7 +673,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 12,
+  pointerWords: 13,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -754,6 +857,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 11,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plugins',
+      codeOrder: 23,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xe383b408b900ece2)),
       ),
     ),
   ],
@@ -1430,3 +1541,341 @@ const StructSchemaInfo capturedSaveSchema = StructSchemaInfo(
 );
 
 final capturedSaveFactory = _CapturedSaveFactory();
+
+final class PluginHandlerReader extends StructReader {
+  PluginHandlerReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginHandlerSchema;
+
+  String? get name => getTextField(0);
+
+  String? get inputType => getTextField(1);
+
+  String? get outputType => getTextField(2);
+
+  int get maxInputBytes => getUint32Field(0);
+
+  int get maxOutputBytes => getUint32Field(4);
+}
+
+final class PluginHandlerBuilder extends StructBuilder {
+  PluginHandlerBuilder(super.raw);
+
+  @override
+  PluginHandlerReader asReader() => PluginHandlerReader(rawToReader());
+
+  set name(String? v) {
+    setTextField(0, v);
+  }
+
+  set inputType(String? v) {
+    setTextField(1, v);
+  }
+
+  set outputType(String? v) {
+    setTextField(2, v);
+  }
+
+  set maxInputBytes(int v) {
+    setUint32Field(0, v);
+  }
+
+  set maxOutputBytes(int v) {
+    setUint32Field(4, v);
+  }
+}
+
+final class _PluginHandlerFactory
+    extends StructFactory<PluginHandlerReader, PluginHandlerBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginHandlerSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  PluginHandlerReader fromRawReader(RawStructReader r) =>
+      PluginHandlerReader(r);
+  @override
+  PluginHandlerReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginHandlerReader(r, capabilities: capabilities);
+  @override
+  PluginHandlerBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginHandlerBuilder(r);
+}
+
+const StructSchemaInfo pluginHandlerSchema = StructSchemaInfo(
+  id: 0x8970e629b64acfe8,
+  displayName: 'host.capnp:PluginHandler',
+  shortName: 'PluginHandler',
+  dataWords: 1,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'inputType',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outputType',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxInputBytes',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxOutputBytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final pluginHandlerFactory = _PluginHandlerFactory();
+
+final class PluginEntryReader extends StructReader {
+  PluginEntryReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = pluginEntrySchema;
+
+  String? get packageId => getTextField(0);
+
+  String? get name => getTextField(1);
+
+  String? get packageVersion => getTextField(2);
+
+  Uint8List? get digest => getDataField(3);
+
+  bool get enabled => getBoolField(0);
+
+  bool get builtin => getBoolField(1);
+
+  bool get available => getBoolField(2);
+
+  ListReader<String?>? get declared => getTextListField(4);
+
+  ListReader<String?>? get approved => getTextListField(5);
+
+  ListReader<PluginHandlerReader>? get handlers => getStructListFieldWith(
+    6,
+    (r) => PluginHandlerReader(r, capabilities: capabilityTable),
+  );
+
+  ListReader<String?>? get dependencies => getTextListField(7);
+
+  String? get issue => getTextField(8);
+}
+
+final class PluginEntryBuilder extends StructBuilder {
+  PluginEntryBuilder(super.raw);
+
+  @override
+  PluginEntryReader asReader() => PluginEntryReader(rawToReader());
+
+  set packageId(String? v) {
+    setTextField(0, v);
+  }
+
+  set name(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageVersion(String? v) {
+    setTextField(2, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set enabled(bool v) {
+    setBoolField(0, v);
+  }
+
+  set builtin(bool v) {
+    setBoolField(1, v);
+  }
+
+  set available(bool v) {
+    setBoolField(2, v);
+  }
+
+  ListBuilder<String?> initDeclared(int length) {
+    return initTextListField(4, length);
+  }
+
+  ListBuilder<String?> initApproved(int length) {
+    return initTextListField(5, length);
+  }
+
+  ListBuilder<PluginHandlerBuilder> initHandlers(int length) {
+    return initStructListFieldWith(
+      6,
+      length,
+      (r) => PluginHandlerBuilder(r),
+      1,
+      3,
+    );
+  }
+
+  ListBuilder<String?> initDependencies(int length) {
+    return initTextListField(7, length);
+  }
+
+  set issue(String? v) {
+    setTextField(8, v);
+  }
+}
+
+final class _PluginEntryFactory
+    extends StructFactory<PluginEntryReader, PluginEntryBuilder> {
+  @override
+  StructSchemaInfo get schema => pluginEntrySchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 9;
+  @override
+  PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
+  @override
+  PluginEntryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => PluginEntryReader(r, capabilities: capabilities);
+  @override
+  PluginEntryBuilder fromRawBuilder(RawStructBuilder r) =>
+      PluginEntryBuilder(r);
+}
+
+const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
+  id: 0xe383b408b900ece2,
+  displayName: 'host.capnp:PluginEntry',
+  shortName: 'PluginEntry',
+  dataWords: 1,
+  pointerWords: 9,
+  fields: [
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageVersion',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'enabled',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'builtin',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'available',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'declared',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approved',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handlers',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x8970e629b64acfe8)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'dependencies',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'issue',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final pluginEntryFactory = _PluginEntryFactory();

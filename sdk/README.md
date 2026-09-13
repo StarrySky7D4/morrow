@@ -1,8 +1,8 @@
 # Morrow 第三方插件 SDK
 
-SDK 源码包版本 `0.1.9-test.49`，当前处于测试开发阶段，提供 C11、C++17、Rust 的受限 Wasm 插件接口。test.48 建立 **guest-v1-rc1 二进制兼容候选基线**；实际 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。该基线与 SDK crate 版本分别管理，不宣称完整 SDK、原生动态库 ABI 或全平台已经稳定。详见 [兼容边界与演进规则](../docs/PLUGIN_SDK_COMPATIBILITY.md)。
+SDK 源码包版本 `0.1.9-test.50`，当前处于测试开发阶段，提供 C11、C++17、Rust 的受限 Wasm 插件接口。test.48 建立 **guest-v1-rc1 二进制兼容候选基线**；实际 guest ABI v2、运行协议 v7、任务 v3、UI v1、依赖调用 v1。该基线与 SDK crate 版本分别管理，不宣称完整 SDK、原生动态库 ABI 或全平台已经稳定。详见 [兼容边界与演进规则](../docs/PLUGIN_SDK_COMPATIBILITY.md)。
 
-Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求编写 Dart 插件。当前不提供 TS／JS guest。主应用默认 Windows 工作台已经使用 Rust 宿主和受限 Wasm 业务插件；通用多插件安装管理和全平台接入仍在推进。
+Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求编写 Dart 插件。当前不提供 TS／JS guest。主应用默认 Windows 工作台已经使用 Rust 宿主和受限 Wasm 业务插件；test.50 已接入第三方包导入、明确批准、启停、升级、卸载，以及独立转换与基础表单。必需依赖的管理界面和全平台接入仍待完成。
 
 ## 开发入口
 
@@ -27,6 +27,8 @@ python -B -X utf8 tool/verify_plugin_projects.py
 SDK 不链接可信核心，不提供自建宿主、打开 Store、自选身份或授予权限的接口。权限由宿主绑定实际实例后核验。SDK 校验不构成对绕过 SDK 的不可信代码的安全边界。
 
 ## 当前接口
+
+主应用使用流程见 [第三方插件管理](../docs/PLUGIN_APPLICATION_MANAGEMENT.md)。目前没有插件网络请求或通用文件系统 API；文件选择／转换输入不等于插件获得文件访问权。下一优先项是独立授权的文件分块读取和 HTTPS GET，之后补写入、删除与外部效果恢复；[IO 设计](../docs/PLUGIN_IO_DESIGN.md)中的签名和能力均尚未实现。完整 SDK 的稳定门槛包含这些能力，现有 guest-v1-rc1 候选不因此扩大承诺。
 
 七种内容命令包括重命名、读取摘要、查询操作结果、读取附件片段、创建正文、编辑正文、读取正文片段。类型化输入／响应保留 UInt64 修订与偏移，响应必须与原请求及适用的操作 ID、目标、修订和片段范围关联。详细用法见 [正文 API](CONTENT_API.md)。
 

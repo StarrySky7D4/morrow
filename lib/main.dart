@@ -1,6 +1,7 @@
 import 'plugins/query_coordinator.dart';
 import 'plugins/editor_session.dart';
 import 'plugins/plugin_tools.dart';
+import 'plugins/plugin_library.dart';
 import 'plugins/protection_backup.dart';
 import 'plugins/bootstrap_stub.dart'
     if (dart.library.io) 'plugins/bootstrap_native.dart'
@@ -2264,6 +2265,8 @@ class _StudioState extends State<Studio> {
             'appearance': '空间外观',
             if (widget.workbench is WorkbenchPluginControl)
               'plugin-tools': '工作台插件',
+            if (widget.workbench is ExternalPluginControl)
+              'plugin-library': '扩展插件',
             if (widget.workbench is WorkbenchProtectionBackup)
               'protection-backup': '内容保护',
             'daily': '此刻的小事',
@@ -2304,6 +2307,24 @@ class _StudioState extends State<Studio> {
             p: p,
             radius: 22,
             child: PluginTools(
+              backend: backend,
+              onChanged: () {
+                if (mounted) setState(() => _queries.invalidate());
+              },
+              ink: p.ink,
+              muted: p.muted,
+              line: p.line,
+              radius: p.borderRadius(11),
+            ),
+          ),
+        ],
+        if (backend is ExternalPluginControl) ...[
+          const SizedBox(height: 14),
+          Glass(
+            componentId: 'plugin-library',
+            p: p,
+            radius: 22,
+            child: PluginLibrary(
               backend: backend,
               onChanged: () {
                 if (mounted) setState(() => _queries.invalidate());
