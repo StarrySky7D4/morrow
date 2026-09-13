@@ -295,6 +295,20 @@ impl HostRuntime {
         self.policy
             .read_content(connection.instance, grant, &self.store, card, clock)
     }
+    /// Apply current object authorization to bytes from this Store's exact frozen scan.
+    /// Foreign Store/snapshot/connection identities reject before consuming the host clock.
+    pub fn read_snapshot_content(
+        &mut self,
+        connection: &Connection,
+        snapshot: &crate::store::CardReadSnapshot,
+        card: &crate::store::FrozenCard,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::content::CardRecord> {
+        self.store.validate_snapshot_card(snapshot, card)?;
+        let grant = self.content_grant(connection, GrantKind::ReadContent, card.id())?;
+        self.policy
+            .read_frozen_content(connection.instance, grant, card.card(), clock)
+    }
     /// Hold the runtime exclusively through response creation. Transport owns the connection.
     /// Clock is a trusted monotonic host function; errors before command decoding have no response id.
     pub fn dispatch(

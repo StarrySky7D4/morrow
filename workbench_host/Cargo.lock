@@ -565,7 +565,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-core"
-version = "0.1.9-test.41"
+version = "0.1.9-test.43"
 dependencies = [
  "capnp",
  "capnpc",
@@ -602,7 +602,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-workbench-host"
-version = "0.1.9-test.42"
+version = "0.1.9-test.43"
 dependencies = [
  "capnp",
  "capnpc",

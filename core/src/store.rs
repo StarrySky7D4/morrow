@@ -10,6 +10,8 @@ use crate::{
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use std::{path::Path, time::Duration};
 mod binding;
+mod card_snapshot;
+pub use card_snapshot::{CardPage, CardReadSnapshot, Census, FrozenCard, ReadPoint};
 mod blobs;
 mod evidence;
 mod evidence_chunks;
@@ -35,6 +37,8 @@ pub struct Store {
     connection: Connection,
     budget: EventBudget,
     audit_trust: Option<crate::audit::TrustedLog>,
+    snapshot_origin: Option<std::path::PathBuf>,
+    snapshot_identity: std::sync::Arc<()>,
 }
 fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
     value.map_err(|error| {
@@ -134,7 +138,10 @@ impl Store {
         if app != APPLICATION_ID || !matches!(version, 5..=11) {
             return Err(Error::UnsupportedVersion);
         }
+        let snapshot_origin = card_snapshot::origin(&connection, true)?;
         let store = Self {
+            snapshot_origin,
+            snapshot_identity: std::sync::Arc::new(()),
             connection,
             budget: EventBudget::default(),
             audit_trust: Some(trust),
@@ -334,7 +341,10 @@ impl Store {
             }
         }
         sql(connection.pragma_update(None, "synchronous", "FULL"))?;
+        let snapshot_origin = card_snapshot::origin(&connection, !exclusive && vfs.is_none())?;
         let store = Self {
+            snapshot_origin,
+            snapshot_identity: std::sync::Arc::new(()),
             connection,
             budget,
             audit_trust,

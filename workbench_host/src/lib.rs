@@ -26,6 +26,7 @@ mod preferences_evidence;
 pub mod projection;
 pub mod projection_v2;
 pub mod query_plan;
+mod query_source;
 mod storage;
 pub mod transfer;
 
@@ -485,76 +486,6 @@ impl Workbench {
             .store_local()
             .export_attachment_local(card, attachment, writer)?;
         Ok(())
-    }
-    /// Versioned query scheduling; every actual guest result is validated before it advances
-    /// filtering or merge cursors. Durable read-source capture is a separate adapter.
-    pub fn query(
-        &mut self,
-        section: &str,
-        filter: &str,
-        text: &str,
-        sort: &str,
-    ) -> Result<Vec<String>> {
-        let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
-        self.pool.maintain(manager, &mut self.host)?;
-        let root = self
-            .pool
-            .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
-        let bundle = self.bundle.as_ref().ok_or("plugin unavailable")?;
-        let selection = manager
-            .selection(&bundle.manifest().package_id)
-            .ok_or("plugin unavailable")?;
-        if !selection.enabled
-            || selection.digest != bundle.digest()
-            || !selection.approved.contains(&GrantKind::ReadContent)
-            || self.host.connection_phase(root.connection())?
-                != morrow_core::lifecycle::InstancePhase::Ready
-        {
-            return Err("query read capability unavailable".into());
-        }
-        struct Live<'a> {
-            workbench: &'a mut Workbench,
-            cursor: String,
-            pending: std::vec::IntoIter<Record>,
-            finished: bool,
-        }
-        impl query_plan::Backend for Live<'_> {
-            fn next_candidate(&mut self) -> Result<Option<Idea>> {
-                loop {
-                    if let Some(record) = self.pending.next() {
-                        let card = self.workbench.authorized_read(&record.idea.id)?;
-                        return Ok(Some(Workbench::decode(&card)?.idea));
-                    }
-                    if self.finished {
-                        return Ok(None);
-                    }
-                    let (records, next) = self.workbench.page(&self.cursor, 128)?;
-                    if next.is_empty() {
-                        self.finished = true;
-                        return Ok(None);
-                    }
-                    self.cursor = next;
-                    self.pending = records.into_iter();
-                }
-            }
-            fn invoke(&mut self, _phase: query_plan::Phase, request: Request) -> Result<Response> {
-                self.workbench.run(request)
-            }
-        }
-        query_plan::execute(
-            &query_plan::Conditions {
-                section: section.into(),
-                filter: filter.into(),
-                text: text.into(),
-                sort: sort.into(),
-            },
-            &mut Live {
-                workbench: self,
-                cursor: String::new(),
-                pending: vec![].into_iter(),
-                finished: false,
-            },
-        )
     }
     pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
         let Some(card) = self.host.store_local().card("morrow-studio-preferences")? else {

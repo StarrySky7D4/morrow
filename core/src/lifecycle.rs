@@ -448,6 +448,30 @@ impl HostPolicy {
         card: &str,
         mut clock: impl FnMut() -> u64,
     ) -> Result<CardRecord> {
+        self.read_content_with(instance, grant, card, &mut clock, || {
+            store.card(card)?.ok_or(Error::NotFound)
+        })
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn read_frozen_content(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        card: &CardRecord,
+        clock: impl FnMut() -> u64,
+    ) -> Result<CardRecord> {
+        let id = card.summary().id;
+        self.read_content_with(instance, grant, &id, clock, || Ok(card.clone()))
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    fn read_content_with(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        card: &str,
+        mut clock: impl FnMut() -> u64,
+        read: impl FnOnce() -> Result<CardRecord>,
+    ) -> Result<CardRecord> {
         identity(card)?;
         let now = clock();
         self.expire_drains(now)?;
@@ -458,7 +482,7 @@ impl HostPolicy {
             now,
             false,
         )?;
-        let value = store.card(card);
+        let value = read();
         let now = clock();
         self.expire_drains(now)?;
         self.authorize_scope(
@@ -468,7 +492,7 @@ impl HostPolicy {
             now,
             false,
         )?;
-        value?.ok_or(Error::NotFound)
+        value
     }
     /// Proposal is host-routed after guest completion; no privileged plugin shortcut.
     /// Recheck the grant inside the transaction and immediately before commit.

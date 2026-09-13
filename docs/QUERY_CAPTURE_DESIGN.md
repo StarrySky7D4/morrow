@@ -1,12 +1,12 @@
 # 查询捕获与一致性读取设计
 
-本文件限定默认工作台查询的下一步接入，不把设计当作已经实现的权限或审计能力。
-当前阶段为 test.42；读取日志基础见 [PLUGIN_READ_JOURNAL.md](PLUGIN_READ_JOURNAL.md)。
+本文件区分默认查询当前实现与后续持久化任务，不把设计当作已完成的审计能力。
+当前阶段为 test.43；读取日志基础见 [PLUGIN_READ_JOURNAL.md](PLUGIN_READ_JOURNAL.md)。
 
 ## 当前实际状态
 
 `workbench_host/src/query_plan.rs` 已提供版本化执行器 `VERSION = 1`、`Conditions` 和 `Backend`。
-默认 `Workbench::query` 已调用这个执行器，但候选仍来自现有分页／逐卡读取，尚无一致快照。
+默认 `Workbench::query` 使用该执行器，并通过 test.43 的独立只读 WAL 快照固定全部候选和正文。
 `Backend::invoke` 统一经过 Filter、SortRun、Merge 三个阶段，使适配器能够记录每次实际调用。
 分块归并每边最多取 64 个前缀元素，并受既有请求字节预算约束；它不是两两比较调用的旧实现。
 执行器检查未知／重复 ID、过滤阶段次序、排序阶段完整排列，以及归并两侧的完整相对顺序。
@@ -14,34 +14,35 @@
 空库也执行真实过滤任务，不因没有候选而绕过插件可用性检查。
 `replay` 核对版本、每次请求原字节、阶段、完整响应序列和最终 ID 投影。
 执行器的 `Observation` 本身不是执行证明；持久化适配器仍须绑定真实 TaskEvidence。
-当前默认查询尚未自动记录候选快照、全部调用证据或最终读取日志；以下各节均为后续设计。
+当前默认查询尚未持久化候选快照、全部调用证据或最终读取日志。原生快照及冻结卡片授权已落地，其余持久化／平台接入仍按下文推进。
 
-## 原生流式快照
+## 原生流式快照（test.43已接入）
 
-建议新增 `Store::open_card_snapshot() -> Result<CardReadSnapshot>`，返回拥有独立只读 SQLite Connection 的句柄。
+`Store::open_card_snapshot() -> Result<CardReadSnapshot>` 返回拥有独立只读 SQLite Connection 的句柄。
 句柄执行 `BEGIN DEFERRED`，立即读取永久事件序号等数据固定快照，结束或 Drop 时关闭读取事务。
 这样不需要自引用 `Transaction`，也不需要新增 unsafe；不会把全部卡片先装入一个 Vec。
 默认原生 WAL 允许该只读快照与后续写入并存；写入不会改变已固定快照的候选或正文。
 
-Store 应保留可信打开来源：SQLite 实际 main 文件名、VFS、存储模式及运行期 Store 身份。
+Store 保留经规范化的 SQLite 实际 main 文件名及私有运行期身份，仅普通原生 WAL 来源可建立该快照；自定义 VFS 和独占来源明确拒绝。
 不能让插件指定快照路径，也不能重新解释一个受工作目录变化影响的相对路径。
 新连接使用 READ_ONLY、禁止 CREATE、query_only、trusted_schema=false 和有界等待策略。
 在同一读取事务内核对 application_id、数据库格式和已有审计身份；无稳定文件名的内存库明确拒绝此路径。
-可在源连接短暂锁定正规写入后固定第二连接，并比较逻辑事件头与审计身份，降低误接库风险。
+建立时源连接与只读连接各自固定事务，并比较逻辑事件头与审计身份；期间若提交改变读点则明确报冲突，不把两个视图拼接。
 路径规范化、相同日志身份或相同事件摘要均不等于对恶意文件替换的操作系统句柄证明。
 如将文件替换纳入威胁模型，需要额外平台身份校验，不能将当前逻辑核对宣称为完整防护。
 
-建议接口轮廓如下，名称和最终契约需随实现固定：
+当前接口如下；显式 close 报告 ROLLBACK 失败，Drop 兜底释放错误路径：
 
 ```rust
 CardReadSnapshot::readpoint() -> &ReadPoint
 CardReadSnapshot::next_page(max_cards, max_bytes) -> Result<CardPage>
 CardReadSnapshot::finish() -> Result<Census>
+CardReadSnapshot::close(self) -> Result<()>
 ```
 
 每页按唯一 ID 升序枚举所有 Card 类型，提供 `FrozenCard` 原 Card PB、类型、格式版本和修订。
 原件使用 `CardRecord::original_bytes()`，保留未知字段和原始编码，不从摘要重新构造。
-关联同快照内该卡最新内容 Commit 的操作 ID、事件序号、原件摘要，核对完整 Card 摘要与修订。
+关联同快照内该卡最新内容 Commit 的操作 ID、事件序号、完整 Commit 容器摘要，核对原 Card PB 摘要与修订。读点头分类解码并核对索引和引用；永久内容操作指向缺失 Card 会拒绝。
 读取 payload 前用 SQL 长度检查拒绝超限数据；原有单卡 8 MiB 上限保持。
 页预算只决定分批，不能让一张合法大卡永久卡在空页；不足容纳单卡的配置应明确拒绝。
 只有实际枚举到末尾才能报告 EOF；一页没有工作台类型卡片不代表 EOF。
@@ -63,10 +64,10 @@ ReadPoint 至少固定格式版本、同事务永久事件高水位及对应原�
 已有 `snapshot_to` 是原生整库备份和完整性核验入口，可用于资格验证，但不替代轻量流式扫描。
 返回 ID 后界面若映射最新缓存，显示正文仍可能不是读取修订；交付协议应绑定结果修订或明确另行刷新。
 
-## 冻结卡片的授权
+## 冻结卡片的授权（test.43已接入）
 
-建议增加可信宿主入口 `HostRuntime::read_snapshot_content(connection, snapshot, frozen_card, clock)`。
-先核对私有运行期 Store 身份与冻结条目归属，再复用现有 ReadContent 种类上限、对象 grant 和前后时钟校验。
+可信宿主入口为 `HostRuntime::read_snapshot_content(connection, snapshot, frozen_card, clock)`。
+先核对私有运行期 Store／快照身份与冻结条目归属，再复用现有 ReadContent 种类上限、对象 grant 和前后时钟校验。空快照也先经 `Store::validate_card_snapshot` 核对来源；损坏后快照失效，不能继续读取已发出的旧条目。
 返回数据必须取自已冻结 Card，不能通过再次调用最新 `Store::card(id)` 破坏快照一致性。
 快照、目录摘要、FrozenCard 和持久化记录均不产生权限；原始卡片也不直接暴露给任意插件。
 查询执行上下文还需绑定真实 Host、Connection、包摘要及计划版本，禁止同包新实例替代旧查询实例。
@@ -111,8 +112,8 @@ ready 仅表示计算和原件已完整提交，不表示用户收到、更不�
 
 ## 后续验收顺序
 
-1. 原生冻结来源：第二连接并发增删改期间分页结果保持同一读点；覆盖全类型空页、EOF、8 MiB 原件和 unknown 字节。
-2. 授权适配：冻结原件读取通过真实对象 grant；跨 Store、换实例、撤权、到期和未来时钟污染均拒绝。
+1. 原生冻结来源（test.43已验，见阶段报告）：第二连接并发增删改期间分页结果保持同一读点；覆盖全类型空页、EOF、8 MiB 原件和 unknown 字节。
+2. 授权适配（test.43已验对象读取边界，查询全程政策仍待接入）：冻结原件读取通过真实对象 grant；跨 Store、换实例、撤权、到期和未来时钟污染均拒绝。
 3. 有界分片：跨现有单份容量完成目录；故障注入覆盖准备、最终提交前后、缺片／重复和配额耗尽，不发布部分成功。
 4. 默认查询接入：使用实际 Rust guest 记录全部三阶段调用，重建过滤、稳定排序及归并；空库同样有真实任务。
 5. 恢复与独立核验：删除原 guest 文件后用原包重放，核对来源材料与最终目录；稳定重试不读最新数据改结果。
