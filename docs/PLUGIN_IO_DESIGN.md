@@ -1,8 +1,14 @@
 # 插件网络与文件接口设计
 
-状态：test.50 后续实施设计，2026-09-14。**本文件不表示网络、文件系统授权或 IO 重放已经实现。** 第一方实现默认 AGPL-3.0-only；第三方 SDK 使用规则沿用既有许可文件。本轮仅新增本文，不修改契约、代码、数据库或冻结包。
+状态：test.50 后续实施设计，2026-09-14。**本文件不表示网络、文件系统授权或 IO 重放已经实现。** 第一方实现默认 AGPL-3.0-only；第三方 SDK 使用规则沿用既有许可文件。本设计及其后续补充不表示已修改运行契约、数据库或冻结包。
 
 依据：[统一架构基线](ARCHITECTURE_BASELINE.md)、[SDK 兼容候选](PLUGIN_SDK_COMPATIBILITY.md)、[SDK 与 UI](PLUGIN_SDK_AND_UI.md)。目标是 C、C++、Rust Wasm 插件经过同一个可信宿主取得明确授权的 IO 能力；插件不能直接获得操作系统文件句柄、任意本机路径、网络 socket 或宿主凭据。正式内容仍只有现有核心 Store 一个权威来源。
+
+## 完整网络能力目标补充
+
+用户进一步要求完整网络 API 对接。最终范围以 [完整网络 API 设计与任务](PLUGIN_NETWORK_API.md) 为准：通用 HTTP 方法、原始/JSON/表单/multipart 请求、账号认证与 OAuth、上传下载、分页限流、流式 HTTP/SSE、WebSocket、恢复与录制重放，以及各平台真实能力。GET 仅为首个内部验证步骤，不是网络交付终点或 SDK 稳定门槛。第三方 JSON 是架构允许的外部接口格式，不改变自有 Cap’n Proto／Protobuf＋LZ4 的分工。
+
+本文 16 MiB/30 秒等是普通请求首期策略；完整能力使用可声明的传输/长流 profile 和有界资源/期限，不能把这些数值冻结为大型上传或连续流的永久上限。所列网络 capability 名称仍为草案；完整候选须补 HEAD/OPTIONS 等方法范围、独立 streaming/WebSocket 声明、认证类型和平台能力发现。
 
 ## 1. 已有实现与准确切入点
 
@@ -25,7 +31,7 @@
 
 包元数据建议追加独立 `IoDeclaration`（预编译 PB，例如 `io_manifest.proto`，由 Manifest 新字段承载），包括 schema 版本／摘要、申请的 IO 类别、具有外部效果的 handler 名及预算。不能复用现有七种 `Capability` 的数值。保留旧 Manifest 的读取和原件编码；扩展主加载器不修改冻结目录里的历史 schema 副本。Registry 新版本存 IO 批准子集，与包选择及依赖锁同一次 CAS 提交；旧 v1 迁移为空 IO 批准，不恢复任何运行期引用。
 
-建议能力：`file.read`、`file.list`、`file.create`、`file.replace`、`file.delete`、`http.get`、`http.send`、`credential.use`。列举会泄露名称／类型，不能从 read 自动推导；replace 不等于 create，delete 不由写权限隐含；send 覆盖显式允许的有副作用方法。首切片仅实现 file.read 与 http.get，其余未实现值必须拒绝，不能接受后静默忽略。持久批准仍只是上限；每次目标选择和会话租约才决定可用对象、方法、字节量与期限。
+建议能力：`file.read`、`file.list`、`file.create`、`file.replace`、`file.delete`、`http.get`、`http.send`、`credential.use`。列举会泄露名称／类型，不能从 read 自动推导；replace 不等于 create，delete 不由写权限隐含；send 覆盖显式允许的有副作用方法。首个内部切片计划实现 file.read 与 http.get；这不缩减完整网络能力的验收范围，其余未实现值必须拒绝，不能接受后静默忽略。持久批准仍只是上限；每次目标选择和会话租约才决定可用对象、方法、字节量与期限。
 
 IO 运行期请求包含 version、schemaSha256、callId、resourceRef／jobRef、operation union；响应绑定**实际请求原帧** SHA、callId、稳定状态码、有界载荷及 EOF。宿主从实际连接确定调用者，不相信包 ID 或请求自报实例。引用由宿主随机生成，绑定 host、连接代次、包摘要、对象类别、权限、期限、预算；猜中引用值也不能跨连接调用。持久化只保留历史引用说明，不把它重新当有效授权。
 
@@ -115,7 +121,7 @@ Web 的 manual redirect 可产生不可读 `opaqueredirect`，所以首版以 `r
 2. **真实实例资源 broker＋选中文件读取**：实现 Manager 批准、宿主选择文件、固定原件、64 KiB 分块、EOF 与取消，C／C++／Rust 实际 guest 逐字节读回；关闭／升级后旧引用失败。这一步必须贯通工作台真实入口，不能只有 broker 单元测试。
 3. **HTTPS GET 完整切片**：固定授权 origin、无重定向、实际异步 worker、预算／超时／取消、三语言示例；用本地合成服务在显式本机测试授权下覆盖成功与恶意响应，不依赖公网。与文件读共同保存录制响应，删除源文件／关停服务器后离线重放仍匹配。
 4. **副作用接口**：先完成持久 intent／未知结果／签名事件与恢复测试，再开放 file.create／replace／delete 和 http.send；没有这组边界前 UI 不显示为可用能力。
-5. **平台资格与分发**：分别验证 Linux／Apple／Android／Web 适配；开发工具追加 IO 模板及 manifest preflight；发布准确支持矩阵。目录树、递归操作、长连接、WebSocket、任意 TCP、自动服务后台运行不混入首切片。
+5. **平台资格与分发**：分别验证 Linux／Apple／Android／Web 适配；开发工具追加 IO 模板及 manifest preflight；发布准确支持矩阵。首切片不混入目录树、递归操作或任意 TCP。长连接/SSE 与 WebSocket 是完整网络能力的后续必做工作包，不能以首切片通过将它们无限后置；后台生命周期按声明平台单独验收。
 
 | 正向证据 | 必须配套的负向测试 |
 | --- | --- |

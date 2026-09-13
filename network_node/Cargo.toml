@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-network-node"
+version = "0.1.9-test.51"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+axum = "=0.8.9"
+reqwest = { version = "=0.12.28", default-features = false, features = ["rustls-tls", "stream"] }
+tokio = { version = "=1.53.1", features = ["full"] }
+tokio-util = { version = "=0.7.19", features = ["rt"] }
+url = "=2.5.8"
+http = "=1.5.0"
+futures-util = "=0.3.33"
+sha2 = "=0.10.9"
+rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
+tokio-rustls = { version = "=0.26.4", default-features = false, features = ["ring", "tls12"] }
+
+morrow-plugin-runtime = { path = "../plugin_runtime", features = ["packages"], optional = true }
+morrow-core = { path = "../core", optional = true }
+
+[features]
+plugin-adapter = ["dep:morrow-plugin-runtime", "dep:morrow-core"]
+
+[dev-dependencies]
+rcgen = "=0.13.2"
+tempfile = "=3.27.0"
+
+[[bin]]
+name = "morrow-api-node"
+path = "src/main.rs"
+required-features = ["plugin-adapter"]

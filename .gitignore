@@ -71,3 +71,5 @@ app.*.map.json
 /audit/target/
 
 /plugin_runtime/target/
+
+/network_node/target/
