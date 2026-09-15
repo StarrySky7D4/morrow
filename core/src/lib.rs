@@ -8,6 +8,7 @@ pub mod dependency_call;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
 pub mod io;
+pub mod io_broker;
 pub mod lifecycle;
 pub mod plugin_package;
 pub mod read_archive;
