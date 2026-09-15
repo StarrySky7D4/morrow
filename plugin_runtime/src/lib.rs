@@ -139,6 +139,7 @@ struct State<'a> {
     task: Option<TaskState<'a>>,
     exchange: Exchange<'a>,
     dependency: Option<Exchange<'a>>,
+    io: Option<Exchange<'a>>,
     limits: StoreLimits,
     cancel: Cancellation,
     calls: u32,
@@ -148,28 +149,37 @@ struct State<'a> {
 pub struct Runner {
     task_abi: bool,
     dependency_abi: bool,
+    io_abi: bool,
     engine: Engine,
     module: Module,
     limits: Limits,
 }
 impl Runner {
     pub fn new(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, false, false)
+        Self::prepare(bytes, limits, false, false, false)
     }
     pub fn new_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false)
+        Self::prepare(bytes, limits, true, false, false)
     }
     /// Task ABI with one additional fixed dependency import. The callback is host-routed;
     /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
     pub fn new_dependency_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, true)
+        Self::prepare(bytes, limits, true, true, false)
+    }
+    /// Task ABI with the fixed IO import. Combined with dependency imports is rejected.
+    pub fn new_io_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        Self::prepare(bytes, limits, true, false, true)
     }
     fn prepare(
         bytes: &[u8],
         limits: Limits,
         task_abi: bool,
         dependency_abi: bool,
+        io_abi: bool,
     ) -> Result<Self, Fault> {
+        if io_abi && dependency_abi {
+            return Err(Fault::UnsupportedAbi);
+        }
         if bytes.len() > MAX_MODULE_BYTES
             || limits.fuel == 0
             || limits.fuel > 100_000_000
@@ -202,6 +212,7 @@ impl Runner {
             let arity = match (import.module(), import.name()) {
                 ("morrow_v1", "exchange") => 4,
                 ("morrow_dependency_v1", "call") if dependency_abi => 4,
+                ("morrow_io_v1", "call") if io_abi => 4,
                 ("morrow_task_v1", "read_input" | "complete") if task_abi => 2,
                 _ => return Err(Fault::UnsupportedAbi),
             };
@@ -231,6 +242,7 @@ impl Runner {
         Ok(Self {
             task_abi,
             dependency_abi,
+            io_abi,
             engine,
             module,
             limits,
@@ -240,7 +252,7 @@ impl Runner {
     /// Cancellation gates imports and checks before/after execution; a pure loop is
     /// bounded by fuel, not immediately interrupted by the cancellation flag.
     pub fn run(&self, exchange: Exchange<'_>, cancel: Cancellation) -> Report {
-        self.execute(exchange, None, cancel, None).report
+        self.execute(exchange, None, None, cancel, None).report
     }
     pub fn run_task<'a>(
         &self,
@@ -248,7 +260,7 @@ impl Runner {
         exchange: Exchange<'a>,
         cancel: Cancellation,
     ) -> TaskRun {
-        self.execute(exchange, None, cancel, Some(input))
+        self.execute(exchange, None, None, cancel, Some(input))
     }
     /// Dependency and core exchange calls share the same bounded import-call counter.
     /// That counter is not a transaction count: a later error cannot imply rollback.
@@ -259,23 +271,37 @@ impl Runner {
         dependency: Exchange<'a>,
         cancel: Cancellation,
     ) -> TaskRun {
-        self.execute(exchange, Some(dependency), cancel, Some(input))
+        self.execute(exchange, Some(dependency), None, cancel, Some(input))
+    }
+    /// IO and core exchange share the host-call counter. The IO callback must return a
+    /// framed response or Err(()) for a fixed transport failure; it must not re-enter.
+    pub fn run_task_with_io<'a>(
+        &self,
+        input: &'a [u8],
+        exchange: Exchange<'a>,
+        io: Exchange<'a>,
+        cancel: Cancellation,
+    ) -> TaskRun {
+        self.execute(exchange, None, Some(io), cancel, Some(input))
     }
     fn execute<'a>(
         &self,
         exchange: Exchange<'a>,
         dependency: Option<Exchange<'a>>,
+        io: Option<Exchange<'a>>,
         cancel: Cancellation,
         input: Option<&'a [u8]>,
     ) -> TaskRun {
-        let fault =
-            if self.task_abi != input.is_some() || self.dependency_abi != dependency.is_some() {
-                Some(Fault::UnsupportedAbi)
-            } else if input.is_some_and(|b| b.is_empty() || b.len() > MAX_TASK_BYTES) {
-                Some(Fault::Limits)
-            } else {
-                cancel.fault()
-            };
+        let fault = if self.task_abi != input.is_some()
+            || self.dependency_abi != dependency.is_some()
+            || self.io_abi != io.is_some()
+        {
+            Some(Fault::UnsupportedAbi)
+        } else if input.is_some_and(|b| b.is_empty() || b.len() > MAX_TASK_BYTES) {
+            Some(Fault::Limits)
+        } else {
+            cancel.fault()
+        };
         if let Some(fault) = fault {
             return TaskRun {
                 report: Report {
@@ -294,6 +320,7 @@ impl Runner {
             }),
             exchange,
             dependency,
+            io,
             limits: StoreLimitsBuilder::new()
                 .memory_size(self.limits.memory_bytes)
                 .memories(1)
@@ -326,6 +353,11 @@ impl Runner {
             linker
                 .func_wrap("morrow_dependency_v1", "call", dependency_call)
                 .expect("dependency call import");
+        }
+        if self.io_abi {
+            linker
+                .func_wrap("morrow_io_v1", "call", io_call)
+                .expect("io call import");
         }
         let outcome = (|| {
             let instance = linker
@@ -590,5 +622,72 @@ fn dependency_call(
     memory
         .write(&mut caller, output, &response)
         .map_err(|_| wasmi::Error::new("dependency response write failed"))?;
+    Ok(response.len() as i32)
+}
+
+// Framed IO only. Authorization belongs to the trusted broker callback.
+fn io_call(
+    mut caller: Caller<'_, State<'_>>,
+    input: i32,
+    length: i32,
+    output: i32,
+    capacity: i32,
+) -> Result<i32, wasmi::Error> {
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    if caller.data().io.is_none()
+        || caller
+            .data()
+            .task
+            .as_ref()
+            .is_none_or(|t| !t.read || t.completion.is_some())
+    {
+        return Err(trap(caller.data_mut(), Fault::TaskProtocol));
+    }
+    if input < 0
+        || output < 0
+        || length <= 0
+        || length as usize > MAX_TASK_BYTES
+        || capacity as usize != MAX_TASK_BYTES
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    let memory = caller
+        .get_export("memory")
+        .and_then(|v| v.into_memory())
+        .ok_or_else(|| wasmi::Error::new("missing memory"))?;
+    let input = input as usize;
+    let output = output as usize;
+    let Some(input_end) = input.checked_add(length as usize) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let Some(output_end) = output.checked_add(MAX_TASK_BYTES) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let memory_len = memory.data(&caller).len();
+    if input_end > memory_len
+        || output_end > memory_len
+        || (input < output_end && output < input_end)
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    if caller.data().calls >= caller.data().max_calls {
+        return Err(trap(caller.data_mut(), Fault::Limits));
+    }
+    let fixed = memory.data(&caller)[input..input_end].to_vec();
+    caller.data_mut().calls += 1;
+    let response = (caller.data_mut().io.as_mut().expect("checked callback"))(&fixed);
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    let response = match response {
+        Ok(bytes) if !bytes.is_empty() && bytes.len() <= MAX_TASK_BYTES => bytes,
+        Err(()) => return Ok(-1),
+        _ => return Err(trap(caller.data_mut(), Fault::Trap)),
+    };
+    memory
+        .write(&mut caller, output, &response)
+        .map_err(|_| wasmi::Error::new("io response write failed"))?;
     Ok(response.len() as i32)
 }
