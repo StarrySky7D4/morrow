@@ -11,6 +11,7 @@ pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
 pub const DEPENDENCY_CALLS_FEATURE: &str = "dependency-calls-v1";
 pub const DEPENDENCIES_FEATURE: &str = "dependencies-v1";
+pub const IO_FEATURE: &str = crate::io::FEATURE;
 pub const MAX_DEPENDENCIES: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
@@ -81,6 +82,8 @@ impl Package {
             transform_handlers: vec![],
             dependencies: vec![],
             dependency_schema_sha256: vec![],
+            io_schema_sha256: vec![],
+            io_declaration: vec![],
         }
     }
     pub fn manifest_for_task(
@@ -191,11 +194,12 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 3
+            || manifest.required_features.len() > 4
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
                     && f != DEPENDENCY_CALLS_FEATURE
+                    && f != IO_FEATURE
             })
             || manifest
                 .required_features
@@ -239,6 +243,17 @@ impl Package {
             }
         } else if !manifest.dependency_schema_sha256.is_empty() {
             return Err(Error::Invalid("unexpected dependency schema"));
+        }
+        let io_feature = manifest.required_features.iter().any(|f| f == IO_FEATURE);
+        if io_feature {
+            if manifest.guest_abi_version != 2
+                || manifest.io_schema_sha256 != crate::io::schema_digest()
+            {
+                return Err(Error::Invalid("io feature"));
+            }
+            crate::io::decode_declaration(&manifest.io_declaration, &crate::io::schema_digest())?;
+        } else if !manifest.io_schema_sha256.is_empty() || !manifest.io_declaration.is_empty() {
+            return Err(Error::Invalid("unexpected io declaration"));
         }
         if manifest.dependencies.len() > MAX_DEPENDENCIES {
             return Err(Error::Limit);

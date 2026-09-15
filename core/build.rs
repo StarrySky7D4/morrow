@@ -59,11 +59,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .compile_protos(&["schemas/plugin_registry.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/io_manifest.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .file_descriptor_set_path(out.join("io_manifest.descriptor.bin"))
+        .compile_protos(&["schemas/io_manifest.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/ui.capnp");
     println!("cargo:rerun-if-changed=schemas/task.capnp");
     println!("cargo:rerun-if-changed=schemas/shared_object.capnp");
     println!("cargo:rerun-if-changed=schemas/shared_transfer.capnp");
     println!("cargo:rerun-if-changed=schemas/dependency_call.capnp");
+    println!("cargo:rerun-if-changed=schemas/io.capnp");
     capnpc::CompilerCommand::new()
         .src_prefix("schemas")
         .file("schemas/runtime.capnp")
@@ -72,6 +78,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("schemas/shared_object.capnp")
         .file("schemas/shared_transfer.capnp")
         .file("schemas/dependency_call.capnp")
+        .file("schemas/io.capnp")
         .run()?;
     Ok(())
 }
