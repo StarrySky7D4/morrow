@@ -1,0 +1,32 @@
+syntax = "proto3";
+package morrow.plugin.io.v1;
+// Package-side IO ceiling. This is never a grant, path, URL, or live lease.
+
+enum IoKind {
+  IO_KIND_UNSPECIFIED = 0;
+  FILE_READ = 1;
+  FILE_LIST = 2;
+  FILE_CREATE = 3;
+  FILE_REPLACE = 4;
+  FILE_DELETE = 5;
+  HTTP_GET = 6;
+  HTTP_SEND = 7;
+  CREDENTIAL_USE = 8;
+}
+
+message IoBudget {
+  uint32 max_chunk_bytes = 1;
+  uint32 max_resources = 2;
+  uint32 max_jobs = 3;
+  uint64 max_job_bytes = 4;
+  uint64 max_instance_bytes = 5;
+  uint32 max_seconds = 6;
+}
+
+message IoDeclaration {
+  uint32 schema_version = 1;
+  bytes schema_sha256 = 2;
+  repeated IoKind requested = 3;
+  repeated string effectful_handlers = 4;
+  IoBudget budget = 5;
+}
