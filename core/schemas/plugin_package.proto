@@ -52,6 +52,8 @@ message Manifest {
   repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
   repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
   bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
+  bytes io_schema_sha256 = 18; // Required only with io-v1.
+  bytes io_declaration = 19; // morrow.plugin.io.v1.IoDeclaration bytes.
 }
 message Package {
   uint32 schema_version = 1;

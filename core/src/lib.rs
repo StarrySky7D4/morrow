@@ -7,6 +7,7 @@ pub mod content_change;
 pub mod dependency_call;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
+pub mod io;
 pub mod lifecycle;
 pub mod plugin_package;
 pub mod read_archive;
@@ -31,6 +32,10 @@ pub mod ui;
 #[allow(clippy::all, unsafe_code)]
 pub mod dependency_call_capnp {
     include!(concat!(env!("OUT_DIR"), "/dependency_call_capnp.rs"));
+}
+#[allow(clippy::all, unsafe_code)]
+pub mod io_capnp {
+    include!(concat!(env!("OUT_DIR"), "/io_capnp.rs"));
 }
 #[allow(clippy::all, unsafe_code)]
 pub mod shared_transfer_capnp {
