@@ -72,8 +72,7 @@ fn guessed_or_foreign_refs_are_denied() {
         Response::decode(&guess, &denied).unwrap().status,
         Status::Revoked
     );
-    let other = identity(1);
-    let mut other = other;
+    let mut other = identity(1);
     other.connection = 8;
     let steal = Request::encode("s", grant.as_bytes(), Kind::FileRead, 0, 3, "").unwrap();
     let cross = broker
@@ -97,6 +96,22 @@ fn revoke_and_path_and_write_kinds_fail_closed() {
             1,
         )
         .unwrap();
+    let path = Request::encode("p", grant.as_bytes(), Kind::FileRead, 0, 3, "../x").unwrap();
+    let invalid = broker
+        .exchange(&identity(2), &approval(), path.bytes(), 10, false)
+        .unwrap();
+    assert_eq!(
+        Response::decode(&path, &invalid).unwrap().status,
+        Status::InvalidPath
+    );
+    let write = Request::encode("w", grant.as_bytes(), Kind::FileCreate, 0, 0, "").unwrap();
+    let denied = broker
+        .exchange(&identity(2), &approval(), write.bytes(), 10, false)
+        .unwrap();
+    assert_eq!(
+        Response::decode(&write, &denied).unwrap().status,
+        Status::Denied
+    );
     broker.revoke(&identity(2));
     let request = Request::encode("r", grant.as_bytes(), Kind::FileRead, 0, 3, "").unwrap();
     let revoked = broker
@@ -104,19 +119,6 @@ fn revoke_and_path_and_write_kinds_fail_closed() {
         .unwrap();
     assert_eq!(
         Response::decode(&request, &revoked).unwrap().status,
-        Status::Revoked
-    );
-    let path = Request::encode("p", grant.as_bytes(), Kind::FileRead, 0, 3, "../x").unwrap();
-    assert!(matches!(
-        broker.exchange(&identity(2), &approval(), path.bytes(), 10, false),
-        Err(_)
-    ));
-    let write = Request::encode("w", grant.as_bytes(), Kind::FileCreate, 0, 0, "").unwrap();
-    let unsupported = broker
-        .exchange(&identity(2), &approval(), write.bytes(), 10, false)
-        .unwrap();
-    assert_eq!(
-        Response::decode(&write, &unsupported).unwrap().status,
         Status::Revoked
     );
 }
