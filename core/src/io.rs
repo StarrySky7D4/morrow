@@ -56,6 +56,76 @@ impl Kind {
             manifest_proto::IoKind::Unspecified => return None,
         })
     }
+
+    fn to_wire(self) -> wire::Kind {
+        match self {
+            Self::FileRead => wire::Kind::FileRead,
+            Self::FileList => wire::Kind::FileList,
+            Self::FileCreate => wire::Kind::FileCreate,
+            Self::FileReplace => wire::Kind::FileReplace,
+            Self::FileDelete => wire::Kind::FileDelete,
+            Self::HttpGet => wire::Kind::HttpGet,
+            Self::HttpSend => wire::Kind::HttpSend,
+            Self::CredentialUse => wire::Kind::CredentialUse,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Status {
+    Ok,
+    Denied,
+    Revoked,
+    Expired,
+    Unsupported,
+    InvalidPath,
+    Quota,
+    NotFound,
+    Conflict,
+    Pending,
+    Cancelled,
+    OutcomeUnknown,
+    EvidenceUnavailable,
+    UnsupportedPlatform,
+}
+
+impl Status {
+    fn to_wire(self) -> wire::Status {
+        match self {
+            Self::Ok => wire::Status::Ok,
+            Self::Denied => wire::Status::Denied,
+            Self::Revoked => wire::Status::Revoked,
+            Self::Expired => wire::Status::Expired,
+            Self::Unsupported => wire::Status::Unsupported,
+            Self::InvalidPath => wire::Status::InvalidPath,
+            Self::Quota => wire::Status::Quota,
+            Self::NotFound => wire::Status::NotFound,
+            Self::Conflict => wire::Status::Conflict,
+            Self::Pending => wire::Status::Pending,
+            Self::Cancelled => wire::Status::Cancelled,
+            Self::OutcomeUnknown => wire::Status::OutcomeUnknown,
+            Self::EvidenceUnavailable => wire::Status::EvidenceUnavailable,
+            Self::UnsupportedPlatform => wire::Status::UnsupportedPlatform,
+        }
+    }
+    fn from_wire(value: wire::Status) -> Self {
+        match value {
+            wire::Status::Ok => Self::Ok,
+            wire::Status::Denied => Self::Denied,
+            wire::Status::Revoked => Self::Revoked,
+            wire::Status::Expired => Self::Expired,
+            wire::Status::Unsupported => Self::Unsupported,
+            wire::Status::InvalidPath => Self::InvalidPath,
+            wire::Status::Quota => Self::Quota,
+            wire::Status::NotFound => Self::NotFound,
+            wire::Status::Conflict => Self::Conflict,
+            wire::Status::Pending => Self::Pending,
+            wire::Status::Cancelled => Self::Cancelled,
+            wire::Status::OutcomeUnknown => Self::OutcomeUnknown,
+            wire::Status::EvidenceUnavailable => Self::EvidenceUnavailable,
+            wire::Status::UnsupportedPlatform => Self::UnsupportedPlatform,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -124,6 +194,13 @@ fn invalid<T>(_: T) -> Error {
     Error::Invalid("io frame")
 }
 
+fn check_path(path: &str) -> Result<()> {
+    if path.len() > 1024 || path.chars().any(|c| c.is_control() || c == '\\' || c == '\0') {
+        return Err(Error::Invalid("io path"));
+    }
+    Ok(())
+}
+
 fn message() -> Builder<capnp::message::HeapAllocator> {
     let mut message = Builder::new_default();
     let mut root = message.init_root::<wire::message::Builder>();
@@ -177,6 +254,44 @@ pub struct Request {
 }
 
 impl Request {
+    pub fn encode(
+        call_id: &str,
+        resource_ref: &[u8; 32],
+        kind: Kind,
+        offset: u64,
+        length: u32,
+        path: &str,
+    ) -> Result<Self> {
+        identity(call_id)?;
+        check_path(path)?;
+        if length as usize > MAX_PAYLOAD_BYTES {
+            return Err(Error::Limit);
+        }
+        let mut message = message();
+        let root = message
+            .get_root::<wire::message::Builder>()
+            .map_err(invalid)?;
+        let mut request = root.init_request();
+        request.set_version(VERSION);
+        request.set_schema_digest(&schema_digest());
+        request.set_call_id(call_id);
+        request.set_resource_ref(resource_ref);
+        request.set_kind(kind.to_wire());
+        request.set_offset(offset);
+        request.set_length(length);
+        request.set_path(path);
+        let bytes = finish(&message)?;
+        Ok(Self {
+            bytes,
+            call_id: call_id.into(),
+            resource_ref: resource_ref.to_vec(),
+            kind,
+            offset,
+            length,
+            path: path.into(),
+        })
+    }
+
     pub fn decode(bytes: &[u8]) -> Result<Self> {
         let message = read(bytes)?;
         let root = message.get_root::<wire::message::Reader>().map_err(invalid)?;
@@ -208,9 +323,7 @@ impl Request {
         };
         let path = request.get_path().map_err(invalid)?;
         let path = path.to_str().map_err(invalid)?.to_owned();
-        if path.len() > 1024 || path.chars().any(|c| c.is_control() || c == '\\' || c == '\0') {
-            return Err(Error::Invalid("io path"));
-        }
+        check_path(&path)?;
         if request.get_length() as usize > MAX_PAYLOAD_BYTES {
             return Err(Error::Limit);
         }
@@ -244,8 +357,13 @@ impl Request {
         &self.path
     }
 
-    /// W1 host reply: declared IO exists, no broker backend is attached.
-    pub fn encode_unsupported(&self) -> Result<Vec<u8>> {
+    pub fn encode_status(&self, status: Status, eof: bool, payload: &[u8]) -> Result<Vec<u8>> {
+        if payload.len() > MAX_PAYLOAD_BYTES {
+            return Err(Error::Limit);
+        }
+        if status != Status::Ok && !payload.is_empty() && payload.len() > 256 {
+            return Err(Error::Limit);
+        }
         let mut message = message();
         let root = message
             .get_root::<wire::message::Builder>()
@@ -255,9 +373,54 @@ impl Request {
         response.set_schema_digest(&schema_digest());
         response.set_call_id(&self.call_id);
         response.set_request_sha256(&Sha256::digest(&self.bytes));
-        response.set_status(wire::Status::Unsupported);
-        response.set_eof(true);
-        response.set_payload(b"");
+        response.set_status(status.to_wire());
+        response.set_eof(eof);
+        response.set_payload(payload);
         finish(&message)
+    }
+
+    pub fn encode_unsupported(&self) -> Result<Vec<u8>> {
+        self.encode_status(Status::Unsupported, true, b"")
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Response {
+    pub status: Status,
+    pub eof: bool,
+    pub payload: Vec<u8>,
+}
+
+impl Response {
+    pub fn decode(request: &Request, bytes: &[u8]) -> Result<Self> {
+        let message = read(bytes)?;
+        let root = message.get_root::<wire::message::Reader>().map_err(invalid)?;
+        let wire::message::Response(response) = root.which().map_err(invalid)? else {
+            return Err(invalid(()));
+        };
+        let response = response.map_err(invalid)?;
+        if response.get_version() != VERSION
+            || response.get_schema_digest().map_err(invalid)? != schema_digest()
+        {
+            return Err(Error::UnsupportedVersion);
+        }
+        let call_id = response.get_call_id().map_err(invalid)?;
+        let call_id = call_id.to_str().map_err(invalid)?;
+        if call_id != request.call_id {
+            return Err(Error::Integrity);
+        }
+        if response.get_request_sha256().map_err(invalid)? != Sha256::digest(&request.bytes).as_slice()
+        {
+            return Err(Error::Integrity);
+        }
+        let payload = response.get_payload().map_err(invalid)?.to_vec();
+        if payload.len() > MAX_PAYLOAD_BYTES {
+            return Err(Error::Limit);
+        }
+        Ok(Self {
+            status: Status::from_wire(response.get_status().map_err(invalid)?),
+            eof: response.get_eof(),
+            payload,
+        })
     }
 }
