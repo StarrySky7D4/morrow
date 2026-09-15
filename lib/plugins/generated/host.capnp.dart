@@ -43,6 +43,8 @@ enum Action {
   externalUiOpen,
   externalUiEvent,
   externalUiClose,
+  readUiLocale,
+  saveUiLocale,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -96,6 +98,8 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'externalUiOpen', codeOrder: 35, ordinal: 35),
     EnumerantSchemaInfo(name: 'externalUiEvent', codeOrder: 36, ordinal: 36),
     EnumerantSchemaInfo(name: 'externalUiClose', codeOrder: 37, ordinal: 37),
+    EnumerantSchemaInfo(name: 'readUiLocale', codeOrder: 38, ordinal: 38),
+    EnumerantSchemaInfo(name: 'saveUiLocale', codeOrder: 39, ordinal: 39),
   ],
 );
 

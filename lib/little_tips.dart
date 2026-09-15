@@ -1,29 +1,42 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'appearance.dart';
 import 'music/music_controller.dart';
 
-const cornerTips = [
-  '不必每个想法都有用\n有些只是让今天更有趣。',
-  '先写下来，再慢慢想\n灵感不必一次就完整。',
-  '留一点空白给自己\n好奇心也需要呼吸。',
-  '今天试一点新东西\n小小的偏离，也有惊喜。',
-  '走神也可能有收获\n给思绪一条散步的小路。',
-  '给喜欢的事一点时间\n不用急着证明它的意义。',
-  '进度可以很小\n愿意开始就已经很好。',
-  '偶尔抬头看看窗外\n生活也是灵感的来源。',
+// Compatibility default for callers without a locale; visible UI uses the context helper.
+List<String> get cornerTips => _cornerTips(L10n.forLocale(const Locale('zh')));
+// Compatibility default for callers without a locale; visible UI uses the context helper.
+List<String> get footerTips => _footerTips(L10n.forLocale(const Locale('zh')));
+
+List<String> localizedCornerTips(BuildContext context) =>
+    _cornerTips(L10n.of(context));
+
+List<String> _cornerTips(AppLocalizations labels) => [
+  labels.visualCornerTips1,
+  labels.visualCornerTips2,
+  labels.visualCornerTips3,
+  labels.visualCornerTips4,
+  labels.visualCornerTips5,
+  labels.visualCornerTips6,
+  labels.visualCornerTips7,
+  labels.visualCornerTips8,
 ];
-const footerTips = [
-  '没有紧迫的事。给好奇心一点时间。',
-  '想到什么就记一点，不用马上整理。',
-  '把大的想法，拆成今天的一小步。',
-  '伸个懒腰，让眼睛休息一会儿。',
-  '允许一个想法暂时没有答案。',
-  '有些收获，会在慢下来以后出现。',
-  '收藏一个细节，也是在照顾灵感。',
-  '今天的随手一记，可能是明天的开始。',
-  '走一会儿神，再回到喜欢的事情。',
-  '不用填满每一分钟。留一点余地。',
+
+List<String> localizedFooterTips(BuildContext context) =>
+    _footerTips(L10n.of(context));
+
+List<String> _footerTips(AppLocalizations labels) => [
+  labels.visualFooterTips1,
+  labels.visualFooterTips2,
+  labels.visualFooterTips3,
+  labels.visualFooterTips4,
+  labels.visualFooterTips5,
+  labels.visualFooterTips6,
+  labels.visualFooterTips7,
+  labels.visualFooterTips8,
+  labels.visualFooterTips9,
+  labels.visualFooterTips10,
 ];
 
 class RotatingTip extends StatefulWidget {
@@ -117,16 +130,23 @@ class MusicFooter extends StatelessWidget {
           Expanded(
             child: RotatingTip(
               key: const ValueKey('footer-tips'),
-              lines: footerTips,
+              lines: localizedFooterTips(context),
               textOverride: music.playing && music.showLyrics
-                  ? (music.lyric ?? '♪ ${music.current?.title ?? ''} · 暂无歌词')
+                  ? (music.lyricForDisplay(
+                          untimedLabel: L10n.of(context).visualNoTimeline,
+                        ) ??
+                        L10n.of(
+                          context,
+                        ).visualNoLyricsTitle(music.current?.title ?? ''))
                   : null,
               style: TextStyle(color: p.muted, fontSize: 11, height: 1.7),
             ),
           ),
           IconButton(
             key: const ValueKey('footer-lyrics-toggle'),
-            tooltip: music.showLyrics ? '底部显示提示语' : '底部显示歌词',
+            tooltip: music.showLyrics
+                ? L10n.of(context).visualFooterTips
+                : L10n.of(context).visualFooterLyrics,
             onPressed: music.playing
                 ? () => music.setShowLyrics(!music.showLyrics)
                 : null,

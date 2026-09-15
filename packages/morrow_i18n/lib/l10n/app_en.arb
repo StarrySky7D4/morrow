@@ -1,0 +1,1226 @@
+{
+  "@@locale": "en",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "commonAppName": "Morrow",
+  "commonCancel": "Cancel",
+  "commonCount": "{count, plural, =0{No items} one{1 item} other{{count} items}}",
+  "commonGreeting": "Hello, {name}",
+  "importsAttachmentLimit": "Up to 20 attachments can be imported at once. Paste the rest separately.",
+  "importsClipboardChanged": "The clipboard changed while being read. Please paste again.",
+  "importsEmbeddedImageUnreadable": "An embedded image could not be read.",
+  "importsEmbeddedImagesSeparate": "Some embedded images need to be imported as separate files.",
+  "importsExcelValues": "Table values and formulas were converted to Markdown. Formatting and merged cells are preserved in the XML attachment.",
+  "importsExcelXmlKept": "The original Excel table has been preserved as an XML attachment.",
+  "importsFileTooLarge": "The clipboard file exceeds 200 MB.",
+  "importsItemLimit": "Only the first 20 items were read. Paste additional items separately.",
+  "importsItemUnreadable": "One clipboard item could not be read. Other readable content has been kept.",
+  "importsLocalImageNotRead": "Local linked images were not read automatically. Paste the image or import the original file.",
+  "importsMergedTable": "Merged cells were converted to a readable table. Original formatting is preserved in the HTML attachment.",
+  "importsOfficeBusy": "Another application is using the clipboard. Office objects were not read.",
+  "importsOfficeEmbeddedKept": "The embedded Office object is preserved as an original attachment. Edit its charts, formulas and layout in the original application.",
+  "importsOfficeExportFailed": "An Office object exceeds the limit or could not be exported. Save it in the original application, then import it.",
+  "importsOfficeReadFailed": "Office content could not be read. Other clipboard content is still available.",
+  "importsOfficeUnavailable": "The Office clipboard is temporarily unavailable.",
+  "importsOfficeUnreadable": "The original Office object could not be read. Other available content has been kept.",
+  "importsRichFallback": "Some rich text formatting could not be converted. Readable text has been kept.",
+  "importsRichTooLarge": "Rich text exceeds 2 MB. Please import the document as an attachment.",
+  "importsRtfTooLarge": "The RTF content is too large. Please import the original document.",
+  "importsSpreadsheetTooLarge": "The table is too large. Please import the Excel file.",
+  "importsTableConverted": "The table was converted to Markdown. Complete data is preserved in the TSV attachment.",
+  "importsTextTooLarge": "The text exceeds 2 MB. Please import it as a file.",
+  "importsTotalTooLarge": "The files in this paste exceed 200 MB in total. Import them in smaller batches.",
+  "importsUnsupported": "Clipboard access is not supported here. Please import a file.",
+  "mainActiveProjects": "In progress",
+  "mainAdjustCustomTone": "Adjust custom tone",
+  "mainAmbientDetail": "Flowing light adds a touch of color.",
+  "mainAppTitle": "Morrow — Room for ideas",
+  "mainAppearance": "Appearance",
+  "mainArrangeIdeas": "Sort ideas",
+  "mainAttachmentCount": "Attachments · {count}",
+  "mainAttachmentHint": "{count} attachments · {name}",
+  "mainAttachmentLimit": "Each record supports up to 20 attachments.",
+  "mainAutosaveNotice": "Appearance and ideas are saved locally",
+  "mainAwaitDiscovery": "Waiting for a new discovery",
+  "mainBackToWorkbench": "Back to workspace",
+  "mainBackgroundCanvas": "Background canvas",
+  "mainBackgroundSound": "Play background audio",
+  "mainBodyHint": "Write your thoughts or paste some content…\n\nSupports # headings, lists, tables and code blocks",
+  "mainBrightWhite": "White",
+  "mainBuiltinTexture": "Use built-in texture",
+  "mainCanvasCompass": "Canvas tint wheel",
+  "mainCaptureIdea": "Capture idea",
+  "mainCaptureNow": "Capture a thought",
+  "mainCardAttachments": "Files {count} · {name}",
+  "mainCategoryExperiment": "Experiment",
+  "mainCategoryIdea": "Idea",
+  "mainCategoryProject": "Project",
+  "mainCategoryPrompt": "Where to keep it",
+  "mainChangeFailed": "This change could not be saved. Your draft is preserved; you can retry.",
+  "mainCheckAgain": "Check again",
+  "mainClearSearch": "Clear search",
+  "mainClipboardEmpty": "No readable text or files in the clipboard. Copy a file from your file manager, or use Import file.",
+  "mainClipboardReadFailed": "Could not read the content. Import a file, or check file and clipboard permissions.",
+  "mainClipboardSupport": "Supports Markdown, Office rich text and tables, screenshots and files. Complex objects keep their original attachments. Up to 20 attachments, 200 MB each.",
+  "mainCollapseSidebar": "Collapse sidebar",
+  "mainCompletedProjects": "Completed",
+  "mainComponentCompass": "Component tint wheel",
+  "mainComponentEmpty": "Empty state",
+  "mainComponentFooter": "Footer tips and lyrics",
+  "mainComponentHero": "Overview card",
+  "mainComponentNavigation": "Sidebar navigation",
+  "mainComponentQuickCapture": "Quick capture",
+  "mainComponentSearch": "Search bar",
+  "mainComponentSettings": "Components and cards · Settings",
+  "mainContentProtection": "Content protection",
+  "mainContentRead": "Content read",
+  "mainContentReadFiles": "Content read; {count} attachments preserved",
+  "mainCornerRadius": "Corner radius",
+  "mainCrystal": "Crystal clear",
+  "mainCrystalDetail": "Light and clear, letting color shine through.",
+  "mainCuriosity": "Interesting things begin\nwith a little curiosity.",
+  "mainCustomCompass": "Color wheel · Custom",
+  "mainCustomLightness": "Custom lightness",
+  "mainCustomTheme": "Custom",
+  "mainDaily": "Little things",
+  "mainDailyExplore": "Take ten minutes to explore",
+  "mainDailyIdea": "Write down an idea",
+  "mainDailyWater": "Pour yourself a glass of water",
+  "mainDarkTheme": "Dark",
+  "mainDeepBlack": "Black",
+  "mainDefaultCanvas": "Default",
+  "mainDefaultGlobalColor": "Default theme color · All controls",
+  "mainDelete": "Delete",
+  "mainDeleted": "Deleted “{title}”",
+  "mainDiagnosticDetails": "Diagnostic details",
+  "mainDone": "Done",
+  "mainEdit": "Edit",
+  "mainEditIdeaTitle": "Make your idea clearer",
+  "mainEditorClosedUnknown": "The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.",
+  "mainEditorSubtitle": "Text, tables, images—keep them here while your idea takes shape.",
+  "mainEditorUnavailable": "The editor is unavailable. Check the content service and retry.",
+  "mainExpandSidebar": "Expand sidebar",
+  "mainExtensionPlugins": "Extensions",
+  "mainFavoriteAttachments": "Saved attachments",
+  "mainFavoriteRecords": "Saved records",
+  "mainFavoriteTooltip": "Favorite {title}",
+  "mainFavoritesIntro": "Your favorite text, images and files, all together.",
+  "mainFieldLimit": "This field supports up to {limit} characters. Shorten the content or import it as a file.",
+  "mainFilterAll": "All",
+  "mainFilterAttachments": "With files",
+  "mainFilterFavorites": "Favorites only",
+  "mainFilterFile": "Files",
+  "mainFilterImage": "Images",
+  "mainFilterMedia": "Audio / video",
+  "mainFilterPending": "To do",
+  "mainFilterText": "Text",
+  "mainFollowTheme": "Follow theme",
+  "mainFrostDetail": "Soften the background and give your thoughts room.",
+  "mainFrostEffect": "Blur",
+  "mainFrostOpacity": "Frost opacity",
+  "mainFrostUnavailable": "Desktop blur is unavailable on this system. Tint and opacity can still be adjusted.",
+  "mainFrosted": "Frosted",
+  "mainGlassTexture": "Glass style",
+  "mainGlobalColor": "{color} · All controls",
+  "mainGreeting": "Let your ideas grow.",
+  "mainGreetingDetail": "Keep the everyday details and the sparks of inspiration.",
+  "mainHeroBody": "A thought, a small task, a what-if.\nThis is where they begin.",
+  "mainHeroCaption": "THE POSSIBILITY CORNER",
+  "mainHeroTitle": "It is okay to start small.",
+  "mainHideAppearance": "Hide appearance settings",
+  "mainHideCustomTone": "Hide custom tone",
+  "mainHidePreview": "Hide preview",
+  "mainHypothesis": "Hypothesis",
+  "mainHypothesisPrompt": "Hypothesis to test",
+  "mainHypothesisSection": "Hypothesis / What to try",
+  "mainIdeaDetails": "Keep the details. Make the next step clearer.",
+  "mainIdeaNameHint": "Give it a name",
+  "mainIdeaNameRequired": "Write down your idea first",
+  "mainIdeaSaved": "Idea saved.",
+  "mainImportFailed": "Could not import the media. Check the file and available storage.",
+  "mainImportFile": "Import file",
+  "mainInboxIntro": "Capture first, organize later. Turn promising ideas into small projects.",
+  "mainJustNow": "Just now",
+  "mainLabIntro": "Start with a hypothesis. Keep your attempts, observations and surprises.",
+  "mainLanguage": "Language",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainLanguageSystem": "System default",
+  "mainLavender": "Lavender",
+  "mainLightOpacity": "20% · Light",
+  "mainLiquidAllCanvases": "Available independently on all four canvas types",
+  "mainLiquidDetail": "Flowing highlights and gentle refraction, like a suspended drop of water.",
+  "mainLiquidEffect": "Liquid glass effect",
+  "mainLiquidGlass": "Liquid glass",
+  "mainLivePreview": "Live preview",
+  "mainLocalMedia": "Local media",
+  "mainMakeYours": "MAKE IT YOURS",
+  "mainMarkOrganized": "Mark as organized",
+  "mainMarkdownBody": "Body · Markdown",
+  "mainMediaLimits": "Images / GIFs ≤ 25 MB; videos ≤ 150 MB",
+  "mainMonochrome": "Monochrome",
+  "mainMoreSteps": "{count} more steps; open to view",
+  "mainMovedProject": "“{title}” moved to Projects",
+  "mainMusic": "Music player",
+  "mainMySpace": "My space",
+  "mainNavigation": "Navigation",
+  "mainNewIdea": "New idea",
+  "mainNewIdeaTitle": "Catch a new idea",
+  "mainNoHypothesis": "No hypothesis yet",
+  "mainNoMatches": "No matching ideas here",
+  "mainNoResultYet": "The result can wait. The process is worth recording too.",
+  "mainNotNow": "Not now",
+  "mainObservationSection": "Observations / What you found",
+  "mainObservations": "Observations and conclusions",
+  "mainObservationsPrompt": "Observations, process and conclusions",
+  "mainOneHourAgo": "1 hour ago",
+  "mainOnlineMedia": "Online media",
+  "mainOpaqueFallback": "Clear panels over the current theme color.",
+  "mainOpenNextStep": "Open project to edit next steps",
+  "mainOrganizedCount": "Organized",
+  "mainOriginalColors": "Original colors",
+  "mainPageFavorites": "Favorites",
+  "mainPageInbox": "Inbox",
+  "mainPageLaboratory": "Lab",
+  "mainPageOverview": "Overview",
+  "mainPageProjects": "Projects",
+  "mainPageSummary": "{page} · Overview",
+  "mainPasteChanged": "The input changed while pasting. Please reopen the editor.",
+  "mainPasteContent": "Paste content",
+  "mainPause": "Pause",
+  "mainPersonalWorkspace": "Personal workspace",
+  "mainPlay": "Play",
+  "mainPreviewEmpty": "Your preview will appear here",
+  "mainProgress": "Small steps · {done}/{total}",
+  "mainProjectIntro": "Use checklists to make progress. Every small step brings you closer.",
+  "mainQueryAgain": "Run a new query",
+  "mainQueryCapacity": "Query history is full",
+  "mainQueryCapacityDetail": "Your content is preserved. This version cannot clear query history yet.",
+  "mainQueryLoading": "Finding ideas…",
+  "mainQueryRetry": "Retry query",
+  "mainQueryTerminated": "This query has ended",
+  "mainQueryUnknown": "Results are not yet confirmed",
+  "mainQuickHint": "What just came to mind?",
+  "mainRecentThoughts": "Recent thoughts",
+  "mainRecordedCount": "With observations",
+  "mainRestoreDefault": "Reset to default",
+  "mainRetry": "Retry",
+  "mainRetrySave": "Retry save",
+  "mainSage": "Sage",
+  "mainSampleBody0": "Keep sudden thoughts here.\nNo rush to finish—just let them begin.",
+  "mainSampleBody1": "A small page for favorite words,\nmusic and everyday details.",
+  "mainSampleBody2": "Try generative art. Let code grow\ninto unexpected shapes.",
+  "mainSampleBody3": "A quiet companion to help remember\nthe little things that slip away.",
+  "mainSampleTitle0": "A home for ideas",
+  "mainSampleTitle1": "A quiet digital garden",
+  "mainSampleTitle2": "Make something just for fun",
+  "mainSampleTitle3": "My little desktop helper",
+  "mainSampleTodo0": "Organize the first collection",
+  "mainSampleTodo1": "Design the garden entrance",
+  "mainSampleTodo2": "Plant a new idea",
+  "mainSampleTodo3": "Sketch a small prototype",
+  "mainSampleTodo4": "Design the reminder interaction",
+  "mainSaveFailed": "Could not save. Your changes remain in this session.",
+  "mainSaveIdea": "Save idea",
+  "mainSaveNotSubmitted": "Not submitted. Your draft and attachments are preserved; you can edit and save again.",
+  "mainSaveUnknown": "This save is not yet confirmed. Your draft and attachments are preserved. Retry this submission; closing will refresh the workspace to check.",
+  "mainSaving": "Saving…",
+  "mainSearchHint": "Search your ideas…",
+  "mainSettings": "Settings",
+  "mainShowAppearance": "Show appearance settings",
+  "mainSidebarMotto": "A little order. Room to wonder.",
+  "mainSlowProgress": "Small steps still move you forward.",
+  "mainSolidCanvas": "Solid",
+  "mainSolidDetail": "A calm, solid-color canvas.",
+  "mainSolidOpacity": "100% · Solid",
+  "mainSortFavorites": "Favorites first",
+  "mainSortRecent": "Recently added",
+  "mainSortTitle": "By title",
+  "mainSquareCorners": "Set to 0 for square corners",
+  "mainStageActive": "In progress",
+  "mainStageCompleted": "Completed",
+  "mainStageOrganized": "Organized",
+  "mainStagePlanned": "Planned",
+  "mainStageRecorded": "Recorded",
+  "mainStageTooltip": "Change stage for {title}",
+  "mainStageUnsorted": "To organize",
+  "mainStageUnverified": "To test",
+  "mainStageVerifying": "Testing",
+  "mainStayCurious": "STAY CURIOUS. STAY YOU.",
+  "mainSteps": "{done}/{total} steps",
+  "mainStorageUnavailable": "Local storage is unavailable. Changes will last for this session only.",
+  "mainStorageUnreadable": "Saved content could not be read. The original data is preserved and will not be overwritten.",
+  "mainTenMinutesAgo": "10 minutes ago",
+  "mainTextureCanvas": "Texture",
+  "mainTextureDetail": "Fine paper-like texture adds a tactile feel.",
+  "mainThemeCompass": "Theme color wheel",
+  "mainThemeGrayscale": "Theme grayscale",
+  "mainThemeTone": "Theme colors",
+  "mainThreeHoursAgo": "3 hours ago",
+  "mainTintOpacity": "Tint opacity",
+  "mainToProject": "Move to projects",
+  "mainTodosPrompt": "Next steps (one per line, optional)",
+  "mainTransparencyUnavailable": "System transparency could not be enabled. You can use the default background instead.",
+  "mainTransparentCanvas": "Transparent",
+  "mainTransparentDetail": "See the space behind the window; on the web, see the host background.",
+  "mainUndo": "Undo",
+  "mainUnfavoriteTooltip": "Unfavorite {title}",
+  "mainUnsortedCount": "To organize",
+  "mainUnverifiedCount": "To test",
+  "mainView": "View",
+  "mainViewAll": "Show all",
+  "mainWarmSand": "Warm sand",
+  "mainWhiteTheme": "White",
+  "mainWindowRadius": "Window corners",
+  "mainWindowRadiusDetail": "Adjust the window edge separately; it becomes square when maximized",
+  "mainWindowsFrostOnly": "Desktop blur is available on Windows only",
+  "mainWorkbench": "Workspace",
+  "mainWorkbenchPlugin": "Workspace plugin",
+  "mainWriteHypothesis": "Open the record and write down what you want to test.",
+  "mainYesterday": "Yesterday",
+  "pluginsApprovalUnknown": "Activation or permission changes could not be confirmed",
+  "pluginsApproveEnable": "Approve and enable",
+  "pluginsApproveWorkbench": "Allow reading and editing, and enable",
+  "pluginsAttachment": "Read attachments",
+  "pluginsBackingUp": "Backing up…",
+  "pluginsBackupLibrary": "Back up library",
+  "pluginsBackupLibraryType": "Library backup",
+  "pluginsBackupProtection": "Back up protection file",
+  "pluginsBackupUnknown": "Backup is not yet confirmed. Keep any file that was created and check the destination.",
+  "pluginsBinaryPreview": "Binary content: {hex}",
+  "pluginsBuiltin": "Built-in workbench",
+  "pluginsBuiltinCount": "{count, plural, =1{1 character} other{{count} characters}} · This session only; not saved as a card",
+  "pluginsBuiltinEmpty": "Enter text to preview uppercase",
+  "pluginsBuiltinHeading": "Text tools",
+  "pluginsBuiltinInput": "Enter text",
+  "pluginsCancel": "Cancel",
+  "pluginsChoosePackage": "Choose plugin file",
+  "pluginsChooseSmallFile": "Choose a small file",
+  "pluginsCloseTextTool": "Hide text tool",
+  "pluginsCloseUnknown": "Closing the plugin view could not be confirmed",
+  "pluginsCloseView": "Close view",
+  "pluginsConnectionLost": "Connection interrupted. Reopen this plugin view.",
+  "pluginsCreate": "Create content",
+  "pluginsDeclared": "Declared permissions: {permissions}",
+  "pluginsDependenciesNotice": "Dependencies must be configured in the host. This page does not approve them.",
+  "pluginsDisable": "Disable",
+  "pluginsDisableWorkbench": "Disable workbench plugin",
+  "pluginsDisabled": "Disabled",
+  "pluginsDisabledDetails": "Not enabled. Allow reading and editing workbench content to use the editor and tools.",
+  "pluginsEdit": "Edit content",
+  "pluginsEmptyLibrary": "No third-party plugins imported yet.",
+  "pluginsEmptyResult": "(empty result)",
+  "pluginsEnabled": "Enabled",
+  "pluginsEnabledDetails": "Enabled. This plugin can read and edit workbench content. Disabling it preserves your data.",
+  "pluginsExistingVersion": "This version is already installed. Its enabled state is unchanged.",
+  "pluginsFileLimit": "The file is too large. Choose a file no larger than {limit} bytes.",
+  "pluginsImport": "Import",
+  "pluginsImportDetails": "You choose whether to enable a plugin after importing it. Disabling or uninstalling preserves your content.",
+  "pluginsImportPreview": "Import preview: {name}",
+  "pluginsImportUnknown": "Import could not be confirmed",
+  "pluginsImportedDisabled": "Imported and disabled. Choose which permissions to allow.",
+  "pluginsInputFailed": "The input file could not be read",
+  "pluginsInputTooLong": "This view has reached its input limit. Shorten the text and try again.",
+  "pluginsInspectFailed": "The plugin preview could not be loaded",
+  "pluginsInspectedOnly": "The file has only been inspected. Enable the plugin separately after importing it.",
+  "pluginsInsufficientApproval": "The plugin is enabled but needs content permission. The workbench stays read-only. Disable it to review permissions again.",
+  "pluginsListUnknown": "The plugin list could not be confirmed",
+  "pluginsManageAbove": "Manage this plugin using the workbench plugin controls above.",
+  "pluginsManagementUnavailable": "Plugin management is unavailable. Existing content remains readable.",
+  "pluginsNoPermissions": "No content permissions declared.",
+  "pluginsOpenTextTool": "Open text tool",
+  "pluginsOpenView": "Open view",
+  "pluginsOpeningView": "Opening plugin view…",
+  "pluginsOperation": "Query operation results",
+  "pluginsOtherCapability": "Other declared permission: {name}",
+  "pluginsPackageFile": "Morrow plugin",
+  "pluginsPreviewOnly": "Preview only. Results are not automatically saved to existing content.",
+  "pluginsPreviewTruncated": "…showing the first 4,096 characters only",
+  "pluginsProtection": "Content protection",
+  "pluginsProtectionDetails": "Back up the original protection file for recovery with this system account. It contains no cards or attachments.",
+  "pluginsProtectionFileType": "Library protection file",
+  "pluginsProtectionSaved": "Protection file backed up. Choose it for recovery if startup fails.",
+  "pluginsRead": "Read content",
+  "pluginsReadingState": "Loading plugin status…",
+  "pluginsRefreshFailed": "{reason}. The list could not be refreshed. Select “Refresh list” to retry reading it.",
+  "pluginsRefreshList": "Refresh list",
+  "pluginsRefreshState": "Refresh status",
+  "pluginsRename": "Rename",
+  "pluginsResultBytes": "{count, plural, =1{1 byte} other{{count} bytes}}\n{preview}",
+  "pluginsSavePermissions": "Save permissions",
+  "pluginsSelectedFile": "Selected file: {name}",
+  "pluginsSettingsUnknown": "The setting has not been confirmed. Refresh the status before choosing again.",
+  "pluginsSnapshotDetails": "A library backup includes its cards, attachments and audit records. External assets remain references. Recovery requires the original system account.",
+  "pluginsSnapshotSaved": "Library backed up, including its attachments and original protection file.",
+  "pluginsStateUnavailable": "Plugin status could not be loaded. Try again.",
+  "pluginsSummary": "Read summaries",
+  "pluginsTextInput": "Input text",
+  "pluginsThirdParty": "Third-party plugins",
+  "pluginsTransform": "Transform",
+  "pluginsTransformUnknown": "The transformation could not be confirmed",
+  "pluginsUiExecution": "Plugin execution did not finish. Reopen the view and try again.",
+  "pluginsUiRejected": "The plugin action was not accepted. Check the input and current permissions.",
+  "pluginsUiUnavailable": "The plugin is unavailable. Check its status and reopen the view.",
+  "pluginsUnavailableView": "Plugin view unavailable",
+  "pluginsUnconfirmed": "{reason}. The operation is unconfirmed. Check the refreshed status before choosing again.",
+  "pluginsUninstallKeepContent": "Uninstall (keep content)",
+  "pluginsUninstallUnknown": "Uninstallation could not be confirmed",
+  "pluginsUninstalled": "Uninstalled. Your existing content has been preserved.",
+  "pluginsUpdatingView": "Updating preview…",
+  "pluginsUseText": "Use text instead",
+  "pluginsUseTransform": "Use transform",
+  "pluginsViewFailed": "The plugin view could not be opened",
+  "pluginsWorkbench": "Workbench plugin",
+  "pluginsWorkbenchReadOnly": "The plugin is allowed, but this workbench is read-only. Resolve the library or plugin issue, then refresh its status.",
+  "recoveryAllFiles": "All files",
+  "recoveryBackupExists": "A file already exists at the backup location. Choose a new filename.",
+  "recoveryBackupFile": "Library backup",
+  "recoveryBackupUnknown": "The backup result needs checking. Keep the current file and inspect the save location.",
+  "recoveryBindingMissing": "This library has no bound protection file, so the selected file cannot be matched to it.",
+  "recoveryBusy": "This library is in use by another process. Close the other window and try again.",
+  "recoveryChooseKey": "Choose recovery file",
+  "recoveryCloseFirst": "The workspace is still running. Close it before switching libraries.",
+  "recoveryFailed": "Recovery did not finish. Keep the original files and try again.",
+  "recoveryIdentityBusy": "Another copy of this library is in use. Close that workspace before opening this copy.",
+  "recoveryIdentityMismatch": "The registered library identity does not match. Keep the original data and restore the correct backup.",
+  "recoveryKeyFile": "Library protection file",
+  "recoveryKeyGuide": "If the protection file is missing or damaged, select a backup of it. The file must belong to this library and requires the original system account.",
+  "recoveryKeyMismatch": "The library key does not match or cannot be decrypted. Use the original file and system account.",
+  "recoveryKeyUnknown": "The recovery result needs checking. Try opening again; a copy of the previous protection file was retained if one existed.",
+  "recoveryLibraryInvalid": "The library could not be verified or opened. Keep the original library and protection key, then try again.",
+  "recoveryMaintenance": "The library needs attention. Keep the original files and review the diagnostic details.",
+  "recoveryMissingKey": "The library protection key is missing. Restore the original .audit-key file and try again.",
+  "recoveryMissingLibrary": "The protection key exists, but the library is missing or empty. Restore the original library.",
+  "recoveryOpenFailed": "The workspace could not open. Check the plugin files and data folder, then try again.",
+  "recoveryPluginUnavailable": "The workspace plugin is unavailable. Existing content can still be viewed and exported.",
+  "recoveryRegistryInvalid": "The active library registration is damaged or unsupported. Opening stopped to preserve the data.",
+  "recoveryRegistryUnreadable": "The active library or registration file cannot be read. Check the original location; no replacement library will be created automatically.",
+  "recoveryRetry": "Try again",
+  "recoverySnapshot": "Restore library backup",
+  "recoverySnapshotGuide": "You can restore a library backup to a new folder and switch to it. The original folder is kept. This restores content as it was when backed up and requires the original system account.",
+  "recoverySnapshotInvalid": "The library backup format or integrity check is invalid. Keep the original backup file.",
+  "recoverySnapshotUnknown": "The restore result needs checking. Inspect the destination folder; the original library was not replaced.",
+  "recoverySwitchUnconfirmed": "The backup was restored to {path}, but switching could not be confirmed. Keep this folder and reopen the workspace to check.",
+  "recoverySwitchUnknown": "The library switch is unconfirmed. Reopen the workspace to check.",
+  "recoveryTargetExists": "The restore destination already exists. Choose a new folder that does not exist yet.",
+  "recoveryTitle": "Reopen workspace",
+  "visualApplyColor": "Apply color",
+  "visualApplyComponent": "Apply to this component",
+  "visualApplyTexture": "Apply media",
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "visualAttachmentFailure": "File operation failed. Check the file and available storage.",
+  "visualAttachmentPreview": "Local attachment preview",
+  "visualAttachmentReadFailure": "The attachment could not be read. Import it again.",
+  "visualAudio": "Audio",
+  "visualAudioStateFailure": "The audio state could not be confirmed. Try again.",
+  "visualAutoLyrics": "Find missing lyrics online automatically",
+  "visualCancel": "Cancel",
+  "visualChangeCover": "Change album artwork",
+  "visualChooseAudio": "Choose an audio file or an LRC lyric file with the same name.",
+  "visualChooseLyrics": "Choose an LRC or TXT lyric file.",
+  "visualClickPreview": "Select to preview",
+  "visualClose": "Close",
+  "visualCloseDialog": "Close dialog",
+  "visualCloseWindow": "Close window",
+  "visualCollapsePlaylist": "Collapse playlist",
+  "visualColorGuide": "Drag the compass to choose hue and saturation, then adjust brightness. You can also enter a color value.",
+  "visualColorTitle": "Add color to your space",
+  "visualComponentCompass": "{title} · Color compass",
+  "visualComponents": "Components and cards",
+  "visualComponentsGuide": "Each item follows the theme by default. Customize one card without changing the others.",
+  "visualCornerTips1": "Not every idea has to be useful.\nSome simply make today more interesting.",
+  "visualCornerTips2": "Write it down, then let it grow.\nAn idea does not have to arrive complete.",
+  "visualCornerTips3": "Leave a little space for yourself.\nCuriosity needs room to breathe.",
+  "visualCornerTips4": "Try something new today.\nA small detour can bring a surprise.",
+  "visualCornerTips5": "Daydreaming can lead somewhere.\nGive your thoughts a path to wander.",
+  "visualCornerTips6": "Make time for what you love.\nThere is no need to prove its worth.",
+  "visualCornerTips7": "Progress can be small.\nBeing willing to start already matters.",
+  "visualCornerTips8": "Look out the window sometimes.\nLife is a source of inspiration too.",
+  "visualCover": "Artwork",
+  "visualCustomCompass": "Color compass · Custom",
+  "visualCustomMaterialGuide": "Turn off to follow the theme while keeping this item''s custom settings.",
+  "visualDefaultOpen": "Open with default app",
+  "visualDownloadOpen": "Download to open",
+  "visualEmbeddedLyrics": "Embedded in audio",
+  "visualExpandPlaylist": "Expand playlist",
+  "visualFile": "File",
+  "visualFileOpenFailure": "The file could not be opened. Install a compatible app, or save the attachment and open it there.",
+  "visualFileRetry": "File operation failed. Try again.",
+  "visualFindLyrics": "Find lyrics",
+  "visualFindLyricsGuide": "Search LRCLIB by song and artist, then choose the matching version.",
+  "visualFollowTheme": "Follow theme",
+  "visualFooterLyrics": "Show lyrics in footer",
+  "visualFooterTips": "Show tips in footer",
+  "visualFooterTips1": "Nothing urgent. Give curiosity a little time.",
+  "visualFooterTips10": "You do not have to fill every minute. Leave some room.",
+  "visualFooterTips2": "Jot down a thought. You can organize it later.",
+  "visualFooterTips3": "Break a big idea into one small step for today.",
+  "visualFooterTips4": "Stretch a little and rest your eyes.",
+  "visualFooterTips5": "An idea is allowed to remain unanswered for now.",
+  "visualFooterTips6": "Some discoveries arrive when you slow down.",
+  "visualFooterTips7": "Saving a detail is a way to nurture an idea.",
+  "visualFooterTips8": "A quick note today might become tomorrow''s beginning.",
+  "visualFooterTips9": "Let your mind wander, then return to what you enjoy.",
+  "visualFrosting": "Frosting",
+  "visualGif": "Animated GIF",
+  "visualHexColor": "HEX color",
+  "visualHexInvalid": "Enter a six-digit hexadecimal color.",
+  "visualImage": "Image",
+  "visualImageDecodeFailure": "This image cannot be decoded. Save it and open it with another app.",
+  "visualImageLoadFailure": "Image could not be loaded: {name}",
+  "visualImageNotImported": "{name} (image not imported)",
+  "visualImageUnavailable": "Image unavailable: {name}",
+  "visualImportFailure": "Import failed. Check the file, encoding, and available storage.",
+  "visualImportLyrics": "Import lyrics",
+  "visualImportMusic": "Import music",
+  "visualImportMusicHint": "Select + to import local songs",
+  "visualIndependentMaterial": "Custom material",
+  "visualLinkFailure": "The link could not be opened. Copy the address and try again.",
+  "visualLoadImage": "Load image · {name}",
+  "visualLoading": "Loading…",
+  "visualLyricsEmpty": "The lyric file is empty.",
+  "visualLyricsFile": "Lyric file",
+  "visualLyricsImportHint": "Import a lyric file or search online.",
+  "visualLyricsLoading": "Loading lyrics…",
+  "visualLyricsMatch": "{album}\n{kind} · {seconds, plural, =1{1 second} other{{seconds} seconds}}",
+  "visualLyricsMissing": "No lyrics found. Import a file or search again.",
+  "visualLyricsNotFound": "No lyrics found. Try changing the song title or artist.",
+  "visualLyricsOnPlay": "Load lyrics automatically during playback",
+  "visualLyricsParseFailure": "Lyrics could not be parsed. Try importing them again.",
+  "visualLyricsReadFailure": "Lyrics could not be loaded. Import them manually or try again.",
+  "visualLyricsServiceFailure": "Could not connect to the lyric service. Try again later or import local lyrics.",
+  "visualLyricsSize": "Keep lyric files within 1 MB.",
+  "visualLyricsSources": "Local file → Embedded → LRCLIB",
+  "visualLyricsVersions": "Multiple versions found. Choose one in search.",
+  "visualMaterialPreview": "Material preview",
+  "visualMaximize": "Maximize",
+  "visualMediaAddress": "Media address",
+  "visualMediaAddressInvalid": "Enter a valid HTTP or HTTPS address without login information.",
+  "visualMediaPreviewFailure": "This media cannot be previewed. Save it and open it with another app.",
+  "visualMediaType": "Media type",
+  "visualMinimize": "Minimize",
+  "visualMusic": "Music",
+  "visualMusicEmptyTitle": "Make room for music",
+  "visualMusicPlayer": "Music player",
+  "visualNextTrack": "Next track",
+  "visualNoLyricsRead": "No lyrics loaded",
+  "visualNoLyricsTitle": "♪ {title} · No lyrics",
+  "visualNoTimeline": "No timing data",
+  "visualOpacity": "Opacity",
+  "visualOptionalArtist": "Artist (optional)",
+  "visualPauseMusic": "Pause music",
+  "visualPaused": "Paused",
+  "visualPlainLyrics": "Plain-text lyrics",
+  "visualPlayMusic": "Play music",
+  "visualPlaybackFailure": "This song cannot be played. Check the file or try another audio format.",
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "visualPlaybackRequestFailure": "Playback could not be started. Try again.",
+  "visualPlaying": "Playing",
+  "visualPlaylistEmpty": "Your playlist is empty",
+  "visualPlaylistLyricsHint": "Import LRC lyrics from the playlist menu",
+  "visualPlaylistSaved": "Playlist and lyrics are saved automatically",
+  "visualPlaylistUpdateFailure": "The playlist could not be updated. Try again.",
+  "visualPreviewColor": "Preview color",
+  "visualPreviousTrack": "Previous track",
+  "visualRemoveAttachment": "Remove attachment",
+  "visualRemoveTrack": "Remove from playlist",
+  "visualRestoreWindow": "Restore",
+  "visualSaveAttachment": "Save attachment as",
+  "visualSearch": "Search",
+  "visualSearchLyrics": "Search lyrics",
+  "visualSongCover": "Album artwork",
+  "visualSongTitle": "Song title",
+  "visualSyncedLyrics": "Synced lyrics",
+  "visualTextureFailure": "Media could not be loaded. Check the file, address, or format. Web media must also allow cross-origin access.",
+  "visualTextureLinkGuide": "Paste a direct HTTP or HTTPS link to an image, GIF, or video. For shared web pages, first find the original media address.",
+  "visualTextureLinkTitle": "Bring in some inspiration",
+  "visualTexturePlaybackGuide": "Videos loop silently by default; enable sound in settings. Online media must permit access, including cross-origin loading on the web.",
+  "visualUseCustomMaterial": "Use custom material",
+  "visualVideo": "Video",
+  "visualViewLyrics": "View lyrics"
+}

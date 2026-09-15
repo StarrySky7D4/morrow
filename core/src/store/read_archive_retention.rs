@@ -136,7 +136,7 @@ pub(super) fn change(
     next: Option<&Manifest>,
     budget: RetentionBudget,
 ) -> Result<()> {
-    if version(c)? != 14 {
+    if !matches!(version(c)?, 14..=16) {
         return Err(Error::UnsupportedVersion);
     }
     budget.validate()?;
@@ -214,7 +214,7 @@ impl Store {
     pub fn read_archive_retention_usage(&self) -> Result<RetentionUsage> {
         let tx = sql(self.connection.unchecked_transaction())?;
         match version(&tx)? {
-            14 => totals(&tx),
+            14..=16 => totals(&tx),
             5..=13 => scan(&tx, |_, _| Ok(())),
             _ => Err(Error::UnsupportedVersion),
         }

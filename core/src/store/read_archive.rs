@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if !matches!(version(c)?, 12..=14) {
+    if !matches!(version(c)?, 12..=16) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())
@@ -508,16 +508,7 @@ pub(super) fn finish_in(
         return Err(Error::Integrity);
     }
     super::read_archive_retention::change(tx, Some(&m), Some(&finalized), retention)?;
-    let (count, bytes): (i64, i64) = sql(tx.query_row(
-        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-        [],
-        |r| Ok((r.get(0)?, r.get(1)?)),
-    ))?;
-    if count >= i64::from(event_budget.max_count)
-        || (bytes as u64).saturating_add(observed.container().len() as u64) > event_budget.max_bytes
-    {
-        return Err(Error::EventCapacity);
-    }
+    super::event_room(tx, event_budget, observed.container().len() as u64)?;
     sql(tx.execute(
         "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,4,?3)",
         params![operation, subject, observed.container()],

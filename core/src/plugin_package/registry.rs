@@ -1,5 +1,5 @@
 //! Native, cooperative selection registry. This does not revoke running instances.
-use super::{Package, capability, catalog::Catalog, proto::Capability};
+use super::{Package, capability, catalog::Catalog, io::IoCapability, proto::Capability};
 use crate::{Error, Result, envelope, identity, lifecycle::GrantKind};
 use prost::Message;
 use std::{
@@ -24,6 +24,8 @@ pub struct Selection {
     pub enabled: bool,
     /// Host-approved ceiling; individual object grants must still be issued separately.
     pub approved: BTreeSet<GrantKind>,
+    /// Independent IO ceiling. Resource scopes and live grants are never restored here.
+    pub approved_io: BTreeSet<IoCapability>,
 }
 /// Persistent exact-version approval; this is not a live instance binding or object grant.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -107,7 +109,16 @@ impl Registry {
             let state = proto::Registry::decode(raw.as_slice())
                 .map_err(|_| Error::Invalid("registry protobuf"))?;
             // Refuse unknown/noncanonical data rather than silently rewriting and losing it.
-            if state.schema_version != 1 || state.encode_to_vec() != raw {
+            if !matches!(state.schema_version, 1 | 2) || state.encode_to_vec() != raw {
+                return Err(Error::UnsupportedVersion);
+            }
+            let legacy = state.schema_version == 1;
+            if legacy
+                && state
+                    .selections
+                    .iter()
+                    .any(|s| !s.approved_io_capabilities.is_empty())
+            {
                 return Err(Error::UnsupportedVersion);
             }
             if state.revision == 0
@@ -130,6 +141,19 @@ impl Registry {
                 if entry.approved_capabilities.len() > 7 {
                     return Err(Error::Limit);
                 }
+                if entry.approved_io_capabilities.len() > 10 {
+                    return Err(Error::Limit);
+                }
+                let mut approved_io = BTreeSet::new();
+                let mut previous_io = None;
+                for raw in entry.approved_io_capabilities {
+                    let kind = IoCapability::from_number(raw)?;
+                    if previous_io.is_some_and(|previous| previous >= raw) {
+                        return Err(Error::Invalid("IO approval ordering"));
+                    }
+                    previous_io = Some(raw);
+                    approved_io.insert(kind);
+                }
                 let mut approved = BTreeSet::new();
                 for cap in entry.approved_capabilities {
                     if !approved.insert(capability(cap)?) {
@@ -143,6 +167,7 @@ impl Registry {
                         digest,
                         enabled: entry.enabled,
                         approved,
+                        approved_io,
                     },
                 );
             }
@@ -179,6 +204,11 @@ impl Registry {
                 result.load(selection)?;
             }
             result.validate_dependencies(&result.dependencies)?;
+            if legacy {
+                // Full old-state validation precedes publication. Do not use commit's
+                // semantic no-op shortcut: migration must durably advance the revision.
+                result.publish(result.selections.clone(), result.dependencies.clone())?;
+            }
         }
         Ok(result)
     }
@@ -198,6 +228,7 @@ impl Registry {
         let package = self.catalog.load(selection.digest)?;
         if package.manifest().package_id != selection.package_id
             || !selection.approved.is_subset(package.capabilities())
+            || !selection.approved_io.is_subset(package.io_capabilities())
         {
             return Err(Error::Integrity);
         }
@@ -413,12 +444,19 @@ impl Registry {
         if next == self.selections && dependencies == self.dependencies {
             return Ok(());
         }
+        self.publish(next, dependencies)
+    }
+    fn publish(
+        &mut self,
+        next: BTreeMap<String, Selection>,
+        dependencies: DependencyLocks,
+    ) -> Result<()> {
         if next.len() > MAX_SELECTIONS || dependencies.len() > MAX_DEPENDENCY_LOCKS {
             return Err(Error::Limit);
         }
         let revision = self.revision.checked_add(1).ok_or(Error::Limit)?;
         let state = proto::Registry {
-            schema_version: 1,
+            schema_version: 2,
             revision,
             dependency_locks: dependencies
                 .values()
@@ -437,6 +475,12 @@ impl Registry {
                     digest: s.digest.to_vec(),
                     enabled: s.enabled,
                     approved_capabilities: s.approved.iter().copied().map(cap_number).collect(),
+                    approved_io_capabilities: s
+                        .approved_io
+                        .iter()
+                        .copied()
+                        .map(IoCapability::number)
+                        .collect(),
                 })
                 .collect(),
         };
@@ -462,6 +506,7 @@ impl Registry {
             digest,
             enabled: false,
             approved: BTreeSet::new(),
+            approved_io: BTreeSet::new(),
         };
         if let Some(previous) = self.selections.get(id) {
             let old = self.load(previous)?;
@@ -477,6 +522,11 @@ impl Registry {
             }
             // A new immutable version requires a fresh explicit enable decision.
             selection.enabled = false;
+            selection.approved_io = previous
+                .approved_io
+                .intersection(package.io_capabilities())
+                .copied()
+                .collect();
             selection.approved = previous
                 .approved
                 .intersection(package.capabilities())
@@ -508,6 +558,39 @@ impl Registry {
         }
         let mut next = self.selections.clone();
         next.get_mut(id).expect("existing selection").approved = approved;
+        self.commit(next, self.dependencies.clone())
+    }
+    /// Read-only approval preflight, including disabled selections. Managers use this
+    /// before revoking live instances so malformed decisions have no runtime effect.
+    pub fn validate_io_approval(
+        &self,
+        id: &str,
+        expected_digest: [u8; 32],
+        approved: &BTreeSet<IoCapability>,
+        expected_revision: u64,
+    ) -> Result<()> {
+        self.check_revision(expected_revision)?;
+        let selection = self.selections.get(id).ok_or(Error::NotFound)?;
+        if selection.digest != expected_digest {
+            return Err(Error::RevisionConflict);
+        }
+        let package = self.load(selection)?;
+        if !approved.is_subset(package.io_capabilities()) {
+            return Err(Error::Invalid("IO approval exceeds declaration"));
+        }
+        Ok(())
+    }
+    /// IO approval uses an independent namespace and the same atomic selection snapshot.
+    pub fn approve_io(
+        &mut self,
+        id: &str,
+        expected_digest: [u8; 32],
+        approved: BTreeSet<IoCapability>,
+        expected_revision: u64,
+    ) -> Result<()> {
+        self.validate_io_approval(id, expected_digest, &approved, expected_revision)?;
+        let mut next = self.selections.clone();
+        next.get_mut(id).expect("existing selection").approved_io = approved;
         self.commit(next, self.dependencies.clone())
     }
     /// Controls future trusted resolution only. Caller must separately stop existing instances.
@@ -574,7 +657,7 @@ mod tests {
         duplicate.extend_from_slice(&[8, 1]); // Repeated scalar field.
         assert_eq!(reject(&duplicate), Error::UnsupportedVersion);
         let mut future = state.clone();
-        future.schema_version = 2;
+        future.schema_version = 3;
         assert_eq!(reject(&future.encode_to_vec()), Error::UnsupportedVersion);
         let mut zero = state;
         zero.revision = 0;
@@ -587,6 +670,7 @@ mod tests {
             digest: vec![1; 32],
             enabled: false,
             approved_capabilities: vec![],
+            approved_io_capabilities: vec![],
         };
         let duplicate = proto::Registry {
             schema_version: 1,

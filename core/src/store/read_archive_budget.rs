@@ -90,7 +90,7 @@ impl Store {
     pub fn read_archive_preparation_usage(&self) -> Result<PreparationUsage> {
         let tx = sql(self.connection.unchecked_transaction())?;
         let version: i64 = sql(tx.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if !matches!(version, 12..=14) {
+        if !matches!(version, 12..=16) {
             return Err(Error::UnsupportedVersion);
         }
         usage(&tx)

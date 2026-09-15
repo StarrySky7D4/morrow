@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_core_client/ui.dart';
 import 'morrow_plugin_ui.dart';
 export 'morrow_plugin_ui.dart';
@@ -20,9 +21,18 @@ abstract interface class PluginUiTransport {
 
 enum PluginUiFailureKind { busy, rejected, plugin, execution, unavailable }
 
+enum PluginUiHostMessage {
+  inputTooLong,
+  connectionLost,
+  rejected,
+  execution,
+  unavailable,
+}
+
 @immutable
 final class PluginUiFailure {
-  const PluginUiFailure(this.kind, this.message);
+  const PluginUiFailure(this.kind, this.message, {this.hostMessage});
+  final PluginUiHostMessage? hostMessage;
   final PluginUiFailureKind kind;
   final String message;
 }
@@ -135,6 +145,7 @@ class PluginUiController extends ChangeNotifier {
         _failure = const PluginUiFailure(
           PluginUiFailureKind.rejected,
           '输入内容已超过此界面的容量，请缩短后重试。',
+          hostMessage: PluginUiHostMessage.inputTooLong,
         );
         notifyListeners();
         return PluginUiAdmission.rejected;
@@ -291,6 +302,7 @@ class PluginUiController extends ChangeNotifier {
     _failure = const PluginUiFailure(
       PluginUiFailureKind.unavailable,
       '连接已中断，请重新打开此插件界面。',
+      hostMessage: PluginUiHostMessage.connectionLost,
     );
     _phase = PluginUiPhase.interrupted;
     if (!_disposed) notifyListeners();
@@ -318,8 +330,17 @@ class PluginUiController extends ChangeNotifier {
 /// Own the controller in the calling screen, open it once, and dispose it on teardown.
 /// Replacing the controller invalidates old widget callbacks and resets local editing state.
 class ManagedPluginForm extends StatefulWidget {
-  const ManagedPluginForm({super.key, required this.controller});
+  const ManagedPluginForm({
+    super.key,
+    required this.controller,
+    this.documentBuilder,
+  });
   final PluginUiController controller;
+
+  /// Optional trusted first-party presentation adapter. It must preserve node
+  /// identities, actions, input values and limits; it never changes controller data.
+  final UiDocumentModel Function(BuildContext, UiDocumentModel)?
+  documentBuilder;
   @override
   State<ManagedPluginForm> createState() => _ManagedPluginFormState();
 }
@@ -342,8 +363,8 @@ class _ManagedPluginFormState extends State<ManagedPluginForm> {
               padding: const EdgeInsets.all(16),
               child: Text(
                 controller.phase == PluginUiPhase.opening
-                    ? '正在打开插件界面…'
-                    : '插件界面暂不可用',
+                    ? L10n.of(context).pluginsOpeningView
+                    : L10n.of(context).pluginsUnavailableView,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
@@ -352,7 +373,9 @@ class _ManagedPluginFormState extends State<ManagedPluginForm> {
               child: AbsorbPointer(
                 absorbing: !controller.canEdit,
                 child: PluginForm(
-                  document: document,
+                  document:
+                      widget.documentBuilder?.call(context, document) ??
+                      document,
                   viewIdentity: identity,
                   actionsEnabled: controller.actionsEnabled,
                   onIntent: (intent) {
@@ -370,7 +393,7 @@ class _ManagedPluginFormState extends State<ManagedPluginForm> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Text(
-                '正在更新预览…',
+                L10n.of(context).pluginsUpdatingView,
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
@@ -378,7 +401,7 @@ class _ManagedPluginFormState extends State<ManagedPluginForm> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: Text(
-                failure.message,
+                pluginUiFailureMessage(L10n.of(context), failure),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.error,
                 ),
@@ -389,3 +412,14 @@ class _ManagedPluginFormState extends State<ManagedPluginForm> {
     },
   );
 }
+
+/// Translate host status codes only; plugin-authored literals remain verbatim.
+String pluginUiFailureMessage(AppLocalizations l, PluginUiFailure failure) =>
+    switch (failure.hostMessage) {
+      PluginUiHostMessage.inputTooLong => l.pluginsInputTooLong,
+      PluginUiHostMessage.connectionLost => l.pluginsConnectionLost,
+      PluginUiHostMessage.rejected => l.pluginsUiRejected,
+      PluginUiHostMessage.execution => l.pluginsUiExecution,
+      PluginUiHostMessage.unavailable => l.pluginsUiUnavailable,
+      null => failure.message,
+    };

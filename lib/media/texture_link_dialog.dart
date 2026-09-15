@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import '../appearance.dart';
 import 'texture_source.dart';
@@ -20,8 +21,8 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
 
   @override
   Widget build(BuildContext context) => StudioDialog(
-    title: '从外面带一点灵感',
-    subtitle: '粘贴图片、GIF 或视频的 HTTP / HTTPS 直链。网页分享链接需要先找到原始媒体地址。',
+    title: L10n.of(context).visualTextureLinkTitle,
+    subtitle: L10n.of(context).visualTextureLinkGuide,
     icon: Icons.add_link_rounded,
     content: Column(
       mainAxisSize: MainAxisSize.min,
@@ -39,16 +40,20 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
             });
           },
           decoration: InputDecoration(
-            labelText: '媒体地址',
+            labelText: L10n.of(context).visualMediaAddress,
             hintText: 'https://…/background.mp4',
-            errorText: invalid ? '请输入有效且不含登录信息的 HTTP / HTTPS 地址' : null,
+            errorText: invalid
+                ? L10n.of(context).visualMediaAddressInvalid
+                : null,
           ),
         ),
         const SizedBox(height: 16),
         DropdownButtonFormField<TextureKind>(
           key: ValueKey(kind),
           initialValue: kind,
-          decoration: const InputDecoration(labelText: '素材类型'),
+          decoration: InputDecoration(
+            labelText: L10n.of(context).visualMediaType,
+          ),
           items: TextureKind.values
               .where(
                 (value) =>
@@ -58,11 +63,11 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
                 (value) => DropdownMenuItem(
                   value: value,
                   child: Text(switch (value) {
-                    TextureKind.image => '图片',
-                    TextureKind.gif => 'GIF 动图',
-                    TextureKind.video => '视频',
-                    TextureKind.audio => '音频',
-                    TextureKind.file => '文件',
+                    TextureKind.image => L10n.of(context).visualImage,
+                    TextureKind.gif => L10n.of(context).visualGif,
+                    TextureKind.video => L10n.of(context).visualVideo,
+                    TextureKind.audio => L10n.of(context).visualAudio,
+                    TextureKind.file => L10n.of(context).visualFile,
                   }),
                 ),
               )
@@ -70,8 +75,8 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
           onChanged: (value) => setState(() => kind = value!),
         ),
         const SizedBox(height: 12),
-        const Text(
-          '视频默认静音循环播放，可在设置中开启声音。网络素材需允许访问，网页端还需支持跨域加载。',
+        Text(
+          L10n.of(context).visualTexturePlaybackGuide,
           style: TextStyle(fontSize: 11, height: 1.7),
         ),
       ],
@@ -79,7 +84,7 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(L10n.of(context).visualCancel),
       ),
       FilledButton(
         onPressed: () {
@@ -98,7 +103,7 @@ class _TextureLinkDialogState extends State<TextureLinkDialog> {
             ),
           );
         },
-        child: const Text('应用素材'),
+        child: Text(L10n.of(context).visualApplyTexture),
       ),
     ],
   );

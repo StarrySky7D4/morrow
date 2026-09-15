@@ -24,6 +24,7 @@ mod content_projection;
 mod evidence;
 pub mod plugin_catalog;
 mod preferences_evidence;
+mod ui_preferences;
 pub mod projection;
 pub mod projection_v2;
 pub mod query_capture;

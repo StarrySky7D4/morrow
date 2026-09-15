@@ -11,7 +11,6 @@ use morrow_core::{
         self, Evidence,
         proto::{ExecutionBudget, TaskEvidence},
     },
-    transaction::Lookup,
 };
 use prost::Message;
 use sha2::{Digest, Sha256};
@@ -193,13 +192,13 @@ fn legacy_seven(path: &Path, originals: &[Evidence]) {
         )
         .unwrap();
     }
-    sql.execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; PRAGMA user_version=7; COMMIT;").unwrap();
+    sql.execute_batch("DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; DROP TABLE task_evidence_chunks; DROP TABLE evidence_chunks; PRAGMA user_version=7; COMMIT;").unwrap();
 }
 #[test]
 fn same_package_observations_share_real_blocks_and_rebuild_exact_original_containers() {
     let (_dir, path, a, b) = fixture();
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 14);
+    assert_eq!(version(&sql), 16);
     let mut all = BTreeSet::new();
     let mut per = Vec::new();
     let mut logical = 0;
@@ -357,7 +356,7 @@ fn chunk_recipe_link_and_size_corruption_fail_closed_without_repair() {
             "accepted corruption {case}"
         );
         let sql = rusqlite::Connection::open(&path).unwrap();
-        assert_eq!(version(&sql), 14);
+        assert_eq!(version(&sql), 16);
     }
 }
 #[test]
@@ -418,7 +417,7 @@ fn legacy_migration_preserves_raw_unknown_fields_exact_container_and_commit_byte
     assert_eq!(restored.digest(), e.digest());
     drop(s);
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 14);
+    assert_eq!(version(&sql), 16);
     let after: Vec<u8> = sql
         .query_row(
             "SELECT payload FROM operations WHERE id='create'",
@@ -472,7 +471,7 @@ fn audited_readonly_v7_does_not_migrate_and_v8_preserves_existing_signature() {
     h.store_local().integrity_check().unwrap();
     drop(h);
     let sql = rusqlite::Connection::open(&path).unwrap();
-    assert_eq!(version(&sql), 14);
+    assert_eq!(version(&sql), 16);
     assert!(counts(&sql).0 > 0);
 }
 #[cfg(feature = "fault-injection")]
@@ -541,7 +540,10 @@ fn write_crashes_never_leave_chunks_without_committed_content() {
         let committed = point == "after-commit";
         assert_eq!(s.card("card").unwrap().is_some(), committed);
         assert_eq!(
-            matches!(s.lookup("create").unwrap(), Lookup::Committed(_)),
+            matches!(
+                s.lookup("create").unwrap(),
+                morrow_core::transaction::Lookup::Committed(_)
+            ),
             committed
         );
         assert_eq!(s.pending(0, 10).unwrap().len(), usize::from(committed));
@@ -626,7 +628,7 @@ fn signed_snapshot_contains_complete_shared_chunks_after_original_database_is_re
         rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY,
     )
     .unwrap();
-    assert_eq!(version(&sql), 14);
+    assert_eq!(version(&sql), 16);
     let (physical, links) = counts(&sql);
     assert!(
         physical > 0 && physical < links,
@@ -652,8 +654,8 @@ fn signed_snapshot_contains_complete_shared_chunks_after_original_database_is_re
 // Version 8 and 9 share physical tables, but only 9 may contain batch observations.
 fn schema_eight(path: &Path) {
     let sql = rusqlite::Connection::open(path).unwrap();
-    assert_eq!(version(&sql), 14);
-    sql.execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=8;").unwrap();
+    assert_eq!(version(&sql), 16);
+    sql.execute_batch("DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=8;").unwrap();
 }
 fn operation_payload(path: &Path) -> Vec<u8> {
     rusqlite::Connection::open(path)
@@ -730,7 +732,7 @@ fn format_eight_readonly_then_migration_preserve_unknown_v1_bytes_and_signed_his
         1
     );
     drop(migrated);
-    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 14);
+    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 16);
     assert_eq!(operation_payload(&path), commit_before);
     assert_eq!(stored_chunks(&path), chunks_before);
 }
@@ -770,7 +772,7 @@ fn format_eight_batch_migration_crashes_publish_only_whole_version_transition() 
             1
         );
         drop(reopened);
-        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 14);
+        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 16);
         assert_eq!(operation_payload(&path), commit_before);
         assert_eq!(stored_chunks(&path), chunks_before);
     }
@@ -853,8 +855,8 @@ fn intent_evidence(size: usize) -> Evidence {
 }
 fn schema_nine(path: &Path) {
     let sql = rusqlite::Connection::open(path).unwrap();
-    assert_eq!(version(&sql), 14);
-    sql.execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=9;").unwrap();
+    assert_eq!(version(&sql), 16);
+    sql.execute_batch("DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives; DROP TABLE read_archive_parts; DROP TABLE read_archives; PRAGMA user_version=9;").unwrap();
 }
 #[test]
 fn format_nine_preserves_legacy_maximum_intent_and_signature_across_migration() {
@@ -877,7 +879,7 @@ fn format_nine_preserves_legacy_maximum_intent_and_signature_across_migration() 
     assert_eq!(migrated.sealed_segment(1).unwrap().unwrap(), segment);
     migrated.integrity_check().unwrap();
     drop(migrated);
-    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 14);
+    assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 16);
     assert_eq!(operation_payload(&path), before);
     assert_eq!(stored_chunks(&path), chunks);
 }
@@ -941,6 +943,6 @@ fn projection_capacity_migration_crashes_leave_whole_nine_or_ten() {
         }
         reopened.integrity_check().unwrap();
         drop(reopened);
-        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 14);
+        assert_eq!(version(&rusqlite::Connection::open(&path).unwrap()), 16);
     }
 }

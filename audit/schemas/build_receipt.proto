@@ -1,0 +1,37 @@
+syntax = "proto3";
+package morrow.build_receipt.v1;
+
+// Integrity record only: this message has no signature or publisher authentication.
+message FileEntry {
+  string path = 1;
+  uint64 size = 2;
+  bytes sha256 = 3;
+}
+message CommandRecord {
+  string label = 1;
+  string program = 2;
+  repeated string args = 3;
+  sint32 exit_code = 4;
+  bool completed = 5;
+  FileEntry stdout = 6;
+  FileEntry stderr = 7;
+}
+message BuildReceipt {
+  uint32 version = 1;
+  string source_head = 2;
+  bool source_dirty = 3;
+  bytes source_root_sha256 = 4;
+  repeated FileEntry sources = 5;
+  string profile = 6;
+  string target = 7;
+  repeated string features = 8;
+  string rustc_version = 9;
+  string cargo_version = 10;
+  bytes collector_sha256 = 11;
+  repeated CommandRecord commands = 12;
+  repeated FileEntry artifacts = 13;
+  bool build_succeeded = 14;
+  uint64 started_unix_ms = 15;
+  uint64 finished_unix_ms = 16;
+}
+

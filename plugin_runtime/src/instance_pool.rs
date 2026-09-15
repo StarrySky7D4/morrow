@@ -222,6 +222,31 @@ impl Pool {
         )?;
         Ok(())
     }
+    /// Reuse the manager's exact live binding and the root's shared IO budget.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_root_io(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        session: &Session,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<morrow_core::plugin_package::io::IoCapability>,
+        expires: u64,
+        now: u64,
+    ) -> Result<crate::io_binding::IoBinding> {
+        self.check_host(host)?;
+        self.check_manager(manager)?;
+        Ok(manager.bind_io(
+            host,
+            self.root(session)?,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+        )?)
+    }
     /// Revoke only a scope on this actual session root; no mutable connection escapes.
     pub fn revoke_root(
         &mut self,

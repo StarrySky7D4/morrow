@@ -96,7 +96,11 @@ fn preflight(mut raw: &[u8], level: u8, budget: &mut usize) -> Result<()> {
     Ok(())
 }
 fn operation_id(raw: &[u8]) -> Result<String> {
-    if raw.starts_with(crate::read_journal::MAGIC) {
+    if raw.starts_with(crate::io_intent::MAGIC) {
+        // Each immutable revision has a distinct event identity. The command ID
+        // inside the original remains stable across its transition history.
+        crate::io_intent::Record::decode(raw).map(|record| record.event_id())
+    } else if raw.starts_with(crate::read_journal::MAGIC) {
         crate::read_journal::decode(raw).map(|v| v.data().operation_id.clone())
     } else if raw.starts_with(b"MORROWR1") {
         crate::records::decode_commit(raw).map(|v| v.1.operation_id)

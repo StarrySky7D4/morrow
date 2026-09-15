@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'workbench_backend.dart';
+import 'workbench_ids.dart';
 
 typedef QueryConditions = ({
   int contentGeneration,
-  String section,
-  String filter,
+  WorkbenchPage section,
+  WorkbenchFilter filter,
   String text,
-  String sort,
+  WorkbenchSort sort,
 });
 
 enum QueryPhase { idle, loading, ready, failed }
@@ -97,10 +98,10 @@ class QueryCoordinator {
     final serial = _serial;
     try {
       final result = await backend.query(
-        conditions.section,
-        conditions.filter,
+        WorkbenchV1.section(conditions.section),
+        WorkbenchV1.filter(conditions.filter),
         conditions.text,
-        conditions.sort,
+        WorkbenchV1.sort(conditions.sort),
         operation: operation,
       );
       if (!_disposed && serial == _serial) {

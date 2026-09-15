@@ -132,7 +132,9 @@ void main() {
     (tester) async {
       await size(tester, 1440);
       final storage = MemoryStorage();
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(palette(tester).surfaces.componentCustom, isFalse);
       await tap(tester, 'background-transparent');
@@ -166,7 +168,7 @@ void main() {
       await slide(tester, 'component-blur', 1);
       await slide(tester, 'component-opacity', .18);
       await tap(tester, 'component-apply');
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(palette(tester).surfaces.components['hero']!.blur, 1);
       expect(palette(tester).surfaces.components['hero']!.enabled, isTrue);
@@ -178,7 +180,7 @@ void main() {
       await tap(tester, 'component-entry:hero');
       await tap(tester, 'component-custom-toggle');
       await tap(tester, 'component-apply');
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(palette(tester).surfaces.components['hero']!.enabled, isFalse);
       expect(palette(tester).surfaces.components['hero']!.blur, 1);
@@ -186,9 +188,11 @@ void main() {
       await tap(tester, 'component-entry:navigation');
       await tap(tester, 'component-custom-toggle');
       await slide(tester, 'component-opacity', .8);
-      await tester.pageBack(); // cancel: no live or persisted mutation
+      await tester.tap(
+        find.byType(BackButton),
+      ); // cancel: no live or persisted mutation
       await tester.pumpAndSettle();
-      await tester.pageBack();
+      await tester.tap(find.byType(BackButton));
       await tester.pumpAndSettle();
       expect(palette(tester).surfaces.components['navigation'], isNull);
       await slide(tester, 'canvas-opacity', 0);
@@ -197,7 +201,9 @@ void main() {
       );
       expect((zeroCanvas.decoration! as BoxDecoration).color!.a, 0);
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(palette(tester).surfaces.components['hero']!.enabled, isFalse);
       expect(palette(tester).surfaces.components['hero']!.opacity, .18);
@@ -215,7 +221,9 @@ void main() {
     (tester) async {
       await size(tester, 1440);
       final storage = MemoryStorage();
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('theme-mist')), findsNothing);
       expect(find.byKey(const ValueKey('corners-square')), findsNothing);
@@ -254,7 +262,9 @@ void main() {
       expect(storage.data!['cornerRadius'], 0);
       expect(storage.data!.containsKey('rounded'), isFalse);
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(palette(tester).background, custom.background);
       expect(palette(tester).borderRadius(20), BorderRadius.zero);
@@ -271,13 +281,17 @@ void main() {
     (tester) async {
       await size(tester, 1440);
       final storage = MemoryStorage();
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       await slide(tester, 'corner-radius', 32);
       final count = (storage.data!['ideas'] as List).length;
       storage.data!.addAll({'theme': 'mist', 'rounded': false});
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(palette(tester).theme, StudioTheme.custom);
       expect(palette(tester).cornerRadius, 0);
@@ -295,12 +309,12 @@ void main() {
       await size(tester, 1440);
       for (final width in [1440.0, 800.0, 390.0]) {
         tester.view.physicalSize = Size(width, 900);
-        await tester.pumpWidget(const MorrowApp());
+        await tester.pumpWidget(const MorrowApp(initialLocale: Locale('zh')));
         await tester.pumpAndSettle();
         final footer = find.byKey(const ValueKey('footer-dock'));
         final rect = tester.getRect(footer);
         expect(rect.bottom, closeTo(900 - (width >= 1050 ? 24 : 12), .1));
-        final page = find.byKey(const ValueKey('page-概览'));
+        final page = find.byKey(const ValueKey('page-workbench.page.overview'));
         final scrollable = find
             .descendant(of: page, matching: find.byType(Scrollable))
             .first;
@@ -349,7 +363,11 @@ void main() {
       });
       final storage = MemoryStorage();
       await tester.pumpWidget(
-        MorrowApp(storage: storage, nativeBackground: NoBackground()),
+        MorrowApp(
+          initialLocale: const Locale('zh'),
+          storage: storage,
+          nativeBackground: NoBackground(),
+        ),
       );
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 20.0);
@@ -369,7 +387,11 @@ void main() {
       expect(storage.data!['windowRadius'], 12);
       await tester.pumpWidget(const SizedBox());
       await tester.pumpWidget(
-        MorrowApp(storage: storage, nativeBackground: NoBackground()),
+        MorrowApp(
+          initialLocale: const Locale('zh'),
+          storage: storage,
+          nativeBackground: NoBackground(),
+        ),
       );
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 12.0);

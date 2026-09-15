@@ -1,8 +1,12 @@
 # 插件网络与文件接口设计
 
+2026-09-15 排期修订：正式出站与入站授权、当前实例绑定、持久意图及 Unknown 核对由 [ROAD-07](ROADMAP_UPDATE_2026-09-15.md) 统一承接；复用已有原生传输，完整 NET／NODE 范围不变。对方无去重／查询接口时必须保留不确定结果与人工核对，不能承诺自动确认或安全重发。
+
 状态：test.50 后续实施设计，2026-09-14。**本文件不表示网络、文件系统授权或 IO 重放已经实现。** 第一方实现默认 AGPL-3.0-only；第三方 SDK 使用规则沿用既有许可文件。本设计及其后续补充不表示已修改运行契约、数据库或冻结包。
 
 依据：[统一架构基线](ARCHITECTURE_BASELINE.md)、[SDK 兼容候选](PLUGIN_SDK_COMPATIBILITY.md)、[SDK 与 UI](PLUGIN_SDK_AND_UI.md)。目标是 C、C++、Rust Wasm 插件经过同一个可信宿主取得明确授权的 IO 能力；插件不能直接获得操作系统文件句柄、任意本机路径、网络 socket 或宿主凭据。正式内容仍只有现有核心 Store 一个权威来源。
+
+当前实现增量：[ROAD-07 声明、批准与实例准入报告](../reports/road-07-io-admission.md)。已落地独立 IO 声明、Registry v2 批准／迁移、Manager／Pool 实例绑定和共享配额；没有 guest IO codec／导入、路径／origin 资源授予、实际文件／网络执行或持久副作用恢复。下文 broker、异步任务与 SDK 调用仍是待实现设计，不能因声明被识别就标为支持。
 
 ## 完整网络能力目标补充
 
@@ -27,11 +31,11 @@
 
 ## 2. 契约与兼容策略
 
-建议新增 `core/schemas/io.capnp`、`core/src/io.rs`，独立 `IO_VERSION=1` 与固定 schema SHA；包要求 `io-v1`，guest ABI 仍为 2。保持 runtime **7**、task **3**、UI **1**、dependency **1** 的原 schema、摘要、解码与路由不变，保持 `sdk/compat/guest-v1-rc1` 所有原件不变。新宿主对原包默认 IO 权限为空；旧宿主遇到 `io-v1` 明确拒绝。
+已新增实验 `core/schemas/io.capnp`，构建时检查 schema，并由 `core/src/plugin_package/io.rs` 提供 IO 版本 1 及精确摘要。包要求 `io-v1`，guest ABI 仍为 2。运行期 codec／`core/src/io.rs` 尚未实现；该 IO 扩展尚未冻结，未来契约变化必须显式更新版本／摘要，不能重编旧候选掩盖不兼容。保持 runtime **7**、task **3**、UI **1**、dependency **1** 的原 schema、摘要、解码与路由不变，保持 `sdk/compat/guest-v1-rc1` 所有原件不变。新宿主对原包默认 IO 权限为空；旧宿主遇到 `io-v1` 明确拒绝。
 
 包元数据建议追加独立 `IoDeclaration`（预编译 PB，例如 `io_manifest.proto`，由 Manifest 新字段承载），包括 schema 版本／摘要、申请的 IO 类别、具有外部效果的 handler 名及预算。不能复用现有七种 `Capability` 的数值。保留旧 Manifest 的读取和原件编码；扩展主加载器不修改冻结目录里的历史 schema 副本。Registry 新版本存 IO 批准子集，与包选择及依赖锁同一次 CAS 提交；旧 v1 迁移为空 IO 批准，不恢复任何运行期引用。
 
-建议能力：`file.read`、`file.list`、`file.create`、`file.replace`、`file.delete`、`http.get`、`http.send`、`credential.use`。列举会泄露名称／类型，不能从 read 自动推导；replace 不等于 create，delete 不由写权限隐含；send 覆盖显式允许的有副作用方法。首个内部切片计划实现 file.read 与 http.get；这不缩减完整网络能力的验收范围，其余未实现值必须拒绝，不能接受后静默忽略。持久批准仍只是上限；每次目标选择和会话租约才决定可用对象、方法、字节量与期限。
+已实现声明类别：FileRead、FileList、FileCreate、FileReplace、FileDelete、HttpRequest、HttpListen、HttpPublish、CredentialUse、WebSocketConnect，具体数值见 io_manifest.proto。列举不由 read 推导，replace 不等于 create，delete 不由写权限隐含；出站、监听、发布和凭据使用分开批准。方法、目标与路径约束由后续资源授权收紧，不能从 HttpRequest 得到任意 URL 或凭据。识别类别并保存批准仅证明声明兼容；全部 IO 执行入口当前仍不可用，不将批准上限当作具体对象授权。
 
 IO 运行期请求包含 version、schemaSha256、callId、resourceRef／jobRef、operation union；响应绑定**实际请求原帧** SHA、callId、稳定状态码、有界载荷及 EOF。宿主从实际连接确定调用者，不相信包 ID 或请求自报实例。引用由宿主随机生成，绑定 host、连接代次、包摘要、对象类别、权限、期限、预算；猜中引用值也不能跨连接调用。持久化只保留历史引用说明，不把它重新当有效授权。
 
@@ -39,14 +43,31 @@ IO 运行期请求包含 version、schemaSha256、callId、resourceRef／jobRef�
 
 共享现有 host_calls 硬上限，每次 IO submit/poll/read/cancel 都计费；另有 IO 累计读写字节、总作业、并行数与实际时间预算。首版建议单块 64 KiB、每实例 8 资源／4 作业、每作业最多 16 MiB、实例 IO 累计最多 64 MiB、最长 30 秒；这些是**待实现与测量的初始硬上限**，声明和用户策略只能收紧。协议支持有界 offset、分页游标、EOF，不以截断数据冒充成功。 全宿主还须有独立总准入（初始建议 32 个并行作业／256 MiB 未完成 spool），防多实例各自合法却合计耗尽资源；已发布证据沿用持久归档配额，失败／取消回收暂存但不删除已提交历史。
 
+### 2.1 声明、批准与实例准入（已实现，执行后端待接入）
+
+- Manifest 新 field 18 承载独立 IoDeclaration，Selection 新 field 5 承载独立 IO 批准。`io-v1`、ABI2、声明版本与精确 IO schema 摘要必须同时匹配；重复／未知类别、错配 handler 和超预算拒绝。保持原内容 Capability／GrantKind 数值不变。
+- Registry 文件升为 schema 2，复用 selection.morrow 的锁、revision CAS 和原子持久化。严格读取 v1 后迁移为空 IO 批准，旧内容批准及依赖锁保留；v1 若携带新 IO 批准字段则拒绝。迁移独立处理，不能被“业务状态无变化”分支跳过；成功推进 revision，失败保留原文件。旧宿主明确拒绝 v2，不承诺数据库降级兼容。
+- 包升级继续禁用；保留的批准仅为旧批准与新声明的交集，新增能力不自动批准。IO 批准变更进入现有 Manager 控制路径，先校验请求，再撤销相关实例，最后持久化；写入失败不能恢复旧绑定。无效请求不应误停实例，无变化请求可以幂等返回。
+- 私有 IoContext 附着实际实例 Control，重复绑定共享同一预算。绑定至少关联 Manager、Host、Connection、包摘要、批准、期限、撤权及取消状态。启停、升级、移除、批准／依赖变更、实例关闭及 Manager 销毁使相关旧引用失效；无关实例不应误停。
+- 出站请求、监听、路由发布和凭据使用分别建模；不得从 HttpRequest 推导 HttpServe，也不能由只读方法名称推断无副作用。HttpRequest 只作为出站上限，具体方法与资源仍需单独约束；声明类别覆盖当前 NET／NODE 分工，但不代表流式和服务后端已经可用。
+- runtime 定义平台中立 broker 接口，由 network_node 实现网络后端，避免 runtime 反向依赖 network_node。IO handler 与纯转换入口明确分开；在执行、意图和审计未就绪时拒绝相应入口，不能退到普通 Runner 或纯任务证据捕获路径。
+
+本轮验收已覆盖包字段／feature／摘要组合、Registry v1→v2 与持久化失败、跨 Manager／Host／实例与过期绑定、重复绑定预算和 Pool 重启；真实 IO 在途请求与迟到结果仍需接入作业后验证。原 sdk_frozen_compat／sdk_frozen_dependency 直接运行旧原件，不重编。完整执行次序见 [IO-A–IO-E](ROADMAP_UPDATE_2026-09-15.md)。
+
 ## 3. 宿主与 SDK API 草案
 
-以下是建议签名，不是当前可调用接口。`IoBinding`、`SelectedFile`、`AuthorizedEndpoint`、`ResourceRef`、`JobRef` 均不提供 guest 构造宿主授权的方法。
+以下 Manager／Pool 绑定入口已实现；IoBroker、Runner IO 执行与 Pool::run_io_task 仍是建议签名。`IoBinding`、`SelectedFile`、`AuthorizedEndpoint`、`ResourceRef`、`JobRef` 均不提供 guest 构造宿主授权的方法。
 
 ```rust
 // 可信本地；校验当前 Manager 选择与批准，绑定真实 Host/Connection/撤权信号。
-IoBroker::bind(host: &HostRuntime, connection: &Connection,
-               approval: &ApprovedIo, limits: IoLimits) -> Result<IoBinding>;
+Manager::bind_io(&self, host: &HostRuntime, instance: &ManagedInstance,
+                 expected_digest: [u8; 32], expected_revision: u64,
+                 requested: &BTreeSet<IoCapability>, expires: u64,
+                 now: u64) -> Result<IoBinding>;
+Pool::bind_root_io(&self, manager: &Manager, host: &HostRuntime,
+                   session: &Session, expected_digest: [u8; 32],
+                   expected_revision: u64, requested: &BTreeSet<IoCapability>,
+                   expires: u64, now: u64) -> Result<IoBinding>;
 IoBroker::grant_file(&mut self, binding: &IoBinding, selected: SelectedFile,
                     access: FileAccess, expires: u64, now: u64) -> Result<ResourceRef>;
 IoBroker::grant_http(&mut self, binding: &IoBinding, endpoint: AuthorizedEndpoint,
@@ -62,7 +83,7 @@ Pool::run_io_task(&mut self, manager: &Manager, host: &mut HostRuntime,
                  clock: impl FnMut() -> u64) -> Result<IoTaskReport>;
 ```
 
-`ApprovedIo` 由 Manager 当前批准投影生成，不能让普通调用者自行传一个 enum 集合绕过审批。API 最终须以私有构造类型或 Manager 创建 binding 强制这一点。身份、引用类别、任务归属错误在推进可信时钟／扣除别人的预算前拒绝；有效身份的已执行请求正常计费。每个实际 IO 阶段及最终交付复核 Ready、批准、租约、撤权和 deadline；依赖 A→B 不自动把 A 的 IO binding 给 B。
+`IoBinding` 只由 Manager 根据当前真实 ManagedInstance 创建，字段私有，无公开构造或反序列化恢复入口。requested 集合只能收紧当前批准，不能作为批准来源；裸 Connection、包声明或调用者传入的 enum 集合都不能生成授权。Pool 包装入口复用已有宿主／Manager／会话关联检查。身份、引用类别、任务归属错误在推进可信时钟／扣除别人的预算前拒绝；有效身份的已执行请求正常计费。每个实际 IO 阶段及最终交付复核 Ready、批准、租约、撤权和 deadline；依赖 A→B 不自动把 A 的 IO binding 给 B。
 
 第一版 IO 与动态依赖同时出现的包可明确 `UnsupportedCombination`；不要把缺 IO 回调转给普通 Runner。后续组合执行仍要逐节点自己的 IO binding、共享总预算和取消传播。外部表单仍只做声明式交互；IO 用独立用户任务启动，不能在预览表单时自动发网请求。
 
@@ -134,3 +155,7 @@ Web 的 manual redirect 可产生不可读 `opaqueredirect`，所以首版以 `r
 | 固定 IO 记录＋签名／备份＋断源重放 | 原件被换、少片／换序／错请求绑定、凭据泄漏、证据额度满、缺材料、Unknown 误报成功、重放真实连网／写磁盘 |
 
 下一阶段的具体首个代码入口是 `core/src/io.rs`＋`plugin_runtime/src/io_broker.rs`＋Runner 的显式 IO 模式，再由 Manager／Pool 和 Workbench 接通真实文件选择。不能以开放未授权 WASI、普通目录路径拼接或在现有纯转换回调里直接联网代替该接口。
+
+## IO-C 持久化增量
+
+意图记录现已接入 Store v15 与现有审计／快照链，具体格式、幂等历史读取及限制见 [意图记录设计](IO_INTENT_RECORDS.md)，验证见 [持久化验收](../reports/road-07-io-intent-store.md)。当前记录不含受保护 IO 原件，也未预留整个操作的后续完成容量，不能作为外发许可。上文完整 IO 范围和实际后端验收要求保持不变。

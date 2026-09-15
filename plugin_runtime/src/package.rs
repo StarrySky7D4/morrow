@@ -74,6 +74,13 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> Report {
+        if self.package.io_declaration().is_some() {
+            return Report {
+                outcome: Err(Fault::UnsupportedAbi),
+                host_calls: 0,
+                fuel_remaining: self.limits.fuel,
+            };
+        }
         if connection.package_digest() != Some(self.package.digest()) {
             return Report {
                 outcome: Err(Fault::PackageBinding),
@@ -111,7 +118,9 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> TaskReport {
-        let fault = if connection.package_digest() != Some(self.package.digest()) {
+        let fault = if self.package.io_declaration().is_some() {
+            Some(Fault::UnsupportedAbi)
+        } else if connection.package_digest() != Some(self.package.digest()) {
             Some(Fault::PackageBinding)
         } else if host.connection_phase(connection)
             != Ok(morrow_core::lifecycle::InstancePhase::Ready)

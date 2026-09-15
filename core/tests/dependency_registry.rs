@@ -347,7 +347,7 @@ fn old_snapshot_without_locks_remains_readable() {
     let Fixture { dir, registry } = f;
     drop(registry);
     let registry = Fixture::open(&dir).unwrap();
-    assert_eq!(registry.revision(), 1);
+    assert_eq!(registry.revision(), 2);
     assert!(registry.selections().next().is_none());
     assert!(registry.dependency("absent", "absent").is_none());
 }
@@ -491,6 +491,7 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
             digest: caller.digest().to_vec(),
             enabled: true,
             approved_capabilities: vec![],
+            approved_io_capabilities: vec![],
         });
         if index < 64 {
             for n in 0..16 {
@@ -509,6 +510,7 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
         digest: provider.digest().to_vec(),
         enabled: true,
         approved_capabilities: vec![],
+        approved_io_capabilities: vec![],
     });
     assert_eq!(state.dependency_locks.len(), MAX_DEPENDENCY_LOCKS);
     let saved = container(&state.encode_to_vec());
@@ -519,6 +521,11 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
         registry: Fixture::open(&dir).unwrap(),
         dir,
     };
+    let migrated = fs::read(f.path()).unwrap();
+    let migrated_state = wire::Registry::decode(raw(&migrated).as_slice()).unwrap();
+    assert_eq!(migrated_state.schema_version, 2);
+    assert_eq!(migrated_state.dependency_locks, state.dependency_locks);
+    assert_ne!(migrated, saved);
     assert!(
         f.registry
             .resolve_dependency("caller-063", "slot-15")
@@ -528,9 +535,9 @@ fn maximum_lock_snapshot_opens_and_one_more_approval_preserves_it() {
         f.approve("caller-064", "slot-00", "provider"),
         Err(Error::Limit)
     );
-    assert_eq!(f.registry.revision(), 1);
+    assert_eq!(f.registry.revision(), 2);
     assert!(f.registry.dependency("caller-064", "slot-00").is_none());
-    assert_eq!(fs::read(f.path()).unwrap(), saved);
+    assert_eq!(fs::read(f.path()).unwrap(), migrated);
 }
 
 #[test]

@@ -23,8 +23,11 @@ void main() {
     t.view.physicalSize = Size(width, 1000);
     addTearDown(t.view.resetDevicePixelRatio);
     addTearDown(t.view.resetPhysicalSize);
-    await t.pumpWidget(MorrowApp(storage: storage));
+    await t.pumpWidget(
+      MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+    );
     await t.pumpAndSettle();
+    expect(find.byType(Studio), findsOneWidget);
   }
 
   Future<void> preview(WidgetTester t, String hex) async {
@@ -74,7 +77,9 @@ void main() {
       await tap(t, 'theme-dark');
       expect(palette(t).themeColor!.toARGB32(), 0xff12785a);
       await t.pumpWidget(const SizedBox());
-      await t.pumpWidget(MorrowApp(storage: storage));
+      await t.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await t.pumpAndSettle();
       expect(palette(t).themeColor!.toARGB32(), 0xff12785a);
       expect(palette(t).theme, StudioTheme.dark);

@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'appearance.dart';
 import 'color_compass.dart';
@@ -56,7 +57,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
       Scaffold(
         backgroundColor: p.background,
         appBar: AppBar(
-          title: const Text('组件与卡片'),
+          title: Text(L10n.of(context).visualComponents),
           backgroundColor: p.background,
         ),
         body: Center(
@@ -66,7 +67,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
               padding: const EdgeInsets.all(20),
               children: [
                 Text(
-                  '每项单独设置，默认跟随主题。修改一张卡片不会影响其他卡片。',
+                  L10n.of(context).visualComponentsGuide,
                   style: TextStyle(color: p.muted, height: 1.6),
                 ),
                 const SizedBox(height: 16),
@@ -80,8 +81,8 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
                     ),
                     subtitle: Text(
                       surfaces.components[entry.key]?.enabled == true
-                          ? '独立材质'
-                          : '跟随主题',
+                          ? L10n.of(context).visualIndependentMaterial
+                          : L10n.of(context).visualFollowTheme,
                     ),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => edit(entry.key, entry.value),
@@ -140,7 +141,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
     final chosen = await showStudioDialog<Color>(
       context: context,
       builder: (_) => ColorCompassDialog(
-        title: '${widget.title} · 调色罗盘',
+        title: L10n.of(context).visualComponentCompass(widget.title),
         initial: value.color ?? widget.palette.surface,
       ),
     );
@@ -196,7 +197,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                             p: p,
                             child: Center(
                               child: Text(
-                                '材质预览',
+                                L10n.of(context).visualMaterialPreview,
                                 style: TextStyle(color: p.ink),
                               ),
                             ),
@@ -209,8 +210,8 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                   SwitchListTile.adaptive(
                     key: const ValueKey('component-custom-toggle'),
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('使用自定义材质'),
-                    subtitle: const Text('关闭后跟随主题，保留本项自定义参数'),
+                    title: Text(L10n.of(context).visualUseCustomMaterial),
+                    subtitle: Text(L10n.of(context).visualCustomMaterialGuide),
                     value: value.enabled,
                     onChanged: (enabled) => setState(
                       () => value = value.copyWith(enabled: enabled),
@@ -224,14 +225,14 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                             children: [
                               slider(
                                 'component-blur',
-                                '磨砂效果',
+                                L10n.of(context).visualFrosting,
                                 value.blur,
                                 40,
                                 (v) => value = value.copyWith(blur: v),
                               ),
                               slider(
                                 'component-opacity',
-                                '不透明度',
+                                L10n.of(context).visualOpacity,
                                 value.opacity,
                                 1,
                                 (v) => value = value.copyWith(opacity: v),
@@ -243,7 +244,9 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                                   Icons.palette_outlined,
                                   size: 16,
                                 ),
-                                label: const Text('调色罗盘 · 自定义'),
+                                label: Text(
+                                  L10n.of(context).visualCustomCompass,
+                                ),
                               ),
                             ],
                           )
@@ -253,11 +256,11 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                   FilledButton(
                     key: const ValueKey('component-apply'),
                     onPressed: () => Navigator.of(context).pop(value),
-                    child: const Text('应用到此组件'),
+                    child: Text(L10n.of(context).visualApplyComponent),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('取消'),
+                    child: Text(L10n.of(context).visualCancel),
                   ),
                 ],
               ),

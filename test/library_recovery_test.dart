@@ -16,6 +16,7 @@ void main() {
       await tester.pumpWidget(
         WorkbenchRecovery(
           message: '已登记内容库无法打开',
+          locale: const Locale('zh'),
           onRetry: () async {
             retries++;
           },
@@ -30,6 +31,7 @@ void main() {
           },
         ),
       );
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('restore-library-snapshot')));
       await tester.pumpAndSettle();
       expect(snapshots, 1);

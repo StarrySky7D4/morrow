@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -86,16 +87,69 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
             key: const ValueKey('desktop-caption'),
             duration: motionDuration(context, 220),
             color: p.captionColor,
-            child: WindowCaption(
-              backgroundColor: Colors.transparent,
-              brightness: p.dark ? Brightness.dark : Brightness.light,
-              title: Row(
-                children: [
-                  Icon(Icons.all_inclusive_rounded, size: 17, color: p.accent),
-                  const SizedBox(width: 8),
-                  Text('Morrow', style: TextStyle(fontSize: 12, color: p.ink)),
-                ],
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: DragToMoveArea(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.all_inclusive_rounded,
+                            size: 17,
+                            color: p.accent,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Morrow',
+                            style: TextStyle(fontSize: 12, color: p.ink),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Tooltip(
+                  message: L10n.of(context).visualMinimize,
+                  child: WindowCaptionButton.minimize(
+                    brightness: p.dark ? Brightness.dark : Brightness.light,
+                    onPressed: () async {
+                      if (await windowManager.isMinimized()) {
+                        await windowManager.restore();
+                      } else {
+                        await windowManager.minimize();
+                      }
+                    },
+                  ),
+                ),
+                Tooltip(
+                  message: maximized
+                      ? L10n.of(context).visualRestoreWindow
+                      : L10n.of(context).visualMaximize,
+                  child: maximized
+                      ? WindowCaptionButton.unmaximize(
+                          brightness: p.dark
+                              ? Brightness.dark
+                              : Brightness.light,
+                          onPressed: windowManager.unmaximize,
+                        )
+                      : WindowCaptionButton.maximize(
+                          brightness: p.dark
+                              ? Brightness.dark
+                              : Brightness.light,
+                          onPressed: windowManager.maximize,
+                        ),
+                ),
+                Tooltip(
+                  message: L10n.of(context).visualCloseWindow,
+                  child: WindowCaptionButton.close(
+                    brightness: p.dark ? Brightness.dark : Brightness.light,
+                    onPressed: windowManager.close,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -117,11 +171,42 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
         ),
       ],
     );
-    return maximized
-        ? contents
-        : DragToResizeArea(
-            resizeEdgeSize: 5,
-            child: ClipRRect(borderRadius: radius, child: contents),
-          );
+    // The desktop frame is also used in MaterialApp.builder, outside the
+    // Navigator's Overlay. Caption tooltips need their own full-window overlay.
+    return _FrameOverlay(
+      child: maximized
+          ? contents
+          : DragToResizeArea(
+              resizeEdgeSize: 5,
+              child: ClipRRect(borderRadius: radius, child: contents),
+            ),
+    );
   }
+}
+
+class _FrameOverlay extends StatefulWidget {
+  const _FrameOverlay({required this.child});
+  final Widget child;
+  @override
+  State<_FrameOverlay> createState() => _FrameOverlayState();
+}
+
+class _FrameOverlayState extends State<_FrameOverlay> {
+  late final OverlayEntry _content = OverlayEntry(builder: (_) => widget.child);
+
+  @override
+  void didUpdateWidget(_FrameOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _content.markNeedsBuild();
+  }
+
+  @override
+  void dispose() {
+    _content.remove();
+    _content.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Overlay(initialEntries: [_content]);
 }

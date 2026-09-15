@@ -18,7 +18,7 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       for (final width in [1440.0, 1050.0, 800.0, 760.0, 390.0]) {
         tester.view.physicalSize = Size(width, 1000);
-        await tester.pumpWidget(const MorrowApp());
+        await tester.pumpWidget(const MorrowApp(initialLocale: Locale('zh')));
         await tester.pumpAndSettle();
         final settings = find.byKey(const ValueKey('appearance-toggle'));
         final search = find.byKey(const ValueKey('header-search'));
@@ -116,7 +116,7 @@ void main() {
       FlutterError.dumpErrorToConsole(details);
       previousHandler?.call(details);
     };
-    await tester.pumpWidget(const MorrowApp());
+    await tester.pumpWidget(const MorrowApp(initialLocale: Locale('zh')));
     await tester.pumpAndSettle();
   }
 
@@ -205,15 +205,27 @@ void main() {
     await tester.tap(find.text('小项目'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byKey(const ValueKey('page-概览')), findsOneWidget);
-    expect(find.byKey(const ValueKey('page-小项目')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('page-workbench.page.overview')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('page-workbench.page.projects')),
+      findsOneWidget,
+    );
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('page-概览')), findsNothing);
+    expect(
+      find.byKey(const ValueKey('page-workbench.page.overview')),
+      findsNothing,
+    );
     await tester.tap(find.text('实验室').first);
     await tester.pump();
     await tester.tap(find.text('已收藏').first);
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('page-已收藏')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('page-workbench.page.favorites')),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures(disableAnimations: true);
@@ -224,7 +236,7 @@ void main() {
     final transition = tester.widget<AnimatedSwitcher>(
       find
           .ancestor(
-            of: find.byKey(const ValueKey('page-概览')),
+            of: find.byKey(const ValueKey('page-workbench.page.overview')),
             matching: find.byType(AnimatedSwitcher),
           )
           .first,
@@ -241,7 +253,9 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(MorrowApp(storage: storage));
+    await tester.pumpWidget(
+      MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('一个安静的数字花园'));
     await tester.pumpAndSettle();
@@ -277,7 +291,10 @@ void main() {
     }
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(
-      MorrowApp(storage: LocalStorage(await SharedPreferences.getInstance())),
+      MorrowApp(
+        initialLocale: const Locale('zh'),
+        storage: LocalStorage(await SharedPreferences.getInstance()),
+      ),
     );
     await tester.pumpAndSettle();
     final palette = tester.widget<Studio>(find.byType(Studio)).palette;
@@ -299,7 +316,9 @@ void main() {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       final slider = find.byKey(const ValueKey('frosted-opacity'));
       await tester.ensureVisible(slider);
@@ -339,7 +358,9 @@ void main() {
         const Color(0xFF2468AB),
       );
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       expect(
         tester.widget<Studio>(find.byType(Studio)).palette.customColor,
@@ -427,7 +448,10 @@ void main() {
           ).toJson(),
         };
       await tester.runAsync(() async {
-        await tester.pumpWidget(MorrowApp(storage: storage));
+        await tester.pumpWidget(
+          MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+        );
+        await tester.pumpAndSettle();
         await precacheImage(
           FileImage(File('test/fixtures/texture.png')),
           tester.element(find.byType(Studio)),

@@ -15,6 +15,8 @@ pub use card_snapshot::{CardPage, CardReadSnapshot, Census, FrozenCard, ReadPoin
 mod blobs;
 mod evidence;
 mod evidence_chunks;
+mod io_intent;
+pub use io_intent::IoIntentReservation;
 pub use binding::{AuditBinding, AuditBindingState};
 mod read_archive;
 mod read_archive_budget;
@@ -94,6 +96,27 @@ fn blob(connection: &Connection, query: &str, id: &str, limit: usize) -> Result<
         None => Ok(None),
     }
 }
+/// Single shared logical capacity entry for every outbox writer. Pre-dispatch
+/// IO intent reservations reduce the room other events may consume, so a
+/// dispatched operation can never be crowded out by later writes. This is a
+/// logical quota; SQLite reporting DiskFull still maps to StorageFull.
+pub(super) fn event_room(c: &Connection, budget: EventBudget, incoming_bytes: u64) -> Result<()> {
+    let (count, bytes): (i64, i64) = sql(c.query_row(
+        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
+        [],
+        |r| Ok((r.get(0)?, r.get(1)?)),
+    ))?;
+    let (reserved_events, reserved_bytes) = io_intent::reservations(c)?;
+    if count.saturating_add(reserved_events) >= i64::from(budget.max_count)
+        || (bytes as u64)
+            .saturating_add(reserved_bytes as u64)
+            .saturating_add(incoming_bytes)
+            > budget.max_bytes
+    {
+        return Err(Error::EventCapacity);
+    }
+    Ok(())
+}
 fn read_card(connection: &Connection, id: &str) -> Result<Option<CardRecord>> {
     let bytes = blob(
         connection,
@@ -142,7 +165,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=14) {
+        if app != APPLICATION_ID || !matches!(version, 5..=16) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
@@ -208,7 +231,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=14))
+            && (app != APPLICATION_ID || !matches!(version, 4..=16))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -253,7 +276,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=14) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=16) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -368,6 +391,31 @@ impl Store {
             boundary("retention-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("retention-migration-after-commit");
+        }
+        if version < 15 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            // Validate the entire previous schema before adding the IO namespace.
+            // No existing original, commit, evidence or signature is rewritten.
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(io_intent::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 15))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("io-intent-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-intent-migration-after-commit");
+        }
+        if version < 16 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            // Validate the entire v15 schema before adding the reservation
+            // namespace. No existing original, commit, evidence or signature is
+            // rewritten; a fresh table starts with zero held quota.
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(io_intent::reservation_schema().as_str()))?;
+            sql(tx.pragma_update(None, "user_version", 16))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("io-reservation-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-reservation-migration-after-commit");
         }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
@@ -605,16 +653,7 @@ impl Store {
         let next = propose(current.as_ref())?;
         let event = transaction::encode_commit_with_evidence(command, &next, &evidence_digests)?;
         let receipt = transaction::decode_commit(&event)?.1;
-        let (count, bytes): (i64, i64) = sql(tx.query_row(
-            "SELECT count(*), coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
-        if count >= i64::from(self.budget.max_count)
-            || (bytes as u64).saturating_add(event.len() as u64) > self.budget.max_bytes
-        {
-            return Err(Error::EventCapacity);
-        }
+        event_room(&tx, self.budget, event.len() as u64)?;
         let payload = envelope::encode(&next)?;
         sql(tx.execute("INSERT INTO cards(id,payload) VALUES(?1,?2) ON CONFLICT(id) DO UPDATE SET payload=excluded.payload", params![card_id, payload]))?;
         boundary("after-card");
@@ -721,7 +760,15 @@ impl Store {
             if total > 32 * 1024 * 1024 {
                 return Err(Error::Limit);
             }
-            if value.starts_with(crate::read_journal::MAGIC) {
+            if value.starts_with(crate::io_intent::MAGIC) {
+                let record = crate::io_intent::Record::decode(value)?;
+                io_intent::verify_operation(
+                    &self.connection,
+                    &record.event_id(),
+                    &record.command().subject,
+                    value,
+                )?;
+            } else if value.starts_with(crate::read_journal::MAGIC) {
                 let version: i64 =
                     sql(self
                         .connection
@@ -755,6 +802,7 @@ impl Store {
         if result != "ok" {
             return Err(Error::Integrity);
         }
+        io_intent::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;
@@ -765,6 +813,7 @@ impl Store {
         read_archive::verify(snapshot)?;
         read_capture::verify(snapshot)?;
         read_archive_retention::verify(snapshot)?;
+        io_intent::verify(snapshot)?;
         let mut operations = sql(snapshot.prepare(
             "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
         ))?;
@@ -776,6 +825,15 @@ impl Store {
             }
             let raw = value.as_blob().map_err(|_| Error::Integrity)?;
             let kind: i64 = sql(row.get(3))?;
+            if kind == 5 {
+                io_intent::verify_operation(
+                    snapshot,
+                    &sql(row.get::<_, String>(0))?,
+                    &sql(row.get::<_, String>(1))?,
+                    raw,
+                )?;
+                continue;
+            }
             if kind == 4 {
                 read_journal::verify_operation(
                     snapshot,

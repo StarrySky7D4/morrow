@@ -119,7 +119,7 @@ fn point(connection: &Connection) -> Result<ReadPoint> {
     ))?;
     let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
     let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-    if app != APPLICATION_ID || !(5..=14).contains(&version) {
+    if app != APPLICATION_ID || !(5..=16).contains(&version) {
         return Err(Error::UnsupportedVersion);
     }
     // Physical card deletion has no valid public operation: retain the reverse closure
@@ -173,6 +173,7 @@ fn point(connection: &Connection) -> Result<ReadPoint> {
             }
             1..=3 => super::records::verify_operation(connection, kind, operation, subject, raw)?,
             4 => super::read_journal::verify_operation(connection, operation, subject, raw)?,
+            5 => super::io_intent::verify_operation(connection, operation, subject, raw)?,
             _ => return Err(Error::Integrity),
         }
         Some(Sha256::digest(raw).into())

@@ -432,7 +432,9 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
       final storage = MemoryStorage();
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('灵感收件箱'));
       await tester.pumpAndSettle();
@@ -465,7 +467,9 @@ void main() {
       expect(find.text('音视频'), findsOneWidget);
       expect(tester.takeException(), isNull);
       await tester.pumpWidget(const SizedBox());
-      await tester.pumpWidget(MorrowApp(storage: storage));
+      await tester.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await tester.pumpAndSettle();
       await tester.tap(find.text('小项目').first);
       await tester.pumpAndSettle();
