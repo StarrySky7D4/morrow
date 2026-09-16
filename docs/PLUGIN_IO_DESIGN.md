@@ -6,7 +6,9 @@
 
 依据：[统一架构基线](ARCHITECTURE_BASELINE.md)、[SDK 兼容候选](PLUGIN_SDK_COMPATIBILITY.md)、[SDK 与 UI](PLUGIN_SDK_AND_UI.md)。目标是 C、C++、Rust Wasm 插件经过同一个可信宿主取得明确授权的 IO 能力；插件不能直接获得操作系统文件句柄、任意本机路径、网络 socket 或宿主凭据。正式内容仍只有现有核心 Store 一个权威来源。
 
-当前实现增量：[ROAD-07 声明、批准与实例准入报告](../reports/road-07-io-admission.md)。已落地独立 IO 声明、Registry v2 批准／迁移、Manager／Pool 实例绑定和共享配额；没有 guest IO codec／导入、路径／origin 资源授予、实际文件／网络执行或持久副作用恢复。下文 broker、异步任务与 SDK 调用仍是待实现设计，不能因声明被识别就标为支持。
+当前实现增量（2026-09-16）：[声明与实例准入](../reports/road-07-io-admission.md)已扩展为[真实 guest IO 与受管文件读取](../reports/track-a-integration-2026-09-16.md)。现有 IO schema 保持不变，`core::io` 支持 Read/Finish/Cancel；`morrow_io_v1.call` 由专用 Runner 导入，FileBroker 使用当前 Manager／Pool 实例、Registry 批准、共享预算与原资源租约。管理入口每次执行一个准确请求并核对实际完成结果，不走纯转换注册。调用限制、测试和平台边界见验收报告。
+
+这些是实验性实现，不代表下文整套异步 API 已实现。submit/poll、OS 资源选择、文件变更、正式 guest 网络、持久材料与恢复仍见 [后续编码看板](DEVELOPMENT_BOARD.md)。已有 network_node 原生 HTTP／HTTPS 客户端和服务节点继续复用；它们不自动拥有 guest 授权。IO 扩展不纳入 guest-v1-rc1 冻结承诺。
 
 ## 完整网络能力目标补充
 
