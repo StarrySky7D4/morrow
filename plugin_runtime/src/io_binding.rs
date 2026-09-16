@@ -99,7 +99,7 @@ impl IoBinding {
             expires,
         })
     }
-    fn validate_identity(
+    pub(crate) fn validate_identity(
         &self,
         manager: &Manager,
         host: &HostRuntime,
@@ -129,6 +129,32 @@ impl IoBinding {
             return Err(Error::Expired);
         }
         Ok(())
+    }
+    /// Validate before examining another resource, without advancing shared accounting.
+    pub(crate) fn preflight(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        now: u64,
+    ) -> Result<()> {
+        self.validate_identity(manager, host, instance)?;
+        let state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&state, now)
+    }
+    pub(crate) fn preflight_capability(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        capability: IoCapability,
+        now: u64,
+    ) -> Result<()> {
+        self.validate_identity(manager, host, instance)?;
+        if !self.capabilities.contains(&capability) {
+            return Err(Error::Denied);
+        }
+        self.preflight(manager, host, instance, now)
     }
     /// Recheck immediately before a broker starts work or delivers an observed result.
     pub fn check(
@@ -197,6 +223,11 @@ impl IoBinding {
             capability,
         })
     }
+    pub(crate) fn reclaimable(&self, now: u64) -> bool {
+        now >= self.expires
+            || self.manager.upgrade().is_none()
+            || !self.control.upgrade().is_some_and(|c| c.active())
+    }
     fn duplicate(&self) -> Self {
         Self {
             manager: self.manager.clone(),
@@ -226,6 +257,16 @@ pub struct IoLease {
     capability: IoCapability,
 }
 impl IoLease {
+    /// Keep an idle resource without consuming a concurrent job slot.
+    pub(crate) fn into_resource(mut self) -> IoResourceLease {
+        let held = IoResourceLease {
+            binding: self.binding.duplicate(),
+            resources: self.resources,
+        };
+        self.resources = 0;
+        held
+    }
+
     pub fn check(
         &self,
         manager: &Manager,
@@ -252,5 +293,49 @@ impl Drop for IoLease {
             .unwrap_or_else(|p| p.into_inner());
         state.usage.resources -= self.resources;
         state.usage.jobs -= 1;
+    }
+}
+
+/// Private held capacity; it carries the original live identity and expiry.
+pub(crate) struct IoResourceLease {
+    binding: IoBinding,
+    resources: u32,
+}
+impl IoResourceLease {
+    pub(crate) fn preflight(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        now: u64,
+    ) -> Result<()> {
+        self.binding.preflight(manager, host, instance, now)
+    }
+
+    pub(crate) fn delivery_guard(&self) -> IoBinding {
+        self.binding.duplicate()
+    }
+    pub(crate) fn check(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        now: u64,
+    ) -> Result<()> {
+        self.binding.check(manager, host, instance, now)
+    }
+    pub(crate) fn reclaimable(&self, now: u64) -> bool {
+        self.binding.reclaimable(now)
+    }
+}
+impl Drop for IoResourceLease {
+    fn drop(&mut self) {
+        let mut state = self
+            .binding
+            .context
+            .state
+            .lock()
+            .unwrap_or_else(|p| p.into_inner());
+        state.usage.resources -= self.resources;
     }
 }

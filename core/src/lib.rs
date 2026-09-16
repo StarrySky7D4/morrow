@@ -9,6 +9,7 @@ pub mod dependency_call;
 pub mod dispatch;
 pub mod lifecycle;
 pub mod io_intent;
+pub mod io;
 pub mod plugin_package;
 pub mod read_archive;
 pub mod read_capture;
@@ -98,4 +99,10 @@ pub(crate) fn title(value: &str) -> Result<()> {
         return Err(Error::Limit);
     }
     Ok(())
+}
+
+// Existing experimental IO schema; generated metadata only.
+#[allow(clippy::all, unsafe_code)]
+pub mod io_capnp {
+    include!(concat!(env!("OUT_DIR"), "/io_capnp.rs"));
 }
