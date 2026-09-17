@@ -342,7 +342,7 @@ fn pending_scan_uses_rebuildable_sqlite_index_without_schema_or_signature_change
     assert_eq!(
         sql.query_row("PRAGMA user_version", [], |r| r.get::<_, u32>(0))
             .unwrap(),
-        14
+        17
     );
     assert_eq!(
         sql.query_row(
@@ -447,7 +447,7 @@ fn legacy_over_count_preparations_are_preserved_and_can_be_explicitly_drained() 
     let sql = rusqlite::Connection::open(&path).unwrap();
     // This is explicitly a legacy DB13 sample; DB14 requires its derived ledger.
     sql.execute_batch(
-        "DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; PRAGMA user_version=13;",
+        "DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; PRAGMA user_version=13;",
     )
     .unwrap();
     sql.execute("INSERT INTO read_archives(operation_id,subject,published,payload) VALUES('legacy-extra','reader',0,?1)",[legacy.container()]).unwrap();

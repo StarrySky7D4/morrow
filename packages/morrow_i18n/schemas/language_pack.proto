@@ -1,0 +1,14 @@
+syntax = "proto3";
+package morrow.localization.v1;
+// Compile-time ARB source remains authoritative. No executable or external paths.
+message LanguagePack {
+  uint32 schema_version = 1;
+  string locale = 2;
+  bytes catalog_sha256 = 3;
+  repeated Message messages = 4;
+}
+message Message {
+  string key = 1;
+  string icu = 2;
+  bytes metadata_json = 3;
+}

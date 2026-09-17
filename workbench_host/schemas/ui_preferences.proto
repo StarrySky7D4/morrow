@@ -1,0 +1,7 @@
+syntax = "proto3";
+package morrow.host.ui.v1;
+// Host-owned presentation preference. Content/plugin contracts and user text are unchanged.
+message Preferences {
+  uint32 schema_version = 1;
+  string locale = 2; // system, zh (Simplified Chinese), en
+}

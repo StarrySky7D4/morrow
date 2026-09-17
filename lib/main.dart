@@ -1,3 +1,7 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'plugins/workbench_ids.dart';
+import 'plugins/workbench_labels.dart';
 import 'plugins/query_coordinator.dart';
 import 'plugins/editor_session.dart';
 import 'plugins/plugin_tools.dart';
@@ -71,7 +75,9 @@ class MorrowApp extends StatefulWidget {
     this.nativeBackground,
     this.initialWarning,
     this.workbench,
+    this.initialLocale,
   });
+  final Locale? initialLocale;
   final StudioStorage? storage;
   final DesktopBackground? nativeBackground;
   final String? initialWarning;
@@ -81,6 +87,12 @@ class MorrowApp extends StatefulWidget {
 }
 
 class _MorrowAppState extends State<MorrowApp> {
+  String uiLocale = 'system';
+  AppLocalizations get l => uiLocale != 'system'
+      ? L10n.forLocale(Locale(uiLocale))
+      : messages.currentContext == null
+      ? L10n.forLocale(const Locale('zh'))
+      : L10n.of(messages.currentContext!);
   StudioTheme theme = StudioTheme.white;
   GlassMode mode = GlassMode.frosted;
   BackgroundMode background = BackgroundMode.ambient;
@@ -109,6 +121,13 @@ class _MorrowAppState extends State<MorrowApp> {
     try {
       restored = storage.read();
       final data = restored;
+      final storedLocale = data?['uiLocale'];
+      uiLocale = const ['zh', 'en'].contains(storedLocale)
+          ? storedLocale as String
+          : 'system';
+      if (const ['zh', 'en'].contains(widget.initialLocale?.languageCode)) {
+        uiLocale = widget.initialLocale!.languageCode;
+      }
       if (data != null) {
         theme = StudioTheme.values.byName(
           data['theme'] == 'mist' ? 'custom' : data['theme'] as String,
@@ -163,16 +182,28 @@ class _MorrowAppState extends State<MorrowApp> {
       warning = '存储内容无法读取，原数据仍保留。当前会话不会覆盖它。';
       storageReadFailed = true;
     }
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => applyWindowBackground(),
+    );
+  }
+
+  bool _initialWarningShown = false;
+  void scheduleInitialWarning(BuildContext localizedContext) {
+    if (_initialWarningShown || warning == null) return;
+    _initialWarningShown = true;
+    final translated = L10n.of(localizedContext);
+    final text = switch (warning!) {
+      '本地存储暂不可用，当前改动仅保留在本次会话。' => translated.mainStorageUnavailable,
+      '存储内容无法读取，原数据仍保留。当前会话不会覆盖它。' => translated.mainStorageUnreadable,
+      '工作台插件不可用，已有内容仍可查看和导出。' => translated.recoveryPluginUnavailable,
+      final message =>
+        '${translated.recoveryMaintenance}\n${translated.mainDiagnosticDetails}: $message',
+    };
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (warning != null) {
-        messages.currentState?.showSnackBar(
-          SnackBar(
-            content: Text(warning!),
-            duration: const Duration(seconds: 8),
-          ),
-        );
-      }
-      applyWindowBackground();
+      if (!mounted) return;
+      messages.currentState?.showSnackBar(
+        SnackBar(content: Text(text), duration: const Duration(seconds: 8)),
+      );
     });
   }
 
@@ -184,6 +215,7 @@ class _MorrowAppState extends State<MorrowApp> {
       await storage.write({
         ...content,
         'version': 1,
+        'uiLocale': uiLocale,
         'theme': theme.name,
         'glass': mode.name,
         'background': background.name,
@@ -205,9 +237,9 @@ class _MorrowAppState extends State<MorrowApp> {
         messages.currentState?.hideCurrentSnackBar();
         messages.currentState?.showSnackBar(
           SnackBar(
-            content: const Text('保存失败，改动仍在当前会话中。'),
+            content: Text(l.mainSaveFailed),
             action: SnackBarAction(
-              label: '重试',
+              label: l.mainRetry,
               onPressed: () => saveContent(restored ?? content),
             ),
           ),
@@ -232,8 +264,8 @@ class _MorrowAppState extends State<MorrowApp> {
           SnackBar(
             content: Text(
               error is PlatformException && error.code == 'backdrop_unavailable'
-                  ? '当前系统无法启用桌面磨砂，染色和透明度仍可调整。'
-                  : '系统透明效果未能启用，可切换到默认背景继续使用。',
+                  ? l.mainFrostUnavailable
+                  : l.mainTransparencyUnavailable,
             ),
           ),
         );
@@ -270,27 +302,50 @@ class _MorrowAppState extends State<MorrowApp> {
       themeColor,
       surfaces,
     );
+    final labelOverrides = WorkbenchLabelsScope.maybeOf(context);
     return MaterialApp(
-      title: 'Morrow — 留一点空间给灵感',
+      onGenerateTitle: (context) => L10n.of(context).mainAppTitle,
+      locale: uiLocale == 'system' ? null : Locale(uiLocale),
+      supportedLocales: L10n.supportedLocales,
+      localizationsDelegates: const [
+        L10n.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: messages,
-      builder: (_, child) => AppearanceScope(
-        palette: palette,
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value:
-              (palette.dark
-                      ? SystemUiOverlayStyle.light
-                      : SystemUiOverlayStyle.dark)
-                  .copyWith(
-                    statusBarColor: Colors.transparent,
-                    systemNavigationBarColor: Colors.transparent,
-                    systemNavigationBarContrastEnforced: false,
-                  ),
-          child: widget.nativeBackground != null && isWindowsDesktop
-              ? DesktopFrame(palette: palette, child: child!)
-              : child!,
-        ),
-      ),
+      builder: (context, child) {
+        scheduleInitialWarning(context);
+        return WorkbenchLabelsScope(
+          labels:
+              labelOverrides ?? WorkbenchLabels(localization: L10n.of(context)),
+          child: _UiLocaleScope(
+            value: uiLocale,
+            onChanged: (value) {
+              setState(() => uiLocale = value);
+              saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
+            },
+            child: AppearanceScope(
+              palette: palette,
+              child: AnnotatedRegion<SystemUiOverlayStyle>(
+                value:
+                    (palette.dark
+                            ? SystemUiOverlayStyle.light
+                            : SystemUiOverlayStyle.dark)
+                        .copyWith(
+                          statusBarColor: Colors.transparent,
+                          systemNavigationBarColor: Colors.transparent,
+                          systemNavigationBarContrastEnforced: false,
+                        ),
+                child: widget.nativeBackground != null && isWindowsDesktop
+                    ? DesktopFrame(palette: palette, child: child!)
+                    : child!,
+              ),
+            ),
+          ),
+        );
+      },
       theme: ThemeData(
         useMaterial3: true,
         brightness: palette.dark ? Brightness.dark : Brightness.light,
@@ -421,6 +476,22 @@ class _MorrowAppState extends State<MorrowApp> {
       ),
     );
   }
+}
+
+/// UI preference only. Updating this scope never replaces the Navigator, Studio
+/// identity or an editor/controller. Saved business data keeps its original language.
+class _UiLocaleScope extends InheritedWidget {
+  const _UiLocaleScope({
+    required this.value,
+    required this.onChanged,
+    required super.child,
+  });
+  final String value;
+  final ValueChanged<String> onChanged;
+  static _UiLocaleScope? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_UiLocaleScope>();
+  @override
+  bool updateShouldNotify(_UiLocaleScope oldWidget) => value != oldWidget.value;
 }
 
 class Idea {
@@ -557,8 +628,77 @@ class Studio extends StatefulWidget {
 }
 
 class _StudioState extends State<Studio> {
-  String section = '概览';
-  String filter = '全部';
+  AppLocalizations get l => L10n.of(context);
+  WorkbenchPage section = WorkbenchPage.overview;
+  WorkbenchLabels get workbenchLabels => WorkbenchLabelsScope.of(context);
+  final Map<String, int> _sampleIndexes = {};
+  String categoryLabel(String value) => switch (value) {
+    '灵感' => l.mainCategoryIdea,
+    '进行中' => l.mainCategoryProject,
+    '实验' => l.mainCategoryExperiment,
+    _ => value,
+  };
+  String stageLabel(String value) {
+    for (final stage in WorkbenchStage.values) {
+      if (WorkbenchV1.stage(stage) == value) {
+        return workbenchLabels.filter(StageFilter(stage));
+      }
+    }
+    return value;
+  }
+
+  String timeLabel(String value) => switch (value) {
+    '刚刚' => l.mainJustNow,
+    '10 分钟前' => l.mainTenMinutesAgo,
+    '1 小时前' => l.mainOneHourAgo,
+    '3 小时前' => l.mainThreeHoursAgo,
+    '昨天' => l.mainYesterday,
+    _ => value,
+  };
+  String displayTitle(Idea idea) {
+    final index = _sampleIndexes[idea.id];
+    const originals = ['给灵感一个容器', '一个安静的数字花园', '周末，做点无用的东西', '我的桌面小助手'];
+    if (index == null || idea.title != originals[index]) return idea.title;
+    return [
+      l.mainSampleTitle0,
+      l.mainSampleTitle1,
+      l.mainSampleTitle2,
+      l.mainSampleTitle3,
+    ][index];
+  }
+
+  String displayDescription(Idea idea) {
+    final index = _sampleIndexes[idea.id];
+    const originals = [
+      '把突然冒出的念头放在这里。\n不急着完成，先让它发生。',
+      '用小小的网页，收藏喜欢的文字、\n音乐和生活里的细枝末节。',
+      '试试生成艺术，让代码长出\n意料之外的形状。',
+      '一个低调常驻的伙伴，帮我记住\n那些容易忘记的小事。',
+    ];
+    if (index == null || idea.description != originals[index]) {
+      return idea.description;
+    }
+    return [
+      l.mainSampleBody0,
+      l.mainSampleBody1,
+      l.mainSampleBody2,
+      l.mainSampleBody3,
+    ][index];
+  }
+
+  String displayTodo(Idea idea, String todo) {
+    if (!_sampleIndexes.containsKey(idea.id)) return todo;
+    return switch (todo) {
+      '整理第一批收藏' => l.mainSampleTodo0,
+      '设计花园入口' => l.mainSampleTodo1,
+      '种下一条新想法' => l.mainSampleTodo2,
+      '画一个小小的原型' => l.mainSampleTodo3,
+      '定义提醒交互' => l.mainSampleTodo4,
+      _ => todo,
+    };
+  }
+
+  WorkbenchFilter filter = GeneralFilter.all;
   String query = '';
   final search = TextEditingController();
   final quickNote = TextEditingController();
@@ -592,7 +732,7 @@ class _StudioState extends State<Studio> {
         : MusicPanel(key: const ValueKey('music-panel'), controller: music),
   );
   final completed = <String>{};
-  String sort = '最近添加';
+  WorkbenchSort sort = WorkbenchSort.recent;
   bool importing = false;
   String? mediaError;
   final ideas = <Idea>[
@@ -693,7 +833,7 @@ class _StudioState extends State<Studio> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              error is FormatException ? error.message : '素材导入失败，请检查文件与可用存储空间。',
+              error is FormatException ? error.message : l.mainImportFailed,
             ),
           ),
         );
@@ -709,7 +849,7 @@ class _StudioState extends State<Studio> {
       context: context,
       builder: (_) => ColorCompassDialog(
         initial: previous ?? p.accent,
-        title: '主题色彩色罗盘',
+        title: l.mainThemeCompass,
         onChanged: widget.onThemeColor,
       ),
     );
@@ -765,6 +905,11 @@ class _StudioState extends State<Studio> {
         List<String>.from(widget.restored!['completed'] as List? ?? []),
       );
     }
+    if (widget.restored == null) {
+      for (var i = 0; i < ideas.length; i++) {
+        _sampleIndexes[ideas[i].id] = i;
+      }
+    }
     widget.onReady(snapshot());
   }
 
@@ -793,13 +938,13 @@ class _StudioState extends State<Studio> {
             children: [
               IconButton(
                 key: const ValueKey('compact-settings-back'),
-                tooltip: '返回工作台',
+                tooltip: l.mainBackToWorkbench,
                 onPressed: closeCompactSettings,
                 icon: Icon(Icons.arrow_back_rounded, color: p.ink),
               ),
               const SizedBox(width: 8),
               Text(
-                '设置',
+                l.mainSettings,
                 style: TextStyle(
                   color: p.ink,
                   fontSize: 18,
@@ -898,10 +1043,10 @@ class _StudioState extends State<Studio> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('这次修改未能保存，草稿保留，可重试。'),
+            content: Text(l.mainChangeFailed),
             duration: const Duration(seconds: 30),
             action: SnackBarAction(
-              label: '重试',
+              label: l.mainRetry,
               onPressed: () => pluginChange(
                 action,
                 idea,
@@ -941,10 +1086,10 @@ class _StudioState extends State<Studio> {
 
     final result = ideas.where((idea) {
       final sectionMatches = switch (section) {
-        '灵感收件箱' => idea.category == '灵感',
-        '小项目' => idea.category == '进行中',
-        '实验室' => idea.category == '实验',
-        '已收藏' => idea.favorite,
+        WorkbenchPage.inbox => idea.category == '灵感',
+        WorkbenchPage.projects => idea.category == '进行中',
+        WorkbenchPage.laboratory => idea.category == '实验',
+        WorkbenchPage.favorites => idea.favorite,
         _ => true,
       };
       return sectionMatches &&
@@ -953,8 +1098,10 @@ class _StudioState extends State<Studio> {
               .toLowerCase()
               .contains(query.toLowerCase());
     }).toList();
-    if (sort == '标题排序') result.sort((a, b) => a.title.compareTo(b.title));
-    if (sort == '收藏优先') {
+    if (sort == WorkbenchSort.title) {
+      result.sort((a, b) => a.title.compareTo(b.title));
+    }
+    if (sort == WorkbenchSort.favoritesFirst) {
       result.sort((a, b) => (b.favorite ? 1 : 0).compareTo(a.favorite ? 1 : 0));
     }
     return result;
@@ -1122,14 +1269,17 @@ class _StudioState extends State<Studio> {
                                                       ),
                                                     ),
                                             child: SingleChildScrollView(
-                                              key: ValueKey('page-$section'),
+                                              key: ValueKey(
+                                                'page-${section.id}',
+                                              ),
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   greeting(),
                                                   const SizedBox(height: 24),
-                                                  if (section == '概览')
+                                                  if (section ==
+                                                      WorkbenchPage.overview)
                                                     hero()
                                                   else
                                                     pageIntro(),
@@ -1139,8 +1289,12 @@ class _StudioState extends State<Studio> {
                                                   Align(
                                                     alignment:
                                                         Alignment.centerRight,
-                                                    child: PopupMenuButton<String>(
-                                                      tooltip: '排列想法',
+                                                    child: PopupMenuButton<WorkbenchSort>(
+                                                      key: const ValueKey(
+                                                        'workbench-sort',
+                                                      ),
+                                                      tooltip:
+                                                          l.mainArrangeIdeas,
                                                       initialValue: sort,
                                                       onSelected: (value) =>
                                                           setState(
@@ -1148,9 +1302,12 @@ class _StudioState extends State<Studio> {
                                                           ),
                                                       itemBuilder: (_) =>
                                                           [
-                                                                '最近添加',
-                                                                '收藏优先',
-                                                                '标题排序',
+                                                                WorkbenchSort
+                                                                    .recent,
+                                                                WorkbenchSort
+                                                                    .favoritesFirst,
+                                                                WorkbenchSort
+                                                                    .title,
                                                               ]
                                                               .map(
                                                                 (
@@ -1158,7 +1315,10 @@ class _StudioState extends State<Studio> {
                                                                 ) => PopupMenuItem(
                                                                   value: label,
                                                                   child: Text(
-                                                                    label,
+                                                                    workbenchLabels
+                                                                        .sort(
+                                                                          label,
+                                                                        ),
                                                                   ),
                                                                 ),
                                                               )
@@ -1182,7 +1342,8 @@ class _StudioState extends State<Studio> {
                                                               width: 5,
                                                             ),
                                                             Text(
-                                                              sort,
+                                                              workbenchLabels
+                                                                  .sort(sort),
                                                               style: TextStyle(
                                                                 fontSize: 10,
                                                                 color: p.muted,
@@ -1233,7 +1394,7 @@ class _StudioState extends State<Studio> {
                                                           ),
                                                       child: KeyedSubtree(
                                                         key: ValueKey(
-                                                          '$filter/$sort/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
+                                                          '${filter.id}/${sort.id}/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
                                                         ),
                                                         child: cards(),
                                                       ),
@@ -1313,115 +1474,142 @@ class _StudioState extends State<Studio> {
     componentId: 'navigation',
     p: p,
     radius: 26,
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(16, 26, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: Row(
-              children: [
-                logo(32),
-                const SizedBox(width: 11),
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
+    child: LayoutBuilder(
+      builder: (context, constraints) => SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: constraints.maxHeight),
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 26, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Row(
+                      children: [
+                        logo(32),
+                        const SizedBox(width: 11),
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Morrow',
+                              style: TextStyle(
+                                fontSize: 23,
+                                color: p.ink,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 9),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 13),
                     child: Text(
-                      'Morrow',
+                      l.mainSidebarMotto,
                       style: TextStyle(
-                        fontSize: 23,
-                        color: p.ink,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -1,
+                        fontSize: 10,
+                        color: p.muted,
+                        letterSpacing: 1,
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 9),
-          Padding(
-            padding: const EdgeInsets.only(left: 13),
-            child: Text(
-              '杂事有序，奇想自由。',
-              style: TextStyle(fontSize: 10, color: p.muted, letterSpacing: 1),
-            ),
-          ),
-          const SizedBox(height: 42),
-          Padding(
-            padding: const EdgeInsets.only(left: 13, bottom: 14),
-            child: Text(
-              '我的空间',
-              style: TextStyle(
-                fontSize: 10,
-                color: p.muted,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
-          navItem('概览', Icons.grid_view_rounded),
-          navItem(
-            '灵感收件箱',
-            Icons.inbox_outlined,
-            count: ideas.where((e) => e.category == '灵感').length,
-          ),
-          navItem('小项目', Icons.folder_open_rounded),
-          navItem('实验室', Icons.science_outlined),
-          const SizedBox(height: 14),
-          Divider(color: p.line, indent: 12, endIndent: 12),
-          const SizedBox(height: 14),
-          navItem('已收藏', Icons.bookmark_border_rounded),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: p.accent.withValues(alpha: .065),
-              borderRadius: p.borderRadius(16),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.wb_twilight_rounded, color: p.accent, size: 23),
-                const SizedBox(height: 9),
-                RotatingTip(
-                  key: const ValueKey('corner-tips'),
-                  lines: cornerTips,
-                  style: TextStyle(fontSize: 10, color: p.muted, height: 1.8),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 22),
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 17,
-                backgroundColor: p.accent.withValues(alpha: .13),
-                child: Text(
-                  'D',
-                  style: TextStyle(color: p.accent, fontSize: 13),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('个人工作台', style: TextStyle(fontSize: 11, color: p.ink)),
-                    Text(
-                      'Just for your curiosity',
-                      style: TextStyle(fontSize: 9, color: p.muted),
+                  const SizedBox(height: 42),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 13, bottom: 14),
+                    child: Text(
+                      l.mainMySpace,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: p.muted,
+                        letterSpacing: 1.5,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  navItem(WorkbenchPage.overview, Icons.grid_view_rounded),
+                  navItem(
+                    WorkbenchPage.inbox,
+                    Icons.inbox_outlined,
+                    count: ideas.where((e) => e.category == '灵感').length,
+                  ),
+                  navItem(WorkbenchPage.projects, Icons.folder_open_rounded),
+                  navItem(WorkbenchPage.laboratory, Icons.science_outlined),
+                  const SizedBox(height: 14),
+                  Divider(color: p.line, indent: 12, endIndent: 12),
+                  const SizedBox(height: 14),
+                  navItem(
+                    WorkbenchPage.favorites,
+                    Icons.bookmark_border_rounded,
+                  ),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: p.accent.withValues(alpha: .065),
+                      borderRadius: p.borderRadius(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.wb_twilight_rounded,
+                          color: p.accent,
+                          size: 23,
+                        ),
+                        const SizedBox(height: 9),
+                        RotatingTip(
+                          key: const ValueKey('corner-tips'),
+                          lines: localizedCornerTips(context),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: p.muted,
+                            height: 1.8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 17,
+                        backgroundColor: p.accent.withValues(alpha: .13),
+                        child: Text(
+                          'D',
+                          style: TextStyle(color: p.accent, fontSize: 13),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l.mainPersonalWorkspace,
+                              style: TextStyle(fontSize: 11, color: p.ink),
+                            ),
+                            Text(
+                              l.mainSidebarMotto,
+                              style: TextStyle(fontSize: 9, color: p.muted),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.more_horiz, color: p.muted, size: 17),
+                    ],
+                  ),
+                ],
               ),
-              Icon(Icons.more_horiz, color: p.muted, size: 17),
-            ],
+            ),
           ),
-        ],
+        ),
       ),
     ),
   );
@@ -1436,8 +1624,9 @@ class _StudioState extends State<Studio> {
     child: Icon(Icons.all_inclusive_rounded, size: 23, color: p.onAccent),
   );
 
-  Widget navItem(String title, IconData icon, {int? count}) {
-    final selected = section == title;
+  Widget navItem(WorkbenchPage page, IconData icon, {int? count}) {
+    final title = workbenchLabels.page(page);
+    final selected = section == page;
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
       child: AnimatedContainer(
@@ -1452,7 +1641,8 @@ class _StudioState extends State<Studio> {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: p.borderRadius(12),
-            onTap: () => selectSection(title),
+            key: ValueKey('nav-${page.id}'),
+            onTap: () => selectSection(page),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
               child: Row(
@@ -1485,31 +1675,34 @@ class _StudioState extends State<Studio> {
     );
   }
 
-  void selectSection(String value) => setState(() {
+  void selectSection(WorkbenchPage value) => setState(() {
     FocusManager.instance.primaryFocus?.unfocus();
     section = value;
-    filter = '全部';
+    filter = GeneralFilter.all;
   });
 
   Widget header(bool sidebar, bool desktop) => Row(
     children: [
       if (!sidebar)
-        PopupMenuButton<String>(
-          tooltip: '导航',
+        PopupMenuButton<WorkbenchPage>(
+          tooltip: l.mainNavigation,
           onSelected: selectSection,
           icon: Icon(Icons.menu_rounded, color: p.ink),
-          itemBuilder: (_) => [
-            '概览',
-            '灵感收件箱',
-            '小项目',
-            '实验室',
-            '已收藏',
-          ].map((s) => PopupMenuItem(value: s, child: Text(s))).toList(),
+          itemBuilder: (_) => WorkbenchPage.values
+              .map(
+                (page) => PopupMenuItem(
+                  value: page,
+                  child: Text(workbenchLabels.page(page)),
+                ),
+              )
+              .toList(),
         )
       else ...[
         IconButton(
           key: const ValueKey('sidebar-toggle'),
-          tooltip: sidebarExpanded ? '收起侧边栏' : '展开侧边栏',
+          tooltip: sidebarExpanded
+              ? l.mainCollapseSidebar
+              : l.mainExpandSidebar,
           onPressed: () {
             setState(() => sidebarExpanded = !sidebarExpanded);
             persist();
@@ -1520,14 +1713,34 @@ class _StudioState extends State<Studio> {
             child: Icon(Icons.chevron_left_rounded, size: 19, color: p.muted),
           ),
         ),
-        Icon(Icons.space_dashboard_outlined, size: 16, color: p.muted),
-        const SizedBox(width: 9),
-        Text('工作台', style: TextStyle(color: p.muted, fontSize: 11)),
-        const SizedBox(width: 10),
-        Text('/', style: TextStyle(color: p.muted)),
-        const SizedBox(width: 10),
-        Text(section, style: TextStyle(color: p.ink, fontSize: 11)),
-        const Spacer(),
+        Expanded(
+          child: Row(
+            children: [
+              Icon(Icons.space_dashboard_outlined, size: 16, color: p.muted),
+              const SizedBox(width: 9),
+              Flexible(
+                child: Text(
+                  l.mainWorkbench,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: p.muted, fontSize: 11),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text('/', style: TextStyle(color: p.muted)),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  workbenchLabels.page(section),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: p.ink, fontSize: 11),
+                ),
+              ),
+              const SizedBox(width: 10),
+            ],
+          ),
+        ),
       ],
       if (sidebar)
         SizedBox(width: 246, child: searchField())
@@ -1536,7 +1749,9 @@ class _StudioState extends State<Studio> {
       const SizedBox(width: 8),
       IconButton(
         key: const ValueKey('appearance-toggle'),
-        tooltip: desktop && showAppearance ? '收起外观设置' : '显示外观设置',
+        tooltip: desktop && showAppearance
+            ? l.mainHideAppearance
+            : l.mainShowAppearance,
         onPressed: () {
           if (desktop) {
             setState(() => showAppearance = !showAppearance);
@@ -1564,7 +1779,7 @@ class _StudioState extends State<Studio> {
         style: TextStyle(fontSize: 11, color: p.ink),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search, size: 17, color: p.muted),
-          hintText: '搜索你的奇思妙想…',
+          hintText: l.mainSearchHint,
           hintStyle: TextStyle(fontSize: 11, color: p.muted),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 13),
@@ -1577,7 +1792,7 @@ class _StudioState extends State<Studio> {
                   ),
                 )
               : IconButton(
-                  tooltip: '清空搜索',
+                  tooltip: l.mainClearSearch,
                   onPressed: () => setState(() {
                     search.clear();
                     query = '';
@@ -1602,7 +1817,9 @@ class _StudioState extends State<Studio> {
             ),
             const SizedBox(height: 9),
             Text(
-              section == '概览' ? '让想法，自由生长。' : section,
+              section == WorkbenchPage.overview
+                  ? l.mainGreeting
+                  : workbenchLabels.page(section),
               style: TextStyle(
                 fontSize: 27,
                 height: 1.3,
@@ -1613,7 +1830,7 @@ class _StudioState extends State<Studio> {
             ),
             const SizedBox(height: 8),
             Text(
-              '收纳日常的零碎，也留住灵光一闪。',
+              l.mainGreetingDetail,
               style: TextStyle(fontSize: 12, color: p.muted),
             ),
           ],
@@ -1629,7 +1846,7 @@ class _StudioState extends State<Studio> {
           shape: RoundedRectangleBorder(borderRadius: p.borderRadius(12)),
         ),
         icon: const Icon(Icons.add, size: 17),
-        label: const Text('新建灵感', style: TextStyle(fontSize: 11)),
+        label: Text(l.mainNewIdea, style: TextStyle(fontSize: 11)),
       ),
     ],
   );
@@ -1639,8 +1856,8 @@ class _StudioState extends State<Studio> {
       componentId: 'hero',
       p: p,
       radius: 23,
-      child: SizedBox(
-        height: 214,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 214),
         child: Stack(
           children: [
             Positioned(
@@ -1655,80 +1872,79 @@ class _StudioState extends State<Studio> {
                 ),
               ),
             ),
-            Positioned.fill(
-              child: Padding(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: p.accent,
-                            shape: BoxShape.circle,
-                          ),
+            Padding(
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: p.accent,
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(width: 7),
-                        Text(
-                          'THE POSSIBILITY CORNER',
-                          style: TextStyle(
-                            fontSize: 8,
-                            letterSpacing: 1.6,
-                            color: p.accent,
-                          ),
+                      ),
+                      const SizedBox(width: 7),
+                      Text(
+                        l.mainHeroCaption,
+                        style: TextStyle(
+                          fontSize: 8,
+                          letterSpacing: 1.6,
+                          color: p.accent,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      '还没成形，也没关系。',
-                      style: TextStyle(
-                        fontSize: 21,
-                        fontWeight: FontWeight.w500,
-                        color: p.ink,
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l.mainHeroTitle,
+                    style: TextStyle(
+                      fontSize: 21,
+                      fontWeight: FontWeight.w500,
+                      color: p.ink,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      '一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。',
-                      style: TextStyle(
-                        fontSize: 11,
-                        height: 1.85,
-                        color: p.muted,
-                      ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    l.mainHeroBody,
+                    style: TextStyle(
+                      fontSize: 11,
+                      height: 1.85,
+                      color: p.muted,
                     ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: createIdea,
-                      borderRadius: p.borderRadius(8),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '记录此刻的想法',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: p.accent,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Icon(
-                              Icons.arrow_forward_rounded,
+                  ),
+                  const SizedBox(height: 20),
+                  InkWell(
+                    onTap: createIdea,
+                    borderRadius: p.borderRadius(8),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 5),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l.mainCaptureNow,
+                            style: TextStyle(
+                              fontSize: 11,
                               color: p.accent,
-                              size: 15,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 10),
+                          Icon(
+                            Icons.arrow_forward_rounded,
+                            color: p.accent,
+                            size: 15,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -1747,7 +1963,9 @@ class _StudioState extends State<Studio> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            section == '概览' ? '最近的念头' : section,
+            section == WorkbenchPage.overview
+                ? l.mainRecentThoughts
+                : workbenchLabels.page(section),
             style: TextStyle(
               fontSize: 15,
               color: p.ink,
@@ -1764,14 +1982,16 @@ class _StudioState extends State<Studio> {
           ),
         ],
       ),
-      Row(
-        mainAxisSize: MainAxisSize.min,
+      Wrap(
+        spacing: 4,
+        runSpacing: 4,
         children: pageFilters
             .map(
               (label) => Padding(
                 padding: const EdgeInsets.only(left: 4),
                 child: InkWell(
                   borderRadius: p.borderRadius(8),
+                  key: ValueKey('filter-${label.id}'),
                   onTap: () => setState(() => filter = label),
                   child: AnimatedContainer(
                     duration: motionDuration(context, 200),
@@ -1786,7 +2006,7 @@ class _StudioState extends State<Studio> {
                       borderRadius: p.borderRadius(8),
                     ),
                     child: Text(
-                      label,
+                      workbenchLabels.filter(label),
                       style: TextStyle(
                         fontSize: 10,
                         color: filter == label ? p.accent : p.muted,
@@ -1825,11 +2045,11 @@ class _StudioState extends State<Studio> {
                 Text(
                   failed
                       ? capacity
-                            ? '查询历史容量已满'
+                            ? l.mainQueryCapacity
                             : (_queries.failure?.terminal ?? false)
-                            ? '此次筛选已终止'
-                            : '尚未确认筛选结果'
-                      : '正在筛选…',
+                            ? l.mainQueryTerminated
+                            : l.mainQueryUnknown
+                      : l.mainQueryLoading,
                   key: ValueKey(failed ? 'query-error' : 'query-loading'),
                   style: TextStyle(color: p.muted),
                 ),
@@ -1840,7 +2060,7 @@ class _StudioState extends State<Studio> {
                       vertical: 8,
                     ),
                     child: Text(
-                      '已有内容已保留。此版本尚不支持清理查询历史。',
+                      l.mainQueryCapacityDetail,
                       textAlign: TextAlign.center,
                       style: TextStyle(color: p.muted, fontSize: 12),
                     ),
@@ -1851,10 +2071,10 @@ class _StudioState extends State<Studio> {
                     onPressed: _queries.retry,
                     child: Text(
                       capacity
-                          ? '重新检查'
+                          ? l.mainCheckAgain
                           : (_queries.failure?.terminal ?? false)
-                          ? '重新筛选'
-                          : '重试筛选',
+                          ? l.mainQueryAgain
+                          : l.mainQueryRetry,
                     ),
                   ),
               ],
@@ -1875,15 +2095,15 @@ class _StudioState extends State<Studio> {
               children: [
                 Icon(Icons.search_off_rounded, color: p.muted),
                 const SizedBox(height: 12),
-                Text('这里还没有匹配的想法', style: TextStyle(color: p.muted)),
+                Text(l.mainNoMatches, style: TextStyle(color: p.muted)),
                 TextButton(
                   onPressed: () => setState(() {
                     search.clear();
                     query = '';
-                    filter = '全部';
-                    section = '概览';
+                    filter = GeneralFilter.all;
+                    section = WorkbenchPage.overview;
                   }),
-                  child: const Text('查看全部'),
+                  child: Text(l.mainViewAll),
                 ),
               ],
             ),
@@ -1891,7 +2111,7 @@ class _StudioState extends State<Studio> {
         ),
       );
     }
-    if (section != '概览') return specializedCards(items);
+    if (section != WorkbenchPage.overview) return specializedCards(items);
     return LayoutBuilder(
       builder: (_, constraints) {
         final columns = constraints.maxWidth >= 460 ? 2 : 1;
@@ -1951,8 +2171,8 @@ class _StudioState extends State<Studio> {
                   const Spacer(),
                   IconButton(
                     tooltip: idea.favorite
-                        ? '取消收藏 ${idea.title}'
-                        : '收藏 ${idea.title}',
+                        ? l.mainUnfavoriteTooltip(displayTitle(idea))
+                        : l.mainFavoriteTooltip(displayTitle(idea)),
                     constraints: const BoxConstraints(
                       minWidth: 32,
                       minHeight: 32,
@@ -1987,7 +2207,7 @@ class _StudioState extends State<Studio> {
               ),
               const SizedBox(height: 14),
               Text(
-                idea.title,
+                displayTitle(idea),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -1998,7 +2218,7 @@ class _StudioState extends State<Studio> {
               ),
               const SizedBox(height: 8),
               Text(
-                idea.description,
+                displayDescription(idea),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 11, color: p.muted, height: 1.8),
@@ -2007,14 +2227,21 @@ class _StudioState extends State<Studio> {
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: Text(
-                    '附件 ${idea.attachments.length} · ${idea.attachments.first.source.name}',
+                    l.mainCardAttachments(
+                      idea.attachments.length,
+                      idea.attachments.first.source.name,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontSize: 10, color: p.accent),
                   ),
                 ),
               const SizedBox(height: 19),
-              Row(
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 6,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -2026,7 +2253,7 @@ class _StudioState extends State<Studio> {
                       borderRadius: p.borderRadius(5),
                     ),
                     child: Text(
-                      idea.category,
+                      categoryLabel(idea.category),
                       style: TextStyle(
                         fontSize: 9,
                         color: p.dark
@@ -2043,12 +2270,10 @@ class _StudioState extends State<Studio> {
                       ),
                     ),
                   ),
-                  const Spacer(),
                   Text(
-                    idea.time,
+                    timeLabel(idea.time),
                     style: TextStyle(fontSize: 9, color: p.muted),
                   ),
-                  const SizedBox(width: 7),
                 ],
               ),
             ],
@@ -2074,14 +2299,14 @@ class _StudioState extends State<Studio> {
               onSubmitted: (_) => saveQuickNote(),
               style: TextStyle(fontSize: 12, color: p.ink),
               decoration: InputDecoration(
-                hintText: '脑海中闪过了什么？',
+                hintText: l.mainQuickHint,
                 hintStyle: TextStyle(fontSize: 11, color: p.muted),
                 border: InputBorder.none,
               ),
             ),
           ),
           IconButton(
-            tooltip: '记录灵感',
+            tooltip: l.mainCaptureIdea,
             onPressed: saveQuickNote,
             icon: Icon(Icons.arrow_upward_rounded, size: 18, color: p.accent),
           ),
@@ -2099,20 +2324,20 @@ class _StudioState extends State<Studio> {
         Idea(
           text,
           '从一个小小的念头开始。',
-          section == '小项目'
+          section == WorkbenchPage.projects
               ? '进行中'
-              : section == '实验室'
+              : section == WorkbenchPage.laboratory
               ? '实验'
               : '灵感',
           Icons.auto_awesome_outlined,
           const Color(0xFF9D87D4),
-          favorite: section == '已收藏',
+          favorite: section == WorkbenchPage.favorites,
         ),
       );
       if (result != null && mounted) {
         setState(() {
           quickNote.clear();
-          filter = '全部';
+          filter = GeneralFilter.all;
           query = '';
           search.clear();
         });
@@ -2125,24 +2350,24 @@ class _StudioState extends State<Studio> {
         Idea(
           text,
           '从一个小小的念头开始。',
-          section == '小项目'
+          section == WorkbenchPage.projects
               ? '进行中'
-              : section == '实验室'
+              : section == WorkbenchPage.laboratory
               ? '实验'
               : '灵感',
           Icons.auto_awesome_outlined,
           const Color(0xFF9D87D4),
-          favorite: section == '已收藏',
+          favorite: section == WorkbenchPage.favorites,
         ),
       );
       quickNote.clear();
-      filter = '全部';
+      filter = GeneralFilter.all;
       query = '';
       search.clear();
     });
     persist();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('灵感已收好。'), duration: Duration(seconds: 2)),
+      SnackBar(content: Text(l.mainIdeaSaved), duration: Duration(seconds: 2)),
     );
   }
 
@@ -2190,7 +2415,7 @@ class _StudioState extends State<Studio> {
     final chosen = await showStudioDialog<Color>(
       context: context,
       builder: (_) => ColorCompassDialog(
-        title: canvas ? '画布染色罗盘' : '组件染色罗盘',
+        title: canvas ? l.mainCanvasCompass : l.mainComponentCompass,
         initial:
             (canvas ? before.canvasColor : before.componentColor) ?? p.surface,
         onChanged: (color) => updateSurfaces(
@@ -2215,7 +2440,7 @@ class _StudioState extends State<Studio> {
     key: ValueKey(canvas ? 'canvas-color' : 'component-color'),
     onPressed: () => chooseSurfaceColor(canvas),
     icon: Icon(Icons.palette_outlined, size: 16, color: p.accent),
-    label: const Text('调色罗盘 · 自定义', style: TextStyle(fontSize: 11)),
+    label: Text(l.mainCustomCompass, style: TextStyle(fontSize: 11)),
     style: OutlinedButton.styleFrom(
       minimumSize: const Size.fromHeight(38),
       side: BorderSide(color: p.line),
@@ -2229,7 +2454,7 @@ class _StudioState extends State<Studio> {
       const SizedBox(height: 12),
       materialSlider(
         'canvas-blur',
-        '磨砂效果',
+        l.mainFrostEffect,
         p.surfaces.canvasBlur,
         40,
         (value) => updateSurfaces(p.surfaces.copyWith(canvasBlur: value)),
@@ -2237,7 +2462,7 @@ class _StudioState extends State<Studio> {
       ),
       materialSlider(
         'canvas-opacity',
-        '染色不透明度',
+        l.mainTintOpacity,
         p.surfaces.canvasOpacity,
         1,
         (value) => updateSurfaces(p.surfaces.copyWith(canvasOpacity: value)),
@@ -2245,7 +2470,7 @@ class _StudioState extends State<Studio> {
       surfaceColorButton(true),
       if (!isWindowsDesktop)
         Text(
-          '桌面磨砂仅在 Windows 版可用',
+          l.mainWindowsFrostOnly,
           style: TextStyle(fontSize: 10, color: p.muted),
         ),
     ],
@@ -2258,24 +2483,28 @@ class _StudioState extends State<Studio> {
         builder: (_) => ComponentMaterialListPage(
           palette: p,
           entries: {
-            'navigation': '侧边导航',
-            'search': '搜索栏',
-            'hero': '概览卡片',
-            'quick-capture': '快速记录',
-            'appearance': '空间外观',
+            'navigation': l.mainComponentNavigation,
+            'search': l.mainComponentSearch,
+            'hero': l.mainComponentHero,
+            'quick-capture': l.mainComponentQuickCapture,
+            'appearance': l.mainAppearance,
             if (widget.workbench is WorkbenchPluginControl)
-              'plugin-tools': '工作台插件',
+              'plugin-tools': l.mainWorkbenchPlugin,
             if (widget.workbench is ExternalPluginControl)
-              'plugin-library': '扩展插件',
+              'plugin-library': l.mainExtensionPlugins,
             if (widget.workbench is WorkbenchProtectionBackup)
-              'protection-backup': '内容保护',
-            'daily': '此刻的小事',
-            'music': '随身听',
-            'footer': '底部提示与歌词',
-            'empty': '空白提示',
-            for (final name in ['灵感收件箱', '小项目', '实验室', '已收藏'])
-              'summary:$name': '$name · 概览',
-            for (final idea in ideas) 'card:${idea.id}': idea.title,
+              'protection-backup': l.mainContentProtection,
+            'daily': l.mainDaily,
+            'music': l.mainMusic,
+            'footer': l.mainComponentFooter,
+            'empty': l.mainComponentEmpty,
+            for (final page in WorkbenchPage.values.where(
+              (p) => p != WorkbenchPage.overview,
+            ))
+              WorkbenchV1.summaryComponentId(page): l.mainPageSummary(
+                workbenchLabels.page(page),
+              ),
+            for (final idea in ideas) 'card:${idea.id}': displayTitle(idea),
           },
           onChanged: (value) {
             if (!mounted) return;
@@ -2286,7 +2515,7 @@ class _StudioState extends State<Studio> {
       ),
     ),
     icon: Icon(Icons.tune_rounded, size: 16, color: p.accent),
-    label: const Text('组件与卡片 · 独立设置', style: TextStyle(fontSize: 11)),
+    label: Text(l.mainComponentSettings, style: TextStyle(fontSize: 11)),
     style: OutlinedButton.styleFrom(
       minimumSize: const Size.fromHeight(38),
       side: BorderSide(color: p.line),
@@ -2356,6 +2585,25 @@ class _StudioState extends State<Studio> {
     );
   }
 
+  Widget languagePicker() {
+    final locale = _UiLocaleScope.of(context);
+    if (locale == null) return const SizedBox.shrink();
+    return DropdownButtonFormField<String>(
+      key: const ValueKey('language-picker'),
+      initialValue: locale.value,
+      isExpanded: true,
+      decoration: InputDecoration(labelText: l.mainLanguage),
+      items: [
+        DropdownMenuItem(value: 'system', child: Text(l.mainLanguageSystem)),
+        DropdownMenuItem(value: 'zh', child: Text(l.mainLanguageChinese)),
+        DropdownMenuItem(value: 'en', child: Text(l.mainLanguageEnglish)),
+      ],
+      onChanged: (value) {
+        if (value != null) locale.onChanged(value);
+      },
+    );
+  }
+
   Widget appearanceControls() => Glass(
     componentId: 'appearance',
     p: p,
@@ -2369,30 +2617,41 @@ class _StudioState extends State<Studio> {
             children: [
               Icon(Icons.tune_rounded, size: 16, color: p.ink),
               const SizedBox(width: 8),
-              Text(
-                '空间外观',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: p.ink,
+              Expanded(
+                child: Text(
+                  l.mainAppearance,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: p.ink,
+                  ),
                 ),
               ),
-              const Spacer(),
-              Text(
-                'MAKE IT YOURS',
-                style: TextStyle(fontSize: 7, letterSpacing: 1, color: p.muted),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  l.mainMakeYours,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(
+                    fontSize: 7,
+                    letterSpacing: 1,
+                    color: p.muted,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 23),
-          label('玻璃质感'),
+          languagePicker(),
+          const SizedBox(height: 18),
+          label(l.mainGlassTexture),
           const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
                 child: modeOption(
                   GlassMode.frosted,
-                  '磨砂',
+                  l.mainFrosted,
                   Icons.blur_on_rounded,
                 ),
               ),
@@ -2400,13 +2659,17 @@ class _StudioState extends State<Studio> {
               Expanded(
                 child: modeOption(
                   GlassMode.clear,
-                  '超透',
+                  l.mainCrystal,
                   Icons.water_drop_outlined,
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: modeOption(GlassMode.liquid, '液体玻璃', Icons.lens_blur),
+                child: modeOption(
+                  GlassMode.liquid,
+                  l.mainLiquidGlass,
+                  Icons.lens_blur,
+                ),
               ),
             ],
           ),
@@ -2420,7 +2683,7 @@ class _StudioState extends State<Studio> {
                   Row(
                     children: [
                       Text(
-                        '磨砂不透明度',
+                        l.mainFrostOpacity,
                         style: TextStyle(fontSize: 10, color: p.muted),
                       ),
                       const Spacer(),
@@ -2455,11 +2718,11 @@ class _StudioState extends State<Studio> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '20% · 轻盈',
+                        l.mainLightOpacity,
                         style: TextStyle(fontSize: 9, color: p.muted),
                       ),
                       Text(
-                        '100% · 纯粹',
+                        l.mainSolidOpacity,
                         style: TextStyle(fontSize: 9, color: p.muted),
                       ),
                     ],
@@ -2543,10 +2806,10 @@ class _StudioState extends State<Studio> {
                               const SizedBox(height: 5),
                               Text(
                                 p.liquid
-                                    ? 'Liquid glass'
+                                    ? l.mainLiquidGlass
                                     : p.clear
-                                    ? 'Crystal clear'
-                                    : 'Softly frosted',
+                                    ? l.mainCrystal
+                                    : l.mainFrosted,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: p.ink,
@@ -2566,14 +2829,14 @@ class _StudioState extends State<Studio> {
           const SizedBox(height: 10),
           Text(
             p.liquid
-                ? '流动的高光、柔和折射，让面板像一滴凝住的水。'
+                ? l.mainLiquidDetail
                 : p.clear
-                ? '通透轻盈，让光与色彩穿过界面。'
-                : '柔化背景，让思绪安静地浮现。',
+                ? l.mainCrystalDetail
+                : l.mainFrostDetail,
             style: TextStyle(fontSize: 9, color: p.muted),
           ),
           const SizedBox(height: 22),
-          label('主题色调'),
+          label(l.mainThemeTone),
           const SizedBox(height: 12),
           Row(
             children: StudioTheme.values
@@ -2585,7 +2848,7 @@ class _StudioState extends State<Studio> {
             key: const ValueKey('theme-color-compass'),
             onPressed: chooseThemeColor,
             icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
-            label: const Text('主题色彩色罗盘', style: TextStyle(fontSize: 11)),
+            label: Text(l.mainThemeCompass, style: TextStyle(fontSize: 11)),
             style: OutlinedButton.styleFrom(
               minimumSize: const Size.fromHeight(38),
               side: BorderSide(color: p.line),
@@ -2597,20 +2860,24 @@ class _StudioState extends State<Studio> {
               Expanded(
                 child: Text(
                   p.themeColor == null
-                      ? '默认主题色 · 全局控件'
-                      : '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()} · 全局控件',
+                      ? l.mainDefaultGlobalColor
+                      : l.mainGlobalColor(
+                          '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                        ),
                   style: TextStyle(color: p.muted, fontSize: 10),
                 ),
               ),
-              TextButton(
-                key: const ValueKey('theme-color-reset'),
-                onPressed: p.themeColor == null
-                    ? null
-                    : () {
-                        widget.onThemeColor(null);
-                        widget.onAppearanceCommit();
-                      },
-                child: const Text('恢复默认'),
+              Flexible(
+                child: TextButton(
+                  key: const ValueKey('theme-color-reset'),
+                  onPressed: p.themeColor == null
+                      ? null
+                      : () {
+                          widget.onThemeColor(null);
+                          widget.onAppearanceCommit();
+                        },
+                  child: Text(l.mainRestoreDefault),
+                ),
               ),
             ],
           ),
@@ -2621,7 +2888,13 @@ class _StudioState extends State<Studio> {
               onPressed: () => setState(() => showCustomTone = !showCustomTone),
               child: Row(
                 children: [
-                  Expanded(child: Text(showCustomTone ? '收起自定义色调' : '调整自定义色调')),
+                  Expanded(
+                    child: Text(
+                      showCustomTone
+                          ? l.mainHideCustomTone
+                          : l.mainAdjustCustomTone,
+                    ),
+                  ),
                   AnimatedRotation(
                     turns: showCustomTone ? .5 : 0,
                     duration: motionDuration(context, 200),
@@ -2637,7 +2910,7 @@ class _StudioState extends State<Studio> {
                       children: [
                         Row(
                           children: [
-                            Expanded(child: label('主题灰度')),
+                            Expanded(child: label(l.mainThemeGrayscale)),
                             label('${(p.grayscale * 100).round()}%'),
                           ],
                         ),
@@ -2651,12 +2924,15 @@ class _StudioState extends State<Studio> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [label('保留原色'), label('黑白灰')],
+                          children: [
+                            label(l.mainOriginalColors),
+                            label(l.mainMonochrome),
+                          ],
                         ),
                         Divider(height: 28, color: p.line),
                         Row(
                           children: [
-                            Expanded(child: label('自定义明暗')),
+                            Expanded(child: label(l.mainCustomLightness)),
                             label('${(p.lightness * 100).round()}%'),
                           ],
                         ),
@@ -2670,7 +2946,10 @@ class _StudioState extends State<Studio> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [label('深黑'), label('亮白')],
+                          children: [
+                            label(l.mainDeepBlack),
+                            label(l.mainBrightWhite),
+                          ],
                         ),
                       ],
                     )
@@ -2680,7 +2959,7 @@ class _StudioState extends State<Studio> {
           Divider(height: 28, color: p.line),
           Row(
             children: [
-              Expanded(child: label('圆角幅度')),
+              Expanded(child: label(l.mainCornerRadius)),
               label('${p.cornerRadius.round()} / 32'),
             ],
           ),
@@ -2694,12 +2973,15 @@ class _StudioState extends State<Studio> {
             onChanged: widget.onRadius,
             onChangeEnd: (_) => widget.onAppearanceCommit(),
           ),
-          Text('拖至 0 即为方角', style: TextStyle(fontSize: 9, color: p.muted)),
+          Text(
+            l.mainSquareCorners,
+            style: TextStyle(fontSize: 9, color: p.muted),
+          ),
           if (widget.desktopCaption) ...[
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: label('窗体圆角')),
+                Expanded(child: label(l.mainWindowRadius)),
                 label('${p.windowRadius.round()} / 32'),
               ],
             ),
@@ -2713,12 +2995,12 @@ class _StudioState extends State<Studio> {
               onChangeEnd: (_) => widget.onAppearanceCommit(),
             ),
             Text(
-              '独立调整窗口边框，最大化时自动展平',
+              l.mainWindowRadiusDetail,
               style: TextStyle(fontSize: 9, color: p.muted),
             ),
           ],
           Divider(height: 24, color: p.line),
-          label('背景画布'),
+          label(l.mainBackgroundCanvas),
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (_, constraints) => Wrap(
@@ -2737,9 +3019,9 @@ class _StudioState extends State<Studio> {
           SwitchListTile.adaptive(
             key: const ValueKey('canvas-liquid-toggle'),
             contentPadding: EdgeInsets.zero,
-            title: const Text('液体玻璃效果', style: TextStyle(fontSize: 12)),
-            subtitle: const Text(
-              '独立于背景类型，四种画布均可开启',
+            title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
+            subtitle: Text(
+              l.mainLiquidAllCanvases,
               style: TextStyle(fontSize: 10),
             ),
             value: p.liquidCanvas,
@@ -2763,7 +3045,12 @@ class _StudioState extends State<Studio> {
                       children: List.generate(
                         4,
                         (index) => Tooltip(
-                          message: ['跟随主题', '淡紫', '鼠尾草', '暖沙'][index],
+                          message: [
+                            l.mainFollowTheme,
+                            l.mainLavender,
+                            l.mainSage,
+                            l.mainWarmSand,
+                          ][index],
                           child: InkWell(
                             key: ValueKey('tint-$index'),
                             onTap: () => widget.onTint(index),
@@ -2808,7 +3095,7 @@ class _StudioState extends State<Studio> {
                       ),
                       label: Text(
                         p.customColor == null
-                            ? '调色罗盘 · 自定义'
+                            ? l.mainCustomCompass
                             : '#${p.customColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
                         style: const TextStyle(fontSize: 11),
                       ),
@@ -2834,8 +3121,8 @@ class _StudioState extends State<Studio> {
                             Icons.upload_file_outlined,
                             size: 15,
                           ),
-                          label: const Text(
-                            '本地素材',
+                          label: Text(
+                            l.mainLocalMedia,
                             style: TextStyle(fontSize: 10),
                           ),
                         ),
@@ -2845,8 +3132,8 @@ class _StudioState extends State<Studio> {
                               ? null
                               : () => chooseTexture(online: true),
                           icon: const Icon(Icons.link, size: 15),
-                          label: const Text(
-                            '网络采集',
+                          label: Text(
+                            l.mainOnlineMedia,
                             style: TextStyle(fontSize: 10),
                           ),
                         ),
@@ -2862,7 +3149,7 @@ class _StudioState extends State<Studio> {
                       if (p.texture!.kind == TextureKind.video)
                         Row(
                           children: [
-                            Expanded(child: label('播放背景声音')),
+                            Expanded(child: label(l.mainBackgroundSound)),
                             Switch(
                               key: const ValueKey('background-audio'),
                               value: backgroundSound,
@@ -2893,7 +3180,7 @@ class _StudioState extends State<Studio> {
                                 ),
                               ),
                               label: Text(
-                                p.mediaPlaying ? '暂停' : '播放',
+                                p.mediaPlaying ? l.mainPause : l.mainPlay,
                                 style: const TextStyle(fontSize: 10),
                               ),
                             ),
@@ -2903,8 +3190,8 @@ class _StudioState extends State<Studio> {
                                 setState(() => mediaError = null);
                                 widget.onTexture(null);
                               },
-                              child: const Text(
-                                '使用内置纹理',
+                              child: Text(
+                                l.mainBuiltinTexture,
                                 style: TextStyle(fontSize: 10),
                               ),
                             ),
@@ -2913,7 +3200,7 @@ class _StudioState extends State<Studio> {
                       ),
                     ] else
                       Text(
-                        '图片 / GIF ≤ 25 MB，视频 ≤ 150 MB',
+                        l.mainMediaLimits,
                         style: TextStyle(fontSize: 9, color: p.muted),
                       ),
                     if (mediaError != null)
@@ -2935,13 +3222,13 @@ class _StudioState extends State<Studio> {
           ),
           const SizedBox(height: 10),
           Text(switch (p.backdrop) {
-            BackgroundMode.ambient => '流动的光晕，为灵感留一点色彩。',
-            BackgroundMode.solid => '一张安静的纯色画布。',
-            BackgroundMode.texture => '细密的纸感网点，让空间多一点触感。',
+            BackgroundMode.ambient => l.mainAmbientDetail,
+            BackgroundMode.solid => l.mainSolidDetail,
+            BackgroundMode.texture => l.mainTextureDetail,
             BackgroundMode.transparent =>
               !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-                  ? '保留通透面板，以当前主题作为底色。'
-                  : '透出窗口背后的空间；网页透出宿主背景。',
+                  ? l.mainOpaqueFallback
+                  : l.mainTransparentDetail,
           }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
           const SizedBox(height: 13),
           Row(
@@ -2952,9 +3239,11 @@ class _StudioState extends State<Studio> {
                 color: p.accent,
               ),
               const SizedBox(width: 6),
-              Text(
-                '外观与灵感自动保存在本机',
-                style: TextStyle(fontSize: 9, color: p.muted),
+              Expanded(
+                child: Text(
+                  l.mainAutosaveNotice,
+                  style: TextStyle(fontSize: 9, color: p.muted),
+                ),
               ),
             ],
           ),
@@ -2968,10 +3257,13 @@ class _StudioState extends State<Studio> {
 
   Widget backgroundOption(BackgroundMode mode) {
     final (title, icon) = switch (mode) {
-      BackgroundMode.ambient => ('默认', Icons.gradient_rounded),
-      BackgroundMode.solid => ('纯色', Icons.circle_outlined),
-      BackgroundMode.texture => ('纹理', Icons.grain_rounded),
-      BackgroundMode.transparent => ('透明', Icons.layers_clear_outlined),
+      BackgroundMode.ambient => (l.mainDefaultCanvas, Icons.gradient_rounded),
+      BackgroundMode.solid => (l.mainSolidCanvas, Icons.circle_outlined),
+      BackgroundMode.texture => (l.mainTextureCanvas, Icons.grain_rounded),
+      BackgroundMode.transparent => (
+        l.mainTransparentCanvas,
+        Icons.layers_clear_outlined,
+      ),
     };
     final selected = p.backdrop == mode;
     return Semantics(
@@ -2983,7 +3275,8 @@ class _StudioState extends State<Studio> {
         borderRadius: p.borderRadius(10),
         child: AnimatedContainer(
           duration: motionDuration(context, 200),
-          height: 38,
+          constraints: const BoxConstraints(minHeight: 38),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
           decoration: BoxDecoration(
             color: selected
                 ? p.accent.withValues(alpha: .14)
@@ -2998,11 +3291,14 @@ class _StudioState extends State<Studio> {
             children: [
               Icon(icon, size: 14, color: selected ? p.accent : p.muted),
               const SizedBox(width: 7),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: selected ? p.accent : p.muted,
+              Flexible(
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: selected ? p.accent : p.muted,
+                  ),
                 ),
               ),
             ],
@@ -3023,7 +3319,8 @@ class _StudioState extends State<Studio> {
         borderRadius: p.borderRadius(10),
         child: AnimatedContainer(
           duration: motionDuration(context, 220),
-          height: 56,
+          constraints: const BoxConstraints(minHeight: 56),
+          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 8),
           decoration: BoxDecoration(
             color: selected
                 ? p.accent.withValues(alpha: .14)
@@ -3034,12 +3331,14 @@ class _StudioState extends State<Studio> {
             borderRadius: p.borderRadius(10),
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 15, color: selected ? p.accent : p.muted),
               const SizedBox(height: 5),
               Text(
                 title,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 11,
                   color: selected ? p.accent : p.muted,
@@ -3060,9 +3359,9 @@ class _StudioState extends State<Studio> {
       StudioTheme.dark => const Color(0xFF302E3E),
     };
     final title = switch (theme) {
-      StudioTheme.white => '白色',
-      StudioTheme.custom => '自定义',
-      StudioTheme.dark => '深色',
+      StudioTheme.white => l.mainWhiteTheme,
+      StudioTheme.custom => l.mainCustomTheme,
+      StudioTheme.dark => l.mainDarkTheme,
     };
     return Semantics(
       selected: selected,
@@ -3143,7 +3442,7 @@ class _StudioState extends State<Studio> {
               Icon(Icons.bolt_outlined, color: p.accent, size: 17),
               const SizedBox(width: 7),
               Text(
-                '此刻的小事',
+                l.mainDaily,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -3154,7 +3453,7 @@ class _StudioState extends State<Studio> {
           ),
           const SizedBox(height: 17),
           LittleTask(
-            title: '给自己倒一杯水',
+            title: l.mainDailyWater,
             done: completed.contains('给自己倒一杯水'),
             onChanged: (done) {
               setState(() {
@@ -3168,7 +3467,7 @@ class _StudioState extends State<Studio> {
             },
           ),
           LittleTask(
-            title: '把一个想法写下来',
+            title: l.mainDailyIdea,
             done: completed.contains('把一个想法写下来'),
             onChanged: (done) {
               setState(() {
@@ -3182,7 +3481,7 @@ class _StudioState extends State<Studio> {
             },
           ),
           LittleTask(
-            title: '留十分钟，随便探索',
+            title: l.mainDailyExplore,
             done: completed.contains('留十分钟，随便探索'),
             onChanged: (done) {
               setState(() {
@@ -3196,7 +3495,10 @@ class _StudioState extends State<Studio> {
             },
           ),
           const SizedBox(height: 9),
-          Text('慢一点，也是在向前。', style: TextStyle(fontSize: 9, color: p.muted)),
+          Text(
+            l.mainSlowProgress,
+            style: TextStyle(fontSize: 9, color: p.muted),
+          ),
         ],
       ),
     ),
@@ -3216,12 +3518,12 @@ class _StudioState extends State<Studio> {
           ),
         ),
         Text(
-          '所有有趣的东西，\n都始于一点点好奇。',
+          l.mainCuriosity,
           style: TextStyle(color: p.muted, fontSize: 12, height: 1.9),
         ),
         const SizedBox(height: 12),
         Text(
-          'STAY CURIOUS. STAY YOU.',
+          l.mainStayCurious,
           style: TextStyle(fontSize: 7, color: p.muted, letterSpacing: 1.4),
         ),
       ],
@@ -3253,7 +3555,7 @@ class _StudioState extends State<Studio> {
     if (mounted) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('编辑器暂时无法打开，请检查内容服务后重试。')));
+      ).showSnackBar(SnackBar(content: Text(l.mainEditorUnavailable)));
     }
   }
 
@@ -3271,11 +3573,9 @@ class _StudioState extends State<Studio> {
         persist();
       } catch (_) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('编辑器已关闭，但保存状态暂时无法确认。请重新打开工作台检查，避免重复创建。'),
-            ),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(l.mainEditorClosedUnknown)));
         }
       }
     }
@@ -3299,11 +3599,11 @@ class _StudioState extends State<Studio> {
       builder: (_) => NewIdeaDialog(
         targetId: target,
         editor: editor,
-        initialFavorite: section == '已收藏',
+        initialFavorite: section == WorkbenchPage.favorites,
         plugin: widget.workbench?.studio,
         initialCategory: switch (section) {
-          '小项目' => '进行中',
-          '实验室' => '实验',
+          WorkbenchPage.projects => '进行中',
+          WorkbenchPage.laboratory => '实验',
           _ => '灵感',
         },
       ),
@@ -3316,18 +3616,18 @@ class _StudioState extends State<Studio> {
     if (editor != null) {
       _acceptEditorResult(result);
       setState(() {
-        filter = '全部';
+        filter = GeneralFilter.all;
         query = '';
         search.clear();
       });
       return;
     }
     if (widget.workbench != null) {
-      if (section == '已收藏') result.favorite = true;
+      if (section == WorkbenchPage.favorites) result.favorite = true;
       final saved = await pluginChange(PluginAction.create, result);
       if (saved != null && mounted) {
         setState(() {
-          filter = '全部';
+          filter = GeneralFilter.all;
           query = '';
           search.clear();
         });
@@ -3336,8 +3636,8 @@ class _StudioState extends State<Studio> {
     }
     setState(() {
       ideas.insert(0, result);
-      if (section == '已收藏') result.favorite = true;
-      filter = '全部';
+      if (section == WorkbenchPage.favorites) result.favorite = true;
+      filter = GeneralFilter.all;
       query = '';
       search.clear();
     });
@@ -3350,8 +3650,8 @@ class _StudioState extends State<Studio> {
       builder: (dialogContext) => StatefulBuilder(
         builder: (_, refresh) => StudioDialog(
           icon: idea.icon,
-          title: idea.title,
-          subtitle: '留住细节，让下一步更清楚。',
+          title: displayTitle(idea),
+          subtitle: l.mainIdeaDetails,
           content: SizedBox(
             width: 390,
             child: SingleChildScrollView(
@@ -3360,18 +3660,18 @@ class _StudioState extends State<Studio> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    idea.category,
+                    categoryLabel(idea.category),
                     style: TextStyle(color: p.accent, fontSize: 12),
                   ),
                   const SizedBox(height: 18),
                   IdeaMarkdown(
-                    data: idea.description,
+                    data: displayDescription(idea),
                     attachments: idea.attachments,
                   ),
                   if (idea.attachments.isNotEmpty) ...[
                     const SizedBox(height: 18),
                     Text(
-                      '附件 · ${idea.attachments.length}',
+                      l.mainAttachmentCount(idea.attachments.length),
                       style: TextStyle(color: p.accent),
                     ),
                     ...idea.attachments.map(
@@ -3380,26 +3680,30 @@ class _StudioState extends State<Studio> {
                   ],
                   if (idea.category == '实验') ...[
                     const SizedBox(height: 18),
-                    Text('假设', style: TextStyle(color: p.accent)),
+                    Text(l.mainHypothesis, style: TextStyle(color: p.accent)),
                     SelectableText(
-                      idea.hypothesis.isEmpty ? '还没有写下假设' : idea.hypothesis,
+                      idea.hypothesis.isEmpty
+                          ? l.mainNoHypothesis
+                          : idea.hypothesis,
                     ),
                     const SizedBox(height: 12),
-                    Text('观察与结论', style: TextStyle(color: p.accent)),
+                    Text(l.mainObservations, style: TextStyle(color: p.accent)),
                     SelectableText(
-                      idea.conclusion.isEmpty ? '等待一次新的发现' : idea.conclusion,
+                      idea.conclusion.isEmpty
+                          ? l.mainAwaitDiscovery
+                          : idea.conclusion,
                     ),
                   ],
                   if (idea.todos.isNotEmpty) ...[
                     const SizedBox(height: 22),
                     Text(
-                      '小小的进展 · ${idea.completed.length}/${idea.todos.length}',
+                      l.mainProgress(idea.completed.length, idea.todos.length),
                       style: TextStyle(color: p.accent, fontSize: 11),
                     ),
                     const SizedBox(height: 8),
                     ...idea.todos.map(
                       (todo) => LittleTask(
-                        title: todo,
+                        title: displayTodo(idea, todo),
                         done: idea.completed.contains(todo),
                         onChanged: (done) async {
                           if (widget.workbench != null) {
@@ -3435,17 +3739,17 @@ class _StudioState extends State<Studio> {
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, 'delete'),
               child: Text(
-                '删除',
+                l.mainDelete,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, 'edit'),
-              child: const Text('编辑'),
+              child: Text(l.mainEdit),
             ),
             FilledButton.tonal(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('收好'),
+              child: Text(l.mainDone),
             ),
           ],
         ),
@@ -3503,10 +3807,10 @@ class _StudioState extends State<Studio> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('已删除「${idea.title}」'),
+          content: Text(l.mainDeleted(displayTitle(idea))),
           duration: const Duration(seconds: 8),
           action: SnackBarAction(
-            label: '撤销',
+            label: l.mainUndo,
             onPressed: () {
               if (!mounted || ideas.any((item) => item.id == idea.id)) return;
               if (widget.workbench != null) {
@@ -3593,6 +3897,7 @@ class NewIdeaDialog extends StatefulWidget {
 }
 
 class _NewIdeaDialogState extends State<NewIdeaDialog> {
+  AppLocalizations get l => L10n.of(context);
   final title = TextEditingController();
   final description = TextEditingController();
   String category = '灵感';
@@ -3653,7 +3958,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       ),
     );
     if (!mounted) return;
-    if (target.text != before) throw StateError('粘贴期间输入发生变化，请重新打开编辑器。');
+    if (target.text != before) throw StateError(l.mainPasteChanged);
     target.value = TextEditingValue(
       text: after,
       selection: TextSelection.collapsed(offset: start + inserted.length),
@@ -3717,9 +4022,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
             _frozenFields = null;
             saveError = error.cause is FormatException
                 ? (error.cause as FormatException).message
-                : '尚未提交。草稿与附件已保留，可修改后再次保存。';
+                : l.mainSaveNotSubmitted;
           } else {
-            saveError = '这次保存尚未确认。草稿与附件已保留，请重试同一次提交；关闭后会重新读取工作台确认。';
+            saveError = l.mainSaveUnknown;
           }
         });
       }
@@ -3738,7 +4043,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   Future<void> importFiles(List<XFile> files) async {
     for (final file in files) {
       if (attachments.length >= 20) {
-        throw const FormatException('每条记录最多保存 20 个附件。');
+        throw FormatException(l.mainAttachmentLimit);
       }
       await _plugin?.validateImport(
         IdeaAttachment.kindFor(file.name).name,
@@ -3781,7 +4086,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
             content: Text(
               error is FormatException
                   ? error.message
-                  : '无法读取内容，请使用导入文件，或检查文件与剪贴板权限。',
+                  : l.mainClipboardReadFailed,
             ),
           ),
         );
@@ -3802,8 +4107,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       maxLines: 8,
       style: TextStyle(fontSize: 13, height: 1.7, color: p.ink),
       maxLength: 20000,
-      decoration: const InputDecoration(
-        hintText: '写下思路，或粘贴一段内容…\n\n支持 # 标题、列表、表格和代码块',
+      decoration: InputDecoration(
+        hintText: l.mainBodyHint,
         border: InputBorder.none,
         alignLabelWithHint: true,
       ),
@@ -3817,7 +4122,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
           child: Align(
             alignment: Alignment.topLeft,
             child: value.text.trim().isEmpty
-                ? Text('预览会显示在这里', style: TextStyle(color: p.muted))
+                ? Text(l.mainPreviewEmpty, style: TextStyle(color: p.muted))
                 : IdeaMarkdown(data: value.text, attachments: attachments),
           ),
         ),
@@ -3837,15 +4142,15 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
               children: [
                 Icon(Icons.notes_rounded, size: 18, color: p.accent),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    '正文 · Markdown',
+                    l.mainMarkdownBody,
                     style: TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
                 IconButton(
                   key: const ValueKey('idea-preview-toggle'),
-                  tooltip: preview ? '收起预览' : '实时预览',
+                  tooltip: preview ? l.mainHidePreview : l.mainLivePreview,
                   isSelected: preview,
                   onPressed: () => setState(() => preview = !preview),
                   icon: const Icon(Icons.visibility_outlined, size: 19),
@@ -3901,7 +4206,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         : description;
     final content = reader == null && widget.readClipboard != null
         ? await widget.readClipboard!()
-        : await readPaste(reader, _plugin);
+        : await readPaste(reader, _plugin, l);
     if (!mounted) return;
     final inserted = target == description && content.markdown.isNotEmpty
         ? content.markdown
@@ -3921,7 +4226,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
           ? 10000
           : 20000;
       if (value.characters.length > limit) {
-        throw FormatException('此输入框最多 $limit 个字符，请缩短内容或将其作为文件导入。');
+        throw FormatException(l.mainFieldLimit(limit));
       }
       final parts = target == description && content.markdown.isNotEmpty
           ? content.markdownParts
@@ -3958,13 +4263,15 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     setState(() {
       preview = target == description && description.text.isNotEmpty;
       pasteNotice = content.warnings.isEmpty
-          ? '已读取内容${content.files.isEmpty ? '' : '，保留 ${content.files.length} 个附件'}'
+          ? (content.files.isEmpty
+                ? l.mainContentRead
+                : l.mainContentReadFiles(content.files.length))
           : content.warnings.join('\n');
     });
     if (inserted.isEmpty && content.files.isEmpty && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('剪贴板中没有可读取的文本或文件。请从资源管理器复制文件，或使用导入文件。')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l.mainClipboardEmpty)));
     }
   }
 
@@ -4033,8 +4340,10 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       child: StudioDialog(
         canClose: !saving && !importing,
         width: 820,
-        title: widget.initialIdea == null ? '接住一个新想法' : '让想法更清晰',
-        subtitle: '文字、表格、图片，先放在这里。让一个念头慢慢成形。',
+        title: widget.initialIdea == null
+            ? l.mainNewIdeaTitle
+            : l.mainEditIdeaTitle,
+        subtitle: l.mainEditorSubtitle,
         content: AbsorbPointer(
           absorbing: _submitFrozen || saving || importing,
           child: SizedBox(
@@ -4055,8 +4364,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                       fontWeight: FontWeight.w600,
                     ),
                     decoration: InputDecoration(
-                      hintText: '给它起个名字',
-                      errorText: invalid ? '先写下你的想法吧' : null,
+                      hintText: l.mainIdeaNameHint,
+                      errorText: invalid ? l.mainIdeaNameRequired : null,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -4068,7 +4377,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                         key: const ValueKey('idea-paste'),
                         onPressed: importing ? null : () => paste(),
                         icon: const Icon(Icons.content_paste, size: 16),
-                        label: const Text('粘贴内容'),
+                        label: Text(l.mainPasteContent),
                       ),
                       OutlinedButton.icon(
                         key: const ValueKey('idea-add-files'),
@@ -4078,15 +4387,12 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                                 () async => importFiles(await openFiles()),
                               ),
                         icon: const Icon(Icons.attach_file, size: 16),
-                        label: const Text('导入文件'),
+                        label: Text(l.mainImportFile),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
-                  const Text(
-                    '支持 Markdown、Office 富文本与表格、截图及文件。复杂对象保留原始附件；最多 20 个附件，单个不超过 200 MB。',
-                    style: TextStyle(fontSize: 11),
-                  ),
+                  Text(l.mainClipboardSupport, style: TextStyle(fontSize: 11)),
                   if (pasteNotice.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -4107,17 +4413,19 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(
                     initialValue: category,
-                    decoration: const InputDecoration(labelText: '放在哪里'),
+                    decoration: InputDecoration(
+                      labelText: l.mainCategoryPrompt,
+                    ),
                     items: ['灵感', '进行中', '实验']
                         .map(
                           (s) => DropdownMenuItem(
                             value: s,
                             child: Text(
                               s == '灵感'
-                                  ? '灵感收件箱'
+                                  ? l.mainPageInbox
                                   : s == '进行中'
-                                  ? '小项目'
-                                  : '实验室',
+                                  ? l.mainPageProjects
+                                  : l.mainPageLaboratory,
                             ),
                           ),
                         )
@@ -4150,7 +4458,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                       minLines: 2,
                       maxLines: 4,
                       maxLength: 5000,
-                      decoration: const InputDecoration(labelText: '想验证的假设'),
+                      decoration: InputDecoration(
+                        labelText: l.mainHypothesisPrompt,
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextField(
@@ -4161,7 +4471,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                       minLines: 2,
                       maxLines: 5,
                       maxLength: 10000,
-                      decoration: const InputDecoration(labelText: '观察、过程与结论'),
+                      decoration: InputDecoration(
+                        labelText: l.mainObservationsPrompt,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 18),
@@ -4173,8 +4485,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     minLines: 2,
                     maxLines: 4,
                     maxLength: 1000,
-                    decoration: const InputDecoration(
-                      labelText: '下一小步（每行一项，可选）',
+                    decoration: InputDecoration(
+                      labelText: l.mainTodosPrompt,
                       alignLabelWithHint: true,
                     ),
                   ),
@@ -4194,17 +4506,17 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
             onPressed: importing || saving
                 ? null
                 : () => Navigator.pop(context),
-            child: const Text('再想想'),
+            child: Text(l.mainNotNow),
           ),
           FilledButton(
             key: const ValueKey('idea-save'),
             onPressed: importing || saving ? null : _save,
             child: Text(
               saving
-                  ? '正在保存…'
+                  ? l.mainSaving
                   : _submitFrozen
-                  ? '重试保存'
-                  : '保存灵感',
+                  ? l.mainRetrySave
+                  : l.mainSaveIdea,
             ),
           ),
         ],

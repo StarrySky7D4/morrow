@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'media/texture_source.dart';
 import 'liquid_glass.dart';
@@ -520,7 +521,7 @@ class StudioDialog extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: '关闭弹窗',
+                      tooltip: L10n.of(context).visualCloseDialog,
                       onPressed: canClose ? () => Navigator.pop(context) : null,
                       icon: Icon(Icons.close_rounded, size: 18, color: p.muted),
                     ),
@@ -561,7 +562,7 @@ Future<T?> showStudioDialog<T>({
 }) => showGeneralDialog<T>(
   context: context,
   barrierDismissible: true,
-  barrierLabel: '关闭弹窗',
+  barrierLabel: L10n.of(context).visualCloseDialog,
   barrierColor: AppearanceScope.of(context).backdrop == BackgroundMode.texture
       ? Colors.black.withValues(alpha: .12)
       : Colors.black.withValues(alpha: .20),

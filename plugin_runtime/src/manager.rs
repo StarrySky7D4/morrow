@@ -3,6 +3,7 @@
 use crate::{
     Cancellation, Fault, Limits, Report,
     dependency::{Dependency, Endpoint, Spec},
+    io_binding::{IoBinding, IoContext},
     package::{PreparedPackage, TaskReport},
 };
 use morrow_core::{
@@ -11,6 +12,7 @@ use morrow_core::{
     lifecycle::{GrantKind, Revocation},
     plugin_package::{
         Package,
+        io::IoCapability,
         registry::{LockedDependency, Registry, Selection},
     },
 };
@@ -25,6 +27,7 @@ pub enum ManagerError {
     Core(Error),
     Prepare(Fault),
     Dependency(crate::dependency::Error),
+    Io(crate::io_binding::Error),
 }
 impl std::fmt::Display for ManagerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -32,6 +35,7 @@ impl std::fmt::Display for ManagerError {
             Self::Core(e) => write!(f, "{e}"),
             Self::Prepare(e) => write!(f, "{e:?}"),
             Self::Dependency(e) => write!(f, "{e}"),
+            Self::Io(e) => write!(f, "{e}"),
         }
     }
 }
@@ -92,12 +96,16 @@ impl ActivationPlan {
         &self.optionals
     }
 }
-struct Control {
+pub(crate) struct Control {
     binding: ConnectionBinding,
+    pub(crate) io: Option<Arc<IoContext>>,
     revocation: Revocation,
     cancel: Cancellation,
 }
 impl Control {
+    pub(crate) fn active(&self) -> bool {
+        !self.revocation.is_revoked() && self.cancel.fault().is_none()
+    }
     fn stop(&self) {
         // Host read and commit boundaries see revocation before cooperative guest cancellation.
         self.revocation.revoke();
@@ -112,6 +120,9 @@ pub struct ManagedInstance {
     control: Arc<Control>,
 }
 impl ManagedInstance {
+    pub(crate) fn io_control(&self) -> &Arc<Control> {
+        &self.control
+    }
     fn binding_matches(&self) -> bool {
         self.connection.binding() == self.control.binding
     }
@@ -442,6 +453,58 @@ impl Manager {
         self.registry.approve(id, digest, approved, revision)?;
         Ok(())
     }
+    /// Validate before revoking; even broader approval needs a new actual connection.
+    pub fn approve_io(
+        &mut self,
+        id: &str,
+        digest: [u8; 32],
+        approved: BTreeSet<IoCapability>,
+        revision: u64,
+    ) -> Result<()> {
+        self.registry
+            .validate_io_approval(id, digest, &approved, revision)?;
+        if self
+            .selection(id)
+            .is_some_and(|s| s.approved_io == approved)
+        {
+            return Ok(());
+        }
+        self.revoke_required_tree(id);
+        self.registry.approve_io(id, digest, approved, revision)?;
+        Ok(())
+    }
+    /// Bind a previously approved ceiling to this exact live host/instance. This does
+    /// not grant an origin, filesystem path, credential or listener address.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_io(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+    ) -> Result<IoBinding> {
+        let package = instance.package.package();
+        let selection = self.checked_selection(
+            &package.manifest().package_id,
+            expected_digest,
+            expected_revision,
+        )?;
+        self.validate_instance(host, instance)?;
+        if !instance.control.active()
+            || package.digest() != expected_digest
+            || instance.connection().package_digest() != Some(expected_digest)
+            || requested.is_empty()
+            || !requested.is_subset(package.io_capabilities())
+            || !requested.is_subset(&selection.approved_io)
+        {
+            return Err(Error::Invalid("unapproved IO binding").into());
+        }
+        IoBinding::new(self, host, instance, requested.clone(), expires, now)
+            .map_err(ManagerError::Io)
+    }
     pub fn set_enabled(
         &mut self,
         id: &str,
@@ -576,6 +639,11 @@ impl Manager {
         };
         let control = Arc::new(Control {
             binding: connection.binding(),
+            io: package
+                .package()
+                .io_declaration()
+                .and_then(|d| d.budget.as_ref())
+                .map(|b| Arc::new(IoContext::new(b))),
             revocation,
             cancel: Cancellation::default(),
         });

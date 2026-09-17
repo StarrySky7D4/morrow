@@ -30,17 +30,15 @@ impl PreparedPackage {
             memory_bytes: host_limits.memory_bytes.min(budget.memory_bytes as usize),
             host_calls: host_limits.host_calls.min(budget.host_calls),
         };
-        let features = &package.manifest().required_features;
-        let dependency = features
+        let dependency = package
+            .manifest()
+            .required_features
             .iter()
             .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
-        let io = features
-            .iter()
-            .any(|f| f == morrow_core::plugin_package::IO_FEATURE);
-        if io && dependency {
-            return Err(Fault::UnsupportedAbi);
-        }
-        let runner = if io {
+        let runner = if package.io_declaration().is_some() {
+            if dependency {
+                return Err(Fault::UnsupportedAbi);
+            }
             Runner::new_io_task(package.module(), limits)?
         } else if dependency {
             Runner::new_dependency_task(package.module(), limits)?
@@ -55,18 +53,45 @@ impl PreparedPackage {
             limits,
         })
     }
+    /// Internal fixed-resource adapter only; raw callbacks are not managed authority.
+    pub(crate) fn run_file_frame<'a>(
+        &self,
+        input: &'a [u8],
+        io: crate::Exchange<'a>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
+        self.run_io_frame(input, io, cancel)
+    }
+    /// IO task ABI with the managed IO callback and a denied content exchange.
+    /// The router owns authorization; this adapter only keeps guest-visible
+    /// protocol rules (one completion equal to a brokered response).
+    pub(crate) fn run_io_frame<'a>(
+        &self,
+        input: &'a [u8],
+        io: crate::Exchange<'a>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
+        let mut core_called = false;
+        let mut run = self.runner.run_task_with_io(
+            input,
+            &mut |_| {
+                core_called = true;
+                Err(())
+            },
+            io,
+            cancel,
+        );
+        if core_called {
+            run.report.outcome = Err(Fault::TaskProtocol);
+            run.completion = None;
+        }
+        run
+    }
     pub fn package(&self) -> &Package {
         &self.package
     }
     pub fn limits(&self) -> Limits {
         self.limits
-    }
-    pub fn uses_io(&self) -> bool {
-        self.package
-            .manifest()
-            .required_features
-            .iter()
-            .any(|f| f == morrow_core::plugin_package::IO_FEATURE)
     }
     /// No grants are created here. This is called only after host approval, not by the guest.
     pub fn connect(&self, host: &mut HostRuntime) -> morrow_core::Result<Connection> {
@@ -88,6 +113,13 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> Report {
+        if self.package.io_declaration().is_some() {
+            return Report {
+                outcome: Err(Fault::UnsupportedAbi),
+                host_calls: 0,
+                fuel_remaining: self.limits.fuel,
+            };
+        }
         if connection.package_digest() != Some(self.package.digest()) {
             return Report {
                 outcome: Err(Fault::PackageBinding),
@@ -125,55 +157,9 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> TaskReport {
-        if self.uses_io() {
-            return TaskReport {
-                execution: Report {
-                    outcome: Err(Fault::UnsupportedAbi),
-                    host_calls: 0,
-                    fuel_remaining: self.limits.fuel,
-                },
-                response: None,
-                output: None,
-                failure: None,
-            };
-        }
-        self.run_task_inner(host, connection, input, None, clock, cancel)
-    }
-
-    pub fn run_task_with_io(
-        &self,
-        host: &mut HostRuntime,
-        connection: &Connection,
-        input: &morrow_core::task::Invocation,
-        io: crate::Exchange<'_>,
-        clock: impl FnMut() -> u64,
-        cancel: Cancellation,
-    ) -> TaskReport {
-        if !self.uses_io() {
-            return TaskReport {
-                execution: Report {
-                    outcome: Err(Fault::UnsupportedAbi),
-                    host_calls: 0,
-                    fuel_remaining: self.limits.fuel,
-                },
-                response: None,
-                output: None,
-                failure: None,
-            };
-        }
-        self.run_task_inner(host, connection, input, Some(io), clock, cancel)
-    }
-
-    fn run_task_inner(
-        &self,
-        host: &mut HostRuntime,
-        connection: &Connection,
-        input: &morrow_core::task::Invocation,
-        mut io: Option<crate::Exchange<'_>>,
-        mut clock: impl FnMut() -> u64,
-        cancel: Cancellation,
-    ) -> TaskReport {
-        let fault = if connection.package_digest() != Some(self.package.digest()) {
+        let fault = if self.package.io_declaration().is_some() {
+            Some(Fault::UnsupportedAbi)
+        } else if connection.package_digest() != Some(self.package.digest()) {
             Some(Fault::PackageBinding)
         } else if host.connection_phase(connection)
             != Ok(morrow_core::lifecycle::InstancePhase::Ready)
@@ -204,28 +190,26 @@ impl PreparedPackage {
         let mut actual = None;
         let mut protocol_fault = false;
         let mut called = false;
-        let mut exchange = |command: &[u8]| {
-            if input.transform().is_some()
-                || called
-                || protocol_fault
-                || command != input.command_bytes()
-            {
-                protocol_fault = true;
-                return Err(());
-            }
-            called = true;
-            let response = host
-                .dispatch(connection, command, &mut clock)
-                .map_err(|_| ())?;
-            actual = Some(response.clone());
-            Ok(response)
-        };
-        let run = if let Some(io) = io.as_mut() {
-            self.runner
-                .run_task_with_io(input.bytes(), &mut exchange, io, cancel)
-        } else {
-            self.runner.run_task(input.bytes(), &mut exchange, cancel)
-        };
+        let run = self.runner.run_task(
+            input.bytes(),
+            &mut |command| {
+                if input.transform().is_some()
+                    || called
+                    || protocol_fault
+                    || command != input.command_bytes()
+                {
+                    protocol_fault = true;
+                    return Err(());
+                }
+                called = true;
+                let response = host
+                    .dispatch(connection, command, &mut clock)
+                    .map_err(|_| ())?;
+                actual = Some(response.clone());
+                Ok(response)
+            },
+            cancel,
+        );
         let mut execution = run.report;
         let mut output = None;
         let mut failure = None;

@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
@@ -64,7 +65,7 @@ class _TextureBackdropState extends State<TextureBackdrop>
     if (!mounted || failed) return;
     failed = true;
     reportAudible();
-    report('素材加载失败，请检查文件、网络地址或格式。网页直链还需允许跨域访问。');
+    report(L10n.of(context).visualTextureFailure);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) setState(() {});
     });
@@ -130,6 +131,7 @@ class _TextureBackdropState extends State<TextureBackdrop>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (failed) report(L10n.of(context).visualTextureFailure);
     syncPlayback();
   }
 

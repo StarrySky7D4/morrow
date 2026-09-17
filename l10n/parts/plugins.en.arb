@@ -1,0 +1,180 @@
+{
+  "@@locale": "en",
+  "pluginsWorkbench": "Workbench plugin",
+  "pluginsReadingState": "Loading plugin status…",
+  "pluginsManagementUnavailable": "Plugin management is unavailable. Existing content remains readable.",
+  "pluginsInsufficientApproval": "The plugin is enabled but needs content permission. The workbench stays read-only. Disable it to review permissions again.",
+  "pluginsWorkbenchReadOnly": "The plugin is allowed, but this workbench is read-only. Resolve the library or plugin issue, then refresh its status.",
+  "pluginsEnabledDetails": "Enabled. This plugin can read and edit workbench content. Disabling it preserves your data.",
+  "pluginsDisabledDetails": "Not enabled. Allow reading and editing workbench content to use the editor and tools.",
+  "pluginsDisableWorkbench": "Disable workbench plugin",
+  "pluginsApproveWorkbench": "Allow reading and editing, and enable",
+  "pluginsOpenTextTool": "Open text tool",
+  "pluginsCloseTextTool": "Hide text tool",
+  "pluginsRefreshState": "Refresh status",
+  "pluginsStateUnavailable": "Plugin status could not be loaded. Try again.",
+  "pluginsSettingsUnknown": "The setting has not been confirmed. Refresh the status before choosing again.",
+  "pluginsPackageFile": "Morrow plugin",
+  "pluginsExistingVersion": "This version is already installed. Its enabled state is unchanged.",
+  "pluginsImportedDisabled": "Imported and disabled. Choose which permissions to allow.",
+  "pluginsUninstalled": "Uninstalled. Your existing content has been preserved.",
+  "pluginsInputTooLong": "This view has reached its input limit. Shorten the text and try again.",
+  "pluginsSummary": "Read summaries",
+  "pluginsOperation": "Query operation results",
+  "pluginsAttachment": "Read attachments",
+  "pluginsCreate": "Create content",
+  "pluginsEdit": "Edit content",
+  "pluginsRead": "Read content",
+  "pluginsRename": "Rename",
+  "pluginsNoPermissions": "No content permissions declared.",
+  "pluginsDependenciesNotice": "Dependencies must be configured in the host. This page does not approve them.",
+  "pluginsBuiltin": "Built-in workbench",
+  "pluginsEnabled": "Enabled",
+  "pluginsDisabled": "Disabled",
+  "pluginsManageAbove": "Manage this plugin using the workbench plugin controls above.",
+  "pluginsSavePermissions": "Save permissions",
+  "pluginsApproveEnable": "Approve and enable",
+  "pluginsDisable": "Disable",
+  "pluginsUninstallKeepContent": "Uninstall (keep content)",
+  "pluginsUseTransform": "Use transform",
+  "pluginsCloseView": "Close view",
+  "pluginsOpenView": "Open view",
+  "pluginsTextInput": "Input text",
+  "pluginsChooseSmallFile": "Choose a small file",
+  "pluginsUseText": "Use text instead",
+  "pluginsTransform": "Transform",
+  "pluginsPreviewOnly": "Preview only. Results are not automatically saved to existing content.",
+  "pluginsThirdParty": "Third-party plugins",
+  "pluginsImportDetails": "You choose whether to enable a plugin after importing it. Disabling or uninstalling preserves your content.",
+  "pluginsChoosePackage": "Choose plugin file",
+  "pluginsRefreshList": "Refresh list",
+  "pluginsInspectedOnly": "The file has only been inspected. Enable the plugin separately after importing it.",
+  "pluginsImport": "Import",
+  "pluginsCancel": "Cancel",
+  "pluginsEmptyLibrary": "No third-party plugins imported yet.",
+  "pluginsBackupLibraryType": "Library backup",
+  "pluginsProtectionFileType": "Library protection file",
+  "pluginsSnapshotSaved": "Library backed up, including its attachments and original protection file.",
+  "pluginsProtectionSaved": "Protection file backed up. Choose it for recovery if startup fails.",
+  "pluginsBackupUnknown": "Backup is not yet confirmed. Keep any file that was created and check the destination.",
+  "pluginsProtection": "Content protection",
+  "pluginsProtectionDetails": "Back up the original protection file for recovery with this system account. It contains no cards or attachments.",
+  "pluginsSnapshotDetails": "A library backup includes its cards, attachments and audit records. External assets remain references. Recovery requires the original system account.",
+  "pluginsBackupLibrary": "Back up library",
+  "pluginsBackingUp": "Backing up…",
+  "pluginsBackupProtection": "Back up protection file",
+  "pluginsListUnknown": "The plugin list could not be confirmed",
+  "pluginsInspectFailed": "The plugin preview could not be loaded",
+  "pluginsImportUnknown": "Import could not be confirmed",
+  "pluginsApprovalUnknown": "Activation or permission changes could not be confirmed",
+  "pluginsUninstallUnknown": "Uninstallation could not be confirmed",
+  "pluginsViewFailed": "The plugin view could not be opened",
+  "pluginsInputFailed": "The input file could not be read",
+  "pluginsTransformUnknown": "The transformation could not be confirmed",
+  "pluginsCloseUnknown": "Closing the plugin view could not be confirmed",
+  "pluginsUnconfirmed": "{reason}. The operation is unconfirmed. Check the refreshed status before choosing again.",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}. The list could not be refreshed. Select “Refresh list” to retry reading it.",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "The file is too large. Choose a file no larger than {limit} bytes.",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "Other declared permission: {name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "Declared permissions: {permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "Selected file: {name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "Import preview: {name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…showing the first 4,096 characters only",
+  "pluginsEmptyResult": "(empty result)",
+  "pluginsBinaryPreview": "Binary content: {hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count, plural, =1{1 byte} other{{count} bytes}}\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "Connection interrupted. Reopen this plugin view.",
+  "pluginsOpeningView": "Opening plugin view…",
+  "pluginsUnavailableView": "Plugin view unavailable",
+  "pluginsUpdatingView": "Updating preview…",
+  "pluginsUiRejected": "The plugin action was not accepted. Check the input and current permissions.",
+  "pluginsUiExecution": "Plugin execution did not finish. Reopen the view and try again.",
+  "pluginsUiUnavailable": "The plugin is unavailable. Check its status and reopen the view.",
+  "pluginsBuiltinHeading": "Text tools",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "Enter text",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count, plural, =1{1 character} other{{count} characters}} · This session only; not saved as a card",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "Enter text to preview uppercase",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  }
+}

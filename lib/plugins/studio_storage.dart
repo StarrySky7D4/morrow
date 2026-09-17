@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:capnproto_dart/capnproto_dart.dart';
 import '../storage.dart';
 import 'workbench_native.dart';
@@ -25,16 +26,56 @@ class RustStudioStorage implements StudioStorage {
     final ideas = await backend.load();
     return RustStudioStorage._(backend, {
       ...config,
+      'uiLocale': await backend.readUiLocale(),
       'ideas': ideas.map((i) => i.toJson()).toList(),
     });
   }
 
   @override
-  Map<String, dynamic> read() => _snapshot;
+  Map<String, dynamic> read() => _copyValue(_snapshot) as Map<String, dynamic>;
+  Future<void> _pending = Future.value();
   @override
-  Future<void> write(Map<String, dynamic> data) async {
-    final result = await backend.savePreferences(encodePreferences(data));
-    _snapshot = {...decodePreferences(result), 'ideas': data['ideas']};
+  Future<void> write(Map<String, dynamic> data) {
+    // Freeze this caller's proposal before any queued or asynchronous work.
+    // In particular, changing a track/completion list after write() must not
+    // change the original request or the confirmed presentation snapshot.
+    late final Uint8List encoded;
+    late final String locale;
+    late final dynamic ideas;
+    try {
+      encoded = encodePreferences(data);
+      locale = data['uiLocale'] as String? ?? 'system';
+      ideas = _copyValue(data['ideas']);
+    } catch (error, stack) {
+      return Future.error(error, stack);
+    }
+    final result = _pending.then((_) async {
+      await backend.saveUiLocale(locale);
+      // Locale remains writable without a guest plugin. Preserve its confirmed
+      // value even if an independent appearance write subsequently fails.
+      _snapshot = {..._snapshot, 'uiLocale': locale};
+      final saved = listEquals(encoded, encodePreferences(_snapshot))
+          ? encoded
+          : await backend.savePreferences(encoded);
+      _snapshot = {
+        ...decodePreferences(saved),
+        'uiLocale': locale,
+        'ideas': ideas,
+      };
+    });
+    _pending = result.catchError((Object _) {});
+    return result;
+  }
+
+  static dynamic _copyValue(dynamic value) {
+    if (value is Map) {
+      return <String, dynamic>{
+        for (final entry in value.entries)
+          entry.key as String: _copyValue(entry.value),
+      };
+    }
+    if (value is List) return value.map(_copyValue).toList();
+    return value;
   }
 }
 

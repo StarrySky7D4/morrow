@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'appearance.dart';
@@ -6,11 +7,11 @@ class ColorCompassDialog extends StatefulWidget {
   const ColorCompassDialog({
     super.key,
     required this.initial,
-    this.title = '给空间一点颜色',
+    this.title,
     this.onChanged,
   });
   final Color initial;
-  final String title;
+  final String? title;
   final ValueChanged<Color>? onChanged;
   @override
   State<ColorCompassDialog> createState() => _ColorCompassDialogState();
@@ -66,8 +67,8 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
   Widget build(BuildContext context) {
     final p = AppearanceScope.of(context);
     return StudioDialog(
-      title: widget.title,
-      subtitle: '拖动罗盘选取色相与饱和度，再调整明暗。也可以直接输入色值。',
+      title: widget.title ?? L10n.of(context).visualColorTitle,
+      subtitle: L10n.of(context).visualColorGuide,
       icon: Icons.palette_outlined,
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -130,11 +131,13 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
                     if (invalid) setState(() => invalid = false);
                   },
                   decoration: InputDecoration(
-                    labelText: 'HEX 色值',
-                    errorText: invalid ? '请输入 6 位十六进制色值' : null,
+                    labelText: L10n.of(context).visualHexColor,
+                    errorText: invalid
+                        ? L10n.of(context).visualHexInvalid
+                        : null,
                     hintText: '#8E7CC3',
                     suffixIcon: IconButton(
-                      tooltip: '预览色值',
+                      tooltip: L10n.of(context).visualPreviewColor,
                       onPressed: applyHex,
                       icon: const Icon(Icons.check, size: 18),
                     ),
@@ -148,13 +151,13 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(L10n.of(context).visualCancel),
         ),
         FilledButton(
           onPressed: () {
             if (applyHex()) Navigator.pop(context, hsv.toColor());
           },
-          child: const Text('应用颜色'),
+          child: Text(L10n.of(context).visualApplyColor),
         ),
       ],
     );

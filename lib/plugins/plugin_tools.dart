@@ -1,6 +1,8 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:morrow_plugin_ui/online.dart';
+import 'workbench_tool_labels.dart';
 
 class PluginManagementState {
   const PluginManagementState({
@@ -47,7 +49,7 @@ class _PluginToolsState extends State<PluginTools> {
   PluginManagementState? _state;
   PluginUiController? _controller;
   bool _busy = false;
-  String? _message;
+  String Function(AppLocalizations)? _message;
   @override
   void initState() {
     super.initState();
@@ -65,7 +67,7 @@ class _PluginToolsState extends State<PluginTools> {
         widget.onChanged();
       }
     } catch (_) {
-      if (mounted) setState(() => _message = '插件状态暂时无法读取，请重试。');
+      if (mounted) setState(() => _message = (l) => l.pluginsStateUnavailable);
     }
   }
 
@@ -96,7 +98,7 @@ class _PluginToolsState extends State<PluginTools> {
         widget.onChanged();
       }
     } catch (_) {
-      if (mounted) setState(() => _message = '插件设置未确认，请刷新状态后重新选择。');
+      if (mounted) setState(() => _message = (l) => l.pluginsSettingsUnknown);
       await _load();
       if (mounted) widget.onChanged();
     } finally {
@@ -139,7 +141,7 @@ class _PluginToolsState extends State<PluginTools> {
               Icon(Icons.extension_outlined, size: 16, color: widget.ink),
               const SizedBox(width: 8),
               Text(
-                '工作台插件',
+                L10n.of(context).pluginsWorkbench,
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -151,16 +153,16 @@ class _PluginToolsState extends State<PluginTools> {
           const SizedBox(height: 12),
           Text(
             state == null
-                ? '正在读取插件状态…'
+                ? L10n.of(context).pluginsReadingState
                 : !state.available
-                ? '插件管理暂不可用，已有内容仍可读取。'
+                ? L10n.of(context).pluginsManagementUnavailable
                 : state.enabled && !state.approved
-                ? '插件已启用，但内容权限不足；工作台保持只读。可停用后重新确认权限。'
+                ? L10n.of(context).pluginsInsufficientApproval
                 : state.enabled && !state.writable
-                ? '插件已允许，但当前工作台只读；处理内容库或插件提示后可刷新状态。'
+                ? L10n.of(context).pluginsWorkbenchReadOnly
                 : state.enabled
-                ? '已启用。插件可读取和编辑工作台内容，停用后保留已有资料。'
-                : '尚未启用。允许读取和编辑工作台内容后，可继续使用编辑与工具功能。',
+                ? L10n.of(context).pluginsEnabledDetails
+                : L10n.of(context).pluginsDisabledDetails,
             style: TextStyle(fontSize: 11, height: 1.6, color: widget.muted),
           ),
           const SizedBox(height: 12),
@@ -176,7 +178,9 @@ class _PluginToolsState extends State<PluginTools> {
                 size: 16,
               ),
               label: Text(
-                state.enabled ? '停用工作台插件' : '允许读取与编辑，并启用',
+                state.enabled
+                    ? L10n.of(context).pluginsDisableWorkbench
+                    : L10n.of(context).pluginsApproveWorkbench,
                 style: const TextStyle(fontSize: 11),
               ),
             ),
@@ -192,25 +196,30 @@ class _PluginToolsState extends State<PluginTools> {
               style: style,
               icon: const Icon(Icons.text_fields, size: 16),
               label: Text(
-                _controller == null ? '打开文字工具' : '收起文字工具',
+                _controller == null
+                    ? L10n.of(context).pluginsOpenTextTool
+                    : L10n.of(context).pluginsCloseTextTool,
                 style: const TextStyle(fontSize: 11),
               ),
             ),
           ],
           if (_controller != null) ...[
             const SizedBox(height: 12),
-            ManagedPluginForm(controller: _controller!),
+            ManagedPluginForm(
+              controller: _controller!,
+              documentBuilder: localizeWorkbenchToolDocument,
+            ),
           ],
           if (_message != null) ...[
             const SizedBox(height: 10),
             Text(
-              _message!,
+              _message!(L10n.of(context)),
               style: TextStyle(fontSize: 11, color: widget.muted),
             ),
           ],
           TextButton(
             onPressed: _busy ? null : _load,
-            child: const Text('刷新状态'),
+            child: Text(L10n.of(context).pluginsRefreshState),
           ),
         ],
       ),

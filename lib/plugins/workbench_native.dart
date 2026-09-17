@@ -806,6 +806,63 @@ class RustWorkbench
 
   static const maxPreferencesBytes = 4 * 1024 * 1024;
   static const _partBytes = 32768;
+  int? _uiLocaleRevision;
+  String? _uiLocale;
+  (String, int, String)? _pendingUiLocale;
+  Future<void> _uiLocaleQueue = Future.value();
+  Future<String> readUiLocale() async {
+    final reply = await _call(host.Action.readUiLocale);
+    final locale = utf8.decode(reply.payload ?? []);
+    if (!const {'system', 'zh', 'en'}.contains(locale)) {
+      throw const FormatException('Unsupported UI locale');
+    }
+    _uiLocaleRevision = reply.revision;
+    _uiLocale = locale;
+    return locale;
+  }
+
+  Future<void> _confirmUiLocale((String, int, String) request) async {
+    final reply = await _call(
+      host.Action.saveUiLocale,
+      configure: (r) {
+        r.operation = request.$1;
+        r.revision = request.$2;
+        r.payload = Uint8List.fromList(utf8.encode(request.$3));
+      },
+    );
+    if (utf8.decode(reply.payload ?? []) != request.$3 ||
+        reply.revision != request.$2 + 1) {
+      throw const FormatException('Language preference receipt mismatch');
+    }
+    _uiLocale = request.$3;
+    _uiLocaleRevision = reply.revision;
+    _pendingUiLocale = null;
+  }
+
+  Future<void> saveUiLocale(String locale) {
+    final result = _uiLocaleQueue.then((_) async {
+      if (!const {'system', 'zh', 'en'}.contains(locale)) {
+        throw const FormatException('Unsupported UI locale');
+      }
+      if (_uiLocaleRevision == null) await readUiLocale();
+      // A later explicit save first confirms the exact earlier operation. It
+      // never replaces an uncertain operation's locale or expected revision.
+      // There is no timer-based or autonomous retry.
+      if (_pendingUiLocale case final request?) {
+        await _confirmUiLocale(request);
+      }
+      if (_uiLocale == locale) return;
+      final request = _pendingUiLocale = (
+        newQueryOperationId(),
+        _uiLocaleRevision!,
+        locale,
+      );
+      await _confirmUiLocale(request);
+    });
+    _uiLocaleQueue = result.catchError((Object _) {});
+    return result;
+  }
+
   Future<void> _preferencesQueue = Future.value();
   Future<T> _preferencesJob<T>(Future<T> Function() job) {
     final result = Completer<T>();
@@ -976,7 +1033,17 @@ class _WorkbenchUiTransport implements PluginUiTransport {
       documentBytes: failure == null ? r.payload : null,
       failure: failure == null
           ? null
-          : PluginUiFailure(failure, r.uiFailure ?? '插件操作未完成'),
+          : PluginUiFailure(
+              failure,
+              r.uiFailure ?? '',
+              hostMessage: switch (failure) {
+                PluginUiFailureKind.rejected => PluginUiHostMessage.rejected,
+                PluginUiFailureKind.execution => PluginUiHostMessage.execution,
+                PluginUiFailureKind.unavailable =>
+                  PluginUiHostMessage.unavailable,
+                _ => null,
+              },
+            ),
     );
   }
 

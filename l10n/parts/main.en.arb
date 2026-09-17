@@ -1,0 +1,367 @@
+{
+  "@@locale": "en",
+  "mainAppTitle": "Morrow — Room for ideas",
+  "mainStorageUnavailable": "Local storage is unavailable. Changes will last for this session only.",
+  "mainStorageUnreadable": "Saved content could not be read. The original data is preserved and will not be overwritten.",
+  "mainSaveFailed": "Could not save. Your changes remain in this session.",
+  "mainRetry": "Retry",
+  "mainFrostUnavailable": "Desktop blur is unavailable on this system. Tint and opacity can still be adjusted.",
+  "mainTransparencyUnavailable": "System transparency could not be enabled. You can use the default background instead.",
+  "mainImportFailed": "Could not import the media. Check the file and available storage.",
+  "mainThemeCompass": "Theme color wheel",
+  "mainBackToWorkbench": "Back to workspace",
+  "mainSettings": "Settings",
+  "mainChangeFailed": "This change could not be saved. Your draft is preserved; you can retry.",
+  "mainArrangeIdeas": "Sort ideas",
+  "mainSidebarMotto": "A little order. Room to wonder.",
+  "mainMySpace": "My space",
+  "mainPersonalWorkspace": "Personal workspace",
+  "mainNavigation": "Navigation",
+  "mainCollapseSidebar": "Collapse sidebar",
+  "mainExpandSidebar": "Expand sidebar",
+  "mainWorkbench": "Workspace",
+  "mainHideAppearance": "Hide appearance settings",
+  "mainShowAppearance": "Show appearance settings",
+  "mainSearchHint": "Search your ideas…",
+  "mainClearSearch": "Clear search",
+  "mainGreeting": "Let your ideas grow.",
+  "mainGreetingDetail": "Keep the everyday details and the sparks of inspiration.",
+  "mainNewIdea": "New idea",
+  "mainHeroTitle": "It is okay to start small.",
+  "mainHeroBody": "A thought, a small task, a what-if.\nThis is where they begin.",
+  "mainCaptureNow": "Capture a thought",
+  "mainRecentThoughts": "Recent thoughts",
+  "mainQueryCapacity": "Query history is full",
+  "mainQueryTerminated": "This query has ended",
+  "mainQueryUnknown": "Results are not yet confirmed",
+  "mainQueryLoading": "Finding ideas…",
+  "mainQueryCapacityDetail": "Your content is preserved. This version cannot clear query history yet.",
+  "mainCheckAgain": "Check again",
+  "mainQueryAgain": "Run a new query",
+  "mainQueryRetry": "Retry query",
+  "mainNoMatches": "No matching ideas here",
+  "mainViewAll": "Show all",
+  "mainQuickHint": "What just came to mind?",
+  "mainCaptureIdea": "Capture idea",
+  "mainIdeaSaved": "Idea saved.",
+  "mainCanvasCompass": "Canvas tint wheel",
+  "mainComponentCompass": "Component tint wheel",
+  "mainCustomCompass": "Color wheel · Custom",
+  "mainFrostEffect": "Blur",
+  "mainTintOpacity": "Tint opacity",
+  "mainWindowsFrostOnly": "Desktop blur is available on Windows only",
+  "mainComponentNavigation": "Sidebar navigation",
+  "mainComponentSearch": "Search bar",
+  "mainComponentHero": "Overview card",
+  "mainComponentQuickCapture": "Quick capture",
+  "mainAppearance": "Appearance",
+  "mainWorkbenchPlugin": "Workspace plugin",
+  "mainExtensionPlugins": "Extensions",
+  "mainContentProtection": "Content protection",
+  "mainDaily": "Little things",
+  "mainMusic": "Music player",
+  "mainComponentFooter": "Footer tips and lyrics",
+  "mainComponentEmpty": "Empty state",
+  "mainComponentSettings": "Components and cards · Settings",
+  "mainGlassTexture": "Glass style",
+  "mainFrosted": "Frosted",
+  "mainCrystal": "Crystal clear",
+  "mainLiquidGlass": "Liquid glass",
+  "mainFrostOpacity": "Frost opacity",
+  "mainLightOpacity": "20% · Light",
+  "mainSolidOpacity": "100% · Solid",
+  "mainLiquidDetail": "Flowing highlights and gentle refraction, like a suspended drop of water.",
+  "mainCrystalDetail": "Light and clear, letting color shine through.",
+  "mainFrostDetail": "Soften the background and give your thoughts room.",
+  "mainThemeTone": "Theme colors",
+  "mainDefaultGlobalColor": "Default theme color · All controls",
+  "mainRestoreDefault": "Reset to default",
+  "mainHideCustomTone": "Hide custom tone",
+  "mainAdjustCustomTone": "Adjust custom tone",
+  "mainThemeGrayscale": "Theme grayscale",
+  "mainOriginalColors": "Original colors",
+  "mainMonochrome": "Monochrome",
+  "mainCustomLightness": "Custom lightness",
+  "mainDeepBlack": "Black",
+  "mainBrightWhite": "White",
+  "mainCornerRadius": "Corner radius",
+  "mainSquareCorners": "Set to 0 for square corners",
+  "mainWindowRadius": "Window corners",
+  "mainWindowRadiusDetail": "Adjust the window edge separately; it becomes square when maximized",
+  "mainBackgroundCanvas": "Background canvas",
+  "mainLiquidEffect": "Liquid glass effect",
+  "mainLiquidAllCanvases": "Available independently on all four canvas types",
+  "mainFollowTheme": "Follow theme",
+  "mainLavender": "Lavender",
+  "mainSage": "Sage",
+  "mainWarmSand": "Warm sand",
+  "mainLocalMedia": "Local media",
+  "mainOnlineMedia": "Online media",
+  "mainBackgroundSound": "Play background audio",
+  "mainPause": "Pause",
+  "mainPlay": "Play",
+  "mainBuiltinTexture": "Use built-in texture",
+  "mainMediaLimits": "Images / GIFs ≤ 25 MB; videos ≤ 150 MB",
+  "mainAmbientDetail": "Flowing light adds a touch of color.",
+  "mainSolidDetail": "A calm, solid-color canvas.",
+  "mainTextureDetail": "Fine paper-like texture adds a tactile feel.",
+  "mainOpaqueFallback": "Clear panels over the current theme color.",
+  "mainTransparentDetail": "See the space behind the window; on the web, see the host background.",
+  "mainAutosaveNotice": "Appearance and ideas are saved locally",
+  "mainDefaultCanvas": "Default",
+  "mainSolidCanvas": "Solid",
+  "mainTextureCanvas": "Texture",
+  "mainTransparentCanvas": "Transparent",
+  "mainWhiteTheme": "White",
+  "mainCustomTheme": "Custom",
+  "mainDarkTheme": "Dark",
+  "mainSlowProgress": "Small steps still move you forward.",
+  "mainCuriosity": "Interesting things begin\nwith a little curiosity.",
+  "mainEditorUnavailable": "The editor is unavailable. Check the content service and retry.",
+  "mainEditorClosedUnknown": "The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.",
+  "mainIdeaDetails": "Keep the details. Make the next step clearer.",
+  "mainHypothesis": "Hypothesis",
+  "mainNoHypothesis": "No hypothesis yet",
+  "mainObservations": "Observations and conclusions",
+  "mainAwaitDiscovery": "Waiting for a new discovery",
+  "mainDelete": "Delete",
+  "mainEdit": "Edit",
+  "mainDone": "Done",
+  "mainUndo": "Undo",
+  "mainPasteChanged": "The input changed while pasting. Please reopen the editor.",
+  "mainSaveNotSubmitted": "Not submitted. Your draft and attachments are preserved; you can edit and save again.",
+  "mainSaveUnknown": "This save is not yet confirmed. Your draft and attachments are preserved. Retry this submission; closing will refresh the workspace to check.",
+  "mainAttachmentLimit": "Each record supports up to 20 attachments.",
+  "mainClipboardReadFailed": "Could not read the content. Import a file, or check file and clipboard permissions.",
+  "mainBodyHint": "Write your thoughts or paste some content…\n\nSupports # headings, lists, tables and code blocks",
+  "mainPreviewEmpty": "Your preview will appear here",
+  "mainMarkdownBody": "Body · Markdown",
+  "mainHidePreview": "Hide preview",
+  "mainLivePreview": "Live preview",
+  "mainClipboardEmpty": "No readable text or files in the clipboard. Copy a file from your file manager, or use Import file.",
+  "mainNewIdeaTitle": "Catch a new idea",
+  "mainEditIdeaTitle": "Make your idea clearer",
+  "mainEditorSubtitle": "Text, tables, images—keep them here while your idea takes shape.",
+  "mainIdeaNameHint": "Give it a name",
+  "mainIdeaNameRequired": "Write down your idea first",
+  "mainPasteContent": "Paste content",
+  "mainImportFile": "Import file",
+  "mainClipboardSupport": "Supports Markdown, Office rich text and tables, screenshots and files. Complex objects keep their original attachments. Up to 20 attachments, 200 MB each.",
+  "mainCategoryPrompt": "Where to keep it",
+  "mainHypothesisPrompt": "Hypothesis to test",
+  "mainObservationsPrompt": "Observations, process and conclusions",
+  "mainTodosPrompt": "Next steps (one per line, optional)",
+  "mainNotNow": "Not now",
+  "mainSaving": "Saving…",
+  "mainRetrySave": "Retry save",
+  "mainSaveIdea": "Save idea",
+  "mainView": "View",
+  "mainMarkOrganized": "Mark as organized",
+  "mainToProject": "Move to projects",
+  "mainOpenNextStep": "Open project to edit next steps",
+  "mainHypothesisSection": "Hypothesis / What to try",
+  "mainWriteHypothesis": "Open the record and write down what you want to test.",
+  "mainObservationSection": "Observations / What you found",
+  "mainNoResultYet": "The result can wait. The process is worth recording too.",
+  "mainInboxIntro": "Capture first, organize later. Turn promising ideas into small projects.",
+  "mainUnsortedCount": "To organize",
+  "mainOrganizedCount": "Organized",
+  "mainProjectIntro": "Use checklists to make progress. Every small step brings you closer.",
+  "mainActiveProjects": "In progress",
+  "mainCompletedProjects": "Completed",
+  "mainLabIntro": "Start with a hypothesis. Keep your attempts, observations and surprises.",
+  "mainUnverifiedCount": "To test",
+  "mainRecordedCount": "With observations",
+  "mainFavoritesIntro": "Your favorite text, images and files, all together.",
+  "mainFavoriteRecords": "Saved records",
+  "mainFavoriteAttachments": "Saved attachments",
+  "mainPageOverview": "Overview",
+  "mainPageInbox": "Inbox",
+  "mainPageProjects": "Projects",
+  "mainPageLaboratory": "Lab",
+  "mainPageFavorites": "Favorites",
+  "mainSortRecent": "Recently added",
+  "mainSortFavorites": "Favorites first",
+  "mainSortTitle": "By title",
+  "mainFilterAll": "All",
+  "mainFilterPending": "To do",
+  "mainFilterAttachments": "With files",
+  "mainFilterFavorites": "Favorites only",
+  "mainFilterImage": "Images",
+  "mainFilterMedia": "Audio / video",
+  "mainFilterFile": "Files",
+  "mainFilterText": "Text",
+  "mainStageUnsorted": "To organize",
+  "mainStageOrganized": "Organized",
+  "mainStagePlanned": "Planned",
+  "mainStageActive": "In progress",
+  "mainStageCompleted": "Completed",
+  "mainStageUnverified": "To test",
+  "mainStageVerifying": "Testing",
+  "mainStageRecorded": "Recorded",
+  "mainLanguage": "Language",
+  "mainLanguageSystem": "System default",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainJustNow": "Just now",
+  "mainTenMinutesAgo": "10 minutes ago",
+  "mainOneHourAgo": "1 hour ago",
+  "mainThreeHoursAgo": "3 hours ago",
+  "mainYesterday": "Yesterday",
+  "mainDailyWater": "Pour yourself a glass of water",
+  "mainDailyIdea": "Write down an idea",
+  "mainDailyExplore": "Take ten minutes to explore",
+  "mainMovedProject": "“{title}” moved to Projects",
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainStageTooltip": "Change stage for {title}",
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFavoriteTooltip": "Favorite {title}",
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainUnfavoriteTooltip": "Unfavorite {title}",
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentHint": "{count} attachments · {name}",
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCardAttachments": "Files {count} · {name}",
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSteps": "{done}/{total} steps",
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainMoreSteps": "{count} more steps; open to view",
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainGlobalColor": "{color} · All controls",
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentCount": "Attachments · {count}",
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainProgress": "Small steps · {done}/{total}",
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDeleted": "Deleted “{title}”",
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFieldLimit": "This field supports up to {limit} characters. Shorten the content or import it as a file.",
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "mainContentRead": "Content read",
+  "mainContentReadFiles": "Content read; {count} attachments preserved",
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainPageSummary": "{page} · Overview",
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCategoryIdea": "Idea",
+  "mainCategoryProject": "Project",
+  "mainCategoryExperiment": "Experiment",
+  "mainSampleTitle0": "A home for ideas",
+  "mainSampleTitle1": "A quiet digital garden",
+  "mainSampleTitle2": "Make something just for fun",
+  "mainSampleTitle3": "My little desktop helper",
+  "mainSampleBody0": "Keep sudden thoughts here.\nNo rush to finish—just let them begin.",
+  "mainSampleBody1": "A small page for favorite words,\nmusic and everyday details.",
+  "mainSampleBody2": "Try generative art. Let code grow\ninto unexpected shapes.",
+  "mainSampleBody3": "A quiet companion to help remember\nthe little things that slip away.",
+  "mainSampleTodo0": "Organize the first collection",
+  "mainSampleTodo1": "Design the garden entrance",
+  "mainSampleTodo2": "Plant a new idea",
+  "mainSampleTodo3": "Sketch a small prototype",
+  "mainSampleTodo4": "Design the reminder interaction",
+  "mainMakeYours": "MAKE IT YOURS",
+  "mainStayCurious": "STAY CURIOUS. STAY YOU.",
+  "mainHeroCaption": "THE POSSIBILITY CORNER",
+  "mainDiagnosticDetails": "Diagnostic details"
+}

@@ -1,0 +1,1226 @@
+{
+  "@@locale": "zh",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "commonAppName": "Morrow",
+  "commonCancel": "取消",
+  "commonCount": "{count} 项",
+  "commonGreeting": "你好，{name}",
+  "importsAttachmentLimit": "最多导入 20 个附件，其余内容请分次粘贴。",
+  "importsClipboardChanged": "读取期间剪贴板发生了变化，请重新粘贴。",
+  "importsEmbeddedImageUnreadable": "有一张内嵌图片无法读取。",
+  "importsEmbeddedImagesSeparate": "部分内嵌图片需要作为文件单独导入。",
+  "importsExcelValues": "表格显示值与公式已转为 Markdown，格式和合并信息保留在 XML 附件。",
+  "importsExcelXmlKept": "Excel 原始表格已保留为 XML 附件。",
+  "importsFileTooLarge": "剪贴板文件超过 200 MB。",
+  "importsItemLimit": "本次只读取前 20 项，请分次粘贴更多内容。",
+  "importsItemUnreadable": "有一项剪贴板内容无法读取，其余可读内容已保留。",
+  "importsLocalImageNotRead": "本地链接图片没有自动读取，请粘贴图片或导入原文件。",
+  "importsMergedTable": "合并单元格已转为阅读表格；原始排版保留在 HTML 附件。",
+  "importsOfficeBusy": "剪贴板正被其他应用占用，Office 对象未读取。",
+  "importsOfficeEmbeddedKept": "Office 嵌入对象已保留为原始附件；图表、公式和版式可用原软件继续编辑。",
+  "importsOfficeExportFailed": "有一个 Office 对象超过限制或无法导出，请在原软件保存后导入。",
+  "importsOfficeReadFailed": "Office 内容读取失败，其他剪贴板内容仍可使用。",
+  "importsOfficeUnavailable": "Office 剪贴板暂不可用。",
+  "importsOfficeUnreadable": "Office 原始对象未能读取，已保留其他可用内容。",
+  "importsRichFallback": "富文本排版无法完整转换，已保留可读文字。",
+  "importsRichTooLarge": "富文本超过 2 MB，请将文档作为附件导入。",
+  "importsRtfTooLarge": "RTF 过大，请导入原始文档。",
+  "importsSpreadsheetTooLarge": "表格过大，请导入 Excel 文件。",
+  "importsTableConverted": "表格已转换为 Markdown，完整数据保留在 TSV 附件中。",
+  "importsTextTooLarge": "文本超过 2 MB，请作为文件导入。",
+  "importsTotalTooLarge": "本次粘贴的文件总量超过 200 MB，请分次导入。",
+  "importsUnsupported": "此环境不支持读取剪贴板，请使用导入文件。",
+  "mainActiveProjects": "正在推进",
+  "mainAdjustCustomTone": "调整自定义色调",
+  "mainAmbientDetail": "流动的光晕，为灵感留一点色彩。",
+  "mainAppTitle": "Morrow — 留一点空间给灵感",
+  "mainAppearance": "空间外观",
+  "mainArrangeIdeas": "排列想法",
+  "mainAttachmentCount": "附件 · {count}",
+  "mainAttachmentHint": "{count} 个附件 · {name}",
+  "mainAttachmentLimit": "每条记录最多保存 20 个附件。",
+  "mainAutosaveNotice": "外观与灵感自动保存在本机",
+  "mainAwaitDiscovery": "等待一次新的发现",
+  "mainBackToWorkbench": "返回工作台",
+  "mainBackgroundCanvas": "背景画布",
+  "mainBackgroundSound": "播放背景声音",
+  "mainBodyHint": "写下思路，或粘贴一段内容…\n\n支持 # 标题、列表、表格和代码块",
+  "mainBrightWhite": "亮白",
+  "mainBuiltinTexture": "使用内置纹理",
+  "mainCanvasCompass": "画布染色罗盘",
+  "mainCaptureIdea": "记录灵感",
+  "mainCaptureNow": "记录此刻的想法",
+  "mainCardAttachments": "附件 {count} · {name}",
+  "mainCategoryExperiment": "实验",
+  "mainCategoryIdea": "灵感",
+  "mainCategoryProject": "进行中",
+  "mainCategoryPrompt": "放在哪里",
+  "mainChangeFailed": "这次修改未能保存，草稿保留，可重试。",
+  "mainCheckAgain": "重新检查",
+  "mainClearSearch": "清空搜索",
+  "mainClipboardEmpty": "剪贴板中没有可读取的文本或文件。请从资源管理器复制文件，或使用导入文件。",
+  "mainClipboardReadFailed": "无法读取内容，请使用导入文件，或检查文件与剪贴板权限。",
+  "mainClipboardSupport": "支持 Markdown、Office 富文本与表格、截图及文件。复杂对象保留原始附件；最多 20 个附件，单个不超过 200 MB。",
+  "mainCollapseSidebar": "收起侧边栏",
+  "mainCompletedProjects": "已经完成",
+  "mainComponentCompass": "组件染色罗盘",
+  "mainComponentEmpty": "空白提示",
+  "mainComponentFooter": "底部提示与歌词",
+  "mainComponentHero": "概览卡片",
+  "mainComponentNavigation": "侧边导航",
+  "mainComponentQuickCapture": "快速记录",
+  "mainComponentSearch": "搜索栏",
+  "mainComponentSettings": "组件与卡片 · 独立设置",
+  "mainContentProtection": "内容保护",
+  "mainContentRead": "已读取内容",
+  "mainContentReadFiles": "已读取内容，保留 {count} 个附件",
+  "mainCornerRadius": "圆角幅度",
+  "mainCrystal": "超透",
+  "mainCrystalDetail": "通透轻盈，让光与色彩穿过界面。",
+  "mainCuriosity": "所有有趣的东西，\n都始于一点点好奇。",
+  "mainCustomCompass": "调色罗盘 · 自定义",
+  "mainCustomLightness": "自定义明暗",
+  "mainCustomTheme": "自定义",
+  "mainDaily": "此刻的小事",
+  "mainDailyExplore": "留十分钟，随便探索",
+  "mainDailyIdea": "把一个想法写下来",
+  "mainDailyWater": "给自己倒一杯水",
+  "mainDarkTheme": "深色",
+  "mainDeepBlack": "深黑",
+  "mainDefaultCanvas": "默认",
+  "mainDefaultGlobalColor": "默认主题色 · 全局控件",
+  "mainDelete": "删除",
+  "mainDeleted": "已删除「{title}」",
+  "mainDiagnosticDetails": "诊断详情",
+  "mainDone": "收好",
+  "mainEdit": "编辑",
+  "mainEditIdeaTitle": "让想法更清晰",
+  "mainEditorClosedUnknown": "编辑器已关闭，但保存状态暂时无法确认。请重新打开工作台检查，避免重复创建。",
+  "mainEditorSubtitle": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+  "mainEditorUnavailable": "编辑器暂时无法打开，请检查内容服务后重试。",
+  "mainExpandSidebar": "展开侧边栏",
+  "mainExtensionPlugins": "扩展插件",
+  "mainFavoriteAttachments": "收藏附件",
+  "mainFavoriteRecords": "收藏记录",
+  "mainFavoriteTooltip": "收藏 {title}",
+  "mainFavoritesIntro": "喜欢的文字、图像与文件，集中收在这里。",
+  "mainFieldLimit": "此输入框最多 {limit} 个字符，请缩短内容或将其作为文件导入。",
+  "mainFilterAll": "全部",
+  "mainFilterAttachments": "含附件",
+  "mainFilterFavorites": "仅收藏",
+  "mainFilterFile": "文件",
+  "mainFilterImage": "图像",
+  "mainFilterMedia": "音视频",
+  "mainFilterPending": "有待办",
+  "mainFilterText": "文字",
+  "mainFollowTheme": "跟随主题",
+  "mainFrostDetail": "柔化背景，让思绪安静地浮现。",
+  "mainFrostEffect": "磨砂效果",
+  "mainFrostOpacity": "磨砂不透明度",
+  "mainFrostUnavailable": "当前系统无法启用桌面磨砂，染色和透明度仍可调整。",
+  "mainFrosted": "磨砂",
+  "mainGlassTexture": "玻璃质感",
+  "mainGlobalColor": "{color} · 全局控件",
+  "mainGreeting": "让想法，自由生长。",
+  "mainGreetingDetail": "收纳日常的零碎，也留住灵光一闪。",
+  "mainHeroBody": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+  "mainHeroCaption": "让可能性发生",
+  "mainHeroTitle": "还没成形，也没关系。",
+  "mainHideAppearance": "收起外观设置",
+  "mainHideCustomTone": "收起自定义色调",
+  "mainHidePreview": "收起预览",
+  "mainHypothesis": "假设",
+  "mainHypothesisPrompt": "想验证的假设",
+  "mainHypothesisSection": "假设 / 想试什么",
+  "mainIdeaDetails": "留住细节，让下一步更清楚。",
+  "mainIdeaNameHint": "给它起个名字",
+  "mainIdeaNameRequired": "先写下你的想法吧",
+  "mainIdeaSaved": "灵感已收好。",
+  "mainImportFailed": "素材导入失败，请检查文件与可用存储空间。",
+  "mainImportFile": "导入文件",
+  "mainInboxIntro": "先接住，再整理。把值得继续的念头转成小项目。",
+  "mainJustNow": "刚刚",
+  "mainLabIntro": "从一个假设开始，保留尝试、观察和意外发现。",
+  "mainLanguage": "界面语言",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainLanguageSystem": "跟随系统",
+  "mainLavender": "淡紫",
+  "mainLightOpacity": "20% · 轻盈",
+  "mainLiquidAllCanvases": "独立于背景类型，四种画布均可开启",
+  "mainLiquidDetail": "流动的高光、柔和折射，让面板像一滴凝住的水。",
+  "mainLiquidEffect": "液体玻璃效果",
+  "mainLiquidGlass": "液体玻璃",
+  "mainLivePreview": "实时预览",
+  "mainLocalMedia": "本地素材",
+  "mainMakeYours": "打造你的风格",
+  "mainMarkOrganized": "标记已整理",
+  "mainMarkdownBody": "正文 · Markdown",
+  "mainMediaLimits": "图片 / GIF ≤ 25 MB，视频 ≤ 150 MB",
+  "mainMonochrome": "黑白灰",
+  "mainMoreSteps": "另有 {count} 步，打开查看",
+  "mainMovedProject": "「{title}」已放入小项目",
+  "mainMusic": "随身听",
+  "mainMySpace": "我的空间",
+  "mainNavigation": "导航",
+  "mainNewIdea": "新建灵感",
+  "mainNewIdeaTitle": "接住一个新想法",
+  "mainNoHypothesis": "还没有写下假设",
+  "mainNoMatches": "这里还没有匹配的想法",
+  "mainNoResultYet": "结果还未发生，过程也值得记录。",
+  "mainNotNow": "再想想",
+  "mainObservationSection": "观察 / 留下发现",
+  "mainObservations": "观察与结论",
+  "mainObservationsPrompt": "观察、过程与结论",
+  "mainOneHourAgo": "1 小时前",
+  "mainOnlineMedia": "网络采集",
+  "mainOpaqueFallback": "保留通透面板，以当前主题作为底色。",
+  "mainOpenNextStep": "打开项目，编辑下一步",
+  "mainOrganizedCount": "已经整理",
+  "mainOriginalColors": "保留原色",
+  "mainPageFavorites": "已收藏",
+  "mainPageInbox": "灵感收件箱",
+  "mainPageLaboratory": "实验室",
+  "mainPageOverview": "概览",
+  "mainPageProjects": "小项目",
+  "mainPageSummary": "{page} · 概览",
+  "mainPasteChanged": "粘贴期间输入发生变化，请重新打开编辑器。",
+  "mainPasteContent": "粘贴内容",
+  "mainPause": "暂停",
+  "mainPersonalWorkspace": "个人工作台",
+  "mainPlay": "播放",
+  "mainPreviewEmpty": "预览会显示在这里",
+  "mainProgress": "小小的进展 · {done}/{total}",
+  "mainProjectIntro": "用清单推动进展。每一个完成的小步，都在靠近结果。",
+  "mainQueryAgain": "重新筛选",
+  "mainQueryCapacity": "查询历史容量已满",
+  "mainQueryCapacityDetail": "已有内容已保留。此版本尚不支持清理查询历史。",
+  "mainQueryLoading": "正在筛选…",
+  "mainQueryRetry": "重试筛选",
+  "mainQueryTerminated": "此次筛选已终止",
+  "mainQueryUnknown": "尚未确认筛选结果",
+  "mainQuickHint": "脑海中闪过了什么？",
+  "mainRecentThoughts": "最近的念头",
+  "mainRecordedCount": "已有记录",
+  "mainRestoreDefault": "恢复默认",
+  "mainRetry": "重试",
+  "mainRetrySave": "重试保存",
+  "mainSage": "鼠尾草",
+  "mainSampleBody0": "把突然冒出的念头放在这里。\n不急着完成，先让它发生。",
+  "mainSampleBody1": "用小小的网页，收藏喜欢的文字、\n音乐和生活里的细枝末节。",
+  "mainSampleBody2": "试试生成艺术，让代码长出\n意料之外的形状。",
+  "mainSampleBody3": "一个低调常驻的伙伴，帮我记住\n那些容易忘记的小事。",
+  "mainSampleTitle0": "给灵感一个容器",
+  "mainSampleTitle1": "一个安静的数字花园",
+  "mainSampleTitle2": "周末，做点无用的东西",
+  "mainSampleTitle3": "我的桌面小助手",
+  "mainSampleTodo0": "整理第一批收藏",
+  "mainSampleTodo1": "设计花园入口",
+  "mainSampleTodo2": "种下一条新想法",
+  "mainSampleTodo3": "画一个小小的原型",
+  "mainSampleTodo4": "定义提醒交互",
+  "mainSaveFailed": "保存失败，改动仍在当前会话中。",
+  "mainSaveIdea": "保存灵感",
+  "mainSaveNotSubmitted": "尚未提交。草稿与附件已保留，可修改后再次保存。",
+  "mainSaveUnknown": "这次保存尚未确认。草稿与附件已保留，请重试同一次提交；关闭后会重新读取工作台确认。",
+  "mainSaving": "正在保存…",
+  "mainSearchHint": "搜索你的奇思妙想…",
+  "mainSettings": "设置",
+  "mainShowAppearance": "显示外观设置",
+  "mainSidebarMotto": "杂事有序，奇想自由。",
+  "mainSlowProgress": "慢一点，也是在向前。",
+  "mainSolidCanvas": "纯色",
+  "mainSolidDetail": "一张安静的纯色画布。",
+  "mainSolidOpacity": "100% · 纯粹",
+  "mainSortFavorites": "收藏优先",
+  "mainSortRecent": "最近添加",
+  "mainSortTitle": "标题排序",
+  "mainSquareCorners": "拖至 0 即为方角",
+  "mainStageActive": "推进中",
+  "mainStageCompleted": "已完成",
+  "mainStageOrganized": "已整理",
+  "mainStagePlanned": "计划中",
+  "mainStageRecorded": "已记录",
+  "mainStageTooltip": "修改状态 {title}",
+  "mainStageUnsorted": "待整理",
+  "mainStageUnverified": "待验证",
+  "mainStageVerifying": "验证中",
+  "mainStayCurious": "保持好奇，做你自己。",
+  "mainSteps": "{done}/{total} 步",
+  "mainStorageUnavailable": "本地存储暂不可用，当前改动仅保留在本次会话。",
+  "mainStorageUnreadable": "存储内容无法读取，原数据仍保留。当前会话不会覆盖它。",
+  "mainTenMinutesAgo": "10 分钟前",
+  "mainTextureCanvas": "纹理",
+  "mainTextureDetail": "细密的纸感网点，让空间多一点触感。",
+  "mainThemeCompass": "主题色彩色罗盘",
+  "mainThemeGrayscale": "主题灰度",
+  "mainThemeTone": "主题色调",
+  "mainThreeHoursAgo": "3 小时前",
+  "mainTintOpacity": "染色不透明度",
+  "mainToProject": "转为项目",
+  "mainTodosPrompt": "下一小步（每行一项，可选）",
+  "mainTransparencyUnavailable": "系统透明效果未能启用，可切换到默认背景继续使用。",
+  "mainTransparentCanvas": "透明",
+  "mainTransparentDetail": "透出窗口背后的空间；网页透出宿主背景。",
+  "mainUndo": "撤销",
+  "mainUnfavoriteTooltip": "取消收藏 {title}",
+  "mainUnsortedCount": "等待整理",
+  "mainUnverifiedCount": "等待验证",
+  "mainView": "查看",
+  "mainViewAll": "查看全部",
+  "mainWarmSand": "暖沙",
+  "mainWhiteTheme": "白色",
+  "mainWindowRadius": "窗体圆角",
+  "mainWindowRadiusDetail": "独立调整窗口边框，最大化时自动展平",
+  "mainWindowsFrostOnly": "桌面磨砂仅在 Windows 版可用",
+  "mainWorkbench": "工作台",
+  "mainWorkbenchPlugin": "工作台插件",
+  "mainWriteHypothesis": "打开记录，写下这次想验证的问题。",
+  "mainYesterday": "昨天",
+  "pluginsApprovalUnknown": "启用或权限变更未能确认",
+  "pluginsApproveEnable": "批准并启用",
+  "pluginsApproveWorkbench": "允许读取与编辑，并启用",
+  "pluginsAttachment": "读取附件",
+  "pluginsBackingUp": "正在备份…",
+  "pluginsBackupLibrary": "备份内容库",
+  "pluginsBackupLibraryType": "内容库备份",
+  "pluginsBackupProtection": "备份保护文件",
+  "pluginsBackupUnknown": "备份结果尚未确认，请保留可能生成的文件并检查保存位置。",
+  "pluginsBinaryPreview": "二进制内容：{hex}",
+  "pluginsBuiltin": "内置工作台",
+  "pluginsBuiltinCount": "{count} 个字符 · 仅本次使用，不保存为卡片",
+  "pluginsBuiltinEmpty": "输入后查看大写转换",
+  "pluginsBuiltinHeading": "文字小工具",
+  "pluginsBuiltinInput": "输入文字",
+  "pluginsCancel": "取消",
+  "pluginsChoosePackage": "选择插件文件",
+  "pluginsChooseSmallFile": "选择小文件",
+  "pluginsCloseTextTool": "收起文字工具",
+  "pluginsCloseUnknown": "插件界面关闭未能确认",
+  "pluginsCloseView": "关闭界面",
+  "pluginsConnectionLost": "连接已中断，请重新打开此插件界面。",
+  "pluginsCreate": "新建内容",
+  "pluginsDeclared": "声明权限：{permissions}",
+  "pluginsDependenciesNotice": "声明了依赖，需要在宿主配置。本页不会批准依赖。",
+  "pluginsDisable": "停用",
+  "pluginsDisableWorkbench": "停用工作台插件",
+  "pluginsDisabled": "未启用",
+  "pluginsDisabledDetails": "尚未启用。允许读取和编辑工作台内容后，可继续使用编辑与工具功能。",
+  "pluginsEdit": "编辑内容",
+  "pluginsEmptyLibrary": "尚未导入第三方插件。",
+  "pluginsEmptyResult": "（空结果）",
+  "pluginsEnabled": "已启用",
+  "pluginsEnabledDetails": "已启用。插件可读取和编辑工作台内容，停用后保留已有资料。",
+  "pluginsExistingVersion": "此版本已在插件列表中，现有启用状态保持不变。",
+  "pluginsFileLimit": "文件太大，请选择不超过 {limit} 字节的文件。",
+  "pluginsImport": "导入",
+  "pluginsImportDetails": "导入后由你选择是否启用。停用或卸载不会删除已有内容。",
+  "pluginsImportPreview": "导入预览：{name}",
+  "pluginsImportUnknown": "导入结果未能确认",
+  "pluginsImportedDisabled": "已导入，尚未启用。请选择需要允许的权限。",
+  "pluginsInputFailed": "输入文件未能读取",
+  "pluginsInputTooLong": "输入内容已超过此界面的容量，请缩短后重试。",
+  "pluginsInspectFailed": "插件预览未能读取",
+  "pluginsInspectedOnly": "目前仅检查了文件。导入后仍需单独启用。",
+  "pluginsInsufficientApproval": "插件已启用，但内容权限不足；工作台保持只读。可停用后重新确认权限。",
+  "pluginsListUnknown": "插件列表未能确认",
+  "pluginsManageAbove": "请使用上方工作台插件按钮管理此插件。",
+  "pluginsManagementUnavailable": "插件管理暂不可用，已有内容仍可读取。",
+  "pluginsNoPermissions": "未声明内容权限。",
+  "pluginsOpenTextTool": "打开文字工具",
+  "pluginsOpenView": "打开界面",
+  "pluginsOpeningView": "正在打开插件界面…",
+  "pluginsOperation": "查询操作结果",
+  "pluginsOtherCapability": "其他声明权限：{name}",
+  "pluginsPackageFile": "Morrow 插件",
+  "pluginsPreviewOnly": "结果仅供预览，不会自动写入已有内容。",
+  "pluginsPreviewTruncated": "…仅显示前 4096 个字符",
+  "pluginsProtection": "内容保护",
+  "pluginsProtectionDetails": "保存原保护文件的备份，供当前系统账户恢复使用。此文件不包含卡片和附件。",
+  "pluginsProtectionFileType": "内容库保护文件",
+  "pluginsProtectionSaved": "保护文件已备份，可在启动失败时选择此文件恢复。",
+  "pluginsRead": "读取内容",
+  "pluginsReadingState": "正在读取插件状态…",
+  "pluginsRefreshFailed": "{reason}。列表暂未刷新，请点“刷新列表”重试读取。",
+  "pluginsRefreshList": "刷新列表",
+  "pluginsRefreshState": "刷新状态",
+  "pluginsRename": "重命名",
+  "pluginsResultBytes": "{count} 字节\n{preview}",
+  "pluginsSavePermissions": "保存权限",
+  "pluginsSelectedFile": "已选文件：{name}",
+  "pluginsSettingsUnknown": "插件设置未确认，请刷新状态后重新选择。",
+  "pluginsSnapshotDetails": "内容库备份包含库内卡片、附件和审计记录；外部素材保留引用，恢复仍需原系统账户。",
+  "pluginsSnapshotSaved": "内容库已备份，包含库内附件与原保护文件。",
+  "pluginsStateUnavailable": "插件状态暂时无法读取，请重试。",
+  "pluginsSummary": "读取摘要",
+  "pluginsTextInput": "输入文字",
+  "pluginsThirdParty": "第三方插件",
+  "pluginsTransform": "转换",
+  "pluginsTransformUnknown": "转换结果未能确认",
+  "pluginsUiExecution": "插件执行未完成，请重新打开界面后重试。",
+  "pluginsUiRejected": "插件操作未被接受，请检查输入与当前权限。",
+  "pluginsUiUnavailable": "插件已不可用，请检查状态并重新打开界面。",
+  "pluginsUnavailableView": "插件界面暂不可用",
+  "pluginsUnconfirmed": "{reason}。操作未确认，请核对刷新后的状态再选择。",
+  "pluginsUninstallKeepContent": "卸载（保留内容）",
+  "pluginsUninstallUnknown": "卸载结果未能确认",
+  "pluginsUninstalled": "已卸载，已有内容仍保留。",
+  "pluginsUpdatingView": "正在更新预览…",
+  "pluginsUseText": "改用文字",
+  "pluginsUseTransform": "使用转换",
+  "pluginsViewFailed": "插件界面未能打开",
+  "pluginsWorkbench": "工作台插件",
+  "pluginsWorkbenchReadOnly": "插件已允许，但当前工作台只读；处理内容库或插件提示后可刷新状态。",
+  "recoveryAllFiles": "所有文件",
+  "recoveryBackupExists": "备份位置已有文件，请选择新的文件名。",
+  "recoveryBackupFile": "内容库备份",
+  "recoveryBackupUnknown": "备份结果需要核对，请保留当前文件并检查保存位置。",
+  "recoveryBindingMissing": "此内容库尚未绑定保护文件，无法核对所选文件的归属。",
+  "recoveryBusy": "此内容库正在由另一个进程使用，请关闭另一个窗口后重试。",
+  "recoveryChooseKey": "选择恢复文件",
+  "recoveryCloseFirst": "工作台仍在运行，请先关闭后再切换内容库。",
+  "recoveryFailed": "恢复未完成，请保留原文件并重试。",
+  "recoveryIdentityBusy": "同一内容库身份的另一份副本正在使用中，请先关闭原工作台再打开此副本。",
+  "recoveryIdentityMismatch": "已登记的内容库身份不匹配，请保留原资料并选择正确备份恢复。",
+  "recoveryKeyFile": "内容库保护文件",
+  "recoveryKeyGuide": "保护文件丢失或损坏时，可选择原文件的备份进行恢复。文件需属于此内容库，并使用原系统账户。",
+  "recoveryKeyMismatch": "内容库保护密钥不匹配或无法解密，请使用原文件及原系统账户。",
+  "recoveryKeyUnknown": "恢复结果需要核对，请重试打开；原保护文件副本已保留（若此前存在）。",
+  "recoveryLibraryInvalid": "内容库无法验证或打开，请保留原内容库与保护密钥后重试。",
+  "recoveryMaintenance": "内容库需要检查，请保留原文件并核对诊断信息。",
+  "recoveryMissingKey": "内容库保护密钥缺失，请恢复原 .audit-key 文件后重试。",
+  "recoveryMissingLibrary": "保护密钥仍在，但内容库缺失或为空，请恢复原内容库。",
+  "recoveryOpenFailed": "工作台暂时无法打开，请检查插件文件与数据目录后重试。",
+  "recoveryPluginUnavailable": "工作台插件不可用，已有内容仍可查看和导出。",
+  "recoveryRegistryInvalid": "活动内容库登记已损坏或不受支持，已停止打开以保护资料。",
+  "recoveryRegistryUnreadable": "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。",
+  "recoveryRetry": "重试打开",
+  "recoverySnapshot": "从内容库备份恢复",
+  "recoverySnapshotGuide": "也可从内容库备份恢复到新目录并切换工作台。原目录会保留；恢复的是备份时的内容，仍需原系统账户。",
+  "recoverySnapshotInvalid": "内容库备份格式或校验不正确，请保留原备份文件。",
+  "recoverySnapshotUnknown": "内容库恢复结果需要核对，请检查目标目录；原内容库未被替换。",
+  "recoverySwitchUnconfirmed": "备份已恢复至 {path}，切换结果未确认，请保留此目录并重新打开工作台核对。",
+  "recoverySwitchUnknown": "内容库切换结果尚未确认，请重新打开工作台核对。",
+  "recoveryTargetExists": "恢复目标已存在，请选择尚不存在的新目录。",
+  "recoveryTitle": "重新打开工作台",
+  "visualApplyColor": "应用颜色",
+  "visualApplyComponent": "应用到此组件",
+  "visualApplyTexture": "应用素材",
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "visualAttachmentFailure": "文件操作失败，请检查文件与存储空间。",
+  "visualAttachmentPreview": "本地附件预览",
+  "visualAttachmentReadFailure": "附件无法读取，请重新导入。",
+  "visualAudio": "音频",
+  "visualAudioStateFailure": "声音状态未能确认，请重试。",
+  "visualAutoLyrics": "自动联网补全歌词",
+  "visualCancel": "取消",
+  "visualChangeCover": "更换歌曲封面",
+  "visualChooseAudio": "请选择音频或同名 LRC 歌词文件。",
+  "visualChooseLyrics": "请选择 LRC 或 TXT 歌词文件。",
+  "visualClickPreview": "点击预览",
+  "visualClose": "关闭",
+  "visualCloseDialog": "关闭弹窗",
+  "visualCloseWindow": "关闭窗口",
+  "visualCollapsePlaylist": "收起播放列表",
+  "visualColorGuide": "拖动罗盘选取色相与饱和度，再调整明暗。也可以直接输入色值。",
+  "visualColorTitle": "给空间一点颜色",
+  "visualComponentCompass": "{title} · 调色罗盘",
+  "visualComponents": "组件与卡片",
+  "visualComponentsGuide": "每项单独设置，默认跟随主题。修改一张卡片不会影响其他卡片。",
+  "visualCornerTips1": "不必每个想法都有用\n有些只是让今天更有趣。",
+  "visualCornerTips2": "先写下来，再慢慢想\n灵感不必一次就完整。",
+  "visualCornerTips3": "留一点空白给自己\n好奇心也需要呼吸。",
+  "visualCornerTips4": "今天试一点新东西\n小小的偏离，也有惊喜。",
+  "visualCornerTips5": "走神也可能有收获\n给思绪一条散步的小路。",
+  "visualCornerTips6": "给喜欢的事一点时间\n不用急着证明它的意义。",
+  "visualCornerTips7": "进度可以很小\n愿意开始就已经很好。",
+  "visualCornerTips8": "偶尔抬头看看窗外\n生活也是灵感的来源。",
+  "visualCover": "封面",
+  "visualCustomCompass": "调色罗盘 · 自定义",
+  "visualCustomMaterialGuide": "关闭后跟随主题，保留本项自定义参数",
+  "visualDefaultOpen": "使用默认应用打开",
+  "visualDownloadOpen": "下载后打开",
+  "visualEmbeddedLyrics": "音频内嵌",
+  "visualExpandPlaylist": "展开播放列表",
+  "visualFile": "文件",
+  "visualFileOpenFailure": "无法打开文件，请先安装对应应用，或将附件另存后打开。",
+  "visualFileRetry": "文件操作失败，请重试。",
+  "visualFindLyrics": "查找歌词",
+  "visualFindLyricsGuide": "按歌名和歌手查询 LRCLIB，选择对应版本。",
+  "visualFollowTheme": "跟随主题",
+  "visualFooterLyrics": "底部显示歌词",
+  "visualFooterTips": "底部显示提示语",
+  "visualFooterTips1": "没有紧迫的事。给好奇心一点时间。",
+  "visualFooterTips10": "不用填满每一分钟。留一点余地。",
+  "visualFooterTips2": "想到什么就记一点，不用马上整理。",
+  "visualFooterTips3": "把大的想法，拆成今天的一小步。",
+  "visualFooterTips4": "伸个懒腰，让眼睛休息一会儿。",
+  "visualFooterTips5": "允许一个想法暂时没有答案。",
+  "visualFooterTips6": "有些收获，会在慢下来以后出现。",
+  "visualFooterTips7": "收藏一个细节，也是在照顾灵感。",
+  "visualFooterTips8": "今天的随手一记，可能是明天的开始。",
+  "visualFooterTips9": "走一会儿神，再回到喜欢的事情。",
+  "visualFrosting": "磨砂效果",
+  "visualGif": "GIF 动图",
+  "visualHexColor": "HEX 色值",
+  "visualHexInvalid": "请输入 6 位十六进制色值",
+  "visualImage": "图片",
+  "visualImageDecodeFailure": "图片无法解码，可另存后打开。",
+  "visualImageLoadFailure": "图片无法加载：{name}",
+  "visualImageNotImported": "{name}（图片未导入）",
+  "visualImageUnavailable": "图片暂不可用：{name}",
+  "visualImportFailure": "导入失败，请检查文件、编码与存储空间。",
+  "visualImportLyrics": "导入歌词",
+  "visualImportMusic": "导入音乐",
+  "visualImportMusicHint": "点击 + 导入本地歌曲",
+  "visualIndependentMaterial": "独立材质",
+  "visualLinkFailure": "无法打开链接，请复制地址后重试。",
+  "visualLoadImage": "加载图片 · {name}",
+  "visualLoading": "正在载入…",
+  "visualLyricsEmpty": "歌词文件为空。",
+  "visualLyricsFile": "歌词文件",
+  "visualLyricsImportHint": "可导入歌词文件，或联网搜索。",
+  "visualLyricsLoading": "正在读取歌词…",
+  "visualLyricsMatch": "{album}\n{kind} · {seconds} 秒",
+  "visualLyricsMissing": "未找到歌词，可导入或重新搜索",
+  "visualLyricsNotFound": "没有找到歌词，试试调整歌名或歌手。",
+  "visualLyricsOnPlay": "播放时自动读取歌词",
+  "visualLyricsParseFailure": "歌词解析未完成，可重新导入",
+  "visualLyricsReadFailure": "歌词读取失败，可手动导入或重试",
+  "visualLyricsServiceFailure": "无法连接歌词服务，请稍后重试或导入本地歌词。",
+  "visualLyricsSize": "歌词文件请控制在 1 MB 以内。",
+  "visualLyricsSources": "本地文件 → 内嵌 → LRCLIB",
+  "visualLyricsVersions": "存在多个版本，请在搜索中选择",
+  "visualMaterialPreview": "材质预览",
+  "visualMaximize": "最大化",
+  "visualMediaAddress": "媒体地址",
+  "visualMediaAddressInvalid": "请输入有效且不含登录信息的 HTTP / HTTPS 地址",
+  "visualMediaPreviewFailure": "此媒体无法预览，可另存后使用其他应用打开。",
+  "visualMediaType": "素材类型",
+  "visualMinimize": "最小化",
+  "visualMusic": "音乐",
+  "visualMusicEmptyTitle": "留一点空间给音乐",
+  "visualMusicPlayer": "随身听",
+  "visualNextTrack": "下一首",
+  "visualNoLyricsRead": "尚未读取到歌词",
+  "visualNoLyricsTitle": "♪ {title} · 暂无歌词",
+  "visualNoTimeline": "无时间轴",
+  "visualOpacity": "不透明度",
+  "visualOptionalArtist": "歌手（可选）",
+  "visualPauseMusic": "暂停音乐",
+  "visualPaused": "已暂停",
+  "visualPlainLyrics": "纯文本歌词",
+  "visualPlayMusic": "播放音乐",
+  "visualPlaybackFailure": "歌曲无法播放，请检查文件或更换音频格式。",
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "visualPlaybackRequestFailure": "播放请求未能完成，请重试。",
+  "visualPlaying": "播放中",
+  "visualPlaylistEmpty": "播放列表还是空的",
+  "visualPlaylistLyricsHint": "从播放列表菜单导入 LRC 歌词",
+  "visualPlaylistSaved": "播放列表与歌词自动保存",
+  "visualPlaylistUpdateFailure": "播放列表未能更新，请重试。",
+  "visualPreviewColor": "预览色值",
+  "visualPreviousTrack": "上一首",
+  "visualRemoveAttachment": "移除附件",
+  "visualRemoveTrack": "移出播放列表",
+  "visualRestoreWindow": "还原",
+  "visualSaveAttachment": "另存附件",
+  "visualSearch": "搜索",
+  "visualSearchLyrics": "搜索歌词",
+  "visualSongCover": "歌曲封面",
+  "visualSongTitle": "歌名",
+  "visualSyncedLyrics": "同步歌词",
+  "visualTextureFailure": "素材加载失败，请检查文件、网络地址或格式。网页直链还需允许跨域访问。",
+  "visualTextureLinkGuide": "粘贴图片、GIF 或视频的 HTTP / HTTPS 直链。网页分享链接需要先找到原始媒体地址。",
+  "visualTextureLinkTitle": "从外面带一点灵感",
+  "visualTexturePlaybackGuide": "视频默认静音循环播放，可在设置中开启声音。网络素材需允许访问，网页端还需支持跨域加载。",
+  "visualUseCustomMaterial": "使用自定义材质",
+  "visualVideo": "视频",
+  "visualViewLyrics": "查看歌词"
+}

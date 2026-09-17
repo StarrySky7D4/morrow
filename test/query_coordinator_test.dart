@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/storage.dart';
 import 'package:morrow_studio/plugins/query_coordinator.dart';
+import 'package:morrow_studio/plugins/workbench_ids.dart';
 import 'package:morrow_studio/plugins/workbench_backend.dart';
 
 class QueryBackend extends WorkbenchBackend {
@@ -38,11 +39,24 @@ class QueryBackend extends WorkbenchBackend {
 
 QueryConditions conditions(String text, {int generation = 0}) => (
   contentGeneration: generation,
-  section: '概览',
-  filter: '全部',
+  section: WorkbenchPage.overview,
+  filter: GeneralFilter.all,
   text: text,
-  sort: '最近添加',
+  sort: WorkbenchSort.recent,
 );
+
+Future<void> waitForLocalizedWorkbench(WidgetTester tester) async {
+  // Loading the verified language pack is independent of query execution.
+  // Wait only for the first localized screen, not for the pending guest reply.
+  for (
+    var attempt = 0;
+    attempt < 100 && find.byType(Studio).evaluate().isEmpty;
+    attempt++
+  ) {
+    await tester.pump(const Duration(milliseconds: 10));
+  }
+  expect(find.byType(Studio), findsOneWidget);
+}
 
 void main() {
   testWidgets('debounce coalesces input and A B A never accepts old A', (
@@ -132,42 +146,43 @@ void main() {
     },
   );
 
-  testWidgets('composition and structured fields cannot collide', (
-    tester,
-  ) async {
-    final backend = QueryBackend();
-    final q = QueryCoordinator(onChanged: () {}, debounce: Duration.zero);
-    q.select(backend, conditions('汉'), deferred: true);
-    await tester.pump(const Duration(seconds: 1));
-    expect(backend.requests, isEmpty);
-    q.select(backend, conditions('汉'));
-    await tester.pump(const Duration(milliseconds: 1));
-    backend.requests.single.complete([]);
-    await tester.pump(const Duration(milliseconds: 1));
-    q.select(backend, (
-      contentGeneration: 0,
-      section: 'a|b',
-      filter: 'c',
-      text: '',
-      sort: '最近添加',
-    ));
-    await tester.pump(const Duration(milliseconds: 1));
-    q.select(backend, (
-      contentGeneration: 0,
-      section: 'a',
-      filter: 'b|c',
-      text: '',
-      sort: '最近添加',
-    ));
-    await tester.pump(const Duration(milliseconds: 1));
-    backend.requests[1].complete(['wrong']);
-    await tester.pump(const Duration(milliseconds: 1));
-    expect(q.ids, isEmpty);
-    expect(backend.requests, hasLength(3));
-    q.dispose();
-    backend.requests.last.complete([]);
-    await tester.pump(const Duration(milliseconds: 1));
-  });
+  testWidgets(
+    'composition and typed page/filter changes reject prior results',
+    (tester) async {
+      final backend = QueryBackend();
+      final q = QueryCoordinator(onChanged: () {}, debounce: Duration.zero);
+      q.select(backend, conditions('汉'), deferred: true);
+      await tester.pump(const Duration(seconds: 1));
+      expect(backend.requests, isEmpty);
+      q.select(backend, conditions('汉'));
+      await tester.pump(const Duration(milliseconds: 1));
+      backend.requests.single.complete([]);
+      await tester.pump(const Duration(milliseconds: 1));
+      q.select(backend, (
+        contentGeneration: 0,
+        section: WorkbenchPage.projects,
+        filter: const StageFilter(WorkbenchStage.active),
+        text: '',
+        sort: WorkbenchSort.recent,
+      ));
+      await tester.pump(const Duration(milliseconds: 1));
+      q.select(backend, (
+        contentGeneration: 0,
+        section: WorkbenchPage.inbox,
+        filter: const StageFilter(WorkbenchStage.organized),
+        text: '',
+        sort: WorkbenchSort.recent,
+      ));
+      await tester.pump(const Duration(milliseconds: 1));
+      backend.requests[1].complete(['wrong']);
+      await tester.pump(const Duration(milliseconds: 1));
+      expect(q.ids, isEmpty);
+      expect(backend.requests, hasLength(3));
+      q.dispose();
+      backend.requests.last.complete([]);
+      await tester.pump(const Duration(milliseconds: 1));
+    },
+  );
 
   testWidgets(
     'production query status exposes real retry and hides stale cards',
@@ -194,7 +209,14 @@ void main() {
           ],
           'completed': <String>[],
         };
-      await tester.pumpWidget(MorrowApp(storage: storage, workbench: backend));
+      await tester.pumpWidget(
+        MorrowApp(
+          initialLocale: const Locale('zh'),
+          storage: storage,
+          workbench: backend,
+        ),
+      );
+      await waitForLocalizedWorkbench(tester);
       await tester.pump(const Duration(milliseconds: 250));
       expect(backend.requests, hasLength(1));
       expect(find.byKey(const ValueKey('query-loading')), findsOneWidget);
@@ -253,8 +275,13 @@ void main() {
       addTearDown(tester.view.resetDevicePixelRatio);
       final backend = QueryBackend();
       await tester.pumpWidget(
-        MorrowApp(storage: MemoryStorage(), workbench: backend),
+        MorrowApp(
+          initialLocale: const Locale('zh'),
+          storage: MemoryStorage(),
+          workbench: backend,
+        ),
       );
+      await waitForLocalizedWorkbench(tester);
       await tester.pump(const Duration(milliseconds: 250));
       backend.requests.last.completeError(
         const QueryFailure('capacity', terminal: true, capacity: true),

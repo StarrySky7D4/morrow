@@ -14,9 +14,17 @@ pub mod dependency;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod file_io;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod inline_ui;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod instance_pool;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod io_binding;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod io_execution;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod io_jobs;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod manager;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
@@ -275,6 +283,9 @@ impl Runner {
     }
     /// IO and core exchange share the host-call counter. The IO callback must return a
     /// framed response or Err(()) for a fixed transport failure; it must not re-enter.
+    /// This raw trusted-host seam grants no authority and validates no IO protocol.
+    /// A broker must enforce managed approval, resource scope, cumulative budgets and
+    /// revocation before work and result delivery; cancellation cannot undo external effects.
     pub fn run_task_with_io<'a>(
         &self,
         input: &'a [u8],

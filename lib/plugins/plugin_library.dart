@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
@@ -115,7 +116,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
   List<PluginLibraryEntry> _entries = [];
   BigInt? _revision;
   bool _busy = false, _confirmed = false;
-  String? _message, _candidatePath, _toolId, _result, _fileName;
+  String? _candidatePath, _toolId, _fileName;
+  String Function(AppLocalizations)? _message, _result;
   PluginLibraryPage? _preview;
   final Map<String, Set<String>> _approvals = {};
   final _text = TextEditingController();
@@ -250,7 +252,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
 
   Future<void> _guard(
     Future<void> Function(ExternalPluginControl) action,
-    String failure,
+    String Function(AppLocalizations) failure,
   ) async {
     if (_busy) return;
     final backend = widget.backend;
@@ -264,13 +266,13 @@ class _PluginLibraryState extends State<PluginLibrary> {
       if (!_current(backend)) return;
       setState(() {
         _confirmed = false;
-        _message = '$failure。操作未确认，请核对刷新后的状态再选择。';
+        _message = (l) => l.pluginsUnconfirmed(failure(l));
       });
       try {
         await _loadPages(backend);
       } catch (_) {
         if (_current(backend)) {
-          setState(() => _message = '$failure。列表暂未刷新，请点“刷新列表”重试读取。');
+          setState(() => _message = (l) => l.pluginsRefreshFailed(failure(l)));
         }
       }
       if (_current(backend)) widget.onChanged();
@@ -287,13 +289,13 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _clearTool();
     });
     await _loadPages(backend);
-  }, '插件列表未能确认');
+  }, (l) => l.pluginsListUnknown);
 
   Future<String?> _pickPackage() async {
     final selected = await openFile(
       acceptedTypeGroups: [
-        const XTypeGroup(
-          label: 'Morrow 插件',
+        XTypeGroup(
+          label: L10n.of(context).pluginsPackageFile,
           extensions: ['mplugin', 'morrowplugin'],
         ),
       ],
@@ -311,7 +313,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _candidatePath = path;
       _preview = preview;
     });
-  }, '插件预览未能读取');
+  }, (l) => l.pluginsInspectFailed);
   Future<void> _import() => _guard((backend) async {
     final preview = _preview;
     final path = _candidatePath;
@@ -327,16 +329,15 @@ class _PluginLibraryState extends State<PluginLibrary> {
     _clearTool();
     await _loadPages(backend);
     if (!_current(backend)) return;
+    final alreadyEnabled = _entries.any(
+      (entry) => entry.id == preview.entries.single.id && entry.enabled,
+    );
     setState(
-      () => _message =
-          _entries.any(
-            (entry) => entry.id == preview.entries.single.id && entry.enabled,
-          )
-          ? '此版本已在插件列表中，现有启用状态保持不变。'
-          : '已导入，尚未启用。请选择需要允许的权限。',
+      () => _message = (l) =>
+          alreadyEnabled ? l.pluginsExistingVersion : l.pluginsImportedDisabled,
     );
     widget.onChanged();
-  }, '导入结果未能确认');
+  }, (l) => l.pluginsImportUnknown);
   Future<void> _configure(PluginLibraryEntry entry, bool enable) =>
       _guard((backend) async {
         final revision = _revision!;
@@ -350,7 +351,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
         _clearTool();
         await _loadPages(backend);
         if (_current(backend)) widget.onChanged();
-      }, '启用或权限变更未能确认');
+      }, (l) => l.pluginsApprovalUnknown);
   Future<void> _remove(PluginLibraryEntry entry) => _guard((backend) async {
     final revision = _revision!;
     await _closeForm();
@@ -360,9 +361,9 @@ class _PluginLibraryState extends State<PluginLibrary> {
     _clearTool();
     await _loadPages(backend);
     if (!_current(backend)) return;
-    setState(() => _message = '已卸载，已有内容仍保留。');
+    setState(() => _message = (l) => l.pluginsUninstalled);
     widget.onChanged();
-  }, '卸载结果未能确认');
+  }, (l) => l.pluginsUninstallUnknown);
 
   bool _standardUi(PluginLibraryEntry entry) =>
       entry.handlers.any(
@@ -400,9 +401,10 @@ class _PluginLibraryState extends State<PluginLibrary> {
     });
     await controller.open('');
     if (_current(backend) && controller.failure != null) {
-      setState(() => _message = controller.failure!.message);
+      final failure = controller.failure!;
+      setState(() => _message = (l) => pluginUiFailureMessage(l, failure));
     }
-  }, '插件界面未能打开');
+  }, (l) => l.pluginsViewFailed);
   void _clearTool() {
     _toolId = null;
     _handler = null;
@@ -428,7 +430,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
     final limit = handler.maxInputBytes.clamp(0, 65536).toInt();
     if (await file.length() > limit) {
       if (_current(backend)) {
-        setState(() => _message = '文件太大，请选择不超过 $limit 字节的文件。');
+        setState(() => _message = (l) => l.pluginsFileLimit(limit));
       }
       return;
     }
@@ -446,14 +448,14 @@ class _PluginLibraryState extends State<PluginLibrary> {
         _result = null;
       });
     }
-  }, '输入文件未能读取');
+  }, (l) => l.pluginsInputFailed);
   Future<void> _transform(PluginLibraryEntry entry) => _guard((backend) async {
     final handler = _handler;
     final revision = _revision;
     if (handler == null || revision == null) return;
     final input = _fileBytes ?? Uint8List.fromList(utf8.encode(_text.text));
     if (input.length > handler.maxInputBytes || input.length > 65536) {
-      setState(() => _message = '输入太长，请缩短文字或选择更小的文件。');
+      setState(() => _message = (l) => l.pluginsInputTooLong);
       return;
     }
     setState(() => _result = null);
@@ -467,48 +469,58 @@ class _PluginLibraryState extends State<PluginLibrary> {
     if (bytes.length > handler.maxOutputBytes || bytes.length > 65536) {
       throw const FormatException('输出超出限制');
     }
-    String preview;
+    // Only the host's framing is localized; plugin output bytes/text stay original.
+    String Function(AppLocalizations) preview;
     try {
       final text = utf8.decode(bytes);
       if (text.runes.any(
         (value) => value < 32 && value != 9 && value != 10 && value != 13,
       )) {
-        throw const FormatException('非文本内容');
+        throw const FormatException('non-text result');
       }
-      preview = String.fromCharCodes(text.runes.take(4096));
-      if (text.runes.length > 4096) preview += '\n…仅显示前 4096 个字符';
-      if (text.isEmpty) preview = '（空结果）';
+      final shown = String.fromCharCodes(text.runes.take(4096));
+      preview = (l) => text.isEmpty
+          ? l.pluginsEmptyResult
+          : text.runes.length > 4096
+          ? '$shown\n${l.pluginsPreviewTruncated}'
+          : shown;
     } on FormatException {
-      preview =
-          '二进制内容：${bytes.take(64).map((b) => b.toRadixString(16).padLeft(2, '0')).join(' ')}${bytes.length > 64 ? ' …' : ''}';
+      final hex = bytes
+          .take(64)
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join(' ');
+      preview = (l) =>
+          l.pluginsBinaryPreview('$hex${bytes.length > 64 ? ' …' : ''}');
     }
-    setState(() => _result = '${bytes.length} 字节\n$preview');
-  }, '转换结果未能确认');
+    setState(
+      () => _result = (l) => l.pluginsResultBytes(bytes.length, preview(l)),
+    );
+  }, (l) => l.pluginsTransformUnknown);
 
   String _capability(String name) =>
-      const {
-        'summary': '读取摘要',
-        'operation': '查询操作结果',
-        'attachment': '读取附件',
-        'create-content': '新建内容',
-        'edit-content': '编辑内容',
-        'read-content': '读取内容',
-        'createContent': '新建内容',
-        'editContent': '编辑内容',
-        'readContent': '读取内容',
-        'rename': '重命名',
-        'readSummary': '读取摘要',
-        'queryOperation': '查询操作结果',
-        'readAttachment': '读取附件',
-        'CreateContent': '新建内容',
-        'EditContent': '编辑内容',
-        'ReadContent': '读取内容',
-        'Rename': '重命名',
-        'ReadSummary': '读取摘要',
-        'QueryOperation': '查询操作结果',
-        'ReadAttachment': '读取附件',
+      {
+        'summary': L10n.of(context).pluginsSummary,
+        'operation': L10n.of(context).pluginsOperation,
+        'attachment': L10n.of(context).pluginsAttachment,
+        'create-content': L10n.of(context).pluginsCreate,
+        'edit-content': L10n.of(context).pluginsEdit,
+        'read-content': L10n.of(context).pluginsRead,
+        'createContent': L10n.of(context).pluginsCreate,
+        'editContent': L10n.of(context).pluginsEdit,
+        'readContent': L10n.of(context).pluginsRead,
+        'rename': L10n.of(context).pluginsRename,
+        'readSummary': L10n.of(context).pluginsSummary,
+        'queryOperation': L10n.of(context).pluginsOperation,
+        'readAttachment': L10n.of(context).pluginsAttachment,
+        'CreateContent': L10n.of(context).pluginsCreate,
+        'EditContent': L10n.of(context).pluginsEdit,
+        'ReadContent': L10n.of(context).pluginsRead,
+        'Rename': L10n.of(context).pluginsRename,
+        'ReadSummary': L10n.of(context).pluginsSummary,
+        'QueryOperation': L10n.of(context).pluginsOperation,
+        'ReadAttachment': L10n.of(context).pluginsAttachment,
       }[name] ??
-      '其他声明权限：$name';
+      L10n.of(context).pluginsOtherCapability(name);
   Widget _note(String text) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 5),
     child: Text(
@@ -539,11 +551,13 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _note('${entry.id} · ${entry.version}'),
       _note(
         entry.declared.isEmpty
-            ? '未声明内容权限。'
-            : '声明权限：${entry.declared.map(_capability).join('、')}',
+            ? L10n.of(context).pluginsNoPermissions
+            : L10n.of(
+                context,
+              ).pluginsDeclared(entry.declared.map(_capability).join(', ')),
       ),
       if (entry.dependencies.isNotEmpty) ...[
-        _note('声明了依赖，需要在宿主配置。本页不会批准依赖。'),
+        _note(L10n.of(context).pluginsDependenciesNotice),
         ...entry.dependencies.map(_note),
       ],
       if (entry.issue.isNotEmpty) _note(entry.issue),
@@ -561,16 +575,16 @@ class _PluginLibraryState extends State<PluginLibrary> {
       ),
       subtitle: Text(
         entry.builtin
-            ? '内置工作台'
+            ? L10n.of(context).pluginsBuiltin
             : entry.enabled
-            ? '已启用'
-            : '未启用',
+            ? L10n.of(context).pluginsEnabled
+            : L10n.of(context).pluginsDisabled,
         style: TextStyle(color: widget.muted, fontSize: 11),
       ),
       children: [
         _facts(entry),
         if (entry.builtin)
-          _note('请使用上方工作台插件按钮管理此插件。')
+          _note(L10n.of(context).pluginsManageAbove)
         else ...[
           ...entry.declared.map(
             (cap) => CheckboxListTile(
@@ -601,7 +615,9 @@ class _PluginLibraryState extends State<PluginLibrary> {
             runSpacing: 8,
             children: [
               _button(
-                entry.enabled ? '保存权限' : '批准并启用',
+                entry.enabled
+                    ? L10n.of(context).pluginsSavePermissions
+                    : L10n.of(context).pluginsApproveEnable,
                 'plugin-approve-${entry.id}',
                 !_confirmed || !entry.available
                     ? null
@@ -610,34 +626,39 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ),
               if (entry.enabled)
                 _button(
-                  '停用',
+                  L10n.of(context).pluginsDisable,
                   'plugin-disable-${entry.id}',
                   !_confirmed ? null : () => _configure(entry, false),
                   icon: Icons.pause_circle_outline,
                 ),
               _button(
-                '卸载（保留内容）',
+                L10n.of(context).pluginsUninstallKeepContent,
                 'plugin-remove-${entry.id}',
                 !_confirmed ? null : () => _remove(entry),
                 icon: Icons.remove_circle_outline,
               ),
               if (_transforms(entry).isNotEmpty)
                 _button(
-                  '使用转换',
+                  L10n.of(context).pluginsUseTransform,
                   'plugin-transform-${entry.id}',
                   !usable ? null : () => _selectTool(entry),
                   icon: Icons.auto_fix_high_outlined,
                 ),
               if (_standardUi(entry))
                 _button(
-                  _formId == entry.id ? '关闭界面' : '打开界面',
+                  _formId == entry.id
+                      ? L10n.of(context).pluginsCloseView
+                      : L10n.of(context).pluginsOpenView,
                   'plugin-ui-${entry.id}',
                   !usable
                       ? null
                       : () {
                           if (_formId == entry.id) {
                             unawaited(
-                              _guard((_) => _closeForm(), '插件界面关闭未能确认'),
+                              _guard(
+                                (_) => _closeForm(),
+                                (l) => l.pluginsCloseUnknown,
+                              ),
                             );
                           } else {
                             unawaited(_openForm(entry));
@@ -679,22 +700,25 @@ class _PluginLibraryState extends State<PluginLibrary> {
               enabled: !_busy && _fileBytes == null,
               minLines: 2,
               maxLines: 5,
-              decoration: const InputDecoration(labelText: '输入文字'),
+              decoration: InputDecoration(
+                labelText: L10n.of(context).pluginsTextInput,
+              ),
               onChanged: (_) => setState(() => _result = null),
             ),
-            if (_fileName != null) _note('已选文件：$_fileName'),
+            if (_fileName != null)
+              _note(L10n.of(context).pluginsSelectedFile(_fileName!)),
             Wrap(
               spacing: 8,
               children: [
                 _button(
-                  '选择小文件',
+                  L10n.of(context).pluginsChooseSmallFile,
                   'plugin-input-file',
                   _pickInput,
                   icon: Icons.attach_file,
                 ),
                 if (_fileBytes != null)
                   _button(
-                    '改用文字',
+                    L10n.of(context).pluginsUseText,
                     'plugin-input-text',
                     () => setState(() {
                       _fileBytes = null;
@@ -702,16 +726,20 @@ class _PluginLibraryState extends State<PluginLibrary> {
                       _result = null;
                     }),
                   ),
-                _button('转换', 'plugin-run', () => _transform(entry)),
+                _button(
+                  L10n.of(context).pluginsTransform,
+                  'plugin-run',
+                  () => _transform(entry),
+                ),
               ],
             ),
             if (_result != null)
               SelectableText(
-                _result!,
+                _result!(L10n.of(context)),
                 key: const ValueKey('plugin-result'),
                 style: TextStyle(color: widget.ink, fontSize: 12),
               ),
-            _note('结果仅供预览，不会自动写入已有内容。'),
+            _note(L10n.of(context).pluginsPreviewOnly),
           ],
           if (_formId == entry.id && _controller != null)
             Padding(
@@ -730,19 +758,29 @@ class _PluginLibraryState extends State<PluginLibrary> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          '第三方插件',
+          L10n.of(context).pluginsThirdParty,
           style: TextStyle(
             color: widget.ink,
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),
         ),
-        _note('导入后由你选择是否启用。停用或卸载不会删除已有内容。'),
+        _note(L10n.of(context).pluginsImportDetails),
         Wrap(
           spacing: 8,
           children: [
-            _button('选择插件文件', 'plugin-pick', _inspect, icon: Icons.add),
-            _button('刷新列表', 'plugin-refresh', _refresh, icon: Icons.refresh),
+            _button(
+              L10n.of(context).pluginsChoosePackage,
+              'plugin-pick',
+              _inspect,
+              icon: Icons.add,
+            ),
+            _button(
+              L10n.of(context).pluginsRefreshList,
+              'plugin-refresh',
+              _refresh,
+              icon: Icons.refresh,
+            ),
           ],
         ),
         if (_busy)
@@ -750,7 +788,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
             padding: EdgeInsets.symmetric(vertical: 8),
             child: LinearProgressIndicator(),
           ),
-        if (_message != null) _note(_message!),
+        if (_message != null) _note(_message!(L10n.of(context))),
         if (_preview != null)
           Container(
             key: const ValueKey('plugin-preview'),
@@ -764,17 +802,23 @@ class _PluginLibraryState extends State<PluginLibrary> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '导入预览：${_preview!.entries.single.name}',
+                  L10n.of(
+                    context,
+                  ).pluginsImportPreview(_preview!.entries.single.name),
                   style: TextStyle(color: widget.ink),
                 ),
                 _facts(_preview!.entries.single),
-                _note('目前仅检查了文件。导入后仍需单独启用。'),
+                _note(L10n.of(context).pluginsInspectedOnly),
                 Wrap(
                   spacing: 8,
                   children: [
-                    _button('导入', 'plugin-import', _import),
                     _button(
-                      '取消',
+                      L10n.of(context).pluginsImport,
+                      'plugin-import',
+                      _import,
+                    ),
+                    _button(
+                      L10n.of(context).pluginsCancel,
                       'plugin-cancel-import',
                       () => setState(() {
                         _preview = null;
@@ -786,7 +830,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ],
             ),
           ),
-        if (_confirmed && _entries.isEmpty) _note('尚未导入第三方插件。'),
+        if (_confirmed && _entries.isEmpty)
+          _note(L10n.of(context).pluginsEmptyLibrary),
         ..._entries.map(_entry),
       ],
     ),

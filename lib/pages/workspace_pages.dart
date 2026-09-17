@@ -1,13 +1,7 @@
 part of '../main.dart';
 
 extension _PageContent on _StudioState {
-  List<String> get pageFilters => switch (section) {
-    '灵感收件箱' => ['全部', '待整理', '已整理'],
-    '小项目' => ['全部', '计划中', '推进中', '已完成'],
-    '实验室' => ['全部', '待验证', '验证中', '已记录'],
-    '已收藏' => ['全部', '图像', '音视频', '文件', '文字'],
-    _ => ['全部', '有待办', '含附件', '仅收藏'],
-  };
+  List<WorkbenchFilter> get pageFilters => section.filters;
   String projectStage(Idea idea) =>
       idea.todos.isNotEmpty && idea.completed.length >= idea.todos.length
       ? '已完成'
@@ -15,19 +9,25 @@ extension _PageContent on _StudioState {
       ? idea.stage
       : '推进中';
   bool matchesPageFilter(Idea idea) => switch (filter) {
-    '全部' => true,
-    '有待办' => idea.todos.any((todo) => !idea.completed.contains(todo)),
-    '含附件' => idea.attachments.isNotEmpty,
-    '仅收藏' => idea.favorite,
-    '图像' => idea.attachments.any(
+    GeneralFilter.all => true,
+    GeneralFilter.pendingTodos => idea.todos.any(
+      (todo) => !idea.completed.contains(todo),
+    ),
+    GeneralFilter.attachments => idea.attachments.isNotEmpty,
+    GeneralFilter.favorites => idea.favorite,
+    GeneralFilter.image => idea.attachments.any(
       (a) => [TextureKind.image, TextureKind.gif].contains(a.source.kind),
     ),
-    '音视频' => idea.attachments.any(
+    GeneralFilter.media => idea.attachments.any(
       (a) => [TextureKind.video, TextureKind.audio].contains(a.source.kind),
     ),
-    '文件' => idea.attachments.any((a) => a.source.kind == TextureKind.file),
-    '文字' => idea.attachments.isEmpty,
-    _ => (section == '小项目' ? projectStage(idea) : idea.stage) == filter,
+    GeneralFilter.file => idea.attachments.any(
+      (a) => a.source.kind == TextureKind.file,
+    ),
+    GeneralFilter.text => idea.attachments.isEmpty,
+    StageFilter(:final stage) =>
+      (section == WorkbenchPage.projects ? projectStage(idea) : idea.stage) ==
+          WorkbenchV1.stage(stage),
   };
   void changeStage(Idea idea, String stage) {
     if (widget.workbench != null) {
@@ -60,20 +60,23 @@ extension _PageContent on _StudioState {
     persist();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('「${idea.title}」已放入小项目'),
+        content: Text(l.mainMovedProject(displayTitle(idea))),
         action: SnackBarAction(
-          label: '查看',
-          onPressed: () => selectSection('小项目'),
+          label: l.mainView,
+          onPressed: () => selectSection(WorkbenchPage.projects),
         ),
       ),
     );
   }
 
   Widget stageMenu(Idea idea, List<String> stages) => PopupMenuButton<String>(
-    tooltip: '修改状态 ${idea.title}',
+    tooltip: l.mainStageTooltip(displayTitle(idea)),
     onSelected: (value) => changeStage(idea, value),
     itemBuilder: (_) => stages
-        .map((stage) => PopupMenuItem(value: stage, child: Text(stage)))
+        .map(
+          (stage) =>
+              PopupMenuItem(value: stage, child: Text(stageLabel(stage))),
+        )
         .toList(),
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -81,7 +84,9 @@ extension _PageContent on _StudioState {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            idea.category == '进行中' ? projectStage(idea) : idea.stage,
+            stageLabel(
+              idea.category == '进行中' ? projectStage(idea) : idea.stage,
+            ),
             style: TextStyle(color: p.accent, fontSize: 11),
           ),
           Icon(Icons.expand_more, size: 16, color: p.accent),
@@ -90,7 +95,9 @@ extension _PageContent on _StudioState {
     ),
   );
   Widget bookmark(Idea idea) => IconButton(
-    tooltip: '${idea.favorite ? '取消收藏' : '收藏'} ${idea.title}',
+    tooltip: idea.favorite
+        ? l.mainUnfavoriteTooltip(displayTitle(idea))
+        : l.mainFavoriteTooltip(displayTitle(idea)),
     onPressed: () {
       if (widget.workbench != null) {
         pluginChange(PluginAction.favorite, idea, flag: !idea.favorite);
@@ -106,7 +113,7 @@ extension _PageContent on _StudioState {
     ),
   );
   Widget recordTitle(Idea idea) => Text(
-    idea.title,
+    displayTitle(idea),
     maxLines: 2,
     overflow: TextOverflow.ellipsis,
     style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.ink),
@@ -114,7 +121,7 @@ extension _PageContent on _StudioState {
   Widget recordSummary(Idea idea) => Padding(
     padding: const EdgeInsets.only(top: 8),
     child: Text(
-      idea.description,
+      displayDescription(idea),
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
       style: TextStyle(fontSize: 12, height: 1.7, color: p.muted),
@@ -130,7 +137,10 @@ extension _PageContent on _StudioState {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
-                  '${idea.attachments.length} 个附件 · ${idea.attachments.first.source.name}',
+                  l.mainAttachmentHint(
+                    idea.attachments.length,
+                    idea.attachments.first.source.name,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 10, color: p.accent),
@@ -155,7 +165,7 @@ extension _PageContent on _StudioState {
   );
 
   Widget specializedCards(List<Idea> items) => switch (section) {
-    '灵感收件箱' => Column(
+    WorkbenchPage.inbox => Column(
       key: const ValueKey('inbox-list'),
       children: items
           .map(
@@ -191,13 +201,17 @@ extension _PageContent on _StudioState {
                                 : Icons.circle_outlined,
                             size: 16,
                           ),
-                          label: Text(idea.stage == '已整理' ? '已整理' : '标记已整理'),
+                          label: Text(
+                            idea.stage == '已整理'
+                                ? l.mainStageOrganized
+                                : l.mainMarkOrganized,
+                          ),
                         ),
                         OutlinedButton.icon(
                           key: ValueKey('promote-${idea.id}'),
                           onPressed: () => moveToProject(idea),
                           icon: const Icon(Icons.arrow_forward, size: 16),
-                          label: const Text('转为项目'),
+                          label: Text(l.mainToProject),
                         ),
                       ],
                     ),
@@ -208,7 +222,7 @@ extension _PageContent on _StudioState {
           )
           .toList(),
     ),
-    '小项目' => LayoutBuilder(
+    WorkbenchPage.projects => LayoutBuilder(
       builder: (_, constraints) {
         final columns = constraints.maxWidth >= 660 ? 2 : 1;
         return Wrap(
@@ -239,7 +253,10 @@ extension _PageContent on _StudioState {
                             stageMenu(idea, ['计划中', '推进中', '已完成']),
                             const Spacer(),
                             Text(
-                              '${idea.completed.length}/${idea.todos.length} 步',
+                              l.mainSteps(
+                                idea.completed.length,
+                                idea.todos.length,
+                              ),
                               style: TextStyle(fontSize: 11, color: p.muted),
                             ),
                           ],
@@ -258,13 +275,13 @@ extension _PageContent on _StudioState {
                         if (idea.todos.isEmpty)
                           TextButton(
                             onPressed: () => openIdea(idea),
-                            child: const Text('打开项目，编辑下一步'),
+                            child: Text(l.mainOpenNextStep),
                           ),
                         ...idea.todos
                             .take(3)
                             .map(
                               (todo) => LittleTask(
-                                title: todo,
+                                title: displayTodo(idea, todo),
                                 done: idea.completed.contains(todo),
                                 onChanged: (done) {
                                   if (widget.workbench != null) {
@@ -290,7 +307,7 @@ extension _PageContent on _StudioState {
                             ),
                         if (idea.todos.length > 3)
                           Text(
-                            '另有 ${idea.todos.length - 3} 步，打开查看',
+                            l.mainMoreSteps(idea.todos.length - 3),
                             style: TextStyle(fontSize: 10, color: p.muted),
                           ),
                         attachmentHint(idea),
@@ -303,7 +320,7 @@ extension _PageContent on _StudioState {
         );
       },
     ),
-    '实验室' => Column(
+    WorkbenchPage.laboratory => Column(
       key: const ValueKey('experiment-journal'),
       children: items.asMap().entries.map((entry) {
         final idea = entry.value;
@@ -333,13 +350,13 @@ extension _PageContent on _StudioState {
                 recordSummary(idea),
                 Divider(height: 28, color: p.line),
                 Text(
-                  '假设 / 想试什么',
+                  l.mainHypothesisSection,
                   style: TextStyle(color: p.accent, fontSize: 10),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   idea.hypothesis.isEmpty
-                      ? '打开记录，写下这次想验证的问题。'
+                      ? l.mainWriteHypothesis
                       : idea.hypothesis,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -347,12 +364,12 @@ extension _PageContent on _StudioState {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  '观察 / 留下发现',
+                  l.mainObservationSection,
                   style: TextStyle(color: p.accent, fontSize: 10),
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  idea.conclusion.isEmpty ? '结果还未发生，过程也值得记录。' : idea.conclusion,
+                  idea.conclusion.isEmpty ? l.mainNoResultYet : idea.conclusion,
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: p.muted, height: 1.7, fontSize: 12),
@@ -431,48 +448,48 @@ extension _PageContent on _StudioState {
 
   Widget pageIntro() {
     final (icon, text, stats) = switch (section) {
-      '灵感收件箱' => (
+      WorkbenchPage.inbox => (
         Icons.inbox_outlined,
-        '先接住，再整理。把值得继续的念头转成小项目。',
+        l.mainInboxIntro,
         <(String, int)>[
           (
-            '等待整理',
+            l.mainUnsortedCount,
             ideas.where((i) => i.category == '灵感' && i.stage != '已整理').length,
           ),
           (
-            '已经整理',
+            l.mainOrganizedCount,
             ideas.where((i) => i.category == '灵感' && i.stage == '已整理').length,
           ),
         ],
       ),
-      '小项目' => (
+      WorkbenchPage.projects => (
         Icons.folder_open,
-        '用清单推动进展。每一个完成的小步，都在靠近结果。',
+        l.mainProjectIntro,
         <(String, int)>[
           (
-            '正在推进',
+            l.mainActiveProjects,
             ideas
                 .where((i) => i.category == '进行中' && projectStage(i) != '已完成')
                 .length,
           ),
           (
-            '已经完成',
+            l.mainCompletedProjects,
             ideas
                 .where((i) => i.category == '进行中' && projectStage(i) == '已完成')
                 .length,
           ),
         ],
       ),
-      '实验室' => (
+      WorkbenchPage.laboratory => (
         Icons.science_outlined,
-        '从一个假设开始，保留尝试、观察和意外发现。',
+        l.mainLabIntro,
         <(String, int)>[
           (
-            '等待验证',
+            l.mainUnverifiedCount,
             ideas.where((i) => i.category == '实验' && i.stage == '待验证').length,
           ),
           (
-            '已有记录',
+            l.mainRecordedCount,
             ideas
                 .where((i) => i.category == '实验' && i.conclusion.isNotEmpty)
                 .length,
@@ -481,11 +498,11 @@ extension _PageContent on _StudioState {
       ),
       _ => (
         Icons.bookmarks_outlined,
-        '喜欢的文字、图像与文件，集中收在这里。',
+        l.mainFavoritesIntro,
         <(String, int)>[
-          ('收藏记录', ideas.where((i) => i.favorite).length),
+          (l.mainFavoriteRecords, ideas.where((i) => i.favorite).length),
           (
-            '收藏附件',
+            l.mainFavoriteAttachments,
             ideas
                 .where((i) => i.favorite)
                 .fold<int>(0, (n, i) => n + i.attachments.length),
@@ -494,7 +511,7 @@ extension _PageContent on _StudioState {
       ),
     };
     return Glass(
-      componentId: 'summary:$section',
+      componentId: WorkbenchV1.summaryComponentId(section),
       p: p,
       child: Padding(
         padding: const EdgeInsets.all(22),

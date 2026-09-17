@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'audio_formats.dart';
 import 'lyrics_dialog.dart';
 import 'lyrics_service.dart';
@@ -8,6 +9,13 @@ import '../appearance.dart';
 import '../media/texture_repository.dart';
 import '../media/texture_source.dart';
 import 'music_controller.dart';
+
+enum _ImportFailure implements Exception {
+  audioType,
+  lyricType,
+  lyricSize,
+  lyricEmpty,
+}
 
 class MusicPanel extends StatefulWidget {
   const MusicPanel({super.key, required this.controller});
@@ -29,6 +37,7 @@ class _MusicPanelState extends State<MusicPanel> {
   MusicController get music => widget.controller;
   Future<void> pick(String type) async {
     if (importing) return;
+    final labels = L10n.of(context);
     setState(() => importing = true);
     final selected = music.current;
     try {
@@ -38,13 +47,18 @@ class _MusicPanelState extends State<MusicPanel> {
           // Show all files there, then validate names before importing.
           acceptedTypeGroups: androidPicker
               ? const []
-              : [XTypeGroup(label: '音乐', extensions: audioExtensions)],
+              : [
+                  XTypeGroup(
+                    label: labels.visualMusic,
+                    extensions: audioExtensions,
+                  ),
+                ],
         );
         final allowed = audioExtensions;
         if (files.any(
           (file) => !allowed.contains(file.name.toLowerCase().split('.').last),
         )) {
-          throw const FormatException('请选择音频或同名 LRC 歌词文件。');
+          throw _ImportFailure.audioType;
         }
         final lyrics = <String, String>{};
         for (final file in files.where(
@@ -86,12 +100,12 @@ class _MusicPanelState extends State<MusicPanel> {
               ? const []
               : [
                   type == 'lyrics'
-                      ? const XTypeGroup(
-                          label: '歌词文件',
+                      ? XTypeGroup(
+                          label: labels.visualLyricsFile,
                           extensions: ['lrc', 'txt'],
                         )
-                      : const XTypeGroup(
-                          label: '歌曲封面',
+                      : XTypeGroup(
+                          label: labels.visualSongCover,
                           extensions: ['png', 'jpg', 'jpeg', 'webp'],
                         ),
                 ],
@@ -102,13 +116,15 @@ class _MusicPanelState extends State<MusicPanel> {
             'lrc',
             'txt',
           ].contains(file.name.toLowerCase().split('.').last)) {
-            throw const FormatException('请选择 LRC 或 TXT 歌词文件。');
+            throw _ImportFailure.lyricType;
           }
           if (await file.length() > 1024 * 1024) {
-            throw const FormatException('歌词文件请控制在 1 MB 以内。');
+            throw _ImportFailure.lyricSize;
           }
           final lyrics = await file.readAsString();
-          if (lyrics.trim().isEmpty) throw const FormatException('歌词文件为空。');
+          if (lyrics.trim().isEmpty) {
+            throw _ImportFailure.lyricEmpty;
+          }
           if (!mounted || !music.tracks.contains(selected)) return;
           music.setLyrics(lyrics, track: selected);
         } else {
@@ -123,9 +139,13 @@ class _MusicPanelState extends State<MusicPanel> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              error is FormatException ? error.message : '导入失败，请检查文件、编码与存储空间。',
-            ),
+            content: Text(switch (error) {
+              _ImportFailure.audioType => L10n.of(context).visualChooseAudio,
+              _ImportFailure.lyricType => L10n.of(context).visualChooseLyrics,
+              _ImportFailure.lyricSize => L10n.of(context).visualLyricsSize,
+              _ImportFailure.lyricEmpty => L10n.of(context).visualLyricsEmpty,
+              _ => L10n.of(context).visualImportFailure,
+            }),
           ),
         );
       }
@@ -160,12 +180,16 @@ class _MusicPanelState extends State<MusicPanel> {
       context: context,
       builder: (_) => StudioDialog(
         title: track.title,
-        subtitle: track.lyricSource.isEmpty ? '尚未读取到歌词' : track.lyricSource,
+        subtitle: track.lyricSource.isEmpty
+            ? L10n.of(context).visualNoLyricsRead
+            : musicSourceLabel(context, track.lyricSource),
         content: SizedBox(
           width: 420,
           child: SingleChildScrollView(
             child: SelectableText(
-              track.lyrics.isEmpty ? '可导入歌词文件，或联网搜索。' : track.lyrics,
+              track.lyrics.isEmpty
+                  ? L10n.of(context).visualLyricsImportHint
+                  : track.lyrics,
               style: const TextStyle(height: 1.8),
             ),
           ),
@@ -173,7 +197,7 @@ class _MusicPanelState extends State<MusicPanel> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: Text(L10n.of(context).visualClose),
           ),
         ],
       ),
@@ -202,7 +226,7 @@ class _MusicPanelState extends State<MusicPanel> {
                   const SizedBox(width: 7),
                   Expanded(
                     child: Text(
-                      '随身听',
+                      L10n.of(context).visualMusicPlayer,
                       style: TextStyle(
                         color: p.ink,
                         fontSize: 12,
@@ -212,7 +236,7 @@ class _MusicPanelState extends State<MusicPanel> {
                   ),
                   IconButton(
                     key: const ValueKey('music-add'),
-                    tooltip: '导入音乐',
+                    tooltip: L10n.of(context).visualImportMusic,
                     onPressed: importing ? null : () => pick('songs'),
                     icon: const Icon(Icons.add_rounded, size: 18),
                   ),
@@ -222,7 +246,7 @@ class _MusicPanelState extends State<MusicPanel> {
               Row(
                 children: [
                   Tooltip(
-                    message: '更换歌曲封面',
+                    message: L10n.of(context).visualChangeCover,
                     child: InkWell(
                       onTap: music.current == null || importing
                           ? null
@@ -244,7 +268,8 @@ class _MusicPanelState extends State<MusicPanel> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          music.current?.title ?? '留一点空间给音乐',
+                          music.current?.title ??
+                              L10n.of(context).visualMusicEmptyTitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -256,10 +281,16 @@ class _MusicPanelState extends State<MusicPanel> {
                         const SizedBox(height: 4),
                         Text(
                           music.loading
-                              ? '正在载入…'
+                              ? L10n.of(context).visualLoading
                               : music.current == null
-                              ? '点击 + 导入本地歌曲'
-                              : '${music.index + 1} / ${music.tracks.length} · ${music.playing ? '播放中' : '已暂停'}',
+                              ? L10n.of(context).visualImportMusicHint
+                              : L10n.of(context).visualPlaybackPosition(
+                                  music.tracks.length,
+                                  music.index + 1,
+                                  music.playing
+                                      ? L10n.of(context).visualPlaying
+                                      : L10n.of(context).visualPaused,
+                                ),
                           style: TextStyle(fontSize: 9, color: p.muted),
                         ),
                       ],
@@ -273,13 +304,15 @@ class _MusicPanelState extends State<MusicPanel> {
                 children: [
                   IconButton(
                     key: const ValueKey('music-previous'),
-                    tooltip: '上一首',
+                    tooltip: L10n.of(context).visualPreviousTrack,
                     onPressed: music.current == null ? null : music.previous,
                     icon: const Icon(Icons.skip_previous_rounded),
                   ),
                   IconButton.filledTonal(
                     key: const ValueKey('music-play'),
-                    tooltip: music.playing ? '暂停音乐' : '播放音乐',
+                    tooltip: music.playing
+                        ? L10n.of(context).visualPauseMusic
+                        : L10n.of(context).visualPlayMusic,
                     onPressed:
                         music.current == null || music.loading || music.blocked
                         ? null
@@ -292,13 +325,15 @@ class _MusicPanelState extends State<MusicPanel> {
                   ),
                   IconButton(
                     key: const ValueKey('music-next'),
-                    tooltip: '下一首',
+                    tooltip: L10n.of(context).visualNextTrack,
                     onPressed: music.current == null ? null : music.next,
                     icon: const Icon(Icons.skip_next_rounded),
                   ),
                   IconButton(
                     key: const ValueKey('music-list-toggle'),
-                    tooltip: expanded ? '收起播放列表' : '展开播放列表',
+                    tooltip: expanded
+                        ? L10n.of(context).visualCollapsePlaylist
+                        : L10n.of(context).visualExpandPlaylist,
                     onPressed: () => setState(() => expanded = !expanded),
                     icon: Icon(
                       Icons.queue_music_rounded,
@@ -356,7 +391,7 @@ class _MusicPanelState extends State<MusicPanel> {
                   children: [
                     Expanded(
                       child: Text(
-                        '底部显示歌词',
+                        L10n.of(context).visualFooterLyrics,
                         style: TextStyle(fontSize: 10, color: p.muted),
                       ),
                     ),
@@ -371,8 +406,8 @@ class _MusicPanelState extends State<MusicPanel> {
                   container: true,
                   child: Text(
                     music.showLyrics && music.current!.lyrics.isEmpty
-                        ? '从播放列表菜单导入 LRC 歌词'
-                        : '播放列表与歌词自动保存',
+                        ? L10n.of(context).visualPlaylistLyricsHint
+                        : L10n.of(context).visualPlaylistSaved,
                     style: TextStyle(fontSize: 9, color: p.muted),
                   ),
                 ),
@@ -381,7 +416,7 @@ class _MusicPanelState extends State<MusicPanel> {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    music.error!,
+                    musicErrorLabel(context, music.error!),
                     style: TextStyle(
                       fontSize: 10,
                       color: Theme.of(context).colorScheme.error,
@@ -401,7 +436,7 @@ class _MusicPanelState extends State<MusicPanel> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8),
                               child: Text(
-                                '播放列表还是空的',
+                                L10n.of(context).visualPlaylistEmpty,
                                 style: TextStyle(color: p.muted, fontSize: 10),
                               ),
                             ),
@@ -432,7 +467,7 @@ class _MusicPanelState extends State<MusicPanel> {
                                 minLeadingWidth: 12,
                                 onTap: () => music.select(index),
                                 trailing: IconButton(
-                                  tooltip: '移出播放列表',
+                                  tooltip: L10n.of(context).visualRemoveTrack,
                                   onPressed: () => music.remove(index),
                                   icon: const Icon(
                                     Icons.close_rounded,
@@ -445,12 +480,12 @@ class _MusicPanelState extends State<MusicPanel> {
                           SwitchListTile.adaptive(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
-                            title: const Text(
-                              '自动联网补全歌词',
+                            title: Text(
+                              L10n.of(context).visualAutoLyrics,
                               style: TextStyle(fontSize: 10),
                             ),
-                            subtitle: const Text(
-                              '本地文件 → 内嵌 → LRCLIB',
+                            subtitle: Text(
+                              L10n.of(context).visualLyricsSources,
                               style: TextStyle(fontSize: 9),
                             ),
                             value: music.onlineLyrics,
@@ -459,8 +494,11 @@ class _MusicPanelState extends State<MusicPanel> {
                           if (music.current != null)
                             Text(
                               music.lyricStatus.isEmpty
-                                  ? '播放时自动读取歌词'
-                                  : music.lyricStatus,
+                                  ? L10n.of(context).visualLyricsOnPlay
+                                  : musicStatusLabel(
+                                      context,
+                                      music.lyricStatus,
+                                    ),
                               style: TextStyle(fontSize: 10, color: p.muted),
                             ),
                           if (music.current != null)
@@ -475,8 +513,8 @@ class _MusicPanelState extends State<MusicPanel> {
                                     Icons.image_outlined,
                                     size: 14,
                                   ),
-                                  label: const Text(
-                                    '封面',
+                                  label: Text(
+                                    L10n.of(context).visualCover,
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 ),
@@ -487,16 +525,16 @@ class _MusicPanelState extends State<MusicPanel> {
                                     Icons.travel_explore,
                                     size: 14,
                                   ),
-                                  label: const Text(
-                                    '搜索歌词',
+                                  label: Text(
+                                    L10n.of(context).visualSearchLyrics,
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 ),
                                 TextButton.icon(
                                   onPressed: showAllLyrics,
                                   icon: const Icon(Icons.subject, size: 14),
-                                  label: const Text(
-                                    '查看歌词',
+                                  label: Text(
+                                    L10n.of(context).visualViewLyrics,
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 ),
@@ -509,8 +547,8 @@ class _MusicPanelState extends State<MusicPanel> {
                                     Icons.lyrics_outlined,
                                     size: 14,
                                   ),
-                                  label: const Text(
-                                    '导入歌词',
+                                  label: Text(
+                                    L10n.of(context).visualImportLyrics,
                                     style: TextStyle(fontSize: 10),
                                   ),
                                 ),
@@ -581,3 +619,28 @@ class _TrackCoverState extends State<TrackCover> {
     );
   }
 }
+
+String musicSourceLabel(BuildContext context, String source) =>
+    switch (source) {
+      '歌词文件' => L10n.of(context).visualLyricsFile,
+      '音频内嵌' => L10n.of(context).visualEmbeddedLyrics,
+      _ => source,
+    };
+
+String musicStatusLabel(BuildContext context, String status) =>
+    switch (status) {
+      '正在读取歌词…' => L10n.of(context).visualLyricsLoading,
+      '歌词解析未完成，可重新导入' => L10n.of(context).visualLyricsParseFailure,
+      '未找到歌词，可导入或重新搜索' => L10n.of(context).visualLyricsMissing,
+      '存在多个版本，请在搜索中选择' => L10n.of(context).visualLyricsVersions,
+      '歌词读取失败，可手动导入或重试' => L10n.of(context).visualLyricsReadFailure,
+      _ => musicSourceLabel(context, status),
+    };
+
+String musicErrorLabel(BuildContext context, String error) => switch (error) {
+  '歌曲无法播放，请检查文件或更换音频格式。' => L10n.of(context).visualPlaybackFailure,
+  '播放请求未能完成，请重试。' => L10n.of(context).visualPlaybackRequestFailure,
+  '声音状态未能确认，请重试。' => L10n.of(context).visualAudioStateFailure,
+  '播放列表未能更新，请重试。' => L10n.of(context).visualPlaylistUpdateFailure,
+  _ => L10n.of(context).visualPlaybackFailure,
+};

@@ -1,0 +1,180 @@
+{
+  "@@locale": "zh",
+  "pluginsWorkbench": "工作台插件",
+  "pluginsReadingState": "正在读取插件状态…",
+  "pluginsManagementUnavailable": "插件管理暂不可用，已有内容仍可读取。",
+  "pluginsInsufficientApproval": "插件已启用，但内容权限不足；工作台保持只读。可停用后重新确认权限。",
+  "pluginsWorkbenchReadOnly": "插件已允许，但当前工作台只读；处理内容库或插件提示后可刷新状态。",
+  "pluginsEnabledDetails": "已启用。插件可读取和编辑工作台内容，停用后保留已有资料。",
+  "pluginsDisabledDetails": "尚未启用。允许读取和编辑工作台内容后，可继续使用编辑与工具功能。",
+  "pluginsDisableWorkbench": "停用工作台插件",
+  "pluginsApproveWorkbench": "允许读取与编辑，并启用",
+  "pluginsOpenTextTool": "打开文字工具",
+  "pluginsCloseTextTool": "收起文字工具",
+  "pluginsRefreshState": "刷新状态",
+  "pluginsStateUnavailable": "插件状态暂时无法读取，请重试。",
+  "pluginsSettingsUnknown": "插件设置未确认，请刷新状态后重新选择。",
+  "pluginsPackageFile": "Morrow 插件",
+  "pluginsExistingVersion": "此版本已在插件列表中，现有启用状态保持不变。",
+  "pluginsImportedDisabled": "已导入，尚未启用。请选择需要允许的权限。",
+  "pluginsUninstalled": "已卸载，已有内容仍保留。",
+  "pluginsInputTooLong": "输入内容已超过此界面的容量，请缩短后重试。",
+  "pluginsSummary": "读取摘要",
+  "pluginsOperation": "查询操作结果",
+  "pluginsAttachment": "读取附件",
+  "pluginsCreate": "新建内容",
+  "pluginsEdit": "编辑内容",
+  "pluginsRead": "读取内容",
+  "pluginsRename": "重命名",
+  "pluginsNoPermissions": "未声明内容权限。",
+  "pluginsDependenciesNotice": "声明了依赖，需要在宿主配置。本页不会批准依赖。",
+  "pluginsBuiltin": "内置工作台",
+  "pluginsEnabled": "已启用",
+  "pluginsDisabled": "未启用",
+  "pluginsManageAbove": "请使用上方工作台插件按钮管理此插件。",
+  "pluginsSavePermissions": "保存权限",
+  "pluginsApproveEnable": "批准并启用",
+  "pluginsDisable": "停用",
+  "pluginsUninstallKeepContent": "卸载（保留内容）",
+  "pluginsUseTransform": "使用转换",
+  "pluginsCloseView": "关闭界面",
+  "pluginsOpenView": "打开界面",
+  "pluginsTextInput": "输入文字",
+  "pluginsChooseSmallFile": "选择小文件",
+  "pluginsUseText": "改用文字",
+  "pluginsTransform": "转换",
+  "pluginsPreviewOnly": "结果仅供预览，不会自动写入已有内容。",
+  "pluginsThirdParty": "第三方插件",
+  "pluginsImportDetails": "导入后由你选择是否启用。停用或卸载不会删除已有内容。",
+  "pluginsChoosePackage": "选择插件文件",
+  "pluginsRefreshList": "刷新列表",
+  "pluginsInspectedOnly": "目前仅检查了文件。导入后仍需单独启用。",
+  "pluginsImport": "导入",
+  "pluginsCancel": "取消",
+  "pluginsEmptyLibrary": "尚未导入第三方插件。",
+  "pluginsBackupLibraryType": "内容库备份",
+  "pluginsProtectionFileType": "内容库保护文件",
+  "pluginsSnapshotSaved": "内容库已备份，包含库内附件与原保护文件。",
+  "pluginsProtectionSaved": "保护文件已备份，可在启动失败时选择此文件恢复。",
+  "pluginsBackupUnknown": "备份结果尚未确认，请保留可能生成的文件并检查保存位置。",
+  "pluginsProtection": "内容保护",
+  "pluginsProtectionDetails": "保存原保护文件的备份，供当前系统账户恢复使用。此文件不包含卡片和附件。",
+  "pluginsSnapshotDetails": "内容库备份包含库内卡片、附件和审计记录；外部素材保留引用，恢复仍需原系统账户。",
+  "pluginsBackupLibrary": "备份内容库",
+  "pluginsBackingUp": "正在备份…",
+  "pluginsBackupProtection": "备份保护文件",
+  "pluginsListUnknown": "插件列表未能确认",
+  "pluginsInspectFailed": "插件预览未能读取",
+  "pluginsImportUnknown": "导入结果未能确认",
+  "pluginsApprovalUnknown": "启用或权限变更未能确认",
+  "pluginsUninstallUnknown": "卸载结果未能确认",
+  "pluginsViewFailed": "插件界面未能打开",
+  "pluginsInputFailed": "输入文件未能读取",
+  "pluginsTransformUnknown": "转换结果未能确认",
+  "pluginsCloseUnknown": "插件界面关闭未能确认",
+  "pluginsUnconfirmed": "{reason}。操作未确认，请核对刷新后的状态再选择。",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}。列表暂未刷新，请点“刷新列表”重试读取。",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "文件太大，请选择不超过 {limit} 字节的文件。",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "其他声明权限：{name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "声明权限：{permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "已选文件：{name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "导入预览：{name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…仅显示前 4096 个字符",
+  "pluginsEmptyResult": "（空结果）",
+  "pluginsBinaryPreview": "二进制内容：{hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count} 字节\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "连接已中断，请重新打开此插件界面。",
+  "pluginsOpeningView": "正在打开插件界面…",
+  "pluginsUnavailableView": "插件界面暂不可用",
+  "pluginsUpdatingView": "正在更新预览…",
+  "pluginsUiRejected": "插件操作未被接受，请检查输入与当前权限。",
+  "pluginsUiExecution": "插件执行未完成，请重新打开界面后重试。",
+  "pluginsUiUnavailable": "插件已不可用，请检查状态并重新打开界面。",
+  "pluginsBuiltinHeading": "文字小工具",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "输入文字",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count} 个字符 · 仅本次使用，不保存为卡片",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "输入后查看大写转换",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  }
+}
