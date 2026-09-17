@@ -484,7 +484,7 @@ fn backup_remains_self_contained_after_original_database_is_removed() {
 }
 
 fn downgrade_to_eleven(path: &Path) {
-    rusqlite::Connection::open(path).unwrap().execute_batch("DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives;DROP TABLE read_archive_parts;DROP TABLE read_archives;PRAGMA user_version=11;").unwrap();
+    rusqlite::Connection::open(path).unwrap().execute_batch("DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures; DROP TABLE operation_read_archives;DROP TABLE read_archive_parts;DROP TABLE read_archives;PRAGMA user_version=11;").unwrap();
 }
 fn version(path: &Path) -> i64 {
     rusqlite::Connection::open(path)
@@ -542,7 +542,7 @@ fn migration_preserves_original_legacy_read_and_signature_and_rejects_old_format
     assert_eq!(version(&path), 11);
     let mut migrated =
         Store::open_audited(&path, Default::default(), false, trust.clone()).unwrap();
-    assert_eq!(version(&path), 14);
+    assert_eq!(version(&path), 17);
     assert_eq!(
         migrated
             .lookup_read("query", "legacy")
@@ -556,7 +556,7 @@ fn migration_preserves_original_legacy_read_and_signature_and_rejects_old_format
     drop(migrated);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("PRAGMA user_version=11;")
+        .execute_batch("DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=11;")
         .unwrap();
     assert!(Store::open_audited(&path, Default::default(), false, trust).is_err());
     assert_eq!(version(&path), 11);

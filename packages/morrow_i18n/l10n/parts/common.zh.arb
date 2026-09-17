@@ -1,0 +1,22 @@
+{
+  "@@locale": "zh",
+  "commonAppName": "Morrow",
+  "commonCancel": "取消",
+  "commonCount": "{count} 项",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonGreeting": "你好，{name}",
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

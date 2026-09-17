@@ -81,6 +81,17 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
                 out.reborrow(),
             );
         }
+        wire::Action::ReadUiLocale => {
+            let (locale,revision)=host.read_ui_locale()?;
+            out.set_payload(locale.as_bytes());
+            out.set_revision(revision);
+        }
+        wire::Action::SaveUiLocale => {
+            let locale=std::str::from_utf8(r.get_payload()?)?;
+            let revision=host.save_ui_locale(&text(r.get_operation())?,r.get_revision(),locale)?;
+            out.set_payload(locale.as_bytes());
+            out.set_revision(revision);
+        }
         wire::Action::PluginInspect => {
             plugin_catalog_reply(
                 host.inspect_plugin(std::path::Path::new(&text(r.get_selected_path())?))?,

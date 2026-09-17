@@ -24,7 +24,7 @@ Runner 可复用已校验模块，每次 run 创建独立 Store，结束后释�
 | 宿主调用 | 默认至多 16 次；可信调用方可设 0–1024 |
 | 消息 | 64 KiB，必须在提交前通过输出范围检查 |
 
-静态模块检查使用 EnforcedLimits::strict；以上是原型参数，不是性能结论或发行参数。缺省关闭 Wasmi 的 WAT 文本解析，仅测试依赖解析 WAT；不提供 WASI、文件、网络或自定义身份导入。由内存增长限额触发的拒绝配置为 trap。
+静态模块检查使用 EnforcedLimits::strict；以上是原型参数，不是性能结论或发行参数。缺省关闭 Wasmi 的 WAT 文本解析，仅测试依赖解析 WAT；不提供 WASI、直接操作系统文件／网络或自定义身份导入。实验性 `morrow_io_v1.call` 仅由专用 Runner 开放；受管固定文件字节读取的真实授权、预算和单帧限制见 [IO 整合验收](../reports/track-a-integration-2026-09-16.md)，不代表正式 guest 网络已接通。由内存增长限额触发的拒绝配置为 trap。
 
 Wasmi 1.1.0 的 fuel 和 StoreLimits 用于验证可替换解释后端，锁定版本不代表它是最新版本或全平台最终选型。依据见 [固定版本 API](https://docs.rs/wasmi/1.1.0/wasmi/)、[资源限额](https://docs.rs/wasmi/1.1.0/wasmi/struct.StoreLimitsBuilder.html)。Wasmtime／Pulley、浏览器 Worker 与平台分发限制继续分别验证。
 

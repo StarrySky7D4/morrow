@@ -4,6 +4,7 @@ import 'plugins/workbench_self_check.dart';
 import 'plugins/canvas_self_check.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:path_provider/path_provider.dart';
 import 'main.dart' show MorrowApp;
 import 'desktop_frame.dart';
@@ -24,6 +25,16 @@ Future<void> main(List<String> arguments) async {
   final managed =
       !arguments.any((v) => v.startsWith('--data-directory=')) ||
       arguments.contains('--managed-library');
+  final requestedLocale = arguments
+      .where((v) => v.startsWith('--locale='))
+      .firstOrNull
+      ?.substring('--locale='.length);
+  final previewLocale = const ['en', 'zh'].contains(requestedLocale)
+      ? Locale(requestedLocale!)
+      : null;
+  final startupLocale =
+      previewLocale ?? WidgetsBinding.instance.platformDispatcher.locale;
+  final startupMessages = L10n.forLocale(startupLocale);
   Directory? recoveryDirectory;
   RustWorkbench? opened;
   final executable = File(Platform.resolvedExecutable).parent.path;
@@ -70,6 +81,7 @@ Future<void> main(List<String> arguments) async {
         key: boundary,
         child: MorrowApp(
           storage: storage,
+          initialLocale: previewLocale,
           workbench: backend,
           nativeBackground: DesktopBackground(),
           initialWarning:
@@ -103,14 +115,18 @@ Future<void> main(List<String> arguments) async {
     final targetDirectory = recoveryDirectory;
     runApp(
       WorkbenchRecovery(
-        message: workbenchFailureMessage(error),
+        failure: error,
+        locale: previewLocale,
         onRetry: () => main(arguments),
         onRestoreSnapshot: !managed || targetDirectory == null
             ? null
             : () async {
                 final selected = await openFile(
-                  acceptedTypeGroups: const [
-                    XTypeGroup(label: '内容库备份', extensions: ['morrowbackup']),
+                  acceptedTypeGroups: [
+                    XTypeGroup(
+                      label: startupMessages.recoveryBackupFile,
+                      extensions: ['morrowbackup'],
+                    ),
                   ],
                 );
                 if (selected == null) return;
@@ -131,9 +147,7 @@ Future<void> main(List<String> arguments) async {
                     selected: destination,
                   );
                 } catch (_) {
-                  throw StateError(
-                    'Morrow workbench host: 备份已恢复至 ${destination.path}，切换结果未确认，请保留此目录并重新打开工作台核对。',
-                  );
+                  throw RecoverySwitchUnconfirmed(destination.path);
                 }
                 await main(arguments);
               },
@@ -141,12 +155,12 @@ Future<void> main(List<String> arguments) async {
             ? null
             : () async {
                 final selected = await openFile(
-                  acceptedTypeGroups: const [
+                  acceptedTypeGroups: [
                     XTypeGroup(
-                      label: '内容库保护文件',
+                      label: startupMessages.recoveryKeyFile,
                       extensions: ['audit-key', 'backup'],
                     ),
-                    XTypeGroup(label: '所有文件'),
+                    XTypeGroup(label: startupMessages.recoveryAllFiles),
                   ],
                 );
                 if (selected == null) return;

@@ -4,6 +4,41 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/workbench_recovery.dart';
 
 void main() {
+  testWidgets('English recovery keeps failure state while locale changes', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(380, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final locale = ValueNotifier(const Locale('en'));
+    addTearDown(locale.dispose);
+    await tester.pumpWidget(
+      ValueListenableBuilder<Locale>(
+        valueListenable: locale,
+        builder: (context, value, child) => WorkbenchRecovery(
+          locale: value,
+          failure: StateError('unclassified startup error'),
+          onRetry: () async =>
+              throw const RecoverySwitchUnconfirmed('C:/retained'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Reopen workspace'), findsOneWidget);
+    await tester.tap(find.text('Try again'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('C:/retained'), findsOneWidget);
+    expect(
+      find.textContaining('switching could not be confirmed'),
+      findsOneWidget,
+    );
+    locale.value = const Locale('zh');
+    await tester.pumpAndSettle();
+    expect(find.text('重新打开工作台'), findsOneWidget);
+    expect(find.textContaining('C:/retained'), findsOneWidget);
+    expect(find.textContaining('切换结果未确认'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets(
     'recovery stays usable after cancellation and failure, serializes work',
     (tester) async {
@@ -16,6 +51,7 @@ void main() {
       await tester.pumpWidget(
         WorkbenchRecovery(
           message: '保护文件缺失',
+          locale: const Locale('zh'),
           onRetry: () async {
             calls++;
           },
@@ -27,6 +63,7 @@ void main() {
           },
         ),
       );
+      await tester.pumpAndSettle();
       await tester.tap(find.text('选择恢复文件'));
       await tester.pumpAndSettle();
       expect(calls, 1);

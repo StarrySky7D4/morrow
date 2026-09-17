@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,15 @@ class AttachmentTile extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              error is FormatException ? error.message : '文件操作失败，请检查文件与存储空间。',
-            ),
+            content: Text(switch (error) {
+              FormatException(message: '文件操作失败，请重试。') => L10n.of(
+                context,
+              ).visualFileRetry,
+              FormatException(message: '无法打开文件，请先安装对应应用，或将附件另存后打开。') => L10n.of(
+                context,
+              ).visualFileOpenFailure,
+              _ => L10n.of(context).visualAttachmentFailure,
+            }),
           ),
         );
       }
@@ -70,7 +77,15 @@ class AttachmentTile extends StatelessWidget {
             style: TextStyle(fontSize: 12, color: p.ink),
           ),
           subtitle: Text(
-            '${attachment.extension.toUpperCase()} · ${attachment.sizeLabel}${kind == TextureKind.file ? (kIsWeb ? ' · 下载后打开' : ' · 使用默认应用打开') : ' · 点击预览'}',
+            L10n.of(context).visualAttachmentDetails(
+              kind == TextureKind.file
+                  ? (kIsWeb
+                        ? L10n.of(context).visualDownloadOpen
+                        : L10n.of(context).visualDefaultOpen)
+                  : L10n.of(context).visualClickPreview,
+              attachment.extension.toUpperCase(),
+              attachment.sizeLabel,
+            ),
             style: TextStyle(fontSize: 10, color: p.muted),
           ),
           onTap: () => attachment.previewable
@@ -83,14 +98,14 @@ class AttachmentTile extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                tooltip: '另存附件',
+                tooltip: L10n.of(context).visualSaveAttachment,
                 icon: const Icon(Icons.download_outlined, size: 18),
                 onPressed: () =>
                     action(context, () => exportAttachment(attachment)),
               ),
               if (onRemove != null)
                 IconButton(
-                  tooltip: '移除附件',
+                  tooltip: L10n.of(context).visualRemoveAttachment,
                   icon: const Icon(Icons.close, size: 18),
                   onPressed: onRemove,
                 ),
@@ -109,12 +124,14 @@ class AttachmentPreview extends StatefulWidget {
   State<AttachmentPreview> createState() => _AttachmentPreviewState();
 }
 
+enum _PreviewFailure { media, read }
+
 class _AttachmentPreviewState extends State<AttachmentPreview> {
   ResolvedTexture? resolved;
   Player? player;
   VideoController? video;
   StreamSubscription<String>? errors;
-  String? error;
+  _PreviewFailure? error;
   @override
   void initState() {
     super.initState();
@@ -137,13 +154,13 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
         final engine = player = Player();
         video = VideoController(engine);
         errors = engine.stream.error.listen((_) {
-          if (mounted) setState(() => error = '此媒体无法预览，可另存后使用其他应用打开。');
+          if (mounted) setState(() => error = _PreviewFailure.media);
         });
         await engine.open(Media(data.uri), play: false);
       }
       if (mounted) setState(() {});
     } catch (_) {
-      if (mounted) setState(() => error = '附件无法读取，请重新导入。');
+      if (mounted) setState(() => error = _PreviewFailure.read);
     }
   }
 
@@ -163,12 +180,18 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
   @override
   Widget build(BuildContext context) => StudioDialog(
     title: widget.attachment.source.name,
-    subtitle: '本地附件预览',
+    subtitle: L10n.of(context).visualAttachmentPreview,
     content: SizedBox(
       width: 620,
       height: 320,
       child: error != null
-          ? Center(child: Text(error!))
+          ? Center(
+              child: Text(
+                error == _PreviewFailure.media
+                    ? L10n.of(context).visualMediaPreviewFailure
+                    : L10n.of(context).visualAttachmentReadFailure,
+              ),
+            )
           : resolved == null
           ? const Center(child: CircularProgressIndicator())
           : video != null
@@ -177,15 +200,16 @@ class _AttachmentPreviewState extends State<AttachmentPreview> {
               child: Image.memory(
                 resolved!.bytes!,
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) =>
-                    const Center(child: Text('图片无法解码，可另存后打开。')),
+                errorBuilder: (_, _, _) => Center(
+                  child: Text(L10n.of(context).visualImageDecodeFailure),
+                ),
               ),
             ),
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('关闭'),
+        child: Text(L10n.of(context).visualClose),
       ),
     ],
   );

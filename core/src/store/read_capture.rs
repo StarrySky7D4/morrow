@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if !matches!(version(c)?, 13 | 14) {
+    if !matches!(version(c)?, 13..=17) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())
@@ -60,6 +60,7 @@ fn load(c: &Connection, subject: &str, operation: &str) -> Result<Option<State>>
     Ok(Some(state))
 }
 pub(super) fn reject_tracked(c: &Connection, operation: &str) -> Result<()> {
+    super::io_intent::reject_reserved(c, operation)?;
     if version(c)? < 13 {
         return Ok(());
     }

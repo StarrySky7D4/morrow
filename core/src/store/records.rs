@@ -127,16 +127,7 @@ impl Store {
         references(&tx, &next)?;
         let event = records::encode_commit(input.to_vec(), &next)?;
         let receipt = records::decode_commit(&event)?.1;
-        let (count, bytes): (i64, i64) = sql(tx.query_row(
-            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
-        if count >= i64::from(self.budget.max_count)
-            || (bytes as u64).saturating_add(event.len() as u64) > self.budget.max_bytes
-        {
-            return Err(Error::EventCapacity);
-        }
+        super::event_room(&tx, self.budget, event.len() as u64)?;
         sql(tx.execute("INSERT INTO records(kind,id,payload) VALUES(?1,?2,?3) ON CONFLICT(kind,id) DO UPDATE SET payload=excluded.payload",params![kind as u32,command.object_id,next.container()?]))?;
         boundary("record-after-content");
         sql(tx.execute(

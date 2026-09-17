@@ -1,0 +1,42 @@
+{
+  "@@locale": "en",
+  "recoveryTitle": "Reopen workspace",
+  "recoveryOpenFailed": "The workspace could not open. Check the plugin files and data folder, then try again.",
+  "recoveryFailed": "Recovery did not finish. Keep the original files and try again.",
+  "recoverySnapshotGuide": "You can restore a library backup to a new folder and switch to it. The original folder is kept. This restores content as it was when backed up and requires the original system account.",
+  "recoverySnapshot": "Restore library backup",
+  "recoveryKeyGuide": "If the protection file is missing or damaged, select a backup of it. The file must belong to this library and requires the original system account.",
+  "recoveryRetry": "Try again",
+  "recoveryChooseKey": "Choose recovery file",
+  "recoveryBackupFile": "Library backup",
+  "recoveryKeyFile": "Library protection file",
+  "recoveryAllFiles": "All files",
+  "recoveryPluginUnavailable": "The workspace plugin is unavailable. Existing content can still be viewed and exported.",
+  "recoveryMaintenance": "The library needs attention. Keep the original files and review the diagnostic details.",
+  "recoverySwitchUnconfirmed": "The backup was restored to {path}, but switching could not be confirmed. Keep this folder and reopen the workspace to check.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "The library protection key is missing. Restore the original .audit-key file and try again.",
+  "recoveryKeyMismatch": "The library key does not match or cannot be decrypted. Use the original file and system account.",
+  "recoveryMissingLibrary": "The protection key exists, but the library is missing or empty. Restore the original library.",
+  "recoveryIdentityBusy": "Another copy of this library is in use. Close that workspace before opening this copy.",
+  "recoveryBusy": "This library is in use by another process. Close the other window and try again.",
+  "recoveryTargetExists": "The restore destination already exists. Choose a new folder that does not exist yet.",
+  "recoverySnapshotUnknown": "The restore result needs checking. Inspect the destination folder; the original library was not replaced.",
+  "recoverySnapshotInvalid": "The library backup format or integrity check is invalid. Keep the original backup file.",
+  "recoveryBackupExists": "A file already exists at the backup location. Choose a new filename.",
+  "recoveryBackupUnknown": "The backup result needs checking. Keep the current file and inspect the save location.",
+  "recoveryBindingMissing": "This library has no bound protection file, so the selected file cannot be matched to it.",
+  "recoveryKeyUnknown": "The recovery result needs checking. Try opening again; a copy of the previous protection file was retained if one existed.",
+  "recoveryLibraryInvalid": "The library could not be verified or opened. Keep the original library and protection key, then try again.",
+  "recoveryCloseFirst": "The workspace is still running. Close it before switching libraries.",
+  "recoveryIdentityMismatch": "The registered library identity does not match. Keep the original data and restore the correct backup.",
+  "recoveryRegistryInvalid": "The active library registration is damaged or unsupported. Opening stopped to preserve the data.",
+  "recoverySwitchUnknown": "The library switch is unconfirmed. Reopen the workspace to check.",
+  "recoveryRegistryUnreadable": "The active library or registration file cannot be read. Check the original location; no replacement library will be created automatically."
+}

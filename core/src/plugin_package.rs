@@ -7,6 +7,7 @@ use std::{collections::BTreeSet, sync::OnceLock};
 pub mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.plugin.v1.rs"));
 }
+pub mod io;
 pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
 pub const DEPENDENCY_CALLS_FEATURE: &str = "dependency-calls-v1";
@@ -51,6 +52,7 @@ pub struct Package {
     module: Vec<u8>,
     digest: [u8; 32],
     ceiling: BTreeSet<GrantKind>,
+    io_ceiling: BTreeSet<io::IoCapability>,
 }
 impl Package {
     pub fn manifest_for(
@@ -81,6 +83,7 @@ impl Package {
             transform_handlers: vec![],
             dependencies: vec![],
             dependency_schema_sha256: vec![],
+            io_declaration: None,
         }
     }
     pub fn manifest_for_task(
@@ -112,6 +115,11 @@ impl Package {
         &self,
         input: &crate::task::Transform,
     ) -> Result<&proto::TransformHandler> {
+        // IO packages require their dedicated execution/observation contract, including when
+        // the module also advertises a pure entrypoint. Never capture them as pure evidence.
+        if self.io_declaration().is_some() {
+            return Err(Error::Invalid("IO package requires IO execution"));
+        }
         let handler = self
             .manifest
             .transform_handlers
@@ -191,11 +199,12 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 3
+            || manifest.required_features.len() > 4
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
                     && f != DEPENDENCY_CALLS_FEATURE
+                    && f != io::FEATURE
             })
             || manifest
                 .required_features
@@ -283,6 +292,22 @@ impl Package {
                 return Err(Error::Limit);
             }
         }
+        io::validate_wire(&package.manifest, manifest.io_declaration.as_ref())?;
+        let io_feature = manifest.required_features.iter().any(|f| f == io::FEATURE);
+        if io_feature != manifest.io_declaration.is_some()
+            || (io_feature && manifest.guest_abi_version != 2)
+        {
+            return Err(Error::Invalid("IO declaration feature"));
+        }
+        let io_ceiling = if let Some(declaration) = &manifest.io_declaration {
+            let ceiling = io::validate(declaration)?;
+            if declaration.handlers.iter().any(|h| handlers.contains(h)) {
+                return Err(Error::Invalid("IO handler registered as pure transform"));
+            }
+            ceiling
+        } else {
+            BTreeSet::new()
+        };
         identity(&manifest.package_id)?;
         if manifest.package_version.len() > 128
             || manifest.display_name.is_empty()
@@ -331,6 +356,7 @@ impl Package {
             module: package.module,
             digest: Sha256::digest(archive).into(),
             ceiling,
+            io_ceiling,
         })
     }
     pub fn archive(&self) -> &[u8] {
@@ -347,6 +373,12 @@ impl Package {
     }
     pub fn digest(&self) -> [u8; 32] {
         self.digest
+    }
+    pub fn io_declaration(&self) -> Option<&io::proto::IoDeclaration> {
+        self.manifest.io_declaration.as_ref()
+    }
+    pub fn io_capabilities(&self) -> &BTreeSet<io::IoCapability> {
+        &self.io_ceiling
     }
     pub fn capabilities(&self) -> &BTreeSet<GrantKind> {
         &self.ceiling

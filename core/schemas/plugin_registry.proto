@@ -1,12 +1,15 @@
 syntax = "proto3";
 package morrow.plugin.registry.v1;
-// Canonical v1 snapshot: unknown/noncanonical fields are rejected, never dropped.
+// Canonical snapshots: v1 has no IO approval; v2 adds an independent IO ceiling.
+// Unknown/noncanonical fields are rejected, never dropped.
 message Selection {
   string package_id = 1;
   bytes digest = 2;
   bool enabled = 3;
   // Numeric values match morrow.plugin.v1.Capability. These are ceilings, not grants.
   repeated int32 approved_capabilities = 4;
+  // Separate IO namespace; never interpret these values as content capabilities.
+  repeated int32 approved_io_capabilities = 5;
 }
 // Declarative exact-package approval. No scope, TTL, instance or live lease is persisted.
 message LockedDependency {

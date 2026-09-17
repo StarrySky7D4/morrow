@@ -553,7 +553,7 @@ fn downgrade_to_thirteen(path: &Path) {
     rusqlite::Connection::open(path)
         .unwrap()
         .execute_batch(
-            "DROP TABLE read_archive_costs;DROP TABLE read_archive_totals;PRAGMA user_version=13;",
+            "DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs;DROP TABLE read_archive_totals;PRAGMA user_version=13;",
         )
         .unwrap();
 }
@@ -604,7 +604,7 @@ fn migration_and_snapshot_preserve_originals_and_signatures_with_self_contained_
     drop(old);
     assert_eq!(version(&path), 13);
     let store = Store::open_audited(&path, Default::default(), false, trust.clone()).unwrap();
-    assert_eq!(version(&path), 14);
+    assert_eq!(version(&path), 17);
     assert_eq!(
         store
             .lookup_read("query", "published")
@@ -700,7 +700,7 @@ fn legacy_over_hard_archive_count_is_preserved_readable_and_blocks_only_growth()
     tx.commit().unwrap();
     drop(sql);
     let mut migrated = Store::open_existing(&path, Default::default()).unwrap();
-    assert_eq!(version(&path), 14);
+    assert_eq!(version(&path), 17);
     assert_eq!(
         migrated.read_archive_retention_usage().unwrap().archives,
         u64::from(MAX_RETAINED_ARCHIVES) + 1

@@ -1,5 +1,7 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'host_notices.dart';
 
 class ProtectionBackup extends StatefulWidget {
   const ProtectionBackup({
@@ -25,7 +27,7 @@ class ProtectionBackup extends StatefulWidget {
 
 class _ProtectionBackupState extends State<ProtectionBackup> {
   bool _busy = false;
-  String? _message;
+  String Function(AppLocalizations)? _message;
   bool _failed = false;
   Future<void> _save({bool snapshot = false}) async {
     if (_busy) return;
@@ -52,7 +54,9 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
               : 'morrow-protection-$stamp.backup',
           acceptedTypeGroups: [
             XTypeGroup(
-              label: snapshot ? '内容库备份' : '内容库保护文件',
+              label: snapshot
+                  ? L10n.of(context).pluginsBackupLibraryType
+                  : L10n.of(context).pluginsProtectionFileType,
               extensions: [snapshot ? 'morrowbackup' : 'backup'],
             ),
           ],
@@ -62,9 +66,8 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
       await (snapshot ? widget.onSnapshot! : widget.onBackup)(path);
       if (mounted) {
         setState(() {
-          _message = snapshot
-              ? '内容库已备份，包含库内附件与原保护文件。'
-              : '保护文件已备份，可在启动失败时选择此文件恢复。';
+          _message = (l) =>
+              snapshot ? l.pluginsSnapshotSaved : l.pluginsProtectionSaved;
         });
       }
     } catch (error) {
@@ -72,9 +75,8 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
         setState(() {
           _failed = true;
           final detail = error is StateError ? error.message.toString() : '';
-          _message = detail.isNotEmpty && !detail.contains('内容服务')
-              ? detail
-              : '备份结果尚未确认，请保留可能生成的文件并检查保存位置。';
+          _message = (l) =>
+              hostStorageNotice(l, detail) ?? l.pluginsBackupUnknown;
         });
       }
     } finally {
@@ -93,7 +95,7 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
             Icon(Icons.key_rounded, size: 16, color: widget.ink),
             const SizedBox(width: 8),
             Text(
-              '内容保护',
+              L10n.of(context).pluginsProtection,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -104,13 +106,13 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
         ),
         const SizedBox(height: 12),
         Text(
-          '保存原保护文件的备份，供当前系统账户恢复使用。此文件不包含卡片和附件。',
+          L10n.of(context).pluginsProtectionDetails,
           style: TextStyle(fontSize: 11, height: 1.6, color: widget.muted),
         ),
         const SizedBox(height: 12),
         if (widget.onSnapshot != null) ...[
           Text(
-            '内容库备份包含库内卡片、附件和审计记录；外部素材保留引用，恢复仍需原系统账户。',
+            L10n.of(context).pluginsSnapshotDetails,
             style: TextStyle(fontSize: 11, height: 1.6, color: widget.muted),
           ),
           const SizedBox(height: 12),
@@ -118,7 +120,10 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
             key: const ValueKey('backup-snapshot'),
             onPressed: _busy ? null : () => _save(snapshot: true),
             icon: const Icon(Icons.inventory_2_outlined, size: 16),
-            label: const Text('备份内容库', style: TextStyle(fontSize: 11)),
+            label: Text(
+              L10n.of(context).pluginsBackupLibrary,
+              style: TextStyle(fontSize: 11),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: widget.ink,
               minimumSize: const Size.fromHeight(38),
@@ -133,7 +138,9 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
           onPressed: _busy ? null : _save,
           icon: const Icon(Icons.save_alt_rounded, size: 16),
           label: Text(
-            _busy ? '正在备份…' : '备份保护文件',
+            _busy
+                ? L10n.of(context).pluginsBackingUp
+                : L10n.of(context).pluginsBackupProtection,
             style: const TextStyle(fontSize: 11),
           ),
           style: OutlinedButton.styleFrom(
@@ -146,7 +153,7 @@ class _ProtectionBackupState extends State<ProtectionBackup> {
         if (_message != null) ...[
           const SizedBox(height: 10),
           Text(
-            _message!,
+            _message!(L10n.of(context)),
             style: TextStyle(
               fontSize: 11,
               height: 1.6,

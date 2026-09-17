@@ -1,5 +1,6 @@
 syntax = "proto3";
 package morrow.plugin.v1;
+import "io_manifest.proto";
 // Persistent package metadata. Declarations are ceilings, never grants.
 enum Capability {
   CAPABILITY_UNSPECIFIED = 0;
@@ -51,6 +52,7 @@ message Manifest {
   bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
   repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
   repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
+  morrow.plugin.io.v1.IoDeclaration io_declaration = 18; // Requires io-v1; never a grant.
   bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
 }
 message Package {

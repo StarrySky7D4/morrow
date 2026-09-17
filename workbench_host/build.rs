@@ -1,10 +1,11 @@
 fn main() {
+    println!("cargo:rerun-if-changed=schemas/ui_preferences.proto");
     println!("cargo:rerun-if-changed=schemas/projection.proto");
     println!("cargo:rerun-if-changed=schemas/query_capture.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path().expect("protoc"))
         .compile_protos(
-            &["schemas/projection.proto", "schemas/query_capture.proto"],
+            &["schemas/projection.proto", "schemas/query_capture.proto", "schemas/ui_preferences.proto"],
             &["schemas"],
         )
         .expect("projection schema");

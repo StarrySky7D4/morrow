@@ -1,4 +1,5 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-changed=schemas/build_receipt.proto");
     println!("cargo:rerun-if-changed=schemas/keys.proto");
     println!("cargo:rerun-if-changed=schemas/snapshot.proto");
     println!("cargo:rerun-if-changed=schemas/library.proto");
@@ -9,6 +10,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "schemas/keys.proto",
                 "schemas/snapshot.proto",
                 "schemas/library.proto",
+                "schemas/build_receipt.proto",
             ],
             &["schemas"],
         )?;

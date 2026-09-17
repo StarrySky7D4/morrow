@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -47,13 +48,13 @@ class IdeaMarkdown extends StatelessWidget {
             Uri.parse(safe),
             mode: LaunchMode.externalApplication,
           )) {
-            throw const FormatException('无法打开链接');
+            throw const FormatException('Link launch failed');
           }
         } catch (_) {
           if (context.mounted) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(const SnackBar(content: Text('无法打开链接，请复制地址后重试。')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(L10n.of(context).visualLinkFailure)),
+            );
           }
         }
       },
@@ -77,7 +78,7 @@ class IdeaMarkdown extends StatelessWidget {
         return _LinkedImage(
           key: ValueKey(uri.toString()),
           uri: uri,
-          alt: alt ?? '图片',
+          alt: alt ?? L10n.of(context).visualImage,
         );
       },
     );
@@ -104,14 +105,19 @@ class _LinkedImageState extends State<_LinkedImage> {
         safe,
         fit: BoxFit.contain,
         height: 220,
-        errorBuilder: (_, _, _) => Text('图片无法加载：${widget.alt}'),
+        errorBuilder: (_, _, _) =>
+            Text(L10n.of(context).visualImageLoadFailure(widget.alt)),
       );
     }
     // Reading arbitrary local paths and silently loading tracking images are avoided.
     return OutlinedButton.icon(
       onPressed: remote ? () => setState(() => load = true) : null,
       icon: const Icon(Icons.image_outlined, size: 17),
-      label: Text(remote ? '加载图片 · ${widget.alt}' : '${widget.alt}（图片未导入）'),
+      label: Text(
+        remote
+            ? L10n.of(context).visualLoadImage(widget.alt)
+            : L10n.of(context).visualImageNotImported(widget.alt),
+      ),
     );
   }
 }
@@ -153,7 +159,11 @@ class _InlineAttachmentState extends State<_InlineAttachment> {
 
   @override
   Widget build(BuildContext context) {
-    if (failed) return Text('图片暂不可用：${widget.attachment.source.name}');
+    if (failed) {
+      return Text(
+        L10n.of(context).visualImageUnavailable(widget.attachment.source.name),
+      );
+    }
     if (resolved == null) {
       return const SizedBox(
         height: 40,
@@ -161,8 +171,9 @@ class _InlineAttachmentState extends State<_InlineAttachment> {
       );
     }
     final result = resolved!;
-    Widget error(BuildContext context, Object error, StackTrace? stack) =>
-        Text('图片暂不可用：${widget.attachment.source.name}');
+    Widget error(BuildContext context, Object error, StackTrace? stack) => Text(
+      L10n.of(context).visualImageUnavailable(widget.attachment.source.name),
+    );
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: 300),
       child: result.bytes != null

@@ -1,5 +1,7 @@
 # Android 构建
 
+2026-09-15 补充：本文保留旧 Android 构建与设备记录，不表示新 Rust 插件架构已经接入。新架构的隔离 Service、Cap’n Proto 传输、共享对象、后台恢复及 API 分级任务见 [Android 插件执行域方案](ANDROID_PLUGIN_RUNTIME.md)。实际最低系统版本须按构建配置和能力分别核对。
+
 已添加 Android 工程及移动端文件适配。最低 Android 7.0（API 24），编译／目标 API 36，Flutter 3.44.0。ARM64 调试 APK 已完成构建与包内容检查，已在 Android 16 真机安装启动并连接 Flutter 调试器，完整功能验证尚未完成。
 
 ## 本机准备

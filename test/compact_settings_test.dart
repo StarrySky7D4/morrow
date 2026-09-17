@@ -34,9 +34,11 @@ void main() {
             'ideas': <dynamic>[],
             'completed': <String>[],
           };
-        await t.pumpWidget(MorrowApp(storage: storage));
+        await t.pumpWidget(
+          MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+        );
         await t.pumpAndSettle();
-        final page = find.byKey(const ValueKey('page-概览'));
+        final page = find.byKey(const ValueKey('page-workbench.page.overview'));
         expect(page, findsOneWidget);
         expect(
           find.byKey(const ValueKey('compact-settings-page')),
@@ -76,7 +78,9 @@ void main() {
         expect(scroll.pixels, closeTo(offset, .1));
         await tap(t, 'appearance-toggle');
         await t.pumpWidget(const SizedBox());
-        await t.pumpWidget(MorrowApp(storage: storage));
+        await t.pumpWidget(
+          MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+        );
         await t.pumpAndSettle();
         expect(
           find.byKey(const ValueKey('compact-settings-page')),
@@ -94,7 +98,9 @@ void main() {
   ) async {
     addTearDown(t.view.reset);
     size(t, 390);
-    await t.pumpWidget(MorrowApp(storage: MemoryStorage()));
+    await t.pumpWidget(
+      MorrowApp(initialLocale: const Locale('zh'), storage: MemoryStorage()),
+    );
     await t.pumpAndSettle();
     await tap(t, 'appearance-toggle');
     await tap(t, 'theme-color-compass');
@@ -105,7 +111,10 @@ void main() {
     await t.binding.handlePopRoute();
     await t.pumpAndSettle();
     expect(find.byKey(const ValueKey('compact-settings-page')), findsNothing);
-    expect(find.byKey(const ValueKey('page-概览')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('page-workbench.page.overview')),
+      findsOneWidget,
+    );
     await tap(t, 'appearance-toggle');
     await t.sendKeyEvent(LogicalKeyboardKey.escape);
     await t.pumpAndSettle();
@@ -120,7 +129,9 @@ void main() {
       addTearDown(t.view.reset);
       final storage = MemoryStorage();
       size(t, 1440);
-      await t.pumpWidget(MorrowApp(storage: storage));
+      await t.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: storage),
+      );
       await t.pumpAndSettle();
       await tap(t, 'appearance-toggle');
       expect(storage.data!['appearanceExpanded'], isFalse);
@@ -140,7 +151,10 @@ void main() {
       size(t, 390);
       await t.pumpAndSettle();
       expect(find.byKey(const ValueKey('theme-color-compass')), findsNothing);
-      expect(find.byKey(const ValueKey('page-概览')), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('page-workbench.page.overview')),
+        findsOneWidget,
+      );
       expect(t.takeException(), isNull);
       await t.pumpWidget(const SizedBox());
     },
@@ -151,9 +165,13 @@ void main() {
     (t) async {
       addTearDown(t.view.reset);
       size(t, 390);
-      await t.pumpWidget(MorrowApp(storage: MemoryStorage()));
+      await t.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: MemoryStorage()),
+      );
       await t.pumpAndSettle();
-      final content = find.byKey(const ValueKey('page-概览'));
+      final content = find.byKey(
+        const ValueKey('page-workbench.page.overview'),
+      );
       final settings = find.byKey(const ValueKey('compact-settings-page'));
       double opacity(String key) =>
           t.widget<Opacity>(find.byKey(ValueKey(key))).opacity;
@@ -204,7 +222,9 @@ void main() {
       addTearDown(t.view.reset);
       addTearDown(t.platformDispatcher.clearAccessibilityFeaturesTestValue);
       size(t, 390);
-      await t.pumpWidget(MorrowApp(storage: MemoryStorage()));
+      await t.pumpWidget(
+        MorrowApp(initialLocale: const Locale('zh'), storage: MemoryStorage()),
+      );
       await t.pumpAndSettle();
       await t.tap(find.byKey(const ValueKey('appearance-toggle')));
       await t.pump();
@@ -212,7 +232,10 @@ void main() {
       t.platformDispatcher.accessibilityFeaturesTestValue =
           const FakeAccessibilityFeatures(disableAnimations: true);
       await t.pump();
-      expect(find.byKey(const ValueKey('page-概览')), findsNothing);
+      expect(
+        find.byKey(const ValueKey('page-workbench.page.overview')),
+        findsNothing,
+      );
       expect(
         t
             .widget<Opacity>(

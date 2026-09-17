@@ -76,6 +76,20 @@ void main() {
           isNot(contains(Uri.encodeComponent(file.path))),
         );
         final storage = await RustStudioStorage.open(backend);
+        expect(storage.read()['uiLocale'], 'system');
+        await storage.write({...storage.read(), 'uiLocale': 'en'});
+        expect(await backend.readUiLocale(), 'en');
+        expect(storage.read()['uiLocale'], 'en');
+        final proposal = {
+          ...storage.read(),
+          'completed': <String>['frozen'],
+        };
+        final pendingPreferences = storage.write(proposal);
+        (proposal['completed'] as List).add('mutated after submission');
+        await pendingPreferences;
+        expect(storage.read()['completed'], ['frozen']);
+        (storage.read()['completed'] as List).clear();
+        expect(storage.read()['completed'], ['frozen']);
         await storage.write({
           ...storage.read(),
           'theme': 'custom',
@@ -397,6 +411,13 @@ void main() {
           directory: directory,
         );
         expect(backend.writable, isFalse);
+        final readOnlyStorage = await RustStudioStorage.open(backend);
+        await readOnlyStorage.write({
+          ...readOnlyStorage.read(),
+          'uiLocale': 'en',
+        });
+        expect(await backend.readUiLocale(), 'en');
+        expect(readOnlyStorage.read()['uiLocale'], 'en');
         final withoutPlugin = '${directory.path}/without-plugin.backup';
         await backend.backupProtection(withoutPlugin);
         expect(await File(withoutPlugin).readAsBytes(), original);

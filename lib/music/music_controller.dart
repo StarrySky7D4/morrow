@@ -212,11 +212,13 @@ class MusicController extends ChangeNotifier {
   bool _disposed = false, _opened = false;
   Future<void> _pending = Future.value();
   MusicTrack? get current => tracks.isEmpty ? null : tracks[index];
-  String? get lyric {
+  String? get lyric => lyricForDisplay(untimedLabel: '无时间轴');
+
+  String? lyricForDisplay({required String untimedLabel}) {
     if (_lyrics.isEmpty) {
       final plain = current?.lyrics.trim() ?? '';
       if (plain.isEmpty) return null;
-      return '${plain.split('\n').first} · 无时间轴';
+      return '${plain.split('\n').first} · $untimedLabel';
     }
     String line = '♪ ${current?.title ?? ''}';
     for (final item in _lyrics) {

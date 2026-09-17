@@ -30,12 +30,17 @@ impl PreparedPackage {
             memory_bytes: host_limits.memory_bytes.min(budget.memory_bytes as usize),
             host_calls: host_limits.host_calls.min(budget.host_calls),
         };
-        let runner = if package
+        let dependency = package
             .manifest()
             .required_features
             .iter()
-            .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE)
-        {
+            .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
+        let runner = if package.io_declaration().is_some() {
+            if dependency {
+                return Err(Fault::UnsupportedAbi);
+            }
+            Runner::new_io_task(package.module(), limits)?
+        } else if dependency {
             Runner::new_dependency_task(package.module(), limits)?
         } else if package.manifest().guest_abi_version == 2 {
             Runner::new_task(package.module(), limits)?
@@ -47,6 +52,40 @@ impl PreparedPackage {
             runner,
             limits,
         })
+    }
+    /// Internal fixed-resource adapter only; raw callbacks are not managed authority.
+    pub(crate) fn run_file_frame<'a>(
+        &self,
+        input: &'a [u8],
+        io: crate::Exchange<'a>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
+        self.run_io_frame(input, io, cancel)
+    }
+    /// IO task ABI with the managed IO callback and a denied content exchange.
+    /// The router owns authorization; this adapter only keeps guest-visible
+    /// protocol rules (one completion equal to a brokered response).
+    pub(crate) fn run_io_frame<'a>(
+        &self,
+        input: &'a [u8],
+        io: crate::Exchange<'a>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
+        let mut core_called = false;
+        let mut run = self.runner.run_task_with_io(
+            input,
+            &mut |_| {
+                core_called = true;
+                Err(())
+            },
+            io,
+            cancel,
+        );
+        if core_called {
+            run.report.outcome = Err(Fault::TaskProtocol);
+            run.completion = None;
+        }
+        run
     }
     pub fn package(&self) -> &Package {
         &self.package
@@ -74,6 +113,13 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> Report {
+        if self.package.io_declaration().is_some() {
+            return Report {
+                outcome: Err(Fault::UnsupportedAbi),
+                host_calls: 0,
+                fuel_remaining: self.limits.fuel,
+            };
+        }
         if connection.package_digest() != Some(self.package.digest()) {
             return Report {
                 outcome: Err(Fault::PackageBinding),
@@ -111,7 +157,9 @@ impl PreparedPackage {
         mut clock: impl FnMut() -> u64,
         cancel: Cancellation,
     ) -> TaskReport {
-        let fault = if connection.package_digest() != Some(self.package.digest()) {
+        let fault = if self.package.io_declaration().is_some() {
+            Some(Fault::UnsupportedAbi)
+        } else if connection.package_digest() != Some(self.package.digest()) {
             Some(Fault::PackageBinding)
         } else if host.connection_phase(connection)
             != Ok(morrow_core::lifecycle::InstancePhase::Ready)

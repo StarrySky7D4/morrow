@@ -1,3 +1,4 @@
+#requires -Version 7.0
 param([switch]$SkipVerify, [switch]$RefreshArtifact)
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -6,6 +7,13 @@ function Checked([string]$Program, [string[]]$Arguments) {
   & $Program @Arguments
   if ($LASTEXITCODE -ne 0) { throw "$Program failed: $LASTEXITCODE" }
 }
+Checked python @('-X','utf8','tool/build_i18n.py','--check')
+$version = [regex]::Match((Get-Content pubspec.yaml -Raw),'(?m)^version: ([^+\r\n]+)').Groups[1].Value
+if ($RefreshArtifact) { throw 'Preview artifacts are immutable. Use a new version or a fresh output directory; existing outputs are retained.' }
+$sourceArchive = Join-Path $projectRoot "dist/morrow-$version-source.zip"
+Checked python @('-X','utf8','tool/package_preview_source.py',$sourceArchive)
+$sourceCommit = (& git rev-parse HEAD).Trim()
+$sourceHash = (Get-FileHash -LiteralPath $sourceArchive -Algorithm SHA256).Hash.ToLowerInvariant()
 Checked cargo @('build','--locked','--manifest-path','plugins/workbench/Cargo.toml','--target','wasm32-unknown-unknown','--release','--target-dir','build/first-party-plugins')
 Checked cargo @('build','--locked','--manifest-path','workbench_host/Cargo.toml','--release','--target-dir','build/workbench-host')
 New-Item -ItemType Directory -Force -Path build/workbench-host/bundle | Out-Null
@@ -16,7 +24,8 @@ if (-not $SkipVerify) {
   $env:MORROW_WORKBENCH_PACKAGE = (Resolve-Path build/workbench-host/bundle/workbench.morrowplugin).Path
   Checked flutter @('test','--no-pub','test/rust_workbench_integration_test.dart')
 }
-Checked flutter @('build','windows','--release','--target','lib/main.dart')
+Checked flutter @('build','windows','--release','--no-pub','--target','lib/main.dart')
+Checked python @('-X','utf8','tool/package_preview_source.py',$sourceArchive,'--check')
 $version = [regex]::Match((Get-Content pubspec.yaml -Raw),'(?m)^version: ([^+\r\n]+)').Groups[1].Value
 $destination = Join-Path $projectRoot "dist/morrow-$version-rust-workbench-windows"
 if ((Test-Path -LiteralPath $destination) -and -not $RefreshArtifact) { throw "Preserving existing artifact: $destination" }
@@ -27,6 +36,9 @@ foreach ($file in Get-ChildItem -LiteralPath $releaseRoot -Recurse -File) {
   New-Item -ItemType Directory -Force -Path (Split-Path $targetFile) | Out-Null
   Copy-Item -LiteralPath $file.FullName -Destination $targetFile -Force
 }
+# Bundle the matching installed MSVC runtime for a standalone preview.
+$crt = 'C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Redist\MSVC\14.44.35112\x64\Microsoft.VC143.CRT'
+if (Test-Path -LiteralPath $crt) { Copy-Item -Path "$crt/*.dll" -Destination $destination -Force }
 Copy-Item -LiteralPath build/workbench-host/release/morrow-workbench-host.exe -Destination $destination
 New-Item -ItemType Directory -Force -Path (Join-Path $destination plugins) | Out-Null
 Copy-Item -LiteralPath build/workbench-host/bundle/workbench.morrowplugin -Destination (Join-Path $destination plugins/workbench.morrowplugin)
@@ -36,10 +48,13 @@ Copy-Item -LiteralPath LICENSE,NOTICE -Destination $destination -Force
 Copy-Item -LiteralPath packaging/THIRD_PARTY_NOTICES.txt -Destination $destination -Force
 $sourceNotice = @"
 Morrow $version - AGPL-3.0-only
-Corresponding source and build scripts:
-https://github.com/StarrySky7D4/morrow/tree/v$version
-Source archive:
-https://github.com/StarrySky7D4/morrow/archive/refs/tags/v$version.zip
+Local testing preview, built from the working tree (including uncommitted changes).
+Base Git commit: $sourceCommit
+Corresponding source archive, supplied alongside this preview:
+$([IO.Path]::GetFileName($sourceArchive))
+SHA-256: $sourceHash
+The snapshot was checked against the working tree before and after compilation.
+This preview does not assert that a Git tag or GitHub Release exists.
 Build instructions: README.md and tool/build_rust_workbench_windows.ps1
 The source is available at no charge. Third-party source locations and
 license notices are listed in THIRD_PARTY_NOTICES.txt and licenses/.
@@ -48,6 +63,7 @@ license notices are listed in THIRD_PARTY_NOTICES.txt and licenses/.
 
 $licenses = Join-Path $destination licenses
 New-Item -ItemType Directory -Force -Path $licenses | Out-Null
+Copy-Item -Path packaging/licenses/* -Destination $licenses -Recurse -Force
 $toolchain = & rustc --print sysroot
 if ($LASTEXITCODE -ne 0) {throw 'Cannot locate Rust library notices'}
 Copy-Item -LiteralPath (Join-Path $toolchain 'share/doc/rust/COPYRIGHT-library.html') -Destination (Join-Path $licenses 'Rust-COPYRIGHT-library.html') -Force

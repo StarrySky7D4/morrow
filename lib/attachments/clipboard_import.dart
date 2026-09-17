@@ -10,6 +10,9 @@ import '../content/rich_content.dart';
 import 'attachment.dart';
 import '../media/texture_source.dart';
 import 'office_clipboard.dart';
+import 'import_notices.dart';
+import 'package:morrow_i18n/morrow_i18n.dart';
+import 'package:flutter/widgets.dart' show Locale;
 
 class PastedContent {
   const PastedContent({
@@ -56,6 +59,7 @@ Future<XFile?> _readFile(
   ClipboardDataReader item,
   FileFormat? format,
   String fallback,
+  AppLocalizations messages,
 ) async {
   final result = Completer<XFile?>();
   final progress = item.getFile(
@@ -63,12 +67,12 @@ Future<XFile?> _readFile(
     (file) async {
       try {
         if ((file.fileSize ?? 0) > IdeaAttachment.maxSize) {
-          throw const FormatException('剪贴板文件超过 200 MB。');
+          throw FormatException(messages.importsFileTooLarge);
         }
         final bytes = BytesBuilder(copy: false);
         await for (final chunk in file.getStream()) {
           if (bytes.length + chunk.length > IdeaAttachment.maxSize) {
-            throw const FormatException('剪贴板文件超过 200 MB。');
+            throw FormatException(messages.importsFileTooLarge);
           }
           bytes.add(chunk);
         }
@@ -91,7 +95,9 @@ Future<XFile?> _readFile(
 Future<PastedContent> readPaste([
   ClipboardReader? reader,
   StudioBackend? plugin,
+  AppLocalizations? messages,
 ]) async {
+  final l = messages ?? L10n.forLocale(const Locale('zh'));
   Future<_PasteText> plain(String text, {String? parent}) async {
     if (plugin == null) return _PasteText(plainTextToMarkdown(text));
     final result = await plugin.capture('plain', text, parentTicket: parent);
@@ -107,7 +113,7 @@ Future<PastedContent> readPaste([
   final systemRead = reader == null;
   final sequence = systemRead ? await clipboardSequence() : null;
   reader ??= await SystemClipboard.instance?.read();
-  if (reader == null) throw const FormatException('此环境不支持读取剪贴板，请使用导入文件。');
+  if (reader == null) throw FormatException(l.importsUnsupported);
   final files = <XFile>[];
   final texts = <String>[], textParts = <List<PastePart>>[];
   final rich = <_PasteText>[];
@@ -121,13 +127,13 @@ Future<PastedContent> readPaste([
   var memoryBytes = 0;
   Future<void> addFile(XFile file) async {
     if (files.length >= 20) {
-      warnings.add('最多导入 20 个附件，其余内容请分次粘贴。');
+      warnings.add(l.importsAttachmentLimit);
       return;
     }
     final size = await file.length();
     if (size > IdeaAttachment.maxSize ||
         memoryBytes + size > IdeaAttachment.maxSize) {
-      warnings.add('本次粘贴的文件总量超过 200 MB，请分次导入。');
+      warnings.add(l.importsTotalTooLarge);
       return;
     }
     memoryBytes += size;
@@ -157,7 +163,7 @@ Future<PastedContent> readPaste([
       }
       final text = await item.readValue(Formats.plainText) ?? '';
       if (text.length > 2 * 1024 * 1024) {
-        throw const FormatException('文本超过 2 MB，请作为文件导入。');
+        throw FormatException(l.importsTextTooLarge);
       }
       if (text.isNotEmpty) addText(text);
       final html = await item.readValue(Formats.htmlText);
@@ -188,7 +194,7 @@ Future<PastedContent> readPaste([
               ];
             }
           }
-          warnings.add('富文本排版无法完整转换，已保留可读文字。');
+          warnings.add(l.importsRichFallback);
         }
       } else if (text.isNotEmpty) {
         final table = await plain(text);
@@ -200,7 +206,7 @@ Future<PastedContent> readPaste([
         }
         if (table.value != text) {
           await addFile(textFile(text, 'tsv', 'table-$index'));
-          warnings.add('表格已转换为 Markdown，完整数据保留在 TSV 附件中。');
+          warnings.add(l.importsTableConverted);
         }
       } else if (item.canProvide(Formats.uri)) {
         final uri = await item.readValue(Formats.uri);
@@ -244,11 +250,12 @@ Future<PastedContent> readPaste([
           item,
           suggested != null ? null : candidate!.$1,
           suggested ?? '$prefix-$index.${candidate!.$2}',
+          l,
         );
         if (file != null) await addFile(file);
       }
       if (item.canProvide(Formats.rtf)) {
-        final rtf = await _readFile(item, Formats.rtf, '$prefix-$index.rtf');
+        final rtf = await _readFile(item, Formats.rtf, '$prefix-$index.rtf', l);
         if (rtf != null) {
           await addFile(rtf);
           if (text.isEmpty && (html == null || html.isEmpty)) {
@@ -262,11 +269,11 @@ Future<PastedContent> readPaste([
       }
     } catch (error) {
       warnings.add(
-        error is FormatException ? error.message : '有一项剪贴板内容无法读取，其余可读内容已保留。',
+        error is FormatException ? error.message : l.importsItemUnreadable,
       );
     }
   }
-  if (reader.items.length > 20) warnings.add('本次只读取前 20 项，请分次粘贴更多内容。');
+  if (reader.items.length > 20) warnings.add(l.importsItemLimit);
   if (systemRead && windowsOfficeClipboard) {
     try {
       final office = await readOfficeClipboard(sequence);
@@ -301,7 +308,7 @@ Future<PastedContent> readPaste([
             }
             warnings.addAll(fragment.warnings);
           } catch (_) {
-            warnings.add('Excel 原始表格已保留为 XML 附件。');
+            warnings.add(l.importsExcelXmlKept);
           }
         }
         if (name.endsWith('.rtf') && texts.isEmpty && rich.isEmpty) {
@@ -315,11 +322,11 @@ Future<PastedContent> readPaste([
           ..add(officeText);
       }
     } catch (_) {
-      warnings.add('Office 原始对象未能读取，已保留其他可用内容。');
+      warnings.add(l.importsOfficeUnreadable);
     }
     final after = await clipboardSequence();
     if (sequence != null && after != null && sequence != after) {
-      throw const FormatException('读取期间剪贴板发生了变化，请重新粘贴。');
+      throw FormatException(l.importsClipboardChanged);
     }
   }
   return PastedContent(
@@ -328,7 +335,9 @@ Future<PastedContent> readPaste([
     textParts: _joinParts(textParts),
     markdownParts: _joinParts(rich.map((entry) => entry.parts)),
     files: files,
-    warnings: warnings.toList(),
+    warnings: warnings
+        .map((notice) => localizeImportNotice(notice, l))
+        .toList(),
     formats: formats.toList(),
   );
 }

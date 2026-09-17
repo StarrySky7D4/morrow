@@ -5,6 +5,8 @@ publish_to: none
 environment:
   sdk: ^3.12.0
 dependencies:
+  morrow_i18n:
+    path: ../morrow_i18n
   flutter:
     sdk: flutter
   morrow_core_client:

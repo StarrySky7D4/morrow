@@ -1,0 +1,367 @@
+{
+  "@@locale": "zh",
+  "mainAppTitle": "Morrow — 留一点空间给灵感",
+  "mainStorageUnavailable": "本地存储暂不可用，当前改动仅保留在本次会话。",
+  "mainStorageUnreadable": "存储内容无法读取，原数据仍保留。当前会话不会覆盖它。",
+  "mainSaveFailed": "保存失败，改动仍在当前会话中。",
+  "mainRetry": "重试",
+  "mainFrostUnavailable": "当前系统无法启用桌面磨砂，染色和透明度仍可调整。",
+  "mainTransparencyUnavailable": "系统透明效果未能启用，可切换到默认背景继续使用。",
+  "mainImportFailed": "素材导入失败，请检查文件与可用存储空间。",
+  "mainThemeCompass": "主题色彩色罗盘",
+  "mainBackToWorkbench": "返回工作台",
+  "mainSettings": "设置",
+  "mainChangeFailed": "这次修改未能保存，草稿保留，可重试。",
+  "mainArrangeIdeas": "排列想法",
+  "mainSidebarMotto": "杂事有序，奇想自由。",
+  "mainMySpace": "我的空间",
+  "mainPersonalWorkspace": "个人工作台",
+  "mainNavigation": "导航",
+  "mainCollapseSidebar": "收起侧边栏",
+  "mainExpandSidebar": "展开侧边栏",
+  "mainWorkbench": "工作台",
+  "mainHideAppearance": "收起外观设置",
+  "mainShowAppearance": "显示外观设置",
+  "mainSearchHint": "搜索你的奇思妙想…",
+  "mainClearSearch": "清空搜索",
+  "mainGreeting": "让想法，自由生长。",
+  "mainGreetingDetail": "收纳日常的零碎，也留住灵光一闪。",
+  "mainNewIdea": "新建灵感",
+  "mainHeroTitle": "还没成形，也没关系。",
+  "mainHeroBody": "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。",
+  "mainCaptureNow": "记录此刻的想法",
+  "mainRecentThoughts": "最近的念头",
+  "mainQueryCapacity": "查询历史容量已满",
+  "mainQueryTerminated": "此次筛选已终止",
+  "mainQueryUnknown": "尚未确认筛选结果",
+  "mainQueryLoading": "正在筛选…",
+  "mainQueryCapacityDetail": "已有内容已保留。此版本尚不支持清理查询历史。",
+  "mainCheckAgain": "重新检查",
+  "mainQueryAgain": "重新筛选",
+  "mainQueryRetry": "重试筛选",
+  "mainNoMatches": "这里还没有匹配的想法",
+  "mainViewAll": "查看全部",
+  "mainQuickHint": "脑海中闪过了什么？",
+  "mainCaptureIdea": "记录灵感",
+  "mainIdeaSaved": "灵感已收好。",
+  "mainCanvasCompass": "画布染色罗盘",
+  "mainComponentCompass": "组件染色罗盘",
+  "mainCustomCompass": "调色罗盘 · 自定义",
+  "mainFrostEffect": "磨砂效果",
+  "mainTintOpacity": "染色不透明度",
+  "mainWindowsFrostOnly": "桌面磨砂仅在 Windows 版可用",
+  "mainComponentNavigation": "侧边导航",
+  "mainComponentSearch": "搜索栏",
+  "mainComponentHero": "概览卡片",
+  "mainComponentQuickCapture": "快速记录",
+  "mainAppearance": "空间外观",
+  "mainWorkbenchPlugin": "工作台插件",
+  "mainExtensionPlugins": "扩展插件",
+  "mainContentProtection": "内容保护",
+  "mainDaily": "此刻的小事",
+  "mainMusic": "随身听",
+  "mainComponentFooter": "底部提示与歌词",
+  "mainComponentEmpty": "空白提示",
+  "mainComponentSettings": "组件与卡片 · 独立设置",
+  "mainGlassTexture": "玻璃质感",
+  "mainFrosted": "磨砂",
+  "mainCrystal": "超透",
+  "mainLiquidGlass": "液体玻璃",
+  "mainFrostOpacity": "磨砂不透明度",
+  "mainLightOpacity": "20% · 轻盈",
+  "mainSolidOpacity": "100% · 纯粹",
+  "mainLiquidDetail": "流动的高光、柔和折射，让面板像一滴凝住的水。",
+  "mainCrystalDetail": "通透轻盈，让光与色彩穿过界面。",
+  "mainFrostDetail": "柔化背景，让思绪安静地浮现。",
+  "mainThemeTone": "主题色调",
+  "mainDefaultGlobalColor": "默认主题色 · 全局控件",
+  "mainRestoreDefault": "恢复默认",
+  "mainHideCustomTone": "收起自定义色调",
+  "mainAdjustCustomTone": "调整自定义色调",
+  "mainThemeGrayscale": "主题灰度",
+  "mainOriginalColors": "保留原色",
+  "mainMonochrome": "黑白灰",
+  "mainCustomLightness": "自定义明暗",
+  "mainDeepBlack": "深黑",
+  "mainBrightWhite": "亮白",
+  "mainCornerRadius": "圆角幅度",
+  "mainSquareCorners": "拖至 0 即为方角",
+  "mainWindowRadius": "窗体圆角",
+  "mainWindowRadiusDetail": "独立调整窗口边框，最大化时自动展平",
+  "mainBackgroundCanvas": "背景画布",
+  "mainLiquidEffect": "液体玻璃效果",
+  "mainLiquidAllCanvases": "独立于背景类型，四种画布均可开启",
+  "mainFollowTheme": "跟随主题",
+  "mainLavender": "淡紫",
+  "mainSage": "鼠尾草",
+  "mainWarmSand": "暖沙",
+  "mainLocalMedia": "本地素材",
+  "mainOnlineMedia": "网络采集",
+  "mainBackgroundSound": "播放背景声音",
+  "mainPause": "暂停",
+  "mainPlay": "播放",
+  "mainBuiltinTexture": "使用内置纹理",
+  "mainMediaLimits": "图片 / GIF ≤ 25 MB，视频 ≤ 150 MB",
+  "mainAmbientDetail": "流动的光晕，为灵感留一点色彩。",
+  "mainSolidDetail": "一张安静的纯色画布。",
+  "mainTextureDetail": "细密的纸感网点，让空间多一点触感。",
+  "mainOpaqueFallback": "保留通透面板，以当前主题作为底色。",
+  "mainTransparentDetail": "透出窗口背后的空间；网页透出宿主背景。",
+  "mainAutosaveNotice": "外观与灵感自动保存在本机",
+  "mainDefaultCanvas": "默认",
+  "mainSolidCanvas": "纯色",
+  "mainTextureCanvas": "纹理",
+  "mainTransparentCanvas": "透明",
+  "mainWhiteTheme": "白色",
+  "mainCustomTheme": "自定义",
+  "mainDarkTheme": "深色",
+  "mainSlowProgress": "慢一点，也是在向前。",
+  "mainCuriosity": "所有有趣的东西，\n都始于一点点好奇。",
+  "mainEditorUnavailable": "编辑器暂时无法打开，请检查内容服务后重试。",
+  "mainEditorClosedUnknown": "编辑器已关闭，但保存状态暂时无法确认。请重新打开工作台检查，避免重复创建。",
+  "mainIdeaDetails": "留住细节，让下一步更清楚。",
+  "mainHypothesis": "假设",
+  "mainNoHypothesis": "还没有写下假设",
+  "mainObservations": "观察与结论",
+  "mainAwaitDiscovery": "等待一次新的发现",
+  "mainDelete": "删除",
+  "mainEdit": "编辑",
+  "mainDone": "收好",
+  "mainUndo": "撤销",
+  "mainPasteChanged": "粘贴期间输入发生变化，请重新打开编辑器。",
+  "mainSaveNotSubmitted": "尚未提交。草稿与附件已保留，可修改后再次保存。",
+  "mainSaveUnknown": "这次保存尚未确认。草稿与附件已保留，请重试同一次提交；关闭后会重新读取工作台确认。",
+  "mainAttachmentLimit": "每条记录最多保存 20 个附件。",
+  "mainClipboardReadFailed": "无法读取内容，请使用导入文件，或检查文件与剪贴板权限。",
+  "mainBodyHint": "写下思路，或粘贴一段内容…\n\n支持 # 标题、列表、表格和代码块",
+  "mainPreviewEmpty": "预览会显示在这里",
+  "mainMarkdownBody": "正文 · Markdown",
+  "mainHidePreview": "收起预览",
+  "mainLivePreview": "实时预览",
+  "mainClipboardEmpty": "剪贴板中没有可读取的文本或文件。请从资源管理器复制文件，或使用导入文件。",
+  "mainNewIdeaTitle": "接住一个新想法",
+  "mainEditIdeaTitle": "让想法更清晰",
+  "mainEditorSubtitle": "文字、表格、图片，先放在这里。让一个念头慢慢成形。",
+  "mainIdeaNameHint": "给它起个名字",
+  "mainIdeaNameRequired": "先写下你的想法吧",
+  "mainPasteContent": "粘贴内容",
+  "mainImportFile": "导入文件",
+  "mainClipboardSupport": "支持 Markdown、Office 富文本与表格、截图及文件。复杂对象保留原始附件；最多 20 个附件，单个不超过 200 MB。",
+  "mainCategoryPrompt": "放在哪里",
+  "mainHypothesisPrompt": "想验证的假设",
+  "mainObservationsPrompt": "观察、过程与结论",
+  "mainTodosPrompt": "下一小步（每行一项，可选）",
+  "mainNotNow": "再想想",
+  "mainSaving": "正在保存…",
+  "mainRetrySave": "重试保存",
+  "mainSaveIdea": "保存灵感",
+  "mainView": "查看",
+  "mainMarkOrganized": "标记已整理",
+  "mainToProject": "转为项目",
+  "mainOpenNextStep": "打开项目，编辑下一步",
+  "mainHypothesisSection": "假设 / 想试什么",
+  "mainWriteHypothesis": "打开记录，写下这次想验证的问题。",
+  "mainObservationSection": "观察 / 留下发现",
+  "mainNoResultYet": "结果还未发生，过程也值得记录。",
+  "mainInboxIntro": "先接住，再整理。把值得继续的念头转成小项目。",
+  "mainUnsortedCount": "等待整理",
+  "mainOrganizedCount": "已经整理",
+  "mainProjectIntro": "用清单推动进展。每一个完成的小步，都在靠近结果。",
+  "mainActiveProjects": "正在推进",
+  "mainCompletedProjects": "已经完成",
+  "mainLabIntro": "从一个假设开始，保留尝试、观察和意外发现。",
+  "mainUnverifiedCount": "等待验证",
+  "mainRecordedCount": "已有记录",
+  "mainFavoritesIntro": "喜欢的文字、图像与文件，集中收在这里。",
+  "mainFavoriteRecords": "收藏记录",
+  "mainFavoriteAttachments": "收藏附件",
+  "mainPageOverview": "概览",
+  "mainPageInbox": "灵感收件箱",
+  "mainPageProjects": "小项目",
+  "mainPageLaboratory": "实验室",
+  "mainPageFavorites": "已收藏",
+  "mainSortRecent": "最近添加",
+  "mainSortFavorites": "收藏优先",
+  "mainSortTitle": "标题排序",
+  "mainFilterAll": "全部",
+  "mainFilterPending": "有待办",
+  "mainFilterAttachments": "含附件",
+  "mainFilterFavorites": "仅收藏",
+  "mainFilterImage": "图像",
+  "mainFilterMedia": "音视频",
+  "mainFilterFile": "文件",
+  "mainFilterText": "文字",
+  "mainStageUnsorted": "待整理",
+  "mainStageOrganized": "已整理",
+  "mainStagePlanned": "计划中",
+  "mainStageActive": "推进中",
+  "mainStageCompleted": "已完成",
+  "mainStageUnverified": "待验证",
+  "mainStageVerifying": "验证中",
+  "mainStageRecorded": "已记录",
+  "mainLanguage": "界面语言",
+  "mainLanguageSystem": "跟随系统",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainJustNow": "刚刚",
+  "mainTenMinutesAgo": "10 分钟前",
+  "mainOneHourAgo": "1 小时前",
+  "mainThreeHoursAgo": "3 小时前",
+  "mainYesterday": "昨天",
+  "mainDailyWater": "给自己倒一杯水",
+  "mainDailyIdea": "把一个想法写下来",
+  "mainDailyExplore": "留十分钟，随便探索",
+  "mainMovedProject": "「{title}」已放入小项目",
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainStageTooltip": "修改状态 {title}",
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFavoriteTooltip": "收藏 {title}",
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainUnfavoriteTooltip": "取消收藏 {title}",
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentHint": "{count} 个附件 · {name}",
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCardAttachments": "附件 {count} · {name}",
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSteps": "{done}/{total} 步",
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainMoreSteps": "另有 {count} 步，打开查看",
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainGlobalColor": "{color} · 全局控件",
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentCount": "附件 · {count}",
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainProgress": "小小的进展 · {done}/{total}",
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDeleted": "已删除「{title}」",
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFieldLimit": "此输入框最多 {limit} 个字符，请缩短内容或将其作为文件导入。",
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "mainContentRead": "已读取内容",
+  "mainContentReadFiles": "已读取内容，保留 {count} 个附件",
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainPageSummary": "{page} · 概览",
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCategoryIdea": "灵感",
+  "mainCategoryProject": "进行中",
+  "mainCategoryExperiment": "实验",
+  "mainSampleTitle0": "给灵感一个容器",
+  "mainSampleTitle1": "一个安静的数字花园",
+  "mainSampleTitle2": "周末，做点无用的东西",
+  "mainSampleTitle3": "我的桌面小助手",
+  "mainSampleBody0": "把突然冒出的念头放在这里。\n不急着完成，先让它发生。",
+  "mainSampleBody1": "用小小的网页，收藏喜欢的文字、\n音乐和生活里的细枝末节。",
+  "mainSampleBody2": "试试生成艺术，让代码长出\n意料之外的形状。",
+  "mainSampleBody3": "一个低调常驻的伙伴，帮我记住\n那些容易忘记的小事。",
+  "mainSampleTodo0": "整理第一批收藏",
+  "mainSampleTodo1": "设计花园入口",
+  "mainSampleTodo2": "种下一条新想法",
+  "mainSampleTodo3": "画一个小小的原型",
+  "mainSampleTodo4": "定义提醒交互",
+  "mainMakeYours": "打造你的风格",
+  "mainStayCurious": "保持好奇，做你自己。",
+  "mainHeroCaption": "让可能性发生",
+  "mainDiagnosticDetails": "诊断详情"
+}

@@ -36,3 +36,7 @@ protoc-bin-vendored = "=3.2.0"
 [[bin]]
 name = "morrow-audit-seal"
 path = "src/seal_main.rs"
+
+[[bin]]
+name = "morrow-build-receipt"
+path = "src/build_receipt_main.rs"

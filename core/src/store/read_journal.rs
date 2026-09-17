@@ -72,7 +72,7 @@ impl Store {
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
         boundary("read-after-begin");
         super::read_capture::reject_tracked(&tx, &input.operation_id)?;
-        if !matches!(version(&tx)?, 12..=14) {
+        if !matches!(version(&tx)?, 12..=17) {
             return Err(Error::UnsupportedVersion);
         }
         let digests = super::evidence::digests(evidence)?;
@@ -102,17 +102,7 @@ impl Store {
             authorize()?;
             return Ok(previous.receipt());
         }
-        let (count, bytes): (i64, i64) = sql(tx.query_row(
-            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
-        if count >= i64::from(self.budget.max_count)
-            || (bytes as u64).saturating_add(observed.container().len() as u64)
-                > self.budget.max_bytes
-        {
-            return Err(Error::EventCapacity);
-        }
+        super::event_room(&tx, self.budget, observed.container().len() as u64)?;
         sql(tx.execute(
             "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,4,?3)",
             params![input.operation_id, input.subject, observed.container()],

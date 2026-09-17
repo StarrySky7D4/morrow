@@ -1,3 +1,4 @@
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import '../appearance.dart';
 import 'lyrics_service.dart';
@@ -20,18 +21,18 @@ class _LyricsSearchDialogState extends State<LyricsSearchDialog> {
   late final artist = TextEditingController(text: widget.artist);
   List<LyricMatch>? matches;
   bool busy = false;
-  String? error;
+  bool failed = false;
   Future<void> search() async {
     if (busy || title.text.trim().isEmpty) return;
     setState(() {
       busy = true;
-      error = null;
+      failed = false;
     });
     try {
       final result = await widget.service.search(title.text, artist.text);
       if (mounted) setState(() => matches = result);
     } catch (_) {
-      if (mounted) setState(() => error = '无法连接歌词服务，请稍后重试或导入本地歌词。');
+      if (mounted) setState(() => failed = true);
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -46,8 +47,8 @@ class _LyricsSearchDialogState extends State<LyricsSearchDialog> {
 
   @override
   Widget build(BuildContext context) => StudioDialog(
-    title: '查找歌词',
-    subtitle: '按歌名和歌手查询 LRCLIB，选择对应版本。',
+    title: L10n.of(context).visualFindLyrics,
+    subtitle: L10n.of(context).visualFindLyricsGuide,
     content: SizedBox(
       width: 460,
       child: SingleChildScrollView(
@@ -56,13 +57,17 @@ class _LyricsSearchDialogState extends State<LyricsSearchDialog> {
           children: [
             TextField(
               controller: title,
-              decoration: const InputDecoration(labelText: '歌名'),
+              decoration: InputDecoration(
+                labelText: L10n.of(context).visualSongTitle,
+              ),
               onSubmitted: (_) => search(),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: artist,
-              decoration: const InputDecoration(labelText: '歌手（可选）'),
+              decoration: InputDecoration(
+                labelText: L10n.of(context).visualOptionalArtist,
+              ),
               onSubmitted: (_) => search(),
             ),
             if (busy)
@@ -70,19 +75,28 @@ class _LyricsSearchDialogState extends State<LyricsSearchDialog> {
                 padding: EdgeInsets.all(16),
                 child: LinearProgressIndicator(),
               ),
-            if (error != null)
-              Padding(padding: const EdgeInsets.all(12), child: Text(error!)),
+            if (failed)
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(L10n.of(context).visualLyricsServiceFailure),
+              ),
             if (matches?.isEmpty ?? false)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(12),
-                child: Text('没有找到歌词，试试调整歌名或歌手。'),
+                child: Text(L10n.of(context).visualLyricsNotFound),
               ),
             if (matches != null)
               ...matches!.map(
                 (match) => ListTile(
                   title: Text('${match.title} · ${match.artist}'),
                   subtitle: Text(
-                    '${match.album}\n${match.synced ? '同步歌词' : '纯文本歌词'} · ${match.duration.round()} 秒',
+                    L10n.of(context).visualLyricsMatch(
+                      match.album,
+                      match.synced
+                          ? L10n.of(context).visualSyncedLyrics
+                          : L10n.of(context).visualPlainLyrics,
+                      match.duration.round(),
+                    ),
                   ),
                   isThreeLine: true,
                   trailing: const Icon(Icons.chevron_right),
@@ -96,9 +110,12 @@ class _LyricsSearchDialogState extends State<LyricsSearchDialog> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(L10n.of(context).visualCancel),
       ),
-      FilledButton(onPressed: busy ? null : search, child: const Text('搜索')),
+      FilledButton(
+        onPressed: busy ? null : search,
+        child: Text(L10n.of(context).visualSearch),
+      ),
     ],
   );
 }
