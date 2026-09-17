@@ -1,6 +1,6 @@
 # IO-C2：唯一活跃执行与恢复核对
 
-日期：2026-09-17。结果：**PASS_SCOPED**。范围：`morrow-plugin-runtime 0.1.9-test.50` 新增 `io_execution` broker，依赖 Store 格式 17；核心新增材料核对释放 API。真实 HTTP／文件后端、异步作业与远端效果核对不在本次范围；主应用版本、冻结 SDK 原件与其它平台未改动；未提交、未发布。
+日期：2026-09-17。结果：**PASS_SCOPED**。范围：`morrow-plugin-runtime 0.1.9-test.50` 新增 `io_execution` broker，依赖 Store 格式 17；核心新增材料核对释放 API。真实 HTTP／文件后端、异步作业与远端效果核对不在本次范围；主应用版本、冻结 SDK 原件与其它平台未改动；已推送 `track-a/w1-io-contract`（`d086eaf`），未发布。
 
 ## 实际交付
 

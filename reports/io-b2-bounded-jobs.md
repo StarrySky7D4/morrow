@@ -1,6 +1,6 @@
 # IO-B2：有界 IO 作业与契约路由
 
-日期：2026-09-17。结果：**PASS_SCOPED**。范围：`morrow-plugin-runtime 0.1.9-test.50` 新增 `io_jobs` 作业执行器（submit／poll／read／cancel、队列／调用／字节／期限界限、契约路由、停止回收与迟到结果拒绝）。真实 HTTP／文件后端、异步 guest 挂起与远端效果核对不在本次范围；主应用版本、冻结 SDK、核心格式与其它平台未改动；未提交、未发布。
+日期：2026-09-17。结果：**PASS_SCOPED**。范围：`morrow-plugin-runtime 0.1.9-test.50` 新增 `io_jobs` 作业执行器（submit／poll／read／cancel、队列／调用／字节／期限界限、契约路由、停止回收与迟到结果拒绝）。真实 HTTP／文件后端、异步 guest 挂起与远端效果核对不在本次范围；主应用版本、冻结 SDK、核心格式与其它平台未改动；已推送 `track-a/w1-io-contract`（`d086eaf`），未发布。
 
 ## 实际交付
 
