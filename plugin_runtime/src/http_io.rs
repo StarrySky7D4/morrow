@@ -108,6 +108,7 @@ impl HttpGrant {
             return Err(Error::Denied);
         }
         let guard = HttpCallGuard {
+            service_validity: None,
             inner: Arc::new(CallState {
                 grant: Arc::clone(&self.state),
                 job: Arc::clone(job),
@@ -131,8 +132,18 @@ struct CallState {
 #[derive(Clone)]
 pub struct HttpCallGuard {
     inner: Arc<CallState>,
+    service_validity: Option<crate::service_history::Validity>,
 }
 impl HttpCallGuard {
+    pub(crate) fn with_service_validity(
+        mut self,
+        validity: Option<&crate::service_history::Validity>,
+    ) -> io_execution::Result<Self> {
+        self.service_validity = validity.cloned();
+        self.check()?;
+        Ok(self)
+    }
+
     pub fn policy_sha256(&self) -> [u8; 32] {
         self.inner.grant.policy_sha256
     }
@@ -172,6 +183,9 @@ impl HttpCallGuard {
         Ok(())
     }
     fn check_cancel(&self) -> io_execution::Result<()> {
+        if let Some(validity) = &self.service_validity {
+            validity.check()?;
+        }
         if self.inner.grant.revoked.load(Ordering::Acquire) {
             return Err(io_execution::Error::Denied);
         }

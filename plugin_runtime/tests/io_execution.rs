@@ -994,8 +994,9 @@ fn store_final_authorization_checks_current_revocation() {
     assert_eq!(result, Err(Error::Denied));
     assert_eq!(samples, 2);
     assert_eq!(f.phase(OPERATION), Phase::Prepared);
-    assert!(broker.retire(OPERATION));
+    assert_eq!(broker.active(), 0);
     assert_eq!((binding.usage().resources, binding.usage().jobs), (0, 0));
+    assert!(!broker.retire(OPERATION)); // failed claim already released this attempt
 }
 
 #[test]
@@ -1258,4 +1259,180 @@ fn delivery_clock_can_retire_execution_without_registry_deadlock() {
             .payload(),
         b"response"
     );
+}
+
+/// Independent manager registries and HostRuntime owners share only the SQLite
+/// file and original command. No live Broker lock can serialize these attempts.
+fn compete_independent_brokers(backend_succeeds: bool) {
+    use std::sync::{
+        Arc, Barrier, Mutex,
+        atomic::{AtomicUsize, Ordering},
+        mpsc,
+    };
+    use std::time::Duration;
+    let dir = tempfile::tempdir().unwrap();
+    let mut first = Fixture::at(dir.path().to_path_buf(), "racer-a");
+    let second = Fixture::at(dir.path().to_path_buf(), "racer-b");
+    let command = command(OPERATION);
+    first.seed(&command);
+    let mut participants = Vec::new();
+    // Reserve both live executions before either dispatches, as independent
+    // processes may legitimately do while the durable phase is Prepared.
+    for mut f in [first, second] {
+        let instance = f.connect();
+        let binding = f.bind(&instance);
+        let broker = Broker::new();
+        broker
+            .begin(
+                &f.manager,
+                &mut f.host,
+                &instance,
+                &binding,
+                IoCapability::HttpRequest,
+                ID,
+                &command,
+                2,
+            )
+            .unwrap();
+        participants.push((f, instance, binding, broker));
+    }
+    let start = Arc::new(Barrier::new(2));
+    let calls = Arc::new(AtomicUsize::new(0));
+    let (finished_tx, finished_rx) = mpsc::channel();
+    let finished_rx = Arc::new(Mutex::new(finished_rx));
+    let workers = participants
+        .into_iter()
+        .map(|(mut f, instance, binding, broker)| {
+            let start = start.clone();
+            let calls = calls.clone();
+            let finished_tx = finished_tx.clone();
+            let finished_rx = finished_rx.clone();
+            std::thread::spawn(move || {
+                let mut first_clock = true;
+                let mut executed = false;
+                let result = broker.dispatch(
+                    &f.manager,
+                    &mut f.host,
+                    &instance,
+                    OPERATION,
+                    |request| {
+                        executed = true;
+                        assert_eq!(request, REQUEST);
+                        assert_eq!(
+                            calls.fetch_add(1, Ordering::SeqCst),
+                            0,
+                            "both independent brokers dispatched one durable operation"
+                        );
+                        // Wait until the competing dispatch has failed, so its
+                        // read transaction cannot interfere with response storage.
+                        finished_rx
+                            .lock()
+                            .unwrap()
+                            .recv_timeout(Duration::from_secs(5))
+                            .unwrap();
+                        if backend_succeeds {
+                            Ok(b"response".to_vec())
+                        } else {
+                            Err(())
+                        }
+                    },
+                    || {
+                        if first_clock {
+                            first_clock = false;
+                            start.wait();
+                        }
+                        3
+                    },
+                );
+                if !executed {
+                    assert!(
+                        result.is_err(),
+                        "loser may not report a successful dispatch"
+                    );
+                    // SQLite uses zero busy timeout, so contention can fail before
+                    // the strict claim reaches its revision check. Neither result
+                    // permits dispatch or an automatic retry of this live slot.
+                    assert!(matches!(
+                        result,
+                        Err(Error::Storage
+                            | Error::Conflict
+                            | Error::OutcomeUnknown
+                            | Error::Dispatched)
+                    ));
+                    finished_tx.send(()).unwrap();
+                } else if backend_succeeds {
+                    assert_eq!(result.as_ref().unwrap(), b"response");
+                } else {
+                    assert_eq!(result, Err(Error::OutcomeUnknown));
+                }
+                assert!(
+                    broker
+                        .dispatch(
+                            &f.manager,
+                            &mut f.host,
+                            &instance,
+                            OPERATION,
+                            |_| panic!("same broker retry must never resend"),
+                            || 4
+                        )
+                        .is_err()
+                );
+                // Explicit cleanup is idempotent; a losing strict claim may have
+                // already removed its entry, while an earlier phase rejection has not.
+                broker.retire(OPERATION);
+                assert_eq!(broker.active(), 0);
+                assert_eq!((binding.usage().jobs, binding.usage().resources), (0, 0));
+                instance.close(&mut f.host).unwrap();
+                executed
+            })
+        })
+        .collect::<Vec<_>>();
+    let outcomes = workers
+        .into_iter()
+        .map(|worker| worker.join().unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(outcomes.iter().filter(|&&executed| executed).count(), 1);
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    let store = Store::open_existing(&dir.path().join("db"), EventBudget::default()).unwrap();
+    let recorded = store.lookup_io_intent(ID, OPERATION).unwrap().unwrap();
+    assert_eq!(
+        recorded.recovery(),
+        if backend_succeeds {
+            Recovery::AlreadyObserved
+        } else {
+            Recovery::ReconcileOnly
+        }
+    );
+    assert_eq!(
+        store
+            .io_material(ID, OPERATION, Kind::Request)
+            .unwrap()
+            .unwrap()
+            .payload(),
+        REQUEST
+    );
+    if backend_succeeds {
+        assert_eq!(
+            store
+                .io_material(ID, OPERATION, Kind::Response)
+                .unwrap()
+                .unwrap()
+                .payload(),
+            b"response"
+        );
+    } else {
+        assert!(matches!(
+            store.io_material(ID, OPERATION, Kind::Response),
+            Err(morrow_core::Error::EvidenceUnavailable)
+        ));
+    }
+    store.integrity_check().unwrap();
+}
+#[test]
+fn independent_managers_and_hosts_claim_one_observed_outbound_execution() {
+    compete_independent_brokers(true);
+}
+#[test]
+fn independent_managers_and_hosts_never_resend_an_unknown_outbound_execution() {
+    compete_independent_brokers(false);
 }

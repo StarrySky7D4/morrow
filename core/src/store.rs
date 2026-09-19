@@ -18,8 +18,9 @@ mod evidence_chunks;
 mod io_intent;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
-pub use io_evidence::IoMaterialReservation;
+mod service_request;
 pub use binding::{AuditBinding, AuditBindingState};
+pub use io_evidence::IoMaterialReservation;
 mod read_archive;
 mod read_archive_budget;
 mod read_archive_cursor;
@@ -112,7 +113,12 @@ pub(super) fn event_room(c: &Connection, budget: EventBudget, incoming_bytes: u6
 pub(super) fn byte_room(c: &Connection, budget: EventBudget, incoming_bytes: u64) -> Result<()> {
     capacity_room(c, budget, incoming_bytes, false)
 }
-fn capacity_room(c: &Connection, budget: EventBudget, incoming_bytes: u64, event: bool) -> Result<()> {
+fn capacity_room(
+    c: &Connection,
+    budget: EventBudget,
+    incoming_bytes: u64,
+    event: bool,
+) -> Result<()> {
     let (count, bytes): (i64, i64) = sql(c.query_row(
         "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
         [],

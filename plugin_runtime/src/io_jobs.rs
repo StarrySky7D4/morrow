@@ -8,6 +8,7 @@ use crate::{
     io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
+    service_history::{self, ServiceJournal},
     service_io::{ListenerGrant, ServiceGrant},
     worker::TaskId,
 };
@@ -110,6 +111,7 @@ pub struct RouteContext<'a> {
     expected: Option<Vec<u8>>,
     uncertain: bool,
     http_guard: Option<crate::http_io::HttpCallGuard>,
+    service_validity: Option<&'a service_history::Validity>,
 }
 impl RouteContext<'_> {
     /// Validate a host-issued endpoint grant against this exact managed import.
@@ -127,14 +129,16 @@ impl RouteContext<'_> {
             .authority
             .as_ref()
             .ok_or(io_execution::Error::Denied)?;
-        let guard = grant.authorize(
-            self.host,
-            self.instance,
-            self.lease,
-            self.request,
-            self.cancel.clone(),
-            Arc::clone(&authority.clock),
-        )?;
+        let guard = grant
+            .authorize(
+                self.host,
+                self.instance,
+                self.lease,
+                self.request,
+                self.cancel.clone(),
+                Arc::clone(&authority.clock),
+            )?
+            .with_service_validity(self.service_validity)?;
         self.http_guard = Some(guard.clone());
         Ok(guard)
     }
@@ -147,6 +151,9 @@ impl RouteContext<'_> {
         backend: impl FnOnce(&[u8]) -> Result<Vec<u8>, ()>,
     ) -> io_execution::Result<Vec<u8>> {
         use io_execution::{Error, storage};
+        if let Some(validity) = self.service_validity {
+            validity.check()?;
+        }
         if self.used {
             return Err(Error::Duplicate);
         }
@@ -177,6 +184,11 @@ impl RouteContext<'_> {
             child
         };
         let authorize = || {
+            if let Some(validity) = self.service_validity {
+                validity
+                    .check()
+                    .map_err(|_| morrow_core::Error::Invalid("expired service request"))?;
+            }
             authority
                 .with_execution_time(|now| child.check(now).map_err(Error::from))
                 .map_err(|_| morrow_core::Error::Invalid("inactive IO job"))
@@ -234,11 +246,19 @@ impl RouteContext<'_> {
             self.instance,
             &command.operation_id,
             |raw| {
+                if let Some(validity) = self.service_validity {
+                    validity.check().map_err(|_| ())?;
+                }
                 let response = backend(raw)?;
                 Response::decode_http(self.request, &response).map_err(|_| ())?;
                 Ok(response)
             },
-            |live| authority.with_execution_time(|now| live.check_liveness(now)),
+            |live| {
+                if let Some(validity) = self.service_validity {
+                    validity.check()?;
+                }
+                authority.with_execution_time(|now| live.check_liveness(now))
+            },
         );
         // Forget only live bookkeeping, never durable Unknown/Observed history.
         self.broker.retire(&command.operation_id);
@@ -279,6 +299,16 @@ impl JobLimits {
         })
     }
 }
+/// Historical request handling does not imply the guest executed on this attempt.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ServicePersistenceStatus {
+    Completed,
+    Replayed,
+    Unknown,
+    Expired,
+    Conflict,
+    Unavailable,
+}
 pub struct JobReport {
     /// Execution facts only; the content exchange is always denied for IO jobs.
     pub task: TaskReport,
@@ -288,6 +318,8 @@ pub struct JobReport {
     pub http_response: Option<HttpOutcome>,
     /// Service completion bound to its original request, independent of IO responses.
     pub service_response: Option<service::Reply>,
+    pub service_persistence: Option<ServicePersistenceStatus>,
+    service_validity: Option<service_history::Validity>,
     /// Admitted IO calls, in guest order.
     pub calls: u32,
     /// Cumulatively charged request + response bytes for this job.
@@ -310,6 +342,7 @@ impl std::fmt::Debug for JobReport {
                 "service_status",
                 &self.service_response.as_ref().map(|r| r.status),
             )
+            .field("service_persistence", &self.service_persistence)
             .field("calls", &self.calls)
             .field("bytes", &self.bytes)
             .field("cancelled", &self.cancelled)
@@ -318,6 +351,12 @@ impl std::fmt::Debug for JobReport {
     }
 }
 impl JobReport {
+    /// Fresh historical-result retention check; this never restores live authority.
+    pub fn service_retention_valid(&self) -> bool {
+        self.service_validity
+            .as_ref()
+            .is_none_or(|validity| validity.check().is_ok())
+    }
     /// Bytes a caller must be willing to read before the result is consumed.
     pub fn payload_bytes(&self) -> usize {
         self.service_response.as_ref().map_or(0, |r| {
@@ -455,6 +494,17 @@ impl Control {
             && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
+        } else if let Some(report) = &mut slot.report
+            && report.service_response.is_some()
+            && let Some(validity) = &report.service_validity
+            && let Err(error) = validity.check()
+        {
+            suppress(report, Fault::Deadline);
+            report.service_persistence = Some(if error == io_execution::Error::Expired {
+                ServicePersistenceStatus::Expired
+            } else {
+                ServicePersistenceStatus::Unavailable
+            });
         }
     }
     fn stop(&self) {
@@ -519,6 +569,7 @@ fn suppress(report: &mut JobReport, fault: Fault) {
     report.response = None;
     report.http_response = None;
     report.service_response = None;
+    report.service_persistence = None;
     report.cancelled = true;
     // A routed effect cannot be presumed rolled back when its delivery is suppressed.
     report.unknown |= report.calls > 0;
@@ -526,6 +577,11 @@ fn suppress(report: &mut JobReport, fault: Fault) {
 struct ServiceJob {
     request: service::Request,
     grant: ServiceGrant,
+    persistence: Option<ServicePersistence>,
+}
+struct ServicePersistence {
+    journal: ServiceJournal,
+    key: String,
 }
 struct Job {
     serial: u64,
@@ -850,7 +906,52 @@ impl IoWorker {
             request.bytes().to_vec(),
             JobRouter::Brokered(router),
             timeout,
-            Some(Box::new(ServiceJob { request, grant })),
+            Some(Box::new(ServiceJob {
+                request,
+                grant,
+                persistence: None,
+            })),
+        )
+    }
+    /// Same queue and live authority, with a durable single dispatch boundary.
+    /// The host supplies a stable namespace and a bounded UTC clock. The key is
+    /// scoped to the authenticated principal/service and is not authorization.
+    #[allow(clippy::too_many_arguments)]
+    pub fn submit_service_durable(
+        &self,
+        request: service::Request,
+        grant: ServiceGrant,
+        journal: ServiceJournal,
+        key: &str,
+        router: Box<dyn BrokerRouter>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_job(&authority.binding, &request)
+            .map_err(|_| JobError::InvalidOptions)?;
+        let expected =
+            morrow_core::service_record::call_id(journal.policy(), key, request.invocation())
+                .map_err(|_| JobError::InvalidOptions)?;
+        if expected != request.call_id() {
+            return Err(JobError::InvalidOptions);
+        }
+        self.submit_routed(
+            request.bytes().to_vec(),
+            JobRouter::Brokered(router),
+            timeout,
+            Some(Box::new(ServiceJob {
+                request,
+                grant,
+                persistence: Some(ServicePersistence {
+                    journal,
+                    key: key.into(),
+                }),
+            })),
         )
     }
     fn submit_routed(
@@ -1080,22 +1181,34 @@ fn execute(
                 report.bytes = input.len() as u64;
                 report
             }
-            None => run_job(
+            None => match prepare_service_history(
                 package,
-                &input,
-                &cancel,
-                control,
-                &mut router,
-                lease.as_ref(),
                 host,
-                match session {
-                    Session::Managed(i) => Some(i),
-                    Session::Raw(..) => None,
-                },
-                &broker,
-                &mut http_guards,
+                control,
+                &cancel,
+                lease.as_ref(),
                 service.as_deref(),
-            ),
+                input.len(),
+            ) {
+                Err(report) => *report,
+                Ok(history) => run_job(
+                    package,
+                    &input,
+                    &cancel,
+                    control,
+                    &mut router,
+                    lease.as_ref(),
+                    host,
+                    match session {
+                        Session::Managed(i) => Some(i),
+                        Session::Raw(..) => None,
+                    },
+                    &broker,
+                    &mut http_guards,
+                    service.as_deref(),
+                    history.as_ref(),
+                ),
+            },
         };
         if let Some(fault) =
             control.job_fault(&cancel, service.as_ref().map(|s| &s.grant), &http_guards)
@@ -1134,11 +1247,119 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
         response: None,
         http_response: None,
         service_response: None,
+        service_persistence: None,
+        service_validity: None,
         calls: 0,
         bytes: 0,
         cancelled: true,
         unknown: false,
     }
+}
+// Returns a claimed historical boundary, or a complete non-executing report.
+#[allow(clippy::too_many_arguments)]
+fn prepare_service_history(
+    package: &PreparedPackage,
+    host: &mut HostRuntime,
+    control: &Arc<Control>,
+    cancel: &Cancellation,
+    lease: Option<&Arc<IoJobLease>>,
+    service: Option<&ServiceJob>,
+    input_len: usize,
+) -> Result<Option<(Record, service_history::Validity)>, Box<JobReport>> {
+    let Some(service) = service else {
+        return Ok(None);
+    };
+    let Some(persistence) = &service.persistence else {
+        return Ok(None);
+    };
+    let begin = service_history::begin(
+        host.store_local_mut(),
+        &persistence.journal,
+        &persistence.key,
+        &service.request,
+        package.package().digest(),
+        || {
+            if control
+                .job_fault(cancel, Some(&service.grant), &[])
+                .is_some()
+            {
+                Err(morrow_core::Error::Invalid("service authority"))
+            } else {
+                Ok(())
+            }
+        },
+    );
+    let mut report = cancelled_report(package, Fault::TaskProtocol);
+    report.cancelled = false;
+    report.bytes = input_len as u64;
+    match begin {
+        Ok(service_history::Begin::Execute { record, validity }) => {
+            if validity.arm(cancel).is_ok() {
+                return Ok(Some((record, validity)));
+            }
+            report.unknown = true;
+            report.service_validity = Some(validity);
+            report.service_persistence = Some(ServicePersistenceStatus::Unknown);
+        }
+        Ok(service_history::Begin::Replay {
+            reply,
+            completion,
+            validity,
+        }) => {
+            report.service_validity = Some(validity);
+            let charge = completion.len() as u64;
+            if report
+                .bytes
+                .checked_add(charge)
+                .is_none_or(|n| n > control.limits.max_job_bytes)
+                || control.charge(charge, &[], lease.map(Arc::as_ref)).is_err()
+            {
+                report.task.execution.outcome = Err(Fault::Limits);
+                report.service_persistence = Some(ServicePersistenceStatus::Unavailable);
+            } else {
+                report.bytes += charge;
+                report.task.execution.outcome = Ok(0);
+                report.service_response = Some(reply);
+                report.service_persistence = Some(ServicePersistenceStatus::Replayed);
+            }
+        }
+        Ok(service_history::Begin::Unknown) => {
+            report.unknown = true;
+            report.service_persistence = Some(ServicePersistenceStatus::Unknown);
+        }
+        Ok(service_history::Begin::Expired) => {
+            report.service_persistence = Some(ServicePersistenceStatus::Expired)
+        }
+        Err(io_execution::Error::Conflict) => {
+            report.service_persistence = Some(ServicePersistenceStatus::Conflict)
+        }
+        Err(error) => {
+            report.unknown = matches!(
+                error,
+                io_execution::Error::CommitUnknown | io_execution::Error::OutcomeUnknown
+            );
+            report.service_persistence = Some(ServicePersistenceStatus::Unavailable);
+        }
+    }
+    Err(Box::new(report))
+}
+fn service_job_fault(
+    control: &Control,
+    cancel: &Cancellation,
+    service: Option<&ServiceJob>,
+    http: &[crate::http_io::HttpCallGuard],
+    validity: Option<&service_history::Validity>,
+) -> Option<Fault> {
+    control
+        .job_fault(cancel, service.map(|s| &s.grant), http)
+        .or_else(|| {
+            validity
+                .and_then(|v| v.check().err())
+                .map(|error| match error {
+                    io_execution::Error::Expired => Fault::Deadline,
+                    _ => Fault::TaskProtocol,
+                })
+        })
 }
 #[allow(clippy::too_many_arguments)]
 fn run_job(
@@ -1153,6 +1374,7 @@ fn run_job(
     broker: &Broker,
     http_guards: &mut Vec<crate::http_io::HttpCallGuard>,
     service: Option<&ServiceJob>,
+    history: Option<&(Record, service_history::Validity)>,
 ) -> JobReport {
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -1160,13 +1382,32 @@ fn run_job(
     let mut unknown = false;
     let mut last_request: Option<Vec<u8>> = None;
     let mut last_response: Option<Vec<u8>> = None;
+    if let Some(fault) = service_job_fault(
+        control,
+        cancel,
+        service,
+        http_guards,
+        history.map(|(_, validity)| validity),
+    ) {
+        let mut report = cancelled_report(package, fault);
+        report.bytes = bytes;
+        report.unknown = history.is_some();
+        report.service_validity = history.map(|(_, validity)| validity.clone());
+        return report;
+    }
     let run = package.run_io_frame(
         input,
         &mut |request| {
             if fault.is_some() {
                 return Err(());
             }
-            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
+            if let Some(late) = service_job_fault(
+                control,
+                cancel,
+                service,
+                http_guards,
+                history.map(|(_, validity)| validity),
+            ) {
                 fault = Some(late);
                 return Err(());
             }
@@ -1209,7 +1450,13 @@ fn run_job(
             bytes += request_charge;
             // Recheck just before dispatch. Once a synchronous trusted router
             // starts, a later cancellation cannot claim its effects did not occur.
-            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
+            if let Some(late) = service_job_fault(
+                control,
+                cancel,
+                service,
+                http_guards,
+                history.map(|(_, validity)| validity),
+            ) {
                 fault = Some(late);
                 return Err(());
             }
@@ -1233,6 +1480,7 @@ fn run_job(
                             expected: None,
                             uncertain: false,
                             http_guard: None,
+                            service_validity: history.map(|(_, validity)| validity),
                         };
                         let reply = router.route(&mut context, call, &parsed);
                         if let Some(guard) = context.http_guard.take() {
@@ -1259,7 +1507,13 @@ fn run_job(
                 },
             };
             bytes += reserved;
-            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
+            if let Some(late) = service_job_fault(
+                control,
+                cancel,
+                service,
+                http_guards,
+                history.map(|(_, validity)| validity),
+            ) {
                 fault = Some(late);
                 unknown = true;
                 return Err(());
@@ -1310,14 +1564,21 @@ fn run_job(
         },
         cancel.clone(),
     );
-    if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
+    if let Some(late) = service_job_fault(
+        control,
+        cancel,
+        service,
+        http_guards,
+        history.map(|(_, validity)| validity),
+    ) {
         // A result that outlived its deadline or revocation is not a success.
         let mut report = cancelled_report(package, late);
         report.task.execution.host_calls = run.report.host_calls;
         report.task.execution.fuel_remaining = run.report.fuel_remaining;
         report.calls = calls;
         report.bytes = bytes;
-        report.unknown = unknown || calls > 0;
+        report.unknown = unknown || calls > 0 || history.is_some();
+        report.service_validity = history.map(|(_, validity)| validity.clone());
         return report;
     }
     let mut execution = run.report;
@@ -1327,8 +1588,9 @@ fn run_job(
     let mut response = None;
     let mut http_response = None;
     let mut service_response = None;
+    let mut service_persistence = history.map(|_| ServicePersistenceStatus::Unknown);
     if let Some(service) = service {
-        if execution.outcome.is_ok() {
+        if execution.outcome == Ok(0) {
             match run.completion {
                 Some(done) => {
                     let charged = bytes
@@ -1343,7 +1605,27 @@ fn run_job(
                     match charged {
                         Err(fault) => execution.outcome = Err(fault),
                         Ok(()) => match service::Response::decode(&service.request, &done) {
-                            Ok(reply) => service_response = Some(reply),
+                            Ok(reply) => {
+                                if let Some(history) = history {
+                                    match service_history::finish(
+                                        host.store_local_mut(),
+                                        &history.0,
+                                        &done,
+                                    ) {
+                                        Ok(()) => {
+                                            service_persistence =
+                                                Some(ServicePersistenceStatus::Completed);
+                                            service_response = Some(reply);
+                                        }
+                                        Err(_) => {
+                                            execution.outcome = Err(Fault::TaskProtocol);
+                                            unknown = true;
+                                        }
+                                    }
+                                } else {
+                                    service_response = Some(reply);
+                                }
+                            }
                             Err(_) => execution.outcome = Err(Fault::TaskProtocol),
                         },
                     }
@@ -1353,8 +1635,9 @@ fn run_job(
         }
         // Past an admitted side effect, an invalid/oversized final reply never
         // proves rollback and must not authorize an automatic replay.
-        if execution.outcome.is_err() {
-            unknown |= calls > 0;
+        if execution.outcome != Ok(0) {
+            unknown |= calls > 0 || history.is_some();
+            service_response = None;
         }
     } else if execution.outcome.is_ok() {
         match (run.completion, last_response, last_request) {
@@ -1384,6 +1667,8 @@ fn run_job(
         response,
         http_response,
         service_response,
+        service_persistence,
+        service_validity: history.map(|(_, validity)| validity.clone()),
         calls,
         bytes,
         cancelled: false,

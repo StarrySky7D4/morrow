@@ -37,7 +37,7 @@
 
 普通 HTTP 仅 loopback；TLS 由宿主显式提供地址、证书和私钥，保留 TLS 校验和 Bearer／scope 检查。不存在隐式公网监听、自动防火墙配置或 guest 选择监听地址。本轮仅验证 Windows 的本机 HTTP/TLS，不能从可配置地址推导公网部署已通过。
 
-收到获准请求后，宿主剥离原始认证头、填入实际 principal，构造服务 Request，并调用 `IoWorker::submit_service`。固定调用序号不等于持久幂等键。请求不额外重建一套插件实例或批准权威；排队、执行、Ready 与最终 read 使用同一原实例和配额。
+收到获准请求后，宿主剥离原始认证头、填入实际 principal，构造服务 Request，并调用 `IoWorker::submit_service`。普通 route 的固定调用序号不等于持久幂等键；需要恢复时，宿主显式使用 durable_route／submit_service_durable，并保存稳定 namespace，见 [持久请求与恢复](PLUGIN_SERVICE_HISTORY.md)。请求不额外重建一套插件实例或批准权威；排队、执行、Ready 与最终 read 使用同一原实例和配额。
 
 **零次 IO import 是合法服务计算**：guest 可以直接返回绑定请求的服务 Reply。若发生 IO，则每次 import 仍走受控 `BrokerRouter`／`RouteContext`，出站服务需另获 [HTTP 端点批准](PLUGIN_MANAGED_HTTP.md)，实际副作用继续遵守 Prepared → 发送边界 → Observed／Unknown。最终服务 Reply 可以由多个计算／调用结果组合，不要求等于最后一次 IO 响应，但必须精确绑定原服务 Request。
 
@@ -52,7 +52,7 @@ ServiceGrant／ListenerGrant 撤权以及 Manager 停用、批准变更、移除
 ## 仍未完成与验证入口
 
 - 持久服务／监听批准、主应用发布 UI、证书在线轮换、OAuth/OIDC/mTLS、账号与细粒度内容范围。
-- 入站持久幂等、稳定请求恢复／查询、整条入站身份与内容提交的审计关联；出站子调用证据不等于完整服务调用证据。
+- 入站唯一认领、保存结果重试和崩溃后的保守恢复已完成限定验证；独立状态查询、待核对结果处理及整条入站身份与内容提交的审计关联仍待建立，见 [持久请求与恢复](PLUGIN_SERVICE_HISTORY.md)。
 - 大正文／流式上传下载、SSE/WebSocket、异步持久任务、多 worker 调度与完整平台矩阵。
 - 新服务契约的 C/C++/Rust SDK、正式示例生成、冻结原包兼容门禁与稳定版承诺。既有三语言纯转换节点示例不是本契约的三语言验收。
 

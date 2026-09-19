@@ -10,6 +10,7 @@ use morrow_core::{
         registry::Registry,
     },
     service::{self, Invocation, Reply, Request, Response},
+    service_record::{self, Policy},
     store::{EventBudget, Store},
 };
 use morrow_network_node::{
@@ -21,6 +22,7 @@ use morrow_plugin_runtime::{
     Limits as RuntimeLimits,
     io_jobs::{BrokerRouter, IoWorker, JobLimits, RouteContext, RouterFault},
     manager::Manager,
+    service_history::ServiceJournal,
     service_io::{ListenerGrant, ServiceGrant},
 };
 use std::{
@@ -37,6 +39,13 @@ use tokio::{
     net::TcpStream,
 };
 const ID: &str = "org.example.managed.service";
+const KEY: &str = "synthetic-request-1";
+fn policy() -> Policy {
+    Policy {
+        namespace: [8; 32],
+        retention_ms: 1000,
+    }
+}
 const TOKEN: &str = "synthetic-managed-service-token-123456789";
 struct Deny;
 impl BrokerRouter for Deny {
@@ -134,15 +143,63 @@ struct Running {
     listener: ListenerGrant,
     clock: Arc<AtomicU64>,
     digest: [u8; 32],
+    journal: Option<ServiceJournal>,
+    wall: Arc<AtomicU64>,
 }
 impl Running {
     fn new(method: &str, corrupt: bool, spin: bool) -> Self {
-        let request = Request::encode(1, &invocation(method)).unwrap();
+        Self::configured(
+            tempfile::tempdir().unwrap(),
+            method,
+            corrupt,
+            spin,
+            false,
+            RuntimeLimits::default().fuel,
+        )
+    }
+    fn durable(corrupt: bool, fuel: u64) -> Self {
+        Self::configured(
+            tempfile::tempdir().unwrap(),
+            "POST",
+            corrupt,
+            false,
+            true,
+            fuel,
+        )
+    }
+    fn reopen(self, fuel: u64) -> Self {
+        let Self {
+            _dir,
+            manager,
+            host,
+            grant,
+            listener,
+            clock,
+            digest: _,
+            journal,
+            wall,
+        } = self;
+        drop((manager, host, grant, listener, clock, journal, wall));
+        Self::configured(_dir, "POST", false, false, true, fuel)
+    }
+    fn configured(
+        dir: tempfile::TempDir,
+        method: &str,
+        corrupt: bool,
+        spin: bool,
+        durable: bool,
+        fuel: u64,
+    ) -> Self {
+        let id = if durable {
+            service_record::call_id(&policy(), KEY, &invocation(method)).unwrap()
+        } else {
+            1
+        };
+        let request = Request::encode(id, &invocation(method)).unwrap();
         let response_request =
-            Request::encode(if corrupt { 2 } else { 1 }, &invocation(method)).unwrap();
+            Request::encode(if corrupt { id + 1 } else { id }, &invocation(method)).unwrap();
         let response = Response::encode(&response_request, &reply(method)).unwrap();
         let wasm = fixture(&request, &response, spin);
-        let dir = tempfile::tempdir().unwrap();
         let caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
         let mut declaration =
             io::declaration(caps.iter().copied().collect(), vec!["serve.notes".into()]);
@@ -155,7 +212,13 @@ impl Running {
         let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
         catalog.install(&package).unwrap();
         let registry = Registry::open(&dir.path().join("registry"), catalog).unwrap();
-        let mut manager = Manager::new(registry, RuntimeLimits::default());
+        let mut manager = Manager::new(
+            registry,
+            RuntimeLimits {
+                fuel,
+                ..RuntimeLimits::default()
+            },
+        );
         manager.select(&package, manager.revision()).unwrap();
         manager
             .approve_io(ID, digest, caps.clone(), manager.revision())
@@ -202,6 +265,10 @@ impl Running {
         )
         .unwrap();
         let host = ServiceHost::new(worker, Duration::from_secs(2), routers()).unwrap();
+        let wall = Arc::new(AtomicU64::new(1_000_000));
+        let utc = wall.clone();
+        let journal = durable
+            .then(|| ServiceJournal::new(policy(), move || utc.load(Ordering::SeqCst)).unwrap());
         Self {
             _dir: dir,
             manager,
@@ -210,10 +277,18 @@ impl Running {
             listener,
             clock,
             digest,
+            journal,
+            wall,
         }
     }
     async fn bind(&self, method: &str) -> ManagedNode {
-        let route = self.host.route(self.grant.clone(), method, "/api").unwrap();
+        let route = if let Some(journal) = &self.journal {
+            self.host
+                .durable_route(self.grant.clone(), method, "/api", journal.clone())
+                .unwrap()
+        } else {
+            self.host.route(self.grant.clone(), method, "/api").unwrap()
+        };
         ManagedNode::bind(
             "127.0.0.1:0".parse().unwrap(),
             self.listener.clone(),
@@ -238,11 +313,23 @@ impl Running {
     }
 }
 async fn request(address: SocketAddr, method: &str, token: &str) -> Vec<u8> {
-    let input = invocation(method);
+    request_extra(address, method, token, "", None).await
+}
+async fn request_extra(
+    address: SocketAddr,
+    method: &str,
+    token: &str,
+    extra: &str,
+    body: Option<&[u8]>,
+) -> Vec<u8> {
+    let mut input = invocation(method);
+    if let Some(body) = body {
+        input.body = body.to_vec();
+    }
     let mut socket = TcpStream::connect(address).await.unwrap();
     // Cookie, Proxy-*, transport headers and Connection-nominated fields must be absent in guest input.
     let headers = format!(
-        "{method} {} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nCookie: secret=not-for-plugin\r\nProxy-Metadata: not-for-plugin\r\nConnection: close, x-private\r\nX-Private: not-for-plugin\r\nX-Claimed-Principal: administrator\r\nContent-Length: {}\r\n\r\n",
+        "{method} {} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nCookie: secret=not-for-plugin\r\nProxy-Metadata: not-for-plugin\r\nConnection: close, x-private\r\nX-Private: not-for-plugin\r\nX-Claimed-Principal: administrator\r\n{extra}Content-Length: {}\r\n\r\n",
         input.target,
         input.body.len()
     );
@@ -472,4 +559,203 @@ async fn foreign_listener_and_mixed_workers_fail_before_binding() {
     node.shutdown().await.unwrap();
     first.finish().await;
     second.finish().await;
+}
+
+#[tokio::test]
+async fn durable_retry_survives_restart_without_executing_guest_again() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    let extra = format!("Idempotency-Key: {KEY}\r\n");
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, Some(b"different")).await,
+        409,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    // One fuel unit cannot execute even this fixture's input check. A retained
+    // response still succeeds, proving the restarted path skipped Wasm execution.
+    let run = run.reopen(1);
+    let node = run.bind("POST").await;
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    let other = "Idempotency-Key: different-operation\r\n";
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, other, None).await,
+        409,
+    );
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+#[tokio::test]
+async fn durable_unknown_expiry_and_revocation_never_reexecute_or_disclose() {
+    let run = Running::durable(false, 1);
+    let node = run.bind("POST").await;
+    let extra = format!("Idempotency-Key: {KEY}\r\n");
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        409,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    // Restoring enough fuel cannot turn an uncertain prior dispatch into a resend.
+    let run = run.reopen(RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        409,
+    );
+    run.wall.store(1_001_000, Ordering::SeqCst);
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        410,
+    );
+    run.grant.revoke();
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        403,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+#[tokio::test]
+async fn durable_key_header_is_required_unique_bounded_and_not_hop_by_hop() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    for extra in [
+        String::new(),
+        format!("Idempotency-Key: {KEY}\r\nIdempotency-Key: {KEY}\r\n"),
+        format!("Idempotency-Key: {}\r\n", "x".repeat(129)),
+        format!("Idempotency-Key: {KEY}\r\nConnection: idempotency-key\r\n"),
+    ] {
+        status(
+            &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+            400,
+        );
+    }
+    status(
+        &request_extra(
+            node.local_addr(),
+            "POST",
+            TOKEN,
+            &format!("Idempotency-Key: {KEY}\r\n"),
+            None,
+        )
+        .await,
+        202,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+#[tokio::test]
+async fn observed_service_result_expires_without_reopening_its_key() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    let extra = format!("Idempotency-Key: {KEY}\r\n");
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    run.wall.store(1_001_000, Ordering::SeqCst);
+    let response = request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await;
+    status(&response, 410);
+    assert!(!response.ends_with(&reply("POST").body));
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+
+#[tokio::test]
+async fn dropped_http_response_is_recovered_after_restart_without_guest_execution() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    let mut socket = TcpStream::connect(node.local_addr()).await.unwrap();
+    socket.write_all(format!("POST /api?q=one&q=two HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {KEY}\r\nX-Claimed-Principal: administrator\r\nContent-Length: 7\r\nConnection: close\r\n\r\n").as_bytes()).await.unwrap();
+    socket.write_all(b"\0\xffinput").await.unwrap();
+    let mut first = [0; 1];
+    tokio::time::timeout(Duration::from_secs(5), socket.read_exact(&mut first))
+        .await
+        .unwrap()
+        .unwrap();
+    assert_eq!(&first, b"H");
+    // Drop before consuming the status, headers or response body. The host has
+    // crossed its response persistence boundary, but the caller has no result.
+    drop(socket);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let run = run.reopen(1);
+    let node = run.bind("POST").await;
+    let response = request_extra(
+        node.local_addr(),
+        "POST",
+        TOKEN,
+        &format!("Idempotency-Key: {KEY}\r\n"),
+        None,
+    )
+    .await;
+    status(&response, 202);
+    assert!(response.ends_with(&reply("POST").body));
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+#[tokio::test]
+async fn durable_cached_response_is_scoped_to_the_actual_authenticated_principal() {
+    const BOB: &str = "synthetic-principal-bob-token-123456789";
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let route = run
+        .host
+        .durable_route(
+            run.grant.clone(),
+            "POST",
+            "/api",
+            run.journal.clone().unwrap(),
+        )
+        .unwrap();
+    let alice =
+        Principal::new("alice", TOKEN, &["service.notes"], Duration::from_secs(60)).unwrap();
+    let node = ManagedNode::bind(
+        "127.0.0.1:0".parse().unwrap(),
+        run.listener.clone(),
+        vec![
+            alice.clone(),
+            Principal::new("bob", BOB, &["service.notes"], Duration::from_secs(60)).unwrap(),
+        ],
+        vec![route],
+        Limits::default(),
+    )
+    .await
+    .unwrap();
+    let extra = format!("Idempotency-Key: {KEY}\r\n");
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    // Bob is permitted to invoke the service, but the fixture only accepts an
+    // Alice request; he cannot receive Alice's saved result under the same key.
+    let response = request_extra(node.local_addr(), "POST", BOB, &extra, None).await;
+    status(&response, 409);
+    assert!(!response.ends_with(&reply("POST").body));
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        202,
+    );
+    alice.revoke();
+    status(
+        &request_extra(node.local_addr(), "POST", TOKEN, &extra, None).await,
+        401,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
 }

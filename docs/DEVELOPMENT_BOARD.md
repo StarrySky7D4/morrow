@@ -19,11 +19,13 @@
 | 顺序／编号 | 状态／优先级 | 模块与前置 | 可评审产物与退出证据 |
 | --- | --- | --- | --- |
 | 1 / IO-C1 | 已验存储子集 / P0 | core 证据存储；依赖 IO-C0 | Store v17 受保护原件、原容器身份和共享容量预留；读取／幂等重试有界校验；满额、真实满盘、撤权、崩溃重开、材料缺失均可解释，旧签名原件不改写 |
-| 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
+| 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；现用 Store 严格认领，两个独立宿主竞争同一操作时仅新提交成功者可外发；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
 | 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输；后续连接主应用、持久批准与其它资源 |
 | 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；仍待持久批准/主应用、真实提供者核对、路径范围和更多平台 |
-| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；入站持久幂等和内容权限交集仍待完成；持久批准、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
-| 4 / IO-D3 | 待 IO-B2/C2 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
+| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；内容权限交集、独立状态查询／核对仍待完成；持久批准、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
+| 4 / IO-D2a | 下一项 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 固定 principal/service/内容范围，重新鉴权后方可读取或提交；禁止通过缓存和任务 ID 绕权，撤权／跨主体／内容冲突有真实回归；继续拒绝未授权 core exchange |
+| 4 / IO-D2b | 待 IO-D2a / P0 | 持久服务配置与恢复操作 | 原宿主持久保存 namespace／主体／资源批准；只读状态查询和有依据的结果核对，不自动重发 Unknown；记录入站与子调用的因果关系及证据退休规则 |
+| 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
 | 5 / IO-E2 | 待 B2/D1/D2/D3 / P1 | workbench_host＋Flutter 管理界面 | 文件／网络／监听／发布分别显示授权、任务及恢复状态；独立插件真实调用和提供服务，用户资料无隐式迁移 |
 | 5 / ROAD-08-IO | 待 C1/C2 与实际后端 / P0 | 录制证据与独立验证器 | A→B→IO→内容提交→封存→删除安装来源→隔离重放；真实故障、合法退休与缺材料分类；重放禁止实际外发 |
@@ -42,3 +44,7 @@
 ## 每次合入检查
 
 记录基线和实际范围，复核 schema／数据库／授权唯一权威；跑改动相关回归、冻结原包完整性及执行兼容。影响共享模块时检查 wasm32 编译，原生 IO 另报平台资格。完成一项只移动该子项状态，ROAD-07、完整 SDK 和 M0–M7 不因局部通过整体勾选。测试版继续沿 test.x 推进，0.2.0 仅在声明范围达到既定门槛后评审。
+
+## 本轮恢复边界验收
+
+持久入站与跨宿主唯一外发的限定结果见 [报告](../reports/service-history-2026-09-19.md)：core 499、runtime 356、network 72 项通过，均无失败；5个 ignored 为父测试实际启动的崩溃子进程入口。三 crate 严格静态检查、默认 wasm32 库编译与冻结 SDK 原件检查通过。不是全平台运行、新 SDK 稳定或完整插件产品验收。

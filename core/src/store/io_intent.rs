@@ -233,67 +233,13 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if !matches!(version(&tx)?, 16..=17) {
-            return Err(Error::UnsupportedVersion);
+        let (result, changed) = reserve_followup_in_tx(&tx, self.budget, command, authorize)?;
+        if changed {
+            boundary("io-reservation-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-reservation-after-commit");
         }
-        let all = history(&tx, &command.operation_id)?;
-        let stored = all.first().ok_or(Error::NotFound)?;
-        // A different command for the same operationId can never reserve or
-        // extend the quota bound to the stored original.
-        stored.matches_command(command)?;
-        if all.last().ok_or(Error::Integrity)?.phase() != Phase::Prepared {
-            return Err(Error::Invalid("IO intent reservation phase"));
-        }
-        let existing: Option<(String, i64)> = sql(tx.query_row(
-            "SELECT subject,bytes FROM io_reservations WHERE operation_id=?1",
-            [&command.operation_id],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ).optional())?;
-        if let Some((subject, bytes)) = existing {
-            if subject != command.subject {
-                return Err(Error::Integrity);
-            }
-            // Idempotent: the same operationId never deducts twice.
-            authorize()?;
-            return Ok(IoIntentReservation {
-                events: FOLLOWUP_EVENTS,
-                bytes: bytes as u64,
-            });
-        }
-        let (count, bytes): (i64, i64) = sql(tx.query_row(
-            "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-            [],
-            |r| Ok((r.get(0)?, r.get(1)?)),
-        ))?;
-        let (reserved_events, reserved_bytes) = reservations(&tx)?;
-        // Protected IO material is held and stored in the same byte budget, so a
-        // dispatched command can never be crowded out by material it must keep.
-        let material_bytes =
-            u64::try_from(super::io_evidence::accounted(&tx)?).map_err(|_| Error::Integrity)?;
-        if count.saturating_add(reserved_events).saturating_add(FOLLOWUP_EVENTS as i64)
-            >= i64::from(self.budget.max_count)
-            || (bytes as u64)
-                .saturating_add(reserved_bytes as u64)
-                .saturating_add(material_bytes)
-                .saturating_add(FOLLOWUP_BYTES)
-                > self.budget.max_bytes
-        {
-            return Err(Error::EventCapacity);
-        }
-        sql(tx.execute(
-            "INSERT INTO io_reservations(operation_id,subject,events,bytes) VALUES(?1,?2,1,?3)",
-            params![&command.operation_id, command.subject, FOLLOWUP_BYTES as i64],
-        ))?;
-        boundary("io-reservation-after-insert");
-        // No network or external work may occur in this synchronous callback.
-        authorize()?;
-        boundary("io-reservation-before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("io-reservation-after-commit");
-        Ok(IoIntentReservation {
-            events: FOLLOWUP_EVENTS,
-            bytes: FOLLOWUP_BYTES,
-        })
+        Ok(result)
     }
     /// Releases a reservation while the command is still before the dispatch
     /// boundary. After OutcomeUnknown the terminal Observed revision must keep
@@ -343,133 +289,40 @@ impl Store {
         candidate: &Record,
         authorize: impl FnOnce() -> Result<()>,
     ) -> Result<Record> {
+        self.append_io_intent_impl(candidate, authorize, false)
+    }
+    /// Atomically claim the unique Prepared -> OutcomeUnknown transition.
+    /// Unlike historical append, an already committed identical candidate is a
+    /// RevisionConflict, never another successful claim. Only Ok from this call
+    /// confirms winning the claim; CommitUnknown requires reconciliation and
+    /// must never be treated as permission to dispatch. The trusted caller still
+    /// needs current backend authorization and protected evidence admission.
+    pub fn claim_io_dispatch_local_authorized(
+        &mut self,
+        candidate: &Record,
+        authorize: impl FnOnce() -> Result<()>,
+    ) -> Result<Record> {
+        if candidate.phase() != Phase::OutcomeUnknown {
+            return Err(Error::Invalid("IO dispatch claim phase"));
+        }
+        self.append_io_intent_impl(candidate, authorize, true)
+    }
+    fn append_io_intent_impl(
+        &mut self,
+        candidate: &Record,
+        authorize: impl FnOnce() -> Result<()>,
+        strict_claim: bool,
+    ) -> Result<Record> {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if !matches!(version(&tx)?, 16..=17) {
-            return Err(Error::UnsupportedVersion);
+        let (result, changed) = append_in_tx(&tx, self.budget, candidate, authorize, strict_claim)?;
+        if changed {
+            boundary("io-intent-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-intent-after-commit");
         }
-        let command = candidate.command();
-        let all = history(&tx, &command.operation_id)?;
-        reject_other_ids(&tx, &command.operation_id)?;
-        if let Some(first) = all.first() {
-            first.matches_command(command)?;
-            if let Some(stored) = all.get(candidate.revision() as usize - 1) {
-                if stored.raw() != candidate.raw() {
-                    return Err(Error::OperationConflict);
-                }
-                authorize()?;
-                return Ok(stored.clone());
-            }
-            all.last()
-                .ok_or(Error::Integrity)?
-                .verify_successor(candidate)?;
-            match candidate.phase() {
-                Phase::OutcomeUnknown => {
-                    // Dispatch boundary: the complete post-send revision and
-                    // its audit event must already be reserved for this exact
-                    // command by the same subject.
-                    let reserved: Option<String> = sql(tx.query_row(
-                        "SELECT subject FROM io_reservations WHERE operation_id=?1",
-                        [&command.operation_id],
-                        |r| r.get(0),
-                    ).optional())?;
-                    if reserved.as_deref() != Some(command.subject.as_str()) {
-                        return Err(Error::Invalid("IO intent dispatch reservation"));
-                    }
-                }
-                Phase::CancelledBeforeDispatch => {
-                    // No dispatch happened; the held quota returns to everyone.
-                    // Any protected material reservation is released with it; an
-                    // original already admitted stays retained for the history.
-                    sql(tx.execute(
-                        "DELETE FROM io_reservations WHERE operation_id=?1",
-                        [&command.operation_id],
-                    ))?;
-                    if version(&tx)? >= 17 {
-                        sql(tx.execute(
-                            "DELETE FROM io_material_reservations WHERE operation_id=?1",
-                            [&command.operation_id],
-                        ))?;
-                    }
-                }
-                Phase::Observed => {
-                    // Terminal observation consumes exactly this operation's
-                    // own reservation. No fresh capacity check: the reservation
-                    // already accounted for this event, even if the database is
-                    // reopened with a lower budget after dispatch.
-                    let deleted = sql(tx.execute(
-                        "DELETE FROM io_reservations WHERE operation_id=?1 AND subject=?2",
-                        params![&command.operation_id, command.subject.as_str()],
-                    ))?;
-                    if deleted != 1 {
-                        return Err(Error::Integrity);
-                    }
-                    // Without stored protected material an observation would
-                    // leave an unexplained reservation, so a terminal history
-                    // must not hold any material quota.
-                    if version(&tx)? >= 17 {
-                        let held: bool = sql(tx.query_row(
-                            "SELECT EXISTS(SELECT 1 FROM io_material_reservations WHERE operation_id=?1)",
-                            [&command.operation_id],
-                            |r| r.get(0),
-                        ))?;
-                        if held {
-                            return Err(Error::Invalid("IO material reservation"));
-                        }
-                    }
-                }
-                Phase::Prepared | Phase::InvalidPhase => return Err(Error::Integrity),
-            }
-        } else {
-            if candidate.phase() != Phase::Prepared {
-                return Err(Error::RevisionConflict);
-            }
-            let stray: bool = sql(tx.query_row(
-                "SELECT EXISTS(SELECT 1 FROM io_reservations WHERE operation_id=?1)",
-                [&command.operation_id],
-                |r| r.get(0),
-            ))?;
-            if stray {
-                return Err(Error::Integrity);
-            }
-        }
-        let event = candidate.event_id();
-        if event == command.operation_id {
-            return Err(Error::OperationConflict);
-        }
-        reject_other_ids(&tx, &event)?;
-        reject_reserved(&tx, &event)?;
-        // The terminal observation is paid from this operation's own
-        // reservation instead of the budget headroom other writers compete for.
-        if candidate.phase() != Phase::Observed {
-            super::event_room(&tx, self.budget, candidate.container().len() as u64)?;
-        }
-        sql(tx.execute(
-            "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,5,?3)",
-            params![event, command.subject, candidate.container()],
-        ))?;
-        boundary("io-intent-after-operation");
-        sql(tx.execute(
-            "INSERT INTO io_intents(operation_id,revision,event_id) VALUES(?1,?2,?3)",
-            params![command.operation_id, candidate.revision() as i64, event],
-        ))?;
-        boundary("io-intent-after-history");
-        sql(tx.execute(
-            "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
-            params![event, candidate.container()],
-        ))?;
-        sql(tx.execute(
-            "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
-            [&event],
-        ))?;
-        boundary("io-intent-after-event");
-        // No network or external work may occur in this synchronous callback.
-        authorize()?;
-        boundary("io-intent-before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("io-intent-after-commit");
-        Ok(candidate.clone())
+        Ok(result)
     }
     /// A pinned local history lookup. Different subjects observe absence.
     /// Historical approval digests never restore live authorization.
@@ -494,4 +347,224 @@ impl Store {
         let all = history(&tx, operation)?;
         Ok(all.last().cloned())
     }
+}
+
+// Shared SQL body: the caller owns commit/rollback and the final transaction boundary.
+pub(super) fn reserve_followup_in_tx(
+    tx: &rusqlite::Transaction<'_>,
+    budget: super::EventBudget,
+    command: &crate::io_intent::Command,
+    authorize: impl FnOnce() -> Result<()>,
+) -> Result<(IoIntentReservation, bool)> {
+    if !matches!(version(tx)?, 16..=17) {
+        return Err(Error::UnsupportedVersion);
+    }
+    let all = history(tx, &command.operation_id)?;
+    let stored = all.first().ok_or(Error::NotFound)?;
+    // A different command for the same operationId can never reserve or
+    // extend the quota bound to the stored original.
+    stored.matches_command(command)?;
+    if all.last().ok_or(Error::Integrity)?.phase() != Phase::Prepared {
+        return Err(Error::Invalid("IO intent reservation phase"));
+    }
+    let existing: Option<(String, i64)> = sql(tx
+        .query_row(
+            "SELECT subject,bytes FROM io_reservations WHERE operation_id=?1",
+            [&command.operation_id],
+            |r| Ok((r.get(0)?, r.get(1)?)),
+        )
+        .optional())?;
+    if let Some((subject, bytes)) = existing {
+        if subject != command.subject {
+            return Err(Error::Integrity);
+        }
+        // Idempotent: the same operationId never deducts twice.
+        authorize()?;
+        return Ok((
+            IoIntentReservation {
+                events: FOLLOWUP_EVENTS,
+                bytes: bytes as u64,
+            },
+            false,
+        ));
+    }
+    let (count, bytes): (i64, i64) = sql(tx.query_row(
+        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
+        [],
+        |r| Ok((r.get(0)?, r.get(1)?)),
+    ))?;
+    let (reserved_events, reserved_bytes) = reservations(tx)?;
+    // Protected IO material is held and stored in the same byte budget, so a
+    // dispatched command can never be crowded out by material it must keep.
+    let material_bytes =
+        u64::try_from(super::io_evidence::accounted(tx)?).map_err(|_| Error::Integrity)?;
+    if count
+        .saturating_add(reserved_events)
+        .saturating_add(FOLLOWUP_EVENTS as i64)
+        >= i64::from(budget.max_count)
+        || (bytes as u64)
+            .saturating_add(reserved_bytes as u64)
+            .saturating_add(material_bytes)
+            .saturating_add(FOLLOWUP_BYTES)
+            > budget.max_bytes
+    {
+        return Err(Error::EventCapacity);
+    }
+    sql(tx.execute(
+        "INSERT INTO io_reservations(operation_id,subject,events,bytes) VALUES(?1,?2,1,?3)",
+        params![
+            &command.operation_id,
+            command.subject,
+            FOLLOWUP_BYTES as i64
+        ],
+    ))?;
+    boundary("io-reservation-after-insert");
+    // No network or external work may occur in this synchronous callback.
+    authorize()?;
+    Ok((
+        IoIntentReservation {
+            events: FOLLOWUP_EVENTS,
+            bytes: FOLLOWUP_BYTES,
+        },
+        true,
+    ))
+}
+
+// Shared SQL body: the caller owns commit/rollback and the final transaction boundary.
+pub(super) fn append_in_tx(
+    tx: &rusqlite::Transaction<'_>,
+    budget: super::EventBudget,
+    candidate: &Record,
+    authorize: impl FnOnce() -> Result<()>,
+    strict_claim: bool,
+) -> Result<(Record, bool)> {
+    if !matches!(version(tx)?, 16..=17) {
+        return Err(Error::UnsupportedVersion);
+    }
+    let command = candidate.command();
+    let all = history(tx, &command.operation_id)?;
+    reject_other_ids(tx, &command.operation_id)?;
+    if let Some(first) = all.first() {
+        first.matches_command(command)?;
+        if strict_claim
+            && (all.last().ok_or(Error::Integrity)?.phase() != Phase::Prepared
+                || all.get(candidate.revision() as usize - 1).is_some())
+        {
+            return Err(Error::RevisionConflict);
+        }
+        if let Some(stored) = all.get(candidate.revision() as usize - 1) {
+            if stored.raw() != candidate.raw() {
+                return Err(Error::OperationConflict);
+            }
+            authorize()?;
+            return Ok((stored.clone(), false));
+        }
+        all.last()
+            .ok_or(Error::Integrity)?
+            .verify_successor(candidate)?;
+        match candidate.phase() {
+            Phase::OutcomeUnknown => {
+                // Dispatch boundary: the complete post-send revision and
+                // its audit event must already be reserved for this exact
+                // command by the same subject.
+                let reserved: Option<String> = sql(tx
+                    .query_row(
+                        "SELECT subject FROM io_reservations WHERE operation_id=?1",
+                        [&command.operation_id],
+                        |r| r.get(0),
+                    )
+                    .optional())?;
+                if reserved.as_deref() != Some(command.subject.as_str()) {
+                    return Err(Error::Invalid("IO intent dispatch reservation"));
+                }
+            }
+            Phase::CancelledBeforeDispatch => {
+                // No dispatch happened; the held quota returns to everyone.
+                // Any protected material reservation is released with it; an
+                // original already admitted stays retained for the history.
+                sql(tx.execute(
+                    "DELETE FROM io_reservations WHERE operation_id=?1",
+                    [&command.operation_id],
+                ))?;
+                if version(tx)? >= 17 {
+                    sql(tx.execute(
+                        "DELETE FROM io_material_reservations WHERE operation_id=?1",
+                        [&command.operation_id],
+                    ))?;
+                }
+            }
+            Phase::Observed => {
+                // Terminal observation consumes exactly this operation's
+                // own reservation. No fresh capacity check: the reservation
+                // already accounted for this event, even if the database is
+                // reopened with a lower budget after dispatch.
+                let deleted = sql(tx.execute(
+                    "DELETE FROM io_reservations WHERE operation_id=?1 AND subject=?2",
+                    params![&command.operation_id, command.subject.as_str()],
+                ))?;
+                if deleted != 1 {
+                    return Err(Error::Integrity);
+                }
+                // Without stored protected material an observation would
+                // leave an unexplained reservation, so a terminal history
+                // must not hold any material quota.
+                if version(tx)? >= 17 {
+                    let held: bool = sql(tx.query_row(
+                            "SELECT EXISTS(SELECT 1 FROM io_material_reservations WHERE operation_id=?1)",
+                            [&command.operation_id],
+                            |r| r.get(0),
+                        ))?;
+                    if held {
+                        return Err(Error::Invalid("IO material reservation"));
+                    }
+                }
+            }
+            Phase::Prepared | Phase::InvalidPhase => return Err(Error::Integrity),
+        }
+    } else {
+        if candidate.phase() != Phase::Prepared {
+            return Err(Error::RevisionConflict);
+        }
+        let stray: bool = sql(tx.query_row(
+            "SELECT EXISTS(SELECT 1 FROM io_reservations WHERE operation_id=?1)",
+            [&command.operation_id],
+            |r| r.get(0),
+        ))?;
+        if stray {
+            return Err(Error::Integrity);
+        }
+    }
+    let event = candidate.event_id();
+    if event == command.operation_id {
+        return Err(Error::OperationConflict);
+    }
+    reject_other_ids(tx, &event)?;
+    reject_reserved(tx, &event)?;
+    // The terminal observation is paid from this operation's own
+    // reservation instead of the budget headroom other writers compete for.
+    if candidate.phase() != Phase::Observed {
+        super::event_room(tx, budget, candidate.container().len() as u64)?;
+    }
+    sql(tx.execute(
+        "INSERT INTO operations(id,card_id,object_kind,payload) VALUES(?1,?2,5,?3)",
+        params![event, command.subject, candidate.container()],
+    ))?;
+    boundary("io-intent-after-operation");
+    sql(tx.execute(
+        "INSERT INTO io_intents(operation_id,revision,event_id) VALUES(?1,?2,?3)",
+        params![command.operation_id, candidate.revision() as i64, event],
+    ))?;
+    boundary("io-intent-after-history");
+    sql(tx.execute(
+        "INSERT INTO outbox(id,payload) VALUES(?1,?2)",
+        params![event, candidate.container()],
+    ))?;
+    sql(tx.execute(
+        "INSERT INTO operation_events(sequence,id) VALUES(last_insert_rowid(),?1)",
+        [&event],
+    ))?;
+    boundary("io-intent-after-event");
+    // No network or external work may occur in this synchronous callback.
+    authorize()?;
+    Ok((candidate.clone(), true))
 }

@@ -16,6 +16,8 @@ pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod file_io;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod http_io;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod inline_ui;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod instance_pool;
@@ -26,10 +28,6 @@ pub mod io_execution;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_jobs;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
-pub mod http_io;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
-pub mod service_io;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod manager;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;
@@ -37,6 +35,10 @@ pub mod package;
 pub mod proposal;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod replay;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod service_history;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod service_io;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod ui_session;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]

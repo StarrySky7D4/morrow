@@ -33,7 +33,12 @@ impl Command {
     fn validate(&self) -> Result<()> {
         identity(&self.operation_id)?;
         identity(&self.subject)?;
-        if self.protocol_sha256 != io::schema_digest() {
+        // Existing HttpPublish records retain their legacy IO digest. Only this
+        // capability can opt into the independent inbound service record contract.
+        if self.protocol_sha256 != io::schema_digest()
+            && !(self.capability == io::IoCapability::HttpPublish
+                && self.protocol_sha256 == crate::service_record::schema_digest())
+        {
             return Err(Error::UnsupportedVersion);
         }
         if self.request_bytes > io::MAX_JOB_BYTES || self.response_limit > io::MAX_JOB_BYTES {

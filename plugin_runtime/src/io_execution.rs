@@ -439,15 +439,26 @@ impl Broker {
         }
         let boundary = stored.propose_dispatch_boundary().map_err(storage)?;
         let mut rejected = None;
-        let committed = host
-            .store_local_mut()
-            .append_io_intent_local_authorized(&boundary, || {
-                guard(&live).map_err(|error| {
-                    rejected = Some(error);
-                    morrow_core::Error::Invalid("inactive IO dispatch")
-                })
-            });
+        let committed =
+            host.store_local_mut()
+                .claim_io_dispatch_local_authorized(&boundary, || {
+                    guard(&live).map_err(|error| {
+                        rejected = Some(error);
+                        morrow_core::Error::Invalid("inactive IO dispatch")
+                    })
+                });
         if let Err(error) = committed {
+            // A losing claim, including a lost commit receipt, never reaches
+            // the backend. Release this attempt's live reservation without
+            // deleting durable history or a replacement registry entry.
+            let mut active = self.lock();
+            if active
+                .get(operation)
+                .is_some_and(|entry| Arc::ptr_eq(&entry.live, &live))
+            {
+                active.remove(operation);
+            }
+            live.retired.store(true, Ordering::Release);
             return Err(rejected.unwrap_or_else(|| storage(error)));
         }
         // Nothing after this durable boundary can safely authorize automatic resend.

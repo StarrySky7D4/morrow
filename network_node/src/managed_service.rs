@@ -4,9 +4,10 @@ use crate::{
     Error, Limits, RawHttpResponse, Result,
     server::{AuthorizedHandler, AuthorizedRoute, Node, Principal, TlsIdentity},
 };
-use morrow_core::{dispatch::HostRuntime, io::Header, service};
+use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
-    io_jobs::{BrokerRouter, IoWorker, JobError, Poll},
+    io_jobs::{BrokerRouter, IoWorker, JobError, Poll, ServicePersistenceStatus},
+    service_history::ServiceJournal,
     service_io::{ListenerGrant, ServiceGrant},
 };
 use std::{
@@ -44,6 +45,7 @@ pub struct ManagedRoute {
     grant: ServiceGrant,
     method: String,
     path: String,
+    journal: Option<ServiceJournal>,
 }
 impl ServiceHost {
     pub fn new(worker: IoWorker, timeout: Duration, routers: RouterFactory) -> Result<Self> {
@@ -78,29 +80,54 @@ impl ServiceHost {
             grant,
             method: method.into(),
             path: path.into(),
+            journal: None,
         })
+    }
+    /// Requires one Idempotency-Key and persists a single execution boundary.
+    /// Namespace must remain stable for the same published service after restart.
+    pub fn durable_route(
+        &self,
+        grant: ServiceGrant,
+        method: &str,
+        path: &str,
+        journal: ServiceJournal,
+    ) -> Result<ManagedRoute> {
+        let mut route = self.route(grant, method, path)?;
+        route.journal = Some(journal);
+        Ok(route)
     }
     fn bound_route(
         &self,
         grant: ServiceGrant,
         method: &str,
         path: &str,
+        journal: Option<ServiceJournal>,
     ) -> Result<AuthorizedRoute> {
         let scope = grant.service().to_owned();
         let inner = self.inner.clone();
         let handler: AuthorizedHandler = Arc::new(move |request, cancel| {
             let inner = inner.clone();
             let grant = grant.clone();
+            let journal = journal.clone();
             Box::pin(async move {
                 let (request, principal) = request.into_parts();
                 principal.check(grant.service())?;
                 if cancel.is_cancelled() {
                     return Err(Error::Cancelled);
                 }
-                let serial = inner
-                    .sequence
-                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
-                    .map_err(|_| Error::Limit)?;
+                let key = if journal.is_some() {
+                    let mut keys = request
+                        .headers
+                        .iter()
+                        .filter(|(name, _)| name.eq_ignore_ascii_case("idempotency-key"));
+                    let key = keys.next().ok_or(Error::Invalid)?.1.clone();
+                    if keys.next().is_some() {
+                        return Err(Error::Invalid);
+                    }
+                    Some(key)
+                } else {
+                    None
+                };
                 // Strip transport/credential fields, including Connection-nominated fields.
                 let nominated: Vec<String> = request
                     .headers
@@ -112,12 +139,16 @@ impl ServiceHost {
                             .map(|part| part.trim().to_ascii_lowercase())
                     })
                     .collect();
-                let headers = request
+                if key.is_some() && nominated.iter().any(|name| name == "idempotency-key") {
+                    return Err(Error::Invalid);
+                }
+                let mut headers: Vec<Header> = request
                     .headers
                     .into_iter()
                     .filter_map(|(name, value)| {
                         let lower = name.to_ascii_lowercase();
-                        if lower.starts_with("proxy-")
+                        if (key.is_some() && lower == "idempotency-key")
+                            || lower.starts_with("proxy-")
                             || nominated.contains(&lower)
                             || matches!(
                                 lower.as_str(),
@@ -143,6 +174,10 @@ impl ServiceHost {
                         }
                     })
                     .collect();
+                // Normalize name order, preserving the order of repeated values.
+                if journal.is_some() {
+                    headers.sort_by(|a, b| a.name.cmp(&b.name));
+                }
                 let invocation = service::Invocation {
                     service: grant.service().into(),
                     handler: grant.handler().into(),
@@ -152,14 +187,33 @@ impl ServiceHost {
                     headers,
                     body: request.body,
                 };
+                let serial = if let (Some(journal), Some(key)) = (&journal, &key) {
+                    service_record::call_id(journal.policy(), key, &invocation)
+                        .map_err(|_| Error::Invalid)?
+                } else {
+                    inner
+                        .sequence
+                        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| n.checked_add(1))
+                        .map_err(|_| Error::Limit)?
+                };
                 let request =
                     service::Request::encode(serial, &invocation).map_err(|_| Error::Invalid)?;
                 let router = (inner.routers)();
-                let result = inner
-                    .worker
-                    .lock()
-                    .map_err(|_| Error::Closed)?
-                    .submit_service(request, grant.clone(), router, inner.timeout);
+                let result = {
+                    let worker = inner.worker.lock().map_err(|_| Error::Closed)?;
+                    if let (Some(journal), Some(key)) = (journal, key) {
+                        worker.submit_service_durable(
+                            request,
+                            grant.clone(),
+                            journal,
+                            &key,
+                            router,
+                            inner.timeout,
+                        )
+                    } else {
+                        worker.submit_service(request, grant.clone(), router, inner.timeout)
+                    }
+                };
                 let mut job = match result {
                     Ok(job) => job,
                     Err(JobError::Busy) => {
@@ -203,8 +257,27 @@ impl ServiceHost {
                     .map_err(|_| Error::Closed)?
                     .check_service(&grant)
                     .map_err(|_| Error::Denied)?;
+                if !report.service_retention_valid() {
+                    return Ok(fixed_service_reply(410, b"Service request expired"));
+                }
                 if report.cancelled {
                     return Err(Error::Cancelled);
+                }
+                match report.service_persistence {
+                    Some(ServicePersistenceStatus::Unknown) => {
+                        return Ok(fixed_service_reply(
+                            409,
+                            b"Service outcome requires reconciliation",
+                        ));
+                    }
+                    Some(ServicePersistenceStatus::Conflict) => {
+                        return Ok(fixed_service_reply(409, b"Idempotency key conflict"));
+                    }
+                    Some(ServicePersistenceStatus::Expired) => {
+                        return Ok(fixed_service_reply(410, b"Service request expired"));
+                    }
+                    Some(ServicePersistenceStatus::Unavailable) => return Err(Error::Closed),
+                    _ => {}
                 }
                 if report.unknown || report.task.execution.outcome != Ok(0) {
                     return Err(Error::Transport);
@@ -297,11 +370,12 @@ impl ManagedNode {
                 .grant
                 .bound_to_listener(&grant)
                 .map_err(|_| Error::Denied)?;
-            approved.push(
-                route
-                    .host
-                    .bound_route(service, &route.method, &route.path)?,
-            );
+            approved.push(route.host.bound_route(
+                service,
+                &route.method,
+                &route.path,
+                route.journal,
+            )?);
         }
         grant.activate().map_err(|_| Error::Denied)?;
         let node = if let Some(identity) = identity {
@@ -358,5 +432,13 @@ impl ManagedNode {
 impl Drop for ManagedNode {
     fn drop(&mut self) {
         self.stop.cancel();
+    }
+}
+
+fn fixed_service_reply(status: u16, body: &[u8]) -> RawHttpResponse {
+    RawHttpResponse {
+        status,
+        headers: vec![("content-type".into(), b"text/plain; charset=utf-8".to_vec())],
+        body: body.to_vec(),
     }
 }

@@ -196,81 +196,13 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        // Protected material only exists from format 17; older stores must be
-        // reopened and migrated before any admission is attempted.
-        if version(&tx)? < 17 {
-            return Err(Error::UnsupportedVersion);
+        let (result, changed) = reserve_materials_in_tx(&tx, self.budget, command, authorize)?;
+        if changed {
+            boundary("io-material-reservation-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-material-reservation-after-commit");
         }
-        let all = super::io_intent::history(&tx, &command.operation_id)?;
-        let stored = all.first().ok_or(Error::NotFound)?;
-        // A different command for the same operationId can never reserve the
-        // capacity bound to the stored original.
-        stored.matches_command(command)?;
-        if all.last().ok_or(Error::Integrity)?.phase() != Phase::Prepared {
-            return Err(Error::Invalid("IO material reservation phase"));
-        }
-        let planned_request = io_evidence::max_container_bytes(command.request_bytes)?;
-        let planned_response = io_evidence::max_container_bytes(command.response_limit)?;
-        let request_held = held(&tx, &command.operation_id, Kind::Request)?;
-        let response_held = held(&tx, &command.operation_id, Kind::Response)?;
-        let request_admitted =
-            load_material(&tx, &command.operation_id, Kind::Request, &all)?.is_some();
-        let response_admitted =
-            load_material(&tx, &command.operation_id, Kind::Response, &all)?.is_some();
-        // A kind slot holds a reservation or an admitted original, never both;
-        // an admitted original is already charged and needs no reservation.
-        if (request_held.is_some() && request_admitted)
-            || (response_held.is_some() && response_admitted)
-        {
-            return Err(Error::Integrity);
-        }
-        let mut incoming = 0u64;
-        for (existing, planned, admitted) in [
-            (request_held.as_ref(), planned_request, request_admitted),
-            (response_held.as_ref(), planned_response, response_admitted),
-        ] {
-            if let Some((bytes, subject)) = existing {
-                if subject != &command.subject || *bytes != planned as i64 {
-                    return Err(Error::Integrity);
-                }
-            } else if !admitted {
-                incoming = incoming.checked_add(planned).ok_or(Error::Limit)?;
-            }
-        }
-        if incoming > 0 {
-            super::byte_room(&tx, self.budget, incoming)?;
-        }
-        if request_held.is_none() && !request_admitted {
-            sql(tx.execute(
-                "INSERT INTO io_material_reservations(operation_id,kind,subject,reserved_bytes) VALUES(?1,1,?2,?3)",
-                params![&command.operation_id, command.subject, planned_request as i64],
-            ))?;
-        }
-        if response_held.is_none() && !response_admitted {
-            sql(tx.execute(
-                "INSERT INTO io_material_reservations(operation_id,kind,subject,reserved_bytes) VALUES(?1,2,?2,?3)",
-                params![&command.operation_id, command.subject, planned_response as i64],
-            ))?;
-        }
-        if incoming == 0 {
-            // Fully idempotent: the same command never deducts twice, and the
-            // authorized callback still observes the request.
-            authorize()?;
-            return Ok(IoMaterialReservation {
-                request_bytes: planned_request,
-                response_bytes: planned_response,
-            });
-        }
-        boundary("io-material-reservation-after-insert");
-        // No network or external work may occur in this synchronous callback.
-        authorize()?;
-        boundary("io-material-reservation-before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("io-material-reservation-after-commit");
-        Ok(IoMaterialReservation {
-            request_bytes: planned_request,
-            response_bytes: planned_response,
-        })
+        Ok(result)
     }
     /// Releases both material reservations while the command is still before
     /// the dispatch boundary. After OutcomeUnknown the response must be stored
@@ -360,104 +292,18 @@ impl Store {
         authorize: impl FnOnce() -> Result<()>,
     ) -> Result<()> {
         identity(subject)?;
-        // The caller-declared slot must be the slot the record was encoded for;
-        // a mismatch would otherwise only surface later as a store-integrity
-        // fault after an unusable original had already been admitted.
         if material.kind() != kind {
             return Err(Error::Invalid("IO material kind"));
         }
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        // Protected material only exists from format 17; older stores must be
-        // reopened and migrated before any admission is attempted.
-        if version(&tx)? < 17 {
-            return Err(Error::UnsupportedVersion);
+        let changed = store_material_in_tx(&tx, subject, kind, material, authorize)?;
+        if changed {
+            boundary("io-material-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-material-after-commit");
         }
-        let operation = material.operation_id();
-        let all = super::io_intent::history(&tx, operation)?;
-        let stored = all.first().ok_or(Error::NotFound)?;
-        // A subject can never store or observe another subject's material.
-        if stored.command().subject != subject {
-            return Err(Error::NotFound);
-        }
-        if material.subject() != subject {
-            return Err(Error::OperationConflict);
-        }
-        if material.request_sha256() != stored.command().request_sha256 {
-            return Err(Error::OperationConflict);
-        }
-        if let Some(existing) = load_material(&tx, operation, kind, &all)? {
-            if existing.raw() != material.raw() {
-                return Err(Error::OperationConflict);
-            }
-            // Idempotent admission: its reservation must already be consumed.
-            if held(&tx, operation, kind)?.is_some() {
-                return Err(Error::Integrity);
-            }
-            authorize()?;
-            return Ok(());
-        }
-        // Request material may exist before or after the dispatch boundary;
-        // response material can only exist once the boundary is crossed.
-        let allowed = matches!(
-            (kind, all.last().ok_or(Error::Integrity)?.phase()),
-            (Kind::Request, Phase::Prepared | Phase::OutcomeUnknown)
-                | (Kind::Response, Phase::OutcomeUnknown)
-        );
-        if !allowed {
-            return Err(Error::Invalid("IO material phase"));
-        }
-        let (reserved_bytes, reservation_subject) =
-            held(&tx, operation, kind)?.ok_or(Error::Invalid("IO material reservation"))?;
-        if reservation_subject != subject {
-            return Err(Error::Integrity);
-        }
-        // A request original must be exactly the bytes the command binds; a
-        // response original can never exceed the declared response limit.
-        match kind {
-            Kind::Request => {
-                if material.payload().len() as u64 != stored.command().request_bytes
-                    || material.payload_sha256() != stored.command().request_sha256
-                {
-                    return Err(Error::OperationConflict);
-                }
-            }
-            Kind::Response => {
-                if material.payload().len() as u64 > stored.command().response_limit {
-                    return Err(Error::Limit);
-                }
-            }
-        }
-        if material.container().len() as u64 > reserved_bytes as u64 {
-            return Err(Error::EventCapacity);
-        }
-        let deleted = sql(tx.execute(
-            "DELETE FROM io_material_reservations WHERE operation_id=?1 AND kind=?2 AND subject=?3",
-            params![operation, kind.number() as i64, subject],
-        ))?;
-        if deleted != 1 {
-            return Err(Error::Integrity);
-        }
-        sql(tx.execute(
-            "INSERT INTO io_evidence(digest,operation_id,subject,kind,request_sha256,payload_sha256,payload_bytes,container) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
-            params![
-                material.digest().as_slice(),
-                operation,
-                material.subject(),
-                kind.number() as i64,
-                material.request_sha256().as_slice(),
-                material.payload_sha256().as_slice(),
-                material.payload().len() as i64,
-                material.container(),
-            ],
-        ))?;
-        boundary("io-material-after-evidence");
-        // No network or external work may occur in this synchronous callback.
-        authorize()?;
-        boundary("io-material-before-commit");
-        tx.commit().map_err(|_| Error::CommitUnknown)?;
-        boundary("io-material-after-commit");
         Ok(())
     }
     /// Reads back one stored original. A different subject or missing history
@@ -584,4 +430,194 @@ mod disk_tests {
         assert_eq!(store.io_material_reservation_usage().unwrap(), before);
         store.integrity_check().unwrap();
     }
+}
+
+// Shared SQL body: the caller owns commit/rollback and the final transaction boundary.
+pub(super) fn reserve_materials_in_tx(
+    tx: &rusqlite::Transaction<'_>,
+    budget: super::EventBudget,
+    command: &crate::io_intent::Command,
+    authorize: impl FnOnce() -> Result<()>,
+) -> Result<(IoMaterialReservation, bool)> {
+    // Protected material only exists from format 17; older stores must be
+    // reopened and migrated before any admission is attempted.
+    if version(tx)? < 17 {
+        return Err(Error::UnsupportedVersion);
+    }
+    let all = super::io_intent::history(tx, &command.operation_id)?;
+    let stored = all.first().ok_or(Error::NotFound)?;
+    // A different command for the same operationId can never reserve the
+    // capacity bound to the stored original.
+    stored.matches_command(command)?;
+    if all.last().ok_or(Error::Integrity)?.phase() != Phase::Prepared {
+        return Err(Error::Invalid("IO material reservation phase"));
+    }
+    let planned_request = io_evidence::max_container_bytes(command.request_bytes)?;
+    let planned_response = io_evidence::max_container_bytes(command.response_limit)?;
+    let request_held = held(tx, &command.operation_id, Kind::Request)?;
+    let response_held = held(tx, &command.operation_id, Kind::Response)?;
+    let request_admitted = load_material(tx, &command.operation_id, Kind::Request, &all)?.is_some();
+    let response_admitted =
+        load_material(tx, &command.operation_id, Kind::Response, &all)?.is_some();
+    // A kind slot holds a reservation or an admitted original, never both;
+    // an admitted original is already charged and needs no reservation.
+    if (request_held.is_some() && request_admitted)
+        || (response_held.is_some() && response_admitted)
+    {
+        return Err(Error::Integrity);
+    }
+    let mut incoming = 0u64;
+    for (existing, planned, admitted) in [
+        (request_held.as_ref(), planned_request, request_admitted),
+        (response_held.as_ref(), planned_response, response_admitted),
+    ] {
+        if let Some((bytes, subject)) = existing {
+            if subject != &command.subject || *bytes != planned as i64 {
+                return Err(Error::Integrity);
+            }
+        } else if !admitted {
+            incoming = incoming.checked_add(planned).ok_or(Error::Limit)?;
+        }
+    }
+    if incoming > 0 {
+        super::byte_room(tx, budget, incoming)?;
+    }
+    if request_held.is_none() && !request_admitted {
+        sql(tx.execute(
+                "INSERT INTO io_material_reservations(operation_id,kind,subject,reserved_bytes) VALUES(?1,1,?2,?3)",
+                params![&command.operation_id, command.subject, planned_request as i64],
+            ))?;
+    }
+    if response_held.is_none() && !response_admitted {
+        sql(tx.execute(
+                "INSERT INTO io_material_reservations(operation_id,kind,subject,reserved_bytes) VALUES(?1,2,?2,?3)",
+                params![&command.operation_id, command.subject, planned_response as i64],
+            ))?;
+    }
+    if incoming == 0 {
+        // Fully idempotent: the same command never deducts twice, and the
+        // authorized callback still observes the request.
+        authorize()?;
+        return Ok((
+            IoMaterialReservation {
+                request_bytes: planned_request,
+                response_bytes: planned_response,
+            },
+            false,
+        ));
+    }
+    boundary("io-material-reservation-after-insert");
+    // No network or external work may occur in this synchronous callback.
+    authorize()?;
+    Ok((
+        IoMaterialReservation {
+            request_bytes: planned_request,
+            response_bytes: planned_response,
+        },
+        true,
+    ))
+}
+
+// Shared SQL body: the caller owns commit/rollback and the final transaction boundary.
+pub(super) fn store_material_in_tx(
+    tx: &rusqlite::Transaction<'_>,
+    subject: &str,
+    kind: io_evidence::Kind,
+    material: &io_evidence::Material,
+    authorize: impl FnOnce() -> Result<()>,
+) -> Result<bool> {
+    identity(subject)?;
+    // The caller-declared slot must be the slot the record was encoded for;
+    // a mismatch would otherwise only surface later as a store-integrity
+    // fault after an unusable original had already been admitted.
+    if material.kind() != kind {
+        return Err(Error::Invalid("IO material kind"));
+    }
+    // Protected material only exists from format 17; older stores must be
+    // reopened and migrated before any admission is attempted.
+    if version(tx)? < 17 {
+        return Err(Error::UnsupportedVersion);
+    }
+    let operation = material.operation_id();
+    let all = super::io_intent::history(tx, operation)?;
+    let stored = all.first().ok_or(Error::NotFound)?;
+    // A subject can never store or observe another subject's material.
+    if stored.command().subject != subject {
+        return Err(Error::NotFound);
+    }
+    if material.subject() != subject {
+        return Err(Error::OperationConflict);
+    }
+    if material.request_sha256() != stored.command().request_sha256 {
+        return Err(Error::OperationConflict);
+    }
+    if let Some(existing) = load_material(tx, operation, kind, &all)? {
+        if existing.raw() != material.raw() {
+            return Err(Error::OperationConflict);
+        }
+        // Idempotent admission: its reservation must already be consumed.
+        if held(tx, operation, kind)?.is_some() {
+            return Err(Error::Integrity);
+        }
+        authorize()?;
+        return Ok(false);
+    }
+    // Request material may exist before or after the dispatch boundary;
+    // response material can only exist once the boundary is crossed.
+    let allowed = matches!(
+        (kind, all.last().ok_or(Error::Integrity)?.phase()),
+        (Kind::Request, Phase::Prepared | Phase::OutcomeUnknown)
+            | (Kind::Response, Phase::OutcomeUnknown)
+    );
+    if !allowed {
+        return Err(Error::Invalid("IO material phase"));
+    }
+    let (reserved_bytes, reservation_subject) =
+        held(tx, operation, kind)?.ok_or(Error::Invalid("IO material reservation"))?;
+    if reservation_subject != subject {
+        return Err(Error::Integrity);
+    }
+    // A request original must be exactly the bytes the command binds; a
+    // response original can never exceed the declared response limit.
+    match kind {
+        Kind::Request => {
+            if material.payload().len() as u64 != stored.command().request_bytes
+                || material.payload_sha256() != stored.command().request_sha256
+            {
+                return Err(Error::OperationConflict);
+            }
+        }
+        Kind::Response => {
+            if material.payload().len() as u64 > stored.command().response_limit {
+                return Err(Error::Limit);
+            }
+        }
+    }
+    if material.container().len() as u64 > reserved_bytes as u64 {
+        return Err(Error::EventCapacity);
+    }
+    let deleted = sql(tx.execute(
+        "DELETE FROM io_material_reservations WHERE operation_id=?1 AND kind=?2 AND subject=?3",
+        params![operation, kind.number() as i64, subject],
+    ))?;
+    if deleted != 1 {
+        return Err(Error::Integrity);
+    }
+    sql(tx.execute(
+            "INSERT INTO io_evidence(digest,operation_id,subject,kind,request_sha256,payload_sha256,payload_bytes,container) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",
+            params![
+                material.digest().as_slice(),
+                operation,
+                material.subject(),
+                kind.number() as i64,
+                material.request_sha256().as_slice(),
+                material.payload_sha256().as_slice(),
+                material.payload().len() as i64,
+                material.container(),
+            ],
+        ))?;
+    boundary("io-material-after-evidence");
+    // No network or external work may occur in this synchronous callback.
+    authorize()?;
+    Ok(true)
 }
