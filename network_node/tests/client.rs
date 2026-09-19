@@ -415,3 +415,38 @@ async fn connection_closed_without_response_does_not_retry_or_leak_diagnostic() 
     assert!(!error.to_string().contains("private-test-body"));
     assert!(!task.await.unwrap());
 }
+
+#[tokio::test]
+async fn raw_response_preserves_obs_text_while_text_api_remains_strict() {
+    let raw = b"HTTP/1.1 200 OK\r\nX-Label: \xe9\r\nX-Label: ascii\r\nContent-Length: 3\r\nConnection: close\r\n\r\n\x00\xffA";
+    let (origin, received, task) = server(raw.to_vec(), Duration::ZERO).await;
+    let reply = client(&origin, &["GET"], Limits::default())
+        .send_raw(request(&origin, "GET"), CancellationToken::new())
+        .await
+        .unwrap();
+    assert_eq!(reply.status, 200);
+    assert_eq!(reply.body, b"\x00\xffA");
+    assert_eq!(
+        reply
+            .headers
+            .iter()
+            .filter(|(name, _)| name == "x-label")
+            .map(|(_, value)| value.clone())
+            .collect::<Vec<_>>(),
+        vec![vec![0xe9], b"ascii".to_vec()]
+    );
+    assert!(received.await.unwrap().starts_with(b"GET /api?"));
+    task.await.unwrap();
+
+    // A separate real exchange exercises the backwards-compatible text API.
+    let (origin, received, task) = server(raw.to_vec(), Duration::ZERO).await;
+    assert_eq!(
+        client(&origin, &["GET"], Limits::default())
+            .send(request(&origin, "GET"), CancellationToken::new())
+            .await
+            .err(),
+        Some(Error::Transport)
+    );
+    assert!(received.await.unwrap().starts_with(b"GET /api?"));
+    task.await.unwrap();
+}

@@ -26,6 +26,8 @@ pub mod io_execution;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_jobs;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod http_io;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod manager;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod package;

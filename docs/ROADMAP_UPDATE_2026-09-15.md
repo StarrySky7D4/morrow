@@ -157,7 +157,7 @@ IO-C 仍在进行：发送前后续意图/审计容量预留已在 Store v16 落
 [编码看板](DEVELOPMENT_BOARD.md) 是当前任务状态入口，沿用 ROAD-07 / IO-A–E 的总门槛：
 
 1. IO-C1：保持已验 Store v17 原始容器、材料预留、有界读取／幂等校验、满盘与恢复回归；补正式证据访问策略与按配额退休方案。不得把摘要当作原件存在证明，不以本轮迁移替代主应用数据验收。
-2. IO-C2 与 IO-B2：基于已修正的唯一执行与最终交付校验，托管作业已绑定真实 Manager/IoBinding 与共享 job/bytes；已把可信 BrokerRouter、作业子调用预留与持久 Broker 贯通（[本轮证据](../reports/brokered-io-jobs-2026-09-19.md)）；后续接真实资源批准与后端，验证重启及主应用任务报告一致。持久状态不恢复 live grant，数据库锁外执行 IO。
+2. IO-C2 与 IO-B2：基于已修正的唯一执行与最终交付校验，托管作业已绑定真实 Manager/IoBinding 与共享 job/bytes；已把可信 BrokerRouter、作业子调用预留与持久 Broker 贯通（[本轮证据](../reports/brokered-io-jobs-2026-09-19.md)）；已接原实例端点批准与真实HTTP/TLS后端（[托管HTTP](PLUGIN_MANAGED_HTTP.md)）；后续验证持久批准、重启及主应用任务报告一致。持久状态不恢复 live grant，数据库锁外执行 IO。
 3. IO-D1／D2／D3：在上述门槛通过后，分别完成第三方 HTTP／HTTPS 调用、授权 API 节点服务、文件选择／目录与变更。每项验证实际后端、权限交集、结果丢失及撤权；客户端和服务端都属于首批网络范围。
 4. IO-E1／E2 与 ROAD-08：按固定契约完成三语言 SDK、管理界面、外部独立插件和断源重放。既有 guest-v1-rc1 原件不重建；新 IO 单独形成兼容候选。
 

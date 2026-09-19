@@ -275,6 +275,34 @@ impl IoBinding {
             capability,
         })
     }
+    /// Hold one resource under the existing approved ceiling, without consuming
+    /// a concurrent job or byte budget. Concrete resource selection is host policy.
+    pub(crate) fn admit_resource(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        capabilities: &[IoCapability],
+        now: u64,
+    ) -> Result<IoResourceLease> {
+        self.validate_identity(manager, host, instance)?;
+        if capabilities.is_empty() || capabilities.iter().any(|c| !self.capabilities.contains(c)) {
+            return Err(Error::Denied);
+        }
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&state, now)?;
+        let resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
+        if resources > self.context.budget.max_resources {
+            return Err(Error::Limit);
+        }
+        self.validate_owner(host, instance)?;
+        state.usage.resources = resources;
+        state.last_tick = now;
+        Ok(IoResourceLease {
+            binding: self.duplicate(),
+            resources: 1,
+        })
+    }
     /// Internal job admission after an exact managed owner was authenticated at
     /// worker construction. Uses the original instance context, never a new grant.
     pub(crate) fn admit_job_authenticated(
@@ -386,6 +414,9 @@ pub(crate) struct IoResourceLease {
     resources: u32,
 }
 impl IoResourceLease {
+    pub(crate) fn binding(&self) -> &IoBinding {
+        &self.binding
+    }
     pub(crate) fn preflight(
         &self,
         manager: &Manager,
@@ -433,6 +464,9 @@ pub(crate) struct IoJobLease {
     bytes: Mutex<u64>,
 }
 impl IoJobLease {
+    pub(crate) fn binding(&self) -> &IoBinding {
+        &self.binding
+    }
     /// Reserve only the response ceiling and one held call resource. The worker
     /// already charged the exact request frame, and the parent owns the job slot.
     /// Validation and checked accounting precede every mutation of either budget.

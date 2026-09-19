@@ -107,8 +107,35 @@ pub struct RouteContext<'a> {
     used: bool,
     expected: Option<Vec<u8>>,
     uncertain: bool,
+    http_guard: Option<crate::http_io::HttpCallGuard>,
 }
 impl RouteContext<'_> {
+    /// Validate a host-issued endpoint grant against this exact managed import.
+    /// The returned monitor can be moved into an asynchronous transport without
+    /// borrowing the host or keeping worker-state locks alive.
+    pub fn authorize_http(
+        &mut self,
+        grant: &crate::http_io::HttpGrant,
+    ) -> io_execution::Result<crate::http_io::HttpCallGuard> {
+        if self.http_guard.is_some() {
+            return Err(io_execution::Error::Duplicate);
+        }
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(io_execution::Error::Denied)?;
+        let guard = grant.authorize(
+            self.host,
+            self.instance,
+            self.lease,
+            self.request,
+            self.cancel.clone(),
+            Arc::clone(&authority.clock),
+        )?;
+        self.http_guard = Some(guard.clone());
+        Ok(guard)
+    }
     /// Persist the exact framed request, commit the send boundary, and execute
     /// one bounded HTTP-frame backend once. Resource selection remains the
     /// trusted router's responsibility; this method does not create its grant.
@@ -288,6 +315,7 @@ struct Slot {
     report: Option<JobReport>,
     abandoned: bool,
     _lease: Option<Arc<IoJobLease>>,
+    http_guards: Vec<crate::http_io::HttpCallGuard>,
 }
 struct State {
     phase: Phase,
@@ -298,7 +326,7 @@ struct State {
 struct Authority {
     cancellation: Cancellation,
     binding: IoBinding,
-    clock: Mutex<Box<dyn FnMut() -> u64 + Send>>,
+    clock: crate::http_io::SharedClock,
 }
 impl Authority {
     // Serialize sampling AND validation in the original host clock domain.
@@ -371,7 +399,17 @@ impl Control {
             })
     }
     fn refresh(&self, slot: &mut Slot) {
-        if let Some(fault) = self.fault(&slot.cancel)
+        let fault = self.fault(&slot.cancel).or_else(|| {
+            crate::http_io::HttpCallGuard::check_all(&slot.http_guards)
+                .err()
+                .map(|error| match error {
+                    io_execution::Error::Expired => Fault::Deadline,
+                    io_execution::Error::Cancelled => Fault::Cancelled,
+                    io_execution::Error::Clock => Fault::TaskProtocol,
+                    _ => Fault::InactiveConnection,
+                })
+        });
+        if let Some(fault) = fault
             && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
@@ -576,7 +614,7 @@ impl IoWorker {
         let authority = Authority {
             cancellation: instance.cancellation(),
             binding,
-            clock: Mutex::new(Box::new(clock)),
+            clock: Arc::new(Mutex::new(Box::new(clock))),
         };
         Self::spawn_session(
             Session::Managed(instance),
@@ -768,6 +806,7 @@ impl IoWorker {
                 report: None,
                 abandoned: false,
                 _lease: lease.clone(),
+                http_guards: Vec::new(),
             },
         );
         if self
@@ -875,10 +914,10 @@ fn execute(
                 // Gentle draining preserves a valid Ready result until consumed,
                 // dropped or expired; then disconnection cannot discard success.
                 Phase::Draining => {
-                    idle && state
-                        .jobs
-                        .values()
-                        .all(|slot| control.fault(&slot.cancel).is_some())
+                    idle && state.jobs.values().all(|slot| {
+                        slot.report.as_ref().is_some_and(|report| report.cancelled)
+                            || control.fault(&slot.cancel).is_some()
+                    })
                 }
                 Phase::Stopping | Phase::Stopped | Phase::Failed => idle,
             };
@@ -901,6 +940,7 @@ fn execute(
             mut router,
             lease,
         } = job;
+        let mut http_guards = Vec::new();
         let mut report = match control.fault(&cancel) {
             Some(fault) => {
                 let mut report = cancelled_report(package, fault);
@@ -920,6 +960,7 @@ fn execute(
                     Session::Raw(..) => None,
                 },
                 &broker,
+                &mut http_guards,
             ),
         };
         if let Some(fault) = control.fault(&cancel) {
@@ -933,6 +974,7 @@ fn execute(
             if slot.abandoned {
                 state.jobs.remove(&serial);
             } else {
+                slot.http_guards = http_guards;
                 slot.report = Some(report);
                 control.refresh(slot);
             }
@@ -972,6 +1014,7 @@ fn run_job(
     host: &mut HostRuntime,
     instance: Option<&ManagedInstance>,
     broker: &Broker,
+    http_guards: &mut Vec<crate::http_io::HttpCallGuard>,
 ) -> JobReport {
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -1051,8 +1094,14 @@ fn run_job(
                             used: false,
                             expected: None,
                             uncertain: false,
+                            http_guard: None,
                         };
                         let reply = router.route(&mut context, call, &parsed);
+                        if let Some(guard) = context.http_guard.take() {
+                            // At most one guard per import; imports are bounded by
+                            // max_calls. Keep successful authorization through Ready.
+                            http_guards.push(guard);
+                        }
                         if context.uncertain || (context.expected.is_some() && reply.is_err()) {
                             Err(RouterFault::Unknown)
                         } else if reply

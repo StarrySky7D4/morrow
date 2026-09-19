@@ -105,7 +105,7 @@ gRPC 另设 profile：原生后端覆盖 unary、server/client/bidirectional str
 
 ## 7. 执行任务与退出门槛
 
-以下全部为待实施；编号是工作包，不绑定某个 test.x 发布次数。IO-1 的 GET 跑通只能标内部进展。网络完整交付至少要求 NET-1 到 NET-7 在声明平台达到相应验收；NET-8 以独立 profile 验收并准确披露，不能借“不属于基础 profile”声称任意网络 API 已兼容。
+以下是完整工作包，尚未整项验收；NET-1的有界HTTP出站与NET-6的持久发送分类已形成 [托管HTTP子集](PLUGIN_MANAGED_HTTP.md)，不包含账户/流/三语言新接口或主应用。编号是工作包，不绑定某个 test.x 发布次数。IO-1 的 GET 跑通只能标内部进展。网络完整交付至少要求 NET-1 到 NET-7 在声明平台达到相应验收；NET-8 以独立 profile 验收并准确披露，不能借“不属于基础 profile”声称任意网络 API 已兼容。
 
 | 任务 | 依赖 | 交付与必须通过的证据 |
 | --- | --- | --- |

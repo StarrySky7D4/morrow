@@ -4,12 +4,13 @@
 
 ## 当前实现
 
+- `managed_http`（plugin-adapter）：通过真实 Manager/IoBinding 批准固定 origin/方法/凭据，guest→托管作业→持久发送边界→实际 HTTP/TLS→受控交付已接线；完整范围见 [托管 HTTP](../docs/PLUGIN_MANAGED_HTTP.md)，尚未接主应用与持久账户/资源界面。
 - `client::Client`：受信任调用方指定精确 origin 与允许方法，支持 GET/HEAD/POST/PUT/PATCH/DELETE/OPTIONS、原始正文、重复业务头与完整 HTTP status；4xx/5xx 仍返回响应。目标 DNS 全量检查后钉定连接，禁止隐式代理、重定向、重试与解压。默认 HTTPS 公网，显式本机 HTTP/HTTPS profile 仅允许 loopback；TLS 使用内置 WebPKI 信任根；自定义受信任根有界导入且保持证书/主机名验证，不自动读取 Windows 系统证书库。
 - `server::Node`：普通 HTTP 仅监听本机 IPv4/IPv6；TLS 通过 `TlsIdentity` 和 `bind_tls` 明确配置证书/私钥与监听地址，可选择非本机地址，不隐式改防火墙或发布公网；所有路由先 Bearer 认证，按精确路径与方法分派。检查 header/正文/输出、并发、超时与取消，停机撤销交付并关闭 socket。最多 2×并发数量的接收连接，每个连接固定期限 2×请求超时，半头/空闲/keep-alive/TLS 未完成握手不能永久占位。每连接独立推进 TLS 握手，单个慢握手不阻塞 listener 接收其他请求。
 - `plugin::PluginService`（可选 feature）：启动方明确选择固定包与 bytes→bytes 处理器，只接受无内容能力/无依赖的包。创建全新独占数据目录，拒绝已有目录/文件；Worker 以零内容批准执行，远端不能选择其他包/handler或获取内容对象。处理器失败返回固定 422，内部错误和认证头不传给插件。
 - `morrow-api-node`：提供 plugin 模式及 relay 模式；可作为本机 API 节点，也可将获认证请求转发到启动方固定的上游，再返回上游结果。relay 仅转发 content-type/accept 业务头，节点认证信息不转发。
 
-默认请求 body 1 MiB、响应 body 4 MiB、header 16 KiB、并发16、请求超时30秒；类型层另有有界最大配置。当前正文完整缓冲，读取网络分块时检查总量，不是 guest 流式 API。响应头仅接受可表示为文本的值；不承诺保留网络逐字节报文顺序/原始 HTTP 帧。
+默认请求 body 1 MiB、响应 body 4 MiB、header 16 KiB、并发16、请求超时30秒；类型层另有有界最大配置。当前正文完整缓冲，读取网络分块时检查总量，不是 guest 流式 API。`send_raw` 保留响应头值原字节与重复项；原文本 `send` 接口仍严格拒绝非文本值。不承诺保留网络逐字节报文顺序/原始 HTTP 帧。
 
 ## 构建与测试
 
@@ -48,8 +49,10 @@ Ctrl+C 执行有界停止。首期服务只有一个节点 token；远端主体�
 
 ## 验证范围及缺口
 
-当前实现是可运行的受信任原生传输底座，和 app 的原有 Manager、Registry、正式 guest IO import、网络证据与 UI 服务管理仍有待集成。原 guest 协议与冻结二进制不变，本轮不修改 Flutter、正式用户资料库或应用版本。
+当前传输底座已有托管出站适配，接入 Manager/IoBinding、现有 guest IO import 和持久操作/材料；Registry 持久资源配置、主应用 UI 服务管理与完整服务发布仍待集成。原 guest 协议与冻结二进制不变，本轮不修改 Flutter、正式用户资料库或应用版本。
 
-完整目标仍包括：正式出站/监听/发布权限、远端主体与内容授权交集、外部效果持久意图/Unknown查询、API Key/OAuth账户管理、multipart辅助/大型流/SSE/WebSocket、webhook签名与恢复、TLS 部署/证书轮换和各平台实际验收。当前 Error 的取消/超时/传输失败不证明远端没执行，不会自动重试；没有持久结果恢复。不要把普通原生HTTP调用描述为完整插件服务SDK稳定。
+完整目标仍包括：正式出站/监听/发布权限、远端主体与内容授权交集、外部效果持久意图/Unknown查询、API Key/OAuth账户管理、multipart辅助/大型流/SSE/WebSocket、webhook签名与恢复、TLS 部署/证书轮换和各平台实际验收。当前 Error 的取消/超时/传输失败不证明远端没执行，不会自动重试；低层 Client 不提供持久恢复；managed_http 通过 Broker/Store 留下恢复分类与原件，但真实提供者核对及主应用恢复界面仍未完成。不要把普通原生HTTP调用描述为完整插件服务SDK稳定。
 
 本轮实际结果见 [首次原生验证报告](../reports/network-node-initial.md)：33 项 Release 测试、strict Clippy 和 4 次实际可执行文件流程通过；不是整个网络 SDK 的完成声明。
+
+本轮托管HTTP接线的范围与证据见 [2026-09-19报告](../reports/managed-http-2026-09-19.md)；旧33项是原型历史结果，不与本轮测试重复累加。

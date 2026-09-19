@@ -1,9 +1,12 @@
 #![forbid(unsafe_code)]
 //! Experimental trusted native HTTP client and API node transport.
-//! This crate does not create plugin grants or expose arbitrary guest networking.
+//! The optional managed adapter binds explicit host-selected HTTP resources to
+//! original plugin authority; the transport alone never grants guest networking.
 use std::time::Duration;
 
 pub mod client;
+#[cfg(feature = "plugin-adapter")]
+pub mod managed_http;
 #[cfg(feature = "plugin-adapter")]
 pub mod plugin;
 pub mod server;
@@ -21,6 +24,14 @@ pub struct HttpRequest {
 pub struct HttpResponse {
     pub status: u16,
     pub headers: Vec<(String, String)>,
+    pub body: Vec<u8>,
+}
+/// HTTP response with exact header value bytes, including legal HTTP obs-text.
+/// Deliberately no Debug: response headers and bodies can contain secrets.
+#[derive(Clone, PartialEq, Eq)]
+pub struct RawHttpResponse {
+    pub status: u16,
+    pub headers: Vec<(String, Vec<u8>)>,
     pub body: Vec<u8>,
 }
 #[derive(Clone, Copy, Debug)]

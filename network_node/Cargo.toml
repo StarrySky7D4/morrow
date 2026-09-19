@@ -27,6 +27,7 @@ morrow-core = { path = "../core", optional = true }
 plugin-adapter = ["dep:morrow-plugin-runtime", "dep:morrow-core"]
 
 [dev-dependencies]
+wat = "=1.239.0"
 rcgen = "=0.13.2"
 tempfile = "=3.27.0"
 

@@ -1,5 +1,5 @@
 //! Trusted native outbound HTTP. No plugin approval or reusable guest capability is created here.
-use crate::{Error, HttpRequest, HttpResponse, Limits, Result};
+use crate::{Error, HttpRequest, HttpResponse, Limits, RawHttpResponse, Result};
 use futures_util::StreamExt;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use std::{
@@ -128,6 +128,33 @@ impl Client {
         request: HttpRequest,
         cancel: CancellationToken,
     ) -> Result<HttpResponse> {
+        let response = self.send_raw(request, cancel).await?;
+        let headers = response
+            .headers
+            .into_iter()
+            .map(|(name, value)| {
+                // Preserve the existing text API's strict HeaderValue semantics.
+                // In particular, never replace non-ASCII bytes with lossy text.
+                let value = HeaderValue::from_bytes(&value).map_err(|_| Error::Transport)?;
+                Ok((
+                    name,
+                    value.to_str().map_err(|_| Error::Transport)?.to_owned(),
+                ))
+            })
+            .collect::<Result<Vec<_>>>()?;
+        Ok(HttpResponse {
+            status: response.status,
+            headers,
+            body: response.body,
+        })
+    }
+    /// Preserve exact response header value bytes, including legal obs-text.
+    /// Admission, destination controls, quotas and cancellation match `send`.
+    pub async fn send_raw(
+        &self,
+        request: HttpRequest,
+        cancel: CancellationToken,
+    ) -> Result<RawHttpResponse> {
         if cancel.is_cancelled() {
             return Err(Error::Cancelled);
         }
@@ -187,7 +214,7 @@ impl Client {
         target: Url,
         request: HttpRequest,
         headers: HeaderMap,
-    ) -> Result<HttpResponse> {
+    ) -> Result<RawHttpResponse> {
         let host = target.host_str().ok_or(Error::Invalid)?;
         let port = target.port_or_known_default().ok_or(Error::Invalid)?;
         let mut addresses = Vec::new();
@@ -263,10 +290,7 @@ impl Client {
             if bytes > self.limits.max_header_bytes {
                 return Err(Error::Limit);
             }
-            output_headers.push((
-                name.as_str().to_owned(),
-                value.to_str().map_err(|_| Error::Transport)?.to_owned(),
-            ));
+            output_headers.push((name.as_str().to_owned(), value.as_bytes().to_vec()));
         }
         let mut stream = response.bytes_stream();
         let mut body = Vec::new();
@@ -281,7 +305,7 @@ impl Client {
             }
             body.extend_from_slice(&chunk);
         }
-        Ok(HttpResponse {
+        Ok(RawHttpResponse {
             status,
             headers: output_headers,
             body,
