@@ -7,7 +7,7 @@ edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [features]
-packages = ["dep:morrow-core", "dep:prost"]
+packages = ["dep:morrow-core", "dep:prost", "dep:sha2"]
 # Process-exit boundaries in the durable Store, for crash-interruption tests only.
 fault-injection = ["packages", "morrow-core/fault-injection"]
 [dependencies]
@@ -16,6 +16,7 @@ wasmparser = {version = "=0.239.0", default-features = false, features = ["std"]
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 morrow-core = {path = "../core", optional = true}
 prost = {version = "=0.14.4", optional = true}
+sha2 = {version = "=0.10.9", optional = true}
 [dev-dependencies]
 sha2 = "=0.10.9"
 morrow-workbench-plugin = {path = "../plugins/workbench"}

@@ -8,6 +8,7 @@ use crate::{
     io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
+    service_content::ServiceContentAccess,
     service_history::{self, ServiceJournal},
     service_io::{ListenerGrant, ServiceGrant},
     worker::TaskId,
@@ -112,6 +113,7 @@ pub struct RouteContext<'a> {
     uncertain: bool,
     http_guard: Option<crate::http_io::HttpCallGuard>,
     service_validity: Option<&'a service_history::Validity>,
+    service_content: Option<&'a ServiceContentAccess>,
 }
 impl RouteContext<'_> {
     /// Validate a host-issued endpoint grant against this exact managed import.
@@ -138,7 +140,8 @@ impl RouteContext<'_> {
                 self.cancel.clone(),
                 Arc::clone(&authority.clock),
             )?
-            .with_service_validity(self.service_validity)?;
+            .with_service_validity(self.service_validity)?
+            .with_service_content(self.service_content)?;
         self.http_guard = Some(guard.clone());
         Ok(guard)
     }
@@ -190,7 +193,12 @@ impl RouteContext<'_> {
                     .map_err(|_| morrow_core::Error::Invalid("expired service request"))?;
             }
             authority
-                .with_execution_time(|now| child.check(now).map_err(Error::from))
+                .with_execution_time(|now| {
+                    if let Some(access) = self.service_content {
+                        access.check_at(now)?;
+                    }
+                    child.check(now).map_err(Error::from)
+                })
                 .map_err(|_| morrow_core::Error::Invalid("inactive IO job"))
         };
         if let Some(stored) = self
@@ -249,6 +257,11 @@ impl RouteContext<'_> {
                 if let Some(validity) = self.service_validity {
                     validity.check().map_err(|_| ())?;
                 }
+                if let Some(access) = self.service_content {
+                    authority
+                        .with_execution_time(|now| access.check_at(now).map_err(Error::from))
+                        .map_err(|_| ())?;
+                }
                 let response = backend(raw)?;
                 Response::decode_http(self.request, &response).map_err(|_| ())?;
                 Ok(response)
@@ -257,7 +270,12 @@ impl RouteContext<'_> {
                 if let Some(validity) = self.service_validity {
                     validity.check()?;
                 }
-                authority.with_execution_time(|now| live.check_liveness(now))
+                authority.with_execution_time(|now| {
+                    if let Some(access) = self.service_content {
+                        access.check_at(now)?;
+                    }
+                    live.check_liveness(now)
+                })
             },
         );
         // Forget only live bookkeeping, never durable Unknown/Observed history.
@@ -310,7 +328,7 @@ pub enum ServicePersistenceStatus {
     Unavailable,
 }
 pub struct JobReport {
-    /// Execution facts only; the content exchange is always denied for IO jobs.
+    /// Execution facts; content imports require an explicit durable service access.
     pub task: TaskReport,
     /// The last brokered IO response, decoded against its own request.
     pub response: Option<Response>,
@@ -385,6 +403,7 @@ struct Slot {
     _lease: Option<Arc<IoJobLease>>,
     http_guards: Vec<crate::http_io::HttpCallGuard>,
     service_grant: Option<ServiceGrant>,
+    service_content: Option<ServiceContentAccess>,
 }
 struct State {
     phase: Phase,
@@ -456,13 +475,14 @@ impl Control {
         self.state.lock().unwrap_or_else(|e| e.into_inner())
     }
     fn fault(&self, cancel: &Cancellation) -> Option<Fault> {
-        self.job_fault(cancel, None, &[])
+        self.job_fault(cancel, None, &[], None)
     }
     fn job_fault(
         &self,
         cancel: &Cancellation,
         service: Option<&ServiceGrant>,
         http: &[crate::http_io::HttpCallGuard],
+        content: Option<&ServiceContentAccess>,
     ) -> Option<Fault> {
         cancel
             .fault()
@@ -474,6 +494,9 @@ impl Control {
                             authority.binding.check_liveness(now)?;
                             if let Some(grant) = service {
                                 grant.check(now)?;
+                            }
+                            if let Some(content) = content {
+                                content.check_at(now)?;
                             }
                             crate::http_io::HttpCallGuard::check_all_at(http, now)
                         })
@@ -489,9 +512,12 @@ impl Control {
             })
     }
     fn refresh(&self, slot: &mut Slot) {
-        if let Some(fault) =
-            self.job_fault(&slot.cancel, slot.service_grant.as_ref(), &slot.http_guards)
-            && let Some(report) = &mut slot.report
+        if let Some(fault) = self.job_fault(
+            &slot.cancel,
+            slot.service_grant.as_ref(),
+            &slot.http_guards,
+            slot.service_content.as_ref(),
+        ) && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
         } else if let Some(report) = &mut slot.report
@@ -578,6 +604,7 @@ struct ServiceJob {
     request: service::Request,
     grant: ServiceGrant,
     persistence: Option<ServicePersistence>,
+    content: Option<ServiceContentAccess>,
 }
 struct ServicePersistence {
     journal: ServiceJournal,
@@ -670,7 +697,8 @@ impl Drop for JobHandle {
     }
 }
 /// One bounded executor owning its package, connection and core on a dedicated
-/// thread. IO jobs deny content exchange; routers execute outside caller transactions.
+/// thread. Ordinary IO jobs deny content exchange; durable content service jobs
+/// use original object grants. Routers execute outside caller transactions.
 pub struct IoWorker {
     sender: SyncSender<Message>,
     control: Arc<Control>,
@@ -910,6 +938,7 @@ impl IoWorker {
                 request,
                 grant,
                 persistence: None,
+                content: None,
             })),
         )
     }
@@ -947,12 +976,77 @@ impl IoWorker {
             Some(Box::new(ServiceJob {
                 request,
                 grant,
+                content: None,
                 persistence: Some(ServicePersistence {
                     journal,
                     key: key.into(),
                 }),
             })),
         )
+    }
+    /// Typed content access is only available on a durable service invocation.
+    /// The effective content scope is part of its exact retained input.
+    #[allow(clippy::too_many_arguments)]
+    pub fn submit_service_content(
+        &self,
+        request: service::Request,
+        grant: ServiceGrant,
+        journal: ServiceJournal,
+        key: &str,
+        access: ServiceContentAccess,
+        router: Box<dyn BrokerRouter>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_job(&authority.binding, &request)
+            .map_err(|_| JobError::InvalidOptions)?;
+        access
+            .validate_grant(&grant)
+            .map_err(|_| JobError::InvalidOptions)?;
+        access
+            .validate_request(&request)
+            .map_err(|_| JobError::InvalidOptions)?;
+        let expected =
+            morrow_core::service_record::call_id(journal.policy(), key, request.invocation())
+                .map_err(|_| JobError::InvalidOptions)?;
+        if expected != request.call_id() {
+            return Err(JobError::InvalidOptions);
+        }
+        self.submit_routed(
+            request.bytes().to_vec(),
+            JobRouter::Brokered(router),
+            timeout,
+            Some(Box::new(ServiceJob {
+                request,
+                grant,
+                content: Some(access),
+                persistence: Some(ServicePersistence {
+                    journal,
+                    key: key.into(),
+                }),
+            })),
+        )
+    }
+    pub fn check_content_access(&self, access: &ServiceContentAccess) -> Result<(), JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        access
+            .validate_binding(&authority.binding)
+            .map_err(|_| JobError::InvalidOptions)?;
+        authority
+            .with_time(|now| {
+                authority.binding.check_liveness(now)?;
+                access.check_at(now)
+            })
+            .map_err(|_| JobError::Closed)
     }
     fn submit_routed(
         &self,
@@ -965,6 +1059,15 @@ impl IoWorker {
             || timeout > self.control.timeout
             || input.is_empty()
             || input.len() > MAX_TASK_BYTES
+        {
+            return Err(JobError::InvalidOptions);
+        }
+        if let Some(service) = &service
+            && service.content.is_none()
+            && service.request.invocation().headers.iter().any(|h| {
+                h.name
+                    .eq_ignore_ascii_case(crate::service_content::SCOPE_HEADER)
+            })
         {
             return Err(JobError::InvalidOptions);
         }
@@ -1005,6 +1108,9 @@ impl IoWorker {
                 a.with_time(|now| {
                     if let Some(service) = &service {
                         service.grant.check(now)?;
+                        if let Some(access) = &service.content {
+                            access.check_at(now)?;
+                        }
                     }
                     a.binding.admit_job_authenticated(
                         input_bytes,
@@ -1039,6 +1145,7 @@ impl IoWorker {
                 _lease: lease.clone(),
                 http_guards: Vec::new(),
                 service_grant: service.as_ref().map(|service| service.grant.clone()),
+                service_content: service.as_ref().and_then(|s| s.content.clone()),
             },
         );
         if self
@@ -1175,7 +1282,12 @@ fn execute(
             service,
         } = job;
         let mut http_guards = Vec::new();
-        let mut report = match control.job_fault(&cancel, service.as_ref().map(|s| &s.grant), &[]) {
+        let mut report = match control.job_fault(
+            &cancel,
+            service.as_ref().map(|s| &s.grant),
+            &[],
+            service.as_ref().and_then(|s| s.content.as_ref()),
+        ) {
             Some(fault) => {
                 let mut report = cancelled_report(package, fault);
                 report.bytes = input.len() as u64;
@@ -1210,9 +1322,12 @@ fn execute(
                 ),
             },
         };
-        if let Some(fault) =
-            control.job_fault(&cancel, service.as_ref().map(|s| &s.grant), &http_guards)
-        {
+        if let Some(fault) = control.job_fault(
+            &cancel,
+            service.as_ref().map(|s| &s.grant),
+            &http_guards,
+            service.as_ref().and_then(|s| s.content.as_ref()),
+        ) {
             suppress(&mut report, fault);
         }
         // Computation is over. Only the controlled slot owns the job lease when
@@ -1280,7 +1395,7 @@ fn prepare_service_history(
         package.package().digest(),
         || {
             if control
-                .job_fault(cancel, Some(&service.grant), &[])
+                .job_fault(cancel, Some(&service.grant), &[], service.content.as_ref())
                 .is_some()
             {
                 Err(morrow_core::Error::Invalid("service authority"))
@@ -1351,7 +1466,12 @@ fn service_job_fault(
     validity: Option<&service_history::Validity>,
 ) -> Option<Fault> {
     control
-        .job_fault(cancel, service.map(|s| &s.grant), http)
+        .job_fault(
+            cancel,
+            service.map(|s| &s.grant),
+            http,
+            service.and_then(|s| s.content.as_ref()),
+        )
         .or_else(|| {
             validity
                 .and_then(|v| v.check().err())
@@ -1360,6 +1480,51 @@ fn service_job_fault(
                     _ => Fault::TaskProtocol,
                 })
         })
+}
+#[allow(clippy::too_many_arguments)]
+fn dispatch_service_content(
+    host: &mut HostRuntime,
+    instance: Option<&ManagedInstance>,
+    control: &Control,
+    cancel: &Cancellation,
+    service: Option<&ServiceJob>,
+    validity: Option<&service_history::Validity>,
+    request: &[u8],
+) -> Result<Vec<u8>, RouterFault> {
+    let instance = instance.ok_or(RouterFault::Denied)?;
+    let service = service.ok_or(RouterFault::Denied)?;
+    let access = service.content.as_ref().ok_or(RouterFault::Denied)?;
+    let authority = control.authority.as_ref().ok_or(RouterFault::Denied)?;
+    let mut clock = authority.clock.lock().map_err(|_| RouterFault::Denied)?;
+    // Hold the original clock domain through dispatch. The guard must not sample
+    // that clock again; all original Store boundaries supply their sampled time.
+    host.dispatch_guarded(
+        instance.connection(),
+        request,
+        &mut **clock,
+        |command, now| {
+            if cancel.fault().is_some() || control.revocation.is_revoked() {
+                return Err(morrow_core::Error::Invalid("cancelled service content"));
+            }
+            authority
+                .binding
+                .check_liveness(now)
+                .map_err(|_| morrow_core::Error::Invalid("inactive instance"))?;
+            service
+                .grant
+                .check(now)
+                .map_err(|_| morrow_core::Error::Invalid("inactive service"))?;
+            if let Some(validity) = validity {
+                validity
+                    .check()
+                    .map_err(|_| morrow_core::Error::Invalid("expired service request"))?;
+            }
+            access
+                .check_command(command, now)
+                .map_err(|_| morrow_core::Error::Invalid("denied service content"))
+        },
+    )
+    .map_err(|_| RouterFault::Unknown)
 }
 #[allow(clippy::too_many_arguments)]
 fn run_job(
@@ -1395,9 +1560,9 @@ fn run_job(
         report.service_validity = history.map(|(_, validity)| validity.clone());
         return report;
     }
-    let run = package.run_io_frame(
+    let run = package.run_service_frame(
         input,
-        &mut |request| {
+        &mut |content_call, request| {
             if fault.is_some() {
                 return Err(());
             }
@@ -1415,7 +1580,11 @@ fn run_job(
                 fault = Some(Fault::Limits);
                 return Err(());
             }
-            let capabilities: &[IoCapability] = if lease.is_some() {
+            if content_call && service.and_then(|s| s.content.as_ref()).is_none() {
+                fault = Some(Fault::TaskProtocol);
+                return Err(());
+            }
+            let capabilities: &[IoCapability] = if lease.is_some() && !content_call {
                 match Request::decode(request).map(|r| r.action().clone()) {
                     Ok(Action::Read { .. } | Action::Finish { .. } | Action::Cancel { .. }) => {
                         &[IoCapability::FileRead]
@@ -1463,48 +1632,80 @@ fn run_job(
             let call = calls;
             calls += 1;
             let mut reserved = 0;
-            let routed = match router {
-                JobRouter::Raw(router) => router.route(call, request),
-                JobRouter::Brokered(router) => match (instance, lease, Request::decode(request)) {
-                    (Some(instance), Some(lease), Ok(parsed)) => {
-                        let mut context = RouteContext {
-                            host,
-                            instance,
-                            broker,
-                            control,
-                            lease,
-                            cancel,
-                            request: &parsed,
-                            reserved: &mut reserved,
-                            used: false,
-                            expected: None,
-                            uncertain: false,
-                            http_guard: None,
-                            service_validity: history.map(|(_, validity)| validity),
-                        };
-                        let reply = router.route(&mut context, call, &parsed);
-                        if let Some(guard) = context.http_guard.take() {
-                            // At most one guard per import; imports are bounded by
-                            // max_calls. Keep successful authorization through Ready.
-                            http_guards.push(guard);
-                        }
-                        if context.uncertain || (context.expected.is_some() && reply.is_err()) {
-                            Err(RouterFault::Unknown)
-                        } else if reply
-                            .as_ref()
-                            .is_ok_and(|v| context.expected.as_ref() != Some(v))
-                        {
-                            Err(if context.used {
-                                RouterFault::Unknown
-                            } else {
-                                RouterFault::Denied
-                            })
-                        } else {
-                            reply
+            let routed = if content_call {
+                let response_bound = morrow_core::runtime::MAX_MESSAGE_BYTES as u64;
+                if bytes
+                    .checked_add(response_bound)
+                    .is_none_or(|n| n > control.limits.max_job_bytes)
+                {
+                    fault = Some(Fault::Limits);
+                    return Err(());
+                }
+                if let Err(error) = control.charge(response_bound, &[], lease.map(Arc::as_ref)) {
+                    fault = Some(error);
+                    return Err(());
+                }
+                reserved = response_bound;
+                // Reserve the full reply bound before a content transaction can commit.
+                // A fixed upper bound avoids discovering response quota after a write.
+                dispatch_service_content(
+                    host,
+                    instance,
+                    control,
+                    cancel,
+                    service,
+                    history.map(|(_, validity)| validity),
+                    request,
+                )
+            } else {
+                match router {
+                    JobRouter::Raw(router) => router.route(call, request),
+                    JobRouter::Brokered(router) => {
+                        match (instance, lease, Request::decode(request)) {
+                            (Some(instance), Some(lease), Ok(parsed)) => {
+                                let mut context = RouteContext {
+                                    host,
+                                    instance,
+                                    broker,
+                                    control,
+                                    lease,
+                                    cancel,
+                                    request: &parsed,
+                                    reserved: &mut reserved,
+                                    used: false,
+                                    expected: None,
+                                    uncertain: false,
+                                    http_guard: None,
+                                    service_validity: history.map(|(_, validity)| validity),
+                                    service_content: service.and_then(|s| s.content.as_ref()),
+                                };
+                                let reply = router.route(&mut context, call, &parsed);
+                                if let Some(guard) = context.http_guard.take() {
+                                    // At most one guard per import; imports are bounded by
+                                    // max_calls. Keep successful authorization through Ready.
+                                    http_guards.push(guard);
+                                }
+                                if context.uncertain
+                                    || (context.expected.is_some() && reply.is_err())
+                                {
+                                    Err(RouterFault::Unknown)
+                                } else if reply
+                                    .as_ref()
+                                    .is_ok_and(|v| context.expected.as_ref() != Some(v))
+                                {
+                                    Err(if context.used {
+                                        RouterFault::Unknown
+                                    } else {
+                                        RouterFault::Denied
+                                    })
+                                } else {
+                                    reply
+                                }
+                            }
+                            _ => Err(RouterFault::Denied),
                         }
                     }
-                    _ => Err(RouterFault::Denied),
-                },
+                }
             };
             bytes += reserved;
             if let Some(late) = service_job_fault(

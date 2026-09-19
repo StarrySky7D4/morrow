@@ -4,6 +4,7 @@ use morrow_core::{
     dispatch::{Connection, HostRuntime},
     plugin_package::Package,
 };
+type ServiceExchange<'a> = &'a mut dyn FnMut(bool, &[u8]) -> Result<Vec<u8>, ()>;
 pub struct PreparedPackage {
     package: Package,
     runner: Runner,
@@ -86,6 +87,22 @@ impl PreparedPackage {
             run.completion = None;
         }
         run
+    }
+    /// Both imports reach one serialized callback, so content and IO retain the
+    /// same host, job accounting and cancellation rather than parallel authorities.
+    pub(crate) fn run_service_frame(
+        &self,
+        input: &[u8],
+        route: ServiceExchange<'_>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
+        let route = std::cell::RefCell::new(route);
+        self.runner.run_task_with_io(
+            input,
+            &mut |bytes| route.borrow_mut()(true, bytes),
+            &mut |bytes| route.borrow_mut()(false, bytes),
+            cancel,
+        )
     }
     pub fn package(&self) -> &Package {
         &self.package

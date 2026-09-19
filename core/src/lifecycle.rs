@@ -55,13 +55,55 @@ impl Revocation {
         self.0.load(Ordering::Acquire)
     }
 }
+/// Read-only check of an already issued object grant. This is not a new grant.
+/// Clones retain the original grant/connection expiry and share the host clock.
+#[derive(Clone)]
+pub struct ContentAuthorization {
+    grant_revocation: Revocation,
+    connection_revocation: Revocation,
+    read_revocation: Revocation,
+    expires_at: u64,
+    clock: Arc<AtomicU64>,
+}
+impl ContentAuthorization {
+    pub fn check(&self, now: u64) -> Result<()> {
+        self.live(now)?;
+        advance_clock(&self.clock, now)?;
+        self.live(now)
+    }
+    fn live(&self, now: u64) -> Result<()> {
+        if self.grant_revocation.is_revoked()
+            || self.connection_revocation.is_revoked()
+            || self.read_revocation.is_revoked()
+            || now >= self.expires_at
+        {
+            return Err(Error::Invalid("inactive content authorization"));
+        }
+        Ok(())
+    }
+}
+fn advance_clock(clock: &AtomicU64, now: u64) -> Result<()> {
+    clock
+        .fetch_update(Ordering::AcqRel, Ordering::Acquire, |previous| {
+            (now >= previous).then_some(now)
+        })
+        .map(|_| ())
+        .map_err(|_| Error::Invalid("clock regression"))
+}
 struct GrantRecord {
+    revocation: Revocation,
     attachment_id: Option<String>,
     kind: GrantKind,
     card_id: String,
     expires_at: u64,
 }
+impl Drop for GrantRecord {
+    fn drop(&mut self) {
+        self.revocation.revoke();
+    }
+}
 struct InstanceRecord {
+    read_revocation: Revocation,
     revocation: Revocation,
     phase: InstancePhase,
     drain_deadline: Option<u64>,
@@ -75,7 +117,7 @@ struct Task {
 pub struct HostPolicy {
     id: u64,
     next: u64,
-    last_tick: u64,
+    last_tick: Arc<AtomicU64>,
     instances: BTreeMap<u64, InstanceRecord>,
     tasks: BTreeMap<u64, Task>,
 }
@@ -91,7 +133,7 @@ impl HostPolicy {
         Ok(Self {
             id,
             next: 1,
-            last_tick: 0,
+            last_tick: Arc::new(AtomicU64::new(0)),
             instances: BTreeMap::new(),
             tasks: BTreeMap::new(),
         })
@@ -102,12 +144,9 @@ impl HostPolicy {
         Ok(value)
     }
     fn tick(&mut self, now: u64) -> Result<()> {
-        if now < self.last_tick {
-            return Err(Error::Invalid("clock regression"));
-        }
-        self.last_tick = now;
-        Ok(())
+        advance_clock(&self.last_tick, now)
     }
+
     fn record(&self, instance: Instance) -> Result<&InstanceRecord> {
         if instance.host != self.id {
             return Err(Error::Invalid("foreign instance"));
@@ -128,6 +167,7 @@ impl HostPolicy {
         self.instances.insert(
             generation,
             InstanceRecord {
+                read_revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 phase: InstancePhase::Preparing,
                 drain_deadline: None,
@@ -227,6 +267,7 @@ impl HostPolicy {
         self.record_mut(instance)?.grants.insert(
             serial,
             GrantRecord {
+                revocation: Revocation(Arc::new(AtomicBool::new(false))),
                 attachment_id: attachment_id.map(str::to_owned),
                 kind,
                 card_id: card_id.into(),
@@ -234,6 +275,43 @@ impl HostPolicy {
             },
         );
         Ok(Grant { instance, serial })
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn content_authorization(
+        &self,
+        instance: Instance,
+        grant: Grant,
+        target: (GrantKind, &str, Option<&str>),
+        now: u64,
+    ) -> Result<ContentAuthorization> {
+        self.authorize_scope(instance, grant, target, now, false)?;
+        let record = self.record(instance)?;
+        let scope = record
+            .grants
+            .get(&grant.serial)
+            .ok_or(Error::Invalid("revoked grant"))?;
+        let probe = ContentAuthorization {
+            grant_revocation: scope.revocation.clone(),
+            connection_revocation: record.revocation.clone(),
+            read_revocation: record.read_revocation.clone(),
+            expires_at: scope.expires_at,
+            clock: self.last_tick.clone(),
+        };
+        probe.check(now)?;
+        Ok(probe)
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn check_scope_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        target: (GrantKind, &str, Option<&str>),
+        now: u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<()> {
+        self.expire_drains(now)?;
+        guard(now)?;
+        self.authorize_scope(instance, grant, target, now, false)
     }
     fn authorize(
         &self,
@@ -336,13 +414,24 @@ impl HostPolicy {
         &mut self,
         permit: Permit,
         store: &mut crate::store::Store,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.commit_rename_guarded(permit, store, clock, |_| Ok(()))
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn commit_rename_guarded(
+        &mut self,
+        permit: Permit,
+        store: &mut crate::store::Store,
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Receipt> {
         let task = self.take_task(permit, clock())?;
         store.rename(&task.request, || {
             let now = clock();
             self.tick(now)?;
             self.expire_drains(now)?;
+            guard(now)?;
             self.authorize(permit.instance, task.grant, &task.request, now, true)
         })
     }
@@ -355,11 +444,24 @@ impl HostPolicy {
         grant: Grant,
         store: &crate::store::Store,
         card_id: &str,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::content::CardSummary> {
+        self.read_summary_guarded(instance, grant, store, card_id, clock, |_| Ok(()))
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn read_summary_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        card_id: &str,
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::content::CardSummary> {
         identity(card_id)?;
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -372,6 +474,7 @@ impl HostPolicy {
             .map(|card| card.map(|value| value.summary()));
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -388,13 +491,26 @@ impl HostPolicy {
         grant: Grant,
         store: &crate::store::Store,
         target: (&str, &str),
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Lookup> {
+        self.query_operation_guarded(instance, grant, store, target, clock, |_| Ok(()))
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn query_operation_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        target: (&str, &str),
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Lookup> {
         let (card_id, operation_id) = target;
         identity(card_id)?;
         identity(operation_id)?;
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -405,6 +521,7 @@ impl HostPolicy {
         let result = store.lookup_for_card(card_id, operation_id);
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -421,7 +538,19 @@ impl HostPolicy {
         grant: Grant,
         store: &crate::store::Store,
         request: &crate::runtime::ReadAttachment,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::attachment::AttachmentChunk> {
+        self.read_attachment_guarded(instance, grant, store, request, clock, |_| Ok(()))
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn read_attachment_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        request: &crate::runtime::ReadAttachment,
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::attachment::AttachmentChunk> {
         request.validate()?;
         let target = (
@@ -431,10 +560,12 @@ impl HostPolicy {
         );
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(instance, grant, target, now, false)?;
         let result = store.read_attachment_chunk(request);
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(instance, grant, target, now, false)?;
         result
     }
@@ -448,9 +579,33 @@ impl HostPolicy {
         card: &str,
         mut clock: impl FnMut() -> u64,
     ) -> Result<CardRecord> {
-        self.read_content_with(instance, grant, card, &mut clock, || {
-            store.card(card)?.ok_or(Error::NotFound)
-        })
+        self.read_content_with(
+            instance,
+            grant,
+            card,
+            &mut clock,
+            || store.card(card)?.ok_or(Error::NotFound),
+            |_| Ok(()),
+        )
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    pub(crate) fn read_content_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &crate::store::Store,
+        card: &str,
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<CardRecord> {
+        self.read_content_with(
+            instance,
+            grant,
+            card,
+            clock,
+            || store.card(card)?.ok_or(Error::NotFound),
+            guard,
+        )
     }
     #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
     pub(crate) fn read_frozen_content(
@@ -461,9 +616,10 @@ impl HostPolicy {
         clock: impl FnMut() -> u64,
     ) -> Result<CardRecord> {
         let id = card.summary().id;
-        self.read_content_with(instance, grant, &id, clock, || Ok(card.clone()))
+        self.read_content_with(instance, grant, &id, clock, || Ok(card.clone()), |_| Ok(()))
     }
     #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
     fn read_content_with(
         &mut self,
         instance: Instance,
@@ -471,10 +627,12 @@ impl HostPolicy {
         card: &str,
         mut clock: impl FnMut() -> u64,
         read: impl FnOnce() -> Result<CardRecord>,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<CardRecord> {
         identity(card)?;
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -485,6 +643,7 @@ impl HostPolicy {
         let value = read();
         let now = clock();
         self.expire_drains(now)?;
+        guard(now)?;
         self.authorize_scope(
             instance,
             grant,
@@ -573,13 +732,38 @@ impl HostPolicy {
         operation: &str,
         card: &CardRecord,
         evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.create_content_with_evidence_guarded(
+            instance,
+            grant,
+            store,
+            operation,
+            card,
+            evidence,
+            clock,
+            |_| Ok(()),
+        )
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn create_content_with_evidence_guarded(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        operation: &str,
+        card: &CardRecord,
+        evidence: &[crate::task_evidence::Evidence],
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
     ) -> Result<crate::transaction::Receipt> {
         identity(operation)?;
         let id = card.summary().id;
         store.create_authorized_with_evidence(operation, card, evidence, || {
             let now = clock();
             self.expire_drains(now)?;
+            guard(now)?;
             self.authorize_scope(
                 instance,
                 grant,
@@ -603,6 +787,7 @@ impl HostPolicy {
         {
             return Err(Error::Invalid("drain transition"));
         }
+        record.read_revocation.revoke();
         record.phase = InstancePhase::Draining;
         record.drain_deadline = Some(deadline);
         Ok(())

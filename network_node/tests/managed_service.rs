@@ -759,3 +759,23 @@ async fn durable_cached_response_is_scoped_to_the_actual_authenticated_principal
     node.shutdown().await.unwrap();
     run.finish().await;
 }
+
+#[tokio::test]
+async fn ordinary_service_strips_content_scope_metadata_without_granting_content_access() {
+    let run = Running::new("POST", false, false);
+    let node = run.bind("POST").await;
+    // The existing guest verifies its entire original invocation byte for byte.
+    // Neither attacker-controlled reserved header may enter that invocation.
+    let response = request_extra(
+        node.local_addr(),
+        "POST",
+        TOKEN,
+        "Morrow-Content-Scope: forged\r\nmorrow-content-scope: another\r\n",
+        None,
+    )
+    .await;
+    status(&response, 202);
+    assert!(response.ends_with(&reply("POST").body));
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}

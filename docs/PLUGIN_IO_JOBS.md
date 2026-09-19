@@ -11,6 +11,7 @@
 - `submit(input, router, timeout) -> JobHandle`：`input` 是**完整任务输入帧**（1..=128 KiB，例如 IO 请求帧），建立作业时立即计费，不做截断、不重放。
 - `submit_brokered(input, Box<dyn BrokerRouter>, timeout)`：仅托管执行器可用。每次 import 提供私有身份的 `RouteContext`，实际 HTTP 回调由 `context.dispatch(command, backend)` 单次执行，并交回该次持久操作的原始响应。
 - `submit_service(request, grant, router, timeout)`：同一 managed worker 的类型化入站服务入口；允许零 IO import，最终完成帧绑定原服务 Request。发布／监听和主体范围见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)，已通过 Windows 本机限定验证。
+- `submit_service_content(request, grant, journal, key, access, router, timeout)`：显式内容访问只开放给持久服务，沿用原7类 core 命令；内容与 IO 共用原实例、调用和字节预算，见 [内容合同](PLUGIN_SERVICE_CONTENT.md)。
 - `router: Box<dyn Router + Send>`：可信宿主为每个作业提供的契约路由；`route(call, request)` 按 guest 顺序收到每次调用，执行器从不重试。
 - `JobHandle`：`poll()` 非阻塞观察、`read(max_bytes)` 恰好一次读取终态、`cancel()` 请求取消。
 - `drain(timeout)` 停止接收并收紧所有期限，仍有效的 Ready 等待 read/drop，或等到期限才收尾；`stop()` 先撤权再取消；`try_finish()` 只在执行线程结束后归还核心所有权。
@@ -73,6 +74,6 @@ brokered 的累计计费为 `input + 每次 request + 每次获准 response_limi
 
 ## 仍未覆盖
 
-主应用与持久网络／服务批准、文件系统后端、guest 动态发布路由、OAuth/账户凭据与细粒度内容权限、异步 guest 挂起与多次作业并发、执行器池化、真实远端效果核对与录制回放、按配额退休。单独使用本层不授予资源权限；托管 HTTP 须另获端点批准。原生宿主显式发布服务及 Principal service scopes 已通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；文件变更后端仍待接入。
+主应用与持久网络／服务批准、文件系统后端、guest 动态发布路由、OAuth/持久账户凭据与内容范围管理、异步 guest 挂起与多次作业并发、执行器池化、真实远端效果核对与录制回放、按配额退休。单独使用本层不授予资源权限；托管 HTTP 须另获端点批准。原生宿主显式发布服务及 Principal service scopes 已通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；文件变更后端仍待接入。
 
 托管 HTTP 的原实例端点批准与实际传输见 [IO-D1](PLUGIN_MANAGED_HTTP.md)。其资源守卫保留至最终 read/drop，独立端点撤权不必撤销整个插件实例也能阻止旧响应交付。

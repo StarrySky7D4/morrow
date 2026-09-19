@@ -109,6 +109,7 @@ impl HttpGrant {
         }
         let guard = HttpCallGuard {
             service_validity: None,
+            service_content: None,
             inner: Arc::new(CallState {
                 grant: Arc::clone(&self.state),
                 job: Arc::clone(job),
@@ -133,6 +134,7 @@ struct CallState {
 pub struct HttpCallGuard {
     inner: Arc<CallState>,
     service_validity: Option<crate::service_history::Validity>,
+    service_content: Option<crate::service_content::ServiceContentAccess>,
 }
 impl HttpCallGuard {
     pub(crate) fn with_service_validity(
@@ -144,6 +146,14 @@ impl HttpCallGuard {
         Ok(self)
     }
 
+    pub(crate) fn with_service_content(
+        mut self,
+        content: Option<&crate::service_content::ServiceContentAccess>,
+    ) -> io_execution::Result<Self> {
+        self.service_content = content.cloned();
+        self.check()?;
+        Ok(self)
+    }
     pub fn policy_sha256(&self) -> [u8; 32] {
         self.inner.grant.policy_sha256
     }
@@ -178,11 +188,17 @@ impl HttpCallGuard {
             guard.check_cancel()?;
             guard.inner.grant.resource.binding().check_liveness(now)?;
             guard.inner.job.binding().check_liveness(now)?;
+            if let Some(content) = &guard.service_content {
+                content.check_at(now)?;
+            }
             guard.check_cancel()?;
         }
         Ok(())
     }
     fn check_cancel(&self) -> io_execution::Result<()> {
+        if let Some(content) = &self.service_content {
+            content.check()?;
+        }
         if let Some(validity) = &self.service_validity {
             validity.check()?;
         }

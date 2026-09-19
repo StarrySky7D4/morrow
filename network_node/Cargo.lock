@@ -917,6 +917,7 @@ version = "0.1.9-test.50"
 dependencies = [
  "morrow-core",
  "prost",
+ "sha2 0.10.9",
  "wasmi",
  "wasmparser",
 ]

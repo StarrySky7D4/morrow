@@ -309,13 +309,62 @@ impl HostRuntime {
         self.policy
             .read_frozen_content(connection.instance, grant, card.card(), clock)
     }
+    /// Capture only an existing exact object grant for later host-side delivery checks.
+    /// This never grants access and is tied to the original connection and grant lifetime.
+    pub fn content_authorization(
+        &self,
+        connection: &Connection,
+        kind: GrantKind,
+        card: &str,
+        attachment: Option<&str>,
+        now: u64,
+    ) -> Result<crate::lifecycle::ContentAuthorization> {
+        crate::identity(card)?;
+        if let Some(id) = attachment {
+            crate::identity(id)?;
+        }
+        if (kind == GrantKind::ReadAttachment) != attachment.is_some() {
+            return Err(Error::Invalid("attachment scope"));
+        }
+        connection.permits_kind(kind)?;
+        self.policy.phase(connection.instance)?;
+        let grant = *connection
+            .grants
+            .get(&(kind, card.into(), attachment.map(str::to_owned)))
+            .ok_or(Error::Invalid("missing grant"))?;
+        self.policy
+            .content_authorization(connection.instance, grant, (kind, card, attachment), now)
+    }
     /// Hold the runtime exclusively through response creation. Transport owns the connection.
     /// Clock is a trusted monotonic host function; errors before command decoding have no response id.
     pub fn dispatch(
         &mut self,
         connection: &Connection,
         input: &[u8],
+        clock: impl FnMut() -> u64,
+    ) -> Result<Vec<u8>> {
+        self.dispatch_inner(connection, input, clock, |_, _| Ok(()), false)
+    }
+    /// Extra host constraints intersect the original grant at every read/commit boundary
+    /// and after encoding a successful response. A late denial cannot undo a committed write.
+    pub fn dispatch_guarded(
+        &mut self,
+        connection: &Connection,
+        input: &[u8],
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(&Command, u64) -> Result<()>,
+    ) -> Result<Vec<u8>> {
+        self.dispatch_inner(connection, input, clock, guard, true)
+    }
+    // Legacy dispatch retains its original clock/response boundaries. Only the new
+    // explicitly guarded entry samples the additional post-encoding delivery check.
+    fn dispatch_inner(
+        &mut self,
+        connection: &Connection,
+        input: &[u8],
         mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(&Command, u64) -> Result<()>,
+        final_delivery_check: bool,
     ) -> Result<Vec<u8>> {
         if input.len() > MAX_MESSAGE_BYTES {
             return Err(Error::Limit);
@@ -335,13 +384,15 @@ impl HostRuntime {
             Command::ReadAttachment(v) => Some(v.attachment_id.clone()),
             _ => None,
         };
+        let mut selected_grant = None;
         let result = (|| {
             connection.permits_kind(kind)?;
             self.policy.phase(connection.instance)?;
             let grant = *connection
                 .grants
-                .get(&(kind, command.card_id().to_owned(), attachment))
+                .get(&(kind, command.card_id().to_owned(), attachment.clone()))
                 .ok_or(Error::Invalid("missing grant"))?;
+            selected_grant = Some(grant);
             match &command {
                 Command::CreateContent(v) => {
                     let card = crate::content::CardRecord::new(
@@ -351,15 +402,32 @@ impl HostRuntime {
                         &v.title,
                         v.body.clone(),
                     )?;
-                    self.create_content(connection, &v.operation_id, &card, &mut clock)
+                    self.policy
+                        .create_content_with_evidence_guarded(
+                            connection.instance,
+                            grant,
+                            &mut self.store,
+                            &v.operation_id,
+                            &card,
+                            &[],
+                            &mut clock,
+                            |now| guard(&command, now),
+                        )
                         .map(Outcome::ContentCommitted)
                 }
                 Command::EditContent(v) => self
-                    .edit_content(connection, v, &mut clock)
+                    .edit_content_guarded(connection, v, &mut clock, |now| guard(&command, now))
                     .map(Outcome::ContentCommitted),
                 Command::ReadContent(v) => {
                     use sha2::{Digest, Sha256};
-                    let card = self.read_content(connection, &v.card_id, &mut clock)?;
+                    let card = self.policy.read_content_guarded(
+                        connection.instance,
+                        grant,
+                        &self.store,
+                        &v.card_id,
+                        &mut clock,
+                        |now| guard(&command, now),
+                    )?;
                     if card.summary().revision != v.expected_revision {
                         return Err(Error::RevisionConflict);
                     }
@@ -377,20 +445,38 @@ impl HostRuntime {
                         bytes: body[start..(start + v.length as usize).min(body.len())].to_vec(),
                     };
                     // Hashing/copying can be substantial; recheck authorization immediately before delivery.
-                    self.read_content(connection, &v.card_id, &mut clock)?;
+                    self.policy.read_content_guarded(
+                        connection.instance,
+                        grant,
+                        &self.store,
+                        &v.card_id,
+                        &mut clock,
+                        |now| guard(&command, now),
+                    )?;
                     Ok(Outcome::ContentChunk(part))
                 }
                 Command::Rename(request) => {
+                    let now = clock();
+                    guard(&command, now)?;
                     let permit = self
                         .policy
-                        .begin(connection.instance, grant, request, clock())?;
+                        .begin(connection.instance, grant, request, now)?;
                     self.policy
-                        .commit_rename(permit, &mut self.store, &mut clock)
+                        .commit_rename_guarded(permit, &mut self.store, &mut clock, |now| {
+                            guard(&command, now)
+                        })
                         .map(Outcome::Renamed)
                 }
                 Command::ReadAttachment(request) => self
                     .policy
-                    .read_attachment(connection.instance, grant, &self.store, request, &mut clock)
+                    .read_attachment_guarded(
+                        connection.instance,
+                        grant,
+                        &self.store,
+                        request,
+                        &mut clock,
+                        |now| guard(&command, now),
+                    )
                     .map(Outcome::AttachmentChunk),
                 Command::QueryOperation {
                     card_id,
@@ -398,12 +484,13 @@ impl HostRuntime {
                     ..
                 } => self
                     .policy
-                    .query_operation(
+                    .query_operation_guarded(
                         connection.instance,
                         grant,
                         &self.store,
                         (card_id, operation_id),
                         &mut clock,
+                        |now| guard(&command, now),
                     )
                     .map(|result| Outcome::OperationResult {
                         card_id: card_id.clone(),
@@ -412,16 +499,42 @@ impl HostRuntime {
                     }),
                 Command::ReadSummary { card_id, .. } => self
                     .policy
-                    .read_summary(connection.instance, grant, &self.store, card_id, &mut clock)
+                    .read_summary_guarded(
+                        connection.instance,
+                        grant,
+                        &self.store,
+                        card_id,
+                        &mut clock,
+                        |now| guard(&command, now),
+                    )
                     .map(Outcome::Summary),
             }
         })();
+        let succeeded = result.is_ok();
         let response = Response {
             request_id: command.request_id().into(),
             outcome: result.unwrap_or_else(|error| Outcome::Rejected(failure(error))),
         };
         match response.encode() {
-            Ok(bytes) => Ok(bytes),
+            Ok(bytes) => {
+                if succeeded && final_delivery_check {
+                    let grant = selected_grant.ok_or(Error::Invalid("missing grant"))?;
+                    if let Err(error) = self.policy.check_scope_guarded(
+                        connection.instance,
+                        grant,
+                        (kind, command.card_id(), attachment.as_deref()),
+                        clock(),
+                        |now| guard(&command, now),
+                    ) {
+                        return Response {
+                            request_id: command.request_id().into(),
+                            outcome: Outcome::Rejected(failure(error)),
+                        }
+                        .encode();
+                    }
+                }
+                Ok(bytes)
+            }
             Err(Error::Limit) => Response {
                 request_id: command.request_id().into(),
                 outcome: Outcome::Rejected(crate::response::Failure::Limit),

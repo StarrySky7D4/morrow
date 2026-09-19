@@ -367,12 +367,14 @@ pub(crate) fn bounded_message(message: &Builder<capnp::message::HeapAllocator>) 
 }
 pub(crate) fn read_message(
     bytes: &[u8],
-) -> Result<capnp::message::Reader<serialize::BufferSegments<&[u8]>>> {
+) -> Result<capnp::message::Reader<serialize::OwnedSegments>> {
     if bytes.len() > MAX_MESSAGE_BYTES {
         return Err(Error::Limit);
     }
     let mut remaining = bytes;
-    let message = serialize::read_message_from_flat_slice(
+    // A transport may embed the frame at any byte offset. Own aligned segments
+    // while retaining the same input/traversal/nesting bounds.
+    let message = serialize::read_message(
         &mut remaining,
         ReaderOptions {
             traversal_limit_in_words: Some(MAX_MESSAGE_BYTES / 8),

@@ -29,7 +29,7 @@
 2. `ServiceGrant::issue` 固定 service／handler 与实际 Manager、Host、ManagedInstance、绑定和资源租约；`ListenerGrant::issue` 单独占监听资源。`ServiceHost` 持有同一个 `IoWorker::spawn_managed` 创建的 worker。路由与 listener 必须属于该 worker 的实际实例；同包的新实例不能借用旧批准。
 3. `Principal::new` 由宿主配置主体 ID、Bearer token、允许的 service 集合与期限。服务端只保存 token 摘要，认证后构造不可由普通请求自报的 `AuthorizedRequest`。主体只能调用其 service scope；clone 不续期、不生成新批准，撤权共享生效。
 
-主体 scope 是当前服务调用范围，不是内容库读取／修改范围，也不是细化到路径、方法或记录的 ACL。当前不因此开放用户数据库或允许原始 SQL／core exchange。接入内容操作需要后续独立建立远端主体、服务、内容权限交集。
+Principal 的 service scope 只允许调用服务。需要读写卡片时，宿主显式配置 content_route 与 ServiceContentPolicy，将实际主体范围和原逐对象内容 grant 相交；受控 exchange 已通过本机限定验证，见 [内容权限合同](PLUGIN_SERVICE_CONTENT.md)。普通服务仍拒绝内容 exchange，不开放原始 SQL；持久账号和主应用范围管理仍待接入。
 
 ## 发布与执行路径
 
@@ -51,7 +51,7 @@ ServiceGrant／ListenerGrant 撤权以及 Manager 停用、批准变更、移除
 
 ## 仍未完成与验证入口
 
-- 持久服务／监听批准、主应用发布 UI、证书在线轮换、OAuth/OIDC/mTLS、账号与细粒度内容范围。
+- 持久服务／监听批准、主应用发布 UI、证书在线轮换、OAuth/OIDC/mTLS、持久账号与内容范围管理界面。
 - 入站唯一认领、保存结果重试和崩溃后的保守恢复已完成限定验证；独立状态查询、待核对结果处理及整条入站身份与内容提交的审计关联仍待建立，见 [持久请求与恢复](PLUGIN_SERVICE_HISTORY.md)。
 - 大正文／流式上传下载、SSE/WebSocket、异步持久任务、多 worker 调度与完整平台矩阵。
 - 新服务契约的 C/C++/Rust SDK、正式示例生成、冻结原包兼容门禁与稳定版承诺。既有三语言纯转换节点示例不是本契约的三语言验收。

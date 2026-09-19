@@ -1,5 +1,6 @@
 //! Explicit native publication on the original managed plugin instance.
-//! Remote authentication never grants content access or additional outbound IO.
+//! Content routes require a separate host-issued scope policy for each actual
+//! authenticated principal. Authentication alone grants no content or outbound IO.
 use crate::{
     Error, Limits, RawHttpResponse, Result,
     server::{AuthorizedHandler, AuthorizedRoute, Node, Principal, TlsIdentity},
@@ -7,10 +8,12 @@ use crate::{
 use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
     io_jobs::{BrokerRouter, IoWorker, JobError, Poll, ServicePersistenceStatus},
+    service_content::{ContentScope, ServiceContentPolicy},
     service_history::ServiceJournal,
     service_io::{ListenerGrant, ServiceGrant},
 };
 use std::{
+    collections::BTreeMap,
     net::SocketAddr,
     sync::{
         Arc, Mutex,
@@ -46,6 +49,11 @@ pub struct ManagedRoute {
     method: String,
     path: String,
     journal: Option<ServiceJournal>,
+    content: Option<Arc<ContentRoute>>,
+}
+struct ContentRoute {
+    policy: ServiceContentPolicy,
+    principals: BTreeMap<String, Vec<ContentScope>>,
 }
 impl ServiceHost {
     pub fn new(worker: IoWorker, timeout: Duration, routers: RouterFactory) -> Result<Self> {
@@ -81,6 +89,7 @@ impl ServiceHost {
             method: method.into(),
             path: path.into(),
             journal: None,
+            content: None,
         })
     }
     /// Requires one Idempotency-Key and persists a single execution boundary.
@@ -96,12 +105,32 @@ impl ServiceHost {
         route.journal = Some(journal);
         Ok(route)
     }
+    /// Publish a durable content service with a fixed host-approved scope table.
+    /// A principal missing from the table is denied, even if it may use the service.
+    pub fn content_route(
+        &self,
+        grant: ServiceGrant,
+        method: &str,
+        path: &str,
+        journal: ServiceJournal,
+        policy: ServiceContentPolicy,
+        principal_scopes: BTreeMap<String, Vec<ContentScope>>,
+    ) -> Result<ManagedRoute> {
+        policy.validate_grant(&grant).map_err(|_| Error::Denied)?;
+        let mut route = self.durable_route(grant, method, path, journal)?;
+        route.content = Some(Arc::new(ContentRoute {
+            policy,
+            principals: principal_scopes,
+        }));
+        Ok(route)
+    }
     fn bound_route(
         &self,
         grant: ServiceGrant,
         method: &str,
         path: &str,
         journal: Option<ServiceJournal>,
+        content: Option<Arc<ContentRoute>>,
     ) -> Result<AuthorizedRoute> {
         let scope = grant.service().to_owned();
         let inner = self.inner.clone();
@@ -109,6 +138,7 @@ impl ServiceHost {
             let inner = inner.clone();
             let grant = grant.clone();
             let journal = journal.clone();
+            let content = content.clone();
             Box::pin(async move {
                 let (request, principal) = request.into_parts();
                 principal.check(grant.service())?;
@@ -125,6 +155,25 @@ impl ServiceHost {
                         return Err(Error::Invalid);
                     }
                     Some(key)
+                } else {
+                    None
+                };
+                let access = if let Some(content) = &content {
+                    let scopes = content
+                        .principals
+                        .get(principal.id())
+                        .ok_or(Error::Denied)?
+                        .clone();
+                    let live_principal = principal.clone();
+                    let service = grant.service().to_owned();
+                    Some(
+                        content
+                            .policy
+                            .authorize(principal.id(), scopes, move || {
+                                live_principal.allows(&service)
+                            })
+                            .map_err(|_| Error::Denied)?,
+                    )
                 } else {
                     None
                 };
@@ -152,7 +201,8 @@ impl ServiceHost {
                             || nominated.contains(&lower)
                             || matches!(
                                 lower.as_str(),
-                                "authorization"
+                                "morrow-content-scope"
+                                    | "authorization"
                                     | "cookie"
                                     | "host"
                                     | "content-length"
@@ -174,6 +224,17 @@ impl ServiceHost {
                         }
                     })
                     .collect();
+                if let Some(access) = &access {
+                    let digest = access.scope_digest();
+                    let value = digest
+                        .iter()
+                        .map(|b| format!("{b:02x}"))
+                        .collect::<String>();
+                    headers.push(Header {
+                        name: "morrow-content-scope".into(),
+                        value: value.into_bytes(),
+                    });
+                }
                 // Normalize name order, preserving the order of repeated values.
                 if journal.is_some() {
                     headers.sort_by(|a, b| a.name.cmp(&b.name));
@@ -202,14 +263,26 @@ impl ServiceHost {
                 let result = {
                     let worker = inner.worker.lock().map_err(|_| Error::Closed)?;
                     if let (Some(journal), Some(key)) = (journal, key) {
-                        worker.submit_service_durable(
-                            request,
-                            grant.clone(),
-                            journal,
-                            &key,
-                            router,
-                            inner.timeout,
-                        )
+                        if let Some(access) = &access {
+                            worker.submit_service_content(
+                                request,
+                                grant.clone(),
+                                journal,
+                                &key,
+                                access.clone(),
+                                router,
+                                inner.timeout,
+                            )
+                        } else {
+                            worker.submit_service_durable(
+                                request,
+                                grant.clone(),
+                                journal,
+                                &key,
+                                router,
+                                inner.timeout,
+                            )
+                        }
                     } else {
                         worker.submit_service(request, grant.clone(), router, inner.timeout)
                     }
@@ -228,6 +301,9 @@ impl ServiceHost {
                 };
                 loop {
                     principal.check(grant.service())?;
+                    if let Some(access) = &access {
+                        access.check().map_err(|_| Error::Denied)?;
+                    }
                     if cancel.is_cancelled() {
                         return Err(Error::Cancelled);
                     }
@@ -257,6 +333,15 @@ impl ServiceHost {
                     .map_err(|_| Error::Closed)?
                     .check_service(&grant)
                     .map_err(|_| Error::Denied)?;
+                if let Some(access) = &access {
+                    access.check().map_err(|_| Error::Denied)?;
+                    inner
+                        .worker
+                        .lock()
+                        .map_err(|_| Error::Closed)?
+                        .check_content_access(access)
+                        .map_err(|_| Error::Denied)?;
+                }
                 if !report.service_retention_valid() {
                     return Ok(fixed_service_reply(410, b"Service request expired"));
                 }
@@ -375,6 +460,7 @@ impl ManagedNode {
                 &route.method,
                 &route.path,
                 route.journal,
+                route.content,
             )?);
         }
         grant.activate().map_err(|_| Error::Denied)?;

@@ -105,6 +105,22 @@ impl ServiceGrant {
             }),
         })
     }
+    pub(crate) fn validate_instance(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+    ) -> io_binding::Result<()> {
+        self.state
+            .resource
+            .lease
+            .binding()
+            .validate_owner(host, instance)
+    }
+    pub(crate) fn same_service(&self, other: &Self) -> bool {
+        Arc::ptr_eq(&self.state.resource, &other.state.resource)
+            && self.state.service == other.state.service
+            && self.state.handler == other.state.handler
+    }
     pub fn service(&self) -> &str {
         &self.state.service
     }

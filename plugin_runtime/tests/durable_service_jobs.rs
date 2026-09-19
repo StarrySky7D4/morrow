@@ -5,6 +5,7 @@ use morrow_core::{
     dispatch::HostRuntime,
     io::{self as wire, Header},
     io_intent::{Command, Phase},
+    lifecycle::GrantKind,
     plugin_package::{
         Package,
         catalog::Catalog,
@@ -24,6 +25,9 @@ use morrow_plugin_runtime::{
         ServicePersistenceStatus,
     },
     manager::Manager,
+    service_content::{
+        ContentScope, SCOPE_HEADER, ServiceContentAccess, ServiceContentPolicy, scope_digest,
+    },
     service_history::ServiceJournal,
     service_io::ServiceGrant,
 };
@@ -31,7 +35,7 @@ use std::{
     collections::BTreeSet,
     sync::{
         Arc, Mutex,
-        atomic::{AtomicU64, AtomicUsize, Ordering},
+        atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering},
     },
     thread,
     time::{Duration, Instant},
@@ -61,8 +65,11 @@ fn request() -> service::Request {
     service::Request::encode(call, &invocation).unwrap()
 }
 fn completion() -> Vec<u8> {
+    completion_for(&request())
+}
+fn completion_for(request: &service::Request) -> Vec<u8> {
     service::Response::encode(
-        &request(),
+        request,
         &Reply {
             status: 201,
             headers: vec![Header {
@@ -93,8 +100,8 @@ fn outbound() -> wire::Request {
 fn literal(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("\\{b:02x}")).collect()
 }
-fn module(io_call: bool) -> Vec<u8> {
-    let complete = completion();
+fn module(io_call: bool, request: &service::Request) -> Vec<u8> {
+    let complete = completion_for(request);
     let outbound = outbound();
     let call = if io_call {
         format!(
@@ -131,13 +138,50 @@ struct Running {
     utc: Arc<AtomicU64>,
     digest: [u8; 32],
     fuel: u64,
+    request: service::Request,
+    access: Option<ServiceContentAccess>,
+    content_policy: Option<ServiceContentPolicy>,
+    principal_active: Arc<AtomicBool>,
+    ticks: Arc<AtomicU64>,
 }
 impl Running {
     fn new(io_call: bool) -> Self {
+        Self::new_with_content(io_call, false)
+    }
+    fn new_with_content(io_call: bool, content: bool) -> Self {
+        let scopes = vec![ContentScope {
+            kind: GrantKind::ReadContent,
+            card_id: "card.allowed".into(),
+            attachment_id: None,
+        }];
+        let mut request = request();
+        if content {
+            let mut invocation = request.invocation().clone();
+            invocation.headers.push(Header {
+                name: SCOPE_HEADER.into(),
+                value: scope_digest(&scopes)
+                    .unwrap()
+                    .iter()
+                    .map(|v| format!("{v:02x}"))
+                    .collect::<String>()
+                    .into_bytes(),
+            });
+            request = service::Request::encode(request.call_id(), &invocation).unwrap();
+        }
+
         let dir = tempfile::tempdir().unwrap();
-        let wasm = module(io_call);
+        let wasm = module(io_call, &request);
         let caps = BTreeSet::from([IoCapability::HttpPublish, IoCapability::HttpRequest]);
-        let mut manifest = Package::manifest_for_task(ID, "1.0.0", &wasm, vec![]);
+        let mut manifest = Package::manifest_for_task(
+            ID,
+            "1.0.0",
+            &wasm,
+            if content {
+                vec![morrow_core::plugin_package::proto::Capability::ReadContent]
+            } else {
+                vec![]
+            },
+        );
         let mut declaration =
             io::declaration(caps.iter().copied().collect(), vec!["notes.echo".into()]);
         declaration.service_schema_sha256 = service::schema_digest().to_vec();
@@ -157,6 +201,16 @@ impl Running {
             Limits::default(),
         );
         manager.select(&package, manager.revision()).unwrap();
+        if content {
+            manager
+                .approve(
+                    ID,
+                    digest,
+                    BTreeSet::from([GrantKind::ReadContent]),
+                    manager.revision(),
+                )
+                .unwrap();
+        }
         manager
             .approve_io(ID, digest, caps.clone(), manager.revision())
             .unwrap();
@@ -167,7 +221,17 @@ impl Running {
             Store::open(&dir.path().join("history.db"), EventBudget::default()).unwrap(),
         )
         .unwrap();
-        let instance = manager.connect(ID, &mut host).unwrap();
+        let mut instance = manager.connect(ID, &mut host).unwrap();
+        if content {
+            host.grant(
+                instance.parts_mut().1,
+                GrantKind::ReadContent,
+                "card.allowed",
+                5,
+                1,
+            )
+            .unwrap();
+        }
         let fuel = instance.package().limits().fuel;
         let binding = manager
             .bind_io(&host, &instance, digest, manager.revision(), &caps, 100, 1)
@@ -185,12 +249,24 @@ impl Running {
             1,
         )
         .unwrap();
+        let content_policy = content.then(|| {
+            ServiceContentPolicy::issue(&host, &instance, &grant, scopes.clone(), 1).unwrap()
+        });
+        let principal_active = Arc::new(AtomicBool::new(true));
+        let active = principal_active.clone();
+        let access = content_policy.as_ref().map(|policy| {
+            policy
+                .authorize("alice", scopes, move || active.load(Ordering::SeqCst))
+                .unwrap()
+        });
+        let ticks = Arc::new(AtomicU64::new(1));
+        let original_clock = ticks.clone();
         let worker = IoWorker::spawn_managed(
             &manager,
             host,
             instance,
             binding,
-            || 1,
+            move || original_clock.load(Ordering::SeqCst),
             2,
             JobLimits::new(2, 32_768, 1_048_576).unwrap(),
         )
@@ -208,9 +284,28 @@ impl Running {
             utc,
             digest,
             fuel,
+            request,
+            access,
+            content_policy,
+            principal_active,
+            ticks,
         }
     }
     fn submit(&self, router: Box<dyn BrokerRouter>) -> JobHandle {
+        if let Some(access) = &self.access {
+            return self
+                .worker
+                .submit_service_content(
+                    service::Request::decode(self.request.bytes()).unwrap(),
+                    self.grant.clone(),
+                    self.journal.clone(),
+                    KEY,
+                    access.clone(),
+                    router,
+                    WAIT,
+                )
+                .unwrap();
+        }
         self.worker
             .submit_service_durable(
                 request(),
@@ -235,7 +330,7 @@ impl Running {
         }
     }
     fn service_command(&self) -> Command {
-        RequestRecord::encode(&policy(), KEY, &request(), CREATED)
+        RequestRecord::encode(&policy(), KEY, &self.request, CREATED)
             .unwrap()
             .command(self.digest)
             .unwrap()
@@ -396,4 +491,112 @@ fn actual_guest_route_expiring_before_dispatch_never_calls_backend_and_remains_u
             .unwrap()
             .is_none()
     );
+}
+
+#[test]
+fn content_ready_and_replay_recheck_principal_policy_and_original_object_expiry() {
+    for cause in 0..3 {
+        let mut run = Running::new_with_content(false, true);
+        let mut first = run.submit(Box::new(NoIo));
+        ready(&mut first);
+        assert_eq!(
+            first.read(4096).unwrap().unwrap().service_persistence,
+            Some(ServicePersistenceStatus::Completed)
+        );
+        let mut replay = run.submit(Box::new(NoIo));
+        ready(&mut replay);
+        match cause {
+            0 => run.principal_active.store(false, Ordering::SeqCst),
+            1 => run.content_policy.as_ref().unwrap().revoke(),
+            _ => run.ticks.store(5, Ordering::SeqCst),
+        }
+        let report = replay.read(0).unwrap().unwrap();
+        assert!(report.cancelled && report.service_response.is_none());
+        assert_eq!(report.payload_bytes(), 0);
+        let command = run.service_command();
+        let host = run.finish();
+        assert_eq!(
+            host.store_local()
+                .lookup_io_intent(&command.subject, &command.operation_id)
+                .unwrap()
+                .unwrap()
+                .phase(),
+            Phase::Observed
+        );
+    }
+}
+struct RevokeContentBeforeDispatch {
+    active: Arc<AtomicBool>,
+    backend: Arc<AtomicUsize>,
+    command: Command,
+}
+impl BrokerRouter for RevokeContentBeforeDispatch {
+    fn route(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        _: u32,
+        _: &wire::Request,
+    ) -> Result<Vec<u8>, RouterFault> {
+        self.active.store(false, Ordering::SeqCst);
+        let result = context.dispatch(&self.command, |_| {
+            self.backend.fetch_add(1, Ordering::SeqCst);
+            Ok(vec![])
+        });
+        assert!(result.is_err());
+        Err(RouterFault::Denied)
+    }
+}
+#[test]
+fn content_principal_revocation_inside_router_prevents_the_actual_backend() {
+    let mut run = Running::new_with_content(true, true);
+    let backend = Arc::new(AtomicUsize::new(0));
+    let outgoing = run.outgoing_command();
+    let mut job = run.submit(Box::new(RevokeContentBeforeDispatch {
+        active: run.principal_active.clone(),
+        backend: backend.clone(),
+        command: outgoing.clone(),
+    }));
+    ready(&mut job);
+    assert!(job.read(0).unwrap().unwrap().service_response.is_none());
+    assert_eq!(backend.load(Ordering::SeqCst), 0);
+    let host = run.finish();
+    assert!(
+        host.store_local()
+            .lookup_io_intent(&outgoing.subject, &outgoing.operation_id)
+            .unwrap()
+            .is_none()
+    );
+}
+#[test]
+fn content_history_cannot_be_opened_through_the_unscoped_service_submit_api() {
+    let mut run = Running::new_with_content(false, true);
+    let mut first = run.submit(Box::new(NoIo));
+    ready(&mut first);
+    assert_eq!(
+        first.read(4096).unwrap().unwrap().service_persistence,
+        Some(ServicePersistenceStatus::Completed)
+    );
+    assert!(
+        run.worker
+            .submit_service_durable(
+                service::Request::decode(run.request.bytes()).unwrap(),
+                run.grant.clone(),
+                run.journal.clone(),
+                KEY,
+                Box::new(NoIo),
+                WAIT
+            )
+            .is_err()
+    );
+    assert!(
+        run.worker
+            .submit_service(
+                service::Request::decode(run.request.bytes()).unwrap(),
+                run.grant.clone(),
+                Box::new(NoIo),
+                WAIT
+            )
+            .is_err()
+    );
+    run.finish();
 }
