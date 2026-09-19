@@ -278,6 +278,9 @@ pub(crate) fn failure(error: Error) -> Failure {
         Error::CommitUnknown => Failure::CommitUnknown,
         Error::Limit => Failure::Limit,
         Error::Invalid(_) => Failure::Denied,
+        // Missing protected IO material keeps the stable Storage failure code
+        // for now; a dedicated runtime error code is deferred to IO-C2.
+        Error::EvidenceUnavailable => Failure::Storage,
         _ => Failure::Storage,
     }
 }

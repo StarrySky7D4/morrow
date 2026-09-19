@@ -60,6 +60,17 @@ impl PreparedPackage {
         io: crate::Exchange<'a>,
         cancel: Cancellation,
     ) -> crate::TaskRun {
+        self.run_io_frame(input, io, cancel)
+    }
+    /// IO task ABI with the managed IO callback and a denied content exchange.
+    /// The router owns authorization; this adapter only keeps guest-visible
+    /// protocol rules (one completion equal to a brokered response).
+    pub(crate) fn run_io_frame<'a>(
+        &self,
+        input: &'a [u8],
+        io: crate::Exchange<'a>,
+        cancel: Cancellation,
+    ) -> crate::TaskRun {
         let mut core_called = false;
         let mut run = self.runner.run_task_with_io(
             input,

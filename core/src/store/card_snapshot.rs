@@ -119,7 +119,7 @@ fn point(connection: &Connection) -> Result<ReadPoint> {
     ))?;
     let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
     let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-    if app != APPLICATION_ID || !(5..=16).contains(&version) {
+    if app != APPLICATION_ID || !(5..=17).contains(&version) {
         return Err(Error::UnsupportedVersion);
     }
     // Physical card deletion has no valid public operation: retain the reverse closure

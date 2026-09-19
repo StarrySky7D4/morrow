@@ -156,6 +156,28 @@ impl IoBinding {
         }
         self.preflight(manager, host, instance, now)
     }
+    /// Only after exact host/manager/instance identity has already been checked.
+    /// Used inside a Store final guard where the host is exclusively borrowed.
+    /// This retains the original approval control; it cannot authorize a new owner.
+    pub(crate) fn check_liveness(&self, now: u64) -> Result<()> {
+        let active = || {
+            self.manager.upgrade().is_some()
+                && self
+                    .control
+                    .upgrade()
+                    .is_some_and(|control| control.active())
+        };
+        if !active() {
+            return Err(Error::Denied);
+        }
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&state, now)?;
+        if !active() {
+            return Err(Error::Denied);
+        }
+        state.last_tick = now;
+        Ok(())
+    }
     /// Recheck immediately before a broker starts work or delivers an observed result.
     pub fn check(
         &self,
@@ -228,7 +250,7 @@ impl IoBinding {
             || self.manager.upgrade().is_none()
             || !self.control.upgrade().is_some_and(|c| c.active())
     }
-    fn duplicate(&self) -> Self {
+    pub(crate) fn duplicate(&self) -> Self {
         Self {
             manager: self.manager.clone(),
             control: self.control.clone(),

@@ -9,6 +9,7 @@ pub mod dependency_call;
 pub mod dispatch;
 pub mod lifecycle;
 pub mod io_intent;
+pub mod io_evidence;
 pub mod io;
 pub mod plugin_package;
 pub mod read_archive;
@@ -71,6 +72,7 @@ pub enum Error {
     StorageFull,
     OperationConflict,
     NotFound,
+    EvidenceUnavailable,
     EventCapacity,
     ArchiveCapacity,
     CommitUnknown,

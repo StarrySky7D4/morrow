@@ -3,6 +3,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .compile_protos(&["schemas/io_intent.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/io_evidence.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/io_evidence.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/read_capture.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)

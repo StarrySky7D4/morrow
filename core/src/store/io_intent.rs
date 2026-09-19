@@ -87,7 +87,7 @@ fn reject_other_ids(c: &Connection, id: &str) -> Result<()> {
     }
     Ok(())
 }
-fn history(c: &Connection, operation: &str) -> Result<Vec<Record>> {
+pub(super) fn history(c: &Connection, operation: &str) -> Result<Vec<Record>> {
     identity(operation)?;
     if version(c)? < 15 {
         return Ok(Vec::new());
@@ -140,9 +140,10 @@ pub(super) fn verify_operation(
     subject: &str,
     raw: &[u8],
 ) -> Result<()> {
-    // Accepts the in-flight v15→v16 migration: pre-existing kind-5 events must
-    // keep verifying while the reservation table is being added.
-    if !matches!(version(c)?, 15..=16) {
+    // Accepts the in-flight v15→v16 and v16→v17 migrations: pre-existing
+    // kind-5 events must keep verifying while the reservation and material
+    // namespaces are being added.
+    if !matches!(version(c)?, 15..=17) {
         return Err(Error::UnsupportedVersion);
     }
     let record = Record::decode(raw)?;
@@ -232,7 +233,7 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if version(&tx)? != 16 {
+        if !matches!(version(&tx)?, 16..=17) {
             return Err(Error::UnsupportedVersion);
         }
         let all = history(&tx, &command.operation_id)?;
@@ -265,10 +266,15 @@ impl Store {
             |r| Ok((r.get(0)?, r.get(1)?)),
         ))?;
         let (reserved_events, reserved_bytes) = reservations(&tx)?;
+        // Protected IO material is held and stored in the same byte budget, so a
+        // dispatched command can never be crowded out by material it must keep.
+        let material_bytes =
+            u64::try_from(super::io_evidence::accounted(&tx)?).map_err(|_| Error::Integrity)?;
         if count.saturating_add(reserved_events).saturating_add(FOLLOWUP_EVENTS as i64)
             >= i64::from(self.budget.max_count)
             || (bytes as u64)
                 .saturating_add(reserved_bytes as u64)
+                .saturating_add(material_bytes)
                 .saturating_add(FOLLOWUP_BYTES)
                 > self.budget.max_bytes
         {
@@ -298,7 +304,7 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if version(&tx)? != 16 {
+        if !matches!(version(&tx)?, 16..=17) {
             return Err(Error::UnsupportedVersion);
         }
         let all = history(&tx, operation)?;
@@ -340,7 +346,7 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if version(&tx)? != 16 {
+        if !matches!(version(&tx)?, 16..=17) {
             return Err(Error::UnsupportedVersion);
         }
         let command = candidate.command();
@@ -374,10 +380,18 @@ impl Store {
                 }
                 Phase::CancelledBeforeDispatch => {
                     // No dispatch happened; the held quota returns to everyone.
+                    // Any protected material reservation is released with it; an
+                    // original already admitted stays retained for the history.
                     sql(tx.execute(
                         "DELETE FROM io_reservations WHERE operation_id=?1",
                         [&command.operation_id],
                     ))?;
+                    if version(&tx)? >= 17 {
+                        sql(tx.execute(
+                            "DELETE FROM io_material_reservations WHERE operation_id=?1",
+                            [&command.operation_id],
+                        ))?;
+                    }
                 }
                 Phase::Observed => {
                     // Terminal observation consumes exactly this operation's
@@ -390,6 +404,19 @@ impl Store {
                     ))?;
                     if deleted != 1 {
                         return Err(Error::Integrity);
+                    }
+                    // Without stored protected material an observation would
+                    // leave an unexplained reservation, so a terminal history
+                    // must not hold any material quota.
+                    if version(&tx)? >= 17 {
+                        let held: bool = sql(tx.query_row(
+                            "SELECT EXISTS(SELECT 1 FROM io_material_reservations WHERE operation_id=?1)",
+                            [&command.operation_id],
+                            |r| r.get(0),
+                        ))?;
+                        if held {
+                            return Err(Error::Invalid("IO material reservation"));
+                        }
                     }
                 }
                 Phase::Prepared | Phase::InvalidPhase => return Err(Error::Integrity),

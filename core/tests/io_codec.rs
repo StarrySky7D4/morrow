@@ -2,7 +2,10 @@
 use capnp::{message::Builder, serialize};
 use morrow_core::{
     Error,
-    io::{self, Action, Request, Response, Status, UnsupportedAction},
+    io::{
+        self, Action, Header, HttpOutcome, HttpSubmission, Request, Response, Status,
+        UnsupportedAction,
+    },
     io_capnp as wire,
 };
 use sha2::{Digest, Sha256};
@@ -380,7 +383,8 @@ fn equivalent_fields_with_different_original_wire_bytes_do_not_share_responses()
 }
 #[test]
 fn all_known_submission_variants_are_unsupported_but_wrong_variant_pointer_is_rejected() {
-    for variant in 0..12 {
+    // Variant 5 is the HTTP submission and is covered separately.
+    for variant in (0..12).filter(|variant| *variant != 5) {
         let raw = request(|r| {
             let mut s = r.init_submit();
             match variant {
@@ -432,4 +436,328 @@ fn all_known_submission_variants_are_unsupported_but_wrong_variant_pointer_is_re
     // fileCreate struct left in place, but discriminant claims fileRead Data.
     raw[submit + 8..submit + 10].copy_from_slice(&0u16.to_le_bytes());
     assert!(Request::decode(&raw).is_err());
+}
+
+fn http_submission() -> HttpSubmission {
+    HttpSubmission {
+        operation_id: b"operation-1".to_vec(),
+        deadline_ms: 30_000,
+        endpoint: b"endpoint-ref".to_vec(),
+        method: "POST".into(),
+        relative_target: "/v1/items?q=1".into(),
+        headers: vec![
+            Header {
+                name: "accept".into(),
+                value: b"application/json".to_vec(),
+            },
+            Header {
+                name: "x-trace".into(),
+                value: b"trace-123".to_vec(),
+            },
+        ],
+        body: b"{\"a\":1}".to_vec(),
+        credential: b"credential-ref".to_vec(),
+    }
+}
+fn http_rejected(submission: &HttpSubmission) -> bool {
+    Request::encode_http_submit(1, submission).is_err()
+}
+
+#[test]
+fn http_submission_roundtrip_binds_exact_references_and_headers() {
+    let submission = http_submission();
+    let req = Request::encode_http_submit(9, &submission).unwrap();
+    assert_eq!(req.call_id(), 9);
+    match req.action() {
+        Action::SubmitHttp(decoded) => assert_eq!(decoded, &submission),
+        other => panic!("expected HTTP submission, got {other:?}"),
+    }
+    let outcome = HttpOutcome {
+        status: Status::Completed,
+        http_status: 201,
+        headers: vec![Header {
+            name: "content-type".into(),
+            value: b"application/json".to_vec(),
+        }],
+        body: b"{\"ok\":true}".to_vec(),
+    };
+    let completed_bytes = Response::encode_http(&req, &outcome).unwrap();
+    assert_eq!(
+        Response::decode_http(&req, &completed_bytes).unwrap(),
+        outcome
+    );
+    // The read profile cannot claim an HTTP submission as a read success.
+    assert!(matches!(
+        Response::decode(&req, &completed_bytes),
+        Err(Error::Invalid(_))
+    ));
+    // A remote 4xx is still a completed outcome with its real status.
+    let not_found = HttpOutcome {
+        status: Status::Completed,
+        http_status: 404,
+        headers: vec![],
+        body: b"missing".to_vec(),
+    };
+    let bytes = Response::encode_http(&req, &not_found).unwrap();
+    assert_eq!(Response::decode_http(&req, &bytes).unwrap(), not_found);
+    // A transport-unknown state carries no remote fields at all.
+    let unknown = HttpOutcome {
+        status: Status::OutcomeUnknown,
+        http_status: 0,
+        headers: vec![],
+        body: vec![],
+    };
+    let bytes = Response::encode_http(&req, &unknown).unwrap();
+    assert_eq!(Response::decode_http(&req, &bytes).unwrap(), unknown);
+}
+
+#[test]
+fn http_submission_rejects_runtime_headers_bad_targets_and_bounds() {
+    let base = http_submission();
+    let mut lower = base.clone();
+    lower.method = "post".into();
+    assert!(http_rejected(&lower));
+    let mut scheme = base.clone();
+    scheme.relative_target = "https://evil.example/x".into();
+    assert!(http_rejected(&scheme));
+    let mut relative = base.clone();
+    relative.relative_target = "x".into();
+    assert!(http_rejected(&relative));
+    let mut fragment = base.clone();
+    fragment.relative_target = "/x#frag".into();
+    assert!(http_rejected(&fragment));
+    let mut crlf = base.clone();
+    crlf.headers[0].value = b"a\r\nx".to_vec();
+    assert!(http_rejected(&crlf));
+    let mut host = base.clone();
+    host.headers.push(Header {
+        name: "Host".into(),
+        value: b"evil.example".to_vec(),
+    });
+    assert!(http_rejected(&host));
+    let mut framing = base.clone();
+    framing.headers.push(Header {
+        name: "content-length".into(),
+        value: b"1".to_vec(),
+    });
+    assert!(http_rejected(&framing));
+    let mut many = base.clone();
+    many.headers = vec![
+        Header {
+            name: "x".into(),
+            value: vec![],
+        };
+        io::MAX_HEADERS + 1
+    ];
+    assert!(http_rejected(&many));
+    let mut oversized_body = base.clone();
+    oversized_body.body = vec![0; io::MAX_PAYLOAD_BYTES + 1];
+    assert!(http_rejected(&oversized_body));
+    let mut deadline = base.clone();
+    deadline.deadline_ms = io::MAX_SUBMIT_DEADLINE_MS + 1;
+    assert!(http_rejected(&deadline));
+    let mut no_operation = base.clone();
+    no_operation.operation_id = vec![];
+    assert!(http_rejected(&no_operation));
+    let mut no_target = base.clone();
+    no_target.relative_target = String::new();
+    assert!(http_rejected(&no_target));
+}
+
+#[test]
+fn http_outcome_rejects_bad_status_fields_and_frame_binding() {
+    let req = Request::encode_http_submit(1, &http_submission()).unwrap();
+    let completed = |http_status, body: &[u8]| HttpOutcome {
+        status: Status::Completed,
+        http_status,
+        headers: vec![],
+        body: body.to_vec(),
+    };
+    assert!(Response::encode_http(&req, &completed(99, b"")).is_err());
+    assert!(Response::encode_http(&req, &completed(600, b"")).is_err());
+    assert!(
+        Response::encode_http(&req, &completed(200, &vec![0; io::MAX_PAYLOAD_BYTES + 1])).is_err()
+    );
+    let remote_fields_on_denied = HttpOutcome {
+        status: Status::Denied,
+        http_status: 200,
+        headers: vec![],
+        body: vec![],
+    };
+    assert!(Response::encode_http(&req, &remote_fields_on_denied).is_err());
+    let read = Request::encode_read(1, &[4; 32], 0, 3).unwrap();
+    assert!(Response::encode_http(&read, &completed(200, b"")).is_err());
+    let good = Response::encode_http(&req, &completed(200, b"ok")).unwrap();
+    let other = Request::encode_http_submit(2, &http_submission()).unwrap();
+    assert!(matches!(
+        Response::decode_http(&other, &good),
+        Err(Error::Integrity)
+    ));
+    assert!(matches!(
+        Response::decode_http(&read, &good),
+        Err(Error::Invalid(_))
+    ));
+}
+
+#[test]
+fn crafted_http_submission_is_validated_on_decode() {
+    let raw = request(|mut root| {
+        let mut submit = root.reborrow().init_submit();
+        submit.set_operation_id(b"operation-1");
+        submit.set_deadline_ms(0);
+        let mut http = submit.init_http_request();
+        http.set_endpoint(b"endpoint-ref");
+        http.set_method("POST");
+        http.set_relative_target("/x");
+        let mut headers = http.reborrow().init_headers(1);
+        let mut header = headers.reborrow().get(0);
+        header.set_name("Host");
+        header.set_value(b"evil.example");
+        http.set_body(b"");
+        http.set_credential(b"credential-ref");
+    });
+    assert!(matches!(
+        Request::decode(&raw),
+        Err(Error::Invalid("HTTP runtime header"))
+    ));
+    let raw = request(|mut root| {
+        let mut submit = root.reborrow().init_submit();
+        submit.set_operation_id(b"operation-1");
+        let mut http = submit.init_http_request();
+        http.set_endpoint(b"endpoint-ref");
+        http.set_method("GET");
+        http.set_relative_target("/x");
+        http.set_credential(b"credential-ref");
+    });
+    assert!(matches!(
+        Request::decode(&raw).unwrap().action(),
+        Action::SubmitHttp(_)
+    ));
+}
+
+fn raw_http_submission(value: &HttpSubmission) -> Vec<u8> {
+    request(|root| {
+        let mut submit = root.init_submit();
+        submit.set_operation_id(&value.operation_id);
+        submit.set_deadline_ms(value.deadline_ms);
+        let mut http = submit.init_http_request();
+        http.set_endpoint(&value.endpoint);
+        http.set_method(&value.method);
+        http.set_relative_target(&value.relative_target);
+        http.set_body(&value.body);
+        http.set_credential(&value.credential);
+        let mut headers = http.init_headers(value.headers.len() as u32);
+        for (i, header) in value.headers.iter().enumerate() {
+            let mut item = headers.reborrow().get(i as u32);
+            item.set_name(&header.name);
+            item.set_value(&header.value);
+        }
+    })
+}
+
+#[test]
+fn http_rejects_guest_authority_headers_on_encode_and_wire_decode() {
+    for name in [
+        "Authorization",
+        "cOoKiE",
+        "HOST",
+        "Connection",
+        "Content-Length",
+        "Transfer-Encoding",
+        "Upgrade",
+        "TE",
+        "Trailer",
+        "Expect",
+        "Keep-Alive",
+        "Proxy-Authorization",
+        "pRoXy-Authenticate",
+        "proxy-custom",
+    ] {
+        let mut value = http_submission();
+        value.headers = vec![Header {
+            name: name.into(),
+            value: b"guest-chosen".to_vec(),
+        }];
+        assert!(Request::encode_http_submit(1, &value).is_err(), "{name}");
+        assert!(
+            Request::decode(&raw_http_submission(&value)).is_err(),
+            "{name}"
+        );
+    }
+}
+
+#[test]
+fn http_rejects_ambiguous_targets_on_encode_and_wire_decode() {
+    for target in [
+        "//evil.example/x",
+        "/\\evil.example/x",
+        "/x\\y",
+        "/x#fragment",
+    ] {
+        let mut value = http_submission();
+        value.relative_target = target.into();
+        assert!(Request::encode_http_submit(1, &value).is_err(), "{target}");
+        assert!(
+            Request::decode(&raw_http_submission(&value)).is_err(),
+            "{target}"
+        );
+    }
+}
+
+#[test]
+fn http_header_control_bytes_are_rejected_in_both_directions() {
+    let req = Request::encode_http_submit(1, &http_submission()).unwrap();
+    for byte in (0u8..=31).filter(|b| *b != b'\t').chain([127]) {
+        let header = Header {
+            name: "x-data".into(),
+            value: vec![b'a', byte, b'b'],
+        };
+        let mut value = http_submission();
+        value.headers = vec![header.clone()];
+        assert!(Request::encode_http_submit(1, &value).is_err(), "{byte}");
+        assert!(
+            Request::decode(&raw_http_submission(&value)).is_err(),
+            "{byte}"
+        );
+        let outcome = HttpOutcome {
+            status: Status::Completed,
+            http_status: 200,
+            headers: vec![header.clone()],
+            body: vec![],
+        };
+        assert!(Response::encode_http(&req, &outcome).is_err(), "{byte}");
+        let raw = response(&req, |mut root| {
+            root.set_http_status(200);
+            let mut headers = root.init_headers(1);
+            let mut item = headers.reborrow().get(0);
+            item.set_name(&header.name);
+            item.set_value(&header.value);
+        });
+        assert!(Response::decode_http(&req, &raw).is_err(), "{byte}");
+    }
+    let mut value = http_submission();
+    value.headers[0].value = b"a\tb".to_vec();
+    let req = Request::encode_http_submit(1, &value).unwrap();
+    let outcome = HttpOutcome {
+        status: Status::Completed,
+        http_status: 200,
+        headers: value.headers,
+        body: vec![],
+    };
+    let raw = Response::encode_http(&req, &outcome).unwrap();
+    assert_eq!(Response::decode_http(&req, &raw).unwrap(), outcome);
+}
+
+#[test]
+fn http_invalid_result_status_is_rejected_on_encode_and_wire_decode() {
+    let req = Request::encode_http_submit(1, &http_submission()).unwrap();
+    let outcome = HttpOutcome {
+        status: Status::Invalid,
+        http_status: 0,
+        headers: vec![],
+        body: vec![],
+    };
+    assert!(Response::encode_http(&req, &outcome).is_err());
+    let raw = response(&req, |mut root| root.set_status(Status::Invalid));
+    assert!(Response::decode_http(&req, &raw).is_err());
 }

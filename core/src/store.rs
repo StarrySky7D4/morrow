@@ -17,6 +17,8 @@ mod evidence;
 mod evidence_chunks;
 mod io_intent;
 pub use io_intent::IoIntentReservation;
+mod io_evidence;
+pub use io_evidence::IoMaterialReservation;
 pub use binding::{AuditBinding, AuditBindingState};
 mod read_archive;
 mod read_archive_budget;
@@ -53,6 +55,8 @@ fn sql<T>(value: rusqlite::Result<T>) -> Result<T> {
     value.map_err(|error| {
         #[cfg(all(target_arch = "wasm32", feature = "web-test-hooks"))]
         web_boundary(&format!("sqlite-error:{error:?}"));
+        #[cfg(test)]
+        eprintln!("SQLITE-ERROR-DEBUG: {error:?}");
         match error.sqlite_error_code() {
             Some(rusqlite::ErrorCode::DiskFull) => Error::StorageFull,
             Some(rusqlite::ErrorCode::DatabaseBusy | rusqlite::ErrorCode::DatabaseLocked) => {
@@ -97,19 +101,29 @@ fn blob(connection: &Connection, query: &str, id: &str, limit: usize) -> Result<
     }
 }
 /// Single shared logical capacity entry for every outbox writer. Pre-dispatch
-/// IO intent reservations reduce the room other events may consume, so a
-/// dispatched operation can never be crowded out by later writes. This is a
-/// logical quota; SQLite reporting DiskFull still maps to StorageFull.
+/// IO intent reservations and stored/protected IO material reduce the room
+/// other events may consume, so a dispatched operation can never be crowded
+/// out by later writes. This is a logical quota; SQLite reporting DiskFull
+/// still maps to StorageFull.
 pub(super) fn event_room(c: &Connection, budget: EventBudget, incoming_bytes: u64) -> Result<()> {
+    capacity_room(c, budget, incoming_bytes, true)
+}
+/// Material admission consumes bytes but creates no outbox event.
+pub(super) fn byte_room(c: &Connection, budget: EventBudget, incoming_bytes: u64) -> Result<()> {
+    capacity_room(c, budget, incoming_bytes, false)
+}
+fn capacity_room(c: &Connection, budget: EventBudget, incoming_bytes: u64, event: bool) -> Result<()> {
     let (count, bytes): (i64, i64) = sql(c.query_row(
         "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
         [],
         |r| Ok((r.get(0)?, r.get(1)?)),
     ))?;
     let (reserved_events, reserved_bytes) = io_intent::reservations(c)?;
-    if count.saturating_add(reserved_events) >= i64::from(budget.max_count)
+    let material_bytes = u64::try_from(io_evidence::accounted(c)?).map_err(|_| Error::Integrity)?;
+    if (event && count.saturating_add(reserved_events) >= i64::from(budget.max_count))
         || (bytes as u64)
             .saturating_add(reserved_bytes as u64)
+            .saturating_add(material_bytes)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -165,7 +179,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=16) {
+        if app != APPLICATION_ID || !matches!(version, 5..=17) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
@@ -231,7 +245,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=16))
+            && (app != APPLICATION_ID || !matches!(version, 4..=17))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -276,7 +290,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=16) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=17) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -416,6 +430,20 @@ impl Store {
             boundary("io-reservation-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("io-reservation-migration-after-commit");
+        }
+        if version < 17 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            // Validate the entire v16 schema before adding the protected IO
+            // material namespace. No existing original, commit, evidence or
+            // signature is rewritten; fresh tables start with zero stored
+            // material and zero held material quota.
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(io_evidence::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 17))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("io-evidence-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("io-evidence-migration-after-commit");
         }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
@@ -803,6 +831,7 @@ impl Store {
             return Err(Error::Integrity);
         }
         io_intent::verify_schema(snapshot)?;
+        io_evidence::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;
@@ -814,6 +843,7 @@ impl Store {
         read_capture::verify(snapshot)?;
         read_archive_retention::verify(snapshot)?;
         io_intent::verify(snapshot)?;
+        io_evidence::verify(snapshot)?;
         let mut operations = sql(snapshot.prepare(
             "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
         ))?;
