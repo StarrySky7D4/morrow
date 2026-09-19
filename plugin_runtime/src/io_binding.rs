@@ -1,8 +1,14 @@
 //! Trusted broker admission only: no file/network execution, resource path or guest grant.
 //! Every delivery must check its lease again. Reservations do not prove an external effect.
-use crate::manager::{Control, ManagedInstance, Manager};
+use crate::{
+    Cancellation, Fault,
+    manager::{Control, ManagedInstance, Manager},
+};
 use morrow_core::{
     dispatch::{ConnectionBinding, HostBinding, HostRuntime},
+    io::{self, Action, Request},
+    io_intent::Command,
+    lifecycle::InstancePhase,
     plugin_package::io::{IoCapability, proto::IoBudget},
 };
 use std::{
@@ -117,6 +123,30 @@ impl IoBinding {
             .validate_instance(host, instance)
             .map_err(|_| Error::Denied)?;
         if !self.control.upgrade().is_some_and(|c| c.active()) {
+            return Err(Error::Denied);
+        }
+        Ok(())
+    }
+    /// Check the original, already authenticated owner after it moved to a worker.
+    /// This cannot authenticate a different manager or establish a fresh approval.
+    pub(crate) fn validate_owner(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+    ) -> Result<()> {
+        let control = instance.io_control();
+        if self.manager.upgrade().is_none()
+            || self.host != host.binding()
+            || self.connection != instance.connection().binding()
+            || !Weak::ptr_eq(&self.control, &Arc::downgrade(control))
+            || !control
+                .io
+                .as_ref()
+                .is_some_and(|context| Arc::ptr_eq(context, &self.context))
+            || instance.connection().package_digest() != Some(instance.package().package().digest())
+            || host.connection_phase(instance.connection()) != Ok(InstancePhase::Ready)
+            || !control.active()
+        {
             return Err(Error::Denied);
         }
         Ok(())
@@ -403,6 +433,81 @@ pub(crate) struct IoJobLease {
     bytes: Mutex<u64>,
 }
 impl IoJobLease {
+    /// Reserve only the response ceiling and one held call resource. The worker
+    /// already charged the exact request frame, and the parent owns the job slot.
+    /// Validation and checked accounting precede every mutation of either budget.
+    pub(crate) fn reserve_call(
+        self: &Arc<Self>,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        command: &Command,
+        request: &Request,
+        cancel: Cancellation,
+        now: u64,
+    ) -> Result<IoCallLease> {
+        self.binding.validate_owner(host, instance)?;
+        check_cancel(&cancel)?;
+        let Action::SubmitHttp(http) = request.action() else {
+            return Err(Error::Denied);
+        };
+        if command.package_sha256 != instance.package().package().digest()
+            || command.protocol_sha256 != io::schema_digest()
+            || command.request_sha256 != request.digest()
+            || command.request_bytes != request.bytes().len() as u64
+            || command.operation_id.as_bytes() != http.operation_id.as_slice()
+            || command.capability != IoCapability::HttpRequest
+            || !self
+                .binding
+                .capabilities
+                .contains(&IoCapability::HttpRequest)
+            || (!http.credential.is_empty()
+                && !self
+                    .binding
+                    .capabilities
+                    .contains(&IoCapability::CredentialUse))
+        {
+            return Err(Error::Denied);
+        }
+        if command.response_limit == 0 || command.response_limit > io::MAX_FRAME_BYTES as u64 {
+            return Err(Error::Limit);
+        }
+        let mut job = self.bytes.lock().map_err(|_| Error::Denied)?;
+        let mut state = self
+            .binding
+            .context
+            .state
+            .lock()
+            .map_err(|_| Error::Denied)?;
+        self.binding.validate_time(&state, now)?;
+        let next_job = job
+            .checked_add(command.response_limit)
+            .ok_or(Error::Limit)?;
+        let next_bytes = state
+            .usage
+            .bytes
+            .checked_add(command.response_limit)
+            .ok_or(Error::Limit)?;
+        let next_resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
+        if next_job > self.limit
+            || next_bytes > self.binding.context.budget.max_bytes
+            || next_resources > self.binding.context.budget.max_resources
+        {
+            return Err(Error::Limit);
+        }
+        // Cancellation or revocation during validation must not create a reservation.
+        check_cancel(&cancel)?;
+        self.binding.validate_owner(host, instance)?;
+        let command = command.clone();
+        *job = next_job;
+        state.usage.bytes = next_bytes;
+        state.usage.resources = next_resources;
+        state.last_tick = now;
+        Ok(IoCallLease {
+            job: Arc::clone(self),
+            command,
+            cancel,
+        })
+    }
     pub(crate) fn charge(&self, capabilities: &[IoCapability], bytes: u64, now: u64) -> Result<()> {
         if capabilities
             .iter()
@@ -443,5 +548,53 @@ impl Drop for IoJobLease {
             .lock()
             .unwrap_or_else(|p| p.into_inner());
         state.usage.jobs -= 1;
+    }
+}
+
+fn check_cancel(cancel: &Cancellation) -> Result<()> {
+    match cancel.fault() {
+        None => Ok(()),
+        Some(Fault::Deadline) => Err(Error::Expired),
+        Some(_) => Err(Error::Denied),
+    }
+}
+
+/// One immutable HTTP command reserved under its original managed job. Retaining
+/// a call also retains that job's slot; dropping never refunds cumulative bytes.
+pub(crate) struct IoCallLease {
+    job: Arc<IoJobLease>,
+    command: Command,
+    cancel: Cancellation,
+}
+impl IoCallLease {
+    pub(crate) fn binding(&self) -> &IoBinding {
+        &self.job.binding
+    }
+    pub(crate) fn command(&self) -> &Command {
+        &self.command
+    }
+    pub(crate) fn check(&self, now: u64) -> Result<()> {
+        check_cancel(&self.cancel)?;
+        self.binding().check_liveness(now)?;
+        check_cancel(&self.cancel)
+    }
+    pub(crate) fn validate_owner(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+    ) -> Result<()> {
+        self.binding().validate_owner(host, instance)
+    }
+}
+impl Drop for IoCallLease {
+    fn drop(&mut self) {
+        let mut state = self
+            .job
+            .binding
+            .context
+            .state
+            .lock()
+            .unwrap_or_else(|p| p.into_inner());
+        state.usage.resources -= 1;
     }
 }

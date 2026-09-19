@@ -1,11 +1,11 @@
 # IO-C2：唯一活跃执行与恢复核对
 
-状态：broker 层已完成本轮生命周期修正，验证范围见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)，依赖 [IO-C1 受保护原件](IO_PROTECTED_EVIDENCE.md) 的存储与预留。本层在可信宿主会话内约束一个 operationId 只跨越一次持久发送边界，并让任何中断都只能走核对、不能走重发。真实 HTTP／文件后端、异步作业与重试策略属于 IO-B2／IO-D，不在本文件范围。
+状态：broker 层已完成本轮生命周期修正，验证范围见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)，依赖 [IO-C1 受保护原件](IO_PROTECTED_EVIDENCE.md) 的存储与预留。本层在可信宿主会话内约束一个 operationId 只跨越一次持久发送边界，并让任何中断都只能走核对、不能走重发。托管 HTTP 作业已通过子调用预留接入，见 [接线报告](../reports/brokered-io-jobs-2026-09-19.md)。真实 HTTP／文件后端和资源授权属于 IO-D。
 
 ## 组成
 
 - `plugin_runtime::io_execution::Broker`：内存中的 operationId → 活跃执行注册表。注册表不持久化，进程重启后由持久历史单独决定还能不能开始新的尝试。
-- 每条活跃执行持有：该次绑定的实时 `IoBinding`（`plugin_runtime/src/io_binding.rs`）、一个并发作业租约、主体与命令快照、以及 `Prepared`／`Dispatched` 状态。
+- 每条活跃执行持有：该次绑定的实时 `IoBinding`（`plugin_runtime/src/io_binding.rs`）、独立并发作业租约或原作业子调用租约、主体与命令快照、以及 `Prepared`／`Dispatched` 状态。
 - 持久侧复用 `io_intents` 历史与 `io_evidence` 原件：发送边界提交 `OutcomeUnknown`，成功后提交 `Observed` 并保留响应原件。
 - 后端由可信宿主以同步回调提供；本层自身不产生任何网络、文件或凭据效果。
 
@@ -67,6 +67,10 @@
 
 `begin` 为一次执行申请一个并发作业租约，按 `request_bytes + response_limit` 计入该实例的 IO 字节预算；累计字节只增不退，释放执行只归还并发作业槽位。Store 材料预留与 outbox 写入共享同一逻辑字节额度，真实磁盘空间仍由 SQLite 的 `StorageFull` 报告。
 
+托管 `submit_brokered` 使用私有 `begin_in_job`，只接受原作业签发的单次 `IoCallLease`。响应完整帧额度及一个 resource 在发送前预留；父作业已经计 input/request/jobs，不再走独立 `begin` 重复计费。原作业取消、Manager 撤权和绑定到期贯穿 Store 提交前、实际回调前及最终交付。记录 Observed 后撤权仍保留事实，但拒绝载荷交付。
+
+最终时钟回调在注册表锁外调用，之后重新核对条目与身份；允许时钟回调退休该操作，不会自锁。此约束与托管作业的纯取时时钟要求不同，后者见 IO-B2 文档。
+
 ## 仍未覆盖
 
-真实出站／监听／服务发布声明与 Registry 授权（IO-D1–D3）、与 IO-B2 作业层及实际后端贯通的产品调用链、真实后端效果核对来源与远端身份、录制式隔离回放（ROAD-08-IO）、凭据注入、按配额退休、主应用 UI 与三语言 SDK。本层不表示任何插件已经可以访问网络或文件系统。
+真实出站／监听／服务发布声明与 Registry 授权（IO-D1–D3）、实际后端贯通的产品调用链、真实后端效果核对来源与远端身份、录制式隔离回放（ROAD-08-IO）、凭据注入、按配额退休、主应用 UI 与三语言 SDK。本层不表示任何插件已经可以访问网络或文件系统。

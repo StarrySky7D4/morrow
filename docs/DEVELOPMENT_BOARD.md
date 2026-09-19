@@ -20,7 +20,7 @@
 | --- | --- | --- | --- |
 | 1 / IO-C1 | 已验存储子集 / P0 | core 证据存储；依赖 IO-C0 | Store v17 受保护原件、原容器身份和共享容量预留；读取／幂等重试有界校验；满额、真实满盘、撤权、崩溃重开、材料缺失均可解释，旧签名原件不改写 |
 | 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
-| 3 / IO-B2 | 已验调度＋托管准入；子调用接线下一项 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。下一步为 Broker 分配同一作业的子调用预留，避免重复计费，再连资源批准和真正后端 |
+| 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。下一步连资源批准和真正后端 |
 | 4 / IO-D1 | 编解码已验；后端待接线 / P0 | guest→Manager/Pool→broker→network_node | HTTP 编解码与认证／控制字节／歧义目标拒绝已验；仍须真实第三方 HTTP/HTTPS 出站、origin／方法／凭据授权与响应限制，重定向／取消／远端已执行但响应丢失、Unknown 核对；至少包含有副作用方法，不能以一次 GET 结项 |
 | 4 / IO-D2 | 待 IO-B2/C2 / P0 | broker＋network_node API 节点；与 D1 同批范围 | guest 发布授权路由；远端主体与插件权限交集，认证／路由冲突／限流／撤权／节点停止及响应丢失；实际请求证明服务端能力 |
 | 4 / IO-D3 | 待 IO-B2/C2 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |

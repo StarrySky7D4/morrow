@@ -1202,3 +1202,60 @@ fn broker_administration_cannot_cancel_same_id_on_another_host() {
     assert_eq!(f.phase(OPERATION), Phase::CancelledBeforeDispatch);
     assert_eq!(binding.usage().jobs, 0);
 }
+
+#[test]
+fn delivery_clock_can_retire_execution_without_registry_deadlock() {
+    let (_dir, mut f) = Fixture::new();
+    let instance = f.connect();
+    let binding = f.bind(&instance);
+    let command = command(OPERATION);
+    f.seed(&command);
+    let broker = Broker::new();
+    broker
+        .begin(
+            &f.manager,
+            &mut f.host,
+            &instance,
+            &binding,
+            IoCapability::HttpRequest,
+            ID,
+            &command,
+            2,
+        )
+        .unwrap();
+    let mut samples = 0;
+    let mut calls = 0;
+    let result = broker.dispatch(
+        &f.manager,
+        &mut f.host,
+        &instance,
+        OPERATION,
+        |_| {
+            calls += 1;
+            Ok(b"response".to_vec())
+        },
+        || {
+            samples += 1;
+            if samples == 4 {
+                assert!(broker.retire(OPERATION));
+                assert_eq!(binding.usage().jobs, 1);
+            }
+            2 + samples
+        },
+    );
+    assert_eq!(result, Err(Error::Cancelled));
+    assert_eq!(samples, 4);
+    assert_eq!(calls, 1);
+    assert_eq!(f.phase(OPERATION), Phase::Observed);
+    assert_eq!(broker.active(), 0);
+    assert_eq!((binding.usage().jobs, binding.usage().resources), (0, 0));
+    assert_eq!(
+        f.host
+            .store_local()
+            .io_material(ID, OPERATION, Kind::Response)
+            .unwrap()
+            .unwrap()
+            .payload(),
+        b"response"
+    );
+}

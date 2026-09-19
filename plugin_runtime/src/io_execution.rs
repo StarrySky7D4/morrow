@@ -4,7 +4,7 @@
 //! backend operation at most once, and refuses resend after interruption.
 //! Backends are supplied by the trusted host; this module performs no I/O.
 use crate::{
-    io_binding::{Error as BindingError, IoBinding, IoLease},
+    io_binding::{Error as BindingError, IoBinding, IoCallLease, IoLease},
     manager::{ManagedInstance, Manager},
 };
 use morrow_core::{
@@ -63,7 +63,7 @@ impl From<BindingError> for Error {
         }
     }
 }
-fn storage(error: morrow_core::Error) -> Error {
+pub(crate) fn storage(error: morrow_core::Error) -> Error {
     match error {
         morrow_core::Error::Limit
         | morrow_core::Error::EventCapacity
@@ -95,17 +95,24 @@ enum State {
 }
 // A dispatch keeps this reservation alive even if its map entry is retired.
 // Retirement revokes delivery, but cannot pretend that an in-flight backend stopped.
-struct Live {
+enum Reservation {
+    Standalone { _lease: IoLease },
+    Job(IoCallLease),
+}
+pub(crate) struct Live {
     binding: IoBinding,
-    _lease: IoLease,
+    reservation: Reservation,
     retired: AtomicBool,
 }
 impl Live {
-    fn check_liveness(&self, now: u64) -> Result<()> {
+    pub(crate) fn check_liveness(&self, now: u64) -> Result<()> {
         if self.retired.load(Ordering::Acquire) {
             return Err(Error::Cancelled);
         }
         self.binding.check_liveness(now)?;
+        if let Reservation::Job(lease) = &self.reservation {
+            lease.check(now)?;
+        }
         if self.retired.load(Ordering::Acquire) {
             return Err(Error::Cancelled);
         }
@@ -256,11 +263,72 @@ impl Broker {
             Active {
                 live: Arc::new(Live {
                     binding: binding.duplicate(),
-                    _lease: lease,
+                    reservation: Reservation::Standalone { _lease: lease },
                     retired: AtomicBool::new(false),
                 }),
                 subject: subject.to_string(),
                 command: command.clone(),
+                state: State::Prepared,
+            },
+        );
+        Ok(())
+    }
+    /// Accept one single-use subcall reservation from an authenticated worker.
+    /// The parent already owns its job slot and prepaid response ceiling.
+    pub(crate) fn begin_in_job(
+        &self,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        lease: IoCallLease,
+        now: u64,
+    ) -> Result<()> {
+        lease.validate_owner(host, instance)?;
+        lease.check(now)?;
+        let command = lease.command().clone();
+        self.check_host(host, true)?;
+        let stored = host
+            .store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .map_err(storage)?
+            .ok_or(Error::NotFound)?;
+        stored.matches_command(&command).map_err(storage)?;
+        match stored.phase() {
+            Phase::Prepared => {}
+            Phase::OutcomeUnknown => return Err(Error::OutcomeUnknown),
+            Phase::Observed => return Err(Error::Dispatched),
+            Phase::CancelledBeforeDispatch => return Err(Error::Cancelled),
+            Phase::InvalidPhase => return Err(Error::Integrity),
+        }
+        let request = host
+            .store_local()
+            .io_material(&command.subject, &command.operation_id, Kind::Request)
+            .map_err(storage)?
+            .ok_or(Error::EvidenceUnavailable)?;
+        if request.payload_sha256() != command.request_sha256
+            || request.payload().len() as u64 != command.request_bytes
+        {
+            return Err(Error::Integrity);
+        }
+        host.store_local_mut()
+            .reserve_io_intent_followup(&command, || Ok(()))
+            .map_err(storage)?;
+        host.store_local_mut()
+            .reserve_io_materials(&command, || Ok(()))
+            .map_err(storage)?;
+        let mut active = self.lock();
+        if active.contains_key(&command.operation_id) {
+            return Err(Error::Duplicate);
+        }
+        active.insert(
+            command.operation_id.clone(),
+            Active {
+                live: Arc::new(Live {
+                    binding: lease.binding().duplicate(),
+                    reservation: Reservation::Job(lease),
+                    retired: AtomicBool::new(false),
+                }),
+                subject: command.subject.clone(),
+                command,
                 state: State::Prepared,
             },
         );
@@ -281,15 +349,58 @@ impl Broker {
         run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
         mut clock: impl FnMut() -> u64,
     ) -> Result<Vec<u8>> {
+        self.dispatch_checked(
+            host,
+            instance,
+            operation,
+            run,
+            |binding, host, instance| {
+                binding
+                    .validate_identity(manager, host, instance)
+                    .map_err(Error::from)
+            },
+            |live| live.check_liveness(clock()),
+        )
+    }
+    pub(crate) fn dispatch_in_job(
+        &self,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        operation: &str,
+        run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
+        guard: impl FnMut(&Live) -> Result<()>,
+    ) -> Result<Vec<u8>> {
+        {
+            let active = self.lock();
+            let entry = active.get(operation).ok_or(Error::NotFound)?;
+            if !matches!(entry.live.reservation, Reservation::Job(_)) {
+                return Err(Error::Denied);
+            }
+        }
+        self.dispatch_checked(
+            host,
+            instance,
+            operation,
+            run,
+            |binding, host, instance| binding.validate_owner(host, instance).map_err(Error::from),
+            guard,
+        )
+    }
+    fn dispatch_checked(
+        &self,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        operation: &str,
+        run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
+        identity: impl Fn(&IoBinding, &HostRuntime, &ManagedInstance) -> Result<()>,
+        mut guard: impl FnMut(&Live) -> Result<()>,
+    ) -> Result<Vec<u8>> {
         self.check_host(host, false)?;
         let (subject, command, live) = {
             let mut active = self.lock();
             let entry = active.get_mut(operation).ok_or(Error::NotFound)?;
             // A foreign instance cannot advance the trusted clock or claim this slot.
-            entry
-                .live
-                .binding
-                .validate_identity(manager, host, instance)?;
+            identity(&entry.live.binding, host, instance)?;
             if entry.state != State::Prepared {
                 return Err(Error::Dispatched);
             }
@@ -300,7 +411,7 @@ impl Broker {
                 Arc::clone(&entry.live),
             )
         };
-        live.check_liveness(clock())?;
+        guard(&live)?;
         let stored = host
             .store_local()
             .lookup_io_intent(&subject, operation)
@@ -331,7 +442,7 @@ impl Broker {
         let committed = host
             .store_local_mut()
             .append_io_intent_local_authorized(&boundary, || {
-                live.check_liveness(clock()).map_err(|error| {
+                guard(&live).map_err(|error| {
                     rejected = Some(error);
                     morrow_core::Error::Invalid("inactive IO dispatch")
                 })
@@ -340,8 +451,8 @@ impl Broker {
             return Err(rejected.unwrap_or_else(|| storage(error)));
         }
         // Nothing after this durable boundary can safely authorize automatic resend.
-        live.binding.validate_identity(manager, host, instance)?;
-        live.check_liveness(clock())?;
+        identity(&live.binding, host, instance)?;
+        guard(&live)?;
         let response = run(request.payload()).map_err(|_| Error::OutcomeUnknown)?;
         if response.len() as u64 > command.response_limit {
             return Err(Error::OutcomeUnknown);
@@ -371,15 +482,16 @@ impl Broker {
             material.payload_sha256(),
             ObservationSource::OriginalResponse,
         )?;
-        let now = clock();
         let delivery = (|| {
+            // Clock callbacks may retire this execution: never call them under
+            // the registry lock. Recheck membership/identity after the guard.
+            guard(&live)?;
             let active = self.lock();
             let entry = active.get(operation).ok_or(Error::Cancelled)?;
             if !Arc::ptr_eq(&entry.live, &live) {
                 return Err(Error::Cancelled);
             }
-            live.binding.validate_identity(manager, host, instance)?;
-            live.check_liveness(now)
+            identity(&live.binding, host, instance)
         })();
         self.retire(operation);
         delivery?;

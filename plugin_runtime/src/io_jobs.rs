@@ -1,10 +1,11 @@
 //! Bounded IO job executor: submit, poll, read and cancel on one native thread.
 //! Each job carries a trusted-host contract router for its IO calls; this module
-//! performs no I/O itself, never retries a routed call, and never delivers a
+//! performs no external network/file operations itself, never retries a call, and never delivers a
 //! result that outlived its authorization or deadline as a success.
 use crate::{
     Cancellation, Fault, MAX_TASK_BYTES, Report,
     io_binding::{Error as BindingError, IoBinding, IoJobLease},
+    io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
     worker::TaskId,
@@ -12,6 +13,8 @@ use crate::{
 use morrow_core::{
     dispatch::{Connection, HostRuntime},
     io::{Action, HttpOutcome, MAX_FRAME_BYTES, Request, Response},
+    io_evidence::{Kind, Material},
+    io_intent::{Command, Phase as IntentPhase, Record},
     plugin_package::io::IoCapability,
 };
 use std::{
@@ -75,6 +78,147 @@ pub enum RouterFault {
 /// external effect already in progress. This executor does not implement network IO.
 pub trait Router: Send {
     fn route(&mut self, call: u32, request: &[u8]) -> Result<Vec<u8>, RouterFault>;
+}
+/// Trusted resource-authorizing adapter. Its actual effect must go through the
+/// supplied context; returning invented success without dispatch is rejected.
+pub trait BrokerRouter: Send {
+    fn route(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        call: u32,
+        request: &Request,
+    ) -> Result<Vec<u8>, RouterFault>;
+}
+enum JobRouter {
+    Raw(Box<dyn Router>),
+    Brokered(Box<dyn BrokerRouter>),
+}
+/// Scope of one actual guest IO import. Private fields prevent a router from
+/// substituting a host, managed identity, request or job reservation.
+pub struct RouteContext<'a> {
+    host: &'a mut HostRuntime,
+    instance: &'a ManagedInstance,
+    broker: &'a Broker,
+    control: &'a Control,
+    lease: &'a Arc<IoJobLease>,
+    cancel: &'a Cancellation,
+    request: &'a Request,
+    reserved: &'a mut u64,
+    used: bool,
+    expected: Option<Vec<u8>>,
+    uncertain: bool,
+}
+impl RouteContext<'_> {
+    /// Persist the exact framed request, commit the send boundary, and execute
+    /// one bounded HTTP-frame backend once. Resource selection remains the
+    /// trusted router's responsibility; this method does not create its grant.
+    pub fn dispatch(
+        &mut self,
+        command: &Command,
+        backend: impl FnOnce(&[u8]) -> Result<Vec<u8>, ()>,
+    ) -> io_execution::Result<Vec<u8>> {
+        use io_execution::{Error, storage};
+        if self.used {
+            return Err(Error::Duplicate);
+        }
+        self.used = true;
+        let prepared = Record::prepared(command.clone()).map_err(storage)?;
+        let authority = self.control.authority.as_ref().ok_or(Error::Denied)?;
+        let child = {
+            let mut state = self.control.lock();
+            let next = state
+                .bytes
+                .checked_add(command.response_limit)
+                .filter(|n| *n <= self.control.limits.max_total_bytes)
+                .ok_or(Error::Limit)?;
+            let child = authority.with_execution_time(|now| {
+                self.lease
+                    .reserve_call(
+                        self.host,
+                        self.instance,
+                        command,
+                        self.request,
+                        self.cancel.clone(),
+                        now,
+                    )
+                    .map_err(Error::from)
+            })?;
+            state.bytes = next;
+            *self.reserved = command.response_limit;
+            child
+        };
+        let authorize = || {
+            authority
+                .with_execution_time(|now| child.check(now).map_err(Error::from))
+                .map_err(|_| morrow_core::Error::Invalid("inactive IO job"))
+        };
+        if let Some(stored) = self
+            .host
+            .store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .map_err(storage)?
+        {
+            stored.matches_command(command).map_err(storage)?;
+            match stored.phase() {
+                IntentPhase::Prepared => {}
+                IntentPhase::OutcomeUnknown => {
+                    self.uncertain = true;
+                    return Err(Error::OutcomeUnknown);
+                }
+                IntentPhase::Observed => return Err(Error::Dispatched),
+                IntentPhase::CancelledBeforeDispatch => return Err(Error::Cancelled),
+                IntentPhase::InvalidPhase => return Err(Error::Integrity),
+            }
+        } else {
+            self.host
+                .store_local_mut()
+                .append_io_intent_local_authorized(&prepared, authorize)
+                .map_err(storage)?;
+        }
+        self.host
+            .store_local_mut()
+            .reserve_io_intent_followup(command, authorize)
+            .map_err(storage)?;
+        self.host
+            .store_local_mut()
+            .reserve_io_materials(command, authorize)
+            .map_err(storage)?;
+        let material = Material::encode(
+            Kind::Request,
+            &command.operation_id,
+            &command.subject,
+            command.request_sha256,
+            self.request.bytes(),
+        )
+        .map_err(storage)?;
+        self.host
+            .store_local_mut()
+            .store_io_material(&command.subject, Kind::Request, &material, authorize)
+            .map_err(storage)?;
+        authority.with_execution_time(|now| {
+            self.broker
+                .begin_in_job(self.host, self.instance, child, now)
+        })?;
+        self.uncertain = true;
+        let result = self.broker.dispatch_in_job(
+            self.host,
+            self.instance,
+            &command.operation_id,
+            |raw| {
+                let response = backend(raw)?;
+                Response::decode_http(self.request, &response).map_err(|_| ())?;
+                Ok(response)
+            },
+            |live| authority.with_execution_time(|now| live.check_liveness(now)),
+        );
+        // Forget only live bookkeeping, never durable Unknown/Observed history.
+        self.broker.retire(&command.operation_id);
+        if let Ok(response) = &result {
+            self.uncertain = false;
+            self.expected = Some(response.clone());
+        }
+        result
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct JobLimits {
@@ -163,6 +307,13 @@ impl Authority {
         f: impl FnOnce(u64) -> Result<T, BindingError>,
     ) -> Result<T, BindingError> {
         let mut clock = self.clock.lock().map_err(|_| BindingError::Denied)?;
+        f(clock())
+    }
+    fn with_execution_time<T>(
+        &self,
+        f: impl FnOnce(u64) -> io_execution::Result<T>,
+    ) -> io_execution::Result<T> {
+        let mut clock = self.clock.lock().map_err(|_| io_execution::Error::Denied)?;
         f(clock())
     }
 }
@@ -295,7 +446,7 @@ struct Job {
     serial: u64,
     cancel: Cancellation,
     input: Vec<u8>,
-    router: Box<dyn Router>,
+    router: JobRouter,
     lease: Option<Arc<IoJobLease>>,
 }
 enum Message {
@@ -404,6 +555,8 @@ impl IoWorker {
     /// Authenticate the exact managed owner before handing it to the worker.
     /// Manager remains on the calling side: approval changes and Drop revoke the
     /// original Control immediately, without waiting for a synchronous router.
+    /// The clock must be a bounded, non-reentrant monotonic time source: it runs
+    /// inside serialized authorization and must not call worker/handle methods.
     #[allow(clippy::too_many_arguments)]
     pub fn spawn_managed(
         manager: &Manager,
@@ -492,13 +645,7 @@ impl IoWorker {
             .name(format!("morrow-io-job-{id}"))
             .spawn(move || {
                 let result = catch_unwind(AssertUnwindSafe(|| {
-                    execute(
-                        session.package(),
-                        &mut host,
-                        session.connection(),
-                        &receiver,
-                        &inner,
-                    )
+                    execute(&session, &mut host, &receiver, &inner)
                 }));
                 let result = match result {
                     Ok(result) => result,
@@ -535,6 +682,27 @@ impl IoWorker {
         &self,
         input: Vec<u8>,
         router: Box<dyn Router>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        self.submit_routed(input, JobRouter::Raw(router), timeout)
+    }
+    /// Requires the managed owner; actual side effects must pass the context's
+    /// durable dispatch boundary and use the original job's subcall reservation.
+    pub fn submit_brokered(
+        &self,
+        input: Vec<u8>,
+        router: Box<dyn BrokerRouter>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        if self.control.authority.is_none() {
+            return Err(JobError::InvalidOptions);
+        }
+        self.submit_routed(input, JobRouter::Brokered(router), timeout)
+    }
+    fn submit_routed(
+        &self,
+        input: Vec<u8>,
+        router: JobRouter,
         timeout: Duration,
     ) -> Result<JobHandle, JobError> {
         if timeout.is_zero()
@@ -683,12 +851,13 @@ impl Drop for IoWorker {
     }
 }
 fn execute(
-    package: &PreparedPackage,
+    session: &Session,
     host: &mut HostRuntime,
-    connection: &Connection,
     receiver: &Receiver<Message>,
     control: &Arc<Control>,
 ) -> Result<(), JobError> {
+    let package = session.package();
+    let broker = Broker::new();
     loop {
         {
             let mut state = control.lock();
@@ -743,8 +912,14 @@ fn execute(
                 &input,
                 &cancel,
                 control,
-                &mut *router,
-                lease.as_deref(),
+                &mut router,
+                lease.as_ref(),
+                host,
+                match session {
+                    Session::Managed(i) => Some(i),
+                    Session::Raw(..) => None,
+                },
+                &broker,
             ),
         };
         if let Some(fault) = control.fault(&cancel) {
@@ -763,7 +938,7 @@ fn execute(
             }
         }
     }
-    host.disconnect(connection)
+    host.disconnect(session.connection())
         .map_err(|_| JobError::Disconnect)
 }
 fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
@@ -786,13 +961,17 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
         unknown: false,
     }
 }
+#[allow(clippy::too_many_arguments)]
 fn run_job(
     package: &PreparedPackage,
     input: &[u8],
     cancel: &Cancellation,
     control: &Arc<Control>,
-    router: &mut dyn Router,
-    lease: Option<&IoJobLease>,
+    router: &mut JobRouter,
+    lease: Option<&Arc<IoJobLease>>,
+    host: &mut HostRuntime,
+    instance: Option<&ManagedInstance>,
+    broker: &Broker,
 ) -> JobReport {
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -841,7 +1020,8 @@ fn run_job(
                 fault = Some(Fault::Limits);
                 return Err(());
             }
-            if let Err(error) = control.charge(request_charge, capabilities, lease) {
+            if let Err(error) = control.charge(request_charge, capabilities, lease.map(Arc::as_ref))
+            {
                 fault = Some(error);
                 return Err(());
             }
@@ -854,7 +1034,44 @@ fn run_job(
             }
             let call = calls;
             calls += 1;
-            let routed = router.route(call, request);
+            let mut reserved = 0;
+            let routed = match router {
+                JobRouter::Raw(router) => router.route(call, request),
+                JobRouter::Brokered(router) => match (instance, lease, Request::decode(request)) {
+                    (Some(instance), Some(lease), Ok(parsed)) => {
+                        let mut context = RouteContext {
+                            host,
+                            instance,
+                            broker,
+                            control,
+                            lease,
+                            cancel,
+                            request: &parsed,
+                            reserved: &mut reserved,
+                            used: false,
+                            expected: None,
+                            uncertain: false,
+                        };
+                        let reply = router.route(&mut context, call, &parsed);
+                        if context.uncertain || (context.expected.is_some() && reply.is_err()) {
+                            Err(RouterFault::Unknown)
+                        } else if reply
+                            .as_ref()
+                            .is_ok_and(|v| context.expected.as_ref() != Some(v))
+                        {
+                            Err(if context.used {
+                                RouterFault::Unknown
+                            } else {
+                                RouterFault::Denied
+                            })
+                        } else {
+                            reply
+                        }
+                    }
+                    _ => Err(RouterFault::Denied),
+                },
+            };
+            bytes += reserved;
             if let Some(late) = control.fault(cancel) {
                 fault = Some(late);
                 unknown = true;
@@ -876,8 +1093,13 @@ fn run_job(
                     return Err(());
                 }
             };
-            let response_charge = response.len() as u64;
-            if response.is_empty()
+            let response_charge = if reserved == 0 {
+                response.len() as u64
+            } else {
+                0
+            };
+            if (reserved != 0 && response.len() as u64 > reserved)
+                || response.is_empty()
                 || response.len() > MAX_FRAME_BYTES
                 || bytes
                     .checked_add(response_charge)
@@ -889,7 +1111,7 @@ fn run_job(
                 unknown = true;
                 return Err(());
             }
-            if let Err(error) = control.charge(response_charge, &[], lease) {
+            if let Err(error) = control.charge(response_charge, &[], lease.map(Arc::as_ref)) {
                 fault = Some(error);
                 unknown = true;
                 return Err(());
