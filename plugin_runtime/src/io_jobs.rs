@@ -8,6 +8,7 @@ use crate::{
     io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
+    service_io::{ListenerGrant, ServiceGrant},
     worker::TaskId,
 };
 use morrow_core::{
@@ -16,6 +17,7 @@ use morrow_core::{
     io_evidence::{Kind, Material},
     io_intent::{Command, Phase as IntentPhase, Record},
     plugin_package::io::IoCapability,
+    service,
 };
 use std::{
     collections::BTreeMap,
@@ -277,7 +279,6 @@ impl JobLimits {
         })
     }
 }
-#[derive(Debug)]
 pub struct JobReport {
     /// Execution facts only; the content exchange is always denied for IO jobs.
     pub task: TaskReport,
@@ -285,6 +286,8 @@ pub struct JobReport {
     pub response: Option<Response>,
     /// HTTP result, validated against its exact submission frame.
     pub http_response: Option<HttpOutcome>,
+    /// Service completion bound to its original request, independent of IO responses.
+    pub service_response: Option<service::Reply>,
     /// Admitted IO calls, in guest order.
     pub calls: u32,
     /// Cumulatively charged request + response bytes for this job.
@@ -294,10 +297,36 @@ pub struct JobReport {
     /// The last routed call had an unknown external outcome; reconcile.
     pub unknown: bool,
 }
+impl std::fmt::Debug for JobReport {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("JobReport")
+            .field("execution", &self.task.execution)
+            .field("response_present", &self.response.is_some())
+            .field(
+                "http_status",
+                &self.http_response.as_ref().map(|r| r.http_status),
+            )
+            .field(
+                "service_status",
+                &self.service_response.as_ref().map(|r| r.status),
+            )
+            .field("calls", &self.calls)
+            .field("bytes", &self.bytes)
+            .field("cancelled", &self.cancelled)
+            .field("unknown", &self.unknown)
+            .finish()
+    }
+}
 impl JobReport {
     /// Bytes a caller must be willing to read before the result is consumed.
     pub fn payload_bytes(&self) -> usize {
-        self.http_response.as_ref().map_or(0, |r| {
+        self.service_response.as_ref().map_or(0, |r| {
+            r.body.len()
+                + r.headers
+                    .iter()
+                    .map(|h| h.name.len() + h.value.len())
+                    .sum::<usize>()
+        }) + self.http_response.as_ref().map_or(0, |r| {
             r.body.len()
                 + r.headers
                     .iter()
@@ -316,6 +345,7 @@ struct Slot {
     abandoned: bool,
     _lease: Option<Arc<IoJobLease>>,
     http_guards: Vec<crate::http_io::HttpCallGuard>,
+    service_grant: Option<ServiceGrant>,
 }
 struct State {
     phase: Phase,
@@ -387,29 +417,41 @@ impl Control {
         self.state.lock().unwrap_or_else(|e| e.into_inner())
     }
     fn fault(&self, cancel: &Cancellation) -> Option<Fault> {
+        self.job_fault(cancel, None, &[])
+    }
+    fn job_fault(
+        &self,
+        cancel: &Cancellation,
+        service: Option<&ServiceGrant>,
+        http: &[crate::http_io::HttpCallGuard],
+    ) -> Option<Fault> {
         cancel
             .fault()
             .or_else(|| self.revocation.is_revoked().then_some(Fault::Cancelled))
             .or_else(|| {
-                self.authority.as_ref().and_then(|a| {
-                    a.with_time(|now| a.binding.check_liveness(now))
+                self.authority.as_ref().and_then(|authority| {
+                    authority
+                        .with_execution_time(|now| {
+                            authority.binding.check_liveness(now)?;
+                            if let Some(grant) = service {
+                                grant.check(now)?;
+                            }
+                            crate::http_io::HttpCallGuard::check_all_at(http, now)
+                        })
                         .err()
-                        .map(binding_fault)
+                        .map(|error| match error {
+                            io_execution::Error::Expired => Fault::Deadline,
+                            io_execution::Error::Cancelled => Fault::Cancelled,
+                            io_execution::Error::Clock => Fault::TaskProtocol,
+                            io_execution::Error::Limit => Fault::Limits,
+                            _ => Fault::InactiveConnection,
+                        })
                 })
             })
     }
     fn refresh(&self, slot: &mut Slot) {
-        let fault = self.fault(&slot.cancel).or_else(|| {
-            crate::http_io::HttpCallGuard::check_all(&slot.http_guards)
-                .err()
-                .map(|error| match error {
-                    io_execution::Error::Expired => Fault::Deadline,
-                    io_execution::Error::Cancelled => Fault::Cancelled,
-                    io_execution::Error::Clock => Fault::TaskProtocol,
-                    _ => Fault::InactiveConnection,
-                })
-        });
-        if let Some(fault) = fault
+        if let Some(fault) =
+            self.job_fault(&slot.cancel, slot.service_grant.as_ref(), &slot.http_guards)
             && let Some(report) = &mut slot.report
         {
             suppress(report, fault);
@@ -476,9 +518,14 @@ fn suppress(report: &mut JobReport, fault: Fault) {
     report.task.failure = None;
     report.response = None;
     report.http_response = None;
+    report.service_response = None;
     report.cancelled = true;
     // A routed effect cannot be presumed rolled back when its delivery is suppressed.
     report.unknown |= report.calls > 0;
+}
+struct ServiceJob {
+    request: service::Request,
+    grant: ServiceGrant,
 }
 struct Job {
     serial: u64,
@@ -486,6 +533,7 @@ struct Job {
     input: Vec<u8>,
     router: JobRouter,
     lease: Option<Arc<IoJobLease>>,
+    service: Option<Box<ServiceJob>>,
 }
 enum Message {
     Job(Job),
@@ -722,7 +770,7 @@ impl IoWorker {
         router: Box<dyn Router>,
         timeout: Duration,
     ) -> Result<JobHandle, JobError> {
-        self.submit_routed(input, JobRouter::Raw(router), timeout)
+        self.submit_routed(input, JobRouter::Raw(router), timeout, None)
     }
     /// Requires the managed owner; actual side effects must pass the context's
     /// durable dispatch boundary and use the original job's subcall reservation.
@@ -735,13 +783,82 @@ impl IoWorker {
         if self.control.authority.is_none() {
             return Err(JobError::InvalidOptions);
         }
-        self.submit_routed(input, JobRouter::Brokered(router), timeout)
+        self.submit_routed(input, JobRouter::Brokered(router), timeout, None)
+    }
+    /// Validate a service route before native publication, without consuming any
+    /// job/byte quota. The original grant already pins declaration and handler.
+    pub fn check_service(&self, grant: &ServiceGrant) -> Result<(), JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_binding(&authority.binding)
+            .map_err(|_| JobError::InvalidOptions)?;
+        let state = self.control.lock();
+        if state.phase != Phase::Running || self.control.revocation.is_revoked() {
+            return Err(JobError::Closed);
+        }
+        authority
+            .with_time(|now| {
+                authority.binding.check_liveness(now)?;
+                grant.check(now)
+            })
+            .map_err(|_| JobError::Closed)
+    }
+    /// Check a listener in this worker's original serialized clock domain.
+    /// This neither claims the listener nor charges a job or byte reservation.
+    pub fn check_listener(&self, grant: &ListenerGrant) -> Result<(), JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_binding(&authority.binding)
+            .map_err(|_| JobError::InvalidOptions)?;
+        let state = self.control.lock();
+        if state.phase != Phase::Running || self.control.revocation.is_revoked() {
+            return Err(JobError::Closed);
+        }
+        authority
+            .with_time(|now| {
+                authority.binding.check_liveness(now)?;
+                grant.check(now)
+            })
+            .map_err(|_| JobError::Closed)
+    }
+    /// Submit a host-authenticated service invocation. This is the same bounded
+    /// queue and actual managed instance; all guest IO still uses BrokerRouter.
+    pub fn submit_service(
+        &self,
+        request: service::Request,
+        grant: ServiceGrant,
+        router: Box<dyn BrokerRouter>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_job(&authority.binding, &request)
+            .map_err(|_| JobError::InvalidOptions)?;
+        self.submit_routed(
+            request.bytes().to_vec(),
+            JobRouter::Brokered(router),
+            timeout,
+            Some(Box::new(ServiceJob { request, grant })),
+        )
     }
     fn submit_routed(
         &self,
         input: Vec<u8>,
         router: JobRouter,
         timeout: Duration,
+        service: Option<Box<ServiceJob>>,
     ) -> Result<JobHandle, JobError> {
         if timeout.is_zero()
             || timeout > self.control.timeout
@@ -778,7 +895,16 @@ impl IoWorker {
             .authority
             .as_ref()
             .map(|a| {
+                if let Some(service) = &service {
+                    service
+                        .grant
+                        .validate_job(&a.binding, &service.request)
+                        .map_err(|_| JobError::InvalidOptions)?;
+                }
                 a.with_time(|now| {
+                    if let Some(service) = &service {
+                        service.grant.check(now)?;
+                    }
                     a.binding.admit_job_authenticated(
                         input_bytes,
                         self.control.limits.max_job_bytes,
@@ -799,6 +925,10 @@ impl IoWorker {
             Some(authority) => Cancellation::linked(cancel, authority.cancellation.clone()),
             None => cancel,
         };
+        let cancel = match &service {
+            Some(service) => Cancellation::linked(cancel, service.grant.cancellation()),
+            None => cancel,
+        };
         state.jobs.insert(
             serial,
             Slot {
@@ -807,6 +937,7 @@ impl IoWorker {
                 abandoned: false,
                 _lease: lease.clone(),
                 http_guards: Vec::new(),
+                service_grant: service.as_ref().map(|service| service.grant.clone()),
             },
         );
         if self
@@ -817,6 +948,7 @@ impl IoWorker {
                 input,
                 router,
                 lease,
+                service,
             }))
             .is_err()
         {
@@ -939,9 +1071,10 @@ fn execute(
             input,
             mut router,
             lease,
+            service,
         } = job;
         let mut http_guards = Vec::new();
-        let mut report = match control.fault(&cancel) {
+        let mut report = match control.job_fault(&cancel, service.as_ref().map(|s| &s.grant), &[]) {
             Some(fault) => {
                 let mut report = cancelled_report(package, fault);
                 report.bytes = input.len() as u64;
@@ -961,9 +1094,12 @@ fn execute(
                 },
                 &broker,
                 &mut http_guards,
+                service.as_deref(),
             ),
         };
-        if let Some(fault) = control.fault(&cancel) {
+        if let Some(fault) =
+            control.job_fault(&cancel, service.as_ref().map(|s| &s.grant), &http_guards)
+        {
             suppress(&mut report, fault);
         }
         // Computation is over. Only the controlled slot owns the job lease when
@@ -997,6 +1133,7 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
         },
         response: None,
         http_response: None,
+        service_response: None,
         calls: 0,
         bytes: 0,
         cancelled: true,
@@ -1015,6 +1152,7 @@ fn run_job(
     instance: Option<&ManagedInstance>,
     broker: &Broker,
     http_guards: &mut Vec<crate::http_io::HttpCallGuard>,
+    service: Option<&ServiceJob>,
 ) -> JobReport {
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -1028,7 +1166,7 @@ fn run_job(
             if fault.is_some() {
                 return Err(());
             }
-            if let Some(late) = control.fault(cancel) {
+            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
                 fault = Some(late);
                 return Err(());
             }
@@ -1071,7 +1209,7 @@ fn run_job(
             bytes += request_charge;
             // Recheck just before dispatch. Once a synchronous trusted router
             // starts, a later cancellation cannot claim its effects did not occur.
-            if let Some(late) = control.fault(cancel) {
+            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
                 fault = Some(late);
                 return Err(());
             }
@@ -1121,7 +1259,7 @@ fn run_job(
                 },
             };
             bytes += reserved;
-            if let Some(late) = control.fault(cancel) {
+            if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
                 fault = Some(late);
                 unknown = true;
                 return Err(());
@@ -1172,7 +1310,7 @@ fn run_job(
         },
         cancel.clone(),
     );
-    if let Some(late) = control.fault(cancel) {
+    if let Some(late) = control.job_fault(cancel, service.map(|s| &s.grant), http_guards) {
         // A result that outlived its deadline or revocation is not a success.
         let mut report = cancelled_report(package, late);
         report.task.execution.host_calls = run.report.host_calls;
@@ -1188,7 +1326,37 @@ fn run_job(
     }
     let mut response = None;
     let mut http_response = None;
-    if execution.outcome.is_ok() {
+    let mut service_response = None;
+    if let Some(service) = service {
+        if execution.outcome.is_ok() {
+            match run.completion {
+                Some(done) => {
+                    let charged = bytes
+                        .checked_add(done.len() as u64)
+                        .filter(|next| *next <= control.limits.max_job_bytes)
+                        .ok_or(Fault::Limits)
+                        .and_then(|next| {
+                            control.charge(done.len() as u64, &[], lease.map(Arc::as_ref))?;
+                            bytes = next;
+                            Ok(())
+                        });
+                    match charged {
+                        Err(fault) => execution.outcome = Err(fault),
+                        Ok(()) => match service::Response::decode(&service.request, &done) {
+                            Ok(reply) => service_response = Some(reply),
+                            Err(_) => execution.outcome = Err(Fault::TaskProtocol),
+                        },
+                    }
+                }
+                None => execution.outcome = Err(Fault::TaskProtocol),
+            }
+        }
+        // Past an admitted side effect, an invalid/oversized final reply never
+        // proves rollback and must not authorize an automatic replay.
+        if execution.outcome.is_err() {
+            unknown |= calls > 0;
+        }
+    } else if execution.outcome.is_ok() {
         match (run.completion, last_response, last_request) {
             (Some(done), Some(actual), Some(request)) if calls > 0 && done == actual => {
                 let decoded = Request::decode(&request).and_then(|request| {
@@ -1215,6 +1383,7 @@ fn run_job(
         },
         response,
         http_response,
+        service_response,
         calls,
         bytes,
         cancelled: false,

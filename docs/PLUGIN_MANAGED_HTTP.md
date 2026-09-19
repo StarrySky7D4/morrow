@@ -1,6 +1,6 @@
 # IO-D1：托管插件的有界 HTTP/HTTPS 出站
 
-状态：Windows 本机真实 HTTP/TLS 路径已接线；这是首批有界出站能力，不是完整网络 SDK。验收范围与实际结果见 [本轮报告](../reports/managed-http-2026-09-19.md)。API 节点发布、账户服务、大文件流和主应用 UI 仍沿 [完整网络目标](PLUGIN_NETWORK_API.md) 与 [API节点目标](PLUGIN_API_NODE.md) 推进。
+状态：Windows 本机真实 HTTP/TLS 路径已接线；这是首批有界出站能力，不是完整网络 SDK。验收范围与实际结果见 [本轮报告](../reports/managed-http-2026-09-19.md)。原生宿主显式 API 节点发布已接入并通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；持久服务发布、账户服务、大文件流和主应用 UI 仍沿 [完整网络目标](PLUGIN_NETWORK_API.md) 与 [API节点目标](PLUGIN_API_NODE.md) 推进。
 
 ## 授权来源
 
@@ -37,7 +37,7 @@
 
 - 宿主主界面/持久资源批准、凭据库、路径范围、本地局域网独立 profile及平台策略。
 - 实际提供者幂等/状态查询核对、应用重启后的恢复展示、证据访问策略与配额退休。
-- API节点路由发布与远端主体交集；受控文件变更/选择/枚举。
+- 在已接线的原生服务发布／Principal service scopes 上补持久发布、细粒度内容权限交集与主应用接入；受控文件变更/选择/枚举。
 - 三语言类型化扩展、大文件/流/SSE/WebSocket、OAuth、多账号、录制隔离重放。
 
 上述范围未因本机传输通过而完成；冻结旧 SDK、应用版本和用户数据库不在本轮变更范围。

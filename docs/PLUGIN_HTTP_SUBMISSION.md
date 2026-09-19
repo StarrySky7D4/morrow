@@ -1,6 +1,6 @@
 # IO-D1 第一步：HTTP 提交与结果帧编解码
 
-状态：核心协议层已实现，限定回归与边界见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)；这是 IO-D1 的第一步，**不表示真实出站已经可用**。真实网络路径、origin／方法／凭据授权与 Unknown 核对仍未接入。
+状态：核心协议层已实现，限定回归与边界见 [整合修正报告](../reports/io-safety-refactor-2026-09-19.md)；这是 IO-D1 的核心帧层；后续已接通原实例批准与本机真实 HTTP/TLS，见 [托管 HTTP](PLUGIN_MANAGED_HTTP.md)。持久资源配置、主应用与真实提供者 Unknown 核对仍待完成。
 
 ## 模型
 

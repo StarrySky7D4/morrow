@@ -40,7 +40,9 @@
 
 代码新增受信任宿主 HTTP/HTTPS 客户端和 Bearer API 路由服务，支持原始正文、常用方法、限额、取消、超时，以及显式三语言纯转换插件适配。它是共享传输底座；不是完整入站服务权限、通用 guest 网络调用、网络审计或 UI 管理完成证明。
 
-当前 `PluginService` 只允许明确选择的无内容能力、无依赖、bytes→bytes 处理器，使用新建隔离内容库。网络认证头不会传入 guest，包/处理器由启动方固定。它不打开现有用户内容库，不允许远端注册任意路由或改变包，不将它冒充未来正式的 service manifest/Manager 授权实现。
+旧原型 `PluginService` 只允许明确选择的无内容能力、无依赖、bytes→bytes 处理器，使用新建隔离内容库。网络认证头不会传入 guest，包/处理器由启动方固定。它不打开现有用户内容库，不允许远端注册任意路由或改变包，不将它冒充未来正式的 service manifest/Manager 授权实现。
+
+新增 [IO-D2 受管服务](PLUGIN_MANAGED_SERVICE.md) 已通过 Windows 本机限定验证：独立类型化 service Request/Reply 与声明 tag 7，原 Manager 批准的 HttpListen／HttpPublish、同 worker 的发布与监听租约、Bearer Principal service scopes 及零 IO 合法服务计算；有出站 IO 时继续走已批准 Broker。它是可信原生宿主显式发布，不是 guest 动态注册，也不代表持久发布、主应用 UI 或新版三语言 SDK 已完成。
 
 普通 HTTP listener 只支持 loopback，TLS listener 接收显式证书/私钥与监听地址；出站以精确 origin 和方法校验，本机 HTTP/HTTPS profile 必须显式选择，自定义根不关闭证书验证。实际资格测试均限定本机合成证书，没有公开部署验收。OAuth、服务持久发布、证书在线轮换、SSE/WS、异步持久任务、完整网络证据与全部平台尚待实现。客户端取消/传输失败仍可能在远端产生效果，原生错误码没有提供持久结果查询。
 

@@ -158,7 +158,11 @@ impl HttpCallGuard {
             .clock
             .lock()
             .map_err(|_| io_execution::Error::Denied)?;
-        let now = clock();
+        Self::check_all_at(guards, clock())
+    }
+    /// Caller holds the original managed worker clock and has sampled one instant
+    /// for service, job and all endpoint grants at the delivery boundary.
+    pub(crate) fn check_all_at(guards: &[Self], now: u64) -> io_execution::Result<()> {
         for guard in guards {
             guard.check_cancel()?;
             guard.inner.grant.resource.binding().check_liveness(now)?;

@@ -10,6 +10,7 @@
 - `IoWorker::spawn(package, host, connection, clock, capacity, limits)`：低层可信回调入口，不含托管 IO 批准；一个执行器独占一个包、连接与核心，运行在名为 `morrow-io-job-<id>` 的独立线程上，因此内容提交不会发生在调用方事务内。
 - `submit(input, router, timeout) -> JobHandle`：`input` 是**完整任务输入帧**（1..=128 KiB，例如 IO 请求帧），建立作业时立即计费，不做截断、不重放。
 - `submit_brokered(input, Box<dyn BrokerRouter>, timeout)`：仅托管执行器可用。每次 import 提供私有身份的 `RouteContext`，实际 HTTP 回调由 `context.dispatch(command, backend)` 单次执行，并交回该次持久操作的原始响应。
+- `submit_service(request, grant, router, timeout)`：同一 managed worker 的类型化入站服务入口；允许零 IO import，最终完成帧绑定原服务 Request。发布／监听和主体范围见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)，已通过 Windows 本机限定验证。
 - `router: Box<dyn Router + Send>`：可信宿主为每个作业提供的契约路由；`route(call, request)` 按 guest 顺序收到每次调用，执行器从不重试。
 - `JobHandle`：`poll()` 非阻塞观察、`read(max_bytes)` 恰好一次读取终态、`cancel()` 请求取消。
 - `drain(timeout)` 停止接收并收紧所有期限，仍有效的 Ready 等待 read/drop，或等到期限才收尾；`stop()` 先撤权再取消；`try_finish()` 只在执行线程结束后归还核心所有权。
@@ -42,7 +43,7 @@
 2. **先计费请求字节**，预算不足则在路由之前拒绝，不产生外部效果。
 3. 调用契约路由；`Denied`／`Limit` 映射为本地失败，`Unknown` 明确标记为“效果可能已发生，需核对”。
 4. 计费响应字节；响应为空、超帧或不满足预算时拒绝，并把作业标记为 `unknown`，因为调用已经到达路由。
-5. guest 完成帧必须等于最后一次路由响应；否则执行以 `TaskProtocol` 结束。
+5. 旧 IO 作业 profile 的 guest 完成帧必须等于最后一次路由响应；否则以 `TaskProtocol` 结束。服务 profile 则验证独立 service Reply 与原请求的 call ID／摘要，允许零次 IO；有 IO 时仍经过同一 Broker，且另计最终完成帧字节。
 
 `submit_brokered` 在上述调度内增加持久顺序：校验真实命令与额度 → Prepared → 请求原件与收尾容量 → OutcomeUnknown 发送边界 → backend 至多一次 → 校验完整 HTTP 响应帧 → 响应原件与 Observed → 最新授权与原响应一致性检查。网络回调期间不持作业、时钟或 Broker 注册表锁。
 
@@ -50,7 +51,7 @@ brokered 的累计计费为 `input + 每次 request + 每次获准 response_limi
 
 路由未经过 context 却返回合法帧、替换已记录响应或在成功后返回拒绝，均不能交付成功；已有 Unknown 也不能被路由错误映射为普通拒绝。同步回调的副作用和具体资源批准仍属于可信后端责任，不能把这层接口当作进程沙箱。
 
-`JobReport.response` 保存读取类结果，`http_response` 保存按原请求精确校验的 HTTP 结果；两种结果互斥，HTTP 正文和头字段计入 read 字节上限。取消或撤权同时清除两种字段。
+`JobReport.response` 保存读取类结果，`http_response` 保存按原请求精确校验的出站 HTTP 结果，`service_response` 保存独立服务 Reply；按作业 profile 返回对应结果，正文和头字段计入 read 字节上限。取消或撤权清除这些载荷。
 
 `JobReport` 因此区分三种事实：`execution.outcome` 是运行结论，`cancelled` 表示撤权、取消或期限阻止交付，`unknown` 表示外部效果未知、只能核对。
 
@@ -67,11 +68,11 @@ brokered 的累计计费为 `input + 每次 request + 每次获准 response_limi
 
 - [IO-C2](PLUGIN_IO_EXECUTION.md) 已接入托管 HTTP 子调用：一个 import 最多一次 context.dispatch，一个 operationId 最多一次持久发送尝试。多个 import 使用各自命令和预留，统一受作业调用数及字节上限约束。
 - 托管入口已持有原 IoBinding 并使用原实例共享额度；低层 spawn 的 clock 参数仍不承担批准检查。两者均不自行授予资源权限。作业子调用预留、操作证据和 Broker 已串接；HTTP原实例资源批准与实际传输见IO-D1，其它后端仍待接入。
-- IO 协议帧使用 [IO-A／IO-B1](PLUGIN_IO_DESIGN.md) 的单帧契约；本层不改变帧格式、不新增 core schema。
+- 原 IO 协议帧继续使用 [IO-A／IO-B1](PLUGIN_IO_DESIGN.md) 单帧契约；入站服务新增独立 `service.capnp`，通过 IO 声明 tag 7 显式选择，不改写旧 `io.capnp` 或冻结原件。
 - 数据库格式与记录不变；作业本身不持久化，重启后由持久历史与核对决定后续。
 
 ## 仍未覆盖
 
-主应用与持久网络批准、文件系统后端、guest 发布授权路由、远端身份与凭据、异步 guest 挂起与多次作业并发、执行器池化、真实远端效果核对与录制回放、按配额退休。单独使用本层不授予资源权限；托管HTTP适配须另获端点批准，文件变更与服务发布仍未接线。
+主应用与持久网络／服务批准、文件系统后端、guest 动态发布路由、OAuth/账户凭据与细粒度内容权限、异步 guest 挂起与多次作业并发、执行器池化、真实远端效果核对与录制回放、按配额退休。单独使用本层不授予资源权限；托管 HTTP 须另获端点批准。原生宿主显式发布服务及 Principal service scopes 已通过本机限定验证，见 [IO-D2](PLUGIN_MANAGED_SERVICE.md)；文件变更后端仍待接入。
 
 托管 HTTP 的原实例端点批准与实际传输见 [IO-D1](PLUGIN_MANAGED_HTTP.md)。其资源守卫保留至最终 read/drop，独立端点撤权不必撤销整个插件实例也能阻止旧响应交付。

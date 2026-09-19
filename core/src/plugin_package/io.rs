@@ -58,6 +58,7 @@ pub fn schema_digest() -> [u8; 32] {
 /// Convenience metadata only. Package validation is still required; this grants nothing.
 pub fn declaration(capabilities: Vec<IoCapability>, handlers: Vec<String>) -> proto::IoDeclaration {
     proto::IoDeclaration {
+        service_schema_sha256: Vec::new(),
         schema_version: DECLARATION_VERSION,
         io_version: VERSION,
         io_schema_sha256: schema_digest().to_vec(),
@@ -90,6 +91,14 @@ pub(crate) fn validate(value: &proto::IoDeclaration) -> Result<BTreeSet<IoCapabi
     for raw in &value.requested_capabilities {
         if !capabilities.insert(IoCapability::from_number(*raw)?) {
             return Err(Error::Invalid("duplicate IO capability"));
+        }
+    }
+    if !value.service_schema_sha256.is_empty() {
+        if value.service_schema_sha256 != crate::service::schema_digest() {
+            return Err(Error::UnsupportedVersion);
+        }
+        if !capabilities.contains(&IoCapability::HttpPublish) {
+            return Err(Error::Invalid("service requires HTTP publish"));
         }
     }
     let mut handlers = BTreeSet::new();

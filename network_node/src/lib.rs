@@ -8,6 +8,8 @@ pub mod client;
 #[cfg(feature = "plugin-adapter")]
 pub mod managed_http;
 #[cfg(feature = "plugin-adapter")]
+pub mod managed_service;
+#[cfg(feature = "plugin-adapter")]
 pub mod plugin;
 pub mod server;
 

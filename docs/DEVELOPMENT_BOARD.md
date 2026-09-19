@@ -22,7 +22,7 @@
 | 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
 | 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输；后续连接主应用、持久批准与其它资源 |
 | 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；仍待持久批准/主应用、真实提供者核对、路径范围和更多平台 |
-| 4 / IO-D2 | 待 IO-B2/C2 / P0 | broker＋network_node API 节点；与 D1 同批范围 | guest 发布授权路由；远端主体与插件权限交集，认证／路由冲突／限流／撤权／节点停止及响应丢失；实际请求证明服务端能力 |
+| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；入站持久幂等和内容权限交集仍待完成；持久批准、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
 | 4 / IO-D3 | 待 IO-B2/C2 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
 | 5 / IO-E2 | 待 B2/D1/D2/D3 / P1 | workbench_host＋Flutter 管理界面 | 文件／网络／监听／发布分别显示授权、任务及恢复状态；独立插件真实调用和提供服务，用户资料无隐式迁移 |

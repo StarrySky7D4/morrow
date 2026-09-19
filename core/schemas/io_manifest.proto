@@ -29,4 +29,6 @@ message IoDeclaration {
   // Effectful entrypoints are separate from pure TransformHandler registrations.
   repeated string handlers = 5;
   IoBudget budget = 6;
+  // Optional inbound service contract; requires HTTP_PUBLISH when present.
+  bytes service_schema_sha256 = 7;
 }

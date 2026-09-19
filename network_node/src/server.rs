@@ -1,18 +1,21 @@
 //! Bounded HTTP/TLS node. Listener configuration belongs to the trusted native host.
 //! Plain HTTP is loopback-only; TLS may explicitly bind another configured address.
-use crate::{Error, HttpRequest, HttpResponse, Limits, Result};
+use crate::{Error, HttpRequest, HttpResponse, Limits, RawHttpResponse, Result};
 use axum::{Router, body::Body, extract::State};
 use futures_util::StreamExt;
 use http::{HeaderMap, HeaderName, HeaderValue, Method, Request, Response, StatusCode, Uri};
 use rustls::pki_types::{CertificateDer, PrivateKeyDer, pem::PemObject};
 use sha2::{Digest, Sha256};
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     future::Future,
     io,
     net::SocketAddr,
     pin::Pin,
-    sync::Arc,
+    sync::{
+        Arc,
+        atomic::{AtomicBool, Ordering},
+    },
     task::{Context, Poll},
     time::Duration,
 };
@@ -40,35 +43,256 @@ pub struct Route {
     path: String,
     handler: Handler,
 }
+fn route_key(method: &str, path: &str) -> Result<(Method, String)> {
+    if method.is_empty()
+        || method.len() > 32
+        || !method
+            .bytes()
+            .all(|byte| byte.is_ascii_uppercase() || byte == b'-')
+        || !path.starts_with('/')
+        || path.len() > 8192
+        || path.contains(['*', '{', '}', '#', '?'])
+    {
+        return Err(Error::Invalid);
+    }
+    let method = Method::from_bytes(method.as_bytes()).map_err(|_| Error::Invalid)?;
+    let uri: Uri = path.parse().map_err(|_| Error::Invalid)?;
+    if uri.scheme().is_some() || uri.authority().is_some() || uri.path() != path {
+        return Err(Error::Invalid);
+    }
+    Ok((method, path.into()))
+}
 impl Route {
     pub fn new(method: &str, path: &str, handler: Handler) -> Result<Self> {
-        if method.is_empty()
-            || method.len() > 32
-            || !method
-                .bytes()
-                .all(|byte| byte.is_ascii_uppercase() || byte == b'-')
-            || !path.starts_with('/')
-            || path.len() > 8192
-            || path.contains(['*', '{', '}', '#', '?'])
-        {
-            return Err(Error::Invalid);
-        }
-        let method = Method::from_bytes(method.as_bytes()).map_err(|_| Error::Invalid)?;
-        let uri: Uri = path.parse().map_err(|_| Error::Invalid)?;
-        if uri.scheme().is_some() || uri.authority().is_some() || uri.path() != path {
-            return Err(Error::Invalid);
-        }
+        let (method, path) = route_key(method, path)?;
         Ok(Self {
             method,
-            path: path.into(),
+            path,
             handler,
         })
     }
 }
+fn safe_id(id: &str) -> bool {
+    !id.is_empty()
+        && id.len() <= 128
+        && id
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || matches!(b, b'.' | b'_' | b'-'))
+}
+struct PrincipalState {
+    id: String,
+    token_digest: [u8; 32],
+    services: BTreeSet<String>,
+    expires: Instant,
+    revoked: AtomicBool,
+}
+/// A host-configured authenticated remote identity. Clones share revocation and
+/// the original deadline; neither cloning nor a request header renews authority.
+/// No bearer text or secret-bearing Debug implementation is retained.
+#[derive(Clone)]
+pub struct Principal {
+    inner: Arc<PrincipalState>,
+}
+impl Principal {
+    pub fn new(id: &str, token: &str, services: &[&str], ttl: Duration) -> Result<Self> {
+        validate_bearer_token(token)?;
+        if !safe_id(id)
+            || services.is_empty()
+            || services.len() > 64
+            || ttl.is_zero()
+            || ttl > Duration::from_secs(24 * 60 * 60)
+        {
+            return Err(Error::Invalid);
+        }
+        let mut scopes = BTreeSet::new();
+        for service in services {
+            if !safe_id(service) || !scopes.insert((*service).to_owned()) {
+                return Err(Error::Invalid);
+            }
+        }
+        Ok(Self {
+            inner: Arc::new(PrincipalState {
+                id: id.into(),
+                token_digest: Sha256::digest(token.as_bytes()).into(),
+                services: scopes,
+                expires: Instant::now().checked_add(ttl).ok_or(Error::Invalid)?,
+                revoked: AtomicBool::new(false),
+            }),
+        })
+    }
+    pub fn id(&self) -> &str {
+        &self.inner.id
+    }
+    pub fn revoke(&self) {
+        self.inner.revoked.store(true, Ordering::Release);
+    }
+    fn active(&self) -> bool {
+        !self.inner.revoked.load(Ordering::Acquire) && Instant::now() < self.inner.expires
+    }
+    pub fn allows(&self, service: &str) -> bool {
+        self.active() && self.inner.services.contains(service)
+    }
+    pub fn check(&self, service: &str) -> Result<()> {
+        if self.allows(service) {
+            Ok(())
+        } else {
+            Err(Error::Denied)
+        }
+    }
+}
+/// Only the server constructs this after authenticating the bearer and checking
+/// the route's fixed service scope. HTTP headers cannot supply its principal.
+pub struct AuthorizedRequest {
+    request: HttpRequest,
+    principal: Principal,
+}
+impl AuthorizedRequest {
+    pub fn into_parts(self) -> (HttpRequest, Principal) {
+        (self.request, self.principal)
+    }
+}
+pub type AuthorizedHandler = Arc<
+    dyn Fn(
+            AuthorizedRequest,
+            CancellationToken,
+        ) -> Pin<Box<dyn Future<Output = Result<RawHttpResponse>> + Send>>
+        + Send
+        + Sync,
+>;
+pub struct AuthorizedRoute {
+    method: Method,
+    path: String,
+    service: String,
+    handler: AuthorizedHandler,
+}
+impl AuthorizedRoute {
+    pub fn new(
+        service: &str,
+        method: &str,
+        path: &str,
+        handler: AuthorizedHandler,
+    ) -> Result<Self> {
+        if !safe_id(service) {
+            return Err(Error::Invalid);
+        }
+        let (method, path) = route_key(method, path)?;
+        Ok(Self {
+            method,
+            path,
+            service: service.into(),
+            handler,
+        })
+    }
+}
+#[derive(Clone)]
+enum Authenticated {
+    Legacy,
+    Principal(Principal),
+}
+enum Authentication {
+    Legacy([u8; 32]),
+    Principals(Vec<Principal>),
+}
+impl Authentication {
+    fn authenticate(&self, headers: &HeaderMap) -> Option<Authenticated> {
+        let received = bearer_digest(headers)?;
+        match self {
+            Self::Legacy(expected) => {
+                digest_eq(&received, expected).then_some(Authenticated::Legacy)
+            }
+            Self::Principals(principals) => {
+                let mut matched = None;
+                // Bound the table and compare every digest, with no early exit
+                // within digest bytes. Do not expose configured IDs on failure.
+                for principal in principals {
+                    if digest_eq(&received, &principal.inner.token_digest) && principal.active() {
+                        matched = Some(Authenticated::Principal(principal.clone()));
+                    }
+                }
+                matched
+            }
+        }
+    }
+}
+#[derive(Clone)]
+enum BoundHandler {
+    Legacy(Handler),
+    Authorized {
+        service: String,
+        handler: AuthorizedHandler,
+    },
+}
+impl BoundHandler {
+    fn check(&self, identity: &Authenticated) -> Result<()> {
+        match (self, identity) {
+            (Self::Legacy(_), Authenticated::Legacy) => Ok(()),
+            (Self::Authorized { service, .. }, Authenticated::Principal(principal)) => {
+                principal.check(service)
+            }
+            _ => Err(Error::Denied),
+        }
+    }
+    async fn invoke(
+        &self,
+        input: HttpRequest,
+        identity: Authenticated,
+        token: CancellationToken,
+    ) -> Result<RawHttpResponse> {
+        self.check(&identity)?;
+        match (self, identity) {
+            (Self::Legacy(handler), Authenticated::Legacy) => {
+                let value = handler(input, token).await?;
+                Ok(RawHttpResponse {
+                    status: value.status,
+                    body: value.body,
+                    headers: value
+                        .headers
+                        .into_iter()
+                        .map(|(name, value)| (name, value.into_bytes()))
+                        .collect(),
+                })
+            }
+            (Self::Authorized { handler, .. }, Authenticated::Principal(principal)) => {
+                handler(
+                    AuthorizedRequest {
+                        request: input,
+                        principal,
+                    },
+                    token,
+                )
+                .await
+            }
+            _ => Err(Error::Denied),
+        }
+    }
+}
+type Routes = BTreeMap<String, BTreeMap<String, BoundHandler>>;
+fn route_table(
+    entries: impl IntoIterator<Item = (Method, String, BoundHandler)>,
+) -> Result<Routes> {
+    let mut table = Routes::new();
+    let mut count = 0;
+    for (method, path, handler) in entries {
+        count += 1;
+        if count > 1024
+            || table
+                .entry(path)
+                .or_default()
+                .insert(method.to_string(), handler)
+                .is_some()
+        {
+            return Err(Error::Invalid);
+        }
+    }
+    if count == 0 {
+        return Err(Error::Invalid);
+    }
+    Ok(table)
+}
 
 struct Shared {
-    routes: BTreeMap<String, BTreeMap<String, Handler>>,
-    token_digest: [u8; 32],
+    routes: Routes,
+    authentication: Authentication,
     limits: Limits,
     requests: Semaphore,
     stop: CancellationToken,
@@ -175,23 +399,92 @@ impl Node {
     ) -> Result<Self> {
         limits.validate()?;
         validate_bearer_token(&bearer_token)?;
-        if routes.is_empty() || routes.len() > 1024 {
+        let table = route_table(routes.into_iter().map(|route| {
+            (
+                route.method,
+                route.path,
+                BoundHandler::Legacy(route.handler),
+            )
+        }))?;
+        let authentication = Authentication::Legacy(Sha256::digest(bearer_token.as_bytes()).into());
+        drop(bearer_token);
+        Self::listen(address, table, authentication, limits, tls).await
+    }
+    /// Plain HTTP retains the original loopback-only restriction.
+    pub async fn bind_authorized(
+        address: SocketAddr,
+        principals: Vec<Principal>,
+        routes: Vec<AuthorizedRoute>,
+        limits: Limits,
+    ) -> Result<Self> {
+        if !address.ip().is_loopback() {
+            return Err(Error::Denied);
+        }
+        Self::authorized_inner(address, principals, routes, limits, None).await
+    }
+    pub async fn bind_authorized_tls(
+        address: SocketAddr,
+        principals: Vec<Principal>,
+        routes: Vec<AuthorizedRoute>,
+        limits: Limits,
+        identity: TlsIdentity,
+    ) -> Result<Self> {
+        Self::authorized_inner(
+            address,
+            principals,
+            routes,
+            limits,
+            Some(TlsAcceptor::from(identity.config)),
+        )
+        .await
+    }
+    async fn authorized_inner(
+        address: SocketAddr,
+        principals: Vec<Principal>,
+        routes: Vec<AuthorizedRoute>,
+        limits: Limits,
+        tls: Option<TlsAcceptor>,
+    ) -> Result<Self> {
+        limits.validate()?;
+        if principals.is_empty() || principals.len() > 1024 {
             return Err(Error::Invalid);
         }
-        let mut table = BTreeMap::<String, BTreeMap<String, Handler>>::new();
-        for route in routes {
-            if table
-                .entry(route.path)
-                .or_default()
-                .insert(route.method.to_string(), route.handler)
-                .is_some()
+        let mut ids = BTreeSet::new();
+        let mut digests = BTreeSet::new();
+        for principal in &principals {
+            if !principal.active()
+                || !ids.insert(principal.id().to_owned())
+                || !digests.insert(principal.inner.token_digest)
             {
                 return Err(Error::Invalid);
             }
         }
-        let token_digest = Sha256::digest(bearer_token.as_bytes()).into();
-        // Do not retain the bearer token in server state or diagnostic structures.
-        drop(bearer_token);
+        let table = route_table(routes.into_iter().map(|route| {
+            (
+                route.method,
+                route.path,
+                BoundHandler::Authorized {
+                    service: route.service,
+                    handler: route.handler,
+                },
+            )
+        }))?;
+        Self::listen(
+            address,
+            table,
+            Authentication::Principals(principals),
+            limits,
+            tls,
+        )
+        .await
+    }
+    async fn listen(
+        address: SocketAddr,
+        table: Routes,
+        authentication: Authentication,
+        limits: Limits,
+        tls: Option<TlsAcceptor>,
+    ) -> Result<Self> {
         let listener = TcpListener::bind(address)
             .await
             .map_err(|_| Error::Transport)?;
@@ -199,7 +492,7 @@ impl Node {
         let stop = CancellationToken::new();
         let shared = Arc::new(Shared {
             routes: table,
-            token_digest,
+            authentication,
             limits,
             requests: Semaphore::new(limits.max_concurrent),
             stop: stop.clone(),
@@ -224,9 +517,17 @@ impl Node {
             task: Some(task),
         })
     }
+    #[cfg(feature = "plugin-adapter")]
+    pub(crate) fn stop_token(&self) -> CancellationToken {
+        self.stop.clone()
+    }
     pub fn local_addr(&self) -> SocketAddr {
         self.address
     }
+    /// Await destruction of the task owning the listening socket, including after
+    /// forced cancellation. Timeout does not certify that every separately spawned
+    /// connection task has exited; their socket IO still observes the stop token.
+    /// Callers releasing a listener lease must await this future, not merely drop it.
     pub async fn shutdown(mut self) -> Result<()> {
         self.stop.cancel();
         let Some(mut task) = self.task.take() else {
@@ -237,8 +538,10 @@ impl Node {
             Ok(_) => Err(Error::Transport),
             Err(_) => {
                 task.abort();
-                // Socket wrappers also see stop; aborting only axum's top-level task would
-                // otherwise leave separately spawned slow connection tasks alive.
+                // abort() requests cancellation; awaiting is what confirms that the
+                // listener owner has actually been dropped before its lease is released.
+                // Independent connection tasks retain the shared cancellation token.
+                let _ = task.await;
                 Err(Error::Timeout)
             }
         }
@@ -246,6 +549,8 @@ impl Node {
 }
 impl Drop for Node {
     fn drop(&mut self) {
+        // Best-effort cancellation only: synchronous Drop cannot confirm task exit.
+        // Managed listener owners use and await shutdown() before releasing a lease.
         self.stop.cancel();
         if let Some(task) = self.task.take() {
             task.abort();
@@ -475,29 +780,19 @@ fn header_size(headers: &HeaderMap) -> Option<usize> {
             .checked_add(4)
     })
 }
-fn authorized(headers: &HeaderMap, expected: &[u8; 32]) -> bool {
+fn bearer_digest(headers: &HeaderMap) -> Option<[u8; 32]> {
     let mut values = headers.get_all(http::header::AUTHORIZATION).iter();
-    let Some(value) = values.next() else {
-        return false;
-    };
+    let value = values.next()?;
     if values.next().is_some() {
-        return false;
+        return None;
     }
-    let Ok(value) = value.to_str() else {
-        return false;
-    };
-    let Some((scheme, token)) = value.split_once(' ') else {
-        return false;
-    };
-    if !scheme.eq_ignore_ascii_case("Bearer")
-        || token.is_empty()
-        || token.len() > 4096
-        || !token.bytes().all(|byte| byte.is_ascii_graphic())
-    {
-        return false;
+    let (scheme, token) = value.to_str().ok()?.split_once(' ')?;
+    if !scheme.eq_ignore_ascii_case("Bearer") || validate_bearer_token(token).is_err() {
+        return None;
     }
-    let received = Sha256::digest(token.as_bytes());
-    // No early exit on an individual digest byte.
+    Some(Sha256::digest(token.as_bytes()).into())
+}
+fn digest_eq(received: &[u8; 32], expected: &[u8; 32]) -> bool {
     received
         .iter()
         .zip(expected)
@@ -519,7 +814,7 @@ fn forbidden_response_header(name: &HeaderName) -> bool {
             | "content-length"
     )
 }
-fn response(value: HttpResponse, limits: Limits) -> Result<Response<Body>> {
+fn response(value: RawHttpResponse, limits: Limits) -> Result<Response<Body>> {
     if value.body.len() > limits.max_response_bytes {
         return Err(Error::Limit);
     }
@@ -545,7 +840,7 @@ fn response(value: HttpResponse, limits: Limits) -> Result<Response<Body>> {
         if forbidden_response_header(&name) {
             return Err(Error::Denied);
         }
-        let value = HeaderValue::from_str(&value).map_err(|_| Error::Invalid)?;
+        let value = HeaderValue::from_bytes(&value).map_err(|_| Error::Invalid)?;
         headers.append(name, value);
     }
     let mut response = Response::new(Body::from(value.body));
@@ -572,14 +867,14 @@ async fn dispatch(State(state): State<Arc<Shared>>, request: Request<Body>) -> R
     if header_size(request.headers()).is_none_or(|size| size > state.limits.max_header_bytes) {
         return fixed(StatusCode::REQUEST_HEADER_FIELDS_TOO_LARGE, "header limit");
     }
-    if !authorized(request.headers(), &state.token_digest) {
+    let Some(identity) = state.authentication.authenticate(request.headers()) else {
         let mut response = fixed(StatusCode::UNAUTHORIZED, "authentication required");
         response.headers_mut().insert(
             http::header::WWW_AUTHENTICATE,
             HeaderValue::from_static("Bearer"),
         );
         return response;
-    }
+    };
     let Some(methods) = state.routes.get(request.uri().path()) else {
         return fixed(StatusCode::NOT_FOUND, "route not found");
     };
@@ -592,6 +887,9 @@ async fn dispatch(State(state): State<Arc<Shared>>, request: Request<Body>) -> R
         }
         return response;
     };
+    if let Err(error) = handler.check(&identity) {
+        return failure(error);
+    }
     let Ok(_permit) = state.requests.try_acquire() else {
         return fixed(StatusCode::TOO_MANY_REQUESTS, "node busy");
     };
@@ -630,7 +928,7 @@ async fn dispatch(State(state): State<Arc<Shared>>, request: Request<Body>) -> R
         if token.is_cancelled() {
             return Err(Error::Cancelled);
         }
-        handler(input, token.clone()).await
+        handler.invoke(input, identity.clone(), token.clone()).await
     };
     let value = tokio::select! {
         biased;
@@ -644,6 +942,9 @@ async fn dispatch(State(state): State<Arc<Shared>>, request: Request<Body>) -> R
     if Instant::now() >= deadline {
         token.cancel();
         return failure(Error::Timeout);
+    }
+    if let Err(error) = handler.check(&identity) {
+        return failure(error);
     }
     match value {
         Ok(value) => match response(value, state.limits) {

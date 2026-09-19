@@ -151,6 +151,30 @@ impl IoBinding {
         }
         Ok(())
     }
+    /// Compare two already authenticated bindings without accepting a replacement
+    /// owner or deriving any new capability from package metadata.
+    pub(crate) fn validate_same_owner(&self, other: &Self) -> Result<()> {
+        if self.host != other.host
+            || self.connection != other.connection
+            || !Weak::ptr_eq(&self.manager, &other.manager)
+            || !Weak::ptr_eq(&self.control, &other.control)
+            || !Arc::ptr_eq(&self.context, &other.context)
+            || self.manager.upgrade().is_none()
+            || !self
+                .control
+                .upgrade()
+                .is_some_and(|control| control.active())
+        {
+            return Err(Error::Denied);
+        }
+        Ok(())
+    }
+    pub(crate) fn require_capability(&self, capability: IoCapability) -> Result<()> {
+        if !self.capabilities.contains(&capability) {
+            return Err(Error::Denied);
+        }
+        Ok(())
+    }
     fn validate_time(&self, state: &State, now: u64) -> Result<()> {
         if now < state.last_tick {
             return Err(Error::Clock);
