@@ -4,12 +4,15 @@
 //! result that outlived its authorization or deadline as a success.
 use crate::{
     Cancellation, Fault, MAX_TASK_BYTES, Report,
+    io_binding::{Error as BindingError, IoBinding, IoJobLease},
+    manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
     worker::TaskId,
 };
 use morrow_core::{
     dispatch::{Connection, HostRuntime},
-    io::{MAX_FRAME_BYTES, Request, Response},
+    io::{Action, HttpOutcome, MAX_FRAME_BYTES, Request, Response},
+    plugin_package::io::IoCapability,
 };
 use std::{
     collections::BTreeMap,
@@ -109,6 +112,8 @@ pub struct JobReport {
     pub task: TaskReport,
     /// The last brokered IO response, decoded against its own request.
     pub response: Option<Response>,
+    /// HTTP result, validated against its exact submission frame.
+    pub http_response: Option<HttpOutcome>,
     /// Admitted IO calls, in guest order.
     pub calls: u32,
     /// Cumulatively charged request + response bytes for this job.
@@ -121,7 +126,13 @@ pub struct JobReport {
 impl JobReport {
     /// Bytes a caller must be willing to read before the result is consumed.
     pub fn payload_bytes(&self) -> usize {
-        self.response.as_ref().map_or(0, |r| r.payload.len())
+        self.http_response.as_ref().map_or(0, |r| {
+            r.body.len()
+                + r.headers
+                    .iter()
+                    .map(|h| h.name.len() + h.value.len())
+                    .sum::<usize>()
+        }) + self.response.as_ref().map_or(0, |r| r.payload.len())
             + self.task.output.as_ref().map_or(0, |o| o.bytes.len())
             + self.task.failure.as_ref().map_or(0, |f| f.message.len())
     }
@@ -132,6 +143,7 @@ struct Slot {
     cancel: Cancellation,
     report: Option<JobReport>,
     abandoned: bool,
+    _lease: Option<Arc<IoJobLease>>,
 }
 struct State {
     phase: Phase,
@@ -139,7 +151,51 @@ struct State {
     jobs: BTreeMap<u64, Slot>,
     bytes: u64,
 }
+struct Authority {
+    cancellation: Cancellation,
+    binding: IoBinding,
+    clock: Mutex<Box<dyn FnMut() -> u64 + Send>>,
+}
+impl Authority {
+    // Serialize sampling AND validation in the original host clock domain.
+    fn with_time<T>(
+        &self,
+        f: impl FnOnce(u64) -> Result<T, BindingError>,
+    ) -> Result<T, BindingError> {
+        let mut clock = self.clock.lock().map_err(|_| BindingError::Denied)?;
+        f(clock())
+    }
+}
+fn binding_fault(error: BindingError) -> Fault {
+    match error {
+        BindingError::Expired => Fault::Deadline,
+        BindingError::Limit => Fault::Limits,
+        BindingError::Denied => Fault::InactiveConnection,
+        BindingError::Clock => Fault::TaskProtocol,
+    }
+}
+/// Retain the complete managed instance so its original Control stays live;
+/// dropping/closing it revokes the connection, including all late handles.
+enum Session {
+    Raw(PreparedPackage, Connection),
+    Managed(ManagedInstance),
+}
+impl Session {
+    fn package(&self) -> &PreparedPackage {
+        match self {
+            Self::Raw(p, _) => p,
+            Self::Managed(i) => i.package(),
+        }
+    }
+    fn connection(&self) -> &Connection {
+        match self {
+            Self::Raw(_, c) => c,
+            Self::Managed(i) => i.connection(),
+        }
+    }
+}
 struct Control {
+    authority: Option<Authority>,
     revocation: morrow_core::lifecycle::Revocation,
     id: u64,
     capacity: usize,
@@ -155,6 +211,13 @@ impl Control {
         cancel
             .fault()
             .or_else(|| self.revocation.is_revoked().then_some(Fault::Cancelled))
+            .or_else(|| {
+                self.authority.as_ref().and_then(|a| {
+                    a.with_time(|now| a.binding.check_liveness(now))
+                        .err()
+                        .map(binding_fault)
+                })
+            })
     }
     fn refresh(&self, slot: &mut Slot) {
         if let Some(fault) = self.fault(&slot.cancel)
@@ -193,17 +256,25 @@ impl Control {
         }
     }
     /// Cumulative byte admission is never refunded, even after cancellation.
-    fn charge(&self, amount: u64) -> bool {
+    fn charge(
+        &self,
+        amount: u64,
+        capabilities: &[IoCapability],
+        lease: Option<&IoJobLease>,
+    ) -> Result<(), Fault> {
         let mut state = self.lock();
-        if state
+        let next = state
             .bytes
             .checked_add(amount)
-            .is_none_or(|n| n > self.limits.max_total_bytes)
-        {
-            return false;
+            .filter(|n| *n <= self.limits.max_total_bytes)
+            .ok_or(Fault::Limits)?;
+        if let (Some(lease), Some(authority)) = (lease, &self.authority) {
+            authority
+                .with_time(|now| lease.charge(capabilities, amount, now))
+                .map_err(binding_fault)?;
         }
-        state.bytes += amount;
-        true
+        state.bytes = next;
+        Ok(())
     }
 }
 fn suppress(report: &mut JobReport, fault: Fault) {
@@ -215,6 +286,7 @@ fn suppress(report: &mut JobReport, fault: Fault) {
     report.task.output = None;
     report.task.failure = None;
     report.response = None;
+    report.http_response = None;
     report.cancelled = true;
     // A routed effect cannot be presumed rolled back when its delivery is suppressed.
     report.unknown |= report.calls > 0;
@@ -224,6 +296,7 @@ struct Job {
     cancel: Cancellation,
     input: Vec<u8>,
     router: Box<dyn Router>,
+    lease: Option<Arc<IoJobLease>>,
 }
 enum Message {
     Job(Job),
@@ -311,14 +384,64 @@ pub struct IoWorker {
     join: Option<JoinHandle<Result<HostRuntime, JobError>>>,
 }
 impl IoWorker {
+    /// Low-level trusted callback executor; no managed IO authorization is implied.
     pub fn spawn(
         package: PreparedPackage,
-        mut host: HostRuntime,
+        host: HostRuntime,
         connection: Connection,
-        clock: impl FnMut() -> u64 + Send + 'static,
+        _clock: impl FnMut() -> u64 + Send + 'static,
         capacity: usize,
         limits: JobLimits,
     ) -> Result<Self, JobError> {
+        Self::spawn_session(
+            Session::Raw(package, connection),
+            host,
+            None,
+            capacity,
+            limits,
+        )
+    }
+    /// Authenticate the exact managed owner before handing it to the worker.
+    /// Manager remains on the calling side: approval changes and Drop revoke the
+    /// original Control immediately, without waiting for a synchronous router.
+    #[allow(clippy::too_many_arguments)]
+    pub fn spawn_managed(
+        manager: &Manager,
+        host: HostRuntime,
+        instance: ManagedInstance,
+        binding: IoBinding,
+        mut clock: impl FnMut() -> u64 + Send + 'static,
+        capacity: usize,
+        limits: JobLimits,
+    ) -> Result<Self, JobError> {
+        binding
+            .validate_identity(manager, &host, &instance)
+            .map_err(|_| JobError::InvalidOptions)?;
+        binding
+            .check(manager, &host, &instance, clock())
+            .map_err(|_| JobError::InvalidOptions)?;
+        let authority = Authority {
+            cancellation: instance.cancellation(),
+            binding,
+            clock: Mutex::new(Box::new(clock)),
+        };
+        Self::spawn_session(
+            Session::Managed(instance),
+            host,
+            Some(authority),
+            capacity,
+            limits,
+        )
+    }
+    fn spawn_session(
+        session: Session,
+        mut host: HostRuntime,
+        authority: Option<Authority>,
+        capacity: usize,
+        limits: JobLimits,
+    ) -> Result<Self, JobError> {
+        let package = session.package();
+        let connection = session.connection();
         JobLimits::new(
             limits.max_calls,
             limits.max_job_bytes,
@@ -339,8 +462,7 @@ impl IoWorker {
         let timeout = Duration::from_millis(budget.max_duration_ms).min(MAX_TIMEOUT);
         if !(1..=MAX_PENDING).contains(&capacity)
             || connection.package_digest() != Some(package.package().digest())
-            || host.connection_phase(&connection)
-                != Ok(morrow_core::lifecycle::InstancePhase::Ready)
+            || host.connection_phase(connection) != Ok(morrow_core::lifecycle::InstancePhase::Ready)
         {
             return Err(JobError::InvalidOptions);
         }
@@ -348,9 +470,10 @@ impl IoWorker {
             .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
             .map_err(|_| JobError::InvalidOptions)?;
         let revocation = host
-            .revocation(&connection)
+            .revocation(connection)
             .map_err(|_| JobError::InvalidOptions)?;
         let control = Arc::new(Control {
+            authority,
             revocation,
             id,
             capacity,
@@ -369,7 +492,13 @@ impl IoWorker {
             .name(format!("morrow-io-job-{id}"))
             .spawn(move || {
                 let result = catch_unwind(AssertUnwindSafe(|| {
-                    execute(&package, &mut host, &connection, clock, &receiver, &inner)
+                    execute(
+                        session.package(),
+                        &mut host,
+                        session.connection(),
+                        &receiver,
+                        &inner,
+                    )
                 }));
                 let result = match result {
                     Ok(result) => result,
@@ -437,15 +566,40 @@ impl IoWorker {
             return Err(JobError::Limit);
         }
         let serial = state.next;
-        state.next = state.next.checked_add(1).ok_or(JobError::Closed)?;
+        let next = state.next.checked_add(1).ok_or(JobError::Closed)?;
+        let lease = self
+            .control
+            .authority
+            .as_ref()
+            .map(|a| {
+                a.with_time(|now| {
+                    a.binding.admit_job_authenticated(
+                        input_bytes,
+                        self.control.limits.max_job_bytes,
+                        now,
+                    )
+                })
+                .map(Arc::new)
+                .map_err(|e| match e {
+                    BindingError::Limit => JobError::Limit,
+                    _ => JobError::Closed,
+                })
+            })
+            .transpose()?;
+        state.next = next;
         state.bytes += input_bytes;
         let cancel = Cancellation::until(deadline);
+        let cancel = match &self.control.authority {
+            Some(authority) => Cancellation::linked(cancel, authority.cancellation.clone()),
+            None => cancel,
+        };
         state.jobs.insert(
             serial,
             Slot {
                 cancel: cancel.clone(),
                 report: None,
                 abandoned: false,
+                _lease: lease.clone(),
             },
         );
         if self
@@ -455,6 +609,7 @@ impl IoWorker {
                 cancel: cancel.clone(),
                 input,
                 router,
+                lease,
             }))
             .is_err()
         {
@@ -531,14 +686,15 @@ fn execute(
     package: &PreparedPackage,
     host: &mut HostRuntime,
     connection: &Connection,
-    _clock: impl FnMut() -> u64,
     receiver: &Receiver<Message>,
     control: &Arc<Control>,
 ) -> Result<(), JobError> {
     loop {
         {
             let mut state = control.lock();
-            if control.revocation.is_revoked() && state.phase == Phase::Running {
+            if control.fault(&Cancellation::default()).is_some()
+                && matches!(state.phase, Phase::Running | Phase::Draining)
+            {
                 state.phase = Phase::Stopping;
             }
             for slot in state.jobs.values_mut() {
@@ -574,6 +730,7 @@ fn execute(
             cancel,
             input,
             mut router,
+            lease,
         } = job;
         let mut report = match control.fault(&cancel) {
             Some(fault) => {
@@ -581,11 +738,21 @@ fn execute(
                 report.bytes = input.len() as u64;
                 report
             }
-            None => run_job(package, &input, &cancel, control, &mut *router),
+            None => run_job(
+                package,
+                &input,
+                &cancel,
+                control,
+                &mut *router,
+                lease.as_deref(),
+            ),
         };
         if let Some(fault) = control.fault(&cancel) {
             suppress(&mut report, fault);
         }
+        // Computation is over. Only the controlled slot owns the job lease when
+        // Ready becomes visible, so successful read/drop immediately frees it.
+        drop(lease);
         let mut state = control.lock();
         if let Some(slot) = state.jobs.get_mut(&serial) {
             if slot.abandoned {
@@ -612,6 +779,7 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
             failure: None,
         },
         response: None,
+        http_response: None,
         calls: 0,
         bytes: 0,
         cancelled: true,
@@ -624,6 +792,7 @@ fn run_job(
     cancel: &Cancellation,
     control: &Arc<Control>,
     router: &mut dyn Router,
+    lease: Option<&IoJobLease>,
 ) -> JobReport {
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
@@ -645,15 +814,35 @@ fn run_job(
                 fault = Some(Fault::Limits);
                 return Err(());
             }
+            let capabilities: &[IoCapability] = if lease.is_some() {
+                match Request::decode(request).map(|r| r.action().clone()) {
+                    Ok(Action::Read { .. } | Action::Finish { .. } | Action::Cancel { .. }) => {
+                        &[IoCapability::FileRead]
+                    }
+                    Ok(Action::SubmitHttp(http)) if !http.credential.is_empty() => {
+                        &[IoCapability::HttpRequest, IoCapability::CredentialUse]
+                    }
+                    Ok(Action::SubmitHttp(_)) => &[IoCapability::HttpRequest],
+                    _ => {
+                        fault = Some(Fault::TaskProtocol);
+                        return Err(());
+                    }
+                }
+            } else {
+                &[]
+            };
             // The request is charged before the router may produce any external
             // effect, so a byte cap is never discovered after the call.
             let request_charge = request.len() as u64;
             if bytes
                 .checked_add(request_charge)
                 .is_none_or(|total| total > control.limits.max_job_bytes)
-                || !control.charge(request_charge)
             {
                 fault = Some(Fault::Limits);
+                return Err(());
+            }
+            if let Err(error) = control.charge(request_charge, capabilities, lease) {
+                fault = Some(error);
                 return Err(());
             }
             bytes += request_charge;
@@ -693,11 +882,15 @@ fn run_job(
                 || bytes
                     .checked_add(response_charge)
                     .is_none_or(|total| total > control.limits.max_job_bytes)
-                || !control.charge(response_charge)
             {
                 // The call already reached the router; the result cannot be
                 // delivered within quota, so the outcome needs reconciliation.
                 fault = Some(Fault::Limits);
+                unknown = true;
+                return Err(());
+            }
+            if let Err(error) = control.charge(response_charge, &[], lease) {
+                fault = Some(error);
                 unknown = true;
                 return Err(());
             }
@@ -723,15 +916,20 @@ fn run_job(
         execution.outcome = Err(fault);
     }
     let mut response = None;
+    let mut http_response = None;
     if execution.outcome.is_ok() {
         match (run.completion, last_response, last_request) {
             (Some(done), Some(actual), Some(request)) if calls > 0 && done == actual => {
-                match Request::decode(&request)
-                    .map_err(|_| ())
-                    .and_then(|request| Response::decode(&request, &actual).map_err(|_| ()))
-                {
-                    Ok(value) => response = Some(value),
-                    Err(()) => execution.outcome = Err(Fault::TaskProtocol),
+                let decoded = Request::decode(&request).and_then(|request| {
+                    if matches!(request.action(), Action::SubmitHttp(_)) {
+                        http_response = Some(Response::decode_http(&request, &actual)?);
+                    } else {
+                        response = Some(Response::decode(&request, &actual)?);
+                    }
+                    Ok(())
+                });
+                if decoded.is_err() {
+                    execution.outcome = Err(Fault::TaskProtocol);
                 }
             }
             _ => execution.outcome = Err(Fault::TaskProtocol),
@@ -745,6 +943,7 @@ fn run_job(
             failure: None,
         },
         response,
+        http_response,
         calls,
         bytes,
         cancelled: false,

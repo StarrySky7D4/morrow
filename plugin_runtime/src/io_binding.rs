@@ -245,6 +245,38 @@ impl IoBinding {
             capability,
         })
     }
+    /// Internal job admission after an exact managed owner was authenticated at
+    /// worker construction. Uses the original instance context, never a new grant.
+    pub(crate) fn admit_job_authenticated(
+        &self,
+        bytes: u64,
+        limit: u64,
+        now: u64,
+    ) -> Result<IoJobLease> {
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&state, now)?;
+        if self.manager.upgrade().is_none() || !self.control.upgrade().is_some_and(|c| c.active()) {
+            return Err(Error::Denied);
+        }
+        let budget = &self.context.budget;
+        let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
+        if limit == 0
+            || limit > budget.max_job_bytes
+            || bytes > limit
+            || total > budget.max_bytes
+            || state.usage.jobs >= budget.max_jobs
+        {
+            return Err(Error::Limit);
+        }
+        state.usage.jobs += 1;
+        state.usage.bytes = total;
+        state.last_tick = now;
+        Ok(IoJobLease {
+            binding: self.duplicate(),
+            limit,
+            bytes: Mutex::new(bytes),
+        })
+    }
     pub(crate) fn reclaimable(&self, now: u64) -> bool {
         now >= self.expires
             || self.manager.upgrade().is_none()
@@ -359,5 +391,57 @@ impl Drop for IoResourceLease {
             .lock()
             .unwrap_or_else(|p| p.into_inner());
         state.usage.resources -= self.resources;
+    }
+}
+
+/// One managed job slot, held from queue admission through final read/drop.
+/// Incremental charges share the original instance's nonrefundable byte budget.
+/// This lease does not itself grant a file, origin, credential or listener.
+pub(crate) struct IoJobLease {
+    binding: IoBinding,
+    limit: u64,
+    bytes: Mutex<u64>,
+}
+impl IoJobLease {
+    pub(crate) fn charge(&self, capabilities: &[IoCapability], bytes: u64, now: u64) -> Result<()> {
+        if capabilities
+            .iter()
+            .any(|c| !self.binding.capabilities.contains(c))
+        {
+            return Err(Error::Denied);
+        }
+        let mut job = self.bytes.lock().map_err(|_| Error::Denied)?;
+        let mut state = self
+            .binding
+            .context
+            .state
+            .lock()
+            .map_err(|_| Error::Denied)?;
+        self.binding.validate_time(&state, now)?;
+        if self.binding.manager.upgrade().is_none()
+            || !self.binding.control.upgrade().is_some_and(|c| c.active())
+        {
+            return Err(Error::Denied);
+        }
+        let next_job = job.checked_add(bytes).ok_or(Error::Limit)?;
+        let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
+        if next_job > self.limit || total > self.binding.context.budget.max_bytes {
+            return Err(Error::Limit);
+        }
+        *job = next_job;
+        state.usage.bytes = total;
+        state.last_tick = now;
+        Ok(())
+    }
+}
+impl Drop for IoJobLease {
+    fn drop(&mut self) {
+        let mut state = self
+            .binding
+            .context
+            .state
+            .lock()
+            .unwrap_or_else(|p| p.into_inner());
+        state.usage.jobs -= 1;
     }
 }
