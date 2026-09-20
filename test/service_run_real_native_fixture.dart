@@ -41,18 +41,23 @@ class RealServiceFixture {
   late BigInt registry;
   late String address;
 
-  static Future<RealServiceFixture> open({bool occupyPort = false}) async {
+  static Future<RealServiceFixture> open({
+    bool occupyPort = false,
+    Future<RustWorkbench> Function(Directory)? openBackend,
+  }) async {
     final dir = await Directory.systemTemp.createTemp(
       'morrow-external-service-fault-',
     );
     RealServiceFixture? fixture;
     try {
-      final backend = await RustWorkbench.open(
-        executable: Platform.environment['MORROW_WORKBENCH_HOST']!,
-        package: Platform.environment['MORROW_WORKBENCH_PACKAGE']!,
-        directory: dir,
-        managed: true,
-      );
+      final backend = openBackend != null
+          ? await openBackend(dir)
+          : await RustWorkbench.open(
+              executable: Platform.environment['MORROW_WORKBENCH_HOST']!,
+              package: Platform.environment['MORROW_WORKBENCH_PACKAGE']!,
+              directory: dir,
+              managed: true,
+            );
       fixture = RealServiceFixture._(dir, backend);
       await fixture._prepare(occupyPort: occupyPort);
       return fixture;
