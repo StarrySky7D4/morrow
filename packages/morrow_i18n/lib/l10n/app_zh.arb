@@ -314,6 +314,19 @@
       }
     }
   },
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsUnconfirmed": {
     "placeholders": {
       "reason": {
@@ -1364,6 +1377,57 @@
   "pluginsServiceRevision": "修订",
   "pluginsServiceRotate": "轮换令牌",
   "pluginsServiceRotateAuthentication": "轮换认证",
+  "pluginsServiceRunAbandon": "保留记录并结束本次尝试",
+  "pluginsServiceRunAdvanced": "请求与工作线程限制",
+  "pluginsServiceRunAttempt": "结果未明的启动尝试",
+  "pluginsServiceRunBoundsHint": "这些限制还必须符合插件声明与已保存的授权。任务预留后即计入累计预算，取消不会退还。到期后停止本次运行，不会自动续期。",
+  "pluginsServiceRunBytes": "运行字节预算（字节，最多 67,108,864）",
+  "pluginsServiceRunCalls": "每项作业调用次数（最多 1,024）",
+  "pluginsServiceRunCancelled": "已取消",
+  "pluginsServiceRunClosed": "已关闭",
+  "pluginsServiceRunConcurrent": "并发作业数（最多 128）",
+  "pluginsServiceRunControlUnknown": "控制操作结果不明。再次操作前请刷新原服务状态。",
+  "pluginsServiceRunDenied": "已拒绝",
+  "pluginsServiceRunExited": "服务已退出",
+  "pluginsServiceRunHeaderBytes": "最大请求头大小（字节，最多 65,536）",
+  "pluginsServiceRunHint": "从已保存的配置和发布授权启动有限服务。运行期间可继续编辑内容，收起此面板不会停止服务。",
+  "pluginsServiceRunHttpPanel": "当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。",
+  "pluginsServiceRunIdentityChanged": "内容正由另一任务管理。此面板不会使用原服务身份控制该任务。",
+  "pluginsServiceRunInvalid": "请检查所选服务与数值限制，尚未提交新的运行。",
+  "pluginsServiceRunInvalidOutcome": "配置无效",
+  "pluginsServiceRunJobBytes": "每项作业字节数（最多 16,777,216）",
+  "pluginsServiceRunJobs": "累计任务预留次数（最多 1,000,000）",
+  "pluginsServiceRunLastObservation": "以下为最近一次观察，当前状态尚未核实。",
+  "pluginsServiceRunLifetime": "运行时长（毫秒，最多 3,600,000）",
+  "pluginsServiceRunLimit": "已达到限额",
+  "pluginsServiceRunLocal": "内容可在本地访问",
+  "pluginsServiceRunNetwork": "绑定：{bind}；监听：{listener}；监督：{supervision}",
+  "pluginsServiceRunNextSettings": "下一次显式运行的设置",
+  "pluginsServiceRunNoSelection": "请刷新记录、启用服务插件，并保存配置和发布授权。当前预览支持回环地址 HTTP 服务。",
+  "pluginsServiceRunOwned": "内容由运行中的服务管理",
+  "pluginsServiceRunPending": "等待中",
+  "pluginsServiceRunReclaimed": "内容控制权已收回，等待确认",
+  "pluginsServiceRunReclaiming": "正在等待收回内容控制权",
+  "pluginsServiceRunRecovery": "清理需要修复",
+  "pluginsServiceRunRequestBytes": "最大请求大小（字节）",
+  "pluginsServiceRunResponseBytes": "最大响应大小（字节）",
+  "pluginsServiceRunRunning": "服务运行中",
+  "pluginsServiceRunSelection": "已授权的服务发布",
+  "pluginsServiceRunStale": "所选插件、配置或授权已变化。启动前请刷新记录并重新选择。",
+  "pluginsServiceRunStart": "启动有限服务",
+  "pluginsServiceRunStartUnknown": "启动结果不明，已保留本次尝试身份。请刷新以查找对应服务，不会自动重新启动。",
+  "pluginsServiceRunStarting": "服务正在启动",
+  "pluginsServiceRunStatusFailed": "无法核实当前服务状态。继续操作前请刷新状态。",
+  "pluginsServiceRunStop": "停止服务",
+  "pluginsServiceRunStopping": "正在停止，等待监听器和工作线程退出",
+  "pluginsServiceRunSucceeded": "成功",
+  "pluginsServiceRunTask": "当前任务身份",
+  "pluginsServiceRunTimeout": "作业超时（毫秒，最多 30,000）",
+  "pluginsServiceRunTimeoutOutcome": "已超时",
+  "pluginsServiceRunTitle": "运行 API 服务",
+  "pluginsServiceRunTotalBytes": "工作线程字节预算（最多 67,108,864）",
+  "pluginsServiceRunTransport": "传输失败",
+  "pluginsServiceRunUnavailable": "内容存储不可用",
   "pluginsServiceSaveConfig": "保存配置",
   "pluginsServiceSavePublication": "保存发布批准",
   "pluginsServiceSaved": "已保存。请在下方核对返回的修订和实际到期时间。",

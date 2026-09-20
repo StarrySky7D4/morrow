@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`f135dd1`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart业务自动路由已接入；TLS、出站资源适配与Flutter服务界面仍待接入。现有短IO自动drain的行为不变。
+基线：`507aba9`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart业务自动路由已接入；Flutter有限服务运行面板已接入；TLS、出站资源适配和更多实际故障用户路径仍待完成。现有短IO自动drain的行为不变。
 
 ## 当前限制的具体来源
 
@@ -10,7 +10,7 @@
 | `plugin_runtime/src/io_binding.rs` | 旧绑定按IO声明限期；service-run-v1在原IoContext签发一次有限运行，原请求上限不变 | 重复绑定不应改变同实例账本；释放作业只返还并发容量，不退款 |
 | `plugin_runtime/src/io_jobs.rs` | `spawn_session_owned` 从声明建立单作业timeout，`submit_routed`校验；工作线程同步执行一项guest/broker调用 | 监听长期运行需要独立运行期限；仅添加UI队列仍可能等待当前阻塞请求结束 |
 | `network_node/src/managed_service.rs` | 监听监督和执行worker有各自退出路径 | socket关闭不证明worker已退出；必须分别观察并真实join |
-| `workbench_host/src/lib.rs` / `io_tasks.rs` / `service_tasks.rs` | StateSlot用执行者变体保持原State独占，原生服务准入、命令提交与双退出已接线；短IO仍独立drain | 私有命令/回执协议已接；Dart业务路由已接；尚需Flutter运行交互、TLS和出站资源适配，不能通过第二个Store绕过独占 |
+| `workbench_host/src/lib.rs` / `io_tasks.rs` / `service_tasks.rs` | StateSlot用执行者变体保持原State独占，原生服务准入、命令提交与双退出已接线；短IO仍独立drain | 私有命令/回执协议已接；Dart业务路由已接；已接Flutter运行交互，尚需实际故障流程、TLS和出站资源适配，不能通过第二个Store绕过独占 |
 
 ## 一、完整所有者适配
 
@@ -49,7 +49,7 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 - **并发容量**：排队、执行、Ready未取走结果分别有界；UI管理命令预留容量。
 - **累计额度**：在原实例账本上累计的作业/字节总额。取消、读取、释放、续租、换路由都不清零，不以新worker掩盖累计消耗。
 
-固定有限运行租约、显式累计预算和原声明内续租已实现，下一步抽出完整WorkbenchState并接有界调度。后续长期数值上限需经原型测量确定并版本化，不能把当前有限续租原型当作管理队列、无限常驻和工作台共存均已完成。
+固定有限运行租约、显式累计预算和原声明内续租已实现；完整WorkbenchState、有界调度和应用有限运行界面也已接线。后续长期数值上限需经原型测量确定并版本化，不能把当前有限续租原型当作管理队列、无限常驻和工作台共存均已完成。
 
 需要同时修改并测试的入口：包声明验证、Manager准入、IoBinding时间/计费、IoWorker每请求deadline、ListenerGrant/ServiceGrant及持久授权解析。只改其中一处会造成旁路或仍在30秒后失效，不作为完成。
 
@@ -59,7 +59,7 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 `WorkbenchState`已从外围Workbench抽出，直接持有原Storage、Pool、Manager、内容及内外部UI会话、undo、附件/上传暂存与capture状态；不包含worker句柄或可空StorageSlot。它实现HostOwner/ManagedHostOwner，runtime始终来自同一Storage。外层Workbench通过StateSlot管理完整状态的移交/回收，并保留HTTP提交去重与回执关联。
 
-原内容、查询、证据、设置、插件目录、凭据、端点和服务批准逻辑都在State上运行，外围使用显式借用转发。短IO的finish_io只封存原Storage，不关闭Pool和编辑器；应用finish在真实回收后才执行完整清理。不能把这次提取当作业务调度已完成：现有短IO仍进入drain，业务入口在后台返回Busy；下一步必须接入原worker上的有界命令和长期服务的实际应用准入。验证范围见[状态提取报告](../reports/workbench-state-2026-09-20.md)。
+原内容、查询、证据、设置、插件目录、凭据、端点和服务批准逻辑都在State上运行，外围使用显式借用转发。短IO的finish_io只封存原Storage，不关闭Pool和编辑器；应用finish在真实回收后才执行完整清理。状态提取本身不证明业务调度；后续已接原worker有界命令和有限服务应用准入。现有短IO仍进入drain，服务期间普通业务则使用命令路由。验证范围见[状态提取报告](../reports/workbench-state-2026-09-20.md)。
 
 工作台层定义有界且完全拥有参数的命令，分别覆盖Page/Read、Create/Apply、Query、Preferences、Capture、Import/Export及管理操作。Create/Apply继续走现有 `run_observed`、Pool、逐对象授权和证据提交，不允许直接写Store替代。响应是拥有的结果或受控结果句柄，不跨线程传递借用、指针或临时UI对象。
 
@@ -67,11 +67,11 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 每次循环最多执行一项宿主命令，随后仍处理一项原IO消息，服务请求占满原作业容量不影响这8项保留。处理前后、正式进入handler前及读取结果时均复核原运行有效性。取消/关闭发生在handler启动前不会调用handler；启动后的取消、停止、错误或不合格回复按Unknown处理，不报告回滚，也不自动重试。panic沿原worker失败回收，执行/断连/维护状态继续分别保存。修复仅重试断连或封存，不重跑业务命令。
 
-`ManagedHostOwner` 与 `spawn_managed_owner` 在移动之前借用拥有者内部的原Manager完成同一准入校验，解决借用Manager同时移动整个状态的问题；缺失/错误Manager仍返回原owner与原instance。Windows组合拥有者实测包含原Storage、Pool和Manager，可在同一真实HTTP监听期间查询原库执行事实并完整回收，见[宿主命令报告](../reports/owner-commands-2026-09-20.md)。组合测试不是主应用WorkbenchState，尚未移动undo、内容/UI会话或暂存。
+`ManagedHostOwner` 与 `spawn_managed_owner` 在移动之前借用拥有者内部的原Manager完成同一准入校验，解决借用Manager同时移动整个状态的问题；缺失/错误Manager仍返回原owner与原instance。Windows组合拥有者实测包含原Storage、Pool和Manager，可在同一真实HTTP监听期间查询原库执行事实并完整回收，见[宿主命令报告](../reports/owner-commands-2026-09-20.md)。该报告的组合测试不是主应用WorkbenchState，不能单独证明undo、内容/UI会话或暂存移交；后续完整State和应用路由证据分别见对应报告。
 
 内部Manager续租现通过 `IoWorker<ManagedHostOwner>::queue_service_run_renewal` 和ServiceHost本地转发进入原8项保留队列，无需实现字节命令handler。执行时借用原owner内部Manager，与外部续租共用身份、当前批准、两级修订、首次期限和累计额度校验。取消在worker状态锁下与CAS串行化；开始后的取消/停止只压制回执为Unknown，不能回滚或据此自动重试。`ServiceRunRenewalHandle::read`区分待完成、明确的续租批准/拒绝和交付不确定；排入队列不是续租成功。见[内部续租报告](../reports/owned-service-renewal-2026-09-20.md)。
 
-该入口不增加guest ABI、HTTP管理路由或持久操作记录。诊断快照仍不产生授权。下一集成项是完整State上的内容/批准/撤权等管理命令接线，不能以复制Manager、另开Registry或handler重入worker实现；现有撤销原语不等于全部应用管理命令已接入。
+该入口不增加guest ABI、HTTP管理路由或持久操作记录。诊断快照仍不产生授权。完整State业务命令已接线，不复制Manager、不另开Registry、不在handler中重入worker；全部管理页面和实际撤权故障流程仍需逐项验收。
 
 第一步允许同一执行线程串行处理UI和服务命令，这是过渡阶段，不宣称即时响应。下一步需要将长耗时网络等待和guest续执行改为可暂停的作业阶段，使原宿主在等待期间能处理其他已授权命令；不能在仍持有 `&mut HostRuntime` 的同步guest/broker调用中重入工作台。保留命令顺序、operation身份及最终授权检查，不能为了交互响应复制Runtime或数据库。
 
@@ -96,10 +96,10 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 以下原生准入前置现已实现：`Workbench::start_service`核对同一原授权锁内的配置摘要/修订、发布修订和监听政策，签发新有限运行并非阻塞启动监督线程。`service_status`区分绑定、监听、监督和worker退出诊断，保留提交身份；`submit_service_command`只向已运行的原ServiceHost提交业务。取消、修复与确认复用StateSlot任务身份；原State只在监听和worker结束、监督线程真实join后回到本地。ManagedNode新增可取消等待的borrowed join，句柄保留到终态。实际验收见[应用服务准入报告](../reports/application-service-admission-2026-09-20.md)。
 
-私有调度协议与有界命令句柄表、Dart低层模型和接口现已接入，见[命令协议报告](../reports/service-command-protocol-2026-09-20.md)。Dart普通业务自动路由现已通过真实HTTP与原Rust工作台卡片/语言操作验证，见[路由报告](../reports/service-business-routing-2026-09-20.md)。下一编码重点调整为Flutter的启动/状态/停止/恢复页面；仍需覆盖长IO可暂停、TLS和出站资源、完整Unknown核对，不能把原生测试入口当作已完成的界面用户路径。
+私有调度协议与有界命令句柄表、Dart低层模型和接口现已接入，见[命令协议报告](../reports/service-command-protocol-2026-09-20.md)。Dart普通业务自动路由现已通过真实HTTP与原Rust工作台卡片/语言操作验证，见[路由报告](../reports/service-business-routing-2026-09-20.md)。Flutter启动/状态/停止/修复/确认面板现已接入，使用backend绑定会话保留在途尝试。页面与真实宿主的验证范围见[运行面板报告](../reports/service-run-ui-2026-09-20.md)。后续重点为实际故障流程、长IO可暂停、TLS和出站资源及完整Unknown核对。
 
-先新增可信应用ServiceStart准入，复用 `service_authority::ResolvedService::resolve/issue`、`Manager::bind_budgeted_service_run`、`IoWorker::spawn_managed_owner`、`ServiceHost::new_owned/bind_configured`。第一验收限定原持久发布配置中的单个loopback HTTP服务，使用明确的有限期限和累计预算，不自动续租；未批准的出站调用明确拒绝。复用StateSlot的唯一owner与修复/确认规则，以执行者变体区分短IO和常驻服务，避免两个槽分别持有同一库。
+已实现的可信应用ServiceStart准入复用 `service_authority::ResolvedService::resolve/issue`、`Manager::bind_budgeted_service_run`、`IoWorker::spawn_managed_owner`、`ServiceHost::new_owned/bind_configured`。第一验收限定原持久发布配置中的单个loopback HTTP服务，使用明确的有限期限和累计预算，不自动续租；未批准的出站调用明确拒绝。复用StateSlot的唯一owner与修复/确认规则，以执行者变体区分短IO和常驻服务，避免两个槽分别持有同一库。
 
-服务监督器持有Tokio runtime、ServiceHost和监听直到实际退出。现ManagedNode只有消费式异步shutdown及Drop停止信号，需提供可观察的非阻塞停止/完成路径或由监督器保存该future；监听和worker都结束后才将原State重新暴露为本地。端口绑定失败保留原ServiceHost回收，构造失败保留原worker回收，不能丢弃拥有者后旁路重开。
+服务监督器持有Tokio runtime、ServiceHost和监听直到实际退出。ManagedNode已提供可取消等待的borrowed join，由监督器保留完成路径；监听和worker都结束后才将原State重新暴露为本地。端口绑定失败保留原ServiceHost回收，构造失败保留原worker回收，不能丢弃拥有者后旁路重开。
 
-私有调度与Dart双队列已实现：发送槽内选择原task，普通业务按顺序提交/等待/读取，控制命令绕过业务等待。现有上传块实查32KiB，完整内层请求仍限64KiB；超限明确失败，不回退本地或截断。下一步验收服务运行页面、更多UI代次/capture工作流，以及界面触发的端口冲突、丢回执、撤权、到期、慢回调停止和封存修复。
+私有调度与Dart双队列已实现：发送槽内选择原task，普通业务按顺序提交/等待/读取，控制命令绕过业务等待。现有上传块实查32KiB，完整内层请求仍限64KiB；超限明确失败，不回退本地或截断。有限运行页面已通过双语窄屏、预算/身份绑定、卸载重挂、Unknown及停止/回收门槛测试。下一步验收更多UI代次/capture工作流，以及真实界面触发的端口冲突、丢回执、撤权、到期、慢回调停止和封存修复。

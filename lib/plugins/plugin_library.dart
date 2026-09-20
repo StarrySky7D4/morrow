@@ -7,6 +7,9 @@ import 'http_task_manager.dart';
 import 'io_task_control.dart';
 import 'service_control.dart';
 import 'service_manager.dart';
+import 'service_run_control.dart';
+import 'service_run_manager.dart';
+import 'service_run_session.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
@@ -988,11 +991,34 @@ class _PluginLibraryState extends State<PluginLibrary> {
             radius: widget.radius,
           ),
         ],
+        if (widget.backend is WorkbenchServiceRunControl &&
+            widget.backend is WorkbenchServiceControl &&
+            widget.backend is WorkbenchIoTaskControl) ...[
+          const SizedBox(height: 20),
+          ServiceRunManager(
+            backend: widget.backend as WorkbenchServiceRunControl,
+            ioBackend: widget.backend as WorkbenchIoTaskControl,
+            metadataBackend: widget.backend as WorkbenchServiceControl,
+            plugins: _confirmed ? _entries : const [],
+            registryRevision: _confirmed ? _revision : null,
+            ink: widget.ink,
+            muted: widget.muted,
+            line: widget.line,
+            radius: widget.radius,
+            onChanged: widget.onChanged,
+          ),
+        ],
         if (widget.backend is WorkbenchIoTaskControl &&
             widget.backend is WorkbenchEndpointControl) ...[
           const SizedBox(height: 20),
           HttpTaskManager(
             backend: widget.backend as WorkbenchIoTaskControl,
+            serviceSession: widget.backend is WorkbenchServiceRunControl
+                ? ServiceRunSession.forBackend(
+                    widget.backend as WorkbenchServiceRunControl,
+                    widget.backend as WorkbenchIoTaskControl,
+                  )
+                : null,
             endpointBackend: widget.backend as WorkbenchEndpointControl,
             plugins: _confirmed ? _entries : const [],
             registryRevision: _confirmed ? _revision : null,

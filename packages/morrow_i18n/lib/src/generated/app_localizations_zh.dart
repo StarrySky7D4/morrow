@@ -1827,6 +1827,171 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsServiceRotateAuthentication => '轮换认证';
 
   @override
+  String get pluginsServiceRunAbandon => '保留记录并结束本次尝试';
+
+  @override
+  String get pluginsServiceRunAdvanced => '请求与工作线程限制';
+
+  @override
+  String get pluginsServiceRunAttempt => '结果未明的启动尝试';
+
+  @override
+  String get pluginsServiceRunBoundsHint =>
+      '这些限制还必须符合插件声明与已保存的授权。任务预留后即计入累计预算，取消不会退还。到期后停止本次运行，不会自动续期。';
+
+  @override
+  String get pluginsServiceRunBytes => '运行字节预算（字节，最多 67,108,864）';
+
+  @override
+  String get pluginsServiceRunCalls => '每项作业调用次数（最多 1,024）';
+
+  @override
+  String get pluginsServiceRunCancelled => '已取消';
+
+  @override
+  String get pluginsServiceRunClosed => '已关闭';
+
+  @override
+  String get pluginsServiceRunConcurrent => '并发作业数（最多 128）';
+
+  @override
+  String get pluginsServiceRunControlUnknown => '控制操作结果不明。再次操作前请刷新原服务状态。';
+
+  @override
+  String get pluginsServiceRunDenied => '已拒绝';
+
+  @override
+  String get pluginsServiceRunExited => '服务已退出';
+
+  @override
+  String get pluginsServiceRunHeaderBytes => '最大请求头大小（字节，最多 65,536）';
+
+  @override
+  String get pluginsServiceRunHint =>
+      '从已保存的配置和发布授权启动有限服务。运行期间可继续编辑内容，收起此面板不会停止服务。';
+
+  @override
+  String get pluginsServiceRunHttpPanel =>
+      '当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。';
+
+  @override
+  String get pluginsServiceRunIdentityChanged =>
+      '内容正由另一任务管理。此面板不会使用原服务身份控制该任务。';
+
+  @override
+  String get pluginsServiceRunInvalid => '请检查所选服务与数值限制，尚未提交新的运行。';
+
+  @override
+  String get pluginsServiceRunInvalidOutcome => '配置无效';
+
+  @override
+  String get pluginsServiceRunJobBytes => '每项作业字节数（最多 16,777,216）';
+
+  @override
+  String get pluginsServiceRunJobs => '累计任务预留次数（最多 1,000,000）';
+
+  @override
+  String get pluginsServiceRunLastObservation => '以下为最近一次观察，当前状态尚未核实。';
+
+  @override
+  String get pluginsServiceRunLifetime => '运行时长（毫秒，最多 3,600,000）';
+
+  @override
+  String get pluginsServiceRunLimit => '已达到限额';
+
+  @override
+  String get pluginsServiceRunLocal => '内容可在本地访问';
+
+  @override
+  String pluginsServiceRunNetwork(
+    String bind,
+    String listener,
+    String supervision,
+  ) {
+    return '绑定：$bind；监听：$listener；监督：$supervision';
+  }
+
+  @override
+  String get pluginsServiceRunNextSettings => '下一次显式运行的设置';
+
+  @override
+  String get pluginsServiceRunNoSelection =>
+      '请刷新记录、启用服务插件，并保存配置和发布授权。当前预览支持回环地址 HTTP 服务。';
+
+  @override
+  String get pluginsServiceRunOwned => '内容由运行中的服务管理';
+
+  @override
+  String get pluginsServiceRunPending => '等待中';
+
+  @override
+  String get pluginsServiceRunReclaimed => '内容控制权已收回，等待确认';
+
+  @override
+  String get pluginsServiceRunReclaiming => '正在等待收回内容控制权';
+
+  @override
+  String get pluginsServiceRunRecovery => '清理需要修复';
+
+  @override
+  String get pluginsServiceRunRequestBytes => '最大请求大小（字节）';
+
+  @override
+  String get pluginsServiceRunResponseBytes => '最大响应大小（字节）';
+
+  @override
+  String get pluginsServiceRunRunning => '服务运行中';
+
+  @override
+  String get pluginsServiceRunSelection => '已授权的服务发布';
+
+  @override
+  String get pluginsServiceRunStale => '所选插件、配置或授权已变化。启动前请刷新记录并重新选择。';
+
+  @override
+  String get pluginsServiceRunStart => '启动有限服务';
+
+  @override
+  String get pluginsServiceRunStartUnknown =>
+      '启动结果不明，已保留本次尝试身份。请刷新以查找对应服务，不会自动重新启动。';
+
+  @override
+  String get pluginsServiceRunStarting => '服务正在启动';
+
+  @override
+  String get pluginsServiceRunStatusFailed => '无法核实当前服务状态。继续操作前请刷新状态。';
+
+  @override
+  String get pluginsServiceRunStop => '停止服务';
+
+  @override
+  String get pluginsServiceRunStopping => '正在停止，等待监听器和工作线程退出';
+
+  @override
+  String get pluginsServiceRunSucceeded => '成功';
+
+  @override
+  String get pluginsServiceRunTask => '当前任务身份';
+
+  @override
+  String get pluginsServiceRunTimeout => '作业超时（毫秒，最多 30,000）';
+
+  @override
+  String get pluginsServiceRunTimeoutOutcome => '已超时';
+
+  @override
+  String get pluginsServiceRunTitle => '运行 API 服务';
+
+  @override
+  String get pluginsServiceRunTotalBytes => '工作线程字节预算（最多 67,108,864）';
+
+  @override
+  String get pluginsServiceRunTransport => '传输失败';
+
+  @override
+  String get pluginsServiceRunUnavailable => '内容存储不可用';
+
+  @override
   String get pluginsServiceSaveConfig => '保存配置';
 
   @override

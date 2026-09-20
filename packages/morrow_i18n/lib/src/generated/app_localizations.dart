@@ -3528,6 +3528,316 @@ abstract class AppLocalizations {
   /// **'Rotate authentication'**
   String get pluginsServiceRotateAuthentication;
 
+  /// No description provided for @pluginsServiceRunAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep record and end this attempt'**
+  String get pluginsServiceRunAbandon;
+
+  /// No description provided for @pluginsServiceRunAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Request and worker limits'**
+  String get pluginsServiceRunAdvanced;
+
+  /// No description provided for @pluginsServiceRunAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Unresolved start attempt'**
+  String get pluginsServiceRunAttempt;
+
+  /// No description provided for @pluginsServiceRunBoundsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'These limits must also fit the plugin declaration and saved approvals. Reserved work consumes the cumulative budget even when cancelled. Expiry stops this run; renewal is not automatic.'**
+  String get pluginsServiceRunBoundsHint;
+
+  /// No description provided for @pluginsServiceRunBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Run byte budget (bytes, up to 67,108,864)'**
+  String get pluginsServiceRunBytes;
+
+  /// No description provided for @pluginsServiceRunCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Calls per job (up to 1,024)'**
+  String get pluginsServiceRunCalls;
+
+  /// No description provided for @pluginsServiceRunCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get pluginsServiceRunCancelled;
+
+  /// No description provided for @pluginsServiceRunClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get pluginsServiceRunClosed;
+
+  /// No description provided for @pluginsServiceRunConcurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Concurrent jobs (up to 128)'**
+  String get pluginsServiceRunConcurrent;
+
+  /// No description provided for @pluginsServiceRunControlUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The control result is unknown. Refresh the original service state before another operation.'**
+  String get pluginsServiceRunControlUnknown;
+
+  /// No description provided for @pluginsServiceRunDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Denied'**
+  String get pluginsServiceRunDenied;
+
+  /// No description provided for @pluginsServiceRunExited.
+  ///
+  /// In en, this message translates to:
+  /// **'Service exited'**
+  String get pluginsServiceRunExited;
+
+  /// No description provided for @pluginsServiceRunHeaderBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum header size (bytes, up to 65,536)'**
+  String get pluginsServiceRunHeaderBytes;
+
+  /// No description provided for @pluginsServiceRunHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.'**
+  String get pluginsServiceRunHint;
+
+  /// No description provided for @pluginsServiceRunHttpPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.'**
+  String get pluginsServiceRunHttpPanel;
+
+  /// No description provided for @pluginsServiceRunIdentityChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'A different task owns the content. This panel will not control it using the previous service identity.'**
+  String get pluginsServiceRunIdentityChanged;
+
+  /// No description provided for @pluginsServiceRunInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the selected service and numeric limits. No new run was submitted.'**
+  String get pluginsServiceRunInvalid;
+
+  /// No description provided for @pluginsServiceRunInvalidOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid configuration'**
+  String get pluginsServiceRunInvalidOutcome;
+
+  /// No description provided for @pluginsServiceRunJobBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Bytes per job (up to 16,777,216)'**
+  String get pluginsServiceRunJobBytes;
+
+  /// No description provided for @pluginsServiceRunJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Total task reservations (up to 1,000,000)'**
+  String get pluginsServiceRunJobs;
+
+  /// No description provided for @pluginsServiceRunLastObservation.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing the last observation; current state is unverified.'**
+  String get pluginsServiceRunLastObservation;
+
+  /// No description provided for @pluginsServiceRunLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Run duration (ms, up to 3,600,000)'**
+  String get pluginsServiceRunLifetime;
+
+  /// No description provided for @pluginsServiceRunLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Limit reached'**
+  String get pluginsServiceRunLimit;
+
+  /// No description provided for @pluginsServiceRunLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Content is available locally'**
+  String get pluginsServiceRunLocal;
+
+  /// No description provided for @pluginsServiceRunNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Bind: {bind}; listener: {listener}; supervision: {supervision}'**
+  String pluginsServiceRunNetwork(
+    String bind,
+    String listener,
+    String supervision,
+  );
+
+  /// No description provided for @pluginsServiceRunNextSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings for the next explicit run'**
+  String get pluginsServiceRunNextSettings;
+
+  /// No description provided for @pluginsServiceRunNoSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.'**
+  String get pluginsServiceRunNoSelection;
+
+  /// No description provided for @pluginsServiceRunOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'Content is managed by the running service'**
+  String get pluginsServiceRunOwned;
+
+  /// No description provided for @pluginsServiceRunPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pluginsServiceRunPending;
+
+  /// No description provided for @pluginsServiceRunReclaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Content ownership reclaimed; acknowledgement required'**
+  String get pluginsServiceRunReclaimed;
+
+  /// No description provided for @pluginsServiceRunReclaiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to reclaim content ownership'**
+  String get pluginsServiceRunReclaiming;
+
+  /// No description provided for @pluginsServiceRunRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleanup needs repair'**
+  String get pluginsServiceRunRecovery;
+
+  /// No description provided for @pluginsServiceRunRequestBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum request size (bytes)'**
+  String get pluginsServiceRunRequestBytes;
+
+  /// No description provided for @pluginsServiceRunResponseBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum response size (bytes)'**
+  String get pluginsServiceRunResponseBytes;
+
+  /// No description provided for @pluginsServiceRunRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Service running'**
+  String get pluginsServiceRunRunning;
+
+  /// No description provided for @pluginsServiceRunSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved service publication'**
+  String get pluginsServiceRunSelection;
+
+  /// No description provided for @pluginsServiceRunStale.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected package, configuration or approval changed. Refresh records and select it again before starting.'**
+  String get pluginsServiceRunStale;
+
+  /// No description provided for @pluginsServiceRunStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start finite service'**
+  String get pluginsServiceRunStart;
+
+  /// No description provided for @pluginsServiceRunStartUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The start result is unknown. This attempt identity is retained; refresh to locate it. It will not be started again automatically.'**
+  String get pluginsServiceRunStartUnknown;
+
+  /// No description provided for @pluginsServiceRunStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting service'**
+  String get pluginsServiceRunStarting;
+
+  /// No description provided for @pluginsServiceRunStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not verify the current service state. Refresh before taking further action.'**
+  String get pluginsServiceRunStatusFailed;
+
+  /// No description provided for @pluginsServiceRunStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop service'**
+  String get pluginsServiceRunStop;
+
+  /// No description provided for @pluginsServiceRunStopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopping; waiting for listener and worker exit'**
+  String get pluginsServiceRunStopping;
+
+  /// No description provided for @pluginsServiceRunSucceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Succeeded'**
+  String get pluginsServiceRunSucceeded;
+
+  /// No description provided for @pluginsServiceRunTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Current task identity'**
+  String get pluginsServiceRunTask;
+
+  /// No description provided for @pluginsServiceRunTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Job timeout (ms, up to 30,000)'**
+  String get pluginsServiceRunTimeout;
+
+  /// No description provided for @pluginsServiceRunTimeoutOutcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed out'**
+  String get pluginsServiceRunTimeoutOutcome;
+
+  /// No description provided for @pluginsServiceRunTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Run API service'**
+  String get pluginsServiceRunTitle;
+
+  /// No description provided for @pluginsServiceRunTotalBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker byte budget (up to 67,108,864)'**
+  String get pluginsServiceRunTotalBytes;
+
+  /// No description provided for @pluginsServiceRunTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport failure'**
+  String get pluginsServiceRunTransport;
+
+  /// No description provided for @pluginsServiceRunUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Content storage unavailable'**
+  String get pluginsServiceRunUnavailable;
+
   /// No description provided for @pluginsServiceSaveConfig.
   ///
   /// In en, this message translates to:

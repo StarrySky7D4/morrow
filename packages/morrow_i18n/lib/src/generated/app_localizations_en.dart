@@ -1977,6 +1977,185 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsServiceRotateAuthentication => 'Rotate authentication';
 
   @override
+  String get pluginsServiceRunAbandon => 'Keep record and end this attempt';
+
+  @override
+  String get pluginsServiceRunAdvanced => 'Request and worker limits';
+
+  @override
+  String get pluginsServiceRunAttempt => 'Unresolved start attempt';
+
+  @override
+  String get pluginsServiceRunBoundsHint =>
+      'These limits must also fit the plugin declaration and saved approvals. Reserved work consumes the cumulative budget even when cancelled. Expiry stops this run; renewal is not automatic.';
+
+  @override
+  String get pluginsServiceRunBytes =>
+      'Run byte budget (bytes, up to 67,108,864)';
+
+  @override
+  String get pluginsServiceRunCalls => 'Calls per job (up to 1,024)';
+
+  @override
+  String get pluginsServiceRunCancelled => 'Cancelled';
+
+  @override
+  String get pluginsServiceRunClosed => 'Closed';
+
+  @override
+  String get pluginsServiceRunConcurrent => 'Concurrent jobs (up to 128)';
+
+  @override
+  String get pluginsServiceRunControlUnknown =>
+      'The control result is unknown. Refresh the original service state before another operation.';
+
+  @override
+  String get pluginsServiceRunDenied => 'Denied';
+
+  @override
+  String get pluginsServiceRunExited => 'Service exited';
+
+  @override
+  String get pluginsServiceRunHeaderBytes =>
+      'Maximum header size (bytes, up to 65,536)';
+
+  @override
+  String get pluginsServiceRunHint =>
+      'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.';
+
+  @override
+  String get pluginsServiceRunHttpPanel =>
+      'An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.';
+
+  @override
+  String get pluginsServiceRunIdentityChanged =>
+      'A different task owns the content. This panel will not control it using the previous service identity.';
+
+  @override
+  String get pluginsServiceRunInvalid =>
+      'Check the selected service and numeric limits. No new run was submitted.';
+
+  @override
+  String get pluginsServiceRunInvalidOutcome => 'Invalid configuration';
+
+  @override
+  String get pluginsServiceRunJobBytes => 'Bytes per job (up to 16,777,216)';
+
+  @override
+  String get pluginsServiceRunJobs =>
+      'Total task reservations (up to 1,000,000)';
+
+  @override
+  String get pluginsServiceRunLastObservation =>
+      'Showing the last observation; current state is unverified.';
+
+  @override
+  String get pluginsServiceRunLifetime => 'Run duration (ms, up to 3,600,000)';
+
+  @override
+  String get pluginsServiceRunLimit => 'Limit reached';
+
+  @override
+  String get pluginsServiceRunLocal => 'Content is available locally';
+
+  @override
+  String pluginsServiceRunNetwork(
+    String bind,
+    String listener,
+    String supervision,
+  ) {
+    return 'Bind: $bind; listener: $listener; supervision: $supervision';
+  }
+
+  @override
+  String get pluginsServiceRunNextSettings =>
+      'Settings for the next explicit run';
+
+  @override
+  String get pluginsServiceRunNoSelection =>
+      'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.';
+
+  @override
+  String get pluginsServiceRunOwned =>
+      'Content is managed by the running service';
+
+  @override
+  String get pluginsServiceRunPending => 'Pending';
+
+  @override
+  String get pluginsServiceRunReclaimed =>
+      'Content ownership reclaimed; acknowledgement required';
+
+  @override
+  String get pluginsServiceRunReclaiming =>
+      'Waiting to reclaim content ownership';
+
+  @override
+  String get pluginsServiceRunRecovery => 'Cleanup needs repair';
+
+  @override
+  String get pluginsServiceRunRequestBytes => 'Maximum request size (bytes)';
+
+  @override
+  String get pluginsServiceRunResponseBytes => 'Maximum response size (bytes)';
+
+  @override
+  String get pluginsServiceRunRunning => 'Service running';
+
+  @override
+  String get pluginsServiceRunSelection => 'Approved service publication';
+
+  @override
+  String get pluginsServiceRunStale =>
+      'The selected package, configuration or approval changed. Refresh records and select it again before starting.';
+
+  @override
+  String get pluginsServiceRunStart => 'Start finite service';
+
+  @override
+  String get pluginsServiceRunStartUnknown =>
+      'The start result is unknown. This attempt identity is retained; refresh to locate it. It will not be started again automatically.';
+
+  @override
+  String get pluginsServiceRunStarting => 'Starting service';
+
+  @override
+  String get pluginsServiceRunStatusFailed =>
+      'Could not verify the current service state. Refresh before taking further action.';
+
+  @override
+  String get pluginsServiceRunStop => 'Stop service';
+
+  @override
+  String get pluginsServiceRunStopping =>
+      'Stopping; waiting for listener and worker exit';
+
+  @override
+  String get pluginsServiceRunSucceeded => 'Succeeded';
+
+  @override
+  String get pluginsServiceRunTask => 'Current task identity';
+
+  @override
+  String get pluginsServiceRunTimeout => 'Job timeout (ms, up to 30,000)';
+
+  @override
+  String get pluginsServiceRunTimeoutOutcome => 'Timed out';
+
+  @override
+  String get pluginsServiceRunTitle => 'Run API service';
+
+  @override
+  String get pluginsServiceRunTotalBytes =>
+      'Worker byte budget (up to 67,108,864)';
+
+  @override
+  String get pluginsServiceRunTransport => 'Transport failure';
+
+  @override
+  String get pluginsServiceRunUnavailable => 'Content storage unavailable';
+
+  @override
   String get pluginsServiceSaveConfig => 'Save configuration';
 
   @override

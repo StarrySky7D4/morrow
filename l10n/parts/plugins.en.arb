@@ -528,5 +528,69 @@
   "pluginsServiceSavePublication": "Save publication approval",
   "pluginsServicePublicationMismatch": "This publication no longer matches the current configuration. Review and explicitly save a replacement approval.",
   "pluginsServiceYes": "Yes",
-  "pluginsServiceNo": "No"
+  "pluginsServiceNo": "No",
+  "pluginsServiceRunTitle": "Run API service",
+  "pluginsServiceRunHint": "Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.",
+  "pluginsServiceRunSelection": "Approved service publication",
+  "pluginsServiceRunNoSelection": "Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.",
+  "pluginsServiceRunStale": "The selected package, configuration or approval changed. Refresh records and select it again before starting.",
+  "pluginsServiceRunStart": "Start finite service",
+  "pluginsServiceRunStop": "Stop service",
+  "pluginsServiceRunLifetime": "Run duration (ms, up to 3,600,000)",
+  "pluginsServiceRunJobs": "Total task reservations (up to 1,000,000)",
+  "pluginsServiceRunBytes": "Run byte budget (bytes, up to 67,108,864)",
+  "pluginsServiceRunAdvanced": "Request and worker limits",
+  "pluginsServiceRunCalls": "Calls per job (up to 1,024)",
+  "pluginsServiceRunJobBytes": "Bytes per job (up to 16,777,216)",
+  "pluginsServiceRunTotalBytes": "Worker byte budget (up to 67,108,864)",
+  "pluginsServiceRunRequestBytes": "Maximum request size (bytes)",
+  "pluginsServiceRunResponseBytes": "Maximum response size (bytes)",
+  "pluginsServiceRunHeaderBytes": "Maximum header size (bytes, up to 65,536)",
+  "pluginsServiceRunConcurrent": "Concurrent jobs (up to 128)",
+  "pluginsServiceRunTimeout": "Job timeout (ms, up to 30,000)",
+  "pluginsServiceRunBoundsHint": "These limits must also fit the plugin declaration and saved approvals. Reserved work consumes the cumulative budget even when cancelled. Expiry stops this run; renewal is not automatic.",
+  "pluginsServiceRunStarting": "Starting service",
+  "pluginsServiceRunRunning": "Service running",
+  "pluginsServiceRunStopping": "Stopping; waiting for listener and worker exit",
+  "pluginsServiceRunExited": "Service exited",
+  "pluginsServiceRunPending": "Pending",
+  "pluginsServiceRunSucceeded": "Succeeded",
+  "pluginsServiceRunInvalidOutcome": "Invalid configuration",
+  "pluginsServiceRunDenied": "Denied",
+  "pluginsServiceRunLimit": "Limit reached",
+  "pluginsServiceRunCancelled": "Cancelled",
+  "pluginsServiceRunTimeoutOutcome": "Timed out",
+  "pluginsServiceRunTransport": "Transport failure",
+  "pluginsServiceRunClosed": "Closed",
+  "pluginsServiceRunLocal": "Content is available locally",
+  "pluginsServiceRunOwned": "Content is managed by the running service",
+  "pluginsServiceRunReclaiming": "Waiting to reclaim content ownership",
+  "pluginsServiceRunReclaimed": "Content ownership reclaimed; acknowledgement required",
+  "pluginsServiceRunRecovery": "Cleanup needs repair",
+  "pluginsServiceRunUnavailable": "Content storage unavailable",
+  "pluginsServiceRunStatusFailed": "Could not verify the current service state. Refresh before taking further action.",
+  "pluginsServiceRunStartUnknown": "The start result is unknown. This attempt identity is retained; refresh to locate it. It will not be started again automatically.",
+  "pluginsServiceRunControlUnknown": "The control result is unknown. Refresh the original service state before another operation.",
+  "pluginsServiceRunIdentityChanged": "A different task owns the content. This panel will not control it using the previous service identity.",
+  "pluginsServiceRunInvalid": "Check the selected service and numeric limits. No new run was submitted.",
+  "pluginsServiceRunTask": "Current task identity",
+  "pluginsServiceRunAttempt": "Unresolved start attempt",
+  "pluginsServiceRunAbandon": "Keep record and end this attempt",
+  "pluginsServiceRunNetwork": "Bind: {bind}; listener: {listener}; supervision: {supervision}",
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunLastObservation": "Showing the last observation; current state is unverified.",
+  "pluginsServiceRunNextSettings": "Settings for the next explicit run",
+  "pluginsServiceRunHttpPanel": "An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained."
 }

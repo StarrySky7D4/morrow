@@ -314,6 +314,19 @@
       }
     }
   },
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsUnconfirmed": {
     "placeholders": {
       "reason": {
@@ -1364,6 +1377,57 @@
   "pluginsServiceRevision": "Revision",
   "pluginsServiceRotate": "Rotate token",
   "pluginsServiceRotateAuthentication": "Rotate authentication",
+  "pluginsServiceRunAbandon": "Keep record and end this attempt",
+  "pluginsServiceRunAdvanced": "Request and worker limits",
+  "pluginsServiceRunAttempt": "Unresolved start attempt",
+  "pluginsServiceRunBoundsHint": "These limits must also fit the plugin declaration and saved approvals. Reserved work consumes the cumulative budget even when cancelled. Expiry stops this run; renewal is not automatic.",
+  "pluginsServiceRunBytes": "Run byte budget (bytes, up to 67,108,864)",
+  "pluginsServiceRunCalls": "Calls per job (up to 1,024)",
+  "pluginsServiceRunCancelled": "Cancelled",
+  "pluginsServiceRunClosed": "Closed",
+  "pluginsServiceRunConcurrent": "Concurrent jobs (up to 128)",
+  "pluginsServiceRunControlUnknown": "The control result is unknown. Refresh the original service state before another operation.",
+  "pluginsServiceRunDenied": "Denied",
+  "pluginsServiceRunExited": "Service exited",
+  "pluginsServiceRunHeaderBytes": "Maximum header size (bytes, up to 65,536)",
+  "pluginsServiceRunHint": "Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.",
+  "pluginsServiceRunHttpPanel": "An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.",
+  "pluginsServiceRunIdentityChanged": "A different task owns the content. This panel will not control it using the previous service identity.",
+  "pluginsServiceRunInvalid": "Check the selected service and numeric limits. No new run was submitted.",
+  "pluginsServiceRunInvalidOutcome": "Invalid configuration",
+  "pluginsServiceRunJobBytes": "Bytes per job (up to 16,777,216)",
+  "pluginsServiceRunJobs": "Total task reservations (up to 1,000,000)",
+  "pluginsServiceRunLastObservation": "Showing the last observation; current state is unverified.",
+  "pluginsServiceRunLifetime": "Run duration (ms, up to 3,600,000)",
+  "pluginsServiceRunLimit": "Limit reached",
+  "pluginsServiceRunLocal": "Content is available locally",
+  "pluginsServiceRunNetwork": "Bind: {bind}; listener: {listener}; supervision: {supervision}",
+  "pluginsServiceRunNextSettings": "Settings for the next explicit run",
+  "pluginsServiceRunNoSelection": "Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.",
+  "pluginsServiceRunOwned": "Content is managed by the running service",
+  "pluginsServiceRunPending": "Pending",
+  "pluginsServiceRunReclaimed": "Content ownership reclaimed; acknowledgement required",
+  "pluginsServiceRunReclaiming": "Waiting to reclaim content ownership",
+  "pluginsServiceRunRecovery": "Cleanup needs repair",
+  "pluginsServiceRunRequestBytes": "Maximum request size (bytes)",
+  "pluginsServiceRunResponseBytes": "Maximum response size (bytes)",
+  "pluginsServiceRunRunning": "Service running",
+  "pluginsServiceRunSelection": "Approved service publication",
+  "pluginsServiceRunStale": "The selected package, configuration or approval changed. Refresh records and select it again before starting.",
+  "pluginsServiceRunStart": "Start finite service",
+  "pluginsServiceRunStartUnknown": "The start result is unknown. This attempt identity is retained; refresh to locate it. It will not be started again automatically.",
+  "pluginsServiceRunStarting": "Starting service",
+  "pluginsServiceRunStatusFailed": "Could not verify the current service state. Refresh before taking further action.",
+  "pluginsServiceRunStop": "Stop service",
+  "pluginsServiceRunStopping": "Stopping; waiting for listener and worker exit",
+  "pluginsServiceRunSucceeded": "Succeeded",
+  "pluginsServiceRunTask": "Current task identity",
+  "pluginsServiceRunTimeout": "Job timeout (ms, up to 30,000)",
+  "pluginsServiceRunTimeoutOutcome": "Timed out",
+  "pluginsServiceRunTitle": "Run API service",
+  "pluginsServiceRunTotalBytes": "Worker byte budget (up to 67,108,864)",
+  "pluginsServiceRunTransport": "Transport failure",
+  "pluginsServiceRunUnavailable": "Content storage unavailable",
   "pluginsServiceSaveConfig": "Save configuration",
   "pluginsServiceSavePublication": "Save publication approval",
   "pluginsServiceSaved": "Saved. Review the returned revision and actual expiry below.",

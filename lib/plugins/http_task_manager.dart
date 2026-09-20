@@ -9,6 +9,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'endpoint_control.dart';
 import 'io_task_control.dart';
 import 'plugin_library.dart';
+import 'service_run_session.dart';
 
 String _hex(List<int> value) =>
     value.map((v) => v.toRadixString(16).padLeft(2, '0')).join();
@@ -298,6 +299,7 @@ class HttpTaskManager extends StatefulWidget {
     required this.line,
     required this.radius,
     this.onChanged,
+    this.serviceSession,
   });
   final WorkbenchIoTaskControl backend;
   final WorkbenchEndpointControl endpointBackend;
@@ -306,6 +308,7 @@ class HttpTaskManager extends StatefulWidget {
   final Color ink, muted, line;
   final BorderRadius radius;
   final VoidCallback? onChanged;
+  final ServiceRunSession? serviceSession;
   @override
   State<HttpTaskManager> createState() => _HttpTaskManagerState();
 }
@@ -326,6 +329,25 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
   bool _availabilityQueued = false;
   int _endpointEpoch = 0, _attachmentEpoch = 0;
   Timer? _timer;
+  bool get _serviceOwnsTask =>
+      widget.serviceSession?.service != null &&
+      _equal(
+        widget.serviceSession!.service!.task.key,
+        widget.serviceSession!.task?.key,
+      );
+  void _serviceChanged() {
+    if (!mounted) return;
+    setState(() {});
+    _schedule();
+    if (!_serviceOwnsTask) {
+      if (_session.busy) {
+        _refreshOnIdle = true;
+      } else {
+        unawaited(_session.refresh());
+      }
+    }
+  }
+
   String _fingerprint() =>
       '${widget.registryRevision}|${widget.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.declaredIo.join(',')}:${p.approvedIo.join(',')}:${p.ioHandlers.join(',')}').join('|')}';
   void _attach() {
@@ -372,7 +394,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
   void _schedule() {
     _timer?.cancel();
     _timer = null;
-    if (!_session.shouldPoll) return;
+    if (!_session.shouldPoll || _serviceOwnsTask) return;
     final session = _session, epoch = _attachmentEpoch;
     _timer = Timer(const Duration(seconds: 1), () {
       if (mounted &&
@@ -387,6 +409,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
   void initState() {
     super.initState();
     _directory = _fingerprint();
+    widget.serviceSession?.addListener(_serviceChanged);
     _attach();
     unawaited(_loadEndpoints());
   }
@@ -394,6 +417,10 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
   @override
   void didUpdateWidget(covariant HttpTaskManager oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.serviceSession, widget.serviceSession)) {
+      oldWidget.serviceSession?.removeListener(_serviceChanged);
+      widget.serviceSession?.addListener(_serviceChanged);
+    }
     final changedBackend = !identical(oldWidget.backend, widget.backend);
     final directory = _fingerprint();
     if (changedBackend) {
@@ -424,6 +451,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
 
   @override
   void dispose() {
+    widget.serviceSession?.removeListener(_serviceChanged);
     _attachmentEpoch++;
     _endpointEpoch++;
     _timer?.cancel();
@@ -873,6 +901,13 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
   @override
   Widget build(BuildContext context) {
     final l = L10n.of(context), state = _session.snapshot, selected = _selected;
+    if (_serviceOwnsTask) {
+      return Padding(
+        key: const ValueKey('http-task-service-active'),
+        padding: const EdgeInsets.all(19),
+        child: _note(l.pluginsServiceRunHttpPanel),
+      );
+    }
     final key = state?.key, active = key != null && !_session.busy;
     final methods = selected?.policy.methods ?? const <String>[];
     final canEdit = _session.canStart;

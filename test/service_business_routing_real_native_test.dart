@@ -11,6 +11,7 @@ import 'package:morrow_studio/main.dart' show Idea;
 import 'package:morrow_studio/plugins/io_task_models.dart';
 import 'package:morrow_studio/plugins/service_control.dart';
 import 'package:morrow_studio/plugins/service_run_control.dart';
+import 'package:morrow_studio/plugins/service_run_session.dart';
 import 'package:morrow_studio/plugins/workbench_backend.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 
@@ -76,6 +77,24 @@ Future<void> _post(
   } finally {
     request.fillRange(0, request.length, 0);
     socket.destroy();
+  }
+}
+
+Future<ServiceRunSnapshot> _observeSession(
+  ServiceRunSession session,
+  ServiceRunPhase phase,
+) async {
+  final deadline = DateTime.now().add(const Duration(seconds: 20));
+  while (true) {
+    await session.refresh();
+    expect(session.trusted, isTrue, reason: '${session.notice}');
+    final current = session.service!;
+    if (current.phase == phase) return current;
+    if (current.phase == ServiceRunPhase.exited ||
+        DateTime.now().isAfter(deadline)) {
+      fail('Session did not observe $phase: ${current.phase}');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 10));
   }
 }
 
@@ -213,7 +232,10 @@ void main() {
         await reservation.close();
         reservation = null;
         await backend.saveUiLocale('zh');
-        final started = await backend.startServiceRun(
+        final session = ServiceRunSession.forBackend(backend, backend);
+        await session.refresh();
+        expect(session.canStart, isTrue);
+        await session.start(
           ServiceRunRequest(
             submission: _identity(17),
             configId: config.id,
@@ -232,9 +254,12 @@ void main() {
             maxTotalBytes: BigInt.from(4 * 1024 * 1024),
           ),
         );
-        task = started.task.key!;
-        final running = await _waitFor(backend, task, ServiceRunPhase.running);
+        expect(session.notice, isNull);
+        task = session.task!.key!;
+        final running = await _observeSession(session, ServiceRunPhase.running);
         expect(running.address, address);
+        expect(session.canStop, isTrue);
+        expect(session.canAcknowledge, isFalse);
         await _post(
           address,
           issued.token.bytes,
@@ -287,8 +312,8 @@ void main() {
           'executed-after',
         );
 
-        await backend.cancelIo(task);
-        final exited = await _waitFor(backend, task, ServiceRunPhase.exited);
+        await session.stop();
+        final exited = await _observeSession(session, ServiceRunPhase.exited);
         expect(exited.task.storage, IoStoragePhase.reclaimed);
         expect(exited.task.exit!.execution, IoJobError.none);
         expect(exited.task.exit!.maintenance, IoJobError.none);
@@ -299,7 +324,11 @@ void main() {
           'edited by original Rust guest',
         );
         expect(await backend.readUiLocale(), 'en');
-        await backend.acknowledgeIo(task);
+        expect(session.canAcknowledge, isTrue);
+        await session.acknowledge();
+        expect(session.canStart, isTrue);
+        expect(session.service, isNull);
+        expect(session.history.single.outcomeUnknown, isFalse);
         task = null;
         expect((await backend.ioStatus()).storage, IoStoragePhase.local);
         await backend.close();
