@@ -2,6 +2,7 @@ import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
 import 'credential_manager.dart';
+import 'endpoint_control.dart';
 import 'host_request.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
@@ -27,6 +28,7 @@ class RustWorkbench
         WorkbenchPluginControl,
         ExternalPluginControl,
         WorkbenchCredentialControl,
+        WorkbenchEndpointControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
@@ -224,6 +226,198 @@ class RustWorkbench
           decisions[index] = approved[index];
         }
       },
+    );
+  }
+
+  EndpointPolicy _endpointPolicy(host.EndpointPolicyReader row) {
+    final methods = row.methods;
+    if (methods == null || methods.length > 16) {
+      throw const FormatException('Invalid endpoint methods');
+    }
+    final value = EndpointPolicy(
+      packageId: row.packageId ?? '',
+      packageDigest: Uint8List.fromList(row.packageDigest ?? []),
+      origin: row.origin ?? '',
+      profile: row.profile,
+      methods: [
+        for (final method in methods)
+          method ?? (throw const FormatException('Missing endpoint method')),
+      ],
+      credentialReference: Uint8List.fromList(row.credentialReference ?? []),
+      rootCertificate: Uint8List.fromList(row.rootCertificate ?? []),
+      maxRequestBytes: row.maxRequestBytes,
+      maxResponseBytes: row.maxResponseBytes,
+      maxHeaderBytes: row.maxHeaderBytes,
+      maxConcurrent: row.maxConcurrent,
+      timeoutMs: row.timeoutMs,
+      maxFrameBytes: row.maxFrameBytes,
+    );
+    _checkEndpointPolicy(value);
+    return value;
+  }
+
+  void _checkEndpointPolicy(EndpointPolicy value, {bool forSave = false}) {
+    const methods = {
+      'GET',
+      'HEAD',
+      'POST',
+      'PUT',
+      'PATCH',
+      'DELETE',
+      'OPTIONS',
+    };
+    bool bounded(int n, int max) => n > 0 && n <= max;
+    if (value.packageId.isEmpty ||
+        value.packageId.length > 256 ||
+        value.packageDigest.length != 32 ||
+        value.packageDigest.every((v) => v == 0) ||
+        value.origin.isEmpty ||
+        value.origin.length > 2048 ||
+        value.profile < 1 ||
+        value.profile > 3 ||
+        value.methods.isEmpty ||
+        value.methods.length > 16 ||
+        !value.methods.every((v) => RegExp(r'^[A-Z-]{1,32}$').hasMatch(v)) ||
+        (forSave && !value.methods.every(methods.contains)) ||
+        (value.credentialReference.isNotEmpty &&
+            (value.credentialReference.length != 32 ||
+                value.credentialReference.every((v) => v == 0))) ||
+        value.rootCertificate.length > 32768 ||
+        !bounded(value.maxRequestBytes, 65536) ||
+        !bounded(value.maxResponseBytes, 65536) ||
+        !bounded(value.maxHeaderBytes, 16384) ||
+        !bounded(value.maxConcurrent, 128) ||
+        !bounded(value.timeoutMs, 30000) ||
+        !bounded(value.maxFrameBytes, 131072)) {
+      throw const FormatException('Invalid endpoint policy');
+    }
+    for (var i = 1; i < value.methods.length; i++) {
+      if (value.methods[i - 1].compareTo(value.methods[i]) >= 0) {
+        throw const FormatException('Invalid endpoint method ordering');
+      }
+    }
+  }
+
+  StoredEndpoint _endpoint(host.EndpointInfoReader row) {
+    final reference = Uint8List.fromList(row.reference ?? []);
+    final revision = BigInt.from(row.revision).toUnsigned(64);
+    final created = BigInt.from(row.createdMs).toUnsigned(64);
+    final expires = BigInt.from(row.expiresMs).toUnsigned(64);
+    _credentialIdentity(reference, revision);
+    if (created <= BigInt.zero ||
+        expires <= created ||
+        expires - created > BigInt.from(30 * 86400000)) {
+      throw const FormatException('Invalid endpoint lifetime');
+    }
+    return StoredEndpoint(
+      reference: reference,
+      revision: revision,
+      createdMs: created,
+      expiresMs: expires,
+      disabled: row.disabled,
+      policy: _endpointPolicy(
+        row.policy ?? (throw const FormatException('Missing endpoint policy')),
+      ),
+    );
+  }
+
+  @override
+  Future<EndpointPage> endpointPage({
+    Uint8List? after,
+    Uint8List? snapshot,
+  }) async {
+    if ((after != null && after.length != 32) ||
+        (snapshot != null && snapshot.length != 32)) {
+      throw const FormatException('Invalid endpoint cursor');
+    }
+    final result = await _call(
+      host.Action.endpointPage,
+      configure: (r) {
+        if (after != null) r.endpointCursor = after;
+        if (snapshot != null) r.endpointSnapshot = snapshot;
+      },
+    );
+    final entries = result.endpoints;
+    final bound = Uint8List.fromList(result.endpointSnapshot ?? []);
+    final next = Uint8List.fromList(result.endpointCursor ?? []);
+    if (entries == null ||
+        entries.length > 2 ||
+        bound.length != 32 ||
+        (next.isNotEmpty && next.length != 32)) {
+      throw const FormatException('Invalid endpoint page');
+    }
+    return EndpointPage(
+      entries: [for (final row in entries) _endpoint(row)],
+      snapshot: bound,
+      next: next.isEmpty ? null : next,
+    );
+  }
+
+  StoredEndpoint _endpointResult(host.ResponseReader result) {
+    final entries = result.endpoints;
+    if (entries == null || entries.length != 1) {
+      throw const FormatException('Endpoint update result unavailable');
+    }
+    return _endpoint(entries[0]);
+  }
+
+  @override
+  Future<StoredEndpoint> saveEndpoint({
+    required Uint8List reference,
+    required BigInt expectedRevision,
+    required BigInt registryRevision,
+    required int lifetimeDays,
+    required EndpointPolicy policy,
+  }) async {
+    _credentialIdentity(reference, expectedRevision, create: true);
+    _checkEndpointPolicy(policy, forSave: true);
+    if (registryRevision < BigInt.zero ||
+        registryRevision > (BigInt.one << 63) - BigInt.one ||
+        lifetimeDays < 1 ||
+        lifetimeDays > 30) {
+      throw const FormatException('Invalid endpoint approval');
+    }
+    return _endpointResult(
+      await _call(
+        host.Action.endpointSave,
+        configure: (r) {
+          r.endpointReference = reference;
+          r.revision = expectedRevision.toSigned(64).toInt();
+          r.endpointRegistryRevision = registryRevision.toSigned(64).toInt();
+          r.endpointDays = lifetimeDays;
+          final p = r.initEndpointPolicy();
+          p.packageId = policy.packageId;
+          p.packageDigest = policy.packageDigest;
+          p.origin = policy.origin;
+          p.profile = policy.profile;
+          p.credentialReference = policy.credentialReference;
+          p.rootCertificate = policy.rootCertificate;
+          p.maxRequestBytes = policy.maxRequestBytes;
+          p.maxResponseBytes = policy.maxResponseBytes;
+          p.maxHeaderBytes = policy.maxHeaderBytes;
+          p.maxConcurrent = policy.maxConcurrent;
+          p.timeoutMs = policy.timeoutMs;
+          p.maxFrameBytes = policy.maxFrameBytes;
+          final methods = p.initMethods(policy.methods.length);
+          for (var i = 0; i < policy.methods.length; i++) {
+            methods[i] = policy.methods[i];
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<StoredEndpoint> disableEndpoint(StoredEndpoint expected) async {
+    _credentialIdentity(expected.reference, expected.revision);
+    return _endpointResult(
+      await _call(
+        host.Action.endpointDisable,
+        configure: (r) {
+          r.endpointReference = expected.reference;
+          r.revision = expected.revision.toSigned(64).toInt();
+        },
+      ),
     );
   }
 

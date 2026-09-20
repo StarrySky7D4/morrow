@@ -49,6 +49,9 @@ enum Action {
   credentialPage,
   credentialSave,
   credentialDisable,
+  endpointPage,
+  endpointSave,
+  endpointDisable,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -108,6 +111,9 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'credentialPage', codeOrder: 41, ordinal: 41),
     EnumerantSchemaInfo(name: 'credentialSave', codeOrder: 42, ordinal: 42),
     EnumerantSchemaInfo(name: 'credentialDisable', codeOrder: 43, ordinal: 43),
+    EnumerantSchemaInfo(name: 'endpointPage', codeOrder: 44, ordinal: 44),
+    EnumerantSchemaInfo(name: 'endpointSave', codeOrder: 45, ordinal: 45),
+    EnumerantSchemaInfo(name: 'endpointDisable', codeOrder: 46, ordinal: 46),
   ],
 );
 
@@ -181,6 +187,21 @@ final class RequestReader extends StructReader {
   String? get credentialSecret => getTextField(22);
 
   int get credentialDays => getUint32Field(36);
+
+  Uint8List? get endpointCursor => getDataField(23);
+
+  Uint8List? get endpointSnapshot => getDataField(24);
+
+  Uint8List? get endpointReference => getDataField(25);
+
+  int get endpointRegistryRevision => getUint64Field(40);
+
+  int get endpointDays => getUint32Field(48);
+
+  EndpointPolicyReader? get endpointPolicy => getStructFieldWith(
+    26,
+    (r) => EndpointPolicyReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -312,6 +333,32 @@ final class RequestBuilder extends StructBuilder {
   set credentialDays(int v) {
     setUint32Field(36, v);
   }
+
+  set endpointCursor(Uint8List? v) {
+    setDataField(23, v);
+  }
+
+  set endpointSnapshot(Uint8List? v) {
+    setDataField(24, v);
+  }
+
+  set endpointReference(Uint8List? v) {
+    setDataField(25, v);
+  }
+
+  set endpointRegistryRevision(int v) {
+    setUint64Field(40, v);
+  }
+
+  set endpointDays(int v) {
+    setUint32Field(48, v);
+  }
+
+  EndpointPolicyBuilder initEndpointPolicy() {
+    return initStructFieldWith(26, (r) => EndpointPolicyBuilder(r), 3, 6);
+  }
+
+  bool hasEndpointPolicy() => hasPointerField(26);
 }
 
 final class _RequestFactory
@@ -319,9 +366,9 @@ final class _RequestFactory
   @override
   StructSchemaInfo get schema => requestSchema;
   @override
-  int get dataWords => 5;
+  int get dataWords => 7;
   @override
-  int get ptrWords => 23;
+  int get ptrWords => 27;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -337,8 +384,8 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   id: 0x98af3617e14b2953,
   displayName: 'host.capnp:Request',
   shortName: 'Request',
-  dataWords: 5,
-  pointerWords: 23,
+  dataWords: 7,
+  pointerWords: 27,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -588,6 +635,54 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'endpointCursor',
+      codeOrder: 31,
+      body: SlotFieldSchemaInfo(
+        offset: 23,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointSnapshot',
+      codeOrder: 32,
+      body: SlotFieldSchemaInfo(
+        offset: 24,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointReference',
+      codeOrder: 33,
+      body: SlotFieldSchemaInfo(
+        offset: 25,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointRegistryRevision',
+      codeOrder: 34,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointDays',
+      codeOrder: 35,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointPolicy',
+      codeOrder: 36,
+      body: SlotFieldSchemaInfo(
+        offset: 26,
+        type: StructRefTypeSchemaInfo(0x92d12e9515591f54),
+      ),
+    ),
   ],
 );
 
@@ -657,6 +752,15 @@ final class ResponseReader extends StructReader {
   Uint8List? get credentialSnapshot => getDataField(14);
 
   Uint8List? get credentialCursor => getDataField(15);
+
+  ListReader<EndpointInfoReader>? get endpoints => getStructListFieldWith(
+    16,
+    (r) => EndpointInfoReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get endpointSnapshot => getDataField(17);
+
+  Uint8List? get endpointCursor => getDataField(18);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -784,6 +888,24 @@ final class ResponseBuilder extends StructBuilder {
   set credentialCursor(Uint8List? v) {
     setDataField(15, v);
   }
+
+  ListBuilder<EndpointInfoBuilder> initEndpoints(int length) {
+    return initStructListFieldWith(
+      16,
+      length,
+      (r) => EndpointInfoBuilder(r),
+      4,
+      2,
+    );
+  }
+
+  set endpointSnapshot(Uint8List? v) {
+    setDataField(17, v);
+  }
+
+  set endpointCursor(Uint8List? v) {
+    setDataField(18, v);
+  }
 }
 
 final class _ResponseFactory
@@ -793,7 +915,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 16;
+  int get ptrWords => 19;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -810,7 +932,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 16,
+  pointerWords: 19,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1025,6 +1147,30 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       codeOrder: 26,
       body: SlotFieldSchemaInfo(
         offset: 15,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpoints',
+      codeOrder: 27,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xd59a7350b2afe3bd)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointSnapshot',
+      codeOrder: 28,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointCursor',
+      codeOrder: 29,
+      body: SlotFieldSchemaInfo(
+        offset: 18,
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
@@ -2184,3 +2330,365 @@ const StructSchemaInfo credentialInfoSchema = StructSchemaInfo(
 );
 
 final credentialInfoFactory = _CredentialInfoFactory();
+
+final class EndpointPolicyReader extends StructReader {
+  EndpointPolicyReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = endpointPolicySchema;
+
+  String? get packageId => getTextField(0);
+
+  Uint8List? get packageDigest => getDataField(1);
+
+  String? get origin => getTextField(2);
+
+  int get profile => getUint16Field(0);
+
+  ListReader<String?>? get methods => getTextListField(3);
+
+  Uint8List? get credentialReference => getDataField(4);
+
+  Uint8List? get rootCertificate => getDataField(5);
+
+  int get maxRequestBytes => getUint32Field(4);
+
+  int get maxResponseBytes => getUint32Field(8);
+
+  int get maxHeaderBytes => getUint32Field(12);
+
+  int get maxConcurrent => getUint16Field(2);
+
+  int get timeoutMs => getUint32Field(16);
+
+  int get maxFrameBytes => getUint32Field(20);
+}
+
+final class EndpointPolicyBuilder extends StructBuilder {
+  EndpointPolicyBuilder(super.raw);
+
+  @override
+  EndpointPolicyReader asReader() => EndpointPolicyReader(rawToReader());
+
+  set packageId(String? v) {
+    setTextField(0, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set origin(String? v) {
+    setTextField(2, v);
+  }
+
+  set profile(int v) {
+    setUint16Field(0, v);
+  }
+
+  ListBuilder<String?> initMethods(int length) {
+    return initTextListField(3, length);
+  }
+
+  set credentialReference(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set rootCertificate(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set maxRequestBytes(int v) {
+    setUint32Field(4, v);
+  }
+
+  set maxResponseBytes(int v) {
+    setUint32Field(8, v);
+  }
+
+  set maxHeaderBytes(int v) {
+    setUint32Field(12, v);
+  }
+
+  set maxConcurrent(int v) {
+    setUint16Field(2, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+
+  set maxFrameBytes(int v) {
+    setUint32Field(20, v);
+  }
+}
+
+final class _EndpointPolicyFactory
+    extends StructFactory<EndpointPolicyReader, EndpointPolicyBuilder> {
+  @override
+  StructSchemaInfo get schema => endpointPolicySchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 6;
+  @override
+  EndpointPolicyReader fromRawReader(RawStructReader r) =>
+      EndpointPolicyReader(r);
+  @override
+  EndpointPolicyReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EndpointPolicyReader(r, capabilities: capabilities);
+  @override
+  EndpointPolicyBuilder fromRawBuilder(RawStructBuilder r) =>
+      EndpointPolicyBuilder(r);
+}
+
+const StructSchemaInfo endpointPolicySchema = StructSchemaInfo(
+  id: 0x92d12e9515591f54,
+  displayName: 'host.capnp:EndpointPolicy',
+  shortName: 'EndpointPolicy',
+  dataWords: 3,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'origin',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'profile',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'methods',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialReference',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'rootCertificate',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxRequestBytes',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxResponseBytes',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxHeaderBytes',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxConcurrent',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxFrameBytes',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final endpointPolicyFactory = _EndpointPolicyFactory();
+
+final class EndpointInfoReader extends StructReader {
+  EndpointInfoReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = endpointInfoSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+
+  int get createdMs => getUint64Field(8);
+
+  int get expiresMs => getUint64Field(16);
+
+  bool get disabled => getBoolField(192);
+
+  EndpointPolicyReader? get policy => getStructFieldWith(
+    1,
+    (r) => EndpointPolicyReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class EndpointInfoBuilder extends StructBuilder {
+  EndpointInfoBuilder(super.raw);
+
+  @override
+  EndpointInfoReader asReader() => EndpointInfoReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set createdMs(int v) {
+    setUint64Field(8, v);
+  }
+
+  set expiresMs(int v) {
+    setUint64Field(16, v);
+  }
+
+  set disabled(bool v) {
+    setBoolField(192, v);
+  }
+
+  EndpointPolicyBuilder initPolicy() {
+    return initStructFieldWith(1, (r) => EndpointPolicyBuilder(r), 3, 6);
+  }
+
+  bool hasPolicy() => hasPointerField(1);
+}
+
+final class _EndpointInfoFactory
+    extends StructFactory<EndpointInfoReader, EndpointInfoBuilder> {
+  @override
+  StructSchemaInfo get schema => endpointInfoSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 2;
+  @override
+  EndpointInfoReader fromRawReader(RawStructReader r) => EndpointInfoReader(r);
+  @override
+  EndpointInfoReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EndpointInfoReader(r, capabilities: capabilities);
+  @override
+  EndpointInfoBuilder fromRawBuilder(RawStructBuilder r) =>
+      EndpointInfoBuilder(r);
+}
+
+const StructSchemaInfo endpointInfoSchema = StructSchemaInfo(
+  id: 0xd59a7350b2afe3bd,
+  displayName: 'host.capnp:EndpointInfo',
+  shortName: 'EndpointInfo',
+  dataWords: 4,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'createdMs',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expiresMs',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disabled',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 192,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'policy',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0x92d12e9515591f54),
+      ),
+    ),
+  ],
+);
+
+final endpointInfoFactory = _EndpointInfoFactory();

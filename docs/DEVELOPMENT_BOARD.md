@@ -27,7 +27,7 @@
 | 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；出站受保护凭据已接Store v20及原worker；下一项主应用配置，再补Unknown核对、因果关系、跨进程时钟高水位和证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
-| 5 / IO-E2 | 已验类别、凭据与Rust任务状态子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [管理接口](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；原Store有界元数据分页、Windows凭据录入／替换／停用已验。[Rust应用任务状态](PLUGIN_APP_IO_TASKS.md)已接原Storage所有权、Busy与恢复；仍需具体端点批准、CLI／Flutter任务消息与关闭待退出，再验用户路径和API服务，用户资料无隐式迁移 |
+| 5 / IO-E2 | 已验类别、凭据、端点与Rust任务状态子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [管理接口](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；原Store有界分页、Windows凭据与[具体端点批准](PLUGIN_ENDPOINT_MANAGEMENT.md)录入／替换／停用已验。[Rust应用任务状态](PLUGIN_APP_IO_TASKS.md)已接原Storage所有权、Busy与恢复；仍需CLI／Flutter任务消息与关闭待退出，再验用户路径和API服务，用户资料无隐式迁移 |
 | 5 / ROAD-08-IO | 待 C1/C2 与实际后端 / P0 | 录制证据与独立验证器 | A→B→IO→内容提交→封存→删除安装来源→隔离重放；真实故障、合法退休与缺材料分类；重放禁止实际外发 |
 | 6 / IO-E3 | 待基础双向 IO / P1 | NET-2–8／NODE-4–7 按各自依赖 | OAuth／多账号、上传下载、分页限流、流/SSE/WebSocket、webhook、持久服务与 TLS 运维；每个 profile 单独验收 |
 
@@ -93,3 +93,7 @@
 [应用合同](PLUGIN_APP_IO_TASKS.md)：Workbench Rust 入口可使用原 Manager／Store 独立准入 IO 实例，启动一项受管任务并非阻塞查询、读取、取消、回收和恢复；StorageSlot 对现有内容方法显式提供 Busy，协议提前拒绝依赖存储的文件／上传／批准副作用。Ready 仍须最终读取授权校验，停止请求不冒充线程退出，退出诊断与实际修复分开保存。
 
 本轮验证记录见[报告](../reports/app-io-tasks-2026-09-20.md)。这不是 CLI／Flutter 已有网络任务界面：下一项具体端点批准管理 → 私有任务消息、界面状态与 EOF／关闭待退出 → 实际用户路径、撤销和重启核对。文件系统、API节点、Unknown核对、因果链、三语言SDK与平台资格保持原有退出门槛。原任务句柄不持久化，不恢复旧授权，不自动重试外部效果。
+
+## 主应用端点批准进展（2026-09-20）
+
+[端点管理合同](PLUGIN_ENDPOINT_MANAGEMENT.md)与[验证报告](../reports/endpoint-admin-2026-09-20.md)：原Store完整政策分页／保存／停用、私有协议、Dart原生适配、中英文界面及进程重启恢复通过。保存只记录批准，不启用插件、不解密秘密、不建立连接；冻结SDK不变。下一项明确为CLI／Flutter短响应任务消息、关闭待退出及实际用户请求路径；IO-E2整体仍进行中。

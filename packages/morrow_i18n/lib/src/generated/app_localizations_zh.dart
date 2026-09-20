@@ -1071,6 +1071,137 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsEnabledDetails => '已启用。插件可读取和编辑工作台内容，停用后保留已有资料。';
 
   @override
+  String get pluginsEndpointAdvanced => '政策额度（未注明时以字节计）';
+
+  @override
+  String get pluginsEndpointCertificate => '选择 DER 信任根';
+
+  @override
+  String get pluginsEndpointCertificateDetails =>
+      'HTTPS 可选信任根：单个二进制 DER 证书（.der 或 .cer），最大 32 KiB。不接受 PEM 或证书包。切换到 HTTP 前请移除信任根。';
+
+  @override
+  String get pluginsEndpointCertificateInvalid =>
+      '请选择不超过 32 KiB 的单个有效二进制 DER 证书（.der 或 .cer）。';
+
+  @override
+  String pluginsEndpointCertificateSelected(int bytes) {
+    return '已选择 DER 信任根（$bytes 字节）';
+  }
+
+  @override
+  String get pluginsEndpointConcurrency => '并发请求（1–128）';
+
+  @override
+  String get pluginsEndpointCreateTitle => '新建端点批准';
+
+  @override
+  String get pluginsEndpointCredential => '凭据引用';
+
+  @override
+  String get pluginsEndpointCredentialLifetime =>
+      '所选凭据须在端点的整个有效期内有效，系统不会延长凭据期限。';
+
+  @override
+  String get pluginsEndpointCredentialUnavailable =>
+      '使用凭据需要插件包声明并获批 credential-use 权限，且已保存的引用仍有效。';
+
+  @override
+  String get pluginsEndpointCredentialsFailed => '无法读取凭据引用，请刷新状态后再选择凭据。';
+
+  @override
+  String get pluginsEndpointDetails =>
+      '为指定插件包及摘要保存服务器政策。保存不会连接网络、启用插件，也不代表网络任务立即可用。';
+
+  @override
+  String get pluginsEndpointDigest => '插件包摘要';
+
+  @override
+  String get pluginsEndpointDisabledDone => '端点批准已停用。';
+
+  @override
+  String get pluginsEndpointEmpty => '尚无已保存的端点批准';
+
+  @override
+  String get pluginsEndpointFrameBytes => '帧预算（1–131072 字节）';
+
+  @override
+  String get pluginsEndpointHeaderBytes => '请求头上限（1–16384 字节）';
+
+  @override
+  String get pluginsEndpointInvalid => '请检查插件包、源地址、方法、1–30 天期限、凭据权限、证书及政策额度。';
+
+  @override
+  String get pluginsEndpointLifetime => '有效期（1–30 天）';
+
+  @override
+  String get pluginsEndpointLoadFailed => '无法一致地读取端点批准，请刷新状态后重试。';
+
+  @override
+  String get pluginsEndpointLocalHttp => '本机 HTTP';
+
+  @override
+  String get pluginsEndpointLocalHttps => '本机 HTTPS';
+
+  @override
+  String get pluginsEndpointMethods => '允许的请求方法';
+
+  @override
+  String get pluginsEndpointNew => '添加端点';
+
+  @override
+  String get pluginsEndpointNoCredential => '不使用凭据';
+
+  @override
+  String get pluginsEndpointOrigin => '仅源地址，例如 https://api.example.com';
+
+  @override
+  String get pluginsEndpointPackage => '插件包';
+
+  @override
+  String get pluginsEndpointPackageUnavailable =>
+      '该插件包不可用或尚未批准 HTTP 权限，已有批准仍可停用。';
+
+  @override
+  String get pluginsEndpointProfile => '连接类型';
+
+  @override
+  String get pluginsEndpointPublicHttps => '公网 HTTPS';
+
+  @override
+  String get pluginsEndpointRemoveCertificate => '移除信任根';
+
+  @override
+  String get pluginsEndpointReplace => '替换批准';
+
+  @override
+  String get pluginsEndpointReplaceTitle => '使用当前插件包摘要替换端点批准';
+
+  @override
+  String get pluginsEndpointRequestBytes => '请求上限（1–65536 字节）';
+
+  @override
+  String get pluginsEndpointResponseBytes => '响应上限（1–65536 字节）';
+
+  @override
+  String get pluginsEndpointSave => '保存端点批准';
+
+  @override
+  String get pluginsEndpointSaved => '端点批准已保存，未建立网络连接。';
+
+  @override
+  String get pluginsEndpointTimeout => '超时（1–30000 毫秒）';
+
+  @override
+  String get pluginsEndpointTitle => 'API 端点批准';
+
+  @override
+  String get pluginsEndpointUnknown => '无法确认操作结果。请刷新状态后再修改，请求不会自动重发。';
+
+  @override
+  String get pluginsEndpointWorking => '正在更新端点状态…';
+
+  @override
   String get pluginsExistingVersion => '此版本已在插件列表中，现有启用状态保持不变。';
 
   @override

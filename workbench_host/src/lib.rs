@@ -22,6 +22,7 @@ pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod capture_provenance;
 mod content_projection;
 pub mod credential_control;
+pub mod endpoint_control;
 mod evidence;
 pub mod io_tasks;
 pub mod plugin_catalog;

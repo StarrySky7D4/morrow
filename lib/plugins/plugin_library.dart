@@ -1,6 +1,8 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'credential_manager.dart';
+import 'endpoint_control.dart';
+import 'endpoint_manager.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
@@ -972,6 +974,23 @@ class _PluginLibraryState extends State<PluginLibrary> {
           const SizedBox(height: 20),
           CredentialManager(
             backend: widget.backend as WorkbenchCredentialControl,
+            ink: widget.ink,
+            muted: widget.muted,
+            line: widget.line,
+            radius: widget.radius,
+          ),
+        ],
+        if (widget.backend is WorkbenchEndpointControl &&
+            _confirmed &&
+            _revision != null) ...[
+          const SizedBox(height: 20),
+          EndpointManager(
+            backend: widget.backend as WorkbenchEndpointControl,
+            plugins: _entries,
+            registryRevision: _revision!,
+            credentialBackend: widget.backend is WorkbenchCredentialControl
+                ? widget.backend as WorkbenchCredentialControl
+                : null,
             ink: widget.ink,
             muted: widget.muted,
             line: widget.line,

@@ -78,6 +78,78 @@ fn reference(record: &Record) -> Vec<u8> {
         .collect::<String>()
         .into_bytes()
 }
+/// Validate the same transport policy used by live approval without DNS, sockets
+/// or credential access. Persistent callers must first validate the core Record.
+/// Custom TLS trust accepts one DER certificate, never PEM text.
+pub fn validate_endpoint_policy(
+    value: &morrow_core::outbound_authority::proto::Endpoint,
+) -> Result<()> {
+    validated_transport_policy(value).map(|_| ())
+}
+fn validated_transport_policy(
+    value: &morrow_core::outbound_authority::proto::Endpoint,
+) -> Result<(NetworkProfile, Limits)> {
+    let profile = match value.profile {
+        1 => NetworkProfile::PublicHttps,
+        2 => NetworkProfile::LoopbackHttp,
+        3 => NetworkProfile::LoopbackHttps,
+        _ => return Err(Error::Invalid),
+    };
+    let limits = Limits {
+        max_request_bytes: value
+            .max_request_bytes
+            .try_into()
+            .map_err(|_| Error::Limit)?,
+        max_response_bytes: value
+            .max_response_bytes
+            .try_into()
+            .map_err(|_| Error::Limit)?,
+        max_header_bytes: value
+            .max_header_bytes
+            .try_into()
+            .map_err(|_| Error::Limit)?,
+        max_concurrent: value.max_concurrent.try_into().map_err(|_| Error::Limit)?,
+        timeout: Duration::from_millis(value.timeout_ms),
+    };
+    limits.validate()?;
+    if value.max_frame_bytes == 0
+        || value.max_frame_bytes > io::MAX_FRAME_BYTES as u64
+        || limits.max_request_bytes > io::MAX_PAYLOAD_BYTES
+        || limits.max_response_bytes > io::MAX_PAYLOAD_BYTES
+        || limits.max_header_bytes > io::MAX_HEADER_BYTES
+        || value.timeout_ms > io::MAX_SUBMIT_DEADLINE_MS
+    {
+        return Err(Error::Limit);
+    }
+    let origin = url::Url::parse(&value.origin).map_err(|_| Error::Invalid)?;
+    if origin.origin().ascii_serialization() != value.origin
+        || !origin.username().is_empty()
+        || origin.password().is_some()
+        || origin.path() != "/"
+        || origin.query().is_some()
+        || origin.fragment().is_some()
+    {
+        return Err(Error::Invalid);
+    }
+    let names: Vec<_> = value.methods.iter().map(String::as_str).collect();
+    let policy = match profile {
+        NetworkProfile::PublicHttps => EndpointPolicy::new(&value.origin, &names, false),
+        NetworkProfile::LoopbackHttp => {
+            if !value.origin.starts_with("http://") {
+                return Err(Error::Denied);
+            }
+            EndpointPolicy::new(&value.origin, &names, true)
+        }
+        NetworkProfile::LoopbackHttps => EndpointPolicy::local_https(&value.origin, &names),
+    }?;
+    // Parse TLS trust before opening a credential. This builds no connection.
+    if !value.root_certificate.is_empty() {
+        Client::with_root_certificate(policy, limits, &value.root_certificate)?;
+    } else {
+        Client::new(policy, limits)?;
+    }
+    Ok((profile, limits))
+}
 impl StoredHttpEndpoint {
     /// Hold the original Store authority pin while resolving both records.
     /// UTC is a trusted, bounded, non-reentrant callback; backwards time or expiry
@@ -186,66 +258,10 @@ impl StoredHttpEndpoint {
             now,
         )
         .map_err(|_| Error::Denied)?;
-        let profile = match value.profile {
-            1 => NetworkProfile::PublicHttps,
-            2 => NetworkProfile::LoopbackHttp,
-            3 => NetworkProfile::LoopbackHttps,
-            _ => return Err(Error::Invalid),
-        };
-        let limits = Limits {
-            max_request_bytes: value
-                .max_request_bytes
-                .try_into()
-                .map_err(|_| Error::Limit)?,
-            max_response_bytes: value
-                .max_response_bytes
-                .try_into()
-                .map_err(|_| Error::Limit)?,
-            max_header_bytes: value
-                .max_header_bytes
-                .try_into()
-                .map_err(|_| Error::Limit)?,
-            max_concurrent: value.max_concurrent.try_into().map_err(|_| Error::Limit)?,
-            timeout: Duration::from_millis(value.timeout_ms),
-        };
-        limits.validate()?;
-        if host_secret == [0; 32]
-            || value.max_frame_bytes == 0
-            || value.max_frame_bytes > io::MAX_FRAME_BYTES as u64
-            || limits.max_request_bytes > io::MAX_PAYLOAD_BYTES
-            || limits.max_response_bytes > io::MAX_PAYLOAD_BYTES
-            || limits.max_header_bytes > io::MAX_HEADER_BYTES
-            || value.timeout_ms > io::MAX_SUBMIT_DEADLINE_MS
-        {
+        if host_secret == [0; 32] {
             return Err(Error::Limit);
         }
-        let origin = url::Url::parse(&value.origin).map_err(|_| Error::Invalid)?;
-        if origin.origin().ascii_serialization() != value.origin
-            || !origin.username().is_empty()
-            || origin.password().is_some()
-            || origin.path() != "/"
-            || origin.query().is_some()
-            || origin.fragment().is_some()
-        {
-            return Err(Error::Invalid);
-        }
-        let names: Vec<_> = value.methods.iter().map(String::as_str).collect();
-        let policy = match profile {
-            NetworkProfile::PublicHttps => EndpointPolicy::new(&value.origin, &names, false),
-            NetworkProfile::LoopbackHttp => {
-                if !value.origin.starts_with("http://") {
-                    return Err(Error::Denied);
-                }
-                EndpointPolicy::new(&value.origin, &names, true)
-            }
-            NetworkProfile::LoopbackHttps => EndpointPolicy::local_https(&value.origin, &names),
-        }?;
-        // Parse TLS trust before opening a credential. This builds no connection.
-        if !value.root_certificate.is_empty() {
-            Client::with_root_certificate(policy, limits, &value.root_certificate)?;
-        } else {
-            Client::new(policy, limits)?;
-        }
+        let (profile, limits) = validated_transport_policy(value)?;
         self.live.check()?;
         let credential = if let Some(record) = &self.credential {
             let credential = resolve_secret(record)?;

@@ -1163,6 +1163,145 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enabled. This plugin can read and edit workbench content. Disabling it preserves your data.';
 
   @override
+  String get pluginsEndpointAdvanced =>
+      'Policy limits (bytes unless stated otherwise)';
+
+  @override
+  String get pluginsEndpointCertificate => 'Choose DER trust root';
+
+  @override
+  String get pluginsEndpointCertificateDetails =>
+      'Optional trust root for HTTPS: one binary DER certificate (.der or .cer), up to 32 KiB. PEM and certificate bundles are not accepted. Remove the trust root before switching to HTTP.';
+
+  @override
+  String get pluginsEndpointCertificateInvalid =>
+      'Choose one valid binary DER certificate (.der or .cer) no larger than 32 KiB.';
+
+  @override
+  String pluginsEndpointCertificateSelected(int bytes) {
+    return 'DER trust root selected ($bytes bytes)';
+  }
+
+  @override
+  String get pluginsEndpointConcurrency => 'Concurrent requests (1–128)';
+
+  @override
+  String get pluginsEndpointCreateTitle => 'New endpoint approval';
+
+  @override
+  String get pluginsEndpointCredential => 'Credential reference';
+
+  @override
+  String get pluginsEndpointCredentialLifetime =>
+      'The selected credential must remain valid for the full endpoint lifetime. Its expiration will not be extended.';
+
+  @override
+  String get pluginsEndpointCredentialUnavailable =>
+      'Credentials require the package’s declared and approved credential-use permission and a valid saved reference.';
+
+  @override
+  String get pluginsEndpointCredentialsFailed =>
+      'Credential references could not be read. Refresh status before choosing a credential.';
+
+  @override
+  String get pluginsEndpointDetails =>
+      'Save a server policy for a specific package and digest. Saving does not connect to the network, enable a plugin, or make network tasks immediately available.';
+
+  @override
+  String get pluginsEndpointDigest => 'Package digest';
+
+  @override
+  String get pluginsEndpointDisabledDone => 'Endpoint approval disabled.';
+
+  @override
+  String get pluginsEndpointEmpty => 'No saved endpoint approvals';
+
+  @override
+  String get pluginsEndpointFrameBytes => 'Frame budget (1–131072 bytes)';
+
+  @override
+  String get pluginsEndpointHeaderBytes => 'Maximum header bytes (1–16384)';
+
+  @override
+  String get pluginsEndpointInvalid =>
+      'Check the package, origin, methods, 1–30 day lifetime, credential permission, certificate, and policy limits.';
+
+  @override
+  String get pluginsEndpointLifetime => 'Valid for (1–30 days)';
+
+  @override
+  String get pluginsEndpointLoadFailed =>
+      'Endpoint approvals could not be read consistently. Refresh status to try again.';
+
+  @override
+  String get pluginsEndpointLocalHttp => 'Local HTTP';
+
+  @override
+  String get pluginsEndpointLocalHttps => 'Local HTTPS';
+
+  @override
+  String get pluginsEndpointMethods => 'Allowed request methods';
+
+  @override
+  String get pluginsEndpointNew => 'Add endpoint';
+
+  @override
+  String get pluginsEndpointNoCredential => 'No credential';
+
+  @override
+  String get pluginsEndpointOrigin =>
+      'Origin only, for example https://api.example.com';
+
+  @override
+  String get pluginsEndpointPackage => 'Package';
+
+  @override
+  String get pluginsEndpointPackageUnavailable =>
+      'This package is unavailable or has no approved HTTP permission. Existing approvals can still be disabled.';
+
+  @override
+  String get pluginsEndpointProfile => 'Connection profile';
+
+  @override
+  String get pluginsEndpointPublicHttps => 'Public HTTPS';
+
+  @override
+  String get pluginsEndpointRemoveCertificate => 'Remove trust root';
+
+  @override
+  String get pluginsEndpointReplace => 'Replace approval';
+
+  @override
+  String get pluginsEndpointReplaceTitle =>
+      'Replace endpoint approval using the current package digest';
+
+  @override
+  String get pluginsEndpointRequestBytes => 'Maximum request bytes (1–65536)';
+
+  @override
+  String get pluginsEndpointResponseBytes => 'Maximum response bytes (1–65536)';
+
+  @override
+  String get pluginsEndpointSave => 'Save endpoint approval';
+
+  @override
+  String get pluginsEndpointSaved =>
+      'Endpoint approval saved. No network connection was made.';
+
+  @override
+  String get pluginsEndpointTimeout => 'Timeout (1–30000 milliseconds)';
+
+  @override
+  String get pluginsEndpointTitle => 'API endpoint approvals';
+
+  @override
+  String get pluginsEndpointUnknown =>
+      'The result could not be confirmed. Refresh status before making another change. The request will not be sent again automatically.';
+
+  @override
+  String get pluginsEndpointWorking => 'Updating endpoint status…';
+
+  @override
   String get pluginsExistingVersion =>
       'This version is already installed. Its enabled state is unchanged.';
 

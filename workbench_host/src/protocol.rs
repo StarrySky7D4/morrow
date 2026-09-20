@@ -104,6 +104,29 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match action {
+        wire::Action::EndpointPage => {
+            let page = host.endpoint_page(r.get_endpoint_cursor()?, r.get_endpoint_snapshot()?)?;
+            out.set_endpoint_snapshot(&page.snapshot);
+            out.set_endpoint_cursor(page.next.as_ref().map_or(&[], |v| v.as_slice()));
+            let mut entries = out.reborrow().init_endpoints(page.entries.len() as u32);
+            for (i, entry) in page.entries.iter().enumerate() {
+                endpoint_reply(entry, entries.reborrow().get(i as u32))?;
+            }
+        }
+        wire::Action::EndpointSave => {
+            let entry = host.save_endpoint(crate::endpoint_control::EndpointUpdate {
+                reference: r.get_endpoint_reference()?.to_vec(),
+                expected_revision: r.get_revision(),
+                registry_revision: r.get_endpoint_registry_revision(),
+                lifetime_days: r.get_endpoint_days(),
+                policy: endpoint_policy(r.get_endpoint_policy()?)?,
+            })?;
+            endpoint_reply(&entry, out.reborrow().init_endpoints(1).get(0))?;
+        }
+        wire::Action::EndpointDisable => {
+            let entry = host.disable_endpoint(r.get_endpoint_reference()?, r.get_revision())?;
+            endpoint_reply(&entry, out.reborrow().init_endpoints(1).get(0))?;
+        }
         wire::Action::CredentialPage => {
             let page =
                 host.credential_page(r.get_credential_cursor()?, r.get_credential_snapshot()?)?;
@@ -714,4 +737,57 @@ fn credential_reply(
     out.set_created_ms(value.created_ms);
     out.set_expires_ms(value.expires_ms);
     out.set_disabled(value.disabled);
+}
+
+fn endpoint_policy(
+    value: wire::endpoint_policy::Reader<'_>,
+) -> Result<morrow_core::outbound_authority::proto::Endpoint> {
+    let methods = value.get_methods()?;
+    if methods.len() > 16 {
+        return Err("endpoint method count exceeds budget".into());
+    }
+    Ok(morrow_core::outbound_authority::proto::Endpoint {
+        package_id: text(value.get_package_id())?,
+        package_sha256: value.get_package_digest()?.to_vec(),
+        origin: text(value.get_origin())?,
+        profile: i32::from(value.get_profile()),
+        methods: methods.iter().map(text).collect::<Result<_>>()?,
+        credential_reference: value.get_credential_reference()?.to_vec(),
+        root_certificate: value.get_root_certificate()?.to_vec(),
+        max_request_bytes: u64::from(value.get_max_request_bytes()),
+        max_response_bytes: u64::from(value.get_max_response_bytes()),
+        max_header_bytes: u64::from(value.get_max_header_bytes()),
+        max_concurrent: u32::from(value.get_max_concurrent()),
+        timeout_ms: u64::from(value.get_timeout_ms()),
+        max_frame_bytes: u64::from(value.get_max_frame_bytes()),
+    })
+}
+fn endpoint_reply(
+    value: &crate::endpoint_control::EndpointInfo,
+    mut out: wire::endpoint_info::Builder<'_>,
+) -> Result<()> {
+    out.set_reference(&value.reference);
+    out.set_revision(value.revision);
+    out.set_created_ms(value.created_ms);
+    out.set_expires_ms(value.expires_ms);
+    out.set_disabled(value.disabled);
+    let policy = &value.policy;
+    let mut p = out.init_policy();
+    p.set_package_id(&policy.package_id);
+    p.set_package_digest(&policy.package_sha256);
+    p.set_origin(&policy.origin);
+    p.set_profile(policy.profile.try_into()?);
+    p.set_credential_reference(&policy.credential_reference);
+    p.set_root_certificate(&policy.root_certificate);
+    p.set_max_request_bytes(policy.max_request_bytes.try_into()?);
+    p.set_max_response_bytes(policy.max_response_bytes.try_into()?);
+    p.set_max_header_bytes(policy.max_header_bytes.try_into()?);
+    p.set_max_concurrent(policy.max_concurrent.try_into()?);
+    p.set_timeout_ms(policy.timeout_ms.try_into()?);
+    p.set_max_frame_bytes(policy.max_frame_bytes.try_into()?);
+    let mut methods = p.init_methods(policy.methods.len().try_into()?);
+    for (i, method) in policy.methods.iter().enumerate() {
+        methods.set(i as u32, method);
+    }
+    Ok(())
 }

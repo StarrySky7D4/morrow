@@ -14,6 +14,7 @@ prost = "=0.14.4"
 morrow-core = {path = "../core"}
 morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
 morrow-workbench-plugin = {path = "../plugins/workbench"}
+morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
 capnp = { version = "=0.24.1", features = ["unaligned"] }
 sha2 = "=0.10.9"
 [build-dependencies]
@@ -25,7 +26,6 @@ rusqlite = "=0.40.2"
 tempfile = "=3.27.0"
 wat = "=1.239.0"
 tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time"] }
-morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 morrow-audit = {path = "../audit"}

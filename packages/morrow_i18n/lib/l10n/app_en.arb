@@ -191,6 +191,13 @@
       }
     }
   },
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
   "@pluginsFileLimit": {
     "placeholders": {
       "limit": {
@@ -1066,6 +1073,47 @@
   "pluginsEmptyResult": "(empty result)",
   "pluginsEnabled": "Enabled",
   "pluginsEnabledDetails": "Enabled. This plugin can read and edit workbench content. Disabling it preserves your data.",
+  "pluginsEndpointAdvanced": "Policy limits (bytes unless stated otherwise)",
+  "pluginsEndpointCertificate": "Choose DER trust root",
+  "pluginsEndpointCertificateDetails": "Optional trust root for HTTPS: one binary DER certificate (.der or .cer), up to 32 KiB. PEM and certificate bundles are not accepted. Remove the trust root before switching to HTTP.",
+  "pluginsEndpointCertificateInvalid": "Choose one valid binary DER certificate (.der or .cer) no larger than 32 KiB.",
+  "pluginsEndpointCertificateSelected": "DER trust root selected ({bytes} bytes)",
+  "pluginsEndpointConcurrency": "Concurrent requests (1–128)",
+  "pluginsEndpointCreateTitle": "New endpoint approval",
+  "pluginsEndpointCredential": "Credential reference",
+  "pluginsEndpointCredentialLifetime": "The selected credential must remain valid for the full endpoint lifetime. Its expiration will not be extended.",
+  "pluginsEndpointCredentialUnavailable": "Credentials require the package’s declared and approved credential-use permission and a valid saved reference.",
+  "pluginsEndpointCredentialsFailed": "Credential references could not be read. Refresh status before choosing a credential.",
+  "pluginsEndpointDetails": "Save a server policy for a specific package and digest. Saving does not connect to the network, enable a plugin, or make network tasks immediately available.",
+  "pluginsEndpointDigest": "Package digest",
+  "pluginsEndpointDisabledDone": "Endpoint approval disabled.",
+  "pluginsEndpointEmpty": "No saved endpoint approvals",
+  "pluginsEndpointFrameBytes": "Frame budget (1–131072 bytes)",
+  "pluginsEndpointHeaderBytes": "Maximum header bytes (1–16384)",
+  "pluginsEndpointInvalid": "Check the package, origin, methods, 1–30 day lifetime, credential permission, certificate, and policy limits.",
+  "pluginsEndpointLifetime": "Valid for (1–30 days)",
+  "pluginsEndpointLoadFailed": "Endpoint approvals could not be read consistently. Refresh status to try again.",
+  "pluginsEndpointLocalHttp": "Local HTTP",
+  "pluginsEndpointLocalHttps": "Local HTTPS",
+  "pluginsEndpointMethods": "Allowed request methods",
+  "pluginsEndpointNew": "Add endpoint",
+  "pluginsEndpointNoCredential": "No credential",
+  "pluginsEndpointOrigin": "Origin only, for example https://api.example.com",
+  "pluginsEndpointPackage": "Package",
+  "pluginsEndpointPackageUnavailable": "This package is unavailable or has no approved HTTP permission. Existing approvals can still be disabled.",
+  "pluginsEndpointProfile": "Connection profile",
+  "pluginsEndpointPublicHttps": "Public HTTPS",
+  "pluginsEndpointRemoveCertificate": "Remove trust root",
+  "pluginsEndpointReplace": "Replace approval",
+  "pluginsEndpointReplaceTitle": "Replace endpoint approval using the current package digest",
+  "pluginsEndpointRequestBytes": "Maximum request bytes (1–65536)",
+  "pluginsEndpointResponseBytes": "Maximum response bytes (1–65536)",
+  "pluginsEndpointSave": "Save endpoint approval",
+  "pluginsEndpointSaved": "Endpoint approval saved. No network connection was made.",
+  "pluginsEndpointTimeout": "Timeout (1–30000 milliseconds)",
+  "pluginsEndpointTitle": "API endpoint approvals",
+  "pluginsEndpointUnknown": "The result could not be confirmed. Refresh status before making another change. The request will not be sent again automatically.",
+  "pluginsEndpointWorking": "Updating endpoint status…",
   "pluginsExistingVersion": "This version is already installed. Its enabled state is unchanged.",
   "pluginsFileLimit": "The file is too large. Choose a file no larger than {limit} bytes.",
   "pluginsImport": "Import",

@@ -2120,6 +2120,252 @@ abstract class AppLocalizations {
   /// **'Enabled. This plugin can read and edit workbench content. Disabling it preserves your data.'**
   String get pluginsEnabledDetails;
 
+  /// No description provided for @pluginsEndpointAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Policy limits (bytes unless stated otherwise)'**
+  String get pluginsEndpointAdvanced;
+
+  /// No description provided for @pluginsEndpointCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose DER trust root'**
+  String get pluginsEndpointCertificate;
+
+  /// No description provided for @pluginsEndpointCertificateDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional trust root for HTTPS: one binary DER certificate (.der or .cer), up to 32 KiB. PEM and certificate bundles are not accepted. Remove the trust root before switching to HTTP.'**
+  String get pluginsEndpointCertificateDetails;
+
+  /// No description provided for @pluginsEndpointCertificateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one valid binary DER certificate (.der or .cer) no larger than 32 KiB.'**
+  String get pluginsEndpointCertificateInvalid;
+
+  /// No description provided for @pluginsEndpointCertificateSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'DER trust root selected ({bytes} bytes)'**
+  String pluginsEndpointCertificateSelected(int bytes);
+
+  /// No description provided for @pluginsEndpointConcurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Concurrent requests (1–128)'**
+  String get pluginsEndpointConcurrency;
+
+  /// No description provided for @pluginsEndpointCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New endpoint approval'**
+  String get pluginsEndpointCreateTitle;
+
+  /// No description provided for @pluginsEndpointCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential reference'**
+  String get pluginsEndpointCredential;
+
+  /// No description provided for @pluginsEndpointCredentialLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected credential must remain valid for the full endpoint lifetime. Its expiration will not be extended.'**
+  String get pluginsEndpointCredentialLifetime;
+
+  /// No description provided for @pluginsEndpointCredentialUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials require the package’s declared and approved credential-use permission and a valid saved reference.'**
+  String get pluginsEndpointCredentialUnavailable;
+
+  /// No description provided for @pluginsEndpointCredentialsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential references could not be read. Refresh status before choosing a credential.'**
+  String get pluginsEndpointCredentialsFailed;
+
+  /// No description provided for @pluginsEndpointDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a server policy for a specific package and digest. Saving does not connect to the network, enable a plugin, or make network tasks immediately available.'**
+  String get pluginsEndpointDetails;
+
+  /// No description provided for @pluginsEndpointDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Package digest'**
+  String get pluginsEndpointDigest;
+
+  /// No description provided for @pluginsEndpointDisabledDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint approval disabled.'**
+  String get pluginsEndpointDisabledDone;
+
+  /// No description provided for @pluginsEndpointEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved endpoint approvals'**
+  String get pluginsEndpointEmpty;
+
+  /// No description provided for @pluginsEndpointFrameBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Frame budget (1–131072 bytes)'**
+  String get pluginsEndpointFrameBytes;
+
+  /// No description provided for @pluginsEndpointHeaderBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum header bytes (1–16384)'**
+  String get pluginsEndpointHeaderBytes;
+
+  /// No description provided for @pluginsEndpointInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the package, origin, methods, 1–30 day lifetime, credential permission, certificate, and policy limits.'**
+  String get pluginsEndpointInvalid;
+
+  /// No description provided for @pluginsEndpointLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for (1–30 days)'**
+  String get pluginsEndpointLifetime;
+
+  /// No description provided for @pluginsEndpointLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint approvals could not be read consistently. Refresh status to try again.'**
+  String get pluginsEndpointLoadFailed;
+
+  /// No description provided for @pluginsEndpointLocalHttp.
+  ///
+  /// In en, this message translates to:
+  /// **'Local HTTP'**
+  String get pluginsEndpointLocalHttp;
+
+  /// No description provided for @pluginsEndpointLocalHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'Local HTTPS'**
+  String get pluginsEndpointLocalHttps;
+
+  /// No description provided for @pluginsEndpointMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed request methods'**
+  String get pluginsEndpointMethods;
+
+  /// No description provided for @pluginsEndpointNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add endpoint'**
+  String get pluginsEndpointNew;
+
+  /// No description provided for @pluginsEndpointNoCredential.
+  ///
+  /// In en, this message translates to:
+  /// **'No credential'**
+  String get pluginsEndpointNoCredential;
+
+  /// No description provided for @pluginsEndpointOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'Origin only, for example https://api.example.com'**
+  String get pluginsEndpointOrigin;
+
+  /// No description provided for @pluginsEndpointPackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Package'**
+  String get pluginsEndpointPackage;
+
+  /// No description provided for @pluginsEndpointPackageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This package is unavailable or has no approved HTTP permission. Existing approvals can still be disabled.'**
+  String get pluginsEndpointPackageUnavailable;
+
+  /// No description provided for @pluginsEndpointProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection profile'**
+  String get pluginsEndpointProfile;
+
+  /// No description provided for @pluginsEndpointPublicHttps.
+  ///
+  /// In en, this message translates to:
+  /// **'Public HTTPS'**
+  String get pluginsEndpointPublicHttps;
+
+  /// No description provided for @pluginsEndpointRemoveCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove trust root'**
+  String get pluginsEndpointRemoveCertificate;
+
+  /// No description provided for @pluginsEndpointReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace approval'**
+  String get pluginsEndpointReplace;
+
+  /// No description provided for @pluginsEndpointReplaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace endpoint approval using the current package digest'**
+  String get pluginsEndpointReplaceTitle;
+
+  /// No description provided for @pluginsEndpointRequestBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum request bytes (1–65536)'**
+  String get pluginsEndpointRequestBytes;
+
+  /// No description provided for @pluginsEndpointResponseBytes.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum response bytes (1–65536)'**
+  String get pluginsEndpointResponseBytes;
+
+  /// No description provided for @pluginsEndpointSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save endpoint approval'**
+  String get pluginsEndpointSave;
+
+  /// No description provided for @pluginsEndpointSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint approval saved. No network connection was made.'**
+  String get pluginsEndpointSaved;
+
+  /// No description provided for @pluginsEndpointTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout (1–30000 milliseconds)'**
+  String get pluginsEndpointTimeout;
+
+  /// No description provided for @pluginsEndpointTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'API endpoint approvals'**
+  String get pluginsEndpointTitle;
+
+  /// No description provided for @pluginsEndpointUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The result could not be confirmed. Refresh status before making another change. The request will not be sent again automatically.'**
+  String get pluginsEndpointUnknown;
+
+  /// No description provided for @pluginsEndpointWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating endpoint status…'**
+  String get pluginsEndpointWorking;
+
   /// No description provided for @pluginsExistingVersion.
   ///
   /// In en, this message translates to:

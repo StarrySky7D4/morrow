@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -13,6 +13,8 @@ struct Request {
  approvedIoCapabilities @24 :List(Text);
  credentialReference @25 :Data; credentialSnapshot @26 :Data; credentialCursor @27 :Data;
  credentialHeader @28 :Text; credentialSecret @29 :Text; credentialDays @30 :UInt32;
+ endpointCursor @31 :Data; endpointSnapshot @32 :Data; endpointReference @33 :Data;
+ endpointRegistryRevision @34 :UInt64; endpointDays @35 :UInt32; endpointPolicy @36 :EndpointPolicy;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -26,6 +28,7 @@ struct Response {
  captureScope @21 :Text; captureTicket @22 :Text;
  plugins @23 :List(PluginEntry);
  credentials @24 :List(CredentialInfo); credentialSnapshot @25 :Data; credentialCursor @26 :Data;
+ endpoints @27 :List(EndpointInfo); endpointSnapshot @28 :Data; endpointCursor @29 :Data;
 }
 
 # Trusted editor observations. Selection offsets count UTF-16 code units, not UTF-8 bytes.
@@ -64,4 +67,16 @@ struct PluginEntry {
 struct CredentialInfo {
  reference @0 :Data; revision @1 :UInt64; createdMs @2 :UInt64;
  expiresMs @3 :UInt64; disabled @4 :Bool;
+}
+
+# Trusted UI policy administration; these values do not restore active grants.
+struct EndpointPolicy {
+ packageId @0 :Text; packageDigest @1 :Data; origin @2 :Text; profile @3 :UInt16;
+ methods @4 :List(Text); credentialReference @5 :Data; rootCertificate @6 :Data;
+ maxRequestBytes @7 :UInt32; maxResponseBytes @8 :UInt32; maxHeaderBytes @9 :UInt32;
+ maxConcurrent @10 :UInt16; timeoutMs @11 :UInt32; maxFrameBytes @12 :UInt32;
+}
+struct EndpointInfo {
+ reference @0 :Data; revision @1 :UInt64; createdMs @2 :UInt64; expiresMs @3 :UInt64;
+ disabled @4 :Bool; policy @5 :EndpointPolicy;
 }
