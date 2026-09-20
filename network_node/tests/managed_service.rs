@@ -58,9 +58,6 @@ impl BrokerRouter for Deny {
         Err(RouterFault::Denied)
     }
 }
-fn routers() -> RouterFactory {
-    Arc::new(|| Box::new(Deny))
-}
 fn invocation(method: &str) -> Invocation {
     Invocation {
         service: "service.notes".into(),
@@ -80,7 +77,7 @@ fn invocation(method: &str) -> Invocation {
     }
 }
 fn reply(method: &str) -> Reply {
-    Reply {
+    let mut reply = Reply {
         status: 202,
         headers: vec![
             Header {
@@ -101,7 +98,20 @@ fn reply(method: &str) -> Reply {
         } else {
             b"\0\xffoutput".to_vec()
         },
+    };
+    // The PATCH fixture fills a 1024-byte Node response-header budget exactly.
+    if method == "PATCH" {
+        let bytes: usize = reply
+            .headers
+            .iter()
+            .map(|h| h.name.len() + h.value.len() + 4)
+            .sum();
+        reply.headers.push(Header {
+            name: "x-pad".into(),
+            value: vec![b'x'; 1024 - bytes - 9],
+        });
     }
+    reply
 }
 fn quoted(bytes: &[u8]) -> String {
     bytes.iter().map(|b| format!("\\{b:02x}")).collect()
@@ -145,6 +155,8 @@ struct Running {
     digest: [u8; 32],
     journal: Option<ServiceJournal>,
     wall: Arc<AtomicU64>,
+    router_calls: Arc<AtomicU64>,
+    persisted_config: bool,
 }
 impl Running {
     fn new(method: &str, corrupt: bool, spin: bool) -> Self {
@@ -155,6 +167,7 @@ impl Running {
             spin,
             false,
             RuntimeLimits::default().fuel,
+            false,
         )
     }
     fn durable(corrupt: bool, fuel: u64) -> Self {
@@ -165,6 +178,18 @@ impl Running {
             false,
             true,
             fuel,
+            false,
+        )
+    }
+    fn with_persisted_config(fuel: u64) -> Self {
+        Self::configured(
+            tempfile::tempdir().unwrap(),
+            "POST",
+            false,
+            false,
+            true,
+            fuel,
+            true,
         )
     }
     fn reopen(self, fuel: u64) -> Self {
@@ -176,11 +201,13 @@ impl Running {
             listener,
             clock,
             digest: _,
+            router_calls: _,
+            persisted_config,
             journal,
             wall,
         } = self;
         drop((manager, host, grant, listener, clock, journal, wall));
-        Self::configured(_dir, "POST", false, false, true, fuel)
+        Self::configured(_dir, "POST", false, false, true, fuel, persisted_config)
     }
     fn configured(
         dir: tempfile::TempDir,
@@ -189,9 +216,32 @@ impl Running {
         spin: bool,
         durable: bool,
         fuel: u64,
+        persisted_config: bool,
     ) -> Self {
+        use morrow_core::service_config::{Config, VERSION, proto};
+        let mut store = Store::open(&dir.path().join("db"), EventBudget::default()).unwrap();
+        let loaded = if persisted_config {
+            store.load_service_config("configured-notes").unwrap()
+        } else {
+            None
+        };
+        // A deliberately different namespace ensures restart must use the loaded
+        // configuration, not the historical fixture's default retention policy.
+        let journal_policy = loaded
+            .as_ref()
+            .map(|config| config.policy().unwrap())
+            .unwrap_or_else(|| {
+                if persisted_config {
+                    Policy {
+                        namespace: [19; 32],
+                        retention_ms: 1500,
+                    }
+                } else {
+                    policy()
+                }
+            });
         let id = if durable {
-            service_record::call_id(&policy(), KEY, &invocation(method)).unwrap()
+            service_record::call_id(&journal_policy, KEY, &invocation(method)).unwrap()
         } else {
             1
         };
@@ -209,6 +259,32 @@ impl Running {
         manifest.io_declaration = Some(declaration);
         let package = Package::build(manifest, &wasm).unwrap();
         let digest = package.digest();
+        let config = if persisted_config {
+            Some(loaded.unwrap_or_else(|| {
+                let config = Config::encode(proto::Configuration {
+                    schema_version: VERSION,
+                    id: "configured-notes".into(),
+                    revision: 1,
+                    namespace: journal_policy.namespace.to_vec(),
+                    retention_ms: journal_policy.retention_ms,
+                    service: "service.notes".into(),
+                    handler: "serve.notes".into(),
+                    package_sha256: digest.to_vec(),
+                    disabled: false,
+                    principals: vec![proto::Principal {
+                        id: "alice".into(),
+                        authentication_reference: vec![42; 32],
+                        content_scopes: vec![],
+                    }],
+                    approval_references: vec![vec![43; 32]],
+                })
+                .unwrap();
+                store.save_service_config_local(&config, 0).unwrap();
+                config
+            }))
+        } else {
+            None
+        };
         let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
         catalog.install(&package).unwrap();
         let registry = Registry::open(&dir.path().join("registry"), catalog).unwrap();
@@ -226,9 +302,7 @@ impl Running {
         manager
             .set_enabled(ID, digest, true, manager.revision())
             .unwrap();
-        let mut runtime =
-            HostRuntime::new(Store::open(&dir.path().join("db"), EventBudget::default()).unwrap())
-                .unwrap();
+        let mut runtime = HostRuntime::new(store).unwrap();
         let instance = manager.connect(ID, &mut runtime).unwrap();
         let binding = manager
             .bind_io(
@@ -264,11 +338,25 @@ impl Running {
             JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
         )
         .unwrap();
-        let host = ServiceHost::new(worker, Duration::from_secs(2), routers()).unwrap();
+        let router_calls = Arc::new(AtomicU64::new(0));
+        let calls = router_calls.clone();
+        let factory: RouterFactory = Arc::new(move || {
+            calls.fetch_add(1, Ordering::SeqCst);
+            Box::new(Deny)
+        });
+        let host = ServiceHost::new(worker, Duration::from_secs(2), factory).unwrap();
         let wall = Arc::new(AtomicU64::new(1_000_000));
         let utc = wall.clone();
-        let journal = durable
-            .then(|| ServiceJournal::new(policy(), move || utc.load(Ordering::SeqCst)).unwrap());
+        let journal = if let Some(config) = config {
+            Some(
+                ServiceJournal::from_config(&config, &grant, move || utc.load(Ordering::SeqCst))
+                    .unwrap(),
+            )
+        } else {
+            durable.then(|| {
+                ServiceJournal::new(journal_policy, move || utc.load(Ordering::SeqCst)).unwrap()
+            })
+        };
         Self {
             _dir: dir,
             manager,
@@ -279,6 +367,8 @@ impl Running {
             digest,
             journal,
             wall,
+            router_calls,
+            persisted_config,
         }
     }
     async fn bind(&self, method: &str) -> ManagedNode {
@@ -322,7 +412,26 @@ async fn request_extra(
     extra: &str,
     body: Option<&[u8]>,
 ) -> Vec<u8> {
+    request_target(
+        address,
+        method,
+        token,
+        extra,
+        body,
+        &invocation(method).target,
+    )
+    .await
+}
+async fn request_target(
+    address: SocketAddr,
+    method: &str,
+    token: &str,
+    extra: &str,
+    body: Option<&[u8]>,
+    target: &str,
+) -> Vec<u8> {
     let mut input = invocation(method);
+    input.target = target.into();
     if let Some(body) = body {
         input.body = body.to_vec();
     }
@@ -776,6 +885,388 @@ async fn ordinary_service_strips_content_scope_metadata_without_granting_content
     .await;
     status(&response, 202);
     assert!(response.ends_with(&reply("POST").body));
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+
+const BOB_QUERY: &str = "synthetic-query-bob-token-123456789";
+async fn bind_query(run: &Running) -> ManagedNode {
+    let route = run
+        .host
+        .durable_route(
+            run.grant.clone(),
+            "POST",
+            "/api",
+            run.journal.clone().unwrap(),
+        )
+        .unwrap();
+    let query = run.host.query_route(&route, "/history").unwrap();
+    ManagedNode::bind(
+        "127.0.0.1:0".parse().unwrap(),
+        run.listener.clone(),
+        vec![
+            Principal::new("alice", TOKEN, &["service.notes"], Duration::from_secs(60)).unwrap(),
+            Principal::new(
+                "bob",
+                BOB_QUERY,
+                &["service.notes"],
+                Duration::from_secs(60),
+            )
+            .unwrap(),
+        ],
+        vec![route, query],
+        Limits::default(),
+    )
+    .await
+    .unwrap()
+}
+async fn query(address: SocketAddr, token: &str, body: Option<&[u8]>) -> Vec<u8> {
+    request_target(
+        address,
+        "POST",
+        token,
+        &format!("Idempotency-Key: {KEY}\r\n"),
+        body,
+        "/history?q=one&q=two",
+    )
+    .await
+}
+fn query_state(response: &[u8], code: u16, state: &str) {
+    status(response, code);
+    let expected = format!("morrow-service-state: {state}\r\n");
+    assert!(
+        response
+            .windows(expected.len())
+            .any(|part| part == expected.as_bytes()),
+        "{}",
+        String::from_utf8_lossy(response)
+    );
+}
+#[tokio::test]
+async fn query_missing_is_read_only_then_original_executes_and_query_returns_observed() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = bind_query(&run).await;
+    for _ in 0..2 {
+        query_state(&query(node.local_addr(), TOKEN, None).await, 404, "missing");
+    }
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 0);
+    status(
+        &request_extra(
+            node.local_addr(),
+            "POST",
+            TOKEN,
+            &format!("Idempotency-Key: {KEY}\r\n"),
+            None,
+        )
+        .await,
+        202,
+    );
+    let response = query(node.local_addr(), TOKEN, None).await;
+    status(&response, 202);
+    assert!(response.ends_with(&reply("POST").body));
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+    query_state(
+        &query(node.local_addr(), TOKEN, Some(b"changed")).await,
+        409,
+        "conflict",
+    );
+    query_state(
+        &query(node.local_addr(), BOB_QUERY, None).await,
+        404,
+        "missing",
+    );
+    let changed_target = request_target(
+        node.local_addr(),
+        "POST",
+        TOKEN,
+        &format!("Idempotency-Key: {KEY}\r\n"),
+        None,
+        "/history?q=other",
+    )
+    .await;
+    query_state(&changed_target, 409, "conflict");
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    // Only Prepared, OutcomeUnknown and Observed from the one real execution.
+    let store = Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+    assert_eq!(store.pending_usage().unwrap().0, 3);
+}
+#[tokio::test]
+async fn query_observed_survives_restart_with_insufficient_guest_fuel_and_no_router_factory() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let node = run.bind("POST").await;
+    status(
+        &request_extra(
+            node.local_addr(),
+            "POST",
+            TOKEN,
+            &format!("Idempotency-Key: {KEY}\r\n"),
+            None,
+        )
+        .await,
+        202,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let run = run.reopen(1);
+    let node = bind_query(&run).await;
+    let response = query(node.local_addr(), TOKEN, None).await;
+    status(&response, 202);
+    assert!(response.ends_with(&reply("POST").body));
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 0);
+    run.wall.store(1_001_000, Ordering::SeqCst);
+    query_state(&query(node.local_addr(), TOKEN, None).await, 410, "expired");
+    run.grant.revoke();
+    status(&query(node.local_addr(), TOKEN, None).await, 403);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+#[tokio::test]
+async fn query_unknown_survives_restart_without_execution_even_after_fuel_restored() {
+    let run = Running::durable(false, 1);
+    let node = run.bind("POST").await;
+    status(
+        &request_extra(
+            node.local_addr(),
+            "POST",
+            TOKEN,
+            &format!("Idempotency-Key: {KEY}\r\n"),
+            None,
+        )
+        .await,
+        409,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let run = run.reopen(RuntimeLimits::default().fuel);
+    let node = bind_query(&run).await;
+    for _ in 0..2 {
+        query_state(&query(node.local_addr(), TOKEN, None).await, 409, "unknown");
+    }
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 0);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let store = Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+    assert_eq!(store.pending_usage().unwrap().0, 2);
+}
+#[tokio::test]
+async fn query_route_requires_same_host_durable_origin_and_distinct_valid_path() {
+    let run = Running::durable(false, RuntimeLimits::default().fuel);
+    let other = Running::durable(false, RuntimeLimits::default().fuel);
+    let ordinary = run
+        .host
+        .route(run.grant.clone(), "POST", "/ordinary")
+        .unwrap();
+    assert!(run.host.query_route(&ordinary, "/history").is_err());
+    let route = run
+        .host
+        .durable_route(
+            run.grant.clone(),
+            "POST",
+            "/api",
+            run.journal.clone().unwrap(),
+        )
+        .unwrap();
+    assert!(other.host.query_route(&route, "/history").is_err());
+    assert!(run.host.query_route(&route, "/api").is_err());
+    assert!(run.host.query_route(&route, "/history?x=1").is_err());
+    let query = run.host.query_route(&route, "/history").unwrap();
+    assert!(run.host.query_route(&query, "/history-again").is_err());
+    run.finish().await;
+    other.finish().await;
+}
+
+#[tokio::test]
+async fn query_prepared_and_cancelled_history_never_claims_or_creates_events() {
+    use morrow_core::{
+        io_evidence::{Kind, Material},
+        io_intent::Record,
+        service_record::RequestRecord,
+    };
+    for cancelled in [false, true] {
+        let run = Running::durable(false, RuntimeLimits::default().fuel);
+        run.finish().await;
+        let request = Request::encode(
+            service_record::call_id(&policy(), KEY, &invocation("POST")).unwrap(),
+            &invocation("POST"),
+        )
+        .unwrap();
+        let original = RequestRecord::encode(&policy(), KEY, &request, 1_000_000).unwrap();
+        let proposed = Record::prepared(original.command(run.digest).unwrap()).unwrap();
+        let command = proposed.command();
+        let material = Material::encode(
+            Kind::Request,
+            &command.operation_id,
+            &command.subject,
+            command.request_sha256,
+            original.container(),
+        )
+        .unwrap();
+        let mut store =
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+        let prepared = store
+            .prepare_service_request_local_authorized(&proposed, &material, || Ok(()))
+            .unwrap();
+        if cancelled {
+            store
+                .append_io_intent_local_authorized(
+                    &prepared.propose_cancel_before_dispatch().unwrap(),
+                    || Ok(()),
+                )
+                .unwrap();
+        }
+        let usage = store.pending_usage().unwrap();
+        drop(store);
+        let run = run.reopen(RuntimeLimits::default().fuel);
+        let node = bind_query(&run).await;
+        for _ in 0..2 {
+            query_state(
+                &query(node.local_addr(), TOKEN, None).await,
+                if cancelled { 409 } else { 202 },
+                if cancelled { "cancelled" } else { "prepared" },
+            );
+        }
+        assert_eq!(run.router_calls.load(Ordering::SeqCst), 0);
+        node.shutdown().await.unwrap();
+        run.finish().await;
+        let store =
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+        assert_eq!(store.pending_usage().unwrap(), usage);
+        let stored = store
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .unwrap()
+            .unwrap();
+        assert_eq!(
+            stored.phase(),
+            if cancelled {
+                morrow_core::io_intent::Phase::CancelledBeforeDispatch
+            } else {
+                morrow_core::io_intent::Phase::Prepared
+            }
+        );
+    }
+}
+
+#[tokio::test]
+async fn persisted_service_configuration_reopens_original_history_with_fresh_grants() {
+    let run = Running::with_persisted_config(RuntimeLimits::default().fuel);
+    assert_eq!(run.journal.as_ref().unwrap().policy().namespace, [19; 32]);
+    let node = run.bind("POST").await;
+    status(
+        &request_extra(
+            node.local_addr(),
+            "POST",
+            TOKEN,
+            &format!("Idempotency-Key: {KEY}\r\n"),
+            None,
+        )
+        .await,
+        202,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let saved = {
+        let store =
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+        let config = store
+            .load_service_config("configured-notes")
+            .unwrap()
+            .unwrap();
+        assert_eq!(config.value().package_sha256, run.digest);
+        (config.container().to_vec(), store.pending_usage().unwrap())
+    };
+    // Reopened Store loads config before the new manager, instance and listener
+    // are created. The old live grants are dropped, never restored from disk.
+    let run = run.reopen(1);
+    assert_eq!(run.journal.as_ref().unwrap().policy().retention_ms, 1500);
+    let node = bind_query(&run).await;
+    let response = query(node.local_addr(), TOKEN, None).await;
+    status(&response, 202);
+    assert!(response.ends_with(&reply("POST").body));
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 0);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let store = Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+    assert_eq!(
+        store
+            .load_service_config("configured-notes")
+            .unwrap()
+            .unwrap()
+            .container(),
+        saved.0
+    );
+    assert_eq!(store.pending_usage().unwrap(), saved.1);
+}
+
+#[tokio::test]
+async fn query_observed_preserves_response_at_exact_header_budget_without_added_metadata() {
+    let run = Running::configured(
+        tempfile::tempdir().unwrap(),
+        "PATCH",
+        false,
+        false,
+        true,
+        RuntimeLimits::default().fuel,
+        false,
+    );
+    let route = run
+        .host
+        .durable_route(
+            run.grant.clone(),
+            "PATCH",
+            "/api",
+            run.journal.clone().unwrap(),
+        )
+        .unwrap();
+    let query_route = run.host.query_route(&route, "/history").unwrap();
+    let node = ManagedNode::bind(
+        "127.0.0.1:0".parse().unwrap(),
+        run.listener.clone(),
+        vec![Principal::new("alice", TOKEN, &["service.notes"], Duration::from_secs(60)).unwrap()],
+        vec![route, query_route],
+        Limits {
+            max_header_bytes: 1024,
+            ..Limits::default()
+        },
+    )
+    .await
+    .unwrap();
+    let extra = format!("Idempotency-Key: {KEY}\r\n");
+    let first = request_extra(node.local_addr(), "PATCH", TOKEN, &extra, None).await;
+    status(&first, 202);
+    let recovered = request_target(
+        node.local_addr(),
+        "PATCH",
+        TOKEN,
+        &extra,
+        None,
+        "/history?q=one&q=two",
+    )
+    .await;
+    status(&recovered, 202);
+    assert!(recovered.ends_with(&reply("PATCH").body));
+    let expected = reply("PATCH");
+    assert_eq!(
+        expected
+            .headers
+            .iter()
+            .map(|h| h.name.len() + h.value.len() + 4)
+            .sum::<usize>(),
+        1024
+    );
+    for header in expected.headers {
+        let mut line = format!("{}: ", header.name).into_bytes();
+        line.extend_from_slice(&header.value);
+        line.extend_from_slice(b"\r\n");
+        assert!(recovered.windows(line.len()).any(|part| part == line));
+    }
+    assert!(
+        !recovered
+            .windows(b"morrow-service-state".len())
+            .any(|part| part == b"morrow-service-state")
+    );
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
     node.shutdown().await.unwrap();
     run.finish().await;
 }

@@ -50,6 +50,7 @@ pub struct ManagedRoute {
     path: String,
     journal: Option<ServiceJournal>,
     content: Option<Arc<ContentRoute>>,
+    query_target: Option<String>,
 }
 struct ContentRoute {
     policy: ServiceContentPolicy,
@@ -90,6 +91,7 @@ impl ServiceHost {
             path: path.into(),
             journal: None,
             content: None,
+            query_target: None,
         })
     }
     /// Requires one Idempotency-Key and persists a single execution boundary.
@@ -124,14 +126,34 @@ impl ServiceHost {
         }));
         Ok(route)
     }
-    fn bound_route(
-        &self,
-        grant: ServiceGrant,
-        method: &str,
-        path: &str,
-        journal: Option<ServiceJournal>,
-        content: Option<Arc<ContentRoute>>,
-    ) -> Result<AuthorizedRoute> {
+    /// Query retained state without preparing, dispatching or retrying an operation.
+    /// Repeat the original method, query string, business headers, body and key at
+    /// this distinct path. The original operation target is fixed by the host.
+    pub fn query_route(&self, original: &ManagedRoute, query_path: &str) -> Result<ManagedRoute> {
+        if !Arc::ptr_eq(&self.inner, &original.host.inner) {
+            return Err(Error::Denied);
+        }
+        if original.journal.is_none()
+            || original.query_target.is_some()
+            || original.path == query_path
+        {
+            return Err(Error::Invalid);
+        }
+        let mut route = self.route(original.grant.clone(), &original.method, query_path)?;
+        route.journal = original.journal.clone();
+        route.content = original.content.clone();
+        route.query_target = Some(original.path.clone());
+        Ok(route)
+    }
+    fn bound_route(&self, grant: ServiceGrant, route: ManagedRoute) -> Result<AuthorizedRoute> {
+        let ManagedRoute {
+            method,
+            path,
+            journal,
+            content,
+            query_target,
+            ..
+        } = route;
         let scope = grant.service().to_owned();
         let inner = self.inner.clone();
         let handler: AuthorizedHandler = Arc::new(move |request, cancel| {
@@ -139,6 +161,7 @@ impl ServiceHost {
             let grant = grant.clone();
             let journal = journal.clone();
             let content = content.clone();
+            let query_target = query_target.clone();
             Box::pin(async move {
                 let (request, principal) = request.into_parts();
                 principal.check(grant.service())?;
@@ -239,12 +262,21 @@ impl ServiceHost {
                 if journal.is_some() {
                     headers.sort_by(|a, b| a.name.cmp(&b.name));
                 }
+                let querying = query_target.is_some();
+                let target = if let Some(original) = query_target {
+                    match request.target.split_once('?') {
+                        Some((_, query)) => format!("{original}?{query}"),
+                        None => original,
+                    }
+                } else {
+                    request.target
+                };
                 let invocation = service::Invocation {
                     service: grant.service().into(),
                     handler: grant.handler().into(),
                     principal: principal.id().into(),
                     method: request.method,
-                    target: request.target,
+                    target,
                     headers,
                     body: request.body,
                 };
@@ -259,18 +291,29 @@ impl ServiceHost {
                 };
                 let request =
                     service::Request::encode(serial, &invocation).map_err(|_| Error::Invalid)?;
-                let router = (inner.routers)();
+                // Factory callbacks remain outside the worker lock and are never
+                // constructed for read-only queries.
+                let router = (!querying).then(|| (inner.routers)());
                 let result = {
                     let worker = inner.worker.lock().map_err(|_| Error::Closed)?;
                     if let (Some(journal), Some(key)) = (journal, key) {
-                        if let Some(access) = &access {
+                        if querying {
+                            worker.query_service_history(
+                                request,
+                                grant.clone(),
+                                journal,
+                                &key,
+                                access.clone(),
+                                inner.timeout,
+                            )
+                        } else if let Some(access) = &access {
                             worker.submit_service_content(
                                 request,
                                 grant.clone(),
                                 journal,
                                 &key,
                                 access.clone(),
-                                router,
+                                router.ok_or(Error::Closed)?,
                                 inner.timeout,
                             )
                         } else {
@@ -279,12 +322,17 @@ impl ServiceHost {
                                 grant.clone(),
                                 journal,
                                 &key,
-                                router,
+                                router.ok_or(Error::Closed)?,
                                 inner.timeout,
                             )
                         }
                     } else {
-                        worker.submit_service(request, grant.clone(), router, inner.timeout)
+                        worker.submit_service(
+                            request,
+                            grant.clone(),
+                            router.ok_or(Error::Closed)?,
+                            inner.timeout,
+                        )
                     }
                 };
                 let mut job = match result {
@@ -343,23 +391,64 @@ impl ServiceHost {
                         .map_err(|_| Error::Denied)?;
                 }
                 if !report.service_retention_valid() {
-                    return Ok(fixed_service_reply(410, b"Service request expired"));
+                    return Ok(service_state_reply(
+                        querying,
+                        "expired",
+                        410,
+                        b"Service request expired",
+                    ));
                 }
                 if report.cancelled {
                     return Err(Error::Cancelled);
                 }
                 match report.service_persistence {
+                    Some(ServicePersistenceStatus::Missing) => {
+                        return Ok(service_state_reply(
+                            querying,
+                            "missing",
+                            404,
+                            b"Service request not found",
+                        ));
+                    }
+                    Some(ServicePersistenceStatus::Prepared) => {
+                        return Ok(service_state_reply(
+                            querying,
+                            "prepared",
+                            202,
+                            b"Service request prepared; not dispatched",
+                        ));
+                    }
+                    Some(ServicePersistenceStatus::Cancelled) => {
+                        return Ok(service_state_reply(
+                            querying,
+                            "cancelled",
+                            409,
+                            b"Service request cancelled before dispatch",
+                        ));
+                    }
                     Some(ServicePersistenceStatus::Unknown) => {
-                        return Ok(fixed_service_reply(
+                        return Ok(service_state_reply(
+                            querying,
+                            "unknown",
                             409,
                             b"Service outcome requires reconciliation",
                         ));
                     }
                     Some(ServicePersistenceStatus::Conflict) => {
-                        return Ok(fixed_service_reply(409, b"Idempotency key conflict"));
+                        return Ok(service_state_reply(
+                            querying,
+                            "conflict",
+                            409,
+                            b"Idempotency key conflict",
+                        ));
                     }
                     Some(ServicePersistenceStatus::Expired) => {
-                        return Ok(fixed_service_reply(410, b"Service request expired"));
+                        return Ok(service_state_reply(
+                            querying,
+                            "expired",
+                            410,
+                            b"Service request expired",
+                        ));
                     }
                     Some(ServicePersistenceStatus::Unavailable) => return Err(Error::Closed),
                     _ => {}
@@ -368,18 +457,21 @@ impl ServiceHost {
                     return Err(Error::Transport);
                 }
                 let reply = report.service_response.ok_or(Error::Transport)?;
+                // Observed results preserve the exact stored response. Appending
+                // metadata here could exceed an originally valid header budget.
+                let headers = reply
+                    .headers
+                    .into_iter()
+                    .map(|h| (h.name, h.value))
+                    .collect();
                 Ok(RawHttpResponse {
                     status: reply.status,
-                    headers: reply
-                        .headers
-                        .into_iter()
-                        .map(|h| (h.name, h.value))
-                        .collect(),
+                    headers,
                     body: reply.body,
                 })
             })
         });
-        AuthorizedRoute::new(&scope, method, path, handler)
+        AuthorizedRoute::new(&scope, &method, &path, handler)
     }
     /// Stops all clones and returns the original host to its owner exactly once.
     pub async fn shutdown(&self) -> Result<HostRuntime> {
@@ -455,13 +547,7 @@ impl ManagedNode {
                 .grant
                 .bound_to_listener(&grant)
                 .map_err(|_| Error::Denied)?;
-            approved.push(route.host.bound_route(
-                service,
-                &route.method,
-                &route.path,
-                route.journal,
-                route.content,
-            )?);
+            approved.push(route.host.clone().bound_route(service, route)?);
         }
         grant.activate().map_err(|_| Error::Denied)?;
         let node = if let Some(identity) = identity {
@@ -527,4 +613,14 @@ fn fixed_service_reply(status: u16, body: &[u8]) -> RawHttpResponse {
         headers: vec![("content-type".into(), b"text/plain; charset=utf-8".to_vec())],
         body: body.to_vec(),
     }
+}
+
+fn service_state_reply(querying: bool, state: &str, status: u16, body: &[u8]) -> RawHttpResponse {
+    let mut reply = fixed_service_reply(status, body);
+    if querying {
+        reply
+            .headers
+            .push(("morrow-service-state".into(), state.as_bytes().to_vec()));
+    }
+    reply
 }

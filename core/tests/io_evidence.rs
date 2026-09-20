@@ -622,7 +622,7 @@ fn downgrade_with_new_objects_is_refused_and_honest_v16_migrates_cleanly() {
     rusqlite::Connection::open(&path)
         .unwrap()
         .execute_batch(
-            "DROP TABLE io_evidence; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
+            "DROP TABLE io_evidence; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
         )
         .unwrap();
     let migrated = Store::open_existing(&path, Default::default()).unwrap();
@@ -630,7 +630,7 @@ fn downgrade_with_new_objects_is_refused_and_honest_v16_migrates_cleanly() {
         .unwrap()
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 17);
+    assert_eq!(version, 18);
     assert_eq!(migrated.pending(0, 10).unwrap(), originals);
     assert_eq!(migrated.io_material_reservation_usage().unwrap(), (0, 0));
     migrated.integrity_check().unwrap();

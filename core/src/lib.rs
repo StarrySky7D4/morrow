@@ -118,3 +118,4 @@ pub mod service_capnp {
 
 /// Historical inbound service request identity and bounded retention metadata.
 pub mod service_record;
+pub mod service_config;

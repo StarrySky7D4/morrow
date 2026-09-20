@@ -705,3 +705,122 @@ fn listener_revocation_cancels_a_bound_service_inside_the_actual_router() {
     assert_eq!(run.observer.usage().jobs, 0);
     finish(&mut run.worker);
 }
+
+fn desired_config(package_sha256: [u8; 32]) -> morrow_core::service_config::Config {
+    use morrow_core::service_config::{Config, VERSION, proto::Configuration};
+    Config::encode(Configuration {
+        schema_version: VERSION,
+        id: "notes-published".into(),
+        revision: 1,
+        namespace: vec![71; 32],
+        retention_ms: 12345,
+        service: SERVICE.into(),
+        handler: HANDLER.into(),
+        package_sha256: package_sha256.to_vec(),
+        disabled: false,
+        principals: vec![],
+        approval_references: vec![vec![73; 32]],
+    })
+    .unwrap()
+}
+#[test]
+fn journal_config_checks_actual_package_service_handler_disabled_and_shared_revocation() {
+    use morrow_core::service_config::Config;
+    use morrow_plugin_runtime::{io_execution, service_history::ServiceJournal};
+    let fixture = Fixture::new();
+    let config = desired_config(fixture.digest);
+    let grant = fixture.grant();
+    let listener = ListenerGrant::issue(
+        &fixture.manager,
+        &fixture.host,
+        &fixture.instance,
+        &fixture.binding,
+        1,
+    )
+    .unwrap();
+    let bound = grant.bound_to_listener(&listener).unwrap();
+    for actual in [&grant, &bound] {
+        let journal = ServiceJournal::from_config(&config, actual, || 100).unwrap();
+        assert_eq!(journal.policy().namespace, [71; 32]);
+        assert_eq!(journal.policy().retention_ms, 12345);
+        for changed_field in 0..4 {
+            let mut changed = config.value().clone();
+            match changed_field {
+                0 => changed.disabled = true,
+                1 => changed.package_sha256 = vec![72; 32],
+                2 => changed.service = "other-service".into(),
+                3 => changed.handler = "other-handler".into(),
+                _ => unreachable!(),
+            }
+            let changed = Config::encode(changed).unwrap();
+            assert_eq!(actual.validate_config(&changed), Err(Error::Denied));
+            assert_eq!(
+                ServiceJournal::from_config(&changed, actual, || 100).err(),
+                Some(io_execution::Error::Denied)
+            );
+        }
+    }
+    // Binding preserves the actual package and also the original listener's
+    // revocation. The unbound service remains independently valid.
+    listener.revoke();
+    assert_eq!(bound.validate_config(&config), Err(Error::Denied));
+    assert!(ServiceJournal::from_config(&config, &grant, || 100).is_ok());
+    grant.revoke();
+    assert_eq!(
+        ServiceJournal::from_config(&config, &grant, || 100).err(),
+        Some(io_execution::Error::Denied)
+    );
+}
+#[test]
+fn persisted_config_reopen_uses_original_store_policy_with_fresh_actual_instance_grant() {
+    use morrow_plugin_runtime::service_history::ServiceJournal;
+    let (dir, digest, expected) = {
+        let mut fixture = Fixture::new();
+        let config = desired_config(fixture.digest);
+        fixture
+            .host
+            .store_local_mut()
+            .save_service_config_local(&config, 0)
+            .unwrap();
+        let old_grant = fixture.grant();
+        old_grant.revoke();
+        // Keep the original profile directory while every old live owner and
+        // approval object is dropped at this scope boundary.
+        (fixture._dir, fixture.digest, config.container().to_vec())
+    };
+    let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
+    let registry = Registry::open(&dir.path().join("registry"), catalog).unwrap();
+    let mut manager = Manager::new(registry, Limits::default());
+    let mut host = HostRuntime::new(
+        Store::open_existing(&dir.path().join("db"), EventBudget::default()).unwrap(),
+    )
+    .unwrap();
+    let config = host
+        .store_local()
+        .load_service_config("notes-published")
+        .unwrap()
+        .unwrap();
+    assert_eq!(config.container(), expected);
+    let instance = manager.connect(ID, &mut host).unwrap();
+    let binding = manager
+        .bind_io(
+            &host,
+            &instance,
+            digest,
+            manager.revision(),
+            &caps(),
+            100,
+            1,
+        )
+        .unwrap();
+    let grant =
+        ServiceGrant::issue(&manager, &host, &instance, &binding, SERVICE, HANDLER, 1).unwrap();
+    let before = binding.usage();
+    let journal = ServiceJournal::from_config(&config, &grant, || 100).unwrap();
+    assert_eq!(journal.policy().namespace, [71; 32]);
+    assert_eq!(journal.policy().retention_ms, 12345);
+    assert_eq!(binding.usage(), before);
+    // Constructing a journal does not create another service/listener resource.
+    assert_eq!(binding.usage().resources, 1);
+    host.store_local().integrity_check().unwrap();
+}

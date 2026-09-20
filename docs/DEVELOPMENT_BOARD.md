@@ -1,8 +1,8 @@
 # 后续编码看板
 
-更新：2026-09-19。基线：test.52 开发线 457e023 与隔离分支 `codex/io-safety-refactor` 的 Track A 修补／重构；应用版本仍为 `0.1.9-test.52+56`。本看板随代码提交维护，是当前任务状态入口；总架构与退出门槛见 [主路线](FUTURE_ROADMAP.md) 和 [执行路线](ROADMAP_UPDATE_2026-09-15.md)。版本号、编译和测试数量不替代产品验收。
+更新：2026-09-20。基线：test.52 开发线 457e023 与隔离分支 `codex/io-safety-refactor` 的 Track A 修补／重构；应用版本仍为 `0.1.9-test.52+56`。本看板随代码提交维护，是当前任务状态入口；总架构与退出门槛见 [主路线](FUTURE_ROADMAP.md) 和 [执行路线](ROADMAP_UPDATE_2026-09-15.md)。版本号、编译和测试数量不替代产品验收。
 
-状态含义：已验子集＝对应限定实现通过；下一项＝可开始编码；待前置＝须先通过列出的门槛；可并行＝不修改正在整合的核心契约；研究＝不得作为运行后端上线。本轮隔离修正与验证证据见 [修正报告](../reports/io-safety-refactor-2026-09-19.md)；隔离分支通过不代表已推送、发布或主应用端到端验收。
+状态含义：已验子集＝对应限定实现通过；下一项＝可开始编码；待前置＝须先通过列出的门槛；可并行＝不修改正在整合的核心契约；研究＝不得作为运行后端上线。本轮隔离修正与验证证据见 [修正报告](../reports/io-safety-refactor-2026-09-19.md)；前置提交608ccc3已同步到同名远端开发分支；本轮后续改动的本地验证不代表已发布或主应用端到端验收。
 
 ## 已验子集
 
@@ -22,9 +22,9 @@
 | 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；现用 Store 严格认领，两个独立宿主竞争同一操作时仅新提交成功者可外发；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
 | 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输；后续连接主应用、持久批准与其它资源 |
 | 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；仍待持久批准/主应用、真实提供者核对、路径范围和更多平台 |
-| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；独立状态查询／核对仍待完成；持久批准、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
-| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置与主应用 UI仍待接入，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
-| 4 / IO-D2b | 下一项 / P0 | 持久服务配置与恢复操作 | 原宿主持久保存 namespace／主体／资源批准；只读状态查询和有依据的结果核对，不自动重发 Unknown；记录入站与子调用的因果关系及证据退休规则 |
+| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；[只读状态查询与稳定配置](PLUGIN_SERVICE_RECOVERY.md)已接线；Unknown核对、持久批准解析、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
+| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置记录已接原Store，批准解析与主应用 UI仍待接入，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
+| 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。下一项接批准／凭据解析与主应用配置，再补Unknown核对、因果关系、时钟高水位和证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
 | 5 / IO-E2 | 待 B2/D1/D2/D3 / P1 | workbench_host＋Flutter 管理界面 | 文件／网络／监听／发布分别显示授权、任务及恢复状态；独立插件真实调用和提供服务，用户资料无隐式迁移 |
@@ -51,4 +51,8 @@
 
 ## 本轮内容权限验收
 
-[内容服务报告](../reports/service-content-2026-09-19.md)：核心510、运行时370、网络78项通过，均无失败；主应用宿主116个测试入口通过（含3个既有子进程入口，不将父测试内的子进程输出重复累计）。实际 HTTP→Wasm→core 读取／改名、主体隔离、权限收窄后缓存拒绝和重启原回执恢复已验；旧 dispatch 采时保持兼容，新增 guarded 入口执行最终授权检查。下一项 IO-D2b：持久服务配置与恢复查询；IO-D3 文件系统后端可沿固定 Broker 边界独立推进。
+[内容服务报告](../reports/service-content-2026-09-19.md)：核心510、运行时370、网络78项通过，均无失败；主应用宿主116个测试入口通过（含3个既有子进程入口，不将父测试内的子进程输出重复累计）。实际 HTTP→Wasm→core 读取／改名、主体隔离、权限收窄后缓存拒绝和重启原回执恢复已验；旧 dispatch 采时保持兼容，新增 guarded 入口执行最终授权检查。IO-D2b的配置／只读查询进展见下；IO-D3 文件系统后端可沿固定 Broker 边界独立推进。
+
+## 持久配置与恢复查询进展（2026-09-20）
+
+原Store的配置修订、原worker查询及实际HTTP入口已贯通，证据见[本轮报告](../reports/service-recovery-2026-09-20.md)。所有查询保留原授权、容量与TTL；Missing不写记录、Prepared不认领、Unknown不重发，Observed返回原件。配置仅为期望状态，主体认证与资源批准引用不能恢复旧权限。下一编码顺序：原宿主解析持久批准／认证引用并安全切换配置 → 有证据的Unknown核对与完整因果链 → 证据退休；三语言SDK和主应用UI依赖这些契约继续推进。

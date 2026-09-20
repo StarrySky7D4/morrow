@@ -35,6 +35,7 @@ struct ServiceState {
     listener: Option<ListenerGrant>,
     service: String,
     handler: String,
+    package_sha256: [u8; 32],
 }
 /// One registered handler on one actual managed instance. Clones share both the
 /// resource reservation and the revocation signal used by every submitted job.
@@ -83,6 +84,7 @@ impl ServiceGrant {
                 listener: None,
                 service: service.into(),
                 handler: handler.into(),
+                package_sha256: instance.package().package().digest(),
             }),
         })
     }
@@ -102,6 +104,7 @@ impl ServiceGrant {
                 listener: Some(listener.clone()),
                 service: self.state.service.clone(),
                 handler: self.state.handler.clone(),
+                package_sha256: self.state.package_sha256,
             }),
         })
     }
@@ -126,6 +129,25 @@ impl ServiceGrant {
     }
     pub fn handler(&self) -> &str {
         &self.state.handler
+    }
+    /// Bind desired configuration to this actual instance's package and handler.
+    /// This is not live authorization: the worker must still check its original
+    /// clock and grants. Credential and approval references remain host-resolved.
+    /// Saving a newer configuration revision does not revoke an existing route;
+    /// the host must explicitly revoke/reconfigure its live grants and listeners.
+    pub fn validate_config(
+        &self,
+        config: &morrow_core::service_config::Config,
+    ) -> io_binding::Result<()> {
+        let value = config.value();
+        if value.disabled
+            || value.package_sha256.as_slice() != self.state.package_sha256
+            || value.service != self.state.service
+            || value.handler != self.state.handler
+        {
+            return Err(Error::Denied);
+        }
+        self.validate_binding(self.state.resource.lease.binding())
     }
     pub fn revoke(&self) {
         self.state.resource.cancel.cancel();

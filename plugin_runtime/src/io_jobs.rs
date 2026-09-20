@@ -94,6 +94,8 @@ pub trait BrokerRouter: Send {
     ) -> Result<Vec<u8>, RouterFault>;
 }
 enum JobRouter {
+    /// History queries have no executable resource adapter.
+    ReadOnly,
     Raw(Box<dyn Router>),
     Brokered(Box<dyn BrokerRouter>),
 }
@@ -322,6 +324,14 @@ impl JobLimits {
 pub enum ServicePersistenceStatus {
     Completed,
     Replayed,
+    /// No matching historical request; querying did not prepare one.
+    Missing,
+    /// A retained request has not crossed its dispatch boundary.
+    Prepared,
+    /// A retained cancellation before dispatch.
+    Cancelled,
+    /// A read-only query returned the validated original completion.
+    Observed,
     Unknown,
     Expired,
     Conflict,
@@ -521,7 +531,6 @@ impl Control {
         {
             suppress(report, fault);
         } else if let Some(report) = &mut slot.report
-            && report.service_response.is_some()
             && let Some(validity) = &report.service_validity
             && let Err(error) = validity.check()
         {
@@ -607,6 +616,7 @@ struct ServiceJob {
     content: Option<ServiceContentAccess>,
 }
 struct ServicePersistence {
+    read_only: bool,
     journal: ServiceJournal,
     key: String,
 }
@@ -978,6 +988,7 @@ impl IoWorker {
                 grant,
                 content: None,
                 persistence: Some(ServicePersistence {
+                    read_only: false,
                     journal,
                     key: key.into(),
                 }),
@@ -1026,6 +1037,60 @@ impl IoWorker {
                 grant,
                 content: Some(access),
                 persistence: Some(ServicePersistence {
+                    read_only: false,
+                    journal,
+                    key: key.into(),
+                }),
+            })),
+        )
+    }
+    /// Inspect a durable request without preparing, claiming, executing or
+    /// reconciling it. The caller repeats the exact original invocation; the
+    /// original principal/content scope and current grants must still match.
+    /// Uses the original queue, Store, instance and shared budgets. No resource
+    /// router can be provided, and a missing request stays missing.
+    #[allow(clippy::too_many_arguments)]
+    pub fn query_service_history(
+        &self,
+        request: service::Request,
+        grant: ServiceGrant,
+        journal: ServiceJournal,
+        key: &str,
+        access: Option<ServiceContentAccess>,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(JobError::InvalidOptions)?;
+        grant
+            .validate_job(&authority.binding, &request)
+            .map_err(|_| JobError::InvalidOptions)?;
+        if let Some(access) = &access {
+            access
+                .validate_grant(&grant)
+                .map_err(|_| JobError::InvalidOptions)?;
+            access
+                .validate_request(&request)
+                .map_err(|_| JobError::InvalidOptions)?;
+        }
+        let expected =
+            morrow_core::service_record::call_id(journal.policy(), key, request.invocation())
+                .map_err(|_| JobError::InvalidOptions)?;
+        if expected != request.call_id() {
+            return Err(JobError::InvalidOptions);
+        }
+        self.submit_routed(
+            request.bytes().to_vec(),
+            JobRouter::ReadOnly,
+            timeout,
+            Some(Box::new(ServiceJob {
+                request,
+                grant,
+                content: access,
+                persistence: Some(ServicePersistence {
+                    read_only: true,
                     journal,
                     key: key.into(),
                 }),
@@ -1387,6 +1452,18 @@ fn prepare_service_history(
     let Some(persistence) = &service.persistence else {
         return Ok(None);
     };
+    if persistence.read_only {
+        return Err(Box::new(query_service_report(
+            package,
+            host,
+            control,
+            cancel,
+            lease,
+            service,
+            persistence,
+            input_len,
+        )));
+    }
     let begin = service_history::begin(
         host.store_local_mut(),
         &persistence.journal,
@@ -1457,6 +1534,85 @@ fn prepare_service_history(
         }
     }
     Err(Box::new(report))
+}
+// This branch always returns a terminal report to the worker loop; it never
+// returns a dispatch claim. Read-only status delivery shares the original guards.
+#[allow(clippy::too_many_arguments)]
+fn query_service_report(
+    package: &PreparedPackage,
+    host: &HostRuntime,
+    control: &Arc<Control>,
+    cancel: &Cancellation,
+    lease: Option<&Arc<IoJobLease>>,
+    service: &ServiceJob,
+    persistence: &ServicePersistence,
+    input_len: usize,
+) -> JobReport {
+    let query = service_history::query(
+        host.store_local(),
+        &persistence.journal,
+        &persistence.key,
+        &service.request,
+        package.package().digest(),
+        || {
+            if control
+                .job_fault(cancel, Some(&service.grant), &[], service.content.as_ref())
+                .is_some()
+            {
+                Err(morrow_core::Error::Invalid("service query authority"))
+            } else {
+                Ok(())
+            }
+        },
+    );
+    let mut report = cancelled_report(package, Fault::TaskProtocol);
+    report.cancelled = false;
+    report.bytes = input_len as u64;
+    report.task.execution.outcome = Ok(0);
+    report.service_persistence = Some(match query {
+        Ok(service_history::Query::Missing) => ServicePersistenceStatus::Missing,
+        Ok(service_history::Query::Prepared { validity }) => {
+            report.service_validity = Some(validity);
+            ServicePersistenceStatus::Prepared
+        }
+        Ok(service_history::Query::Unknown { validity }) => {
+            report.unknown = true;
+            report.service_validity = Some(validity);
+            ServicePersistenceStatus::Unknown
+        }
+        Ok(service_history::Query::Cancelled { validity }) => {
+            report.service_validity = Some(validity);
+            ServicePersistenceStatus::Cancelled
+        }
+        Ok(service_history::Query::Expired) => ServicePersistenceStatus::Expired,
+        Ok(service_history::Query::Observed {
+            reply,
+            completion,
+            validity,
+        }) => {
+            report.service_validity = Some(validity);
+            let charge = completion.len() as u64;
+            if report
+                .bytes
+                .checked_add(charge)
+                .is_none_or(|n| n > control.limits.max_job_bytes)
+                || control.charge(charge, &[], lease.map(Arc::as_ref)).is_err()
+            {
+                report.task.execution.outcome = Err(Fault::Limits);
+                ServicePersistenceStatus::Unavailable
+            } else {
+                report.bytes += charge;
+                report.service_response = Some(reply);
+                ServicePersistenceStatus::Observed
+            }
+        }
+        Err(io_execution::Error::Conflict) => ServicePersistenceStatus::Conflict,
+        Err(_) => {
+            report.task.execution.outcome = Err(Fault::TaskProtocol);
+            ServicePersistenceStatus::Unavailable
+        }
+    });
+    report
 }
 fn service_job_fault(
     control: &Control,
@@ -1659,6 +1815,7 @@ fn run_job(
                 )
             } else {
                 match router {
+                    JobRouter::ReadOnly => Err(RouterFault::Denied),
                     JobRouter::Raw(router) => router.route(call, request),
                     JobRouter::Brokered(router) => {
                         match (instance, lease, Request::decode(request)) {

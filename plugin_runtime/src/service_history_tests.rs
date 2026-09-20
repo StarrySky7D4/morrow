@@ -505,3 +505,325 @@ fn crash_after_committed_claim_reopens_unknown_without_executing_again() {
     );
     store.integrity_check().unwrap();
 }
+
+#[derive(Debug, PartialEq, Eq)]
+struct QuerySnapshot {
+    pending: (u64, u64),
+    intents_reserved: (u64, u64),
+    materials_reserved: (u64, u64),
+    intent: Option<Vec<u8>>,
+    request: Option<Vec<u8>>,
+    response: Option<Vec<u8>>,
+}
+fn query_snapshot(store: &Store) -> QuerySnapshot {
+    let retained = RequestRecord::encode(&policy(), KEY, &request(), 100).unwrap();
+    let command = retained.command(PACKAGE).unwrap();
+    let material = |kind| {
+        store
+            .io_material(&command.subject, &command.operation_id, kind)
+            .ok()
+            .flatten()
+            .map(|value| value.payload().to_vec())
+    };
+    QuerySnapshot {
+        pending: store.pending_usage().unwrap(),
+        intents_reserved: store.io_intent_reservation_usage().unwrap(),
+        materials_reserved: store.io_material_reservation_usage().unwrap(),
+        intent: store
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .unwrap()
+            .map(|record| record.raw().to_vec()),
+        request: material(Kind::Request),
+        response: material(Kind::Response),
+    }
+}
+#[test]
+fn query_missing_prepared_unknown_and_cancelled_never_change_records_or_reservations() {
+    for state in 0..4 {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("query.db");
+        let mut store = Store::open(&path, EventBudget::default()).unwrap();
+        let time = Arc::new(AtomicU64::new(100));
+        let journal = journal(&time);
+        match state {
+            0 => {}
+            1 => {
+                prepare(&mut store, true);
+            }
+            2 => {
+                execute(&mut store, &journal);
+            }
+            3 => {
+                let prepared = prepare(&mut store, true);
+                let cancelled = prepared.propose_cancel_before_dispatch().unwrap();
+                store
+                    .append_io_intent_local_authorized(&cancelled, || Ok(()))
+                    .unwrap();
+            }
+            _ => unreachable!(),
+        }
+        drop(store);
+        let store = Store::open_existing(&path, EventBudget::default()).unwrap();
+        let before = query_snapshot(&store);
+        for _ in 0..2 {
+            let mut guards = 0;
+            let result = query(&store, &journal, KEY, &request(), PACKAGE, || {
+                guards += 1;
+                Ok(())
+            })
+            .unwrap();
+            assert_eq!(guards, 2);
+            match (state, result) {
+                (0, Query::Missing) => {}
+                (1, Query::Prepared { validity })
+                | (2, Query::Unknown { validity })
+                | (3, Query::Cancelled { validity }) => validity.check().unwrap(),
+                _ => panic!("query must report the stored phase without advancing it"),
+            }
+            assert_eq!(query_snapshot(&store), before);
+        }
+        store.integrity_check().unwrap();
+    }
+}
+#[test]
+fn query_rechecks_authorization_for_every_successful_outcome() {
+    for state in 0..6 {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open(&dir.path().join("query.db"), EventBudget::default()).unwrap();
+        let time = Arc::new(AtomicU64::new(100));
+        let journal = journal(&time);
+        match state {
+            0 => {}
+            1 | 4 => {
+                prepare(&mut store, true);
+            }
+            2 => {
+                execute(&mut store, &journal);
+            }
+            3 => {
+                let prepared = prepare(&mut store, true);
+                store
+                    .append_io_intent_local_authorized(
+                        &prepared.propose_cancel_before_dispatch().unwrap(),
+                        || Ok(()),
+                    )
+                    .unwrap();
+            }
+            5 => {
+                let (record, _) = execute(&mut store, &journal);
+                finish(&mut store, &record, &response(&request(), b"secret")).unwrap();
+            }
+            _ => unreachable!(),
+        }
+        if state == 4 {
+            time.store(1100, Ordering::SeqCst);
+        }
+        let before = query_snapshot(&store);
+        for reject_on in [1, 2] {
+            let mut guards = 0;
+            assert_eq!(
+                query(&store, &journal, KEY, &request(), PACKAGE, || {
+                    guards += 1;
+                    if guards == reject_on {
+                        Err(morrow_core::Error::Integrity)
+                    } else {
+                        Ok(())
+                    }
+                })
+                .err(),
+                Some(Error::Denied)
+            );
+            assert_eq!(guards, reject_on);
+            assert_eq!(query_snapshot(&store), before);
+        }
+    }
+}
+#[test]
+fn query_observed_reopens_exact_evidence_and_keeps_original_expiry() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("query.db");
+    let mut store = Store::open(&path, EventBudget::default()).unwrap();
+    let time = Arc::new(AtomicU64::new(100));
+    let journal = journal(&time);
+    let (record, _) = execute(&mut store, &journal);
+    let expected = response(&request(), b"saved-result");
+    finish(&mut store, &record, &expected).unwrap();
+    drop(store);
+    let store = Store::open_existing(&path, EventBudget::default()).unwrap();
+    let before = query_snapshot(&store);
+    time.store(900, Ordering::SeqCst);
+    let validity = match query(&store, &journal, KEY, &request(), PACKAGE, || Ok(())).unwrap() {
+        Query::Observed {
+            reply,
+            completion,
+            validity,
+        } => {
+            assert_eq!(reply.status, 201);
+            assert_eq!(reply.body, b"saved-result");
+            assert_eq!(completion, expected);
+            validity
+        }
+        _ => panic!("expected original response evidence"),
+    };
+    time.store(1100, Ordering::SeqCst);
+    assert_eq!(validity.check(), Err(Error::Expired));
+    assert!(matches!(
+        query(&store, &journal, KEY, &request(), PACKAGE, || Ok(())).unwrap(),
+        Query::Expired
+    ));
+    assert_eq!(query_snapshot(&store), before);
+}
+#[test]
+fn query_missing_material_cannot_report_prepared_or_observed_success() {
+    for observed in [false, true] {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open(&dir.path().join("query.db"), EventBudget::default()).unwrap();
+        let time = Arc::new(AtomicU64::new(100));
+        let journal = journal(&time);
+        if observed {
+            let (record, _) = execute(&mut store, &journal);
+            let command = record.command();
+            store
+                .release_io_material_reconciliation(
+                    &command.subject,
+                    &command.operation_id,
+                    Kind::Response,
+                )
+                .unwrap();
+            let reconciled = record
+                .propose_observation([2; 32], ObservationSource::Reconciliation)
+                .unwrap();
+            store
+                .append_io_intent_local_authorized(&reconciled, || Ok(()))
+                .unwrap();
+        } else {
+            prepare(&mut store, false);
+        }
+        let before = query_snapshot(&store);
+        assert_eq!(
+            query(&store, &journal, KEY, &request(), PACKAGE, || Ok(())).err(),
+            Some(Error::EvidenceUnavailable)
+        );
+        assert_eq!(query_snapshot(&store), before);
+    }
+}
+#[test]
+fn query_changed_request_package_or_policy_conflicts_and_other_principal_is_missing() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut store = Store::open(&dir.path().join("query.db"), EventBudget::default()).unwrap();
+    prepare(&mut store, true);
+    let time = Arc::new(AtomicU64::new(100));
+    let journal = journal(&time);
+    let before = query_snapshot(&store);
+    assert_eq!(
+        query(
+            &store,
+            &journal,
+            KEY,
+            &request_with(b"changed"),
+            PACKAGE,
+            || Ok(())
+        )
+        .err(),
+        Some(Error::Conflict)
+    );
+    assert_eq!(
+        query(&store, &journal, KEY, &request(), [9; 32], || Ok(())).err(),
+        Some(Error::Conflict)
+    );
+    for field in 0..3 {
+        let mut invocation = request().invocation().clone();
+        match field {
+            0 => invocation.handler = "notes.other".into(),
+            1 => invocation.target = "/other".into(),
+            2 => invocation.headers.push(Header {
+                name: "morrow-content-scope".into(),
+                value: vec![b'a'; 64],
+            }),
+            _ => unreachable!(),
+        }
+        let changed_request = Request::encode(1, &invocation).unwrap();
+        assert_eq!(
+            query(&store, &journal, KEY, &changed_request, PACKAGE, || Ok(())).err(),
+            Some(Error::Conflict)
+        );
+    }
+    let changed = ServiceJournal::new(
+        Policy {
+            retention_ms: 999,
+            ..policy()
+        },
+        || 100,
+    )
+    .unwrap();
+    assert_eq!(
+        query(&store, &changed, KEY, &request(), PACKAGE, || Ok(())).err(),
+        Some(Error::Conflict)
+    );
+    let other = Request::encode(
+        1,
+        &Invocation {
+            service: "notes".into(),
+            handler: "notes.echo".into(),
+            principal: "bob".into(),
+            method: "POST".into(),
+            target: "/notes".into(),
+            headers: vec![],
+            body: b"original".to_vec(),
+        },
+    )
+    .unwrap();
+    assert!(matches!(
+        query(&store, &journal, KEY, &other, PACKAGE, || Ok(())).unwrap(),
+        Query::Missing
+    ));
+    assert_eq!(query_snapshot(&store), before);
+}
+#[test]
+fn query_prepared_unknown_and_cancelled_keep_ttl_and_expire_during_final_guard() {
+    for state in 0..3 {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open(&dir.path().join("query.db"), EventBudget::default()).unwrap();
+        let time = Arc::new(AtomicU64::new(100));
+        let journal = journal(&time);
+        match state {
+            0 => {
+                prepare(&mut store, true);
+            }
+            1 => {
+                execute(&mut store, &journal);
+            }
+            2 => {
+                let prepared = prepare(&mut store, true);
+                store
+                    .append_io_intent_local_authorized(
+                        &prepared.propose_cancel_before_dispatch().unwrap(),
+                        || Ok(()),
+                    )
+                    .unwrap();
+            }
+            _ => unreachable!(),
+        }
+        let before = query_snapshot(&store);
+        let validity = match query(&store, &journal, KEY, &request(), PACKAGE, || Ok(())).unwrap() {
+            Query::Prepared { validity }
+            | Query::Unknown { validity }
+            | Query::Cancelled { validity } => validity,
+            _ => panic!("expected retained unfinished state"),
+        };
+        let mut guards = 0;
+        assert!(matches!(
+            query(&store, &journal, KEY, &request(), PACKAGE, || {
+                guards += 1;
+                if guards == 2 {
+                    time.store(1100, Ordering::SeqCst);
+                }
+                Ok(())
+            })
+            .unwrap(),
+            Query::Expired
+        ));
+        assert_eq!(validity.check(), Err(Error::Expired));
+        assert_eq!(query_snapshot(&store), before);
+    }
+}

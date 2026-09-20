@@ -19,6 +19,7 @@ mod io_intent;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
 mod service_request;
+mod service_config;
 pub use binding::{AuditBinding, AuditBindingState};
 pub use io_evidence::IoMaterialReservation;
 mod read_archive;
@@ -130,6 +131,7 @@ fn capacity_room(
         || (bytes as u64)
             .saturating_add(reserved_bytes as u64)
             .saturating_add(material_bytes)
+            .saturating_add(service_config::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -185,7 +187,7 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=17) {
+        if app != APPLICATION_ID || !matches!(version, 5..=18) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
@@ -251,7 +253,7 @@ impl Store {
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=17))
+            && (app != APPLICATION_ID || !matches!(version, 4..=18))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -296,7 +298,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=17) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=18) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -450,6 +452,16 @@ impl Store {
             boundary("io-evidence-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("io-evidence-migration-after-commit");
+        }
+        if version < 18 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(service_config::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 18))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("service-config-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("service-config-migration-after-commit");
         }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
@@ -838,6 +850,7 @@ impl Store {
         }
         io_intent::verify_schema(snapshot)?;
         io_evidence::verify_schema(snapshot)?;
+        service_config::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;

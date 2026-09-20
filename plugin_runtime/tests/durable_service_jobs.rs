@@ -600,3 +600,245 @@ fn content_history_cannot_be_opened_through_the_unscoped_service_submit_api() {
     );
     run.finish();
 }
+
+fn query(run: &Running) -> JobHandle {
+    run.worker
+        .query_service_history(
+            service::Request::decode(run.request.bytes()).unwrap(),
+            run.grant.clone(),
+            run.journal.clone(),
+            KEY,
+            run.access.clone(),
+            WAIT,
+        )
+        .unwrap()
+}
+
+#[test]
+fn history_query_missing_never_prepares_or_executes_and_uses_original_job_budget() {
+    let mut run = Running::new(true);
+    let mut first = query(&run);
+    let mut second = query(&run);
+    assert!(matches!(
+        run.worker.query_service_history(
+            request(),
+            run.grant.clone(),
+            run.journal.clone(),
+            KEY,
+            None,
+            WAIT,
+        ),
+        Err(morrow_plugin_runtime::io_jobs::JobError::Busy)
+    ));
+    ready(&mut first);
+    ready(&mut second);
+    assert_eq!(run.binding.usage().jobs, 2);
+    for handle in [&mut first, &mut second] {
+        let report = handle.read(0).unwrap().unwrap();
+        assert_eq!(
+            report.service_persistence,
+            Some(ServicePersistenceStatus::Missing)
+        );
+        assert_eq!(report.task.execution.outcome, Ok(0));
+        assert_eq!(report.task.execution.fuel_remaining, run.fuel);
+        assert_eq!(report.task.execution.host_calls, 0);
+        assert_eq!(report.calls, 0);
+    }
+    assert_eq!(
+        run.binding.usage().bytes,
+        2 * request().bytes().len() as u64
+    );
+    let command = run.service_command();
+    let host = run.finish();
+    assert!(
+        host.store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(host.store_local().pending_usage().unwrap(), (0, 0));
+}
+
+#[test]
+fn history_query_observed_returns_original_with_no_fuel_or_imports_and_charges_bytes() {
+    let mut run = Running::new(false);
+    let mut original = run.submit(Box::new(NoIo));
+    ready(&mut original);
+    let original = original.read(4096).unwrap().unwrap();
+    let mut handle = query(&run);
+    ready(&mut handle);
+    let report = handle.read(4096).unwrap().unwrap();
+    assert_eq!(
+        report.service_persistence,
+        Some(ServicePersistenceStatus::Observed)
+    );
+    assert!(report.service_response == original.service_response);
+    assert_eq!(report.task.execution.fuel_remaining, run.fuel);
+    assert_eq!(report.task.execution.host_calls, 0);
+    assert_eq!(report.calls, 0);
+    assert_eq!(report.bytes, original.bytes);
+    assert_eq!(run.binding.usage().bytes, 2 * original.bytes);
+    assert_eq!(run.finish().store_local().pending_usage().unwrap().0, 3);
+}
+
+fn seed_query_phase(run: &Running, phase: Phase) -> Vec<u8> {
+    use morrow_core::{
+        io_evidence::{Kind, Material},
+        io_intent::Record,
+    };
+    let original = RequestRecord::encode(&policy(), KEY, &run.request, CREATED).unwrap();
+    let command = original.command(run.digest).unwrap();
+    let mut store =
+        Store::open(&run._dir.path().join("history.db"), EventBudget::default()).unwrap();
+    let prepared = Record::prepared(command.clone()).unwrap();
+    let material = Material::encode(
+        Kind::Request,
+        &command.operation_id,
+        &command.subject,
+        command.request_sha256,
+        original.container(),
+    )
+    .unwrap();
+    let prepared = store
+        .prepare_service_request_local_authorized(&prepared, &material, || Ok(()))
+        .unwrap();
+    if phase == Phase::OutcomeUnknown {
+        let unknown = prepared.propose_dispatch_boundary().unwrap();
+        return store
+            .claim_io_dispatch_local_authorized(&unknown, || Ok(()))
+            .unwrap()
+            .raw()
+            .to_vec();
+    }
+    prepared.raw().to_vec()
+}
+
+#[test]
+fn history_query_prepared_and_unknown_preserve_exact_records_and_never_dispatch() {
+    for (phase, expected) in [
+        (Phase::Prepared, ServicePersistenceStatus::Prepared),
+        (Phase::OutcomeUnknown, ServicePersistenceStatus::Unknown),
+    ] {
+        let mut run = Running::new(true);
+        let before = seed_query_phase(&run, phase);
+        for _ in 0..2 {
+            let mut handle = query(&run);
+            ready(&mut handle);
+            let report = handle.read(0).unwrap().unwrap();
+            assert_eq!(report.service_persistence, Some(expected));
+            assert_eq!(report.task.execution.fuel_remaining, run.fuel);
+            assert_eq!(report.task.execution.host_calls, 0);
+            assert_eq!(report.calls, 0);
+            assert!(report.service_response.is_none());
+        }
+        let command = run.service_command();
+        let host = run.finish();
+        let after = host
+            .store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .unwrap()
+            .unwrap();
+        assert_eq!(after.raw(), before);
+        assert_eq!(
+            host.store_local().pending_usage().unwrap().0,
+            if phase == Phase::Prepared { 1 } else { 2 }
+        );
+    }
+}
+
+#[test]
+fn history_query_prepared_ready_expiry_suppresses_stale_status_without_claim() {
+    let mut run = Running::new(true);
+    let before = seed_query_phase(&run, Phase::Prepared);
+    let mut handle = query(&run);
+    ready(&mut handle);
+    run.utc.store(CREATED + RETENTION, Ordering::SeqCst);
+    let report = handle.read(0).unwrap().unwrap();
+    assert!(report.cancelled);
+    assert_eq!(
+        report.service_persistence,
+        Some(ServicePersistenceStatus::Expired)
+    );
+    let command = run.service_command();
+    let host = run.finish();
+    assert_eq!(
+        host.store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .unwrap()
+            .unwrap()
+            .raw(),
+        before
+    );
+}
+
+#[test]
+fn history_query_ready_rechecks_content_authority_and_never_opens_unscoped() {
+    for cause in 0..3 {
+        let mut run = Running::new_with_content(false, true);
+        let mut original = run.submit(Box::new(NoIo));
+        ready(&mut original);
+        original.read(4096).unwrap().unwrap();
+        assert!(
+            run.worker
+                .query_service_history(
+                    service::Request::decode(run.request.bytes()).unwrap(),
+                    run.grant.clone(),
+                    run.journal.clone(),
+                    KEY,
+                    None,
+                    WAIT,
+                )
+                .is_err()
+        );
+        let mut handle = query(&run);
+        ready(&mut handle);
+        match cause {
+            0 => run.principal_active.store(false, Ordering::SeqCst),
+            1 => run.content_policy.as_ref().unwrap().revoke(),
+            _ => run.ticks.store(5, Ordering::SeqCst),
+        }
+        let report = handle.read(0).unwrap().unwrap();
+        assert!(report.cancelled);
+        assert!(report.service_response.is_none());
+        assert!(report.service_persistence.is_none());
+        assert_eq!(report.payload_bytes(), 0);
+        run.finish();
+    }
+}
+
+#[test]
+fn history_query_changed_input_conflicts_and_other_principal_sees_missing() {
+    let mut run = Running::new(false);
+    let mut original = run.submit(Box::new(NoIo));
+    ready(&mut original);
+    original.read(4096).unwrap().unwrap();
+    for (other_principal, expected) in [
+        (false, ServicePersistenceStatus::Conflict),
+        (true, ServicePersistenceStatus::Missing),
+    ] {
+        let mut invocation = request().invocation().clone();
+        if other_principal {
+            invocation.principal = "bob".into();
+        } else {
+            invocation.body = b"changed".to_vec();
+        }
+        let call = service_record::call_id(&policy(), KEY, &invocation).unwrap();
+        let mut handle = run
+            .worker
+            .query_service_history(
+                service::Request::encode(call, &invocation).unwrap(),
+                run.grant.clone(),
+                run.journal.clone(),
+                KEY,
+                None,
+                WAIT,
+            )
+            .unwrap();
+        ready(&mut handle);
+        let report = handle.read(0).unwrap().unwrap();
+        assert_eq!(report.service_persistence, Some(expected));
+        assert_eq!(report.task.execution.fuel_remaining, run.fuel);
+        assert!(report.service_response.is_none());
+    }
+    assert_eq!(run.finish().store_local().pending_usage().unwrap().0, 3);
+}

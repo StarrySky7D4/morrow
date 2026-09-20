@@ -302,6 +302,7 @@ impl Running {
                 self.principal_scopes.clone(),
             )
             .unwrap();
+        let query = self.host.query_route(&route, "/content-history").unwrap();
         ManagedNode::bind(
             "127.0.0.1:0".parse().unwrap(),
             self.listener.clone(),
@@ -309,7 +310,7 @@ impl Running {
                 Principal::new("alice", ALICE, &[SERVICE], Duration::from_secs(60)).unwrap(),
                 Principal::new("bob", BOB, &[SERVICE], Duration::from_secs(60)).unwrap(),
             ],
-            vec![route],
+            vec![route, query],
             Limits::default(),
         )
         .await
@@ -326,11 +327,14 @@ impl Running {
     }
 }
 async fn post(address: SocketAddr, token: &str) -> Vec<u8> {
+    post_target(address, token, "/content").await
+}
+async fn post_target(address: SocketAddr, token: &str, target: &str) -> Vec<u8> {
     let mut socket = TcpStream::connect(address).await.unwrap();
     // Both forged reserved headers must be removed, including mixed casing and
     // Connection nomination. The host then inserts exactly its actual digest.
     let text = format!(
-        "POST /content HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nIdempotency-Key: {KEY}\r\nMorrow-Content-Scope: forged\r\nmorrow-content-scope: other\r\nConnection: close, morrow-content-scope\r\nContent-Length: 0\r\n\r\n"
+        "POST {target} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nIdempotency-Key: {KEY}\r\nMorrow-Content-Scope: forged\r\nmorrow-content-scope: other\r\nConnection: close, morrow-content-scope\r\nContent-Length: 0\r\n\r\n"
     );
     socket.write_all(text.as_bytes()).await.unwrap();
     let mut output = Vec::new();
@@ -434,6 +438,13 @@ async fn narrowed_scope_after_restart_cannot_replay_old_same_key_result() {
         1,
     );
     let node = run.bind().await;
+    let query = post_target(node.local_addr(), ALICE, "/content-history").await;
+    status(&query, 409);
+    assert!(
+        !query
+            .windows(b"old-sensitive-body".len())
+            .any(|w| w == b"old-sensitive-body")
+    );
     let reply = post(node.local_addr(), ALICE).await;
     status(&reply, 409);
     assert!(
@@ -559,4 +570,39 @@ async fn read_only_principal_scope_cannot_submit_the_actual_guest_rename() {
     );
     assert_eq!(store.pending_usage().unwrap().0, 5);
     store.integrity_check().unwrap();
+}
+
+#[tokio::test]
+async fn content_history_query_preserves_scope_table_and_current_policy_revocation() {
+    let dir = tempfile::tempdir().unwrap();
+    let run = Running::open(
+        dir.path(),
+        "alice",
+        &scopes(),
+        BTreeMap::from([("alice".into(), scopes())]),
+        Some(b"only authorized query can recover"),
+        RuntimeLimits::default().fuel,
+    );
+    let node = run.bind().await;
+    status(
+        &post_target(node.local_addr(), ALICE, "/content-history").await,
+        404,
+    );
+    let original = core_reply(&post(node.local_addr(), ALICE).await);
+    let queried = post_target(node.local_addr(), ALICE, "/content-history").await;
+    assert_eq!(core_reply(&queried), original);
+    status(
+        &post_target(node.local_addr(), BOB, "/content-history").await,
+        403,
+    );
+    run.policy.revoke();
+    status(
+        &post_target(node.local_addr(), ALICE, "/content-history").await,
+        403,
+    );
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    let store = Store::open_existing(&dir.path().join("db"), EventBudget::default()).unwrap();
+    // Two original seed writes plus only the three execution history transitions.
+    assert_eq!(store.pending_usage().unwrap().0, 5);
 }

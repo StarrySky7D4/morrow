@@ -143,7 +143,7 @@ pub(super) fn verify_operation(
     // Accepts the in-flight v15→v16 and v16→v17 migrations: pre-existing
     // kind-5 events must keep verifying while the reservation and material
     // namespaces are being added.
-    if !matches!(version(c)?, 15..=17) {
+    if !matches!(version(c)?, 15..=18) {
         return Err(Error::UnsupportedVersion);
     }
     let record = Record::decode(raw)?;
@@ -250,7 +250,7 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
-        if !matches!(version(&tx)?, 16..=17) {
+        if !matches!(version(&tx)?, 16..=18) {
             return Err(Error::UnsupportedVersion);
         }
         let all = history(&tx, operation)?;
@@ -356,7 +356,7 @@ pub(super) fn reserve_followup_in_tx(
     command: &crate::io_intent::Command,
     authorize: impl FnOnce() -> Result<()>,
 ) -> Result<(IoIntentReservation, bool)> {
-    if !matches!(version(tx)?, 16..=17) {
+    if !matches!(version(tx)?, 16..=18) {
         return Err(Error::UnsupportedVersion);
     }
     let all = history(tx, &command.operation_id)?;
@@ -438,7 +438,7 @@ pub(super) fn append_in_tx(
     authorize: impl FnOnce() -> Result<()>,
     strict_claim: bool,
 ) -> Result<(Record, bool)> {
-    if !matches!(version(tx)?, 16..=17) {
+    if !matches!(version(tx)?, 16..=18) {
         return Err(Error::UnsupportedVersion);
     }
     let command = candidate.command();

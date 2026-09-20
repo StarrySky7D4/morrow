@@ -33,6 +33,19 @@ impl ServiceJournal {
             })),
         })
     }
+    /// Restore only the historical namespace and retention policy, bound to a
+    /// freshly issued actual service grant. This does not resolve credential or
+    /// approval references, restore authority, or open a listener. The worker
+    /// continues to enforce live authorization. Configuration revision changes
+    /// do not automatically revoke already constructed journals or routes.
+    pub fn from_config(
+        config: &morrow_core::service_config::Config,
+        grant: &crate::service_io::ServiceGrant,
+        clock: impl FnMut() -> u64 + Send + 'static,
+    ) -> Result<Self> {
+        grant.validate_config(config)?;
+        Self::new(config.policy().map_err(storage)?, clock)
+    }
     pub fn policy(&self) -> &Policy {
         &self.policy
     }
@@ -109,6 +122,105 @@ pub(crate) enum Begin {
     },
     Unknown,
     Expired,
+}
+
+/// Read-only recovery state. None of these variants authorizes execution or
+/// reconciliation; nonterminal states retain the original retention deadline.
+#[allow(clippy::large_enum_variant)]
+pub(crate) enum Query {
+    Missing,
+    Prepared {
+        validity: Validity,
+    },
+    Unknown {
+        validity: Validity,
+    },
+    Cancelled {
+        validity: Validity,
+    },
+    Expired,
+    Observed {
+        reply: service::Reply,
+        completion: Vec<u8>,
+        validity: Validity,
+    },
+}
+
+/// Inspect the original request and evidence without preparing, reserving,
+/// claiming, executing or reconciling anything. Requiring the complete original
+/// request also preserves the host-supplied content scope in the identity check.
+pub(crate) fn query(
+    store: &Store,
+    journal: &ServiceJournal,
+    key: &str,
+    request: &Request,
+    package: [u8; 32],
+    mut authorize: impl FnMut() -> morrow_core::Result<()>,
+) -> Result<Query> {
+    authorize().map_err(|_| Error::Denied)?;
+    let candidate =
+        RequestRecord::encode(journal.policy(), key, request, journal.now()?).map_err(storage)?;
+    let command = candidate.command(package).map_err(storage)?;
+    let result = if let Some(stored) = store
+        .lookup_io_intent(&command.subject, &command.operation_id)
+        .map_err(storage)?
+    {
+        let retained = original(store, &stored)?;
+        retained
+            .matches(journal.policy(), key, request)
+            .map_err(storage)?;
+        stored
+            .matches_command(&retained.command(package).map_err(storage)?)
+            .map_err(storage)?;
+        let validity = Validity::new(journal, &retained);
+        match validity.check() {
+            Err(Error::Expired) => Query::Expired,
+            Err(error) => return Err(error),
+            Ok(()) => match stored.phase() {
+                Phase::Prepared => Query::Prepared { validity },
+                Phase::OutcomeUnknown => Query::Unknown { validity },
+                Phase::CancelledBeforeDispatch => Query::Cancelled { validity },
+                Phase::InvalidPhase => return Err(Error::Integrity),
+                Phase::Observed => {
+                    let response = store
+                        .io_material(&command.subject, &command.operation_id, Kind::Response)
+                        .map_err(storage)?
+                        .ok_or(Error::EvidenceUnavailable)?;
+                    if stored.data().observation_sha256 != response.payload_sha256() {
+                        return Err(Error::Integrity);
+                    }
+                    let completion = response.payload().to_vec();
+                    let reply =
+                        Response::decode(retained.request(), &completion).map_err(storage)?;
+                    Query::Observed {
+                        reply,
+                        completion,
+                        validity,
+                    }
+                }
+            },
+        }
+    } else {
+        Query::Missing
+    };
+    // Missing, expired and unfinished history are still private information.
+    // Every successful outcome must pass the final live authorization check.
+    authorize().map_err(|_| Error::Denied)?;
+    let validity = match &result {
+        Query::Prepared { validity }
+        | Query::Unknown { validity }
+        | Query::Cancelled { validity }
+        | Query::Observed { validity, .. } => Some(validity),
+        Query::Missing | Query::Expired => None,
+    };
+    if let Some(validity) = validity {
+        match validity.check() {
+            Err(Error::Expired) => return Ok(Query::Expired),
+            Err(error) => return Err(error),
+            Ok(()) => {}
+        }
+    }
+    Ok(result)
 }
 
 // Preserve the precise host guard failure rather than flattening it to a Store
