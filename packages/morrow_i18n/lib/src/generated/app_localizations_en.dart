@@ -1790,6 +1790,266 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pluginsServiceAcknowledgeUncertain =>
+      'I reviewed the refreshed records';
+
+  @override
+  String get pluginsServiceAddScope => 'Add content scope';
+
+  @override
+  String get pluginsServiceAttachmentId => 'Exact attachment identity';
+
+  @override
+  String get pluginsServiceAuthenticationUnavailable =>
+      'This selected authentication is missing, disabled, expired, or belongs to another principal. Its draft scopes are retained; select a valid replacement or explicitly remove it.';
+
+  @override
+  String get pluginsServiceAuthorities =>
+      'Authentication and publication records';
+
+  @override
+  String get pluginsServiceCardId => 'Exact card identity';
+
+  @override
+  String get pluginsServiceCatalogChanged =>
+      'The package catalog changed or is unavailable. Your draft is preserved. Explicitly refresh the selection before saving.';
+
+  @override
+  String get pluginsServiceClearToken => 'Clear token';
+
+  @override
+  String get pluginsServiceCloseEditor => 'Close editor';
+
+  @override
+  String get pluginsServiceConfigDigest => 'Configuration digest';
+
+  @override
+  String get pluginsServiceConfiguration => 'Saved configuration';
+
+  @override
+  String get pluginsServiceConfigurations => 'Saved configurations';
+
+  @override
+  String get pluginsServiceCopyClear => 'Copy and clear token';
+
+  @override
+  String get pluginsServiceCreated => 'Created (UTC)';
+
+  @override
+  String get pluginsServiceDays => 'Requested lifetime (1–30 days)';
+
+  @override
+  String get pluginsServiceDigestFixed =>
+      'Editing keeps the original package digest. A matching package must be selected; this does not enable it.';
+
+  @override
+  String get pluginsServiceDisable => 'Disable';
+
+  @override
+  String get pluginsServiceDisabled => 'Disabled';
+
+  @override
+  String get pluginsServiceEditConfig => 'Edit configuration';
+
+  @override
+  String get pluginsServiceEditPublication => 'Edit publication';
+
+  @override
+  String get pluginsServiceExpired => 'Expired or not yet valid';
+
+  @override
+  String get pluginsServiceExpires => 'Actual expiry (UTC)';
+
+  @override
+  String get pluginsServiceHandler => 'Declared service handler';
+
+  @override
+  String get pluginsServiceIdentity => 'Service identity';
+
+  @override
+  String get pluginsServiceInvalid =>
+      'Check the fields, selected approvals, and current package before saving.';
+
+  @override
+  String get pluginsServiceIssue => 'Issue token';
+
+  @override
+  String get pluginsServiceIssuedToken => 'One-time bearer token';
+
+  @override
+  String get pluginsServiceListenAddress => 'Numeric listen address and port';
+
+  @override
+  String get pluginsServiceLoadFailed =>
+      'Records could not be refreshed. Refresh again before making changes.';
+
+  @override
+  String get pluginsServiceManagementOnly =>
+      'Manage saved configurations and approvals here. Saving does not start a listener, run a package, or activate a service.';
+
+  @override
+  String get pluginsServiceMethod => 'HTTP method';
+
+  @override
+  String get pluginsServiceNewAuthentication => 'New authentication';
+
+  @override
+  String get pluginsServiceNewConfig => 'New configuration';
+
+  @override
+  String get pluginsServiceNo => 'No';
+
+  @override
+  String get pluginsServiceNoAuthentication =>
+      'Create a currently valid authentication record first.';
+
+  @override
+  String get pluginsServiceNoAuthorities =>
+      'No authentication or publication records.';
+
+  @override
+  String get pluginsServiceNoConfigurations => 'No service configurations.';
+
+  @override
+  String get pluginsServicePackage => 'Declared and approved package';
+
+  @override
+  String get pluginsServicePackageDigest => 'Package digest';
+
+  @override
+  String get pluginsServicePackageUnavailable =>
+      'The matching package or its listen/publish approvals are unavailable. Historical records remain readable and can be disabled.';
+
+  @override
+  String get pluginsServicePath => 'Exact request path';
+
+  @override
+  String get pluginsServicePolicyChanged =>
+      'The selected original record changed or is no longer usable. Refresh the selection, or reopen the editor from the current record. Your draft remains here.';
+
+  @override
+  String get pluginsServicePrincipalId => 'Principal identity';
+
+  @override
+  String get pluginsServicePrincipals =>
+      'Authorized principals and content scopes';
+
+  @override
+  String get pluginsServicePublicationEditor => 'Publication approval';
+
+  @override
+  String get pluginsServicePublicationHelp =>
+      'Approval is bound to this exact configuration, revision and reference. Its actual expiry is limited by every selected authentication record and may be shorter than requested. Saving does not start listening.';
+
+  @override
+  String get pluginsServicePublicationMismatch =>
+      'This publication no longer matches the current configuration. Review and explicitly save a replacement approval.';
+
+  @override
+  String get pluginsServiceQueryPath => 'Separate result query path (optional)';
+
+  @override
+  String get pluginsServiceReference => 'Approval reference';
+
+  @override
+  String get pluginsServiceRefresh => 'Refresh records';
+
+  @override
+  String get pluginsServiceRefreshSelection => 'Refresh this selection';
+
+  @override
+  String get pluginsServiceRemovePrincipal => 'Remove principal';
+
+  @override
+  String get pluginsServiceRemoveScope => 'Remove scope';
+
+  @override
+  String get pluginsServiceRetention =>
+      'Request history retention (milliseconds, up to 30 days)';
+
+  @override
+  String get pluginsServiceRevision => 'Revision';
+
+  @override
+  String get pluginsServiceRotate => 'Rotate token';
+
+  @override
+  String get pluginsServiceRotateAuthentication => 'Rotate authentication';
+
+  @override
+  String get pluginsServiceSaveConfig => 'Save configuration';
+
+  @override
+  String get pluginsServiceSavePublication => 'Save publication approval';
+
+  @override
+  String get pluginsServiceSaved =>
+      'Saved. Review the returned revision and actual expiry below.';
+
+  @override
+  String get pluginsServiceScopeAttachment => 'Read attachment';
+
+  @override
+  String get pluginsServiceScopeCreate => 'Create content';
+
+  @override
+  String get pluginsServiceScopeEdit => 'Edit content';
+
+  @override
+  String get pluginsServiceScopeKind => 'Allowed content operation';
+
+  @override
+  String get pluginsServiceScopeQuery => 'Query operation';
+
+  @override
+  String get pluginsServiceScopeRead => 'Read content';
+
+  @override
+  String get pluginsServiceScopeRename => 'Rename card';
+
+  @override
+  String get pluginsServiceScopeSummary => 'Read summary';
+
+  @override
+  String get pluginsServiceScopesHelp =>
+      'Select authentication explicitly. Add each allowed operation and exact object identity below. Removing a scope or principal requires its own button; existing scopes are preserved while editing.';
+
+  @override
+  String get pluginsServiceTitle => 'Service configuration';
+
+  @override
+  String get pluginsServiceTls => 'Require TLS';
+
+  @override
+  String get pluginsServiceTlsHelp =>
+      'Non-loopback addresses require TLS. This saves the requirement only; no listener or TLS identity is created here.';
+
+  @override
+  String get pluginsServiceTokenDiscarded =>
+      'The one-time token was cleared while this panel was closed. Issue a new token explicitly if needed.';
+
+  @override
+  String get pluginsServiceTokenHelp =>
+      'This token is shown only now. Copy it explicitly if needed. Clearing or closing this panel removes it from the session; it cannot be retrieved from the list. Rotation replaces the previous token.';
+
+  @override
+  String get pluginsServiceUncertainHelp =>
+      'Refresh and inspect the original records first. Acknowledging this notice only allows another explicit action; it does not prove that the previous change failed or replay it.';
+
+  @override
+  String get pluginsServiceUnsupported => 'Unsupported historical value';
+
+  @override
+  String get pluginsServiceWorking => 'Working…';
+
+  @override
+  String get pluginsServiceWriteUnknown =>
+      'The result of the last change is unknown. It has not been sent again.';
+
+  @override
+  String get pluginsServiceYes => 'Yes';
+
+  @override
   String get pluginsSettingsUnknown =>
       'The setting has not been confirmed. Refresh the status before choosing again.';
 

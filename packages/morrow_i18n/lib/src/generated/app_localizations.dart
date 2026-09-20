@@ -3186,6 +3186,480 @@ abstract class AppLocalizations {
   /// **'Selected file: {name}'**
   String pluginsSelectedFile(String name);
 
+  /// No description provided for @pluginsServiceAcknowledgeUncertain.
+  ///
+  /// In en, this message translates to:
+  /// **'I reviewed the refreshed records'**
+  String get pluginsServiceAcknowledgeUncertain;
+
+  /// No description provided for @pluginsServiceAddScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Add content scope'**
+  String get pluginsServiceAddScope;
+
+  /// No description provided for @pluginsServiceAttachmentId.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact attachment identity'**
+  String get pluginsServiceAttachmentId;
+
+  /// No description provided for @pluginsServiceAuthenticationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This selected authentication is missing, disabled, expired, or belongs to another principal. Its draft scopes are retained; select a valid replacement or explicitly remove it.'**
+  String get pluginsServiceAuthenticationUnavailable;
+
+  /// No description provided for @pluginsServiceAuthorities.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication and publication records'**
+  String get pluginsServiceAuthorities;
+
+  /// No description provided for @pluginsServiceCardId.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact card identity'**
+  String get pluginsServiceCardId;
+
+  /// No description provided for @pluginsServiceCatalogChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The package catalog changed or is unavailable. Your draft is preserved. Explicitly refresh the selection before saving.'**
+  String get pluginsServiceCatalogChanged;
+
+  /// No description provided for @pluginsServiceClearToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear token'**
+  String get pluginsServiceClearToken;
+
+  /// No description provided for @pluginsServiceCloseEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Close editor'**
+  String get pluginsServiceCloseEditor;
+
+  /// No description provided for @pluginsServiceConfigDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration digest'**
+  String get pluginsServiceConfigDigest;
+
+  /// No description provided for @pluginsServiceConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved configuration'**
+  String get pluginsServiceConfiguration;
+
+  /// No description provided for @pluginsServiceConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved configurations'**
+  String get pluginsServiceConfigurations;
+
+  /// No description provided for @pluginsServiceCopyClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy and clear token'**
+  String get pluginsServiceCopyClear;
+
+  /// No description provided for @pluginsServiceCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Created (UTC)'**
+  String get pluginsServiceCreated;
+
+  /// No description provided for @pluginsServiceDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested lifetime (1–30 days)'**
+  String get pluginsServiceDays;
+
+  /// No description provided for @pluginsServiceDigestFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing keeps the original package digest. A matching package must be selected; this does not enable it.'**
+  String get pluginsServiceDigestFixed;
+
+  /// No description provided for @pluginsServiceDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get pluginsServiceDisable;
+
+  /// No description provided for @pluginsServiceDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get pluginsServiceDisabled;
+
+  /// No description provided for @pluginsServiceEditConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit configuration'**
+  String get pluginsServiceEditConfig;
+
+  /// No description provided for @pluginsServiceEditPublication.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit publication'**
+  String get pluginsServiceEditPublication;
+
+  /// No description provided for @pluginsServiceExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired or not yet valid'**
+  String get pluginsServiceExpired;
+
+  /// No description provided for @pluginsServiceExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual expiry (UTC)'**
+  String get pluginsServiceExpires;
+
+  /// No description provided for @pluginsServiceHandler.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared service handler'**
+  String get pluginsServiceHandler;
+
+  /// No description provided for @pluginsServiceIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Service identity'**
+  String get pluginsServiceIdentity;
+
+  /// No description provided for @pluginsServiceInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the fields, selected approvals, and current package before saving.'**
+  String get pluginsServiceInvalid;
+
+  /// No description provided for @pluginsServiceIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue token'**
+  String get pluginsServiceIssue;
+
+  /// No description provided for @pluginsServiceIssuedToken.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time bearer token'**
+  String get pluginsServiceIssuedToken;
+
+  /// No description provided for @pluginsServiceListenAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Numeric listen address and port'**
+  String get pluginsServiceListenAddress;
+
+  /// No description provided for @pluginsServiceLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Records could not be refreshed. Refresh again before making changes.'**
+  String get pluginsServiceLoadFailed;
+
+  /// No description provided for @pluginsServiceManagementOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage saved configurations and approvals here. Saving does not start a listener, run a package, or activate a service.'**
+  String get pluginsServiceManagementOnly;
+
+  /// No description provided for @pluginsServiceMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP method'**
+  String get pluginsServiceMethod;
+
+  /// No description provided for @pluginsServiceNewAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'New authentication'**
+  String get pluginsServiceNewAuthentication;
+
+  /// No description provided for @pluginsServiceNewConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'New configuration'**
+  String get pluginsServiceNewConfig;
+
+  /// No description provided for @pluginsServiceNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get pluginsServiceNo;
+
+  /// No description provided for @pluginsServiceNoAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a currently valid authentication record first.'**
+  String get pluginsServiceNoAuthentication;
+
+  /// No description provided for @pluginsServiceNoAuthorities.
+  ///
+  /// In en, this message translates to:
+  /// **'No authentication or publication records.'**
+  String get pluginsServiceNoAuthorities;
+
+  /// No description provided for @pluginsServiceNoConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'No service configurations.'**
+  String get pluginsServiceNoConfigurations;
+
+  /// No description provided for @pluginsServicePackage.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared and approved package'**
+  String get pluginsServicePackage;
+
+  /// No description provided for @pluginsServicePackageDigest.
+  ///
+  /// In en, this message translates to:
+  /// **'Package digest'**
+  String get pluginsServicePackageDigest;
+
+  /// No description provided for @pluginsServicePackageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The matching package or its listen/publish approvals are unavailable. Historical records remain readable and can be disabled.'**
+  String get pluginsServicePackageUnavailable;
+
+  /// No description provided for @pluginsServicePath.
+  ///
+  /// In en, this message translates to:
+  /// **'Exact request path'**
+  String get pluginsServicePath;
+
+  /// No description provided for @pluginsServicePolicyChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected original record changed or is no longer usable. Refresh the selection, or reopen the editor from the current record. Your draft remains here.'**
+  String get pluginsServicePolicyChanged;
+
+  /// No description provided for @pluginsServicePrincipalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal identity'**
+  String get pluginsServicePrincipalId;
+
+  /// No description provided for @pluginsServicePrincipals.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorized principals and content scopes'**
+  String get pluginsServicePrincipals;
+
+  /// No description provided for @pluginsServicePublicationEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Publication approval'**
+  String get pluginsServicePublicationEditor;
+
+  /// No description provided for @pluginsServicePublicationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval is bound to this exact configuration, revision and reference. Its actual expiry is limited by every selected authentication record and may be shorter than requested. Saving does not start listening.'**
+  String get pluginsServicePublicationHelp;
+
+  /// No description provided for @pluginsServicePublicationMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'This publication no longer matches the current configuration. Review and explicitly save a replacement approval.'**
+  String get pluginsServicePublicationMismatch;
+
+  /// No description provided for @pluginsServiceQueryPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate result query path (optional)'**
+  String get pluginsServiceQueryPath;
+
+  /// No description provided for @pluginsServiceReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval reference'**
+  String get pluginsServiceReference;
+
+  /// No description provided for @pluginsServiceRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh records'**
+  String get pluginsServiceRefresh;
+
+  /// No description provided for @pluginsServiceRefreshSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh this selection'**
+  String get pluginsServiceRefreshSelection;
+
+  /// No description provided for @pluginsServiceRemovePrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove principal'**
+  String get pluginsServiceRemovePrincipal;
+
+  /// No description provided for @pluginsServiceRemoveScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove scope'**
+  String get pluginsServiceRemoveScope;
+
+  /// No description provided for @pluginsServiceRetention.
+  ///
+  /// In en, this message translates to:
+  /// **'Request history retention (milliseconds, up to 30 days)'**
+  String get pluginsServiceRetention;
+
+  /// No description provided for @pluginsServiceRevision.
+  ///
+  /// In en, this message translates to:
+  /// **'Revision'**
+  String get pluginsServiceRevision;
+
+  /// No description provided for @pluginsServiceRotate.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate token'**
+  String get pluginsServiceRotate;
+
+  /// No description provided for @pluginsServiceRotateAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate authentication'**
+  String get pluginsServiceRotateAuthentication;
+
+  /// No description provided for @pluginsServiceSaveConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'Save configuration'**
+  String get pluginsServiceSaveConfig;
+
+  /// No description provided for @pluginsServiceSavePublication.
+  ///
+  /// In en, this message translates to:
+  /// **'Save publication approval'**
+  String get pluginsServiceSavePublication;
+
+  /// No description provided for @pluginsServiceSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Review the returned revision and actual expiry below.'**
+  String get pluginsServiceSaved;
+
+  /// No description provided for @pluginsServiceScopeAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Read attachment'**
+  String get pluginsServiceScopeAttachment;
+
+  /// No description provided for @pluginsServiceScopeCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create content'**
+  String get pluginsServiceScopeCreate;
+
+  /// No description provided for @pluginsServiceScopeEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit content'**
+  String get pluginsServiceScopeEdit;
+
+  /// No description provided for @pluginsServiceScopeKind.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed content operation'**
+  String get pluginsServiceScopeKind;
+
+  /// No description provided for @pluginsServiceScopeQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Query operation'**
+  String get pluginsServiceScopeQuery;
+
+  /// No description provided for @pluginsServiceScopeRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read content'**
+  String get pluginsServiceScopeRead;
+
+  /// No description provided for @pluginsServiceScopeRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename card'**
+  String get pluginsServiceScopeRename;
+
+  /// No description provided for @pluginsServiceScopeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Read summary'**
+  String get pluginsServiceScopeSummary;
+
+  /// No description provided for @pluginsServiceScopesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Select authentication explicitly. Add each allowed operation and exact object identity below. Removing a scope or principal requires its own button; existing scopes are preserved while editing.'**
+  String get pluginsServiceScopesHelp;
+
+  /// No description provided for @pluginsServiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Service configuration'**
+  String get pluginsServiceTitle;
+
+  /// No description provided for @pluginsServiceTls.
+  ///
+  /// In en, this message translates to:
+  /// **'Require TLS'**
+  String get pluginsServiceTls;
+
+  /// No description provided for @pluginsServiceTlsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-loopback addresses require TLS. This saves the requirement only; no listener or TLS identity is created here.'**
+  String get pluginsServiceTlsHelp;
+
+  /// No description provided for @pluginsServiceTokenDiscarded.
+  ///
+  /// In en, this message translates to:
+  /// **'The one-time token was cleared while this panel was closed. Issue a new token explicitly if needed.'**
+  String get pluginsServiceTokenDiscarded;
+
+  /// No description provided for @pluginsServiceTokenHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This token is shown only now. Copy it explicitly if needed. Clearing or closing this panel removes it from the session; it cannot be retrieved from the list. Rotation replaces the previous token.'**
+  String get pluginsServiceTokenHelp;
+
+  /// No description provided for @pluginsServiceUncertainHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh and inspect the original records first. Acknowledging this notice only allows another explicit action; it does not prove that the previous change failed or replay it.'**
+  String get pluginsServiceUncertainHelp;
+
+  /// No description provided for @pluginsServiceUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported historical value'**
+  String get pluginsServiceUnsupported;
+
+  /// No description provided for @pluginsServiceWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Working…'**
+  String get pluginsServiceWorking;
+
+  /// No description provided for @pluginsServiceWriteUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The result of the last change is unknown. It has not been sent again.'**
+  String get pluginsServiceWriteUnknown;
+
+  /// No description provided for @pluginsServiceYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get pluginsServiceYes;
+
   /// No description provided for @pluginsSettingsUnknown.
   ///
   /// In en, this message translates to:

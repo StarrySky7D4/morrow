@@ -1651,6 +1651,252 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get pluginsServiceAcknowledgeUncertain => '我已核对刷新后的记录';
+
+  @override
+  String get pluginsServiceAddScope => '添加内容范围';
+
+  @override
+  String get pluginsServiceAttachmentId => '精确附件标识';
+
+  @override
+  String get pluginsServiceAuthenticationUnavailable =>
+      '所选认证已缺失、停用、过期或属于其他主体。范围草稿已保留；请选择有效替代项，或明确移除。';
+
+  @override
+  String get pluginsServiceAuthorities => '认证与发布记录';
+
+  @override
+  String get pluginsServiceCardId => '精确卡片标识';
+
+  @override
+  String get pluginsServiceCatalogChanged => '包目录已变化或不可用。草稿已保留；保存前请明确刷新选择。';
+
+  @override
+  String get pluginsServiceClearToken => '清除令牌';
+
+  @override
+  String get pluginsServiceCloseEditor => '关闭编辑器';
+
+  @override
+  String get pluginsServiceConfigDigest => '配置摘要';
+
+  @override
+  String get pluginsServiceConfiguration => '已保存的配置';
+
+  @override
+  String get pluginsServiceConfigurations => '已保存的配置';
+
+  @override
+  String get pluginsServiceCopyClear => '复制并清除令牌';
+
+  @override
+  String get pluginsServiceCreated => '创建时间（UTC）';
+
+  @override
+  String get pluginsServiceDays => '请求有效期（1–30 天）';
+
+  @override
+  String get pluginsServiceDigestFixed => '编辑绑定原包摘要，必须选择匹配的包；此操作不会启用包。';
+
+  @override
+  String get pluginsServiceDisable => '停用';
+
+  @override
+  String get pluginsServiceDisabled => '已停用';
+
+  @override
+  String get pluginsServiceEditConfig => '编辑配置';
+
+  @override
+  String get pluginsServiceEditPublication => '编辑发布批准';
+
+  @override
+  String get pluginsServiceExpired => '已过期或尚未生效';
+
+  @override
+  String get pluginsServiceExpires => '实际到期时间（UTC）';
+
+  @override
+  String get pluginsServiceHandler => '已声明的服务处理器';
+
+  @override
+  String get pluginsServiceIdentity => '服务标识';
+
+  @override
+  String get pluginsServiceInvalid => '请检查各字段、所选批准及当前包后再保存。';
+
+  @override
+  String get pluginsServiceIssue => '签发令牌';
+
+  @override
+  String get pluginsServiceIssuedToken => '一次性访问令牌';
+
+  @override
+  String get pluginsServiceListenAddress => '数字监听地址与端口';
+
+  @override
+  String get pluginsServiceLoadFailed => '未能刷新记录。请再次刷新后再修改。';
+
+  @override
+  String get pluginsServiceManagementOnly =>
+      '这里仅管理已保存的配置和批准。保存不会启动监听、运行包或启用服务。';
+
+  @override
+  String get pluginsServiceMethod => 'HTTP 方法';
+
+  @override
+  String get pluginsServiceNewAuthentication => '新建认证';
+
+  @override
+  String get pluginsServiceNewConfig => '新建配置';
+
+  @override
+  String get pluginsServiceNo => '否';
+
+  @override
+  String get pluginsServiceNoAuthentication => '请先创建当前有效的认证记录。';
+
+  @override
+  String get pluginsServiceNoAuthorities => '暂无认证或发布记录。';
+
+  @override
+  String get pluginsServiceNoConfigurations => '暂无服务配置。';
+
+  @override
+  String get pluginsServicePackage => '已声明并批准的包';
+
+  @override
+  String get pluginsServicePackageDigest => '包摘要';
+
+  @override
+  String get pluginsServicePackageUnavailable =>
+      '匹配的包或其监听／发布批准不可用。历史记录仍可查看和停用。';
+
+  @override
+  String get pluginsServicePath => '精确请求路径';
+
+  @override
+  String get pluginsServicePolicyChanged =>
+      '所选原记录已变化或不可用。请刷新选择，或从当前记录重新打开编辑器；草稿仍保留在这里。';
+
+  @override
+  String get pluginsServicePrincipalId => '主体标识';
+
+  @override
+  String get pluginsServicePrincipals => '授权主体与内容范围';
+
+  @override
+  String get pluginsServicePublicationEditor => '发布批准';
+
+  @override
+  String get pluginsServicePublicationHelp =>
+      '批准绑定此精确配置、修订和引用。实际到期时间受每个所选认证限制，可能短于请求时长。保存不会启动监听。';
+
+  @override
+  String get pluginsServicePublicationMismatch => '此发布批准不再匹配当前配置。请核对后明确保存替代批准。';
+
+  @override
+  String get pluginsServiceQueryPath => '独立结果查询路径（可选）';
+
+  @override
+  String get pluginsServiceReference => '批准引用';
+
+  @override
+  String get pluginsServiceRefresh => '刷新记录';
+
+  @override
+  String get pluginsServiceRefreshSelection => '刷新此选择';
+
+  @override
+  String get pluginsServiceRemovePrincipal => '移除主体';
+
+  @override
+  String get pluginsServiceRemoveScope => '移除范围';
+
+  @override
+  String get pluginsServiceRetention => '请求历史保留时长（毫秒，最多 30 天）';
+
+  @override
+  String get pluginsServiceRevision => '修订';
+
+  @override
+  String get pluginsServiceRotate => '轮换令牌';
+
+  @override
+  String get pluginsServiceRotateAuthentication => '轮换认证';
+
+  @override
+  String get pluginsServiceSaveConfig => '保存配置';
+
+  @override
+  String get pluginsServiceSavePublication => '保存发布批准';
+
+  @override
+  String get pluginsServiceSaved => '已保存。请在下方核对返回的修订和实际到期时间。';
+
+  @override
+  String get pluginsServiceScopeAttachment => '读取附件';
+
+  @override
+  String get pluginsServiceScopeCreate => '创建内容';
+
+  @override
+  String get pluginsServiceScopeEdit => '编辑内容';
+
+  @override
+  String get pluginsServiceScopeKind => '允许的内容操作';
+
+  @override
+  String get pluginsServiceScopeQuery => '查询操作';
+
+  @override
+  String get pluginsServiceScopeRead => '读取内容';
+
+  @override
+  String get pluginsServiceScopeRename => '重命名卡片';
+
+  @override
+  String get pluginsServiceScopeSummary => '读取摘要';
+
+  @override
+  String get pluginsServiceScopesHelp =>
+      '请明确选择认证，并逐项添加允许的操作及对象标识。移除范围或主体需点击对应按钮；编辑时保留原有范围。';
+
+  @override
+  String get pluginsServiceTitle => '服务配置';
+
+  @override
+  String get pluginsServiceTls => '要求 TLS';
+
+  @override
+  String get pluginsServiceTlsHelp => '非本机回环地址必须要求 TLS。这里仅保存要求，不创建监听器或 TLS 身份。';
+
+  @override
+  String get pluginsServiceTokenDiscarded =>
+      '面板关闭期间，一次性令牌已清除。如有需要，请明确执行新的签发操作。';
+
+  @override
+  String get pluginsServiceTokenHelp =>
+      '令牌仅在本次显示。如有需要，请主动复制。清除或关闭此面板会从会话中移除令牌，列表无法再次读出。轮换会替换此前的令牌。';
+
+  @override
+  String get pluginsServiceUncertainHelp =>
+      '请先刷新并核对原记录。确认此提示仅允许执行下一次明确操作，并不证明上一次修改失败，也不会重发。';
+
+  @override
+  String get pluginsServiceUnsupported => '不支持的历史值';
+
+  @override
+  String get pluginsServiceWorking => '正在处理…';
+
+  @override
+  String get pluginsServiceWriteUnknown => '上一次修改的结果尚不确定，系统没有再次发送。';
+
+  @override
+  String get pluginsServiceYes => '是';
+
+  @override
   String get pluginsSettingsUnknown => '插件设置未确认，请刷新状态后重新选择。';
 
   @override

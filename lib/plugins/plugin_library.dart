@@ -5,6 +5,8 @@ import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
 import 'http_task_manager.dart';
 import 'io_task_control.dart';
+import 'service_control.dart';
+import 'service_manager.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
@@ -974,6 +976,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
         if (_confirmed && _entries.isEmpty)
           _note(L10n.of(context).pluginsEmptyLibrary),
         ..._entries.map(_entry),
+        if (widget.backend is WorkbenchServiceControl) ...[
+          const SizedBox(height: 20),
+          ServiceManager(
+            backend: widget.backend as WorkbenchServiceControl,
+            plugins: _confirmed ? _entries : const [],
+            registryRevision: _confirmed ? _revision : null,
+            ink: widget.ink,
+            muted: widget.muted,
+            line: widget.line,
+            radius: widget.radius,
+          ),
+        ],
         if (widget.backend is WorkbenchIoTaskControl &&
             widget.backend is WorkbenchEndpointControl) ...[
           const SizedBox(height: 20),
