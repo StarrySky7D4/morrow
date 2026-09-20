@@ -146,6 +146,71 @@ class FakeBackend
 
 void main() {
   test(
+    'typed start failure stays unknown after later empty observations',
+    () async {
+      final backend = FakeBackend();
+      backend.onStart = (_) async {
+        backend.failStatus = true;
+        throw const ServiceRunStartFailure('cleanup status unavailable');
+      };
+      final session = ServiceRunSession(backend, backend);
+      addTearDown(session.dispose);
+
+      await session.refresh();
+      await session.start(request());
+
+      expect(session.canStart, isFalse);
+      expect(session.canAbandon, isFalse);
+
+      expect(session.attempt?.submission, id(1));
+      expect(session.startUnknown, isTrue);
+      expect(session.startFailureDetail, 'cleanup status unavailable');
+      expect(session.history, isEmpty);
+
+      backend.failStatus = false;
+      await session.refresh();
+      await session.refresh();
+
+      expect(session.startUnknown, isTrue);
+      expect(session.canStart, isFalse);
+      expect(session.canAbandon, isTrue);
+      expect(session.attempt?.submission, id(1));
+      expect(session.startFailureDetail, 'cleanup status unavailable');
+      expect(backend.starts, 1);
+
+      await session.start(request(2));
+      expect(backend.starts, 1);
+      expect(session.attempt?.submission, id(1));
+
+      session.abandonAttempt();
+
+      expect(session.history.length, 1);
+      expect(session.history.single.request.submission, id(1));
+      expect(session.history.single.outcomeUnknown, isTrue);
+      expect(session.history.single.abandoned, isTrue);
+      expect(
+        session.history.single.startFailureDetail,
+        'cleanup status unavailable',
+      );
+      expect(session.attempt, isNull);
+      expect(session.startFailureDetail, isNull);
+      expect(session.canStart, isTrue);
+
+      backend.onStart = null;
+
+      await session.start(request());
+      expect(backend.starts, 1);
+      expect(session.notice, ServiceRunNotice.invalid);
+      expect(session.attempt, isNull);
+
+      await session.start(request(2));
+      expect(backend.starts, 2);
+      expect(session.startUnknown, isFalse);
+      expect(session.attempt?.submission, id(2));
+    },
+  );
+
+  test(
     'verified start failure is inspected and permits only a new explicit attempt',
     () async {
       final backend = FakeBackend()
