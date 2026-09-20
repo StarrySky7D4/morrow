@@ -13,7 +13,7 @@
 | RecoveryRequired | 原存储已取回，但清理或封存需要恢复；失败清理保留确切实例，封存失败仍可读取既有内容 |
 | Unavailable | 线程未归还原容器，不能自动重开内容库或重新执行任务 |
 
-StateSlot的执行者现区分短IO与持久配置服务，两者共用同一owner、清理/修复和确认规则。原生 `start_service` 返回后可能仍在绑定；`service_status`保留原提交身份、实际地址、绑定/监听/监督结果及通用存储阶段。服务工作台命令通过 `submit_service_command`进入原ServiceHost，短IO仍自动排空。私有协议现已开放显式服务启动/状态与有界命令提交/查询/读取/取消，Dart提供低层接口并自动路由服务期间的普通业务；页面启动入口尚未接入。
+StateSlot的执行者现区分短IO与持久配置服务，两者共用同一owner、清理/修复和确认规则。原生 `start_service` 返回后可能仍在绑定；`service_status`保留原提交身份、实际地址、绑定/监听/监督结果及通用存储阶段。服务工作台命令通过 `submit_service_command`进入原ServiceHost，短IO仍自动排空。私有协议现已开放显式服务启动/状态与有界命令提交/查询/读取/取消，Dart提供低层接口并自动路由服务期间的普通业务；页面启动入口已接入，Windows完整应用路径见[窗口集成报告](../reports/service-window-integration-2026-09-21.md)。
 
 StateSlot 不实现 Deref；现有业务方法先显式借用完整状态，缺席返回类型化Busy。调用顺序在文件创建、计数、捕获、上传完成与注册表变更之前检查。IO使用内部原Manager在同一HostRuntime上独立准入实例，再通过 `spawn_managed_owner` 将完整状态移交，不拆取Pool根。短IO退出只封存原Storage；应用最终关闭才关闭Pool、编辑器和capture范围。HttpTasks的已用提交身份与当前提交关联留在外围，移交和回收均不重置它们。
 
@@ -60,3 +60,5 @@ StateSlot 不实现 Deref；现有业务方法先显式借用完整状态，缺�
 服务运行中的IO状态观察不会把原业务界面误置只读；真实回收后恢复本地诊断。内层业务错误与QueryFailure终态保持，损坏的已消费回执转为带task/submission/command身份的Unknown。类型化敏感结果解码后擦除内层帧；返回借用Reader时显式转移其原缓冲寿命。
 
 当前上传块实查为32KiB，已在完整64KiB命令帧预算之内，没有为了接线调整块大小。其他完整请求若超过64KiB明确拒绝，不截断或绕过原运行时上限；本地路径仍允许原128KiB私有帧。服务运行页面已接入，见[运行面板报告](../reports/service-run-ui-2026-09-20.md)。下一步是更多内容/UI/capture组合、真实故障用户路径与超限业务的显式分段方案，不能把基本卡片/语言实测当作所有UI交互完成。
+
+同步拥有者回调阻塞期间的服务停止已有[原生验收](../reports/service-slow-owner-2026-09-21.md)，监听退出不能替代owner回收；正常或panic返回后才可取回原容器。长IO期间让出执行权的改造按[S0–S4方案](PLUGIN_SUSPENDABLE_IO_PLAN.md)继续推进，当前不宣称同步guest具备该能力。

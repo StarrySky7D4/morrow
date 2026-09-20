@@ -19,18 +19,23 @@ use morrow_network_node::{
     server::Principal,
 };
 use morrow_plugin_runtime::{
-    io_jobs::{BrokerRouter, HostOwner, IoWorker, JobError, JobLimits, RouteContext, RouterFault},
+    io_jobs::{
+        BrokerRouter, CommandOwner, HostOwner, IoWorker, JobError, JobLimits, OwnerCommandError,
+        RouteContext, RouterFault,
+    },
     manager::Manager,
     service_io::{ListenerGrant, ServiceGrant},
 };
 use std::{
     collections::BTreeSet,
+    io::Write,
+    path::PathBuf,
     sync::{
         Arc,
         atomic::{AtomicUsize, Ordering},
         mpsc,
     },
-    time::Duration,
+    time::{Duration, Instant},
 };
 
 const WAIT: Duration = Duration::from_secs(5);
@@ -59,6 +64,39 @@ struct Owner {
     entered: mpsc::SyncSender<()>,
     release: Option<mpsc::Receiver<()>>,
     fail_maintenance: bool,
+    command_gate: Option<CommandGate>,
+}
+struct CommandGate {
+    entered: mpsc::SyncSender<()>,
+    release: mpsc::Receiver<()>,
+    effect_file: PathBuf,
+    panic_after_release: bool,
+}
+impl CommandOwner for Owner {
+    fn command(&mut self, input: Vec<u8>) -> Result<Vec<u8>, JobError> {
+        let gate = self.command_gate.as_ref().ok_or(JobError::Unavailable)?;
+        if input.len() != 1 {
+            return Err(JobError::InvalidOptions);
+        }
+        // Test-only durable effect. The barrier signals only after the real
+        // file sync; cancellation cannot be interpreted as rolling it back.
+        let mut file = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(&gate.effect_file)
+            .map_err(|_| JobError::Unavailable)?;
+        file.write_all(&input).map_err(|_| JobError::Unavailable)?;
+        file.sync_all().map_err(|_| JobError::Unavailable)?;
+        gate.entered.send(()).map_err(|_| JobError::Unavailable)?;
+        gate.release
+            .recv_timeout(Duration::from_secs(15))
+            .map_err(|_| JobError::Unavailable)?;
+        assert!(
+            !gate.panic_after_release,
+            "synthetic panic after durable effect"
+        );
+        Ok(input)
+    }
 }
 impl HostOwner for Owner {
     fn runtime(&self) -> &HostRuntime {
@@ -98,8 +136,17 @@ struct Fixture {
     finished: Arc<AtomicUsize>,
     entered: mpsc::Receiver<()>,
     release: mpsc::SyncSender<()>,
+    command_entered: mpsc::Receiver<()>,
+    command_release: mpsc::SyncSender<()>,
+    effect_file: PathBuf,
 }
 fn fixture(held: bool, fail_maintenance: bool) -> Fixture {
+    fixture_mode(held, fail_maintenance, None)
+}
+fn fixture_slow(panic_after_release: bool) -> Fixture {
+    fixture_mode(false, false, Some(panic_after_release))
+}
+fn fixture_mode(held: bool, fail_maintenance: bool, command: Option<bool>) -> Fixture {
     let dir = tempfile::tempdir().unwrap();
     let wasm = wat::parse_str(
         r#"(module (memory (export "memory") 1)
@@ -170,6 +217,9 @@ fn fixture(held: bool, fail_maintenance: bool) -> Fixture {
     let finished = Arc::new(AtomicUsize::new(0));
     let (entered_tx, entered) = mpsc::sync_channel(1);
     let (release, release_rx) = mpsc::sync_channel(1);
+    let (command_entered_tx, command_entered) = mpsc::sync_channel(1);
+    let (command_release, command_release_rx) = mpsc::sync_channel(1);
+    let effect_file = dir.path().join("slow-command-effects.bin");
     let owner = Owner {
         runtime,
         marker: marker.clone(),
@@ -178,6 +228,12 @@ fn fixture(held: bool, fail_maintenance: bool) -> Fixture {
         entered: entered_tx,
         release: held.then_some(release_rx),
         fail_maintenance,
+        command_gate: command.map(|panic_after_release| CommandGate {
+            entered: command_entered_tx,
+            release: command_release_rx,
+            effect_file: effect_file.clone(),
+            panic_after_release,
+        }),
     };
     let worker = IoWorker::spawn_managed_owned(
         &manager,
@@ -200,10 +256,97 @@ fn fixture(held: bool, fail_maintenance: bool) -> Fixture {
         finished,
         entered,
         release,
+        command_entered,
+        command_release,
+        effect_file,
     }
 }
 fn principals() -> Vec<Principal> {
     vec![Principal::new("alice", TOKEN, &["test.service"], Duration::from_secs(60)).unwrap()]
+}
+
+#[tokio::test]
+async fn service_host_shutdown_with_held_owner_callback() {
+    for panic_after_release in [false, true] {
+        let f = fixture_slow(panic_after_release);
+        let host = ServiceHost::new_owned(f.worker, Duration::from_secs(2), routers()).unwrap();
+        let route = host.route(f.grant.clone(), "POST", "/invoke").unwrap();
+        let mut node = ManagedNode::bind_owned(
+            "127.0.0.1:0".parse().unwrap(),
+            f.listener.clone(),
+            principals(),
+            vec![route],
+            Limits::default(),
+        )
+        .await
+        .unwrap();
+        let address = node.local_addr();
+        assert!(tokio::net::TcpStream::connect(address).await.is_ok());
+
+        let mut running = host.submit_owner_command(vec![1], 8).unwrap();
+        f.command_entered
+            .recv_timeout(WAIT)
+            .expect("first effect synced before barrier");
+        assert!(running.is_started());
+        assert_eq!(std::fs::read(&f.effect_file).unwrap(), [1]);
+        let mut queued = host.submit_owner_command(vec![2], 8).unwrap();
+        assert!(!queued.is_started());
+
+        let before = Instant::now();
+        host.request_stop().unwrap();
+        node.request_stop();
+        assert!(before.elapsed() < Duration::from_millis(500));
+        assert!(matches!(
+            host.submit_owner_command(vec![3], 8),
+            Err(OwnerCommandError::Closed)
+        ));
+        assert_eq!(running.read(), Err(OwnerCommandError::Unknown));
+        assert!(running.is_started());
+        assert_eq!(queued.read(), Err(OwnerCommandError::Closed));
+        assert!(!queued.is_started());
+
+        tokio::time::timeout(WAIT, node.join())
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(node.is_finished());
+        assert!(tokio::net::TcpStream::connect(address).await.is_err());
+        assert!(host.try_reclaim().unwrap().is_none());
+        assert_eq!(f.finished.load(Ordering::SeqCst), 0);
+        assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
+        // Dropping a truly pending shutdown observer must not discard ownership.
+        assert!(
+            tokio::time::timeout(Duration::from_millis(50), host.shutdown_owned())
+                .await
+                .is_err()
+        );
+        assert!(host.try_reclaim().unwrap().is_none());
+        assert_eq!(std::fs::read(&f.effect_file).unwrap(), [1]);
+        assert_eq!(f.finished.load(Ordering::SeqCst), 0);
+
+        f.command_release.send(()).unwrap();
+        let exit = tokio::time::timeout(WAIT, host.shutdown_owned())
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(Arc::ptr_eq(&exit.owner.marker, &f.marker));
+        assert_eq!(
+            exit.result,
+            if panic_after_release {
+                Err(JobError::Unavailable)
+            } else {
+                Ok(())
+            }
+        );
+        assert_eq!(exit.disconnect, Ok(()));
+        assert_eq!(exit.maintenance, Ok(()));
+        assert_eq!(f.finished.load(Ordering::SeqCst), 1);
+        assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
+        assert_eq!(std::fs::read(&f.effect_file).unwrap(), [1]);
+        assert!(matches!(host.try_reclaim(), Err(Error::Closed)));
+        drop(exit);
+        assert_eq!(f.dropped.load(Ordering::SeqCst), 1);
+    }
 }
 
 #[tokio::test]
