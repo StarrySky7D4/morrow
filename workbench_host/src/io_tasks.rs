@@ -15,6 +15,8 @@ use std::{
 
 #[path = "service_tasks.rs"]
 pub mod service;
+#[path = "service_commands.rs"]
+pub mod service_commands;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AccessError {
@@ -96,6 +98,7 @@ pub struct PreparedJob {
 }
 struct Task {
     key: TaskKey,
+    commands: service_commands::Registry,
     worker: Option<Executor>,
     handle: Option<JobHandle>,
     stopping: bool,
@@ -417,6 +420,7 @@ impl Workbench {
                 // A failed cleanup remains explicit and retains its exact instance.
                 if self.state.cleanup_instance(instance).is_err() {
                     self.state.task = Some(Task {
+                        commands: Default::default(),
                         key,
                         worker: None,
                         handle: None,
@@ -453,6 +457,7 @@ impl Workbench {
                     Ok(())
                 };
                 self.state.task = Some(Task {
+                    commands: Default::default(),
                     key,
                     worker: None,
                     handle: None,
@@ -469,6 +474,7 @@ impl Workbench {
         };
         let submitted = worker.submit_brokered(job.input, job.router, job.timeout);
         self.state.task = Some(Task {
+            commands: Default::default(),
             key,
             worker: Some(Executor::Io(Box::new(worker))),
             handle: None,

@@ -949,3 +949,463 @@ fn dropping_running_service_eventually_closes_socket_and_reopens_original_librar
     assert_eq!(store.pending_usage().unwrap(), (0, 0));
     store.integrity_check().unwrap();
 }
+
+struct ProtocolReply {
+    bytes: usize,
+    error: String,
+    payload: zeroize::Zeroizing<Vec<u8>>,
+    service_key: Vec<u8>,
+    service_submission: Vec<u8>,
+    phase: u16,
+    address: String,
+    bind: u16,
+    listener: u16,
+    command_key: Vec<u8>,
+    command_submission: Vec<u8>,
+    delivery: u16,
+    terminal: u16,
+    started: bool,
+}
+fn protocol_call(app: &mut Workbench, input: Vec<u8>) -> ProtocolReply {
+    let input = zeroize::Zeroizing::new(input);
+    let bytes = zeroize::Zeroizing::new(protocol::respond(app, &input).unwrap());
+    assert!(bytes.len() <= 256 * 1024);
+    let mut slice = bytes.as_slice();
+    let message =
+        capnp::serialize::read_message_from_flat_slice(&mut slice, Default::default()).unwrap();
+    assert!(slice.is_empty());
+    let response = message.get_root::<wire::response::Reader>().unwrap();
+    assert_eq!(response.get_version(), 1);
+    assert_eq!(response.get_digest().unwrap(), protocol::digest());
+    assert!(
+        response.get_issued_token().unwrap().is_empty(),
+        "outer lifecycle replies never contain a business token"
+    );
+    let run = response.get_service_run().unwrap();
+    let command = response.get_owner_command().unwrap();
+    ProtocolReply {
+        bytes: bytes.len(),
+        error: response.get_error().unwrap().to_str().unwrap().into(),
+        payload: zeroize::Zeroizing::new(response.get_payload().unwrap().to_vec()),
+        service_key: run.get_task().unwrap().get_key().unwrap().to_vec(),
+        service_submission: run.get_submission().unwrap().to_vec(),
+        phase: run.get_phase(),
+        address: run.get_address().unwrap().to_str().unwrap().into(),
+        bind: run.get_bind(),
+        listener: run.get_listener(),
+        command_key: command.get_key().unwrap().to_vec(),
+        command_submission: command.get_submission().unwrap().to_vec(),
+        delivery: command.get_delivery(),
+        terminal: command.get_terminal(),
+        started: command.get_started(),
+    }
+}
+fn protocol_ok(app: &mut Workbench, input: Vec<u8>) -> ProtocolReply {
+    let reply = protocol_call(app, input);
+    assert!(reply.error.is_empty(), "{}", reply.error);
+    reply
+}
+fn start_frame(options: ServiceStart) -> Vec<u8> {
+    frame(wire::Action::ServiceRunStart, |r| {
+        let mut s = r.init_service_run();
+        s.set_submission(&options.submission);
+        s.set_config_id(&options.config_id);
+        s.set_config_digest(&options.config_digest);
+        s.set_config_revision(options.config_revision);
+        s.set_publication(&options.publication);
+        s.set_publication_revision(options.publication_revision);
+        s.set_package_id(&options.package_id);
+        s.set_package_digest(&options.package_digest);
+        s.set_registry_revision(options.registry_revision);
+        s.set_lifetime_ms(options.lifetime.as_millis().try_into().unwrap());
+        s.set_max_jobs(options.budget.max_jobs);
+        s.set_max_bytes(options.budget.max_bytes);
+        s.set_max_calls(options.limits.max_calls);
+        s.set_max_job_bytes(options.limits.max_job_bytes);
+        s.set_max_total_bytes(options.limits.max_total_bytes);
+        s.set_max_request_bytes(options.network_limits.max_request_bytes.try_into().unwrap());
+        s.set_max_response_bytes(
+            options
+                .network_limits
+                .max_response_bytes
+                .try_into()
+                .unwrap(),
+        );
+        s.set_max_header_bytes(options.network_limits.max_header_bytes.try_into().unwrap());
+        s.set_max_concurrent(options.network_limits.max_concurrent.try_into().unwrap());
+        s.set_timeout_ms(
+            options
+                .network_limits
+                .timeout
+                .as_millis()
+                .try_into()
+                .unwrap(),
+        );
+    })
+}
+fn lifecycle_frame(action: wire::Action, task: &[u8], command: &[u8]) -> Vec<u8> {
+    frame(action, |mut r| {
+        r.set_io_key(task);
+        r.set_command_key(command);
+    })
+}
+fn submit_frame(task: &[u8], submission: &[u8; 32], input: &[u8]) -> Vec<u8> {
+    frame(wire::Action::CommandSubmit, |mut r| {
+        r.set_io_key(task);
+        r.set_command_submission(submission);
+        r.set_payload(input);
+    })
+}
+fn protocol_start(fixture: &mut Fixture) -> (Vec<u8>, SocketAddr) {
+    let frame = start_frame(fixture.options(1));
+    let admitted = protocol_ok(&mut fixture.app, frame);
+    assert_eq!(admitted.service_submission, [1; 32]);
+    assert_eq!(admitted.service_key.len(), 32);
+    let key = admitted.service_key;
+    // Recover a lost start receipt by observation, never by a second start.
+    let recovered = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::ServiceRunStatus, &[], &[]),
+    );
+    assert_eq!(recovered.service_key, key);
+    assert_eq!(recovered.service_submission, [1; 32]);
+    let deadline = Instant::now() + WAIT;
+    loop {
+        let status = protocol_ok(
+            &mut fixture.app,
+            lifecycle_frame(wire::Action::ServiceRunStatus, &key, &[]),
+        );
+        assert_eq!(status.service_key, key);
+        assert_eq!(status.service_submission, [1; 32]);
+        if status.phase == 1 {
+            assert_eq!(status.bind, 1);
+            return (key, status.address.parse().unwrap());
+        }
+        assert_eq!(status.phase, 0, "service left Starting without binding");
+        assert!(Instant::now() < deadline);
+        thread::sleep(Duration::from_millis(2));
+    }
+}
+fn protocol_ready(app: &mut Workbench, task: &[u8], command: &[u8]) {
+    let deadline = Instant::now() + WAIT;
+    loop {
+        let status = protocol_ok(
+            app,
+            lifecycle_frame(wire::Action::CommandStatus, task, command),
+        );
+        assert_eq!(status.command_key, command);
+        if status.delivery == 1 {
+            return;
+        }
+        assert_eq!(status.delivery, 0);
+        assert!(Instant::now() < deadline);
+        thread::sleep(Duration::from_millis(2));
+    }
+}
+fn protocol_exited(app: &mut Workbench, task: &[u8]) {
+    let deadline = Instant::now() + WAIT;
+    loop {
+        let status = protocol_ok(
+            app,
+            lifecycle_frame(wire::Action::ServiceRunStatus, task, &[]),
+        );
+        if status.phase == 3 {
+            assert_eq!(status.listener, 1);
+            return;
+        }
+        assert!(Instant::now() < deadline);
+        thread::sleep(Duration::from_millis(2));
+    }
+}
+fn protocol_stop(app: &mut Workbench, task: &[u8]) {
+    protocol_ok(app, lifecycle_frame(wire::Action::IoCancel, task, &[]));
+    protocol_exited(app, task);
+    protocol_ok(app, lifecycle_frame(wire::Action::IoAcknowledge, task, &[]));
+}
+
+#[test]
+fn protocol_deduplicates_commands_and_preserves_original_business_responses() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    let (task, address) = protocol_start(&mut fixture);
+    assert!(post(address, FIRST_KEY, b"before").ends_with(b"executed-before"));
+    let input = mutation("protocol-created", 0, common::idea("protocol-card"));
+    let admitted = protocol_ok(&mut fixture.app, submit_frame(&task, &[71; 32], &input));
+    assert_eq!(admitted.command_key.len(), 32);
+    assert_eq!(admitted.command_submission, [71; 32]);
+    let command = admitted.command_key;
+    // Recover a lost submit receipt by identity only. Unknown submissions do
+    // not create reservations, execute a body, or consume the original result.
+    for submission in [[71; 32], [70; 32]] {
+        let observed = protocol_call(
+            &mut fixture.app,
+            frame(wire::Action::CommandStatus, |mut r| {
+                r.set_io_key(&task);
+                r.set_command_submission(&submission);
+            }),
+        );
+        if submission == [71; 32] {
+            assert!(observed.error.is_empty());
+            assert_eq!(observed.command_key, command);
+            assert_eq!(observed.command_submission, submission);
+        } else {
+            assert!(!observed.error.is_empty());
+            assert!(observed.command_key.is_empty());
+        }
+        assert!(observed.payload.is_empty());
+    }
+    let duplicate = protocol_ok(&mut fixture.app, submit_frame(&task, &[71; 32], &input));
+    assert_eq!(duplicate.command_key, command);
+    assert!(duplicate.payload.is_empty());
+    let changed = mutation("must-not-run", 0, common::idea("unapproved-duplicate-card"));
+    assert!(
+        !protocol_call(&mut fixture.app, submit_frame(&task, &[71; 32], &changed))
+            .error
+            .is_empty()
+    );
+    let foreign_task = [79; 32];
+    let foreign_command = [80; 32];
+    for (wrong_task, wrong_command) in [
+        (&foreign_task[..], command.as_slice()),
+        (task.as_slice(), &foreign_command[..]),
+    ] {
+        for action in [
+            wire::Action::CommandStatus,
+            wire::Action::CommandRead,
+            wire::Action::CommandCancel,
+        ] {
+            let denied = protocol_call(
+                &mut fixture.app,
+                lifecycle_frame(action, wrong_task, wrong_command),
+            );
+            assert!(!denied.error.is_empty());
+            assert!(denied.payload.is_empty());
+        }
+    }
+    protocol_ready(&mut fixture.app, &task, &command);
+    let delivered = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &command),
+    );
+    assert_eq!((delivered.delivery, delivered.terminal), (2, 0));
+    assert!(delivered.started);
+    let mut bytes = delivered.payload.as_slice();
+    let message =
+        capnp::serialize::read_message_from_flat_slice(&mut bytes, Default::default()).unwrap();
+    let response = message.get_root::<wire::response::Reader>().unwrap();
+    assert!(response.get_error().unwrap().is_empty());
+    assert_eq!(response.get_revision(), 1);
+    assert_eq!(
+        morrow_workbench_plugin::codec::decode_response(response.get_payload().unwrap())
+            .unwrap()
+            .idea
+            .id,
+        "protocol-card"
+    );
+    let lost = protocol_call(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &command),
+    );
+    assert_eq!((lost.delivery, lost.terminal), (2, 0));
+    assert!(lost.payload.is_empty());
+    let duplicate = protocol_ok(&mut fixture.app, submit_frame(&task, &[71; 32], &input));
+    assert_eq!(
+        (duplicate.command_key, duplicate.delivery),
+        (command.clone(), 2)
+    );
+    assert!(duplicate.payload.is_empty());
+    // A scheduler frame can never recurse through the original owner's business entry.
+    let nested = frame(wire::Action::ServiceRunStatus, |mut r| r.set_io_key(&task));
+    let denied = protocol_call(&mut fixture.app, submit_frame(&task, &[72; 32], &nested));
+    assert!(!denied.error.is_empty());
+    assert!(denied.command_key.is_empty() && denied.payload.is_empty());
+    // Rejection spent neither an identity nor a reservation.
+    let accepted = protocol_ok(
+        &mut fixture.app,
+        submit_frame(&task, &[72; 32], &frame(wire::Action::ReadUiLocale, |_| {})),
+    );
+    protocol_ready(&mut fixture.app, &task, &accepted.command_key);
+    protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &accepted.command_key),
+    );
+    assert!(post(address, SECOND_KEY, b"after").ends_with(b"executed-after"));
+    protocol_stop(&mut fixture.app, &task);
+    assert_eq!(fixture.app.read("protocol-card").unwrap().revision, 1);
+    assert!(fixture.app.read("unapproved-duplicate-card").is_err());
+    fixture.app.finish().unwrap();
+}
+
+#[test]
+fn protocol_read_never_replays_one_time_authentication_after_lost_delivery() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    let (task, _) = protocol_start(&mut fixture);
+    let reference = AUTH;
+    let input = frame(wire::Action::ServiceAuthenticationIssue, |mut r| {
+        r.set_service_reference(&reference);
+        r.set_revision(1);
+        r.set_principal_id("alice");
+        r.set_service_days(1);
+    });
+    let admitted = protocol_ok(&mut fixture.app, submit_frame(&task, &[82; 32], &input));
+    let command = admitted.command_key;
+    protocol_ready(&mut fixture.app, &task, &command);
+    let first = protocol_call(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &command),
+    );
+    assert!(first.started);
+    match first.terminal {
+        0 => {
+            assert!(first.error.is_empty());
+            let mut bytes = first.payload.as_slice();
+            let message =
+                capnp::serialize::read_message_from_flat_slice(&mut bytes, Default::default())
+                    .unwrap();
+            let response = message.get_root::<wire::response::Reader>().unwrap();
+            assert!(
+                response.get_error().unwrap().is_empty(),
+                "{}",
+                response.get_error().unwrap().to_str().unwrap()
+            );
+            assert_eq!(response.get_issued_token().unwrap().len(), 64);
+        }
+        5 => assert!(first.payload.is_empty()),
+        terminal => panic!("unexpected authentication terminal state: {terminal}"),
+    }
+    let original_terminal = first.terminal;
+    drop(first);
+    let repeated = protocol_call(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &command),
+    );
+    assert_eq!(
+        (repeated.delivery, repeated.terminal),
+        (2, original_terminal)
+    );
+    assert!(repeated.payload.is_empty());
+    protocol_exited(&mut fixture.app, &task);
+    let state = fixture.app.local_state().unwrap();
+    let record = state
+        .host
+        .store_local()
+        .load_service_authority(&reference)
+        .unwrap()
+        .unwrap();
+    assert_eq!(record.value().revision, 2);
+    let retry = protocol_call(&mut fixture.app, submit_frame(&task, &[82; 32], &input));
+    assert!(retry.payload.is_empty());
+    assert!(retry.delivery == 2 || !retry.error.is_empty());
+    assert_eq!(
+        fixture
+            .app
+            .local_state()
+            .unwrap()
+            .host
+            .store_local()
+            .load_service_authority(&reference)
+            .unwrap()
+            .unwrap()
+            .container(),
+        record.container()
+    );
+    protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::IoAcknowledge, &task, &[]),
+    );
+    fixture.app.finish().unwrap();
+}
+
+#[test]
+fn protocol_ready_commands_retain_capacity_until_read_or_explicit_cancel() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    let (task, _) = protocol_start(&mut fixture);
+    let input = frame(wire::Action::ReadUiLocale, |_| {});
+    let mut keys = Vec::new();
+    for n in 1..=8 {
+        let admitted = protocol_ok(&mut fixture.app, submit_frame(&task, &[n; 32], &input));
+        protocol_ready(&mut fixture.app, &task, &admitted.command_key);
+        keys.push(admitted.command_key);
+    }
+    let ninth = protocol_call(&mut fixture.app, submit_frame(&task, &[9; 32], &input));
+    assert!(!ninth.error.is_empty());
+    assert!(ninth.command_key.is_empty() && ninth.payload.is_empty());
+    let first = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &keys[0]),
+    );
+    assert_eq!((first.delivery, first.terminal), (2, 0));
+    assert!(!first.payload.is_empty());
+    let ninth = protocol_ok(&mut fixture.app, submit_frame(&task, &[9; 32], &input));
+    protocol_ready(&mut fixture.app, &task, &ninth.command_key);
+    let cancelled = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandCancel, &task, &ninth.command_key),
+    );
+    assert_eq!((cancelled.delivery, cancelled.terminal), (2, 5));
+    assert!(cancelled.started && cancelled.payload.is_empty());
+    let lost = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &ninth.command_key),
+    );
+    assert_eq!((lost.delivery, lost.terminal), (2, 5));
+    assert!(lost.payload.is_empty());
+    let retry = protocol_ok(&mut fixture.app, submit_frame(&task, &[9; 32], &input));
+    assert_eq!(retry.command_key, ninth.command_key);
+    assert_eq!((retry.delivery, retry.terminal), (2, 5));
+    for command in &keys[1..] {
+        protocol_ok(
+            &mut fixture.app,
+            lifecycle_frame(wire::Action::CommandRead, &task, command),
+        );
+    }
+    protocol_stop(&mut fixture.app, &task);
+    fixture.app.finish().unwrap();
+}
+
+#[test]
+fn protocol_command_read_preserves_maximum_inner_frame_with_larger_outer_envelope() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    let input = frame(wire::Action::ReadUiLocale, |_| {});
+    // A controlled diagnostic makes a valid original-owner response approach
+    // its exact bound; the command and delivery still traverse the real worker.
+    let mut low = 0;
+    let mut high = 128 * 1024 + 1;
+    let mut expected = Vec::new();
+    while low + 1 < high {
+        let n = (low + high) / 2;
+        let state = fixture.app.local_state_mut().unwrap();
+        state.plugin_warning = Some("x".repeat(n));
+        let bytes = protocol::respond_state(state, &input).unwrap();
+        let mut slice = bytes.as_slice();
+        let message =
+            capnp::serialize::read_message_from_flat_slice(&mut slice, Default::default()).unwrap();
+        let response = message.get_root::<wire::response::Reader>().unwrap();
+        if response.get_error().unwrap().is_empty()
+            && response.get_maintenance_warning().unwrap().len() == n
+        {
+            low = n;
+            expected = bytes;
+        } else {
+            high = n;
+        }
+    }
+    assert!(expected.len() <= 128 * 1024 && expected.len() > 128 * 1024 - 64);
+    fixture.app.local_state_mut().unwrap().plugin_warning = Some("x".repeat(low));
+    let (task, _) = protocol_start(&mut fixture);
+    let admitted = protocol_ok(&mut fixture.app, submit_frame(&task, &[91; 32], &input));
+    protocol_ready(&mut fixture.app, &task, &admitted.command_key);
+    let delivered = protocol_ok(
+        &mut fixture.app,
+        lifecycle_frame(wire::Action::CommandRead, &task, &admitted.command_key),
+    );
+    assert_eq!((delivered.delivery, delivered.terminal), (2, 0));
+    assert_eq!(delivered.payload.as_slice(), expected.as_slice());
+    assert!(delivered.bytes > 128 * 1024 && delivered.bytes <= 256 * 1024);
+    // Remove the artificial warning only after the original owner is returned.
+    let native_key = TaskKey::from_bytes(&task).unwrap();
+    fixture.app.cancel_io(native_key).unwrap();
+    exited(&mut fixture.app, native_key);
+    fixture.app.local_state_mut().unwrap().plugin_warning = None;
+    fixture.app.acknowledge_io(native_key).unwrap();
+    fixture.app.finish().unwrap();
+}

@@ -22,6 +22,81 @@ void expectCleared(List<Uint8List> buffers) {
 }
 
 void main() {
+  for (final failWrite in [false, true]) {
+    test(
+      'nested command clears replaced segments and serialized frame, failure=$failWrite',
+      () async {
+        final inner = MessageBuilder();
+        final credential = inner.initRoot(host.requestFactory)
+          ..action = host.Action.credentialSave
+          ..credentialSecret = 'nested-only-secret';
+        final nested = inner.serialize();
+        late List<Uint8List> segments;
+        late Uint8List frame;
+        final operation = sendHostRequest(
+          host.Action.commandSubmit,
+          configure: (request) {
+            request.payload = Uint8List(8192)..fillRange(0, 8192, 83);
+            request.payload = nested;
+            segments = buffers(request);
+            expect(segments.length, greaterThan(1));
+          },
+          send: (bytes) async {
+            frame = bytes;
+            expectCleared(segments);
+            final outer = MessageReader.deserialize(
+              bytes,
+            ).getRoot(host.requestFactory);
+            final request = MessageReader.deserialize(
+              outer.payload!,
+            ).getRoot(host.requestFactory);
+            expect(request.credentialSecret, 'nested-only-secret');
+            await Future<void>.delayed(Duration.zero);
+            expect(bytes.any((byte) => byte != 0), isTrue);
+            if (failWrite) throw StateError('uncertain write');
+          },
+        );
+        if (failWrite) {
+          await expectLater(operation, throwsStateError);
+        } else {
+          await operation;
+        }
+        expectCleared([...segments, frame]);
+        // The caller continues owning its original input, independently of the
+        // temporary wrapper copies that sendHostRequest erases.
+        expect(
+          MessageReader.deserialize(
+            nested,
+          ).getRoot(host.requestFactory).credentialSecret,
+          'nested-only-secret',
+        );
+        nested.fillRange(0, nested.length, 0);
+        for (final bytes in buffers(credential)) {
+          bytes.fillRange(0, bytes.length, 0);
+        }
+      },
+    );
+  }
+  test(
+    'invalid nested command clears abandoned allocations before any send',
+    () async {
+      late List<Uint8List> segments;
+      await expectLater(
+        sendHostRequest(
+          host.Action.commandSubmit,
+          configure: (request) {
+            request.payload = Uint8List(8192)..fillRange(0, 8192, 83);
+            request.payload = Uint8List(16384)..fillRange(0, 16384, 84);
+            segments = buffers(request);
+            throw const FormatException('invalid nested frame');
+          },
+          send: (_) async => fail('must not send'),
+        ),
+        throwsFormatException,
+      );
+      expectCleared(segments);
+    },
+  );
   test(
     'credential frame survives pending write, all owned copies clear afterward',
     () async {

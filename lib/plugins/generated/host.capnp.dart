@@ -66,6 +66,12 @@ enum Action {
   serviceAuthenticationIssue,
   serviceAuthorityDisable,
   servicePublicationSave,
+  serviceRunStart,
+  serviceRunStatus,
+  commandSubmit,
+  commandStatus,
+  commandRead,
+  commandCancel,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -162,6 +168,12 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 60,
       ordinal: 60,
     ),
+    EnumerantSchemaInfo(name: 'serviceRunStart', codeOrder: 61, ordinal: 61),
+    EnumerantSchemaInfo(name: 'serviceRunStatus', codeOrder: 62, ordinal: 62),
+    EnumerantSchemaInfo(name: 'commandSubmit', codeOrder: 63, ordinal: 63),
+    EnumerantSchemaInfo(name: 'commandStatus', codeOrder: 64, ordinal: 64),
+    EnumerantSchemaInfo(name: 'commandRead', codeOrder: 65, ordinal: 65),
+    EnumerantSchemaInfo(name: 'commandCancel', codeOrder: 66, ordinal: 66),
   ],
 );
 
@@ -277,6 +289,15 @@ final class RequestReader extends StructReader {
   String? get principalId => getTextField(34);
 
   int get serviceDays => getUint32Field(52);
+
+  ServiceRunStartReader? get serviceRun => getStructFieldWith(
+    35,
+    (r) => ServiceRunStartReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get commandKey => getDataField(36);
+
+  Uint8List? get commandSubmission => getDataField(37);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -481,6 +502,20 @@ final class RequestBuilder extends StructBuilder {
   set serviceDays(int v) {
     setUint32Field(52, v);
   }
+
+  ServiceRunStartBuilder initServiceRun() {
+    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 6);
+  }
+
+  bool hasServiceRun() => hasPointerField(35);
+
+  set commandKey(Uint8List? v) {
+    setDataField(36, v);
+  }
+
+  set commandSubmission(Uint8List? v) {
+    setDataField(37, v);
+  }
 }
 
 final class _RequestFactory
@@ -490,7 +525,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 35;
+  int get ptrWords => 38;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -507,7 +542,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 35,
+  pointerWords: 38,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -877,6 +912,30 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'serviceRun',
+      codeOrder: 46,
+      body: SlotFieldSchemaInfo(
+        offset: 35,
+        type: StructRefTypeSchemaInfo(0xcfbad2e8a254be1e),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'commandKey',
+      codeOrder: 47,
+      body: SlotFieldSchemaInfo(
+        offset: 36,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'commandSubmission',
+      codeOrder: 48,
+      body: SlotFieldSchemaInfo(
+        offset: 37,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
   ],
 );
 
@@ -983,6 +1042,16 @@ final class ResponseReader extends StructReader {
   Uint8List? get serviceCursor => getDataField(24);
 
   Uint8List? get issuedToken => getDataField(25);
+
+  ServiceRunStateReader? get serviceRun => getStructFieldWith(
+    26,
+    (r) => ServiceRunStateReader(r, capabilities: capabilityTable),
+  );
+
+  OwnerCommandStateReader? get ownerCommand => getStructFieldWith(
+    27,
+    (r) => OwnerCommandStateReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1172,6 +1241,18 @@ final class ResponseBuilder extends StructBuilder {
   set issuedToken(Uint8List? v) {
     setDataField(25, v);
   }
+
+  ServiceRunStateBuilder initServiceRun() {
+    return initStructFieldWith(26, (r) => ServiceRunStateBuilder(r), 1, 3);
+  }
+
+  bool hasServiceRun() => hasPointerField(26);
+
+  OwnerCommandStateBuilder initOwnerCommand() {
+    return initStructFieldWith(27, (r) => OwnerCommandStateBuilder(r), 1, 2);
+  }
+
+  bool hasOwnerCommand() => hasPointerField(27);
 }
 
 final class _ResponseFactory
@@ -1181,7 +1262,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 26;
+  int get ptrWords => 28;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1198,7 +1279,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 26,
+  pointerWords: 28,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1496,10 +1577,617 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'serviceRun',
+      codeOrder: 37,
+      body: SlotFieldSchemaInfo(
+        offset: 26,
+        type: StructRefTypeSchemaInfo(0xa273c5f327412a4e),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ownerCommand',
+      codeOrder: 38,
+      body: SlotFieldSchemaInfo(
+        offset: 27,
+        type: StructRefTypeSchemaInfo(0xa900283eae59a262),
+      ),
+    ),
   ],
 );
 
 final responseFactory = _ResponseFactory();
+
+final class ServiceRunStartReader extends StructReader {
+  ServiceRunStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceRunStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get configId => getTextField(1);
+
+  Uint8List? get configDigest => getDataField(2);
+
+  int get configRevision => getUint64Field(0);
+
+  Uint8List? get publication => getDataField(3);
+
+  int get publicationRevision => getUint64Field(8);
+
+  String? get packageId => getTextField(4);
+
+  Uint8List? get packageDigest => getDataField(5);
+
+  int get registryRevision => getUint64Field(16);
+
+  int get lifetimeMs => getUint32Field(24);
+
+  int get maxJobs => getUint64Field(32);
+
+  int get maxBytes => getUint64Field(40);
+
+  int get maxCalls => getUint32Field(28);
+
+  int get maxJobBytes => getUint64Field(48);
+
+  int get maxTotalBytes => getUint64Field(56);
+
+  int get maxRequestBytes => getUint32Field(64);
+
+  int get maxResponseBytes => getUint32Field(68);
+
+  int get maxHeaderBytes => getUint32Field(72);
+
+  int get maxConcurrent => getUint16Field(76);
+
+  int get timeoutMs => getUint32Field(80);
+}
+
+final class ServiceRunStartBuilder extends StructBuilder {
+  ServiceRunStartBuilder(super.raw);
+
+  @override
+  ServiceRunStartReader asReader() => ServiceRunStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set configId(String? v) {
+    setTextField(1, v);
+  }
+
+  set configDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set configRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set publication(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set publicationRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(4, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(16, v);
+  }
+
+  set lifetimeMs(int v) {
+    setUint32Field(24, v);
+  }
+
+  set maxJobs(int v) {
+    setUint64Field(32, v);
+  }
+
+  set maxBytes(int v) {
+    setUint64Field(40, v);
+  }
+
+  set maxCalls(int v) {
+    setUint32Field(28, v);
+  }
+
+  set maxJobBytes(int v) {
+    setUint64Field(48, v);
+  }
+
+  set maxTotalBytes(int v) {
+    setUint64Field(56, v);
+  }
+
+  set maxRequestBytes(int v) {
+    setUint32Field(64, v);
+  }
+
+  set maxResponseBytes(int v) {
+    setUint32Field(68, v);
+  }
+
+  set maxHeaderBytes(int v) {
+    setUint32Field(72, v);
+  }
+
+  set maxConcurrent(int v) {
+    setUint16Field(76, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(80, v);
+  }
+}
+
+final class _ServiceRunStartFactory
+    extends StructFactory<ServiceRunStartReader, ServiceRunStartBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceRunStartSchema;
+  @override
+  int get dataWords => 11;
+  @override
+  int get ptrWords => 6;
+  @override
+  ServiceRunStartReader fromRawReader(RawStructReader r) =>
+      ServiceRunStartReader(r);
+  @override
+  ServiceRunStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceRunStartReader(r, capabilities: capabilities);
+  @override
+  ServiceRunStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceRunStartBuilder(r);
+}
+
+const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
+  id: 0xcfbad2e8a254be1e,
+  displayName: 'host.capnp:ServiceRunStart',
+  shortName: 'ServiceRunStart',
+  dataWords: 11,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'configId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'configDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'configRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'publication',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'publicationRevision',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'lifetimeMs',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxJobs',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxBytes',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxCalls',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxJobBytes',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxTotalBytes',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxRequestBytes',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxResponseBytes',
+      codeOrder: 16,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxHeaderBytes',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 18,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxConcurrent',
+      codeOrder: 18,
+      body: SlotFieldSchemaInfo(
+        offset: 38,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 19,
+      body: SlotFieldSchemaInfo(
+        offset: 20,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final serviceRunStartFactory = _ServiceRunStartFactory();
+
+final class ServiceRunStateReader extends StructReader {
+  ServiceRunStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceRunStateSchema;
+
+  IoStateReader? get task => getStructFieldWith(
+    0,
+    (r) => IoStateReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get submission => getDataField(1);
+
+  int get phase => getUint16Field(0);
+
+  String? get address => getTextField(2);
+
+  int get bind => getUint16Field(2);
+
+  int get listener => getUint16Field(4);
+
+  int get supervision => getUint16Field(6);
+}
+
+final class ServiceRunStateBuilder extends StructBuilder {
+  ServiceRunStateBuilder(super.raw);
+
+  @override
+  ServiceRunStateReader asReader() => ServiceRunStateReader(rawToReader());
+
+  IoStateBuilder initTask() {
+    return initStructFieldWith(0, (r) => IoStateBuilder(r), 2, 2);
+  }
+
+  bool hasTask() => hasPointerField(0);
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(0, v);
+  }
+
+  set address(String? v) {
+    setTextField(2, v);
+  }
+
+  set bind(int v) {
+    setUint16Field(2, v);
+  }
+
+  set listener(int v) {
+    setUint16Field(4, v);
+  }
+
+  set supervision(int v) {
+    setUint16Field(6, v);
+  }
+}
+
+final class _ServiceRunStateFactory
+    extends StructFactory<ServiceRunStateReader, ServiceRunStateBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceRunStateSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 3;
+  @override
+  ServiceRunStateReader fromRawReader(RawStructReader r) =>
+      ServiceRunStateReader(r);
+  @override
+  ServiceRunStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceRunStateReader(r, capabilities: capabilities);
+  @override
+  ServiceRunStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceRunStateBuilder(r);
+}
+
+const StructSchemaInfo serviceRunStateSchema = StructSchemaInfo(
+  id: 0xa273c5f327412a4e,
+  displayName: 'host.capnp:ServiceRunState',
+  shortName: 'ServiceRunState',
+  dataWords: 1,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'task',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0xce222e3c4b9af41b),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'address',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bind',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'listener',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'supervision',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final serviceRunStateFactory = _ServiceRunStateFactory();
+
+final class OwnerCommandStateReader extends StructReader {
+  OwnerCommandStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = ownerCommandStateSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  int get delivery => getUint16Field(0);
+
+  bool get started => getBoolField(16);
+
+  int get terminal => getUint16Field(4);
+}
+
+final class OwnerCommandStateBuilder extends StructBuilder {
+  OwnerCommandStateBuilder(super.raw);
+
+  @override
+  OwnerCommandStateReader asReader() => OwnerCommandStateReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(0, v);
+  }
+
+  set started(bool v) {
+    setBoolField(16, v);
+  }
+
+  set terminal(int v) {
+    setUint16Field(4, v);
+  }
+}
+
+final class _OwnerCommandStateFactory
+    extends StructFactory<OwnerCommandStateReader, OwnerCommandStateBuilder> {
+  @override
+  StructSchemaInfo get schema => ownerCommandStateSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  OwnerCommandStateReader fromRawReader(RawStructReader r) =>
+      OwnerCommandStateReader(r);
+  @override
+  OwnerCommandStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => OwnerCommandStateReader(r, capabilities: capabilities);
+  @override
+  OwnerCommandStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      OwnerCommandStateBuilder(r);
+}
+
+const StructSchemaInfo ownerCommandStateSchema = StructSchemaInfo(
+  id: 0xa900283eae59a262,
+  displayName: 'host.capnp:OwnerCommandState',
+  shortName: 'OwnerCommandState',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivery',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'started',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'terminal',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final ownerCommandStateFactory = _OwnerCommandStateFactory();
 
 final class PastePartReader extends StructReader {
   PastePartReader(super.raw, {super.capabilities});

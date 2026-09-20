@@ -13,7 +13,10 @@ Future<void> sendHostRequest(
 }) async {
   final builder = MessageBuilder();
   final request = builder.initRoot(host.requestFactory);
-  final sensitive = action == host.Action.credentialSave;
+  // A command payload is a complete nested request and may contain credentials.
+  final sensitive =
+      action == host.Action.credentialSave ||
+      action == host.Action.commandSubmit;
   Uint8List? payload;
   try {
     try {

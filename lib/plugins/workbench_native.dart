@@ -5,6 +5,8 @@ import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'service_control.dart';
 import 'service_codec_native.dart';
+import 'service_run_control.dart';
+import 'service_run_codec_native.dart';
 import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'host_request.dart';
@@ -34,6 +36,7 @@ class RustWorkbench
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
         WorkbenchServiceControl,
+        WorkbenchServiceRunControl,
         WorkbenchIoTaskControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
@@ -829,6 +832,129 @@ class RustWorkbench
     }
   }
 
+  @override
+  Future<ServiceRunSnapshot> startServiceRun(ServiceRunRequest request) {
+    ServiceRunValidation.request(request);
+    return _callDecoded<ServiceRunSnapshot>(
+      host.Action.serviceRunStart,
+      configure: (r) =>
+          ServiceRunCodec.writeRequest(request, r.initServiceRun()),
+      decode: (r) =>
+          ServiceRunCodec.snapshot(r, expectedSubmission: request.submission),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<ServiceRunSnapshot> serviceRunStatus({Uint8List? key}) {
+    final owned = key == null ? null : ServiceRunValidation.identity(key);
+    return _callDecoded<ServiceRunSnapshot>(
+      host.Action.serviceRunStatus,
+      configure: (r) {
+        if (owned != null) r.ioKey = owned;
+      },
+      decode: (r) => ServiceRunCodec.snapshot(r, expectedKey: owned),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<OwnerCommandSnapshot> submitServiceCommand(
+    Uint8List task,
+    Uint8List submission,
+    Uint8List frame,
+  ) async {
+    final taskId = ServiceRunValidation.identity(task);
+    final attempt = ServiceRunValidation.identity(submission);
+    ServiceRunValidation.command(frame);
+    // The caller owns its original frame. Protect this asynchronous queue copy
+    // until host_request has serialized and wiped its own command envelope.
+    final input = Uint8List.fromList(frame);
+    try {
+      return await _callDecoded<OwnerCommandSnapshot>(
+        host.Action.commandSubmit,
+        configure: (r) {
+          r.ioKey = taskId;
+          r.commandSubmission = attempt;
+          r.payload = input;
+        },
+        decode: (r) => ServiceRunCodec.command(r, expectedSubmission: attempt),
+        clearReply: true,
+        updatePresentation: false,
+      );
+    } finally {
+      input.fillRange(0, input.length, 0);
+    }
+  }
+
+  Future<OwnerCommandSnapshot> _serviceCommandAction(
+    host.Action action,
+    Uint8List task,
+    Uint8List key,
+  ) {
+    final taskId = ServiceRunValidation.identity(task);
+    final commandId = ServiceRunValidation.identity(key);
+    return _callDecoded<OwnerCommandSnapshot>(
+      action,
+      configure: (r) {
+        r.ioKey = taskId;
+        r.commandKey = commandId;
+      },
+      decode: (r) => ServiceRunCodec.command(r, expectedKey: commandId),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<OwnerCommandSnapshot> serviceCommandStatus(
+    Uint8List task,
+    Uint8List key,
+  ) => _serviceCommandAction(host.Action.commandStatus, task, key);
+
+  @override
+  Future<OwnerCommandSnapshot> serviceCommandBySubmission(
+    Uint8List task,
+    Uint8List submission,
+  ) {
+    final taskId = ServiceRunValidation.identity(task);
+    final attempt = ServiceRunValidation.identity(submission);
+    return _callDecoded<OwnerCommandSnapshot>(
+      host.Action.commandStatus,
+      configure: (r) {
+        r.ioKey = taskId;
+        r.commandSubmission = attempt;
+      },
+      decode: (r) => ServiceRunCodec.command(r, expectedSubmission: attempt),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<OwnerCommandSnapshot> cancelServiceCommand(
+    Uint8List task,
+    Uint8List key,
+  ) => _serviceCommandAction(host.Action.commandCancel, task, key);
+
+  @override
+  Future<OwnerCommandRead> readServiceCommand(Uint8List task, Uint8List key) {
+    final taskId = ServiceRunValidation.identity(task);
+    final commandId = ServiceRunValidation.identity(key);
+    return _callDecoded<OwnerCommandRead>(
+      host.Action.commandRead,
+      configure: (r) {
+        r.ioKey = taskId;
+        r.commandKey = commandId;
+      },
+      decode: (r) => ServiceRunCodec.read(r, expectedKey: commandId),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
   void _fail(Object error) {
     _failure ??= error;
     _buffer.fillRange(0, _buffer.length, 0);
@@ -841,12 +967,16 @@ class RustWorkbench
   void _receive(List<int> bytes) {
     try {
       if (_failure != null) return;
+      if (_buffer.length + bytes.length > 256 * 1024 + 4) {
+        _fail(const FormatException('内容服务消息过大'));
+        return;
+      }
       _buffer.addAll(bytes);
       if (_buffer.length < 4) return;
       final size = ByteData.sublistView(
         Uint8List.fromList(_buffer.take(4).toList()),
       ).getUint32(0, Endian.little);
-      if (size == 0 || size > 128 * 1024 || _buffer.length > 128 * 1024 + 4) {
+      if (size == 0 || size > 256 * 1024 || _buffer.length > 256 * 1024 + 4) {
         _fail(const FormatException('内容服务消息过大'));
         return;
       }
@@ -922,6 +1052,7 @@ class RustWorkbench
     Duration requestTimeout = const Duration(seconds: 60),
     required T Function(host.ResponseReader) decode,
     bool clearReply = false,
+    bool updatePresentation = true,
   }) {
     if (_closingProcess != null) {
       return Future.error(StateError('Content service is closing'));
@@ -954,13 +1085,18 @@ class RustWorkbench
             throw error;
           },
         );
-        final reply = readMessage(bytes).getRoot(host.responseFactory);
+        final reply = readMessage(
+          bytes,
+          maxBytes: ServiceRunCodec.responseMaxBytes(action),
+        ).getRoot(host.responseFactory);
         if (reply.version != 1 || !_same(reply.digest, contract.hostDigest)) {
           throw const FormatException('内容服务版本不匹配');
         }
-        writable = !reply.readOnly;
-        final notice = reply.maintenanceWarning ?? '';
-        maintenanceWarning = notice.isEmpty ? null : notice;
+        if (updatePresentation) {
+          writable = !reply.readOnly;
+          final notice = reply.maintenanceWarning ?? '';
+          maintenanceWarning = notice.isEmpty ? null : notice;
+        }
         if ((reply.error ?? '').isNotEmpty) {
           if (action == host.Action.query) {
             // 100 is query-specific; an unknown code never proves termination.

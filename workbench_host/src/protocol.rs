@@ -8,6 +8,8 @@ use capnp::{
 use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
+#[path = "service_run_protocol.rs"]
+mod service_run;
 pub fn digest() -> [u8; 32] {
     Sha256::digest(
         include_str!("../schemas/host.capnp")
@@ -108,6 +110,9 @@ fn io_result_reply(
     Ok(())
 }
 trait ResponseTarget {
+    fn response_budget(&self, _action: wire::Action) -> usize {
+        128 * 1024
+    }
     fn dispatch(
         &mut self,
         request: wire::request::Reader<'_>,
@@ -128,16 +133,17 @@ pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<V
 }
 
 fn is_scheduler_action(action: wire::Action) -> bool {
-    matches!(
-        action,
-        wire::Action::HttpStart
-            | wire::Action::IoStatus
-            | wire::Action::IoPoll
-            | wire::Action::IoRead
-            | wire::Action::IoCancel
-            | wire::Action::IoRepair
-            | wire::Action::IoAcknowledge
-    )
+    service_run::is_action(action)
+        || matches!(
+            action,
+            wire::Action::HttpStart
+                | wire::Action::IoStatus
+                | wire::Action::IoPoll
+                | wire::Action::IoRead
+                | wire::Action::IoCancel
+                | wire::Action::IoRepair
+                | wire::Action::IoAcknowledge
+        )
 }
 
 fn requires_writable_state(action: wire::Action) -> bool {
@@ -157,6 +163,13 @@ fn requires_writable_state(action: wire::Action) -> bool {
 }
 
 impl ResponseTarget for Workbench {
+    fn response_budget(&self, action: wire::Action) -> usize {
+        if action == wire::Action::CommandRead {
+            256 * 1024
+        } else {
+            128 * 1024
+        }
+    }
     fn writable(&self) -> bool {
         Workbench::writable(self)
     }
@@ -180,6 +193,9 @@ impl ResponseTarget for Workbench {
                 self.state.local_mut()?
             };
             return handle_business(state, r, out);
+        }
+        if service_run::is_action(action) {
+            return service_run::handle(self, r, out);
         }
         let host = self;
         if action == wire::Action::HttpStart {
@@ -282,19 +298,23 @@ impl ResponseTarget for WorkbenchState {
 }
 fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut output = Builder::new_default();
+    let mut response_budget = 128 * 1024;
     let failure = {
         let mut out = output.init_root::<wire::response::Builder>();
         out.set_version(1);
         out.set_digest(&digest());
-        handle(host, bytes, out.reborrow()).err()
+        match handle(host, bytes, out.reborrow()) {
+            Ok(budget) => {
+                response_budget = budget;
+                None
+            }
+            Err(error) => Some(error),
+        }
     };
     if let Some(e) = failure {
         // Never serialize a partial success together with an error. In
         // particular, a one-time token must not survive in abandoned segments.
-        output
-            .get_root::<wire::response::Builder>()?
-            .get_issued_token()?
-            .zeroize();
+        wipe_sensitive_reply(&mut output)?;
         output = Builder::new_default();
         let mut out = output.init_root::<wire::response::Builder>();
         out.set_version(1);
@@ -328,11 +348,8 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
     // The CLI immediately takes ownership in another Zeroizing buffer. Keep
     // this intermediate owner protected too, including oversized replies.
     let mut bytes = Zeroizing::new(serialize::write_message_to_words(&output));
-    output
-        .get_root::<wire::response::Builder>()?
-        .get_issued_token()?
-        .zeroize();
-    if bytes.len() > 128 * 1024 {
+    wipe_sensitive_reply(&mut output)?;
+    if bytes.len() > response_budget {
         // A fresh message contains neither partial payload nor hidden segments.
         // The request may already have executed; this is a delivery error only.
         let mut bounded = Builder::new_default();
@@ -345,12 +362,18 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
     }
     Ok(std::mem::take(&mut *bytes))
 }
-fn handle(
-    host: &mut impl ResponseTarget,
+fn wipe_sensitive_reply(output: &mut Builder<capnp::message::HeapAllocator>) -> Result<()> {
+    let mut out = output.get_root::<wire::response::Builder>()?;
+    out.reborrow().get_issued_token()?.zeroize();
+    // A nested business response can itself carry a one-time credential.
+    out.reborrow().get_payload()?.zeroize();
+    Ok(())
+}
+fn validated_request(
     bytes: &[u8],
-    out: wire::response::Builder<'_>,
-) -> Result<()> {
-    if bytes.len() > 128 * 1024 {
+    max_bytes: usize,
+) -> Result<capnp::message::Reader<serialize::BufferSegments<&[u8]>>> {
+    if bytes.is_empty() || bytes.len() > max_bytes {
         return Err("host frame budget".into());
     }
     // Borrow the caller-owned frame; do not copy plaintext credential input into
@@ -370,7 +393,26 @@ fn handle(
     if r.get_version() != 1 || r.get_digest()? != digest() {
         return Err("host contract mismatch".into());
     }
-    host.dispatch(r, out)
+    r.get_action()?;
+    Ok(message)
+}
+fn validate_command_frame(bytes: &[u8]) -> Result<()> {
+    let message = validated_request(bytes, 64 * 1024)?;
+    if is_scheduler_action(message.get_root::<wire::request::Reader>()?.get_action()?) {
+        return Err("scheduler actions require the outer application".into());
+    }
+    Ok(())
+}
+fn handle(
+    host: &mut impl ResponseTarget,
+    bytes: &[u8],
+    out: wire::response::Builder<'_>,
+) -> Result<usize> {
+    let message = validated_request(bytes, 128 * 1024)?;
+    let r = message.get_root::<wire::request::Reader>()?;
+    let budget = host.response_budget(r.get_action()?);
+    host.dispatch(r, out)?;
+    Ok(budget)
 }
 
 fn handle_business(
@@ -407,7 +449,13 @@ fn handle_business(
         | wire::Action::IoRead
         | wire::Action::IoCancel
         | wire::Action::IoRepair
-        | wire::Action::IoAcknowledge => {
+        | wire::Action::IoAcknowledge
+        | wire::Action::ServiceRunStart
+        | wire::Action::ServiceRunStatus
+        | wire::Action::CommandSubmit
+        | wire::Action::CommandStatus
+        | wire::Action::CommandRead
+        | wire::Action::CommandCancel => {
             return Err("scheduler actions require the outer application".into());
         }
         wire::Action::EndpointPage => {

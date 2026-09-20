@@ -390,6 +390,7 @@ impl Workbench {
             Err(error) => {
                 if self.state.cleanup_instance(instance).is_err() {
                     self.state.task = Some(Task {
+                        commands: Default::default(),
                         key,
                         worker: None,
                         handle: None,
@@ -431,6 +432,7 @@ impl Workbench {
                     Ok(())
                 };
                 self.state.task = Some(Task {
+                    commands: Default::default(),
                     key,
                     worker: None,
                     handle: None,
@@ -456,6 +458,7 @@ impl Workbench {
             Err(failure) => {
                 failure.worker.stop();
                 self.state.task = Some(Task {
+                    commands: Default::default(),
                     key,
                     worker: Some(Executor::Io(Box::new(failure.worker))),
                     handle: None,
@@ -481,6 +484,7 @@ impl Workbench {
             options.submission,
         );
         self.state.task = Some(Task {
+            commands: Default::default(),
             key,
             service: Some(execution.progress()),
             worker: Some(Executor::Service(execution)),

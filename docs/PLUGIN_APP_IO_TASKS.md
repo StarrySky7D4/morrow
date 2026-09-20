@@ -13,7 +13,7 @@
 | RecoveryRequired | 原存储已取回，但清理或封存需要恢复；失败清理保留确切实例，封存失败仍可读取既有内容 |
 | Unavailable | 线程未归还原容器，不能自动重开内容库或重新执行任务 |
 
-StateSlot的执行者现区分短IO与持久配置服务，两者共用同一owner、清理/修复和确认规则。原生 `start_service` 返回后可能仍在绑定；`service_status`保留原提交身份、实际地址、绑定/监听/监督结果及通用存储阶段。服务工作台命令通过 `submit_service_command`进入原ServiceHost，短IO仍自动排空。现有私有协议与Flutter尚未开放这些服务运行接口。
+StateSlot的执行者现区分短IO与持久配置服务，两者共用同一owner、清理/修复和确认规则。原生 `start_service` 返回后可能仍在绑定；`service_status`保留原提交身份、实际地址、绑定/监听/监督结果及通用存储阶段。服务工作台命令通过 `submit_service_command`进入原ServiceHost，短IO仍自动排空。私有协议现已开放显式服务启动/状态与有界命令提交/查询/读取/取消，Dart提供对应低层接口；页面入口和现有业务自动路由尚未接入。
 
 StateSlot 不实现 Deref；现有业务方法先显式借用完整状态，缺席返回类型化Busy。调用顺序在文件创建、计数、捕获、上传完成与注册表变更之前检查。IO使用内部原Manager在同一HostRuntime上独立准入实例，再通过 `spawn_managed_owner` 将完整状态移交，不拆取Pool根。短IO退出只封存原Storage；应用最终关闭才关闭Pool、编辑器和capture范围。HttpTasks的已用提交身份与当前提交关联留在外围，移交和回收均不重置它们。
 
@@ -40,6 +40,16 @@ StateSlot 不实现 Deref；现有业务方法先显式借用完整状态，缺�
 
 完整业务状态已提取并接入短IO真实移交。State现在实现CommandOwner，与本地调用共用校验、业务分派、错误码和响应清理；State明确拒绝HttpStart及全部Io调度动作。队列输入上限64KiB，私有响应上限128KiB，不增加guest入口。接入Dart时需要缩小现有部分64KiB上传块，为命令封装预留空间；不能把所有现有128KiB私有请求直接转入队列，超限必须明确拒绝。排队与未读回执由Zeroizing保护，输入移入State及回复交给读取方时转交清理责任。取消后不把已发生的写入当作回滚。
 
-本地访问仍先检查StateSlot；待显式修复时只读入口保留，写入和上传消费被拒绝。worker的原身份/有效性和prepare_io检查在业务派发前执行。原生Workbench现在可通过公开服务准入与命令方法调用Running服务，但私有协议和Flutter尚未连接；当前应用准入限定有限loopback HTTP，未配置的出站调用拒绝。下一步接异步命令回执及API节点界面，再实现长IO可暂停、TLS/出站资源和服务期间响应验收。准备回调不是插件可提交的任意路由，也不是从UI直接构造授权的捷径。文件系统、Unknown核对、完整因果链和三语言IO SDK仍按原门槛推进；当前契约不承诺SDK稳定或全平台运行资格。
+本地访问仍先检查StateSlot；待显式修复时只读入口保留，写入和上传消费被拒绝。worker的原身份/有效性和prepare_io检查在业务派发前执行。原生Workbench现在可通过公开服务准入与命令方法调用Running服务，私有协议及Dart低层接口已连接，Flutter页面和业务自动路由尚未连接；当前应用准入限定有限loopback HTTP，未配置的出站调用拒绝。下一步接异步命令回执及API节点界面，再实现长IO可暂停、TLS/出站资源和服务期间响应验收。准备回调不是插件可提交的任意路由，也不是从UI直接构造授权的捷径。文件系统、Unknown核对、完整因果链和三语言IO SDK仍按原门槛推进；当前契约不承诺SDK稳定或全平台运行资格。
 
 持久端点接线顺序：应用在 Storage 尚在位时，用原 Store 的可变借用调用 `StoredHttpEndpoint::resolve` 取得记录与原授权租约；随后将解析对象移入准备回调，使用 `approve_windows` 在新准入的原实例上验证类别、端点政策并解析系统凭据。解析不是恢复活动授权。Preparation 只暴露只读 HostRuntime，不能为适配持久端点而允许回调替换原核心；UTC 的持久记录期限与任务的单调时钟域也继续分开校验。
+
+## 服务调度与命令身份（2026-09-20）
+
+私有动作61—66承载ServiceRunStart/Status与CommandSubmit/Status/Read/Cancel。启动逐项携带原配置、发布、包与Registry身份/修订及有限预算；启动回执丢失时，可用空任务key查询单个当前服务并核对原submission，不自动重新启动。停止、修复、确认仍走原IoCancel/Repair/Acknowledge。
+
+每项服务最多保留8个未消费命令句柄、512项提交历史。相同非零submission及完整内层请求SHA-256返回原随机command key和当前状态；修改字节冲突，失败准入不消耗历史。历史满额拒绝新增，不淘汰旧身份。丢命令提交回执可用CommandStatus的空commandKey及原commandSubmission只读核对，未知身份不执行请求或创建记录，也不必重发正文。状态查询不消费Ready；read复核原授权后至多交付一次，结果离开后只留摘要、started与终态。成功读回执丢失、开始后取消及Unknown都不能成为重跑依据。任务确认后旧key失效，历史不会跨新任务或进程自动恢复。
+
+内层请求最多64KiB且预先验证契约，禁止嵌套全部调度动作；业务回复保持128KiB。只有已验证外层CommandRead允许256KiB响应封装，以容纳原业务回复与少量状态；其余私有帧仍128KiB。Rust清理内层输入、回复与封装payload；Dart清理发送暂存和外层回执，调用方须dispose拥有的内层结果。这里的命令身份只用于当前运行交付，不替代持久内容事务或Unknown证据核对。
+
+本阶段不把既有业务请求自动转为命令，也不开放页面启动按钮。下一步在每个快速传输交换之外等待命令结果，让停止/状态可插入；缩小上传块至满足64KiB完整内层帧预算，并保留查询、草稿、令牌和不确定写入语义。测试与限制见[服务命令协议报告](../reports/service-command-protocol-2026-09-20.md)。

@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -19,6 +19,7 @@ struct Request {
  serviceConfig @39 :ServiceConfigUpdate; servicePublication @40 :ServicePublicationUpdate;
  serviceReference @41 :Data; serviceSnapshot @42 :Data; serviceCursor @43 :Data;
  principalId @44 :Text; serviceDays @45 :UInt32;
+ serviceRun @46 :ServiceRunStart; commandKey @47 :Data; commandSubmission @48 :Data;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -37,6 +38,35 @@ struct Response {
  serviceConfigs @32 :List(ServiceConfigInfo); serviceAuthorities @33 :List(ServiceAuthorityInfo);
  serviceSnapshot @34 :Data; serviceCursor @35 :Data;
  issuedToken @36 :Data;
+ serviceRun @37 :ServiceRunState; ownerCommand @38 :OwnerCommandState;
+}
+
+# Private application lifecycle, not a guest capability. Every start explicitly
+# binds current desired-state revisions and ceilings; no saved state auto-starts.
+struct ServiceRunStart {
+ submission @0 :Data; configId @1 :Text; configDigest @2 :Data; configRevision @3 :UInt64;
+ publication @4 :Data; publicationRevision @5 :UInt64;
+ packageId @6 :Text; packageDigest @7 :Data; registryRevision @8 :UInt64;
+ lifetimeMs @9 :UInt32; maxJobs @10 :UInt64; maxBytes @11 :UInt64;
+ maxCalls @12 :UInt32; maxJobBytes @13 :UInt64; maxTotalBytes @14 :UInt64;
+ maxRequestBytes @15 :UInt32; maxResponseBytes @16 :UInt32;
+ maxHeaderBytes @17 :UInt32; maxConcurrent @18 :UInt16; timeoutMs @19 :UInt32;
+}
+# phase 0 starting, 1 running, 2 stopping, 3 actually reclaimed.
+# optional outcomes: 0 pending, 1 success, 2 invalid, 3 denied, 4 limit,
+# 5 cancelled, 6 timeout, 7 transport, 8 closed.
+struct ServiceRunState {
+ task @0 :IoState; submission @1 :Data; phase @2 :UInt16; address @3 :Text;
+ bind @4 :UInt16; listener @5 :UInt16; supervision @6 :UInt16;
+}
+# delivery 0 pending, 1 ready (read still rechecks authority), 2 consumed.
+# terminal 0 absent, 1 busy, 2 closed, 3 limit, 4 cancelled, 5 unknown, 6 consumed.
+# A consumed success has terminal 0. No read response is replayable.
+# commandRead alone permits a 256 KiB outer frame; its payload is one original
+# private business response of at most 128 KiB. All other frames remain 128 KiB.
+struct OwnerCommandState {
+ key @0 :Data; submission @1 :Data; delivery @2 :UInt16;
+ started @3 :Bool; terminal @4 :UInt16;
 }
 
 # Trusted editor observations. Selection offsets count UTF-16 code units, not UTF-8 bytes.
