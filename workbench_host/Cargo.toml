@@ -23,6 +23,9 @@ capnpc = "=0.24.0"
 [dev-dependencies]
 rusqlite = "=0.40.2"
 tempfile = "=3.27.0"
+wat = "=1.239.0"
+tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time"] }
+morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 morrow-audit = {path = "../audit"}

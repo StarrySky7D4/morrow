@@ -159,6 +159,29 @@ impl DerefMut for Storage {
     }
 }
 
+// Move the complete protected session, including its signing identity and both
+// database/library leases. The worker borrows this original runtime only.
+impl morrow_plugin_runtime::io_jobs::HostOwner for Storage {
+    fn runtime(&self) -> &HostRuntime {
+        self
+    }
+    fn runtime_mut(&mut self) -> &mut HostRuntime {
+        self
+    }
+    fn prepare_io(&mut self) -> std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError> {
+        self.prepare_write()
+            .map_err(|_| morrow_plugin_runtime::io_jobs::JobError::Unavailable)
+    }
+    fn finish_io(&mut self) -> std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError> {
+        self.flush_pending()
+            .map_err(|_| morrow_plugin_runtime::io_jobs::JobError::Unavailable)
+    }
+}
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "storage_io_tests.rs"]
+mod io_tests;
+
 #[cfg(target_os = "windows")]
 pub(crate) fn session_message(e: SessionError) -> &'static str {
     match e {

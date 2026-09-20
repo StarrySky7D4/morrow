@@ -79,4 +79,10 @@
 
 原Store v20在同一读事务进行有界分页和快照核对；主应用Windows凭据面板完成新建、替换、停用和进程重启恢复，仅返回元数据。原DPAPI保护、原Store CAS和撤权协调器继续是唯一权威；保存凭据不会启用插件或创建活动网络授权。[报告](../reports/credential-admin-web-2026-09-20.md)记录真实Flutter→Rust、缓冲区清理、页外损坏、混合记录空页及Web修复证据。IO-E2仍为部分完成，新SDK未冻结。
 
-下一编码顺序：原Storage/审计Session/Pool的作业所有权接线 → 原端点批准管理与短响应start/poll/read/cancel → 真实主应用HTTP链路、撤销与重启核对。文件系统后端可沿固定broker边界独立推进；凭据期限不代替活动授权，Unknown结果不能自动重发。
+下一编码顺序：完整Storage交接底座（进展见下节）→ 主应用可恢复任务状态机 → 原端点批准管理与短响应start/poll/read/cancel → 真实主应用HTTP链路、撤销与重启核对。文件系统后端可沿固定broker边界独立推进；凭据期限不代替活动授权，Unknown结果不能自动重发。
+
+## 受保护存储的 IO 所有权交接（2026-09-20）
+
+[所有权合同](PLUGIN_IO_OWNERSHIP.md)：IoWorker 可移交完整 HostOwner，Windows Storage 保留原审计 Session、签名身份、数据库／身份／Registry 租约。独立准入 IO 实例而不拆取 Pool 根；异常结束归还原容器、执行／断连／维护状态及必要的待清理实例。原运行时默认 API 保留，维护失败不把已发生的 HTTP 效果改写为未执行。
+
+这属于 IO-B2／IO-E2 的宿主底座子集。真实受管 Wasm→本机HTTP→原审计Store→封存／重开已验，详见[报告](../reports/io-owner-2026-09-20.md)。CLI／Flutter 主应用命令循环尚未使用新交接入口，不能标记主应用网络任务完成。下一项是在主应用中建立显式的存储在线程中／停止待退出／已取回状态，再接端点批准和短响应任务协议；文件系统、API节点管理、Unknown核对与完整SDK保持原门槛。

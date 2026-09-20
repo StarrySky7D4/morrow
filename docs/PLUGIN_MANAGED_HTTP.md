@@ -12,7 +12,7 @@
 
 ## 运行流程
 
-1. 宿主在移交实例前调用 `HttpEndpoint::approve`，然后以原 binding 启动 `IoWorker::spawn_managed`。
+1. 宿主在移交实例前调用 `HttpEndpoint::approve`，然后以原 binding 启动 `IoWorker::spawn_managed`。受保护存储宿主可用 `spawn_managed_owned` 移交完整 Storage，保留签名身份与租约，参见[所有权合同](PLUGIN_IO_OWNERSHIP.md)。
 2. 将端点引用交给 guest；guest 通过现有 IO 帧提供操作 ID、方法、相对路径/查询、业务头、正文和可选凭据引用。
 3. 宿主用 `endpoint.router(tokio_handle)` 提供 `BrokerRouter`，调用 `submit_brokered`。Tokio runtime 由宿主管理且须持续运行；网络驱动从专用 IO 线程调用，不在 Tokio task 内嵌套阻塞。
 4. 路由核对原实例与引用、方法、凭据和额度。错误请求在持久发送边界前拒绝；guest 不能直接提供认证/代理/Host/分帧头，也不能覆盖已配置的凭据头。
@@ -35,7 +35,7 @@
 
 ## 后续门槛
 
-- 宿主主界面、凭据录入／轮换流程、其他平台提供者、路径范围、本地局域网独立 profile及平台策略。
+- 宿主端点批准与任务主界面、其他平台凭据提供者、路径范围、本地局域网独立 profile及平台策略。Windows 凭据录入／替换已有[主应用限定验证](PLUGIN_IO_MANAGEMENT.md)。
 - 实际提供者幂等/状态查询核对、应用重启后的恢复展示、证据访问策略与配额退休。
 - 在已接线的持久发布与内容权限交集上补主应用管理、Unknown核对与因果证据；受控文件变更/选择/枚举。
 - 三语言类型化扩展、大文件/流/SSE/WebSocket、OAuth、多账号、录制隔离重放。

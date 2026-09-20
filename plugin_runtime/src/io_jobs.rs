@@ -14,7 +14,7 @@ use crate::{
     worker::TaskId,
 };
 use morrow_core::{
-    dispatch::{Connection, HostRuntime},
+    dispatch::{Connection, HostBinding, HostRuntime},
     io::{Action, HttpOutcome, MAX_FRAME_BYTES, Request, Response},
     io_evidence::{Kind, Material},
     io_intent::{Command, Phase as IntentPhase, Record},
@@ -49,6 +49,52 @@ pub enum JobError {
     Limit,
     Spawn,
     Disconnect,
+}
+/// Trusted owner of the original runtime and its storage/identity guards. The
+/// returned runtime must remain the same for this owner's complete lifetime;
+/// hooks must not replace it, revive grants, or re-enter worker handles.
+pub trait HostOwner: Send + 'static {
+    fn runtime(&self) -> &HostRuntime;
+    fn runtime_mut(&mut self) -> &mut HostRuntime;
+    fn prepare_io(&mut self) -> Result<(), JobError> {
+        Ok(())
+    }
+    fn finish_io(&mut self) -> Result<(), JobError> {
+        Ok(())
+    }
+}
+impl HostOwner for HostRuntime {
+    fn runtime(&self) -> &HostRuntime {
+        self
+    }
+    fn runtime_mut(&mut self) -> &mut HostRuntime {
+        self
+    }
+}
+/// Execution and maintenance are independent: sealing failure cannot undo an
+/// already committed effect. Reclamation never grants permission to replay it.
+pub struct WorkerExit<O: HostOwner> {
+    pub owner: O,
+    pub result: Result<(), JobError>,
+    pub maintenance: Result<(), JobError>,
+    /// Failed cleanup is separate from execution. The exact managed instance is
+    /// retained only when its disconnection could not be confirmed.
+    pub disconnect: Result<(), JobError>,
+    pub instance: Option<ManagedInstance>,
+}
+/// Admission did not start a worker. The original owner and managed instance
+/// remain available for explicit cleanup; neither is silently reconstructed.
+pub struct SpawnFailure<O: HostOwner> {
+    pub owner: O,
+    pub instance: Option<ManagedInstance>,
+    pub error: JobError,
+}
+impl<O: HostOwner> std::fmt::Debug for SpawnFailure<O> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("SpawnFailure")
+            .field("error", &self.error)
+            .finish_non_exhaustive()
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Phase {
@@ -472,6 +518,7 @@ impl Session {
     }
 }
 struct Control {
+    host: HostBinding,
     authority: Option<Authority>,
     revocation: morrow_core::lifecycle::Revocation,
     id: u64,
@@ -748,13 +795,13 @@ impl Drop for JobHandle {
 /// One bounded executor owning its package, connection and core on a dedicated
 /// thread. Ordinary IO jobs deny content exchange; durable content service jobs
 /// use original object grants. Routers execute outside caller transactions.
-pub struct IoWorker {
+pub struct IoWorker<O: HostOwner = HostRuntime> {
     sender: SyncSender<Message>,
     control: Arc<Control>,
-    join: Option<JoinHandle<Result<HostRuntime, JobError>>>,
+    join: Option<JoinHandle<WorkerExit<O>>>,
     service_authority: morrow_core::store::ServiceAuthorityControl,
 }
-impl IoWorker {
+impl IoWorker<HostRuntime> {
     /// Low-level trusted callback executor; no managed IO authorization is implied.
     pub fn spawn(
         package: PreparedPackage,
@@ -764,13 +811,14 @@ impl IoWorker {
         capacity: usize,
         limits: JobLimits,
     ) -> Result<Self, JobError> {
-        Self::spawn_session(
+        Self::spawn_session_owned(
             Session::Raw(package, connection),
             host,
             None,
             capacity,
             limits,
         )
+        .map_err(|failure| failure.error)
     }
     /// Authenticate the exact managed owner before handing it to the worker.
     /// Manager remains on the calling side: approval changes and Drop revoke the
@@ -783,113 +831,224 @@ impl IoWorker {
         host: HostRuntime,
         instance: ManagedInstance,
         binding: IoBinding,
-        mut clock: impl FnMut() -> u64 + Send + 'static,
+        clock: impl FnMut() -> u64 + Send + 'static,
         capacity: usize,
         limits: JobLimits,
     ) -> Result<Self, JobError> {
-        binding
-            .validate_identity(manager, &host, &instance)
-            .map_err(|_| JobError::InvalidOptions)?;
-        binding
-            .check(manager, &host, &instance, clock())
-            .map_err(|_| JobError::InvalidOptions)?;
+        Self::spawn_managed_owned(manager, host, instance, binding, clock, capacity, limits)
+            .map_err(|failure| failure.error)
+    }
+
+    /// Compatibility path. Use `try_reclaim` with a containing owner when its
+    /// storage guards must be recovered even after worker failure.
+    pub fn try_finish(&mut self) -> Result<Option<HostRuntime>, JobError> {
+        match self.try_reclaim()? {
+            None => Ok(None),
+            Some(exit) => {
+                exit.result?;
+                exit.maintenance?;
+                Ok(Some(exit.owner))
+            }
+        }
+    }
+}
+impl<O: HostOwner> IoWorker<O> {
+    /// Move the complete original host owner into the executor. The instance
+    /// must be admitted independently; a borrowed Pool root cannot be detached.
+    #[allow(clippy::too_many_arguments)]
+    pub fn spawn_managed_owned(
+        manager: &Manager,
+        owner: O,
+        instance: ManagedInstance,
+        binding: IoBinding,
+        mut clock: impl FnMut() -> u64 + Send + 'static,
+        capacity: usize,
+        limits: JobLimits,
+    ) -> Result<Self, Box<SpawnFailure<O>>> {
+        let admission = catch_unwind(AssertUnwindSafe(|| {
+            binding
+                .validate_identity(manager, owner.runtime(), &instance)
+                .map_err(|_| JobError::InvalidOptions)?;
+            binding
+                .check(manager, owner.runtime(), &instance, clock())
+                .map_err(|_| JobError::InvalidOptions)
+        }))
+        .unwrap_or(Err(JobError::Unavailable));
+        if let Err(error) = admission {
+            return Err(Box::new(SpawnFailure {
+                owner,
+                instance: Some(instance),
+                error,
+            }));
+        }
         let authority = Authority {
             cancellation: instance.cancellation(),
             binding,
             clock: Arc::new(Mutex::new(Box::new(clock))),
         };
-        Self::spawn_session(
+        Self::spawn_session_owned(
             Session::Managed(instance),
-            host,
+            owner,
             Some(authority),
             capacity,
             limits,
         )
     }
-    fn spawn_session(
+    fn spawn_session_owned(
         session: Session,
-        mut host: HostRuntime,
+        owner: O,
         authority: Option<Authority>,
         capacity: usize,
         limits: JobLimits,
-    ) -> Result<Self, JobError> {
-        let package = session.package();
-        let connection = session.connection();
-        JobLimits::new(
-            limits.max_calls,
-            limits.max_job_bytes,
-            limits.max_total_bytes,
-        )?;
-        let budget = package
-            .package()
-            .io_declaration()
-            .and_then(|declaration| declaration.budget.as_ref())
-            .ok_or(JobError::InvalidOptions)?;
-        if capacity > budget.max_jobs as usize
-            || limits.max_job_bytes > budget.max_job_bytes
-            || limits.max_total_bytes > budget.max_bytes
-            || limits.max_calls > package.limits().host_calls
-        {
-            return Err(JobError::InvalidOptions);
-        }
-        let timeout = Duration::from_millis(budget.max_duration_ms).min(MAX_TIMEOUT);
-        if !(1..=MAX_PENDING).contains(&capacity)
-            || connection.package_digest() != Some(package.package().digest())
-            || host.connection_phase(connection) != Ok(morrow_core::lifecycle::InstancePhase::Ready)
-        {
-            return Err(JobError::InvalidOptions);
-        }
-        let id = NEXT_EXECUTOR
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
-            .map_err(|_| JobError::InvalidOptions)?;
-        let revocation = host
-            .revocation(connection)
-            .map_err(|_| JobError::InvalidOptions)?;
-        let control = Arc::new(Control {
-            authority,
-            revocation,
-            id,
-            capacity,
-            limits,
-            timeout,
-            state: Mutex::new(State {
-                phase: Phase::Running,
-                next: 1,
-                jobs: BTreeMap::new(),
-                bytes: 0,
-            }),
-        });
-        let (sender, receiver) = mpsc::sync_channel(capacity);
-        let service_authority = host.store_local().service_authority_control();
+    ) -> Result<Self, Box<SpawnFailure<O>>> {
+        let setup = catch_unwind(AssertUnwindSafe(|| {
+            let host = owner.runtime();
+            let package = session.package();
+            let connection = session.connection();
+            JobLimits::new(
+                limits.max_calls,
+                limits.max_job_bytes,
+                limits.max_total_bytes,
+            )?;
+            let budget = package
+                .package()
+                .io_declaration()
+                .and_then(|declaration| declaration.budget.as_ref())
+                .ok_or(JobError::InvalidOptions)?;
+            if capacity > budget.max_jobs as usize
+                || limits.max_job_bytes > budget.max_job_bytes
+                || limits.max_total_bytes > budget.max_bytes
+                || limits.max_calls > package.limits().host_calls
+            {
+                return Err(JobError::InvalidOptions);
+            }
+            let timeout = Duration::from_millis(budget.max_duration_ms).min(MAX_TIMEOUT);
+            if !(1..=MAX_PENDING).contains(&capacity)
+                || connection.package_digest() != Some(package.package().digest())
+                || host.connection_phase(connection)
+                    != Ok(morrow_core::lifecycle::InstancePhase::Ready)
+            {
+                return Err(JobError::InvalidOptions);
+            }
+            let id = NEXT_EXECUTOR
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+                .map_err(|_| JobError::InvalidOptions)?;
+            let revocation = host
+                .revocation(connection)
+                .map_err(|_| JobError::InvalidOptions)?;
+            let control = Arc::new(Control {
+                host: host.binding(),
+                authority,
+                revocation,
+                id,
+                capacity,
+                limits,
+                timeout,
+                state: Mutex::new(State {
+                    phase: Phase::Running,
+                    next: 1,
+                    jobs: BTreeMap::new(),
+                    bytes: 0,
+                }),
+            });
+            let (sender, receiver) = mpsc::sync_channel(capacity);
+            let service_authority = host.store_local().service_authority_control();
+            Ok((control, sender, receiver, service_authority))
+        }))
+        .unwrap_or(Err(JobError::Unavailable));
+        let (control, sender, receiver, service_authority) = match setup {
+            Ok(setup) => setup,
+            Err(error) => return Err(spawn_failure(owner, session, error)),
+        };
+        let id = control.id;
         let inner = Arc::clone(&control);
-        let join = thread::Builder::new()
-            .name(format!("morrow-io-job-{id}"))
-            .spawn(move || {
-                let result = catch_unwind(AssertUnwindSafe(|| {
-                    execute(&session, &mut host, &receiver, &inner)
-                }));
-                let result = match result {
-                    Ok(result) => result,
-                    Err(_) => Err(JobError::Unavailable),
-                };
-                let mut state = inner.lock();
-                if result.is_err() {
-                    inner.revocation.revoke();
+        // A failed OS spawn drops its closure. Keep the only owner in a staged
+        // slot also reachable here, so failure returns it instead of dropping it.
+        let staged = Arc::new(Mutex::new(Some((owner, session))));
+        let worker_owner = Arc::clone(&staged);
+        let join = spawn_owner_thread(format!("morrow-io-job-{id}"), move || {
+            let (mut owner, session) = worker_owner
+                .lock()
+                .unwrap_or_else(|e| e.into_inner())
+                .take()
+                .expect("worker owner staged once");
+            let result = catch_unwind(AssertUnwindSafe(|| {
+                execute(&session, &mut owner, &receiver, &inner)
+            }));
+            let mut result = match result {
+                Ok(result) => result,
+                Err(_) => Err(JobError::Unavailable),
+            };
+            if result.is_err() {
+                // Failure revocation must not wait behind potentially slow
+                // owner maintenance or disconnection hooks.
+                inner.stop();
+            }
+            // Disconnect on success, panic and preparation failure before
+            // sealing. Retain the first execution error independently.
+            let disconnected = catch_unwind(AssertUnwindSafe(|| {
+                checked_runtime(&mut owner, inner.host)?
+                    .disconnect(session.connection())
+                    .map_err(|_| JobError::Disconnect)
+            }))
+            .unwrap_or(Err(JobError::Unavailable));
+            if result.is_ok() {
+                result = disconnected;
+            }
+            if result.is_err() {
+                inner.stop();
+            }
+            let instance = match session {
+                Session::Managed(instance) if disconnected.is_err() => Some(instance),
+                _ => None,
+            };
+            let maintenance = catch_unwind(AssertUnwindSafe(|| {
+                // Exception to unconditional maintenance: a substituted runtime
+                // must never direct sealing/cleanup at an alternate Store.
+                if owner.runtime().binding() != inner.host {
+                    return Err(JobError::InvalidOptions);
                 }
-                state.phase = if result.is_ok() {
-                    Phase::Stopped
-                } else {
-                    Phase::Failed
-                };
-                for slot in state.jobs.values_mut() {
-                    slot.cancel.cancel();
-                    inner.refresh(slot);
+                let result = owner.finish_io();
+                if owner.runtime().binding() != inner.host {
+                    return Err(JobError::InvalidOptions);
                 }
-                state.jobs.retain(|_, slot| !slot.abandoned);
-                drop(state);
-                result.map(|()| host)
-            })
-            .map_err(|_| JobError::Spawn)?;
+                result
+            }))
+            .unwrap_or(Err(JobError::Unavailable));
+            let mut state = inner.lock();
+            if result.is_err() || maintenance.is_err() {
+                inner.revocation.revoke();
+            }
+            state.phase = if result.is_ok() && maintenance.is_ok() {
+                Phase::Stopped
+            } else {
+                Phase::Failed
+            };
+            for slot in state.jobs.values_mut() {
+                slot.cancel.cancel();
+                inner.refresh(slot);
+            }
+            state.jobs.retain(|_, slot| !slot.abandoned);
+            drop(state);
+            WorkerExit {
+                owner,
+                result,
+                maintenance,
+                disconnect: disconnected,
+                instance,
+            }
+        });
+        let join = match join {
+            Ok(join) => join,
+            Err(_) => {
+                let (owner, session) = staged
+                    .lock()
+                    .unwrap_or_else(|e| e.into_inner())
+                    .take()
+                    .expect("failed spawn retains staged owner");
+                return Err(spawn_failure(owner, session, JobError::Spawn));
+            }
+        };
         Ok(Self {
             sender,
             control,
@@ -1341,7 +1500,7 @@ impl IoWorker {
         self.control.lock().bytes
     }
     /// Returns exclusive core ownership only after the thread ended.
-    pub fn try_finish(&mut self) -> Result<Option<HostRuntime>, JobError> {
+    pub fn try_reclaim(&mut self) -> Result<Option<WorkerExit<O>>, JobError> {
         let join = self.join.as_ref().ok_or(JobError::Consumed)?;
         if !join.is_finished() {
             return Ok(None);
@@ -1350,18 +1509,59 @@ impl IoWorker {
             .take()
             .unwrap()
             .join()
-            .map_err(|_| JobError::Unavailable)?
+            .map_err(|_| JobError::Unavailable)
             .map(Some)
     }
 }
-impl Drop for IoWorker {
+impl<O: HostOwner> Drop for IoWorker<O> {
     fn drop(&mut self) {
         self.stop();
     }
 }
-fn execute(
+fn spawn_failure<O: HostOwner>(
+    owner: O,
+    session: Session,
+    error: JobError,
+) -> Box<SpawnFailure<O>> {
+    let instance = match session {
+        Session::Managed(instance) => Some(instance),
+        Session::Raw(..) => None,
+    };
+    Box::new(SpawnFailure {
+        owner,
+        instance,
+        error,
+    })
+}
+#[cfg(test)]
+thread_local! {
+    // Thread-local injection cannot interfere with concurrent tests or workers.
+    static FAIL_OWNER_SPAWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+fn spawn_owner_thread<T: Send + 'static>(
+    name: String,
+    run: impl FnOnce() -> T + Send + 'static,
+) -> std::io::Result<JoinHandle<T>> {
+    #[cfg(test)]
+    if FAIL_OWNER_SPAWN.replace(false) {
+        return Err(std::io::Error::other("injected worker spawn failure"));
+    }
+    thread::Builder::new().name(name).spawn(run)
+}
+fn checked_runtime<O: HostOwner>(
+    owner: &mut O,
+    original: HostBinding,
+) -> Result<&mut HostRuntime, JobError> {
+    let runtime = owner.runtime_mut();
+    if runtime.binding() != original {
+        return Err(JobError::InvalidOptions);
+    }
+    Ok(runtime)
+}
+
+fn execute<O: HostOwner>(
     session: &Session,
-    host: &mut HostRuntime,
+    owner: &mut O,
     receiver: &Receiver<Message>,
     control: &Arc<Control>,
 ) -> Result<(), JobError> {
@@ -1404,6 +1604,13 @@ fn execute(
             Message::Job(job) => job,
             Message::Wake => continue,
             Message::ServiceUpdate(update, reply) => {
+                if let Err(error) = owner.prepare_io() {
+                    // No Store mutation was attempted; a missing acknowledgement
+                    // remains unavailable and must not prompt automatic replay.
+                    drop(reply);
+                    return Err(error);
+                }
+                let host = checked_runtime(owner, control.host)?;
                 let result = match *update {
                     ServiceUpdate::Configuration {
                         value,
@@ -1448,34 +1655,44 @@ fn execute(
                 report.bytes = input.len() as u64;
                 report
             }
-            None => match prepare_service_history(
-                package,
-                host,
-                control,
-                &cancel,
-                lease.as_ref(),
-                service.as_deref(),
-                input.len(),
-            ) {
-                Err(report) => *report,
-                Ok(history) => run_job(
+            None => {
+                if !matches!(router, JobRouter::ReadOnly)
+                    && !service.as_ref().is_some_and(|service| {
+                        service.persistence.as_ref().is_some_and(|p| p.read_only)
+                    })
+                {
+                    owner.prepare_io()?;
+                }
+                let host = checked_runtime(owner, control.host)?;
+                match prepare_service_history(
                     package,
-                    &input,
-                    &cancel,
-                    control,
-                    &mut router,
-                    lease.as_ref(),
                     host,
-                    match session {
-                        Session::Managed(i) => Some(i),
-                        Session::Raw(..) => None,
-                    },
-                    &broker,
-                    &mut http_guards,
+                    control,
+                    &cancel,
+                    lease.as_ref(),
                     service.as_deref(),
-                    history.as_ref(),
-                ),
-            },
+                    input.len(),
+                ) {
+                    Err(report) => *report,
+                    Ok(history) => run_job(
+                        package,
+                        &input,
+                        &cancel,
+                        control,
+                        &mut router,
+                        lease.as_ref(),
+                        host,
+                        match session {
+                            Session::Managed(i) => Some(i),
+                            Session::Raw(..) => None,
+                        },
+                        &broker,
+                        &mut http_guards,
+                        service.as_deref(),
+                        history.as_ref(),
+                    ),
+                }
+            }
         };
         if let Some(fault) = control.job_fault(
             &cancel,
@@ -1499,8 +1716,7 @@ fn execute(
             }
         }
     }
-    host.disconnect(session.connection())
-        .map_err(|_| JobError::Disconnect)
+    Ok(())
 }
 fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
     JobReport {
@@ -2121,5 +2337,127 @@ fn run_job(
         bytes,
         cancelled: false,
         unknown,
+    }
+}
+
+#[cfg(test)]
+mod owner_tests {
+    use super::*;
+    use morrow_core::{
+        plugin_package::{Package, io},
+        store::Store,
+    };
+
+    struct Owner {
+        runtime: HostRuntime,
+        token: Arc<()>,
+        finished: bool,
+    }
+    impl HostOwner for Owner {
+        fn runtime(&self) -> &HostRuntime {
+            &self.runtime
+        }
+        fn runtime_mut(&mut self) -> &mut HostRuntime {
+            &mut self.runtime
+        }
+        fn prepare_io(&mut self) -> Result<(), JobError> {
+            panic!("readonly must not trigger write preparation")
+        }
+        fn finish_io(&mut self) -> Result<(), JobError> {
+            self.finished = true;
+            Ok(())
+        }
+    }
+    fn fixture() -> (tempfile::TempDir, Owner, Session) {
+        let dir = tempfile::tempdir().unwrap();
+        let wasm = wat::parse_str(
+            r#"(module
+            (import "morrow_task_v1" "complete" (func $done (param i32 i32) (result i32)))
+            (memory (export "memory") 1) (data (i32.const 0) "ok")
+            (func (export "morrow_run") (result i32)
+                i32.const 0 i32.const 2 call $done drop i32.const 0))"#,
+        )
+        .unwrap();
+        let mut manifest =
+            Package::manifest_for_task("org.example.owner.unit", "1.0.0", &wasm, vec![]);
+        manifest.required_features.push(io::FEATURE.into());
+        manifest.io_declaration = Some(io::declaration(
+            vec![IoCapability::FileRead],
+            vec!["io.invoke".into()],
+        ));
+        let package = PreparedPackage::new(
+            Package::build(manifest, &wasm).unwrap(),
+            crate::Limits::default(),
+        )
+        .unwrap();
+        let mut runtime =
+            HostRuntime::new(Store::open(&dir.path().join("db"), Default::default()).unwrap())
+                .unwrap();
+        let connection = package.connect(&mut runtime).unwrap();
+        (
+            dir,
+            Owner {
+                runtime,
+                token: Arc::new(()),
+                finished: false,
+            },
+            Session::Raw(package, connection),
+        )
+    }
+    #[test]
+    fn failed_thread_spawn_returns_staged_original_owner() {
+        let (_dir, owner, session) = fixture();
+        let token = owner.token.clone();
+        let binding = owner.runtime.binding();
+        FAIL_OWNER_SPAWN.set(true);
+        let failure =
+            match IoWorker::spawn_session_owned(session, owner, None, 1, JobLimits::default()) {
+                Err(failure) => failure,
+                Ok(_) => panic!("injected spawn unexpectedly succeeded"),
+            };
+        assert_eq!(failure.error, JobError::Spawn);
+        assert!(Arc::ptr_eq(&failure.owner.token, &token));
+        assert_eq!(failure.owner.runtime.binding(), binding);
+        assert!(!failure.owner.finished);
+    }
+    #[test]
+    fn readonly_malformed_input_does_not_invoke_owner_write_preparation() {
+        let (_dir, owner, session) = fixture();
+        let usage = owner.runtime.store_local().pending_usage().unwrap();
+        let mut worker =
+            IoWorker::spawn_session_owned(session, owner, None, 1, JobLimits::default()).unwrap();
+        let mut job = worker
+            .submit_routed(vec![1], JobRouter::ReadOnly, Duration::from_secs(10), None)
+            .unwrap();
+        let deadline = Instant::now() + Duration::from_secs(10);
+        loop {
+            match job.read(4096) {
+                Ok(Some(report)) => {
+                    assert_eq!(report.task.execution.outcome, Err(Fault::TaskProtocol));
+                    assert_eq!(report.calls, 0);
+                    break;
+                }
+                Ok(None) => {
+                    assert!(Instant::now() < deadline);
+                    thread::sleep(Duration::from_millis(1));
+                }
+                Err(error) => panic!("readonly result {error:?}"),
+            }
+        }
+        worker.stop();
+        let exit = loop {
+            if let Some(exit) = worker.try_reclaim().unwrap() {
+                break exit;
+            }
+            assert!(Instant::now() < deadline);
+            thread::sleep(Duration::from_millis(1));
+        };
+        assert_eq!(exit.result, Ok(()));
+        assert_eq!(exit.maintenance, Ok(()));
+        assert!(exit.owner.finished);
+        assert_eq!(
+            exit.owner.runtime.store_local().pending_usage().unwrap(),
+            usage
+        );
     }
 }

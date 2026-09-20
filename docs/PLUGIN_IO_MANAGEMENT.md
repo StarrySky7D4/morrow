@@ -21,7 +21,7 @@ Manager 是唯一类别批准来源。有效修改撤销旧实例；持久化失
 ## 后续应用接线
 
 1. 原 Store 有界列表及 Windows 凭据管理已接通，见下节。下一项具体端点批准界面，绑定原插件身份、端点政策和凭据引用；保存凭据不隐含网络批准。
-2. 保持原审计 Session、HostRuntime、签名器和数据库租约的唯一所有权，完成网络作业的宿主接线。现有 IoWorker 消费 HostRuntime，而工作台 Storage/Session 与 Pool 持有原运行时及实例；禁止为绕过所有权另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。先实现可验证的拥有者交接／原拥有线程执行边界，再接实际请求。
+2. 完整 Storage 的受控交接与取回已建立，见[所有权合同](PLUGIN_IO_OWNERSHIP.md)：泛型 IoWorker 保留原审计 Session、签名器和数据库租约，独立准入 IO 实例并保留 Pool 根；实际审计 Storage＋本机 HTTP 已验。下一步将这一能力接入主应用的可恢复任务状态机，明确存储在线程中时的操作限制；禁止另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。
 3. 私有管理协议提供短响应的 start／poll／read／cancel；不得让长期请求堵住当前串行 Flutter 通道。使用原 Manager／实例／IoBinding，再解析 Store 中的端点批准并恢复系统凭据。Ready 读取仍需最后一次授权检查；未知结果不自动重发。
 4. 验证真实主应用输入→批准→网络效果→撤销→重启核对，再扩展服务发布、文件系统与三语言 SDK。当前纯 InlineUi 不接受 IO 声明包，不能用普通表单测试替代实际 IO 执行验收。
 

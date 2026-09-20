@@ -4,6 +4,8 @@
 
 ## 结构
 
+需要保留审计签名器、数据库锁和其它原生状态的宿主，可以通过 `IoWorker<O>` 与 `spawn_managed_owned` 移交完整 `HostOwner`。异常退出通过 `try_reclaim` 取回原容器及独立执行／断连／维护结果，不重建运行时；详见[所有权合同](PLUGIN_IO_OWNERSHIP.md)。原默认入口保持兼容。
+
 `plugin_runtime::io_jobs`：
 
 - `IoWorker::spawn_managed(manager, host, instance, binding, clock, capacity, limits)`：在移交前核对真实 Manager、Host、完整 ManagedInstance 与 IoBinding；工作线程持有完整实例，Manager 留宿主侧，可在同步路由阻塞期间直接撤权。
