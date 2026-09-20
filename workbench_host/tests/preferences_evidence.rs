@@ -60,7 +60,7 @@ fn original(h: &Workbench, op: &str) -> Evidence {
     e.remove(0)
 }
 fn configure(h: &mut Workbench, enabled: bool) {
-    let s = h.plugin_status();
+    let s = h.plugin_status().unwrap();
     h.configure_plugin(s.revision, &s.digest, enabled).unwrap();
 }
 fn assert_pages(e: &Evidence, prefs: &Preferences) {

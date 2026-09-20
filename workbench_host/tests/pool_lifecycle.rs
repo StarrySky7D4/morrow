@@ -46,7 +46,7 @@ fn event(generation: u64, revision: u64, serial: u64, text: &str) -> Vec<u8> {
     .unwrap()
 }
 fn configure(host: &mut Workbench, enabled: bool) {
-    let s = host.plugin_status();
+    let s = host.plugin_status().unwrap();
     host.configure_plugin(s.revision, &s.digest, enabled)
         .unwrap();
 }
@@ -150,7 +150,7 @@ fn actual_content_and_online_ui_share_lifecycle_without_crossing_content_revisio
         host.query("概览", "全部", "", "最近添加").unwrap(),
         ["card"]
     );
-    host.ui_close(first.generation);
+    host.ui_close(first.generation).unwrap();
     assert!(
         host.writable(),
         "closing a view must not close the content session"
@@ -168,7 +168,7 @@ fn disable_reenable_and_stale_close_cannot_reuse_old_ui_authority() {
     let mut host = Workbench::open_managed(dir.path(), Some(package())).unwrap();
     host.create("seed", common::idea("card")).unwrap();
     let first = host.ui_open("first").unwrap();
-    let s = host.plugin_status();
+    let s = host.plugin_status().unwrap();
     assert!(
         host.configure_plugin(s.revision + 1, &s.digest, false)
             .is_err()
@@ -191,7 +191,7 @@ fn disable_reenable_and_stale_close_cannot_reuse_old_ui_authority() {
     configure(&mut host, true);
     let second = host.ui_open("second").unwrap();
     assert!(second.generation > first.generation);
-    host.ui_close(first.generation);
+    host.ui_close(first.generation).unwrap();
     assert!(
         host.ui_event(second.generation, &event(second.generation, 1, 1, "fresh"))
             .unwrap()
@@ -207,7 +207,7 @@ fn disable_reenable_and_stale_close_cannot_reuse_old_ui_authority() {
     drop(host);
     let mut host = Workbench::open_managed(dir.path(), Some(package())).unwrap();
     assert!(!host.writable());
-    assert!(!host.plugin_status().enabled);
+    assert!(!host.plugin_status().unwrap().enabled);
     assert_eq!(host.read("card").unwrap().revision, 1);
     configure(&mut host, true);
     assert_eq!(favorite(&mut host, 1, "after-restart").unwrap().revision, 2);

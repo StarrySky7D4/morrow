@@ -1,6 +1,6 @@
 //! Qualification adapter only. The normal query transport does not persist these archives.
 use crate::test_common as common;
-use crate::{Result, Workbench, command, now, query_plan};
+use crate::{Result, Workbench, WorkbenchState, command, now, query_plan};
 use morrow_core::{
     content::CardRecord,
     lifecycle::{GrantKind, InstancePhase},
@@ -31,7 +31,7 @@ fn part_type(phase: query_plan::Phase) -> &'static str {
     }
 }
 struct Capture<'a> {
-    host: &'a mut Workbench,
+    host: &'a mut WorkbenchState,
     snapshot: CardReadSnapshot,
     pending: std::vec::IntoIter<FrozenCard>,
     eof: bool,
@@ -41,12 +41,13 @@ struct Capture<'a> {
 }
 impl Capture<'_> {
     fn append(&mut self, kind: &str, raw: &[u8]) -> Result<()> {
-        self.host
-            .host
-            .local_mut()
-            .unwrap()
-            .store_local_mut()
-            .append_read_archive(SUBJECT, OPERATION, self.ordinal, kind, raw)?;
+        self.host.host.store_local_mut().append_read_archive(
+            SUBJECT,
+            OPERATION,
+            self.ordinal,
+            kind,
+            raw,
+        )?;
         self.ordinal += 1;
         Ok(())
     }
@@ -58,7 +59,7 @@ impl query_plan::Backend for Capture<'_> {
                 let idea = if entry.card().summary().type_id == "org.morrow.idea" {
                     self.host.grant(entry.id(), GrantKind::ReadContent)?;
                     let start = self.host.start;
-                    let result = self.host.host.local_mut().unwrap().read_snapshot_content(
+                    let result = self.host.host.read_snapshot_content(
                         self.host
                             .pool
                             .root(self.host.plugin.as_ref().unwrap())?
@@ -68,7 +69,7 @@ impl query_plan::Backend for Capture<'_> {
                         || now(start),
                     );
                     self.host.revoke(entry.id(), GrantKind::ReadContent)?;
-                    Some(Workbench::decode(&result?)?.idea)
+                    Some(WorkbenchState::decode(&result?)?.idea)
                 } else {
                     None
                 };
@@ -108,7 +109,7 @@ impl query_plan::Backend for Capture<'_> {
         )?;
         let captured = self.host.pool.record_transform_observation(
             self.host.manager.as_ref().unwrap(),
-            self.host.host.local_mut().unwrap(),
+            &mut self.host.host,
             self.host.plugin.as_ref().unwrap(),
             &input,
             self.remaining,
@@ -212,7 +213,7 @@ fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u6
                     source.update(fact.commit_sha256);
                     source_count += 1;
                     if s.type_id == "org.morrow.idea" {
-                        candidates.push(Workbench::decode(&card)?.idea);
+                        candidates.push(WorkbenchState::decode(&card)?.idea);
                     }
                 }
                 kind => {
@@ -290,13 +291,12 @@ fn qualify(count: usize) {
     let source = dir.path().join("source");
     std::fs::create_dir(&source).unwrap();
     let db = source.join("workbench.db");
-    let mut host = Workbench::open(&db, Some(common::package())).unwrap();
+    let mut workbench = Workbench::open(&db, Some(common::package())).unwrap();
+    let host = workbench.local_state_mut().unwrap();
     for i in 0..count {
         let mut idea = common::idea(&format!("card-{i:03}"));
         idea.title = format!("Title {:03}", count - i);
         host.host
-            .local_mut()
-            .unwrap()
             .store_local_mut()
             .create_local(
                 &format!("seed-{i}"),
@@ -311,14 +311,8 @@ fn qualify(count: usize) {
             )
             .unwrap();
     }
-    host.host.local_mut().unwrap().flush_pending().unwrap();
-    let snapshot = host
-        .host
-        .local()
-        .unwrap()
-        .store_local()
-        .open_card_snapshot()
-        .unwrap();
+    host.host.flush_pending().unwrap();
+    let snapshot = host.host.store_local().open_card_snapshot().unwrap();
     let point = snapshot.readpoint().clone();
     let mut request = command(Action::Query);
     request.section = "概览".into();
@@ -331,8 +325,6 @@ fn qualify(count: usize) {
         sort: request.sort.clone(),
     };
     host.host
-        .local_mut()
-        .unwrap()
         .store_local_mut()
         .begin_read_archive(&Plan {
             operation_id: OPERATION.into(),
@@ -348,7 +340,7 @@ fn qualify(count: usize) {
         .unwrap();
     let package = host.bundle.as_ref().unwrap().archive().to_vec();
     let mut capture = Capture {
-        host: &mut host,
+        host,
         snapshot,
         pending: vec![].into_iter(),
         eof: false,
@@ -372,8 +364,6 @@ fn qualify(count: usize) {
     }
     let status = host
         .host
-        .local()
-        .unwrap()
         .store_local()
         .lookup_read_archive(SUBJECT, OPERATION)
         .unwrap()
@@ -381,8 +371,6 @@ fn qualify(count: usize) {
     assert!(status.root.is_none());
     assert!(
         host.host
-            .local()
-            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, OPERATION)
             .unwrap()
@@ -407,19 +395,13 @@ fn qualify(count: usize) {
         .unwrap()
         .connection();
     assert_eq!(
-        host.host
-            .local()
-            .unwrap()
-            .connection_phase(connection)
-            .unwrap(),
+        host.host.connection_phase(connection).unwrap(),
         InstancePhase::Ready
     );
     let manager = host.manager.as_ref().unwrap();
     let pool = &host.pool;
     let session = host.plugin.as_ref().unwrap();
     host.host
-        .local_mut()
-        .unwrap()
         .store_local_mut()
         .finish_read_archive_local_authorized(
             SUBJECT,
@@ -458,19 +440,17 @@ fn qualify(count: usize) {
             },
         )
         .unwrap();
-    host.host.local_mut().unwrap().flush_pending().unwrap();
+    host.host.flush_pending().unwrap();
     let backup = dir.path().join("query.morrowbackup");
     host.backup_snapshot(&backup).unwrap();
     let original = host
         .host
-        .local()
-        .unwrap()
         .store_local()
         .lookup_read(SUBJECT, OPERATION)
         .unwrap()
         .unwrap();
-    host.finish().unwrap();
-    drop(host);
+    workbench.finish().unwrap();
+    drop(workbench);
     // Only this test's validated temporary source is removed, including its own credentials.
     assert!(source.starts_with(dir.path()) && source.file_name().unwrap() == "source");
     std::fs::remove_dir_all(&source).unwrap();

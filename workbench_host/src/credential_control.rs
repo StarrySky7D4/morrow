@@ -1,5 +1,5 @@
 //! Trusted application administration. Only redacted metadata crosses back to UI.
-use crate::{Result, Workbench};
+use crate::{Result, Workbench, WorkbenchState};
 use morrow_core::outbound_authority::{Record, proto::record::Kind};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -37,9 +37,8 @@ fn reference(bytes: &[u8]) -> Result<[u8; 32]> {
     }
     Ok(value)
 }
-impl Workbench {
+impl WorkbenchState {
     pub fn credential_page(&mut self, after: &[u8], snapshot: &[u8]) -> Result<CredentialPage> {
-        self.host.local()?;
         let after = (!after.is_empty()).then(|| reference(after)).transpose()?;
         let snapshot = (!snapshot.is_empty())
             .then(|| {
@@ -50,7 +49,6 @@ impl Workbench {
             .transpose()?;
         let page = self
             .host
-            .local_mut()?
             .store_local_mut()
             .list_outbound_authorities_local(after, snapshot, 16)?;
         Ok(CredentialPage {
@@ -74,7 +72,6 @@ impl Workbench {
         header_value: &str,
         lifetime_days: u32,
     ) -> Result<CredentialInfo> {
-        self.host.local()?;
         #[cfg(not(target_os = "windows"))]
         {
             let _ = (
@@ -106,7 +103,6 @@ impl Workbench {
                     if candidate != [0; 32]
                         && self
                             .host
-                            .local()?
                             .store_local()
                             .load_outbound_authority(&candidate)?
                             .is_none()
@@ -120,7 +116,6 @@ impl Workbench {
                 let key = reference(requested_reference)?;
                 let previous = self
                     .host
-                    .local()?
                     .store_local()
                     .load_outbound_authority(&key)?
                     .ok_or("credential not found")?;
@@ -144,7 +139,6 @@ impl Workbench {
             )?;
             self.host.prepare_write()?;
             self.host
-                .local_mut()?
                 .store_local_mut()
                 .save_outbound_authority_local(&record, expected_revision)?;
             info(&record)
@@ -157,11 +151,9 @@ impl Workbench {
         key: &[u8],
         expected_revision: u64,
     ) -> Result<CredentialInfo> {
-        self.host.local()?;
         let key = reference(key)?;
         let record = self
             .host
-            .local()?
             .store_local()
             .load_outbound_authority(&key)?
             .ok_or("credential not found")?;
@@ -181,9 +173,38 @@ impl Workbench {
         let disabled = Record::encode(value)?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_outbound_authority_local(&disabled, expected_revision)?;
         info(&disabled)
+    }
+}
+
+impl Workbench {
+    pub fn credential_page(&mut self, after: &[u8], snapshot: &[u8]) -> Result<CredentialPage> {
+        self.local_state_mut()?.credential_page(after, snapshot)
+    }
+    pub fn save_credential(
+        &mut self,
+        requested_reference: &[u8],
+        expected_revision: u64,
+        header_name: &str,
+        header_value: &str,
+        lifetime_days: u32,
+    ) -> Result<CredentialInfo> {
+        self.local_state_mut()?.save_credential(
+            requested_reference,
+            expected_revision,
+            header_name,
+            header_value,
+            lifetime_days,
+        )
+    }
+    pub fn disable_credential(
+        &mut self,
+        key: &[u8],
+        expected_revision: u64,
+    ) -> Result<CredentialInfo> {
+        self.local_state_mut()?
+            .disable_credential(key, expected_revision)
     }
 }

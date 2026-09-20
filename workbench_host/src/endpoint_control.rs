@@ -1,5 +1,5 @@
 //! Trusted application policy administration; saving never creates a live grant.
-use crate::{Result, Workbench};
+use crate::{Result, Workbench, WorkbenchState};
 use morrow_core::{
     outbound_authority::{
         Record, WINDOWS_DPAPI_PROVIDER,
@@ -51,9 +51,8 @@ fn reference(bytes: &[u8]) -> Result<[u8; 32]> {
     }
     Ok(value)
 }
-impl Workbench {
+impl WorkbenchState {
     pub fn endpoint_page(&mut self, after: &[u8], snapshot: &[u8]) -> Result<EndpointPage> {
-        self.host.local()?;
         let after = (!after.is_empty()).then(|| reference(after)).transpose()?;
         let snapshot = (!snapshot.is_empty())
             .then(|| snapshot.try_into().map_err(|_| "invalid endpoint snapshot"))
@@ -61,7 +60,6 @@ impl Workbench {
         // Two full policies, including DER roots, fit the bounded host frame.
         let page = self
             .host
-            .local_mut()?
             .store_local_mut()
             .list_outbound_authorities_local(after, snapshot, 2)?;
         Ok(EndpointPage {
@@ -77,7 +75,6 @@ impl Workbench {
     }
 
     pub fn save_endpoint(&mut self, update: EndpointUpdate) -> Result<EndpointInfo> {
-        self.host.local()?;
         if !(1..=30).contains(&update.lifetime_days) {
             return Err("endpoint lifetime must be between 1 and 30 days".into());
         }
@@ -97,7 +94,6 @@ impl Workbench {
                 if candidate != [0; 32]
                     && self
                         .host
-                        .local()?
                         .store_local()
                         .load_outbound_authority(&candidate)?
                         .is_none()
@@ -111,7 +107,6 @@ impl Workbench {
             let key = reference(&update.reference)?;
             let previous = self
                 .host
-                .local()?
                 .store_local()
                 .load_outbound_authority(&key)?
                 .ok_or("endpoint not found")?;
@@ -175,7 +170,6 @@ impl Workbench {
             let key = reference(&policy.credential_reference)?;
             let credential = self
                 .host
-                .local()?
                 .store_local()
                 .load_outbound_authority(&key)?
                 .ok_or("credential not found")?;
@@ -193,18 +187,15 @@ impl Workbench {
         }
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_outbound_authority_local(&record, update.expected_revision)?;
         Ok(result)
     }
 
     pub fn disable_endpoint(&mut self, key: &[u8], expected_revision: u64) -> Result<EndpointInfo> {
-        self.host.local()?;
         let key = reference(key)?;
         let record = self
             .host
-            .local()?
             .store_local()
             .load_outbound_authority(&key)?
             .ok_or("endpoint not found")?;
@@ -224,7 +215,6 @@ impl Workbench {
         let disabled = Record::encode(value)?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_outbound_authority_local(&disabled, expected_revision)?;
         info(&disabled)
@@ -259,13 +249,23 @@ mod tests {
         w.import_plugin(
             &path,
             &package.digest(),
-            w.manager.as_ref().unwrap().revision(),
+            w.local_state()
+                .unwrap()
+                .manager
+                .as_ref()
+                .unwrap()
+                .revision(),
         )
         .unwrap();
         w.configure_external_io(
             &package.manifest().package_id,
             &package.digest(),
-            w.manager.as_ref().unwrap().revision(),
+            w.local_state()
+                .unwrap()
+                .manager
+                .as_ref()
+                .unwrap()
+                .revision(),
             &["http-request".into(), "credential-use".into()],
         )
         .unwrap();
@@ -295,7 +295,13 @@ mod tests {
         EndpointUpdate {
             reference,
             expected_revision,
-            registry_revision: w.manager.as_ref().unwrap().revision(),
+            registry_revision: w
+                .local_state()
+                .unwrap()
+                .manager
+                .as_ref()
+                .unwrap()
+                .revision(),
             lifetime_days: 1,
             policy,
         }
@@ -308,9 +314,9 @@ mod tests {
             .save_endpoint(update(&w, policy.clone(), vec![], 0))
             .unwrap();
         let lease = w
-            .host
-            .local_mut()
+            .local_state_mut()
             .unwrap()
+            .host
             .store_local_mut()
             .pin_service_authority()
             .unwrap();
@@ -324,9 +330,9 @@ mod tests {
             .unwrap();
         assert!(lease.check().is_err());
         let lease = w
-            .host
-            .local_mut()
+            .local_state_mut()
             .unwrap()
+            .host
             .store_local_mut()
             .pin_service_authority()
             .unwrap();
@@ -359,10 +365,10 @@ mod tests {
         })
         .unwrap();
         assert!(morrow_audit::credentials::open(&record).is_err());
-        w.host.prepare_write().unwrap();
-        w.host
-            .local_mut()
+        w.local_state_mut().unwrap().host.prepare_write().unwrap();
+        w.local_state_mut()
             .unwrap()
+            .host
             .store_local_mut()
             .save_outbound_authority_local(&record, 0)
             .unwrap();
@@ -378,7 +384,7 @@ mod tests {
         use capnp::{message::Builder, serialize};
         let dir = tempfile::tempdir().unwrap();
         let (mut w, policy) = setup(dir.path());
-        w.host.prepare_write().unwrap();
+        w.local_state_mut().unwrap().host.prepare_write().unwrap();
         for byte in 1..=3u8 {
             let mut historical = policy.clone();
             // Core-valid historical metadata, deliberately not valid DER. Reading
@@ -395,9 +401,9 @@ mod tests {
                 kind: Some(Kind::Endpoint(historical)),
             })
             .unwrap();
-            w.host
-                .local_mut()
+            w.local_state_mut()
                 .unwrap()
+                .host
                 .store_local_mut()
                 .save_outbound_authority_local(&record, 0)
                 .unwrap();
@@ -449,5 +455,18 @@ mod tests {
         assert!(cursor.is_empty());
         assert_eq!(seen, [1, 2, 3]);
         assert_eq!(w.endpoint_page(&[], &[]).unwrap().snapshot, before);
+    }
+}
+
+impl Workbench {
+    pub fn endpoint_page(&mut self, after: &[u8], snapshot: &[u8]) -> Result<EndpointPage> {
+        self.local_state_mut()?.endpoint_page(after, snapshot)
+    }
+    pub fn save_endpoint(&mut self, update: EndpointUpdate) -> Result<EndpointInfo> {
+        self.local_state_mut()?.save_endpoint(update)
+    }
+    pub fn disable_endpoint(&mut self, key: &[u8], expected_revision: u64) -> Result<EndpointInfo> {
+        self.local_state_mut()?
+            .disable_endpoint(key, expected_revision)
     }
 }

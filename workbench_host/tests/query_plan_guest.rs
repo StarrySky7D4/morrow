@@ -183,11 +183,11 @@ fn empty_query_checks_live_plugin_and_read_capability_and_invalid_conditions() {
     );
     assert!(host.query("not-a-section", "全部", "", "最近添加").is_err());
     assert!(host.query("概览", "全部", "", "not-a-sort").is_err());
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     host.configure_plugin(status.revision, &status.digest, false)
         .unwrap();
     assert!(host.query("概览", "全部", "", "最近添加").is_err());
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     host.configure_plugin(status.revision, &status.digest, true)
         .unwrap();
     assert!(
@@ -204,6 +204,6 @@ fn empty_query_checks_live_plugin_and_read_capability_and_invalid_conditions() {
         .retain(|v| *v != Capability::ReadContent as i32);
     let package = Package::build(manifest, original.module()).unwrap();
     let mut host = Workbench::open(&no_read.join("db"), Some(package)).unwrap();
-    assert!(host.plugin_status().enabled);
+    assert!(host.plugin_status().unwrap().enabled);
     assert!(host.query("概览", "全部", "", "最近添加").is_err());
 }

@@ -159,3 +159,9 @@
 原Manager随owner移动后，现在可通过原执行者的类型化续租命令更新同一运行租约。该入口共用8项保留容量和外部续租的身份/修订/CAS规则；待完成、明确拒绝、成功和Unknown分别处理。取消与CAS串行化，已更新账本不因回执丢失回滚。Windows同一监听器以两个不同持久请求身份完成真实HTTP/Wasm执行，第二次在旧期限之后、更新期限之内，原Store两条Observed记录与保护身份均保留；详见[内部续租报告](../reports/owned-service-renewal-2026-09-20.md)。
 
 上一节的内部续租缺口已关闭。下一项：完整WorkbenchState提取（原Storage/Pool/Manager/内容会话/undo/附件导入暂存/capture）→ 内容与批准/撤权等应用管理命令接入 → 长IO等待可暂停 → 主应用启动/停止/恢复与真实用户路径。socket关闭、授权撤销与worker回收仍是独立步骤，应用关闭流程必须分别完成。主应用内容Busy、Unknown持久证据核对、完整文件系统和三语言IO SDK稳定门槛仍未完成；IO-D2b/IO-E2保持进行中。
+
+## 完整工作台状态提取（2026-09-20）
+
+原业务状态已集中到WorkbenchState，直接持有Storage/Pool/Manager/内容及UI会话/undo/附件与上传暂存/capture。短IO从移动Storage改为移动完整State；外围仅持有StateSlot和HTTP提交关联。原内容、查询与证据提交实现迁到State，并由外围显式借用转发。短任务封存与最终应用清理分离，线程回收不关闭编辑器或Pool根。验证细节见[状态报告](../reports/workbench-state-2026-09-20.md)。
+
+这关闭了“Pool/Manager和编辑状态仍在另一个线程”的结构缺口。后台业务调用当前仍返回Busy：下一项要在同一个State上建立有界业务/管理命令与原协议派发，接入常驻节点准入，再实现可暂停长IO和主应用启动/停止/恢复。不能把本次提取标作服务期间编辑已可用，也不能以外围缓存或第二份Store替代后续接线。IO-D2b/IO-E2、Unknown证据核对、文件系统和完整三语言SDK继续进行中。

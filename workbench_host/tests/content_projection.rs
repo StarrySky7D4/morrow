@@ -72,7 +72,7 @@ fn checked(h: &Workbench, path: &Path, op: &str) -> Evidence {
     e
 }
 fn configure(h: &mut Workbench, on: bool) {
-    let s = h.plugin_status();
+    let s = h.plugin_status().unwrap();
     h.configure_plugin(s.revision, &s.digest, on).unwrap();
 }
 fn varint(mut n: usize) -> Vec<u8> {

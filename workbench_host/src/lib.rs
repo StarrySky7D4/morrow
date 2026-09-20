@@ -54,7 +54,12 @@ pub struct Mutation<'a> {
 }
 pub struct Workbench {
     http_tasks: http_tasks::HttpTasks,
-    host: crate::io_tasks::StorageSlot,
+    state: crate::io_tasks::StateSlot,
+}
+
+/// All authoritative business state moves together; no worker handle lives here.
+pub(crate) struct WorkbenchState {
+    host: storage::Storage,
     plugin: Option<Session>,
     pool: Pool,
     manager: Option<Manager>,
@@ -94,7 +99,7 @@ fn now(start: Instant) -> u64 {
         .unwrap_or(u64::MAX - 1)
         .saturating_add(1)
 }
-impl Workbench {
+impl WorkbenchState {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
         Self::with_storage(
             storage::Storage::open(path)?,
@@ -171,8 +176,7 @@ impl Workbench {
         let mut query_owner = [0; 32];
         getrandom::fill(&mut query_owner)?;
         let mut workbench = Self {
-            host: crate::io_tasks::StorageSlot::new(host),
-            http_tasks: Default::default(),
+            host,
             plugin,
             pool,
             manager,
@@ -197,38 +201,31 @@ impl Workbench {
         Ok(workbench)
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
-        self.host.local()?.backup_snapshot(destination)
+        self.host.backup_snapshot(destination)
     }
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
-        self.host.local()?.backup_key(destination)
+        self.host.backup_key(destination)
     }
     pub fn maintenance_warning(&self) -> Option<&str> {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
-        self.host.request_stop();
-        self.host.try_reclaim()?;
-        // A stop request is not thread completion. Keep the original Pool
-        // leases until its Runtime has actually returned.
-        self.host.local()?;
         if let Some(mut external) = self.external_ui.take() {
             external.ui.close();
         }
         if let Some(mut ui) = self.ui.take() {
             ui.close();
         }
-        let closed = self.pool.close_all(self.host.local_mut()?);
+        let closed = self.pool.close_all(&mut self.host);
         self.plugin = None;
         self.capture_scopes.clear();
         // Disconnecting instances must not prevent a pending durable audit flush attempt.
-        let flushed = self.host.finish_maintenance();
+        let flushed = self.host.flush_pending();
         closed?;
         flushed
     }
     pub fn writable(&self) -> bool {
-        let Ok(host) = self.host.local() else {
-            return false;
-        };
+        let host = &self.host;
         self.host.warning().is_none()
             && self.plugin_status().approved
             && self.plugin.as_ref().is_some_and(|session| {
@@ -261,7 +258,7 @@ impl Workbench {
     fn grant(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         let time = now(self.start);
         self.pool.grant_root(
-            self.host.local_mut()?,
+            &mut self.host,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
@@ -272,7 +269,7 @@ impl Workbench {
     }
     fn revoke(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         self.pool.revoke_root(
-            self.host.local_mut()?,
+            &mut self.host,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
@@ -288,7 +285,6 @@ impl Workbench {
         input: Request,
         capture: bool,
     ) -> Result<(Response, Option<morrow_core::task_evidence::Evidence>)> {
-        self.host.local()?;
         self.counter = self
             .counter
             .checked_add(1)
@@ -307,7 +303,7 @@ impl Workbench {
             self.pool
                 .record_transform(
                     self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                    self.host.local_mut()?,
+                    &mut self.host,
                     self.plugin.as_ref().ok_or("plugin unavailable")?,
                     &task,
                 )
@@ -319,7 +315,7 @@ impl Workbench {
             self.pool
                 .run_task(
                     self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                    self.host.local_mut()?,
+                    &mut self.host,
                     self.plugin.as_ref().ok_or("plugin unavailable")?,
                     &task,
                     || now(start),
@@ -352,27 +348,15 @@ impl Workbench {
     }
     /// Trusted local UI projection, independent of plugin availability. No mutation.
     pub fn read(&self, id: &str) -> Result<Record> {
-        Self::decode(
-            &self
-                .host
-                .local()?
-                .store_local()
-                .card(id)?
-                .ok_or("card not found")?,
-        )
+        Self::decode(&self.host.store_local().card(id)?.ok_or("card not found")?)
     }
     pub fn page(&self, after: &str, limit: u32) -> Result<(Vec<Record>, String)> {
-        let ids = self
-            .host
-            .local()?
-            .store_local()
-            .card_ids_local(after, limit)?;
+        let ids = self.host.store_local().card_ids_local(after, limit)?;
         let cursor = ids.last().cloned().unwrap_or_default();
         let mut result = Vec::new();
         for id in ids {
             let card = self
                 .host
-                .local()?
                 .store_local()
                 .card(&id)?
                 .ok_or("card disappeared")?;
@@ -385,7 +369,7 @@ impl Workbench {
     fn authorized_read(&mut self, id: &str) -> Result<CardRecord> {
         self.grant(id, GrantKind::ReadContent)?;
         let start = self.start;
-        let result = self.host.local_mut()?.read_content(
+        let result = self.host.read_content(
             self.pool
                 .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                 .connection(),
@@ -426,7 +410,6 @@ impl Workbench {
         let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
         let blob = self
             .host
-            .local_mut()?
             .store_local_mut()
             .stage_blob(reader, size, None, clock)?;
         let id = format!("asset-{}", blob.id);
@@ -537,18 +520,12 @@ impl Workbench {
         writer: &mut impl std::io::Write,
     ) -> Result<()> {
         self.host
-            .local()?
             .store_local()
             .export_attachment_local(card, attachment, writer)?;
         Ok(())
     }
     pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
-        let Some(card) = self
-            .host
-            .local()?
-            .store_local()
-            .card("morrow-studio-preferences")?
-        else {
+        let Some(card) = self.host.store_local().card("morrow-studio-preferences")? else {
             return Ok(None);
         };
         if card.summary().type_id != "org.morrow.studio" || card.summary().format_version != 1 {
@@ -585,7 +562,6 @@ impl Workbench {
         output_type: &str,
         input: Vec<u8>,
     ) -> Result<Vec<u8>> {
-        self.host.local()?;
         self.counter = self
             .counter
             .checked_add(1)
@@ -602,7 +578,7 @@ impl Workbench {
         let start = self.start;
         let result = self.pool.run_task(
             self.manager.as_ref().ok_or("plugin manager unavailable")?,
-            self.host.local_mut()?,
+            &mut self.host,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
@@ -625,15 +601,12 @@ impl Workbench {
         Ok(out.bytes)
     }
 }
-impl Drop for Workbench {
+impl Drop for WorkbenchState {
     fn drop(&mut self) {
-        self.host.request_stop();
         if let Some(mut ui) = self.ui.take() {
             ui.close();
         }
-        if let Ok(host) = self.host.local_mut() {
-            let _ = self.pool.close_all(host);
-        }
+        let _ = self.pool.close_all(&mut self.host);
         self.plugin = None;
         self.capture_scopes.clear();
     }
@@ -727,3 +700,123 @@ mod http_tasks_tests;
 #[cfg(all(test, target_os = "windows"))]
 #[path = "../tests/common/mod.rs"]
 mod test_common;
+
+impl Workbench {
+    pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
+        self.local_state()?.backup_snapshot(destination)
+    }
+    pub fn backup_key(&self, destination: &Path) -> Result<()> {
+        self.local_state()?.backup_key(destination)
+    }
+    pub fn writable(&self) -> bool {
+        self.state.require_writable().is_ok()
+            && self.local_state().is_ok_and(WorkbenchState::writable)
+    }
+    #[cfg(test)]
+    fn prepare_write(&mut self) -> Result<()> {
+        self.local_state_mut()?.prepare_write()
+    }
+    pub fn read(&self, id: &str) -> Result<Record> {
+        self.local_state()?.read(id)
+    }
+    pub fn page(&self, after: &str, limit: u32) -> Result<(Vec<Record>, String)> {
+        self.local_state()?.page(after, limit)
+    }
+    pub fn import(
+        &mut self,
+        card: &str,
+        name: &str,
+        kind: &str,
+        reader: &mut impl std::io::Read,
+        size: u64,
+    ) -> Result<Asset> {
+        self.local_state_mut()?
+            .import(card, name, kind, reader, size)
+    }
+    pub fn create(&mut self, operation: &str, draft: Idea) -> Result<Record> {
+        self.local_state_mut()?.create(operation, draft)
+    }
+    pub fn apply(&mut self, mutation: Mutation<'_>) -> Result<Record> {
+        self.local_state_mut()?.apply(mutation)
+    }
+    pub fn export(
+        &self,
+        card: &str,
+        attachment: &str,
+        writer: &mut impl std::io::Write,
+    ) -> Result<()> {
+        self.local_state()?.export(card, attachment, writer)
+    }
+    pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
+        self.local_state()?.read_preferences()
+    }
+    pub fn save_preferences(&mut self, operation: &str, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.local_state_mut()?.save_preferences(operation, input)
+    }
+    pub fn capture(&mut self, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.local_state_mut()?.capture(input)
+    }
+    pub fn service(&mut self, input: Vec<u8>) -> Result<Vec<u8>> {
+        self.local_state_mut()?.service(input)
+    }
+}
+
+impl Workbench {
+    pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
+        Ok(Self {
+            http_tasks: Default::default(),
+            state: io_tasks::StateSlot::new(WorkbenchState::open(path, package)?),
+        })
+    }
+    pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
+        Ok(Self {
+            http_tasks: Default::default(),
+            state: io_tasks::StateSlot::new(WorkbenchState::open_managed(root, package)?),
+        })
+    }
+    pub(crate) fn local_state(&self) -> Result<&WorkbenchState> {
+        self.state.local()
+    }
+    pub(crate) fn local_state_mut(&mut self) -> Result<&mut WorkbenchState> {
+        self.state.require_writable()?;
+        self.state.local_mut()
+    }
+    pub fn maintenance_warning(&self) -> Option<&str> {
+        self.state.warning().or_else(|| {
+            self.state
+                .local()
+                .ok()
+                .and_then(WorkbenchState::maintenance_warning)
+        })
+    }
+    pub fn finish(&mut self) -> Result<()> {
+        self.state.request_stop();
+        self.state.try_reclaim()?;
+        self.state.local_mut()?.finish()
+    }
+}
+impl Drop for Workbench {
+    fn drop(&mut self) {
+        self.state.request_stop();
+    }
+}
+impl morrow_plugin_runtime::io_jobs::HostOwner for WorkbenchState {
+    fn runtime(&self) -> &morrow_core::dispatch::HostRuntime {
+        &self.host
+    }
+    fn runtime_mut(&mut self) -> &mut morrow_core::dispatch::HostRuntime {
+        &mut self.host
+    }
+    fn prepare_io(&mut self) -> std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError> {
+        morrow_plugin_runtime::io_jobs::HostOwner::prepare_io(&mut self.host)
+    }
+    fn finish_io(&mut self) -> std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError> {
+        // A short IO exit seals storage; it must not close content/editor sessions.
+        morrow_plugin_runtime::io_jobs::HostOwner::finish_io(&mut self.host)
+    }
+}
+impl morrow_plugin_runtime::io_jobs::ManagedHostOwner for WorkbenchState {
+    fn manager(&self) -> Option<&Manager> {
+        self.manager.as_ref()
+    }
+}

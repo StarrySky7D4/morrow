@@ -1,6 +1,6 @@
 //! Durable query intent and successful actual-run archive. Ready records a committed
 //! result, not UI delivery. A lost snapshot is interrupted, never resumed on new data.
-use crate::{Result, Workbench, command, now, query_plan};
+use crate::{Result, Workbench, WorkbenchState, command, now, query_plan};
 use morrow_core::{
     lifecycle::{GrantKind, InstancePhase},
     read_archive::{Budget, Finish, Plan},
@@ -57,7 +57,7 @@ fn part_type(phase: query_plan::Phase) -> &'static str {
     }
 }
 struct Capture<'a> {
-    host: &'a mut Workbench,
+    host: &'a mut WorkbenchState,
     snapshot: CardReadSnapshot,
     state: State,
     pending: std::vec::IntoIter<FrozenCard>,
@@ -70,19 +70,14 @@ impl Capture<'_> {
     fn append(&mut self, kind: &str, raw: &[u8]) -> Result<()> {
         // Any uncertain write stops capture. The outer boundary resolves the durable
         // state before ending it, so no new source/ordinal is guessed after an error.
-        self.state = self
-            .host
-            .host
-            .local_mut()?
-            .store_local_mut()
-            .append_read_capture(
-                SUBJECT,
-                &self.state.plan().operation_id,
-                &self.state.token(),
-                self.ordinal,
-                kind,
-                raw,
-            )?;
+        self.state = self.host.host.store_local_mut().append_read_capture(
+            SUBJECT,
+            &self.state.plan().operation_id,
+            &self.state.token(),
+            self.ordinal,
+            kind,
+            raw,
+        )?;
         self.ordinal = self
             .ordinal
             .checked_add(1)
@@ -98,7 +93,7 @@ impl query_plan::Backend for Capture<'_> {
                 let idea = if entry.card().summary().type_id == "org.morrow.idea" {
                     self.host.grant(entry.id(), GrantKind::ReadContent)?;
                     let start = self.host.start;
-                    let result = self.host.host.local_mut()?.read_snapshot_content(
+                    let result = self.host.host.read_snapshot_content(
                         self.host
                             .pool
                             .root(self.host.plugin.as_ref().ok_or("plugin unavailable")?)?
@@ -108,7 +103,7 @@ impl query_plan::Backend for Capture<'_> {
                         || now(start),
                     );
                     self.host.revoke(entry.id(), GrantKind::ReadContent)?;
-                    Some(Workbench::decode(&result?)?.idea)
+                    Some(WorkbenchState::decode(&result?)?.idea)
                 } else {
                     None
                 };
@@ -157,7 +152,7 @@ impl query_plan::Backend for Capture<'_> {
                 .manager
                 .as_ref()
                 .ok_or("plugin manager unavailable")?,
-            self.host.host.local_mut()?,
+            &mut self.host.host,
             self.host.plugin.as_ref().ok_or("plugin unavailable")?,
             &input,
             self.remaining,
@@ -202,11 +197,10 @@ impl query_plan::Backend for Capture<'_> {
         Ok(response)
     }
 }
-impl Workbench {
+impl WorkbenchState {
     pub(crate) fn check_query_access(&mut self) -> Result<()> {
-        self.host.local()?;
         let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
-        self.pool.maintain(manager, self.host.local_mut()?)?;
+        self.pool.maintain(manager, &mut self.host)?;
         let root = self
             .pool
             .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
@@ -217,23 +211,18 @@ impl Workbench {
         if !selection.enabled
             || selection.digest != package.digest()
             || !selection.approved.contains(&GrantKind::ReadContent)
-            || self.host.local()?.connection_phase(root.connection())? != InstancePhase::Ready
+            || self.host.connection_phase(root.connection())? != InstancePhase::Ready
         {
             return Err("query read capability unavailable".into());
         }
         Ok(())
     }
     pub(crate) fn recover_queries(&mut self) -> Result<()> {
-        self.host.local()?;
         // Startup owns the application's library lease. No live in-process query exists.
         // Other capture subjects are not ours to interrupt.
         let mut after = String::new();
         loop {
-            let states = self
-                .host
-                .local()?
-                .store_local()
-                .list_read_captures(&after, 128)?;
+            let states = self.host.store_local().list_read_captures(&after, 128)?;
             if states.is_empty() {
                 break;
             }
@@ -243,7 +232,7 @@ impl Workbench {
                     && state.context_type() == CONTEXT
                     && state.phase() == Phase::Preparing
                 {
-                    self.host.local_mut()?.store_local_mut().end_read_capture(
+                    self.host.store_local_mut().end_read_capture(
                         SUBJECT,
                         &after,
                         &state.token(),
@@ -262,7 +251,6 @@ impl Workbench {
         text: &str,
         sort: &str,
     ) -> Result<Vec<String>> {
-        self.host.local()?;
         let mut nonce = [0; 16];
         getrandom::fill(&mut nonce)?;
         let operation = format!("query-{:032x}", u128::from_le_bytes(nonce));
@@ -276,7 +264,6 @@ impl Workbench {
         text: &str,
         sort: &str,
     ) -> Result<Vec<String>> {
-        self.host.local()?;
         let mut request = command(Action::Query);
         request.section = section.into();
         request.filter = filter.into();
@@ -285,7 +272,6 @@ impl Workbench {
         let bytes = codec::encode_request(&request)?;
         if let Some(state) = self
             .host
-            .local()?
             .store_local()
             .lookup_read_capture(SUBJECT, operation)?
         {
@@ -301,7 +287,7 @@ impl Workbench {
                 Phase::Preparing => {
                     // Synchronous host cannot have another active query on this Workbench.
                     // An earlier unwound call lost its owned snapshot; never rebind it.
-                    self.host.local_mut()?.store_local_mut().end_read_capture(
+                    self.host.store_local_mut().end_read_capture(
                         SUBJECT,
                         operation,
                         &state.token(),
@@ -332,7 +318,6 @@ impl Workbench {
                 // Ready is never demoted because transport/audit flush/permission failed.
                 let lookup = self
                     .host
-                    .local()?
                     .store_local()
                     .lookup_read_capture(SUBJECT, operation);
                 let terminal = match lookup {
@@ -341,7 +326,6 @@ impl Workbench {
                             && state.owner() == self.query_owner =>
                     {
                         self.host
-                            .local_mut()?
                             .store_local_mut()
                             .end_read_capture(
                                 SUBJECT,
@@ -385,11 +369,8 @@ impl Workbench {
     ) -> Result<Vec<String>> {
         self.host.prepare_write()?;
         self.check_query_access()?;
-        let snapshot = self.host.local()?.store_local().open_card_snapshot()?;
-        self.host
-            .local()?
-            .store_local()
-            .validate_card_snapshot(&snapshot)?;
+        let snapshot = self.host.store_local().open_card_snapshot()?;
+        self.host.store_local().validate_card_snapshot(&snapshot)?;
         let point = snapshot.readpoint().clone();
         let package = self.bundle.as_ref().ok_or("plugin unavailable")?;
         let digest = package.digest();
@@ -403,26 +384,22 @@ impl Workbench {
             package_sha256: digest.to_vec(),
             fuel_budget: TOTAL_FUEL,
         };
-        let state = self
-            .host
-            .local_mut()?
-            .store_local_mut()
-            .begin_read_capture(
-                &Plan {
-                    operation_id: operation.into(),
-                    subject: SUBJECT.into(),
-                    request_type: "morrow.workbench.request.v1".into(),
-                    request,
-                    response_type: RESULT.into(),
-                    budget: Budget {
-                        max_parts: 65536,
-                        max_bytes: 4 * 1024 * 1024 * 1024,
-                    },
+        let state = self.host.store_local_mut().begin_read_capture(
+            &Plan {
+                operation_id: operation.into(),
+                subject: SUBJECT.into(),
+                request_type: "morrow.workbench.request.v1".into(),
+                request,
+                response_type: RESULT.into(),
+                budget: Budget {
+                    max_parts: 65536,
+                    max_bytes: 4 * 1024 * 1024 * 1024,
                 },
-                CONTEXT,
-                &context.encode_to_vec(),
-                self.query_owner,
-            )?;
+            },
+            CONTEXT,
+            &context.encode_to_vec(),
+            self.query_owner,
+        )?;
         let mut capture = Capture {
             host: self,
             snapshot,
@@ -442,7 +419,6 @@ impl Workbench {
         self.check_query_access()?;
         let status = self
             .host
-            .local()?
             .store_local()
             .lookup_read_archive(SUBJECT, operation)?
             .ok_or("missing query archive")?;
@@ -463,7 +439,6 @@ impl Workbench {
         let session = self.plugin.as_ref().ok_or("plugin unavailable")?;
         let (ready, _) = self
             .host
-            .local_mut()?
             .store_local_mut()
             .finish_read_capture_local_authorized(
                 SUBJECT,
@@ -502,7 +477,7 @@ impl Workbench {
                     Ok(())
                 },
             )?;
-        self.host.finish_maintenance()?;
+        self.host.flush_pending()?;
         self.deliver_query(&ready)
     }
     fn deliver_query(&mut self, state: &State) -> Result<Vec<String>> {
@@ -511,7 +486,6 @@ impl Workbench {
         self.check_query_access()?;
         let read = self
             .host
-            .local()?
             .store_local()
             .lookup_read(SUBJECT, &state.plan().operation_id)?
             .ok_or("missing committed query")?;
@@ -565,5 +539,30 @@ fn validate_result_wire(mut raw: &[u8]) -> Result<()> {
     }
     Ok(())
 }
+
+impl Workbench {
+    pub fn query(
+        &mut self,
+        section: &str,
+        filter: &str,
+        text: &str,
+        sort: &str,
+    ) -> Result<Vec<String>> {
+        self.local_state_mut()?.query(section, filter, text, sort)
+    }
+
+    pub fn query_with_operation(
+        &mut self,
+        operation: &str,
+        section: &str,
+        filter: &str,
+        text: &str,
+        sort: &str,
+    ) -> Result<Vec<String>> {
+        self.local_state_mut()?
+            .query_with_operation(operation, section, filter, text, sort)
+    }
+}
+
 #[cfg(test)]
 mod tests;

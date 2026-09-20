@@ -1,5 +1,5 @@
 //! Trusted presentation preference: one core-owned record, no Dart side database.
-use crate::{Result, Workbench, now};
+use crate::{Result, Workbench, WorkbenchState, now};
 use morrow_core::{content::CardRecord, content_change::ContentChange, lifecycle::GrantKind};
 use prost::Message;
 mod proto {
@@ -14,9 +14,9 @@ fn validate(locale: &str) -> Result<()> {
     }
     Ok(())
 }
-impl Workbench {
+impl WorkbenchState {
     pub fn read_ui_locale(&self) -> Result<(String, u64)> {
-        let Some(card) = self.host.local()?.store_local().card(ID)? else {
+        let Some(card) = self.host.store_local().card(ID)? else {
             return Ok(("system".into(), 0));
         };
         let summary = card.summary();
@@ -39,7 +39,6 @@ impl Workbench {
         expected_revision: u64,
         locale: &str,
     ) -> Result<u64> {
-        self.host.local()?;
         validate(locale)?;
         let _ = self.read_ui_locale()?; // Never overwrite an unknown/corrupt record.
         self.host.prepare_write()?;
@@ -53,24 +52,18 @@ impl Workbench {
         } else {
             GrantKind::EditContent
         };
-        let mut connection = self.host.local_mut()?.connect()?;
+        let mut connection = self.host.connect()?;
         let start = self.start;
         let result = (|| -> Result<u64> {
             let tick = now(start);
-            self.host.local_mut()?.grant(
-                &mut connection,
-                kind,
-                ID,
-                tick.saturating_add(30_000),
-                tick,
-            )?;
+            self.host
+                .grant(&mut connection, kind, ID, tick.saturating_add(30_000), tick)?;
             let receipt = if expected_revision == 0 {
                 let card = CardRecord::new(ID, TYPE, 1, TITLE, body)?;
                 self.host
-                    .local_mut()?
                     .create_content(&connection, operation, &card, || now(start))?
             } else {
-                self.host.local_mut()?.edit_content(
+                self.host.edit_content(
                     &connection,
                     &ContentChange {
                         operation_id: operation.into(),
@@ -86,11 +79,27 @@ impl Workbench {
             };
             Ok(receipt.revision)
         })();
-        let disconnected = self.host.local_mut()?.disconnect(&connection);
+        let disconnected = self.host.disconnect(&connection);
         let revision = result?;
         disconnected?;
         // A sealing failure cannot turn an already committed locale into an uncommitted result.
-        let _ = self.host.finish_maintenance();
+        let _ = self.host.flush_pending();
         Ok(revision)
+    }
+}
+
+impl Workbench {
+    pub fn read_ui_locale(&self) -> Result<(String, u64)> {
+        self.local_state()?.read_ui_locale()
+    }
+
+    pub fn save_ui_locale(
+        &mut self,
+        operation: &str,
+        expected_revision: u64,
+        locale: &str,
+    ) -> Result<u64> {
+        self.local_state_mut()?
+            .save_ui_locale(operation, expected_revision, locale)
     }
 }

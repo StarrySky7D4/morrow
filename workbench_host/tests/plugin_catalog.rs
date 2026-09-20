@@ -221,14 +221,14 @@ fn external_controls_preserve_builtin_content_and_builtin_switch_preserves_exter
         .external_ui_open(&e.id, &e.digest, revision(&w), "seed")
         .unwrap();
     assert!(w.writable());
-    let status = w.plugin_status();
+    let status = w.plugin_status().unwrap();
     w.configure_plugin(status.revision, &status.digest, false)
         .unwrap();
     let update = w
         .external_ui_event(&e.id, reply.generation, &event(&reply, "survived"))
         .unwrap();
     assert!(update.failure.is_none());
-    let status = w.plugin_status();
+    let status = w.plugin_status().unwrap();
     w.configure_plugin(status.revision, &status.digest, true)
         .unwrap();
     assert!(w.writable());

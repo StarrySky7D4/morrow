@@ -33,6 +33,7 @@ struct Setup {
     app: Workbench,
     package: Package,
     endpoint: EndpointInfo,
+    registry_revision: u64,
     dir: tempfile::TempDir,
 }
 impl Setup {
@@ -61,8 +62,14 @@ impl Setup {
         let package = Package::build(manifest, wasm).unwrap();
         let dir = tempfile::tempdir().unwrap();
         let mut app = Workbench::open_managed(dir.path(), None).unwrap();
-        app.catalog.as_ref().unwrap().install(&package).unwrap();
-        let manager = app.manager.as_mut().unwrap();
+        app.local_state()
+            .unwrap()
+            .catalog
+            .as_ref()
+            .unwrap()
+            .install(&package)
+            .unwrap();
+        let manager = app.local_state_mut().unwrap().manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();
         manager
             .approve_io(
@@ -79,7 +86,13 @@ impl Setup {
             .save_endpoint(EndpointUpdate {
                 reference: vec![],
                 expected_revision: 0,
-                registry_revision: app.manager.as_ref().unwrap().revision(),
+                registry_revision: app
+                    .local_state()
+                    .unwrap()
+                    .manager
+                    .as_ref()
+                    .unwrap()
+                    .revision(),
                 lifetime_days: 1,
                 policy: proto::Endpoint {
                     package_id: ID.into(),
@@ -98,7 +111,15 @@ impl Setup {
                 },
             })
             .unwrap();
+        let registry_revision = app
+            .local_state()
+            .unwrap()
+            .manager
+            .as_ref()
+            .unwrap()
+            .revision();
         Self {
+            registry_revision,
             app,
             package,
             endpoint,
@@ -111,7 +132,7 @@ impl Setup {
             endpoint: self.endpoint.reference,
             endpoint_revision: self.endpoint.revision,
             package_digest: self.package.digest(),
-            registry_revision: self.app.manager.as_ref().unwrap().revision(),
+            registry_revision: self.registry_revision,
             method: "GET".into(),
             target: "/forward".into(),
             headers: vec![],
@@ -260,7 +281,7 @@ fn operation(byte: u8) -> String {
 fn saved_endpoint_real_rust_guest_http_result_and_evidence_survive_restart_without_replay() {
     let server = Server::new(b"rust-forwarded".to_vec(), false);
     let mut setup = Setup::new(&server.origin, true);
-    let binding = setup.app.host.local().unwrap().binding();
+    let binding = setup.app.local_state().unwrap().host.binding();
     let request = setup.request(1);
     let key = setup.app.start_http(request).unwrap();
     ready(&mut setup.app, key);
@@ -287,8 +308,8 @@ fn saved_endpoint_real_rust_guest_http_result_and_evidence_survive_restart_witho
     assert_eq!(response.http_status, 200);
     assert_eq!(response.body, b"rust-forwarded");
     reclaimed(&mut setup.app, key);
-    assert_eq!(setup.app.host.local().unwrap().binding(), binding);
-    let store = setup.app.host.local().unwrap().store_local();
+    assert_eq!(setup.app.local_state().unwrap().host.binding(), binding);
+    let store = setup.app.local_state().unwrap().host.store_local();
     assert_eq!(
         store
             .lookup_io_intent(ID, &operation(1))
@@ -322,7 +343,7 @@ fn saved_endpoint_real_rust_guest_http_result_and_evidence_survive_restart_witho
     setup.app.finish().unwrap();
     drop(setup.app);
     let mut app = Workbench::open_managed(setup.dir.path(), None).unwrap();
-    let store = app.host.local().unwrap().store_local();
+    let store = app.local_state().unwrap().host.store_local();
     assert_eq!(
         store
             .lookup_io_intent(ID, &operation(1))
@@ -403,7 +424,7 @@ fn cancelling_real_http_keeps_busy_until_actual_join_and_never_replays_submissio
         StoragePhase::Stopping | StoragePhase::Reclaimed
     ));
     if status.exit.is_none() {
-        assert!(setup.app.host.local().is_err());
+        assert!(setup.app.local_state().is_err());
     }
     ready(&mut setup.app, key);
     let report = setup.app.read_io(key, 512 * 1024).unwrap().unwrap();
@@ -685,7 +706,14 @@ fn valid_guest_frame_cannot_substitute_operation_path_or_another_allowed_http_me
             .save_endpoint(EndpointUpdate {
                 reference: setup.endpoint.reference.to_vec(),
                 expected_revision: 1,
-                registry_revision: setup.app.manager.as_ref().unwrap().revision(),
+                registry_revision: setup
+                    .app
+                    .local_state()
+                    .unwrap()
+                    .manager
+                    .as_ref()
+                    .unwrap()
+                    .revision(),
                 lifetime_days: 1,
                 policy,
             })
@@ -703,9 +731,9 @@ fn valid_guest_frame_cannot_substitute_operation_path_or_another_allowed_http_me
         assert!(
             setup
                 .app
-                .host
-                .local()
+                .local_state()
                 .unwrap()
+                .host
                 .store_local()
                 .lookup_io_intent(ID, &operation(13))
                 .unwrap()

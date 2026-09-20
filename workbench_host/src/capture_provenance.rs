@@ -271,9 +271,8 @@ fn bundle(scope: &Scope) -> Result<Bundle> {
         applications,
     })
 }
-impl Workbench {
+impl WorkbenchState {
     fn capture_binding(&self) -> Result<Binding> {
-        self.host.local()?;
         if !self.writable() {
             return Err("capture scope is unavailable while host or plugin is read only".into());
         }
@@ -281,13 +280,12 @@ impl Workbench {
             .pool
             .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
         Ok(Binding {
-            host: self.host.local()?.binding(),
+            host: self.host.binding(),
             connection: root.connection().binding(),
             package: root.package().package().digest(),
         })
     }
     fn check_capture_scope(&mut self, id: &str, allow_pending: bool) -> Result<()> {
-        self.host.local()?;
         self.capture_scopes.expire_at(Instant::now());
         let binding = match self.capture_binding() {
             Ok(b) => b,
@@ -320,7 +318,6 @@ impl Workbench {
         Ok(())
     }
     pub fn open_capture_scope(&mut self, target: &str, revision: u64) -> Result<String> {
-        self.host.local()?;
         self.prepare_write()?;
         self.capture_scopes.expire_at(Instant::now());
         // The same fixed identity validation as the persisted content API, without granting write.
@@ -330,7 +327,7 @@ impl Workbench {
         }
         .validate()?;
         let prior = if revision == 0 {
-            if self.host.local()?.store_local().card(target)?.is_some() {
+            if self.host.store_local().card(target)?.is_some() {
                 return Err("capture create target already exists".into());
             }
             None
@@ -428,7 +425,6 @@ impl Workbench {
         input: Vec<u8>,
         parent: &str,
     ) -> Result<(String, Vec<u8>)> {
-        self.host.local()?;
         self.check_capture_scope(scope, false)?;
         let (format, source) = v2::capture_input(&input)?;
         if !parent.is_empty() {
@@ -463,7 +459,7 @@ impl Workbench {
         let reserved = self.reserve_capture_fuel(scope)?;
         let result = self.pool.record_transform(
             self.manager.as_ref().ok_or("plugin manager unavailable")?,
-            self.host.local_mut()?,
+            &mut self.host,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             &task,
         );
@@ -498,7 +494,6 @@ impl Workbench {
         Ok((ticket, payload))
     }
     pub fn record_paste(&mut self, scope: &str, event: PasteEvent) -> Result<()> {
-        self.host.local()?;
         self.check_capture_scope(scope, false)?;
         v2::event_bounds(&event)?;
         let s = &self.capture_scopes.scopes[scope];
@@ -558,7 +553,7 @@ impl Workbench {
     }
 }
 
-impl Workbench {
+impl WorkbenchState {
     fn retry_captured_save(
         &mut self,
         operation: &str,
@@ -569,22 +564,17 @@ impl Workbench {
         snapshot: &EditorSnapshot,
     ) -> Result<Option<Record>> {
         if matches!(
-            self.host.local()?.store_local().lookup(operation)?,
+            self.host.store_local().lookup(operation)?,
             transaction::Lookup::Absent
         ) {
             return Ok(None);
         }
         let (commit, receipt) = self
             .host
-            .local()?
             .store_local()
             .operation_commit(id, operation)?
             .ok_or("operation belongs to another content object")?;
-        let evidence = self
-            .host
-            .local()?
-            .store_local()
-            .operation_evidence(id, operation)?;
+        let evidence = self.host.store_local().operation_evidence(id, operation)?;
         if evidence.len() != 1 {
             return Err("capture retry requires one original batch".into());
         }
@@ -724,7 +714,6 @@ impl Workbench {
         scope: &str,
         snapshot: EditorSnapshot,
     ) -> Result<Record> {
-        self.host.local()?;
         self.prepare_write()?;
         let id = draft.id.clone();
         let mut request = command(Action::Create);
@@ -747,7 +736,6 @@ impl Workbench {
         scope: &str,
         snapshot: EditorSnapshot,
     ) -> Result<Record> {
-        self.host.local()?;
         self.prepare_write()?;
         let Mutation {
             operation,
@@ -787,6 +775,51 @@ impl Workbench {
         self.undo.remove(id);
         self.staged.retain(|(card, _), _| card != id);
         Self::decode(&projection.card)
+    }
+}
+
+impl Workbench {
+    pub fn open_capture_scope(&mut self, target: &str, revision: u64) -> Result<String> {
+        self.local_state_mut()?.open_capture_scope(target, revision)
+    }
+
+    pub fn close_capture_scope(&mut self, scope: &str) -> Result<()> {
+        self.local_state_mut()?.close_capture_scope(scope);
+        Ok(())
+    }
+
+    pub fn capture_scoped(
+        &mut self,
+        scope: &str,
+        input: Vec<u8>,
+        parent: &str,
+    ) -> Result<(String, Vec<u8>)> {
+        self.local_state_mut()?.capture_scoped(scope, input, parent)
+    }
+
+    pub fn record_paste(&mut self, scope: &str, event: PasteEvent) -> Result<()> {
+        self.local_state_mut()?.record_paste(scope, event)
+    }
+
+    pub fn create_captured(
+        &mut self,
+        operation: &str,
+        draft: Idea,
+        scope: &str,
+        snapshot: EditorSnapshot,
+    ) -> Result<Record> {
+        self.local_state_mut()?
+            .create_captured(operation, draft, scope, snapshot)
+    }
+
+    pub fn apply_captured(
+        &mut self,
+        mutation: Mutation<'_>,
+        scope: &str,
+        snapshot: EditorSnapshot,
+    ) -> Result<Record> {
+        self.local_state_mut()?
+            .apply_captured(mutation, scope, snapshot)
     }
 }
 

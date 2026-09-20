@@ -45,7 +45,7 @@ fn original_store_create_replace_disable_survives_restart_without_plugin_or_plai
     let dir = tempfile::tempdir().unwrap();
     let database = dir.path().join("workbench.db");
     let mut w = Workbench::open(&database, None).unwrap();
-    assert!(!w.plugin_status().enabled);
+    assert!(!w.plugin_status().unwrap().enabled);
     let first = w
         .save_credential(&[], 0, "Authorization", "Bearer first-test-secret", 7)
         .unwrap();
@@ -94,7 +94,7 @@ fn original_store_create_replace_disable_survives_restart_without_plugin_or_plai
     let page = w.credential_page(&[], &[]).unwrap();
     assert_eq!(page.entries[0].revision, 3);
     assert!(page.entries[0].disabled);
-    assert!(!w.plugin_status().enabled);
+    assert!(!w.plugin_status().unwrap().enabled);
     let renewed = w
         .save_credential(
             &first.reference,

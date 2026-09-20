@@ -139,7 +139,7 @@ fn verify(e: &Evidence, path: &Path, op: &str, observations: usize) {
     );
 }
 fn configure(h: &mut Workbench, enabled: bool) {
-    let s = h.plugin_status();
+    let s = h.plugin_status().unwrap();
     h.configure_plugin(s.revision, &s.digest, enabled).unwrap();
 }
 #[test]
@@ -365,7 +365,7 @@ fn editor_cancel_disable_reenable_and_reopen_never_revive_old_tickets() {
     let (ticket, _) = h
         .capture_scoped(&closed, request("plain", "old"), "")
         .unwrap();
-    h.close_capture_scope(&closed);
+    h.close_capture_scope(&closed).unwrap();
     assert!(
         h.record_paste(&closed, paste("late", "", 0, 0, vec![part(&ticket)], "old"))
             .is_err()
@@ -647,7 +647,7 @@ fn scope_capacity_and_failed_conversion_leave_existing_valid_editor_usable() {
         .map(|i| h.open_capture_scope(&format!("draft-{i}"), 0).unwrap())
         .collect();
     assert!(h.open_capture_scope("overflow", 0).is_err());
-    h.close_capture_scope(&scopes[0]);
+    h.close_capture_scope(&scopes[0]).unwrap();
     let scope = h.open_capture_scope("card", 0).unwrap();
     let (ticket, _) = h
         .capture_scoped(&scope, request("plain", "valid"), "")

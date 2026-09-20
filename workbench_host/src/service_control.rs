@@ -1,6 +1,6 @@
 //! Trusted service administration on the original Store. These operations save
 //! desired configuration and explicit approval, never start a network listener.
-use crate::{Result, Workbench};
+use crate::{Result, Workbench, WorkbenchState};
 use morrow_core::{
     plugin_package::io::IoCapability,
     service_authority::{
@@ -122,7 +122,7 @@ fn info(record: &Record) -> AuthorityInfo {
         kind,
     }
 }
-impl Workbench {
+impl WorkbenchState {
     fn service_package(&self, id: &str, digest: &[u8], revision: u64, handler: &str) -> Result<()> {
         let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
         if manager.revision() != revision {
@@ -172,7 +172,6 @@ impl Workbench {
         for principal in principals {
             let record = self
                 .host
-                .local()?
                 .store_local()
                 .load_service_authority(&key(&principal.authentication_reference)?)?
                 .ok_or("service authentication missing")?;
@@ -197,11 +196,11 @@ impl Workbench {
         } else {
             Some(key(snapshot)?)
         };
-        Ok(self
-            .host
-            .local_mut()?
-            .store_local_mut()
-            .list_service_configs_local((!after.is_empty()).then_some(after), snapshot, 1)?)
+        Ok(self.host.store_local_mut().list_service_configs_local(
+            (!after.is_empty()).then_some(after),
+            snapshot,
+            1,
+        )?)
     }
     pub fn service_authority_page(
         &mut self,
@@ -212,7 +211,6 @@ impl Workbench {
         let snapshot = (!snapshot.is_empty()).then(|| key(snapshot)).transpose()?;
         let page = self
             .host
-            .local_mut()?
             .store_local_mut()
             .list_service_authorities_local(after, snapshot, 2)?;
         Ok(AuthorityPage {
@@ -228,7 +226,6 @@ impl Workbench {
         principal: &str,
         lifetime_days: u32,
     ) -> Result<IssuedAuthentication> {
-        self.host.local()?;
         let next = revision(expected_revision)?;
         let (created, expires) = lifetime(lifetime_days)?;
         let reference = if reference.is_empty() {
@@ -238,7 +235,6 @@ impl Workbench {
             let candidate = random_key()?;
             if self
                 .host
-                .local()?
                 .store_local()
                 .load_service_authority(&candidate)?
                 .is_some()
@@ -250,7 +246,6 @@ impl Workbench {
             let key = key(reference)?;
             let old = self
                 .host
-                .local()?
                 .store_local()
                 .load_service_authority(&key)?
                 .ok_or("authentication not found")?;
@@ -287,7 +282,6 @@ impl Workbench {
         })?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_service_authority_local(&record, expected_revision)?;
         Ok(IssuedAuthentication {
@@ -296,7 +290,6 @@ impl Workbench {
         })
     }
     pub fn save_service_config(&mut self, update: ServiceConfigUpdate) -> Result<Config> {
-        self.host.local()?;
         let next = revision(update.expected_revision)?;
         let (id, namespace, references) = if update.id.is_empty() {
             if update.expected_revision != 0 {
@@ -312,7 +305,6 @@ impl Workbench {
             let publication = random_key()?;
             if self
                 .host
-                .local()?
                 .store_local()
                 .load_service_authority(&publication)?
                 .is_some()
@@ -323,7 +315,6 @@ impl Workbench {
         } else {
             let old = self
                 .host
-                .local()?
                 .store_local()
                 .load_service_config(&update.id)?
                 .ok_or("service configuration not found")?;
@@ -361,7 +352,6 @@ impl Workbench {
         self.service_principals(&config.value().principals, utc()?, None)?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_service_config_local(&config, update.expected_revision)?;
         Ok(config)
@@ -369,7 +359,6 @@ impl Workbench {
     pub fn disable_service_config(&mut self, id: &str, expected_revision: u64) -> Result<Config> {
         let old = self
             .host
-            .local()?
             .store_local()
             .load_service_config(id)?
             .ok_or("service configuration not found")?;
@@ -385,7 +374,6 @@ impl Workbench {
         let disabled = Config::encode(value)?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_service_config_local(&disabled, expected_revision)?;
         Ok(disabled)
@@ -393,7 +381,6 @@ impl Workbench {
     pub fn save_service_publication(&mut self, update: PublicationUpdate) -> Result<AuthorityInfo> {
         let config = self
             .host
-            .local()?
             .store_local()
             .load_service_config(&update.config_id)?
             .ok_or("service configuration not found")?;
@@ -440,7 +427,6 @@ impl Workbench {
         })?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_service_authority_local(&record, update.expected_revision)?;
         Ok(info(&record))
@@ -453,7 +439,6 @@ impl Workbench {
     ) -> Result<AuthorityInfo> {
         let old = self
             .host
-            .local()?
             .store_local()
             .load_service_authority(&key(reference)?)?
             .ok_or("service authority not found")?;
@@ -469,9 +454,58 @@ impl Workbench {
         let disabled = Record::encode(value)?;
         self.host.prepare_write()?;
         self.host
-            .local_mut()?
             .store_local_mut()
             .save_service_authority_local(&disabled, expected_revision)?;
         Ok(info(&disabled))
+    }
+}
+
+impl Workbench {
+    pub fn service_config_page(
+        &mut self,
+        after: &str,
+        snapshot: &[u8],
+    ) -> Result<ServiceConfigPage> {
+        self.local_state_mut()?.service_config_page(after, snapshot)
+    }
+    pub fn service_authority_page(
+        &mut self,
+        after: &[u8],
+        snapshot: &[u8],
+    ) -> Result<AuthorityPage> {
+        self.local_state_mut()?
+            .service_authority_page(after, snapshot)
+    }
+    pub fn issue_service_authentication(
+        &mut self,
+        reference: &[u8],
+        expected_revision: u64,
+        principal: &str,
+        lifetime_days: u32,
+    ) -> Result<IssuedAuthentication> {
+        self.local_state_mut()?.issue_service_authentication(
+            reference,
+            expected_revision,
+            principal,
+            lifetime_days,
+        )
+    }
+    pub fn save_service_config(&mut self, update: ServiceConfigUpdate) -> Result<Config> {
+        self.local_state_mut()?.save_service_config(update)
+    }
+    pub fn disable_service_config(&mut self, id: &str, expected_revision: u64) -> Result<Config> {
+        self.local_state_mut()?
+            .disable_service_config(id, expected_revision)
+    }
+    pub fn save_service_publication(&mut self, update: PublicationUpdate) -> Result<AuthorityInfo> {
+        self.local_state_mut()?.save_service_publication(update)
+    }
+    pub fn disable_service_authority(
+        &mut self,
+        reference: &[u8],
+        expected_revision: u64,
+    ) -> Result<AuthorityInfo> {
+        self.local_state_mut()?
+            .disable_service_authority(reference, expected_revision)
     }
 }

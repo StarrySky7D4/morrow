@@ -1,6 +1,6 @@
 //! Trusted application ownership and short, nonblocking IO task controls.
 //! This is not a guest capability or an approval for a network destination.
-use crate::{Result, Workbench, now, storage::Storage};
+use crate::{Result, Workbench, WorkbenchState, now};
 use morrow_core::{dispatch::HostRuntime, plugin_package::io::IoCapability};
 use morrow_plugin_runtime::{
     io_binding::IoBinding,
@@ -93,21 +93,22 @@ pub struct PreparedJob {
 }
 struct Task {
     key: TaskKey,
-    worker: Option<IoWorker<Storage>>,
+    worker: Option<IoWorker<WorkbenchState>>,
     handle: Option<JobHandle>,
     stopping: bool,
     exit: Option<ExitStatus>,
 }
-/// No Deref: absence of Storage must be handled at every call site.
-pub(crate) struct StorageSlot {
-    owner: Option<Storage>,
+/// The complete state is either local or owned by the original worker. No
+/// fallback store, partial state, or panicking Deref can mask its absence.
+pub(crate) struct StateSlot {
+    owner: Option<WorkbenchState>,
     task: Option<Task>,
     cleanup: Option<ManagedInstance>,
     repair_needed: bool,
     lost: bool,
 }
-impl StorageSlot {
-    pub(crate) fn new(owner: Storage) -> Self {
+impl StateSlot {
+    pub(crate) fn new(owner: WorkbenchState) -> Self {
         Self {
             owner: Some(owner),
             task: None,
@@ -116,7 +117,7 @@ impl StorageSlot {
             lost: false,
         }
     }
-    pub(crate) fn local(&self) -> Result<&Storage> {
+    pub(crate) fn local(&self) -> Result<&WorkbenchState> {
         if self.lost {
             return Err(AccessError::OwnerUnavailable.into());
         }
@@ -126,22 +127,19 @@ impl StorageSlot {
         }
         Ok(owner)
     }
-    pub(crate) fn local_mut(&mut self) -> Result<&mut Storage> {
+    pub(crate) fn local_mut(&mut self) -> Result<&mut WorkbenchState> {
         self.local()?;
         self.owner.as_mut().ok_or_else(|| AccessError::Busy.into())
     }
-    pub(crate) fn is_local(&self) -> bool {
-        self.local().is_ok()
-    }
-    pub(crate) fn prepare_write(&mut self) -> Result<()> {
+    pub(crate) fn require_writable(&self) -> Result<()> {
         self.local()?;
         if self.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
-        self.local_mut()?.prepare_write()
+        Ok(())
     }
     pub(crate) fn finish_maintenance(&mut self) -> Result<()> {
-        self.local_mut()?.flush_pending()?;
+        self.local_mut()?.host.flush_pending()?;
         self.repair_needed = false;
         Ok(())
     }
@@ -155,7 +153,7 @@ impl StorageSlot {
         if self.repair_needed || self.cleanup.is_some() {
             return Some("后台任务已退出，存储维护或连接清理需要恢复。");
         }
-        self.owner.as_ref().and_then(Storage::warning)
+        self.owner.as_ref().and_then(|state| state.host.warning())
     }
     pub(crate) fn request_stop(&mut self) {
         if let Some(task) = &mut self.task
@@ -237,6 +235,7 @@ impl StorageSlot {
             .owner
             .as_mut()
             .ok_or(AccessError::OwnerUnavailable)?
+            .host
             .disconnect(instance.connection());
         if let Err(error) = result {
             self.cleanup = Some(instance);
@@ -249,52 +248,52 @@ impl StorageSlot {
 impl Workbench {
     /// Nonblocking observation. Only an actual completed join restores access.
     pub fn io_status(&mut self) -> Snapshot {
-        let _ = self.host.try_reclaim();
-        self.host.snapshot()
+        let _ = self.state.try_reclaim();
+        self.state.snapshot()
     }
     pub fn poll_io(&mut self, key: TaskKey) -> Result<Snapshot> {
-        self.host.checked_task(key)?;
-        let _ = self.host.try_reclaim();
-        Ok(self.host.snapshot())
+        self.state.checked_task(key)?;
+        let _ = self.state.try_reclaim();
+        Ok(self.state.snapshot())
     }
     pub fn read_io(&mut self, key: TaskKey, max_bytes: usize) -> Result<Option<JobReport>> {
-        let task = self.host.checked_task(key)?;
+        let task = self.state.checked_task(key)?;
         let handle = task.handle.as_mut().ok_or(AccessError::StaleTask)?;
         handle
             .read(max_bytes)
             .map_err(|e| format!("IO result: {e:?}").into())
     }
     pub fn cancel_io(&mut self, key: TaskKey) -> Result<Snapshot> {
-        self.host.checked_task(key)?;
-        self.host.request_stop();
+        self.state.checked_task(key)?;
+        self.state.request_stop();
         Ok(self.io_status())
     }
     /// Explicitly forget one finished task. Never starts or retries its request.
     pub fn acknowledge_io(&mut self, key: TaskKey) -> Result<()> {
-        self.host.checked_task(key)?;
-        self.host.try_reclaim()?;
-        self.host.local()?;
-        if self.host.repair_needed {
+        self.state.checked_task(key)?;
+        self.state.try_reclaim()?;
+        self.state.local()?;
+        if self.state.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
-        self.host.task = None;
+        self.state.task = None;
         Ok(())
     }
     /// Retry only cleanup/sealing of this same returned owner, never its job.
     pub fn repair_io(&mut self, key: TaskKey) -> Result<Snapshot> {
-        self.host.checked_task(key)?;
-        self.host.try_reclaim()?;
-        if self.host.lost {
+        self.state.checked_task(key)?;
+        self.state.try_reclaim()?;
+        if self.state.lost {
             return Err(AccessError::OwnerUnavailable.into());
         }
-        if self.host.owner.is_none() {
+        if self.state.owner.is_none() {
             return Err(AccessError::Busy.into());
         }
-        if let Some(instance) = self.host.cleanup.take() {
-            self.host.cleanup_instance(instance)?;
+        if let Some(instance) = self.state.cleanup.take() {
+            self.state.cleanup_instance(instance)?;
         }
-        self.host.finish_maintenance()?;
-        Ok(self.host.snapshot())
+        self.state.finish_maintenance()?;
+        Ok(self.state.snapshot())
     }
     /// Start one explicitly approved job on an independently admitted instance.
     /// The preparer is trusted local code, must be bounded, and must not send IO.
@@ -304,12 +303,12 @@ impl Workbench {
         options: StartOptions,
         prepare: impl FnOnce(Preparation<'_>) -> Result<PreparedJob>,
     ) -> Result<TaskKey> {
-        self.host.try_reclaim()?;
-        self.host.local()?;
-        if self.host.repair_needed {
+        self.state.try_reclaim()?;
+        self.state.local()?;
+        if self.state.repair_needed {
             return Err(AccessError::RecoveryRequired.into());
         }
-        if self.host.task.is_some() {
+        if self.state.task.is_some() {
             return Err(AccessError::UnacknowledgedTask.into());
         }
         if options.lifetime.is_zero()
@@ -317,14 +316,16 @@ impl Workbench {
         {
             return Err("invalid IO lifetime".into());
         }
-        let time = now(self.start);
+        let start = self.state.local()?.start;
+        let time = now(start);
         let expires = time
             .checked_add(u64::try_from(options.lifetime.as_millis())?)
             .ok_or("IO deadline overflow")?;
         if expires <= time {
             return Err("IO lifetime must be at least one millisecond".into());
         }
-        let manager = self.manager.as_mut().ok_or("plugin manager unavailable")?;
+        let state = self.state.local_mut()?;
+        let manager = state.manager.as_mut().ok_or("plugin manager unavailable")?;
         let selection = manager
             .selection(&options.package_id)
             .ok_or("plugin not selected")?;
@@ -337,11 +338,11 @@ impl Workbench {
         let mut key = [0; 32];
         getrandom::fill(&mut key)?;
         let key = TaskKey(key);
-        self.host.prepare_write()?;
-        let instance = manager.connect(&options.package_id, self.host.local_mut()?)?;
+        state.host.prepare_write()?;
+        let instance = manager.connect(&options.package_id, &mut state.host)?;
         let prepared = catch_unwind(AssertUnwindSafe(|| -> Result<_> {
             let binding = manager.bind_io(
-                self.host.local()?,
+                &state.host,
                 &instance,
                 options.digest,
                 options.revision,
@@ -351,7 +352,7 @@ impl Workbench {
             )?;
             let job = prepare(Preparation {
                 manager,
-                host: self.host.local()?,
+                host: &state.host,
                 instance: &instance,
                 binding: &binding,
                 now: time,
@@ -366,8 +367,8 @@ impl Workbench {
             Ok(value) => value,
             Err(error) => {
                 // A failed cleanup remains explicit and retains its exact instance.
-                if self.host.cleanup_instance(instance).is_err() {
-                    self.host.task = Some(Task {
+                if self.state.cleanup_instance(instance).is_err() {
+                    self.state.task = Some(Task {
                         key,
                         worker: None,
                         handle: None,
@@ -382,10 +383,8 @@ impl Workbench {
                 return Err(error);
             }
         };
-        let owner = self.host.owner.take().ok_or(AccessError::Busy)?;
-        let start = self.start;
-        let worker = match IoWorker::spawn_managed_owned(
-            manager,
+        let owner = self.state.owner.take().ok_or(AccessError::Busy)?;
+        let worker = match IoWorker::spawn_managed_owner(
             owner,
             instance,
             binding,
@@ -396,15 +395,15 @@ impl Workbench {
             Ok(worker) => worker,
             Err(failure) => {
                 let error = failure.error;
-                self.host.owner = Some(failure.owner);
+                self.state.owner = Some(failure.owner);
                 let disconnect = if let Some(instance) = failure.instance {
-                    self.host
+                    self.state
                         .cleanup_instance(instance)
                         .map_err(|_| JobError::Disconnect)
                 } else {
                     Ok(())
                 };
-                self.host.task = Some(Task {
+                self.state.task = Some(Task {
                     key,
                     worker: None,
                     handle: None,
@@ -419,18 +418,18 @@ impl Workbench {
             }
         };
         let submitted = worker.submit_brokered(job.input, job.router, job.timeout);
-        self.host.task = Some(Task {
+        self.state.task = Some(Task {
             key,
             worker: Some(worker),
             handle: None,
             stopping: false,
             exit: None,
         });
-        let task = self.host.checked_task(key)?;
+        let task = self.state.checked_task(key)?;
         match submitted {
             Ok(handle) => task.handle = Some(handle),
             Err(error) => {
-                self.host.request_stop();
+                self.state.request_stop();
                 return Err(format!(
                     "IO submission failed: {error:?}; inspect task status before retrying"
                 )
@@ -442,7 +441,7 @@ impl Workbench {
         if let Some(worker) = &task.worker
             && let Err(error) = worker.drain(options.lifetime)
         {
-            self.host.request_stop();
+            self.state.request_stop();
             return Err(
                 format!("IO drain failed: {error:?}; inspect task status before retrying").into(),
             );

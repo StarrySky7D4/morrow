@@ -8,7 +8,7 @@ use morrow_core::{
     transaction::{self, Receipt, proto::command::Action as StoredAction},
 };
 
-impl Workbench {
+impl WorkbenchState {
     pub(super) fn project_content(
         &mut self,
         operation: &str,
@@ -106,7 +106,7 @@ impl Workbench {
                 }
                 self.grant(&id, GrantKind::CreateContent)?;
                 let start = self.start;
-                let result = self.host.local_mut()?.create_content_with_evidence(
+                let result = self.host.create_content_with_evidence(
                     self.pool
                         .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                         .connection(),
@@ -153,7 +153,7 @@ impl Workbench {
                 }
                 self.grant(&id, GrantKind::EditContent)?;
                 let start = self.start;
-                let result = self.host.local_mut()?.edit_content_with_evidence(
+                let result = self.host.edit_content_with_evidence(
                     self.pool
                         .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                         .connection(),

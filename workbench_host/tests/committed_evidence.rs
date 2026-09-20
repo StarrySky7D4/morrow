@@ -45,7 +45,7 @@ fn action<'a>(operation: &'a str, revision: u64, action: Action, flag: bool) -> 
     }
 }
 fn configure(h: &mut Workbench, enable: bool) {
-    let status = h.plugin_status();
+    let status = h.plugin_status().unwrap();
     h.configure_plugin(status.revision, &status.digest, enable)
         .unwrap();
 }

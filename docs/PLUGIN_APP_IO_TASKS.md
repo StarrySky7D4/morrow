@@ -1,6 +1,6 @@
 # 主应用 IO 任务与内容库访问
 
-`Workbench` 的 Rust 应用入口使用显式 `StorageSlot` 承接完整原 Storage。该入口负责一次任务的准入、交付、停止、实际线程回收与恢复；不创建第二份数据库。端点批准页面已接入，见[端点管理](PLUGIN_ENDPOINT_MANAGEMENT.md)；HTTP-forward 的私有任务消息及 Dart 原生接口已接入，见[HTTP任务接线](PLUGIN_APP_HTTP_TASKS.md)；面向用户的任务界面仍待完成。
+`Workbench` 的 Rust 应用入口使用显式 `StateSlot` 承接完整原 `WorkbenchState`。该状态直接拥有Storage、Manager、Pool、内容/编辑会话、undo、上传暂存和capture范围；内部不保存worker句柄或可空StorageSlot。外围负责一次任务的准入、交付、停止、真实线程回收与恢复，不创建第二份数据库。端点批准页面见[端点管理](PLUGIN_ENDPOINT_MANAGEMENT.md)，HTTP任务消息及界面见[HTTP任务接线](PLUGIN_APP_HTTP_TASKS.md)与[页面验证](../reports/http-task-ui-2026-09-20.md)。
 
 ## 原存储与应用状态
 
@@ -13,7 +13,7 @@
 | RecoveryRequired | 原存储已取回，但清理或封存需要恢复；失败清理保留确切实例，封存失败仍可读取既有内容 |
 | Unavailable | 线程未归还原容器，不能自动重开内容库或重新执行任务 |
 
-StorageSlot 不实现 Deref；所有依赖存储的现有方法显式申请借用，缺席返回类型化 Busy。调用顺序在文件创建、计数、捕获、上传完成与注册表变更之前检查，避免操作已经修改了状态才报告忙碌。Manager 与 Pool 留在调用侧，IO 使用原 Manager 在同一 HostRuntime 上独立准入的实例，不拆取 Pool 根。
+StateSlot 不实现 Deref；现有业务方法先显式借用完整状态，缺席返回类型化Busy。调用顺序在文件创建、计数、捕获、上传完成与注册表变更之前检查。IO使用内部原Manager在同一HostRuntime上独立准入实例，再通过 `spawn_managed_owner` 将完整状态移交，不拆取Pool根。短IO退出只封存原Storage；应用最终关闭才关闭Pool、编辑器和capture范围。HttpTasks的已用提交身份与当前提交关联留在外围，移交和回收均不重置它们。
 
 ## 受信任应用接口
 
@@ -28,7 +28,7 @@ StorageSlot 不实现 Deref；所有依赖存储的现有方法显式申请借�
 
 ## 既有私有协议与关闭
 
-合法私有请求开始时尝试回收已结束线程，然后在依赖存储的分支前检查访问。导出不能因为 Busy 创建文件，完成上传不能因 Busy 消费令牌。插件目录／包检查、只读插件状态、关闭界面或捕获范围、上传缓冲区追加／取消及分块读取可继续进行；这些操作不获得内容库或网络权限，原缓冲区额度与期限也不会因 Busy 续期。忙碌时插件状态仅读 Manager，不刷新依赖存储的 Pool。
+合法私有请求开始时尝试回收已结束线程，然后在依赖状态的分支前检查访问。导出不能因Busy创建文件，上传完成不能因Busy消费令牌。Manager、编辑器及缓冲区已随原状态移交，因此目录、插件状态、界面/捕获关闭及上传追加/取消也必须显式借用状态。当前这些入口在后台阶段返回Busy，不能静默丢弃关闭操作或编造插件修订；Rust `plugin_status`、`ui_close`、`close_capture_scope` 改为Result，私有协议传播既有错误码。下一步需将这些调用接入原执行者命令通道，不能把Busy作为常驻服务的最终交互方案。
 
 沿用现有错误字段与 `ui_code`：110＝Busy，111＝需要恢复，112＝原存储不可用，113＝任务身份失效，114＝上一任务尚未确认。任务所有权阶段未修改消息布局；后续端点管理扩展了私有协议并同步生成 Dart，冻结 SDK 保持不变。旧 Dart 错误处理可接收普通错误，查询不能将 Busy 误判为终止。
 
@@ -36,6 +36,6 @@ StorageSlot 不实现 Deref；所有依赖存储的现有方法显式申请借�
 
 ## 下一项
 
-原 Store 的具体端点批准管理已接入。私有 start／poll／read／cancel、repair／acknowledge 与 Dart 原生接口已接入；下一步完成 Flutter 任务表单与状态界面。准备回调不是插件可提交的任意路由，也不是从 UI 直接构造授权的捷径。随后验证实际应用批准、请求、取消、重启核对及 API 节点管理，继续文件系统、Unknown 核对、完整因果链和三语言 IO SDK；当前契约不承诺 SDK 稳定或全平台运行资格。
+完整业务状态已提取并接入短IO真实移交；下一步是原执行者的业务/管理命令派发、长期服务时内容与编辑器可访问、长IO可暂停，以及主应用API节点启动/停止/修复。准备回调不是插件可提交的任意路由，也不是从UI直接构造授权的捷径。文件系统、Unknown核对、完整因果链和三语言IO SDK仍按原门槛推进；当前契约不承诺SDK稳定或全平台运行资格。
 
 持久端点接线顺序：应用在 Storage 尚在位时，用原 Store 的可变借用调用 `StoredHttpEndpoint::resolve` 取得记录与原授权租约；随后将解析对象移入准备回调，使用 `approve_windows` 在新准入的原实例上验证类别、端点政策并解析系统凭据。解析不是恢复活动授权。Preparation 只暴露只读 HostRuntime，不能为适配持久端点而允许回调替换原核心；UTC 的持久记录期限与任务的单调时钟域也继续分开校验。

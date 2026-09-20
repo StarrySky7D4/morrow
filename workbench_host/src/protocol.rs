@@ -196,7 +196,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     let action = r.get_action()?;
     // Reclaim only if the actual worker has exited. Check access before file
     // creation, registry changes or consuming upload tokens in these routes.
-    let _ = host.host.try_reclaim();
+    let _ = host.state.try_reclaim();
     if !matches!(
         action,
         wire::Action::PluginCatalog
@@ -216,7 +216,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             | wire::Action::AppendCaptureUpload
             | wire::Action::ReadPreferencesPart
     ) {
-        host.host.local()?;
+        host.local_state()?;
     }
     let id = if crate::service_protocol::is_action(action) {
         String::new()
@@ -448,17 +448,17 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             host.external_ui_close(&id, r.get_offset())?;
         }
         wire::Action::PluginState => {
-            if host.host.is_local() {
+            if host.local_state().is_ok() {
                 host.refresh_plugin_state()?;
             }
-            plugin_status(host, out.reborrow());
+            plugin_status(host, out.reborrow())?;
         }
         wire::Action::PluginConfigure => {
             if r.get_limit() > 1 {
                 return Err("invalid enable decision".into());
             }
             host.configure_plugin(r.get_revision(), r.get_sha256()?, r.get_limit() == 1)?;
-            plugin_status(host, out.reborrow());
+            plugin_status(host, out.reborrow())?;
         }
         wire::Action::UiOpen => {
             ui_reply(host.ui_open(&text(r.get_name())?)?, out.reborrow());
@@ -470,7 +470,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             );
         }
         wire::Action::UiClose => {
-            host.ui_close(r.get_offset());
+            host.ui_close(r.get_offset())?;
         }
 
         wire::Action::BackupSnapshot => {
@@ -591,12 +591,14 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             result?;
         }
         wire::Action::ReadPreferences => {
+            let host = host.local_state_mut()?;
             if let Some(bytes) = host.read_preferences()? {
                 let part = host.transfers.open(bytes, crate::now(host.start))?;
                 write_chunk(out.reborrow(), &part);
             }
         }
         wire::Action::ReadPreferencesPart => {
+            let host = host.local_state_mut()?;
             let part = host.transfers.read(
                 &text(r.get_transfer())?,
                 r.get_offset(),
@@ -605,6 +607,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             write_chunk(out.reborrow(), &part);
         }
         wire::Action::BeginPreferences => {
+            let host = host.local_state_mut()?;
             if !host.writable() {
                 return Err("plugin unavailable".into());
             }
@@ -617,6 +620,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_transfer(token.as_str());
         }
         wire::Action::AppendPreferences => {
+            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let offset = host.transfers.append(
                 &token,
@@ -628,6 +632,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_offset(offset as u64);
         }
         wire::Action::FinishPreferences => {
+            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let (operation, bytes) = host.transfers.finish(&token, crate::now(host.start))?;
             let bytes = host.save_preferences(&operation, bytes)?;
@@ -636,6 +641,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_total_length(bytes.len() as u64);
         }
         wire::Action::AbortPreferences => {
+            let host = host.local_state_mut()?;
             host.transfers.abort(&text(r.get_transfer())?);
         }
         wire::Action::SavePreferences => {
@@ -651,9 +657,10 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_capture_scope(&scope);
         }
         wire::Action::CloseCaptureScope => {
-            host.close_capture_scope(&text(r.get_capture_scope())?);
+            host.close_capture_scope(&text(r.get_capture_scope())?)?;
         }
         wire::Action::BeginCaptureUpload => {
+            let host = host.local_state_mut()?;
             host.prepare_write()?;
             let token = host.capture_transfers.begin(
                 text(r.get_operation())?,
@@ -664,6 +671,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_transfer(&token);
         }
         wire::Action::AppendCaptureUpload => {
+            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let offset = host.capture_transfers.append(
                 &token,
@@ -675,9 +683,11 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_offset(offset as u64);
         }
         wire::Action::AbortCaptureUpload => {
+            let host = host.local_state_mut()?;
             host.capture_transfers.abort(&text(r.get_transfer())?);
         }
         wire::Action::FinishPaste => {
+            let host = host.local_state_mut()?;
             let (operation, bytes) = host
                 .capture_transfers
                 .finish(&text(r.get_transfer())?, crate::now(host.start))?;
@@ -690,6 +700,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             host.record_paste(&text(upload.get_scope())?, event)?;
         }
         wire::Action::FinishCapturedSave => {
+            let host = host.local_state_mut()?;
             let (operation, bytes) = host
                 .capture_transfers
                 .finish(&text(r.get_transfer())?, crate::now(host.start))?;
@@ -758,13 +769,14 @@ fn write_chunk(mut out: wire::response::Builder<'_>, part: &crate::transfer::Chu
     out.set_payload(&part.bytes);
 }
 
-fn plugin_status(host: &Workbench, mut out: wire::response::Builder<'_>) {
-    let s = host.plugin_status();
+fn plugin_status(host: &Workbench, mut out: wire::response::Builder<'_>) -> Result<()> {
+    let s = host.plugin_status()?;
     out.set_revision(s.revision);
     out.set_sha256(&s.digest);
     out.set_plugin_enabled(s.enabled);
     out.set_plugin_approved(s.approved);
     out.set_plugin_available(s.available);
+    Ok(())
 }
 fn ui_reply(reply: morrow_plugin_runtime::inline_ui::Reply, mut out: wire::response::Builder<'_>) {
     use morrow_plugin_runtime::inline_ui::Failure;

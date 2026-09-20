@@ -20,7 +20,7 @@ fn failed_disable_stops_connection_and_reports_read_only_until_explicit_reenable
     let dir = tempfile::tempdir().unwrap();
     let mut host = Workbench::open(&dir.path().join("workbench.db"), Some(package())).unwrap();
     host.create("seed", idea("saved")).unwrap();
-    let before = host.plugin_status();
+    let before = host.plugin_status().unwrap();
     assert!(host.writable());
     let path = dir.path().join("plugin-manager/state/selection.morrow");
     let saved = dir.path().join("plugin-manager/state/saved");
@@ -79,7 +79,7 @@ fn incomplete_approval_is_read_only_for_every_persistent_write_route() {
     let partial = Package::build(manifest, original.module()).unwrap();
     let mut host = Workbench::open(&dir.path().join("workbench.db"), Some(partial)).unwrap();
     assert!(!host.writable());
-    assert!(!host.plugin_status().approved);
+    assert!(!host.plugin_status().unwrap().approved);
     assert!(
         host.create("blocked", idea("blocked"))
             .err()

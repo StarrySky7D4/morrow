@@ -2,7 +2,7 @@
 //! One owned SQLite read view supplies every candidate and body for a live query.
 //! Snapshot completeness is local evidence; durable recording/independent source proof is a
 //! separate adapter. No latest-store body lookup is allowed after this snapshot is pinned.
-use crate::{Result, Workbench, now, query_plan};
+use crate::{Result, Workbench, WorkbenchState, now, query_plan};
 use morrow_core::{
     lifecycle::{GrantKind, InstancePhase},
     store::{CardReadSnapshot, Census, FrozenCard},
@@ -10,7 +10,7 @@ use morrow_core::{
 use morrow_workbench_plugin::{Idea, Request, Response};
 
 struct Live<'a> {
-    workbench: &'a mut Workbench,
+    workbench: &'a mut WorkbenchState,
     snapshot: CardReadSnapshot,
     pending: std::vec::IntoIter<FrozenCard>,
     finished: bool,
@@ -26,7 +26,7 @@ impl query_plan::Backend for Live<'_> {
                 }
                 self.workbench.grant(entry.id(), GrantKind::ReadContent)?;
                 let start = self.workbench.start;
-                let result = self.workbench.host.local_mut()?.read_snapshot_content(
+                let result = self.workbench.host.read_snapshot_content(
                     self.workbench
                         .pool
                         .root(self.workbench.plugin.as_ref().ok_or("plugin unavailable")?)?
@@ -36,7 +36,7 @@ impl query_plan::Backend for Live<'_> {
                     || now(start),
                 );
                 self.workbench.revoke(entry.id(), GrantKind::ReadContent)?;
-                return Ok(Some(Workbench::decode(&result?)?.idea));
+                return Ok(Some(WorkbenchState::decode(&result?)?.idea));
             }
             if self.finished {
                 return Ok(None);
@@ -52,19 +52,16 @@ impl query_plan::Backend for Live<'_> {
         self.workbench.run(request)
     }
 }
-impl Workbench {
+impl WorkbenchState {
     fn query_snapshot(
         &mut self,
         snapshot: CardReadSnapshot,
         conditions: &query_plan::Conditions,
     ) -> Result<(Vec<String>, Census)> {
         // Check ownership even for an empty library, before policy clocks or actual guest work.
-        self.host
-            .local()?
-            .store_local()
-            .validate_card_snapshot(&snapshot)?;
+        self.host.store_local().validate_card_snapshot(&snapshot)?;
         let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
-        self.pool.maintain(manager, self.host.local_mut()?)?;
+        self.pool.maintain(manager, &mut self.host)?;
         let root = self
             .pool
             .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
@@ -75,7 +72,7 @@ impl Workbench {
         if !selection.enabled
             || selection.digest != bundle.digest()
             || !selection.approved.contains(&GrantKind::ReadContent)
-            || self.host.local()?.connection_phase(root.connection())? != InstancePhase::Ready
+            || self.host.connection_phase(root.connection())? != InstancePhase::Ready
         {
             return Err("query read capability unavailable".into());
         }
@@ -93,5 +90,16 @@ impl Workbench {
         Ok((result, census))
     }
 }
+
+impl Workbench {
+    fn query_snapshot(
+        &mut self,
+        snapshot: CardReadSnapshot,
+        conditions: &query_plan::Conditions,
+    ) -> Result<(Vec<String>, Census)> {
+        self.local_state_mut()?.query_snapshot(snapshot, conditions)
+    }
+}
+
 #[cfg(test)]
 mod tests;

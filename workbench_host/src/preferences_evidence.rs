@@ -23,13 +23,12 @@ fn verify_body(body: &[u8], intent: &[u8]) -> Result<()> {
     }
     Ok(())
 }
-impl Workbench {
+impl WorkbenchState {
     pub(super) fn save_preferences_observed(
         &mut self,
         operation: &str,
         input: Vec<u8>,
     ) -> Result<Vec<u8>> {
-        self.host.local()?;
         self.prepare_write()?;
         let preferences = preferences::decode_wire(&input)?;
         let intent = preferences::encode_wire(&preferences)?;
@@ -38,7 +37,7 @@ impl Workbench {
         if self.retry_preferences(operation, &intent, &pages)? {
             return Ok(intent);
         }
-        let prior = self.host.local()?.store_local().card(ID)?;
+        let prior = self.host.store_local().card(ID)?;
         if let Some(prior) = &prior
             && (prior.summary().type_id != "org.morrow.studio"
                 || prior.summary().format_version != 1)
@@ -93,7 +92,7 @@ impl Workbench {
             .collect::<morrow_core::Result<Vec<_>>>()?;
         let captured = self.pool.record_transform_batch(
             self.manager.as_ref().ok_or("plugin manager unavailable")?,
-            self.host.local_mut()?,
+            &mut self.host,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             &tasks,
             INTENT,
@@ -138,23 +137,15 @@ impl Workbench {
         pages: &[Vec<u8>],
     ) -> Result<bool> {
         // Global lookup rejects an operation used by another card or command family.
-        if matches!(
-            self.host.local()?.store_local().lookup(operation)?,
-            Lookup::Absent
-        ) {
+        if matches!(self.host.store_local().lookup(operation)?, Lookup::Absent) {
             return Ok(false);
         }
         let (commit, expected_receipt) = self
             .host
-            .local()?
             .store_local()
             .operation_commit(ID, operation)?
             .ok_or("operation belongs to another content object")?;
-        let evidence = self
-            .host
-            .local()?
-            .store_local()
-            .operation_evidence(ID, operation)?;
+        let evidence = self.host.store_local().operation_evidence(ID, operation)?;
         if evidence.len() != 1 || evidence[0].data().schema_version != task_evidence::BATCH_VERSION
         {
             return Err("existing operation has no supported original settings batch".into());
@@ -247,19 +238,17 @@ impl Workbench {
             .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
             .connection();
         let result = match change {
-            Change::Create(card) => self.host.local_mut()?.create_content_with_evidence(
+            Change::Create(card) => self.host.create_content_with_evidence(
                 connection,
                 operation,
                 card,
                 evidence,
                 || now(start),
             ),
-            Change::Edit(change) => self.host.local_mut()?.edit_content_with_evidence(
-                connection,
-                change,
-                evidence,
-                || now(start),
-            ),
+            Change::Edit(change) => {
+                self.host
+                    .edit_content_with_evidence(connection, change, evidence, || now(start))
+            }
         };
         self.revoke(ID, kind)?;
         Ok(result?)

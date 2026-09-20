@@ -47,19 +47,19 @@ fn disabled_plugin_stays_disabled_after_managed_restart_until_explicit_reenable(
     let root = tempfile::tempdir().unwrap();
     let mut host = Workbench::open_managed(root.path(), Some(package())).unwrap();
     host.create("seed", common::idea("card")).unwrap();
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     assert!(status.enabled && status.approved && host.writable());
     host.configure_plugin(status.revision, &status.digest, false)
         .unwrap();
     assert!(!host.writable());
-    assert!(!host.plugin_status().enabled);
+    assert!(!host.plugin_status().unwrap().enabled);
     assert!(host.create("denied", common::idea("denied")).is_err());
     assert_eq!(host.read("card").unwrap().revision, 1);
     host.finish().unwrap();
     drop(host);
     let mut host = Workbench::open_managed(root.path(), Some(package())).unwrap();
     assert!(!host.writable());
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     assert!(!status.enabled);
     assert!(
         host.create("still-denied", common::idea("still-denied"))
@@ -78,7 +78,7 @@ fn stale_configuration_does_not_revoke_instance_or_close_its_active_view() {
     let mut host = Workbench::open_managed(root.path(), Some(package())).unwrap();
     let first = host.ui_open("seed").unwrap();
     assert!(first.failure.is_none(), "{:?}", first.failure);
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     assert!(
         host.configure_plugin(status.revision + 1, &status.digest, false)
             .is_err()
@@ -88,7 +88,7 @@ fn stale_configuration_does_not_revoke_instance_or_close_its_active_view() {
             .is_err()
     );
     assert!(host.writable());
-    assert_eq!(host.plugin_status().revision, status.revision);
+    assert_eq!(host.plugin_status().unwrap().revision, status.revision);
     let update = host
         .ui_event(
             first.generation,
@@ -140,11 +140,11 @@ fn online_ui_generations_and_admission_are_independent_of_business_cards() {
         .unwrap();
     assert!(duplicate.failure.is_some());
     assert_eq!((duplicate.revision, duplicate.serial), (2, 1));
-    host.ui_close(first.generation);
+    host.ui_close(first.generation).unwrap();
     let second = host.ui_open("new").unwrap();
     assert!(second.failure.is_none());
     assert!(second.generation > first.generation);
-    host.ui_close(first.generation);
+    host.ui_close(first.generation).unwrap();
     assert!(
         host.ui_event(first.generation, &event(first.generation, 1, 1, "old"))
             .is_err()
@@ -164,7 +164,7 @@ fn disabling_invalidates_ui_and_reenabled_view_rejects_old_generation() {
     let mut host = Workbench::open_managed(root.path(), Some(package())).unwrap();
     let old = host.ui_open("old").unwrap();
     assert!(old.failure.is_none());
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     host.configure_plugin(status.revision, &status.digest, false)
         .unwrap();
     assert!(
@@ -172,13 +172,13 @@ fn disabling_invalidates_ui_and_reenabled_view_rejects_old_generation() {
             .is_err()
     );
     assert!(host.ui_open("disabled").is_err());
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     host.configure_plugin(status.revision, &status.digest, true)
         .unwrap();
     let fresh = host.ui_open("fresh").unwrap();
     assert!(fresh.failure.is_none());
     assert!(fresh.generation > old.generation);
-    host.ui_close(old.generation);
+    host.ui_close(old.generation).unwrap();
     assert!(
         host.ui_event(fresh.generation, &event(fresh.generation, 1, 1, "retained"))
             .unwrap()
@@ -196,7 +196,7 @@ fn upgrading_disables_new_bundle_and_downgrade_preserves_read_only_content() {
     old.finish().unwrap();
     drop(old);
     let mut current = Workbench::open_managed(root.path(), Some(package())).unwrap();
-    let status = current.plugin_status();
+    let status = current.plugin_status().unwrap();
     assert!(!status.enabled);
     assert!(!current.writable());
     assert_eq!(current.read("card").unwrap().revision, 1);
@@ -208,7 +208,7 @@ fn upgrading_disables_new_bundle_and_downgrade_preserves_read_only_content() {
     let old = Workbench::open_managed(root.path(), Some(common::package())).unwrap();
     assert!(!old.writable());
     assert!(old.maintenance_warning().is_some());
-    assert!(!old.plugin_status().available);
+    assert!(!old.plugin_status().unwrap().available);
     assert_eq!(old.read("card").unwrap().revision, 1);
 }
 #[test]
@@ -223,7 +223,7 @@ fn corrupted_plugin_registry_is_preserved_while_library_stays_readable() {
     let host = Workbench::open_managed(root.path(), Some(package())).unwrap();
     assert!(!host.writable());
     assert!(host.maintenance_warning().is_some());
-    assert!(!host.plugin_status().available);
+    assert!(!host.plugin_status().unwrap().available);
     assert_eq!(host.read("card").unwrap().revision, 1);
     assert_eq!(std::fs::read(path).unwrap(), b"corrupt-registry");
 }
@@ -251,7 +251,7 @@ fn enabled_without_write_approval_reports_read_only_and_refuses_mutation() {
         .unwrap();
     drop(registry);
     let mut host = Workbench::open_managed(root.path(), Some(package())).unwrap();
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     assert!(status.enabled && status.available);
     assert!(!status.approved);
     assert!(!host.writable());
@@ -266,7 +266,7 @@ fn managed_library_restore_keeps_original_plugin_policy_root() {
     host.create("seed", common::idea("card")).unwrap();
     let archive = root.path().join("snapshot");
     host.backup_snapshot(&archive).unwrap();
-    let status = host.plugin_status();
+    let status = host.plugin_status().unwrap();
     host.configure_plugin(status.revision, &status.digest, false)
         .unwrap();
     host.finish().unwrap();
@@ -275,7 +275,7 @@ fn managed_library_restore_keeps_original_plugin_policy_root() {
     morrow_workbench_host::restore_snapshot(&archive, &target).unwrap();
     morrow_workbench_host::activate_library(root.path(), &target).unwrap();
     let host = Workbench::open_managed(root.path(), Some(package())).unwrap();
-    assert!(!host.plugin_status().enabled);
+    assert!(!host.plugin_status().unwrap().enabled);
     assert!(!host.writable());
     assert_eq!(host.read("card").unwrap().revision, 1);
     assert!(!target.join("plugin-manager").exists());

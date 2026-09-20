@@ -39,8 +39,11 @@ struct Setup {
 }
 impl Setup {
     fn new() -> Self {
+        Self::with_package(None)
+    }
+    fn with_package(bundle: Option<Package>) -> Self {
         let dir = tempfile::tempdir().unwrap();
-        let mut app = Workbench::open_managed(dir.path(), None).unwrap();
+        let mut app = Workbench::open_managed(dir.path(), bundle).unwrap();
         let wasm = wat::parse_str(
             r#"(module
           (import "morrow_task_v1" "read_input" (func $read (param i32 i32) (result i32)))
@@ -65,8 +68,9 @@ impl Setup {
         manifest.required_features.push(io::FEATURE.into());
         manifest.io_declaration = Some(declaration);
         let package = Package::build(manifest, &wasm).unwrap();
-        app.catalog.as_ref().unwrap().install(&package).unwrap();
-        let manager = app.manager.as_mut().unwrap();
+        let state = app.local_state_mut().unwrap();
+        state.catalog.as_ref().unwrap().install(&package).unwrap();
+        let manager = state.manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();
         manager
             .approve_io(ID, package.digest(), caps, manager.revision())
@@ -75,9 +79,9 @@ impl Setup {
             .set_enabled(ID, package.digest(), true, manager.revision())
             .unwrap();
         let revision = manager.revision();
-        let pooled = app
+        let pooled = state
             .pool
-            .start(manager, app.host.local_mut().unwrap(), ID, &[], revision)
+            .start(manager, &mut state.host, ID, &[], revision)
             .unwrap();
         Self {
             app,
@@ -90,7 +94,14 @@ impl Setup {
         StartOptions {
             package_id: ID.into(),
             digest: self.digest,
-            revision: self.app.manager.as_ref().unwrap().revision(),
+            revision: self
+                .app
+                .local_state()
+                .unwrap()
+                .manager
+                .as_ref()
+                .unwrap()
+                .revision(),
             capabilities: BTreeSet::from([IoCapability::HttpRequest]),
             lifetime: WAIT,
             limits: JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
@@ -164,7 +175,12 @@ impl Setup {
     }
     fn local_pool(&self) {
         assert!(
-            self.app.pool.root(&self.pooled).is_ok(),
+            self.app
+                .local_state()
+                .unwrap()
+                .pool
+                .root(&self.pooled)
+                .is_ok(),
             "original pooled session retained"
         );
     }
@@ -267,6 +283,19 @@ fn assert_guards(root: &std::path::Path, database: &std::path::Path) {
         matches!(Sealer::new(key), Err(LeaseError::Busy)),
         "original signing identity lease must also remain held"
     );
+    let catalog =
+        morrow_core::plugin_package::catalog::Catalog::open(&root.join("plugin-manager/packages"))
+            .unwrap();
+    assert!(
+        matches!(
+            morrow_core::plugin_package::registry::Registry::open(
+                &root.join("plugin-manager/state"),
+                catalog,
+            ),
+            Err(morrow_core::Error::StorageBusy)
+        ),
+        "original manager registry lease must remain held with the storage owner"
+    );
 }
 struct Server {
     origin: String,
@@ -337,32 +366,71 @@ impl Drop for Server {
 }
 
 #[test]
-fn application_ready_keeps_owner_busy_read_bound_does_not_consume_and_reclaims_original_store() {
+fn application_ready_keeps_complete_state_busy_and_reclaims_original_state() {
     let runtime = runtime();
     let server = Server::new();
     let mut setup = Setup::new();
-    let original = setup.app.host.local().unwrap().binding();
     let content = b"complete upload retained while busy";
-    let time = now(setup.app.start);
-    let token = setup
-        .app
-        .transfers
-        .begin(
-            "upload-operation".into(),
-            content.len() as u64,
-            &Sha256::digest(content),
-            time,
+    let staged_key = ("saved-card".into(), "staged-attachment".into());
+    let staged = morrow_core::content::Attachment {
+        id: "staged-attachment".into(),
+        display_name: "pending.txt".into(),
+        media_type: "text/plain".into(),
+        byte_length: content.len() as u64,
+        sha256: Sha256::digest(content).into(),
+    };
+    let (original, root_binding, revision, query_owner, start, token, capture) = {
+        let state = setup.app.local_state_mut().unwrap();
+        let time = now(state.start);
+        let token = state
+            .transfers
+            .begin(
+                "upload-operation".into(),
+                content.len() as u64,
+                &Sha256::digest(content),
+                time,
+            )
+            .unwrap();
+        state.transfers.append(&token, 0, content, time).unwrap();
+        let capture = state
+            .capture_transfers
+            .begin(
+                "capture-upload".into(),
+                content.len() as u64,
+                &Sha256::digest(content),
+                time,
+            )
+            .unwrap();
+        state
+            .capture_transfers
+            .append(&capture, 0, content, time)
+            .unwrap();
+        state.undo.insert("undo-operation".into(), (7, 11));
+        state.staged.insert(staged_key.clone(), staged.clone());
+        state.counter = 37;
+        (
+            state.host.binding(),
+            state
+                .pool
+                .root(&setup.pooled)
+                .unwrap()
+                .connection()
+                .binding(),
+            state.manager.as_ref().unwrap().revision(),
+            state.query_owner,
+            state.start,
+            token,
+            capture,
         )
-        .unwrap();
-    setup
-        .app
-        .transfers
-        .append(&token, 0, content, time)
-        .unwrap();
+    };
+    // Save exact approval inputs before the entire state leaves the application.
+    let options = setup.options();
     let key = setup.start(&server, &runtime, "application-ready", None);
     wait_ready(&mut setup.app, key);
     assert_eq!(setup.app.io_status().storage, StoragePhase::Running);
     setup.guards();
+    access_error(setup.app.local_state(), AccessError::Busy);
+    access_error(setup.app.local_state_mut(), AccessError::Busy);
     access_error(setup.app.page("", 1), AccessError::Busy);
     access_error(setup.app.read_preferences(), AccessError::Busy);
     let export = setup.dir.path().join("must-not-exist.bin");
@@ -389,63 +457,20 @@ fn application_ready_keeps_owner_busy_read_bound_does_not_consume_and_reclaims_o
         110
     );
     assert_eq!(std::fs::read(&existing).unwrap(), b"original");
-    let revision = setup.app.manager.as_ref().unwrap().revision();
     access_error(
         setup
             .app
             .configure_external_io(ID, &setup.digest, revision, &[]),
         AccessError::Busy,
     );
-    assert_eq!(setup.app.manager.as_ref().unwrap().revision(), revision);
-    assert!(
-        setup
-            .app
-            .manager
-            .as_ref()
-            .unwrap()
-            .selection(ID)
-            .unwrap()
-            .approved_io
-            .contains(&IoCapability::HttpRequest)
-    );
     assert_eq!(
         protocol_code(&mut setup.app, wire::Action::FinishPreferences, "", &token),
         110
     );
-    let time = now(setup.app.start);
-    assert_eq!(
-        setup.app.transfers.finish(&token, time).unwrap(),
-        ("upload-operation".into(), content.to_vec())
-    );
-    let capture = setup
-        .app
-        .capture_transfers
-        .begin(
-            "capture-upload".into(),
-            content.len() as u64,
-            &Sha256::digest(content),
-            time,
-        )
-        .unwrap();
-    setup
-        .app
-        .capture_transfers
-        .append(&capture, 0, content, time)
-        .unwrap();
     for action in [wire::Action::FinishPaste, wire::Action::FinishCapturedSave] {
         assert_eq!(protocol_code(&mut setup.app, action, "", &capture), 110);
     }
-    assert_eq!(
-        setup
-            .app
-            .capture_transfers
-            .finish(&capture, time)
-            .unwrap()
-            .1,
-        content
-    );
-    // Starting another task while Ready cannot invoke its trusted preparer.
-    let options = setup.options();
+    // These rejected operations must not consume retained transfer or capture state.
     access_error(
         setup
             .app
@@ -458,6 +483,7 @@ fn application_ready_keeps_owner_busy_read_bound_does_not_consume_and_reclaims_o
     };
     assert_eq!(bounded.to_string(), "IO result: ReadBound");
     assert_eq!(setup.app.poll_io(key).unwrap().delivery, Some(Poll::Ready));
+    access_error(setup.app.local_state(), AccessError::Busy);
     let report = setup.app.read_io(key, 256 * 1024).unwrap().unwrap();
     assert!(report.task.execution.outcome.is_ok());
     let response = report.http_response.unwrap();
@@ -467,20 +493,58 @@ fn application_ready_keeps_owner_busy_read_bound_does_not_consume_and_reclaims_o
     assert_eq!(status.storage, StoragePhase::Reclaimed);
     let exit = status.exit.unwrap();
     assert!(exit.execution.is_ok() && exit.disconnect.is_ok() && exit.maintenance.is_ok());
-    assert_eq!(setup.app.host.local().unwrap().binding(), original);
+    {
+        let state = setup.app.local_state_mut().unwrap();
+        assert_eq!(state.host.binding(), original);
+        assert_eq!(
+            state
+                .pool
+                .root(&setup.pooled)
+                .unwrap()
+                .connection()
+                .binding(),
+            root_binding
+        );
+        assert_eq!(state.manager.as_ref().unwrap().revision(), revision);
+        assert!(
+            state
+                .manager
+                .as_ref()
+                .unwrap()
+                .selection(ID)
+                .unwrap()
+                .approved_io
+                .contains(&IoCapability::HttpRequest)
+        );
+        assert_eq!(
+            (state.query_owner, state.start, state.counter),
+            (query_owner, start, 37)
+        );
+        assert_eq!(state.undo.get("undo-operation"), Some(&(7, 11)));
+        assert_eq!(state.staged.get(&staged_key), Some(&staged));
+        let time = now(state.start);
+        assert_eq!(
+            state.transfers.finish(&token, time).unwrap(),
+            ("upload-operation".into(), content.to_vec())
+        );
+        assert_eq!(
+            state.capture_transfers.finish(&capture, time).unwrap(),
+            ("capture-upload".into(), content.to_vec())
+        );
+        let store = state.host.store_local();
+        assert_eq!(
+            store
+                .lookup_io_intent(ID, "application-ready")
+                .unwrap()
+                .unwrap()
+                .phase(),
+            IntentPhase::Observed
+        );
+        assert_eq!(store.pending_usage().unwrap(), (0, 0));
+        store.integrity_check().unwrap();
+    }
     setup.guards();
     setup.local_pool();
-    let store = setup.app.host.local().unwrap().store_local();
-    assert_eq!(
-        store
-            .lookup_io_intent(ID, "application-ready")
-            .unwrap()
-            .unwrap()
-            .phase(),
-        IntentPhase::Observed
-    );
-    assert_eq!(store.pending_usage().unwrap(), (0, 0));
-    store.integrity_check().unwrap();
     assert_eq!(server.calls.load(Ordering::SeqCst), 1);
     let options = setup.options();
     access_error(
@@ -496,11 +560,218 @@ fn application_ready_keeps_owner_busy_read_bound_does_not_consume_and_reclaims_o
 }
 
 #[test]
+fn real_workbench_content_inline_ui_and_capture_editor_survive_io_handoff() {
+    use crate::{
+        Mutation,
+        capture_provenance::{PasteEvent, PastePart},
+        test_common as common,
+    };
+    use morrow_core::{
+        plugin_package::proto::TransformHandler,
+        ui::{Document, Event, EventKind},
+    };
+    use morrow_workbench_plugin::Action;
+
+    let original = common::package();
+    let mut manifest = original.manifest().clone();
+    manifest.transform_handlers.extend([
+        TransformHandler {
+            handler: "ui.form".into(),
+            input_type: "text.utf8".into(),
+            output_type: "morrow.ui.document.v1".into(),
+            max_input_bytes: 32,
+            max_output_bytes: 65536,
+        },
+        TransformHandler {
+            handler: "ui.edit".into(),
+            input_type: "morrow.ui.event.v1".into(),
+            output_type: "morrow.ui.document.v1".into(),
+            max_input_bytes: 65536,
+            max_output_bytes: 65536,
+        },
+    ]);
+    let bundle = Package::build(manifest, original.module()).unwrap();
+    let mut setup = Setup::with_package(Some(bundle));
+    let runtime = runtime();
+    let server = Server::new();
+    let card = setup
+        .app
+        .create("before-handoff-create", common::idea("handoff-card"))
+        .unwrap();
+    let encode_edit = |generation, revision, serial, text: &str| {
+        Event {
+            view: "workbench-tools".into(),
+            generation,
+            revision,
+            serial,
+            node: "text".into(),
+            action: "text.edit".into(),
+            kind: EventKind::EditText,
+            text: text.into(),
+            checked: false,
+        }
+        .encode()
+        .unwrap()
+    };
+    let opened = setup.app.ui_open("before").unwrap();
+    assert!(opened.failure.is_none(), "{:?}", opened.failure);
+    let edited = setup
+        .app
+        .ui_event(
+            opened.generation,
+            &encode_edit(opened.generation, opened.revision, 1, "retained draft"),
+        )
+        .unwrap();
+    assert!(edited.failure.is_none(), "{:?}", edited.failure);
+    assert_eq!((edited.revision, edited.serial), (2, 1));
+    let scope = setup
+        .app
+        .open_capture_scope(&card.idea.id, card.revision)
+        .unwrap();
+    let before = card.idea.description.clone();
+    let offset = before.encode_utf16().count() as u32;
+    let paste = PasteEvent {
+        id: "paste-before-handoff".into(),
+        field: "description".into(),
+        before: before.clone(),
+        start_utf16: offset,
+        end_utf16: offset,
+        parts: vec![PastePart {
+            ticket: String::new(),
+            literal: " retained paste".into(),
+            selection: String::new(),
+        }],
+        after: format!("{before} retained paste"),
+    };
+    setup.app.record_paste(&scope, paste.clone()).unwrap();
+    let key = setup.start(&server, &runtime, "live-editor-handoff", None);
+    wait_ready(&mut setup.app, key);
+    access_error(setup.app.plugin_status(), AccessError::Busy);
+    access_error(setup.app.ui_close(opened.generation), AccessError::Busy);
+    access_error(setup.app.close_capture_scope(&scope), AccessError::Busy);
+    access_error(
+        setup.app.ui_event(
+            opened.generation,
+            &encode_edit(opened.generation, edited.revision, 2, "after handoff"),
+        ),
+        AccessError::Busy,
+    );
+    access_error(setup.app.read(&card.idea.id), AccessError::Busy);
+    for action in [wire::Action::UiClose, wire::Action::CloseCaptureScope] {
+        assert_eq!(protocol_code(&mut setup.app, action, "", ""), 110);
+    }
+    assert_eq!(
+        setup
+            .app
+            .read_io(key, 256 * 1024)
+            .unwrap()
+            .unwrap()
+            .http_response
+            .unwrap()
+            .body,
+        b"owned"
+    );
+    reclaim(&mut setup.app, key);
+
+    // Continue the original view; a reopened or cleared InlineUi cannot accept this revision/serial.
+    let continued = setup
+        .app
+        .ui_event(
+            opened.generation,
+            &encode_edit(opened.generation, edited.revision, 2, "after handoff"),
+        )
+        .unwrap();
+    assert!(continued.failure.is_none(), "{:?}", continued.failure);
+    assert_eq!(
+        (continued.generation, continued.revision, continued.serial),
+        (opened.generation, 3, 2)
+    );
+    let document = Document::decode(continued.document.as_ref().unwrap()).unwrap();
+    assert_eq!(
+        document
+            .nodes()
+            .iter()
+            .find(|node| node.id == "preview")
+            .unwrap()
+            .text,
+        "AFTER HANDOFF"
+    );
+    // The same editor retains its prior paste identity, not just a newly created empty scope.
+    setup.app.record_paste(&scope, paste.clone()).unwrap();
+    let mut conflicting = paste.clone();
+    conflicting.after.push('!');
+    assert_eq!(
+        setup
+            .app
+            .record_paste(&scope, conflicting)
+            .unwrap_err()
+            .to_string(),
+        "paste application identity conflict"
+    );
+    let offset = paste.after.encode_utf16().count() as u32;
+    setup
+        .app
+        .record_paste(
+            &scope,
+            PasteEvent {
+                id: "paste-after-handoff".into(),
+                field: "description".into(),
+                before: paste.after.clone(),
+                start_utf16: offset,
+                end_utf16: offset,
+                parts: vec![PastePart {
+                    ticket: String::new(),
+                    literal: " continued".into(),
+                    selection: String::new(),
+                }],
+                after: format!("{} continued", paste.after),
+            },
+        )
+        .unwrap();
+    let current = setup.app.read(&card.idea.id).unwrap();
+    assert_eq!(
+        (current.revision, &current.idea.title),
+        (card.revision, &card.idea.title)
+    );
+    let mut proposed = current.idea;
+    proposed.title = "Edited by original Rust guest after IO".into();
+    let applied = setup
+        .app
+        .apply(Mutation {
+            operation: "after-handoff-edit",
+            id: &card.idea.id,
+            revision: card.revision,
+            action: Action::Edit,
+            proposed: Some(proposed),
+            text: "",
+            flag: false,
+        })
+        .unwrap();
+    assert_eq!(applied.revision, card.revision + 1);
+    assert_eq!(applied.idea.title, "Edited by original Rust guest after IO");
+    let created = setup
+        .app
+        .create("after-handoff-create", common::idea("second-handoff-card"))
+        .unwrap();
+    assert_eq!(created.revision, 1);
+    assert_eq!(
+        setup.app.read(&card.idea.id).unwrap().idea.title,
+        applied.idea.title
+    );
+    setup.app.close_capture_scope(&scope).unwrap();
+    setup.app.ui_close(opened.generation).unwrap();
+    setup.app.acknowledge_io(key).unwrap();
+    setup.local_pool();
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    setup.app.finish().unwrap();
+}
+
+#[test]
 fn old_or_foreign_tokens_cannot_stop_new_task_and_cancel_waits_for_late_router_release() {
     let runtime = runtime();
     let server = Server::new();
     let mut setup = Setup::new();
-    let original = setup.app.host.local().unwrap().binding();
+    let original = setup.app.local_state().unwrap().host.binding();
     let old = setup.start(&server, &runtime, "first-task", None);
     wait_ready(&mut setup.app, old);
     setup.app.read_io(old, 256 * 1024).unwrap().unwrap();
@@ -533,13 +804,14 @@ fn old_or_foreign_tokens_cannot_stop_new_task_and_cancel_waits_for_late_router_r
     setup.guards();
     access_error(setup.app.acknowledge_io(key), AccessError::Busy);
     access_error(setup.app.finish(), AccessError::Busy);
-    setup.local_pool();
+    access_error(setup.app.local_state(), AccessError::Busy);
+    access_error(setup.app.local_state_mut(), AccessError::Busy);
     release_tx.send(()).unwrap();
     let status = reclaim(&mut setup.app, key);
     assert_eq!(status.storage, StoragePhase::Reclaimed);
     let suppressed = setup.app.read_io(key, 256 * 1024).unwrap().unwrap();
     assert!(suppressed.cancelled && suppressed.unknown && suppressed.http_response.is_none());
-    assert_eq!(setup.app.host.local().unwrap().binding(), original);
+    assert_eq!(setup.app.local_state().unwrap().host.binding(), original);
     setup.local_pool();
     setup.guards();
     assert_eq!(server.calls.load(Ordering::SeqCst), 3);
@@ -558,7 +830,7 @@ fn old_or_foreign_tokens_cannot_stop_new_task_and_cancel_waits_for_late_router_r
 #[test]
 fn preparation_failure_or_panic_returns_original_owner_and_keeps_existing_pool_usable() {
     let mut setup = Setup::new();
-    let original = setup.app.host.local().unwrap().binding();
+    let original = setup.app.local_state().unwrap().host.binding();
     let options = setup.options();
     assert!(
         setup
@@ -574,7 +846,7 @@ fn preparation_failure_or_panic_returns_original_owner_and_keeps_existing_pool_u
             .is_err()
     );
     assert_eq!(setup.app.io_status().storage, StoragePhase::Local);
-    assert_eq!(setup.app.host.local().unwrap().binding(), original);
+    assert_eq!(setup.app.local_state().unwrap().host.binding(), original);
     setup.guards();
     setup.local_pool();
     // The next real admission proves the failed preparations left no phantom task.
@@ -605,7 +877,7 @@ impl BrokerRouter for NeverRouter {
 #[test]
 fn rejected_worker_options_and_submission_return_owner_with_inspectable_status() {
     let mut setup = Setup::new();
-    let original = setup.app.host.local().unwrap().binding();
+    let original = setup.app.local_state().unwrap().host.binding();
     for invalid_worker in [true, false] {
         let mut options = setup.options();
         if invalid_worker {
@@ -633,7 +905,7 @@ fn rejected_worker_options_and_submission_return_owner_with_inspectable_status()
         let exit = status.exit.unwrap();
         assert_eq!(exit.execution.is_err(), invalid_worker);
         assert!(exit.disconnect.is_ok() && exit.maintenance.is_ok());
-        assert_eq!(setup.app.host.local().unwrap().binding(), original);
+        assert_eq!(setup.app.local_state().unwrap().host.binding(), original);
         setup.guards();
         setup.local_pool();
         setup.app.acknowledge_io(key).unwrap();
@@ -698,12 +970,12 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
     let runtime = runtime();
     let server = Server::new();
     let mut setup = Setup::new();
-    let original = setup.app.host.local().unwrap().binding();
+    let original = setup.app.local_state().unwrap().host.binding();
     setup
         .app
-        .host
-        .local_mut()
+        .local_state_mut()
         .unwrap()
+        .host
         .fail_next_seal_for_test();
     let key = setup.start(&server, &runtime, "repair-only", None);
     wait_ready(&mut setup.app, key);
@@ -715,9 +987,9 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
     assert!(
         setup
             .app
-            .host
-            .local()
+            .local_state()
             .unwrap()
+            .host
             .store_local()
             .pending_usage()
             .unwrap()
@@ -725,10 +997,7 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
             > 0
     );
     access_error(setup.app.acknowledge_io(key), AccessError::RecoveryRequired);
-    access_error(
-        setup.app.host.prepare_write(),
-        AccessError::RecoveryRequired,
-    );
+    access_error(setup.app.prepare_write(), AccessError::RecoveryRequired);
     let options = setup.options();
     access_error(
         setup
@@ -742,7 +1011,7 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
         repaired.exit, failed.exit,
         "historical maintenance failure remains visible"
     );
-    let owner = setup.app.host.local().unwrap();
+    let owner = &setup.app.local_state().unwrap().host;
     assert_eq!(owner.binding(), original);
     assert_eq!(owner.store_local().pending_usage().unwrap(), (0, 0));
     assert_eq!(

@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`d073f6153025502a1653ff0560727a4ee54e0864`；2026-09-20。本文区分已实现的拥有者适配、有限服务运行租约、累计任务/字节预算、原声明内续租、宿主命令预留通道和内部Manager续租，以及仍待实现的完整工作台状态与界面调度。主应用常驻节点尚未完成。
+基线：`cd287d6`；2026-09-20。本文区分已实现的拥有者适配、有限服务运行租约、累计任务/字节预算、原声明内续租、宿主命令预留通道、内部Manager续租和完整WorkbenchState提取，以及仍待实现的工作台命令派发与界面调度。主应用常驻节点尚未完成。
 
 ## 当前限制的具体来源
 
@@ -10,7 +10,7 @@
 | `plugin_runtime/src/io_binding.rs` | 旧绑定按IO声明限期；service-run-v1在原IoContext签发一次有限运行，原请求上限不变 | 重复绑定不应改变同实例账本；释放作业只返还并发容量，不退款 |
 | `plugin_runtime/src/io_jobs.rs` | `spawn_session_owned` 从声明建立单作业timeout，`submit_routed`校验；工作线程同步执行一项guest/broker调用 | 监听长期运行需要独立运行期限；仅添加UI队列仍可能等待当前阻塞请求结束 |
 | `network_node/src/managed_service.rs` | 监听监督和执行worker有各自退出路径 | socket关闭不证明worker已退出；必须分别观察并真实join |
-| `workbench_host/src/lib.rs` / `io_tasks.rs` | Storage交给IO worker，但Pool、Manager、undo、附件暂存和UI会话仍在Workbench调用线程 | 在线内容操作不能通过第二个Store绕过独占，也不能只给worker加原始读卡片请求 |
+| `workbench_host/src/lib.rs` / `io_tasks.rs` | 完整WorkbenchState随短IO移交，外围仅保留任务状态与回执关联；业务入口尚未排入原worker | 在线内容操作仍返回Busy，下一步必须接原状态上的业务命令，不能通过第二个Store绕过独占 |
 
 ## 一、完整所有者适配
 
@@ -57,7 +57,9 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 ## 三、把完整工作台状态放入单个执行者
 
-抽出 `WorkbenchState`，直接持有原Storage、Pool、Manager、内容会话、undo、附件/导入暂存与capture状态；不包含指向自身的worker句柄或可空StorageSlot。它实现HostOwner，runtime始终来自同一Storage。外层Workbench成为运行状态与命令回执的管理者。
+`WorkbenchState`已从外围Workbench抽出，直接持有原Storage、Pool、Manager、内容及内外部UI会话、undo、附件/上传暂存与capture状态；不包含worker句柄或可空StorageSlot。它实现HostOwner/ManagedHostOwner，runtime始终来自同一Storage。外层Workbench通过StateSlot管理完整状态的移交/回收，并保留HTTP提交去重与回执关联。
+
+原内容、查询、证据、设置、插件目录、凭据、端点和服务批准逻辑都在State上运行，外围使用显式借用转发。短IO的finish_io只封存原Storage，不关闭Pool和编辑器；应用finish在真实回收后才执行完整清理。不能把这次提取当作业务调度已完成：现有短IO仍进入drain，业务入口在后台返回Busy；下一步必须接入原worker上的有界命令和长期服务的实际应用准入。验证范围见[状态提取报告](../reports/workbench-state-2026-09-20.md)。
 
 工作台层定义有界且完全拥有参数的命令，分别覆盖Page/Read、Create/Apply、Query、Preferences、Capture、Import/Export及管理操作。Create/Apply继续走现有 `run_observed`、Pool、逐对象授权和证据提交，不允许直接写Store替代。响应是拥有的结果或受控结果句柄，不跨线程传递借用、指针或临时UI对象。
 
@@ -69,7 +71,7 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 内部Manager续租现通过 `IoWorker<ManagedHostOwner>::queue_service_run_renewal` 和ServiceHost本地转发进入原8项保留队列，无需实现字节命令handler。执行时借用原owner内部Manager，与外部续租共用身份、当前批准、两级修订、首次期限和累计额度校验。取消在worker状态锁下与CAS串行化；开始后的取消/停止只压制回执为Unknown，不能回滚或据此自动重试。`ServiceRunRenewalHandle::read`区分待完成、明确的续租批准/拒绝和交付不确定；排入队列不是续租成功。见[内部续租报告](../reports/owned-service-renewal-2026-09-20.md)。
 
-该入口不增加guest ABI、HTTP管理路由或持久操作记录。诊断快照仍不产生授权。下一集成项是完整WorkbenchState提取及内容/批准/撤权等管理命令接线，不能以复制Manager、另开Registry或handler重入worker实现；现有撤销原语不等于全部应用管理命令已接入。
+该入口不增加guest ABI、HTTP管理路由或持久操作记录。诊断快照仍不产生授权。下一集成项是完整State上的内容/批准/撤权等管理命令接线，不能以复制Manager、另开Registry或handler重入worker实现；现有撤销原语不等于全部应用管理命令已接入。
 
 第一步允许同一执行线程串行处理UI和服务命令，这是过渡阶段，不宣称即时响应。下一步需要将长耗时网络等待和guest续执行改为可暂停的作业阶段，使原宿主在等待期间能处理其他已授权命令；不能在仍持有 `&mut HostRuntime` 的同步guest/broker调用中重入工作台。保留命令顺序、operation身份及最终授权检查，不能为了交互响应复制Runtime或数据库。
 

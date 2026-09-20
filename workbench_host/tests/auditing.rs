@@ -150,7 +150,7 @@ fn audit_child() {
             // the storage fault must not implicitly revive a terminated plugin session.
             assert!(!host.writable());
             assert!(host.maintenance_warning().is_none());
-            let status = host.plugin_status();
+            let status = host.plugin_status().unwrap();
             host.configure_plugin(status.revision, &status.digest, true)
                 .unwrap();
             assert!(host.writable());

@@ -73,7 +73,7 @@ impl Workbench {
         if status.key.is_some() {
             return Err(AccessError::UnacknowledgedTask.into());
         }
-        self.host.local()?;
+        self.local_state()?;
         if request.submission == [0; 32]
             || request.endpoint == [0; 32]
             || request.timeout_ms == 0
@@ -84,8 +84,8 @@ impl Workbench {
             return Err("invalid, repeated or exhausted HTTP submission identity".into());
         }
         let record = self
+            .local_state()?
             .host
-            .local()?
             .store_local()
             .load_outbound_authority(&request.endpoint)?
             .ok_or("endpoint not found")?;
@@ -100,6 +100,7 @@ impl Workbench {
             return Err("endpoint package digest changed".into());
         }
         let package = self
+            .local_state()?
             .catalog
             .as_ref()
             .ok_or("catalog unavailable")?
@@ -129,7 +130,7 @@ impl Workbench {
         let package_id = policy.package_id.clone();
         let lifetime = Duration::from_millis(request.timeout_ms);
         let stored = StoredHttpEndpoint::resolve(
-            self.host.local_mut()?.store_local_mut(),
+            self.local_state_mut()?.host.store_local_mut(),
             &request.endpoint,
             utc,
         )?;
