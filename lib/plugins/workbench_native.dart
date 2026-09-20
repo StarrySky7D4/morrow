@@ -15,6 +15,7 @@ import 'studio_native.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' show Random;
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:capnproto_dart/capnproto_dart.dart';
@@ -26,6 +27,8 @@ import 'workbench_backend.dart';
 import 'generated/host.capnp.dart' as host;
 import 'generated/workbench.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
+
+part 'service_business_routing_native.dart';
 
 class RustWorkbench
     implements
@@ -67,6 +70,10 @@ class RustWorkbench
   Completer<Uint8List>? _response;
   Object? _failure;
   Future<void> _queue = Future.value();
+  Future<void> _businessQueue = Future.value();
+  ServiceRunSnapshot? _serviceRoute;
+  bool _serviceStopping = false;
+  bool _serviceAdmissionUncertain = false;
   Future<void>? _closingProcess;
   int _sequence = 0;
   @override
@@ -1054,37 +1061,117 @@ class RustWorkbench
     bool clearReply = false,
     bool updatePresentation = true,
   }) {
+    if (_isScheduler(action)) {
+      return _exchangeDecoded(
+        action,
+        configure: configure,
+        requestTimeout: requestTimeout,
+        decode: decode,
+        clearReply: clearReply,
+        updatePresentation: updatePresentation,
+      );
+    }
+    final completion = Completer<T>();
+    _businessQueue = _businessQueue.then((_) async {
+      try {
+        completion.complete(
+          await _exchangeDecoded(
+            action,
+            configure: configure,
+            requestTimeout: requestTimeout,
+            decode: decode,
+            clearReply: clearReply,
+            updatePresentation: updatePresentation,
+            routeBusiness: true,
+          ),
+        );
+      } catch (error, stack) {
+        completion.completeError(error, stack);
+      }
+    });
+    return completion.future;
+  }
+
+  Future<T> _exchangeDecoded<T>(
+    host.Action action, {
+    void Function(host.RequestBuilder)? configure,
+    Duration requestTimeout = const Duration(seconds: 60),
+    required T Function(host.ResponseReader) decode,
+    bool clearReply = false,
+    bool updatePresentation = true,
+    bool routeBusiness = false,
+    Duration Function()? remainingBudget,
+  }) {
+    // Preserve the original fenced-transport diagnosis while EOF cleanup runs.
+    if (_failure != null) return Future.error(_failure!);
     if (_closingProcess != null) {
       return Future.error(StateError('Content service is closing'));
     }
     final completion = Completer<T>();
     _queue = _queue.then((_) async {
       Uint8List? receivedBytes;
+      Uint8List? schedulerKey;
       Completer<Uint8List>? pendingReply;
+      Never transportTimeout() {
+        final error = TimeoutException('内容服务响应超时');
+        _fail(error);
+        // EOF requests original-owner cleanup; a timer never proves exit.
+        unawaited(close().catchError((Object _) {}));
+        throw error;
+      }
+
       try {
         if (_failure != null) throw _failure!;
+        remainingBudget?.call();
+        // Choose only when this actual pipe slot is reached. A preceding
+        // service-start receipt has already updated the observed owner here.
+        if (routeBusiness && _serviceAdmissionUncertain) {
+          throw StateError(
+            'Service admission outcome is unknown; inspect its current status',
+          );
+        }
+        if (routeBusiness && _serviceRoute != null) {
+          final service = _serviceRoute!;
+          unawaited(
+            _throughService(
+              action,
+              service,
+              configure: configure,
+              requestTimeout: requestTimeout,
+              decode: decode,
+              clearReply: clearReply,
+              updatePresentation: updatePresentation,
+            ).then<void>(
+              completion.complete,
+              onError: completion.completeError,
+            ),
+          );
+          return;
+        }
         late Completer<Uint8List> response;
         await sendHostRequest(
           action,
-          configure: configure,
+          configure: (r) {
+            configure?.call(r);
+            if (_isScheduler(action)) schedulerKey = r.asReader().ioKey;
+          },
           send: (payload) async {
             final header = ByteData(4)
               ..setUint32(0, payload.length, Endian.little);
             response = _response = pendingReply = Completer<Uint8List>();
             process.stdin.add(header.buffer.asUint8List());
             process.stdin.add(payload);
-            await process.stdin.flush();
+            await process.stdin.flush().timeout(
+              remainingBudget?.call() ?? requestTimeout,
+              onTimeout: transportTimeout,
+            );
           },
         );
         final bytes = receivedBytes = await response.future.timeout(
-          requestTimeout,
-          onTimeout: () {
-            final error = TimeoutException('内容服务响应超时');
-            _fail(error);
-            process.kill();
-            throw error;
-          },
+          remainingBudget?.call() ?? requestTimeout,
+          onTimeout: transportTimeout,
         );
+        remainingBudget?.call();
         final reply = readMessage(
           bytes,
           maxBytes: ServiceRunCodec.responseMaxBytes(action),
@@ -1092,29 +1179,33 @@ class RustWorkbench
         if (reply.version != 1 || !_same(reply.digest, contract.hostDigest)) {
           throw const FormatException('内容服务版本不匹配');
         }
-        if (updatePresentation) {
-          writable = !reply.readOnly;
-          final notice = reply.maintenanceWarning ?? '';
-          maintenanceWarning = notice.isEmpty ? null : notice;
+        final maskServiceObservation =
+            _isScheduler(action) && _serviceRoute != null;
+        _checkBusinessReply(
+          action,
+          reply,
+          updatePresentation: updatePresentation && !maskServiceObservation,
+        );
+        final decoded = decode(reply);
+        _observeScheduler(action, reply, expectedTask: schedulerKey);
+        if (maskServiceObservation &&
+            _serviceRoute == null &&
+            updatePresentation) {
+          _checkBusinessReply(action, reply, updatePresentation: true);
         }
-        if ((reply.error ?? '').isNotEmpty) {
-          if (action == host.Action.query) {
-            // 100 is query-specific; an unknown code never proves termination.
-            throw QueryFailure(
-              reply.error!,
-              terminal: reply.uiCode == 100 || reply.uiCode == 101,
-              capacity: reply.uiCode == 101 || reply.uiCode == 102,
-            );
-          }
-          throw StateError(reply.error!);
-        }
-        completion.complete(decode(reply));
+        completion.complete(decoded);
       } catch (e, stack) {
+        if (action == host.Action.serviceRunStart &&
+            pendingReply != null &&
+            e is! _HostResponseError) {
+          _serviceAdmissionUncertain = true;
+        }
         if (pendingReply != null && receivedBytes == null) {
           // A failed write/flush cannot prove whether the host accepted this
           // request. Fence the channel so a late reply can never satisfy a
           // different request, including a one-time authentication receipt.
           _fail(StateError('Content service transport outcome is unknown'));
+          unawaited(close().catchError((Object _) {}));
         }
         completion.completeError(e, stack);
       } finally {

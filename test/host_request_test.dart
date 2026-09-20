@@ -22,6 +22,35 @@ void expectCleared(List<Uint8List> buffers) {
 }
 
 void main() {
+  test(
+    'service routing bounds the complete frame and clears ordinary request copies',
+    () async {
+      late List<Uint8List> segments;
+      await expectLater(
+        sendHostRequest(
+          host.Action.service,
+          maxBytes: 64 * 1024,
+          clearAfterSend: true,
+          configure: (request) {
+            request.payload = Uint8List(64 * 1024)..fillRange(0, 64 * 1024, 71);
+            segments = buffers(request);
+          },
+          send: (_) async => fail('complete frame exceeds the nested budget'),
+        ),
+        throwsFormatException,
+      );
+      expectCleared(segments);
+      await sendHostRequest(
+        host.Action.service,
+        clearAfterSend: true,
+        configure: (r) => r.payload = Uint8List(64 * 1024),
+        send: (frame) async {
+          expect(frame.length, greaterThan(64 * 1024));
+          expect(frame.length, lessThan(128 * 1024));
+        },
+      );
+    },
+  );
   for (final failWrite in [false, true]) {
     test(
       'nested command clears replaced segments and serialized frame, failure=$failWrite',

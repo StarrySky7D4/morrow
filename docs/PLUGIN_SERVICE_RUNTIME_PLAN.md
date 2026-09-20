@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`601df45`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart低层接口已接入；TLS、出站资源适配、业务自动路由与Flutter界面仍待接入。现有短IO自动drain的行为不变。
+基线：`f135dd1`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart业务自动路由已接入；TLS、出站资源适配与Flutter服务界面仍待接入。现有短IO自动drain的行为不变。
 
 ## 当前限制的具体来源
 
@@ -10,7 +10,7 @@
 | `plugin_runtime/src/io_binding.rs` | 旧绑定按IO声明限期；service-run-v1在原IoContext签发一次有限运行，原请求上限不变 | 重复绑定不应改变同实例账本；释放作业只返还并发容量，不退款 |
 | `plugin_runtime/src/io_jobs.rs` | `spawn_session_owned` 从声明建立单作业timeout，`submit_routed`校验；工作线程同步执行一项guest/broker调用 | 监听长期运行需要独立运行期限；仅添加UI队列仍可能等待当前阻塞请求结束 |
 | `network_node/src/managed_service.rs` | 监听监督和执行worker有各自退出路径 | socket关闭不证明worker已退出；必须分别观察并真实join |
-| `workbench_host/src/lib.rs` / `io_tasks.rs` / `service_tasks.rs` | StateSlot用执行者变体保持原State独占，原生服务准入、命令提交与双退出已接线；短IO仍独立drain | 私有命令/回执协议已接；尚需Flutter业务路由与交互、TLS和出站资源适配，不能通过第二个Store绕过独占 |
+| `workbench_host/src/lib.rs` / `io_tasks.rs` / `service_tasks.rs` | StateSlot用执行者变体保持原State独占，原生服务准入、命令提交与双退出已接线；短IO仍独立drain | 私有命令/回执协议已接；Dart业务路由已接；尚需Flutter运行交互、TLS和出站资源适配，不能通过第二个Store绕过独占 |
 
 ## 一、完整所有者适配
 
@@ -96,10 +96,10 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 以下原生准入前置现已实现：`Workbench::start_service`核对同一原授权锁内的配置摘要/修订、发布修订和监听政策，签发新有限运行并非阻塞启动监督线程。`service_status`区分绑定、监听、监督和worker退出诊断，保留提交身份；`submit_service_command`只向已运行的原ServiceHost提交业务。取消、修复与确认复用StateSlot任务身份；原State只在监听和worker结束、监督线程真实join后回到本地。ManagedNode新增可取消等待的borrowed join，句柄保留到终态。实际验收见[应用服务准入报告](../reports/application-service-admission-2026-09-20.md)。
 
-私有调度协议与有界命令句柄表、Dart低层模型和接口现已接入，见[命令协议报告](../reports/service-command-protocol-2026-09-20.md)。下一编码重点调整为Flutter的启动/状态/停止页面及业务异步交付；仍需覆盖长IO可暂停、TLS和出站资源、完整Unknown核对，不能把原生测试入口当作已完成的界面用户路径。
+私有调度协议与有界命令句柄表、Dart低层模型和接口现已接入，见[命令协议报告](../reports/service-command-protocol-2026-09-20.md)。Dart普通业务自动路由现已通过真实HTTP与原Rust工作台卡片/语言操作验证，见[路由报告](../reports/service-business-routing-2026-09-20.md)。下一编码重点调整为Flutter的启动/状态/停止/恢复页面；仍需覆盖长IO可暂停、TLS和出站资源、完整Unknown核对，不能把原生测试入口当作已完成的界面用户路径。
 
 先新增可信应用ServiceStart准入，复用 `service_authority::ResolvedService::resolve/issue`、`Manager::bind_budgeted_service_run`、`IoWorker::spawn_managed_owner`、`ServiceHost::new_owned/bind_configured`。第一验收限定原持久发布配置中的单个loopback HTTP服务，使用明确的有限期限和累计预算，不自动续租；未批准的出站调用明确拒绝。复用StateSlot的唯一owner与修复/确认规则，以执行者变体区分短IO和常驻服务，避免两个槽分别持有同一库。
 
 服务监督器持有Tokio runtime、ServiceHost和监听直到实际退出。现ManagedNode只有消费式异步shutdown及Drop停止信号，需提供可观察的非阻塞停止/完成路径或由监督器保存该future；监听和worker都结束后才将原State重新暴露为本地。端口绑定失败保留原ServiceHost回收，构造失败保留原worker回收，不能丢弃拥有者后旁路重开。
 
-然后增加私有服务调度与有界命令句柄操作，全部纳入State禁止的调度动作集合。Dart只串行单次传输，命令等待期间让状态/停止请求插入，不能让轮询占住整个原请求队列。活跃服务上传块需为64KiB队列帧预留空间（候选48KiB）；其他超限请求明确报Limit，不扩大Runtime限制或截断数据。验收实际HTTP期间原卡片/UI代次/capture继续工作，以及端口冲突、丢回执、撤权、到期、慢回调停止和封存修复。
+私有调度与Dart双队列已实现：发送槽内选择原task，普通业务按顺序提交/等待/读取，控制命令绕过业务等待。现有上传块实查32KiB，完整内层请求仍限64KiB；超限明确失败，不回退本地或截断。下一步验收服务运行页面、更多UI代次/capture工作流，以及界面触发的端口冲突、丢回执、撤权、到期、慢回调停止和封存修复。

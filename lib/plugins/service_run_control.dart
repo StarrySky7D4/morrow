@@ -112,12 +112,44 @@ class OwnerCommandRead {
   bool _disposed = false;
   Uint8List? get payload => _payload;
   bool get disposed => _disposed;
+
+  /// Transfers this buffer's lifetime to a caller that must retain a native
+  /// reader backed by it. The receiver now owns erasure and further copies.
+  Uint8List? takePayload() {
+    final bytes = _payload;
+    _payload = null;
+    _disposed = true;
+    return bytes;
+  }
+
   void dispose() {
     final bytes = _payload;
     if (bytes != null) bytes.fillRange(0, bytes.length, 0);
     _payload = null;
     _disposed = true;
   }
+}
+
+/// A routed business command did not deliver a usable response. Retained
+/// identities permit read-only reconciliation, never automatic resubmission.
+class ServiceCommandFailure implements Exception {
+  ServiceCommandFailure({
+    required this.message,
+    required Uint8List task,
+    required Uint8List submission,
+    Uint8List? command,
+    required this.outcomeUnknown,
+    this.terminal,
+  }) : task = _owned(task),
+       submission = _owned(submission),
+       command = command == null ? null : _owned(command);
+  final String message;
+  final Uint8List task, submission;
+  final Uint8List? command;
+  final bool outcomeUnknown;
+  final OwnerCommandTerminal? terminal;
+  @override
+  String toString() => message;
 }
 
 abstract interface class WorkbenchServiceRunControl {

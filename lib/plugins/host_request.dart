@@ -9,12 +9,18 @@ import 'generated/identity.dart' as contract;
 Future<void> sendHostRequest(
   host.Action action, {
   void Function(host.RequestBuilder)? configure,
+  bool clearAfterSend = false,
+  int maxBytes = 128 * 1024,
   required Future<void> Function(Uint8List) send,
 }) async {
+  if (maxBytes < 1 || maxBytes > 128 * 1024) {
+    throw ArgumentError.value(maxBytes, 'maxBytes');
+  }
   final builder = MessageBuilder();
   final request = builder.initRoot(host.requestFactory);
   // A command payload is a complete nested request and may contain credentials.
   final sensitive =
+      clearAfterSend ||
       action == host.Action.credentialSave ||
       action == host.Action.commandSubmit;
   Uint8List? payload;
@@ -40,7 +46,7 @@ Future<void> sendHostRequest(
         }
       }
     }
-    if (payload.length > 128 * 1024) {
+    if (payload.length > maxBytes) {
       throw const FormatException('请求内容过大');
     }
     await send(payload);
