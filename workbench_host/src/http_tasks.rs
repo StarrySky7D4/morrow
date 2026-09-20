@@ -9,7 +9,9 @@ use morrow_core::{
     plugin_package::io::IoCapability,
 };
 use morrow_network_node::{managed_http::HttpRouter, stored_http::StoredHttpEndpoint};
-use morrow_plugin_runtime::io_jobs::{BrokerRouter, JobLimits, RouteContext, RouterFault};
+use morrow_plugin_runtime::io_jobs::{
+    BrokerRouter, JobLimits, RouteContext, RouteStart, RouterFault,
+};
 use std::{
     collections::BTreeSet,
     time::{Duration, SystemTime, UNIX_EPOCH},
@@ -43,6 +45,20 @@ struct OwnedRouter {
     _runtime: tokio::runtime::Runtime,
 }
 impl BrokerRouter for OwnedRouter {
+    fn begin(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        call: u32,
+        request: &Request,
+    ) -> RouteStart {
+        if call != 0 || request.bytes() != self.request {
+            return RouteStart::Ready(Err(RouterFault::Denied));
+        }
+        // Keep the owned Tokio runtime alive on the worker while the adapter's
+        // transport task waits; its Handle alone does not own that runtime.
+        self.inner.begin(context, call, request)
+    }
+
     fn route(
         &mut self,
         context: &mut RouteContext<'_>,

@@ -1,6 +1,6 @@
 # 可暂停 IO：下一编码项
 
-2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；[broker阶段拆分](../reports/broker-phases-2026-09-21.md)也已接入现有同步入口。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已接入真实HTTP路径，服务组合与应用验收仍待完成，不增加新IO SDK稳定声明。
+2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；[broker阶段拆分](../reports/broker-phases-2026-09-21.md)也已接入现有同步入口。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已接入真实HTTP路径，[入站服务与出站等待组合](../reports/service-outbound-wait-2026-09-21.md)限定路径已通过，应用验收仍待完成，不增加新IO SDK稳定声明。
 
 ## 问题与约束
 
@@ -20,7 +20,7 @@
 | S3：恢复与调度 | continuation 或显式新契约回到原 worker；恢复前复核原代次、声明、资源授权与截止；保留普通命令排序和停止优先 | 慢传输期间内容读取与独立修改能完成；响应 Ready 后撤权仍拒绝交付；停止和 guest trap 均不恢复失效实例 |
 | S4：契约候选与 SDK | 仅在 S0–S3 证明执行模型后确定新 Schema、能力声明、错误语义和三语言封装 | 旧 36 文件/13 原包兼容证据；新三语言相同正负向量；独立插件调用、取消、丢回执与跨重启核对 |
 
-S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。owned执行状态现已接入真实Runner，旧同步驱动在Store外持有回调；无宿主借用进入continuation。Broker认领、执行与原件提交的内部拆分已验证，执行票据与未读观察持有原reservation；它们暂为私有实现，旧公开入口仍同步。[package执行状态与worker逐import驱动](../reports/owned-package-frame-2026-09-21.md)现也已接入，完成帧的原身份与持久化核验仍留在worker。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已完成这条真实适配器接线，原TCP等待期间原库提交与回调panic回收已验。下一步补入站持久服务同时出站HTTP、慢命令/传输完成/停止竞争及原应用业务路由，完成S2/S3组合验收。不能把仍借用RouteContext的回调移到线程上，也不能用复制宿主替代调度。
+S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。owned执行状态现已接入真实Runner，旧同步驱动在Store外持有回调；无宿主借用进入continuation。Broker认领、执行与原件提交的内部拆分已验证，执行票据与未读观察持有原reservation；它们暂为私有实现，旧公开入口仍同步。[package执行状态与worker逐import驱动](../reports/owned-package-frame-2026-09-21.md)现也已接入，完成帧的原身份与持久化核验仍留在worker。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已完成这条真实适配器接线，原TCP等待期间原库提交与回调panic回收已验。[入站服务与出站等待组合](../reports/service-outbound-wait-2026-09-21.md)现已验证真实出站、重放、撤权、历史到期与慢命令期间停止。工作台单次HTTP包装器现转发begin；主应用服务仍拒绝出站IO。下一步接明确的服务出站资源选择与原批准/撤销流程，再验应用业务路由和更多完成/停止竞争，完成S2/S3整体验收。不能把仍借用RouteContext的回调移到线程上，也不能用复制宿主替代调度。
 
 探针使用 `morrow_probe_v0` 私有入口；它没有生产授权或持久效果核对语义。既有 `morrow_io_v1.call` 的字节契约保持冻结，是否可透明承载必须经过真实包与旧包兼容验收；只有确实需要guest可见变化时才建立独立版本契约。
 

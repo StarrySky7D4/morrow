@@ -606,3 +606,6 @@ async fn content_history_query_preserves_scope_table_and_current_policy_revocati
     // Two original seed writes plus only the three execution history transitions.
     assert_eq!(store.pending_usage().unwrap().0, 5);
 }
+
+#[path = "support/service_http_wait.rs"]
+mod service_http_wait;
