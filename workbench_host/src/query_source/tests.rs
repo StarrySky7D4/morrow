@@ -30,6 +30,8 @@ fn seed(host: &mut Workbench, id: &str, title: &str, body: &str) {
     idea.title = title.into();
     idea.description = body.into();
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .create_local(&format!("seed-{id}"), &card(&idea))
         .unwrap();
@@ -45,7 +47,14 @@ fn card(idea: &Idea) -> CardRecord {
     .unwrap()
 }
 fn replace(host: &mut Workbench, operation: &str, idea: Idea) {
-    let prior = host.host.store_local().card(&idea.id).unwrap().unwrap();
+    let prior = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .card(&idea.id)
+        .unwrap()
+        .unwrap();
     let change = ContentChange {
         operation_id: operation.into(),
         card_id: idea.id.clone(),
@@ -63,6 +72,8 @@ fn replace(host: &mut Workbench, operation: &str, idea: Idea) {
         .connection();
     let start = host.start;
     host.host
+        .local_mut()
+        .unwrap()
         .edit_content(connection, &change, || crate::now(start))
         .unwrap();
     host.revoke(&idea.id, GrantKind::EditContent).unwrap();
@@ -72,12 +83,28 @@ fn assert_release(mut host: Workbench, db: &Path) {
         Workbench::open(db, None).is_err(),
         "query must retain the Windows Session lease"
     );
-    host.host.flush_pending().unwrap();
-    assert_eq!(host.host.store_local().pending_usage().unwrap(), (0, 0));
+    host.host.local_mut().unwrap().flush_pending().unwrap();
+    assert_eq!(
+        host.host
+            .local()
+            .unwrap()
+            .store_local()
+            .pending_usage()
+            .unwrap(),
+        (0, 0)
+    );
     host.finish().unwrap();
     drop(host);
     let mut reopened = Workbench::open(db, None).unwrap();
-    assert!(reopened.host.store_local().integrity_check().is_ok());
+    assert!(
+        reopened
+            .host
+            .local()
+            .unwrap()
+            .store_local()
+            .integrity_check()
+            .is_ok()
+    );
     reopened.finish().unwrap();
 }
 
@@ -89,7 +116,13 @@ fn frozen_query_keeps_old_set_body_and_sort_after_formal_writes() {
     seed(&mut host, "a", "Zebra", "needle original");
     seed(&mut host, "b", "Apple", "needle original");
     seed(&mut host, "d", "Mango", "needle original");
-    let snapshot = host.host.store_local().open_card_snapshot().unwrap();
+    let snapshot = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .open_card_snapshot()
+        .unwrap();
     let mut a = host.read("a").unwrap().idea;
     a.description = "changed body".into();
     replace(&mut host, "edit-a", a);
@@ -123,6 +156,8 @@ fn full_non_idea_page_is_counted_and_does_not_end_query() {
     for i in 0..128 {
         let id = format!("a-{i:03}");
         host.host
+            .local_mut()
+            .unwrap()
             .store_local_mut()
             .create_local(
                 &format!("seed-{id}"),
@@ -131,13 +166,24 @@ fn full_non_idea_page_is_counted_and_does_not_end_query() {
             .unwrap();
     }
     seed(&mut host, "z-idea", "Visible", "body");
-    let snapshot = host.host.store_local().open_card_snapshot().unwrap();
+    let snapshot = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .open_card_snapshot()
+        .unwrap();
     let (ids, census) = host.query_snapshot(snapshot, &conditions()).unwrap();
     assert_eq!(ids, ["z-idea"]);
     assert_eq!(census.count, 129);
     let (_, again) = host
         .query_snapshot(
-            host.host.store_local().open_card_snapshot().unwrap(),
+            host.host
+                .local()
+                .unwrap()
+                .store_local()
+                .open_card_snapshot()
+                .unwrap(),
             &conditions(),
         )
         .unwrap();
@@ -158,7 +204,12 @@ fn foreign_invalid_and_capacity_failures_release_snapshot_without_poisoning_host
     invalid.text = "x".repeat(16385);
     assert!(
         host.query_snapshot(
-            host.host.store_local().open_card_snapshot().unwrap(),
+            host.host
+                .local()
+                .unwrap()
+                .store_local()
+                .open_card_snapshot()
+                .unwrap(),
             &invalid
         )
         .is_err()
@@ -220,7 +271,7 @@ fn actual_guest_trap_releases_snapshot_and_explicit_restart_restores_query() {
         "host-local write after failure",
     );
     assert!(Workbench::open(&db, None).is_err());
-    host.host.flush_pending().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
     host.finish().unwrap();
     drop(host);
     let mut host = Workbench::open(&db, Some(recovery_package())).unwrap();
@@ -247,7 +298,7 @@ fn empty_store_still_requires_current_read_capability() {
     let package = Package::build(manifest, original.module()).unwrap();
     let mut host = Workbench::open(&db, Some(package)).unwrap();
     assert!(host.query("概览", "全部", "", "最近添加").is_err());
-    host.host.flush_pending().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
     host.finish().unwrap();
     drop(host);
     let mut host = Workbench::open(&db, Some(recovery_package())).unwrap();

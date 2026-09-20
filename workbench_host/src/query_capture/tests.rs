@@ -24,6 +24,8 @@ fn seed(host: &mut Workbench, id: &str, title: &str, description: &str) {
     idea.title = title.into();
     idea.description = description.into();
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .create_local(
             &format!("seed-{id}"),
@@ -39,7 +41,14 @@ fn seed(host: &mut Workbench, id: &str, title: &str, description: &str) {
         .unwrap();
 }
 fn replace(host: &mut Workbench, operation: &str, idea: Idea) {
-    let prior = host.host.store_local().card(&idea.id).unwrap().unwrap();
+    let prior = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .card(&idea.id)
+        .unwrap()
+        .unwrap();
     let change = ContentChange {
         operation_id: operation.into(),
         card_id: idea.id.clone(),
@@ -57,6 +66,8 @@ fn replace(host: &mut Workbench, operation: &str, idea: Idea) {
         .connection();
     let start = host.start;
     host.host
+        .local_mut()
+        .unwrap()
         .edit_content(connection, &change, || crate::now(start))
         .unwrap();
     host.revoke(&idea.id, GrantKind::EditContent).unwrap();
@@ -66,6 +77,8 @@ fn query(host: &mut Workbench, operation: &str) -> Result<Vec<String>> {
 }
 fn state(host: &Workbench, operation: &str) -> State {
     host.host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read_capture(SUBJECT, operation)
         .unwrap()
@@ -75,7 +88,13 @@ fn terminal(error: &(dyn std::error::Error + 'static)) {
     assert!(error.downcast_ref::<QueryFailure>().unwrap().terminal);
 }
 fn prepare(host: &mut Workbench, operation: &str) -> State {
-    let snapshot = host.host.store_local().open_card_snapshot().unwrap();
+    let snapshot = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .open_card_snapshot()
+        .unwrap();
     let point = snapshot.readpoint().clone();
     snapshot.close().unwrap();
     let mut request = command(Action::Query);
@@ -92,6 +111,8 @@ fn prepare(host: &mut Workbench, operation: &str) -> State {
         fuel_budget: TOTAL_FUEL,
     };
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .begin_read_capture(
             &Plan {
@@ -298,6 +319,8 @@ fn same_operation_retries_original_results_without_guest_runs_and_survives_reope
     assert_eq!(query(&mut host, "fixed").unwrap(), ["b", "a"]);
     let original = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read(SUBJECT, "fixed")
         .unwrap()
@@ -331,6 +354,8 @@ fn same_operation_retries_original_results_without_guest_runs_and_survives_reope
     assert_eq!(
         reopened
             .host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "fixed")
             .unwrap()
@@ -352,6 +377,8 @@ fn persisted_preparation_is_interrupted_on_reopen_and_cancelled_intent_is_not_re
     let pending = prepare(&mut host, "preparing");
     let package = host.bundle.as_ref().unwrap().archive().to_vec();
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .append_read_capture(
             SUBJECT,
@@ -364,6 +391,8 @@ fn persisted_preparation_is_interrupted_on_reopen_and_cancelled_intent_is_not_re
         .unwrap();
     let cancelled = prepare(&mut host, "cancelled");
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .end_read_capture(
             SUBJECT,
@@ -390,6 +419,8 @@ fn persisted_preparation_is_interrupted_on_reopen_and_cancelled_intent_is_not_re
         assert!(
             reopened
                 .host
+                .local()
+                .unwrap()
                 .store_local()
                 .lookup_read(SUBJECT, operation)
                 .unwrap()
@@ -449,6 +480,8 @@ fn capacity_failure_is_terminal_without_partial_observation_and_requires_a_fresh
     assert_eq!(state(&host, "capacity").phase(), Phase::Failed);
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "capacity")
             .unwrap()
@@ -486,6 +519,8 @@ fn production_multiphase_archive_replays_all_originals_after_backup_and_source_r
     }
     for i in 0..2 {
         host.host
+            .local_mut()
+            .unwrap()
             .store_local_mut()
             .create_local(
                 &format!("seed-other-{i}"),
@@ -493,8 +528,14 @@ fn production_multiphase_archive_replays_all_originals_after_backup_and_source_r
             )
             .unwrap();
     }
-    host.host.flush_pending().unwrap();
-    let mut baseline = host.host.store_local().open_card_snapshot().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
+    let mut baseline = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .open_card_snapshot()
+        .unwrap();
     let mut originals = BTreeMap::new();
     loop {
         let page = baseline.next_page(23, 4 * 1024 * 1024).unwrap();
@@ -510,7 +551,7 @@ fn production_multiphase_archive_replays_all_originals_after_backup_and_source_r
     let ids = query(&mut host, "production-archive").unwrap();
     assert_eq!(ids.len(), 130);
     let replayed = replay_production(
-        host.host.store_local(),
+        host.host.local().unwrap().store_local(),
         "production-archive",
         &census,
         &originals,
@@ -520,6 +561,8 @@ fn production_multiphase_archive_replays_all_originals_after_backup_and_source_r
     assert!(replayed.1 >= 5);
     let original = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read(SUBJECT, "production-archive")
         .unwrap()
@@ -561,9 +604,9 @@ fn ready_after_seal_failure_retries_original_result_without_another_guest_call()
     let db = dir.path().join("workbench.db");
     let mut host = Workbench::open(&db, Some(common::package())).unwrap();
     seed(&mut host, "a", "A", "body");
-    host.host.flush_pending().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
     let executions_before = host.counter;
-    host.host.fail_next_seal_for_test();
+    host.host.local_mut().unwrap().fail_next_seal_for_test();
     let error = query(&mut host, "seal-failure").unwrap_err();
     assert!(!error.downcast_ref::<QueryFailure>().unwrap().terminal);
     assert!(host.maintenance_warning().is_some());
@@ -571,11 +614,22 @@ fn ready_after_seal_failure_retries_original_result_without_another_guest_call()
     assert_eq!(ready.phase(), Phase::Ready);
     let original = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read(SUBJECT, "seal-failure")
         .unwrap()
         .unwrap();
-    assert_eq!(host.host.store_local().pending_usage().unwrap().0, 1);
+    assert_eq!(
+        host.host
+            .local()
+            .unwrap()
+            .store_local()
+            .pending_usage()
+            .unwrap()
+            .0,
+        1
+    );
     let executed = host.counter;
     assert!(
         executed > executions_before,
@@ -589,6 +643,8 @@ fn ready_after_seal_failure_retries_original_result_without_another_guest_call()
     assert_eq!(state(&host, "seal-failure").container(), ready.container());
     assert_eq!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "seal-failure")
             .unwrap()
@@ -598,12 +654,22 @@ fn ready_after_seal_failure_retries_original_result_without_another_guest_call()
     );
     // Explicit maintenance can seal the same pending observation after the one-shot
     // failure. Its prior successful commit must not depend on that later maintenance.
-    host.refresh_plugin_state();
+    host.refresh_plugin_state().unwrap();
     assert!(host.maintenance_warning().is_none());
-    assert_eq!(host.host.store_local().pending_usage().unwrap(), (0, 0));
+    assert_eq!(
+        host.host
+            .local()
+            .unwrap()
+            .store_local()
+            .pending_usage()
+            .unwrap(),
+        (0, 0)
+    );
     assert_eq!(state(&host, "seal-failure").container(), ready.container());
     assert_eq!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "seal-failure")
             .unwrap()
@@ -628,6 +694,8 @@ fn existing_content_operation_cannot_become_a_query_retry_loop() {
     assert_eq!(host.counter, before);
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read_capture(SUBJECT, "seed-a")
             .unwrap()
@@ -643,6 +711,8 @@ fn existing_content_operation_cannot_become_a_query_retry_loop() {
 
 fn retention_limit(host: &mut Workbench, count: u32, bytes: u64) {
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .set_read_archive_retention_budget(morrow_core::read_archive::RetentionBudget {
             max_archives: count,
@@ -681,6 +751,8 @@ fn retained_history_blocks_new_capture_but_delivers_original_ready_with_current_
     let ready = state(&host, "retained-ready");
     let usage = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .read_archive_retention_usage()
         .unwrap();
@@ -693,6 +765,8 @@ fn retained_history_blocks_new_capture_but_delivers_original_ready_with_current_
     assert_eq!(host.counter, before);
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read_capture(SUBJECT, "over-capacity")
             .unwrap()
@@ -706,6 +780,8 @@ fn retained_history_blocks_new_capture_but_delivers_original_ready_with_current_
     );
     assert_eq!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .read_archive_retention_usage()
             .unwrap(),
@@ -719,7 +795,7 @@ fn partial_capture_capacity_failure_releases_archive_and_remembers_terminal_reas
     let db = dir.path().join("workbench.db");
     let mut host = Workbench::open(&db, Some(common::package())).unwrap();
     seed(&mut host, "a", "A", "body");
-    host.host.flush_pending().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
     // Intent fits; the actual first-party package cannot fit in this local policy.
     retention_limit(&mut host, 4, 64 * 1024);
     let (code, text) = query_wire(&mut host, "package-capacity");
@@ -730,6 +806,8 @@ fn partial_capture_capacity_failure_releases_archive_and_remembers_terminal_reas
     assert_eq!(failed.reason(), "query_archive_capacity");
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "package-capacity")
             .unwrap()
@@ -737,6 +815,8 @@ fn partial_capture_capacity_failure_releases_archive_and_remembers_terminal_reas
     );
     assert_eq!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .read_archive_retention_usage()
             .unwrap()
@@ -769,6 +849,8 @@ fn capacity_with_unconfirmed_cleanup_preserves_operation_and_reports_unknown_wir
     assert_eq!(state(&host, "uncertain-capacity").phase(), Phase::Preparing);
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, "uncertain-capacity")
             .unwrap()
@@ -783,6 +865,8 @@ fn capacity_with_unconfirmed_cleanup_preserves_operation_and_reports_unknown_wir
     );
     assert_eq!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .read_archive_retention_usage()
             .unwrap()

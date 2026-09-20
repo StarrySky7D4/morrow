@@ -20,12 +20,12 @@ use std::{
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod capture_provenance;
-pub mod credential_control;
 mod content_projection;
+pub mod credential_control;
 mod evidence;
+pub mod io_tasks;
 pub mod plugin_catalog;
 mod preferences_evidence;
-mod ui_preferences;
 pub mod projection;
 pub mod projection_v2;
 pub mod query_capture;
@@ -33,6 +33,7 @@ pub mod query_plan;
 mod query_source;
 mod storage;
 pub mod transfer;
+mod ui_preferences;
 
 pub struct Record {
     pub idea: Idea,
@@ -48,7 +49,7 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
-    host: storage::Storage,
+    host: crate::io_tasks::StorageSlot,
     plugin: Option<Session>,
     pool: Pool,
     manager: Option<Manager>,
@@ -165,7 +166,7 @@ impl Workbench {
         let mut query_owner = [0; 32];
         getrandom::fill(&mut query_owner)?;
         let mut workbench = Self {
-            host,
+            host: crate::io_tasks::StorageSlot::new(host),
             plugin,
             pool,
             manager,
@@ -190,35 +191,43 @@ impl Workbench {
         Ok(workbench)
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
-        self.host.backup_snapshot(destination)
+        self.host.local()?.backup_snapshot(destination)
     }
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
-        self.host.backup_key(destination)
+        self.host.local()?.backup_key(destination)
     }
     pub fn maintenance_warning(&self) -> Option<&str> {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
+        self.host.request_stop();
+        self.host.try_reclaim()?;
+        // A stop request is not thread completion. Keep the original Pool
+        // leases until its Runtime has actually returned.
+        self.host.local()?;
         if let Some(mut external) = self.external_ui.take() {
             external.ui.close();
         }
         if let Some(mut ui) = self.ui.take() {
             ui.close();
         }
-        let closed = self.pool.close_all(&mut self.host);
+        let closed = self.pool.close_all(self.host.local_mut()?);
         self.plugin = None;
         self.capture_scopes.clear();
         // Disconnecting instances must not prevent a pending durable audit flush attempt.
-        let flushed = self.host.flush_pending();
+        let flushed = self.host.finish_maintenance();
         closed?;
         flushed
     }
     pub fn writable(&self) -> bool {
+        let Ok(host) = self.host.local() else {
+            return false;
+        };
         self.host.warning().is_none()
             && self.plugin_status().approved
             && self.plugin.as_ref().is_some_and(|session| {
                 self.pool.root(session).is_ok_and(|instance| {
-                    self.host.connection_phase(instance.connection())
+                    host.connection_phase(instance.connection())
                         == Ok(morrow_core::lifecycle::InstancePhase::Ready)
                 })
             })
@@ -246,7 +255,7 @@ impl Workbench {
     fn grant(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         let time = now(self.start);
         self.pool.grant_root(
-            &mut self.host,
+            self.host.local_mut()?,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
@@ -257,7 +266,7 @@ impl Workbench {
     }
     fn revoke(&mut self, id: &str, kind: GrantKind) -> Result<()> {
         self.pool.revoke_root(
-            &mut self.host,
+            self.host.local_mut()?,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             kind,
             id,
@@ -273,6 +282,7 @@ impl Workbench {
         input: Request,
         capture: bool,
     ) -> Result<(Response, Option<morrow_core::task_evidence::Evidence>)> {
+        self.host.local()?;
         self.counter = self
             .counter
             .checked_add(1)
@@ -291,7 +301,7 @@ impl Workbench {
             self.pool
                 .record_transform(
                     self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                    &mut self.host,
+                    self.host.local_mut()?,
                     self.plugin.as_ref().ok_or("plugin unavailable")?,
                     &task,
                 )
@@ -303,7 +313,7 @@ impl Workbench {
             self.pool
                 .run_task(
                     self.manager.as_ref().ok_or("plugin manager unavailable")?,
-                    &mut self.host,
+                    self.host.local_mut()?,
                     self.plugin.as_ref().ok_or("plugin unavailable")?,
                     &task,
                     || now(start),
@@ -336,15 +346,27 @@ impl Workbench {
     }
     /// Trusted local UI projection, independent of plugin availability. No mutation.
     pub fn read(&self, id: &str) -> Result<Record> {
-        Self::decode(&self.host.store_local().card(id)?.ok_or("card not found")?)
+        Self::decode(
+            &self
+                .host
+                .local()?
+                .store_local()
+                .card(id)?
+                .ok_or("card not found")?,
+        )
     }
     pub fn page(&self, after: &str, limit: u32) -> Result<(Vec<Record>, String)> {
-        let ids = self.host.store_local().card_ids_local(after, limit)?;
+        let ids = self
+            .host
+            .local()?
+            .store_local()
+            .card_ids_local(after, limit)?;
         let cursor = ids.last().cloned().unwrap_or_default();
         let mut result = Vec::new();
         for id in ids {
             let card = self
                 .host
+                .local()?
                 .store_local()
                 .card(&id)?
                 .ok_or("card disappeared")?;
@@ -357,7 +379,7 @@ impl Workbench {
     fn authorized_read(&mut self, id: &str) -> Result<CardRecord> {
         self.grant(id, GrantKind::ReadContent)?;
         let start = self.start;
-        let result = self.host.read_content(
+        let result = self.host.local_mut()?.read_content(
             self.pool
                 .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                 .connection(),
@@ -398,6 +420,7 @@ impl Workbench {
         let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
         let blob = self
             .host
+            .local_mut()?
             .store_local_mut()
             .stage_blob(reader, size, None, clock)?;
         let id = format!("asset-{}", blob.id);
@@ -508,12 +531,18 @@ impl Workbench {
         writer: &mut impl std::io::Write,
     ) -> Result<()> {
         self.host
+            .local()?
             .store_local()
             .export_attachment_local(card, attachment, writer)?;
         Ok(())
     }
     pub fn read_preferences(&self) -> Result<Option<Vec<u8>>> {
-        let Some(card) = self.host.store_local().card("morrow-studio-preferences")? else {
+        let Some(card) = self
+            .host
+            .local()?
+            .store_local()
+            .card("morrow-studio-preferences")?
+        else {
             return Ok(None);
         };
         if card.summary().type_id != "org.morrow.studio" || card.summary().format_version != 1 {
@@ -550,6 +579,7 @@ impl Workbench {
         output_type: &str,
         input: Vec<u8>,
     ) -> Result<Vec<u8>> {
+        self.host.local()?;
         self.counter = self
             .counter
             .checked_add(1)
@@ -566,7 +596,7 @@ impl Workbench {
         let start = self.start;
         let result = self.pool.run_task(
             self.manager.as_ref().ok_or("plugin manager unavailable")?,
-            &mut self.host,
+            self.host.local_mut()?,
             self.plugin.as_ref().ok_or("plugin unavailable")?,
             &task,
             || now(start),
@@ -591,10 +621,13 @@ impl Workbench {
 }
 impl Drop for Workbench {
     fn drop(&mut self) {
+        self.host.request_stop();
         if let Some(mut ui) = self.ui.take() {
             ui.close();
         }
-        let _ = self.pool.close_all(&mut self.host);
+        if let Ok(host) = self.host.local_mut() {
+            let _ = self.pool.close_all(host);
+        }
         self.plugin = None;
         self.capture_scopes.clear();
     }

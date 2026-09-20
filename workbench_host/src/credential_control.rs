@@ -39,6 +39,7 @@ fn reference(bytes: &[u8]) -> Result<[u8; 32]> {
 }
 impl Workbench {
     pub fn credential_page(&mut self, after: &[u8], snapshot: &[u8]) -> Result<CredentialPage> {
+        self.host.local()?;
         let after = (!after.is_empty()).then(|| reference(after)).transpose()?;
         let snapshot = (!snapshot.is_empty())
             .then(|| {
@@ -49,6 +50,7 @@ impl Workbench {
             .transpose()?;
         let page = self
             .host
+            .local_mut()?
             .store_local_mut()
             .list_outbound_authorities_local(after, snapshot, 16)?;
         Ok(CredentialPage {
@@ -72,6 +74,7 @@ impl Workbench {
         header_value: &str,
         lifetime_days: u32,
     ) -> Result<CredentialInfo> {
+        self.host.local()?;
         #[cfg(not(target_os = "windows"))]
         {
             let _ = (
@@ -103,6 +106,7 @@ impl Workbench {
                     if candidate != [0; 32]
                         && self
                             .host
+                            .local()?
                             .store_local()
                             .load_outbound_authority(&candidate)?
                             .is_none()
@@ -116,6 +120,7 @@ impl Workbench {
                 let key = reference(requested_reference)?;
                 let previous = self
                     .host
+                    .local()?
                     .store_local()
                     .load_outbound_authority(&key)?
                     .ok_or("credential not found")?;
@@ -139,6 +144,7 @@ impl Workbench {
             )?;
             self.host.prepare_write()?;
             self.host
+                .local_mut()?
                 .store_local_mut()
                 .save_outbound_authority_local(&record, expected_revision)?;
             info(&record)
@@ -151,9 +157,11 @@ impl Workbench {
         key: &[u8],
         expected_revision: u64,
     ) -> Result<CredentialInfo> {
+        self.host.local()?;
         let key = reference(key)?;
         let record = self
             .host
+            .local()?
             .store_local()
             .load_outbound_authority(&key)?
             .ok_or("credential not found")?;
@@ -173,6 +181,7 @@ impl Workbench {
         let disabled = Record::encode(value)?;
         self.host.prepare_write()?;
         self.host
+            .local_mut()?
             .store_local_mut()
             .save_outbound_authority_local(&disabled, expected_revision)?;
         info(&disabled)

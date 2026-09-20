@@ -10,6 +10,7 @@ impl Workbench {
     pub fn operation_evidence(&self, card: &str, operation: &str) -> Result<Vec<Evidence>> {
         Ok(self
             .host
+            .local()?
             .store_local()
             .operation_evidence(card, operation)?)
     }
@@ -20,15 +21,23 @@ impl Workbench {
         intent: &Request,
         revision: Option<u64>,
     ) -> Result<Option<Record>> {
-        if matches!(self.host.store_local().lookup(operation)?, Lookup::Absent) {
+        if matches!(
+            self.host.local()?.store_local().lookup(operation)?,
+            Lookup::Absent
+        ) {
             return Ok(None);
         }
         let (commit, expected_receipt) = self
             .host
+            .local()?
             .store_local()
             .operation_commit(id, operation)?
             .ok_or("operation belongs to another content object")?;
-        let evidence = self.host.store_local().operation_evidence(id, operation)?;
+        let evidence = self
+            .host
+            .local()?
+            .store_local()
+            .operation_evidence(id, operation)?;
         if evidence.len() != 1 {
             return Err("existing operation has no supported original workbench intent".into());
         }
@@ -82,7 +91,7 @@ impl Workbench {
                 let record = Self::decode(&card)?;
                 self.grant(id, GrantKind::CreateContent)?;
                 let start = self.start;
-                let result = self.host.create_content_with_evidence(
+                let result = self.host.local_mut()?.create_content_with_evidence(
                     self.pool
                         .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                         .connection(),
@@ -130,7 +139,7 @@ impl Workbench {
                 };
                 self.grant(id, GrantKind::EditContent)?;
                 let start = self.start;
-                let result = self.host.edit_content_with_evidence(
+                let result = self.host.local_mut()?.edit_content_with_evidence(
                     self.pool
                         .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
                         .connection(),

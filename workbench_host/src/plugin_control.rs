@@ -10,15 +10,17 @@ pub struct PluginStatus {
 }
 impl Workbench {
     /// Explicit status refresh may retry bounded content maintenance after a failure.
-    pub fn refresh_plugin_state(&mut self) {
+    pub fn refresh_plugin_state(&mut self) -> Result<()> {
+        self.host.local()?;
         if self.host.warning().is_some() {
-            let _ = self.host.flush_pending();
+            let _ = self.host.finish_maintenance();
         }
         if let Some(manager) = &self.manager
-            && let Err(error) = self.pool.maintain(manager, &mut self.host)
+            && let Err(error) = self.pool.maintain(manager, self.host.local_mut()?)
         {
             self.plugin_warning = Some(format!("插件会话暂不可用，已有内容仍可读取。{error}"));
         }
+        Ok(())
     }
     pub fn plugin_status(&self) -> PluginStatus {
         let selection = self.manager.as_ref().and_then(|m| {
@@ -35,6 +37,7 @@ impl Workbench {
         }
     }
     pub fn configure_plugin(&mut self, expected: u64, digest: &[u8], enable: bool) -> Result<()> {
+        self.host.local()?;
         let bundle = self.bundle.as_ref().ok_or("工作台插件文件不可用。")?;
         let manager = self.manager.as_mut().ok_or("插件管理不可用。")?;
         if manager.revision() != expected || digest != bundle.digest() {
@@ -56,31 +59,33 @@ impl Workbench {
             manager.set_enabled(id, bundle.digest(), false, manager.revision())
         };
         let closed = if let Some(session) = self.plugin.take() {
-            self.pool.close(&mut self.host, &session)
+            self.pool.close(self.host.local_mut()?, &session)
         } else {
             Ok(())
         };
-        let maintained = self.pool.maintain(manager, &mut self.host);
+        let maintained = self.pool.maintain(manager, self.host.local_mut()?);
         result?;
         closed?;
         maintained?;
         if enable {
             let revision = manager.revision();
-            self.plugin = Some(
-                self.pool
-                    .start(manager, &mut self.host, id, &[], revision)?,
-            );
+            self.plugin =
+                Some(
+                    self.pool
+                        .start(manager, self.host.local_mut()?, id, &[], revision)?,
+                );
         }
         self.plugin_warning = None;
         Ok(())
     }
     pub fn ui_open(&mut self, seed: &str) -> Result<Reply> {
+        self.host.local()?;
         if self.ui.is_some() {
             return Err("已有插件表单，请先关闭后重开。".into());
         }
         self.pool.maintain(
             self.manager.as_ref().ok_or("插件管理不可用。")?,
-            &mut self.host,
+            self.host.local_mut()?,
         )?;
         let instance = self
             .pool
@@ -88,7 +93,7 @@ impl Workbench {
         self.ui_generation = self.ui_generation.checked_add(1).ok_or("界面代次耗尽")?;
         let mut ui = InlineUi::new(
             instance.package(),
-            &self.host,
+            self.host.local()?,
             instance.connection(),
             "workbench-tools",
             self.ui_generation,
@@ -96,7 +101,7 @@ impl Workbench {
         )?;
         let reply = ui.open(
             instance.package(),
-            &mut self.host,
+            self.host.local_mut()?,
             instance.connection(),
             seed,
         )?;
@@ -105,20 +110,21 @@ impl Workbench {
         Ok(reply)
     }
     pub fn ui_event(&mut self, generation: u64, input: &[u8]) -> Result<Reply> {
+        self.host.local()?;
         let ui = self.ui.as_mut().ok_or("插件表单已关闭。")?;
         if ui.generation() != generation {
             return Err("插件表单已更换，请重新打开。".into());
         }
         self.pool.maintain(
             self.manager.as_ref().ok_or("插件管理不可用。")?,
-            &mut self.host,
+            self.host.local_mut()?,
         )?;
         let instance = self
             .pool
             .root(self.plugin.as_ref().ok_or("插件已停用。")?)?;
         match ui.event(
             instance.package(),
-            &mut self.host,
+            self.host.local_mut()?,
             instance.connection(),
             input,
         ) {
@@ -161,8 +167,8 @@ impl Workbench {
             instance.stop();
         }
         self.finish_stopped_session();
-        if let Some(manager) = &self.manager
-            && let Err(error) = self.pool.maintain(manager, &mut self.host)
+        if let (Some(manager), Ok(host)) = (&self.manager, self.host.local_mut())
+            && let Err(error) = self.pool.maintain(manager, host)
         {
             self.plugin_warning = Some(format!("插件会话已停止，清理暂未完成。{error}"));
         }

@@ -24,6 +24,15 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     out.set_version(1);
     out.set_digest(&digest());
     if let Err(e) = handle(host, bytes, out.reborrow()) {
+        if let Some(access) = e.downcast_ref::<crate::io_tasks::AccessError>() {
+            out.set_ui_code(match access {
+                crate::io_tasks::AccessError::Busy => 110,
+                crate::io_tasks::AccessError::RecoveryRequired => 111,
+                crate::io_tasks::AccessError::OwnerUnavailable => 112,
+                crate::io_tasks::AccessError::StaleTask => 113,
+                crate::io_tasks::AccessError::UnacknowledgedTask => 114,
+            });
+        }
         if let Some(query) = e.downcast_ref::<crate::query_capture::QueryFailure>() {
             out.set_ui_code(match (query.capacity, query.terminal) {
                 (true, true) => 101,
@@ -74,10 +83,30 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     if r.get_version() != 1 || r.get_digest()? != digest() {
         return Err("host contract mismatch".into());
     }
+    let action = r.get_action()?;
+    // Reclaim only if the actual worker has exited. Check access before file
+    // creation, registry changes or consuming upload tokens in these routes.
+    let _ = host.host.try_reclaim();
+    if !matches!(
+        action,
+        wire::Action::PluginCatalog
+            | wire::Action::PluginInspect
+            | wire::Action::PluginState
+            | wire::Action::UiClose
+            | wire::Action::CloseCaptureScope
+            | wire::Action::AbortPreferences
+            | wire::Action::AbortCaptureUpload
+            | wire::Action::AppendPreferences
+            | wire::Action::AppendCaptureUpload
+            | wire::Action::ReadPreferencesPart
+    ) {
+        host.host.local()?;
+    }
     let id = text(r.get_id())?;
-    match r.get_action()? {
+    match action {
         wire::Action::CredentialPage => {
-            let page = host.credential_page(r.get_credential_cursor()?, r.get_credential_snapshot()?)?;
+            let page =
+                host.credential_page(r.get_credential_cursor()?, r.get_credential_snapshot()?)?;
             out.set_credential_snapshot(&page.snapshot);
             out.set_credential_cursor(page.next.as_ref().map_or(&[], |v| v.as_slice()));
             let mut entries = out.reborrow().init_credentials(page.entries.len() as u32);
@@ -107,13 +136,14 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             );
         }
         wire::Action::ReadUiLocale => {
-            let (locale,revision)=host.read_ui_locale()?;
+            let (locale, revision) = host.read_ui_locale()?;
             out.set_payload(locale.as_bytes());
             out.set_revision(revision);
         }
         wire::Action::SaveUiLocale => {
-            let locale=std::str::from_utf8(r.get_payload()?)?;
-            let revision=host.save_ui_locale(&text(r.get_operation())?,r.get_revision(),locale)?;
+            let locale = std::str::from_utf8(r.get_payload()?)?;
+            let revision =
+                host.save_ui_locale(&text(r.get_operation())?, r.get_revision(), locale)?;
             out.set_payload(locale.as_bytes());
             out.set_revision(revision);
         }
@@ -190,7 +220,9 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             host.external_ui_close(&id, r.get_offset())?;
         }
         wire::Action::PluginState => {
-            host.refresh_plugin_state();
+            if host.host.is_local() {
+                host.refresh_plugin_state()?;
+            }
             plugin_status(host, out.reborrow());
         }
         wire::Action::PluginConfigure => {
@@ -636,13 +668,17 @@ fn plugin_catalog_reply(
                 .set(index as u32, value.as_str());
         }
         {
-            let mut values = row.reborrow().init_declared_io(entry.declared_io.len() as u32);
+            let mut values = row
+                .reborrow()
+                .init_declared_io(entry.declared_io.len() as u32);
             for (index, value) in entry.declared_io.iter().enumerate() {
                 values.set(index as u32, value.as_str());
             }
         }
         {
-            let mut values = row.reborrow().init_approved_io(entry.approved_io.len() as u32);
+            let mut values = row
+                .reborrow()
+                .init_approved_io(entry.approved_io.len() as u32);
             for (index, value) in entry.approved_io.iter().enumerate() {
                 values.set(index as u32, value.as_str());
             }

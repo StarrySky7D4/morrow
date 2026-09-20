@@ -60,7 +60,7 @@ fn failed_disable_stops_connection_and_reports_read_only_until_explicit_reenable
     fs::remove_dir(&path).unwrap();
     fs::rename(saved, &path).unwrap();
     assert_eq!(fs::read(&path).unwrap(), bytes);
-    host.refresh_plugin_state();
+    host.refresh_plugin_state().unwrap();
     assert!(!host.writable()); // No implicit reconnect.
     host.configure_plugin(before.revision, &before.digest, true)
         .unwrap();

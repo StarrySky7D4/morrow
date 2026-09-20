@@ -110,7 +110,7 @@ fn assert_readable_and_stopped(host: &mut Workbench) {
     assert!(host.create("after-fault", common::idea("denied")).is_err());
     assert!(favorite(host, 1, "after-fault-edit").is_err());
     assert!(host.query("概览", "全部", "", "最近添加").is_err());
-    host.refresh_plugin_state();
+    host.refresh_plugin_state().unwrap();
     assert!(
         !host.writable(),
         "refresh must not implicitly restart failed guest"

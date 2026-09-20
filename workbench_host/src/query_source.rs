@@ -26,7 +26,7 @@ impl query_plan::Backend for Live<'_> {
                 }
                 self.workbench.grant(entry.id(), GrantKind::ReadContent)?;
                 let start = self.workbench.start;
-                let result = self.workbench.host.read_snapshot_content(
+                let result = self.workbench.host.local_mut()?.read_snapshot_content(
                     self.workbench
                         .pool
                         .root(self.workbench.plugin.as_ref().ok_or("plugin unavailable")?)?
@@ -59,9 +59,12 @@ impl Workbench {
         conditions: &query_plan::Conditions,
     ) -> Result<(Vec<String>, Census)> {
         // Check ownership even for an empty library, before policy clocks or actual guest work.
-        self.host.store_local().validate_card_snapshot(&snapshot)?;
+        self.host
+            .local()?
+            .store_local()
+            .validate_card_snapshot(&snapshot)?;
         let manager = self.manager.as_ref().ok_or("plugin manager unavailable")?;
-        self.pool.maintain(manager, &mut self.host)?;
+        self.pool.maintain(manager, self.host.local_mut()?)?;
         let root = self
             .pool
             .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?;
@@ -72,7 +75,7 @@ impl Workbench {
         if !selection.enabled
             || selection.digest != bundle.digest()
             || !selection.approved.contains(&GrantKind::ReadContent)
-            || self.host.connection_phase(root.connection())? != InstancePhase::Ready
+            || self.host.local()?.connection_phase(root.connection())? != InstancePhase::Ready
         {
             return Err("query read capability unavailable".into());
         }

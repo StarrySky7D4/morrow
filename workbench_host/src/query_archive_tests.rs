@@ -41,13 +41,12 @@ struct Capture<'a> {
 }
 impl Capture<'_> {
     fn append(&mut self, kind: &str, raw: &[u8]) -> Result<()> {
-        self.host.host.store_local_mut().append_read_archive(
-            SUBJECT,
-            OPERATION,
-            self.ordinal,
-            kind,
-            raw,
-        )?;
+        self.host
+            .host
+            .local_mut()
+            .unwrap()
+            .store_local_mut()
+            .append_read_archive(SUBJECT, OPERATION, self.ordinal, kind, raw)?;
         self.ordinal += 1;
         Ok(())
     }
@@ -59,7 +58,7 @@ impl query_plan::Backend for Capture<'_> {
                 let idea = if entry.card().summary().type_id == "org.morrow.idea" {
                     self.host.grant(entry.id(), GrantKind::ReadContent)?;
                     let start = self.host.start;
-                    let result = self.host.host.read_snapshot_content(
+                    let result = self.host.host.local_mut().unwrap().read_snapshot_content(
                         self.host
                             .pool
                             .root(self.host.plugin.as_ref().unwrap())?
@@ -109,7 +108,7 @@ impl query_plan::Backend for Capture<'_> {
         )?;
         let captured = self.host.pool.record_transform_observation(
             self.host.manager.as_ref().unwrap(),
-            &mut self.host.host,
+            self.host.host.local_mut().unwrap(),
             self.host.plugin.as_ref().unwrap(),
             &input,
             self.remaining,
@@ -151,7 +150,10 @@ fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u6
         "morrow.workbench.request.v1"
     );
     assert_eq!(manifest.status().plan.response_type, "test.query.result.v1");
-    assert_eq!(end.database_version, morrow_core::store::SCHEMA_VERSION as u32);
+    assert_eq!(
+        end.database_version,
+        morrow_core::store::SCHEMA_VERSION as u32
+    );
     let request = codec::decode_request(&manifest.status().plan.request)?;
     let conditions = query_plan::Conditions {
         section: request.section,
@@ -293,6 +295,8 @@ fn qualify(count: usize) {
         let mut idea = common::idea(&format!("card-{i:03}"));
         idea.title = format!("Title {:03}", count - i);
         host.host
+            .local_mut()
+            .unwrap()
             .store_local_mut()
             .create_local(
                 &format!("seed-{i}"),
@@ -307,8 +311,14 @@ fn qualify(count: usize) {
             )
             .unwrap();
     }
-    host.host.flush_pending().unwrap();
-    let snapshot = host.host.store_local().open_card_snapshot().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
+    let snapshot = host
+        .host
+        .local()
+        .unwrap()
+        .store_local()
+        .open_card_snapshot()
+        .unwrap();
     let point = snapshot.readpoint().clone();
     let mut request = command(Action::Query);
     request.section = "概览".into();
@@ -321,6 +331,8 @@ fn qualify(count: usize) {
         sort: request.sort.clone(),
     };
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .begin_read_archive(&Plan {
             operation_id: OPERATION.into(),
@@ -360,6 +372,8 @@ fn qualify(count: usize) {
     }
     let status = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read_archive(SUBJECT, OPERATION)
         .unwrap()
@@ -367,6 +381,8 @@ fn qualify(count: usize) {
     assert!(status.root.is_none());
     assert!(
         host.host
+            .local()
+            .unwrap()
             .store_local()
             .lookup_read(SUBJECT, OPERATION)
             .unwrap()
@@ -391,13 +407,19 @@ fn qualify(count: usize) {
         .unwrap()
         .connection();
     assert_eq!(
-        host.host.connection_phase(connection).unwrap(),
+        host.host
+            .local()
+            .unwrap()
+            .connection_phase(connection)
+            .unwrap(),
         InstancePhase::Ready
     );
     let manager = host.manager.as_ref().unwrap();
     let pool = &host.pool;
     let session = host.plugin.as_ref().unwrap();
     host.host
+        .local_mut()
+        .unwrap()
         .store_local_mut()
         .finish_read_archive_local_authorized(
             SUBJECT,
@@ -436,11 +458,13 @@ fn qualify(count: usize) {
             },
         )
         .unwrap();
-    host.host.flush_pending().unwrap();
+    host.host.local_mut().unwrap().flush_pending().unwrap();
     let backup = dir.path().join("query.morrowbackup");
     host.backup_snapshot(&backup).unwrap();
     let original = host
         .host
+        .local()
+        .unwrap()
         .store_local()
         .lookup_read(SUBJECT, OPERATION)
         .unwrap()

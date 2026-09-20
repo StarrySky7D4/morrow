@@ -139,13 +139,13 @@ fn audit_child() {
                     .is_empty()
             );
             // A refresh while the actual failure remains must not advertise restored writes.
-            host.refresh_plugin_state();
+            host.refresh_plugin_state().unwrap();
             assert!(!host.writable());
             assert!(host.maintenance_warning().is_some());
             // This test runs as its own Windows child process, with this one selected test.
             // Windows environment mutation is safe; no other process's injection is changed.
             unsafe { std::env::remove_var("MORROW_WORKBENCH_FAIL_SEAL") };
-            host.refresh_plugin_state();
+            host.refresh_plugin_state().unwrap();
             // finish() already closed this root even though sealing failed. Clearing
             // the storage fault must not implicitly revive a terminated plugin session.
             assert!(!host.writable());

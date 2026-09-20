@@ -291,6 +291,7 @@ impl Workbench {
         expected_digest: &[u8],
         revision: u64,
     ) -> Result<()> {
+        self.host.local()?;
         self.catalog_revision(Some(revision))?;
         let p = catalog::read_file(path)?;
         if expected_digest != p.digest() {
@@ -339,6 +340,7 @@ impl Workbench {
         revision: u64,
         approved: &[String],
     ) -> Result<()> {
+        self.host.local()?;
         self.catalog_revision(Some(revision))?;
         if self.builtin_id(id) {
             return Err("built-in plugin requires its dedicated settings".into());
@@ -373,6 +375,7 @@ impl Workbench {
         approved: &[String],
         enable: bool,
     ) -> Result<()> {
+        self.host.local()?;
         self.catalog_revision(Some(revision))?;
         if self.builtin_id(id) {
             return Err("内置工作台插件请使用原设置入口。".into());
@@ -415,6 +418,7 @@ impl Workbench {
         cleanup
     }
     pub fn remove_external(&mut self, id: &str, digest: &[u8], revision: u64) -> Result<()> {
+        self.host.local()?;
         self.catalog_revision(Some(revision))?;
         if self.builtin_id(id) {
             return Err("内置工作台插件请使用原设置入口。".into());
@@ -434,9 +438,10 @@ impl Workbench {
         cleanup
     }
     pub(crate) fn maintain_external(&mut self) -> Result<()> {
+        self.host.local()?;
         self.pool.maintain(
             self.manager.as_ref().ok_or("插件管理不可用。")?,
-            &mut self.host,
+            self.host.local_mut()?,
         )?;
         if self
             .external_ui
@@ -445,7 +450,7 @@ impl Workbench {
             && let Some(mut u) = self.external_ui.take()
         {
             u.ui.close();
-            if let Err(error) = self.pool.close(&mut self.host, &u.session) {
+            if let Err(error) = self.pool.close(self.host.local_mut()?, &u.session) {
                 self.external_ui = Some(u);
                 return Err(error.into());
             }
@@ -462,7 +467,7 @@ impl Workbench {
         self.maintain_external()?;
         Ok(self.pool.start(
             self.manager.as_mut().unwrap(),
-            &mut self.host,
+            self.host.local_mut()?,
             id,
             &[],
             revision,
@@ -479,6 +484,7 @@ impl Workbench {
         output_type: &str,
         input: &[u8],
     ) -> Result<Vec<u8>> {
+        self.host.local()?;
         if input.len() > morrow_core::task::MAX_VALUE_BYTES {
             return Err("转换输入超过 64 KiB。".into());
         }
@@ -497,16 +503,17 @@ impl Workbench {
         let start = self.start;
         let result = self.pool.run_task(
             self.manager.as_ref().unwrap(),
-            &mut self.host,
+            self.host.local_mut()?,
             &session,
             &invocation,
             || now(start),
         );
+        let host = self.host.local()?;
         let live = self
             .pool
             .root(&session)
-            .is_ok_and(|i| self.host.connection_phase(i.connection()) == Ok(InstancePhase::Ready));
-        let closed = self.pool.close(&mut self.host, &session);
+            .is_ok_and(|i| host.connection_phase(i.connection()) == Ok(InstancePhase::Ready));
+        let closed = self.pool.close(self.host.local_mut()?, &session);
         let report = result?;
         closed?;
         if !live {
@@ -530,6 +537,7 @@ impl Workbench {
         revision: u64,
         seed: &str,
     ) -> Result<Reply> {
+        self.host.local()?;
         self.maintain_external()?;
         if self.external_ui.is_some() {
             return Err("已有外部插件表单，请先关闭。".into());
@@ -551,7 +559,7 @@ impl Workbench {
             let instance = self.pool.root(&session)?;
             let mut ui = InlineUi::new(
                 instance.package(),
-                &self.host,
+                self.host.local()?,
                 instance.connection(),
                 &view,
                 generation,
@@ -559,7 +567,7 @@ impl Workbench {
             )?;
             let reply = ui.open(
                 instance.package(),
-                &mut self.host,
+                self.host.local_mut()?,
                 instance.connection(),
                 seed,
             )?;
@@ -577,12 +585,13 @@ impl Workbench {
                 Ok(reply)
             }
             Err(e) => {
-                self.pool.close(&mut self.host, &session)?;
+                self.pool.close(self.host.local_mut()?, &session)?;
                 Err(e)
             }
         }
     }
     pub fn external_ui_event(&mut self, id: &str, generation: u64, bytes: &[u8]) -> Result<Reply> {
+        self.host.local()?;
         self.maintain_external()?;
         let u = self.external_ui.as_mut().ok_or("外部插件表单已关闭。")?;
         if u.id != id || u.ui.generation() != generation {
@@ -594,7 +603,7 @@ impl Workbench {
         }
         let reply = u.ui.event(
             instance.package(),
-            &mut self.host,
+            self.host.local_mut()?,
             instance.connection(),
             bytes,
         )?;
@@ -620,7 +629,7 @@ impl Workbench {
                 .as_ref()
                 .ok_or("插件已停止，表单未交付。")?;
             let i = self.pool.root(&u.session)?;
-            if self.host.connection_phase(i.connection()) != Ok(InstancePhase::Ready) {
+            if self.host.local()?.connection_phase(i.connection()) != Ok(InstancePhase::Ready) {
                 return Err("插件已撤权，表单未交付。".into());
             }
         }
@@ -634,6 +643,7 @@ impl Workbench {
         self.external_ui_closed.push_back((id, generation));
     }
     pub fn external_ui_close(&mut self, id: &str, generation: u64) -> Result<()> {
+        self.host.local()?;
         if self
             .external_ui_closed
             .iter()
@@ -649,7 +659,7 @@ impl Workbench {
         }
         let mut u = self.external_ui.take().unwrap();
         u.ui.close();
-        if let Err(error) = self.pool.close(&mut self.host, &u.session) {
+        if let Err(error) = self.pool.close(self.host.local_mut()?, &u.session) {
             self.external_ui = Some(u);
             return Err(error.into());
         }
