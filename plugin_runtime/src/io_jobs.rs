@@ -2189,212 +2189,227 @@ fn run_job(
         report.service_validity = history.map(|(_, validity)| validity.clone());
         return report;
     }
-    let run = package.run_service_frame(
-        input,
-        &mut |content_call, request| {
-            if fault.is_some() {
-                return Err(());
-            }
-            if let Some(late) = service_job_fault(
-                control,
-                cancel,
-                service,
-                http_guards,
-                history.map(|(_, validity)| validity),
-            ) {
-                fault = Some(late);
-                return Err(());
-            }
-            if calls >= control.limits.max_calls {
-                fault = Some(Fault::Limits);
-                return Err(());
-            }
-            if content_call && service.and_then(|s| s.content.as_ref()).is_none() {
-                fault = Some(Fault::TaskProtocol);
-                return Err(());
-            }
-            let capabilities: &[IoCapability] = if lease.is_some() && !content_call {
-                match Request::decode(request).map(|r| r.action().clone()) {
-                    Ok(Action::Read { .. } | Action::Finish { .. } | Action::Cancel { .. }) => {
-                        &[IoCapability::FileRead]
+    let run = match package.start_service_frame(input, cancel.clone()) {
+        Err(run) => run,
+        Ok(mut frame) => {
+            while let Some(pending) = frame.pending() {
+                let token = pending.token.clone();
+                let content_call = pending.kind == crate::continuation::Kind::Core;
+                let request = pending.bytes.as_slice();
+                // Each route borrows the owner only for this import. The frame
+                // keeps owned guest state, and final validation stays below.
+                let response = (|| {
+                    if fault.is_some() {
+                        return Err(());
                     }
-                    Ok(Action::SubmitHttp(http)) if !http.credential.is_empty() => {
-                        &[IoCapability::HttpRequest, IoCapability::CredentialUse]
+                    if let Some(late) = service_job_fault(
+                        control,
+                        cancel,
+                        service,
+                        http_guards,
+                        history.map(|(_, validity)| validity),
+                    ) {
+                        fault = Some(late);
+                        return Err(());
                     }
-                    Ok(Action::SubmitHttp(_)) => &[IoCapability::HttpRequest],
-                    _ => {
+                    if calls >= control.limits.max_calls {
+                        fault = Some(Fault::Limits);
+                        return Err(());
+                    }
+                    if content_call && service.and_then(|s| s.content.as_ref()).is_none() {
                         fault = Some(Fault::TaskProtocol);
                         return Err(());
                     }
-                }
-            } else {
-                &[]
-            };
-            // The request is charged before the router may produce any external
-            // effect, so a byte cap is never discovered after the call.
-            let request_charge = request.len() as u64;
-            if bytes
-                .checked_add(request_charge)
-                .is_none_or(|total| total > control.limits.max_job_bytes)
-            {
-                fault = Some(Fault::Limits);
-                return Err(());
-            }
-            if let Err(error) = control.charge(request_charge, capabilities, lease.map(Arc::as_ref))
-            {
-                fault = Some(error);
-                return Err(());
-            }
-            bytes += request_charge;
-            // Recheck just before dispatch. Once a synchronous trusted router
-            // starts, a later cancellation cannot claim its effects did not occur.
-            if let Some(late) = service_job_fault(
-                control,
-                cancel,
-                service,
-                http_guards,
-                history.map(|(_, validity)| validity),
-            ) {
-                fault = Some(late);
-                return Err(());
-            }
-            let call = calls;
-            calls += 1;
-            let mut reserved = 0;
-            let routed = if content_call {
-                let response_bound = morrow_core::runtime::MAX_MESSAGE_BYTES as u64;
-                if bytes
-                    .checked_add(response_bound)
-                    .is_none_or(|n| n > control.limits.max_job_bytes)
-                {
-                    fault = Some(Fault::Limits);
-                    return Err(());
-                }
-                if let Err(error) = control.charge(response_bound, &[], lease.map(Arc::as_ref)) {
-                    fault = Some(error);
-                    return Err(());
-                }
-                reserved = response_bound;
-                // Reserve the full reply bound before a content transaction can commit.
-                // A fixed upper bound avoids discovering response quota after a write.
-                dispatch_service_content(
-                    host,
-                    instance,
-                    control,
-                    cancel,
-                    service,
-                    history.map(|(_, validity)| validity),
-                    request,
-                )
-            } else {
-                match router {
-                    JobRouter::ReadOnly => Err(RouterFault::Denied),
-                    JobRouter::Raw(router) => router.route(call, request),
-                    JobRouter::Brokered(router) => {
-                        match (instance, lease, Request::decode(request)) {
-                            (Some(instance), Some(lease), Ok(parsed)) => {
-                                let mut context = RouteContext {
-                                    host,
-                                    instance,
-                                    broker,
-                                    control,
-                                    lease,
-                                    cancel,
-                                    request: &parsed,
-                                    reserved: &mut reserved,
-                                    used: false,
-                                    expected: None,
-                                    uncertain: false,
-                                    http_guard: None,
-                                    service_validity: history.map(|(_, validity)| validity),
-                                    service_content: service.and_then(|s| s.content.as_ref()),
-                                };
-                                let reply = router.route(&mut context, call, &parsed);
-                                if let Some(guard) = context.http_guard.take() {
-                                    // At most one guard per import; imports are bounded by
-                                    // max_calls. Keep successful authorization through Ready.
-                                    http_guards.push(guard);
-                                }
-                                if context.uncertain
-                                    || (context.expected.is_some() && reply.is_err())
-                                {
-                                    Err(RouterFault::Unknown)
-                                } else if reply
-                                    .as_ref()
-                                    .is_ok_and(|v| context.expected.as_ref() != Some(v))
-                                {
-                                    Err(if context.used {
-                                        RouterFault::Unknown
-                                    } else {
-                                        RouterFault::Denied
-                                    })
-                                } else {
-                                    reply
+                    let capabilities: &[IoCapability] = if lease.is_some() && !content_call {
+                        match Request::decode(request).map(|r| r.action().clone()) {
+                            Ok(
+                                Action::Read { .. } | Action::Finish { .. } | Action::Cancel { .. },
+                            ) => &[IoCapability::FileRead],
+                            Ok(Action::SubmitHttp(http)) if !http.credential.is_empty() => {
+                                &[IoCapability::HttpRequest, IoCapability::CredentialUse]
+                            }
+                            Ok(Action::SubmitHttp(_)) => &[IoCapability::HttpRequest],
+                            _ => {
+                                fault = Some(Fault::TaskProtocol);
+                                return Err(());
+                            }
+                        }
+                    } else {
+                        &[]
+                    };
+                    // The request is charged before the router may produce any external
+                    // effect, so a byte cap is never discovered after the call.
+                    let request_charge = request.len() as u64;
+                    if bytes
+                        .checked_add(request_charge)
+                        .is_none_or(|total| total > control.limits.max_job_bytes)
+                    {
+                        fault = Some(Fault::Limits);
+                        return Err(());
+                    }
+                    if let Err(error) =
+                        control.charge(request_charge, capabilities, lease.map(Arc::as_ref))
+                    {
+                        fault = Some(error);
+                        return Err(());
+                    }
+                    bytes += request_charge;
+                    // Recheck just before dispatch. Once a synchronous trusted router
+                    // starts, a later cancellation cannot claim its effects did not occur.
+                    if let Some(late) = service_job_fault(
+                        control,
+                        cancel,
+                        service,
+                        http_guards,
+                        history.map(|(_, validity)| validity),
+                    ) {
+                        fault = Some(late);
+                        return Err(());
+                    }
+                    let call = calls;
+                    calls += 1;
+                    let mut reserved = 0;
+                    let routed = if content_call {
+                        let response_bound = morrow_core::runtime::MAX_MESSAGE_BYTES as u64;
+                        if bytes
+                            .checked_add(response_bound)
+                            .is_none_or(|n| n > control.limits.max_job_bytes)
+                        {
+                            fault = Some(Fault::Limits);
+                            return Err(());
+                        }
+                        if let Err(error) =
+                            control.charge(response_bound, &[], lease.map(Arc::as_ref))
+                        {
+                            fault = Some(error);
+                            return Err(());
+                        }
+                        reserved = response_bound;
+                        // Reserve the full reply bound before a content transaction can commit.
+                        // A fixed upper bound avoids discovering response quota after a write.
+                        dispatch_service_content(
+                            host,
+                            instance,
+                            control,
+                            cancel,
+                            service,
+                            history.map(|(_, validity)| validity),
+                            request,
+                        )
+                    } else {
+                        match router {
+                            JobRouter::ReadOnly => Err(RouterFault::Denied),
+                            JobRouter::Raw(router) => router.route(call, request),
+                            JobRouter::Brokered(router) => {
+                                match (instance, lease, Request::decode(request)) {
+                                    (Some(instance), Some(lease), Ok(parsed)) => {
+                                        let mut context = RouteContext {
+                                            host,
+                                            instance,
+                                            broker,
+                                            control,
+                                            lease,
+                                            cancel,
+                                            request: &parsed,
+                                            reserved: &mut reserved,
+                                            used: false,
+                                            expected: None,
+                                            uncertain: false,
+                                            http_guard: None,
+                                            service_validity: history.map(|(_, validity)| validity),
+                                            service_content: service
+                                                .and_then(|s| s.content.as_ref()),
+                                        };
+                                        let reply = router.route(&mut context, call, &parsed);
+                                        if let Some(guard) = context.http_guard.take() {
+                                            // At most one guard per import; imports are bounded by
+                                            // max_calls. Keep successful authorization through Ready.
+                                            http_guards.push(guard);
+                                        }
+                                        if context.uncertain
+                                            || (context.expected.is_some() && reply.is_err())
+                                        {
+                                            Err(RouterFault::Unknown)
+                                        } else if reply
+                                            .as_ref()
+                                            .is_ok_and(|v| context.expected.as_ref() != Some(v))
+                                        {
+                                            Err(if context.used {
+                                                RouterFault::Unknown
+                                            } else {
+                                                RouterFault::Denied
+                                            })
+                                        } else {
+                                            reply
+                                        }
+                                    }
+                                    _ => Err(RouterFault::Denied),
                                 }
                             }
-                            _ => Err(RouterFault::Denied),
                         }
+                    };
+                    bytes += reserved;
+                    if let Some(late) = service_job_fault(
+                        control,
+                        cancel,
+                        service,
+                        http_guards,
+                        history.map(|(_, validity)| validity),
+                    ) {
+                        fault = Some(late);
+                        unknown = true;
+                        return Err(());
                     }
-                }
-            };
-            bytes += reserved;
-            if let Some(late) = service_job_fault(
-                control,
-                cancel,
-                service,
-                http_guards,
-                history.map(|(_, validity)| validity),
-            ) {
-                fault = Some(late);
-                unknown = true;
-                return Err(());
+                    let response = match routed {
+                        Ok(response) => response,
+                        Err(RouterFault::Denied) => {
+                            fault = Some(Fault::InactiveConnection);
+                            return Err(());
+                        }
+                        Err(RouterFault::Limit) => {
+                            fault = Some(Fault::Limits);
+                            return Err(());
+                        }
+                        Err(RouterFault::Unknown) => {
+                            fault = Some(Fault::TaskProtocol);
+                            unknown = true;
+                            return Err(());
+                        }
+                    };
+                    let response_charge = if reserved == 0 {
+                        response.len() as u64
+                    } else {
+                        0
+                    };
+                    if (reserved != 0 && response.len() as u64 > reserved)
+                        || response.is_empty()
+                        || response.len() > MAX_FRAME_BYTES
+                        || bytes
+                            .checked_add(response_charge)
+                            .is_none_or(|total| total > control.limits.max_job_bytes)
+                    {
+                        // The call already reached the router; the result cannot be
+                        // delivered within quota, so the outcome needs reconciliation.
+                        fault = Some(Fault::Limits);
+                        unknown = true;
+                        return Err(());
+                    }
+                    if let Err(error) = control.charge(response_charge, &[], lease.map(Arc::as_ref))
+                    {
+                        fault = Some(error);
+                        unknown = true;
+                        return Err(());
+                    }
+                    bytes += response_charge;
+                    last_request = Some(request.to_vec());
+                    last_response = Some(response.clone());
+                    Ok(response)
+                })();
+                frame.resume(&token, response).expect("same pending call");
             }
-            let response = match routed {
-                Ok(response) => response,
-                Err(RouterFault::Denied) => {
-                    fault = Some(Fault::InactiveConnection);
-                    return Err(());
-                }
-                Err(RouterFault::Limit) => {
-                    fault = Some(Fault::Limits);
-                    return Err(());
-                }
-                Err(RouterFault::Unknown) => {
-                    fault = Some(Fault::TaskProtocol);
-                    unknown = true;
-                    return Err(());
-                }
-            };
-            let response_charge = if reserved == 0 {
-                response.len() as u64
-            } else {
-                0
-            };
-            if (reserved != 0 && response.len() as u64 > reserved)
-                || response.is_empty()
-                || response.len() > MAX_FRAME_BYTES
-                || bytes
-                    .checked_add(response_charge)
-                    .is_none_or(|total| total > control.limits.max_job_bytes)
-            {
-                // The call already reached the router; the result cannot be
-                // delivered within quota, so the outcome needs reconciliation.
-                fault = Some(Fault::Limits);
-                unknown = true;
-                return Err(());
-            }
-            if let Err(error) = control.charge(response_charge, &[], lease.map(Arc::as_ref)) {
-                fault = Some(error);
-                unknown = true;
-                return Err(());
-            }
-            bytes += response_charge;
-            last_request = Some(request.to_vec());
-            last_response = Some(response.clone());
-            Ok(response)
-        },
-        cancel.clone(),
-    );
+            frame.finish()
+        }
+    };
     if let Some(late) = service_job_fault(
         control,
         cancel,

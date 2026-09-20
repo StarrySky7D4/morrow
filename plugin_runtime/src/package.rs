@@ -4,7 +4,7 @@ use morrow_core::{
     dispatch::{Connection, HostRuntime},
     plugin_package::Package,
 };
-type ServiceExchange<'a> = &'a mut dyn FnMut(bool, &[u8]) -> Result<Vec<u8>, ()>;
+mod frame;
 pub struct PreparedPackage {
     package: Package,
     runner: Runner,
@@ -63,46 +63,23 @@ impl PreparedPackage {
     ) -> crate::TaskRun {
         self.run_io_frame(input, io, cancel)
     }
-    /// IO task ABI with the managed IO callback and a denied content exchange.
-    /// The router owns authorization; this adapter only keeps guest-visible
-    /// protocol rules (one completion equal to a brokered response).
+    /// Deny content imports; the managed adapter validates response binding.
     pub(crate) fn run_io_frame<'a>(
         &self,
         input: &'a [u8],
         io: crate::Exchange<'a>,
         cancel: Cancellation,
     ) -> crate::TaskRun {
-        let mut core_called = false;
-        let mut run = self.runner.run_task_with_io(
-            input,
-            &mut |_| {
-                core_called = true;
-                Err(())
-            },
-            io,
-            cancel,
-        );
-        if core_called {
-            run.report.outcome = Err(Fault::TaskProtocol);
-            run.completion = None;
+        let mut frame = match self.start_io_frame(input, cancel) {
+            Ok(frame) => frame,
+            Err(run) => return run,
+        };
+        while let Some(call) = frame.pending() {
+            let token = call.token.clone();
+            let response = io(&call.bytes);
+            frame.resume(&token, response).expect("same pending call");
         }
-        run
-    }
-    /// Both imports reach one serialized callback, so content and IO retain the
-    /// same host, job accounting and cancellation rather than parallel authorities.
-    pub(crate) fn run_service_frame(
-        &self,
-        input: &[u8],
-        route: ServiceExchange<'_>,
-        cancel: Cancellation,
-    ) -> crate::TaskRun {
-        let route = std::cell::RefCell::new(route);
-        self.runner.run_task_with_io(
-            input,
-            &mut |bytes| route.borrow_mut()(true, bytes),
-            &mut |bytes| route.borrow_mut()(false, bytes),
-            cancel,
-        )
+        frame.finish()
     }
     pub fn package(&self) -> &Package {
         &self.package
