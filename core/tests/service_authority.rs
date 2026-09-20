@@ -376,7 +376,7 @@ mod native {
         ));
         let sql = rusqlite::Connection::open(&path).unwrap();
         sql.execute_batch(
-            "DROP TABLE IF EXISTS service_authority_identity; DROP TABLE service_authorities;",
+            "DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE service_authorities;",
         )
         .unwrap();
         drop(sql);
@@ -514,7 +514,7 @@ mod native {
                 1 => "UPDATE service_authorities SET kind=2;",
                 2 => "UPDATE service_authorities SET subject='bob';",
                 3 => "UPDATE service_authorities SET payload=X'00';",
-                _ => "DROP TABLE IF EXISTS service_authority_identity; DROP TABLE service_authorities;",
+                _ => "DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE service_authorities;",
             })
             .unwrap();
             drop(sql);
@@ -625,7 +625,7 @@ mod crash {
             let path = dir.path().join("migration.db");
             drop(Store::open(&path, Default::default()).unwrap());
             let sql = rusqlite::Connection::open(&path).unwrap();
-            sql.execute_batch("DROP TABLE service_authority_identity; DROP TABLE service_authorities; PRAGMA user_version=18;").unwrap();
+            sql.execute_batch("DROP TABLE IF EXISTS outbound_authorities; DROP TABLE service_authority_identity; DROP TABLE service_authorities; PRAGMA user_version=18;").unwrap();
             drop(sql);
             run(&path, "migrate", point);
             let sql = rusqlite::Connection::open(&path).unwrap();

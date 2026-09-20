@@ -32,14 +32,17 @@ impl Drop for OwnedBlob {
         }
     }
 }
-fn crypt(input: &[u8], encrypt: bool) -> Result<Zeroizing<Vec<u8>>> {
+fn crypt(input: &[u8], encrypt: bool, entropy: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    if input.is_empty() || input.len() > 64 * 1024 || entropy.is_empty() || entropy.len() > 256 {
+        return Err(KeyError::Format);
+    }
     let data = CRYPT_INTEGER_BLOB {
         cbData: u32::try_from(input.len()).map_err(|_| KeyError::Format)?,
         pbData: input.as_ptr().cast_mut(),
     };
     let entropy = CRYPT_INTEGER_BLOB {
-        cbData: ENTROPY.len() as u32,
-        pbData: ENTROPY.as_ptr().cast_mut(),
+        cbData: entropy.len() as u32,
+        pbData: entropy.as_ptr().cast_mut(),
     };
     let mut output = CRYPT_INTEGER_BLOB {
         cbData: 0,
@@ -83,8 +86,44 @@ fn crypt(input: &[u8], encrypt: bool) -> Result<Zeroizing<Vec<u8>>> {
     ))
 }
 pub(super) fn protect(input: &[u8]) -> Result<Vec<u8>> {
-    Ok(crypt(input, true)?.to_vec())
+    Ok(crypt(input, true, ENTROPY)?.to_vec())
 }
 pub(super) fn unprotect(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
-    crypt(input, false)
+    crypt(input, false, ENTROPY)
+}
+
+const HTTP_ENTROPY: &[u8] = b"Morrow/http/credential/current-user/v1";
+pub(super) fn protect_http(input: &[u8]) -> Result<Vec<u8>> {
+    Ok(crypt(input, true, HTTP_ENTROPY)?.to_vec())
+}
+pub(super) fn unprotect_http(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    crypt(input, false, HTTP_ENTROPY)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn fixed_legacy_entropy_still_decrypts_keys_and_http_domain_is_separate() {
+        let plain = Zeroizing::new(b"synthetic-domain-check".to_vec());
+        let legacy = crypt(&plain, true, b"Morrow/audit/key/current-user/v1").unwrap();
+        assert!(unprotect(&legacy).unwrap().as_slice() == plain.as_slice());
+        assert!(unprotect_http(&legacy).is_err());
+        let current = protect(&plain).unwrap();
+        assert!(
+            crypt(&current, false, b"Morrow/audit/key/current-user/v1")
+                .unwrap()
+                .as_slice()
+                == plain.as_slice()
+        );
+        let http = protect_http(&plain).unwrap();
+        assert!(unprotect_http(&http).unwrap().as_slice() == plain.as_slice());
+        assert!(unprotect(&http).is_err());
+    }
+    #[test]
+    fn dpapi_input_and_entropy_bounds_fail_before_os_call() {
+        assert!(crypt(&[], true, ENTROPY).is_err());
+        assert!(crypt(&vec![1; 65537], true, ENTROPY).is_err());
+        assert!(crypt(b"x", true, &[]).is_err());
+        assert!(crypt(b"x", true, &vec![1; 257]).is_err());
+    }
 }

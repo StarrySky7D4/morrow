@@ -873,6 +873,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "morrow-audit"
+version = "0.1.9-test.50"
+dependencies = [
+ "lz4_flex",
+ "morrow-core",
+ "prost",
+ "prost-build",
+ "protoc-bin-vendored",
+ "rusqlite",
+ "sha2 0.10.9",
+ "tempfile",
+ "windows-sys 0.61.2",
+ "zeroize",
+]
+
+[[package]]
 name = "morrow-core"
 version = "0.1.9-test.50"
 dependencies = [
@@ -897,6 +913,7 @@ dependencies = [
  "axum",
  "futures-util",
  "http",
+ "morrow-audit",
  "morrow-core",
  "morrow-plugin-runtime",
  "rcgen",
@@ -909,6 +926,7 @@ dependencies = [
  "tokio-util",
  "url",
  "wat",
+ "zeroize",
 ]
 
 [[package]]

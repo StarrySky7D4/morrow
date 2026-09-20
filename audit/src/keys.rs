@@ -193,6 +193,14 @@ fn frame(container: &[u8]) -> Vec<u8> {
     ]
     .concat()
 }
+// Only the dedicated credential codec may select this separate DPAPI domain.
+pub(crate) fn protect_http_credential(input: &[u8]) -> Result<Vec<u8>> {
+    windows::protect_http(input)
+}
+pub(crate) fn unprotect_http_credential(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    windows::unprotect_http(input)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

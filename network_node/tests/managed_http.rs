@@ -6,6 +6,7 @@ use morrow_core::{
     io::{Header, HttpSubmission, Request, Response, Status},
     io_evidence::Kind,
     io_intent::{Phase, Recovery},
+    outbound_authority::{self, Record as StoredRecord, proto as outbound},
     plugin_package::{
         Package,
         catalog::Catalog,
@@ -18,10 +19,11 @@ use morrow_network_node::{
     HttpResponse, Limits,
     managed_http::{Credential, EndpointApproval, HttpEndpoint, NetworkProfile},
     server::{Handler, Node, Route, TlsIdentity},
+    stored_http::StoredHttpEndpoint,
 };
 use morrow_plugin_runtime::{
     Limits as RuntimeLimits,
-    io_jobs::{IoWorker, JobHandle, JobLimits, JobReport, Poll},
+    io_jobs::{IoWorker, JobHandle, JobLimits, JobReport, Poll, ServiceUpdate},
     manager::{ManagedInstance, Manager},
 };
 use std::{
@@ -29,7 +31,7 @@ use std::{
     net::{IpAddr, Ipv4Addr, SocketAddr},
     sync::{
         Arc,
-        atomic::{AtomicUsize, Ordering},
+        atomic::{AtomicU64, AtomicUsize, Ordering},
     },
     time::{Duration, Instant},
 };
@@ -83,6 +85,49 @@ fn submission(endpoint: &HttpEndpoint, operation: &str) -> HttpSubmission {
         credential: vec![],
     }
 }
+const STORED_ENDPOINT: [u8; 32] = [31; 32];
+const STORED_CREDENTIAL: [u8; 32] = [32; 32];
+struct StoredSetup {
+    credential: Option<StoredRecord>,
+    wall: Arc<AtomicU64>,
+    provider_calls: Arc<AtomicUsize>,
+    wrong_reference: bool,
+    foreign_instance: bool,
+    windows_provider: bool,
+    alter: Option<fn(&mut outbound::Endpoint)>,
+}
+fn stored_setup(credentials: bool) -> StoredSetup {
+    StoredSetup {
+        credential: credentials.then(|| {
+            StoredRecord::encode(outbound::Record {
+                schema_version: outbound_authority::VERSION,
+                reference: STORED_CREDENTIAL.to_vec(),
+                revision: 1,
+                created_ms: 1000,
+                expires_ms: 61_000,
+                disabled: false,
+                kind: Some(outbound::record::Kind::Credential(outbound::Credential {
+                    provider: outbound_authority::WINDOWS_DPAPI_PROVIDER.into(),
+                    ciphertext: vec![1, 2, 3],
+                })),
+            })
+            .unwrap()
+        }),
+        wall: Arc::new(AtomicU64::new(1000)),
+        provider_calls: Arc::new(AtomicUsize::new(0)),
+        wrong_reference: false,
+        foreign_instance: false,
+        windows_provider: false,
+        alter: None,
+    }
+}
+fn credential_wire_reference() -> Vec<u8> {
+    STORED_CREDENTIAL
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect::<String>()
+        .into_bytes()
+}
 struct Running {
     _dir: tempfile::TempDir,
     _manager: Manager,
@@ -95,6 +140,21 @@ impl Running {
         Self::configured(approval, credentials, false)
     }
     fn configured(approval: EndpointApproval, credentials: bool, second_instance: bool) -> Self {
+        Self::build(approval, credentials, second_instance, None).unwrap()
+    }
+    fn stored(
+        approval: EndpointApproval,
+        credentials: bool,
+        setup: StoredSetup,
+    ) -> morrow_network_node::Result<Self> {
+        Self::build(approval, credentials, false, Some(setup))
+    }
+    fn build(
+        approval: EndpointApproval,
+        credentials: bool,
+        second_instance: bool,
+        stored: Option<StoredSetup>,
+    ) -> morrow_network_node::Result<Self> {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wat::parse_str(
             r#"(module
@@ -135,16 +195,110 @@ impl Running {
         manager
             .set_enabled(ID, digest, true, manager.revision())
             .unwrap();
-        let mut host =
-            HostRuntime::new(Store::open(&dir.path().join("db"), EventBudget::default()).unwrap())
-                .unwrap();
+        let mut store = Store::open(&dir.path().join("db"), EventBudget::default()).unwrap();
+        let restored = if let Some(settings) = &stored {
+            if let Some(credential) = &settings.credential {
+                store.save_outbound_authority_local(credential, 0).unwrap();
+            }
+            let mut endpoint = outbound::Endpoint {
+                package_id: ID.into(),
+                package_sha256: digest.to_vec(),
+                origin: approval.origin.clone(),
+                profile: match approval.profile {
+                    NetworkProfile::PublicHttps => 1,
+                    NetworkProfile::LoopbackHttp => 2,
+                    NetworkProfile::LoopbackHttps => 3,
+                },
+                methods: vec!["GET".into(), "HEAD".into(), "POST".into()],
+                credential_reference: settings
+                    .credential
+                    .as_ref()
+                    .map_or_else(Vec::new, |_| STORED_CREDENTIAL.to_vec()),
+                root_certificate: approval.root_certificate.clone().unwrap_or_default(),
+                max_request_bytes: approval.limits.max_request_bytes as u64,
+                max_response_bytes: approval.limits.max_response_bytes as u64,
+                max_header_bytes: approval.limits.max_header_bytes as u64,
+                max_concurrent: approval.limits.max_concurrent as u32,
+                timeout_ms: approval.limits.timeout.as_millis() as u64,
+                max_frame_bytes: approval.response_frame_limit,
+            };
+            if let Some(alter) = settings.alter {
+                alter(&mut endpoint);
+            }
+            let endpoint = StoredRecord::encode(outbound::Record {
+                schema_version: outbound_authority::VERSION,
+                reference: STORED_ENDPOINT.to_vec(),
+                revision: 1,
+                created_ms: 1000,
+                expires_ms: 61_000,
+                disabled: false,
+                kind: Some(outbound::record::Kind::Endpoint(endpoint)),
+            })
+            .unwrap();
+            store.save_outbound_authority_local(&endpoint, 0).unwrap();
+            // Close the writer completely: restored approval and ciphertext must
+            // come from the reopened original database, not in-memory records.
+            drop(store);
+            store = Store::open_existing(&dir.path().join("db"), EventBudget::default()).unwrap();
+            let wall = settings.wall.clone();
+            Some(StoredHttpEndpoint::resolve(
+                &mut store,
+                &STORED_ENDPOINT,
+                move || wall.load(Ordering::SeqCst),
+            )?)
+        } else {
+            None
+        };
+        let mut host = HostRuntime::new(store).unwrap();
         let instance = manager.connect(ID, &mut host).unwrap();
         let binding = manager
             .bind_io(&host, &instance, digest, manager.revision(), &caps, 100, 1)
             .unwrap();
-        let endpoint =
+        let endpoint = if let Some(restored) = restored {
+            let settings = stored.as_ref().unwrap();
+            let foreign = settings
+                .foreign_instance
+                .then(|| manager.connect(ID, &mut host).unwrap());
+            let approved_instance = foreign.as_ref().unwrap_or(&instance);
+            if settings.windows_provider {
+                #[cfg(target_os = "windows")]
+                {
+                    restored.approve_windows(
+                        &manager,
+                        &host,
+                        approved_instance,
+                        &binding,
+                        [7; 32],
+                        2,
+                    )?
+                }
+                #[cfg(not(target_os = "windows"))]
+                {
+                    return Err(morrow_network_node::Error::Denied);
+                }
+            } else {
+                restored.approve(
+                    &manager,
+                    &host,
+                    approved_instance,
+                    &binding,
+                    [7; 32],
+                    2,
+                    |_| {
+                        settings.provider_calls.fetch_add(1, Ordering::SeqCst);
+                        let reference = if settings.wrong_reference {
+                            b"wrong-reference".to_vec()
+                        } else {
+                            credential_wire_reference()
+                        };
+                        Credential::header(reference, "authorization", &format!("Bearer {TOKEN}"))
+                    },
+                )?
+            }
+        } else {
             HttpEndpoint::approve(&manager, &host, &instance, &binding, approval, [7; 32], 2)
-                .unwrap();
+                .unwrap()
+        };
         let (instance, binding, original) = if second_instance {
             let second = manager.connect(ID, &mut host).unwrap();
             let binding = manager
@@ -164,13 +318,13 @@ impl Running {
             JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
         )
         .unwrap();
-        Self {
+        Ok(Self {
             _dir: dir,
             _manager: manager,
             _original_instance: original,
             worker,
             endpoint,
-        }
+        })
     }
     fn submit(&mut self, submission: &HttpSubmission) -> (Request, JobHandle) {
         let request = Request::encode_http_submit(1, submission).unwrap();
@@ -759,5 +913,229 @@ async fn all_seven_approved_methods_reach_server_through_managed_wasm_and_are_ob
         );
         assert_eq!(server.calls.load(Ordering::SeqCst), 1, "method {method}");
         assert_observed(&run.finish().await, &request, &operation, &report);
+    }
+}
+
+#[tokio::test]
+async fn stored_endpoint_without_credential_never_calls_provider_and_uses_real_transport() {
+    let mut server = Server::new(
+        Some(raw_response("200 OK", b"stored response")),
+        Duration::ZERO,
+    )
+    .await;
+    let setup = stored_setup(false);
+    let calls = setup.provider_calls.clone();
+    let mut run = Running::stored(approval(&server.origin), false, setup).unwrap();
+    let (request, mut job) = run.submit(&submission(&run.endpoint, "stored-no-credential"));
+    let report = consume(&mut job).await;
+    assert_eq!(
+        report.http_response.as_ref().unwrap().body,
+        b"stored response"
+    );
+    let wire = server.request().await;
+    assert!(
+        !String::from_utf8_lossy(&wire)
+            .to_ascii_lowercase()
+            .contains("authorization:")
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    assert_observed(
+        &run.finish().await,
+        &request,
+        "stored-no-credential",
+        &report,
+    );
+}
+#[tokio::test]
+async fn stored_endpoint_rejects_wrong_package_capability_policy_and_alias_before_secret_callback()
+{
+    for mode in 0..7 {
+        let mut setup = stored_setup(true);
+        setup.foreign_instance = mode == 6;
+        let calls = setup.provider_calls.clone();
+        setup.alter = match mode {
+            0 => Some(|endpoint| endpoint.package_sha256 = vec![99; 32]),
+            1 => None,
+            2 => Some(|endpoint| endpoint.root_certificate = b"not a valid certificate".to_vec()),
+            3 => Some(|endpoint| endpoint.origin = "http://127.1".into()),
+            4 => Some(|endpoint| endpoint.origin = "http://0x7f000001".into()),
+            5 => Some(|endpoint| endpoint.package_id = "org.example.foreign".into()),
+            _ => None,
+        };
+        assert!(
+            Running::stored(approval("http://127.0.0.1:12345"), mode != 1, setup).is_err(),
+            "mode {mode}"
+        );
+        assert_eq!(calls.load(Ordering::SeqCst), 0, "mode {mode}");
+    }
+    for disabled in [false, true] {
+        let mut setup = stored_setup(true);
+        let calls = setup.provider_calls.clone();
+        let mut credential = setup.credential.take().unwrap().value().clone();
+        if disabled {
+            credential.disabled = true;
+        } else {
+            credential.created_ms = 1;
+            credential.expires_ms = 1000;
+        }
+        setup.credential = Some(StoredRecord::encode(credential).unwrap());
+        assert!(Running::stored(approval("http://127.0.0.1:12345"), true, setup).is_err());
+        assert_eq!(calls.load(Ordering::SeqCst), 0);
+    }
+    let mut setup = stored_setup(true);
+    setup.wrong_reference = true;
+    let calls = setup.provider_calls.clone();
+    assert!(Running::stored(approval("http://127.0.0.1:12345"), true, setup).is_err());
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+}
+#[tokio::test]
+async fn stored_endpoint_owner_queue_disable_suppresses_inflight_and_ready_responses() {
+    for ready_first in [false, true] {
+        let mut server = Server::new(
+            Some(raw_response("200 OK", b"must not be delivered")),
+            if ready_first {
+                Duration::ZERO
+            } else {
+                Duration::from_millis(150)
+            },
+        )
+        .await;
+        let mut run = Running::stored(approval(&server.origin), true, stored_setup(true)).unwrap();
+        let mut input = submission(&run.endpoint, "stored-revoke");
+        input.credential = credential_wire_reference();
+        let (_, mut job) = run.submit(&input);
+        let _ = server.request().await;
+        if ready_first {
+            ready(&mut job).await;
+        }
+        let mut observer =
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+        let mut value = observer
+            .load_outbound_authority(&STORED_CREDENTIAL)
+            .unwrap()
+            .unwrap()
+            .value()
+            .clone();
+        value.revision += 1;
+        value.disabled = true;
+        let value = StoredRecord::encode(value).unwrap();
+        assert_eq!(
+            observer.save_outbound_authority_local(&value, 1),
+            Err(morrow_core::Error::StorageBusy)
+        );
+        let mut update = run
+            .worker
+            .update_service(ServiceUpdate::Outbound {
+                value,
+                expected_revision: 1,
+            })
+            .unwrap();
+        let report = consume(&mut job).await;
+        assert!(report.task.execution.outcome.is_err());
+        assert!(report.http_response.is_none() && report.response.is_none());
+        assert_eq!(report.payload_bytes(), 0);
+        tokio::time::timeout(WAIT, async {
+            loop {
+                if let Some(result) = update.read().unwrap() {
+                    result.unwrap();
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(1)).await;
+            }
+        })
+        .await
+        .unwrap();
+        assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+        let host = run.finish().await;
+        assert!(matches!(
+            host.store_local()
+                .lookup_io_intent(ID, "stored-revoke")
+                .unwrap()
+                .unwrap()
+                .phase(),
+            Phase::OutcomeUnknown | Phase::Observed
+        ));
+    }
+}
+#[tokio::test]
+async fn stored_endpoint_utc_regression_and_expiry_are_sticky_at_ready_delivery() {
+    for invalid_time in [999, 61_000] {
+        let mut server = Server::new(
+            Some(raw_response("200 OK", b"undeliverable")),
+            Duration::ZERO,
+        )
+        .await;
+        let setup = stored_setup(false);
+        let wall = setup.wall.clone();
+        let mut run = Running::stored(approval(&server.origin), false, setup).unwrap();
+        let (_, mut job) = run.submit(&submission(&run.endpoint, "stored-time"));
+        let _ = server.request().await;
+        ready(&mut job).await;
+        wall.store(invalid_time, Ordering::SeqCst);
+        let report = job.read(256 * 1024).unwrap().unwrap();
+        assert!(report.http_response.is_none() && report.response.is_none());
+        assert_eq!(report.payload_bytes(), 0);
+        wall.store(1000, Ordering::SeqCst);
+        let (_, mut again) = run.submit(&submission(&run.endpoint, "stored-time-again"));
+        let report = consume(&mut again).await;
+        assert!(report.task.execution.outcome.is_err());
+        assert!(report.http_response.is_none());
+        assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+        run.finish().await;
+    }
+}
+#[cfg(target_os = "windows")]
+#[tokio::test]
+async fn stored_windows_dpapi_credential_injects_real_http_without_plaintext_in_material() {
+    let mut server = Server::new(
+        Some(raw_response("200 OK", b"provider response")),
+        Duration::ZERO,
+    )
+    .await;
+    let mut setup = stored_setup(true);
+    let credential = morrow_audit::credentials::seal(
+        STORED_CREDENTIAL,
+        1,
+        1000,
+        61_000,
+        "authorization",
+        &format!("Bearer {TOKEN}"),
+    )
+    .unwrap();
+    assert!(
+        !credential
+            .container()
+            .windows(TOKEN.len())
+            .any(|part| part == TOKEN.as_bytes())
+    );
+    setup.credential = Some(credential);
+    setup.windows_provider = true;
+    let calls = setup.provider_calls.clone();
+    let mut run = Running::stored(approval(&server.origin), true, setup).unwrap();
+    let mut input = submission(&run.endpoint, "stored-dpapi");
+    input.credential = credential_wire_reference();
+    let (request, mut job) = run.submit(&input);
+    let report = consume(&mut job).await;
+    assert_eq!(
+        report.http_response.as_ref().unwrap().body,
+        b"provider response"
+    );
+    let wire = server.request().await;
+    assert!(String::from_utf8_lossy(&wire).contains(&format!("authorization: Bearer {TOKEN}\r\n")));
+    assert_eq!(calls.load(Ordering::SeqCst), 0);
+    let host = run.finish().await;
+    assert_observed(&host, &request, "stored-dpapi", &report);
+    for kind in [Kind::Request, Kind::Response] {
+        let material = host
+            .store_local()
+            .io_material(ID, "stored-dpapi", kind)
+            .unwrap()
+            .unwrap();
+        assert!(
+            !material
+                .payload()
+                .windows(TOKEN.len())
+                .any(|part| part == TOKEN.as_bytes())
+        );
     }
 }

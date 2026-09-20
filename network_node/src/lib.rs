@@ -12,6 +12,8 @@ pub mod managed_service;
 #[cfg(feature = "plugin-adapter")]
 pub mod plugin;
 pub mod server;
+#[cfg(feature = "plugin-adapter")]
+pub mod stored_http;
 
 // Deliberately no Debug: headers and bodies can contain credentials or user content.
 #[derive(Clone, PartialEq, Eq)]

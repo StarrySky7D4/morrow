@@ -18,6 +18,7 @@ mod evidence_chunks;
 mod io_intent;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
+mod outbound_authority;
 mod service_authority;
 mod service_authority_lock;
 mod service_config;
@@ -36,7 +37,7 @@ mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 19;
+pub const SCHEMA_VERSION: i64 = 20;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -139,6 +140,7 @@ fn capacity_room(
             .saturating_add(material_bytes)
             .saturating_add(service_config::accounted(c)?)
             .saturating_add(service_authority::accounted(c)?)
+            .saturating_add(outbound_authority::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -533,6 +535,16 @@ impl Store {
             boundary("service-authority-migration-before-commit");
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("service-authority-migration-after-commit");
+        }
+        if version < 20 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(outbound_authority::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 20))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("outbound-authority-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("outbound-authority-migration-after-commit");
         }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
@@ -930,6 +942,7 @@ impl Store {
         io_evidence::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
+        outbound_authority::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;

@@ -550,3 +550,7 @@ SDK 源码包、运行时、核心、宿主和审计进入 test.48，应用构�
 ## 2026-09-20 持久入站批准进展
 
 原Store v19已保存入站认证摘要和精确发布批准，重新核对原实例、包、处理器及内容授权后绑定本机HTTP/TLS；配置或批准更新由原worker串行提交并撤销旧路由。协调锁覆盖数据库副本、独占和原生VFS，Unsupported平台不恢复活动权限。见[合同](PLUGIN_SERVICE_AUTHORITY.md)和[证据](../reports/service-authority-2026-09-20.md)。下一项为出站API受保护凭据／持久端点批准与主应用接入，其后继续Unknown核对、因果链和证据退休；当前子集不意味着完整插件系统或三语言SDK已稳定。
+
+## 2026-09-20 持久出站批准进展
+
+原Store v20新增固定origin／方法／网络profile／额度／TLS根的端点批准与系统保护凭据。Windows复用原DPAPI边界并分离HTTP保护域，解密前验证原Store和实际实例的HttpRequest／CredentialUse；活动端点保留撤销与期限检查。合同见[持久出站授权](PLUGIN_OUTBOUND_AUTHORITY.md)，验证见[报告](../reports/outbound-authority-2026-09-20.md)。下一项主应用端点与凭据管理、授权与任务显示；后续路径范围、OAuth、提供者核对、文件系统与三语言SDK保持原范围。

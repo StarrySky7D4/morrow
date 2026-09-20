@@ -30,6 +30,7 @@ use std::{
 use tokio::runtime::Handle;
 use tokio_util::sync::CancellationToken;
 use url::Url;
+use zeroize::Zeroize;
 
 static NEXT_ENDPOINT: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy)]
@@ -44,6 +45,11 @@ pub struct Credential {
     reference: Vec<u8>,
     name: String,
     value: String,
+}
+impl Drop for Credential {
+    fn drop(&mut self) {
+        self.value.zeroize();
+    }
 }
 impl Credential {
     pub fn header(reference: Vec<u8>, name: &str, value: &str) -> Result<Self> {
@@ -80,6 +86,9 @@ impl Credential {
             name: name.to_owned(),
             value: value.to_owned(),
         })
+    }
+    pub(crate) fn reference(&self) -> &[u8] {
+        &self.reference
     }
 }
 /// Explicit trusted-host approval input, not plugin-provided configuration.
@@ -123,6 +132,28 @@ impl HttpEndpoint {
         approval: EndpointApproval,
         host_secret: [u8; 32],
         now: u64,
+    ) -> Result<Self> {
+        Self::approve_guarded(
+            manager,
+            host,
+            instance,
+            binding,
+            approval,
+            host_secret,
+            now,
+            None,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn approve_guarded(
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        approval: EndpointApproval,
+        host_secret: [u8; 32],
+        now: u64,
+        live: Option<Box<dyn Fn() -> bool + Send + Sync>>,
     ) -> Result<Self> {
         let EndpointApproval {
             origin,
@@ -222,6 +253,11 @@ impl HttpEndpoint {
             morrow_plugin_runtime::io_binding::Error::Limit => Error::Limit,
             _ => Error::Denied,
         })?;
+        let grant = if let Some(live) = live {
+            grant.with_live_guard(live).map_err(|_| Error::Denied)?
+        } else {
+            grant
+        };
         Ok(Self {
             inner: Arc::new(Endpoint {
                 grant,

@@ -29,3 +29,6 @@ pub mod library;
 
 /// Local engineering receipts; independent of application audit signing.
 pub mod build_receipt;
+
+#[cfg(target_os = "windows")]
+pub mod credentials;

@@ -288,6 +288,56 @@ fn original_worker_updates_revoke_ready_results_even_if_cas_fails() {
     }
 }
 #[test]
+fn outbound_admin_update_uses_original_store_and_revokes_inbound_publications() {
+    use morrow_core::outbound_authority::{Record, WINDOWS_DPAPI_PROVIDER, proto};
+    use morrow_plugin_runtime::io_jobs::ServiceUpdate;
+    let mut f = Fixture::new();
+    persistent_authority(&mut f);
+    let service = configured(&mut f, Arc::new(AtomicU64::new(2000)));
+    let database = f._dir.path().join("db");
+    let record = Record::encode(proto::Record {
+        schema_version: 1,
+        reference: vec![61; 32],
+        revision: 1,
+        created_ms: 1000,
+        expires_ms: 60_000,
+        disabled: false,
+        kind: Some(proto::record::Kind::Credential(proto::Credential {
+            provider: WINDOWS_DPAPI_PROVIDER.into(),
+            ciphertext: b"synthetic-opaque-provider-payload".to_vec(),
+        })),
+    })
+    .unwrap();
+    let mut run = f.start();
+    let mut ack = run
+        .worker
+        .update_service(ServiceUpdate::Outbound {
+            value: record.clone(),
+            expected_revision: 0,
+        })
+        .unwrap();
+    assert!(service.check().is_err());
+    let end = Instant::now() + WAIT;
+    loop {
+        if let Some(result) = ack.read().unwrap() {
+            result.unwrap();
+            break;
+        }
+        assert!(Instant::now() < end);
+        thread::sleep(Duration::from_millis(1));
+    }
+    finish(&mut run.worker);
+    let store = Store::open(&database, EventBudget::default()).unwrap();
+    assert_eq!(
+        store
+            .load_outbound_authority(&[61; 32])
+            .unwrap()
+            .unwrap()
+            .container(),
+        record.container()
+    );
+}
+#[test]
 fn dropping_original_store_invalidates_configured_clones_and_listener() {
     let mut f = Fixture::new();
     persistent_authority(&mut f);

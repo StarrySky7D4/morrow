@@ -24,6 +24,7 @@ struct GrantState {
     endpoint: [u8; 32],
     credential: bool,
     revoked: AtomicBool,
+    live: Option<Arc<dyn Fn() -> bool + Send + Sync>>,
 }
 /// An opaque, revocable host resource approval. Copies retain the same resource
 /// and revocation state, and cannot establish a new approval or managed owner.
@@ -32,6 +33,42 @@ pub struct HttpGrant {
     state: Arc<GrantState>,
 }
 impl HttpGrant {
+    /// Host preflight before decrypting a credential. This neither reserves a
+    /// resource nor replaces issuance and effect/delivery authorization.
+    pub fn preflight(
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        credential: bool,
+        now: u64,
+    ) -> io_binding::Result<()> {
+        binding.preflight_capability(manager, host, instance, IoCapability::HttpRequest, now)?;
+        if credential {
+            binding.preflight_capability(
+                manager,
+                host,
+                instance,
+                IoCapability::CredentialUse,
+                now,
+            )?;
+        }
+        Ok(())
+    }
+    /// Add a host-owned revocation/expiry probe to a newly issued, unshared grant.
+    /// The callback is bounded, pure and non-reentrant; it may only restrict
+    /// existing authority. Failed probes permanently revoke this grant.
+    pub fn with_live_guard(
+        mut self,
+        live: impl Fn() -> bool + Send + Sync + 'static,
+    ) -> io_binding::Result<Self> {
+        let state = Arc::get_mut(&mut self.state).ok_or(io_binding::Error::Denied)?;
+        if state.live.is_some() || state.revoked.load(Ordering::Acquire) || !live() {
+            return Err(io_binding::Error::Denied);
+        }
+        state.live = Some(Arc::new(live));
+        Ok(self)
+    }
     /// The digest identifies the host-approved immutable policy; the digest alone
     /// is not proof of approval. This trusted host call performs the actual issuance.
     #[allow(clippy::too_many_arguments)]
@@ -61,6 +98,7 @@ impl HttpGrant {
                 endpoint,
                 credential,
                 revoked: AtomicBool::new(false),
+                live: None,
             }),
         })
     }
@@ -196,6 +234,12 @@ impl HttpCallGuard {
         Ok(())
     }
     fn check_cancel(&self) -> io_execution::Result<()> {
+        if let Some(live) = &self.inner.grant.live
+            && !live()
+        {
+            self.inner.grant.revoked.store(true, Ordering::Release);
+            return Err(io_execution::Error::Denied);
+        }
         if let Some(content) = &self.service_content {
             content.check()?;
         }

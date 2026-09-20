@@ -233,3 +233,64 @@ fn wrong_host_manager_same_package_instance_and_expiry_never_reserve_resources()
     assert_eq!(f.binding.usage(), Usage::default());
     second.close(&mut f.host).unwrap();
 }
+
+#[test]
+fn secret_preflight_checks_actual_owner_capabilities_without_advancing_accounting() {
+    for (approved, credential, expected) in [
+        (
+            BTreeSet::from([IoCapability::FileRead]),
+            false,
+            Err(Error::Denied),
+        ),
+        (
+            BTreeSet::from([IoCapability::HttpRequest]),
+            true,
+            Err(Error::Denied),
+        ),
+        (all_caps(), true, Ok(())),
+    ] {
+        let f = Fixture::new(approved);
+        assert_eq!(
+            HttpGrant::preflight(&f.manager, &f.host, &f.instance, &f.binding, credential, 30),
+            expected
+        );
+        assert_eq!(f.binding.usage(), Usage::default());
+        f.binding
+            .check(&f.manager, &f.host, &f.instance, 2)
+            .unwrap();
+        let other = Fixture::new(all_caps());
+        assert_eq!(
+            HttpGrant::preflight(
+                &other.manager,
+                &f.host,
+                &f.instance,
+                &f.binding,
+                credential,
+                3
+            ),
+            Err(Error::Denied)
+        );
+        assert_eq!(f.binding.usage(), Usage::default());
+    }
+}
+
+#[test]
+fn live_guard_can_only_be_attached_once_to_an_unshared_active_grant() {
+    let f = Fixture::new(all_caps());
+    assert_eq!(
+        f.issue(true, 1).unwrap().with_live_guard(|| false).err(),
+        Some(Error::Denied)
+    );
+    assert_eq!(f.binding.usage(), Usage::default());
+    let grant = f.issue(true, 1).unwrap().with_live_guard(|| true).unwrap();
+    assert_eq!(grant.with_live_guard(|| true).err(), Some(Error::Denied));
+    assert_eq!(f.binding.usage(), Usage::default());
+    let grant = f.issue(true, 1).unwrap();
+    let retained = grant.clone();
+    assert_eq!(grant.with_live_guard(|| true).err(), Some(Error::Denied));
+    drop(retained);
+    let grant = f.issue(true, 1).unwrap();
+    grant.revoke();
+    assert_eq!(grant.with_live_guard(|| true).err(), Some(Error::Denied));
+    assert_eq!(f.binding.usage(), Usage::default());
+}

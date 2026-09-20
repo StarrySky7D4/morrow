@@ -630,7 +630,7 @@ struct Job {
 }
 enum Message {
     Job(Job),
-    ServiceUpdate(ServiceUpdate, SyncSender<morrow_core::Result<()>>),
+    ServiceUpdate(Box<ServiceUpdate>, SyncSender<morrow_core::Result<()>>),
     Wake,
 }
 /// Trusted host administration, never exposed to guest imports. A missing
@@ -642,6 +642,10 @@ pub enum ServiceUpdate {
     },
     Authority {
         value: morrow_core::service_authority::Record,
+        expected_revision: u64,
+    },
+    Outbound {
+        value: morrow_core::outbound_authority::Record,
         expected_revision: u64,
     },
 }
@@ -904,7 +908,7 @@ impl IoWorker {
         }
         let (sender, receiver) = mpsc::sync_channel(1);
         self.sender
-            .try_send(Message::ServiceUpdate(update, sender))
+            .try_send(Message::ServiceUpdate(Box::new(update), sender))
             .map_err(|error| match error {
                 mpsc::TrySendError::Full(_) => JobError::Busy,
                 mpsc::TrySendError::Disconnected(_) => JobError::Closed,
@@ -1400,7 +1404,7 @@ fn execute(
             Message::Job(job) => job,
             Message::Wake => continue,
             Message::ServiceUpdate(update, reply) => {
-                let result = match update {
+                let result = match *update {
                     ServiceUpdate::Configuration {
                         value,
                         expected_revision,
@@ -1413,6 +1417,12 @@ fn execute(
                     } => host
                         .store_local_mut()
                         .save_service_authority_local(&value, expected_revision),
+                    ServiceUpdate::Outbound {
+                        value,
+                        expected_revision,
+                    } => host
+                        .store_local_mut()
+                        .save_outbound_authority_local(&value, expected_revision),
                 };
                 let _ = reply.try_send(result);
                 continue;

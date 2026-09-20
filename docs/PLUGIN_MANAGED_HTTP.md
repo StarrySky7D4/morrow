@@ -4,7 +4,7 @@
 
 ## 授权来源
 
-插件包声明、Registry/Manager 的 HttpRequest 类别批准与具体资源批准同时满足才可发出请求。`HttpEndpoint::approve` 是可信宿主的显式运行期资源批准入口，必须提供真实 Manager、Host、ManagedInstance、原 IoBinding 和端点策略；不从 guest 数据直接创建批准。当前资源批准只在内存中存在，尚未接入持久配置和授权界面。
+插件包声明、Registry/Manager 的 HttpRequest 类别批准与具体资源批准同时满足才可发出请求。`HttpEndpoint::approve` 是可信宿主的显式运行期资源批准入口，必须提供真实 Manager、Host、ManagedInstance、原 IoBinding 和端点策略；不从 guest 数据直接创建批准。此原始入口保持显式内存批准；持久端点与系统保护凭据通过后续 [StoredHttpEndpoint](PLUGIN_OUTBOUND_AUTHORITY.md) 重新校验并签发，主应用授权界面仍待接入。
 
 `EndpointApproval` 固定一个 origin、允许的方法、网络 profile、请求/响应/头额度、期限、完整响应帧上限，以及可选的凭据引用/头值与自定义 TLS 信任根。当前批准涵盖该 origin 下所有路径，尚无更细路径范围规则。公网 profile 只接受 HTTPS 公网地址；本机 HTTP/HTTPS 必须显式选择，仅准 loopback，TLS 仍验证证书和主机名。DNS 全答案集校验后钉定连接，禁止系统隐式代理、重定向和自动重试。
 
@@ -25,7 +25,7 @@
 
 `Credential::header` 支持由宿主提供的 Bearer、Basic、API Key 或其它合法头；实际引用必须精确匹配且原实例须同时获 HttpRequest 与 CredentialUse。值仅在传输前注入，不出现在 guest 请求帧或受保护请求原件中。请求原件与响应原件是 Morrow 协议帧原字节，不是 TCP/TLS/HTTP 原始报文；不得声称保留网络逐字节顺序、TLS记录或 trailers。
 
-响应头允许重复项与合法非 ASCII 字节；`Client::send_raw` 保留头值 bytes，旧文本 `send` 接口保持原严格转换。远端本身可能在响应中回显凭据，故本层不承诺对任何响应都能自动剔除秘密。尚无系统凭据库、OAuth刷新或持久账户服务。
+响应头允许重复项与合法非 ASCII 字节；`Client::send_raw` 保留头值 bytes，旧文本 `send` 接口保持原严格转换。远端本身可能在响应中回显凭据，故本层不承诺对任何响应都能自动剔除秘密。已增加Windows DPAPI保护的原Store凭据记录；OAuth刷新、多账号与跨平台系统提供者尚待实现。
 
 ## 额度和生命周期
 
@@ -35,9 +35,9 @@
 
 ## 后续门槛
 
-- 宿主主界面/持久资源批准、凭据库、路径范围、本地局域网独立 profile及平台策略。
+- 宿主主界面、凭据录入／轮换流程、其他平台提供者、路径范围、本地局域网独立 profile及平台策略。
 - 实际提供者幂等/状态查询核对、应用重启后的恢复展示、证据访问策略与配额退休。
-- 在已接线的原生服务发布／Principal service scopes 上补持久发布、细粒度内容权限交集与主应用接入；受控文件变更/选择/枚举。
+- 在已接线的持久发布与内容权限交集上补主应用管理、Unknown核对与因果证据；受控文件变更/选择/枚举。
 - 三语言类型化扩展、大文件/流/SSE/WebSocket、OAuth、多账号、录制隔离重放。
 
-上述范围未因本机传输通过而完成；冻结旧 SDK、应用版本和用户数据库不在本轮变更范围。
+上述范围未因本机传输通过而完成；冻结旧 SDK和应用版本维持原状；本轮持久批准验证已将临时库升级至Store v20，未操作用户实际资料库。

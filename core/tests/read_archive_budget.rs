@@ -447,7 +447,7 @@ fn legacy_over_count_preparations_are_preserved_and_can_be_explicitly_drained() 
     let sql = rusqlite::Connection::open(&path).unwrap();
     // This is explicitly a legacy DB13 sample; DB14 requires its derived ledger.
     sql.execute_batch(
-        "DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; PRAGMA user_version=13;",
+        "DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; PRAGMA user_version=13;",
     )
     .unwrap();
     sql.execute("INSERT INTO read_archives(operation_id,subject,published,payload) VALUES('legacy-extra','reader',0,?1)",[legacy.container()]).unwrap();
