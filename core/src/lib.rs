@@ -116,6 +116,7 @@ pub mod service_capnp {
     include!(concat!(env!("OUT_DIR"), "/service_capnp.rs"));
 }
 
+pub mod service_authority;
+pub mod service_config;
 /// Historical inbound service request identity and bounded retention metadata.
 pub mod service_record;
-pub mod service_config;

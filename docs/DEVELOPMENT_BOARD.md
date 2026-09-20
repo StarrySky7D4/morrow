@@ -22,9 +22,9 @@
 | 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；现用 Store 严格认领，两个独立宿主竞争同一操作时仅新提交成功者可外发；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
 | 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输；后续连接主应用、持久批准与其它资源 |
 | 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；仍待持久批准/主应用、真实提供者核对、路径范围和更多平台 |
-| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；[只读状态查询与稳定配置](PLUGIN_SERVICE_RECOVERY.md)已接线；Unknown核对、持久批准解析、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
-| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置记录已接原Store，批准解析与主应用 UI仍待接入，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
-| 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。下一项接批准／凭据解析与主应用配置，再补Unknown核对、因果关系、时钟高水位和证据退休 |
+| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；[只读状态查询与稳定配置](PLUGIN_SERVICE_RECOVERY.md)已接线；[入站批准与认证解析](PLUGIN_SERVICE_AUTHORITY.md)已接原Store及真实HTTP/TLS；Unknown核对、出站凭据保护、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
+| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置记录已接原Store，入站批准解析已接线，主应用 UI仍待接入，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
+| 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；下一项接出站受保护凭据与主应用配置，再补Unknown核对、因果关系、跨进程时钟高水位和证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
 | 5 / IO-E2 | 待 B2/D1/D2/D3 / P1 | workbench_host＋Flutter 管理界面 | 文件／网络／监听／发布分别显示授权、任务及恢复状态；独立插件真实调用和提供服务，用户资料无隐式迁移 |
@@ -55,4 +55,8 @@
 
 ## 持久配置与恢复查询进展（2026-09-20）
 
-原Store的配置修订、原worker查询及实际HTTP入口已贯通，证据见[本轮报告](../reports/service-recovery-2026-09-20.md)。所有查询保留原授权、容量与TTL；Missing不写记录、Prepared不认领、Unknown不重发，Observed返回原件。配置仅为期望状态，主体认证与资源批准引用不能恢复旧权限。下一编码顺序：原宿主解析持久批准／认证引用并安全切换配置 → 有证据的Unknown核对与完整因果链 → 证据退休；三语言SDK和主应用UI依赖这些契约继续推进。
+原Store的配置修订、原worker查询及实际HTTP入口已贯通，证据见[本轮报告](../reports/service-recovery-2026-09-20.md)。所有查询保留原授权、容量与TTL；Missing不写记录、Prepared不认领、Unknown不重发，Observed返回原件。配置仅为期望状态，主体认证与资源批准引用不能恢复旧权限。下一编码顺序：出站受保护凭据与主应用配置 → 有证据的Unknown核对与完整因果链 → 证据退休；三语言SDK和主应用UI依赖这些契约继续推进。
+
+## 持久入站授权进展（2026-09-20）
+
+[批准合同](PLUGIN_SERVICE_AUTHORITY.md)与[验证报告](../reports/service-authority-2026-09-20.md)：原Store v19记录认证摘要和精确发布批准，原实际实例重新准入；配置或认证更新通过原worker执行并阻断迟到交付。数据库副本、独占模式与显式原生VFS遵守同一授权锁。仅Windows本机HTTP/TLS及存储故障测试通过；没有主应用发布UI、出站秘密保险库或全平台运行结论。

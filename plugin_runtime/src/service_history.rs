@@ -36,8 +36,8 @@ impl ServiceJournal {
     /// Restore only the historical namespace and retention policy, bound to a
     /// freshly issued actual service grant. This does not resolve credential or
     /// approval references, restore authority, or open a listener. The worker
-    /// continues to enforce live authorization. Configuration revision changes
-    /// do not automatically revoke already constructed journals or routes.
+    /// continues to enforce live authorization. This helper alone does not watch
+    /// revisions; ResolvedService issuance adds the original-Store mutation probe.
     pub fn from_config(
         config: &morrow_core::service_config::Config,
         grant: &crate::service_io::ServiceGrant,

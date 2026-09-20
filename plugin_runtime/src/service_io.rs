@@ -13,9 +13,17 @@ use std::sync::{
 struct Resource {
     lease: IoResourceLease,
     cancel: Cancellation,
+    authority: Option<crate::service_authority::LiveAuthority>,
 }
 impl Resource {
+    fn check_authority(&self) -> io_binding::Result<()> {
+        if let Some(authority) = &self.authority {
+            authority.check()?;
+        }
+        Ok(())
+    }
     fn check(&self, now: u64) -> io_binding::Result<()> {
+        self.check_authority()?;
         if self.cancel.fault().is_some() {
             return Err(Error::Denied);
         }
@@ -27,7 +35,7 @@ impl Resource {
         if self.cancel.fault().is_some() {
             return Err(Error::Denied);
         }
-        Ok(())
+        self.check_authority()
     }
 }
 struct ServiceState {
@@ -80,6 +88,7 @@ impl ServiceGrant {
                 resource: Arc::new(Resource {
                     lease,
                     cancel: Cancellation::default(),
+                    authority: None,
                 }),
                 listener: None,
                 service: service.into(),
@@ -87,6 +96,17 @@ impl ServiceGrant {
                 package_sha256: instance.package().package().digest(),
             }),
         })
+    }
+    pub(crate) fn with_authority(
+        mut self,
+        authority: crate::service_authority::LiveAuthority,
+    ) -> io_binding::Result<Self> {
+        authority.check()?;
+        let state = Arc::get_mut(&mut self.state).ok_or(Error::Denied)?;
+        Arc::get_mut(&mut state.resource)
+            .ok_or(Error::Denied)?
+            .authority = Some(authority);
+        Ok(self)
     }
     /// Bind this service to one actual listener without duplicating either
     /// resource reservation. Revocation of either original grant stops jobs.
@@ -133,8 +153,9 @@ impl ServiceGrant {
     /// Bind desired configuration to this actual instance's package and handler.
     /// This is not live authorization: the worker must still check its original
     /// clock and grants. Credential and approval references remain host-resolved.
-    /// Saving a newer configuration revision does not revoke an existing route;
-    /// the host must explicitly revoke/reconfigure its live grants and listeners.
+    /// Legacy grants need explicit revocation when configuration changes. Grants
+    /// issued through ResolvedService additionally carry original-Store probes
+    /// invalidated by accepted configuration/approval mutations.
     pub fn validate_config(
         &self,
         config: &morrow_core::service_config::Config,
@@ -167,6 +188,7 @@ impl ServiceGrant {
         }
     }
     pub(crate) fn validate_binding(&self, binding: &IoBinding) -> io_binding::Result<()> {
+        self.state.resource.check_authority()?;
         self.state
             .resource
             .lease
@@ -217,11 +239,13 @@ impl ListenerGrant {
             resource: Arc::new(Resource {
                 lease,
                 cancel: Cancellation::default(),
+                authority: None,
             }),
             activated: Arc::new(AtomicBool::new(false)),
         })
     }
     pub(crate) fn validate_binding(&self, binding: &IoBinding) -> io_binding::Result<()> {
+        self.resource.check_authority()?;
         self.resource.lease.binding().validate_same_owner(binding)?;
         if self.resource.cancel.fault().is_some() {
             return Err(Error::Denied);
@@ -231,6 +255,7 @@ impl ListenerGrant {
     /// Claim this one resource exactly once across all clones. A failed native
     /// bind still consumes the claim; retry requires a newly approved grant.
     pub fn activate(&self) -> io_binding::Result<()> {
+        self.resource.check_authority()?;
         self.resource
             .lease
             .binding()
@@ -244,7 +269,17 @@ impl ListenerGrant {
         if self.resource.cancel.fault().is_some() {
             return Err(Error::Denied);
         }
-        Ok(())
+        self.resource.check_authority()
+    }
+    pub(crate) fn with_authority(
+        mut self,
+        authority: crate::service_authority::LiveAuthority,
+    ) -> io_binding::Result<Self> {
+        authority.check()?;
+        Arc::get_mut(&mut self.resource)
+            .ok_or(Error::Denied)?
+            .authority = Some(authority);
+        Ok(self)
     }
     pub fn revoke(&self) {
         self.resource.cancel.cancel();

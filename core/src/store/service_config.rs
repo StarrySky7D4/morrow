@@ -96,6 +96,7 @@ impl Store {
         if expected_revision.checked_add(1) != Some(value.revision) {
             return Err(Error::RevisionConflict);
         }
+        let _writer = self.service_authority_coordinator.writer()?;
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
@@ -125,6 +126,7 @@ impl Store {
                 return Err(Error::OperationConflict);
             }
         }
+        self.service_authority_coordinator.control().revoke_all();
         // Remove the old row only inside the atomic transaction so quota counts
         // replacements once, including updates that shrink an already full DB.
         if previous.is_some() {

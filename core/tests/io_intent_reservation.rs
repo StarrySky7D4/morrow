@@ -521,14 +521,14 @@ fn version_fifteen_with_prepared_intent_migrates_and_then_reserves() {
     drop(store);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; PRAGMA user_version=15;")
+        .execute_batch("DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; PRAGMA user_version=15;")
         .unwrap();
     let mut migrated = Store::open_existing(&path, Default::default()).unwrap();
     let version: i64 = rusqlite::Connection::open(&path)
         .unwrap()
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 18);
+    assert_eq!(version, morrow_core::store::SCHEMA_VERSION);
     equivalent_latest(&migrated, &prepared);
     reserve(&mut migrated, prepared.command());
     append(&mut migrated, &prepared.propose_dispatch_boundary().unwrap());

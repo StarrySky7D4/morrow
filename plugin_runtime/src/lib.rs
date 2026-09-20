@@ -36,6 +36,8 @@ pub mod proposal;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod replay;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+pub mod service_authority;
+#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod service_content;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod service_history;

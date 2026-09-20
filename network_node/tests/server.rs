@@ -1,8 +1,9 @@
 //! Actual loopback HTTP qualification; no mocked HTTP transport.
 use morrow_network_node::{
-    Error, HttpRequest, HttpResponse, Limits,
-    server::{Handler, Node, Route},
+    Error, HttpRequest, HttpResponse, Limits, RawHttpResponse,
+    server::{AuthorizedHandler, AuthorizedRoute, Handler, Node, Principal, Route},
 };
+use sha2::{Digest, Sha256};
 use std::{
     future::Future,
     net::{IpAddr, Ipv4Addr, Ipv6Addr, SocketAddr},
@@ -627,5 +628,250 @@ async fn incomplete_unauthenticated_connections_expire_and_capacity_recovers_wit
         .unwrap();
     assert_eq!(response.status(), 200);
     assert_eq!(response.text().await.unwrap(), "recovered");
+    node.shutdown().await.unwrap();
+}
+
+fn verifier() -> [u8; 32] {
+    Sha256::digest(TOKEN.as_bytes()).into()
+}
+fn guarded_principal(live: &Arc<AtomicBool>, ttl: Duration) -> Principal {
+    let live = live.clone();
+    Principal::from_verifier("alice", verifier(), &["service.notes"], ttl, move || {
+        live.load(Ordering::Acquire)
+    })
+    .unwrap()
+}
+fn authorized_route(callback: AuthorizedHandler) -> AuthorizedRoute {
+    AuthorizedRoute::new("service.notes", "GET", "/guarded", callback).unwrap()
+}
+fn authorized_ok(body: &[u8]) -> RawHttpResponse {
+    RawHttpResponse {
+        status: 200,
+        headers: vec![],
+        body: body.to_vec(),
+    }
+}
+#[test]
+fn verifier_constructor_reuses_identity_scope_and_ttl_validation() {
+    assert!(
+        Principal::from_verifier(
+            "alice",
+            [0; 32],
+            &["service.notes"],
+            Duration::from_secs(1),
+            || true
+        )
+        .is_err()
+    );
+    for id in ["", "bad id", "../alice"] {
+        assert!(
+            Principal::from_verifier(
+                id,
+                verifier(),
+                &["service.notes"],
+                Duration::from_secs(1),
+                || true
+            )
+            .is_err()
+        );
+    }
+    for services in [
+        vec![],
+        vec!["bad scope"],
+        vec!["service.notes", "service.notes"],
+    ] {
+        assert!(
+            Principal::from_verifier(
+                "alice",
+                verifier(),
+                &services,
+                Duration::from_secs(1),
+                || true
+            )
+            .is_err()
+        );
+    }
+    for ttl in [Duration::ZERO, Duration::from_secs(24 * 60 * 60 + 1)] {
+        assert!(
+            Principal::from_verifier("alice", verifier(), &["service.notes"], ttl, || true)
+                .is_err()
+        );
+    }
+    let denied = Principal::from_verifier(
+        "alice",
+        verifier(),
+        &["service.notes"],
+        Duration::from_secs(1),
+        || false,
+    )
+    .unwrap();
+    assert!(!denied.allows("service.notes"));
+    let principal =
+        Principal::new("alice", TOKEN, &["service.notes"], Duration::from_secs(1)).unwrap();
+    assert!(principal.allows("service.notes"));
+}
+#[tokio::test]
+async fn persisted_verifier_authenticates_current_bearer_and_shared_live_guard_revokes_clones() {
+    let live = Arc::new(AtomicBool::new(true));
+    let principal = guarded_principal(&live, Duration::from_secs(10));
+    let copied = principal.clone();
+    let calls = Arc::new(AtomicUsize::new(0));
+    let observed = calls.clone();
+    let callback: AuthorizedHandler = Arc::new(move |request, _| {
+        let observed = observed.clone();
+        Box::pin(async move {
+            let (_, principal) = request.into_parts();
+            assert_eq!(principal.id(), "alice");
+            assert!(!principal.allows("service.other"));
+            observed.fetch_add(1, Ordering::SeqCst);
+            Ok(authorized_ok(b"authenticated current identity"))
+        })
+    });
+    let node = Node::bind_authorized(
+        address(),
+        vec![principal.clone()],
+        vec![authorized_route(callback)],
+        limits(),
+    )
+    .await
+    .unwrap();
+    let target = url(&node, "/guarded");
+    let http = client();
+    let success = http.get(&target).bearer_auth(TOKEN).send().await.unwrap();
+    assert_eq!(success.status(), 200);
+    assert_eq!(
+        success.bytes().await.unwrap().as_ref(),
+        b"authenticated current identity"
+    );
+    assert_eq!(
+        http.get(&target)
+            .bearer_auth("different-synthetic-bearer-token-123456789")
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        401
+    );
+    live.store(false, Ordering::Release);
+    assert!(!principal.allows("service.notes"));
+    assert!(!copied.allows("service.notes"));
+    assert_eq!(
+        http.get(&target)
+            .bearer_auth(TOKEN)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        401
+    );
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    // Even if the external guard permits again, explicit revocation of any clone
+    // remains permanent for the original identity and all other clones.
+    copied.revoke();
+    live.store(true, Ordering::Release);
+    assert!(!principal.allows("service.notes"));
+    assert_eq!(
+        http.get(&target)
+            .bearer_auth(TOKEN)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        401
+    );
+    node.shutdown().await.unwrap();
+}
+#[tokio::test]
+async fn verifier_guard_revoked_after_handler_admission_suppresses_late_response() {
+    let live = Arc::new(AtomicBool::new(true));
+    let principal = guarded_principal(&live, Duration::from_secs(10));
+    let entered = Arc::new(Notify::new());
+    let released = Arc::new(Notify::new());
+    let admission = entered.clone();
+    let release = released.clone();
+    let callback: AuthorizedHandler = Arc::new(move |_, _| {
+        let admission = admission.clone();
+        let release = release.clone();
+        Box::pin(async move {
+            admission.notify_one();
+            release.notified().await;
+            Ok(authorized_ok(b"private late response must be withheld"))
+        })
+    });
+    let node = Node::bind_authorized(
+        address(),
+        vec![principal.clone()],
+        vec![authorized_route(callback)],
+        limits(),
+    )
+    .await
+    .unwrap();
+    let target = url(&node, "/guarded");
+    let pending = tokio::spawn(async move {
+        client()
+            .get(target)
+            .bearer_auth(TOKEN)
+            .send()
+            .await
+            .unwrap()
+    });
+    timeout(Duration::from_secs(2), entered.notified())
+        .await
+        .unwrap();
+    live.store(false, Ordering::Release);
+    released.notify_one();
+    let response = pending.await.unwrap();
+    assert_eq!(response.status(), 403);
+    assert!(
+        !response
+            .text()
+            .await
+            .unwrap()
+            .contains("private late response")
+    );
+    assert!(!principal.allows("service.notes"));
+    node.shutdown().await.unwrap();
+}
+#[tokio::test]
+async fn verifier_principal_clone_never_renews_original_monotonic_ttl() {
+    let live = Arc::new(AtomicBool::new(true));
+    let principal = guarded_principal(&live, Duration::from_millis(500));
+    let after_creation = tokio::time::Instant::now();
+    let copied = principal.clone();
+    let callback: AuthorizedHandler =
+        Arc::new(|_, _| Box::pin(async { Ok(authorized_ok(b"live")) }));
+    let node = Node::bind_authorized(
+        address(),
+        vec![copied.clone()],
+        vec![authorized_route(callback)],
+        limits(),
+    )
+    .await
+    .unwrap();
+    assert_eq!(
+        client()
+            .get(url(&node, "/guarded"))
+            .bearer_auth(TOKEN)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        200
+    );
+    tokio::time::sleep_until(after_creation + Duration::from_millis(520)).await;
+    let late_clone = copied.clone();
+    assert!(!principal.allows("service.notes"));
+    assert!(!copied.allows("service.notes"));
+    assert!(!late_clone.allows("service.notes"));
+    assert_eq!(
+        client()
+            .get(url(&node, "/guarded"))
+            .bearer_auth(TOKEN)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        401
+    );
     node.shutdown().await.unwrap();
 }

@@ -15,7 +15,7 @@ fn version(c: &Connection) -> Result<i64> {
     sql(c.query_row("PRAGMA user_version", [], |r| r.get(0)))
 }
 fn require(c: &Connection) -> Result<()> {
-    if !matches!(version(c)?, 12..=18) {
+    if !matches!(version(c)?, 12..=super::SCHEMA_VERSION) {
         return Err(Error::UnsupportedVersion);
     }
     Ok(())

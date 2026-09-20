@@ -36,6 +36,267 @@ const ID: &str = "org.example.service.jobs";
 const SERVICE: &str = "notes";
 const HANDLER: &str = "notes.echo";
 const WAIT: Duration = Duration::from_secs(10);
+use morrow_core::{service_authority as stored_authority, service_config};
+use morrow_plugin_runtime::service_authority::{ConfiguredService, ResolvedService};
+
+fn persistent_authority(f: &mut Fixture) -> (service_config::Config, stored_authority::Record) {
+    let config = service_config::Config::encode(service_config::proto::Configuration {
+        schema_version: 1,
+        id: "stored-service".into(),
+        revision: 1,
+        namespace: vec![51; 32],
+        retention_ms: 60_000,
+        service: SERVICE.into(),
+        handler: HANDLER.into(),
+        package_sha256: f.digest.to_vec(),
+        disabled: false,
+        principals: vec![service_config::proto::Principal {
+            id: "local-user".into(),
+            authentication_reference: vec![52; 32],
+            content_scopes: vec![],
+        }],
+        approval_references: vec![vec![53; 32]],
+    })
+    .unwrap();
+    let auth = stored_authority::Record::encode(stored_authority::proto::Record {
+        schema_version: 1,
+        reference: vec![52; 32],
+        revision: 1,
+        created_ms: 1000,
+        expires_ms: 60_000,
+        disabled: false,
+        kind: Some(stored_authority::proto::record::Kind::Authentication(
+            stored_authority::proto::Authentication {
+                principal_id: "local-user".into(),
+                token_sha256: vec![54; 32],
+            },
+        )),
+    })
+    .unwrap();
+    let publication = stored_authority::Record::encode(stored_authority::proto::Record {
+        schema_version: 1,
+        reference: vec![53; 32],
+        revision: 1,
+        created_ms: 1000,
+        expires_ms: 90_000,
+        disabled: false,
+        kind: Some(stored_authority::proto::record::Kind::Publication(
+            stored_authority::proto::Publication {
+                config_id: "stored-service".into(),
+                config_sha256: config.digest().to_vec(),
+                listen_address: "127.0.0.1:0".into(),
+                tls_required: false,
+                method: "POST".into(),
+                path: "/echo".into(),
+                query_path: "/status".into(),
+            },
+        )),
+    })
+    .unwrap();
+    let store = f.host.store_local_mut();
+    store.save_service_config_local(&config, 0).unwrap();
+    store.save_service_authority_local(&auth, 0).unwrap();
+    store.save_service_authority_local(&publication, 0).unwrap();
+    (config, auth)
+}
+fn configured(f: &mut Fixture, clock: Arc<AtomicU64>) -> ConfiguredService {
+    ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        move || clock.load(Ordering::SeqCst),
+    )
+    .unwrap()
+    .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+    .unwrap()
+}
+#[test]
+fn restored_authority_requires_original_store_and_current_config_digest() {
+    let mut f = Fixture::new();
+    let (config, _) = persistent_authority(&mut f);
+    let resolved = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap();
+    let other = Fixture::new();
+    assert!(
+        resolved
+            .issue(
+                &other.manager,
+                &other.host,
+                &other.instance,
+                &other.binding,
+                1
+            )
+            .is_err()
+    );
+    assert!(
+        ResolvedService::resolve(
+            f.host.store_local_mut(),
+            "stored-service",
+            &[52; 32],
+            || 2000
+        )
+        .is_err()
+    );
+    let mut changed = config.value().clone();
+    changed.revision = 2;
+    changed.retention_ms += 1;
+    f.host
+        .store_local_mut()
+        .save_service_config_local(&service_config::Config::encode(changed).unwrap(), 1)
+        .unwrap();
+    assert!(
+        ResolvedService::resolve(
+            f.host.store_local_mut(),
+            "stored-service",
+            &[53; 32],
+            || 2000
+        )
+        .is_err()
+    );
+}
+#[test]
+fn restored_authority_clock_regression_and_expiry_are_sticky() {
+    for expired in [false, true] {
+        let mut f = Fixture::new();
+        persistent_authority(&mut f);
+        let time = Arc::new(AtomicU64::new(2000));
+        let service = configured(&mut f, time.clone());
+        service.check().unwrap();
+        time.store(if expired { 60_000 } else { 1999 }, Ordering::SeqCst);
+        assert!(service.check().is_err());
+        time.store(2000, Ordering::SeqCst);
+        assert!(service.check().is_err());
+        assert!(service.grant().check(1).is_err());
+        assert!(service.listener().activate().is_err());
+    }
+}
+#[test]
+fn persisted_approval_never_bypasses_actual_registry_or_content_grants() {
+    let mut f = Fixture::configured(
+        0,
+        false,
+        true,
+        BTreeSet::from([IoCapability::HttpListen]),
+        4096,
+    );
+    persistent_authority(&mut f);
+    let resolved = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap();
+    assert!(
+        resolved
+            .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+            .is_err()
+    );
+    let mut f = Fixture::new();
+    let (config, _) = persistent_authority(&mut f);
+    let mut config = config.value().clone();
+    config.revision += 1;
+    config.principals[0]
+        .content_scopes
+        .push(service_config::proto::ContentScope {
+            kind: 7,
+            card_id: "unapproved-card".into(),
+            attachment_id: String::new(),
+        });
+    let config = service_config::Config::encode(config).unwrap();
+    f.host
+        .store_local_mut()
+        .save_service_config_local(&config, 1)
+        .unwrap();
+    let mut publication = f
+        .host
+        .store_local()
+        .load_service_authority(&[53; 32])
+        .unwrap()
+        .unwrap()
+        .value()
+        .clone();
+    publication.revision += 1;
+    if let Some(stored_authority::proto::record::Kind::Publication(ref mut value)) =
+        publication.kind
+    {
+        value.config_sha256 = config.digest().to_vec();
+    }
+    f.host
+        .store_local_mut()
+        .save_service_authority_local(&stored_authority::Record::encode(publication).unwrap(), 1)
+        .unwrap();
+    let resolved = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap();
+    assert!(
+        resolved
+            .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+            .is_err()
+    );
+}
+#[test]
+fn original_worker_updates_revoke_ready_results_even_if_cas_fails() {
+    use morrow_plugin_runtime::io_jobs::ServiceUpdate;
+    for expected_revision in [0, 1] {
+        let mut f = Fixture::new();
+        let (_, auth) = persistent_authority(&mut f);
+        let service = configured(&mut f, Arc::new(AtomicU64::new(2000)));
+        let mut run = f.start();
+        let mut job = run
+            .worker
+            .submit_service(request(), service.grant().clone(), Box::new(NoIo), WAIT)
+            .unwrap();
+        ready(&mut job);
+        let mut updated = auth.value().clone();
+        updated.revision = 2;
+        updated.disabled = true;
+        let mut ack = run
+            .worker
+            .update_service(ServiceUpdate::Authority {
+                value: stored_authority::Record::encode(updated).unwrap(),
+                expected_revision,
+            })
+            .unwrap();
+        assert!(service.check().is_err());
+        let report = job.read(8192).unwrap().unwrap();
+        assert!(report.cancelled && report.service_response.is_none());
+        let end = Instant::now() + WAIT;
+        let result = loop {
+            if let Some(result) = ack.read().unwrap() {
+                break result;
+            }
+            assert!(Instant::now() < end);
+            thread::sleep(Duration::from_millis(1));
+        };
+        if expected_revision == 0 {
+            assert_eq!(result, Err(morrow_core::Error::RevisionConflict));
+        } else {
+            result.unwrap();
+        }
+        assert_eq!(ack.read().err(), Some(JobError::Consumed));
+        finish(&mut run.worker);
+    }
+}
+#[test]
+fn dropping_original_store_invalidates_configured_clones_and_listener() {
+    let mut f = Fixture::new();
+    persistent_authority(&mut f);
+    let service = configured(&mut f, Arc::new(AtomicU64::new(2000)));
+    drop(f.host);
+    assert!(service.clone().check().is_err());
+    assert!(service.grant().check(1).is_err());
+    assert!(service.listener().activate().is_err());
+}
 fn caps() -> BTreeSet<IoCapability> {
     BTreeSet::from([
         IoCapability::HttpPublish,

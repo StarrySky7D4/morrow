@@ -7,7 +7,11 @@ use crate::{
 };
 use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
-    io_jobs::{BrokerRouter, IoWorker, JobError, Poll, ServicePersistenceStatus},
+    io_jobs::{
+        BrokerRouter, IoWorker, JobError, Poll, ServicePersistenceStatus, ServiceUpdate,
+        ServiceUpdateHandle,
+    },
+    service_authority::ConfiguredService,
     service_content::{ContentScope, ServiceContentPolicy},
     service_history::ServiceJournal,
     service_io::{ListenerGrant, ServiceGrant},
@@ -144,6 +148,92 @@ impl ServiceHost {
         route.content = original.content.clone();
         route.query_target = Some(original.path.clone());
         Ok(route)
+    }
+    /// Queue a host-authorized revision change on the original worker Store.
+    /// Acceptance revokes resolved services immediately; read the returned
+    /// acknowledgement to distinguish the committed CAS result from admission.
+    pub fn update_service(
+        &self,
+        update: ServiceUpdate,
+    ) -> std::result::Result<ServiceUpdateHandle, JobError> {
+        self.inner
+            .worker
+            .lock()
+            .map_err(|_| JobError::Closed)?
+            .update_service(update)
+    }
+    /// Bind only the explicitly approved persisted address, transport and routes.
+    /// TLS keys remain separately supplied host data; this never restores live
+    /// authority from configuration alone or accepts caller route overrides.
+    pub async fn bind_configured(
+        &self,
+        configured: ConfiguredService,
+        tls: Option<TlsIdentity>,
+        limits: Limits,
+    ) -> Result<ManagedNode> {
+        configured.check().map_err(|_| Error::Denied)?;
+        let configured = Arc::new(configured);
+        let publication = configured.publication();
+        if publication.tls_required != tls.is_some() {
+            return Err(Error::Denied);
+        }
+        let address = publication
+            .listen_address
+            .parse()
+            .map_err(|_| Error::Invalid)?;
+        let mut principals = Vec::with_capacity(configured.principals().len());
+        let mut scopes = BTreeMap::new();
+        for principal in configured.principals() {
+            let live = configured.clone();
+            principals.push(Principal::from_verifier(
+                principal.id(),
+                principal.verifier(),
+                &[configured.config().value().service.as_str()],
+                Duration::from_secs(24 * 60 * 60),
+                move || live.check().is_ok(),
+            )?);
+            scopes.insert(principal.id().to_owned(), principal.scopes().to_vec());
+        }
+        // Even an empty content scope table is explicit and contributes to the
+        // durable request identity. Authentication alone never enables content.
+        let route = self.content_route(
+            configured.grant().clone(),
+            &publication.method,
+            &publication.path,
+            configured.journal().clone(),
+            configured.content_policy().clone(),
+            scopes,
+        )?;
+        let mut routes = Vec::with_capacity(2);
+        if !publication.query_path.is_empty() {
+            routes.push(self.query_route(&route, &publication.query_path)?);
+        }
+        routes.push(route);
+        let node = if let Some(identity) = tls {
+            ManagedNode::bind_tls(
+                address,
+                configured.listener().clone(),
+                principals,
+                routes,
+                limits,
+                identity,
+            )
+            .await?
+        } else {
+            ManagedNode::bind(
+                address,
+                configured.listener().clone(),
+                principals,
+                routes,
+                limits,
+            )
+            .await?
+        };
+        if configured.check().is_err() {
+            let _ = node.shutdown().await;
+            return Err(Error::Denied);
+        }
+        Ok(node)
     }
     fn bound_route(&self, grant: ServiceGrant, route: ManagedRoute) -> Result<AuthorizedRoute> {
         let ManagedRoute {

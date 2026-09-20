@@ -309,7 +309,7 @@ mod native {
             Err(Error::Integrity)
         ));
         let sql = rusqlite::Connection::open(&path).unwrap();
-        sql.execute_batch("DROP TABLE service_configs;").unwrap();
+        sql.execute_batch("DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE service_configs;").unwrap();
         drop(sql);
         let store = Store::open_existing(&path, Default::default()).unwrap();
         assert_eq!(store.pending(0, 128).unwrap(), original);
@@ -318,7 +318,7 @@ mod native {
         assert_eq!(
             sql.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
                 .unwrap(),
-            18
+            morrow_core::store::SCHEMA_VERSION
         );
     }
     #[test]
@@ -334,7 +334,7 @@ mod native {
                 0 => "UPDATE service_configs SET id='swapped';",
                 1 => "UPDATE service_configs SET revision=2;",
                 2 => "UPDATE service_configs SET payload=X'00';",
-                _ => "DROP TABLE service_configs;",
+                _ => "DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE service_configs;",
             })
             .unwrap();
             drop(sql);
@@ -445,7 +445,7 @@ mod crash {
             let path = dir.path().join("migrate.db");
             drop(Store::open(&path, Default::default()).unwrap());
             let sql = rusqlite::Connection::open(&path).unwrap();
-            sql.execute_batch("DROP TABLE service_configs; PRAGMA user_version=17;")
+            sql.execute_batch("DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE service_configs; PRAGMA user_version=17;")
                 .unwrap();
             drop(sql);
             run(&path, "migrate", point);

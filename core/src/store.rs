@@ -18,10 +18,13 @@ mod evidence_chunks;
 mod io_intent;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
-mod service_request;
+mod service_authority;
+mod service_authority_lock;
 mod service_config;
+mod service_request;
 pub use binding::{AuditBinding, AuditBindingState};
 pub use io_evidence::IoMaterialReservation;
+pub use service_authority_lock::{ServiceAuthorityControl, ServiceAuthorityLease};
 mod read_archive;
 mod read_archive_budget;
 mod read_archive_cursor;
@@ -32,6 +35,8 @@ mod read_journal;
 mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
+/// Latest supported persistent Store schema; historical feature floors stay fixed.
+pub const SCHEMA_VERSION: i64 = 19;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -47,6 +52,7 @@ impl Default for EventBudget {
 }
 pub struct Store {
     connection: Connection,
+    service_authority_coordinator: service_authority_lock::ServiceAuthorityCoordinator,
     budget: EventBudget,
     retention_budget: crate::read_archive::RetentionBudget,
     audit_trust: Option<crate::audit::TrustedLog>,
@@ -132,6 +138,7 @@ fn capacity_room(
             .saturating_add(reserved_bytes as u64)
             .saturating_add(material_bytes)
             .saturating_add(service_config::accounted(c)?)
+            .saturating_add(service_authority::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -164,7 +171,50 @@ fn read_commit(connection: &Connection, id: &str) -> Result<Option<Vec<u8>>> {
         transaction::MAX_EVENT_BYTES + transaction::MAX_EVENT_BYTES / 255 + 128,
     )
 }
+// Authority locking depends on the actual native database, not snapshot support
+// or journal mode. Unknown native adapters must never become no-op writers.
+#[cfg(not(target_arch = "wasm32"))]
+fn native_service_authority_supported(
+    connection: &Connection,
+    path: &Path,
+    vfs: Option<&str>,
+) -> Result<bool> {
+    let actual: String = sql(connection.query_row(
+        "SELECT file FROM pragma_database_list WHERE name='main'",
+        [],
+        |r| r.get(0),
+    ))?;
+    if actual.is_empty() {
+        return if vfs.is_none() && path == Path::new(":memory:") {
+            Ok(false)
+        } else {
+            Err(Error::Invalid("unidentified native authority store"))
+        };
+    }
+    // If a custom native VFS cannot prove a real local backing file, reject the
+    // adapter. A profile with no supported live pin must not bypass writers.
+    let actual = std::fs::canonicalize(actual).map_err(|_| Error::Io)?;
+    if !actual.is_file() {
+        return Err(Error::Invalid("native authority store file"));
+    }
+    Ok(true)
+}
+#[cfg(target_arch = "wasm32")]
+fn native_service_authority_supported(_: &Connection, _: &Path, _: Option<&str>) -> Result<bool> {
+    Ok(false)
+}
 impl Store {
+    /// Pin this file-backed Store before resolving persisted service approvals.
+    pub fn pin_service_authority(&mut self) -> Result<ServiceAuthorityLease> {
+        self.service_authority_coordinator.pin()
+    }
+    pub fn validate_service_authority(&self, lease: &ServiceAuthorityLease) -> Result<()> {
+        self.service_authority_coordinator.validate(lease)
+    }
+    pub fn service_authority_control(&self) -> ServiceAuthorityControl {
+        self.service_authority_coordinator.control()
+    }
+
     #[cfg(not(target_arch = "wasm32"))]
     pub fn open(path: &Path, budget: EventBudget) -> Result<Self> {
         Self::open_mode(path, budget, true)
@@ -187,11 +237,19 @@ impl Store {
         sql(connection.busy_timeout(Duration::ZERO))?;
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
-        if app != APPLICATION_ID || !matches!(version, 5..=18) {
+        if app != APPLICATION_ID || !matches!(version, 5..=SCHEMA_VERSION) {
             return Err(Error::UnsupportedVersion);
         }
         let snapshot_origin = card_snapshot::origin(&connection, true)?;
+        let authority_store_id = service_authority::store_identity(&connection)?;
+        let authority_native = native_service_authority_supported(&connection, path, None)?;
+        let service_authority_coordinator =
+            service_authority_lock::ServiceAuthorityCoordinator::new(
+                authority_store_id.unwrap_or([0; 32]),
+                authority_store_id.is_some() && authority_native,
+            );
         let store = Self {
+            service_authority_coordinator,
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
             retention_budget: Default::default(),
@@ -249,11 +307,12 @@ impl Store {
             None => Connection::open_with_flags(path, flags),
         })?;
         sql(connection.busy_timeout(Duration::ZERO))?;
+        let authority_native = native_service_authority_supported(&connection, path, vfs)?;
         // Reject unrelated and future databases before changing their pragmas/schema.
         let app: i64 = sql(connection.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
         let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
         if !(app == 0 && version == 0 && create)
-            && (app != APPLICATION_ID || !matches!(version, 4..=18))
+            && (app != APPLICATION_ID || !matches!(version, 4..=SCHEMA_VERSION))
         {
             return Err(Error::UnsupportedVersion);
         }
@@ -298,7 +357,7 @@ impl Store {
             sql(tx.execute_batch(blobs::SCHEMA))?;
             sql(tx.execute_batch(records::SCHEMA))?;
             sql(tx.commit())?;
-        } else if app != APPLICATION_ID || !matches!(version, 4..=18) {
+        } else if app != APPLICATION_ID || !matches!(version, 4..=SCHEMA_VERSION) {
             return Err(Error::UnsupportedVersion);
         }
         if version == 4 || (app == 0 && version == 0 && create) {
@@ -463,6 +522,18 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("service-config-migration-after-commit");
         }
+        if version < 19 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(service_authority::SCHEMA))?;
+            sql(tx.execute_batch(service_authority::IDENTITY_SCHEMA))?;
+            service_authority::create_identity(&tx)?;
+            sql(tx.pragma_update(None, "user_version", 19))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("service-authority-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("service-authority-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload or DB-version change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -476,7 +547,14 @@ impl Store {
         }
         sql(connection.pragma_update(None, "synchronous", "FULL"))?;
         let snapshot_origin = card_snapshot::origin(&connection, !exclusive && vfs.is_none())?;
+        let authority_store_id = service_authority::store_identity(&connection)?;
+        let service_authority_coordinator =
+            service_authority_lock::ServiceAuthorityCoordinator::new(
+                authority_store_id.unwrap_or([0; 32]),
+                authority_store_id.is_some() && authority_native,
+            );
         let store = Self {
+            service_authority_coordinator,
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
             retention_budget: Default::default(),
@@ -851,6 +929,7 @@ impl Store {
         io_intent::verify_schema(snapshot)?;
         io_evidence::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
+        service_authority::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;
@@ -947,6 +1026,75 @@ impl Store {
 #[cfg(test)]
 mod disk_tests {
     use super::*;
+    #[test]
+    #[cfg(any(windows, unix))]
+    fn explicit_native_vfs_uses_authority_lock_when_snapshots_are_disabled() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("vfs-owner.db");
+        let mut owner = Store::open(&path, EventBudget::default()).unwrap();
+        let lease = owner.pin_service_authority().unwrap();
+        let copy = dir.path().join("vfs-copy.db");
+        owner.snapshot_to(&copy, 32 * 1024 * 1024).unwrap();
+        let vfs = if cfg!(windows) { "win32" } else { "unix" };
+        let mut other =
+            Store::open_adapter(&copy, EventBudget::default(), false, Some(vfs), false, None)
+                .unwrap();
+        assert!(other.snapshot_origin.is_none());
+        let config =
+            crate::service_config::Config::encode(crate::service_config::proto::Configuration {
+                schema_version: 1,
+                id: "locked-api".into(),
+                revision: 1,
+                namespace: vec![4; 32],
+                retention_ms: 1000,
+                service: "service.example".into(),
+                handler: "api".into(),
+                package_sha256: vec![5; 32],
+                disabled: false,
+                principals: vec![],
+                approval_references: vec![],
+            })
+            .unwrap();
+        assert_eq!(
+            other.save_service_config_local(&config, 0),
+            Err(Error::StorageBusy)
+        );
+        lease.check().unwrap();
+        drop(owner);
+        other.pin_service_authority().unwrap();
+        other.save_service_config_local(&config, 0).unwrap();
+        assert!(matches!(
+            Store::open_adapter(
+                &path,
+                EventBudget::default(),
+                false,
+                Some("morrow-unregistered-vfs"),
+                false,
+                None
+            ),
+            Err(Error::Storage)
+        ));
+    }
+    #[test]
+    #[cfg(not(target_arch = "wasm32"))]
+    fn native_unknown_backing_cannot_be_classified_as_memory_writer() {
+        let connection = Connection::open_in_memory().unwrap();
+        assert_eq!(
+            native_service_authority_supported(&connection, Path::new(":memory:"), None),
+            Ok(false)
+        );
+        assert!(
+            native_service_authority_supported(&connection, Path::new("unknown.db"), None).is_err()
+        );
+        assert!(
+            native_service_authority_supported(
+                &connection,
+                Path::new(":memory:"),
+                Some("custom-vfs")
+            )
+            .is_err()
+        );
+    }
     #[test]
     fn sqlite_full_during_raw_stage_leaves_no_partial_blob() {
         let dir = tempfile::tempdir().unwrap();

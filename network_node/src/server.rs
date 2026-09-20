@@ -85,6 +85,7 @@ struct PrincipalState {
     services: BTreeSet<String>,
     expires: Instant,
     revoked: AtomicBool,
+    live: Option<Box<dyn Fn() -> bool + Send + Sync>>,
 }
 /// A host-configured authenticated remote identity. Clones share revocation and
 /// the original deadline; neither cloning nor a request header renews authority.
@@ -96,6 +97,38 @@ pub struct Principal {
 impl Principal {
     pub fn new(id: &str, token: &str, services: &[&str], ttl: Duration) -> Result<Self> {
         validate_bearer_token(token)?;
+        Self::build(
+            id,
+            Sha256::digest(token.as_bytes()).into(),
+            services,
+            ttl,
+            None,
+        )
+    }
+    /// Restore a host-provisioned verifier with a fresh, bounded live authority.
+    /// The host must provision a strong bearer; a nonzero digest proves no entropy.
+    /// `live` must be pure, bounded and non-reentrant. It is checked on every
+    /// authentication, permission check and final response delivery. Clones share
+    /// the callback, revocation and original monotonic expiry without renewal.
+    pub fn from_verifier(
+        id: &str,
+        token_digest: [u8; 32],
+        services: &[&str],
+        ttl: Duration,
+        live: impl Fn() -> bool + Send + Sync + 'static,
+    ) -> Result<Self> {
+        if token_digest == [0; 32] {
+            return Err(Error::Invalid);
+        }
+        Self::build(id, token_digest, services, ttl, Some(Box::new(live)))
+    }
+    fn build(
+        id: &str,
+        token_digest: [u8; 32],
+        services: &[&str],
+        ttl: Duration,
+        live: Option<Box<dyn Fn() -> bool + Send + Sync>>,
+    ) -> Result<Self> {
         if !safe_id(id)
             || services.is_empty()
             || services.len() > 64
@@ -113,10 +146,11 @@ impl Principal {
         Ok(Self {
             inner: Arc::new(PrincipalState {
                 id: id.into(),
-                token_digest: Sha256::digest(token.as_bytes()).into(),
+                token_digest,
                 services: scopes,
                 expires: Instant::now().checked_add(ttl).ok_or(Error::Invalid)?,
                 revoked: AtomicBool::new(false),
+                live,
             }),
         })
     }
@@ -127,7 +161,19 @@ impl Principal {
         self.inner.revoked.store(true, Ordering::Release);
     }
     fn active(&self) -> bool {
-        !self.inner.revoked.load(Ordering::Acquire) && Instant::now() < self.inner.expires
+        if self.inner.revoked.load(Ordering::Acquire) || Instant::now() >= self.inner.expires {
+            return false;
+        }
+        if let Some(live) = &self.inner.live {
+            if !live() {
+                return false;
+            }
+            // A guard is an additional constraint, never permission to bypass
+            // revocation or time elapsed while the host callback was evaluated.
+            return !self.inner.revoked.load(Ordering::Acquire)
+                && Instant::now() < self.inner.expires;
+        }
+        true
     }
     pub fn allows(&self, service: &str) -> bool {
         self.active() && self.inner.services.contains(service)

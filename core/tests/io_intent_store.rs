@@ -518,14 +518,14 @@ fn version_fourteen_migrates_without_rewriting_existing_content_or_pending_bytes
     drop(store);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=14;")
+        .execute_batch("DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=14;")
         .unwrap();
     let mut migrated = Store::open_existing(&path, Default::default()).unwrap();
     let version: i64 = rusqlite::Connection::open(&path)
         .unwrap()
         .query_row("PRAGMA user_version", [], |row| row.get(0))
         .unwrap();
-    assert_eq!(version, 18);
+    assert_eq!(version, morrow_core::store::SCHEMA_VERSION);
     assert_eq!(migrated.pending(0, 10).unwrap(), original);
     assert_eq!(
         migrated.card("legacy").unwrap().unwrap().encode(),

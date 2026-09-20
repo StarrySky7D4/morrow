@@ -630,7 +630,42 @@ struct Job {
 }
 enum Message {
     Job(Job),
+    ServiceUpdate(ServiceUpdate, SyncSender<morrow_core::Result<()>>),
     Wake,
+}
+/// Trusted host administration, never exposed to guest imports. A missing
+/// acknowledgement is not proof of rollback and must not trigger blind replay.
+pub enum ServiceUpdate {
+    Configuration {
+        value: morrow_core::service_config::Config,
+        expected_revision: u64,
+    },
+    Authority {
+        value: morrow_core::service_authority::Record,
+        expected_revision: u64,
+    },
+}
+pub struct ServiceUpdateHandle {
+    receiver: Receiver<morrow_core::Result<()>>,
+    consumed: bool,
+}
+impl ServiceUpdateHandle {
+    pub fn read(&mut self) -> Result<Option<morrow_core::Result<()>>, JobError> {
+        if self.consumed {
+            return Err(JobError::Consumed);
+        }
+        match self.receiver.try_recv() {
+            Ok(result) => {
+                self.consumed = true;
+                Ok(Some(result))
+            }
+            Err(mpsc::TryRecvError::Empty) => Ok(None),
+            Err(mpsc::TryRecvError::Disconnected) => {
+                self.consumed = true;
+                Err(JobError::Unavailable)
+            }
+        }
+    }
 }
 /// Opaque handle to a controlled slot; Ready is computation, not delivery.
 /// Dropping requests cancellation and never rolls back an admitted effect.
@@ -713,6 +748,7 @@ pub struct IoWorker {
     sender: SyncSender<Message>,
     control: Arc<Control>,
     join: Option<JoinHandle<Result<HostRuntime, JobError>>>,
+    service_authority: morrow_core::store::ServiceAuthorityControl,
 }
 impl IoWorker {
     /// Low-level trusted callback executor; no managed IO authorization is implied.
@@ -820,6 +856,7 @@ impl IoWorker {
             }),
         });
         let (sender, receiver) = mpsc::sync_channel(capacity);
+        let service_authority = host.store_local().service_authority_control();
         let inner = Arc::clone(&control);
         let join = thread::Builder::new()
             .name(format!("morrow-io-job-{id}"))
@@ -853,6 +890,30 @@ impl IoWorker {
             sender,
             control,
             join: Some(join),
+            service_authority,
+        })
+    }
+    /// Enqueue a bounded CAS mutation on the original Store. Acceptance revokes
+    /// all resolved publications immediately, before an in-flight router can
+    /// deliver. A later conflict or storage failure never revives old grants.
+    /// Reopening publication requires a fresh resolution and fresh grants.
+    pub fn update_service(&self, update: ServiceUpdate) -> Result<ServiceUpdateHandle, JobError> {
+        let state = self.control.lock();
+        if state.phase != Phase::Running {
+            return Err(JobError::Closed);
+        }
+        let (sender, receiver) = mpsc::sync_channel(1);
+        self.sender
+            .try_send(Message::ServiceUpdate(update, sender))
+            .map_err(|error| match error {
+                mpsc::TrySendError::Full(_) => JobError::Busy,
+                mpsc::TrySendError::Disconnected(_) => JobError::Closed,
+            })?;
+        self.service_authority.revoke_all();
+        drop(state);
+        Ok(ServiceUpdateHandle {
+            receiver,
+            consumed: false,
         })
     }
     /// Queued, running and unconsumed Ready slots share one capacity ceiling.
@@ -1335,8 +1396,27 @@ fn execute(
             Err(RecvTimeoutError::Timeout) => continue,
             Err(RecvTimeoutError::Disconnected) => break,
         };
-        let Message::Job(job) = message else {
-            continue;
+        let job = match message {
+            Message::Job(job) => job,
+            Message::Wake => continue,
+            Message::ServiceUpdate(update, reply) => {
+                let result = match update {
+                    ServiceUpdate::Configuration {
+                        value,
+                        expected_revision,
+                    } => host
+                        .store_local_mut()
+                        .save_service_config_local(&value, expected_revision),
+                    ServiceUpdate::Authority {
+                        value,
+                        expected_revision,
+                    } => host
+                        .store_local_mut()
+                        .save_service_authority_local(&value, expected_revision),
+                };
+                let _ = reply.try_send(result);
+                continue;
+            }
         };
         let Job {
             serial,

@@ -343,7 +343,7 @@ fn material_migration_crashes_keep_complete_old_or_new_schema_and_originals() {
         rusqlite::Connection::open(&path)
             .unwrap()
             .execute_batch(
-                "DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
+                "DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
             )
             .unwrap();
         crash(&path, "migrate", point);

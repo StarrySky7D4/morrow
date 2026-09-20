@@ -151,7 +151,7 @@ fn replay_restored(store: &morrow_core::store::Store) -> Result<(Vec<String>, u6
         "morrow.workbench.request.v1"
     );
     assert_eq!(manifest.status().plan.response_type, "test.query.result.v1");
-    assert_eq!(end.database_version, 18);
+    assert_eq!(end.database_version, morrow_core::store::SCHEMA_VERSION as u32);
     let request = codec::decode_request(&manifest.status().plan.request)?;
     let conditions = query_plan::Conditions {
         section: request.section,

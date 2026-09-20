@@ -46,6 +46,11 @@ impl Config {
     pub fn container(&self) -> &[u8] {
         &self.container
     }
+    /// Bind approvals to the complete original persisted configuration container.
+    pub fn digest(&self) -> [u8; 32] {
+        use sha2::Digest;
+        sha2::Sha256::digest(&self.container).into()
+    }
     pub fn policy(&self) -> Result<Policy> {
         Ok(Policy {
             namespace: digest(&self.value.namespace)?,
