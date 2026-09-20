@@ -998,6 +998,47 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
     );
     access_error(setup.app.acknowledge_io(key), AccessError::RecoveryRequired);
     access_error(setup.app.prepare_write(), AccessError::RecoveryRequired);
+    let pending_before = setup
+        .app
+        .local_state()
+        .unwrap()
+        .host
+        .store_local()
+        .pending_usage()
+        .unwrap();
+    let read_frame = owner_frame(wire::Action::ReadUiLocale, "", "", 0, &[]);
+    let read_reply = protocol::respond(&mut setup.app, &read_frame).unwrap();
+    let mut raw = read_reply.as_slice();
+    let message =
+        capnp::serialize::read_message_from_flat_slice(&mut raw, Default::default()).unwrap();
+    let reply = message.get_root::<wire::response::Reader>().unwrap();
+    assert!(reply.get_error().unwrap().to_str().unwrap().is_empty());
+    assert_eq!(reply.get_payload().unwrap(), b"system");
+    assert_eq!(reply.get_ui_code(), 0);
+    assert!(reply.get_read_only());
+    for action in [
+        wire::Action::UiClose,
+        wire::Action::ServiceConfigPage,
+        wire::Action::BeginPreferences,
+    ] {
+        assert_eq!(protocol_code(&mut setup.app, action, "", ""), 111);
+    }
+    assert_eq!(
+        setup
+            .app
+            .local_state()
+            .unwrap()
+            .host
+            .store_local()
+            .pending_usage()
+            .unwrap(),
+        pending_before,
+        "read-only access and rejected mutations must not silently repair the owner"
+    );
+    assert_eq!(
+        setup.app.io_status().storage,
+        StoragePhase::RecoveryRequired
+    );
     let options = setup.options();
     access_error(
         setup
@@ -1027,5 +1068,390 @@ fn maintenance_failure_requires_explicit_repair_and_does_not_resend_observed_htt
     setup.guards();
     setup.local_pool();
     setup.app.acknowledge_io(key).unwrap();
+    setup.app.finish().unwrap();
+}
+// These tests directly own a Running executor. They do not claim that the
+// application's short-task start_io API already exposes a persistent service UI.
+fn command_worker(
+    setup: &mut Setup,
+    network: Option<(&Server, &tokio::runtime::Runtime)>,
+) -> (IoWorker<WorkbenchState>, Option<PreparedJob>) {
+    let state = setup.app.state.owner.as_mut().unwrap();
+    state.host.prepare_write().unwrap();
+    let start = state.start;
+    let time = now(start);
+    let manager = state.manager.as_mut().unwrap();
+    let instance = manager.connect(ID, &mut state.host).unwrap();
+    let binding = manager
+        .bind_io(
+            &state.host,
+            &instance,
+            setup.digest,
+            manager.revision(),
+            &BTreeSet::from([IoCapability::HttpRequest]),
+            time + 30_000,
+            time,
+        )
+        .unwrap();
+    let job = network.map(|(server, runtime)| {
+        let endpoint = HttpEndpoint::approve(
+            manager,
+            &state.host,
+            &instance,
+            &binding,
+            EndpointApproval {
+                origin: server.origin.clone(),
+                methods: vec!["GET".into()],
+                profile: NetworkProfile::LoopbackHttp,
+                limits: Limits {
+                    max_request_bytes: 65536,
+                    max_response_bytes: 65536,
+                    max_header_bytes: 16384,
+                    max_concurrent: 1,
+                    timeout: Duration::from_secs(2),
+                },
+                response_frame_limit: 128 * 1024,
+                credential: None,
+                root_certificate: None,
+            },
+            [9; 32],
+            time,
+        )
+        .unwrap();
+        let input = Request::encode_http_submit(
+            1,
+            &HttpSubmission {
+                operation_id: b"owner-command-http".to_vec(),
+                deadline_ms: 0,
+                endpoint: endpoint.endpoint_reference().into_bytes(),
+                method: "GET".into(),
+                relative_target: "/owner".into(),
+                headers: vec![],
+                body: vec![],
+                credential: vec![],
+            },
+        )
+        .unwrap()
+        .bytes()
+        .to_vec();
+        PreparedJob {
+            input,
+            router: Box::new(endpoint.router(runtime.handle().clone())),
+            timeout: WAIT,
+        }
+    });
+    let owner = setup.app.state.owner.take().unwrap();
+    let worker = IoWorker::spawn_managed_owner(
+        owner,
+        instance,
+        binding,
+        move || now(start),
+        1,
+        JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        worker.phase(),
+        morrow_plugin_runtime::io_jobs::Phase::Running
+    );
+    (worker, job)
+}
+
+fn return_command_owner(setup: &mut Setup, worker: &mut IoWorker<WorkbenchState>) {
+    worker.stop();
+    let deadline = Instant::now() + WAIT;
+    let exit = loop {
+        if let Some(exit) = worker.try_reclaim().unwrap() {
+            break exit;
+        }
+        assert!(Instant::now() < deadline, "command owner was not returned");
+        thread::sleep(Duration::from_millis(2));
+    };
+    assert!(exit.result.is_ok(), "{:?}", exit.result);
+    assert!(exit.disconnect.is_ok(), "{:?}", exit.disconnect);
+    assert!(exit.maintenance.is_ok(), "{:?}", exit.maintenance);
+    setup.app.state.owner = Some(exit.owner);
+    if let Some(instance) = exit.instance {
+        setup.app.state.cleanup_instance(instance).unwrap();
+    }
+    setup.local_pool();
+    setup.guards();
+}
+
+fn owner_frame(
+    action: wire::Action,
+    id: &str,
+    operation: &str,
+    revision: u64,
+    payload: &[u8],
+) -> Vec<u8> {
+    let mut frame = capnp::message::Builder::new_default();
+    let mut request = frame.init_root::<wire::request::Builder>();
+    request.set_version(1);
+    request.set_digest(&protocol::digest());
+    request.set_action(action);
+    request.set_id(id);
+    request.set_operation(operation);
+    request.set_revision(revision);
+    request.set_payload(payload);
+    capnp::serialize::write_message_to_words(&frame)
+}
+
+struct OwnerReply {
+    revision: u64,
+    payload: Vec<u8>,
+    error: String,
+}
+fn wait_command(handle: &morrow_plugin_runtime::io_jobs::OwnerCommandHandle) {
+    use morrow_plugin_runtime::io_jobs::OwnerCommandPoll;
+    let deadline = Instant::now() + WAIT;
+    while handle.poll() == OwnerCommandPoll::Pending {
+        assert!(Instant::now() < deadline, "owner command did not finish");
+        thread::sleep(Duration::from_millis(2));
+    }
+    assert_eq!(handle.poll(), OwnerCommandPoll::Ready);
+}
+fn owner_reply(worker: &IoWorker<WorkbenchState>, input: Vec<u8>) -> OwnerReply {
+    let mut handle = worker.submit_owner_command(input, 128 * 1024).unwrap();
+    wait_command(&handle);
+    let bytes = zeroize::Zeroizing::new(handle.read().unwrap().unwrap());
+    let mut raw = bytes.as_slice();
+    let message =
+        capnp::serialize::read_message_from_flat_slice(&mut raw, Default::default()).unwrap();
+    assert!(raw.is_empty());
+    let reply = message.get_root::<wire::response::Reader>().unwrap();
+    assert_eq!(reply.get_version(), 1);
+    assert_eq!(reply.get_digest().unwrap(), protocol::digest());
+    OwnerReply {
+        revision: reply.get_revision(),
+        payload: reply.get_payload().unwrap().to_vec(),
+        error: reply.get_error().unwrap().to_str().unwrap().into(),
+    }
+}
+fn mutation_frame(operation: &str, revision: u64, idea: morrow_workbench_plugin::Idea) -> Vec<u8> {
+    use morrow_workbench_plugin::{Action, codec};
+    let mut request = crate::command(if revision == 0 {
+        Action::Create
+    } else {
+        Action::Edit
+    });
+    let id = idea.id.clone();
+    request.proposed = idea;
+    owner_frame(
+        wire::Action::Mutate,
+        &id,
+        operation,
+        revision,
+        &codec::encode_request(&request).unwrap(),
+    )
+}
+
+#[test]
+fn owner_lane_real_guest_mutations_and_http_share_original_state() {
+    use morrow_workbench_plugin::codec;
+    let mut setup = Setup::with_package(Some(crate::test_common::package()));
+    let runtime = runtime();
+    let server = Server::new();
+    let (identity, root, query_owner) = {
+        let state = setup.app.local_state_mut().unwrap();
+        state.undo.insert("unrelated-draft".into(), (17, 41));
+        (
+            state.host.binding(),
+            state
+                .pool
+                .root(&setup.pooled)
+                .unwrap()
+                .connection()
+                .binding(),
+            state.query_owner,
+        )
+    };
+    let (mut worker, job) = command_worker(&mut setup, Some((&server, &runtime)));
+    setup.guards();
+    assert!(setup.app.local_state().is_err());
+    let created = owner_reply(
+        &worker,
+        mutation_frame("lane-create", 0, crate::test_common::idea("lane-card")),
+    );
+    assert!(created.error.is_empty(), "{}", created.error);
+    assert_eq!(created.revision, 1);
+    let created = codec::decode_response(&created.payload).unwrap().idea;
+    let job = job.unwrap();
+    let mut http = worker
+        .submit_brokered(job.input, job.router, job.timeout)
+        .unwrap();
+    let deadline = Instant::now() + WAIT;
+    while http.poll() == Poll::Pending {
+        assert!(Instant::now() < deadline, "interleaved HTTP did not finish");
+        thread::sleep(Duration::from_millis(2));
+    }
+    let report = http.read(256 * 1024).unwrap().unwrap();
+    assert!(report.task.execution.outcome.is_ok());
+    assert_eq!(report.http_response.unwrap().body, b"owned");
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    assert_eq!(
+        worker.phase(),
+        morrow_plugin_runtime::io_jobs::Phase::Running
+    );
+    let mut edited = created.clone();
+    edited.title = "Edited by actual Rust guest in the owner lane".into();
+    let changed = owner_reply(&worker, mutation_frame("lane-edit", 1, edited.clone()));
+    assert!(changed.error.is_empty(), "{}", changed.error);
+    assert_eq!(changed.revision, 2);
+    let mut conflict = edited.clone();
+    conflict.title = "must not replace revision two".into();
+    let rejected = owner_reply(&worker, mutation_frame("lane-stale-edit", 1, conflict));
+    assert!(!rejected.error.is_empty());
+    let read = owner_reply(
+        &worker,
+        owner_frame(wire::Action::Read, "lane-card", "", 0, &[]),
+    );
+    assert!(read.error.is_empty(), "{}", read.error);
+    assert_eq!(read.revision, 2);
+    assert_eq!(
+        codec::decode_response(&read.payload).unwrap().idea.title,
+        edited.title
+    );
+    assert_eq!(worker.owner_command_usage(), (0, 0));
+    return_command_owner(&mut setup, &mut worker);
+    let state = setup.app.local_state().unwrap();
+    assert_eq!(state.host.binding(), identity);
+    assert_eq!(
+        state
+            .pool
+            .root(&setup.pooled)
+            .unwrap()
+            .connection()
+            .binding(),
+        root
+    );
+    assert_eq!(state.query_owner, query_owner);
+    assert_eq!(state.undo.get("unrelated-draft"), Some(&(17, 41)));
+    assert_eq!(
+        state.host.store_local().lookup("lane-stale-edit").unwrap(),
+        morrow_core::transaction::Lookup::Absent
+    );
+    assert_eq!(setup.app.read("lane-card").unwrap().revision, 2);
+    assert_eq!(
+        setup
+            .app
+            .operation_evidence("lane-card", "lane-create")
+            .unwrap()
+            .len(),
+        1
+    );
+    assert_eq!(
+        setup
+            .app
+            .operation_evidence("lane-card", "lane-edit")
+            .unwrap()
+            .len(),
+        1
+    );
+    setup.app.finish().unwrap();
+}
+
+#[test]
+fn cancelling_ready_owner_write_is_unknown_but_preserves_exactly_one_commit() {
+    use morrow_plugin_runtime::io_jobs::OwnerCommandError;
+    let mut setup = Setup::with_package(Some(crate::test_common::package()));
+    let (mut worker, _) = command_worker(&mut setup, None);
+    let mut handle = worker
+        .submit_owner_command(
+            mutation_frame(
+                "cancel-ready-create",
+                0,
+                crate::test_common::idea("cancelled-reply-card"),
+            ),
+            128 * 1024,
+        )
+        .unwrap();
+    wait_command(&handle);
+    assert!(handle.is_started());
+    handle.cancel();
+    assert_eq!(handle.read(), Err(OwnerCommandError::Unknown));
+    assert_eq!(worker.owner_command_usage(), (0, 0));
+    return_command_owner(&mut setup, &mut worker);
+    let state = setup.app.local_state().unwrap();
+    assert_eq!(
+        state.counter, 1,
+        "ready cancellation must not execute a retry"
+    );
+    let (commit, receipt) = state
+        .host
+        .store_local()
+        .operation_commit("cancelled-reply-card", "cancel-ready-create")
+        .unwrap()
+        .unwrap();
+    assert_eq!(receipt.revision, 1);
+    assert_eq!(commit.operation_id, "cancel-ready-create");
+    assert_eq!(setup.app.read("cancelled-reply-card").unwrap().revision, 1);
+    assert_eq!(
+        setup
+            .app
+            .operation_evidence("cancelled-reply-card", "cancel-ready-create")
+            .unwrap()
+            .len(),
+        1
+    );
+    setup.app.finish().unwrap();
+}
+
+#[test]
+fn owner_lane_rejects_scheduler_and_malformed_frames_then_accepts_business() {
+    let mut setup = Setup::with_package(Some(crate::test_common::package()));
+    let (mut worker, _) = command_worker(&mut setup, None);
+    for action in [
+        wire::Action::HttpStart,
+        wire::Action::IoStatus,
+        wire::Action::IoPoll,
+        wire::Action::IoRead,
+        wire::Action::IoCancel,
+        wire::Action::IoRepair,
+        wire::Action::IoAcknowledge,
+    ] {
+        let reply = owner_reply(&worker, owner_frame(action, "", "", 0, &[]));
+        assert!(
+            !reply.error.is_empty(),
+            "scheduler action accepted: {action:?}"
+        );
+        assert!(reply.payload.is_empty());
+        assert_eq!(
+            worker.phase(),
+            morrow_plugin_runtime::io_jobs::Phase::Running
+        );
+    }
+    let valid = mutation_frame(
+        "after-rejections",
+        0,
+        crate::test_common::idea("valid-after-rejections"),
+    );
+    let mut bad_digest = valid.clone();
+    let digest = protocol::digest();
+    let offset = bad_digest
+        .windows(digest.len())
+        .position(|part| part == digest)
+        .unwrap();
+    bad_digest[offset] ^= 1;
+    let mut trailing = valid.clone();
+    trailing.extend_from_slice(&[0; 8]);
+    for invalid in [bad_digest, trailing] {
+        let rejected = owner_reply(&worker, invalid);
+        assert!(!rejected.error.is_empty());
+        assert!(rejected.payload.is_empty());
+    }
+    let accepted = owner_reply(&worker, valid);
+    assert!(accepted.error.is_empty(), "{}", accepted.error);
+    assert_eq!(accepted.revision, 1);
+    return_command_owner(&mut setup, &mut worker);
+    assert_eq!(
+        setup.app.local_state().unwrap().counter,
+        1,
+        "rejected frames must not execute guest code"
+    );
+    assert_eq!(
+        setup.app.read("valid-after-rejections").unwrap().revision,
+        1
+    );
     setup.app.finish().unwrap();
 }

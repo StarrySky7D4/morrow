@@ -820,3 +820,15 @@ impl morrow_plugin_runtime::io_jobs::ManagedHostOwner for WorkbenchState {
         self.manager.as_ref()
     }
 }
+impl morrow_plugin_runtime::io_jobs::CommandOwner for WorkbenchState {
+    fn command(
+        &mut self,
+        input: Vec<u8>,
+    ) -> std::result::Result<Vec<u8>, morrow_plugin_runtime::io_jobs::JobError> {
+        // The trusted queue transfers ownership. Protect credential-bearing
+        // frames during parsing, execution, errors and unwinding here too.
+        let input = zeroize::Zeroizing::new(input);
+        protocol::respond_state(self, &input)
+            .map_err(|_| morrow_plugin_runtime::io_jobs::JobError::Unavailable)
+    }
+}

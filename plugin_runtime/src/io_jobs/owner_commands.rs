@@ -5,9 +5,10 @@
 //! preempted. Cancellation never rolls back or automatically repeats an effect.
 use super::{
     BindingError, Cancellation, Control, HostOwner, IoWorker, JobError, ManagedHostOwner, Phase,
-    ServiceGrant, ServiceRunBudget, ServiceRunSnapshot, checked_runtime,
+    ServiceGrant, ServiceRunBudget, ServiceRunSnapshot, State, checked_runtime,
 };
 use std::sync::{Arc, Mutex, Weak, mpsc};
+use zeroize::Zeroizing;
 
 pub const MAX_OWNER_COMMANDS: usize = 8;
 pub const MAX_OWNER_COMMAND_INPUT: usize = 64 * 1024;
@@ -17,6 +18,10 @@ pub const MAX_OWNER_COMMAND_REPLY: usize = 1024 * 1024;
 /// must bound allocations and work, preserve runtime identity, and must not
 /// re-enter worker handles. Preparation precedes each command; final sealing
 /// remains part of normal worker exit, including failure and panic recovery.
+/// The queue wipes bytes while it owns them. On invocation the input is moved
+/// into the handler, which must protect its own input, copies and intermediate
+/// buffers, including on error or panic. Returned bytes are protected again
+/// immediately; a successful handle read transfers that responsibility onward.
 pub trait CommandOwner: HostOwner {
     fn command(&mut self, input: Vec<u8>) -> Result<Vec<u8>, JobError>;
 }
@@ -58,22 +63,23 @@ pub enum OwnerCommandPoll {
     Consumed,
 }
 
-struct Status {
+pub(super) struct Status {
     started: bool,
     cancelled: bool,
     finished: bool,
+    input: Option<Zeroizing<Vec<u8>>>,
     reply: Option<Reply>,
 }
 
 enum Reply {
-    Data(Vec<u8>),
+    Data(Zeroizing<Vec<u8>>),
     Renewal(Result<ServiceRunSnapshot, BindingError>),
 }
 
 struct Ticket {
     control: Weak<Control>,
     bytes: usize,
-    status: Mutex<Status>,
+    status: Arc<Mutex<Status>>,
 }
 impl Ticket {
     fn lock(&self) -> std::sync::MutexGuard<'_, Status> {
@@ -88,8 +94,26 @@ impl Drop for Ticket {
             let mut state = control.lock();
             state.owner_commands -= 1;
             state.owner_command_bytes -= self.bytes;
+            state.owner_command_status.retain(|status| {
+                status.as_ptr() != Arc::as_ptr(&self.status) && status.strong_count() != 0
+            });
         }
     }
+}
+
+// This weak index owns only payload state, never a Ticket. Dropping an upgraded
+// status while holding worker state cannot run Ticket::drop and re-enter that
+// lock. Sensitive bytes are cleared without releasing any queue reservation.
+pub(super) fn clear_sensitive(state: &mut State) {
+    state.owner_command_status.retain(|weak| {
+        let Some(status) = weak.upgrade() else {
+            return false;
+        };
+        let mut status = status.lock().unwrap_or_else(|error| error.into_inner());
+        status.input = None;
+        status.reply = None;
+        true
+    });
 }
 
 /// A nonblocking response handle. Unread Ready responses retain their full
@@ -114,6 +138,7 @@ impl OwnerCommandHandle {
             let _state = self.control.lock();
             let mut status = ticket.lock();
             status.cancelled = true;
+            status.input = None;
             status.reply = None;
         }
     }
@@ -122,9 +147,13 @@ impl OwnerCommandHandle {
         let Some(ticket) = &self.ticket else {
             return OwnerCommandPoll::Consumed;
         };
-        let state = self.control.lock();
+        let mut state = self.control.lock();
+        let closed = closed(&self.control, state.phase);
+        if closed {
+            clear_sensitive(&mut state);
+        }
         let status = ticket.lock();
-        if status.finished || status.cancelled || closed(&self.control, state.phase) {
+        if status.finished || status.cancelled || closed {
             OwnerCommandPoll::Ready
         } else {
             OwnerCommandPoll::Pending
@@ -134,9 +163,11 @@ impl OwnerCommandHandle {
     /// `None` is still pending. Every terminal response is consumed once.
     /// Stopping, draining, cancellation or losing the owner after start yields
     /// Unknown even when the handler had already produced a response.
+    /// Successfully returned bytes belong to the caller and must be wiped by
+    /// that caller when they contain secrets; the queue retains no copy.
     pub fn read(&mut self) -> Result<Option<Vec<u8>>, OwnerCommandError> {
         match self.read_reply()? {
-            Some(Reply::Data(bytes)) => Ok(Some(bytes)),
+            Some(Reply::Data(mut bytes)) => Ok(Some(std::mem::take(&mut *bytes))),
             Some(Reply::Renewal(_)) => Err(OwnerCommandError::Unknown),
             None => Ok(None),
         }
@@ -145,11 +176,15 @@ impl OwnerCommandHandle {
     fn read_reply(&mut self) -> Result<Option<Reply>, OwnerCommandError> {
         let ticket = self.ticket.as_ref().ok_or(OwnerCommandError::Consumed)?;
         let result = {
-            let state = self.control.lock();
+            let mut state = self.control.lock();
+            let closed = closed(&self.control, state.phase);
+            if closed {
+                clear_sensitive(&mut state);
+            }
             let mut status = ticket.lock();
             self.started = status.started;
-            let closed = closed(&self.control, state.phase);
             if status.cancelled || closed {
+                status.input = None;
                 status.reply = None;
                 Err(if status.started {
                     OwnerCommandError::Unknown
@@ -221,7 +256,6 @@ struct RenewalRequest {
 
 enum CommandKind<O: HostOwner> {
     Data {
-        input: Vec<u8>,
         max_reply_bytes: usize,
         dispatch: fn(&mut O, Vec<u8>) -> Result<Vec<u8>, JobError>,
     },
@@ -252,25 +286,29 @@ impl<O: HostOwner> Command<O> {
         checked_runtime(owner, control.host)?;
         owner.prepare_io()?;
         checked_runtime(owner, control.host)?;
-        {
+        let input = {
             let state = control.lock();
             let mut status = self.ticket.lock();
             if closed(control, state.phase) || status.cancelled {
                 return Ok(());
             }
             status.started = true;
-        }
+            status.input.take()
+        };
         // No control/response lock spans application code. A panic propagates
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
             CommandKind::Data {
-                input,
                 max_reply_bytes,
                 dispatch,
-            } => dispatch(owner, input)
-                .ok()
-                .filter(|reply| reply.len() <= max_reply_bytes)
-                .map(Reply::Data),
+            } => {
+                let mut input = input.ok_or(JobError::Unavailable)?;
+                dispatch(owner, std::mem::take(&mut *input))
+                    .map(Zeroizing::new)
+                    .ok()
+                    .filter(|reply| reply.len() <= max_reply_bytes)
+                    .map(Reply::Data)
+            }
             CommandKind::Renewal { request, dispatch } => Some(Reply::Renewal(dispatch(
                 owner,
                 control,
@@ -303,9 +341,11 @@ impl<O: HostOwner> IoWorker<O> {
         &self,
         kind: CommandKind<O>,
         bytes: usize,
+        input: Option<Zeroizing<Vec<u8>>>,
     ) -> Result<OwnerCommandHandle, OwnerCommandError> {
         let mut state = self.control.lock();
         if closed(&self.control, state.phase) {
+            clear_sensitive(&mut state);
             return Err(OwnerCommandError::Closed);
         }
         if state.owner_commands >= MAX_OWNER_COMMANDS {
@@ -313,15 +353,23 @@ impl<O: HostOwner> IoWorker<O> {
         }
         state.owner_commands += 1;
         state.owner_command_bytes += bytes;
+        let status = Arc::new(Mutex::new(Status {
+            started: false,
+            cancelled: false,
+            finished: false,
+            input,
+            reply: None,
+        }));
+        // Reap dead weak entries before adding one of the at most eight live
+        // reservations. This index never owns or refunds a reservation itself.
+        state
+            .owner_command_status
+            .retain(|status| status.strong_count() != 0);
+        state.owner_command_status.push(Arc::downgrade(&status));
         let ticket = Arc::new(Ticket {
             control: Arc::downgrade(&self.control),
             bytes,
-            status: Mutex::new(Status {
-                started: false,
-                cancelled: false,
-                finished: false,
-                reply: None,
-            }),
+            status,
         });
         let sent = self.owner_sender.try_send(Command {
             kind,
@@ -348,17 +396,19 @@ impl<O: CommandOwner> IoWorker<O> {
         input: Vec<u8>,
         max_reply_bytes: usize,
     ) -> Result<OwnerCommandHandle, OwnerCommandError> {
+        // Protect even the early size/capacity/closed rejection paths.
+        let input = Zeroizing::new(input);
         if input.len() > MAX_OWNER_COMMAND_INPUT || max_reply_bytes > MAX_OWNER_COMMAND_REPLY {
             return Err(OwnerCommandError::Limit);
         }
         let bytes = input.len() + max_reply_bytes;
         self.enqueue_owner_command(
             CommandKind::Data {
-                input,
                 max_reply_bytes,
                 dispatch: O::command,
             },
             bytes,
+            Some(input),
         )
     }
 }
@@ -399,6 +449,7 @@ impl<O: ManagedHostOwner> IoWorker<O> {
                 dispatch: renew_with_owner::<O>,
             },
             bytes,
+            None,
         )?;
         Ok(ServiceRunRenewalHandle { inner })
     }
@@ -420,4 +471,148 @@ fn renew_with_owner<O: ManagedHostOwner>(
         request.budget,
         || !ticket.lock().cancelled,
     )
+}
+
+#[cfg(test)]
+mod sensitive_tests {
+    use super::*;
+    use crate::io_jobs::JobLimits;
+    use morrow_core::{
+        dispatch::{Connection, HostRuntime},
+        store::Store,
+    };
+    use std::{collections::BTreeMap, time::Duration};
+
+    struct Fixture {
+        control: Arc<Control>,
+        _connection: Connection,
+        _host: HostRuntime,
+        _dir: tempfile::TempDir,
+    }
+    impl Fixture {
+        fn new() -> Self {
+            let dir = tempfile::tempdir().unwrap();
+            let mut host =
+                HostRuntime::new(Store::open(&dir.path().join("db"), Default::default()).unwrap())
+                    .unwrap();
+            let connection = host.connect().unwrap();
+            let control = Arc::new(Control {
+                host: host.binding(),
+                authority: None,
+                revocation: host.revocation(&connection).unwrap(),
+                id: 1,
+                capacity: 1,
+                limits: JobLimits::default(),
+                timeout: Duration::from_secs(1),
+                state: Mutex::new(State {
+                    phase: Phase::Running,
+                    next: 1,
+                    jobs: BTreeMap::new(),
+                    bytes: 0,
+                    owner_commands: 0,
+                    owner_command_bytes: 0,
+                    owner_command_status: Vec::new(),
+                }),
+            });
+            Self {
+                control,
+                _connection: connection,
+                _host: host,
+                _dir: dir,
+            }
+        }
+
+        fn handle(&self, input: Option<Vec<u8>>, reply: Option<Vec<u8>>) -> OwnerCommandHandle {
+            let started = reply.is_some();
+            let status = Arc::new(Mutex::new(Status {
+                started,
+                cancelled: false,
+                finished: started,
+                input: input.map(Zeroizing::new),
+                reply: reply.map(Zeroizing::new).map(Reply::Data),
+            }));
+            let bytes = 128;
+            let ticket = Arc::new(Ticket {
+                control: Arc::downgrade(&self.control),
+                bytes,
+                status,
+            });
+            let mut state = self.control.lock();
+            state.owner_commands += 1;
+            state.owner_command_bytes += bytes;
+            state
+                .owner_command_status
+                .push(Arc::downgrade(&ticket.status));
+            OwnerCommandHandle {
+                control: Arc::clone(&self.control),
+                ticket: Some(ticket),
+                started: false,
+            }
+        }
+
+        fn usage(&self) -> (usize, usize, usize) {
+            let state = self.control.lock();
+            (
+                state.owner_commands,
+                state.owner_command_bytes,
+                state.owner_command_status.len(),
+            )
+        }
+    }
+
+    #[test]
+    fn queued_cancel_clears_payload_before_dequeue_without_refunding_reservation() {
+        let fixture = Fixture::new();
+        let mut handle = fixture.handle(Some(b"queued credential".to_vec()), None);
+        let queued_ticket = Arc::clone(handle.ticket.as_ref().unwrap());
+        handle.cancel();
+        assert!(queued_ticket.lock().input.is_none());
+        assert_eq!(fixture.usage(), (1, 128, 1));
+        assert_eq!(handle.read(), Err(OwnerCommandError::Cancelled));
+        assert_eq!(fixture.usage(), (1, 128, 1));
+        drop(queued_ticket);
+        assert_eq!(fixture.usage(), (0, 0, 0));
+    }
+
+    #[test]
+    fn stop_clears_unread_ready_payload_before_handle_is_polled_or_dropped() {
+        let fixture = Fixture::new();
+        let mut handle = fixture.handle(None, Some(b"one-time token".to_vec()));
+        let status = Arc::clone(&handle.ticket.as_ref().unwrap().status);
+        fixture.control.stop();
+        assert!(status.lock().unwrap().reply.is_none());
+        assert_eq!(fixture.usage(), (1, 128, 1));
+        assert_eq!(handle.read(), Err(OwnerCommandError::Unknown));
+        // Even an independent diagnostic Arc to payload state cannot retain
+        // the queue ticket or leave a stale weak index after it is reclaimed.
+        assert_eq!(fixture.usage(), (0, 0, 0));
+    }
+
+    #[test]
+    fn polling_revoked_control_clears_all_payloads_but_preserves_tickets() {
+        let fixture = Fixture::new();
+        let ready = fixture.handle(None, Some(b"ready token".to_vec()));
+        let queued = fixture.handle(Some(b"queued secret".to_vec()), None);
+        fixture.control.revocation.revoke();
+        assert_eq!(ready.poll(), OwnerCommandPoll::Ready);
+        assert!(ready.ticket.as_ref().unwrap().lock().reply.is_none());
+        assert!(queued.ticket.as_ref().unwrap().lock().input.is_none());
+        assert_eq!(fixture.usage(), (2, 256, 2));
+        drop(ready);
+        drop(queued);
+        assert_eq!(fixture.usage(), (0, 0, 0));
+    }
+
+    #[test]
+    fn successful_read_transfers_original_allocation_to_caller_without_a_copy() {
+        let fixture = Fixture::new();
+        let bytes = b"caller owns returned secret".to_vec();
+        let original = bytes.as_ptr();
+        let mut handle = fixture.handle(None, Some(bytes));
+        let returned = Zeroizing::new(handle.read().unwrap().unwrap());
+        assert_eq!(returned.as_ptr(), original);
+        assert_eq!(returned.as_slice(), b"caller owns returned secret");
+        assert_eq!(fixture.usage(), (0, 0, 0));
+        assert_eq!(handle.read(), Err(OwnerCommandError::Consumed));
+    }
 }

@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`cd287d6`；2026-09-20。本文区分已实现的拥有者适配、有限服务运行租约、累计任务/字节预算、原声明内续租、宿主命令预留通道、内部Manager续租和完整WorkbenchState提取，以及仍待实现的工作台命令派发与界面调度。主应用常驻节点尚未完成。
+基线：`ea7dfe0`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租，以及本地/worker共用的业务协议派发。主应用常驻节点的准入、异步命令交付与界面调度仍待接入；现有短IO自动drain的行为不变。
 
 ## 当前限制的具体来源
 
@@ -10,7 +10,7 @@
 | `plugin_runtime/src/io_binding.rs` | 旧绑定按IO声明限期；service-run-v1在原IoContext签发一次有限运行，原请求上限不变 | 重复绑定不应改变同实例账本；释放作业只返还并发容量，不退款 |
 | `plugin_runtime/src/io_jobs.rs` | `spawn_session_owned` 从声明建立单作业timeout，`submit_routed`校验；工作线程同步执行一项guest/broker调用 | 监听长期运行需要独立运行期限；仅添加UI队列仍可能等待当前阻塞请求结束 |
 | `network_node/src/managed_service.rs` | 监听监督和执行worker有各自退出路径 | socket关闭不证明worker已退出；必须分别观察并真实join |
-| `workbench_host/src/lib.rs` / `io_tasks.rs` | 完整WorkbenchState随短IO移交，外围仅保留任务状态与回执关联；业务入口尚未排入原worker | 在线内容操作仍返回Busy，下一步必须接原状态上的业务命令，不能通过第二个Store绕过独占 |
+| `workbench_host/src/lib.rs` / `io_tasks.rs` | State实现CommandOwner并共用原业务协议；现有短IO自动drain，外围未提交异步业务命令 | 尚需常驻运行准入和主应用命令/回执控制，不能通过第二个Store绕过独占 |
 
 ## 一、完整所有者适配
 
@@ -79,6 +79,10 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 ## 四、启动、停止与恢复顺序
 
+业务派发前置现已落地：WorkbenchState实现CommandOwner，借用同一个私有协议业务处理器；外围只保留调度与StateSlot访问门槛。worker内拒绝全部调度动作，不允许递归start/repair。原本地只读访问、服务错误脱敏和修订检查继续共用；输入及未读回执增加明确擦除责任。原State上的实际Rust guest写入与HTTP交错、旧修订拒绝，以及Ready写取消后的单次提交已接入测试，详见[业务命令报告](../reports/workbench-commands-2026-09-20.md)。
+
+这尚未把Flutter/CLI请求排入常驻ServiceHost；下一切片需提供持久配置/发布批准下的有限服务准入、原State独占移交，以及非阻塞的命令提交/查询/读取/取消和退出回收。应保留短IO的现有排空规则，并分别持有监听监督、Tokio runtime及原worker直到实际退出。仅增加一个允许无限接收命令的短IO入口不满足该要求。
+
 1. 原库加载配置/批准，验证实际原包、原instance、对象grant及新运行profile；创建服务run身份。
 2. 移交完整WorkbenchState；spawn失败恢复 `SpawnFailure.owner`，再清理其原instance。适配器选项失败从 `ServiceHostFailure.worker`回收。
 3. 绑定经过批准的地址与TLS；端口冲突或取消启动必须归还原owner。Tokio runtime持续存活到监听和worker都结束。
@@ -87,3 +91,11 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 6. 接入主应用启动/状态/停止/修复页面，验证实际认证HTTP/TLS、内容读写、持久请求查询、撤权、端口冲突、故障重启与工作台共存。
 
 本方案不改变Unknown持久证据核对、文件系统后端、三语言IO SDK和各平台资格的原门槛。其余网络能力也不会因常驻监听子项通过而一并标为完成。
+
+## 下一切片的具体接线
+
+先新增可信应用ServiceStart准入，复用 `service_authority::ResolvedService::resolve/issue`、`Manager::bind_budgeted_service_run`、`IoWorker::spawn_managed_owner`、`ServiceHost::new_owned/bind_configured`。第一验收限定原持久发布配置中的单个loopback HTTP服务，使用明确的有限期限和累计预算，不自动续租；未批准的出站调用明确拒绝。复用StateSlot的唯一owner与修复/确认规则，以执行者变体区分短IO和常驻服务，避免两个槽分别持有同一库。
+
+服务监督器持有Tokio runtime、ServiceHost和监听直到实际退出。现ManagedNode只有消费式异步shutdown及Drop停止信号，需提供可观察的非阻塞停止/完成路径或由监督器保存该future；监听和worker都结束后才将原State重新暴露为本地。端口绑定失败保留原ServiceHost回收，构造失败保留原worker回收，不能丢弃拥有者后旁路重开。
+
+然后增加私有服务调度与有界命令句柄操作，全部纳入State禁止的调度动作集合。Dart只串行单次传输，命令等待期间让状态/停止请求插入，不能让轮询占住整个原请求队列。活跃服务上传块需为64KiB队列帧预留空间（候选48KiB）；其他超限请求明确报Limit，不扩大Runtime限制或截断数据。验收实际HTTP期间原卡片/UI代次/capture继续工作，以及端口冲突、丢回执、撤权、到期、慢回调停止和封存修复。

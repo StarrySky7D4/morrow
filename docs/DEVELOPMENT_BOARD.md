@@ -165,3 +165,9 @@
 原业务状态已集中到WorkbenchState，直接持有Storage/Pool/Manager/内容及UI会话/undo/附件与上传暂存/capture。短IO从移动Storage改为移动完整State；外围仅持有StateSlot和HTTP提交关联。原内容、查询与证据提交实现迁到State，并由外围显式借用转发。短任务封存与最终应用清理分离，线程回收不关闭编辑器或Pool根。验证细节见[状态报告](../reports/workbench-state-2026-09-20.md)。
 
 这关闭了“Pool/Manager和编辑状态仍在另一个线程”的结构缺口。后台业务调用当前仍返回Busy：下一项要在同一个State上建立有界业务/管理命令与原协议派发，接入常驻节点准入，再实现可暂停长IO和主应用启动/停止/恢复。不能把本次提取标作服务期间编辑已可用，也不能以外围缓存或第二份Store替代后续接线。IO-D2b/IO-E2、Unknown证据核对、文件系统和完整三语言SDK继续进行中。
+
+## 原工作台业务命令派发（2026-09-20）
+
+WorkbenchState已实现原生CommandOwner，本地与worker共用业务协议校验、错误码、部分结果/令牌清理和响应预算。原State明确拒绝调度动作；外围保留Busy及显式修复门槛。排队输入和未读回执使用Zeroizing，取消/停止/失效清理缓冲而不提前返还容量。实际Rust guest创建、HTTP、编辑及读取沿同一State完成，旧修订失败，Ready写取消后的Unknown保留一次真实提交，见[验证报告](../reports/workbench-commands-2026-09-20.md)。
+
+下一切片：持久服务配置下的有限运行准入与原State移交 → 主应用异步业务命令回执及启动/停止/修复 → 长IO等待可暂停和界面响应。现有短IO自动drain，主应用常驻服务尚未接入，不能把测试专用Running worker标为完整产品路径。随后继续Unknown证据核对、文件系统、三语言SDK及全平台资格；IO-D2b/IO-E2继续进行中，版本和SDK冻结基线不变。

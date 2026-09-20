@@ -1,6 +1,6 @@
 //! Private binary UI transport. The child process and all paths are selected by
 //! the trusted Flutter host; plugins receive only the registered business task.
-use crate::{Result, Workbench, host_capnp as wire};
+use crate::{Result, Workbench, WorkbenchState, host_capnp as wire};
 use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
@@ -107,7 +107,180 @@ fn io_result_reply(
     }
     Ok(())
 }
+trait ResponseTarget {
+    fn dispatch(
+        &mut self,
+        request: wire::request::Reader<'_>,
+        out: wire::response::Builder<'_>,
+    ) -> Result<()>;
+    fn writable(&self) -> bool;
+    fn warning(&self) -> Option<&str>;
+}
+
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
+    respond_target(host, bytes)
+}
+
+/// The original owner executes business commands while a worker holds it.
+/// Scheduler commands are unavailable here, including nested HttpStart.
+pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<Vec<u8>> {
+    respond_target(host, bytes)
+}
+
+fn is_scheduler_action(action: wire::Action) -> bool {
+    matches!(
+        action,
+        wire::Action::HttpStart
+            | wire::Action::IoStatus
+            | wire::Action::IoPoll
+            | wire::Action::IoRead
+            | wire::Action::IoCancel
+            | wire::Action::IoRepair
+            | wire::Action::IoAcknowledge
+    )
+}
+
+fn requires_writable_state(action: wire::Action) -> bool {
+    // These routes previously borrowed only &WorkbenchState. Administrative pages and
+    // preference downloads mutate authority/transfer state and intentionally stay gated.
+    !matches!(
+        action,
+        wire::Action::Read
+            | wire::Action::Page
+            | wire::Action::ExportFile
+            | wire::Action::BackupSnapshot
+            | wire::Action::BackupProtection
+            | wire::Action::PluginCatalog
+            | wire::Action::PluginInspect
+            | wire::Action::ReadUiLocale
+    )
+}
+
+impl ResponseTarget for Workbench {
+    fn writable(&self) -> bool {
+        Workbench::writable(self)
+    }
+    fn warning(&self) -> Option<&str> {
+        self.maintenance_warning()
+    }
+    fn dispatch(
+        &mut self,
+        r: wire::request::Reader<'_>,
+        mut out: wire::response::Builder<'_>,
+    ) -> Result<()> {
+        let action = r.get_action()?;
+        // Parse and validate first. Only an actually completed worker can return
+        // the original state; malformed frames do not trigger recovery work.
+        let _ = self.state.try_reclaim();
+        if !is_scheduler_action(action) {
+            // Keep this gate outside service error redaction so Busy/RecoveryRequired survive.
+            let state = if requires_writable_state(action) {
+                self.local_state_mut()?
+            } else {
+                self.state.local_mut()?
+            };
+            return handle_business(state, r, out);
+        }
+        let host = self;
+        if action == wire::Action::HttpStart {
+            host.local_state_mut()?;
+        }
+        match action {
+            wire::Action::HttpStart => {
+                let h = r.get_http_start()?;
+                let headers = h.get_headers()?;
+                if headers.len() > 64 {
+                    return Err("HTTP header count".into());
+                }
+                host.start_http(crate::http_tasks::HttpStart {
+                    submission: h.get_submission()?.try_into()?,
+                    endpoint: h.get_endpoint()?.try_into()?,
+                    endpoint_revision: h.get_endpoint_revision(),
+                    package_digest: h.get_package_digest()?.try_into()?,
+                    registry_revision: h.get_registry_revision(),
+                    method: text(h.get_method())?,
+                    target: text(h.get_target())?,
+                    headers: headers
+                        .iter()
+                        .map(|v| {
+                            Ok(morrow_core::io::Header {
+                                name: text(v.get_name())?,
+                                value: v.get_value()?.to_vec(),
+                            })
+                        })
+                        .collect::<Result<_>>()?,
+                    body: h.get_body()?.to_vec(),
+                    timeout_ms: u64::from(h.get_timeout_ms()),
+                })?;
+                io_state_reply(
+                    &host.io_status(),
+                    host.http_submission(),
+                    out.reborrow().init_io_state(),
+                );
+            }
+            wire::Action::IoStatus => {
+                io_state_reply(
+                    &host.io_status(),
+                    host.http_submission(),
+                    out.reborrow().init_io_state(),
+                );
+            }
+            wire::Action::IoPoll
+            | wire::Action::IoCancel
+            | wire::Action::IoRepair
+            | wire::Action::IoAcknowledge => {
+                let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
+                let status = match action {
+                    wire::Action::IoCancel => host.cancel_io(key)?,
+                    wire::Action::IoRepair => host.repair_io(key)?,
+                    wire::Action::IoAcknowledge => {
+                        host.acknowledge_io(key)?;
+                        host.io_status()
+                    }
+                    _ => host.poll_io(key)?,
+                };
+                io_state_reply(
+                    &status,
+                    host.http_submission(),
+                    out.reborrow().init_io_state(),
+                );
+            }
+            wire::Action::IoRead => {
+                let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
+                // Worker-owned reports are bounded; expose only the single HTTP
+                // outcome, never duplicate guest completion or unbounded diagnostics.
+                let report = host.read_io(key, 4 * 1024 * 1024)?;
+                if let Some(report) = report {
+                    io_result_reply(&report, out.reborrow().init_io_result())?;
+                }
+                io_state_reply(
+                    &host.io_status(),
+                    host.http_submission(),
+                    out.reborrow().init_io_state(),
+                );
+            }
+            _ => return Err("not a scheduler action".into()),
+        }
+        Ok(())
+    }
+}
+
+impl ResponseTarget for WorkbenchState {
+    fn writable(&self) -> bool {
+        WorkbenchState::writable(self)
+    }
+    fn warning(&self) -> Option<&str> {
+        self.maintenance_warning()
+    }
+    fn dispatch(
+        &mut self,
+        r: wire::request::Reader<'_>,
+        out: wire::response::Builder<'_>,
+    ) -> Result<()> {
+        handle_business(self, r, out)
+    }
+}
+fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut output = Builder::new_default();
     let failure = {
         let mut out = output.init_root::<wire::response::Builder>();
@@ -148,7 +321,7 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     {
         let mut out = output.get_root::<wire::response::Builder>()?;
         out.set_read_only(!host.writable());
-        if let Some(warning) = host.maintenance_warning() {
+        if let Some(warning) = host.warning() {
             out.set_maintenance_warning(warning);
         }
     }
@@ -172,7 +345,11 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     }
     Ok(std::mem::take(&mut *bytes))
 }
-fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'_>) -> Result<()> {
+fn handle(
+    host: &mut impl ResponseTarget,
+    bytes: &[u8],
+    out: wire::response::Builder<'_>,
+) -> Result<()> {
     if bytes.len() > 128 * 1024 {
         return Err("host frame budget".into());
     }
@@ -193,30 +370,18 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     if r.get_version() != 1 || r.get_digest()? != digest() {
         return Err("host contract mismatch".into());
     }
+    host.dispatch(r, out)
+}
+
+fn handle_business(
+    host: &mut WorkbenchState,
+    r: wire::request::Reader<'_>,
+    mut out: wire::response::Builder<'_>,
+) -> Result<()> {
     let action = r.get_action()?;
-    // Reclaim only if the actual worker has exited. Check access before file
-    // creation, registry changes or consuming upload tokens in these routes.
-    let _ = host.state.try_reclaim();
-    if !matches!(
-        action,
-        wire::Action::PluginCatalog
-            | wire::Action::IoStatus
-            | wire::Action::IoPoll
-            | wire::Action::IoRead
-            | wire::Action::IoCancel
-            | wire::Action::IoRepair
-            | wire::Action::IoAcknowledge
-            | wire::Action::PluginInspect
-            | wire::Action::PluginState
-            | wire::Action::UiClose
-            | wire::Action::CloseCaptureScope
-            | wire::Action::AbortPreferences
-            | wire::Action::AbortCaptureUpload
-            | wire::Action::AppendPreferences
-            | wire::Action::AppendCaptureUpload
-            | wire::Action::ReadPreferencesPart
-    ) {
-        host.local_state()?;
+    // This owner already runs inside a worker; scheduling here would recursively move it.
+    if is_scheduler_action(action) {
+        return Err("scheduler actions require the outer application".into());
     }
     let id = if crate::service_protocol::is_action(action) {
         String::new()
@@ -236,78 +401,14 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             crate::service_protocol::handle(host, r, out.reborrow())
                 .map_err(|_| "service administration request could not be completed")?;
         }
-        wire::Action::HttpStart => {
-            let h = r.get_http_start()?;
-            let headers = h.get_headers()?;
-            if headers.len() > 64 {
-                return Err("HTTP header count".into());
-            }
-            host.start_http(crate::http_tasks::HttpStart {
-                submission: h.get_submission()?.try_into()?,
-                endpoint: h.get_endpoint()?.try_into()?,
-                endpoint_revision: h.get_endpoint_revision(),
-                package_digest: h.get_package_digest()?.try_into()?,
-                registry_revision: h.get_registry_revision(),
-                method: text(h.get_method())?,
-                target: text(h.get_target())?,
-                headers: headers
-                    .iter()
-                    .map(|v| {
-                        Ok(morrow_core::io::Header {
-                            name: text(v.get_name())?,
-                            value: v.get_value()?.to_vec(),
-                        })
-                    })
-                    .collect::<Result<_>>()?,
-                body: h.get_body()?.to_vec(),
-                timeout_ms: u64::from(h.get_timeout_ms()),
-            })?;
-            io_state_reply(
-                &host.io_status(),
-                host.http_submission(),
-                out.reborrow().init_io_state(),
-            );
-        }
-        wire::Action::IoStatus => {
-            io_state_reply(
-                &host.io_status(),
-                host.http_submission(),
-                out.reborrow().init_io_state(),
-            );
-        }
-        wire::Action::IoPoll
+        wire::Action::HttpStart
+        | wire::Action::IoStatus
+        | wire::Action::IoPoll
+        | wire::Action::IoRead
         | wire::Action::IoCancel
         | wire::Action::IoRepair
         | wire::Action::IoAcknowledge => {
-            let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
-            let status = match action {
-                wire::Action::IoCancel => host.cancel_io(key)?,
-                wire::Action::IoRepair => host.repair_io(key)?,
-                wire::Action::IoAcknowledge => {
-                    host.acknowledge_io(key)?;
-                    host.io_status()
-                }
-                _ => host.poll_io(key)?,
-            };
-            io_state_reply(
-                &status,
-                host.http_submission(),
-                out.reborrow().init_io_state(),
-            );
-        }
-        wire::Action::IoRead => {
-            let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
-            // Worker-owned reports are bounded; expose only the single HTTP
-            // outcome, never duplicate guest completion or unbounded diagnostics.
-            let report = host.read_io(key, 4 * 1024 * 1024)?;
-            if let Some(report) = report {
-                io_result_reply(&report, out.reborrow().init_io_result())?;
-            }
-            io_state_reply(
-                &host.io_status(),
-                host.http_submission(),
-                out.reborrow().init_io_state(),
-            );
+            return Err("scheduler actions require the outer application".into());
         }
         wire::Action::EndpointPage => {
             let page = host.endpoint_page(r.get_endpoint_cursor()?, r.get_endpoint_snapshot()?)?;
@@ -448,17 +549,15 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             host.external_ui_close(&id, r.get_offset())?;
         }
         wire::Action::PluginState => {
-            if host.local_state().is_ok() {
-                host.refresh_plugin_state()?;
-            }
-            plugin_status(host, out.reborrow())?;
+            host.refresh_plugin_state()?;
+            plugin_status(host, out.reborrow());
         }
         wire::Action::PluginConfigure => {
             if r.get_limit() > 1 {
                 return Err("invalid enable decision".into());
             }
             host.configure_plugin(r.get_revision(), r.get_sha256()?, r.get_limit() == 1)?;
-            plugin_status(host, out.reborrow())?;
+            plugin_status(host, out.reborrow());
         }
         wire::Action::UiOpen => {
             ui_reply(host.ui_open(&text(r.get_name())?)?, out.reborrow());
@@ -470,7 +569,7 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             );
         }
         wire::Action::UiClose => {
-            host.ui_close(r.get_offset())?;
+            host.ui_close(r.get_offset());
         }
 
         wire::Action::BackupSnapshot => {
@@ -591,14 +690,12 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             result?;
         }
         wire::Action::ReadPreferences => {
-            let host = host.local_state_mut()?;
             if let Some(bytes) = host.read_preferences()? {
                 let part = host.transfers.open(bytes, crate::now(host.start))?;
                 write_chunk(out.reborrow(), &part);
             }
         }
         wire::Action::ReadPreferencesPart => {
-            let host = host.local_state_mut()?;
             let part = host.transfers.read(
                 &text(r.get_transfer())?,
                 r.get_offset(),
@@ -607,7 +704,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             write_chunk(out.reborrow(), &part);
         }
         wire::Action::BeginPreferences => {
-            let host = host.local_state_mut()?;
             if !host.writable() {
                 return Err("plugin unavailable".into());
             }
@@ -620,7 +716,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_transfer(token.as_str());
         }
         wire::Action::AppendPreferences => {
-            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let offset = host.transfers.append(
                 &token,
@@ -632,7 +727,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_offset(offset as u64);
         }
         wire::Action::FinishPreferences => {
-            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let (operation, bytes) = host.transfers.finish(&token, crate::now(host.start))?;
             let bytes = host.save_preferences(&operation, bytes)?;
@@ -641,7 +735,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_total_length(bytes.len() as u64);
         }
         wire::Action::AbortPreferences => {
-            let host = host.local_state_mut()?;
             host.transfers.abort(&text(r.get_transfer())?);
         }
         wire::Action::SavePreferences => {
@@ -657,10 +750,9 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_capture_scope(&scope);
         }
         wire::Action::CloseCaptureScope => {
-            host.close_capture_scope(&text(r.get_capture_scope())?)?;
+            host.close_capture_scope(&text(r.get_capture_scope())?);
         }
         wire::Action::BeginCaptureUpload => {
-            let host = host.local_state_mut()?;
             host.prepare_write()?;
             let token = host.capture_transfers.begin(
                 text(r.get_operation())?,
@@ -671,7 +763,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_transfer(&token);
         }
         wire::Action::AppendCaptureUpload => {
-            let host = host.local_state_mut()?;
             let token = text(r.get_transfer())?;
             let offset = host.capture_transfers.append(
                 &token,
@@ -683,11 +774,9 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             out.set_offset(offset as u64);
         }
         wire::Action::AbortCaptureUpload => {
-            let host = host.local_state_mut()?;
             host.capture_transfers.abort(&text(r.get_transfer())?);
         }
         wire::Action::FinishPaste => {
-            let host = host.local_state_mut()?;
             let (operation, bytes) = host
                 .capture_transfers
                 .finish(&text(r.get_transfer())?, crate::now(host.start))?;
@@ -700,7 +789,6 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
             host.record_paste(&text(upload.get_scope())?, event)?;
         }
         wire::Action::FinishCapturedSave => {
-            let host = host.local_state_mut()?;
             let (operation, bytes) = host
                 .capture_transfers
                 .finish(&text(r.get_transfer())?, crate::now(host.start))?;
@@ -769,14 +857,13 @@ fn write_chunk(mut out: wire::response::Builder<'_>, part: &crate::transfer::Chu
     out.set_payload(&part.bytes);
 }
 
-fn plugin_status(host: &Workbench, mut out: wire::response::Builder<'_>) -> Result<()> {
-    let s = host.plugin_status()?;
+fn plugin_status(host: &WorkbenchState, mut out: wire::response::Builder<'_>) {
+    let s = host.plugin_status();
     out.set_revision(s.revision);
     out.set_sha256(&s.digest);
     out.set_plugin_enabled(s.enabled);
     out.set_plugin_approved(s.approved);
     out.set_plugin_available(s.available);
-    Ok(())
 }
 fn ui_reply(reply: morrow_plugin_runtime::inline_ui::Reply, mut out: wire::response::Builder<'_>) {
     use morrow_plugin_runtime::inline_ui::Failure;

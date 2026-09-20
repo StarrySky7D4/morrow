@@ -1,5 +1,5 @@
 //! Bounded mapping for the private service administration channel only.
-use crate::{Result, Workbench, host_capnp as wire, service_control};
+use crate::{Result, WorkbenchState, host_capnp as wire, service_control};
 use morrow_core::{
     service_authority::proto as authority,
     service_config::{Config, proto as config},
@@ -185,7 +185,7 @@ fn write_authority(
 }
 
 pub(crate) fn handle(
-    host: &mut Workbench,
+    host: &mut WorkbenchState,
     request: wire::request::Reader<'_>,
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {

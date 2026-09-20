@@ -938,6 +938,7 @@ dependencies = [
  "sha2 0.10.9",
  "wasmi",
  "wasmparser",
+ "zeroize",
 ]
 
 [[package]]

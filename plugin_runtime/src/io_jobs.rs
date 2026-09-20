@@ -481,6 +481,7 @@ struct State {
     bytes: u64,
     owner_commands: usize,
     owner_command_bytes: usize,
+    owner_command_status: Vec<std::sync::Weak<Mutex<owner_commands::Status>>>,
 }
 struct Authority {
     cancellation: Cancellation,
@@ -654,6 +655,7 @@ impl Control {
         if !matches!(state.phase, Phase::Stopped | Phase::Failed) {
             state.phase = Phase::Stopping;
         }
+        owner_commands::clear_sensitive(&mut state);
         for slot in state.jobs.values_mut() {
             slot.cancel.cancel();
             self.refresh(slot);
@@ -1048,6 +1050,7 @@ impl<O: HostOwner> IoWorker<O> {
                     bytes: 0,
                     owner_commands: 0,
                     owner_command_bytes: 0,
+                    owner_command_status: Vec::new(),
                 }),
             });
             let (sender, receiver) = mpsc::sync_channel(capacity);
@@ -1124,6 +1127,7 @@ impl<O: HostOwner> IoWorker<O> {
             } else {
                 Phase::Failed
             };
+            owner_commands::clear_sensitive(&mut state);
             for slot in state.jobs.values_mut() {
                 slot.cancel.cancel();
                 inner.refresh(slot);
@@ -1576,6 +1580,7 @@ impl<O: HostOwner> IoWorker<O> {
             return Err(JobError::Closed);
         }
         state.phase = Phase::Draining;
+        owner_commands::clear_sensitive(&mut state);
         for slot in state.jobs.values_mut() {
             slot.cancel.limit_deadline(deadline);
             self.control.refresh(slot);
@@ -1728,6 +1733,9 @@ fn execute<O: HostOwner>(
                 && matches!(state.phase, Phase::Running | Phase::Draining)
             {
                 state.phase = Phase::Stopping;
+            }
+            if state.phase != Phase::Running {
+                owner_commands::clear_sensitive(&mut state);
             }
             for slot in state.jobs.values_mut() {
                 control.refresh(slot);

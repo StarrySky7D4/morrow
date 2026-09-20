@@ -585,6 +585,7 @@ dependencies = [
  "wasmi",
  "wasmparser",
  "wat",
+ "zeroize",
 ]
 
 [[package]]
