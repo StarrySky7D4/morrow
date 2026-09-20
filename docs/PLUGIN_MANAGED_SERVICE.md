@@ -47,7 +47,13 @@ Principal 的 service scope 只允许调用服务。需要读写卡片时，宿�
 
 ServiceGrant／ListenerGrant 撤权以及 Manager 停用、批准变更、移除、Drop 都会使旧绑定失效。服务调用句柄取消与节点关闭只能请求停止；已经到达上游或完成的业务效果不能被宣称回滚，发送边界后的不确定结果仍须核对。
 
-`ManagedNode` 的监督任务持有监听租约，通过实际 `Node::shutdown` 收尾后释放其副本；Drop 仅发取消信号，不直接终止持有租约的监督任务。其它仍存活的 grant／route 副本可能继续占有资源，clone/revoke 本身不退款。这里保证监听任务的租约生命周期，不宣称所有已接受连接、插件计算或外部业务均已回滚。`ServiceHost::shutdown` 有界等待 worker 退出后归还原 Host；超时不是线程已退出的证明。
+`ManagedNode` 的监督任务持有监听租约，通过实际 `Node::shutdown` 收尾后释放其副本；Drop 仅发取消信号，不直接终止持有租约的监督任务。其它仍存活的 grant／route 副本可能继续占有资源，clone/revoke 本身不退款。这里保证监听任务的租约生命周期，不宣称所有已接受连接、插件计算或外部业务均已回滚。
+
+`ServiceHost<O: HostOwner = HostRuntime>` 现可接收 `spawn_managed_owned` 创建的完整拥有者 worker，`ManagedRoute<O>` 保留同一类型。`new_owned` 选项无效时返回原 worker；`ManagedNode::bind_owned`／`bind_tls_owned` 支持这种路由。旧 `new`、`bind`、`bind_tls` 保留 HostRuntime 专用签名，包括旧调用方不标注类型的空路由列表。
+
+`request_stop` 仅请求取消；`try_reclaim` 在线程真实退出后归还一次完整 `WorkerExit<O>`，分别保留原拥有者、执行、断连和维护结果。`shutdown_owned` 等待实际回收，不设置固定成功超时；取消该等待后，调用方保留的 ServiceHost 仍可继续回收。调用方必须持有它直到回收完成，最后一个句柄 Drop 只发停止信号。旧 `ServiceHost<HostRuntime>::shutdown` 保留五秒有界等待语义；超时不是线程已退出的证明。监听停止和 worker 回收是两个独立步骤。
+
+真实 Windows Storage 的 HTTP 执行、原库保护锁、审计身份及封存故障恢复见 [所有者回收验证](../reports/service-owner-2026-09-20.md)。这不改变旧 IO v1 的最长30秒绑定限制，也未让主应用运行服务；后续见 [常驻与调度方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。
 
 ## 仍未完成与验证入口
 

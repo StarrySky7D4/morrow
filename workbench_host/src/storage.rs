@@ -182,6 +182,10 @@ impl morrow_plugin_runtime::io_jobs::HostOwner for Storage {
 #[path = "storage_io_tests.rs"]
 mod io_tests;
 
+#[cfg(all(test, target_os = "windows"))]
+#[path = "storage_service_tests.rs"]
+mod service_tests;
+
 #[cfg(target_os = "windows")]
 pub(crate) fn session_message(e: SessionError) -> &'static str {
     match e {

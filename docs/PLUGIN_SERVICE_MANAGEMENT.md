@@ -24,12 +24,14 @@
 
 1. 私有 Cap'n Proto 消息和 Dart 数据模型已接入七个管理动作，保留128 KiB帧、字段与总量限制；最大合法历史配置实测可返回。元数据与一次性令牌使用独立解析路径，修订以BigInt保存；Dart模型与原生编解码分离。中英文配置/认证/批准表单已接原生适配，未知写入只刷新，不自动重发。Web编译保持通过，不据此宣称浏览器支持原生服务管理或监听。
 2. **区分监听寿命与单请求预算。** 当前IO声明及实例绑定寿命最多30秒，累计预算也不因请求完成而退款。这只能支持限时执行，不能作为常驻API服务的最终设计。需单独版本化服务运行租约、并发/每请求/累计额度及显式续租规则；禁止后台循环重新绑定来规避期限和累计限制。
-3. 将 `ServiceHost`、route和execution泛型化到 `HostOwner`，让真实原 `IoWorker<Storage>` 可用。公开停止请求与非阻塞完整 `WorkerExit<Storage>` 回收；兼容 `try_finish()->HostRuntime` 不足以保留失败后的原owner及清理诊断。
+3. `ServiceHost`、route和execution已泛型化到 `HostOwner`，真实原 `IoWorker<Storage>` 可用。`new_owned`在构造失败时归还原worker，`request_stop`与`try_reclaim`分离取消和真实join；`shutdown_owned`返回完整 `WorkerExit<Storage>`，无固定成功超时。旧HostRuntime专用构造/关闭与监听bind签名保留兼容，包含Storage的工作台入口必须使用owned接口。尚未接入主应用服务活动状态。
 4. 在唯一StorageSlot增加服务活动分支，共用Busy、原实例、恢复和退出状态。原Store解析配置/批准/认证，同Manager与IoBinding重新授权后移交；监听runtime必须活到真实收尾。端口占用、绑定失败也须归还完整原Storage。
 5. 停止分别等待监听监督任务结束和worker实际join，再恢复原库。EOF/关闭沿相同路径；不能用超时、强杀或新建runtime伪装回收。管理状态/停止/修复通过Busy门禁，在线修改若支持则必须走原worker更新队列。
 6. 真实主应用入站读取/修改、认证隔离、持久请求查询、撤权、端口冲突、阻塞请求停止时的原库锁、封存失败恢复及重启核对。之后接入有证据的Unknown核对、完整因果链、文件系统及三语言IO SDK。
 
 常驻期间原Storage独占使内容界面Busy，属于下一阶段必须解决的产品约束；不能用旁路数据库规避。应明确统一任务调度/访问边界，再作用户路径验收。方案尚未实现的步骤不列为已完成。
+
+具体源码约束、版本化租约和完整WorkbenchState调度的实施顺序见[常驻运行方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。只有添加消息队列仍可能等待同步guest/broker请求完成，不能把它当作内容界面即时响应的最终实现。
 
 ## 私有消息与令牌所有权
 

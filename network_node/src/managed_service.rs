@@ -8,8 +8,8 @@ use crate::{
 use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
     io_jobs::{
-        BrokerRouter, IoWorker, JobError, Poll, ServicePersistenceStatus, ServiceUpdate,
-        ServiceUpdateHandle,
+        BrokerRouter, HostOwner, IoWorker, JobError, Poll, ServicePersistenceStatus, ServiceUpdate,
+        ServiceUpdateHandle, WorkerExit,
     },
     service_authority::ConfiguredService,
     service_content::{ContentScope, ServiceContentPolicy},
@@ -28,27 +28,49 @@ use std::{
 use tokio_util::sync::CancellationToken;
 /// Trusted host factory. Its routers must enforce every outbound resource approval.
 pub type RouterFactory = Arc<dyn Fn() -> Box<dyn BrokerRouter> + Send + Sync>;
-struct Execution {
-    worker: Mutex<IoWorker>,
+struct Execution<O: HostOwner = HostRuntime> {
+    worker: Mutex<IoWorker<O>>,
     sequence: AtomicU64,
     timeout: Duration,
     routers: RouterFactory,
 }
-impl Drop for Execution {
+impl<O: HostOwner> Drop for Execution<O> {
     fn drop(&mut self) {
-        if let Ok(worker) = self.worker.get_mut() {
-            worker.stop();
-        }
+        // Drop requests cancellation only. The worker still owns its guards
+        // until actual exit; callers must retain a ServiceHost to reclaim them.
+        self.worker
+            .get_mut()
+            .unwrap_or_else(|e| e.into_inner())
+            .stop();
     }
 }
 /// Clones share one worker, queue, instance and lifetime budgets.
-#[derive(Clone)]
-pub struct ServiceHost {
-    inner: Arc<Execution>,
+pub struct ServiceHost<O: HostOwner = HostRuntime> {
+    inner: Arc<Execution<O>>,
+}
+impl<O: HostOwner> Clone for ServiceHost<O> {
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+        }
+    }
+}
+/// Adapter construction did not take ownership. The original worker can still
+/// be stopped and reclaimed; its storage guards are never reconstructed.
+pub struct ServiceHostFailure<O: HostOwner> {
+    pub worker: IoWorker<O>,
+    pub error: Error,
+}
+impl<O: HostOwner> std::fmt::Debug for ServiceHostFailure<O> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ServiceHostFailure")
+            .field("error", &self.error)
+            .finish_non_exhaustive()
+    }
 }
 /// Opaque route keeps the actual worker and publication owner until listener binding.
-pub struct ManagedRoute {
-    host: ServiceHost,
+pub struct ManagedRoute<O: HostOwner = HostRuntime> {
+    host: ServiceHost<O>,
     grant: ServiceGrant,
     method: String,
     path: String,
@@ -60,10 +82,19 @@ struct ContentRoute {
     policy: ServiceContentPolicy,
     principals: BTreeMap<String, Vec<ContentScope>>,
 }
-impl ServiceHost {
-    pub fn new(worker: IoWorker, timeout: Duration, routers: RouterFactory) -> Result<Self> {
+impl<O: HostOwner> ServiceHost<O> {
+    /// Preserve the original worker when adapter options are rejected, so a
+    /// containing owner and its storage guards remain explicitly recoverable.
+    pub fn new_owned(
+        worker: IoWorker<O>,
+        timeout: Duration,
+        routers: RouterFactory,
+    ) -> std::result::Result<Self, ServiceHostFailure<O>> {
         if timeout.is_zero() || timeout > Duration::from_secs(30) {
-            return Err(Error::Invalid);
+            return Err(ServiceHostFailure {
+                worker,
+                error: Error::Invalid,
+            });
         }
         Ok(Self {
             inner: Arc::new(Execution {
@@ -74,7 +105,7 @@ impl ServiceHost {
             }),
         })
     }
-    pub fn route(&self, grant: ServiceGrant, method: &str, path: &str) -> Result<ManagedRoute> {
+    pub fn route(&self, grant: ServiceGrant, method: &str, path: &str) -> Result<ManagedRoute<O>> {
         self.inner
             .worker
             .lock()
@@ -106,7 +137,7 @@ impl ServiceHost {
         method: &str,
         path: &str,
         journal: ServiceJournal,
-    ) -> Result<ManagedRoute> {
+    ) -> Result<ManagedRoute<O>> {
         let mut route = self.route(grant, method, path)?;
         route.journal = Some(journal);
         Ok(route)
@@ -121,7 +152,7 @@ impl ServiceHost {
         journal: ServiceJournal,
         policy: ServiceContentPolicy,
         principal_scopes: BTreeMap<String, Vec<ContentScope>>,
-    ) -> Result<ManagedRoute> {
+    ) -> Result<ManagedRoute<O>> {
         policy.validate_grant(&grant).map_err(|_| Error::Denied)?;
         let mut route = self.durable_route(grant, method, path, journal)?;
         route.content = Some(Arc::new(ContentRoute {
@@ -133,7 +164,11 @@ impl ServiceHost {
     /// Query retained state without preparing, dispatching or retrying an operation.
     /// Repeat the original method, query string, business headers, body and key at
     /// this distinct path. The original operation target is fixed by the host.
-    pub fn query_route(&self, original: &ManagedRoute, query_path: &str) -> Result<ManagedRoute> {
+    pub fn query_route(
+        &self,
+        original: &ManagedRoute<O>,
+        query_path: &str,
+    ) -> Result<ManagedRoute<O>> {
         if !Arc::ptr_eq(&self.inner, &original.host.inner) {
             return Err(Error::Denied);
         }
@@ -210,7 +245,7 @@ impl ServiceHost {
         }
         routes.push(route);
         let node = if let Some(identity) = tls {
-            ManagedNode::bind_tls(
+            ManagedNode::bind_tls_owned(
                 address,
                 configured.listener().clone(),
                 principals,
@@ -220,7 +255,7 @@ impl ServiceHost {
             )
             .await?
         } else {
-            ManagedNode::bind(
+            ManagedNode::bind_owned(
                 address,
                 configured.listener().clone(),
                 principals,
@@ -235,7 +270,7 @@ impl ServiceHost {
         }
         Ok(node)
     }
-    fn bound_route(&self, grant: ServiceGrant, route: ManagedRoute) -> Result<AuthorizedRoute> {
+    fn bound_route(&self, grant: ServiceGrant, route: ManagedRoute<O>) -> Result<AuthorizedRoute> {
         let ManagedRoute {
             method,
             path,
@@ -563,20 +598,57 @@ impl ServiceHost {
         });
         AuthorizedRoute::new(&scope, &method, &path, handler)
     }
-    /// Stops all clones and returns the original host to its owner exactly once.
+    /// Request cancellation for this shared worker without waiting for exit.
+    /// The original owner stays on the worker; this does not release a listener.
+    pub fn request_stop(&self) -> Result<()> {
+        self.inner
+            .worker
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .stop();
+        Ok(())
+    }
+    /// Recover the complete original owner exactly once, only after actual join.
+    /// Execution, disconnection and maintenance diagnostics remain independent.
+    /// A poisoned adapter lock does not make an otherwise recoverable owner vanish.
+    pub fn try_reclaim(&self) -> Result<Option<WorkerExit<O>>> {
+        self.inner
+            .worker
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .try_reclaim()
+            .map_err(|_| Error::Closed)
+    }
+    /// Stop all clones and wait for actual thread exit. There is no timeout that
+    /// could report success while the original storage guards are still in use.
+    /// Cancelling this future leaves the shared handle available for reclamation.
+    pub async fn shutdown_owned(&self) -> Result<WorkerExit<O>> {
+        self.request_stop()?;
+        loop {
+            if let Some(exit) = self.try_reclaim()? {
+                return Ok(exit);
+            }
+            tokio::time::sleep(Duration::from_millis(2)).await;
+        }
+    }
+}
+impl ServiceHost<HostRuntime> {
+    /// Legacy runtime-only constructor. Containing owners must use new_owned
+    /// so rejected options return the worker instead of dropping it.
+    pub fn new(worker: IoWorker, timeout: Duration, routers: RouterFactory) -> Result<Self> {
+        Self::new_owned(worker, timeout, routers).map_err(|failure| failure.error)
+    }
+    /// Legacy runtime-only shutdown, including its five-second timeout and
+    /// execution/maintenance error mapping. Use shutdown_owned to retain the
+    /// owner and complete cleanup diagnostics even on failure.
     pub async fn shutdown(&self) -> Result<HostRuntime> {
-        self.inner.worker.lock().map_err(|_| Error::Closed)?.stop();
+        self.request_stop()?;
         let deadline = Instant::now() + Duration::from_secs(5);
         loop {
-            if let Some(host) = self
-                .inner
-                .worker
-                .lock()
-                .map_err(|_| Error::Closed)?
-                .try_finish()
-                .map_err(|_| Error::Closed)?
-            {
-                return Ok(host);
+            if let Some(exit) = self.try_reclaim()? {
+                exit.result.map_err(|_| Error::Closed)?;
+                exit.maintenance.map_err(|_| Error::Closed)?;
+                return Ok(exit.owner);
             }
             if Instant::now() >= deadline {
                 return Err(Error::Timeout);
@@ -593,30 +665,50 @@ pub struct ManagedNode {
     task: Option<tokio::task::JoinHandle<Result<()>>>,
 }
 impl ManagedNode {
+    /// Preserve inference for existing callers, including an empty route list.
     pub async fn bind(
         address: SocketAddr,
         grant: ListenerGrant,
         principals: Vec<Principal>,
-        routes: Vec<ManagedRoute>,
+        routes: Vec<ManagedRoute<HostRuntime>>,
         limits: Limits,
     ) -> Result<Self> {
-        Self::bind_inner(address, grant, principals, routes, limits, None).await
+        Self::bind_owned(address, grant, principals, routes, limits).await
     }
     pub async fn bind_tls(
         address: SocketAddr,
         grant: ListenerGrant,
         principals: Vec<Principal>,
-        routes: Vec<ManagedRoute>,
+        routes: Vec<ManagedRoute<HostRuntime>>,
+        limits: Limits,
+        identity: TlsIdentity,
+    ) -> Result<Self> {
+        Self::bind_tls_owned(address, grant, principals, routes, limits, identity).await
+    }
+    pub async fn bind_owned<O: HostOwner>(
+        address: SocketAddr,
+        grant: ListenerGrant,
+        principals: Vec<Principal>,
+        routes: Vec<ManagedRoute<O>>,
+        limits: Limits,
+    ) -> Result<Self> {
+        Self::bind_inner(address, grant, principals, routes, limits, None).await
+    }
+    pub async fn bind_tls_owned<O: HostOwner>(
+        address: SocketAddr,
+        grant: ListenerGrant,
+        principals: Vec<Principal>,
+        routes: Vec<ManagedRoute<O>>,
         limits: Limits,
         identity: TlsIdentity,
     ) -> Result<Self> {
         Self::bind_inner(address, grant, principals, routes, limits, Some(identity)).await
     }
-    async fn bind_inner(
+    async fn bind_inner<O: HostOwner>(
         address: SocketAddr,
         grant: ListenerGrant,
         principals: Vec<Principal>,
-        routes: Vec<ManagedRoute>,
+        routes: Vec<ManagedRoute<O>>,
         limits: Limits,
         identity: Option<TlsIdentity>,
     ) -> Result<Self> {
