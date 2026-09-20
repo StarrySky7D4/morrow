@@ -23,6 +23,32 @@ def log_trace(path, event):
     with open(path, "a", encoding="utf-8") as t:
         t.write(json.dumps(event) + "\n")
 
+def matches_request(root, req):
+    armed = root / "armed.sha256"
+    if armed.exists():
+        return hashlib.sha256(req).hexdigest() == armed.read_text(encoding="ascii").strip()
+    mask_file = root / "armed.mask.json"
+    if not mask_file.exists():
+        return False
+    if len(req) < 1 or len(req) > MAX_REQ:
+        raise ValueError("invalid request length")
+    with mask_file.open("rb") as source:
+        raw = source.read(4 * MAX_REQ + 129)
+    if len(raw) > 4 * MAX_REQ + 128:
+        raise ValueError("mask config file too large")
+    cfg = json.loads(raw.decode("ascii"))
+    template = bytes.fromhex(cfg["template"])
+    mask = bytes.fromhex(cfg["mask"])
+    if not 1 <= len(template) <= MAX_REQ or len(mask) != len(template):
+        raise ValueError("invalid template or mask length")
+    if not all(m in (0, 255) for m in mask):
+        raise ValueError("mask bytes must be 0 or 255 only")
+    if not any(m == 255 for m in mask):
+        raise ValueError("mask must cover at least one byte")
+    if len(req) != len(template):
+        return False
+    return all((a & m) == (b & m) for a, b, m in zip(req, template, mask))
+
 def main():
     root = Path(__file__).resolve().parent
     cfg = json.loads((root / "proxy.json").read_text(encoding="utf-8"))
@@ -30,7 +56,6 @@ def main():
     mode = cfg["mode"]
     if mode not in ("malformed", "eof"):
         die("invalid mode")
-    armed_f = root / "armed.sha256"
     trace = root / "trace.jsonl"
     receipt = root / "receipt.bin"
 
@@ -59,8 +84,7 @@ def main():
             if not 1 <= n <= MAX_REP:
                 raise ValueError("invalid reply length")
             reply = read_exact(cout, n)
-            armed = armed_f.read_text(encoding="utf-8").strip() if armed_f.exists() else None
-            if armed is not None and hashlib.sha256(req).hexdigest() == armed:
+            if matches_request(root, req):
                 log_trace(trace, {"event": "matched"})
                 if not injected:
                     injected = True

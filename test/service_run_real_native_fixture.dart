@@ -239,16 +239,18 @@ class RealServiceFixture {
     }
   }
 
-  Future<void> close() async {
+  Future<void> close({bool observeBeforeClose = true}) async {
     await reservation?.close();
     reservation = null;
     issued?.dispose();
     try {
-      await session.refresh();
-      if (session.canStop) await session.stop();
-      if (session.service != null &&
-          session.service!.phase != ServiceRunPhase.exited) {
-        await observe(ServiceRunPhase.exited);
+      if (observeBeforeClose) {
+        await session.refresh();
+        if (session.canStop) await session.stop();
+        if (session.service != null &&
+            session.service!.phase != ServiceRunPhase.exited) {
+          await observe(ServiceRunPhase.exited);
+        }
       }
     } finally {
       // Native close waits for actual exit even if observation or cleanup failed.
