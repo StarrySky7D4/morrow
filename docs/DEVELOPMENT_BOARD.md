@@ -171,3 +171,9 @@
 WorkbenchState已实现原生CommandOwner，本地与worker共用业务协议校验、错误码、部分结果/令牌清理和响应预算。原State明确拒绝调度动作；外围保留Busy及显式修复门槛。排队输入和未读回执使用Zeroizing，取消/停止/失效清理缓冲而不提前返还容量。实际Rust guest创建、HTTP、编辑及读取沿同一State完成，旧修订失败，Ready写取消后的Unknown保留一次真实提交，见[验证报告](../reports/workbench-commands-2026-09-20.md)。
 
 下一切片：持久服务配置下的有限运行准入与原State移交 → 主应用异步业务命令回执及启动/停止/修复 → 长IO等待可暂停和界面响应。现有短IO自动drain，主应用常驻服务尚未接入，不能把测试专用Running worker标为完整产品路径。随后继续Unknown证据核对、文件系统、三语言SDK及全平台资格；IO-D2b/IO-E2继续进行中，版本和SDK冻结基线不变。
+
+## 原生应用服务准入与监督回收（2026-09-20）
+
+Workbench已提供start_service、service_status和submit_service_command；原持久配置/发布/认证解析、明确有限预算和原State移交接入同一个StateSlot。服务监督线程拥有Tokio runtime，监听与worker都实际结束并join后才归还原State；Drop只请求停止，监督线程保留清理资源。绑定、监听、监督和存储退出结果独立，端口冲突也保留原拥有者并要求确认。审查发现的配置先检查后pin竞态已改为先固定原授权锁、再比较预期修订和地址。见[验证报告](../reports/application-service-admission-2026-09-20.md)。
+
+本切片限定单个已批准loopback HTTP有限服务；不自动续租，不把未批准出站调用变成权限。下一项：私有服务/命令调度协议和有界句柄表 → Flutter启动/状态/停止及内容命令异步交付 → 可暂停长IO、TLS与出站资源接线。Unknown持久核对、文件系统、三语言SDK和平台资格继续原验收；IO-D2b/IO-E2整体未完成，版本和发布状态不变。

@@ -855,18 +855,39 @@ impl ManagedNode {
     pub fn local_addr(&self) -> SocketAddr {
         self.address
     }
-    pub async fn shutdown(mut self) -> Result<()> {
+
+    /// Signal socket shutdown without waiting for the listener supervisor.
+    /// This does not revoke the application's listener grant or stop/reclaim
+    /// the ServiceHost worker; those have independent ownership lifetimes.
+    pub fn request_stop(&self) {
         self.stop.cancel();
+    }
+
+    /// Whether the listener supervisor has exited, including after its terminal
+    /// result was consumed. This says nothing about ServiceHost reclamation.
+    pub fn is_finished(&self) -> bool {
         self.task
-            .take()
-            .ok_or(Error::Closed)?
-            .await
-            .map_err(|_| Error::Transport)?
+            .as_ref()
+            .is_none_or(tokio::task::JoinHandle::is_finished)
+    }
+
+    /// Await the existing listener supervisor without requesting shutdown.
+    /// Cancelling this borrowed future retains the same supervision handle for
+    /// another join. A terminal success or error can be consumed exactly once.
+    pub async fn join(&mut self) -> Result<()> {
+        let result = self.task.as_mut().ok_or(Error::Closed)?.await;
+        self.task.take();
+        result.map_err(|_| Error::Transport)?
+    }
+
+    pub async fn shutdown(mut self) -> Result<()> {
+        self.request_stop();
+        self.join().await
     }
 }
 impl Drop for ManagedNode {
     fn drop(&mut self) {
-        self.stop.cancel();
+        self.request_stop();
     }
 }
 
@@ -886,4 +907,34 @@ fn service_state_reply(querying: bool, state: &str, status: u16, body: &[u8]) ->
             .push(("morrow-service-state".into(), state.as_bytes().to_vec()));
     }
     reply
+}
+
+#[cfg(test)]
+mod managed_node_join_tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn listener_terminal_errors_are_consumed_once_including_task_panics() {
+        for panic in [false, true] {
+            let task = tokio::spawn(async move {
+                assert!(!panic, "injected listener supervisor panic");
+                Err(Error::Denied)
+            });
+            let mut node = ManagedNode {
+                address: "127.0.0.1:0".parse().unwrap(),
+                stop: CancellationToken::new(),
+                task: Some(task),
+            };
+            assert_eq!(
+                node.join().await,
+                Err(if panic {
+                    Error::Transport
+                } else {
+                    Error::Denied
+                })
+            );
+            assert!(node.is_finished());
+            assert_eq!(node.join().await, Err(Error::Closed));
+        }
+    }
 }

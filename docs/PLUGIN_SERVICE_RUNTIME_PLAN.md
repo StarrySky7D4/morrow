@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`ea7dfe0`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租，以及本地/worker共用的业务协议派发。主应用常驻节点的准入、异步命令交付与界面调度仍待接入；现有短IO自动drain的行为不变。
+基线：`ad346fd`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；TLS、出站资源适配、私有异步命令协议与Flutter界面仍待接入。现有短IO自动drain的行为不变。
 
 ## 当前限制的具体来源
 
@@ -10,7 +10,7 @@
 | `plugin_runtime/src/io_binding.rs` | 旧绑定按IO声明限期；service-run-v1在原IoContext签发一次有限运行，原请求上限不变 | 重复绑定不应改变同实例账本；释放作业只返还并发容量，不退款 |
 | `plugin_runtime/src/io_jobs.rs` | `spawn_session_owned` 从声明建立单作业timeout，`submit_routed`校验；工作线程同步执行一项guest/broker调用 | 监听长期运行需要独立运行期限；仅添加UI队列仍可能等待当前阻塞请求结束 |
 | `network_node/src/managed_service.rs` | 监听监督和执行worker有各自退出路径 | socket关闭不证明worker已退出；必须分别观察并真实join |
-| `workbench_host/src/lib.rs` / `io_tasks.rs` | State实现CommandOwner并共用原业务协议；现有短IO自动drain，外围未提交异步业务命令 | 尚需常驻运行准入和主应用命令/回执控制，不能通过第二个Store绕过独占 |
+| `workbench_host/src/lib.rs` / `io_tasks.rs` / `service_tasks.rs` | StateSlot用执行者变体保持原State独占，原生服务准入、命令提交与双退出已接线；短IO仍独立drain | 尚需私有命令/回执协议与Flutter交互、TLS和出站资源适配，不能通过第二个Store绕过独占 |
 
 ## 一、完整所有者适配
 
@@ -93,6 +93,10 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 本方案不改变Unknown持久证据核对、文件系统后端、三语言IO SDK和各平台资格的原门槛。其余网络能力也不会因常驻监听子项通过而一并标为完成。
 
 ## 下一切片的具体接线
+
+以下原生准入前置现已实现：`Workbench::start_service`核对同一原授权锁内的配置摘要/修订、发布修订和监听政策，签发新有限运行并非阻塞启动监督线程。`service_status`区分绑定、监听、监督和worker退出诊断，保留提交身份；`submit_service_command`只向已运行的原ServiceHost提交业务。取消、修复与确认复用StateSlot任务身份；原State只在监听和worker结束、监督线程真实join后回到本地。ManagedNode新增可取消等待的borrowed join，句柄保留到终态。实际验收见[应用服务准入报告](../reports/application-service-admission-2026-09-20.md)。
+
+下一编码重点调整为私有调度协议与有界命令句柄表，随后接Flutter的启动/状态/停止及业务异步交付；仍需覆盖长IO可暂停、TLS和出站资源、完整Unknown核对，不能把原生测试入口当作已完成的界面用户路径。
 
 先新增可信应用ServiceStart准入，复用 `service_authority::ResolvedService::resolve/issue`、`Manager::bind_budgeted_service_run`、`IoWorker::spawn_managed_owner`、`ServiceHost::new_owned/bind_configured`。第一验收限定原持久发布配置中的单个loopback HTTP服务，使用明确的有限期限和累计预算，不自动续租；未批准的出站调用明确拒绝。复用StateSlot的唯一owner与修复/确认规则，以执行者变体区分短IO和常驻服务，避免两个槽分别持有同一库。
 

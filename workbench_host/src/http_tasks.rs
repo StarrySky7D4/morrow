@@ -65,7 +65,11 @@ fn utc() -> u64 {
 impl Workbench {
     /// Correlate a lost start reply without starting or replaying anything.
     pub fn http_submission(&self) -> Option<[u8; 32]> {
-        self.http_tasks.current
+        if self.state.has_service_task() {
+            None
+        } else {
+            self.http_tasks.current
+        }
     }
 
     pub fn start_http(&mut self, request: HttpStart) -> Result<TaskKey> {

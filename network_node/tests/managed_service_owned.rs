@@ -359,6 +359,60 @@ async fn stopping_or_dropping_listener_keeps_host_reclamation_separate() {
 }
 
 #[tokio::test]
+async fn cancelled_listener_join_retains_supervision_until_explicit_stop_and_rejoin() {
+    let f = fixture(false, false);
+    let host = ServiceHost::new_owned(f.worker, Duration::from_secs(2), routers()).unwrap();
+    let route = host.route(f.grant.clone(), "POST", "/invoke").unwrap();
+    let mut node = ManagedNode::bind_owned(
+        "127.0.0.1:0".parse().unwrap(),
+        f.listener.clone(),
+        principals(),
+        vec![route],
+        Limits::default(),
+    )
+    .await
+    .unwrap();
+    let address = node.local_addr();
+    assert!(!node.is_finished());
+    // This timeout polls and then drops a genuinely pending join future. Join
+    // itself must neither request a stop nor detach the supervisor handle.
+    assert!(
+        tokio::time::timeout(Duration::from_millis(25), node.join())
+            .await
+            .is_err()
+    );
+    assert!(!node.is_finished());
+    assert!(tokio::net::TcpStream::connect(address).await.is_ok());
+    let before = std::time::Instant::now();
+    node.request_stop();
+    assert!(before.elapsed() < Duration::from_millis(100));
+    tokio::time::timeout(WAIT, node.join())
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(node.is_finished());
+    assert_eq!(node.join().await, Err(Error::Closed));
+    let rebound = std::net::TcpListener::bind(address).unwrap();
+    drop(rebound);
+    // Actual socket shutdown is not evidence of worker or storage-owner exit.
+    assert_eq!(f.finished.load(Ordering::SeqCst), 0);
+    assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
+    assert!(host.try_reclaim().unwrap().is_none());
+    let exit = tokio::time::timeout(WAIT, host.shutdown_owned())
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(Arc::ptr_eq(&exit.owner.marker, &f.marker));
+    assert_eq!(exit.result, Ok(()));
+    assert_eq!(exit.disconnect, Ok(()));
+    assert_eq!(exit.maintenance, Ok(()));
+    assert_eq!(f.finished.load(Ordering::SeqCst), 1);
+    assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
+    drop(exit);
+    assert_eq!(f.dropped.load(Ordering::SeqCst), 1);
+}
+
+#[tokio::test]
 async fn last_host_drop_only_releases_guards_after_the_worker_finishes() {
     let f = fixture(true, false);
     let host = ServiceHost::new_owned(f.worker, Duration::from_secs(2), routers()).unwrap();

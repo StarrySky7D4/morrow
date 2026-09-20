@@ -13,6 +13,9 @@ use std::{
     time::Duration,
 };
 
+#[path = "service_tasks.rs"]
+pub mod service;
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum AccessError {
     Busy,
@@ -93,10 +96,40 @@ pub struct PreparedJob {
 }
 struct Task {
     key: TaskKey,
-    worker: Option<IoWorker<WorkbenchState>>,
+    worker: Option<Executor>,
     handle: Option<JobHandle>,
     stopping: bool,
     exit: Option<ExitStatus>,
+    service: Option<service::Progress>,
+}
+enum Executor {
+    Io(Box<IoWorker<WorkbenchState>>),
+    Service(service::ServiceExecution),
+}
+impl Executor {
+    fn stop(&self) {
+        match self {
+            Self::Io(worker) => worker.stop(),
+            Self::Service(worker) => worker.stop(),
+        }
+    }
+    fn try_reclaim(
+        &mut self,
+    ) -> std::result::Result<
+        Option<morrow_plugin_runtime::io_jobs::WorkerExit<WorkbenchState>>,
+        JobError,
+    > {
+        match self {
+            Self::Io(worker) => worker.try_reclaim(),
+            Self::Service(worker) => worker.try_reclaim(),
+        }
+    }
+    fn service_progress(&self) -> Option<service::Progress> {
+        match self {
+            Self::Io(_) => None,
+            Self::Service(worker) => Some(worker.progress()),
+        }
+    }
 }
 /// The complete state is either local or owned by the original worker. No
 /// fallback store, partial state, or panicking Deref can mask its absence.
@@ -106,8 +139,14 @@ pub(crate) struct StateSlot {
     cleanup: Option<ManagedInstance>,
     repair_needed: bool,
     lost: bool,
+    service_submissions: BTreeSet<[u8; 32]>,
 }
 impl StateSlot {
+    pub(crate) fn has_service_task(&self) -> bool {
+        self.task
+            .as_ref()
+            .is_some_and(|task| task.service.is_some())
+    }
     pub(crate) fn new(owner: WorkbenchState) -> Self {
         Self {
             owner: Some(owner),
@@ -115,6 +154,7 @@ impl StateSlot {
             cleanup: None,
             repair_needed: false,
             lost: false,
+            service_submissions: BTreeSet::new(),
         }
     }
     pub(crate) fn local(&self) -> Result<&WorkbenchState> {
@@ -171,7 +211,12 @@ impl StateSlot {
         let Some(worker) = &mut task.worker else {
             return Ok(false);
         };
-        match worker.try_reclaim() {
+        let result = worker.try_reclaim();
+        if let Some(progress) = worker.service_progress() {
+            task.stopping |= progress.phase == service::ServicePhase::Stopping;
+            task.service = Some(progress);
+        }
+        match result {
             Ok(None) => Ok(false),
             Ok(Some(exit)) => {
                 // Restore the original owner before recording any fallible cleanup.
@@ -184,6 +229,9 @@ impl StateSlot {
                     maintenance: exit.maintenance,
                 });
                 task.worker = None;
+                if let Some(progress) = &mut task.service {
+                    progress.phase = service::ServicePhase::Exited;
+                }
                 Ok(true)
             }
             Err(error) => {
@@ -373,6 +421,7 @@ impl Workbench {
                         worker: None,
                         handle: None,
                         stopping: false,
+                        service: None,
                         exit: Some(ExitStatus {
                             execution: Err(JobError::InvalidOptions),
                             disconnect: Err(JobError::Disconnect),
@@ -408,6 +457,7 @@ impl Workbench {
                     worker: None,
                     handle: None,
                     stopping: false,
+                    service: None,
                     exit: Some(ExitStatus {
                         execution: Err(error),
                         disconnect,
@@ -420,10 +470,11 @@ impl Workbench {
         let submitted = worker.submit_brokered(job.input, job.router, job.timeout);
         self.state.task = Some(Task {
             key,
-            worker: Some(worker),
+            worker: Some(Executor::Io(Box::new(worker))),
             handle: None,
             stopping: false,
             exit: None,
+            service: None,
         });
         let task = self.state.checked_task(key)?;
         match submitted {
@@ -438,7 +489,7 @@ impl Workbench {
         }
         // Draining preserves Ready until read, abandonment or deadline, so final
         // delivery can still check the original active instance and authority.
-        if let Some(worker) = &task.worker
+        if let Some(Executor::Io(worker)) = &task.worker
             && let Err(error) = worker.drain(options.lifetime)
         {
             self.state.request_stop();
