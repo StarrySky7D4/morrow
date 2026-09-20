@@ -554,3 +554,7 @@ SDK 源码包、运行时、核心、宿主和审计进入 test.48，应用构�
 ## 2026-09-20 持久出站批准进展
 
 原Store v20新增固定origin／方法／网络profile／额度／TLS根的端点批准与系统保护凭据。Windows复用原DPAPI边界并分离HTTP保护域，解密前验证原Store和实际实例的HttpRequest／CredentialUse；活动端点保留撤销与期限检查。合同见[持久出站授权](PLUGIN_OUTBOUND_AUTHORITY.md)，验证见[报告](../reports/outbound-authority-2026-09-20.md)。下一项主应用端点与凭据管理、授权与任务显示；后续路径范围、OAuth、提供者核对、文件系统与三语言SDK保持原范围。
+
+## 2026-09-20 主应用 IO 类别批准进展
+
+插件库已显示并独立保存／撤销网络与文件类别，沿原Manager和Registry，不自动启用插件或改变内容权限；修订冲突不自动重试，真实私有协议重启恢复已验。会话代数阻止切换工作台后的旧回包和旧关闭失败污染当前界面。见[合同](PLUGIN_IO_MANAGEMENT.md)与[报告](../reports/plugin-io-management-2026-09-20.md)。下一项原Store资源／凭据管理和原审计会话的作业所有权接线，其后再验实际主应用HTTP任务。类别UI不是端点批准、网络调用能力或完整IO-E2验收。

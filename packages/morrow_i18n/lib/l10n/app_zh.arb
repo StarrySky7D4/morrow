@@ -177,6 +177,20 @@
       }
     }
   },
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsOtherCapability": {
     "placeholders": {
       "name": {
@@ -985,6 +999,7 @@
   "pluginsCloseUnknown": "插件界面关闭未能确认",
   "pluginsCloseView": "关闭界面",
   "pluginsConnectionLost": "连接已中断，请重新打开此插件界面。",
+  "pluginsContentPermissions": "内容权限",
   "pluginsCreate": "新建内容",
   "pluginsDeclared": "声明权限：{permissions}",
   "pluginsDependenciesNotice": "声明了依赖，需要在宿主配置。本页不会批准依赖。",
@@ -1009,6 +1024,23 @@
   "pluginsInspectFailed": "插件预览未能读取",
   "pluginsInspectedOnly": "目前仅检查了文件。导入后仍需单独启用。",
   "pluginsInsufficientApproval": "插件已启用，但内容权限不足；工作台保持只读。可停用后重新确认权限。",
+  "pluginsIoApproved": "已批准：{permissions}",
+  "pluginsIoCredentialUse": "使用已批准的凭据",
+  "pluginsIoDeclared": "请求的网络与文件权限：{permissions}",
+  "pluginsIoFileCreate": "创建文件",
+  "pluginsIoFileDelete": "删除文件",
+  "pluginsIoFileList": "浏览已批准的文件夹",
+  "pluginsIoFileRead": "读取已批准的文件",
+  "pluginsIoFileReplace": "替换文件",
+  "pluginsIoHttpListen": "监听网络连接",
+  "pluginsIoHttpPublish": "对外提供 API 服务",
+  "pluginsIoHttpRequest": "调用网络 API",
+  "pluginsIoNoneApproved": "尚未批准网络与文件权限",
+  "pluginsIoRevoke": "撤销全部网络与文件权限",
+  "pluginsIoSave": "保存网络与文件权限",
+  "pluginsIoScopeNotice": "这些选择仅保存权限类别。连接地址、文件范围和凭据仍需另行批准；尚未提供的能力不会因此启用。修改后需重新打开插件表单。",
+  "pluginsIoTitle": "网络与文件权限",
+  "pluginsIoWebSocketConnect": "连接 WebSocket 服务",
   "pluginsListUnknown": "插件列表未能确认",
   "pluginsManageAbove": "请使用上方工作台插件按钮管理此插件。",
   "pluginsManagementUnavailable": "插件管理暂不可用，已有内容仍可读取。",

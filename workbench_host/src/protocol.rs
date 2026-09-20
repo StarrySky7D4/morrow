@@ -122,6 +122,14 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
                 r.get_limit() == 1,
             )?;
         }
+        wire::Action::PluginApproveIo => {
+            let values = r.get_approved_io_capabilities()?;
+            if values.len() > 10 {
+                return Err("IO capability decision budget".into());
+            }
+            let approved = values.iter().map(text).collect::<Result<Vec<_>>>()?;
+            host.configure_external_io(&id, r.get_sha256()?, r.get_revision(), &approved)?;
+        }
         wire::Action::PluginRemove => {
             host.remove_external(&id, r.get_sha256()?, r.get_revision())?;
         }
@@ -601,6 +609,18 @@ fn plugin_catalog_reply(
                 .get_approved()
                 .expect("initialized list")
                 .set(index as u32, value.as_str());
+        }
+        {
+            let mut values = row.reborrow().init_declared_io(entry.declared_io.len() as u32);
+            for (index, value) in entry.declared_io.iter().enumerate() {
+                values.set(index as u32, value.as_str());
+            }
+        }
+        {
+            let mut values = row.reborrow().init_approved_io(entry.approved_io.len() as u32);
+            for (index, value) in entry.approved_io.iter().enumerate() {
+                values.set(index as u32, value.as_str());
+            }
         }
         for (index, value) in entry.dependencies.iter().enumerate() {
             if index == 0 {

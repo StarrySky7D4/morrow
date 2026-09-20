@@ -1022,6 +1022,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Connection interrupted. Reopen this plugin view.';
 
   @override
+  String get pluginsContentPermissions => 'Content permissions';
+
+  @override
   String get pluginsCreate => 'Create content';
 
   @override
@@ -1107,6 +1110,62 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pluginsInsufficientApproval =>
       'The plugin is enabled but needs content permission. The workbench stays read-only. Disable it to review permissions again.';
+
+  @override
+  String pluginsIoApproved(String permissions) {
+    return 'Approved: $permissions';
+  }
+
+  @override
+  String get pluginsIoCredentialUse => 'Use approved credentials';
+
+  @override
+  String pluginsIoDeclared(String permissions) {
+    return 'Requested network and file permissions: $permissions';
+  }
+
+  @override
+  String get pluginsIoFileCreate => 'Create files';
+
+  @override
+  String get pluginsIoFileDelete => 'Delete files';
+
+  @override
+  String get pluginsIoFileList => 'Browse approved folders';
+
+  @override
+  String get pluginsIoFileRead => 'Read approved files';
+
+  @override
+  String get pluginsIoFileReplace => 'Replace files';
+
+  @override
+  String get pluginsIoHttpListen => 'Listen for network connections';
+
+  @override
+  String get pluginsIoHttpPublish => 'Provide an API service';
+
+  @override
+  String get pluginsIoHttpRequest => 'Call network APIs';
+
+  @override
+  String get pluginsIoNoneApproved => 'No network or file permissions approved';
+
+  @override
+  String get pluginsIoRevoke => 'Revoke all network and file permissions';
+
+  @override
+  String get pluginsIoSave => 'Save network and file permissions';
+
+  @override
+  String get pluginsIoScopeNotice =>
+      'These choices save permission categories only. Server addresses, file access and credentials need separate approval; unavailable features remain unavailable. Reopen the plugin form after changes.';
+
+  @override
+  String get pluginsIoTitle => 'Network and file permissions';
+
+  @override
+  String get pluginsIoWebSocketConnect => 'Connect to WebSocket services';
 
   @override
   String get pluginsListUnknown => 'The plugin list could not be confirmed';

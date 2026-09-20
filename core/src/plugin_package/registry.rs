@@ -574,6 +574,12 @@ impl Registry {
         if selection.digest != expected_digest {
             return Err(Error::RevisionConflict);
         }
+        // Revoking every IO category must remain possible if the selected package
+        // is missing or damaged. Identity and revision are still checked above;
+        // any nonempty decision needs the exact validated declaration below.
+        if approved.is_empty() {
+            return Ok(());
+        }
         let package = self.load(selection)?;
         if !approved.is_subset(package.io_capabilities()) {
             return Err(Error::Invalid("IO approval exceeds declaration"));

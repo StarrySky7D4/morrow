@@ -469,3 +469,81 @@ fn dependency_locks_never_inherit_caller_io_approval() {
             .is_empty()
     );
 }
+
+#[test]
+fn missing_package_can_only_clear_io_approval_with_current_identity_and_revision() {
+    let (d, mut r) = setup();
+    let p = package(
+        "1.0.0",
+        vec![IoCapability::HttpRequest, IoCapability::CredentialUse],
+    );
+    let archive = Catalog::open(&d.path().join("packages"))
+        .unwrap()
+        .install(&p)
+        .unwrap();
+    r.select(p.digest(), r.revision()).unwrap();
+    r.approve(
+        ID,
+        p.digest(),
+        BTreeSet::from([GrantKind::ReadContent]),
+        r.revision(),
+    )
+    .unwrap();
+    r.approve_io(
+        ID,
+        p.digest(),
+        BTreeSet::from([IoCapability::HttpRequest]),
+        r.revision(),
+    )
+    .unwrap();
+    r.set_enabled(ID, p.digest(), true, r.revision()).unwrap();
+    fs::remove_file(archive).unwrap();
+    let revision = r.revision();
+    let original = fs::read(path(&d)).unwrap();
+    assert!(
+        r.approve_io(
+            ID,
+            p.digest(),
+            BTreeSet::from([IoCapability::HttpRequest]),
+            revision
+        )
+        .is_err()
+    );
+    assert!(
+        r.approve_io(
+            ID,
+            p.digest(),
+            BTreeSet::from([IoCapability::CredentialUse]),
+            revision
+        )
+        .is_err()
+    );
+    assert_eq!(
+        r.approve_io(ID, p.digest(), BTreeSet::new(), revision - 1),
+        Err(Error::RevisionConflict)
+    );
+    assert_eq!(
+        r.approve_io(ID, [0; 32], BTreeSet::new(), revision),
+        Err(Error::RevisionConflict)
+    );
+    assert_eq!(
+        r.approve_io("org.example.missing", p.digest(), BTreeSet::new(), revision),
+        Err(Error::NotFound)
+    );
+    assert_eq!(fs::read(path(&d)).unwrap(), original);
+    r.approve_io(ID, p.digest(), BTreeSet::new(), revision)
+        .unwrap();
+    assert_eq!(r.revision(), revision + 1);
+    drop(r);
+    // Missing installed content still fails startup closed; repairing the exact
+    // immutable archive must not restore the previously persisted IO approval.
+    assert!(open(&d).is_err());
+    install(&d, &p);
+    let restored = open(&d).unwrap();
+    let selected = restored.selection(ID).unwrap();
+    assert!(selected.approved_io.is_empty());
+    assert_eq!(selected.approved, BTreeSet::from([GrantKind::ReadContent]));
+    assert!(selected.enabled);
+    assert_eq!(selected.digest, p.digest());
+    assert!(restored.resolve_enabled(ID).is_ok());
+}

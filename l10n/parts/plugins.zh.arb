@@ -176,5 +176,37 @@
   "pluginsBuiltinEmpty": "输入后查看大写转换",
   "@pluginsBuiltinEmpty": {
     "description": "First-party workbench text tool display only"
-  }
+  },
+  "pluginsIoTitle": "网络与文件权限",
+  "pluginsIoScopeNotice": "这些选择仅保存权限类别。连接地址、文件范围和凭据仍需另行批准；尚未提供的能力不会因此启用。修改后需重新打开插件表单。",
+  "pluginsIoNoneApproved": "尚未批准网络与文件权限",
+  "pluginsIoApproved": "已批准：{permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "请求的网络与文件权限：{permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "保存网络与文件权限",
+  "pluginsIoRevoke": "撤销全部网络与文件权限",
+  "pluginsContentPermissions": "内容权限",
+  "pluginsIoFileRead": "读取已批准的文件",
+  "pluginsIoFileList": "浏览已批准的文件夹",
+  "pluginsIoFileCreate": "创建文件",
+  "pluginsIoFileReplace": "替换文件",
+  "pluginsIoFileDelete": "删除文件",
+  "pluginsIoHttpRequest": "调用网络 API",
+  "pluginsIoHttpListen": "监听网络连接",
+  "pluginsIoHttpPublish": "对外提供 API 服务",
+  "pluginsIoCredentialUse": "使用已批准的凭据",
+  "pluginsIoWebSocketConnect": "连接 WebSocket 服务"
 }

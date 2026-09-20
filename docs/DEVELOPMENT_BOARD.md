@@ -27,7 +27,7 @@
 | 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；出站受保护凭据已接Store v20及原worker；下一项主应用配置，再补Unknown核对、因果关系、跨进程时钟高水位和证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
-| 5 / IO-E2 | 待 B2/D1/D2/D3 / P1 | workbench_host＋Flutter 管理界面 | 文件／网络／监听／发布分别显示授权、任务及恢复状态；独立插件真实调用和提供服务，用户资料无隐式迁移 |
+| 5 / IO-E2 | 已验类别管理子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [类别管理](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；仍需资源与凭据录入、任务及恢复状态、原审计会话的作业所有权接线，再验独立插件真实调用和提供服务，用户资料无隐式迁移 |
 | 5 / ROAD-08-IO | 待 C1/C2 与实际后端 / P0 | 录制证据与独立验证器 | A→B→IO→内容提交→封存→删除安装来源→隔离重放；真实故障、合法退休与缺材料分类；重放禁止实际外发 |
 | 6 / IO-E3 | 待基础双向 IO / P1 | NET-2–8／NODE-4–7 按各自依赖 | OAuth／多账号、上传下载、分页限流、流/SSE/WebSocket、webhook、持久服务与 TLS 运维；每个 profile 单独验收 |
 
@@ -64,3 +64,13 @@
 ## 持久出站授权进展（2026-09-20）
 
 [出站批准合同](PLUGIN_OUTBOUND_AUTHORITY.md)：端点批准和系统保护凭据保存在原Store v20，Windows使用与审计密钥隔离的DPAPI域；实际插件实例与凭据使用权限在解密前复核，修订更新继续走原worker并撤销旧活动授权。后续主应用需提供端点批准、凭据录入／轮换、任务与恢复界面；其他平台凭据提供者、OAuth及完整网络SDK继续独立验收。验证结果见[本轮报告](../reports/outbound-authority-2026-09-20.md)。
+
+## 主应用 IO 类别管理进展（2026-09-20）
+
+[接口合同](PLUGIN_IO_MANAGEMENT.md)与[验证报告](../reports/plugin-io-management-2026-09-20.md)：主应用支持独立保存／撤销网络和文件类别，保持内容批准与启用状态；真实 Flutter→Rust 进程重启恢复通过。切换工作台后的迟到回包与旧关闭失败已隔离。类别批准不代替资源授权，也没有接通实际网络任务。
+
+下一编码顺序：原Store有界元数据列表与凭据录入／轮换 → 原Storage/审计Session/Pool的作业所有权接线 → 短响应任务协议与真实HTTP主应用链路。禁止另建运行时或数据库绕过唯一权威；Unknown核对、因果链、文件系统及完整SDK继续保持原退出门槛。
+
+### 本轮发现的 Web 构建阻断
+
+Flutter Web 的 JavaScript Release 构建在现有 Cap'n Proto 反射代码上失败：`ui.capnp.dart` 的64位schema ID不能精确表示为JavaScript数值。保留原类型编号和协议校验，后续修复生成／元数据层并验证精确身份与原二进制向量；本轮Wasm dry run不计完整Web通过。详见[本轮故障记录](../reports/plugin-io-management-2026-09-20.md)。此项属于ROAD-01b构建回执与全平台资格，不以原生测试代替。

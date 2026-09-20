@@ -135,6 +135,8 @@ class RustWorkbench
             available: row.available,
             declared: texts(row.declared),
             approved: texts(row.approved),
+            declaredIo: texts(row.declaredIo),
+            approvedIo: texts(row.approvedIo),
             dependencies: texts(row.dependencies),
             issue: row.issue ?? '',
             handlers: [
@@ -215,6 +217,24 @@ class RustWorkbench
         _externalSelection(r, entry, revision);
         r.limit = enable ? 1 : 0;
         final decisions = r.initApprovedCapabilities(approved.length);
+        for (var index = 0; index < approved.length; index++) {
+          decisions[index] = approved[index];
+        }
+      },
+    );
+  }
+
+  @override
+  Future<void> configureExternalIo(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    List<String> approved,
+  ) async {
+    await _call(
+      host.Action.pluginApproveIo,
+      configure: (r) {
+        _externalSelection(r, entry, revision);
+        final decisions = r.initApprovedIoCapabilities(approved.length);
         for (var index = 0; index < approved.length; index++) {
           decisions[index] = approved[index];
         }

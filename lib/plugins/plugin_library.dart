@@ -31,11 +31,13 @@ class PluginLibraryEntry {
     required this.dependencies,
     required this.handlers,
     required this.issue,
+    this.declaredIo = const [],
+    this.approvedIo = const [],
   });
   final String id, name, version, issue;
   final Uint8List digest;
   final bool enabled, builtin, available;
-  final List<String> declared, approved, dependencies;
+  final List<String> declared, approved, dependencies, declaredIo, approvedIo;
   final List<PluginTransformHandler> handlers;
 }
 
@@ -60,6 +62,11 @@ abstract interface class ExternalPluginControl {
     BigInt revision,
     List<String> approved,
     bool enable,
+  );
+  Future<void> configureExternalIo(
+    PluginLibraryEntry entry,
+    BigInt revision,
+    List<String> approved,
   );
   Future<void> removeExternal(PluginLibraryEntry entry, BigInt revision);
   Future<Uint8List> transformExternal(
@@ -116,10 +123,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
   List<PluginLibraryEntry> _entries = [];
   BigInt? _revision;
   bool _busy = false, _confirmed = false;
+  int _epoch = 0;
   String? _candidatePath, _toolId, _fileName;
   String Function(AppLocalizations)? _message, _result;
   PluginLibraryPage? _preview;
   final Map<String, Set<String>> _approvals = {};
+  final Map<String, Set<String>> _ioApprovals = {};
   final _text = TextEditingController();
   PluginTransformHandler? _handler;
   Uint8List? _fileBytes;
@@ -127,8 +136,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
   _ObservedTransport? _transport, _unclosed;
   String? _formId;
 
-  bool _current(ExternalPluginControl backend) =>
-      mounted && identical(widget.backend, backend);
+  bool _current(ExternalPluginControl backend, int epoch) =>
+      mounted && epoch == _epoch && identical(widget.backend, backend);
   @override
   void initState() {
     super.initState();
@@ -139,6 +148,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
   void didUpdateWidget(covariant PluginLibrary oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.backend, widget.backend)) {
+      _epoch++;
       _releaseForm();
       _busy = false;
       _confirmed = false;
@@ -183,12 +193,13 @@ class _PluginLibraryState extends State<PluginLibrary> {
 
   @override
   void dispose() {
+    _epoch++;
     _releaseForm();
     _text.dispose();
     super.dispose();
   }
 
-  Future<void> _closeForm() async {
+  Future<void> _closeForm(int epoch) async {
     final controller = _controller;
     final transport = _transport ?? _unclosed;
     if (transport == null) return;
@@ -200,13 +211,16 @@ class _PluginLibraryState extends State<PluginLibrary> {
         // A new explicit user action may retry the idempotent close request.
         await transport.retryClose();
       }
-      if (identical(_unclosed, transport)) _unclosed = null;
+      if (mounted && epoch == _epoch && identical(_unclosed, transport)) {
+        _unclosed = null;
+      }
     } catch (_) {
-      _unclosed = transport;
+      if (mounted && epoch == _epoch) _unclosed = transport;
       rethrow;
     } finally {
-      controller?.dispose();
-      if (identical(_controller, controller)) {
+      // On replacement/disposal, _releaseForm owns cleanup of the old controller.
+      if (mounted && epoch == _epoch) controller?.dispose();
+      if (mounted && epoch == _epoch && identical(_controller, controller)) {
         _controller = null;
         _transport = null;
         _formId = null;
@@ -215,7 +229,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
     }
   }
 
-  Future<void> _loadPages(ExternalPluginControl backend) async {
+  Future<void> _loadPages(ExternalPluginControl backend, int epoch) async {
     var cursor = '';
     BigInt? revision;
     final entries = <PluginLibraryEntry>[];
@@ -226,7 +240,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
         throw const FormatException('插件分页未能结束');
       }
       final page = await backend.pluginPage(cursor: cursor, revision: revision);
-      if (!_current(backend)) return;
+      if (!_current(backend, epoch)) return;
       revision ??= page.revision;
       if (page.revision != revision) throw const FormatException('插件列表已变化');
       for (final entry in page.entries) {
@@ -235,15 +249,17 @@ class _PluginLibraryState extends State<PluginLibrary> {
       }
       cursor = page.cursor;
     } while (cursor.isNotEmpty);
-    if (!_current(backend)) return;
+    if (!_current(backend, epoch)) return;
     setState(() {
       _entries = entries;
       _revision = revision;
       _confirmed = true;
       _clearTool();
       _approvals.clear();
+      _ioApprovals.clear();
       for (final entry in entries) {
         _approvals[entry.id] = entry.approved.toSet();
+        _ioApprovals[entry.id] = entry.approvedIo.toSet();
       }
       _preview = null;
       _candidatePath = null;
@@ -251,44 +267,45 @@ class _PluginLibraryState extends State<PluginLibrary> {
   }
 
   Future<void> _guard(
-    Future<void> Function(ExternalPluginControl) action,
+    Future<void> Function(ExternalPluginControl, int) action,
     String Function(AppLocalizations) failure,
   ) async {
     if (_busy) return;
     final backend = widget.backend;
+    final epoch = _epoch;
     setState(() {
       _busy = true;
       _message = null;
     });
     try {
-      await action(backend);
+      await action(backend, epoch);
     } catch (_) {
-      if (!_current(backend)) return;
+      if (!_current(backend, epoch)) return;
       setState(() {
         _confirmed = false;
         _message = (l) => l.pluginsUnconfirmed(failure(l));
       });
       try {
-        await _loadPages(backend);
+        await _loadPages(backend, epoch);
       } catch (_) {
-        if (_current(backend)) {
+        if (_current(backend, epoch)) {
           setState(() => _message = (l) => l.pluginsRefreshFailed(failure(l)));
         }
       }
-      if (_current(backend)) widget.onChanged();
+      if (_current(backend, epoch)) widget.onChanged();
     } finally {
-      if (_current(backend)) setState(() => _busy = false);
+      if (_current(backend, epoch)) setState(() => _busy = false);
     }
   }
 
-  Future<void> _refresh() => _guard((backend) async {
-    await _closeForm();
-    if (!_current(backend)) return;
+  Future<void> _refresh() => _guard((backend, epoch) async {
+    await _closeForm(epoch);
+    if (!_current(backend, epoch)) return;
     setState(() {
       _confirmed = false;
       _clearTool();
     });
-    await _loadPages(backend);
+    await _loadPages(backend, epoch);
   }, (l) => l.pluginsListUnknown);
 
   Future<String?> _pickPackage() async {
@@ -303,32 +320,32 @@ class _PluginLibraryState extends State<PluginLibrary> {
     return selected?.path;
   }
 
-  Future<void> _inspect() => _guard((backend) async {
+  Future<void> _inspect() => _guard((backend, epoch) async {
     final path = await (widget.pickPackage ?? _pickPackage)();
-    if (path == null || !_current(backend)) return;
+    if (path == null || !_current(backend, epoch)) return;
     final preview = await backend.inspectPlugin(path);
-    if (!_current(backend)) return;
+    if (!_current(backend, epoch)) return;
     if (preview.entries.length != 1) throw const FormatException('插件预览不完整');
     setState(() {
       _candidatePath = path;
       _preview = preview;
     });
   }, (l) => l.pluginsInspectFailed);
-  Future<void> _import() => _guard((backend) async {
+  Future<void> _import() => _guard((backend, epoch) async {
     final preview = _preview;
     final path = _candidatePath;
     if (preview == null || path == null) return;
-    await _closeForm();
-    if (!_current(backend)) return;
+    await _closeForm(epoch);
+    if (!_current(backend, epoch)) return;
     await backend.importPlugin(
       path,
       Uint8List.fromList(preview.entries.single.digest),
       preview.revision,
     );
-    if (!_current(backend)) return;
+    if (!_current(backend, epoch)) return;
     _clearTool();
-    await _loadPages(backend);
-    if (!_current(backend)) return;
+    await _loadPages(backend, epoch);
+    if (!_current(backend, epoch)) return;
     final alreadyEnabled = _entries.any(
       (entry) => entry.id == preview.entries.single.id && entry.enabled,
     );
@@ -339,31 +356,46 @@ class _PluginLibraryState extends State<PluginLibrary> {
     widget.onChanged();
   }, (l) => l.pluginsImportUnknown);
   Future<void> _configure(PluginLibraryEntry entry, bool enable) =>
-      _guard((backend) async {
+      _guard((backend, epoch) async {
         final revision = _revision!;
         final approval = enable
             ? (_approvals[entry.id] ?? {}).toList()
             : entry.approved;
-        await _closeForm();
-        if (!_current(backend)) return;
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
         await backend.configureExternal(entry, revision, approval, enable);
-        if (!_current(backend)) return;
+        if (!_current(backend, epoch)) return;
         _clearTool();
-        await _loadPages(backend);
-        if (_current(backend)) widget.onChanged();
+        await _loadPages(backend, epoch);
+        if (_current(backend, epoch)) widget.onChanged();
       }, (l) => l.pluginsApprovalUnknown);
-  Future<void> _remove(PluginLibraryEntry entry) => _guard((backend) async {
-    final revision = _revision!;
-    await _closeForm();
-    if (!_current(backend)) return;
-    await backend.removeExternal(entry, revision);
-    if (!_current(backend)) return;
-    _clearTool();
-    await _loadPages(backend);
-    if (!_current(backend)) return;
-    setState(() => _message = (l) => l.pluginsUninstalled);
-    widget.onChanged();
-  }, (l) => l.pluginsUninstallUnknown);
+  Future<void> _configureIo(PluginLibraryEntry entry, {bool revoke = false}) =>
+      _guard((backend, epoch) async {
+        final revision = _revision!;
+        final approval = revoke
+            ? <String>[]
+            : (_ioApprovals[entry.id] ?? {}).toList();
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        await backend.configureExternalIo(entry, revision, approval);
+        if (!_current(backend, epoch)) return;
+        _clearTool();
+        await _loadPages(backend, epoch);
+        if (_current(backend, epoch)) widget.onChanged();
+      }, (l) => l.pluginsApprovalUnknown);
+  Future<void> _remove(PluginLibraryEntry entry) =>
+      _guard((backend, epoch) async {
+        final revision = _revision!;
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        await backend.removeExternal(entry, revision);
+        if (!_current(backend, epoch)) return;
+        _clearTool();
+        await _loadPages(backend, epoch);
+        if (!_current(backend, epoch)) return;
+        setState(() => _message = (l) => l.pluginsUninstalled);
+        widget.onChanged();
+      }, (l) => l.pluginsUninstallUnknown);
 
   bool _standardUi(PluginLibraryEntry entry) =>
       entry.handlers.any(
@@ -386,25 +418,26 @@ class _PluginLibraryState extends State<PluginLibrary> {
       .handlers
       .where((h) => h.name != 'ui.form' && h.name != 'ui.edit')
       .toList();
-  Future<void> _openForm(PluginLibraryEntry entry) => _guard((backend) async {
-    final revision = _revision!;
-    await _closeForm();
-    if (!_current(backend)) return;
-    final transport = _ObservedTransport(
-      backend.createExternalPluginUi(entry, revision),
-    );
-    final controller = PluginUiController(transport);
-    setState(() {
-      _transport = transport;
-      _controller = controller;
-      _formId = entry.id;
-    });
-    await controller.open('');
-    if (_current(backend) && controller.failure != null) {
-      final failure = controller.failure!;
-      setState(() => _message = (l) => pluginUiFailureMessage(l, failure));
-    }
-  }, (l) => l.pluginsViewFailed);
+  Future<void> _openForm(PluginLibraryEntry entry) =>
+      _guard((backend, epoch) async {
+        final revision = _revision!;
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        final transport = _ObservedTransport(
+          backend.createExternalPluginUi(entry, revision),
+        );
+        final controller = PluginUiController(transport);
+        setState(() {
+          _transport = transport;
+          _controller = controller;
+          _formId = entry.id;
+        });
+        await controller.open('');
+        if (_current(backend, epoch) && controller.failure != null) {
+          final failure = controller.failure!;
+          setState(() => _message = (l) => pluginUiFailureMessage(l, failure));
+        }
+      }, (l) => l.pluginsViewFailed);
   void _clearTool() {
     _toolId = null;
     _handler = null;
@@ -422,14 +455,14 @@ class _PluginLibraryState extends State<PluginLibrary> {
     });
   }
 
-  Future<void> _pickInput() => _guard((backend) async {
+  Future<void> _pickInput() => _guard((backend, epoch) async {
     final handler = _handler;
     if (handler == null) return;
     final file = await openFile();
-    if (file == null || !_current(backend)) return;
+    if (file == null || !_current(backend, epoch)) return;
     final limit = handler.maxInputBytes.clamp(0, 65536).toInt();
     if (await file.length() > limit) {
-      if (_current(backend)) {
+      if (_current(backend, epoch)) {
         setState(() => _message = (l) => l.pluginsFileLimit(limit));
       }
       return;
@@ -441,7 +474,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       }
       builder.add(chunk);
     }
-    if (_current(backend)) {
+    if (_current(backend, epoch)) {
       setState(() {
         _fileBytes = builder.takeBytes();
         _fileName = file.name;
@@ -449,7 +482,10 @@ class _PluginLibraryState extends State<PluginLibrary> {
       });
     }
   }, (l) => l.pluginsInputFailed);
-  Future<void> _transform(PluginLibraryEntry entry) => _guard((backend) async {
+  Future<void> _transform(PluginLibraryEntry entry) => _guard((
+    backend,
+    epoch,
+  ) async {
     final handler = _handler;
     final revision = _revision;
     if (handler == null || revision == null) return;
@@ -465,7 +501,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       handler,
       Uint8List.fromList(input),
     );
-    if (!_current(backend)) return;
+    if (!_current(backend, epoch)) return;
     if (bytes.length > handler.maxOutputBytes || bytes.length > 65536) {
       throw const FormatException('输出超出限制');
     }
@@ -521,6 +557,92 @@ class _PluginLibraryState extends State<PluginLibrary> {
         'ReadAttachment': L10n.of(context).pluginsAttachment,
       }[name] ??
       L10n.of(context).pluginsOtherCapability(name);
+  String _ioCapability(String name) {
+    final l = L10n.of(context);
+    return {
+          'file-read': l.pluginsIoFileRead,
+          'file-list': l.pluginsIoFileList,
+          'file-create': l.pluginsIoFileCreate,
+          'file-replace': l.pluginsIoFileReplace,
+          'file-delete': l.pluginsIoFileDelete,
+          'http-request': l.pluginsIoHttpRequest,
+          'http-listen': l.pluginsIoHttpListen,
+          'http-publish': l.pluginsIoHttpPublish,
+          'credential-use': l.pluginsIoCredentialUse,
+          'websocket-connect': l.pluginsIoWebSocketConnect,
+        }[name] ??
+        l.pluginsOtherCapability(name);
+  }
+
+  Widget _ioPermissions(PluginLibraryEntry entry) {
+    final l = L10n.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          l.pluginsIoTitle,
+          style: TextStyle(
+            color: widget.ink,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        _note(l.pluginsIoScopeNotice),
+        _note(
+          entry.approvedIo.isEmpty
+              ? l.pluginsIoNoneApproved
+              : l.pluginsIoApproved(
+                  entry.approvedIo.map(_ioCapability).join(', '),
+                ),
+        ),
+        ...entry.declaredIo.map(
+          (cap) => CheckboxListTile(
+            key: ValueKey('plugin-io-cap-${entry.id}-$cap'),
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text(
+              _ioCapability(cap),
+              style: TextStyle(color: widget.ink, fontSize: 12),
+            ),
+            value: _ioApprovals[entry.id]?.contains(cap) ?? false,
+            onChanged: _busy || !_confirmed || !entry.available
+                ? null
+                : (checked) => setState(() {
+                    final selected = _ioApprovals.putIfAbsent(
+                      entry.id,
+                      () => {},
+                    );
+                    checked == true ? selected.add(cap) : selected.remove(cap);
+                  }),
+          ),
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _button(
+              l.pluginsIoSave,
+              'plugin-io-save-${entry.id}',
+              !_confirmed || !entry.available
+                  ? null
+                  : () => _configureIo(entry),
+              icon: Icons.security_outlined,
+            ),
+            if (entry.approvedIo.isNotEmpty)
+              _button(
+                l.pluginsIoRevoke,
+                'plugin-io-revoke-${entry.id}',
+                !_confirmed ? null : () => _configureIo(entry, revoke: true),
+                icon: Icons.block_outlined,
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _note(String text) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 5),
     child: Text(
@@ -556,6 +678,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
                 context,
               ).pluginsDeclared(entry.declared.map(_capability).join(', ')),
       ),
+      if (entry.declaredIo.isNotEmpty)
+        _note(
+          L10n.of(
+            context,
+          ).pluginsIoDeclared(entry.declaredIo.map(_ioCapability).join(', ')),
+        ),
       if (entry.dependencies.isNotEmpty) ...[
         _note(L10n.of(context).pluginsDependenciesNotice),
         ...entry.dependencies.map(_note),
@@ -586,6 +714,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
         if (entry.builtin)
           _note(L10n.of(context).pluginsManageAbove)
         else ...[
+          if (entry.declaredIo.isNotEmpty || entry.approvedIo.isNotEmpty)
+            _ioPermissions(entry),
+          if (entry.declared.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _note(L10n.of(context).pluginsContentPermissions),
+          ],
           ...entry.declared.map(
             (cap) => CheckboxListTile(
               key: ValueKey('plugin-cap-${entry.id}-$cap'),
@@ -656,7 +790,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                           if (_formId == entry.id) {
                             unawaited(
                               _guard(
-                                (_) => _closeForm(),
+                                (_, epoch) => _closeForm(epoch),
                                 (l) => l.pluginsCloseUnknown,
                               ),
                             );

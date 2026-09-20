@@ -943,6 +943,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsConnectionLost => '连接已中断，请重新打开此插件界面。';
 
   @override
+  String get pluginsContentPermissions => '内容权限';
+
+  @override
   String get pluginsCreate => '新建内容';
 
   @override
@@ -1019,6 +1022,62 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsInsufficientApproval => '插件已启用，但内容权限不足；工作台保持只读。可停用后重新确认权限。';
+
+  @override
+  String pluginsIoApproved(String permissions) {
+    return '已批准：$permissions';
+  }
+
+  @override
+  String get pluginsIoCredentialUse => '使用已批准的凭据';
+
+  @override
+  String pluginsIoDeclared(String permissions) {
+    return '请求的网络与文件权限：$permissions';
+  }
+
+  @override
+  String get pluginsIoFileCreate => '创建文件';
+
+  @override
+  String get pluginsIoFileDelete => '删除文件';
+
+  @override
+  String get pluginsIoFileList => '浏览已批准的文件夹';
+
+  @override
+  String get pluginsIoFileRead => '读取已批准的文件';
+
+  @override
+  String get pluginsIoFileReplace => '替换文件';
+
+  @override
+  String get pluginsIoHttpListen => '监听网络连接';
+
+  @override
+  String get pluginsIoHttpPublish => '对外提供 API 服务';
+
+  @override
+  String get pluginsIoHttpRequest => '调用网络 API';
+
+  @override
+  String get pluginsIoNoneApproved => '尚未批准网络与文件权限';
+
+  @override
+  String get pluginsIoRevoke => '撤销全部网络与文件权限';
+
+  @override
+  String get pluginsIoSave => '保存网络与文件权限';
+
+  @override
+  String get pluginsIoScopeNotice =>
+      '这些选择仅保存权限类别。连接地址、文件范围和凭据仍需另行批准；尚未提供的能力不会因此启用。修改后需重新打开插件表单。';
+
+  @override
+  String get pluginsIoTitle => '网络与文件权限';
+
+  @override
+  String get pluginsIoWebSocketConnect => '连接 WebSocket 服务';
 
   @override
   String get pluginsListUnknown => '插件列表未能确认';

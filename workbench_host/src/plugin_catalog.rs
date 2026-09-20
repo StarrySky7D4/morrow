@@ -2,7 +2,7 @@
 use crate::{Result, Workbench, now};
 use morrow_core::{
     lifecycle::{GrantKind, InstancePhase},
-    plugin_package::{Package, catalog, registry::Selection},
+    plugin_package::{Package, catalog, io::IoCapability, registry::Selection},
     task::{Invocation, Transform},
 };
 use morrow_plugin_runtime::{
@@ -29,6 +29,8 @@ pub struct PluginEntry {
     pub available: bool,
     pub declared: Vec<String>,
     pub approved: Vec<String>,
+    pub declared_io: Vec<String>,
+    pub approved_io: Vec<String>,
     pub handlers: Vec<PluginHandler>,
     pub dependencies: Vec<String>,
     pub issue: String,
@@ -57,6 +59,36 @@ fn capability(kind: GrantKind) -> &'static str {
         GrantKind::EditContent => "edit-content",
         GrantKind::ReadContent => "read-content",
     }
+}
+fn io_capability(kind: IoCapability) -> &'static str {
+    match kind {
+        IoCapability::FileRead => "file-read",
+        IoCapability::FileList => "file-list",
+        IoCapability::FileCreate => "file-create",
+        IoCapability::FileReplace => "file-replace",
+        IoCapability::FileDelete => "file-delete",
+        IoCapability::HttpRequest => "http-request",
+        IoCapability::HttpListen => "http-listen",
+        IoCapability::HttpPublish => "http-publish",
+        IoCapability::CredentialUse => "credential-use",
+        IoCapability::WebSocketConnect => "websocket-connect",
+    }
+}
+fn io_approval(values: &[String]) -> Result<BTreeSet<IoCapability>> {
+    if values.len() > 10 {
+        return Err("IO capability decision budget".into());
+    }
+    let mut set = BTreeSet::new();
+    for value in values {
+        let kind = (1..=10)
+            .filter_map(|n| IoCapability::from_number(n).ok())
+            .find(|&kind| io_capability(kind) == value)
+            .ok_or("unknown IO capability")?;
+        if !set.insert(kind) {
+            return Err("duplicate IO capability".into());
+        }
+    }
+    Ok(set)
 }
 fn approval(values: &[String]) -> Result<BTreeSet<GrantKind>> {
     let mut set = BTreeSet::new();
@@ -142,6 +174,17 @@ impl Workbench {
             approved: selected.map_or(vec![], |s| {
                 s.approved.iter().map(|&k| capability(k).into()).collect()
             }),
+            declared_io: p
+                .io_capabilities()
+                .iter()
+                .map(|&k| io_capability(k).into())
+                .collect(),
+            approved_io: selected.map_or(vec![], |s| {
+                s.approved_io
+                    .iter()
+                    .map(|&k| io_capability(k).into())
+                    .collect()
+            }),
             handlers: m
                 .transform_handlers
                 .iter()
@@ -208,6 +251,12 @@ impl Workbench {
                     available: false,
                     declared: vec![],
                     approved: s.approved.iter().map(|&k| capability(k).into()).collect(),
+                    declared_io: vec![],
+                    approved_io: s
+                        .approved_io
+                        .iter()
+                        .map(|&k| io_capability(k).into())
+                        .collect(),
                     handlers: vec![],
                     dependencies: vec![],
                     issue: format!("已选包不可用：{e}"),
@@ -278,6 +327,40 @@ impl Workbench {
             .ok_or("插件目录不可用。")?
             .install(&p)?;
         let result = self.manager.as_mut().unwrap().select(&p, revision);
+        let cleanup = self.maintain_external();
+        result?;
+        cleanup
+    }
+    /// Category approval only: no endpoint, path, credential, object grant or enable decision.
+    pub fn configure_external_io(
+        &mut self,
+        id: &str,
+        digest: &[u8],
+        revision: u64,
+        approved: &[String],
+    ) -> Result<()> {
+        self.catalog_revision(Some(revision))?;
+        if self.builtin_id(id) {
+            return Err("built-in plugin requires its dedicated settings".into());
+        }
+        let allowed = io_approval(approved)?;
+        let selection = self
+            .manager
+            .as_ref()
+            .unwrap()
+            .selection(id)
+            .ok_or("plugin is not selected")?;
+        if digest != selection.digest {
+            return Err("plugin digest changed".into());
+        }
+        let exact_digest = selection.digest;
+        // Manager preflights the verified declaration before revoking. Empty approval
+        // can clear a missing package; expansions still require its original bytes.
+        let result = self
+            .manager
+            .as_mut()
+            .unwrap()
+            .approve_io(id, exact_digest, allowed, revision);
         let cleanup = self.maintain_external();
         result?;
         cleanup

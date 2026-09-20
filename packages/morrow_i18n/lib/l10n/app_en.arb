@@ -177,6 +177,20 @@
       }
     }
   },
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsOtherCapability": {
     "placeholders": {
       "name": {
@@ -985,6 +999,7 @@
   "pluginsCloseUnknown": "Closing the plugin view could not be confirmed",
   "pluginsCloseView": "Close view",
   "pluginsConnectionLost": "Connection interrupted. Reopen this plugin view.",
+  "pluginsContentPermissions": "Content permissions",
   "pluginsCreate": "Create content",
   "pluginsDeclared": "Declared permissions: {permissions}",
   "pluginsDependenciesNotice": "Dependencies must be configured in the host. This page does not approve them.",
@@ -1009,6 +1024,23 @@
   "pluginsInspectFailed": "The plugin preview could not be loaded",
   "pluginsInspectedOnly": "The file has only been inspected. Enable the plugin separately after importing it.",
   "pluginsInsufficientApproval": "The plugin is enabled but needs content permission. The workbench stays read-only. Disable it to review permissions again.",
+  "pluginsIoApproved": "Approved: {permissions}",
+  "pluginsIoCredentialUse": "Use approved credentials",
+  "pluginsIoDeclared": "Requested network and file permissions: {permissions}",
+  "pluginsIoFileCreate": "Create files",
+  "pluginsIoFileDelete": "Delete files",
+  "pluginsIoFileList": "Browse approved folders",
+  "pluginsIoFileRead": "Read approved files",
+  "pluginsIoFileReplace": "Replace files",
+  "pluginsIoHttpListen": "Listen for network connections",
+  "pluginsIoHttpPublish": "Provide an API service",
+  "pluginsIoHttpRequest": "Call network APIs",
+  "pluginsIoNoneApproved": "No network or file permissions approved",
+  "pluginsIoRevoke": "Revoke all network and file permissions",
+  "pluginsIoSave": "Save network and file permissions",
+  "pluginsIoScopeNotice": "These choices save permission categories only. Server addresses, file access and credentials need separate approval; unavailable features remain unavailable. Reopen the plugin form after changes.",
+  "pluginsIoTitle": "Network and file permissions",
+  "pluginsIoWebSocketConnect": "Connect to WebSocket services",
   "pluginsListUnknown": "The plugin list could not be confirmed",
   "pluginsManageAbove": "Manage this plugin using the workbench plugin controls above.",
   "pluginsManagementUnavailable": "Plugin management is unavailable. Existing content remains readable.",

@@ -1886,6 +1886,12 @@ abstract class AppLocalizations {
   /// **'Connection interrupted. Reopen this plugin view.'**
   String get pluginsConnectionLost;
 
+  /// No description provided for @pluginsContentPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Content permissions'**
+  String get pluginsContentPermissions;
+
   /// No description provided for @pluginsCreate.
   ///
   /// In en, this message translates to:
@@ -2029,6 +2035,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The plugin is enabled but needs content permission. The workbench stays read-only. Disable it to review permissions again.'**
   String get pluginsInsufficientApproval;
+
+  /// No description provided for @pluginsIoApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved: {permissions}'**
+  String pluginsIoApproved(String permissions);
+
+  /// No description provided for @pluginsIoCredentialUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use approved credentials'**
+  String get pluginsIoCredentialUse;
+
+  /// No description provided for @pluginsIoDeclared.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested network and file permissions: {permissions}'**
+  String pluginsIoDeclared(String permissions);
+
+  /// No description provided for @pluginsIoFileCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create files'**
+  String get pluginsIoFileCreate;
+
+  /// No description provided for @pluginsIoFileDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete files'**
+  String get pluginsIoFileDelete;
+
+  /// No description provided for @pluginsIoFileList.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse approved folders'**
+  String get pluginsIoFileList;
+
+  /// No description provided for @pluginsIoFileRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read approved files'**
+  String get pluginsIoFileRead;
+
+  /// No description provided for @pluginsIoFileReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace files'**
+  String get pluginsIoFileReplace;
+
+  /// No description provided for @pluginsIoHttpListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen for network connections'**
+  String get pluginsIoHttpListen;
+
+  /// No description provided for @pluginsIoHttpPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide an API service'**
+  String get pluginsIoHttpPublish;
+
+  /// No description provided for @pluginsIoHttpRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Call network APIs'**
+  String get pluginsIoHttpRequest;
+
+  /// No description provided for @pluginsIoNoneApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'No network or file permissions approved'**
+  String get pluginsIoNoneApproved;
+
+  /// No description provided for @pluginsIoRevoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke all network and file permissions'**
+  String get pluginsIoRevoke;
+
+  /// No description provided for @pluginsIoSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save network and file permissions'**
+  String get pluginsIoSave;
+
+  /// No description provided for @pluginsIoScopeNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'These choices save permission categories only. Server addresses, file access and credentials need separate approval; unavailable features remain unavailable. Reopen the plugin form after changes.'**
+  String get pluginsIoScopeNotice;
+
+  /// No description provided for @pluginsIoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Network and file permissions'**
+  String get pluginsIoTitle;
+
+  /// No description provided for @pluginsIoWebSocketConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to WebSocket services'**
+  String get pluginsIoWebSocketConnect;
 
   /// No description provided for @pluginsListUnknown.
   ///

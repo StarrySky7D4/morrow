@@ -45,6 +45,7 @@ enum Action {
   externalUiClose,
   readUiLocale,
   saveUiLocale,
+  pluginApproveIo,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -100,6 +101,7 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'externalUiClose', codeOrder: 37, ordinal: 37),
     EnumerantSchemaInfo(name: 'readUiLocale', codeOrder: 38, ordinal: 38),
     EnumerantSchemaInfo(name: 'saveUiLocale', codeOrder: 39, ordinal: 39),
+    EnumerantSchemaInfo(name: 'pluginApproveIo', codeOrder: 40, ordinal: 40),
   ],
 );
 
@@ -159,6 +161,8 @@ final class RequestReader extends StructReader {
   String? get outputType => getTextField(16);
 
   bool get catalogRevisionBound => getBoolField(256);
+
+  ListReader<String?>? get approvedIoCapabilities => getTextListField(17);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -262,6 +266,10 @@ final class RequestBuilder extends StructBuilder {
   set catalogRevisionBound(bool v) {
     setBoolField(256, v);
   }
+
+  ListBuilder<String?> initApprovedIoCapabilities(int length) {
+    return initTextListField(17, length);
+  }
 }
 
 final class _RequestFactory
@@ -271,7 +279,7 @@ final class _RequestFactory
   @override
   int get dataWords => 5;
   @override
-  int get ptrWords => 17;
+  int get ptrWords => 18;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -288,7 +296,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 5,
-  pointerWords: 17,
+  pointerWords: 18,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -482,6 +490,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'approvedIoCapabilities',
+      codeOrder: 24,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
   ],
 );
 
@@ -648,7 +664,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      9,
+      11,
     );
   }
 }
@@ -1693,6 +1709,10 @@ final class PluginEntryReader extends StructReader {
   ListReader<String?>? get dependencies => getTextListField(7);
 
   String? get issue => getTextField(8);
+
+  ListReader<String?>? get declaredIo => getTextListField(9);
+
+  ListReader<String?>? get approvedIo => getTextListField(10);
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -1754,6 +1774,14 @@ final class PluginEntryBuilder extends StructBuilder {
   set issue(String? v) {
     setTextField(8, v);
   }
+
+  ListBuilder<String?> initDeclaredIo(int length) {
+    return initTextListField(9, length);
+  }
+
+  ListBuilder<String?> initApprovedIo(int length) {
+    return initTextListField(10, length);
+  }
 }
 
 final class _PluginEntryFactory
@@ -1763,7 +1791,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 9;
+  int get ptrWords => 11;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -1781,7 +1809,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
   displayName: 'host.capnp:PluginEntry',
   shortName: 'PluginEntry',
   dataWords: 1,
-  pointerWords: 9,
+  pointerWords: 11,
   fields: [
     FieldSchemaInfo(
       name: 'packageId',
@@ -1877,6 +1905,22 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 8,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'declaredIo',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approvedIo',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
       ),
     ),
   ],

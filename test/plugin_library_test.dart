@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_core_client/ui.dart' show UiEvent;
 import 'package:morrow_core_client/src/generated/ui.capnp.dart' as wire;
 import 'package:morrow_core_client/src/generated/contract_identity.dart'
@@ -36,6 +38,9 @@ PluginLibraryEntry entry(
   String id, {
   bool enabled = false,
   bool builtin = false,
+  bool available = true,
+  List<String> declaredIo = const [],
+  List<String> approvedIo = const [],
   List<String> approved = const [],
   List<PluginTransformHandler> handlers = const [transform],
 }) => PluginLibraryEntry(
@@ -45,7 +50,9 @@ PluginLibraryEntry entry(
   digest: Uint8List.fromList(List.filled(32, id.codeUnitAt(0))),
   enabled: enabled,
   builtin: builtin,
-  available: true,
+  available: available,
+  declaredIo: declaredIo,
+  approvedIo: approvedIo,
   declared: const ['read-content', 'edit-content'],
   approved: approved,
   dependencies: const [],
@@ -77,6 +84,7 @@ class FakeUi implements PluginUiTransport {
   FakeUi(this.log);
   final List<String> log;
   int closes = 0, closeFailures = 0;
+  Completer<void>? closeGate;
   final events = <UiEvent>[];
   PluginUiReply reply(String text, int revision, int serial) => PluginUiReply(
     view: 'view',
@@ -106,6 +114,7 @@ class FakeUi implements PluginUiTransport {
   Future<void> close() async {
     closes++;
     log.add('close');
+    if (closeGate != null) await closeGate!.future;
     if (closeFailures-- > 0) throw StateError('close failed');
   }
 }
@@ -114,6 +123,7 @@ class FakeBackend implements ExternalPluginControl {
   FakeBackend(this.entries);
   List<PluginLibraryEntry> entries;
   BigInt revision = BigInt.one;
+  Future<PluginLibraryPage>? nextPage;
   final pages = <(String, BigInt?)>[];
   final log = <String>[];
   final views = <FakeUi>[];
@@ -122,7 +132,9 @@ class FakeBackend implements ExternalPluginControl {
       configurations = 0,
       removals = 0,
       transforms = 0;
-  bool conflict = false;
+  bool conflict = false, ioConflict = false;
+  int ioConfigurations = 0;
+  List<String>? lastApprovedIo;
   List<String>? lastApproved;
   Uint8List? lastInput;
   @override
@@ -131,6 +143,9 @@ class FakeBackend implements ExternalPluginControl {
     BigInt? revision,
   }) async {
     pages.add((cursor, revision));
+    final deferred = nextPage;
+    nextPage = null;
+    if (deferred != null) return deferred;
     if (revision != null && revision != this.revision) {
       throw StateError('changed');
     }
@@ -187,6 +202,38 @@ class FakeBackend implements ExternalPluginControl {
             enabled: enable,
             approved: approved,
             handlers: item.handlers,
+            available: item.available,
+            declaredIo: item.declaredIo,
+            approvedIo: item.approvedIo,
+          )
+        else
+          item,
+    ];
+  }
+
+  @override
+  Future<void> configureExternalIo(
+    PluginLibraryEntry value,
+    BigInt revision,
+    List<String> approved,
+  ) async {
+    ioConfigurations++;
+    log.add('configure-io');
+    lastApprovedIo = List.of(approved);
+    expect(revision, this.revision);
+    this.revision += BigInt.one;
+    if (ioConflict) throw StateError('revision conflict');
+    entries = [
+      for (final item in entries)
+        if (item.id == value.id)
+          entry(
+            item.id,
+            enabled: item.enabled,
+            approved: item.approved,
+            handlers: item.handlers,
+            available: item.available,
+            declaredIo: item.declaredIo,
+            approvedIo: approved,
           )
         else
           item,
@@ -224,22 +271,28 @@ class FakeBackend implements ExternalPluginControl {
   }
 }
 
-Widget page(FakeBackend backend, {Future<String?> Function()? picker}) =>
-    MaterialApp(
-      home: Scaffold(
-        body: SingleChildScrollView(
-          child: PluginLibrary(
-            backend: backend,
-            onChanged: () {},
-            ink: Colors.black,
-            muted: Colors.grey,
-            line: Colors.grey,
-            radius: BorderRadius.circular(12),
-            pickPackage: picker,
-          ),
-        ),
+Widget page(
+  FakeBackend backend, {
+  Future<String?> Function()? picker,
+  Locale? locale,
+}) => MaterialApp(
+  locale: locale ?? const Locale('zh'),
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(
+    body: SingleChildScrollView(
+      child: PluginLibrary(
+        backend: backend,
+        onChanged: () {},
+        ink: Colors.black,
+        muted: Colors.grey,
+        line: Colors.grey,
+        radius: BorderRadius.circular(12),
+        pickPackage: picker,
       ),
-    );
+    ),
+  ),
+);
 Future<void> click(WidgetTester tester, String key) async {
   final finder = find.byKey(ValueKey(key));
   await tester.ensureVisible(finder);
@@ -258,6 +311,269 @@ Future<void> mount(
 }
 
 void main() {
+  testWidgets(
+    'ABA backend switch ignores old pages and preserves new busy state',
+    (tester) async {
+      final a = FakeBackend([
+        entry('a', declaredIo: ['http-request']),
+      ]);
+      final b = FakeBackend([entry('b')]);
+      await mount(tester, a);
+      final oldPage = Completer<PluginLibraryPage>();
+      a.nextPage = oldPage.future;
+      await tester.tap(find.byKey(const ValueKey('plugin-refresh')));
+      await tester.pump();
+      await tester.pumpWidget(page(b));
+      await tester.pumpAndSettle();
+      final newPage = Completer<PluginLibraryPage>();
+      a.nextPage = newPage.future;
+      await tester.pumpWidget(page(a));
+      await tester.pump();
+      oldPage.complete(
+        PluginLibraryPage(
+          revision: BigInt.one,
+          entries: [
+            entry(
+              'stale',
+              declaredIo: ['http-request'],
+              approvedIo: ['http-request'],
+            ),
+          ],
+          cursor: '',
+        ),
+      );
+      await tester.pump();
+      expect(find.byKey(const ValueKey('plugin-entry-stale')), findsNothing);
+      expect(
+        tester
+            .widget<OutlinedButton>(
+              find.byKey(const ValueKey('plugin-refresh')),
+            )
+            .onPressed,
+        isNull,
+      );
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      a.revision = BigInt.two;
+      newPage.complete(
+        PluginLibraryPage(revision: a.revision, entries: a.entries, cursor: ''),
+      );
+      await tester.pumpAndSettle();
+      await click(tester, 'plugin-entry-a');
+      await click(tester, 'plugin-io-cap-a-http-request');
+      await click(tester, 'plugin-io-save-a');
+      expect(a.lastApprovedIo, ['http-request']);
+      expect(a.ioConfigurations, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'late old close failure cannot replace new form or poison IO approval',
+    (tester) async {
+      final a = FakeBackend([
+        entry(
+          'a',
+          enabled: true,
+          handlers: uiHandlers,
+          declaredIo: ['http-request'],
+          approvedIo: ['http-request'],
+        ),
+      ]);
+      final b = FakeBackend([
+        entry(
+          'b',
+          enabled: true,
+          handlers: uiHandlers,
+          declaredIo: ['http-request'],
+          approvedIo: ['http-request'],
+        ),
+      ]);
+      await mount(tester, a);
+      await click(tester, 'plugin-entry-a');
+      await click(tester, 'plugin-ui-a');
+      final close = Completer<void>();
+      a.views.single.closeGate = close;
+      final revokeA = find.byKey(const ValueKey('plugin-io-revoke-a'));
+      await tester.ensureVisible(revokeA);
+      await tester.pumpAndSettle();
+      await tester.tap(revokeA);
+      await tester.pump();
+      await tester.pumpWidget(page(b));
+      await tester.pumpAndSettle();
+      await click(tester, 'plugin-entry-b');
+      await click(tester, 'plugin-ui-b');
+      expect(find.byType(ManagedPluginForm), findsOneWidget);
+      close.completeError(StateError('old backend close failed'));
+      await tester.pumpAndSettle();
+      // The detached transport still reports its cleanup failure, without owning B.
+      expect(tester.takeException(), isA<StateError>());
+      expect(find.byType(ManagedPluginForm), findsOneWidget);
+      expect(a.ioConfigurations, 0);
+      expect(b.views.single.closes, 0);
+      await click(tester, 'plugin-io-revoke-b');
+      expect(b.ioConfigurations, 1);
+      expect(b.lastApprovedIo, isEmpty);
+      expect(b.log, ['open', 'close', 'configure-io']);
+      expect(a.views.single.closes, 1);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('all IO categories remain readable on a narrow English screen', (
+    tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 700);
+    addTearDown(tester.view.reset);
+    final backend = FakeBackend([
+      entry(
+        'a',
+        declaredIo: [
+          'file-read',
+          'file-list',
+          'file-create',
+          'file-replace',
+          'file-delete',
+          'http-request',
+          'http-listen',
+          'http-publish',
+          'credential-use',
+          'websocket-connect',
+        ],
+      ),
+    ]);
+    await tester.pumpWidget(page(backend, locale: const Locale('en')));
+    await tester.pumpAndSettle();
+    await click(tester, 'plugin-entry-a');
+    expect(find.text('Call network APIs'), findsOneWidget);
+    expect(find.text('Use approved credentials'), findsOneWidget);
+    await click(tester, 'plugin-io-cap-a-credential-use');
+    await click(tester, 'plugin-io-save-a');
+    expect(backend.lastApprovedIo, ['credential-use']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'IO decisions are separate, explicit and do not enable a plugin',
+    (tester) async {
+      final backend = FakeBackend([
+        entry(
+          'a',
+          approved: ['read-content'],
+          declaredIo: ['http-request', 'credential-use'],
+        ),
+      ]);
+      await mount(tester, backend);
+      await click(tester, 'plugin-entry-a');
+      await click(tester, 'plugin-io-cap-a-http-request');
+      expect(backend.ioConfigurations, 0);
+      expect(backend.configurations, 0);
+      await click(tester, 'plugin-io-save-a');
+      expect(backend.ioConfigurations, 1);
+      expect(backend.lastApprovedIo, ['http-request']);
+      expect(backend.entries.single.enabled, isFalse);
+      expect(backend.entries.single.approved, ['read-content']);
+      expect(backend.configurations, 0);
+      expect(backend.transforms, 0);
+      expect(find.textContaining('连接地址、文件范围和凭据仍需另行批准'), findsOneWidget);
+      await click(tester, 'plugin-io-revoke-a');
+      expect(backend.lastApprovedIo, isEmpty);
+      expect(backend.entries.single.approvedIo, isEmpty);
+    },
+  );
+
+  testWidgets('IO save closes an open form before changing approval', (
+    tester,
+  ) async {
+    final backend = FakeBackend([
+      entry(
+        'a',
+        enabled: true,
+        handlers: uiHandlers,
+        declaredIo: ['http-request'],
+        approvedIo: ['http-request'],
+      ),
+    ]);
+    await mount(tester, backend);
+    await click(tester, 'plugin-entry-a');
+    await click(tester, 'plugin-ui-a');
+    expect(find.byType(ManagedPluginForm), findsOneWidget);
+    await click(tester, 'plugin-io-revoke-a');
+    expect(backend.log, ['open', 'close', 'configure-io']);
+    expect(find.byType(ManagedPluginForm), findsNothing);
+    expect(backend.entries.single.enabled, isTrue);
+  });
+
+  testWidgets(
+    'IO conflict refreshes original approvals without replaying the write',
+    (tester) async {
+      final backend = FakeBackend([
+        entry('a', declaredIo: ['http-request']),
+      ])..ioConflict = true;
+      await mount(tester, backend);
+      await click(tester, 'plugin-entry-a');
+      await click(tester, 'plugin-io-cap-a-http-request');
+      await click(tester, 'plugin-io-save-a');
+      expect(backend.ioConfigurations, 1);
+      expect(backend.entries.single.approvedIo, isEmpty);
+      expect(
+        tester
+            .widget<CheckboxListTile>(
+              find.byKey(const ValueKey('plugin-io-cap-a-http-request')),
+            )
+            .value,
+        isFalse,
+      );
+      expect(find.textContaining('操作未确认'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 1));
+      expect(backend.ioConfigurations, 1);
+    },
+  );
+
+  testWidgets(
+    'unavailable plugin can revoke previous IO approvals but cannot expand',
+    (tester) async {
+      final backend = FakeBackend([
+        entry('a', available: false, approvedIo: ['http-request']),
+      ]);
+      await mount(tester, backend);
+      await click(tester, 'plugin-entry-a');
+      expect(
+        tester
+            .widget<OutlinedButton>(
+              find.byKey(const ValueKey('plugin-io-save-a')),
+            )
+            .onPressed,
+        isNull,
+      );
+      await click(tester, 'plugin-io-revoke-a');
+      expect(backend.lastApprovedIo, isEmpty);
+      expect(backend.ioConfigurations, 1);
+    },
+  );
+
+  testWidgets('failed form close blocks IO changes until explicit retry', (
+    tester,
+  ) async {
+    final backend = FakeBackend([
+      entry(
+        'a',
+        enabled: true,
+        handlers: uiHandlers,
+        declaredIo: ['http-request'],
+        approvedIo: ['http-request'],
+      ),
+    ]);
+    await mount(tester, backend);
+    await click(tester, 'plugin-entry-a');
+    await click(tester, 'plugin-ui-a');
+    backend.views.single.closeFailures = 1;
+    await click(tester, 'plugin-io-revoke-a');
+    expect(backend.ioConfigurations, 0);
+    await click(tester, 'plugin-io-revoke-a');
+    expect(backend.ioConfigurations, 1);
+  });
+
   testWidgets(
     'all pages retain the first revision and builtin remains separately managed',
     (tester) async {

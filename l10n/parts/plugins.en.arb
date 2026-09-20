@@ -176,5 +176,37 @@
   "pluginsBuiltinEmpty": "Enter text to preview uppercase",
   "@pluginsBuiltinEmpty": {
     "description": "First-party workbench text tool display only"
-  }
+  },
+  "pluginsIoTitle": "Network and file permissions",
+  "pluginsIoScopeNotice": "These choices save permission categories only. Server addresses, file access and credentials need separate approval; unavailable features remain unavailable. Reopen the plugin form after changes.",
+  "pluginsIoNoneApproved": "No network or file permissions approved",
+  "pluginsIoApproved": "Approved: {permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "Requested network and file permissions: {permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "Save network and file permissions",
+  "pluginsIoRevoke": "Revoke all network and file permissions",
+  "pluginsContentPermissions": "Content permissions",
+  "pluginsIoFileRead": "Read approved files",
+  "pluginsIoFileList": "Browse approved folders",
+  "pluginsIoFileCreate": "Create files",
+  "pluginsIoFileReplace": "Replace files",
+  "pluginsIoFileDelete": "Delete files",
+  "pluginsIoHttpRequest": "Call network APIs",
+  "pluginsIoHttpListen": "Listen for network connections",
+  "pluginsIoHttpPublish": "Provide an API service",
+  "pluginsIoCredentialUse": "Use approved credentials",
+  "pluginsIoWebSocketConnect": "Connect to WebSocket services"
 }
