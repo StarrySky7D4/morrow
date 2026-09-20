@@ -21,6 +21,7 @@ fn manifest() -> proto::Manifest {
     declaration.service_run = Some(io::proto::ServiceRunProfile {
         schema_version: io::SERVICE_RUN_VERSION,
         max_duration_ms: io::MAX_SERVICE_RUN_DURATION_MS,
+        budget: None,
     });
     manifest.io_declaration = Some(declaration);
     manifest

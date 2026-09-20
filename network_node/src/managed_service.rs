@@ -469,7 +469,15 @@ impl<O: HostOwner> ServiceHost<O> {
                             body: b"Service busy".to_vec(),
                         });
                     }
-                    Err(JobError::Limit) => return Err(Error::Limit),
+                    // A valid HTTP frame can still exceed the service's job/run
+                    // budget. Keep this distinct from HTTP body/header size errors.
+                    Err(JobError::Limit) => {
+                        return Ok(RawHttpResponse {
+                            status: 429,
+                            headers: vec![],
+                            body: b"Service quota exhausted".to_vec(),
+                        });
+                    }
                     Err(_) => return Err(Error::Denied),
                 };
                 loop {

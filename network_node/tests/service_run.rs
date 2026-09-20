@@ -22,6 +22,7 @@ use morrow_network_node::{
 };
 use morrow_plugin_runtime::{
     Limits as RuntimeLimits,
+    io_binding::ServiceRunBudget,
     io_jobs::{
         BrokerRouter, IoWorker, JobError, JobLimits, RouteContext, RouterFault, ServiceUpdate,
     },
@@ -225,6 +226,14 @@ impl Running {
     }
 
     fn with_configuration(spin: bool, timeout: Duration, earlier_auth: Option<bool>) -> Self {
+        Self::with_options(spin, timeout, earlier_auth, None)
+    }
+    fn with_options(
+        spin: bool,
+        timeout: Duration,
+        earlier_auth: Option<bool>,
+        run_budget: Option<ServiceRunBudget>,
+    ) -> Self {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wasm(spin);
         let caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
@@ -233,6 +242,11 @@ impl Running {
         declaration.service_schema_sha256 = service::schema_digest().to_vec();
         declaration.budget.as_mut().unwrap().max_duration_ms = timeout.as_millis() as u64;
         declaration.service_run = Some(io::proto::ServiceRunProfile {
+            budget: run_budget.map(|_| io::proto::ServiceRunBudget {
+                schema_version: 1,
+                max_jobs: 10,
+                max_bytes: io::MAX_BYTES,
+            }),
             schema_version: 1,
             max_duration_ms: 120_000,
         });
@@ -240,6 +254,11 @@ impl Running {
         manifest
             .required_features
             .extend([io::FEATURE.into(), "service-run-v1".into()]);
+        if run_budget.is_some() {
+            manifest
+                .required_features
+                .push(io::SERVICE_RUN_BUDGET_FEATURE.into());
+        }
         manifest.io_declaration = Some(declaration);
         let package = Package::build(manifest, &wasm).unwrap();
         let digest = package.digest();
@@ -267,8 +286,19 @@ impl Running {
         let mut runtime = HostRuntime::new(store).unwrap();
         let instance = manager.connect(ID, &mut runtime).unwrap();
         let started = Instant::now();
-        let binding = manager
-            .bind_service_run(
+        let binding = if let Some(budget) = run_budget {
+            manager.bind_budgeted_service_run(
+                &runtime,
+                &instance,
+                digest,
+                manager.revision(),
+                &caps,
+                120_001,
+                1,
+                budget,
+            )
+        } else {
+            manager.bind_service_run(
                 &runtime,
                 &instance,
                 digest,
@@ -277,7 +307,8 @@ impl Running {
                 120_001,
                 1,
             )
-            .unwrap();
+        }
+        .unwrap();
         let now = || u64::try_from(started.elapsed().as_millis()).unwrap() + 1;
         let grant = ServiceGrant::issue(
             &manager,
@@ -489,4 +520,44 @@ async fn manager_revocation_closes_long_running_listener() {
     }
     node.shutdown().await.unwrap();
     run.finish().await;
+}
+
+#[tokio::test]
+async fn budgeted_http_node_delivers_final_allowed_response_then_returns_quota() {
+    let first = Request::encode(1, &invocation(b"before")).unwrap();
+    let encoded = Response::encode(
+        &first,
+        &Reply {
+            status: 202,
+            headers: vec![],
+            body: b"executed-before".to_vec(),
+        },
+    )
+    .unwrap();
+    let exact_bytes = (first.bytes().len() + encoded.len()) as u64;
+    // Exhaust cumulative jobs with spare bytes, then exhaust bytes with spare jobs.
+    for budget in [
+        ServiceRunBudget {
+            max_jobs: 1,
+            max_bytes: 8192,
+        },
+        ServiceRunBudget {
+            max_jobs: 10,
+            max_bytes: exact_bytes,
+        },
+    ] {
+        let run = Running::with_options(false, Duration::from_secs(2), None, Some(budget));
+        let node = run.bind().await;
+        let response = request(node.local_addr(), b"before").await;
+        status(&response, 202);
+        assert!(response.ends_with(b"executed-before"));
+        status(&request(node.local_addr(), b"after").await, 429);
+        assert!(
+            run.host
+                .route(run.grant.clone(), "POST", "/still-live")
+                .is_ok()
+        );
+        node.shutdown().await.unwrap();
+        run.finish().await;
+    }
 }

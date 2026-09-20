@@ -199,13 +199,14 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 5
+            || manifest.required_features.len() > 6
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
                     && f != DEPENDENCY_CALLS_FEATURE
                     && f != io::FEATURE
                     && f != io::SERVICE_RUN_FEATURE
+                    && f != io::SERVICE_RUN_BUDGET_FEATURE
             })
             || manifest
                 .required_features
@@ -311,6 +312,19 @@ impl Package {
                 .is_some_and(|declaration| declaration.service_run.is_some())
         {
             return Err(Error::Invalid("service run declaration feature"));
+        }
+        let service_run_budget_feature = manifest
+            .required_features
+            .iter()
+            .any(|f| f == io::SERVICE_RUN_BUDGET_FEATURE);
+        if service_run_budget_feature
+            != manifest
+                .io_declaration
+                .as_ref()
+                .and_then(|declaration| declaration.service_run.as_ref())
+                .is_some_and(|profile| profile.budget.is_some())
+        {
+            return Err(Error::Invalid("service run budget declaration feature"));
         }
         let io_ceiling = if let Some(declaration) = &manifest.io_declaration {
             let ceiling = io::validate(declaration)?;

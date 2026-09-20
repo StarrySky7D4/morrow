@@ -43,6 +43,7 @@ fn package(service_run: bool) -> Package {
     budget.max_job_bytes = 6;
     if service_run {
         declaration.service_run = Some(io::proto::ServiceRunProfile {
+            budget: None,
             schema_version: io::SERVICE_RUN_VERSION,
             max_duration_ms: RUN_MS,
         });

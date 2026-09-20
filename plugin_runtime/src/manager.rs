@@ -3,7 +3,7 @@
 use crate::{
     Cancellation, Fault, Limits, Report,
     dependency::{Dependency, Endpoint, Spec},
-    io_binding::{IoBinding, IoContext},
+    io_binding::{IoBinding, IoContext, ServiceRunBudget},
     package::{PreparedPackage, TaskReport},
 };
 use morrow_core::{
@@ -495,6 +495,7 @@ impl Manager {
             expires,
             now,
             false,
+            None,
         )
     }
     /// Explicit trusted-host approval of one fixed service run on this exact instance.
@@ -526,6 +527,38 @@ impl Manager {
             expires,
             now,
             true,
+            None,
+        )
+    }
+    /// Explicit one-shot run approval with cumulative task and byte ceilings.
+    /// Only packages declaring the budget feature are accepted; no implicit defaults.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_budgeted_service_run(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+        budget: ServiceRunBudget,
+    ) -> Result<IoBinding> {
+        if !requested.contains(&IoCapability::HttpListen)
+            || !requested.contains(&IoCapability::HttpPublish)
+        {
+            return Err(Error::Invalid("service run requires listen and publish").into());
+        }
+        self.bind_io_kind(
+            host,
+            instance,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+            true,
+            Some(budget),
         )
     }
     #[allow(clippy::too_many_arguments)]
@@ -539,6 +572,7 @@ impl Manager {
         expires: u64,
         now: u64,
         service_run: bool,
+        run_budget: Option<ServiceRunBudget>,
     ) -> Result<IoBinding> {
         let package = instance.package.package();
         let selection = self.checked_selection(
@@ -564,6 +598,7 @@ impl Manager {
             expires,
             now,
             service_run,
+            run_budget,
         )
         .map_err(ManagerError::Io)
     }
@@ -706,6 +741,13 @@ impl Manager {
                     Arc::new(IoContext::new(
                         b,
                         d.service_run.as_ref().map(|run| run.max_duration_ms),
+                        d.service_run
+                            .as_ref()
+                            .and_then(|run| run.budget.as_ref())
+                            .map(|budget| ServiceRunBudget {
+                                max_jobs: budget.max_jobs,
+                                max_bytes: budget.max_bytes,
+                            }),
                     ))
                 })
             }),

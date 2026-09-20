@@ -17,6 +17,10 @@ pub const MAX_JOB_BYTES: u64 = 16 * 1024 * 1024;
 pub const MAX_DURATION_MS: u64 = 30_000;
 pub const SERVICE_RUN_FEATURE: &str = "service-run-v1";
 pub const SERVICE_RUN_VERSION: u32 = 1;
+pub const SERVICE_RUN_BUDGET_FEATURE: &str = "service-run-budget-v1";
+pub const SERVICE_RUN_BUDGET_VERSION: u32 = 1;
+/// Finite experimental run ceiling, not a measured throughput guarantee.
+pub const MAX_SERVICE_RUN_JOBS: u64 = 1_000_000;
 /// Experimental finite service lifetime ceiling, not a live authorization or request timeout.
 pub const MAX_SERVICE_RUN_DURATION_MS: u64 = 3_600_000;
 
@@ -146,6 +150,22 @@ pub(crate) fn validate(value: &proto::IoDeclaration) -> Result<BTreeSet<IoCapabi
         || budget.max_duration_ms > MAX_DURATION_MS
     {
         return Err(Error::Limit);
+    }
+    if let Some(run_budget) = value
+        .service_run
+        .as_ref()
+        .and_then(|profile| profile.budget.as_ref())
+    {
+        if run_budget.schema_version != SERVICE_RUN_BUDGET_VERSION {
+            return Err(Error::UnsupportedVersion);
+        }
+        if run_budget.max_jobs == 0
+            || run_budget.max_jobs > MAX_SERVICE_RUN_JOBS
+            || run_budget.max_bytes == 0
+            || run_budget.max_bytes > budget.max_bytes
+        {
+            return Err(Error::Limit);
+        }
     }
     Ok(capabilities)
 }

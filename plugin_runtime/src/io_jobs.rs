@@ -4,7 +4,7 @@
 //! result that outlived its authorization or deadline as a success.
 use crate::{
     Cancellation, Fault, MAX_TASK_BYTES, Report,
-    io_binding::{Error as BindingError, IoBinding, IoJobLease},
+    io_binding::{Error as BindingError, IoBinding, IoJobLease, ServiceRunUsage},
     io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
@@ -853,6 +853,14 @@ impl IoWorker<HostRuntime> {
     }
 }
 impl<O: HostOwner> IoWorker<O> {
+    /// Original run ledger snapshot; reading diagnostics does not confer authority.
+    pub fn service_run_usage(&self) -> Option<ServiceRunUsage> {
+        self.control
+            .authority
+            .as_ref()
+            .and_then(|authority| authority.binding.service_run_usage())
+    }
+
     /// Move the complete original host owner into the executor. The instance
     /// must be admitted independently; a borrowed Pool root cannot be detached.
     #[allow(clippy::too_many_arguments)]

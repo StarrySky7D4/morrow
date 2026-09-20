@@ -41,7 +41,7 @@ Principal 的 service scope 只允许调用服务。需要读写卡片时，宿�
 
 **零次 IO import 是合法服务计算**：guest 可以直接返回绑定请求的服务 Reply。若发生 IO，则每次 import 仍走受控 `BrokerRouter`／`RouteContext`，出站服务需另获 [HTTP 端点批准](PLUGIN_MANAGED_HTTP.md)，实际副作用继续遵守 Prepared → 发送边界 → Observed／Unknown。最终服务 Reply 可以由多个计算／调用结果组合，不要求等于最后一次 IO 响应，但必须精确绑定原服务 Request。
 
-服务完成帧另计字节，不能通过零 IO 绕过输出额度。队列饱和可返回 429；失败、取消、无效完成帧不伪装成成功。HTTP 4xx／5xx 是可表达的业务响应。主体在等待和交付处重新检查，作业也持续受发布、监听、原实例和已使用出站资源的存活约束。已交付字节不能因之后撤权被追回。
+服务完成帧另计字节，不能通过零 IO 绕过输出额度。队列饱和或作业预算准入被拒绝返回 429；HTTP 报文自身超限仍走原报文校验。累计预算耗尽不承诺自动恢复，不设置虚假的 Retry-After。失败、取消、无效完成帧不伪装成成功。HTTP 4xx／5xx 是可表达的业务响应。主体在等待和交付处重新检查，作业也持续受发布、监听、原实例和已使用出站资源的存活约束。已交付字节不能因之后撤权被追回。
 
 ## 停止、租约与事实边界
 
@@ -53,7 +53,7 @@ ServiceGrant／ListenerGrant 撤权以及 Manager 停用、批准变更、移除
 
 `request_stop` 仅请求取消；`try_reclaim` 在线程真实退出后归还一次完整 `WorkerExit<O>`，分别保留原拥有者、执行、断连和维护结果。`shutdown_owned` 等待实际回收，不设置固定成功超时；取消该等待后，调用方保留的 ServiceHost 仍可继续回收。调用方必须持有它直到回收完成，最后一个句柄 Drop 只发停止信号。旧 `ServiceHost<HostRuntime>::shutdown` 保留五秒有界等待语义；超时不是线程已退出的证明。监听停止和 worker 回收是两个独立步骤。
 
-真实 Windows Storage 的 HTTP 执行、原库保护锁、审计身份及封存故障恢复见 [所有者回收验证](../reports/service-owner-2026-09-20.md)。旧 IO v1 保留最长30秒绑定限制。新 `service-run-v1` 可通过显式 `Manager::bind_service_run` 签发一次有限长租约，每请求期限不变；验证见[有限运行报告](../reports/service-run-2026-09-20.md)。尚未让主应用运行服务；后续见 [常驻与调度方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。
+真实 Windows Storage 的 HTTP 执行、原库保护锁、审计身份及封存故障恢复见 [所有者回收验证](../reports/service-owner-2026-09-20.md)。旧 IO v1 保留最长30秒绑定限制。新 `service-run-v1` 可通过显式 `Manager::bind_service_run` 签发一次有限长租约，每请求期限不变；验证见[有限运行报告](../reports/service-run-2026-09-20.md)。新 `service-run-budget-v1` 在同一运行上增加显式累计任务和字节预算，见[累计预算报告](../reports/service-run-budget-2026-09-20.md)。尚未让主应用运行服务；后续见 [常驻与调度方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。
 
 ## 仍未完成与验证入口
 

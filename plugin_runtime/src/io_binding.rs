@@ -39,6 +39,19 @@ pub struct Usage {
     /// Cumulative admitted bytes, not current resident bytes; releasing a lease never refunds them.
     pub bytes: u64,
 }
+/// Explicit trusted-host ceilings, subordinate to the package's versioned run budget.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ServiceRunBudget {
+    pub max_jobs: u64,
+    pub max_bytes: u64,
+}
+/// Cumulative successful task reservations, not successful business operations.
+/// Release, cancellation, result reads and post-reservation enqueue failure never refund.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ServiceRunUsage {
+    pub jobs: u64,
+    pub bytes: u64,
+}
 #[derive(Default)]
 struct State {
     usage: Usage,
@@ -46,20 +59,46 @@ struct State {
     service_run: Option<ServiceRun>,
 }
 struct ServiceRun {
+    jobs: u64,
+    budget: Option<ServiceRunBudget>,
     deadline: Instant,
     failed: Option<Error>,
+}
+impl State {
+    fn next_run_job(&self) -> Result<u64> {
+        let Some(run) = &self.service_run else {
+            return Ok(0);
+        };
+        let next = run.jobs.checked_add(1).ok_or(Error::Limit)?;
+        if run.budget.is_some_and(|budget| next > budget.max_jobs) {
+            return Err(Error::Limit);
+        }
+        Ok(next)
+    }
+    fn byte_ceiling(&self, declared: u64) -> u64 {
+        self.service_run
+            .as_ref()
+            .and_then(|run| run.budget)
+            .map_or(declared, |budget| declared.min(budget.max_bytes))
+    }
 }
 /// One context per actual managed instance, owned by its Control, never by a bind request.
 pub(crate) struct IoContext {
     budget: IoBudget,
     max_run_ms: Option<u64>,
+    run_budget_ceiling: Option<ServiceRunBudget>,
     state: Mutex<State>,
 }
 impl IoContext {
-    pub(crate) fn new(budget: &IoBudget, max_run_ms: Option<u64>) -> Self {
+    pub(crate) fn new(
+        budget: &IoBudget,
+        max_run_ms: Option<u64>,
+        run_budget_ceiling: Option<ServiceRunBudget>,
+    ) -> Self {
         Self {
             budget: *budget,
             max_run_ms,
+            run_budget_ceiling,
             state: Mutex::new(State::default()),
         }
     }
@@ -86,6 +125,7 @@ impl IoBinding {
         expires: u64,
         now: u64,
         service_run: bool,
+        run_budget: Option<ServiceRunBudget>,
     ) -> Result<Self> {
         let control = instance.io_control();
         let context = control.io.as_ref().ok_or(Error::Denied)?.clone();
@@ -98,6 +138,17 @@ impl IoBinding {
             return Err(Error::Denied);
         }
         if duration > context.max_run_ms.unwrap_or(context.budget.max_duration_ms) {
+            return Err(Error::Limit);
+        }
+        if run_budget.is_some() != context.run_budget_ceiling.is_some() {
+            return Err(Error::Denied);
+        }
+        if let (Some(approved), Some(ceiling)) = (run_budget, context.run_budget_ceiling)
+            && (approved.max_jobs == 0
+                || approved.max_jobs > ceiling.max_jobs
+                || approved.max_bytes == 0
+                || approved.max_bytes > ceiling.max_bytes)
+        {
             return Err(Error::Limit);
         }
         let mut state = context.state.lock().map_err(|_| Error::Denied)?;
@@ -115,6 +166,8 @@ impl IoBinding {
                 .checked_add(Duration::from_millis(duration))
                 .ok_or(Error::Limit)?;
             state.service_run = Some(ServiceRun {
+                jobs: 0,
+                budget: run_budget,
                 deadline,
                 failed: None,
             });
@@ -326,7 +379,7 @@ impl IoBinding {
         let budget = &self.context.budget;
         if next.resources > budget.max_resources
             || next.jobs > budget.max_jobs
-            || next.bytes > budget.max_bytes
+            || next.bytes > state.byte_ceiling(budget.max_bytes)
             || bytes > budget.max_job_bytes
         {
             return Err(Error::Limit);
@@ -334,7 +387,11 @@ impl IoBinding {
         if !self.control.upgrade().is_some_and(|c| c.active()) {
             return Err(Error::Denied);
         }
+        let next_run_job = state.next_run_job()?;
         state.usage = next;
+        if let Some(run) = &mut state.service_run {
+            run.jobs = next_run_job;
+        }
         state.last_tick = now;
         Ok(IoLease {
             binding: self.duplicate(),
@@ -389,13 +446,17 @@ impl IoBinding {
         if limit == 0
             || limit > budget.max_job_bytes
             || bytes > limit
-            || total > budget.max_bytes
+            || total > state.byte_ceiling(budget.max_bytes)
             || state.usage.jobs >= budget.max_jobs
         {
             return Err(Error::Limit);
         }
+        let next_run_job = state.next_run_job()?;
         state.usage.jobs += 1;
         state.usage.bytes = total;
+        if let Some(run) = &mut state.service_run {
+            run.jobs = next_run_job;
+        }
         state.last_tick = now;
         Ok(IoJobLease {
             binding: self.duplicate(),
@@ -424,6 +485,14 @@ impl IoBinding {
             capabilities: self.capabilities.clone(),
             expires: self.expires,
         }
+    }
+    /// Snapshot of the original run ledger, without checking or granting live authority.
+    pub fn service_run_usage(&self) -> Option<ServiceRunUsage> {
+        let state = self.context.state.lock().unwrap_or_else(|p| p.into_inner());
+        state.service_run.as_ref().map(|run| ServiceRunUsage {
+            jobs: run.jobs,
+            bytes: state.usage.bytes,
+        })
     }
     /// Host diagnostic counters only. Reading them does not check or confer live authority.
     pub fn usage(&self) -> Usage {
@@ -597,7 +666,7 @@ impl IoJobLease {
             .ok_or(Error::Limit)?;
         let next_resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
         if next_job > self.limit
-            || next_bytes > self.binding.context.budget.max_bytes
+            || next_bytes > state.byte_ceiling(self.binding.context.budget.max_bytes)
             || next_resources > self.binding.context.budget.max_resources
         {
             return Err(Error::Limit);
@@ -638,7 +707,9 @@ impl IoJobLease {
         }
         let next_job = job.checked_add(bytes).ok_or(Error::Limit)?;
         let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
-        if next_job > self.limit || total > self.binding.context.budget.max_bytes {
+        if next_job > self.limit
+            || total > state.byte_ceiling(self.binding.context.budget.max_bytes)
+        {
             return Err(Error::Limit);
         }
         *job = next_job;

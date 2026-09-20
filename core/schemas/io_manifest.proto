@@ -26,6 +26,14 @@ message IoBudget {
 message ServiceRunProfile {
   uint32 schema_version = 1;
   uint64 max_duration_ms = 2;
+  // Optional cumulative run ceiling; requires service-run-budget-v1.
+  ServiceRunBudget budget = 3;
+}
+// Independent from concurrent jobs and per-request IO limits. Grants no permission.
+message ServiceRunBudget {
+  uint32 schema_version = 1;
+  uint64 max_jobs = 2;
+  uint64 max_bytes = 3;
 }
 message IoDeclaration {
   uint32 schema_version = 1;
