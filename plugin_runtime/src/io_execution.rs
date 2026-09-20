@@ -8,7 +8,7 @@ use crate::{
     manager::{ManagedInstance, Manager},
 };
 use morrow_core::{
-    dispatch::{HostBinding, HostRuntime},
+    dispatch::{ConnectionBinding, HostBinding, HostRuntime},
     io_evidence::{Kind, Material},
     io_intent::{Command, ObservationSource, Phase, Recovery},
     plugin_package::io::IoCapability,
@@ -125,11 +125,47 @@ struct Active {
     command: Command,
     state: State,
 }
+// Private phases, consumed once. No original owner borrow enters execution.
+struct DispatchTicket {
+    operation: String,
+    subject: String,
+    command: Command,
+    live: Arc<Live>,
+    request: Material,
+    original_host: HostBinding,
+    original_connection: ConnectionBinding,
+    broker: Arc<()>,
+}
+
+impl DispatchTicket {
+    fn execute(
+        self,
+        run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
+        guard: &mut impl FnMut(&Live) -> Result<()>,
+    ) -> Result<DispatchObservation> {
+        guard(&self.live)?;
+        let response = run(self.request.payload()).map_err(|_| Error::OutcomeUnknown)?;
+        if response.len() as u64 > self.command.response_limit {
+            return Err(Error::OutcomeUnknown);
+        }
+        Ok(DispatchObservation {
+            ticket: self,
+            response,
+        })
+    }
+}
+
+struct DispatchObservation {
+    ticket: DispatchTicket,
+    response: Vec<u8>,
+}
+
 /// One broker per trusted host session. The registry is in-memory only: after a
 /// restart the durable history alone decides whether a fresh attempt is even
 /// possible, and an OutcomeUnknown history never is.
 #[derive(Default)]
 pub struct Broker {
+    identity: Arc<()>,
     active: Mutex<BTreeMap<String, Active>>,
     host: Mutex<Option<HostBinding>>,
 }
@@ -386,15 +422,25 @@ impl Broker {
             guard,
         )
     }
-    fn dispatch_checked(
+    fn retire_matching(&self, operation: &str, live: &Arc<Live>) {
+        let mut active = self.lock();
+        if active
+            .get(operation)
+            .is_some_and(|entry| Arc::ptr_eq(&entry.live, live))
+        {
+            active.remove(operation);
+        }
+        live.retired.store(true, Ordering::Release);
+    }
+
+    fn claim_dispatch_checked(
         &self,
         host: &mut HostRuntime,
         instance: &ManagedInstance,
         operation: &str,
-        run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
-        identity: impl Fn(&IoBinding, &HostRuntime, &ManagedInstance) -> Result<()>,
-        mut guard: impl FnMut(&Live) -> Result<()>,
-    ) -> Result<Vec<u8>> {
+        identity: &impl Fn(&IoBinding, &HostRuntime, &ManagedInstance) -> Result<()>,
+        guard: &mut impl FnMut(&Live) -> Result<()>,
+    ) -> Result<DispatchTicket> {
         self.check_host(host, false)?;
         let (subject, command, live) = {
             let mut active = self.lock();
@@ -451,26 +497,60 @@ impl Broker {
             // A losing claim, including a lost commit receipt, never reaches
             // the backend. Release this attempt's live reservation without
             // deleting durable history or a replacement registry entry.
-            let mut active = self.lock();
-            if active
-                .get(operation)
-                .is_some_and(|entry| Arc::ptr_eq(&entry.live, &live))
-            {
-                active.remove(operation);
-            }
-            live.retired.store(true, Ordering::Release);
+            self.retire_matching(operation, &live);
             return Err(rejected.unwrap_or_else(|| storage(error)));
         }
         // Nothing after this durable boundary can safely authorize automatic resend.
         identity(&live.binding, host, instance)?;
-        guard(&live)?;
-        let response = run(request.payload()).map_err(|_| Error::OutcomeUnknown)?;
-        if response.len() as u64 > command.response_limit {
-            return Err(Error::OutcomeUnknown);
+        Ok(DispatchTicket {
+            operation: operation.to_string(),
+            subject,
+            command,
+            live,
+            request,
+            original_host: host.binding(),
+            original_connection: instance.connection().binding(),
+            broker: Arc::clone(&self.identity),
+        })
+    }
+
+    fn complete_dispatch_checked(
+        &self,
+        observation: DispatchObservation,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        identity: &impl Fn(&IoBinding, &HostRuntime, &ManagedInstance) -> Result<()>,
+        guard: &mut impl FnMut(&Live) -> Result<()>,
+    ) -> Result<Vec<u8>> {
+        let DispatchObservation {
+            ticket:
+                DispatchTicket {
+                    operation,
+                    subject,
+                    command,
+                    live,
+                    request: _,
+                    original_host,
+                    original_connection,
+                    broker,
+                },
+            response,
+        } = observation;
+
+        // Structural comparisons only: reject before any writes or clock samples.
+        if !Arc::ptr_eq(&broker, &self.identity) {
+            return Err(Error::Denied);
         }
+        if host.binding() != original_host {
+            return Err(Error::Denied);
+        }
+        if instance.connection().binding() != original_connection {
+            return Err(Error::Denied);
+        }
+
         let material = Material::encode(
             Kind::Response,
-            operation,
+            &operation,
             &subject,
             command.request_sha256,
             &response,
@@ -489,7 +569,7 @@ impl Broker {
         self.finish(
             host,
             &subject,
-            operation,
+            &operation,
             material.payload_sha256(),
             ObservationSource::OriginalResponse,
         )?;
@@ -498,15 +578,30 @@ impl Broker {
             // the registry lock. Recheck membership/identity after the guard.
             guard(&live)?;
             let active = self.lock();
-            let entry = active.get(operation).ok_or(Error::Cancelled)?;
+            let entry = active.get(&operation).ok_or(Error::Cancelled)?;
             if !Arc::ptr_eq(&entry.live, &live) {
                 return Err(Error::Cancelled);
             }
             identity(&live.binding, host, instance)
         })();
-        self.retire(operation);
+        self.retire_matching(&operation, &live);
         delivery?;
         Ok(response)
+    }
+
+    fn dispatch_checked(
+        &self,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        operation: &str,
+        run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
+        identity: impl Fn(&IoBinding, &HostRuntime, &ManagedInstance) -> Result<()>,
+        mut guard: impl FnMut(&Live) -> Result<()>,
+    ) -> Result<Vec<u8>> {
+        let ticket =
+            self.claim_dispatch_checked(host, instance, operation, &identity, &mut guard)?;
+        let observation = ticket.execute(run, &mut guard)?;
+        self.complete_dispatch_checked(observation, host, instance, &identity, &mut guard)
     }
     /// Canonically cancel a live Prepared execution before any external effect.
     /// After the dispatch boundary only reconciliation is available.
@@ -660,3 +755,6 @@ fn retained(value: morrow_core::Result<Option<Material>>) -> Result<bool> {
         Err(error) => Err(storage(error)),
     }
 }
+
+#[cfg(test)]
+mod phase_tests;
