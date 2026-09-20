@@ -1,8 +1,16 @@
 # 后续编码看板
 
-更新：2026-09-20。基线：test.52 开发线 457e023 与隔离分支 `codex/io-safety-refactor` 的 Track A 修补／重构；应用版本仍为 `0.1.9-test.52+56`。本看板随代码提交维护，是当前任务状态入口；总架构与退出门槛见 [主路线](FUTURE_ROADMAP.md) 和 [执行路线](ROADMAP_UPDATE_2026-09-15.md)。版本号、编译和测试数量不替代产品验收。
+更新：2026-09-20。基线：test.52 开发线 457e023 与隔离分支 `codex/io-safety-refactor` 的 Track A 修补／重构；应用版本仍为 `0.1.9-test.52+56`。当前源码核对到 `41e6431`（实现验证基线；2026-09-21 源码同步目标为同名 GitHub 开发分支）；本看板随代码提交维护，是当前任务状态入口；总架构与退出门槛见 [主路线](FUTURE_ROADMAP.md) 和 [执行路线](ROADMAP_UPDATE_2026-09-15.md)。版本号、编译和测试数量不替代产品验收。
 
 状态含义：已验子集＝对应限定实现通过；下一项＝可开始编码；待前置＝须先通过列出的门槛；可并行＝不修改正在整合的核心契约；研究＝不得作为运行后端上线。本轮隔离修正与验证证据见 [修正报告](../reports/io-safety-refactor-2026-09-19.md)；前置提交608ccc3已同步到同名远端开发分支；本轮后续改动的本地验证不代表已发布或主应用端到端验收。
+
+## 当前状态摘要
+
+最新证据：[服务故障验证](../reports/service-run-faults-2026-09-20.md)。已接凭据/端点、HTTP任务、API节点配置/有限运行面板及原工作台业务路由；162项组合回归（含8项真实Windows故障）通过，9文件分析和Windows预览构建通过。冻结SDK完整性检查仍为36文件/13原包对；本次文档更新仅核对已有日志，没有重跑构建或测试。
+
+当前依次推进：真实窗口与内容/UI/capture共存 → 实际丢回执、慢回调停止、封存修复 → 长IO可暂停与超限帧分段 → 应用服务TLS/出站资源。文件系统可独立推进；跨重启Unknown、因果证据、三语言IO SDK和全平台资格未完成。应用服务当前只准入已批准的单个回环HTTP有限运行。
+
+下面的总表是当前状态；“本轮恢复边界验收”之后为累计阶段记录，其“下一项”“尚未接入”保留当时语境，不覆盖本摘要与总表。
 
 ## 已验子集
 
@@ -10,9 +18,9 @@
 | --- | --- | --- |
 | IO-A | 当前 IO 声明、Registry 批准、Manager／Pool 实例绑定 | [准入报告](../reports/road-07-io-admission.md)；声明不是资源授权 |
 | IO-B1 | 当前协议 Read/Finish/Cancel、raw Runner IO、固定字节 FileBroker、预算／撤权／回收 | [整合验收](../reports/track-a-integration-2026-09-16.md)；15 codec + 12 raw + 15 managed 回归包含在核心396／运行时271项内；不是异步作业或选择器 |
-| IO-C0 | Store v16 意图历史及后续意图／审计逻辑预留 | [意图记录](IO_INTENT_RECORDS.md)；没有受保护请求／响应材料或真实效果核对 |
+| IO-C0 | Store v16 意图历史及后续意图／审计逻辑预留 | [意图记录](IO_INTENT_RECORDS.md)；该阶段本身不包含受保护材料，后续材料/执行证据见IO-C1/C2，完整效果核对仍待完成 |
 | ROAD-04a | test.52 宿主中英文界面 | [i18n 范围](I18N_PREVIEW.md)；插件消息、RTL、业务值迁移未整项通过 |
-| SDK-BASE | 冻结 C／C++／Rust 原包兼容 | 冻结基线为36固定文件／13原包对；本轮执行结果见修正报告；新 IO 仍实验性 |
+| SDK-BASE | 冻结 C／C++／Rust 原包兼容 | 冻结基线为36固定文件／13原包对；历史原包执行见修正报告，最新完整性检查见服务故障报告；新 IO 仍实验性 |
 
 ## 编码队列
 
@@ -20,14 +28,14 @@
 | --- | --- | --- | --- |
 | 1 / IO-C1 | 已验存储子集 / P0 | core 证据存储；依赖 IO-C0 | Store v17 受保护原件、原容器身份和共享容量预留；读取／幂等重试有界校验；满额、真实满盘、撤权、崩溃重开、材料缺失均可解释，旧签名原件不改写 |
 | 2 / IO-C2 | 已验 broker 子集 / P0 | runtime broker＋core，沿用 IoBinding | 同 operationId 唯一活跃执行、请求匹配、原代次退休及恢复核对；现用 Store 严格认领，两个独立宿主竞争同一操作时仅新提交成功者可外发；重复提交、并发绑定、发送边界中断不导致重发，历史记录不恢复授权 |
-| 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输；后续连接主应用、持久批准与其它资源 |
-| 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；[持久端点批准与Windows系统保护凭据](PLUGIN_OUTBOUND_AUTHORITY.md)已接线，仍待主应用、真实提供者核对、路径范围和更多平台 |
-| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；[只读状态查询与稳定配置](PLUGIN_SERVICE_RECOVERY.md)已接线；[入站批准与认证解析](PLUGIN_SERVICE_AUTHORITY.md)已接原Store及真实HTTP/TLS；Unknown核对、跨平台凭据提供者、UI 与新三语言 SDK 未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
-| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置记录已接原Store，入站批准解析已接线，主应用 UI仍待接入，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
-| 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；出站受保护凭据已接Store v20及原worker；下一项主应用配置，再补Unknown核对、因果关系、跨进程时钟高水位和证据退休 |
+| 3 / IO-B2 | 已验调度＋托管准入＋持久子调用 / P0 | runtime 作业调度＋独立契约路由 | 有界 submit/poll/read/cancel、Ready 最终交付撤权、声明预算、温和排空已验；已接真实 Manager/IoBinding 的撤权与原实例共享 job/bytes；[托管证据](../reports/managed-io-jobs-2026-09-19.md)。同一作业子调用已贯通 Prepared／发送边界／Observed，无重复计费；[接线证据](../reports/brokered-io-jobs-2026-09-19.md)。HTTP端点与原实例资源批准已接真实传输，持久批准和主应用HTTP/有限服务任务已接入；后续补长IO可暂停、其它资源及故障闭环 |
+| 4 / IO-D1 | 已验本机 HTTP/TLS 出站子集 / P0 | guest→Manager/IoBinding→broker→network_node | [托管 HTTP](PLUGIN_MANAGED_HTTP.md)：原实例端点批准、精确 origin/方法/凭据引用、真实 POST/状态/重复头/原件、发送后断线不重发与 Ready 撤权已验；[持久端点批准与Windows系统保护凭据](PLUGIN_OUTBOUND_AUTHORITY.md)已接线，主应用凭据/端点管理与HTTP任务页面已接入；仍待真实提供者核对、路径范围和更多平台 |
+| 4 / IO-D2 | 已验本机受管服务子集 / P0 | broker＋network_node 受管服务 | 独立 service 帧／声明 tag 7、真实 Manager 的发布与监听批准、同 worker 路由及 Principal service scopes 已接线；这是宿主显式发布，非 guest 动态注册。本机 HTTP/TLS 的认证／冲突／额度／撤权／节点关闭已验；[持久请求](PLUGIN_SERVICE_HISTORY.md)已接同一 Store 的原子准备／唯一认领／响应原件重试／TTL，真实断线重启恢复已验；[内容权限交集](PLUGIN_SERVICE_CONTENT.md)已通过实际 HTTP 读写与重放验证；[只读状态查询与稳定配置](PLUGIN_SERVICE_RECOVERY.md)已接线；[入站批准与认证解析](PLUGIN_SERVICE_AUTHORITY.md)已接原Store及真实HTTP/TLS；主应用配置/有限运行面板和原业务路由已接；完整Unknown核对、实际窗口验收、跨平台凭据提供者与新三语言SDK未完成，见 [实现合同](PLUGIN_MANAGED_SERVICE.md) |
+| 4 / IO-D2a | 已验原生内容子集 / P0 | 远端主体与内容权限交集；依赖 IO-D2 | 原逐对象 grant probe＋service policy＋真实 principal scope；7类命令保留原事务授权，Ready／重放复验，范围变化同key冲突，HTTP实际读／改名／重启重放已验；持久配置/入站批准及主应用服务配置与运行面板已接线；实际窗口与完整内容/UI/capture共存仍待验收，见 [合同](PLUGIN_SERVICE_CONTENT.md) |
+| 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；出站受保护凭据已接Store v20及原worker；主应用配置与有限运行、启动诊断及8项实际故障已验；后续补真实窗口和其余故障流程、Unknown核对、因果关系、跨进程时钟高水位及证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
-| 5 / IO-E2 | 已验类别、凭据、端点与Rust任务状态子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [管理接口](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；原Store有界分页、Windows凭据与[具体端点批准](PLUGIN_ENDPOINT_MANAGEMENT.md)录入／替换／停用已验。[Rust应用任务状态](PLUGIN_APP_IO_TASKS.md)已接原Storage所有权、Busy与恢复；[HTTP任务消息与关闭](PLUGIN_APP_HTTP_TASKS.md)已接私有通道和Dart接口；[HTTP任务页面](PLUGIN_APP_HTTP_TASKS.md)已验Windows真实Rust guest/凭据/响应与设置重挂；下一项API节点管理与Unknown证据核对，用户资料无隐式迁移 |
+| 5 / IO-E2 | 已验HTTP任务、服务配置/运行与诊断子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [管理接口](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；原Store有界分页、Windows凭据与[具体端点批准](PLUGIN_ENDPOINT_MANAGEMENT.md)录入／替换／停用已验。[Rust应用任务状态](PLUGIN_APP_IO_TASKS.md)已接原Storage所有权、Busy与恢复；[HTTP任务消息与关闭](PLUGIN_APP_HTTP_TASKS.md)已接私有通道和Dart接口；[HTTP任务页面](PLUGIN_APP_HTTP_TASKS.md)已验Windows真实Rust guest/凭据/响应与设置重挂；API节点配置/有限运行面板及原工作台业务路由已接，启动诊断与真实故障证据见[最新报告](../reports/service-run-faults-2026-09-20.md)；下一项实际窗口、其余故障与Unknown证据核对，用户资料无隐式迁移 |
 | 5 / ROAD-08-IO | 待 C1/C2 与实际后端 / P0 | 录制证据与独立验证器 | A→B→IO→内容提交→封存→删除安装来源→隔离重放；真实故障、合法退休与缺材料分类；重放禁止实际外发 |
 | 6 / IO-E3 | 待基础双向 IO / P1 | NET-2–8／NODE-4–7 按各自依赖 | OAuth／多账号、上传下载、分页限流、流/SSE/WebSocket、webhook、持久服务与 TLS 运维；每个 profile 单独验收 |
 

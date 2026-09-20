@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`507aba9`；2026-09-20。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart业务自动路由已接入；Flutter有限服务运行面板已接入；TLS、出站资源适配和更多实际故障用户路径仍待完成。现有短IO自动drain的行为不变。
+当前实现：`41e6431`；2026-09-20，版本 `0.1.9-test.52+56`。已实现完整WorkbenchState、原执行者命令预留、内部续租、本地/worker共用业务派发，以及原生应用的持久配置服务准入和监督回收。当前应用服务准入限定明确批准的单个loopback HTTP有限运行；私有异步命令协议、有界身份表及Dart业务自动路由已接入；Flutter有限服务运行面板及启动诊断已接入，真实端口占用/到期/撤销发布与认证/准入拒绝8项通过；实际窗口与其余故障、应用服务TLS和出站资源适配仍待完成。现有短IO自动drain的行为不变。
 
 ## 当前限制的具体来源
 
@@ -81,7 +81,7 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 业务派发前置现已落地：WorkbenchState实现CommandOwner，借用同一个私有协议业务处理器；外围只保留调度与StateSlot访问门槛。worker内拒绝全部调度动作，不允许递归start/repair。原本地只读访问、服务错误脱敏和修订检查继续共用；输入及未读回执增加明确擦除责任。原State上的实际Rust guest写入与HTTP交错、旧修订拒绝，以及Ready写取消后的单次提交已接入测试，详见[业务命令报告](../reports/workbench-commands-2026-09-20.md)。
 
-这尚未把Flutter/CLI请求排入常驻ServiceHost；下一切片需提供持久配置/发布批准下的有限服务准入、原State独占移交，以及非阻塞的命令提交/查询/读取/取消和退出回收。应保留短IO的现有排空规则，并分别持有监听监督、Tokio runtime及原worker直到实际退出。仅增加一个允许无限接收命令的短IO入口不满足该要求。
+持久配置/发布批准下的有限服务准入、原State独占移交、私有命令提交/查询/读取/取消及Dart业务路由现已接入原ServiceHost；Flutter运行面板沿该路径控制服务。短IO继续使用原排空规则，监听监督、Tokio runtime及原worker保留到实际退出。该接线不证明同步长IO期间能够有界响应UI，也不替代实际窗口及完整故障恢复验收。
 
 1. 原库加载配置/批准，验证实际原包、原instance、对象grant及新运行profile；创建服务run身份。
 2. 移交完整WorkbenchState；spawn失败恢复 `SpawnFailure.owner`，再清理其原instance。适配器选项失败从 `ServiceHostFailure.worker`回收。
@@ -92,7 +92,7 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 本方案不改变Unknown持久证据核对、文件系统后端、三语言IO SDK和各平台资格的原门槛。其余网络能力也不会因常驻监听子项通过而一并标为完成。
 
-## 下一切片的具体接线
+## 已实现接线与剩余验收
 
 以下原生准入前置现已实现：`Workbench::start_service`核对同一原授权锁内的配置摘要/修订、发布修订和监听政策，签发新有限运行并非阻塞启动监督线程。`service_status`区分绑定、监听、监督和worker退出诊断，保留提交身份；`submit_service_command`只向已运行的原ServiceHost提交业务。取消、修复与确认复用StateSlot任务身份；原State只在监听和worker结束、监督线程真实join后回到本地。ManagedNode新增可取消等待的borrowed join，句柄保留到终态。实际验收见[应用服务准入报告](../reports/application-service-admission-2026-09-20.md)。
 
