@@ -40,7 +40,9 @@ pub const MAX_TIMEOUT: Duration = Duration::from_secs(3600);
 pub const MAX_CALLS: u32 = 1024;
 pub const MAX_JOB_BYTES: u64 = 16 * 1024 * 1024;
 pub const MAX_TOTAL_BYTES: u64 = 64 * 1024 * 1024;
+mod deferred;
 mod owner_commands;
+mod transport_task;
 pub use owner_commands::{
     CommandOwner, MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS,
     OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
@@ -144,7 +146,21 @@ pub trait Router: Send {
 }
 /// Trusted resource-authorizing adapter. Its actual effect must go through the
 /// supplied context; returning invented success without dispatch is rejected.
+pub enum RouteStart {
+    Ready(Result<Vec<u8>, RouterFault>),
+    /// The context owns exactly one prepared transport. The worker launches it.
+    Deferred,
+}
 pub trait BrokerRouter: Send {
+    fn begin(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        call: u32,
+        request: &Request,
+    ) -> RouteStart {
+        RouteStart::Ready(self.route(context, call, request))
+    }
+
     fn route(
         &mut self,
         context: &mut RouteContext<'_>,
@@ -164,7 +180,7 @@ pub struct RouteContext<'a> {
     host: &'a mut HostRuntime,
     instance: &'a ManagedInstance,
     broker: &'a Broker,
-    control: &'a Control,
+    control: &'a Arc<Control>,
     lease: &'a Arc<IoJobLease>,
     cancel: &'a Cancellation,
     request: &'a Request,
@@ -172,6 +188,7 @@ pub struct RouteContext<'a> {
     used: bool,
     expected: Option<Vec<u8>>,
     uncertain: bool,
+    deferred: Option<deferred::PendingDispatch>,
     http_guard: Option<crate::http_io::HttpCallGuard>,
     service_validity: Option<&'a service_history::Validity>,
     service_content: Option<&'a ServiceContentAccess>,
@@ -206,14 +223,7 @@ impl RouteContext<'_> {
         self.http_guard = Some(guard.clone());
         Ok(guard)
     }
-    /// Persist the exact framed request, commit the send boundary, and execute
-    /// one bounded HTTP-frame backend once. Resource selection remains the
-    /// trusted router's responsibility; this method does not create its grant.
-    pub fn dispatch(
-        &mut self,
-        command: &Command,
-        backend: impl FnOnce(&[u8]) -> Result<Vec<u8>, ()>,
-    ) -> io_execution::Result<Vec<u8>> {
+    fn prepare_dispatch(&mut self, command: &Command) -> io_execution::Result<()> {
         use io_execution::{Error, storage};
         if let Some(validity) = self.service_validity {
             validity.check()?;
@@ -309,6 +319,65 @@ impl RouteContext<'_> {
             self.broker
                 .begin_in_job(self.host, self.instance, child, now)
         })?;
+        Ok(())
+    }
+    /// Prepare one owned transport for the worker. No external effect starts
+    /// until the adapter returns `RouteStart::Deferred`. No host borrow leaves
+    /// this scope. Cancellation waits for actual transport exit before reclaim.
+    pub fn defer_dispatch(
+        &mut self,
+        command: &Command,
+        backend: impl FnOnce(&[u8]) -> Result<Vec<u8>, ()> + Send + 'static,
+    ) -> io_execution::Result<()> {
+        self.prepare_dispatch(command)?;
+        self.uncertain = true;
+        let guard = deferred::Guard {
+            control: Arc::clone(self.control),
+            validity: self.service_validity.cloned(),
+            content: self.service_content.cloned(),
+        };
+        let ticket = match self.broker.claim_in_job(
+            self.host,
+            self.instance,
+            &command.operation_id,
+            |live| guard.check(live),
+        ) {
+            Ok(ticket) => ticket,
+            Err(error) => {
+                self.broker.retire(&command.operation_id);
+                return Err(error);
+            }
+        };
+        let request = self.request.bytes().to_vec();
+        let execution_guard = guard.clone();
+        self.deferred = Some(deferred::PendingDispatch {
+            operation: command.operation_id.clone(),
+            guard,
+            run: Box::new(move || {
+                ticket.execute(
+                    |raw| {
+                        let response = backend(raw)?;
+                        let request = Request::decode(&request).map_err(|_| ())?;
+                        Response::decode_http(&request, &response).map_err(|_| ())?;
+                        Ok(response)
+                    },
+                    &mut |live| execution_guard.check(live),
+                )
+            }),
+        });
+        Ok(())
+    }
+    /// Persist the exact framed request, commit the send boundary, and execute
+    /// one bounded HTTP-frame backend once. Resource selection remains the
+    /// trusted router's responsibility; this method does not create its grant.
+    pub fn dispatch(
+        &mut self,
+        command: &Command,
+        backend: impl FnOnce(&[u8]) -> Result<Vec<u8>, ()>,
+    ) -> io_execution::Result<Vec<u8>> {
+        use io_execution::Error;
+        self.prepare_dispatch(command)?;
+        let authority = self.control.authority.as_ref().ok_or(Error::Denied)?;
         self.uncertain = true;
         let result = self.broker.dispatch_in_job(
             self.host,
@@ -1848,7 +1917,8 @@ fn execute<O: HostOwner>(
                         control,
                         &mut router,
                         lease.as_ref(),
-                        host,
+                        owner,
+                        owner_receiver,
                         match session {
                             Session::Managed(i) => Some(i),
                             Session::Raw(..) => None,
@@ -1857,7 +1927,7 @@ fn execute<O: HostOwner>(
                         &mut http_guards,
                         service.as_deref(),
                         history.as_ref(),
-                    ),
+                    )?,
                 }
             }
         };
@@ -2156,20 +2226,22 @@ fn dispatch_service_content(
     .map_err(|_| RouterFault::Unknown)
 }
 #[allow(clippy::too_many_arguments)]
-fn run_job(
+fn run_job<O: HostOwner>(
     package: &PreparedPackage,
     input: &[u8],
     cancel: &Cancellation,
     control: &Arc<Control>,
     router: &mut JobRouter,
     lease: Option<&Arc<IoJobLease>>,
-    host: &mut HostRuntime,
+    owner: &mut O,
+    owner_receiver: &Receiver<owner_commands::Command<O>>,
     instance: Option<&ManagedInstance>,
     broker: &Broker,
     http_guards: &mut Vec<crate::http_io::HttpCallGuard>,
     service: Option<&ServiceJob>,
     history: Option<&(Record, service_history::Validity)>,
-) -> JobReport {
+) -> Result<JobReport, JobError> {
+    let mut owner_error = None;
     let mut calls = 0u32;
     let mut bytes = input.len() as u64;
     let mut fault: Option<Fault> = None;
@@ -2187,7 +2259,7 @@ fn run_job(
         report.bytes = bytes;
         report.unknown = history.is_some();
         report.service_validity = history.map(|(_, validity)| validity.clone());
-        return report;
+        return Ok(report);
     }
     let run = match package.start_service_frame(input, cancel.clone()) {
         Err(run) => run,
@@ -2287,6 +2359,13 @@ fn run_job(
                         reserved = response_bound;
                         // Reserve the full reply bound before a content transaction can commit.
                         // A fixed upper bound avoids discovering response quota after a write.
+                        let host = match checked_runtime(owner, control.host) {
+                            Ok(host) => host,
+                            Err(error) => {
+                                owner_error = Some(error);
+                                return Err(());
+                            }
+                        };
                         dispatch_service_content(
                             host,
                             instance,
@@ -2303,44 +2382,27 @@ fn run_job(
                             JobRouter::Brokered(router) => {
                                 match (instance, lease, Request::decode(request)) {
                                     (Some(instance), Some(lease), Ok(parsed)) => {
-                                        let mut context = RouteContext {
-                                            host,
+                                        match deferred::route(
+                                            router.as_mut(),
+                                            call,
+                                            &parsed,
+                                            owner,
+                                            owner_receiver,
                                             instance,
                                             broker,
                                             control,
                                             lease,
                                             cancel,
-                                            request: &parsed,
-                                            reserved: &mut reserved,
-                                            used: false,
-                                            expected: None,
-                                            uncertain: false,
-                                            http_guard: None,
-                                            service_validity: history.map(|(_, validity)| validity),
-                                            service_content: service
-                                                .and_then(|s| s.content.as_ref()),
-                                        };
-                                        let reply = router.route(&mut context, call, &parsed);
-                                        if let Some(guard) = context.http_guard.take() {
-                                            // At most one guard per import; imports are bounded by
-                                            // max_calls. Keep successful authorization through Ready.
-                                            http_guards.push(guard);
-                                        }
-                                        if context.uncertain
-                                            || (context.expected.is_some() && reply.is_err())
-                                        {
-                                            Err(RouterFault::Unknown)
-                                        } else if reply
-                                            .as_ref()
-                                            .is_ok_and(|v| context.expected.as_ref() != Some(v))
-                                        {
-                                            Err(if context.used {
-                                                RouterFault::Unknown
-                                            } else {
-                                                RouterFault::Denied
-                                            })
-                                        } else {
-                                            reply
+                                            &mut reserved,
+                                            http_guards,
+                                            history.map(|(_, validity)| validity),
+                                            service.and_then(|s| s.content.as_ref()),
+                                        ) {
+                                            Ok(reply) => reply,
+                                            Err(error) => {
+                                                owner_error = Some(error);
+                                                return Err(());
+                                            }
                                         }
                                     }
                                     _ => Err(RouterFault::Denied),
@@ -2410,6 +2472,10 @@ fn run_job(
             frame.finish()
         }
     };
+    if let Some(error) = owner_error {
+        return Err(error);
+    }
+    let host = checked_runtime(owner, control.host)?;
     if let Some(late) = service_job_fault(
         control,
         cancel,
@@ -2425,7 +2491,7 @@ fn run_job(
         report.bytes = bytes;
         report.unknown = unknown || calls > 0 || history.is_some();
         report.service_validity = history.map(|(_, validity)| validity.clone());
-        return report;
+        return Ok(report);
     }
     let mut execution = run.report;
     if let Some(fault) = fault {
@@ -2503,7 +2569,7 @@ fn run_job(
             _ => execution.outcome = Err(Fault::TaskProtocol),
         }
     }
-    JobReport {
+    Ok(JobReport {
         task: TaskReport {
             execution,
             response: None,
@@ -2519,7 +2585,7 @@ fn run_job(
         bytes,
         cancelled: false,
         unknown,
-    }
+    })
 }
 
 #[cfg(test)]

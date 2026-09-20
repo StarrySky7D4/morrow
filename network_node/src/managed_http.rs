@@ -296,13 +296,12 @@ pub struct HttpRouter {
     endpoint: HttpEndpoint,
     runtime: Handle,
 }
-impl BrokerRouter for HttpRouter {
-    fn route(
-        &mut self,
+impl HttpRouter {
+    fn prepare(
+        &self,
         context: &mut RouteContext<'_>,
-        _call: u32,
         request: &Request,
-    ) -> std::result::Result<Vec<u8>, RouterFault> {
+    ) -> std::result::Result<(Command, HttpRequest, Duration, HttpCallGuard), RouterFault> {
         let endpoint = &self.endpoint.inner;
         let Action::SubmitHttp(http) = request.action() else {
             return Err(RouterFault::Denied);
@@ -376,10 +375,24 @@ impl BrokerRouter for HttpRouter {
                 .timeout
                 .min(Duration::from_millis(http.deadline_ms))
         };
+        Ok((command, outbound, duration, guard))
+    }
+}
+
+impl BrokerRouter for HttpRouter {
+    fn route(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        _call: u32,
+        request: &Request,
+    ) -> std::result::Result<Vec<u8>, RouterFault> {
+        let (command, outbound, duration, guard) = self.prepare(context, request)?;
+        let endpoint = self.endpoint.inner.clone();
+        let owned_request = Request::decode(request.bytes()).map_err(|_| RouterFault::Denied)?;
         let result = context.dispatch(&command, |_| {
             guard.check().map_err(|_| ())?;
             self.runtime.block_on(async {
-                tokio::time::timeout(duration, send(endpoint, outbound, request, &guard))
+                tokio::time::timeout(duration, send(&endpoint, outbound, &owned_request, &guard))
                     .await
                     .map_err(|_| ())?
             })
@@ -389,6 +402,37 @@ impl BrokerRouter for HttpRouter {
         let response = result.map_err(route_error)?;
         guard.check().map_err(|_| RouterFault::Unknown)?;
         Ok(response)
+    }
+
+    fn begin(
+        &mut self,
+        context: &mut RouteContext<'_>,
+        _call: u32,
+        request: &Request,
+    ) -> morrow_plugin_runtime::io_jobs::RouteStart {
+        use morrow_plugin_runtime::io_jobs::RouteStart;
+        let (command, outbound, duration, guard) = match self.prepare(context, request) {
+            Ok(prepared) => prepared,
+            Err(fault) => return RouteStart::Ready(Err(fault)),
+        };
+        let endpoint = self.endpoint.inner.clone();
+        let runtime = self.runtime.clone();
+        let owned_request = match Request::decode(request.bytes()) {
+            Ok(owned) => owned,
+            Err(_) => return RouteStart::Ready(Err(RouterFault::Denied)),
+        };
+        let result = context.defer_dispatch(&command, move |_| {
+            guard.check().map_err(|_| ())?;
+            runtime.block_on(async {
+                tokio::time::timeout(duration, send(&endpoint, outbound, &owned_request, &guard))
+                    .await
+                    .map_err(|_| ())?
+            })
+        });
+        match result {
+            Ok(()) => RouteStart::Deferred,
+            Err(error) => RouteStart::Ready(Err(route_error(error))),
+        }
     }
 }
 fn route_error(error: io_execution::Error) -> RouterFault {

@@ -1,14 +1,14 @@
 # 可暂停 IO：下一编码项
 
-2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；[broker阶段拆分](../reports/broker-phases-2026-09-21.md)也已接入现有同步入口。受管异步调度尚未接入，不增加现有SDK支持声明。
+2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；[broker阶段拆分](../reports/broker-phases-2026-09-21.md)也已接入现有同步入口。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已接入真实HTTP路径，服务组合与应用验收仍待完成，不增加新IO SDK稳定声明。
 
 ## 问题与约束
 
-公开Runner驱动仍同步调用 `BrokerRouter::route` 和 `RouteContext::dispatch`；内部Wasm IO import虽已通过continuation让出执行权，外层仍立即等待原回调返回。HTTP 适配器内部虽使用异步客户端，原 worker 仍在 `Handle::block_on` 中等待；普通拥有者命令只能排队。当前停止可以取消准入与交付，但无法强行打断可信同步回调，也不能在其返回前释放原存储。
+旧同步适配器仍通过 `BrokerRouter::route` 和 `RouteContext::dispatch` 运行，可信同步回调不可抢占。受管HTTP现通过 `begin`／`defer_dispatch` 在独立有界传输任务中等待，原worker可处理拥有者命令；停止仍须等待实际传输和已开始的拥有者回调退出，才能释放原存储。
 
 目标是在受管网络等待期间让原拥有者处理获准的业务与控制操作，并让取消、预算、证据和结果交付继续属于同一次操作。不能通过重开数据库、复制 WorkbenchState、重复执行 guest 或新增不受控外发线程实现。
 
-冻结的 `morrow_io_v1.call` 字节契约和已有 C/C++/Rust 包保持不变。内部 continuation 不要求 guest 改写；只有 guest 可见语义确需变化时才制定独立版本契约并准入。当前公开运行入口仍同步调用回调，不能把内部让出执行权宣称为受管网络等待已不占用 worker。
+冻结的 `morrow_io_v1.call` 字节契约和已有 C/C++/Rust 包保持不变。内部 continuation 不要求 guest 改写；只有 guest 可见语义确需变化时才制定独立版本契约并准入。公开Runner同步回调入口保持兼容；受管HTTP路径已有等待期间原拥有者可用的原生证据，应用与完整服务组合仍须独立验收。
 
 ## 实施顺序与退出门槛
 
@@ -20,7 +20,7 @@
 | S3：恢复与调度 | continuation 或显式新契约回到原 worker；恢复前复核原代次、声明、资源授权与截止；保留普通命令排序和停止优先 | 慢传输期间内容读取与独立修改能完成；响应 Ready 后撤权仍拒绝交付；停止和 guest trap 均不恢复失效实例 |
 | S4：契约候选与 SDK | 仅在 S0–S3 证明执行模型后确定新 Schema、能力声明、错误语义和三语言封装 | 旧 36 文件/13 原包兼容证据；新三语言相同正负向量；独立插件调用、取消、丢回执与跨重启核对 |
 
-S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。owned执行状态现已接入真实Runner，旧同步驱动在Store外持有回调；无宿主借用进入continuation。Broker认领、执行与原件提交的内部拆分已验证，执行票据与未读观察持有原reservation；它们暂为私有实现，旧公开入口仍同步。[package执行状态与worker逐import驱动](../reports/owned-package-frame-2026-09-21.md)现也已接入，完成帧的原身份与持久化核验仍留在worker。下一步在此基础上把RouteContext和HTTP等待任务接入这些阶段，让原worker在等待期间处理拥有者命令，完成S2/S3的生产路径验收。不能把仍借用RouteContext的回调移到线程上，也不能用复制宿主替代调度。
+S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。owned执行状态现已接入真实Runner，旧同步驱动在Store外持有回调；无宿主借用进入continuation。Broker认领、执行与原件提交的内部拆分已验证，执行票据与未读观察持有原reservation；它们暂为私有实现，旧公开入口仍同步。[package执行状态与worker逐import驱动](../reports/owned-package-frame-2026-09-21.md)现也已接入，完成帧的原身份与持久化核验仍留在worker。[受管HTTP等待与原拥有者调度](../reports/deferred-http-owner-2026-09-21.md)现已完成这条真实适配器接线，原TCP等待期间原库提交与回调panic回收已验。下一步补入站持久服务同时出站HTTP、慢命令/传输完成/停止竞争及原应用业务路由，完成S2/S3组合验收。不能把仍借用RouteContext的回调移到线程上，也不能用复制宿主替代调度。
 
 探针使用 `morrow_probe_v0` 私有入口；它没有生产授权或持久效果核对语义。既有 `morrow_io_v1.call` 的字节契约保持冻结，是否可透明承载必须经过真实包与旧包兼容验收；只有确实需要guest可见变化时才建立独立版本契约。
 

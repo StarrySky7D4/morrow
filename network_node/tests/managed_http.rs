@@ -23,7 +23,10 @@ use morrow_network_node::{
 };
 use morrow_plugin_runtime::{
     Limits as RuntimeLimits,
-    io_jobs::{IoWorker, JobHandle, JobLimits, JobReport, Poll, ServiceUpdate},
+    io_jobs::{
+        CommandOwner, HostOwner, IoWorker, JobError, JobHandle, JobLimits, JobReport, Poll,
+        ServiceUpdate,
+    },
     manager::{ManagedInstance, Manager},
 };
 use std::{
@@ -128,11 +131,44 @@ fn credential_wire_reference() -> Vec<u8> {
         .collect::<String>()
         .into_bytes()
 }
+struct HttpOwner {
+    host: HostRuntime,
+    original: morrow_core::dispatch::HostBinding,
+}
+impl HostOwner for HttpOwner {
+    fn runtime(&self) -> &HostRuntime {
+        &self.host
+    }
+    fn runtime_mut(&mut self) -> &mut HostRuntime {
+        &mut self.host
+    }
+}
+impl CommandOwner for HttpOwner {
+    fn command(&mut self, input: Vec<u8>) -> Result<Vec<u8>, JobError> {
+        assert_eq!(self.host.binding(), self.original);
+        let card = morrow_core::content::CardRecord::new(
+            "during-http",
+            "note",
+            1,
+            "owner command",
+            input.clone(),
+        )
+        .map_err(|_| JobError::Unavailable)?;
+        self.host
+            .store_local_mut()
+            .create_local("create-during-http", &card)
+            .map_err(|_| JobError::Unavailable)?;
+        if input == b"panic" {
+            panic!("synthetic owner panic after committed card");
+        }
+        Ok(input)
+    }
+}
 struct Running {
     _dir: tempfile::TempDir,
     _manager: Manager,
     _original_instance: Option<ManagedInstance>,
-    worker: IoWorker,
+    worker: IoWorker<HttpOwner>,
     endpoint: HttpEndpoint,
 }
 impl Running {
@@ -308,9 +344,13 @@ impl Running {
         } else {
             (instance, binding, None)
         };
-        let worker = IoWorker::spawn_managed(
-            &manager,
+        let owner = HttpOwner {
+            original: host.binding(),
             host,
+        };
+        let worker = IoWorker::spawn_managed_owned(
+            &manager,
+            owner,
             instance,
             binding,
             || 2,
@@ -339,7 +379,11 @@ impl Running {
         self.worker.stop();
         let end = Instant::now() + WAIT;
         loop {
-            if let Some(host) = self.worker.try_finish().unwrap() {
+            if let Some(exit) = self.worker.try_reclaim().unwrap() {
+                assert_eq!(exit.result, Ok(()));
+                assert_eq!(exit.maintenance, Ok(()));
+                assert_eq!(exit.disconnect, Ok(()));
+                let host = exit.owner.host;
                 host.store_local().integrity_check().unwrap();
                 return host;
             }
@@ -1139,3 +1183,6 @@ async fn stored_windows_dpapi_credential_injects_real_http_without_plaintext_in_
         );
     }
 }
+
+#[path = "support/deferred_http_owner.rs"]
+mod deferred_http_owner;

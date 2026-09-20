@@ -126,7 +126,7 @@ struct Active {
     state: State,
 }
 // Private phases, consumed once. No original owner borrow enters execution.
-struct DispatchTicket {
+pub(crate) struct DispatchTicket {
     operation: String,
     subject: String,
     command: Command,
@@ -138,7 +138,7 @@ struct DispatchTicket {
 }
 
 impl DispatchTicket {
-    fn execute(
+    pub(crate) fn execute(
         self,
         run: impl FnOnce(&[u8]) -> std::result::Result<Vec<u8>, ()>,
         guard: &mut impl FnMut(&Live) -> Result<()>,
@@ -155,7 +155,7 @@ impl DispatchTicket {
     }
 }
 
-struct DispatchObservation {
+pub(crate) struct DispatchObservation {
     ticket: DispatchTicket,
     response: Vec<u8>,
 }
@@ -420,6 +420,43 @@ impl Broker {
             run,
             |binding, host, instance| binding.validate_owner(host, instance).map_err(Error::from),
             guard,
+        )
+    }
+    pub(crate) fn claim_in_job(
+        &self,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        operation: &str,
+        mut guard: impl FnMut(&Live) -> Result<()>,
+    ) -> Result<DispatchTicket> {
+        {
+            let active = self.lock();
+            let entry = active.get(operation).ok_or(Error::NotFound)?;
+            if !matches!(entry.live.reservation, Reservation::Job(_)) {
+                return Err(Error::Denied);
+            }
+        }
+        self.claim_dispatch_checked(
+            host,
+            instance,
+            operation,
+            &|binding, host, instance| binding.validate_owner(host, instance).map_err(Error::from),
+            &mut guard,
+        )
+    }
+    pub(crate) fn complete_in_job(
+        &self,
+        observation: DispatchObservation,
+        host: &mut HostRuntime,
+        instance: &ManagedInstance,
+        mut guard: impl FnMut(&Live) -> Result<()>,
+    ) -> Result<Vec<u8>> {
+        self.complete_dispatch_checked(
+            observation,
+            host,
+            instance,
+            &|binding, host, instance| binding.validate_owner(host, instance).map_err(Error::from),
+            &mut guard,
         )
     }
     fn retire_matching(&self, operation: &str, live: &Arc<Live>) {
