@@ -592,5 +592,14 @@
   },
   "pluginsServiceRunLastObservation": "Showing the last observation; current state is unverified.",
   "pluginsServiceRunNextSettings": "Settings for the next explicit run",
-  "pluginsServiceRunHttpPanel": "An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained."
+  "pluginsServiceRunHttpPanel": "An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.",
+  "pluginsServiceRunStartRejected": "The start response reported an error. The current task has been checked; review the reason and any cleanup state before proceeding.",
+  "pluginsServiceRunHostFailure": "Host diagnostic: {detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  }
 }

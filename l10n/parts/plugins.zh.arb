@@ -592,5 +592,14 @@
   },
   "pluginsServiceRunLastObservation": "以下为最近一次观察，当前状态尚未核实。",
   "pluginsServiceRunNextSettings": "下一次显式运行的设置",
-  "pluginsServiceRunHttpPanel": "当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。"
+  "pluginsServiceRunHttpPanel": "当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。",
+  "pluginsServiceRunStartRejected": "启动响应报告了错误，已核对当前任务。请查看原因及可能需要的清理状态后继续操作。",
+  "pluginsServiceRunHostFailure": "宿主诊断：{detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  }
 }

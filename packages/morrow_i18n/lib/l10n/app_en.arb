@@ -314,6 +314,13 @@
       }
     }
   },
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsServiceRunNetwork": {
     "placeholders": {
       "bind": {
@@ -1391,6 +1398,7 @@
   "pluginsServiceRunExited": "Service exited",
   "pluginsServiceRunHeaderBytes": "Maximum header size (bytes, up to 65,536)",
   "pluginsServiceRunHint": "Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.",
+  "pluginsServiceRunHostFailure": "Host diagnostic: {detail}",
   "pluginsServiceRunHttpPanel": "An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.",
   "pluginsServiceRunIdentityChanged": "A different task owns the content. This panel will not control it using the previous service identity.",
   "pluginsServiceRunInvalid": "Check the selected service and numeric limits. No new run was submitted.",
@@ -1415,6 +1423,7 @@
   "pluginsServiceRunSelection": "Approved service publication",
   "pluginsServiceRunStale": "The selected package, configuration or approval changed. Refresh records and select it again before starting.",
   "pluginsServiceRunStart": "Start finite service",
+  "pluginsServiceRunStartRejected": "The start response reported an error. The current task has been checked; review the reason and any cleanup state before proceeding.",
   "pluginsServiceRunStartUnknown": "The start result is unknown. This attempt identity is retained; refresh to locate it. It will not be started again automatically.",
   "pluginsServiceRunStarting": "Starting service",
   "pluginsServiceRunStatusFailed": "Could not verify the current service state. Refresh before taking further action.",

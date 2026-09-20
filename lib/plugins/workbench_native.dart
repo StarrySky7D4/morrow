@@ -840,17 +840,21 @@ class RustWorkbench
   }
 
   @override
-  Future<ServiceRunSnapshot> startServiceRun(ServiceRunRequest request) {
+  Future<ServiceRunSnapshot> startServiceRun(ServiceRunRequest request) async {
     ServiceRunValidation.request(request);
-    return _callDecoded<ServiceRunSnapshot>(
-      host.Action.serviceRunStart,
-      configure: (r) =>
-          ServiceRunCodec.writeRequest(request, r.initServiceRun()),
-      decode: (r) =>
-          ServiceRunCodec.snapshot(r, expectedSubmission: request.submission),
-      clearReply: true,
-      updatePresentation: false,
-    );
+    try {
+      return await _callDecoded<ServiceRunSnapshot>(
+        host.Action.serviceRunStart,
+        configure: (r) =>
+            ServiceRunCodec.writeRequest(request, r.initServiceRun()),
+        decode: (r) =>
+            ServiceRunCodec.snapshot(r, expectedSubmission: request.submission),
+        clearReply: true,
+        updatePresentation: false,
+      );
+    } on _HostResponseError catch (error) {
+      throw ServiceRunStartFailure(error.message);
+    }
   }
 
   @override

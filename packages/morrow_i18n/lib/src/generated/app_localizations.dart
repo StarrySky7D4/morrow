@@ -3612,6 +3612,12 @@ abstract class AppLocalizations {
   /// **'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.'**
   String get pluginsServiceRunHint;
 
+  /// No description provided for @pluginsServiceRunHostFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Host diagnostic: {detail}'**
+  String pluginsServiceRunHostFailure(String detail);
+
   /// No description provided for @pluginsServiceRunHttpPanel.
   ///
   /// In en, this message translates to:
@@ -3759,6 +3765,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Start finite service'**
   String get pluginsServiceRunStart;
+
+  /// No description provided for @pluginsServiceRunStartRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The start response reported an error. The current task has been checked; review the reason and any cleanup state before proceeding.'**
+  String get pluginsServiceRunStartRejected;
 
   /// No description provided for @pluginsServiceRunStartUnknown.
   ///

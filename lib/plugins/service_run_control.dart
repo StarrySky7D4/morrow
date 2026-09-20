@@ -45,6 +45,16 @@ class ServiceRunRequest {
 
 enum ServiceRunPhase { starting, running, stopping, exited }
 
+/// A valid host error response to a start request, as distinct from a lost or
+/// malformed response. The host may retain a cleanup task: callers must inspect
+/// its original identity before deciding which operation is available next.
+class ServiceRunStartFailure implements Exception {
+  const ServiceRunStartFailure(this.message);
+  final String message;
+  @override
+  String toString() => message;
+}
+
 enum ServiceNetworkOutcome {
   pending,
   succeeded,

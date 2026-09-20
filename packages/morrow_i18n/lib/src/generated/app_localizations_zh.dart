@@ -1871,6 +1871,11 @@ class AppLocalizationsZh extends AppLocalizations {
       '从已保存的配置和发布授权启动有限服务。运行期间可继续编辑内容，收起此面板不会停止服务。';
 
   @override
+  String pluginsServiceRunHostFailure(String detail) {
+    return '宿主诊断：$detail';
+  }
+
+  @override
   String get pluginsServiceRunHttpPanel =>
       '当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。';
 
@@ -1950,6 +1955,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsServiceRunStart => '启动有限服务';
+
+  @override
+  String get pluginsServiceRunStartRejected =>
+      '启动响应报告了错误，已核对当前任务。请查看原因及可能需要的清理状态后继续操作。';
 
   @override
   String get pluginsServiceRunStartUnknown =>

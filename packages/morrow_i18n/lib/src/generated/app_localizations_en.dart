@@ -2024,6 +2024,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.';
 
   @override
+  String pluginsServiceRunHostFailure(String detail) {
+    return 'Host diagnostic: $detail';
+  }
+
+  @override
   String get pluginsServiceRunHttpPanel =>
       'An API service currently owns this task. Use the service run panel above to stop it or acknowledge its exit. Your HTTP request draft is retained.';
 
@@ -2111,6 +2116,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsServiceRunStart => 'Start finite service';
+
+  @override
+  String get pluginsServiceRunStartRejected =>
+      'The start response reported an error. The current task has been checked; review the reason and any cleanup state before proceeding.';
 
   @override
   String get pluginsServiceRunStartUnknown =>

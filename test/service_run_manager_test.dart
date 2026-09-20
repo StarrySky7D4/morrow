@@ -618,6 +618,76 @@ void main() {
   );
 
   testWidgets(
+    'rejected start diagnostic survives narrow bilingual remount until explicit new start',
+    (tester) async {
+      _cleanup(tester);
+      tester.view.physicalSize = const Size(320, 640);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final run = _RunBackend(), metadata = _metadata();
+      const detail =
+          'Service admission rejected: the requested execution budget exceeds the approved package declaration. 请检查运行预算后再重试。';
+      run.onStart = (_) => Future.error(const ServiceRunStartFailure(detail));
+      await _mount(tester, _host(run, metadata));
+      await _select(tester);
+      await _click(tester, 'start');
+      final original = run.starts.single;
+      final session = ServiceRunSession.forBackend(run, run);
+      expect(session.startUnknown, isFalse);
+      expect(session.history.single.request.submission, original.submission);
+      expect(session.history.single.outcomeUnknown, isFalse);
+      expect(session.history.single.startFailureDetail, detail);
+      expect(_button(tester, 'start').onPressed, isNotNull);
+      expect(
+        tester.widget<Text>(_find('failure-detail')).data,
+        contains(detail),
+      );
+      final english = tester.widget<Text>(_find('notice')).data;
+      await tester.ensureVisible(_find('failure-detail'));
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      await _mount(tester, _host(run, metadata, locale: 'zh'));
+      expect(tester.widget<Text>(_find('notice')).data, isNot(english));
+      expect(
+        tester.widget<Text>(_find('failure-detail')).data,
+        contains(detail),
+      );
+      expect(run.starts.length, 1);
+      await _mount(tester, const SizedBox.shrink());
+      await _mount(tester, _host(run, metadata));
+      await _click(tester, 'refresh');
+      await _click(tester, 'refresh-records');
+      expect(
+        tester.widget<Text>(_find('failure-detail')).data,
+        contains(detail),
+      );
+      expect(run.starts.length, 1);
+      expect(_button(tester, 'start').onPressed, isNull);
+      run.onStart = null;
+      await _select(tester);
+      expect(
+        run.starts.length,
+        1,
+        reason: 'selecting a candidate never resubmits a start',
+      );
+      await _click(tester, 'start');
+      expect(run.starts.length, 2);
+      expect(
+        run.starts.last.submission,
+        isNot(orderedEquals(original.submission)),
+      );
+      expect(run.starts.last.configId, original.configId);
+      expect(run.starts.last.configDigest, original.configDigest);
+      expect(run.starts.last.publication, original.publication);
+      expect(run.starts.last.registryRevision, original.registryRevision);
+      expect(_find('failure-detail'), findsNothing);
+      expect(_button(tester, 'stop').onPressed, isNotNull);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
     'narrow screen and locale switch keep all advanced fields accessible',
     (tester) async {
       _cleanup(tester);

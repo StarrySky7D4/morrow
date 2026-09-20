@@ -146,6 +146,128 @@ class FakeBackend
 
 void main() {
   test(
+    'verified start failure is inspected and permits only a new explicit attempt',
+    () async {
+      final backend = FakeBackend()
+        ..onStart = (_) async =>
+            throw const ServiceRunStartFailure('plugin approval changed');
+      final session = ServiceRunSession(backend, backend);
+      await session.refresh();
+      await session.start(request());
+      expect(backend.starts, 1);
+      expect(session.notice, ServiceRunNotice.startRejected);
+      expect(session.startFailureDetail, 'plugin approval changed');
+      expect(session.startUnknown, isFalse);
+      expect(session.canStart, isTrue);
+      expect(session.canAbandon, isFalse);
+      expect(
+        session.history.single.startFailureDetail,
+        'plugin approval changed',
+      );
+      await session.refresh();
+      expect(session.notice, ServiceRunNotice.startRejected);
+      expect(backend.starts, 1);
+      await session.start(request());
+      expect(backend.starts, 1, reason: 'same recent identity is not replayed');
+      backend.onStart = null;
+      await session.start(request(2));
+      expect(backend.starts, 2);
+      expect(session.service!.submission, id(2));
+      expect(session.startFailureDetail, isNull);
+    },
+  );
+
+  test(
+    'host start error can retain a cleanup task requiring repair and acknowledgement',
+    () async {
+      final backend = FakeBackend();
+      backend.onStart = (value) async {
+        backend.set(
+          run(
+            key: 20,
+            submission: value.submission.first,
+            phase: ServiceRunPhase.exited,
+            storage: IoStoragePhase.recoveryRequired,
+          ),
+        );
+        throw const ServiceRunStartFailure('service preparation failed');
+      };
+      final session = ServiceRunSession(backend, backend);
+      await session.refresh();
+      await session.start(request());
+      expect(session.startUnknown, isFalse);
+      expect(session.canStart, isFalse);
+      expect(session.canAcknowledge, isFalse);
+      expect(session.canRepair, isTrue);
+      expect(session.task!.key, id(20));
+      expect(session.attempt!.submission, id(1));
+      await session.repair();
+      expect(backend.repairs, 1);
+      expect(session.canAcknowledge, isTrue);
+      await session.acknowledge();
+      expect(session.canStart, isTrue);
+      expect(
+        session.history.single.startFailureDetail,
+        'service preparation failed',
+      );
+      expect(session.startFailureDetail, isNull);
+      expect(backend.starts, 1);
+    },
+  );
+
+  test(
+    'valid error followed by unavailable observation keeps Unknown and original identity',
+    () async {
+      final backend = FakeBackend();
+      backend.onStart = (_) async {
+        backend.failStatus = true;
+        throw const ServiceRunStartFailure('start response reported failure');
+      };
+      final session = ServiceRunSession(backend, backend);
+      await session.refresh();
+      await session.start(request());
+      expect(session.startUnknown, isTrue);
+      expect(session.shouldPoll, isFalse);
+      expect(
+        session.canStart || session.canStop || session.canAbandon,
+        isFalse,
+      );
+      expect(session.attempt!.submission, id(1));
+      expect(session.startFailureDetail, 'start response reported failure');
+      await session.start(request(2));
+      expect(backend.starts, 1);
+      backend.failStatus = false;
+      backend.set(run(submission: 1));
+      await session.refresh();
+      expect(session.notice, ServiceRunNotice.startRejected);
+      expect(session.startUnknown, isFalse);
+      expect(session.canStop, isTrue);
+      expect(backend.starts, 1);
+    },
+  );
+
+  test('valid start error cannot adopt an unrelated cleanup task', () async {
+    final backend = FakeBackend();
+    backend.onStart = (_) async {
+      backend.set(run(key: 90, submission: 9, phase: ServiceRunPhase.exited));
+      throw const ServiceRunStartFailure('another task exists');
+    };
+    final session = ServiceRunSession(backend, backend);
+    await session.refresh();
+    await session.start(request());
+    expect(session.notice, ServiceRunNotice.identityChanged);
+    expect(session.startUnknown, isTrue);
+    expect(
+      session.canAcknowledge || session.canRepair || session.canStart,
+      isFalse,
+    );
+    expect(session.attempt!.submission, id(1));
+    expect(session.history, isEmpty);
+    await session.acknowledge();
+    expect(backend.acknowledgements, 0);
+  });
+
+  test(
     'backend disposal during preflight prevents later start and stop mutations',
     () async {
       for (final stopping in [false, true]) {

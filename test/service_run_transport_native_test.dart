@@ -194,6 +194,94 @@ void _originalPresentation(RustWorkbench backend) {
 void main() {
   final python = Platform.environment['MORROW_CLOSE_TEST_PYTHON'];
   test(
+    'validated host start error preserves exact diagnostic without retry',
+    () async {
+      const detail =
+          'Service admission denied: declared run budget exceeded (请求预算过大)';
+      final child = await _Child.open(python!, [
+        _initial(),
+        _reply((r) => r.error = detail),
+      ]);
+      try {
+        await expectLater(
+          child.backend.startServiceRun(_startRequest()),
+          throwsA(
+            isA<ServiceRunStartFailure>().having(
+              (error) => error.message,
+              'original host diagnostic',
+              detail,
+            ),
+          ),
+        );
+        _originalPresentation(child.backend);
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+        expect(
+          await child.actions(
+            inspect: (index, request) {
+              if (index == 1) {
+                expect(request.serviceRun!.submission, _submission);
+                expect(request.serviceRun!.configId, 'controlled-service');
+              }
+            },
+          ),
+          [host.Action.page, host.Action.serviceRunStart],
+        );
+      } finally {
+        await child.close();
+      }
+    },
+    skip: python == null,
+  );
+
+  for (final invalid in [
+    'wrong-digest',
+    'malformed',
+    'invalid-success',
+    'lost-transport',
+  ]) {
+    test(
+      '$invalid start response is never a positively classified host rejection',
+      () async {
+        final responses = <Uint8List>[_initial()];
+        switch (invalid) {
+          case 'wrong-digest':
+            responses.add(
+              _reply((r) {
+                r.digest = Uint8List(32);
+                r.error = 'untrusted admission denied';
+              }),
+            );
+          case 'malformed':
+            responses.add(Uint8List(8));
+          case 'invalid-success':
+            // Valid outer contract, but no successful run identity/state.
+            responses.add(_reply((_) {}));
+          case 'lost-transport':
+            // The child logs the start, then reaches EOF in its reply script.
+            // It cannot establish whether the actual host accepted the start.
+            break;
+        }
+        final child = await _Child.open(python!, responses);
+        try {
+          await expectLater(
+            child.backend.startServiceRun(_startRequest()),
+            throwsA(isNot(isA<ServiceRunStartFailure>())),
+          );
+          _originalPresentation(child.backend);
+          await Future<void>.delayed(const Duration(milliseconds: 80));
+          expect(await child.actions(), [
+            host.Action.page,
+            host.Action.serviceRunStart,
+          ]);
+        } finally {
+          await child.close();
+        }
+      },
+      skip: python == null,
+    );
+  }
+
+  test(
     'controlled child accepts large command-read and owns wiping payload',
     () async {
       final inner = _largeInner();

@@ -6,6 +6,7 @@ import 'service_run_control.dart';
 enum ServiceRunNotice {
   statusFailed,
   startUnknown,
+  startRejected,
   controlUnknown,
   identityChanged,
   invalid,
@@ -16,9 +17,11 @@ class ServiceRunAttemptRecord {
     required this.request,
     required this.outcomeUnknown,
     required this.abandoned,
+    this.startFailureDetail,
   });
   final ServiceRunRequest request;
   final bool outcomeUnknown, abandoned;
+  final String? startFailureDetail;
 }
 
 class _IdentityChanged implements Exception {}
@@ -48,6 +51,7 @@ class ServiceRunSession extends ChangeNotifier {
   ServiceRunRequest? attempt;
   bool busy = false, trusted = false, startUnknown = false;
   ServiceRunNotice? notice;
+  String? startFailureDetail;
   final List<ServiceRunAttemptRecord> _history = [];
   List<ServiceRunAttemptRecord> get history => List.unmodifiable(_history);
   bool _disposed = false;
@@ -103,6 +107,7 @@ class ServiceRunSession extends ChangeNotifier {
         request: value,
         outcomeUnknown: unknown,
         abandoned: abandoned,
+        startFailureDetail: startFailureDetail,
       ),
     );
     if (_history.length > 5) _history.removeAt(0);
@@ -194,7 +199,11 @@ class ServiceRunSession extends ChangeNotifier {
     try {
       await _inspect();
       trusted = true;
-      notice = startUnknown ? ServiceRunNotice.startUnknown : null;
+      notice = startUnknown
+          ? ServiceRunNotice.startUnknown
+          : startFailureDetail != null
+          ? ServiceRunNotice.startRejected
+          : null;
     } catch (error) {
       notice = error is _IdentityChanged
           ? ServiceRunNotice.identityChanged
@@ -224,6 +233,7 @@ class ServiceRunSession extends ChangeNotifier {
     notice = null;
     _changed();
     var sent = false;
+    startFailureDetail = null;
     try {
       // Refresh the local task immediately before the single explicit admission.
       await _inspect();
@@ -239,11 +249,33 @@ class ServiceRunSession extends ChangeNotifier {
       trusted = true;
     } catch (error) {
       startUnknown = sent;
-      notice = error is _IdentityChanged
-          ? ServiceRunNotice.identityChanged
-          : sent
-          ? ServiceRunNotice.startUnknown
-          : ServiceRunNotice.statusFailed;
+      if (sent && error is ServiceRunStartFailure) {
+        // A valid error is not evidence that no worker/cleanup task exists.
+        // Keep the submitted identity while observing the native owner's state.
+        startFailureDetail = String.fromCharCodes(
+          error.message.runes.take(1024),
+        );
+        try {
+          await _inspect();
+          if (_disposed) return;
+          if (_local) {
+            _archive(unknown: false);
+            startUnknown = false;
+          }
+          trusted = true;
+          notice = ServiceRunNotice.startRejected;
+        } catch (inspectionError) {
+          notice = inspectionError is _IdentityChanged
+              ? ServiceRunNotice.identityChanged
+              : ServiceRunNotice.startUnknown;
+        }
+      } else {
+        notice = error is _IdentityChanged
+            ? ServiceRunNotice.identityChanged
+            : sent
+            ? ServiceRunNotice.startUnknown
+            : ServiceRunNotice.statusFailed;
+      }
     } finally {
       busy = false;
       _changed();
@@ -296,6 +328,7 @@ class ServiceRunSession extends ChangeNotifier {
         task = receipt;
         service = null;
         _archive(unknown: false);
+        startFailureDetail = null;
       } else {
         if (!listEquals(receipt.key, key)) throw _IdentityChanged();
         task = receipt;
@@ -323,6 +356,7 @@ class ServiceRunSession extends ChangeNotifier {
   void abandonAttempt() {
     if (!canAbandon) return;
     _archive(unknown: true, abandoned: true);
+    startFailureDetail = null;
     startUnknown = false;
     notice = null;
     _changed();

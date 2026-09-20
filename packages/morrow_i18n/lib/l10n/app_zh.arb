@@ -314,6 +314,13 @@
       }
     }
   },
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsServiceRunNetwork": {
     "placeholders": {
       "bind": {
@@ -1391,6 +1398,7 @@
   "pluginsServiceRunExited": "服务已退出",
   "pluginsServiceRunHeaderBytes": "最大请求头大小（字节，最多 65,536）",
   "pluginsServiceRunHint": "从已保存的配置和发布授权启动有限服务。运行期间可继续编辑内容，收起此面板不会停止服务。",
+  "pluginsServiceRunHostFailure": "宿主诊断：{detail}",
   "pluginsServiceRunHttpPanel": "当前任务属于 API 服务。请使用上方服务运行面板停止服务或确认退出，HTTP 请求草稿仍会保留。",
   "pluginsServiceRunIdentityChanged": "内容正由另一任务管理。此面板不会使用原服务身份控制该任务。",
   "pluginsServiceRunInvalid": "请检查所选服务与数值限制，尚未提交新的运行。",
@@ -1415,6 +1423,7 @@
   "pluginsServiceRunSelection": "已授权的服务发布",
   "pluginsServiceRunStale": "所选插件、配置或授权已变化。启动前请刷新记录并重新选择。",
   "pluginsServiceRunStart": "启动有限服务",
+  "pluginsServiceRunStartRejected": "启动响应报告了错误，已核对当前任务。请查看原因及可能需要的清理状态后继续操作。",
   "pluginsServiceRunStartUnknown": "启动结果不明，已保留本次尝试身份。请刷新以查找对应服务，不会自动重新启动。",
   "pluginsServiceRunStarting": "服务正在启动",
   "pluginsServiceRunStatusFailed": "无法核实当前服务状态。继续操作前请刷新状态。",

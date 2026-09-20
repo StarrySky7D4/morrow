@@ -342,6 +342,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
       switch (notice) {
         ServiceRunNotice.statusFailed => l.pluginsServiceRunStatusFailed,
         ServiceRunNotice.startUnknown => l.pluginsServiceRunStartUnknown,
+        ServiceRunNotice.startRejected => l.pluginsServiceRunStartRejected,
         ServiceRunNotice.controlUnknown => l.pluginsServiceRunControlUnknown,
         ServiceRunNotice.identityChanged => l.pluginsServiceRunIdentityChanged,
         ServiceRunNotice.invalid => l.pluginsServiceRunInvalid,
@@ -403,6 +404,11 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
           ),
           if (_run.notice != null)
             _note(_notice(l, _run.notice!), key: 'notice'),
+          if (_run.startFailureDetail case final String detail)
+            _note(
+              l.pluginsServiceRunHostFailure(detail),
+              key: 'failure-detail',
+            ),
           if (_invalid) _note(l.pluginsServiceRunInvalid, key: 'invalid'),
           if (task != null) _note(_storage(l, task.storage), key: 'storage'),
           if (!_run.trusted && !_run.busy && task != null)
