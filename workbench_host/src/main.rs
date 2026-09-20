@@ -122,7 +122,8 @@ fn frames(
         }
         let mut bytes = zeroize::Zeroizing::new(vec![0; size]);
         input.read_exact(&mut bytes)?;
-        let response = morrow_workbench_host::protocol::respond(host, &bytes)?;
+        let response =
+            zeroize::Zeroizing::new(morrow_workbench_host::protocol::respond(host, &bytes)?);
         output.write_all(&(response.len() as u32).to_le_bytes())?;
         output.write_all(&response)?;
         output.flush()?;

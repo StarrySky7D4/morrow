@@ -7,6 +7,7 @@ use capnp::{
 };
 use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
+use zeroize::{Zeroize, Zeroizing};
 pub fn digest() -> [u8; 32] {
     Sha256::digest(
         include_str!("../schemas/host.capnp")
@@ -108,10 +109,23 @@ fn io_result_reply(
 }
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut output = Builder::new_default();
-    let mut out = output.init_root::<wire::response::Builder>();
-    out.set_version(1);
-    out.set_digest(&digest());
-    if let Err(e) = handle(host, bytes, out.reborrow()) {
+    let failure = {
+        let mut out = output.init_root::<wire::response::Builder>();
+        out.set_version(1);
+        out.set_digest(&digest());
+        handle(host, bytes, out.reborrow()).err()
+    };
+    if let Some(e) = failure {
+        // Never serialize a partial success together with an error. In
+        // particular, a one-time token must not survive in abandoned segments.
+        output
+            .get_root::<wire::response::Builder>()?
+            .get_issued_token()?
+            .zeroize();
+        output = Builder::new_default();
+        let mut out = output.init_root::<wire::response::Builder>();
+        out.set_version(1);
+        out.set_digest(&digest());
         if let Some(access) = e.downcast_ref::<crate::io_tasks::AccessError>() {
             out.set_ui_code(match access {
                 crate::io_tasks::AccessError::Busy => 110,
@@ -131,14 +145,22 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
         }
         out.set_error(e.to_string().as_str());
     }
-    out.set_read_only(!host.writable());
-    if let Some(warning) = host.maintenance_warning() {
-        out.set_maintenance_warning(warning);
+    {
+        let mut out = output.get_root::<wire::response::Builder>()?;
+        out.set_read_only(!host.writable());
+        if let Some(warning) = host.maintenance_warning() {
+            out.set_maintenance_warning(warning);
+        }
     }
-    let bytes = serialize::write_message_to_words(&output);
+    // The CLI immediately takes ownership in another Zeroizing buffer. Keep
+    // this intermediate owner protected too, including oversized replies.
+    let mut bytes = Zeroizing::new(serialize::write_message_to_words(&output));
+    output
+        .get_root::<wire::response::Builder>()?
+        .get_issued_token()?
+        .zeroize();
     if bytes.len() > 128 * 1024 {
-        // Clearing pointers on the old builder leaves its oversized allocation in
-        // the serialized segments. Use a fresh message and deliver no partial result.
+        // A fresh message contains neither partial payload nor hidden segments.
         // The request may already have executed; this is a delivery error only.
         let mut bounded = Builder::new_default();
         let mut error = bounded.init_root::<wire::response::Builder>();
@@ -148,7 +170,7 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
         error.set_error("response exceeds 128 KiB frame budget; no result delivered; verify any operation before retrying");
         return Ok(serialize::write_message_to_words(&bounded));
     }
-    Ok(bytes)
+    Ok(std::mem::take(&mut *bytes))
 }
 fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'_>) -> Result<()> {
     if bytes.len() > 128 * 1024 {
@@ -196,8 +218,24 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     ) {
         host.host.local()?;
     }
-    let id = text(r.get_id())?;
+    let id = if crate::service_protocol::is_action(action) {
+        String::new()
+    } else {
+        text(r.get_id())?
+    };
     match action {
+        wire::Action::ServiceConfigPage
+        | wire::Action::ServiceConfigSave
+        | wire::Action::ServiceConfigDisable
+        | wire::Action::ServiceAuthorityPage
+        | wire::Action::ServiceAuthenticationIssue
+        | wire::Action::ServiceAuthorityDisable
+        | wire::Action::ServicePublicationSave => {
+            // Service errors can contain host paths. Expose no raw backend
+            // details; the shared access gate above still preserves Busy codes.
+            crate::service_protocol::handle(host, r, out.reborrow())
+                .map_err(|_| "service administration request could not be completed")?;
+        }
         wire::Action::HttpStart => {
             let h = r.get_http_start()?;
             let headers = h.get_headers()?;

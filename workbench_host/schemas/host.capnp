@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -16,6 +16,9 @@ struct Request {
  endpointCursor @31 :Data; endpointSnapshot @32 :Data; endpointReference @33 :Data;
  endpointRegistryRevision @34 :UInt64; endpointDays @35 :UInt32; endpointPolicy @36 :EndpointPolicy;
  httpStart @37 :HttpStart; ioKey @38 :Data;
+ serviceConfig @39 :ServiceConfigUpdate; servicePublication @40 :ServicePublicationUpdate;
+ serviceReference @41 :Data; serviceSnapshot @42 :Data; serviceCursor @43 :Data;
+ principalId @44 :Text; serviceDays @45 :UInt32;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -31,6 +34,9 @@ struct Response {
  credentials @24 :List(CredentialInfo); credentialSnapshot @25 :Data; credentialCursor @26 :Data;
  endpoints @27 :List(EndpointInfo); endpointSnapshot @28 :Data; endpointCursor @29 :Data;
  ioState @30 :IoState; ioResult @31 :IoResult;
+ serviceConfigs @32 :List(ServiceConfigInfo); serviceAuthorities @33 :List(ServiceAuthorityInfo);
+ serviceSnapshot @34 :Data; serviceCursor @35 :Data;
+ issuedToken @36 :Data;
 }
 
 # Trusted editor observations. Selection offsets count UTF-16 code units, not UTF-8 bytes.
@@ -101,4 +107,32 @@ struct IoResult {
  present @0 :Bool; cancelled @1 :Bool; unknown @2 :Bool; calls @3 :UInt32; chargedBytes @4 :UInt64;
  executionFault @5 :UInt16; exitCode @6 :Int32;
  hasHttp @7 :Bool; status @8 :UInt16; httpStatus @9 :UInt16; headers @10 :List(HttpHeader); body @11 :Data;
+}
+
+# Service desired state only. No raw authentication verifiers cross this channel.
+struct ServiceContentScope { kind @0 :UInt16; cardId @1 :Text; attachmentId @2 :Text; }
+struct ServicePrincipal { id @0 :Text; authenticationReference @1 :Data; scopes @2 :List(ServiceContentScope); }
+struct ServiceConfigUpdate {
+ id @0 :Text; expectedRevision @1 :UInt64; registryRevision @2 :UInt64;
+ packageId @3 :Text; packageDigest @4 :Data; service @5 :Text; handler @6 :Text;
+ retentionMs @7 :UInt64; principals @8 :List(ServicePrincipal);
+}
+struct ServiceConfigInfo {
+ id @0 :Text; revision @1 :UInt64; namespace @2 :Data; retentionMs @3 :UInt64;
+ service @4 :Text; handler @5 :Text; packageDigest @6 :Data; disabled @7 :Bool;
+ principals @8 :List(ServicePrincipal); approvalReferences @9 :List(Data); digest @10 :Data;
+}
+struct ServicePublication {
+ configId @0 :Text; configDigest @1 :Data; listenAddress @2 :Text; tlsRequired @3 :Bool;
+ method @4 :Text; path @5 :Text; queryPath @6 :Text;
+}
+struct ServicePublicationUpdate {
+ reference @0 :Data; expectedRevision @1 :UInt64; configRevision @2 :UInt64;
+ registryRevision @3 :UInt64; packageId @4 :Text; lifetimeDays @5 :UInt32;
+ policy @6 :ServicePublication;
+}
+# kind 1 authentication, 2 publication. Token is returned separately on issue only.
+struct ServiceAuthorityInfo {
+ reference @0 :Data; revision @1 :UInt64; createdMs @2 :UInt64; expiresMs @3 :UInt64;
+ disabled @4 :Bool; kind @5 :UInt16; principalId @6 :Text; publication @7 :ServicePublication;
 }

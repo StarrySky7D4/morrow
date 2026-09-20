@@ -59,6 +59,13 @@ enum Action {
   ioCancel,
   ioRepair,
   ioAcknowledge,
+  serviceConfigPage,
+  serviceConfigSave,
+  serviceConfigDisable,
+  serviceAuthorityPage,
+  serviceAuthenticationIssue,
+  serviceAuthorityDisable,
+  servicePublicationSave,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -128,6 +135,33 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'ioCancel', codeOrder: 51, ordinal: 51),
     EnumerantSchemaInfo(name: 'ioRepair', codeOrder: 52, ordinal: 52),
     EnumerantSchemaInfo(name: 'ioAcknowledge', codeOrder: 53, ordinal: 53),
+    EnumerantSchemaInfo(name: 'serviceConfigPage', codeOrder: 54, ordinal: 54),
+    EnumerantSchemaInfo(name: 'serviceConfigSave', codeOrder: 55, ordinal: 55),
+    EnumerantSchemaInfo(
+      name: 'serviceConfigDisable',
+      codeOrder: 56,
+      ordinal: 56,
+    ),
+    EnumerantSchemaInfo(
+      name: 'serviceAuthorityPage',
+      codeOrder: 57,
+      ordinal: 57,
+    ),
+    EnumerantSchemaInfo(
+      name: 'serviceAuthenticationIssue',
+      codeOrder: 58,
+      ordinal: 58,
+    ),
+    EnumerantSchemaInfo(
+      name: 'serviceAuthorityDisable',
+      codeOrder: 59,
+      ordinal: 59,
+    ),
+    EnumerantSchemaInfo(
+      name: 'servicePublicationSave',
+      codeOrder: 60,
+      ordinal: 60,
+    ),
   ],
 );
 
@@ -223,6 +257,26 @@ final class RequestReader extends StructReader {
   );
 
   Uint8List? get ioKey => getDataField(28);
+
+  ServiceConfigUpdateReader? get serviceConfig => getStructFieldWith(
+    29,
+    (r) => ServiceConfigUpdateReader(r, capabilities: capabilityTable),
+  );
+
+  ServicePublicationUpdateReader? get servicePublication => getStructFieldWith(
+    30,
+    (r) => ServicePublicationUpdateReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get serviceReference => getDataField(31);
+
+  Uint8List? get serviceSnapshot => getDataField(32);
+
+  Uint8List? get serviceCursor => getDataField(33);
+
+  String? get principalId => getTextField(34);
+
+  int get serviceDays => getUint32Field(52);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -390,6 +444,43 @@ final class RequestBuilder extends StructBuilder {
   set ioKey(Uint8List? v) {
     setDataField(28, v);
   }
+
+  ServiceConfigUpdateBuilder initServiceConfig() {
+    return initStructFieldWith(29, (r) => ServiceConfigUpdateBuilder(r), 3, 6);
+  }
+
+  bool hasServiceConfig() => hasPointerField(29);
+
+  ServicePublicationUpdateBuilder initServicePublication() {
+    return initStructFieldWith(
+      30,
+      (r) => ServicePublicationUpdateBuilder(r),
+      4,
+      3,
+    );
+  }
+
+  bool hasServicePublication() => hasPointerField(30);
+
+  set serviceReference(Uint8List? v) {
+    setDataField(31, v);
+  }
+
+  set serviceSnapshot(Uint8List? v) {
+    setDataField(32, v);
+  }
+
+  set serviceCursor(Uint8List? v) {
+    setDataField(33, v);
+  }
+
+  set principalId(String? v) {
+    setTextField(34, v);
+  }
+
+  set serviceDays(int v) {
+    setUint32Field(52, v);
+  }
 }
 
 final class _RequestFactory
@@ -399,7 +490,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 29;
+  int get ptrWords => 35;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -416,7 +507,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 29,
+  pointerWords: 35,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -730,6 +821,62 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'serviceConfig',
+      codeOrder: 39,
+      body: SlotFieldSchemaInfo(
+        offset: 29,
+        type: StructRefTypeSchemaInfo(0xd315414aa0761357),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'servicePublication',
+      codeOrder: 40,
+      body: SlotFieldSchemaInfo(
+        offset: 30,
+        type: StructRefTypeSchemaInfo(0xa97047b00d40e3de),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceReference',
+      codeOrder: 41,
+      body: SlotFieldSchemaInfo(
+        offset: 31,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceSnapshot',
+      codeOrder: 42,
+      body: SlotFieldSchemaInfo(
+        offset: 32,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceCursor',
+      codeOrder: 43,
+      body: SlotFieldSchemaInfo(
+        offset: 33,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'principalId',
+      codeOrder: 44,
+      body: SlotFieldSchemaInfo(
+        offset: 34,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceDays',
+      codeOrder: 45,
+      body: SlotFieldSchemaInfo(
+        offset: 13,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
   ],
 );
 
@@ -818,6 +965,24 @@ final class ResponseReader extends StructReader {
     20,
     (r) => IoResultReader(r, capabilities: capabilityTable),
   );
+
+  ListReader<ServiceConfigInfoReader>? get serviceConfigs =>
+      getStructListFieldWith(
+        21,
+        (r) => ServiceConfigInfoReader(r, capabilities: capabilityTable),
+      );
+
+  ListReader<ServiceAuthorityInfoReader>? get serviceAuthorities =>
+      getStructListFieldWith(
+        22,
+        (r) => ServiceAuthorityInfoReader(r, capabilities: capabilityTable),
+      );
+
+  Uint8List? get serviceSnapshot => getDataField(23);
+
+  Uint8List? get serviceCursor => getDataField(24);
+
+  Uint8List? get issuedToken => getDataField(25);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -975,6 +1140,38 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasIoResult() => hasPointerField(20);
+
+  ListBuilder<ServiceConfigInfoBuilder> initServiceConfigs(int length) {
+    return initStructListFieldWith(
+      21,
+      length,
+      (r) => ServiceConfigInfoBuilder(r),
+      3,
+      8,
+    );
+  }
+
+  ListBuilder<ServiceAuthorityInfoBuilder> initServiceAuthorities(int length) {
+    return initStructListFieldWith(
+      22,
+      length,
+      (r) => ServiceAuthorityInfoBuilder(r),
+      4,
+      3,
+    );
+  }
+
+  set serviceSnapshot(Uint8List? v) {
+    setDataField(23, v);
+  }
+
+  set serviceCursor(Uint8List? v) {
+    setDataField(24, v);
+  }
+
+  set issuedToken(Uint8List? v) {
+    setDataField(25, v);
+  }
 }
 
 final class _ResponseFactory
@@ -984,7 +1181,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 21;
+  int get ptrWords => 26;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1001,7 +1198,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 21,
+  pointerWords: 26,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1257,6 +1454,46 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 20,
         type: StructRefTypeSchemaInfo(0xf0687624897d7cf5),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceConfigs',
+      codeOrder: 32,
+      body: SlotFieldSchemaInfo(
+        offset: 21,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x996df480d50b21ff)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceAuthorities',
+      codeOrder: 33,
+      body: SlotFieldSchemaInfo(
+        offset: 22,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x9812c3ee959cfea5)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceSnapshot',
+      codeOrder: 34,
+      body: SlotFieldSchemaInfo(
+        offset: 23,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'serviceCursor',
+      codeOrder: 35,
+      body: SlotFieldSchemaInfo(
+        offset: 24,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'issuedToken',
+      codeOrder: 36,
+      body: SlotFieldSchemaInfo(
+        offset: 25,
+        type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
   ],
@@ -3433,3 +3670,1046 @@ const StructSchemaInfo ioResultSchema = StructSchemaInfo(
 );
 
 final ioResultFactory = _IoResultFactory();
+
+final class ServiceContentScopeReader extends StructReader {
+  ServiceContentScopeReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceContentScopeSchema;
+
+  int get kind => getUint16Field(0);
+
+  String? get cardId => getTextField(0);
+
+  String? get attachmentId => getTextField(1);
+}
+
+final class ServiceContentScopeBuilder extends StructBuilder {
+  ServiceContentScopeBuilder(super.raw);
+
+  @override
+  ServiceContentScopeReader asReader() =>
+      ServiceContentScopeReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set attachmentId(String? v) {
+    setTextField(1, v);
+  }
+}
+
+final class _ServiceContentScopeFactory
+    extends
+        StructFactory<ServiceContentScopeReader, ServiceContentScopeBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceContentScopeSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  ServiceContentScopeReader fromRawReader(RawStructReader r) =>
+      ServiceContentScopeReader(r);
+  @override
+  ServiceContentScopeReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceContentScopeReader(r, capabilities: capabilities);
+  @override
+  ServiceContentScopeBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceContentScopeBuilder(r);
+}
+
+const StructSchemaInfo serviceContentScopeSchema = StructSchemaInfo(
+  id: 0x9b84fb9cea78ca89,
+  displayName: 'host.capnp:ServiceContentScope',
+  shortName: 'ServiceContentScope',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'attachmentId',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final serviceContentScopeFactory = _ServiceContentScopeFactory();
+
+final class ServicePrincipalReader extends StructReader {
+  ServicePrincipalReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = servicePrincipalSchema;
+
+  String? get id => getTextField(0);
+
+  Uint8List? get authenticationReference => getDataField(1);
+
+  ListReader<ServiceContentScopeReader>? get scopes => getStructListFieldWith(
+    2,
+    (r) => ServiceContentScopeReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class ServicePrincipalBuilder extends StructBuilder {
+  ServicePrincipalBuilder(super.raw);
+
+  @override
+  ServicePrincipalReader asReader() => ServicePrincipalReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set authenticationReference(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  ListBuilder<ServiceContentScopeBuilder> initScopes(int length) {
+    return initStructListFieldWith(
+      2,
+      length,
+      (r) => ServiceContentScopeBuilder(r),
+      1,
+      2,
+    );
+  }
+}
+
+final class _ServicePrincipalFactory
+    extends StructFactory<ServicePrincipalReader, ServicePrincipalBuilder> {
+  @override
+  StructSchemaInfo get schema => servicePrincipalSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  ServicePrincipalReader fromRawReader(RawStructReader r) =>
+      ServicePrincipalReader(r);
+  @override
+  ServicePrincipalReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServicePrincipalReader(r, capabilities: capabilities);
+  @override
+  ServicePrincipalBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServicePrincipalBuilder(r);
+}
+
+const StructSchemaInfo servicePrincipalSchema = StructSchemaInfo(
+  id: 0x8f0a28facf60f41f,
+  displayName: 'host.capnp:ServicePrincipal',
+  shortName: 'ServicePrincipal',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'authenticationReference',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'scopes',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x9b84fb9cea78ca89)),
+      ),
+    ),
+  ],
+);
+
+final servicePrincipalFactory = _ServicePrincipalFactory();
+
+final class ServiceConfigUpdateReader extends StructReader {
+  ServiceConfigUpdateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceConfigUpdateSchema;
+
+  String? get id => getTextField(0);
+
+  int get expectedRevision => getUint64Field(0);
+
+  int get registryRevision => getUint64Field(8);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  String? get service => getTextField(3);
+
+  String? get handler => getTextField(4);
+
+  int get retentionMs => getUint64Field(16);
+
+  ListReader<ServicePrincipalReader>? get principals => getStructListFieldWith(
+    5,
+    (r) => ServicePrincipalReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class ServiceConfigUpdateBuilder extends StructBuilder {
+  ServiceConfigUpdateBuilder(super.raw);
+
+  @override
+  ServiceConfigUpdateReader asReader() =>
+      ServiceConfigUpdateReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set service(String? v) {
+    setTextField(3, v);
+  }
+
+  set handler(String? v) {
+    setTextField(4, v);
+  }
+
+  set retentionMs(int v) {
+    setUint64Field(16, v);
+  }
+
+  ListBuilder<ServicePrincipalBuilder> initPrincipals(int length) {
+    return initStructListFieldWith(
+      5,
+      length,
+      (r) => ServicePrincipalBuilder(r),
+      0,
+      3,
+    );
+  }
+}
+
+final class _ServiceConfigUpdateFactory
+    extends
+        StructFactory<ServiceConfigUpdateReader, ServiceConfigUpdateBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceConfigUpdateSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 6;
+  @override
+  ServiceConfigUpdateReader fromRawReader(RawStructReader r) =>
+      ServiceConfigUpdateReader(r);
+  @override
+  ServiceConfigUpdateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceConfigUpdateReader(r, capabilities: capabilities);
+  @override
+  ServiceConfigUpdateBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceConfigUpdateBuilder(r);
+}
+
+const StructSchemaInfo serviceConfigUpdateSchema = StructSchemaInfo(
+  id: 0xd315414aa0761357,
+  displayName: 'host.capnp:ServiceConfigUpdate',
+  shortName: 'ServiceConfigUpdate',
+  dataWords: 3,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'service',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'retentionMs',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'principals',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x8f0a28facf60f41f)),
+      ),
+    ),
+  ],
+);
+
+final serviceConfigUpdateFactory = _ServiceConfigUpdateFactory();
+
+final class ServiceConfigInfoReader extends StructReader {
+  ServiceConfigInfoReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceConfigInfoSchema;
+
+  String? get id => getTextField(0);
+
+  int get revision => getUint64Field(0);
+
+  Uint8List? get namespace => getDataField(1);
+
+  int get retentionMs => getUint64Field(8);
+
+  String? get service => getTextField(2);
+
+  String? get handler => getTextField(3);
+
+  Uint8List? get packageDigest => getDataField(4);
+
+  bool get disabled => getBoolField(128);
+
+  ListReader<ServicePrincipalReader>? get principals => getStructListFieldWith(
+    5,
+    (r) => ServicePrincipalReader(r, capabilities: capabilityTable),
+  );
+
+  ListReader<Uint8List?>? get approvalReferences => getDataListField(6);
+
+  Uint8List? get digest => getDataField(7);
+}
+
+final class ServiceConfigInfoBuilder extends StructBuilder {
+  ServiceConfigInfoBuilder(super.raw);
+
+  @override
+  ServiceConfigInfoReader asReader() => ServiceConfigInfoReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set namespace(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set retentionMs(int v) {
+    setUint64Field(8, v);
+  }
+
+  set service(String? v) {
+    setTextField(2, v);
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set disabled(bool v) {
+    setBoolField(128, v);
+  }
+
+  ListBuilder<ServicePrincipalBuilder> initPrincipals(int length) {
+    return initStructListFieldWith(
+      5,
+      length,
+      (r) => ServicePrincipalBuilder(r),
+      0,
+      3,
+    );
+  }
+
+  ListBuilder<Uint8List?> initApprovalReferences(int length) {
+    return initDataListField(6, length);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(7, v);
+  }
+}
+
+final class _ServiceConfigInfoFactory
+    extends StructFactory<ServiceConfigInfoReader, ServiceConfigInfoBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceConfigInfoSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 8;
+  @override
+  ServiceConfigInfoReader fromRawReader(RawStructReader r) =>
+      ServiceConfigInfoReader(r);
+  @override
+  ServiceConfigInfoReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceConfigInfoReader(r, capabilities: capabilities);
+  @override
+  ServiceConfigInfoBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceConfigInfoBuilder(r);
+}
+
+const StructSchemaInfo serviceConfigInfoSchema = StructSchemaInfo(
+  id: 0x996df480d50b21ff,
+  displayName: 'host.capnp:ServiceConfigInfo',
+  shortName: 'ServiceConfigInfo',
+  dataWords: 3,
+  pointerWords: 8,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'namespace',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'retentionMs',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'service',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disabled',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 128,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'principals',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0x8f0a28facf60f41f)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approvalReferences',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Data')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final serviceConfigInfoFactory = _ServiceConfigInfoFactory();
+
+final class ServicePublicationReader extends StructReader {
+  ServicePublicationReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = servicePublicationSchema;
+
+  String? get configId => getTextField(0);
+
+  Uint8List? get configDigest => getDataField(1);
+
+  String? get listenAddress => getTextField(2);
+
+  bool get tlsRequired => getBoolField(0);
+
+  String? get method => getTextField(3);
+
+  String? get path => getTextField(4);
+
+  String? get queryPath => getTextField(5);
+}
+
+final class ServicePublicationBuilder extends StructBuilder {
+  ServicePublicationBuilder(super.raw);
+
+  @override
+  ServicePublicationReader asReader() =>
+      ServicePublicationReader(rawToReader());
+
+  set configId(String? v) {
+    setTextField(0, v);
+  }
+
+  set configDigest(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set listenAddress(String? v) {
+    setTextField(2, v);
+  }
+
+  set tlsRequired(bool v) {
+    setBoolField(0, v);
+  }
+
+  set method(String? v) {
+    setTextField(3, v);
+  }
+
+  set path(String? v) {
+    setTextField(4, v);
+  }
+
+  set queryPath(String? v) {
+    setTextField(5, v);
+  }
+}
+
+final class _ServicePublicationFactory
+    extends StructFactory<ServicePublicationReader, ServicePublicationBuilder> {
+  @override
+  StructSchemaInfo get schema => servicePublicationSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 6;
+  @override
+  ServicePublicationReader fromRawReader(RawStructReader r) =>
+      ServicePublicationReader(r);
+  @override
+  ServicePublicationReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServicePublicationReader(r, capabilities: capabilities);
+  @override
+  ServicePublicationBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServicePublicationBuilder(r);
+}
+
+const StructSchemaInfo servicePublicationSchema = StructSchemaInfo(
+  id: 0xbfea80b328fbd5e0,
+  displayName: 'host.capnp:ServicePublication',
+  shortName: 'ServicePublication',
+  dataWords: 1,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'configId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'configDigest',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'listenAddress',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'tlsRequired',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'method',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'path',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'queryPath',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final servicePublicationFactory = _ServicePublicationFactory();
+
+final class ServicePublicationUpdateReader extends StructReader {
+  ServicePublicationUpdateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = servicePublicationUpdateSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get expectedRevision => getUint64Field(0);
+
+  int get configRevision => getUint64Field(8);
+
+  int get registryRevision => getUint64Field(16);
+
+  String? get packageId => getTextField(1);
+
+  int get lifetimeDays => getUint32Field(24);
+
+  ServicePublicationReader? get policy => getStructFieldWith(
+    2,
+    (r) => ServicePublicationReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class ServicePublicationUpdateBuilder extends StructBuilder {
+  ServicePublicationUpdateBuilder(super.raw);
+
+  @override
+  ServicePublicationUpdateReader asReader() =>
+      ServicePublicationUpdateReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set configRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(16, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set lifetimeDays(int v) {
+    setUint32Field(24, v);
+  }
+
+  ServicePublicationBuilder initPolicy() {
+    return initStructFieldWith(2, (r) => ServicePublicationBuilder(r), 1, 6);
+  }
+
+  bool hasPolicy() => hasPointerField(2);
+}
+
+final class _ServicePublicationUpdateFactory
+    extends
+        StructFactory<
+          ServicePublicationUpdateReader,
+          ServicePublicationUpdateBuilder
+        > {
+  @override
+  StructSchemaInfo get schema => servicePublicationUpdateSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 3;
+  @override
+  ServicePublicationUpdateReader fromRawReader(RawStructReader r) =>
+      ServicePublicationUpdateReader(r);
+  @override
+  ServicePublicationUpdateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServicePublicationUpdateReader(r, capabilities: capabilities);
+  @override
+  ServicePublicationUpdateBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServicePublicationUpdateBuilder(r);
+}
+
+const StructSchemaInfo servicePublicationUpdateSchema = StructSchemaInfo(
+  id: 0xa97047b00d40e3de,
+  displayName: 'host.capnp:ServicePublicationUpdate',
+  shortName: 'ServicePublicationUpdate',
+  dataWords: 4,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedRevision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'configRevision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'lifetimeDays',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'policy',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0xbfea80b328fbd5e0),
+      ),
+    ),
+  ],
+);
+
+final servicePublicationUpdateFactory = _ServicePublicationUpdateFactory();
+
+final class ServiceAuthorityInfoReader extends StructReader {
+  ServiceAuthorityInfoReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceAuthorityInfoSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+
+  int get createdMs => getUint64Field(8);
+
+  int get expiresMs => getUint64Field(16);
+
+  bool get disabled => getBoolField(192);
+
+  int get kind => getUint16Field(26);
+
+  String? get principalId => getTextField(1);
+
+  ServicePublicationReader? get publication => getStructFieldWith(
+    2,
+    (r) => ServicePublicationReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class ServiceAuthorityInfoBuilder extends StructBuilder {
+  ServiceAuthorityInfoBuilder(super.raw);
+
+  @override
+  ServiceAuthorityInfoReader asReader() =>
+      ServiceAuthorityInfoReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set createdMs(int v) {
+    setUint64Field(8, v);
+  }
+
+  set expiresMs(int v) {
+    setUint64Field(16, v);
+  }
+
+  set disabled(bool v) {
+    setBoolField(192, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(26, v);
+  }
+
+  set principalId(String? v) {
+    setTextField(1, v);
+  }
+
+  ServicePublicationBuilder initPublication() {
+    return initStructFieldWith(2, (r) => ServicePublicationBuilder(r), 1, 6);
+  }
+
+  bool hasPublication() => hasPointerField(2);
+}
+
+final class _ServiceAuthorityInfoFactory
+    extends
+        StructFactory<ServiceAuthorityInfoReader, ServiceAuthorityInfoBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceAuthorityInfoSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 3;
+  @override
+  ServiceAuthorityInfoReader fromRawReader(RawStructReader r) =>
+      ServiceAuthorityInfoReader(r);
+  @override
+  ServiceAuthorityInfoReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceAuthorityInfoReader(r, capabilities: capabilities);
+  @override
+  ServiceAuthorityInfoBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceAuthorityInfoBuilder(r);
+}
+
+const StructSchemaInfo serviceAuthorityInfoSchema = StructSchemaInfo(
+  id: 0x9812c3ee959cfea5,
+  displayName: 'host.capnp:ServiceAuthorityInfo',
+  shortName: 'ServiceAuthorityInfo',
+  dataWords: 4,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'createdMs',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expiresMs',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disabled',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 192,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 13,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'principalId',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'publication',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0xbfea80b328fbd5e0),
+      ),
+    ),
+  ],
+);
+
+final serviceAuthorityInfoFactory = _ServiceAuthorityInfoFactory();

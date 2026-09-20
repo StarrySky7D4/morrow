@@ -3,6 +3,8 @@ import 'plugin_tools.dart';
 import 'plugin_library.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
+import 'service_control.dart';
+import 'service_codec_native.dart';
 import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'host_request.dart';
@@ -31,6 +33,7 @@ class RustWorkbench
         ExternalPluginControl,
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
+        WorkbenchServiceControl,
         WorkbenchIoTaskControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
@@ -298,6 +301,106 @@ class RustWorkbench
       result: HttpTaskCodec.result(response.ioResult),
     );
   }
+
+  @override
+  Future<ServiceConfigPage> serviceConfigPage({
+    String? after,
+    Uint8List? snapshot,
+  }) {
+    final bound = snapshot == null ? null : Uint8List.fromList(snapshot);
+    return _callDecoded<ServiceConfigPage>(
+      host.Action.serviceConfigPage,
+      configure: (r) =>
+          ServiceCodec.writeConfigPage(r, after: after, snapshot: bound),
+      decode: ServiceCodec.configPage,
+      clearReply: true,
+    );
+  }
+
+  @override
+  Future<StoredServiceConfig> saveServiceConfig(ServiceConfigUpdate update) =>
+      _callDecoded<StoredServiceConfig>(
+        host.Action.serviceConfigSave,
+        configure: (r) =>
+            ServiceCodec.writeConfig(update, r.initServiceConfig()),
+        decode: ServiceCodec.configResult,
+        clearReply: true,
+      );
+
+  @override
+  Future<StoredServiceConfig> disableServiceConfig(
+    String id,
+    BigInt expectedRevision,
+  ) => _callDecoded<StoredServiceConfig>(
+    host.Action.serviceConfigDisable,
+    configure: (r) => ServiceCodec.writeConfigDisable(id, expectedRevision, r),
+    decode: ServiceCodec.configResult,
+    clearReply: true,
+  );
+
+  @override
+  Future<ServiceAuthorityPage> serviceAuthorityPage({
+    Uint8List? after,
+    Uint8List? snapshot,
+  }) {
+    final cursor = after == null ? null : Uint8List.fromList(after);
+    final bound = snapshot == null ? null : Uint8List.fromList(snapshot);
+    return _callDecoded<ServiceAuthorityPage>(
+      host.Action.serviceAuthorityPage,
+      configure: (r) =>
+          ServiceCodec.writeAuthorityPage(r, after: cursor, snapshot: bound),
+      decode: ServiceCodec.authorityPage,
+      clearReply: true,
+    );
+  }
+
+  @override
+  Future<IssuedServiceAuthentication> issueServiceAuthentication({
+    required Uint8List reference,
+    required BigInt expectedRevision,
+    required String principalId,
+    required int lifetimeDays,
+  }) {
+    final owned = Uint8List.fromList(reference);
+    return _callDecoded<IssuedServiceAuthentication>(
+      host.Action.serviceAuthenticationIssue,
+      configure: (r) => ServiceCodec.writeAuthentication(
+        r,
+        reference: owned,
+        expectedRevision: expectedRevision,
+        principalId: principalId,
+        lifetimeDays: lifetimeDays,
+      ),
+      decode: ServiceCodec.issuedAuthentication,
+      clearReply: true,
+    );
+  }
+
+  @override
+  Future<StoredServiceAuthority> disableServiceAuthority(
+    Uint8List reference,
+    BigInt expectedRevision,
+  ) {
+    final owned = Uint8List.fromList(reference);
+    return _callDecoded<StoredServiceAuthority>(
+      host.Action.serviceAuthorityDisable,
+      configure: (r) =>
+          ServiceCodec.writeAuthorityDisable(owned, expectedRevision, r),
+      decode: ServiceCodec.authorityResult,
+      clearReply: true,
+    );
+  }
+
+  @override
+  Future<StoredServiceAuthority> saveServicePublication(
+    ServicePublicationUpdate update,
+  ) => _callDecoded<StoredServiceAuthority>(
+    host.Action.servicePublicationSave,
+    configure: (r) =>
+        ServiceCodec.writePublication(update, r.initServicePublication()),
+    decode: ServiceCodec.publicationResult,
+    clearReply: true,
+  );
 
   EndpointPolicy _endpointPolicy(host.EndpointPolicyReader row) {
     final methods = row.methods;
@@ -728,32 +831,45 @@ class RustWorkbench
 
   void _fail(Object error) {
     _failure ??= error;
+    _buffer.fillRange(0, _buffer.length, 0);
+    _buffer.clear();
     final pending = _response;
     _response = null;
     if (pending != null && !pending.isCompleted) pending.completeError(error);
   }
 
   void _receive(List<int> bytes) {
-    if (_failure != null) return;
-    _buffer.addAll(bytes);
-    if (_buffer.length < 4) return;
-    final size = ByteData.sublistView(
-      Uint8List.fromList(_buffer.take(4).toList()),
-    ).getUint32(0, Endian.little);
-    if (size == 0 || size > 128 * 1024 || _buffer.length > 128 * 1024 + 4) {
-      _fail(const FormatException('内容服务消息过大'));
-      return;
+    try {
+      if (_failure != null) return;
+      _buffer.addAll(bytes);
+      if (_buffer.length < 4) return;
+      final size = ByteData.sublistView(
+        Uint8List.fromList(_buffer.take(4).toList()),
+      ).getUint32(0, Endian.little);
+      if (size == 0 || size > 128 * 1024 || _buffer.length > 128 * 1024 + 4) {
+        _fail(const FormatException('内容服务消息过大'));
+        return;
+      }
+      if (_buffer.length < size + 4) return;
+      if (_buffer.length != size + 4 || _response == null) {
+        _fail(const FormatException('内容服务响应顺序错误'));
+        return;
+      }
+      final reply = Uint8List(size)..setRange(0, size, _buffer, 4);
+      _buffer.fillRange(0, _buffer.length, 0);
+      _buffer.clear();
+      final pending = _response!;
+      _response = null;
+      pending.complete(reply);
+    } finally {
+      // Process stdout has one subscriber. Erase writable delivered chunks after
+      // copying them; immutable runtime-owned chunks cannot be guaranteed wiped.
+      try {
+        bytes.fillRange(0, bytes.length, 0);
+      } on UnsupportedError {
+        // The aggregation buffer and owned decoded frame are still cleared.
+      }
     }
-    if (_buffer.length < size + 4) return;
-    if (_buffer.length != size + 4 || _response == null) {
-      _fail(const FormatException('内容服务响应顺序错误'));
-      return;
-    }
-    final reply = Uint8List.fromList(_buffer.sublist(4));
-    _buffer.clear();
-    final pending = _response!;
-    _response = null;
-    pending.complete(reply);
   }
 
   static MessageReader readMessage(
@@ -791,12 +907,29 @@ class RustWorkbench
     host.Action action, {
     void Function(host.RequestBuilder)? configure,
     Duration requestTimeout = const Duration(seconds: 60),
+  }) => _callDecoded<host.ResponseReader>(
+    action,
+    configure: configure,
+    requestTimeout: requestTimeout,
+    decode: (reply) => reply,
+  );
+
+  /// Decode owned service models before clearing the private reply frame.
+  /// Native readers borrow that frame; a decoder must not return reader views.
+  Future<T> _callDecoded<T>(
+    host.Action action, {
+    void Function(host.RequestBuilder)? configure,
+    Duration requestTimeout = const Duration(seconds: 60),
+    required T Function(host.ResponseReader) decode,
+    bool clearReply = false,
   }) {
     if (_closingProcess != null) {
       return Future.error(StateError('Content service is closing'));
     }
-    final completion = Completer<host.ResponseReader>();
+    final completion = Completer<T>();
     _queue = _queue.then((_) async {
+      Uint8List? receivedBytes;
+      Completer<Uint8List>? pendingReply;
       try {
         if (_failure != null) throw _failure!;
         late Completer<Uint8List> response;
@@ -806,13 +939,13 @@ class RustWorkbench
           send: (payload) async {
             final header = ByteData(4)
               ..setUint32(0, payload.length, Endian.little);
-            response = _response = Completer<Uint8List>();
+            response = _response = pendingReply = Completer<Uint8List>();
             process.stdin.add(header.buffer.asUint8List());
             process.stdin.add(payload);
             await process.stdin.flush();
           },
         );
-        final bytes = await response.future.timeout(
+        final bytes = receivedBytes = await response.future.timeout(
           requestTimeout,
           onTimeout: () {
             final error = TimeoutException('内容服务响应超时');
@@ -839,9 +972,27 @@ class RustWorkbench
           }
           throw StateError(reply.error!);
         }
-        completion.complete(reply);
+        completion.complete(decode(reply));
       } catch (e, stack) {
+        if (pendingReply != null && receivedBytes == null) {
+          // A failed write/flush cannot prove whether the host accepted this
+          // request. Fence the channel so a late reply can never satisfy a
+          // different request, including a one-time authentication receipt.
+          _fail(StateError('Content service transport outcome is unknown'));
+        }
         completion.completeError(e, stack);
+      } finally {
+        if (receivedBytes case final bytes?) {
+          if (clearReply) bytes.fillRange(0, bytes.length, 0);
+        } else if (pendingReply case final pending?) {
+          // A write/flush failure can race a completed reply. Also erase that
+          // owned frame when it arrives, without retrying the request.
+          unawaited(
+            pending.future.then<void>((bytes) {
+              if (clearReply) bytes.fillRange(0, bytes.length, 0);
+            }, onError: (Object _, StackTrace _) {}),
+          );
+        }
       }
     });
     return completion.future;
