@@ -1,14 +1,14 @@
 # 可暂停 IO：下一编码项
 
-2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；生产执行路径尚未接入，不增加现有SDK支持声明。
+2026-09-21。这是根据现有实现与[慢回调实测](../reports/service-slow-owner-2026-09-21.md)形成的执行计划。S0隔离原型已有[实际证据](../reports/suspendable-io-s0-2026-09-21.md)：6项测试及严格Clippy通过；后续[owned Runner改造](../reports/owned-runner-2026-09-21.md)已接入现有同步驱动；受管异步调度尚未接入，不增加现有SDK支持声明。
 
 ## 问题与约束
 
-`BrokerRouter::route`、`RouteContext::dispatch` 及 Wasm IO import 是同步调用。HTTP 适配器内部虽使用异步客户端，原 worker 仍在 `Handle::block_on` 中等待；普通拥有者命令只能排队。当前停止可以取消准入与交付，但无法强行打断可信同步回调，也不能在其返回前释放原存储。
+公开Runner驱动仍同步调用 `BrokerRouter::route` 和 `RouteContext::dispatch`；内部Wasm IO import虽已通过continuation让出执行权，外层仍立即等待原回调返回。HTTP 适配器内部虽使用异步客户端，原 worker 仍在 `Handle::block_on` 中等待；普通拥有者命令只能排队。当前停止可以取消准入与交付，但无法强行打断可信同步回调，也不能在其返回前释放原存储。
 
 目标是在受管网络等待期间让原拥有者处理获准的业务与控制操作，并让取消、预算、证据和结果交付继续属于同一次操作。不能通过重开数据库、复制 WorkbenchState、重复执行 guest 或新增不受控外发线程实现。
 
-冻结的 `morrow_io_v1.call` 和已有 C/C++/Rust 包继续原样运行。需要让出执行权的新契约必须单独版本化并准入；旧 guest 的同步执行限制如实保留，不能伪称旧 ABI 已自动变为可暂停。
+冻结的 `morrow_io_v1.call` 字节契约和已有 C/C++/Rust 包保持不变。内部 continuation 不要求 guest 改写；只有 guest 可见语义确需变化时才制定独立版本契约并准入。当前公开运行入口仍同步调用回调，不能把内部让出执行权宣称为受管网络等待已不占用 worker。
 
 ## 实施顺序与退出门槛
 
@@ -20,7 +20,7 @@
 | S3：恢复与调度 | continuation 或显式新契约回到原 worker；恢复前复核原代次、声明、资源授权与截止；保留普通命令排序和停止优先 | 慢传输期间内容读取与独立修改能完成；响应 Ready 后撤权仍拒绝交付；停止和 guest trap 均不恢复失效实例 |
 | S4：契约候选与 SDK | 仅在 S0–S3 证明执行模型后确定新 Schema、能力声明、错误语义和三语言封装 | 旧 36 文件/13 原包兼容证据；新三语言相同正负向量；独立插件调用、取消、丢回执与跨重启核对 |
 
-S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。下一步将owned执行状态接入受控Runner路径并推进S1；不能直接把现有借用闭包跨暂停保存，也不能把“另起async task”作为解决方案。
+S0可运行探针与所有权图已交付，证明原Wasm调用恢复与原HostRuntime在传输等待期间提交内容可同时成立。当前优先continuation，不要求插件先改写显式yield状态机。owned执行状态现已接入真实Runner，旧同步驱动在Store外持有回调；无宿主借用进入continuation。下一步推进S1：拆分Broker认领、传输与原件提交，再让package/worker采用同一owned执行状态。不能把仍借用RouteContext的回调移到线程上，也不能用复制宿主替代调度。
 
 探针使用 `morrow_probe_v0` 私有入口；它没有生产授权或持久效果核对语义。既有 `morrow_io_v1.call` 的字节契约保持冻结，是否可透明承载必须经过真实包与旧包兼容验收；只有确实需要guest可见变化时才建立独立版本契约。
 

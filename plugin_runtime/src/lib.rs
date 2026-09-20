@@ -1,5 +1,6 @@
 #![deny(unsafe_code)]
-//! Replaceable synchronous Wasm backend probe. No WASI, filesystem or identity imports.
+//! Bounded Wasm backend with an owned continuation and synchronous host driver.
+//! No WASI, filesystem or identity imports.
 use std::sync::{
     Arc, Mutex,
     atomic::{AtomicBool, Ordering},
@@ -9,6 +10,7 @@ use wasmi::{
     Caller, Config, EnforcedLimits, Engine, ExternType, Linker, Module, Store, StoreLimits,
     StoreLimitsBuilder, ValType,
 };
+mod continuation;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod dependency;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
@@ -144,8 +146,8 @@ pub struct TaskRun {
     pub report: Report,
     pub completion: Option<Vec<u8>>,
 }
-struct TaskState<'a> {
-    input: &'a [u8],
+struct TaskState {
+    input: Vec<u8>,
     read: bool,
     completion: Option<Vec<u8>>,
 }
@@ -153,11 +155,12 @@ struct TaskState<'a> {
 /// retain input, re-enter the guest, or return unbounded responses. Calls may commit;
 /// a later trap/cancellation never implies rollback. Fuel cannot interrupt this closure.
 type Exchange<'a> = &'a mut dyn FnMut(&[u8]) -> Result<Vec<u8>, ()>;
-struct State<'a> {
-    task: Option<TaskState<'a>>,
-    exchange: Exchange<'a>,
-    dependency: Option<Exchange<'a>>,
-    io: Option<Exchange<'a>>,
+struct State {
+    task: Option<TaskState>,
+    dependency: bool,
+    io: bool,
+    pending: Option<continuation::PendingCall>,
+    session: Arc<()>,
     limits: StoreLimits,
     cancel: Cancellation,
     calls: u32,
@@ -308,138 +311,55 @@ impl Runner {
     fn execute<'a>(
         &self,
         exchange: Exchange<'a>,
-        dependency: Option<Exchange<'a>>,
-        io: Option<Exchange<'a>>,
+        mut dependency: Option<Exchange<'a>>,
+        mut io: Option<Exchange<'a>>,
         cancel: Cancellation,
         input: Option<&'a [u8]>,
     ) -> TaskRun {
-        let fault = if self.task_abi != input.is_some()
-            || self.dependency_abi != dependency.is_some()
-            || self.io_abi != io.is_some()
+        let started = if self.dependency_abi != dependency.is_some() || self.io_abi != io.is_some()
         {
-            Some(Fault::UnsupportedAbi)
-        } else if input.is_some_and(|b| b.is_empty() || b.len() > MAX_TASK_BYTES) {
-            Some(Fault::Limits)
+            Err(Fault::UnsupportedAbi)
         } else {
-            cancel.fault()
+            continuation::Execution::start(self, input, cancel)
         };
-        if let Some(fault) = fault {
-            return TaskRun {
-                report: Report {
-                    outcome: Err(fault),
-                    host_calls: 0,
-                    fuel_remaining: self.limits.fuel,
-                },
-                completion: None,
-            };
-        }
-        let state = State {
-            task: input.map(|input| TaskState {
-                input,
-                read: false,
-                completion: None,
-            }),
-            exchange,
-            dependency,
-            io,
-            limits: StoreLimitsBuilder::new()
-                .memory_size(self.limits.memory_bytes)
-                .memories(1)
-                .tables(1)
-                .table_elements(4096)
-                .instances(1)
-                .trap_on_grow_failure(true)
-                .build(),
-            cancel,
-            calls: 0,
-            max_calls: self.limits.host_calls,
-            stopped: None,
+        let mut execution = match started {
+            Ok(execution) => execution,
+            Err(fault) => {
+                return TaskRun {
+                    report: Report {
+                        outcome: Err(fault),
+                        host_calls: 0,
+                        fuel_remaining: self.limits.fuel,
+                    },
+                    completion: None,
+                };
+            }
         };
-        let mut store = Store::new(&self.engine, state);
-        store.limiter(|s| &mut s.limits);
-        store.set_fuel(self.limits.fuel).expect("fuel enabled");
-        let mut linker = Linker::new(&self.engine);
-        linker
-            .func_wrap("morrow_v1", "exchange", host_exchange)
-            .expect("one fixed import");
-        if self.task_abi {
-            linker
-                .func_wrap("morrow_task_v1", "read_input", task_read)
-                .expect("task input import");
-            linker
-                .func_wrap("morrow_task_v1", "complete", task_complete)
-                .expect("task result import");
-        }
-        if self.dependency_abi {
-            linker
-                .func_wrap("morrow_dependency_v1", "call", dependency_call)
-                .expect("dependency call import");
-        }
-        if self.io_abi {
-            linker
-                .func_wrap("morrow_io_v1", "call", io_call)
-                .expect("io call import");
-        }
-        let outcome = (|| {
-            let instance = linker
-                .instantiate_and_start(&mut store, &self.module)
-                .map_err(|_| Fault::Limits)?;
-            let func = instance
-                .get_typed_func::<(), i32>(&store, "morrow_run")
-                .map_err(|_| Fault::UnsupportedAbi)?;
-            func.call(&mut store, ()).map_err(|e| {
-                if e.as_trap_code() == Some(wasmi::TrapCode::OutOfFuel) {
-                    Fault::Limits
-                } else {
-                    Fault::Trap
+        // Host callbacks live only in this driver, never in the Wasm Store.
+        // The existing entry points remain synchronous until a managed scheduler
+        // supplies validated dispatch/delivery phases for the owned execution.
+        while let Some(pending) = execution.pending() {
+            let token = pending.token.clone();
+            let response = match pending.kind {
+                continuation::Kind::Core => exchange(&pending.bytes),
+                continuation::Kind::Dependency => {
+                    dependency.as_mut().expect("checked mode")(&pending.bytes)
                 }
-            })
-        })();
-        let outcome = if let Some(f) = &store.data().stopped {
-            Err(f.clone())
-        } else if let Some(fault) = store.data().cancel.fault() {
-            Err(fault)
-        } else {
-            outcome
-        };
-        let outcome = if self.task_abi
-            && outcome.is_ok()
-            && (outcome != Ok(0)
-                || store
-                    .data()
-                    .task
-                    .as_ref()
-                    .is_none_or(|t| t.completion.is_none()))
-        {
-            Err(Fault::TaskProtocol)
-        } else {
-            outcome
-        };
-        let completion = if outcome.is_ok() {
-            store
-                .data_mut()
-                .task
-                .as_mut()
-                .and_then(|t| t.completion.take())
-        } else {
-            None
-        };
-        TaskRun {
-            report: Report {
-                outcome,
-                host_calls: store.data().calls,
-                fuel_remaining: store.get_fuel().unwrap_or(0),
-            },
-            completion,
+                continuation::Kind::Io => io.as_mut().expect("checked mode")(&pending.bytes),
+            };
+            execution
+                .resume(&token, response)
+                .expect("same execution and call");
         }
+        execution.finish()
     }
 }
-fn trap(state: &mut State<'_>, fault: Fault) -> wasmi::Error {
+fn trap(state: &mut State, fault: Fault) -> wasmi::Error {
     state.stopped = Some(fault);
     wasmi::Error::new("guest boundary stopped")
 }
 fn host_exchange(
-    mut caller: Caller<'_, State<'_>>,
+    mut caller: Caller<'_, State>,
     input: i32,
     length: i32,
     output: i32,
@@ -491,26 +411,18 @@ fn host_exchange(
     // Freeze input and validate full output capacity before a potentially committing call.
     let fixed = memory.data(&caller)[input..input_end].to_vec();
     caller.data_mut().calls += 1;
-    let response = (caller.data_mut().exchange)(&fixed);
-    if let Some(fault) = caller.data().cancel.fault() {
-        return Err(trap(caller.data_mut(), fault));
-    }
-    let response = match response {
-        Ok(v) => v,
-        Err(()) => return Ok(-1),
-    };
-    if response.is_empty() || response.len() > MAX_MESSAGE_BYTES {
-        return Err(trap(caller.data_mut(), Fault::Trap));
-    }
-    // Reacquire memory after the host call; never retain a borrowed memory view.
-    memory
-        .write(&mut caller, output, &response)
-        .map_err(|_| wasmi::Error::new("response write failed"))?;
-    Ok(response.len() as i32)
+    Err(continuation::suspend(
+        caller.data_mut(),
+        continuation::Kind::Core,
+        fixed,
+        memory,
+        output,
+        MAX_MESSAGE_BYTES,
+    ))
 }
 
 fn task_read(
-    mut caller: Caller<'_, State<'_>>,
+    mut caller: Caller<'_, State>,
     output: i32,
     capacity: i32,
 ) -> Result<i32, wasmi::Error> {
@@ -541,7 +453,7 @@ fn task_read(
     Ok(input.len() as i32)
 }
 fn task_complete(
-    mut caller: Caller<'_, State<'_>>,
+    mut caller: Caller<'_, State>,
     input: i32,
     length: i32,
 ) -> Result<i32, wasmi::Error> {
@@ -577,7 +489,7 @@ fn task_complete(
 
 // Fixed byte exchange only. Authorization and dependency routing belong to the trusted callback.
 fn dependency_call(
-    mut caller: Caller<'_, State<'_>>,
+    mut caller: Caller<'_, State>,
     input: i32,
     length: i32,
     output: i32,
@@ -586,7 +498,7 @@ fn dependency_call(
     if let Some(fault) = caller.data().cancel.fault() {
         return Err(trap(caller.data_mut(), fault));
     }
-    if caller.data().dependency.is_none()
+    if !caller.data().dependency
         || caller
             .data()
             .task
@@ -627,28 +539,19 @@ fn dependency_call(
     }
     let fixed = memory.data(&caller)[input..input_end].to_vec();
     caller.data_mut().calls += 1;
-    let response = (caller
-        .data_mut()
-        .dependency
-        .as_mut()
-        .expect("checked callback"))(&fixed);
-    if let Some(fault) = caller.data().cancel.fault() {
-        return Err(trap(caller.data_mut(), fault));
-    }
-    let response = match response {
-        Ok(bytes) if !bytes.is_empty() && bytes.len() <= MAX_TASK_BYTES => bytes,
-        _ => return Err(trap(caller.data_mut(), Fault::TaskProtocol)),
-    };
-    // No memory view is held across the callback. Reacquire it for the bounded response write.
-    memory
-        .write(&mut caller, output, &response)
-        .map_err(|_| wasmi::Error::new("dependency response write failed"))?;
-    Ok(response.len() as i32)
+    Err(continuation::suspend(
+        caller.data_mut(),
+        continuation::Kind::Dependency,
+        fixed,
+        memory,
+        output,
+        MAX_TASK_BYTES,
+    ))
 }
 
 // Framed IO only. Authorization belongs to the trusted broker callback.
 fn io_call(
-    mut caller: Caller<'_, State<'_>>,
+    mut caller: Caller<'_, State>,
     input: i32,
     length: i32,
     output: i32,
@@ -657,7 +560,7 @@ fn io_call(
     if let Some(fault) = caller.data().cancel.fault() {
         return Err(trap(caller.data_mut(), fault));
     }
-    if caller.data().io.is_none()
+    if !caller.data().io
         || caller
             .data()
             .task
@@ -698,17 +601,12 @@ fn io_call(
     }
     let fixed = memory.data(&caller)[input..input_end].to_vec();
     caller.data_mut().calls += 1;
-    let response = (caller.data_mut().io.as_mut().expect("checked callback"))(&fixed);
-    if let Some(fault) = caller.data().cancel.fault() {
-        return Err(trap(caller.data_mut(), fault));
-    }
-    let response = match response {
-        Ok(bytes) if !bytes.is_empty() && bytes.len() <= MAX_TASK_BYTES => bytes,
-        Err(()) => return Ok(-1),
-        _ => return Err(trap(caller.data_mut(), Fault::Trap)),
-    };
-    memory
-        .write(&mut caller, output, &response)
-        .map_err(|_| wasmi::Error::new("io response write failed"))?;
-    Ok(response.len() as i32)
+    Err(continuation::suspend(
+        caller.data_mut(),
+        continuation::Kind::Io,
+        fixed,
+        memory,
+        output,
+        MAX_TASK_BYTES,
+    ))
 }
