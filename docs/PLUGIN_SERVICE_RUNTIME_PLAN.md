@@ -114,4 +114,4 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 Windows完整应用集成现已通过：经真实窗口中的Flutter框架输入启动原宿主服务，完成内容提交、Markdown预览、语言和宽窄布局切换、停止回收及原库重开核对；同时修复三类实际界面接线问题。相关93项回归、1项原生集成、9文件分析和Release构建通过，见[窗口集成报告](../reports/service-window-integration-2026-09-21.md)。未验系统鼠标键盘/真实剪贴板，渲染截图不是系统截图。
 
-慢拥有者回调期间的真实监听停止与原owner回收也已有[限定证据](../reports/service-slow-owner-2026-09-21.md)：9项原生测试及严格Clippy通过，已开始操作不误报取消成功，排队操作不执行；同步回调仍占用执行线程。下一主线进入[可暂停IO S0原型](PLUGIN_SUSPENDABLE_IO_PLAN.md)，再接broker拆分、帧分段和TLS/出站资源。系统输入/真实剪贴板、更多编辑/capture、其它维护故障及外部效果核对仍待完成；局部通过不等于持久Unknown核对、完整恢复能力或SDK稳定。
+慢拥有者回调期间的真实监听停止与原owner回收也已有[限定证据](../reports/service-slow-owner-2026-09-21.md)：9项原生测试及严格Clippy通过，已开始操作不误报取消成功，排队操作不执行；同步回调仍占用执行线程。S0隔离原型现已通过6项测试，真实等待期间原HostRuntime可提交内容，见[证据](../reports/suspendable-io-s0-2026-09-21.md)；下一主线为[owned Runner状态与broker拆分](PLUGIN_SUSPENDABLE_IO_PLAN.md)，继而帧分段和TLS/出站资源。系统输入/真实剪贴板、更多编辑/capture、其它维护故障及外部效果核对仍待完成；局部通过不等于持久Unknown核对、完整恢复能力或SDK稳定。
