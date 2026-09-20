@@ -205,6 +205,63 @@
       }
     }
   },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "calls": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "fault": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "disconnect": {
+        "type": "String"
+      },
+      "execution": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsImportPreview": {
     "placeholders": {
       "name": {
@@ -1116,6 +1173,88 @@
   "pluginsEndpointWorking": "Updating endpoint status…",
   "pluginsExistingVersion": "This version is already installed. Its enabled state is unchanged.",
   "pluginsFileLimit": "The file is too large. Choose a file no larger than {limit} bytes.",
+  "pluginsHttpTaskAbandon": "End observation of this attempt",
+  "pluginsHttpTaskAbandonDetails": "Only after fresh status confirms no active task and the original library is available, you may end this observation. This does not prove that no remote effects occurred. The identity and uncertainty remain in history; a new request requires another explicit submission.",
+  "pluginsHttpTaskAbsent": "No result delivery",
+  "pluginsHttpTaskAccepted": "Accepted",
+  "pluginsHttpTaskAcknowledge": "Acknowledge finished task",
+  "pluginsHttpTaskArchivedUnknown": "Observation ended by the user. The previous remote effects remain unconfirmed; this attempt was not replayed.",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskBody": "Request body",
+  "pluginsHttpTaskBodyFormat": "Request body encoding",
+  "pluginsHttpTaskBusy": "Busy",
+  "pluginsHttpTaskCancel": "Request cancellation",
+  "pluginsHttpTaskCancelled": "Cancellation observed; remote effects may still have occurred",
+  "pluginsHttpTaskCatalogUnavailable": "Plugin catalog status is unavailable. Refresh the plugin library before a new submission; existing task controls remain available.",
+  "pluginsHttpTaskClosed": "Closed",
+  "pluginsHttpTaskCompleted": "Completed",
+  "pluginsHttpTaskConflict": "Conflict",
+  "pluginsHttpTaskConsumed": "Result consumed",
+  "pluginsHttpTaskControlUnknown": "The control result could not be confirmed. Refresh task status before deciding the next action.",
+  "pluginsHttpTaskCounters": "IO calls: {calls}; charged bytes: {bytes}",
+  "pluginsHttpTaskDeadline": "Deadline exceeded",
+  "pluginsHttpTaskDenied": "Denied",
+  "pluginsHttpTaskDetails": "Run one explicit request using an approved endpoint and an enabled plugin with the experimental HTTP forward handler. Task status remains available while the content library is busy.",
+  "pluginsHttpTaskDisconnect": "Connection cleanup failed",
+  "pluginsHttpTaskEndpoint": "Approved endpoint",
+  "pluginsHttpTaskEndpointsFailed": "Endpoints could not be read consistently, or the content library is busy. Task controls remain available. Refresh endpoints when the library returns.",
+  "pluginsHttpTaskEvidenceUnavailable": "Outcome evidence unavailable",
+  "pluginsHttpTaskExecution": "Guest execution: {fault}; exit code: {code}",
+  "pluginsHttpTaskExit": "Worker exit — execution: {execution}; disconnect: {disconnect}; maintenance: {maintenance}",
+  "pluginsHttpTaskExplicit": "Submit sends one real request. Each click creates a new identity. Unknown submissions and result reads are never replayed automatically. Cancellation does not prove the remote operation was undone.",
+  "pluginsHttpTaskFailed": "Failed",
+  "pluginsHttpTaskHeaders": "Ordinary request headers, one Name: value per line",
+  "pluginsHttpTaskHeadersHint": "Repeated headers stay separate. Credential and connection headers are supplied only by the runtime.",
+  "pluginsHttpTaskHistory": "Previous task observations (up to 5)",
+  "pluginsHttpTaskHttpResult": "HTTP outcome: {status}; remote status: {code}",
+  "pluginsHttpTaskInactive": "Connection is inactive",
+  "pluginsHttpTaskInvalid": "Check the selected endpoint, method, relative target, ordinary headers, body encoding and timeout against the approval limits.",
+  "pluginsHttpTaskInvalidOptions": "Invalid options",
+  "pluginsHttpTaskKey": "Task identity: {identity}",
+  "pluginsHttpTaskLimit": "Quota or limit reached",
+  "pluginsHttpTaskLoadingEndpoints": "Reading approved endpoints…",
+  "pluginsHttpTaskLocal": "Content library available; no active task",
+  "pluginsHttpTaskModule": "Invalid guest module",
+  "pluginsHttpTaskNew": "Prepare a new request",
+  "pluginsHttpTaskNoEndpoints": "No current endpoint matches an enabled, approved HTTP forward plugin.",
+  "pluginsHttpTaskNotFound": "Not found",
+  "pluginsHttpTaskOk": "OK",
+  "pluginsHttpTaskOutcomeUnknown": "Remote outcome unknown; do not assume rollback or resend",
+  "pluginsHttpTaskPackageChanged": "Package binding changed",
+  "pluginsHttpTaskPending": "Result pending",
+  "pluginsHttpTaskPoll": "Check task",
+  "pluginsHttpTaskProtocol": "Task protocol error",
+  "pluginsHttpTaskRead": "Read result once",
+  "pluginsHttpTaskReadBound": "Read limit exceeded",
+  "pluginsHttpTaskReadPending": "No result was returned. Check status before explicitly reading again.",
+  "pluginsHttpTaskReadUnknown": "The result read could not be confirmed and may already have consumed the result. It will not be read again. Status and exit can still be checked.",
+  "pluginsHttpTaskReady": "Result ready: read explicitly. Ready does not mean the worker has exited.",
+  "pluginsHttpTaskReclaimed": "Worker exited; original content library returned",
+  "pluginsHttpTaskRecoveryRequired": "Worker exited; cleanup or maintenance requires repair",
+  "pluginsHttpTaskRefresh": "Refresh task status",
+  "pluginsHttpTaskRefreshEndpoints": "Refresh approved endpoints",
+  "pluginsHttpTaskRemoteError": "The remote server returned a 4xx/5xx response. This is a completed HTTP exchange, separate from guest execution errors.",
+  "pluginsHttpTaskRepair": "Repair cleanup",
+  "pluginsHttpTaskResponseBase64": "Response body: exact Base64",
+  "pluginsHttpTaskResponseHeaders": "Response headers (duplicates preserved; binary values use Base64)",
+  "pluginsHttpTaskResponseText": "Response body: plain text preview",
+  "pluginsHttpTaskResultUnavailable": "Result delivery unavailable",
+  "pluginsHttpTaskRevoked": "Approval revoked",
+  "pluginsHttpTaskRunning": "Running; content library is owned by the worker",
+  "pluginsHttpTaskSpawn": "Worker could not start",
+  "pluginsHttpTaskStart": "Submit new request",
+  "pluginsHttpTaskStartUnknown": "The submission result is unknown. Its identity is retained. Query status to find the same task; the request will not be sent again.",
+  "pluginsHttpTaskStatusFailed": "Task status could not be confirmed. Refresh status; no request has been replayed.",
+  "pluginsHttpTaskStopping": "Stopping; waiting for actual worker exit",
+  "pluginsHttpTaskSubmission": "Submission identity: {identity}",
+  "pluginsHttpTaskTarget": "Relative target, for example /v1/items?limit=10",
+  "pluginsHttpTaskText": "UTF-8 text",
+  "pluginsHttpTaskTimeout": "Timeout in milliseconds (1–30000, within endpoint approval)",
+  "pluginsHttpTaskTitle": "HTTP tasks",
+  "pluginsHttpTaskTrap": "Guest execution trapped",
+  "pluginsHttpTaskUnavailable": "Original content library unavailable; recovery needs attention",
+  "pluginsHttpTaskUnsupported": "Unsupported operation",
+  "pluginsHttpTaskWorking": "Waiting for the task control response…",
   "pluginsImport": "Import",
   "pluginsImportDetails": "You choose whether to enable a plugin after importing it. Disabling or uninstalling preserves your content.",
   "pluginsImportPreview": "Import preview: {name}",

@@ -924,7 +924,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      11,
+      12,
     );
   }
 
@@ -2085,6 +2085,8 @@ final class PluginEntryReader extends StructReader {
   ListReader<String?>? get declaredIo => getTextListField(9);
 
   ListReader<String?>? get approvedIo => getTextListField(10);
+
+  ListReader<String?>? get ioHandlers => getTextListField(11);
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2154,6 +2156,10 @@ final class PluginEntryBuilder extends StructBuilder {
   ListBuilder<String?> initApprovedIo(int length) {
     return initTextListField(10, length);
   }
+
+  ListBuilder<String?> initIoHandlers(int length) {
+    return initTextListField(11, length);
+  }
 }
 
 final class _PluginEntryFactory
@@ -2163,7 +2169,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 11;
+  int get ptrWords => 12;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -2181,7 +2187,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
   displayName: 'host.capnp:PluginEntry',
   shortName: 'PluginEntry',
   dataWords: 1,
-  pointerWords: 11,
+  pointerWords: 12,
   fields: [
     FieldSchemaInfo(
       name: 'packageId',
@@ -2292,6 +2298,14 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
       codeOrder: 13,
       body: SlotFieldSchemaInfo(
         offset: 10,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ioHandlers',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
         type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
       ),
     ),

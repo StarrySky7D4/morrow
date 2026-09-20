@@ -3,6 +3,8 @@ import 'dart:async';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
+import 'http_task_manager.dart';
+import 'io_task_control.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
@@ -36,12 +38,14 @@ class PluginLibraryEntry {
     required this.issue,
     this.declaredIo = const [],
     this.approvedIo = const [],
+    this.ioHandlers = const [],
   });
   final String id, name, version, issue;
   final Uint8List digest;
   final bool enabled, builtin, available;
   final List<String> declared, approved, dependencies, declaredIo, approvedIo;
   final List<PluginTransformHandler> handlers;
+  final List<String> ioHandlers;
 }
 
 class PluginTransformHandler {
@@ -970,6 +974,21 @@ class _PluginLibraryState extends State<PluginLibrary> {
         if (_confirmed && _entries.isEmpty)
           _note(L10n.of(context).pluginsEmptyLibrary),
         ..._entries.map(_entry),
+        if (widget.backend is WorkbenchIoTaskControl &&
+            widget.backend is WorkbenchEndpointControl) ...[
+          const SizedBox(height: 20),
+          HttpTaskManager(
+            backend: widget.backend as WorkbenchIoTaskControl,
+            endpointBackend: widget.backend as WorkbenchEndpointControl,
+            plugins: _confirmed ? _entries : const [],
+            registryRevision: _confirmed ? _revision : null,
+            ink: widget.ink,
+            muted: widget.muted,
+            line: widget.line,
+            radius: widget.radius,
+            onChanged: widget.onChanged,
+          ),
+        ],
         if (widget.backend is WorkbenchCredentialControl) ...[
           const SizedBox(height: 20),
           CredentialManager(

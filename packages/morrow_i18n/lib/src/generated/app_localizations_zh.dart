@@ -1210,6 +1210,276 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get pluginsHttpTaskAbandon => '结束本次尝试的观察';
+
+  @override
+  String get pluginsHttpTaskAbandonDetails =>
+      '仅在刷新确认无活动任务且原内容库可用后，才能结束本次观察。这不证明远端未发生效果。身份与未知状态仍保留在历史中，新请求需要另一次明确提交。';
+
+  @override
+  String get pluginsHttpTaskAbsent => '暂无结果交付';
+
+  @override
+  String get pluginsHttpTaskAccepted => '已接受';
+
+  @override
+  String get pluginsHttpTaskAcknowledge => '确认任务结束';
+
+  @override
+  String get pluginsHttpTaskArchivedUnknown => '用户已结束观察。此前远端效果仍未确认，本次尝试未被重发。';
+
+  @override
+  String get pluginsHttpTaskBase64 => 'Base64';
+
+  @override
+  String get pluginsHttpTaskBody => '请求正文';
+
+  @override
+  String get pluginsHttpTaskBodyFormat => '请求正文编码';
+
+  @override
+  String get pluginsHttpTaskBusy => '忙碌';
+
+  @override
+  String get pluginsHttpTaskCancel => '请求取消';
+
+  @override
+  String get pluginsHttpTaskCancelled => '已观察到取消，远端仍可能已经执行';
+
+  @override
+  String get pluginsHttpTaskCatalogUnavailable =>
+      '插件目录状态不可用。新提交前请刷新插件库，已有任务控制仍可使用。';
+
+  @override
+  String get pluginsHttpTaskClosed => '已关闭';
+
+  @override
+  String get pluginsHttpTaskCompleted => '已完成';
+
+  @override
+  String get pluginsHttpTaskConflict => '冲突';
+
+  @override
+  String get pluginsHttpTaskConsumed => '结果已消费';
+
+  @override
+  String get pluginsHttpTaskControlUnknown => '无法确认控制操作结果，请刷新任务状态后再决定下一步。';
+
+  @override
+  String pluginsHttpTaskCounters(String bytes, String calls) {
+    return 'IO 调用次数：$calls；计费字节：$bytes';
+  }
+
+  @override
+  String get pluginsHttpTaskDeadline => '超过期限';
+
+  @override
+  String get pluginsHttpTaskDenied => '已拒绝';
+
+  @override
+  String get pluginsHttpTaskDetails =>
+      '通过已批准端点和已启用、具有实验性 HTTP 转发处理器的插件执行一次明确请求。内容库忙碌时仍可查看及控制任务。';
+
+  @override
+  String get pluginsHttpTaskDisconnect => '连接清理失败';
+
+  @override
+  String get pluginsHttpTaskEndpoint => '已批准端点';
+
+  @override
+  String get pluginsHttpTaskEndpointsFailed =>
+      '无法一致读取端点，或内容库正在忙碌。任务控制仍可使用，内容库归还后请刷新端点。';
+
+  @override
+  String get pluginsHttpTaskEvidenceUnavailable => '结果证据不可用';
+
+  @override
+  String pluginsHttpTaskExecution(int code, String fault) {
+    return '插件执行：$fault；退出码：$code';
+  }
+
+  @override
+  String pluginsHttpTaskExit(
+    String disconnect,
+    String execution,
+    String maintenance,
+  ) {
+    return '后台线程退出记录：执行 $execution；断连 $disconnect；维护 $maintenance';
+  }
+
+  @override
+  String get pluginsHttpTaskExplicit =>
+      '提交会发送一次真实请求，每次点击生成新身份。未知提交及结果读取不会自动重放，取消不代表远端操作已撤销。';
+
+  @override
+  String get pluginsHttpTaskFailed => '失败';
+
+  @override
+  String get pluginsHttpTaskHeaders => '普通请求头，每行 Name: value';
+
+  @override
+  String get pluginsHttpTaskHeadersHint => '重复请求头保持独立。凭据与连接请求头仅由运行时提供。';
+
+  @override
+  String get pluginsHttpTaskHistory => '此前任务记录（最多 5 项）';
+
+  @override
+  String pluginsHttpTaskHttpResult(int code, String status) {
+    return 'HTTP 结果：$status；远端状态码：$code';
+  }
+
+  @override
+  String get pluginsHttpTaskInactive => '连接未激活';
+
+  @override
+  String get pluginsHttpTaskInvalid => '请根据批准额度检查所选端点、方法、相对目标、普通请求头、正文编码与超时。';
+
+  @override
+  String get pluginsHttpTaskInvalidOptions => '参数无效';
+
+  @override
+  String pluginsHttpTaskKey(String identity) {
+    return '任务身份：$identity';
+  }
+
+  @override
+  String get pluginsHttpTaskLimit => '达到额度或限制';
+
+  @override
+  String get pluginsHttpTaskLoadingEndpoints => '正在读取批准端点…';
+
+  @override
+  String get pluginsHttpTaskLocal => '内容库可用，当前无任务';
+
+  @override
+  String get pluginsHttpTaskModule => '插件模块无效';
+
+  @override
+  String get pluginsHttpTaskNew => '准备新请求';
+
+  @override
+  String get pluginsHttpTaskNoEndpoints => '没有端点匹配当前已启用、已批准的 HTTP 转发插件。';
+
+  @override
+  String get pluginsHttpTaskNotFound => '未找到';
+
+  @override
+  String get pluginsHttpTaskOk => '正常';
+
+  @override
+  String get pluginsHttpTaskOutcomeUnknown => '远端结果未知，不应假定已回滚或再次发送';
+
+  @override
+  String get pluginsHttpTaskPackageChanged => '插件包绑定已变化';
+
+  @override
+  String get pluginsHttpTaskPending => '结果待定';
+
+  @override
+  String get pluginsHttpTaskPoll => '核对任务';
+
+  @override
+  String get pluginsHttpTaskProtocol => '任务协议错误';
+
+  @override
+  String get pluginsHttpTaskRead => '读取一次结果';
+
+  @override
+  String get pluginsHttpTaskReadBound => '超过读取额度';
+
+  @override
+  String get pluginsHttpTaskReadPending => '尚未返回结果，请核对状态后再明确读取。';
+
+  @override
+  String get pluginsHttpTaskReadUnknown =>
+      '无法确认读取结果，结果可能已被消费。不会再次读取，仍可核对状态及退出情况。';
+
+  @override
+  String get pluginsHttpTaskReady => '结果就绪，请明确读取。就绪不代表后台线程已退出。';
+
+  @override
+  String get pluginsHttpTaskReclaimed => '后台线程已退出，原内容库已归还';
+
+  @override
+  String get pluginsHttpTaskRecoveryRequired => '后台线程已退出，清理或维护需要修复';
+
+  @override
+  String get pluginsHttpTaskRefresh => '刷新任务状态';
+
+  @override
+  String get pluginsHttpTaskRefreshEndpoints => '刷新批准端点';
+
+  @override
+  String get pluginsHttpTaskRemoteError =>
+      '远端返回了 4xx/5xx 响应。这是已完成的 HTTP 交互，与插件执行错误分别记录。';
+
+  @override
+  String get pluginsHttpTaskRepair => '修复清理';
+
+  @override
+  String get pluginsHttpTaskResponseBase64 => '响应正文：完整 Base64';
+
+  @override
+  String get pluginsHttpTaskResponseHeaders => '响应头（保留重复项，二进制值使用 Base64）';
+
+  @override
+  String get pluginsHttpTaskResponseText => '响应正文：纯文本预览';
+
+  @override
+  String get pluginsHttpTaskResultUnavailable => '结果交付不可用';
+
+  @override
+  String get pluginsHttpTaskRevoked => '批准已撤销';
+
+  @override
+  String get pluginsHttpTaskRunning => '运行中，内容库由后台线程持有';
+
+  @override
+  String get pluginsHttpTaskSpawn => '后台线程未能启动';
+
+  @override
+  String get pluginsHttpTaskStart => '提交新请求';
+
+  @override
+  String get pluginsHttpTaskStartUnknown =>
+      '提交结果未知，已保留本次身份。请查询状态核对同一任务，请求不会再次发送。';
+
+  @override
+  String get pluginsHttpTaskStatusFailed => '无法确认任务状态。请刷新状态，请求未被重发。';
+
+  @override
+  String get pluginsHttpTaskStopping => '正在停止，等待后台线程实际退出';
+
+  @override
+  String pluginsHttpTaskSubmission(String identity) {
+    return '提交身份：$identity';
+  }
+
+  @override
+  String get pluginsHttpTaskTarget => '相对目标，例如 /v1/items?limit=10';
+
+  @override
+  String get pluginsHttpTaskText => 'UTF-8 文本';
+
+  @override
+  String get pluginsHttpTaskTimeout => '超时毫秒数（1–30000，且不超过端点批准）';
+
+  @override
+  String get pluginsHttpTaskTitle => 'HTTP 任务';
+
+  @override
+  String get pluginsHttpTaskTrap => '插件执行异常终止';
+
+  @override
+  String get pluginsHttpTaskUnavailable => '原内容库不可用，需要处理恢复问题';
+
+  @override
+  String get pluginsHttpTaskUnsupported => '不支持的操作';
+
+  @override
+  String get pluginsHttpTaskWorking => '正在等待任务控制回执…';
+
+  @override
   String get pluginsImport => '导入';
 
   @override

@@ -25,6 +25,10 @@ void main() {
       final serving = server.listen((request) async {
         calls++;
         expect(request.method, 'POST');
+        expect(
+          request.headers.value(HttpHeaders.authorizationHeader),
+          'Bearer native-test-secret',
+        );
         expect(await utf8.decoder.bind(request).join(), 'native body');
         if (request.uri.path == '/hold') {
           entered.complete();
@@ -46,16 +50,25 @@ void main() {
         );
         final preview = await backend.inspectPlugin(fixture!);
         final candidate = preview.entries.single;
+        expect(candidate.ioHandlers, ['morrow.http.forward.v1']);
         await backend.importPlugin(fixture, candidate.digest, preview.revision);
         var catalog = await entireCatalog(backend);
         var plugin = catalog.entries.singleWhere((e) => e.id == candidate.id);
         await backend.configureExternalIo(plugin, catalog.revision, [
           'http-request',
+          'credential-use',
         ]);
         catalog = await entireCatalog(backend);
         plugin = catalog.entries.singleWhere((e) => e.id == candidate.id);
         await backend.configureExternal(plugin, catalog.revision, [], true);
         catalog = await entireCatalog(backend);
+        final credential = await backend.saveCredential(
+          reference: Uint8List(0),
+          expectedRevision: BigInt.zero,
+          headerName: 'Authorization',
+          headerValue: 'Bearer native-test-secret',
+          lifetimeDays: 2,
+        );
         final endpoint = await backend.saveEndpoint(
           reference: Uint8List(0),
           expectedRevision: BigInt.zero,
@@ -67,7 +80,7 @@ void main() {
             origin: 'http://127.0.0.1:${server.port}',
             profile: 2,
             methods: ['POST'],
-            credentialReference: Uint8List(0),
+            credentialReference: credential.reference,
             rootCertificate: Uint8List(0),
             maxRequestBytes: 65536,
             maxResponseBytes: 65536,

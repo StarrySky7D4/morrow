@@ -4,6 +4,7 @@ import 'plugin_library.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'io_task_control.dart';
+import 'io_task_codec_native.dart';
 import 'host_request.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
@@ -145,6 +146,7 @@ class RustWorkbench
             approved: texts(row.approved),
             declaredIo: texts(row.declaredIo),
             approvedIo: texts(row.approvedIo),
+            ioHandlers: texts(row.ioHandlers),
             dependencies: texts(row.dependencies),
             issue: row.issue ?? '',
             handlers: [

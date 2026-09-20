@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/generated/host.capnp.dart' as host;
 import 'package:morrow_studio/plugins/host_request.dart';
 import 'package:morrow_studio/plugins/io_task_control.dart';
+import 'package:morrow_studio/plugins/io_task_codec_native.dart';
 
 Uint8List identity(int value) => Uint8List.fromList(List.filled(32, value));
 HttpTaskRequest request({

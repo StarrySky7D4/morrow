@@ -2378,6 +2378,502 @@ abstract class AppLocalizations {
   /// **'The file is too large. Choose a file no larger than {limit} bytes.'**
   String pluginsFileLimit(int limit);
 
+  /// No description provided for @pluginsHttpTaskAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'End observation of this attempt'**
+  String get pluginsHttpTaskAbandon;
+
+  /// No description provided for @pluginsHttpTaskAbandonDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Only after fresh status confirms no active task and the original library is available, you may end this observation. This does not prove that no remote effects occurred. The identity and uncertainty remain in history; a new request requires another explicit submission.'**
+  String get pluginsHttpTaskAbandonDetails;
+
+  /// No description provided for @pluginsHttpTaskAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'No result delivery'**
+  String get pluginsHttpTaskAbsent;
+
+  /// No description provided for @pluginsHttpTaskAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get pluginsHttpTaskAccepted;
+
+  /// No description provided for @pluginsHttpTaskAcknowledge.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge finished task'**
+  String get pluginsHttpTaskAcknowledge;
+
+  /// No description provided for @pluginsHttpTaskArchivedUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Observation ended by the user. The previous remote effects remain unconfirmed; this attempt was not replayed.'**
+  String get pluginsHttpTaskArchivedUnknown;
+
+  /// No description provided for @pluginsHttpTaskBase64.
+  ///
+  /// In en, this message translates to:
+  /// **'Base64'**
+  String get pluginsHttpTaskBase64;
+
+  /// No description provided for @pluginsHttpTaskBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Request body'**
+  String get pluginsHttpTaskBody;
+
+  /// No description provided for @pluginsHttpTaskBodyFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Request body encoding'**
+  String get pluginsHttpTaskBodyFormat;
+
+  /// No description provided for @pluginsHttpTaskBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Busy'**
+  String get pluginsHttpTaskBusy;
+
+  /// No description provided for @pluginsHttpTaskCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Request cancellation'**
+  String get pluginsHttpTaskCancel;
+
+  /// No description provided for @pluginsHttpTaskCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation observed; remote effects may still have occurred'**
+  String get pluginsHttpTaskCancelled;
+
+  /// No description provided for @pluginsHttpTaskCatalogUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugin catalog status is unavailable. Refresh the plugin library before a new submission; existing task controls remain available.'**
+  String get pluginsHttpTaskCatalogUnavailable;
+
+  /// No description provided for @pluginsHttpTaskClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get pluginsHttpTaskClosed;
+
+  /// No description provided for @pluginsHttpTaskCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get pluginsHttpTaskCompleted;
+
+  /// No description provided for @pluginsHttpTaskConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict'**
+  String get pluginsHttpTaskConflict;
+
+  /// No description provided for @pluginsHttpTaskConsumed.
+  ///
+  /// In en, this message translates to:
+  /// **'Result consumed'**
+  String get pluginsHttpTaskConsumed;
+
+  /// No description provided for @pluginsHttpTaskControlUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The control result could not be confirmed. Refresh task status before deciding the next action.'**
+  String get pluginsHttpTaskControlUnknown;
+
+  /// No description provided for @pluginsHttpTaskCounters.
+  ///
+  /// In en, this message translates to:
+  /// **'IO calls: {calls}; charged bytes: {bytes}'**
+  String pluginsHttpTaskCounters(String bytes, String calls);
+
+  /// No description provided for @pluginsHttpTaskDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline exceeded'**
+  String get pluginsHttpTaskDeadline;
+
+  /// No description provided for @pluginsHttpTaskDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Denied'**
+  String get pluginsHttpTaskDenied;
+
+  /// No description provided for @pluginsHttpTaskDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Run one explicit request using an approved endpoint and an enabled plugin with the experimental HTTP forward handler. Task status remains available while the content library is busy.'**
+  String get pluginsHttpTaskDetails;
+
+  /// No description provided for @pluginsHttpTaskDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection cleanup failed'**
+  String get pluginsHttpTaskDisconnect;
+
+  /// No description provided for @pluginsHttpTaskEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved endpoint'**
+  String get pluginsHttpTaskEndpoint;
+
+  /// No description provided for @pluginsHttpTaskEndpointsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoints could not be read consistently, or the content library is busy. Task controls remain available. Refresh endpoints when the library returns.'**
+  String get pluginsHttpTaskEndpointsFailed;
+
+  /// No description provided for @pluginsHttpTaskEvidenceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome evidence unavailable'**
+  String get pluginsHttpTaskEvidenceUnavailable;
+
+  /// No description provided for @pluginsHttpTaskExecution.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest execution: {fault}; exit code: {code}'**
+  String pluginsHttpTaskExecution(int code, String fault);
+
+  /// No description provided for @pluginsHttpTaskExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker exit — execution: {execution}; disconnect: {disconnect}; maintenance: {maintenance}'**
+  String pluginsHttpTaskExit(
+    String disconnect,
+    String execution,
+    String maintenance,
+  );
+
+  /// No description provided for @pluginsHttpTaskExplicit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit sends one real request. Each click creates a new identity. Unknown submissions and result reads are never replayed automatically. Cancellation does not prove the remote operation was undone.'**
+  String get pluginsHttpTaskExplicit;
+
+  /// No description provided for @pluginsHttpTaskFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get pluginsHttpTaskFailed;
+
+  /// No description provided for @pluginsHttpTaskHeaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordinary request headers, one Name: value per line'**
+  String get pluginsHttpTaskHeaders;
+
+  /// No description provided for @pluginsHttpTaskHeadersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeated headers stay separate. Credential and connection headers are supplied only by the runtime.'**
+  String get pluginsHttpTaskHeadersHint;
+
+  /// No description provided for @pluginsHttpTaskHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous task observations (up to 5)'**
+  String get pluginsHttpTaskHistory;
+
+  /// No description provided for @pluginsHttpTaskHttpResult.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP outcome: {status}; remote status: {code}'**
+  String pluginsHttpTaskHttpResult(int code, String status);
+
+  /// No description provided for @pluginsHttpTaskInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection is inactive'**
+  String get pluginsHttpTaskInactive;
+
+  /// No description provided for @pluginsHttpTaskInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the selected endpoint, method, relative target, ordinary headers, body encoding and timeout against the approval limits.'**
+  String get pluginsHttpTaskInvalid;
+
+  /// No description provided for @pluginsHttpTaskInvalidOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid options'**
+  String get pluginsHttpTaskInvalidOptions;
+
+  /// No description provided for @pluginsHttpTaskKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Task identity: {identity}'**
+  String pluginsHttpTaskKey(String identity);
+
+  /// No description provided for @pluginsHttpTaskLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Quota or limit reached'**
+  String get pluginsHttpTaskLimit;
+
+  /// No description provided for @pluginsHttpTaskLoadingEndpoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading approved endpoints…'**
+  String get pluginsHttpTaskLoadingEndpoints;
+
+  /// No description provided for @pluginsHttpTaskLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Content library available; no active task'**
+  String get pluginsHttpTaskLocal;
+
+  /// No description provided for @pluginsHttpTaskModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid guest module'**
+  String get pluginsHttpTaskModule;
+
+  /// No description provided for @pluginsHttpTaskNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare a new request'**
+  String get pluginsHttpTaskNew;
+
+  /// No description provided for @pluginsHttpTaskNoEndpoints.
+  ///
+  /// In en, this message translates to:
+  /// **'No current endpoint matches an enabled, approved HTTP forward plugin.'**
+  String get pluginsHttpTaskNoEndpoints;
+
+  /// No description provided for @pluginsHttpTaskNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Not found'**
+  String get pluginsHttpTaskNotFound;
+
+  /// No description provided for @pluginsHttpTaskOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get pluginsHttpTaskOk;
+
+  /// No description provided for @pluginsHttpTaskOutcomeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote outcome unknown; do not assume rollback or resend'**
+  String get pluginsHttpTaskOutcomeUnknown;
+
+  /// No description provided for @pluginsHttpTaskPackageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Package binding changed'**
+  String get pluginsHttpTaskPackageChanged;
+
+  /// No description provided for @pluginsHttpTaskPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Result pending'**
+  String get pluginsHttpTaskPending;
+
+  /// No description provided for @pluginsHttpTaskPoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Check task'**
+  String get pluginsHttpTaskPoll;
+
+  /// No description provided for @pluginsHttpTaskProtocol.
+  ///
+  /// In en, this message translates to:
+  /// **'Task protocol error'**
+  String get pluginsHttpTaskProtocol;
+
+  /// No description provided for @pluginsHttpTaskRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read result once'**
+  String get pluginsHttpTaskRead;
+
+  /// No description provided for @pluginsHttpTaskReadBound.
+  ///
+  /// In en, this message translates to:
+  /// **'Read limit exceeded'**
+  String get pluginsHttpTaskReadBound;
+
+  /// No description provided for @pluginsHttpTaskReadPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No result was returned. Check status before explicitly reading again.'**
+  String get pluginsHttpTaskReadPending;
+
+  /// No description provided for @pluginsHttpTaskReadUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The result read could not be confirmed and may already have consumed the result. It will not be read again. Status and exit can still be checked.'**
+  String get pluginsHttpTaskReadUnknown;
+
+  /// No description provided for @pluginsHttpTaskReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Result ready: read explicitly. Ready does not mean the worker has exited.'**
+  String get pluginsHttpTaskReady;
+
+  /// No description provided for @pluginsHttpTaskReclaimed.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker exited; original content library returned'**
+  String get pluginsHttpTaskReclaimed;
+
+  /// No description provided for @pluginsHttpTaskRecoveryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker exited; cleanup or maintenance requires repair'**
+  String get pluginsHttpTaskRecoveryRequired;
+
+  /// No description provided for @pluginsHttpTaskRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh task status'**
+  String get pluginsHttpTaskRefresh;
+
+  /// No description provided for @pluginsHttpTaskRefreshEndpoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh approved endpoints'**
+  String get pluginsHttpTaskRefreshEndpoints;
+
+  /// No description provided for @pluginsHttpTaskRemoteError.
+  ///
+  /// In en, this message translates to:
+  /// **'The remote server returned a 4xx/5xx response. This is a completed HTTP exchange, separate from guest execution errors.'**
+  String get pluginsHttpTaskRemoteError;
+
+  /// No description provided for @pluginsHttpTaskRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair cleanup'**
+  String get pluginsHttpTaskRepair;
+
+  /// No description provided for @pluginsHttpTaskResponseBase64.
+  ///
+  /// In en, this message translates to:
+  /// **'Response body: exact Base64'**
+  String get pluginsHttpTaskResponseBase64;
+
+  /// No description provided for @pluginsHttpTaskResponseHeaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Response headers (duplicates preserved; binary values use Base64)'**
+  String get pluginsHttpTaskResponseHeaders;
+
+  /// No description provided for @pluginsHttpTaskResponseText.
+  ///
+  /// In en, this message translates to:
+  /// **'Response body: plain text preview'**
+  String get pluginsHttpTaskResponseText;
+
+  /// No description provided for @pluginsHttpTaskResultUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Result delivery unavailable'**
+  String get pluginsHttpTaskResultUnavailable;
+
+  /// No description provided for @pluginsHttpTaskRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Approval revoked'**
+  String get pluginsHttpTaskRevoked;
+
+  /// No description provided for @pluginsHttpTaskRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running; content library is owned by the worker'**
+  String get pluginsHttpTaskRunning;
+
+  /// No description provided for @pluginsHttpTaskSpawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker could not start'**
+  String get pluginsHttpTaskSpawn;
+
+  /// No description provided for @pluginsHttpTaskStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit new request'**
+  String get pluginsHttpTaskStart;
+
+  /// No description provided for @pluginsHttpTaskStartUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The submission result is unknown. Its identity is retained. Query status to find the same task; the request will not be sent again.'**
+  String get pluginsHttpTaskStartUnknown;
+
+  /// No description provided for @pluginsHttpTaskStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Task status could not be confirmed. Refresh status; no request has been replayed.'**
+  String get pluginsHttpTaskStatusFailed;
+
+  /// No description provided for @pluginsHttpTaskStopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopping; waiting for actual worker exit'**
+  String get pluginsHttpTaskStopping;
+
+  /// No description provided for @pluginsHttpTaskSubmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission identity: {identity}'**
+  String pluginsHttpTaskSubmission(String identity);
+
+  /// No description provided for @pluginsHttpTaskTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Relative target, for example /v1/items?limit=10'**
+  String get pluginsHttpTaskTarget;
+
+  /// No description provided for @pluginsHttpTaskText.
+  ///
+  /// In en, this message translates to:
+  /// **'UTF-8 text'**
+  String get pluginsHttpTaskText;
+
+  /// No description provided for @pluginsHttpTaskTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout in milliseconds (1–30000, within endpoint approval)'**
+  String get pluginsHttpTaskTimeout;
+
+  /// No description provided for @pluginsHttpTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP tasks'**
+  String get pluginsHttpTaskTitle;
+
+  /// No description provided for @pluginsHttpTaskTrap.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest execution trapped'**
+  String get pluginsHttpTaskTrap;
+
+  /// No description provided for @pluginsHttpTaskUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Original content library unavailable; recovery needs attention'**
+  String get pluginsHttpTaskUnavailable;
+
+  /// No description provided for @pluginsHttpTaskUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported operation'**
+  String get pluginsHttpTaskUnsupported;
+
+  /// No description provided for @pluginsHttpTaskWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the task control response…'**
+  String get pluginsHttpTaskWorking;
+
   /// No description provided for @pluginsImport.
   ///
   /// In en, this message translates to:

@@ -310,5 +310,144 @@
         "type": "int"
       }
     }
-  }
+  },
+  "pluginsHttpTaskTitle": "HTTP 任务",
+  "pluginsHttpTaskDetails": "通过已批准端点和已启用、具有实验性 HTTP 转发处理器的插件执行一次明确请求。内容库忙碌时仍可查看及控制任务。",
+  "pluginsHttpTaskStatusFailed": "无法确认任务状态。请刷新状态，请求未被重发。",
+  "pluginsHttpTaskEndpointsFailed": "无法一致读取端点，或内容库正在忙碌。任务控制仍可使用，内容库归还后请刷新端点。",
+  "pluginsHttpTaskInvalid": "请根据批准额度检查所选端点、方法、相对目标、普通请求头、正文编码与超时。",
+  "pluginsHttpTaskStartUnknown": "提交结果未知，已保留本次身份。请查询状态核对同一任务，请求不会再次发送。",
+  "pluginsHttpTaskReadUnknown": "无法确认读取结果，结果可能已被消费。不会再次读取，仍可核对状态及退出情况。",
+  "pluginsHttpTaskControlUnknown": "无法确认控制操作结果，请刷新任务状态后再决定下一步。",
+  "pluginsHttpTaskReadPending": "尚未返回结果，请核对状态后再明确读取。",
+  "pluginsHttpTaskLocal": "内容库可用，当前无任务",
+  "pluginsHttpTaskRunning": "运行中，内容库由后台线程持有",
+  "pluginsHttpTaskStopping": "正在停止，等待后台线程实际退出",
+  "pluginsHttpTaskReclaimed": "后台线程已退出，原内容库已归还",
+  "pluginsHttpTaskRecoveryRequired": "后台线程已退出，清理或维护需要修复",
+  "pluginsHttpTaskUnavailable": "原内容库不可用，需要处理恢复问题",
+  "pluginsHttpTaskAbsent": "暂无结果交付",
+  "pluginsHttpTaskPending": "结果待定",
+  "pluginsHttpTaskReady": "结果就绪，请明确读取。就绪不代表后台线程已退出。",
+  "pluginsHttpTaskConsumed": "结果已消费",
+  "pluginsHttpTaskResultUnavailable": "结果交付不可用",
+  "pluginsHttpTaskOk": "正常",
+  "pluginsHttpTaskInvalidOptions": "参数无效",
+  "pluginsHttpTaskBusy": "忙碌",
+  "pluginsHttpTaskClosed": "已关闭",
+  "pluginsHttpTaskReadBound": "超过读取额度",
+  "pluginsHttpTaskLimit": "达到额度或限制",
+  "pluginsHttpTaskSpawn": "后台线程未能启动",
+  "pluginsHttpTaskDisconnect": "连接清理失败",
+  "pluginsHttpTaskProtocol": "任务协议错误",
+  "pluginsHttpTaskDeadline": "超过期限",
+  "pluginsHttpTaskPackageChanged": "插件包绑定已变化",
+  "pluginsHttpTaskInactive": "连接未激活",
+  "pluginsHttpTaskModule": "插件模块无效",
+  "pluginsHttpTaskUnsupported": "不支持的操作",
+  "pluginsHttpTaskCancelled": "已观察到取消，远端仍可能已经执行",
+  "pluginsHttpTaskTrap": "插件执行异常终止",
+  "pluginsHttpTaskAccepted": "已接受",
+  "pluginsHttpTaskCompleted": "已完成",
+  "pluginsHttpTaskDenied": "已拒绝",
+  "pluginsHttpTaskRevoked": "批准已撤销",
+  "pluginsHttpTaskNotFound": "未找到",
+  "pluginsHttpTaskConflict": "冲突",
+  "pluginsHttpTaskOutcomeUnknown": "远端结果未知，不应假定已回滚或再次发送",
+  "pluginsHttpTaskEvidenceUnavailable": "结果证据不可用",
+  "pluginsHttpTaskFailed": "失败",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "插件执行：{fault}；退出码：{code}",
+  "pluginsHttpTaskCounters": "IO 调用次数：{calls}；计费字节：{bytes}",
+  "pluginsHttpTaskHttpResult": "HTTP 结果：{status}；远端状态码：{code}",
+  "pluginsHttpTaskRemoteError": "远端返回了 4xx/5xx 响应。这是已完成的 HTTP 交互，与插件执行错误分别记录。",
+  "pluginsHttpTaskResponseHeaders": "响应头（保留重复项，二进制值使用 Base64）",
+  "pluginsHttpTaskResponseBase64": "响应正文：完整 Base64",
+  "pluginsHttpTaskResponseText": "响应正文：纯文本预览",
+  "pluginsHttpTaskExit": "后台线程退出记录：执行 {execution}；断连 {disconnect}；维护 {maintenance}",
+  "pluginsHttpTaskWorking": "正在等待任务控制回执…",
+  "pluginsHttpTaskSubmission": "提交身份：{identity}",
+  "pluginsHttpTaskKey": "任务身份：{identity}",
+  "pluginsHttpTaskRefresh": "刷新任务状态",
+  "pluginsHttpTaskPoll": "核对任务",
+  "pluginsHttpTaskRead": "读取一次结果",
+  "pluginsHttpTaskCancel": "请求取消",
+  "pluginsHttpTaskRepair": "修复清理",
+  "pluginsHttpTaskAcknowledge": "确认任务结束",
+  "pluginsHttpTaskHistory": "此前任务记录（最多 5 项）",
+  "pluginsHttpTaskNew": "准备新请求",
+  "pluginsHttpTaskRefreshEndpoints": "刷新批准端点",
+  "pluginsHttpTaskLoadingEndpoints": "正在读取批准端点…",
+  "pluginsHttpTaskCatalogUnavailable": "插件目录状态不可用。新提交前请刷新插件库，已有任务控制仍可使用。",
+  "pluginsHttpTaskNoEndpoints": "没有端点匹配当前已启用、已批准的 HTTP 转发插件。",
+  "pluginsHttpTaskEndpoint": "已批准端点",
+  "pluginsHttpTaskTarget": "相对目标，例如 /v1/items?limit=10",
+  "pluginsHttpTaskHeaders": "普通请求头，每行 Name: value",
+  "pluginsHttpTaskHeadersHint": "重复请求头保持独立。凭据与连接请求头仅由运行时提供。",
+  "pluginsHttpTaskBodyFormat": "请求正文编码",
+  "pluginsHttpTaskText": "UTF-8 文本",
+  "pluginsHttpTaskBody": "请求正文",
+  "pluginsHttpTaskTimeout": "超时毫秒数（1–30000，且不超过端点批准）",
+  "pluginsHttpTaskExplicit": "提交会发送一次真实请求，每次点击生成新身份。未知提交及结果读取不会自动重放，取消不代表远端操作已撤销。",
+  "pluginsHttpTaskStart": "提交新请求",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "结束本次尝试的观察",
+  "pluginsHttpTaskAbandonDetails": "仅在刷新确认无活动任务且原内容库可用后，才能结束本次观察。这不证明远端未发生效果。身份与未知状态仍保留在历史中，新请求需要另一次明确提交。",
+  "pluginsHttpTaskArchivedUnknown": "用户已结束观察。此前远端效果仍未确认，本次尝试未被重发。"
 }

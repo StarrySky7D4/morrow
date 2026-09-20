@@ -1311,6 +1311,297 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pluginsHttpTaskAbandon => 'End observation of this attempt';
+
+  @override
+  String get pluginsHttpTaskAbandonDetails =>
+      'Only after fresh status confirms no active task and the original library is available, you may end this observation. This does not prove that no remote effects occurred. The identity and uncertainty remain in history; a new request requires another explicit submission.';
+
+  @override
+  String get pluginsHttpTaskAbsent => 'No result delivery';
+
+  @override
+  String get pluginsHttpTaskAccepted => 'Accepted';
+
+  @override
+  String get pluginsHttpTaskAcknowledge => 'Acknowledge finished task';
+
+  @override
+  String get pluginsHttpTaskArchivedUnknown =>
+      'Observation ended by the user. The previous remote effects remain unconfirmed; this attempt was not replayed.';
+
+  @override
+  String get pluginsHttpTaskBase64 => 'Base64';
+
+  @override
+  String get pluginsHttpTaskBody => 'Request body';
+
+  @override
+  String get pluginsHttpTaskBodyFormat => 'Request body encoding';
+
+  @override
+  String get pluginsHttpTaskBusy => 'Busy';
+
+  @override
+  String get pluginsHttpTaskCancel => 'Request cancellation';
+
+  @override
+  String get pluginsHttpTaskCancelled =>
+      'Cancellation observed; remote effects may still have occurred';
+
+  @override
+  String get pluginsHttpTaskCatalogUnavailable =>
+      'Plugin catalog status is unavailable. Refresh the plugin library before a new submission; existing task controls remain available.';
+
+  @override
+  String get pluginsHttpTaskClosed => 'Closed';
+
+  @override
+  String get pluginsHttpTaskCompleted => 'Completed';
+
+  @override
+  String get pluginsHttpTaskConflict => 'Conflict';
+
+  @override
+  String get pluginsHttpTaskConsumed => 'Result consumed';
+
+  @override
+  String get pluginsHttpTaskControlUnknown =>
+      'The control result could not be confirmed. Refresh task status before deciding the next action.';
+
+  @override
+  String pluginsHttpTaskCounters(String bytes, String calls) {
+    return 'IO calls: $calls; charged bytes: $bytes';
+  }
+
+  @override
+  String get pluginsHttpTaskDeadline => 'Deadline exceeded';
+
+  @override
+  String get pluginsHttpTaskDenied => 'Denied';
+
+  @override
+  String get pluginsHttpTaskDetails =>
+      'Run one explicit request using an approved endpoint and an enabled plugin with the experimental HTTP forward handler. Task status remains available while the content library is busy.';
+
+  @override
+  String get pluginsHttpTaskDisconnect => 'Connection cleanup failed';
+
+  @override
+  String get pluginsHttpTaskEndpoint => 'Approved endpoint';
+
+  @override
+  String get pluginsHttpTaskEndpointsFailed =>
+      'Endpoints could not be read consistently, or the content library is busy. Task controls remain available. Refresh endpoints when the library returns.';
+
+  @override
+  String get pluginsHttpTaskEvidenceUnavailable =>
+      'Outcome evidence unavailable';
+
+  @override
+  String pluginsHttpTaskExecution(int code, String fault) {
+    return 'Guest execution: $fault; exit code: $code';
+  }
+
+  @override
+  String pluginsHttpTaskExit(
+    String disconnect,
+    String execution,
+    String maintenance,
+  ) {
+    return 'Worker exit — execution: $execution; disconnect: $disconnect; maintenance: $maintenance';
+  }
+
+  @override
+  String get pluginsHttpTaskExplicit =>
+      'Submit sends one real request. Each click creates a new identity. Unknown submissions and result reads are never replayed automatically. Cancellation does not prove the remote operation was undone.';
+
+  @override
+  String get pluginsHttpTaskFailed => 'Failed';
+
+  @override
+  String get pluginsHttpTaskHeaders =>
+      'Ordinary request headers, one Name: value per line';
+
+  @override
+  String get pluginsHttpTaskHeadersHint =>
+      'Repeated headers stay separate. Credential and connection headers are supplied only by the runtime.';
+
+  @override
+  String get pluginsHttpTaskHistory => 'Previous task observations (up to 5)';
+
+  @override
+  String pluginsHttpTaskHttpResult(int code, String status) {
+    return 'HTTP outcome: $status; remote status: $code';
+  }
+
+  @override
+  String get pluginsHttpTaskInactive => 'Connection is inactive';
+
+  @override
+  String get pluginsHttpTaskInvalid =>
+      'Check the selected endpoint, method, relative target, ordinary headers, body encoding and timeout against the approval limits.';
+
+  @override
+  String get pluginsHttpTaskInvalidOptions => 'Invalid options';
+
+  @override
+  String pluginsHttpTaskKey(String identity) {
+    return 'Task identity: $identity';
+  }
+
+  @override
+  String get pluginsHttpTaskLimit => 'Quota or limit reached';
+
+  @override
+  String get pluginsHttpTaskLoadingEndpoints => 'Reading approved endpoints…';
+
+  @override
+  String get pluginsHttpTaskLocal =>
+      'Content library available; no active task';
+
+  @override
+  String get pluginsHttpTaskModule => 'Invalid guest module';
+
+  @override
+  String get pluginsHttpTaskNew => 'Prepare a new request';
+
+  @override
+  String get pluginsHttpTaskNoEndpoints =>
+      'No current endpoint matches an enabled, approved HTTP forward plugin.';
+
+  @override
+  String get pluginsHttpTaskNotFound => 'Not found';
+
+  @override
+  String get pluginsHttpTaskOk => 'OK';
+
+  @override
+  String get pluginsHttpTaskOutcomeUnknown =>
+      'Remote outcome unknown; do not assume rollback or resend';
+
+  @override
+  String get pluginsHttpTaskPackageChanged => 'Package binding changed';
+
+  @override
+  String get pluginsHttpTaskPending => 'Result pending';
+
+  @override
+  String get pluginsHttpTaskPoll => 'Check task';
+
+  @override
+  String get pluginsHttpTaskProtocol => 'Task protocol error';
+
+  @override
+  String get pluginsHttpTaskRead => 'Read result once';
+
+  @override
+  String get pluginsHttpTaskReadBound => 'Read limit exceeded';
+
+  @override
+  String get pluginsHttpTaskReadPending =>
+      'No result was returned. Check status before explicitly reading again.';
+
+  @override
+  String get pluginsHttpTaskReadUnknown =>
+      'The result read could not be confirmed and may already have consumed the result. It will not be read again. Status and exit can still be checked.';
+
+  @override
+  String get pluginsHttpTaskReady =>
+      'Result ready: read explicitly. Ready does not mean the worker has exited.';
+
+  @override
+  String get pluginsHttpTaskReclaimed =>
+      'Worker exited; original content library returned';
+
+  @override
+  String get pluginsHttpTaskRecoveryRequired =>
+      'Worker exited; cleanup or maintenance requires repair';
+
+  @override
+  String get pluginsHttpTaskRefresh => 'Refresh task status';
+
+  @override
+  String get pluginsHttpTaskRefreshEndpoints => 'Refresh approved endpoints';
+
+  @override
+  String get pluginsHttpTaskRemoteError =>
+      'The remote server returned a 4xx/5xx response. This is a completed HTTP exchange, separate from guest execution errors.';
+
+  @override
+  String get pluginsHttpTaskRepair => 'Repair cleanup';
+
+  @override
+  String get pluginsHttpTaskResponseBase64 => 'Response body: exact Base64';
+
+  @override
+  String get pluginsHttpTaskResponseHeaders =>
+      'Response headers (duplicates preserved; binary values use Base64)';
+
+  @override
+  String get pluginsHttpTaskResponseText => 'Response body: plain text preview';
+
+  @override
+  String get pluginsHttpTaskResultUnavailable => 'Result delivery unavailable';
+
+  @override
+  String get pluginsHttpTaskRevoked => 'Approval revoked';
+
+  @override
+  String get pluginsHttpTaskRunning =>
+      'Running; content library is owned by the worker';
+
+  @override
+  String get pluginsHttpTaskSpawn => 'Worker could not start';
+
+  @override
+  String get pluginsHttpTaskStart => 'Submit new request';
+
+  @override
+  String get pluginsHttpTaskStartUnknown =>
+      'The submission result is unknown. Its identity is retained. Query status to find the same task; the request will not be sent again.';
+
+  @override
+  String get pluginsHttpTaskStatusFailed =>
+      'Task status could not be confirmed. Refresh status; no request has been replayed.';
+
+  @override
+  String get pluginsHttpTaskStopping =>
+      'Stopping; waiting for actual worker exit';
+
+  @override
+  String pluginsHttpTaskSubmission(String identity) {
+    return 'Submission identity: $identity';
+  }
+
+  @override
+  String get pluginsHttpTaskTarget =>
+      'Relative target, for example /v1/items?limit=10';
+
+  @override
+  String get pluginsHttpTaskText => 'UTF-8 text';
+
+  @override
+  String get pluginsHttpTaskTimeout =>
+      'Timeout in milliseconds (1–30000, within endpoint approval)';
+
+  @override
+  String get pluginsHttpTaskTitle => 'HTTP tasks';
+
+  @override
+  String get pluginsHttpTaskTrap => 'Guest execution trapped';
+
+  @override
+  String get pluginsHttpTaskUnavailable =>
+      'Original content library unavailable; recovery needs attention';
+
+  @override
+  String get pluginsHttpTaskUnsupported => 'Unsupported operation';
+
+  @override
+  String get pluginsHttpTaskWorking => 'Waiting for the task control response…';
+
+  @override
   String get pluginsImport => 'Import';
 
   @override

@@ -21,8 +21,8 @@ Manager 是唯一类别批准来源。有效修改撤销旧实例；持久化失
 ## 后续应用接线
 
 1. 原 Store 有界列表、Windows 凭据与[具体端点管理](PLUGIN_ENDPOINT_MANAGEMENT.md)已接通，绑定原插件身份、端点政策和凭据引用；保存凭据不隐含网络批准，保存端点不创建活动任务。
-2. 完整 Storage 的受控交接与取回已建立，见[所有权合同](PLUGIN_IO_OWNERSHIP.md)：泛型 IoWorker 保留原审计 Session、签名器和数据库租约，独立准入 IO 实例并保留 Pool 根；实际审计 Storage＋本机 HTTP 已验。[Workbench Rust任务状态](PLUGIN_APP_IO_TASKS.md)已接入该入口并明确 Busy／恢复边界；[私有任务消息](PLUGIN_APP_HTTP_TASKS.md)已接入；下一步任务界面。禁止另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。
-3. 私有管理协议已提供短响应的 start／poll／read／cancel 与 Dart 原生接口；任务界面仍待接入。长期请求不得堵住当前串行 Flutter 通道。使用原 Manager／实例／IoBinding，再解析 Store 中的端点批准并恢复系统凭据。Ready 读取仍需最后一次授权检查；未知结果不自动重发。
+2. 完整 Storage 的受控交接与取回已建立，见[所有权合同](PLUGIN_IO_OWNERSHIP.md)：泛型 IoWorker 保留原审计 Session、签名器和数据库租约，独立准入 IO 实例并保留 Pool 根；实际审计 Storage＋本机 HTTP 已验。[Workbench Rust任务状态](PLUGIN_APP_IO_TASKS.md)已接入该入口并明确 Busy／恢复边界；[私有任务消息](PLUGIN_APP_HTTP_TASKS.md)已接入，任务界面进展见下一项。禁止另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。
+3. 私有管理协议已提供短响应的 start／poll／read／cancel 与 Dart 原生接口；[HTTP任务界面](PLUGIN_APP_HTTP_TASKS.md)已接入明确提交、状态、结果、取消、恢复和确认。长期请求不得堵住当前串行 Flutter 通道。使用原 Manager／实例／IoBinding，再解析 Store 中的端点批准并恢复系统凭据。Ready 读取仍需最后一次授权检查；未知结果不自动重发。Windows真实表单链路及重挂通过，仍待跨重启Unknown证据核对和API节点界面。
 4. 验证真实主应用输入→批准→网络效果→撤销→重启核对，再扩展服务发布、文件系统与三语言 SDK。当前纯 InlineUi 不接受 IO 声明包，不能用普通表单测试替代实际 IO 执行验收。
 
 验证范围与证据见 [本轮报告](../reports/plugin-io-management-2026-09-20.md)。整个 IO-E2 和插件系统仍进行中。
@@ -37,4 +37,4 @@ Manager 是唯一类别批准来源。有效修改撤销旧实例；持久化失
 
 提交前清空输入控件；原生宿主请求缓冲区使用 zeroize；Dart 在序列化后清空构建区全部分段，在传输写入完成或失败后清空序列化帧。不可变字符串、依赖内部 UTF-8 临时副本和系统管道副本不承诺清零。不会返回秘密或密文，也不会将后台原始错误显示到该面板。
 
-真实 Flutter→Rust 创建／替换／停用／重启恢复及异常测试见[凭据管理与 Web 构建报告](../reports/credential-admin-web-2026-09-20.md)。这是 Windows 管理子集，不代表已接通主应用 HTTP 任务、OAuth、移动端或 Web 凭据提供者。
+真实 Flutter→Rust 创建／替换／停用／重启恢复及异常测试见[凭据管理与 Web 构建报告](../reports/credential-admin-web-2026-09-20.md)。这是 Windows 凭据管理子集；后续已接通的 HTTP 任务见上文，OAuth、移动端或 Web 凭据提供者仍未完成。

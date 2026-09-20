@@ -873,6 +873,14 @@ fn plugin_catalog_reply(
                 values.set(index as u32, value.as_str());
             }
         }
+        {
+            let mut values = row
+                .reborrow()
+                .init_io_handlers(entry.io_handlers.len() as u32);
+            for (index, value) in entry.io_handlers.iter().enumerate() {
+                values.set(index as u32, value.as_str());
+            }
+        }
         for (index, value) in entry.dependencies.iter().enumerate() {
             if index == 0 {
                 row.reborrow()

@@ -31,6 +31,7 @@ pub struct PluginEntry {
     pub approved: Vec<String>,
     pub declared_io: Vec<String>,
     pub approved_io: Vec<String>,
+    pub io_handlers: Vec<String>,
     pub handlers: Vec<PluginHandler>,
     pub dependencies: Vec<String>,
     pub issue: String,
@@ -185,6 +186,9 @@ impl Workbench {
                     .map(|&k| io_capability(k).into())
                     .collect()
             }),
+            io_handlers: p
+                .io_declaration()
+                .map_or_else(Vec::new, |d| d.handlers.clone()),
             handlers: m
                 .transform_handlers
                 .iter()
@@ -252,6 +256,7 @@ impl Workbench {
                     declared: vec![],
                     approved: s.approved.iter().map(|&k| capability(k).into()).collect(),
                     declared_io: vec![],
+                    io_handlers: vec![],
                     approved_io: s
                         .approved_io
                         .iter()

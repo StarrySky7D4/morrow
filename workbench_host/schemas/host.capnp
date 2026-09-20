@@ -63,6 +63,7 @@ struct PluginEntry {
  declared @7 :List(Text); approved @8 :List(Text);
  handlers @9 :List(PluginHandler); dependencies @10 :List(Text); issue @11 :Text;
  declaredIo @12 :List(Text); approvedIo @13 :List(Text);
+ ioHandlers @14 :List(Text);
 }
 
 # Redacted administration metadata only. No ciphertext or secret readback.

@@ -310,5 +310,144 @@
         "type": "int"
       }
     }
-  }
+  },
+  "pluginsHttpTaskTitle": "HTTP tasks",
+  "pluginsHttpTaskDetails": "Run one explicit request using an approved endpoint and an enabled plugin with the experimental HTTP forward handler. Task status remains available while the content library is busy.",
+  "pluginsHttpTaskStatusFailed": "Task status could not be confirmed. Refresh status; no request has been replayed.",
+  "pluginsHttpTaskEndpointsFailed": "Endpoints could not be read consistently, or the content library is busy. Task controls remain available. Refresh endpoints when the library returns.",
+  "pluginsHttpTaskInvalid": "Check the selected endpoint, method, relative target, ordinary headers, body encoding and timeout against the approval limits.",
+  "pluginsHttpTaskStartUnknown": "The submission result is unknown. Its identity is retained. Query status to find the same task; the request will not be sent again.",
+  "pluginsHttpTaskReadUnknown": "The result read could not be confirmed and may already have consumed the result. It will not be read again. Status and exit can still be checked.",
+  "pluginsHttpTaskControlUnknown": "The control result could not be confirmed. Refresh task status before deciding the next action.",
+  "pluginsHttpTaskReadPending": "No result was returned. Check status before explicitly reading again.",
+  "pluginsHttpTaskLocal": "Content library available; no active task",
+  "pluginsHttpTaskRunning": "Running; content library is owned by the worker",
+  "pluginsHttpTaskStopping": "Stopping; waiting for actual worker exit",
+  "pluginsHttpTaskReclaimed": "Worker exited; original content library returned",
+  "pluginsHttpTaskRecoveryRequired": "Worker exited; cleanup or maintenance requires repair",
+  "pluginsHttpTaskUnavailable": "Original content library unavailable; recovery needs attention",
+  "pluginsHttpTaskAbsent": "No result delivery",
+  "pluginsHttpTaskPending": "Result pending",
+  "pluginsHttpTaskReady": "Result ready: read explicitly. Ready does not mean the worker has exited.",
+  "pluginsHttpTaskConsumed": "Result consumed",
+  "pluginsHttpTaskResultUnavailable": "Result delivery unavailable",
+  "pluginsHttpTaskOk": "OK",
+  "pluginsHttpTaskInvalidOptions": "Invalid options",
+  "pluginsHttpTaskBusy": "Busy",
+  "pluginsHttpTaskClosed": "Closed",
+  "pluginsHttpTaskReadBound": "Read limit exceeded",
+  "pluginsHttpTaskLimit": "Quota or limit reached",
+  "pluginsHttpTaskSpawn": "Worker could not start",
+  "pluginsHttpTaskDisconnect": "Connection cleanup failed",
+  "pluginsHttpTaskProtocol": "Task protocol error",
+  "pluginsHttpTaskDeadline": "Deadline exceeded",
+  "pluginsHttpTaskPackageChanged": "Package binding changed",
+  "pluginsHttpTaskInactive": "Connection is inactive",
+  "pluginsHttpTaskModule": "Invalid guest module",
+  "pluginsHttpTaskUnsupported": "Unsupported operation",
+  "pluginsHttpTaskCancelled": "Cancellation observed; remote effects may still have occurred",
+  "pluginsHttpTaskTrap": "Guest execution trapped",
+  "pluginsHttpTaskAccepted": "Accepted",
+  "pluginsHttpTaskCompleted": "Completed",
+  "pluginsHttpTaskDenied": "Denied",
+  "pluginsHttpTaskRevoked": "Approval revoked",
+  "pluginsHttpTaskNotFound": "Not found",
+  "pluginsHttpTaskConflict": "Conflict",
+  "pluginsHttpTaskOutcomeUnknown": "Remote outcome unknown; do not assume rollback or resend",
+  "pluginsHttpTaskEvidenceUnavailable": "Outcome evidence unavailable",
+  "pluginsHttpTaskFailed": "Failed",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "Guest execution: {fault}; exit code: {code}",
+  "pluginsHttpTaskCounters": "IO calls: {calls}; charged bytes: {bytes}",
+  "pluginsHttpTaskHttpResult": "HTTP outcome: {status}; remote status: {code}",
+  "pluginsHttpTaskRemoteError": "The remote server returned a 4xx/5xx response. This is a completed HTTP exchange, separate from guest execution errors.",
+  "pluginsHttpTaskResponseHeaders": "Response headers (duplicates preserved; binary values use Base64)",
+  "pluginsHttpTaskResponseBase64": "Response body: exact Base64",
+  "pluginsHttpTaskResponseText": "Response body: plain text preview",
+  "pluginsHttpTaskExit": "Worker exit — execution: {execution}; disconnect: {disconnect}; maintenance: {maintenance}",
+  "pluginsHttpTaskWorking": "Waiting for the task control response…",
+  "pluginsHttpTaskSubmission": "Submission identity: {identity}",
+  "pluginsHttpTaskKey": "Task identity: {identity}",
+  "pluginsHttpTaskRefresh": "Refresh task status",
+  "pluginsHttpTaskPoll": "Check task",
+  "pluginsHttpTaskRead": "Read result once",
+  "pluginsHttpTaskCancel": "Request cancellation",
+  "pluginsHttpTaskRepair": "Repair cleanup",
+  "pluginsHttpTaskAcknowledge": "Acknowledge finished task",
+  "pluginsHttpTaskHistory": "Previous task observations (up to 5)",
+  "pluginsHttpTaskNew": "Prepare a new request",
+  "pluginsHttpTaskRefreshEndpoints": "Refresh approved endpoints",
+  "pluginsHttpTaskLoadingEndpoints": "Reading approved endpoints…",
+  "pluginsHttpTaskCatalogUnavailable": "Plugin catalog status is unavailable. Refresh the plugin library before a new submission; existing task controls remain available.",
+  "pluginsHttpTaskNoEndpoints": "No current endpoint matches an enabled, approved HTTP forward plugin.",
+  "pluginsHttpTaskEndpoint": "Approved endpoint",
+  "pluginsHttpTaskTarget": "Relative target, for example /v1/items?limit=10",
+  "pluginsHttpTaskHeaders": "Ordinary request headers, one Name: value per line",
+  "pluginsHttpTaskHeadersHint": "Repeated headers stay separate. Credential and connection headers are supplied only by the runtime.",
+  "pluginsHttpTaskBodyFormat": "Request body encoding",
+  "pluginsHttpTaskText": "UTF-8 text",
+  "pluginsHttpTaskBody": "Request body",
+  "pluginsHttpTaskTimeout": "Timeout in milliseconds (1–30000, within endpoint approval)",
+  "pluginsHttpTaskExplicit": "Submit sends one real request. Each click creates a new identity. Unknown submissions and result reads are never replayed automatically. Cancellation does not prove the remote operation was undone.",
+  "pluginsHttpTaskStart": "Submit new request",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "End observation of this attempt",
+  "pluginsHttpTaskAbandonDetails": "Only after fresh status confirms no active task and the original library is available, you may end this observation. This does not prove that no remote effects occurred. The identity and uncertainty remain in history; a new request requires another explicit submission.",
+  "pluginsHttpTaskArchivedUnknown": "Observation ended by the user. The previous remote effects remain unconfirmed; this attempt was not replayed."
 }
