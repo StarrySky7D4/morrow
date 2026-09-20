@@ -7,10 +7,12 @@ use crate::{
 };
 use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
+    io_binding::{self, ServiceRunBudget, ServiceRunSnapshot},
     io_jobs::{
         BrokerRouter, HostOwner, IoWorker, JobError, Poll, ServicePersistenceStatus, ServiceUpdate,
         ServiceUpdateHandle, WorkerExit,
     },
+    manager::Manager,
     service_authority::ConfiguredService,
     service_content::{ContentScope, ServiceContentPolicy},
     service_history::ServiceJournal,
@@ -83,6 +85,37 @@ struct ContentRoute {
     principals: BTreeMap<String, Vec<ContentScope>>,
 }
 impl<O: HostOwner> ServiceHost<O> {
+    /// Observe the same run ledger used by all routes and listener copies.
+    pub fn service_run_snapshot(&self) -> Option<ServiceRunSnapshot> {
+        self.inner.worker.lock().ok()?.service_run_snapshot()
+    }
+
+    /// Host-only explicit renewal; no HTTP route or guest operation grants it.
+    /// Existing configuration, authentication and per-request deadlines remain
+    /// independent limits even when the original run's approval is extended.
+    pub fn renew_service_run(
+        &self,
+        manager: &Manager,
+        grant: &ServiceGrant,
+        expected_registry_revision: u64,
+        expected_run_revision: u64,
+        expires: u64,
+        budget: ServiceRunBudget,
+    ) -> io_binding::Result<ServiceRunSnapshot> {
+        self.inner
+            .worker
+            .lock()
+            .map_err(|_| io_binding::Error::Denied)?
+            .renew_service_run(
+                manager,
+                grant,
+                expected_registry_revision,
+                expected_run_revision,
+                expires,
+                budget,
+            )
+    }
+
     /// Preserve the original worker when adapter options are rejected, so a
     /// containing owner and its storage guards remain explicitly recoverable.
     pub fn new_owned(

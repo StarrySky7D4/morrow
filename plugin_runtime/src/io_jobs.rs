@@ -4,7 +4,10 @@
 //! result that outlived its authorization or deadline as a success.
 use crate::{
     Cancellation, Fault, MAX_TASK_BYTES, Report,
-    io_binding::{Error as BindingError, IoBinding, IoJobLease, ServiceRunUsage},
+    io_binding::{
+        Error as BindingError, IoBinding, IoJobLease, ServiceRunBudget, ServiceRunSnapshot,
+        ServiceRunUsage,
+    },
     io_execution::{self, Broker},
     manager::{ManagedInstance, Manager},
     package::{PreparedPackage, TaskReport},
@@ -853,6 +856,61 @@ impl IoWorker<HostRuntime> {
     }
 }
 impl<O: HostOwner> IoWorker<O> {
+    /// Diagnostic state of the original budgeted run; never a reusable grant.
+    pub fn service_run_snapshot(&self) -> Option<ServiceRunSnapshot> {
+        self.control
+            .authority
+            .as_ref()
+            .and_then(|authority| authority.binding.service_run_snapshot())
+    }
+
+    /// Explicit trusted-host renewal of this same budgeted run. The original
+    /// package's first-issuance time horizon and cumulative ceilings still apply.
+    /// This does not renew per-request deadlines or independent publication,
+    /// authentication, listener and outbound-resource authorizations.
+    /// Store-resolved grants recheck their live authority; manually issued grants
+    /// retain the trusted host's responsibility for explicit revocation.
+    pub fn renew_service_run(
+        &self,
+        manager: &Manager,
+        grant: &ServiceGrant,
+        expected_registry_revision: u64,
+        expected_run_revision: u64,
+        expires: u64,
+        budget: ServiceRunBudget,
+    ) -> Result<ServiceRunSnapshot, BindingError> {
+        let authority = self
+            .control
+            .authority
+            .as_ref()
+            .ok_or(BindingError::Denied)?;
+        // Reject a foreign identity before it can sample or poison our clock.
+        authority
+            .binding
+            .validate_renewal_manager(manager, expected_registry_revision)?;
+        grant.validate_binding(&authority.binding)?;
+        let state = self.control.lock();
+        if state.phase != Phase::Running
+            || self.control.revocation.is_revoked()
+            || authority.cancellation.fault().is_some()
+        {
+            return Err(BindingError::Denied);
+        }
+        // Keep the admission/stop lock until the original clock and context CAS
+        // have completed. No replacement binding, instance or clock is accepted.
+        authority.with_time(|now| {
+            grant.check(now)?;
+            authority.binding.renew_service_run(
+                manager,
+                expected_registry_revision,
+                expected_run_revision,
+                expires,
+                budget,
+                now,
+            )
+        })
+    }
+
     /// Original run ledger snapshot; reading diagnostics does not confer authority.
     pub fn service_run_usage(&self) -> Option<ServiceRunUsage> {
         self.control

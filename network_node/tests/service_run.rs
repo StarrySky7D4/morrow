@@ -218,6 +218,7 @@ struct Running {
     router_factories: Arc<AtomicUsize>,
     configured: Option<ConfiguredService>,
     wall: Arc<AtomicU64>,
+    tick_offset: Arc<AtomicU64>,
 }
 
 impl Running {
@@ -233,6 +234,16 @@ impl Running {
         timeout: Duration,
         earlier_auth: Option<bool>,
         run_budget: Option<ServiceRunBudget>,
+    ) -> Self {
+        Self::with_run_lease(spin, timeout, earlier_auth, run_budget, 120_001)
+    }
+
+    fn with_run_lease(
+        spin: bool,
+        timeout: Duration,
+        earlier_auth: Option<bool>,
+        run_budget: Option<ServiceRunBudget>,
+        expires: u64,
     ) -> Self {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wasm(spin);
@@ -293,7 +304,7 @@ impl Running {
                 digest,
                 manager.revision(),
                 &caps,
-                120_001,
+                expires,
                 1,
                 budget,
             )
@@ -304,7 +315,7 @@ impl Running {
                 digest,
                 manager.revision(),
                 &caps,
-                120_001,
+                expires,
                 1,
             )
         }
@@ -327,12 +338,17 @@ impl Running {
                 .issue(&manager, &runtime, &instance, &binding, now())
                 .unwrap()
         });
+        let tick_offset = Arc::new(AtomicU64::new(1));
+        let worker_tick = tick_offset.clone();
         let worker = IoWorker::spawn_managed_owned(
             &manager,
             runtime,
             instance,
             binding,
-            move || u64::try_from(started.elapsed().as_millis()).unwrap() + 1,
+            move || {
+                u64::try_from(started.elapsed().as_millis()).unwrap()
+                    + worker_tick.load(Ordering::SeqCst)
+            },
             1,
             JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
         )
@@ -366,6 +382,7 @@ impl Running {
             router_factories,
             configured,
             wall,
+            tick_offset,
         }
     }
 
@@ -560,4 +577,182 @@ async fn budgeted_http_node_delivers_final_allowed_response_then_returns_quota()
         node.shutdown().await.unwrap();
         run.finish().await;
     }
+}
+
+#[tokio::test]
+async fn explicit_renewal_preserves_listener_instance_and_cumulative_http_usage() {
+    let budget = ServiceRunBudget {
+        max_jobs: 1,
+        max_bytes: 8192,
+    };
+    let run = Running::with_run_lease(false, Duration::from_secs(2), None, Some(budget), 10_001);
+    let node = run.bind().await;
+    let address = node.local_addr();
+    let before = request(address, b"before").await;
+    status(&before, 202);
+    assert!(before.ends_with(b"executed-before"));
+    let old = run.host.service_run_snapshot().unwrap();
+    assert_eq!(old.usage.jobs, 1);
+    assert!(old.usage.bytes > 0);
+    let renewed = run
+        .host
+        .renew_service_run(
+            &run.manager,
+            &run.grant,
+            run.manager.revision(),
+            old.revision,
+            60_001,
+            ServiceRunBudget {
+                max_jobs: 2,
+                max_bytes: 16384,
+            },
+        )
+        .unwrap();
+    assert_eq!(renewed.usage, old.usage);
+    assert_eq!(renewed.revision, old.revision + 1);
+    // Advance the original trusted clock beyond the first approval. The same
+    // bound socket and copied grants must use the updated shared run expiry.
+    run.tick_offset.store(15_001, Ordering::SeqCst);
+    let after = request(address, b"after").await;
+    status(&after, 202);
+    assert!(after.ends_with(b"executed-after"));
+    assert_eq!(node.local_addr(), address);
+    let final_state = run.host.service_run_snapshot().unwrap();
+    assert_eq!(final_state.usage.jobs, 2);
+    assert!(final_state.usage.bytes > old.usage.bytes);
+    status(&request(address, b"after").await, 429);
+    assert_eq!(run.host.service_run_snapshot(), Some(final_state));
+    node.shutdown().await.unwrap();
+    // Stopping a copied listener must not be reversible through a run update.
+    let bound = run.grant.clone();
+    run.host.request_stop().unwrap();
+    assert!(
+        run.host
+            .renew_service_run(
+                &run.manager,
+                &bound,
+                run.manager.revision(),
+                final_state.revision,
+                90_001,
+                ServiceRunBudget {
+                    max_jobs: 3,
+                    max_bytes: 32768
+                },
+            )
+            .is_err()
+    );
+    run.finish().await;
+}
+
+#[tokio::test]
+async fn renewal_cannot_extend_configured_authentication_publication_or_disabled_config() {
+    for mode in 0..3 {
+        let budget = ServiceRunBudget {
+            max_jobs: 2,
+            max_bytes: 8192,
+        };
+        let run = Running::with_run_lease(
+            false,
+            Duration::from_secs(2),
+            Some(mode == 0),
+            Some(budget),
+            10_001,
+        );
+        let configured = run.configured.as_ref().unwrap();
+        let node = run
+            .host
+            .bind_configured(configured.clone(), None, Limits::default())
+            .await
+            .unwrap();
+        let renewed = run
+            .host
+            .renew_service_run(
+                &run.manager,
+                configured.grant(),
+                run.manager.revision(),
+                1,
+                60_001,
+                budget,
+            )
+            .unwrap();
+        if mode < 2 {
+            run.wall.store(11_000, Ordering::SeqCst);
+        } else {
+            let mut value = configured.config().value().clone();
+            value.revision += 1;
+            value.disabled = true;
+            let mut update = run
+                .host
+                .update_service(ServiceUpdate::Configuration {
+                    value: Config::encode(value).unwrap(),
+                    expected_revision: 1,
+                })
+                .unwrap();
+            tokio::time::timeout(Duration::from_secs(5), async {
+                loop {
+                    if let Some(result) = update.read().unwrap() {
+                        result.unwrap();
+                        break;
+                    }
+                    tokio::time::sleep(Duration::from_millis(2)).await;
+                }
+            })
+            .await
+            .unwrap();
+        }
+        assert!(
+            run.host
+                .renew_service_run(
+                    &run.manager,
+                    configured.grant(),
+                    run.manager.revision(),
+                    renewed.revision,
+                    90_001,
+                    ServiceRunBudget {
+                        max_jobs: 3,
+                        max_bytes: 16384
+                    },
+                )
+                .is_err()
+        );
+        assert_eq!(run.host.service_run_snapshot(), Some(renewed));
+        assert!(configured.check().is_err());
+        let deadline = Instant::now() + Duration::from_secs(3);
+        while TcpStream::connect(node.local_addr()).await.is_ok() {
+            assert!(Instant::now() < deadline);
+            tokio::time::sleep(Duration::from_millis(10)).await;
+        }
+        node.shutdown().await.unwrap();
+        run.finish().await;
+    }
+}
+
+#[tokio::test]
+async fn renewed_run_keeps_the_original_short_http_request_deadline() {
+    let budget = ServiceRunBudget {
+        max_jobs: 2,
+        max_bytes: 8192,
+    };
+    let run = Running::with_run_lease(true, Duration::from_millis(1), None, Some(budget), 10_001);
+    let node = run.bind().await;
+    run.host
+        .renew_service_run(
+            &run.manager,
+            &run.grant,
+            run.manager.revision(),
+            1,
+            60_001,
+            budget,
+        )
+        .unwrap();
+    run.tick_offset.store(15_001, Ordering::SeqCst);
+    status(&request(node.local_addr(), b"before").await, 503);
+    assert!(
+        run.host
+            .route(run.grant.clone(), "POST", "/still-live")
+            .is_ok()
+    );
+    assert_eq!(run.host.service_run_snapshot().unwrap().revision, 2);
+    node.shutdown().await.unwrap();
+    run.finish().await;
 }

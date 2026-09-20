@@ -415,6 +415,40 @@ impl Manager {
         }
         Ok(())
     }
+    /// Validate an already authenticated worker's original instance after its owner moved.
+    /// This does not create a connection or change any stored capability approval.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn validate_io_renewal(
+        &self,
+        id: &str,
+        digest: [u8; 32],
+        control: &Arc<Control>,
+        connection: ConnectionBinding,
+        capabilities: &BTreeSet<IoCapability>,
+        revision: u64,
+    ) -> Result<()> {
+        self.check_revision(revision)?;
+        if !control.active()
+            || control.binding != connection
+            || !self.instances.get(id).is_some_and(|controls| {
+                controls
+                    .iter()
+                    .any(|registered| Weak::ptr_eq(registered, &Arc::downgrade(control)))
+            })
+        {
+            return Err(Error::Invalid("inactive managed renewal").into());
+        }
+        let (package, selection) = self.registry.resolve_enabled(id)?;
+        if package.digest() != digest
+            || selection.digest != digest
+            || capabilities.is_empty()
+            || !capabilities.is_subset(package.io_capabilities())
+            || !capabilities.is_subset(&selection.approved_io)
+        {
+            return Err(Error::Invalid("unapproved service renewal").into());
+        }
+        Ok(())
+    }
     fn prune(&mut self) -> usize {
         self.instances.retain(|_, controls| {
             controls.retain(|w| w.strong_count() != 0);
@@ -530,8 +564,10 @@ impl Manager {
             None,
         )
     }
-    /// Explicit one-shot run approval with cumulative task and byte ceilings.
+    /// Explicit initial run approval with cumulative task and byte ceilings.
     /// Only packages declaring the budget feature are accepted; no implicit defaults.
+    /// Rebinding stays forbidden. A managed worker can explicitly renew this run
+    /// within its original package horizon and totals without resetting its ledger.
     #[allow(clippy::too_many_arguments)]
     pub fn bind_budgeted_service_run(
         &self,

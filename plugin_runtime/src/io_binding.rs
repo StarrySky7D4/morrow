@@ -52,6 +52,14 @@ pub struct ServiceRunUsage {
     pub jobs: u64,
     pub bytes: u64,
 }
+/// Diagnostic snapshot of a budgeted run. It does not confer authority to renew.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ServiceRunSnapshot {
+    pub revision: u64,
+    pub expires: u64,
+    pub budget: ServiceRunBudget,
+    pub usage: ServiceRunUsage,
+}
 #[derive(Default)]
 struct State {
     usage: Usage,
@@ -61,6 +69,10 @@ struct State {
 struct ServiceRun {
     jobs: u64,
     budget: Option<ServiceRunBudget>,
+    revision: u64,
+    started_tick: u64,
+    started_at: Instant,
+    expires: u64,
     deadline: Instant,
     failed: Option<Error>,
 }
@@ -113,6 +125,8 @@ pub struct IoBinding {
     connection: ConnectionBinding,
     context: Arc<IoContext>,
     capabilities: BTreeSet<IoCapability>,
+    package_id: String,
+    package_digest: [u8; 32],
     expires: u64,
 }
 impl IoBinding {
@@ -162,12 +176,17 @@ impl IoBinding {
             if state.service_run.is_some() {
                 return Err(Error::Denied);
             }
-            let deadline = Instant::now()
+            let started_at = Instant::now();
+            let deadline = started_at
                 .checked_add(Duration::from_millis(duration))
                 .ok_or(Error::Limit)?;
             state.service_run = Some(ServiceRun {
                 jobs: 0,
                 budget: run_budget,
+                revision: 1,
+                started_tick: now,
+                started_at,
+                expires,
                 deadline,
                 failed: None,
             });
@@ -181,6 +200,8 @@ impl IoBinding {
             connection: instance.connection().binding(),
             context,
             capabilities,
+            package_id: instance.package().package().manifest().package_id.clone(),
+            package_digest: instance.package().package().digest(),
             expires,
         })
     }
@@ -254,6 +275,96 @@ impl IoBinding {
         }
         Ok(())
     }
+    /// Authenticate the original manager and immutable instance before sampling its clock.
+    pub(crate) fn validate_renewal_manager(
+        &self,
+        manager: &Manager,
+        expected_registry_revision: u64,
+    ) -> Result<()> {
+        if !Weak::ptr_eq(&self.manager, &manager.identity()) || self.manager.upgrade().is_none() {
+            return Err(Error::Denied);
+        }
+        let control = self.control.upgrade().ok_or(Error::Denied)?;
+        if !control.active()
+            || !control
+                .io
+                .as_ref()
+                .is_some_and(|context| Arc::ptr_eq(context, &self.context))
+        {
+            return Err(Error::Denied);
+        }
+        manager
+            .validate_io_renewal(
+                &self.package_id,
+                self.package_digest,
+                &control,
+                self.connection,
+                &self.capabilities,
+                expected_registry_revision,
+            )
+            .map_err(|_| Error::Denied)
+    }
+    /// Explicitly widen a live budgeted run within its original package ceilings.
+    /// The first issuance fixes the absolute horizon; no usage or authority is reset.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn renew_service_run(
+        &self,
+        manager: &Manager,
+        expected_registry_revision: u64,
+        expected_run_revision: u64,
+        expires: u64,
+        budget: ServiceRunBudget,
+        now: u64,
+    ) -> Result<ServiceRunSnapshot> {
+        self.validate_renewal_manager(manager, expected_registry_revision)?;
+        let ceiling = self.context.run_budget_ceiling.ok_or(Error::Denied)?;
+        let max_run_ms = self.context.max_run_ms.ok_or(Error::Denied)?;
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&mut state, now)?;
+        let run = state.service_run.as_ref().ok_or(Error::Denied)?;
+        let approved = run.budget.ok_or(Error::Denied)?;
+        if expected_run_revision != run.revision
+            || expires < run.expires
+            || budget.max_jobs < approved.max_jobs
+            || budget.max_bytes < approved.max_bytes
+            || (expires == run.expires && budget == approved)
+        {
+            return Err(Error::Denied);
+        }
+        let duration = expires.checked_sub(run.started_tick).ok_or(Error::Limit)?;
+        if duration > max_run_ms
+            || budget.max_jobs > ceiling.max_jobs
+            || budget.max_bytes > ceiling.max_bytes
+        {
+            return Err(Error::Limit);
+        }
+        let revision = run.revision.checked_add(1).ok_or(Error::Limit)?;
+        let deadline = run
+            .started_at
+            .checked_add(Duration::from_millis(duration))
+            .ok_or(Error::Limit)?;
+        // Recheck immediately before mutation, including real elapsed time. Renewal cannot
+        // rescue a run that expired while validating the requested ceilings.
+        self.validate_renewal_manager(manager, expected_registry_revision)?;
+        self.validate_time(&mut state, now)?;
+        let bytes = state.usage.bytes;
+        let run = state.service_run.as_mut().ok_or(Error::Denied)?;
+        run.revision = revision;
+        run.expires = expires;
+        run.deadline = deadline;
+        run.budget = Some(budget);
+        let snapshot = ServiceRunSnapshot {
+            revision,
+            expires,
+            budget,
+            usage: ServiceRunUsage {
+                jobs: run.jobs,
+                bytes,
+            },
+        };
+        state.last_tick = now;
+        Ok(snapshot)
+    }
     fn validate_time(&self, state: &mut State, now: u64) -> Result<()> {
         if let Some(run) = &mut state.service_run {
             if let Some(error) = run.failed {
@@ -261,7 +372,7 @@ impl IoBinding {
             }
             let error = if now < state.last_tick {
                 Some(Error::Clock)
-            } else if now >= self.expires || Instant::now() >= run.deadline {
+            } else if now >= run.expires || Instant::now() >= run.deadline {
                 Some(Error::Expired)
             } else {
                 None
@@ -465,14 +576,14 @@ impl IoBinding {
         })
     }
     pub(crate) fn reclaimable(&self, now: u64) -> bool {
-        now >= self.expires
-            || self.context.state.lock().map_or(true, |state| {
-                state
-                    .service_run
-                    .as_ref()
-                    .is_some_and(|run| run.failed.is_some() || Instant::now() >= run.deadline)
-            })
-            || self.manager.upgrade().is_none()
+        self.context.state.lock().map_or(true, |state| {
+            state
+                .service_run
+                .as_ref()
+                .map_or(now >= self.expires, |run| {
+                    now >= run.expires || run.failed.is_some() || Instant::now() >= run.deadline
+                })
+        }) || self.manager.upgrade().is_none()
             || !self.control.upgrade().is_some_and(|c| c.active())
     }
     pub(crate) fn duplicate(&self) -> Self {
@@ -483,6 +594,8 @@ impl IoBinding {
             connection: self.connection,
             context: self.context.clone(),
             capabilities: self.capabilities.clone(),
+            package_id: self.package_id.clone(),
+            package_digest: self.package_digest,
             expires: self.expires,
         }
     }
@@ -492,6 +605,20 @@ impl IoBinding {
         state.service_run.as_ref().map(|run| ServiceRunUsage {
             jobs: run.jobs,
             bytes: state.usage.bytes,
+        })
+    }
+    /// Read current approved totals and cumulative usage without granting live authority.
+    pub fn service_run_snapshot(&self) -> Option<ServiceRunSnapshot> {
+        let state = self.context.state.lock().unwrap_or_else(|p| p.into_inner());
+        let run = state.service_run.as_ref()?;
+        Some(ServiceRunSnapshot {
+            revision: run.revision,
+            expires: run.expires,
+            budget: run.budget?,
+            usage: ServiceRunUsage {
+                jobs: run.jobs,
+                bytes: state.usage.bytes,
+            },
         })
     }
     /// Host diagnostic counters only. Reading them does not check or confer live authority.
