@@ -33,6 +33,7 @@ pub mod projection_v2;
 pub mod query_capture;
 pub mod query_plan;
 mod query_source;
+pub mod service_control;
 mod storage;
 pub mod transfer;
 mod ui_preferences;

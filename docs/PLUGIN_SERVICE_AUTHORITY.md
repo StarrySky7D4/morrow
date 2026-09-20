@@ -2,6 +2,8 @@
 
 本轮是原生服务底座的限定实现。应用仍为 `0.1.9-test.52+56`，没有接入主应用发布界面，也没有宣布新 SDK 稳定。验证入口见 [报告](../reports/service-authority-2026-09-20.md)。
 
+后续已接入的Workbench Rust配置/令牌/发布批准管理见[管理合同](PLUGIN_SERVICE_MANAGEMENT.md)；私有消息、Flutter页面与工作台监听生命周期仍待实现。
+
 ## 原 Store 数据
 
 Store v19 在原数据库增加 `service_authorities` 和单例 `service_authority_identity`。v18→v19 原子迁移保留原配置、内容与证据；此前版本无法打开升级后的数据库。配置、认证和批准使用规范 Protobuf＋LZ4，没有独立权限数据库。

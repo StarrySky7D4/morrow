@@ -2,6 +2,8 @@
 
 本轮实现属于原生宿主底座，应用版本仍为 `0.1.9-test.52+56`。测试范围与结果见 [验证报告](../reports/service-recovery-2026-09-20.md)。主应用发布界面和完整 SDK 尚未接入；后续入站批准解析见 [持久服务授权](PLUGIN_SERVICE_AUTHORITY.md)。
 
+后续原Store稳定管理分页及Workbench Rust保存/轮换/停用接口已接线，见[管理合同](PLUGIN_SERVICE_MANAGEMENT.md)，不等于已接通主应用监听与恢复页面。
+
 ## 持久配置
 
 `core::service_config::Config` 保存稳定 namespace、保留期限、服务与处理器、包摘要、修订、禁用标记、主体身份／认证引用、精确内容范围和资源批准引用。引用固定为非零32字节标识，不提供明文 token 或密钥字段。配置按严格规范 Protobuf＋LZ4 编码，解码前检查字段、层级、数量和字节上限；拒绝重复、未知字段、非法操作范围及非规范顺序。
