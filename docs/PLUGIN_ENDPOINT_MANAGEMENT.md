@@ -22,4 +22,4 @@
 
 ## 后续
 
-接入短响应的任务启动／查询／读取／取消消息、CLI 关闭待退出协议与 Flutter 任务界面。之后验证真实用户批准到网络效果及重启核对，再推进服务节点、文件系统、Unknown 核对和三语言 IO SDK。限定验证见[报告](../reports/endpoint-admin-2026-09-20.md)。
+[短响应任务消息、CLI 关闭与 Dart 接口](PLUGIN_APP_HTTP_TASKS.md)已接入；下一项为 Flutter 任务界面。之后验证真实用户批准到网络效果及重启核对，再推进服务节点、文件系统、Unknown 核对和三语言 IO SDK。限定验证见[报告](../reports/endpoint-admin-2026-09-20.md)。

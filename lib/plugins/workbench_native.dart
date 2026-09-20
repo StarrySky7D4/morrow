@@ -3,6 +3,7 @@ import 'plugin_tools.dart';
 import 'plugin_library.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
+import 'io_task_control.dart';
 import 'host_request.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
@@ -29,6 +30,7 @@ class RustWorkbench
         ExternalPluginControl,
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
+        WorkbenchIoTaskControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
@@ -58,6 +60,7 @@ class RustWorkbench
   Completer<Uint8List>? _response;
   Object? _failure;
   Future<void> _queue = Future.value();
+  Future<void>? _closingProcess;
   int _sequence = 0;
   @override
   late final RustStudioPlugin studio = RustStudioPlugin(this);
@@ -226,6 +229,71 @@ class RustWorkbench
           decisions[index] = approved[index];
         }
       },
+    );
+  }
+
+  IoTaskSnapshot _ioSnapshot(host.ResponseReader response, {Uint8List? key}) {
+    final snapshot = HttpTaskCodec.snapshot(response.ioState);
+    if (key != null && !_same(snapshot.key, key)) {
+      throw const FormatException('IO task response identity changed');
+    }
+    return snapshot;
+  }
+
+  @override
+  Future<IoTaskSnapshot> startHttp(HttpTaskRequest request) async {
+    HttpTaskCodec.validateRequest(request);
+    final response = await _call(
+      host.Action.httpStart,
+      configure: (r) => HttpTaskCodec.writeRequest(request, r.initHttpStart()),
+    );
+    final snapshot = _ioSnapshot(response);
+    if (snapshot.key == null ||
+        !_same(snapshot.submission, request.submission)) {
+      throw const FormatException('HTTP submission acknowledgement changed');
+    }
+    return snapshot;
+  }
+
+  @override
+  Future<IoTaskSnapshot> ioStatus() async =>
+      _ioSnapshot(await _call(host.Action.ioStatus));
+
+  Future<IoTaskSnapshot> _ioAction(host.Action action, Uint8List key) async {
+    final expected = HttpTaskCodec.identity(key);
+    final response = await _call(action, configure: (r) => r.ioKey = expected);
+    if (action == host.Action.ioAcknowledge) {
+      final snapshot = _ioSnapshot(response);
+      if (snapshot.key != null || snapshot.storage != IoStoragePhase.local) {
+        throw const FormatException('IO task acknowledgement incomplete');
+      }
+      return snapshot;
+    }
+    return _ioSnapshot(response, key: expected);
+  }
+
+  @override
+  Future<IoTaskSnapshot> pollIo(Uint8List key) =>
+      _ioAction(host.Action.ioPoll, key);
+  @override
+  Future<IoTaskSnapshot> cancelIo(Uint8List key) =>
+      _ioAction(host.Action.ioCancel, key);
+  @override
+  Future<IoTaskSnapshot> repairIo(Uint8List key) =>
+      _ioAction(host.Action.ioRepair, key);
+  @override
+  Future<IoTaskSnapshot> acknowledgeIo(Uint8List key) =>
+      _ioAction(host.Action.ioAcknowledge, key);
+  @override
+  Future<IoTaskRead> readIo(Uint8List key) async {
+    final expected = HttpTaskCodec.identity(key);
+    final response = await _call(
+      host.Action.ioRead,
+      configure: (r) => r.ioKey = expected,
+    );
+    return IoTaskRead(
+      snapshot: _ioSnapshot(response, key: expected),
+      result: HttpTaskCodec.result(response.ioResult),
     );
   }
 
@@ -722,6 +790,9 @@ class RustWorkbench
     void Function(host.RequestBuilder)? configure,
     Duration requestTimeout = const Duration(seconds: 60),
   }) {
+    if (_closingProcess != null) {
+      return Future.error(StateError('Content service is closing'));
+    }
     final completion = Completer<host.ResponseReader>();
     _queue = _queue.then((_) async {
       try {
@@ -1330,15 +1401,38 @@ class RustWorkbench
     });
   }
 
-  Future<void> close() async {
+  Future<void> close() => _closingProcess ??= _closeProcess();
+
+  Future<void> _closeProcess() async {
+    Object? failure;
+    StackTrace? failureStack;
+    try {
+      // Finish requests already accepted by the serialized channel before EOF.
+      await _queue;
+    } catch (error, stack) {
+      failure = error;
+      failureStack = stack;
+    }
     try {
       await process.stdin.close();
-    } catch (_) {}
+    } catch (error, stack) {
+      failure ??= error;
+      failureStack ??= stack;
+    }
+    // EOF asks the CLI to stop and join its actual worker. A stop request is not
+    // proof of exit, and forcibly killing it after five seconds loses the owner.
+    final code = await process.exitCode;
     try {
-      await process.exitCode.timeout(const Duration(seconds: 5));
-    } on TimeoutException {
-      process.kill();
-      await process.exitCode;
+      await _stderrDone;
+    } catch (error, stack) {
+      failure ??= error;
+      failureStack ??= stack;
+    }
+    if (code != 0) {
+      throw StateError('Content service shutdown failed ($code)');
+    }
+    if (failure != null) {
+      Error.throwWithStackTrace(failure, failureStack!);
     }
   }
 }

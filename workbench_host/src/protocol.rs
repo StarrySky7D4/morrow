@@ -18,6 +18,94 @@ pub fn digest() -> [u8; 32] {
 fn text(v: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
     Ok(v?.to_str()?.to_owned())
 }
+fn io_error(value: std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError>) -> u16 {
+    use morrow_plugin_runtime::io_jobs::JobError::*;
+    match value {
+        Ok(()) => 0,
+        Err(InvalidOptions) => 1,
+        Err(Busy) => 2,
+        Err(Closed) => 3,
+        Err(Unavailable) => 4,
+        Err(Consumed) => 5,
+        Err(ReadBound) => 6,
+        Err(Limit) => 7,
+        Err(Spawn) => 8,
+        Err(Disconnect) => 9,
+    }
+}
+fn io_state_reply(
+    value: &crate::io_tasks::Snapshot,
+    submission: Option<[u8; 32]>,
+    mut out: wire::io_state::Builder<'_>,
+) {
+    use crate::io_tasks::StoragePhase;
+    use morrow_plugin_runtime::io_jobs::Poll;
+    if let Some(key) = value.key {
+        out.set_key(key.as_bytes());
+    }
+    if let Some(submission) = submission {
+        out.set_submission(&submission);
+    }
+    out.set_storage(match value.storage {
+        StoragePhase::Local => 0,
+        StoragePhase::Running => 1,
+        StoragePhase::Stopping => 2,
+        StoragePhase::Reclaimed => 3,
+        StoragePhase::RecoveryRequired => 4,
+        StoragePhase::Unavailable => 5,
+    });
+    out.set_delivery(match value.delivery {
+        None => 0,
+        Some(Poll::Pending) => 1,
+        Some(Poll::Ready) => 2,
+        Some(Poll::Consumed) => 3,
+        Some(Poll::Unavailable) => 4,
+    });
+    if let Some(exit) = value.exit {
+        out.set_has_exit(true);
+        out.set_execution(io_error(exit.execution));
+        out.set_disconnect(io_error(exit.disconnect));
+        out.set_maintenance(io_error(exit.maintenance));
+    }
+}
+fn io_result_reply(
+    value: &morrow_plugin_runtime::io_jobs::JobReport,
+    mut out: wire::io_result::Builder<'_>,
+) -> Result<()> {
+    use morrow_plugin_runtime::Fault;
+    out.set_present(true);
+    out.set_cancelled(value.cancelled);
+    out.set_unknown(value.unknown);
+    out.set_calls(value.calls);
+    out.set_charged_bytes(value.bytes);
+    match &value.task.execution.outcome {
+        Ok(code) => out.set_exit_code(*code),
+        Err(fault) => out.set_execution_fault(match fault {
+            Fault::TaskProtocol => 1,
+            Fault::Deadline => 2,
+            Fault::PackageBinding => 3,
+            Fault::InactiveConnection => 4,
+            Fault::InvalidModule => 5,
+            Fault::UnsupportedAbi => 6,
+            Fault::Limits => 7,
+            Fault::Cancelled => 8,
+            Fault::Trap => 9,
+        }),
+    }
+    if let Some(http) = &value.http_response {
+        out.set_has_http(true);
+        out.set_status(http.status as u16);
+        out.set_http_status(http.http_status);
+        out.set_body(&http.body);
+        let mut headers = out.init_headers(http.headers.len().try_into()?);
+        for (i, h) in http.headers.iter().enumerate() {
+            let mut item = headers.reborrow().get(i as u32);
+            item.set_name(h.name.as_str());
+            item.set_value(&h.value);
+        }
+    }
+    Ok(())
+}
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     let mut output = Builder::new_default();
     let mut out = output.init_root::<wire::response::Builder>();
@@ -90,6 +178,12 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     if !matches!(
         action,
         wire::Action::PluginCatalog
+            | wire::Action::IoStatus
+            | wire::Action::IoPoll
+            | wire::Action::IoRead
+            | wire::Action::IoCancel
+            | wire::Action::IoRepair
+            | wire::Action::IoAcknowledge
             | wire::Action::PluginInspect
             | wire::Action::PluginState
             | wire::Action::UiClose
@@ -104,6 +198,79 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match action {
+        wire::Action::HttpStart => {
+            let h = r.get_http_start()?;
+            let headers = h.get_headers()?;
+            if headers.len() > 64 {
+                return Err("HTTP header count".into());
+            }
+            host.start_http(crate::http_tasks::HttpStart {
+                submission: h.get_submission()?.try_into()?,
+                endpoint: h.get_endpoint()?.try_into()?,
+                endpoint_revision: h.get_endpoint_revision(),
+                package_digest: h.get_package_digest()?.try_into()?,
+                registry_revision: h.get_registry_revision(),
+                method: text(h.get_method())?,
+                target: text(h.get_target())?,
+                headers: headers
+                    .iter()
+                    .map(|v| {
+                        Ok(morrow_core::io::Header {
+                            name: text(v.get_name())?,
+                            value: v.get_value()?.to_vec(),
+                        })
+                    })
+                    .collect::<Result<_>>()?,
+                body: h.get_body()?.to_vec(),
+                timeout_ms: u64::from(h.get_timeout_ms()),
+            })?;
+            io_state_reply(
+                &host.io_status(),
+                host.http_submission(),
+                out.reborrow().init_io_state(),
+            );
+        }
+        wire::Action::IoStatus => {
+            io_state_reply(
+                &host.io_status(),
+                host.http_submission(),
+                out.reborrow().init_io_state(),
+            );
+        }
+        wire::Action::IoPoll
+        | wire::Action::IoCancel
+        | wire::Action::IoRepair
+        | wire::Action::IoAcknowledge => {
+            let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
+            let status = match action {
+                wire::Action::IoCancel => host.cancel_io(key)?,
+                wire::Action::IoRepair => host.repair_io(key)?,
+                wire::Action::IoAcknowledge => {
+                    host.acknowledge_io(key)?;
+                    host.io_status()
+                }
+                _ => host.poll_io(key)?,
+            };
+            io_state_reply(
+                &status,
+                host.http_submission(),
+                out.reborrow().init_io_state(),
+            );
+        }
+        wire::Action::IoRead => {
+            let key = crate::io_tasks::TaskKey::from_bytes(r.get_io_key()?)?;
+            // Worker-owned reports are bounded; expose only the single HTTP
+            // outcome, never duplicate guest completion or unbounded diagnostics.
+            let report = host.read_io(key, 4 * 1024 * 1024)?;
+            if let Some(report) = report {
+                io_result_reply(&report, out.reborrow().init_io_result())?;
+            }
+            io_state_reply(
+                &host.io_status(),
+                host.http_submission(),
+                out.reborrow().init_io_state(),
+            );
+        }
         wire::Action::EndpointPage => {
             let page = host.endpoint_page(r.get_endpoint_cursor()?, r.get_endpoint_snapshot()?)?;
             out.set_endpoint_snapshot(&page.snapshot);

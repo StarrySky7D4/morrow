@@ -21,8 +21,8 @@ Manager 是唯一类别批准来源。有效修改撤销旧实例；持久化失
 ## 后续应用接线
 
 1. 原 Store 有界列表、Windows 凭据与[具体端点管理](PLUGIN_ENDPOINT_MANAGEMENT.md)已接通，绑定原插件身份、端点政策和凭据引用；保存凭据不隐含网络批准，保存端点不创建活动任务。
-2. 完整 Storage 的受控交接与取回已建立，见[所有权合同](PLUGIN_IO_OWNERSHIP.md)：泛型 IoWorker 保留原审计 Session、签名器和数据库租约，独立准入 IO 实例并保留 Pool 根；实际审计 Storage＋本机 HTTP 已验。[Workbench Rust任务状态](PLUGIN_APP_IO_TASKS.md)已接入该入口并明确 Busy／恢复边界；下一步接私有任务消息。禁止另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。
-3. 私有管理协议提供短响应的 start／poll／read／cancel；不得让长期请求堵住当前串行 Flutter 通道。使用原 Manager／实例／IoBinding，再解析 Store 中的端点批准并恢复系统凭据。Ready 读取仍需最后一次授权检查；未知结果不自动重发。
+2. 完整 Storage 的受控交接与取回已建立，见[所有权合同](PLUGIN_IO_OWNERSHIP.md)：泛型 IoWorker 保留原审计 Session、签名器和数据库租约，独立准入 IO 实例并保留 Pool 根；实际审计 Storage＋本机 HTTP 已验。[Workbench Rust任务状态](PLUGIN_APP_IO_TASKS.md)已接入该入口并明确 Busy／恢复边界；[私有任务消息](PLUGIN_APP_HTTP_TASKS.md)已接入；下一步任务界面。禁止另开数据库、创建替代 HostRuntime 或偷取 Pool 实例。
+3. 私有管理协议已提供短响应的 start／poll／read／cancel 与 Dart 原生接口；任务界面仍待接入。长期请求不得堵住当前串行 Flutter 通道。使用原 Manager／实例／IoBinding，再解析 Store 中的端点批准并恢复系统凭据。Ready 读取仍需最后一次授权检查；未知结果不自动重发。
 4. 验证真实主应用输入→批准→网络效果→撤销→重启核对，再扩展服务发布、文件系统与三语言 SDK。当前纯 InlineUi 不接受 IO 声明包，不能用普通表单测试替代实际 IO 执行验收。
 
 验证范围与证据见 [本轮报告](../reports/plugin-io-management-2026-09-20.md)。整个 IO-E2 和插件系统仍进行中。

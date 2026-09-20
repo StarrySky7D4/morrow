@@ -52,6 +52,13 @@ enum Action {
   endpointPage,
   endpointSave,
   endpointDisable,
+  httpStart,
+  ioStatus,
+  ioPoll,
+  ioRead,
+  ioCancel,
+  ioRepair,
+  ioAcknowledge,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -114,6 +121,13 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'endpointPage', codeOrder: 44, ordinal: 44),
     EnumerantSchemaInfo(name: 'endpointSave', codeOrder: 45, ordinal: 45),
     EnumerantSchemaInfo(name: 'endpointDisable', codeOrder: 46, ordinal: 46),
+    EnumerantSchemaInfo(name: 'httpStart', codeOrder: 47, ordinal: 47),
+    EnumerantSchemaInfo(name: 'ioStatus', codeOrder: 48, ordinal: 48),
+    EnumerantSchemaInfo(name: 'ioPoll', codeOrder: 49, ordinal: 49),
+    EnumerantSchemaInfo(name: 'ioRead', codeOrder: 50, ordinal: 50),
+    EnumerantSchemaInfo(name: 'ioCancel', codeOrder: 51, ordinal: 51),
+    EnumerantSchemaInfo(name: 'ioRepair', codeOrder: 52, ordinal: 52),
+    EnumerantSchemaInfo(name: 'ioAcknowledge', codeOrder: 53, ordinal: 53),
   ],
 );
 
@@ -202,6 +216,13 @@ final class RequestReader extends StructReader {
     26,
     (r) => EndpointPolicyReader(r, capabilities: capabilityTable),
   );
+
+  HttpStartReader? get httpStart => getStructFieldWith(
+    27,
+    (r) => HttpStartReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get ioKey => getDataField(28);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -359,6 +380,16 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasEndpointPolicy() => hasPointerField(26);
+
+  HttpStartBuilder initHttpStart() {
+    return initStructFieldWith(27, (r) => HttpStartBuilder(r), 3, 7);
+  }
+
+  bool hasHttpStart() => hasPointerField(27);
+
+  set ioKey(Uint8List? v) {
+    setDataField(28, v);
+  }
 }
 
 final class _RequestFactory
@@ -368,7 +399,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 27;
+  int get ptrWords => 29;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -385,7 +416,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 27,
+  pointerWords: 29,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -683,6 +714,22 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0x92d12e9515591f54),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'httpStart',
+      codeOrder: 37,
+      body: SlotFieldSchemaInfo(
+        offset: 27,
+        type: StructRefTypeSchemaInfo(0x970c8aabce07e799),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ioKey',
+      codeOrder: 38,
+      body: SlotFieldSchemaInfo(
+        offset: 28,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
   ],
 );
 
@@ -761,6 +808,16 @@ final class ResponseReader extends StructReader {
   Uint8List? get endpointSnapshot => getDataField(17);
 
   Uint8List? get endpointCursor => getDataField(18);
+
+  IoStateReader? get ioState => getStructFieldWith(
+    19,
+    (r) => IoStateReader(r, capabilities: capabilityTable),
+  );
+
+  IoResultReader? get ioResult => getStructFieldWith(
+    20,
+    (r) => IoResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -906,6 +963,18 @@ final class ResponseBuilder extends StructBuilder {
   set endpointCursor(Uint8List? v) {
     setDataField(18, v);
   }
+
+  IoStateBuilder initIoState() {
+    return initStructFieldWith(19, (r) => IoStateBuilder(r), 2, 2);
+  }
+
+  bool hasIoState() => hasPointerField(19);
+
+  IoResultBuilder initIoResult() {
+    return initStructFieldWith(20, (r) => IoResultBuilder(r), 3, 2);
+  }
+
+  bool hasIoResult() => hasPointerField(20);
 }
 
 final class _ResponseFactory
@@ -915,7 +984,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 19;
+  int get ptrWords => 21;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -932,7 +1001,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 19,
+  pointerWords: 21,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1172,6 +1241,22 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 18,
         type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ioState',
+      codeOrder: 30,
+      body: SlotFieldSchemaInfo(
+        offset: 19,
+        type: StructRefTypeSchemaInfo(0xce222e3c4b9af41b),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'ioResult',
+      codeOrder: 31,
+      body: SlotFieldSchemaInfo(
+        offset: 20,
+        type: StructRefTypeSchemaInfo(0xf0687624897d7cf5),
       ),
     ),
   ],
@@ -2692,3 +2777,645 @@ const StructSchemaInfo endpointInfoSchema = StructSchemaInfo(
 );
 
 final endpointInfoFactory = _EndpointInfoFactory();
+
+final class HttpHeaderReader extends StructReader {
+  HttpHeaderReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = httpHeaderSchema;
+
+  String? get name => getTextField(0);
+
+  Uint8List? get value => getDataField(1);
+}
+
+final class HttpHeaderBuilder extends StructBuilder {
+  HttpHeaderBuilder(super.raw);
+
+  @override
+  HttpHeaderReader asReader() => HttpHeaderReader(rawToReader());
+
+  set name(String? v) {
+    setTextField(0, v);
+  }
+
+  set value(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _HttpHeaderFactory
+    extends StructFactory<HttpHeaderReader, HttpHeaderBuilder> {
+  @override
+  StructSchemaInfo get schema => httpHeaderSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  HttpHeaderReader fromRawReader(RawStructReader r) => HttpHeaderReader(r);
+  @override
+  HttpHeaderReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HttpHeaderReader(r, capabilities: capabilities);
+  @override
+  HttpHeaderBuilder fromRawBuilder(RawStructBuilder r) => HttpHeaderBuilder(r);
+}
+
+const StructSchemaInfo httpHeaderSchema = StructSchemaInfo(
+  id: 0xc27af098762f98ea,
+  displayName: 'host.capnp:HttpHeader',
+  shortName: 'HttpHeader',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'value',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final httpHeaderFactory = _HttpHeaderFactory();
+
+final class HttpStartReader extends StructReader {
+  HttpStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = httpStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  Uint8List? get endpoint => getDataField(1);
+
+  int get endpointRevision => getUint64Field(0);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(8);
+
+  String? get method => getTextField(3);
+
+  String? get target => getTextField(4);
+
+  ListReader<HttpHeaderReader>? get headers => getStructListFieldWith(
+    5,
+    (r) => HttpHeaderReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get body => getDataField(6);
+
+  int get timeoutMs => getUint32Field(16);
+}
+
+final class HttpStartBuilder extends StructBuilder {
+  HttpStartBuilder(super.raw);
+
+  @override
+  HttpStartReader asReader() => HttpStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set endpoint(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set endpointRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set method(String? v) {
+    setTextField(3, v);
+  }
+
+  set target(String? v) {
+    setTextField(4, v);
+  }
+
+  ListBuilder<HttpHeaderBuilder> initHeaders(int length) {
+    return initStructListFieldWith(
+      5,
+      length,
+      (r) => HttpHeaderBuilder(r),
+      0,
+      2,
+    );
+  }
+
+  set body(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _HttpStartFactory
+    extends StructFactory<HttpStartReader, HttpStartBuilder> {
+  @override
+  StructSchemaInfo get schema => httpStartSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 7;
+  @override
+  HttpStartReader fromRawReader(RawStructReader r) => HttpStartReader(r);
+  @override
+  HttpStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HttpStartReader(r, capabilities: capabilities);
+  @override
+  HttpStartBuilder fromRawBuilder(RawStructBuilder r) => HttpStartBuilder(r);
+}
+
+const StructSchemaInfo httpStartSchema = StructSchemaInfo(
+  id: 0x970c8aabce07e799,
+  displayName: 'host.capnp:HttpStart',
+  shortName: 'HttpStart',
+  dataWords: 3,
+  pointerWords: 7,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpoint',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'endpointRevision',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'method',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'target',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'headers',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xc27af098762f98ea)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final httpStartFactory = _HttpStartFactory();
+
+final class IoStateReader extends StructReader {
+  IoStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = ioStateSchema;
+
+  Uint8List? get key => getDataField(0);
+
+  Uint8List? get submission => getDataField(1);
+
+  int get storage => getUint16Field(0);
+
+  int get delivery => getUint16Field(2);
+
+  bool get hasExit => getBoolField(32);
+
+  int get execution => getUint16Field(6);
+
+  int get disconnect => getUint16Field(8);
+
+  int get maintenance => getUint16Field(10);
+}
+
+final class IoStateBuilder extends StructBuilder {
+  IoStateBuilder(super.raw);
+
+  @override
+  IoStateReader asReader() => IoStateReader(rawToReader());
+
+  set key(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set submission(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set storage(int v) {
+    setUint16Field(0, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(2, v);
+  }
+
+  set hasExit(bool v) {
+    setBoolField(32, v);
+  }
+
+  set execution(int v) {
+    setUint16Field(6, v);
+  }
+
+  set disconnect(int v) {
+    setUint16Field(8, v);
+  }
+
+  set maintenance(int v) {
+    setUint16Field(10, v);
+  }
+}
+
+final class _IoStateFactory
+    extends StructFactory<IoStateReader, IoStateBuilder> {
+  @override
+  StructSchemaInfo get schema => ioStateSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 2;
+  @override
+  IoStateReader fromRawReader(RawStructReader r) => IoStateReader(r);
+  @override
+  IoStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => IoStateReader(r, capabilities: capabilities);
+  @override
+  IoStateBuilder fromRawBuilder(RawStructBuilder r) => IoStateBuilder(r);
+}
+
+const StructSchemaInfo ioStateSchema = StructSchemaInfo(
+  id: 0xce222e3c4b9af41b,
+  displayName: 'host.capnp:IoState',
+  shortName: 'IoState',
+  dataWords: 2,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'key',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'storage',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivery',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasExit',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 32,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'execution',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disconnect',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maintenance',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final ioStateFactory = _IoStateFactory();
+
+final class IoResultReader extends StructReader {
+  IoResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = ioResultSchema;
+
+  bool get present => getBoolField(0);
+
+  bool get cancelled => getBoolField(1);
+
+  bool get unknown => getBoolField(2);
+
+  int get calls => getUint32Field(4);
+
+  int get chargedBytes => getUint64Field(8);
+
+  int get executionFault => getUint16Field(2);
+
+  int get exitCode => getInt32Field(16);
+
+  bool get hasHttp => getBoolField(3);
+
+  int get status => getUint16Field(20);
+
+  int get httpStatus => getUint16Field(22);
+
+  ListReader<HttpHeaderReader>? get headers => getStructListFieldWith(
+    0,
+    (r) => HttpHeaderReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get body => getDataField(1);
+}
+
+final class IoResultBuilder extends StructBuilder {
+  IoResultBuilder(super.raw);
+
+  @override
+  IoResultReader asReader() => IoResultReader(rawToReader());
+
+  set present(bool v) {
+    setBoolField(0, v);
+  }
+
+  set cancelled(bool v) {
+    setBoolField(1, v);
+  }
+
+  set unknown(bool v) {
+    setBoolField(2, v);
+  }
+
+  set calls(int v) {
+    setUint32Field(4, v);
+  }
+
+  set chargedBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set executionFault(int v) {
+    setUint16Field(2, v);
+  }
+
+  set exitCode(int v) {
+    setInt32Field(16, v);
+  }
+
+  set hasHttp(bool v) {
+    setBoolField(3, v);
+  }
+
+  set status(int v) {
+    setUint16Field(20, v);
+  }
+
+  set httpStatus(int v) {
+    setUint16Field(22, v);
+  }
+
+  ListBuilder<HttpHeaderBuilder> initHeaders(int length) {
+    return initStructListFieldWith(
+      0,
+      length,
+      (r) => HttpHeaderBuilder(r),
+      0,
+      2,
+    );
+  }
+
+  set body(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _IoResultFactory
+    extends StructFactory<IoResultReader, IoResultBuilder> {
+  @override
+  StructSchemaInfo get schema => ioResultSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  IoResultReader fromRawReader(RawStructReader r) => IoResultReader(r);
+  @override
+  IoResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => IoResultReader(r, capabilities: capabilities);
+  @override
+  IoResultBuilder fromRawBuilder(RawStructBuilder r) => IoResultBuilder(r);
+}
+
+const StructSchemaInfo ioResultSchema = StructSchemaInfo(
+  id: 0xf0687624897d7cf5,
+  displayName: 'host.capnp:IoResult',
+  shortName: 'IoResult',
+  dataWords: 3,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'present',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cancelled',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'unknown',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'calls',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'chargedBytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'executionFault',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'exitCode',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Int32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasHttp',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'status',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'httpStatus',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'headers',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xc27af098762f98ea)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'body',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final ioResultFactory = _IoResultFactory();

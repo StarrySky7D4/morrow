@@ -75,27 +75,78 @@ fn run() -> morrow_workbench_host::Result<()> {
     };
     let mut input = std::io::stdin().lock();
     let mut output = std::io::stdout().lock();
+    serve(&mut host, &mut input, &mut output)
+}
+
+/// Every ordinary transport exit drains the original worker before the process
+/// drops the library's ownership guards. Requests are never retried here.
+fn serve(
+    host: &mut morrow_workbench_host::Workbench,
+    input: &mut impl Read,
+    output: &mut impl Write,
+) -> morrow_workbench_host::Result<()> {
+    let transport = frames(host, input, output);
+    let shutdown = finish_wait(host);
+    match (transport, shutdown) {
+        (Ok(()), result) | (result, Ok(())) => result,
+        (Err(transport), Err(shutdown)) => {
+            Err(format!("{transport}; host shutdown failed: {shutdown}").into())
+        }
+    }
+}
+
+fn frames(
+    host: &mut morrow_workbench_host::Workbench,
+    input: &mut impl Read,
+    output: &mut impl Write,
+) -> morrow_workbench_host::Result<()> {
     loop {
         let mut header = [0; 4];
-        match input.read_exact(&mut header) {
-            Ok(()) => {}
-            Err(e) if e.kind() == std::io::ErrorKind::UnexpectedEof => break,
-            Err(e) => return Err(e.into()),
-        };
+        // Only EOF before the first byte is a clean boundary. A partial header
+        // is a transport error, but must still take the same draining exit.
+        loop {
+            match input.read(&mut header[..1]) {
+                Ok(0) => return Ok(()),
+                Ok(_) => break,
+                Err(e) if e.kind() == std::io::ErrorKind::Interrupted => continue,
+                Err(e) => return Err(e.into()),
+            }
+        }
+        input.read_exact(&mut header[1..])?;
         let size = u32::from_le_bytes(header) as usize;
         if size == 0 {
-            break;
+            return Ok(());
         }
         if size > 128 * 1024 {
             return Err("incoming frame budget".into());
         }
         let mut bytes = zeroize::Zeroizing::new(vec![0; size]);
         input.read_exact(&mut bytes)?;
-        let response = morrow_workbench_host::protocol::respond(&mut host, &bytes)?;
+        let response = morrow_workbench_host::protocol::respond(host, &bytes)?;
         output.write_all(&(response.len() as u32).to_le_bytes())?;
         output.write_all(&response)?;
         output.flush()?;
     }
-    host.finish()?;
-    Ok(())
 }
+
+fn finish_wait(host: &mut morrow_workbench_host::Workbench) -> morrow_workbench_host::Result<()> {
+    loop {
+        match host.finish() {
+            Err(error)
+                if error.downcast_ref::<morrow_workbench_host::io_tasks::AccessError>()
+                    == Some(&morrow_workbench_host::io_tasks::AccessError::Busy) =>
+            {
+                // Cancellation is a request, not a joined thread. In particular,
+                // a synchronous router can still own the audited Storage here.
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            // finish already attempts maintenance after actual reclamation.
+            // Report failed cleanup/sealing without implicit repair or replay.
+            result => return result,
+        }
+    }
+}
+
+#[cfg(all(test, target_os = "windows"))]
+#[path = "../tests/support/cli_shutdown.rs"]
+mod shutdown_tests;

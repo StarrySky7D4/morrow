@@ -24,6 +24,7 @@ mod content_projection;
 pub mod credential_control;
 pub mod endpoint_control;
 mod evidence;
+pub mod http_tasks;
 pub mod io_tasks;
 pub mod plugin_catalog;
 mod preferences_evidence;
@@ -50,6 +51,7 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    http_tasks: http_tasks::HttpTasks,
     host: crate::io_tasks::StorageSlot,
     plugin: Option<Session>,
     pool: Pool,
@@ -168,6 +170,7 @@ impl Workbench {
         getrandom::fill(&mut query_owner)?;
         let mut workbench = Self {
             host: crate::io_tasks::StorageSlot::new(host),
+            http_tasks: Default::default(),
             plugin,
             pool,
             manager,
@@ -715,6 +718,9 @@ mod plugin_control;
 
 #[cfg(all(test, target_os = "windows"))]
 mod query_archive_tests;
+
+#[cfg(all(test, target_os = "windows"))]
+mod http_tasks_tests;
 
 #[cfg(all(test, target_os = "windows"))]
 #[path = "../tests/common/mod.rs"]
