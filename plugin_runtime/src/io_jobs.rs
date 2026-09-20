@@ -40,6 +40,11 @@ pub const MAX_TIMEOUT: Duration = Duration::from_secs(3600);
 pub const MAX_CALLS: u32 = 1024;
 pub const MAX_JOB_BYTES: u64 = 16 * 1024 * 1024;
 pub const MAX_TOTAL_BYTES: u64 = 64 * 1024 * 1024;
+mod owner_commands;
+pub use owner_commands::{
+    CommandOwner, MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS,
+    OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll,
+};
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum JobError {
@@ -65,6 +70,11 @@ pub trait HostOwner: Send + 'static {
     fn finish_io(&mut self) -> Result<(), JobError> {
         Ok(())
     }
+}
+/// Complete application owner retaining its original plugin manager. This
+/// allows admission to borrow the manager before moving the owner as a whole.
+pub trait ManagedHostOwner: HostOwner {
+    fn manager(&self) -> Option<&Manager>;
 }
 impl HostOwner for HostRuntime {
     fn runtime(&self) -> &HostRuntime {
@@ -469,6 +479,8 @@ struct State {
     next: u64,
     jobs: BTreeMap<u64, Slot>,
     bytes: u64,
+    owner_commands: usize,
+    owner_command_bytes: usize,
 }
 struct Authority {
     cancellation: Cancellation,
@@ -800,6 +812,7 @@ impl Drop for JobHandle {
 /// use original object grants. Routers execute outside caller transactions.
 pub struct IoWorker<O: HostOwner = HostRuntime> {
     sender: SyncSender<Message>,
+    owner_sender: SyncSender<owner_commands::Command<O>>,
     control: Arc<Control>,
     join: Option<JoinHandle<WorkerExit<O>>>,
     service_authority: morrow_core::store::ServiceAuthorityControl,
@@ -932,12 +945,7 @@ impl<O: HostOwner> IoWorker<O> {
         limits: JobLimits,
     ) -> Result<Self, Box<SpawnFailure<O>>> {
         let admission = catch_unwind(AssertUnwindSafe(|| {
-            binding
-                .validate_identity(manager, owner.runtime(), &instance)
-                .map_err(|_| JobError::InvalidOptions)?;
-            binding
-                .check(manager, owner.runtime(), &instance, clock())
-                .map_err(|_| JobError::InvalidOptions)
+            authenticate_managed_owner(manager, &owner, &instance, &binding, &mut clock)
         }))
         .unwrap_or(Err(JobError::Unavailable));
         if let Err(error) = admission {
@@ -1015,6 +1023,8 @@ impl<O: HostOwner> IoWorker<O> {
                     next: 1,
                     jobs: BTreeMap::new(),
                     bytes: 0,
+                    owner_commands: 0,
+                    owner_command_bytes: 0,
                 }),
             });
             let (sender, receiver) = mpsc::sync_channel(capacity);
@@ -1027,6 +1037,7 @@ impl<O: HostOwner> IoWorker<O> {
             Err(error) => return Err(spawn_failure(owner, session, error)),
         };
         let id = control.id;
+        let (owner_sender, owner_receiver) = mpsc::sync_channel(MAX_OWNER_COMMANDS);
         let inner = Arc::clone(&control);
         // A failed OS spawn drops its closure. Keep the only owner in a staged
         // slot also reachable here, so failure returns it instead of dropping it.
@@ -1039,7 +1050,7 @@ impl<O: HostOwner> IoWorker<O> {
                 .take()
                 .expect("worker owner staged once");
             let result = catch_unwind(AssertUnwindSafe(|| {
-                execute(&session, &mut owner, &receiver, &inner)
+                execute(&session, &mut owner, &receiver, &owner_receiver, &inner)
             }));
             let mut result = match result {
                 Ok(result) => result,
@@ -1117,6 +1128,7 @@ impl<O: HostOwner> IoWorker<O> {
         };
         Ok(Self {
             sender,
+            owner_sender,
             control,
             join: Some(join),
             service_authority,
@@ -1579,6 +1591,58 @@ impl<O: HostOwner> IoWorker<O> {
             .map(Some)
     }
 }
+impl<O: ManagedHostOwner> IoWorker<O> {
+    /// Authenticate with the manager inside the complete owner, then move that
+    /// same owner and original managed instance onto the execution thread.
+    pub fn spawn_managed_owner(
+        owner: O,
+        instance: ManagedInstance,
+        binding: IoBinding,
+        mut clock: impl FnMut() -> u64 + Send + 'static,
+        capacity: usize,
+        limits: JobLimits,
+    ) -> Result<Self, Box<SpawnFailure<O>>> {
+        let admission = catch_unwind(AssertUnwindSafe(|| {
+            let manager = owner.manager().ok_or(JobError::InvalidOptions)?;
+            authenticate_managed_owner(manager, &owner, &instance, &binding, &mut clock)
+        }))
+        .unwrap_or(Err(JobError::Unavailable));
+        if let Err(error) = admission {
+            return Err(Box::new(SpawnFailure {
+                owner,
+                instance: Some(instance),
+                error,
+            }));
+        }
+        let authority = Authority {
+            cancellation: instance.cancellation(),
+            binding,
+            clock: Arc::new(Mutex::new(Box::new(clock))),
+        };
+        Self::spawn_session_owned(
+            Session::Managed(instance),
+            owner,
+            Some(authority),
+            capacity,
+            limits,
+        )
+    }
+}
+
+fn authenticate_managed_owner<O: HostOwner>(
+    manager: &Manager,
+    owner: &O,
+    instance: &ManagedInstance,
+    binding: &IoBinding,
+    clock: &mut impl FnMut() -> u64,
+) -> Result<(), JobError> {
+    binding
+        .validate_identity(manager, owner.runtime(), instance)
+        .map_err(|_| JobError::InvalidOptions)?;
+    binding
+        .check(manager, owner.runtime(), instance, clock())
+        .map_err(|_| JobError::InvalidOptions)
+}
 impl<O: HostOwner> Drop for IoWorker<O> {
     fn drop(&mut self) {
         self.stop();
@@ -1629,6 +1693,7 @@ fn execute<O: HostOwner>(
     session: &Session,
     owner: &mut O,
     receiver: &Receiver<Message>,
+    owner_receiver: &Receiver<owner_commands::Command<O>>,
     control: &Arc<Control>,
 ) -> Result<(), JobError> {
     let package = session.package();
@@ -1660,6 +1725,11 @@ fn execute<O: HostOwner>(
             if finished {
                 break;
             }
+        }
+        // One reserved host command per iteration still leaves the guest lane
+        // a turn. Synchronous handlers/routers cannot be preempted by this lane.
+        if let Ok(command) = owner_receiver.try_recv() {
+            command.execute(owner, control)?;
         }
         let message = match receiver.recv_timeout(Duration::from_millis(10)) {
             Ok(message) => message,

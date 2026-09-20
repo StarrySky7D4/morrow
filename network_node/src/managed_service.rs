@@ -9,8 +9,9 @@ use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
     io_binding::{self, ServiceRunBudget, ServiceRunSnapshot},
     io_jobs::{
-        BrokerRouter, HostOwner, IoWorker, JobError, Poll, ServicePersistenceStatus, ServiceUpdate,
-        ServiceUpdateHandle, WorkerExit,
+        BrokerRouter, CommandOwner, HostOwner, IoWorker, JobError, OwnerCommandError,
+        OwnerCommandHandle, Poll, ServicePersistenceStatus, ServiceUpdate, ServiceUpdateHandle,
+        WorkerExit,
     },
     manager::Manager,
     service_authority::ConfiguredService,
@@ -83,6 +84,21 @@ pub struct ManagedRoute<O: HostOwner = HostRuntime> {
 struct ContentRoute {
     policy: ServiceContentPolicy,
     principals: BTreeMap<String, Vec<ContentScope>>,
+}
+impl<O: CommandOwner> ServiceHost<O> {
+    /// Reserved local-host command lane on the original owner. This method is
+    /// not exposed as an HTTP route and grants no capability to a guest/principal.
+    pub fn submit_owner_command(
+        &self,
+        input: Vec<u8>,
+        max_reply_bytes: usize,
+    ) -> std::result::Result<OwnerCommandHandle, OwnerCommandError> {
+        self.inner
+            .worker
+            .lock()
+            .map_err(|_| OwnerCommandError::Closed)?
+            .submit_owner_command(input, max_reply_bytes)
+    }
 }
 impl<O: HostOwner> ServiceHost<O> {
     /// Observe the same run ledger used by all routes and listener copies.

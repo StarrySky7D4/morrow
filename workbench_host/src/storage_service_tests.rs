@@ -21,7 +21,10 @@ use morrow_network_node::{
 use morrow_plugin_runtime::{
     instance_pool::{Pool, Session as PooledSession},
     io_binding::IoBinding,
-    io_jobs::{BrokerRouter, IoWorker, JobLimits, RouteContext, RouterFault, WorkerExit},
+    io_jobs::{
+        BrokerRouter, CommandOwner, HostOwner, IoWorker, JobError, JobLimits, ManagedHostOwner,
+        RouteContext, RouterFault, WorkerExit,
+    },
     manager::{ManagedInstance, Manager},
     service_history::ServiceJournal,
     service_io::{ListenerGrant, ServiceGrant},
@@ -221,8 +224,8 @@ fn host(
     ServiceHost::new_owned(worker, Duration::from_secs(2), factory).unwrap()
 }
 
-async fn bind(
-    host: &ServiceHost<Storage>,
+async fn bind<O: HostOwner>(
+    host: &ServiceHost<O>,
     grant: ServiceGrant,
     listener: ListenerGrant,
     address: SocketAddr,
@@ -439,5 +442,148 @@ fn occupied_port_leaves_original_protected_owner_reclaimable() {
         drop(owner);
         let reopened = Storage::open_managed(dir.path()).unwrap();
         assert_eq!(reopened.session.trust().id, trust.id);
+    });
+}
+
+/// A qualification owner, not the application WorkbenchState. It moves the
+/// real storage guards, pool lease and Manager together without cloning them.
+struct CommandStorage {
+    storage: Storage,
+    manager: Manager,
+    pool: Pool,
+    pooled: PooledSession,
+    digest: [u8; 32],
+    commands: usize,
+}
+impl HostOwner for CommandStorage {
+    fn runtime(&self) -> &morrow_core::dispatch::HostRuntime {
+        &self.storage
+    }
+    fn runtime_mut(&mut self) -> &mut morrow_core::dispatch::HostRuntime {
+        &mut self.storage
+    }
+    fn prepare_io(&mut self) -> Result<(), JobError> {
+        HostOwner::prepare_io(&mut self.storage)
+    }
+    fn finish_io(&mut self) -> Result<(), JobError> {
+        HostOwner::finish_io(&mut self.storage)
+    }
+}
+impl ManagedHostOwner for CommandStorage {
+    fn manager(&self) -> Option<&Manager> {
+        Some(&self.manager)
+    }
+}
+impl CommandOwner for CommandStorage {
+    fn command(&mut self, input: Vec<u8>) -> Result<Vec<u8>, JobError> {
+        if input != b"lookup-original-intent" {
+            return Err(JobError::InvalidOptions);
+        }
+        // This diagnostic checks the actual same pooled root and persisted
+        // service outcome. It does not bypass content mutation APIs.
+        self.pool
+            .root(&self.pooled)
+            .map_err(|_| JobError::Unavailable)?;
+        let command = RequestRecord::encode(&policy(), KEY, &expected_request(), WALL)
+            .and_then(|record| record.command(self.digest))
+            .map_err(|_| JobError::Unavailable)?;
+        let record = self
+            .storage
+            .store_local()
+            .lookup_io_intent(&command.subject, &command.operation_id)
+            .map_err(|_| JobError::Unavailable)?;
+        self.commands += 1;
+        Ok(match record {
+            None => b"missing".to_vec(),
+            Some(record) if record.phase() == Phase::Observed => b"observed".to_vec(),
+            Some(_) => b"other".to_vec(),
+        })
+    }
+}
+
+#[test]
+fn reserved_commands_share_protected_storage_pool_and_manager_with_live_http() {
+    tokio::runtime::Runtime::new().unwrap().block_on(async {
+        let Setup {
+            dir,
+            owner,
+            manager,
+            pool,
+            pooled,
+            instance,
+            binding,
+            grant,
+            listener,
+            digest,
+        } = Setup::new();
+        let original = owner.binding();
+        let trust = owner.session.trust();
+        let database = owner
+            ._registry
+            .as_ref()
+            .unwrap()
+            .selected_database()
+            .unwrap();
+        let revision = manager.revision();
+        let owner = CommandStorage {
+            storage: owner,
+            manager,
+            pool,
+            pooled,
+            digest,
+            commands: 0,
+        };
+        let worker = IoWorker::spawn_managed_owner(
+            owner,
+            instance,
+            binding,
+            || 2,
+            1,
+            JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
+        )
+        .unwrap();
+        let factory: RouterFactory = Arc::new(|| Box::new(Deny));
+        let host = ServiceHost::new_owned(worker, Duration::from_secs(2), factory).unwrap();
+        let node = bind(&host, grant, listener, "127.0.0.1:0".parse().unwrap())
+            .await
+            .unwrap();
+        for expected in [b"missing".as_slice(), b"observed".as_slice()] {
+            let mut handle = host
+                .submit_owner_command(b"lookup-original-intent".to_vec(), 64)
+                .unwrap();
+            let reply = tokio::time::timeout(WAIT, async {
+                loop {
+                    if let Some(reply) = handle.read().unwrap() {
+                        break reply;
+                    }
+                    tokio::time::sleep(Duration::from_millis(2)).await;
+                }
+            })
+            .await
+            .unwrap();
+            assert_eq!(reply, expected);
+            assert_guards(dir.path(), &database);
+            request(node.local_addr()).await;
+        }
+        node.shutdown().await.unwrap();
+        let exit = tokio::time::timeout(WAIT, host.shutdown_owned())
+            .await
+            .unwrap()
+            .unwrap();
+        assert!(exit.result.is_ok() && exit.disconnect.is_ok() && exit.maintenance.is_ok());
+        assert!(exit.instance.is_none());
+        let mut owner = exit.owner;
+        assert_eq!(owner.commands, 2);
+        assert_eq!(owner.storage.binding(), original);
+        assert_eq!(owner.storage.session.trust().id, trust.id);
+        assert_eq!(owner.storage.session.trust().key, trust.key);
+        assert_eq!(owner.manager.revision(), revision);
+        assert!(owner.pool.root(&owner.pooled).is_ok());
+        assert_guards(dir.path(), &database);
+        owner.pool.close_all(&mut owner.storage).unwrap();
+        drop(owner);
+        let reopened = Storage::open_managed(dir.path()).unwrap();
+        assert_eq!(reopened.session.trust().id, trust.id);
+        reopened.store_local().integrity_check().unwrap();
     });
 }
