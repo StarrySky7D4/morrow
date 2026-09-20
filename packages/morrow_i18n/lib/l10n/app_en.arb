@@ -156,6 +156,34 @@
   "@pluginsBuiltinInput": {
     "description": "First-party workbench text tool display only"
   },
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsDeclared": {
     "placeholders": {
       "permissions": {
@@ -1001,6 +1029,32 @@
   "pluginsConnectionLost": "Connection interrupted. Reopen this plugin view.",
   "pluginsContentPermissions": "Content permissions",
   "pluginsCreate": "Create content",
+  "pluginsCredentialCancel": "Close form",
+  "pluginsCredentialCreateTitle": "New credential",
+  "pluginsCredentialDays": "{days, plural, =1{1 day} other{{days} days}}",
+  "pluginsCredentialDetails": "Store credentials securely for approved API connections. Saving a credential does not approve a server or enable a plugin. Saved secrets cannot be viewed.",
+  "pluginsCredentialDisable": "Disable",
+  "pluginsCredentialDisabled": "Disabled",
+  "pluginsCredentialDisabledDone": "Credential disabled.",
+  "pluginsCredentialEmpty": "No saved credentials",
+  "pluginsCredentialExpired": "Expired",
+  "pluginsCredentialExpires": "Expires: {date}",
+  "pluginsCredentialHeader": "Header name",
+  "pluginsCredentialInvalid": "Check the header name and enter a new secret value. The secret field has been cleared.",
+  "pluginsCredentialLifetime": "Valid for",
+  "pluginsCredentialLoadFailed": "Credentials could not be read consistently. Refresh status to try again.",
+  "pluginsCredentialNew": "Add credential",
+  "pluginsCredentialReading": "Reading credentials…",
+  "pluginsCredentialReference": "Credential {reference}",
+  "pluginsCredentialRefresh": "Refresh status",
+  "pluginsCredentialReplace": "Replace secret",
+  "pluginsCredentialReplaceTitle": "Replace credential {reference}",
+  "pluginsCredentialSave": "Save credential",
+  "pluginsCredentialSaved": "Credential saved. API connections still need separate approval.",
+  "pluginsCredentialSecret": "New secret value",
+  "pluginsCredentialStored": "Saved",
+  "pluginsCredentialTitle": "API credentials",
+  "pluginsCredentialUnknown": "The result could not be confirmed. The secret field has been cleared. Refresh status before making another change.",
   "pluginsDeclared": "Declared permissions: {permissions}",
   "pluginsDependenciesNotice": "Dependencies must be configured in the host. This page does not approve them.",
   "pluginsDisable": "Disable",

@@ -1028,6 +1028,103 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsCreate => 'Create content';
 
   @override
+  String get pluginsCredentialCancel => 'Close form';
+
+  @override
+  String get pluginsCredentialCreateTitle => 'New credential';
+
+  @override
+  String pluginsCredentialDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pluginsCredentialDetails =>
+      'Store credentials securely for approved API connections. Saving a credential does not approve a server or enable a plugin. Saved secrets cannot be viewed.';
+
+  @override
+  String get pluginsCredentialDisable => 'Disable';
+
+  @override
+  String get pluginsCredentialDisabled => 'Disabled';
+
+  @override
+  String get pluginsCredentialDisabledDone => 'Credential disabled.';
+
+  @override
+  String get pluginsCredentialEmpty => 'No saved credentials';
+
+  @override
+  String get pluginsCredentialExpired => 'Expired';
+
+  @override
+  String pluginsCredentialExpires(String date) {
+    return 'Expires: $date';
+  }
+
+  @override
+  String get pluginsCredentialHeader => 'Header name';
+
+  @override
+  String get pluginsCredentialInvalid =>
+      'Check the header name and enter a new secret value. The secret field has been cleared.';
+
+  @override
+  String get pluginsCredentialLifetime => 'Valid for';
+
+  @override
+  String get pluginsCredentialLoadFailed =>
+      'Credentials could not be read consistently. Refresh status to try again.';
+
+  @override
+  String get pluginsCredentialNew => 'Add credential';
+
+  @override
+  String get pluginsCredentialReading => 'Reading credentials…';
+
+  @override
+  String pluginsCredentialReference(String reference) {
+    return 'Credential $reference';
+  }
+
+  @override
+  String get pluginsCredentialRefresh => 'Refresh status';
+
+  @override
+  String get pluginsCredentialReplace => 'Replace secret';
+
+  @override
+  String pluginsCredentialReplaceTitle(String reference) {
+    return 'Replace credential $reference';
+  }
+
+  @override
+  String get pluginsCredentialSave => 'Save credential';
+
+  @override
+  String get pluginsCredentialSaved =>
+      'Credential saved. API connections still need separate approval.';
+
+  @override
+  String get pluginsCredentialSecret => 'New secret value';
+
+  @override
+  String get pluginsCredentialStored => 'Saved';
+
+  @override
+  String get pluginsCredentialTitle => 'API credentials';
+
+  @override
+  String get pluginsCredentialUnknown =>
+      'The result could not be confirmed. The secret field has been cleared. Refresh status before making another change.';
+
+  @override
   String pluginsDeclared(String permissions) {
     return 'Declared permissions: $permissions';
   }

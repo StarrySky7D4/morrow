@@ -430,6 +430,249 @@ mod native {
             SCHEMA_VERSION
         );
     }
+    fn seed_list(store: &mut Store, count: u8) {
+        for index in (1..=count).rev() {
+            let mut value = if index % 2 == 0 {
+                endpoint()
+            } else {
+                credential()
+            };
+            value.reference = vec![index; 32];
+            store
+                .save_outbound_authority_local(&Record::encode(value).unwrap(), 0)
+                .unwrap();
+        }
+    }
+    #[test]
+    fn authority_listing_empty_reopens_without_writes_or_implicit_pin() {
+        let (_dir, path, mut store) = setup();
+        let before = store.pending_usage().unwrap();
+        let page = store
+            .list_outbound_authorities_local(None, None, 16)
+            .unwrap();
+        assert!(page.records.is_empty());
+        assert!(page.next.is_none());
+        assert_ne!(page.snapshot, [0; 32]);
+        assert_eq!(store.pending_usage().unwrap(), before);
+        // A listing must not retain the authority lock or issue a live lease.
+        let mut other = Store::open_existing(&path, Default::default()).unwrap();
+        let lease = other.pin_service_authority().unwrap();
+        let repeated = store
+            .list_outbound_authorities_local(None, Some(page.snapshot), 1)
+            .unwrap();
+        assert_eq!(repeated.snapshot, page.snapshot);
+        lease.check().unwrap();
+        drop(other);
+        drop(store);
+        let mut store = Store::open_existing(&path, Default::default()).unwrap();
+        assert_eq!(
+            store
+                .list_outbound_authorities_local(None, None, 16)
+                .unwrap()
+                .snapshot,
+            page.snapshot
+        );
+    }
+    #[test]
+    fn authority_listing_orders_both_kinds_and_pages_exact_original_containers() {
+        let (_dir, path, mut store) = setup();
+        seed_list(&mut store, 33);
+        let originals: Vec<Vec<u8>> = (1..=33)
+            .map(|index| {
+                store
+                    .load_outbound_authority(&[index; 32])
+                    .unwrap()
+                    .unwrap()
+                    .container()
+                    .to_vec()
+            })
+            .collect();
+        let lease = store.pin_service_authority().unwrap();
+        let first = store
+            .list_outbound_authorities_local(None, None, 16)
+            .unwrap();
+        assert_eq!(first.records.len(), 16);
+        assert_eq!(first.next, Some([16; 32]));
+        let second = store
+            .list_outbound_authorities_local(first.next, Some(first.snapshot), 16)
+            .unwrap();
+        assert_eq!(second.records.len(), 16);
+        assert_eq!(second.next, Some([32; 32]));
+        assert_eq!(second.snapshot, first.snapshot);
+        let third = store
+            .list_outbound_authorities_local(second.next, Some(second.snapshot), 16)
+            .unwrap();
+        assert_eq!(third.records.len(), 1);
+        assert!(third.next.is_none());
+        assert_eq!(third.snapshot, first.snapshot);
+        let mut records = first.records;
+        records.extend(second.records);
+        records.extend(third.records);
+        for (index, record) in records.iter().enumerate() {
+            assert_eq!(record.reference(), [index as u8 + 1; 32]);
+            assert_eq!(record.container(), originals[index]);
+        }
+        lease.check().unwrap();
+        assert_eq!(store.pending_usage().unwrap(), (0, 0));
+        drop(store);
+        let mut reopened = Store::open_existing(&path, Default::default()).unwrap();
+        let end = reopened
+            .list_outbound_authorities_local(Some([33; 32]), Some(first.snapshot), 16)
+            .unwrap();
+        assert!(end.records.is_empty());
+        assert!(end.next.is_none());
+        assert_eq!(end.snapshot, first.snapshot);
+    }
+    #[test]
+    fn authority_listing_rejects_missing_snapshot_unknown_cursor_and_bad_limits() {
+        let (_dir, _path, mut store) = setup();
+        seed_list(&mut store, 2);
+        for limit in [0, 17, u32::MAX] {
+            assert!(matches!(
+                store.list_outbound_authorities_local(None, None, limit),
+                Err(Error::Limit)
+            ));
+        }
+        assert!(matches!(
+            store.list_outbound_authorities_local(Some([1; 32]), None, 1),
+            Err(Error::Invalid(_))
+        ));
+        let page = store
+            .list_outbound_authorities_local(None, None, 1)
+            .unwrap();
+        assert!(matches!(
+            store.list_outbound_authorities_local(Some([99; 32]), Some(page.snapshot), 1),
+            Err(Error::Invalid(_))
+        ));
+        assert!(matches!(
+            store.list_outbound_authorities_local(Some([0; 32]), Some(page.snapshot), 1),
+            Err(Error::Invalid(_))
+        ));
+        assert!(matches!(
+            store.list_outbound_authorities_local(None, Some([0; 32]), 1),
+            Err(Error::RevisionConflict)
+        ));
+    }
+    #[test]
+    fn authority_listing_detects_revision_addition_and_full_container_drift() {
+        let (_dir, path, mut store) = setup();
+        seed_list(&mut store, 3);
+        let first = store
+            .list_outbound_authorities_local(None, None, 1)
+            .unwrap();
+        let mut changed = store
+            .load_outbound_authority(&[3; 32])
+            .unwrap()
+            .unwrap()
+            .value()
+            .clone();
+        changed.revision = 2;
+        changed.disabled = true;
+        store
+            .save_outbound_authority_local(&Record::encode(changed).unwrap(), 1)
+            .unwrap();
+        assert!(matches!(
+            store.list_outbound_authorities_local(first.next, Some(first.snapshot), 1),
+            Err(Error::RevisionConflict)
+        ));
+        let second = store
+            .list_outbound_authorities_local(None, None, 1)
+            .unwrap();
+        let mut added = credential();
+        added.reference = vec![4; 32];
+        store
+            .save_outbound_authority_local(&Record::encode(added).unwrap(), 0)
+            .unwrap();
+        assert!(matches!(
+            store.list_outbound_authorities_local(second.next, Some(second.snapshot), 1),
+            Err(Error::RevisionConflict)
+        ));
+        let third = store
+            .list_outbound_authorities_local(None, None, 1)
+            .unwrap();
+        // Even a valid same-revision container substitution changes the snapshot.
+        let mut changed = store
+            .load_outbound_authority(&[4; 32])
+            .unwrap()
+            .unwrap()
+            .value()
+            .clone();
+        changed.expires_ms += 1;
+        let changed = Record::encode(changed).unwrap();
+        let sql = rusqlite::Connection::open(&path).unwrap();
+        sql.execute(
+            "UPDATE outbound_authorities SET payload=?1 WHERE reference=?2",
+            rusqlite::params![changed.container(), [4u8; 32].as_slice()],
+        )
+        .unwrap();
+        drop(sql);
+        assert!(matches!(
+            store.list_outbound_authorities_local(third.next, Some(third.snapshot), 1),
+            Err(Error::RevisionConflict)
+        ));
+    }
+    #[test]
+    fn authority_listing_rejects_corruption_outside_current_page_before_allocating_large_rows() {
+        for case in 0..4 {
+            let (_dir, path, mut store) = setup();
+            seed_list(&mut store, 2);
+            let sql = rusqlite::Connection::open(&path).unwrap();
+            match case {
+                0 => {
+                    sql.execute(
+                        "UPDATE outbound_authorities SET payload=X'00' WHERE reference=?1",
+                        [[2u8; 32].as_slice()],
+                    )
+                    .unwrap();
+                }
+                1 => {
+                    sql.execute(
+                        "UPDATE outbound_authorities SET payload=zeroblob(?1) WHERE reference=?2",
+                        rusqlite::params![
+                            outbound_authority::MAX_CONTAINER_BYTES as i64 + 1,
+                            [2u8; 32].as_slice()
+                        ],
+                    )
+                    .unwrap();
+                }
+                2 => {
+                    sql.execute(
+                        "UPDATE outbound_authorities SET subject=?1 WHERE reference=?2",
+                        rusqlite::params!["x".repeat(257), [2u8; 32].as_slice()],
+                    )
+                    .unwrap();
+                }
+                _ => {
+                    sql.execute_batch("ALTER TABLE outbound_authorities RENAME TO originals; CREATE TABLE outbound_authorities(reference,revision,kind,subject,payload); INSERT INTO outbound_authorities SELECT reference,'not-integer',kind,subject,payload FROM originals;").unwrap();
+                }
+            }
+            drop(sql);
+            assert!(
+                store
+                    .list_outbound_authorities_local(None, None, 1)
+                    .is_err(),
+                "case {case}"
+            );
+        }
+    }
+    #[test]
+    fn authority_listing_rejects_more_than_the_bounded_table_count() {
+        let (_dir, path, mut store) = setup();
+        let mut sql = rusqlite::Connection::open(&path).unwrap();
+        let tx = sql.transaction().unwrap();
+        for index in 0..=outbound_authority::MAX_RECORDS {
+            let mut value = credential();
+            value.reference[..8].copy_from_slice(&(index as u64 + 1).to_le_bytes());
+            let record = Record::encode(value).unwrap();
+            tx.execute("INSERT INTO outbound_authorities(reference,revision,kind,subject,payload) VALUES(?1,1,1,?2,?3)",rusqlite::params![record.reference().as_slice(),outbound_authority::WINDOWS_DPAPI_PROVIDER,record.container()]).unwrap();
+        }
+        tx.commit().unwrap();
+        drop(sql);
+        assert!(matches!(
+            store.list_outbound_authorities_local(None, None, 1),
+            Err(Error::Limit)
+        ));
+    }
     #[test]
     fn existing_inbound_material_consumes_outbound_byte_capacity() {
         let (_dir, path, mut store) = setup();

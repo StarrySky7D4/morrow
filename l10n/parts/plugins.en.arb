@@ -208,5 +208,59 @@
   "pluginsIoHttpListen": "Listen for network connections",
   "pluginsIoHttpPublish": "Provide an API service",
   "pluginsIoCredentialUse": "Use approved credentials",
-  "pluginsIoWebSocketConnect": "Connect to WebSocket services"
+  "pluginsIoWebSocketConnect": "Connect to WebSocket services",
+  "pluginsCredentialTitle": "API credentials",
+  "pluginsCredentialDetails": "Store credentials securely for approved API connections. Saving a credential does not approve a server or enable a plugin. Saved secrets cannot be viewed.",
+  "pluginsCredentialReading": "Reading credentials…",
+  "pluginsCredentialEmpty": "No saved credentials",
+  "pluginsCredentialNew": "Add credential",
+  "pluginsCredentialRefresh": "Refresh status",
+  "pluginsCredentialReplace": "Replace secret",
+  "pluginsCredentialDisable": "Disable",
+  "pluginsCredentialDisabled": "Disabled",
+  "pluginsCredentialStored": "Saved",
+  "pluginsCredentialExpired": "Expired",
+  "pluginsCredentialExpires": "Expires: {date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "Credential {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "New credential",
+  "pluginsCredentialReplaceTitle": "Replace credential {reference}",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "Header name",
+  "pluginsCredentialSecret": "New secret value",
+  "pluginsCredentialLifetime": "Valid for",
+  "pluginsCredentialDays": "{days, plural, =1{1 day} other{{days} days}}",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "Save credential",
+  "pluginsCredentialCancel": "Close form",
+  "pluginsCredentialInvalid": "Check the header name and enter a new secret value. The secret field has been cleared.",
+  "pluginsCredentialUnknown": "The result could not be confirmed. The secret field has been cleared. Refresh status before making another change.",
+  "pluginsCredentialLoadFailed": "Credentials could not be read consistently. Refresh status to try again.",
+  "pluginsCredentialSaved": "Credential saved. API connections still need separate approval.",
+  "pluginsCredentialDisabledDone": "Credential disabled."
 }

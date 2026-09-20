@@ -19,6 +19,7 @@ mod io_intent;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
 mod outbound_authority;
+pub use outbound_authority::OutboundAuthorityPage;
 mod service_authority;
 mod service_authority_lock;
 mod service_config;

@@ -1,6 +1,8 @@
 import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
+import 'credential_manager.dart';
+import 'host_request.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
@@ -24,6 +26,7 @@ class RustWorkbench
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
         ExternalPluginControl,
+        WorkbenchCredentialControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
@@ -224,6 +227,128 @@ class RustWorkbench
     );
   }
 
+  StoredCredential _credential(host.CredentialInfoReader row) {
+    final reference = Uint8List.fromList(row.reference ?? []);
+    final revision = BigInt.from(row.revision).toUnsigned(64);
+    final created = BigInt.from(row.createdMs).toUnsigned(64);
+    final expires = BigInt.from(row.expiresMs).toUnsigned(64);
+    if (reference.length != 32 ||
+        reference.every((b) => b == 0) ||
+        revision <= BigInt.zero ||
+        revision > (BigInt.one << 63) - BigInt.one ||
+        created <= BigInt.zero ||
+        expires <= created ||
+        expires - created > BigInt.from(30 * 86400000)) {
+      throw const FormatException('Invalid credential metadata');
+    }
+    return StoredCredential(
+      reference: reference,
+      revision: revision,
+      createdMs: created,
+      expiresMs: expires,
+      disabled: row.disabled,
+    );
+  }
+
+  @override
+  Future<CredentialPage> credentialPage({
+    Uint8List? after,
+    Uint8List? snapshot,
+  }) async {
+    final result = await _call(
+      host.Action.credentialPage,
+      configure: (r) {
+        if (after != null) r.credentialCursor = after;
+        if (snapshot != null) r.credentialSnapshot = snapshot;
+      },
+    );
+    final rows = result.credentials;
+    final bound = Uint8List.fromList(result.credentialSnapshot ?? []);
+    final cursor = Uint8List.fromList(result.credentialCursor ?? []);
+    if (rows == null ||
+        rows.length > 16 ||
+        bound.length != 32 ||
+        (cursor.isNotEmpty && cursor.length != 32)) {
+      throw const FormatException('Invalid credential page');
+    }
+    return CredentialPage(
+      entries: [for (final row in rows) _credential(row)],
+      snapshot: bound,
+      next: cursor.isEmpty ? null : cursor,
+    );
+  }
+
+  StoredCredential _credentialResult(host.ResponseReader result) {
+    final rows = result.credentials;
+    if (rows == null || rows.length != 1) {
+      throw const FormatException('Credential update result unavailable');
+    }
+    return _credential(rows[0]);
+  }
+
+  void _credentialIdentity(
+    Uint8List reference,
+    BigInt revision, {
+    bool create = false,
+  }) {
+    if (revision < BigInt.zero ||
+        revision > (BigInt.one << 63) - BigInt.one ||
+        (reference.isEmpty
+            ? !create || revision != BigInt.zero
+            : reference.length != 32 ||
+                  reference.every((b) => b == 0) ||
+                  revision == BigInt.zero)) {
+      throw const FormatException('Invalid credential update identity');
+    }
+  }
+
+  @override
+  Future<StoredCredential> saveCredential({
+    required Uint8List reference,
+    required BigInt expectedRevision,
+    required String headerName,
+    required String headerValue,
+    required int lifetimeDays,
+  }) async {
+    _credentialIdentity(reference, expectedRevision, create: true);
+    if (lifetimeDays < 1 ||
+        lifetimeDays > 30 ||
+        headerName.isEmpty ||
+        headerName.length > 128 ||
+        headerValue.isEmpty ||
+        headerValue.length > 8192 ||
+        !headerName.codeUnits.every((v) => v >= 0x21 && v <= 0x7e) ||
+        !headerValue.codeUnits.every((v) => v >= 0x20 && v <= 0x7e)) {
+      throw const FormatException('Invalid credential input');
+    }
+    return _credentialResult(
+      await _call(
+        host.Action.credentialSave,
+        configure: (r) {
+          r.credentialReference = reference;
+          r.revision = expectedRevision.toSigned(64).toInt();
+          r.credentialHeader = headerName;
+          r.credentialSecret = headerValue;
+          r.credentialDays = lifetimeDays;
+        },
+      ),
+    );
+  }
+
+  @override
+  Future<StoredCredential> disableCredential(StoredCredential expected) async {
+    _credentialIdentity(expected.reference, expected.revision);
+    return _credentialResult(
+      await _call(
+        host.Action.credentialDisable,
+        configure: (r) {
+          r.credentialReference = expected.reference;
+          r.revision = expected.revision.toSigned(64).toInt();
+        },
+      ),
+    );
+  }
+
   @override
   Future<void> configureExternalIo(
     PluginLibraryEntry entry,
@@ -407,19 +532,19 @@ class RustWorkbench
     _queue = _queue.then((_) async {
       try {
         if (_failure != null) throw _failure!;
-        final builder = MessageBuilder();
-        final r = builder.initRoot(host.requestFactory);
-        r.version = 1;
-        r.digest = Uint8List.fromList(contract.hostDigest);
-        r.action = action;
-        configure?.call(r);
-        final payload = builder.serialize();
-        if (payload.length > 128 * 1024) throw const FormatException('请求内容过大');
-        final header = ByteData(4)..setUint32(0, payload.length, Endian.little);
-        final response = _response = Completer<Uint8List>();
-        process.stdin.add(header.buffer.asUint8List());
-        process.stdin.add(payload);
-        await process.stdin.flush();
+        late Completer<Uint8List> response;
+        await sendHostRequest(
+          action,
+          configure: configure,
+          send: (payload) async {
+            final header = ByteData(4)
+              ..setUint32(0, payload.length, Endian.little);
+            response = _response = Completer<Uint8List>();
+            process.stdin.add(header.buffer.asUint8List());
+            process.stdin.add(payload);
+            await process.stdin.flush();
+          },
+        );
         final bytes = await response.future.timeout(
           requestTimeout,
           onTimeout: () {

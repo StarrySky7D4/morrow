@@ -1,5 +1,6 @@
 """Generate Dart bindings from the same Cap'n Proto schema Rust compiles."""
 import hashlib, json, os, re, shutil, subprocess, tempfile, sys
+from capnp_web_metadata import adapt
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
 ROOT=Path(__file__).resolve().parents[1]
@@ -27,9 +28,16 @@ for name,path in [("runtimeDigest","runtime.capnp"),("contentDigest","content.pr
     lines.append("const "+name+" = <int>["+", ".join(map(str,digest))+"];")
 with tempfile.TemporaryDirectory(prefix="core-codegen-",dir=ROOT/"build") as directory:
     subprocess.run([dart_executable(),"--packages="+str(config),str(generator)],input=request,cwd=directory,check=True)
+    subprocess.run([dart_executable(),"format",directory],check=True,stdout=subprocess.DEVNULL)
+    outputs = ["contract_identity.dart"]
+    for name in ["runtime.capnp.dart", "ui.capnp.dart"]:
+        original = (Path(directory)/name).read_text(encoding="utf-8")
+        for filename, contents in adapt(name, original).items():
+            (Path(directory)/filename).write_text(contents, encoding="utf-8")
+            outputs.append(filename)
     (Path(directory)/"contract_identity.dart").write_text("\n".join(lines)+"\n",encoding="utf-8")
     subprocess.run([dart_executable(),"format",directory],check=True,stdout=subprocess.DEVNULL)
-    for name in ["runtime.capnp.dart","ui.capnp.dart","contract_identity.dart"]:
+    for name in outputs:
         generated=(Path(directory)/name).read_text(encoding="utf-8")
         target=CLIENT/"lib/src/generated"/name
         if "--check" in sys.argv:

@@ -949,6 +949,93 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsCreate => '新建内容';
 
   @override
+  String get pluginsCredentialCancel => '关闭表单';
+
+  @override
+  String get pluginsCredentialCreateTitle => '新建凭据';
+
+  @override
+  String pluginsCredentialDays(int days) {
+    return '$days 天';
+  }
+
+  @override
+  String get pluginsCredentialDetails =>
+      '安全保存已批准 API 连接使用的凭据。保存凭据不会批准服务器或启用插件，已保存的秘密内容无法查看。';
+
+  @override
+  String get pluginsCredentialDisable => '停用';
+
+  @override
+  String get pluginsCredentialDisabled => '已停用';
+
+  @override
+  String get pluginsCredentialDisabledDone => '凭据已停用。';
+
+  @override
+  String get pluginsCredentialEmpty => '尚未保存凭据';
+
+  @override
+  String get pluginsCredentialExpired => '已过期';
+
+  @override
+  String pluginsCredentialExpires(String date) {
+    return '到期时间：$date';
+  }
+
+  @override
+  String get pluginsCredentialHeader => '请求头名称';
+
+  @override
+  String get pluginsCredentialInvalid => '请检查请求头名称并输入新的秘密内容。秘密输入框已清空。';
+
+  @override
+  String get pluginsCredentialLifetime => '有效期';
+
+  @override
+  String get pluginsCredentialLoadFailed => '无法完整读取一致的凭据状态，请刷新后重试。';
+
+  @override
+  String get pluginsCredentialNew => '添加凭据';
+
+  @override
+  String get pluginsCredentialReading => '正在读取凭据…';
+
+  @override
+  String pluginsCredentialReference(String reference) {
+    return '凭据 $reference';
+  }
+
+  @override
+  String get pluginsCredentialRefresh => '刷新状态';
+
+  @override
+  String get pluginsCredentialReplace => '替换秘密内容';
+
+  @override
+  String pluginsCredentialReplaceTitle(String reference) {
+    return '替换凭据 $reference';
+  }
+
+  @override
+  String get pluginsCredentialSave => '保存凭据';
+
+  @override
+  String get pluginsCredentialSaved => '凭据已保存，API 连接仍需单独批准。';
+
+  @override
+  String get pluginsCredentialSecret => '新的秘密内容';
+
+  @override
+  String get pluginsCredentialStored => '已保存';
+
+  @override
+  String get pluginsCredentialTitle => 'API 凭据';
+
+  @override
+  String get pluginsCredentialUnknown => '暂时无法确认结果，秘密输入框已清空。请先刷新状态，再进行修改。';
+
+  @override
   String pluginsDeclared(String permissions) {
     return '声明权限：$permissions';
   }

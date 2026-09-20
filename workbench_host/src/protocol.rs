@@ -57,15 +57,17 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     if bytes.len() > 128 * 1024 {
         return Err("host frame budget".into());
     }
-    let mut cursor = std::io::Cursor::new(bytes);
-    let message = serialize::read_message(
-        &mut cursor,
+    // Borrow the caller-owned frame; do not copy plaintext credential input into
+    // a second owned segment allocation. The native input owner wipes its frame.
+    let mut remaining = bytes;
+    let message = serialize::read_message_from_flat_slice(
+        &mut remaining,
         ReaderOptions {
             traversal_limit_in_words: Some(32768),
             nesting_limit: 20,
         },
     )?;
-    if cursor.position() != bytes.len() as u64 {
+    if !remaining.is_empty() {
         return Err("trailing host bytes".into());
     }
     let r = message.get_root::<wire::request::Reader>()?;
@@ -74,6 +76,29 @@ fn handle(host: &mut Workbench, bytes: &[u8], mut out: wire::response::Builder<'
     }
     let id = text(r.get_id())?;
     match r.get_action()? {
+        wire::Action::CredentialPage => {
+            let page = host.credential_page(r.get_credential_cursor()?, r.get_credential_snapshot()?)?;
+            out.set_credential_snapshot(&page.snapshot);
+            out.set_credential_cursor(page.next.as_ref().map_or(&[], |v| v.as_slice()));
+            let mut entries = out.reborrow().init_credentials(page.entries.len() as u32);
+            for (i, entry) in page.entries.iter().enumerate() {
+                credential_reply(entry, entries.reborrow().get(i as u32));
+            }
+        }
+        wire::Action::CredentialSave => {
+            let entry = host.save_credential(
+                r.get_credential_reference()?,
+                r.get_revision(),
+                r.get_credential_header()?.to_str()?,
+                r.get_credential_secret()?.to_str()?,
+                r.get_credential_days(),
+            )?;
+            credential_reply(&entry, out.reborrow().init_credentials(1).get(0));
+        }
+        wire::Action::CredentialDisable => {
+            let entry = host.disable_credential(r.get_credential_reference()?, r.get_revision())?;
+            credential_reply(&entry, out.reborrow().init_credentials(1).get(0));
+        }
         wire::Action::PluginCatalog => {
             let expected = r.get_catalog_revision_bound().then_some(r.get_revision());
             plugin_catalog_reply(
@@ -642,4 +667,15 @@ fn plugin_catalog_reply(
             handler.set_max_output_bytes(value.max_output_bytes);
         }
     }
+}
+
+fn credential_reply(
+    value: &crate::credential_control::CredentialInfo,
+    mut out: wire::credential_info::Builder<'_>,
+) {
+    out.set_reference(&value.reference);
+    out.set_revision(value.revision);
+    out.set_created_ms(value.created_ms);
+    out.set_expires_ms(value.expires_ms);
+    out.set_disabled(value.disabled);
 }

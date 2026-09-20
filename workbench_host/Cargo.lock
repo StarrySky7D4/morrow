@@ -619,6 +619,7 @@ dependencies = [
  "semver",
  "sha2 0.10.9",
  "tempfile",
+ "zeroize",
 ]
 
 [[package]]

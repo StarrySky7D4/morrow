@@ -27,7 +27,7 @@
 | 4 / IO-D2b | 已验配置／查询子集，整体进行中 / P0 | 持久服务配置与恢复操作 | 原Store v18保存稳定namespace、主体／批准引用与修订CAS；新实际grant恢复journal；原worker只读查询不认领、不执行，真实HTTP重启与响应边界已验，见[合同](PLUGIN_SERVICE_RECOVERY.md)。Store v19入站认证摘要／发布批准、原拥有者写锁与撤销、原worker配置修改和HTTP/TLS绑定已验；出站受保护凭据已接Store v20及原worker；下一项主应用配置，再补Unknown核对、因果关系、跨进程时钟高水位和证据退休 |
 | 4 / IO-D3 | 下一项，可独立推进 / P0 | 平台文件适配＋broker | 系统选择、目录枚举、创建／替换／删除，资源越界／替换冲突／撤权／崩溃结果核对；固定读取保留兼容测试 |
 | 5 / IO-E1 | 待 B2/D1/D2/D3 契约验收 / P1 | sdk/rust、sdk/c、sdk/cpp | 三语言类型化 IO、同一正负向量与独立仓库插件；旧原包原样执行；新扩展单独形成兼容候选 |
-| 5 / IO-E2 | 已验类别管理子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [类别管理](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；仍需资源与凭据录入、任务及恢复状态、原审计会话的作业所有权接线，再验独立插件真实调用和提供服务，用户资料无隐式迁移 |
+| 5 / IO-E2 | 已验类别管理与 Windows 凭据子集，整体进行中 / P1 | workbench_host＋Flutter 管理界面 | [管理接口](PLUGIN_IO_MANAGEMENT.md)已接私有协议与真实Registry：声明／批准分离、明确保存／撤销、修订校验与重启恢复；原Store有界元数据分页、Windows凭据录入／替换／停用已验。仍需端点等资源批准、任务及恢复状态、原审计会话的作业所有权接线，再验独立插件真实调用和提供服务，用户资料无隐式迁移 |
 | 5 / ROAD-08-IO | 待 C1/C2 与实际后端 / P0 | 录制证据与独立验证器 | A→B→IO→内容提交→封存→删除安装来源→隔离重放；真实故障、合法退休与缺材料分类；重放禁止实际外发 |
 | 6 / IO-E3 | 待基础双向 IO / P1 | NET-2–8／NODE-4–7 按各自依赖 | OAuth／多账号、上传下载、分页限流、流/SSE/WebSocket、webhook、持久服务与 TLS 运维；每个 profile 单独验收 |
 
@@ -69,8 +69,14 @@
 
 [接口合同](PLUGIN_IO_MANAGEMENT.md)与[验证报告](../reports/plugin-io-management-2026-09-20.md)：主应用支持独立保存／撤销网络和文件类别，保持内容批准与启用状态；真实 Flutter→Rust 进程重启恢复通过。切换工作台后的迟到回包与旧关闭失败已隔离。类别批准不代替资源授权，也没有接通实际网络任务。
 
-下一编码顺序：原Store有界元数据列表与凭据录入／轮换 → 原Storage/审计Session/Pool的作业所有权接线 → 短响应任务协议与真实HTTP主应用链路。禁止另建运行时或数据库绕过唯一权威；Unknown核对、因果链、文件系统及完整SDK继续保持原退出门槛。
+本节当时的下一项为原Store有界元数据列表与凭据录入／轮换；完成状态见下节。禁止另建运行时或数据库绕过唯一权威；Unknown核对、因果链、文件系统及完整SDK继续保持原退出门槛。
 
-### 本轮发现的 Web 构建阻断
+### Web 构建阻断及修复
 
-Flutter Web 的 JavaScript Release 构建在现有 Cap'n Proto 反射代码上失败：`ui.capnp.dart` 的64位schema ID不能精确表示为JavaScript数值。保留原类型编号和协议校验，后续修复生成／元数据层并验证精确身份与原二进制向量；本轮Wasm dry run不计完整Web通过。详见[本轮故障记录](../reports/plugin-io-management-2026-09-20.md)。此项属于ROAD-01b构建回执与全平台资格，不以原生测试代替。
+上一轮 Flutter Web JavaScript Release 因 Cap'n Proto 反射代码的64位schema ID无法精确表示为JavaScript数值而失败，历史记录见[故障报告](../reports/plugin-io-management-2026-09-20.md)。本轮生成器保留原生反射，并为Web提供精确十六进制／BigInt身份侧表；Web关闭可选int反射，不修改消息布局。UiEvent三个UInt64字段使用两个UInt32传递，真实Chrome边界向量和完整Web JS Release均通过，见[修复报告](../reports/credential-admin-web-2026-09-20.md)。这不代表所有运行期UInt64路径、浏览器存储或Web插件IO均已验收。
+
+## 主应用凭据管理进展（2026-09-20）
+
+原Store v20在同一读事务进行有界分页和快照核对；主应用Windows凭据面板完成新建、替换、停用和进程重启恢复，仅返回元数据。原DPAPI保护、原Store CAS和撤权协调器继续是唯一权威；保存凭据不会启用插件或创建活动网络授权。[报告](../reports/credential-admin-web-2026-09-20.md)记录真实Flutter→Rust、缓冲区清理、页外损坏、混合记录空页及Web修复证据。IO-E2仍为部分完成，新SDK未冻结。
+
+下一编码顺序：原Storage/审计Session/Pool的作业所有权接线 → 原端点批准管理与短响应start/poll/read/cancel → 真实主应用HTTP链路、撤销与重启核对。文件系统后端可沿固定broker边界独立推进；凭据期限不代替活动授权，Unknown结果不能自动重发。

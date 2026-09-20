@@ -89,7 +89,7 @@ fn run() -> morrow_workbench_host::Result<()> {
         if size > 128 * 1024 {
             return Err("incoming frame budget".into());
         }
-        let mut bytes = vec![0; size];
+        let mut bytes = zeroize::Zeroizing::new(vec![0; size]);
         input.read_exact(&mut bytes)?;
         let response = morrow_workbench_host::protocol::respond(&mut host, &bytes)?;
         output.write_all(&(response.len() as u32).to_le_bytes())?;

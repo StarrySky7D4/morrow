@@ -7,13 +7,14 @@ edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [dependencies]
+zeroize = "=1.9.0"
 semver = "=1.0.28"
 getrandom = "=0.4.3"
 prost = "=0.14.4"
 morrow-core = {path = "../core"}
 morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
 morrow-workbench-plugin = {path = "../plugins/workbench"}
-capnp = "=0.24.1"
+capnp = { version = "=0.24.1", features = ["unaligned"] }
 sha2 = "=0.10.9"
 [build-dependencies]
 prost-build = "=0.14.4"

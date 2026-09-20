@@ -208,5 +208,59 @@
   "pluginsIoHttpListen": "监听网络连接",
   "pluginsIoHttpPublish": "对外提供 API 服务",
   "pluginsIoCredentialUse": "使用已批准的凭据",
-  "pluginsIoWebSocketConnect": "连接 WebSocket 服务"
+  "pluginsIoWebSocketConnect": "连接 WebSocket 服务",
+  "pluginsCredentialTitle": "API 凭据",
+  "pluginsCredentialDetails": "安全保存已批准 API 连接使用的凭据。保存凭据不会批准服务器或启用插件，已保存的秘密内容无法查看。",
+  "pluginsCredentialReading": "正在读取凭据…",
+  "pluginsCredentialEmpty": "尚未保存凭据",
+  "pluginsCredentialNew": "添加凭据",
+  "pluginsCredentialRefresh": "刷新状态",
+  "pluginsCredentialReplace": "替换秘密内容",
+  "pluginsCredentialDisable": "停用",
+  "pluginsCredentialDisabled": "已停用",
+  "pluginsCredentialStored": "已保存",
+  "pluginsCredentialExpired": "已过期",
+  "pluginsCredentialExpires": "到期时间：{date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "凭据 {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "新建凭据",
+  "pluginsCredentialReplaceTitle": "替换凭据 {reference}",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "请求头名称",
+  "pluginsCredentialSecret": "新的秘密内容",
+  "pluginsCredentialLifetime": "有效期",
+  "pluginsCredentialDays": "{days} 天",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "保存凭据",
+  "pluginsCredentialCancel": "关闭表单",
+  "pluginsCredentialInvalid": "请检查请求头名称并输入新的秘密内容。秘密输入框已清空。",
+  "pluginsCredentialUnknown": "暂时无法确认结果，秘密输入框已清空。请先刷新状态，再进行修改。",
+  "pluginsCredentialLoadFailed": "无法完整读取一致的凭据状态，请刷新后重试。",
+  "pluginsCredentialSaved": "凭据已保存，API 连接仍需单独批准。",
+  "pluginsCredentialDisabledDone": "凭据已停用。"
 }

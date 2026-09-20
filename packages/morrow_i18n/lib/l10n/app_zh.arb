@@ -156,6 +156,34 @@
   "@pluginsBuiltinInput": {
     "description": "First-party workbench text tool display only"
   },
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsDeclared": {
     "placeholders": {
       "permissions": {
@@ -1001,6 +1029,32 @@
   "pluginsConnectionLost": "连接已中断，请重新打开此插件界面。",
   "pluginsContentPermissions": "内容权限",
   "pluginsCreate": "新建内容",
+  "pluginsCredentialCancel": "关闭表单",
+  "pluginsCredentialCreateTitle": "新建凭据",
+  "pluginsCredentialDays": "{days} 天",
+  "pluginsCredentialDetails": "安全保存已批准 API 连接使用的凭据。保存凭据不会批准服务器或启用插件，已保存的秘密内容无法查看。",
+  "pluginsCredentialDisable": "停用",
+  "pluginsCredentialDisabled": "已停用",
+  "pluginsCredentialDisabledDone": "凭据已停用。",
+  "pluginsCredentialEmpty": "尚未保存凭据",
+  "pluginsCredentialExpired": "已过期",
+  "pluginsCredentialExpires": "到期时间：{date}",
+  "pluginsCredentialHeader": "请求头名称",
+  "pluginsCredentialInvalid": "请检查请求头名称并输入新的秘密内容。秘密输入框已清空。",
+  "pluginsCredentialLifetime": "有效期",
+  "pluginsCredentialLoadFailed": "无法完整读取一致的凭据状态，请刷新后重试。",
+  "pluginsCredentialNew": "添加凭据",
+  "pluginsCredentialReading": "正在读取凭据…",
+  "pluginsCredentialReference": "凭据 {reference}",
+  "pluginsCredentialRefresh": "刷新状态",
+  "pluginsCredentialReplace": "替换秘密内容",
+  "pluginsCredentialReplaceTitle": "替换凭据 {reference}",
+  "pluginsCredentialSave": "保存凭据",
+  "pluginsCredentialSaved": "凭据已保存，API 连接仍需单独批准。",
+  "pluginsCredentialSecret": "新的秘密内容",
+  "pluginsCredentialStored": "已保存",
+  "pluginsCredentialTitle": "API 凭据",
+  "pluginsCredentialUnknown": "暂时无法确认结果，秘密输入框已清空。请先刷新状态，再进行修改。",
   "pluginsDeclared": "声明权限：{permissions}",
   "pluginsDependenciesNotice": "声明了依赖，需要在宿主配置。本页不会批准依赖。",
   "pluginsDisable": "停用",

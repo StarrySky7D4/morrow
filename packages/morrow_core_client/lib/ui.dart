@@ -10,6 +10,7 @@ import 'ui_models.dart';
 export 'ui_models.dart';
 
 const maxUiBytes = 65536;
+final _lowUint32 = (BigInt.one << 32) - BigInt.one;
 final _maxUint64 = (BigInt.one << 64) - BigInt.one;
 Never _bad() => throw const FormatException('Invalid UI message');
 void _id(String s) {
@@ -28,6 +29,17 @@ void _text(String s, int max) {
 void _uint64(BigInt n) {
   if (n <= BigInt.zero || n > _maxUint64) _bad();
 }
+
+// Exact little-endian halves: JS int cannot carry the full UInt64 range.
+// These offsets are the unchanged generated Event fields (8, 16, 24).
+void _setUint64(StructBuilder value, int offset, BigInt number) {
+  value.setUint32Field(offset, (number & _lowUint32).toInt());
+  value.setUint32Field(offset + 4, (number >> 32).toInt());
+}
+
+BigInt _getUint64(StructReader value, int offset) =>
+    BigInt.from(value.getUint32Field(offset)) |
+    (BigInt.from(value.getUint32Field(offset + 4)) << 32);
 
 void _frame(Uint8List bytes) {
   if (bytes.length < 8 || bytes.length > maxUiBytes) _bad();
@@ -129,9 +141,9 @@ final class UiEvent {
     r.version = contract.uiProtocolVersion;
     r.schemaDigest = Uint8List.fromList(contract.uiDigest);
     r.view = view;
-    r.generation = generation.toSigned(64).toInt();
-    r.revision = revision.toSigned(64).toInt();
-    r.serial = serial.toSigned(64).toInt();
+    _setUint64(r, 8, generation);
+    _setUint64(r, 16, revision);
+    _setUint64(r, 24, serial);
     r.node = node;
     r.action = action;
     r.kind = wire.EventKind.values[kind.index];
@@ -147,9 +159,9 @@ final class UiEvent {
     _contract(r.version, r.schemaDigest);
     return UiEvent(
       view: r.view ?? '',
-      generation: BigInt.from(r.generation).toUnsigned(64),
-      revision: BigInt.from(r.revision).toUnsigned(64),
-      serial: BigInt.from(r.serial).toUnsigned(64),
+      generation: _getUint64(r, 8),
+      revision: _getUint64(r, 16),
+      serial: _getUint64(r, 24),
       node: r.node ?? '',
       action: r.action ?? '',
       kind: EventKind.values[(r.kind ?? _bad()).index],

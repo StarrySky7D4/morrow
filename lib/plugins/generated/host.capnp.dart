@@ -46,6 +46,9 @@ enum Action {
   readUiLocale,
   saveUiLocale,
   pluginApproveIo,
+  credentialPage,
+  credentialSave,
+  credentialDisable,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -102,6 +105,9 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'readUiLocale', codeOrder: 38, ordinal: 38),
     EnumerantSchemaInfo(name: 'saveUiLocale', codeOrder: 39, ordinal: 39),
     EnumerantSchemaInfo(name: 'pluginApproveIo', codeOrder: 40, ordinal: 40),
+    EnumerantSchemaInfo(name: 'credentialPage', codeOrder: 41, ordinal: 41),
+    EnumerantSchemaInfo(name: 'credentialSave', codeOrder: 42, ordinal: 42),
+    EnumerantSchemaInfo(name: 'credentialDisable', codeOrder: 43, ordinal: 43),
   ],
 );
 
@@ -163,6 +169,18 @@ final class RequestReader extends StructReader {
   bool get catalogRevisionBound => getBoolField(256);
 
   ListReader<String?>? get approvedIoCapabilities => getTextListField(17);
+
+  Uint8List? get credentialReference => getDataField(18);
+
+  Uint8List? get credentialSnapshot => getDataField(19);
+
+  Uint8List? get credentialCursor => getDataField(20);
+
+  String? get credentialHeader => getTextField(21);
+
+  String? get credentialSecret => getTextField(22);
+
+  int get credentialDays => getUint32Field(36);
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -270,6 +288,30 @@ final class RequestBuilder extends StructBuilder {
   ListBuilder<String?> initApprovedIoCapabilities(int length) {
     return initTextListField(17, length);
   }
+
+  set credentialReference(Uint8List? v) {
+    setDataField(18, v);
+  }
+
+  set credentialSnapshot(Uint8List? v) {
+    setDataField(19, v);
+  }
+
+  set credentialCursor(Uint8List? v) {
+    setDataField(20, v);
+  }
+
+  set credentialHeader(String? v) {
+    setTextField(21, v);
+  }
+
+  set credentialSecret(String? v) {
+    setTextField(22, v);
+  }
+
+  set credentialDays(int v) {
+    setUint32Field(36, v);
+  }
 }
 
 final class _RequestFactory
@@ -279,7 +321,7 @@ final class _RequestFactory
   @override
   int get dataWords => 5;
   @override
-  int get ptrWords => 18;
+  int get ptrWords => 23;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -296,7 +338,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 5,
-  pointerWords: 18,
+  pointerWords: 23,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -498,6 +540,54 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'credentialReference',
+      codeOrder: 25,
+      body: SlotFieldSchemaInfo(
+        offset: 18,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialSnapshot',
+      codeOrder: 26,
+      body: SlotFieldSchemaInfo(
+        offset: 19,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialCursor',
+      codeOrder: 27,
+      body: SlotFieldSchemaInfo(
+        offset: 20,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialHeader',
+      codeOrder: 28,
+      body: SlotFieldSchemaInfo(
+        offset: 21,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialSecret',
+      codeOrder: 29,
+      body: SlotFieldSchemaInfo(
+        offset: 22,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialDays',
+      codeOrder: 30,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
   ],
 );
 
@@ -558,6 +648,15 @@ final class ResponseReader extends StructReader {
     12,
     (r) => PluginEntryReader(r, capabilities: capabilityTable),
   );
+
+  ListReader<CredentialInfoReader>? get credentials => getStructListFieldWith(
+    13,
+    (r) => CredentialInfoReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get credentialSnapshot => getDataField(14);
+
+  Uint8List? get credentialCursor => getDataField(15);
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -667,6 +766,24 @@ final class ResponseBuilder extends StructBuilder {
       11,
     );
   }
+
+  ListBuilder<CredentialInfoBuilder> initCredentials(int length) {
+    return initStructListFieldWith(
+      13,
+      length,
+      (r) => CredentialInfoBuilder(r),
+      4,
+      1,
+    );
+  }
+
+  set credentialSnapshot(Uint8List? v) {
+    setDataField(14, v);
+  }
+
+  set credentialCursor(Uint8List? v) {
+    setDataField(15, v);
+  }
 }
 
 final class _ResponseFactory
@@ -676,7 +793,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 13;
+  int get ptrWords => 16;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -693,7 +810,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 13,
+  pointerWords: 16,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -885,6 +1002,30 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 12,
         type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xe383b408b900ece2)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentials',
+      codeOrder: 24,
+      body: SlotFieldSchemaInfo(
+        offset: 13,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xd6240ef6d779aa99)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialSnapshot',
+      codeOrder: 25,
+      body: SlotFieldSchemaInfo(
+        offset: 14,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'credentialCursor',
+      codeOrder: 26,
+      body: SlotFieldSchemaInfo(
+        offset: 15,
+        type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
   ],
@@ -1927,3 +2068,119 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
 );
 
 final pluginEntryFactory = _PluginEntryFactory();
+
+final class CredentialInfoReader extends StructReader {
+  CredentialInfoReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = credentialInfoSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+
+  int get createdMs => getUint64Field(8);
+
+  int get expiresMs => getUint64Field(16);
+
+  bool get disabled => getBoolField(192);
+}
+
+final class CredentialInfoBuilder extends StructBuilder {
+  CredentialInfoBuilder(super.raw);
+
+  @override
+  CredentialInfoReader asReader() => CredentialInfoReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set createdMs(int v) {
+    setUint64Field(8, v);
+  }
+
+  set expiresMs(int v) {
+    setUint64Field(16, v);
+  }
+
+  set disabled(bool v) {
+    setBoolField(192, v);
+  }
+}
+
+final class _CredentialInfoFactory
+    extends StructFactory<CredentialInfoReader, CredentialInfoBuilder> {
+  @override
+  StructSchemaInfo get schema => credentialInfoSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 1;
+  @override
+  CredentialInfoReader fromRawReader(RawStructReader r) =>
+      CredentialInfoReader(r);
+  @override
+  CredentialInfoReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => CredentialInfoReader(r, capabilities: capabilities);
+  @override
+  CredentialInfoBuilder fromRawBuilder(RawStructBuilder r) =>
+      CredentialInfoBuilder(r);
+}
+
+const StructSchemaInfo credentialInfoSchema = StructSchemaInfo(
+  id: 0xd6240ef6d779aa99,
+  displayName: 'host.capnp:CredentialInfo',
+  shortName: 'CredentialInfo',
+  dataWords: 4,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'createdMs',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expiresMs',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disabled',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 192,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final credentialInfoFactory = _CredentialInfoFactory();

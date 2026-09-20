@@ -1898,6 +1898,162 @@ abstract class AppLocalizations {
   /// **'Create content'**
   String get pluginsCreate;
 
+  /// No description provided for @pluginsCredentialCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Close form'**
+  String get pluginsCredentialCancel;
+
+  /// No description provided for @pluginsCredentialCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New credential'**
+  String get pluginsCredentialCreateTitle;
+
+  /// No description provided for @pluginsCredentialDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day} other{{days} days}}'**
+  String pluginsCredentialDays(int days);
+
+  /// No description provided for @pluginsCredentialDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Store credentials securely for approved API connections. Saving a credential does not approve a server or enable a plugin. Saved secrets cannot be viewed.'**
+  String get pluginsCredentialDetails;
+
+  /// No description provided for @pluginsCredentialDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable'**
+  String get pluginsCredentialDisable;
+
+  /// No description provided for @pluginsCredentialDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get pluginsCredentialDisabled;
+
+  /// No description provided for @pluginsCredentialDisabledDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential disabled.'**
+  String get pluginsCredentialDisabledDone;
+
+  /// No description provided for @pluginsCredentialEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved credentials'**
+  String get pluginsCredentialEmpty;
+
+  /// No description provided for @pluginsCredentialExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get pluginsCredentialExpired;
+
+  /// No description provided for @pluginsCredentialExpires.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires: {date}'**
+  String pluginsCredentialExpires(String date);
+
+  /// No description provided for @pluginsCredentialHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Header name'**
+  String get pluginsCredentialHeader;
+
+  /// No description provided for @pluginsCredentialInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the header name and enter a new secret value. The secret field has been cleared.'**
+  String get pluginsCredentialInvalid;
+
+  /// No description provided for @pluginsCredentialLifetime.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid for'**
+  String get pluginsCredentialLifetime;
+
+  /// No description provided for @pluginsCredentialLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials could not be read consistently. Refresh status to try again.'**
+  String get pluginsCredentialLoadFailed;
+
+  /// No description provided for @pluginsCredentialNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add credential'**
+  String get pluginsCredentialNew;
+
+  /// No description provided for @pluginsCredentialReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading credentials…'**
+  String get pluginsCredentialReading;
+
+  /// No description provided for @pluginsCredentialReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential {reference}'**
+  String pluginsCredentialReference(String reference);
+
+  /// No description provided for @pluginsCredentialRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh status'**
+  String get pluginsCredentialRefresh;
+
+  /// No description provided for @pluginsCredentialReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace secret'**
+  String get pluginsCredentialReplace;
+
+  /// No description provided for @pluginsCredentialReplaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace credential {reference}'**
+  String pluginsCredentialReplaceTitle(String reference);
+
+  /// No description provided for @pluginsCredentialSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save credential'**
+  String get pluginsCredentialSave;
+
+  /// No description provided for @pluginsCredentialSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Credential saved. API connections still need separate approval.'**
+  String get pluginsCredentialSaved;
+
+  /// No description provided for @pluginsCredentialSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'New secret value'**
+  String get pluginsCredentialSecret;
+
+  /// No description provided for @pluginsCredentialStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get pluginsCredentialStored;
+
+  /// No description provided for @pluginsCredentialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'API credentials'**
+  String get pluginsCredentialTitle;
+
+  /// No description provided for @pluginsCredentialUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The result could not be confirmed. The secret field has been cleared. Refresh status before making another change.'**
+  String get pluginsCredentialUnknown;
+
   /// No description provided for @pluginsDeclared.
   ///
   /// In en, this message translates to:
