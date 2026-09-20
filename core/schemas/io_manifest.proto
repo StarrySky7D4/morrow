@@ -21,6 +21,12 @@ message IoBudget {
   uint64 max_job_bytes = 4;
   uint64 max_duration_ms = 5;
 }
+// Experimental finite service lifetime ceiling. This declares no live permission,
+// and does not extend the per-request IoBudget.max_duration_ms ceiling.
+message ServiceRunProfile {
+  uint32 schema_version = 1;
+  uint64 max_duration_ms = 2;
+}
 message IoDeclaration {
   uint32 schema_version = 1;
   uint32 io_version = 2;
@@ -31,4 +37,6 @@ message IoDeclaration {
   IoBudget budget = 6;
   // Optional inbound service contract; requires HTTP_PUBLISH when present.
   bytes service_schema_sha256 = 7;
+  // Requires service-run-v1, HTTP_LISTEN, HTTP_PUBLISH and the service schema pin.
+  ServiceRunProfile service_run = 8;
 }

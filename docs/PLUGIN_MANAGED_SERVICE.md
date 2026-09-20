@@ -53,7 +53,7 @@ ServiceGrant／ListenerGrant 撤权以及 Manager 停用、批准变更、移除
 
 `request_stop` 仅请求取消；`try_reclaim` 在线程真实退出后归还一次完整 `WorkerExit<O>`，分别保留原拥有者、执行、断连和维护结果。`shutdown_owned` 等待实际回收，不设置固定成功超时；取消该等待后，调用方保留的 ServiceHost 仍可继续回收。调用方必须持有它直到回收完成，最后一个句柄 Drop 只发停止信号。旧 `ServiceHost<HostRuntime>::shutdown` 保留五秒有界等待语义；超时不是线程已退出的证明。监听停止和 worker 回收是两个独立步骤。
 
-真实 Windows Storage 的 HTTP 执行、原库保护锁、审计身份及封存故障恢复见 [所有者回收验证](../reports/service-owner-2026-09-20.md)。这不改变旧 IO v1 的最长30秒绑定限制，也未让主应用运行服务；后续见 [常驻与调度方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。
+真实 Windows Storage 的 HTTP 执行、原库保护锁、审计身份及封存故障恢复见 [所有者回收验证](../reports/service-owner-2026-09-20.md)。旧 IO v1 保留最长30秒绑定限制。新 `service-run-v1` 可通过显式 `Manager::bind_service_run` 签发一次有限长租约，每请求期限不变；验证见[有限运行报告](../reports/service-run-2026-09-20.md)。尚未让主应用运行服务；后续见 [常驻与调度方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)。
 
 ## 仍未完成与验证入口
 

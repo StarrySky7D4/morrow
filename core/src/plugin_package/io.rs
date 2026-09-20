@@ -15,6 +15,10 @@ pub const MAX_JOBS: u32 = 4;
 pub const MAX_BYTES: u64 = 64 * 1024 * 1024;
 pub const MAX_JOB_BYTES: u64 = 16 * 1024 * 1024;
 pub const MAX_DURATION_MS: u64 = 30_000;
+pub const SERVICE_RUN_FEATURE: &str = "service-run-v1";
+pub const SERVICE_RUN_VERSION: u32 = 1;
+/// Experimental finite service lifetime ceiling, not a live authorization or request timeout.
+pub const MAX_SERVICE_RUN_DURATION_MS: u64 = 3_600_000;
 
 /// Names and numbers belong only to the experimental IO profile.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -58,6 +62,7 @@ pub fn schema_digest() -> [u8; 32] {
 /// Convenience metadata only. Package validation is still required; this grants nothing.
 pub fn declaration(capabilities: Vec<IoCapability>, handlers: Vec<String>) -> proto::IoDeclaration {
     proto::IoDeclaration {
+        service_run: None,
         service_schema_sha256: Vec::new(),
         schema_version: DECLARATION_VERSION,
         io_version: VERSION,
@@ -99,6 +104,22 @@ pub(crate) fn validate(value: &proto::IoDeclaration) -> Result<BTreeSet<IoCapabi
         }
         if !capabilities.contains(&IoCapability::HttpPublish) {
             return Err(Error::Invalid("service requires HTTP publish"));
+        }
+    }
+    if let Some(profile) = &value.service_run {
+        if profile.schema_version != SERVICE_RUN_VERSION {
+            return Err(Error::UnsupportedVersion);
+        }
+        if profile.max_duration_ms == 0 || profile.max_duration_ms > MAX_SERVICE_RUN_DURATION_MS {
+            return Err(Error::Limit);
+        }
+        if !capabilities.contains(&IoCapability::HttpListen)
+            || !capabilities.contains(&IoCapability::HttpPublish)
+            || value.service_schema_sha256.is_empty()
+        {
+            return Err(Error::Invalid(
+                "service run requires listen, publish and service schema",
+            ));
         }
     }
     let mut handlers = BTreeSet::new();

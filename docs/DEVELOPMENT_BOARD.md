@@ -129,3 +129,9 @@
 独立前置ServiceHost完整所有权适配已落地：泛型HostOwner、构造失败归还原worker、非阻塞停止请求、真实join后返回完整WorkerExit，以及可取消等待但不丢失owner的shutdown_owned。原HostRuntime构造和bind空路由调用保持源码兼容。真实Windows原Storage上的HTTP执行、端口冲突和封存失败修复已验；监听关闭与worker归还分别检查，见[所有权报告](../reports/service-owner-2026-09-20.md)。
 
 后续按[常驻运行方案](PLUGIN_SERVICE_RUNTIME_PLAN.md)实施：显式版本化运行租约与每请求预算 → 包含原Pool/Manager/内容状态的WorkbenchState和统一有界调度 → 长耗时等待可暂停与工作台共存 → 主应用启动/停止及完整故障用户路径。本轮没有放宽30秒旧声明，也没有新监听按钮；常驻期间内容Busy仍未解决，不能标记常驻API节点完成。
+
+## 服务有限运行租约进展（2026-09-20）
+
+`service-run-v1`独立版本化声明与可信宿主 `bind_service_run`已实现：有限时长上限暂为一小时，每请求仍受原IO短期限；原实例一次签发、真实时钟截止、回退/过期失效及原累计字节账本保持。真实同一监听器31秒后执行第二个不同请求，旧30秒绑定不再是新profile的限制；旧包行为不变。详见[有限运行报告](../reports/service-run-2026-09-20.md)。
+
+这是常驻节点的前置原型，主应用尚无启动入口。一小时稳定性、累计作业总额、显式续租与完整WorkbenchState调度仍未完成；不能用原型替代服务期间内容界面的可用性验收。下一步继续完整工作台所有权和调度，同时收敛版本化运行预算与续租；IO-D2b/IO-E2整体保持进行中。

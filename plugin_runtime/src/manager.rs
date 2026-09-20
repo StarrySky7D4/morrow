@@ -486,6 +486,60 @@ impl Manager {
         expires: u64,
         now: u64,
     ) -> Result<IoBinding> {
+        self.bind_io_kind(
+            host,
+            instance,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+            false,
+        )
+    }
+    /// Explicit trusted-host approval of one fixed service run on this exact instance.
+    /// The package profile is only a ceiling. This does not grant a listener address,
+    /// remote principal, content access or outbound endpoint, nor restore a persisted approval.
+    /// Rebinding/renewal on the same instance is rejected even after all handles are dropped.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_service_run(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+    ) -> Result<IoBinding> {
+        if !requested.contains(&IoCapability::HttpListen)
+            || !requested.contains(&IoCapability::HttpPublish)
+        {
+            return Err(Error::Invalid("service run requires listen and publish").into());
+        }
+        self.bind_io_kind(
+            host,
+            instance,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+            true,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn bind_io_kind(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+        service_run: bool,
+    ) -> Result<IoBinding> {
         let package = instance.package.package();
         let selection = self.checked_selection(
             &package.manifest().package_id,
@@ -502,8 +556,16 @@ impl Manager {
         {
             return Err(Error::Invalid("unapproved IO binding").into());
         }
-        IoBinding::new(self, host, instance, requested.clone(), expires, now)
-            .map_err(ManagerError::Io)
+        IoBinding::new(
+            self,
+            host,
+            instance,
+            requested.clone(),
+            expires,
+            now,
+            service_run,
+        )
+        .map_err(ManagerError::Io)
     }
     pub fn set_enabled(
         &mut self,
@@ -639,11 +701,14 @@ impl Manager {
         };
         let control = Arc::new(Control {
             binding: connection.binding(),
-            io: package
-                .package()
-                .io_declaration()
-                .and_then(|d| d.budget.as_ref())
-                .map(|b| Arc::new(IoContext::new(b))),
+            io: package.package().io_declaration().and_then(|d| {
+                d.budget.as_ref().map(|b| {
+                    Arc::new(IoContext::new(
+                        b,
+                        d.service_run.as_ref().map(|run| run.max_duration_ms),
+                    ))
+                })
+            }),
             revocation,
             cancel: Cancellation::default(),
         });

@@ -14,6 +14,7 @@ use morrow_core::{
 use std::{
     collections::BTreeSet,
     sync::{Arc, Mutex, Weak},
+    time::{Duration, Instant},
 };
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -42,16 +43,23 @@ pub struct Usage {
 struct State {
     usage: Usage,
     last_tick: u64,
+    service_run: Option<ServiceRun>,
+}
+struct ServiceRun {
+    deadline: Instant,
+    failed: Option<Error>,
 }
 /// One context per actual managed instance, owned by its Control, never by a bind request.
 pub(crate) struct IoContext {
     budget: IoBudget,
+    max_run_ms: Option<u64>,
     state: Mutex<State>,
 }
 impl IoContext {
-    pub(crate) fn new(budget: &IoBudget) -> Self {
+    pub(crate) fn new(budget: &IoBudget, max_run_ms: Option<u64>) -> Self {
         Self {
             budget: *budget,
+            max_run_ms,
             state: Mutex::new(State::default()),
         }
     }
@@ -69,6 +77,7 @@ pub struct IoBinding {
     expires: u64,
 }
 impl IoBinding {
+    #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         manager: &Manager,
         host: &HostRuntime,
@@ -76,6 +85,7 @@ impl IoBinding {
         capabilities: BTreeSet<IoCapability>,
         expires: u64,
         now: u64,
+        service_run: bool,
     ) -> Result<Self> {
         let control = instance.io_control();
         let context = control.io.as_ref().ok_or(Error::Denied)?.clone();
@@ -83,7 +93,11 @@ impl IoBinding {
             .checked_sub(now)
             .filter(|v| *v > 0)
             .ok_or(Error::Expired)?;
-        if duration > context.budget.max_duration_ms {
+        // A service profile cannot escape its one-shot lifetime through the legacy API.
+        if service_run != context.max_run_ms.is_some() {
+            return Err(Error::Denied);
+        }
+        if duration > context.max_run_ms.unwrap_or(context.budget.max_duration_ms) {
             return Err(Error::Limit);
         }
         let mut state = context.state.lock().map_err(|_| Error::Denied)?;
@@ -92,6 +106,18 @@ impl IoBinding {
         }
         if !control.active() {
             return Err(Error::Denied);
+        }
+        if service_run {
+            if state.service_run.is_some() {
+                return Err(Error::Denied);
+            }
+            let deadline = Instant::now()
+                .checked_add(Duration::from_millis(duration))
+                .ok_or(Error::Limit)?;
+            state.service_run = Some(ServiceRun {
+                deadline,
+                failed: None,
+            });
         }
         state.last_tick = now;
         drop(state);
@@ -175,16 +201,34 @@ impl IoBinding {
         }
         Ok(())
     }
-    fn validate_time(&self, state: &State, now: u64) -> Result<()> {
-        if now < state.last_tick {
-            return Err(Error::Clock);
-        }
-        if now >= self.expires {
-            return Err(Error::Expired);
+    fn validate_time(&self, state: &mut State, now: u64) -> Result<()> {
+        if let Some(run) = &mut state.service_run {
+            if let Some(error) = run.failed {
+                return Err(error);
+            }
+            let error = if now < state.last_tick {
+                Some(Error::Clock)
+            } else if now >= self.expires || Instant::now() >= run.deadline {
+                Some(Error::Expired)
+            } else {
+                None
+            };
+            if let Some(error) = error {
+                run.failed = Some(error);
+                return Err(error);
+            }
+        } else {
+            if now < state.last_tick {
+                return Err(Error::Clock);
+            }
+            if now >= self.expires {
+                return Err(Error::Expired);
+            }
         }
         Ok(())
     }
     /// Validate before examining another resource, without advancing shared accounting.
+    /// An authenticated service-run clock failure permanently invalidates the run.
     pub(crate) fn preflight(
         &self,
         manager: &Manager,
@@ -193,8 +237,8 @@ impl IoBinding {
         now: u64,
     ) -> Result<()> {
         self.validate_identity(manager, host, instance)?;
-        let state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)
+        let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
+        self.validate_time(&mut state, now)
     }
     pub(crate) fn preflight_capability(
         &self,
@@ -225,7 +269,7 @@ impl IoBinding {
             return Err(Error::Denied);
         }
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)?;
+        self.validate_time(&mut state, now)?;
         if !active() {
             return Err(Error::Denied);
         }
@@ -242,7 +286,7 @@ impl IoBinding {
     ) -> Result<()> {
         self.validate_identity(manager, host, instance)?;
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)?;
+        self.validate_time(&mut state, now)?;
         if !self.control.upgrade().is_some_and(|c| c.active()) {
             return Err(Error::Denied);
         }
@@ -269,7 +313,7 @@ impl IoBinding {
             return Err(Error::Denied);
         }
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)?;
+        self.validate_time(&mut state, now)?;
         let next = Usage {
             resources: state
                 .usage
@@ -314,7 +358,7 @@ impl IoBinding {
             return Err(Error::Denied);
         }
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)?;
+        self.validate_time(&mut state, now)?;
         let resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
         if resources > self.context.budget.max_resources {
             return Err(Error::Limit);
@@ -336,10 +380,10 @@ impl IoBinding {
         now: u64,
     ) -> Result<IoJobLease> {
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
-        self.validate_time(&state, now)?;
         if self.manager.upgrade().is_none() || !self.control.upgrade().is_some_and(|c| c.active()) {
             return Err(Error::Denied);
         }
+        self.validate_time(&mut state, now)?;
         let budget = &self.context.budget;
         let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
         if limit == 0
@@ -361,6 +405,12 @@ impl IoBinding {
     }
     pub(crate) fn reclaimable(&self, now: u64) -> bool {
         now >= self.expires
+            || self.context.state.lock().map_or(true, |state| {
+                state
+                    .service_run
+                    .as_ref()
+                    .is_some_and(|run| run.failed.is_some() || Instant::now() >= run.deadline)
+            })
             || self.manager.upgrade().is_none()
             || !self.control.upgrade().is_some_and(|c| c.active())
     }
@@ -536,7 +586,7 @@ impl IoJobLease {
             .state
             .lock()
             .map_err(|_| Error::Denied)?;
-        self.binding.validate_time(&state, now)?;
+        self.binding.validate_time(&mut state, now)?;
         let next_job = job
             .checked_add(command.response_limit)
             .ok_or(Error::Limit)?;
@@ -580,7 +630,7 @@ impl IoJobLease {
             .state
             .lock()
             .map_err(|_| Error::Denied)?;
-        self.binding.validate_time(&state, now)?;
+        self.binding.validate_time(&mut state, now)?;
         if self.binding.manager.upgrade().is_none()
             || !self.binding.control.upgrade().is_some_and(|c| c.active())
         {
