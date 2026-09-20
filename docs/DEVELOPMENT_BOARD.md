@@ -153,3 +153,9 @@
 原生执行者已增加独立8项宿主命令保留，覆盖排队、执行和Ready未读；取消后的未知结果、原时钟复验与两条队列轮转都有专项。`ManagedHostOwner`允许原Manager随整个拥有者移动，失败仍归还原对象。真实Windows组合拥有者在同一HTTP监听期间保留Storage/Pool/Manager，查询原Store已执行记录并完整回收，见[验证报告](../reports/owner-commands-2026-09-20.md)。这是调度前置，不是全部工作台内容方法已在线程中运行。
 
 下一步收敛为：内部Manager的续租/撤权管理命令 → 完整WorkbenchState提取及现有内容命令接入 → 长IO等待可暂停 → 主应用界面和故障路径。内部Manager目前不能供外部旧续租方法借用，这一缺口不能通过复制管理器解决。宿主handler与旧IO router仍同步执行，预留队列不等于长任务期间的响应时间保证；主应用内容Busy尚未消除，IO-D2b/IO-E2及完整SDK门槛保持未完成。
+
+## 内部Manager续租命令进展（2026-09-20）
+
+原Manager随owner移动后，现在可通过原执行者的类型化续租命令更新同一运行租约。该入口共用8项保留容量和外部续租的身份/修订/CAS规则；待完成、明确拒绝、成功和Unknown分别处理。取消与CAS串行化，已更新账本不因回执丢失回滚。Windows同一监听器以两个不同持久请求身份完成真实HTTP/Wasm执行，第二次在旧期限之后、更新期限之内，原Store两条Observed记录与保护身份均保留；详见[内部续租报告](../reports/owned-service-renewal-2026-09-20.md)。
+
+上一节的内部续租缺口已关闭。下一项：完整WorkbenchState提取（原Storage/Pool/Manager/内容会话/undo/附件导入暂存/capture）→ 内容与批准/撤权等应用管理命令接入 → 长IO等待可暂停 → 主应用启动/停止/恢复与真实用户路径。socket关闭、授权撤销与worker回收仍是独立步骤，应用关闭流程必须分别完成。主应用内容Busy、Unknown持久证据核对、完整文件系统和三语言IO SDK稳定门槛仍未完成；IO-D2b/IO-E2保持进行中。

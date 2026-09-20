@@ -43,7 +43,7 @@ pub const MAX_TOTAL_BYTES: u64 = 64 * 1024 * 1024;
 mod owner_commands;
 pub use owner_commands::{
     CommandOwner, MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS,
-    OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll,
+    OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
 };
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -543,6 +543,50 @@ struct Control {
     state: Mutex<State>,
 }
 impl Control {
+    // Both external-manager and original-owner commands use this single CAS
+    // path. `permitted` is private cancellation state, sampled under admission's
+    // lock so cancellation winning that lock cannot race into a later renewal.
+    #[allow(clippy::too_many_arguments)]
+    fn renew_service_run(
+        &self,
+        manager: &Manager,
+        grant: &ServiceGrant,
+        expected_registry_revision: u64,
+        expected_run_revision: u64,
+        expires: u64,
+        budget: ServiceRunBudget,
+        permitted: impl FnOnce() -> bool,
+    ) -> Result<ServiceRunSnapshot, BindingError> {
+        let authority = self.authority.as_ref().ok_or(BindingError::Denied)?;
+        // Foreign identities must not sample or poison the original clock.
+        authority
+            .binding
+            .validate_renewal_manager(manager, expected_registry_revision)?;
+        grant.validate_binding(&authority.binding)?;
+        let state = self.lock();
+        if state.phase != Phase::Running
+            || self.revocation.is_revoked()
+            || authority.cancellation.fault().is_some()
+            || !permitted()
+        {
+            return Err(BindingError::Denied);
+        }
+        // Preserve state -> ticket (above) -> clock -> IO context ordering.
+        // The original grant also rechecks configuration, publication and any
+        // listener authority before the same original run's mutation.
+        authority.with_time(|now| {
+            grant.check(now)?;
+            authority.binding.renew_service_run(
+                manager,
+                expected_registry_revision,
+                expected_run_revision,
+                expires,
+                budget,
+                now,
+            )
+        })
+    }
+
     fn lock(&self) -> std::sync::MutexGuard<'_, State> {
         self.state.lock().unwrap_or_else(|e| e.into_inner())
     }
@@ -892,36 +936,15 @@ impl<O: HostOwner> IoWorker<O> {
         expires: u64,
         budget: ServiceRunBudget,
     ) -> Result<ServiceRunSnapshot, BindingError> {
-        let authority = self
-            .control
-            .authority
-            .as_ref()
-            .ok_or(BindingError::Denied)?;
-        // Reject a foreign identity before it can sample or poison our clock.
-        authority
-            .binding
-            .validate_renewal_manager(manager, expected_registry_revision)?;
-        grant.validate_binding(&authority.binding)?;
-        let state = self.control.lock();
-        if state.phase != Phase::Running
-            || self.control.revocation.is_revoked()
-            || authority.cancellation.fault().is_some()
-        {
-            return Err(BindingError::Denied);
-        }
-        // Keep the admission/stop lock until the original clock and context CAS
-        // have completed. No replacement binding, instance or clock is accepted.
-        authority.with_time(|now| {
-            grant.check(now)?;
-            authority.binding.renew_service_run(
-                manager,
-                expected_registry_revision,
-                expected_run_revision,
-                expires,
-                budget,
-                now,
-            )
-        })
+        self.control.renew_service_run(
+            manager,
+            grant,
+            expected_registry_revision,
+            expected_run_revision,
+            expires,
+            budget,
+            || true,
+        )
     }
 
     /// Original run ledger snapshot; reading diagnostics does not confer authority.

@@ -9,9 +9,9 @@ use morrow_core::{dispatch::HostRuntime, io::Header, service, service_record};
 use morrow_plugin_runtime::{
     io_binding::{self, ServiceRunBudget, ServiceRunSnapshot},
     io_jobs::{
-        BrokerRouter, CommandOwner, HostOwner, IoWorker, JobError, OwnerCommandError,
-        OwnerCommandHandle, Poll, ServicePersistenceStatus, ServiceUpdate, ServiceUpdateHandle,
-        WorkerExit,
+        BrokerRouter, CommandOwner, HostOwner, IoWorker, JobError, ManagedHostOwner,
+        OwnerCommandError, OwnerCommandHandle, Poll, ServicePersistenceStatus,
+        ServiceRunRenewalHandle, ServiceUpdate, ServiceUpdateHandle, WorkerExit,
     },
     manager::Manager,
     service_authority::ConfiguredService,
@@ -98,6 +98,30 @@ impl<O: CommandOwner> ServiceHost<O> {
             .lock()
             .map_err(|_| OwnerCommandError::Closed)?
             .submit_owner_command(input, max_reply_bytes)
+    }
+}
+impl<O: ManagedHostOwner> ServiceHost<O> {
+    /// Queue an explicit renewal against the Manager inside the original owner.
+    /// Read the typed result before treating admission as a successful update.
+    pub fn queue_service_run_renewal(
+        &self,
+        grant: ServiceGrant,
+        expected_registry_revision: u64,
+        expected_run_revision: u64,
+        expires: u64,
+        budget: ServiceRunBudget,
+    ) -> std::result::Result<ServiceRunRenewalHandle, OwnerCommandError> {
+        self.inner
+            .worker
+            .lock()
+            .map_err(|_| OwnerCommandError::Closed)?
+            .queue_service_run_renewal(
+                grant,
+                expected_registry_revision,
+                expected_run_revision,
+                expires,
+                budget,
+            )
     }
 }
 impl<O: HostOwner> ServiceHost<O> {

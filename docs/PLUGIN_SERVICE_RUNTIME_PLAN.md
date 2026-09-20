@@ -1,6 +1,6 @@
 # 常驻服务运行与工作台调度实施方案
 
-基线：`fce0e2bee1fcdde263380bded0437bd514c65887`；2026-09-20。本文区分已实现的拥有者适配、有限服务运行租约、累计任务/字节预算、原声明内续租和宿主命令预留通道，以及仍待实现的完整工作台状态与界面调度。主应用常驻节点尚未完成。
+基线：`d073f6153025502a1653ff0560727a4ee54e0864`；2026-09-20。本文区分已实现的拥有者适配、有限服务运行租约、累计任务/字节预算、原声明内续租、宿主命令预留通道和内部Manager续租，以及仍待实现的完整工作台状态与界面调度。主应用常驻节点尚未完成。
 
 ## 当前限制的具体来源
 
@@ -67,7 +67,9 @@ WorkerExit中的执行结果、原instance断连结果和维护/封存结果独�
 
 `ManagedHostOwner` 与 `spawn_managed_owner` 在移动之前借用拥有者内部的原Manager完成同一准入校验，解决借用Manager同时移动整个状态的问题；缺失/错误Manager仍返回原owner与原instance。Windows组合拥有者实测包含原Storage、Pool和Manager，可在同一真实HTTP监听期间查询原库执行事实并完整回收，见[宿主命令报告](../reports/owner-commands-2026-09-20.md)。组合测试不是主应用WorkbenchState，尚未移动undo、内容/UI会话或暂存。
 
-新的集成前置：内部Manager移动后，外部调用方无法提供旧续租入口所需的 `&Manager`。需要将续租、撤权与状态读取建成明确的内部管理命令，在原执行者上调用原身份/修订/额度校验；不得复制Manager、另开Registry或在handler中重入worker句柄。当前外部Manager续租接口保持原语义，但不能据此宣称内部Manager拥有者已完成续租接线。
+内部Manager续租现通过 `IoWorker<ManagedHostOwner>::queue_service_run_renewal` 和ServiceHost本地转发进入原8项保留队列，无需实现字节命令handler。执行时借用原owner内部Manager，与外部续租共用身份、当前批准、两级修订、首次期限和累计额度校验。取消在worker状态锁下与CAS串行化；开始后的取消/停止只压制回执为Unknown，不能回滚或据此自动重试。`ServiceRunRenewalHandle::read`区分待完成、明确的续租批准/拒绝和交付不确定；排入队列不是续租成功。见[内部续租报告](../reports/owned-service-renewal-2026-09-20.md)。
+
+该入口不增加guest ABI、HTTP管理路由或持久操作记录。诊断快照仍不产生授权。下一集成项是完整WorkbenchState提取及内容/批准/撤权等管理命令接线，不能以复制Manager、另开Registry或handler重入worker实现；现有撤销原语不等于全部应用管理命令已接入。
 
 第一步允许同一执行线程串行处理UI和服务命令，这是过渡阶段，不宣称即时响应。下一步需要将长耗时网络等待和guest续执行改为可暂停的作业阶段，使原宿主在等待期间能处理其他已授权命令；不能在仍持有 `&mut HostRuntime` 的同步guest/broker调用中重入工作台。保留命令顺序、operation身份及最终授权检查，不能为了交互响应复制Runtime或数据库。
 
