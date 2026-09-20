@@ -10,6 +10,7 @@ import 'endpoint_control.dart';
 import 'io_task_control.dart';
 import 'plugin_library.dart';
 import 'service_run_session.dart';
+import 'session_view_state.dart';
 
 String _hex(List<int> value) =>
     value.map((v) => v.toRadixString(16).padLeft(2, '0')).join();
@@ -313,7 +314,8 @@ class HttpTaskManager extends StatefulWidget {
   State<HttpTaskManager> createState() => _HttpTaskManagerState();
 }
 
-class _HttpTaskManagerState extends State<HttpTaskManager> {
+class _HttpTaskManagerState extends State<HttpTaskManager>
+    with SessionViewState<HttpTaskManager> {
   late _HttpSession _session;
   late String _directory;
   final _target = TextEditingController(text: '/');
@@ -337,7 +339,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
       );
   void _serviceChanged() {
     if (!mounted) return;
-    setState(() {});
+    markSessionViewDirty();
     _schedule();
     if (!_serviceOwnsTask) {
       if (_session.busy) {
@@ -382,7 +384,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager> {
 
   void _changed() {
     if (!mounted) return;
-    setState(() {});
+    markSessionViewDirty();
     _schedule();
     if (_refreshOnIdle && !_session.busy) {
       _refreshOnIdle = false;

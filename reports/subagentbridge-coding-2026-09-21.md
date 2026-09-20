@@ -11,3 +11,5 @@ GLM 返回执行成功，但其候选在显式归档后错误地期望旧提交�
 验证：`service_run_session_test.dart` 17 项通过，限定 Flutter 静态分析通过；日志分别为 `build/subagentbridge-unknown-session-test.log` 和 `build/subagentbridge-unknown-session-analyze.log`。只增加测试，没有生产代码改动，没有重跑之前的 162 项组合或 Windows 构建，不把历史测试数与本次重复累计。
 
 本次服务记录为单请求，记账输入 553、输出 422 tokens；这是插件记录，不是整体会话节省量或最终供应商账单。后续优先单模型单任务，只发送相关接口/片段及验收条件；有具体缺陷再反馈一次，不默认双模型重复实现。失败或 Unknown 不自动重放。新 IO SDK、真实窗口、真实丢回执及封存恢复等原验收门槛不因辅助编码接入而完成。
+
+后续Windows窗口集成轮继续使用GLM max两次，分别提供测试辅助候选与异步目录刷新修补候选；主代理纠正编译/等待/重试问题并独立补回归。最终93项相关回归、1项Windows完整应用集成、静态分析与Release构建通过。两个任务ID、记账及边界见[窗口集成报告](service-window-integration-2026-09-21.md)。未直接应用未经验证的返回代码，未向模型开放提交、推送或生产资料库。

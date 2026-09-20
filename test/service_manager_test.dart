@@ -34,6 +34,7 @@ Widget host(
   ServiceFakeBackend backend, {
   String locale = 'en',
   int revision = 1,
+  int panels = 1,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -42,14 +43,20 @@ Widget host(
     body: SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: ServiceManager(
-          backend: backend,
-          plugins: [servicePlugin()],
-          registryRevision: BigInt.from(revision),
-          ink: Colors.black,
-          muted: Colors.grey,
-          line: Colors.grey,
-          radius: BorderRadius.circular(12),
+        child: Column(
+          children: [
+            for (var i = 0; i < panels; i++)
+              ServiceManager(
+                key: ValueKey('panel-$i'),
+                backend: backend,
+                plugins: [servicePlugin()],
+                registryRevision: BigInt.from(revision),
+                ink: Colors.black,
+                muted: Colors.grey,
+                line: Colors.grey,
+                radius: BorderRadius.circular(12),
+              ),
+          ],
         ),
       ),
     ),
@@ -72,6 +79,24 @@ OutlinedButton button(WidgetTester tester, String key) =>
     tester.widget(find.byKey(ValueKey(key)));
 
 void main() {
+  testWidgets('mounting a sibling panel never rebuilds peers during build', (
+    tester,
+  ) async {
+    final backend = ServiceFakeBackend();
+    await tester.pumpWidget(host(backend));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(host(backend, panels: 2));
+    await tester.pumpAndSettle();
+    expect(find.byType(ServiceManager), findsNWidgets(2));
+    expect(tester.takeException(), isNull);
+    expect(ServiceSession.forBackend(backend).trusted, isTrue);
+    expect(backend.writes, 0);
+    await tester.pumpWidget(host(backend));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+
   testWidgets(
     'pending and failed clipboard copy does not duplicate or retain token',
     (tester) async {

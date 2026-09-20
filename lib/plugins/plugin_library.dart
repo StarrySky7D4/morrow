@@ -705,195 +705,200 @@ class _PluginLibraryState extends State<PluginLibrary> {
   );
   Widget _entry(PluginLibraryEntry entry) {
     final usable = _confirmed && entry.available && entry.enabled;
-    return ExpansionTile(
-      key: ValueKey('plugin-entry-${entry.id}'),
-      tilePadding: EdgeInsets.zero,
-      childrenPadding: const EdgeInsets.only(bottom: 12),
-      title: Text(
-        entry.name,
-        style: TextStyle(color: widget.ink, fontSize: 13),
-      ),
-      subtitle: Text(
-        entry.builtin
-            ? L10n.of(context).pluginsBuiltin
-            : entry.enabled
-            ? L10n.of(context).pluginsEnabled
-            : L10n.of(context).pluginsDisabled,
-        style: TextStyle(color: widget.muted, fontSize: 11),
-      ),
-      children: [
-        _facts(entry),
-        if (entry.builtin)
-          _note(L10n.of(context).pluginsManageAbove)
-        else ...[
-          if (entry.declaredIo.isNotEmpty || entry.approvedIo.isNotEmpty)
-            _ioPermissions(entry),
-          if (entry.declared.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _note(L10n.of(context).pluginsContentPermissions),
-          ],
-          ...entry.declared.map(
-            (cap) => CheckboxListTile(
-              key: ValueKey('plugin-cap-${entry.id}-$cap'),
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              title: Text(
-                _capability(cap),
-                style: TextStyle(color: widget.ink, fontSize: 12),
-              ),
-              value: _approvals[entry.id]?.contains(cap) ?? false,
-              onChanged: _busy || !_confirmed
-                  ? null
-                  : (checked) => setState(() {
-                      final selected = _approvals.putIfAbsent(
-                        entry.id,
-                        () => {},
-                      );
-                      checked == true
-                          ? selected.add(cap)
-                          : selected.remove(cap);
-                    }),
-            ),
-          ),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              _button(
-                entry.enabled
-                    ? L10n.of(context).pluginsSavePermissions
-                    : L10n.of(context).pluginsApproveEnable,
-                'plugin-approve-${entry.id}',
-                !_confirmed || !entry.available
-                    ? null
-                    : () => _configure(entry, true),
-                icon: Icons.check_circle_outline,
-              ),
-              if (entry.enabled)
-                _button(
-                  L10n.of(context).pluginsDisable,
-                  'plugin-disable-${entry.id}',
-                  !_confirmed ? null : () => _configure(entry, false),
-                  icon: Icons.pause_circle_outline,
-                ),
-              _button(
-                L10n.of(context).pluginsUninstallKeepContent,
-                'plugin-remove-${entry.id}',
-                !_confirmed ? null : () => _remove(entry),
-                icon: Icons.remove_circle_outline,
-              ),
-              if (_transforms(entry).isNotEmpty)
-                _button(
-                  L10n.of(context).pluginsUseTransform,
-                  'plugin-transform-${entry.id}',
-                  !usable ? null : () => _selectTool(entry),
-                  icon: Icons.auto_fix_high_outlined,
-                ),
-              if (_standardUi(entry))
-                _button(
-                  _formId == entry.id
-                      ? L10n.of(context).pluginsCloseView
-                      : L10n.of(context).pluginsOpenView,
-                  'plugin-ui-${entry.id}',
-                  !usable
-                      ? null
-                      : () {
-                          if (_formId == entry.id) {
-                            unawaited(
-                              _guard(
-                                (_, epoch) => _closeForm(epoch),
-                                (l) => l.pluginsCloseUnknown,
-                              ),
-                            );
-                          } else {
-                            unawaited(_openForm(entry));
-                          }
-                        },
-                  icon: Icons.view_quilt_outlined,
-                ),
+    // Keep ephemeral expansion/form state out of the settings scroll bucket.
+    // Unkeyed descendant text fields must not read an expansion boolean either.
+    return PageStorage(
+      bucket: PageStorageBucket(),
+      child: ExpansionTile(
+        key: ValueKey('plugin-entry-${entry.id}'),
+        tilePadding: EdgeInsets.zero,
+        childrenPadding: const EdgeInsets.only(bottom: 12),
+        title: Text(
+          entry.name,
+          style: TextStyle(color: widget.ink, fontSize: 13),
+        ),
+        subtitle: Text(
+          entry.builtin
+              ? L10n.of(context).pluginsBuiltin
+              : entry.enabled
+              ? L10n.of(context).pluginsEnabled
+              : L10n.of(context).pluginsDisabled,
+          style: TextStyle(color: widget.muted, fontSize: 11),
+        ),
+        children: [
+          _facts(entry),
+          if (entry.builtin)
+            _note(L10n.of(context).pluginsManageAbove)
+          else ...[
+            if (entry.declaredIo.isNotEmpty || entry.approvedIo.isNotEmpty)
+              _ioPermissions(entry),
+            if (entry.declared.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _note(L10n.of(context).pluginsContentPermissions),
             ],
-          ),
-          if (_toolId == entry.id) ...[
-            const SizedBox(height: 12),
-            DropdownButton<PluginTransformHandler>(
-              key: const ValueKey('plugin-handler'),
-              isExpanded: true,
-              value: _handler,
-              items: _transforms(entry)
-                  .map(
-                    (handler) => DropdownMenuItem(
-                      value: handler,
-                      child: Text(
-                        handler.name,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  )
-                  .toList(),
-              onChanged: _busy
-                  ? null
-                  : (handler) => setState(() {
-                      _handler = handler;
-                      _result = null;
-                      _fileBytes = null;
-                      _fileName = null;
-                    }),
-            ),
-            TextField(
-              key: const ValueKey('plugin-input'),
-              controller: _text,
-              enabled: !_busy && _fileBytes == null,
-              minLines: 2,
-              maxLines: 5,
-              decoration: InputDecoration(
-                labelText: L10n.of(context).pluginsTextInput,
+            ...entry.declared.map(
+              (cap) => CheckboxListTile(
+                key: ValueKey('plugin-cap-${entry.id}-$cap'),
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: Text(
+                  _capability(cap),
+                  style: TextStyle(color: widget.ink, fontSize: 12),
+                ),
+                value: _approvals[entry.id]?.contains(cap) ?? false,
+                onChanged: _busy || !_confirmed
+                    ? null
+                    : (checked) => setState(() {
+                        final selected = _approvals.putIfAbsent(
+                          entry.id,
+                          () => {},
+                        );
+                        checked == true
+                            ? selected.add(cap)
+                            : selected.remove(cap);
+                      }),
               ),
-              onChanged: (_) => setState(() => _result = null),
             ),
-            if (_fileName != null)
-              _note(L10n.of(context).pluginsSelectedFile(_fileName!)),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: [
                 _button(
-                  L10n.of(context).pluginsChooseSmallFile,
-                  'plugin-input-file',
-                  _pickInput,
-                  icon: Icons.attach_file,
+                  entry.enabled
+                      ? L10n.of(context).pluginsSavePermissions
+                      : L10n.of(context).pluginsApproveEnable,
+                  'plugin-approve-${entry.id}',
+                  !_confirmed || !entry.available
+                      ? null
+                      : () => _configure(entry, true),
+                  icon: Icons.check_circle_outline,
                 ),
-                if (_fileBytes != null)
+                if (entry.enabled)
                   _button(
-                    L10n.of(context).pluginsUseText,
-                    'plugin-input-text',
-                    () => setState(() {
-                      _fileBytes = null;
-                      _fileName = null;
-                      _result = null;
-                    }),
+                    L10n.of(context).pluginsDisable,
+                    'plugin-disable-${entry.id}',
+                    !_confirmed ? null : () => _configure(entry, false),
+                    icon: Icons.pause_circle_outline,
                   ),
                 _button(
-                  L10n.of(context).pluginsTransform,
-                  'plugin-run',
-                  () => _transform(entry),
+                  L10n.of(context).pluginsUninstallKeepContent,
+                  'plugin-remove-${entry.id}',
+                  !_confirmed ? null : () => _remove(entry),
+                  icon: Icons.remove_circle_outline,
                 ),
+                if (_transforms(entry).isNotEmpty)
+                  _button(
+                    L10n.of(context).pluginsUseTransform,
+                    'plugin-transform-${entry.id}',
+                    !usable ? null : () => _selectTool(entry),
+                    icon: Icons.auto_fix_high_outlined,
+                  ),
+                if (_standardUi(entry))
+                  _button(
+                    _formId == entry.id
+                        ? L10n.of(context).pluginsCloseView
+                        : L10n.of(context).pluginsOpenView,
+                    'plugin-ui-${entry.id}',
+                    !usable
+                        ? null
+                        : () {
+                            if (_formId == entry.id) {
+                              unawaited(
+                                _guard(
+                                  (_, epoch) => _closeForm(epoch),
+                                  (l) => l.pluginsCloseUnknown,
+                                ),
+                              );
+                            } else {
+                              unawaited(_openForm(entry));
+                            }
+                          },
+                    icon: Icons.view_quilt_outlined,
+                  ),
               ],
             ),
-            if (_result != null)
-              SelectableText(
-                _result!(L10n.of(context)),
-                key: const ValueKey('plugin-result'),
-                style: TextStyle(color: widget.ink, fontSize: 12),
+            if (_toolId == entry.id) ...[
+              const SizedBox(height: 12),
+              DropdownButton<PluginTransformHandler>(
+                key: const ValueKey('plugin-handler'),
+                isExpanded: true,
+                value: _handler,
+                items: _transforms(entry)
+                    .map(
+                      (handler) => DropdownMenuItem(
+                        value: handler,
+                        child: Text(
+                          handler.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: _busy
+                    ? null
+                    : (handler) => setState(() {
+                        _handler = handler;
+                        _result = null;
+                        _fileBytes = null;
+                        _fileName = null;
+                      }),
               ),
-            _note(L10n.of(context).pluginsPreviewOnly),
+              TextField(
+                key: const ValueKey('plugin-input'),
+                controller: _text,
+                enabled: !_busy && _fileBytes == null,
+                minLines: 2,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  labelText: L10n.of(context).pluginsTextInput,
+                ),
+                onChanged: (_) => setState(() => _result = null),
+              ),
+              if (_fileName != null)
+                _note(L10n.of(context).pluginsSelectedFile(_fileName!)),
+              Wrap(
+                spacing: 8,
+                children: [
+                  _button(
+                    L10n.of(context).pluginsChooseSmallFile,
+                    'plugin-input-file',
+                    _pickInput,
+                    icon: Icons.attach_file,
+                  ),
+                  if (_fileBytes != null)
+                    _button(
+                      L10n.of(context).pluginsUseText,
+                      'plugin-input-text',
+                      () => setState(() {
+                        _fileBytes = null;
+                        _fileName = null;
+                        _result = null;
+                      }),
+                    ),
+                  _button(
+                    L10n.of(context).pluginsTransform,
+                    'plugin-run',
+                    () => _transform(entry),
+                  ),
+                ],
+              ),
+              if (_result != null)
+                SelectableText(
+                  _result!(L10n.of(context)),
+                  key: const ValueKey('plugin-result'),
+                  style: TextStyle(color: widget.ink, fontSize: 12),
+                ),
+              _note(L10n.of(context).pluginsPreviewOnly),
+            ],
+            if (_formId == entry.id && _controller != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: ManagedPluginForm(controller: _controller!),
+              ),
           ],
-          if (_formId == entry.id && _controller != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: ManagedPluginForm(controller: _controller!),
-            ),
         ],
-      ],
+      ),
     );
   }
 

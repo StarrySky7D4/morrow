@@ -8,6 +8,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'plugin_library.dart';
 import 'service_control.dart';
 import 'service_session.dart';
+import 'session_view_state.dart';
 
 String _hex(List<int> bytes) =>
     bytes.map((v) => v.toRadixString(16).padLeft(2, '0')).join();
@@ -87,7 +88,8 @@ class ServiceManager extends StatefulWidget {
   State<ServiceManager> createState() => _ServiceManagerState();
 }
 
-class _ServiceManagerState extends State<ServiceManager> {
+class _ServiceManagerState extends State<ServiceManager>
+    with SessionViewState<ServiceManager> {
   late ServiceSession _session;
   int _attachment = 0, _formEpoch = 0;
   String? _form;
@@ -216,9 +218,7 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   void _changed() {
-    if (mounted) {
-      setState(() {});
-    }
+    markSessionViewDirty();
   }
 
   @override

@@ -11,6 +11,7 @@ import 'service_control.dart';
 import 'service_run_control.dart';
 import 'service_run_session.dart';
 import 'service_session.dart';
+import 'session_view_state.dart';
 
 String _hex(List<int> bytes) =>
     bytes.map((v) => v.toRadixString(16).padLeft(2, '0')).join();
@@ -55,7 +56,8 @@ class ServiceRunManager extends StatefulWidget {
   State<ServiceRunManager> createState() => _ServiceRunManagerState();
 }
 
-class _ServiceRunManagerState extends State<ServiceRunManager> {
+class _ServiceRunManagerState extends State<ServiceRunManager>
+    with SessionViewState<ServiceRunManager> {
   late ServiceRunSession _run;
   late ServiceSession _metadata;
   Timer? _timer;
@@ -63,6 +65,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
   String _boundDirectory = '', _lastState = '';
   int _attachment = 0;
   bool _invalid = false, _refreshing = false;
+  bool _refreshQueued = false, _waitingForMetadata = false;
   final _fields = {
     'lifetime': TextEditingController(text: '60000'),
     'jobs': TextEditingController(text: '64'),
@@ -77,8 +80,9 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
     'timeout': TextEditingController(text: '10000'),
   };
 
-  String get _directory =>
-      '${widget.registryRevision}|${widget.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.approvedIo.join(',')}:${p.ioHandlers.join(',')}').join('|')}';
+  String _signature(ServiceRunManager w) =>
+      '${w.registryRevision}|${w.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.approvedIo.join(',')}:${p.ioHandlers.join(',')}').join('|')}';
+  String get _directory => _signature(widget);
   bool get _metadataCurrent =>
       !_refreshing &&
       !_metadata.busy &&
@@ -165,6 +169,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
 
   void _detach() {
     _attachment++;
+    _refreshQueued = false;
+    _waitingForMetadata = false;
     _timer?.cancel();
     _run.removeListener(_changed);
     _metadata.removeListener(_metadataChanged);
@@ -188,6 +194,9 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
       _lastState = '';
       _refreshing = false;
       _attach();
+    } else if (_signature(oldWidget) != _directory) {
+      _boundDirectory = '';
+      _scheduleRefresh();
     }
   }
 
@@ -201,7 +210,26 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
   }
 
   void _metadataChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    if (_waitingForMetadata && !_metadata.busy) {
+      _waitingForMetadata = false;
+      // A successful concurrent read can unblock our own fresh observation.
+      // A failed read stays blocked until the user explicitly refreshes.
+      if (_metadata.trusted && !_metadata.uncertain) _scheduleRefresh();
+    }
+    markSessionViewDirty();
+  }
+
+  void _scheduleRefresh() {
+    if (_refreshQueued || !mounted) return;
+    _refreshQueued = true;
+    final attachment = _attachment;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || attachment != _attachment) return;
+      _refreshQueued = false;
+      // An in-flight refresh checks for a newer directory on completion.
+      if (!_refreshing) unawaited(_refresh());
+    });
   }
 
   void _changed() {
@@ -214,26 +242,32 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
         if (mounted && attachment == _attachment) widget.onChanged?.call();
       });
     }
-    setState(() {});
+    markSessionViewDirty();
   }
 
   Future<void> _refresh() async {
     if (_refreshing) return;
     final attachment = _attachment, directory = _directory;
     final run = _run, metadata = _metadata;
+    _waitingForMetadata = false;
     setState(() => _refreshing = true);
     // Observe the owner first. Metadata uses the ordinary business route and
     // can wait behind a guest; observation must not depend on that completion.
     await run.refresh();
     if (!mounted || attachment != _attachment) return;
-    if (!metadata.busy) await metadata.refresh();
+    if (metadata.busy) {
+      _waitingForMetadata = true;
+    } else {
+      await metadata.refresh();
+    }
     if (!mounted || attachment != _attachment) return;
     setState(() {
       _refreshing = false;
-      if (metadata.trusted && directory == _directory) {
+      if (!_waitingForMetadata && metadata.trusted && directory == _directory) {
         _boundDirectory = directory;
       }
     });
+    if (directory != _directory) _scheduleRefresh();
   }
 
   Future<void> _start() async {
@@ -511,23 +545,26 @@ class _ServiceRunManagerState extends State<ServiceRunManager> {
           _field(l.pluginsServiceRunLifetime, 'lifetime'),
           _field(l.pluginsServiceRunJobs, 'jobs'),
           _field(l.pluginsServiceRunBytes, 'bytes'),
-          ExpansionTile(
-            key: const ValueKey('service-run-advanced'),
-            tilePadding: EdgeInsets.zero,
-            title: Text(
-              l.pluginsServiceRunAdvanced,
-              style: TextStyle(color: widget.ink, fontSize: 12),
+          PageStorage(
+            bucket: PageStorageBucket(),
+            child: ExpansionTile(
+              key: const ValueKey('service-run-advanced'),
+              tilePadding: EdgeInsets.zero,
+              title: Text(
+                l.pluginsServiceRunAdvanced,
+                style: TextStyle(color: widget.ink, fontSize: 12),
+              ),
+              children: [
+                _field(l.pluginsServiceRunCalls, 'calls'),
+                _field(l.pluginsServiceRunJobBytes, 'job-bytes'),
+                _field(l.pluginsServiceRunTotalBytes, 'total-bytes'),
+                _field(l.pluginsServiceRunRequestBytes, 'request-bytes'),
+                _field(l.pluginsServiceRunResponseBytes, 'response-bytes'),
+                _field(l.pluginsServiceRunHeaderBytes, 'header-bytes'),
+                _field(l.pluginsServiceRunConcurrent, 'concurrent'),
+                _field(l.pluginsServiceRunTimeout, 'timeout'),
+              ],
             ),
-            children: [
-              _field(l.pluginsServiceRunCalls, 'calls'),
-              _field(l.pluginsServiceRunJobBytes, 'job-bytes'),
-              _field(l.pluginsServiceRunTotalBytes, 'total-bytes'),
-              _field(l.pluginsServiceRunRequestBytes, 'request-bytes'),
-              _field(l.pluginsServiceRunResponseBytes, 'response-bytes'),
-              _field(l.pluginsServiceRunHeaderBytes, 'header-bytes'),
-              _field(l.pluginsServiceRunConcurrent, 'concurrent'),
-              _field(l.pluginsServiceRunTimeout, 'timeout'),
-            ],
           ),
           _note(l.pluginsServiceRunBoundsHint),
           _button(

@@ -189,25 +189,29 @@ Widget _host(
   int revision = 7,
   PluginLibraryEntry? plugin,
   bool showHttp = false,
+  bool catalogReady = true,
+  bool showRunPanel = true,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
     body: SingleChildScrollView(
+      key: const PageStorageKey('service-panel-scroll'),
       child: Column(
         children: [
-          ServiceRunManager(
-            backend: run,
-            ioBackend: run,
-            metadataBackend: metadata,
-            plugins: [plugin ?? _plugin()],
-            registryRevision: BigInt.from(revision),
-            ink: Colors.black,
-            muted: Colors.grey,
-            line: Colors.grey,
-            radius: BorderRadius.circular(12),
-          ),
+          if (showRunPanel)
+            ServiceRunManager(
+              backend: run,
+              ioBackend: run,
+              metadataBackend: metadata,
+              plugins: catalogReady ? [plugin ?? _plugin()] : [],
+              registryRevision: catalogReady ? BigInt.from(revision) : null,
+              ink: Colors.black,
+              muted: Colors.grey,
+              line: Colors.grey,
+              radius: BorderRadius.circular(12),
+            ),
           if (showHttp)
             HttpTaskManager(
               backend: run,
@@ -268,6 +272,138 @@ void _cleanup(WidgetTester tester) {
 }
 
 void main() {
+  int choices(WidgetTester tester) => tester
+      .widget<DropdownButton<String>>(
+        find.descendant(
+          of: find.byType(ServiceRunManager),
+          matching: find.byType(DropdownButton<String>),
+        ),
+      )
+      .items!
+      .length;
+
+  for (final sharedRefresh in [false, true]) {
+    testWidgets(
+      'async catalog joins ${sharedRefresh ? "shared" : "own"} metadata load',
+      (tester) async {
+        _cleanup(tester);
+        final run = _RunBackend(), metadata = _metadata();
+        final gate = Completer<ServiceConfigPage>();
+        metadata.onConfigPage = (_, _) => gate.future;
+        final pending = sharedRefresh
+            ? ServiceSession.forBackend(metadata).refresh()
+            : null;
+        await _mount(tester, _host(run, metadata, catalogReady: false));
+        await _mount(tester, _host(run, metadata, revision: 8));
+        expect(choices(tester), 0);
+        expect(_button(tester, 'start').onPressed, isNull);
+        metadata.onConfigPage = null;
+        gate.complete(
+          ServiceConfigPage(
+            configs: metadata.configs,
+            snapshot: serviceKey(metadata.generation),
+            next: null,
+          ),
+        );
+        await pending;
+        await tester.pumpAndSettle();
+        expect(choices(tester), 1);
+        expect(run.starts, isEmpty);
+        expect(metadata.writes, 0);
+        await _select(tester);
+        await _click(tester, 'start');
+        expect(run.starts.single.registryRevision, BigInt.from(8));
+      },
+    );
+  }
+
+  testWidgets('catalog refresh failure stays blocked without a retry loop', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final run = _RunBackend(), metadata = _metadata();
+    await _mount(tester, _host(run, metadata, catalogReady: false));
+    metadata.onConfigPage = (_, _) async => throw StateError('offline');
+    await _mount(tester, _host(run, metadata));
+    final attempts = metadata.configPages.length;
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+    expect(metadata.configPages.length, attempts);
+    expect(choices(tester), 0);
+    expect(run.starts, isEmpty);
+    metadata.onConfigPage = null;
+    await _click(tester, 'refresh-records');
+    expect(choices(tester), 1);
+    expect(metadata.writes, 0);
+  });
+
+  testWidgets('failed shared metadata read is not automatically retried', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final run = _RunBackend(), metadata = _metadata();
+    final gate = Completer<ServiceConfigPage>();
+    metadata.onConfigPage = (_, _) => gate.future;
+    final pending = ServiceSession.forBackend(metadata).refresh();
+    await _mount(tester, _host(run, metadata));
+    gate.completeError(StateError('shared read failed'));
+    await pending;
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(seconds: 3));
+    expect(metadata.configPages, hasLength(1));
+    expect(choices(tester), 0);
+    expect(_button(tester, 'start').onPressed, isNull);
+    expect(run.starts, isEmpty);
+  });
+
+  testWidgets('old metadata completion cannot refresh a replacement backend', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final oldRun = _RunBackend(), oldMetadata = _metadata();
+    final gate = Completer<ServiceConfigPage>();
+    oldMetadata.onConfigPage = (_, _) => gate.future;
+    await _mount(tester, _host(oldRun, oldMetadata, catalogReady: false));
+    final run = _RunBackend(), metadata = _metadata();
+    await _mount(tester, _host(run, metadata));
+    final reads = metadata.configPages.length;
+    gate.complete(
+      ServiceConfigPage(
+        configs: oldMetadata.configs,
+        snapshot: serviceKey(oldMetadata.generation),
+        next: null,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(metadata.configPages.length, reads);
+    expect(choices(tester), 1);
+    await _select(tester);
+    await _click(tester, 'start');
+    expect(oldRun.starts, isEmpty);
+    expect(run.starts, hasLength(1));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'parent scroll cannot corrupt advanced expansion on remount',
+    (tester) async {
+      _cleanup(tester);
+      final run = _RunBackend(), metadata = _metadata();
+      await _mount(tester, _host(run, metadata));
+      await _click(tester, 'advanced');
+      await tester.ensureVisible(_find('timeout'));
+      await tester.pumpAndSettle();
+      expect(_find('timeout'), findsOneWidget);
+      await _mount(tester, _host(run, metadata, showRunPanel: false));
+      await _mount(tester, _host(run, metadata));
+      expect(_find('timeout'), findsNothing);
+      await _click(tester, 'advanced');
+      expect(_find('timeout'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      expect(run.starts, isEmpty);
+    },
+  );
+
   testWidgets(
     'explicit approved selection pins authority and submitted budgets',
     (tester) async {
