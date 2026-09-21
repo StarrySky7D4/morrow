@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     .collect();
     let mut manifest = Package::manifest_for_transform(
         "org.morrow.workbench",
-        env!("CARGO_PKG_VERSION"),
+        morrow_workbench_plugin::PACKAGE_VERSION,
         &module,
         handlers,
     );
@@ -51,6 +51,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         Capability::ReadContent as i32,
     ];
     let package = Package::build(manifest, &module)?;
+    if std::path::Path::new(&destination).is_file() {
+        let previous = catalog::read_file(std::path::Path::new(&destination))?;
+        if previous.manifest().package_version == package.manifest().package_version
+            && previous.digest() != package.digest()
+        {
+            return Err("Bundled guest bytes changed without a package version bump; update plugins/workbench/Cargo.toml before packaging".into());
+        }
+    }
     std::fs::write(&destination, package.archive())?;
     let loaded = catalog::read_file(std::path::Path::new(&destination))?;
     assert_eq!(loaded.digest(), package.digest());

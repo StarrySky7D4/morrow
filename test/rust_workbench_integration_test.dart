@@ -80,6 +80,11 @@ void main() {
         await storage.write({...storage.read(), 'uiLocale': 'en'});
         expect(await backend.readUiLocale(), 'en');
         expect(storage.read()['uiLocale'], 'en');
+        for (final code in ['ru', 'fr', 'de', 'es', 'ja', 'ko', 'pt', 'en']) {
+          await storage.write({...storage.read(), 'uiLocale': code});
+          expect(await backend.readUiLocale(), code);
+          expect(storage.read()['uiLocale'], code);
+        }
         final proposal = {
           ...storage.read(),
           'completed': <String>['frozen'],
@@ -135,6 +140,8 @@ void main() {
               'blur': 2.0,
               'opacity': 0.0,
               'color': 0xff44aa99,
+              'mode': 'liquid',
+              'cornerRadius': 12.0,
             },
             'navigation': <String, dynamic>{
               'enabled': false,

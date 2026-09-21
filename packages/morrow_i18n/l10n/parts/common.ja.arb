@@ -1,0 +1,22 @@
+{
+  "@@locale": "ja",
+  "commonAppName": "Morrow",
+  "commonCancel": "キャンセル",
+  "commonCount": "{count, plural, =0{項目なし} other{{count} 件}}",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonGreeting": "こんにちは、{name}さん",
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

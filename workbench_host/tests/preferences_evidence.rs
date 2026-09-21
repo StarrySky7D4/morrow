@@ -101,6 +101,7 @@ fn actual_sdk_complete_649_pages_form_one_atomic_self_contained_batch() {
             opacity: 0.5,
             color: 0xff123456,
             has_color: true,
+            ..Default::default()
         })
         .collect();
     assert_eq!(p::validation_pages(&prefs).unwrap().len(), 649);

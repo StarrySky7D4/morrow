@@ -1,0 +1,646 @@
+{
+  "@@locale": "ko",
+  "pluginsWorkbench": "작업 공간 플러그인",
+  "pluginsReadingState": "플러그인 상태 불러오는 중…",
+  "pluginsManagementUnavailable": "플러그인 관리를 사용할 수 없습니다. 기존 콘텐츠는 계속 읽을 수 있습니다.",
+  "pluginsInsufficientApproval": "플러그인이 활성화되었지만 콘텐츠 권한이 필요합니다. 작업 공간은 읽기 전용입니다. 비활성화한 후 권한을 다시 확인하세요.",
+  "pluginsWorkbenchReadOnly": "플러그인은 허용되었지만 작업 공간은 읽기 전용입니다. 라이브러리나 플러그인 문제를 해결한 후 상태를 새로 고치세요.",
+  "pluginsEnabledDetails": "활성화됨. 이 플러그인은 콘텐츠를 읽고 편집할 수 있습니다. 비활성화해도 데이터는 보존됩니다.",
+  "pluginsDisabledDetails": "비활성화됨. 편집기와 도구를 사용하려면 콘텐츠 읽기 및 편집을 허용하세요.",
+  "pluginsDisableWorkbench": "작업 공간 플러그인 비활성화",
+  "pluginsApproveWorkbench": "읽기와 편집을 허용하고 활성화",
+  "pluginsOpenTextTool": "텍스트 도구 열기",
+  "pluginsCloseTextTool": "텍스트 도구 숨기기",
+  "pluginsRefreshState": "상태 새로 고침",
+  "pluginsStateUnavailable": "플러그인 상태를 불러오지 못했습니다. 다시 시도하세요.",
+  "pluginsSettingsUnknown": "설정이 아직 확인되지 않았습니다. 상태를 새로 고친 후 다시 선택하세요.",
+  "pluginsPackageFile": "Morrow 플러그인",
+  "pluginsExistingVersion": "이 버전은 이미 설치되어 있습니다. 활성화 상태는 변경되지 않았습니다.",
+  "pluginsImportedDisabled": "가져왔으며 비활성화 상태입니다. 허용할 권한을 선택하세요.",
+  "pluginsUninstalled": "제거했습니다. 기존 콘텐츠는 보존되었습니다.",
+  "pluginsInputTooLong": "입력 한도에 도달했습니다. 텍스트를 줄인 후 다시 시도하세요.",
+  "pluginsSummary": "요약 읽기",
+  "pluginsOperation": "작업 결과 조회",
+  "pluginsAttachment": "첨부 파일 읽기",
+  "pluginsCreate": "콘텐츠 만들기",
+  "pluginsEdit": "콘텐츠 편집",
+  "pluginsRead": "콘텐츠 읽기",
+  "pluginsRename": "이름 바꾸기",
+  "pluginsNoPermissions": "선언된 콘텐츠 권한이 없습니다.",
+  "pluginsDependenciesNotice": "종속성은 호스트에서 구성해야 합니다. 이 페이지에서는 승인하지 않습니다.",
+  "pluginsBuiltin": "기본 작업 공간",
+  "pluginsEnabled": "활성화됨",
+  "pluginsDisabled": "비활성화됨",
+  "pluginsManageAbove": "위의 작업 공간 플러그인 제어 항목에서 관리하세요.",
+  "pluginsSavePermissions": "권한 저장",
+  "pluginsApproveEnable": "승인하고 활성화",
+  "pluginsDisable": "비활성화",
+  "pluginsUninstallKeepContent": "제거(콘텐츠 유지)",
+  "pluginsUseTransform": "변환 사용",
+  "pluginsCloseView": "보기 닫기",
+  "pluginsOpenView": "보기 열기",
+  "pluginsTextInput": "입력 텍스트",
+  "pluginsChooseSmallFile": "작은 파일 선택",
+  "pluginsUseText": "텍스트로 입력",
+  "pluginsTransform": "변환",
+  "pluginsPreviewOnly": "미리 보기 전용입니다. 결과는 기존 콘텐츠에 자동 저장되지 않습니다.",
+  "pluginsThirdParty": "타사 플러그인",
+  "pluginsImportDetails": "가져온 후 활성화 여부를 선택합니다. 비활성화하거나 제거해도 콘텐츠는 보존됩니다.",
+  "pluginsChoosePackage": "플러그인 파일 선택",
+  "pluginsRefreshList": "목록 새로 고침",
+  "pluginsInspectedOnly": "파일 검사만 완료했습니다. 가져온 후 플러그인을 별도로 활성화하세요.",
+  "pluginsImport": "가져오기",
+  "pluginsCancel": "취소",
+  "pluginsEmptyLibrary": "가져온 타사 플러그인이 없습니다.",
+  "pluginsBackupLibraryType": "라이브러리 백업",
+  "pluginsProtectionFileType": "라이브러리 보호 파일",
+  "pluginsSnapshotSaved": "첨부 파일과 원본 보호 파일을 포함하여 라이브러리를 백업했습니다.",
+  "pluginsProtectionSaved": "보호 파일을 백업했습니다. 시작에 실패하면 복구 시 이 파일을 선택하세요.",
+  "pluginsBackupUnknown": "백업이 아직 확인되지 않았습니다. 생성된 파일을 보존하고 대상 위치를 확인하세요.",
+  "pluginsProtection": "콘텐츠 보호",
+  "pluginsProtectionDetails": "이 시스템 계정으로 복구할 수 있도록 원본 보호 파일을 백업하세요. 카드나 첨부 파일은 포함되지 않습니다.",
+  "pluginsSnapshotDetails": "백업에는 카드, 첨부 파일 및 감사 기록이 포함됩니다. 외부 리소스는 참조로 유지됩니다. 복구에는 원래 시스템 계정이 필요합니다.",
+  "pluginsBackupLibrary": "라이브러리 백업",
+  "pluginsBackingUp": "백업 중…",
+  "pluginsBackupProtection": "보호 파일 백업",
+  "pluginsListUnknown": "플러그인 목록을 확인하지 못했습니다",
+  "pluginsInspectFailed": "플러그인 미리 보기를 불러오지 못했습니다",
+  "pluginsImportUnknown": "가져오기를 확인하지 못했습니다",
+  "pluginsApprovalUnknown": "활성화 또는 권한 변경을 확인하지 못했습니다",
+  "pluginsUninstallUnknown": "제거를 확인하지 못했습니다",
+  "pluginsViewFailed": "플러그인 보기를 열지 못했습니다",
+  "pluginsInputFailed": "입력 파일을 읽지 못했습니다",
+  "pluginsTransformUnknown": "변환을 확인하지 못했습니다",
+  "pluginsCloseUnknown": "보기 닫기를 확인하지 못했습니다",
+  "pluginsUnconfirmed": "{reason}. 작업이 확인되지 않았습니다. 갱신된 상태를 확인한 후 다시 선택하세요.",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}. 목록을 새로 고치지 못했습니다. ‘목록 새로 고침’을 선택하여 다시 읽으세요.",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "파일이 너무 큽니다. {limit}바이트 이하의 파일을 선택하세요.",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "기타 선언된 권한: {name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "선언된 권한: {permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "선택한 파일: {name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "가져오기 미리 보기: {name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…처음 4,096자만 표시",
+  "pluginsEmptyResult": "(빈 결과)",
+  "pluginsBinaryPreview": "바이너리 콘텐츠: {hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count}바이트\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "연결이 중단되었습니다. 플러그인 보기를 다시 여세요.",
+  "pluginsOpeningView": "플러그인 보기 여는 중…",
+  "pluginsUnavailableView": "플러그인 보기를 사용할 수 없음",
+  "pluginsUpdatingView": "미리 보기 갱신 중…",
+  "pluginsUiRejected": "플러그인 작업이 수락되지 않았습니다. 입력 내용과 현재 권한을 확인하세요.",
+  "pluginsUiExecution": "플러그인 실행이 완료되지 않았습니다. 보기를 다시 열고 재시도하세요.",
+  "pluginsUiUnavailable": "플러그인을 사용할 수 없습니다. 상태를 확인한 후 보기를 다시 여세요.",
+  "pluginsBuiltinHeading": "텍스트 도구",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "텍스트 입력",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count}자 · 이 세션에서만 사용하며 카드로 저장되지 않음",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "텍스트를 입력하여 대문자 변환 미리 보기",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsIoTitle": "네트워크 및 파일 권한",
+  "pluginsIoScopeNotice": "여기서는 권한 종류만 저장합니다. 서버 주소, 파일 접근, 자격 증명은 별도 승인이 필요하며 사용할 수 없는 기능이 활성화되지는 않습니다. 변경 후 플러그인 양식을 다시 여세요.",
+  "pluginsIoNoneApproved": "승인된 네트워크 또는 파일 권한 없음",
+  "pluginsIoApproved": "승인됨: {permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "요청한 네트워크 및 파일 권한: {permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "네트워크 및 파일 권한 저장",
+  "pluginsIoRevoke": "모든 네트워크 및 파일 권한 취소",
+  "pluginsContentPermissions": "콘텐츠 권한",
+  "pluginsIoFileRead": "승인된 파일 읽기",
+  "pluginsIoFileList": "승인된 폴더 탐색",
+  "pluginsIoFileCreate": "파일 만들기",
+  "pluginsIoFileReplace": "파일 교체",
+  "pluginsIoFileDelete": "파일 삭제",
+  "pluginsIoHttpRequest": "네트워크 API 호출",
+  "pluginsIoHttpListen": "네트워크 연결 수신 대기",
+  "pluginsIoHttpPublish": "API 서비스 제공",
+  "pluginsIoCredentialUse": "승인된 자격 증명 사용",
+  "pluginsIoWebSocketConnect": "WebSocket 서비스에 연결",
+  "pluginsCredentialTitle": "API 자격 증명",
+  "pluginsCredentialDetails": "승인된 API 연결의 자격 증명을 안전하게 저장합니다. 저장해도 서버가 승인되거나 플러그인이 활성화되지 않습니다. 저장된 비밀 값은 볼 수 없습니다.",
+  "pluginsCredentialReading": "자격 증명 읽는 중…",
+  "pluginsCredentialEmpty": "저장된 자격 증명 없음",
+  "pluginsCredentialNew": "자격 증명 추가",
+  "pluginsCredentialRefresh": "상태 새로 고침",
+  "pluginsCredentialReplace": "비밀 값 교체",
+  "pluginsCredentialDisable": "비활성화",
+  "pluginsCredentialDisabled": "비활성화됨",
+  "pluginsCredentialStored": "저장됨",
+  "pluginsCredentialExpired": "만료됨",
+  "pluginsCredentialExpires": "만료일: {date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "자격 증명 {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "새 자격 증명",
+  "pluginsCredentialReplaceTitle": "자격 증명 {reference} 교체",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "헤더 이름",
+  "pluginsCredentialSecret": "새 비밀 값",
+  "pluginsCredentialLifetime": "유효 기간",
+  "pluginsCredentialDays": "{days}일",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "자격 증명 저장",
+  "pluginsCredentialCancel": "양식 닫기",
+  "pluginsCredentialInvalid": "헤더 이름을 확인하고 새 비밀 값을 입력하세요. 비밀 값 필드가 지워졌습니다.",
+  "pluginsCredentialUnknown": "결과를 확인하지 못했습니다. 비밀 값 필드가 지워졌습니다. 다른 변경 전에 상태를 새로 고치세요.",
+  "pluginsCredentialLoadFailed": "자격 증명을 일관되게 읽지 못했습니다. 상태를 새로 고쳐 재시도하세요.",
+  "pluginsCredentialSaved": "자격 증명을 저장했습니다. API 연결에는 여전히 별도 승인이 필요합니다.",
+  "pluginsCredentialDisabledDone": "자격 증명을 비활성화했습니다.",
+  "pluginsEndpointTitle": "API 엔드포인트 승인",
+  "pluginsEndpointDetails": "특정 패키지와 다이제스트에 대한 서버 정책을 저장합니다. 저장해도 네트워크에 연결하거나 플러그인을 활성화하지 않으며 네트워크 작업이 즉시 사용 가능해지지 않습니다.",
+  "pluginsEndpointNew": "엔드포인트 추가",
+  "pluginsEndpointCreateTitle": "새 엔드포인트 승인",
+  "pluginsEndpointReplaceTitle": "현재 패키지 다이제스트로 승인 교체",
+  "pluginsEndpointReplace": "승인 교체",
+  "pluginsEndpointSave": "엔드포인트 승인 저장",
+  "pluginsEndpointSaved": "엔드포인트 승인을 저장했습니다. 네트워크 연결은 하지 않았습니다.",
+  "pluginsEndpointDisabledDone": "엔드포인트 승인을 비활성화했습니다.",
+  "pluginsEndpointEmpty": "저장된 엔드포인트 승인 없음",
+  "pluginsEndpointWorking": "엔드포인트 상태 갱신 중…",
+  "pluginsEndpointLoadFailed": "엔드포인트 승인을 일관되게 읽지 못했습니다. 상태를 새로 고쳐 재시도하세요.",
+  "pluginsEndpointCredentialsFailed": "자격 증명 참조를 읽지 못했습니다. 상태를 새로 고친 후 선택하세요.",
+  "pluginsEndpointUnknown": "결과를 확인하지 못했습니다. 다른 변경 전에 상태를 새로 고치세요. 요청은 자동으로 다시 전송되지 않습니다.",
+  "pluginsEndpointInvalid": "패키지, 오리진, 메서드, 1~30일 유효 기간, 자격 증명 권한, 인증서 및 정책 한도를 확인하세요.",
+  "pluginsEndpointPackage": "패키지",
+  "pluginsEndpointPackageUnavailable": "패키지를 사용할 수 없거나 승인된 HTTP 권한이 없습니다. 기존 승인은 비활성화할 수 있습니다.",
+  "pluginsEndpointDigest": "패키지 다이제스트",
+  "pluginsEndpointOrigin": "오리진만 입력(예: https://api.example.com)",
+  "pluginsEndpointProfile": "연결 프로필",
+  "pluginsEndpointPublicHttps": "공용 HTTPS",
+  "pluginsEndpointLocalHttp": "로컬 HTTP",
+  "pluginsEndpointLocalHttps": "로컬 HTTPS",
+  "pluginsEndpointMethods": "허용된 요청 메서드",
+  "pluginsEndpointLifetime": "유효 기간(1~30일)",
+  "pluginsEndpointCredential": "자격 증명 참조",
+  "pluginsEndpointNoCredential": "자격 증명 없음",
+  "pluginsEndpointCredentialUnavailable": "패키지에 선언되고 승인된 자격 증명 사용 권한과 유효한 저장 참조가 필요합니다.",
+  "pluginsEndpointCredentialLifetime": "선택한 자격 증명은 엔드포인트의 전체 유효 기간 동안 유효해야 합니다. 만료일은 연장되지 않습니다.",
+  "pluginsEndpointAdvanced": "정책 한도(별도 표시가 없으면 바이트)",
+  "pluginsEndpointRequestBytes": "최대 요청 바이트(1~65536)",
+  "pluginsEndpointResponseBytes": "최대 응답 바이트(1~65536)",
+  "pluginsEndpointHeaderBytes": "최대 헤더 바이트(1~16384)",
+  "pluginsEndpointConcurrency": "동시 요청 수(1~128)",
+  "pluginsEndpointTimeout": "시간 제한(1~30000밀리초)",
+  "pluginsEndpointFrameBytes": "프레임 한도(1~131072바이트)",
+  "pluginsEndpointCertificateDetails": "선택적 HTTPS 신뢰 루트: 32 KiB 이하의 바이너리 DER 인증서(.der 또는 .cer) 한 개. PEM 및 인증서 묶음은 지원하지 않습니다. HTTP로 전환하기 전에 신뢰 루트를 제거하세요.",
+  "pluginsEndpointCertificate": "DER 신뢰 루트 선택",
+  "pluginsEndpointRemoveCertificate": "신뢰 루트 제거",
+  "pluginsEndpointCertificateSelected": "DER 신뢰 루트 선택됨({bytes}바이트)",
+  "pluginsEndpointCertificateInvalid": "32 KiB 이하의 유효한 바이너리 DER 인증서(.der 또는 .cer) 한 개를 선택하세요.",
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsHttpTaskTitle": "HTTP 작업",
+  "pluginsHttpTaskDetails": "승인된 엔드포인트와 실험적 HTTP 전달 처리기가 있는 활성 플러그인으로 명시적 요청을 한 번 실행합니다. 콘텐츠 라이브러리가 사용 중이어도 작업 상태를 확인할 수 있습니다.",
+  "pluginsHttpTaskStatusFailed": "작업 상태를 확인하지 못했습니다. 상태를 새로 고치세요. 요청은 재실행되지 않았습니다.",
+  "pluginsHttpTaskEndpointsFailed": "엔드포인트를 일관되게 읽지 못했거나 라이브러리가 사용 중입니다. 작업 제어는 계속 가능합니다. 라이브러리가 반환되면 엔드포인트를 새로 고치세요.",
+  "pluginsHttpTaskInvalid": "엔드포인트, 메서드, 상대 대상, 일반 헤더, 본문 인코딩 및 시간 제한이 승인 한도에 맞는지 확인하세요.",
+  "pluginsHttpTaskStartUnknown": "제출 결과를 알 수 없습니다. 식별자는 유지됩니다. 상태를 조회하여 같은 작업을 확인하세요. 요청은 다시 전송되지 않습니다.",
+  "pluginsHttpTaskReadUnknown": "결과 읽기를 확인하지 못했으며 이미 결과가 소비되었을 수 있습니다. 다시 읽지 않습니다. 상태와 종료 여부는 확인할 수 있습니다.",
+  "pluginsHttpTaskControlUnknown": "제어 결과를 확인하지 못했습니다. 다음 작업을 결정하기 전에 상태를 새로 고치세요.",
+  "pluginsHttpTaskReadPending": "반환된 결과가 없습니다. 명시적으로 다시 읽기 전에 상태를 확인하세요.",
+  "pluginsHttpTaskLocal": "라이브러리 사용 가능 · 활성 작업 없음",
+  "pluginsHttpTaskRunning": "실행 중 · 워커가 라이브러리 소유",
+  "pluginsHttpTaskStopping": "중지 중 · 실제 워커 종료 대기",
+  "pluginsHttpTaskReclaimed": "워커 종료 · 원래 라이브러리 반환됨",
+  "pluginsHttpTaskRecoveryRequired": "워커 종료 · 정리 또는 유지 관리 복구 필요",
+  "pluginsHttpTaskUnavailable": "원래 라이브러리 사용 불가 · 복구 필요",
+  "pluginsHttpTaskAbsent": "전달된 결과 없음",
+  "pluginsHttpTaskPending": "결과 대기 중",
+  "pluginsHttpTaskReady": "결과 준비 완료: 명시적으로 읽으세요. 워커가 종료되었다는 뜻은 아닙니다.",
+  "pluginsHttpTaskConsumed": "결과 소비됨",
+  "pluginsHttpTaskResultUnavailable": "결과 전달 사용 불가",
+  "pluginsHttpTaskOk": "정상",
+  "pluginsHttpTaskInvalidOptions": "잘못된 옵션",
+  "pluginsHttpTaskBusy": "사용 중",
+  "pluginsHttpTaskClosed": "닫힘",
+  "pluginsHttpTaskReadBound": "읽기 한도 초과",
+  "pluginsHttpTaskLimit": "할당량 또는 한도 도달",
+  "pluginsHttpTaskSpawn": "워커를 시작하지 못함",
+  "pluginsHttpTaskDisconnect": "연결 정리 실패",
+  "pluginsHttpTaskProtocol": "작업 프로토콜 오류",
+  "pluginsHttpTaskDeadline": "기한 초과",
+  "pluginsHttpTaskPackageChanged": "패키지 바인딩 변경됨",
+  "pluginsHttpTaskInactive": "연결 비활성",
+  "pluginsHttpTaskModule": "잘못된 게스트 모듈",
+  "pluginsHttpTaskUnsupported": "지원하지 않는 작업",
+  "pluginsHttpTaskCancelled": "취소 감지됨 · 원격 영향이 이미 발생했을 수 있음",
+  "pluginsHttpTaskTrap": "게스트 실행 트랩 발생",
+  "pluginsHttpTaskAccepted": "수락됨",
+  "pluginsHttpTaskCompleted": "완료됨",
+  "pluginsHttpTaskDenied": "거부됨",
+  "pluginsHttpTaskRevoked": "승인 취소됨",
+  "pluginsHttpTaskNotFound": "찾을 수 없음",
+  "pluginsHttpTaskConflict": "충돌",
+  "pluginsHttpTaskOutcomeUnknown": "원격 결과 불명 · 롤백되었다고 가정하거나 재전송하지 마세요",
+  "pluginsHttpTaskEvidenceUnavailable": "결과 증거 사용 불가",
+  "pluginsHttpTaskFailed": "실패",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "게스트 실행: {fault}; 종료 코드: {code}",
+  "pluginsHttpTaskCounters": "IO 호출: {calls}; 계상된 바이트: {bytes}",
+  "pluginsHttpTaskHttpResult": "HTTP 결과: {status}; 원격 상태: {code}",
+  "pluginsHttpTaskRemoteError": "원격 서버가 4xx/5xx 응답을 반환했습니다. HTTP 교환은 완료되었으며 게스트 실행 오류와는 별개입니다.",
+  "pluginsHttpTaskResponseHeaders": "응답 헤더(중복 유지, 바이너리 값은 Base64)",
+  "pluginsHttpTaskResponseBase64": "응답 본문: 정확한 Base64",
+  "pluginsHttpTaskResponseText": "응답 본문: 일반 텍스트 미리 보기",
+  "pluginsHttpTaskExit": "워커 종료 — 실행: {execution}; 연결 해제: {disconnect}; 유지 관리: {maintenance}",
+  "pluginsHttpTaskWorking": "작업 제어 응답 대기 중…",
+  "pluginsHttpTaskSubmission": "제출 식별자: {identity}",
+  "pluginsHttpTaskKey": "작업 식별자: {identity}",
+  "pluginsHttpTaskRefresh": "작업 상태 새로 고침",
+  "pluginsHttpTaskPoll": "작업 확인",
+  "pluginsHttpTaskRead": "결과 한 번 읽기",
+  "pluginsHttpTaskCancel": "취소 요청",
+  "pluginsHttpTaskRepair": "정리 복구",
+  "pluginsHttpTaskAcknowledge": "완료된 작업 확인",
+  "pluginsHttpTaskHistory": "이전 작업 관측(최대 5개)",
+  "pluginsHttpTaskNew": "새 요청 준비",
+  "pluginsHttpTaskRefreshEndpoints": "승인된 엔드포인트 새로 고침",
+  "pluginsHttpTaskLoadingEndpoints": "승인된 엔드포인트 읽는 중…",
+  "pluginsHttpTaskCatalogUnavailable": "플러그인 목록 상태를 사용할 수 없습니다. 새 제출 전에 플러그인 라이브러리를 새로 고치세요. 기존 작업은 계속 제어할 수 있습니다.",
+  "pluginsHttpTaskNoEndpoints": "활성화되고 승인된 HTTP 전달 플러그인과 일치하는 엔드포인트가 없습니다.",
+  "pluginsHttpTaskEndpoint": "승인된 엔드포인트",
+  "pluginsHttpTaskTarget": "상대 대상(예: /v1/items?limit=10)",
+  "pluginsHttpTaskHeaders": "일반 요청 헤더, 한 줄에 이름: 값 하나",
+  "pluginsHttpTaskHeadersHint": "중복 헤더는 별도로 유지됩니다. 자격 증명 및 연결 헤더는 런타임에서만 제공합니다.",
+  "pluginsHttpTaskBodyFormat": "요청 본문 인코딩",
+  "pluginsHttpTaskText": "UTF-8 텍스트",
+  "pluginsHttpTaskBody": "요청 본문",
+  "pluginsHttpTaskTimeout": "시간 제한(1~30000밀리초, 승인 범위 내)",
+  "pluginsHttpTaskExplicit": "제출하면 실제 요청을 한 번 보냅니다. 클릭할 때마다 새 식별자가 생성됩니다. 결과가 불명확한 제출이나 읽기는 자동 재실행되지 않습니다. 취소가 원격 작업의 롤백을 증명하지는 않습니다.",
+  "pluginsHttpTaskStart": "새 요청 제출",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "이 시도 관측 종료",
+  "pluginsHttpTaskAbandonDetails": "최신 상태에서 활성 작업이 없고 원래 라이브러리가 사용 가능함을 확인한 후에만 관측을 종료할 수 있습니다. 원격 영향이 없었다는 증거는 아닙니다. 식별자와 불확실성은 기록에 남으며 새 요청은 명시적으로 제출해야 합니다.",
+  "pluginsHttpTaskArchivedUnknown": "사용자가 관측을 종료했습니다. 이전 원격 영향은 여전히 미확인 상태이며 이 시도는 재실행되지 않았습니다.",
+  "pluginsServiceTitle": "서비스 구성",
+  "pluginsServiceManagementOnly": "저장된 구성과 승인을 관리합니다. 저장해도 리스너 시작, 패키지 실행 또는 서비스 활성화는 수행하지 않습니다.",
+  "pluginsServiceRefresh": "기록 새로 고침",
+  "pluginsServiceNewConfig": "새 구성",
+  "pluginsServiceEditConfig": "구성 편집",
+  "pluginsServiceNewAuthentication": "새 인증",
+  "pluginsServiceRotateAuthentication": "인증 교체",
+  "pluginsServicePublicationEditor": "게시 승인",
+  "pluginsServiceEditPublication": "게시 편집",
+  "pluginsServiceWorking": "처리 중…",
+  "pluginsServiceLoadFailed": "기록을 새로 고치지 못했습니다. 변경 전에 다시 새로 고치세요.",
+  "pluginsServiceWriteUnknown": "마지막 변경 결과를 알 수 없습니다. 다시 전송하지 않았습니다.",
+  "pluginsServiceInvalid": "저장 전에 필드, 선택한 승인 및 현재 패키지를 확인하세요.",
+  "pluginsServiceSaved": "저장했습니다. 아래에서 반환된 리비전과 실제 만료일을 확인하세요.",
+  "pluginsServiceTokenDiscarded": "패널을 닫아 한 번만 표시되는 토큰이 지워졌습니다. 필요하면 새 토큰을 명시적으로 발급하세요.",
+  "pluginsServiceUncertainHelp": "먼저 원본 기록을 새로 고치고 확인하세요. 이 알림 확인은 다른 명시적 작업을 허용할 뿐, 이전 변경의 실패를 증명하거나 재실행하지 않습니다.",
+  "pluginsServiceAcknowledgeUncertain": "갱신된 기록을 확인했습니다",
+  "pluginsServiceIssuedToken": "한 번만 표시되는 Bearer 토큰",
+  "pluginsServiceTokenHelp": "토큰은 지금만 표시됩니다. 필요하면 명시적으로 복사하세요. 지우거나 패널을 닫으면 세션에서 제거되며 목록에서 다시 가져올 수 없습니다. 교체 시 이전 토큰이 대체됩니다.",
+  "pluginsServiceCopyClear": "토큰 복사 후 지우기",
+  "pluginsServiceClearToken": "토큰 지우기",
+  "pluginsServiceConfigurations": "저장된 구성",
+  "pluginsServiceNoConfigurations": "서비스 구성이 없습니다.",
+  "pluginsServiceAuthorities": "인증 및 게시 기록",
+  "pluginsServiceNoAuthorities": "인증 또는 게시 기록이 없습니다.",
+  "pluginsServiceRevision": "리비전",
+  "pluginsServiceReference": "승인 참조",
+  "pluginsServiceCreated": "생성일(UTC)",
+  "pluginsServiceExpires": "실제 만료일(UTC)",
+  "pluginsServiceDisabled": "비활성화됨",
+  "pluginsServiceExpired": "만료되었거나 아직 유효하지 않음",
+  "pluginsServiceDisable": "비활성화",
+  "pluginsServicePackage": "선언되고 승인된 패키지",
+  "pluginsServicePackageDigest": "패키지 다이제스트",
+  "pluginsServiceConfigDigest": "구성 다이제스트",
+  "pluginsServicePackageUnavailable": "일치하는 패키지 또는 수신/게시 승인을 사용할 수 없습니다. 이전 기록은 계속 읽거나 비활성화할 수 있습니다.",
+  "pluginsServiceDigestFixed": "편집 시 원래 패키지 다이제스트를 유지합니다. 일치하는 패키지를 선택해야 하며 선택해도 활성화되지 않습니다.",
+  "pluginsServiceHandler": "선언된 서비스 처리기",
+  "pluginsServiceIdentity": "서비스 식별자",
+  "pluginsServiceRetention": "요청 기록 보관 기간(밀리초, 최대 30일)",
+  "pluginsServicePrincipals": "허용된 주체 및 콘텐츠 범위",
+  "pluginsServiceScopesHelp": "인증을 명시적으로 선택하세요. 허용할 작업과 정확한 객체 식별자를 아래에 추가하세요. 범위나 주체 삭제는 전용 버튼으로 수행하며 편집 중 기존 범위는 유지됩니다.",
+  "pluginsServiceNoAuthentication": "먼저 현재 유효한 인증 기록을 만드세요.",
+  "pluginsServiceAuthenticationUnavailable": "선택한 인증이 없거나, 비활성화 또는 만료되었거나 다른 주체에 속합니다. 범위 초안은 유지됩니다. 유효한 인증으로 교체하거나 명시적으로 제거하세요.",
+  "pluginsServicePolicyChanged": "원본 기록이 변경되었거나 사용할 수 없습니다. 선택을 새로 고치거나 현재 기록에서 편집기를 다시 여세요. 초안은 유지됩니다.",
+  "pluginsServiceCatalogChanged": "패키지 목록이 변경되었거나 사용할 수 없습니다. 초안은 유지됩니다. 저장 전에 선택을 명시적으로 새로 고치세요.",
+  "pluginsServiceRefreshSelection": "선택 새로 고침",
+  "pluginsServiceSaveConfig": "구성 저장",
+  "pluginsServiceCloseEditor": "편집기 닫기",
+  "pluginsServiceAddScope": "콘텐츠 범위 추가",
+  "pluginsServiceRemovePrincipal": "주체 제거",
+  "pluginsServiceRemoveScope": "범위 제거",
+  "pluginsServiceScopeKind": "허용된 콘텐츠 작업",
+  "pluginsServiceCardId": "정확한 카드 식별자",
+  "pluginsServiceAttachmentId": "정확한 첨부 파일 식별자",
+  "pluginsServiceScopeRename": "카드 이름 바꾸기",
+  "pluginsServiceScopeSummary": "요약 읽기",
+  "pluginsServiceScopeQuery": "작업 조회",
+  "pluginsServiceScopeAttachment": "첨부 파일 읽기",
+  "pluginsServiceScopeCreate": "콘텐츠 만들기",
+  "pluginsServiceScopeEdit": "콘텐츠 편집",
+  "pluginsServiceScopeRead": "콘텐츠 읽기",
+  "pluginsServiceUnsupported": "지원하지 않는 이전 값",
+  "pluginsServicePrincipalId": "주체 식별자",
+  "pluginsServiceDays": "요청 유효 기간(1~30일)",
+  "pluginsServiceIssue": "토큰 발급",
+  "pluginsServiceRotate": "토큰 교체",
+  "pluginsServicePublicationHelp": "승인은 정확히 이 구성, 리비전 및 참조에 연결됩니다. 실제 만료는 선택한 모든 인증 기록에 의해 제한되며 요청한 기간보다 짧을 수 있습니다. 저장해도 수신 대기는 시작하지 않습니다.",
+  "pluginsServiceConfiguration": "저장된 구성",
+  "pluginsServiceListenAddress": "숫자 수신 주소 및 포트",
+  "pluginsServiceTls": "TLS 필수",
+  "pluginsServiceTlsHelp": "루프백이 아닌 주소에는 TLS가 필요합니다. 요구 사항만 저장하며 리스너나 TLS ID를 만들지 않습니다.",
+  "pluginsServiceMethod": "HTTP 메서드",
+  "pluginsServicePath": "정확한 요청 경로",
+  "pluginsServiceQueryPath": "별도 결과 조회 경로(선택)",
+  "pluginsServiceSavePublication": "게시 승인 저장",
+  "pluginsServicePublicationMismatch": "게시가 현재 구성과 더 이상 일치하지 않습니다. 검토한 후 대체 승인을 명시적으로 저장하세요.",
+  "pluginsServiceYes": "예",
+  "pluginsServiceNo": "아니요",
+  "pluginsServiceRunTitle": "API 서비스 실행",
+  "pluginsServiceRunHint": "승인된 게시와 유한한 실행 한도를 선택하고 서비스를 명시적으로 시작하세요. 중지 후 원래 작업 공간 소유자가 복귀할 때까지 기다린 후 결과를 확인하세요.",
+  "pluginsServiceRunSelection": "승인된 서비스 게시",
+  "pluginsServiceRunNoSelection": "사용 가능한 승인된 게시가 없습니다. 플러그인, 구성 및 인증 상태를 확인하세요.",
+  "pluginsServiceRunStale": "선택한 패키지, 구성 또는 승인이 변경되었습니다. 기록을 새로 고치고 시작 전에 다시 선택하세요.",
+  "pluginsServiceRunStart": "한도 있는 서비스 시작",
+  "pluginsServiceRunStop": "서비스 중지",
+  "pluginsServiceRunLifetime": "실행 시간(밀리초, 최대 3,600,000)",
+  "pluginsServiceRunJobs": "전체 작업 예약 수(최대 1,000,000)",
+  "pluginsServiceRunBytes": "실행 바이트 한도(최대 67,108,864)",
+  "pluginsServiceRunAdvanced": "요청 및 워커 한도",
+  "pluginsServiceRunCalls": "작업당 호출 수(최대 1,024)",
+  "pluginsServiceRunJobBytes": "작업당 바이트(최대 16,777,216)",
+  "pluginsServiceRunTotalBytes": "워커 바이트 한도(최대 67,108,864)",
+  "pluginsServiceRunRequestBytes": "최대 요청 크기(바이트)",
+  "pluginsServiceRunResponseBytes": "최대 응답 크기(바이트)",
+  "pluginsServiceRunHeaderBytes": "최대 헤더 크기(바이트, 최대 65,536)",
+  "pluginsServiceRunConcurrent": "동시 작업 수(최대 128)",
+  "pluginsServiceRunTimeout": "작업 시간 제한(밀리초, 최대 30,000)",
+  "pluginsServiceRunBoundsHint": "한도는 플러그인 선언 및 저장된 승인에도 맞아야 합니다. 예약된 작업은 취소되어도 누적 한도를 소비합니다. 만료 시 실행이 중지되며 자동 갱신되지 않습니다.",
+  "pluginsServiceRunStarting": "서비스 시작 중",
+  "pluginsServiceRunRunning": "서비스 실행 중",
+  "pluginsServiceRunStopping": "중지 중 · 리스너 및 워커 종료 대기",
+  "pluginsServiceRunExited": "서비스 종료됨",
+  "pluginsServiceRunPending": "대기 중",
+  "pluginsServiceRunSucceeded": "성공",
+  "pluginsServiceRunInvalidOutcome": "잘못된 구성",
+  "pluginsServiceRunDenied": "거부됨",
+  "pluginsServiceRunLimit": "한도 도달",
+  "pluginsServiceRunCancelled": "취소됨",
+  "pluginsServiceRunTimeoutOutcome": "시간 초과",
+  "pluginsServiceRunTransport": "전송 실패",
+  "pluginsServiceRunClosed": "닫힘",
+  "pluginsServiceRunLocal": "콘텐츠 로컬 사용 가능",
+  "pluginsServiceRunOwned": "실행 중인 서비스가 콘텐츠 관리",
+  "pluginsServiceRunReclaiming": "콘텐츠 소유권 회수 대기",
+  "pluginsServiceRunReclaimed": "콘텐츠 소유권 회수됨 · 확인 필요",
+  "pluginsServiceRunRecovery": "정리 복구 필요",
+  "pluginsServiceRunUnavailable": "콘텐츠 저장소 사용 불가",
+  "pluginsServiceRunStatusFailed": "현재 서비스 상태를 확인하지 못했습니다. 다음 작업 전에 새로 고치세요.",
+  "pluginsServiceRunStartUnknown": "시작 결과를 알 수 없습니다. 시도 식별자는 유지됩니다. 새로 고쳐 확인하세요. 자동으로 다시 시작하지 않습니다.",
+  "pluginsServiceRunControlUnknown": "제어 결과를 알 수 없습니다. 다른 작업 전에 원래 서비스 상태를 새로 고치세요.",
+  "pluginsServiceRunIdentityChanged": "다른 작업이 콘텐츠를 소유합니다. 이 패널은 이전 서비스 식별자로 해당 작업을 제어하지 않습니다.",
+  "pluginsServiceRunInvalid": "선택한 서비스와 숫자 한도를 확인하세요. 새 실행은 제출하지 않았습니다.",
+  "pluginsServiceRunTask": "현재 작업 식별자",
+  "pluginsServiceRunAttempt": "미해결 시작 시도",
+  "pluginsServiceRunAbandon": "기록을 유지하고 시도 종료",
+  "pluginsServiceRunNetwork": "바인딩: {bind}; 리스너: {listener}; 감독: {supervision}",
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunLastObservation": "마지막 관측 표시 중 · 현재 상태 미확인",
+  "pluginsServiceRunNextSettings": "다음 명시적 실행 설정",
+  "pluginsServiceRunHttpPanel": "API 서비스가 이 작업을 소유합니다. 위 서비스 실행 패널에서 중지하거나 종료를 확인하세요. HTTP 요청 초안은 유지됩니다.",
+  "pluginsServiceRunStartRejected": "시작 응답에서 오류를 보고했습니다. 현재 작업은 확인했습니다. 원인과 정리 상태를 검토한 후 진행하세요.",
+  "pluginsServiceRunHostFailure": "호스트 진단: {detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunOutboundHint": "외부 API(선택, 최대 8개). 이 패키지에 승인된 엔드포인트만 표시됩니다. 모두 선택 해제하면 외부 호출이 차단됩니다.",
+  "pluginsServiceRunOutboundFailed": "엔드포인트 목록을 확인하지 못했습니다. 선택한 항목을 사용하기 전에 새로 고치세요.",
+  "pluginsServiceRunOutboundStale": "선택한 엔드포인트가 변경되었거나 사용할 수 없습니다. 현재 버전을 명시적으로 선택하거나 선택을 해제하세요.",
+  "pluginsServiceRunOutboundClear": "엔드포인트 선택 해제",
+  "pluginsServiceRunOutboundAttempt": "이 시작 시도에 연결된 엔드포인트",
+  "pluginsServiceTlsHint": "PEM 인증서 체인과 개인 키를 선택한 후 검사하세요. 시작 시 파일을 다시 검사하며 활성 인증서는 자동 교체되지 않습니다.",
+  "pluginsServiceTlsCertificate": "인증서 체인 선택",
+  "pluginsServiceTlsPrivateKey": "개인 키 선택",
+  "pluginsServiceTlsInspect": "인증서 검사",
+  "pluginsServiceTlsChecking": "인증서 선택 처리 중…",
+  "pluginsServiceTlsFailed": "인증서 검사에 실패했습니다. PEM 파일, 키 쌍 및 로컬 경로를 확인한 후 다시 시도하세요.",
+  "pluginsServiceTlsChecked": "인증서와 키 쌍을 확인했습니다. 인증서 PEM SHA-256이 아래에 표시됩니다. 클라이언트는 호스트 이름, 유효 기간 및 신뢰 체인을 계속 검증해야 합니다.",
+  "pluginsServiceTlsAttempt": "이 시작 시도에 연결된 인증서 PEM 다이제스트",
+  "pluginsServiceTlsUnavailable": "이 백엔드는 로컬 TLS 인증서 선택을 지원하지 않습니다.",
+  "pluginsServiceTlsValidity": "인증서 체인의 공통 유효 기간(UTC): {start} ~ {end}. 만료 후 서비스가 중지됩니다.",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "인증서 체인이 아직 유효하지 않거나 만료되었습니다. 인증서를 확인 또는 교체하고 시작 전에 다시 검사하세요.",
+  "pluginsServiceTlsRecheck": "시작 전에 인증서를 다시 검사하세요. 시계가 변경되어도 이전 선택은 복원되지 않습니다.",
+  "pluginsTlsIdentitiesTitle": "저장된 TLS ID",
+  "pluginsTlsIdentitiesHint": "ID를 명시적으로 선택하세요. 교체하거나 비활성화하면 이를 사용하는 서비스가 중지됩니다. 새 시작은 항상 명시적으로 수행합니다.",
+  "pluginsTlsIdentitiesUseFile": "다음 시작에 검사된 파일 사용",
+  "pluginsTlsIdentitiesSaved": "저장했습니다. 아래 ID와 리비전을 검토한 후 새 시작에 사용하도록 선택하세요.",
+  "pluginsTlsIdentitiesUnknownHint": "확인 전에 기록을 새로 고치고 검토하세요. 영수증이 없다고 변경이 실패한 것은 아닙니다. 확인 없이 다시 만들지 마세요.",
+  "pluginsTlsIdentitiesSavedMode": "다음 시작: 저장된 ID. 호스트가 시작 시 인증서 유효 기간을 확인합니다.",
+  "pluginsTlsIdentitiesFileMode": "다음 시작: 검사된 로컬 파일.",
+  "pluginsTlsIdentitiesStale": "선택한 ID가 변경 또는 비활성화되었거나 새로 고쳐지지 않았습니다. 현재 ID를 다시 선택하세요.",
+  "pluginsTlsIdentitiesEmpty": "이 라이브러리에 저장된 ID가 없습니다.",
+  "pluginsTlsIdentitiesSelect": "다음 시작에 사용",
+  "pluginsTlsIdentitiesReplace": "검사된 파일로 교체",
+  "pluginsTlsIdentitiesDisable": "ID 비활성화",
+  "pluginsTlsIdentitiesImport": "가져오기 또는 교체할 인증서 파일 준비",
+  "pluginsTlsIdentitiesSave": "새 ID로 저장"
+}

@@ -1,0 +1,1711 @@
+{
+  "@@locale": "ru",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "calls": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "fault": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "disconnect": {
+        "type": "String"
+      },
+      "execution": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "end": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "commonAppName": "Morrow",
+  "commonCancel": "Отмена",
+  "commonCount": "{count, plural, =0{Нет элементов} one{{count} элемент} few{{count} элемента} many{{count} элементов} other{{count} элемента}}",
+  "commonGreeting": "Здравствуйте, {name}",
+  "importsAttachmentLimit": "За раз можно импортировать 20 вложений. Остальные вставьте отдельно.",
+  "importsClipboardChanged": "Буфер обмена изменился во время чтения. Вставьте заново.",
+  "importsEmbeddedImageUnreadable": "Не удалось прочитать встроенное изображение.",
+  "importsEmbeddedImagesSeparate": "Некоторые встроенные изображения нужно импортировать отдельными файлами.",
+  "importsExcelValues": "Значения и формулы преобразованы в Markdown. Оформление и объединённые ячейки сохранены во вложении XML.",
+  "importsExcelXmlKept": "Исходная таблица Excel сохранена вложением XML.",
+  "importsFileTooLarge": "Файл в буфере обмена превышает 200 МБ.",
+  "importsItemLimit": "Прочитаны только первые 20 элементов. Остальные вставьте отдельно.",
+  "importsItemUnreadable": "Один элемент буфера обмена не удалось прочитать. Остальное доступное содержимое сохранено.",
+  "importsLocalImageNotRead": "Локальные изображения по ссылкам не читаются автоматически. Вставьте изображение или импортируйте исходный файл.",
+  "importsMergedTable": "Объединённые ячейки преобразованы в читаемую таблицу. Исходное оформление сохранено во вложении HTML.",
+  "importsOfficeBusy": "Буфер обмена занят другим приложением. Объекты Office не прочитаны.",
+  "importsOfficeEmbeddedKept": "Встроенный объект Office сохранён исходным вложением. Редактируйте диаграммы, формулы и макет в исходном приложении.",
+  "importsOfficeExportFailed": "Объект Office превышает лимит или не экспортируется. Сохраните в исходном приложении и импортируйте.",
+  "importsOfficeReadFailed": "Не удалось прочитать Office. Остальное содержимое буфера обмена доступно.",
+  "importsOfficeUnavailable": "Буфер обмена Office временно недоступен.",
+  "importsOfficeUnreadable": "Исходный объект Office не прочитан. Остальное доступное содержимое сохранено.",
+  "importsRichFallback": "Часть форматирования не преобразована. Читаемый текст сохранён.",
+  "importsRichTooLarge": "Форматированный текст превышает 2 МБ. Импортируйте документ вложением.",
+  "importsRtfTooLarge": "RTF слишком велик. Импортируйте исходный документ.",
+  "importsSpreadsheetTooLarge": "Таблица слишком велика. Импортируйте файл Excel.",
+  "importsTableConverted": "Таблица преобразована в Markdown. Полные данные сохранены во вложении TSV.",
+  "importsTextTooLarge": "Текст превышает 2 МБ. Импортируйте его файлом.",
+  "importsTotalTooLarge": "Общий размер вставляемых файлов превышает 200 МБ. Импортируйте меньшими группами.",
+  "importsUnsupported": "Буфер обмена здесь не поддерживается. Импортируйте файл.",
+  "mainActiveProjects": "В работе",
+  "mainAdjustCustomTone": "Настроить цвет",
+  "mainAmbientDetail": "Плавный свет добавляет немного цвета.",
+  "mainAppTitle": "Morrow — Пространство для идей",
+  "mainAppearance": "Оформление",
+  "mainArrangeIdeas": "Сортировать идеи",
+  "mainAttachmentCount": "Вложения · {count}",
+  "mainAttachmentHint": "Вложений: {count} · {name}",
+  "mainAttachmentLimit": "До 20 вложений в одной записи.",
+  "mainAutosaveNotice": "Оформление и идеи сохраняются локально",
+  "mainAwaitDiscovery": "В ожидании открытия",
+  "mainBackToWorkbench": "Вернуться в рабочую область",
+  "mainBackgroundCanvas": "Фоновое полотно",
+  "mainBackgroundSound": "Включить фоновый звук",
+  "mainBodyHint": "Запишите мысли или вставьте содержимое…\n\nПоддерживаются # заголовки, списки, таблицы и блоки кода",
+  "mainBrightWhite": "Белый",
+  "mainBuiltinTexture": "Встроенная текстура",
+  "mainCanvasCompass": "Цветовой круг фона",
+  "mainCaptureIdea": "Записать идею",
+  "mainCaptureNow": "Записать мысль",
+  "mainCardAttachments": "Файлов: {count} · {name}",
+  "mainCategoryExperiment": "Эксперимент",
+  "mainCategoryIdea": "Идея",
+  "mainCategoryProject": "Проект",
+  "mainCategoryPrompt": "Где сохранить",
+  "mainChangeFailed": "Изменение не сохранено. Черновик сохранён; можно повторить.",
+  "mainCheckAgain": "Проверить снова",
+  "mainClearSearch": "Очистить поиск",
+  "mainClipboardEmpty": "В буфере обмена нет доступных текста или файлов. Скопируйте файл в файловом менеджере или используйте импорт.",
+  "mainClipboardReadFailed": "Не удалось прочитать содержимое. Импортируйте файл или проверьте разрешения на файл и буфер обмена.",
+  "mainClipboardSupport": "Поддерживаются Markdown, форматированный текст и таблицы Office, снимки экрана и файлы. Сложные объекты сохраняются исходными вложениями. До 20 вложений по 200 МБ.",
+  "mainCollapseSidebar": "Свернуть боковую панель",
+  "mainCompletedProjects": "Завершено",
+  "mainComponentCompass": "Цветовой круг компонента",
+  "mainComponentEmpty": "Пустое состояние",
+  "mainComponentFooter": "Подсказки и текст песни",
+  "mainComponentHero": "Карточка обзора",
+  "mainComponentNavigation": "Боковая навигация",
+  "mainComponentQuickCapture": "Быстрая запись",
+  "mainComponentSearch": "Строка поиска",
+  "mainComponentSettings": "Компоненты и карточки · Настройки",
+  "mainContentProtection": "Защита содержимого",
+  "mainContentRead": "Содержимое прочитано",
+  "mainContentReadFiles": "Содержимое прочитано; вложений сохранено: {count}",
+  "mainCornerRadius": "Радиус углов",
+  "mainCredentialSettings": "Учётные данные",
+  "mainCrystal": "Прозрачное",
+  "mainCrystalDetail": "Лёгкость и прозрачность, раскрывающие цвет.",
+  "mainCuriosity": "Интересное начинается\nс капельки любопытства.",
+  "mainCustomCompass": "Цветовой круг · Настройка",
+  "mainCustomLightness": "Яркость цвета",
+  "mainCustomTheme": "Своя",
+  "mainDaily": "Мелочи дня",
+  "mainDailyExplore": "Уделите десять минут открытиям",
+  "mainDailyIdea": "Запишите идею",
+  "mainDailyWater": "Налейте себе воды",
+  "mainDarkTheme": "Тёмная",
+  "mainDeepBlack": "Чёрный",
+  "mainDefaultCanvas": "Обычный",
+  "mainDefaultGlobalColor": "Цвет темы по умолчанию · Все элементы",
+  "mainDelete": "Удалить",
+  "mainDeleted": "«{title}» удалено",
+  "mainDiagnosticDetails": "Диагностические сведения",
+  "mainDone": "Готово",
+  "mainEdit": "Изменить",
+  "mainEditIdeaTitle": "Сделайте идею яснее",
+  "mainEditorClosedUnknown": "Редактор закрыт, но сохранение не подтверждено. Откройте рабочую область и проверьте результат, прежде чем создавать копию.",
+  "mainEditorSubtitle": "Текст, таблицы, изображения — храните их здесь, пока идея обретает форму.",
+  "mainEditorUnavailable": "Редактор недоступен. Проверьте службу содержимого и повторите.",
+  "mainEndpointSettings": "Исходящие конечные точки",
+  "mainExpandSettings": "Развернуть настройки",
+  "mainExpandSidebar": "Развернуть боковую панель",
+  "mainExtensionPlugins": "Расширения",
+  "mainFavoriteAttachments": "Избранные вложения",
+  "mainFavoriteRecords": "Избранные записи",
+  "mainFavoriteTooltip": "В избранное: {title}",
+  "mainFavoritesIntro": "Любимые тексты, изображения и файлы в одном месте.",
+  "mainFieldLimit": "Не более {limit} символов. Сократите текст или импортируйте его файлом.",
+  "mainFilterAll": "Все",
+  "mainFilterAttachments": "С файлами",
+  "mainFilterFavorites": "Только избранное",
+  "mainFilterFile": "Файлы",
+  "mainFilterImage": "Изображения",
+  "mainFilterMedia": "Аудио / видео",
+  "mainFilterPending": "К выполнению",
+  "mainFilterText": "Текст",
+  "mainFollowTheme": "По теме",
+  "mainFrostDetail": "Смягчите фон и освободите место для мыслей.",
+  "mainFrostEffect": "Размытие",
+  "mainFrostOpacity": "Непрозрачность стекла",
+  "mainFrostUnavailable": "Размытие рабочего стола недоступно. Цвет и непрозрачность можно изменить.",
+  "mainFrosted": "Матовое",
+  "mainGlassTexture": "Стиль стекла",
+  "mainGlobalColor": "{color} · Все элементы",
+  "mainGreeting": "Пусть ваши идеи растут.",
+  "mainGreetingDetail": "Сохраняйте детали повседневности и искры вдохновения.",
+  "mainHeroBody": "Мысль, небольшая задача, «а что если».\nВсё начинается здесь.",
+  "mainHeroCaption": "УГОЛОК ВОЗМОЖНОСТЕЙ",
+  "mainHeroTitle": "Можно начать с малого.",
+  "mainHideAppearance": "Скрыть настройки оформления",
+  "mainHideCustomTone": "Скрыть настройку цвета",
+  "mainHidePreview": "Скрыть предпросмотр",
+  "mainHttpSettings": "HTTP-задачи",
+  "mainHypothesis": "Гипотеза",
+  "mainHypothesisPrompt": "Гипотеза для проверки",
+  "mainHypothesisSection": "Гипотеза / Что попробовать",
+  "mainIdeaDetails": "Сохраните детали. Пусть следующий шаг станет понятнее.",
+  "mainIdeaNameHint": "Дайте название",
+  "mainIdeaNameRequired": "Сначала запишите идею",
+  "mainIdeaSaved": "Идея сохранена.",
+  "mainImportFailed": "Не удалось импортировать медиа. Проверьте файл и свободное место.",
+  "mainImportFile": "Импортировать файл",
+  "mainInboxIntro": "Сначала записывайте, потом разбирайте. Превращайте удачные идеи в небольшие проекты.",
+  "mainIoNoDeclarations": "Установленные плагины не запрашивают доступ к файлам или сети.",
+  "mainIoSettings": "Сеть и файлы",
+  "mainIoSettingsGuide": "Управляйте доступом плагинов к файлам и сети отдельно от оформления. Одобрение возможности не даёт доступ ко всем файлам и адресам; операции зависят от текущего бэкенда.",
+  "mainIoSettingsSummary": "Разрешения, учётные данные, конечные точки и API",
+  "mainJustNow": "Только что",
+  "mainLabIntro": "Начните с гипотезы. Сохраняйте попытки, наблюдения и неожиданные открытия.",
+  "mainLanguage": "Язык",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainLanguageSystem": "Как в системе",
+  "mainLavender": "Лаванда",
+  "mainLightOpacity": "20% · Лёгкое",
+  "mainLiquidAllCanvases": "Отдельно доступен для всех четырёх типов фона",
+  "mainLiquidDetail": "Плавные блики и мягкое преломление, словно капля воды в воздухе.",
+  "mainLiquidEffect": "Эффект жидкого стекла",
+  "mainLiquidGlass": "Жидкое стекло",
+  "mainLivePreview": "Живой предпросмотр",
+  "mainLocalMedia": "Локальные медиа",
+  "mainMakeYours": "ПО-ВАШЕМУ",
+  "mainMarkOrganized": "Отметить как разобранное",
+  "mainMarkdownBody": "Текст · Markdown",
+  "mainMediaLimits": "Изображения / GIF ≤ 25 МБ; видео ≤ 150 МБ",
+  "mainMonochrome": "Монохромное",
+  "mainMoreSteps": "Ещё шагов: {count}; откройте для просмотра",
+  "mainMovedProject": "«{title}» перенесено в проекты",
+  "mainMusic": "Музыкальный плеер",
+  "mainMySpace": "Моё пространство",
+  "mainNavigation": "Навигация",
+  "mainNewIdea": "Новая идея",
+  "mainNewIdeaTitle": "Поймайте новую идею",
+  "mainNoHypothesis": "Гипотезы пока нет",
+  "mainNoMatches": "Подходящих идей нет",
+  "mainNoResultYet": "Результат подождёт. Процесс тоже стоит записать.",
+  "mainNotNow": "Не сейчас",
+  "mainObservationSection": "Наблюдения / Что выяснилось",
+  "mainObservations": "Наблюдения и выводы",
+  "mainObservationsPrompt": "Наблюдения, процесс и выводы",
+  "mainOneHourAgo": "Час назад",
+  "mainOnlineMedia": "Онлайн-медиа",
+  "mainOpaqueFallback": "Прозрачные панели поверх цвета текущей темы.",
+  "mainOpenNextStep": "Откройте проект, чтобы изменить следующие шаги",
+  "mainOrganizedCount": "Разобрано",
+  "mainOriginalColors": "Исходные цвета",
+  "mainPageFavorites": "Избранное",
+  "mainPageInbox": "Входящие",
+  "mainPageLaboratory": "Лаборатория",
+  "mainPageOverview": "Обзор",
+  "mainPageProjects": "Проекты",
+  "mainPageSummary": "{page} · Обзор",
+  "mainPasteChanged": "Во время вставки ввод изменился. Откройте редактор заново.",
+  "mainPasteContent": "Вставить содержимое",
+  "mainPause": "Пауза",
+  "mainPersonalWorkspace": "Личная рабочая область",
+  "mainPlay": "Воспроизвести",
+  "mainPluginSettings": "Плагины и службы",
+  "mainPluginSettingsSummary": "Встроенные инструменты, расширения, сеть, файлы и защита данных",
+  "mainPreviewEmpty": "Здесь появится предпросмотр",
+  "mainProgress": "Маленькие шаги · {done}/{total}",
+  "mainProjectIntro": "Продвигайтесь по списку задач. Каждый маленький шаг приближает к цели.",
+  "mainQueryAgain": "Новый запрос",
+  "mainQueryCapacity": "История запросов заполнена",
+  "mainQueryCapacityDetail": "Данные сохранены. Эта версия пока не позволяет очистить историю запросов.",
+  "mainQueryLoading": "Поиск идей…",
+  "mainQueryRetry": "Повторить запрос",
+  "mainQueryTerminated": "Запрос завершён",
+  "mainQueryUnknown": "Результаты пока не подтверждены",
+  "mainQuickHint": "Что пришло в голову?",
+  "mainReadOnlySettings": "Содержимое доступно только для чтения. Проверьте плагин рабочей области, чтобы вернуть редактирование.",
+  "mainRecentThoughts": "Недавние мысли",
+  "mainRecordedCount": "С наблюдениями",
+  "mainRestoreDefault": "По умолчанию",
+  "mainRetry": "Повторить",
+  "mainRetrySave": "Повторить сохранение",
+  "mainSage": "Шалфей",
+  "mainSampleBody0": "Сохраняйте внезапные мысли здесь.\nНе спешите завершать — просто начните.",
+  "mainSampleBody1": "Небольшая страница для любимых слов,\nмузыки и повседневных деталей.",
+  "mainSampleBody2": "Попробуйте генеративное искусство. Пусть код\nсоздаёт неожиданные формы.",
+  "mainSampleBody3": "Тихий спутник, который поможет помнить\nмелочи, ускользающие из памяти.",
+  "mainSampleTitle0": "Дом для идей",
+  "mainSampleTitle1": "Тихий цифровой сад",
+  "mainSampleTitle2": "Сделать что-то ради удовольствия",
+  "mainSampleTitle3": "Мой маленький помощник",
+  "mainSampleTodo0": "Разобрать первую коллекцию",
+  "mainSampleTodo1": "Оформить вход в сад",
+  "mainSampleTodo2": "Посадить новую идею",
+  "mainSampleTodo3": "Набросать небольшой прототип",
+  "mainSampleTodo4": "Продумать напоминания",
+  "mainSaveConnectionUnknown": "Соединение прервано; результат сохранения неизвестен. Откройте библиотеку заново и проверьте перед повтором.",
+  "mainSaveFailed": "Не удалось сохранить. Изменения сохранены в текущем сеансе.",
+  "mainSaveIdea": "Сохранить идею",
+  "mainSaveNotSubmitted": "Не отправлено. Черновик и вложения сохранены; можно исправить и сохранить снова.",
+  "mainSaveReadOnly": "Изменения не сохранены. Включите плагин рабочей области в разделе «Плагины и службы» и повторите.",
+  "mainSaveUnknown": "Сохранение не подтверждено. Черновик и вложения сохранены. Повторите эту отправку; при закрытии рабочая область обновится для проверки.",
+  "mainSaving": "Сохранение…",
+  "mainSearchHint": "Поиск идей…",
+  "mainServiceRunSettings": "Работа служб",
+  "mainServiceSettings": "Службы API",
+  "mainSettings": "Настройки",
+  "mainShowAppearance": "Показать настройки оформления",
+  "mainSidebarMotto": "Немного порядка. Простор для открытий.",
+  "mainSlowProgress": "Даже маленькие шаги ведут вперёд.",
+  "mainSolidCanvas": "Однотонный",
+  "mainSolidDetail": "Спокойный однотонный фон.",
+  "mainSolidOpacity": "100% · Плотное",
+  "mainSortFavorites": "Сначала избранное",
+  "mainSortRecent": "Недавно добавленные",
+  "mainSortTitle": "По названию",
+  "mainSquareCorners": "0 — прямые углы",
+  "mainStageActive": "В работе",
+  "mainStageCompleted": "Завершено",
+  "mainStageOrganized": "Разобрано",
+  "mainStagePlanned": "Запланировано",
+  "mainStageRecorded": "Записано",
+  "mainStageTooltip": "Изменить этап: {title}",
+  "mainStageUnsorted": "Нужно разобрать",
+  "mainStageUnverified": "Нужно проверить",
+  "mainStageVerifying": "Проверяется",
+  "mainStayCurious": "БУДЬТЕ ЛЮБОПЫТНЫ. БУДЬТЕ СОБОЙ.",
+  "mainSteps": "Шаги: {done}/{total}",
+  "mainStorageUnavailable": "Локальное хранилище недоступно. Изменения сохранятся только до конца сеанса.",
+  "mainStorageUnreadable": "Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.",
+  "mainTenMinutesAgo": "10 минут назад",
+  "mainTextureCanvas": "Текстура",
+  "mainTextureDetail": "Тонкая бумажная текстура создаёт ощущение материала.",
+  "mainThemeCompass": "Цветовой круг темы",
+  "mainThemeGrayscale": "Обесцвечивание темы",
+  "mainThemeTone": "Цвета темы",
+  "mainThreeHoursAgo": "3 часа назад",
+  "mainTintOpacity": "Непрозрачность оттенка",
+  "mainToProject": "Перенести в проекты",
+  "mainTodosPrompt": "Следующие шаги (по одному в строке, необязательно)",
+  "mainTransparencyUnavailable": "Не удалось включить прозрачность системы. Можно использовать обычный фон.",
+  "mainTransparentCanvas": "Прозрачный",
+  "mainTransparentDetail": "Показывает пространство за окном; в веб-версии — фон страницы.",
+  "mainUndo": "Отменить",
+  "mainUnfavoriteTooltip": "Убрать из избранного: {title}",
+  "mainUnsortedCount": "Нужно разобрать",
+  "mainUnverifiedCount": "Нужно проверить",
+  "mainView": "Просмотр",
+  "mainViewAll": "Показать всё",
+  "mainWarmSand": "Тёплый песок",
+  "mainWhiteTheme": "Светлая",
+  "mainWindowRadius": "Углы окна",
+  "mainWindowRadiusDetail": "Отдельная настройка рамки; при разворачивании углы прямые",
+  "mainWindowsFrostOnly": "Размытие рабочего стола доступно только в Windows",
+  "mainWorkbench": "Рабочая область",
+  "mainWorkbenchPlugin": "Плагин рабочей области",
+  "mainWriteHypothesis": "Откройте запись и опишите, что хотите проверить.",
+  "mainYesterday": "Вчера",
+  "pluginsApprovalUnknown": "Не удалось подтвердить включение или изменение разрешений",
+  "pluginsApproveEnable": "Разрешить и включить",
+  "pluginsApproveWorkbench": "Разрешить чтение и изменение и включить",
+  "pluginsAttachment": "Читать вложения",
+  "pluginsBackingUp": "Копирование…",
+  "pluginsBackupLibrary": "Скопировать библиотеку",
+  "pluginsBackupLibraryType": "Резервная копия библиотеки",
+  "pluginsBackupProtection": "Скопировать файл защиты",
+  "pluginsBackupUnknown": "Резервное копирование ещё не подтверждено. Сохраните созданные файлы и проверьте папку назначения.",
+  "pluginsBinaryPreview": "Двоичное содержимое: {hex}",
+  "pluginsBuiltin": "Встроенное пространство",
+  "pluginsBuiltinCount": "{count, plural, one{{count} символ} few{{count} символа} many{{count} символов} other{{count} символа}} · Только в этом сеансе; не сохранено как карточка",
+  "pluginsBuiltinEmpty": "Введите текст для предпросмотра в верхнем регистре",
+  "pluginsBuiltinHeading": "Текстовые инструменты",
+  "pluginsBuiltinInput": "Введите текст",
+  "pluginsCancel": "Отмена",
+  "pluginsChoosePackage": "Выбрать файл плагина",
+  "pluginsChooseSmallFile": "Выбрать небольшой файл",
+  "pluginsCloseTextTool": "Скрыть текстовый инструмент",
+  "pluginsCloseUnknown": "Не удалось подтвердить закрытие представления",
+  "pluginsCloseView": "Закрыть представление",
+  "pluginsConnectionLost": "Соединение прервано. Откройте представление плагина заново.",
+  "pluginsContentPermissions": "Разрешения содержимого",
+  "pluginsCreate": "Создавать содержимое",
+  "pluginsCredentialCancel": "Закрыть форму",
+  "pluginsCredentialCreateTitle": "Новые учётные данные",
+  "pluginsCredentialDays": "{days, plural, one{{days} день} few{{days} дня} many{{days} дней} other{{days} дня}}",
+  "pluginsCredentialDetails": "Безопасно храните учётные данные для разрешённых API. Сохранение не разрешает сервер и не включает плагин. Просмотреть сохранённые секреты нельзя.",
+  "pluginsCredentialDisable": "Отключить",
+  "pluginsCredentialDisabled": "Отключены",
+  "pluginsCredentialDisabledDone": "Учётные данные отключены.",
+  "pluginsCredentialEmpty": "Нет сохранённых учётных данных",
+  "pluginsCredentialExpired": "Срок истёк",
+  "pluginsCredentialExpires": "Срок действия: {date}",
+  "pluginsCredentialHeader": "Имя заголовка",
+  "pluginsCredentialInvalid": "Проверьте имя заголовка и введите новый секрет. Поле секрета очищено.",
+  "pluginsCredentialLifetime": "Срок действия",
+  "pluginsCredentialLoadFailed": "Не удалось согласованно прочитать учётные данные. Обновите состояние для повторной попытки.",
+  "pluginsCredentialNew": "Добавить учётные данные",
+  "pluginsCredentialReading": "Чтение учётных данных…",
+  "pluginsCredentialReference": "Учётные данные {reference}",
+  "pluginsCredentialRefresh": "Обновить состояние",
+  "pluginsCredentialReplace": "Заменить секрет",
+  "pluginsCredentialReplaceTitle": "Заменить учётные данные {reference}",
+  "pluginsCredentialSave": "Сохранить учётные данные",
+  "pluginsCredentialSaved": "Учётные данные сохранены. Подключения API требуют отдельного разрешения.",
+  "pluginsCredentialSecret": "Новое значение секрета",
+  "pluginsCredentialStored": "Сохранены",
+  "pluginsCredentialTitle": "Учётные данные API",
+  "pluginsCredentialUnknown": "Результат не подтверждён. Поле секрета очищено. Обновите состояние перед следующим изменением.",
+  "pluginsDeclared": "Заявленные разрешения: {permissions}",
+  "pluginsDependenciesNotice": "Зависимости настраиваются в хосте. Эта страница не даёт им разрешений.",
+  "pluginsDisable": "Отключить",
+  "pluginsDisableWorkbench": "Отключить плагин пространства",
+  "pluginsDisabled": "Выключен",
+  "pluginsDisabledDetails": "Выключен. Разрешите чтение и изменение содержимого, чтобы использовать редактор и инструменты.",
+  "pluginsEdit": "Изменять содержимое",
+  "pluginsEmptyLibrary": "Сторонние плагины ещё не импортированы.",
+  "pluginsEmptyResult": "(пустой результат)",
+  "pluginsEnabled": "Включён",
+  "pluginsEnabledDetails": "Включён. Плагин может читать и изменять содержимое. Отключение сохраняет ваши данные.",
+  "pluginsEndpointAdvanced": "Лимиты политики (в байтах, если не указано иное)",
+  "pluginsEndpointCertificate": "Выбрать корневой сертификат DER",
+  "pluginsEndpointCertificateDetails": "Необязательный корневой сертификат HTTPS: один двоичный DER (.der или .cer), до 32 КиБ. PEM и наборы сертификатов не принимаются. Удалите сертификат перед переходом на HTTP.",
+  "pluginsEndpointCertificateInvalid": "Выберите один корректный двоичный сертификат DER (.der или .cer) до 32 КиБ.",
+  "pluginsEndpointCertificateSelected": "Выбран корневой сертификат DER ({bytes} байт)",
+  "pluginsEndpointConcurrency": "Параллельные запросы (1–128)",
+  "pluginsEndpointCreateTitle": "Новое разрешение конечной точки",
+  "pluginsEndpointCredential": "Ссылка на учётные данные",
+  "pluginsEndpointCredentialLifetime": "Учётные данные должны действовать весь срок разрешения конечной точки. Их срок не продлевается.",
+  "pluginsEndpointCredentialUnavailable": "Нужны заявленное и одобренное разрешение пакета на использование учётных данных и действующая сохранённая ссылка.",
+  "pluginsEndpointCredentialsFailed": "Не удалось прочитать ссылки на учётные данные. Обновите состояние перед выбором.",
+  "pluginsEndpointDetails": "Сохраните политику сервера для конкретного пакета и его хеша. Сохранение не подключает к сети, не включает плагин и не делает сетевые задачи сразу доступными.",
+  "pluginsEndpointDigest": "Хеш пакета",
+  "pluginsEndpointDisabledDone": "Разрешение конечной точки отключено.",
+  "pluginsEndpointEmpty": "Нет сохранённых разрешений конечных точек",
+  "pluginsEndpointFrameBytes": "Лимит кадра (1–131072 байт)",
+  "pluginsEndpointHeaderBytes": "Максимум байт заголовков (1–16384)",
+  "pluginsEndpointInvalid": "Проверьте пакет, origin, методы, срок 1–30 дней, разрешение учётных данных, сертификат и лимиты политики.",
+  "pluginsEndpointLifetime": "Срок действия (1–30 дней)",
+  "pluginsEndpointLoadFailed": "Не удалось согласованно прочитать разрешения конечных точек. Обновите состояние для повторной попытки.",
+  "pluginsEndpointLocalHttp": "Локальный HTTP",
+  "pluginsEndpointLocalHttps": "Локальный HTTPS",
+  "pluginsEndpointMethods": "Разрешённые методы запросов",
+  "pluginsEndpointNew": "Добавить конечную точку",
+  "pluginsEndpointNoCredential": "Без учётных данных",
+  "pluginsEndpointOrigin": "Только origin, например https://api.example.com",
+  "pluginsEndpointPackage": "Пакет",
+  "pluginsEndpointPackageUnavailable": "Пакет недоступен или не имеет разрешения HTTP. Существующие разрешения можно отключить.",
+  "pluginsEndpointProfile": "Профиль подключения",
+  "pluginsEndpointPublicHttps": "Публичный HTTPS",
+  "pluginsEndpointRemoveCertificate": "Удалить корневой сертификат",
+  "pluginsEndpointReplace": "Заменить разрешение",
+  "pluginsEndpointReplaceTitle": "Заменить разрешение с текущим хешем пакета",
+  "pluginsEndpointRequestBytes": "Максимум байт запроса (1–65536)",
+  "pluginsEndpointResponseBytes": "Максимум байт ответа (1–65536)",
+  "pluginsEndpointSave": "Сохранить разрешение конечной точки",
+  "pluginsEndpointSaved": "Разрешение сохранено. Подключение к сети не выполнялось.",
+  "pluginsEndpointTimeout": "Тайм-аут (1–30000 мс)",
+  "pluginsEndpointTitle": "Разрешения конечных точек API",
+  "pluginsEndpointUnknown": "Результат не подтверждён. Обновите состояние перед изменениями. Запрос не будет автоматически отправлен повторно.",
+  "pluginsEndpointWorking": "Обновление состояния конечной точки…",
+  "pluginsExistingVersion": "Эта версия уже установлена. Состояние включения не изменилось.",
+  "pluginsFileLimit": "Файл слишком велик. Выберите файл размером не более {limit} байт.",
+  "pluginsHttpTaskAbandon": "Завершить наблюдение за попыткой",
+  "pluginsHttpTaskAbandonDetails": "Наблюдение можно завершить, только когда свежее состояние подтверждает отсутствие активной задачи и доступность исходной библиотеки. Это не доказывает отсутствие удалённых изменений. Идентификатор и неопределённость сохраняются в истории; новый запрос требует явной отправки.",
+  "pluginsHttpTaskAbsent": "Результат не доставлен",
+  "pluginsHttpTaskAccepted": "Принято",
+  "pluginsHttpTaskAcknowledge": "Подтвердить завершённую задачу",
+  "pluginsHttpTaskArchivedUnknown": "Наблюдение завершено пользователем. Предыдущие удалённые изменения не подтверждены; попытка не повторялась.",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskBody": "Тело запроса",
+  "pluginsHttpTaskBodyFormat": "Кодировка тела запроса",
+  "pluginsHttpTaskBusy": "Занято",
+  "pluginsHttpTaskCancel": "Запросить отмену",
+  "pluginsHttpTaskCancelled": "Отмена обнаружена; удалённые изменения могли произойти",
+  "pluginsHttpTaskCatalogUnavailable": "Каталог плагинов недоступен. Обновите его перед новой отправкой; управление существующей задачей доступно.",
+  "pluginsHttpTaskClosed": "Закрыто",
+  "pluginsHttpTaskCompleted": "Завершено",
+  "pluginsHttpTaskConflict": "Конфликт",
+  "pluginsHttpTaskConsumed": "Результат потреблён",
+  "pluginsHttpTaskControlUnknown": "Результат управляющего действия не подтверждён. Обновите состояние задачи перед следующим действием.",
+  "pluginsHttpTaskCounters": "Вызовы IO: {calls}; учтённые байты: {bytes}",
+  "pluginsHttpTaskDeadline": "Превышен срок выполнения",
+  "pluginsHttpTaskDenied": "Отказано",
+  "pluginsHttpTaskDetails": "Выполните один явно заданный запрос через разрешённую конечную точку и включённый плагин с экспериментальным HTTP-обработчиком. Состояние задачи доступно, даже когда библиотека занята.",
+  "pluginsHttpTaskDisconnect": "Ошибка очистки соединения",
+  "pluginsHttpTaskEndpoint": "Разрешённая конечная точка",
+  "pluginsHttpTaskEndpointsFailed": "Не удалось согласованно прочитать конечные точки, либо библиотека занята. Управление задачами доступно. Обновите конечные точки после возврата библиотеки.",
+  "pluginsHttpTaskEvidenceUnavailable": "Подтверждение результата недоступно",
+  "pluginsHttpTaskExecution": "Выполнение гостя: {fault}; код выхода: {code}",
+  "pluginsHttpTaskExit": "Выход рабочего процесса — выполнение: {execution}; отключение: {disconnect}; обслуживание: {maintenance}",
+  "pluginsHttpTaskExplicit": "Отправка выполняет один реальный запрос. Каждый щелчок создаёт новый идентификатор. Неподтверждённые отправки и чтения не повторяются автоматически. Отмена не доказывает откат удалённой операции.",
+  "pluginsHttpTaskFailed": "Ошибка",
+  "pluginsHttpTaskHeaders": "Обычные заголовки запроса: Имя: значение, по одному на строку",
+  "pluginsHttpTaskHeadersHint": "Повторяющиеся заголовки сохраняются отдельно. Заголовки учётных данных и соединения задаёт только среда выполнения.",
+  "pluginsHttpTaskHistory": "Предыдущие наблюдения задач (до 5)",
+  "pluginsHttpTaskHttpResult": "Результат HTTP: {status}; удалённый статус: {code}",
+  "pluginsHttpTaskInactive": "Соединение неактивно",
+  "pluginsHttpTaskInvalid": "Проверьте конечную точку, метод, относительный путь, обычные заголовки, кодировку тела и тайм-аут на соответствие разрешённым лимитам.",
+  "pluginsHttpTaskInvalidOptions": "Недопустимые параметры",
+  "pluginsHttpTaskKey": "Идентификатор задачи: {identity}",
+  "pluginsHttpTaskLimit": "Достигнута квота или лимит",
+  "pluginsHttpTaskLoadingEndpoints": "Чтение разрешённых конечных точек…",
+  "pluginsHttpTaskLocal": "Библиотека доступна; активных задач нет",
+  "pluginsHttpTaskModule": "Недопустимый гостевой модуль",
+  "pluginsHttpTaskNew": "Подготовить новый запрос",
+  "pluginsHttpTaskNoEndpoints": "Нет конечных точек для включённого и разрешённого плагина пересылки HTTP.",
+  "pluginsHttpTaskNotFound": "Не найдено",
+  "pluginsHttpTaskOk": "ОК",
+  "pluginsHttpTaskOutcomeUnknown": "Удалённый результат неизвестен; не считайте изменения отменёнными и не повторяйте отправку",
+  "pluginsHttpTaskPackageChanged": "Привязка пакета изменена",
+  "pluginsHttpTaskPending": "Ожидание результата",
+  "pluginsHttpTaskPoll": "Проверить задачу",
+  "pluginsHttpTaskProtocol": "Ошибка протокола задачи",
+  "pluginsHttpTaskRead": "Прочитать результат один раз",
+  "pluginsHttpTaskReadBound": "Превышен предел чтения",
+  "pluginsHttpTaskReadPending": "Результат не возвращён. Проверьте состояние перед явным повторным чтением.",
+  "pluginsHttpTaskReadUnknown": "Чтение результата не подтверждено и могло уже потребить результат. Повторного чтения не будет. Состояние и завершение всё ещё можно проверить.",
+  "pluginsHttpTaskReady": "Результат готов: прочитайте явно. Это не означает завершение рабочего процесса.",
+  "pluginsHttpTaskReclaimed": "Рабочий процесс завершён; исходная библиотека возвращена",
+  "pluginsHttpTaskRecoveryRequired": "Рабочий процесс завершён; очистка или обслуживание требуют исправления",
+  "pluginsHttpTaskRefresh": "Обновить состояние задачи",
+  "pluginsHttpTaskRefreshEndpoints": "Обновить разрешённые конечные точки",
+  "pluginsHttpTaskRemoteError": "Удалённый сервер вернул 4xx/5xx. HTTP-обмен завершён; это отдельно от ошибок выполнения гостя.",
+  "pluginsHttpTaskRepair": "Исправить очистку",
+  "pluginsHttpTaskResponseBase64": "Тело ответа: точный Base64",
+  "pluginsHttpTaskResponseHeaders": "Заголовки ответа (повторы сохранены; двоичные значения в Base64)",
+  "pluginsHttpTaskResponseText": "Тело ответа: текстовый предпросмотр",
+  "pluginsHttpTaskResultUnavailable": "Доставка результата недоступна",
+  "pluginsHttpTaskRevoked": "Разрешение отозвано",
+  "pluginsHttpTaskRunning": "Выполняется; библиотека передана рабочему процессу",
+  "pluginsHttpTaskSpawn": "Не удалось запустить рабочий процесс",
+  "pluginsHttpTaskStart": "Отправить новый запрос",
+  "pluginsHttpTaskStartUnknown": "Результат отправки неизвестен. Идентификатор сохранён. Запросите состояние той же задачи; запрос не будет отправлен повторно.",
+  "pluginsHttpTaskStatusFailed": "Не удалось подтвердить состояние задачи. Обновите состояние; запрос не повторялся.",
+  "pluginsHttpTaskStopping": "Остановка; ожидание фактического выхода рабочего процесса",
+  "pluginsHttpTaskSubmission": "Идентификатор отправки: {identity}",
+  "pluginsHttpTaskTarget": "Относительный путь, например /v1/items?limit=10",
+  "pluginsHttpTaskText": "Текст UTF-8",
+  "pluginsHttpTaskTimeout": "Тайм-аут в мс (1–30000, в пределах разрешения)",
+  "pluginsHttpTaskTitle": "Задачи HTTP",
+  "pluginsHttpTaskTrap": "Ловушка при выполнении гостевого кода",
+  "pluginsHttpTaskUnavailable": "Исходная библиотека недоступна; требуется восстановление",
+  "pluginsHttpTaskUnsupported": "Операция не поддерживается",
+  "pluginsHttpTaskWorking": "Ожидание ответа управления задачей…",
+  "pluginsImport": "Импортировать",
+  "pluginsImportDetails": "После импорта вы решаете, включать ли плагин. Отключение и удаление сохраняют содержимое.",
+  "pluginsImportPreview": "Предпросмотр импорта: {name}",
+  "pluginsImportUnknown": "Не удалось подтвердить импорт",
+  "pluginsImportedDisabled": "Импортирован и выключен. Выберите разрешения.",
+  "pluginsInputFailed": "Не удалось прочитать входной файл",
+  "pluginsInputTooLong": "Достигнут предел ввода. Сократите текст и повторите попытку.",
+  "pluginsInspectFailed": "Не удалось загрузить предпросмотр плагина",
+  "pluginsInspectedOnly": "Файл только проверен. После импорта включите плагин отдельно.",
+  "pluginsInsufficientApproval": "Плагин включён, но ему нужен доступ к содержимому. Пространство доступно только для чтения. Отключите плагин, чтобы снова проверить разрешения.",
+  "pluginsIoApproved": "Разрешено: {permissions}",
+  "pluginsIoCredentialUse": "Использовать разрешённые учётные данные",
+  "pluginsIoDeclared": "Запрошенные разрешения сети и файлов: {permissions}",
+  "pluginsIoFileCreate": "Создавать файлы",
+  "pluginsIoFileDelete": "Удалять файлы",
+  "pluginsIoFileList": "Просматривать разрешённые папки",
+  "pluginsIoFileRead": "Читать разрешённые файлы",
+  "pluginsIoFileReplace": "Заменять файлы",
+  "pluginsIoHttpListen": "Принимать сетевые соединения",
+  "pluginsIoHttpPublish": "Предоставлять API-сервис",
+  "pluginsIoHttpRequest": "Вызывать сетевые API",
+  "pluginsIoNoneApproved": "Разрешения сети и файлов не выданы",
+  "pluginsIoRevoke": "Отозвать все разрешения сети и файлов",
+  "pluginsIoSave": "Сохранить разрешения сети и файлов",
+  "pluginsIoScopeNotice": "Здесь сохраняются только категории разрешений. Адреса серверов, доступ к файлам и учётные данные требуют отдельного одобрения; недоступные функции не включаются. После изменений откройте форму плагина заново.",
+  "pluginsIoTitle": "Разрешения сети и файлов",
+  "pluginsIoWebSocketConnect": "Подключаться к WebSocket-сервисам",
+  "pluginsListUnknown": "Не удалось подтвердить список плагинов",
+  "pluginsManageAbove": "Управляйте этим плагином с помощью элементов выше.",
+  "pluginsManagementUnavailable": "Управление плагинами недоступно. Существующее содержимое можно читать.",
+  "pluginsNoPermissions": "Разрешения для содержимого не заявлены.",
+  "pluginsOpenTextTool": "Открыть текстовый инструмент",
+  "pluginsOpenView": "Открыть представление",
+  "pluginsOpeningView": "Открытие представления плагина…",
+  "pluginsOperation": "Запрашивать результаты операций",
+  "pluginsOtherCapability": "Другое заявленное разрешение: {name}",
+  "pluginsPackageFile": "Плагин Morrow",
+  "pluginsPreviewOnly": "Только предпросмотр. Результаты не сохраняются автоматически в существующее содержимое.",
+  "pluginsPreviewTruncated": "…показаны только первые 4096 символов",
+  "pluginsProtection": "Защита содержимого",
+  "pluginsProtectionDetails": "Сохраните исходный файл защиты для восстановления с этой системной учётной записью. Карточек и вложений в нём нет.",
+  "pluginsProtectionFileType": "Файл защиты библиотеки",
+  "pluginsProtectionSaved": "Файл защиты скопирован. Выберите его для восстановления при сбое запуска.",
+  "pluginsRead": "Читать содержимое",
+  "pluginsReadingState": "Загрузка состояния плагина…",
+  "pluginsRefreshFailed": "{reason}. Не удалось обновить список. Нажмите «Обновить список» для повторного чтения.",
+  "pluginsRefreshList": "Обновить список",
+  "pluginsRefreshState": "Обновить состояние",
+  "pluginsRename": "Переименовать",
+  "pluginsResultBytes": "{count, plural, one{{count} байт} few{{count} байта} many{{count} байт} other{{count} байта}}\n{preview}",
+  "pluginsSavePermissions": "Сохранить разрешения",
+  "pluginsSelectedFile": "Выбран файл: {name}",
+  "pluginsServiceAcknowledgeUncertain": "Я проверил обновлённые записи",
+  "pluginsServiceAddScope": "Добавить область содержимого",
+  "pluginsServiceAttachmentId": "Точный идентификатор вложения",
+  "pluginsServiceAuthenticationUnavailable": "Выбранная аутентификация отсутствует, отключена, просрочена или принадлежит другому субъекту. Черновые области сохранены; выберите замену или явно удалите её.",
+  "pluginsServiceAuthorities": "Записи аутентификации и публикации",
+  "pluginsServiceCardId": "Точный идентификатор карточки",
+  "pluginsServiceCatalogChanged": "Каталог пакетов изменился или недоступен. Черновик сохранён. Явно обновите выбор перед сохранением.",
+  "pluginsServiceClearToken": "Очистить токен",
+  "pluginsServiceCloseEditor": "Закрыть редактор",
+  "pluginsServiceConfigDigest": "Хеш конфигурации",
+  "pluginsServiceConfiguration": "Сохранённая конфигурация",
+  "pluginsServiceConfigurations": "Сохранённые конфигурации",
+  "pluginsServiceCopyClear": "Скопировать и очистить токен",
+  "pluginsServiceCreated": "Создано (UTC)",
+  "pluginsServiceDays": "Запрошенный срок (1–30 дней)",
+  "pluginsServiceDigestFixed": "Редактирование сохраняет исходный хеш пакета. Выберите совпадающий пакет; это не включает его.",
+  "pluginsServiceDisable": "Отключить",
+  "pluginsServiceDisabled": "Отключено",
+  "pluginsServiceEditConfig": "Изменить конфигурацию",
+  "pluginsServiceEditPublication": "Изменить публикацию",
+  "pluginsServiceExpired": "Срок истёк или ещё не наступил",
+  "pluginsServiceExpires": "Фактический срок (UTC)",
+  "pluginsServiceHandler": "Заявленный обработчик сервиса",
+  "pluginsServiceIdentity": "Идентификатор сервиса",
+  "pluginsServiceInvalid": "Проверьте поля, выбранные разрешения и текущий пакет перед сохранением.",
+  "pluginsServiceIssue": "Выпустить токен",
+  "pluginsServiceIssuedToken": "Однократно показываемый Bearer-токен",
+  "pluginsServiceListenAddress": "Числовой адрес и порт прослушивания",
+  "pluginsServiceLoadFailed": "Не удалось обновить записи. Повторите обновление перед изменениями.",
+  "pluginsServiceManagementOnly": "Здесь управляются сохранённые настройки и разрешения. Сохранение не запускает слушатель, пакет или сервис.",
+  "pluginsServiceMethod": "Метод HTTP",
+  "pluginsServiceNewAuthentication": "Новая аутентификация",
+  "pluginsServiceNewConfig": "Новая конфигурация",
+  "pluginsServiceNo": "Нет",
+  "pluginsServiceNoAuthentication": "Сначала создайте действующую запись аутентификации.",
+  "pluginsServiceNoAuthorities": "Нет записей аутентификации или публикации.",
+  "pluginsServiceNoConfigurations": "Нет конфигураций сервиса.",
+  "pluginsServicePackage": "Заявленный и разрешённый пакет",
+  "pluginsServicePackageDigest": "Хеш пакета",
+  "pluginsServicePackageUnavailable": "Подходящий пакет или его разрешения прослушивания/публикации недоступны. Исторические записи можно читать и отключать.",
+  "pluginsServicePath": "Точный путь запроса",
+  "pluginsServicePolicyChanged": "Выбранная исходная запись изменилась или недоступна. Обновите выбор либо откройте редактор из текущей записи. Черновик сохранён.",
+  "pluginsServicePrincipalId": "Идентификатор субъекта",
+  "pluginsServicePrincipals": "Разрешённые субъекты и области содержимого",
+  "pluginsServicePublicationEditor": "Разрешение публикации",
+  "pluginsServicePublicationHelp": "Разрешение привязано к точной конфигурации, ревизии и ссылке. Срок ограничен всеми выбранными записями аутентификации и может быть короче запрошенного. Сохранение не запускает прослушивание.",
+  "pluginsServicePublicationMismatch": "Публикация больше не соответствует текущей конфигурации. Проверьте и явно сохраните новое разрешение.",
+  "pluginsServiceQueryPath": "Отдельный путь запроса результата (необязательно)",
+  "pluginsServiceReference": "Ссылка на разрешение",
+  "pluginsServiceRefresh": "Обновить записи",
+  "pluginsServiceRefreshSelection": "Обновить выбор",
+  "pluginsServiceRemovePrincipal": "Удалить субъект",
+  "pluginsServiceRemoveScope": "Удалить область",
+  "pluginsServiceRetention": "Хранение истории запросов (мс, до 30 дней)",
+  "pluginsServiceRevision": "Ревизия",
+  "pluginsServiceRotate": "Заменить токен",
+  "pluginsServiceRotateAuthentication": "Заменить аутентификацию",
+  "pluginsServiceRunAbandon": "Сохранить запись и завершить попытку",
+  "pluginsServiceRunAdvanced": "Лимиты запросов и рабочего процесса",
+  "pluginsServiceRunAttempt": "Неподтверждённая попытка запуска",
+  "pluginsServiceRunBoundsHint": "Лимиты также должны соответствовать декларации плагина и сохранённым разрешениям. Зарезервированная работа расходует общий бюджет даже при отмене. По истечении срока запуск останавливается; автопродления нет.",
+  "pluginsServiceRunBytes": "Лимит байт запуска (до 67 108 864)",
+  "pluginsServiceRunCalls": "Вызовов на задачу (до 1024)",
+  "pluginsServiceRunCancelled": "Отменено",
+  "pluginsServiceRunClosed": "Закрыто",
+  "pluginsServiceRunConcurrent": "Параллельные задачи (до 128)",
+  "pluginsServiceRunControlUnknown": "Результат управления неизвестен. Обновите состояние исходного сервиса перед другой операцией.",
+  "pluginsServiceRunDenied": "Отказано",
+  "pluginsServiceRunExited": "Сервис завершён",
+  "pluginsServiceRunHeaderBytes": "Максимальный размер заголовков (байт, до 65 536)",
+  "pluginsServiceRunHint": "Выберите разрешённую публикацию и конечные лимиты, затем явно запустите сервис. После остановки дождитесь возврата исходного владельца пространства перед подтверждением результата.",
+  "pluginsServiceRunHostFailure": "Диагностика хоста: {detail}",
+  "pluginsServiceRunHttpPanel": "Этой задачей владеет API-сервис. Остановите его или подтвердите выход в панели сервиса выше. Черновик HTTP-запроса сохранён.",
+  "pluginsServiceRunIdentityChanged": "Содержимым владеет другая задача. Панель не будет управлять ею с прежним идентификатором сервиса.",
+  "pluginsServiceRunInvalid": "Проверьте выбранный сервис и числовые лимиты. Новый запуск не отправлен.",
+  "pluginsServiceRunInvalidOutcome": "Недопустимая конфигурация",
+  "pluginsServiceRunJobBytes": "Байт на задачу (до 16 777 216)",
+  "pluginsServiceRunJobs": "Всего резервирований задач (до 1 000 000)",
+  "pluginsServiceRunLastObservation": "Показано последнее наблюдение; текущее состояние не проверено.",
+  "pluginsServiceRunLifetime": "Длительность (мс, до 3 600 000)",
+  "pluginsServiceRunLimit": "Лимит достигнут",
+  "pluginsServiceRunLocal": "Содержимое доступно локально",
+  "pluginsServiceRunNetwork": "Привязка: {bind}; слушатель: {listener}; надзор: {supervision}",
+  "pluginsServiceRunNextSettings": "Настройки следующего явного запуска",
+  "pluginsServiceRunNoSelection": "Нет доступных разрешённых публикаций. Проверьте плагин, конфигурацию и аутентификацию.",
+  "pluginsServiceRunOutboundAttempt": "Конечные точки этой попытки запуска",
+  "pluginsServiceRunOutboundClear": "Очистить выбор конечных точек",
+  "pluginsServiceRunOutboundFailed": "Не удалось проверить список конечных точек. Обновите перед использованием выбранных.",
+  "pluginsServiceRunOutboundHint": "Исходящие API (необязательно, до 8). Показаны только разрешённые для пакета конечные точки. Если ничего не выбрано, исходящие вызовы запрещены.",
+  "pluginsServiceRunOutboundStale": "Выбранная конечная точка изменилась или недоступна. Явно выберите текущую версию или очистите выбор.",
+  "pluginsServiceRunOwned": "Содержимым управляет работающий сервис",
+  "pluginsServiceRunPending": "Ожидание",
+  "pluginsServiceRunReclaimed": "Владение содержимым возвращено; требуется подтверждение",
+  "pluginsServiceRunReclaiming": "Ожидание возврата владения содержимым",
+  "pluginsServiceRunRecovery": "Очистка требует исправления",
+  "pluginsServiceRunRequestBytes": "Максимальный размер запроса (байт)",
+  "pluginsServiceRunResponseBytes": "Максимальный размер ответа (байт)",
+  "pluginsServiceRunRunning": "Сервис работает",
+  "pluginsServiceRunSelection": "Разрешённая публикация сервиса",
+  "pluginsServiceRunStale": "Выбранный пакет, конфигурация или разрешение изменились. Обновите записи и выберите снова перед запуском.",
+  "pluginsServiceRunStart": "Запустить ограниченный сервис",
+  "pluginsServiceRunStartRejected": "Ответ запуска сообщил об ошибке. Текущая задача проверена; изучите причину и состояние очистки перед продолжением.",
+  "pluginsServiceRunStartUnknown": "Результат запуска неизвестен. Идентификатор попытки сохранён; обновите, чтобы найти её. Автоматического повторного запуска не будет.",
+  "pluginsServiceRunStarting": "Запуск сервиса",
+  "pluginsServiceRunStatusFailed": "Не удалось проверить состояние сервиса. Обновите перед следующими действиями.",
+  "pluginsServiceRunStop": "Остановить сервис",
+  "pluginsServiceRunStopping": "Остановка; ожидание выхода слушателя и рабочего процесса",
+  "pluginsServiceRunSucceeded": "Успешно",
+  "pluginsServiceRunTask": "Идентификатор текущей задачи",
+  "pluginsServiceRunTimeout": "Тайм-аут задачи (мс, до 30 000)",
+  "pluginsServiceRunTimeoutOutcome": "Тайм-аут",
+  "pluginsServiceRunTitle": "Запуск API-сервиса",
+  "pluginsServiceRunTotalBytes": "Лимит байт рабочего процесса (до 67 108 864)",
+  "pluginsServiceRunTransport": "Ошибка транспорта",
+  "pluginsServiceRunUnavailable": "Хранилище содержимого недоступно",
+  "pluginsServiceSaveConfig": "Сохранить конфигурацию",
+  "pluginsServiceSavePublication": "Сохранить разрешение публикации",
+  "pluginsServiceSaved": "Сохранено. Проверьте возвращённую ревизию и фактический срок ниже.",
+  "pluginsServiceScopeAttachment": "Читать вложение",
+  "pluginsServiceScopeCreate": "Создавать содержимое",
+  "pluginsServiceScopeEdit": "Изменять содержимое",
+  "pluginsServiceScopeKind": "Разрешённая операция с содержимым",
+  "pluginsServiceScopeQuery": "Запросить операцию",
+  "pluginsServiceScopeRead": "Читать содержимое",
+  "pluginsServiceScopeRename": "Переименовать карточку",
+  "pluginsServiceScopeSummary": "Читать сводку",
+  "pluginsServiceScopesHelp": "Явно выберите аутентификацию. Добавьте разрешённые операции и точные идентификаторы объектов ниже. Для удаления области или субъекта используйте отдельную кнопку; при редактировании существующие области сохраняются.",
+  "pluginsServiceTitle": "Настройка сервиса",
+  "pluginsServiceTls": "Требовать TLS",
+  "pluginsServiceTlsAttempt": "Хеш PEM-сертификата, привязанный к попытке запуска",
+  "pluginsServiceTlsCertificate": "Выбрать цепочку сертификатов",
+  "pluginsServiceTlsChecked": "Сертификат и соответствие ключа проверены. SHA-256 PEM показан ниже. Клиенты всё равно должны проверять имя хоста, срок и цепочку доверия.",
+  "pluginsServiceTlsChecking": "Обработка выбранного сертификата…",
+  "pluginsServiceTlsFailed": "Проверка сертификата не удалась. Проверьте PEM-файлы, соответствие ключа и локальные пути.",
+  "pluginsServiceTlsHelp": "Адреса вне loopback требуют TLS. Здесь сохраняется только требование; слушатель и TLS-идентичность не создаются.",
+  "pluginsServiceTlsHint": "Выберите цепочку сертификатов PEM и закрытый ключ, затем проверьте их. При запуске файлы проверяются снова; активный сертификат не заменяется автоматически.",
+  "pluginsServiceTlsInspect": "Проверить сертификат",
+  "pluginsServiceTlsOutsideValidity": "Цепочка сертификатов ещё не действует или просрочена. Проверьте или замените сертификат и повторите проверку перед запуском.",
+  "pluginsServiceTlsPrivateKey": "Выбрать закрытый ключ",
+  "pluginsServiceTlsRecheck": "Проверьте сертификат ещё раз перед запуском. Изменение часов не восстанавливает предыдущий выбор.",
+  "pluginsServiceTlsUnavailable": "Этот бэкенд не поддерживает выбор локального TLS-сертификата.",
+  "pluginsServiceTlsValidity": "Общий срок цепочки сертификатов (UTC): с {start} по {end}. После истечения сервис остановится.",
+  "pluginsServiceTokenDiscarded": "Одноразовый токен очищен при закрытии панели. При необходимости явно выпустите новый.",
+  "pluginsServiceTokenHelp": "Токен показывается только сейчас. При необходимости скопируйте его явно. Очистка или закрытие панели удалит его из сеанса; получить его из списка нельзя. Замена отменяет предыдущий токен.",
+  "pluginsServiceUncertainHelp": "Сначала обновите и проверьте исходные записи. Подтверждение уведомления лишь разрешает следующее явное действие; оно не доказывает сбой предыдущего изменения и не повторяет его.",
+  "pluginsServiceUnsupported": "Неподдерживаемое историческое значение",
+  "pluginsServiceWorking": "Выполнение…",
+  "pluginsServiceWriteUnknown": "Результат последнего изменения неизвестен. Оно не отправлялось повторно.",
+  "pluginsServiceYes": "Да",
+  "pluginsSettingsUnknown": "Настройка ещё не подтверждена. Обновите состояние перед повторным выбором.",
+  "pluginsSnapshotDetails": "Копия библиотеки включает карточки, вложения и записи аудита. Внешние ресурсы остаются ссылками. Для восстановления нужна исходная системная учётная запись.",
+  "pluginsSnapshotSaved": "Библиотека скопирована, включая вложения и исходный файл защиты.",
+  "pluginsStateUnavailable": "Не удалось загрузить состояние плагина. Повторите попытку.",
+  "pluginsSummary": "Читать сводки",
+  "pluginsTextInput": "Исходный текст",
+  "pluginsThirdParty": "Сторонние плагины",
+  "pluginsTlsIdentitiesDisable": "Отключить идентичность",
+  "pluginsTlsIdentitiesEmpty": "В библиотеке нет сохранённых идентичностей.",
+  "pluginsTlsIdentitiesFileMode": "Следующий запуск: проверенные локальные файлы.",
+  "pluginsTlsIdentitiesHint": "Выберите идентичность явно. Замена или отключение останавливает использующие её сервисы; новый запуск всегда выполняется явно.",
+  "pluginsTlsIdentitiesImport": "Подготовить сертификаты для импорта или замены",
+  "pluginsTlsIdentitiesReplace": "Заменить проверенными файлами",
+  "pluginsTlsIdentitiesSave": "Сохранить как новую идентичность",
+  "pluginsTlsIdentitiesSaved": "Сохранено. Проверьте идентичность и ревизию ниже, затем выберите для нового запуска.",
+  "pluginsTlsIdentitiesSavedMode": "Следующий запуск: сохранённая идентичность. Хост проверит срок сертификата при запуске.",
+  "pluginsTlsIdentitiesSelect": "Использовать при следующем запуске",
+  "pluginsTlsIdentitiesStale": "Выбранная идентичность изменилась, отключена или не обновлена. Выберите актуальную снова.",
+  "pluginsTlsIdentitiesTitle": "Сохранённые TLS-идентичности",
+  "pluginsTlsIdentitiesUnknownHint": "Обновите и проверьте записи перед подтверждением. Отсутствие квитанции не означает сбой; не создавайте повторно без проверки.",
+  "pluginsTlsIdentitiesUseFile": "Использовать проверенные файлы при следующем запуске",
+  "pluginsTransform": "Преобразовать",
+  "pluginsTransformUnknown": "Не удалось подтвердить преобразование",
+  "pluginsUiExecution": "Выполнение плагина не завершилось. Откройте представление заново и повторите попытку.",
+  "pluginsUiRejected": "Действие плагина не принято. Проверьте ввод и текущие разрешения.",
+  "pluginsUiUnavailable": "Плагин недоступен. Проверьте состояние и откройте представление заново.",
+  "pluginsUnavailableView": "Представление плагина недоступно",
+  "pluginsUnconfirmed": "{reason}. Операция не подтверждена. Проверьте обновлённое состояние перед повторным выбором.",
+  "pluginsUninstallKeepContent": "Удалить (сохранить содержимое)",
+  "pluginsUninstallUnknown": "Не удалось подтвердить удаление",
+  "pluginsUninstalled": "Удалён. Существующее содержимое сохранено.",
+  "pluginsUpdatingView": "Обновление предпросмотра…",
+  "pluginsUseText": "Использовать текст",
+  "pluginsUseTransform": "Использовать преобразование",
+  "pluginsViewFailed": "Не удалось открыть представление плагина",
+  "pluginsWorkbench": "Плагин рабочего пространства",
+  "pluginsWorkbenchReadOnly": "Плагин разрешён, но пространство доступно только для чтения. Устраните проблему библиотеки или плагина и обновите состояние.",
+  "recoveryAllFiles": "Все файлы",
+  "recoveryBackupExists": "Файл резервной копии уже существует. Выберите новое имя.",
+  "recoveryBackupFile": "Резервная копия библиотеки",
+  "recoveryBackupUnknown": "Результат копирования требует проверки. Сохраните текущий файл и проверьте место сохранения.",
+  "recoveryBindingMissing": "У библиотеки нет привязанного файла защиты. Выбранный файл невозможно сопоставить.",
+  "recoveryBusy": "Библиотека занята другим процессом. Закройте другое окно и повторите.",
+  "recoveryChooseKey": "Выбрать файл восстановления",
+  "recoveryCloseFirst": "Рабочая область ещё открыта. Закройте её перед сменой библиотеки.",
+  "recoveryFailed": "Восстановление не завершено. Сохраните исходные файлы и повторите.",
+  "recoveryIdentityBusy": "Другая копия библиотеки уже открыта. Закройте её перед открытием этой.",
+  "recoveryIdentityMismatch": "Идентификатор библиотеки не совпадает с регистрацией. Сохраните исходные данные и восстановите правильную копию.",
+  "recoveryKeyFile": "Файл защиты библиотеки",
+  "recoveryKeyGuide": "Если файл защиты отсутствует или повреждён, выберите его копию. Она должна принадлежать этой библиотеке; нужна исходная системная учётная запись.",
+  "recoveryKeyMismatch": "Ключ не подходит или не расшифровывается. Используйте исходный файл и системную учётную запись.",
+  "recoveryKeyUnknown": "Результат восстановления требует проверки. Попробуйте открыть заново; прежний файл защиты, если был, сохранён в копии.",
+  "recoveryLibraryInvalid": "Не удалось проверить или открыть библиотеку. Сохраните исходную библиотеку и ключ защиты, затем повторите.",
+  "recoveryMaintenance": "Библиотеке требуется обслуживание. Сохраните исходные файлы и изучите диагностику.",
+  "recoveryMissingKey": "Ключ защиты библиотеки отсутствует. Восстановите исходный .audit-key и повторите.",
+  "recoveryMissingLibrary": "Ключ есть, но библиотека отсутствует или пуста. Восстановите исходную библиотеку.",
+  "recoveryOpenFailed": "Рабочая область не открылась. Проверьте файлы плагинов и папку данных и повторите.",
+  "recoveryPluginUnavailable": "Плагин рабочей области недоступен. Имеющиеся данные можно просматривать и экспортировать.",
+  "recoveryRegistryInvalid": "Регистрация активной библиотеки повреждена или не поддерживается. Открытие остановлено для защиты данных.",
+  "recoveryRegistryUnreadable": "Не удалось прочитать активную библиотеку или её регистрацию. Проверьте исходное расположение; новая библиотека автоматически не создаётся.",
+  "recoveryRetry": "Повторить",
+  "recoverySnapshot": "Восстановить резервную копию библиотеки",
+  "recoverySnapshotGuide": "Резервную копию библиотеки можно восстановить в новую папку и переключиться на неё. Исходная папка сохранится. Будет восстановлено состояние на момент копирования; нужна исходная системная учётная запись.",
+  "recoverySnapshotInvalid": "Неверный формат копии или ошибка целостности. Сохраните исходный файл копии.",
+  "recoverySnapshotUnknown": "Результат восстановления требует проверки. Проверьте папку назначения; исходная библиотека не заменена.",
+  "recoverySwitchUnconfirmed": "Копия восстановлена в {path}, но переключение не подтверждено. Сохраните папку и откройте рабочую область для проверки.",
+  "recoverySwitchUnknown": "Переключение библиотеки не подтверждено. Откройте рабочую область заново для проверки.",
+  "recoveryTargetExists": "Папка восстановления уже существует. Выберите новую, ещё не существующую папку.",
+  "recoveryTitle": "Открыть рабочую область заново",
+  "visualApplyColor": "Применить цвет",
+  "visualApplyComponent": "Применить к этому компоненту",
+  "visualApplyTexture": "Применить медиа",
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "visualAttachmentFailure": "Ошибка работы с файлом. Проверьте файл и свободное место.",
+  "visualAttachmentPreview": "Предпросмотр локального вложения",
+  "visualAttachmentReadFailure": "Не удалось прочитать вложение. Импортируйте заново.",
+  "visualAudio": "Аудио",
+  "visualAudioStateFailure": "Не удалось подтвердить состояние аудио. Повторите.",
+  "visualAutoLyrics": "Автоматически искать отсутствующий текст песни онлайн",
+  "visualCancel": "Отмена",
+  "visualChangeCover": "Изменить обложку",
+  "visualChooseAudio": "Выберите аудиофайл или одноимённый файл LRC.",
+  "visualChooseLyrics": "Выберите файл текста песни LRC или TXT.",
+  "visualClickPreview": "Нажмите для просмотра",
+  "visualClose": "Закрыть",
+  "visualCloseDialog": "Закрыть диалог",
+  "visualCloseWindow": "Закрыть окно",
+  "visualCollapsePlaylist": "Свернуть плейлист",
+  "visualColorGuide": "Перетащите круг, чтобы выбрать тон и насыщенность, затем настройте яркость. Можно также ввести значение цвета.",
+  "visualColorTitle": "Добавьте цвет в своё пространство",
+  "visualComponentCompass": "{title} · Цветовой круг",
+  "visualComponents": "Компоненты и карточки",
+  "visualComponentsGuide": "По умолчанию элементы следуют теме. Настройка одной карточки не изменит остальные.",
+  "visualCornerTips1": "Не каждая идея должна быть полезной.\nНекоторые просто делают день интереснее.",
+  "visualCornerTips2": "Запишите и дайте вырасти.\nИдея не обязана сразу быть законченной.",
+  "visualCornerTips3": "Оставьте немного места для себя.\nЛюбопытству нужен простор.",
+  "visualCornerTips4": "Попробуйте сегодня что-то новое.\nМаленький обход может удивить.",
+  "visualCornerTips5": "Мечты тоже куда-то ведут.\nДайте мыслям побродить.",
+  "visualCornerTips6": "Находите время для любимого.\nНе нужно доказывать его ценность.",
+  "visualCornerTips7": "Прогресс бывает небольшим.\nГотовность начать уже важна.",
+  "visualCornerTips8": "Иногда смотрите в окно.\nЖизнь тоже вдохновляет.",
+  "visualCover": "Обложка",
+  "visualCustomCompass": "Цветовой круг · Настройка",
+  "visualCustomMaterialGuide": "Выключите, чтобы следовать теме, сохранив свои настройки этого элемента.",
+  "visualDefaultOpen": "Открыть приложением по умолчанию",
+  "visualDownloadOpen": "Скачать для открытия",
+  "visualEmbeddedLyrics": "Встроено в аудио",
+  "visualExpandPlaylist": "Развернуть плейлист",
+  "visualFile": "Файл",
+  "visualFileOpenFailure": "Не удалось открыть файл. Установите совместимое приложение или сохраните вложение и откройте его там.",
+  "visualFileRetry": "Ошибка работы с файлом. Повторите.",
+  "visualFindLyrics": "Найти текст песни",
+  "visualFindLyricsGuide": "Ищите в LRCLIB по песне и исполнителю, затем выберите нужную версию.",
+  "visualFollowTheme": "По теме",
+  "visualFooterLyrics": "Показывать текст песни внизу",
+  "visualFooterTips": "Показывать подсказки внизу",
+  "visualFooterTips1": "Ничего срочного. Дайте любопытству немного времени.",
+  "visualFooterTips10": "Не нужно занимать каждую минуту. Оставьте немного свободы.",
+  "visualFooterTips2": "Запишите мысль. Разобрать можно позже.",
+  "visualFooterTips3": "Превратите большую идею в один маленький шаг на сегодня.",
+  "visualFooterTips4": "Потянитесь и дайте глазам отдохнуть.",
+  "visualFooterTips5": "Идея пока может оставаться без ответа.",
+  "visualFooterTips6": "Некоторые открытия приходят, когда не спешишь.",
+  "visualFooterTips7": "Сохранённая деталь помогает идее вырасти.",
+  "visualFooterTips8": "Сегодняшняя заметка может стать завтрашним началом.",
+  "visualFooterTips9": "Дайте мыслям побродить, затем вернитесь к любимому.",
+  "visualFrosting": "Размытие",
+  "visualGif": "Анимированный GIF",
+  "visualHexColor": "Цвет HEX",
+  "visualHexInvalid": "Введите шестизначный шестнадцатеричный цвет.",
+  "visualImage": "Изображение",
+  "visualImageDecodeFailure": "Не удалось декодировать изображение. Сохраните и откройте в другом приложении.",
+  "visualImageLoadFailure": "Не удалось загрузить изображение: {name}",
+  "visualImageNotImported": "{name} (изображение не импортировано)",
+  "visualImageUnavailable": "Изображение недоступно: {name}",
+  "visualImportFailure": "Ошибка импорта. Проверьте файл, кодировку и свободное место.",
+  "visualImportLyrics": "Импортировать текст песни",
+  "visualImportMusic": "Импортировать музыку",
+  "visualImportMusicHint": "Нажмите +, чтобы добавить песни с устройства",
+  "visualIndependentMaterial": "Свой материал",
+  "visualInheritColor": "Использовать цвет темы",
+  "visualLinkFailure": "Не удалось открыть ссылку. Скопируйте адрес и повторите.",
+  "visualLoadImage": "Загрузить изображение · {name}",
+  "visualLoading": "Загрузка…",
+  "visualLyricsEmpty": "Файл текста песни пуст.",
+  "visualLyricsFile": "Файл текста песни",
+  "visualLyricsImportHint": "Импортируйте файл текста песни или найдите онлайн.",
+  "visualLyricsLoading": "Загрузка текста песни…",
+  "visualLyricsMatch": "{album}\n{kind} · {seconds, plural, one{{seconds} секунда} few{{seconds} секунды} many{{seconds} секунд} other{{seconds} секунды}}",
+  "visualLyricsMissing": "Текст песни не найден. Импортируйте файл или повторите поиск.",
+  "visualLyricsNotFound": "Текст песни не найден. Попробуйте другое название или исполнителя.",
+  "visualLyricsOnPlay": "Загружать текст песни при воспроизведении",
+  "visualLyricsParseFailure": "Не удалось разобрать текст песни. Импортируйте заново.",
+  "visualLyricsReadFailure": "Не удалось загрузить текст песни. Импортируйте вручную или повторите.",
+  "visualLyricsServiceFailure": "Не удалось подключиться к службе текстов песен. Повторите позже или импортируйте файл.",
+  "visualLyricsSize": "Размер файла текста песни — до 1 МБ.",
+  "visualLyricsSources": "Файл → Встроенный текст → LRCLIB",
+  "visualLyricsVersions": "Найдено несколько версий. Выберите нужную в поиске.",
+  "visualMaterialPreview": "Предпросмотр материала",
+  "visualMaximize": "Развернуть",
+  "visualMediaAddress": "Адрес медиа",
+  "visualMediaAddressInvalid": "Введите корректный HTTP- или HTTPS-адрес без данных входа.",
+  "visualMediaPreviewFailure": "Предпросмотр недоступен. Сохраните медиа и откройте в другом приложении.",
+  "visualMediaType": "Тип медиа",
+  "visualMinimize": "Свернуть",
+  "visualMusic": "Музыка",
+  "visualMusicEmptyTitle": "Оставьте место для музыки",
+  "visualMusicPlayer": "Музыкальный плеер",
+  "visualNextTrack": "Следующая песня",
+  "visualNoLyricsRead": "Текст песни не загружен",
+  "visualNoLyricsTitle": "♪ {title} · Нет текста песни",
+  "visualNoTimeline": "Нет временных меток",
+  "visualOpacity": "Непрозрачность",
+  "visualOptionalArtist": "Исполнитель (необязательно)",
+  "visualPauseMusic": "Приостановить музыку",
+  "visualPaused": "На паузе",
+  "visualPlainLyrics": "Обычный текст песни",
+  "visualPlayMusic": "Включить музыку",
+  "visualPlaybackFailure": "Песня не воспроизводится. Проверьте файл или попробуйте другой аудиоформат.",
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "visualPlaybackRequestFailure": "Не удалось начать воспроизведение. Повторите.",
+  "visualPlaying": "Воспроизводится",
+  "visualPlaylistEmpty": "Плейлист пуст",
+  "visualPlaylistLyricsHint": "Импортируйте LRC через меню плейлиста",
+  "visualPlaylistSaved": "Плейлист и текст песен сохраняются автоматически",
+  "visualPlaylistUpdateFailure": "Не удалось обновить плейлист. Повторите.",
+  "visualPreviewColor": "Предпросмотр цвета",
+  "visualPreviousTrack": "Предыдущая песня",
+  "visualRemoveAttachment": "Удалить вложение",
+  "visualRemoveTrack": "Удалить из плейлиста",
+  "visualResetMaterial": "Вернуть тему",
+  "visualRestoreWindow": "Восстановить",
+  "visualSaveAttachment": "Сохранить вложение как",
+  "visualSearch": "Поиск",
+  "visualSearchLyrics": "Поиск текста песни",
+  "visualSongCover": "Обложка альбома",
+  "visualSongTitle": "Название песни",
+  "visualSyncedLyrics": "Синхронизированный текст",
+  "visualTextureFailure": "Не удалось загрузить медиа. Проверьте файл, адрес или формат. Для веб-медиа также нужен разрешённый доступ между источниками.",
+  "visualTextureLinkGuide": "Вставьте прямую HTTP- или HTTPS-ссылку на изображение, GIF или видео. Для страниц сначала найдите адрес исходного медиа.",
+  "visualTextureLinkTitle": "Добавьте вдохновения",
+  "visualTexturePlaybackGuide": "Видео повторяется без звука; звук включается в настройках. Онлайн-медиа должны разрешать доступ, включая междоменную загрузку в веб-версии.",
+  "visualTipsMaterialGuide": "Выключено — прозрачные подсказки; включено — материал ниже. Свои значения сохраняются.",
+  "visualTransparentTips": "Прозрачное наложение (по умолчанию)",
+  "visualUseCustomMaterial": "Использовать свой материал",
+  "visualVideo": "Видео",
+  "visualViewLyrics": "Просмотр текста песни"
+}

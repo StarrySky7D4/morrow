@@ -1,0 +1,606 @@
+{
+  "@@locale": "ko",
+  "visualCloseDialog": "대화 상자 닫기",
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "visualCancel": "취소",
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "visualClose": "닫기",
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "visualColorTitle": "내 공간에 색을 더하세요",
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "visualColorGuide": "색상환을 드래그해 색조와 채도를 고른 뒤 밝기를 조정하세요. 색상 값을 입력할 수도 있습니다.",
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "visualHexColor": "HEX 색상",
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "visualHexInvalid": "6자리 16진수 색상을 입력하세요.",
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "visualPreviewColor": "색상 미리보기",
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "visualApplyColor": "색상 적용",
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "visualComponents": "구성 요소 및 카드",
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "visualComponentsGuide": "각 항목은 기본적으로 테마를 따릅니다. 다른 카드에 영향을 주지 않고 하나만 설정할 수 있습니다.",
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "visualIndependentMaterial": "사용자 지정 질감",
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "visualFollowTheme": "테마 따르기",
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "visualMaterialPreview": "질감 미리보기",
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "visualUseCustomMaterial": "사용자 지정 질감 사용",
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "visualCustomMaterialGuide": "끄면 테마를 따릅니다. 이 항목의 사용자 지정 설정은 보존됩니다.",
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "visualFrosting": "흐림 효과",
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "visualOpacity": "불투명도",
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "visualCustomCompass": "색상환 · 사용자 지정",
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "visualApplyComponent": "이 구성 요소에 적용",
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "visualAttachmentFailure": "파일 작업에 실패했습니다. 파일과 저장 공간을 확인하세요.",
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "visualSaveAttachment": "다른 이름으로 첨부 저장",
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "visualRemoveAttachment": "첨부 파일 제거",
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "visualMediaPreviewFailure": "이 미디어는 미리 볼 수 없습니다. 저장한 뒤 다른 앱으로 여세요.",
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "visualAttachmentReadFailure": "첨부 파일을 읽지 못했습니다. 다시 가져오세요.",
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "visualAttachmentPreview": "로컬 첨부 미리보기",
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "visualImageDecodeFailure": "이미지를 디코딩할 수 없습니다. 저장한 뒤 다른 앱으로 여세요.",
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "visualLinkFailure": "링크를 열지 못했습니다. 주소를 복사한 뒤 다시 시도하세요.",
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "visualImage": "이미지",
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "visualGif": "움직이는 GIF",
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "visualVideo": "동영상",
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "visualAudio": "오디오",
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "visualFile": "파일",
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "visualTextureFailure": "미디어를 불러오지 못했습니다. 파일, 주소, 형식을 확인하세요. 웹 미디어는 교차 출처 접근도 허용해야 합니다.",
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "visualTextureLinkTitle": "영감 불러오기",
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "visualTextureLinkGuide": "이미지, GIF, 동영상의 직접 HTTP 또는 HTTPS 링크를 붙여넣으세요. 공유 웹페이지는 원본 미디어 주소를 먼저 찾으세요.",
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "visualMediaAddress": "미디어 주소",
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "visualMediaAddressInvalid": "로그인 정보가 없는 올바른 HTTP 또는 HTTPS 주소를 입력하세요.",
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "visualMediaType": "미디어 유형",
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "visualTexturePlaybackGuide": "동영상은 기본적으로 무음 반복 재생됩니다. 설정에서 소리를 켤 수 있습니다. 온라인 미디어는 웹의 교차 출처 로딩을 포함해 접근을 허용해야 합니다.",
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "visualApplyTexture": "미디어 적용",
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "visualMusic": "음악",
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "visualChooseAudio": "오디오 파일 또는 이름이 같은 LRC 가사 파일을 선택하세요.",
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "visualLyricsFile": "가사 파일",
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "visualSongCover": "앨범 표지",
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "visualChooseLyrics": "LRC 또는 TXT 가사 파일을 선택하세요.",
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "visualLyricsSize": "가사 파일은 1 MB 이하여야 합니다.",
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "visualLyricsEmpty": "가사 파일이 비어 있습니다.",
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "visualImportFailure": "가져오기에 실패했습니다. 파일, 인코딩, 저장 공간을 확인하세요.",
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "visualNoLyricsRead": "불러온 가사 없음",
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "visualLyricsImportHint": "가사 파일을 가져오거나 온라인으로 검색하세요.",
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "visualMusicPlayer": "음악 플레이어",
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "visualImportMusic": "음악 가져오기",
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "visualChangeCover": "앨범 표지 변경",
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "visualMusicEmptyTitle": "음악을 위한 공간",
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "visualLoading": "불러오는 중…",
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "visualImportMusicHint": "+를 눌러 로컬 노래 가져오기",
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "visualPlaying": "재생 중",
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "visualPaused": "일시 정지됨",
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "visualPreviousTrack": "이전 곡",
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "visualPauseMusic": "음악 일시 정지",
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "visualPlayMusic": "음악 재생",
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "visualNextTrack": "다음 곡",
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "visualCollapsePlaylist": "재생 목록 접기",
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "visualExpandPlaylist": "재생 목록 펼치기",
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "visualFooterLyrics": "하단에 가사 표시",
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "visualFooterTips": "하단에 팁 표시",
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "visualPlaylistLyricsHint": "재생 목록 메뉴에서 LRC 가사 가져오기",
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "visualPlaylistSaved": "재생 목록과 가사는 자동 저장됩니다",
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "visualPlaylistEmpty": "재생 목록이 비어 있습니다",
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "visualRemoveTrack": "재생 목록에서 제거",
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "visualAutoLyrics": "없는 가사를 온라인에서 자동 검색",
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "visualLyricsSources": "로컬 파일 → 내장 가사 → LRCLIB",
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "visualLyricsOnPlay": "재생 중 가사 자동 불러오기",
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "visualCover": "표지",
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "visualSearchLyrics": "가사 검색",
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "visualViewLyrics": "가사 보기",
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "visualImportLyrics": "가사 가져오기",
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "visualLyricsServiceFailure": "가사 서비스에 연결하지 못했습니다. 나중에 다시 시도하거나 로컬 가사를 가져오세요.",
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "visualFindLyrics": "가사 찾기",
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "visualFindLyricsGuide": "LRCLIB에서 곡명과 아티스트로 검색한 뒤 맞는 버전을 선택하세요.",
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "visualSongTitle": "곡 제목",
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "visualOptionalArtist": "아티스트(선택 사항)",
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "visualLyricsNotFound": "가사를 찾지 못했습니다. 곡명이나 아티스트를 바꿔 보세요.",
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "visualSyncedLyrics": "동기화된 가사",
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "visualPlainLyrics": "일반 텍스트 가사",
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "visualSearch": "검색",
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "visualEmbeddedLyrics": "오디오에 내장됨",
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "visualLyricsLoading": "가사 불러오는 중…",
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "visualLyricsParseFailure": "가사를 분석하지 못했습니다. 다시 가져오세요.",
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "visualNoTimeline": "시간 정보 없음",
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "visualMinimize": "최소화",
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "visualMaximize": "최대화",
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "visualRestoreWindow": "이전 크기로",
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "visualCloseWindow": "창 닫기",
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "visualDownloadOpen": "다운로드하여 열기",
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "visualDefaultOpen": "기본 앱으로 열기",
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "visualClickPreview": "선택하여 미리보기",
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "visualComponentCompass": "{title} · 색상환",
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageLoadFailure": "이미지를 불러오지 못했습니다: {name}",
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLoadImage": "이미지 불러오기 · {name}",
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageNotImported": "{name}(가져오지 않은 이미지)",
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageUnavailable": "이미지 사용 불가: {name}",
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLyricsMatch": "{album}\n{kind} · {seconds}초",
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "visualNoLyricsTitle": "♪ {title} · 가사 없음",
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualCornerTips1": "모든 아이디어가 유용할 필요는 없어요.\n오늘을 조금 더 흥미롭게 해 주기도 하죠.",
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "visualCornerTips2": "적어 두고 자라게 두세요.\n처음부터 완성된 아이디어일 필요는 없어요.",
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "visualCornerTips3": "나를 위한 여유를 남기세요.\n호기심에도 숨 쉴 공간이 필요해요.",
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "visualCornerTips4": "오늘 새로운 것을 시도하세요.\n작은 우회가 뜻밖의 발견을 줄 수 있어요.",
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "visualCornerTips5": "공상도 어딘가로 이어질 수 있어요.\n생각이 거닐 길을 내어 주세요.",
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "visualCornerTips6": "좋아하는 일에 시간을 쓰세요.\n그 가치를 증명할 필요는 없어요.",
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "visualCornerTips7": "발전은 작아도 괜찮아요.\n시작하려는 마음만으로도 의미가 있어요.",
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "visualCornerTips8": "가끔 창밖을 바라보세요.\n삶도 영감의 원천이니까요.",
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "visualFooterTips1": "급한 일은 없어요. 호기심에 시간을 주세요.",
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "visualFooterTips2": "생각을 적어 두세요. 정리는 나중에 해도 돼요.",
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "visualFooterTips3": "큰 아이디어를 오늘 할 작은 한 걸음으로 나누세요.",
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "visualFooterTips4": "가볍게 스트레칭하고 눈을 쉬게 하세요.",
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "visualFooterTips5": "아이디어에 지금 당장 답이 없어도 괜찮아요.",
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "visualFooterTips6": "속도를 늦출 때 찾아오는 발견도 있어요.",
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "visualFooterTips7": "작은 기록도 아이디어를 키우는 방법이에요.",
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "visualFooterTips8": "오늘의 짧은 메모가 내일의 시작이 될 수 있어요.",
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "visualFooterTips9": "마음이 거닐게 두었다가 좋아하는 일로 돌아오세요.",
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "visualFooterTips10": "매 순간을 채우지 않아도 괜찮아요. 여유를 남기세요.",
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "visualLyricsMissing": "가사를 찾지 못했습니다. 파일을 가져오거나 다시 검색하세요.",
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "visualLyricsVersions": "여러 버전을 찾았습니다. 검색에서 하나를 선택하세요.",
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "visualLyricsReadFailure": "가사를 불러오지 못했습니다. 직접 가져오거나 다시 시도하세요.",
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "visualPlaybackFailure": "노래를 재생할 수 없습니다. 파일을 확인하거나 다른 오디오 형식을 사용하세요.",
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "visualPlaybackRequestFailure": "재생을 시작하지 못했습니다. 다시 시도하세요.",
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "visualAudioStateFailure": "오디오 상태를 확인하지 못했습니다. 다시 시도하세요.",
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "visualPlaylistUpdateFailure": "재생 목록을 갱신하지 못했습니다. 다시 시도하세요.",
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "visualFileRetry": "파일 작업에 실패했습니다. 다시 시도하세요.",
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "visualFileOpenFailure": "파일을 열지 못했습니다. 호환 앱을 설치하거나 첨부 파일을 저장해 그 앱에서 여세요.",
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "visualTransparentTips": "투명 오버레이(기본값)",
+  "visualTipsMaterialGuide": "끄면 팁을 투명하게 표시하고 켜면 아래 질감을 사용합니다. 사용자 값은 유지됩니다.",
+  "visualResetMaterial": "테마로 초기화",
+  "visualInheritColor": "테마 색조 사용"
+}

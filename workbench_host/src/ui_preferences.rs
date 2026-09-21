@@ -9,7 +9,10 @@ const ID: &str = "morrow-ui-preferences";
 const TYPE: &str = "org.morrow.host.ui-preferences";
 const TITLE: &str = "UI preferences";
 fn validate(locale: &str) -> Result<()> {
-    if !matches!(locale, "system" | "zh" | "en") {
+    if !matches!(
+        locale,
+        "system" | "zh" | "en" | "ru" | "fr" | "de" | "es" | "ja" | "ko" | "pt"
+    ) {
         return Err("unsupported UI locale".into());
     }
     Ok(())

@@ -1,0 +1,646 @@
+{
+  "@@locale": "ru",
+  "pluginsWorkbench": "Плагин рабочего пространства",
+  "pluginsReadingState": "Загрузка состояния плагина…",
+  "pluginsManagementUnavailable": "Управление плагинами недоступно. Существующее содержимое можно читать.",
+  "pluginsInsufficientApproval": "Плагин включён, но ему нужен доступ к содержимому. Пространство доступно только для чтения. Отключите плагин, чтобы снова проверить разрешения.",
+  "pluginsWorkbenchReadOnly": "Плагин разрешён, но пространство доступно только для чтения. Устраните проблему библиотеки или плагина и обновите состояние.",
+  "pluginsEnabledDetails": "Включён. Плагин может читать и изменять содержимое. Отключение сохраняет ваши данные.",
+  "pluginsDisabledDetails": "Выключен. Разрешите чтение и изменение содержимого, чтобы использовать редактор и инструменты.",
+  "pluginsDisableWorkbench": "Отключить плагин пространства",
+  "pluginsApproveWorkbench": "Разрешить чтение и изменение и включить",
+  "pluginsOpenTextTool": "Открыть текстовый инструмент",
+  "pluginsCloseTextTool": "Скрыть текстовый инструмент",
+  "pluginsRefreshState": "Обновить состояние",
+  "pluginsStateUnavailable": "Не удалось загрузить состояние плагина. Повторите попытку.",
+  "pluginsSettingsUnknown": "Настройка ещё не подтверждена. Обновите состояние перед повторным выбором.",
+  "pluginsPackageFile": "Плагин Morrow",
+  "pluginsExistingVersion": "Эта версия уже установлена. Состояние включения не изменилось.",
+  "pluginsImportedDisabled": "Импортирован и выключен. Выберите разрешения.",
+  "pluginsUninstalled": "Удалён. Существующее содержимое сохранено.",
+  "pluginsInputTooLong": "Достигнут предел ввода. Сократите текст и повторите попытку.",
+  "pluginsSummary": "Читать сводки",
+  "pluginsOperation": "Запрашивать результаты операций",
+  "pluginsAttachment": "Читать вложения",
+  "pluginsCreate": "Создавать содержимое",
+  "pluginsEdit": "Изменять содержимое",
+  "pluginsRead": "Читать содержимое",
+  "pluginsRename": "Переименовать",
+  "pluginsNoPermissions": "Разрешения для содержимого не заявлены.",
+  "pluginsDependenciesNotice": "Зависимости настраиваются в хосте. Эта страница не даёт им разрешений.",
+  "pluginsBuiltin": "Встроенное пространство",
+  "pluginsEnabled": "Включён",
+  "pluginsDisabled": "Выключен",
+  "pluginsManageAbove": "Управляйте этим плагином с помощью элементов выше.",
+  "pluginsSavePermissions": "Сохранить разрешения",
+  "pluginsApproveEnable": "Разрешить и включить",
+  "pluginsDisable": "Отключить",
+  "pluginsUninstallKeepContent": "Удалить (сохранить содержимое)",
+  "pluginsUseTransform": "Использовать преобразование",
+  "pluginsCloseView": "Закрыть представление",
+  "pluginsOpenView": "Открыть представление",
+  "pluginsTextInput": "Исходный текст",
+  "pluginsChooseSmallFile": "Выбрать небольшой файл",
+  "pluginsUseText": "Использовать текст",
+  "pluginsTransform": "Преобразовать",
+  "pluginsPreviewOnly": "Только предпросмотр. Результаты не сохраняются автоматически в существующее содержимое.",
+  "pluginsThirdParty": "Сторонние плагины",
+  "pluginsImportDetails": "После импорта вы решаете, включать ли плагин. Отключение и удаление сохраняют содержимое.",
+  "pluginsChoosePackage": "Выбрать файл плагина",
+  "pluginsRefreshList": "Обновить список",
+  "pluginsInspectedOnly": "Файл только проверен. После импорта включите плагин отдельно.",
+  "pluginsImport": "Импортировать",
+  "pluginsCancel": "Отмена",
+  "pluginsEmptyLibrary": "Сторонние плагины ещё не импортированы.",
+  "pluginsBackupLibraryType": "Резервная копия библиотеки",
+  "pluginsProtectionFileType": "Файл защиты библиотеки",
+  "pluginsSnapshotSaved": "Библиотека скопирована, включая вложения и исходный файл защиты.",
+  "pluginsProtectionSaved": "Файл защиты скопирован. Выберите его для восстановления при сбое запуска.",
+  "pluginsBackupUnknown": "Резервное копирование ещё не подтверждено. Сохраните созданные файлы и проверьте папку назначения.",
+  "pluginsProtection": "Защита содержимого",
+  "pluginsProtectionDetails": "Сохраните исходный файл защиты для восстановления с этой системной учётной записью. Карточек и вложений в нём нет.",
+  "pluginsSnapshotDetails": "Копия библиотеки включает карточки, вложения и записи аудита. Внешние ресурсы остаются ссылками. Для восстановления нужна исходная системная учётная запись.",
+  "pluginsBackupLibrary": "Скопировать библиотеку",
+  "pluginsBackingUp": "Копирование…",
+  "pluginsBackupProtection": "Скопировать файл защиты",
+  "pluginsListUnknown": "Не удалось подтвердить список плагинов",
+  "pluginsInspectFailed": "Не удалось загрузить предпросмотр плагина",
+  "pluginsImportUnknown": "Не удалось подтвердить импорт",
+  "pluginsApprovalUnknown": "Не удалось подтвердить включение или изменение разрешений",
+  "pluginsUninstallUnknown": "Не удалось подтвердить удаление",
+  "pluginsViewFailed": "Не удалось открыть представление плагина",
+  "pluginsInputFailed": "Не удалось прочитать входной файл",
+  "pluginsTransformUnknown": "Не удалось подтвердить преобразование",
+  "pluginsCloseUnknown": "Не удалось подтвердить закрытие представления",
+  "pluginsUnconfirmed": "{reason}. Операция не подтверждена. Проверьте обновлённое состояние перед повторным выбором.",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}. Не удалось обновить список. Нажмите «Обновить список» для повторного чтения.",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "Файл слишком велик. Выберите файл размером не более {limit} байт.",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "Другое заявленное разрешение: {name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "Заявленные разрешения: {permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "Выбран файл: {name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "Предпросмотр импорта: {name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…показаны только первые 4096 символов",
+  "pluginsEmptyResult": "(пустой результат)",
+  "pluginsBinaryPreview": "Двоичное содержимое: {hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count, plural, one{{count} байт} few{{count} байта} many{{count} байт} other{{count} байта}}\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "Соединение прервано. Откройте представление плагина заново.",
+  "pluginsOpeningView": "Открытие представления плагина…",
+  "pluginsUnavailableView": "Представление плагина недоступно",
+  "pluginsUpdatingView": "Обновление предпросмотра…",
+  "pluginsUiRejected": "Действие плагина не принято. Проверьте ввод и текущие разрешения.",
+  "pluginsUiExecution": "Выполнение плагина не завершилось. Откройте представление заново и повторите попытку.",
+  "pluginsUiUnavailable": "Плагин недоступен. Проверьте состояние и откройте представление заново.",
+  "pluginsBuiltinHeading": "Текстовые инструменты",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "Введите текст",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count, plural, one{{count} символ} few{{count} символа} many{{count} символов} other{{count} символа}} · Только в этом сеансе; не сохранено как карточка",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "Введите текст для предпросмотра в верхнем регистре",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsIoTitle": "Разрешения сети и файлов",
+  "pluginsIoScopeNotice": "Здесь сохраняются только категории разрешений. Адреса серверов, доступ к файлам и учётные данные требуют отдельного одобрения; недоступные функции не включаются. После изменений откройте форму плагина заново.",
+  "pluginsIoNoneApproved": "Разрешения сети и файлов не выданы",
+  "pluginsIoApproved": "Разрешено: {permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "Запрошенные разрешения сети и файлов: {permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "Сохранить разрешения сети и файлов",
+  "pluginsIoRevoke": "Отозвать все разрешения сети и файлов",
+  "pluginsContentPermissions": "Разрешения содержимого",
+  "pluginsIoFileRead": "Читать разрешённые файлы",
+  "pluginsIoFileList": "Просматривать разрешённые папки",
+  "pluginsIoFileCreate": "Создавать файлы",
+  "pluginsIoFileReplace": "Заменять файлы",
+  "pluginsIoFileDelete": "Удалять файлы",
+  "pluginsIoHttpRequest": "Вызывать сетевые API",
+  "pluginsIoHttpListen": "Принимать сетевые соединения",
+  "pluginsIoHttpPublish": "Предоставлять API-сервис",
+  "pluginsIoCredentialUse": "Использовать разрешённые учётные данные",
+  "pluginsIoWebSocketConnect": "Подключаться к WebSocket-сервисам",
+  "pluginsCredentialTitle": "Учётные данные API",
+  "pluginsCredentialDetails": "Безопасно храните учётные данные для разрешённых API. Сохранение не разрешает сервер и не включает плагин. Просмотреть сохранённые секреты нельзя.",
+  "pluginsCredentialReading": "Чтение учётных данных…",
+  "pluginsCredentialEmpty": "Нет сохранённых учётных данных",
+  "pluginsCredentialNew": "Добавить учётные данные",
+  "pluginsCredentialRefresh": "Обновить состояние",
+  "pluginsCredentialReplace": "Заменить секрет",
+  "pluginsCredentialDisable": "Отключить",
+  "pluginsCredentialDisabled": "Отключены",
+  "pluginsCredentialStored": "Сохранены",
+  "pluginsCredentialExpired": "Срок истёк",
+  "pluginsCredentialExpires": "Срок действия: {date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "Учётные данные {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "Новые учётные данные",
+  "pluginsCredentialReplaceTitle": "Заменить учётные данные {reference}",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "Имя заголовка",
+  "pluginsCredentialSecret": "Новое значение секрета",
+  "pluginsCredentialLifetime": "Срок действия",
+  "pluginsCredentialDays": "{days, plural, one{{days} день} few{{days} дня} many{{days} дней} other{{days} дня}}",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "Сохранить учётные данные",
+  "pluginsCredentialCancel": "Закрыть форму",
+  "pluginsCredentialInvalid": "Проверьте имя заголовка и введите новый секрет. Поле секрета очищено.",
+  "pluginsCredentialUnknown": "Результат не подтверждён. Поле секрета очищено. Обновите состояние перед следующим изменением.",
+  "pluginsCredentialLoadFailed": "Не удалось согласованно прочитать учётные данные. Обновите состояние для повторной попытки.",
+  "pluginsCredentialSaved": "Учётные данные сохранены. Подключения API требуют отдельного разрешения.",
+  "pluginsCredentialDisabledDone": "Учётные данные отключены.",
+  "pluginsEndpointTitle": "Разрешения конечных точек API",
+  "pluginsEndpointDetails": "Сохраните политику сервера для конкретного пакета и его хеша. Сохранение не подключает к сети, не включает плагин и не делает сетевые задачи сразу доступными.",
+  "pluginsEndpointNew": "Добавить конечную точку",
+  "pluginsEndpointCreateTitle": "Новое разрешение конечной точки",
+  "pluginsEndpointReplaceTitle": "Заменить разрешение с текущим хешем пакета",
+  "pluginsEndpointReplace": "Заменить разрешение",
+  "pluginsEndpointSave": "Сохранить разрешение конечной точки",
+  "pluginsEndpointSaved": "Разрешение сохранено. Подключение к сети не выполнялось.",
+  "pluginsEndpointDisabledDone": "Разрешение конечной точки отключено.",
+  "pluginsEndpointEmpty": "Нет сохранённых разрешений конечных точек",
+  "pluginsEndpointWorking": "Обновление состояния конечной точки…",
+  "pluginsEndpointLoadFailed": "Не удалось согласованно прочитать разрешения конечных точек. Обновите состояние для повторной попытки.",
+  "pluginsEndpointCredentialsFailed": "Не удалось прочитать ссылки на учётные данные. Обновите состояние перед выбором.",
+  "pluginsEndpointUnknown": "Результат не подтверждён. Обновите состояние перед изменениями. Запрос не будет автоматически отправлен повторно.",
+  "pluginsEndpointInvalid": "Проверьте пакет, origin, методы, срок 1–30 дней, разрешение учётных данных, сертификат и лимиты политики.",
+  "pluginsEndpointPackage": "Пакет",
+  "pluginsEndpointPackageUnavailable": "Пакет недоступен или не имеет разрешения HTTP. Существующие разрешения можно отключить.",
+  "pluginsEndpointDigest": "Хеш пакета",
+  "pluginsEndpointOrigin": "Только origin, например https://api.example.com",
+  "pluginsEndpointProfile": "Профиль подключения",
+  "pluginsEndpointPublicHttps": "Публичный HTTPS",
+  "pluginsEndpointLocalHttp": "Локальный HTTP",
+  "pluginsEndpointLocalHttps": "Локальный HTTPS",
+  "pluginsEndpointMethods": "Разрешённые методы запросов",
+  "pluginsEndpointLifetime": "Срок действия (1–30 дней)",
+  "pluginsEndpointCredential": "Ссылка на учётные данные",
+  "pluginsEndpointNoCredential": "Без учётных данных",
+  "pluginsEndpointCredentialUnavailable": "Нужны заявленное и одобренное разрешение пакета на использование учётных данных и действующая сохранённая ссылка.",
+  "pluginsEndpointCredentialLifetime": "Учётные данные должны действовать весь срок разрешения конечной точки. Их срок не продлевается.",
+  "pluginsEndpointAdvanced": "Лимиты политики (в байтах, если не указано иное)",
+  "pluginsEndpointRequestBytes": "Максимум байт запроса (1–65536)",
+  "pluginsEndpointResponseBytes": "Максимум байт ответа (1–65536)",
+  "pluginsEndpointHeaderBytes": "Максимум байт заголовков (1–16384)",
+  "pluginsEndpointConcurrency": "Параллельные запросы (1–128)",
+  "pluginsEndpointTimeout": "Тайм-аут (1–30000 мс)",
+  "pluginsEndpointFrameBytes": "Лимит кадра (1–131072 байт)",
+  "pluginsEndpointCertificateDetails": "Необязательный корневой сертификат HTTPS: один двоичный DER (.der или .cer), до 32 КиБ. PEM и наборы сертификатов не принимаются. Удалите сертификат перед переходом на HTTP.",
+  "pluginsEndpointCertificate": "Выбрать корневой сертификат DER",
+  "pluginsEndpointRemoveCertificate": "Удалить корневой сертификат",
+  "pluginsEndpointCertificateSelected": "Выбран корневой сертификат DER ({bytes} байт)",
+  "pluginsEndpointCertificateInvalid": "Выберите один корректный двоичный сертификат DER (.der или .cer) до 32 КиБ.",
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsHttpTaskTitle": "Задачи HTTP",
+  "pluginsHttpTaskDetails": "Выполните один явно заданный запрос через разрешённую конечную точку и включённый плагин с экспериментальным HTTP-обработчиком. Состояние задачи доступно, даже когда библиотека занята.",
+  "pluginsHttpTaskStatusFailed": "Не удалось подтвердить состояние задачи. Обновите состояние; запрос не повторялся.",
+  "pluginsHttpTaskEndpointsFailed": "Не удалось согласованно прочитать конечные точки, либо библиотека занята. Управление задачами доступно. Обновите конечные точки после возврата библиотеки.",
+  "pluginsHttpTaskInvalid": "Проверьте конечную точку, метод, относительный путь, обычные заголовки, кодировку тела и тайм-аут на соответствие разрешённым лимитам.",
+  "pluginsHttpTaskStartUnknown": "Результат отправки неизвестен. Идентификатор сохранён. Запросите состояние той же задачи; запрос не будет отправлен повторно.",
+  "pluginsHttpTaskReadUnknown": "Чтение результата не подтверждено и могло уже потребить результат. Повторного чтения не будет. Состояние и завершение всё ещё можно проверить.",
+  "pluginsHttpTaskControlUnknown": "Результат управляющего действия не подтверждён. Обновите состояние задачи перед следующим действием.",
+  "pluginsHttpTaskReadPending": "Результат не возвращён. Проверьте состояние перед явным повторным чтением.",
+  "pluginsHttpTaskLocal": "Библиотека доступна; активных задач нет",
+  "pluginsHttpTaskRunning": "Выполняется; библиотека передана рабочему процессу",
+  "pluginsHttpTaskStopping": "Остановка; ожидание фактического выхода рабочего процесса",
+  "pluginsHttpTaskReclaimed": "Рабочий процесс завершён; исходная библиотека возвращена",
+  "pluginsHttpTaskRecoveryRequired": "Рабочий процесс завершён; очистка или обслуживание требуют исправления",
+  "pluginsHttpTaskUnavailable": "Исходная библиотека недоступна; требуется восстановление",
+  "pluginsHttpTaskAbsent": "Результат не доставлен",
+  "pluginsHttpTaskPending": "Ожидание результата",
+  "pluginsHttpTaskReady": "Результат готов: прочитайте явно. Это не означает завершение рабочего процесса.",
+  "pluginsHttpTaskConsumed": "Результат потреблён",
+  "pluginsHttpTaskResultUnavailable": "Доставка результата недоступна",
+  "pluginsHttpTaskOk": "ОК",
+  "pluginsHttpTaskInvalidOptions": "Недопустимые параметры",
+  "pluginsHttpTaskBusy": "Занято",
+  "pluginsHttpTaskClosed": "Закрыто",
+  "pluginsHttpTaskReadBound": "Превышен предел чтения",
+  "pluginsHttpTaskLimit": "Достигнута квота или лимит",
+  "pluginsHttpTaskSpawn": "Не удалось запустить рабочий процесс",
+  "pluginsHttpTaskDisconnect": "Ошибка очистки соединения",
+  "pluginsHttpTaskProtocol": "Ошибка протокола задачи",
+  "pluginsHttpTaskDeadline": "Превышен срок выполнения",
+  "pluginsHttpTaskPackageChanged": "Привязка пакета изменена",
+  "pluginsHttpTaskInactive": "Соединение неактивно",
+  "pluginsHttpTaskModule": "Недопустимый гостевой модуль",
+  "pluginsHttpTaskUnsupported": "Операция не поддерживается",
+  "pluginsHttpTaskCancelled": "Отмена обнаружена; удалённые изменения могли произойти",
+  "pluginsHttpTaskTrap": "Ловушка при выполнении гостевого кода",
+  "pluginsHttpTaskAccepted": "Принято",
+  "pluginsHttpTaskCompleted": "Завершено",
+  "pluginsHttpTaskDenied": "Отказано",
+  "pluginsHttpTaskRevoked": "Разрешение отозвано",
+  "pluginsHttpTaskNotFound": "Не найдено",
+  "pluginsHttpTaskConflict": "Конфликт",
+  "pluginsHttpTaskOutcomeUnknown": "Удалённый результат неизвестен; не считайте изменения отменёнными и не повторяйте отправку",
+  "pluginsHttpTaskEvidenceUnavailable": "Подтверждение результата недоступно",
+  "pluginsHttpTaskFailed": "Ошибка",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "Выполнение гостя: {fault}; код выхода: {code}",
+  "pluginsHttpTaskCounters": "Вызовы IO: {calls}; учтённые байты: {bytes}",
+  "pluginsHttpTaskHttpResult": "Результат HTTP: {status}; удалённый статус: {code}",
+  "pluginsHttpTaskRemoteError": "Удалённый сервер вернул 4xx/5xx. HTTP-обмен завершён; это отдельно от ошибок выполнения гостя.",
+  "pluginsHttpTaskResponseHeaders": "Заголовки ответа (повторы сохранены; двоичные значения в Base64)",
+  "pluginsHttpTaskResponseBase64": "Тело ответа: точный Base64",
+  "pluginsHttpTaskResponseText": "Тело ответа: текстовый предпросмотр",
+  "pluginsHttpTaskExit": "Выход рабочего процесса — выполнение: {execution}; отключение: {disconnect}; обслуживание: {maintenance}",
+  "pluginsHttpTaskWorking": "Ожидание ответа управления задачей…",
+  "pluginsHttpTaskSubmission": "Идентификатор отправки: {identity}",
+  "pluginsHttpTaskKey": "Идентификатор задачи: {identity}",
+  "pluginsHttpTaskRefresh": "Обновить состояние задачи",
+  "pluginsHttpTaskPoll": "Проверить задачу",
+  "pluginsHttpTaskRead": "Прочитать результат один раз",
+  "pluginsHttpTaskCancel": "Запросить отмену",
+  "pluginsHttpTaskRepair": "Исправить очистку",
+  "pluginsHttpTaskAcknowledge": "Подтвердить завершённую задачу",
+  "pluginsHttpTaskHistory": "Предыдущие наблюдения задач (до 5)",
+  "pluginsHttpTaskNew": "Подготовить новый запрос",
+  "pluginsHttpTaskRefreshEndpoints": "Обновить разрешённые конечные точки",
+  "pluginsHttpTaskLoadingEndpoints": "Чтение разрешённых конечных точек…",
+  "pluginsHttpTaskCatalogUnavailable": "Каталог плагинов недоступен. Обновите его перед новой отправкой; управление существующей задачей доступно.",
+  "pluginsHttpTaskNoEndpoints": "Нет конечных точек для включённого и разрешённого плагина пересылки HTTP.",
+  "pluginsHttpTaskEndpoint": "Разрешённая конечная точка",
+  "pluginsHttpTaskTarget": "Относительный путь, например /v1/items?limit=10",
+  "pluginsHttpTaskHeaders": "Обычные заголовки запроса: Имя: значение, по одному на строку",
+  "pluginsHttpTaskHeadersHint": "Повторяющиеся заголовки сохраняются отдельно. Заголовки учётных данных и соединения задаёт только среда выполнения.",
+  "pluginsHttpTaskBodyFormat": "Кодировка тела запроса",
+  "pluginsHttpTaskText": "Текст UTF-8",
+  "pluginsHttpTaskBody": "Тело запроса",
+  "pluginsHttpTaskTimeout": "Тайм-аут в мс (1–30000, в пределах разрешения)",
+  "pluginsHttpTaskExplicit": "Отправка выполняет один реальный запрос. Каждый щелчок создаёт новый идентификатор. Неподтверждённые отправки и чтения не повторяются автоматически. Отмена не доказывает откат удалённой операции.",
+  "pluginsHttpTaskStart": "Отправить новый запрос",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "Завершить наблюдение за попыткой",
+  "pluginsHttpTaskAbandonDetails": "Наблюдение можно завершить, только когда свежее состояние подтверждает отсутствие активной задачи и доступность исходной библиотеки. Это не доказывает отсутствие удалённых изменений. Идентификатор и неопределённость сохраняются в истории; новый запрос требует явной отправки.",
+  "pluginsHttpTaskArchivedUnknown": "Наблюдение завершено пользователем. Предыдущие удалённые изменения не подтверждены; попытка не повторялась.",
+  "pluginsServiceTitle": "Настройка сервиса",
+  "pluginsServiceManagementOnly": "Здесь управляются сохранённые настройки и разрешения. Сохранение не запускает слушатель, пакет или сервис.",
+  "pluginsServiceRefresh": "Обновить записи",
+  "pluginsServiceNewConfig": "Новая конфигурация",
+  "pluginsServiceEditConfig": "Изменить конфигурацию",
+  "pluginsServiceNewAuthentication": "Новая аутентификация",
+  "pluginsServiceRotateAuthentication": "Заменить аутентификацию",
+  "pluginsServicePublicationEditor": "Разрешение публикации",
+  "pluginsServiceEditPublication": "Изменить публикацию",
+  "pluginsServiceWorking": "Выполнение…",
+  "pluginsServiceLoadFailed": "Не удалось обновить записи. Повторите обновление перед изменениями.",
+  "pluginsServiceWriteUnknown": "Результат последнего изменения неизвестен. Оно не отправлялось повторно.",
+  "pluginsServiceInvalid": "Проверьте поля, выбранные разрешения и текущий пакет перед сохранением.",
+  "pluginsServiceSaved": "Сохранено. Проверьте возвращённую ревизию и фактический срок ниже.",
+  "pluginsServiceTokenDiscarded": "Одноразовый токен очищен при закрытии панели. При необходимости явно выпустите новый.",
+  "pluginsServiceUncertainHelp": "Сначала обновите и проверьте исходные записи. Подтверждение уведомления лишь разрешает следующее явное действие; оно не доказывает сбой предыдущего изменения и не повторяет его.",
+  "pluginsServiceAcknowledgeUncertain": "Я проверил обновлённые записи",
+  "pluginsServiceIssuedToken": "Однократно показываемый Bearer-токен",
+  "pluginsServiceTokenHelp": "Токен показывается только сейчас. При необходимости скопируйте его явно. Очистка или закрытие панели удалит его из сеанса; получить его из списка нельзя. Замена отменяет предыдущий токен.",
+  "pluginsServiceCopyClear": "Скопировать и очистить токен",
+  "pluginsServiceClearToken": "Очистить токен",
+  "pluginsServiceConfigurations": "Сохранённые конфигурации",
+  "pluginsServiceNoConfigurations": "Нет конфигураций сервиса.",
+  "pluginsServiceAuthorities": "Записи аутентификации и публикации",
+  "pluginsServiceNoAuthorities": "Нет записей аутентификации или публикации.",
+  "pluginsServiceRevision": "Ревизия",
+  "pluginsServiceReference": "Ссылка на разрешение",
+  "pluginsServiceCreated": "Создано (UTC)",
+  "pluginsServiceExpires": "Фактический срок (UTC)",
+  "pluginsServiceDisabled": "Отключено",
+  "pluginsServiceExpired": "Срок истёк или ещё не наступил",
+  "pluginsServiceDisable": "Отключить",
+  "pluginsServicePackage": "Заявленный и разрешённый пакет",
+  "pluginsServicePackageDigest": "Хеш пакета",
+  "pluginsServiceConfigDigest": "Хеш конфигурации",
+  "pluginsServicePackageUnavailable": "Подходящий пакет или его разрешения прослушивания/публикации недоступны. Исторические записи можно читать и отключать.",
+  "pluginsServiceDigestFixed": "Редактирование сохраняет исходный хеш пакета. Выберите совпадающий пакет; это не включает его.",
+  "pluginsServiceHandler": "Заявленный обработчик сервиса",
+  "pluginsServiceIdentity": "Идентификатор сервиса",
+  "pluginsServiceRetention": "Хранение истории запросов (мс, до 30 дней)",
+  "pluginsServicePrincipals": "Разрешённые субъекты и области содержимого",
+  "pluginsServiceScopesHelp": "Явно выберите аутентификацию. Добавьте разрешённые операции и точные идентификаторы объектов ниже. Для удаления области или субъекта используйте отдельную кнопку; при редактировании существующие области сохраняются.",
+  "pluginsServiceNoAuthentication": "Сначала создайте действующую запись аутентификации.",
+  "pluginsServiceAuthenticationUnavailable": "Выбранная аутентификация отсутствует, отключена, просрочена или принадлежит другому субъекту. Черновые области сохранены; выберите замену или явно удалите её.",
+  "pluginsServicePolicyChanged": "Выбранная исходная запись изменилась или недоступна. Обновите выбор либо откройте редактор из текущей записи. Черновик сохранён.",
+  "pluginsServiceCatalogChanged": "Каталог пакетов изменился или недоступен. Черновик сохранён. Явно обновите выбор перед сохранением.",
+  "pluginsServiceRefreshSelection": "Обновить выбор",
+  "pluginsServiceSaveConfig": "Сохранить конфигурацию",
+  "pluginsServiceCloseEditor": "Закрыть редактор",
+  "pluginsServiceAddScope": "Добавить область содержимого",
+  "pluginsServiceRemovePrincipal": "Удалить субъект",
+  "pluginsServiceRemoveScope": "Удалить область",
+  "pluginsServiceScopeKind": "Разрешённая операция с содержимым",
+  "pluginsServiceCardId": "Точный идентификатор карточки",
+  "pluginsServiceAttachmentId": "Точный идентификатор вложения",
+  "pluginsServiceScopeRename": "Переименовать карточку",
+  "pluginsServiceScopeSummary": "Читать сводку",
+  "pluginsServiceScopeQuery": "Запросить операцию",
+  "pluginsServiceScopeAttachment": "Читать вложение",
+  "pluginsServiceScopeCreate": "Создавать содержимое",
+  "pluginsServiceScopeEdit": "Изменять содержимое",
+  "pluginsServiceScopeRead": "Читать содержимое",
+  "pluginsServiceUnsupported": "Неподдерживаемое историческое значение",
+  "pluginsServicePrincipalId": "Идентификатор субъекта",
+  "pluginsServiceDays": "Запрошенный срок (1–30 дней)",
+  "pluginsServiceIssue": "Выпустить токен",
+  "pluginsServiceRotate": "Заменить токен",
+  "pluginsServicePublicationHelp": "Разрешение привязано к точной конфигурации, ревизии и ссылке. Срок ограничен всеми выбранными записями аутентификации и может быть короче запрошенного. Сохранение не запускает прослушивание.",
+  "pluginsServiceConfiguration": "Сохранённая конфигурация",
+  "pluginsServiceListenAddress": "Числовой адрес и порт прослушивания",
+  "pluginsServiceTls": "Требовать TLS",
+  "pluginsServiceTlsHelp": "Адреса вне loopback требуют TLS. Здесь сохраняется только требование; слушатель и TLS-идентичность не создаются.",
+  "pluginsServiceMethod": "Метод HTTP",
+  "pluginsServicePath": "Точный путь запроса",
+  "pluginsServiceQueryPath": "Отдельный путь запроса результата (необязательно)",
+  "pluginsServiceSavePublication": "Сохранить разрешение публикации",
+  "pluginsServicePublicationMismatch": "Публикация больше не соответствует текущей конфигурации. Проверьте и явно сохраните новое разрешение.",
+  "pluginsServiceYes": "Да",
+  "pluginsServiceNo": "Нет",
+  "pluginsServiceRunTitle": "Запуск API-сервиса",
+  "pluginsServiceRunHint": "Выберите разрешённую публикацию и конечные лимиты, затем явно запустите сервис. После остановки дождитесь возврата исходного владельца пространства перед подтверждением результата.",
+  "pluginsServiceRunSelection": "Разрешённая публикация сервиса",
+  "pluginsServiceRunNoSelection": "Нет доступных разрешённых публикаций. Проверьте плагин, конфигурацию и аутентификацию.",
+  "pluginsServiceRunStale": "Выбранный пакет, конфигурация или разрешение изменились. Обновите записи и выберите снова перед запуском.",
+  "pluginsServiceRunStart": "Запустить ограниченный сервис",
+  "pluginsServiceRunStop": "Остановить сервис",
+  "pluginsServiceRunLifetime": "Длительность (мс, до 3 600 000)",
+  "pluginsServiceRunJobs": "Всего резервирований задач (до 1 000 000)",
+  "pluginsServiceRunBytes": "Лимит байт запуска (до 67 108 864)",
+  "pluginsServiceRunAdvanced": "Лимиты запросов и рабочего процесса",
+  "pluginsServiceRunCalls": "Вызовов на задачу (до 1024)",
+  "pluginsServiceRunJobBytes": "Байт на задачу (до 16 777 216)",
+  "pluginsServiceRunTotalBytes": "Лимит байт рабочего процесса (до 67 108 864)",
+  "pluginsServiceRunRequestBytes": "Максимальный размер запроса (байт)",
+  "pluginsServiceRunResponseBytes": "Максимальный размер ответа (байт)",
+  "pluginsServiceRunHeaderBytes": "Максимальный размер заголовков (байт, до 65 536)",
+  "pluginsServiceRunConcurrent": "Параллельные задачи (до 128)",
+  "pluginsServiceRunTimeout": "Тайм-аут задачи (мс, до 30 000)",
+  "pluginsServiceRunBoundsHint": "Лимиты также должны соответствовать декларации плагина и сохранённым разрешениям. Зарезервированная работа расходует общий бюджет даже при отмене. По истечении срока запуск останавливается; автопродления нет.",
+  "pluginsServiceRunStarting": "Запуск сервиса",
+  "pluginsServiceRunRunning": "Сервис работает",
+  "pluginsServiceRunStopping": "Остановка; ожидание выхода слушателя и рабочего процесса",
+  "pluginsServiceRunExited": "Сервис завершён",
+  "pluginsServiceRunPending": "Ожидание",
+  "pluginsServiceRunSucceeded": "Успешно",
+  "pluginsServiceRunInvalidOutcome": "Недопустимая конфигурация",
+  "pluginsServiceRunDenied": "Отказано",
+  "pluginsServiceRunLimit": "Лимит достигнут",
+  "pluginsServiceRunCancelled": "Отменено",
+  "pluginsServiceRunTimeoutOutcome": "Тайм-аут",
+  "pluginsServiceRunTransport": "Ошибка транспорта",
+  "pluginsServiceRunClosed": "Закрыто",
+  "pluginsServiceRunLocal": "Содержимое доступно локально",
+  "pluginsServiceRunOwned": "Содержимым управляет работающий сервис",
+  "pluginsServiceRunReclaiming": "Ожидание возврата владения содержимым",
+  "pluginsServiceRunReclaimed": "Владение содержимым возвращено; требуется подтверждение",
+  "pluginsServiceRunRecovery": "Очистка требует исправления",
+  "pluginsServiceRunUnavailable": "Хранилище содержимого недоступно",
+  "pluginsServiceRunStatusFailed": "Не удалось проверить состояние сервиса. Обновите перед следующими действиями.",
+  "pluginsServiceRunStartUnknown": "Результат запуска неизвестен. Идентификатор попытки сохранён; обновите, чтобы найти её. Автоматического повторного запуска не будет.",
+  "pluginsServiceRunControlUnknown": "Результат управления неизвестен. Обновите состояние исходного сервиса перед другой операцией.",
+  "pluginsServiceRunIdentityChanged": "Содержимым владеет другая задача. Панель не будет управлять ею с прежним идентификатором сервиса.",
+  "pluginsServiceRunInvalid": "Проверьте выбранный сервис и числовые лимиты. Новый запуск не отправлен.",
+  "pluginsServiceRunTask": "Идентификатор текущей задачи",
+  "pluginsServiceRunAttempt": "Неподтверждённая попытка запуска",
+  "pluginsServiceRunAbandon": "Сохранить запись и завершить попытку",
+  "pluginsServiceRunNetwork": "Привязка: {bind}; слушатель: {listener}; надзор: {supervision}",
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunLastObservation": "Показано последнее наблюдение; текущее состояние не проверено.",
+  "pluginsServiceRunNextSettings": "Настройки следующего явного запуска",
+  "pluginsServiceRunHttpPanel": "Этой задачей владеет API-сервис. Остановите его или подтвердите выход в панели сервиса выше. Черновик HTTP-запроса сохранён.",
+  "pluginsServiceRunStartRejected": "Ответ запуска сообщил об ошибке. Текущая задача проверена; изучите причину и состояние очистки перед продолжением.",
+  "pluginsServiceRunHostFailure": "Диагностика хоста: {detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunOutboundHint": "Исходящие API (необязательно, до 8). Показаны только разрешённые для пакета конечные точки. Если ничего не выбрано, исходящие вызовы запрещены.",
+  "pluginsServiceRunOutboundFailed": "Не удалось проверить список конечных точек. Обновите перед использованием выбранных.",
+  "pluginsServiceRunOutboundStale": "Выбранная конечная точка изменилась или недоступна. Явно выберите текущую версию или очистите выбор.",
+  "pluginsServiceRunOutboundClear": "Очистить выбор конечных точек",
+  "pluginsServiceRunOutboundAttempt": "Конечные точки этой попытки запуска",
+  "pluginsServiceTlsHint": "Выберите цепочку сертификатов PEM и закрытый ключ, затем проверьте их. При запуске файлы проверяются снова; активный сертификат не заменяется автоматически.",
+  "pluginsServiceTlsCertificate": "Выбрать цепочку сертификатов",
+  "pluginsServiceTlsPrivateKey": "Выбрать закрытый ключ",
+  "pluginsServiceTlsInspect": "Проверить сертификат",
+  "pluginsServiceTlsChecking": "Обработка выбранного сертификата…",
+  "pluginsServiceTlsFailed": "Проверка сертификата не удалась. Проверьте PEM-файлы, соответствие ключа и локальные пути.",
+  "pluginsServiceTlsChecked": "Сертификат и соответствие ключа проверены. SHA-256 PEM показан ниже. Клиенты всё равно должны проверять имя хоста, срок и цепочку доверия.",
+  "pluginsServiceTlsAttempt": "Хеш PEM-сертификата, привязанный к попытке запуска",
+  "pluginsServiceTlsUnavailable": "Этот бэкенд не поддерживает выбор локального TLS-сертификата.",
+  "pluginsServiceTlsValidity": "Общий срок цепочки сертификатов (UTC): с {start} по {end}. После истечения сервис остановится.",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "Цепочка сертификатов ещё не действует или просрочена. Проверьте или замените сертификат и повторите проверку перед запуском.",
+  "pluginsServiceTlsRecheck": "Проверьте сертификат ещё раз перед запуском. Изменение часов не восстанавливает предыдущий выбор.",
+  "pluginsTlsIdentitiesTitle": "Сохранённые TLS-идентичности",
+  "pluginsTlsIdentitiesHint": "Выберите идентичность явно. Замена или отключение останавливает использующие её сервисы; новый запуск всегда выполняется явно.",
+  "pluginsTlsIdentitiesUseFile": "Использовать проверенные файлы при следующем запуске",
+  "pluginsTlsIdentitiesSaved": "Сохранено. Проверьте идентичность и ревизию ниже, затем выберите для нового запуска.",
+  "pluginsTlsIdentitiesUnknownHint": "Обновите и проверьте записи перед подтверждением. Отсутствие квитанции не означает сбой; не создавайте повторно без проверки.",
+  "pluginsTlsIdentitiesSavedMode": "Следующий запуск: сохранённая идентичность. Хост проверит срок сертификата при запуске.",
+  "pluginsTlsIdentitiesFileMode": "Следующий запуск: проверенные локальные файлы.",
+  "pluginsTlsIdentitiesStale": "Выбранная идентичность изменилась, отключена или не обновлена. Выберите актуальную снова.",
+  "pluginsTlsIdentitiesEmpty": "В библиотеке нет сохранённых идентичностей.",
+  "pluginsTlsIdentitiesSelect": "Использовать при следующем запуске",
+  "pluginsTlsIdentitiesReplace": "Заменить проверенными файлами",
+  "pluginsTlsIdentitiesDisable": "Отключить идентичность",
+  "pluginsTlsIdentitiesImport": "Подготовить сертификаты для импорта или замены",
+  "pluginsTlsIdentitiesSave": "Сохранить как новую идентичность"
+}

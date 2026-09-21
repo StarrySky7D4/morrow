@@ -301,6 +301,11 @@ Future<void> click(WidgetTester tester, String key) async {
   await tester.pumpAndSettle();
 }
 
+Future<void> openIo(WidgetTester tester, String id) async {
+  await click(tester, 'io-settings-open');
+  await click(tester, 'plugin-io-entry-$id');
+}
+
 Future<void> mount(
   WidgetTester tester,
   FakeBackend backend, {
@@ -311,6 +316,45 @@ Future<void> mount(
 }
 
 void main() {
+  testWidgets('IO is a separate page and returning refreshes the library', (
+    tester,
+  ) async {
+    final backend = FakeBackend([
+      entry('a', declaredIo: ['http-request', 'file-read']),
+    ]);
+    await mount(tester, backend);
+    await click(tester, 'plugin-entry-a');
+    expect(
+      find.byKey(const ValueKey('plugin-io-cap-a-file-read')),
+      findsNothing,
+    );
+    await openIo(tester, 'a');
+    expect(find.byKey(const ValueKey('io-settings-page')), findsOneWidget);
+    expect(find.byKey(const ValueKey('plugin-pick')), findsNothing);
+    await click(tester, 'plugin-io-cap-a-file-read');
+    await click(tester, 'plugin-io-save-a');
+    expect(backend.lastApprovedIo, ['file-read']);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('io-settings-page')), findsNothing);
+    expect(find.byKey(const ValueKey('plugin-pick')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('plugin-io-cap-a-file-read')),
+      findsNothing,
+    );
+    await openIo(tester, 'a');
+    expect(
+      tester
+          .widget<CheckboxListTile>(
+            find.byKey(const ValueKey('plugin-io-cap-a-file-read')),
+          )
+          .value,
+      isTrue,
+    );
+    expect(backend.ioConfigurations, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'ABA backend switch ignores old pages and preserves new busy state',
     (tester) async {
@@ -358,7 +402,7 @@ void main() {
         PluginLibraryPage(revision: a.revision, entries: a.entries, cursor: ''),
       );
       await tester.pumpAndSettle();
-      await click(tester, 'plugin-entry-a');
+      await openIo(tester, 'a');
       await click(tester, 'plugin-io-cap-a-http-request');
       await click(tester, 'plugin-io-save-a');
       expect(a.lastApprovedIo, ['http-request']);
@@ -393,7 +437,7 @@ void main() {
       await click(tester, 'plugin-ui-a');
       final close = Completer<void>();
       a.views.single.closeGate = close;
-      final revokeA = find.byKey(const ValueKey('plugin-io-revoke-a'));
+      final revokeA = find.byKey(const ValueKey('io-settings-open'));
       await tester.ensureVisible(revokeA);
       await tester.pumpAndSettle();
       await tester.tap(revokeA);
@@ -410,6 +454,7 @@ void main() {
       expect(find.byType(ManagedPluginForm), findsOneWidget);
       expect(a.ioConfigurations, 0);
       expect(b.views.single.closes, 0);
+      await openIo(tester, 'b');
       await click(tester, 'plugin-io-revoke-b');
       expect(b.ioConfigurations, 1);
       expect(b.lastApprovedIo, isEmpty);
@@ -444,7 +489,7 @@ void main() {
     ]);
     await tester.pumpWidget(page(backend, locale: const Locale('en')));
     await tester.pumpAndSettle();
-    await click(tester, 'plugin-entry-a');
+    await openIo(tester, 'a');
     expect(find.text('Call network APIs'), findsOneWidget);
     expect(find.text('Use approved credentials'), findsOneWidget);
     await click(tester, 'plugin-io-cap-a-credential-use');
@@ -464,7 +509,7 @@ void main() {
         ),
       ]);
       await mount(tester, backend);
-      await click(tester, 'plugin-entry-a');
+      await openIo(tester, 'a');
       await click(tester, 'plugin-io-cap-a-http-request');
       expect(backend.ioConfigurations, 0);
       expect(backend.configurations, 0);
@@ -498,6 +543,7 @@ void main() {
     await click(tester, 'plugin-entry-a');
     await click(tester, 'plugin-ui-a');
     expect(find.byType(ManagedPluginForm), findsOneWidget);
+    await openIo(tester, 'a');
     await click(tester, 'plugin-io-revoke-a');
     expect(backend.log, ['open', 'close', 'configure-io']);
     expect(find.byType(ManagedPluginForm), findsNothing);
@@ -511,7 +557,7 @@ void main() {
         entry('a', declaredIo: ['http-request']),
       ])..ioConflict = true;
       await mount(tester, backend);
-      await click(tester, 'plugin-entry-a');
+      await openIo(tester, 'a');
       await click(tester, 'plugin-io-cap-a-http-request');
       await click(tester, 'plugin-io-save-a');
       expect(backend.ioConfigurations, 1);
@@ -537,7 +583,7 @@ void main() {
         entry('a', available: false, approvedIo: ['http-request']),
       ]);
       await mount(tester, backend);
-      await click(tester, 'plugin-entry-a');
+      await openIo(tester, 'a');
       expect(
         tester
             .widget<OutlinedButton>(
@@ -568,8 +614,10 @@ void main() {
     await click(tester, 'plugin-entry-a');
     await click(tester, 'plugin-ui-a');
     backend.views.single.closeFailures = 1;
-    await click(tester, 'plugin-io-revoke-a');
+    await click(tester, 'io-settings-open');
     expect(backend.ioConfigurations, 0);
+    expect(find.byKey(const ValueKey('io-settings-page')), findsNothing);
+    await openIo(tester, 'a');
     await click(tester, 'plugin-io-revoke-a');
     expect(backend.ioConfigurations, 1);
   });

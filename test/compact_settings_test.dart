@@ -124,7 +124,7 @@ void main() {
   });
 
   testWidgets(
-    'Resize preserves desktop preference and resets narrow settings navigation',
+    'Resize preserves desktop preference and the open settings page',
     (t) async {
       addTearDown(t.view.reset);
       final storage = MemoryStorage();
@@ -143,14 +143,15 @@ void main() {
       expect(storage.data!['appearanceExpanded'], isFalse);
       size(t, 1050);
       await t.pumpAndSettle();
-      expect(find.byKey(const ValueKey('compact-settings-page')), findsNothing);
       expect(
-        t.getSize(find.byKey(const ValueKey('settings-side-panel'))).width,
-        0,
+        find.byKey(const ValueKey('compact-settings-page')),
+        findsOneWidget,
       );
+      expect(find.byKey(const ValueKey('settings-side-panel')), findsNothing);
       size(t, 390);
       await t.pumpAndSettle();
-      expect(find.byKey(const ValueKey('theme-color-compass')), findsNothing);
+      expect(find.byKey(const ValueKey('theme-color-compass')), findsOneWidget);
+      await tap(t, 'compact-settings-back');
       expect(
         find.byKey(const ValueKey('page-workbench.page.overview')),
         findsOneWidget,

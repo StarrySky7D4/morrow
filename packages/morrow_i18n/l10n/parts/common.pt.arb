@@ -1,0 +1,22 @@
+{
+  "@@locale": "pt",
+  "commonAppName": "Morrow",
+  "commonCancel": "Cancelar",
+  "commonCount": "{count, plural, =0{Nenhum item} one{{count} item} other{{count} itens}}",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonGreeting": "Olá, {name}",
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../window_effects.dart';
@@ -7,27 +8,37 @@ Future<void> qualifyCanvas(String output) async {
   const channel = MethodChannel('morrow/window_shape');
   final tint = ValueNotifier<double>(0);
   final evidence = <String>[];
+  final radius = ValueNotifier<double>(0);
+  bool cornerScene = false;
   try {
     await DesktopBackground().apply();
     runApp(
       Directionality(
         textDirection: TextDirection.ltr,
-        child: ValueListenableBuilder<double>(
-          valueListenable: tint,
-          builder: (_, alpha, _) => Stack(
-            fit: StackFit.expand,
-            children: [
-              Positioned.fill(
-                child: ColoredBox(color: Colors.green.withValues(alpha: alpha)),
-              ),
-              const Positioned(
-                left: 64,
-                top: 80,
-                width: 128,
-                height: 32,
-                child: ColoredBox(color: Colors.white),
-              ),
-            ],
+        child: AnimatedBuilder(
+          animation: Listenable.merge([tint, radius]),
+          builder: (_, _) => ClipRRect(
+            borderRadius: BorderRadius.circular(radius.value),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: (cornerScene ? Colors.white : Colors.green)
+                        .withValues(alpha: tint.value),
+                  ),
+                ),
+                if (!cornerScene)
+                  const Positioned(
+                    left: 64,
+                    top: 80,
+                    width: 128,
+                    height: 32,
+                    child: ColoredBox(color: Colors.white),
+                  ),
+              ],
+            ),
           ),
         ),
       ),
@@ -121,8 +132,62 @@ Future<void> qualifyCanvas(String output) async {
         throw StateError('Transparency was not restored');
       }
     }
+    // Sample the compositor output against our own fixture, including the
+    // native region and the independent blur window (not just Flutter pixels).
+    cornerScene = true;
+    for (final logicalRadius in [8.0, 20.0, 32.0]) {
+      radius.value = logicalRadius;
+      await channel.invokeMethod<void>('setRadius', logicalRadius);
+      await sample(0, 0);
+      final baseline = (await channel.invokeMapMethod<String, dynamic>(
+        'sampleCornerProbe',
+      ))!;
+      final base = (baseline['pixels'] as List).cast<int>();
+      final extent = baseline['extent'] as int;
+      final scale = baseline['scale'] as double;
+      await sample(0, 1);
+      final foreground =
+          ((await channel.invokeMapMethod<String, dynamic>(
+                    'sampleCornerProbe',
+                  ))!['pixels']
+                  as List)
+              .cast<int>();
+      final partial = List.filled(4, 0);
+      for (var i = 0; i < base.length; i++) {
+        if (distance(foreground[i], base[i]) > 18 &&
+            distance(foreground[i], 0xffffff) > 18) {
+          partial[i ~/ (extent * extent)]++;
+        }
+      }
+      if (partial.any((n) => n < 2)) {
+        throw StateError('A corner lost antialias coverage: $partial');
+      }
+      await sample(12, 0);
+      final frost =
+          ((await channel.invokeMapMethod<String, dynamic>(
+                    'sampleCornerProbe',
+                  ))!['pixels']
+                  as List)
+              .cast<int>();
+      final r = logicalRadius * scale;
+      var checkedOutside = 0;
+      for (var i = 0; i < base.length; i++) {
+        final x = (i % extent) + .5, y = ((i ~/ extent) % extent) + .5;
+        if (x < r &&
+            y < r &&
+            math.sqrt(math.pow(x - r, 2) + math.pow(y - r, 2)) > r + 1.5) {
+          checkedOutside++;
+          if (distance(frost[i], base[i]) > 24) {
+            throw StateError('Blur leaked outside rounded canvas at $i');
+          }
+        }
+      }
+      evidence.add(
+        'corners radius=$logicalRadius scale=$scale partial=$partial outsideChecked=$checkedOutside',
+      );
+    }
     await File(output).writeAsString(
-      'PASS: owned desktop source, zero alpha, progressive low frost, canvas and caption blur, sharp foreground, full canvas tint and return to transparent.\n\n${evidence.join("\n")}',
+      'PASS: owned desktop source, zero alpha, progressive low frost, canvas and caption blur, sharp foreground, full canvas tint, transparent recovery, four antialiased corners and clipped native blur.\n\n${evidence.join("\n")}',
     );
     exit(0);
   } catch (e, stack) {

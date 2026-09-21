@@ -480,6 +480,18 @@ pub mod catalog {
         /// Publish a complete synced file without overwriting another digest. Activation is separate.
         pub fn install(&self, package: &Package) -> Result<PathBuf> {
             let path = self.path(package.digest());
+            // Reopening an installed immutable bundle only needs validation.
+            // Avoid writing/syncing a temporary archive on every application
+            // launch. File type, contents and digest still pass load(), and an
+            // invalid existing entry is never silently repaired or overwritten.
+            match fs::symlink_metadata(&path) {
+                Ok(_) => {
+                    self.load(package.digest())?;
+                    return Ok(path);
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(_) => return Err(Error::Io),
+            }
             let mut staged = tempfile::NamedTempFile::new_in(&self.root).map_err(|_| Error::Io)?;
             staged.write_all(package.archive()).map_err(|_| Error::Io)?;
             staged.as_file().sync_all().map_err(|_| Error::Io)?;

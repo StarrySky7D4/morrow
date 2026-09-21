@@ -1,0 +1,646 @@
+{
+  "@@locale": "de",
+  "pluginsWorkbench": "Arbeitsbereich-Plugin",
+  "pluginsReadingState": "Plugin-Status wird geladen…",
+  "pluginsManagementUnavailable": "Die Plugin-Verwaltung ist nicht verfügbar. Vorhandene Inhalte bleiben lesbar.",
+  "pluginsInsufficientApproval": "Das Plugin ist aktiviert, benötigt aber Inhaltsberechtigungen. Der Arbeitsbereich bleibt schreibgeschützt. Deaktivieren Sie es, um die Berechtigungen erneut zu prüfen.",
+  "pluginsWorkbenchReadOnly": "Das Plugin ist zugelassen, aber der Arbeitsbereich ist schreibgeschützt. Beheben Sie das Bibliotheks- oder Plugin-Problem und aktualisieren Sie den Status.",
+  "pluginsEnabledDetails": "Aktiviert. Dieses Plugin kann Inhalte lesen und bearbeiten. Beim Deaktivieren bleiben Ihre Daten erhalten.",
+  "pluginsDisabledDetails": "Deaktiviert. Erlauben Sie das Lesen und Bearbeiten von Inhalten, um Editor und Werkzeuge zu nutzen.",
+  "pluginsDisableWorkbench": "Arbeitsbereich-Plugin deaktivieren",
+  "pluginsApproveWorkbench": "Lesen und Bearbeiten erlauben und aktivieren",
+  "pluginsOpenTextTool": "Textwerkzeug öffnen",
+  "pluginsCloseTextTool": "Textwerkzeug ausblenden",
+  "pluginsRefreshState": "Status aktualisieren",
+  "pluginsStateUnavailable": "Der Plugin-Status konnte nicht geladen werden. Versuchen Sie es erneut.",
+  "pluginsSettingsUnknown": "Die Einstellung ist noch nicht bestätigt. Aktualisieren Sie den Status, bevor Sie erneut wählen.",
+  "pluginsPackageFile": "Morrow-Plugin",
+  "pluginsExistingVersion": "Diese Version ist bereits installiert. Ihr Aktivierungsstatus bleibt unverändert.",
+  "pluginsImportedDisabled": "Importiert und deaktiviert. Wählen Sie die zu erlaubenden Berechtigungen.",
+  "pluginsUninstalled": "Deinstalliert. Ihre vorhandenen Inhalte bleiben erhalten.",
+  "pluginsInputTooLong": "Das Eingabelimit ist erreicht. Kürzen Sie den Text und versuchen Sie es erneut.",
+  "pluginsSummary": "Zusammenfassungen lesen",
+  "pluginsOperation": "Vorgangsergebnisse abfragen",
+  "pluginsAttachment": "Anhänge lesen",
+  "pluginsCreate": "Inhalte erstellen",
+  "pluginsEdit": "Inhalte bearbeiten",
+  "pluginsRead": "Inhalte lesen",
+  "pluginsRename": "Umbenennen",
+  "pluginsNoPermissions": "Keine Inhaltsberechtigungen angegeben.",
+  "pluginsDependenciesNotice": "Abhängigkeiten müssen im Host konfiguriert werden. Diese Seite genehmigt sie nicht.",
+  "pluginsBuiltin": "Integrierter Arbeitsbereich",
+  "pluginsEnabled": "Aktiviert",
+  "pluginsDisabled": "Deaktiviert",
+  "pluginsManageAbove": "Verwalten Sie dieses Plugin über die obigen Steuerelemente des Arbeitsbereich-Plugins.",
+  "pluginsSavePermissions": "Berechtigungen speichern",
+  "pluginsApproveEnable": "Genehmigen und aktivieren",
+  "pluginsDisable": "Deaktivieren",
+  "pluginsUninstallKeepContent": "Deinstallieren (Inhalte behalten)",
+  "pluginsUseTransform": "Transformation verwenden",
+  "pluginsCloseView": "Ansicht schließen",
+  "pluginsOpenView": "Ansicht öffnen",
+  "pluginsTextInput": "Eingabetext",
+  "pluginsChooseSmallFile": "Kleine Datei auswählen",
+  "pluginsUseText": "Stattdessen Text verwenden",
+  "pluginsTransform": "Transformieren",
+  "pluginsPreviewOnly": "Nur Vorschau. Ergebnisse werden nicht automatisch in vorhandene Inhalte gespeichert.",
+  "pluginsThirdParty": "Drittanbieter-Plugins",
+  "pluginsImportDetails": "Nach dem Import entscheiden Sie über die Aktivierung. Beim Deaktivieren oder Deinstallieren bleiben Inhalte erhalten.",
+  "pluginsChoosePackage": "Plugin-Datei auswählen",
+  "pluginsRefreshList": "Liste aktualisieren",
+  "pluginsInspectedOnly": "Die Datei wurde nur geprüft. Aktivieren Sie das Plugin nach dem Import separat.",
+  "pluginsImport": "Importieren",
+  "pluginsCancel": "Abbrechen",
+  "pluginsEmptyLibrary": "Noch keine Drittanbieter-Plugins importiert.",
+  "pluginsBackupLibraryType": "Bibliothekssicherung",
+  "pluginsProtectionFileType": "Bibliotheksschutzdatei",
+  "pluginsSnapshotSaved": "Bibliothek einschließlich Anhängen und ursprünglicher Schutzdatei gesichert.",
+  "pluginsProtectionSaved": "Schutzdatei gesichert. Wählen Sie sie zur Wiederherstellung aus, falls der Start fehlschlägt.",
+  "pluginsBackupUnknown": "Die Sicherung ist noch nicht bestätigt. Behalten Sie erstellte Dateien und prüfen Sie das Ziel.",
+  "pluginsProtection": "Inhaltsschutz",
+  "pluginsProtectionDetails": "Sichern Sie die ursprüngliche Schutzdatei zur Wiederherstellung mit diesem Systemkonto. Sie enthält keine Karten oder Anhänge.",
+  "pluginsSnapshotDetails": "Die Sicherung enthält Karten, Anhänge und Audit-Datensätze. Externe Ressourcen bleiben Verweise. Zur Wiederherstellung ist das ursprüngliche Systemkonto erforderlich.",
+  "pluginsBackupLibrary": "Bibliothek sichern",
+  "pluginsBackingUp": "Sicherung läuft…",
+  "pluginsBackupProtection": "Schutzdatei sichern",
+  "pluginsListUnknown": "Die Plugin-Liste konnte nicht bestätigt werden",
+  "pluginsInspectFailed": "Die Plugin-Vorschau konnte nicht geladen werden",
+  "pluginsImportUnknown": "Der Import konnte nicht bestätigt werden",
+  "pluginsApprovalUnknown": "Aktivierung oder Berechtigungsänderungen konnten nicht bestätigt werden",
+  "pluginsUninstallUnknown": "Die Deinstallation konnte nicht bestätigt werden",
+  "pluginsViewFailed": "Die Plugin-Ansicht konnte nicht geöffnet werden",
+  "pluginsInputFailed": "Die Eingabedatei konnte nicht gelesen werden",
+  "pluginsTransformUnknown": "Die Transformation konnte nicht bestätigt werden",
+  "pluginsCloseUnknown": "Das Schließen der Ansicht konnte nicht bestätigt werden",
+  "pluginsUnconfirmed": "{reason}. Der Vorgang ist unbestätigt. Prüfen Sie den aktualisierten Status, bevor Sie erneut wählen.",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}. Die Liste konnte nicht aktualisiert werden. Wählen Sie „Liste aktualisieren“, um sie erneut zu lesen.",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "Die Datei ist zu groß. Wählen Sie eine Datei mit höchstens {limit} Bytes.",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "Weitere angegebene Berechtigung: {name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "Angegebene Berechtigungen: {permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "Ausgewählte Datei: {name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "Importvorschau: {name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…nur die ersten 4.096 Zeichen werden angezeigt",
+  "pluginsEmptyResult": "(leeres Ergebnis)",
+  "pluginsBinaryPreview": "Binärinhalt: {hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count} Bytes\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "Verbindung unterbrochen. Öffnen Sie die Plugin-Ansicht erneut.",
+  "pluginsOpeningView": "Plugin-Ansicht wird geöffnet…",
+  "pluginsUnavailableView": "Plugin-Ansicht nicht verfügbar",
+  "pluginsUpdatingView": "Vorschau wird aktualisiert…",
+  "pluginsUiRejected": "Die Plugin-Aktion wurde abgelehnt. Prüfen Sie Eingabe und aktuelle Berechtigungen.",
+  "pluginsUiExecution": "Die Plugin-Ausführung wurde nicht abgeschlossen. Öffnen Sie die Ansicht erneut und versuchen Sie es noch einmal.",
+  "pluginsUiUnavailable": "Das Plugin ist nicht verfügbar. Prüfen Sie den Status und öffnen Sie die Ansicht erneut.",
+  "pluginsBuiltinHeading": "Textwerkzeuge",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "Text eingeben",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count} Zeichen · Nur diese Sitzung; nicht als Karte gespeichert",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "Text für die Großbuchstabenvorschau eingeben",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsIoTitle": "Netzwerk- und Dateiberechtigungen",
+  "pluginsIoScopeNotice": "Hier werden nur Berechtigungskategorien gespeichert. Serveradressen, Dateizugriff und Zugangsdaten benötigen separate Genehmigungen; nicht verfügbare Funktionen bleiben unverfügbar. Öffnen Sie das Plugin-Formular nach Änderungen erneut.",
+  "pluginsIoNoneApproved": "Keine Netzwerk- oder Dateiberechtigungen genehmigt",
+  "pluginsIoApproved": "Genehmigt: {permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "Angeforderte Netzwerk- und Dateiberechtigungen: {permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "Netzwerk- und Dateiberechtigungen speichern",
+  "pluginsIoRevoke": "Alle Netzwerk- und Dateiberechtigungen widerrufen",
+  "pluginsContentPermissions": "Inhaltsberechtigungen",
+  "pluginsIoFileRead": "Genehmigte Dateien lesen",
+  "pluginsIoFileList": "Genehmigte Ordner durchsuchen",
+  "pluginsIoFileCreate": "Dateien erstellen",
+  "pluginsIoFileReplace": "Dateien ersetzen",
+  "pluginsIoFileDelete": "Dateien löschen",
+  "pluginsIoHttpRequest": "Netzwerk-APIs aufrufen",
+  "pluginsIoHttpListen": "Auf Netzwerkverbindungen lauschen",
+  "pluginsIoHttpPublish": "API-Dienst bereitstellen",
+  "pluginsIoCredentialUse": "Genehmigte Zugangsdaten verwenden",
+  "pluginsIoWebSocketConnect": "Mit WebSocket-Diensten verbinden",
+  "pluginsCredentialTitle": "API-Zugangsdaten",
+  "pluginsCredentialDetails": "Speichern Sie Zugangsdaten für genehmigte API-Verbindungen sicher. Das Speichern genehmigt keinen Server und aktiviert kein Plugin. Gespeicherte Geheimnisse können nicht angezeigt werden.",
+  "pluginsCredentialReading": "Zugangsdaten werden gelesen…",
+  "pluginsCredentialEmpty": "Keine gespeicherten Zugangsdaten",
+  "pluginsCredentialNew": "Zugangsdaten hinzufügen",
+  "pluginsCredentialRefresh": "Status aktualisieren",
+  "pluginsCredentialReplace": "Geheimnis ersetzen",
+  "pluginsCredentialDisable": "Deaktivieren",
+  "pluginsCredentialDisabled": "Deaktiviert",
+  "pluginsCredentialStored": "Gespeichert",
+  "pluginsCredentialExpired": "Abgelaufen",
+  "pluginsCredentialExpires": "Läuft ab: {date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "Zugangsdaten {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "Neue Zugangsdaten",
+  "pluginsCredentialReplaceTitle": "Zugangsdaten {reference} ersetzen",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "Headername",
+  "pluginsCredentialSecret": "Neuer Geheimniswert",
+  "pluginsCredentialLifetime": "Gültigkeitsdauer",
+  "pluginsCredentialDays": "{days, plural, one{{days} Tag} other{{days} Tage}}",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "Zugangsdaten speichern",
+  "pluginsCredentialCancel": "Formular schließen",
+  "pluginsCredentialInvalid": "Prüfen Sie den Headernamen und geben Sie ein neues Geheimnis ein. Das Geheimnisfeld wurde geleert.",
+  "pluginsCredentialUnknown": "Das Ergebnis konnte nicht bestätigt werden. Das Geheimnisfeld wurde geleert. Aktualisieren Sie den Status vor weiteren Änderungen.",
+  "pluginsCredentialLoadFailed": "Zugangsdaten konnten nicht konsistent gelesen werden. Aktualisieren Sie den Status, um es erneut zu versuchen.",
+  "pluginsCredentialSaved": "Zugangsdaten gespeichert. API-Verbindungen benötigen weiterhin eine separate Genehmigung.",
+  "pluginsCredentialDisabledDone": "Zugangsdaten deaktiviert.",
+  "pluginsEndpointTitle": "API-Endpunktgenehmigungen",
+  "pluginsEndpointDetails": "Speichern Sie eine Serverrichtlinie für ein bestimmtes Paket und dessen Hash. Das Speichern stellt keine Netzwerkverbindung her, aktiviert kein Plugin und macht Netzwerkaufgaben nicht sofort verfügbar.",
+  "pluginsEndpointNew": "Endpunkt hinzufügen",
+  "pluginsEndpointCreateTitle": "Neue Endpunktgenehmigung",
+  "pluginsEndpointReplaceTitle": "Genehmigung mit aktuellem Paket-Hash ersetzen",
+  "pluginsEndpointReplace": "Genehmigung ersetzen",
+  "pluginsEndpointSave": "Endpunktgenehmigung speichern",
+  "pluginsEndpointSaved": "Endpunktgenehmigung gespeichert. Es wurde keine Netzwerkverbindung hergestellt.",
+  "pluginsEndpointDisabledDone": "Endpunktgenehmigung deaktiviert.",
+  "pluginsEndpointEmpty": "Keine gespeicherten Endpunktgenehmigungen",
+  "pluginsEndpointWorking": "Endpunktstatus wird aktualisiert…",
+  "pluginsEndpointLoadFailed": "Endpunktgenehmigungen konnten nicht konsistent gelesen werden. Aktualisieren Sie den Status für einen neuen Versuch.",
+  "pluginsEndpointCredentialsFailed": "Zugangsdatenreferenzen konnten nicht gelesen werden. Aktualisieren Sie den Status vor der Auswahl.",
+  "pluginsEndpointUnknown": "Das Ergebnis ist unbestätigt. Aktualisieren Sie den Status vor weiteren Änderungen. Die Anfrage wird nicht automatisch erneut gesendet.",
+  "pluginsEndpointInvalid": "Prüfen Sie Paket, Origin, Methoden, Gültigkeit von 1–30 Tagen, Zugangsdatenberechtigung, Zertifikat und Richtlinienlimits.",
+  "pluginsEndpointPackage": "Paket",
+  "pluginsEndpointPackageUnavailable": "Dieses Paket ist nicht verfügbar oder besitzt keine HTTP-Genehmigung. Vorhandene Genehmigungen können weiterhin deaktiviert werden.",
+  "pluginsEndpointDigest": "Paket-Hash",
+  "pluginsEndpointOrigin": "Nur Origin, z. B. https://api.example.com",
+  "pluginsEndpointProfile": "Verbindungsprofil",
+  "pluginsEndpointPublicHttps": "Öffentliches HTTPS",
+  "pluginsEndpointLocalHttp": "Lokales HTTP",
+  "pluginsEndpointLocalHttps": "Lokales HTTPS",
+  "pluginsEndpointMethods": "Erlaubte Anfragemethoden",
+  "pluginsEndpointLifetime": "Gültigkeit (1–30 Tage)",
+  "pluginsEndpointCredential": "Zugangsdatenreferenz",
+  "pluginsEndpointNoCredential": "Keine Zugangsdaten",
+  "pluginsEndpointCredentialUnavailable": "Zugangsdaten erfordern die angegebene und genehmigte Berechtigung zur Zugangsdatenverwendung sowie eine gültige gespeicherte Referenz.",
+  "pluginsEndpointCredentialLifetime": "Die Zugangsdaten müssen während der gesamten Endpunktgültigkeit gültig bleiben. Ihr Ablaufdatum wird nicht verlängert.",
+  "pluginsEndpointAdvanced": "Richtlinienlimits (Bytes, sofern nicht anders angegeben)",
+  "pluginsEndpointRequestBytes": "Maximale Anfragegröße (1–65536 Bytes)",
+  "pluginsEndpointResponseBytes": "Maximale Antwortgröße (1–65536 Bytes)",
+  "pluginsEndpointHeaderBytes": "Maximale Headergröße (1–16384 Bytes)",
+  "pluginsEndpointConcurrency": "Gleichzeitige Anfragen (1–128)",
+  "pluginsEndpointTimeout": "Zeitlimit (1–30000 Millisekunden)",
+  "pluginsEndpointFrameBytes": "Frame-Budget (1–131072 Bytes)",
+  "pluginsEndpointCertificateDetails": "Optionale HTTPS-Vertrauenswurzel: ein binäres DER-Zertifikat (.der oder .cer), maximal 32 KiB. PEM und Zertifikatssammlungen werden nicht akzeptiert. Entfernen Sie die Vertrauenswurzel vor dem Wechsel zu HTTP.",
+  "pluginsEndpointCertificate": "DER-Vertrauenswurzel auswählen",
+  "pluginsEndpointRemoveCertificate": "Vertrauenswurzel entfernen",
+  "pluginsEndpointCertificateSelected": "DER-Vertrauenswurzel ausgewählt ({bytes} Bytes)",
+  "pluginsEndpointCertificateInvalid": "Wählen Sie ein gültiges binäres DER-Zertifikat (.der oder .cer) mit höchstens 32 KiB.",
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsHttpTaskTitle": "HTTP-Aufgaben",
+  "pluginsHttpTaskDetails": "Führen Sie eine explizite Anfrage mit einem genehmigten Endpunkt und einem aktivierten Plugin mit experimentellem HTTP-Weiterleitungshandler aus. Der Aufgabenstatus bleibt bei belegter Inhaltsbibliothek verfügbar.",
+  "pluginsHttpTaskStatusFailed": "Der Aufgabenstatus konnte nicht bestätigt werden. Aktualisieren Sie ihn; es wurde keine Anfrage wiederholt.",
+  "pluginsHttpTaskEndpointsFailed": "Endpunkte konnten nicht konsistent gelesen werden oder die Bibliothek ist belegt. Aufgabensteuerung bleibt verfügbar. Aktualisieren Sie Endpunkte, sobald die Bibliothek zurückgegeben wurde.",
+  "pluginsHttpTaskInvalid": "Prüfen Sie Endpunkt, Methode, relatives Ziel, normale Header, Body-Kodierung und Zeitlimit anhand der Genehmigungsgrenzen.",
+  "pluginsHttpTaskStartUnknown": "Das Übermittlungsergebnis ist unbekannt. Die Kennung bleibt erhalten. Fragen Sie den Status derselben Aufgabe ab; die Anfrage wird nicht erneut gesendet.",
+  "pluginsHttpTaskReadUnknown": "Das Lesen konnte nicht bestätigt werden und hat das Ergebnis möglicherweise bereits verbraucht. Es wird nicht erneut gelesen. Status und Beendigung können weiterhin geprüft werden.",
+  "pluginsHttpTaskControlUnknown": "Das Steuerungsergebnis ist unbestätigt. Aktualisieren Sie den Aufgabenstatus vor der nächsten Entscheidung.",
+  "pluginsHttpTaskReadPending": "Kein Ergebnis zurückgegeben. Prüfen Sie den Status vor einem ausdrücklichen erneuten Lesen.",
+  "pluginsHttpTaskLocal": "Bibliothek verfügbar; keine aktive Aufgabe",
+  "pluginsHttpTaskRunning": "Wird ausgeführt; Worker besitzt die Bibliothek",
+  "pluginsHttpTaskStopping": "Wird gestoppt; tatsächliche Worker-Beendigung wird abgewartet",
+  "pluginsHttpTaskReclaimed": "Worker beendet; ursprüngliche Bibliothek zurückgegeben",
+  "pluginsHttpTaskRecoveryRequired": "Worker beendet; Bereinigung oder Wartung muss repariert werden",
+  "pluginsHttpTaskUnavailable": "Ursprüngliche Bibliothek nicht verfügbar; Wiederherstellung erfordert Aufmerksamkeit",
+  "pluginsHttpTaskAbsent": "Keine Ergebniszustellung",
+  "pluginsHttpTaskPending": "Ergebnis ausstehend",
+  "pluginsHttpTaskReady": "Ergebnis bereit: ausdrücklich lesen. Dies bedeutet nicht, dass der Worker beendet ist.",
+  "pluginsHttpTaskConsumed": "Ergebnis verbraucht",
+  "pluginsHttpTaskResultUnavailable": "Ergebniszustellung nicht verfügbar",
+  "pluginsHttpTaskOk": "OK",
+  "pluginsHttpTaskInvalidOptions": "Ungültige Optionen",
+  "pluginsHttpTaskBusy": "Belegt",
+  "pluginsHttpTaskClosed": "Geschlossen",
+  "pluginsHttpTaskReadBound": "Leselimit überschritten",
+  "pluginsHttpTaskLimit": "Kontingent oder Limit erreicht",
+  "pluginsHttpTaskSpawn": "Worker konnte nicht gestartet werden",
+  "pluginsHttpTaskDisconnect": "Verbindungsbereinigung fehlgeschlagen",
+  "pluginsHttpTaskProtocol": "Aufgabenprotokollfehler",
+  "pluginsHttpTaskDeadline": "Frist überschritten",
+  "pluginsHttpTaskPackageChanged": "Paketbindung geändert",
+  "pluginsHttpTaskInactive": "Verbindung inaktiv",
+  "pluginsHttpTaskModule": "Ungültiges Gastmodul",
+  "pluginsHttpTaskUnsupported": "Nicht unterstützter Vorgang",
+  "pluginsHttpTaskCancelled": "Abbruch erkannt; entfernte Auswirkungen können dennoch eingetreten sein",
+  "pluginsHttpTaskTrap": "Trap bei Gastausführung",
+  "pluginsHttpTaskAccepted": "Angenommen",
+  "pluginsHttpTaskCompleted": "Abgeschlossen",
+  "pluginsHttpTaskDenied": "Abgelehnt",
+  "pluginsHttpTaskRevoked": "Genehmigung widerrufen",
+  "pluginsHttpTaskNotFound": "Nicht gefunden",
+  "pluginsHttpTaskConflict": "Konflikt",
+  "pluginsHttpTaskOutcomeUnknown": "Entferntes Ergebnis unbekannt; weder Rücknahme annehmen noch erneut senden",
+  "pluginsHttpTaskEvidenceUnavailable": "Ergebnisnachweise nicht verfügbar",
+  "pluginsHttpTaskFailed": "Fehlgeschlagen",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "Gastausführung: {fault}; Exitcode: {code}",
+  "pluginsHttpTaskCounters": "E/A-Aufrufe: {calls}; angerechnete Bytes: {bytes}",
+  "pluginsHttpTaskHttpResult": "HTTP-Ergebnis: {status}; entfernter Status: {code}",
+  "pluginsHttpTaskRemoteError": "Der entfernte Server hat 4xx/5xx zurückgegeben. Der HTTP-Austausch ist abgeschlossen; dies ist von Gastausführungsfehlern getrennt.",
+  "pluginsHttpTaskResponseHeaders": "Antwortheader (Duplikate erhalten; Binärwerte in Base64)",
+  "pluginsHttpTaskResponseBase64": "Antwortinhalt: exaktes Base64",
+  "pluginsHttpTaskResponseText": "Antwortinhalt: Klartextvorschau",
+  "pluginsHttpTaskExit": "Worker-Beendigung — Ausführung: {execution}; Trennung: {disconnect}; Wartung: {maintenance}",
+  "pluginsHttpTaskWorking": "Antwort der Aufgabensteuerung wird erwartet…",
+  "pluginsHttpTaskSubmission": "Übermittlungskennung: {identity}",
+  "pluginsHttpTaskKey": "Aufgabenkennung: {identity}",
+  "pluginsHttpTaskRefresh": "Aufgabenstatus aktualisieren",
+  "pluginsHttpTaskPoll": "Aufgabe prüfen",
+  "pluginsHttpTaskRead": "Ergebnis einmal lesen",
+  "pluginsHttpTaskCancel": "Abbruch anfordern",
+  "pluginsHttpTaskRepair": "Bereinigung reparieren",
+  "pluginsHttpTaskAcknowledge": "Abgeschlossene Aufgabe bestätigen",
+  "pluginsHttpTaskHistory": "Frühere Aufgabenbeobachtungen (bis zu 5)",
+  "pluginsHttpTaskNew": "Neue Anfrage vorbereiten",
+  "pluginsHttpTaskRefreshEndpoints": "Genehmigte Endpunkte aktualisieren",
+  "pluginsHttpTaskLoadingEndpoints": "Genehmigte Endpunkte werden gelesen…",
+  "pluginsHttpTaskCatalogUnavailable": "Plugin-Katalogstatus nicht verfügbar. Aktualisieren Sie die Plugin-Bibliothek vor einer neuen Übermittlung; bestehende Aufgaben bleiben steuerbar.",
+  "pluginsHttpTaskNoEndpoints": "Kein Endpunkt passt zu einem aktivierten, genehmigten HTTP-Weiterleitungs-Plugin.",
+  "pluginsHttpTaskEndpoint": "Genehmigter Endpunkt",
+  "pluginsHttpTaskTarget": "Relatives Ziel, z. B. /v1/items?limit=10",
+  "pluginsHttpTaskHeaders": "Normale Anfrageheader, je ein Name: Wert pro Zeile",
+  "pluginsHttpTaskHeadersHint": "Wiederholte Header bleiben getrennt. Zugangsdaten- und Verbindungsheader werden nur von der Laufzeit bereitgestellt.",
+  "pluginsHttpTaskBodyFormat": "Kodierung des Anfrageinhalts",
+  "pluginsHttpTaskText": "UTF-8-Text",
+  "pluginsHttpTaskBody": "Anfrageinhalt",
+  "pluginsHttpTaskTimeout": "Zeitlimit in Millisekunden (1–30000, innerhalb der Genehmigung)",
+  "pluginsHttpTaskExplicit": "Übermitteln sendet eine echte Anfrage. Jeder Klick erstellt eine neue Kennung. Ungewisse Übermittlungen und Ergebnislesevorgänge werden nie automatisch wiederholt. Ein Abbruch beweist keine Rücknahme des entfernten Vorgangs.",
+  "pluginsHttpTaskStart": "Neue Anfrage übermitteln",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "Beobachtung dieses Versuchs beenden",
+  "pluginsHttpTaskAbandonDetails": "Die Beobachtung darf erst enden, wenn ein aktueller Status keine aktive Aufgabe und die Verfügbarkeit der ursprünglichen Bibliothek bestätigt. Das beweist nicht, dass entfernte Auswirkungen ausgeblieben sind. Kennung und Ungewissheit bleiben im Verlauf; eine neue Anfrage erfordert eine ausdrückliche Übermittlung.",
+  "pluginsHttpTaskArchivedUnknown": "Beobachtung durch den Benutzer beendet. Frühere entfernte Auswirkungen bleiben unbestätigt; dieser Versuch wurde nicht wiederholt.",
+  "pluginsServiceTitle": "Dienstkonfiguration",
+  "pluginsServiceManagementOnly": "Verwalten Sie hier gespeicherte Konfigurationen und Genehmigungen. Speichern startet weder Listener noch Paket oder Dienst.",
+  "pluginsServiceRefresh": "Datensätze aktualisieren",
+  "pluginsServiceNewConfig": "Neue Konfiguration",
+  "pluginsServiceEditConfig": "Konfiguration bearbeiten",
+  "pluginsServiceNewAuthentication": "Neue Authentifizierung",
+  "pluginsServiceRotateAuthentication": "Authentifizierung rotieren",
+  "pluginsServicePublicationEditor": "Veröffentlichungsgenehmigung",
+  "pluginsServiceEditPublication": "Veröffentlichung bearbeiten",
+  "pluginsServiceWorking": "Wird bearbeitet…",
+  "pluginsServiceLoadFailed": "Datensätze konnten nicht aktualisiert werden. Aktualisieren Sie erneut vor Änderungen.",
+  "pluginsServiceWriteUnknown": "Das Ergebnis der letzten Änderung ist unbekannt. Sie wurde nicht erneut gesendet.",
+  "pluginsServiceInvalid": "Prüfen Sie Felder, gewählte Genehmigungen und aktuelles Paket vor dem Speichern.",
+  "pluginsServiceSaved": "Gespeichert. Prüfen Sie unten die zurückgegebene Revision und den tatsächlichen Ablauf.",
+  "pluginsServiceTokenDiscarded": "Das einmal angezeigte Token wurde beim Schließen des Panels gelöscht. Stellen Sie bei Bedarf ausdrücklich ein neues aus.",
+  "pluginsServiceUncertainHelp": "Aktualisieren und prüfen Sie zuerst die ursprünglichen Datensätze. Diese Meldung zu bestätigen erlaubt nur eine weitere ausdrückliche Aktion; es beweist weder ein Scheitern der vorigen Änderung noch wiederholt es diese.",
+  "pluginsServiceAcknowledgeUncertain": "Ich habe die aktualisierten Datensätze geprüft",
+  "pluginsServiceIssuedToken": "Einmal angezeigtes Bearer-Token",
+  "pluginsServiceTokenHelp": "Dieses Token wird nur jetzt angezeigt. Kopieren Sie es bei Bedarf ausdrücklich. Leeren oder Schließen entfernt es aus der Sitzung; es kann nicht aus der Liste abgerufen werden. Rotation ersetzt das vorherige Token.",
+  "pluginsServiceCopyClear": "Token kopieren und löschen",
+  "pluginsServiceClearToken": "Token löschen",
+  "pluginsServiceConfigurations": "Gespeicherte Konfigurationen",
+  "pluginsServiceNoConfigurations": "Keine Dienstkonfigurationen.",
+  "pluginsServiceAuthorities": "Authentifizierungs- und Veröffentlichungsdatensätze",
+  "pluginsServiceNoAuthorities": "Keine Authentifizierungs- oder Veröffentlichungsdatensätze.",
+  "pluginsServiceRevision": "Revision",
+  "pluginsServiceReference": "Genehmigungsreferenz",
+  "pluginsServiceCreated": "Erstellt (UTC)",
+  "pluginsServiceExpires": "Tatsächlicher Ablauf (UTC)",
+  "pluginsServiceDisabled": "Deaktiviert",
+  "pluginsServiceExpired": "Abgelaufen oder noch nicht gültig",
+  "pluginsServiceDisable": "Deaktivieren",
+  "pluginsServicePackage": "Deklariertes und genehmigtes Paket",
+  "pluginsServicePackageDigest": "Paket-Hash",
+  "pluginsServiceConfigDigest": "Konfigurations-Hash",
+  "pluginsServicePackageUnavailable": "Das passende Paket oder seine Empfangs-/Veröffentlichungsgenehmigungen fehlen. Historische Datensätze bleiben lesbar und können deaktiviert werden.",
+  "pluginsServiceDigestFixed": "Bearbeiten behält den ursprünglichen Paket-Hash bei. Ein passendes Paket muss gewählt werden; dies aktiviert es nicht.",
+  "pluginsServiceHandler": "Deklarierter Diensthandler",
+  "pluginsServiceIdentity": "Dienstkennung",
+  "pluginsServiceRetention": "Aufbewahrung des Anfrageverlaufs (Millisekunden, bis zu 30 Tage)",
+  "pluginsServicePrincipals": "Autorisierte Identitäten und Inhaltsbereiche",
+  "pluginsServiceScopesHelp": "Wählen Sie die Authentifizierung ausdrücklich. Ergänzen Sie unten erlaubte Vorgänge und exakte Objektkennungen. Bereiche oder Identitäten werden nur über ihre eigene Schaltfläche entfernt; vorhandene Bereiche bleiben beim Bearbeiten erhalten.",
+  "pluginsServiceNoAuthentication": "Erstellen Sie zuerst einen derzeit gültigen Authentifizierungsdatensatz.",
+  "pluginsServiceAuthenticationUnavailable": "Die gewählte Authentifizierung fehlt, ist deaktiviert, abgelaufen oder gehört zu einer anderen Identität. Entwurfsbereiche bleiben erhalten; wählen Sie einen gültigen Ersatz oder entfernen Sie sie ausdrücklich.",
+  "pluginsServicePolicyChanged": "Der ursprüngliche Datensatz wurde geändert oder ist unbrauchbar. Aktualisieren Sie die Auswahl oder öffnen Sie den Editor vom aktuellen Datensatz aus. Ihr Entwurf bleibt erhalten.",
+  "pluginsServiceCatalogChanged": "Der Paketkatalog wurde geändert oder ist nicht verfügbar. Ihr Entwurf bleibt erhalten. Aktualisieren Sie die Auswahl ausdrücklich vor dem Speichern.",
+  "pluginsServiceRefreshSelection": "Diese Auswahl aktualisieren",
+  "pluginsServiceSaveConfig": "Konfiguration speichern",
+  "pluginsServiceCloseEditor": "Editor schließen",
+  "pluginsServiceAddScope": "Inhaltsbereich hinzufügen",
+  "pluginsServiceRemovePrincipal": "Identität entfernen",
+  "pluginsServiceRemoveScope": "Bereich entfernen",
+  "pluginsServiceScopeKind": "Erlaubter Inhaltsvorgang",
+  "pluginsServiceCardId": "Exakte Kartenkennung",
+  "pluginsServiceAttachmentId": "Exakte Anhangskennung",
+  "pluginsServiceScopeRename": "Karte umbenennen",
+  "pluginsServiceScopeSummary": "Zusammenfassung lesen",
+  "pluginsServiceScopeQuery": "Vorgang abfragen",
+  "pluginsServiceScopeAttachment": "Anhang lesen",
+  "pluginsServiceScopeCreate": "Inhalte erstellen",
+  "pluginsServiceScopeEdit": "Inhalte bearbeiten",
+  "pluginsServiceScopeRead": "Inhalte lesen",
+  "pluginsServiceUnsupported": "Nicht unterstützter historischer Wert",
+  "pluginsServicePrincipalId": "Identitätskennung",
+  "pluginsServiceDays": "Angeforderte Gültigkeit (1–30 Tage)",
+  "pluginsServiceIssue": "Token ausstellen",
+  "pluginsServiceRotate": "Token rotieren",
+  "pluginsServicePublicationHelp": "Die Genehmigung ist an genau diese Konfiguration, Revision und Referenz gebunden. Ihr Ablauf wird durch alle gewählten Authentifizierungen begrenzt und kann früher als angefordert sein. Speichern startet keinen Listener.",
+  "pluginsServiceConfiguration": "Gespeicherte Konfiguration",
+  "pluginsServiceListenAddress": "Numerische Empfangsadresse und Port",
+  "pluginsServiceTls": "TLS erforderlich",
+  "pluginsServiceTlsHelp": "Nicht-Loopback-Adressen erfordern TLS. Hier wird nur die Anforderung gespeichert; weder Listener noch TLS-Identität werden erstellt.",
+  "pluginsServiceMethod": "HTTP-Methode",
+  "pluginsServicePath": "Exakter Anfragepfad",
+  "pluginsServiceQueryPath": "Separater Ergebnisabfragepfad (optional)",
+  "pluginsServiceSavePublication": "Veröffentlichungsgenehmigung speichern",
+  "pluginsServicePublicationMismatch": "Diese Veröffentlichung passt nicht mehr zur aktuellen Konfiguration. Prüfen und speichern Sie ausdrücklich eine Ersatzgenehmigung.",
+  "pluginsServiceYes": "Ja",
+  "pluginsServiceNo": "Nein",
+  "pluginsServiceRunTitle": "API-Dienst ausführen",
+  "pluginsServiceRunHint": "Wählen Sie eine genehmigte Veröffentlichung und endliche Laufgrenzen, dann starten Sie den Dienst ausdrücklich. Warten Sie nach dem Stoppen auf die Rückkehr des ursprünglichen Arbeitsbereichsbesitzers, bevor Sie das Ergebnis bestätigen.",
+  "pluginsServiceRunSelection": "Genehmigte Dienstveröffentlichung",
+  "pluginsServiceRunNoSelection": "Keine genehmigte Veröffentlichung verfügbar. Prüfen Sie Plugin, Konfiguration und Authentifizierung.",
+  "pluginsServiceRunStale": "Paket, Konfiguration oder Genehmigung wurde geändert. Aktualisieren Sie die Datensätze und wählen Sie vor dem Start erneut.",
+  "pluginsServiceRunStart": "Zeitlich begrenzten Dienst starten",
+  "pluginsServiceRunStop": "Dienst stoppen",
+  "pluginsServiceRunLifetime": "Laufdauer (ms, bis 3.600.000)",
+  "pluginsServiceRunJobs": "Gesamte Aufgabenreservierungen (bis 1.000.000)",
+  "pluginsServiceRunBytes": "Lauf-Bytebudget (bis 67.108.864)",
+  "pluginsServiceRunAdvanced": "Anfrage- und Worker-Limits",
+  "pluginsServiceRunCalls": "Aufrufe pro Auftrag (bis 1.024)",
+  "pluginsServiceRunJobBytes": "Bytes pro Auftrag (bis 16.777.216)",
+  "pluginsServiceRunTotalBytes": "Worker-Bytebudget (bis 67.108.864)",
+  "pluginsServiceRunRequestBytes": "Maximale Anfragegröße (Bytes)",
+  "pluginsServiceRunResponseBytes": "Maximale Antwortgröße (Bytes)",
+  "pluginsServiceRunHeaderBytes": "Maximale Headergröße (Bytes, bis 65.536)",
+  "pluginsServiceRunConcurrent": "Gleichzeitige Aufträge (bis 128)",
+  "pluginsServiceRunTimeout": "Auftragszeitlimit (ms, bis 30.000)",
+  "pluginsServiceRunBoundsHint": "Diese Grenzen müssen auch zur Plugin-Deklaration und zu gespeicherten Genehmigungen passen. Reservierte Arbeit verbraucht das Gesamtbudget auch bei Abbruch. Nach Ablauf stoppt der Lauf; keine automatische Verlängerung.",
+  "pluginsServiceRunStarting": "Dienst wird gestartet",
+  "pluginsServiceRunRunning": "Dienst läuft",
+  "pluginsServiceRunStopping": "Wird gestoppt; Listener- und Worker-Ende wird abgewartet",
+  "pluginsServiceRunExited": "Dienst beendet",
+  "pluginsServiceRunPending": "Ausstehend",
+  "pluginsServiceRunSucceeded": "Erfolgreich",
+  "pluginsServiceRunInvalidOutcome": "Ungültige Konfiguration",
+  "pluginsServiceRunDenied": "Abgelehnt",
+  "pluginsServiceRunLimit": "Limit erreicht",
+  "pluginsServiceRunCancelled": "Abgebrochen",
+  "pluginsServiceRunTimeoutOutcome": "Zeitlimit überschritten",
+  "pluginsServiceRunTransport": "Transportfehler",
+  "pluginsServiceRunClosed": "Geschlossen",
+  "pluginsServiceRunLocal": "Inhalte lokal verfügbar",
+  "pluginsServiceRunOwned": "Inhalte werden vom laufenden Dienst verwaltet",
+  "pluginsServiceRunReclaiming": "Rückgabe des Inhaltsbesitzes wird abgewartet",
+  "pluginsServiceRunReclaimed": "Inhaltsbesitz zurückgegeben; Bestätigung erforderlich",
+  "pluginsServiceRunRecovery": "Bereinigung muss repariert werden",
+  "pluginsServiceRunUnavailable": "Inhaltsspeicher nicht verfügbar",
+  "pluginsServiceRunStatusFailed": "Der Dienststatus konnte nicht geprüft werden. Aktualisieren Sie vor weiteren Aktionen.",
+  "pluginsServiceRunStartUnknown": "Das Startergebnis ist unbekannt. Die Versuchskennung bleibt erhalten; aktualisieren Sie, um sie zu finden. Es wird nicht automatisch erneut gestartet.",
+  "pluginsServiceRunControlUnknown": "Das Steuerungsergebnis ist unbekannt. Aktualisieren Sie den ursprünglichen Dienststatus vor einem weiteren Vorgang.",
+  "pluginsServiceRunIdentityChanged": "Eine andere Aufgabe besitzt die Inhalte. Dieses Panel steuert sie nicht mit der vorherigen Dienstkennung.",
+  "pluginsServiceRunInvalid": "Prüfen Sie Dienst und numerische Grenzen. Kein neuer Lauf wurde übermittelt.",
+  "pluginsServiceRunTask": "Aktuelle Aufgabenkennung",
+  "pluginsServiceRunAttempt": "Ungeklärter Startversuch",
+  "pluginsServiceRunAbandon": "Datensatz behalten und Versuch beenden",
+  "pluginsServiceRunNetwork": "Bindung: {bind}; Listener: {listener}; Überwachung: {supervision}",
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunLastObservation": "Letzte Beobachtung angezeigt; aktueller Zustand ungeprüft.",
+  "pluginsServiceRunNextSettings": "Einstellungen für den nächsten ausdrücklichen Lauf",
+  "pluginsServiceRunHttpPanel": "Ein API-Dienst besitzt diese Aufgabe. Nutzen Sie das obere Dienstpanel zum Stoppen oder Bestätigen seines Endes. Ihr HTTP-Anfrageentwurf bleibt erhalten.",
+  "pluginsServiceRunStartRejected": "Die Startantwort meldete einen Fehler. Die aktuelle Aufgabe wurde geprüft; prüfen Sie Ursache und Bereinigungszustand vor dem Fortfahren.",
+  "pluginsServiceRunHostFailure": "Host-Diagnose: {detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunOutboundHint": "Ausgehende APIs (optional, bis zu 8). Nur für dieses Paket genehmigte Endpunkte werden angezeigt. Ohne Auswahl sind ausgehende Aufrufe gesperrt.",
+  "pluginsServiceRunOutboundFailed": "Die Endpunktliste konnte nicht geprüft werden. Aktualisieren Sie vor Verwendung ausgewählter Endpunkte.",
+  "pluginsServiceRunOutboundStale": "Ein ausgewählter Endpunkt wurde geändert oder ist nicht mehr verfügbar. Wählen Sie seine aktuelle Version ausdrücklich oder leeren Sie die Auswahl.",
+  "pluginsServiceRunOutboundClear": "Endpunktauswahl leeren",
+  "pluginsServiceRunOutboundAttempt": "An diesen Startversuch gebundene Endpunkte",
+  "pluginsServiceTlsHint": "Wählen Sie eine PEM-Zertifikatskette und einen privaten Schlüssel, dann prüfen Sie sie. Dateien werden beim Start erneut geprüft; aktive Zertifikate werden nicht automatisch rotiert.",
+  "pluginsServiceTlsCertificate": "Zertifikatskette auswählen",
+  "pluginsServiceTlsPrivateKey": "Privaten Schlüssel auswählen",
+  "pluginsServiceTlsInspect": "Zertifikat prüfen",
+  "pluginsServiceTlsChecking": "Zertifikatsauswahl wird verarbeitet…",
+  "pluginsServiceTlsFailed": "Zertifikatsprüfung fehlgeschlagen. Prüfen Sie PEM-Dateien, Schlüsselpaarung und lokale Pfade vor einem erneuten Versuch.",
+  "pluginsServiceTlsChecked": "Zertifikat und Schlüsselpaarung geprüft. Der SHA-256 des Zertifikat-PEM steht unten. Clients müssen weiterhin Hostnamen, Gültigkeit und Vertrauenskette prüfen.",
+  "pluginsServiceTlsAttempt": "An den Startversuch gebundener Zertifikat-PEM-Hash",
+  "pluginsServiceTlsUnavailable": "Dieses Backend unterstützt keine lokale TLS-Zertifikatsauswahl.",
+  "pluginsServiceTlsValidity": "Gemeinsame Gültigkeit der Zertifikatskette (UTC): {start} bis {end}. Der Dienst stoppt nach Ablauf.",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "Die Zertifikatskette ist noch nicht gültig oder abgelaufen. Prüfen oder ersetzen Sie das Zertifikat und kontrollieren Sie es vor dem Start erneut.",
+  "pluginsServiceTlsRecheck": "Prüfen Sie das Zertifikat vor dem Start erneut. Eine Uhrzeitänderung stellt die vorige Auswahl nicht wieder her.",
+  "pluginsTlsIdentitiesTitle": "Gespeicherte TLS-Identitäten",
+  "pluginsTlsIdentitiesHint": "Wählen Sie eine Identität ausdrücklich. Ersetzen oder Deaktivieren stoppt die Dienste, die sie verwenden; ein neuer Start erfolgt immer ausdrücklich.",
+  "pluginsTlsIdentitiesUseFile": "Geprüfte Dateien beim nächsten Start verwenden",
+  "pluginsTlsIdentitiesSaved": "Gespeichert. Prüfen Sie Identität und Revision unten und wählen Sie sie für einen neuen Start.",
+  "pluginsTlsIdentitiesUnknownHint": "Aktualisieren und prüfen Sie Datensätze vor der Bestätigung. Eine fehlende Quittung bedeutet kein Scheitern; erstellen Sie nicht erneut, ohne zu prüfen.",
+  "pluginsTlsIdentitiesSavedMode": "Nächster Start: gespeicherte Identität. Der Host prüft die Zertifikatsgültigkeit beim Start.",
+  "pluginsTlsIdentitiesFileMode": "Nächster Start: geprüfte lokale Dateien.",
+  "pluginsTlsIdentitiesStale": "Die Identität wurde geändert, deaktiviert oder nicht aktualisiert. Wählen Sie erneut eine aktuelle Identität.",
+  "pluginsTlsIdentitiesEmpty": "Keine gespeicherten Identitäten in dieser Bibliothek.",
+  "pluginsTlsIdentitiesSelect": "Beim nächsten Start verwenden",
+  "pluginsTlsIdentitiesReplace": "Durch geprüfte Dateien ersetzen",
+  "pluginsTlsIdentitiesDisable": "Identität deaktivieren",
+  "pluginsTlsIdentitiesImport": "Zertifikatsdateien zum Importieren oder Ersetzen vorbereiten",
+  "pluginsTlsIdentitiesSave": "Als neue Identität speichern"
+}

@@ -3,6 +3,8 @@ import 'plugins/workbench_recovery.dart';
 import 'plugins/workbench_self_check.dart';
 import 'plugins/canvas_self_check.dart';
 import 'dart:io';
+import 'plugins/startup_probe.dart';
+import 'plugins/workbench_startup.dart';
 import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:path_provider/path_provider.dart';
@@ -13,12 +15,19 @@ import 'plugins/workbench_native.dart';
 import 'plugins/studio_storage.dart';
 
 Future<void> main(List<String> arguments) async {
+  final startupCheck = arguments
+      .where((v) => v.startsWith('--startup-check='))
+      .firstOrNull
+      ?.substring('--startup-check='.length);
+  final startup = StartupProbe(startupCheck);
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDesktopFrame();
+  startup.attach();
+  startup.mark('binding');
   final canvasCheck = arguments
       .where((v) => v.startsWith('--canvas-check='))
       .firstOrNull;
   if (canvasCheck != null) {
+    await initializeDesktopFrame();
     await qualifyCanvas(canvasCheck.substring('--canvas-check='.length));
     return;
   }
@@ -29,12 +38,14 @@ Future<void> main(List<String> arguments) async {
       .where((v) => v.startsWith('--locale='))
       .firstOrNull
       ?.substring('--locale='.length);
-  final previewLocale = const ['en', 'zh'].contains(requestedLocale)
+  final previewLocale = L10n.isSupportedCode(requestedLocale)
       ? Locale(requestedLocale!)
       : null;
   final startupLocale =
       previewLocale ?? WidgetsBinding.instance.platformDispatcher.locale;
   final startupMessages = L10n.forLocale(startupLocale);
+  final workbenchReady = ValueNotifier(false);
+  runApp(WorkbenchStartup(ready: workbenchReady, locale: previewLocale));
   Directory? recoveryDirectory;
   RustWorkbench? opened;
   final executable = File(Platform.resolvedExecutable).parent.path;
@@ -43,7 +54,7 @@ Future<void> main(List<String> arguments) async {
         .where((v) => v.startsWith('--self-check='))
         .firstOrNull;
     final errors = <String>[];
-    if (check != null) {
+    if (check != null || startupCheck != null) {
       final original = FlutterError.onError;
       FlutterError.onError = (details) {
         errors.add(details.exceptionAsString());
@@ -53,6 +64,11 @@ Future<void> main(List<String> arguments) async {
     final selected = arguments
         .where((v) => v.startsWith('--data-directory='))
         .firstOrNull;
+    if (startupCheck != null && selected == null) {
+      throw StateError(
+        'Startup qualification requires an explicit data directory',
+      );
+    }
     final directory = Directory(
       selected == null
           ? '${(await getApplicationSupportDirectory()).path}/rust-workbench'
@@ -66,30 +82,57 @@ Future<void> main(List<String> arguments) async {
         'Qualification requires an explicit fresh data directory',
       );
     }
-    final backend = await RustWorkbench.open(
-      executable: '$executable/morrow-workbench-host.exe',
-      package: '$executable/plugins/workbench.morrowplugin',
-      directory: directory,
-      managed: managed,
-    );
-    opened = backend;
+    // Both branches must finish before failure cleanup, so an open host never
+    // escapes if desktop initialization fails. Neither branch needs the other.
+    await Future.wait<void>([
+      initializeDesktopFrame().then((_) => startup.mark('desktop')),
+      RustWorkbench.open(
+        executable: '$executable/morrow-workbench-host.exe',
+        package: '$executable/plugins/workbench.morrowplugin',
+        directory: directory,
+        managed: managed,
+      ).then((backend) {
+        opened = backend;
+        startup.mark('host');
+      }),
+    ]);
+    final backend = opened!;
     if (check != null) await seedQualification(backend, directory);
     final storage = await RustStudioStorage.open(backend);
+    startup.mark('storage');
     final boundary = GlobalKey();
+    startup.mark('runApp');
     runApp(
-      RepaintBoundary(
-        key: boundary,
-        child: MorrowApp(
-          storage: storage,
-          initialLocale: previewLocale,
-          workbench: backend,
-          nativeBackground: DesktopBackground(),
-          initialWarning:
-              backend.maintenanceWarning ??
-              (backend.writable ? null : '工作台插件不可用，已有内容仍可查看和导出。'),
+      WorkbenchStartup(
+        ready: workbenchReady,
+        locale: previewLocale,
+        onRevealed: startup.revealed,
+        child: RepaintBoundary(
+          key: boundary,
+          child: MorrowApp(
+            storage: storage,
+            onFirstFrame: () {
+              startup.workbenchPainted();
+              workbenchReady.value = true;
+            },
+            initialLocale: previewLocale,
+            workbench: backend,
+            nativeBackground: DesktopBackground(),
+            initialWarning:
+                backend.maintenanceWarning ??
+                (backend.writable ? null : '工作台插件不可用，已有内容仍可查看和导出。'),
+          ),
         ),
       ),
     );
+    if (startupCheck != null) {
+      await startup.finish();
+      if (errors.isNotEmpty) {
+        throw StateError('Startup rendering failed: ${errors.join('\n')}');
+      }
+      await backend.close();
+      exit(0);
+    }
     if (check != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         finishQualification(
@@ -102,7 +145,11 @@ Future<void> main(List<String> arguments) async {
       });
     }
   } catch (error, stack) {
-    await opened?.close();
+    try {
+      await opened?.close();
+    } catch (_) {
+      // Keep the original library/preference failure actionable in recovery.
+    }
     final check = arguments
         .where((v) => v.startsWith('--self-check='))
         .firstOrNull;
@@ -110,6 +157,10 @@ Future<void> main(List<String> arguments) async {
       await File(
         '${check.substring('--self-check='.length)}.md',
       ).writeAsString('Startup failed: $error\n$stack');
+      exit(1);
+    }
+    if (startupCheck != null) {
+      await startup.fail(error);
       exit(1);
     }
     final targetDirectory = recoveryDirectory;

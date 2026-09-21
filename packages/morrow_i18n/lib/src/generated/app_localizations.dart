@@ -5,7 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_ru.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -95,6 +102,13 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
+    Locale('de'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('pt'),
+    Locale('ru'),
     Locale('zh'),
   ];
 
@@ -542,6 +556,12 @@ abstract class AppLocalizations {
   /// **'Corner radius'**
   String get mainCornerRadius;
 
+  /// No description provided for @mainCredentialSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials'**
+  String get mainCredentialSettings;
+
   /// No description provided for @mainCrystal.
   ///
   /// In en, this message translates to:
@@ -679,6 +699,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The editor is unavailable. Check the content service and retry.'**
   String get mainEditorUnavailable;
+
+  /// No description provided for @mainEndpointSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Outbound endpoints'**
+  String get mainEndpointSettings;
+
+  /// No description provided for @mainExpandSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand settings'**
+  String get mainExpandSettings;
 
   /// No description provided for @mainExpandSidebar.
   ///
@@ -866,6 +898,12 @@ abstract class AppLocalizations {
   /// **'Hide preview'**
   String get mainHidePreview;
 
+  /// No description provided for @mainHttpSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'HTTP tasks'**
+  String get mainHttpSettings;
+
   /// No description provided for @mainHypothesis.
   ///
   /// In en, this message translates to:
@@ -925,6 +963,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Capture first, organize later. Turn promising ideas into small projects.'**
   String get mainInboxIntro;
+
+  /// No description provided for @mainIoNoDeclarations.
+  ///
+  /// In en, this message translates to:
+  /// **'No installed plugin currently declares file or network access.'**
+  String get mainIoNoDeclarations;
+
+  /// No description provided for @mainIoSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Network & file access'**
+  String get mainIoSettings;
+
+  /// No description provided for @mainIoSettingsGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage plugin file and network permissions separately from appearance. Approving a declared capability does not grant access to every file or endpoint; available operations depend on the current backend.'**
+  String get mainIoSettingsGuide;
+
+  /// No description provided for @mainIoSettingsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions, credentials, endpoints and API services'**
+  String get mainIoSettingsSummary;
 
   /// No description provided for @mainJustNow.
   ///
@@ -1226,6 +1288,18 @@ abstract class AppLocalizations {
   /// **'Play'**
   String get mainPlay;
 
+  /// No description provided for @mainPluginSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugins and services'**
+  String get mainPluginSettings;
+
+  /// No description provided for @mainPluginSettingsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Built-in tools, extensions, network and file access, and content protection'**
+  String get mainPluginSettingsSummary;
+
   /// No description provided for @mainPreviewEmpty.
   ///
   /// In en, this message translates to:
@@ -1291,6 +1365,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'What just came to mind?'**
   String get mainQuickHint;
+
+  /// No description provided for @mainReadOnlySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Content is read-only. Check the workbench plugin to restore editing.'**
+  String get mainReadOnlySettings;
 
   /// No description provided for @mainRecentThoughts.
   ///
@@ -1406,6 +1486,12 @@ abstract class AppLocalizations {
   /// **'Design the reminder interaction'**
   String get mainSampleTodo4;
 
+  /// No description provided for @mainSaveConnectionUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The connection was interrupted; the save result is unknown. Reopen the library to confirm before retrying.'**
+  String get mainSaveConnectionUnknown;
+
   /// No description provided for @mainSaveFailed.
   ///
   /// In en, this message translates to:
@@ -1424,6 +1510,12 @@ abstract class AppLocalizations {
   /// **'Not submitted. Your draft and attachments are preserved; you can edit and save again.'**
   String get mainSaveNotSubmitted;
 
+  /// No description provided for @mainSaveReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.'**
+  String get mainSaveReadOnly;
+
   /// No description provided for @mainSaveUnknown.
   ///
   /// In en, this message translates to:
@@ -1441,6 +1533,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search your ideas…'**
   String get mainSearchHint;
+
+  /// No description provided for @mainServiceRunSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Service runtime'**
+  String get mainServiceRunSettings;
+
+  /// No description provided for @mainServiceSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'API services'**
+  String get mainServiceSettings;
 
   /// No description provided for @mainSettings.
   ///
@@ -4924,6 +5028,12 @@ abstract class AppLocalizations {
   /// **'Custom material'**
   String get visualIndependentMaterial;
 
+  /// No description provided for @visualInheritColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Use theme tint'**
+  String get visualInheritColor;
+
   /// Visual interface: LinkFailure
   ///
   /// In en, this message translates to:
@@ -5218,6 +5328,12 @@ abstract class AppLocalizations {
   /// **'Remove from playlist'**
   String get visualRemoveTrack;
 
+  /// No description provided for @visualResetMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to theme'**
+  String get visualResetMaterial;
+
   /// Visual interface: RestoreWindow
   ///
   /// In en, this message translates to:
@@ -5284,6 +5400,18 @@ abstract class AppLocalizations {
   /// **'Videos loop silently by default; enable sound in settings. Online media must permit access, including cross-origin loading on the web.'**
   String get visualTexturePlaybackGuide;
 
+  /// No description provided for @visualTipsMaterialGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Off keeps tips transparent; on uses the material below. Your custom values are retained.'**
+  String get visualTipsMaterialGuide;
+
+  /// No description provided for @visualTransparentTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Transparent overlay (default)'**
+  String get visualTransparentTips;
+
   /// Visual interface: UseCustomMaterial
   ///
   /// In en, this message translates to:
@@ -5313,8 +5441,17 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'ja',
+    'ko',
+    'pt',
+    'ru',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -5323,8 +5460,22 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'ru':
+      return AppLocalizationsRu();
     case 'zh':
       return AppLocalizationsZh();
   }

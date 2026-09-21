@@ -5,3 +5,4 @@ output-localization-file: app_localizations.dart
 output-class: AppLocalizations
 nullable-getter: true
 use-escaping: true
+preferred-supported-locales: [en]

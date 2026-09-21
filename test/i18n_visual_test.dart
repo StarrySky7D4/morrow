@@ -76,6 +76,18 @@ void main() {
           .text,
       '#abcdef',
     );
+    for (final code in L10n.nativeNames.keys) {
+      await tester.pumpWidget(host(code, dialog));
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('color-hex')))
+            .controller!
+            .text,
+        '#abcdef',
+      );
+      expect(tester.takeException(), isNull, reason: code);
+    }
     expect(tester.takeException(), isNull);
   });
 
@@ -139,6 +151,19 @@ void main() {
             .text,
         'https://user:pass@example.com/原图.png',
       );
+      for (final code in L10n.nativeNames.keys) {
+        await tester.pumpWidget(host(code, dialog));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<TextField>(find.byKey(const ValueKey('texture-url')))
+              .controller!
+              .text,
+          'https://user:pass@example.com/原图.png',
+        );
+        expect(find.byType(TextField), findsWidgets);
+        expect(tester.takeException(), isNull, reason: code);
+      }
       expect(tester.takeException(), isNull);
     },
   );

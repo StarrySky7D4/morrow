@@ -1,0 +1,42 @@
+{
+  "@@locale": "fr",
+  "recoveryTitle": "Rouvrir l’espace de travail",
+  "recoveryOpenFailed": "Impossible d’ouvrir l’espace de travail. Vérifiez les extensions et le dossier de données, puis réessayez.",
+  "recoveryFailed": "La récupération n’est pas terminée. Conservez les fichiers originaux et réessayez.",
+  "recoverySnapshotGuide": "Restaurez une sauvegarde dans un nouveau dossier puis basculez vers celui-ci. Le dossier original est conservé. Le contenu revient à la date de sauvegarde et exige le compte système d’origine.",
+  "recoverySnapshot": "Restaurer une sauvegarde",
+  "recoveryKeyGuide": "Si le fichier de protection manque ou est endommagé, choisissez sa sauvegarde. Elle doit appartenir à cette bibliothèque et nécessite le compte système d’origine.",
+  "recoveryRetry": "Réessayer",
+  "recoveryChooseKey": "Choisir le fichier de récupération",
+  "recoveryBackupFile": "Sauvegarde de bibliothèque",
+  "recoveryKeyFile": "Fichier de protection de bibliothèque",
+  "recoveryAllFiles": "Tous les fichiers",
+  "recoveryPluginUnavailable": "Extension de l’espace de travail indisponible. Le contenu existant reste consultable et exportable.",
+  "recoveryMaintenance": "La bibliothèque nécessite une intervention. Conservez les originaux et consultez le diagnostic.",
+  "recoverySwitchUnconfirmed": "Sauvegarde restaurée dans {path}, mais basculement non confirmé. Conservez ce dossier et rouvrez l’espace pour vérifier.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "Clé de protection absente. Restaurez le fichier .audit-key original et réessayez.",
+  "recoveryKeyMismatch": "Clé incompatible ou indéchiffrable. Utilisez le fichier et le compte système d’origine.",
+  "recoveryMissingLibrary": "Clé présente, mais bibliothèque absente ou vide. Restaurez la bibliothèque originale.",
+  "recoveryIdentityBusy": "Une autre copie de cette bibliothèque est ouverte. Fermez-la avant d’ouvrir celle-ci.",
+  "recoveryBusy": "Bibliothèque utilisée par un autre processus. Fermez l’autre fenêtre et réessayez.",
+  "recoveryTargetExists": "La destination existe déjà. Choisissez un nouveau dossier qui n’existe pas encore.",
+  "recoverySnapshotUnknown": "Résultat à vérifier. Inspectez le dossier de destination ; la bibliothèque originale n’a pas été remplacée.",
+  "recoverySnapshotInvalid": "Format ou intégrité de la sauvegarde invalide. Conservez le fichier original.",
+  "recoveryBackupExists": "Un fichier existe déjà à cet emplacement. Choisissez un nouveau nom.",
+  "recoveryBackupUnknown": "Résultat de sauvegarde à vérifier. Conservez le fichier actuel et inspectez l’emplacement.",
+  "recoveryBindingMissing": "Aucun fichier de protection lié à cette bibliothèque. Impossible d’y associer le fichier choisi.",
+  "recoveryKeyUnknown": "Résultat de récupération à vérifier. Essayez de rouvrir ; une copie de l’ancien fichier de protection a été conservée s’il existait.",
+  "recoveryLibraryInvalid": "Impossible de vérifier ou d’ouvrir la bibliothèque. Conservez la bibliothèque et la clé originales, puis réessayez.",
+  "recoveryCloseFirst": "L’espace de travail est encore ouvert. Fermez-le avant de changer de bibliothèque.",
+  "recoveryIdentityMismatch": "Identité de bibliothèque différente de l’enregistrement. Conservez les données originales et restaurez la bonne sauvegarde.",
+  "recoveryRegistryInvalid": "Enregistrement de bibliothèque actif endommagé ou non pris en charge. Ouverture arrêtée pour préserver les données.",
+  "recoverySwitchUnknown": "Changement de bibliothèque non confirmé. Rouvrez l’espace de travail pour vérifier.",
+  "recoveryRegistryUnreadable": "Impossible de lire la bibliothèque active ou son enregistrement. Vérifiez l’emplacement original ; aucune bibliothèque de remplacement ne sera créée automatiquement."
+}

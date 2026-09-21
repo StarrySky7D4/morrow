@@ -1,0 +1,1711 @@
+{
+  "@@locale": "ja",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "bytes": {
+        "type": "String"
+      },
+      "calls": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "fault": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "disconnect": {
+        "type": "String"
+      },
+      "execution": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "code": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "end": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "action": {
+        "type": "String"
+      },
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "index": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "commonAppName": "Morrow",
+  "commonCancel": "キャンセル",
+  "commonCount": "{count, plural, =0{項目なし} other{{count} 件}}",
+  "commonGreeting": "こんにちは、{name}さん",
+  "importsAttachmentLimit": "一度に取り込める添付は 20 個までです。残りは分けて貼り付けてください。",
+  "importsClipboardChanged": "読み取り中にクリップボードが変わりました。再度貼り付けてください。",
+  "importsEmbeddedImageUnreadable": "埋め込み画像を読み取れませんでした。",
+  "importsEmbeddedImagesSeparate": "一部の埋め込み画像は別ファイルとして読み込む必要があります。",
+  "importsExcelValues": "値と数式を Markdown に変換しました。書式と結合セルは XML 添付に保持しています。",
+  "importsExcelXmlKept": "元の Excel 表は XML 添付として保持しました。",
+  "importsFileTooLarge": "クリップボードのファイルが 200 MB を超えています。",
+  "importsItemLimit": "最初の 20 項目のみ読み取りました。残りは分けて貼り付けてください。",
+  "importsItemUnreadable": "クリップボードの 1 項目を読み取れませんでした。他の読み取り可能な内容は保持しました。",
+  "importsLocalImageNotRead": "ローカルのリンク画像は自動で読み取りません。画像を貼り付けるか、元のファイルを読み込んでください。",
+  "importsMergedTable": "結合セルを読みやすい表に変換しました。元の書式は HTML 添付に保持しています。",
+  "importsOfficeBusy": "別のアプリがクリップボードを使用中です。Office オブジェクトは読み取っていません。",
+  "importsOfficeEmbeddedKept": "埋め込み Office オブジェクトは元の添付として保持します。グラフ、数式、レイアウトは元のアプリで編集してください。",
+  "importsOfficeExportFailed": "Office オブジェクトが上限を超えているか、書き出せませんでした。元のアプリで保存してから読み込んでください。",
+  "importsOfficeReadFailed": "Office の内容を読み取れませんでした。クリップボードの他の内容は利用できます。",
+  "importsOfficeUnavailable": "Office のクリップボードは一時的に利用できません。",
+  "importsOfficeUnreadable": "元の Office オブジェクトを読み取れませんでした。他の利用可能な内容は保持しました。",
+  "importsRichFallback": "一部の書式を変換できませんでした。読めるテキストは保持しました。",
+  "importsRichTooLarge": "書式付きテキストが 2 MB を超えています。文書を添付として読み込んでください。",
+  "importsRtfTooLarge": "RTF の内容が大きすぎます。元の文書を読み込んでください。",
+  "importsSpreadsheetTooLarge": "表が大きすぎます。Excel ファイルを読み込んでください。",
+  "importsTableConverted": "表を Markdown に変換しました。完全なデータは TSV 添付に保持しています。",
+  "importsTextTooLarge": "テキストが 2 MB を超えています。ファイルとして読み込んでください。",
+  "importsTotalTooLarge": "貼り付けるファイルの合計が 200 MB を超えています。小分けにして読み込んでください。",
+  "importsUnsupported": "ここではクリップボードを利用できません。ファイルを読み込んでください。",
+  "mainActiveProjects": "進行中",
+  "mainAdjustCustomTone": "色調を調整",
+  "mainAmbientDetail": "流れる光が、ほのかな彩りを添えます。",
+  "mainAppTitle": "Morrow — アイデアの居場所",
+  "mainAppearance": "外観",
+  "mainArrangeIdeas": "アイデアを並べ替え",
+  "mainAttachmentCount": "添付 · {count}",
+  "mainAttachmentHint": "添付 {count} 件 · {name}",
+  "mainAttachmentLimit": "1 件の記録につき添付は 20 個までです。",
+  "mainAutosaveNotice": "外観とアイデアはローカルに保存されます",
+  "mainAwaitDiscovery": "新しい発見を待っています",
+  "mainBackToWorkbench": "ワークスペースに戻る",
+  "mainBackgroundCanvas": "背景キャンバス",
+  "mainBackgroundSound": "背景の音声を再生",
+  "mainBodyHint": "思いつきを書いたり、内容を貼り付けたり…\n\n# 見出し、リスト、表、コードブロックに対応",
+  "mainBrightWhite": "白",
+  "mainBuiltinTexture": "内蔵テクスチャを使用",
+  "mainCanvasCompass": "キャンバスのカラーホイール",
+  "mainCaptureIdea": "アイデアを記録",
+  "mainCaptureNow": "思いつきを記録",
+  "mainCardAttachments": "ファイル {count} 件 · {name}",
+  "mainCategoryExperiment": "実験",
+  "mainCategoryIdea": "アイデア",
+  "mainCategoryProject": "プロジェクト",
+  "mainCategoryPrompt": "保存先",
+  "mainChangeFailed": "変更を保存できませんでした。下書きは保持されています。再試行できます。",
+  "mainCheckAgain": "もう一度確認",
+  "mainClearSearch": "検索をクリア",
+  "mainClipboardEmpty": "クリップボードに読み取り可能なテキストやファイルがありません。ファイルをコピーするか、ファイルの読み込みを利用してください。",
+  "mainClipboardReadFailed": "内容を読み取れませんでした。ファイルを取り込むか、ファイルとクリップボードの権限を確認してください。",
+  "mainClipboardSupport": "Markdown、Office の書式付きテキストと表、スクリーンショット、ファイルに対応。複雑なオブジェクトは元の添付として保持します。最大 20 個、各 200 MB。",
+  "mainCollapseSidebar": "サイドバーを折りたたむ",
+  "mainCompletedProjects": "完了",
+  "mainComponentCompass": "コンポーネントのカラーホイール",
+  "mainComponentEmpty": "空の状態",
+  "mainComponentFooter": "フッターのヒントと歌詞",
+  "mainComponentHero": "概要カード",
+  "mainComponentNavigation": "サイドバーのナビゲーション",
+  "mainComponentQuickCapture": "クイックメモ",
+  "mainComponentSearch": "検索バー",
+  "mainComponentSettings": "コンポーネントとカード · 設定",
+  "mainContentProtection": "コンテンツの保護",
+  "mainContentRead": "内容を読み取りました",
+  "mainContentReadFiles": "内容を読み取り、添付 {count} 件を保持しました",
+  "mainCornerRadius": "角の丸み",
+  "mainCredentialSettings": "認証情報",
+  "mainCrystal": "クリア",
+  "mainCrystalDetail": "軽やかに透き通り、色を引き立てます。",
+  "mainCuriosity": "面白いことは、\n小さな好奇心から。",
+  "mainCustomCompass": "カラーホイール · カスタム",
+  "mainCustomLightness": "明るさを調整",
+  "mainCustomTheme": "カスタム",
+  "mainDaily": "日々の小さなこと",
+  "mainDailyExplore": "10 分だけ探求しよう",
+  "mainDailyIdea": "アイデアを書き留めよう",
+  "mainDailyWater": "水を一杯飲もう",
+  "mainDarkTheme": "ダーク",
+  "mainDeepBlack": "黒",
+  "mainDefaultCanvas": "標準",
+  "mainDefaultGlobalColor": "標準テーマカラー · すべての操作部品",
+  "mainDelete": "削除",
+  "mainDeleted": "「{title}」を削除しました",
+  "mainDiagnosticDetails": "診断の詳細",
+  "mainDone": "完了",
+  "mainEdit": "編集",
+  "mainEditIdeaTitle": "アイデアをより明確に",
+  "mainEditorClosedUnknown": "エディターを閉じましたが、保存結果は未確認です。別のコピーを作る前にワークスペースを開き直して確認してください。",
+  "mainEditorSubtitle": "テキスト、表、画像。アイデアが形になるまで、ここに。",
+  "mainEditorUnavailable": "エディターを利用できません。コンテンツサービスを確認して再試行してください。",
+  "mainEndpointSettings": "送信先エンドポイント",
+  "mainExpandSettings": "設定を展開",
+  "mainExpandSidebar": "サイドバーを展開",
+  "mainExtensionPlugins": "拡張機能",
+  "mainFavoriteAttachments": "お気に入りの添付",
+  "mainFavoriteRecords": "お気に入りの記録",
+  "mainFavoriteTooltip": "「{title}」をお気に入りに追加",
+  "mainFavoritesIntro": "お気に入りのテキスト、画像、ファイルをひとまとめに。",
+  "mainFieldLimit": "最大 {limit} 文字です。短くするか、ファイルとして読み込んでください。",
+  "mainFilterAll": "すべて",
+  "mainFilterAttachments": "ファイルあり",
+  "mainFilterFavorites": "お気に入りのみ",
+  "mainFilterFile": "ファイル",
+  "mainFilterImage": "画像",
+  "mainFilterMedia": "音声 / 動画",
+  "mainFilterPending": "未完了",
+  "mainFilterText": "テキスト",
+  "mainFollowTheme": "テーマに合わせる",
+  "mainFrostDetail": "背景をやわらげ、思考に余白を。",
+  "mainFrostEffect": "ぼかし",
+  "mainFrostOpacity": "ガラスの不透明度",
+  "mainFrostUnavailable": "デスクトップのぼかしを利用できません。色と不透明度は調整できます。",
+  "mainFrosted": "すりガラス",
+  "mainGlassTexture": "ガラスの質感",
+  "mainGlobalColor": "{color} · すべての操作部品",
+  "mainGreeting": "アイデアを育てよう。",
+  "mainGreetingDetail": "日々の気づきも、ひらめきの瞬間も。",
+  "mainHeroBody": "思いつき、小さな用事、「もしも」。\nここから始めよう。",
+  "mainHeroCaption": "可能性の片隅",
+  "mainHeroTitle": "小さな思いつきからで大丈夫。",
+  "mainHideAppearance": "外観設定を隠す",
+  "mainHideCustomTone": "カスタム色調を隠す",
+  "mainHidePreview": "プレビューを隠す",
+  "mainHttpSettings": "HTTP タスク",
+  "mainHypothesis": "仮説",
+  "mainHypothesisPrompt": "検証する仮説",
+  "mainHypothesisSection": "仮説 / 試したいこと",
+  "mainIdeaDetails": "細部を記録して、次の一歩を明確に。",
+  "mainIdeaNameHint": "名前を付けましょう",
+  "mainIdeaNameRequired": "まずアイデアを入力してください",
+  "mainIdeaSaved": "アイデアを保存しました。",
+  "mainImportFailed": "メディアを読み込めませんでした。ファイルと空き容量を確認してください。",
+  "mainImportFile": "ファイルを読み込む",
+  "mainInboxIntro": "まず記録、整理は後で。有望なアイデアを小さなプロジェクトに。",
+  "mainIoNoDeclarations": "ファイルやネットワークへのアクセスを宣言するプラグインはありません。",
+  "mainIoSettings": "ネットワークとファイル",
+  "mainIoSettingsGuide": "外観とは別にプラグインのファイル・ネットワーク権限を管理します。機能を承認しても、すべてのファイルや接続先へのアクセスは許可されません。利用可能な操作は現在のバックエンドによります。",
+  "mainIoSettingsSummary": "権限、認証情報、エンドポイント、API サービス",
+  "mainJustNow": "たった今",
+  "mainLabIntro": "仮説から始めて、試行、観察、意外な発見を残しましょう。",
+  "mainLanguage": "言語",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainLanguageSystem": "システムに合わせる",
+  "mainLavender": "ラベンダー",
+  "mainLightOpacity": "20% · 淡い",
+  "mainLiquidAllCanvases": "4 種類すべての背景で個別に使用できます",
+  "mainLiquidDetail": "浮かぶ水滴のような、流れる光とやわらかな屈折。",
+  "mainLiquidEffect": "リキッドガラス効果",
+  "mainLiquidGlass": "リキッドガラス",
+  "mainLivePreview": "ライブプレビュー",
+  "mainLocalMedia": "ローカルメディア",
+  "mainMakeYours": "自分らしく",
+  "mainMarkOrganized": "整理済みにする",
+  "mainMarkdownBody": "本文 · Markdown",
+  "mainMediaLimits": "画像 / GIF は 25 MB 以下、動画は 150 MB 以下",
+  "mainMonochrome": "モノクロ",
+  "mainMoreSteps": "ほか {count} ステップ。開いて表示",
+  "mainMovedProject": "「{title}」をプロジェクトに移動しました",
+  "mainMusic": "音楽プレーヤー",
+  "mainMySpace": "自分のスペース",
+  "mainNavigation": "ナビゲーション",
+  "mainNewIdea": "新しいアイデア",
+  "mainNewIdeaTitle": "新しいひらめきをつかまえる",
+  "mainNoHypothesis": "仮説はまだありません",
+  "mainNoMatches": "一致するアイデアはありません",
+  "mainNoResultYet": "結果は後でも大丈夫。過程も記録する価値があります。",
+  "mainNotNow": "今はしない",
+  "mainObservationSection": "観察 / 分かったこと",
+  "mainObservations": "観察と結論",
+  "mainObservationsPrompt": "観察、過程、結論",
+  "mainOneHourAgo": "1 時間前",
+  "mainOnlineMedia": "オンラインメディア",
+  "mainOpaqueFallback": "現在のテーマカラーに透明なパネルを重ねます。",
+  "mainOpenNextStep": "プロジェクトを開いて次のステップを編集",
+  "mainOrganizedCount": "整理済み",
+  "mainOriginalColors": "元の色",
+  "mainPageFavorites": "お気に入り",
+  "mainPageInbox": "受信箱",
+  "mainPageLaboratory": "実験室",
+  "mainPageOverview": "概要",
+  "mainPageProjects": "プロジェクト",
+  "mainPageSummary": "{page} · 概要",
+  "mainPasteChanged": "貼り付け中に入力内容が変わりました。エディターを開き直してください。",
+  "mainPasteContent": "内容を貼り付け",
+  "mainPause": "一時停止",
+  "mainPersonalWorkspace": "個人用ワークスペース",
+  "mainPlay": "再生",
+  "mainPluginSettings": "プラグインとサービス",
+  "mainPluginSettingsSummary": "内蔵ツール、拡張機能、ネットワーク、ファイル、コンテンツ保護",
+  "mainPreviewEmpty": "ここにプレビューが表示されます",
+  "mainProgress": "小さな一歩 · {done}/{total}",
+  "mainProjectIntro": "チェックリストで少しずつ前進。一歩ずつ、目標に近づきます。",
+  "mainQueryAgain": "新しく検索",
+  "mainQueryCapacity": "検索履歴がいっぱいです",
+  "mainQueryCapacityDetail": "内容は保持されています。このバージョンでは検索履歴を消去できません。",
+  "mainQueryLoading": "アイデアを検索中…",
+  "mainQueryRetry": "検索を再試行",
+  "mainQueryTerminated": "この検索は終了しました",
+  "mainQueryUnknown": "結果はまだ確定していません",
+  "mainQuickHint": "今、何を思いつきましたか？",
+  "mainReadOnlySettings": "内容は読み取り専用です。ワークスペースプラグインを確認して編集を復旧してください。",
+  "mainRecentThoughts": "最近のアイデア",
+  "mainRecordedCount": "観察記録あり",
+  "mainRestoreDefault": "既定に戻す",
+  "mainRetry": "再試行",
+  "mainRetrySave": "保存を再試行",
+  "mainSage": "セージ",
+  "mainSampleBody0": "ふと思いついたことをここに。\n完成を急がず、まずは始めよう。",
+  "mainSampleBody1": "好きな言葉や音楽、\n日常の小さなことを集めるページ。",
+  "mainSampleBody2": "ジェネラティブアートに挑戦。\nコードから意外な形を生み出そう。",
+  "mainSampleBody3": "忘れがちな小さなことを\nそっと覚えてくれる相棒。",
+  "mainSampleTitle0": "アイデアの居場所",
+  "mainSampleTitle1": "静かなデジタルガーデン",
+  "mainSampleTitle2": "楽しむために何か作ろう",
+  "mainSampleTitle3": "小さなデスクトップの相棒",
+  "mainSampleTodo0": "最初のコレクションを整理",
+  "mainSampleTodo1": "ガーデンの入り口をデザイン",
+  "mainSampleTodo2": "新しいアイデアの種をまく",
+  "mainSampleTodo3": "小さな試作品を描く",
+  "mainSampleTodo4": "リマインダーの操作を考える",
+  "mainSaveConnectionUnknown": "接続が切れ、保存結果は不明です。再試行する前にライブラリを開き直して確認してください。",
+  "mainSaveFailed": "保存できませんでした。変更はこのセッション内に保持されています。",
+  "mainSaveIdea": "アイデアを保存",
+  "mainSaveNotSubmitted": "未送信です。下書きと添付ファイルは保持されています。編集して再保存できます。",
+  "mainSaveReadOnly": "変更は保存されていません。「プラグインとサービス」でワークスペースプラグインを有効にして再試行してください。",
+  "mainSaveUnknown": "保存結果は未確認です。下書きと添付は保持されています。この送信を再試行してください。閉じるとワークスペースを更新して確認します。",
+  "mainSaving": "保存中…",
+  "mainSearchHint": "アイデアを検索…",
+  "mainServiceRunSettings": "サービスの実行",
+  "mainServiceSettings": "API サービス",
+  "mainSettings": "設定",
+  "mainShowAppearance": "外観設定を表示",
+  "mainSidebarMotto": "少しの整理。ひらめく余白。",
+  "mainSlowProgress": "小さな一歩も、前進です。",
+  "mainSolidCanvas": "単色",
+  "mainSolidDetail": "落ち着いた単色の背景。",
+  "mainSolidOpacity": "100% · 不透明",
+  "mainSortFavorites": "お気に入り優先",
+  "mainSortRecent": "最近追加した順",
+  "mainSortTitle": "タイトル順",
+  "mainSquareCorners": "0 で四角い角になります",
+  "mainStageActive": "進行中",
+  "mainStageCompleted": "完了",
+  "mainStageOrganized": "整理済み",
+  "mainStagePlanned": "計画済み",
+  "mainStageRecorded": "記録済み",
+  "mainStageTooltip": "「{title}」の段階を変更",
+  "mainStageUnsorted": "未整理",
+  "mainStageUnverified": "未検証",
+  "mainStageVerifying": "検証中",
+  "mainStayCurious": "好奇心を忘れず、自分らしく。",
+  "mainSteps": "{done}/{total} ステップ",
+  "mainStorageUnavailable": "ローカル保存領域を利用できません。変更はこのセッション中のみ保持されます。",
+  "mainStorageUnreadable": "保存済みの内容を読み取れませんでした。元のデータは保持され、上書きされません。",
+  "mainTenMinutesAgo": "10 分前",
+  "mainTextureCanvas": "テクスチャ",
+  "mainTextureDetail": "繊細な紙のような質感を添えます。",
+  "mainThemeCompass": "テーマのカラーホイール",
+  "mainThemeGrayscale": "テーマのグレースケール",
+  "mainThemeTone": "テーマカラー",
+  "mainThreeHoursAgo": "3 時間前",
+  "mainTintOpacity": "色の不透明度",
+  "mainToProject": "プロジェクトに移動",
+  "mainTodosPrompt": "次のステップ（1 行に 1 件、省略可）",
+  "mainTransparencyUnavailable": "システムの透過を有効にできませんでした。標準の背景を利用できます。",
+  "mainTransparentCanvas": "透明",
+  "mainTransparentDetail": "ウィンドウの背後を表示します。Web 版ではホストの背景を表示します。",
+  "mainUndo": "元に戻す",
+  "mainUnfavoriteTooltip": "「{title}」をお気に入りから削除",
+  "mainUnsortedCount": "未整理",
+  "mainUnverifiedCount": "未検証",
+  "mainView": "表示",
+  "mainViewAll": "すべて表示",
+  "mainWarmSand": "ウォームサンド",
+  "mainWhiteTheme": "ライト",
+  "mainWindowRadius": "ウィンドウの角",
+  "mainWindowRadiusDetail": "ウィンドウの縁を個別に調整。最大化すると角は四角くなります",
+  "mainWindowsFrostOnly": "デスクトップのぼかしは Windows のみ対応",
+  "mainWorkbench": "ワークスペース",
+  "mainWorkbenchPlugin": "ワークスペースプラグイン",
+  "mainWriteHypothesis": "記録を開いて、検証したいことを書きましょう。",
+  "mainYesterday": "昨日",
+  "pluginsApprovalUnknown": "有効化または権限の変更を確認できませんでした",
+  "pluginsApproveEnable": "承認して有効化",
+  "pluginsApproveWorkbench": "閲覧・編集を許可して有効化",
+  "pluginsAttachment": "添付ファイルを閲覧",
+  "pluginsBackingUp": "バックアップ中…",
+  "pluginsBackupLibrary": "ライブラリをバックアップ",
+  "pluginsBackupLibraryType": "ライブラリのバックアップ",
+  "pluginsBackupProtection": "保護ファイルをバックアップ",
+  "pluginsBackupUnknown": "バックアップはまだ確認されていません。作成されたファイルを保持し、保存先を確認してください。",
+  "pluginsBinaryPreview": "バイナリ内容：{hex}",
+  "pluginsBuiltin": "組み込みワークスペース",
+  "pluginsBuiltinCount": "{count} 文字 · このセッションのみ。カードとしては保存されません",
+  "pluginsBuiltinEmpty": "テキストを入力して大文字変換をプレビュー",
+  "pluginsBuiltinHeading": "テキストツール",
+  "pluginsBuiltinInput": "テキストを入力",
+  "pluginsCancel": "キャンセル",
+  "pluginsChoosePackage": "プラグインファイルを選択",
+  "pluginsChooseSmallFile": "小さなファイルを選択",
+  "pluginsCloseTextTool": "テキストツールを隠す",
+  "pluginsCloseUnknown": "ビューを閉じたことを確認できませんでした",
+  "pluginsCloseView": "ビューを閉じる",
+  "pluginsConnectionLost": "接続が中断されました。プラグインのビューを開き直してください。",
+  "pluginsContentPermissions": "コンテンツの権限",
+  "pluginsCreate": "コンテンツを作成",
+  "pluginsCredentialCancel": "フォームを閉じる",
+  "pluginsCredentialCreateTitle": "新しい認証情報",
+  "pluginsCredentialDays": "{days} 日",
+  "pluginsCredentialDetails": "承認された API 接続用の認証情報を安全に保存します。保存してもサーバーの承認やプラグインの有効化は行いません。保存済みのシークレットは表示できません。",
+  "pluginsCredentialDisable": "無効化",
+  "pluginsCredentialDisabled": "無効",
+  "pluginsCredentialDisabledDone": "認証情報を無効にしました。",
+  "pluginsCredentialEmpty": "保存済みの認証情報はありません",
+  "pluginsCredentialExpired": "期限切れ",
+  "pluginsCredentialExpires": "有効期限：{date}",
+  "pluginsCredentialHeader": "ヘッダー名",
+  "pluginsCredentialInvalid": "ヘッダー名を確認し、新しいシークレットを入力してください。シークレット欄は消去されました。",
+  "pluginsCredentialLifetime": "有効期間",
+  "pluginsCredentialLoadFailed": "認証情報を整合した状態で読み取れませんでした。状態を更新して再試行してください。",
+  "pluginsCredentialNew": "認証情報を追加",
+  "pluginsCredentialReading": "認証情報を読み込み中…",
+  "pluginsCredentialReference": "認証情報 {reference}",
+  "pluginsCredentialRefresh": "状態を更新",
+  "pluginsCredentialReplace": "シークレットを置換",
+  "pluginsCredentialReplaceTitle": "認証情報 {reference} を置換",
+  "pluginsCredentialSave": "認証情報を保存",
+  "pluginsCredentialSaved": "認証情報を保存しました。API 接続には別途承認が必要です。",
+  "pluginsCredentialSecret": "新しいシークレット値",
+  "pluginsCredentialStored": "保存済み",
+  "pluginsCredentialTitle": "API 認証情報",
+  "pluginsCredentialUnknown": "結果を確認できませんでした。シークレット欄は消去されました。状態を更新してから次の変更を行ってください。",
+  "pluginsDeclared": "宣言された権限：{permissions}",
+  "pluginsDependenciesNotice": "依存関係はホストで設定する必要があります。このページでは承認されません。",
+  "pluginsDisable": "無効化",
+  "pluginsDisableWorkbench": "ワークスペースプラグインを無効化",
+  "pluginsDisabled": "無効",
+  "pluginsDisabledDetails": "無効です。エディターとツールを使うには、コンテンツの閲覧と編集を許可してください。",
+  "pluginsEdit": "コンテンツを編集",
+  "pluginsEmptyLibrary": "サードパーティ製プラグインはまだありません。",
+  "pluginsEmptyResult": "（空の結果）",
+  "pluginsEnabled": "有効",
+  "pluginsEnabledDetails": "有効です。このプラグインはコンテンツを閲覧・編集できます。無効にしてもデータは保持されます。",
+  "pluginsEndpointAdvanced": "ポリシーの上限（特記なき場合はバイト）",
+  "pluginsEndpointCertificate": "DER 信頼ルートを選択",
+  "pluginsEndpointCertificateDetails": "任意の HTTPS 信頼ルート：32 KiB 以下のバイナリ DER 証明書（.der または .cer）1 個。PEM や証明書バンドルは使用できません。HTTP に切り替える前に信頼ルートを削除してください。",
+  "pluginsEndpointCertificateInvalid": "32 KiB 以下の有効なバイナリ DER 証明書（.der または .cer）を 1 個選択してください。",
+  "pluginsEndpointCertificateSelected": "DER 信頼ルートを選択済み（{bytes} バイト）",
+  "pluginsEndpointConcurrency": "同時リクエスト数（1～128）",
+  "pluginsEndpointCreateTitle": "新しいエンドポイント承認",
+  "pluginsEndpointCredential": "認証情報の参照",
+  "pluginsEndpointCredentialLifetime": "認証情報はエンドポイントの有効期間全体を通じて有効である必要があります。有効期限は延長されません。",
+  "pluginsEndpointCredentialUnavailable": "パッケージに宣言・承認された認証情報使用権限と、有効な保存済み参照が必要です。",
+  "pluginsEndpointCredentialsFailed": "認証情報の参照を読み取れませんでした。状態を更新してから選択してください。",
+  "pluginsEndpointDetails": "特定のパッケージとダイジェストに対するサーバーポリシーを保存します。保存してもネットワーク接続やプラグインの有効化は行わず、ネットワークタスクが直ちに利用可能になることもありません。",
+  "pluginsEndpointDigest": "パッケージダイジェスト",
+  "pluginsEndpointDisabledDone": "エンドポイント承認を無効にしました。",
+  "pluginsEndpointEmpty": "保存済みのエンドポイント承認はありません",
+  "pluginsEndpointFrameBytes": "フレーム上限（1～131072 バイト）",
+  "pluginsEndpointHeaderBytes": "ヘッダー最大サイズ（1～16384 バイト）",
+  "pluginsEndpointInvalid": "パッケージ、オリジン、メソッド、1～30 日の有効期間、認証情報の権限、証明書、ポリシーの上限を確認してください。",
+  "pluginsEndpointLifetime": "有効期間（1～30 日）",
+  "pluginsEndpointLoadFailed": "エンドポイント承認を整合した状態で読み取れませんでした。状態を更新して再試行してください。",
+  "pluginsEndpointLocalHttp": "ローカル HTTP",
+  "pluginsEndpointLocalHttps": "ローカル HTTPS",
+  "pluginsEndpointMethods": "許可するリクエストメソッド",
+  "pluginsEndpointNew": "エンドポイントを追加",
+  "pluginsEndpointNoCredential": "認証情報なし",
+  "pluginsEndpointOrigin": "オリジンのみ（例：https://api.example.com）",
+  "pluginsEndpointPackage": "パッケージ",
+  "pluginsEndpointPackageUnavailable": "パッケージが利用不可か、HTTP 権限が未承認です。既存の承認は無効にできます。",
+  "pluginsEndpointProfile": "接続プロファイル",
+  "pluginsEndpointPublicHttps": "パブリック HTTPS",
+  "pluginsEndpointRemoveCertificate": "信頼ルートを削除",
+  "pluginsEndpointReplace": "承認を置換",
+  "pluginsEndpointReplaceTitle": "現在のパッケージダイジェストで承認を置換",
+  "pluginsEndpointRequestBytes": "リクエスト最大サイズ（1～65536 バイト）",
+  "pluginsEndpointResponseBytes": "レスポンス最大サイズ（1～65536 バイト）",
+  "pluginsEndpointSave": "エンドポイント承認を保存",
+  "pluginsEndpointSaved": "エンドポイント承認を保存しました。ネットワーク接続は行っていません。",
+  "pluginsEndpointTimeout": "タイムアウト（1～30000 ミリ秒）",
+  "pluginsEndpointTitle": "API エンドポイントの承認",
+  "pluginsEndpointUnknown": "結果を確認できませんでした。次の変更前に状態を更新してください。リクエストは自動再送されません。",
+  "pluginsEndpointWorking": "エンドポイントの状態を更新中…",
+  "pluginsExistingVersion": "このバージョンはインストール済みです。有効・無効の状態は変わりません。",
+  "pluginsFileLimit": "ファイルが大きすぎます。{limit} バイト以下のファイルを選択してください。",
+  "pluginsHttpTaskAbandon": "この試行の観測を終了",
+  "pluginsHttpTaskAbandonDetails": "最新の状態でアクティブなタスクがなく、元のライブラリが利用可能だと確認された場合のみ観測を終了できます。リモートへの影響がなかった証明にはなりません。識別子と不確実性は履歴に残り、新規リクエストには明示的な送信が必要です。",
+  "pluginsHttpTaskAbsent": "結果の配信なし",
+  "pluginsHttpTaskAccepted": "受付済み",
+  "pluginsHttpTaskAcknowledge": "終了済みタスクを確認",
+  "pluginsHttpTaskArchivedUnknown": "ユーザーが観測を終了しました。以前のリモートへの影響は未確認のままです。この試行は再実行していません。",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskBody": "リクエスト本文",
+  "pluginsHttpTaskBodyFormat": "リクエスト本文のエンコード",
+  "pluginsHttpTaskBusy": "使用中",
+  "pluginsHttpTaskCancel": "キャンセルを要求",
+  "pluginsHttpTaskCancelled": "キャンセルを検知。リモート側への影響はすでに発生している可能性があります",
+  "pluginsHttpTaskCatalogUnavailable": "プラグインカタログの状態が利用できません。新規送信前にプラグインライブラリを更新してください。既存タスクの操作は可能です。",
+  "pluginsHttpTaskClosed": "終了済み",
+  "pluginsHttpTaskCompleted": "完了",
+  "pluginsHttpTaskConflict": "競合",
+  "pluginsHttpTaskConsumed": "結果は消費済み",
+  "pluginsHttpTaskControlUnknown": "制御の結果を確認できませんでした。タスクの状態を更新してから次の操作を判断してください。",
+  "pluginsHttpTaskCounters": "IO 呼び出し：{calls}・計上バイト数：{bytes}",
+  "pluginsHttpTaskDeadline": "期限超過",
+  "pluginsHttpTaskDenied": "拒否",
+  "pluginsHttpTaskDetails": "承認済みエンドポイントと実験的 HTTP 転送ハンドラーを持つ有効なプラグインで、明示的なリクエストを 1 回実行します。ライブラリが使用中でもタスクの状態は確認できます。",
+  "pluginsHttpTaskDisconnect": "接続のクリーンアップ失敗",
+  "pluginsHttpTaskEndpoint": "承認済みエンドポイント",
+  "pluginsHttpTaskEndpointsFailed": "エンドポイントを整合した状態で読み取れないか、ライブラリが使用中です。タスクの操作は可能です。ライブラリが戻ってからエンドポイントを更新してください。",
+  "pluginsHttpTaskEvidenceUnavailable": "結果の証跡が利用不可",
+  "pluginsHttpTaskExecution": "ゲスト実行：{fault}・終了コード：{code}",
+  "pluginsHttpTaskExit": "ワーカー終了 — 実行：{execution}・切断：{disconnect}・保守：{maintenance}",
+  "pluginsHttpTaskExplicit": "送信すると実際のリクエストを 1 回実行します。クリックごとに新しい識別子が作成されます。結果不明の送信や読み取りを自動再実行しません。キャンセルしてもリモート操作の取り消しは保証されません。",
+  "pluginsHttpTaskFailed": "失敗",
+  "pluginsHttpTaskHeaders": "通常のリクエストヘッダー（1 行に 名前: 値）",
+  "pluginsHttpTaskHeadersHint": "重複ヘッダーは個別に保持します。認証情報と接続のヘッダーはランタイムのみが設定します。",
+  "pluginsHttpTaskHistory": "過去のタスク観測（最大 5 件）",
+  "pluginsHttpTaskHttpResult": "HTTP 結果：{status}・リモートステータス：{code}",
+  "pluginsHttpTaskInactive": "接続は非アクティブ",
+  "pluginsHttpTaskInvalid": "エンドポイント、メソッド、相対ターゲット、通常のヘッダー、本文のエンコード、タイムアウトが承認範囲内か確認してください。",
+  "pluginsHttpTaskInvalidOptions": "無効なオプション",
+  "pluginsHttpTaskKey": "タスク識別子：{identity}",
+  "pluginsHttpTaskLimit": "クォータまたは上限に到達",
+  "pluginsHttpTaskLoadingEndpoints": "承認済みエンドポイントを読み込み中…",
+  "pluginsHttpTaskLocal": "ライブラリ利用可能・実行中のタスクなし",
+  "pluginsHttpTaskModule": "無効なゲストモジュール",
+  "pluginsHttpTaskNew": "新しいリクエストを準備",
+  "pluginsHttpTaskNoEndpoints": "有効かつ承認済みの HTTP 転送プラグインに一致するエンドポイントがありません。",
+  "pluginsHttpTaskNotFound": "見つかりません",
+  "pluginsHttpTaskOk": "正常",
+  "pluginsHttpTaskOutcomeUnknown": "リモート側の結果は不明です。ロールバック済みと見なしたり再送したりしないでください",
+  "pluginsHttpTaskPackageChanged": "パッケージの紐付けが変更済み",
+  "pluginsHttpTaskPending": "結果待ち",
+  "pluginsHttpTaskPoll": "タスクを確認",
+  "pluginsHttpTaskProtocol": "タスクのプロトコルエラー",
+  "pluginsHttpTaskRead": "結果を 1 回読み取る",
+  "pluginsHttpTaskReadBound": "読み取り上限超過",
+  "pluginsHttpTaskReadPending": "結果は返されませんでした。状態を確認してから明示的に再読み取りしてください。",
+  "pluginsHttpTaskReadUnknown": "結果の読み取りを確認できず、すでに消費された可能性があります。再読み取りは行いません。状態とワーカー終了は確認できます。",
+  "pluginsHttpTaskReady": "結果の準備完了。明示的に読み取ってください。ワーカーの終了を意味するものではありません。",
+  "pluginsHttpTaskReclaimed": "ワーカー終了・元のライブラリを返却済み",
+  "pluginsHttpTaskRecoveryRequired": "ワーカー終了・クリーンアップまたは保守の修復が必要",
+  "pluginsHttpTaskRefresh": "タスクの状態を更新",
+  "pluginsHttpTaskRefreshEndpoints": "承認済みエンドポイントを更新",
+  "pluginsHttpTaskRemoteError": "リモートサーバーから 4xx/5xx が返されました。HTTP 通信は完了しており、ゲスト実行エラーとは別です。",
+  "pluginsHttpTaskRepair": "クリーンアップを修復",
+  "pluginsHttpTaskResponseBase64": "レスポンス本文：正確な Base64",
+  "pluginsHttpTaskResponseHeaders": "レスポンスヘッダー（重複保持・バイナリ値は Base64）",
+  "pluginsHttpTaskResponseText": "レスポンス本文：プレーンテキストのプレビュー",
+  "pluginsHttpTaskResultUnavailable": "結果の配信が利用不可",
+  "pluginsHttpTaskRevoked": "承認取り消し済み",
+  "pluginsHttpTaskRunning": "実行中・ワーカーがライブラリを所有",
+  "pluginsHttpTaskSpawn": "ワーカーを起動できませんでした",
+  "pluginsHttpTaskStart": "新しいリクエストを送信",
+  "pluginsHttpTaskStartUnknown": "送信結果は不明です。識別子は保持されています。状態を照会して同じタスクを確認してください。リクエストは再送しません。",
+  "pluginsHttpTaskStatusFailed": "タスクの状態を確認できませんでした。状態を更新してください。リクエストは再実行していません。",
+  "pluginsHttpTaskStopping": "停止中・ワーカーの実際の終了を待機",
+  "pluginsHttpTaskSubmission": "送信識別子：{identity}",
+  "pluginsHttpTaskTarget": "相対ターゲット（例：/v1/items?limit=10）",
+  "pluginsHttpTaskText": "UTF-8 テキスト",
+  "pluginsHttpTaskTimeout": "タイムアウト（1～30000 ミリ秒、承認範囲内）",
+  "pluginsHttpTaskTitle": "HTTP タスク",
+  "pluginsHttpTaskTrap": "ゲスト実行でトラップが発生",
+  "pluginsHttpTaskUnavailable": "元のライブラリが利用不可・復旧対応が必要",
+  "pluginsHttpTaskUnsupported": "未対応の操作",
+  "pluginsHttpTaskWorking": "タスク制御の応答を待機中…",
+  "pluginsImport": "インポート",
+  "pluginsImportDetails": "インポート後に有効にするか選択できます。無効化やアンインストール後もコンテンツは保持されます。",
+  "pluginsImportPreview": "インポートのプレビュー：{name}",
+  "pluginsImportUnknown": "インポートを確認できませんでした",
+  "pluginsImportedDisabled": "インポート済みで無効です。許可する権限を選択してください。",
+  "pluginsInputFailed": "入力ファイルを読み取れませんでした",
+  "pluginsInputTooLong": "入力上限に達しました。テキストを短くして再試行してください。",
+  "pluginsInspectFailed": "プラグインのプレビューを読み込めませんでした",
+  "pluginsInspectedOnly": "ファイルの検査のみ完了しました。インポート後、別途有効にしてください。",
+  "pluginsInsufficientApproval": "プラグインは有効ですが、コンテンツへの権限が必要です。ワークスペースは読み取り専用です。無効にして権限を再確認してください。",
+  "pluginsIoApproved": "承認済み：{permissions}",
+  "pluginsIoCredentialUse": "許可された認証情報を使用",
+  "pluginsIoDeclared": "要求されたネットワーク・ファイル権限：{permissions}",
+  "pluginsIoFileCreate": "ファイルを作成",
+  "pluginsIoFileDelete": "ファイルを削除",
+  "pluginsIoFileList": "許可されたフォルダーを参照",
+  "pluginsIoFileRead": "許可されたファイルを読む",
+  "pluginsIoFileReplace": "ファイルを置換",
+  "pluginsIoHttpListen": "ネットワーク接続を待ち受ける",
+  "pluginsIoHttpPublish": "API サービスを提供",
+  "pluginsIoHttpRequest": "ネットワーク API を呼び出す",
+  "pluginsIoNoneApproved": "ネットワーク・ファイル権限は未承認です",
+  "pluginsIoRevoke": "ネットワーク・ファイル権限をすべて取り消す",
+  "pluginsIoSave": "ネットワーク・ファイル権限を保存",
+  "pluginsIoScopeNotice": "ここでは権限の種類のみ保存します。サーバーアドレス、ファイルアクセス、認証情報は別途承認が必要です。利用不可の機能は有効になりません。変更後はフォームを開き直してください。",
+  "pluginsIoTitle": "ネットワークとファイルの権限",
+  "pluginsIoWebSocketConnect": "WebSocket サービスに接続",
+  "pluginsListUnknown": "プラグイン一覧を確認できませんでした",
+  "pluginsManageAbove": "上のワークスペースプラグインの操作項目で管理してください。",
+  "pluginsManagementUnavailable": "プラグイン管理は利用できません。既存のコンテンツは引き続き閲覧できます。",
+  "pluginsNoPermissions": "コンテンツの権限は宣言されていません。",
+  "pluginsOpenTextTool": "テキストツールを開く",
+  "pluginsOpenView": "ビューを開く",
+  "pluginsOpeningView": "プラグインのビューを開いています…",
+  "pluginsOperation": "操作結果を照会",
+  "pluginsOtherCapability": "その他の宣言済み権限：{name}",
+  "pluginsPackageFile": "Morrow プラグイン",
+  "pluginsPreviewOnly": "プレビューのみです。結果は既存のコンテンツに自動保存されません。",
+  "pluginsPreviewTruncated": "…先頭の 4,096 文字のみ表示",
+  "pluginsProtection": "コンテンツの保護",
+  "pluginsProtectionDetails": "このシステムアカウントで復旧できるよう、元の保護ファイルをバックアップしてください。カードや添付ファイルは含まれません。",
+  "pluginsProtectionFileType": "ライブラリ保護ファイル",
+  "pluginsProtectionSaved": "保護ファイルをバックアップしました。起動に失敗した場合、復旧時に選択してください。",
+  "pluginsRead": "コンテンツを閲覧",
+  "pluginsReadingState": "プラグインの状態を読み込み中…",
+  "pluginsRefreshFailed": "{reason}。一覧を更新できませんでした。「一覧を更新」で読み込みを再試行してください。",
+  "pluginsRefreshList": "一覧を更新",
+  "pluginsRefreshState": "状態を更新",
+  "pluginsRename": "名前を変更",
+  "pluginsResultBytes": "{count} バイト\n{preview}",
+  "pluginsSavePermissions": "権限を保存",
+  "pluginsSelectedFile": "選択したファイル：{name}",
+  "pluginsServiceAcknowledgeUncertain": "更新後の記録を確認しました",
+  "pluginsServiceAddScope": "コンテンツ範囲を追加",
+  "pluginsServiceAttachmentId": "正確な添付ファイル識別子",
+  "pluginsServiceAuthenticationUnavailable": "選択した認証が存在しない、無効、期限切れ、または別の主体に属しています。範囲の下書きは保持されます。有効な認証に置き換えるか明示的に削除してください。",
+  "pluginsServiceAuthorities": "認証と公開の記録",
+  "pluginsServiceCardId": "正確なカード識別子",
+  "pluginsServiceCatalogChanged": "パッケージカタログが変更されたか利用できません。下書きは保持しています。保存前に選択を明示的に更新してください。",
+  "pluginsServiceClearToken": "トークンを消去",
+  "pluginsServiceCloseEditor": "エディターを閉じる",
+  "pluginsServiceConfigDigest": "設定ダイジェスト",
+  "pluginsServiceConfiguration": "保存済み設定",
+  "pluginsServiceConfigurations": "保存済み設定",
+  "pluginsServiceCopyClear": "トークンをコピーして消去",
+  "pluginsServiceCreated": "作成日時（UTC）",
+  "pluginsServiceDays": "要求する有効期間（1～30 日）",
+  "pluginsServiceDigestFixed": "編集時も元のパッケージダイジェストを保持します。一致するパッケージを選択してください。選択しても有効化されません。",
+  "pluginsServiceDisable": "無効化",
+  "pluginsServiceDisabled": "無効",
+  "pluginsServiceEditConfig": "設定を編集",
+  "pluginsServiceEditPublication": "公開を編集",
+  "pluginsServiceExpired": "期限切れ、または有効期間前",
+  "pluginsServiceExpires": "実際の有効期限（UTC）",
+  "pluginsServiceHandler": "宣言済みサービスハンドラー",
+  "pluginsServiceIdentity": "サービス識別子",
+  "pluginsServiceInvalid": "保存前に入力欄、選択した承認、現在のパッケージを確認してください。",
+  "pluginsServiceIssue": "トークンを発行",
+  "pluginsServiceIssuedToken": "一度だけ表示される Bearer トークン",
+  "pluginsServiceListenAddress": "数値の待ち受けアドレスとポート",
+  "pluginsServiceLoadFailed": "記録を更新できませんでした。変更前に再度更新してください。",
+  "pluginsServiceManagementOnly": "保存済みの設定と承認を管理します。保存してもリスナーの起動、パッケージの実行、サービスの有効化は行いません。",
+  "pluginsServiceMethod": "HTTP メソッド",
+  "pluginsServiceNewAuthentication": "新しい認証",
+  "pluginsServiceNewConfig": "新しい設定",
+  "pluginsServiceNo": "いいえ",
+  "pluginsServiceNoAuthentication": "先に現在有効な認証記録を作成してください。",
+  "pluginsServiceNoAuthorities": "認証や公開の記録はありません。",
+  "pluginsServiceNoConfigurations": "サービス設定はありません。",
+  "pluginsServicePackage": "宣言・承認済みパッケージ",
+  "pluginsServicePackageDigest": "パッケージダイジェスト",
+  "pluginsServicePackageUnavailable": "一致するパッケージまたは待ち受け・公開の承認が利用できません。過去の記録は閲覧・無効化できます。",
+  "pluginsServicePath": "正確なリクエストパス",
+  "pluginsServicePolicyChanged": "元の記録が変更されたか利用できなくなりました。選択を更新するか現在の記録からエディターを開き直してください。下書きは保持しています。",
+  "pluginsServicePrincipalId": "主体の識別子",
+  "pluginsServicePrincipals": "許可された主体とコンテンツ範囲",
+  "pluginsServicePublicationEditor": "公開の承認",
+  "pluginsServicePublicationHelp": "承認はこの設定、リビジョン、参照に厳密に紐付きます。実際の有効期限は選択したすべての認証記録によって制限され、要求より短くなる場合があります。保存しても待ち受けは開始しません。",
+  "pluginsServicePublicationMismatch": "この公開は現在の設定に一致しません。確認して置き換え用の承認を明示的に保存してください。",
+  "pluginsServiceQueryPath": "結果照会用の別パス（任意）",
+  "pluginsServiceReference": "承認の参照",
+  "pluginsServiceRefresh": "記録を更新",
+  "pluginsServiceRefreshSelection": "この選択を更新",
+  "pluginsServiceRemovePrincipal": "主体を削除",
+  "pluginsServiceRemoveScope": "範囲を削除",
+  "pluginsServiceRetention": "リクエスト履歴の保持期間（ミリ秒、最大 30 日）",
+  "pluginsServiceRevision": "リビジョン",
+  "pluginsServiceRotate": "トークンをローテーション",
+  "pluginsServiceRotateAuthentication": "認証をローテーション",
+  "pluginsServiceRunAbandon": "記録を保持してこの試行を終了",
+  "pluginsServiceRunAdvanced": "リクエストとワーカーの上限",
+  "pluginsServiceRunAttempt": "未解決の開始試行",
+  "pluginsServiceRunBoundsHint": "上限はプラグインの宣言と保存済み承認にも適合する必要があります。予約済み作業はキャンセル後も累積枠を消費します。期限到達で停止し、自動更新は行いません。",
+  "pluginsServiceRunBytes": "実行バイト上限（最大 67,108,864）",
+  "pluginsServiceRunCalls": "ジョブごとの呼び出し数（最大 1,024）",
+  "pluginsServiceRunCancelled": "キャンセル済み",
+  "pluginsServiceRunClosed": "終了済み",
+  "pluginsServiceRunConcurrent": "同時ジョブ数（最大 128）",
+  "pluginsServiceRunControlUnknown": "制御結果は不明です。別の操作前に元のサービス状態を更新してください。",
+  "pluginsServiceRunDenied": "拒否",
+  "pluginsServiceRunExited": "サービス終了",
+  "pluginsServiceRunHeaderBytes": "ヘッダー最大サイズ（バイト、最大 65,536）",
+  "pluginsServiceRunHint": "承認済みの公開と有限の実行上限を選び、明示的にサービスを開始してください。停止後は元のワークスペース所有者が戻ってから結果を確認してください。",
+  "pluginsServiceRunHostFailure": "ホスト診断：{detail}",
+  "pluginsServiceRunHttpPanel": "API サービスがこのタスクを所有しています。上のサービス実行パネルで停止または終了の確認を行ってください。HTTP リクエストの下書きは保持しています。",
+  "pluginsServiceRunIdentityChanged": "別のタスクがコンテンツを所有しています。このパネルは以前のサービス識別子でそのタスクを操作しません。",
+  "pluginsServiceRunInvalid": "選択したサービスと数値上限を確認してください。新規実行は送信していません。",
+  "pluginsServiceRunInvalidOutcome": "無効な設定",
+  "pluginsServiceRunJobBytes": "ジョブごとのバイト数（最大 16,777,216）",
+  "pluginsServiceRunJobs": "タスク予約総数（最大 1,000,000）",
+  "pluginsServiceRunLastObservation": "最後の観測を表示中。現在の状態は未確認です。",
+  "pluginsServiceRunLifetime": "実行時間（ミリ秒、最大 3,600,000）",
+  "pluginsServiceRunLimit": "上限に到達",
+  "pluginsServiceRunLocal": "コンテンツをローカルで利用可能",
+  "pluginsServiceRunNetwork": "バインド：{bind}・リスナー：{listener}・監視：{supervision}",
+  "pluginsServiceRunNextSettings": "次の明示的な実行の設定",
+  "pluginsServiceRunNoSelection": "利用可能な承認済み公開がありません。プラグイン、設定、認証の状態を確認してください。",
+  "pluginsServiceRunOutboundAttempt": "この開始試行に紐付くエンドポイント",
+  "pluginsServiceRunOutboundClear": "エンドポイントの選択を解除",
+  "pluginsServiceRunOutboundFailed": "エンドポイント一覧を確認できませんでした。選択済みのものを使用する前に更新してください。",
+  "pluginsServiceRunOutboundHint": "外部 API（任意、最大 8 件）。このパッケージ用に承認されたエンドポイントのみ表示します。未選択なら外部呼び出しを禁止します。",
+  "pluginsServiceRunOutboundStale": "選択したエンドポイントが変更されたか利用できません。現在のバージョンを明示的に選ぶか、選択を解除してください。",
+  "pluginsServiceRunOwned": "実行中のサービスがコンテンツを管理",
+  "pluginsServiceRunPending": "待機中",
+  "pluginsServiceRunReclaimed": "コンテンツの所有権を回収済み・確認が必要",
+  "pluginsServiceRunReclaiming": "コンテンツの所有権返却を待機",
+  "pluginsServiceRunRecovery": "クリーンアップの修復が必要",
+  "pluginsServiceRunRequestBytes": "リクエスト最大サイズ（バイト）",
+  "pluginsServiceRunResponseBytes": "レスポンス最大サイズ（バイト）",
+  "pluginsServiceRunRunning": "サービス実行中",
+  "pluginsServiceRunSelection": "承認済みサービス公開",
+  "pluginsServiceRunStale": "選択したパッケージ、設定、承認が変更されました。記録を更新し、開始前に再選択してください。",
+  "pluginsServiceRunStart": "上限付きサービスを開始",
+  "pluginsServiceRunStartRejected": "開始応答がエラーを報告しました。現在のタスクは確認済みです。原因とクリーンアップ状態を確認してから続行してください。",
+  "pluginsServiceRunStartUnknown": "開始結果は不明です。試行識別子を保持しています。更新して確認してください。自動で再開始することはありません。",
+  "pluginsServiceRunStarting": "サービスを開始中",
+  "pluginsServiceRunStatusFailed": "現在のサービス状態を確認できませんでした。次の操作前に更新してください。",
+  "pluginsServiceRunStop": "サービスを停止",
+  "pluginsServiceRunStopping": "停止中・リスナーとワーカーの終了を待機",
+  "pluginsServiceRunSucceeded": "成功",
+  "pluginsServiceRunTask": "現在のタスク識別子",
+  "pluginsServiceRunTimeout": "ジョブのタイムアウト（ミリ秒、最大 30,000）",
+  "pluginsServiceRunTimeoutOutcome": "タイムアウト",
+  "pluginsServiceRunTitle": "API サービスを実行",
+  "pluginsServiceRunTotalBytes": "ワーカーのバイト上限（最大 67,108,864）",
+  "pluginsServiceRunTransport": "転送エラー",
+  "pluginsServiceRunUnavailable": "コンテンツストレージが利用不可",
+  "pluginsServiceSaveConfig": "設定を保存",
+  "pluginsServiceSavePublication": "公開承認を保存",
+  "pluginsServiceSaved": "保存しました。返されたリビジョンと実際の有効期限を以下で確認してください。",
+  "pluginsServiceScopeAttachment": "添付ファイルを閲覧",
+  "pluginsServiceScopeCreate": "コンテンツを作成",
+  "pluginsServiceScopeEdit": "コンテンツを編集",
+  "pluginsServiceScopeKind": "許可するコンテンツ操作",
+  "pluginsServiceScopeQuery": "操作を照会",
+  "pluginsServiceScopeRead": "コンテンツを閲覧",
+  "pluginsServiceScopeRename": "カード名を変更",
+  "pluginsServiceScopeSummary": "概要を閲覧",
+  "pluginsServiceScopesHelp": "認証を明示的に選択し、許可する操作と正確なオブジェクト識別子を追加してください。範囲や主体の削除には専用ボタンを使用します。編集中も既存の範囲を保持します。",
+  "pluginsServiceTitle": "サービス設定",
+  "pluginsServiceTls": "TLS を必須にする",
+  "pluginsServiceTlsAttempt": "この開始試行に紐付く証明書 PEM ダイジェスト",
+  "pluginsServiceTlsCertificate": "証明書チェーンを選択",
+  "pluginsServiceTlsChecked": "証明書と鍵の対応を確認しました。証明書 PEM の SHA-256 を以下に表示します。クライアント側では引き続きホスト名、有効期間、信頼チェーンの検証が必要です。",
+  "pluginsServiceTlsChecking": "選択した証明書を処理中…",
+  "pluginsServiceTlsFailed": "証明書の検査に失敗しました。PEM ファイル、鍵の対応、ローカルパスを確認して再試行してください。",
+  "pluginsServiceTlsHelp": "ループバック以外のアドレスには TLS が必要です。ここでは要件のみ保存し、リスナーや TLS ID は作成しません。",
+  "pluginsServiceTlsHint": "PEM 証明書チェーンと秘密鍵を選択して検査してください。開始時にファイルを再検査します。有効な証明書は自動でローテーションされません。",
+  "pluginsServiceTlsInspect": "証明書を検査",
+  "pluginsServiceTlsOutsideValidity": "証明書チェーンが有効期間前または期限切れです。証明書を確認または交換し、開始前に再検査してください。",
+  "pluginsServiceTlsPrivateKey": "秘密鍵を選択",
+  "pluginsServiceTlsRecheck": "開始前に証明書を再検査してください。時刻が変わっても以前の選択は復元されません。",
+  "pluginsServiceTlsUnavailable": "このバックエンドはローカル TLS 証明書の選択に対応していません。",
+  "pluginsServiceTlsValidity": "証明書チェーン共通の有効期間（UTC）：{start} ～ {end}。期限後はサービスを停止します。",
+  "pluginsServiceTokenDiscarded": "パネルを閉じたため、一度だけ表示されるトークンを消去しました。必要なら明示的に新規発行してください。",
+  "pluginsServiceTokenHelp": "このトークンは今だけ表示されます。必要なら明示的にコピーしてください。消去またはパネルを閉じるとセッションから削除され、一覧から取得できません。ローテーションすると以前のトークンが置き換わります。",
+  "pluginsServiceUncertainHelp": "まず元の記録を更新して確認してください。この通知の確認は次の明示的な操作を可能にするだけです。以前の変更の失敗を証明せず、再実行もしません。",
+  "pluginsServiceUnsupported": "未対応の過去の値",
+  "pluginsServiceWorking": "処理中…",
+  "pluginsServiceWriteUnknown": "直前の変更結果は不明です。再送していません。",
+  "pluginsServiceYes": "はい",
+  "pluginsSettingsUnknown": "設定はまだ確認されていません。状態を更新してから再度選択してください。",
+  "pluginsSnapshotDetails": "バックアップにはカード、添付ファイル、監査記録が含まれます。外部リソースは参照のままです。復旧には元のシステムアカウントが必要です。",
+  "pluginsSnapshotSaved": "添付ファイルと元の保護ファイルを含め、ライブラリをバックアップしました。",
+  "pluginsStateUnavailable": "プラグインの状態を読み込めませんでした。再試行してください。",
+  "pluginsSummary": "概要を閲覧",
+  "pluginsTextInput": "入力テキスト",
+  "pluginsThirdParty": "サードパーティ製プラグイン",
+  "pluginsTlsIdentitiesDisable": "ID を無効化",
+  "pluginsTlsIdentitiesEmpty": "このライブラリに保存済み ID はありません。",
+  "pluginsTlsIdentitiesFileMode": "次回開始：検査済みローカルファイル。",
+  "pluginsTlsIdentitiesHint": "ID を明示的に選択してください。置換や無効化により、その ID を使用するサービスは停止します。新たな開始には常に明示的な操作が必要です。",
+  "pluginsTlsIdentitiesImport": "インポート・置換用の証明書ファイルを準備",
+  "pluginsTlsIdentitiesReplace": "検査済みファイルで置換",
+  "pluginsTlsIdentitiesSave": "新しい ID として保存",
+  "pluginsTlsIdentitiesSaved": "保存しました。以下の ID とリビジョンを確認してから、新しい開始用に選択してください。",
+  "pluginsTlsIdentitiesSavedMode": "次回開始：保存済み ID。開始時にホストが証明書の有効期間を確認します。",
+  "pluginsTlsIdentitiesSelect": "次回開始に使用",
+  "pluginsTlsIdentitiesStale": "選択した ID が変更・無効化されたか、未更新です。現在の ID を選び直してください。",
+  "pluginsTlsIdentitiesTitle": "保存済み TLS ID",
+  "pluginsTlsIdentitiesUnknownHint": "確認前に記録を更新して点検してください。受領証がないことは変更の失敗を意味しません。確認せず再作成しないでください。",
+  "pluginsTlsIdentitiesUseFile": "次回開始に検査済みファイルを使用",
+  "pluginsTransform": "変換",
+  "pluginsTransformUnknown": "変換を確認できませんでした",
+  "pluginsUiExecution": "プラグインの実行が完了しませんでした。ビューを開き直して再試行してください。",
+  "pluginsUiRejected": "プラグインの操作は受け付けられませんでした。入力と現在の権限を確認してください。",
+  "pluginsUiUnavailable": "プラグインは利用できません。状態を確認してビューを開き直してください。",
+  "pluginsUnavailableView": "プラグインのビューは利用できません",
+  "pluginsUnconfirmed": "{reason}。操作は未確認です。更新後の状態を確認してから再度選択してください。",
+  "pluginsUninstallKeepContent": "アンインストール（内容を保持）",
+  "pluginsUninstallUnknown": "アンインストールを確認できませんでした",
+  "pluginsUninstalled": "アンインストールしました。既存のコンテンツは保持されています。",
+  "pluginsUpdatingView": "プレビューを更新中…",
+  "pluginsUseText": "代わりにテキストを使用",
+  "pluginsUseTransform": "変換を使用",
+  "pluginsViewFailed": "プラグインのビューを開けませんでした",
+  "pluginsWorkbench": "ワークスペースプラグイン",
+  "pluginsWorkbenchReadOnly": "プラグインは許可されていますが、ワークスペースは読み取り専用です。ライブラリまたはプラグインの問題を解決して状態を更新してください。",
+  "recoveryAllFiles": "すべてのファイル",
+  "recoveryBackupExists": "バックアップ先にファイルがあります。新しい名前を選んでください。",
+  "recoveryBackupFile": "ライブラリのバックアップ",
+  "recoveryBackupUnknown": "バックアップ結果の確認が必要です。現在のファイルを保持し、保存先を確認してください。",
+  "recoveryBindingMissing": "このライブラリには保護ファイルの関連付けがなく、選択したファイルと照合できません。",
+  "recoveryBusy": "別のプロセスが使用中です。他のウィンドウを閉じて再試行してください。",
+  "recoveryChooseKey": "復旧ファイルを選択",
+  "recoveryCloseFirst": "ワークスペースは実行中です。ライブラリを切り替える前に閉じてください。",
+  "recoveryFailed": "復旧が完了しませんでした。元のファイルを保持して再試行してください。",
+  "recoveryIdentityBusy": "このライブラリの別のコピーが使用中です。そちらを閉じてから開いてください。",
+  "recoveryIdentityMismatch": "登録されたライブラリ識別情報が一致しません。元のデータを保持し、正しいバックアップを復元してください。",
+  "recoveryKeyFile": "ライブラリ保護ファイル",
+  "recoveryKeyGuide": "保護ファイルがない、または破損している場合はバックアップを選んでください。このライブラリに属するファイルと、元のシステムアカウントが必要です。",
+  "recoveryKeyMismatch": "キーが一致しないか復号できません。元のファイルとシステムアカウントを使ってください。",
+  "recoveryKeyUnknown": "復旧結果の確認が必要です。再度開いてください。以前の保護ファイルがあった場合、そのコピーは保持されています。",
+  "recoveryLibraryInvalid": "ライブラリを検証または開けませんでした。元のライブラリと保護キーを保持して再試行してください。",
+  "recoveryMaintenance": "ライブラリの確認が必要です。元のファイルを保持し、診断の詳細を確認してください。",
+  "recoveryMissingKey": "保護キーがありません。元の .audit-key を復元して再試行してください。",
+  "recoveryMissingLibrary": "キーはありますが、ライブラリがないか空です。元のライブラリを復元してください。",
+  "recoveryOpenFailed": "ワークスペースを開けませんでした。プラグインとデータフォルダーを確認して再試行してください。",
+  "recoveryPluginUnavailable": "ワークスペースプラグインを利用できません。既存の内容は閲覧・書き出しできます。",
+  "recoveryRegistryInvalid": "有効なライブラリ登録が破損しているか未対応です。データ保護のため開く処理を中止しました。",
+  "recoveryRegistryUnreadable": "有効なライブラリまたは登録ファイルを読めません。元の場所を確認してください。代替ライブラリは自動作成しません。",
+  "recoveryRetry": "再試行",
+  "recoverySnapshot": "ライブラリのバックアップを復元",
+  "recoverySnapshotGuide": "バックアップを新しいフォルダーに復元して切り替えられます。元のフォルダーは保持します。内容はバックアップ時点に戻り、元のシステムアカウントが必要です。",
+  "recoverySnapshotInvalid": "バックアップの形式または整合性確認が無効です。元のバックアップを保持してください。",
+  "recoverySnapshotUnknown": "復元結果の確認が必要です。復元先を確認してください。元のライブラリは置き換えていません。",
+  "recoverySwitchUnconfirmed": "{path} に復元しましたが、切り替えは未確認です。このフォルダーを保持し、ワークスペースを開き直して確認してください。",
+  "recoverySwitchUnknown": "ライブラリの切り替えは未確認です。ワークスペースを開き直して確認してください。",
+  "recoveryTargetExists": "復元先は既に存在します。まだ存在しない新しいフォルダーを選んでください。",
+  "recoveryTitle": "ワークスペースを開き直す",
+  "visualApplyColor": "色を適用",
+  "visualApplyComponent": "このコンポーネントに適用",
+  "visualApplyTexture": "メディアを適用",
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "visualAttachmentFailure": "ファイル操作に失敗しました。ファイルと空き容量を確認してください。",
+  "visualAttachmentPreview": "ローカル添付のプレビュー",
+  "visualAttachmentReadFailure": "添付を読み取れませんでした。再度読み込んでください。",
+  "visualAudio": "音声",
+  "visualAudioStateFailure": "音声の状態を確認できませんでした。再試行してください。",
+  "visualAutoLyrics": "歌詞がない場合は自動でオンライン検索",
+  "visualCancel": "キャンセル",
+  "visualChangeCover": "アートワークを変更",
+  "visualChooseAudio": "音声ファイル、または同名の LRC 歌詞ファイルを選んでください。",
+  "visualChooseLyrics": "LRC または TXT の歌詞ファイルを選んでください。",
+  "visualClickPreview": "選択してプレビュー",
+  "visualClose": "閉じる",
+  "visualCloseDialog": "ダイアログを閉じる",
+  "visualCloseWindow": "ウィンドウを閉じる",
+  "visualCollapsePlaylist": "プレイリストを折りたたむ",
+  "visualColorGuide": "ホイールをドラッグして色相と彩度を選び、明るさを調整します。色の値も入力できます。",
+  "visualColorTitle": "自分の空間に彩りを",
+  "visualComponentCompass": "{title} · カラーホイール",
+  "visualComponents": "コンポーネントとカード",
+  "visualComponentsGuide": "既定では各項目はテーマに従います。1 枚のカードを変更しても他には影響しません。",
+  "visualCornerTips1": "すべてのアイデアが役立つ必要はありません。\n今日を少し面白くするだけでも。",
+  "visualCornerTips2": "書き留めたら、育てていきましょう。\n最初から完成していなくても大丈夫。",
+  "visualCornerTips3": "自分のための余白を少し。\n好奇心にも呼吸する場所が必要です。",
+  "visualCornerTips4": "今日は何か新しいことを。\n小さな寄り道に驚きがあるかも。",
+  "visualCornerTips5": "空想にも行き先はあります。\n思考が散歩する道を作りましょう。",
+  "visualCornerTips6": "好きなことに時間を。\n価値を証明しなくてもいいのです。",
+  "visualCornerTips7": "進歩は小さくても。\n始めようと思ったことにも意味があります。",
+  "visualCornerTips8": "時には窓の外を。\n暮らしもひらめきの源です。",
+  "visualCover": "アートワーク",
+  "visualCustomCompass": "カラーホイール · カスタム",
+  "visualCustomMaterialGuide": "オフにするとテーマに従います。この項目の個別設定は保持されます。",
+  "visualDefaultOpen": "既定のアプリで開く",
+  "visualDownloadOpen": "ダウンロードして開く",
+  "visualEmbeddedLyrics": "音声に埋め込み済み",
+  "visualExpandPlaylist": "プレイリストを展開",
+  "visualFile": "ファイル",
+  "visualFileOpenFailure": "ファイルを開けませんでした。対応アプリを入れるか、添付を保存して別のアプリで開いてください。",
+  "visualFileRetry": "ファイル操作に失敗しました。再試行してください。",
+  "visualFindLyrics": "歌詞を探す",
+  "visualFindLyricsGuide": "LRCLIB で曲名とアーティストを検索し、合うバージョンを選んでください。",
+  "visualFollowTheme": "テーマに合わせる",
+  "visualFooterLyrics": "フッターに歌詞を表示",
+  "visualFooterTips": "フッターにヒントを表示",
+  "visualFooterTips1": "急がなくて大丈夫。好奇心に少し時間を。",
+  "visualFooterTips10": "すべての時間を埋めなくても。余白を残しましょう。",
+  "visualFooterTips2": "思いつきをメモ。整理は後でできます。",
+  "visualFooterTips3": "大きなアイデアを、今日の小さな一歩に。",
+  "visualFooterTips4": "少し伸びをして、目を休めましょう。",
+  "visualFooterTips5": "アイデアの答えは、まだなくても大丈夫。",
+  "visualFooterTips6": "ゆっくり進むと見つかることもあります。",
+  "visualFooterTips7": "細部を残すことも、アイデアを育てる方法。",
+  "visualFooterTips8": "今日のメモが、明日の始まりになるかも。",
+  "visualFooterTips9": "思いを巡らせたら、好きなことに戻りましょう。",
+  "visualFrosting": "すりガラス効果",
+  "visualGif": "アニメーション GIF",
+  "visualHexColor": "HEX カラー",
+  "visualHexInvalid": "6 桁の 16 進数カラーを入力してください。",
+  "visualImage": "画像",
+  "visualImageDecodeFailure": "画像をデコードできません。保存して別のアプリで開いてください。",
+  "visualImageLoadFailure": "画像を読み込めませんでした: {name}",
+  "visualImageNotImported": "{name}（画像未読み込み）",
+  "visualImageUnavailable": "画像を利用できません: {name}",
+  "visualImportFailure": "読み込みに失敗しました。ファイル、文字コード、空き容量を確認してください。",
+  "visualImportLyrics": "歌詞を読み込む",
+  "visualImportMusic": "音楽を読み込む",
+  "visualImportMusicHint": "＋でローカルの曲を追加",
+  "visualIndependentMaterial": "カスタムの質感",
+  "visualInheritColor": "テーマの色を使う",
+  "visualLinkFailure": "リンクを開けませんでした。アドレスをコピーして再試行してください。",
+  "visualLoadImage": "画像を読み込む · {name}",
+  "visualLoading": "読み込み中…",
+  "visualLyricsEmpty": "歌詞ファイルが空です。",
+  "visualLyricsFile": "歌詞ファイル",
+  "visualLyricsImportHint": "歌詞ファイルを読み込むか、オンラインで検索してください。",
+  "visualLyricsLoading": "歌詞を読み込み中…",
+  "visualLyricsMatch": "{album}\n{kind} · {seconds} 秒",
+  "visualLyricsMissing": "歌詞が見つかりません。ファイルを読み込むか再検索してください。",
+  "visualLyricsNotFound": "歌詞が見つかりません。曲名やアーティストを変えてみてください。",
+  "visualLyricsOnPlay": "再生中に歌詞を自動で読み込む",
+  "visualLyricsParseFailure": "歌詞を解析できませんでした。もう一度読み込んでください。",
+  "visualLyricsReadFailure": "歌詞を読み込めませんでした。手動で取り込むか再試行してください。",
+  "visualLyricsServiceFailure": "歌詞サービスに接続できませんでした。後で再試行するか、ローカルの歌詞を読み込んでください。",
+  "visualLyricsSize": "歌詞ファイルは 1 MB 以下にしてください。",
+  "visualLyricsSources": "ローカルファイル → 埋め込み → LRCLIB",
+  "visualLyricsVersions": "複数のバージョンが見つかりました。検索画面で選んでください。",
+  "visualMaterialPreview": "質感のプレビュー",
+  "visualMaximize": "最大化",
+  "visualMediaAddress": "メディアのアドレス",
+  "visualMediaAddressInvalid": "ログイン情報を含まない有効な HTTP / HTTPS アドレスを入力してください。",
+  "visualMediaPreviewFailure": "このメディアはプレビューできません。保存して別のアプリで開いてください。",
+  "visualMediaType": "メディアの種類",
+  "visualMinimize": "最小化",
+  "visualMusic": "音楽",
+  "visualMusicEmptyTitle": "音楽にも居場所を",
+  "visualMusicPlayer": "音楽プレーヤー",
+  "visualNextTrack": "次の曲",
+  "visualNoLyricsRead": "歌詞が読み込まれていません",
+  "visualNoLyricsTitle": "♪ {title} · 歌詞なし",
+  "visualNoTimeline": "時間情報なし",
+  "visualOpacity": "不透明度",
+  "visualOptionalArtist": "アーティスト（省略可）",
+  "visualPauseMusic": "音楽を一時停止",
+  "visualPaused": "一時停止中",
+  "visualPlainLyrics": "通常の歌詞",
+  "visualPlayMusic": "音楽を再生",
+  "visualPlaybackFailure": "曲を再生できません。ファイルを確認するか、別の音声形式を試してください。",
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "visualPlaybackRequestFailure": "再生を開始できませんでした。再試行してください。",
+  "visualPlaying": "再生中",
+  "visualPlaylistEmpty": "プレイリストは空です",
+  "visualPlaylistLyricsHint": "プレイリストのメニューから LRC 歌詞を追加",
+  "visualPlaylistSaved": "プレイリストと歌詞は自動保存されます",
+  "visualPlaylistUpdateFailure": "プレイリストを更新できませんでした。再試行してください。",
+  "visualPreviewColor": "色をプレビュー",
+  "visualPreviousTrack": "前の曲",
+  "visualRemoveAttachment": "添付ファイルを削除",
+  "visualRemoveTrack": "プレイリストから削除",
+  "visualResetMaterial": "テーマに戻す",
+  "visualRestoreWindow": "元のサイズに戻す",
+  "visualSaveAttachment": "添付ファイルを別名で保存",
+  "visualSearch": "検索",
+  "visualSearchLyrics": "歌詞を検索",
+  "visualSongCover": "アルバムアート",
+  "visualSongTitle": "曲名",
+  "visualSyncedLyrics": "同期歌詞",
+  "visualTextureFailure": "メディアを読み込めませんでした。ファイル、アドレス、形式を確認してください。Web メディアにはクロスオリジンアクセスの許可も必要です。",
+  "visualTextureLinkGuide": "画像、GIF、動画の直接の HTTP / HTTPS リンクを貼り付けてください。共有ページの場合は元のメディア URL を探してください。",
+  "visualTextureLinkTitle": "インスピレーションを取り込む",
+  "visualTexturePlaybackGuide": "動画は既定で無音ループ再生します。音声は設定で有効にできます。オンラインメディアは Web でのクロスオリジン読み込みを含め、アクセスを許可する必要があります。",
+  "visualTipsMaterialGuide": "オフではヒントは透明、オンでは下の質感を使用します。個別の値は保持されます。",
+  "visualTransparentTips": "透明オーバーレイ（既定）",
+  "visualUseCustomMaterial": "質感を個別に設定",
+  "visualVideo": "動画",
+  "visualViewLyrics": "歌詞を表示"
+}

@@ -111,6 +111,29 @@ class _RotatingTipState extends State<RotatingTip> {
   }
 }
 
+/// Tips float over the canvas. Material is opt-in using the existing per-
+/// component editor; the default has no blur, fill, shadow or border.
+class FooterOverlay extends StatelessWidget {
+  const FooterOverlay({super.key, required this.music});
+  final MusicController music;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = AppearanceScope.of(context);
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      child: MusicFooter(music: music),
+    );
+    return Padding(
+      key: const ValueKey('footer-dock'),
+      padding: const EdgeInsets.only(top: 8),
+      child: p.surfaces.components['footer']?.enabled == true
+          ? Glass(componentId: 'footer', p: p, radius: 14, child: content)
+          : content,
+    );
+  }
+}
+
 class MusicFooter extends StatelessWidget {
   const MusicFooter({super.key, required this.music});
   final MusicController music;

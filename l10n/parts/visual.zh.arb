@@ -598,5 +598,9 @@
   "visualFileOpenFailure": "无法打开文件，请先安装对应应用，或将附件另存后打开。",
   "@visualFileOpenFailure": {
     "description": "Visual interface: FileOpenFailure"
-  }
+  },
+  "visualTransparentTips": "透明浮层（默认）",
+  "visualTipsMaterialGuide": "关闭时保持透明浮层；开启后使用下方材质。自定义参数会保留。",
+  "visualResetMaterial": "重置为跟随主题",
+  "visualInheritColor": "使用主题染色"
 }

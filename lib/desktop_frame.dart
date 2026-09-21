@@ -104,7 +104,12 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
                           const SizedBox(width: 8),
                           Text(
                             'Morrow',
-                            style: TextStyle(fontSize: 12, color: p.ink),
+                            style: TextStyle(
+                              inherit: false,
+                              fontFamily: 'Segoe UI',
+                              fontSize: 12,
+                              color: p.ink,
+                            ),
                           ),
                         ],
                       ),
@@ -178,7 +183,14 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
           ? contents
           : DragToResizeArea(
               resizeEdgeSize: 5,
-              child: ClipRRect(borderRadius: radius, child: contents),
+              child: ClipRRect(
+                key: const ValueKey('desktop-canvas-clip'),
+                borderRadius: radius,
+                // Composite overlapping canvas/caption/border layers first,
+                // then apply coverage once to avoid dark seams at the arc.
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: contents,
+              ),
             ),
     );
   }

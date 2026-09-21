@@ -24,3 +24,18 @@ String? hostStorageNotice(AppLocalizations l, String detail) =>
       "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。" => l.recoveryRegistryUnreadable,
       _ => null,
     };
+
+/// Present a known host failure without leaking paths, plugin payloads or keys.
+String? storageFailureNotice(AppLocalizations l, Object error) {
+  if (error is! StateError) return null;
+  final detail = error.message.toString();
+  return hostStorageNotice(l, detail) ??
+      switch (detail) {
+        'plugin unavailable' ||
+        '工作台当前只读，请检查插件权限和内容库状态。' ||
+        '请先启用工作台插件。' => l.mainSaveReadOnly,
+        'Content service transport outcome is unknown' =>
+          l.mainSaveConnectionUnknown,
+        _ => null,
+      };
+}

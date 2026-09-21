@@ -598,5 +598,9 @@
   "visualFileOpenFailure": "The file could not be opened. Install a compatible app, or save the attachment and open it there.",
   "@visualFileOpenFailure": {
     "description": "Visual interface: FileOpenFailure"
-  }
+  },
+  "visualTransparentTips": "Transparent overlay (default)",
+  "visualTipsMaterialGuide": "Off keeps tips transparent; on uses the material below. Your custom values are retained.",
+  "visualResetMaterial": "Reset to theme",
+  "visualInheritColor": "Use theme tint"
 }

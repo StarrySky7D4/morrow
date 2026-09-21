@@ -1,0 +1,606 @@
+{
+  "@@locale": "ru",
+  "visualCloseDialog": "Закрыть диалог",
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "visualCancel": "Отмена",
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "visualClose": "Закрыть",
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "visualColorTitle": "Добавьте цвет в своё пространство",
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "visualColorGuide": "Перетащите круг, чтобы выбрать тон и насыщенность, затем настройте яркость. Можно также ввести значение цвета.",
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "visualHexColor": "Цвет HEX",
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "visualHexInvalid": "Введите шестизначный шестнадцатеричный цвет.",
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "visualPreviewColor": "Предпросмотр цвета",
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "visualApplyColor": "Применить цвет",
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "visualComponents": "Компоненты и карточки",
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "visualComponentsGuide": "По умолчанию элементы следуют теме. Настройка одной карточки не изменит остальные.",
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "visualIndependentMaterial": "Свой материал",
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "visualFollowTheme": "По теме",
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "visualMaterialPreview": "Предпросмотр материала",
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "visualUseCustomMaterial": "Использовать свой материал",
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "visualCustomMaterialGuide": "Выключите, чтобы следовать теме, сохранив свои настройки этого элемента.",
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "visualFrosting": "Размытие",
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "visualOpacity": "Непрозрачность",
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "visualCustomCompass": "Цветовой круг · Настройка",
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "visualApplyComponent": "Применить к этому компоненту",
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "visualAttachmentFailure": "Ошибка работы с файлом. Проверьте файл и свободное место.",
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "visualSaveAttachment": "Сохранить вложение как",
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "visualRemoveAttachment": "Удалить вложение",
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "visualMediaPreviewFailure": "Предпросмотр недоступен. Сохраните медиа и откройте в другом приложении.",
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "visualAttachmentReadFailure": "Не удалось прочитать вложение. Импортируйте заново.",
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "visualAttachmentPreview": "Предпросмотр локального вложения",
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "visualImageDecodeFailure": "Не удалось декодировать изображение. Сохраните и откройте в другом приложении.",
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "visualLinkFailure": "Не удалось открыть ссылку. Скопируйте адрес и повторите.",
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "visualImage": "Изображение",
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "visualGif": "Анимированный GIF",
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "visualVideo": "Видео",
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "visualAudio": "Аудио",
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "visualFile": "Файл",
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "visualTextureFailure": "Не удалось загрузить медиа. Проверьте файл, адрес или формат. Для веб-медиа также нужен разрешённый доступ между источниками.",
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "visualTextureLinkTitle": "Добавьте вдохновения",
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "visualTextureLinkGuide": "Вставьте прямую HTTP- или HTTPS-ссылку на изображение, GIF или видео. Для страниц сначала найдите адрес исходного медиа.",
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "visualMediaAddress": "Адрес медиа",
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "visualMediaAddressInvalid": "Введите корректный HTTP- или HTTPS-адрес без данных входа.",
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "visualMediaType": "Тип медиа",
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "visualTexturePlaybackGuide": "Видео повторяется без звука; звук включается в настройках. Онлайн-медиа должны разрешать доступ, включая междоменную загрузку в веб-версии.",
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "visualApplyTexture": "Применить медиа",
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "visualMusic": "Музыка",
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "visualChooseAudio": "Выберите аудиофайл или одноимённый файл LRC.",
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "visualLyricsFile": "Файл текста песни",
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "visualSongCover": "Обложка альбома",
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "visualChooseLyrics": "Выберите файл текста песни LRC или TXT.",
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "visualLyricsSize": "Размер файла текста песни — до 1 МБ.",
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "visualLyricsEmpty": "Файл текста песни пуст.",
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "visualImportFailure": "Ошибка импорта. Проверьте файл, кодировку и свободное место.",
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "visualNoLyricsRead": "Текст песни не загружен",
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "visualLyricsImportHint": "Импортируйте файл текста песни или найдите онлайн.",
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "visualMusicPlayer": "Музыкальный плеер",
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "visualImportMusic": "Импортировать музыку",
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "visualChangeCover": "Изменить обложку",
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "visualMusicEmptyTitle": "Оставьте место для музыки",
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "visualLoading": "Загрузка…",
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "visualImportMusicHint": "Нажмите +, чтобы добавить песни с устройства",
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "visualPlaying": "Воспроизводится",
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "visualPaused": "На паузе",
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "visualPreviousTrack": "Предыдущая песня",
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "visualPauseMusic": "Приостановить музыку",
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "visualPlayMusic": "Включить музыку",
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "visualNextTrack": "Следующая песня",
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "visualCollapsePlaylist": "Свернуть плейлист",
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "visualExpandPlaylist": "Развернуть плейлист",
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "visualFooterLyrics": "Показывать текст песни внизу",
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "visualFooterTips": "Показывать подсказки внизу",
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "visualPlaylistLyricsHint": "Импортируйте LRC через меню плейлиста",
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "visualPlaylistSaved": "Плейлист и текст песен сохраняются автоматически",
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "visualPlaylistEmpty": "Плейлист пуст",
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "visualRemoveTrack": "Удалить из плейлиста",
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "visualAutoLyrics": "Автоматически искать отсутствующий текст песни онлайн",
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "visualLyricsSources": "Файл → Встроенный текст → LRCLIB",
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "visualLyricsOnPlay": "Загружать текст песни при воспроизведении",
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "visualCover": "Обложка",
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "visualSearchLyrics": "Поиск текста песни",
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "visualViewLyrics": "Просмотр текста песни",
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "visualImportLyrics": "Импортировать текст песни",
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "visualLyricsServiceFailure": "Не удалось подключиться к службе текстов песен. Повторите позже или импортируйте файл.",
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "visualFindLyrics": "Найти текст песни",
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "visualFindLyricsGuide": "Ищите в LRCLIB по песне и исполнителю, затем выберите нужную версию.",
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "visualSongTitle": "Название песни",
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "visualOptionalArtist": "Исполнитель (необязательно)",
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "visualLyricsNotFound": "Текст песни не найден. Попробуйте другое название или исполнителя.",
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "visualSyncedLyrics": "Синхронизированный текст",
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "visualPlainLyrics": "Обычный текст песни",
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "visualSearch": "Поиск",
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "visualEmbeddedLyrics": "Встроено в аудио",
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "visualLyricsLoading": "Загрузка текста песни…",
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "visualLyricsParseFailure": "Не удалось разобрать текст песни. Импортируйте заново.",
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "visualNoTimeline": "Нет временных меток",
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "visualMinimize": "Свернуть",
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "visualMaximize": "Развернуть",
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "visualRestoreWindow": "Восстановить",
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "visualCloseWindow": "Закрыть окно",
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "visualDownloadOpen": "Скачать для открытия",
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "visualDefaultOpen": "Открыть приложением по умолчанию",
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "visualClickPreview": "Нажмите для просмотра",
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "visualComponentCompass": "{title} · Цветовой круг",
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageLoadFailure": "Не удалось загрузить изображение: {name}",
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLoadImage": "Загрузить изображение · {name}",
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageNotImported": "{name} (изображение не импортировано)",
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageUnavailable": "Изображение недоступно: {name}",
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLyricsMatch": "{album}\n{kind} · {seconds, plural, one{{seconds} секунда} few{{seconds} секунды} many{{seconds} секунд} other{{seconds} секунды}}",
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "visualNoLyricsTitle": "♪ {title} · Нет текста песни",
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualCornerTips1": "Не каждая идея должна быть полезной.\nНекоторые просто делают день интереснее.",
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "visualCornerTips2": "Запишите и дайте вырасти.\nИдея не обязана сразу быть законченной.",
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "visualCornerTips3": "Оставьте немного места для себя.\nЛюбопытству нужен простор.",
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "visualCornerTips4": "Попробуйте сегодня что-то новое.\nМаленький обход может удивить.",
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "visualCornerTips5": "Мечты тоже куда-то ведут.\nДайте мыслям побродить.",
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "visualCornerTips6": "Находите время для любимого.\nНе нужно доказывать его ценность.",
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "visualCornerTips7": "Прогресс бывает небольшим.\nГотовность начать уже важна.",
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "visualCornerTips8": "Иногда смотрите в окно.\nЖизнь тоже вдохновляет.",
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "visualFooterTips1": "Ничего срочного. Дайте любопытству немного времени.",
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "visualFooterTips2": "Запишите мысль. Разобрать можно позже.",
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "visualFooterTips3": "Превратите большую идею в один маленький шаг на сегодня.",
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "visualFooterTips4": "Потянитесь и дайте глазам отдохнуть.",
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "visualFooterTips5": "Идея пока может оставаться без ответа.",
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "visualFooterTips6": "Некоторые открытия приходят, когда не спешишь.",
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "visualFooterTips7": "Сохранённая деталь помогает идее вырасти.",
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "visualFooterTips8": "Сегодняшняя заметка может стать завтрашним началом.",
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "visualFooterTips9": "Дайте мыслям побродить, затем вернитесь к любимому.",
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "visualFooterTips10": "Не нужно занимать каждую минуту. Оставьте немного свободы.",
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "visualLyricsMissing": "Текст песни не найден. Импортируйте файл или повторите поиск.",
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "visualLyricsVersions": "Найдено несколько версий. Выберите нужную в поиске.",
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "visualLyricsReadFailure": "Не удалось загрузить текст песни. Импортируйте вручную или повторите.",
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "visualPlaybackFailure": "Песня не воспроизводится. Проверьте файл или попробуйте другой аудиоформат.",
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "visualPlaybackRequestFailure": "Не удалось начать воспроизведение. Повторите.",
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "visualAudioStateFailure": "Не удалось подтвердить состояние аудио. Повторите.",
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "visualPlaylistUpdateFailure": "Не удалось обновить плейлист. Повторите.",
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "visualFileRetry": "Ошибка работы с файлом. Повторите.",
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "visualFileOpenFailure": "Не удалось открыть файл. Установите совместимое приложение или сохраните вложение и откройте его там.",
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "visualTransparentTips": "Прозрачное наложение (по умолчанию)",
+  "visualTipsMaterialGuide": "Выключено — прозрачные подсказки; включено — материал ниже. Свои значения сохраняются.",
+  "visualResetMaterial": "Вернуть тему",
+  "visualInheritColor": "Использовать цвет темы"
+}

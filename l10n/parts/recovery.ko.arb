@@ -1,0 +1,42 @@
+{
+  "@@locale": "ko",
+  "recoveryTitle": "작업 공간 다시 열기",
+  "recoveryOpenFailed": "작업 공간을 열지 못했습니다. 플러그인 파일과 데이터 폴더를 확인하고 다시 시도하세요.",
+  "recoveryFailed": "복구가 완료되지 않았습니다. 원본 파일을 보존하고 다시 시도하세요.",
+  "recoverySnapshotGuide": "라이브러리 백업을 새 폴더에 복원한 뒤 전환할 수 있습니다. 원래 폴더는 유지됩니다. 백업 당시의 내용으로 복원되며 원래 시스템 계정이 필요합니다.",
+  "recoverySnapshot": "라이브러리 백업 복원",
+  "recoveryKeyGuide": "보호 파일이 없거나 손상되었다면 백업을 선택하세요. 이 라이브러리의 파일이어야 하며 원래 시스템 계정이 필요합니다.",
+  "recoveryRetry": "다시 시도",
+  "recoveryChooseKey": "복구 파일 선택",
+  "recoveryBackupFile": "라이브러리 백업",
+  "recoveryKeyFile": "라이브러리 보호 파일",
+  "recoveryAllFiles": "모든 파일",
+  "recoveryPluginUnavailable": "작업 공간 플러그인을 사용할 수 없습니다. 기존 콘텐츠는 보고 내보낼 수 있습니다.",
+  "recoveryMaintenance": "라이브러리 점검이 필요합니다. 원본 파일을 보존하고 진단 내용을 확인하세요.",
+  "recoverySwitchUnconfirmed": "{path}에 복원했지만 전환은 확인되지 않았습니다. 이 폴더를 보존하고 작업 공간을 다시 열어 확인하세요.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "보호 키가 없습니다. 원래 .audit-key 파일을 복원하고 다시 시도하세요.",
+  "recoveryKeyMismatch": "키가 일치하지 않거나 복호화할 수 없습니다. 원래 파일과 시스템 계정을 사용하세요.",
+  "recoveryMissingLibrary": "키는 있지만 라이브러리가 없거나 비어 있습니다. 원래 라이브러리를 복원하세요.",
+  "recoveryIdentityBusy": "이 라이브러리의 다른 사본이 사용 중입니다. 해당 작업 공간을 닫은 후 여세요.",
+  "recoveryBusy": "다른 프로세스가 라이브러리를 사용 중입니다. 다른 창을 닫고 다시 시도하세요.",
+  "recoveryTargetExists": "복원 대상이 이미 있습니다. 아직 존재하지 않는 새 폴더를 선택하세요.",
+  "recoverySnapshotUnknown": "복원 결과를 확인해야 합니다. 대상 폴더를 확인하세요. 원래 라이브러리는 교체하지 않았습니다.",
+  "recoverySnapshotInvalid": "백업 형식 또는 무결성 검사가 올바르지 않습니다. 원래 백업 파일을 보존하세요.",
+  "recoveryBackupExists": "백업 위치에 파일이 이미 있습니다. 새 이름을 선택하세요.",
+  "recoveryBackupUnknown": "백업 결과를 확인해야 합니다. 현재 파일을 보존하고 저장 위치를 확인하세요.",
+  "recoveryBindingMissing": "이 라이브러리에 연결된 보호 파일이 없어 선택한 파일을 대조할 수 없습니다.",
+  "recoveryKeyUnknown": "복구 결과를 확인해야 합니다. 다시 열어 보세요. 이전 보호 파일이 있었다면 사본을 보존했습니다.",
+  "recoveryLibraryInvalid": "라이브러리를 검증하거나 열지 못했습니다. 원래 라이브러리와 보호 키를 보존하고 다시 시도하세요.",
+  "recoveryCloseFirst": "작업 공간이 실행 중입니다. 라이브러리를 전환하기 전에 닫으세요.",
+  "recoveryIdentityMismatch": "등록된 라이브러리 식별 정보가 일치하지 않습니다. 원본 데이터를 보존하고 올바른 백업을 복원하세요.",
+  "recoveryRegistryInvalid": "활성 라이브러리 등록이 손상되었거나 지원되지 않습니다. 데이터를 보호하기 위해 열기를 중단했습니다.",
+  "recoverySwitchUnknown": "라이브러리 전환이 확인되지 않았습니다. 작업 공간을 다시 열어 확인하세요.",
+  "recoveryRegistryUnreadable": "활성 라이브러리나 등록 파일을 읽을 수 없습니다. 원래 위치를 확인하세요. 대체 라이브러리는 자동 생성하지 않습니다."
+}

@@ -1,5 +1,8 @@
+import '../settings_surface.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
+import '../appearance.dart';
+import 'io_settings_page.dart';
 import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
@@ -93,6 +96,8 @@ abstract interface class ExternalPluginControl {
   );
 }
 
+enum PluginLibraryMode { library, io }
+
 class PluginLibrary extends StatefulWidget {
   const PluginLibrary({
     super.key,
@@ -103,12 +108,16 @@ class PluginLibrary extends StatefulWidget {
     required this.line,
     required this.radius,
     this.pickPackage,
+    this.openIo,
+    this.mode = PluginLibraryMode.library,
   });
+  final PluginLibraryMode mode;
   final ExternalPluginControl backend;
   final VoidCallback onChanged;
   final Color ink, muted, line;
   final BorderRadius radius;
   final Future<String?> Function()? pickPackage;
+  final Future<void> Function()? openIo;
   @override
   State<PluginLibrary> createState() => _PluginLibraryState();
 }
@@ -381,6 +390,24 @@ class _PluginLibraryState extends State<PluginLibrary> {
         await _loadPages(backend, epoch);
         if (_current(backend, epoch)) widget.onChanged();
       }, (l) => l.pluginsApprovalUnknown);
+  Future<void> _openIo() => _guard((backend, epoch) async {
+    await _closeForm(epoch);
+    if (!mounted || !_current(backend, epoch)) return;
+    if (widget.openIo != null) {
+      await widget.openIo!();
+    } else {
+      await Navigator.of(context).push<void>(
+        CanvasSettingsRoute<void>(
+          builder: (_) =>
+              IoSettingsPage(backend: backend, onChanged: widget.onChanged),
+        ),
+      );
+    }
+    if (!_current(backend, epoch)) return;
+    await _loadPages(backend, epoch);
+    if (_current(backend, epoch)) widget.onChanged();
+  }, (l) => l.pluginsApprovalUnknown);
+
   Future<void> _configureIo(PluginLibraryEntry entry, {bool revoke = false}) =>
       _guard((backend, epoch) async {
         final revision = _revision!;
@@ -730,8 +757,6 @@ class _PluginLibraryState extends State<PluginLibrary> {
           if (entry.builtin)
             _note(L10n.of(context).pluginsManageAbove)
           else ...[
-            if (entry.declaredIo.isNotEmpty || entry.approvedIo.isNotEmpty)
-              _ioPermissions(entry),
             if (entry.declared.isNotEmpty) ...[
               const SizedBox(height: 12),
               _note(L10n.of(context).pluginsContentPermissions),
@@ -903,168 +928,273 @@ class _PluginLibraryState extends State<PluginLibrary> {
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(19),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          L10n.of(context).pluginsThirdParty,
-          style: TextStyle(
-            color: widget.ink,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => widget.mode == PluginLibraryMode.io
+      ? _ioSettings()
+      : Padding(
+          padding: const EdgeInsets.all(19),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                L10n.of(context).pluginsThirdParty,
+                style: TextStyle(
+                  color: widget.ink,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SettingsNavigationFeedback(
+                child: ListTile(
+                  key: const ValueKey('io-settings-open'),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: widget.radius,
+                    side: BorderSide(color: widget.line),
+                  ),
+                  title: Text(
+                    L10n.of(context).mainIoSettings,
+                    style: TextStyle(color: widget.ink, fontSize: 13),
+                  ),
+                  subtitle: Text(
+                    L10n.of(context).mainIoSettingsSummary,
+                    style: TextStyle(
+                      color: widget.muted,
+                      fontSize: 11,
+                      height: 1.5,
+                    ),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: _busy ? null : _openIo,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _note(L10n.of(context).pluginsImportDetails),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _button(
+                    L10n.of(context).pluginsChoosePackage,
+                    'plugin-pick',
+                    _inspect,
+                    icon: Icons.add,
+                  ),
+                  _button(
+                    L10n.of(context).pluginsRefreshList,
+                    'plugin-refresh',
+                    _refresh,
+                    icon: Icons.refresh,
+                  ),
+                ],
+              ),
+              if (_busy)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: LinearProgressIndicator(),
+                ),
+              if (_message != null) _note(_message!(L10n.of(context))),
+              if (_preview != null)
+                Container(
+                  key: const ValueKey('plugin-preview'),
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: widget.line),
+                    borderRadius: widget.radius,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        L10n.of(
+                          context,
+                        ).pluginsImportPreview(_preview!.entries.single.name),
+                        style: TextStyle(color: widget.ink),
+                      ),
+                      _facts(_preview!.entries.single),
+                      _note(L10n.of(context).pluginsInspectedOnly),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          _button(
+                            L10n.of(context).pluginsImport,
+                            'plugin-import',
+                            _import,
+                          ),
+                          _button(
+                            L10n.of(context).pluginsCancel,
+                            'plugin-cancel-import',
+                            () => setState(() {
+                              _preview = null;
+                              _candidatePath = null;
+                            }),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              if (_confirmed && _entries.isEmpty)
+                _note(L10n.of(context).pluginsEmptyLibrary),
+              ..._entries.map(_entry),
+            ],
           ),
+        );
+  Widget _ioGroup(String id, Widget child) => Glass(
+    key: ValueKey('io-group:$id'),
+    componentId: 'io:$id',
+    p: AppearanceScope.of(context),
+    child: Padding(padding: const EdgeInsets.all(20), child: child),
+  );
+
+  Widget _ioSettings() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      _note(L10n.of(context).mainIoSettingsGuide),
+      const SizedBox(height: 12),
+      Align(
+        alignment: Alignment.centerRight,
+        child: _button(
+          L10n.of(context).pluginsRefreshList,
+          'plugin-refresh',
+          _refresh,
+          icon: Icons.refresh,
         ),
-        _note(L10n.of(context).pluginsImportDetails),
-        Wrap(
-          spacing: 8,
-          children: [
-            _button(
-              L10n.of(context).pluginsChoosePackage,
-              'plugin-pick',
-              _inspect,
-              icon: Icons.add,
-            ),
-            _button(
-              L10n.of(context).pluginsRefreshList,
-              'plugin-refresh',
-              _refresh,
-              icon: Icons.refresh,
-            ),
-          ],
-        ),
-        if (_busy)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8),
-            child: LinearProgressIndicator(),
-          ),
-        if (_message != null) _note(_message!(L10n.of(context))),
-        if (_preview != null)
-          Container(
-            key: const ValueKey('plugin-preview'),
-            margin: const EdgeInsets.symmetric(vertical: 12),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              border: Border.all(color: widget.line),
-              borderRadius: widget.radius,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+      if (_busy) const LinearProgressIndicator(),
+      if (_message != null) _note(_message!(L10n.of(context))),
+      const SizedBox(height: 16),
+      SettingsSections(
+        children: [
+          _ioGroup(
+            'permissions',
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  L10n.of(
-                    context,
-                  ).pluginsImportPreview(_preview!.entries.single.name),
-                  style: TextStyle(color: widget.ink),
+                  L10n.of(context).pluginsIoTitle,
+                  style: TextStyle(
+                    color: widget.ink,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                _facts(_preview!.entries.single),
-                _note(L10n.of(context).pluginsInspectedOnly),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    _button(
-                      L10n.of(context).pluginsImport,
-                      'plugin-import',
-                      _import,
+                if (_confirmed &&
+                    !_entries.any(
+                      (e) => e.declaredIo.isNotEmpty || e.approvedIo.isNotEmpty,
+                    ))
+                  _note(L10n.of(context).mainIoNoDeclarations),
+                for (final entry in _entries.where(
+                  (e) => e.declaredIo.isNotEmpty || e.approvedIo.isNotEmpty,
+                ))
+                  PageStorage(
+                    key: ValueKey('io-permission-storage-${entry.id}'),
+                    bucket: PageStorageBucket(),
+                    child: ExpansionTile(
+                      key: ValueKey('plugin-io-entry-${entry.id}'),
+                      tilePadding: EdgeInsets.zero,
+                      title: Text(entry.name),
+                      children: [_ioPermissions(entry)],
                     ),
-                    _button(
-                      L10n.of(context).pluginsCancel,
-                      'plugin-cancel-import',
-                      () => setState(() {
-                        _preview = null;
-                        _candidatePath = null;
-                      }),
-                    ),
-                  ],
-                ),
+                  ),
               ],
             ),
           ),
-        if (_confirmed && _entries.isEmpty)
-          _note(L10n.of(context).pluginsEmptyLibrary),
-        ..._entries.map(_entry),
-        if (widget.backend is WorkbenchServiceControl) ...[
-          const SizedBox(height: 20),
-          ServiceManager(
-            backend: widget.backend as WorkbenchServiceControl,
-            plugins: _confirmed ? _entries : const [],
-            registryRevision: _confirmed ? _revision : null,
-            ink: widget.ink,
-            muted: widget.muted,
-            line: widget.line,
-            radius: widget.radius,
-          ),
+          if (widget.backend is WorkbenchServiceControl) ...[
+            _ioGroup(
+              'ServiceManager',
+              ServiceManager(
+                backend: widget.backend as WorkbenchServiceControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+              ),
+            ),
+          ],
+          if (widget.backend is WorkbenchServiceRunControl &&
+              widget.backend is WorkbenchServiceControl &&
+              widget.backend is WorkbenchIoTaskControl) ...[
+            _ioGroup(
+              'ServiceRunManager',
+              ServiceRunManager(
+                backend: widget.backend as WorkbenchServiceRunControl,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                metadataBackend: widget.backend as WorkbenchServiceControl,
+                endpointBackend: widget.backend is WorkbenchEndpointControl
+                    ? widget.backend as WorkbenchEndpointControl
+                    : null,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
+          ],
+          if (widget.backend is WorkbenchIoTaskControl &&
+              widget.backend is WorkbenchEndpointControl) ...[
+            _ioGroup(
+              'HttpTaskManager',
+              HttpTaskManager(
+                backend: widget.backend as WorkbenchIoTaskControl,
+                serviceSession: widget.backend is WorkbenchServiceRunControl
+                    ? ServiceRunSession.forBackend(
+                        widget.backend as WorkbenchServiceRunControl,
+                        widget.backend as WorkbenchIoTaskControl,
+                      )
+                    : null,
+                endpointBackend: widget.backend as WorkbenchEndpointControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
+          ],
+          if (widget.backend is WorkbenchCredentialControl) ...[
+            _ioGroup(
+              'CredentialManager',
+              CredentialManager(
+                backend: widget.backend as WorkbenchCredentialControl,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+              ),
+            ),
+          ],
+          if (widget.backend is WorkbenchEndpointControl &&
+              _confirmed &&
+              _revision != null) ...[
+            _ioGroup(
+              'EndpointManager',
+              EndpointManager(
+                backend: widget.backend as WorkbenchEndpointControl,
+                plugins: _entries,
+                registryRevision: _revision!,
+                credentialBackend: widget.backend is WorkbenchCredentialControl
+                    ? widget.backend as WorkbenchCredentialControl
+                    : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+              ),
+            ),
+          ],
         ],
-        if (widget.backend is WorkbenchServiceRunControl &&
-            widget.backend is WorkbenchServiceControl &&
-            widget.backend is WorkbenchIoTaskControl) ...[
-          const SizedBox(height: 20),
-          ServiceRunManager(
-            backend: widget.backend as WorkbenchServiceRunControl,
-            ioBackend: widget.backend as WorkbenchIoTaskControl,
-            metadataBackend: widget.backend as WorkbenchServiceControl,
-            endpointBackend: widget.backend is WorkbenchEndpointControl
-                ? widget.backend as WorkbenchEndpointControl
-                : null,
-            plugins: _confirmed ? _entries : const [],
-            registryRevision: _confirmed ? _revision : null,
-            ink: widget.ink,
-            muted: widget.muted,
-            line: widget.line,
-            radius: widget.radius,
-            onChanged: widget.onChanged,
-          ),
-        ],
-        if (widget.backend is WorkbenchIoTaskControl &&
-            widget.backend is WorkbenchEndpointControl) ...[
-          const SizedBox(height: 20),
-          HttpTaskManager(
-            backend: widget.backend as WorkbenchIoTaskControl,
-            serviceSession: widget.backend is WorkbenchServiceRunControl
-                ? ServiceRunSession.forBackend(
-                    widget.backend as WorkbenchServiceRunControl,
-                    widget.backend as WorkbenchIoTaskControl,
-                  )
-                : null,
-            endpointBackend: widget.backend as WorkbenchEndpointControl,
-            plugins: _confirmed ? _entries : const [],
-            registryRevision: _confirmed ? _revision : null,
-            ink: widget.ink,
-            muted: widget.muted,
-            line: widget.line,
-            radius: widget.radius,
-            onChanged: widget.onChanged,
-          ),
-        ],
-        if (widget.backend is WorkbenchCredentialControl) ...[
-          const SizedBox(height: 20),
-          CredentialManager(
-            backend: widget.backend as WorkbenchCredentialControl,
-            ink: widget.ink,
-            muted: widget.muted,
-            line: widget.line,
-            radius: widget.radius,
-          ),
-        ],
-        if (widget.backend is WorkbenchEndpointControl &&
-            _confirmed &&
-            _revision != null) ...[
-          const SizedBox(height: 20),
-          EndpointManager(
-            backend: widget.backend as WorkbenchEndpointControl,
-            plugins: _entries,
-            registryRevision: _revision!,
-            credentialBackend: widget.backend is WorkbenchCredentialControl
-                ? widget.backend as WorkbenchCredentialControl
-                : null,
-            ink: widget.ink,
-            muted: widget.muted,
-            line: widget.line,
-            radius: widget.radius,
-          ),
-        ],
-      ],
-    ),
+      ),
+    ],
   );
 }

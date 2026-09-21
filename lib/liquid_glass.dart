@@ -104,12 +104,15 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface> {
   ui.FragmentShader? _shader;
   bool _loadingShader = false;
   bool get _filterEnabled => !widget.canvas || !widget.transparentCanvas;
+  bool get _needsRefraction => (widget.material?.liquid ?? 1) > .001;
   Offset _light = const Offset(-.65, -.8);
 
   @override
   void initState() {
     super.initState();
-    if (_filterEnabled && ui.ImageFilter.isShaderFilterSupported) {
+    if (_filterEnabled &&
+        _needsRefraction &&
+        ui.ImageFilter.isShaderFilterSupported) {
       _loadShader();
     }
   }
@@ -118,6 +121,7 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface> {
   void didUpdateWidget(LiquidGlassSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (_filterEnabled &&
+        _needsRefraction &&
         _shader == null &&
         ui.ImageFilter.isShaderFilterSupported) {
       _loadShader();
@@ -146,6 +150,9 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface> {
   }
 
   ui.ImageFilter _filter(Size size, GlassMaterial material) {
+    if (material.liquid <= .001) {
+      return ui.ImageFilter.blur(sigmaX: material.blur, sigmaY: material.blur);
+    }
     final ui.ImageFilter refraction;
     if (_shader case final shader?) {
       shader.setFloat(2, widget.borderRadius.topLeft.x);
@@ -178,7 +185,7 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface> {
           borderRadius: widget.borderRadius,
         );
     return MouseRegion(
-      onHover: reduce
+      onHover: reduce || !_needsRefraction
           ? null
           : (event) {
               final box = context.findRenderObject() as RenderBox?;
@@ -191,7 +198,9 @@ class _LiquidGlassSurfaceState extends State<LiquidGlassSurface> {
                 ),
               );
             },
-      onExit: (_) => setState(() => _light = const Offset(-.65, -.8)),
+      onExit: !_needsRefraction
+          ? null
+          : (_) => setState(() => _light = const Offset(-.65, -.8)),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: widget.borderRadius,

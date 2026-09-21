@@ -1,0 +1,606 @@
+{
+  "@@locale": "de",
+  "visualCloseDialog": "Dialog schließen",
+  "@visualCloseDialog": {
+    "description": "Visual interface: CloseDialog"
+  },
+  "visualCancel": "Abbrechen",
+  "@visualCancel": {
+    "description": "Visual interface: Cancel"
+  },
+  "visualClose": "Schließen",
+  "@visualClose": {
+    "description": "Visual interface: Close"
+  },
+  "visualColorTitle": "Bring Farbe in deinen Bereich",
+  "@visualColorTitle": {
+    "description": "Visual interface: ColorTitle"
+  },
+  "visualColorGuide": "Ziehe im Farbkreis, um Farbton und Sättigung zu wählen, und passe dann die Helligkeit an. Du kannst auch einen Farbwert eingeben.",
+  "@visualColorGuide": {
+    "description": "Visual interface: ColorGuide"
+  },
+  "visualHexColor": "HEX-Farbe",
+  "@visualHexColor": {
+    "description": "Visual interface: HexColor"
+  },
+  "visualHexInvalid": "Gib einen sechsstelligen Hex-Farbwert ein.",
+  "@visualHexInvalid": {
+    "description": "Visual interface: HexInvalid"
+  },
+  "visualPreviewColor": "Farbvorschau",
+  "@visualPreviewColor": {
+    "description": "Visual interface: PreviewColor"
+  },
+  "visualApplyColor": "Farbe anwenden",
+  "@visualApplyColor": {
+    "description": "Visual interface: ApplyColor"
+  },
+  "visualComponents": "Komponenten und Karten",
+  "@visualComponents": {
+    "description": "Visual interface: Components"
+  },
+  "visualComponentsGuide": "Alle Elemente folgen standardmäßig dem Thema. Passe eine Karte an, ohne andere zu verändern.",
+  "@visualComponentsGuide": {
+    "description": "Visual interface: ComponentsGuide"
+  },
+  "visualIndependentMaterial": "Eigenes Material",
+  "@visualIndependentMaterial": {
+    "description": "Visual interface: IndependentMaterial"
+  },
+  "visualFollowTheme": "Thema folgen",
+  "@visualFollowTheme": {
+    "description": "Visual interface: FollowTheme"
+  },
+  "visualMaterialPreview": "Materialvorschau",
+  "@visualMaterialPreview": {
+    "description": "Visual interface: MaterialPreview"
+  },
+  "visualUseCustomMaterial": "Eigenes Material verwenden",
+  "@visualUseCustomMaterial": {
+    "description": "Visual interface: UseCustomMaterial"
+  },
+  "visualCustomMaterialGuide": "Zum Folgen des Themas ausschalten; eigene Einstellungen dieses Elements bleiben erhalten.",
+  "@visualCustomMaterialGuide": {
+    "description": "Visual interface: CustomMaterialGuide"
+  },
+  "visualFrosting": "Mattierung",
+  "@visualFrosting": {
+    "description": "Visual interface: Frosting"
+  },
+  "visualOpacity": "Deckkraft",
+  "@visualOpacity": {
+    "description": "Visual interface: Opacity"
+  },
+  "visualCustomCompass": "Farbkreis · Benutzerdefiniert",
+  "@visualCustomCompass": {
+    "description": "Visual interface: CustomCompass"
+  },
+  "visualApplyComponent": "Auf diese Komponente anwenden",
+  "@visualApplyComponent": {
+    "description": "Visual interface: ApplyComponent"
+  },
+  "visualAttachmentFailure": "Dateivorgang fehlgeschlagen. Prüfe Datei und freien Speicher.",
+  "@visualAttachmentFailure": {
+    "description": "Visual interface: AttachmentFailure"
+  },
+  "visualSaveAttachment": "Anhang speichern unter",
+  "@visualSaveAttachment": {
+    "description": "Visual interface: SaveAttachment"
+  },
+  "visualRemoveAttachment": "Anhang entfernen",
+  "@visualRemoveAttachment": {
+    "description": "Visual interface: RemoveAttachment"
+  },
+  "visualMediaPreviewFailure": "Keine Medienvorschau möglich. Speichere die Datei und öffne sie mit einer anderen App.",
+  "@visualMediaPreviewFailure": {
+    "description": "Visual interface: MediaPreviewFailure"
+  },
+  "visualAttachmentReadFailure": "Anhang konnte nicht gelesen werden. Importiere ihn erneut.",
+  "@visualAttachmentReadFailure": {
+    "description": "Visual interface: AttachmentReadFailure"
+  },
+  "visualAttachmentPreview": "Vorschau des lokalen Anhangs",
+  "@visualAttachmentPreview": {
+    "description": "Visual interface: AttachmentPreview"
+  },
+  "visualImageDecodeFailure": "Bild konnte nicht dekodiert werden. Speichere es und öffne es mit einer anderen App.",
+  "@visualImageDecodeFailure": {
+    "description": "Visual interface: ImageDecodeFailure"
+  },
+  "visualLinkFailure": "Link konnte nicht geöffnet werden. Kopiere die Adresse und versuche es erneut.",
+  "@visualLinkFailure": {
+    "description": "Visual interface: LinkFailure"
+  },
+  "visualImage": "Bild",
+  "@visualImage": {
+    "description": "Visual interface: Image"
+  },
+  "visualGif": "Animiertes GIF",
+  "@visualGif": {
+    "description": "Visual interface: Gif"
+  },
+  "visualVideo": "Video",
+  "@visualVideo": {
+    "description": "Visual interface: Video"
+  },
+  "visualAudio": "Audio",
+  "@visualAudio": {
+    "description": "Visual interface: Audio"
+  },
+  "visualFile": "Datei",
+  "@visualFile": {
+    "description": "Visual interface: File"
+  },
+  "visualTextureFailure": "Medium konnte nicht geladen werden. Prüfe Datei, Adresse und Format. Webmedien müssen auch ursprungsübergreifenden Zugriff erlauben.",
+  "@visualTextureFailure": {
+    "description": "Visual interface: TextureFailure"
+  },
+  "visualTextureLinkTitle": "Hol dir Inspiration",
+  "@visualTextureLinkTitle": {
+    "description": "Visual interface: TextureLinkTitle"
+  },
+  "visualTextureLinkGuide": "Füge einen direkten HTTP- oder HTTPS-Link zu Bild, GIF oder Video ein. Suche bei geteilten Webseiten zuerst die Original-Medienadresse.",
+  "@visualTextureLinkGuide": {
+    "description": "Visual interface: TextureLinkGuide"
+  },
+  "visualMediaAddress": "Medienadresse",
+  "@visualMediaAddress": {
+    "description": "Visual interface: MediaAddress"
+  },
+  "visualMediaAddressInvalid": "Gib eine gültige HTTP- oder HTTPS-Adresse ohne Anmeldedaten ein.",
+  "@visualMediaAddressInvalid": {
+    "description": "Visual interface: MediaAddressInvalid"
+  },
+  "visualMediaType": "Medientyp",
+  "@visualMediaType": {
+    "description": "Visual interface: MediaType"
+  },
+  "visualTexturePlaybackGuide": "Videos laufen standardmäßig lautlos in Schleife; Ton lässt sich in den Einstellungen aktivieren. Onlinemedien müssen Zugriff erlauben, im Web auch ursprungsübergreifend.",
+  "@visualTexturePlaybackGuide": {
+    "description": "Visual interface: TexturePlaybackGuide"
+  },
+  "visualApplyTexture": "Medium anwenden",
+  "@visualApplyTexture": {
+    "description": "Visual interface: ApplyTexture"
+  },
+  "visualMusic": "Musik",
+  "@visualMusic": {
+    "description": "Visual interface: Music"
+  },
+  "visualChooseAudio": "Wähle eine Audiodatei oder eine gleichnamige LRC-Datei.",
+  "@visualChooseAudio": {
+    "description": "Visual interface: ChooseAudio"
+  },
+  "visualLyricsFile": "Liedtextdatei",
+  "@visualLyricsFile": {
+    "description": "Visual interface: LyricsFile"
+  },
+  "visualSongCover": "Albumcover",
+  "@visualSongCover": {
+    "description": "Visual interface: SongCover"
+  },
+  "visualChooseLyrics": "Wähle eine LRC- oder TXT-Liedtextdatei.",
+  "@visualChooseLyrics": {
+    "description": "Visual interface: ChooseLyrics"
+  },
+  "visualLyricsSize": "Liedtextdateien dürfen höchstens 1 MB groß sein.",
+  "@visualLyricsSize": {
+    "description": "Visual interface: LyricsSize"
+  },
+  "visualLyricsEmpty": "Die Liedtextdatei ist leer.",
+  "@visualLyricsEmpty": {
+    "description": "Visual interface: LyricsEmpty"
+  },
+  "visualImportFailure": "Import fehlgeschlagen. Prüfe Datei, Kodierung und freien Speicher.",
+  "@visualImportFailure": {
+    "description": "Visual interface: ImportFailure"
+  },
+  "visualNoLyricsRead": "Keine Liedtexte geladen",
+  "@visualNoLyricsRead": {
+    "description": "Visual interface: NoLyricsRead"
+  },
+  "visualLyricsImportHint": "Importiere Liedtexte oder suche online.",
+  "@visualLyricsImportHint": {
+    "description": "Visual interface: LyricsImportHint"
+  },
+  "visualMusicPlayer": "Musikplayer",
+  "@visualMusicPlayer": {
+    "description": "Visual interface: MusicPlayer"
+  },
+  "visualImportMusic": "Musik importieren",
+  "@visualImportMusic": {
+    "description": "Visual interface: ImportMusic"
+  },
+  "visualChangeCover": "Albumcover ändern",
+  "@visualChangeCover": {
+    "description": "Visual interface: ChangeCover"
+  },
+  "visualMusicEmptyTitle": "Mach Platz für Musik",
+  "@visualMusicEmptyTitle": {
+    "description": "Visual interface: MusicEmptyTitle"
+  },
+  "visualLoading": "Wird geladen…",
+  "@visualLoading": {
+    "description": "Visual interface: Loading"
+  },
+  "visualImportMusicHint": "Mit + lokale Titel importieren",
+  "@visualImportMusicHint": {
+    "description": "Visual interface: ImportMusicHint"
+  },
+  "visualPlaying": "Wiedergabe",
+  "@visualPlaying": {
+    "description": "Visual interface: Playing"
+  },
+  "visualPaused": "Pausiert",
+  "@visualPaused": {
+    "description": "Visual interface: Paused"
+  },
+  "visualPreviousTrack": "Vorheriger Titel",
+  "@visualPreviousTrack": {
+    "description": "Visual interface: PreviousTrack"
+  },
+  "visualPauseMusic": "Musik pausieren",
+  "@visualPauseMusic": {
+    "description": "Visual interface: PauseMusic"
+  },
+  "visualPlayMusic": "Musik abspielen",
+  "@visualPlayMusic": {
+    "description": "Visual interface: PlayMusic"
+  },
+  "visualNextTrack": "Nächster Titel",
+  "@visualNextTrack": {
+    "description": "Visual interface: NextTrack"
+  },
+  "visualCollapsePlaylist": "Wiedergabeliste einklappen",
+  "@visualCollapsePlaylist": {
+    "description": "Visual interface: CollapsePlaylist"
+  },
+  "visualExpandPlaylist": "Wiedergabeliste ausklappen",
+  "@visualExpandPlaylist": {
+    "description": "Visual interface: ExpandPlaylist"
+  },
+  "visualFooterLyrics": "Liedtext unten anzeigen",
+  "@visualFooterLyrics": {
+    "description": "Visual interface: FooterLyrics"
+  },
+  "visualFooterTips": "Tipps unten anzeigen",
+  "@visualFooterTips": {
+    "description": "Visual interface: FooterTips"
+  },
+  "visualPlaylistLyricsHint": "LRC-Liedtexte über das Wiedergabelistenmenü importieren",
+  "@visualPlaylistLyricsHint": {
+    "description": "Visual interface: PlaylistLyricsHint"
+  },
+  "visualPlaylistSaved": "Wiedergabeliste und Liedtexte werden automatisch gespeichert",
+  "@visualPlaylistSaved": {
+    "description": "Visual interface: PlaylistSaved"
+  },
+  "visualPlaylistEmpty": "Die Wiedergabeliste ist leer",
+  "@visualPlaylistEmpty": {
+    "description": "Visual interface: PlaylistEmpty"
+  },
+  "visualRemoveTrack": "Aus Wiedergabeliste entfernen",
+  "@visualRemoveTrack": {
+    "description": "Visual interface: RemoveTrack"
+  },
+  "visualAutoLyrics": "Fehlende Liedtexte automatisch online suchen",
+  "@visualAutoLyrics": {
+    "description": "Visual interface: AutoLyrics"
+  },
+  "visualLyricsSources": "Lokale Datei → Eingebettet → LRCLIB",
+  "@visualLyricsSources": {
+    "description": "Visual interface: LyricsSources"
+  },
+  "visualLyricsOnPlay": "Liedtexte während der Wiedergabe automatisch laden",
+  "@visualLyricsOnPlay": {
+    "description": "Visual interface: LyricsOnPlay"
+  },
+  "visualCover": "Cover",
+  "@visualCover": {
+    "description": "Visual interface: Cover"
+  },
+  "visualSearchLyrics": "Liedtexte suchen",
+  "@visualSearchLyrics": {
+    "description": "Visual interface: SearchLyrics"
+  },
+  "visualViewLyrics": "Liedtext ansehen",
+  "@visualViewLyrics": {
+    "description": "Visual interface: ViewLyrics"
+  },
+  "visualImportLyrics": "Liedtexte importieren",
+  "@visualImportLyrics": {
+    "description": "Visual interface: ImportLyrics"
+  },
+  "visualLyricsServiceFailure": "Keine Verbindung zum Liedtextdienst. Versuche es später oder importiere lokale Liedtexte.",
+  "@visualLyricsServiceFailure": {
+    "description": "Visual interface: LyricsServiceFailure"
+  },
+  "visualFindLyrics": "Liedtext finden",
+  "@visualFindLyrics": {
+    "description": "Visual interface: FindLyrics"
+  },
+  "visualFindLyricsGuide": "Suche in LRCLIB nach Titel und Interpret und wähle die passende Version.",
+  "@visualFindLyricsGuide": {
+    "description": "Visual interface: FindLyricsGuide"
+  },
+  "visualSongTitle": "Songtitel",
+  "@visualSongTitle": {
+    "description": "Visual interface: SongTitle"
+  },
+  "visualOptionalArtist": "Interpret (optional)",
+  "@visualOptionalArtist": {
+    "description": "Visual interface: OptionalArtist"
+  },
+  "visualLyricsNotFound": "Keine Liedtexte gefunden. Ändere Titel oder Interpret.",
+  "@visualLyricsNotFound": {
+    "description": "Visual interface: LyricsNotFound"
+  },
+  "visualSyncedLyrics": "Synchronisierte Liedtexte",
+  "@visualSyncedLyrics": {
+    "description": "Visual interface: SyncedLyrics"
+  },
+  "visualPlainLyrics": "Liedtext ohne Zeitangaben",
+  "@visualPlainLyrics": {
+    "description": "Visual interface: PlainLyrics"
+  },
+  "visualSearch": "Suchen",
+  "@visualSearch": {
+    "description": "Visual interface: Search"
+  },
+  "visualEmbeddedLyrics": "In Audiodatei eingebettet",
+  "@visualEmbeddedLyrics": {
+    "description": "Visual interface: EmbeddedLyrics"
+  },
+  "visualLyricsLoading": "Liedtexte werden geladen…",
+  "@visualLyricsLoading": {
+    "description": "Visual interface: LyricsLoading"
+  },
+  "visualLyricsParseFailure": "Liedtexte konnten nicht verarbeitet werden. Importiere sie erneut.",
+  "@visualLyricsParseFailure": {
+    "description": "Visual interface: LyricsParseFailure"
+  },
+  "visualNoTimeline": "Keine Zeitangaben",
+  "@visualNoTimeline": {
+    "description": "Visual interface: NoTimeline"
+  },
+  "visualMinimize": "Minimieren",
+  "@visualMinimize": {
+    "description": "Visual interface: Minimize"
+  },
+  "visualMaximize": "Maximieren",
+  "@visualMaximize": {
+    "description": "Visual interface: Maximize"
+  },
+  "visualRestoreWindow": "Wiederherstellen",
+  "@visualRestoreWindow": {
+    "description": "Visual interface: RestoreWindow"
+  },
+  "visualCloseWindow": "Fenster schließen",
+  "@visualCloseWindow": {
+    "description": "Visual interface: CloseWindow"
+  },
+  "visualDownloadOpen": "Zum Öffnen herunterladen",
+  "@visualDownloadOpen": {
+    "description": "Visual interface: DownloadOpen"
+  },
+  "visualDefaultOpen": "Mit Standard-App öffnen",
+  "@visualDefaultOpen": {
+    "description": "Visual interface: DefaultOpen"
+  },
+  "visualClickPreview": "Für Vorschau auswählen",
+  "@visualClickPreview": {
+    "description": "Visual interface: ClickPreview"
+  },
+  "visualComponentCompass": "{title} · Farbkreis",
+  "@visualComponentCompass": {
+    "description": "Visual interface: ComponentCompass",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualAttachmentDetails": "{extension} · {size} · {action}",
+  "@visualAttachmentDetails": {
+    "description": "Visual interface: AttachmentDetails",
+    "placeholders": {
+      "extension": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageLoadFailure": "Bild konnte nicht geladen werden: {name}",
+  "@visualImageLoadFailure": {
+    "description": "Visual interface: ImageLoadFailure",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLoadImage": "Bild laden · {name}",
+  "@visualLoadImage": {
+    "description": "Visual interface: LoadImage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageNotImported": "{name} (Bild nicht importiert)",
+  "@visualImageNotImported": {
+    "description": "Visual interface: ImageNotImported",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualImageUnavailable": "Bild nicht verfügbar: {name}",
+  "@visualImageUnavailable": {
+    "description": "Visual interface: ImageUnavailable",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualPlaybackPosition": "{index} / {count} · {state}",
+  "@visualPlaybackPosition": {
+    "description": "Visual interface: PlaybackPosition",
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      },
+      "state": {
+        "type": "String"
+      }
+    }
+  },
+  "visualLyricsMatch": "{album}\n{kind} · {seconds, plural, one{{seconds} Sekunde} other{{seconds} Sekunden}}",
+  "@visualLyricsMatch": {
+    "description": "Visual interface: LyricsMatch",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "kind": {
+        "type": "String"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "visualNoLyricsTitle": "♪ {title} · Kein Liedtext",
+  "@visualNoLyricsTitle": {
+    "description": "Visual interface: NoLyricsTitle",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "visualCornerTips1": "Nicht jede Idee muss nützlich sein.\nManche machen den Tag einfach interessanter.",
+  "@visualCornerTips1": {
+    "description": "Visual interface: CornerTips1"
+  },
+  "visualCornerTips2": "Schreib sie auf und lass sie wachsen.\nEine Idee muss nicht fertig ankommen.",
+  "@visualCornerTips2": {
+    "description": "Visual interface: CornerTips2"
+  },
+  "visualCornerTips3": "Lass dir ein wenig Freiraum.\nNeugier braucht Platz zum Atmen.",
+  "@visualCornerTips3": {
+    "description": "Visual interface: CornerTips3"
+  },
+  "visualCornerTips4": "Probiere heute etwas Neues.\nEin kleiner Umweg kann überraschen.",
+  "@visualCornerTips4": {
+    "description": "Visual interface: CornerTips4"
+  },
+  "visualCornerTips5": "Tagträume können irgendwohin führen.\nLass deine Gedanken wandern.",
+  "@visualCornerTips5": {
+    "description": "Visual interface: CornerTips5"
+  },
+  "visualCornerTips6": "Nimm dir Zeit für das, was du liebst.\nDu musst seinen Wert nicht beweisen.",
+  "@visualCornerTips6": {
+    "description": "Visual interface: CornerTips6"
+  },
+  "visualCornerTips7": "Fortschritt darf klein sein.\nAnfangen zu wollen zählt bereits.",
+  "@visualCornerTips7": {
+    "description": "Visual interface: CornerTips7"
+  },
+  "visualCornerTips8": "Schau ab und zu aus dem Fenster.\nAuch das Leben inspiriert.",
+  "@visualCornerTips8": {
+    "description": "Visual interface: CornerTips8"
+  },
+  "visualFooterTips1": "Nichts eilt. Gib deiner Neugier etwas Zeit.",
+  "@visualFooterTips1": {
+    "description": "Visual interface: FooterTips1"
+  },
+  "visualFooterTips2": "Notiere einen Gedanken. Ordnen kannst du später.",
+  "@visualFooterTips2": {
+    "description": "Visual interface: FooterTips2"
+  },
+  "visualFooterTips3": "Mach aus einer großen Idee einen kleinen Schritt für heute.",
+  "@visualFooterTips3": {
+    "description": "Visual interface: FooterTips3"
+  },
+  "visualFooterTips4": "Streck dich und gönn deinen Augen eine Pause.",
+  "@visualFooterTips4": {
+    "description": "Visual interface: FooterTips4"
+  },
+  "visualFooterTips5": "Eine Idee darf vorerst unbeantwortet bleiben.",
+  "@visualFooterTips5": {
+    "description": "Visual interface: FooterTips5"
+  },
+  "visualFooterTips6": "Manche Entdeckungen kommen, wenn du langsamer wirst.",
+  "@visualFooterTips6": {
+    "description": "Visual interface: FooterTips6"
+  },
+  "visualFooterTips7": "Ein festgehaltenes Detail lässt eine Idee wachsen.",
+  "@visualFooterTips7": {
+    "description": "Visual interface: FooterTips7"
+  },
+  "visualFooterTips8": "Eine kurze Notiz heute kann morgen ein Anfang sein.",
+  "@visualFooterTips8": {
+    "description": "Visual interface: FooterTips8"
+  },
+  "visualFooterTips9": "Lass die Gedanken wandern und kehre dann zu dem zurück, was dir Freude macht.",
+  "@visualFooterTips9": {
+    "description": "Visual interface: FooterTips9"
+  },
+  "visualFooterTips10": "Du musst nicht jede Minute füllen. Lass etwas Freiraum.",
+  "@visualFooterTips10": {
+    "description": "Visual interface: FooterTips10"
+  },
+  "visualLyricsMissing": "Keine Liedtexte gefunden. Importiere eine Datei oder suche erneut.",
+  "@visualLyricsMissing": {
+    "description": "Visual interface: LyricsMissing"
+  },
+  "visualLyricsVersions": "Mehrere Versionen gefunden. Wähle eine in der Suche.",
+  "@visualLyricsVersions": {
+    "description": "Visual interface: LyricsVersions"
+  },
+  "visualLyricsReadFailure": "Liedtexte konnten nicht geladen werden. Importiere sie manuell oder versuche es erneut.",
+  "@visualLyricsReadFailure": {
+    "description": "Visual interface: LyricsReadFailure"
+  },
+  "visualPlaybackFailure": "Titel kann nicht abgespielt werden. Prüfe die Datei oder nutze ein anderes Audioformat.",
+  "@visualPlaybackFailure": {
+    "description": "Visual interface: PlaybackFailure"
+  },
+  "visualPlaybackRequestFailure": "Wiedergabe konnte nicht gestartet werden. Versuche es erneut.",
+  "@visualPlaybackRequestFailure": {
+    "description": "Visual interface: PlaybackRequestFailure"
+  },
+  "visualAudioStateFailure": "Audiostatus konnte nicht bestätigt werden. Versuche es erneut.",
+  "@visualAudioStateFailure": {
+    "description": "Visual interface: AudioStateFailure"
+  },
+  "visualPlaylistUpdateFailure": "Wiedergabeliste konnte nicht aktualisiert werden. Versuche es erneut.",
+  "@visualPlaylistUpdateFailure": {
+    "description": "Visual interface: PlaylistUpdateFailure"
+  },
+  "visualFileRetry": "Dateivorgang fehlgeschlagen. Versuche es erneut.",
+  "@visualFileRetry": {
+    "description": "Visual interface: FileRetry"
+  },
+  "visualFileOpenFailure": "Datei konnte nicht geöffnet werden. Installiere eine passende App oder speichere den Anhang und öffne ihn dort.",
+  "@visualFileOpenFailure": {
+    "description": "Visual interface: FileOpenFailure"
+  },
+  "visualTransparentTips": "Transparente Einblendung (Standard)",
+  "visualTipsMaterialGuide": "Aus: transparente Tipps; ein: Material unten. Eigene Werte bleiben erhalten.",
+  "visualResetMaterial": "Auf Thema zurücksetzen",
+  "visualInheritColor": "Themenfarbe verwenden"
+}

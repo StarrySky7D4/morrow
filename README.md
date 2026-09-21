@@ -2,9 +2,11 @@
 
 留一点空间给明天的想法。项目原名 daemon，现统一命名为 Morrow；代码包名为 `morrow_studio`。改名兼容策略见 [重命名说明](docs/RENAMING.md)。历史发布附件保留原名，新构建使用 `morrow-*`。
 
-[下载 test.14 Windows 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.14) · [下载 test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [AGPL-3.0-only](LICENSE)
+[下载 test.53 Windows 测试预览版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.53) · [下载 test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1) · [AGPL-3.0-only](LICENSE)
 
-用 Flutter 构建的灵感工作台。当前开发版为 **0.1.9-test.52+56**（尚未发布）：Windows 默认启动 Rust 工作台插件与独立核心数据库，Flutter 负责界面和平台媒体承载；Web／Android 暂保留原路径。旧 test.1 数据不会自动导入或覆盖。当前迁移结果与容量边界见 [test.1 功能对照](docs/TEST1_RUST_PARITY.md)。
+用 Flutter 构建的灵感工作台。当前测试预览版为 **0.1.9-test.53+57**：Windows 默认启动 Rust 工作台插件与独立核心数据库，Flutter 负责界面和平台媒体承载；Web／Android 暂保留原路径。旧 test.1 数据不会自动导入或覆盖。当前迁移结果与容量边界见 [test.1 功能对照](docs/TEST1_RUST_PARITY.md)。
+
+test.53 汇总近期插件/网络设置分离、组件材质与保存修复、九语言界面、设置导航及启动过渡优化，并纳入开发线已完成的 HTTP/HTTPS 与 TLS 身份管理工作；仍属重构测试阶段，SDK 尚未完整冻结。具体范围和限制见 [test.53 发布说明](reports/0.1.9-test.53-release.md)。
 
 test.14 平滑透明画布低强度磨砂，并将模糊和染色覆盖到标题栏背景。test.13 将材质自定义改为每个组件与内容卡片独立设置，修正透明画布模糊与零不透明度黑底。test.12 将工作台偏好保存改为有界分段传输，支持最多 4 MiB 的整份配置，失败保留原设置。此前增加透明画布的磨砂、不透明度与染色罗盘，以及默认跟随主题、可独立启用的组件材质设置。插件 SDK 已扩展为运行期 v7，提供 C／C++／Rust 的正文创建、编辑与分段读取；见 [SDK](sdk/README.md)。以下清单保留产品功能基线，具体重构验收以对照记录为准。
 
@@ -37,7 +39,7 @@ Android 工程与移动端文件适配已加入，提供 ARM64 调试签名测�
 
 ## 测试版推进
 
-当前开发版本为 `0.1.9-test.52+56`；已发布的 test.14 为 Windows x64 测试预览构建，不是稳定版。`test.1` 是 `0.1.x` 最后一个兼容现有数据类型的测试版；从 `test.2` 起以 `0.1.9-test.x` 逐步推进大规模重写，后续可能包含破坏性数据变更。核心架构与数据模型锚定、插件系统及声明支持的平台完成验收后发布 `0.2.0`。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。后续编码状态见 [任务看板](docs/DEVELOPMENT_BOARD.md)，最新服务运行与故障验证见 [验收报告](reports/service-run-faults-2026-09-20.md)；早期受管 IO 整合保留为 [历史记录](reports/track-a-integration-2026-09-16.md)。
+当前测试预览版本为 `0.1.9-test.53+57`，提供 Windows x64 测试预览构建，不是稳定版。`test.1` 是 `0.1.x` 最后一个兼容现有数据类型的测试版；从 `test.2` 起以 `0.1.9-test.x` 逐步推进大规模重写，后续可能包含破坏性数据变更。核心架构与数据模型锚定、插件系统及声明支持的平台完成验收后发布 `0.2.0`。最小插件原型跑通不等于系统完成；阶段任务、验收范围与版本规则见 [未来路线](docs/FUTURE_ROADMAP.md)。后续编码状态见 [任务看板](docs/DEVELOPMENT_BOARD.md)，最新服务运行与故障验证见 [验收报告](reports/service-run-faults-2026-09-20.md)；早期受管 IO 整合保留为 [历史记录](reports/track-a-integration-2026-09-16.md)。
 
 ### 当前开发状态（2026-09-20）
 

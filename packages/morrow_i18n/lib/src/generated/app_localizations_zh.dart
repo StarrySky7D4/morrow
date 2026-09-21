@@ -245,6 +245,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainCornerRadius => '圆角幅度';
 
   @override
+  String get mainCredentialSettings => '凭据';
+
+  @override
   String get mainCrystal => '超透';
 
   @override
@@ -314,6 +317,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainEditorUnavailable => '编辑器暂时无法打开，请检查内容服务后重试。';
+
+  @override
+  String get mainEndpointSettings => '出站端点';
+
+  @override
+  String get mainExpandSettings => '展开完整设置';
 
   @override
   String get mainExpandSidebar => '展开侧边栏';
@@ -415,6 +424,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainHidePreview => '收起预览';
 
   @override
+  String get mainHttpSettings => 'HTTP 任务';
+
+  @override
   String get mainHypothesis => '假设';
 
   @override
@@ -443,6 +455,19 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainInboxIntro => '先接住，再整理。把值得继续的念头转成小项目。';
+
+  @override
+  String get mainIoNoDeclarations => '当前已安装的插件尚未声明文件或网络访问能力。';
+
+  @override
+  String get mainIoSettings => '网络与文件访问';
+
+  @override
+  String get mainIoSettingsGuide =>
+      '在此管理插件的文件与网络权限。批准能力声明不代表授权访问所有文件或端点；具体操作以当前后端支持的能力为准。';
+
+  @override
+  String get mainIoSettingsSummary => '权限、凭据、端点与 API 服务';
 
   @override
   String get mainJustNow => '刚刚';
@@ -601,6 +626,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainPlay => '播放';
 
   @override
+  String get mainPluginSettings => '插件与服务';
+
+  @override
+  String get mainPluginSettingsSummary => '内置工具、扩展插件、网络与文件访问、内容保护';
+
+  @override
   String get mainPreviewEmpty => '预览会显示在这里';
 
   @override
@@ -634,6 +665,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainQuickHint => '脑海中闪过了什么？';
+
+  @override
+  String get mainReadOnlySettings => '内容库当前只读，请检查工作台插件以恢复编辑。';
 
   @override
   String get mainRecentThoughts => '最近的念头';
@@ -693,6 +727,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainSampleTodo4 => '定义提醒交互';
 
   @override
+  String get mainSaveConnectionUnknown => '连接中断，保存结果尚未确认。请重新打开内容库核对后再重试。';
+
+  @override
   String get mainSaveFailed => '保存失败，改动仍在当前会话中。';
 
   @override
@@ -702,6 +739,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainSaveNotSubmitted => '尚未提交。草稿与附件已保留，可修改后再次保存。';
 
   @override
+  String get mainSaveReadOnly => '改动尚未保存。请在“插件与服务”中启用工作台插件，然后重试。';
+
+  @override
   String get mainSaveUnknown => '这次保存尚未确认。草稿与附件已保留，请重试同一次提交；关闭后会重新读取工作台确认。';
 
   @override
@@ -709,6 +749,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainSearchHint => '搜索你的奇思妙想…';
+
+  @override
+  String get mainServiceRunSettings => '服务运行';
+
+  @override
+  String get mainServiceSettings => 'API 服务';
 
   @override
   String get mainSettings => '设置';
@@ -2565,6 +2611,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get visualIndependentMaterial => '独立材质';
 
   @override
+  String get visualInheritColor => '使用主题染色';
+
+  @override
   String get visualLinkFailure => '无法打开链接，请复制地址后重试。';
 
   @override
@@ -2720,6 +2769,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get visualRemoveTrack => '移出播放列表';
 
   @override
+  String get visualResetMaterial => '重置为跟随主题';
+
+  @override
   String get visualRestoreWindow => '还原';
 
   @override
@@ -2753,6 +2805,12 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get visualTexturePlaybackGuide =>
       '视频默认静音循环播放，可在设置中开启声音。网络素材需允许访问，网页端还需支持跨域加载。';
+
+  @override
+  String get visualTipsMaterialGuide => '关闭时保持透明浮层；开启后使用下方材质。自定义参数会保留。';
+
+  @override
+  String get visualTransparentTips => '透明浮层（默认）';
 
   @override
   String get visualUseCustomMaterial => '使用自定义材质';

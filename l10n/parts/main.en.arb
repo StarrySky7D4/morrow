@@ -363,5 +363,20 @@
   "mainMakeYours": "MAKE IT YOURS",
   "mainStayCurious": "STAY CURIOUS. STAY YOU.",
   "mainHeroCaption": "THE POSSIBILITY CORNER",
-  "mainDiagnosticDetails": "Diagnostic details"
+  "mainDiagnosticDetails": "Diagnostic details",
+  "mainIoSettings": "Network & file access",
+  "mainIoSettingsSummary": "Permissions, credentials, endpoints and API services",
+  "mainIoSettingsGuide": "Manage plugin file and network permissions separately from appearance. Approving a declared capability does not grant access to every file or endpoint; available operations depend on the current backend.",
+  "mainIoNoDeclarations": "No installed plugin currently declares file or network access.",
+  "mainPluginSettings": "Plugins and services",
+  "mainPluginSettingsSummary": "Built-in tools, extensions, network and file access, and content protection",
+  "mainReadOnlySettings": "Content is read-only. Check the workbench plugin to restore editing.",
+  "mainSaveReadOnly": "Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.",
+  "mainSaveConnectionUnknown": "The connection was interrupted; the save result is unknown. Reopen the library to confirm before retrying.",
+  "mainServiceSettings": "API services",
+  "mainServiceRunSettings": "Service runtime",
+  "mainHttpSettings": "HTTP tasks",
+  "mainCredentialSettings": "Credentials",
+  "mainEndpointSettings": "Outbound endpoints",
+  "mainExpandSettings": "Expand settings"
 }

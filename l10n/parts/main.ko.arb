@@ -1,0 +1,382 @@
+{
+  "@@locale": "ko",
+  "mainAppTitle": "Morrow — 아이디어를 위한 공간",
+  "mainStorageUnavailable": "로컬 저장소를 사용할 수 없습니다. 변경 사항은 이번 세션에만 유지됩니다.",
+  "mainStorageUnreadable": "저장된 내용을 읽지 못했습니다. 원본 데이터는 보존되며 덮어쓰지 않습니다.",
+  "mainSaveFailed": "저장하지 못했습니다. 변경 사항은 이번 세션에 유지됩니다.",
+  "mainRetry": "다시 시도",
+  "mainFrostUnavailable": "바탕 화면 흐림 효과를 사용할 수 없습니다. 색조와 불투명도는 조정할 수 있습니다.",
+  "mainTransparencyUnavailable": "시스템 투명 효과를 켤 수 없습니다. 기본 배경을 사용할 수 있습니다.",
+  "mainImportFailed": "미디어를 가져오지 못했습니다. 파일과 저장 공간을 확인하세요.",
+  "mainThemeCompass": "테마 색상환",
+  "mainBackToWorkbench": "작업 공간으로 돌아가기",
+  "mainSettings": "설정",
+  "mainChangeFailed": "변경 사항을 저장하지 못했습니다. 초안은 유지되며 다시 시도할 수 있습니다.",
+  "mainArrangeIdeas": "아이디어 정렬",
+  "mainSidebarMotto": "조금의 정리, 발견을 위한 여유.",
+  "mainMySpace": "내 공간",
+  "mainPersonalWorkspace": "개인 작업 공간",
+  "mainNavigation": "탐색",
+  "mainCollapseSidebar": "사이드바 접기",
+  "mainExpandSidebar": "사이드바 펼치기",
+  "mainWorkbench": "작업 공간",
+  "mainHideAppearance": "모양 설정 숨기기",
+  "mainShowAppearance": "모양 설정 표시",
+  "mainSearchHint": "아이디어 검색…",
+  "mainClearSearch": "검색 지우기",
+  "mainGreeting": "아이디어를 키워 보세요.",
+  "mainGreetingDetail": "일상의 작은 발견과 영감의 순간을 담으세요.",
+  "mainNewIdea": "새 아이디어",
+  "mainHeroTitle": "작게 시작해도 괜찮아요.",
+  "mainHeroBody": "생각 하나, 작은 할 일, 문득 떠오른 가능성.\n여기에서 시작됩니다.",
+  "mainCaptureNow": "생각 기록하기",
+  "mainRecentThoughts": "최근 아이디어",
+  "mainQueryCapacity": "쿼리 기록이 가득 찼습니다",
+  "mainQueryTerminated": "이 쿼리는 종료되었습니다",
+  "mainQueryUnknown": "결과가 아직 확인되지 않았습니다",
+  "mainQueryLoading": "아이디어 찾는 중…",
+  "mainQueryCapacityDetail": "내용은 보존됩니다. 이 버전에서는 아직 쿼리 기록을 지울 수 없습니다.",
+  "mainCheckAgain": "다시 확인",
+  "mainQueryAgain": "새 쿼리 실행",
+  "mainQueryRetry": "쿼리 다시 시도",
+  "mainNoMatches": "일치하는 아이디어가 없습니다",
+  "mainViewAll": "모두 보기",
+  "mainQuickHint": "방금 무엇이 떠올랐나요?",
+  "mainCaptureIdea": "아이디어 기록",
+  "mainIdeaSaved": "아이디어를 저장했습니다.",
+  "mainCanvasCompass": "캔버스 색상환",
+  "mainComponentCompass": "구성 요소 색상환",
+  "mainCustomCompass": "색상환 · 사용자 지정",
+  "mainFrostEffect": "흐림",
+  "mainTintOpacity": "색조 불투명도",
+  "mainWindowsFrostOnly": "바탕 화면 흐림은 Windows에서만 지원됩니다",
+  "mainComponentNavigation": "사이드바 탐색",
+  "mainComponentSearch": "검색창",
+  "mainComponentHero": "개요 카드",
+  "mainComponentQuickCapture": "빠른 기록",
+  "mainAppearance": "모양",
+  "mainWorkbenchPlugin": "작업 공간 플러그인",
+  "mainExtensionPlugins": "확장 기능",
+  "mainContentProtection": "콘텐츠 보호",
+  "mainDaily": "소소한 일상",
+  "mainMusic": "음악 플레이어",
+  "mainComponentFooter": "하단 팁과 가사",
+  "mainComponentEmpty": "빈 상태",
+  "mainComponentSettings": "구성 요소 및 카드 · 설정",
+  "mainGlassTexture": "유리 스타일",
+  "mainFrosted": "반투명",
+  "mainCrystal": "맑게",
+  "mainLiquidGlass": "리퀴드 글래스",
+  "mainFrostOpacity": "유리 불투명도",
+  "mainLightOpacity": "20% · 옅게",
+  "mainSolidOpacity": "100% · 불투명",
+  "mainLiquidDetail": "공중에 떠 있는 물방울처럼 흐르는 빛과 부드러운 굴절.",
+  "mainCrystalDetail": "가볍고 맑게, 색이 빛나도록.",
+  "mainFrostDetail": "배경을 부드럽게 하고 생각에 여유를 주세요.",
+  "mainThemeTone": "테마 색상",
+  "mainDefaultGlobalColor": "기본 테마 색상 · 모든 컨트롤",
+  "mainRestoreDefault": "기본값 복원",
+  "mainHideCustomTone": "사용자 지정 색조 숨기기",
+  "mainAdjustCustomTone": "색조 조정",
+  "mainThemeGrayscale": "테마 회색조",
+  "mainOriginalColors": "원래 색상",
+  "mainMonochrome": "단색",
+  "mainCustomLightness": "사용자 지정 밝기",
+  "mainDeepBlack": "검정",
+  "mainBrightWhite": "흰색",
+  "mainCornerRadius": "모서리 반경",
+  "mainSquareCorners": "0으로 설정하면 직각 모서리가 됩니다",
+  "mainWindowRadius": "창 모서리",
+  "mainWindowRadiusDetail": "창 테두리를 별도로 조정합니다. 최대화하면 모서리가 직각이 됩니다",
+  "mainBackgroundCanvas": "배경 캔버스",
+  "mainLiquidEffect": "리퀴드 글래스 효과",
+  "mainLiquidAllCanvases": "네 가지 배경 유형 모두에서 개별적으로 사용할 수 있습니다",
+  "mainFollowTheme": "테마 따르기",
+  "mainLavender": "라벤더",
+  "mainSage": "세이지",
+  "mainWarmSand": "따뜻한 모래",
+  "mainLocalMedia": "로컬 미디어",
+  "mainOnlineMedia": "온라인 미디어",
+  "mainBackgroundSound": "배경 소리 재생",
+  "mainPause": "일시 정지",
+  "mainPlay": "재생",
+  "mainBuiltinTexture": "기본 텍스처 사용",
+  "mainMediaLimits": "이미지 / GIF ≤ 25 MB, 동영상 ≤ 150 MB",
+  "mainAmbientDetail": "흐르는 빛이 은은한 색을 더합니다.",
+  "mainSolidDetail": "차분한 단색 배경.",
+  "mainTextureDetail": "고운 종이 질감이 촉감을 더합니다.",
+  "mainOpaqueFallback": "현재 테마 색상 위에 맑은 패널을 표시합니다.",
+  "mainTransparentDetail": "창 뒤의 공간을 보여 줍니다. 웹에서는 호스트 배경을 표시합니다.",
+  "mainAutosaveNotice": "모양과 아이디어는 로컬에 저장됩니다",
+  "mainDefaultCanvas": "기본",
+  "mainSolidCanvas": "단색",
+  "mainTextureCanvas": "텍스처",
+  "mainTransparentCanvas": "투명",
+  "mainWhiteTheme": "밝게",
+  "mainCustomTheme": "사용자 지정",
+  "mainDarkTheme": "어둡게",
+  "mainSlowProgress": "작은 걸음도 앞으로 나아갑니다.",
+  "mainCuriosity": "흥미로운 일은\n작은 호기심에서 시작됩니다.",
+  "mainEditorUnavailable": "편집기를 사용할 수 없습니다. 콘텐츠 서비스를 확인한 뒤 다시 시도하세요.",
+  "mainEditorClosedUnknown": "편집기가 닫혔지만 저장 결과는 확인되지 않았습니다. 다른 사본을 만들기 전에 작업 공간을 다시 열어 확인하세요.",
+  "mainIdeaDetails": "세부 내용을 남기고 다음 단계를 명확히 하세요.",
+  "mainHypothesis": "가설",
+  "mainNoHypothesis": "아직 가설이 없습니다",
+  "mainObservations": "관찰 및 결론",
+  "mainAwaitDiscovery": "새로운 발견을 기다립니다",
+  "mainDelete": "삭제",
+  "mainEdit": "편집",
+  "mainDone": "완료",
+  "mainUndo": "실행 취소",
+  "mainPasteChanged": "붙여넣는 동안 입력이 변경되었습니다. 편집기를 다시 여세요.",
+  "mainSaveNotSubmitted": "제출되지 않았습니다. 초안과 첨부 파일은 보존되며 수정 후 다시 저장할 수 있습니다.",
+  "mainSaveUnknown": "저장 결과가 확인되지 않았습니다. 초안과 첨부 파일은 보존됩니다. 이 제출을 다시 시도하세요. 닫으면 작업 공간을 새로 고쳐 확인합니다.",
+  "mainAttachmentLimit": "기록당 첨부 파일은 최대 20개입니다.",
+  "mainClipboardReadFailed": "내용을 읽지 못했습니다. 파일을 가져오거나 파일 및 클립보드 권한을 확인하세요.",
+  "mainBodyHint": "생각을 적거나 내용을 붙여넣으세요…\n\n# 제목, 목록, 표, 코드 블록 지원",
+  "mainPreviewEmpty": "여기에 미리보기가 표시됩니다",
+  "mainMarkdownBody": "본문 · Markdown",
+  "mainHidePreview": "미리보기 숨기기",
+  "mainLivePreview": "실시간 미리보기",
+  "mainClipboardEmpty": "클립보드에 읽을 수 있는 텍스트나 파일이 없습니다. 파일 관리자에서 파일을 복사하거나 파일 가져오기를 사용하세요.",
+  "mainNewIdeaTitle": "새 아이디어 담기",
+  "mainEditIdeaTitle": "아이디어 다듬기",
+  "mainEditorSubtitle": "글, 표, 이미지. 아이디어가 형태를 갖출 때까지 여기에 담으세요.",
+  "mainIdeaNameHint": "이름을 지어 주세요",
+  "mainIdeaNameRequired": "먼저 아이디어를 적어 주세요",
+  "mainPasteContent": "내용 붙여넣기",
+  "mainImportFile": "파일 가져오기",
+  "mainClipboardSupport": "Markdown, Office 서식 있는 텍스트와 표, 스크린샷, 파일을 지원합니다. 복잡한 개체는 원본 첨부로 보존합니다. 최대 20개, 각 200 MB까지 가능합니다.",
+  "mainCategoryPrompt": "보관 위치",
+  "mainHypothesisPrompt": "검증할 가설",
+  "mainObservationsPrompt": "관찰, 과정 및 결론",
+  "mainTodosPrompt": "다음 단계(한 줄에 하나, 선택 사항)",
+  "mainNotNow": "나중에",
+  "mainSaving": "저장 중…",
+  "mainRetrySave": "저장 다시 시도",
+  "mainSaveIdea": "아이디어 저장",
+  "mainView": "보기",
+  "mainMarkOrganized": "정리됨으로 표시",
+  "mainToProject": "프로젝트로 이동",
+  "mainOpenNextStep": "프로젝트를 열어 다음 단계 편집",
+  "mainHypothesisSection": "가설 / 시도할 것",
+  "mainWriteHypothesis": "기록을 열고 검증하고 싶은 내용을 적으세요.",
+  "mainObservationSection": "관찰 / 발견한 것",
+  "mainNoResultYet": "결과는 나중에 나와도 괜찮아요. 과정도 기록할 가치가 있습니다.",
+  "mainInboxIntro": "먼저 기록하고 나중에 정리하세요. 좋은 아이디어를 작은 프로젝트로 키워 보세요.",
+  "mainUnsortedCount": "정리할 항목",
+  "mainOrganizedCount": "정리됨",
+  "mainProjectIntro": "체크리스트로 진행하세요. 작은 걸음마다 목표에 가까워집니다.",
+  "mainActiveProjects": "진행 중",
+  "mainCompletedProjects": "완료됨",
+  "mainLabIntro": "가설로 시작하세요. 시도, 관찰, 뜻밖의 발견을 남기세요.",
+  "mainUnverifiedCount": "검증 대기",
+  "mainRecordedCount": "관찰 기록 있음",
+  "mainFavoritesIntro": "즐겨찾는 글, 이미지, 파일을 한곳에 모으세요.",
+  "mainFavoriteRecords": "즐겨찾는 기록",
+  "mainFavoriteAttachments": "즐겨찾는 첨부 파일",
+  "mainPageOverview": "개요",
+  "mainPageInbox": "수집함",
+  "mainPageProjects": "프로젝트",
+  "mainPageLaboratory": "실험실",
+  "mainPageFavorites": "즐겨찾기",
+  "mainSortRecent": "최근 추가순",
+  "mainSortFavorites": "즐겨찾기 우선",
+  "mainSortTitle": "제목순",
+  "mainFilterAll": "전체",
+  "mainFilterPending": "할 일",
+  "mainFilterAttachments": "파일 있음",
+  "mainFilterFavorites": "즐겨찾기만",
+  "mainFilterImage": "이미지",
+  "mainFilterMedia": "오디오 / 동영상",
+  "mainFilterFile": "파일",
+  "mainFilterText": "텍스트",
+  "mainStageUnsorted": "정리 대기",
+  "mainStageOrganized": "정리됨",
+  "mainStagePlanned": "계획됨",
+  "mainStageActive": "진행 중",
+  "mainStageCompleted": "완료됨",
+  "mainStageUnverified": "검증 대기",
+  "mainStageVerifying": "검증 중",
+  "mainStageRecorded": "기록됨",
+  "mainLanguage": "언어",
+  "mainLanguageSystem": "시스템 기본값",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainJustNow": "방금",
+  "mainTenMinutesAgo": "10분 전",
+  "mainOneHourAgo": "1시간 전",
+  "mainThreeHoursAgo": "3시간 전",
+  "mainYesterday": "어제",
+  "mainDailyWater": "물 한 잔 마시기",
+  "mainDailyIdea": "아이디어 하나 적기",
+  "mainDailyExplore": "10분 동안 탐색하기",
+  "mainMovedProject": "“{title}”을(를) 프로젝트로 이동했습니다",
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainStageTooltip": "{title} 단계 변경",
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFavoriteTooltip": "{title} 즐겨찾기 추가",
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainUnfavoriteTooltip": "{title} 즐겨찾기 해제",
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentHint": "첨부 {count}개 · {name}",
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCardAttachments": "파일 {count}개 · {name}",
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSteps": "{done}/{total}단계",
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainMoreSteps": "{count}개 단계 더 있음. 열어서 보기",
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainGlobalColor": "{color} · 모든 컨트롤",
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentCount": "첨부 파일 · {count}",
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainProgress": "작은 걸음 · {done}/{total}",
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDeleted": "“{title}” 삭제됨",
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFieldLimit": "최대 {limit}자입니다. 내용을 줄이거나 파일로 가져오세요.",
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "mainContentRead": "내용을 읽었습니다",
+  "mainContentReadFiles": "내용을 읽고 첨부 {count}개를 보존했습니다",
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainPageSummary": "{page} · 개요",
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCategoryIdea": "아이디어",
+  "mainCategoryProject": "프로젝트",
+  "mainCategoryExperiment": "실험",
+  "mainSampleTitle0": "아이디어를 위한 집",
+  "mainSampleTitle1": "조용한 디지털 정원",
+  "mainSampleTitle2": "재미로 무언가 만들기",
+  "mainSampleTitle3": "나의 작은 도우미",
+  "mainSampleBody0": "문득 떠오른 생각을 여기에.\n완성을 서두르지 말고 시작해 보세요.",
+  "mainSampleBody1": "좋아하는 글귀와 음악,\n일상의 작은 순간을 위한 페이지.",
+  "mainSampleBody2": "생성 예술에 도전해 보세요. 코드가\n뜻밖의 형태로 자라나게 하세요.",
+  "mainSampleBody3": "놓치기 쉬운 작은 일을\n기억하게 돕는 조용한 친구.",
+  "mainSampleTodo0": "첫 모음 정리하기",
+  "mainSampleTodo1": "정원 입구 디자인하기",
+  "mainSampleTodo2": "새 아이디어 심기",
+  "mainSampleTodo3": "작은 시제품 구상하기",
+  "mainSampleTodo4": "알림 동작 설계하기",
+  "mainMakeYours": "나만의 스타일",
+  "mainStayCurious": "호기심을 잃지 말고, 나답게.",
+  "mainHeroCaption": "가능성의 공간",
+  "mainDiagnosticDetails": "진단 세부 정보",
+  "mainIoSettings": "네트워크 및 파일",
+  "mainIoSettingsSummary": "권한, 자격 증명, 엔드포인트 및 API 서비스",
+  "mainIoSettingsGuide": "모양 설정과 별도로 플러그인의 파일 및 네트워크 권한을 관리합니다. 기능을 승인해도 모든 파일이나 엔드포인트에 접근할 수 있는 것은 아닙니다. 가능한 작업은 현재 백엔드에 따라 달라집니다.",
+  "mainIoNoDeclarations": "파일 또는 네트워크 접근을 선언한 플러그인이 없습니다.",
+  "mainPluginSettings": "플러그인 및 서비스",
+  "mainPluginSettingsSummary": "기본 도구, 확장 기능, 네트워크, 파일 및 콘텐츠 보호",
+  "mainReadOnlySettings": "콘텐츠가 읽기 전용입니다. 편집을 복원하려면 작업 공간 플러그인을 확인하세요.",
+  "mainSaveReadOnly": "변경 사항이 저장되지 않았습니다. 플러그인 및 서비스에서 작업 공간 플러그인을 켜고 다시 시도하세요.",
+  "mainSaveConnectionUnknown": "연결이 끊겨 저장 결과를 알 수 없습니다. 다시 시도하기 전에 라이브러리를 다시 열어 확인하세요.",
+  "mainServiceSettings": "API 서비스",
+  "mainServiceRunSettings": "서비스 실행",
+  "mainHttpSettings": "HTTP 작업",
+  "mainCredentialSettings": "자격 증명",
+  "mainEndpointSettings": "아웃바운드 엔드포인트",
+  "mainExpandSettings": "설정 펼치기"
+}

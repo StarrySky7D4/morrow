@@ -306,6 +306,49 @@ void _cleanup(WidgetTester tester) {
 
 void main() {
   testWidgets(
+    'Service settings retain drafts per backend without restoring authorization',
+    (tester) async {
+      _cleanup(tester);
+      final a = _RunBackend(), b = _RunBackend(), metadata = _metadata();
+      await _mount(tester, _host(a, metadata));
+      await _select(tester);
+      await tester.ensureVisible(_find('lifetime'));
+      await tester.enterText(_find('lifetime'), 'unfinished');
+      await _mount(tester, _host(b, metadata));
+      expect(
+        tester.widget<TextField>(_find('lifetime')).controller!.text,
+        '60000',
+      );
+      expect(_button(tester, 'start').onPressed, isNull);
+      await _mount(tester, _host(a, metadata));
+      expect(
+        tester.widget<TextField>(_find('lifetime')).controller!.text,
+        'unfinished',
+      );
+      await _click(tester, 'start');
+      expect(a.starts, isEmpty);
+      await tester.enterText(_find('lifetime'), '120000');
+      await _mount(tester, const SizedBox.shrink());
+      await _mount(tester, _host(a, metadata, revision: 8));
+      expect(
+        tester.widget<TextField>(_find('lifetime')).controller!.text,
+        '120000',
+      );
+      expect(
+        _button(tester, 'start').onPressed,
+        isNull,
+        reason: 'old selection cannot approve a changed registry',
+      );
+      expect(a.starts, isEmpty);
+      await _select(tester);
+      await _click(tester, 'start');
+      expect(a.starts.single.registryRevision, BigInt.from(8));
+      expect(a.starts.single.lifetimeMs, 120000);
+      expect(b.starts, isEmpty);
+    },
+  );
+
+  testWidgets(
     'TLS publication requires checked selection, then freezes it in the attempt',
     (tester) async {
       _cleanup(tester);
@@ -1101,7 +1144,12 @@ void main() {
         contains(detail),
       );
       expect(run.starts.length, 1);
-      expect(_button(tester, 'start').onPressed, isNull);
+      expect(
+        _button(tester, 'start').onPressed,
+        isNotNull,
+        reason:
+            'the preserved selection is current; retry still requires a click',
+      );
       run.onStart = null;
       await _select(tester);
       expect(

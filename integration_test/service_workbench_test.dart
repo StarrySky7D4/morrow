@@ -67,6 +67,7 @@ void main() {
         );
         expect(keyed('compact-settings-back'), findsNothing);
         await tapVisible(tester, keyed('appearance-toggle'));
+        await openIoSettings(tester);
         await waitForUi(
           tester,
           () => find.byType(ServiceRunManager).evaluate().length == 1,
@@ -117,6 +118,7 @@ void main() {
 
         // Compact page is dismissed using the production return button. Service
         // session must survive the settings subtree unmount without a new start.
+        await leaveIoSettings(tester);
         await tapVisible(tester, keyed('compact-settings-back'));
         await waitForUi(
           tester,
@@ -199,6 +201,8 @@ void main() {
           root,
           '${output.path}/03-wide-workbench.png',
         );
+        await openIoSettings(tester);
+        expect(fixture.session.task!.key, task);
         await tapVisible(tester, keyed('service-run-stop'));
         await waitForUi(
           tester,

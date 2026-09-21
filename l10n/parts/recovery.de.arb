@@ -1,0 +1,42 @@
+{
+  "@@locale": "de",
+  "recoveryTitle": "Arbeitsbereich erneut öffnen",
+  "recoveryOpenFailed": "Arbeitsbereich konnte nicht geöffnet werden. Prüfe Plugin-Dateien und Datenordner und versuche es erneut.",
+  "recoveryFailed": "Wiederherstellung nicht abgeschlossen. Bewahre Originaldateien auf und versuche es erneut.",
+  "recoverySnapshotGuide": "Stelle die Bibliothekssicherung in einem neuen Ordner wieder her und wechsle dorthin. Der Originalordner bleibt erhalten. Inhalte entsprechen dem Sicherungszeitpunkt; das ursprüngliche Systemkonto ist erforderlich.",
+  "recoverySnapshot": "Bibliothekssicherung wiederherstellen",
+  "recoveryKeyGuide": "Falls die Schutzdatei fehlt oder beschädigt ist, wähle eine Sicherung. Sie muss zu dieser Bibliothek gehören; das ursprüngliche Systemkonto ist erforderlich.",
+  "recoveryRetry": "Erneut versuchen",
+  "recoveryChooseKey": "Wiederherstellungsdatei wählen",
+  "recoveryBackupFile": "Bibliothekssicherung",
+  "recoveryKeyFile": "Bibliotheksschutzdatei",
+  "recoveryAllFiles": "Alle Dateien",
+  "recoveryPluginUnavailable": "Arbeitsbereich-Plugin nicht verfügbar. Vorhandene Inhalte können weiter angesehen und exportiert werden.",
+  "recoveryMaintenance": "Die Bibliothek benötigt Aufmerksamkeit. Bewahre Originaldateien auf und prüfe die Diagnose.",
+  "recoverySwitchUnconfirmed": "Sicherung nach {path} wiederhergestellt, Wechsel aber nicht bestätigt. Bewahre den Ordner auf und öffne den Arbeitsbereich zur Prüfung erneut.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "Bibliotheksschlüssel fehlt. Stelle die ursprüngliche .audit-key-Datei wieder her und versuche es erneut.",
+  "recoveryKeyMismatch": "Schlüssel passt nicht oder lässt sich nicht entschlüsseln. Verwende Originaldatei und ursprüngliches Systemkonto.",
+  "recoveryMissingLibrary": "Schlüssel vorhanden, Bibliothek fehlt oder ist leer. Stelle die ursprüngliche Bibliothek wieder her.",
+  "recoveryIdentityBusy": "Eine andere Kopie dieser Bibliothek ist geöffnet. Schließe sie, bevor du diese öffnest.",
+  "recoveryBusy": "Bibliothek wird von einem anderen Prozess verwendet. Schließe das andere Fenster und versuche es erneut.",
+  "recoveryTargetExists": "Wiederherstellungsziel existiert bereits. Wähle einen neuen, noch nicht vorhandenen Ordner.",
+  "recoverySnapshotUnknown": "Wiederherstellungsergebnis prüfen. Kontrolliere den Zielordner; die Originalbibliothek wurde nicht ersetzt.",
+  "recoverySnapshotInvalid": "Sicherungsformat oder Integritätsprüfung ungültig. Bewahre die ursprüngliche Sicherungsdatei auf.",
+  "recoveryBackupExists": "Am Sicherungsort existiert bereits eine Datei. Wähle einen neuen Namen.",
+  "recoveryBackupUnknown": "Sicherungsergebnis prüfen. Bewahre die aktuelle Datei auf und kontrolliere den Speicherort.",
+  "recoveryBindingMissing": "Keine Schutzdatei an diese Bibliothek gebunden. Die gewählte Datei kann nicht zugeordnet werden.",
+  "recoveryKeyUnknown": "Wiederherstellungsergebnis prüfen. Versuche erneut zu öffnen; die vorherige Schutzdatei wurde, falls vorhanden, als Kopie aufbewahrt.",
+  "recoveryLibraryInvalid": "Bibliothek konnte nicht geprüft oder geöffnet werden. Bewahre Originalbibliothek und Schlüssel auf und versuche es erneut.",
+  "recoveryCloseFirst": "Arbeitsbereich läuft noch. Schließe ihn vor dem Bibliothekswechsel.",
+  "recoveryIdentityMismatch": "Registrierte Bibliotheksidentität stimmt nicht überein. Bewahre Originaldaten auf und stelle die passende Sicherung wieder her.",
+  "recoveryRegistryInvalid": "Aktive Bibliotheksregistrierung beschädigt oder nicht unterstützt. Öffnen zum Schutz der Daten gestoppt.",
+  "recoverySwitchUnknown": "Bibliothekswechsel nicht bestätigt. Öffne den Arbeitsbereich erneut zur Prüfung.",
+  "recoveryRegistryUnreadable": "Aktive Bibliothek oder Registrierung nicht lesbar. Prüfe den ursprünglichen Speicherort; es wird nicht automatisch eine Ersatzbibliothek erstellt."
+}

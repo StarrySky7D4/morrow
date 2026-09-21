@@ -65,6 +65,7 @@ struct CanvasBackdrop::State {
   Compositor compositor{nullptr};
   Desktop::DesktopWindowTarget target{nullptr};
   SpriteVisual visual{nullptr};
+  CompositionRoundedRectangleGeometry shape{nullptr};
   CompositionEffectBrush brush{nullptr};
   HWND window = nullptr;
   double top_inset = 0;
@@ -76,7 +77,8 @@ struct CanvasBackdrop::State {
 CanvasBackdrop::CanvasBackdrop() = default;
 CanvasBackdrop::~CanvasBackdrop() = default;
 void CanvasBackdrop::Reset() { state_.reset(); }
-void CanvasBackdrop::UpdateBounds(HWND app) {
+void CanvasBackdrop::UpdateBounds(HWND app, double corner_radius) {
+  if (corner_radius >= 0) corner_radius_ = corner_radius;
   if (!state_ || updating_) return;
   updating_ = true;
   RECT r{}; POINT origin{};
@@ -89,18 +91,19 @@ void CanvasBackdrop::UpdateBounds(HWND app) {
     // window. Insert immediately behind Flutter, including the caption background.
     SetWindowPos(state_->window, app, origin.x, origin.y + top, r.right,
       r.bottom - top, SWP_NOACTIVATE | SWP_SHOWWINDOW);
-    // Copy the actual native rounded region into canvas-local coordinates so
-    // the independent background cannot leak beyond the app's lower corners.
-    HRGN clip = CreateRectRgn(0, 0, 0, 0);
-    if (GetWindowRgn(app, clip) != ERROR) {
-      RECT outer{}; GetWindowRect(app, &outer);
-      OffsetRgn(clip, outer.left - origin.x, outer.top - origin.y - top);
-      HRGN bounds = CreateRectRgn(0, 0, r.right, r.bottom - top);
-      CombineRgn(clip, clip, bounds, RGN_AND); DeleteObject(bounds);
-      if (!SetWindowRgn(state_->window, clip, TRUE)) DeleteObject(clip);
-    } else {
-      DeleteObject(clip);
-      SetWindowRgn(state_->window, nullptr, TRUE);
+    // The HRGN is deliberately a loose binary hit-test envelope. The blur
+    // needs its own smooth shape or it would fill the transparent AA fringe.
+    // Geometry uses the full client canvas, translated when an inset is used.
+    try {
+      const float radius = IsZoomed(app) ? 0.0f : static_cast<float>(
+          std::min(corner_radius_ * GetDpiForWindow(app) / 96.0,
+              std::min(r.right, r.bottom) / 2.0));
+      state_->shape.Size({static_cast<float>(r.right), static_cast<float>(r.bottom)});
+      state_->shape.Offset({0, -static_cast<float>(top)});
+      state_->shape.CornerRadius({radius, radius});
+    } catch (...) {
+      // A failed compositor cannot leave an unbounded blur behind the app.
+      state_.reset();
     }
 
   }
@@ -143,11 +146,14 @@ bool CanvasBackdrop::Set(HWND app, double blur, double top_inset) {
       candidate->visual.RelativeSizeAdjustment({1, 1});
       candidate->visual.Opacity(0);
       candidate->visual.Brush(candidate->brush);
+      candidate->shape = candidate->compositor.CreateRoundedRectangleGeometry();
+      candidate->visual.Clip(candidate->compositor.CreateGeometricClip(candidate->shape));
       candidate->target.Root(candidate->visual);
       state_ = std::move(candidate);
     }
     state_->top_inset = top_inset;
     UpdateBounds(app);
+    if (!state_) return false;
     const float value = static_cast<float>(std::clamp(blur, 0.0, 40.0));
     // HostBackdropBrush already contains system blur. A radius alone cannot
     // approach the clear desktop at zero: progressively mix in that source over

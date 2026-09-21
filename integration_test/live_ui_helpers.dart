@@ -5,6 +5,76 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+Future<void> openIoSettings(WidgetTester tester) async {
+  await waitForUi(
+    tester,
+    () =>
+        find
+            .byKey(const ValueKey('plugin-settings-open'))
+            .evaluate()
+            .isNotEmpty ||
+        find.byKey(const ValueKey('io-settings-open')).evaluate().isNotEmpty,
+    reason: 'settings entrance transition completes',
+  );
+  if (find
+      .byKey(const ValueKey('plugin-settings-open'))
+      .evaluate()
+      .isNotEmpty) {
+    await tapVisible(
+      tester,
+      find.byKey(const ValueKey('plugin-settings-open')),
+    );
+    await waitForUi(
+      tester,
+      () => find
+          .byKey(const ValueKey('plugin-settings-page'))
+          .evaluate()
+          .isNotEmpty,
+      reason: 'plugin settings page',
+    );
+  }
+  await tapVisible(tester, find.byKey(const ValueKey('io-settings-open')));
+  await waitForUi(
+    tester,
+    () => find.byKey(const ValueKey('io-settings-page')).evaluate().isNotEmpty,
+    reason: 'dedicated IO settings page',
+  );
+}
+
+Future<void> leaveIoSettings(WidgetTester tester) async {
+  await tapVisible(tester, find.byType(BackButton));
+  await waitForUi(
+    tester,
+    () => find.byKey(const ValueKey('io-settings-page')).evaluate().isEmpty,
+    reason: 'return from IO settings',
+  );
+  await waitForUi(
+    tester,
+    () =>
+        find
+            .byKey(const ValueKey('plugin-settings-page'))
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .byKey(const ValueKey('plugin-settings-open'))
+            .evaluate()
+            .isNotEmpty,
+    reason: 'parent settings route visible',
+  );
+  if (find
+      .byKey(const ValueKey('plugin-settings-page'))
+      .evaluate()
+      .isNotEmpty) {
+    await tapVisible(tester, find.byType(BackButton));
+    await waitForUi(
+      tester,
+      () =>
+          find.byKey(const ValueKey('plugin-settings-page')).evaluate().isEmpty,
+      reason: 'return from plugin settings',
+    );
+  }
+}
+
 // Live integration binding only. Polling services need not ever settle.
 Future<void> waitForUi(
   WidgetTester tester,

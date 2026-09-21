@@ -17,13 +17,29 @@ void main() {
   test(
     'bundled PB/LZ4 resources validate and typed intl plurals execute',
     () async {
-      for (final code in ['en', 'zh']) {
+      for (final code in L10n.nativeNames.keys) {
         final pack = LanguagePackCodec.validate(await bytes(code), code);
         expect(pack.locale, code);
         expect(pack.messages.any((m) => m.key == 'commonCount'), true);
         final messages = await L10n.delegate.load(Locale(code));
         expect(messages.commonGreeting('Ada'), contains('Ada'));
       }
+      expect(
+        L10n.supportedLocales.map((v) => v.languageCode).toSet(),
+        L10n.nativeNames.keys.toSet(),
+      );
+      expect(L10n.supportedLocales.first, const Locale('en'));
+      expect(
+        basicLocaleListResolution([const Locale('xx')], L10n.supportedLocales),
+        const Locale('en'),
+      );
+      final ru = L10n.forLocale(const Locale('ru'));
+      expect(ru.commonCount(1), contains('1'));
+      expect(ru.commonCount(2), isNot(ru.commonCount(5).replaceAll('5', '2')));
+      expect(ru.pluginsCredentialDays(1), '1 день');
+      expect(ru.pluginsCredentialDays(2), '2 дня');
+      expect(ru.pluginsCredentialDays(5), '5 дней');
+      expect(ru.pluginsCredentialDays(21), '21 день');
       final en = L10n.forLocale(const Locale('en'));
       expect(en.commonCount(0), 'No items');
       expect(en.commonCount(1), '1 item');
@@ -107,6 +123,6 @@ void main() {
     );
     expect(messages.commonCancel, '取消');
     expect(L10n.forLocale(const Locale('en')).commonCancel, 'Cancel');
-    expect(L10n.forLocale(const Locale('fr')).commonCancel, '取消');
+    expect(L10n.forLocale(const Locale('zz')).commonCancel, '取消');
   });
 }

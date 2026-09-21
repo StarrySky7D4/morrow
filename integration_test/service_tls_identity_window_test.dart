@@ -75,6 +75,7 @@ void main() {
           ),
         );
         await tapVisible(tester, keyed('appearance-toggle'));
+        await openIoSettings(tester);
         await waitForUi(
           tester,
           () => find.byType(ServiceRunManager).evaluate().length == 1,
@@ -172,6 +173,7 @@ void main() {
         final response = await fixture.post(tlsCertificate: trust);
         expect(response, startsWith('HTTP/1.1 202 '));
         expect(response, endsWith('executed-before'));
+        await leaveIoSettings(tester);
         await tapVisible(tester, keyed('language-picker'));
         await tapVisible(tester, find.text('简体中文').last);
         await waitForUi(
@@ -179,6 +181,7 @@ void main() {
           () => storage.read()['uiLocale'] == 'zh',
           reason: 'Chinese locale persisted',
         );
+        await openIoSettings(tester);
         final regenerated = await Process.run(
           Platform.environment['MORROW_TLS_FIXTURE']!,
           [pem.path],

@@ -63,6 +63,49 @@ class ServiceRunManager extends StatefulWidget {
   State<ServiceRunManager> createState() => _ServiceRunManagerState();
 }
 
+// UI drafts survive leaving the settings route. They carry no trusted directory,
+// grant, owner or execution state; those are freshly observed on every mount.
+final _viewDrafts = Expando<_ServiceRunViewDraft>('service settings drafts');
+
+class _ServiceRunViewDraft {
+  _ServiceRunViewDraft(
+    ServiceRunManager source,
+    this.selection,
+    this.tlsRequired,
+    this.tlsSelection,
+    this.outbound,
+    this.fields,
+  ) : ioBackend = source.ioBackend,
+      metadataBackend = source.metadataBackend,
+      endpointBackend = source.endpointBackend;
+  final Object ioBackend, metadataBackend;
+  final Object? endpointBackend;
+  final String? selection;
+  final bool tlsRequired;
+  final ServiceTlsSelection? tlsSelection;
+  final Map<String, ServiceEndpointSelection> outbound;
+  final Map<String, TextEditingValue> fields;
+
+  bool matches(ServiceRunManager other) =>
+      identical(ioBackend, other.ioBackend) &&
+      identical(metadataBackend, other.metadataBackend) &&
+      identical(endpointBackend, other.endpointBackend);
+}
+
+const _runFieldDefaults = {
+  'lifetime': '60000',
+  'jobs': '64',
+  'bytes': '4194304',
+  'calls': '4',
+  'job-bytes': '1048576',
+  'total-bytes': '4194304',
+  'request-bytes': '65536',
+  'response-bytes': '65536',
+  'header-bytes': '16384',
+  'concurrent': '1',
+  'timeout': '10000',
+};
+
 class _ServiceRunManagerState extends State<ServiceRunManager>
     with SessionViewState<ServiceRunManager> {
   late ServiceRunSession _run;
@@ -87,17 +130,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   }
 
   final _fields = {
-    'lifetime': TextEditingController(text: '60000'),
-    'jobs': TextEditingController(text: '64'),
-    'bytes': TextEditingController(text: '4194304'),
-    'calls': TextEditingController(text: '4'),
-    'job-bytes': TextEditingController(text: '1048576'),
-    'total-bytes': TextEditingController(text: '4194304'),
-    'request-bytes': TextEditingController(text: '65536'),
-    'response-bytes': TextEditingController(text: '65536'),
-    'header-bytes': TextEditingController(text: '16384'),
-    'concurrent': TextEditingController(text: '1'),
-    'timeout': TextEditingController(text: '10000'),
+    for (final entry in _runFieldDefaults.entries)
+      entry.key: TextEditingController(text: entry.value),
   };
 
   String _signature(ServiceRunManager w) =>
@@ -212,6 +246,18 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
 
   void _attach() {
     _attachment++;
+    final draft = _viewDrafts[widget.backend];
+    final restore = draft != null && draft.matches(widget);
+    _selection = restore ? draft.selection : null;
+    _tlsRequired = restore && draft.tlsRequired;
+    _tlsSelection = restore ? draft.tlsSelection : null;
+    _outbound.clear();
+    if (restore) _outbound.addAll(draft.outbound);
+    for (final entry in _fields.entries) {
+      entry.value.value = restore
+          ? draft.fields[entry.key]!
+          : TextEditingValue(text: _runFieldDefaults[entry.key]!);
+    }
     _run = ServiceRunSession.forBackend(widget.backend, widget.ioBackend);
     _metadata = ServiceSession.forBackend(widget.metadataBackend);
     _run.addListener(_changed);
@@ -223,7 +269,16 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     unawaited(_refresh());
   }
 
-  void _detach() {
+  void _detach([ServiceRunManager? previous]) {
+    final source = previous ?? widget;
+    _viewDrafts[source.backend] = _ServiceRunViewDraft(
+      source,
+      _selection,
+      _tlsRequired,
+      _tlsSelection,
+      Map.of(_outbound),
+      {for (final entry in _fields.entries) entry.key: entry.value.value},
+    );
     _attachment++;
     _refreshQueued = false;
     _waitingForMetadata = false;
@@ -245,7 +300,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         !identical(oldWidget.ioBackend, widget.ioBackend) ||
         !identical(oldWidget.metadataBackend, widget.metadataBackend) ||
         !identical(oldWidget.endpointBackend, widget.endpointBackend)) {
-      _detach();
+      _detach(oldWidget);
       _selection = null;
       _tlsSelection = null;
       _protectedTls = null;
@@ -640,6 +695,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
           ),
           const SizedBox(height: 10),
           _note(l.pluginsServiceRunNextSettings),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             key: ValueKey(
               'service-run-selection-${selectionCurrent ? _selection : ''}',

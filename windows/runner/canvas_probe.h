@@ -49,6 +49,56 @@ class CanvasProbe {
     ReleaseDC(nullptr, dc);
     return pixels;
   }
+  flutter::EncodableMap Corners() {
+    flutter::EncodableMap result;
+    if (!fixture_ || !IsWindow(fixture_)) return result;
+    POINT origin{}; ClientToScreen(app_, &origin);
+    RECT client{}, scene{}; GetClientRect(app_, &client); GetWindowRect(fixture_, &scene);
+    const double scale = GetDpiForWindow(app_) / 96.0;
+    const int extent = static_cast<int>(std::ceil(36 * scale));
+    if (extent > 144 || client.right < 2 * extent || client.bottom < 2 * extent) return result;
+    flutter::EncodableList pixels;
+    HDC dc = GetDC(nullptr);
+    HDC tile = CreateCompatibleDC(dc);
+    HBITMAP bitmap = CreateCompatibleBitmap(dc, extent, extent);
+    if (!dc || !tile || !bitmap) {
+      if (bitmap) DeleteObject(bitmap);
+      if (tile) DeleteDC(tile);
+      if (dc) ReleaseDC(nullptr, dc);
+      return {};
+    }
+    const auto old = SelectObject(tile, bitmap);
+    const auto release = [&]() {
+      SelectObject(tile, old); DeleteObject(bitmap); DeleteDC(tile); ReleaseDC(nullptr, dc);
+    };
+    for (int corner = 0; corner < 4; ++corner) {
+      const int left = origin.x + ((corner & 1) ? client.right - extent : 0);
+      const int top = origin.y + ((corner & 2) ? client.bottom - extent : 0);
+      if (!PtInRect(&scene, POINT{left, top}) ||
+          !PtInRect(&scene, POINT{left + extent - 1, top + extent - 1}) ||
+          !BitBlt(tile, 0, 0, extent, extent, dc, left, top, SRCCOPY)) {
+        release(); return {};
+      }
+      for (int y = 0; y < extent; ++y) for (int x = 0; x < extent; ++x) {
+        POINT point{origin.x + ((corner & 1) ? client.right - 1 - x : x),
+                    origin.y + ((corner & 2) ? client.bottom - 1 - y : y)};
+        const HWND at = GetAncestor(WindowFromPoint(point), GA_ROOT);
+        if (!PtInRect(&scene, point) || (at != app_ && at != fixture_)) {
+          release(); return {};
+        }
+        const auto color = GetPixel(tile, point.x - left, point.y - top);
+        if (color == CLR_INVALID) { release(); return {}; }
+        pixels.emplace_back(static_cast<int32_t>((GetRValue(color) << 16) |
+            (GetGValue(color) << 8) | GetBValue(color)));
+      }
+    }
+    release();
+    result[flutter::EncodableValue("extent")] = flutter::EncodableValue(extent);
+    result[flutter::EncodableValue("scale")] = flutter::EncodableValue(scale);
+    result[flutter::EncodableValue("pixels")] = flutter::EncodableValue(pixels);
+    return result;
+  }
+
  private:
   HWND fixture_ = nullptr, app_ = nullptr;
   static LRESULT CALLBACK Paint(HWND window, UINT message, WPARAM w, LPARAM l) {

@@ -2,6 +2,8 @@
 #[cfg(target_arch = "wasm32")]
 use morrow_plugin_sdk::{task::FailureCode, wasm};
 use sha2::{Digest, Sha256};
+/// Immutable bundled package version. Bump whenever guest bytes or manifest change.
+pub const PACKAGE_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub mod capture;
 pub mod codec;
 pub mod persistence;

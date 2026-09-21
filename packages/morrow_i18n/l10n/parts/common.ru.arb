@@ -1,0 +1,22 @@
+{
+  "@@locale": "ru",
+  "commonAppName": "Morrow",
+  "commonCancel": "Отмена",
+  "commonCount": "{count, plural, =0{Нет элементов} one{{count} элемент} few{{count} элемента} many{{count} элементов} other{{count} элемента}}",
+  "@commonCount": {
+    "description": "Typed integer and English plural qualification",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commonGreeting": "Здравствуйте, {name}",
+  "@commonGreeting": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
+}

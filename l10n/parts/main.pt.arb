@@ -1,0 +1,382 @@
+{
+  "@@locale": "pt",
+  "mainAppTitle": "Morrow — Espaço para ideias",
+  "mainStorageUnavailable": "Armazenamento local indisponível. As alterações duram apenas nesta sessão.",
+  "mainStorageUnreadable": "Não foi possível ler o conteúdo salvo. Os dados originais estão preservados e não serão sobrescritos.",
+  "mainSaveFailed": "Não foi possível salvar. As alterações permanecem nesta sessão.",
+  "mainRetry": "Tentar novamente",
+  "mainFrostUnavailable": "O desfoque da área de trabalho está indisponível. A tonalidade e a opacidade continuam ajustáveis.",
+  "mainTransparencyUnavailable": "Não foi possível ativar a transparência do sistema. Você pode usar o fundo padrão.",
+  "mainImportFailed": "Não foi possível importar a mídia. Verifique o arquivo e o espaço disponível.",
+  "mainThemeCompass": "Círculo de cores do tema",
+  "mainBackToWorkbench": "Voltar ao espaço de trabalho",
+  "mainSettings": "Configurações",
+  "mainChangeFailed": "A alteração não foi salva. O rascunho foi preservado; tente novamente.",
+  "mainArrangeIdeas": "Ordenar ideias",
+  "mainSidebarMotto": "Um pouco de ordem. Espaço para descobrir.",
+  "mainMySpace": "Meu espaço",
+  "mainPersonalWorkspace": "Espaço pessoal",
+  "mainNavigation": "Navegação",
+  "mainCollapseSidebar": "Recolher barra lateral",
+  "mainExpandSidebar": "Expandir barra lateral",
+  "mainWorkbench": "Espaço de trabalho",
+  "mainHideAppearance": "Ocultar ajustes de aparência",
+  "mainShowAppearance": "Mostrar ajustes de aparência",
+  "mainSearchHint": "Pesquisar ideias…",
+  "mainClearSearch": "Limpar pesquisa",
+  "mainGreeting": "Deixe suas ideias crescerem.",
+  "mainGreetingDetail": "Guarde os detalhes do dia a dia e as faíscas de inspiração.",
+  "mainNewIdea": "Nova ideia",
+  "mainHeroTitle": "Tudo bem começar aos poucos.",
+  "mainHeroBody": "Um pensamento, uma tarefa, um «e se».\nTudo começa aqui.",
+  "mainCaptureNow": "Anotar uma ideia",
+  "mainRecentThoughts": "Ideias recentes",
+  "mainQueryCapacity": "Histórico de consultas cheio",
+  "mainQueryTerminated": "Esta consulta terminou",
+  "mainQueryUnknown": "Resultados ainda não confirmados",
+  "mainQueryLoading": "Buscando ideias…",
+  "mainQueryCapacityDetail": "Seu conteúdo foi preservado. Esta versão ainda não permite limpar o histórico de consultas.",
+  "mainCheckAgain": "Verificar novamente",
+  "mainQueryAgain": "Nova consulta",
+  "mainQueryRetry": "Repetir consulta",
+  "mainNoMatches": "Nenhuma ideia correspondente",
+  "mainViewAll": "Mostrar tudo",
+  "mainQuickHint": "O que acabou de vir à mente?",
+  "mainCaptureIdea": "Registrar ideia",
+  "mainIdeaSaved": "Ideia salva.",
+  "mainCanvasCompass": "Círculo de cores do fundo",
+  "mainComponentCompass": "Círculo de cores do componente",
+  "mainCustomCompass": "Círculo de cores · Personalizado",
+  "mainFrostEffect": "Desfoque",
+  "mainTintOpacity": "Opacidade da tonalidade",
+  "mainWindowsFrostOnly": "O desfoque da área de trabalho está disponível apenas no Windows",
+  "mainComponentNavigation": "Navegação lateral",
+  "mainComponentSearch": "Barra de pesquisa",
+  "mainComponentHero": "Cartão de visão geral",
+  "mainComponentQuickCapture": "Nota rápida",
+  "mainAppearance": "Aparência",
+  "mainWorkbenchPlugin": "Plugin do espaço de trabalho",
+  "mainExtensionPlugins": "Extensões",
+  "mainContentProtection": "Proteção do conteúdo",
+  "mainDaily": "Pequenas coisas",
+  "mainMusic": "Reprodutor de música",
+  "mainComponentFooter": "Dicas e letras no rodapé",
+  "mainComponentEmpty": "Estado vazio",
+  "mainComponentSettings": "Componentes e cartões · Configurações",
+  "mainGlassTexture": "Estilo de vidro",
+  "mainFrosted": "Fosco",
+  "mainCrystal": "Cristalino",
+  "mainLiquidGlass": "Vidro líquido",
+  "mainFrostOpacity": "Opacidade do vidro",
+  "mainLightOpacity": "20% · Leve",
+  "mainSolidOpacity": "100% · Opaco",
+  "mainLiquidDetail": "Reflexos fluidos e refração suave, como uma gota de água suspensa.",
+  "mainCrystalDetail": "Leve e transparente, deixando as cores brilharem.",
+  "mainFrostDetail": "Suavize o fundo e dê espaço aos pensamentos.",
+  "mainThemeTone": "Cores do tema",
+  "mainDefaultGlobalColor": "Cor padrão do tema · Todos os controles",
+  "mainRestoreDefault": "Restaurar padrão",
+  "mainHideCustomTone": "Ocultar tonalidade personalizada",
+  "mainAdjustCustomTone": "Ajustar tonalidade",
+  "mainThemeGrayscale": "Escala de cinza do tema",
+  "mainOriginalColors": "Cores originais",
+  "mainMonochrome": "Monocromático",
+  "mainCustomLightness": "Luminosidade personalizada",
+  "mainDeepBlack": "Preto",
+  "mainBrightWhite": "Branco",
+  "mainCornerRadius": "Raio dos cantos",
+  "mainSquareCorners": "0 para cantos retos",
+  "mainWindowRadius": "Cantos da janela",
+  "mainWindowRadiusDetail": "Ajuste independente da borda; ao maximizar, os cantos ficam retos",
+  "mainBackgroundCanvas": "Tela de fundo",
+  "mainLiquidEffect": "Efeito de vidro líquido",
+  "mainLiquidAllCanvases": "Disponível separadamente nos quatro tipos de fundo",
+  "mainFollowTheme": "Seguir tema",
+  "mainLavender": "Lavanda",
+  "mainSage": "Sálvia",
+  "mainWarmSand": "Areia quente",
+  "mainLocalMedia": "Mídia local",
+  "mainOnlineMedia": "Mídia online",
+  "mainBackgroundSound": "Reproduzir áudio de fundo",
+  "mainPause": "Pausar",
+  "mainPlay": "Reproduzir",
+  "mainBuiltinTexture": "Usar textura integrada",
+  "mainMediaLimits": "Imagens / GIFs ≤ 25 MB; vídeos ≤ 150 MB",
+  "mainAmbientDetail": "A luz fluida adiciona um toque de cor.",
+  "mainSolidDetail": "Um fundo liso e tranquilo.",
+  "mainTextureDetail": "Uma fina textura de papel traz uma sensação tátil.",
+  "mainOpaqueFallback": "Painéis transparentes sobre a cor do tema atual.",
+  "mainTransparentDetail": "Mostra o espaço atrás da janela; na web, o fundo da página.",
+  "mainAutosaveNotice": "A aparência e as ideias são salvas localmente",
+  "mainDefaultCanvas": "Padrão",
+  "mainSolidCanvas": "Liso",
+  "mainTextureCanvas": "Textura",
+  "mainTransparentCanvas": "Transparente",
+  "mainWhiteTheme": "Claro",
+  "mainCustomTheme": "Personalizado",
+  "mainDarkTheme": "Escuro",
+  "mainSlowProgress": "Pequenos passos também levam adiante.",
+  "mainCuriosity": "Coisas interessantes começam\ncom um pouco de curiosidade.",
+  "mainEditorUnavailable": "Editor indisponível. Verifique o serviço de conteúdo e tente novamente.",
+  "mainEditorClosedUnknown": "O editor fechou, mas o salvamento não foi confirmado. Reabra o espaço de trabalho e verifique antes de criar outra cópia.",
+  "mainIdeaDetails": "Guarde os detalhes. Deixe o próximo passo mais claro.",
+  "mainHypothesis": "Hipótese",
+  "mainNoHypothesis": "Ainda não há hipótese",
+  "mainObservations": "Observações e conclusões",
+  "mainAwaitDiscovery": "À espera de uma descoberta",
+  "mainDelete": "Excluir",
+  "mainEdit": "Editar",
+  "mainDone": "Concluído",
+  "mainUndo": "Desfazer",
+  "mainPasteChanged": "A entrada mudou durante a colagem. Reabra o editor.",
+  "mainSaveNotSubmitted": "Não enviado. O rascunho e os anexos foram preservados; você pode editar e salvar novamente.",
+  "mainSaveUnknown": "Salvamento não confirmado. O rascunho e os anexos foram preservados. Repita este envio; ao fechar, o espaço de trabalho será atualizado para verificação.",
+  "mainAttachmentLimit": "Até 20 anexos por registro.",
+  "mainClipboardReadFailed": "Não foi possível ler o conteúdo. Importe um arquivo ou verifique as permissões do arquivo e da área de transferência.",
+  "mainBodyHint": "Escreva suas ideias ou cole conteúdo…\n\nSuporta # títulos, listas, tabelas e blocos de código",
+  "mainPreviewEmpty": "A prévia aparecerá aqui",
+  "mainMarkdownBody": "Texto · Markdown",
+  "mainHidePreview": "Ocultar prévia",
+  "mainLivePreview": "Prévia ao vivo",
+  "mainClipboardEmpty": "Não há texto ou arquivos legíveis na área de transferência. Copie um arquivo no gerenciador ou use Importar arquivo.",
+  "mainNewIdeaTitle": "Capture uma nova ideia",
+  "mainEditIdeaTitle": "Dê clareza à sua ideia",
+  "mainEditorSubtitle": "Textos, tabelas, imagens: guarde tudo aqui enquanto a ideia ganha forma.",
+  "mainIdeaNameHint": "Dê um nome",
+  "mainIdeaNameRequired": "Escreva sua ideia primeiro",
+  "mainPasteContent": "Colar conteúdo",
+  "mainImportFile": "Importar arquivo",
+  "mainClipboardSupport": "Suporta Markdown, texto formatado e tabelas do Office, capturas e arquivos. Objetos complexos mantêm os anexos originais. Até 20 anexos de 200 MB cada.",
+  "mainCategoryPrompt": "Onde guardar",
+  "mainHypothesisPrompt": "Hipótese a testar",
+  "mainObservationsPrompt": "Observações, processo e conclusões",
+  "mainTodosPrompt": "Próximos passos (um por linha, opcional)",
+  "mainNotNow": "Agora não",
+  "mainSaving": "Salvando…",
+  "mainRetrySave": "Tentar salvar novamente",
+  "mainSaveIdea": "Salvar ideia",
+  "mainView": "Ver",
+  "mainMarkOrganized": "Marcar como organizado",
+  "mainToProject": "Mover para projetos",
+  "mainOpenNextStep": "Abra o projeto para editar os próximos passos",
+  "mainHypothesisSection": "Hipótese / O que tentar",
+  "mainWriteHypothesis": "Abra o registro e anote o que deseja testar.",
+  "mainObservationSection": "Observações / Descobertas",
+  "mainNoResultYet": "O resultado pode esperar. O processo também merece ser registrado.",
+  "mainInboxIntro": "Registre primeiro, organize depois. Transforme boas ideias em pequenos projetos.",
+  "mainUnsortedCount": "A organizar",
+  "mainOrganizedCount": "Organizados",
+  "mainProjectIntro": "Avance com listas de tarefas. Cada pequeno passo aproxima você do objetivo.",
+  "mainActiveProjects": "Em andamento",
+  "mainCompletedProjects": "Concluídos",
+  "mainLabIntro": "Comece com uma hipótese. Guarde tentativas, observações e surpresas.",
+  "mainUnverifiedCount": "A testar",
+  "mainRecordedCount": "Com observações",
+  "mainFavoritesIntro": "Seus textos, imagens e arquivos favoritos em um só lugar.",
+  "mainFavoriteRecords": "Registros favoritos",
+  "mainFavoriteAttachments": "Anexos favoritos",
+  "mainPageOverview": "Visão geral",
+  "mainPageInbox": "Caixa de entrada",
+  "mainPageProjects": "Projetos",
+  "mainPageLaboratory": "Laboratório",
+  "mainPageFavorites": "Favoritos",
+  "mainSortRecent": "Adicionados recentemente",
+  "mainSortFavorites": "Favoritos primeiro",
+  "mainSortTitle": "Por título",
+  "mainFilterAll": "Todos",
+  "mainFilterPending": "A fazer",
+  "mainFilterAttachments": "Com arquivos",
+  "mainFilterFavorites": "Apenas favoritos",
+  "mainFilterImage": "Imagens",
+  "mainFilterMedia": "Áudio / vídeo",
+  "mainFilterFile": "Arquivos",
+  "mainFilterText": "Texto",
+  "mainStageUnsorted": "A organizar",
+  "mainStageOrganized": "Organizado",
+  "mainStagePlanned": "Planejado",
+  "mainStageActive": "Em andamento",
+  "mainStageCompleted": "Concluído",
+  "mainStageUnverified": "A testar",
+  "mainStageVerifying": "Em teste",
+  "mainStageRecorded": "Registrado",
+  "mainLanguage": "Idioma",
+  "mainLanguageSystem": "Idioma do sistema",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainJustNow": "Agora mesmo",
+  "mainTenMinutesAgo": "Há 10 minutos",
+  "mainOneHourAgo": "Há 1 hora",
+  "mainThreeHoursAgo": "Há 3 horas",
+  "mainYesterday": "Ontem",
+  "mainDailyWater": "Sirva-se um copo de água",
+  "mainDailyIdea": "Anote uma ideia",
+  "mainDailyExplore": "Reserve dez minutos para explorar",
+  "mainMovedProject": "“{title}” movido para Projetos",
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainStageTooltip": "Alterar etapa de {title}",
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFavoriteTooltip": "Adicionar {title} aos favoritos",
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainUnfavoriteTooltip": "Remover {title} dos favoritos",
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentHint": "{count} anexos · {name}",
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCardAttachments": "Arquivos {count} · {name}",
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSteps": "{done}/{total} etapas",
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainMoreSteps": "Mais {count} etapas; abra para ver",
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainGlobalColor": "{color} · Todos os controles",
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentCount": "Anexos · {count}",
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainProgress": "Pequenos passos · {done}/{total}",
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDeleted": "“{title}” excluído",
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFieldLimit": "Máximo de {limit} caracteres. Reduza o conteúdo ou importe como arquivo.",
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "mainContentRead": "Conteúdo lido",
+  "mainContentReadFiles": "Conteúdo lido; {count} anexos preservados",
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainPageSummary": "{page} · Visão geral",
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCategoryIdea": "Ideia",
+  "mainCategoryProject": "Projeto",
+  "mainCategoryExperiment": "Experimento",
+  "mainSampleTitle0": "Um lar para as ideias",
+  "mainSampleTitle1": "Um jardim digital tranquilo",
+  "mainSampleTitle2": "Criar algo por diversão",
+  "mainSampleTitle3": "Meu pequeno assistente",
+  "mainSampleBody0": "Guarde pensamentos espontâneos aqui.\nSem pressa para terminar: deixe-os começar.",
+  "mainSampleBody1": "Uma página para palavras favoritas,\nmúsica e detalhes do dia a dia.",
+  "mainSampleBody2": "Experimente arte generativa. Deixe o código\ncriar formas inesperadas.",
+  "mainSampleBody3": "Um companheiro discreto para lembrar\ndas pequenas coisas que escapam.",
+  "mainSampleTodo0": "Organizar a primeira coleção",
+  "mainSampleTodo1": "Projetar a entrada do jardim",
+  "mainSampleTodo2": "Plantar uma nova ideia",
+  "mainSampleTodo3": "Esboçar um pequeno protótipo",
+  "mainSampleTodo4": "Projetar os lembretes",
+  "mainMakeYours": "DO SEU JEITO",
+  "mainStayCurious": "MANTENHA A CURIOSIDADE. SEJA VOCÊ.",
+  "mainHeroCaption": "O CANTO DAS POSSIBILIDADES",
+  "mainDiagnosticDetails": "Detalhes do diagnóstico",
+  "mainIoSettings": "Rede e arquivos",
+  "mainIoSettingsSummary": "Permissões, credenciais, endpoints e serviços de API",
+  "mainIoSettingsGuide": "Gerencie permissões de arquivos e rede separadamente da aparência. Aprovar uma capacidade não libera todos os arquivos ou endpoints; as operações dependem do backend atual.",
+  "mainIoNoDeclarations": "Nenhum plugin instalado declara acesso a arquivos ou rede.",
+  "mainPluginSettings": "Plugins e serviços",
+  "mainPluginSettingsSummary": "Ferramentas integradas, extensões, rede, arquivos e proteção do conteúdo",
+  "mainReadOnlySettings": "O conteúdo é somente leitura. Verifique o plugin do espaço de trabalho para restaurar a edição.",
+  "mainSaveReadOnly": "As alterações não foram salvas. Ative o plugin do espaço de trabalho em Plugins e serviços e tente novamente.",
+  "mainSaveConnectionUnknown": "A conexão foi interrompida; o resultado do salvamento é desconhecido. Reabra a biblioteca e confira antes de tentar novamente.",
+  "mainServiceSettings": "Serviços de API",
+  "mainServiceRunSettings": "Execução de serviços",
+  "mainHttpSettings": "Tarefas HTTP",
+  "mainCredentialSettings": "Credenciais",
+  "mainEndpointSettings": "Endpoints de saída",
+  "mainExpandSettings": "Expandir configurações"
+}

@@ -18,7 +18,7 @@ import subprocess
 MAX_RAW = 4 * 1024 * 1024
 MAX_ENTRIES = 4096
 MAX_TEXT = 64 * 1024
-LOCALES = ('en', 'zh')
+LOCALES = ('en', 'zh', 'ru', 'fr', 'de', 'es', 'ja', 'ko', 'pt')
 
 class CatalogError(ValueError):
     pass
@@ -68,7 +68,7 @@ def merge(root):
     fragments = {}
     for directory in sources:
         for path in sorted(directory.glob('*.arb')):
-            match = re.fullmatch(r'(common|main|visual|plugins|imports|recovery)\.(en|zh)\.arb', path.name)
+            match = re.fullmatch(r'(common|main|visual|plugins|imports|recovery)\.(' + '|'.join(LOCALES) + r')\.arb', path.name)
             if not match:
                 raise CatalogError(f'unrecognized fragment: {path.name}')
             prefix, locale = match.groups()
@@ -81,16 +81,17 @@ def merge(root):
     for prefix in sorted({p for p, _ in fragments}):
         if any((prefix, locale) not in fragments for locale in LOCALES):
             raise CatalogError(f'missing locale for {prefix}')
-        left, right = (fragments[prefix, locale] for locale in LOCALES)
+        catalogs = [fragments[prefix, locale] for locale in LOCALES]
+        left = catalogs[0]
         keys = lambda data: {k for k in data if not k.startswith('@')}
-        if keys(left) != keys(right):
-            raise CatalogError(f'missing/extra message in {prefix}: {keys(left) ^ keys(right)}')
-        for key in keys(left):
-            specs = [data.get('@' + key, {}).get('placeholders', {}) for data in (left, right)]
-            # Formatting/optional-parameters are part of the typed contract too.
-            if specs[0] != specs[1]:
-                raise CatalogError(f'placeholder contract mismatch: {key}')
-        for locale, data in zip(LOCALES, (left, right)):
+        for locale, right in zip(LOCALES[1:], catalogs[1:]):
+            if keys(left) != keys(right):
+                raise CatalogError(f'missing/extra message in {prefix}.{locale}: {keys(left) ^ keys(right)}')
+            for key in keys(left):
+                specs = [data.get('@' + key, {}).get('placeholders', {}) for data in (left, right)]
+                if specs[0] != specs[1]:
+                    raise CatalogError(f'placeholder contract mismatch: {key}')
+        for locale, data in zip(LOCALES, catalogs):
             for key, value in data.items():
                 if key == '@@locale':
                     continue
@@ -176,7 +177,7 @@ def main():
             if not flutter:
                 raise CatalogError('Flutter executable not available')
             subprocess.run([flutter, 'gen-l10n'], cwd=args.root/'packages/morrow_i18n', check=True)
-        print(f'i18n {"checked" if args.check else "compiled"}: {count} artifacts; en/zh')
+        print(f'i18n {"checked" if args.check else "compiled"}: {count} artifacts; {"/".join(LOCALES)}')
     except (CatalogError, OSError, ValueError, subprocess.CalledProcessError) as exc:
         parser.exit(1, f'i18n: {exc}\n')
 

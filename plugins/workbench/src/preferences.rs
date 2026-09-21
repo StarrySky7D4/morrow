@@ -97,6 +97,9 @@ pub fn validate(v: &Preferences) -> Result<(), &'static str> {
             || !(0.0..=40.0).contains(&c.blur)
             || !c.opacity.is_finite()
             || !(0.0..=1.0).contains(&c.opacity)
+            || !matches!(c.mode.as_str(), "" | "frosted" | "clear" | "liquid")
+            || !c.corner_radius.is_finite()
+            || !(0.0..=32.0).contains(&c.corner_radius)
         {
             return Err("component material");
         }
@@ -237,6 +240,9 @@ pub fn decode_wire(bytes: &[u8]) -> Result<Preferences, &'static str> {
             opacity: c.get_opacity(),
             color: c.get_color(),
             has_color: c.get_has_color(),
+            mode: txt(c.get_mode())?,
+            corner_radius: c.get_corner_radius(),
+            has_corner_radius: c.get_has_corner_radius(),
         });
     }
     let p = Preferences {
@@ -301,6 +307,9 @@ pub fn encode_wire(v: &Preferences) -> Result<Vec<u8>, &'static str> {
             out.set_opacity(c.opacity);
             out.set_color(c.color);
             out.set_has_color(c.has_color);
+            out.set_mode(c.mode.as_str());
+            out.set_corner_radius(c.corner_radius);
+            out.set_has_corner_radius(c.has_corner_radius);
         }
     }
     let mut completed = b.init_completed(v.completed.len() as u32);

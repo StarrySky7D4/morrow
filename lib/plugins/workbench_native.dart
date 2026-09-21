@@ -14,6 +14,7 @@ import 'host_request.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
+import 'package:morrow_i18n/locale_codes.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math' show Random;
@@ -101,9 +102,14 @@ class RustWorkbench
     try {
       await result._call(host.Action.page, configure: (r) => r.limit = 1);
       return result;
-    } catch (_) {
-      await result.close();
-      rethrow;
+    } catch (error, stack) {
+      // Startup failures normally also make the child exit nonzero. Cleanup
+      // must not replace the actionable key/identity/library error with that
+      // secondary exit status. close() still waits for the process to exit.
+      try {
+        await result.close();
+      } catch (_) {}
+      Error.throwWithStackTrace(error, stack);
     }
   }
 
@@ -1732,7 +1738,7 @@ class RustWorkbench
   Future<String> readUiLocale() async {
     final reply = await _call(host.Action.readUiLocale);
     final locale = utf8.decode(reply.payload ?? []);
-    if (!const {'system', 'zh', 'en'}.contains(locale)) {
+    if (!isUiLocale(locale)) {
       throw const FormatException('Unsupported UI locale');
     }
     _uiLocaleRevision = reply.revision;
@@ -1760,7 +1766,7 @@ class RustWorkbench
 
   Future<void> saveUiLocale(String locale) {
     final result = _uiLocaleQueue.then((_) async {
-      if (!const {'system', 'zh', 'en'}.contains(locale)) {
+      if (!isUiLocale(locale)) {
         throw const FormatException('Unsupported UI locale');
       }
       if (_uiLocaleRevision == null) await readUiLocale();

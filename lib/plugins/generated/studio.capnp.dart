@@ -1625,8 +1625,8 @@ final class PreferencesBuilder extends StructBuilder {
       5,
       length,
       (r) => ComponentMaterialBuilder(r),
-      3,
-      1,
+      4,
+      2,
     );
   }
 }
@@ -1767,6 +1767,12 @@ final class ComponentMaterialReader extends StructReader {
   int get color => getUint32Field(4);
 
   bool get hasColor => getBoolField(1);
+
+  String? get mode => getTextField(1);
+
+  double get cornerRadius => getFloat64Field(24);
+
+  bool get hasCornerRadius => getBoolField(2);
 }
 
 final class ComponentMaterialBuilder extends StructBuilder {
@@ -1798,6 +1804,18 @@ final class ComponentMaterialBuilder extends StructBuilder {
   set hasColor(bool v) {
     setBoolField(1, v);
   }
+
+  set mode(String? v) {
+    setTextField(1, v);
+  }
+
+  set cornerRadius(double v) {
+    setFloat64Field(24, v);
+  }
+
+  set hasCornerRadius(bool v) {
+    setBoolField(2, v);
+  }
 }
 
 final class _ComponentMaterialFactory
@@ -1805,9 +1823,9 @@ final class _ComponentMaterialFactory
   @override
   StructSchemaInfo get schema => componentMaterialSchema;
   @override
-  int get dataWords => 3;
+  int get dataWords => 4;
   @override
-  int get ptrWords => 1;
+  int get ptrWords => 2;
   @override
   ComponentMaterialReader fromRawReader(RawStructReader r) =>
       ComponentMaterialReader(r);
@@ -1825,8 +1843,8 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
   id: 0xb066b97201e60c1a,
   displayName: 'studio.capnp:ComponentMaterial',
   shortName: 'ComponentMaterial',
-  dataWords: 3,
-  pointerWords: 1,
+  dataWords: 4,
+  pointerWords: 2,
   fields: [
     FieldSchemaInfo(
       name: 'id',
@@ -1873,6 +1891,30 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
       codeOrder: 5,
       body: SlotFieldSchemaInfo(
         offset: 1,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mode',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cornerRadius',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Float64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasCornerRadius',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
         type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),

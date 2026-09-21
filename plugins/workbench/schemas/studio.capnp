@@ -47,4 +47,4 @@ struct Preferences {
  components @10 :List(ComponentMaterial);
 }
 
-struct ComponentMaterial { id @0 :Text; enabled @1 :Bool; blur @2 :Float64; opacity @3 :Float64; color @4 :UInt32; hasColor @5 :Bool; }
+struct ComponentMaterial { id @0 :Text; enabled @1 :Bool; blur @2 :Float64; opacity @3 :Float64; color @4 :UInt32; hasColor @5 :Bool; mode @6 :Text; cornerRadius @7 :Float64; hasCornerRadius @8 :Bool; }

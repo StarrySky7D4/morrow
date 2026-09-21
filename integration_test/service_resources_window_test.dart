@@ -136,6 +136,7 @@ void main() {
             ),
           );
           await tapVisible(tester, keyed('appearance-toggle'));
+          await openIoSettings(tester);
           await waitForUi(
             tester,
             () => find.byType(ServiceRunManager).evaluate().length == 1,

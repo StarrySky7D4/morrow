@@ -1,0 +1,382 @@
+{
+  "@@locale": "ru",
+  "mainAppTitle": "Morrow — Пространство для идей",
+  "mainStorageUnavailable": "Локальное хранилище недоступно. Изменения сохранятся только до конца сеанса.",
+  "mainStorageUnreadable": "Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.",
+  "mainSaveFailed": "Не удалось сохранить. Изменения сохранены в текущем сеансе.",
+  "mainRetry": "Повторить",
+  "mainFrostUnavailable": "Размытие рабочего стола недоступно. Цвет и непрозрачность можно изменить.",
+  "mainTransparencyUnavailable": "Не удалось включить прозрачность системы. Можно использовать обычный фон.",
+  "mainImportFailed": "Не удалось импортировать медиа. Проверьте файл и свободное место.",
+  "mainThemeCompass": "Цветовой круг темы",
+  "mainBackToWorkbench": "Вернуться в рабочую область",
+  "mainSettings": "Настройки",
+  "mainChangeFailed": "Изменение не сохранено. Черновик сохранён; можно повторить.",
+  "mainArrangeIdeas": "Сортировать идеи",
+  "mainSidebarMotto": "Немного порядка. Простор для открытий.",
+  "mainMySpace": "Моё пространство",
+  "mainPersonalWorkspace": "Личная рабочая область",
+  "mainNavigation": "Навигация",
+  "mainCollapseSidebar": "Свернуть боковую панель",
+  "mainExpandSidebar": "Развернуть боковую панель",
+  "mainWorkbench": "Рабочая область",
+  "mainHideAppearance": "Скрыть настройки оформления",
+  "mainShowAppearance": "Показать настройки оформления",
+  "mainSearchHint": "Поиск идей…",
+  "mainClearSearch": "Очистить поиск",
+  "mainGreeting": "Пусть ваши идеи растут.",
+  "mainGreetingDetail": "Сохраняйте детали повседневности и искры вдохновения.",
+  "mainNewIdea": "Новая идея",
+  "mainHeroTitle": "Можно начать с малого.",
+  "mainHeroBody": "Мысль, небольшая задача, «а что если».\nВсё начинается здесь.",
+  "mainCaptureNow": "Записать мысль",
+  "mainRecentThoughts": "Недавние мысли",
+  "mainQueryCapacity": "История запросов заполнена",
+  "mainQueryTerminated": "Запрос завершён",
+  "mainQueryUnknown": "Результаты пока не подтверждены",
+  "mainQueryLoading": "Поиск идей…",
+  "mainQueryCapacityDetail": "Данные сохранены. Эта версия пока не позволяет очистить историю запросов.",
+  "mainCheckAgain": "Проверить снова",
+  "mainQueryAgain": "Новый запрос",
+  "mainQueryRetry": "Повторить запрос",
+  "mainNoMatches": "Подходящих идей нет",
+  "mainViewAll": "Показать всё",
+  "mainQuickHint": "Что пришло в голову?",
+  "mainCaptureIdea": "Записать идею",
+  "mainIdeaSaved": "Идея сохранена.",
+  "mainCanvasCompass": "Цветовой круг фона",
+  "mainComponentCompass": "Цветовой круг компонента",
+  "mainCustomCompass": "Цветовой круг · Настройка",
+  "mainFrostEffect": "Размытие",
+  "mainTintOpacity": "Непрозрачность оттенка",
+  "mainWindowsFrostOnly": "Размытие рабочего стола доступно только в Windows",
+  "mainComponentNavigation": "Боковая навигация",
+  "mainComponentSearch": "Строка поиска",
+  "mainComponentHero": "Карточка обзора",
+  "mainComponentQuickCapture": "Быстрая запись",
+  "mainAppearance": "Оформление",
+  "mainWorkbenchPlugin": "Плагин рабочей области",
+  "mainExtensionPlugins": "Расширения",
+  "mainContentProtection": "Защита содержимого",
+  "mainDaily": "Мелочи дня",
+  "mainMusic": "Музыкальный плеер",
+  "mainComponentFooter": "Подсказки и текст песни",
+  "mainComponentEmpty": "Пустое состояние",
+  "mainComponentSettings": "Компоненты и карточки · Настройки",
+  "mainGlassTexture": "Стиль стекла",
+  "mainFrosted": "Матовое",
+  "mainCrystal": "Прозрачное",
+  "mainLiquidGlass": "Жидкое стекло",
+  "mainFrostOpacity": "Непрозрачность стекла",
+  "mainLightOpacity": "20% · Лёгкое",
+  "mainSolidOpacity": "100% · Плотное",
+  "mainLiquidDetail": "Плавные блики и мягкое преломление, словно капля воды в воздухе.",
+  "mainCrystalDetail": "Лёгкость и прозрачность, раскрывающие цвет.",
+  "mainFrostDetail": "Смягчите фон и освободите место для мыслей.",
+  "mainThemeTone": "Цвета темы",
+  "mainDefaultGlobalColor": "Цвет темы по умолчанию · Все элементы",
+  "mainRestoreDefault": "По умолчанию",
+  "mainHideCustomTone": "Скрыть настройку цвета",
+  "mainAdjustCustomTone": "Настроить цвет",
+  "mainThemeGrayscale": "Обесцвечивание темы",
+  "mainOriginalColors": "Исходные цвета",
+  "mainMonochrome": "Монохромное",
+  "mainCustomLightness": "Яркость цвета",
+  "mainDeepBlack": "Чёрный",
+  "mainBrightWhite": "Белый",
+  "mainCornerRadius": "Радиус углов",
+  "mainSquareCorners": "0 — прямые углы",
+  "mainWindowRadius": "Углы окна",
+  "mainWindowRadiusDetail": "Отдельная настройка рамки; при разворачивании углы прямые",
+  "mainBackgroundCanvas": "Фоновое полотно",
+  "mainLiquidEffect": "Эффект жидкого стекла",
+  "mainLiquidAllCanvases": "Отдельно доступен для всех четырёх типов фона",
+  "mainFollowTheme": "По теме",
+  "mainLavender": "Лаванда",
+  "mainSage": "Шалфей",
+  "mainWarmSand": "Тёплый песок",
+  "mainLocalMedia": "Локальные медиа",
+  "mainOnlineMedia": "Онлайн-медиа",
+  "mainBackgroundSound": "Включить фоновый звук",
+  "mainPause": "Пауза",
+  "mainPlay": "Воспроизвести",
+  "mainBuiltinTexture": "Встроенная текстура",
+  "mainMediaLimits": "Изображения / GIF ≤ 25 МБ; видео ≤ 150 МБ",
+  "mainAmbientDetail": "Плавный свет добавляет немного цвета.",
+  "mainSolidDetail": "Спокойный однотонный фон.",
+  "mainTextureDetail": "Тонкая бумажная текстура создаёт ощущение материала.",
+  "mainOpaqueFallback": "Прозрачные панели поверх цвета текущей темы.",
+  "mainTransparentDetail": "Показывает пространство за окном; в веб-версии — фон страницы.",
+  "mainAutosaveNotice": "Оформление и идеи сохраняются локально",
+  "mainDefaultCanvas": "Обычный",
+  "mainSolidCanvas": "Однотонный",
+  "mainTextureCanvas": "Текстура",
+  "mainTransparentCanvas": "Прозрачный",
+  "mainWhiteTheme": "Светлая",
+  "mainCustomTheme": "Своя",
+  "mainDarkTheme": "Тёмная",
+  "mainSlowProgress": "Даже маленькие шаги ведут вперёд.",
+  "mainCuriosity": "Интересное начинается\nс капельки любопытства.",
+  "mainEditorUnavailable": "Редактор недоступен. Проверьте службу содержимого и повторите.",
+  "mainEditorClosedUnknown": "Редактор закрыт, но сохранение не подтверждено. Откройте рабочую область и проверьте результат, прежде чем создавать копию.",
+  "mainIdeaDetails": "Сохраните детали. Пусть следующий шаг станет понятнее.",
+  "mainHypothesis": "Гипотеза",
+  "mainNoHypothesis": "Гипотезы пока нет",
+  "mainObservations": "Наблюдения и выводы",
+  "mainAwaitDiscovery": "В ожидании открытия",
+  "mainDelete": "Удалить",
+  "mainEdit": "Изменить",
+  "mainDone": "Готово",
+  "mainUndo": "Отменить",
+  "mainPasteChanged": "Во время вставки ввод изменился. Откройте редактор заново.",
+  "mainSaveNotSubmitted": "Не отправлено. Черновик и вложения сохранены; можно исправить и сохранить снова.",
+  "mainSaveUnknown": "Сохранение не подтверждено. Черновик и вложения сохранены. Повторите эту отправку; при закрытии рабочая область обновится для проверки.",
+  "mainAttachmentLimit": "До 20 вложений в одной записи.",
+  "mainClipboardReadFailed": "Не удалось прочитать содержимое. Импортируйте файл или проверьте разрешения на файл и буфер обмена.",
+  "mainBodyHint": "Запишите мысли или вставьте содержимое…\n\nПоддерживаются # заголовки, списки, таблицы и блоки кода",
+  "mainPreviewEmpty": "Здесь появится предпросмотр",
+  "mainMarkdownBody": "Текст · Markdown",
+  "mainHidePreview": "Скрыть предпросмотр",
+  "mainLivePreview": "Живой предпросмотр",
+  "mainClipboardEmpty": "В буфере обмена нет доступных текста или файлов. Скопируйте файл в файловом менеджере или используйте импорт.",
+  "mainNewIdeaTitle": "Поймайте новую идею",
+  "mainEditIdeaTitle": "Сделайте идею яснее",
+  "mainEditorSubtitle": "Текст, таблицы, изображения — храните их здесь, пока идея обретает форму.",
+  "mainIdeaNameHint": "Дайте название",
+  "mainIdeaNameRequired": "Сначала запишите идею",
+  "mainPasteContent": "Вставить содержимое",
+  "mainImportFile": "Импортировать файл",
+  "mainClipboardSupport": "Поддерживаются Markdown, форматированный текст и таблицы Office, снимки экрана и файлы. Сложные объекты сохраняются исходными вложениями. До 20 вложений по 200 МБ.",
+  "mainCategoryPrompt": "Где сохранить",
+  "mainHypothesisPrompt": "Гипотеза для проверки",
+  "mainObservationsPrompt": "Наблюдения, процесс и выводы",
+  "mainTodosPrompt": "Следующие шаги (по одному в строке, необязательно)",
+  "mainNotNow": "Не сейчас",
+  "mainSaving": "Сохранение…",
+  "mainRetrySave": "Повторить сохранение",
+  "mainSaveIdea": "Сохранить идею",
+  "mainView": "Просмотр",
+  "mainMarkOrganized": "Отметить как разобранное",
+  "mainToProject": "Перенести в проекты",
+  "mainOpenNextStep": "Откройте проект, чтобы изменить следующие шаги",
+  "mainHypothesisSection": "Гипотеза / Что попробовать",
+  "mainWriteHypothesis": "Откройте запись и опишите, что хотите проверить.",
+  "mainObservationSection": "Наблюдения / Что выяснилось",
+  "mainNoResultYet": "Результат подождёт. Процесс тоже стоит записать.",
+  "mainInboxIntro": "Сначала записывайте, потом разбирайте. Превращайте удачные идеи в небольшие проекты.",
+  "mainUnsortedCount": "Нужно разобрать",
+  "mainOrganizedCount": "Разобрано",
+  "mainProjectIntro": "Продвигайтесь по списку задач. Каждый маленький шаг приближает к цели.",
+  "mainActiveProjects": "В работе",
+  "mainCompletedProjects": "Завершено",
+  "mainLabIntro": "Начните с гипотезы. Сохраняйте попытки, наблюдения и неожиданные открытия.",
+  "mainUnverifiedCount": "Нужно проверить",
+  "mainRecordedCount": "С наблюдениями",
+  "mainFavoritesIntro": "Любимые тексты, изображения и файлы в одном месте.",
+  "mainFavoriteRecords": "Избранные записи",
+  "mainFavoriteAttachments": "Избранные вложения",
+  "mainPageOverview": "Обзор",
+  "mainPageInbox": "Входящие",
+  "mainPageProjects": "Проекты",
+  "mainPageLaboratory": "Лаборатория",
+  "mainPageFavorites": "Избранное",
+  "mainSortRecent": "Недавно добавленные",
+  "mainSortFavorites": "Сначала избранное",
+  "mainSortTitle": "По названию",
+  "mainFilterAll": "Все",
+  "mainFilterPending": "К выполнению",
+  "mainFilterAttachments": "С файлами",
+  "mainFilterFavorites": "Только избранное",
+  "mainFilterImage": "Изображения",
+  "mainFilterMedia": "Аудио / видео",
+  "mainFilterFile": "Файлы",
+  "mainFilterText": "Текст",
+  "mainStageUnsorted": "Нужно разобрать",
+  "mainStageOrganized": "Разобрано",
+  "mainStagePlanned": "Запланировано",
+  "mainStageActive": "В работе",
+  "mainStageCompleted": "Завершено",
+  "mainStageUnverified": "Нужно проверить",
+  "mainStageVerifying": "Проверяется",
+  "mainStageRecorded": "Записано",
+  "mainLanguage": "Язык",
+  "mainLanguageSystem": "Как в системе",
+  "mainLanguageChinese": "简体中文",
+  "mainLanguageEnglish": "English",
+  "mainJustNow": "Только что",
+  "mainTenMinutesAgo": "10 минут назад",
+  "mainOneHourAgo": "Час назад",
+  "mainThreeHoursAgo": "3 часа назад",
+  "mainYesterday": "Вчера",
+  "mainDailyWater": "Налейте себе воды",
+  "mainDailyIdea": "Запишите идею",
+  "mainDailyExplore": "Уделите десять минут открытиям",
+  "mainMovedProject": "«{title}» перенесено в проекты",
+  "@mainMovedProject": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainStageTooltip": "Изменить этап: {title}",
+  "@mainStageTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFavoriteTooltip": "В избранное: {title}",
+  "@mainFavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainUnfavoriteTooltip": "Убрать из избранного: {title}",
+  "@mainUnfavoriteTooltip": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentHint": "Вложений: {count} · {name}",
+  "@mainAttachmentHint": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCardAttachments": "Файлов: {count} · {name}",
+  "@mainCardAttachments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSteps": "Шаги: {done}/{total}",
+  "@mainSteps": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainMoreSteps": "Ещё шагов: {count}; откройте для просмотра",
+  "@mainMoreSteps": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainGlobalColor": "{color} · Все элементы",
+  "@mainGlobalColor": {
+    "placeholders": {
+      "color": {
+        "type": "String"
+      }
+    }
+  },
+  "mainAttachmentCount": "Вложения · {count}",
+  "@mainAttachmentCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainProgress": "Маленькие шаги · {done}/{total}",
+  "@mainProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mainDeleted": "«{title}» удалено",
+  "@mainDeleted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mainFieldLimit": "Не более {limit} символов. Сократите текст или импортируйте его файлом.",
+  "@mainFieldLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "mainContentRead": "Содержимое прочитано",
+  "mainContentReadFiles": "Содержимое прочитано; вложений сохранено: {count}",
+  "@mainContentReadFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mainPageSummary": "{page} · Обзор",
+  "@mainPageSummary": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      }
+    }
+  },
+  "mainCategoryIdea": "Идея",
+  "mainCategoryProject": "Проект",
+  "mainCategoryExperiment": "Эксперимент",
+  "mainSampleTitle0": "Дом для идей",
+  "mainSampleTitle1": "Тихий цифровой сад",
+  "mainSampleTitle2": "Сделать что-то ради удовольствия",
+  "mainSampleTitle3": "Мой маленький помощник",
+  "mainSampleBody0": "Сохраняйте внезапные мысли здесь.\nНе спешите завершать — просто начните.",
+  "mainSampleBody1": "Небольшая страница для любимых слов,\nмузыки и повседневных деталей.",
+  "mainSampleBody2": "Попробуйте генеративное искусство. Пусть код\nсоздаёт неожиданные формы.",
+  "mainSampleBody3": "Тихий спутник, который поможет помнить\nмелочи, ускользающие из памяти.",
+  "mainSampleTodo0": "Разобрать первую коллекцию",
+  "mainSampleTodo1": "Оформить вход в сад",
+  "mainSampleTodo2": "Посадить новую идею",
+  "mainSampleTodo3": "Набросать небольшой прототип",
+  "mainSampleTodo4": "Продумать напоминания",
+  "mainMakeYours": "ПО-ВАШЕМУ",
+  "mainStayCurious": "БУДЬТЕ ЛЮБОПЫТНЫ. БУДЬТЕ СОБОЙ.",
+  "mainHeroCaption": "УГОЛОК ВОЗМОЖНОСТЕЙ",
+  "mainDiagnosticDetails": "Диагностические сведения",
+  "mainIoSettings": "Сеть и файлы",
+  "mainIoSettingsSummary": "Разрешения, учётные данные, конечные точки и API",
+  "mainIoSettingsGuide": "Управляйте доступом плагинов к файлам и сети отдельно от оформления. Одобрение возможности не даёт доступ ко всем файлам и адресам; операции зависят от текущего бэкенда.",
+  "mainIoNoDeclarations": "Установленные плагины не запрашивают доступ к файлам или сети.",
+  "mainPluginSettings": "Плагины и службы",
+  "mainPluginSettingsSummary": "Встроенные инструменты, расширения, сеть, файлы и защита данных",
+  "mainReadOnlySettings": "Содержимое доступно только для чтения. Проверьте плагин рабочей области, чтобы вернуть редактирование.",
+  "mainSaveReadOnly": "Изменения не сохранены. Включите плагин рабочей области в разделе «Плагины и службы» и повторите.",
+  "mainSaveConnectionUnknown": "Соединение прервано; результат сохранения неизвестен. Откройте библиотеку заново и проверьте перед повтором.",
+  "mainServiceSettings": "Службы API",
+  "mainServiceRunSettings": "Работа служб",
+  "mainHttpSettings": "HTTP-задачи",
+  "mainCredentialSettings": "Учётные данные",
+  "mainEndpointSettings": "Исходящие конечные точки",
+  "mainExpandSettings": "Развернуть настройки"
+}

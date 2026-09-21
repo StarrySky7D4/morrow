@@ -402,6 +402,7 @@ class _CredentialManagerState extends State<CredentialManager> {
                     ),
               style: TextStyle(color: widget.ink, fontSize: 12),
             ),
+            const SizedBox(height: 16),
             TextField(
               key: const ValueKey('credential-header'),
               controller: _header,
@@ -410,6 +411,7 @@ class _CredentialManagerState extends State<CredentialManager> {
               enableSuggestions: false,
               decoration: InputDecoration(labelText: l.pluginsCredentialHeader),
             ),
+            const SizedBox(height: 16),
             TextField(
               key: const ValueKey('credential-secret'),
               controller: _secret,
@@ -423,7 +425,7 @@ class _CredentialManagerState extends State<CredentialManager> {
               smartQuotesType: SmartQuotesType.disabled,
               decoration: InputDecoration(labelText: l.pluginsCredentialSecret),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             DropdownButtonFormField<int>(
               key: ValueKey('credential-days-$_formEpoch'),
               initialValue: _days,
@@ -444,7 +446,7 @@ class _CredentialManagerState extends State<CredentialManager> {
                       if (value != null) setState(() => _days = value);
                     },
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               runSpacing: 8,

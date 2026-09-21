@@ -1,0 +1,42 @@
+{
+  "@@locale": "ja",
+  "recoveryTitle": "ワークスペースを開き直す",
+  "recoveryOpenFailed": "ワークスペースを開けませんでした。プラグインとデータフォルダーを確認して再試行してください。",
+  "recoveryFailed": "復旧が完了しませんでした。元のファイルを保持して再試行してください。",
+  "recoverySnapshotGuide": "バックアップを新しいフォルダーに復元して切り替えられます。元のフォルダーは保持します。内容はバックアップ時点に戻り、元のシステムアカウントが必要です。",
+  "recoverySnapshot": "ライブラリのバックアップを復元",
+  "recoveryKeyGuide": "保護ファイルがない、または破損している場合はバックアップを選んでください。このライブラリに属するファイルと、元のシステムアカウントが必要です。",
+  "recoveryRetry": "再試行",
+  "recoveryChooseKey": "復旧ファイルを選択",
+  "recoveryBackupFile": "ライブラリのバックアップ",
+  "recoveryKeyFile": "ライブラリ保護ファイル",
+  "recoveryAllFiles": "すべてのファイル",
+  "recoveryPluginUnavailable": "ワークスペースプラグインを利用できません。既存の内容は閲覧・書き出しできます。",
+  "recoveryMaintenance": "ライブラリの確認が必要です。元のファイルを保持し、診断の詳細を確認してください。",
+  "recoverySwitchUnconfirmed": "{path} に復元しましたが、切り替えは未確認です。このフォルダーを保持し、ワークスペースを開き直して確認してください。",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "保護キーがありません。元の .audit-key を復元して再試行してください。",
+  "recoveryKeyMismatch": "キーが一致しないか復号できません。元のファイルとシステムアカウントを使ってください。",
+  "recoveryMissingLibrary": "キーはありますが、ライブラリがないか空です。元のライブラリを復元してください。",
+  "recoveryIdentityBusy": "このライブラリの別のコピーが使用中です。そちらを閉じてから開いてください。",
+  "recoveryBusy": "別のプロセスが使用中です。他のウィンドウを閉じて再試行してください。",
+  "recoveryTargetExists": "復元先は既に存在します。まだ存在しない新しいフォルダーを選んでください。",
+  "recoverySnapshotUnknown": "復元結果の確認が必要です。復元先を確認してください。元のライブラリは置き換えていません。",
+  "recoverySnapshotInvalid": "バックアップの形式または整合性確認が無効です。元のバックアップを保持してください。",
+  "recoveryBackupExists": "バックアップ先にファイルがあります。新しい名前を選んでください。",
+  "recoveryBackupUnknown": "バックアップ結果の確認が必要です。現在のファイルを保持し、保存先を確認してください。",
+  "recoveryBindingMissing": "このライブラリには保護ファイルの関連付けがなく、選択したファイルと照合できません。",
+  "recoveryKeyUnknown": "復旧結果の確認が必要です。再度開いてください。以前の保護ファイルがあった場合、そのコピーは保持されています。",
+  "recoveryLibraryInvalid": "ライブラリを検証または開けませんでした。元のライブラリと保護キーを保持して再試行してください。",
+  "recoveryCloseFirst": "ワークスペースは実行中です。ライブラリを切り替える前に閉じてください。",
+  "recoveryIdentityMismatch": "登録されたライブラリ識別情報が一致しません。元のデータを保持し、正しいバックアップを復元してください。",
+  "recoveryRegistryInvalid": "有効なライブラリ登録が破損しているか未対応です。データ保護のため開く処理を中止しました。",
+  "recoverySwitchUnknown": "ライブラリの切り替えは未確認です。ワークスペースを開き直して確認してください。",
+  "recoveryRegistryUnreadable": "有効なライブラリまたは登録ファイルを読めません。元の場所を確認してください。代替ライブラリは自動作成しません。"
+}

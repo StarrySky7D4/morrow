@@ -165,6 +165,9 @@ Uint8List encodePreferences(Map<String, dynamic> data) {
     out.opacity = (value['opacity'] as num?)?.toDouble() ?? .76;
     out.hasColor = value['color'] != null;
     out.color = value['color'] as int? ?? 0;
+    out.mode = value['mode'] as String? ?? '';
+    out.cornerRadius = (value['cornerRadius'] as num?)?.toDouble() ?? 0;
+    out.hasCornerRadius = value['cornerRadius'] != null;
   }
   final done = data['completed'] as List? ?? [];
   final completed = b.initCompleted(done.length);
@@ -202,6 +205,8 @@ Map<String, dynamic> decodePreferences(Uint8List bytes) {
           'blur': c.blur,
           'opacity': c.opacity,
           'color': c.hasColor ? c.color : null,
+          if ((c.mode ?? '').isNotEmpty) 'mode': c.mode,
+          if (c.hasCornerRadius) 'cornerRadius': c.cornerRadius,
         },
     },
     'theme': a.theme,

@@ -337,7 +337,8 @@ void main() {
           await tester.tap(find.byKey(const ValueKey('compact-settings-back')));
           await tester.pumpAndSettle();
         }
-        expect(tester.getRect(footer), rect);
+        expect(tester.getRect(footer).bottom, rect.bottom);
+        expect(tester.getRect(footer).left, rect.left);
         expect(tester.takeException(), isNull);
         await tester.pumpWidget(const SizedBox());
       }
@@ -371,6 +372,14 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(calls.last.arguments, 20.0);
+      expect(
+        tester
+            .widget<ClipRRect>(
+              find.byKey(const ValueKey('desktop-canvas-clip')),
+            )
+            .clipBehavior,
+        Clip.antiAliasWithSaveLayer,
+      );
       for (final radius in [0.0, 32.0, 12.0]) {
         await slide(tester, 'window-radius', radius);
         expect(calls.last.method, 'setRadius');

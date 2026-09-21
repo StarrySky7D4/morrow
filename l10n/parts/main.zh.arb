@@ -363,5 +363,20 @@
   "mainMakeYours": "打造你的风格",
   "mainStayCurious": "保持好奇，做你自己。",
   "mainHeroCaption": "让可能性发生",
-  "mainDiagnosticDetails": "诊断详情"
+  "mainDiagnosticDetails": "诊断详情",
+  "mainIoSettings": "网络与文件访问",
+  "mainIoSettingsSummary": "权限、凭据、端点与 API 服务",
+  "mainIoSettingsGuide": "在此管理插件的文件与网络权限。批准能力声明不代表授权访问所有文件或端点；具体操作以当前后端支持的能力为准。",
+  "mainIoNoDeclarations": "当前已安装的插件尚未声明文件或网络访问能力。",
+  "mainPluginSettings": "插件与服务",
+  "mainPluginSettingsSummary": "内置工具、扩展插件、网络与文件访问、内容保护",
+  "mainReadOnlySettings": "内容库当前只读，请检查工作台插件以恢复编辑。",
+  "mainSaveReadOnly": "改动尚未保存。请在“插件与服务”中启用工作台插件，然后重试。",
+  "mainSaveConnectionUnknown": "连接中断，保存结果尚未确认。请重新打开内容库核对后再重试。",
+  "mainServiceSettings": "API 服务",
+  "mainServiceRunSettings": "服务运行",
+  "mainHttpSettings": "HTTP 任务",
+  "mainCredentialSettings": "凭据",
+  "mainEndpointSettings": "出站端点",
+  "mainExpandSettings": "展开完整设置"
 }

@@ -2,13 +2,18 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'generated/app_localizations.dart';
 import 'language_pack.dart';
+import '../locale_codes.dart';
 
 /// Use [delegate] in the app: it validates bundled PB/LZ4 before intl execution.
 abstract final class L10n {
   static AppLocalizations of(BuildContext context) =>
       AppLocalizations.of(context) ?? forLocale(const Locale('zh'));
-  static AppLocalizations forLocale(Locale locale) =>
-      lookupAppLocalizations(Locale(locale.languageCode == 'en' ? 'en' : 'zh'));
+  static AppLocalizations forLocale(Locale locale) => lookupAppLocalizations(
+    Locale(isSupportedCode(locale.languageCode) ? locale.languageCode : 'zh'),
+  );
+  static bool isSupportedCode(String? code) =>
+      supportedLocales.any((locale) => locale.languageCode == code);
+  static const nativeNames = uiLanguageNames;
   static const LocalizationsDelegate<AppLocalizations> delegate =
       _VerifiedDelegate();
   static List<Locale> get supportedLocales => AppLocalizations.supportedLocales;
@@ -17,7 +22,7 @@ abstract final class L10n {
 class _VerifiedDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _VerifiedDelegate();
   @override
-  bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => L10n.isSupportedCode(locale.languageCode);
   @override
   Future<AppLocalizations> load(Locale locale) async {
     final code = locale.languageCode;

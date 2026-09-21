@@ -89,6 +89,12 @@ void main() {
       find.text(L10n.forLocale(const Locale('en')).mainPageProjects),
       findsWidgets,
     );
+    for (final code in ['ru', 'fr', 'de', 'es', 'ja', 'ko', 'pt']) {
+      await language(t, L10n.nativeNames[code]!);
+      expect(storage.data!['uiLocale'], code);
+      expect(backend.calls, prior);
+      expect(t.takeException(), isNull, reason: code);
+    }
     await language(t, '简体中文');
     expect(storage.data!['uiLocale'], 'zh');
     expect(backend.calls, prior);
@@ -132,17 +138,19 @@ void main() {
       scroll.jumpTo(scroll.maxScrollExtent / 2);
       await t.pumpAndSettle();
       final offset = scroll.pixels;
-      t.binding.platformDispatcher.localesTestValue = const [Locale('en')];
-      await t.pumpAndSettle();
-      expect(
-        find.text(L10n.forLocale(const Locale('en')).mainNewIdeaTitle),
-        findsOneWidget,
-      );
-      expect(t.widget<TextField>(titleFinder).controller, same(title));
-      expect(title.value, input);
-      expect(body.text, contains('用户正文 stays unchanged'));
-      expect(scroll.pixels, closeTo(offset, .1));
-      expect(t.takeException(), isNull);
+      for (final code in L10n.nativeNames.keys) {
+        t.binding.platformDispatcher.localesTestValue = [Locale(code)];
+        await t.pumpAndSettle();
+        expect(
+          find.text(L10n.forLocale(Locale(code)).mainNewIdeaTitle),
+          findsOneWidget,
+        );
+        expect(t.widget<TextField>(titleFinder).controller, same(title));
+        expect(title.value, input);
+        expect(body.text, contains('用户正文 stays unchanged'));
+        expect(scroll.pixels, closeTo(offset, .1));
+        expect(t.takeException(), isNull);
+      }
       await t.binding.handlePopRoute();
       await t.pumpAndSettle();
       await t.pumpWidget(const SizedBox());
@@ -228,36 +236,50 @@ void main() {
       await t.pumpWidget(const SizedBox());
     },
   );
-  testWidgets('English workspace and settings fit narrow and low windows', (
+  testWidgets('All locales fit narrow and low windows and restore on reload', (
     t,
   ) async {
     viewport(t);
-    for (final width in [1440.0, 1050.0, 800.0, 390.0]) {
-      t.view.physicalSize = Size(width, 700);
-      await t.pumpWidget(
-        MorrowApp(storage: MemoryStorage(), initialLocale: const Locale('en')),
-      );
-      await t.pumpAndSettle();
-      expect(t.takeException(), isNull, reason: 'workspace width=$width');
-      if (width >= 800) {
-        final projects = find.byKey(
-          ValueKey('nav-${WorkbenchPage.projects.id}'),
+    for (final code in L10n.nativeNames.keys) {
+      for (final width in [1440.0, 1050.0, 800.0, 390.0]) {
+        t.view.physicalSize = Size(width, 700);
+        await t.pumpWidget(
+          MorrowApp(storage: MemoryStorage()..data = {'uiLocale': code}),
         );
-        await t.ensureVisible(projects);
-        await t.tap(projects);
         await t.pumpAndSettle();
-        expect(t.takeException(), isNull, reason: 'projects width=$width');
-      }
-      if (width < 1050) {
-        await t.tap(find.byKey(const ValueKey('appearance-toggle')));
+        expect(
+          t.widget<MaterialApp>(find.byType(MaterialApp)).locale,
+          Locale(code),
+        );
+        expect(
+          t.takeException(),
+          isNull,
+          reason: '$code workspace width=$width',
+        );
+        if (width >= 800) {
+          final projects = find.byKey(
+            ValueKey('nav-${WorkbenchPage.projects.id}'),
+          );
+          await t.ensureVisible(projects);
+          await t.tap(projects);
+          await t.pumpAndSettle();
+          expect(t.takeException(), isNull, reason: 'projects width=$width');
+        }
+        if (width < 1050) {
+          await t.tap(find.byKey(const ValueKey('appearance-toggle')));
+          await t.pumpAndSettle();
+        }
+        final picker = find.byKey(const ValueKey('language-picker'));
+        await t.ensureVisible(picker);
         await t.pumpAndSettle();
+        expect(picker, findsOneWidget);
+        expect(
+          t.takeException(),
+          isNull,
+          reason: '$code settings width=$width',
+        );
+        await t.pumpWidget(const SizedBox());
       }
-      final picker = find.byKey(const ValueKey('language-picker'));
-      await t.ensureVisible(picker);
-      await t.pumpAndSettle();
-      expect(picker, findsOneWidget);
-      expect(t.takeException(), isNull, reason: 'settings width=$width');
-      await t.pumpWidget(const SizedBox());
     }
   });
 }

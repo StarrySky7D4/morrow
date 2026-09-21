@@ -1,12 +1,12 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'plugins/workbench_ids.dart';
+import 'plugins/host_notices.dart';
 import 'plugins/workbench_labels.dart';
 import 'plugins/query_coordinator.dart';
 import 'plugins/editor_session.dart';
 import 'plugins/plugin_tools.dart';
 import 'plugins/plugin_library.dart';
-import 'plugins/protection_backup.dart';
 import 'plugins/bootstrap_stub.dart'
     if (dart.library.io) 'plugins/bootstrap_native.dart'
     as bootstrap;
@@ -27,6 +27,8 @@ import 'appearance.dart';
 import 'component_material_page.dart';
 import 'collapsible_panel.dart';
 import 'settings_page_transition.dart';
+import 'settings_surface.dart';
+import 'plugins/plugin_settings_page.dart';
 import 'liquid_glass.dart';
 import 'content/idea_markdown.dart';
 export 'appearance.dart';
@@ -76,8 +78,12 @@ class MorrowApp extends StatefulWidget {
     this.initialWarning,
     this.workbench,
     this.initialLocale,
+    this.onFirstFrame,
   });
   final Locale? initialLocale;
+
+  /// Signals the first laid-out workbench, after restoration and localization.
+  final VoidCallback? onFirstFrame;
   final StudioStorage? storage;
   final DesktopBackground? nativeBackground;
   final String? initialWarning;
@@ -87,6 +93,7 @@ class MorrowApp extends StatefulWidget {
 }
 
 class _MorrowAppState extends State<MorrowApp> {
+  bool _reportedFirstFrame = false;
   String uiLocale = 'system';
   AppLocalizations get l => uiLocale != 'system'
       ? L10n.forLocale(Locale(uiLocale))
@@ -122,10 +129,10 @@ class _MorrowAppState extends State<MorrowApp> {
       restored = storage.read();
       final data = restored;
       final storedLocale = data?['uiLocale'];
-      uiLocale = const ['zh', 'en'].contains(storedLocale)
-          ? storedLocale as String
+      uiLocale = storedLocale is String && L10n.isSupportedCode(storedLocale)
+          ? storedLocale
           : 'system';
-      if (const ['zh', 'en'].contains(widget.initialLocale?.languageCode)) {
+      if (L10n.isSupportedCode(widget.initialLocale?.languageCode)) {
         uiLocale = widget.initialLocale!.languageCode;
       }
       if (data != null) {
@@ -232,12 +239,12 @@ class _MorrowAppState extends State<MorrowApp> {
         'cornerRadius': cornerRadius,
         'grayscale': grayscale,
       });
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
         messages.currentState?.hideCurrentSnackBar();
         messages.currentState?.showSnackBar(
           SnackBar(
-            content: Text(l.mainSaveFailed),
+            content: Text(storageFailureNotice(l, error) ?? l.mainSaveFailed),
             action: SnackBarAction(
               label: l.mainRetry,
               onPressed: () => saveContent(restored ?? content),
@@ -304,6 +311,7 @@ class _MorrowAppState extends State<MorrowApp> {
     );
     final labelOverrides = WorkbenchLabelsScope.maybeOf(context);
     return MaterialApp(
+      scrollBehavior: const StudioScrollBehavior(),
       onGenerateTitle: (context) => L10n.of(context).mainAppTitle,
       locale: uiLocale == 'system' ? null : Locale(uiLocale),
       supportedLocales: L10n.supportedLocales,
@@ -352,6 +360,10 @@ class _MorrowAppState extends State<MorrowApp> {
         fontFamily: 'Segoe UI',
         fontFamilyFallback: const ['Microsoft YaHei', 'Arial'],
         scaffoldBackgroundColor: Colors.transparent,
+        snackBarTheme: const SnackBarThemeData(
+          showCloseIcon: true,
+          behavior: SnackBarBehavior.floating,
+        ),
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             shape: RoundedRectangleBorder(
@@ -472,7 +484,15 @@ class _MorrowAppState extends State<MorrowApp> {
         workbench: widget.workbench,
         restored: restored,
         onSave: saveContent,
-        onReady: (data) => restored = data,
+        onReady: (data) {
+          restored = data;
+          if (!_reportedFirstFrame && widget.onFirstFrame != null) {
+            _reportedFirstFrame = true;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) widget.onFirstFrame?.call();
+            });
+          }
+        },
       ),
     );
   }
@@ -705,6 +725,7 @@ class _StudioState extends State<Studio> {
   final searchFocus = FocusNode();
   bool showAppearance = true;
   bool compactSettingsOpen = false;
+  final settingsNavigator = GlobalKey<NavigatorState>();
   bool sidebarExpanded = true;
   bool showCustomTone = false;
   late final MusicController music;
@@ -913,61 +934,26 @@ class _StudioState extends State<Studio> {
     widget.onReady(snapshot());
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final width =
-        MediaQuery.sizeOf(context).width -
-        MediaQuery.paddingOf(context).horizontal;
-    if (width >= 1050) compactSettingsOpen = false;
-  }
-
   void closeCompactSettings() {
     FocusManager.instance.primaryFocus?.unfocus();
     setState(() => compactSettingsOpen = false);
   }
 
-  Widget compactSettings() => Focus(
-    autofocus: true,
-    child: Padding(
-      key: const ValueKey('compact-settings-page'),
-      padding: const EdgeInsets.all(12),
-      child: Column(
+  Widget compactSettings() => SettingsSurface(
+    key: const ValueKey('compact-settings-page'),
+    title: l.mainSettings,
+    onBack: closeCompactSettings,
+    backKey: const ValueKey('compact-settings-back'),
+    backTooltip: l.mainBackToWorkbench,
+    child: SingleChildScrollView(
+      key: const PageStorageKey('compact-settings-scroll'),
+      padding: const EdgeInsets.only(bottom: 20),
+      child: SettingsSections(
         children: [
-          Row(
-            children: [
-              IconButton(
-                key: const ValueKey('compact-settings-back'),
-                tooltip: l.mainBackToWorkbench,
-                onPressed: closeCompactSettings,
-                icon: Icon(Icons.arrow_back_rounded, color: p.ink),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l.mainSettings,
-                style: TextStyle(
-                  color: p.ink,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: SingleChildScrollView(
-              key: const PageStorageKey('compact-settings-scroll'),
-              child: Column(
-                children: [
-                  appearance(),
-                  const SizedBox(height: 20),
-                  scratchpad(),
-                  const SizedBox(height: 20),
-                  musicPanel(),
-                  const SizedBox(height: 20),
-                ],
-              ),
-            ),
+          appearance(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [scratchpad(), const SizedBox(height: 20), musicPanel()],
           ),
         ],
       ),
@@ -1039,11 +1025,11 @@ class _StudioState extends State<Studio> {
       });
       persist();
       return result;
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l.mainChangeFailed),
+            content: Text(storageFailureNotice(l, error) ?? l.mainChangeFailed),
             duration: const Duration(seconds: 30),
             action: SnackBarAction(
               label: l.mainRetry,
@@ -1109,362 +1095,420 @@ class _StudioState extends State<Studio> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: !compactSettingsOpen,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && compactSettingsOpen) closeCompactSettings();
-      },
-      child: CallbackShortcuts(
-        bindings: {
-          if (compactSettingsOpen)
-            const SingleActivator(LogicalKeyboardKey.escape):
-                closeCompactSettings,
-          if (!compactSettingsOpen) ...{
-            const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
-                searchFocus.requestFocus(),
-            const SingleActivator(LogicalKeyboardKey.keyN, control: true):
-                createIdea,
-          },
+    return CallbackShortcuts(
+      bindings: {
+        if (compactSettingsOpen)
+          const SingleActivator(LogicalKeyboardKey.escape):
+              closeCompactSettings,
+        if (!compactSettingsOpen) ...{
+          const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
+              searchFocus.requestFocus(),
+          const SingleActivator(LogicalKeyboardKey.keyN, control: true):
+              createIdea,
         },
-        child: Scaffold(
-          body: Stack(
-            children: [
-              // Keep opaque modes opaque while their foregrounds crossfade.
-              // This fill is inside DesktopFrame's clip, never in the native host.
-              Positioned.fill(
-                child: ColoredBox(
-                  color: p.backdrop == BackgroundMode.transparent
-                      ? (!kIsWeb &&
-                                defaultTargetPlatform == TargetPlatform.android
-                            ? p.background
-                            : Colors.transparent)
-                      : p.backdrop == BackgroundMode.solid
-                      ? p.solidColor
-                      : p.background,
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            // Keep opaque modes opaque while their foregrounds crossfade.
+            // This fill is inside DesktopFrame's clip, never in the native host.
+            Positioned.fill(
+              child: ColoredBox(
+                color: p.backdrop == BackgroundMode.transparent
+                    ? (!kIsWeb &&
+                              defaultTargetPlatform == TargetPlatform.android
+                          ? p.background
+                          : Colors.transparent)
+                    : p.backdrop == BackgroundMode.solid
+                    ? p.solidColor
+                    : p.background,
+              ),
+            ),
+            Positioned.fill(
+              child: AnimatedSwitcher(
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero
+                    : const Duration(milliseconds: 360),
+                child: RepaintBoundary(
+                  key: ValueKey(
+                    '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
+                  ),
+                  child: SizedBox.expand(
+                    child: CustomPaint(painter: AmbientPainter(p)),
+                  ),
                 ),
               ),
+            ),
+            Positioned.fill(child: mediaCanvas()),
+            if (p.backdrop == BackgroundMode.transparent)
               Positioned.fill(
-                child: AnimatedSwitcher(
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : const Duration(milliseconds: 360),
-                  child: RepaintBoundary(
-                    key: ValueKey(
-                      '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
-                    ),
-                    child: SizedBox.expand(
-                      child: CustomPaint(painter: AmbientPainter(p)),
+                child: IgnorePointer(
+                  child: AnimatedContainer(
+                    key: const ValueKey('transparent-canvas-tint'),
+                    duration: motionDuration(context, 280),
+                    color: (p.surfaces.canvasColor ?? p.surface).withValues(
+                      alpha: p.surfaces.canvasOpacity,
                     ),
                   ),
                 ),
               ),
-              Positioned.fill(child: mediaCanvas()),
-              if (p.backdrop == BackgroundMode.transparent)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: AnimatedContainer(
-                      key: const ValueKey('transparent-canvas-tint'),
-                      duration: motionDuration(context, 280),
-                      color: (p.surfaces.canvasColor ?? p.surface).withValues(
-                        alpha: p.surfaces.canvasOpacity,
-                      ),
-                    ),
+            if (p.liquidCanvas)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: LiquidGlassSurface(
+                    key: const ValueKey('liquid-canvas'),
+                    canvas: true,
+                    transparentCanvas: p.backdrop == BackgroundMode.transparent,
+                    tint: p.surface,
+                    dark: p.dark,
+                    borderRadius: BorderRadius.circular(p.windowRadius),
+                    child: const SizedBox.expand(),
                   ),
                 ),
-              if (p.liquidCanvas)
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: LiquidGlassSurface(
-                      key: const ValueKey('liquid-canvas'),
-                      canvas: true,
-                      transparentCanvas:
-                          p.backdrop == BackgroundMode.transparent,
-                      tint: p.surface,
-                      dark: p.dark,
-                      borderRadius: BorderRadius.circular(p.windowRadius),
-                      child: const SizedBox.expand(),
-                    ),
-                  ),
-                ),
-              SafeArea(
-                minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
+              ),
+            SafeArea(
+              minimum: EdgeInsets.only(top: widget.desktopCaption ? 32 : 0),
+              child: CanvasNavigation(
+                navigatorKey: settingsNavigator,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     final desktop = constraints.maxWidth >= 1050;
                     final sidebar = constraints.maxWidth >= 760;
-                    return SettingsPageTransition(
-                      showSettings: !desktop && compactSettingsOpen,
-                      duration: desktop
-                          ? Duration.zero
-                          : motionDuration(context, 320),
-                      settings: compactSettings(),
-                      content: Padding(
-                        padding: EdgeInsets.all(desktop ? 24 : 12),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (sidebar)
-                              CollapsiblePanel(
-                                key: const ValueKey('sidebar-panel'),
-                                expanded: sidebarExpanded,
-                                axis: Axis.horizontal,
-                                extent: desktop ? 234 : 192,
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                    right: desktop ? 26 : 16,
+                    return PopScope(
+                      canPop: !compactSettingsOpen,
+                      onPopInvokedWithResult: (didPop, result) {
+                        if (!didPop && compactSettingsOpen) {
+                          closeCompactSettings();
+                        }
+                      },
+                      child: SettingsPageTransition(
+                        showSettings: compactSettingsOpen,
+                        duration: motionDuration(context, 320),
+                        settings: compactSettings(),
+                        content: Padding(
+                          padding: EdgeInsets.all(desktop ? 24 : 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              if (sidebar)
+                                CollapsiblePanel(
+                                  key: const ValueKey('sidebar-panel'),
+                                  expanded: sidebarExpanded,
+                                  axis: Axis.horizontal,
+                                  extent: desktop ? 234 : 192,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      right: desktop ? 26 : 16,
+                                    ),
+                                    child: navigation(),
                                   ),
-                                  child: navigation(),
                                 ),
-                              ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  header(sidebar, desktop),
-                                  const SizedBox(height: 22),
-                                  Expanded(
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                              Expanded(
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Column(
                                       children: [
+                                        header(sidebar, desktop),
+                                        if (widget.workbench != null &&
+                                            !widget.workbench!.writable) ...[
+                                          const SizedBox(height: 12),
+                                          readOnlyNotice(),
+                                        ],
+                                        const SizedBox(height: 22),
                                         Expanded(
-                                          child: AnimatedSwitcher(
-                                            duration:
-                                                MediaQuery.disableAnimationsOf(
-                                                  context,
-                                                )
-                                                ? Duration.zero
-                                                : const Duration(
-                                                    milliseconds: 300,
-                                                  ),
-                                            switchInCurve: Curves.easeOutCubic,
-                                            switchOutCurve: Curves.easeInCubic,
-                                            layoutBuilder:
-                                                (current, previous) => Stack(
-                                                  alignment:
-                                                      Alignment.topCenter,
-                                                  children: [
-                                                    ...previous.map(
-                                                      (child) => IgnorePointer(
-                                                        child: ExcludeSemantics(
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: AnimatedSwitcher(
+                                                  duration:
+                                                      MediaQuery.disableAnimationsOf(
+                                                        context,
+                                                      )
+                                                      ? Duration.zero
+                                                      : const Duration(
+                                                          milliseconds: 300,
+                                                        ),
+                                                  switchInCurve:
+                                                      Curves.easeOutCubic,
+                                                  switchOutCurve:
+                                                      Curves.easeInCubic,
+                                                  layoutBuilder:
+                                                      (
+                                                        current,
+                                                        previous,
+                                                      ) => Stack(
+                                                        alignment:
+                                                            Alignment.topCenter,
+                                                        children: [
+                                                          ...previous.map(
+                                                            (
+                                                              child,
+                                                            ) => IgnorePointer(
+                                                              child:
+                                                                  ExcludeSemantics(
+                                                                    child:
+                                                                        child,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          ?current,
+                                                        ],
+                                                      ),
+                                                  transitionBuilder:
+                                                      (
+                                                        child,
+                                                        animation,
+                                                      ) => FadeTransition(
+                                                        opacity: animation,
+                                                        child: SlideTransition(
+                                                          position:
+                                                              Tween<Offset>(
+                                                                begin:
+                                                                    const Offset(
+                                                                      0,
+                                                                      .025,
+                                                                    ),
+                                                                end:
+                                                                    Offset.zero,
+                                                              ).animate(
+                                                                animation,
+                                                              ),
                                                           child: child,
                                                         ),
                                                       ),
+                                                  child: SingleChildScrollView(
+                                                    key: ValueKey(
+                                                      'page-${section.id}',
                                                     ),
-                                                    ?current,
-                                                  ],
-                                                ),
-                                            transitionBuilder:
-                                                (child, animation) =>
-                                                    FadeTransition(
-                                                      opacity: animation,
-                                                      child: SlideTransition(
-                                                        position: Tween<Offset>(
-                                                          begin: const Offset(
-                                                            0,
-                                                            .025,
-                                                          ),
-                                                          end: Offset.zero,
-                                                        ).animate(animation),
-                                                        child: child,
-                                                      ),
-                                                    ),
-                                            child: SingleChildScrollView(
-                                              key: ValueKey(
-                                                'page-${section.id}',
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  greeting(),
-                                                  const SizedBox(height: 24),
-                                                  if (section ==
-                                                      WorkbenchPage.overview)
-                                                    hero()
-                                                  else
-                                                    pageIntro(),
-                                                  const SizedBox(height: 28),
-                                                  collectionHeader(),
-                                                  const SizedBox(height: 6),
-                                                  Align(
-                                                    alignment:
-                                                        Alignment.centerRight,
-                                                    child: PopupMenuButton<WorkbenchSort>(
-                                                      key: const ValueKey(
-                                                        'workbench-sort',
-                                                      ),
-                                                      tooltip:
-                                                          l.mainArrangeIdeas,
-                                                      initialValue: sort,
-                                                      onSelected: (value) =>
-                                                          setState(
-                                                            () => sort = value,
-                                                          ),
-                                                      itemBuilder: (_) =>
-                                                          [
-                                                                WorkbenchSort
-                                                                    .recent,
-                                                                WorkbenchSort
-                                                                    .favoritesFirst,
-                                                                WorkbenchSort
-                                                                    .title,
-                                                              ]
-                                                              .map(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        greeting(),
+                                                        const SizedBox(
+                                                          height: 24,
+                                                        ),
+                                                        if (section ==
+                                                            WorkbenchPage
+                                                                .overview)
+                                                          hero()
+                                                        else
+                                                          pageIntro(),
+                                                        const SizedBox(
+                                                          height: 28,
+                                                        ),
+                                                        collectionHeader(),
+                                                        const SizedBox(
+                                                          height: 6,
+                                                        ),
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .centerRight,
+                                                          child: PopupMenuButton<WorkbenchSort>(
+                                                            key: const ValueKey(
+                                                              'workbench-sort',
+                                                            ),
+                                                            tooltip: l
+                                                                .mainArrangeIdeas,
+                                                            initialValue: sort,
+                                                            onSelected:
                                                                 (
-                                                                  label,
-                                                                ) => PopupMenuItem(
-                                                                  value: label,
-                                                                  child: Text(
+                                                                  value,
+                                                                ) => setState(
+                                                                  () => sort =
+                                                                      value,
+                                                                ),
+                                                            itemBuilder: (_) =>
+                                                                [
+                                                                      WorkbenchSort
+                                                                          .recent,
+                                                                      WorkbenchSort
+                                                                          .favoritesFirst,
+                                                                      WorkbenchSort
+                                                                          .title,
+                                                                    ]
+                                                                    .map(
+                                                                      (
+                                                                        label,
+                                                                      ) => PopupMenuItem(
+                                                                        value:
+                                                                            label,
+                                                                        child: Text(
+                                                                          workbenchLabels.sort(
+                                                                            label,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                    .toList(),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets.all(
+                                                                    6,
+                                                                  ),
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Icon(
+                                                                    Icons
+                                                                        .sort_rounded,
+                                                                    size: 13,
+                                                                    color:
+                                                                        p.muted,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  Text(
                                                                     workbenchLabels
                                                                         .sort(
-                                                                          label,
+                                                                          sort,
                                                                         ),
+                                                                    style: TextStyle(
+                                                                      fontSize:
+                                                                          10,
+                                                                      color: p
+                                                                          .muted,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              )
-                                                              .toList(),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              6,
-                                                            ),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .sort_rounded,
-                                                              size: 13,
-                                                              color: p.muted,
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 5,
-                                                            ),
-                                                            Text(
-                                                              workbenchLabels
-                                                                  .sort(sort),
-                                                              style: TextStyle(
-                                                                fontSize: 10,
-                                                                color: p.muted,
+                                                                ],
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  SoftSize(
-                                                    duration: motionDuration(
-                                                      context,
-                                                      240,
-                                                    ),
-                                                    alignment:
-                                                        Alignment.topCenter,
-                                                    child: AnimatedSwitcher(
-                                                      key: const ValueKey(
-                                                        'cards-transition',
-                                                      ),
-                                                      duration: motionDuration(
-                                                        context,
-                                                        220,
-                                                      ),
-                                                      layoutBuilder:
-                                                          (
-                                                            current,
-                                                            previous,
-                                                          ) => Stack(
-                                                            alignment: Alignment
-                                                                .topCenter,
-                                                            children: [
-                                                              ...previous.map(
-                                                                (
-                                                                  child,
-                                                                ) => IgnorePointer(
-                                                                  child:
-                                                                      ExcludeSemantics(
-                                                                        child:
-                                                                            child,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                              ?current,
-                                                            ],
                                                           ),
-                                                      child: KeyedSubtree(
-                                                        key: ValueKey(
-                                                          '${filter.id}/${sort.id}/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
                                                         ),
-                                                        child: cards(),
-                                                      ),
+                                                        const SizedBox(
+                                                          height: 16,
+                                                        ),
+                                                        SoftSize(
+                                                          duration:
+                                                              motionDuration(
+                                                                context,
+                                                                240,
+                                                              ),
+                                                          alignment: Alignment
+                                                              .topCenter,
+                                                          child: AnimatedSwitcher(
+                                                            key: const ValueKey(
+                                                              'cards-transition',
+                                                            ),
+                                                            duration:
+                                                                motionDuration(
+                                                                  context,
+                                                                  220,
+                                                                ),
+                                                            layoutBuilder:
+                                                                (
+                                                                  current,
+                                                                  previous,
+                                                                ) => Stack(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topCenter,
+                                                                  children: [
+                                                                    ...previous.map(
+                                                                      (
+                                                                        child,
+                                                                      ) => IgnorePointer(
+                                                                        child: ExcludeSemantics(
+                                                                          child:
+                                                                              child,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    ?current,
+                                                                  ],
+                                                                ),
+                                                            child: KeyedSubtree(
+                                                              key: ValueKey(
+                                                                '${filter.id}/${sort.id}/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
+                                                              ),
+                                                              child: cards(),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 22,
+                                                        ),
+                                                        quickCapture(),
+                                                        const SizedBox(
+                                                          height: 22,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 72,
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 22),
-                                                  quickCapture(),
-                                                  const SizedBox(height: 22),
-                                                  const SizedBox(height: 8),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        if (desktop)
-                                          CollapsiblePanel(
-                                            key: const ValueKey(
-                                              'settings-side-panel',
-                                            ),
-                                            expanded: showAppearance,
-                                            axis: Axis.horizontal,
-                                            extent: 276,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                left: 24,
-                                              ),
-                                              child: SingleChildScrollView(
-                                                child: Column(
-                                                  children: [
-                                                    appearance(),
-                                                    const SizedBox(height: 20),
-                                                    scratchpad(),
-                                                    const SizedBox(height: 20),
-                                                    musicPanel(),
-                                                    const SizedBox(height: 20),
-                                                    smallQuote(),
-                                                  ],
                                                 ),
                                               ),
-                                            ),
+                                              if (desktop)
+                                                CollapsiblePanel(
+                                                  key: const ValueKey(
+                                                    'settings-side-panel',
+                                                  ),
+                                                  expanded: showAppearance,
+                                                  axis: Axis.horizontal,
+                                                  extent: 276,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          left: 24,
+                                                        ),
+                                                    child:
+                                                        SingleChildScrollView(
+                                                          child: Column(
+                                                            children: [
+                                                              appearance(),
+                                                              const SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              scratchpad(),
+                                                              const SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              musicPanel(),
+                                                              const SizedBox(
+                                                                height: 20,
+                                                              ),
+                                                              smallQuote(),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                  ),
+                                                ),
+                                            ],
                                           ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  Glass(
-                                    key: const ValueKey('footer-dock'),
-                                    componentId: 'footer',
-                                    p: p,
-                                    radius: 14,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 14,
-                                        vertical: 4,
-                                      ),
-                                      child: MusicFooter(music: music),
+                                    AnimatedPositioned(
+                                      duration: motionDuration(context, 280),
+                                      left: 0,
+                                      right: desktop && showAppearance
+                                          ? 276
+                                          : 0,
+                                      bottom: 0,
+                                      child: FooterOverlay(music: music),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
                   },
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -2478,8 +2522,8 @@ class _StudioState extends State<Studio> {
 
   Widget componentMaterialSettings() => OutlinedButton.icon(
     key: const ValueKey('component-settings'),
-    onPressed: () => Navigator.of(context).push(
-      MaterialPageRoute<void>(
+    onPressed: () => settingsNavigator.currentState!.push(
+      CanvasSettingsRoute<void>(
         builder: (_) => ComponentMaterialListPage(
           palette: p,
           entries: {
@@ -2488,6 +2532,15 @@ class _StudioState extends State<Studio> {
             'hero': l.mainComponentHero,
             'quick-capture': l.mainComponentQuickCapture,
             'appearance': l.mainAppearance,
+            'plugin-settings': l.mainPluginSettings,
+            if (widget.workbench is ExternalPluginControl) ...{
+              'io:permissions': l.pluginsIoTitle,
+              'io:ServiceManager': l.mainServiceSettings,
+              'io:ServiceRunManager': l.mainServiceRunSettings,
+              'io:HttpTaskManager': l.mainHttpSettings,
+              'io:CredentialManager': l.mainCredentialSettings,
+              'io:EndpointManager': l.mainEndpointSettings,
+            },
             if (widget.workbench is WorkbenchPluginControl)
               'plugin-tools': l.mainWorkbenchPlugin,
             if (widget.workbench is ExternalPluginControl)
@@ -2517,67 +2570,88 @@ class _StudioState extends State<Studio> {
     icon: Icon(Icons.tune_rounded, size: 16, color: p.accent),
     label: Text(l.mainComponentSettings, style: TextStyle(fontSize: 11)),
     style: OutlinedButton.styleFrom(
+      splashFactory: NoSplash.splashFactory,
       minimumSize: const Size.fromHeight(38),
       side: BorderSide(color: p.line),
       shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
     ),
   );
 
+  Future<void> openPluginSettings() async {
+    final backend = widget.workbench;
+    if (backend == null) return;
+    await settingsNavigator.currentState!.push<void>(
+      CanvasSettingsRoute<void>(
+        builder: (_) => PluginSettingsPage(
+          backend: backend,
+          onChanged: () {
+            if (mounted) setState(() => _queries.invalidate());
+          },
+        ),
+      ),
+    );
+    if (mounted) setState(() => _queries.invalidate());
+  }
+
+  Widget readOnlyNotice() => Glass(
+    p: p,
+    child: Padding(
+      padding: const EdgeInsets.all(12),
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 12,
+        runSpacing: 8,
+        children: [
+          Text(
+            l.mainReadOnlySettings,
+            style: TextStyle(color: p.ink, height: 1.5),
+          ),
+          TextButton.icon(
+            key: const ValueKey('readonly-plugin-settings'),
+            style: TextButton.styleFrom(splashFactory: NoSplash.splashFactory),
+            onPressed: openPluginSettings,
+            icon: const Icon(Icons.extension_outlined),
+            label: Text(l.mainPluginSettings),
+          ),
+        ],
+      ),
+    ),
+  );
+
   Widget appearance() {
-    final Object? backend = widget.workbench;
+    final backend = widget.workbench;
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         appearanceControls(),
-        if (backend is WorkbenchPluginControl) ...[
-          const SizedBox(height: 14),
+        if (backend is WorkbenchPluginControl ||
+            backend is ExternalPluginControl ||
+            backend is WorkbenchProtectionBackup) ...[
+          const SizedBox(height: 20),
           Glass(
-            componentId: 'plugin-tools',
             p: p,
-            radius: 22,
-            child: PluginTools(
-              backend: backend,
-              onChanged: () {
-                if (mounted) setState(() => _queries.invalidate());
-              },
-              ink: p.ink,
-              muted: p.muted,
-              line: p.line,
-              radius: p.borderRadius(11),
-            ),
-          ),
-        ],
-        if (backend is ExternalPluginControl) ...[
-          const SizedBox(height: 14),
-          Glass(
-            componentId: 'plugin-library',
-            p: p,
-            radius: 22,
-            child: PluginLibrary(
-              backend: backend,
-              onChanged: () {
-                if (mounted) setState(() => _queries.invalidate());
-              },
-              ink: p.ink,
-              muted: p.muted,
-              line: p.line,
-              radius: p.borderRadius(11),
-            ),
-          ),
-        ],
-        if (backend is WorkbenchProtectionBackup) ...[
-          const SizedBox(height: 14),
-          Glass(
-            componentId: 'protection-backup',
-            p: p,
-            radius: 22,
-            child: ProtectionBackup(
-              onBackup: backend.backupProtection,
-              onSnapshot: backend.backupSnapshot,
-              ink: p.ink,
-              muted: p.muted,
-              line: p.line,
-              radius: p.borderRadius(11),
+            componentId: 'plugin-settings',
+            child: SettingsNavigationFeedback(
+              child: ListTile(
+                key: const ValueKey('plugin-settings-open'),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                leading: Icon(Icons.extension_outlined, color: p.accent),
+                title: Text(
+                  l.mainPluginSettings,
+                  style: TextStyle(color: p.ink),
+                ),
+                subtitle: Text(
+                  l.mainPluginSettingsSummary,
+                  style: TextStyle(color: p.muted),
+                ),
+                trailing: Icon(Icons.chevron_right, color: p.muted),
+                onTap: openPluginSettings,
+              ),
             ),
           ),
         ],
@@ -2595,8 +2669,8 @@ class _StudioState extends State<Studio> {
       decoration: InputDecoration(labelText: l.mainLanguage),
       items: [
         DropdownMenuItem(value: 'system', child: Text(l.mainLanguageSystem)),
-        DropdownMenuItem(value: 'zh', child: Text(l.mainLanguageChinese)),
-        DropdownMenuItem(value: 'en', child: Text(l.mainLanguageEnglish)),
+        for (final entry in L10n.nativeNames.entries)
+          DropdownMenuItem(value: entry.key, child: Text(entry.value)),
       ],
       onChanged: (value) {
         if (value != null) locale.onChanged(value);
@@ -2614,12 +2688,25 @@ class _StudioState extends State<Studio> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            key: const ValueKey('appearance-heading'),
             children: [
-              Icon(Icons.tune_rounded, size: 16, color: p.ink),
+              SizedBox.square(
+                dimension: 40,
+                child: Center(
+                  child: Icon(
+                    Icons.tune_rounded,
+                    key: const ValueKey('appearance-heading-icon'),
+                    size: 16,
+                    color: p.ink,
+                  ),
+                ),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   l.mainAppearance,
+                  key: const ValueKey('appearance-heading-title'),
+                  textAlign: TextAlign.start,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -2628,9 +2715,12 @@ class _StudioState extends State<Studio> {
                 ),
               ),
               const SizedBox(width: 8),
-              Flexible(
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 100),
                 child: Text(
                   l.mainMakeYours,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontSize: 7,
@@ -2639,6 +2729,23 @@ class _StudioState extends State<Studio> {
                   ),
                 ),
               ),
+              if (!compactSettingsOpen)
+                IconButton(
+                  key: const ValueKey('settings-expand'),
+                  tooltip: l.mainExpandSettings,
+                  style: IconButton.styleFrom(
+                    fixedSize: const Size.square(40),
+                    minimumSize: const Size.square(40),
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.standard,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    setState(() => compactSettingsOpen = true);
+                  },
+                  icon: Icon(Icons.open_in_full, size: 16, color: p.muted),
+                ),
             ],
           ),
           const SizedBox(height: 23),
@@ -2682,11 +2789,13 @@ class _StudioState extends State<Studio> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Text(
-                        l.mainFrostOpacity,
-                        style: TextStyle(fontSize: 10, color: p.muted),
+                      Expanded(
+                        child: Text(
+                          l.mainFrostOpacity,
+                          style: TextStyle(fontSize: 10, color: p.muted),
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Text(
                         '${(p.frostedOpacity * 100).round()}%',
                         style: TextStyle(fontSize: 11, color: p.accent),
@@ -2717,13 +2826,19 @@ class _StudioState extends State<Studio> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        l.mainLightOpacity,
-                        style: TextStyle(fontSize: 9, color: p.muted),
+                      Expanded(
+                        child: Text(
+                          l.mainLightOpacity,
+                          style: TextStyle(fontSize: 9, color: p.muted),
+                        ),
                       ),
-                      Text(
-                        l.mainSolidOpacity,
-                        style: TextStyle(fontSize: 9, color: p.muted),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l.mainSolidOpacity,
+                          textAlign: TextAlign.end,
+                          style: TextStyle(fontSize: 9, color: p.muted),
+                        ),
                       ),
                     ],
                   ),
@@ -2731,6 +2846,7 @@ class _StudioState extends State<Studio> {
               ],
             ),
           ),
+          const SizedBox(height: 16),
           componentMaterialSettings(),
           const SizedBox(height: 14),
           SizedBox(

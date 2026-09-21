@@ -23,13 +23,15 @@ class I18nCatalogTests(unittest.TestCase):
         self.zh = {'@@locale': 'zh', 'mainHello': '你好 {name}', '@mainHello': copy.deepcopy(self.en['@mainHello'])}
         self.write()
     def write(self):
-        for locale, data in [('en', self.en), ('zh', self.zh)]:
+        for locale in i18n.LOCALES:
+            data = copy.deepcopy(self.zh if locale == 'zh' else self.en)
+            data['@@locale'] = locale
             (self.parts / f'main.{locale}.arb').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
     def test_real_cli_roundtrip_is_deterministic_and_stale_bytes_fail(self):
         result = subprocess.run([sys.executable, str(TOOL), '--root', str(self.root)], capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         first = i18n.outputs(self.root)
-        self.assertEqual(i18n.build(self.root, check=True), 5)
+        self.assertEqual(i18n.build(self.root, check=True), 2 * len(i18n.LOCALES) + 1)
         self.assertEqual(first, i18n.outputs(self.root))
         binary = self.root / 'packages/morrow_i18n/assets/languages/en.mlang'
         self.assertTrue(binary.read_bytes().startswith(b'MROWLNG1'))

@@ -1045,6 +1045,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
             _note(l.pluginsHttpTaskCatalogUnavailable),
           if (_endpointsTrusted && _choices.isEmpty)
             _note(l.pluginsHttpTaskNoEndpoints),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             key: const ValueKey('http-task-endpoint'),
             initialValue: selected == null ? null : _hex(selected.reference),
@@ -1063,6 +1064,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
                 .toList(),
             onChanged: canEdit && _endpointsTrusted ? _select : null,
           ),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             key: const ValueKey('http-task-method'),
             initialValue: methods.contains(_method) ? _method : null,
@@ -1081,6 +1083,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
             lines: 2,
           ),
           _note(l.pluginsHttpTaskHeadersHint),
+          const SizedBox(height: 16),
           DropdownButtonFormField<String>(
             key: const ValueKey('http-task-body-format'),
             initialValue: _bodyFormat,

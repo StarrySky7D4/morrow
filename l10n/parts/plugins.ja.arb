@@ -1,0 +1,646 @@
+{
+  "@@locale": "ja",
+  "pluginsWorkbench": "ワークスペースプラグイン",
+  "pluginsReadingState": "プラグインの状態を読み込み中…",
+  "pluginsManagementUnavailable": "プラグイン管理は利用できません。既存のコンテンツは引き続き閲覧できます。",
+  "pluginsInsufficientApproval": "プラグインは有効ですが、コンテンツへの権限が必要です。ワークスペースは読み取り専用です。無効にして権限を再確認してください。",
+  "pluginsWorkbenchReadOnly": "プラグインは許可されていますが、ワークスペースは読み取り専用です。ライブラリまたはプラグインの問題を解決して状態を更新してください。",
+  "pluginsEnabledDetails": "有効です。このプラグインはコンテンツを閲覧・編集できます。無効にしてもデータは保持されます。",
+  "pluginsDisabledDetails": "無効です。エディターとツールを使うには、コンテンツの閲覧と編集を許可してください。",
+  "pluginsDisableWorkbench": "ワークスペースプラグインを無効化",
+  "pluginsApproveWorkbench": "閲覧・編集を許可して有効化",
+  "pluginsOpenTextTool": "テキストツールを開く",
+  "pluginsCloseTextTool": "テキストツールを隠す",
+  "pluginsRefreshState": "状態を更新",
+  "pluginsStateUnavailable": "プラグインの状態を読み込めませんでした。再試行してください。",
+  "pluginsSettingsUnknown": "設定はまだ確認されていません。状態を更新してから再度選択してください。",
+  "pluginsPackageFile": "Morrow プラグイン",
+  "pluginsExistingVersion": "このバージョンはインストール済みです。有効・無効の状態は変わりません。",
+  "pluginsImportedDisabled": "インポート済みで無効です。許可する権限を選択してください。",
+  "pluginsUninstalled": "アンインストールしました。既存のコンテンツは保持されています。",
+  "pluginsInputTooLong": "入力上限に達しました。テキストを短くして再試行してください。",
+  "pluginsSummary": "概要を閲覧",
+  "pluginsOperation": "操作結果を照会",
+  "pluginsAttachment": "添付ファイルを閲覧",
+  "pluginsCreate": "コンテンツを作成",
+  "pluginsEdit": "コンテンツを編集",
+  "pluginsRead": "コンテンツを閲覧",
+  "pluginsRename": "名前を変更",
+  "pluginsNoPermissions": "コンテンツの権限は宣言されていません。",
+  "pluginsDependenciesNotice": "依存関係はホストで設定する必要があります。このページでは承認されません。",
+  "pluginsBuiltin": "組み込みワークスペース",
+  "pluginsEnabled": "有効",
+  "pluginsDisabled": "無効",
+  "pluginsManageAbove": "上のワークスペースプラグインの操作項目で管理してください。",
+  "pluginsSavePermissions": "権限を保存",
+  "pluginsApproveEnable": "承認して有効化",
+  "pluginsDisable": "無効化",
+  "pluginsUninstallKeepContent": "アンインストール（内容を保持）",
+  "pluginsUseTransform": "変換を使用",
+  "pluginsCloseView": "ビューを閉じる",
+  "pluginsOpenView": "ビューを開く",
+  "pluginsTextInput": "入力テキスト",
+  "pluginsChooseSmallFile": "小さなファイルを選択",
+  "pluginsUseText": "代わりにテキストを使用",
+  "pluginsTransform": "変換",
+  "pluginsPreviewOnly": "プレビューのみです。結果は既存のコンテンツに自動保存されません。",
+  "pluginsThirdParty": "サードパーティ製プラグイン",
+  "pluginsImportDetails": "インポート後に有効にするか選択できます。無効化やアンインストール後もコンテンツは保持されます。",
+  "pluginsChoosePackage": "プラグインファイルを選択",
+  "pluginsRefreshList": "一覧を更新",
+  "pluginsInspectedOnly": "ファイルの検査のみ完了しました。インポート後、別途有効にしてください。",
+  "pluginsImport": "インポート",
+  "pluginsCancel": "キャンセル",
+  "pluginsEmptyLibrary": "サードパーティ製プラグインはまだありません。",
+  "pluginsBackupLibraryType": "ライブラリのバックアップ",
+  "pluginsProtectionFileType": "ライブラリ保護ファイル",
+  "pluginsSnapshotSaved": "添付ファイルと元の保護ファイルを含め、ライブラリをバックアップしました。",
+  "pluginsProtectionSaved": "保護ファイルをバックアップしました。起動に失敗した場合、復旧時に選択してください。",
+  "pluginsBackupUnknown": "バックアップはまだ確認されていません。作成されたファイルを保持し、保存先を確認してください。",
+  "pluginsProtection": "コンテンツの保護",
+  "pluginsProtectionDetails": "このシステムアカウントで復旧できるよう、元の保護ファイルをバックアップしてください。カードや添付ファイルは含まれません。",
+  "pluginsSnapshotDetails": "バックアップにはカード、添付ファイル、監査記録が含まれます。外部リソースは参照のままです。復旧には元のシステムアカウントが必要です。",
+  "pluginsBackupLibrary": "ライブラリをバックアップ",
+  "pluginsBackingUp": "バックアップ中…",
+  "pluginsBackupProtection": "保護ファイルをバックアップ",
+  "pluginsListUnknown": "プラグイン一覧を確認できませんでした",
+  "pluginsInspectFailed": "プラグインのプレビューを読み込めませんでした",
+  "pluginsImportUnknown": "インポートを確認できませんでした",
+  "pluginsApprovalUnknown": "有効化または権限の変更を確認できませんでした",
+  "pluginsUninstallUnknown": "アンインストールを確認できませんでした",
+  "pluginsViewFailed": "プラグインのビューを開けませんでした",
+  "pluginsInputFailed": "入力ファイルを読み取れませんでした",
+  "pluginsTransformUnknown": "変換を確認できませんでした",
+  "pluginsCloseUnknown": "ビューを閉じたことを確認できませんでした",
+  "pluginsUnconfirmed": "{reason}。操作は未確認です。更新後の状態を確認してから再度選択してください。",
+  "@pluginsUnconfirmed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsRefreshFailed": "{reason}。一覧を更新できませんでした。「一覧を更新」で読み込みを再試行してください。",
+  "@pluginsRefreshFailed": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsFileLimit": "ファイルが大きすぎます。{limit} バイト以下のファイルを選択してください。",
+  "@pluginsFileLimit": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsOtherCapability": "その他の宣言済み権限：{name}",
+  "@pluginsOtherCapability": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsDeclared": "宣言された権限：{permissions}",
+  "@pluginsDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsSelectedFile": "選択したファイル：{name}",
+  "@pluginsSelectedFile": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsImportPreview": "インポートのプレビュー：{name}",
+  "@pluginsImportPreview": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsPreviewTruncated": "…先頭の 4,096 文字のみ表示",
+  "pluginsEmptyResult": "（空の結果）",
+  "pluginsBinaryPreview": "バイナリ内容：{hex}",
+  "@pluginsBinaryPreview": {
+    "placeholders": {
+      "hex": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsResultBytes": "{count} バイト\n{preview}",
+  "@pluginsResultBytes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "preview": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsConnectionLost": "接続が中断されました。プラグインのビューを開き直してください。",
+  "pluginsOpeningView": "プラグインのビューを開いています…",
+  "pluginsUnavailableView": "プラグインのビューは利用できません",
+  "pluginsUpdatingView": "プレビューを更新中…",
+  "pluginsUiRejected": "プラグインの操作は受け付けられませんでした。入力と現在の権限を確認してください。",
+  "pluginsUiExecution": "プラグインの実行が完了しませんでした。ビューを開き直して再試行してください。",
+  "pluginsUiUnavailable": "プラグインは利用できません。状態を確認してビューを開き直してください。",
+  "pluginsBuiltinHeading": "テキストツール",
+  "@pluginsBuiltinHeading": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinInput": "テキストを入力",
+  "@pluginsBuiltinInput": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsBuiltinCount": "{count} 文字 · このセッションのみ。カードとしては保存されません",
+  "@pluginsBuiltinCount": {
+    "description": "First-party workbench text tool display only",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsBuiltinEmpty": "テキストを入力して大文字変換をプレビュー",
+  "@pluginsBuiltinEmpty": {
+    "description": "First-party workbench text tool display only"
+  },
+  "pluginsIoTitle": "ネットワークとファイルの権限",
+  "pluginsIoScopeNotice": "ここでは権限の種類のみ保存します。サーバーアドレス、ファイルアクセス、認証情報は別途承認が必要です。利用不可の機能は有効になりません。変更後はフォームを開き直してください。",
+  "pluginsIoNoneApproved": "ネットワーク・ファイル権限は未承認です",
+  "pluginsIoApproved": "承認済み：{permissions}",
+  "@pluginsIoApproved": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoDeclared": "要求されたネットワーク・ファイル権限：{permissions}",
+  "@pluginsIoDeclared": {
+    "placeholders": {
+      "permissions": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsIoSave": "ネットワーク・ファイル権限を保存",
+  "pluginsIoRevoke": "ネットワーク・ファイル権限をすべて取り消す",
+  "pluginsContentPermissions": "コンテンツの権限",
+  "pluginsIoFileRead": "許可されたファイルを読む",
+  "pluginsIoFileList": "許可されたフォルダーを参照",
+  "pluginsIoFileCreate": "ファイルを作成",
+  "pluginsIoFileReplace": "ファイルを置換",
+  "pluginsIoFileDelete": "ファイルを削除",
+  "pluginsIoHttpRequest": "ネットワーク API を呼び出す",
+  "pluginsIoHttpListen": "ネットワーク接続を待ち受ける",
+  "pluginsIoHttpPublish": "API サービスを提供",
+  "pluginsIoCredentialUse": "許可された認証情報を使用",
+  "pluginsIoWebSocketConnect": "WebSocket サービスに接続",
+  "pluginsCredentialTitle": "API 認証情報",
+  "pluginsCredentialDetails": "承認された API 接続用の認証情報を安全に保存します。保存してもサーバーの承認やプラグインの有効化は行いません。保存済みのシークレットは表示できません。",
+  "pluginsCredentialReading": "認証情報を読み込み中…",
+  "pluginsCredentialEmpty": "保存済みの認証情報はありません",
+  "pluginsCredentialNew": "認証情報を追加",
+  "pluginsCredentialRefresh": "状態を更新",
+  "pluginsCredentialReplace": "シークレットを置換",
+  "pluginsCredentialDisable": "無効化",
+  "pluginsCredentialDisabled": "無効",
+  "pluginsCredentialStored": "保存済み",
+  "pluginsCredentialExpired": "期限切れ",
+  "pluginsCredentialExpires": "有効期限：{date}",
+  "@pluginsCredentialExpires": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialReference": "認証情報 {reference}",
+  "@pluginsCredentialReference": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialCreateTitle": "新しい認証情報",
+  "pluginsCredentialReplaceTitle": "認証情報 {reference} を置換",
+  "@pluginsCredentialReplaceTitle": {
+    "placeholders": {
+      "reference": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsCredentialHeader": "ヘッダー名",
+  "pluginsCredentialSecret": "新しいシークレット値",
+  "pluginsCredentialLifetime": "有効期間",
+  "pluginsCredentialDays": "{days} 日",
+  "@pluginsCredentialDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsCredentialSave": "認証情報を保存",
+  "pluginsCredentialCancel": "フォームを閉じる",
+  "pluginsCredentialInvalid": "ヘッダー名を確認し、新しいシークレットを入力してください。シークレット欄は消去されました。",
+  "pluginsCredentialUnknown": "結果を確認できませんでした。シークレット欄は消去されました。状態を更新してから次の変更を行ってください。",
+  "pluginsCredentialLoadFailed": "認証情報を整合した状態で読み取れませんでした。状態を更新して再試行してください。",
+  "pluginsCredentialSaved": "認証情報を保存しました。API 接続には別途承認が必要です。",
+  "pluginsCredentialDisabledDone": "認証情報を無効にしました。",
+  "pluginsEndpointTitle": "API エンドポイントの承認",
+  "pluginsEndpointDetails": "特定のパッケージとダイジェストに対するサーバーポリシーを保存します。保存してもネットワーク接続やプラグインの有効化は行わず、ネットワークタスクが直ちに利用可能になることもありません。",
+  "pluginsEndpointNew": "エンドポイントを追加",
+  "pluginsEndpointCreateTitle": "新しいエンドポイント承認",
+  "pluginsEndpointReplaceTitle": "現在のパッケージダイジェストで承認を置換",
+  "pluginsEndpointReplace": "承認を置換",
+  "pluginsEndpointSave": "エンドポイント承認を保存",
+  "pluginsEndpointSaved": "エンドポイント承認を保存しました。ネットワーク接続は行っていません。",
+  "pluginsEndpointDisabledDone": "エンドポイント承認を無効にしました。",
+  "pluginsEndpointEmpty": "保存済みのエンドポイント承認はありません",
+  "pluginsEndpointWorking": "エンドポイントの状態を更新中…",
+  "pluginsEndpointLoadFailed": "エンドポイント承認を整合した状態で読み取れませんでした。状態を更新して再試行してください。",
+  "pluginsEndpointCredentialsFailed": "認証情報の参照を読み取れませんでした。状態を更新してから選択してください。",
+  "pluginsEndpointUnknown": "結果を確認できませんでした。次の変更前に状態を更新してください。リクエストは自動再送されません。",
+  "pluginsEndpointInvalid": "パッケージ、オリジン、メソッド、1～30 日の有効期間、認証情報の権限、証明書、ポリシーの上限を確認してください。",
+  "pluginsEndpointPackage": "パッケージ",
+  "pluginsEndpointPackageUnavailable": "パッケージが利用不可か、HTTP 権限が未承認です。既存の承認は無効にできます。",
+  "pluginsEndpointDigest": "パッケージダイジェスト",
+  "pluginsEndpointOrigin": "オリジンのみ（例：https://api.example.com）",
+  "pluginsEndpointProfile": "接続プロファイル",
+  "pluginsEndpointPublicHttps": "パブリック HTTPS",
+  "pluginsEndpointLocalHttp": "ローカル HTTP",
+  "pluginsEndpointLocalHttps": "ローカル HTTPS",
+  "pluginsEndpointMethods": "許可するリクエストメソッド",
+  "pluginsEndpointLifetime": "有効期間（1～30 日）",
+  "pluginsEndpointCredential": "認証情報の参照",
+  "pluginsEndpointNoCredential": "認証情報なし",
+  "pluginsEndpointCredentialUnavailable": "パッケージに宣言・承認された認証情報使用権限と、有効な保存済み参照が必要です。",
+  "pluginsEndpointCredentialLifetime": "認証情報はエンドポイントの有効期間全体を通じて有効である必要があります。有効期限は延長されません。",
+  "pluginsEndpointAdvanced": "ポリシーの上限（特記なき場合はバイト）",
+  "pluginsEndpointRequestBytes": "リクエスト最大サイズ（1～65536 バイト）",
+  "pluginsEndpointResponseBytes": "レスポンス最大サイズ（1～65536 バイト）",
+  "pluginsEndpointHeaderBytes": "ヘッダー最大サイズ（1～16384 バイト）",
+  "pluginsEndpointConcurrency": "同時リクエスト数（1～128）",
+  "pluginsEndpointTimeout": "タイムアウト（1～30000 ミリ秒）",
+  "pluginsEndpointFrameBytes": "フレーム上限（1～131072 バイト）",
+  "pluginsEndpointCertificateDetails": "任意の HTTPS 信頼ルート：32 KiB 以下のバイナリ DER 証明書（.der または .cer）1 個。PEM や証明書バンドルは使用できません。HTTP に切り替える前に信頼ルートを削除してください。",
+  "pluginsEndpointCertificate": "DER 信頼ルートを選択",
+  "pluginsEndpointRemoveCertificate": "信頼ルートを削除",
+  "pluginsEndpointCertificateSelected": "DER 信頼ルートを選択済み（{bytes} バイト）",
+  "pluginsEndpointCertificateInvalid": "32 KiB 以下の有効なバイナリ DER 証明書（.der または .cer）を 1 個選択してください。",
+  "@pluginsEndpointCertificateSelected": {
+    "placeholders": {
+      "bytes": {
+        "type": "int"
+      }
+    }
+  },
+  "pluginsHttpTaskTitle": "HTTP タスク",
+  "pluginsHttpTaskDetails": "承認済みエンドポイントと実験的 HTTP 転送ハンドラーを持つ有効なプラグインで、明示的なリクエストを 1 回実行します。ライブラリが使用中でもタスクの状態は確認できます。",
+  "pluginsHttpTaskStatusFailed": "タスクの状態を確認できませんでした。状態を更新してください。リクエストは再実行していません。",
+  "pluginsHttpTaskEndpointsFailed": "エンドポイントを整合した状態で読み取れないか、ライブラリが使用中です。タスクの操作は可能です。ライブラリが戻ってからエンドポイントを更新してください。",
+  "pluginsHttpTaskInvalid": "エンドポイント、メソッド、相対ターゲット、通常のヘッダー、本文のエンコード、タイムアウトが承認範囲内か確認してください。",
+  "pluginsHttpTaskStartUnknown": "送信結果は不明です。識別子は保持されています。状態を照会して同じタスクを確認してください。リクエストは再送しません。",
+  "pluginsHttpTaskReadUnknown": "結果の読み取りを確認できず、すでに消費された可能性があります。再読み取りは行いません。状態とワーカー終了は確認できます。",
+  "pluginsHttpTaskControlUnknown": "制御の結果を確認できませんでした。タスクの状態を更新してから次の操作を判断してください。",
+  "pluginsHttpTaskReadPending": "結果は返されませんでした。状態を確認してから明示的に再読み取りしてください。",
+  "pluginsHttpTaskLocal": "ライブラリ利用可能・実行中のタスクなし",
+  "pluginsHttpTaskRunning": "実行中・ワーカーがライブラリを所有",
+  "pluginsHttpTaskStopping": "停止中・ワーカーの実際の終了を待機",
+  "pluginsHttpTaskReclaimed": "ワーカー終了・元のライブラリを返却済み",
+  "pluginsHttpTaskRecoveryRequired": "ワーカー終了・クリーンアップまたは保守の修復が必要",
+  "pluginsHttpTaskUnavailable": "元のライブラリが利用不可・復旧対応が必要",
+  "pluginsHttpTaskAbsent": "結果の配信なし",
+  "pluginsHttpTaskPending": "結果待ち",
+  "pluginsHttpTaskReady": "結果の準備完了。明示的に読み取ってください。ワーカーの終了を意味するものではありません。",
+  "pluginsHttpTaskConsumed": "結果は消費済み",
+  "pluginsHttpTaskResultUnavailable": "結果の配信が利用不可",
+  "pluginsHttpTaskOk": "正常",
+  "pluginsHttpTaskInvalidOptions": "無効なオプション",
+  "pluginsHttpTaskBusy": "使用中",
+  "pluginsHttpTaskClosed": "終了済み",
+  "pluginsHttpTaskReadBound": "読み取り上限超過",
+  "pluginsHttpTaskLimit": "クォータまたは上限に到達",
+  "pluginsHttpTaskSpawn": "ワーカーを起動できませんでした",
+  "pluginsHttpTaskDisconnect": "接続のクリーンアップ失敗",
+  "pluginsHttpTaskProtocol": "タスクのプロトコルエラー",
+  "pluginsHttpTaskDeadline": "期限超過",
+  "pluginsHttpTaskPackageChanged": "パッケージの紐付けが変更済み",
+  "pluginsHttpTaskInactive": "接続は非アクティブ",
+  "pluginsHttpTaskModule": "無効なゲストモジュール",
+  "pluginsHttpTaskUnsupported": "未対応の操作",
+  "pluginsHttpTaskCancelled": "キャンセルを検知。リモート側への影響はすでに発生している可能性があります",
+  "pluginsHttpTaskTrap": "ゲスト実行でトラップが発生",
+  "pluginsHttpTaskAccepted": "受付済み",
+  "pluginsHttpTaskCompleted": "完了",
+  "pluginsHttpTaskDenied": "拒否",
+  "pluginsHttpTaskRevoked": "承認取り消し済み",
+  "pluginsHttpTaskNotFound": "見つかりません",
+  "pluginsHttpTaskConflict": "競合",
+  "pluginsHttpTaskOutcomeUnknown": "リモート側の結果は不明です。ロールバック済みと見なしたり再送したりしないでください",
+  "pluginsHttpTaskEvidenceUnavailable": "結果の証跡が利用不可",
+  "pluginsHttpTaskFailed": "失敗",
+  "pluginsHttpTaskBase64": "Base64",
+  "pluginsHttpTaskExecution": "ゲスト実行：{fault}・終了コード：{code}",
+  "pluginsHttpTaskCounters": "IO 呼び出し：{calls}・計上バイト数：{bytes}",
+  "pluginsHttpTaskHttpResult": "HTTP 結果：{status}・リモートステータス：{code}",
+  "pluginsHttpTaskRemoteError": "リモートサーバーから 4xx/5xx が返されました。HTTP 通信は完了しており、ゲスト実行エラーとは別です。",
+  "pluginsHttpTaskResponseHeaders": "レスポンスヘッダー（重複保持・バイナリ値は Base64）",
+  "pluginsHttpTaskResponseBase64": "レスポンス本文：正確な Base64",
+  "pluginsHttpTaskResponseText": "レスポンス本文：プレーンテキストのプレビュー",
+  "pluginsHttpTaskExit": "ワーカー終了 — 実行：{execution}・切断：{disconnect}・保守：{maintenance}",
+  "pluginsHttpTaskWorking": "タスク制御の応答を待機中…",
+  "pluginsHttpTaskSubmission": "送信識別子：{identity}",
+  "pluginsHttpTaskKey": "タスク識別子：{identity}",
+  "pluginsHttpTaskRefresh": "タスクの状態を更新",
+  "pluginsHttpTaskPoll": "タスクを確認",
+  "pluginsHttpTaskRead": "結果を 1 回読み取る",
+  "pluginsHttpTaskCancel": "キャンセルを要求",
+  "pluginsHttpTaskRepair": "クリーンアップを修復",
+  "pluginsHttpTaskAcknowledge": "終了済みタスクを確認",
+  "pluginsHttpTaskHistory": "過去のタスク観測（最大 5 件）",
+  "pluginsHttpTaskNew": "新しいリクエストを準備",
+  "pluginsHttpTaskRefreshEndpoints": "承認済みエンドポイントを更新",
+  "pluginsHttpTaskLoadingEndpoints": "承認済みエンドポイントを読み込み中…",
+  "pluginsHttpTaskCatalogUnavailable": "プラグインカタログの状態が利用できません。新規送信前にプラグインライブラリを更新してください。既存タスクの操作は可能です。",
+  "pluginsHttpTaskNoEndpoints": "有効かつ承認済みの HTTP 転送プラグインに一致するエンドポイントがありません。",
+  "pluginsHttpTaskEndpoint": "承認済みエンドポイント",
+  "pluginsHttpTaskTarget": "相対ターゲット（例：/v1/items?limit=10）",
+  "pluginsHttpTaskHeaders": "通常のリクエストヘッダー（1 行に 名前: 値）",
+  "pluginsHttpTaskHeadersHint": "重複ヘッダーは個別に保持します。認証情報と接続のヘッダーはランタイムのみが設定します。",
+  "pluginsHttpTaskBodyFormat": "リクエスト本文のエンコード",
+  "pluginsHttpTaskText": "UTF-8 テキスト",
+  "pluginsHttpTaskBody": "リクエスト本文",
+  "pluginsHttpTaskTimeout": "タイムアウト（1～30000 ミリ秒、承認範囲内）",
+  "pluginsHttpTaskExplicit": "送信すると実際のリクエストを 1 回実行します。クリックごとに新しい識別子が作成されます。結果不明の送信や読み取りを自動再実行しません。キャンセルしてもリモート操作の取り消しは保証されません。",
+  "pluginsHttpTaskStart": "新しいリクエストを送信",
+  "@pluginsHttpTaskExecution": {
+    "placeholders": {
+      "fault": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskCounters": {
+    "placeholders": {
+      "calls": {
+        "type": "String"
+      },
+      "bytes": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskHttpResult": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "code": {
+        "type": "int"
+      }
+    }
+  },
+  "@pluginsHttpTaskExit": {
+    "placeholders": {
+      "execution": {
+        "type": "String"
+      },
+      "disconnect": {
+        "type": "String"
+      },
+      "maintenance": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskSubmission": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "@pluginsHttpTaskKey": {
+    "placeholders": {
+      "identity": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsHttpTaskAbandon": "この試行の観測を終了",
+  "pluginsHttpTaskAbandonDetails": "最新の状態でアクティブなタスクがなく、元のライブラリが利用可能だと確認された場合のみ観測を終了できます。リモートへの影響がなかった証明にはなりません。識別子と不確実性は履歴に残り、新規リクエストには明示的な送信が必要です。",
+  "pluginsHttpTaskArchivedUnknown": "ユーザーが観測を終了しました。以前のリモートへの影響は未確認のままです。この試行は再実行していません。",
+  "pluginsServiceTitle": "サービス設定",
+  "pluginsServiceManagementOnly": "保存済みの設定と承認を管理します。保存してもリスナーの起動、パッケージの実行、サービスの有効化は行いません。",
+  "pluginsServiceRefresh": "記録を更新",
+  "pluginsServiceNewConfig": "新しい設定",
+  "pluginsServiceEditConfig": "設定を編集",
+  "pluginsServiceNewAuthentication": "新しい認証",
+  "pluginsServiceRotateAuthentication": "認証をローテーション",
+  "pluginsServicePublicationEditor": "公開の承認",
+  "pluginsServiceEditPublication": "公開を編集",
+  "pluginsServiceWorking": "処理中…",
+  "pluginsServiceLoadFailed": "記録を更新できませんでした。変更前に再度更新してください。",
+  "pluginsServiceWriteUnknown": "直前の変更結果は不明です。再送していません。",
+  "pluginsServiceInvalid": "保存前に入力欄、選択した承認、現在のパッケージを確認してください。",
+  "pluginsServiceSaved": "保存しました。返されたリビジョンと実際の有効期限を以下で確認してください。",
+  "pluginsServiceTokenDiscarded": "パネルを閉じたため、一度だけ表示されるトークンを消去しました。必要なら明示的に新規発行してください。",
+  "pluginsServiceUncertainHelp": "まず元の記録を更新して確認してください。この通知の確認は次の明示的な操作を可能にするだけです。以前の変更の失敗を証明せず、再実行もしません。",
+  "pluginsServiceAcknowledgeUncertain": "更新後の記録を確認しました",
+  "pluginsServiceIssuedToken": "一度だけ表示される Bearer トークン",
+  "pluginsServiceTokenHelp": "このトークンは今だけ表示されます。必要なら明示的にコピーしてください。消去またはパネルを閉じるとセッションから削除され、一覧から取得できません。ローテーションすると以前のトークンが置き換わります。",
+  "pluginsServiceCopyClear": "トークンをコピーして消去",
+  "pluginsServiceClearToken": "トークンを消去",
+  "pluginsServiceConfigurations": "保存済み設定",
+  "pluginsServiceNoConfigurations": "サービス設定はありません。",
+  "pluginsServiceAuthorities": "認証と公開の記録",
+  "pluginsServiceNoAuthorities": "認証や公開の記録はありません。",
+  "pluginsServiceRevision": "リビジョン",
+  "pluginsServiceReference": "承認の参照",
+  "pluginsServiceCreated": "作成日時（UTC）",
+  "pluginsServiceExpires": "実際の有効期限（UTC）",
+  "pluginsServiceDisabled": "無効",
+  "pluginsServiceExpired": "期限切れ、または有効期間前",
+  "pluginsServiceDisable": "無効化",
+  "pluginsServicePackage": "宣言・承認済みパッケージ",
+  "pluginsServicePackageDigest": "パッケージダイジェスト",
+  "pluginsServiceConfigDigest": "設定ダイジェスト",
+  "pluginsServicePackageUnavailable": "一致するパッケージまたは待ち受け・公開の承認が利用できません。過去の記録は閲覧・無効化できます。",
+  "pluginsServiceDigestFixed": "編集時も元のパッケージダイジェストを保持します。一致するパッケージを選択してください。選択しても有効化されません。",
+  "pluginsServiceHandler": "宣言済みサービスハンドラー",
+  "pluginsServiceIdentity": "サービス識別子",
+  "pluginsServiceRetention": "リクエスト履歴の保持期間（ミリ秒、最大 30 日）",
+  "pluginsServicePrincipals": "許可された主体とコンテンツ範囲",
+  "pluginsServiceScopesHelp": "認証を明示的に選択し、許可する操作と正確なオブジェクト識別子を追加してください。範囲や主体の削除には専用ボタンを使用します。編集中も既存の範囲を保持します。",
+  "pluginsServiceNoAuthentication": "先に現在有効な認証記録を作成してください。",
+  "pluginsServiceAuthenticationUnavailable": "選択した認証が存在しない、無効、期限切れ、または別の主体に属しています。範囲の下書きは保持されます。有効な認証に置き換えるか明示的に削除してください。",
+  "pluginsServicePolicyChanged": "元の記録が変更されたか利用できなくなりました。選択を更新するか現在の記録からエディターを開き直してください。下書きは保持しています。",
+  "pluginsServiceCatalogChanged": "パッケージカタログが変更されたか利用できません。下書きは保持しています。保存前に選択を明示的に更新してください。",
+  "pluginsServiceRefreshSelection": "この選択を更新",
+  "pluginsServiceSaveConfig": "設定を保存",
+  "pluginsServiceCloseEditor": "エディターを閉じる",
+  "pluginsServiceAddScope": "コンテンツ範囲を追加",
+  "pluginsServiceRemovePrincipal": "主体を削除",
+  "pluginsServiceRemoveScope": "範囲を削除",
+  "pluginsServiceScopeKind": "許可するコンテンツ操作",
+  "pluginsServiceCardId": "正確なカード識別子",
+  "pluginsServiceAttachmentId": "正確な添付ファイル識別子",
+  "pluginsServiceScopeRename": "カード名を変更",
+  "pluginsServiceScopeSummary": "概要を閲覧",
+  "pluginsServiceScopeQuery": "操作を照会",
+  "pluginsServiceScopeAttachment": "添付ファイルを閲覧",
+  "pluginsServiceScopeCreate": "コンテンツを作成",
+  "pluginsServiceScopeEdit": "コンテンツを編集",
+  "pluginsServiceScopeRead": "コンテンツを閲覧",
+  "pluginsServiceUnsupported": "未対応の過去の値",
+  "pluginsServicePrincipalId": "主体の識別子",
+  "pluginsServiceDays": "要求する有効期間（1～30 日）",
+  "pluginsServiceIssue": "トークンを発行",
+  "pluginsServiceRotate": "トークンをローテーション",
+  "pluginsServicePublicationHelp": "承認はこの設定、リビジョン、参照に厳密に紐付きます。実際の有効期限は選択したすべての認証記録によって制限され、要求より短くなる場合があります。保存しても待ち受けは開始しません。",
+  "pluginsServiceConfiguration": "保存済み設定",
+  "pluginsServiceListenAddress": "数値の待ち受けアドレスとポート",
+  "pluginsServiceTls": "TLS を必須にする",
+  "pluginsServiceTlsHelp": "ループバック以外のアドレスには TLS が必要です。ここでは要件のみ保存し、リスナーや TLS ID は作成しません。",
+  "pluginsServiceMethod": "HTTP メソッド",
+  "pluginsServicePath": "正確なリクエストパス",
+  "pluginsServiceQueryPath": "結果照会用の別パス（任意）",
+  "pluginsServiceSavePublication": "公開承認を保存",
+  "pluginsServicePublicationMismatch": "この公開は現在の設定に一致しません。確認して置き換え用の承認を明示的に保存してください。",
+  "pluginsServiceYes": "はい",
+  "pluginsServiceNo": "いいえ",
+  "pluginsServiceRunTitle": "API サービスを実行",
+  "pluginsServiceRunHint": "承認済みの公開と有限の実行上限を選び、明示的にサービスを開始してください。停止後は元のワークスペース所有者が戻ってから結果を確認してください。",
+  "pluginsServiceRunSelection": "承認済みサービス公開",
+  "pluginsServiceRunNoSelection": "利用可能な承認済み公開がありません。プラグイン、設定、認証の状態を確認してください。",
+  "pluginsServiceRunStale": "選択したパッケージ、設定、承認が変更されました。記録を更新し、開始前に再選択してください。",
+  "pluginsServiceRunStart": "上限付きサービスを開始",
+  "pluginsServiceRunStop": "サービスを停止",
+  "pluginsServiceRunLifetime": "実行時間（ミリ秒、最大 3,600,000）",
+  "pluginsServiceRunJobs": "タスク予約総数（最大 1,000,000）",
+  "pluginsServiceRunBytes": "実行バイト上限（最大 67,108,864）",
+  "pluginsServiceRunAdvanced": "リクエストとワーカーの上限",
+  "pluginsServiceRunCalls": "ジョブごとの呼び出し数（最大 1,024）",
+  "pluginsServiceRunJobBytes": "ジョブごとのバイト数（最大 16,777,216）",
+  "pluginsServiceRunTotalBytes": "ワーカーのバイト上限（最大 67,108,864）",
+  "pluginsServiceRunRequestBytes": "リクエスト最大サイズ（バイト）",
+  "pluginsServiceRunResponseBytes": "レスポンス最大サイズ（バイト）",
+  "pluginsServiceRunHeaderBytes": "ヘッダー最大サイズ（バイト、最大 65,536）",
+  "pluginsServiceRunConcurrent": "同時ジョブ数（最大 128）",
+  "pluginsServiceRunTimeout": "ジョブのタイムアウト（ミリ秒、最大 30,000）",
+  "pluginsServiceRunBoundsHint": "上限はプラグインの宣言と保存済み承認にも適合する必要があります。予約済み作業はキャンセル後も累積枠を消費します。期限到達で停止し、自動更新は行いません。",
+  "pluginsServiceRunStarting": "サービスを開始中",
+  "pluginsServiceRunRunning": "サービス実行中",
+  "pluginsServiceRunStopping": "停止中・リスナーとワーカーの終了を待機",
+  "pluginsServiceRunExited": "サービス終了",
+  "pluginsServiceRunPending": "待機中",
+  "pluginsServiceRunSucceeded": "成功",
+  "pluginsServiceRunInvalidOutcome": "無効な設定",
+  "pluginsServiceRunDenied": "拒否",
+  "pluginsServiceRunLimit": "上限に到達",
+  "pluginsServiceRunCancelled": "キャンセル済み",
+  "pluginsServiceRunTimeoutOutcome": "タイムアウト",
+  "pluginsServiceRunTransport": "転送エラー",
+  "pluginsServiceRunClosed": "終了済み",
+  "pluginsServiceRunLocal": "コンテンツをローカルで利用可能",
+  "pluginsServiceRunOwned": "実行中のサービスがコンテンツを管理",
+  "pluginsServiceRunReclaiming": "コンテンツの所有権返却を待機",
+  "pluginsServiceRunReclaimed": "コンテンツの所有権を回収済み・確認が必要",
+  "pluginsServiceRunRecovery": "クリーンアップの修復が必要",
+  "pluginsServiceRunUnavailable": "コンテンツストレージが利用不可",
+  "pluginsServiceRunStatusFailed": "現在のサービス状態を確認できませんでした。次の操作前に更新してください。",
+  "pluginsServiceRunStartUnknown": "開始結果は不明です。試行識別子を保持しています。更新して確認してください。自動で再開始することはありません。",
+  "pluginsServiceRunControlUnknown": "制御結果は不明です。別の操作前に元のサービス状態を更新してください。",
+  "pluginsServiceRunIdentityChanged": "別のタスクがコンテンツを所有しています。このパネルは以前のサービス識別子でそのタスクを操作しません。",
+  "pluginsServiceRunInvalid": "選択したサービスと数値上限を確認してください。新規実行は送信していません。",
+  "pluginsServiceRunTask": "現在のタスク識別子",
+  "pluginsServiceRunAttempt": "未解決の開始試行",
+  "pluginsServiceRunAbandon": "記録を保持してこの試行を終了",
+  "pluginsServiceRunNetwork": "バインド：{bind}・リスナー：{listener}・監視：{supervision}",
+  "@pluginsServiceRunNetwork": {
+    "placeholders": {
+      "bind": {
+        "type": "String"
+      },
+      "listener": {
+        "type": "String"
+      },
+      "supervision": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunLastObservation": "最後の観測を表示中。現在の状態は未確認です。",
+  "pluginsServiceRunNextSettings": "次の明示的な実行の設定",
+  "pluginsServiceRunHttpPanel": "API サービスがこのタスクを所有しています。上のサービス実行パネルで停止または終了の確認を行ってください。HTTP リクエストの下書きは保持しています。",
+  "pluginsServiceRunStartRejected": "開始応答がエラーを報告しました。現在のタスクは確認済みです。原因とクリーンアップ状態を確認してから続行してください。",
+  "pluginsServiceRunHostFailure": "ホスト診断：{detail}",
+  "@pluginsServiceRunHostFailure": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceRunOutboundHint": "外部 API（任意、最大 8 件）。このパッケージ用に承認されたエンドポイントのみ表示します。未選択なら外部呼び出しを禁止します。",
+  "pluginsServiceRunOutboundFailed": "エンドポイント一覧を確認できませんでした。選択済みのものを使用する前に更新してください。",
+  "pluginsServiceRunOutboundStale": "選択したエンドポイントが変更されたか利用できません。現在のバージョンを明示的に選ぶか、選択を解除してください。",
+  "pluginsServiceRunOutboundClear": "エンドポイントの選択を解除",
+  "pluginsServiceRunOutboundAttempt": "この開始試行に紐付くエンドポイント",
+  "pluginsServiceTlsHint": "PEM 証明書チェーンと秘密鍵を選択して検査してください。開始時にファイルを再検査します。有効な証明書は自動でローテーションされません。",
+  "pluginsServiceTlsCertificate": "証明書チェーンを選択",
+  "pluginsServiceTlsPrivateKey": "秘密鍵を選択",
+  "pluginsServiceTlsInspect": "証明書を検査",
+  "pluginsServiceTlsChecking": "選択した証明書を処理中…",
+  "pluginsServiceTlsFailed": "証明書の検査に失敗しました。PEM ファイル、鍵の対応、ローカルパスを確認して再試行してください。",
+  "pluginsServiceTlsChecked": "証明書と鍵の対応を確認しました。証明書 PEM の SHA-256 を以下に表示します。クライアント側では引き続きホスト名、有効期間、信頼チェーンの検証が必要です。",
+  "pluginsServiceTlsAttempt": "この開始試行に紐付く証明書 PEM ダイジェスト",
+  "pluginsServiceTlsUnavailable": "このバックエンドはローカル TLS 証明書の選択に対応していません。",
+  "pluginsServiceTlsValidity": "証明書チェーン共通の有効期間（UTC）：{start} ～ {end}。期限後はサービスを停止します。",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "証明書チェーンが有効期間前または期限切れです。証明書を確認または交換し、開始前に再検査してください。",
+  "pluginsServiceTlsRecheck": "開始前に証明書を再検査してください。時刻が変わっても以前の選択は復元されません。",
+  "pluginsTlsIdentitiesTitle": "保存済み TLS ID",
+  "pluginsTlsIdentitiesHint": "ID を明示的に選択してください。置換や無効化により、その ID を使用するサービスは停止します。新たな開始には常に明示的な操作が必要です。",
+  "pluginsTlsIdentitiesUseFile": "次回開始に検査済みファイルを使用",
+  "pluginsTlsIdentitiesSaved": "保存しました。以下の ID とリビジョンを確認してから、新しい開始用に選択してください。",
+  "pluginsTlsIdentitiesUnknownHint": "確認前に記録を更新して点検してください。受領証がないことは変更の失敗を意味しません。確認せず再作成しないでください。",
+  "pluginsTlsIdentitiesSavedMode": "次回開始：保存済み ID。開始時にホストが証明書の有効期間を確認します。",
+  "pluginsTlsIdentitiesFileMode": "次回開始：検査済みローカルファイル。",
+  "pluginsTlsIdentitiesStale": "選択した ID が変更・無効化されたか、未更新です。現在の ID を選び直してください。",
+  "pluginsTlsIdentitiesEmpty": "このライブラリに保存済み ID はありません。",
+  "pluginsTlsIdentitiesSelect": "次回開始に使用",
+  "pluginsTlsIdentitiesReplace": "検査済みファイルで置換",
+  "pluginsTlsIdentitiesDisable": "ID を無効化",
+  "pluginsTlsIdentitiesImport": "インポート・置換用の証明書ファイルを準備",
+  "pluginsTlsIdentitiesSave": "新しい ID として保存"
+}

@@ -46,6 +46,12 @@ bool FlutterWindow::OnCreate() {
           else result->Error("probe_occluded", "The owned fixture is occluded or unavailable.");
           return;
         }
+        if (call.method_name() == "sampleCornerProbe") {
+          auto corners = canvas_probe_.Corners();
+          if (!corners.empty()) result->Success(flutter::EncodableValue(corners));
+          else result->Error("probe_occluded", "The owned corner fixture is occluded or unavailable.");
+          return;
+        }
         if (call.method_name() == "setCanvasBlur") {
           const auto* value = call.arguments() ? std::get_if<double>(call.arguments()) : nullptr;
           double top_inset = 0;
@@ -146,14 +152,19 @@ bool FlutterWindow::ApplyWindowShape() {
     POINT origin = {0, 0};
     if (GetWindowRect(hwnd, &frame) && GetClientRect(hwnd, &client) &&
         ClientToScreen(hwnd, &origin)) {
-      const int diameter = static_cast<int>(std::lround(
-          corner_radius_ * 2 * GetDpiForWindow(hwnd) / 96.0));
+      // HRGN is binary, not antialiased. It is only a conservative hit-test
+      // envelope; Flutter/composition own the visible per-pixel edge. Preserve
+      // their coverage pixels at fractional DPI instead of cutting them off.
+      constexpr int guard = 2;  // physical pixels, independent of logical DPI
+      const int diameter = static_cast<int>(std::ceil(
+          corner_radius_ * 2 * GetDpiForWindow(hwnd) / 96.0)) + 2 * guard;
       // The Flutter canvas uses client coordinates. SetWindowRgn uses outer
       // window coordinates, which can include invisible resize margins.
       const int left = origin.x - frame.left;
       const int top = origin.y - frame.top;
-      HRGN region = CreateRoundRectRgn(left, top, left + client.right + 1,
-          top + client.bottom + 1, diameter, diameter);
+      HRGN region = CreateRoundRectRgn(left - guard, top - guard,
+          left + client.right + guard, top + client.bottom + guard,
+          diameter, diameter);
       if (region) {
         success = SetWindowRgn(hwnd, region, TRUE) != 0;
         // On success Windows takes ownership of this GDI object.
@@ -162,7 +173,7 @@ bool FlutterWindow::ApplyWindowShape() {
     }
   }
   applying_shape_ = false;
-  canvas_backdrop_.UpdateBounds(hwnd);
+  canvas_backdrop_.UpdateBounds(hwnd, corner_radius_);
   return success;
 }
 

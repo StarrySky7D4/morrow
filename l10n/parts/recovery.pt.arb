@@ -1,0 +1,42 @@
+{
+  "@@locale": "pt",
+  "recoveryTitle": "Reabrir espaço de trabalho",
+  "recoveryOpenFailed": "Não foi possível abrir o espaço de trabalho. Verifique os plugins e a pasta de dados e tente novamente.",
+  "recoveryFailed": "A recuperação não terminou. Preserve os arquivos originais e tente novamente.",
+  "recoverySnapshotGuide": "Restaure o backup da biblioteca em uma nova pasta e alterne para ela. A pasta original é preservada. O conteúdo volta ao momento do backup e exige a conta original do sistema.",
+  "recoverySnapshot": "Restaurar backup da biblioteca",
+  "recoveryKeyGuide": "Se o arquivo de proteção estiver ausente ou danificado, escolha seu backup. Ele deve pertencer a esta biblioteca e exige a conta original do sistema.",
+  "recoveryRetry": "Tentar novamente",
+  "recoveryChooseKey": "Escolher arquivo de recuperação",
+  "recoveryBackupFile": "Backup da biblioteca",
+  "recoveryKeyFile": "Arquivo de proteção da biblioteca",
+  "recoveryAllFiles": "Todos os arquivos",
+  "recoveryPluginUnavailable": "Plugin do espaço de trabalho indisponível. O conteúdo existente pode ser visualizado e exportado.",
+  "recoveryMaintenance": "A biblioteca precisa de atenção. Preserve os originais e examine o diagnóstico.",
+  "recoverySwitchUnconfirmed": "Backup restaurado em {path}, mas a troca não foi confirmada. Preserve a pasta e reabra o espaço para verificar.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "A chave de proteção está ausente. Restaure o .audit-key original e tente novamente.",
+  "recoveryKeyMismatch": "A chave não corresponde ou não pode ser descriptografada. Use o arquivo e a conta de sistema originais.",
+  "recoveryMissingLibrary": "A chave existe, mas a biblioteca está ausente ou vazia. Restaure a biblioteca original.",
+  "recoveryIdentityBusy": "Outra cópia desta biblioteca está aberta. Feche-a antes de abrir esta.",
+  "recoveryBusy": "Outro processo usa esta biblioteca. Feche a outra janela e tente novamente.",
+  "recoveryTargetExists": "O destino já existe. Escolha uma nova pasta que ainda não exista.",
+  "recoverySnapshotUnknown": "Verifique o resultado na pasta de destino; a biblioteca original não foi substituída.",
+  "recoverySnapshotInvalid": "Formato ou integridade do backup inválidos. Preserve o arquivo original.",
+  "recoveryBackupExists": "Já existe um arquivo no destino. Escolha outro nome.",
+  "recoveryBackupUnknown": "Verifique o resultado do backup. Preserve o arquivo atual e confira o local.",
+  "recoveryBindingMissing": "Esta biblioteca não tem arquivo de proteção vinculado. Não é possível associar o arquivo escolhido.",
+  "recoveryKeyUnknown": "Verifique o resultado da recuperação. Tente reabrir; uma cópia do arquivo de proteção anterior foi mantida, se existia.",
+  "recoveryLibraryInvalid": "Não foi possível verificar ou abrir a biblioteca. Preserve a biblioteca e a chave originais e tente novamente.",
+  "recoveryCloseFirst": "O espaço de trabalho ainda está aberto. Feche antes de trocar de biblioteca.",
+  "recoveryIdentityMismatch": "A identidade registrada não corresponde. Preserve os dados originais e restaure o backup correto.",
+  "recoveryRegistryInvalid": "O registro da biblioteca ativa está danificado ou não é compatível. A abertura foi interrompida para preservar os dados.",
+  "recoverySwitchUnknown": "Troca de biblioteca não confirmada. Reabra o espaço de trabalho para verificar.",
+  "recoveryRegistryUnreadable": "Não é possível ler a biblioteca ativa ou seu registro. Verifique o local original; nenhuma biblioteca substituta será criada automaticamente."
+}

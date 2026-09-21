@@ -216,11 +216,13 @@ class _ServiceTlsIdentityPanelState extends State<ServiceTlsIdentityPanel>
           line: widget.line,
           radius: widget.radius,
         ),
+        const SizedBox(height: 12),
         _button(
           l.pluginsTlsIdentitiesSave,
           'save',
           s.canWrite && checked ? () => unawaited(s.save()) : null,
         ),
+        const SizedBox(height: 12),
       ],
     );
   }

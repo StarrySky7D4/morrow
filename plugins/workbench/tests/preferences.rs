@@ -81,6 +81,7 @@ fn independent_material_ids_and_legacy_defaults_roundtrip() {
             opacity: 0.,
             color: 0xff33aa55,
             has_color: true,
+            ..Default::default()
         },
         p::proto::ComponentMaterial {
             id: "card:b".into(),
@@ -89,6 +90,7 @@ fn independent_material_ids_and_legacy_defaults_roundtrip() {
             opacity: 1.,
             color: 0,
             has_color: false,
+            ..Default::default()
         },
     ];
     let bytes = p::encode_wire(&v).unwrap();
@@ -111,5 +113,38 @@ fn independent_material_ids_and_legacy_defaults_roundtrip() {
             .unwrap()
             .components
             .is_empty()
+    );
+}
+
+#[test]
+fn component_mode_radius_persist_and_invalid_values_leave_prior_bytes_intact() {
+    let mut v = config();
+    v.components.push(p::proto::ComponentMaterial {
+        id: "footer".into(),
+        enabled: true,
+        blur: 1.0,
+        opacity: 0.12,
+        mode: "liquid".into(),
+        corner_radius: 12.0,
+        has_corner_radius: true,
+        ..Default::default()
+    });
+    let stored = p::encode_persistent(&v, None).unwrap();
+    assert_eq!(p::decode_persistent(&stored).unwrap(), v);
+    assert_eq!(p::decode_wire(&p::encode_wire(&v).unwrap()).unwrap(), v);
+    for mode in ["clear", "frosted", ""] {
+        v.components[0].mode = mode.into();
+        assert_eq!(p::decode_wire(&p::encode_wire(&v).unwrap()).unwrap(), v);
+    }
+    v.components[0].mode = "unknown".into();
+    assert!(p::encode_wire(&v).is_err());
+    v.components[0].mode = "liquid".into();
+    for radius in [-1.0, 33.0, f64::NAN, f64::INFINITY] {
+        v.components[0].corner_radius = radius;
+        assert!(p::encode_persistent(&v, Some(&stored)).is_err());
+    }
+    assert_eq!(
+        p::decode_persistent(&stored).unwrap().components[0].corner_radius,
+        12.0
     );
 }

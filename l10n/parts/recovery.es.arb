@@ -1,0 +1,42 @@
+{
+  "@@locale": "es",
+  "recoveryTitle": "Reabrir espacio de trabajo",
+  "recoveryOpenFailed": "No se pudo abrir el espacio de trabajo. Revisa los complementos y la carpeta de datos y reintenta.",
+  "recoveryFailed": "La recuperación no terminó. Conserva los archivos originales y reintenta.",
+  "recoverySnapshotGuide": "Restaura la copia de la biblioteca en una carpeta nueva y cambia a ella. La carpeta original se conserva. Se recupera el estado de la copia y se requiere la cuenta de sistema original.",
+  "recoverySnapshot": "Restaurar copia de biblioteca",
+  "recoveryKeyGuide": "Si falta el archivo de protección o está dañado, elige su copia. Debe pertenecer a esta biblioteca y requiere la cuenta de sistema original.",
+  "recoveryRetry": "Reintentar",
+  "recoveryChooseKey": "Elegir archivo de recuperación",
+  "recoveryBackupFile": "Copia de biblioteca",
+  "recoveryKeyFile": "Archivo de protección de biblioteca",
+  "recoveryAllFiles": "Todos los archivos",
+  "recoveryPluginUnavailable": "Complemento del espacio de trabajo no disponible. El contenido existente se puede ver y exportar.",
+  "recoveryMaintenance": "La biblioteca requiere atención. Conserva los originales y revisa el diagnóstico.",
+  "recoverySwitchUnconfirmed": "Copia restaurada en {path}, pero el cambio no está confirmado. Conserva esa carpeta y reabre el espacio para comprobarlo.",
+  "@recoverySwitchUnconfirmed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "recoveryMissingKey": "Falta la clave de protección. Restaura el archivo .audit-key original y reintenta.",
+  "recoveryKeyMismatch": "La clave no coincide o no se puede descifrar. Usa el archivo y la cuenta de sistema originales.",
+  "recoveryMissingLibrary": "La clave existe, pero la biblioteca falta o está vacía. Restaura la biblioteca original.",
+  "recoveryIdentityBusy": "Otra copia de esta biblioteca está abierta. Ciérrala antes de abrir esta.",
+  "recoveryBusy": "Otro proceso usa esta biblioteca. Cierra la otra ventana y reintenta.",
+  "recoveryTargetExists": "El destino ya existe. Elige una carpeta nueva que aún no exista.",
+  "recoverySnapshotUnknown": "Verifica el resultado en la carpeta de destino; la biblioteca original no se reemplazó.",
+  "recoverySnapshotInvalid": "Formato o integridad de la copia no válidos. Conserva el archivo original.",
+  "recoveryBackupExists": "Ya existe un archivo en el destino. Elige otro nombre.",
+  "recoveryBackupUnknown": "Verifica el resultado de la copia. Conserva el archivo actual y revisa la ubicación.",
+  "recoveryBindingMissing": "La biblioteca no tiene un archivo de protección vinculado. No se puede asociar el archivo elegido.",
+  "recoveryKeyUnknown": "Verifica el resultado de la recuperación. Intenta abrir de nuevo; se guardó una copia del archivo de protección anterior, si existía.",
+  "recoveryLibraryInvalid": "No se pudo verificar o abrir la biblioteca. Conserva la biblioteca y la clave originales y reintenta.",
+  "recoveryCloseFirst": "El espacio de trabajo sigue abierto. Ciérralo antes de cambiar de biblioteca.",
+  "recoveryIdentityMismatch": "La identidad registrada no coincide. Conserva los datos originales y restaura la copia correcta.",
+  "recoveryRegistryInvalid": "El registro de biblioteca activa está dañado o no es compatible. Se detuvo la apertura para proteger los datos.",
+  "recoverySwitchUnknown": "Cambio de biblioteca sin confirmar. Reabre el espacio de trabajo para verificar.",
+  "recoveryRegistryUnreadable": "No se puede leer la biblioteca activa o su registro. Revisa la ubicación original; no se creará otra biblioteca automáticamente."
+}

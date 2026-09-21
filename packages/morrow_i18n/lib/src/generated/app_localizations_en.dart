@@ -280,6 +280,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainCornerRadius => 'Corner radius';
 
   @override
+  String get mainCredentialSettings => 'Credentials';
+
+  @override
   String get mainCrystal => 'Crystal clear';
 
   @override
@@ -354,6 +357,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mainEditorUnavailable =>
       'The editor is unavailable. Check the content service and retry.';
+
+  @override
+  String get mainEndpointSettings => 'Outbound endpoints';
+
+  @override
+  String get mainExpandSettings => 'Expand settings';
 
   @override
   String get mainExpandSidebar => 'Expand sidebar';
@@ -460,6 +469,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainHidePreview => 'Hide preview';
 
   @override
+  String get mainHttpSettings => 'HTTP tasks';
+
+  @override
   String get mainHypothesis => 'Hypothesis';
 
   @override
@@ -490,6 +502,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mainInboxIntro =>
       'Capture first, organize later. Turn promising ideas into small projects.';
+
+  @override
+  String get mainIoNoDeclarations =>
+      'No installed plugin currently declares file or network access.';
+
+  @override
+  String get mainIoSettings => 'Network & file access';
+
+  @override
+  String get mainIoSettingsGuide =>
+      'Manage plugin file and network permissions separately from appearance. Approving a declared capability does not grant access to every file or endpoint; available operations depend on the current backend.';
+
+  @override
+  String get mainIoSettingsSummary =>
+      'Permissions, credentials, endpoints and API services';
 
   @override
   String get mainJustNow => 'Just now';
@@ -653,6 +680,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainPlay => 'Play';
 
   @override
+  String get mainPluginSettings => 'Plugins and services';
+
+  @override
+  String get mainPluginSettingsSummary =>
+      'Built-in tools, extensions, network and file access, and content protection';
+
+  @override
   String get mainPreviewEmpty => 'Your preview will appear here';
 
   @override
@@ -688,6 +722,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainQuickHint => 'What just came to mind?';
+
+  @override
+  String get mainReadOnlySettings =>
+      'Content is read-only. Check the workbench plugin to restore editing.';
 
   @override
   String get mainRecentThoughts => 'Recent thoughts';
@@ -751,6 +789,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainSampleTodo4 => 'Design the reminder interaction';
 
   @override
+  String get mainSaveConnectionUnknown =>
+      'The connection was interrupted; the save result is unknown. Reopen the library to confirm before retrying.';
+
+  @override
   String get mainSaveFailed =>
       'Could not save. Your changes remain in this session.';
 
@@ -762,6 +804,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Not submitted. Your draft and attachments are preserved; you can edit and save again.';
 
   @override
+  String get mainSaveReadOnly =>
+      'Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.';
+
+  @override
   String get mainSaveUnknown =>
       'This save is not yet confirmed. Your draft and attachments are preserved. Retry this submission; closing will refresh the workspace to check.';
 
@@ -770,6 +816,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainSearchHint => 'Search your ideas…';
+
+  @override
+  String get mainServiceRunSettings => 'Service runtime';
+
+  @override
+  String get mainServiceSettings => 'API services';
 
   @override
   String get mainSettings => 'Settings';
@@ -2804,6 +2856,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visualIndependentMaterial => 'Custom material';
 
   @override
+  String get visualInheritColor => 'Use theme tint';
+
+  @override
   String get visualLinkFailure =>
       'The link could not be opened. Copy the address and try again.';
 
@@ -2979,6 +3034,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visualRemoveTrack => 'Remove from playlist';
 
   @override
+  String get visualResetMaterial => 'Reset to theme';
+
+  @override
   String get visualRestoreWindow => 'Restore';
 
   @override
@@ -3013,6 +3071,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get visualTexturePlaybackGuide =>
       'Videos loop silently by default; enable sound in settings. Online media must permit access, including cross-origin loading on the web.';
+
+  @override
+  String get visualTipsMaterialGuide =>
+      'Off keeps tips transparent; on uses the material below. Your custom values are retained.';
+
+  @override
+  String get visualTransparentTips => 'Transparent overlay (default)';
 
   @override
   String get visualUseCustomMaterial => 'Use custom material';

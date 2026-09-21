@@ -16,7 +16,11 @@ class ComponentMaterial {
     this.blur = 22,
     this.opacity = .76,
     this.color,
+    this.mode,
+    this.cornerRadius,
   });
+  final GlassMode? mode;
+  final double? cornerRadius;
   final bool enabled;
   final double blur, opacity;
   final Color? color;
@@ -25,22 +29,36 @@ class ComponentMaterial {
     double? blur,
     double? opacity,
     Color? color,
+    GlassMode? mode,
+    double? cornerRadius,
+    bool inheritColor = false,
+    bool inheritMode = false,
+    bool inheritRadius = false,
   }) => ComponentMaterial(
     enabled: enabled ?? this.enabled,
     blur: blur ?? this.blur,
     opacity: opacity ?? this.opacity,
-    color: color ?? this.color,
+    color: inheritColor ? null : color ?? this.color,
+    mode: inheritMode ? null : mode ?? this.mode,
+    cornerRadius: inheritRadius ? null : cornerRadius ?? this.cornerRadius,
   );
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
     'blur': blur,
     'opacity': opacity,
     'color': color?.toARGB32(),
+    if (mode != null) 'mode': mode!.name,
+    if (cornerRadius != null) 'cornerRadius': cornerRadius,
   };
   factory ComponentMaterial.fromJson(Map<String, dynamic> data) {
     final blur = (data['blur'] as num?)?.toDouble() ?? 22;
     final opacity = (data['opacity'] as num?)?.toDouble() ?? .76;
-    if (!blur.isFinite ||
+    final radius = (data['cornerRadius'] as num?)?.toDouble();
+    final modeName = data['mode'] as String?;
+    if ((radius != null && (!radius.isFinite || radius < 0 || radius > 32)) ||
+        (modeName != null &&
+            !GlassMode.values.any((m) => m.name == modeName)) ||
+        !blur.isFinite ||
         !opacity.isFinite ||
         blur < 0 ||
         blur > 40 ||
@@ -53,6 +71,8 @@ class ComponentMaterial {
       blur: blur,
       opacity: opacity,
       color: data['color'] == null ? null : Color(data['color'] as int),
+      mode: modeName == null ? null : GlassMode.values.byName(modeName),
+      cornerRadius: radius,
     );
   }
 }
@@ -336,16 +356,21 @@ class Glass extends StatelessWidget {
         ? p.solidColor
         : p.surface;
     final tint = custom ? local!.color ?? inheritedTint : inheritedTint;
-    final borderRadius = p.borderRadius(radius);
+    final mode = custom ? local!.mode ?? p.mode : p.mode;
+    final clear = mode == GlassMode.clear;
+    final liquid = mode == GlassMode.liquid;
+    final borderRadius = custom && local!.cornerRadius != null
+        ? BorderRadius.circular(radius * local.cornerRadius! / 20)
+        : p.borderRadius(radius);
     // Editors need a reading surface even when surrounding cards are clear.
     final readable = dialog || MediaQuery.highContrastOf(context);
-    final top = p.clear
+    final top = clear
         ? (readable ? .86 : (p.dark ? .12 : .10))
         : p.frostedOpacity.clamp(.2, 1).toDouble();
-    final bottom = p.clear
+    final bottom = clear
         ? (readable ? .80 : .025)
         : p.frostedOpacity.clamp(.2, 1).toDouble();
-    final inherited = p.liquid
+    final inherited = liquid
         ? GlassMaterial.liquid(
             tint: tint,
             dark: p.dark,
@@ -353,16 +378,16 @@ class Glass extends StatelessWidget {
             borderRadius: borderRadius,
           )
         : GlassMaterial(
-            blur: p.clear ? 1 : 22,
+            blur: clear ? 1 : 22,
             liquid: 0,
             decoration: BoxDecoration(
               borderRadius: borderRadius,
               boxShadow: [
                 BoxShadow(
                   color: (p.dark ? Colors.black : const Color(0xFF716386))
-                      .withValues(alpha: p.clear ? .025 : .035),
-                  blurRadius: p.clear ? 14 : 18,
-                  offset: Offset(0, p.clear ? 4 : 8),
+                      .withValues(alpha: clear ? .025 : .035),
+                  blurRadius: clear ? 14 : 18,
+                  offset: Offset(0, clear ? 4 : 8),
                 ),
               ],
               gradient: LinearGradient(
@@ -430,9 +455,10 @@ class AppearanceScope extends InheritedWidget {
     required super.child,
   });
   final Palette palette;
+  static Palette? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<AppearanceScope>()?.palette;
   static Palette of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<AppearanceScope>()?.palette ??
-      const Palette(StudioTheme.white, GlassMode.frosted);
+      maybeOf(context) ?? const Palette(StudioTheme.white, GlassMode.frosted);
   @override
   bool updateShouldNotify(AppearanceScope oldWidget) =>
       oldWidget.palette != palette;
