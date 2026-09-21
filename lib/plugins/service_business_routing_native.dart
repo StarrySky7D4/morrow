@@ -114,12 +114,14 @@ extension _ServiceBusinessRouting on RustWorkbench {
     required T Function(host.ResponseReader) decode,
     required bool clearReply,
     required bool updatePresentation,
+    Uint8List? submissionOverride,
+    host.Action? replyAction,
   }) async {
     final task = service.task.key!;
     final random = Random.secure();
-    final submission = Uint8List.fromList(
-      List.generate(32, (_) => random.nextInt(256)),
-    );
+    final submission =
+        submissionOverride ??
+        Uint8List.fromList(List.generate(32, (_) => random.nextInt(256)));
     if (submission.every((v) => v == 0)) submission[0] = 1;
     final elapsed = Stopwatch()..start();
     Uint8List? command;
@@ -204,11 +206,23 @@ extension _ServiceBusinessRouting on RustWorkbench {
           action,
           configure: configure,
           clearAfterSend: true,
-          maxBytes: 64 * 1024,
+          maxBytes: 128 * 1024,
           send: (bytes) async {
             input = Uint8List.fromList(bytes);
           },
         );
+        if (input!.length > 64 * 1024) {
+          return await _throughSegmented<T>(
+            action,
+            service,
+            input!,
+            submission,
+            remaining: remaining,
+            decode: decode,
+            clearReply: clearReply,
+            updatePresentation: updatePresentation,
+          );
+        }
         remaining();
         // From the first attempted send onward, a transport/decoding failure
         // cannot prove that this command was never admitted. Do not replay it.
@@ -269,7 +283,7 @@ extension _ServiceBusinessRouting on RustWorkbench {
                 );
               }
               _checkBusinessReply(
-                action,
+                replyAction ?? action,
                 reply,
                 updatePresentation: updatePresentation,
               );
@@ -320,6 +334,91 @@ extension _ServiceBusinessRouting on RustWorkbench {
         ),
         stack,
       );
+    }
+  }
+
+  Future<T> _throughSegmented<T>(
+    host.Action action,
+    ServiceRunSnapshot service,
+    Uint8List input,
+    Uint8List submission, {
+    required Duration Function() remaining,
+    required T Function(host.ResponseReader) decode,
+    required bool clearReply,
+    required bool updatePresentation,
+  }) async {
+    final token = submission
+        .map((v) => v.toRadixString(16).padLeft(2, '0'))
+        .join();
+    final digest = Uint8List.fromList(sha256.convert(input).bytes);
+    var completed = false;
+    Future<int> stage(
+      host.Action action,
+      void Function(host.RequestBuilder) configure,
+    ) => _throughService<int>(
+      action,
+      service,
+      configure: configure,
+      requestTimeout: remaining(),
+      decode: (r) => r.offset,
+      clearReply: true,
+      updatePresentation: false,
+    );
+    try {
+      final offset = await stage(host.Action.commandFrameBegin, (r) {
+        r.transfer = token;
+        r.totalLength = input.length;
+        r.sha256 = digest;
+      });
+      if (offset != 0)
+        throw const FormatException('Invalid frame begin acknowledgement');
+      for (var offset = 0; offset < input.length;) {
+        final end = (offset + 32768).clamp(0, input.length);
+        final acknowledged = await stage(host.Action.commandFrameAppend, (r) {
+          r.transfer = token;
+          r.offset = offset;
+          r.payload = Uint8List.sublistView(input, offset, end);
+        });
+        if (acknowledged != end)
+          throw const FormatException('Invalid frame part acknowledgement');
+        offset = end;
+      }
+      final result = await _throughService<T>(
+        host.Action.commandFrameFinish,
+        service,
+        configure: (r) {
+          r.transfer = token;
+          r.totalLength = input.length;
+          r.sha256 = digest;
+        },
+        submissionOverride: submission,
+        replyAction: action,
+        requestTimeout: remaining(),
+        decode: decode,
+        clearReply: clearReply,
+        updatePresentation: updatePresentation,
+      );
+      completed = true;
+      return result;
+    } finally {
+      // Exact-token cleanup has no business effect. Do not wait behind a lost
+      // channel; expiry and original-worker exit also wipe the bounded upload.
+      if (!completed &&
+          _failure == null &&
+          _closingProcess == null &&
+          RustWorkbench._same(_serviceRoute?.task.key, service.task.key!)) {
+        unawaited(
+          _throughService<void>(
+            host.Action.commandFrameAbort,
+            service,
+            configure: (r) => r.transfer = token,
+            requestTimeout: const Duration(seconds: 2),
+            decode: (_) {},
+            clearReply: true,
+            updatePresentation: false,
+          ).then<void>((_) {}, onError: (Object _, StackTrace _) {}),
+        );
+      }
     }
   }
 }

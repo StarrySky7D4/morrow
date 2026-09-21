@@ -72,6 +72,10 @@ enum Action {
   commandStatus,
   commandRead,
   commandCancel,
+  commandFrameBegin,
+  commandFrameAppend,
+  commandFrameFinish,
+  commandFrameAbort,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -174,6 +178,10 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'commandStatus', codeOrder: 64, ordinal: 64),
     EnumerantSchemaInfo(name: 'commandRead', codeOrder: 65, ordinal: 65),
     EnumerantSchemaInfo(name: 'commandCancel', codeOrder: 66, ordinal: 66),
+    EnumerantSchemaInfo(name: 'commandFrameBegin', codeOrder: 67, ordinal: 67),
+    EnumerantSchemaInfo(name: 'commandFrameAppend', codeOrder: 68, ordinal: 68),
+    EnumerantSchemaInfo(name: 'commandFrameFinish', codeOrder: 69, ordinal: 69),
+    EnumerantSchemaInfo(name: 'commandFrameAbort', codeOrder: 70, ordinal: 70),
   ],
 );
 

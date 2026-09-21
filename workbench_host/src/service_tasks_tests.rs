@@ -1430,3 +1430,6 @@ fn protocol_command_read_preserves_maximum_inner_frame_with_larger_outer_envelop
     fixture.app.acknowledge_io(native_key).unwrap();
     fixture.app.finish().unwrap();
 }
+
+#[path = "service_frame_tests.rs"]
+mod frame_tests;

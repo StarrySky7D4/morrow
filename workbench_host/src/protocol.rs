@@ -182,6 +182,9 @@ impl ResponseTarget for Workbench {
         mut out: wire::response::Builder<'_>,
     ) -> Result<()> {
         let action = r.get_action()?;
+        if is_command_frame(action) {
+            return Err("frame staging requires the original owner command lane".into());
+        }
         // Parse and validate first. Only an actually completed worker can return
         // the original state; malformed frames do not trigger recovery work.
         let _ = self.state.try_reclaim();
@@ -396,6 +399,15 @@ fn validated_request(
     r.get_action()?;
     Ok(message)
 }
+fn is_command_frame(action: wire::Action) -> bool {
+    matches!(
+        action,
+        wire::Action::CommandFrameBegin
+            | wire::Action::CommandFrameAppend
+            | wire::Action::CommandFrameFinish
+            | wire::Action::CommandFrameAbort
+    )
+}
 fn validate_command_frame(bytes: &[u8]) -> Result<()> {
     let message = validated_request(bytes, 64 * 1024)?;
     if is_scheduler_action(message.get_root::<wire::request::Reader>()?.get_action()?) {
@@ -424,6 +436,40 @@ fn handle_business(
     // This owner already runs inside a worker; scheduling here would recursively move it.
     if is_scheduler_action(action) {
         return Err("scheduler actions require the outer application".into());
+    }
+    if is_command_frame(action) {
+        let token = text(r.get_transfer())?;
+        let now = std::time::Instant::now();
+        match action {
+            wire::Action::CommandFrameBegin => {
+                host.command_frame
+                    .begin(&token, r.get_total_length(), r.get_sha256()?, now)?;
+                out.set_offset(0);
+            }
+            wire::Action::CommandFrameAppend => {
+                out.set_offset(host.command_frame.append(
+                    &token,
+                    r.get_offset(),
+                    r.get_payload()?,
+                    now,
+                )? as u64);
+            }
+            wire::Action::CommandFrameFinish => {
+                let bytes =
+                    host.command_frame
+                        .take(&token, r.get_total_length(), r.get_sha256()?, now)?;
+                let message = validated_request(&bytes, 128 * 1024)?;
+                let inner = message.get_root::<wire::request::Reader>()?;
+                let action = inner.get_action()?;
+                if is_scheduler_action(action) || is_command_frame(action) {
+                    return Err("nested scheduling or staging is forbidden".into());
+                }
+                return handle_business(host, inner, out);
+            }
+            wire::Action::CommandFrameAbort => host.command_frame.abort(&token),
+            _ => unreachable!(),
+        }
+        return Ok(());
     }
     let id = if crate::service_protocol::is_action(action) {
         String::new()
@@ -893,6 +939,10 @@ fn handle_business(
         wire::Action::Service => {
             out.set_payload(&host.service(r.get_payload()?.to_vec())?);
         }
+        wire::Action::CommandFrameBegin
+        | wire::Action::CommandFrameAppend
+        | wire::Action::CommandFrameFinish
+        | wire::Action::CommandFrameAbort => unreachable!(),
     }
     Ok(())
 }

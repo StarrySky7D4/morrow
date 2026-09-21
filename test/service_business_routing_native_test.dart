@@ -182,10 +182,13 @@ try:
   temporary.rename(root/('request.%d.bin'%index))
   reply=root/('reply.%d.bin'%index)
   deadline=time.monotonic()+15
-  while not reply.exists():
-   if time.monotonic()>deadline: raise TimeoutError('controlled reply')
-   time.sleep(.002)
-  data=reply.read_bytes()
+  while True:
+   try:
+    data=reply.read_bytes()
+    break
+   except (FileNotFoundError, PermissionError):
+    if time.monotonic()>deadline: raise TimeoutError('controlled reply')
+    time.sleep(.002)
   sys.stdout.buffer.write(struct.pack('<I',len(data))+data)
   sys.stdout.buffer.flush()
   index+=1
@@ -271,6 +274,127 @@ except BaseException:
 
 void main() {
   final python = Platform.environment['MORROW_CLOSE_TEST_PYTHON'];
+  for (final mode in [0, 1, 2]) {
+    final badOffset = mode == 1;
+    final unknownFinish = mode == 2;
+    test(
+      'large service frame is ordered and ${badOffset
+          ? "aborted on bad acknowledgement"
+          : unknownFinish
+          ? "unknown completion is not retried"
+          : "executed once"}',
+      () async {
+        final body = Uint8List.fromList(List.generate(80000, (i) => i % 251));
+        final staged = <int>[];
+        String? token;
+        var expectedLength = 0;
+        var executed = 0;
+        var aborted = false;
+        Uint8List? finishSubmission;
+        late final _Script script;
+        script = _Script((r) {
+          switch (r.action!) {
+            case host.Action.commandFrameBegin:
+              token = r.transfer;
+              expectedLength = r.totalLength;
+              expect(expectedLength, greaterThan(65536));
+              expect(r.sha256!.length, 32);
+              return _reply((out) => out.offset = 0);
+            case host.Action.commandFrameAppend:
+              expect(r.transfer, token);
+              expect(r.offset, staged.length);
+              expect(r.payload!.length, lessThanOrEqualTo(32768));
+              staged.addAll(r.payload!);
+              return _reply(
+                (out) => out.offset = staged.length + (badOffset ? 1 : 0),
+              );
+            case host.Action.commandFrameFinish:
+              expect(r.transfer, token);
+              expect(staged.length, expectedLength);
+              final inner = RustWorkbench.readMessage(
+                Uint8List.fromList(staged),
+              ).getRoot(host.requestFactory);
+              expect(inner.action, host.Action.service);
+              expect(inner.payload, body);
+              executed++;
+              finishSubmission = Uint8List.fromList(script.submission!);
+              script.unknown = unknownFinish;
+              return _reply(
+                (out) => out.payload = Uint8List.fromList([1, 2, 3]),
+              );
+            case host.Action.commandFrameAbort:
+              expect(r.transfer, token);
+              aborted = true;
+              staged.clear();
+              return _reply((_) {});
+            default:
+              throw StateError('unexpected inner action ${r.action}');
+          }
+        });
+        final child = await _Child.open(python!, script);
+        try {
+          await child.backend.startServiceRun(_start());
+          if (badOffset) {
+            await expectLater(
+              child.backend.service(body),
+              throwsFormatException,
+            );
+            final deadline = DateTime.now().add(const Duration(seconds: 5));
+            while (!aborted && DateTime.now().isBefore(deadline)) {
+              await Future<void>.delayed(const Duration(milliseconds: 10));
+            }
+            expect(aborted, isTrue);
+            expect(executed, 0);
+            expect(
+              script.commands.where(
+                (r) => r.action == host.Action.commandFrameFinish,
+              ),
+              isEmpty,
+            );
+          } else if (unknownFinish) {
+            try {
+              await child.backend.service(body);
+              fail('unknown completion was delivered');
+            } on ServiceCommandFailure catch (error) {
+              expect(error.outcomeUnknown, isTrue);
+              expect(error.submission, finishSubmission);
+              expect(
+                error.submission
+                    .map((b) => b.toRadixString(16).padLeft(2, '0'))
+                    .join(),
+                token,
+              );
+            }
+            final until = DateTime.now().add(const Duration(seconds: 5));
+            while (!aborted && DateTime.now().isBefore(until)) {
+              await Future<void>.delayed(const Duration(milliseconds: 10));
+            }
+            expect(aborted, isTrue);
+            expect(executed, 1);
+            expect(
+              script.commands
+                  .where((r) => r.action == host.Action.commandFrameFinish)
+                  .length,
+              1,
+            );
+          } else {
+            expect(await child.backend.service(body), [1, 2, 3]);
+            expect(executed, 1);
+            expect(script.commands.map((r) => r.action), [
+              host.Action.commandFrameBegin,
+              host.Action.commandFrameAppend,
+              host.Action.commandFrameAppend,
+              host.Action.commandFrameAppend,
+              host.Action.commandFrameFinish,
+            ]);
+          }
+        } finally {
+          await child.dispose();
+        }
+      },
+      skip: python == null,
+    );
+  }
   test(
     'queued business observes start admission and scheduler passes pending',
     () async {
@@ -435,13 +559,13 @@ void main() {
           1,
         );
         await expectLater(
-          child.backend.service(Uint8List(64 * 1024)),
+          child.backend.service(Uint8List(128 * 1024)),
           throwsFormatException,
         );
         expect(
           script.actions,
           before,
-          reason: 'outer business frame exceeds 64 KiB',
+          reason: 'outer business frame exceeds 128 KiB',
         );
       } finally {
         await child.dispose();

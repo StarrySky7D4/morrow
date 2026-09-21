@@ -20,6 +20,7 @@ use std::{
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod capture_provenance;
+mod command_frame;
 mod content_projection;
 pub mod credential_control;
 pub mod endpoint_control;
@@ -76,6 +77,7 @@ pub(crate) struct WorkbenchState {
     query_owner: [u8; 32],
     undo: BTreeMap<String, (u64, u64)>,
     staged: BTreeMap<(String, String), Attachment>,
+    command_frame: command_frame::FrameUpload,
     transfers: transfer::Transfers,
     pub(crate) capture_transfers: transfer::Transfers,
     capture_scopes: capture_provenance::CaptureScopes,
@@ -193,6 +195,7 @@ impl WorkbenchState {
             query_owner,
             undo: BTreeMap::new(),
             staged: BTreeMap::new(),
+            command_frame: command_frame::FrameUpload::default(),
             transfers: transfer::Transfers::default(),
             capture_transfers: transfer::Transfers::default(),
             capture_scopes: capture_provenance::CaptureScopes::default(),
@@ -210,6 +213,7 @@ impl WorkbenchState {
         self.host.warning().or(self.plugin_warning.as_deref())
     }
     pub fn finish(&mut self) -> Result<()> {
+        self.command_frame.clear();
         if let Some(mut external) = self.external_ui.take() {
             external.ui.close();
         }
@@ -811,6 +815,7 @@ impl morrow_plugin_runtime::io_jobs::HostOwner for WorkbenchState {
         morrow_plugin_runtime::io_jobs::HostOwner::prepare_io(&mut self.host)
     }
     fn finish_io(&mut self) -> std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError> {
+        self.command_frame.clear();
         // A short IO exit seals storage; it must not close content/editor sessions.
         morrow_plugin_runtime::io_jobs::HostOwner::finish_io(&mut self.host)
     }
