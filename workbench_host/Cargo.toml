@@ -23,6 +23,9 @@ prost-build = "=0.14.4"
 protoc-bin-vendored = "=3.2.0"
 capnpc = "=0.24.0"
 [dev-dependencies]
+rcgen = "=0.13.2"
+rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
+tokio-rustls = { version = "=0.26.4", default-features = false, features = ["ring", "tls12"] }
 rusqlite = "=0.40.2"
 tempfile = "=3.27.0"
 wat = "=1.239.0"

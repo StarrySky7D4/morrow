@@ -43,6 +43,9 @@ const WAIT: Duration = Duration::from_secs(15);
 #[path = "service_outbound_tests.rs"]
 mod outbound_tests;
 
+#[path = "service_tls_tests.rs"]
+mod tls_tests;
+
 fn policy() -> Policy {
     Policy {
         namespace: [19; 32],

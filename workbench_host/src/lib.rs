@@ -35,6 +35,7 @@ pub mod query_capture;
 pub mod query_plan;
 mod query_source;
 pub mod service_control;
+pub mod service_tls;
 mod service_protocol;
 mod storage;
 pub mod transfer;

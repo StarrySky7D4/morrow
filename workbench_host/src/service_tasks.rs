@@ -11,6 +11,7 @@ use morrow_network_node::{
     Error as NetworkError, Limits as NetworkLimits,
     managed_http::{HttpRouteSet, MAX_SERVICE_ENDPOINTS},
     managed_service::{ManagedNode, RouterFactory, ServiceHost},
+    server::TlsIdentity,
     stored_http::StoredHttpEndpoint,
 };
 use morrow_plugin_runtime::{
@@ -119,6 +120,7 @@ impl ServiceExecution {
         runtime: tokio::runtime::Runtime,
         limits: NetworkLimits,
         submission: [u8; 32],
+        tls: Option<TlsIdentity>,
     ) -> Self {
         let listener = configured.listener().clone();
         let control = Arc::new(Control {
@@ -141,6 +143,7 @@ impl ServiceExecution {
                     worker_listener,
                     worker_control,
                     limits,
+                    tls,
                 )
             });
         let join = match joined {
@@ -215,6 +218,7 @@ fn supervise(
     listener: ListenerGrant,
     control: Arc<Control>,
     limits: NetworkLimits,
+    tls: Option<TlsIdentity>,
 ) -> std::result::Result<WorkerExit<WorkbenchState>, JobError> {
     // Keep the node outside the unwind boundary so a panic while supervising
     // still leaves its actual join handle available for explicit cleanup.
@@ -225,7 +229,7 @@ fn supervise(
                 control.progress().bind = Some(Err(NetworkError::Cancelled));
                 return;
             }
-            match host.bind_configured(configured, None, limits).await {
+            match host.bind_configured(configured, tls, limits).await {
                 Ok(bound) => {
                     let address = bound.local_addr();
                     node = Some(bound);
@@ -308,6 +312,16 @@ impl Workbench {
         options: ServiceStart,
         outbound: &[ServiceEndpointSelection],
     ) -> Result<TaskKey> {
+        self.start_service_with_network(options, outbound, None)
+    }
+    /// TLS material is selected explicitly for this run and never restored from
+    /// publication metadata. Plain HTTP remains restricted to loopback.
+    pub fn start_service_with_network(
+        &mut self,
+        options: ServiceStart,
+        outbound: &[ServiceEndpointSelection],
+        tls: Option<&crate::service_tls::TlsSelection>,
+    ) -> Result<TaskKey> {
         if outbound.len() > MAX_SERVICE_ENDPOINTS {
             return Err("too many service outbound endpoints".into());
         }
@@ -387,11 +401,15 @@ impl Workbench {
             return Err("service publication required".into());
         };
         let address: SocketAddr = publication.listen_address.parse()?;
-        if publication.tls_required || !address.ip().is_loopback() {
-            return Err(
-                "application service admission currently requires approved loopback HTTP".into(),
-            );
+        if publication.tls_required != tls.is_some() {
+            return Err("selected TLS identity does not match approved publication mode".into());
         }
+        if !publication.tls_required && !address.ip().is_loopback() {
+            return Err("plain application HTTP requires approved loopback address".into());
+        }
+        let tls = tls
+            .map(crate::service_tls::TlsSelection::load)
+            .transpose()?;
         let mut endpoints = Vec::with_capacity(outbound.len());
         for selection in outbound {
             let endpoint = StoredHttpEndpoint::resolve(
@@ -586,6 +604,7 @@ impl Workbench {
             runtime,
             options.network_limits,
             options.submission,
+            tls,
         );
         self.state.task = Some(Task {
             commands: Default::default(),
