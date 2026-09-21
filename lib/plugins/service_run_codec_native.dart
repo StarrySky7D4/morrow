@@ -102,6 +102,12 @@ abstract final class ServiceRunCodec {
     if (value.tls case final ServiceTlsSelection selected) {
       writeTls(selected, out.initTls());
     }
+    if (value.protectedTls case final ServiceTlsIdentityChoice selected) {
+      final choice = out.initProtectedTls();
+      choice.reference = selected.reference;
+      choice.revision = _wire(selected.revision);
+      choice.certificateSha256 = selected.certificateSha256;
+    }
     final outbound = out.initOutbound(value.outbound.length);
     for (var i = 0; i < value.outbound.length; i++) {
       outbound[i].reference = value.outbound[i].reference;

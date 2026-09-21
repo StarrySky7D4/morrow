@@ -56,6 +56,106 @@ Future<String> _post(RealServiceFixture fixture, String certificate) async {
 }
 
 void main() {
+  for (final rotate in [false, true]) {
+    test(
+      'saved TLS identity ${rotate ? "rotation" : "disable"} uses real owner and closes listener',
+      () async {
+        final f = await RealServiceFixture.open(tlsRequired: true);
+        try {
+          final pem = Directory('${f.directory.path}/tls');
+          await _generate(pem);
+          final cert = '${pem.path}/certificate.pem',
+              key = '${pem.path}/private-key.pem';
+          final trust = '${f.directory.path}/trust.pem';
+          await File(cert).copy(trust);
+          final inspected = await f.backend.inspectServiceTls(
+            certificatePath: cert,
+            privateKeyPath: key,
+          );
+          final saved = await f.backend.saveTlsIdentity(
+            selection: inspected,
+            reference: Uint8List(0),
+            expectedRevision: BigInt.zero,
+          );
+          await File(cert).delete();
+          await File(key).delete();
+          await f.session.start(f.request(protectedTls: saved.choice));
+          await f.observe(ServiceRunPhase.running);
+          expect(await _post(f, trust), startsWith('HTTP/1.1 202 '));
+          final before = await f.backend.tlsIdentityPage();
+          expect(
+            before.identities.single.choice.reference,
+            saved.choice.reference,
+          );
+          await _generate(pem);
+          final next = await f.backend.inspectServiceTls(
+            certificatePath: cert,
+            privateKeyPath: key,
+          );
+          await f.backend.saveTlsIdentity(
+            selection: next,
+            reference: Uint8List(0),
+            expectedRevision: BigInt.zero,
+          );
+          expect(await _post(f, trust), startsWith('HTTP/1.1 202 '));
+          final updated = rotate
+              ? await f.backend.saveTlsIdentity(
+                  selection: next,
+                  reference: saved.choice.reference,
+                  expectedRevision: saved.choice.revision,
+                )
+              : await f.backend.disableTlsIdentity(saved);
+          expect(updated.choice.revision, BigInt.two);
+          expect(updated.disabled, !rotate);
+          await f.observe(ServiceRunPhase.exited);
+          await f.session.acknowledge();
+          await expectLater(
+            f.backend.tlsIdentityPage(snapshot: before.snapshot),
+            throwsA(isA<StateError>()),
+          );
+          await expectLater(
+            f.backend.startServiceRun(
+              f.request(submission: 32, protectedTls: saved.choice),
+            ),
+            throwsA(isA<ServiceRunStartFailure>()),
+          );
+          if (rotate) {
+            await f.session.start(
+              f.request(submission: 33, protectedTls: updated.choice),
+            );
+            await f.observe(ServiceRunPhase.running);
+            await expectLater(
+              _post(f, trust),
+              throwsA(isA<HandshakeException>()),
+            );
+            expect(await _post(f, cert), startsWith('HTTP/1.1 202 '));
+            await f.session.stop();
+            await f.observe(ServiceRunPhase.exited);
+            await f.session.acknowledge();
+          }
+          await f.backend.close();
+          final reopened = await RustWorkbench.open(
+            executable: Platform.environment['MORROW_WORKBENCH_HOST']!,
+            package: Platform.environment['MORROW_WORKBENCH_PACKAGE']!,
+            directory: f.directory,
+            managed: true,
+          );
+          try {
+            final row = (await reopened.tlsIdentityPage()).identities
+                .singleWhere((row) => row.choice.key == saved.choice.key);
+            expect(row.choice.revision, BigInt.two);
+            expect(row.disabled, !rotate);
+          } finally {
+            await reopened.close();
+          }
+        } finally {
+          await f.close(observeBeforeClose: false);
+        }
+      },
+      skip: !_available,
+      timeout: const Timeout(Duration(minutes: 2)),
+    );
+  }
   test(
     'real host refuses expired/future PEM even with fabricated valid metadata',
     () async {

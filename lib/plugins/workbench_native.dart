@@ -7,6 +7,7 @@ import 'service_control.dart';
 import 'service_codec_native.dart';
 import 'service_run_control.dart';
 import 'service_run_codec_native.dart';
+import 'service_tls_identity_codec_native.dart';
 import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'host_request.dart';
@@ -41,6 +42,7 @@ class RustWorkbench
         WorkbenchServiceControl,
         WorkbenchServiceRunControl,
         WorkbenchServiceTlsControl,
+        WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
@@ -876,6 +878,104 @@ class RustWorkbench
         r,
         certificatePath: certificatePath,
         privateKeyPath: privateKeyPath,
+      ),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<ServiceTlsIdentityPage> tlsIdentityPage({
+    Uint8List? after,
+    Uint8List? snapshot,
+  }) {
+    final cursor = after == null ? null : ServiceRunValidation.identity(after);
+    final frozenSnapshot = snapshot == null
+        ? null
+        : ServiceRunValidation.identity(snapshot);
+    if (cursor != null && frozenSnapshot == null) {
+      throw const FormatException('TLS identity snapshot required');
+    }
+    return _callDecoded<ServiceTlsIdentityPage>(
+      host.Action.tlsIdentityPage,
+      configure: (r) {
+        if (cursor != null) r.serviceCursor = cursor;
+        if (frozenSnapshot != null) r.serviceSnapshot = frozenSnapshot;
+      },
+      decode: (r) => ServiceTlsIdentityCodec.page(
+        r,
+        after: cursor,
+        expectedSnapshot: frozenSnapshot,
+      ),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<ServiceTlsIdentityInfo> saveTlsIdentity({
+    required ServiceTlsSelection selection,
+    required Uint8List reference,
+    required BigInt expectedRevision,
+  }) {
+    final frozenReference = Uint8List.fromList(reference).asUnmodifiableView();
+    final frozen = ServiceTlsSelection(
+      certificatePath: selection.certificatePath,
+      privateKeyPath: selection.privateKeyPath,
+      certificateSha256: selection.certificateSha256,
+      validity: selection.validity,
+    );
+    ServiceRunValidation.tlsMutation(
+      frozenReference,
+      expectedRevision,
+      create: true,
+    );
+    ServiceRunValidation.tlsSelection(frozen);
+    if (expectedRevision == ServiceRunValidation.maxTlsRevision) {
+      throw const FormatException('TLS identity revision exhausted');
+    }
+    return _callDecoded<ServiceTlsIdentityInfo>(
+      host.Action.tlsIdentitySave,
+      configure: (r) {
+        r.serviceReference = frozenReference;
+        r.revision = expectedRevision.toInt();
+        ServiceRunCodec.writeTls(frozen, r.initServiceTls());
+      },
+      decode: (r) => ServiceTlsIdentityCodec.saved(
+        r,
+        reference: frozenReference,
+        revision: expectedRevision + BigInt.one,
+        certificateSha256: frozen.certificateSha256,
+        disabled: false,
+      ),
+      clearReply: true,
+      updatePresentation: false,
+    );
+  }
+
+  @override
+  Future<ServiceTlsIdentityInfo> disableTlsIdentity(
+    ServiceTlsIdentityInfo expected,
+  ) {
+    final choice = expected.choice;
+    ServiceRunValidation.tlsIdentity(choice);
+    if (!expected.disabled &&
+        choice.revision == ServiceRunValidation.maxTlsRevision) {
+      throw const FormatException('TLS identity revision exhausted');
+    }
+    return _callDecoded<ServiceTlsIdentityInfo>(
+      host.Action.tlsIdentityDisable,
+      configure: (r) {
+        r.serviceReference = choice.reference;
+        r.revision = choice.revision.toInt();
+      },
+      decode: (r) => ServiceTlsIdentityCodec.saved(
+        r,
+        reference: choice.reference,
+        revision:
+            choice.revision + (expected.disabled ? BigInt.zero : BigInt.one),
+        certificateSha256: choice.certificateSha256,
+        disabled: true,
       ),
       clearReply: true,
       updatePresentation: false,

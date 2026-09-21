@@ -198,6 +198,7 @@ class RealServiceFixture {
     int jobs = 64,
     int calls = 4,
     ServiceTlsSelection? tls,
+    ServiceTlsIdentityChoice? protectedTls,
   }) => ServiceRunRequest(
     submission: Uint8List.fromList(List.filled(32, submission)),
     configId: config.id,
@@ -216,6 +217,7 @@ class RealServiceFixture {
     maxJobBytes: BigInt.from(1024 * 1024),
     maxTotalBytes: BigInt.from(4 * 1024 * 1024),
     tls: tls,
+    protectedTls: protectedTls,
   );
 
   Future<ServiceRunSnapshot> observe(ServiceRunPhase phase) async {

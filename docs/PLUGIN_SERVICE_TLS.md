@@ -25,6 +25,12 @@ Flutter 为 TLS 发布提供本地 PEM 选择、检查和证书摘要展示。�
 
 原拥有者私有命令 `tlsIdentityPage/Save/Disable` 及 `ServiceRunStart.protectedTls` 已接通，见[管理与启动报告](../reports/application-service-tls-control-2026-09-21.md)。列表每页最多 16 条，使用原库稳定快照；返回引用、修订、证书摘要及禁用状态，不返回私钥或密文。保存使用冻结的 PEM 选择重新检查，替换/禁用要求精确修订；运行中通过原拥有者命令执行。可信 Rust 入口为 `start_service_with_protected_tls`；文件与受保护引用不能同时选择。
 
-启动在原 Store 重验引用/修订/摘要、实际解封证书及共同有效期，绑定独立身份依赖，保留完整 8 个出站名额。源 PEM 可以移除；替换或禁用当前身份使旧监听与缓存交付失效，无关身份保存不影响当前服务。采用新身份须显式启动，不自动重启。已保存身份的 Dart 类型化管理 API 和选择/轮换 UI 尚未实现，现有 UI 仍从明确选择的 PEM 加载，这是下一项；之后继续 Unknown 持久核对、完整文件系统和 C/C++/Rust IO SDK。当前没有自动续期、ACME 或客户端证书认证。
+启动在原 Store 重验引用/修订/摘要、实际解封证书及共同有效期，绑定独立身份依赖，保留完整 8 个出站名额。源 PEM 可以移除；替换或禁用当前身份使旧监听与缓存交付失效，无关身份保存不影响当前服务。采用新身份须显式启动，不自动重启。
+
+Dart 类型化管理 API 已接入 `WorkbenchTlsIdentityControl`，原生后端提供 `tlsIdentityPage/saveTlsIdentity/disableTlsIdentity`。分页冻结快照/游标，严格校验顺序、数量及续页身份；变更回执匹配期望修订、引用、摘要和禁用状态。保存只传经过检查的文件选择，返回仅含元数据；原始回复帧在解码后清除。
+
+`ServiceRunRequest.protectedTls` 拷贝并冻结引用/修订/证书摘要，与 `tls` 文件选择互斥。Dart 不加载已保存私钥或自行恢复授权，实际证书有效期仍由原生启动检查。真实 Dart→Rust→HTTPS、原拥有者轮换/禁用和同库重开已通过；保存成功后回执损坏/EOF 保留原命令 Unknown 身份，不自动再次保存或创建重复条目，详见[客户端报告](../reports/application-service-tls-client-2026-09-21.md)。
+
+选择/轮换 UI 尚未实现，现有 UI 仍从明确选择的 PEM 加载，这是下一项；之后继续 Unknown 持久核对、完整文件系统和 C/C++/Rust IO SDK。当前没有自动续期、ACME 或客户端证书认证。
 
 公共 guest ABI 未改变。原生测试通过不代表 C/C++/Rust IO SDK 稳定、公网部署合格或其它平台已验证。

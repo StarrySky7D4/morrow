@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'io_task_models.dart';
 import 'service_control.dart' show ServiceValidation;
+import 'service_tls_identity_models.dart';
+export 'service_tls_identity_models.dart';
 
 Uint8List _owned(Uint8List bytes) =>
     Uint8List.fromList(bytes).asUnmodifiableView();
@@ -36,6 +38,22 @@ abstract interface class WorkbenchServiceTlsControl {
     required String certificatePath,
     required String privateKeyPath,
   });
+}
+
+/// Original-owner administration. A lost reply must be reconciled, never retried automatically.
+abstract interface class WorkbenchTlsIdentityControl {
+  Future<ServiceTlsIdentityPage> tlsIdentityPage({
+    Uint8List? after,
+    Uint8List? snapshot,
+  });
+  Future<ServiceTlsIdentityInfo> saveTlsIdentity({
+    required ServiceTlsSelection selection,
+    required Uint8List reference,
+    required BigInt expectedRevision,
+  });
+  Future<ServiceTlsIdentityInfo> disableTlsIdentity(
+    ServiceTlsIdentityInfo expected,
+  );
 }
 
 class ServiceEndpointSelection {
@@ -76,10 +94,18 @@ class ServiceRunRequest {
     this.timeoutMs = 10000,
     List<ServiceEndpointSelection> outbound = const [],
     ServiceTlsSelection? tls,
+    ServiceTlsIdentityChoice? protectedTls,
   }) : submission = _owned(submission),
        configDigest = _owned(configDigest),
        publication = _owned(publication),
        packageDigest = _owned(packageDigest),
+       protectedTls = protectedTls == null
+           ? null
+           : ServiceTlsIdentityChoice(
+               reference: protectedTls.reference,
+               revision: protectedTls.revision,
+               certificateSha256: protectedTls.certificateSha256,
+             ),
        tls = tls == null
            ? null
            : ServiceTlsSelection(
@@ -98,6 +124,7 @@ class ServiceRunRequest {
        );
   final List<ServiceEndpointSelection> outbound;
   final ServiceTlsSelection? tls;
+  final ServiceTlsIdentityChoice? protectedTls;
   final Uint8List submission, configDigest, publication, packageDigest;
   final String configId, packageId;
   final BigInt configRevision, publicationRevision, registryRevision;
@@ -251,6 +278,23 @@ abstract interface class WorkbenchServiceRunControl {
 }
 
 abstract final class ServiceRunValidation {
+  static final maxTlsRevision = (BigInt.one << 63) - BigInt.one;
+  static void tlsIdentity(ServiceTlsIdentityChoice choice) {
+    identity(choice.reference);
+    identity(choice.certificateSha256);
+    _bigRange(choice.revision, maxTlsRevision);
+  }
+
+  static void tlsMutation(
+    Uint8List reference,
+    BigInt revision, {
+    bool create = false,
+  }) {
+    if (create && reference.isEmpty && revision == BigInt.zero) return;
+    identity(reference);
+    _bigRange(revision, maxTlsRevision);
+  }
+
   static void tlsPath(String path) {
     if (path.isEmpty ||
         utf8.encode(path).length > 4096 ||
@@ -291,6 +335,12 @@ abstract final class ServiceRunValidation {
   }
 
   static void request(ServiceRunRequest value) {
+    if (value.tls != null && value.protectedTls != null) {
+      throw const FormatException('Ambiguous TLS identity choice');
+    }
+    if (value.protectedTls case final ServiceTlsIdentityChoice choice) {
+      tlsIdentity(choice);
+    }
     if (value.tls case final ServiceTlsSelection selected) {
       tlsSelection(selected);
     }

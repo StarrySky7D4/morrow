@@ -21,6 +21,7 @@ ServiceRunRequest request({
   BigInt? bytes,
   List<ServiceEndpointSelection> outbound = const [],
   ServiceTlsSelection? tls,
+  ServiceTlsIdentityChoice? protectedTls,
 }) => ServiceRunRequest(
   submission: submission ?? identity(1),
   configId: 'service',
@@ -42,6 +43,7 @@ ServiceRunRequest request({
   maxRequestBytes: requestBytes,
   outbound: outbound,
   tls: tls,
+  protectedTls: protectedTls,
 );
 
 host.ResponseBuilder response() =>
@@ -63,6 +65,51 @@ host.ResponseBuilder command({
 }
 
 void main() {
+  test(
+    'saved TLS start freezes identity and refuses ambiguous selection',
+    () async {
+      final ref = identity(23), digest = identity(24);
+      final selected = ServiceTlsIdentityChoice(
+        reference: ref,
+        revision: BigInt.from(3),
+        certificateSha256: digest,
+      );
+      final value = request(protectedTls: selected);
+      ref.fillRange(0, 32, 0);
+      digest.fillRange(0, 32, 0);
+      await sendHostRequest(
+        host.Action.serviceRunStart,
+        configure: (r) =>
+            ServiceRunCodec.writeRequest(value, r.initServiceRun()),
+        send: (bytes) async {
+          final row = MessageReader.deserialize(
+            bytes,
+          ).getRoot(host.requestFactory).serviceRun!;
+          expect(row.tls, isNull);
+          expect(row.protectedTls!.reference, identity(23));
+          expect(row.protectedTls!.revision, 3);
+          expect(row.protectedTls!.certificateSha256, identity(24));
+        },
+      );
+      expect(
+        () => ServiceRunValidation.request(
+          request(
+            protectedTls: selected,
+            tls: ServiceTlsSelection(
+              certificatePath: '/cert',
+              privateKeyPath: '/key',
+              certificateSha256: identity(2),
+            ),
+          ),
+        ),
+        throwsFormatException,
+      );
+      expect(
+        () => value.protectedTls!.reference[0] = 4,
+        throwsUnsupportedError,
+      );
+    },
+  );
   test(
     'TLS request freezes selection and writes only paths and certificate digest',
     () async {

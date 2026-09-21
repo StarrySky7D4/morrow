@@ -10,6 +10,7 @@ import 'package:morrow_studio/plugins/generated/identity.dart' as contract;
 import 'package:morrow_studio/plugins/host_request.dart';
 import 'package:morrow_studio/plugins/service_run_codec_native.dart';
 import 'package:morrow_studio/plugins/service_run_control.dart';
+import 'package:morrow_studio/plugins/service_tls_identity_codec_native.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 
 import 'service_run_real_native_fixture.dart';
@@ -128,6 +129,103 @@ void main() {
       !RealServiceFixture.available ||
       !Platform.environment.containsKey('MORROW_CLOSE_TEST_PYTHON');
   for (final mode in ['malformed', 'eof']) {
+    test(
+      'protected TLS save retains Unknown after $mode reply loss without duplicate identity',
+      () async {
+        final f = await openProxy(mode);
+        try {
+          final pem = Directory('${f.directory.path}/tls');
+          final generated = await Process.run(
+            Platform.environment['MORROW_TLS_FIXTURE']!,
+            [pem.path],
+          );
+          expect(generated.exitCode, 0, reason: '${generated.stderr}');
+          final selection = await f.backend.inspectServiceTls(
+            certificatePath: '${pem.path}/certificate.pem',
+            privateKeyPath: '${pem.path}/private-key.pem',
+          );
+          await f.session.start(f.request());
+          final task = (await f.observe(ServiceRunPhase.running)).task.key!;
+          await armCommandRead(f, task);
+          ServiceCommandFailure? lost;
+          try {
+            await f.backend.saveTlsIdentity(
+              selection: selection,
+              reference: Uint8List(0),
+              expectedRevision: BigInt.zero,
+            );
+          } on ServiceCommandFailure catch (error) {
+            lost = error;
+          }
+          expect(lost, isNotNull);
+          expect(lost!.outcomeUnknown, isTrue);
+          expect(lost.task, task);
+          expect(lost.command, hasLength(32));
+          await File('${f.directory.path}/armed.mask.json').delete();
+          final original = await File(
+            '${f.directory.path}/receipt.bin',
+          ).readAsBytes();
+          final read = ServiceRunCodec.read(
+            RustWorkbench.readMessage(original).getRoot(host.responseFactory),
+            expectedKey: lost.command!,
+          );
+          late String savedKey;
+          try {
+            expect(read.snapshot.submission, lost.submission);
+            expect(read.snapshot.terminal, OwnerCommandTerminal.none);
+            final saved = ServiceTlsIdentityCodec.saved(
+              RustWorkbench.readMessage(
+                read.payload!,
+              ).getRoot(host.responseFactory),
+              reference: Uint8List(0),
+              revision: BigInt.one,
+              certificateSha256: selection.certificateSha256,
+              disabled: false,
+            );
+            savedKey = saved.choice.key;
+          } finally {
+            read.dispose();
+            original.fillRange(0, original.length, 0);
+          }
+          if (mode == 'malformed') {
+            final state = await f.backend.serviceCommandBySubmission(
+              task,
+              lost.submission,
+            );
+            expect(state.key, lost.command);
+            expect(state.delivery, OwnerCommandDelivery.consumed);
+            expect(
+              (await f.backend.tlsIdentityPage()).identities.single.choice.key,
+              savedKey,
+            );
+            await f.session.stop();
+            await f.observe(ServiceRunPhase.exited);
+            await f.session.acknowledge();
+          }
+          await f.backend.close();
+          final events = await trace(f);
+          expect(events.where((e) => e['event'] == 'matched'), hasLength(1));
+          final reopened = await RustWorkbench.open(
+            executable: Platform.environment['MORROW_WORKBENCH_HOST']!,
+            package: Platform.environment['MORROW_WORKBENCH_PACKAGE']!,
+            directory: Directory('${f.directory.path}/managed-store'),
+            managed: true,
+          );
+          try {
+            final row = (await reopened.tlsIdentityPage()).identities.single;
+            expect(row.choice.key, savedKey);
+            expect(row.choice.revision, BigInt.one);
+            expect(row.disabled, isFalse);
+          } finally {
+            await reopened.close();
+          }
+        } finally {
+          await f.close(observeBeforeClose: false);
+        }
+      },
+      skip: skip || !Platform.environment.containsKey('MORROW_TLS_FIXTURE'),
+      timeout: const Timeout(Duration(minutes: 2)),
+    );
     test(
       'committed ordinary business write survives $mode reply loss without duplicate commit',
       () async {
