@@ -607,7 +607,7 @@
   "pluginsServiceRunOutboundStale": "A selected endpoint changed or is no longer available. Select its current version explicitly, or clear the selection.",
   "pluginsServiceRunOutboundClear": "Clear endpoint selection",
   "pluginsServiceRunOutboundAttempt": "Endpoints bound to this start attempt",
-  "pluginsServiceTlsHint": "This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.",
+  "pluginsServiceTlsHint": "Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.",
   "pluginsServiceTlsCertificate": "Choose certificate chain",
   "pluginsServiceTlsPrivateKey": "Choose private key",
   "pluginsServiceTlsInspect": "Check certificate",
@@ -628,5 +628,19 @@
     }
   },
   "pluginsServiceTlsOutsideValidity": "The certificate chain is not yet valid or has expired. Check or replace the certificate and inspect it again before starting.",
-  "pluginsServiceTlsRecheck": "Check the certificate again before starting. A change in the clock does not restore the previous selection."
+  "pluginsServiceTlsRecheck": "Check the certificate again before starting. A change in the clock does not restore the previous selection.",
+  "pluginsTlsIdentitiesTitle": "Saved TLS identities",
+  "pluginsTlsIdentitiesHint": "Select an identity explicitly. Replacing or disabling an identity stops services that use it; a new start is always explicit.",
+  "pluginsTlsIdentitiesUseFile": "Use checked files for next start",
+  "pluginsTlsIdentitiesSaved": "Saved. Review the identity and revision below, then select it for a new start.",
+  "pluginsTlsIdentitiesUnknownHint": "Refresh and inspect the records before acknowledging. A missing receipt does not mean the change failed; do not create it again without checking.",
+  "pluginsTlsIdentitiesSavedMode": "Next start: saved identity. The host checks its certificate validity at startup.",
+  "pluginsTlsIdentitiesFileMode": "Next start: checked local files.",
+  "pluginsTlsIdentitiesStale": "The selected identity changed, was disabled, or has not been refreshed. Select a current identity again.",
+  "pluginsTlsIdentitiesEmpty": "No saved identities in this library.",
+  "pluginsTlsIdentitiesSelect": "Use for next start",
+  "pluginsTlsIdentitiesReplace": "Replace with checked files",
+  "pluginsTlsIdentitiesDisable": "Disable identity",
+  "pluginsTlsIdentitiesImport": "Prepare certificate files for import or replacement",
+  "pluginsTlsIdentitiesSave": "Save as a new identity"
 }

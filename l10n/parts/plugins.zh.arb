@@ -607,7 +607,7 @@
   "pluginsServiceRunOutboundStale": "已选端点发生变化或已不可用。请明确选择当前版本，或清空选择。",
   "pluginsServiceRunOutboundClear": "清空端点选择",
   "pluginsServiceRunOutboundAttempt": "本次启动绑定的端点",
-  "pluginsServiceTlsHint": "此发布要求 TLS。选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。",
+  "pluginsServiceTlsHint": "选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。",
   "pluginsServiceTlsCertificate": "选择证书链",
   "pluginsServiceTlsPrivateKey": "选择私钥",
   "pluginsServiceTlsInspect": "检查证书",
@@ -628,5 +628,19 @@
     }
   },
   "pluginsServiceTlsOutsideValidity": "证书链尚未生效或已过期。请检查或更换证书后再次检查，当前选择不能启动服务。",
-  "pluginsServiceTlsRecheck": "启动前请重新检查证书。时钟变化不会恢复之前的选择。"
+  "pluginsServiceTlsRecheck": "启动前请重新检查证书。时钟变化不会恢复之前的选择。",
+  "pluginsTlsIdentitiesTitle": "已保存的 TLS 身份",
+  "pluginsTlsIdentitiesHint": "请明确选择身份。替换或禁用身份会停止使用它的服务，采用新身份需要再次启动。",
+  "pluginsTlsIdentitiesUseFile": "下次启动使用已检查文件",
+  "pluginsTlsIdentitiesSaved": "已保存。请核对下方身份与修订，需要启动时再明确选择。",
+  "pluginsTlsIdentitiesUnknownHint": "请先刷新并核对记录，再确认继续。回执丢失不代表修改失败，未核对前请勿重复创建。",
+  "pluginsTlsIdentitiesSavedMode": "下次启动：已保存身份。宿主会在启动时重新检查证书有效期。",
+  "pluginsTlsIdentitiesFileMode": "下次启动：已检查的本地文件。",
+  "pluginsTlsIdentitiesStale": "已选身份已变化、被禁用或尚未刷新。请重新选择当前身份。",
+  "pluginsTlsIdentitiesEmpty": "当前资料库尚无已保存身份。",
+  "pluginsTlsIdentitiesSelect": "用于下次启动",
+  "pluginsTlsIdentitiesReplace": "用已检查文件替换",
+  "pluginsTlsIdentitiesDisable": "禁用身份",
+  "pluginsTlsIdentitiesImport": "准备导入或替换的证书文件",
+  "pluginsTlsIdentitiesSave": "保存为新身份"
 }

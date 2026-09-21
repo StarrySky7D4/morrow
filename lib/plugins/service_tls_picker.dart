@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'service_run_control.dart';
+import 'service_tls_draft.dart';
 
 /// A per-view choice; only a successfully checked immutable value leaves it.
 class ServiceTlsPicker extends StatefulWidget {
@@ -18,6 +19,7 @@ class ServiceTlsPicker extends StatefulWidget {
     required this.radius,
     this.chooseFile,
     this.now,
+    this.draft,
   });
   final WorkbenchServiceTlsControl backend;
   final bool enabled;
@@ -28,21 +30,36 @@ class ServiceTlsPicker extends StatefulWidget {
   final Future<String?> Function()? chooseFile;
   @visibleForTesting
   final DateTime Function()? now;
+  final ServiceTlsDraft? draft;
   @override
   State<ServiceTlsPicker> createState() => _ServiceTlsPickerState();
 }
 
 class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
   DateTime get _now => widget.now?.call() ?? DateTime.now();
-  String _certificate = '', _privateKey = '';
-  ServiceTlsSelection? _checked;
+  final _localDraft = ServiceTlsDraft();
+  ServiceTlsDraft get _draft => widget.draft ?? _localDraft;
+  String get _certificate => _draft.certificate;
+  set _certificate(String value) => _draft.certificate = value;
+  String get _privateKey => _draft.privateKey;
+  set _privateKey(String value) => _draft.privateKey = value;
+  ServiceTlsSelection? get _checked => _draft.checked;
+  set _checked(ServiceTlsSelection? value) => _draft.checked = value;
   bool _busy = false, _failed = false;
   int _generation = 0;
   Timer? _timer;
-  bool _accepted = false;
+  bool get _accepted => _draft.accepted;
+  set _accepted(bool value) => _draft.accepted = value;
   @override
   void initState() {
     super.initState();
+    if (widget.draft != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_checked?.validity?.validAt(_now) != true) _accepted = false;
+        widget.onChanged(_accepted ? _checked : null);
+      });
+    }
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       final validity = _checked?.validity;
       if (validity == null) return;
@@ -63,11 +80,20 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
   @override
   void didUpdateWidget(covariant ServiceTlsPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.backend, widget.backend)) {
+    if (!identical(oldWidget.backend, widget.backend) ||
+        !identical(oldWidget.draft, widget.draft)) {
       _generation++;
-      _certificate = _privateKey = '';
-      _checked = null;
-      _accepted = false;
+      if (widget.draft == null) {
+        _certificate = _privateKey = '';
+        _checked = null;
+        _accepted = false;
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          if (_checked?.validity?.validAt(_now) != true) _accepted = false;
+          widget.onChanged(_accepted ? _checked : null);
+        });
+      }
       _busy = _failed = false;
     }
   }

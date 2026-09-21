@@ -2251,7 +2251,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsServiceTlsHint =>
-      'This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.';
+      'Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.';
 
   @override
   String get pluginsServiceTlsInspect => 'Check certificate';
@@ -2325,6 +2325,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsThirdParty => 'Third-party plugins';
+
+  @override
+  String get pluginsTlsIdentitiesDisable => 'Disable identity';
+
+  @override
+  String get pluginsTlsIdentitiesEmpty =>
+      'No saved identities in this library.';
+
+  @override
+  String get pluginsTlsIdentitiesFileMode => 'Next start: checked local files.';
+
+  @override
+  String get pluginsTlsIdentitiesHint =>
+      'Select an identity explicitly. Replacing or disabling an identity stops services that use it; a new start is always explicit.';
+
+  @override
+  String get pluginsTlsIdentitiesImport =>
+      'Prepare certificate files for import or replacement';
+
+  @override
+  String get pluginsTlsIdentitiesReplace => 'Replace with checked files';
+
+  @override
+  String get pluginsTlsIdentitiesSave => 'Save as a new identity';
+
+  @override
+  String get pluginsTlsIdentitiesSaved =>
+      'Saved. Review the identity and revision below, then select it for a new start.';
+
+  @override
+  String get pluginsTlsIdentitiesSavedMode =>
+      'Next start: saved identity. The host checks its certificate validity at startup.';
+
+  @override
+  String get pluginsTlsIdentitiesSelect => 'Use for next start';
+
+  @override
+  String get pluginsTlsIdentitiesStale =>
+      'The selected identity changed, was disabled, or has not been refreshed. Select a current identity again.';
+
+  @override
+  String get pluginsTlsIdentitiesTitle => 'Saved TLS identities';
+
+  @override
+  String get pluginsTlsIdentitiesUnknownHint =>
+      'Refresh and inspect the records before acknowledging. A missing receipt does not mean the change failed; do not create it again without checking.';
+
+  @override
+  String get pluginsTlsIdentitiesUseFile => 'Use checked files for next start';
 
   @override
   String get pluginsTransform => 'Transform';

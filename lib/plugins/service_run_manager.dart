@@ -12,6 +12,8 @@ import 'plugin_library.dart';
 import 'service_control.dart';
 import 'service_run_control.dart';
 import 'service_tls_picker.dart';
+import 'service_tls_identity_panel.dart';
+import 'service_tls_identity_session.dart';
 import 'service_run_session.dart';
 import 'service_session.dart';
 import 'session_view_state.dart';
@@ -76,6 +78,14 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   bool _endpointsTrusted = false, _endpointsFailed = false;
   bool _tlsRequired = false;
   ServiceTlsSelection? _tlsSelection;
+  ServiceTlsIdentityChoice? _protectedTls;
+  bool get _tlsReady {
+    if (widget.backend case final WorkbenchTlsIdentityControl backend) {
+      return TlsIdentitySession.forBackend(backend).canUse;
+    }
+    return _tlsSelection?.validity?.validAt(DateTime.now()) == true;
+  }
+
   final _fields = {
     'lifetime': TextEditingController(text: '60000'),
     'jobs': TextEditingController(text: '64'),
@@ -238,6 +248,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
       _detach();
       _selection = null;
       _tlsSelection = null;
+      _protectedTls = null;
       _tlsRequired = false;
       _outbound.clear();
       _endpoints = const [];
@@ -341,11 +352,19 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
 
   Future<void> _start() async {
     if (!_run.canStart || !_metadataCurrent || !_outboundCurrent) return;
+    if (widget.backend case final WorkbenchTlsIdentityControl backend) {
+      final identities = TlsIdentitySession.forBackend(backend);
+      _tlsSelection = identities.canUse && !identities.useSaved
+          ? identities.draft.checked
+          : null;
+      _protectedTls = identities.canUse && identities.useSaved
+          ? identities.selected
+          : null;
+    }
     final selected = _choices.where((c) => c.key == _selection).toList();
     if (selected.length != 1) return;
     final choice = selected.single;
-    if (choice.publication.publication!.tlsRequired &&
-        _tlsSelection?.validity?.validAt(DateTime.now()) != true) {
+    if (choice.publication.publication!.tlsRequired && !_tlsReady) {
       return;
     }
     try {
@@ -381,6 +400,9 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         timeoutMs: number('timeout'),
         outbound: _outbound.values.toList(),
         tls: choice.publication.publication!.tlsRequired ? _tlsSelection : null,
+        protectedTls: choice.publication.publication!.tlsRequired
+            ? _protectedTls
+            : null,
       );
       ServiceRunValidation.request(request);
       setState(() => _invalid = false);
@@ -499,6 +521,18 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
           _note(l.pluginsServiceRunHint),
           if (_run.attempt?.tls case final ServiceTlsSelection selected) ...[
             _note(l.pluginsServiceTlsAttempt),
+            _note(
+              _hex(selected.certificateSha256),
+              key: 'attempt-tls-fingerprint',
+            ),
+          ],
+          if (_run.attempt?.protectedTls
+              case final ServiceTlsIdentityChoice selected) ...[
+            _note(l.pluginsServiceTlsAttempt),
+            _note(
+              '${selected.key} · r${selected.revision}',
+              key: 'attempt-tls-identity',
+            ),
             _note(
               _hex(selected.certificateSha256),
               key: 'attempt-tls-fingerprint',
@@ -633,6 +667,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
                     if (value != _selection) {
                       _outbound.clear();
                       _tlsSelection = null;
+                      _protectedTls = null;
                     }
                     _selection = value;
                     _tlsRequired = choices.any(
@@ -643,7 +678,28 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
                   }),
           ),
           if (choices.isEmpty) _note(l.pluginsServiceRunNoSelection),
-          if (_tlsRequired)
+          if (widget.backend is WorkbenchTlsIdentityControl &&
+              widget.backend is WorkbenchServiceTlsControl)
+            ServiceTlsIdentityPanel(
+              key: ValueKey('service-tls-identities-$_selection-$_attachment'),
+              backend: widget.backend as WorkbenchTlsIdentityControl,
+              inspector: widget.backend as WorkbenchServiceTlsControl,
+              selectionEnabled:
+                  _run.canStart && selectionCurrent && _tlsRequired,
+              onChanged: (file, saved) {
+                if (mounted) {
+                  setState(() {
+                    _tlsSelection = file;
+                    _protectedTls = saved;
+                  });
+                }
+              },
+              ink: widget.ink,
+              muted: widget.muted,
+              line: widget.line,
+              radius: widget.radius,
+            )
+          else if (_tlsRequired)
             if (widget.backend case final WorkbenchServiceTlsControl tlsBackend)
               ServiceTlsPicker(
                 key: ValueKey('service-tls-$_selection-$_attachment'),
@@ -744,7 +800,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
             _run.canStart &&
                     selectionCurrent &&
                     _metadataCurrent &&
-                    (!_tlsRequired || _tlsSelection != null) &&
+                    (!_tlsRequired || _tlsReady) &&
                     _outboundCurrent
                 ? _start
                 : null,

@@ -2079,7 +2079,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsServiceTlsHint =>
-      '此发布要求 TLS。选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。';
+      '选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。';
 
   @override
   String get pluginsServiceTlsInspect => '检查证书';
@@ -2147,6 +2147,50 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsThirdParty => '第三方插件';
+
+  @override
+  String get pluginsTlsIdentitiesDisable => '禁用身份';
+
+  @override
+  String get pluginsTlsIdentitiesEmpty => '当前资料库尚无已保存身份。';
+
+  @override
+  String get pluginsTlsIdentitiesFileMode => '下次启动：已检查的本地文件。';
+
+  @override
+  String get pluginsTlsIdentitiesHint =>
+      '请明确选择身份。替换或禁用身份会停止使用它的服务，采用新身份需要再次启动。';
+
+  @override
+  String get pluginsTlsIdentitiesImport => '准备导入或替换的证书文件';
+
+  @override
+  String get pluginsTlsIdentitiesReplace => '用已检查文件替换';
+
+  @override
+  String get pluginsTlsIdentitiesSave => '保存为新身份';
+
+  @override
+  String get pluginsTlsIdentitiesSaved => '已保存。请核对下方身份与修订，需要启动时再明确选择。';
+
+  @override
+  String get pluginsTlsIdentitiesSavedMode => '下次启动：已保存身份。宿主会在启动时重新检查证书有效期。';
+
+  @override
+  String get pluginsTlsIdentitiesSelect => '用于下次启动';
+
+  @override
+  String get pluginsTlsIdentitiesStale => '已选身份已变化、被禁用或尚未刷新。请重新选择当前身份。';
+
+  @override
+  String get pluginsTlsIdentitiesTitle => '已保存的 TLS 身份';
+
+  @override
+  String get pluginsTlsIdentitiesUnknownHint =>
+      '请先刷新并核对记录，再确认继续。回执丢失不代表修改失败，未核对前请勿重复创建。';
+
+  @override
+  String get pluginsTlsIdentitiesUseFile => '下次启动使用已检查文件';
 
   @override
   String get pluginsTransform => '转换';

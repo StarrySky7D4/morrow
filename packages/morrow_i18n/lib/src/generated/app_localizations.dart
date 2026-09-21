@@ -4003,7 +4003,7 @@ abstract class AppLocalizations {
   /// No description provided for @pluginsServiceTlsHint.
   ///
   /// In en, this message translates to:
-  /// **'This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.'**
+  /// **'Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.'**
   String get pluginsServiceTlsHint;
 
   /// No description provided for @pluginsServiceTlsInspect.
@@ -4125,6 +4125,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Third-party plugins'**
   String get pluginsThirdParty;
+
+  /// No description provided for @pluginsTlsIdentitiesDisable.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable identity'**
+  String get pluginsTlsIdentitiesDisable;
+
+  /// No description provided for @pluginsTlsIdentitiesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved identities in this library.'**
+  String get pluginsTlsIdentitiesEmpty;
+
+  /// No description provided for @pluginsTlsIdentitiesFileMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Next start: checked local files.'**
+  String get pluginsTlsIdentitiesFileMode;
+
+  /// No description provided for @pluginsTlsIdentitiesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an identity explicitly. Replacing or disabling an identity stops services that use it; a new start is always explicit.'**
+  String get pluginsTlsIdentitiesHint;
+
+  /// No description provided for @pluginsTlsIdentitiesImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare certificate files for import or replacement'**
+  String get pluginsTlsIdentitiesImport;
+
+  /// No description provided for @pluginsTlsIdentitiesReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace with checked files'**
+  String get pluginsTlsIdentitiesReplace;
+
+  /// No description provided for @pluginsTlsIdentitiesSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as a new identity'**
+  String get pluginsTlsIdentitiesSave;
+
+  /// No description provided for @pluginsTlsIdentitiesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Review the identity and revision below, then select it for a new start.'**
+  String get pluginsTlsIdentitiesSaved;
+
+  /// No description provided for @pluginsTlsIdentitiesSavedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Next start: saved identity. The host checks its certificate validity at startup.'**
+  String get pluginsTlsIdentitiesSavedMode;
+
+  /// No description provided for @pluginsTlsIdentitiesSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Use for next start'**
+  String get pluginsTlsIdentitiesSelect;
+
+  /// No description provided for @pluginsTlsIdentitiesStale.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected identity changed, was disabled, or has not been refreshed. Select a current identity again.'**
+  String get pluginsTlsIdentitiesStale;
+
+  /// No description provided for @pluginsTlsIdentitiesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved TLS identities'**
+  String get pluginsTlsIdentitiesTitle;
+
+  /// No description provided for @pluginsTlsIdentitiesUnknownHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh and inspect the records before acknowledging. A missing receipt does not mean the change failed; do not create it again without checking.'**
+  String get pluginsTlsIdentitiesUnknownHint;
+
+  /// No description provided for @pluginsTlsIdentitiesUseFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Use checked files for next start'**
+  String get pluginsTlsIdentitiesUseFile;
 
   /// No description provided for @pluginsTransform.
   ///
