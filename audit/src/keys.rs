@@ -200,6 +200,12 @@ pub(crate) fn protect_http_credential(input: &[u8]) -> Result<Vec<u8>> {
 pub(crate) fn unprotect_http_credential(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
     windows::unprotect_http(input)
 }
+pub(crate) fn protect_tls_identity(input: &[u8]) -> Result<Vec<u8>> {
+    windows::protect_tls(input)
+}
+pub(crate) fn unprotect_tls_identity(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    windows::unprotect_tls(input)
+}
 
 #[cfg(test)]
 mod tests {

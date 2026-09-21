@@ -86,6 +86,60 @@ impl TlsSelection {
         let identity = TlsIdentity::from_pem(&cert, &key).map_err(|_| IDENTITY_ERROR)?;
         Ok((identity, TlsValidity::from_pem(&cert)?))
     }
+
+    /// Build a protected envelope from an explicit frozen file choice. This does
+    /// not persist it or grant permission to start a service. The eventual Store
+    /// administration layer must supply its identity and enforce revision CAS.
+    pub fn protect(
+        &self,
+        store_id: [u8; 32],
+        reference: [u8; 32],
+        revision: u64,
+    ) -> Result<morrow_core::tls_identity::Record> {
+        #[cfg(not(target_os = "windows"))]
+        {
+            let _ = (store_id, reference, revision);
+            Err("protected TLS identities unavailable on this platform".into())
+        }
+        #[cfg(target_os = "windows")]
+        {
+            let cert = read_bounded(&self.certificate)?;
+            let key = read_bounded(&self.private_key)?;
+            if <[u8; 32]>::from(Sha256::digest(&*cert)) != self.certificate_sha256 {
+                return Err("selected TLS certificate changed".into());
+            }
+            TlsIdentity::from_pem(&cert, &key).map_err(|_| IDENTITY_ERROR)?;
+            TlsValidity::from_pem(&cert)?;
+            Ok(morrow_audit::tls_identity::seal(
+                store_id, reference, revision, &cert, &key,
+            )?)
+        }
+    }
+}
+
+/// Restore protected material only for the caller's expected immutable choice.
+/// Caller must independently load the current Store row and restrict its live
+/// service authority to the returned validity before any listener can start.
+pub fn load_protected(
+    record: &morrow_core::tls_identity::Record,
+    store_id: &[u8; 32],
+    reference: &[u8; 32],
+    revision: u64,
+) -> Result<(TlsIdentity, TlsValidity)> {
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = (record, store_id, reference, revision);
+        Err("protected TLS identities unavailable on this platform".into())
+    }
+    #[cfg(target_os = "windows")]
+    {
+        let material = morrow_audit::tls_identity::open(record, store_id, reference, revision)?;
+        let identity =
+            TlsIdentity::from_pem(material.certificate_pem(), material.private_key_pem())
+                .map_err(|_| IDENTITY_ERROR)?;
+        let validity = TlsValidity::from_pem(material.certificate_pem())?;
+        Ok((identity, validity))
+    }
 }
 
 fn reparse(metadata: &Metadata) -> bool {
@@ -179,6 +233,77 @@ mod tests {
         let CertifiedKey { cert, key_pair } =
             generate_simple_self_signed(vec!["localhost".into()]).unwrap();
         (cert.pem(), key_pair.serialize_pem())
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn protected_identity_recovers_without_source_files_and_refuses_changed_selection() {
+        let dir = TempDir::new().unwrap();
+        let (cert, key) = pair();
+        let (cert_path, key_path) = write(&dir, &cert, &key);
+        let selected = TlsSelection::inspect(&cert_path, &key_path).unwrap();
+        let record = selected.protect([1; 32], [2; 32], 1).unwrap();
+        let encoded = record.container().to_vec();
+        fs::remove_file(&cert_path).unwrap();
+        fs::remove_file(&key_path).unwrap();
+        let reloaded = morrow_core::tls_identity::Record::decode(&encoded).unwrap();
+        let (_, validity) = load_protected(&reloaded, &[1; 32], &[2; 32], 1).unwrap();
+        assert_eq!(Some(validity), selected.validity());
+        assert!(selected.load().is_err());
+        assert!(load_protected(&reloaded, &[3; 32], &[2; 32], 1).is_err());
+        let (other_cert, other_key) = pair();
+        write(&dir, &other_cert, &other_key);
+        assert!(selected.protect([1; 32], [2; 32], 2).is_err());
+        write(&dir, &cert, &other_key);
+        assert!(selected.protect([1; 32], [2; 32], 2).is_err());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn valid_protection_does_not_replace_pair_and_validity_validation() {
+        let (cert, key) = pair();
+        let (_, wrong_key) = pair();
+        let mismatch = morrow_audit::tls_identity::seal(
+            [1; 32],
+            [2; 32],
+            1,
+            cert.as_bytes(),
+            wrong_key.as_bytes(),
+        )
+        .unwrap();
+        assert!(load_protected(&mismatch, &[1; 32], &[2; 32], 1).is_err());
+        let malformed = morrow_audit::tls_identity::seal(
+            [1; 32],
+            [2; 32],
+            1,
+            b"not a certificate",
+            key.as_bytes(),
+        )
+        .unwrap();
+        assert!(load_protected(&malformed, &[1; 32], &[2; 32], 1).is_err());
+        let mut params = rcgen::CertificateParams::new(vec!["localhost".into()]).unwrap();
+        params.not_before = time::OffsetDateTime::from_unix_timestamp(100).unwrap();
+        params.not_after = time::OffsetDateTime::from_unix_timestamp(101).unwrap();
+        let key = rcgen::KeyPair::generate().unwrap();
+        let cert = params.self_signed(&key).unwrap();
+        let record = morrow_audit::tls_identity::seal(
+            [1; 32],
+            [2; 32],
+            1,
+            cert.pem().as_bytes(),
+            key.serialize_pem().as_bytes(),
+        )
+        .unwrap();
+        let (_, validity) = load_protected(&record, &[1; 32], &[2; 32], 1).unwrap();
+        assert_eq!(
+            validity,
+            TlsValidity {
+                not_before: 100,
+                not_after: 101
+            }
+        );
+        // Loading returns the real expiry; the live-authority start gate still applies.
+        assert_eq!(validity.authority_window().unwrap(), (100000, 102000));
     }
 
     fn write(

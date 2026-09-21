@@ -33,7 +33,15 @@ impl Drop for OwnedBlob {
     }
 }
 fn crypt(input: &[u8], encrypt: bool, entropy: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
-    if input.is_empty() || input.len() > 64 * 1024 || entropy.is_empty() || entropy.len() > 256 {
+    crypt_bounded(input, encrypt, entropy, 64 * 1024)
+}
+fn crypt_bounded(
+    input: &[u8],
+    encrypt: bool,
+    entropy: &[u8],
+    limit: usize,
+) -> Result<Zeroizing<Vec<u8>>> {
+    if input.is_empty() || input.len() > limit || entropy.is_empty() || entropy.len() > 256 {
         return Err(KeyError::Format);
     }
     let data = CRYPT_INTEGER_BLOB {
@@ -77,7 +85,7 @@ fn crypt(input: &[u8], encrypt: bool, entropy: &[u8]) -> Result<Zeroizing<Vec<u8
         return Err(KeyError::Protection);
     }
     let output = OwnedBlob(output);
-    if output.0.pbData.is_null() || output.0.cbData > 64 * 1024 {
+    if output.0.pbData.is_null() || output.0.cbData as usize > limit {
         return Err(KeyError::Protection);
     }
     // SAFETY: successful DPAPI allocation remains owned until after this copy.
@@ -99,6 +107,24 @@ pub(super) fn protect_http(input: &[u8]) -> Result<Vec<u8>> {
 pub(super) fn unprotect_http(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
     crypt(input, false, HTTP_ENTROPY)
 }
+const TLS_ENTROPY: &[u8] = b"Morrow/tls/identity/current-user/v1";
+pub(super) fn protect_tls(input: &[u8]) -> Result<Vec<u8>> {
+    Ok(crypt_bounded(
+        input,
+        true,
+        TLS_ENTROPY,
+        morrow_core::tls_identity::MAX_CIPHERTEXT_BYTES,
+    )?
+    .to_vec())
+}
+pub(super) fn unprotect_tls(input: &[u8]) -> Result<Zeroizing<Vec<u8>>> {
+    crypt_bounded(
+        input,
+        false,
+        TLS_ENTROPY,
+        morrow_core::tls_identity::MAX_CIPHERTEXT_BYTES,
+    )
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -118,6 +144,12 @@ mod tests {
         let http = protect_http(&plain).unwrap();
         assert!(unprotect_http(&http).unwrap().as_slice() == plain.as_slice());
         assert!(unprotect(&http).is_err());
+        let tls = protect_tls(&plain).unwrap();
+        assert!(unprotect_tls(&tls).unwrap().as_slice() == plain.as_slice());
+        assert!(unprotect(&tls).is_err());
+        assert!(unprotect_http(&tls).is_err());
+        assert!(unprotect_tls(&http).is_err());
+        assert!(unprotect_tls(&legacy).is_err());
     }
     #[test]
     fn dpapi_input_and_entropy_bounds_fail_before_os_call() {

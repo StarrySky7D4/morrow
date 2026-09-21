@@ -32,3 +32,6 @@ pub mod build_receipt;
 
 #[cfg(target_os = "windows")]
 pub mod credentials;
+
+#[cfg(target_os = "windows")]
+pub mod tls_identity;

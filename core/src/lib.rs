@@ -19,6 +19,7 @@ pub mod records;
 pub mod response;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod store;
+pub mod tls_identity;
 pub mod transaction;
 // Export attributes mark the reviewed native/Wasm ABI boundary.
 #[allow(unsafe_code)]
