@@ -197,6 +197,24 @@ void main() {
             root,
             '${output.path}/01-discovered.png',
           );
+          // Mutate an unselected endpoint on the same original owner while
+          // the selected service and its cached response remain live.
+          final unrelated = await fixture.backend.saveEndpoint(
+            reference: Uint8List(0),
+            expectedRevision: BigInt.zero,
+            registryRevision: fixture.registry,
+            lifetimeDays: 1,
+            policy: endpoint.policy,
+          );
+          await fixture.backend.disableEndpoint(unrelated);
+          expect(fixture.session.task!.key, identity);
+          expect(fixture.session.service?.phase, ServiceRunPhase.running);
+          expect((await invoke(fixture, input, 'window-first')).$1, 202);
+          expect(
+            calls,
+            1,
+            reason: 'unrelated writes preserve the cached reply',
+          );
           var settled = false;
           final waiting = invoke(fixture, waitingInput, 'window-wait').then((
             value,
@@ -220,13 +238,15 @@ void main() {
             await waitForUi(
               tester,
               () => fixture.session.canAcknowledge,
-              // Current policy invalidates all restored authorities on an
-              // approval write. Observe actual reclaim before any local read.
+              // The immutable service scope depends on this selected endpoint.
+              // Observe actual reclaim before any local read.
               reason: 'approval mutation automatically retires the service',
             );
             expect(fixture.session.task!.key, identity);
-            final disabled =
-                (await fixture.backend.endpointPage()).entries.single;
+            final disabled = (await fixture.backend.endpointPage()).entries
+                .singleWhere(
+                  (entry) => hex(entry.reference) == hex(endpoint.reference),
+                );
             expect(disabled.reference, endpoint.reference);
             expect(disabled.disabled, isTrue);
             expect(disabled.revision, endpoint.revision + BigInt.one);
@@ -287,7 +307,9 @@ void main() {
             managed: true,
           );
           try {
-            final stored = (await reopened.endpointPage()).entries.single;
+            final stored = (await reopened.endpointPage()).entries.singleWhere(
+              (entry) => hex(entry.reference) == hex(endpoint.reference),
+            );
             expect(stored.reference, endpoint.reference);
             expect(stored.disabled, action == 'revoke');
             expect(await reopened.readUiLocale(), 'en');
@@ -300,6 +322,7 @@ void main() {
               'passed': true,
               'action': action,
               'requests': calls,
+              'unrelatedMutationPreservedService': true,
               'input': 'Windows Flutter framework',
               'guest':
                   'actual Rust/Wasm core codec; not public SDK qualification',

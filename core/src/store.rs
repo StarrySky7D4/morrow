@@ -28,7 +28,9 @@ pub use service_config::ServiceConfigPage;
 mod service_request;
 pub use binding::{AuditBinding, AuditBindingState};
 pub use io_evidence::IoMaterialReservation;
-pub use service_authority_lock::{ServiceAuthorityControl, ServiceAuthorityLease};
+pub use service_authority_lock::{
+    ServiceAuthorityControl, ServiceAuthorityLease, ServiceAuthorityResource,
+};
 mod read_archive;
 mod read_archive_budget;
 mod read_archive_cursor;
@@ -212,6 +214,15 @@ impl Store {
     /// Pin this file-backed Store before resolving persisted service approvals.
     pub fn pin_service_authority(&mut self) -> Result<ServiceAuthorityLease> {
         self.service_authority_coordinator.pin()
+    }
+    /// Narrow a current all-writes resolution guard to its exact loaded records.
+    /// Does not grant IO or allow a scoped lease to expand its dependencies.
+    pub fn narrow_service_authority(
+        &self,
+        guard: &ServiceAuthorityLease,
+        resources: &[ServiceAuthorityResource],
+    ) -> Result<ServiceAuthorityLease> {
+        self.service_authority_coordinator.narrow(guard, resources)
     }
     pub fn validate_service_authority(&self, lease: &ServiceAuthorityLease) -> Result<()> {
         self.service_authority_coordinator.validate(lease)

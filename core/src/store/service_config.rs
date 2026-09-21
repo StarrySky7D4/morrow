@@ -221,7 +221,11 @@ impl Store {
                 return Err(Error::OperationConflict);
             }
         }
-        self.service_authority_coordinator.control().revoke_all();
+        self.service_authority_coordinator
+            .control()
+            .revoke_resource(&super::ServiceAuthorityResource::Configuration(
+                value.id.clone(),
+            ));
         // Remove the old row only inside the atomic transaction so quota counts
         // replacements once, including updates that shrink an already full DB.
         if previous.is_some() {

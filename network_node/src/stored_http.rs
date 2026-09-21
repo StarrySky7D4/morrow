@@ -200,6 +200,17 @@ impl StoredHttpEndpoint {
             created = created.max(record.value().created_ms);
             expires = expires.min(record.value().expires_ms);
         }
+        let mut dependencies = vec![morrow_core::store::ServiceAuthorityResource::Outbound(
+            *endpoint_reference,
+        )];
+        if let Some(record) = &credential {
+            dependencies.push(morrow_core::store::ServiceAuthorityResource::Outbound(
+                record.reference(),
+            ));
+        }
+        let lease = store
+            .narrow_service_authority(&lease, &dependencies)
+            .map_err(|_| Error::Denied)?;
         let live = Live {
             lease,
             clock: Arc::new(Mutex::new(Clock {
@@ -228,6 +239,20 @@ impl StoredHttpEndpoint {
     }
     pub fn revision(&self) -> u64 {
         self.endpoint.value().revision
+    }
+    /// Restrict a service's immutable selected-resource scope, including cached
+    /// results, using this exact original Store lease and expiry clock.
+    pub fn service_dependency(
+        &self,
+        store: &Store,
+    ) -> Result<morrow_plugin_runtime::service_authority::AuthorityDependency> {
+        let live = self.live.clone();
+        morrow_plugin_runtime::service_authority::AuthorityDependency::new(
+            store,
+            live.lease.clone(),
+            move || live.check().is_ok(),
+        )
+        .map_err(|_| Error::Denied)
     }
     /// Bind service replay to the complete selected records, including protected
     /// credential revision/expiry. Order is irrelevant; duplicates are rejected.

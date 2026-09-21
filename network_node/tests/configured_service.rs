@@ -143,6 +143,15 @@ struct Running {
 }
 impl Running {
     fn open(path: &Path, fuel: u64, slow: bool, tls_required: bool) -> Self {
+        Self::open_with(path, fuel, slow, tls_required, |_, resolved| resolved)
+    }
+    fn open_with(
+        path: &Path,
+        fuel: u64,
+        slow: bool,
+        tls_required: bool,
+        restrict: impl FnOnce(&mut Store, ResolvedService) -> ResolvedService,
+    ) -> Self {
         let wasm = module(slow);
         let caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
         let mut declaration = io::declaration(caps.iter().copied().collect(), vec![HANDLER.into()]);
@@ -219,6 +228,7 @@ impl Running {
             utc.load(Ordering::SeqCst)
         })
         .unwrap();
+        let resolved = restrict(&mut store, resolved);
         let catalog = Catalog::open(&path.join("catalog")).unwrap();
         catalog.install(&package).unwrap();
         let mut manager = Manager::new(
@@ -590,6 +600,111 @@ async fn configured_factory_enforces_exact_tls_mode_and_serves_actual_approved_t
         .unwrap();
     status(&output, 200);
     assert!(output.ends_with(SECRET));
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+
+#[tokio::test]
+async fn unrelated_authority_and_configuration_writes_preserve_live_service_and_replay() {
+    let dir = tempfile::tempdir().unwrap();
+    let run = Running::open(dir.path(), RuntimeLimits::default().fuel, false, false);
+    let node = run.bind().await;
+    status(&post(node.local_addr(), "/approved", TOKEN).await, 200);
+    let reader = Store::open_existing(&dir.path().join("db"), EventBudget::default()).unwrap();
+    let mut auth = reader
+        .load_service_authority(&AUTH)
+        .unwrap()
+        .unwrap()
+        .value()
+        .clone();
+    auth.reference = vec![88; 32];
+    auth.disabled = true;
+    update_done(
+        run.host
+            .update_service(ServiceUpdate::Authority {
+                value: Authority::encode(auth).unwrap(),
+                expected_revision: 0,
+            })
+            .unwrap(),
+    )
+    .await;
+    let mut config = run.configured.config().value().clone();
+    config.id = "unrelated-config".into();
+    config.namespace = vec![88; 32];
+    config.disabled = true;
+    update_done(
+        run.host
+            .update_service(ServiceUpdate::Configuration {
+                value: Config::encode(config).unwrap(),
+                expected_revision: 0,
+            })
+            .unwrap(),
+    )
+    .await;
+    run.configured.check().unwrap();
+    let replay = post(node.local_addr(), "/approved-history", TOKEN).await;
+    status(&replay, 200);
+    assert!(replay.ends_with(SECRET));
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+}
+
+#[tokio::test]
+async fn restrictive_dependency_bounds_and_live_probe_fence_cached_service_results() {
+    use morrow_core::store::ServiceAuthorityResource;
+    use morrow_plugin_runtime::service_authority::AuthorityDependency;
+    use std::sync::atomic::AtomicBool;
+    let dir = tempfile::tempdir().unwrap();
+    let live = Arc::new(AtomicBool::new(true));
+    let probe = live.clone();
+    let run = Running::open_with(
+        dir.path(),
+        RuntimeLimits::default().fuel,
+        false,
+        false,
+        |store, resolved| {
+            let guard = store.pin_service_authority().unwrap();
+            let lease = store
+                .narrow_service_authority(&guard, &[ServiceAuthorityResource::Outbound([91; 32])])
+                .unwrap();
+            let dependency =
+                AuthorityDependency::new(store, lease, move || probe.load(Ordering::SeqCst))
+                    .unwrap();
+            let bounded = resolved
+                .with_dependencies(store, vec![dependency.clone(); 8])
+                .unwrap();
+            assert!(
+                bounded
+                    .with_dependencies(store, vec![dependency.clone()])
+                    .is_err()
+            );
+            let resolved = ResolvedService::resolve(store, CONFIG, &APPROVAL, || 1000).unwrap();
+            resolved.with_dependencies(store, vec![dependency]).unwrap()
+        },
+    );
+    let node = run.bind().await;
+    status(&post(node.local_addr(), "/approved", TOKEN).await, 200);
+    status(
+        &post(node.local_addr(), "/approved-history", TOKEN).await,
+        200,
+    );
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+    // Connect before expiry; the listener may close the connection or deny it,
+    // but must not deliver the response cached under the formerly valid scope.
+    let mut socket = TcpStream::connect(node.local_addr()).await.unwrap();
+    live.store(false, Ordering::SeqCst);
+    assert!(run.configured.check().is_err());
+    assert!(run.configured.grant().check(1).is_err());
+    assert!(run.configured.listener().check(1).is_err());
+    let _ = socket.write_all(format!("POST /approved-history?q=1 HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {KEY}\r\nContent-Length: 7\r\nConnection: close\r\n\r\nrequest").as_bytes()).await;
+    let mut output = Vec::new();
+    let _ = tokio::time::timeout(Duration::from_secs(12), socket.read_to_end(&mut output))
+        .await
+        .unwrap();
+    assert!(!output.starts_with(b"HTTP/1.1 200 "));
+    assert!(!output.windows(SECRET.len()).any(|part| part == SECRET));
+    assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
     node.shutdown().await.unwrap();
     run.finish().await;
 }

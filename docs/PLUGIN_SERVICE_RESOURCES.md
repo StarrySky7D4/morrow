@@ -25,4 +25,4 @@
 
 [本轮证据](../reports/service-resource-directory-2026-09-21.md)覆盖实际 Rust/Wasm 插件从目录发现引用、真实 HTTP、伪造头/请求体、旧包与空选择、重放、撤权和拥有者回收。测试插件复用 core codec，只用于集成验证，不能作为独立公共 SDK 的资格证据。
 
-完整 Windows 窗口端点选择→资源发现→出站→运行中撤销/停止的限定验收已通过，见[窗口报告](../reports/service-resource-window-2026-09-21.md)。当前批准变更撤销全部恢复的入站/出站授权；下一项按依赖资源精确撤销，再推进分段帧、应用服务 TLS、Unknown 核对、文件系统与三语言 IO SDK。
+完整 Windows 窗口端点选择→资源发现→出站→运行中撤销/停止的限定验收已通过，见[窗口报告](../reports/service-resource-window-2026-09-21.md)。现已[按资源依赖撤销](../reports/resource-scoped-revocation-2026-09-21.md)：未选资源写入保留原服务，已选端点/凭据失效仍回收整个依赖服务并拒绝旧缓存。下一项推进分段帧、应用服务 TLS、Unknown 核对、文件系统与三语言 IO SDK。

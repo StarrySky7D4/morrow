@@ -1231,7 +1231,7 @@ impl<O: HostOwner> IoWorker<O> {
         })
     }
     /// Enqueue a bounded CAS mutation on the original Store. Acceptance revokes
-    /// all resolved publications immediately, before an in-flight router can
+    /// matching resource dependencies immediately, before an in-flight router can
     /// deliver. A later conflict or storage failure never revives old grants.
     /// Reopening publication requires a fresh resolution and fresh grants.
     pub fn update_service(&self, update: ServiceUpdate) -> Result<ServiceUpdateHandle, JobError> {
@@ -1240,13 +1240,25 @@ impl<O: HostOwner> IoWorker<O> {
             return Err(JobError::Closed);
         }
         let (sender, receiver) = mpsc::sync_channel(1);
+        use morrow_core::store::ServiceAuthorityResource;
+        let resource = match &update {
+            ServiceUpdate::Configuration { value, .. } => {
+                ServiceAuthorityResource::Configuration(value.value().id.clone())
+            }
+            ServiceUpdate::Authority { value, .. } => {
+                ServiceAuthorityResource::Inbound(value.reference())
+            }
+            ServiceUpdate::Outbound { value, .. } => {
+                ServiceAuthorityResource::Outbound(value.reference())
+            }
+        };
         self.sender
             .try_send(Message::ServiceUpdate(Box::new(update), sender))
             .map_err(|error| match error {
                 mpsc::TrySendError::Full(_) => JobError::Busy,
                 mpsc::TrySendError::Disconnected(_) => JobError::Closed,
             })?;
-        self.service_authority.revoke_all();
+        self.service_authority.revoke_resource(&resource);
         drop(state);
         Ok(ServiceUpdateHandle {
             receiver,

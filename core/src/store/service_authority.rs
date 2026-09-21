@@ -287,7 +287,11 @@ impl Store {
                 return Err(Error::Limit);
             }
         }
-        self.service_authority_coordinator.control().revoke_all();
+        self.service_authority_coordinator
+            .control()
+            .revoke_resource(&super::ServiceAuthorityResource::Inbound(
+                record.reference(),
+            ));
         if previous.is_some() {
             sql(tx.execute(
                 "DELETE FROM service_authorities WHERE reference=?1 AND revision=?2",

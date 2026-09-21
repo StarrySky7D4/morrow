@@ -432,6 +432,108 @@ mod native {
         store.save_outbound_authority_local(&expanded, 1).unwrap();
         store.integrity_check().unwrap();
     }
+
+    #[test]
+    fn scoped_writes_revoke_dependents_but_preserve_unrelated_and_early_cas_conflicts() {
+        use morrow_core::store::ServiceAuthorityResource as Resource;
+        let (_dir, _path, mut store) = setup();
+        store
+            .save_outbound_authority_local(&Record::encode(credential()).unwrap(), 0)
+            .unwrap();
+        store
+            .save_outbound_authority_local(&Record::encode(endpoint()).unwrap(), 0)
+            .unwrap();
+        store.save_service_authority_local(&inbound(), 0).unwrap();
+        let guard = store.pin_service_authority().unwrap();
+        let endpoint_lease = store
+            .narrow_service_authority(
+                &guard,
+                &[Resource::Outbound([2; 32]), Resource::Outbound([1; 32])],
+            )
+            .unwrap();
+        let credential_lease = store
+            .narrow_service_authority(&guard, &[Resource::Outbound([1; 32])])
+            .unwrap();
+        let unrelated = store
+            .narrow_service_authority(&guard, &[Resource::Inbound(inbound().reference())])
+            .unwrap();
+        let mut value = endpoint();
+        value.revision = 2;
+        value.disabled = true;
+        let updated = Record::encode(value).unwrap();
+        assert_eq!(
+            store.save_outbound_authority_local(&updated, 0),
+            Err(Error::RevisionConflict)
+        );
+        endpoint_lease.check().unwrap();
+        credential_lease.check().unwrap();
+        guard.check().unwrap();
+        store.save_outbound_authority_local(&updated, 1).unwrap();
+        assert!(endpoint_lease.check().is_err());
+        assert!(guard.check().is_err());
+        credential_lease.check().unwrap();
+        unrelated.check().unwrap();
+        let mut value = credential();
+        value.revision = 2;
+        store
+            .save_outbound_authority_local(&Record::encode(value).unwrap(), 1)
+            .unwrap();
+        assert!(credential_lease.check().is_err());
+        unrelated.check().unwrap();
+        store.service_authority_control().revoke_all();
+        assert!(unrelated.check().is_err());
+    }
+
+    #[test]
+    fn scoped_quota_rollback_never_revives_affected_epoch_or_revokes_unrelated_epoch() {
+        use morrow_core::store::ServiceAuthorityResource as Resource;
+        let (_dir, path, store) = setup();
+        drop(store);
+        let original = Record::encode(credential()).unwrap();
+        let mut store = Store::open_existing(
+            &path,
+            EventBudget {
+                max_count: 1024,
+                max_bytes: original.container().len() as u64,
+            },
+        )
+        .unwrap();
+        store.save_outbound_authority_local(&original, 0).unwrap();
+        let guard = store.pin_service_authority().unwrap();
+        let affected = store
+            .narrow_service_authority(&guard, &[Resource::Outbound([1; 32])])
+            .unwrap();
+        let unrelated = store
+            .narrow_service_authority(&guard, &[Resource::Outbound([2; 32])])
+            .unwrap();
+        let mut value = credential();
+        value.revision = 2;
+        if let Some(proto::record::Kind::Credential(c)) = &mut value.kind {
+            c.ciphertext = (0..256).map(|i| i as u8).collect();
+        }
+        assert_eq!(
+            store.save_outbound_authority_local(&Record::encode(value).unwrap(), 1),
+            Err(Error::EventCapacity)
+        );
+        assert!(affected.check().is_err());
+        unrelated.check().unwrap();
+        assert_eq!(
+            store
+                .load_outbound_authority(&[1; 32])
+                .unwrap()
+                .unwrap()
+                .value()
+                .revision,
+            1
+        );
+        let fresh = store.pin_service_authority().unwrap();
+        store
+            .narrow_service_authority(&fresh, &[Resource::Outbound([1; 32])])
+            .unwrap()
+            .check()
+            .unwrap();
+        assert!(affected.check().is_err());
+    }
     #[test]
     fn v19_migration_preserves_inbound_identity_and_event_bytes() {
         let (_dir, path, mut store) = setup();

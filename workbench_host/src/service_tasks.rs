@@ -405,6 +405,11 @@ impl Workbench {
             endpoints.push(endpoint);
         }
         let outbound_scope = StoredHttpEndpoint::selection_digest(&endpoints)?;
+        let dependencies = endpoints
+            .iter()
+            .map(|endpoint| endpoint.service_dependency(state.host.store_local()))
+            .collect::<std::result::Result<Vec<_>, _>>()?;
+        let resolved = resolved.with_dependencies(state.host.store_local(), dependencies)?;
         let start = state.start;
         let time = now(start);
         let expires = time

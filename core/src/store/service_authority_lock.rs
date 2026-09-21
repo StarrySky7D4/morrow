@@ -12,20 +12,49 @@ use std::sync::{
 #[cfg(not(target_arch = "wasm32"))]
 use std::{fs::File, path::PathBuf};
 
+mod epochs;
+use epochs::Epochs;
+
+/// Exact persisted dependency in this Store; namespaces never alias each other.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ServiceAuthorityResource {
+    Configuration(String),
+    Inbound([u8; 32]),
+    Outbound([u8; 32]),
+}
+impl ServiceAuthorityResource {
+    fn validate(&self) -> Result<()> {
+        match self {
+            Self::Configuration(id) => crate::identity(id),
+            Self::Inbound(id) | Self::Outbound(id) if *id != [0; 32] => Ok(()),
+            _ => Err(Error::Invalid("authority dependency")),
+        }
+    }
+}
+
 struct State {
     alive: AtomicBool,
-    epoch: Mutex<Arc<AtomicBool>>,
+    epoch: Mutex<Epochs>,
 }
 /// A read-only observation of an authority resolution from one original Store.
 /// It cannot extend the Store lifetime, restore a revoked epoch, or grant IO.
 #[derive(Clone)]
 pub struct ServiceAuthorityLease {
     state: Arc<State>,
-    revoked: Arc<AtomicBool>,
+    global: Arc<AtomicBool>,
+    writes: Option<Arc<AtomicBool>>,
+    dependencies: Vec<Arc<AtomicBool>>,
 }
 impl ServiceAuthorityLease {
     pub fn check(&self) -> Result<()> {
-        if !self.state.alive.load(Ordering::Acquire) || self.revoked.load(Ordering::Acquire) {
+        if !self.state.alive.load(Ordering::Acquire)
+            || self.global.load(Ordering::Acquire)
+            || self
+                .writes
+                .as_ref()
+                .is_some_and(|v| v.load(Ordering::Acquire))
+            || self.dependencies.iter().any(|v| v.load(Ordering::Acquire))
+        {
             return Err(Error::Invalid("inactive service authority"));
         }
         Ok(())
@@ -43,8 +72,16 @@ impl ServiceAuthorityControl {
             self.state.alive.store(false, Ordering::Release);
             poisoned.into_inner()
         });
-        epoch.store(true, Ordering::Release);
-        *epoch = Arc::new(AtomicBool::new(false));
+        epoch.revoke_all();
+    }
+    /// Revoke exact dependents and every legacy all-writes lease. Re-resolution
+    /// is required even when the following write rolls back or remains unknown.
+    pub fn revoke_resource(&self, resource: &ServiceAuthorityResource) {
+        let mut epoch = self.state.epoch.lock().unwrap_or_else(|poisoned| {
+            self.state.alive.store(false, Ordering::Release);
+            poisoned.into_inner()
+        });
+        epoch.revoke(resource);
     }
 }
 /// A transient writer reservation, or another reference to this Store's pin.
@@ -68,7 +105,7 @@ impl ServiceAuthorityCoordinator {
             native_restore_supported,
             state: Arc::new(State {
                 alive: AtomicBool::new(true),
-                epoch: Mutex::new(Arc::new(AtomicBool::new(false))),
+                epoch: Mutex::new(Epochs::default()),
             }),
             #[cfg(not(target_arch = "wasm32"))]
             pinned: None,
@@ -99,19 +136,45 @@ impl ServiceAuthorityCoordinator {
             if self.pinned.is_none() {
                 self.pinned = Some(Arc::new(acquire(self.store_id)?));
             }
-            let revoked = self
-                .state
-                .epoch
-                .lock()
-                .map_err(|_| Error::Integrity)?
-                .clone();
+            let epochs = self.state.epoch.lock().map_err(|_| Error::Integrity)?;
             let lease = ServiceAuthorityLease {
                 state: self.state.clone(),
-                revoked,
+                global: epochs.global.clone(),
+                writes: Some(epochs.writes.clone()),
+                dependencies: vec![],
             };
             lease.check()?;
             Ok(lease)
         }
+    }
+    /// Convert a still-valid all-writes resolution guard after reading records.
+    /// Validation and dependency capture share the invalidation mutex: a revoke
+    /// between loading a record and narrowing cannot issue a fresh valid lease.
+    pub(crate) fn narrow(
+        &self,
+        guard: &ServiceAuthorityLease,
+        resources: &[ServiceAuthorityResource],
+    ) -> Result<ServiceAuthorityLease> {
+        if !Arc::ptr_eq(&self.state, &guard.state) || guard.writes.is_none() {
+            return Err(Error::Invalid("authority resolution guard"));
+        }
+        if resources.is_empty() || resources.len() > 66 {
+            return Err(Error::Limit);
+        }
+        for resource in resources {
+            resource.validate()?;
+        }
+        let mut epochs = self.state.epoch.lock().map_err(|_| Error::Integrity)?;
+        guard.check()?;
+        let dependencies = epochs.bind(resources)?;
+        let lease = ServiceAuthorityLease {
+            state: self.state.clone(),
+            global: guard.global.clone(),
+            writes: None,
+            dependencies,
+        };
+        lease.check()?;
+        Ok(lease)
     }
     pub(crate) fn writer(&self) -> Result<ServiceAuthorityWriteGuard> {
         self.check_owner()?;
@@ -253,10 +316,12 @@ fn acquire(store_id: [u8; 32]) -> Result<File> {
 }
 
 #[cfg(all(test, not(target_arch = "wasm32")))]
+mod resource_tests;
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
     use std::sync::atomic::AtomicU64;
-    fn id() -> [u8; 32] {
+    pub(super) fn id() -> [u8; 32] {
         static NEXT: AtomicU64 = AtomicU64::new(1);
         let mut id = [0; 32];
         id[..8].copy_from_slice(&u64::from(std::process::id()).to_le_bytes());

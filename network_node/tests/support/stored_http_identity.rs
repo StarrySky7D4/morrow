@@ -250,3 +250,61 @@ async fn selection_digest_binds_complete_records_and_is_order_independent() {
         StoredHttpEndpoint::selection_digest(&resolve(&mut host, &[STORED_ENDPOINT])).unwrap()
     );
 }
+
+#[tokio::test]
+async fn stored_unrelated_outbound_reference_mutation_preserves_request_ready() {
+    for ready_first in [false, true] {
+        let mut server = Server::new(
+            Some(raw_response("200 OK", b"delivered")),
+            if ready_first {
+                Duration::ZERO
+            } else {
+                Duration::from_millis(150)
+            },
+        )
+        .await;
+        let mut run = Running::stored(approval(&server.origin), true, stored_setup(true)).unwrap();
+        let mut input = submission(&run.endpoint, "stored-unrelated");
+        input.credential = credential_wire_reference();
+        let (_, mut job) = run.submit(&input);
+        let _ = server.request().await;
+        if ready_first {
+            ready(&mut job).await;
+        }
+        let observer =
+            Store::open_existing(&run._dir.path().join("db"), EventBudget::default()).unwrap();
+        let mut value = observer
+            .load_outbound_authority(&STORED_CREDENTIAL)
+            .unwrap()
+            .unwrap()
+            .value()
+            .clone();
+        value.reference = vec![99; 32];
+        value.revision = 1;
+        value.disabled = true;
+        let value = StoredRecord::encode(value).unwrap();
+        let mut update = run
+            .worker
+            .update_service(ServiceUpdate::Outbound {
+                value,
+                expected_revision: 0,
+            })
+            .unwrap();
+        let report = consume(&mut job).await;
+        assert!(report.task.execution.outcome.is_ok());
+        assert!(report.http_response.is_some());
+        tokio::time::timeout(WAIT, async {
+            loop {
+                if let Some(result) = update.read().unwrap() {
+                    result.unwrap();
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(1)).await;
+            }
+        })
+        .await
+        .unwrap();
+        assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+        let _ = run.finish().await;
+    }
+}

@@ -24,6 +24,38 @@ struct Clock {
     high_water: u64,
     failed: bool,
 }
+/// Trusted host dependency, retaining its original Store and live expiry probe.
+/// It can only restrict a publication, never grant a guest access to a resource.
+/// Probes must be bounded and must not re-enter this publication or its journal.
+#[derive(Clone)]
+pub struct AuthorityDependency {
+    lease: ServiceAuthorityLease,
+    live: Arc<dyn Fn() -> bool + Send + Sync>,
+}
+impl AuthorityDependency {
+    pub fn new(
+        store: &Store,
+        lease: ServiceAuthorityLease,
+        live: impl Fn() -> bool + Send + Sync + 'static,
+    ) -> Result<Self> {
+        store
+            .validate_service_authority(&lease)
+            .map_err(|_| Error::Denied)?;
+        let dependency = Self {
+            lease,
+            live: Arc::new(live),
+        };
+        dependency.check()?;
+        Ok(dependency)
+    }
+    fn check(&self) -> Result<()> {
+        self.lease.check().map_err(|_| Error::Denied)?;
+        if !(self.live)() {
+            return Err(Error::Denied);
+        }
+        self.lease.check().map_err(|_| Error::Denied)
+    }
+}
 /// Native host probe, deliberately neither serializable nor constructible by a guest.
 #[derive(Clone)]
 pub(crate) struct LiveAuthority {
@@ -32,10 +64,14 @@ pub(crate) struct LiveAuthority {
     created: u64,
     expires: u64,
     deadline: Instant,
+    dependencies: Vec<AuthorityDependency>,
 }
 impl LiveAuthority {
     fn now(&self) -> Result<u64> {
         self.lease.check().map_err(|_| Error::Denied)?;
+        for dependency in &self.dependencies {
+            dependency.check()?;
+        }
         let mut clock = self.clock.lock().map_err(|_| Error::Clock)?;
         if clock.failed {
             return Err(Error::Clock);
@@ -51,6 +87,9 @@ impl LiveAuthority {
             return Err(Error::Expired);
         }
         self.lease.check().map_err(|_| Error::Denied)?;
+        for dependency in &self.dependencies {
+            dependency.check()?;
+        }
         Ok(now)
     }
     pub(crate) fn check(&self) -> Result<()> {
@@ -129,6 +168,10 @@ impl ResolvedService {
         let mut created = approval.value().created_ms;
         let mut expires = approval.value().expires_ms;
         let mut principals = Vec::with_capacity(config.value().principals.len());
+        let mut dependencies = vec![
+            morrow_core::store::ServiceAuthorityResource::Configuration(config_id.to_owned()),
+            morrow_core::store::ServiceAuthorityResource::Inbound(*approval_reference),
+        ];
         for principal in &config.value().principals {
             let reference = principal
                 .authentication_reference
@@ -140,6 +183,9 @@ impl ResolvedService {
                 .map_err(|_| Error::Denied)?
                 .ok_or(Error::Denied)?;
             authentication.check_time(now).map_err(|_| Error::Denied)?;
+            dependencies.push(morrow_core::store::ServiceAuthorityResource::Inbound(
+                *reference,
+            ));
             let Some(Kind::Authentication(value)) = authentication.value().kind.as_ref() else {
                 return Err(Error::Denied);
             };
@@ -179,8 +225,12 @@ impl ResolvedService {
                 scopes,
             });
         }
+        let lease = store
+            .narrow_service_authority(&lease, &dependencies)
+            .map_err(|_| Error::Denied)?;
         let live = LiveAuthority {
             lease,
+            dependencies: vec![],
             clock: Arc::new(Mutex::new(Clock {
                 sample: Box::new(clock),
                 high_water: now,
@@ -201,6 +251,30 @@ impl ResolvedService {
             principals,
             live,
         })
+    }
+    /// Add only restrictive dependencies from the same original Store. The
+    /// immutable publication/replay scope includes every explicitly selected
+    /// resource, so its expiry/revocation also fences cached response delivery.
+    pub fn with_dependencies(
+        mut self,
+        store: &Store,
+        dependencies: Vec<AuthorityDependency>,
+    ) -> Result<Self> {
+        store
+            .validate_service_authority(&self.live.lease)
+            .map_err(|_| Error::Denied)?;
+        if self.live.dependencies.len() + dependencies.len() > 8 {
+            return Err(Error::Limit);
+        }
+        for dependency in &dependencies {
+            store
+                .validate_service_authority(&dependency.lease)
+                .map_err(|_| Error::Denied)?;
+            dependency.check()?;
+        }
+        self.live.dependencies.extend(dependencies);
+        self.live.check()?;
+        Ok(self)
     }
     /// Freshly issue native resources after rechecking the actual managed
     /// instance and original Store; no persisted object is itself a grant.
@@ -295,3 +369,6 @@ impl ConfiguredService {
         self.live.check()
     }
 }
+
+#[cfg(test)]
+mod tests;

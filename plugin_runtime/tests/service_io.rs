@@ -288,7 +288,7 @@ fn original_worker_updates_revoke_ready_results_even_if_cas_fails() {
     }
 }
 #[test]
-fn outbound_admin_update_uses_original_store_and_revokes_inbound_publications() {
+fn unrelated_outbound_admin_update_uses_original_store_and_preserves_inbound_publication() {
     use morrow_core::outbound_authority::{Record, WINDOWS_DPAPI_PROVIDER, proto};
     use morrow_plugin_runtime::io_jobs::ServiceUpdate;
     let mut f = Fixture::new();
@@ -316,7 +316,7 @@ fn outbound_admin_update_uses_original_store_and_revokes_inbound_publications() 
             expected_revision: 0,
         })
         .unwrap();
-    assert!(service.check().is_err());
+    service.check().unwrap();
     let end = Instant::now() + WAIT;
     loop {
         if let Some(result) = ack.read().unwrap() {
@@ -326,7 +326,9 @@ fn outbound_admin_update_uses_original_store_and_revokes_inbound_publications() 
         assert!(Instant::now() < end);
         thread::sleep(Duration::from_millis(1));
     }
+    service.check().unwrap();
     finish(&mut run.worker);
+    assert!(service.check().is_err()); // Original owner has now been dropped.
     let store = Store::open(&database, EventBudget::default()).unwrap();
     assert_eq!(
         store
