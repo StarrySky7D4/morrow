@@ -4012,17 +4012,35 @@ abstract class AppLocalizations {
   /// **'Check certificate'**
   String get pluginsServiceTlsInspect;
 
+  /// No description provided for @pluginsServiceTlsOutsideValidity.
+  ///
+  /// In en, this message translates to:
+  /// **'The certificate chain is not yet valid or has expired. Check or replace the certificate and inspect it again before starting.'**
+  String get pluginsServiceTlsOutsideValidity;
+
   /// No description provided for @pluginsServiceTlsPrivateKey.
   ///
   /// In en, this message translates to:
   /// **'Choose private key'**
   String get pluginsServiceTlsPrivateKey;
 
+  /// No description provided for @pluginsServiceTlsRecheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the certificate again before starting. A change in the clock does not restore the previous selection.'**
+  String get pluginsServiceTlsRecheck;
+
   /// No description provided for @pluginsServiceTlsUnavailable.
   ///
   /// In en, this message translates to:
   /// **'This backend does not support local TLS certificate selection.'**
   String get pluginsServiceTlsUnavailable;
+
+  /// No description provided for @pluginsServiceTlsValidity.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared certificate-chain validity (UTC): {start} through {end}. The service stops after expiry.'**
+  String pluginsServiceTlsValidity(String end, String start);
 
   /// No description provided for @pluginsServiceTokenDiscarded.
   ///

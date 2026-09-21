@@ -533,7 +533,7 @@ final class RequestBuilder extends StructBuilder {
   }
 
   ServiceTlsSelectionBuilder initServiceTls() {
-    return initStructFieldWith(38, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+    return initStructFieldWith(38, (r) => ServiceTlsSelectionBuilder(r), 0, 4);
   }
 
   bool hasServiceTls() => hasPointerField(38);
@@ -1289,7 +1289,7 @@ final class ResponseBuilder extends StructBuilder {
   bool hasOwnerCommand() => hasPointerField(27);
 
   ServiceTlsSelectionBuilder initServiceTls() {
-    return initStructFieldWith(28, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+    return initStructFieldWith(28, (r) => ServiceTlsSelectionBuilder(r), 0, 4);
   }
 
   bool hasServiceTls() => hasPointerField(28);
@@ -1800,7 +1800,7 @@ final class ServiceRunStartBuilder extends StructBuilder {
   }
 
   ServiceTlsSelectionBuilder initTls() {
-    return initStructFieldWith(7, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+    return initStructFieldWith(7, (r) => ServiceTlsSelectionBuilder(r), 0, 4);
   }
 
   bool hasTls() => hasPointerField(7);
@@ -2025,6 +2025,11 @@ final class ServiceTlsSelectionReader extends StructReader {
   String? get privateKeyPath => getTextField(1);
 
   Uint8List? get certificateSha256 => getDataField(2);
+
+  ServiceTlsValidityReader? get validity => getStructFieldWith(
+    3,
+    (r) => ServiceTlsValidityReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ServiceTlsSelectionBuilder extends StructBuilder {
@@ -2045,6 +2050,12 @@ final class ServiceTlsSelectionBuilder extends StructBuilder {
   set certificateSha256(Uint8List? v) {
     setDataField(2, v);
   }
+
+  ServiceTlsValidityBuilder initValidity() {
+    return initStructFieldWith(3, (r) => ServiceTlsValidityBuilder(r), 2, 0);
+  }
+
+  bool hasValidity() => hasPointerField(3);
 }
 
 final class _ServiceTlsSelectionFactory
@@ -2055,7 +2066,7 @@ final class _ServiceTlsSelectionFactory
   @override
   int get dataWords => 0;
   @override
-  int get ptrWords => 3;
+  int get ptrWords => 4;
   @override
   ServiceTlsSelectionReader fromRawReader(RawStructReader r) =>
       ServiceTlsSelectionReader(r);
@@ -2074,7 +2085,7 @@ const StructSchemaInfo serviceTlsSelectionSchema = StructSchemaInfo(
   displayName: 'host.capnp:ServiceTlsSelection',
   shortName: 'ServiceTlsSelection',
   dataWords: 0,
-  pointerWords: 3,
+  pointerWords: 4,
   fields: [
     FieldSchemaInfo(
       name: 'certificatePath',
@@ -2100,10 +2111,93 @@ const StructSchemaInfo serviceTlsSelectionSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'validity',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: StructRefTypeSchemaInfo(0xcb7b63dcd2349074),
+      ),
+    ),
   ],
 );
 
 final serviceTlsSelectionFactory = _ServiceTlsSelectionFactory();
+
+final class ServiceTlsValidityReader extends StructReader {
+  ServiceTlsValidityReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceTlsValiditySchema;
+
+  int get notBeforeSeconds => getInt64Field(0);
+
+  int get notAfterSeconds => getInt64Field(8);
+}
+
+final class ServiceTlsValidityBuilder extends StructBuilder {
+  ServiceTlsValidityBuilder(super.raw);
+
+  @override
+  ServiceTlsValidityReader asReader() =>
+      ServiceTlsValidityReader(rawToReader());
+
+  set notBeforeSeconds(int v) {
+    setInt64Field(0, v);
+  }
+
+  set notAfterSeconds(int v) {
+    setInt64Field(8, v);
+  }
+}
+
+final class _ServiceTlsValidityFactory
+    extends StructFactory<ServiceTlsValidityReader, ServiceTlsValidityBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceTlsValiditySchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 0;
+  @override
+  ServiceTlsValidityReader fromRawReader(RawStructReader r) =>
+      ServiceTlsValidityReader(r);
+  @override
+  ServiceTlsValidityReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceTlsValidityReader(r, capabilities: capabilities);
+  @override
+  ServiceTlsValidityBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceTlsValidityBuilder(r);
+}
+
+const StructSchemaInfo serviceTlsValiditySchema = StructSchemaInfo(
+  id: 0xcb7b63dcd2349074,
+  displayName: 'host.capnp:ServiceTlsValidity',
+  shortName: 'ServiceTlsValidity',
+  dataWords: 2,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'notBeforeSeconds',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Int64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'notAfterSeconds',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Int64'),
+      ),
+    ),
+  ],
+);
+
+final serviceTlsValidityFactory = _ServiceTlsValidityFactory();
 
 final class ServiceEndpointSelectionReader extends StructReader {
   ServiceEndpointSelectionReader(super.raw, {super.capabilities});

@@ -8,12 +8,21 @@ import 'package:morrow_studio/plugins/service_run_control.dart';
 
 class Backend implements WorkbenchServiceTlsControl {
   Completer<ServiceTlsSelection>? pending;
+  ServiceTlsValidity validity = const ServiceTlsValidity(
+    notBeforeSeconds: 1,
+    notAfterSeconds: 253402300799,
+  );
   @override
   Future<ServiceTlsSelection> inspectServiceTls({
     required String certificatePath,
     required String privateKeyPath,
   }) async => pending == null
-      ? selection(certificatePath, privateKeyPath)
+      ? ServiceTlsSelection(
+          certificatePath: certificatePath,
+          privateKeyPath: privateKeyPath,
+          certificateSha256: Uint8List.fromList(List.filled(32, 17)),
+          validity: validity,
+        )
       : pending!.future;
 }
 
@@ -21,9 +30,68 @@ ServiceTlsSelection selection(String cert, String key) => ServiceTlsSelection(
   certificatePath: cert,
   privateKeyPath: key,
   certificateSha256: Uint8List.fromList(List.filled(32, 17)),
+  validity: const ServiceTlsValidity(
+    notBeforeSeconds: 1,
+    notAfterSeconds: 253402300799,
+  ),
 );
 
 void main() {
+  testWidgets(
+    'future and expired checks require explicit reinspection without automatic reactivation',
+    (tester) async {
+      final backend = Backend()
+        ..validity = const ServiceTlsValidity(
+          notBeforeSeconds: 1000,
+          notAfterSeconds: 1500,
+        );
+      var now = DateTime.fromMillisecondsSinceEpoch(900000, isUtc: true);
+      final events = <ServiceTlsSelection?>[];
+      var file = 0;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ServiceTlsPicker(
+              backend: backend,
+              enabled: true,
+              now: () => now,
+              chooseFile: () async => file++ == 0 ? '/cert.pem' : '/key.pem',
+              onChanged: events.add,
+              ink: Colors.black,
+              muted: Colors.grey,
+              line: Colors.grey,
+              radius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      );
+      Future<void> tap(String key) async {
+        await tester.tap(find.byKey(ValueKey('service-tls-$key')));
+        await tester.pumpAndSettle();
+      }
+
+      await tap('certificate');
+      await tap('private-key');
+      await tap('inspect');
+      expect(events.last, isNull);
+      expect(
+        find.byKey(const ValueKey('service-tls-outside-validity')),
+        findsOneWidget,
+      );
+      now = DateTime.fromMillisecondsSinceEpoch(1200000, isUtc: true);
+      await tester.pump(const Duration(seconds: 1));
+      expect(events.last, isNull);
+      await tap('inspect');
+      expect(events.last, isNotNull);
+      now = DateTime.fromMillisecondsSinceEpoch(1501000, isUtc: true);
+      await tester.pump(const Duration(seconds: 1));
+      expect(events.last, isNull);
+      now = DateTime.fromMillisecondsSinceEpoch(1200000, isUtc: true);
+      await tester.pump(const Duration(seconds: 1));
+      expect(events.last, isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
   testWidgets(
     'selection requires inspection and replacing a path clears its fingerprint',
     (tester) async {
@@ -59,8 +127,22 @@ void main() {
       expect(events.whereType<ServiceTlsSelection>(), isEmpty);
       await tap('inspect');
       expect(events.last!.certificatePath, '/cert.pem');
+      expect(
+        find.textContaining(
+          '1970-01-01T00:00:01.000Z through 9999-12-31T23:59:59.000Z',
+        ),
+        findsOneWidget,
+      );
       await tester.pumpWidget(host('zh'));
       await tester.pumpAndSettle();
+      expect(find.textContaining('1970-01-01T00:00:01.000Z'), findsOneWidget);
+      final validityText = tester
+          .widget<Text>(find.textContaining('证书链共同有效区间'))
+          .data!;
+      expect(
+        validityText.indexOf('1970'),
+        lessThan(validityText.indexOf('9999')),
+      );
       expect(
         find.byKey(const ValueKey('service-tls-fingerprint')),
         findsOneWidget,
@@ -74,6 +156,7 @@ void main() {
       );
       await tap('inspect');
       expect(events.last!.certificatePath, '/other.pem');
+      await tester.pumpWidget(const SizedBox.shrink());
     },
   );
 

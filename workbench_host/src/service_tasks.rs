@@ -408,8 +408,17 @@ impl Workbench {
             return Err("plain application HTTP requires approved loopback address".into());
         }
         let tls = tls
-            .map(crate::service_tls::TlsSelection::load)
+            .map(crate::service_tls::TlsSelection::load_with_validity)
             .transpose()?;
+        let (resolved, tls) = if let Some((identity, validity)) = tls {
+            let (not_before, expires) = validity.authority_window()?;
+            (
+                resolved.restrict_validity(not_before, expires)?,
+                Some(identity),
+            )
+        } else {
+            (resolved, None)
+        };
         let mut endpoints = Vec::with_capacity(outbound.len());
         for selection in outbound {
             let endpoint = StoredHttpEndpoint::resolve(

@@ -615,5 +615,18 @@
   "pluginsServiceTlsFailed": "Certificate check failed. Check the PEM files, key pairing and local paths before trying again.",
   "pluginsServiceTlsChecked": "Certificate and key pairing checked. Certificate PEM SHA-256 is shown below. Clients must still verify the hostname, validity and trust chain.",
   "pluginsServiceTlsAttempt": "Certificate PEM digest bound to this start attempt",
-  "pluginsServiceTlsUnavailable": "This backend does not support local TLS certificate selection."
+  "pluginsServiceTlsUnavailable": "This backend does not support local TLS certificate selection.",
+  "pluginsServiceTlsValidity": "Shared certificate-chain validity (UTC): {start} through {end}. The service stops after expiry.",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "The certificate chain is not yet valid or has expired. Check or replace the certificate and inspect it again before starting.",
+  "pluginsServiceTlsRecheck": "Check the certificate again before starting. A change in the clock does not restore the previous selection."
 }

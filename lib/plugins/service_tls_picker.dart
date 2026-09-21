@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
@@ -16,6 +17,7 @@ class ServiceTlsPicker extends StatefulWidget {
     required this.line,
     required this.radius,
     this.chooseFile,
+    this.now,
   });
   final WorkbenchServiceTlsControl backend;
   final bool enabled;
@@ -24,15 +26,39 @@ class ServiceTlsPicker extends StatefulWidget {
   final BorderRadius radius;
   @visibleForTesting
   final Future<String?> Function()? chooseFile;
+  @visibleForTesting
+  final DateTime Function()? now;
   @override
   State<ServiceTlsPicker> createState() => _ServiceTlsPickerState();
 }
 
 class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
+  DateTime get _now => widget.now?.call() ?? DateTime.now();
   String _certificate = '', _privateKey = '';
   ServiceTlsSelection? _checked;
   bool _busy = false, _failed = false;
   int _generation = 0;
+  Timer? _timer;
+  bool _accepted = false;
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      final validity = _checked?.validity;
+      if (validity == null) return;
+      if (_accepted && !validity.validAt(_now)) {
+        _accepted = false;
+        widget.onChanged(null);
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(covariant ServiceTlsPicker oldWidget) {
@@ -41,6 +67,7 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
       _generation++;
       _certificate = _privateKey = '';
       _checked = null;
+      _accepted = false;
       _busy = _failed = false;
     }
   }
@@ -105,12 +132,15 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
       );
       if (!mounted || generation != _generation) return;
       ServiceRunValidation.tlsSelection(checked);
+      final validity = checked.validity;
+      if (validity == null) throw const FormatException('Missing TLS validity');
       if (checked.certificatePath != certificate ||
           checked.privateKeyPath != privateKey) {
         throw const FormatException('TLS selection changed');
       }
       setState(() => _checked = checked);
-      widget.onChanged(checked);
+      _accepted = validity.validAt(_now);
+      widget.onChanged(_accepted ? checked : null);
     } catch (_) {
       if (mounted && generation == _generation) setState(() => _failed = true);
     } finally {
@@ -138,6 +168,7 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
   Widget build(BuildContext context) {
     final l = L10n.of(context);
     final checked = _checked;
+    final validity = checked?.validity;
     Widget note(String text, {String? key}) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Text(
@@ -180,6 +211,26 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
         if (_failed) note(l.pluginsServiceTlsFailed, key: 'service-tls-failed'),
         if (checked != null) ...[
           note(l.pluginsServiceTlsChecked),
+          if (validity != null) ...[
+            note(
+              l.pluginsServiceTlsValidity(
+                DateTime.fromMillisecondsSinceEpoch(
+                  validity.notAfterSeconds * 1000,
+                  isUtc: true,
+                ).toIso8601String(),
+                DateTime.fromMillisecondsSinceEpoch(
+                  validity.notBeforeSeconds * 1000,
+                  isUtc: true,
+                ).toIso8601String(),
+              ),
+            ),
+            if (!validity.validAt(_now))
+              note(
+                l.pluginsServiceTlsOutsideValidity,
+                key: 'service-tls-outside-validity',
+              ),
+            if (!_accepted) note(l.pluginsServiceTlsRecheck),
+          ],
           SelectionArea(
             child: Text(
               checked.certificateSha256

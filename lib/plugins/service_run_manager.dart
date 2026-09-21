@@ -344,7 +344,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     final selected = _choices.where((c) => c.key == _selection).toList();
     if (selected.length != 1) return;
     final choice = selected.single;
-    if (choice.publication.publication!.tlsRequired && _tlsSelection == null) {
+    if (choice.publication.publication!.tlsRequired &&
+        _tlsSelection?.validity?.validAt(DateTime.now()) != true) {
       return;
     }
     try {

@@ -36,6 +36,7 @@ pub mod query_plan;
 mod query_source;
 pub mod service_control;
 pub mod service_tls;
+pub mod tls_validity;
 mod service_protocol;
 mod storage;
 pub mod transfer;

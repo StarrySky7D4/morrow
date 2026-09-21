@@ -56,7 +56,8 @@ struct ServiceRunStart {
  outbound @20 :List(ServiceEndpointSelection);
  tls @21 :ServiceTlsSelection;
 }
-struct ServiceTlsSelection { certificatePath @0 :Text; privateKeyPath @1 :Text; certificateSha256 @2 :Data; }
+struct ServiceTlsSelection { certificatePath @0 :Text; privateKeyPath @1 :Text; certificateSha256 @2 :Data; validity @3 :ServiceTlsValidity; }
+struct ServiceTlsValidity { notBeforeSeconds @0 :Int64; notAfterSeconds @1 :Int64; }
 struct ServiceEndpointSelection { reference @0 :Data; revision @1 :UInt64; }
 # phase 0 starting, 1 running, 2 stopping, 3 actually reclaimed.
 # optional outcomes: 0 pending, 1 success, 2 invalid, 3 denied, 4 limit,

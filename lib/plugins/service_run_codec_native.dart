@@ -33,6 +33,12 @@ abstract final class ServiceRunCodec {
       certificatePath: certificatePath,
       privateKeyPath: privateKeyPath,
       certificateSha256: row.certificateSha256 ?? Uint8List(0),
+      validity: row.validity == null
+          ? throw const FormatException('Missing TLS certificate validity')
+          : ServiceTlsValidity(
+              notBeforeSeconds: row.validity!.notBeforeSeconds,
+              notAfterSeconds: row.validity!.notAfterSeconds,
+            ),
     );
     ServiceRunValidation.tlsSelection(selected);
     return selected;

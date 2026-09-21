@@ -1,7 +1,8 @@
 //! Explicit, per-run TLS identity selection by the trusted application.
 //! Files are bounded and revalidated at start. This is not a filesystem sandbox,
-//! certificate trust/expiry validator, persisted key store, or automatic rotation.
+//! certificate trust validator, persisted key store, or automatic rotation.
 use crate::Result;
+use crate::tls_validity::TlsValidity;
 use morrow_network_node::server::TlsIdentity;
 use sha2::{Digest, Sha256};
 use std::{
@@ -21,6 +22,7 @@ pub struct TlsSelection {
     certificate: PathBuf,
     private_key: PathBuf,
     certificate_sha256: [u8; 32],
+    validity: Option<TlsValidity>,
 }
 
 impl TlsSelection {
@@ -38,6 +40,7 @@ impl TlsSelection {
             certificate,
             private_key,
             certificate_sha256,
+            validity: None,
         })
     }
     pub fn inspect(certificate: &Path, private_key: &Path) -> Result<Self> {
@@ -48,6 +51,7 @@ impl TlsSelection {
             certificate: certificate.to_path_buf(),
             private_key: private_key.to_path_buf(),
             certificate_sha256: Sha256::digest(&*cert).into(),
+            validity: Some(TlsValidity::from_pem(&cert)?),
         })
     }
 
@@ -63,15 +67,24 @@ impl TlsSelection {
         self.certificate_sha256
     }
 
+    pub fn validity(&self) -> Option<TlsValidity> {
+        self.validity
+    }
+
     /// Recheck selected files immediately before constructing the active identity.
     /// An active server owns its in-memory identity and does not watch these paths.
     pub fn load(&self) -> Result<TlsIdentity> {
+        self.load_with_validity().map(|(identity, _)| identity)
+    }
+
+    pub fn load_with_validity(&self) -> Result<(TlsIdentity, TlsValidity)> {
         let cert = read_bounded(&self.certificate)?;
         let key = read_bounded(&self.private_key)?;
         if <[u8; 32]>::from(Sha256::digest(&*cert)) != self.certificate_sha256 {
             return Err("selected TLS certificate changed".into());
         }
-        TlsIdentity::from_pem(&cert, &key).map_err(|_| IDENTITY_ERROR.into())
+        let identity = TlsIdentity::from_pem(&cert, &key).map_err(|_| IDENTITY_ERROR)?;
+        Ok((identity, TlsValidity::from_pem(&cert)?))
     }
 }
 

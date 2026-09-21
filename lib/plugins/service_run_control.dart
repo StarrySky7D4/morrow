@@ -12,9 +12,23 @@ class ServiceTlsSelection {
     required this.certificatePath,
     required this.privateKeyPath,
     required Uint8List certificateSha256,
+    this.validity,
   }) : certificateSha256 = _owned(certificateSha256);
   final String certificatePath, privateKeyPath;
   final Uint8List certificateSha256;
+  final ServiceTlsValidity? validity;
+}
+
+class ServiceTlsValidity {
+  const ServiceTlsValidity({
+    required this.notBeforeSeconds,
+    required this.notAfterSeconds,
+  });
+  final int notBeforeSeconds, notAfterSeconds;
+  bool validAt(DateTime time) {
+    final now = time.millisecondsSinceEpoch;
+    return now >= notBeforeSeconds * 1000 && now < (notAfterSeconds + 1) * 1000;
+  }
 }
 
 abstract interface class WorkbenchServiceTlsControl {
@@ -72,6 +86,7 @@ class ServiceRunRequest {
                certificatePath: tls.certificatePath,
                privateKeyPath: tls.privateKeyPath,
                certificateSha256: tls.certificateSha256,
+               validity: tls.validity,
              ),
        outbound = List.unmodifiable(
          outbound.map(
@@ -248,6 +263,13 @@ abstract final class ServiceRunValidation {
     tlsPath(value.certificatePath);
     tlsPath(value.privateKeyPath);
     identity(value.certificateSha256);
+    if (value.validity case final ServiceTlsValidity validity) {
+      if (validity.notBeforeSeconds < -62135596800 ||
+          validity.notAfterSeconds > 253402300799 ||
+          validity.notBeforeSeconds > validity.notAfterSeconds) {
+        throw const FormatException('Invalid TLS certificate validity');
+      }
+    }
   }
 
   static Uint8List identity(Uint8List value) {

@@ -10,10 +10,14 @@ import 'service_run_real_native_fixture.dart';
 final _available =
     RealServiceFixture.available &&
     Platform.environment.containsKey('MORROW_TLS_FIXTURE');
-Future<void> _generate(Directory directory) async {
+Future<void> _generate(Directory directory, {int? before, int? after}) async {
   final result = await Process.run(
     Platform.environment['MORROW_TLS_FIXTURE']!,
-    [directory.path],
+    [
+      directory.path,
+      if (before != null) '$before',
+      if (after != null) '$after',
+    ],
   );
   expect(result.exitCode, 0, reason: '${result.stderr}');
 }
@@ -53,6 +57,57 @@ Future<String> _post(RealServiceFixture fixture, String certificate) async {
 
 void main() {
   test(
+    'real host refuses expired/future PEM even with fabricated valid metadata',
+    () async {
+      final fixture = await RealServiceFixture.open(tlsRequired: true);
+      try {
+        final pem = Directory('${fixture.directory.path}/tls');
+        final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        for (final bounds in [(now - 100, now - 10), (now + 100, now + 200)]) {
+          await _generate(pem, before: bounds.$1, after: bounds.$2);
+          final selected = await fixture.backend.inspectServiceTls(
+            certificatePath: '${pem.path}/certificate.pem',
+            privateKeyPath: '${pem.path}/private-key.pem',
+          );
+          expect(selected.validity!.notBeforeSeconds, bounds.$1);
+          expect(selected.validity!.notAfterSeconds, bounds.$2);
+          expect(selected.validity!.validAt(DateTime.now()), isFalse);
+          final fabricated = ServiceTlsSelection(
+            certificatePath: selected.certificatePath,
+            privateKeyPath: selected.privateKeyPath,
+            certificateSha256: selected.certificateSha256,
+            validity: const ServiceTlsValidity(
+              notBeforeSeconds: 0,
+              notAfterSeconds: 253402300799,
+            ),
+          );
+          await expectLater(
+            fixture.backend.startServiceRun(fixture.request(tls: fabricated)),
+            throwsA(isA<ServiceRunStartFailure>()),
+          );
+          expect((await fixture.backend.ioStatus()).key, isNull);
+        }
+        // Rejections leave the original owner and exact submission available.
+        await _generate(pem);
+        final selected = await fixture.backend.inspectServiceTls(
+          certificatePath: '${pem.path}/certificate.pem',
+          privateKeyPath: '${pem.path}/private-key.pem',
+        );
+        await fixture.session.start(fixture.request(tls: selected));
+        await fixture.observe(ServiceRunPhase.running);
+        expect(
+          await _post(fixture, selected.certificatePath),
+          startsWith('HTTP/1.1 202 '),
+        );
+      } finally {
+        await fixture.close();
+      }
+    },
+    skip: !_available,
+    timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  test(
     'real private TLS inspection, original owner start, HTTPS and same-library reopen',
     () async {
       final fixture = await RealServiceFixture.open(tlsRequired: true);
@@ -65,6 +120,8 @@ void main() {
           certificatePath: cert,
           privateKeyPath: key,
         );
+        expect(selected.validity, isNotNull);
+        expect(selected.validity!.validAt(DateTime.now()), isTrue);
         expect(
           selected.certificateSha256,
           orderedEquals(sha256.convert(await File(cert).readAsBytes()).bytes),

@@ -334,6 +334,16 @@
       }
     }
   },
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "end": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsUnconfirmed": {
     "placeholders": {
       "reason": {
@@ -1464,8 +1474,11 @@
   "pluginsServiceTlsHelp": "Non-loopback addresses require TLS. This saves the requirement only; no listener or TLS identity is created here.",
   "pluginsServiceTlsHint": "This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.",
   "pluginsServiceTlsInspect": "Check certificate",
+  "pluginsServiceTlsOutsideValidity": "The certificate chain is not yet valid or has expired. Check or replace the certificate and inspect it again before starting.",
   "pluginsServiceTlsPrivateKey": "Choose private key",
+  "pluginsServiceTlsRecheck": "Check the certificate again before starting. A change in the clock does not restore the previous selection.",
   "pluginsServiceTlsUnavailable": "This backend does not support local TLS certificate selection.",
+  "pluginsServiceTlsValidity": "Shared certificate-chain validity (UTC): {start} through {end}. The service stops after expiry.",
   "pluginsServiceTokenDiscarded": "The one-time token was cleared while this panel was closed. Issue a new token explicitly if needed.",
   "pluginsServiceTokenHelp": "This token is shown only now. Copy it explicitly if needed. Clearing or closing this panel removes it from the session; it cannot be retrieved from the list. Rotation replaces the previous token.",
   "pluginsServiceUncertainHelp": "Refresh and inspect the original records first. Acknowledging this notice only allows another explicit action; it does not prove that the previous change failed or replay it.",

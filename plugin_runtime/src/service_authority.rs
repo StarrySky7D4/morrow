@@ -123,6 +123,31 @@ pub struct ResolvedService {
     live: LiveAuthority,
 }
 impl ResolvedService {
+    /// Narrow the live authorization interval before creating grants. This
+    /// cannot replace the Store lease, extend its wall/monotonic lifetime, or
+    /// consume an outbound dependency slot. All derived authorities inherit it.
+    pub fn restrict_validity(mut self, not_before_ms: u64, expires_ms: u64) -> Result<Self> {
+        if not_before_ms >= expires_ms {
+            return Err(Error::Denied);
+        }
+        let now = self.live.now()?;
+        let created = self.live.created.max(not_before_ms);
+        let expires = self.live.expires.min(expires_ms);
+        if now >= expires {
+            return Err(Error::Expired);
+        }
+        if now < created || created >= expires {
+            return Err(Error::Denied);
+        }
+        let deadline = Instant::now()
+            .checked_add(Duration::from_millis(expires - now))
+            .ok_or(Error::Clock)?;
+        self.live.created = created;
+        self.live.expires = expires;
+        self.live.deadline = self.live.deadline.min(deadline);
+        self.live.check()?;
+        Ok(self)
+    }
     /// Pin the Store's authority writer lock before loading any references.
     /// The clock is trusted UTC milliseconds, bounded and non-reentrant. A
     /// clock regression permanently invalidates this resolution. Memory-only

@@ -15,6 +15,22 @@ ServiceTlsSelection _sel({
 }
 
 void main() {
+  test('validity includes the final second and handles dates before epoch', () {
+    for (final start in [-2, 0, 1000]) {
+      final validity = ServiceTlsValidity(
+        notBeforeSeconds: start,
+        notAfterSeconds: start + 1,
+      );
+      bool valid(int ms) => validity.validAt(
+        DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true),
+      );
+      expect(valid(start * 1000 - 1), isFalse);
+      expect(valid(start * 1000), isTrue);
+      expect(valid((start + 2) * 1000 - 1), isTrue);
+      expect(valid((start + 2) * 1000), isFalse);
+    }
+  });
+
   test('constructor copies and exposes unmodifiable Uint8List', () {
     final Uint8List source = Uint8List.fromList(List<int>.filled(32, 7));
     final ServiceTlsSelection value = ServiceTlsSelection(

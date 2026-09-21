@@ -175,6 +175,73 @@ fn restored_authority_clock_regression_and_expiry_are_sticky() {
         assert!(service.listener().activate().is_err());
     }
 }
+
+#[test]
+fn restricted_validity_is_inherited_and_cannot_extend_or_revive_authority() {
+    for (window, invalid_at) in [
+        ((1500, 3000), 3000),
+        ((0, u64::MAX), 60_000),
+        ((1500, 3000), 1999),
+    ] {
+        let mut f = Fixture::new();
+        persistent_authority(&mut f);
+        let clock = Arc::new(AtomicU64::new(2000));
+        let sample = clock.clone();
+        let service = ResolvedService::resolve(
+            f.host.store_local_mut(),
+            "stored-service",
+            &[53; 32],
+            move || sample.load(Ordering::SeqCst),
+        )
+        .unwrap()
+        .restrict_validity(window.0, window.1)
+        .unwrap()
+        .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+        .unwrap();
+        service.check().unwrap();
+        clock.store(invalid_at, Ordering::SeqCst);
+        assert!(service.check().is_err());
+        clock.store(2000, Ordering::SeqCst);
+        assert!(service.check().is_err());
+        assert!(service.grant().check(1).is_err());
+        assert!(service.listener().activate().is_err());
+    }
+}
+
+#[test]
+fn restricted_validity_rejects_future_empty_expired_and_monotonic_overrun() {
+    let mut f = Fixture::new();
+    persistent_authority(&mut f);
+    for (before, after) in [(3000, 4000), (0, 2000), (2000, 2000), (3000, 2000)] {
+        assert!(
+            ResolvedService::resolve(
+                f.host.store_local_mut(),
+                "stored-service",
+                &[53; 32],
+                || 2000
+            )
+            .unwrap()
+            .restrict_validity(before, after)
+            .is_err()
+        );
+    }
+    let service = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap()
+    .restrict_validity(1000, 2050)
+    .unwrap()
+    .restrict_validity(0, u64::MAX)
+    .unwrap()
+    .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+    .unwrap();
+    // Wall clock frozen; widening a later restriction cannot revive its deadline.
+    thread::sleep(Duration::from_millis(65));
+    assert!(service.check().is_err());
+}
 #[test]
 fn persisted_approval_never_bypasses_actual_registry_or_content_grants() {
     let mut f = Fixture::configured(

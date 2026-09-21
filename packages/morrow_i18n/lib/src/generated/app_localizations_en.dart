@@ -2257,11 +2257,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsServiceTlsInspect => 'Check certificate';
 
   @override
+  String get pluginsServiceTlsOutsideValidity =>
+      'The certificate chain is not yet valid or has expired. Check or replace the certificate and inspect it again before starting.';
+
+  @override
   String get pluginsServiceTlsPrivateKey => 'Choose private key';
+
+  @override
+  String get pluginsServiceTlsRecheck =>
+      'Check the certificate again before starting. A change in the clock does not restore the previous selection.';
 
   @override
   String get pluginsServiceTlsUnavailable =>
       'This backend does not support local TLS certificate selection.';
+
+  @override
+  String pluginsServiceTlsValidity(String end, String start) {
+    return 'Shared certificate-chain validity (UTC): $start through $end. The service stops after expiry.';
+  }
 
   @override
   String get pluginsServiceTokenDiscarded =>

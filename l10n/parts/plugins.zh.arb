@@ -615,5 +615,18 @@
   "pluginsServiceTlsFailed": "证书检查未完成。请检查 PEM 文件、密钥配对与本地路径后重试。",
   "pluginsServiceTlsChecked": "证书与密钥配对已检查，证书 PEM 的 SHA-256 如下。客户端仍须验证域名、有效期与信任链。",
   "pluginsServiceTlsAttempt": "本次启动绑定的证书 PEM 摘要",
-  "pluginsServiceTlsUnavailable": "当前后端不支持本地 TLS 证书选择。"
+  "pluginsServiceTlsUnavailable": "当前后端不支持本地 TLS 证书选择。",
+  "pluginsServiceTlsValidity": "证书链共同有效区间（UTC）：{start} 至 {end}。到期后服务会停止。",
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsServiceTlsOutsideValidity": "证书链尚未生效或已过期。请检查或更换证书后再次检查，当前选择不能启动服务。",
+  "pluginsServiceTlsRecheck": "启动前请重新检查证书。时钟变化不会恢复之前的选择。"
 }

@@ -93,6 +93,9 @@ void main() {
       row.certificatePath = '/cert.pem';
       row.privateKeyPath = '/key.pem';
       row.certificateSha256 = identity(19);
+      row.initValidity()
+        ..notBeforeSeconds = 1
+        ..notAfterSeconds = 253402300799;
       expect(
         ServiceRunCodec.tlsSelection(
           out.asReader(),
@@ -112,6 +115,25 @@ void main() {
       );
     },
   );
+  test('TLS inspection rejects missing or malformed validity metadata', () {
+    final out = response();
+    final row = out.initServiceTls();
+    row.certificatePath = '/cert.pem';
+    row.privateKeyPath = '/key.pem';
+    row.certificateSha256 = identity(19);
+    ServiceTlsSelection decode() => ServiceRunCodec.tlsSelection(
+      out.asReader(),
+      certificatePath: '/cert.pem',
+      privateKeyPath: '/key.pem',
+    );
+    expect(decode, throwsFormatException);
+    for (final bounds in [(2, 1), (-62135596801, 1), (0, 253402300800)]) {
+      row.initValidity()
+        ..notBeforeSeconds = bounds.$1
+        ..notAfterSeconds = bounds.$2;
+      expect(decode, throwsFormatException);
+    }
+  });
   test(
     'endpoint selection is owned and preserves UInt64 revisions on wire',
     () async {

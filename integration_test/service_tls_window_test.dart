@@ -119,7 +119,14 @@ void main() {
           () => keyed('service-tls-fingerprint').evaluate().isNotEmpty,
           reason: 'real PEM inspection',
         );
-      await tester.ensureVisible(find.byType(ServiceTlsPicker));
+        expect(fixture.session.service, isNull);
+        expect(
+          find.textContaining(
+            'Shared certificate-chain validity (UTC): 1975-01-01T00:00:00.000Z through 4096-01-01T00:00:00.000Z',
+          ),
+          findsOneWidget,
+        );
+        await tester.ensureVisible(find.byType(ServiceTlsPicker));
         await saveBoundaryPng(
           tester,
           boundary,

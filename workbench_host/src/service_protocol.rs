@@ -211,6 +211,10 @@ pub(crate) fn handle(
             reply.set_certificate_path(&certificate);
             reply.set_private_key_path(&private_key);
             reply.set_certificate_sha256(&checked.certificate_sha256());
+            let window = checked.validity().ok_or("missing TLS validity")?;
+            let mut validity = reply.init_validity();
+            validity.set_not_before_seconds(window.not_before);
+            validity.set_not_after_seconds(window.not_after);
         }
         wire::Action::ServiceConfigPage => {
             let page = host.service_config_page(

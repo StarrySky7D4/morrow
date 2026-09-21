@@ -453,6 +453,43 @@ async fn configured_factory_absolute_expiry_and_queued_edits_revoke_original_aut
         run.finish().await;
     }
 }
+
+#[tokio::test]
+async fn restrictive_validity_fences_cached_response_and_stays_invalid_after_clock_recovery() {
+    for expired in [true, false] {
+        let dir = tempfile::tempdir().unwrap();
+        let run = Running::open_with(
+            dir.path(),
+            RuntimeLimits::default().fuel,
+            false,
+            false,
+            |_, resolved| resolved.restrict_validity(1000, 3000).unwrap(),
+        );
+        let node = run.bind().await;
+        status(&post(node.local_addr(), "/approved", TOKEN).await, 200);
+        status(
+            &post(node.local_addr(), "/approved-history", TOKEN).await,
+            200,
+        );
+        assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+        let mut socket = TcpStream::connect(node.local_addr()).await.unwrap();
+        run.wall
+            .store(if expired { 3000 } else { 999 }, Ordering::SeqCst);
+        assert!(run.configured.check().is_err());
+        run.wall.store(1000, Ordering::SeqCst);
+        assert!(run.configured.check().is_err());
+        let _ = socket.write_all(format!("POST /approved-history?q=1 HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {KEY}\r\nContent-Length: 7\r\nConnection: close\r\n\r\nrequest").as_bytes()).await;
+        let mut output = Vec::new();
+        let _ = tokio::time::timeout(Duration::from_secs(12), socket.read_to_end(&mut output))
+            .await
+            .unwrap();
+        assert!(!output.starts_with(b"HTTP/1.1 200 "));
+        assert!(!output.windows(SECRET.len()).any(|part| part == SECRET));
+        assert_eq!(run.router_calls.load(Ordering::SeqCst), 1);
+        node.shutdown().await.unwrap();
+        run.finish().await;
+    }
+}
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn configured_auth_or_config_revocation_after_real_dispatch_never_delivers_late_guest_result()
 {

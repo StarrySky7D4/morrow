@@ -128,6 +128,10 @@ class _TlsBackend extends _RunBackend implements WorkbenchServiceTlsControl {
     certificatePath: certificatePath,
     privateKeyPath: privateKeyPath,
     certificateSha256: serviceKey(13),
+    validity: const ServiceTlsValidity(
+      notBeforeSeconds: 1,
+      notAfterSeconds: 253402300799,
+    ),
   );
 }
 

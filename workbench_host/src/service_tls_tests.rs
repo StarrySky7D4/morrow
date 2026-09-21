@@ -16,6 +16,93 @@ fn pair(dir: &Path) -> (CertifiedKey, TlsSelection) {
     (certified, selection)
 }
 
+fn timed_pair(dir: &Path, before: i64, after: i64) -> (CertifiedKey, TlsSelection) {
+    let key_pair = rcgen::KeyPair::generate().unwrap();
+    let mut params = rcgen::CertificateParams::new(vec!["localhost".into()]).unwrap();
+    params.not_before = time::OffsetDateTime::from_unix_timestamp(before).unwrap();
+    params.not_after = time::OffsetDateTime::from_unix_timestamp(after).unwrap();
+    let cert = params.self_signed(&key_pair).unwrap();
+    let certificate = dir.join("certificate.pem");
+    let private_key = dir.join("private-key.pem");
+    fs::write(&certificate, cert.pem()).unwrap();
+    fs::write(&private_key, key_pair.serialize_pem()).unwrap();
+    let selection = TlsSelection::inspect(&certificate, &private_key).unwrap();
+    (CertifiedKey { cert, key_pair }, selection)
+}
+
+#[test]
+fn expired_and_future_certificates_are_inspectable_but_cannot_start() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    approve_tls(&mut fixture);
+    let binding = fixture.app.local_state().unwrap().host.binding();
+    let dir = tempfile::tempdir().unwrap();
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    for (before, after) in [(now - 100, now - 1), (now + 3600, now + 7200)] {
+        let (_, selection) = timed_pair(dir.path(), before, after);
+        assert_eq!(selection.validity().unwrap().not_after, after);
+        let mut options = fixture.options(1);
+        options.publication_revision = 2;
+        assert!(
+            fixture
+                .app
+                .start_service_with_network(options, &[], Some(&selection))
+                .is_err()
+        );
+        assert_eq!(fixture.app.local_state().unwrap().host.binding(), binding);
+        assert!(fixture.app.io_status().key.is_none());
+    }
+    let (_, selection) = timed_pair(dir.path(), now - 100, now + 3600);
+    let task = start_tls(&mut fixture, &selection, 1);
+    running(&mut fixture.app, task);
+    stop(&mut fixture, task);
+    fixture.app.finish().unwrap();
+}
+
+#[test]
+fn certificate_expiry_stops_real_tls_listener_and_returns_original_owner() {
+    let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+    approve_tls(&mut fixture);
+    let binding = fixture.app.local_state().unwrap().host.binding();
+    let dir = tempfile::tempdir().unwrap();
+    let now = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    let (cert, selection) = timed_pair(dir.path(), now - 60, now + 5);
+    let task = start_tls(&mut fixture, &selection, 1);
+    let address = running(&mut fixture.app, task);
+    let runtime = tokio::runtime::Runtime::new().unwrap();
+    runtime.block_on(async {
+        tokio::time::timeout(WAIT, async {
+            let mut socket = connect(address, &cert, "localhost").await.unwrap();
+            assert!(
+                request(&mut socket, TOKEN)
+                    .await
+                    .ends_with(b"executed-before")
+            );
+        })
+        .await
+        .unwrap();
+    });
+    let result = exited(&mut fixture.app, task);
+    assert_eq!(result.listener, Some(Ok(())));
+    assert_eq!(fixture.app.local_state().unwrap().host.binding(), binding);
+    assert!(TcpStream::connect_timeout(&address, Duration::from_millis(100)).is_err());
+    fixture.app.acknowledge_io(task).unwrap();
+    let mut options = fixture.options(2);
+    options.publication_revision = 2;
+    assert!(
+        fixture
+            .app
+            .start_service_with_network(options, &[], Some(&selection))
+            .is_err()
+    );
+    fixture.app.finish().unwrap();
+}
+
 fn approve_tls(fixture: &mut Fixture) {
     let state = fixture.app.local_state_mut().unwrap();
     state.host.prepare_write().unwrap();

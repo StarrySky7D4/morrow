@@ -7,6 +7,8 @@ edition = "2024"
 publish = false
 license = "AGPL-3.0-only"
 [dependencies]
+x509-parser = { version = "=0.18.1", default-features = false }
+rustls-pki-types = "=1.15.1"
 zeroize = "=1.9.0"
 semver = "=1.0.28"
 getrandom = "=0.4.3"
@@ -23,6 +25,7 @@ prost-build = "=0.14.4"
 protoc-bin-vendored = "=3.2.0"
 capnpc = "=0.24.0"
 [dev-dependencies]
+time = "=0.3.55"
 rcgen = "=0.13.2"
 rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
 tokio-rustls = { version = "=0.26.4", default-features = false, features = ["ring", "tls12"] }

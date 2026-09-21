@@ -334,6 +334,16 @@
       }
     }
   },
+  "@pluginsServiceTlsValidity": {
+    "placeholders": {
+      "end": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsUnconfirmed": {
     "placeholders": {
       "reason": {
@@ -1464,8 +1474,11 @@
   "pluginsServiceTlsHelp": "非本机回环地址必须要求 TLS。这里仅保存要求，不创建监听器或 TLS 身份。",
   "pluginsServiceTlsHint": "此发布要求 TLS。选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。",
   "pluginsServiceTlsInspect": "检查证书",
+  "pluginsServiceTlsOutsideValidity": "证书链尚未生效或已过期。请检查或更换证书后再次检查，当前选择不能启动服务。",
   "pluginsServiceTlsPrivateKey": "选择私钥",
+  "pluginsServiceTlsRecheck": "启动前请重新检查证书。时钟变化不会恢复之前的选择。",
   "pluginsServiceTlsUnavailable": "当前后端不支持本地 TLS 证书选择。",
+  "pluginsServiceTlsValidity": "证书链共同有效区间（UTC）：{start} 至 {end}。到期后服务会停止。",
   "pluginsServiceTokenDiscarded": "面板关闭期间，一次性令牌已清除。如有需要，请明确执行新的签发操作。",
   "pluginsServiceTokenHelp": "令牌仅在本次显示。如有需要，请主动复制。清除或关闭此面板会从会话中移除令牌，列表无法再次读出。轮换会替换此前的令牌。",
   "pluginsServiceUncertainHelp": "请先刷新并核对原记录。确认此提示仅允许执行下一次明确操作，并不证明上一次修改失败，也不会重发。",

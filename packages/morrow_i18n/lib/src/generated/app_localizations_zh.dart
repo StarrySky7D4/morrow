@@ -2085,10 +2085,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsServiceTlsInspect => '检查证书';
 
   @override
+  String get pluginsServiceTlsOutsideValidity =>
+      '证书链尚未生效或已过期。请检查或更换证书后再次检查，当前选择不能启动服务。';
+
+  @override
   String get pluginsServiceTlsPrivateKey => '选择私钥';
 
   @override
+  String get pluginsServiceTlsRecheck => '启动前请重新检查证书。时钟变化不会恢复之前的选择。';
+
+  @override
   String get pluginsServiceTlsUnavailable => '当前后端不支持本地 TLS 证书选择。';
+
+  @override
+  String pluginsServiceTlsValidity(String end, String start) {
+    return '证书链共同有效区间（UTC）：$start 至 $end。到期后服务会停止。';
+  }
 
   @override
   String get pluginsServiceTokenDiscarded =>
