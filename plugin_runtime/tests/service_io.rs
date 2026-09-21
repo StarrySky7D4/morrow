@@ -111,6 +111,142 @@ fn configured(f: &mut Fixture, clock: Arc<AtomicU64>) -> ConfiguredService {
     .unwrap()
 }
 #[test]
+fn identity_dependency_preserves_eight_outbound_slots_and_is_inherited_by_grants() {
+    use morrow_core::store::ServiceAuthorityResource as Resource;
+    use morrow_plugin_runtime::service_authority::AuthorityDependency;
+    for revoke_identity in [false, true] {
+        let mut f = Fixture::new();
+        persistent_authority(&mut f);
+        let resolved = ResolvedService::resolve(
+            f.host.store_local_mut(),
+            "stored-service",
+            &[53; 32],
+            || 2000,
+        )
+        .unwrap();
+        let store = f.host.store_local_mut();
+        let guard = store.pin_service_authority().unwrap();
+        let dep = |resource| {
+            AuthorityDependency::new(
+                store,
+                store.narrow_service_authority(&guard, &[resource]).unwrap(),
+                || true,
+            )
+            .unwrap()
+        };
+        let identity = dep(Resource::TlsIdentity([99; 32]));
+        let outbound = (1..=8).map(|i| dep(Resource::Outbound([i; 32]))).collect();
+        let resolved = resolved
+            .with_dependencies(store, outbound)
+            .unwrap()
+            .with_identity_dependency(store, identity)
+            .unwrap();
+        let configured = resolved
+            .issue(&f.manager, &f.host, &f.instance, &f.binding, 1)
+            .unwrap();
+        configured.check().unwrap();
+        f.host
+            .store_local()
+            .service_authority_control()
+            .revoke_resource(&if revoke_identity {
+                Resource::TlsIdentity([99; 32])
+            } else {
+                Resource::Outbound([8; 32])
+            });
+        assert!(configured.check().is_err());
+        assert!(configured.listener().activate().is_err());
+        assert!(configured.grant().check(1).is_err());
+    }
+}
+#[test]
+fn foreign_store_identity_dependency_cannot_attach_or_launder_original_authority() {
+    use morrow_core::store::ServiceAuthorityResource as Resource;
+    for foreign_argument in [false, true] {
+        let mut f = Fixture::new();
+        persistent_authority(&mut f);
+        let resolved = ResolvedService::resolve(
+            f.host.store_local_mut(),
+            "stored-service",
+            &[53; 32],
+            || 2000,
+        )
+        .unwrap();
+        let mut foreign = Fixture::new();
+        let foreign_identity = tls_dependency_on(
+            foreign.host.store_local_mut(),
+            Resource::TlsIdentity([77; 32]),
+        );
+        let result = if foreign_argument {
+            // Even the foreign dependency and Store agreeing cannot replace
+            // the original publication's Store instance.
+            resolved.with_identity_dependency(foreign.host.store_local(), foreign_identity)
+        } else {
+            resolved.with_identity_dependency(f.host.store_local(), foreign_identity)
+        };
+        assert!(matches!(result, Err(Error::Denied)));
+    }
+}
+
+fn tls_dependency_on(
+    store: &mut Store,
+    resource: morrow_core::store::ServiceAuthorityResource,
+) -> morrow_plugin_runtime::service_authority::AuthorityDependency {
+    let guard = store.pin_service_authority().unwrap();
+    morrow_plugin_runtime::service_authority::AuthorityDependency::new(
+        store,
+        store.narrow_service_authority(&guard, &[resource]).unwrap(),
+        || true,
+    )
+    .unwrap()
+}
+
+#[test]
+fn revoked_identity_dependency_cannot_attach() {
+    use morrow_core::store::ServiceAuthorityResource as Resource;
+    let mut f = Fixture::new();
+    persistent_authority(&mut f);
+    let resolved = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap();
+    let identity = tls_dependency_on(f.host.store_local_mut(), Resource::TlsIdentity([99; 32]));
+    f.host
+        .store_local()
+        .service_authority_control()
+        .revoke_resource(&Resource::TlsIdentity([99; 32]));
+    assert!(matches!(
+        resolved.with_identity_dependency(f.host.store_local(), identity),
+        Err(Error::Denied)
+    ));
+}
+
+#[test]
+fn second_identity_dependency_is_rejected() {
+    use morrow_core::store::ServiceAuthorityResource as Resource;
+    let mut f = Fixture::new();
+    persistent_authority(&mut f);
+    let resolved = ResolvedService::resolve(
+        f.host.store_local_mut(),
+        "stored-service",
+        &[53; 32],
+        || 2000,
+    )
+    .unwrap();
+    let first = tls_dependency_on(f.host.store_local_mut(), Resource::TlsIdentity([99; 32]));
+    let second = tls_dependency_on(f.host.store_local_mut(), Resource::TlsIdentity([98; 32]));
+    let resolved = resolved
+        .with_identity_dependency(f.host.store_local(), first)
+        .unwrap();
+    assert!(matches!(
+        resolved.with_identity_dependency(f.host.store_local(), second),
+        Err(Error::Limit)
+    ));
+}
+
+#[test]
 fn restored_authority_requires_original_store_and_current_config_digest() {
     let mut f = Fixture::new();
     let (config, _) = persistent_authority(&mut f);

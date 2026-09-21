@@ -53,6 +53,17 @@ fn expired_and_future_certificates_are_inspectable_but_cannot_start() {
         );
         assert_eq!(fixture.app.local_state().unwrap().host.binding(), binding);
         assert!(fixture.app.io_status().key.is_none());
+        let saved = fixture.app.save_tls_identity(&[], 0, &selection).unwrap();
+        let mut options = fixture.options(1);
+        options.publication_revision = 2;
+        assert!(
+            fixture
+                .app
+                .start_service_with_protected_tls(options, &[], &saved.selection)
+                .is_err()
+        );
+        assert_eq!(fixture.app.local_state().unwrap().host.binding(), binding);
+        assert!(fixture.app.io_status().key.is_none());
     }
     let (_, selection) = timed_pair(dir.path(), now - 100, now + 3600);
     let task = start_tls(&mut fixture, &selection, 1);
@@ -122,6 +133,174 @@ fn approve_tls(fixture: &mut Fixture) {
         .save_service_authority_local(&Authority::encode(publication).unwrap(), 1)
         .unwrap();
     state.host.flush_pending().unwrap();
+}
+
+#[test]
+fn protected_tls_original_owner_rotation_and_disable_close_real_listener() {
+    for rotate in [false, true] {
+        let mut fixture = Fixture::new("127.0.0.1:0".parse().unwrap());
+        approve_tls(&mut fixture);
+        let original_binding = fixture.app.local_state().unwrap().host.binding();
+        let dir = tempfile::tempdir().unwrap();
+        let (root, selected) = pair(dir.path());
+        let saved = fixture.app.save_tls_identity(&[], 0, &selected).unwrap();
+        fs::remove_file(selected.certificate_path()).unwrap();
+        fs::remove_file(selected.private_key_path()).unwrap();
+        let mut options = fixture.options(1);
+        options.publication_revision = 2;
+        let input = |choice: &crate::tls_identity_control::ProtectedTlsChoice, dual: bool| {
+            let original = start_frame(fixture.options(1));
+            let reader =
+                capnp::serialize::read_message(&mut original.as_slice(), Default::default())
+                    .unwrap();
+            let mut message = capnp::message::Builder::new_default();
+            message
+                .set_root(reader.get_root::<wire::request::Reader>().unwrap())
+                .unwrap();
+            let r = message.get_root::<wire::request::Builder>().unwrap();
+            let mut s = r.get_service_run().unwrap();
+            s.set_publication_revision(2);
+            if dual {
+                let mut t = s.reborrow().init_tls();
+                t.set_certificate_path(selected.certificate_path().to_str().unwrap());
+                t.set_private_key_path(selected.private_key_path().to_str().unwrap());
+                t.set_certificate_sha256(&selected.certificate_sha256());
+            }
+            let mut t = s.init_protected_tls();
+            t.set_reference(&choice.reference);
+            t.set_revision(choice.revision);
+            t.set_certificate_sha256(&choice.certificate_sha256);
+            capnp::serialize::write_message_to_words(&message)
+        };
+        let mut stale = saved.selection;
+        stale.revision += 1;
+        let bad_revision = input(&stale, false);
+        let dual = input(&saved.selection, true);
+        let mut stale_digest = saved.selection;
+        stale_digest.certificate_sha256 = [7; 32];
+        let bad_digest = input(&stale_digest, false);
+        let valid = input(&saved.selection, false);
+        for bad in [bad_revision, bad_digest, dual] {
+            assert!(!protocol_call(&mut fixture.app, bad).error.is_empty());
+            assert!(fixture.app.io_status().key.is_none());
+        }
+        let task = if rotate {
+            TaskKey::from_bytes(&protocol_ok(&mut fixture.app, valid).service_key).unwrap()
+        } else {
+            fixture
+                .app
+                .start_service_with_protected_tls(options, &[], &saved.selection)
+                .unwrap()
+        };
+        let address = running(&mut fixture.app, task);
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        rt.block_on(async {
+            let mut socket = connect(address, &root, "localhost").await.unwrap();
+            assert!(
+                request(&mut socket, TOKEN)
+                    .await
+                    .starts_with(b"HTTP/1.1 202 ")
+            );
+        });
+        command(
+            &mut fixture.app,
+            task,
+            frame(wire::Action::TlsIdentityPage, |_| {}),
+        );
+        let (new_root, new_selection) = pair(dir.path());
+        // Saving a distinct identity through the original owner does not revoke this run.
+        command(
+            &mut fixture.app,
+            task,
+            frame(wire::Action::TlsIdentitySave, |r| {
+                let mut s = r.init_service_tls();
+                s.set_certificate_path(new_selection.certificate_path().to_str().unwrap());
+                s.set_private_key_path(new_selection.private_key_path().to_str().unwrap());
+                s.set_certificate_sha256(&new_selection.certificate_sha256());
+            }),
+        );
+        rt.block_on(async {
+            let mut socket = connect(address, &root, "localhost").await.unwrap();
+            assert!(
+                request(&mut socket, TOKEN)
+                    .await
+                    .starts_with(b"HTTP/1.1 202 ")
+            );
+        });
+        let mut pending = rt.block_on(connect(address, &root, "localhost")).unwrap();
+        command(
+            &mut fixture.app,
+            task,
+            frame(
+                if rotate {
+                    wire::Action::TlsIdentitySave
+                } else {
+                    wire::Action::TlsIdentityDisable
+                },
+                |mut r| {
+                    r.set_service_reference(&saved.selection.reference);
+                    r.set_revision(1);
+                    if rotate {
+                        let mut s = r.init_service_tls();
+                        s.set_certificate_path(new_selection.certificate_path().to_str().unwrap());
+                        s.set_private_key_path(new_selection.private_key_path().to_str().unwrap());
+                        s.set_certificate_sha256(&new_selection.certificate_sha256());
+                    }
+                },
+            ),
+        );
+        let stopped = exited(&mut fixture.app, task);
+        assert_eq!(stopped.listener, Some(Ok(())));
+        fixture.app.acknowledge_io(task).unwrap();
+        assert_eq!(
+            fixture.app.local_state().unwrap().host.binding(),
+            original_binding
+        );
+        rt.block_on(async {
+            let bytes=format!("POST /api HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {FIRST_KEY}\r\nContent-Length: 6\r\nConnection: close\r\n\r\nbefore");
+            let _=pending.write_all(bytes.as_bytes()).await; let mut response=Vec::new();
+            let _=tokio::time::timeout(WAIT,pending.read_to_end(&mut response)).await.unwrap();
+            assert!(!response.starts_with(b"HTTP/1.1 202 "));
+        });
+        let mut options = fixture.options(2);
+        options.publication_revision = 2;
+        assert!(
+            fixture
+                .app
+                .start_service_with_protected_tls(options, &[], &saved.selection)
+                .is_err()
+        );
+        let row = fixture
+            .app
+            .tls_identity_page(&[], &[])
+            .unwrap()
+            .entries
+            .into_iter()
+            .find(|r| r.selection.reference == saved.selection.reference)
+            .unwrap();
+        assert_eq!(row.selection.revision, 2);
+        assert_eq!(row.disabled, !rotate);
+        if rotate {
+            let mut options = fixture.options(2);
+            options.publication_revision = 2;
+            let task = fixture
+                .app
+                .start_service_with_protected_tls(options, &[], &row.selection)
+                .unwrap();
+            let address = running(&mut fixture.app, task);
+            rt.block_on(async {
+                assert!(connect(address, &root, "localhost").await.is_err());
+                let mut socket = connect(address, &new_root, "localhost").await.unwrap();
+                assert!(
+                    request(&mut socket, TOKEN)
+                        .await
+                        .starts_with(b"HTTP/1.1 202 ")
+                );
+            });
+            stop(&mut fixture, task);
+        }
+        fixture.app.finish().unwrap();
+    }
 }
 
 fn start_tls(fixture: &mut Fixture, selection: &TlsSelection, submission: u8) -> TaskKey {

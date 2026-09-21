@@ -21,6 +21,10 @@ Flutter 为 TLS 发布提供本地 PEM 选择、检查和证书摘要展示。�
 
 证书链共同有效区间以 UTC 显示；未来/过期选择不能启动，时钟恢复后须显式重新检查。Rust 重新读取实际证书，不信任 UI 时间数据。到期、原授权撤销或时钟回拨使原 live authority 失效，缓存响应和新请求均重新校验，监听器进入原停止/回收流程；这不承诺强制中断任意同步回调。详见[有效期报告](../reports/application-service-tls-validity-2026-09-21.md)。
 
-受保护密钥的独立封装与原生加载器已完成，见[保护阶段报告](../reports/application-service-tls-protection-2026-09-21.md)。原 Store 的受保护记录、Schema 21 迁移、修订 CAS、快照与独立撤销依赖已完成，见[存储报告](../reports/application-service-tls-store-2026-09-21.md)。应用服务启动尚未使用该引用；现有 UI 仍从明确选择的 PEM 加载。下一步为原拥有者管理命令、启动时绑定该依赖及显式轮换界面，再继续 Unknown 持久核对、完整文件系统和 C/C++/Rust IO SDK。当前没有自动续期、ACME 或客户端证书认证。
+受保护密钥的独立封装与原生加载器已完成，见[保护阶段报告](../reports/application-service-tls-protection-2026-09-21.md)。原 Store 的受保护记录、Schema 21 迁移、修订 CAS、快照与独立撤销依赖已完成，见[存储报告](../reports/application-service-tls-store-2026-09-21.md)。
+
+原拥有者私有命令 `tlsIdentityPage/Save/Disable` 及 `ServiceRunStart.protectedTls` 已接通，见[管理与启动报告](../reports/application-service-tls-control-2026-09-21.md)。列表每页最多 16 条，使用原库稳定快照；返回引用、修订、证书摘要及禁用状态，不返回私钥或密文。保存使用冻结的 PEM 选择重新检查，替换/禁用要求精确修订；运行中通过原拥有者命令执行。可信 Rust 入口为 `start_service_with_protected_tls`；文件与受保护引用不能同时选择。
+
+启动在原 Store 重验引用/修订/摘要、实际解封证书及共同有效期，绑定独立身份依赖，保留完整 8 个出站名额。源 PEM 可以移除；替换或禁用当前身份使旧监听与缓存交付失效，无关身份保存不影响当前服务。采用新身份须显式启动，不自动重启。已保存身份的 Dart 类型化管理 API 和选择/轮换 UI 尚未实现，现有 UI 仍从明确选择的 PEM 加载，这是下一项；之后继续 Unknown 持久核对、完整文件系统和 C/C++/Rust IO SDK。当前没有自动续期、ACME 或客户端证书认证。
 
 公共 guest ABI 未改变。原生测试通过不代表 C/C++/Rust IO SDK 稳定、公网部署合格或其它平台已验证。

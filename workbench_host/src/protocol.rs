@@ -484,7 +484,10 @@ fn handle_business(
         | wire::Action::ServiceAuthenticationIssue
         | wire::Action::ServiceAuthorityDisable
         | wire::Action::ServicePublicationSave
-        | wire::Action::ServiceTlsInspect => {
+        | wire::Action::ServiceTlsInspect
+        | wire::Action::TlsIdentityPage
+        | wire::Action::TlsIdentitySave
+        | wire::Action::TlsIdentityDisable => {
             // Service errors can contain host paths. Expose no raw backend
             // details; the shared access gate above still preserves Busy codes.
             crate::service_protocol::handle(host, r, out.reborrow())

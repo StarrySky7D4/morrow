@@ -16,6 +16,9 @@ pub(crate) fn is_action(action: wire::Action) -> bool {
             | wire::Action::ServiceAuthorityDisable
             | wire::Action::ServicePublicationSave
             | wire::Action::ServiceTlsInspect
+            | wire::Action::TlsIdentityPage
+            | wire::Action::TlsIdentitySave
+            | wire::Action::TlsIdentityDisable
     )
 }
 
@@ -193,12 +196,58 @@ fn write_authority(
     }
 }
 
+fn write_tls_identity(
+    value: &crate::tls_identity_control::TlsIdentityInfo,
+    mut out: wire::tls_identity_info::Builder<'_>,
+) {
+    out.set_disabled(value.disabled);
+    let mut choice = out.init_choice();
+    choice.set_reference(&value.selection.reference);
+    choice.set_revision(value.selection.revision);
+    choice.set_certificate_sha256(&value.selection.certificate_sha256);
+}
 pub(crate) fn handle(
     host: &mut WorkbenchState,
     request: wire::request::Reader<'_>,
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     match request.get_action()? {
+        wire::Action::TlsIdentityPage => {
+            let page = host.tls_identity_page(
+                reference(request.get_service_cursor()?, true)?,
+                reference(request.get_service_snapshot()?, true)?,
+            )?;
+            out.set_service_snapshot(&page.snapshot);
+            out.set_service_cursor(page.next.as_ref().map_or(&[][..], |v| v.as_slice()));
+            let mut rows = out.init_tls_identities(page.entries.len().try_into()?);
+            for (i, value) in page.entries.iter().enumerate() {
+                write_tls_identity(value, rows.reborrow().get(i as u32));
+            }
+        }
+        wire::Action::TlsIdentitySave => {
+            if !request.has_service_tls() {
+                return Err("TLS selection required".into());
+            }
+            let selected = request.get_service_tls()?;
+            let selected = crate::service_tls::TlsSelection::from_expected(
+                tls_path(selected.get_certificate_path())?.into(),
+                tls_path(selected.get_private_key_path())?.into(),
+                selected.get_certificate_sha256()?.try_into()?,
+            )?;
+            let saved = host.save_tls_identity(
+                reference(request.get_service_reference()?, true)?,
+                request.get_revision(),
+                &selected,
+            )?;
+            write_tls_identity(&saved, out.init_tls_identities(1).get(0));
+        }
+        wire::Action::TlsIdentityDisable => {
+            let value = host.disable_tls_identity(
+                reference(request.get_service_reference()?, false)?,
+                request.get_revision(),
+            )?;
+            write_tls_identity(&value, out.init_tls_identities(1).get(0));
+        }
         wire::Action::ServiceTlsInspect => {
             let selected = request.get_service_tls()?;
             let certificate = tls_path(selected.get_certificate_path())?;

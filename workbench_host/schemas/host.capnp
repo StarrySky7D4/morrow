@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -41,6 +41,7 @@ struct Response {
  issuedToken @36 :Data;
  serviceRun @37 :ServiceRunState; ownerCommand @38 :OwnerCommandState;
  serviceTls @39 :ServiceTlsSelection;
+ tlsIdentities @40 :List(TlsIdentityInfo);
 }
 
 # Private application lifecycle, not a guest capability. Every start explicitly
@@ -55,6 +56,7 @@ struct ServiceRunStart {
  maxHeaderBytes @17 :UInt32; maxConcurrent @18 :UInt16; timeoutMs @19 :UInt32;
  outbound @20 :List(ServiceEndpointSelection);
  tls @21 :ServiceTlsSelection;
+ protectedTls @22 :ProtectedTlsIdentityRef;
 }
 struct ServiceTlsSelection { certificatePath @0 :Text; privateKeyPath @1 :Text; certificateSha256 @2 :Data; validity @3 :ServiceTlsValidity; }
 struct ServiceTlsValidity { notBeforeSeconds @0 :Int64; notAfterSeconds @1 :Int64; }
@@ -179,3 +181,6 @@ struct ServiceAuthorityInfo {
 # totalLength and sha256. append binds offset and <=32 KiB payload.
 # One <=128 KiB upload, fixed 120s TTL; finish validates a complete nonscheduler
 # request then consumes once. Each outer command remains <=64 KiB.
+
+struct ProtectedTlsIdentityRef { reference @0 :Data; revision @1 :UInt64; certificateSha256 @2 :Data; }
+struct TlsIdentityInfo { choice @0 :ProtectedTlsIdentityRef; disabled @1 :Bool; }

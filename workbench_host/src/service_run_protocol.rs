@@ -112,7 +112,17 @@ pub(super) fn handle(
         } else {
             None
         };
-        let key = host.start_service_with_network(
+        let protected = if s.has_protected_tls() {
+            let choice = s.get_protected_tls()?;
+            Some(crate::tls_identity_control::ProtectedTlsChoice {
+                reference: choice.get_reference()?.try_into()?,
+                revision: choice.get_revision(),
+                certificate_sha256: choice.get_certificate_sha256()?.try_into()?,
+            })
+        } else {
+            None
+        };
+        let key = host.start_service_with_tls_choice(
             ServiceStart {
                 submission: s.get_submission()?.try_into()?,
                 config_id: text(s.get_config_id())?,
@@ -144,6 +154,7 @@ pub(super) fn handle(
             },
             &outbound,
             tls.as_ref(),
+            protected.as_ref(),
         )?;
         service_reply(host.service_status(key)?, out.reborrow().init_service_run());
         return Ok(());

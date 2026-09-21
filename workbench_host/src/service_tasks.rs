@@ -322,6 +322,26 @@ impl Workbench {
         outbound: &[ServiceEndpointSelection],
         tls: Option<&crate::service_tls::TlsSelection>,
     ) -> Result<TaskKey> {
+        self.start_service_with_tls_choice(options, outbound, tls, None)
+    }
+    pub fn start_service_with_protected_tls(
+        &mut self,
+        options: ServiceStart,
+        outbound: &[ServiceEndpointSelection],
+        tls: &crate::tls_identity_control::ProtectedTlsChoice,
+    ) -> Result<TaskKey> {
+        self.start_service_with_tls_choice(options, outbound, None, Some(tls))
+    }
+    pub(crate) fn start_service_with_tls_choice(
+        &mut self,
+        options: ServiceStart,
+        outbound: &[ServiceEndpointSelection],
+        tls: Option<&crate::service_tls::TlsSelection>,
+        protected: Option<&crate::tls_identity_control::ProtectedTlsChoice>,
+    ) -> Result<TaskKey> {
+        if tls.is_some() && protected.is_some() {
+            return Err("ambiguous TLS identity choice".into());
+        }
         if outbound.len() > MAX_SERVICE_ENDPOINTS {
             return Err("too many service outbound endpoints".into());
         }
@@ -401,15 +421,25 @@ impl Workbench {
             return Err("service publication required".into());
         };
         let address: SocketAddr = publication.listen_address.parse()?;
-        if publication.tls_required != tls.is_some() {
+        if publication.tls_required != (tls.is_some() || protected.is_some()) {
             return Err("selected TLS identity does not match approved publication mode".into());
         }
         if !publication.tls_required && !address.ip().is_loopback() {
             return Err("plain application HTTP requires approved loopback address".into());
         }
-        let tls = tls
-            .map(crate::service_tls::TlsSelection::load_with_validity)
-            .transpose()?;
+        let (resolved, tls) = if let Some(choice) = protected {
+            let (identity, validity, dependency) = choice.load(state.host.store_local_mut())?;
+            (
+                resolved.with_identity_dependency(state.host.store_local(), dependency)?,
+                Some((identity, validity)),
+            )
+        } else {
+            (
+                resolved,
+                tls.map(crate::service_tls::TlsSelection::load_with_validity)
+                    .transpose()?,
+            )
+        };
         let (resolved, tls) = if let Some((identity, validity)) = tls {
             let (not_before, expires) = validity.authority_window()?;
             (

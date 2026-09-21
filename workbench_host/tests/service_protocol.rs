@@ -37,7 +37,83 @@ fn rejected(bytes: &[u8]) {
         assert!(response.get_issued_token().unwrap().is_empty());
         assert!(response.get_service_configs().unwrap().is_empty());
         assert!(response.get_service_authorities().unwrap().is_empty());
+        assert!(response.get_tls_identities().unwrap().is_empty());
     });
+}
+#[test]
+fn protected_tls_commands_redact_material_enforce_cas_and_reopen_original_store() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut app = Workbench::open_managed(dir.path(), None).unwrap();
+    let pair = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+    let cert = dir.path().join("tls.pem");
+    let key = dir.path().join("tls.key");
+    std::fs::write(&cert, pair.cert.pem()).unwrap();
+    std::fs::write(&key, pair.key_pair.serialize_pem()).unwrap();
+    let digest: [u8; 32] = Sha256::digest(pair.cert.pem().as_bytes()).into();
+    let save = |reference: &[u8], revision, digest: &[u8]| {
+        frame(wire::Action::TlsIdentitySave, |mut r| {
+            r.set_service_reference(reference);
+            r.set_revision(revision);
+            let mut selection = r.init_service_tls();
+            selection.set_certificate_path(cert.to_str().unwrap());
+            selection.set_private_key_path(key.to_str().unwrap());
+            selection.set_certificate_sha256(digest);
+        })
+    };
+    let saved = protocol::respond(&mut app, &save(&[], 0, &digest)).unwrap();
+    let reference = read(&saved, |r| {
+        success(r);
+        assert!(!r.has_service_tls());
+        assert!(r.get_payload().unwrap().is_empty());
+        let rows = r.get_tls_identities().unwrap();
+        assert_eq!(rows.len(), 1);
+        let choice = rows.get(0).get_choice().unwrap();
+        assert_eq!(choice.get_revision(), 1);
+        assert_eq!(choice.get_certificate_sha256().unwrap(), digest);
+        choice.get_reference().unwrap().to_vec()
+    });
+    assert!(!String::from_utf8_lossy(&saved).contains("PRIVATE KEY"));
+    assert!(!String::from_utf8_lossy(&saved).contains("tls.key"));
+    rejected(&protocol::respond(&mut app, &save(&reference, 0, &digest)).unwrap());
+    rejected(&protocol::respond(&mut app, &save(&reference, 1, &[7; 32])).unwrap());
+    let page = frame(wire::Action::TlsIdentityPage, |_| {});
+    let response = protocol::respond(&mut app, &page).unwrap();
+    let snapshot = read(&response, |r| {
+        success(r);
+        assert_eq!(r.get_tls_identities().unwrap().len(), 1);
+        r.get_service_snapshot().unwrap().to_vec()
+    });
+    std::fs::remove_file(&cert).unwrap();
+    std::fs::remove_file(&key).unwrap();
+    let disable = frame(wire::Action::TlsIdentityDisable, |mut r| {
+        r.set_service_reference(&reference);
+        r.set_revision(1);
+    });
+    let response = protocol::respond(&mut app, &disable).unwrap();
+    read(&response, |r| {
+        success(r);
+        let row = r.get_tls_identities().unwrap().get(0);
+        assert!(row.get_disabled());
+        assert_eq!(row.get_choice().unwrap().get_revision(), 2);
+    });
+    rejected(
+        &protocol::respond(
+            &mut app,
+            &frame(wire::Action::TlsIdentityPage, |mut r| {
+                r.set_service_snapshot(&snapshot)
+            }),
+        )
+        .unwrap(),
+    );
+    app.finish().unwrap();
+    drop(app);
+    let mut app = Workbench::open_managed(dir.path(), None).unwrap();
+    let response = protocol::respond(&mut app, &page).unwrap();
+    read(&response, |r| {
+        success(r);
+        assert!(r.get_tls_identities().unwrap().get(0).get_disabled());
+    });
+    app.finish().unwrap();
 }
 
 #[test]

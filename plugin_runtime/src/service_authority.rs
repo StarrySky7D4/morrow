@@ -65,11 +65,16 @@ pub(crate) struct LiveAuthority {
     expires: u64,
     deadline: Instant,
     dependencies: Vec<AuthorityDependency>,
+    identity_dependency: Option<AuthorityDependency>,
 }
 impl LiveAuthority {
     fn now(&self) -> Result<u64> {
         self.lease.check().map_err(|_| Error::Denied)?;
-        for dependency in &self.dependencies {
+        for dependency in self
+            .dependencies
+            .iter()
+            .chain(self.identity_dependency.iter())
+        {
             dependency.check()?;
         }
         let mut clock = self.clock.lock().map_err(|_| Error::Clock)?;
@@ -87,7 +92,11 @@ impl LiveAuthority {
             return Err(Error::Expired);
         }
         self.lease.check().map_err(|_| Error::Denied)?;
-        for dependency in &self.dependencies {
+        for dependency in self
+            .dependencies
+            .iter()
+            .chain(self.identity_dependency.iter())
+        {
             dependency.check()?;
         }
         Ok(now)
@@ -256,6 +265,7 @@ impl ResolvedService {
         let live = LiveAuthority {
             lease,
             dependencies: vec![],
+            identity_dependency: None,
             clock: Arc::new(Mutex::new(Clock {
                 sample: Box::new(clock),
                 high_water: now,
@@ -298,6 +308,28 @@ impl ResolvedService {
             dependency.check()?;
         }
         self.live.dependencies.extend(dependencies);
+        self.live.check()?;
+        Ok(self)
+    }
+    /// A single server identity may further restrict the same original Store's
+    /// authority without consuming any of the eight outbound dependency slots.
+    /// It cannot replace an existing identity or relax any prior restrictions.
+    pub fn with_identity_dependency(
+        mut self,
+        store: &Store,
+        dependency: AuthorityDependency,
+    ) -> Result<Self> {
+        if self.live.identity_dependency.is_some() {
+            return Err(Error::Limit);
+        }
+        store
+            .validate_service_authority(&self.live.lease)
+            .map_err(|_| Error::Denied)?;
+        store
+            .validate_service_authority(&dependency.lease)
+            .map_err(|_| Error::Denied)?;
+        dependency.check()?;
+        self.live.identity_dependency = Some(dependency);
         self.live.check()?;
         Ok(self)
     }

@@ -77,6 +77,9 @@ enum Action {
   commandFrameFinish,
   commandFrameAbort,
   serviceTlsInspect,
+  tlsIdentityPage,
+  tlsIdentitySave,
+  tlsIdentityDisable,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -184,6 +187,9 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'commandFrameFinish', codeOrder: 69, ordinal: 69),
     EnumerantSchemaInfo(name: 'commandFrameAbort', codeOrder: 70, ordinal: 70),
     EnumerantSchemaInfo(name: 'serviceTlsInspect', codeOrder: 71, ordinal: 71),
+    EnumerantSchemaInfo(name: 'tlsIdentityPage', codeOrder: 72, ordinal: 72),
+    EnumerantSchemaInfo(name: 'tlsIdentitySave', codeOrder: 73, ordinal: 73),
+    EnumerantSchemaInfo(name: 'tlsIdentityDisable', codeOrder: 74, ordinal: 74),
   ],
 );
 
@@ -519,7 +525,7 @@ final class RequestBuilder extends StructBuilder {
   }
 
   ServiceRunStartBuilder initServiceRun() {
-    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 8);
+    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 9);
   }
 
   bool hasServiceRun() => hasPointerField(35);
@@ -1086,6 +1092,12 @@ final class ResponseReader extends StructReader {
     28,
     (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
   );
+
+  ListReader<TlsIdentityInfoReader>? get tlsIdentities =>
+      getStructListFieldWith(
+        29,
+        (r) => TlsIdentityInfoReader(r, capabilities: capabilityTable),
+      );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1293,6 +1305,16 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasServiceTls() => hasPointerField(28);
+
+  ListBuilder<TlsIdentityInfoBuilder> initTlsIdentities(int length) {
+    return initStructListFieldWith(
+      29,
+      length,
+      (r) => TlsIdentityInfoBuilder(r),
+      1,
+      1,
+    );
+  }
 }
 
 final class _ResponseFactory
@@ -1302,7 +1324,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 29;
+  int get ptrWords => 30;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1319,7 +1341,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 29,
+  pointerWords: 30,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1641,6 +1663,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'tlsIdentities',
+      codeOrder: 40,
+      body: SlotFieldSchemaInfo(
+        offset: 29,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xcf706275cfdfc99d)),
+      ),
+    ),
   ],
 );
 
@@ -1700,6 +1730,11 @@ final class ServiceRunStartReader extends StructReader {
   ServiceTlsSelectionReader? get tls => getStructFieldWith(
     7,
     (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
+  );
+
+  ProtectedTlsIdentityRefReader? get protectedTls => getStructFieldWith(
+    8,
+    (r) => ProtectedTlsIdentityRefReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1804,6 +1839,17 @@ final class ServiceRunStartBuilder extends StructBuilder {
   }
 
   bool hasTls() => hasPointerField(7);
+
+  ProtectedTlsIdentityRefBuilder initProtectedTls() {
+    return initStructFieldWith(
+      8,
+      (r) => ProtectedTlsIdentityRefBuilder(r),
+      1,
+      2,
+    );
+  }
+
+  bool hasProtectedTls() => hasPointerField(8);
 }
 
 final class _ServiceRunStartFactory
@@ -1813,7 +1859,7 @@ final class _ServiceRunStartFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 8;
+  int get ptrWords => 9;
   @override
   ServiceRunStartReader fromRawReader(RawStructReader r) =>
       ServiceRunStartReader(r);
@@ -1832,7 +1878,7 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
   displayName: 'host.capnp:ServiceRunStart',
   shortName: 'ServiceRunStart',
   dataWords: 11,
-  pointerWords: 8,
+  pointerWords: 9,
   fields: [
     FieldSchemaInfo(
       name: 'submission',
@@ -2008,6 +2054,14 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 7,
         type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'protectedTls',
+      codeOrder: 22,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: StructRefTypeSchemaInfo(0x829e39ad160424c0),
       ),
     ),
   ],
@@ -5755,3 +5809,180 @@ const StructSchemaInfo serviceAuthorityInfoSchema = StructSchemaInfo(
 );
 
 final serviceAuthorityInfoFactory = _ServiceAuthorityInfoFactory();
+
+final class ProtectedTlsIdentityRefReader extends StructReader {
+  ProtectedTlsIdentityRefReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = protectedTlsIdentityRefSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+
+  Uint8List? get certificateSha256 => getDataField(1);
+}
+
+final class ProtectedTlsIdentityRefBuilder extends StructBuilder {
+  ProtectedTlsIdentityRefBuilder(super.raw);
+
+  @override
+  ProtectedTlsIdentityRefReader asReader() =>
+      ProtectedTlsIdentityRefReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set certificateSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _ProtectedTlsIdentityRefFactory
+    extends
+        StructFactory<
+          ProtectedTlsIdentityRefReader,
+          ProtectedTlsIdentityRefBuilder
+        > {
+  @override
+  StructSchemaInfo get schema => protectedTlsIdentityRefSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  ProtectedTlsIdentityRefReader fromRawReader(RawStructReader r) =>
+      ProtectedTlsIdentityRefReader(r);
+  @override
+  ProtectedTlsIdentityRefReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ProtectedTlsIdentityRefReader(r, capabilities: capabilities);
+  @override
+  ProtectedTlsIdentityRefBuilder fromRawBuilder(RawStructBuilder r) =>
+      ProtectedTlsIdentityRefBuilder(r);
+}
+
+const StructSchemaInfo protectedTlsIdentityRefSchema = StructSchemaInfo(
+  id: 0x829e39ad160424c0,
+  displayName: 'host.capnp:ProtectedTlsIdentityRef',
+  shortName: 'ProtectedTlsIdentityRef',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'certificateSha256',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final protectedTlsIdentityRefFactory = _ProtectedTlsIdentityRefFactory();
+
+final class TlsIdentityInfoReader extends StructReader {
+  TlsIdentityInfoReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = tlsIdentityInfoSchema;
+
+  ProtectedTlsIdentityRefReader? get choice => getStructFieldWith(
+    0,
+    (r) => ProtectedTlsIdentityRefReader(r, capabilities: capabilityTable),
+  );
+
+  bool get disabled => getBoolField(0);
+}
+
+final class TlsIdentityInfoBuilder extends StructBuilder {
+  TlsIdentityInfoBuilder(super.raw);
+
+  @override
+  TlsIdentityInfoReader asReader() => TlsIdentityInfoReader(rawToReader());
+
+  ProtectedTlsIdentityRefBuilder initChoice() {
+    return initStructFieldWith(
+      0,
+      (r) => ProtectedTlsIdentityRefBuilder(r),
+      1,
+      2,
+    );
+  }
+
+  bool hasChoice() => hasPointerField(0);
+
+  set disabled(bool v) {
+    setBoolField(0, v);
+  }
+}
+
+final class _TlsIdentityInfoFactory
+    extends StructFactory<TlsIdentityInfoReader, TlsIdentityInfoBuilder> {
+  @override
+  StructSchemaInfo get schema => tlsIdentityInfoSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 1;
+  @override
+  TlsIdentityInfoReader fromRawReader(RawStructReader r) =>
+      TlsIdentityInfoReader(r);
+  @override
+  TlsIdentityInfoReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => TlsIdentityInfoReader(r, capabilities: capabilities);
+  @override
+  TlsIdentityInfoBuilder fromRawBuilder(RawStructBuilder r) =>
+      TlsIdentityInfoBuilder(r);
+}
+
+const StructSchemaInfo tlsIdentityInfoSchema = StructSchemaInfo(
+  id: 0xcf706275cfdfc99d,
+  displayName: 'host.capnp:TlsIdentityInfo',
+  shortName: 'TlsIdentityInfo',
+  dataWords: 1,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'choice',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0x829e39ad160424c0),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disabled',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final tlsIdentityInfoFactory = _TlsIdentityInfoFactory();
