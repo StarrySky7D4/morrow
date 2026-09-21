@@ -25,3 +25,18 @@ cargo test --manifest-path workbench_host/Cargo.toml --lib io_tasks::service::te
 The test environment must provide both built files; absence fails explicitly.
 The three bounded unsafe imports and fixed export belong only to this Wasm test
 fixture. It has no native transport, credential provider or storage access.
+
+For the Windows application integration test, the host example
+`package_service_resources_fixture` packages this same actual guest and writes
+two valid IO caller frames with deliberately incorrect endpoint/credential
+references. Arguments: `output.mplugin guest.wasm input.bin`; it also writes
+`input.bin.wait` for the separate held request. Outputs use create-new semantics.
+Set `MORROW_SERVICE_RESOURCES_PACKAGE` and `MORROW_SERVICE_RESOURCES_INPUT` to
+these files, alongside the existing native fixture environment variables and
+`MORROW_WINDOW_TEST_OUTPUT`. Run
+`flutter test integration_test/service_resources_window_test.dart -d windows --no-pub --reporter expanded`.
+
+The two cases separately verify an approval write retiring the service under
+the current conservative global revocation policy, and an explicit UI stop
+while the remote server withholds its response. Both must reclaim the original
+owner without waiting for the server release, then reopen the same store.

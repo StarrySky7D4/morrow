@@ -27,10 +27,14 @@ Future<void> tapVisible(WidgetTester tester, Finder target) async {
     () => target.evaluate().length == 1,
     reason: 'unique $target',
   );
-  await tester.ensureVisible(target);
-  // Allow route/scroll transitions to finish before testing the current target.
-  for (var i = 0; i < 10; i++) {
-    await tester.pump(const Duration(milliseconds: 40));
+  // Asynchronous metadata may expand the settings page after the first scroll.
+  // Recompute current geometry, boundedly; never tap an offscreen old position.
+  for (var attempt = 0; attempt < 5; attempt++) {
+    await tester.ensureVisible(target);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 40));
+    }
+    if (target.hitTestable().evaluate().length == 1) break;
   }
   expect(target.hitTestable(), findsOneWidget);
   await tester.tap(target.hitTestable());

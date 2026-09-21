@@ -1,5 +1,6 @@
 // Shared private fixture for actual Windows service-failure tests. The service
-// guest is a two-request WAT fixture; business uses the real builtin Rust guest.
+// default guest is a two-request WAT fixture; resourcePackage selects an actual
+// Rust service guest. Business always uses the real builtin Rust guest.
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -44,6 +45,7 @@ class RealServiceFixture {
   static Future<RealServiceFixture> open({
     bool occupyPort = false,
     Future<RustWorkbench> Function(Directory)? openBackend,
+    String? resourcePackage,
   }) async {
     final dir = await Directory.systemTemp.createTemp(
       'morrow-external-service-fault-',
@@ -59,7 +61,10 @@ class RealServiceFixture {
               managed: true,
             );
       fixture = RealServiceFixture._(dir, backend);
-      await fixture._prepare(occupyPort: occupyPort);
+      await fixture._prepare(
+        occupyPort: occupyPort,
+        resourcePackage: resourcePackage,
+      );
       return fixture;
     } catch (_) {
       if (fixture != null) {
@@ -71,7 +76,11 @@ class RealServiceFixture {
     }
   }
 
-  Future<void> _select(String path, {bool enable = false}) async {
+  Future<void> _select(
+    String path, {
+    bool enable = false,
+    bool outbound = false,
+  }) async {
     final candidate = (await backend.inspectPlugin(path)).entries.single;
     await backend.importPlugin(
       path,
@@ -83,6 +92,7 @@ class RealServiceFixture {
     await backend.configureExternalIo(plugin, catalog.revision, [
       'http-listen',
       'http-publish',
+      if (outbound) 'http-request',
     ]);
     catalog = await entireCatalog(backend);
     plugin = catalog.entries.singleWhere((e) => e.id == candidate.id);
@@ -94,8 +104,15 @@ class RealServiceFixture {
     registry = catalog.revision;
   }
 
-  Future<void> _prepare({required bool occupyPort}) async {
-    await _select(Platform.environment['MORROW_SERVICE_RUN_PACKAGE']!);
+  Future<void> _prepare({
+    required bool occupyPort,
+    String? resourcePackage,
+  }) async {
+    await _select(
+      resourcePackage ?? Platform.environment['MORROW_SERVICE_RUN_PACKAGE']!,
+      enable: resourcePackage != null,
+      outbound: resourcePackage != null,
+    );
     issued = await backend.issueServiceAuthentication(
       reference: Uint8List(0),
       expectedRevision: BigInt.zero,
@@ -121,19 +138,24 @@ class RealServiceFixture {
           ],
         );
     final initial = await backend.saveServiceConfig(update());
-    final output = await Directory(
-      'build/service-run-routing',
-    ).create(recursive: true);
-    final bound =
-        '${output.absolute.path}/fault-service-${DateTime.now().microsecondsSinceEpoch}.mplugin';
-    final packaged = await Process.run(
-      Platform.environment['MORROW_SERVICE_RUN_PACKAGER']!,
-      [bound, _hex(initial.namespace)],
-    );
-    expect(packaged.exitCode, 0, reason: '${packaged.stderr}');
-    await _select(bound, enable: true);
-    config = await backend.saveServiceConfig(update(previous: initial));
-    expect(config.namespace, initial.namespace);
+    if (resourcePackage != null) {
+      // The actual Rust guest decodes the invocation and needs no namespace patch.
+      config = initial;
+    } else {
+      final output = await Directory(
+        'build/service-run-routing',
+      ).create(recursive: true);
+      final bound =
+          '${output.absolute.path}/fault-service-${DateTime.now().microsecondsSinceEpoch}.mplugin';
+      final packaged = await Process.run(
+        Platform.environment['MORROW_SERVICE_RUN_PACKAGER']!,
+        [bound, _hex(initial.namespace)],
+      );
+      expect(packaged.exitCode, 0, reason: '${packaged.stderr}');
+      await _select(bound, enable: true);
+      config = await backend.saveServiceConfig(update(previous: initial));
+      expect(config.namespace, initial.namespace);
+    }
     reservation = await ServerSocket.bind(InternetAddress.loopbackIPv4, 0);
     address = '127.0.0.1:${reservation!.port}';
     publication = await backend.saveServicePublication(
