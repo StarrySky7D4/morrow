@@ -504,7 +504,7 @@ final class RequestBuilder extends StructBuilder {
   }
 
   ServiceRunStartBuilder initServiceRun() {
-    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 6);
+    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 7);
   }
 
   bool hasServiceRun() => hasPointerField(35);
@@ -1642,6 +1642,12 @@ final class ServiceRunStartReader extends StructReader {
   int get maxConcurrent => getUint16Field(76);
 
   int get timeoutMs => getUint32Field(80);
+
+  ListReader<ServiceEndpointSelectionReader>? get outbound =>
+      getStructListFieldWith(
+        6,
+        (r) => ServiceEndpointSelectionReader(r, capabilities: capabilityTable),
+      );
 }
 
 final class ServiceRunStartBuilder extends StructBuilder {
@@ -1729,6 +1735,16 @@ final class ServiceRunStartBuilder extends StructBuilder {
   set timeoutMs(int v) {
     setUint32Field(80, v);
   }
+
+  ListBuilder<ServiceEndpointSelectionBuilder> initOutbound(int length) {
+    return initStructListFieldWith(
+      6,
+      length,
+      (r) => ServiceEndpointSelectionBuilder(r),
+      1,
+      1,
+    );
+  }
 }
 
 final class _ServiceRunStartFactory
@@ -1738,7 +1754,7 @@ final class _ServiceRunStartFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 6;
+  int get ptrWords => 7;
   @override
   ServiceRunStartReader fromRawReader(RawStructReader r) =>
       ServiceRunStartReader(r);
@@ -1757,7 +1773,7 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
   displayName: 'host.capnp:ServiceRunStart',
   shortName: 'ServiceRunStart',
   dataWords: 11,
-  pointerWords: 6,
+  pointerWords: 7,
   fields: [
     FieldSchemaInfo(
       name: 'submission',
@@ -1919,10 +1935,97 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('UInt32'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'outbound',
+      codeOrder: 20,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xb49bb2319d21c626)),
+      ),
+    ),
   ],
 );
 
 final serviceRunStartFactory = _ServiceRunStartFactory();
+
+final class ServiceEndpointSelectionReader extends StructReader {
+  ServiceEndpointSelectionReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceEndpointSelectionSchema;
+
+  Uint8List? get reference => getDataField(0);
+
+  int get revision => getUint64Field(0);
+}
+
+final class ServiceEndpointSelectionBuilder extends StructBuilder {
+  ServiceEndpointSelectionBuilder(super.raw);
+
+  @override
+  ServiceEndpointSelectionReader asReader() =>
+      ServiceEndpointSelectionReader(rawToReader());
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+}
+
+final class _ServiceEndpointSelectionFactory
+    extends
+        StructFactory<
+          ServiceEndpointSelectionReader,
+          ServiceEndpointSelectionBuilder
+        > {
+  @override
+  StructSchemaInfo get schema => serviceEndpointSelectionSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 1;
+  @override
+  ServiceEndpointSelectionReader fromRawReader(RawStructReader r) =>
+      ServiceEndpointSelectionReader(r);
+  @override
+  ServiceEndpointSelectionReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceEndpointSelectionReader(r, capabilities: capabilities);
+  @override
+  ServiceEndpointSelectionBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceEndpointSelectionBuilder(r);
+}
+
+const StructSchemaInfo serviceEndpointSelectionSchema = StructSchemaInfo(
+  id: 0xb49bb2319d21c626,
+  displayName: 'host.capnp:ServiceEndpointSelection',
+  shortName: 'ServiceEndpointSelection',
+  dataWords: 1,
+  pointerWords: 1,
+  fields: [
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final serviceEndpointSelectionFactory = _ServiceEndpointSelectionFactory();
 
 final class ServiceRunStateReader extends StructReader {
   ServiceRunStateReader(super.raw, {super.capabilities});

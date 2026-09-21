@@ -1004,6 +1004,9 @@ class _PluginLibraryState extends State<PluginLibrary> {
             backend: widget.backend as WorkbenchServiceRunControl,
             ioBackend: widget.backend as WorkbenchIoTaskControl,
             metadataBackend: widget.backend as WorkbenchServiceControl,
+            endpointBackend: widget.backend is WorkbenchEndpointControl
+                ? widget.backend as WorkbenchEndpointControl
+                : null,
             plugins: _confirmed ? _entries : const [],
             registryRevision: _confirmed ? _revision : null,
             ink: widget.ink,

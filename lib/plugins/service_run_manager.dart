@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'io_task_models.dart';
+import 'endpoint_control.dart';
+import 'service_endpoint_catalog.dart';
 import 'plugin_library.dart';
 import 'service_control.dart';
 import 'service_run_control.dart';
@@ -43,10 +45,12 @@ class ServiceRunManager extends StatefulWidget {
     required this.line,
     required this.radius,
     this.onChanged,
+    this.endpointBackend,
   });
   final WorkbenchServiceRunControl backend;
   final WorkbenchIoTaskControl ioBackend;
   final WorkbenchServiceControl metadataBackend;
+  final WorkbenchEndpointControl? endpointBackend;
   final List<PluginLibraryEntry> plugins;
   final BigInt? registryRevision;
   final Color ink, muted, line;
@@ -66,6 +70,9 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   int _attachment = 0;
   bool _invalid = false, _refreshing = false;
   bool _refreshQueued = false, _waitingForMetadata = false;
+  List<StoredEndpoint> _endpoints = const [];
+  final Map<String, ServiceEndpointSelection> _outbound = {};
+  bool _endpointsTrusted = false, _endpointsFailed = false;
   final _fields = {
     'lifetime': TextEditingController(text: '60000'),
     'jobs': TextEditingController(text: '64'),
@@ -81,7 +88,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   };
 
   String _signature(ServiceRunManager w) =>
-      '${w.registryRevision}|${w.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.approvedIo.join(',')}:${p.ioHandlers.join(',')}').join('|')}';
+      '${w.registryRevision}|${w.plugins.map((p) => '${p.id}:${_hex(p.digest)}:${p.enabled}:${p.available}:${p.declaredIo.join(',')}:${p.approvedIo.join(',')}:${p.ioHandlers.join(',')}').join('|')}';
   String get _directory => _signature(widget);
   bool get _metadataCurrent =>
       !_refreshing &&
@@ -155,6 +162,42 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     return result;
   }
 
+  List<StoredEndpoint> get _endpointChoices {
+    if (!_endpointsTrusted) return const [];
+    final choices = _choices.where((c) => c.key == _selection).toList();
+    if (choices.length != 1) return const [];
+    final plugin = choices.single.plugin;
+    final now = BigInt.from(DateTime.now().millisecondsSinceEpoch);
+    bool allowed(String capability) =>
+        plugin.declaredIo.contains(capability) &&
+        plugin.approvedIo.contains(capability);
+    if (!allowed('http-request')) return const [];
+    return _endpoints
+        .where(
+          (e) =>
+              !e.disabled &&
+              e.createdMs <= now &&
+              e.expiresMs > now &&
+              e.policy.packageId == plugin.id &&
+              listEquals(e.policy.packageDigest, plugin.digest) &&
+              (e.policy.credentialReference.isEmpty ||
+                  allowed('credential-use')),
+        )
+        .toList();
+  }
+
+  bool get _outboundCurrent =>
+      _outbound.isEmpty ||
+      (!_refreshing &&
+          _endpointsTrusted &&
+          _outbound.values.every(
+            (selection) => _endpointChoices.any(
+              (e) =>
+                  _hex(e.reference) == selection.key &&
+                  e.revision == selection.revision,
+            ),
+          ));
+
   void _attach() {
     _attachment++;
     _run = ServiceRunSession.forBackend(widget.backend, widget.ioBackend);
@@ -163,6 +206,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     _metadata.addListener(_metadataChanged);
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_run.shouldPoll) unawaited(_run.refresh());
+      if (_outbound.isNotEmpty && !_outboundCurrent) markSessionViewDirty();
     });
     unawaited(_refresh());
   }
@@ -187,9 +231,14 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.backend, widget.backend) ||
         !identical(oldWidget.ioBackend, widget.ioBackend) ||
-        !identical(oldWidget.metadataBackend, widget.metadataBackend)) {
+        !identical(oldWidget.metadataBackend, widget.metadataBackend) ||
+        !identical(oldWidget.endpointBackend, widget.endpointBackend)) {
       _detach();
       _selection = null;
+      _outbound.clear();
+      _endpoints = const [];
+      _endpointsTrusted = false;
+      _endpointsFailed = false;
       _boundDirectory = '';
       _lastState = '';
       _refreshing = false;
@@ -249,8 +298,13 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     if (_refreshing) return;
     final attachment = _attachment, directory = _directory;
     final run = _run, metadata = _metadata;
+    final endpoints = widget.endpointBackend;
     _waitingForMetadata = false;
-    setState(() => _refreshing = true);
+    setState(() {
+      _refreshing = true;
+      _endpointsTrusted = false;
+      _endpointsFailed = false;
+    });
     // Observe the owner first. Metadata uses the ordinary business route and
     // can wait behind a guest; observation must not depend on that completion.
     await run.refresh();
@@ -261,6 +315,17 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
       await metadata.refresh();
     }
     if (!mounted || attachment != _attachment) return;
+    if (endpoints != null) {
+      try {
+        final loaded = await loadServiceEndpoints(endpoints);
+        if (!mounted || attachment != _attachment) return;
+        _endpoints = loaded;
+        _endpointsTrusted = true;
+      } catch (_) {
+        if (!mounted || attachment != _attachment) return;
+        _endpointsFailed = true;
+      }
+    }
     setState(() {
       _refreshing = false;
       if (!_waitingForMetadata && metadata.trusted && directory == _directory) {
@@ -271,7 +336,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   }
 
   Future<void> _start() async {
-    if (!_run.canStart || !_metadataCurrent) return;
+    if (!_run.canStart || !_metadataCurrent || !_outboundCurrent) return;
     final selected = _choices.where((c) => c.key == _selection).toList();
     if (selected.length != 1) return;
     final choice = selected.single;
@@ -283,6 +348,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         List.generate(32, (_) => random.nextInt(256)),
       );
       if (submission.every((v) => v == 0)) submission[0] = 1;
+      // Freeze the request in this synchronous event-loop turn, before any
+      // await or backend call can deliver a new directory observation.
       final request = ServiceRunRequest(
         submission: submission,
         configId: choice.config.id,
@@ -304,6 +371,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         maxHeaderBytes: number('header-bytes'),
         maxConcurrent: number('concurrent'),
         timeoutMs: number('timeout'),
+        outbound: _outbound.values.toList(),
       );
       ServiceRunValidation.request(request);
       setState(() => _invalid = false);
@@ -420,6 +488,14 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
             ),
           ),
           _note(l.pluginsServiceRunHint),
+          if (_run.attempt?.outbound.isNotEmpty == true) ...[
+            _note(l.pluginsServiceRunOutboundAttempt),
+            for (final endpoint in _run.attempt!.outbound)
+              _note(
+                '${endpoint.key} · r${endpoint.revision}',
+                key: 'attempt-endpoint-${endpoint.key}',
+              ),
+          ],
           Wrap(
             spacing: 8,
             runSpacing: 6,
@@ -537,11 +613,68 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
                 .toList(),
             onChanged: !_run.canStart
                 ? null
-                : (value) => setState(() => _selection = value),
+                : (value) => setState(() {
+                    if (value != _selection) _outbound.clear();
+                    _selection = value;
+                  }),
           ),
           if (choices.isEmpty) _note(l.pluginsServiceRunNoSelection),
           if (_selection != null && !selectionCurrent)
             _note(l.pluginsServiceRunStale, key: 'stale'),
+          if (widget.endpointBackend != null) ...[
+            _note(l.pluginsServiceRunOutboundHint),
+            if (_endpointsFailed)
+              _note(l.pluginsServiceRunOutboundFailed, key: 'outbound-failed'),
+            if (!_outboundCurrent && _outbound.isNotEmpty)
+              _note(l.pluginsServiceRunOutboundStale, key: 'outbound-stale'),
+            for (final endpoint in _endpointChoices)
+              CheckboxListTile(
+                key: ValueKey(
+                  'service-run-endpoint-${_hex(endpoint.reference)}',
+                ),
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                controlAffinity: ListTileControlAffinity.leading,
+                activeColor: widget.ink,
+                title: Text(
+                  endpoint.policy.origin,
+                  style: TextStyle(color: widget.ink, fontSize: 12),
+                ),
+                subtitle: Text(
+                  '${endpoint.policy.methods.join(', ')} · ${_hex(endpoint.reference).substring(0, 12)} · r${endpoint.revision}',
+                  style: TextStyle(color: widget.muted, fontSize: 11),
+                ),
+                value:
+                    _outbound[_hex(endpoint.reference)]?.revision ==
+                    endpoint.revision,
+                onChanged:
+                    !_run.canStart ||
+                        _refreshing ||
+                        (_outbound.length >= 8 &&
+                            !_outbound.containsKey(_hex(endpoint.reference)))
+                    ? null
+                    : (checked) {
+                        setState(() {
+                          if (checked == true) {
+                            _outbound[_hex(
+                              endpoint.reference,
+                            )] = ServiceEndpointSelection(
+                              reference: endpoint.reference,
+                              revision: endpoint.revision,
+                            );
+                          } else {
+                            _outbound.remove(_hex(endpoint.reference));
+                          }
+                        });
+                      },
+              ),
+            if (_outbound.isNotEmpty)
+              _button(
+                l.pluginsServiceRunOutboundClear,
+                'outbound-clear',
+                _run.canStart ? () => setState(_outbound.clear) : null,
+              ),
+          ],
           _field(l.pluginsServiceRunLifetime, 'lifetime'),
           _field(l.pluginsServiceRunJobs, 'jobs'),
           _field(l.pluginsServiceRunBytes, 'bytes'),
@@ -570,7 +703,10 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
           _button(
             l.pluginsServiceRunStart,
             'start',
-            _run.canStart && selectionCurrent && _metadataCurrent
+            _run.canStart &&
+                    selectionCurrent &&
+                    _metadataCurrent &&
+                    _outboundCurrent
                 ? _start
                 : null,
           ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/http_task_manager.dart';
+import 'package:morrow_studio/plugins/endpoint_control.dart';
 import 'package:morrow_studio/plugins/io_task_control.dart';
 import 'package:morrow_studio/plugins/plugin_library.dart';
 import 'package:morrow_studio/plugins/service_control.dart';
@@ -14,7 +15,7 @@ import 'package:morrow_studio/plugins/service_run_session.dart';
 import 'package:morrow_studio/plugins/service_session.dart';
 
 import 'service_manager_fakes.dart';
-import 'http_task_manager_test.dart' show FakeEndpoints;
+import 'http_task_manager_test.dart' show FakeEndpoints, endpoint;
 
 IoTaskSnapshot _local() => IoTaskSnapshot(
   storage: IoStoragePhase.local,
@@ -122,6 +123,7 @@ PluginLibraryEntry _plugin({
   bool available = true,
   bool approved = true,
   int digest = 3,
+  bool outbound = false,
 }) => PluginLibraryEntry(
   id: 'example.package',
   name: 'Approved service package',
@@ -136,8 +138,10 @@ PluginLibraryEntry _plugin({
   handlers: const [],
   issue: '',
   ioHandlers: const ['invoke'],
-  declaredIo: const ['http-listen', 'http-publish'],
-  approvedIo: approved ? const ['http-listen', 'http-publish'] : const [],
+  declaredIo: ['http-listen', 'http-publish', if (outbound) 'http-request'],
+  approvedIo: approved
+      ? ['http-listen', 'http-publish', if (outbound) 'http-request']
+      : const [],
 );
 
 ServicePublication _policy({
@@ -182,6 +186,16 @@ ServiceFakeBackend _metadata({
     ];
 }
 
+StoredEndpoint _outboundEndpoint({int reference = 2}) {
+  final value = endpoint(
+    reference: reference,
+    packageId: 'example.package',
+    digest: 3,
+  );
+  value.policy.packageDigest.setAll(0, serviceKey(3));
+  return value;
+}
+
 Widget _host(
   _RunBackend run,
   ServiceFakeBackend metadata, {
@@ -191,6 +205,7 @@ Widget _host(
   bool showHttp = false,
   bool catalogReady = true,
   bool showRunPanel = true,
+  WorkbenchEndpointControl? endpoints,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -205,6 +220,7 @@ Widget _host(
               backend: run,
               ioBackend: run,
               metadataBackend: metadata,
+              endpointBackend: endpoints,
               plugins: catalogReady ? [plugin ?? _plugin()] : [],
               registryRevision: catalogReady ? BigInt.from(revision) : null,
               ink: Colors.black,
@@ -272,6 +288,231 @@ void _cleanup(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('narrow panel limits explicit selections to eight', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    tester.view.physicalSize = const Size(360, 760);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final run = _RunBackend(),
+        metadata = _metadata(),
+        endpoints = FakeEndpoints();
+    final rows = List.generate(9, (i) => _outboundEndpoint(reference: i + 1));
+    var offset = 0;
+    endpoints.page = () async {
+      final end = (offset + 2).clamp(0, rows.length);
+      final entries = rows.sublist(offset, end);
+      offset = end;
+      return EndpointPage(
+        entries: entries,
+        snapshot: serviceKey(50),
+        next: end == rows.length ? null : entries.last.reference,
+      );
+    };
+    await _mount(
+      tester,
+      _host(
+        run,
+        metadata,
+        endpoints: endpoints,
+        plugin: _plugin(outbound: true),
+        locale: 'zh',
+      ),
+    );
+    await _select(tester);
+    String key(int i) =>
+        'endpoint-${rows[i].reference.map((b) => b.toRadixString(16).padLeft(2, '0')).join()}';
+    for (var i = 0; i < 8; i++) {
+      await _click(tester, key(i));
+    }
+    expect(tester.widget<CheckboxListTile>(_find(key(8))).onChanged, isNull);
+    await _click(tester, 'start');
+    expect(run.starts.single.outbound, hasLength(8));
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('unapproved and foreign endpoints cannot be selected', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final run = _RunBackend(),
+        metadata = _metadata(),
+        endpoints = FakeEndpoints();
+    endpoints.entries = [_outboundEndpoint(), endpoint(reference: 3)];
+    await _mount(tester, _host(run, metadata, endpoints: endpoints));
+    await _select(tester);
+    expect(find.byType(CheckboxListTile), findsNothing);
+    await _mount(
+      tester,
+      _host(
+        run,
+        metadata,
+        endpoints: endpoints,
+        plugin: _plugin(outbound: true),
+      ),
+    );
+    await _select(tester);
+    expect(find.byType(CheckboxListTile), findsOneWidget);
+    await _click(tester, 'start');
+    expect(run.starts.single.outbound, isEmpty);
+  });
+  testWidgets('late endpoint directory cannot replace a new backend', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final run = _RunBackend(), metadata = _metadata();
+    final old = FakeEndpoints(), fresh = FakeEndpoints()..entries = [];
+    final gate = Completer<EndpointPage>();
+    old.page = () => gate.future;
+    await _mount(
+      tester,
+      _host(run, metadata, endpoints: old, plugin: _plugin(outbound: true)),
+    );
+    await _mount(
+      tester,
+      _host(run, metadata, endpoints: fresh, plugin: _plugin(outbound: true)),
+    );
+    gate.complete(
+      EndpointPage(entries: [_outboundEndpoint()], snapshot: serviceKey(50)),
+    );
+    await tester.pumpAndSettle();
+    await _select(tester);
+    expect(find.byType(CheckboxListTile), findsNothing);
+    expect(run.starts, isEmpty);
+  });
+  testWidgets(
+    'selected endpoint revision freezes into pending attempt across remount',
+    (tester) async {
+      _cleanup(tester);
+      final run = _RunBackend(),
+          metadata = _metadata(),
+          endpoints = FakeEndpoints();
+      final row = _outboundEndpoint();
+      endpoints.entries = [row];
+      final gate = Completer<ServiceRunSnapshot>();
+      run.onStart = (_) => gate.future;
+      await _mount(
+        tester,
+        _host(
+          run,
+          metadata,
+          endpoints: endpoints,
+          plugin: _plugin(outbound: true),
+        ),
+      );
+      await _select(tester);
+      final reference = row.reference
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+      await _click(tester, 'endpoint-$reference');
+      await _click(tester, 'start');
+      expect(run.starts, hasLength(1));
+      final request = run.starts.single;
+      expect(request.outbound.single.revision, row.revision);
+      expect(request.outbound.single.reference, orderedEquals(row.reference));
+      await _mount(tester, const SizedBox.shrink());
+      await _mount(
+        tester,
+        _host(
+          run,
+          metadata,
+          endpoints: endpoints,
+          plugin: _plugin(outbound: true),
+          locale: 'zh',
+        ),
+      );
+      expect(_find('attempt-endpoint-$reference'), findsOneWidget);
+      gate.completeError(StateError('lost receipt'));
+      await tester.pumpAndSettle();
+      await _click(tester, 'refresh');
+      expect(run.starts, hasLength(1));
+      expect(_button(tester, 'start').onPressed, isNull);
+      expect(endpoints.writes, 0);
+      expect(ServiceRunSession.forBackend(run, run).attempt, same(request));
+    },
+  );
+  testWidgets(
+    'refresh keeps stale selection and requires explicit reselection',
+    (tester) async {
+      _cleanup(tester);
+      final run = _RunBackend(),
+          metadata = _metadata(),
+          endpoints = FakeEndpoints();
+      final first = _outboundEndpoint();
+      endpoints.entries = [first];
+      await _mount(
+        tester,
+        _host(
+          run,
+          metadata,
+          endpoints: endpoints,
+          plugin: _plugin(outbound: true),
+        ),
+      );
+      await _select(tester);
+      final reference = first.reference
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+      await _click(tester, 'endpoint-$reference');
+      endpoints.entries = [
+        StoredEndpoint(
+          reference: first.reference,
+          revision: first.revision + BigInt.one,
+          createdMs: first.createdMs,
+          expiresMs: first.expiresMs,
+          disabled: false,
+          policy: first.policy,
+        ),
+      ];
+      await _click(tester, 'refresh-records');
+      expect(_find('outbound-stale'), findsOneWidget);
+      expect(_button(tester, 'start').onPressed, isNull);
+      expect(
+        tester.widget<CheckboxListTile>(_find('endpoint-$reference')).value,
+        isFalse,
+      );
+      await _click(tester, 'endpoint-$reference');
+      await _click(tester, 'start');
+      expect(
+        run.starts.single.outbound.single.revision,
+        first.revision + BigInt.one,
+      );
+      expect(endpoints.writes, 0);
+    },
+  );
+  testWidgets(
+    'failed endpoint refresh blocks selected but permits explicitly cleared service',
+    (tester) async {
+      _cleanup(tester);
+      final run = _RunBackend(),
+          metadata = _metadata(),
+          endpoints = FakeEndpoints();
+      final row = _outboundEndpoint();
+      endpoints.entries = [row];
+      await _mount(
+        tester,
+        _host(
+          run,
+          metadata,
+          endpoints: endpoints,
+          plugin: _plugin(outbound: true),
+        ),
+      );
+      await _select(tester);
+      final reference = row.reference
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+      await _click(tester, 'endpoint-$reference');
+      endpoints.page = () async => throw StateError('unavailable');
+      await _click(tester, 'refresh-records');
+      expect(_find('outbound-failed'), findsOneWidget);
+      expect(_button(tester, 'start').onPressed, isNull);
+      await _click(tester, 'outbound-clear');
+      await _click(tester, 'start');
+      expect(run.starts.single.outbound, isEmpty);
+    },
+  );
   int choices(WidgetTester tester) => tester
       .widget<DropdownButton<String>>(
         find.descendant(
@@ -384,25 +625,24 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets(
-    'parent scroll cannot corrupt advanced expansion on remount',
-    (tester) async {
-      _cleanup(tester);
-      final run = _RunBackend(), metadata = _metadata();
-      await _mount(tester, _host(run, metadata));
-      await _click(tester, 'advanced');
-      await tester.ensureVisible(_find('timeout'));
-      await tester.pumpAndSettle();
-      expect(_find('timeout'), findsOneWidget);
-      await _mount(tester, _host(run, metadata, showRunPanel: false));
-      await _mount(tester, _host(run, metadata));
-      expect(_find('timeout'), findsNothing);
-      await _click(tester, 'advanced');
-      expect(_find('timeout'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-      expect(run.starts, isEmpty);
-    },
-  );
+  testWidgets('parent scroll cannot corrupt advanced expansion on remount', (
+    tester,
+  ) async {
+    _cleanup(tester);
+    final run = _RunBackend(), metadata = _metadata();
+    await _mount(tester, _host(run, metadata));
+    await _click(tester, 'advanced');
+    await tester.ensureVisible(_find('timeout'));
+    await tester.pumpAndSettle();
+    expect(_find('timeout'), findsOneWidget);
+    await _mount(tester, _host(run, metadata, showRunPanel: false));
+    await _mount(tester, _host(run, metadata));
+    expect(_find('timeout'), findsNothing);
+    await _click(tester, 'advanced');
+    expect(_find('timeout'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    expect(run.starts, isEmpty);
+  });
 
   testWidgets(
     'explicit approved selection pins authority and submitted budgets',

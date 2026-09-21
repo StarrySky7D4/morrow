@@ -601,5 +601,10 @@
         "type": "String"
       }
     }
-  }
+  },
+  "pluginsServiceRunOutboundHint": "Outgoing APIs (optional, up to 8). Only endpoints approved for this package are listed. Leaving all unchecked blocks outgoing calls.",
+  "pluginsServiceRunOutboundFailed": "Could not verify the endpoint list. Refresh before using selected endpoints.",
+  "pluginsServiceRunOutboundStale": "A selected endpoint changed or is no longer available. Select its current version explicitly, or clear the selection.",
+  "pluginsServiceRunOutboundClear": "Clear endpoint selection",
+  "pluginsServiceRunOutboundAttempt": "Endpoints bound to this start attempt"
 }

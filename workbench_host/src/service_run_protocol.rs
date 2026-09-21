@@ -2,7 +2,7 @@
 //! from persisted desired state without a fresh explicit start.
 use super::{io_state_reply, text, wire};
 use crate::io_tasks::{
-    service::{ServicePhase, ServiceSnapshot, ServiceStart},
+    service::{ServiceEndpointSelection, ServicePhase, ServiceSnapshot, ServiceStart},
     service_commands::{CommandKey, CommandSnapshot},
 };
 use crate::{Result, Workbench, io_tasks::TaskKey};
@@ -89,35 +89,51 @@ pub(super) fn handle(
     let action = r.get_action()?;
     if action == wire::Action::ServiceRunStart {
         let s = r.get_service_run()?;
-        let key = host.start_service(ServiceStart {
-            submission: s.get_submission()?.try_into()?,
-            config_id: text(s.get_config_id())?,
-            config_digest: s.get_config_digest()?.try_into()?,
-            config_revision: s.get_config_revision(),
-            publication: s.get_publication()?.try_into()?,
-            publication_revision: s.get_publication_revision(),
-            package_id: text(s.get_package_id())?,
-            package_digest: s.get_package_digest()?.try_into()?,
-            registry_revision: s.get_registry_revision(),
-            lifetime: Duration::from_millis(s.get_lifetime_ms().into()),
-            budget: ServiceRunBudget {
-                max_jobs: s.get_max_jobs(),
-                max_bytes: s.get_max_bytes(),
+        let selected = s.get_outbound()?;
+        if selected.len() as usize > morrow_network_node::managed_http::MAX_SERVICE_ENDPOINTS {
+            return Err("too many service outbound endpoints".into());
+        }
+        let outbound = selected
+            .iter()
+            .map(|endpoint| -> Result<_> {
+                Ok(ServiceEndpointSelection {
+                    reference: endpoint.get_reference()?.try_into()?,
+                    revision: endpoint.get_revision(),
+                })
+            })
+            .collect::<Result<Vec<_>>>()?;
+        let key = host.start_service_with_outbound(
+            ServiceStart {
+                submission: s.get_submission()?.try_into()?,
+                config_id: text(s.get_config_id())?,
+                config_digest: s.get_config_digest()?.try_into()?,
+                config_revision: s.get_config_revision(),
+                publication: s.get_publication()?.try_into()?,
+                publication_revision: s.get_publication_revision(),
+                package_id: text(s.get_package_id())?,
+                package_digest: s.get_package_digest()?.try_into()?,
+                registry_revision: s.get_registry_revision(),
+                lifetime: Duration::from_millis(s.get_lifetime_ms().into()),
+                budget: ServiceRunBudget {
+                    max_jobs: s.get_max_jobs(),
+                    max_bytes: s.get_max_bytes(),
+                },
+                limits: JobLimits::new(
+                    s.get_max_calls(),
+                    s.get_max_job_bytes(),
+                    s.get_max_total_bytes(),
+                )
+                .map_err(|_| "invalid service job limits")?,
+                network_limits: morrow_network_node::Limits {
+                    max_request_bytes: s.get_max_request_bytes().try_into()?,
+                    max_response_bytes: s.get_max_response_bytes().try_into()?,
+                    max_header_bytes: s.get_max_header_bytes().try_into()?,
+                    max_concurrent: s.get_max_concurrent().into(),
+                    timeout: Duration::from_millis(s.get_timeout_ms().into()),
+                },
             },
-            limits: JobLimits::new(
-                s.get_max_calls(),
-                s.get_max_job_bytes(),
-                s.get_max_total_bytes(),
-            )
-            .map_err(|_| "invalid service job limits")?,
-            network_limits: morrow_network_node::Limits {
-                max_request_bytes: s.get_max_request_bytes().try_into()?,
-                max_response_bytes: s.get_max_response_bytes().try_into()?,
-                max_header_bytes: s.get_max_header_bytes().try_into()?,
-                max_concurrent: s.get_max_concurrent().into(),
-                timeout: Duration::from_millis(s.get_timeout_ms().into()),
-            },
-        })?;
+            &outbound,
+        )?;
         service_reply(host.service_status(key)?, out.reborrow().init_service_run());
         return Ok(());
     }

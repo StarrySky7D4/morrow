@@ -2081,6 +2081,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.';
 
   @override
+  String get pluginsServiceRunOutboundAttempt =>
+      'Endpoints bound to this start attempt';
+
+  @override
+  String get pluginsServiceRunOutboundClear => 'Clear endpoint selection';
+
+  @override
+  String get pluginsServiceRunOutboundFailed =>
+      'Could not verify the endpoint list. Refresh before using selected endpoints.';
+
+  @override
+  String get pluginsServiceRunOutboundHint =>
+      'Outgoing APIs (optional, up to 8). Only endpoints approved for this package are listed. Leaving all unchecked blocks outgoing calls.';
+
+  @override
+  String get pluginsServiceRunOutboundStale =>
+      'A selected endpoint changed or is no longer available. Select its current version explicitly, or clear the selection.';
+
+  @override
   String get pluginsServiceRunOwned =>
       'Content is managed by the running service';
 

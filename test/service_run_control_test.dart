@@ -19,6 +19,7 @@ ServiceRunRequest request({
   int requestBytes = 65536,
   BigInt? jobs,
   BigInt? bytes,
+  List<ServiceEndpointSelection> outbound = const [],
 }) => ServiceRunRequest(
   submission: submission ?? identity(1),
   configId: 'service',
@@ -38,6 +39,7 @@ ServiceRunRequest request({
   maxCalls: calls,
   maxConcurrent: concurrent,
   maxRequestBytes: requestBytes,
+  outbound: outbound,
 );
 
 host.ResponseBuilder response() =>
@@ -59,6 +61,74 @@ host.ResponseBuilder command({
 }
 
 void main() {
+  test(
+    'endpoint selection is owned and preserves UInt64 revisions on wire',
+    () async {
+      final source = identity(7), max = (BigInt.one << 64) - BigInt.one;
+      final selections = [
+        ServiceEndpointSelection(reference: source, revision: max),
+      ];
+      final value = request(outbound: selections);
+      source.fillRange(0, source.length, 0);
+      selections.clear();
+      expect(value.outbound.single.reference, orderedEquals(identity(7)));
+      expect(() => value.outbound.clear(), throwsUnsupportedError);
+      expect(
+        () => value.outbound.single.reference[0] = 0,
+        throwsUnsupportedError,
+      );
+      await sendHostRequest(
+        host.Action.serviceRunStart,
+        configure: (r) =>
+            ServiceRunCodec.writeRequest(value, r.initServiceRun()),
+        send: (bytes) async {
+          final selections = MessageReader.deserialize(
+            bytes,
+          ).getRoot(host.requestFactory).serviceRun!.outbound!;
+          expect(selections.length, 1);
+          expect(selections[0].reference, orderedEquals(identity(7)));
+          expect(BigInt.from(selections[0].revision).toUnsigned(64), max);
+        },
+      );
+    },
+  );
+  test(
+    'invalid selections reject before sending and old callers select none',
+    () async {
+      ServiceEndpointSelection endpoint(int id, BigInt revision) =>
+          ServiceEndpointSelection(reference: identity(id), revision: revision);
+      for (final selections in [
+        List.generate(9, (i) => endpoint(i + 1, BigInt.one)),
+        [endpoint(1, BigInt.one), endpoint(1, BigInt.two)],
+        [endpoint(0, BigInt.one)],
+        [endpoint(1, BigInt.zero)],
+        [endpoint(1, BigInt.one << 64)],
+        [
+          ServiceEndpointSelection(
+            reference: Uint8List(31),
+            revision: BigInt.one,
+          ),
+        ],
+      ]) {
+        var sends = 0;
+        await expectLater(
+          sendHostRequest(
+            host.Action.serviceRunStart,
+            configure: (r) => ServiceRunCodec.writeRequest(
+              request(outbound: selections),
+              r.initServiceRun(),
+            ),
+            send: (_) async {
+              sends++;
+            },
+          ),
+          throwsFormatException,
+        );
+        expect(sends, 0);
+      }
+      expect(request().outbound, isEmpty);
+    },
+  );
   test(
     'service request owns identities and preserves complete UInt64 revisions',
     () async {

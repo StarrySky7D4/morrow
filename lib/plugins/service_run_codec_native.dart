@@ -62,6 +62,11 @@ abstract final class ServiceRunCodec {
     out.maxHeaderBytes = value.maxHeaderBytes;
     out.maxConcurrent = value.maxConcurrent;
     out.timeoutMs = value.timeoutMs;
+    final outbound = out.initOutbound(value.outbound.length);
+    for (var i = 0; i < value.outbound.length; i++) {
+      outbound[i].reference = value.outbound[i].reference;
+      outbound[i].revision = _wire(value.outbound[i].revision);
+    }
   }
 
   static ServiceRunSnapshot snapshot(

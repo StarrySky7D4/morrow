@@ -69,6 +69,7 @@ impl Server {
             while !stopped.load(Ordering::SeqCst) {
                 match listener.accept() {
                     Ok((mut socket, _)) => {
+                        socket.set_nonblocking(false).unwrap();
                         count.fetch_add(1, Ordering::SeqCst);
                         socket
                             .set_read_timeout(Some(Duration::from_secs(2)))
@@ -185,10 +186,9 @@ fn selected_endpoint_executes_real_http_and_scope_controls_replay_after_reapprov
         reference: ENDPOINT,
         revision: 1,
     }];
-    let key = fixture
-        .app
-        .start_service_with_outbound(fixture.options(1), &selection)
-        .unwrap();
+    let frame = start_frame_with_outbound(fixture.options(1), &selection);
+    let reply = protocol_ok(&mut fixture.app, frame);
+    let key = TaskKey::from_bytes(&reply.service_key).unwrap();
     let address = running(&mut fixture.app, key);
     let result = request(address, "/api", 202);
     let body = &result[result.windows(4).position(|b| b == b"\r\n\r\n").unwrap() + 4..];
@@ -314,5 +314,47 @@ fn saved_endpoint_and_registry_approval_do_not_replace_explicit_service_selectio
             .unwrap()
             .is_none()
     );
+    fixture.app.finish().unwrap();
+}
+
+#[test]
+fn protocol_rejects_invalid_endpoint_selection_before_reserving_submission() {
+    let server = Server::new();
+    let mut allowed = caps();
+    allowed.insert(IoCapability::HttpRequest);
+    let mut fixture = Fixture::with_package("127.0.0.1:0".parse().unwrap(), package(), allowed);
+    save_endpoint(&mut fixture, &server, 1);
+    let selected = ServiceEndpointSelection {
+        reference: ENDPOINT,
+        revision: 1,
+    };
+    for entries in [
+        vec![selected; 9],
+        vec![selected; 2],
+        vec![ServiceEndpointSelection {
+            reference: ENDPOINT,
+            revision: 0,
+        }],
+        vec![ServiceEndpointSelection {
+            reference: ENDPOINT,
+            revision: u64::MAX,
+        }],
+        vec![ServiceEndpointSelection {
+            reference: [0; 32],
+            revision: 1,
+        }],
+    ] {
+        let frame = start_frame_with_outbound(fixture.options(1), &entries);
+        let reply = protocol_call(&mut fixture.app, frame);
+        assert!(!reply.error.is_empty());
+        assert!(fixture.app.state.task.is_none());
+    }
+    let frame = start_frame_with_outbound(fixture.options(1), &[selected]);
+    let reply = protocol_ok(&mut fixture.app, frame);
+    let key = TaskKey::from_bytes(&reply.service_key).unwrap();
+    let address = running(&mut fixture.app, key);
+    request(address, "/api", 202);
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    stop(&mut fixture, key);
     fixture.app.finish().unwrap();
 }

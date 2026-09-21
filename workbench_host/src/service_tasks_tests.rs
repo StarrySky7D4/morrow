@@ -1015,6 +1015,12 @@ fn protocol_ok(app: &mut Workbench, input: Vec<u8>) -> ProtocolReply {
     reply
 }
 fn start_frame(options: ServiceStart) -> Vec<u8> {
+    start_frame_with_outbound(options, &[])
+}
+fn start_frame_with_outbound(
+    options: ServiceStart,
+    outbound: &[ServiceEndpointSelection],
+) -> Vec<u8> {
     frame(wire::Action::ServiceRunStart, |r| {
         let mut s = r.init_service_run();
         s.set_submission(&options.submission);
@@ -1050,6 +1056,12 @@ fn start_frame(options: ServiceStart) -> Vec<u8> {
                 .try_into()
                 .unwrap(),
         );
+        let mut entries = s.init_outbound(outbound.len().try_into().unwrap());
+        for (i, endpoint) in outbound.iter().enumerate() {
+            let mut entry = entries.reborrow().get(i as u32);
+            entry.set_reference(&endpoint.reference);
+            entry.set_revision(endpoint.revision);
+        }
     })
 }
 fn lifecycle_frame(action: wire::Action, task: &[u8], command: &[u8]) -> Vec<u8> {

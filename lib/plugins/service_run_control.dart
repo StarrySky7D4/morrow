@@ -6,6 +6,17 @@ import 'service_control.dart' show ServiceValidation;
 Uint8List _owned(Uint8List bytes) =>
     Uint8List.fromList(bytes).asUnmodifiableView();
 
+class ServiceEndpointSelection {
+  ServiceEndpointSelection({
+    required Uint8List reference,
+    required this.revision,
+  }) : reference = _owned(reference);
+  final Uint8List reference;
+  final BigInt revision;
+  String get key =>
+      reference.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+}
+
 /// A fresh explicit service attempt, bounded by the original package and stored
 /// approvals. Query the current service and compare this submission to recover
 /// a lost start receipt; never automatically resubmit a start request.
@@ -31,10 +42,20 @@ class ServiceRunRequest {
     this.maxHeaderBytes = 16384,
     this.maxConcurrent = 1,
     this.timeoutMs = 10000,
+    List<ServiceEndpointSelection> outbound = const [],
   }) : submission = _owned(submission),
        configDigest = _owned(configDigest),
        publication = _owned(publication),
-       packageDigest = _owned(packageDigest);
+       packageDigest = _owned(packageDigest),
+       outbound = List.unmodifiable(
+         outbound.map(
+           (e) => ServiceEndpointSelection(
+             reference: e.reference,
+             revision: e.revision,
+           ),
+         ),
+       );
+  final List<ServiceEndpointSelection> outbound;
   final Uint8List submission, configDigest, publication, packageDigest;
   final String configId, packageId;
   final BigInt configRevision, publicationRevision, registryRevision;
@@ -207,6 +228,17 @@ abstract final class ServiceRunValidation {
   }
 
   static void request(ServiceRunRequest value) {
+    if (value.outbound.length > 8) {
+      throw const FormatException('Too many service outbound endpoints');
+    }
+    final seen = <String>{};
+    for (final endpoint in value.outbound) {
+      ServiceValidation.digest(endpoint.reference);
+      _bigRange(endpoint.revision, ServiceValidation.maxUint64);
+      if (!seen.add(endpoint.key)) {
+        throw const FormatException('Duplicate service outbound endpoint');
+      }
+    }
     for (final identity in [
       value.submission,
       value.configDigest,

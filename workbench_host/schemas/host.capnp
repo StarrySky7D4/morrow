@@ -51,7 +51,9 @@ struct ServiceRunStart {
  maxCalls @12 :UInt32; maxJobBytes @13 :UInt64; maxTotalBytes @14 :UInt64;
  maxRequestBytes @15 :UInt32; maxResponseBytes @16 :UInt32;
  maxHeaderBytes @17 :UInt32; maxConcurrent @18 :UInt16; timeoutMs @19 :UInt32;
+ outbound @20 :List(ServiceEndpointSelection);
 }
+struct ServiceEndpointSelection { reference @0 :Data; revision @1 :UInt64; }
 # phase 0 starting, 1 running, 2 stopping, 3 actually reclaimed.
 # optional outcomes: 0 pending, 1 success, 2 invalid, 3 denied, 4 limit,
 # 5 cancelled, 6 timeout, 7 transport, 8 closed.

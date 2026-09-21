@@ -1924,6 +1924,22 @@ class AppLocalizationsZh extends AppLocalizations {
       '请刷新记录、启用服务插件，并保存配置和发布授权。当前预览支持回环地址 HTTP 服务。';
 
   @override
+  String get pluginsServiceRunOutboundAttempt => '本次启动绑定的端点';
+
+  @override
+  String get pluginsServiceRunOutboundClear => '清空端点选择';
+
+  @override
+  String get pluginsServiceRunOutboundFailed => '无法核实端点列表。使用已选端点前，请刷新重试。';
+
+  @override
+  String get pluginsServiceRunOutboundHint =>
+      '出站 API（可选，最多 8 个）。仅列出已为当前插件批准的端点；全部不选时禁止出站调用。';
+
+  @override
+  String get pluginsServiceRunOutboundStale => '已选端点发生变化或已不可用。请明确选择当前版本，或清空选择。';
+
+  @override
   String get pluginsServiceRunOwned => '内容由运行中的服务管理';
 
   @override

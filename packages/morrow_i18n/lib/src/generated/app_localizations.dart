@@ -3700,6 +3700,36 @@ abstract class AppLocalizations {
   /// **'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.'**
   String get pluginsServiceRunNoSelection;
 
+  /// No description provided for @pluginsServiceRunOutboundAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoints bound to this start attempt'**
+  String get pluginsServiceRunOutboundAttempt;
+
+  /// No description provided for @pluginsServiceRunOutboundClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear endpoint selection'**
+  String get pluginsServiceRunOutboundClear;
+
+  /// No description provided for @pluginsServiceRunOutboundFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not verify the endpoint list. Refresh before using selected endpoints.'**
+  String get pluginsServiceRunOutboundFailed;
+
+  /// No description provided for @pluginsServiceRunOutboundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing APIs (optional, up to 8). Only endpoints approved for this package are listed. Leaving all unchecked blocks outgoing calls.'**
+  String get pluginsServiceRunOutboundHint;
+
+  /// No description provided for @pluginsServiceRunOutboundStale.
+  ///
+  /// In en, this message translates to:
+  /// **'A selected endpoint changed or is no longer available. Select its current version explicitly, or clear the selection.'**
+  String get pluginsServiceRunOutboundStale;
+
   /// No description provided for @pluginsServiceRunOwned.
   ///
   /// In en, this message translates to:
