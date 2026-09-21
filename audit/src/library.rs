@@ -109,7 +109,10 @@ impl Registry {
     pub fn open_session(&mut self, budget: EventBudget) -> Result<Session> {
         let database = self.selected_database()?;
         let session = if let Some(selected) = &self.selection {
-            let trust = readonly_trust(&database)?;
+            // Routing only compares the protected identity. Session re-reads
+            // and checks it under the database lease before a verified open;
+            // scanning the entire database here duplicates that verification.
+            let trust = protected_trust(&database)?;
             if trust.id != selected.log_id || trust.key.as_bytes().as_slice() != selected.public_key
             {
                 return Err(Error::IdentityMismatch);
@@ -206,14 +209,17 @@ impl Registry {
         Ok(())
     }
 }
-fn readonly_trust(database: &Path) -> Result<TrustedLog> {
+fn protected_trust(database: &Path) -> Result<TrustedLog> {
     reject_link(database)?;
     let key = key_path(database)?;
     reject_link(&key)?;
-    let trust = Key::load(&key).map_err(SessionError::from)?.trust();
-    let store =
+    Ok(Key::load(&key).map_err(SessionError::from)?.trust())
+}
+fn readonly_trust(database: &Path) -> Result<TrustedLog> {
+    let trust = protected_trust(database)?;
+    // This constructor already performs a complete integrity check.
+    let _store =
         Store::open_read_only_audited(database, trust.clone()).map_err(SessionError::from)?;
-    store.integrity_check().map_err(SessionError::from)?;
     Ok(trust)
 }
 fn decode(bytes: &[u8]) -> Result<proto::Selection> {

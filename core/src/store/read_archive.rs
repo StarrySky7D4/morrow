@@ -31,7 +31,7 @@ pub(super) fn load(c: &Connection, subject: &str, operation: &str) -> Result<Opt
     require(c)?;
     identity(subject)?;
     identity(operation)?;
-    let mut st=sql(c.prepare("SELECT subject,published,CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM read_archives WHERE operation_id=?1"))?;
+    let mut st=sql(c.prepare_cached("SELECT subject,published,CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM read_archives WHERE operation_id=?1"))?;
     let mut rows = sql(st.query(params![operation, read_archive::MAX_CONTAINER_BYTES as i64]))?;
     let Some(row) = sql(rows.next())? else {
         return Ok(None);
@@ -72,7 +72,7 @@ pub(super) fn verify_parts(c: &Connection, m: &Manifest) -> Result<()> {
     let mut count = 0u32;
     let mut total = 0u64;
     let mut chain = m.initial_chain();
-    let mut st=sql(c.prepare("SELECT ordinal,CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM read_archive_parts WHERE operation_id=?1 ORDER BY ordinal"))?;
+    let mut st=sql(c.prepare_cached("SELECT ordinal,CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM read_archive_parts WHERE operation_id=?1 ORDER BY ordinal"))?;
     let mut rows = sql(st.query(params![
         state.plan.operation_id,
         read_archive::MAX_CONTAINER_BYTES as i64
@@ -152,7 +152,7 @@ pub(super) fn verify_association(c: &Connection, m: &Manifest) -> Result<()> {
     }
     Ok(())
 }
-fn match_observation(m: &Manifest, observation: &ReadObservation) -> Result<()> {
+pub(super) fn match_observation(m: &Manifest, observation: &ReadObservation) -> Result<()> {
     let s = m.status();
     let v = observation.data();
     if v.schema_version != 2
@@ -192,7 +192,7 @@ pub(super) fn verify_observation(c: &Connection, v: &ReadObservation) -> Result<
     verify_parts(c, &m)?;
     verify_association(c, &m)
 }
-pub(super) fn verify(c: &Connection) -> Result<()> {
+pub(super) fn verify(c: &Connection, mut visit: impl FnMut(&str, [u8; 32])) -> Result<()> {
     verify_schema(c)?;
     if version(c)? < 12 {
         return Ok(());
@@ -211,6 +211,7 @@ pub(super) fn verify(c: &Connection) -> Result<()> {
         let m = load(c, subject, op)?.ok_or(Error::Integrity)?;
         verify_parts(c, &m)?;
         verify_association(c, &m)?;
+        visit(op, m.digest());
     }
     Ok(())
 }

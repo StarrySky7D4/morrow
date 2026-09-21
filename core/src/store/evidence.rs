@@ -10,9 +10,9 @@ pub(super) const SCHEMA: &str = "
 CREATE TABLE task_evidence (digest BLOB PRIMARY KEY CHECK(length(digest)=32), payload BLOB NOT NULL) STRICT;
 CREATE TABLE operation_evidence (operation_id TEXT NOT NULL REFERENCES operations(id), ordinal INTEGER NOT NULL CHECK(ordinal>=0 AND ordinal<16), digest BLOB NOT NULL REFERENCES task_evidence(digest), PRIMARY KEY(operation_id,ordinal)) STRICT;
 CREATE INDEX operation_evidence_digest ON operation_evidence(digest);";
-const MAX_COUNT: usize = 16;
+pub(super) const MAX_COUNT: usize = 16;
 // Counts each original and its container, including repeated positions, before any write.
-const MAX_OPERATION_BYTES: usize = 64 * 1024 * 1024;
+pub(super) const MAX_OPERATION_BYTES: usize = 64 * 1024 * 1024;
 fn add_size(total: &mut usize, evidence: &Evidence) -> Result<()> {
     *total = total
         .checked_add(evidence.raw().len())
@@ -187,7 +187,10 @@ pub(super) fn verify_schema(connection: &Connection) -> Result<()> {
     }
     Ok(())
 }
-pub(super) fn verify(connection: &Connection) -> Result<()> {
+pub(super) fn verify(
+    connection: &Connection,
+    mut visit: impl FnMut([u8; 32], usize),
+) -> Result<()> {
     let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
     if version < 7 {
         return Ok(());
@@ -203,7 +206,7 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         if orphan {
             return Err(Error::Integrity);
         }
-        return super::evidence_chunks::verify(connection);
+        return super::evidence_chunks::verify(connection, visit);
     }
     let mut statement=sql(connection.prepare("SELECT digest,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,EXISTS(SELECT 1 FROM operation_evidence e WHERE e.digest=t.digest) FROM task_evidence t"))?;
     let mut rows = sql(statement.query([task_evidence::MAX_CONTAINER_BYTES as i64]))?;
@@ -221,9 +224,11 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
         }
         let bytes = value.as_blob().map_err(|_| Error::Integrity)?;
         // decode checks bounds before decompression or owned allocation.
-        if task_evidence::decode(bytes, digest)?.data().schema_version != task_evidence::VERSION {
+        let evidence = task_evidence::decode(bytes, digest)?;
+        if evidence.data().schema_version != task_evidence::VERSION {
             return Err(Error::UnsupportedVersion);
         }
+        visit(digest, evidence.raw().len() + evidence.container().len());
     }
     Ok(())
 }

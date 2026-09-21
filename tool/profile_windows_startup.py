@@ -14,6 +14,8 @@ parser.add_argument('--exe', type=Path, required=True)
 parser.add_argument('--fixture', type=Path, required=True)
 parser.add_argument('--output', type=Path, required=True)
 parser.add_argument('--runs', type=int, default=3)
+parser.add_argument('--managed', action='store_true',
+                    help='Register each isolated copy and measure the normal active-library route')
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=False)
 user32 = ctypes.windll.user32
@@ -43,12 +45,22 @@ for index in range(args.runs):
             source.backup(destination)
     shutil.copy2(args.fixture / 'workbench.db.audit-key', target / 'workbench.db.audit-key')
     shutil.copytree(args.fixture / 'plugin-manager', target / 'plugin-manager')
+    if args.managed:
+        # Use the host's canonical registry encoder. Never copy an active
+        # selection that could route the probe back into the original library.
+        with (target / 'register.log').open('w') as log:
+            subprocess.run([
+                str(args.exe.resolve().parent / 'morrow-workbench-host.exe'),
+                '--activate-library', str(target), str(target),
+            ], check=True, timeout=60, creationflags=subprocess.CREATE_NO_WINDOW,
+               stdout=log, stderr=log)
     report = target / 'timings.json'
     started = time.perf_counter()
     shown = None
     with (target / 'process.log').open('w') as log:
         proc = subprocess.Popen([
             str(args.exe.resolve()), f'--data-directory={target}', f'--startup-check={report}',
+            *(['--managed-library'] if args.managed else []),
         ], creationflags=subprocess.CREATE_NO_WINDOW, stdout=log, stderr=log)
         while proc.poll() is None and time.perf_counter() - started < 45:
             if shown is None and visible(proc.pid):

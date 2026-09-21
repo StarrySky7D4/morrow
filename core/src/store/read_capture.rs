@@ -125,7 +125,7 @@ fn verify_state(c: &Connection, state: &State) -> Result<()> {
     match state.phase() {
         Phase::Preparing | Phase::Ready => {
             let m = read_archive::load(c, &p.subject, &p.operation_id)?.ok_or(Error::Integrity)?;
-            verify_binding(c, &m)?;
+            // read_archive::load already validates this capture binding.
             read_archive::verify_association(c, &m)?;
         }
         Phase::Failed | Phase::Cancelled | Phase::Interrupted => {

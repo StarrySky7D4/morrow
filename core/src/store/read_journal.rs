@@ -57,6 +57,24 @@ pub(super) fn verify_operation(
     let observed = read_journal::decode(raw)?;
     verify_observation(connection, operation, subject, &observed)
 }
+pub(super) fn verify_operation_for_open(
+    connection: &Connection,
+    verified: &super::open_verification::OpenVerification<'_>,
+    operation: &str,
+    subject: &str,
+    raw: &[u8],
+) -> Result<()> {
+    if version(connection)? < 11 {
+        return Err(Error::UnsupportedVersion);
+    }
+    let observed = read_journal::decode(raw)?;
+    if observed.data().operation_id != operation || observed.data().subject != subject {
+        return Err(Error::Integrity);
+    }
+    verified.verify_observation(&observed)?;
+    super::blobs::verify_event(connection, operation, &[])?;
+    verified.verify_event(operation, &observed.data().task_evidence_sha256)
+}
 impl Store {
     /// Trusted-local completed computation facts. The final callback must enforce the
     /// host's current authorization; this API does not establish plugin grants or delivery.

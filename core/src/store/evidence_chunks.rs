@@ -117,16 +117,19 @@ fn bounded_payload(
     limit: usize,
 ) -> Result<Option<Vec<u8>>> {
     let value = sql(connection
-        .query_row(query, params![id.as_slice(), limit as i64], |r| {
-            let value = r.get_ref(0)?;
-            if matches!(value, rusqlite::types::ValueRef::Null) {
-                return Ok(None);
-            }
-            let raw = value.as_blob()?;
-            Ok(if raw.len() > limit {
-                None
-            } else {
-                Some(raw.to_vec())
+        .prepare_cached(query)
+        .and_then(|mut statement| {
+            statement.query_row(params![id.as_slice(), limit as i64], |r| {
+                let value = r.get_ref(0)?;
+                if matches!(value, rusqlite::types::ValueRef::Null) {
+                    return Ok(None);
+                }
+                let raw = value.as_blob()?;
+                Ok(if raw.len() > limit {
+                    None
+                } else {
+                    Some(raw.to_vec())
+                })
             })
         })
         .optional())?;
@@ -185,6 +188,15 @@ fn recipe(bytes: &[u8], id: [u8; 32]) -> Result<proto::Recipe> {
     Ok(value)
 }
 pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evidence>> {
+    let Some(container) = read_container(connection, id)? else {
+        return Ok(None);
+    };
+    let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+    decode_container(&container, id, version).map(Some)
+}
+// The database owner alone reads and verifies physical chunks in its transaction.
+// Only the resulting owned bytes can be handed to a computation worker.
+fn read_container(connection: &Connection, id: [u8; 32]) -> Result<Option<Vec<u8>>> {
     let Some(raw) = bounded_payload(
         connection,
         "SELECT CASE WHEN length(payload)<=?2 THEN payload ELSE NULL END FROM task_evidence WHERE digest=?1",
@@ -195,7 +207,7 @@ pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evide
         return Ok(None);
     };
     let recipe = recipe(&raw, id)?;
-    let mut statement = sql(connection.prepare(
+    let mut statement = sql(connection.prepare_cached(
         "SELECT ordinal,digest FROM task_evidence_chunks WHERE evidence_digest=?1 ORDER BY ordinal",
     ))?;
     let mut rows = sql(statement.query([id.as_slice()]))?;
@@ -226,8 +238,10 @@ pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evide
     {
         return Err(Error::Integrity);
     }
-    let evidence = task_evidence::decode(&container, digest(&recipe.evidence_sha256)?)?;
-    let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+    Ok(Some(container))
+}
+fn decode_container(container: &[u8], id: [u8; 32], version: i64) -> Result<Evidence> {
+    let evidence = task_evidence::decode(container, id)?;
     if version < 9 && evidence.data().schema_version != task_evidence::VERSION {
         return Err(Error::UnsupportedVersion);
     }
@@ -240,7 +254,7 @@ pub(super) fn read(connection: &Connection, id: [u8; 32]) -> Result<Option<Evide
     {
         return Err(Error::UnsupportedVersion);
     }
-    Ok(Some(evidence))
+    Ok(evidence)
 }
 fn write(connection: &Connection, evidence: &Evidence, replace: bool) -> Result<()> {
     transaction(connection)?;
@@ -321,7 +335,10 @@ pub(super) fn verify_schema(connection: &Connection) -> Result<()> {
     }
     Ok(())
 }
-pub(super) fn verify(connection: &Connection) -> Result<()> {
+pub(super) fn verify(
+    connection: &Connection,
+    mut visit: impl FnMut([u8; 32], usize),
+) -> Result<()> {
     let invalid:i64=sql(connection.query_row("SELECT count(*) FROM task_evidence_chunks c LEFT JOIN task_evidence e ON c.evidence_digest=e.digest LEFT JOIN evidence_chunks p ON c.digest=p.digest WHERE e.digest IS NULL OR p.digest IS NULL",[],|r|r.get(0)))?;
     if invalid != 0 {
         return Err(Error::Integrity);
@@ -330,6 +347,22 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
     if orphan != 0 {
         return Err(Error::Integrity);
     }
+    let version: i64 = sql(connection.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+    // Small libraries and Web retain the sequential path. Each native batch
+    // owns at most two bounded containers; there is no library-sized queue.
+    #[cfg(not(target_arch = "wasm32"))]
+    let batch_size = {
+        let count: i64 =
+            sql(connection.query_row("SELECT count(*) FROM task_evidence", [], |r| r.get(0)))?;
+        if count >= 8 && std::thread::available_parallelism().is_ok_and(|n| n.get() >= 2) {
+            2
+        } else {
+            1
+        }
+    };
+    #[cfg(target_arch = "wasm32")]
+    let batch_size = 1;
+    let mut batch = Vec::with_capacity(batch_size);
     let mut statement = sql(connection.prepare("SELECT digest FROM task_evidence"))?;
     let mut rows = sql(statement.query([]))?;
     while let Some(row) = sql(rows.next())? {
@@ -338,10 +371,51 @@ pub(super) fn verify(connection: &Connection) -> Result<()> {
                 .as_blob()
                 .map_err(|_| Error::Integrity)?,
         )?;
-        read(connection, id)?.ok_or(Error::Integrity)?;
+        let container = read_container(connection, id)?.ok_or(Error::Integrity)?;
+        batch.push((id, container));
+        if batch.len() == batch_size {
+            for ((id, _), cost) in batch.iter().zip(verify_batch(&batch, version)?) {
+                visit(*id, cost);
+            }
+            batch.clear();
+        }
+    }
+    for ((id, _), cost) in batch.iter().zip(verify_batch(&batch, version)?) {
+        visit(*id, cost);
     }
     Ok(())
 }
+fn verify_batch(batch: &[([u8; 32], Vec<u8>)], version: i64) -> Result<Vec<usize>> {
+    fn cost(e: Evidence) -> usize {
+        e.raw().len() + e.container().len()
+    }
+    #[cfg(not(target_arch = "wasm32"))]
+    if let [first, second] = batch {
+        return std::thread::scope(|scope| {
+            // A failed thread creation falls back to the same verification.
+            // Joining also happens when the owner's computation rejects data.
+            let worker = std::thread::Builder::new()
+                .name("evidence-check".into())
+                .spawn_scoped(scope, || {
+                    decode_container(&first.1, first.0, version).map(cost)
+                });
+            let Ok(worker) = worker else {
+                return batch
+                    .iter()
+                    .map(|(id, bytes)| decode_container(bytes, *id, version).map(cost))
+                    .collect();
+            };
+            let second_result = decode_container(&second.1, second.0, version).map(cost);
+            let first_cost = worker.join().map_err(|_| Error::Integrity)??;
+            Ok(vec![first_cost, second_result?])
+        });
+    }
+    batch
+        .iter()
+        .map(|(id, bytes)| decode_container(bytes, *id, version).map(cost))
+        .collect()
+}
+
 /// Caller verifies the complete legacy v7 database first, then invokes this in the same transaction.
 /// This function neither commits nor changes user_version. Every original container is preserved.
 pub(super) fn migrate(connection: &Connection) -> Result<()> {
@@ -374,4 +448,100 @@ pub(super) fn migrate(connection: &Connection) -> Result<()> {
         previous = Some(id);
     }
     Ok(())
+}
+
+#[cfg(test)]
+pub(super) mod parallel_tests {
+    use super::*;
+    use crate::{
+        plugin_package::{Package, proto::TransformHandler},
+        task::{Invocation, Transform},
+    };
+
+    // Synthetic observations qualify the verifier, not execution of a plugin.
+    pub(in crate::store) fn fixture() -> ([u8; 32], Vec<u8>) {
+        let module = b"\0asm\x01\0\0\0";
+        let package = Package::build(
+            Package::manifest_for_transform(
+                "test.parallel-evidence",
+                "1.0.0",
+                module,
+                vec![TransformHandler {
+                    handler: "convert".into(),
+                    input_type: "bytes".into(),
+                    output_type: "bytes".into(),
+                    max_input_bytes: 65536,
+                    max_output_bytes: 65536,
+                }],
+            ),
+            module,
+        )
+        .unwrap();
+        let input = Invocation::new_transform(
+            "parallel-evidence",
+            Transform {
+                handler: "convert".into(),
+                input_type: "bytes".into(),
+                output_type: "bytes".into(),
+                input: vec![1],
+            },
+        )
+        .unwrap();
+        let evidence = task_evidence::encode(task_evidence::proto::TaskEvidence {
+            schema_version: 1,
+            package_archive: package.archive().to_vec(),
+            invocation: input.bytes().to_vec(),
+            budget: Some(task_evidence::proto::ExecutionBudget {
+                fuel: 100000,
+                memory_bytes: 65536,
+                host_calls: 4,
+            }),
+            backend: task_evidence::BACKEND.into(),
+            completion: input.output_completion(&[2]).unwrap(),
+            fault: 0,
+            exit_code: Some(0),
+            observed_host_calls: 0,
+            fuel_remaining: 90000,
+            batch: None,
+        })
+        .unwrap();
+        (evidence.digest(), evidence.container().to_vec())
+    }
+
+    #[test]
+    fn parallel_batch_matches_serial_and_rejects_errors_on_either_lane() {
+        let valid = fixture();
+        assert!(verify_batch(&[], super::super::SCHEMA_VERSION).is_ok());
+        assert!(verify_batch(std::slice::from_ref(&valid), super::super::SCHEMA_VERSION).is_ok());
+        assert!(
+            verify_batch(
+                &[valid.clone(), valid.clone()],
+                super::super::SCHEMA_VERSION
+            )
+            .is_ok()
+        );
+        for index in 0..2 {
+            for truncated in [false, true] {
+                let mut batch = [valid.clone(), valid.clone()];
+                if truncated {
+                    batch[index].1.truncate(12);
+                } else {
+                    batch[index].0[0] ^= 1;
+                }
+                let expected = decode_container(
+                    &batch[index].1,
+                    batch[index].0,
+                    super::super::SCHEMA_VERSION,
+                )
+                .err()
+                .unwrap();
+                assert_eq!(
+                    verify_batch(&batch, super::super::SCHEMA_VERSION),
+                    Err(expected)
+                );
+            }
+        }
+        // Failure must not poison a future batch or leave work running against it.
+        assert!(verify_batch(&[valid.clone(), valid], super::super::SCHEMA_VERSION).is_ok());
+    }
 }

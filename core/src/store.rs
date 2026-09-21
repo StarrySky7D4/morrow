@@ -16,6 +16,7 @@ mod blobs;
 mod evidence;
 mod evidence_chunks;
 mod io_intent;
+mod open_verification;
 pub use io_intent::IoIntentReservation;
 mod io_evidence;
 mod outbound_authority;
@@ -345,6 +346,46 @@ impl Store {
                 return Err(Error::Invalid("unrelated database"));
             }
         }
+        // A current, bound native WAL database needs no migration or rebinding.
+        // Validate once under the writer transaction, before any index change.
+        // This proof is local to this open; no persisted validation flag or
+        // alternate public unchecked-open API is introduced.
+        if !exclusive
+            && vfs.is_none()
+            && version == SCHEMA_VERSION
+            && let Some(trust) = audit_trust.as_ref()
+        {
+            let mode: String = sql(connection.query_row("PRAGMA journal_mode", [], |r| r.get(0)))?;
+            if mode == "wal" {
+                sql(connection.pragma_update(None, "foreign_keys", true))?;
+                sql(connection.pragma_update(None, "trusted_schema", false))?;
+                sql(connection.pragma_update(None, "synchronous", "FULL"))?;
+                let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+                let locked_version: i64 =
+                    sql(tx.query_row("PRAGMA user_version", [], |r| r.get(0)))?;
+                let locked_app: i64 = sql(tx.query_row("PRAGMA application_id", [], |r| r.get(0)))?;
+                if locked_version != version || locked_app != app {
+                    return Err(Error::Integrity);
+                }
+                if binding::read(&tx)?.is_some() {
+                    Self::integrity_connection(&tx, Some(trust))?;
+                    // Existing binding: verifies the pinned identity and key
+                    // strength without writing a new binding.
+                    binding::bind(&tx, trust)?;
+                    sql(tx.execute_batch(read_archive_budget::INDEX))?;
+                    boundary("binding-before-commit");
+                    tx.commit().map_err(|_| Error::CommitUnknown)?;
+                    boundary("binding-after-commit");
+                    return Self::from_open_connection(
+                        connection,
+                        budget,
+                        audit_trust,
+                        true,
+                        authority_native,
+                    );
+                }
+            }
+        }
         if exclusive {
             let locking: String =
                 sql(connection.query_row("PRAGMA locking_mode=EXCLUSIVE", [], |r| r.get(0)))?;
@@ -585,14 +626,33 @@ impl Store {
             }
         }
         sql(connection.pragma_update(None, "synchronous", "FULL"))?;
-        let snapshot_origin = card_snapshot::origin(&connection, !exclusive && vfs.is_none())?;
+        let store = Self::from_open_connection(
+            connection,
+            budget,
+            audit_trust,
+            !exclusive && vfs.is_none(),
+            authority_native,
+        )?;
+        store.integrity_check()?;
+        Ok(store)
+    }
+    /// Assemble connection-local helpers. Callers must verify this open before
+    /// returning it; only the current bound WAL path has already done so.
+    fn from_open_connection(
+        connection: Connection,
+        budget: EventBudget,
+        audit_trust: Option<crate::audit::TrustedLog>,
+        snapshots: bool,
+        authority_native: bool,
+    ) -> Result<Self> {
+        let snapshot_origin = card_snapshot::origin(&connection, snapshots)?;
         let authority_store_id = service_authority::store_identity(&connection)?;
         let service_authority_coordinator =
             service_authority_lock::ServiceAuthorityCoordinator::new(
                 authority_store_id.unwrap_or([0; 32]),
                 authority_store_id.is_some() && authority_native,
             );
-        let store = Self {
+        Ok(Self {
             service_authority_coordinator,
             snapshot_origin,
             snapshot_identity: std::sync::Arc::new(()),
@@ -600,9 +660,7 @@ impl Store {
             connection,
             budget,
             audit_trust,
-        };
-        store.integrity_check()?;
-        Ok(store)
+        })
     }
     pub fn card(&self, id: &str) -> Result<Option<CardRecord>> {
         identity(id)?;
@@ -961,6 +1019,8 @@ impl Store {
         snapshot: &Connection,
         trust: Option<&crate::audit::TrustedLog>,
     ) -> Result<()> {
+        #[cfg(test)]
+        disk_tests::record_integrity_pass();
         let result: String = sql(snapshot.query_row("PRAGMA integrity_check", [], |r| r.get(0)))?;
         if result != "ok" {
             return Err(Error::Integrity);
@@ -978,7 +1038,7 @@ impl Store {
         evidence_chunks::verify_schema(snapshot)?;
         binding::verify(snapshot, trust)?;
         seals::verify(snapshot, trust)?;
-        read_archive::verify(snapshot)?;
+        let verified = open_verification::OpenVerification::new(snapshot)?;
         read_capture::verify(snapshot)?;
         read_archive_retention::verify(snapshot)?;
         io_intent::verify(snapshot)?;
@@ -1004,8 +1064,9 @@ impl Store {
                 continue;
             }
             if kind == 4 {
-                read_journal::verify_operation(
+                read_journal::verify_operation_for_open(
                     snapshot,
+                    &verified,
                     &sql(row.get::<_, String>(0))?,
                     &sql(row.get::<_, String>(1))?,
                     raw,
@@ -1024,7 +1085,7 @@ impl Store {
             }
             let (event, receipt) = transaction::decode_commit(raw)?;
             blobs::verify_event(snapshot, &receipt.operation_id, &event.attachment_sha256)?;
-            evidence::verify_event(snapshot, &receipt.operation_id, &event.task_evidence_sha256)?;
+            verified.verify_event(&receipt.operation_id, &event.task_evidence_sha256)?;
             if receipt.operation_id != sql(row.get::<_, String>(0))?
                 || receipt.card_id != sql(row.get::<_, String>(1))?
             {
@@ -1059,7 +1120,7 @@ impl Store {
         }
         records::verify(snapshot)?;
         blobs::verify(snapshot)?;
-        evidence::verify(snapshot)?;
+        verified.finish()?;
         Ok(())
     }
 }
@@ -1067,6 +1128,58 @@ impl Store {
 #[cfg(test)]
 mod disk_tests {
     use super::*;
+    std::thread_local! {
+        static INTEGRITY_PASSES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    }
+    pub(super) fn record_integrity_pass() {
+        INTEGRITY_PASSES.with(|count| count.set(count.get() + 1));
+    }
+    #[test]
+    fn bound_current_wal_open_verifies_once_and_rechecks_on_every_open() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("open.db");
+        let key = ed25519_dalek::SigningKey::from_bytes(&[47; 32]);
+        let trust = crate::audit::TrustedLog {
+            id: "open-test".into(),
+            key: key.verifying_key(),
+        };
+        let mut store =
+            Store::open_audited(&path, Default::default(), true, trust.clone()).unwrap();
+        store
+            .create_local(
+                "create",
+                &CardRecord::new("card", "text", 1, "kept", vec![1]).unwrap(),
+            )
+            .unwrap();
+        drop(store);
+        // Also exercise repair of a derived index under the verified transaction.
+        let raw = Connection::open(&path).unwrap();
+        raw.execute_batch("DROP INDEX read_archive_preparations")
+            .unwrap();
+        drop(raw);
+        let writer = Connection::open(&path).unwrap();
+        writer.execute_batch("BEGIN IMMEDIATE").unwrap();
+        assert!(matches!(
+            Store::open_audited(&path, Default::default(), false, trust.clone()),
+            Err(Error::StorageBusy)
+        ));
+        writer.execute_batch("ROLLBACK").unwrap();
+        drop(writer);
+        for _ in 0..2 {
+            INTEGRITY_PASSES.with(|count| count.set(0));
+            let reopened =
+                Store::open_audited(&path, Default::default(), false, trust.clone()).unwrap();
+            assert!(reopened.card("card").unwrap().is_some());
+            assert_eq!(INTEGRITY_PASSES.with(|count| count.get()), 1);
+        }
+        let raw = Connection::open(&path).unwrap();
+        raw.execute_batch("UPDATE cards SET payload=x'01' WHERE id='card'")
+            .unwrap();
+        drop(raw);
+        INTEGRITY_PASSES.with(|count| count.set(0));
+        assert!(Store::open_audited(&path, Default::default(), false, trust).is_err());
+        assert_eq!(INTEGRITY_PASSES.with(|count| count.get()), 1);
+    }
     #[test]
     #[cfg(any(windows, unix))]
     fn explicit_native_vfs_uses_authority_lock_when_snapshots_are_disabled() {

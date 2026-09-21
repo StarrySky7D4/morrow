@@ -27,7 +27,7 @@ pub(super) const SCHEMA:&str="
 CREATE TABLE audit_identity (slot INTEGER PRIMARY KEY CHECK(slot=1), payload BLOB NOT NULL) STRICT;
 CREATE TRIGGER identity_no_update BEFORE UPDATE ON audit_identity BEGIN SELECT RAISE(ABORT,'audit identity'); END;
 CREATE TRIGGER identity_no_delete BEFORE DELETE ON audit_identity BEGIN SELECT RAISE(ABORT,'audit identity'); END;";
-fn read(connection: &Connection) -> Result<Option<AuditBinding>> {
+pub(super) fn read(connection: &Connection) -> Result<Option<AuditBinding>> {
     let mut statement = sql(connection.prepare("SELECT slot,payload FROM audit_identity"))?;
     let mut rows = sql(statement.query([]))?;
     let Some(row) = sql(rows.next())? else {

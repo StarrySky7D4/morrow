@@ -192,3 +192,55 @@ fn expected_identity_is_checked_before_writes_and_never_initializes_missing_data
     assert!(!morrow_audit::session::key_path(&missing).unwrap().exists());
     assert!(Session::open_expected(&original, Default::default(), &expected).is_ok());
 }
+
+#[test]
+fn registered_open_checks_content_even_when_protected_identity_is_unchanged() {
+    let root = tempfile::tempdir().unwrap();
+    let mut registry = Registry::open(root.path()).unwrap();
+    let mut session = registry.open_session(Default::default()).unwrap();
+    session
+        .runtime()
+        .store_local_mut()
+        .create_local(
+            "create",
+            &morrow_core::content::CardRecord::new("card", "text", 1, "kept", vec![1]).unwrap(),
+        )
+        .unwrap();
+    drop(session);
+    drop(registry);
+    let db = root.path().join("workbench.db");
+    let connection = rusqlite::Connection::open(&db).unwrap();
+    connection
+        .execute_batch(
+            "UPDATE cards SET payload=x'01' WHERE id='card'; DROP INDEX read_archive_preparations",
+        )
+        .unwrap();
+    drop(connection);
+    let before = std::fs::read(&db).unwrap();
+    let key = std::fs::read(root.path().join("workbench.db.audit-key")).unwrap();
+    let selected = std::fs::read(root.path().join("active-library.pb.lz4")).unwrap();
+    let mut registry = Registry::open(root.path()).unwrap();
+    assert!(registry.open_session(Default::default()).is_err());
+    drop(registry);
+    assert_eq!(std::fs::read(&db).unwrap(), before);
+    assert_eq!(
+        std::fs::read(root.path().join("workbench.db.audit-key")).unwrap(),
+        key
+    );
+    assert_eq!(
+        std::fs::read(root.path().join("active-library.pb.lz4")).unwrap(),
+        selected
+    );
+    let connection = rusqlite::Connection::open(&db).unwrap();
+    let repaired: i64 = connection
+        .query_row(
+            "SELECT count(*) FROM sqlite_schema WHERE name='read_archive_preparations'",
+            [],
+            |r| r.get(0),
+        )
+        .unwrap();
+    assert_eq!(
+        repaired, 0,
+        "failed verification must not repair derived indexes"
+    );
+}
