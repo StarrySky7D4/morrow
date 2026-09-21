@@ -20,6 +20,8 @@ pub use io_intent::IoIntentReservation;
 mod io_evidence;
 mod outbound_authority;
 pub use outbound_authority::OutboundAuthorityPage;
+mod tls_identity;
+pub use tls_identity::{MAX_RECORDS as MAX_TLS_IDENTITIES, TlsIdentityPage};
 mod service_authority;
 pub use service_authority::ServiceAuthorityPage;
 mod service_authority_lock;
@@ -42,7 +44,7 @@ mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 20;
+pub const SCHEMA_VERSION: i64 = 21;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -146,6 +148,7 @@ fn capacity_room(
             .saturating_add(service_config::accounted(c)?)
             .saturating_add(service_authority::accounted(c)?)
             .saturating_add(outbound_authority::accounted(c)?)
+            .saturating_add(tls_identity::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -560,7 +563,17 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("outbound-authority-migration-after-commit");
         }
-        // Rebuildable SQLite access index; no business-payload or DB-version change.
+        if version < 21 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(tls_identity::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 21))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("tls-identity-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("tls-identity-migration-after-commit");
+        }
+        // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
         sql(connection.pragma_update(None, "trusted_schema", false))?;
@@ -957,6 +970,7 @@ impl Store {
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
         outbound_authority::verify_schema(snapshot)?;
+        tls_identity::verify_schema(snapshot)?;
         read_archive_retention::verify_schema(snapshot)?;
         read_capture::verify_schema(snapshot)?;
         read_archive::verify_schema(snapshot)?;

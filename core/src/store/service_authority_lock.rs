@@ -21,12 +21,15 @@ pub enum ServiceAuthorityResource {
     Configuration(String),
     Inbound([u8; 32]),
     Outbound([u8; 32]),
+    TlsIdentity([u8; 32]),
 }
 impl ServiceAuthorityResource {
     fn validate(&self) -> Result<()> {
         match self {
             Self::Configuration(id) => crate::identity(id),
-            Self::Inbound(id) | Self::Outbound(id) if *id != [0; 32] => Ok(()),
+            Self::Inbound(id) | Self::Outbound(id) | Self::TlsIdentity(id) if *id != [0; 32] => {
+                Ok(())
+            }
             _ => Err(Error::Invalid("authority dependency")),
         }
     }

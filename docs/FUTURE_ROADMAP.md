@@ -1,5 +1,7 @@
 # Morrow 未来路线与任务清单
 
+2026-09-21[TLS 原资料库存储](../reports/application-service-tls-store-2026-09-21.md)已完成：Schema 21 原子迁移、原库身份绑定、精确修订 CAS、128 条上限/共享配额、稳定分页、SQLite 快照保留密文及独立 TLS 撤销依赖。core 常规 556、历史迁移组合 65、最终 TLS 定向 9、audit 26、宿主/协议 91 项通过（有重叠，子进程 harness 另计）；最终严格 Clippy 通过。下一步接原拥有者管理命令、受保护引用启动和真实服务撤销/轮换 UI；当前没有应用监听接线，未推送/发布。
+
 2026-09-21[TLS 受保护封装与原生加载](../reports/application-service-tls-protection-2026-09-21.md)已完成：独立 Protobuf＋LZ4 密文格式和 Windows 当前用户保护绑定资料库/引用/修订/摘要，源 PEM 移除后可恢复身份；旧审计/HTTP 用途域与限额保留。core 31（另 1 原有 harness 忽略）、audit 14、宿主/协议 91 项通过，严格 Clippy 与 core Wasm 编译通过。下一步必须完成原 Store 迁移/CAS/配额/快照、精确撤销依赖及私有控制与轮换 UI；当前封装尚未接入持久管理或应用启动，未推送/发布。
 
 2026-09-21[应用 TLS 有效期与运行授权](../reports/application-service-tls-validity-2026-09-21.md)已完成：证书链共同区间在实际启动时收窄原授权，到期/回拨失效沿原路径停服，缓存交付也受约束；双语 UI 显示 UTC 区间并要求失效后重新检查。89 项宿主/协议、20 项 runtime、8 项网络、67 项不同客户端用例、3 项真实进程、1 项 Windows 窗口与 4 项语言资源测试通过。最终窗口已修复并验证日期顺序。下一项为受保护密钥存储与续期，再推进 Unknown 核对、文件系统和三语言 IO SDK；未推送/发布。

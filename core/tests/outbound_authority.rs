@@ -560,7 +560,7 @@ mod native {
             Err(Error::Integrity)
         ));
         let sql = rusqlite::Connection::open(&path).unwrap();
-        sql.execute_batch("DROP TABLE outbound_authorities;")
+        sql.execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE outbound_authorities;")
             .unwrap();
         drop(sql);
         let store = Store::open_existing(&path, Default::default()).unwrap();
@@ -980,7 +980,7 @@ mod crash {
                     r.get(0)
                 })
                 .unwrap();
-            sql.execute_batch("DROP TABLE outbound_authorities; PRAGMA user_version=19;")
+            sql.execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE outbound_authorities; PRAGMA user_version=19;")
                 .unwrap();
             drop(sql);
             run(&path, "migrate", point);

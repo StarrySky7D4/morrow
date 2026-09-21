@@ -622,7 +622,7 @@ fn downgrade_with_new_objects_is_refused_and_honest_v16_migrates_cleanly() {
     rusqlite::Connection::open(&path)
         .unwrap()
         .execute_batch(
-            "DROP TABLE io_evidence; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
+            "DROP TABLE io_evidence; DROP TABLE IF EXISTS tls_identities; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_material_reservations; PRAGMA user_version=16;",
         )
         .unwrap();
     let migrated = Store::open_existing(&path, Default::default()).unwrap();

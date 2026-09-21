@@ -195,6 +195,39 @@ fn preflight(mut bytes: &[u8], record: &Record) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn original_store_and_snapshot_reopen_ciphertext_without_plaintext_persistence() {
+        use morrow_core::store::{EventBudget, Store};
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("protected.db");
+        let snapshot = dir.path().join("snapshot.db");
+        let mut store = Store::open(&path, EventBudget::default()).unwrap();
+        let id = store.tls_store_identity().unwrap();
+        let record = seal(
+            id,
+            [42; 32],
+            1,
+            b"synthetic TLS certificate",
+            b"private-test-key-never-store-unencrypted",
+        )
+        .unwrap();
+        store.save_tls_identity_local(&record, 0).unwrap();
+        store.snapshot_to(&snapshot, 16 * 1024 * 1024).unwrap();
+        drop(store);
+        for file in [&path, &snapshot] {
+            let store = Store::open_existing(file, EventBudget::default()).unwrap();
+            let stored = store.load_tls_identity(&[42; 32]).unwrap().unwrap();
+            let secret = open(&stored, &store.tls_store_identity().unwrap(), &[42; 32], 1).unwrap();
+            assert!(secret.private_key_pem() == b"private-test-key-never-store-unencrypted");
+            let bytes = std::fs::read(file).unwrap();
+            assert!(
+                !bytes
+                    .windows(secret.private_key_pem().len())
+                    .any(|w| w == secret.private_key_pem())
+            );
+            store.integrity_check().unwrap();
+        }
+    }
     fn synthetic() -> Record {
         seal(
             [1; 32],

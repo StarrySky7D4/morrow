@@ -248,7 +248,7 @@ fn migration_crashes_keep_complete_old_or_new_schema_and_unchanged_originals() {
         let originals = store.pending(0, 128).unwrap();
         drop(store);
         let sql = rusqlite::Connection::open(&path).unwrap();
-        sql.execute_batch("DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=14;")
+        sql.execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=14;")
             .unwrap();
         drop(sql);
         crash(&path, "migrate", point);
@@ -381,7 +381,7 @@ fn reservation_migration_crashes_keep_complete_old_or_new_schema_and_originals()
         let originals = store.pending(0, 128).unwrap();
         drop(store);
         let sql = rusqlite::Connection::open(&path).unwrap();
-        sql.execute_batch("DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; PRAGMA user_version=15;")
+        sql.execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; PRAGMA user_version=15;")
             .unwrap();
         drop(sql);
         crash(&path, "migrate", point);

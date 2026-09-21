@@ -1073,7 +1073,7 @@ fn version(path: &Path) -> i64 {
 fn downgrade_to_twelve(path: &Path) {
     rusqlite::Connection::open(path)
         .unwrap()
-        .execute_batch("DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures;PRAGMA user_version=12;")
+        .execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; DROP TABLE read_archive_costs; DROP TABLE read_archive_totals; DROP TABLE read_captures;PRAGMA user_version=12;")
         .unwrap();
 }
 #[test]
@@ -1158,7 +1158,7 @@ fn migration_preserves_legacy_read_archive_originals_and_sealed_signature() {
     drop(store);
     rusqlite::Connection::open(&path)
         .unwrap()
-        .execute_batch("DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=12;")
+        .execute_batch("DROP TABLE IF EXISTS tls_identities; DROP TABLE IF EXISTS outbound_authorities; DROP TABLE IF EXISTS service_authority_identity; DROP TABLE IF EXISTS service_authorities; DROP TABLE IF EXISTS service_configs; DROP INDEX IF EXISTS io_evidence_kind; DROP TABLE io_evidence; DROP TABLE io_material_reservations; DROP TABLE io_reservations; DROP TABLE io_intents; PRAGMA user_version=12;")
         .unwrap();
     assert!(Store::open_audited(&path, Default::default(), false, trust).is_err());
     assert_eq!(version(&path), 12);
