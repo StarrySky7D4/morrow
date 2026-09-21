@@ -253,7 +253,9 @@ impl Combined {
         .unwrap();
         let approved = endpoint.clone();
         let runtime = tokio::runtime::Handle::current();
-        let routers: RouterFactory = Arc::new(move || Box::new(approved.router(runtime.clone())));
+        let routes =
+            morrow_network_node::managed_http::HttpRouteSet::new(vec![approved], runtime).unwrap();
+        let routers: RouterFactory = Arc::new(move || Box::new(routes.clone()));
         let host = ServiceHost::new_owned(worker, WAIT, routers).unwrap();
         Self {
             blocked,

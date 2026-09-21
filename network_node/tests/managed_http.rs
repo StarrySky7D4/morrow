@@ -170,26 +170,28 @@ struct Running {
     _original_instance: Option<ManagedInstance>,
     worker: IoWorker<HttpOwner>,
     endpoint: HttpEndpoint,
+    secondary: Option<HttpEndpoint>,
 }
 impl Running {
     fn new(approval: EndpointApproval, credentials: bool) -> Self {
         Self::configured(approval, credentials, false)
     }
     fn configured(approval: EndpointApproval, credentials: bool, second_instance: bool) -> Self {
-        Self::build(approval, credentials, second_instance, None).unwrap()
+        Self::build(approval, credentials, second_instance, None, None).unwrap()
     }
     fn stored(
         approval: EndpointApproval,
         credentials: bool,
         setup: StoredSetup,
     ) -> morrow_network_node::Result<Self> {
-        Self::build(approval, credentials, false, Some(setup))
+        Self::build(approval, credentials, false, Some(setup), None)
     }
     fn build(
         approval: EndpointApproval,
         credentials: bool,
         second_instance: bool,
         stored: Option<StoredSetup>,
+        extra: Option<EndpointApproval>,
     ) -> morrow_network_node::Result<Self> {
         let dir = tempfile::tempdir().unwrap();
         let wasm = wat::parse_str(
@@ -213,7 +215,7 @@ impl Running {
             io::declaration(caps.iter().copied().collect(), vec!["io.invoke".into()]);
         let budget = declaration.budget.as_mut().unwrap();
         budget.max_jobs = 1;
-        budget.max_resources = 2;
+        budget.max_resources = if extra.is_some() { 3 } else { 2 };
         budget.max_job_bytes = 1024 * 1024;
         budget.max_bytes = 4 * 1024 * 1024;
         manifest.required_features.push(io::FEATURE.into());
@@ -335,6 +337,10 @@ impl Running {
             HttpEndpoint::approve(&manager, &host, &instance, &binding, approval, [7; 32], 2)
                 .unwrap()
         };
+        let secondary = extra.map(|approval| {
+            HttpEndpoint::approve(&manager, &host, &instance, &binding, approval, [8; 32], 2)
+                .unwrap()
+        });
         let (instance, binding, original) = if second_instance {
             let second = manager.connect(ID, &mut host).unwrap();
             let binding = manager
@@ -364,6 +370,7 @@ impl Running {
             _original_instance: original,
             worker,
             endpoint,
+            secondary,
         })
     }
     fn submit(&mut self, submission: &HttpSubmission) -> (Request, JobHandle) {
@@ -1186,3 +1193,9 @@ async fn stored_windows_dpapi_credential_injects_real_http_without_plaintext_in_
 
 #[path = "support/deferred_http_owner.rs"]
 mod deferred_http_owner;
+
+#[path = "support/http_route_set.rs"]
+mod http_route_set;
+
+#[path = "support/gated_http.rs"]
+mod gated_http;

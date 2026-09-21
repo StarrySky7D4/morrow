@@ -1,8 +1,6 @@
 //! Real HTTP barriers; no synthetic sleep stands in for transport progress.
+use super::gated_http::GatedServer;
 use super::*;
-#[path = "gated_http.rs"]
-mod gated;
-use gated::GatedServer;
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn original_owner_commits_during_real_http_wait_and_reopens_same_database() {

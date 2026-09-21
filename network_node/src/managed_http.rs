@@ -32,6 +32,9 @@ use tokio_util::sync::CancellationToken;
 use url::Url;
 use zeroize::Zeroize;
 
+mod routes;
+pub use routes::{HttpRouteSet, MAX_SERVICE_ENDPOINTS};
+
 static NEXT_ENDPOINT: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy)]
 pub enum NetworkProfile {
