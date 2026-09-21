@@ -17,6 +17,46 @@ fn manifest() -> proto::Manifest {
     ));
     m
 }
+#[test]
+fn resource_directory_profile_requires_service_and_outbound_contracts() {
+    use morrow_core::service_resources::FEATURE;
+    let mut m = manifest();
+    m.required_features.push(FEATURE.into());
+    m.io_declaration.as_mut().unwrap().service_schema_sha256 =
+        morrow_core::service::schema_digest().to_vec();
+    assert!(Package::build(m.clone(), MODULE).is_ok());
+    for case in 0..5 {
+        let mut invalid = m.clone();
+        match case {
+            0 => invalid
+                .io_declaration
+                .as_mut()
+                .unwrap()
+                .service_schema_sha256
+                .clear(),
+            1 => invalid
+                .io_declaration
+                .as_mut()
+                .unwrap()
+                .requested_capabilities
+                .retain(|c| *c != IoCapability::HttpRequest.number()),
+            2 => invalid
+                .io_declaration
+                .as_mut()
+                .unwrap()
+                .requested_capabilities
+                .retain(|c| *c != IoCapability::HttpPublish.number()),
+            3 => invalid.required_features.push(FEATURE.into()),
+            _ => {
+                invalid.io_declaration = None;
+                invalid.required_features = vec![FEATURE.into()];
+            }
+        }
+        assert!(Package::build(invalid, MODULE).is_err());
+    }
+    m.required_features.retain(|f| f != FEATURE);
+    assert!(Package::build(m, MODULE).is_ok());
+}
 fn reject(edit: impl FnOnce(&mut proto::Manifest)) {
     let mut m = manifest();
     edit(&mut m);

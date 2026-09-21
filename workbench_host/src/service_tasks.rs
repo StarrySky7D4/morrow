@@ -302,7 +302,7 @@ impl Workbench {
         self.start_service_with_outbound(options, &[])
     }
     /// Native admission with explicitly selected saved outbound endpoints.
-    /// Existing UI/protocol callers select none until they expose this choice.
+    /// Existing callers select none unless they explicitly supply this choice.
     pub fn start_service_with_outbound(
         &mut self,
         options: ServiceStart,
@@ -412,6 +412,13 @@ impl Workbench {
             .ok_or("service expiry overflow")?;
         let instance = manager.connect(&options.package_id, &mut state.host)?;
         let prepared = catch_unwind(AssertUnwindSafe(|| -> Result<_> {
+            let resource_profile = instance
+                .package()
+                .package()
+                .manifest()
+                .required_features
+                .iter()
+                .any(|f| f == morrow_core::service_resources::FEATURE);
             let mut caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
             if !endpoints.is_empty() {
                 caps.insert(IoCapability::HttpRequest);
@@ -458,16 +465,21 @@ impl Workbench {
                 )?;
                 approved.push(endpoint);
             }
+            let mut resources = None;
             let routers: RouterFactory = if approved.is_empty() {
                 Arc::new(|| Box::new(DenyOutbound))
             } else {
                 let routes = HttpRouteSet::new(approved, runtime.handle().clone())?;
+                if resource_profile {
+                    resources =
+                        Some(routes.resources(outbound_scope.ok_or("missing outbound scope")?)?);
+                }
                 Arc::new(move || Box::new(routes.clone()))
             };
-            Ok((binding, configured, routers))
+            Ok((binding, configured, routers, resources))
         }))
         .unwrap_or_else(|_| Err("service preparation panicked; no listener started".into()));
-        let (binding, configured, routers) = match prepared {
+        let (binding, configured, routers, resources) = match prepared {
             Ok(prepared) => prepared,
             Err(error) => {
                 if self.state.cleanup_instance(instance).is_err() {
@@ -534,11 +546,12 @@ impl Workbench {
                 return Err("service worker admission failed; inspect task before retrying".into());
             }
         };
-        let host = match ServiceHost::new_owned_with_outbound_scope(
+        let host = match ServiceHost::new_owned_with_resources(
             worker,
             options.network_limits.timeout,
             routers,
             outbound_scope,
+            resources,
         ) {
             Ok(host) => host,
             Err(failure) => {

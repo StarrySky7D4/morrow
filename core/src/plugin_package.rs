@@ -199,7 +199,7 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 6
+            || manifest.required_features.len() > 7
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
@@ -207,6 +207,7 @@ impl Package {
                     && f != io::FEATURE
                     && f != io::SERVICE_RUN_FEATURE
                     && f != io::SERVICE_RUN_BUDGET_FEATURE
+                    && f != crate::service_resources::FEATURE
             })
             || manifest
                 .required_features
@@ -335,6 +336,19 @@ impl Package {
         } else {
             BTreeSet::new()
         };
+        if manifest
+            .required_features
+            .iter()
+            .any(|f| f == crate::service_resources::FEATURE)
+            && (!io_ceiling.contains(&io::IoCapability::HttpRequest)
+                || !io_ceiling.contains(&io::IoCapability::HttpPublish)
+                || manifest
+                    .io_declaration
+                    .as_ref()
+                    .is_none_or(|d| d.service_schema_sha256 != crate::service::schema_digest()))
+        {
+            return Err(Error::Invalid("service resources feature"));
+        }
         identity(&manifest.package_id)?;
         if manifest.package_version.len() > 128
             || manifest.display_name.is_empty()

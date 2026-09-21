@@ -3,7 +3,7 @@ use super::*;
 use morrow_plugin_runtime::io_jobs::RouteStart;
 use std::collections::BTreeMap;
 
-pub const MAX_SERVICE_ENDPOINTS: usize = 8;
+pub const MAX_SERVICE_ENDPOINTS: usize = morrow_core::service_resources::MAX_ENDPOINTS;
 
 /// Explicitly selected set of approved live outbound endpoints.
 /// Cloned by service factories; each import resolves via exact reference.
@@ -40,6 +40,40 @@ impl HttpRouteSet {
     /// Sorted, exact endpoint references available for selection.
     pub fn references(&self) -> impl Iterator<Item = &str> {
         self.endpoints.keys().map(|k| k.as_str())
+    }
+
+    /// Metadata from this exact approved set. It is not a live grant and must
+    /// be delivered only to a guest admitting the service-resources-v1 profile.
+    pub fn resources(
+        &self,
+        scope_sha256: [u8; 32],
+    ) -> crate::Result<morrow_core::service_resources::Directory> {
+        use morrow_core::service_resources::{Directory, Endpoint};
+        let endpoints = self
+            .endpoints
+            .iter()
+            .map(|(reference, endpoint)| {
+                let endpoint = &endpoint.inner;
+                Endpoint {
+                    reference: reference.clone(),
+                    credential: endpoint
+                        .credential
+                        .as_ref()
+                        .map_or_else(Vec::new, |c| c.reference().to_vec()),
+                    methods: endpoint.methods.iter().cloned().collect(),
+                    max_request_bytes: endpoint.limits.max_request_bytes as u64,
+                    max_response_bytes: endpoint.limits.max_response_bytes as u64,
+                    timeout_ms: endpoint.limits.timeout.as_millis() as u64,
+                    response_frame_limit: endpoint.response_frame_limit,
+                }
+            })
+            .collect();
+        let resources = Directory {
+            scope_sha256,
+            endpoints,
+        };
+        resources.encode().map_err(|_| Error::Invalid)?;
+        Ok(resources)
     }
 
     fn select(&self, request: &Request) -> std::result::Result<HttpRouter, RouterFault> {

@@ -37,6 +37,7 @@ struct Execution<O: HostOwner = HostRuntime> {
     timeout: Duration,
     routers: RouterFactory,
     outbound_scope: Option<[u8; 32]>,
+    resources: Option<Header>,
 }
 impl<O: HostOwner> Drop for Execution<O> {
     fn drop(&mut self) {
@@ -175,6 +176,35 @@ impl<O: HostOwner> ServiceHost<O> {
         routers: RouterFactory,
         outbound_scope: Option<[u8; 32]>,
     ) -> std::result::Result<Self, ServiceHostFailure<O>> {
+        Self::new_owned_with_resources(worker, timeout, routers, outbound_scope, None)
+    }
+    /// Optional immutable host context for an explicitly opted-in guest. The
+    /// directory must describe the same selected policy scope used for replay.
+    /// On failure the original worker remains recoverable by the caller.
+    pub fn new_owned_with_resources(
+        worker: IoWorker<O>,
+        timeout: Duration,
+        routers: RouterFactory,
+        outbound_scope: Option<[u8; 32]>,
+        resources: Option<morrow_core::service_resources::Directory>,
+    ) -> std::result::Result<Self, ServiceHostFailure<O>> {
+        let resources = match resources
+            .map(|directory| {
+                if Some(directory.scope_sha256) != outbound_scope {
+                    return Err(morrow_core::Error::Invalid("resource scope mismatch"));
+                }
+                directory.to_header()
+            })
+            .transpose()
+        {
+            Ok(resources) => resources,
+            Err(_) => {
+                return Err(ServiceHostFailure {
+                    worker,
+                    error: Error::Invalid,
+                });
+            }
+        };
         if timeout.is_zero() || timeout > Duration::from_secs(30) || outbound_scope == Some([0; 32])
         {
             return Err(ServiceHostFailure {
@@ -189,6 +219,7 @@ impl<O: HostOwner> ServiceHost<O> {
                 timeout,
                 routers,
                 outbound_scope,
+                resources,
             }),
         })
     }
@@ -438,6 +469,7 @@ impl<O: HostOwner> ServiceHost<O> {
                                 lower.as_str(),
                                 "morrow-content-scope"
                                     | "morrow-outbound-scope"
+                                    | "morrow-service-resources-v1"
                                     | "authorization"
                                     | "cookie"
                                     | "host"
@@ -480,6 +512,9 @@ impl<O: HostOwner> ServiceHost<O> {
                             .collect::<String>()
                             .into_bytes(),
                     });
+                }
+                if let Some(header) = &inner.resources {
+                    headers.push(header.clone());
                 }
                 // Normalize name order, preserving the order of repeated values.
                 if journal.is_some() {

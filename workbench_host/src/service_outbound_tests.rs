@@ -33,7 +33,15 @@ fn input() -> IoRequest {
     .unwrap()
 }
 fn package() -> Package {
+    package_with_resources(true)
+}
+fn package_with_resources(resources: bool) -> Package {
     let mut manifest = service_package().manifest().clone();
+    if resources {
+        manifest
+            .required_features
+            .push(morrow_core::service_resources::FEATURE.into());
+    }
     manifest
         .io_declaration
         .as_mut()
@@ -154,10 +162,22 @@ fn save_endpoint(fixture: &mut Fixture, server: &Server, revision: u64) {
 }
 #[track_caller]
 fn request(address: SocketAddr, path: &str, status: u16) -> Vec<u8> {
+    let morrow_core::io::Action::SubmitHttp(mut template) = input().action().clone() else {
+        panic!()
+    };
+    template.endpoint = vec![b'f'; 64];
+    template.credential = b"caller-supplied-credential".to_vec();
+    request_body(
+        address,
+        path,
+        status,
+        IoRequest::encode_http_submit(1, &template).unwrap(),
+    )
+}
+fn request_body(address: SocketAddr, path: &str, status: u16, body: IoRequest) -> Vec<u8> {
     let mut socket = TcpStream::connect(address).unwrap();
     socket.set_read_timeout(Some(WAIT)).unwrap();
-    let body = input();
-    write!(socket,"POST {path} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {FIRST_KEY}\r\nMorrow-Outbound-Scope: forged\r\nConnection: close, morrow-outbound-scope\r\nContent-Length: {}\r\n\r\n", body.bytes().len()).unwrap();
+    write!(socket,"POST {path} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {TOKEN}\r\nIdempotency-Key: {FIRST_KEY}\r\nMorrow-Outbound-Scope: forged\r\nMorrow-Service-Resources-V1: forged\r\nmorrow-service-resources-v1: 00\r\nConnection: close, morrow-outbound-scope, morrow-service-resources-v1\r\nContent-Length: {}\r\n\r\n", body.bytes().len()).unwrap();
     socket.write_all(body.bytes()).unwrap();
     let mut result = Vec::new();
     socket.read_to_end(&mut result).unwrap();
@@ -289,6 +309,44 @@ fn invalid_selection_and_unapproved_outbound_capability_fail_before_listener() {
     post(address, FIRST_KEY, b"before");
     stop(&mut fixture, key);
     fixture.app.finish().unwrap();
+}
+
+#[test]
+fn legacy_guest_receives_no_directory_and_spoofed_header_never_reaches_guest() {
+    for forged in [true, false] {
+        let server = Server::new();
+        let mut allowed = caps();
+        allowed.insert(IoCapability::HttpRequest);
+        let mut fixture = Fixture::with_package(
+            "127.0.0.1:0".parse().unwrap(),
+            package_with_resources(false),
+            allowed,
+        );
+        save_endpoint(&mut fixture, &server, 1);
+        let key = fixture
+            .app
+            .start_service_with_outbound(
+                fixture.options(1),
+                &[ServiceEndpointSelection {
+                    reference: ENDPOINT,
+                    revision: 1,
+                }],
+            )
+            .unwrap();
+        let address = running(&mut fixture.app, key);
+        if forged {
+            // Accidental host injection would make this succeed by replacing the
+            // unapproved caller reference; the old profile must reject it.
+            request(address, "/api", 409);
+            assert_eq!(server.calls.load(Ordering::SeqCst), 0);
+        } else {
+            // A malformed caller directory must be stripped even for old guests.
+            request_body(address, "/api", 202, input());
+            assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+        }
+        stop(&mut fixture, key);
+        fixture.app.finish().unwrap();
+    }
 }
 
 #[test]

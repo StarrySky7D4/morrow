@@ -1,7 +1,7 @@
 //! Test-only actual Rust service guest using current core codecs. This is not
 //! a public SDK example or a production plugin and carries no native authority.
 #![cfg(target_arch = "wasm32")]
-use morrow_core::{io, service};
+use morrow_core::{io, service, service_resources};
 
 #[link(wasm_import_module = "morrow_task_v1")]
 unsafe extern "C" {
@@ -23,6 +23,22 @@ fn run() -> Result<(), ()> {
     }
     let request = service::Request::decode(&input[..length]).map_err(|_| ())?;
     let io_request = io::Request::decode(&request.invocation().body).map_err(|_| ())?;
+    let io_request = if let Some(directory) =
+        service_resources::Directory::from_headers(&request.invocation().headers).map_err(|_| ())?
+    {
+        let endpoint = directory.endpoints.first().ok_or(())?;
+        let io::Action::SubmitHttp(template) = io_request.action() else {
+            return Err(());
+        };
+        let mut submission = template.clone();
+        // The caller's body cannot choose an unapproved endpoint or credential.
+        // This test guest chooses the first resource explicitly selected by UI.
+        submission.endpoint = endpoint.reference.as_bytes().to_vec();
+        submission.credential = endpoint.credential.clone();
+        io::Request::encode_http_submit(io_request.call_id(), &submission).map_err(|_| ())?
+    } else {
+        io_request
+    };
     let mut output = vec![0u8; io::MAX_FRAME_BYTES];
     // SAFETY: request and output are disjoint, bounded owned allocations. Both
     // stay live for the whole import; the runtime validates their wasm ranges.

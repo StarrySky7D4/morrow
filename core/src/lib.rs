@@ -111,6 +111,12 @@ pub mod io_capnp {
 
 /// Bounded inbound service messages; decoding never authenticates a principal.
 pub mod service;
+/// Opt-in metadata for explicitly selected live service resources.
+pub mod service_resources;
+#[allow(clippy::all, unsafe_code)]
+pub mod service_resources_capnp {
+    include!(concat!(env!("OUT_DIR"), "/service_resources_capnp.rs"));
+}
 #[allow(clippy::all, unsafe_code)]
 pub mod service_capnp {
     include!(concat!(env!("OUT_DIR"), "/service_capnp.rs"));

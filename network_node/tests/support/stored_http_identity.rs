@@ -19,6 +19,10 @@ async fn persistent_reference_requires_fresh_original_grant_after_disconnect() {
         tokio::runtime::Handle::current(),
     )
     .unwrap();
+    let directory = stale.resources([3; 32]).unwrap();
+    let directory =
+        morrow_core::service_resources::Directory::decode(&directory.encode().unwrap()).unwrap();
+    assert_eq!(directory.endpoints[0].reference, wire);
     let mut host = run.finish().await;
     let old_approval = host
         .store_local()
@@ -66,7 +70,9 @@ async fn persistent_reference_requires_fresh_original_grant_after_disconnect() {
         JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
     )
     .unwrap();
-    let request = Request::encode_http_submit(1, &submission(&fresh, "persistent-stale")).unwrap();
+    let mut old_metadata_request = submission(&fresh, "persistent-stale");
+    old_metadata_request.endpoint = directory.endpoints[0].reference.as_bytes().to_vec();
+    let request = Request::encode_http_submit(1, &old_metadata_request).unwrap();
     let mut job = run
         .worker
         .submit_brokered(request.bytes().to_vec(), Box::new(stale), WAIT)
@@ -107,6 +113,62 @@ async fn ephemeral_stored_approval_keeps_session_reference() {
         .collect::<String>();
     assert_ne!(run.endpoint.endpoint_reference(), persistent);
     run.finish().await;
+}
+
+#[tokio::test]
+async fn approved_directory_delivers_only_credential_reference_for_real_http() {
+    let mut server = Server::new(Some(raw_response("200 OK", b"live")), Duration::ZERO).await;
+    let mut setup = stored_setup(true);
+    setup.persistent = true;
+    let mut run = Running::stored(approval(&server.origin), true, setup).unwrap();
+    let routes = HttpRouteSet::new(
+        vec![run.endpoint.clone()],
+        tokio::runtime::Handle::current(),
+    )
+    .unwrap();
+    let directory = routes.resources([4; 32]).unwrap();
+    let header = directory.to_header().unwrap();
+    let directory = morrow_core::service_resources::Directory::from_headers(&[header])
+        .unwrap()
+        .unwrap();
+    let endpoint = &directory.endpoints[0];
+    assert_eq!(
+        endpoint.credential,
+        STORED_CREDENTIAL
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect::<String>()
+            .as_bytes()
+    );
+    assert_eq!(endpoint.methods, vec!["GET", "HEAD", "POST"]);
+    assert_eq!(endpoint.max_request_bytes, 65536);
+    let mut input = submission(&run.endpoint, "directory-credential");
+    input.endpoint = endpoint.reference.as_bytes().to_vec();
+    input.credential = endpoint.credential.clone();
+    let (_, mut job) = run.submit(&input);
+    assert_eq!(consume(&mut job).await.task.execution.outcome, Ok(0));
+    assert!(
+        !directory
+            .encode()
+            .unwrap()
+            .windows(TOKEN.len())
+            .any(|w| w == TOKEN.as_bytes())
+    );
+    let sent = server.request().await;
+    assert!(String::from_utf8_lossy(&sent).contains(&format!("authorization: Bearer {TOKEN}")));
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    run.endpoint.revoke();
+    input.operation_id = b"directory-after-revoke".to_vec();
+    let (_, mut job) = run.submit(&input);
+    assert!(consume(&mut job).await.task.execution.outcome.is_err());
+    assert_eq!(server.calls.load(Ordering::SeqCst), 1);
+    let host = run.finish().await;
+    assert!(
+        host.store_local()
+            .lookup_io_intent(ID, "directory-after-revoke")
+            .unwrap()
+            .is_none()
+    );
 }
 
 #[tokio::test]

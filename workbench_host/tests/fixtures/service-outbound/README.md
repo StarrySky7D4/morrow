@@ -3,6 +3,11 @@
 This fixture decodes the actual authenticated service request, forwards the IO
 request carried in its body through `morrow_io_v1.call`, validates the actual IO
 response, and encodes a service response bound to the original request digest.
+When the host supplies the opt-in `service-resources-v1` directory, it decodes
+that bounded context and replaces the caller's endpoint/credential fields with
+the first explicitly selected resource. Tests deliberately send incorrect body
+references and forged reserved headers. The same guest in a legacy package
+receives no directory and retains its previous template behavior.
 It reuses current core codecs for integration testing; it is not a public SDK
 example or a production forwarding service. A guest request never grants access
 to an endpoint: the native host must explicitly select and approve it.

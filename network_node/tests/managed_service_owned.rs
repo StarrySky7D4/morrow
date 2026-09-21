@@ -429,6 +429,42 @@ async fn invalid_adapter_options_return_the_same_live_worker_for_explicit_reclam
     .err()
     .expect("zero outbound identity accepted");
     assert_eq!(failure.error, Error::Invalid);
+    let directory = morrow_core::service_resources::Directory {
+        scope_sha256: [1; 32],
+        endpoints: vec![morrow_core::service_resources::Endpoint {
+            reference: "1".repeat(64),
+            credential: vec![],
+            methods: vec!["GET".into()],
+            max_request_bytes: 1,
+            max_response_bytes: 1,
+            timeout_ms: 1,
+            response_frame_limit: 1,
+        }],
+    };
+    let failure = ServiceHost::new_owned_with_resources(
+        failure.worker,
+        Duration::from_secs(2),
+        routers(),
+        Some([2; 32]),
+        Some(directory.clone()),
+    )
+    .err()
+    .expect("mismatched resource scope accepted");
+    assert_eq!(failure.error, Error::Invalid);
+    let invalid = morrow_core::service_resources::Directory {
+        endpoints: vec![],
+        ..directory
+    };
+    let failure = ServiceHost::new_owned_with_resources(
+        failure.worker,
+        Duration::from_secs(2),
+        routers(),
+        Some([1; 32]),
+        Some(invalid),
+    )
+    .err()
+    .expect("invalid directory accepted");
+    assert_eq!(failure.error, Error::Invalid);
     assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
     let host = ServiceHost::new_owned(failure.worker, Duration::from_secs(2), routers()).unwrap();
     let exit = tokio::time::timeout(WAIT, host.shutdown_owned())
