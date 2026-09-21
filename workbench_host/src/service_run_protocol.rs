@@ -102,7 +102,17 @@ pub(super) fn handle(
                 })
             })
             .collect::<Result<Vec<_>>>()?;
-        let key = host.start_service_with_outbound(
+        let tls = if s.has_tls() {
+            let selected = s.get_tls()?;
+            Some(crate::service_tls::TlsSelection::from_expected(
+                crate::service_protocol::tls_path(selected.get_certificate_path())?.into(),
+                crate::service_protocol::tls_path(selected.get_private_key_path())?.into(),
+                selected.get_certificate_sha256()?.try_into()?,
+            )?)
+        } else {
+            None
+        };
+        let key = host.start_service_with_network(
             ServiceStart {
                 submission: s.get_submission()?.try_into()?,
                 config_id: text(s.get_config_id())?,
@@ -133,6 +143,7 @@ pub(super) fn handle(
                 },
             },
             &outbound,
+            tls.as_ref(),
         )?;
         service_reply(host.service_status(key)?, out.reborrow().init_service_run());
         return Ok(());

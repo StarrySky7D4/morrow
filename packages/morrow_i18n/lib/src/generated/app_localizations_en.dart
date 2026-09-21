@@ -2021,7 +2021,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsServiceRunHint =>
-      'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.';
+      'Choose an approved publication and finite run limits, then explicitly start the service. After stopping, wait for the original workbench owner to return before acknowledging the result.';
 
   @override
   String pluginsServiceRunHostFailure(String detail) {
@@ -2078,7 +2078,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsServiceRunNoSelection =>
-      'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.';
+      'No approved publication is available. Check the plugin, configuration and authentication state.';
 
   @override
   String get pluginsServiceRunOutboundAttempt =>
@@ -2228,8 +2228,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pluginsServiceTls => 'Require TLS';
 
   @override
+  String get pluginsServiceTlsAttempt =>
+      'Certificate PEM digest bound to this start attempt';
+
+  @override
+  String get pluginsServiceTlsCertificate => 'Choose certificate chain';
+
+  @override
+  String get pluginsServiceTlsChecked =>
+      'Certificate and key pairing checked. Certificate PEM SHA-256 is shown below. Clients must still verify the hostname, validity and trust chain.';
+
+  @override
+  String get pluginsServiceTlsChecking => 'Processing certificate selection…';
+
+  @override
+  String get pluginsServiceTlsFailed =>
+      'Certificate check failed. Check the PEM files, key pairing and local paths before trying again.';
+
+  @override
   String get pluginsServiceTlsHelp =>
       'Non-loopback addresses require TLS. This saves the requirement only; no listener or TLS identity is created here.';
+
+  @override
+  String get pluginsServiceTlsHint =>
+      'This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.';
+
+  @override
+  String get pluginsServiceTlsInspect => 'Check certificate';
+
+  @override
+  String get pluginsServiceTlsPrivateKey => 'Choose private key';
+
+  @override
+  String get pluginsServiceTlsUnavailable =>
+      'This backend does not support local TLS certificate selection.';
 
   @override
   String get pluginsServiceTokenDiscarded =>

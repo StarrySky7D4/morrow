@@ -1,0 +1,179 @@
+// Actual Windows app and Rust host; deterministic picker results and framework
+// input do not certify the OS file dialog or physical keyboard/mouse handling.
+import 'dart:convert';
+import 'dart:io';
+import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:morrow_studio/desktop_frame.dart';
+import 'package:morrow_studio/main.dart';
+import 'package:morrow_studio/plugins/service_run_control.dart';
+import 'package:morrow_studio/plugins/service_run_manager.dart';
+import 'package:morrow_studio/plugins/service_tls_picker.dart';
+import 'package:morrow_studio/plugins/studio_storage.dart';
+import 'package:morrow_studio/plugins/workbench_native.dart';
+import 'package:morrow_studio/window_effects.dart';
+import 'package:window_manager/window_manager.dart';
+import '../test/service_run_real_native_fixture.dart';
+import 'live_ui_helpers.dart';
+
+class _PemPicker extends FileSelectorPlatform {
+  _PemPicker(this.paths);
+  final List<String> paths;
+  var count = 0;
+  @override
+  Future<XFile?> openFile({
+    List<XTypeGroup>? acceptedTypeGroups,
+    String? initialDirectory,
+    String? confirmButtonText,
+  }) async {
+    expect(acceptedTypeGroups!.single.extensions, contains('pem'));
+    return XFile(paths[count++]);
+  }
+}
+
+Finder keyed(String key) => find.byKey(ValueKey(key));
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  testWidgets(
+    'Windows TLS selection, authenticated HTTPS and original-owner recovery',
+    (tester) async {
+      expect(RealServiceFixture.available, isTrue);
+      final output = Directory(
+        Platform.environment['MORROW_WINDOW_TEST_OUTPUT']!,
+      ).absolute;
+      final fixture = await RealServiceFixture.open(tlsRequired: true);
+      final originalPicker = FileSelectorPlatform.instance;
+      final boundary = GlobalKey();
+      try {
+        final pem = Directory('${fixture.directory.path}/tls');
+        final generated = await Process.run(
+          Platform.environment['MORROW_TLS_FIXTURE']!,
+          [pem.path],
+        );
+        expect(generated.exitCode, 0, reason: '${generated.stderr}');
+        final cert = '${pem.path}/certificate.pem',
+            key = '${pem.path}/private-key.pem';
+        final picker = _PemPicker([cert, key]);
+        FileSelectorPlatform.instance = picker;
+        await fixture.backend.saveUiLocale('en');
+        final storage = await RustStudioStorage.open(fixture.backend);
+        await initializeDesktopFrame();
+        await windowManager.setSize(const Size(800, 820));
+        await tester.pumpWidget(
+          RepaintBoundary(
+            key: boundary,
+            child: MorrowApp(
+              storage: storage,
+              workbench: fixture.backend,
+              initialLocale: const Locale('en'),
+              nativeBackground: DesktopBackground(),
+            ),
+          ),
+        );
+        await tapVisible(tester, keyed('appearance-toggle'));
+        await waitForUi(
+          tester,
+          () => find.byType(ServiceRunManager).evaluate().length == 1,
+          reason: 'service panel',
+        );
+        final selection = find.descendant(
+          of: find.byType(ServiceRunManager),
+          matching: find.byType(DropdownButtonFormField<String>),
+        );
+        await waitForUi(
+          tester,
+          () =>
+              tester
+                  .widget<DropdownButton<String>>(
+                    find.descendant(
+                      of: selection,
+                      matching: find.byType(DropdownButton<String>),
+                    ),
+                  )
+                  .items
+                  ?.length ==
+              1,
+          reason: 'TLS publication',
+        );
+        await tapVisible(tester, selection);
+        await tapVisible(
+          tester,
+          find.textContaining('${fixture.plugin.name} ·').last,
+        );
+        expect(
+          tester.widget<OutlinedButton>(keyed('service-run-start')).onPressed,
+          isNull,
+        );
+        await tapVisible(tester, keyed('service-tls-certificate'));
+        await tapVisible(tester, keyed('service-tls-private-key'));
+        expect(
+          tester.widget<OutlinedButton>(keyed('service-run-start')).onPressed,
+          isNull,
+        );
+        await tapVisible(tester, keyed('service-tls-inspect'));
+        await waitForUi(
+          tester,
+          () => keyed('service-tls-fingerprint').evaluate().isNotEmpty,
+          reason: 'real PEM inspection',
+        );
+      await tester.ensureVisible(find.byType(ServiceTlsPicker));
+        await saveBoundaryPng(
+          tester,
+          boundary,
+          '${output.path}/01-checked.png',
+        );
+        await tester.ensureVisible(keyed('service-run-lifetime'));
+        await tester.enterText(keyed('service-run-lifetime'), '120000');
+        await tapVisible(tester, keyed('service-run-start'));
+        await waitForUi(
+          tester,
+          () => fixture.session.service?.phase == ServiceRunPhase.running,
+          reason: 'TLS listener',
+        );
+        expect(picker.count, 2);
+        expect(fixture.session.attempt!.tls!.certificatePath, cert);
+        final response = await fixture.post(tlsCertificate: cert);
+        expect(response, startsWith('HTTP/1.1 202 '));
+        expect(response, endsWith('executed-before'));
+        await fixture.backend.saveUiLocale('zh');
+        await tapVisible(tester, keyed('service-run-stop'));
+        await waitForUi(
+          tester,
+          () => fixture.session.service?.phase == ServiceRunPhase.exited,
+          reason: 'actual owner reclaimed',
+        );
+        await tapVisible(tester, keyed('service-run-acknowledge'));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await fixture.backend.close();
+        final reopened = await RustWorkbench.open(
+          executable: Platform.environment['MORROW_WORKBENCH_HOST']!,
+          package: Platform.environment['MORROW_WORKBENCH_PACKAGE']!,
+          directory: fixture.directory,
+          managed: true,
+        );
+        try {
+          expect(await reopened.readUiLocale(), 'zh');
+        } finally {
+          await reopened.close();
+        }
+        await File('${output.path}/result.json').writeAsString(
+          jsonEncode({
+            'passed': true,
+            'httpsStatus': 202,
+            'pickerCalls': picker.count,
+            'input': 'Flutter framework',
+            'picker': 'deterministic local PEM selection',
+            'store': 'original reopened',
+          }),
+        );
+      } finally {
+        FileSelectorPlatform.instance = originalPicker;
+        await tester.pumpWidget(const SizedBox.shrink());
+        await fixture.close(observeBeforeClose: false);
+      }
+    },
+  );
+}

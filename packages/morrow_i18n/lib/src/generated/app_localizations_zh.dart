@@ -1868,7 +1868,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsServiceRunHint =>
-      '从已保存的配置和发布授权启动有限服务。运行期间可继续编辑内容，收起此面板不会停止服务。';
+      '选择已批准的发布与有限运行额度，显式启动服务。停止后等待原工作台回收，再确认结束状态。';
 
   @override
   String pluginsServiceRunHostFailure(String detail) {
@@ -1920,8 +1920,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsServiceRunNextSettings => '下一次显式运行的设置';
 
   @override
-  String get pluginsServiceRunNoSelection =>
-      '请刷新记录、启用服务插件，并保存配置和发布授权。当前预览支持回环地址 HTTP 服务。';
+  String get pluginsServiceRunNoSelection => '没有可用的已批准发布，请检查插件、配置与认证状态。';
 
   @override
   String get pluginsServiceRunOutboundAttempt => '本次启动绑定的端点';
@@ -2060,7 +2059,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pluginsServiceTls => '要求 TLS';
 
   @override
+  String get pluginsServiceTlsAttempt => '本次启动绑定的证书 PEM 摘要';
+
+  @override
+  String get pluginsServiceTlsCertificate => '选择证书链';
+
+  @override
+  String get pluginsServiceTlsChecked =>
+      '证书与密钥配对已检查，证书 PEM 的 SHA-256 如下。客户端仍须验证域名、有效期与信任链。';
+
+  @override
+  String get pluginsServiceTlsChecking => '正在处理证书选择…';
+
+  @override
+  String get pluginsServiceTlsFailed => '证书检查未完成。请检查 PEM 文件、密钥配对与本地路径后重试。';
+
+  @override
   String get pluginsServiceTlsHelp => '非本机回环地址必须要求 TLS。这里仅保存要求，不创建监听器或 TLS 身份。';
+
+  @override
+  String get pluginsServiceTlsHint =>
+      '此发布要求 TLS。选择 PEM 证书链与私钥并检查；文件在启动时会再次校验，运行中不会自动更换证书。';
+
+  @override
+  String get pluginsServiceTlsInspect => '检查证书';
+
+  @override
+  String get pluginsServiceTlsPrivateKey => '选择私钥';
+
+  @override
+  String get pluginsServiceTlsUnavailable => '当前后端不支持本地 TLS 证书选择。';
 
   @override
   String get pluginsServiceTokenDiscarded =>

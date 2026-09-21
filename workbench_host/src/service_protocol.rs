@@ -15,6 +15,7 @@ pub(crate) fn is_action(action: wire::Action) -> bool {
             | wire::Action::ServiceAuthenticationIssue
             | wire::Action::ServiceAuthorityDisable
             | wire::Action::ServicePublicationSave
+            | wire::Action::ServiceTlsInspect
     )
 }
 
@@ -31,6 +32,14 @@ fn reference(value: &[u8], optional: bool) -> Result<&[u8]> {
     } else {
         Err("invalid service reference".into())
     }
+}
+
+pub(crate) fn tls_path(value: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
+    let value = text(value, 4096)?;
+    if value.is_empty() || value.chars().any(char::is_control) {
+        return Err("invalid TLS path".into());
+    }
+    Ok(value)
 }
 fn principals(
     input: capnp::struct_list::Reader<'_, wire::service_principal::Owned>,
@@ -190,6 +199,19 @@ pub(crate) fn handle(
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     match request.get_action()? {
+        wire::Action::ServiceTlsInspect => {
+            let selected = request.get_service_tls()?;
+            let certificate = tls_path(selected.get_certificate_path())?;
+            let private_key = tls_path(selected.get_private_key_path())?;
+            let checked = crate::service_tls::TlsSelection::inspect(
+                std::path::Path::new(&certificate),
+                std::path::Path::new(&private_key),
+            )?;
+            let mut reply = out.init_service_tls();
+            reply.set_certificate_path(&certificate);
+            reply.set_private_key_path(&private_key);
+            reply.set_certificate_sha256(&checked.certificate_sha256());
+        }
         wire::Action::ServiceConfigPage => {
             let page = host.service_config_page(
                 &text(request.get_cursor(), 256)?,

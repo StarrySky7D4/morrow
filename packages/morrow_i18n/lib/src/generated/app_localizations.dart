@@ -3609,7 +3609,7 @@ abstract class AppLocalizations {
   /// No description provided for @pluginsServiceRunHint.
   ///
   /// In en, this message translates to:
-  /// **'Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.'**
+  /// **'Choose an approved publication and finite run limits, then explicitly start the service. After stopping, wait for the original workbench owner to return before acknowledging the result.'**
   String get pluginsServiceRunHint;
 
   /// No description provided for @pluginsServiceRunHostFailure.
@@ -3697,7 +3697,7 @@ abstract class AppLocalizations {
   /// No description provided for @pluginsServiceRunNoSelection.
   ///
   /// In en, this message translates to:
-  /// **'Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.'**
+  /// **'No approved publication is available. Check the plugin, configuration and authentication state.'**
   String get pluginsServiceRunNoSelection;
 
   /// No description provided for @pluginsServiceRunOutboundAttempt.
@@ -3964,11 +3964,65 @@ abstract class AppLocalizations {
   /// **'Require TLS'**
   String get pluginsServiceTls;
 
+  /// No description provided for @pluginsServiceTlsAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate PEM digest bound to this start attempt'**
+  String get pluginsServiceTlsAttempt;
+
+  /// No description provided for @pluginsServiceTlsCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose certificate chain'**
+  String get pluginsServiceTlsCertificate;
+
+  /// No description provided for @pluginsServiceTlsChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate and key pairing checked. Certificate PEM SHA-256 is shown below. Clients must still verify the hostname, validity and trust chain.'**
+  String get pluginsServiceTlsChecked;
+
+  /// No description provided for @pluginsServiceTlsChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing certificate selection…'**
+  String get pluginsServiceTlsChecking;
+
+  /// No description provided for @pluginsServiceTlsFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate check failed. Check the PEM files, key pairing and local paths before trying again.'**
+  String get pluginsServiceTlsFailed;
+
   /// No description provided for @pluginsServiceTlsHelp.
   ///
   /// In en, this message translates to:
   /// **'Non-loopback addresses require TLS. This saves the requirement only; no listener or TLS identity is created here.'**
   String get pluginsServiceTlsHelp;
+
+  /// No description provided for @pluginsServiceTlsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.'**
+  String get pluginsServiceTlsHint;
+
+  /// No description provided for @pluginsServiceTlsInspect.
+  ///
+  /// In en, this message translates to:
+  /// **'Check certificate'**
+  String get pluginsServiceTlsInspect;
+
+  /// No description provided for @pluginsServiceTlsPrivateKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose private key'**
+  String get pluginsServiceTlsPrivateKey;
+
+  /// No description provided for @pluginsServiceTlsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This backend does not support local TLS certificate selection.'**
+  String get pluginsServiceTlsUnavailable;
 
   /// No description provided for @pluginsServiceTokenDiscarded.
   ///

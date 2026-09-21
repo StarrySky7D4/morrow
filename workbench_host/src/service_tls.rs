@@ -24,6 +24,22 @@ pub struct TlsSelection {
 }
 
 impl TlsSelection {
+    /// Restore a caller's frozen choice, not a live identity. `load` is still
+    /// mandatory at admission and compares these bytes with the selected file.
+    pub fn from_expected(
+        certificate: PathBuf,
+        private_key: PathBuf,
+        certificate_sha256: [u8; 32],
+    ) -> Result<Self> {
+        if certificate_sha256 == [0; 32] {
+            return Err(IDENTITY_ERROR.into());
+        }
+        Ok(Self {
+            certificate,
+            private_key,
+            certificate_sha256,
+        })
+    }
     pub fn inspect(certificate: &Path, private_key: &Path) -> Result<Self> {
         let cert = read_bounded(certificate)?;
         let key = read_bounded(private_key)?;

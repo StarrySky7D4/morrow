@@ -20,6 +20,7 @@ ServiceRunRequest request({
   BigInt? jobs,
   BigInt? bytes,
   List<ServiceEndpointSelection> outbound = const [],
+  ServiceTlsSelection? tls,
 }) => ServiceRunRequest(
   submission: submission ?? identity(1),
   configId: 'service',
@@ -40,6 +41,7 @@ ServiceRunRequest request({
   maxConcurrent: concurrent,
   maxRequestBytes: requestBytes,
   outbound: outbound,
+  tls: tls,
 );
 
 host.ResponseBuilder response() =>
@@ -61,6 +63,55 @@ host.ResponseBuilder command({
 }
 
 void main() {
+  test(
+    'TLS request freezes selection and writes only paths and certificate digest',
+    () async {
+      final digest = identity(19);
+      final selection = ServiceTlsSelection(
+        certificatePath: '/cert.pem',
+        privateKeyPath: '/key.pem',
+        certificateSha256: digest,
+      );
+      final value = request(tls: selection);
+      digest.fillRange(0, digest.length, 0);
+      await sendHostRequest(
+        host.Action.serviceRunStart,
+        configure: (r) =>
+            ServiceRunCodec.writeRequest(value, r.initServiceRun()),
+        send: (bytes) async {
+          final row = MessageReader.deserialize(
+            bytes,
+          ).getRoot(host.requestFactory).serviceRun!.tls!;
+          expect(row.certificatePath, '/cert.pem');
+          expect(row.privateKeyPath, '/key.pem');
+          expect(row.certificateSha256, orderedEquals(identity(19)));
+        },
+      );
+      expect(() => value.tls!.certificateSha256[0] = 1, throwsUnsupportedError);
+      final out = response();
+      final row = out.initServiceTls();
+      row.certificatePath = '/cert.pem';
+      row.privateKeyPath = '/key.pem';
+      row.certificateSha256 = identity(19);
+      expect(
+        ServiceRunCodec.tlsSelection(
+          out.asReader(),
+          certificatePath: '/cert.pem',
+          privateKeyPath: '/key.pem',
+        ).certificateSha256,
+        orderedEquals(identity(19)),
+      );
+      row.certificatePath = '/other.pem';
+      expect(
+        () => ServiceRunCodec.tlsSelection(
+          out.asReader(),
+          certificatePath: '/cert.pem',
+          privateKeyPath: '/key.pem',
+        ),
+        throwsFormatException,
+      );
+    },
+  );
   test(
     'endpoint selection is owned and preserves UInt64 revisions on wire',
     () async {

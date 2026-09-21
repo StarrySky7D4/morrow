@@ -46,6 +46,7 @@ class RealServiceFixture {
     bool occupyPort = false,
     Future<RustWorkbench> Function(Directory)? openBackend,
     String? resourcePackage,
+    bool tlsRequired = false,
   }) async {
     final dir = await Directory.systemTemp.createTemp(
       'morrow-external-service-fault-',
@@ -64,6 +65,7 @@ class RealServiceFixture {
       await fixture._prepare(
         occupyPort: occupyPort,
         resourcePackage: resourcePackage,
+        tlsRequired: tlsRequired,
       );
       return fixture;
     } catch (_) {
@@ -107,6 +109,7 @@ class RealServiceFixture {
   Future<void> _prepare({
     required bool occupyPort,
     String? resourcePackage,
+    bool tlsRequired = false,
   }) async {
     await _select(
       resourcePackage ?? Platform.environment['MORROW_SERVICE_RUN_PACKAGE']!,
@@ -170,7 +173,7 @@ class RealServiceFixture {
           configId: config.id,
           configDigest: config.digest,
           listenAddress: address,
-          tlsRequired: false,
+          tlsRequired: tlsRequired,
           method: 'POST',
           path: '/api',
           queryPath: '/history',
@@ -194,6 +197,7 @@ class RealServiceFixture {
     BigInt? configRevision,
     int jobs = 64,
     int calls = 4,
+    ServiceTlsSelection? tls,
   }) => ServiceRunRequest(
     submission: Uint8List.fromList(List.filled(32, submission)),
     configId: config.id,
@@ -211,6 +215,7 @@ class RealServiceFixture {
     maxCalls: calls,
     maxJobBytes: BigInt.from(1024 * 1024),
     maxTotalBytes: BigInt.from(4 * 1024 * 1024),
+    tls: tls,
   );
 
   Future<ServiceRunSnapshot> observe(ServiceRunPhase phase) async {
@@ -231,13 +236,21 @@ class RealServiceFixture {
     }
   }
 
-  Future<String> post({bool second = false}) async {
+  Future<String> post({bool second = false, String? tlsCertificate}) async {
     final target = Uri.parse('http://$address');
-    final socket = await Socket.connect(
-      target.host,
-      target.port,
-      timeout: const Duration(seconds: 2),
-    );
+    final socket = tlsCertificate == null
+        ? await Socket.connect(
+            target.host,
+            target.port,
+            timeout: const Duration(seconds: 2),
+          )
+        : await SecureSocket.connect(
+            target.host,
+            target.port,
+            context: SecurityContext(withTrustedRoots: false)
+              ..setTrustedCertificates(tlsCertificate),
+            timeout: const Duration(seconds: 5),
+          );
     final body = second ? 'after' : 'before';
     final request = Uint8List.fromList([
       ...utf8.encode(

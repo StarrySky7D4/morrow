@@ -40,6 +40,7 @@ class RustWorkbench
         WorkbenchEndpointControl,
         WorkbenchServiceControl,
         WorkbenchServiceRunControl,
+        WorkbenchServiceTlsControl,
         WorkbenchIoTaskControl,
         WorkbenchEditorSupport {
   RustWorkbench._(this.process, this.cache) {
@@ -855,6 +856,30 @@ class RustWorkbench
     } on _HostResponseError catch (error) {
       throw ServiceRunStartFailure(error.message);
     }
+  }
+
+  @override
+  Future<ServiceTlsSelection> inspectServiceTls({
+    required String certificatePath,
+    required String privateKeyPath,
+  }) {
+    ServiceRunValidation.tlsPath(certificatePath);
+    ServiceRunValidation.tlsPath(privateKeyPath);
+    return _callDecoded<ServiceTlsSelection>(
+      host.Action.serviceTlsInspect,
+      configure: (r) {
+        final selected = r.initServiceTls();
+        selected.certificatePath = certificatePath;
+        selected.privateKeyPath = privateKeyPath;
+      },
+      decode: (r) => ServiceRunCodec.tlsSelection(
+        r,
+        certificatePath: certificatePath,
+        privateKeyPath: privateKeyPath,
+      ),
+      clearReply: true,
+      updatePresentation: false,
+    );
   }
 
   @override

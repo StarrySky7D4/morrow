@@ -11,6 +11,7 @@ import 'service_endpoint_catalog.dart';
 import 'plugin_library.dart';
 import 'service_control.dart';
 import 'service_run_control.dart';
+import 'service_tls_picker.dart';
 import 'service_run_session.dart';
 import 'service_session.dart';
 import 'session_view_state.dart';
@@ -73,6 +74,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   List<StoredEndpoint> _endpoints = const [];
   final Map<String, ServiceEndpointSelection> _outbound = {};
   bool _endpointsTrusted = false, _endpointsFailed = false;
+  bool _tlsRequired = false;
+  ServiceTlsSelection? _tlsSelection;
   final _fields = {
     'lifetime': TextEditingController(text: '60000'),
     'jobs': TextEditingController(text: '64'),
@@ -139,7 +142,6 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
           if (authority.kind != 2 ||
               !_active(authority, now) ||
               policy == null ||
-              policy.tlsRequired ||
               policy.configId != config.id ||
               !listEquals(policy.configDigest, config.digest) ||
               !config.approvalReferences.any(
@@ -235,6 +237,8 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         !identical(oldWidget.endpointBackend, widget.endpointBackend)) {
       _detach();
       _selection = null;
+      _tlsSelection = null;
+      _tlsRequired = false;
       _outbound.clear();
       _endpoints = const [];
       _endpointsTrusted = false;
@@ -340,6 +344,9 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     final selected = _choices.where((c) => c.key == _selection).toList();
     if (selected.length != 1) return;
     final choice = selected.single;
+    if (choice.publication.publication!.tlsRequired && _tlsSelection == null) {
+      return;
+    }
     try {
       int number(String key) => int.parse(_fields[key]!.text.trim());
       BigInt big(String key) => BigInt.parse(_fields[key]!.text.trim());
@@ -372,6 +379,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
         maxConcurrent: number('concurrent'),
         timeoutMs: number('timeout'),
         outbound: _outbound.values.toList(),
+        tls: choice.publication.publication!.tlsRequired ? _tlsSelection : null,
       );
       ServiceRunValidation.request(request);
       setState(() => _invalid = false);
@@ -488,6 +496,13 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
             ),
           ),
           _note(l.pluginsServiceRunHint),
+          if (_run.attempt?.tls case final ServiceTlsSelection selected) ...[
+            _note(l.pluginsServiceTlsAttempt),
+            _note(
+              _hex(selected.certificateSha256),
+              key: 'attempt-tls-fingerprint',
+            ),
+          ],
           if (_run.attempt?.outbound.isNotEmpty == true) ...[
             _note(l.pluginsServiceRunOutboundAttempt),
             for (final endpoint in _run.attempt!.outbound)
@@ -614,11 +629,33 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
             onChanged: !_run.canStart
                 ? null
                 : (value) => setState(() {
-                    if (value != _selection) _outbound.clear();
+                    if (value != _selection) {
+                      _outbound.clear();
+                      _tlsSelection = null;
+                    }
                     _selection = value;
+                    _tlsRequired = choices.any(
+                      (c) =>
+                          c.key == value &&
+                          c.publication.publication!.tlsRequired,
+                    );
                   }),
           ),
           if (choices.isEmpty) _note(l.pluginsServiceRunNoSelection),
+          if (_tlsRequired)
+            if (widget.backend case final WorkbenchServiceTlsControl tlsBackend)
+              ServiceTlsPicker(
+                key: ValueKey('service-tls-$_selection-$_attachment'),
+                backend: tlsBackend,
+                enabled: _run.canStart && selectionCurrent,
+                onChanged: (value) => setState(() => _tlsSelection = value),
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+              )
+            else
+              _note(l.pluginsServiceTlsUnavailable),
           if (_selection != null && !selectionCurrent)
             _note(l.pluginsServiceRunStale, key: 'stale'),
           if (widget.endpointBackend != null) ...[
@@ -706,6 +743,7 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
             _run.canStart &&
                     selectionCurrent &&
                     _metadataCurrent &&
+                    (!_tlsRequired || _tlsSelection != null) &&
                     _outboundCurrent
                 ? _start
                 : null,

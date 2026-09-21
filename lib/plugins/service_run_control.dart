@@ -1,10 +1,28 @@
 import 'dart:typed_data';
+import 'dart:convert';
 
 import 'io_task_models.dart';
 import 'service_control.dart' show ServiceValidation;
 
 Uint8List _owned(Uint8List bytes) =>
     Uint8List.fromList(bytes).asUnmodifiableView();
+
+class ServiceTlsSelection {
+  ServiceTlsSelection({
+    required this.certificatePath,
+    required this.privateKeyPath,
+    required Uint8List certificateSha256,
+  }) : certificateSha256 = _owned(certificateSha256);
+  final String certificatePath, privateKeyPath;
+  final Uint8List certificateSha256;
+}
+
+abstract interface class WorkbenchServiceTlsControl {
+  Future<ServiceTlsSelection> inspectServiceTls({
+    required String certificatePath,
+    required String privateKeyPath,
+  });
+}
 
 class ServiceEndpointSelection {
   ServiceEndpointSelection({
@@ -43,10 +61,18 @@ class ServiceRunRequest {
     this.maxConcurrent = 1,
     this.timeoutMs = 10000,
     List<ServiceEndpointSelection> outbound = const [],
+    ServiceTlsSelection? tls,
   }) : submission = _owned(submission),
        configDigest = _owned(configDigest),
        publication = _owned(publication),
        packageDigest = _owned(packageDigest),
+       tls = tls == null
+           ? null
+           : ServiceTlsSelection(
+               certificatePath: tls.certificatePath,
+               privateKeyPath: tls.privateKeyPath,
+               certificateSha256: tls.certificateSha256,
+             ),
        outbound = List.unmodifiable(
          outbound.map(
            (e) => ServiceEndpointSelection(
@@ -56,6 +82,7 @@ class ServiceRunRequest {
          ),
        );
   final List<ServiceEndpointSelection> outbound;
+  final ServiceTlsSelection? tls;
   final Uint8List submission, configDigest, publication, packageDigest;
   final String configId, packageId;
   final BigInt configRevision, publicationRevision, registryRevision;
@@ -209,6 +236,20 @@ abstract interface class WorkbenchServiceRunControl {
 }
 
 abstract final class ServiceRunValidation {
+  static void tlsPath(String path) {
+    if (path.isEmpty ||
+        utf8.encode(path).length > 4096 ||
+        path.runes.any((r) => r < 32 || r >= 127 && r <= 159)) {
+      throw const FormatException('Invalid selected TLS path');
+    }
+  }
+
+  static void tlsSelection(ServiceTlsSelection value) {
+    tlsPath(value.certificatePath);
+    tlsPath(value.privateKeyPath);
+    identity(value.certificateSha256);
+  }
+
   static Uint8List identity(Uint8List value) {
     ServiceValidation.digest(value);
     return _owned(value);
@@ -228,6 +269,9 @@ abstract final class ServiceRunValidation {
   }
 
   static void request(ServiceRunRequest value) {
+    if (value.tls case final ServiceTlsSelection selected) {
+      tlsSelection(selected);
+    }
     if (value.outbound.length > 8) {
       throw const FormatException('Too many service outbound endpoints');
     }

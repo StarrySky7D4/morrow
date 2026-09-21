@@ -7,6 +7,37 @@ import 'service_run_control.dart';
 
 /// Native scheduler codec. It never decodes nested secret-bearing business data.
 abstract final class ServiceRunCodec {
+  static void writeTls(
+    ServiceTlsSelection value,
+    host.ServiceTlsSelectionBuilder out,
+  ) {
+    ServiceRunValidation.tlsSelection(value);
+    out.certificatePath = value.certificatePath;
+    out.privateKeyPath = value.privateKeyPath;
+    out.certificateSha256 = value.certificateSha256;
+  }
+
+  static ServiceTlsSelection tlsSelection(
+    host.ResponseReader response, {
+    required String certificatePath,
+    required String privateKeyPath,
+  }) {
+    _noToken(response);
+    final row = response.serviceTls;
+    if (row == null ||
+        row.certificatePath != certificatePath ||
+        row.privateKeyPath != privateKeyPath) {
+      throw const FormatException('TLS inspection selection mismatch');
+    }
+    final selected = ServiceTlsSelection(
+      certificatePath: certificatePath,
+      privateKeyPath: privateKeyPath,
+      certificateSha256: row.certificateSha256 ?? Uint8List(0),
+    );
+    ServiceRunValidation.tlsSelection(selected);
+    return selected;
+  }
+
   static int responseMaxBytes(host.Action action) =>
       action == host.Action.commandRead ? 256 * 1024 : 128 * 1024;
   static int _wire(BigInt value) => value.toSigned(64).toInt();
@@ -62,6 +93,9 @@ abstract final class ServiceRunCodec {
     out.maxHeaderBytes = value.maxHeaderBytes;
     out.maxConcurrent = value.maxConcurrent;
     out.timeoutMs = value.timeoutMs;
+    if (value.tls case final ServiceTlsSelection selected) {
+      writeTls(selected, out.initTls());
+    }
     final outbound = out.initOutbound(value.outbound.length);
     for (var i = 0; i < value.outbound.length; i++) {
       outbound[i].reference = value.outbound[i].reference;

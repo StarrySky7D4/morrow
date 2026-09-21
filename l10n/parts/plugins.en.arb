@@ -530,9 +530,9 @@
   "pluginsServiceYes": "Yes",
   "pluginsServiceNo": "No",
   "pluginsServiceRunTitle": "Run API service",
-  "pluginsServiceRunHint": "Start a finite service from a saved configuration and publication approval. Content editing remains available while it runs. Closing this panel does not stop the service.",
+  "pluginsServiceRunHint": "Choose an approved publication and finite run limits, then explicitly start the service. After stopping, wait for the original workbench owner to return before acknowledging the result.",
   "pluginsServiceRunSelection": "Approved service publication",
-  "pluginsServiceRunNoSelection": "Refresh records, enable the service plugin and save its configuration and publication approval. This preview supports loopback HTTP services.",
+  "pluginsServiceRunNoSelection": "No approved publication is available. Check the plugin, configuration and authentication state.",
   "pluginsServiceRunStale": "The selected package, configuration or approval changed. Refresh records and select it again before starting.",
   "pluginsServiceRunStart": "Start finite service",
   "pluginsServiceRunStop": "Stop service",
@@ -606,5 +606,14 @@
   "pluginsServiceRunOutboundFailed": "Could not verify the endpoint list. Refresh before using selected endpoints.",
   "pluginsServiceRunOutboundStale": "A selected endpoint changed or is no longer available. Select its current version explicitly, or clear the selection.",
   "pluginsServiceRunOutboundClear": "Clear endpoint selection",
-  "pluginsServiceRunOutboundAttempt": "Endpoints bound to this start attempt"
+  "pluginsServiceRunOutboundAttempt": "Endpoints bound to this start attempt",
+  "pluginsServiceTlsHint": "This publication requires TLS. Select a PEM certificate chain and private key, then check them. Files are checked again at start; an active certificate does not rotate automatically.",
+  "pluginsServiceTlsCertificate": "Choose certificate chain",
+  "pluginsServiceTlsPrivateKey": "Choose private key",
+  "pluginsServiceTlsInspect": "Check certificate",
+  "pluginsServiceTlsChecking": "Processing certificate selection…",
+  "pluginsServiceTlsFailed": "Certificate check failed. Check the PEM files, key pairing and local paths before trying again.",
+  "pluginsServiceTlsChecked": "Certificate and key pairing checked. Certificate PEM SHA-256 is shown below. Clients must still verify the hostname, validity and trust chain.",
+  "pluginsServiceTlsAttempt": "Certificate PEM digest bound to this start attempt",
+  "pluginsServiceTlsUnavailable": "This backend does not support local TLS certificate selection."
 }

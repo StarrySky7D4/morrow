@@ -39,6 +39,70 @@ fn rejected(bytes: &[u8]) {
         assert!(response.get_service_authorities().unwrap().is_empty());
     });
 }
+
+#[test]
+fn tls_inspection_exposes_only_selected_paths_and_certificate_digest() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut w = Workbench::open_managed(dir.path(), None).unwrap();
+    let pair = rcgen::generate_simple_self_signed(vec!["localhost".into()]).unwrap();
+    let cert = dir.path().join("tls-cert.pem");
+    let key = dir.path().join("tls-key.pem");
+    std::fs::write(&cert, pair.cert.pem()).unwrap();
+    std::fs::write(&key, pair.key_pair.serialize_pem()).unwrap();
+    let inspect = |cert: &str, key: &str| {
+        frame(wire::Action::ServiceTlsInspect, |r| {
+            let mut selected = r.init_service_tls();
+            selected.set_certificate_path(cert);
+            selected.set_private_key_path(key);
+        })
+    };
+    let result = protocol::respond(
+        &mut w,
+        &inspect(cert.to_str().unwrap(), key.to_str().unwrap()),
+    )
+    .unwrap();
+    read(&result, |r| {
+        success(r);
+        let selected = r.get_service_tls().unwrap();
+        assert_eq!(
+            selected.get_certificate_path().unwrap().to_str().unwrap(),
+            cert.to_str().unwrap()
+        );
+        assert_eq!(
+            selected.get_private_key_path().unwrap().to_str().unwrap(),
+            key.to_str().unwrap()
+        );
+        assert_eq!(
+            selected.get_certificate_sha256().unwrap(),
+            Sha256::digest(pair.cert.pem().as_bytes()).as_slice()
+        );
+        assert!(r.get_payload().unwrap().is_empty());
+        assert!(r.get_issued_token().unwrap().is_empty());
+    });
+    assert!(!String::from_utf8_lossy(&result).contains("PRIVATE KEY"));
+    for invalid in [
+        String::new(),
+        "bad\0path".into(),
+        "中".repeat(1500),
+        dir.path().join("missing.pem").display().to_string(),
+    ] {
+        for (certificate, private_key) in [
+            (invalid.as_str(), key.to_str().unwrap()),
+            (cert.to_str().unwrap(), invalid.as_str()),
+        ] {
+            let bytes = protocol::respond(&mut w, &inspect(certificate, private_key)).unwrap();
+            rejected(&bytes);
+            read(&bytes, |r| {
+                assert!(!r.has_service_tls());
+                assert_eq!(
+                    r.get_error().unwrap().to_str().unwrap(),
+                    "service administration request could not be completed"
+                );
+            });
+        }
+    }
+    w.finish().unwrap();
+}
 fn install(w: &mut Workbench, root: &Path) -> Package {
     let wasm = wat::parse_str(
         r#"(module (memory (export "memory") 1)

@@ -11,6 +11,7 @@ import 'package:morrow_studio/plugins/plugin_library.dart';
 import 'package:morrow_studio/plugins/service_control.dart';
 import 'package:morrow_studio/plugins/service_run_control.dart';
 import 'package:morrow_studio/plugins/service_run_manager.dart';
+import 'package:morrow_studio/plugins/service_tls_picker.dart';
 import 'package:morrow_studio/plugins/service_run_session.dart';
 import 'package:morrow_studio/plugins/service_session.dart';
 
@@ -116,6 +117,18 @@ class _RunBackend
   @override
   dynamic noSuchMethod(Invocation invocation) =>
       throw StateError('Unexpected control ${invocation.memberName}');
+}
+
+class _TlsBackend extends _RunBackend implements WorkbenchServiceTlsControl {
+  @override
+  Future<ServiceTlsSelection> inspectServiceTls({
+    required String certificatePath,
+    required String privateKeyPath,
+  }) async => ServiceTlsSelection(
+    certificatePath: certificatePath,
+    privateKeyPath: privateKeyPath,
+    certificateSha256: serviceKey(13),
+  );
 }
 
 PluginLibraryEntry _plugin({
@@ -288,6 +301,52 @@ void _cleanup(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets(
+    'TLS publication requires checked selection, then freezes it in the attempt',
+    (tester) async {
+      _cleanup(tester);
+      final run = _TlsBackend(),
+          metadata = _metadata(policy: _policy(tls: true));
+      await _mount(tester, _host(run, metadata));
+      await _select(tester);
+      expect(_button(tester, 'start').onPressed, isNull);
+      final picker = tester.widget<ServiceTlsPicker>(
+        find.byType(ServiceTlsPicker),
+      );
+      final checked = await run.inspectServiceTls(
+        certificatePath: '/cert.pem',
+        privateKeyPath: '/key.pem',
+      );
+      picker.onChanged(checked);
+      await tester.pumpAndSettle();
+      await _mount(tester, _host(run, metadata, locale: 'zh'));
+      expect(_button(tester, 'start').onPressed, isNotNull);
+      await _click(tester, 'start');
+      expect(
+        run.starts.single.tls!.certificateSha256,
+        orderedEquals(serviceKey(13)),
+      );
+      expect(run.starts.single.tls!.certificatePath, '/cert.pem');
+      expect(
+        tester.widget<ServiceTlsPicker>(find.byType(ServiceTlsPicker)).enabled,
+        isFalse,
+      );
+    },
+  );
+
+  testWidgets(
+    'TLS remains selectable but unavailable backend cannot start it',
+    (tester) async {
+      _cleanup(tester);
+      final run = _RunBackend(),
+          metadata = _metadata(policy: _policy(tls: true));
+      await _mount(tester, _host(run, metadata));
+      await _select(tester);
+      expect(_button(tester, 'start').onPressed, isNull);
+      expect(find.byType(ServiceTlsPicker), findsNothing);
+      expect(run.starts, isEmpty);
+    },
+  );
   testWidgets('narrow panel limits explicit selections to eight', (
     tester,
   ) async {
@@ -781,7 +840,6 @@ void main() {
     'unapproved',
     'plugin-disabled',
     'unavailable',
-    'tls',
     'nonloopback',
     'expired-auth',
     'disabled-auth',

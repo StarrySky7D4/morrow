@@ -76,6 +76,7 @@ enum Action {
   commandFrameAppend,
   commandFrameFinish,
   commandFrameAbort,
+  serviceTlsInspect,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -182,6 +183,7 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'commandFrameAppend', codeOrder: 68, ordinal: 68),
     EnumerantSchemaInfo(name: 'commandFrameFinish', codeOrder: 69, ordinal: 69),
     EnumerantSchemaInfo(name: 'commandFrameAbort', codeOrder: 70, ordinal: 70),
+    EnumerantSchemaInfo(name: 'serviceTlsInspect', codeOrder: 71, ordinal: 71),
   ],
 );
 
@@ -306,6 +308,11 @@ final class RequestReader extends StructReader {
   Uint8List? get commandKey => getDataField(36);
 
   Uint8List? get commandSubmission => getDataField(37);
+
+  ServiceTlsSelectionReader? get serviceTls => getStructFieldWith(
+    38,
+    (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class RequestBuilder extends StructBuilder {
@@ -512,7 +519,7 @@ final class RequestBuilder extends StructBuilder {
   }
 
   ServiceRunStartBuilder initServiceRun() {
-    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 7);
+    return initStructFieldWith(35, (r) => ServiceRunStartBuilder(r), 11, 8);
   }
 
   bool hasServiceRun() => hasPointerField(35);
@@ -524,6 +531,12 @@ final class RequestBuilder extends StructBuilder {
   set commandSubmission(Uint8List? v) {
     setDataField(37, v);
   }
+
+  ServiceTlsSelectionBuilder initServiceTls() {
+    return initStructFieldWith(38, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+  }
+
+  bool hasServiceTls() => hasPointerField(38);
 }
 
 final class _RequestFactory
@@ -533,7 +546,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 38;
+  int get ptrWords => 39;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -550,7 +563,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 38,
+  pointerWords: 39,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -944,6 +957,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: PrimitiveTypeSchemaInfo('Data'),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'serviceTls',
+      codeOrder: 49,
+      body: SlotFieldSchemaInfo(
+        offset: 38,
+        type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
+      ),
+    ),
   ],
 );
 
@@ -1059,6 +1080,11 @@ final class ResponseReader extends StructReader {
   OwnerCommandStateReader? get ownerCommand => getStructFieldWith(
     27,
     (r) => OwnerCommandStateReader(r, capabilities: capabilityTable),
+  );
+
+  ServiceTlsSelectionReader? get serviceTls => getStructFieldWith(
+    28,
+    (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1261,6 +1287,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasOwnerCommand() => hasPointerField(27);
+
+  ServiceTlsSelectionBuilder initServiceTls() {
+    return initStructFieldWith(28, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+  }
+
+  bool hasServiceTls() => hasPointerField(28);
 }
 
 final class _ResponseFactory
@@ -1270,7 +1302,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 28;
+  int get ptrWords => 29;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1287,7 +1319,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 28,
+  pointerWords: 29,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1601,6 +1633,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xa900283eae59a262),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'serviceTls',
+      codeOrder: 39,
+      body: SlotFieldSchemaInfo(
+        offset: 28,
+        type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
+      ),
+    ),
   ],
 );
 
@@ -1656,6 +1696,11 @@ final class ServiceRunStartReader extends StructReader {
         6,
         (r) => ServiceEndpointSelectionReader(r, capabilities: capabilityTable),
       );
+
+  ServiceTlsSelectionReader? get tls => getStructFieldWith(
+    7,
+    (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ServiceRunStartBuilder extends StructBuilder {
@@ -1753,6 +1798,12 @@ final class ServiceRunStartBuilder extends StructBuilder {
       1,
     );
   }
+
+  ServiceTlsSelectionBuilder initTls() {
+    return initStructFieldWith(7, (r) => ServiceTlsSelectionBuilder(r), 0, 3);
+  }
+
+  bool hasTls() => hasPointerField(7);
 }
 
 final class _ServiceRunStartFactory
@@ -1762,7 +1813,7 @@ final class _ServiceRunStartFactory
   @override
   int get dataWords => 11;
   @override
-  int get ptrWords => 7;
+  int get ptrWords => 8;
   @override
   ServiceRunStartReader fromRawReader(RawStructReader r) =>
       ServiceRunStartReader(r);
@@ -1781,7 +1832,7 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
   displayName: 'host.capnp:ServiceRunStart',
   shortName: 'ServiceRunStart',
   dataWords: 11,
-  pointerWords: 7,
+  pointerWords: 8,
   fields: [
     FieldSchemaInfo(
       name: 'submission',
@@ -1951,10 +2002,108 @@ const StructSchemaInfo serviceRunStartSchema = StructSchemaInfo(
         type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xb49bb2319d21c626)),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'tls',
+      codeOrder: 21,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
+      ),
+    ),
   ],
 );
 
 final serviceRunStartFactory = _ServiceRunStartFactory();
+
+final class ServiceTlsSelectionReader extends StructReader {
+  ServiceTlsSelectionReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = serviceTlsSelectionSchema;
+
+  String? get certificatePath => getTextField(0);
+
+  String? get privateKeyPath => getTextField(1);
+
+  Uint8List? get certificateSha256 => getDataField(2);
+}
+
+final class ServiceTlsSelectionBuilder extends StructBuilder {
+  ServiceTlsSelectionBuilder(super.raw);
+
+  @override
+  ServiceTlsSelectionReader asReader() =>
+      ServiceTlsSelectionReader(rawToReader());
+
+  set certificatePath(String? v) {
+    setTextField(0, v);
+  }
+
+  set privateKeyPath(String? v) {
+    setTextField(1, v);
+  }
+
+  set certificateSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+}
+
+final class _ServiceTlsSelectionFactory
+    extends
+        StructFactory<ServiceTlsSelectionReader, ServiceTlsSelectionBuilder> {
+  @override
+  StructSchemaInfo get schema => serviceTlsSelectionSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  ServiceTlsSelectionReader fromRawReader(RawStructReader r) =>
+      ServiceTlsSelectionReader(r);
+  @override
+  ServiceTlsSelectionReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => ServiceTlsSelectionReader(r, capabilities: capabilities);
+  @override
+  ServiceTlsSelectionBuilder fromRawBuilder(RawStructBuilder r) =>
+      ServiceTlsSelectionBuilder(r);
+}
+
+const StructSchemaInfo serviceTlsSelectionSchema = StructSchemaInfo(
+  id: 0xf1d1c57be59caa45,
+  displayName: 'host.capnp:ServiceTlsSelection',
+  shortName: 'ServiceTlsSelection',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'certificatePath',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'privateKeyPath',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'certificateSha256',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final serviceTlsSelectionFactory = _ServiceTlsSelectionFactory();
 
 final class ServiceEndpointSelectionReader extends StructReader {
   ServiceEndpointSelectionReader(super.raw, {super.capabilities});
