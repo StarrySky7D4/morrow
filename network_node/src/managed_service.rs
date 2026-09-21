@@ -36,6 +36,7 @@ struct Execution<O: HostOwner = HostRuntime> {
     sequence: AtomicU64,
     timeout: Duration,
     routers: RouterFactory,
+    outbound_scope: Option<[u8; 32]>,
 }
 impl<O: HostOwner> Drop for Execution<O> {
     fn drop(&mut self) {
@@ -163,7 +164,19 @@ impl<O: HostOwner> ServiceHost<O> {
         timeout: Duration,
         routers: RouterFactory,
     ) -> std::result::Result<Self, ServiceHostFailure<O>> {
-        if timeout.is_zero() || timeout > Duration::from_secs(30) {
+        Self::new_owned_with_outbound_scope(worker, timeout, routers, None)
+    }
+    /// Host-only replay identity for the explicitly selected outbound policies.
+    /// It must cover policy/credential revisions and stay stable across restart.
+    /// Routers still enforce live grants; this digest provides no authorization.
+    pub fn new_owned_with_outbound_scope(
+        worker: IoWorker<O>,
+        timeout: Duration,
+        routers: RouterFactory,
+        outbound_scope: Option<[u8; 32]>,
+    ) -> std::result::Result<Self, ServiceHostFailure<O>> {
+        if timeout.is_zero() || timeout > Duration::from_secs(30) || outbound_scope == Some([0; 32])
+        {
             return Err(ServiceHostFailure {
                 worker,
                 error: Error::Invalid,
@@ -175,6 +188,7 @@ impl<O: HostOwner> ServiceHost<O> {
                 sequence: AtomicU64::new(1),
                 timeout,
                 routers,
+                outbound_scope,
             }),
         })
     }
@@ -423,6 +437,7 @@ impl<O: HostOwner> ServiceHost<O> {
                             || matches!(
                                 lower.as_str(),
                                 "morrow-content-scope"
+                                    | "morrow-outbound-scope"
                                     | "authorization"
                                     | "cookie"
                                     | "host"
@@ -454,6 +469,16 @@ impl<O: HostOwner> ServiceHost<O> {
                     headers.push(Header {
                         name: "morrow-content-scope".into(),
                         value: value.into_bytes(),
+                    });
+                }
+                if let Some(digest) = inner.outbound_scope {
+                    headers.push(Header {
+                        name: "morrow-outbound-scope".into(),
+                        value: digest
+                            .iter()
+                            .map(|b| format!("{b:02x}"))
+                            .collect::<String>()
+                            .into_bytes(),
                     });
                 }
                 // Normalize name order, preserving the order of repeated values.

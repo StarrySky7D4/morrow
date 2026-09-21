@@ -420,6 +420,16 @@ async fn invalid_adapter_options_return_the_same_live_worker_for_explicit_reclam
     );
     assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
     assert_eq!(f.finished.load(Ordering::SeqCst), 0);
+    let failure = ServiceHost::new_owned_with_outbound_scope(
+        failure.worker,
+        Duration::from_secs(2),
+        routers(),
+        Some([0; 32]),
+    )
+    .err()
+    .expect("zero outbound identity accepted");
+    assert_eq!(failure.error, Error::Invalid);
+    assert_eq!(f.dropped.load(Ordering::SeqCst), 0);
     let host = ServiceHost::new_owned(failure.worker, Duration::from_secs(2), routers()).unwrap();
     let exit = tokio::time::timeout(WAIT, host.shutdown_owned())
         .await

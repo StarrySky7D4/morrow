@@ -55,6 +55,12 @@ impl Record {
     pub fn reference(&self) -> [u8; 32] {
         self.reference
     }
+    /// Complete canonical record identity, independent of envelope compression.
+    /// A digest identifies saved policy; it never restores live authority.
+    pub fn canonical_digest(&self) -> [u8; 32] {
+        use sha2::Digest;
+        sha2::Sha256::digest(self.value.encode_to_vec()).into()
+    }
     pub fn check_time(&self, now: u64) -> Result<()> {
         if self.value.disabled {
             return Err(Error::Invalid("disabled outbound authority"));

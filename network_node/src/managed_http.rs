@@ -145,6 +145,7 @@ impl HttpEndpoint {
             host_secret,
             now,
             None,
+            None,
         )
     }
     #[allow(clippy::too_many_arguments)]
@@ -157,6 +158,7 @@ impl HttpEndpoint {
         host_secret: [u8; 32],
         now: u64,
         live: Option<Box<dyn Fn() -> bool + Send + Sync>>,
+        wire_reference: Option<[u8; 32]>,
     ) -> Result<Self> {
         let EndpointApproval {
             origin,
@@ -248,7 +250,7 @@ impl HttpEndpoint {
             instance,
             binding,
             policy_sha256,
-            endpoint,
+            wire_reference.unwrap_or(endpoint),
             credential.is_some(),
             now,
         )

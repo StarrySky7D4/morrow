@@ -97,6 +97,7 @@ struct StoredSetup {
     wrong_reference: bool,
     foreign_instance: bool,
     windows_provider: bool,
+    persistent: bool,
     alter: Option<fn(&mut outbound::Endpoint)>,
 }
 fn stored_setup(credentials: bool) -> StoredSetup {
@@ -121,6 +122,7 @@ fn stored_setup(credentials: bool) -> StoredSetup {
         wrong_reference: false,
         foreign_instance: false,
         windows_provider: false,
+        persistent: false,
         alter: None,
     }
 }
@@ -315,14 +317,20 @@ impl Running {
                     return Err(morrow_network_node::Error::Denied);
                 }
             } else {
-                restored.approve(
+                let approve = if settings.persistent {
+                    StoredHttpEndpoint::approve_persistent
+                } else {
+                    StoredHttpEndpoint::approve
+                };
+                approve(
+                    restored,
                     &manager,
                     &host,
                     approved_instance,
                     &binding,
                     [7; 32],
                     2,
-                    |_| {
+                    |_: &StoredRecord| {
                         settings.provider_calls.fetch_add(1, Ordering::SeqCst);
                         let reference = if settings.wrong_reference {
                             b"wrong-reference".to_vec()
@@ -1199,3 +1207,6 @@ mod http_route_set;
 
 #[path = "support/gated_http.rs"]
 mod gated_http;
+
+#[path = "support/stored_http_identity.rs"]
+mod stored_http_identity;

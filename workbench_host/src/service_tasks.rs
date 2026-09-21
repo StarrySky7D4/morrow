@@ -9,7 +9,9 @@ use morrow_core::{
 };
 use morrow_network_node::{
     Error as NetworkError, Limits as NetworkLimits,
+    managed_http::{HttpRouteSet, MAX_SERVICE_ENDPOINTS},
     managed_service::{ManagedNode, RouterFactory, ServiceHost},
+    stored_http::StoredHttpEndpoint,
 };
 use morrow_plugin_runtime::{
     io_binding::ServiceRunBudget,
@@ -47,6 +49,12 @@ pub struct ServiceStart {
     pub budget: ServiceRunBudget,
     pub limits: JobLimits,
     pub network_limits: NetworkLimits,
+}
+/// Exact saved endpoint selection made by the trusted application host.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ServiceEndpointSelection {
+    pub reference: [u8; 32],
+    pub revision: u64,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -291,6 +299,27 @@ impl Workbench {
     /// Start one explicitly approved finite service. Returns before socket
     /// binding; poll the same task for its definitive binding result.
     pub fn start_service(&mut self, options: ServiceStart) -> Result<TaskKey> {
+        self.start_service_with_outbound(options, &[])
+    }
+    /// Native admission with explicitly selected saved outbound endpoints.
+    /// Existing UI/protocol callers select none until they expose this choice.
+    pub fn start_service_with_outbound(
+        &mut self,
+        options: ServiceStart,
+        outbound: &[ServiceEndpointSelection],
+    ) -> Result<TaskKey> {
+        if outbound.len() > MAX_SERVICE_ENDPOINTS {
+            return Err("too many service outbound endpoints".into());
+        }
+        let mut references = BTreeSet::new();
+        for selection in outbound {
+            if selection.reference == [0; 32]
+                || selection.revision == 0
+                || !references.insert(selection.reference)
+            {
+                return Err("invalid or duplicate service outbound endpoint".into());
+            }
+        }
         self.state.try_reclaim()?;
         self.state.require_writable()?;
         if self.state.task.is_some() {
@@ -363,6 +392,19 @@ impl Workbench {
                 "application service admission currently requires approved loopback HTTP".into(),
             );
         }
+        let mut endpoints = Vec::with_capacity(outbound.len());
+        for selection in outbound {
+            let endpoint = StoredHttpEndpoint::resolve(
+                state.host.store_local_mut(),
+                &selection.reference,
+                utc,
+            )?;
+            if endpoint.revision() != selection.revision {
+                return Err("service outbound endpoint changed".into());
+            }
+            endpoints.push(endpoint);
+        }
+        let outbound_scope = StoredHttpEndpoint::selection_digest(&endpoints)?;
         let start = state.start;
         let time = now(start);
         let expires = time
@@ -370,7 +412,16 @@ impl Workbench {
             .ok_or("service expiry overflow")?;
         let instance = manager.connect(&options.package_id, &mut state.host)?;
         let prepared = catch_unwind(AssertUnwindSafe(|| -> Result<_> {
-            let caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
+            let mut caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
+            if !endpoints.is_empty() {
+                caps.insert(IoCapability::HttpRequest);
+            }
+            if endpoints
+                .iter()
+                .any(|endpoint| endpoint.credential_reference().is_some())
+            {
+                caps.insert(IoCapability::CredentialUse);
+            }
             let binding = manager.bind_budgeted_service_run(
                 &state.host,
                 &instance,
@@ -382,10 +433,41 @@ impl Workbench {
                 options.budget,
             )?;
             let configured = resolved.issue(manager, &state.host, &instance, &binding, time)?;
-            Ok((binding, configured))
+            let mut approved = Vec::with_capacity(endpoints.len());
+            for endpoint in endpoints {
+                let mut secret = [0; 32];
+                getrandom::fill(&mut secret)?;
+                #[cfg(target_os = "windows")]
+                let endpoint = endpoint.approve_persistent_windows(
+                    manager,
+                    &state.host,
+                    &instance,
+                    &binding,
+                    secret,
+                    time,
+                )?;
+                #[cfg(not(target_os = "windows"))]
+                let endpoint = endpoint.approve_persistent(
+                    manager,
+                    &state.host,
+                    &instance,
+                    &binding,
+                    secret,
+                    time,
+                    |_| Err(NetworkError::Denied),
+                )?;
+                approved.push(endpoint);
+            }
+            let routers: RouterFactory = if approved.is_empty() {
+                Arc::new(|| Box::new(DenyOutbound))
+            } else {
+                let routes = HttpRouteSet::new(approved, runtime.handle().clone())?;
+                Arc::new(move || Box::new(routes.clone()))
+            };
+            Ok((binding, configured, routers))
         }))
         .unwrap_or_else(|_| Err("service preparation panicked; no listener started".into()));
-        let (binding, configured) = match prepared {
+        let (binding, configured, routers) = match prepared {
             Ok(prepared) => prepared,
             Err(error) => {
                 if self.state.cleanup_instance(instance).is_err() {
@@ -452,8 +534,12 @@ impl Workbench {
                 return Err("service worker admission failed; inspect task before retrying".into());
             }
         };
-        let routers: RouterFactory = Arc::new(|| Box::new(DenyOutbound));
-        let host = match ServiceHost::new_owned(worker, options.network_limits.timeout, routers) {
+        let host = match ServiceHost::new_owned_with_outbound_scope(
+            worker,
+            options.network_limits.timeout,
+            routers,
+            outbound_scope,
+        ) {
             Ok(host) => host,
             Err(failure) => {
                 failure.worker.stop();

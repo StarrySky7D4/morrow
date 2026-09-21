@@ -3,7 +3,9 @@
 use crate::{
     Error, Limits, Result,
     client::{Client, EndpointPolicy},
-    managed_http::{Credential, EndpointApproval, HttpEndpoint, NetworkProfile},
+    managed_http::{
+        Credential, EndpointApproval, HttpEndpoint, MAX_SERVICE_ENDPOINTS, NetworkProfile,
+    },
 };
 use morrow_core::{
     dispatch::HostRuntime,
@@ -16,7 +18,9 @@ use morrow_plugin_runtime::{
     io_binding::IoBinding,
     manager::{ManagedInstance, Manager},
 };
+use sha2::{Digest, Sha256};
 use std::{
+    collections::BTreeMap,
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
@@ -222,6 +226,43 @@ impl StoredHttpEndpoint {
     pub fn credential_reference(&self) -> Option<Vec<u8>> {
         self.credential.as_ref().map(reference)
     }
+    pub fn revision(&self) -> u64 {
+        self.endpoint.value().revision
+    }
+    /// Bind service replay to the complete selected records, including protected
+    /// credential revision/expiry. Order is irrelevant; duplicates are rejected.
+    /// This is an invocation identity only, never an approval or a live check.
+    pub fn selection_digest(endpoints: &[Self]) -> Result<Option<[u8; 32]>> {
+        if endpoints.len() > MAX_SERVICE_ENDPOINTS {
+            return Err(Error::Limit);
+        }
+        if endpoints.is_empty() {
+            return Ok(None);
+        }
+        let mut ordered = BTreeMap::new();
+        for endpoint in endpoints {
+            if ordered
+                .insert(endpoint.endpoint.reference(), endpoint)
+                .is_some()
+            {
+                return Err(Error::Invalid);
+            }
+        }
+        let mut hash = Sha256::new();
+        hash.update(b"morrow.service.outbound-selection.v1\0");
+        hash.update((ordered.len() as u64).to_le_bytes());
+        for (reference, endpoint) in ordered {
+            hash.update(reference);
+            hash.update(endpoint.endpoint.canonical_digest());
+            if let Some(credential) = &endpoint.credential {
+                hash.update([1]);
+                hash.update(credential.canonical_digest());
+            } else {
+                hash.update([0]);
+            }
+        }
+        Ok(Some(hash.finalize().into()))
+    }
     /// The explicit provider callback is trusted host code. It runs only after
     /// original Store/managed owner/package/capabilities and policy validation.
     /// A missing credential never calls it. Unknown providers have no fallback.
@@ -235,6 +276,54 @@ impl StoredHttpEndpoint {
         host_secret: [u8; 32],
         now: u64,
         resolve_secret: impl FnOnce(&Record) -> Result<Credential>,
+    ) -> Result<HttpEndpoint> {
+        self.approve_common(
+            manager,
+            host,
+            instance,
+            binding,
+            host_secret,
+            now,
+            resolve_secret,
+            None,
+        )
+    }
+    /// Stable guest reference with a fresh live grant and approval epoch. Knowing
+    /// a saved reference cannot authorize a call or revive a previous instance.
+    #[allow(clippy::too_many_arguments)]
+    pub fn approve_persistent(
+        self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        host_secret: [u8; 32],
+        now: u64,
+        resolve_secret: impl FnOnce(&Record) -> Result<Credential>,
+    ) -> Result<HttpEndpoint> {
+        let reference = self.endpoint.reference();
+        self.approve_common(
+            manager,
+            host,
+            instance,
+            binding,
+            host_secret,
+            now,
+            resolve_secret,
+            Some(reference),
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn approve_common(
+        self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        host_secret: [u8; 32],
+        now: u64,
+        resolve_secret: impl FnOnce(&Record) -> Result<Credential>,
+        wire_reference: Option<[u8; 32]>,
     ) -> Result<HttpEndpoint> {
         host.store_local()
             .validate_service_authority(&self.live.lease)
@@ -292,6 +381,7 @@ impl StoredHttpEndpoint {
             host_secret,
             now,
             Some(Box::new(move || live.check().is_ok())),
+            wire_reference,
         )
     }
     /// Windows-only DPAPI provider; raw plaintext and unsupported providers never
@@ -308,6 +398,30 @@ impl StoredHttpEndpoint {
         now: u64,
     ) -> Result<HttpEndpoint> {
         self.approve(
+            manager,
+            host,
+            instance,
+            binding,
+            host_secret,
+            now,
+            |record| {
+                let secret = morrow_audit::credentials::open(record).map_err(|_| Error::Denied)?;
+                Credential::header(reference(record), secret.header_name(), secret.value())
+            },
+        )
+    }
+    #[cfg(target_os = "windows")]
+    #[allow(clippy::too_many_arguments)]
+    pub fn approve_persistent_windows(
+        self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        host_secret: [u8; 32],
+        now: u64,
+    ) -> Result<HttpEndpoint> {
+        self.approve_persistent(
             manager,
             host,
             instance,

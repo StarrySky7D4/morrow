@@ -40,6 +40,9 @@ const FIRST_KEY: &str = "application-service-before";
 const SECOND_KEY: &str = "application-service-after";
 const WAIT: Duration = Duration::from_secs(15);
 
+#[path = "service_outbound_tests.rs"]
+mod outbound_tests;
+
 fn policy() -> Policy {
     Policy {
         namespace: [19; 32],
@@ -185,16 +188,22 @@ struct Fixture {
 }
 impl Fixture {
     fn new(address: SocketAddr) -> Self {
+        Self::with_package(address, service_package(), caps())
+    }
+    fn with_package(
+        address: SocketAddr,
+        package: Package,
+        approved: BTreeSet<IoCapability>,
+    ) -> Self {
         let dir = tempfile::tempdir().unwrap();
         let mut app = Workbench::open_managed(dir.path(), Some(workbench_package())).unwrap();
-        let package = service_package();
         let package_digest = package.digest();
         let state = app.local_state_mut().unwrap();
         state.catalog.as_ref().unwrap().install(&package).unwrap();
         let manager = state.manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();
         manager
-            .approve_io(ID, package_digest, caps(), manager.revision())
+            .approve_io(ID, package_digest, approved, manager.revision())
             .unwrap();
         manager
             .set_enabled(ID, package_digest, true, manager.revision())

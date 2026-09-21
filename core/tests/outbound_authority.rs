@@ -66,6 +66,61 @@ fn roundtrip_lifetime_and_ciphertext_only_provider_record() {
         assert!(Record::encode(disabled).unwrap().check_time(10).is_err());
     }
 }
+
+#[test]
+fn canonical_digest_binds_policy_and_protected_credential_even_without_revision_change() {
+    for original in [credential(), endpoint()] {
+        let record = Record::encode(original.clone()).unwrap();
+        let digest = record.canonical_digest();
+        assert_eq!(
+            Record::decode(record.container())
+                .unwrap()
+                .canonical_digest(),
+            digest
+        );
+        let mut mutations = Vec::new();
+        let mut changed = original.clone();
+        changed.created_ms += 1;
+        mutations.push(changed);
+        let mut changed = original.clone();
+        changed.expires_ms += 1;
+        mutations.push(changed);
+        let mut changed = original.clone();
+        changed.disabled = true;
+        mutations.push(changed);
+        match original.kind.as_ref().unwrap() {
+            proto::record::Kind::Credential(_) => {
+                let mut changed = original.clone();
+                let Some(proto::record::Kind::Credential(value)) = changed.kind.as_mut() else {
+                    unreachable!()
+                };
+                value.ciphertext.push(43);
+                mutations.push(changed);
+            }
+            proto::record::Kind::Endpoint(_) => {
+                for field in 0..5 {
+                    let mut changed = original.clone();
+                    let Some(proto::record::Kind::Endpoint(value)) = changed.kind.as_mut() else {
+                        unreachable!()
+                    };
+                    match field {
+                        0 => value.origin = "https://other.example".into(),
+                        1 => value.methods = vec!["GET".into()],
+                        2 => value.credential_reference = vec![4; 32],
+                        3 => value.package_sha256 = vec![5; 32],
+                        _ => value.max_response_bytes += 1,
+                    }
+                    mutations.push(changed);
+                }
+            }
+        }
+        for changed in mutations {
+            assert_eq!(changed.revision, original.revision);
+            assert_eq!(changed.reference, original.reference);
+            assert_ne!(Record::encode(changed).unwrap().canonical_digest(), digest);
+        }
+    }
+}
 #[test]
 fn strict_record_and_credential_bounds_reject_before_decode_allocation() {
     for case in 0..12 {

@@ -99,8 +99,28 @@ fn read_command() -> Command {
         length: 1024,
     })
 }
-fn module(principal: &str, allowed: &[ContentScope], command: &Command) -> Vec<u8> {
-    let request = expected_request(principal, allowed);
+fn module(
+    principal: &str,
+    allowed: &[ContentScope],
+    command: &Command,
+    outbound: Option<[u8; 32]>,
+) -> Vec<u8> {
+    let mut invocation = expected_request(principal, allowed).invocation().clone();
+    if let Some(digest) = outbound {
+        invocation.headers.push(Header {
+            name: "morrow-outbound-scope".into(),
+            value: digest
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect::<String>()
+                .into_bytes(),
+        });
+    }
+    let request = Request::encode(
+        service_record::call_id(&retention(), KEY, &invocation).unwrap(),
+        &invocation,
+    )
+    .unwrap();
     let command = command.encode().unwrap();
     let placeholder = vec![0xa5; 4096];
     let completion = Response::encode(
@@ -189,6 +209,30 @@ impl Running {
         fuel: u64,
         command: Command,
     ) -> Self {
+        Self::with_outbound(
+            path,
+            guest_principal,
+            guest_scopes,
+            principal_scopes,
+            seed,
+            fuel,
+            command,
+            None,
+            None,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn with_outbound(
+        path: &Path,
+        guest_principal: &str,
+        guest_scopes: &[ContentScope],
+        principal_scopes: BTreeMap<String, Vec<ContentScope>>,
+        seed: Option<&[u8]>,
+        fuel: u64,
+        command: Command,
+        guest_outbound: Option<[u8; 32]>,
+        actual_outbound: Option<[u8; 32]>,
+    ) -> Self {
         let write = matches!(&command, Command::Rename(_));
         let mut content_kinds = BTreeSet::from([GrantKind::ReadContent]);
         let mut capabilities = vec![Capability::ReadContent];
@@ -198,7 +242,7 @@ impl Running {
             capabilities.push(Capability::RenameCard);
             maximum_scopes.push(rename_scope());
         }
-        let wasm = module(guest_principal, guest_scopes, &command);
+        let wasm = module(guest_principal, guest_scopes, &command, guest_outbound);
         let io_caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
         let mut manifest = Package::manifest_for_task(ID, "1.0.0", &wasm, capabilities);
         let mut declaration =
@@ -280,7 +324,13 @@ impl Running {
         )
         .unwrap();
         let routers: RouterFactory = Arc::new(|| Box::new(DenyIo));
-        let host = ServiceHost::new(worker, Duration::from_secs(5), routers).unwrap();
+        let host = ServiceHost::new_owned_with_outbound_scope(
+            worker,
+            Duration::from_secs(5),
+            routers,
+            actual_outbound,
+        )
+        .unwrap();
         Self {
             _manager: manager,
             host,
@@ -334,7 +384,7 @@ async fn post_target(address: SocketAddr, token: &str, target: &str) -> Vec<u8> 
     // Both forged reserved headers must be removed, including mixed casing and
     // Connection nomination. The host then inserts exactly its actual digest.
     let text = format!(
-        "POST {target} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nIdempotency-Key: {KEY}\r\nMorrow-Content-Scope: forged\r\nmorrow-content-scope: other\r\nConnection: close, morrow-content-scope\r\nContent-Length: 0\r\n\r\n"
+        "POST {target} HTTP/1.1\r\nHost: localhost\r\nAuthorization: Bearer {token}\r\nIdempotency-Key: {KEY}\r\nMorrow-Content-Scope: forged\r\nmorrow-content-scope: other\r\nMorrow-Outbound-Scope: forged\r\nmorrow-outbound-scope: other\r\nConnection: close, morrow-content-scope, morrow-outbound-scope\r\nContent-Length: 0\r\n\r\n"
     );
     socket.write_all(text.as_bytes()).await.unwrap();
     let mut output = Vec::new();
@@ -461,6 +511,64 @@ fn rename_scope() -> ContentScope {
         kind: GrantKind::Rename,
         card_id: "card-a".into(),
         attachment_id: None,
+    }
+}
+
+#[tokio::test]
+async fn outbound_scope_replays_after_restart_but_changed_or_removed_scope_conflicts() {
+    let dir = tempfile::tempdir().unwrap();
+    let digest = [38; 32];
+    let run = Running::with_outbound(
+        dir.path(),
+        "alice",
+        &scopes(),
+        BTreeMap::from([("alice".into(), scopes())]),
+        Some(b"saved-outbound-result"),
+        RuntimeLimits::default().fuel,
+        read_command(),
+        Some(digest),
+        Some(digest),
+    );
+    let node = run.bind().await;
+    let first = post(node.local_addr(), ALICE).await;
+    status(&first, 200);
+    node.shutdown().await.unwrap();
+    run.finish().await;
+    drop(run);
+    // One fuel cannot execute the guest: identical records must replay, while
+    // changed or removed selection must conflict before executing any code.
+    for (scope, expected_status) in [(Some(digest), 200), (Some([39; 32]), 409), (None, 409)] {
+        let run = Running::with_outbound(
+            dir.path(),
+            "alice",
+            &scopes(),
+            BTreeMap::from([("alice".into(), scopes())]),
+            None,
+            1,
+            read_command(),
+            Some(digest),
+            scope,
+        );
+        let node = run.bind().await;
+        for target in ["/content", "/content-history"] {
+            let reply = post_target(node.local_addr(), ALICE, target).await;
+            status(&reply, expected_status);
+            if expected_status == 409 {
+                assert!(
+                    !reply
+                        .windows(b"saved-outbound-result".len())
+                        .any(|w| w == b"saved-outbound-result")
+                );
+            } else {
+                assert!(matches!(
+                    core_reply(&reply).outcome,
+                    Outcome::ContentChunk(_)
+                ));
+            }
+        }
+        node.shutdown().await.unwrap();
+        run.finish().await;
+        drop(run);
     }
 }
 fn rename_command() -> Command {
