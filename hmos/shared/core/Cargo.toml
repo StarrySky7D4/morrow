@@ -1,0 +1,51 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-core"
+version = "0.1.9-test.50"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]
+ed25519-dalek = "=3.0.0"
+capnp = "=0.24.1"
+prost = "=0.14.4"
+prost-reflect = { version = "=0.16.5", default-features = false }
+lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
+sha2 = "=0.10.9"
+semver = "=1.0.28"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+rusqlite = { version = "=0.40.2", features = ["bundled", "blob", "backup"] }
+tempfile = "=3.27.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+rusqlite = { version = "=0.40.2", features = ["blob"], optional = true }
+
+wasm-bindgen = { version = "=0.2.128", optional = true }
+
+[features]
+web-test-hooks = ["web-storage", "dep:wasm-bindgen"]
+web-storage = ["dep:rusqlite"]
+# Explicitly opt in only for the subprocess crash harness.
+fault-injection = []
+
+[dev-dependencies]
+
+[build-dependencies]
+capnpc = "=0.24.0"
+prost-build = "=0.14.4"
+protoc-bin-vendored = "=3.2.0"
+
+[[bin]]
+name = "morrow-core-check"
+path = "src/main.rs"
+
+[[bin]]
+name = "morrow-core-store"
+path = "src/store_cli.rs"

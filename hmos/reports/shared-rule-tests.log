@@ -1,0 +1,26 @@
+warn: could not canonicalize path C:\Users\Administrator
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.09s
+     Running tests\cards_v2.rs (hmos/.build/qualification\debug\deps\cards_v2-a3265124c5690a65.exe)
+
+running 5 tests
+test common_edits_preserve_task_provenance_unknowns_and_retirement ... ok
+test canonical_decoder_rejects_unrelated_action_data ... ok
+test category_favorite_delete_restore_and_window ... ok
+test canonical_codec_round_trip_and_rejects_extraneous_parameters ... ok
+test codec_covers_all_common_commands ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\tasks_v2.rs (hmos/.build/qualification\debug\deps\tasks_v2-80789fe087e0165a.exe)
+
+running 7 tests
+test unknown_v2_fields_survive_mutation_and_provenance_cannot_be_forged ... ok
+test migration_is_deterministic_baseline_bound_and_preserves_exact_legacy_evidence ... ok
+test ambiguous_tasks_require_individual_decisions_and_task_ids_cannot_be_reused ... ok
+test stage_reorder_and_rename_never_change_task_completion_or_identity ... ok
+test nested_unknown_task_fields_survive_rename_and_binary_contract_checks_adjacent_revisions ... ok
+test capacity_and_bad_legacy_state_fail_without_changing_the_original ... ok
+test invalid_actions_and_adversarial_permutations_leave_the_complete_document_valid ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+

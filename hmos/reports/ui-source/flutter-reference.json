@@ -1,0 +1,40 @@
+{
+  "capturedUtc": "2026-09-23T08:39:43.8831964Z",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+  "head": "ddd9cc8eec224af51f4e58654c9b297332147d96",
+  "source": "active working tree, including uncommitted files",
+  "files": [
+    {
+      "path": "lib/main.dart",
+      "sha256": "0F805054B7690ADD9995FD5A8E89433FE8E79B616B4A56B2BBF510B8B199ED60"
+    },
+    {
+      "path": "lib/appearance.dart",
+      "sha256": "8F84AD530F61FD25B48E5B33648F1E7C608F2A90D05AEE2132CB8C1D20F42099"
+    },
+    {
+      "path": "lib/pages/workspace_pages.dart",
+      "sha256": "DCC5756FA924D585344620012ED5610AE506DEFFD8DAB691936439B857DB25C1"
+    },
+    {
+      "path": "lib/little_tips.dart",
+      "sha256": "96E674DD4DB2452AA259F29C6E786B1D966F09F696047F92F70C129811D41073"
+    },
+    {
+      "path": "lib/workspace_viewport.dart",
+      "sha256": "E04623428FAFB8CFEA808D4909C3D832453BC7BAB3DE22482F716C27BCB6FA1B"
+    },
+    {
+      "path": "lib/settings_surface.dart",
+      "sha256": "D94CBC6399CB187A8950FB1C62033EE64498DF5706391EEAA342BD9751A8DAC0"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_zh.arb",
+      "sha256": "65816ECCAF07F5EEEB0AE98FAA20DA996596CB077648F5BDFA41A49A26D7F764"
+    }
+  ],
+  "renderedBy": "tool/flutter_ui_reference_test.dart",
+  "mobileLogicalSize": "440x676",
+  "desktopLogicalSize": "1280x900",
+  "pixelRatio": 3
+}

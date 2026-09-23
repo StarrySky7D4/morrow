@@ -1,0 +1,28 @@
+[0,0,1320,2232]
+  Text [54,213,411,326] "Morrow"
+  Text [54,332,370,378] "记录 · 整理 · 推进"
+  Text [978,275,1266,317] "HMOS · 开发预览"
+  Scroll [54,420,1266,528] scrollable
+    Button [54,420,235,528] "概览" clickable
+    Button [259,420,440,528] "灵感" clickable
+    Button [464,420,687,528] "进行中" clickable
+    Button [711,420,892,528] "实验" clickable
+    Button [916,420,1097,528] "收藏" clickable
+    Button [1121,420,1266,528] "回收站" clickable
+  Scroll [54,570,1266,2000] scrollable
+    TextArea [102,570,1218,689] clickable longClickable
+    TextInput [102,725,1218,845] clickable longClickable scrollable
+    TextInput [102,881,1218,1001] clickable longClickable scrollable
+    Text [102,1069,199,1125] "类别"
+    Select [223,1037,473,1157] "灵感" clickable
+    Button [1025,1037,1218,1157] "保存" clickable
+    Button [335,1193,624,1313] "取消收藏" clickable
+    Button [648,1193,985,1313] "移入回收站" clickable
+    Select [511,1349,809,1469] "待整理" clickable
+    Text [552,1505,768,1568] "待办事项"
+    Button [102,1604,247,1724] "○" clickable
+    Text [277,1636,1019,1692] "Check-native-task"
+    Button [1049,1604,1218,1724] "移除" clickable
+    TextInput [102,1760,1001,1880] clickable longClickable scrollable
+    Button [1025,1760,1218,1880] "添加" clickable
+  Text [54,2042,1266,2088] "已保存 · 操作修订 5"

@@ -1,0 +1,13 @@
+{
+  "checkedUtc": "2026-09-23T10:09:44.5878550Z",
+  "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
+  "head": "ddd9cc8eec224af51f4e58654c9b297332147d96",
+  "changes": [
+    "changed: plugins/workbench/schemas/preferences.proto",
+    "changed: plugins/workbench/schemas/studio.capnp",
+    "changed: plugins/workbench/src/preferences.rs",
+    "changed: plugins/workbench/src/services.rs",
+    "changed: plugins/workbench/tests/preferences.rs"
+  ],
+  "matches": false
+}

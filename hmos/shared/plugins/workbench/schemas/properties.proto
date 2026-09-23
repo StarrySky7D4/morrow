@@ -1,0 +1,11 @@
+syntax = "proto3";
+package morrow.workbench.v1;
+// Identity, title, revision, outer blobs and relations belong to the core Card.
+message AssetInfo { string id=1; string name=2; string kind=3; uint64 bytes=4; }
+message Properties {
+ uint32 version=1; string description=2; string category=3; string stage=4;
+ string hypothesis=5; string conclusion=6; bool favorite=7;
+ repeated string todos=8; repeated string completed=9;
+ repeated AssetInfo assets=10; uint32 icon=11; uint32 color=12;
+ bool deleted=13; uint64 deleted_at=14;
+}

@@ -1,0 +1,81 @@
+syntax = "proto3";
+package morrow.transaction.v1;
+// Owned persistent commands. Runtime Cap'n Proto is never stored as the business record.
+message Command {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  oneof action {
+    bytes create_card = 3; // exact original Card Protobuf bytes
+    Rename rename = 4;
+    SetAttachments set_attachments = 5;
+    SetContent set_content = 6;
+    MigrateContent migrate_content = 7; // Command schema_version 2 only
+    SetVersionedContent set_versioned_content = 8; // Command schema_version 2 only
+  }
+}
+message Rename {
+  string card_id = 1;
+  uint64 expected_revision = 2;
+  string title = 3;
+}
+message AttachmentRef {
+  string id = 1; string display_name = 2; string media_type = 3;
+  uint64 byte_length = 4; bytes sha256 = 5;
+}
+message SetAttachments {
+  string card_id = 1; uint64 expected_revision = 2; repeated AttachmentRef attachments = 3;
+}
+// Immutable result and pending event. event_id is operation_id in this database scope.
+// Not a signature or a sealed audit segment.
+message Commit {
+  uint32 schema_version = 1;
+  bytes command = 2;
+  bytes command_sha256 = 3;
+  string operation_id = 4;
+  string card_id = 5;
+  uint64 revision = 6;
+  bytes content_sha256 = 7;
+  string event_id = 8;
+  repeated bytes attachment_sha256 = 9;
+  // v2: ordered immutable evidence references; raw payloads live in the same content transaction.
+  repeated bytes task_evidence_sha256 = 10;
+}
+
+// Full content edits retain outer unknown fields, identity and existing relations.
+message SetContent {
+  string card_id = 1; uint64 expected_revision = 2;
+  string title = 3; bytes body = 4; string preview_text = 5;
+  AttachmentList attachments = 6; // absent retains references; present replaces atomically
+}
+
+message AttachmentList { repeated AttachmentRef items = 1; }
+
+// Exact baseline, including unknown fields, permits independent result validation.
+// Identity, title, attachments, relations and creation time remain owned by the source.
+message MigrateContent {
+  bytes source_card = 1;
+  uint32 target_format_version = 2;
+  bytes body = 3;
+  string preview_text = 4;
+}
+// Exact source Card binds type, outer format, revision and unknown fields.
+// This action preserves the source type and format while replacing its content.
+message SetVersionedContent {
+  bytes source_card = 1;
+  string title = 2;
+  bytes body = 3;
+  string preview_text = 4;
+  AttachmentList attachments = 5;
+}
+// Frozen v1 decoding shape. A field unknown to v1 must not acquire v2 semantics
+// when historical command bytes are read by a newer core.
+message LegacyCommand {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  oneof action {
+    bytes create_card = 3;
+    Rename rename = 4;
+    SetAttachments set_attachments = 5;
+    SetContent set_content = 6;
+  }
+}

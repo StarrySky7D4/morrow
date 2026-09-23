@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "Morrow 鸿蒙开发预览"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "Morrow 本地试验工作区"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Morrow"
+    }
+  ]
+}

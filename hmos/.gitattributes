@@ -1,0 +1,3 @@
+# Preserve bytes recorded by shared/reference.json and reports/build-manifest.json.
+# In particular, do not rewrite the frozen Rust snapshot on Windows checkouts.
+* -text

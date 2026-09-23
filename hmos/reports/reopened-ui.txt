@@ -1,0 +1,26 @@
+[0,0,1320,2232]
+  Text [54,213,411,326] "Morrow"
+  Text [54,332,370,378] "记录 · 整理 · 推进"
+  Text [978,275,1266,317] "HMOS · 开发预览"
+  Scroll [54,420,1266,528] scrollable
+    Button [54,420,235,528] "概览" clickable
+    Button [259,420,440,528] "灵感" clickable
+    Button [464,420,687,528] "进行中" clickable
+    Button [711,420,892,528] "实验" clickable
+    Button [916,420,1097,528] "收藏" clickable
+    Button [1121,420,1266,528] "回收站" clickable
+  Scroll [54,570,1266,2000] scrollable
+    Search [54,594,1266,714] clickable
+      SearchField#__SearchField__ [162,594,1170,714] clickable longClickable scrollable
+      SymbolGlyph#__SearchField__Image__ [90,630,138,678] clickable
+    Text [54,780,427,843] "概览 · 1 张卡片"
+    Column [54,885,1266,1122] clickable
+      Text [102,933,774,996] "HMOSHMOS-native-check"
+      Text [102,1032,494,1074] "灵感 · 待整理 · 0/0 待办"
+    Text [363,1260,957,1337] "记录当下，继续探索"
+    Text [303,1337,1018,1386] "新建卡片，或从工作台选择已有内容。"
+    Text [102,1549,342,1619] "新建卡片"
+    Button [1025,1524,1218,1644] "新建" clickable
+    TextInput [102,1680,1218,1800] clickable longClickable scrollable
+    TextArea [102,1836,1218,2000] clickable longClickable
+  Text [54,2042,1266,2088] "本地试验工作区已打开"

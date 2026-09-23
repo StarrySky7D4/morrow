@@ -1,0 +1,13 @@
+warn: could not canonicalize path C:\Users\Administrator
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.41s
+     Running unittests src\lib.rs (hmos/.build/rust\debug\deps\morrow_hmos-599c7ad0513e15ba.exe)
+
+running 4 tests
+test tests::production_path_and_malformed_input_are_rejected ... ok
+test tests::invalid_edit_does_not_write_and_unknown_is_never_cleared ... ok
+test tests::delete_undo_window_and_failed_restore_preserve_the_original ... ok
+test tests::persistence_cas_exact_retry_and_duplicate_task_names ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+

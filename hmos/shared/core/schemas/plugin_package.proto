@@ -1,0 +1,63 @@
+syntax = "proto3";
+package morrow.plugin.v1;
+import "io_manifest.proto";
+// Persistent package metadata. Declarations are ceilings, never grants.
+enum Capability {
+  CAPABILITY_UNSPECIFIED = 0;
+  RENAME_CARD = 1;
+  READ_SUMMARY = 2;
+  QUERY_OPERATION = 3;
+  READ_ATTACHMENT = 4;
+  CREATE_CONTENT = 5;
+  EDIT_CONTENT = 6;
+  READ_CONTENT = 7;
+}
+message ExecutionBudget {
+  uint64 fuel = 1;
+  uint64 memory_bytes = 2;
+  uint32 host_calls = 3;
+}
+// Fixed pure-transform declarations, scoped to the immutable package digest.
+message TransformHandler {
+  string handler = 1;
+  string input_type = 2;
+  string output_type = 3;
+  uint32 max_input_bytes = 4;
+  uint32 max_output_bytes = 5;
+}
+// A portable interface requirement, never approval or a provider identity/handle.
+message DependencyRequirement {
+  string slot = 1;
+  string handler = 2;
+  string input_type = 3;
+  string output_type = 4;
+  string provider_version = 5; // SemVer VersionReq for the selected provider package.
+  bool optional = 6;
+}
+message Manifest {
+  uint32 schema_version = 1;
+  string package_id = 2;
+  string package_version = 3;
+  string display_name = 4;
+  uint32 guest_abi_version = 5;
+  uint32 runtime_protocol_version = 6;
+  bytes runtime_schema_sha256 = 7;
+  bytes content_schema_sha256 = 8;
+  string entrypoint = 9;
+  bytes module_sha256 = 10;
+  repeated Capability requested_capabilities = 11;
+  ExecutionBudget budget = 12;
+  // Future mandatory semantics must be named here; unsupported names reject load.
+  repeated string required_features = 13;
+  bytes task_schema_sha256 = 14; // Required for guest ABI v2, empty for v1.
+  repeated TransformHandler transform_handlers = 15; // Requires transform-handlers-v1.
+  repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
+  morrow.plugin.io.v1.IoDeclaration io_declaration = 18; // Requires io-v1; never a grant.
+  bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
+}
+message Package {
+  uint32 schema_version = 1;
+  // Keep the exact manifest bytes, including future optional fields.
+  bytes manifest = 2;
+  bytes module = 3;
+}

@@ -1,0 +1,21 @@
+/node_modules
+/oh_modules
+/local.properties
+/.idea
+**/build
+/.hvigor
+.cxx
+/.clangd
+/.clang-format
+/.clang-tidy
+**/.test
+/.appanalyzer
+/.build
+/entry/src/main/cpp/rust
+**/target
+
+# Keep validation evidence, while build/cache directories remain ignored above.
+!/reports/*.log
+!/reports/ui-source/*.log
+!/reports/ui-source/v3/*.log
+

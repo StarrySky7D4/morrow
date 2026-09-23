@@ -1,0 +1,1 @@
+{"arch":"x86_64","checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen"],"platform":"linux","profile":"development-unsealed","result":"PASS"}

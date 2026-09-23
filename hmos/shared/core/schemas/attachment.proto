@@ -1,0 +1,27 @@
+syntax = "proto3";
+package morrow.attachment.v1;
+// Metadata only. Original payload bytes are stored unchanged, outside this envelope.
+message Blob {
+  uint32 schema_version = 1;
+  string id = 2;
+  bytes sha256 = 3;
+  uint64 byte_length = 4;
+  int64 created_at_unix_ms = 5;
+  optional int64 retired_at_unix_ms = 6;
+}
+message Clock { uint32 schema_version = 1; int64 last_unix_ms = 2; }
+enum RetentionKind { UNSPECIFIED = 0; UNDO = 1; SNAPSHOT = 2; EVIDENCE = 3; }
+message Retention {
+  uint32 schema_version = 1;
+  string owner_id = 2;
+  string blob_id = 3;
+  RetentionKind kind = 4;
+}
+
+message Chunk {
+  uint32 schema_version = 1;
+  string blob_id = 2;
+  uint64 offset = 3;
+  uint32 byte_length = 4;
+  bytes sha256 = 5;
+}

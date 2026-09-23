@@ -1,0 +1,40 @@
+[0,0,1320,2232]
+  Button [36,156,156,270] clickable
+    Text [65,182,128,245] ""
+  Text [219,188,270,239] ""
+  TextInput [294,156,1007,270] clickable longClickable scrollable
+  Text [1031,197,1101,229] "Ctrl K"
+  Button [1164,156,1284,270] clickable
+    Text [1196,185,1253,242] "󰉘"
+  Scroll [36,339,1284,2112] scrollable
+    Text [36,339,595,371] "A LITTLE SPACE FOR BIG IDEAS"
+    Text [36,398,749,503] "Let your ideas grow."
+    Text [36,527,765,611] "Keep the everyday details and the sparks of inspiration."
+    Button [980,406,1284,544] clickable
+      Text [1025,450,1076,501] ""
+      Text [1097,456,1239,495] "New idea"
+    Text [150,761,548,789] "THE POSSIBILITY CORNER"
+    Text [114,849,786,923] "It is okay to start small."
+    Text [114,953,618,1075] "A thought, a small task, a what-if.\nThis is where they begin."
+    Row [114,1135,471,1210] clickable
+      Text [114,1153,396,1192] "Capture a thought"
+      Text [426,1150,471,1195] ""
+    Text [36,1421,382,1474] "Recent thoughts"
+    Text [406,1430,441,1465] "02"
+    Text [477,1409,578,1486] "All" clickable
+    Text [590,1409,732,1486] "To do" clickable
+    Text [744,1409,938,1486] "With files" clickable
+    Text [950,1409,1207,1486] "Favorites only" clickable
+    Row [36,1522,1284,1597] clickable
+      Text [1092,1540,1131,1579] "󰆨"
+      Text [1146,1542,1266,1577] "默认顺序"
+    Column [36,1645,1284,2112] clickable
+      Text [119,1719,176,1776] ""
+      Button [1146,1699,1242,1795] clickable
+        Text [1169,1722,1220,1773] ""
+      Text [96,1840,619,1889] "HMOSHMOS-native-check"
+      Text [96,1913,591,1972] "给这个念头，留一点生长的空间。"
+      Text [96,2029,225,2085] "Project"
+      Text [1142,2041,1242,2073] "Planned"
+  Text [129,2021,1158,2060] "Nothing urgent. Give curiosity a little time."
+  Text [1185,2015,1236,2066] "󰛹"

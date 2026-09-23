@@ -1,0 +1,6 @@
+syntax = "proto3";
+package morrow.read_capture.v1;
+enum Phase { UNSPECIFIED = 0; PREPARING = 1; READY = 2; FAILED = 3; CANCELLED = 4; INTERRUPTED = 5; }
+// Immutable intent precedes the small mutable lifecycle suffix. This is local control
+// state, not a signed trace or evidence of delivery. Ready must match a read archive.
+message State { uint32 schema_version = 1; bytes plan = 2; string context_type = 3; bytes context = 4; fixed64 charged_bytes = 5; bytes owner = 6; fixed64 revision = 7; Phase phase = 8; bytes archive_root = 9; string reason = 10; }
