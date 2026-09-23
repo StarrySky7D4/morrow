@@ -248,6 +248,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainComponentSettings => 'コンポーネントとカード · 設定';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      '操作は保存されましたが、最新の内容を読み込めませんでした。再読み込みして確認してください。';
+
+  @override
   String get mainContentProtection => 'コンテンツの保護';
 
   @override
@@ -321,6 +325,48 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainDone => '完了';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      '取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision => '破棄要求を取り消す';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle => 'この破棄要求を取り消しますか？';
+
+  @override
+  String get mainDraftImportRecoveryCancelled => '取消済み：元の破棄要求は今後実行されません。';
+
+  @override
+  String get mainDraftImportRecoveryClose => '閉じる';
+
+  @override
+  String get mainDraftImportRecoveryCommitted => '完了：この添付ファイルの取り込みを破棄しました。';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      '操作は確定しましたが、一覧は更新されていません。更新して最新の状態を確認してください。';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      '競合：下書きが変更されました。この要求は取り消すことしかできません。';
+
+  @override
+  String get mainDraftImportRecoveryEmpty => '確認が必要な添付ファイルの決定はありません。';
+
+  @override
+  String get mainDraftImportRecoveryFailed => 'この決定を確認できませんでした。更新して再試行してください。';
+
+  @override
+  String get mainDraftImportRecoveryPending => '保留中：元の破棄要求はまだ確認されていません。';
+
+  @override
+  String get mainDraftImportRecoveryRetry => '元の破棄要求を再試行';
+
+  @override
+  String get mainDraftImportRecoveryTitle => '添付ファイルの決定を確認';
+
+  @override
   String get mainEdit => '編集';
 
   @override
@@ -329,6 +375,55 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       'エディターを閉じましたが、保存結果は未確認です。別のコピーを作る前にワークスペースを開き直して確認してください。';
+
+  @override
+  String get mainEditorContinueDraft => '編集を続ける';
+
+  @override
+  String get mainEditorContinueFailed =>
+      '前回の編集は確定済みです。新しい下書きはこのウィンドウに残っています。次の編集を開けませんでした。再試行してください。';
+
+  @override
+  String get mainEditorNewerDraft => '前回の編集は保存されました。新しい下書きはまだ保存されていません。';
+
+  @override
+  String get mainEditorPendingDraft =>
+      '入力は続けられます。先に前回の保存を確認してください。新しい編集は自動送信されません。';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      'この未確定の編集を破棄しますか？元の操作は再実行できなくなります。保存済みの内容や新しい下書きは変わりません。確定済みの編集は取り消されません。';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => '以前の編集を破棄';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      '元の編集は保存済みです。現在の内容を確認して承認します。再保存はしません。';
+
+  @override
+  String get mainEditorRecoveryConfirm => '確認して承認';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      '基準の内容または操作履歴が変わりました。元の編集案は保持され、現在の内容を上書きできません。';
+
+  @override
+  String get mainEditorRecoveryEmpty => '確認が必要な保存済み編集案はありません。';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      '確認を完了できませんでした。元の編集案は保持されています。更新して再試行してください。';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      '元の編集は未確認です。続行すると元の編集案だけを再試行し、新しい変更は送信しません。';
+
+  @override
+  String get mainEditorRecoveryResume => '元の編集を続行';
+
+  @override
+  String get mainEditorRecoveryTitle => '未確認の編集を確認';
 
   @override
   String get mainEditorSubtitle => 'テキスト、表、画像。アイデアが形になるまで、ここに。';
@@ -393,6 +488,36 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get mainFollowTheme => 'テーマに合わせる';
+
+  @override
+  String get mainFontApply => 'フォントを適用';
+
+  @override
+  String get mainFontDefault => '標準フォント';
+
+  @override
+  String get mainFontFailed => 'フォントを読み込めません。ファイルを確認するか、アプリを再起動して再試行してください。';
+
+  @override
+  String get mainFontFamily => 'システムフォント名';
+
+  @override
+  String get mainFontHelp => 'TTF / OTF、最大 20 MiB。未インストールのフォントは自動的に代替されます。';
+
+  @override
+  String get mainFontHint => '例：Arial、Microsoft YaHei';
+
+  @override
+  String get mainFontImport => 'フォントファイルを読み込む';
+
+  @override
+  String get mainFontReset => '標準に戻す';
+
+  @override
+  String get mainFontSettings => 'フォント';
+
+  @override
+  String get mainFontUnavailable => '保存したフォントを利用できないため、標準フォントを一時的に使用します。';
 
   @override
   String get mainFrostDetail => '背景をやわらげ、思考に余白を。';
@@ -507,6 +632,26 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get mainLavender => 'ラベンダー';
+
+  @override
+  String get mainLegacyStageComplete =>
+      '旧形式ではすべてのタスクを完了にしてプロジェクトを完了します。続行しますか？';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return '別の段階に戻すと、最後のタスク「$task」と同名のすべてのタスクが未完了になります。続行しますか？';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => '続行';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return '旧形式は文字列でタスクを識別します。「$task」というすべてのタスクが変更されます。続行しますか？';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => '旧形式のタスク連動';
 
   @override
   String get mainLightOpacity => '20% · 淡い';
@@ -763,6 +908,44 @@ class AppLocalizationsJa extends AppLocalizations {
       '変更は保存されていません。「プラグインとサービス」でワークスペースプラグインを有効にして再試行してください。';
 
   @override
+  String get mainSaveReadbackPending =>
+      '設定は保存されましたが、読み戻しは未確認です。下書きを保持し、再試行時に元の送信を先に確認します。';
+
+  @override
+  String get mainSaveRecoveryAbandon => '以前の提案を破棄';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      '未保存の提案のみを破棄しますか？現在の下書きと保存済みの内容は保持されます。保存済みの設定は取り消されません。';
+
+  @override
+  String get mainSaveRecoveryCommitted => '以前の設定は保存済みです。確認しても現在の下書きは置き換わりません。';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      'ライブラリが変更されています。以前の提案で新しい設定を上書きできません。保留するか、未保存の提案を破棄してください。';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      '以前の提案を処理しました。下書きは変更されていません。必要なときに保存を再試行してください。';
+
+  @override
+  String get mainSaveRecoveryEmpty => '確認が必要な永続保存の提案はありません。';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      '以前の提案は保存が未確認です。続行すると元の保存を確認して再試行します。新しい下書きは保持されます。';
+
+  @override
+  String get mainSaveRecoveryResolve => '元の保存を確認';
+
+  @override
+  String get mainSaveRecoveryReview => '保存を確認';
+
+  @override
+  String get mainSaveRecoveryTitle => '確認が必要な保存があります';
+
+  @override
   String get mainSaveUnknown =>
       '保存結果は未確認です。下書きと添付は保持されています。この送信を再試行してください。閉じるとワークスペースを更新して確認します。';
 
@@ -855,6 +1038,71 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainStorageUnreadable => '保存済みの内容を読み取れませんでした。元のデータは保持され、上書きされません。';
 
   @override
+  String get mainStyleFlat => 'フラット · 標準';
+
+  @override
+  String get mainStyleFlatDescription => '軽やかな輪郭と明確な階層';
+
+  @override
+  String get mainStyleNeumorphism => 'ニューモーフィズム';
+
+  @override
+  String get mainStyleNeumorphismDescription => '柔らかな光と影で穏やかな立体感';
+
+  @override
+  String get mainTaskAdd => 'タスクを追加';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      '旧形式の同名タスクの完了状態は不明です。各タスクを個別に確認してください。';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage => 'すべて完了して段階を設定';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return 'すべてのタスクを完了にして、段階を「$stage」に設定しますか？';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      '旧形式ではタスクを文字列で照合します。更新後は同名タスクを個別に管理できます。';
+
+  @override
+  String get mainTaskMarkComplete => '完了として確定';
+
+  @override
+  String get mainTaskMarkIncomplete => '未完了として確定';
+
+  @override
+  String get mainTaskMoveDown => '下へ移動';
+
+  @override
+  String get mainTaskMoveUp => '上へ移動';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '完了 $complete · 未完了 $incomplete · 要確認 $ambiguous';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return 'タスク「$task」を削除しますか？';
+  }
+
+  @override
+  String get mainTaskRename => '名前を変更';
+
+  @override
+  String get mainTaskSetStage => '段階のみ変更';
+
+  @override
+  String get mainTaskStagePrompt => 'プロジェクトの段階';
+
+  @override
+  String get mainTaskTextPrompt => 'タスクの内容';
+
+  @override
   String get mainTenMinutesAgo => '10 分前';
 
   @override
@@ -912,6 +1160,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get mainViewAll => 'すべて表示';
+
+  @override
+  String get mainVisualStyle => 'インターフェースのスタイル';
 
   @override
   String get mainWarmSand => 'ウォームサンド';
@@ -2380,6 +2631,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get recoveryCloseFirst => 'ワークスペースは実行中です。ライブラリを切り替える前に閉じてください。';
 
   @override
+  String get recoveryClosing => '元のサービスの終了を待っています。終了が確認されるまで、再起動や復元はできません。';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      '終了はまだ確認されていません。監視を続けます。タイムアウトしても実行済みの操作は取り消されません。';
+
+  @override
   String get recoveryFailed => '復旧が完了しませんでした。元のファイルを保持して再試行してください。';
 
   @override
@@ -2410,6 +2668,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get recoveryMaintenance => 'ライブラリの確認が必要です。元のファイルを保持し、診断の詳細を確認してください。';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      'このライブラリの移行は未完了です。フォルダー内の移行レポートを確認し、元のライブラリを残して、新しい保存先で再試行してください。';
 
   @override
   String get recoveryMissingKey => '保護キーがありません。元の .audit-key を復元して再試行してください。';
@@ -2605,6 +2867,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get visualFindLyricsGuide => 'LRCLIB で曲名とアーティストを検索し、合うバージョンを選んでください。';
 
   @override
+  String visualFollowChain(String path) {
+    return '参照チェーン：$path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return '参照先：$name';
+  }
+
+  @override
+  String get visualFollowCycle => '循環が発生します';
+
+  @override
+  String get visualFollowGuide => '別のコンポーネントの設定を参照できます。解除すると独自設定に戻ります。';
+
+  @override
   String get visualFollowTheme => 'テーマに合わせる';
 
   @override
@@ -2754,6 +3032,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get visualMaterialPreview => '質感のプレビュー';
 
   @override
+  String get visualMaterialSource => 'マテリアルの参照元';
+
+  @override
   String get visualMaximize => '最大化';
 
   @override
@@ -2801,6 +3082,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => 'アーティスト（省略可）';
+
+  @override
+  String get visualOwnMaterial => 'テーマまたは独自設定';
 
   @override
   String get visualPauseMusic => '音楽を一時停止';

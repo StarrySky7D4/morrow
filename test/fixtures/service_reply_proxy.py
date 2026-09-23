@@ -54,7 +54,7 @@ def main():
     cfg = json.loads((root / "proxy.json").read_text(encoding="utf-8"))
     host, store, package = Path(cfg["host"]), Path(cfg["store"]), Path(cfg["package"])
     mode = cfg["mode"]
-    if mode not in ("malformed", "eof"):
+    if mode not in ("malformed", "eof", "replace"):
         die("invalid mode")
     trace = root / "trace.jsonl"
     receipt = root / "receipt.bin"
@@ -77,6 +77,8 @@ def main():
             if not 1 <= rn <= MAX_REQ:
                 raise ValueError("invalid request length")
             req = read_exact(sys.stdin.buffer, rn)
+            if cfg.get("trace_requests", False):
+                log_trace(trace, {"event": "request", "hex": req.hex()})
             cin.write(rhdr + req)
             cin.flush()
             hdr = read_exact(cout, 4)
@@ -92,7 +94,7 @@ def main():
                     log_trace(trace, {"event": "injected", "mode": mode})
                     if mode == "eof":
                         break
-                    reply = b"\x00"
+                    reply = (root / "replacement.bin").read_bytes() if mode == "replace" else b"\x00"
             sys.stdout.buffer.write(struct.pack("<I", len(reply)) + reply)
             sys.stdout.buffer.flush()
     finally:

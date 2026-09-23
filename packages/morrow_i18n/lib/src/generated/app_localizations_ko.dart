@@ -248,6 +248,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mainComponentSettings => '구성 요소 및 카드 · 설정';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      '작업이 저장되었지만 최신 내용을 불러오지 못했습니다. 새로고침하여 확인하세요.';
+
+  @override
   String get mainContentProtection => '콘텐츠 보호';
 
   @override
@@ -321,6 +325,50 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mainDone => '완료';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      '취소하면 원래 포기 요청은 더 이상 실행되지 않습니다. 첨부 파일이 삭제되거나 다른 변경 사항이 되돌려지지는 않습니다.';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision => '포기 요청 취소';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle => '이 포기 요청을 취소할까요?';
+
+  @override
+  String get mainDraftImportRecoveryCancelled =>
+      '취소됨: 원래 포기 요청은 더 이상 실행되지 않습니다.';
+
+  @override
+  String get mainDraftImportRecoveryClose => '닫기';
+
+  @override
+  String get mainDraftImportRecoveryCommitted => '완료: 이 첨부 파일 가져오기를 포기했습니다.';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      '작업은 확인되었지만 목록이 새로고침되지 않았습니다. 새로고침하여 최신 상태를 확인하세요.';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      '충돌: 초안이 변경되었습니다. 이 요청은 취소만 할 수 있습니다.';
+
+  @override
+  String get mainDraftImportRecoveryEmpty => '검토할 첨부 파일 결정이 없습니다.';
+
+  @override
+  String get mainDraftImportRecoveryFailed =>
+      '이 결정을 검토할 수 없습니다. 새로고침한 뒤 다시 시도하세요.';
+
+  @override
+  String get mainDraftImportRecoveryPending => '대기 중: 원래 포기 요청이 확인되지 않았습니다.';
+
+  @override
+  String get mainDraftImportRecoveryRetry => '원래 포기 요청 다시 시도';
+
+  @override
+  String get mainDraftImportRecoveryTitle => '첨부 파일 결정 검토';
+
+  @override
   String get mainEdit => '편집';
 
   @override
@@ -329,6 +377,55 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       '편집기가 닫혔지만 저장 결과는 확인되지 않았습니다. 다른 사본을 만들기 전에 작업 공간을 다시 열어 확인하세요.';
+
+  @override
+  String get mainEditorContinueDraft => '계속 편집';
+
+  @override
+  String get mainEditorContinueFailed =>
+      '이전 편집은 확정되었고 새 초안은 이 창에 남아 있습니다. 다음 편집기를 열지 못했습니다. 다시 시도하세요.';
+
+  @override
+  String get mainEditorNewerDraft => '이전 편집이 저장되었습니다. 새 초안은 아직 저장되지 않았습니다.';
+
+  @override
+  String get mainEditorPendingDraft =>
+      '계속 입력할 수 있습니다. 이전 저장을 먼저 확인하세요. 새 편집 내용은 자동으로 전송되지 않습니다.';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      '확정되지 않은 이 편집을 폐기할까요? 원래 작업은 다시 실행할 수 없게 됩니다. 저장된 내용과 새 초안은 변경되지 않습니다. 이미 확정된 편집은 취소되지 않습니다.';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => '이전 편집 폐기';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      '원래 편집이 저장되었습니다. 현재 내용을 확인하고 승인합니다. 다시 저장하지 않습니다.';
+
+  @override
+  String get mainEditorRecoveryConfirm => '확인 및 승인';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      '기준 내용 또는 작업 기록이 변경되었습니다. 원래 제안은 유지되며 현재 내용을 덮어쓸 수 없습니다.';
+
+  @override
+  String get mainEditorRecoveryEmpty => '확인할 저장된 편집 제안이 없습니다.';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      '확인을 완료하지 못했습니다. 원래 제안은 유지됩니다. 새로 고친 후 다시 시도하세요.';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      '원래 편집이 확인되지 않았습니다. 계속하면 해당 제안만 다시 시도하며 새 변경 사항은 보내지 않습니다.';
+
+  @override
+  String get mainEditorRecoveryResume => '원래 편집 계속';
+
+  @override
+  String get mainEditorRecoveryTitle => '미확인 편집 확인';
 
   @override
   String get mainEditorSubtitle => '글, 표, 이미지. 아이디어가 형태를 갖출 때까지 여기에 담으세요.';
@@ -394,6 +491,37 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get mainFollowTheme => '테마 따르기';
+
+  @override
+  String get mainFontApply => '글꼴 적용';
+
+  @override
+  String get mainFontDefault => '기본 글꼴';
+
+  @override
+  String get mainFontFailed => '글꼴을 불러올 수 없습니다. 파일을 확인하거나 앱을 다시 시작한 후 재시도하세요.';
+
+  @override
+  String get mainFontFamily => '시스템 글꼴 이름';
+
+  @override
+  String get mainFontHelp =>
+      'TTF / OTF, 최대 20 MiB. 설치되지 않은 시스템 글꼴은 자동으로 대체됩니다.';
+
+  @override
+  String get mainFontHint => '예: Arial 또는 Microsoft YaHei';
+
+  @override
+  String get mainFontImport => '글꼴 파일 가져오기';
+
+  @override
+  String get mainFontReset => '기본값 복원';
+
+  @override
+  String get mainFontSettings => '글꼴';
+
+  @override
+  String get mainFontUnavailable => '저장된 글꼴을 사용할 수 없어 기본 글꼴을 임시로 사용합니다.';
 
   @override
   String get mainFrostDetail => '배경을 부드럽게 하고 생각에 여유를 주세요.';
@@ -509,6 +637,26 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get mainLavender => '라벤더';
+
+  @override
+  String get mainLegacyStageComplete =>
+      '이전 형식은 모든 할 일을 완료로 표시하고 프로젝트를 완료합니다. 계속할까요?';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return '다른 단계로 돌아가면 마지막 할 일 “$task”와 같은 이름의 모든 할 일이 미완료로 바뀝니다. 계속할까요?';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => '계속';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return '이전 형식은 텍스트로 할 일을 구분합니다. 이름이 “$task”인 모든 항목이 바뀝니다. 계속할까요?';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => '이전 형식의 할 일 연동';
 
   @override
   String get mainLightOpacity => '20% · 옅게';
@@ -767,6 +915,45 @@ class AppLocalizationsKo extends AppLocalizations {
       '변경 사항이 저장되지 않았습니다. 플러그인 및 서비스에서 작업 공간 플러그인을 켜고 다시 시도하세요.';
 
   @override
+  String get mainSaveReadbackPending =>
+      '설정은 저장되었지만 다시 읽기는 확인되지 않았습니다. 초안을 유지하며 재시도 시 원래 제출을 먼저 확인합니다.';
+
+  @override
+  String get mainSaveRecoveryAbandon => '이전 제안 버리기';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      '저장되지 않은 제안만 버릴까요? 현재 초안과 저장된 내용은 유지됩니다. 이미 저장된 설정은 취소되지 않습니다.';
+
+  @override
+  String get mainSaveRecoveryCommitted =>
+      '이전 설정은 저장되었습니다. 확인해도 현재 초안은 바뀌지 않습니다.';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      '라이브러리가 변경되었습니다. 이전 제안으로 새 설정을 덮어쓸 수 없습니다. 보류하거나 저장되지 않은 제안을 버리세요.';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      '이전 제안을 처리했습니다. 초안은 그대로입니다. 준비되면 저장을 다시 시도하세요.';
+
+  @override
+  String get mainSaveRecoveryEmpty => '확인할 영구 저장 제안이 없습니다.';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      '이전 제안의 저장이 확인되지 않았습니다. 계속하면 원래 저장을 확인하고 시도합니다. 새 초안은 유지됩니다.';
+
+  @override
+  String get mainSaveRecoveryResolve => '원래 저장 확인';
+
+  @override
+  String get mainSaveRecoveryReview => '저장 확인';
+
+  @override
+  String get mainSaveRecoveryTitle => '확인이 필요한 저장이 있습니다';
+
+  @override
   String get mainSaveUnknown =>
       '저장 결과가 확인되지 않았습니다. 초안과 첨부 파일은 보존됩니다. 이 제출을 다시 시도하세요. 닫으면 작업 공간을 새로 고쳐 확인합니다.';
 
@@ -861,6 +1048,71 @@ class AppLocalizationsKo extends AppLocalizations {
       '저장된 내용을 읽지 못했습니다. 원본 데이터는 보존되며 덮어쓰지 않습니다.';
 
   @override
+  String get mainStyleFlat => '플랫 · 기본';
+
+  @override
+  String get mainStyleFlatDescription => '가벼운 테두리와 명확한 계층';
+
+  @override
+  String get mainStyleNeumorphism => '뉴모피즘';
+
+  @override
+  String get mainStyleNeumorphismDescription => '부드러운 빛과 그림자의 입체감';
+
+  @override
+  String get mainTaskAdd => '작업 추가';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      '이름이 같은 이전 형식 작업의 완료 상태가 불확실합니다. 각 작업을 개별적으로 확인하세요.';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage => '모두 완료하고 단계 설정';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return '모든 작업을 완료로 표시하고 단계를 “$stage”(으)로 설정할까요?';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      '이전 형식은 텍스트로 작업을 구분합니다. 업그레이드 후 같은 이름의 작업을 개별적으로 관리할 수 있습니다.';
+
+  @override
+  String get mainTaskMarkComplete => '완료로 확인';
+
+  @override
+  String get mainTaskMarkIncomplete => '미완료로 확인';
+
+  @override
+  String get mainTaskMoveDown => '아래로 이동';
+
+  @override
+  String get mainTaskMoveUp => '위로 이동';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '완료 $complete · 미완료 $incomplete · 확인 필요 $ambiguous';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return '작업 “$task”을(를) 삭제할까요?';
+  }
+
+  @override
+  String get mainTaskRename => '이름 변경';
+
+  @override
+  String get mainTaskSetStage => '단계만 변경';
+
+  @override
+  String get mainTaskStagePrompt => '프로젝트 단계';
+
+  @override
+  String get mainTaskTextPrompt => '작업 내용';
+
+  @override
   String get mainTenMinutesAgo => '10분 전';
 
   @override
@@ -919,6 +1171,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get mainViewAll => '모두 보기';
+
+  @override
+  String get mainVisualStyle => '인터페이스 스타일';
 
   @override
   String get mainWarmSand => '따뜻한 모래';
@@ -2390,6 +2645,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get recoveryCloseFirst => '작업 공간이 실행 중입니다. 라이브러리를 전환하기 전에 닫으세요.';
 
   @override
+  String get recoveryClosing =>
+      '기존 서비스가 종료되기를 기다리고 있습니다. 종료가 확인될 때까지 다시 열기와 복원을 사용할 수 없습니다.';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      '종료가 아직 확인되지 않았습니다. 계속 관찰하며, 시간 초과가 실행된 작업을 취소하지는 않습니다.';
+
+  @override
   String get recoveryFailed => '복구가 완료되지 않았습니다. 원본 파일을 보존하고 다시 시도하세요.';
 
   @override
@@ -2422,6 +2685,10 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get recoveryMaintenance =>
       '라이브러리 점검이 필요합니다. 원본 파일을 보존하고 진단 내용을 확인하세요.';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      '이 라이브러리의 마이그레이션이 완료되지 않았습니다. 폴더의 마이그레이션 보고서를 확인하고 원본 라이브러리를 보존한 채 새 대상 폴더로 다시 시도하세요.';
 
   @override
   String get recoveryMissingKey =>
@@ -2622,6 +2889,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get visualFindLyricsGuide => 'LRCLIB에서 곡명과 아티스트로 검색한 뒤 맞는 버전을 선택하세요.';
 
   @override
+  String visualFollowChain(String path) {
+    return '연결 경로: $path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return '따르는 대상: $name';
+  }
+
+  @override
+  String get visualFollowCycle => '순환 참조 발생';
+
+  @override
+  String get visualFollowGuide => '다른 구성 요소의 설정을 따릅니다. 연결을 해제하면 자체 설정으로 돌아갑니다.';
+
+  @override
   String get visualFollowTheme => '테마 따르기';
 
   @override
@@ -2771,6 +3054,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get visualMaterialPreview => '질감 미리보기';
 
   @override
+  String get visualMaterialSource => '재질 설정 출처';
+
+  @override
   String get visualMaximize => '최대화';
 
   @override
@@ -2818,6 +3104,9 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => '아티스트(선택 사항)';
+
+  @override
+  String get visualOwnMaterial => '테마 또는 자체 설정';
 
   @override
   String get visualPauseMusic => '음악 일시 정지';

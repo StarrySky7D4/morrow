@@ -4,6 +4,7 @@ pub mod attachment;
 pub mod audit;
 pub mod content;
 pub mod content_change;
+pub mod content_migration;
 pub mod dependency_call;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
@@ -21,6 +22,7 @@ pub mod response;
 pub mod store;
 pub mod tls_identity;
 pub mod transaction;
+pub mod versioned_content_change;
 // Export attributes mark the reviewed native/Wasm ABI boundary.
 #[allow(unsafe_code)]
 pub mod bridge;

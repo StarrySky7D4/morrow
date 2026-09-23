@@ -3,16 +3,18 @@ part of '../main.dart';
 extension _PageContent on _StudioState {
   List<WorkbenchFilter> get pageFilters => section.filters;
   String projectStage(Idea idea) =>
-      idea.todos.isNotEmpty && idea.completed.length >= idea.todos.length
-      ? '已完成'
-      : ['计划中', '推进中', '已完成'].contains(idea.stage)
-      ? idea.stage
-      : '推进中';
+      idea.versioned?.projectedStage ??
+      (idea.legacyAllComplete
+          ? '已完成'
+          : ['计划中', '推进中', '已完成'].contains(idea.stage)
+          ? idea.stage
+          : '推进中');
   bool matchesPageFilter(Idea idea) => switch (filter) {
     GeneralFilter.all => true,
-    GeneralFilter.pendingTodos => idea.todos.any(
-      (todo) => !idea.completed.contains(todo),
-    ),
+    GeneralFilter.pendingTodos =>
+      idea.versioned != null
+          ? idea.versioned!.incompleteCount + idea.versioned!.ambiguousCount > 0
+          : idea.todos.any((todo) => !idea.completed.contains(todo)),
     GeneralFilter.attachments => idea.attachments.isNotEmpty,
     GeneralFilter.favorites => idea.favorite,
     GeneralFilter.image => idea.attachments.any(
@@ -29,7 +31,38 @@ extension _PageContent on _StudioState {
       (section == WorkbenchPage.projects ? projectStage(idea) : idea.stage) ==
           WorkbenchV1.stage(stage),
   };
-  void changeStage(Idea idea, String stage) {
+  Future<bool> confirmLegacyTodoChange(String detail) async =>
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l.mainLegacyTodoTitle),
+          content: Text(detail),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l.commonCancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l.mainLegacyTodoContinue),
+            ),
+          ],
+        ),
+      ) ??
+      false;
+
+  Future<void> changeStage(Idea idea, String stage) async {
+    if (idea.versioned == null &&
+        idea.category == '进行中' &&
+        idea.todos.isNotEmpty) {
+      final detail = stage == '已完成'
+          ? l.mainLegacyStageComplete
+          : idea.legacyAllComplete
+          ? l.mainLegacyStageReopen(idea.todos.last)
+          : null;
+      if (detail != null && !await confirmLegacyTodoChange(detail)) return;
+      if (!mounted) return;
+    }
     if (widget.workbench != null) {
       pluginChange(PluginAction.stage, idea, text: stage);
       return;
@@ -39,8 +72,7 @@ extension _PageContent on _StudioState {
       if (idea.category == '进行中') {
         if (stage == '已完成') {
           idea.completed.addAll(idea.todos);
-        } else if (idea.todos.isNotEmpty &&
-            idea.completed.length == idea.todos.length) {
+        } else if (idea.legacyAllComplete) {
           idea.completed.remove(idea.todos.last);
         }
       }
@@ -149,300 +181,301 @@ extension _PageContent on _StudioState {
             ],
           ),
         );
-  Widget recordShell(Idea idea, Widget child, {Key? key}) => Glass(
-    componentId: 'card:${idea.id}',
-    key: key,
-    p: p,
-    radius: 20,
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => openIdea(idea),
-        borderRadius: p.borderRadius(20),
-        child: Padding(padding: const EdgeInsets.all(18), child: child),
+  Widget recordShell(Idea idea, Widget child, {Key? key}) => cardInteractions(
+    idea,
+    Glass(
+      componentId: 'card:${idea.id}',
+      p: p,
+      radius: 20,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => openIdea(idea),
+          borderRadius: p.borderRadius(20),
+          child: Padding(padding: const EdgeInsets.all(18), child: child),
+        ),
       ),
     ),
+    key: key,
   );
 
-  Widget specializedCards(List<Idea> items) => switch (section) {
-    WorkbenchPage.inbox => Column(
-      key: const ValueKey('inbox-list'),
-      children: items
-          .map(
-            (idea) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: recordShell(
-                idea,
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.inbox_outlined, size: 19, color: p.accent),
-                        const SizedBox(width: 12),
-                        Expanded(child: recordTitle(idea)),
-                        bookmark(idea),
-                      ],
-                    ),
-                    recordSummary(idea),
-                    attachmentHint(idea),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      children: [
-                        TextButton.icon(
-                          onPressed: () => changeStage(
-                            idea,
-                            idea.stage == '已整理' ? '待整理' : '已整理',
-                          ),
-                          icon: Icon(
-                            idea.stage == '已整理'
-                                ? Icons.check_circle
-                                : Icons.circle_outlined,
-                            size: 16,
-                          ),
-                          label: Text(
-                            idea.stage == '已整理'
-                                ? l.mainStageOrganized
-                                : l.mainMarkOrganized,
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          key: ValueKey('promote-${idea.id}'),
-                          onPressed: () => moveToProject(idea),
-                          icon: const Icon(Icons.arrow_forward, size: 16),
-                          label: Text(l.mainToProject),
-                        ),
-                      ],
-                    ),
-                  ],
+  Widget specializedCard(Idea idea, int index) => switch (section) {
+    WorkbenchPage.inbox => recordShell(
+      idea,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.inbox_outlined, size: 19, color: p.accent),
+              const SizedBox(width: 12),
+              Expanded(child: recordTitle(idea)),
+              bookmark(idea),
+            ],
+          ),
+          recordSummary(idea),
+          attachmentHint(idea),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            children: [
+              TextButton.icon(
+                onPressed: () =>
+                    changeStage(idea, idea.stage == '已整理' ? '待整理' : '已整理'),
+                icon: Icon(
+                  idea.stage == '已整理'
+                      ? Icons.check_circle
+                      : Icons.circle_outlined,
+                  size: 16,
+                ),
+                label: Text(
+                  idea.stage == '已整理'
+                      ? l.mainStageOrganized
+                      : l.mainMarkOrganized,
                 ),
               ),
-            ),
-          )
-          .toList(),
+              OutlinedButton.icon(
+                key: ValueKey('promote-${idea.id}'),
+                onPressed: () => moveToProject(idea),
+                icon: const Icon(Icons.arrow_forward, size: 16),
+                label: Text(l.mainToProject),
+              ),
+            ],
+          ),
+        ],
+      ),
     ),
-    WorkbenchPage.projects => LayoutBuilder(
-      builder: (_, constraints) {
-        final columns = constraints.maxWidth >= 660 ? 2 : 1;
-        return Wrap(
-          key: const ValueKey('project-board'),
-          spacing: 14,
-          runSpacing: 14,
-          children: items
-              .map(
-                (idea) => SizedBox(
-                  width: (constraints.maxWidth - (columns - 1) * 14) / columns,
-                  child: recordShell(
-                    idea,
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.folder_open, color: p.accent, size: 20),
-                            const SizedBox(width: 10),
-                            Expanded(child: recordTitle(idea)),
-                            bookmark(idea),
-                          ],
+    WorkbenchPage.projects => recordShell(
+      idea,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.folder_open, color: p.accent, size: 20),
+              const SizedBox(width: 10),
+              Expanded(child: recordTitle(idea)),
+              bookmark(idea),
+            ],
+          ),
+          recordSummary(idea),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              stageMenu(idea, ['计划中', '推进中', '已完成']),
+              const Spacer(),
+              Flexible(
+                child: Text(
+                  idea.versioned != null
+                      ? l.mainTaskProgressThreeWay(
+                          idea.versioned!.ambiguousCount,
+                          idea.versioned!.completeCount,
+                          idea.versioned!.incompleteCount,
+                        )
+                      : l.mainSteps(
+                          idea.legacyCompletedCount,
+                          idea.todos.length,
                         ),
-                        recordSummary(idea),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            stageMenu(idea, ['计划中', '推进中', '已完成']),
-                            const Spacer(),
-                            Text(
-                              l.mainSteps(
-                                idea.completed.length,
-                                idea.todos.length,
-                              ),
-                              style: TextStyle(fontSize: 11, color: p.muted),
-                            ),
-                          ],
-                        ),
-                        ClipRRect(
-                          borderRadius: p.borderRadius(8),
-                          child: LinearProgressIndicator(
-                            value: idea.todos.isEmpty
-                                ? (projectStage(idea) == '已完成' ? 1 : 0)
-                                : idea.completed.length / idea.todos.length,
-                            minHeight: 5,
-                            backgroundColor: p.line,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        if (idea.todos.isEmpty)
-                          TextButton(
-                            onPressed: () => openIdea(idea),
-                            child: Text(l.mainOpenNextStep),
-                          ),
-                        ...idea.todos
-                            .take(3)
-                            .map(
-                              (todo) => LittleTask(
-                                title: displayTodo(idea, todo),
-                                done: idea.completed.contains(todo),
-                                onChanged: (done) {
-                                  if (widget.workbench != null) {
-                                    pluginChange(
-                                      PluginAction.todo,
-                                      idea,
-                                      text: todo,
-                                      flag: done,
-                                    );
-                                    return;
-                                  }
-                                  refreshPage(() {
-                                    if (done) {
-                                      idea.completed.add(todo);
-                                    } else {
-                                      idea.completed.remove(todo);
-                                      idea.stage = '推进中';
-                                    }
-                                  });
-                                  persist();
-                                },
-                              ),
-                            ),
-                        if (idea.todos.length > 3)
-                          Text(
-                            l.mainMoreSteps(idea.todos.length - 3),
-                            style: TextStyle(fontSize: 10, color: p.muted),
-                          ),
-                        attachmentHint(idea),
-                      ],
-                    ),
-                  ),
+                  style: TextStyle(fontSize: 11, color: p.muted),
                 ),
-              )
-              .toList(),
-        );
-      },
-    ),
-    WorkbenchPage.laboratory => Column(
-      key: const ValueKey('experiment-journal'),
-      children: items.asMap().entries.map((entry) {
-        final idea = entry.value;
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: recordShell(
-            idea,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+              ),
+            ],
+          ),
+          ClipRRect(
+            borderRadius: p.borderRadius(8),
+            child: LinearProgressIndicator(
+              value: idea.versioned != null
+                  ? (idea.versioned!.tasks.isEmpty
+                        ? 0
+                        : idea.versioned!.completeCount /
+                              idea.versioned!.tasks.length)
+                  : idea.todos.isEmpty
+                  ? (projectStage(idea) == '已完成' ? 1 : 0)
+                  : idea.legacyCompletedCount / idea.todos.length,
+              minHeight: 5,
+              backgroundColor: p.line,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if ((idea.versioned?.tasks.length ?? idea.todos.length) == 0)
+            TextButton(
+              onPressed: () => openIdea(idea),
+              child: Text(l.mainOpenNextStep),
+            ),
+          if (idea.versioned != null)
+            ...idea.versioned!.tasks.take(3).map((task) {
+              final item = task as IdentifiedIdeaTaskView;
+              return Padding(
+                key: ValueKey('task-preview-${idea.id}-${item.taskId}'),
+                padding: const EdgeInsets.symmetric(vertical: 7),
+                child: Row(
                   children: [
-                    Text(
-                      'EXP ${(entry.key + 1).toString().padLeft(2, '0')}',
-                      style: TextStyle(
-                        letterSpacing: 2,
-                        color: p.accent,
-                        fontSize: 11,
+                    Icon(
+                      switch (item.completion) {
+                        VersionedTaskCompletion.complete =>
+                          Icons.check_circle_outline,
+                        VersionedTaskCompletion.incomplete =>
+                          Icons.circle_outlined,
+                        VersionedTaskCompletion.legacyAmbiguous =>
+                          Icons.help_outline,
+                      },
+                      size: 16,
+                      color: p.accent,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        item.text,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: p.ink, fontSize: 12),
                       ),
                     ),
-                    const Spacer(),
-                    stageMenu(idea, ['待验证', '验证中', '已记录']),
-                    bookmark(idea),
                   ],
                 ),
+              );
+            }),
+          ...idea.todos
+              .take(3)
+              .map(
+                (todo) => LittleTask(
+                  title: displayTodo(idea, todo),
+                  done: idea.completed.contains(todo),
+                  onChanged: (done) {
+                    if (widget.workbench != null) {
+                      pluginChange(
+                        PluginAction.todo,
+                        idea,
+                        text: todo,
+                        flag: done,
+                      );
+                      return;
+                    }
+                    refreshPage(() {
+                      if (done) {
+                        idea.completed.add(todo);
+                      } else {
+                        idea.completed.remove(todo);
+                        idea.stage = '推进中';
+                      }
+                    });
+                    persist();
+                  },
+                ),
+              ),
+          if ((idea.versioned?.tasks.length ?? idea.todos.length) > 3)
+            Text(
+              l.mainMoreSteps(
+                (idea.versioned?.tasks.length ?? idea.todos.length) - 3,
+              ),
+              style: TextStyle(fontSize: 10, color: p.muted),
+            ),
+          attachmentHint(idea),
+        ],
+      ),
+    ),
+    WorkbenchPage.laboratory => recordShell(
+      idea,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                'EXP ${(index + 1).toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  letterSpacing: 2,
+                  color: p.accent,
+                  fontSize: 11,
+                ),
+              ),
+              const Spacer(),
+              stageMenu(idea, ['待验证', '验证中', '已记录']),
+              bookmark(idea),
+            ],
+          ),
+          recordTitle(idea),
+          recordSummary(idea),
+          Divider(height: 28, color: p.line),
+          Text(
+            l.mainHypothesisSection,
+            style: TextStyle(color: p.accent, fontSize: 10),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            idea.hypothesis.isEmpty ? l.mainWriteHypothesis : idea.hypothesis,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: p.ink, height: 1.7, fontSize: 12),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l.mainObservationSection,
+            style: TextStyle(color: p.accent, fontSize: 10),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            idea.conclusion.isEmpty ? l.mainNoResultYet : idea.conclusion,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: p.muted, height: 1.7, fontSize: 12),
+          ),
+          attachmentHint(idea),
+        ],
+      ),
+    ),
+    _ => recordShell(
+      idea,
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 56,
+            height: 56,
+            child: ClipRRect(
+              borderRadius: p.borderRadius(12),
+              child:
+                  idea.attachments.any(
+                    (a) => [
+                      TextureKind.image,
+                      TextureKind.gif,
+                    ].contains(a.source.kind),
+                  )
+                  ? TrackCover(
+                      source: idea.attachments
+                          .firstWhere(
+                            (a) => [
+                              TextureKind.image,
+                              TextureKind.gif,
+                            ].contains(a.source.kind),
+                          )
+                          .source,
+                    )
+                  : ColoredBox(
+                      color: p.accent.withValues(alpha: .12),
+                      child: Icon(
+                        idea.attachments.isEmpty
+                            ? Icons.notes
+                            : Icons.folder_copy_outlined,
+                        color: p.accent,
+                      ),
+                    ),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 recordTitle(idea),
                 recordSummary(idea),
-                Divider(height: 28, color: p.line),
-                Text(
-                  l.mainHypothesisSection,
-                  style: TextStyle(color: p.accent, fontSize: 10),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  idea.hypothesis.isEmpty
-                      ? l.mainWriteHypothesis
-                      : idea.hypothesis,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: p.ink, height: 1.7, fontSize: 12),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l.mainObservationSection,
-                  style: TextStyle(color: p.accent, fontSize: 10),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  idea.conclusion.isEmpty ? l.mainNoResultYet : idea.conclusion,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: p.muted, height: 1.7, fontSize: 12),
-                ),
                 attachmentHint(idea),
               ],
             ),
           ),
-        );
-      }).toList(),
-    ),
-    _ => Column(
-      key: const ValueKey('favorites-library'),
-      children: items
-          .map(
-            (idea) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: recordShell(
-                idea,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 56,
-                      height: 56,
-                      child: ClipRRect(
-                        borderRadius: p.borderRadius(12),
-                        child:
-                            idea.attachments.any(
-                              (a) => [
-                                TextureKind.image,
-                                TextureKind.gif,
-                              ].contains(a.source.kind),
-                            )
-                            ? TrackCover(
-                                source: idea.attachments
-                                    .firstWhere(
-                                      (a) => [
-                                        TextureKind.image,
-                                        TextureKind.gif,
-                                      ].contains(a.source.kind),
-                                    )
-                                    .source,
-                              )
-                            : ColoredBox(
-                                color: p.accent.withValues(alpha: .12),
-                                child: Icon(
-                                  idea.attachments.isEmpty
-                                      ? Icons.notes
-                                      : Icons.folder_copy_outlined,
-                                  color: p.accent,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          recordTitle(idea),
-                          recordSummary(idea),
-                          attachmentHint(idea),
-                        ],
-                      ),
-                    ),
-                    bookmark(idea),
-                  ],
-                ),
-              ),
-            ),
-          )
-          .toList(),
+          bookmark(idea),
+        ],
+      ),
     ),
   };
 

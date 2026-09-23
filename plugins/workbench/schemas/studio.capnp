@@ -16,6 +16,7 @@ struct Appearance {
  componentOpacity @24 :Float64 = 0.76;
  componentColor @25 :UInt32;
  hasComponentColor @26 :Bool;
+ visualStyle @27 :Text;
 }
 struct Playback {
  ids @0 :List(Text); index @1 :Int32; playing @2 :Bool; blocked @3 :Bool;
@@ -47,4 +48,4 @@ struct Preferences {
  components @10 :List(ComponentMaterial);
 }
 
-struct ComponentMaterial { id @0 :Text; enabled @1 :Bool; blur @2 :Float64; opacity @3 :Float64; color @4 :UInt32; hasColor @5 :Bool; mode @6 :Text; cornerRadius @7 :Float64; hasCornerRadius @8 :Bool; }
+struct ComponentMaterial { id @0 :Text; enabled @1 :Bool; blur @2 :Float64; opacity @3 :Float64; color @4 :UInt32; hasColor @5 :Bool; mode @6 :Text; cornerRadius @7 :Float64; hasCornerRadius @8 :Bool; followComponent @9 :Text; }

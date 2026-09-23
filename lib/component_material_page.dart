@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'appearance.dart';
 import 'color_compass.dart';
 import 'settings_surface.dart';
+import 'neumorphic_controls.dart';
 
 class ComponentMaterialListPage extends StatefulWidget {
   const ComponentMaterialListPage({
@@ -53,6 +54,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
           id: id,
           title: title,
           initial: initial,
+          entries: widget.entries,
         ),
       ),
     );
@@ -108,7 +110,18 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
                       style: TextStyle(color: p.ink),
                     ),
                     subtitle: Text(
-                      activeSurfaces.components[entry.key]?.enabled == true
+                      activeSurfaces.components[entry.key]?.followComponent !=
+                              null
+                          ? L10n.of(context).visualFollowComponent(
+                              widget.entries[activeSurfaces
+                                      .components[entry.key]!
+                                      .followComponent] ??
+                                  activeSurfaces
+                                      .components[entry.key]!
+                                      .followComponent!,
+                            )
+                          : activeSurfaces.components[entry.key]?.enabled ==
+                                true
                           ? L10n.of(context).visualIndependentMaterial
                           : entry.key == 'footer'
                           ? L10n.of(context).visualTransparentTips
@@ -135,10 +148,12 @@ class ComponentMaterialPage extends StatefulWidget {
     required this.id,
     required this.title,
     required this.initial,
+    this.entries = const {},
   });
   final Palette palette;
   final String id, title;
   final ComponentMaterial initial;
+  final Map<String, String> entries;
   @override
   State<ComponentMaterialPage> createState() => _ComponentMaterialPageState();
 }
@@ -147,6 +162,89 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
   late ComponentMaterial value = widget.initial;
   Palette get currentPalette =>
       AppearanceScope.maybeOf(context) ?? widget.palette;
+  bool get editingOwn => value.enabled && value.followComponent == null;
+  bool canFollow(String target) {
+    final visited = <String>{widget.id};
+    String? current = target;
+    while (current != null) {
+      if (!visited.add(current)) return false;
+      current = currentPalette.surfaces.components[current]?.followComponent;
+    }
+    return true;
+  }
+
+  Widget followPicker() {
+    final l = L10n.of(context);
+    final entries = {...widget.entries};
+    for (final id in currentPalette.surfaces.components.keys) {
+      entries.putIfAbsent(id, () => id);
+    }
+    if (value.followComponent case final target?) {
+      entries.putIfAbsent(target, () => target);
+    }
+    entries.remove(widget.id);
+    final chain = <String>[];
+    final visited = <String>{widget.id};
+    String? next = value.followComponent;
+    while (next != null && visited.add(next)) {
+      chain.add(entries[next] ?? next);
+      next = currentPalette.surfaces.components[next]?.followComponent;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        InputDecorator(
+          decoration: InputDecoration(labelText: l.visualMaterialSource),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              key: const ValueKey('component-follow-source'),
+              value: value.followComponent ?? '',
+              isExpanded: true,
+              items: [
+                DropdownMenuItem(value: '', child: Text(l.visualOwnMaterial)),
+                for (final entry in entries.entries)
+                  DropdownMenuItem(
+                    value: entry.key,
+                    enabled: canFollow(entry.key),
+                    child: Text(
+                      canFollow(entry.key)
+                          ? entry.value
+                          : '${entry.value} · ${l.visualFollowCycle}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+              ],
+              onChanged: (target) {
+                if (target == null ||
+                    (target.isNotEmpty && !canFollow(target))) {
+                  return;
+                }
+                setState(
+                  () => value = value.copyWith(
+                    followComponent: target.isEmpty ? null : target,
+                    clearFollow: target.isEmpty,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          chain.isEmpty
+              ? l.visualFollowGuide
+              : l.visualFollowChain(chain.join(' → ')),
+          style: TextStyle(
+            color: currentPalette.muted,
+            fontSize: 12,
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget slider(
     String key,
     String label,
@@ -167,7 +265,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
         value: current,
         max: max,
         divisions: 100,
-        onChanged: value.enabled ? (v) => setState(() => change(v)) : null,
+        onChanged: editingOwn ? (v) => setState(() => change(v)) : null,
       ),
     ],
   );
@@ -242,7 +340,12 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(20),
-                        child: widget.id == 'footer' && !value.enabled
+                        child:
+                            widget.id == 'footer' &&
+                                p.surfaces
+                                        .resolveComponent(widget.id)
+                                        ?.enabled !=
+                                    true
                             ? previewContent
                             : Glass(
                                 key: const ValueKey('component-preview'),
@@ -255,7 +358,10 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                SwitchListTile.adaptive(
+                followPicker(),
+                const SizedBox(height: 16),
+                NeumorphicSwitchListTile(
+                  palette: p,
                   key: const ValueKey('component-custom-toggle'),
                   contentPadding: EdgeInsets.zero,
                   title: Text(l.visualUseCustomMaterial),
@@ -265,8 +371,11 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                         : l.visualCustomMaterialGuide,
                   ),
                   value: value.enabled,
-                  onChanged: (enabled) =>
-                      setState(() => value = value.copyWith(enabled: enabled)),
+                  onChanged: value.followComponent != null
+                      ? null
+                      : (enabled) => setState(
+                          () => value = value.copyWith(enabled: enabled),
+                        ),
                 ),
                 const SizedBox(height: 16),
                 FilledButton(
@@ -297,11 +406,11 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                 // them while the component follows the current theme.
                 AnimatedOpacity(
                   duration: motionDuration(context, 240),
-                  opacity: value.enabled ? 1 : .45,
-                  child: IgnorePointer(
-                    ignoring: !value.enabled,
+                  opacity: editingOwn ? 1 : .45,
+                  child: Semantics(
+                    container: true,
                     child: ExcludeFocus(
-                      excluding: !value.enabled,
+                      excluding: !editingOwn,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -313,7 +422,8 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                                 null,
                                 ...GlassMode.values,
                               ])
-                                ChoiceChip(
+                                NeumorphicChoiceChip(
+                                  palette: p,
                                   key: ValueKey(
                                     'component-mode-${mode?.name ?? 'inherit'}',
                                   ),
@@ -324,7 +434,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                                     GlassMode.liquid => l.mainLiquidGlass,
                                   }),
                                   selected: value.mode == mode,
-                                  onSelected: value.enabled
+                                  onSelected: editingOwn
                                       ? (_) => setState(() {
                                           value = value.copyWith(
                                             mode: mode,
@@ -377,7 +487,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                             child: TextButton(
                               key: const ValueKey('component-radius-inherit'),
                               onPressed:
-                                  value.enabled && value.cornerRadius != null
+                                  editingOwn && value.cornerRadius != null
                                   ? () => setState(
                                       () => value = value.copyWith(
                                         inheritRadius: true,
@@ -390,7 +500,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                           const SizedBox(height: 12),
                           OutlinedButton.icon(
                             key: const ValueKey('component-color'),
-                            onPressed: value.enabled ? color : null,
+                            onPressed: editingOwn ? color : null,
                             icon: Icon(
                               Icons.palette_outlined,
                               size: 16,
@@ -400,7 +510,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                           ),
                           TextButton(
                             key: const ValueKey('component-color-inherit'),
-                            onPressed: value.enabled && value.color != null
+                            onPressed: editingOwn && value.color != null
                                 ? () => setState(
                                     () => value = value.copyWith(
                                       inheritColor: true,

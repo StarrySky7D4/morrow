@@ -106,7 +106,9 @@ class _DesktopFrameState extends State<DesktopFrame> with WindowListener {
                             'Morrow',
                             style: TextStyle(
                               inherit: false,
-                              fontFamily: 'Segoe UI',
+                              fontFamily: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.fontFamily,
                               fontSize: 12,
                               color: p.ink,
                             ),

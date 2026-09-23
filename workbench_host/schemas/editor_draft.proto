@@ -1,0 +1,92 @@
+syntax = "proto3";
+package morrow.workbench.editor_draft.v1;
+
+// A host-owned successor draft. It is not a business card, a captured save,
+// a guest invocation, or an authorization/capture ticket.
+message TextValue {
+  string text = 1;
+  sint32 selection_base = 2;
+  sint32 selection_extent = 3;
+  uint32 affinity = 4;
+  bool directional = 5;
+  sint32 composing_start = 6;
+  sint32 composing_end = 7;
+}
+
+message Values {
+  TextValue title = 1;
+  TextValue description = 2;
+  TextValue hypothesis = 3;
+  TextValue conclusion = 4;
+  TextValue todos = 5;
+  string category = 6;
+  string stage = 7;
+}
+
+message AssetSelection {
+  // 0 source card, 1 exact predecessor projection, 2 host staged import,
+  // 3 same draft's previous generation pins, 4 explicit parent draft pin.
+  uint32 origin = 1;
+  string asset_id = 2;
+  repeated string aliases = 3;
+}
+
+message WriteRequest {
+  uint32 schema_version = 1;
+  string card_id = 2;
+  string draft_id = 3;
+  string operation_id = 4;
+  uint64 expected_generation = 5;
+  uint64 source_revision = 6;
+  string predecessor_operation = 7;
+  bytes predecessor_sha256 = 8;
+  Values values = 9;
+  repeated AssetSelection assets = 10;
+  // 0 existing card (compatible default), 1 new card with no source record.
+  uint32 source_kind = 11;
+}
+
+message StoredAsset {
+  AssetSelection selection = 1;
+  string pin_id = 2;
+  string display_name = 3;
+  string media_type = 4;
+  uint64 byte_length = 5;
+  bytes sha256 = 6;
+}
+
+// Immutable parent evidence for an explicitly handed-off child draft.
+message ParentLink {
+  string parent_draft_id = 1;
+  uint64 parent_generation = 2;
+  string parent_save_operation = 3;
+  bytes parent_request_sha256 = 4;
+  string committed_operation = 5;
+  bytes committed_sha256 = 6;
+  string child_operation = 7;
+}
+
+// A conditional retirement marker, distinct from an ordinary discard.
+message ParentRetirement {
+  string child_draft_id = 1;
+  string child_operation = 2;
+  string operation_id = 3;
+  uint64 parent_generation = 4;
+}
+
+message Slot {
+  uint32 schema_version = 1;
+  WriteRequest request = 2;
+  uint64 generation = 3;
+  bool active = 4;
+  bytes source_card = 5;
+  bytes predecessor_card = 6;
+  uint64 predecessor_evidence_bytes = 7;
+  repeated StoredAsset assets = 8;
+  uint64 active_bytes = 9;
+  // Exact durable import operations consumed by this generation. Cleared only
+  // after the staging journal has durably retired them, before a newer save.
+  repeated string consumed_imports = 10;
+  ParentLink parent_link = 11;
+  ParentRetirement retirement = 12;
+}

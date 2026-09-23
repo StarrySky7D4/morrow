@@ -7,6 +7,18 @@ pub const PACKAGE_VERSION: &str = env!("CARGO_PKG_VERSION");
 pub mod capture;
 pub mod codec;
 pub mod persistence;
+pub mod query_v2;
+pub mod query_v2_codec;
+#[allow(clippy::all)]
+pub mod query_v2_capnp { include!(concat!(env!("OUT_DIR"), "/query_v2_capnp.rs")); }
+pub mod cards_v2;
+pub mod cards_v2_codec;
+#[allow(clippy::all)]
+pub mod cards_v2_capnp { include!(concat!(env!("OUT_DIR"), "/cards_v2_capnp.rs")); }
+pub mod tasks_v2;
+pub mod tasks_v2_codec;
+#[allow(clippy::all)]
+pub mod tasks_capnp { include!(concat!(env!("OUT_DIR"), "/tasks_capnp.rs")); }
 pub mod preferences;
 pub mod ui;
 #[allow(clippy::all)]
@@ -321,6 +333,21 @@ pub extern "C" fn morrow_run() -> i32 {
         && (t.handler == "ui.form" || t.handler == "ui.edit")
     {
         ui::process(&t.handler, &t.input_type, &t.input)
+    } else if t.handler == "workbench.query.v2"
+        && t.input_type == "morrow.workbench.query.request.v2"
+        && t.output_type == "morrow.workbench.query.response.v2"
+    {
+        query_v2_codec::process(&t.input)
+    } else if t.handler == "workbench.cards.v2"
+        && t.input_type == "morrow.workbench.cards.request.v2"
+        && t.output_type == "morrow.workbench.cards.response.v2"
+    {
+        cards_v2_codec::process(&t.input)
+    } else if t.handler == "workbench.tasks.v2"
+        && t.input_type == "morrow.workbench.tasks.request.v2"
+        && t.output_type == "morrow.workbench.tasks.response.v2"
+    {
+        tasks_v2_codec::process(&t.input)
     } else if t.handler == "workbench.command"
         && t.input_type == "morrow.workbench.request.v1"
         && t.output_type == "morrow.workbench.response.v1"

@@ -227,6 +227,87 @@ impl HostRuntime {
     ) -> Result<crate::transaction::Receipt> {
         self.edit_content_guarded_with_evidence(connection, change, &[], clock, guard)
     }
+    /// Trusted format-aware edit route. The complete source Card is compared inside
+    /// the Store transaction; the host validates format-specific output and evidence.
+    pub fn edit_versioned_content(
+        &mut self,
+        connection: &Connection,
+        change: &crate::versioned_content_change::VersionedContentChange,
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.edit_versioned_content_guarded_with_evidence(
+            connection,
+            change,
+            &[],
+            clock,
+            |_| Ok(()),
+        )
+    }
+    pub fn edit_versioned_content_with_evidence(
+        &mut self,
+        connection: &Connection,
+        change: &crate::versioned_content_change::VersionedContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+    ) -> Result<crate::transaction::Receipt> {
+        self.edit_versioned_content_guarded_with_evidence(
+            connection,
+            change,
+            evidence,
+            clock,
+            |_| Ok(()),
+        )
+    }
+    pub fn edit_versioned_content_guarded_with_evidence(
+        &mut self,
+        connection: &Connection,
+        change: &crate::versioned_content_change::VersionedContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
+        change.validate()?;
+        let grant = self.content_grant(
+            connection,
+            GrantKind::EditContent,
+            &change.source()?.summary().id,
+        )?;
+        self.policy.edit_versioned_content_guarded_with_evidence(
+            connection.instance,
+            grant,
+            &mut self.store,
+            change,
+            evidence,
+            clock,
+            guard,
+        )
+    }
+    /// Trusted host migration route. The host verifies migrator output before invoking
+    /// this API; an EditContent grant is rechecked inside the atomic transaction.
+    pub fn migrate_content_guarded_with_evidence(
+        &mut self,
+        connection: &Connection,
+        change: &crate::content_migration::ContentMigration,
+        evidence: &[crate::task_evidence::Evidence],
+        clock: impl FnMut() -> u64,
+        guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
+        change.validate()?;
+        let grant = self.content_grant(
+            connection,
+            GrantKind::EditContent,
+            &change.source()?.summary().id,
+        )?;
+        self.policy.migrate_content_guarded_with_evidence(
+            connection.instance,
+            grant,
+            &mut self.store,
+            change,
+            evidence,
+            clock,
+            guard,
+        )
+    }
     pub fn edit_content_with_evidence(
         &mut self,
         connection: &Connection,

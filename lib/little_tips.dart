@@ -127,7 +127,7 @@ class FooterOverlay extends StatelessWidget {
     return Padding(
       key: const ValueKey('footer-dock'),
       padding: const EdgeInsets.only(top: 8),
-      child: p.surfaces.components['footer']?.enabled == true
+      child: p.surfaces.resolveComponent('footer')?.enabled == true
           ? Glass(componentId: 'footer', p: p, radius: 14, child: content)
           : content,
     );

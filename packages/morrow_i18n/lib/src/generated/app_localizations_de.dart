@@ -267,6 +267,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mainComponentSettings => 'Komponenten und Karten · Einstellungen';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      'Der Vorgang wurde gespeichert, aber der aktuelle Inhalt konnte nicht geladen werden. Aktualisieren Sie die Ansicht.';
+
+  @override
   String get mainContentProtection => 'Inhaltsschutz';
 
   @override
@@ -342,6 +346,56 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mainDone => 'Fertig';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      'Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision =>
+      'Verzichtsanfrage abbrechen';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle =>
+      'Diese Verzichtsanfrage abbrechen?';
+
+  @override
+  String get mainDraftImportRecoveryCancelled =>
+      'Abgebrochen: Die ursprüngliche Verzichtsanfrage wird nicht mehr ausgeführt.';
+
+  @override
+  String get mainDraftImportRecoveryClose => 'Schließen';
+
+  @override
+  String get mainDraftImportRecoveryCommitted =>
+      'Abgeschlossen: Der Import dieses Anhangs wurde aufgegeben.';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      'Aktion bestätigt, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie sie, um den aktuellen Status zu sehen.';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      'Konflikt: Der Entwurf hat sich geändert. Diese Anfrage kann nur abgebrochen werden.';
+
+  @override
+  String get mainDraftImportRecoveryEmpty =>
+      'Keine Anhangentscheidungen zur Prüfung.';
+
+  @override
+  String get mainDraftImportRecoveryFailed =>
+      'Diese Entscheidung konnte nicht geprüft werden. Aktualisieren und erneut versuchen.';
+
+  @override
+  String get mainDraftImportRecoveryPending =>
+      'Ausstehend: Der ursprüngliche Verzicht wurde nicht bestätigt.';
+
+  @override
+  String get mainDraftImportRecoveryRetry =>
+      'Ursprünglichen Verzicht wiederholen';
+
+  @override
+  String get mainDraftImportRecoveryTitle => 'Anhangentscheidungen prüfen';
+
+  @override
   String get mainEdit => 'Bearbeiten';
 
   @override
@@ -350,6 +404,57 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       'Der Editor ist geschlossen, das Speichern aber nicht bestätigt. Öffne den Arbeitsbereich zur Prüfung, bevor du eine weitere Kopie erstellst.';
+
+  @override
+  String get mainEditorContinueDraft => 'Weiter bearbeiten';
+
+  @override
+  String get mainEditorContinueFailed =>
+      'Die vorherige Änderung ist bestätigt. Ihr neuer Entwurf bleibt in diesem Fenster. Der nächste Editor konnte nicht geöffnet werden. Bitte erneut versuchen.';
+
+  @override
+  String get mainEditorNewerDraft =>
+      'Die vorherige Änderung wurde gespeichert. Ihr neuer Entwurf ist noch ungespeichert.';
+
+  @override
+  String get mainEditorPendingDraft =>
+      'Sie können weiterschreiben. Klären Sie zuerst den vorherigen Speichervorgang; neue Änderungen werden nicht automatisch gesendet.';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      'Diese noch nicht übernommene Änderung verwerfen? Der ursprüngliche Vorgang wird gesperrt. Gespeicherte Inhalte und neuere Entwürfe bleiben unverändert. Bereits übernommene Änderungen werden nicht rückgängig gemacht.';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => 'Alte Änderung verwerfen';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      'Die ursprüngliche Änderung wurde gespeichert. Prüfen und bestätigen Sie den aktuellen Inhalt, ohne erneut zu speichern.';
+
+  @override
+  String get mainEditorRecoveryConfirm => 'Prüfen und bestätigen';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      'Die Ausgangsversion oder der Verlauf hat sich geändert. Der Vorschlag bleibt erhalten und kann den aktuellen Inhalt nicht überschreiben.';
+
+  @override
+  String get mainEditorRecoveryEmpty =>
+      'Keine gespeicherten Änderungsvorschläge zu prüfen.';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      'Die Prüfung konnte nicht abgeschlossen werden. Der ursprüngliche Vorschlag bleibt erhalten. Aktualisieren Sie und versuchen Sie es erneut.';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      'Die ursprüngliche Änderung ist unbestätigt. Fortsetzen wiederholt nur diesen Vorschlag, ohne neuere Änderungen zu senden.';
+
+  @override
+  String get mainEditorRecoveryResume => 'Ursprüngliche Änderung fortsetzen';
+
+  @override
+  String get mainEditorRecoveryTitle => 'Änderungen prüfen';
 
   @override
   String get mainEditorSubtitle =>
@@ -417,6 +522,39 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mainFollowTheme => 'Thema folgen';
+
+  @override
+  String get mainFontApply => 'Schrift anwenden';
+
+  @override
+  String get mainFontDefault => 'Standardschrift';
+
+  @override
+  String get mainFontFailed =>
+      'Die Schrift konnte nicht geladen werden. Prüfe die Datei oder starte die App neu und versuche es erneut.';
+
+  @override
+  String get mainFontFamily => 'Name der Systemschrift';
+
+  @override
+  String get mainFontHelp =>
+      'TTF / OTF, bis zu 20 MiB. Nicht verfügbare Systemschriften werden automatisch ersetzt.';
+
+  @override
+  String get mainFontHint => 'Zum Beispiel: Arial oder Microsoft YaHei';
+
+  @override
+  String get mainFontImport => 'Schriftdatei importieren';
+
+  @override
+  String get mainFontReset => 'Standard wiederherstellen';
+
+  @override
+  String get mainFontSettings => 'Schriftarten';
+
+  @override
+  String get mainFontUnavailable =>
+      'Die gespeicherte Schrift ist nicht verfügbar. Vorübergehend wird die Standardschrift verwendet.';
 
   @override
   String get mainFrostDetail =>
@@ -541,6 +679,26 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mainLavender => 'Lavendel';
+
+  @override
+  String get mainLegacyStageComplete =>
+      'Das alte Format markiert alle Aufgaben als erledigt und schließt das Projekt ab. Fortfahren?';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return 'Ein anderer Projektstatus entfernt die Markierung der letzten Aufgabe „$task“ und aller gleichnamigen Aufgaben. Fortfahren?';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => 'Fortfahren';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return 'Das alte Format identifiziert Aufgaben anhand ihres Textes. Alle Aufgaben „$task“ werden geändert. Fortfahren?';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => 'Änderung einer alten Aufgabenliste';
 
   @override
   String get mainLightOpacity => '20 % · Leicht';
@@ -812,6 +970,46 @@ class AppLocalizationsDe extends AppLocalizations {
       'Änderungen nicht gespeichert. Aktiviere das Arbeitsbereich-Plugin unter Plugins und Dienste und versuche es erneut.';
 
   @override
+  String get mainSaveReadbackPending =>
+      'Die Einstellungen wurden gespeichert, das erneute Lesen ist noch unbestätigt. Der Entwurf bleibt erhalten; ein erneuter Versuch prüft zuerst den ursprünglichen Vorgang.';
+
+  @override
+  String get mainSaveRecoveryAbandon => 'Alten Vorschlag verwerfen';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      'Nur den nicht gespeicherten Vorschlag verwerfen? Ihr Entwurf und gespeicherte Inhalte bleiben erhalten. Gespeicherte Einstellungen werden nicht rückgängig gemacht.';
+
+  @override
+  String get mainSaveRecoveryCommitted =>
+      'Die alten Einstellungen wurden gespeichert. Die Prüfung bestätigt das Ergebnis, ohne Ihren aktuellen Entwurf zu ersetzen.';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      'Die Bibliothek hat sich geändert. Der alte Vorschlag darf neuere Einstellungen nicht überschreiben. Behalten Sie ihn bei oder verwerfen Sie ihn, falls er nicht gespeichert wurde.';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      'Der alte Vorschlag ist geklärt. Ihr Entwurf bleibt unverändert; speichern Sie ihn bei Bedarf erneut.';
+
+  @override
+  String get mainSaveRecoveryEmpty =>
+      'Kein dauerhaft gespeicherter Vorschlag muss geprüft werden.';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      'Der alte Vorschlag ist noch nicht bestätigt. Fortfahren prüft und versucht den ursprünglichen Speichervorgang; Ihr neuer Entwurf bleibt erhalten.';
+
+  @override
+  String get mainSaveRecoveryResolve => 'Ursprüngliches Speichern klären';
+
+  @override
+  String get mainSaveRecoveryReview => 'Speichern prüfen';
+
+  @override
+  String get mainSaveRecoveryTitle => 'Ein Speichervorgang muss geprüft werden';
+
+  @override
   String get mainSaveUnknown =>
       'Speichern noch nicht bestätigt. Entwurf und Anhänge bleiben erhalten. Wiederhole diese Übermittlung; beim Schließen wird der Arbeitsbereich zur Prüfung aktualisiert.';
 
@@ -906,6 +1104,73 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gespeicherte Inhalte konnten nicht gelesen werden. Originaldaten bleiben erhalten und werden nicht überschrieben.';
 
   @override
+  String get mainStyleFlat => 'Flach · Standard';
+
+  @override
+  String get mainStyleFlatDescription => 'Dezente Konturen, klare Ebenen';
+
+  @override
+  String get mainStyleNeumorphism => 'Neumorphismus';
+
+  @override
+  String get mainStyleNeumorphismDescription =>
+      'Weiche Lichtkanten und sanfte Schatten';
+
+  @override
+  String get mainTaskAdd => 'Aufgabe hinzufügen';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      'Der Status dieser alten Aufgaben mit gleichem Namen ist unklar. Bestätigen Sie jede Aufgabe einzeln.';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage =>
+      'Alle erledigen und Phase setzen';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return 'Alle Aufgaben als erledigt markieren und die Phase auf „$stage“ setzen?';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      'Alte Aufgaben werden nach Text zugeordnet. Nach dem Upgrade lassen sich gleichnamige Aufgaben einzeln verwalten.';
+
+  @override
+  String get mainTaskMarkComplete => 'Als erledigt bestätigen';
+
+  @override
+  String get mainTaskMarkIncomplete => 'Als offen bestätigen';
+
+  @override
+  String get mainTaskMoveDown => 'Nach unten';
+
+  @override
+  String get mainTaskMoveUp => 'Nach oben';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '$complete erledigt · $incomplete offen · $ambiguous zu bestätigen';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return 'Aufgabe „$task“ entfernen?';
+  }
+
+  @override
+  String get mainTaskRename => 'Umbenennen';
+
+  @override
+  String get mainTaskSetStage => 'Nur Phase ändern';
+
+  @override
+  String get mainTaskStagePrompt => 'Projektphase';
+
+  @override
+  String get mainTaskTextPrompt => 'Aufgabentext';
+
+  @override
   String get mainTenMinutesAgo => 'Vor 10 Minuten';
 
   @override
@@ -966,6 +1231,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mainViewAll => 'Alle anzeigen';
+
+  @override
+  String get mainVisualStyle => 'Oberflächenstil';
 
   @override
   String get mainWarmSand => 'Warmer Sand';
@@ -2532,6 +2800,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Arbeitsbereich läuft noch. Schließe ihn vor dem Bibliothekswechsel.';
 
   @override
+  String get recoveryClosing =>
+      'Warten auf das Ende des ursprünglichen Dienstes. Erneutes Öffnen und Wiederherstellen sind erst nach bestätigtem Ende möglich.';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      'Das Beenden ist noch nicht bestätigt. Die Überwachung läuft weiter; ein Zeitablauf macht ausgeführte Vorgänge nicht rückgängig.';
+
+  @override
   String get recoveryFailed =>
       'Wiederherstellung nicht abgeschlossen. Bewahre Originaldateien auf und versuche es erneut.';
 
@@ -2565,6 +2841,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get recoveryMaintenance =>
       'Die Bibliothek benötigt Aufmerksamkeit. Bewahre Originaldateien auf und prüfe die Diagnose.';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      'Die Migration dieser Bibliothek ist unvollständig. Prüfen Sie den Bericht im Ordner, behalten Sie die Quellbibliothek und versuchen Sie es mit einem neuen Zielordner erneut.';
 
   @override
   String get recoveryMissingKey =>
@@ -2779,6 +3059,23 @@ class AppLocalizationsDe extends AppLocalizations {
       'Suche in LRCLIB nach Titel und Interpret und wähle die passende Version.';
 
   @override
+  String visualFollowChain(String path) {
+    return 'Verknüpfungskette: $path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return 'Folgt: $name';
+  }
+
+  @override
+  String get visualFollowCycle => 'Würde einen Zyklus erzeugen';
+
+  @override
+  String get visualFollowGuide =>
+      'Anderem Element folgen; nach dem Trennen gelten wieder die eigenen Einstellungen.';
+
+  @override
   String get visualFollowTheme => 'Thema folgen';
 
   @override
@@ -2954,6 +3251,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get visualMaterialPreview => 'Materialvorschau';
 
   @override
+  String get visualMaterialSource => 'Materialquelle';
+
+  @override
   String get visualMaximize => 'Maximieren';
 
   @override
@@ -3001,6 +3301,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => 'Interpret (optional)';
+
+  @override
+  String get visualOwnMaterial => 'Design oder eigene Einstellungen';
 
   @override
   String get visualPauseMusic => 'Musik pausieren';

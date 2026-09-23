@@ -96,6 +96,45 @@ abstract interface class ExternalPluginControl {
   );
 }
 
+// One bounded catalog snapshot per backend, not an authorization cache.
+class _CatalogSnapshot {
+  _CatalogSnapshot(this.revision, this.firstPage, this.entries);
+  final BigInt revision;
+  final String firstPage;
+  final List<PluginLibraryEntry> entries;
+}
+
+var _catalogs = Expando<_CatalogSnapshot>('plugin directory snapshots');
+
+void clearPluginCatalogSnapshots() {
+  _catalogs = Expando<_CatalogSnapshot>('plugin directory snapshots');
+}
+
+final _releases = Expando<Set<_ObservedTransport>>('pending plugin releases');
+
+String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
+  page.cursor,
+  for (final e in page.entries)
+    [
+      e.id,
+      e.name,
+      e.version,
+      e.digest,
+      e.enabled,
+      e.builtin,
+      e.available,
+      e.declared,
+      e.approved,
+      e.dependencies,
+      e.issue,
+      e.declaredIo,
+      e.approvedIo,
+      e.ioHandlers,
+      for (final h in e.handlers)
+        [h.name, h.inputType, h.outputType, h.maxInputBytes, h.maxOutputBytes],
+    ],
+]);
+
 enum PluginLibraryMode { library, io }
 
 class PluginLibrary extends StatefulWidget {
@@ -128,14 +167,21 @@ class _ObservedTransport implements PluginUiTransport {
   _ObservedTransport(this.delegate);
   final PluginUiTransport delegate;
   Future<void>? _closing;
+  bool _closeFailed = false;
   @override
   Future<PluginUiReply> open(String seed) => delegate.open(seed);
   @override
   Future<PluginUiReply> event(Uint8List bytes) => delegate.event(bytes);
   @override
-  Future<void> close() => _closing ??= Future<void>.sync(delegate.close);
+  Future<void> close() => _closing ??= Future<void>.sync(delegate.close)
+      .catchError((Object error, StackTrace stack) {
+        _closeFailed = true;
+        Error.throwWithStackTrace(error, stack);
+      });
+  Future<void> closeOrRetry() => _closeFailed ? retryClose() : close();
   Future<void> retryClose() {
     _closing = null;
+    _closeFailed = false;
     return close();
   }
 }
@@ -162,7 +208,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
   @override
   void initState() {
     super.initState();
-    unawaited(_refresh());
+    unawaited(_refresh(reuseCatalog: true));
   }
 
   @override
@@ -170,18 +216,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.backend, widget.backend)) {
       _epoch++;
-      _releaseForm();
+      _releaseForm(oldWidget.backend);
       _busy = false;
       _confirmed = false;
       _entries = [];
       _revision = null;
       _preview = null;
       _clearTool();
-      unawaited(_refresh());
+      unawaited(_refresh(reuseCatalog: true));
     }
   }
 
-  void _releaseForm() {
+  void _releaseForm([ExternalPluginControl? owner]) {
     final controller = _controller;
     final transport = _transport ?? _unclosed;
     _controller = null;
@@ -189,14 +235,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
     _unclosed = null;
     _formId = null;
     if (transport == null) return;
+    final pending = _releases[owner ?? widget.backend] ??=
+        <_ObservedTransport>{};
+    pending.add(transport);
     unawaited(() async {
       try {
         if (controller != null) {
           await controller.close();
           await transport.close();
         } else {
-          await transport.retryClose();
+          await transport.closeOrRetry();
         }
+        pending.remove(transport);
       } catch (error, stack) {
         FlutterError.reportError(
           FlutterErrorDetails(
@@ -218,6 +268,15 @@ class _PluginLibraryState extends State<PluginLibrary> {
     _releaseForm();
     _text.dispose();
     super.dispose();
+  }
+
+  Future<void> _drainReleases(ExternalPluginControl backend) async {
+    final pending = _releases[backend];
+    if (pending == null) return;
+    for (final transport in pending.toList()) {
+      await transport.closeOrRetry();
+      pending.remove(transport);
+    }
   }
 
   Future<void> _closeForm(int epoch) async {
@@ -250,8 +309,13 @@ class _PluginLibraryState extends State<PluginLibrary> {
     }
   }
 
-  Future<void> _loadPages(ExternalPluginControl backend, int epoch) async {
+  Future<void> _loadPages(
+    ExternalPluginControl backend,
+    int epoch, {
+    bool reuseCatalog = false,
+  }) async {
     var cursor = '';
+    var firstPage = '';
     BigInt? revision;
     final entries = <PluginLibraryEntry>[];
     final cursors = <String>{};
@@ -262,6 +326,19 @@ class _PluginLibraryState extends State<PluginLibrary> {
       }
       final page = await backend.pluginPage(cursor: cursor, revision: revision);
       if (!_current(backend, epoch)) return;
+      if (cursor.isEmpty) {
+        firstPage = _pageFingerprint(page);
+        final cached = reuseCatalog ? _catalogs[backend] : null;
+        if (cached != null &&
+            cached.revision == page.revision &&
+            cached.firstPage == firstPage) {
+          // Recheck the live catalog revision before exposing this snapshot.
+          // All actions still pass revision/digest to the host for authorization.
+          entries.addAll(cached.entries);
+          revision = page.revision;
+          break;
+        }
+      }
       revision ??= page.revision;
       if (page.revision != revision) throw const FormatException('插件列表已变化');
       for (final entry in page.entries) {
@@ -271,6 +348,26 @@ class _PluginLibraryState extends State<PluginLibrary> {
       cursor = page.cursor;
     } while (cursor.isNotEmpty);
     if (!_current(backend, epoch)) return;
+    // Do not retain an unbounded directory or large strings between visits.
+    final bytes = entries.fold<int>(
+      0,
+      (total, e) =>
+          total +
+          utf8
+              .encode(
+                _pageFingerprint(
+                  PluginLibraryPage(
+                    revision: revision!,
+                    entries: [e],
+                    cursor: '',
+                  ),
+                ),
+              )
+              .length,
+    );
+    _catalogs[backend] = entries.length <= 256 && bytes <= 2 * 1024 * 1024
+        ? _CatalogSnapshot(revision, firstPage, List.unmodifiable(entries))
+        : null;
     setState(() {
       _entries = entries;
       _revision = revision;
@@ -299,6 +396,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _message = null;
     });
     try {
+      await _drainReleases(backend);
+      if (!_current(backend, epoch)) return;
       await action(backend, epoch);
     } catch (_) {
       if (!_current(backend, epoch)) return;
@@ -319,15 +418,17 @@ class _PluginLibraryState extends State<PluginLibrary> {
     }
   }
 
-  Future<void> _refresh() => _guard((backend, epoch) async {
-    await _closeForm(epoch);
-    if (!_current(backend, epoch)) return;
-    setState(() {
-      _confirmed = false;
-      _clearTool();
-    });
-    await _loadPages(backend, epoch);
-  }, (l) => l.pluginsListUnknown);
+  Future<void> _refresh({bool reuseCatalog = false}) =>
+      _guard((backend, epoch) async {
+        await _drainReleases(backend);
+        await _closeForm(epoch);
+        if (!_current(backend, epoch)) return;
+        setState(() {
+          _confirmed = false;
+          _clearTool();
+        });
+        await _loadPages(backend, epoch, reuseCatalog: reuseCatalog);
+      }, (l) => l.pluginsListUnknown);
 
   Future<String?> _pickPackage() async {
     final selected = await openFile(
@@ -404,7 +505,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       );
     }
     if (!_current(backend, epoch)) return;
-    await _loadPages(backend, epoch);
+    await _loadPages(backend, epoch, reuseCatalog: true);
     if (_current(backend, epoch)) widget.onChanged();
   }, (l) => l.pluginsApprovalUnknown);
 
@@ -459,6 +560,8 @@ class _PluginLibraryState extends State<PluginLibrary> {
       .toList();
   Future<void> _openForm(PluginLibraryEntry entry) =>
       _guard((backend, epoch) async {
+        await _drainReleases(backend);
+        if (!_current(backend, epoch)) return;
         final revision = _revision!;
         await _closeForm(epoch);
         if (!_current(backend, epoch)) return;

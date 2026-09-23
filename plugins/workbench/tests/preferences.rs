@@ -8,6 +8,7 @@ fn config() -> Preferences {
             theme: "white".into(),
             glass: "frosted".into(),
             background: "transparent".into(),
+            visual_style: "flat".into(),
             opacity: 0.76,
             corner_radius: 20.,
             window_radius: 20.,
@@ -147,4 +148,78 @@ fn component_mode_radius_persist_and_invalid_values_leave_prior_bytes_intact() {
         p::decode_persistent(&stored).unwrap().components[0].corner_radius,
         12.0
     );
+}
+
+#[test]
+fn visual_style_and_component_chains_roundtrip_and_reject_cycles() {
+    let mut v = config();
+    v.appearance.as_mut().unwrap().visual_style = "neumorphism".into();
+    v.components = vec![
+        p::proto::ComponentMaterial {
+            id: "a".into(),
+            enabled: true,
+            blur: 3.,
+            follow_component: "b".into(),
+            ..Default::default()
+        },
+        p::proto::ComponentMaterial {
+            id: "b".into(),
+            enabled: true,
+            blur: 7.,
+            follow_component: "built-in-with-default-theme".into(),
+            ..Default::default()
+        },
+    ];
+    let wire = p::encode_wire(&v).unwrap();
+    assert_eq!(p::decode_wire(&wire).unwrap(), v);
+    let stored = p::encode_persistent(&v, None).unwrap();
+    assert_eq!(p::decode_persistent(&stored).unwrap(), v);
+    v.components[1].follow_component = "a".into();
+    assert!(p::encode_wire(&v).is_err());
+    assert!(p::encode_persistent(&v, Some(&stored)).is_err());
+    v.components[1].follow_component = "b".into();
+    assert!(p::validation_pages(&v).is_err());
+    v.components[1].follow_component.clear();
+    v.appearance.as_mut().unwrap().visual_style = "unknown".into();
+    assert!(p::encode_wire(&v).is_err());
+    assert_eq!(
+        p::decode_persistent(&stored).unwrap().components[0].follow_component,
+        "b"
+    );
+}
+
+#[test]
+fn legacy_empty_style_normalizes_to_flat_at_wire_boundary() {
+    let mut v = config();
+    v.appearance.as_mut().unwrap().visual_style.clear();
+    let old = p::encode_persistent(&v, None).unwrap();
+    assert_eq!(p::decode_persistent(&old).unwrap(), v);
+    let wire = p::encode_wire(&v).unwrap();
+    assert_eq!(
+        p::decode_wire(&wire)
+            .unwrap()
+            .appearance
+            .unwrap()
+            .visual_style,
+        "flat"
+    );
+}
+
+#[test]
+fn component_cycle_across_validation_pages_is_rejected_before_splitting() {
+    let mut v = config();
+    v.components = (0..33)
+        .map(|index| p::proto::ComponentMaterial {
+            id: format!("card:{index}"),
+            blur: 22.,
+            opacity: 0.76,
+            ..Default::default()
+        })
+        .collect();
+    v.components[0].follow_component = "card:32".into();
+    v.components[32].follow_component = "card:0".into();
+    assert!(p::validation_pages(&v).is_err());
+    assert!(p::encode_wire(&v).is_err());
+    v.components[32].follow_component.clear();
+    assert!(p::validation_pages(&v).is_ok());
 }

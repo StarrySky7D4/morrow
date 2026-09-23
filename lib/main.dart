@@ -1,3 +1,19 @@
+import 'editor_draft_import_recovery_dialog.dart';
+import 'plugins/editor_draft_import.dart';
+import 'plugins/editor_draft_import_decision_coordinator.dart';
+import 'editor_recovery_dialog.dart';
+import 'plugins/editor_recovery.dart';
+import 'plugins/versioned_ui_validation.dart';
+import 'plugins/versioned_content.dart';
+import 'plugins/versioned_idea_view.dart';
+import 'plugins/versioned_editor.dart';
+import 'plugins/versioned_editor_adapter.dart';
+import 'versioned_task_panel.dart';
+import 'fonts/font_choice.dart';
+import 'save_recovery.dart';
+import 'save_recovery_dialog.dart';
+import 'fonts/font_repository.dart';
+import 'fonts/font_settings.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'plugins/workbench_ids.dart';
@@ -24,13 +40,19 @@ import 'music/music_panel.dart';
 import 'little_tips.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
+import 'visual_style_picker.dart';
+import 'neumorphic_controls.dart';
+import 'surface_motion.dart';
+import 'component_context_menu.dart';
 import 'component_material_page.dart';
 import 'collapsible_panel.dart';
 import 'settings_page_transition.dart';
+import 'workspace_viewport.dart';
 import 'settings_surface.dart';
 import 'plugins/plugin_settings_page.dart';
 import 'liquid_glass.dart';
 import 'content/idea_markdown.dart';
+import 'content/editor_attachment_rebase.dart';
 export 'appearance.dart';
 import 'color_compass.dart';
 import 'desktop_frame.dart';
@@ -79,8 +101,10 @@ class MorrowApp extends StatefulWidget {
     this.workbench,
     this.initialLocale,
     this.onFirstFrame,
+    this.libraryDirectory,
   });
   final Locale? initialLocale;
+  final String? libraryDirectory;
 
   /// Signals the first laid-out workbench, after restoration and localization.
   final VoidCallback? onFirstFrame;
@@ -95,10 +119,13 @@ class MorrowApp extends StatefulWidget {
 class _MorrowAppState extends State<MorrowApp> {
   bool _reportedFirstFrame = false;
   String uiLocale = 'system';
+  FontChoice uiFont = const FontChoice();
+  String? _fontFamily;
+  int _fontLoad = 0;
   AppLocalizations get l => uiLocale != 'system'
       ? L10n.forLocale(Locale(uiLocale))
       : messages.currentContext == null
-      ? L10n.forLocale(const Locale('zh'))
+      ? L10n.forLocale(L10n.fallbackLocale)
       : L10n.of(messages.currentContext!);
   StudioTheme theme = StudioTheme.white;
   GlassMode mode = GlassMode.frosted;
@@ -119,6 +146,56 @@ class _MorrowAppState extends State<MorrowApp> {
   Map<String, dynamic>? restored;
   String? warning;
   final messages = GlobalKey<ScaffoldMessengerState>();
+  final navigation = GlobalKey<NavigatorState>();
+  bool _recoveryChecked = false;
+
+  Future<void> reviewSaveRecovery() async {
+    final recovery = storage;
+    final context = navigation.currentContext;
+    if (recovery is! SaveRecoveryStorage || context == null) return;
+    final resolved = await showDialog<SaveRecoveryResult>(
+      context: context,
+      builder: (_) =>
+          SaveRecoveryDialog(storage: recovery as SaveRecoveryStorage),
+    );
+    if (!mounted || resolved == null) return;
+    if (resolved == SaveRecoveryResult.retry) {
+      await saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
+      return;
+    }
+    messages.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(l.mainSaveRecoveryDone),
+        action: SnackBarAction(
+          label: l.mainRetry,
+          onPressed: () =>
+              saveContent(restored ?? {'ideas': [], 'completed': <String>[]}),
+        ),
+      ),
+    );
+  }
+
+  Future<void> checkSaveRecovery() async {
+    if (_recoveryChecked || storage is! SaveRecoveryStorage) return;
+    _recoveryChecked = true;
+    try {
+      final pending = await (storage as SaveRecoveryStorage)
+          .inspectSaveRecovery();
+      if (mounted && pending != null) {
+        messages.currentState?.showSnackBar(
+          SnackBar(
+            content: Text(l.mainSaveRecoveryTitle),
+            action: SnackBarAction(
+              label: l.mainSaveRecoveryReview,
+              onPressed: reviewSaveRecovery,
+            ),
+          ),
+        );
+      }
+    } catch (_) {
+      /* A failed background inspection never submits anything. */
+    }
+  }
 
   @override
   void initState() {
@@ -128,6 +205,12 @@ class _MorrowAppState extends State<MorrowApp> {
     try {
       restored = storage.read();
       final data = restored;
+      try {
+        uiFont = FontChoice.fromJson(data?['uiFont']);
+      } catch (_) {
+        uiFont = const FontChoice();
+      }
+      if (!uiFont.imported) _fontFamily = uiFont.resolvedFamily;
       final storedLocale = data?['uiLocale'];
       uiLocale = storedLocale is String && L10n.isSupportedCode(storedLocale)
           ? storedLocale
@@ -189,9 +272,47 @@ class _MorrowAppState extends State<MorrowApp> {
       warning = '存储内容无法读取，原数据仍保留。当前会话不会覆盖它。';
       storageReadFailed = true;
     }
+    if (uiFont.imported) _restoreFont();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => applyWindowBackground(),
     );
+  }
+
+  Future<void> _restoreFont() async {
+    final generation = ++_fontLoad;
+    final font = uiFont;
+    try {
+      await FontRepository.load(
+        font,
+        libraryDirectory: widget.libraryDirectory,
+      );
+      if (mounted && generation == _fontLoad) {
+        setState(() => _fontFamily = font.resolvedFamily);
+      }
+    } catch (_) {
+      if (mounted && generation == _fontLoad) {
+        setState(() => _fontFamily = null);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && generation == _fontLoad) {
+            messages.currentState?.showSnackBar(
+              SnackBar(content: Text(l.mainFontUnavailable)),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> changeFont(FontChoice font) async {
+    font.validate();
+    final generation = ++_fontLoad;
+    await FontRepository.load(font, libraryDirectory: widget.libraryDirectory);
+    if (!mounted || generation != _fontLoad) return;
+    setState(() {
+      uiFont = font;
+      _fontFamily = font.resolvedFamily;
+    });
+    await saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
   }
 
   bool _initialWarningShown = false;
@@ -223,6 +344,7 @@ class _MorrowAppState extends State<MorrowApp> {
         ...content,
         'version': 1,
         'uiLocale': uiLocale,
+        'uiFont': uiFont.toJson(),
         'theme': theme.name,
         'glass': mode.name,
         'background': background.name,
@@ -246,8 +368,12 @@ class _MorrowAppState extends State<MorrowApp> {
           SnackBar(
             content: Text(storageFailureNotice(l, error) ?? l.mainSaveFailed),
             action: SnackBarAction(
-              label: l.mainRetry,
-              onPressed: () => saveContent(restored ?? content),
+              label: storage is SaveRecoveryStorage
+                  ? l.mainSaveRecoveryReview
+                  : l.mainRetry,
+              onPressed: storage is SaveRecoveryStorage
+                  ? reviewSaveRecovery
+                  : () => saveContent(restored ?? content),
             ),
           ),
         );
@@ -311,6 +437,7 @@ class _MorrowAppState extends State<MorrowApp> {
     );
     final labelOverrides = WorkbenchLabelsScope.maybeOf(context);
     return MaterialApp(
+      navigatorKey: navigation,
       scrollBehavior: const StudioScrollBehavior(),
       onGenerateTitle: (context) => L10n.of(context).mainAppTitle,
       locale: uiLocale == 'system' ? null : Locale(uiLocale),
@@ -325,115 +452,125 @@ class _MorrowAppState extends State<MorrowApp> {
       scaffoldMessengerKey: messages,
       builder: (context, child) {
         scheduleInitialWarning(context);
-        return WorkbenchLabelsScope(
-          labels:
-              labelOverrides ?? WorkbenchLabels(localization: L10n.of(context)),
-          child: _UiLocaleScope(
-            value: uiLocale,
-            onChanged: (value) {
-              setState(() => uiLocale = value);
-              saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
-            },
-            child: AppearanceScope(
-              palette: palette,
-              child: AnnotatedRegion<SystemUiOverlayStyle>(
-                value:
-                    (palette.dark
-                            ? SystemUiOverlayStyle.light
-                            : SystemUiOverlayStyle.dark)
-                        .copyWith(
-                          statusBarColor: Colors.transparent,
-                          systemNavigationBarColor: Colors.transparent,
-                          systemNavigationBarContrastEnforced: false,
-                        ),
-                child: widget.nativeBackground != null && isWindowsDesktop
-                    ? DesktopFrame(palette: palette, child: child!)
-                    : child!,
+        return FontScope(
+          value: uiFont,
+          onChanged: changeFont,
+          child: WorkbenchLabelsScope(
+            labels:
+                labelOverrides ??
+                WorkbenchLabels(localization: L10n.of(context)),
+            child: _UiLocaleScope(
+              value: uiLocale,
+              onChanged: (value) {
+                setState(() => uiLocale = value);
+                saveContent(restored ?? {'ideas': [], 'completed': <String>[]});
+              },
+              child: AppearanceScope(
+                palette: palette,
+                child: AnnotatedRegion<SystemUiOverlayStyle>(
+                  value:
+                      (palette.dark
+                              ? SystemUiOverlayStyle.light
+                              : SystemUiOverlayStyle.dark)
+                          .copyWith(
+                            statusBarColor: Colors.transparent,
+                            systemNavigationBarColor: Colors.transparent,
+                            systemNavigationBarContrastEnforced: false,
+                          ),
+                  child: widget.nativeBackground != null && isWindowsDesktop
+                      ? DesktopFrame(palette: palette, child: child!)
+                      : child!,
+                ),
               ),
             ),
           ),
         );
       },
-      theme: ThemeData(
-        useMaterial3: true,
-        brightness: palette.dark ? Brightness.dark : Brightness.light,
-        fontFamily: 'Segoe UI',
-        fontFamilyFallback: const ['Microsoft YaHei', 'Arial'],
-        scaffoldBackgroundColor: Colors.transparent,
-        snackBarTheme: const SnackBarThemeData(
-          showCloseIcon: true,
-          behavior: SnackBarBehavior.floating,
-        ),
-        filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: palette.borderRadius(12),
-            ),
-          ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: palette.borderRadius(12),
-            ),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: palette.borderRadius(10),
-            ),
-          ),
-        ),
-        iconButtonTheme: IconButtonThemeData(
-          style: IconButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: palette.borderRadius(12),
-            ),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: palette.surface.withValues(alpha: .13),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 15,
-          ),
-          labelStyle: TextStyle(color: palette.muted, fontSize: 12),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: palette.borderRadius(13),
-            borderSide: BorderSide(color: palette.line),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: palette.borderRadius(13),
-            borderSide: BorderSide(color: palette.accent),
-          ),
-          border: OutlineInputBorder(borderRadius: palette.borderRadius(13)),
-        ),
-        popupMenuTheme: PopupMenuThemeData(
-          color: palette.surface.withValues(alpha: .95),
-          shape: RoundedRectangleBorder(borderRadius: palette.borderRadius(16)),
-          textStyle: TextStyle(color: palette.ink, fontSize: 12),
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: palette.accent,
-          primary: palette.accent,
-          onPrimary: palette.onAccent,
-          secondary: palette.accent,
-          onSecondary: palette.onAccent,
-          tertiary: palette.accent,
-          onTertiary: palette.onAccent,
-          surface: palette.surface,
-          onSurface: palette.ink,
+      theme: applyNeumorphicControls(
+        ThemeData(
+          useMaterial3: true,
           brightness: palette.dark ? Brightness.dark : Brightness.light,
+          fontFamily: _fontFamily ?? 'Segoe UI',
+          fontFamilyFallback: const ['Microsoft YaHei', 'Arial'],
+          scaffoldBackgroundColor: Colors.transparent,
+          snackBarTheme: const SnackBarThemeData(
+            showCloseIcon: true,
+            behavior: SnackBarBehavior.floating,
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: palette.borderRadius(12),
+              ),
+            ),
+          ),
+          outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: palette.borderRadius(12),
+              ),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: palette.borderRadius(10),
+              ),
+            ),
+          ),
+          iconButtonTheme: IconButtonThemeData(
+            style: IconButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: palette.borderRadius(12),
+              ),
+            ),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: palette.surface.withValues(alpha: .13),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 15,
+            ),
+            labelStyle: TextStyle(color: palette.muted, fontSize: 12),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: palette.borderRadius(13),
+              borderSide: BorderSide(color: palette.line),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: palette.borderRadius(13),
+              borderSide: BorderSide(color: palette.accent),
+            ),
+            border: OutlineInputBorder(borderRadius: palette.borderRadius(13)),
+          ),
+          popupMenuTheme: PopupMenuThemeData(
+            color: palette.surface.withValues(alpha: .95),
+            shape: RoundedRectangleBorder(
+              borderRadius: palette.borderRadius(16),
+            ),
+            textStyle: TextStyle(color: palette.ink, fontSize: 12),
+          ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: palette.accent,
+            primary: palette.accent,
+            onPrimary: palette.onAccent,
+            secondary: palette.accent,
+            onSecondary: palette.onAccent,
+            tertiary: palette.accent,
+            onTertiary: palette.onAccent,
+            surface: palette.surface,
+            onSurface: palette.ink,
+            brightness: palette.dark ? Brightness.dark : Brightness.light,
+          ),
+          textTheme: TextTheme(
+            bodyMedium: TextStyle(color: palette.ink, fontSize: 13),
+            bodySmall: TextStyle(color: palette.muted, fontSize: 12),
+          ),
+          tooltipTheme: const TooltipThemeData(
+            waitDuration: Duration(milliseconds: 400),
+          ),
         ),
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(color: palette.ink, fontSize: 13),
-          bodySmall: TextStyle(color: palette.muted, fontSize: 12),
-        ),
-        tooltipTheme: const TooltipThemeData(
-          waitDuration: Duration(milliseconds: 400),
-        ),
+        palette,
       ),
       home: Studio(
         desktopCaption: widget.nativeBackground != null && isWindowsDesktop,
@@ -486,6 +623,9 @@ class _MorrowAppState extends State<MorrowApp> {
         onSave: saveContent,
         onReady: (data) {
           restored = data;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) checkSaveRecovery();
+          });
           if (!_reportedFirstFrame && widget.onFirstFrame != null) {
             _reportedFirstFrame = true;
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -530,6 +670,11 @@ class Idea {
     String? stage,
     this.hypothesis = '',
     this.conclusion = '',
+    this.contentRevision,
+    this.contentOwner,
+    this.versioned,
+    this.contentDeleted = false,
+    this.historicalReceipt = false,
   }) : id = id ?? nextId(),
        completed = completed ?? {},
        stage =
@@ -543,6 +688,12 @@ class Idea {
   static String nextId() =>
       '${DateTime.now().microsecondsSinceEpoch}-${_sequence++}';
   final String id;
+  // Host-only snapshot metadata. These values are deliberately not persisted as local ideas.
+  final Object? contentOwner;
+  final VersionedIdeaView? versioned;
+  final BigInt? contentRevision;
+  final bool contentDeleted;
+  final bool historicalReceipt;
   String title, description, category, stage, hypothesis, conclusion;
   final List<IdeaAttachment> attachments;
   final String time;
@@ -551,28 +702,40 @@ class Idea {
   final List<String> todos;
   bool favorite;
   final Set<String> completed;
+  // V1 completion is a text membership relation, not a count of distinct labels.
+  int get legacyCompletedCount => todos.where(completed.contains).length;
+  bool get legacyAllComplete =>
+      todos.isNotEmpty && todos.every(completed.contains);
   static const icons = [
     Icons.auto_awesome_outlined,
     Icons.spa_outlined,
     Icons.blur_on_rounded,
     Icons.widgets_outlined,
   ];
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'description': description,
-    'category': category,
-    'time': time,
-    'icon': icons.indexOf(icon),
-    'color': color.toARGB32(),
-    'favorite': favorite,
-    'todos': todos,
-    'completed': completed.toList(),
-    'stage': stage,
-    'hypothesis': hypothesis,
-    'conclusion': conclusion,
-    'attachments': attachments.map((a) => a.toJson()).toList(),
-  };
+  Map<String, dynamic> toJson() {
+    if (versioned != null) {
+      throw StateError(
+        'Versioned content cannot be serialized as a legacy idea',
+      );
+    }
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'category': category,
+      'time': time,
+      'icon': icons.indexOf(icon),
+      'color': color.toARGB32(),
+      'favorite': favorite,
+      'todos': todos,
+      'completed': completed.toList(),
+      'stage': stage,
+      'hypothesis': hypothesis,
+      'conclusion': conclusion,
+      'attachments': attachments.map((a) => a.toJson()).toList(),
+    };
+  }
+
   factory Idea.fromJson(Map<String, dynamic> data) => Idea(
     data['title'] as String,
     data['description'] as String,
@@ -597,6 +760,16 @@ class Idea {
         .map((a) => IdeaAttachment.fromJson(a as Map<String, dynamic>))
         .toList(),
   );
+}
+
+class _VersionedUiIntent {
+  _VersionedUiIntent(this.source, this.command, this.position)
+    : operation = 'workspace-${newQueryOperationId()}';
+  final Idea source;
+  final Object command;
+  final int position;
+  final String operation;
+  final Stopwatch elapsed = Stopwatch()..start();
 }
 
 class Studio extends StatefulWidget {
@@ -647,7 +820,7 @@ class Studio extends StatefulWidget {
   State<Studio> createState() => _StudioState();
 }
 
-class _StudioState extends State<Studio> {
+class _StudioState extends State<Studio> with WidgetsBindingObserver {
   AppLocalizations get l => L10n.of(context);
   WorkbenchPage section = WorkbenchPage.overview;
   WorkbenchLabels get workbenchLabels => WorkbenchLabelsScope.of(context);
@@ -746,11 +919,31 @@ class _StudioState extends State<Studio> {
     if (!value) await music.setBlocked(false);
   }
 
-  Widget musicPanel() => AnimatedSwitcher(
-    duration: motionDuration(context, 250),
-    child: backgroundAudible
-        ? const SizedBox.shrink(key: ValueKey('music-hidden-for-background'))
-        : MusicPanel(key: const ValueKey('music-panel'), controller: music),
+  Widget musicPanel() => CollapsiblePanel(
+    expanded: !backgroundAudible,
+    child: ComponentContextMenu(
+      actions: () => [
+        ComponentMenuAction(
+          label: music.playing ? l.visualPauseMusic : l.visualPlayMusic,
+          icon: music.playing ? Icons.pause : Icons.play_arrow,
+          enabled: music.tracks.isNotEmpty && !music.blocked && !music.loading,
+          onSelected: () => music.toggle(),
+        ),
+        ComponentMenuAction(
+          label: l.visualNextTrack,
+          icon: Icons.skip_next,
+          enabled: music.tracks.isNotEmpty && !music.blocked && !music.loading,
+          onSelected: () => music.next(),
+        ),
+        ComponentMenuAction(
+          label: l.mainComponentSettings,
+          icon: Icons.tune,
+          enabled: widget.workbench == null || widget.workbench!.writable,
+          onSelected: () => openComponentSettings('music', l.mainMusic),
+        ),
+      ],
+      child: MusicPanel(key: const ValueKey('music-panel'), controller: music),
+    ),
   );
   final completed = <String>{};
   WorkbenchSort sort = WorkbenchSort.recent;
@@ -890,6 +1083,7 @@ class _StudioState extends State<Studio> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     search.addListener(() {
       final composing = search.value.composing;
       final active = composing.isValid && !composing.isCollapsed;
@@ -918,13 +1112,22 @@ class _StudioState extends State<Studio> {
       ideas
         ..clear()
         ..addAll(
-          (widget.restored!['ideas'] as List).map(
-            (raw) => Idea.fromJson(raw as Map<String, dynamic>),
-          ),
+          widget.restored!['workspaceIdeas'] is List
+              ? (widget.restored!['workspaceIdeas'] as List).cast<Idea>()
+              : (widget.restored!['ideas'] as List).map(
+                  (raw) => Idea.fromJson(raw as Map<String, dynamic>),
+                ),
         );
       completed.addAll(
         List<String>.from(widget.restored!['completed'] as List? ?? []),
       );
+    }
+    if (widget.workbench case WorkbenchContentRevisionSource source) {
+      for (final idea in ideas) {
+        if (source.knownContentRevision(idea.id) case final version?) {
+          _knownContentRevisions[idea.id] = version;
+        }
+      }
     }
     if (widget.restored == null) {
       for (var i = 0; i < ideas.length; i++) {
@@ -961,17 +1164,34 @@ class _StudioState extends State<Studio> {
   );
 
   Map<String, dynamic> snapshot() => {
-    'ideas': ideas.map((idea) => idea.toJson()).toList(),
+    // Native content is only a transient presentation, never preference JSON.
+    if (widget.workbench is WorkbenchMixedContent)
+      'workspaceIdeas': List<Idea>.unmodifiable(ideas),
+    'ideas': widget.workbench is WorkbenchMixedContent
+        ? <Map<String, dynamic>>[]
+        : ideas.map((idea) => idea.toJson()).toList(),
     'completed': completed.toList(),
     'music': music.toJson(),
     'sidebarExpanded': sidebarExpanded,
     'appearanceExpanded': showAppearance,
   };
-  void persist() => widget.onSave(snapshot());
+  void persist() {
+    _localViews.clear();
+    widget.onSave(snapshot());
+  }
+
+  @override
+  void didHaveMemoryPressure() {
+    _localViews.clear();
+    _queries.releaseCompletedViews();
+    clearPluginCatalogSnapshots();
+  }
+
   void refreshPage(VoidCallback update) => setState(update);
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _queries.dispose();
     music.dispose();
     search.dispose();
@@ -983,6 +1203,33 @@ class _StudioState extends State<Studio> {
   @override
   void didUpdateWidget(Studio oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(widget.workbench, oldWidget.workbench)) {
+      _localViews.clear();
+      _frameIdeas = null;
+      _knownContentRevisions.clear();
+      _pluginBusyOwner = null;
+      _pendingVersioned.clear();
+      _contentGeneration++;
+      // A reused Studio State must never project workspace A cards through B's
+      // query IDs, or persist those cards as B's preferences while B loads.
+      ideas.clear();
+      if (widget.workbench case WorkbenchEditorSupport _) {
+        final backend = widget.workbench;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && identical(widget.workbench, backend)) {
+            unawaited(_refreshAfterEditorClose(backend));
+          }
+        });
+      } else if (!identical(widget.restored, oldWidget.restored)) {
+        if (widget.restored?['ideas'] case final List restoredIdeas) {
+          ideas.addAll(
+            restoredIdeas.map(
+              (raw) => Idea.fromJson(raw as Map<String, dynamic>),
+            ),
+          );
+        }
+      }
+    }
     if (!soundRequested) {
       backgroundAudible = false;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -991,14 +1238,240 @@ class _StudioState extends State<Studio> {
     }
   }
 
-  bool _pluginBusy = false;
+  WorkbenchBackend? _pluginBusyOwner;
+  final _pendingVersioned = <String, _VersionedUiIntent>{};
+  final _knownContentRevisions = <String, BigInt>{};
   int _contentGeneration = 0;
+
+  bool _acceptContentResult(
+    Idea result, {
+    required bool remove,
+    int? position,
+  }) {
+    final version = result.contentRevision;
+    final known = _knownContentRevisions[result.id];
+    if (version != null && known != null && version < known) return false;
+    if (version != null) {
+      if (widget.workbench case WorkbenchContentRevisionSource source) {
+        final latest = source.knownContentRevision(result.id);
+        if (latest != null && version < latest) return false;
+      }
+    }
+    if (version != null) _knownContentRevisions[result.id] = version;
+    setState(() {
+      final index = ideas.indexWhere((item) => item.id == result.id);
+      if (remove) {
+        if (index >= 0) ideas.removeAt(index);
+      } else if (index >= 0) {
+        ideas[index] = result;
+      } else {
+        ideas.insert((position ?? 0).clamp(0, ideas.length), result);
+      }
+      _contentGeneration++;
+    });
+    persist();
+    return true;
+  }
+
   late final _queries = QueryCoordinator(
     onChanged: () {
       if (mounted) setState(() {});
     },
   );
   bool _searchComposing = false;
+  Future<Idea> versionedChange(
+    Idea idea,
+    Object command, {
+    int? position,
+  }) async {
+    final backend = widget.workbench;
+    if (idea.contentOwner != null && !identical(idea.contentOwner, backend)) {
+      throw const VersionedMutationNotSubmitted();
+    }
+    if (backend is! WorkbenchMixedContent ||
+        !backend!.writable ||
+        idea.versioned == null ||
+        _pluginBusyOwner != null) {
+      throw StateError('Versioned mutation is unavailable');
+    }
+    final mixed = backend as WorkbenchMixedContent;
+    final pending = _pendingVersioned[idea.id];
+    if (pending == null) {
+      // Only this pre-send branch can safely release an invalid draft.
+      if (backend case WorkbenchContentRevisionSource revisions) {
+        final known = revisions.knownContentRevision(idea.id);
+        if (known != null && known > idea.versioned!.revision) {
+          await _refreshAfterEditorClose(backend);
+          throw const VersionedMutationNotSubmitted();
+        }
+      }
+      if (command is TaskEditCommand) {
+        validateVersionedTaskDraft(idea.versioned!.source, command);
+      }
+    }
+    if (pending != null && !identical(pending.command, command)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l.mainSaveUnknown),
+          action: SnackBarAction(
+            label: l.mainRetry,
+            onPressed: () {
+              if (mounted && identical(widget.workbench, backend)) {
+                unawaited(
+                  versionedChange(
+                    pending.source,
+                    pending.command,
+                    position: position,
+                  ).catchError((Object _) => pending.source),
+                );
+              }
+            },
+          ),
+        ),
+      );
+      throw StateError('Resolve the original versioned operation first');
+    }
+    final intent =
+        pending ??
+        _VersionedUiIntent(
+          idea,
+          command,
+          position ?? ideas.indexWhere((item) => item.id == idea.id),
+        );
+    _pendingVersioned[idea.id] = intent;
+    _pluginBusyOwner = backend;
+    try {
+      final current = switch (intent.command) {
+        final TaskEditCommand task => await mixed.applyWorkspaceTask(
+          intent.operation,
+          intent.source,
+          task,
+        ),
+        final CardEditCommand card => await mixed.applyWorkspaceCard(
+          intent.operation,
+          intent.source,
+          card,
+        ),
+        _ => throw StateError('Unsupported versioned UI operation'),
+      };
+      if (!mounted || !identical(widget.workbench, backend)) return current;
+      _pendingVersioned.remove(idea.id);
+      if (!_acceptContentResult(
+        current,
+        remove: current.contentDeleted,
+        position: position,
+      )) {
+        unawaited(_refreshAfterEditorClose(backend));
+        throw const WorkbenchCommittedRefreshFailure('Newer view required');
+      }
+      if (intent.command case CardEditCommand(kind: CardEditKind.delete)) {
+        if (current.contentDeleted) {
+          _showVersionedDeleteUndo(
+            current,
+            backend,
+            intent.position,
+            intent.elapsed,
+          );
+        }
+      }
+      return current;
+    } catch (error) {
+      final noCommit =
+          error is VersionedMutationNoCommit &&
+          error.id == intent.source.id &&
+          error.operation == intent.operation &&
+          error.sourceRevision == intent.source.versioned?.revision;
+      if (error is VersionedMutationNoCommit && !noCommit) {
+        throw StateError('Uncorrelated versioned no-commit result');
+      }
+      final locallyUnsent =
+          error is VersionedMutationNotSubmitted && pending == null;
+      if (mounted &&
+          identical(widget.workbench, backend) &&
+          (noCommit || locallyUnsent)) {
+        _pendingVersioned.remove(idea.id);
+        if (noCommit) await _refreshAfterEditorClose(backend);
+      }
+      if (mounted &&
+          identical(widget.workbench, backend) &&
+          (!(noCommit || locallyUnsent) || intent.command is CardEditCommand)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              noCommit || locallyUnsent
+                  ? l.mainSaveNotSubmitted
+                  : error is WorkbenchCommittedRefreshFailure
+                  ? l.mainContentCommittedRefreshFailed
+                  : l.mainSaveUnknown,
+            ),
+            action: noCommit || locallyUnsent
+                ? null
+                : SnackBarAction(
+                    label: l.mainRetry,
+                    onPressed: () {
+                      if (!mounted || !identical(widget.workbench, backend)) {
+                        return;
+                      }
+                      if (_pendingVersioned[idea.id] == intent) {
+                        unawaited(
+                          versionedChange(
+                            intent.source,
+                            intent.command,
+                            position: position,
+                          ).catchError((Object _) => intent.source),
+                        );
+                      } else {
+                        unawaited(_refreshAfterEditorClose(backend));
+                      }
+                    },
+                  ),
+          ),
+        );
+      }
+      rethrow;
+    } finally {
+      if (identical(_pluginBusyOwner, backend)) _pluginBusyOwner = null;
+    }
+  }
+
+  void _showVersionedDeleteUndo(
+    Idea deleted,
+    WorkbenchBackend backend,
+    int position,
+    Stopwatch elapsed,
+  ) {
+    // Host uses its own monotonic clock. Starting before dispatch gives a
+    // conservative remaining window without comparing unrelated clock epochs.
+    final remaining = 8000 - elapsed.elapsedMilliseconds;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l.mainDeleted(displayTitle(deleted))),
+        duration: Duration(milliseconds: remaining > 0 ? remaining : 3000),
+        action: remaining <= 0
+            ? null
+            : SnackBarAction(
+                label: l.mainUndo,
+                onPressed: () {
+                  if (!mounted ||
+                      !identical(widget.workbench, backend) ||
+                      elapsed.elapsedMilliseconds >= 8000 ||
+                      ideas.any((item) => item.id == deleted.id)) {
+                    return;
+                  }
+                  unawaited(
+                    pluginChange(
+                      PluginAction.restore,
+                      deleted,
+                      position: position,
+                    ),
+                  );
+                },
+              ),
+      ),
+    );
+  }
+
   Future<Idea?> pluginChange(
     PluginAction action,
     Idea idea, {
@@ -1007,46 +1480,76 @@ class _StudioState extends State<Studio> {
     int? position,
   }) async {
     final backend = widget.workbench;
-    if (backend == null || _pluginBusy) return null;
-    _pluginBusy = true;
+    if (backend == null ||
+        _pluginBusyOwner != null ||
+        (idea.contentOwner != null && !identical(idea.contentOwner, backend))) {
+      return null;
+    }
+    if (idea.versioned != null) {
+      final Object command = switch (action) {
+        PluginAction.favorite => CardEditCommand.setFavorite(flag),
+        PluginAction.stage => TaskEditCommand.setStage(text),
+        PluginAction.toProject => const CardEditCommand.setCategory(
+          '进行中',
+          '计划中',
+        ),
+        PluginAction.delete => const CardEditCommand.delete(),
+        PluginAction.restore => const CardEditCommand.restore(),
+        _ => throw StateError('Use the typed editor or TaskId action'),
+      };
+      try {
+        return await versionedChange(idea, command, position: position);
+      } catch (_) {
+        return null;
+      }
+    }
+    _pluginBusyOwner = backend;
     try {
       final result = await backend.apply(action, idea, text: text, flag: flag);
-      if (!mounted) return result;
-      setState(() {
-        final index = ideas.indexWhere((item) => item.id == result.id);
-        if (action == PluginAction.delete) {
-          if (index >= 0) ideas.removeAt(index);
-        } else if (index >= 0) {
-          ideas[index] = result;
-        } else {
-          ideas.insert((position ?? 0).clamp(0, ideas.length), result);
-        }
-        _contentGeneration++;
-      });
-      persist();
-      return result;
+      if (!mounted || !identical(widget.workbench, backend)) return null;
+      final remove = result.contentRevision == null
+          ? action == PluginAction.delete
+          : result.contentDeleted;
+      if (_acceptContentResult(result, remove: remove, position: position)) {
+        return result;
+      }
+      if (backend is WorkbenchEditorSupport) {
+        unawaited(_refreshAfterEditorClose(backend));
+      }
+      return null;
     } catch (error) {
-      if (mounted) {
+      if (mounted && identical(widget.workbench, backend)) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(storageFailureNotice(l, error) ?? l.mainChangeFailed),
-            duration: const Duration(seconds: 30),
-            action: SnackBarAction(
-              label: l.mainRetry,
-              onPressed: () => pluginChange(
-                action,
-                idea,
-                text: text,
-                flag: flag,
-                position: position,
-              ),
+            content: Text(
+              error is WorkbenchCommittedRefreshFailure
+                  ? l.mainContentCommittedRefreshFailed
+                  : storageFailureNotice(l, error) ?? l.mainChangeFailed,
             ),
+            duration: const Duration(seconds: 30),
+            action:
+                error is WorkbenchCommittedRefreshFailure ||
+                    backend is WorkbenchMutationFailureNeedsRefresh
+                ? SnackBarAction(
+                    label: l.mainRetry,
+                    onPressed: () => _refreshAfterEditorClose(backend),
+                  )
+                : SnackBarAction(
+                    label: l.mainRetry,
+                    onPressed: () => pluginChange(
+                      action,
+                      idea,
+                      text: text,
+                      flag: flag,
+                      position: position,
+                    ),
+                  ),
           ),
         );
       }
       return null;
     } finally {
-      _pluginBusy = false;
+      if (identical(_pluginBusyOwner, backend)) _pluginBusyOwner = null;
     }
   }
 
@@ -1060,7 +1563,20 @@ class _StudioState extends State<Studio> {
     ), deferred: _searchComposing);
   }
 
-  List<Idea> get visibleIdeas {
+  final _localViews =
+      <
+        ({
+          WorkbenchPage page,
+          WorkbenchFilter filter,
+          String text,
+          WorkbenchSort sort,
+        }),
+        List<Idea>
+      >{};
+  List<Idea>? _frameIdeas;
+  List<Idea> get visibleIdeas => _frameIdeas ??= _calculateVisibleIdeas();
+
+  List<Idea> _calculateVisibleIdeas() {
     pluginProjection();
     if (widget.workbench?.writable ?? false) {
       final byId = {for (final idea in ideas) idea.id: idea};
@@ -1070,6 +1586,13 @@ class _StudioState extends State<Studio> {
       ];
     }
 
+    final conditions = (page: section, filter: filter, text: query, sort: sort);
+    final cached = _localViews.remove(conditions);
+    if (cached != null) {
+      _localViews[conditions] = cached;
+      return cached;
+    }
+    final needle = query.toLowerCase();
     final result = ideas.where((idea) {
       final sectionMatches = switch (section) {
         WorkbenchPage.inbox => idea.category == '灵感',
@@ -1080,9 +1603,10 @@ class _StudioState extends State<Studio> {
       };
       return sectionMatches &&
           matchesPageFilter(idea) &&
-          '${idea.title} ${idea.description} ${idea.hypothesis} ${idea.conclusion} ${idea.attachments.map((a) => a.source.name).join(' ')}'
-              .toLowerCase()
-              .contains(query.toLowerCase());
+          (needle.isEmpty ||
+              '${idea.title} ${idea.description} ${idea.hypothesis} ${idea.conclusion} ${idea.attachments.map((a) => a.source.name).join(' ')}'
+                  .toLowerCase()
+                  .contains(needle));
     }).toList();
     if (sort == WorkbenchSort.title) {
       result.sort((a, b) => a.title.compareTo(b.title));
@@ -1090,11 +1614,17 @@ class _StudioState extends State<Studio> {
     if (sort == WorkbenchSort.favoritesFirst) {
       result.sort((a, b) => (b.favorite ? 1 : 0).compareTo(a.favorite ? 1 : 0));
     }
+    _localViews[conditions] = List.unmodifiable(result);
+    while (_localViews.length > 8 ||
+        _localViews.values.fold<int>(0, (n, v) => n + v.length) > 20000) {
+      _localViews.remove(_localViews.keys.first);
+    }
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
+    _frameIdeas = null;
     return CallbackShortcuts(
       bindings: {
         if (compactSettingsOpen)
@@ -1222,230 +1752,7 @@ class _StudioState extends State<Studio> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Expanded(
-                                                child: AnimatedSwitcher(
-                                                  duration:
-                                                      MediaQuery.disableAnimationsOf(
-                                                        context,
-                                                      )
-                                                      ? Duration.zero
-                                                      : const Duration(
-                                                          milliseconds: 300,
-                                                        ),
-                                                  switchInCurve:
-                                                      Curves.easeOutCubic,
-                                                  switchOutCurve:
-                                                      Curves.easeInCubic,
-                                                  layoutBuilder:
-                                                      (
-                                                        current,
-                                                        previous,
-                                                      ) => Stack(
-                                                        alignment:
-                                                            Alignment.topCenter,
-                                                        children: [
-                                                          ...previous.map(
-                                                            (
-                                                              child,
-                                                            ) => IgnorePointer(
-                                                              child:
-                                                                  ExcludeSemantics(
-                                                                    child:
-                                                                        child,
-                                                                  ),
-                                                            ),
-                                                          ),
-                                                          ?current,
-                                                        ],
-                                                      ),
-                                                  transitionBuilder:
-                                                      (
-                                                        child,
-                                                        animation,
-                                                      ) => FadeTransition(
-                                                        opacity: animation,
-                                                        child: SlideTransition(
-                                                          position:
-                                                              Tween<Offset>(
-                                                                begin:
-                                                                    const Offset(
-                                                                      0,
-                                                                      .025,
-                                                                    ),
-                                                                end:
-                                                                    Offset.zero,
-                                                              ).animate(
-                                                                animation,
-                                                              ),
-                                                          child: child,
-                                                        ),
-                                                      ),
-                                                  child: SingleChildScrollView(
-                                                    key: ValueKey(
-                                                      'page-${section.id}',
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        greeting(),
-                                                        const SizedBox(
-                                                          height: 24,
-                                                        ),
-                                                        if (section ==
-                                                            WorkbenchPage
-                                                                .overview)
-                                                          hero()
-                                                        else
-                                                          pageIntro(),
-                                                        const SizedBox(
-                                                          height: 28,
-                                                        ),
-                                                        collectionHeader(),
-                                                        const SizedBox(
-                                                          height: 6,
-                                                        ),
-                                                        Align(
-                                                          alignment: Alignment
-                                                              .centerRight,
-                                                          child: PopupMenuButton<WorkbenchSort>(
-                                                            key: const ValueKey(
-                                                              'workbench-sort',
-                                                            ),
-                                                            tooltip: l
-                                                                .mainArrangeIdeas,
-                                                            initialValue: sort,
-                                                            onSelected:
-                                                                (
-                                                                  value,
-                                                                ) => setState(
-                                                                  () => sort =
-                                                                      value,
-                                                                ),
-                                                            itemBuilder: (_) =>
-                                                                [
-                                                                      WorkbenchSort
-                                                                          .recent,
-                                                                      WorkbenchSort
-                                                                          .favoritesFirst,
-                                                                      WorkbenchSort
-                                                                          .title,
-                                                                    ]
-                                                                    .map(
-                                                                      (
-                                                                        label,
-                                                                      ) => PopupMenuItem(
-                                                                        value:
-                                                                            label,
-                                                                        child: Text(
-                                                                          workbenchLabels.sort(
-                                                                            label,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                    .toList(),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets.all(
-                                                                    6,
-                                                                  ),
-                                                              child: Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Icon(
-                                                                    Icons
-                                                                        .sort_rounded,
-                                                                    size: 13,
-                                                                    color:
-                                                                        p.muted,
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    width: 5,
-                                                                  ),
-                                                                  Text(
-                                                                    workbenchLabels
-                                                                        .sort(
-                                                                          sort,
-                                                                        ),
-                                                                    style: TextStyle(
-                                                                      fontSize:
-                                                                          10,
-                                                                      color: p
-                                                                          .muted,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 16,
-                                                        ),
-                                                        SoftSize(
-                                                          duration:
-                                                              motionDuration(
-                                                                context,
-                                                                240,
-                                                              ),
-                                                          alignment: Alignment
-                                                              .topCenter,
-                                                          child: AnimatedSwitcher(
-                                                            key: const ValueKey(
-                                                              'cards-transition',
-                                                            ),
-                                                            duration:
-                                                                motionDuration(
-                                                                  context,
-                                                                  220,
-                                                                ),
-                                                            layoutBuilder:
-                                                                (
-                                                                  current,
-                                                                  previous,
-                                                                ) => Stack(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topCenter,
-                                                                  children: [
-                                                                    ...previous.map(
-                                                                      (
-                                                                        child,
-                                                                      ) => IgnorePointer(
-                                                                        child: ExcludeSemantics(
-                                                                          child:
-                                                                              child,
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    ?current,
-                                                                  ],
-                                                                ),
-                                                            child: KeyedSubtree(
-                                                              key: ValueKey(
-                                                                '${filter.id}/${sort.id}/$query/${visibleIdeas.map((idea) => idea.id).join(',')}',
-                                                              ),
-                                                              child: cards(),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 22,
-                                                        ),
-                                                        quickCapture(),
-                                                        const SizedBox(
-                                                          height: 22,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 72,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
+                                                child: workspaceViewport(),
                                               ),
                                               if (desktop)
                                                 CollapsiblePanel(
@@ -1673,44 +1980,52 @@ class _StudioState extends State<Studio> {
     final selected = section == page;
     return Padding(
       padding: const EdgeInsets.only(bottom: 5),
-      child: AnimatedContainer(
-        duration: motionDuration(context, 220),
-        decoration: BoxDecoration(
-          color: selected
-              ? p.accent.withValues(alpha: .13)
-              : Colors.transparent,
-          borderRadius: p.borderRadius(12),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
+      child: NeumorphicSurface(
+        palette: p,
+        depth: selected ? -1 : 0,
+        borderRadius: p.borderRadius(12),
+        child: AnimatedContainer(
+          duration: motionDuration(context, 220),
+          decoration: BoxDecoration(
+            color: selected
+                ? p.accent.withValues(alpha: .13)
+                : Colors.transparent,
             borderRadius: p.borderRadius(12),
-            key: ValueKey('nav-${page.id}'),
-            onTap: () => selectSection(page),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 13),
-              child: Row(
-                children: [
-                  Icon(icon, size: 18, color: selected ? p.accent : p.muted),
-                  const SizedBox(width: 11),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: selected
-                            ? FontWeight.w600
-                            : FontWeight.w400,
-                        color: selected ? p.accent : p.muted,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: p.borderRadius(12),
+              key: ValueKey('nav-${page.id}'),
+              onTap: () => selectSection(page),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 13,
+                ),
+                child: Row(
+                  children: [
+                    Icon(icon, size: 18, color: selected ? p.accent : p.muted),
+                    const SizedBox(width: 11),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: selected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                          color: selected ? p.accent : p.muted,
+                        ),
                       ),
                     ),
-                  ),
-                  if (count != null)
-                    Text(
-                      '$count',
-                      style: TextStyle(fontSize: 10, color: p.muted),
-                    ),
-                ],
+                    if (count != null)
+                      Text(
+                        '$count',
+                        style: TextStyle(fontSize: 10, color: p.muted),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1791,6 +2106,46 @@ class _StudioState extends State<Studio> {
       else
         Expanded(child: searchField()),
       const SizedBox(width: 8),
+      if (widget.workbench is WorkbenchEditorRecovery &&
+          widget.workbench is WorkbenchEditorDraftImportSupport)
+        PopupMenuButton<String>(
+          key: const ValueKey('editor-recovery-open'),
+          tooltip: l.mainEditorRecoveryTitle,
+          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+          onSelected: (value) {
+            if (value == 'imports') {
+              unawaited(reviewDraftImportRecovery());
+            } else {
+              unawaited(reviewEditorRecovery());
+            }
+          },
+          itemBuilder: (_) => [
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-edits'),
+              value: 'edits',
+              child: Text(l.mainEditorRecoveryTitle),
+            ),
+            PopupMenuItem(
+              key: const ValueKey('editor-recovery-menu-imports'),
+              value: 'imports',
+              child: Text(l.mainDraftImportRecoveryTitle),
+            ),
+          ],
+        )
+      else if (widget.workbench is WorkbenchEditorRecovery)
+        IconButton(
+          key: const ValueKey('editor-recovery-open'),
+          tooltip: l.mainEditorRecoveryTitle,
+          onPressed: reviewEditorRecovery,
+          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+        )
+      else if (widget.workbench is WorkbenchEditorDraftImportSupport)
+        IconButton(
+          key: const ValueKey('draft-import-recovery-open'),
+          tooltip: l.mainDraftImportRecoveryTitle,
+          onPressed: reviewDraftImportRecovery,
+          icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
+        ),
       IconButton(
         key: const ValueKey('appearance-toggle'),
         tooltip: desktop && showAppearance
@@ -1815,6 +2170,7 @@ class _StudioState extends State<Studio> {
     height: 38,
     child: Glass(
       componentId: 'search',
+      recessed: true,
       p: p,
       radius: 12,
       child: TextField(
@@ -2037,23 +2393,28 @@ class _StudioState extends State<Studio> {
                   borderRadius: p.borderRadius(8),
                   key: ValueKey('filter-${label.id}'),
                   onTap: () => setState(() => filter = label),
-                  child: AnimatedContainer(
-                    duration: motionDuration(context, 200),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 11,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: filter == label
-                          ? p.accent.withValues(alpha: .13)
-                          : Colors.transparent,
-                      borderRadius: p.borderRadius(8),
-                    ),
-                    child: Text(
-                      workbenchLabels.filter(label),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: filter == label ? p.accent : p.muted,
+                  child: NeumorphicSurface(
+                    palette: p,
+                    depth: filter == label ? -0.8 : 0,
+                    borderRadius: p.borderRadius(8),
+                    child: AnimatedContainer(
+                      duration: motionDuration(context, 200),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 11,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: filter == label
+                            ? p.accent.withValues(alpha: .13)
+                            : Colors.transparent,
+                        borderRadius: p.borderRadius(8),
+                      ),
+                      child: Text(
+                        workbenchLabels.filter(label),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: filter == label ? p.accent : p.muted,
+                        ),
                       ),
                     ),
                   ),
@@ -2065,8 +2426,87 @@ class _StudioState extends State<Studio> {
     ],
   );
 
-  Widget cards() {
+  Widget workspaceViewport() {
     final items = visibleIdeas;
+    return WorkspaceViewport(
+      page: section.id,
+      session: widget.workbench ?? this,
+      queryPending:
+          (widget.workbench?.writable ?? false) &&
+          _queries.phase == QueryPhase.loading,
+      cardRegionKey: ValueKey(switch (section) {
+        WorkbenchPage.inbox => 'inbox-list',
+        WorkbenchPage.projects => 'project-board',
+        WorkbenchPage.laboratory => 'experiment-journal',
+        WorkbenchPage.favorites => 'favorites-library',
+        _ => 'overview-cards',
+      }),
+      ids: [for (final idea in items) idea.id],
+      twoColumnWidth: switch (section) {
+        WorkbenchPage.overview => 460,
+        WorkbenchPage.projects => 660,
+        _ => double.infinity,
+      },
+      status: cardsStatus(items),
+      header: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          greeting(),
+          const SizedBox(height: 24),
+          if (section == WorkbenchPage.overview) hero() else pageIntro(),
+          const SizedBox(height: 28),
+          collectionHeader(),
+          const SizedBox(height: 6),
+          Align(
+            alignment: Alignment.centerRight,
+            child: PopupMenuButton<WorkbenchSort>(
+              key: const ValueKey('workbench-sort'),
+              tooltip: l.mainArrangeIdeas,
+              initialValue: sort,
+              onSelected: (value) => setState(() => sort = value),
+              itemBuilder: (_) =>
+                  [
+                        WorkbenchSort.recent,
+                        WorkbenchSort.favoritesFirst,
+                        WorkbenchSort.title,
+                      ]
+                      .map(
+                        (label) => PopupMenuItem(
+                          value: label,
+                          child: Text(workbenchLabels.sort(label)),
+                        ),
+                      )
+                      .toList(),
+              child: Padding(
+                padding: const EdgeInsets.all(6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.sort_rounded, size: 13, color: p.muted),
+                    const SizedBox(width: 5),
+                    Text(
+                      workbenchLabels.sort(sort),
+                      style: TextStyle(fontSize: 10, color: p.muted),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+      itemBuilder: (_, index) => section == WorkbenchPage.overview
+          ? ideaCard(items[index])
+          : specializedCard(items[index], index),
+      footer: Padding(
+        padding: const EdgeInsets.only(top: 22, bottom: 94),
+        child: quickCapture(),
+      ),
+    );
+  }
+
+  Widget? cardsStatus(List<Idea> items) {
     if ((widget.workbench?.writable ?? false) &&
         _queries.phase != QueryPhase.ready) {
       final failed = _queries.phase == QueryPhase.failed;
@@ -2155,172 +2595,160 @@ class _StudioState extends State<Studio> {
         ),
       );
     }
-    if (section != WorkbenchPage.overview) return specializedCards(items);
-    return LayoutBuilder(
-      builder: (_, constraints) {
-        final columns = constraints.maxWidth >= 460 ? 2 : 1;
-        return Wrap(
-          spacing: 14,
-          runSpacing: 14,
-          children: items
-              .map(
-                (idea) => SizedBox(
-                  width: (constraints.maxWidth - 14 * (columns - 1)) / columns,
-                  child: ideaCard(idea),
-                ),
-              )
-              .toList(),
-        );
-      },
-    );
+    return null;
   }
 
-  Widget ideaCard(Idea idea) => Glass(
-    componentId: 'card:${idea.id}',
-    p: p,
-    radius: 19,
-    child: Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => openIdea(idea),
-        borderRadius: p.borderRadius(19),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(19, 16, 13, 17),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: p
-                          .componentColor(idea.color)
-                          .withValues(alpha: .15),
-                      borderRadius: p.borderRadius(11),
-                    ),
-                    child: Icon(
-                      idea.icon,
-                      color: p.dark
-                          ? Color.lerp(
-                              p.componentColor(idea.color),
-                              Colors.white,
-                              .3,
-                            )
-                          : p.componentColor(idea.color),
-                      size: 19,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    tooltip: idea.favorite
-                        ? l.mainUnfavoriteTooltip(displayTitle(idea))
-                        : l.mainFavoriteTooltip(displayTitle(idea)),
-                    constraints: const BoxConstraints(
-                      minWidth: 32,
-                      minHeight: 32,
-                    ),
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      if (widget.workbench != null) {
-                        pluginChange(
-                          PluginAction.favorite,
-                          idea,
-                          flag: !idea.favorite,
-                        );
-                        return;
-                      }
-                      setState(() => idea.favorite = !idea.favorite);
-                      persist();
-                    },
-                    icon: SoftSwap(
-                      child: Icon(
-                        idea.favorite
-                            ? Icons.bookmark_rounded
-                            : Icons.bookmark_border_rounded,
-                        key: ValueKey(idea.favorite),
-                        size: 17,
-                        color: idea.favorite
-                            ? p.accent
-                            : p.muted.withValues(alpha: .5),
+  Widget ideaCard(Idea idea) => cardInteractions(
+    idea,
+    Glass(
+      componentId: 'card:${idea.id}',
+      p: p,
+      radius: 19,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => openIdea(idea),
+          borderRadius: p.borderRadius(19),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(19, 16, 13, 17),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: p
+                            .componentColor(idea.color)
+                            .withValues(alpha: .15),
+                        borderRadius: p.borderRadius(11),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Text(
-                displayTitle(idea),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: p.ink,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                displayDescription(idea),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 11, color: p.muted, height: 1.8),
-              ),
-              if (idea.attachments.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    l.mainCardAttachments(
-                      idea.attachments.length,
-                      idea.attachments.first.source.name,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 10, color: p.accent),
-                  ),
-                ),
-              const SizedBox(height: 19),
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 8,
-                runSpacing: 6,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: p.componentColor(idea.color).withValues(alpha: .1),
-                      borderRadius: p.borderRadius(5),
-                    ),
-                    child: Text(
-                      categoryLabel(idea.category),
-                      style: TextStyle(
-                        fontSize: 9,
+                      child: Icon(
+                        idea.icon,
                         color: p.dark
                             ? Color.lerp(
                                 p.componentColor(idea.color),
                                 Colors.white,
-                                .4,
+                                .3,
                               )
-                            : Color.lerp(
-                                p.componentColor(idea.color),
-                                Colors.black,
-                                .16,
-                              ),
+                            : p.componentColor(idea.color),
+                        size: 19,
                       ),
                     ),
+                    const Spacer(),
+                    IconButton(
+                      tooltip: idea.favorite
+                          ? l.mainUnfavoriteTooltip(displayTitle(idea))
+                          : l.mainFavoriteTooltip(displayTitle(idea)),
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        if (widget.workbench != null) {
+                          pluginChange(
+                            PluginAction.favorite,
+                            idea,
+                            flag: !idea.favorite,
+                          );
+                          return;
+                        }
+                        setState(() => idea.favorite = !idea.favorite);
+                        persist();
+                      },
+                      icon: SoftSwap(
+                        child: Icon(
+                          idea.favorite
+                              ? Icons.bookmark_rounded
+                              : Icons.bookmark_border_rounded,
+                          key: ValueKey(idea.favorite),
+                          size: 17,
+                          color: idea.favorite
+                              ? p.accent
+                              : p.muted.withValues(alpha: .5),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  displayTitle(idea),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: p.ink,
                   ),
-                  Text(
-                    timeLabel(idea.time),
-                    style: TextStyle(fontSize: 9, color: p.muted),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  displayDescription(idea),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: p.muted, height: 1.8),
+                ),
+                if (idea.attachments.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      l.mainCardAttachments(
+                        idea.attachments.length,
+                        idea.attachments.first.source.name,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 10, color: p.accent),
+                    ),
                   ),
-                ],
-              ),
-            ],
+                const SizedBox(height: 19),
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: p
+                            .componentColor(idea.color)
+                            .withValues(alpha: .1),
+                        borderRadius: p.borderRadius(5),
+                      ),
+                      child: Text(
+                        categoryLabel(idea.category),
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: p.dark
+                              ? Color.lerp(
+                                  p.componentColor(idea.color),
+                                  Colors.white,
+                                  .4,
+                                )
+                              : Color.lerp(
+                                  p.componentColor(idea.color),
+                                  Colors.black,
+                                  .16,
+                                ),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      timeLabel(idea.time),
+                      style: TextStyle(fontSize: 9, color: p.muted),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -2438,8 +2866,12 @@ class _StudioState extends State<Studio> {
       ),
       SliderTheme(
         data: SliderTheme.of(context).copyWith(
-          trackHeight: 3,
-          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+          trackHeight: p.surfaces.visualStyle == VisualStyle.neumorphism
+              ? 7
+              : 3,
+          thumbShape: p.surfaces.visualStyle == VisualStyle.neumorphism
+              ? SliderTheme.of(context).thumbShape
+              : const RoundSliderThumbShape(enabledThumbRadius: 6),
         ),
         child: Slider(
           key: ValueKey(key),
@@ -2526,39 +2958,7 @@ class _StudioState extends State<Studio> {
       CanvasSettingsRoute<void>(
         builder: (_) => ComponentMaterialListPage(
           palette: p,
-          entries: {
-            'navigation': l.mainComponentNavigation,
-            'search': l.mainComponentSearch,
-            'hero': l.mainComponentHero,
-            'quick-capture': l.mainComponentQuickCapture,
-            'appearance': l.mainAppearance,
-            'plugin-settings': l.mainPluginSettings,
-            if (widget.workbench is ExternalPluginControl) ...{
-              'io:permissions': l.pluginsIoTitle,
-              'io:ServiceManager': l.mainServiceSettings,
-              'io:ServiceRunManager': l.mainServiceRunSettings,
-              'io:HttpTaskManager': l.mainHttpSettings,
-              'io:CredentialManager': l.mainCredentialSettings,
-              'io:EndpointManager': l.mainEndpointSettings,
-            },
-            if (widget.workbench is WorkbenchPluginControl)
-              'plugin-tools': l.mainWorkbenchPlugin,
-            if (widget.workbench is ExternalPluginControl)
-              'plugin-library': l.mainExtensionPlugins,
-            if (widget.workbench is WorkbenchProtectionBackup)
-              'protection-backup': l.mainContentProtection,
-            'daily': l.mainDaily,
-            'music': l.mainMusic,
-            'footer': l.mainComponentFooter,
-            'empty': l.mainComponentEmpty,
-            for (final page in WorkbenchPage.values.where(
-              (p) => p != WorkbenchPage.overview,
-            ))
-              WorkbenchV1.summaryComponentId(page): l.mainPageSummary(
-                workbenchLabels.page(page),
-              ),
-            for (final idea in ideas) 'card:${idea.id}': displayTitle(idea),
-          },
+          entries: componentEntries,
           onChanged: (value) {
             if (!mounted) return;
             updateSurfaces(value);
@@ -2576,6 +2976,120 @@ class _StudioState extends State<Studio> {
       shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
     ),
   );
+
+  Map<String, String> get componentEntries => {
+    'navigation': l.mainComponentNavigation,
+    'search': l.mainComponentSearch,
+    'hero': l.mainComponentHero,
+    'quick-capture': l.mainComponentQuickCapture,
+    'appearance': l.mainAppearance,
+    'plugin-settings': l.mainPluginSettings,
+    if (widget.workbench is ExternalPluginControl) ...{
+      'io:permissions': l.pluginsIoTitle,
+      'io:ServiceManager': l.mainServiceSettings,
+      'io:ServiceRunManager': l.mainServiceRunSettings,
+      'io:HttpTaskManager': l.mainHttpSettings,
+      'io:CredentialManager': l.mainCredentialSettings,
+      'io:EndpointManager': l.mainEndpointSettings,
+    },
+    if (widget.workbench is WorkbenchPluginControl)
+      'plugin-tools': l.mainWorkbenchPlugin,
+    if (widget.workbench is ExternalPluginControl)
+      'plugin-library': l.mainExtensionPlugins,
+    if (widget.workbench is WorkbenchProtectionBackup)
+      'protection-backup': l.mainContentProtection,
+    'daily': l.mainDaily,
+    'music': l.mainMusic,
+    'footer': l.mainComponentFooter,
+    'empty': l.mainComponentEmpty,
+    for (final page in WorkbenchPage.values.where(
+      (p) => p != WorkbenchPage.overview,
+    ))
+      WorkbenchV1.summaryComponentId(page): l.mainPageSummary(
+        workbenchLabels.page(page),
+      ),
+    for (final idea in ideas) 'card:${idea.id}': displayTitle(idea),
+  };
+
+  Future<void> openComponentSettings(String id, String title) async {
+    final result = await settingsNavigator.currentState!
+        .push<ComponentMaterial>(
+          CanvasSettingsRoute<ComponentMaterial>(
+            builder: (_) => ComponentMaterialPage(
+              palette: p,
+              id: id,
+              title: title,
+              entries: componentEntries,
+              initial:
+                  p.surfaces.components[id] ??
+                  ComponentMaterial(
+                    blur: p.surfaces.componentCustom
+                        ? p.surfaces.componentBlur
+                        : p.clear
+                        ? 1
+                        : p.liquid
+                        ? 6
+                        : 22,
+                    opacity: p.surfaces.componentCustom
+                        ? p.surfaces.componentOpacity
+                        : p.clear
+                        ? .10
+                        : p.liquid
+                        ? .18
+                        : p.frostedOpacity,
+                    color: p.surfaces.componentColor,
+                  ),
+            ),
+          ),
+        );
+    if (!mounted || result == null) return;
+    updateSurfaces(
+      p.surfaces.copyWith(components: {...p.surfaces.components, id: result}),
+    );
+    widget.onAppearanceCommit();
+  }
+
+  Widget cardInteractions(Idea idea, Widget child, {Key? key}) =>
+      ComponentContextMenu(
+        key: key,
+        actions: () => [
+          ComponentMenuAction(
+            label: l.mainView,
+            icon: Icons.open_in_new,
+            onSelected: () => openIdea(idea),
+          ),
+          ComponentMenuAction(
+            label: idea.favorite
+                ? l.mainUnfavoriteTooltip(displayTitle(idea))
+                : l.mainFavoriteTooltip(displayTitle(idea)),
+            icon: idea.favorite
+                ? Icons.bookmark_remove_outlined
+                : Icons.bookmark_add_outlined,
+            enabled:
+                (widget.workbench == null || widget.workbench!.writable) &&
+                _pluginBusyOwner == null,
+            onSelected: () {
+              if (widget.workbench != null) {
+                pluginChange(PluginAction.favorite, idea, flag: !idea.favorite);
+              } else {
+                refreshPage(() => idea.favorite = !idea.favorite);
+                persist();
+              }
+            },
+          ),
+          ComponentMenuAction(
+            label: l.mainComponentSettings,
+            icon: Icons.tune,
+            enabled: widget.workbench == null || widget.workbench!.writable,
+            onSelected: () =>
+                openComponentSettings('card:${idea.id}', displayTitle(idea)),
+          ),
+        ],
+        child: SurfaceInteraction(
+          borderRadius: p.borderRadius(20),
+          child: child,
+        ),
+      );
 
   Future<void> openPluginSettings() async {
     final backend = widget.workbench;
@@ -2749,7 +3263,28 @@ class _StudioState extends State<Studio> {
             ],
           ),
           const SizedBox(height: 23),
+          VisualStylePicker(
+            palette: p,
+            onChanged: (style) {
+              updateSurfaces(p.surfaces.copyWith(visualStyle: style));
+              widget.onAppearanceCommit();
+            },
+          ),
+          const SizedBox(height: 16),
           languagePicker(),
+          const SizedBox(height: 12),
+          ListTile(
+            key: const ValueKey('font-settings'),
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.font_download_outlined, color: p.ink),
+            title: Text(l.mainFontSettings, style: TextStyle(color: p.ink)),
+            trailing: Icon(Icons.chevron_right, color: p.muted),
+            onTap: () => Navigator.of(context).push(
+              CanvasSettingsRoute<void>(
+                builder: (_) => const FontSettingsPage(),
+              ),
+            ),
+          ),
           const SizedBox(height: 18),
           label(l.mainGlassTexture),
           const SizedBox(height: 10),
@@ -2804,10 +3339,14 @@ class _StudioState extends State<Studio> {
                   ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      trackHeight: 3,
-                      thumbShape: const RoundSliderThumbShape(
-                        enabledThumbRadius: 6,
-                      ),
+                      trackHeight:
+                          p.surfaces.visualStyle == VisualStyle.neumorphism
+                          ? 7
+                          : 3,
+                      thumbShape:
+                          p.surfaces.visualStyle == VisualStyle.neumorphism
+                          ? SliderTheme.of(context).thumbShape
+                          : const RoundSliderThumbShape(enabledThumbRadius: 6),
                       overlayShape: const RoundSliderOverlayShape(
                         overlayRadius: 12,
                       ),
@@ -3132,7 +3671,8 @@ class _StudioState extends State<Studio> {
                   .toList(),
             ),
           ),
-          SwitchListTile.adaptive(
+          NeumorphicSwitchListTile(
+            palette: p,
             key: const ValueKey('canvas-liquid-toggle'),
             contentPadding: EdgeInsets.zero,
             title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
@@ -3266,7 +3806,8 @@ class _StudioState extends State<Studio> {
                         Row(
                           children: [
                             Expanded(child: label(l.mainBackgroundSound)),
-                            Switch(
+                            NeumorphicSwitch(
+                              palette: p,
                               key: const ValueKey('background-audio'),
                               value: backgroundSound,
                               onChanged: setBackgroundSound,
@@ -3389,35 +3930,40 @@ class _StudioState extends State<Studio> {
         key: ValueKey('background-${mode.name}'),
         onTap: () => widget.onBackground(mode),
         borderRadius: p.borderRadius(10),
-        child: AnimatedContainer(
-          duration: motionDuration(context, 200),
-          constraints: const BoxConstraints(minHeight: 38),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          decoration: BoxDecoration(
-            color: selected
-                ? p.accent.withValues(alpha: .14)
-                : Colors.transparent,
-            borderRadius: p.borderRadius(10),
-            border: Border.all(
-              color: selected ? p.accent.withValues(alpha: .5) : p.line,
+        child: NeumorphicSurface(
+          palette: p,
+          depth: selected ? -0.9 : .6,
+          borderRadius: p.borderRadius(10),
+          child: AnimatedContainer(
+            duration: motionDuration(context, 200),
+            constraints: const BoxConstraints(minHeight: 38),
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+            decoration: BoxDecoration(
+              color: selected
+                  ? p.accent.withValues(alpha: .14)
+                  : Colors.transparent,
+              borderRadius: p.borderRadius(10),
+              border: Border.all(
+                color: selected ? p.accent.withValues(alpha: .5) : p.line,
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 14, color: selected ? p.accent : p.muted),
-              const SizedBox(width: 7),
-              Flexible(
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
-                    color: selected ? p.accent : p.muted,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 14, color: selected ? p.accent : p.muted),
+                const SizedBox(width: 7),
+                Flexible(
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: selected ? p.accent : p.muted,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -3433,34 +3979,39 @@ class _StudioState extends State<Studio> {
         key: ValueKey('mode-${mode.name}'),
         onTap: () => widget.onMode(mode),
         borderRadius: p.borderRadius(10),
-        child: AnimatedContainer(
-          duration: motionDuration(context, 220),
-          constraints: const BoxConstraints(minHeight: 56),
-          padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 8),
-          decoration: BoxDecoration(
-            color: selected
-                ? p.accent.withValues(alpha: .14)
-                : p.surface.withValues(alpha: .12),
-            border: Border.all(
-              color: selected ? p.accent.withValues(alpha: .5) : p.line,
-            ),
-            borderRadius: p.borderRadius(10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 15, color: selected ? p.accent : p.muted),
-              const SizedBox(height: 5),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: selected ? p.accent : p.muted,
-                ),
+        child: NeumorphicSurface(
+          palette: p,
+          depth: selected ? -0.9 : .6,
+          borderRadius: p.borderRadius(10),
+          child: AnimatedContainer(
+            duration: motionDuration(context, 220),
+            constraints: const BoxConstraints(minHeight: 56),
+            padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 8),
+            decoration: BoxDecoration(
+              color: selected
+                  ? p.accent.withValues(alpha: .14)
+                  : p.surface.withValues(alpha: .12),
+              border: Border.all(
+                color: selected ? p.accent.withValues(alpha: .5) : p.line,
               ),
-            ],
+              borderRadius: p.borderRadius(10),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 15, color: selected ? p.accent : p.muted),
+                const SizedBox(height: 5),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: selected ? p.accent : p.muted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -3493,39 +4044,44 @@ class _StudioState extends State<Studio> {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Column(
             children: [
-              AnimatedContainer(
-                duration: motionDuration(context, 220),
-                width: 40,
-                height: 40,
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected ? p.accent : Colors.transparent,
-                    width: 1.5,
-                  ),
-                ),
-                child: DecoratedBox(
+              NeumorphicSurface(
+                palette: p,
+                depth: selected ? -1 : .65,
+                borderRadius: BorderRadius.circular(24),
+                child: AnimatedContainer(
+                  duration: motionDuration(context, 220),
+                  width: 40,
+                  height: 40,
+                  padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: color,
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0x22888899)),
+                    border: Border.all(
+                      color: selected ? p.accent : Colors.transparent,
+                      width: 1.5,
+                    ),
                   ),
-                  child: SoftSwap(
-                    child: selected
-                        ? Icon(
-                            Icons.check,
-                            key: const ValueKey('checked'),
-                            size: 15,
-                            color: theme == StudioTheme.dark
-                                ? Colors.white
-                                : const Color(0xFF746095),
-                          )
-                        : const SizedBox(
-                            key: ValueKey('unchecked'),
-                            width: 15,
-                            height: 15,
-                          ),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0x22888899)),
+                    ),
+                    child: SoftSwap(
+                      child: selected
+                          ? Icon(
+                              Icons.check,
+                              key: const ValueKey('checked'),
+                              size: 15,
+                              color: theme == StudioTheme.dark
+                                  ? Colors.white
+                                  : const Color(0xFF746095),
+                            )
+                          : const SizedBox(
+                              key: ValueKey('unchecked'),
+                              width: 15,
+                              height: 15,
+                            ),
+                    ),
                   ),
                 ),
               ),
@@ -3646,17 +4202,16 @@ class _StudioState extends State<Studio> {
     ),
   );
 
-  void _acceptEditorResult(Idea result) {
-    setState(() {
-      final index = ideas.indexWhere((idea) => idea.id == result.id);
-      if (index < 0) {
-        ideas.insert(0, result);
-      } else {
-        ideas[index] = result;
-      }
-      _contentGeneration++;
-    });
-    persist();
+  bool _acceptEditorResult(Idea result, WorkbenchBackend? backend) {
+    if (!mounted || !identical(widget.workbench, backend)) return false;
+    final accepted = _acceptContentResult(
+      result,
+      remove: result.contentDeleted,
+    );
+    if (!accepted && backend is WorkbenchEditorSupport) {
+      unawaited(_refreshAfterEditorClose(backend));
+    }
+    return accepted;
   }
 
   Future<WorkbenchEditorSession?> _openEditor(String id, bool create) async {
@@ -3667,6 +4222,52 @@ class _StudioState extends State<Studio> {
     return null;
   }
 
+  Future<WorkbenchEditorSession> _openConfirmedVersionedEditor(
+    WorkbenchBackend backend,
+    Idea confirmed,
+  ) async {
+    bool current() => mounted && identical(widget.workbench, backend);
+    if (!current() ||
+        !backend.writable ||
+        backend is! WorkbenchVersionedContent ||
+        backend is! WorkbenchVersionedEditorSupport ||
+        backend is! WorkbenchMixedContent ||
+        confirmed.contentRevision == null ||
+        confirmed.contentDeleted) {
+      throw StateError('Confirmed editor is no longer available');
+    }
+    final record = await (backend as WorkbenchVersionedContent).versionedContent
+        .read(confirmed.id);
+    if (!current() ||
+        record.revision != confirmed.contentRevision ||
+        record.formatVersion != 2 ||
+        record.deleted) {
+      throw StateError('Confirmed editor baseline changed');
+    }
+    final view = await (backend as WorkbenchMixedContent).workspaceRecord(
+      record,
+    );
+    if (!current() || view.contentRevision != confirmed.contentRevision) {
+      throw StateError('Confirmed editor presentation changed');
+    }
+    final session = await (backend as WorkbenchVersionedEditorSupport)
+        .openVersionedEditor(
+          confirmed.id,
+          expectedRevision: confirmed.contentRevision,
+        );
+    if (!current()) {
+      await session.close();
+      throw StateError('Editor workspace changed');
+    }
+    return VersionedWorkbenchEditorAdapter(
+      session,
+      view.versioned!,
+      (backend as WorkbenchMixedContent).workspaceRecord,
+      isCurrent: current,
+      reopen: (next) => _openConfirmedVersionedEditor(backend, next),
+    );
+  }
+
   void _editorOpenError(Object error) {
     if (mounted) {
       ScaffoldMessenger.of(
@@ -3675,20 +4276,56 @@ class _StudioState extends State<Studio> {
     }
   }
 
-  Future<void> _refreshAfterEditorClose() async {
-    if (widget.workbench case WorkbenchEditorSupport editor) {
+  Future<void> _refreshAfterEditorClose(WorkbenchBackend? backend) async {
+    if (backend case WorkbenchEditorSupport editor) {
       try {
-        final current = await editor.refreshEditorContent();
-        if (!mounted) return;
-        setState(() {
-          ideas
-            ..clear()
-            ..addAll(current);
-          _contentGeneration++;
-        });
-        persist();
+        for (var attempt = 0; attempt < 3; attempt++) {
+          final generation = _contentGeneration;
+          final current = await editor.refreshEditorContent();
+          if (!mounted || !identical(widget.workbench, backend)) return;
+          final currentIds = current.map((item) => item.id).toSet();
+          final WorkbenchContentRevisionSource? source =
+              backend is WorkbenchContentRevisionSource
+              ? backend as WorkbenchContentRevisionSource
+              : null;
+          if (generation != _contentGeneration ||
+              (source != null &&
+                  source.knownContentIds().any((id) {
+                    final deleted = source.knownContentDeleted(id);
+                    return deleted == true
+                        ? currentIds.contains(id)
+                        : !currentIds.contains(id);
+                  })) ||
+              current.any((item) {
+                final known = _knownContentRevisions[item.id];
+                final latest = source?.knownContentRevision(item.id);
+                final minimum =
+                    latest != null && (known == null || latest > known)
+                    ? latest
+                    : known;
+                return minimum != null &&
+                    item.contentRevision != null &&
+                    item.contentRevision! < minimum;
+              })) {
+            continue;
+          }
+          setState(() {
+            ideas
+              ..clear()
+              ..addAll(current);
+            for (final item in current) {
+              if (item.contentRevision case final version?) {
+                _knownContentRevisions[item.id] = version;
+              }
+            }
+            _contentGeneration++;
+          });
+          persist();
+          return;
+        }
+        throw StateError('Current content changed during refresh');
       } catch (_) {
-        if (mounted) {
+        if (mounted && identical(widget.workbench, backend)) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(l.mainEditorClosedUnknown)));
@@ -3698,6 +4335,7 @@ class _StudioState extends State<Studio> {
   }
 
   Future<void> createIdea() async {
+    final backend = widget.workbench;
     final target = Idea.nextId();
     WorkbenchEditorSession? editor;
     try {
@@ -3706,7 +4344,7 @@ class _StudioState extends State<Studio> {
       _editorOpenError(error);
       return;
     }
-    if (!mounted) {
+    if (!mounted || !identical(widget.workbench, backend)) {
       await editor?.close();
       return;
     }
@@ -3715,6 +4353,7 @@ class _StudioState extends State<Studio> {
       builder: (_) => NewIdeaDialog(
         targetId: target,
         editor: editor,
+        isCurrent: () => mounted && identical(widget.workbench, backend),
         initialFavorite: section == WorkbenchPage.favorites,
         plugin: widget.workbench?.studio,
         initialCategory: switch (section) {
@@ -3724,13 +4363,13 @@ class _StudioState extends State<Studio> {
         },
       ),
     );
-    if (!mounted) return;
+    if (!mounted || !identical(widget.workbench, backend)) return;
     if (result == null) {
-      if (editor != null) await _refreshAfterEditorClose();
+      if (editor != null) await _refreshAfterEditorClose(backend);
       return;
     }
     if (editor != null) {
-      _acceptEditorResult(result);
+      if (!_acceptEditorResult(result, backend)) return;
       setState(() {
         filter = GeneralFilter.all;
         query = '';
@@ -3738,10 +4377,10 @@ class _StudioState extends State<Studio> {
       });
       return;
     }
-    if (widget.workbench != null) {
+    if (backend != null) {
       if (section == WorkbenchPage.favorites) result.favorite = true;
       final saved = await pluginChange(PluginAction.create, result);
-      if (saved != null && mounted) {
+      if (saved != null && mounted && identical(widget.workbench, backend)) {
         setState(() {
           filter = GeneralFilter.all;
           query = '';
@@ -3760,7 +4399,87 @@ class _StudioState extends State<Studio> {
     persist();
   }
 
+  Future<void> reviewDraftImportRecovery() async {
+    final backend = widget.workbench;
+    if (backend is! WorkbenchEditorDraftImportSupport) return;
+    bool current() => mounted && identical(widget.workbench, backend);
+    final coordinator = EditorDraftImportDecisionCoordinator(
+      (backend as WorkbenchEditorDraftImportSupport).editorDraftImports,
+      isCurrent: current,
+    );
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (_) => EditorDraftImportRecoveryDialog(
+          coordinator: coordinator,
+          writable: backend!.writable,
+          isCurrent: current,
+        ),
+      );
+    } finally {
+      coordinator.dispose();
+    }
+  }
+
+  Future<void> reviewEditorRecovery() async {
+    final backend = widget.workbench;
+    if (backend is! WorkbenchEditorRecovery ||
+        backend is! WorkbenchVersionedContent ||
+        backend is! WorkbenchMixedContent) {
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (_) => EditorRecoveryDialog(
+        control: backend as WorkbenchEditorRecovery,
+        isCurrent: () => mounted && identical(widget.workbench, backend),
+        writable: backend!.writable,
+        presentCurrent: (id) async {
+          if (!mounted || !identical(widget.workbench, backend)) {
+            throw StateError('Workspace changed');
+          }
+          final record = await (backend as WorkbenchVersionedContent)
+              .versionedContent
+              .read(id);
+          final current = await (backend as WorkbenchMixedContent)
+              .workspaceRecord(record);
+          if (!mounted || !identical(widget.workbench, backend)) {
+            throw StateError('Workspace changed');
+          }
+          if (!_acceptContentResult(current, remove: current.contentDeleted)) {
+            throw StateError('Current view changed');
+          }
+        },
+      ),
+    );
+  }
+
   Future<void> openIdea(Idea idea) async {
+    final backend = widget.workbench;
+    void rebindVersionedDialog(
+      BuildContext dialogContext,
+      StateSetter refresh,
+    ) {
+      if (!mounted ||
+          !dialogContext.mounted ||
+          !identical(widget.workbench, backend)) {
+        return;
+      }
+      for (final current in ideas) {
+        if (current.id != idea.id ||
+            current.versioned?.id != idea.id ||
+            (current.contentOwner != null &&
+                !identical(current.contentOwner, backend)) ||
+            (idea.contentRevision != null &&
+                current.contentRevision != null &&
+                current.contentRevision! < idea.contentRevision!)) {
+          continue;
+        }
+        refresh(() => idea = current);
+        return;
+      }
+    }
+
     final action = await showStudioDialog<String>(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
@@ -3810,10 +4529,100 @@ class _StudioState extends State<Studio> {
                           : idea.conclusion,
                     ),
                   ],
+                  if (idea.versioned != null) ...[
+                    const SizedBox(height: 18),
+                    DropdownButtonFormField<String>(
+                      key: ValueKey(
+                        'versioned-category-${idea.id}-${idea.contentRevision}',
+                      ),
+                      initialValue: idea.category,
+                      decoration: InputDecoration(
+                        labelText: l.mainCategoryPrompt,
+                      ),
+                      items: ['灵感', '进行中', '实验']
+                          .map(
+                            (value) => DropdownMenuItem(
+                              value: value,
+                              child: Text(
+                                value == '灵感'
+                                    ? l.mainPageInbox
+                                    : value == '进行中'
+                                    ? l.mainPageProjects
+                                    : l.mainPageLaboratory,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: backend?.writable != true
+                          ? null
+                          : (value) async {
+                              if (!mounted ||
+                                  !identical(widget.workbench, backend) ||
+                                  value == null ||
+                                  value == idea.category) {
+                                return;
+                              }
+                              try {
+                                final updated = await versionedChange(
+                                  idea,
+                                  CardEditCommand.setCategory(
+                                    value,
+                                    value == '进行中'
+                                        ? '计划中'
+                                        : value == '实验'
+                                        ? '待验证'
+                                        : '待整理',
+                                  ),
+                                );
+                                if (mounted &&
+                                    dialogContext.mounted &&
+                                    identical(widget.workbench, backend)) {
+                                  refresh(() => idea = updated);
+                                }
+                              } catch (error) {
+                                if (dialogContext.mounted &&
+                                    (error is VersionedMutationNoCommit ||
+                                        error
+                                            is VersionedMutationNotSubmitted)) {
+                                  rebindVersionedDialog(dialogContext, refresh);
+                                }
+                              }
+                            },
+                    ),
+                    VersionedTaskPanel(
+                      key: ValueKey('versioned-tasks-${idea.id}'),
+                      view: idea.versioned!,
+                      writable: backend?.writable == true,
+                      busy: _pluginBusyOwner != null,
+                      onCommand: (command) async {
+                        if (!mounted || !identical(widget.workbench, backend)) {
+                          throw const VersionedMutationNotSubmitted();
+                        }
+                        try {
+                          final updated = await versionedChange(idea, command);
+                          if (mounted &&
+                              dialogContext.mounted &&
+                              identical(widget.workbench, backend)) {
+                            refresh(() => idea = updated);
+                          }
+                        } catch (error) {
+                          if (dialogContext.mounted &&
+                              (error is VersionedMutationNoCommit ||
+                                  error is VersionedMutationNotSubmitted)) {
+                            rebindVersionedDialog(dialogContext, refresh);
+                          }
+                          rethrow;
+                        }
+                      },
+                    ),
+                  ],
                   if (idea.todos.isNotEmpty) ...[
                     const SizedBox(height: 22),
                     Text(
-                      l.mainProgress(idea.completed.length, idea.todos.length),
+                      l.mainProgress(
+                        idea.legacyCompletedCount,
+                        idea.todos.length,
+                      ),
                       style: TextStyle(color: p.accent, fontSize: 11),
                     ),
                     const SizedBox(height: 8),
@@ -3822,6 +4631,20 @@ class _StudioState extends State<Studio> {
                         title: displayTodo(idea, todo),
                         done: idea.completed.contains(todo),
                         onChanged: (done) async {
+                          if (idea.todos
+                                      .where((value) => value == todo)
+                                      .length >
+                                  1 &&
+                              !await confirmLegacyTodoChange(
+                                l.mainLegacyTodoGroup(todo),
+                              )) {
+                            return;
+                          }
+                          if (!mounted ||
+                              !dialogContext.mounted ||
+                              !identical(widget.workbench, backend)) {
+                            return;
+                          }
                           if (widget.workbench != null) {
                             final updated = await pluginChange(
                               PluginAction.todo,
@@ -3871,16 +4694,44 @@ class _StudioState extends State<Studio> {
         ),
       ),
     );
-    if (!mounted) return;
+    if (!mounted || !identical(widget.workbench, backend)) return;
     if (action == 'edit') {
       WorkbenchEditorSession? editor;
       try {
-        editor = await _openEditor(idea.id, false);
+        if (idea.versioned != null) {
+          if (backend is! WorkbenchVersionedContent ||
+              backend is! WorkbenchVersionedEditorSupport ||
+              backend is! WorkbenchMixedContent ||
+              !backend!.writable) {
+            throw StateError('Versioned editor unavailable');
+          }
+          final record = await (backend as WorkbenchVersionedContent)
+              .versionedContent
+              .read(idea.id);
+          idea = await (backend as WorkbenchMixedContent).workspaceRecord(
+            record,
+          );
+          final session = await (backend as WorkbenchVersionedEditorSupport)
+              .openVersionedEditor(
+                idea.id,
+                expectedRevision: idea.contentRevision,
+              );
+          editor = VersionedWorkbenchEditorAdapter(
+            session,
+            idea.versioned!,
+            (backend as WorkbenchMixedContent).workspaceRecord,
+            isCurrent: () => mounted && identical(widget.workbench, backend),
+            reopen: (confirmed) =>
+                _openConfirmedVersionedEditor(backend, confirmed),
+          );
+        } else {
+          editor = await _openEditor(idea.id, false);
+        }
       } catch (error) {
         _editorOpenError(error);
         return;
       }
-      if (!mounted) {
+      if (!mounted || !identical(widget.workbench, backend)) {
         await editor?.close();
         return;
       }
@@ -3889,19 +4740,20 @@ class _StudioState extends State<Studio> {
         builder: (_) => NewIdeaDialog(
           initialIdea: idea,
           editor: editor,
+          isCurrent: () => mounted && identical(widget.workbench, backend),
           plugin: widget.workbench?.studio,
         ),
       );
-      if (!mounted) return;
+      if (!mounted || !identical(widget.workbench, backend)) return;
       if (edited == null) {
-        if (editor != null) await _refreshAfterEditorClose();
+        if (editor != null) await _refreshAfterEditorClose(backend);
         return;
       }
       if (editor != null) {
-        _acceptEditorResult(edited);
+        _acceptEditorResult(edited, backend);
         return;
       }
-      if (widget.workbench != null) {
+      if (backend != null) {
         await pluginChange(PluginAction.edit, edited);
         return;
       }
@@ -3911,11 +4763,20 @@ class _StudioState extends State<Studio> {
       });
       persist();
     } else if (action == 'delete') {
+      if (idea.versioned != null) {
+        await pluginChange(PluginAction.delete, idea);
+        return; // Typed success, including original-operation retries, owns Undo.
+      }
       final index = ideas.indexOf(idea);
-      if (widget.workbench != null) {
-        if (await pluginChange(PluginAction.delete, idea) == null || !mounted) {
+      if (backend != null) {
+        final deleted = await pluginChange(PluginAction.delete, idea);
+        if (deleted == null ||
+            !mounted ||
+            !identical(widget.workbench, backend) ||
+            (deleted.contentRevision != null && !deleted.contentDeleted)) {
           return;
         }
+        idea = deleted;
       } else {
         setState(() => ideas.remove(idea));
         persist();
@@ -3928,8 +4789,12 @@ class _StudioState extends State<Studio> {
           action: SnackBarAction(
             label: l.mainUndo,
             onPressed: () {
-              if (!mounted || ideas.any((item) => item.id == idea.id)) return;
-              if (widget.workbench != null) {
+              if (!mounted ||
+                  !identical(widget.workbench, backend) ||
+                  ideas.any((item) => item.id == idea.id)) {
+                return;
+              }
+              if (backend != null) {
                 pluginChange(PluginAction.restore, idea, position: index);
                 return;
               }
@@ -3961,14 +4826,19 @@ class LittleTask extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(
         children: [
-          SoftSwap(
-            child: Icon(
-              done ? Icons.check_circle_rounded : Icons.circle_outlined,
-              key: ValueKey(done),
-              color: Theme.of(
-                context,
-              ).colorScheme.primary.withValues(alpha: done ? .9 : .4),
-              size: 16,
+          NeumorphicSurface(
+            palette: AppearanceScope.of(context),
+            depth: done ? -0.7 : 0.45,
+            borderRadius: BorderRadius.circular(8),
+            child: SoftSwap(
+              child: Icon(
+                done ? Icons.check_circle_rounded : Icons.circle_outlined,
+                key: ValueKey(done),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: done ? .9 : .4),
+                size: 16,
+              ),
             ),
           ),
           const SizedBox(width: 9),
@@ -3999,10 +4869,12 @@ class NewIdeaDialog extends StatefulWidget {
     this.editor,
     this.targetId,
     this.initialFavorite = false,
+    this.isCurrent,
   });
   final Idea? initialIdea;
   final String? targetId;
   final bool initialFavorite;
+  final bool Function()? isCurrent;
   final WorkbenchEditorSession? editor;
   final String initialCategory;
   final Future<PastedContent> Function()? readClipboard;
@@ -4036,8 +4908,85 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   Idea? _frozenDraft;
   EditorFields? _frozenFields;
   String saveError = '';
+  WorkbenchEditorSession? _editor, _preparedSuccessor;
+  Idea? _baseline, _confirmedAwaitingContinuation;
+  int _editGeneration = 0;
+  int? _submittedGeneration;
+  bool _hasUnsavedSuccessor = false;
+  final _lastFieldValues = <TextEditingController, TextEditingValue>{};
+
+  void _observeDraft(TextEditingController controller) {
+    final previous = _lastFieldValues[controller];
+    final next = controller.value;
+    _lastFieldValues[controller] = next;
+    // Selection, affinity and direction are part of the user's live draft too.
+    // A late S1 receipt must not close a view whose raw editing state changed.
+    if (previous != next) {
+      setState(() {
+        _editGeneration++;
+        if (controller == title && next.text.trim().isNotEmpty) invalid = false;
+      });
+    }
+  }
+
+  Future<void> _continueDraft() async {
+    if (!(widget.isCurrent?.call() ?? true)) {
+      final stale = _preparedSuccessor;
+      _preparedSuccessor = null;
+      await stale?.close();
+      throw StateError('Editor workspace changed');
+    }
+    final confirmed = _confirmedAwaitingContinuation!;
+    final previous = _editor;
+    var next = _preparedSuccessor;
+    if (next == null) {
+      if (previous is WorkbenchEditorContinuation) {
+        next = await (previous as WorkbenchEditorContinuation)
+            .continueAfterCommit(confirmed);
+      } else if (previous != null) {
+        throw StateError('Editor cannot continue a confirmed draft');
+      }
+    }
+    if (!mounted || !(widget.isCurrent?.call() ?? true)) {
+      _preparedSuccessor = null;
+      await next?.close();
+      throw StateError('Editor workspace changed');
+    }
+    if (next != null && next.targetId != _targetId) {
+      _preparedSuccessor = null;
+      await next.close();
+      throw StateError('Successor editor changed target');
+    }
+    // Opening a successor retires the old editor. Keep the new session even
+    // if a live attachment alias needs correction before applying the rebase.
+    _preparedSuccessor = next;
+    final rebased = rebaseEditorAttachments(
+      submitted: _frozenDraft!.attachments,
+      confirmed: confirmed.attachments,
+      selected: attachments,
+      description: description.value,
+    );
+    _lastFieldValues[description] = rebased.description;
+    description.value = rebased.description;
+    setState(() {
+      attachments
+        ..clear()
+        ..addAll(rebased.attachments);
+      _editor = next;
+      _preparedSuccessor = null;
+      _baseline = confirmed;
+      _confirmedAwaitingContinuation = null;
+      _frozenDraft = null;
+      _frozenFields = null;
+      _submittedGeneration = null;
+      _submitFrozen = false;
+      _hasUnsavedSuccessor = true;
+      saveError = '';
+    });
+  }
+
   int _pasteSequence = 0;
-  StudioBackend? get _plugin => widget.editor?.studio ?? widget.plugin;
+  StudioBackend? get _plugin => _editor?.studio ?? widget.plugin;
   String _field(TextEditingController controller) => controller == title
       ? 'title'
       : controller == todos
@@ -4060,7 +5009,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         atStart ?? (selection.isValid ? selection.start : before.length);
     final end = atEnd ?? (selection.isValid ? selection.end : before.length);
     final after = before.replaceRange(start, end, inserted);
-    await widget.editor?.recordPaste(
+    await _editor?.recordPaste(
       PasteInsertion(
         id: 'paste-${DateTime.now().microsecondsSinceEpoch}-${_pasteSequence++}',
         field: _field(target),
@@ -4083,10 +5032,29 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
 
   Future<void> _save() async {
     if (importing || saving) return;
-    if (title.text.trim().isEmpty) {
+    if (!(widget.isCurrent?.call() ?? true)) {
+      setState(() => saveError = l.mainEditorUnavailable);
+      return;
+    }
+    if (_confirmedAwaitingContinuation != null) {
+      setState(() {
+        saving = true;
+        saveError = '';
+      });
+      try {
+        await _continueDraft();
+      } catch (_) {
+        if (mounted) setState(() => saveError = l.mainEditorContinueFailed);
+      } finally {
+        if (mounted) setState(() => saving = false);
+      }
+      return;
+    }
+    if (_frozenDraft == null && title.text.trim().isEmpty) {
       setState(() => invalid = true);
       return;
     }
+    _submittedGeneration ??= _editGeneration;
     _frozenFields ??= EditorFields(
       title: title.text,
       description: description.text,
@@ -4098,22 +5066,25 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       title.text.trim(),
       description.text.trim().isEmpty ? '从一个小小的念头开始。' : description.text.trim(),
       category,
-      widget.initialIdea?.icon ?? Icons.auto_awesome_outlined,
-      widget.initialIdea?.color ?? const Color(0xFF9D87D4),
+      _baseline?.icon ?? Icons.auto_awesome_outlined,
+      _baseline?.color ?? const Color(0xFF9D87D4),
       attachments: List.of(attachments),
       stage: stage,
       hypothesis: hypothesis.text.trim(),
       conclusion: conclusion.text.trim(),
       id: _targetId,
-      favorite: widget.initialIdea?.favorite ?? widget.initialFavorite,
-      time: widget.initialIdea?.time ?? '刚刚',
+      versioned: _baseline?.versioned,
+      contentOwner: _baseline?.contentOwner,
+      contentRevision: _baseline?.contentRevision,
+      favorite: _baseline?.favorite ?? widget.initialFavorite,
+      time: _baseline?.time ?? '刚刚',
       todos: todos.text
           .split('\n')
           .map((line) => line.trim())
           .where((line) => line.isNotEmpty)
           .toSet()
           .toList(),
-      completed: (widget.initialIdea?.completed ?? <String>{}).intersection(
+      completed: (_baseline?.completed ?? <String>{}).intersection(
         todos.text.split('\n').map((line) => line.trim()).toSet(),
       ),
     );
@@ -4123,22 +5094,37 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       saveError = '';
     });
     try {
-      final result = widget.editor == null
+      final result = _editor == null
           ? _frozenDraft!
-          : await widget.editor!.save(_frozenDraft!, _frozenFields!);
+          : await _editor!.save(_frozenDraft!, _frozenFields!);
       if (!mounted) return;
-      saved = true;
-      Navigator.pop(context, result);
+      if (!(widget.isCurrent?.call() ?? true)) {
+        throw WorkbenchCommittedRefreshFailure(
+          StateError('Editor workspace changed'),
+        );
+      }
+      if (_editGeneration != _submittedGeneration) {
+        _confirmedAwaitingContinuation = result;
+        await _continueDraft();
+      } else {
+        saved = true;
+        Navigator.pop(context, result);
+      }
     } catch (error) {
       if (mounted) {
         setState(() {
-          if (error is EditorPreparationException) {
+          if (_confirmedAwaitingContinuation != null) {
+            saveError = l.mainEditorContinueFailed;
+          } else if (error is EditorPreparationException) {
             _submitFrozen = false;
             _frozenDraft = null;
             _frozenFields = null;
+            _submittedGeneration = null;
             saveError = error.cause is FormatException
                 ? (error.cause as FormatException).message
                 : l.mainSaveNotSubmitted;
+          } else if (error is WorkbenchCommittedRefreshFailure) {
+            saveError = l.mainContentCommittedRefreshFailed;
           } else {
             saveError = l.mainSaveUnknown;
           }
@@ -4174,7 +5160,10 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
         await TextureRepository.remove(item.source);
         return;
       }
-      setState(() => attachments.add(item));
+      setState(() {
+        attachments.add(item);
+        _editGeneration++;
+      });
       if (title.text.trim().isEmpty) {
         final name = item.source.name.length > 60
             ? item.source.name.substring(0, 60)
@@ -4217,7 +5206,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     final editor = TextField(
       key: const ValueKey('idea-description'),
       controller: description,
-      readOnly: importing || saving || _submitFrozen,
+      readOnly: importing,
       focusNode: descriptionFocus,
       minLines: 4,
       maxLines: 8,
@@ -4394,32 +5383,44 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
   @override
   void initState() {
     super.initState();
+    _editor = widget.editor;
+    _baseline = widget.initialIdea;
     _targetId =
-        widget.editor?.targetId ??
-        widget.initialIdea?.id ??
-        widget.targetId ??
-        Idea.nextId();
+        _editor?.targetId ?? _baseline?.id ?? widget.targetId ?? Idea.nextId();
     if (kIsWeb) ClipboardEvents.instance?.registerPasteEventListener(webPaste);
-    attachments.addAll(widget.initialIdea?.attachments ?? []);
+    attachments.addAll(_baseline?.attachments ?? []);
     stage =
-        widget.initialIdea?.stage ??
+        _baseline?.stage ??
         (widget.initialCategory == '进行中'
             ? '推进中'
             : widget.initialCategory == '实验'
             ? '待验证'
             : '待整理');
-    hypothesis.text = widget.initialIdea?.hypothesis ?? '';
-    conclusion.text = widget.initialIdea?.conclusion ?? '';
-    final idea = widget.initialIdea;
+    hypothesis.text = _baseline?.hypothesis ?? '';
+    conclusion.text = _baseline?.conclusion ?? '';
+    final idea = _baseline;
     title.text = idea?.title ?? '';
     description.text = idea?.description ?? '';
     category = idea?.category ?? widget.initialCategory;
     todos.text = idea?.todos.join('\n') ?? '';
+    for (final controller in [
+      title,
+      description,
+      hypothesis,
+      conclusion,
+      todos,
+    ]) {
+      _lastFieldValues[controller] = controller.value;
+      controller.addListener(() => _observeDraft(controller));
+    }
   }
 
   @override
   void dispose() {
-    unawaited(widget.editor?.close().catchError((_) {}));
+    unawaited(_editor?.close().catchError((_) {}));
+    if (!identical(_preparedSuccessor, _editor)) {
+      unawaited(_preparedSuccessor?.close().catchError((_) {}));
+    }
     if (kIsWeb) {
       ClipboardEvents.instance?.unregisterPasteEventListener(webPaste);
     }
@@ -4456,12 +5457,10 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
       child: StudioDialog(
         canClose: !saving && !importing,
         width: 820,
-        title: widget.initialIdea == null
-            ? l.mainNewIdeaTitle
-            : l.mainEditIdeaTitle,
+        title: _baseline == null ? l.mainNewIdeaTitle : l.mainEditIdeaTitle,
         subtitle: l.mainEditorSubtitle,
         content: AbsorbPointer(
-          absorbing: _submitFrozen || saving || importing,
+          absorbing: importing,
           child: SizedBox(
             width: 740,
             child: SingleChildScrollView(
@@ -4471,7 +5470,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   TextField(
                     key: const ValueKey('idea-title'),
                     controller: title,
-                    readOnly: importing || saving || _submitFrozen,
+                    readOnly: importing,
                     focusNode: titleFocus,
                     autofocus: true,
                     maxLength: 60,
@@ -4491,13 +5490,15 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     children: [
                       FilledButton.tonalIcon(
                         key: const ValueKey('idea-paste'),
-                        onPressed: importing ? null : () => paste(),
+                        onPressed: importing || saving || _submitFrozen
+                            ? null
+                            : () => paste(),
                         icon: const Icon(Icons.content_paste, size: 16),
                         label: Text(l.mainPasteContent),
                       ),
                       OutlinedButton.icon(
                         key: const ValueKey('idea-add-files'),
-                        onPressed: importing
+                        onPressed: importing || saving || _submitFrozen
                             ? null
                             : () => safely(
                                 () async => importFiles(await openFiles()),
@@ -4527,41 +5528,47 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   const SizedBox(height: 12),
                   _bodyEditor(context),
                   const SizedBox(height: 14),
-                  DropdownButtonFormField<String>(
-                    initialValue: category,
-                    decoration: InputDecoration(
-                      labelText: l.mainCategoryPrompt,
-                    ),
-                    items: ['灵感', '进行中', '实验']
-                        .map(
-                          (s) => DropdownMenuItem(
-                            value: s,
-                            child: Text(
-                              s == '灵感'
-                                  ? l.mainPageInbox
-                                  : s == '进行中'
-                                  ? l.mainPageProjects
-                                  : l.mainPageLaboratory,
+                  if (_baseline?.versioned == null)
+                    DropdownButtonFormField<String>(
+                      isExpanded: true,
+                      initialValue: category,
+                      decoration: InputDecoration(
+                        labelText: l.mainCategoryPrompt,
+                      ),
+                      items: ['灵感', '进行中', '实验']
+                          .map(
+                            (s) => DropdownMenuItem(
+                              value: s,
+                              child: Text(
+                                s == '灵感'
+                                    ? l.mainPageInbox
+                                    : s == '进行中'
+                                    ? l.mainPageProjects
+                                    : l.mainPageLaboratory,
+                              ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (v) => setState(() {
-                      category = v!;
-                      stage = category == '进行中'
-                          ? '推进中'
-                          : category == '实验'
-                          ? '待验证'
-                          : '待整理';
-                    }),
-                  ),
+                          )
+                          .toList(),
+                      onChanged: (v) => setState(() {
+                        _editGeneration++;
+                        category = v!;
+                        stage = category == '进行中'
+                            ? '推进中'
+                            : category == '实验'
+                            ? '待验证'
+                            : '待整理';
+                      }),
+                    ),
                   const SizedBox(height: 12),
                   ...attachments.map(
                     (item) => AttachmentTile(
                       attachment: item,
                       onRemove: importing
                           ? null
-                          : () => setState(() => attachments.remove(item)),
+                          : () => setState(() {
+                              attachments.remove(item);
+                              _editGeneration++;
+                            }),
                     ),
                   ),
                   if (category == '实验') ...[
@@ -4569,7 +5576,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     TextField(
                       key: const ValueKey('experiment-hypothesis'),
                       controller: hypothesis,
-                      readOnly: importing || saving || _submitFrozen,
+                      readOnly: importing,
                       focusNode: hypothesisFocus,
                       minLines: 2,
                       maxLines: 4,
@@ -4582,7 +5589,7 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     TextField(
                       key: const ValueKey('experiment-conclusion'),
                       controller: conclusion,
-                      readOnly: importing || saving || _submitFrozen,
+                      readOnly: importing,
                       focusNode: conclusionFocus,
                       minLines: 2,
                       maxLines: 5,
@@ -4593,30 +5600,54 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                     ),
                   ],
                   const SizedBox(height: 18),
-                  TextField(
-                    key: const ValueKey('idea-todos'),
-                    controller: todos,
-                    readOnly: importing || saving || _submitFrozen,
-                    focusNode: todosFocus,
-                    minLines: 2,
-                    maxLines: 4,
-                    maxLength: 1000,
-                    decoration: InputDecoration(
-                      labelText: l.mainTodosPrompt,
-                      alignLabelWithHint: true,
+                  if (_baseline?.versioned == null)
+                    TextField(
+                      key: const ValueKey('idea-todos'),
+                      controller: todos,
+                      readOnly: importing,
+                      focusNode: todosFocus,
+                      minLines: 2,
+                      maxLines: 4,
+                      maxLength: 1000,
+                      decoration: InputDecoration(
+                        labelText: l.mainTodosPrompt,
+                        alignLabelWithHint: true,
+                      ),
                     ),
-                  ),
                 ],
               ),
             ),
           ),
         ),
         actions: [
-          if (saveError.isNotEmpty)
-            Text(
-              saveError,
-              key: const ValueKey('idea-save-error'),
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+          if (_submitFrozen || _hasUnsavedSuccessor || saveError.isNotEmpty)
+            SizedBox(
+              width: double.infinity,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxHeight: 96),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (_submitFrozen || _hasUnsavedSuccessor)
+                        Text(
+                          _submitFrozen
+                              ? l.mainEditorPendingDraft
+                              : l.mainEditorNewerDraft,
+                          key: const ValueKey('idea-draft-status'),
+                        ),
+                      if (saveError.isNotEmpty)
+                        Text(
+                          saveError,
+                          key: const ValueKey('idea-save-error'),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           TextButton(
             onPressed: importing || saving
@@ -4630,6 +5661,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
             child: Text(
               saving
                   ? l.mainSaving
+                  : _confirmedAwaitingContinuation != null
+                  ? l.mainEditorContinueDraft
                   : _submitFrozen
                   ? l.mainRetrySave
                   : l.mainSaveIdea,

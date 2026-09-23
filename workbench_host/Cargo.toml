@@ -19,6 +19,8 @@ morrow-workbench-plugin = {path = "../plugins/workbench"}
 morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
 capnp = { version = "=0.24.1", features = ["unaligned"] }
 sha2 = "=0.10.9"
+serde_json = "=1.0.151"
+url = "=2.5.8"
 tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time"] }
 [build-dependencies]
 prost-build = "=0.14.4"
@@ -35,6 +37,8 @@ wat = "=1.239.0"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 morrow-audit = {path = "../audit"}
+rusqlite = { version = "=0.40.2", features = ["backup"] }
+tempfile = "=3.27.0"
 
 [features]
 fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection"]
@@ -45,3 +49,7 @@ name = "qualify_shared_evidence"
 [[bin]]
 name = "morrow-content-replay"
 path = "src/bin/content_replay.rs"
+
+[[bin]]
+name = 'morrow-migrate-library'
+path = 'src/bin/migrate_library.rs'

@@ -12,6 +12,7 @@ pub struct Appearance {
     pub theme: String,
     pub glass: String,
     pub background: String,
+    pub visual_style: String,
     pub solid_tint: u16,
     pub opacity: f64,
     pub corner_radius: f64,
@@ -43,6 +44,7 @@ impl Default for Appearance {
             theme: "white".into(),
             glass: "frosted".into(),
             background: "ambient".into(),
+            visual_style: "flat".into(),
             solid_tint: 0,
             opacity: 0.76,
             corner_radius: 20.,
@@ -74,6 +76,7 @@ impl Appearance {
     pub fn validate(&self) -> Result<(), &'static str> {
         if !matches!(self.theme.as_str(), "white" | "custom" | "dark")
             || !matches!(self.glass.as_str(), "frosted" | "clear" | "liquid")
+            || !matches!(self.visual_style.as_str(), "flat" | "neumorphism")
             || !matches!(
                 self.background.as_str(),
                 "ambient" | "solid" | "texture" | "transparent"
@@ -349,6 +352,10 @@ pub(crate) fn read_appearance(r: wire::appearance::Reader<'_>) -> Result<Appeara
         theme: txt(r.get_theme())?,
         glass: txt(r.get_glass())?,
         background: txt(r.get_background())?,
+        visual_style: match txt(r.get_visual_style())?.as_str() {
+            "" => "flat".into(),
+            value => value.into(),
+        },
         solid_tint: r.get_solid_tint(),
         opacity: r.get_opacity(),
         corner_radius: r.get_corner_radius(),
@@ -379,6 +386,7 @@ pub(crate) fn write_appearance(mut b: wire::appearance::Builder<'_>, v: &Appeara
     b.set_theme(v.theme.as_str());
     b.set_glass(v.glass.as_str());
     b.set_background(v.background.as_str());
+    b.set_visual_style(v.visual_style.as_str());
     b.set_solid_tint(v.solid_tint);
     b.set_opacity(v.opacity);
     b.set_corner_radius(v.corner_radius);

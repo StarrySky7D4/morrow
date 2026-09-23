@@ -38,5 +38,8 @@
   "recoveryIdentityMismatch": "La identidad registrada no coincide. Conserva los datos originales y restaura la copia correcta.",
   "recoveryRegistryInvalid": "El registro de biblioteca activa está dañado o no es compatible. Se detuvo la apertura para proteger los datos.",
   "recoverySwitchUnknown": "Cambio de biblioteca sin confirmar. Reabre el espacio de trabajo para verificar.",
-  "recoveryRegistryUnreadable": "No se puede leer la biblioteca activa o su registro. Revisa la ubicación original; no se creará otra biblioteca automáticamente."
+  "recoveryRegistryUnreadable": "No se puede leer la biblioteca activa o su registro. Revisa la ubicación original; no se creará otra biblioteca automáticamente.",
+  "recoveryClosing": "Esperando a que termine el servicio original. No se puede reabrir ni restaurar hasta confirmar su salida.",
+  "recoveryClosingUnconfirmed": "El cierre sigue sin confirmarse. Continúa la supervisión; el tiempo de espera no revierte las operaciones realizadas.",
+  "recoveryMigrationIncomplete": "La migración de esta biblioteca está incompleta. Revise el informe en su carpeta, conserve la biblioteca de origen y vuelva a intentarlo con una nueva carpeta de destino."
 }

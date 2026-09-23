@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'uint64.dart';
 import '../attachment_transfer.dart';
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
@@ -74,8 +75,7 @@ class RenameCommand {
     root.operationId = operationId;
     final rename = root.initRenameCard();
     rename.cardId = cardId;
-    // Preserve all 64 bits through Dart's signed native integer representation.
-    rename.expectedRevision = expectedRevision.toSigned(64).toInt();
+    writeUint64(rename, 0, expectedRevision);
     rename.title = title;
     final bytes = builder.serialize();
     _frame(bytes);
@@ -102,7 +102,7 @@ class RenameCommand {
     return RenameCommand(
       operationId: root.operationId ?? '',
       cardId: rename.cardId ?? '',
-      expectedRevision: BigInt.from(rename.expectedRevision).toUnsigned(64),
+      expectedRevision: readUint64(rename, 0),
       title: rename.title ?? '',
     );
   }
@@ -208,7 +208,7 @@ class RuntimeReply {
             preview = summary.previewText ?? '';
         _identity(id);
         _identity(type);
-        final revision = BigInt.from(summary.revision).toUnsigned(64);
+        final revision = readUint64(summary, 8);
         if (revision == BigInt.zero ||
             summary.formatVersion == 0 ||
             utf8.encode(title).length > 16384 ||
@@ -259,9 +259,9 @@ class RuntimeReply {
         final part = AttachmentPart(
           cardId: value.cardId ?? '',
           attachmentId: value.attachmentId ?? '',
-          revision: BigInt.from(value.revision).toUnsigned(64),
-          offset: BigInt.from(value.offset).toUnsigned(64),
-          totalLength: BigInt.from(value.totalLength).toUnsigned(64),
+          revision: readUint64(value, 0),
+          offset: readUint64(value, 8),
+          totalLength: readUint64(value, 16),
           contentSha256: value.contentSha256 ?? Uint8List(0),
           bytes: value.bytes ?? Uint8List(0),
         );
@@ -287,8 +287,7 @@ class RuntimeReply {
     final card = receipt.cardId ?? '', event = receipt.eventId ?? '';
     _identity(card);
     _identity(event);
-    final revision = BigInt.from(receipt.revision).toUnsigned(64),
-        digest = receipt.contentSha256;
+    final revision = readUint64(receipt, 0), digest = receipt.contentSha256;
     if (receipt.operationId != operationId ||
         (cardId != null && card != cardId) ||
         revision == BigInt.zero ||
@@ -333,8 +332,8 @@ class ReadAttachmentCommand {
     final value = root.initReadAttachment();
     value.cardId = cardId;
     value.attachmentId = attachmentId;
-    value.expectedRevision = expectedRevision.toSigned(64).toInt();
-    value.offset = offset.toInt();
+    writeUint64(value, 0, expectedRevision);
+    writeUint64(value, 8, offset);
     value.length = length;
   });
 }

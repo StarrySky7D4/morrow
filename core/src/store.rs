@@ -787,6 +787,48 @@ impl Store {
             &change.card_id,
             command,
             evidence,
+            |card| {
+                let current = card.ok_or(Error::NotFound)?;
+                // This is a live-write constraint only. Schema 1 SetContent has no source
+                // format; its historical proposal and event decoding remain unchanged.
+                if current.summary().format_version != 1 {
+                    return Err(Error::UnsupportedVersion);
+                }
+                change.propose(current)
+            },
+            authorize,
+            false,
+        )
+    }
+    pub(crate) fn edit_versioned_content_with_evidence(
+        &mut self,
+        change: &crate::versioned_content_change::VersionedContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Receipt> {
+        let command = transaction::versioned_content_command(change)?;
+        self.apply(
+            &change.operation_id,
+            &change.source()?.summary().id,
+            command,
+            evidence,
+            |card| change.propose(card.ok_or(Error::NotFound)?),
+            authorize,
+            false,
+        )
+    }
+    pub(crate) fn migrate_content_with_evidence(
+        &mut self,
+        change: &crate::content_migration::ContentMigration,
+        evidence: &[crate::task_evidence::Evidence],
+        authorize: impl FnMut() -> Result<()>,
+    ) -> Result<Receipt> {
+        let command = transaction::migration_command(change)?;
+        self.apply(
+            &change.operation_id,
+            &change.source()?.summary().id,
+            command,
+            evidence,
             |card| change.propose(card.ok_or(Error::NotFound)?),
             authorize,
             false,
@@ -1293,6 +1335,53 @@ mod disk_tests {
         assert!(store.card("large").unwrap().is_none());
         assert_eq!(store.lookup("full").unwrap(), Lookup::Absent);
         assert!(store.pending(0, 10).unwrap().is_empty());
+        store.integrity_check().unwrap();
+    }
+
+    #[test]
+    fn sqlite_full_rolls_back_forward_format_migration() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open(
+            &dir.path().join("migration-full.db"),
+            EventBudget::default(),
+        )
+        .unwrap();
+        let original = CardRecord::new("card", "unknown", 1, "original", vec![0, 255]).unwrap();
+        store.create_local("seed", &original).unwrap();
+        let pages: i64 = store
+            .connection
+            .query_row("PRAGMA page_count", [], |r| r.get(0))
+            .unwrap();
+        store
+            .connection
+            .pragma_update(None, "max_page_count", pages)
+            .unwrap();
+        let mut seed = 0x12345678u32;
+        let body: Vec<u8> = (0..512 * 1024)
+            .map(|_| {
+                seed ^= seed << 13;
+                seed ^= seed >> 17;
+                seed ^= seed << 5;
+                seed as u8
+            })
+            .collect();
+        let migration = crate::content_migration::ContentMigration {
+            operation_id: "migrate-full".into(),
+            source_card: original.encode(),
+            target_format_version: 2,
+            body,
+            preview_text: "new preview".into(),
+        };
+        assert_eq!(
+            store.migrate_content_with_evidence(&migration, &[], || Ok(())),
+            Err(Error::StorageFull)
+        );
+        assert_eq!(
+            store.card("card").unwrap().unwrap().encode(),
+            original.encode()
+        );
+        assert_eq!(store.lookup("migrate-full").unwrap(), Lookup::Absent);
+        assert_eq!(store.pending(0, 10).unwrap().len(), 1);
         store.integrity_check().unwrap();
     }
 }

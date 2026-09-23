@@ -602,5 +602,39 @@
   "visualTransparentTips": "透明オーバーレイ（既定）",
   "visualTipsMaterialGuide": "オフではヒントは透明、オンでは下の質感を使用します。個別の値は保持されます。",
   "visualResetMaterial": "テーマに戻す",
-  "visualInheritColor": "テーマの色を使う"
+  "visualInheritColor": "テーマの色を使う",
+  "visualMaterialSource": "マテリアルの参照元",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "テーマまたは独自設定",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "参照先：{name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "別のコンポーネントの設定を参照できます。解除すると独自設定に戻ります。",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "循環が発生します",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "参照チェーン：{path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

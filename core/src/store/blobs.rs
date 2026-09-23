@@ -141,6 +141,46 @@ fn stream(
     }
     Ok(())
 }
+/// The Snapshot retention owner is a single durable import identity. Its
+/// metadata and raw bytes are checked before either a retry or recovery can use
+/// it; multiple blobs under one owner are never an ambiguous successful import.
+fn retained_snapshot(connection: &Connection, owner: &str) -> Result<Option<BlobInfo>> {
+    identity(owner)?;
+    let mut statement = sql(connection.prepare(
+        "SELECT blob_id,metadata FROM retentions WHERE owner=?1 AND kind=?2 LIMIT 2",
+    ))?;
+    let mut rows = sql(statement.query(params![owner, RetentionKind::Snapshot as i32]))?;
+    let Some(row) = sql(rows.next())? else {
+        return Ok(None);
+    };
+    let id: String = sql(row.get(0))?;
+    let raw = sql(row.get_ref(1))?
+        .as_blob()
+        .map_err(|_| Error::Integrity)?;
+    if raw.len() > 4096 + 4096 / 255 + 128 {
+        return Err(Error::Integrity);
+    }
+    let metadata = attachment::decode_retention(raw).map_err(|_| Error::Integrity)?;
+    if metadata.owner_id != owner
+        || metadata.blob_id != id
+        || metadata.kind != RetentionKind::Snapshot as i32
+        || sql(rows.next())?.is_some()
+    {
+        return Err(Error::Integrity);
+    }
+    drop(rows);
+    drop(statement);
+    let (row, value) = match info(connection, &id) {
+        Err(Error::NotFound) => return Err(Error::Integrity),
+        result => result?,
+    };
+    if value.retired_at_unix_ms.is_some() {
+        return Err(Error::Integrity);
+    }
+    stream(connection, row, &value, &mut std::io::sink())?;
+    Ok(Some(value))
+}
+
 impl Store {
     /// Host-owned reader; the exact staged bytes, length and hash become immutable.
     /// Ready stages stay protected until referenced or explicitly retired, not merely timed out.
@@ -151,12 +191,45 @@ impl Store {
         expected: Option<[u8; 32]>,
         now_unix_ms: i64,
     ) -> Result<BlobInfo> {
+        self.stage_blob_inner(reader, byte_length, expected, None, now_unix_ms)
+    }
+    /// Atomically stage exact bytes and pin them to one releasable Snapshot
+    /// owner. A matching owner retry returns the original verified blob without
+    /// reading the new reader. After release, the caller's durable tombstone
+    /// must reject old import operations; this primitive is not that tombstone.
+    pub fn stage_blob_retained(
+        &mut self,
+        reader: &mut impl Read,
+        byte_length: u64,
+        expected: [u8; 32],
+        owner: &str,
+        now_unix_ms: i64,
+    ) -> Result<BlobInfo> {
+        self.stage_blob_inner(reader, byte_length, Some(expected), Some(owner), now_unix_ms)
+    }
+    fn stage_blob_inner(
+        &mut self,
+        reader: &mut impl Read,
+        byte_length: u64,
+        expected: Option<[u8; 32]>,
+        owner: Option<&str>,
+        now_unix_ms: i64,
+    ) -> Result<BlobInfo> {
         if byte_length > attachment::MAX_BLOB_BYTES {
             return Err(Error::Limit);
         }
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
+        if let Some(owner) = owner {
+            if let Some(existing) = retained_snapshot(&tx, owner)? {
+                if existing.byte_length != byte_length || Some(existing.sha256) != expected {
+                    return Err(Error::OperationConflict);
+                }
+                // An exact retry is read-only, including its clock state.
+                return Ok(existing);
+            }
+        }
         advance_clock(&tx, now_unix_ms)?;
         let (count, total): (i64, i64) = sql(tx.query_row(
             "SELECT count(*),coalesce(sum(size),0) FROM blobs",
@@ -238,10 +311,25 @@ impl Store {
             ))?;
             value
         };
+        if let Some(owner) = owner {
+            let metadata =
+                attachment::encode_retention(owner, &value.id, RetentionKind::Snapshot)?;
+            sql(tx.execute(
+                "INSERT INTO retentions(owner,kind,blob_id,metadata) VALUES(?1,?2,?3,?4)",
+                params![owner, RetentionKind::Snapshot as i32, value.id, metadata],
+            ))?;
+            boundary("stage-retained-before-commit");
+        }
         boundary("stage-before-commit");
         tx.commit().map_err(|_| Error::CommitUnknown)?;
         boundary("stage-after-commit");
         Ok(value)
+    }
+    /// Read one exact Snapshot owner; corrupted metadata, duplicate ownership
+    /// and damaged payload bytes fail closed. This does not reactivate imports.
+    pub fn retained_blob_local(&self, owner: &str) -> Result<Option<BlobInfo>> {
+        let snapshot = sql(self.connection.unchecked_transaction())?;
+        retained_snapshot(&snapshot, owner)
     }
     pub fn blob_info_local(&self, id: &str) -> Result<BlobInfo> {
         let snapshot = sql(self.connection.unchecked_transaction())?;

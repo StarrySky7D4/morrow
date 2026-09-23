@@ -1,0 +1,14 @@
+syntax = "proto3";
+package morrow.workbench.editor_draft_import_decision.v1;
+import "editor_draft_staging.proto";
+
+// An immutable original import proposal plus one terminal cancellation revision.
+// A stage commit is proved from the separate stage journal's audited history.
+message Slot {
+  uint32 schema_version = 1;
+  morrow.workbench.editor_draft_staging.v1.ImportRequest request = 2;
+  string operation_id = 3;
+  uint64 expected_generation = 4;
+  uint64 revision = 5;
+  bool cancelled = 6;
+}

@@ -1,3 +1,13 @@
+import 'editor_recovery.dart';
+import 'editor_draft.dart';
+import 'editor_draft_codec.dart';
+import 'editor_draft_import.dart';
+import 'editor_draft_import_codec.dart';
+import 'versioned_content.dart';
+import 'versioned_content_scan.dart';
+import 'versioned_idea_view.dart';
+import 'versioned_editor.dart';
+import 'versioned_content_codec.dart';
 import 'editor_session.dart';
 import 'plugin_tools.dart';
 import 'plugin_library.dart';
@@ -17,12 +27,15 @@ import 'dart:async';
 import 'package:morrow_i18n/locale_codes.dart';
 import 'dart:convert';
 import 'dart:io';
+import '../save_recovery.dart';
 import 'dart:math' show Random;
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:flutter/material.dart' show Color;
 import '../main.dart' show Idea;
+import '../fonts/font_choice.dart';
+import 'preferences_save_failure.dart';
 import '../attachments/attachment.dart';
 import '../media/texture_source.dart';
 import 'workbench_backend.dart';
@@ -31,10 +44,24 @@ import 'generated/workbench.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 
 part 'service_business_routing_native.dart';
+part 'versioned_content_native.dart';
+part 'editor_recovery_native.dart';
+part 'editor_draft_native.dart';
+part 'editor_draft_handoff_native.dart';
+part 'editor_draft_import_native.dart';
+part 'versioned_editor_native.dart';
+part 'versioned_workspace_native.dart';
 
 class RustWorkbench
     implements
         WorkbenchBackend,
+        WorkbenchVersionedContent,
+        WorkbenchMixedContent,
+        WorkbenchVersionedEditorSupport,
+        WorkbenchEditorRecovery,
+        WorkbenchEditorDraftSupport,
+        WorkbenchEditorDraftHandoffSupport,
+        WorkbenchEditorDraftImportSupport,
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
         ExternalPluginControl,
@@ -45,7 +72,9 @@ class RustWorkbench
         WorkbenchServiceTlsControl,
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
-        WorkbenchEditorSupport {
+        WorkbenchEditorSupport,
+        WorkbenchContentRevisionSource,
+        WorkbenchMutationFailureNeedsRefresh {
   RustWorkbench._(this.process, this.cache) {
     process.stdout.listen(_receive, onError: _fail, onDone: _ended);
     _stderrDone = process.stderr.listen((bytes) {
@@ -53,6 +82,42 @@ class RustWorkbench
       if (remaining > 0) _stderr.addAll(bytes.take(remaining));
     }).asFuture<void>();
   }
+  @override
+  late final VersionedContentControl versionedContent = NativeVersionedContent(
+    this,
+  );
+
+  @override
+  late final EditorDraftControl editorDrafts = NativeEditorDraftControl(this);
+
+  @override
+  late final EditorDraftHandoffControl editorDraftHandoffs =
+      NativeEditorDraftHandoffControl(this);
+
+  @override
+  late final EditorDraftImportControl editorDraftImports =
+      NativeEditorDraftImportControl(this);
+
+  @override
+  Future<VersionedEditorSession> openVersionedEditor(
+    String id, {
+    BigInt? expectedRevision,
+  }) => openNativeVersionedEditor(this, id, expectedRevision: expectedRevision);
+
+  @override
+  Future<List<EditorRecovery>> inspectEditorRecoveries({String? id}) =>
+      _inspectEditorRecoveries(id: id);
+  @override
+  Future<VersionedMutationResult> resumeEditorRecovery(
+    EditorRecovery observed,
+  ) => _resumeEditorRecovery(observed);
+  @override
+  Future<void> acknowledgeEditorRecovery(EditorRecovery observed) =>
+      _acknowledgeEditorRecovery(observed);
+  @override
+  Future<void> abandonEditorRecovery(EditorRecovery observed) =>
+      _abandonEditorRecovery(observed);
+
   final _stderr = <int>[];
   late final Future<void> _stderrDone;
   String? maintenanceWarning;
@@ -68,7 +133,10 @@ class RustWorkbench
   final Process process;
   final Directory cache;
   final _revisions = <String, int>{};
+  final _knownDeleted = <String, bool>{};
   final _assets = <String, IdeaAttachment>{};
+  final _workspaceAssetCache = <String, _WorkspaceCachedAsset>{};
+  final _sessionPreviewFiles = <String>{};
   final _importAliases = <String, Set<String>>{};
   final _buffer = <int>[];
   Completer<Uint8List>? _response;
@@ -89,6 +157,7 @@ class RustWorkbench
     required String package,
     required Directory directory,
     bool managed = false,
+    void Function(RustWorkbench)? onStarted,
   }) async {
     await directory.create(recursive: true);
     final cache = Directory('${directory.path}/preview-cache');
@@ -100,15 +169,24 @@ class RustWorkbench
     ]);
     final result = RustWorkbench._(process, cache);
     try {
-      await result._call(host.Action.page, configure: (r) => r.limit = 1);
+      onStarted?.call(result);
+      await result._call(
+        host.Action.pageVersioned,
+        configure: (r) => r.limit = 1,
+      );
       return result;
     } catch (error, stack) {
       // Startup failures normally also make the child exit nonzero. Cleanup
       // must not replace the actionable key/identity/library error with that
       // secondary exit status. close() still waits for the process to exit.
-      try {
-        await result.close();
-      } catch (_) {}
+      if (onStarted == null) {
+        try {
+          await result.close();
+        } catch (_) {}
+      } else {
+        // The session owner observes the actual process while recovery renders.
+        unawaited(result.close().catchError((Object _) {}));
+      }
       Error.throwWithStackTrace(error, stack);
     }
   }
@@ -1369,9 +1447,78 @@ class RustWorkbench
     return r;
   }
 
+  static BigInt _revision(int signedCarrier) =>
+      unsignedContentRevision(signedCarrier);
+
+  @override
+  Iterable<String> knownContentIds() => _revisions.keys.toList(growable: false);
+
+  @override
+  BigInt? knownContentRevision(String id) =>
+      _revisions[id] == null ? null : _revision(_revisions[id]!);
+
+  @override
+  bool? knownContentDeleted(String id) => _knownDeleted[id];
+
+  void _rememberRevision(String id, int signedCarrier) {
+    final previous = _revisions[id];
+    if (previous == null || _revision(previous) <= _revision(signedCarrier)) {
+      _revisions[id] = signedCarrier;
+    }
+  }
+
+  Future<({Idea idea, int revision})> _readCurrent(
+    String id, {
+    BigInt? minimum,
+    BigInt? receiptRevision,
+  }) async {
+    for (var attempt = 0; attempt < 3; attempt++) {
+      final current = await _call(
+        host.Action.read,
+        configure: (r) => r.id = id,
+      );
+      final revision = _revision(current.revision);
+      final known = _revisions[id];
+      if (revision < (minimum ?? BigInt.zero) ||
+          (known != null && revision < _revision(known))) {
+        continue;
+      }
+      final idea = await _idea(
+        current,
+        trackRevision: false,
+        historicalReceipt:
+            receiptRevision != null && revision != receiptRevision,
+      );
+      final latestKnown = _revisions[id];
+      if (latestKnown != null && revision < _revision(latestKnown)) continue;
+      _rememberRevision(id, current.revision);
+      _knownDeleted[id] = idea.contentDeleted;
+      return (idea: idea, revision: current.revision);
+    }
+    throw StateError('Current content changed during read');
+  }
+
+  Future<Idea> _currentAfterCommit(
+    String id,
+    host.ResponseReader receipt,
+  ) async {
+    // A receipt can describe an earlier operation. Read the actual card before
+    // allowing any result (especially a delete) to replace visible content.
+    try {
+      return (await _readCurrent(
+        id,
+        minimum: _revision(receipt.revision),
+        receiptRevision: _revision(receipt.revision),
+      )).idea;
+    } catch (error) {
+      throw WorkbenchCommittedRefreshFailure(error);
+    }
+  }
+
   Future<Idea> _idea(
     host.ResponseReader reply, {
     bool trackRevision = true,
+    bool historicalReceipt = false,
   }) async {
     final r = _payload(reply.payload).idea!;
     final id = r.id!;
@@ -1405,6 +1552,7 @@ class RustWorkbench
             out.selectedPath = file.path;
           },
         );
+        _sessionPreviewFiles.add(file.path);
         item = IdeaAttachment(
           source: TextureSource(
             location: file.path,
@@ -1433,13 +1581,50 @@ class RustWorkbench
       hypothesis: r.hypothesis ?? '',
       conclusion: r.conclusion ?? '',
       attachments: attachments,
+      contentRevision: _revision(reply.revision),
+      contentOwner: this,
+      contentDeleted: r.deleted,
+      historicalReceipt: historicalReceipt,
     );
-    if (trackRevision) _revisions[id] = reply.revision;
+    if (trackRevision) _rememberRevision(id, reply.revision);
     return idea;
   }
 
+  /// A complete, format-aware presentation snapshot. No attachment extraction,
+  /// migration or legacy JSON conversion is performed here. The known revision
+  /// fence includes mutations completed while the page walk was awaiting I/O.
+  Future<List<VersionedContentRecord>> loadVersioned({int pageLimit = 128}) =>
+      scanVersionedContent(
+        versionedContent,
+        pageLimit: pageLimit,
+        knownRevisions: () => {
+          for (final entry in _revisions.entries)
+            entry.key: _revision(entry.value),
+        },
+      );
+
+  @override
+  Future<List<Idea>> loadWorkspaceContent() => _loadWorkspaceContent(this);
+
+  @override
+  Future<Idea> workspaceRecord(VersionedContentRecord record) =>
+      _workspaceRecord(this, record);
+
+  @override
+  Future<Idea> applyWorkspaceTask(
+    String operation,
+    Idea idea,
+    TaskEditCommand command,
+  ) => _applyWorkspaceTask(this, operation, idea, command);
+
+  @override
+  Future<Idea> applyWorkspaceCard(
+    String operation,
+    Idea idea,
+    CardEditCommand command,
+  ) => _applyWorkspaceCard(this, operation, idea, command);
   Future<List<Idea>> load() async {
-    final ideas = <Idea>[];
+    final ideas = <String, Idea>{};
     final revisions = <String, int>{};
     var cursor = '';
     do {
@@ -1452,17 +1637,35 @@ class RustWorkbench
       );
       cursor = page.cursor ?? '';
       for (final id in page.ids ?? <String?>[]) {
-        final record = await _call(
-          host.Action.read,
-          configure: (r) => r.id = id,
-        );
-        final data = _payload(record.payload).idea!;
-        revisions[id!] = record.revision;
-        if (!data.deleted) ideas.add(await _idea(record, trackRevision: false));
+        final current = await _readCurrent(id!);
+        revisions[id] = current.revision;
+        if (!current.idea.contentDeleted) {
+          ideas[id] = current.idea;
+        }
       }
     } while (cursor.isNotEmpty);
-    _revisions.addAll(revisions);
-    return ideas.reversed.toList();
+    // Include cards first observed by a concurrent operation after the page
+    // walk. Check again after every awaited read, then publish with no await.
+    for (var attempt = 0; attempt < 3; attempt++) {
+      for (final id in _revisions.keys.toList()) {
+        final known = _revisions[id]!;
+        final scanned = revisions[id];
+        if (scanned != null && _revision(scanned) >= _revision(known)) continue;
+        final current = await _readCurrent(id);
+        revisions[id] = current.revision;
+        if (current.idea.contentDeleted) {
+          ideas.remove(id);
+        } else {
+          ideas[id] = current.idea;
+        }
+      }
+      final complete = _revisions.entries.every((entry) {
+        final scanned = revisions[entry.key];
+        return scanned != null && _revision(scanned) >= _revision(entry.value);
+      });
+      if (complete) return ideas.values.toList().reversed.toList();
+    }
+    throw StateError('Content changed during page scan');
   }
 
   void _writeIdea(
@@ -1553,14 +1756,20 @@ class RustWorkbench
   }
 
   @override
-  Future<List<Idea>> refreshEditorContent() => load();
+  Future<List<Idea>> refreshEditorContent() => loadWorkspaceContent();
 
   @override
   Future<WorkbenchEditorSession> openEditor(
     String target, {
     required bool create,
+  }) => _openLegacyEditor(target, create: create);
+
+  Future<WorkbenchEditorSession> _openLegacyEditor(
+    String target, {
+    required bool create,
+    int? expectedRevision,
   }) async {
-    final revision = create ? 0 : _revisions[target] ?? 0;
+    final revision = expectedRevision ?? (create ? 0 : _revisions[target] ?? 0);
     if (!create && revision == 0) throw StateError('请先重新读取要编辑的卡片。');
     final response = await _call(
       host.Action.openCaptureScope,
@@ -1571,6 +1780,27 @@ class RustWorkbench
     );
     final scope = response.captureScope ?? '';
     if (scope.isEmpty) throw const FormatException('缺少编辑器会话标识');
+    if (expectedRevision != null) {
+      try {
+        final current = await _readCurrent(target);
+        if (_closingProcess != null ||
+            current.revision != expectedRevision ||
+            current.idea.contentDeleted ||
+            current.idea.versioned != null) {
+          throw StateError('The editor baseline changed before opening');
+        }
+      } catch (_) {
+        try {
+          await _call(
+            host.Action.closeCaptureScope,
+            configure: (r) => r.captureScope = scope,
+          );
+        } catch (_) {
+          // A failed transport already invalidates this host-owned scope.
+        }
+        rethrow;
+      }
+    }
     return _NativeEditorSession(this, target, revision, scope, create);
   }
 
@@ -1630,6 +1860,18 @@ class RustWorkbench
     String text = '',
     bool flag = false,
   }) async {
+    if (idea.contentOwner != null && !identical(idea.contentOwner, this)) {
+      throw const FormatException('Content belongs to another workbench');
+    }
+    if (idea.versioned != null) {
+      return _applyVersionedWorkspaceAction(
+        this,
+        action,
+        idea,
+        text: text,
+        flag: flag,
+      );
+    }
     if (!writable) throw StateError('工作台插件不可用，已有内容仍可查看和导出。');
     final attachments = <IdeaAttachment>[];
     if (action == PluginAction.create || action == PluginAction.edit) {
@@ -1668,7 +1910,7 @@ class RustWorkbench
         r.payload = bytes;
       },
     );
-    return _idea(result);
+    return _currentAfterCommit(idea.id, result);
   }
 
   @override
@@ -1678,26 +1920,13 @@ class RustWorkbench
     String text,
     String sort, {
     String? operation,
-  }) async {
-    final builder = MessageBuilder();
-    final r = builder.initRoot(wire.requestFactory);
-    r.version = 1;
-    r.digest = Uint8List.fromList(contract.workbenchDigest);
-    r.action = wire.Action.query;
-    r.section = section;
-    r.filter = filter;
-    r.text = text;
-    r.sort = sort;
-    final result = await _call(
-      host.Action.query,
-      configure: (r) {
-        r.operation = operation ?? newQueryOperationId();
-        r.payload = builder.serialize();
-      },
-    );
-    return [...?result.ids].whereType<String>().toList();
-  }
-
+  }) => versionedContent.query(
+    section,
+    filter,
+    text,
+    sort,
+    operation: operation ?? newQueryOperationId(),
+  );
   Future<Uint8List> service(Uint8List bytes) async => (await _call(
     host.Action.service,
     configure: (r) => r.payload = bytes,
@@ -1730,6 +1959,68 @@ class RustWorkbench
   }
 
   static const maxPreferencesBytes = 4 * 1024 * 1024;
+  int? _fontRevision;
+  FontChoice? _fontChoice;
+  (String, int, FontChoice)? _pendingFont;
+  Future<void> _fontQueue = Future.value();
+  FontChoice _readFontReply(host.ResponseReader reply) {
+    final value = reply.uiFont;
+    if (value == null) throw const FormatException('Missing font preference');
+    final font = FontChoice(
+      family: value.family ?? '',
+      asset: value.asset ?? '',
+      name: value.name ?? '',
+    );
+    font.validate();
+    return font;
+  }
+
+  Future<FontChoice> readUiFont() async {
+    final reply = await _call(host.Action.readUiFont);
+    final font = _readFontReply(reply);
+    _fontRevision = reply.revision;
+    _fontChoice = font;
+    return font;
+  }
+
+  Future<void> _confirmFont((String, int, FontChoice) request) async {
+    final reply = await _call(
+      host.Action.saveUiFont,
+      configure: (r) {
+        r.operation = request.$1;
+        r.revision = request.$2;
+        final value = r.initUiFont();
+        value.family = request.$3.family;
+        value.asset = request.$3.asset;
+        value.name = request.$3.name;
+      },
+    );
+    if (_readFontReply(reply) != request.$3 ||
+        reply.revision != request.$2 + 1) {
+      throw const FormatException('Font receipt mismatch');
+    }
+    _fontRevision = reply.revision;
+    _fontChoice = request.$3;
+    _pendingFont = null;
+  }
+
+  Future<void> saveUiFont(FontChoice font) {
+    font.validate();
+    final result = _fontQueue.then((_) async {
+      if (_fontRevision == null) await readUiFont();
+      if (_pendingFont case final pending?) await _confirmFont(pending);
+      if (_fontChoice == font) return;
+      final request = _pendingFont = (
+        newQueryOperationId(),
+        _fontRevision!,
+        font,
+      );
+      await _confirmFont(request);
+    });
+    _fontQueue = result.catchError((Object _) {});
+    return result;
+  }
+
   static const _partBytes = 32768;
   int? _uiLocaleRevision;
   String? _uiLocale;
@@ -1812,9 +2103,96 @@ class RustWorkbench
     }
   }
 
-  Future<Uint8List?> readPreferences() => _preferencesJob(_readPreferences);
+  bool _preferencesRecoveryLoaded = false;
+  SaveRecovery? _preferencesRecovery;
+  Future<void> _restorePreferencesProposal() async {
+    if (_preferencesRecoveryLoaded) return;
+    final response = await _call(host.Action.pendingPreferences);
+    final operation = response.preferencesOperation ?? '';
+    final bytes = await _downloadPreferences(response);
+    if (bytes != null) {
+      if (operation.isEmpty) {
+        throw const FormatException('Missing recovery operation');
+      }
+      _pendingPreferences = (operation, bytes);
+      // Process exit and journal presence alone do not prove business outcome.
+      _preferencesEffect = response.preferencesCommitted
+          ? PreferencesEffect.locallyCommitted
+          : PreferencesEffect.unknown;
+      _preferencesCommitDigest = response.preferencesCommitted
+          ? Uint8List.fromList(sha256.convert(bytes).bytes)
+          : null;
+      _preferencesRecovery = SaveRecovery(
+        operation: operation,
+        digest: sha256.convert(bytes).toString(),
+        committed: response.preferencesCommitted,
+        conflict: response.preferencesConflict,
+      );
+    } else if (operation.isNotEmpty) {
+      throw const FormatException('Missing recovery proposal');
+    }
+    _preferencesRecoveryLoaded = true;
+  }
+
+  Future<SaveRecovery?> inspectSaveRecovery() => _preferencesJob(() async {
+    _preferencesRecoveryLoaded = false;
+    _preferencesRecovery = null;
+    await _restorePreferencesProposal();
+    return _preferencesRecovery;
+  });
+
+  Future<Uint8List?> resolveSaveRecovery(
+    SaveRecovery observed, {
+    required bool abandon,
+  }) => _preferencesJob(() async {
+    // Re-read before acting; a dialog is not a lease on the recovery slot.
+    _preferencesRecoveryLoaded = false;
+    _preferencesRecovery = null;
+    await _restorePreferencesProposal();
+    final current = _preferencesRecovery;
+    if (current == null ||
+        current.operation != observed.operation ||
+        current.digest != observed.digest) {
+      throw StateError('Save recovery changed; inspect again');
+    }
+    _preferencesFailureEpoch++;
+    if (abandon) {
+      if (current.committed) {
+        throw StateError('Committed settings cannot be abandoned');
+      }
+      await _call(
+        host.Action.abandonPreferences,
+        configure: (r) {
+          r.operation = current.operation;
+          r.sha256 = Uint8List.fromList(
+            sha256.convert(_pendingPreferences!.$2).bytes,
+          );
+        },
+      );
+      _pendingPreferences = null;
+      _preferencesRecovery = null;
+      return _readPreferences();
+    }
+    if (current.conflict) {
+      throw StateError('Save recovery base revision conflict');
+    }
+    final request = _pendingPreferences!;
+    final stored = current.committed
+        ? await _acknowledgeCommittedPreferences(request)
+        : await _sendPreferences(request);
+    _preferencesRecovery = null;
+    return stored;
+  });
+
+  Future<Uint8List?> readPreferences() => _preferencesJob(() async {
+    await _restorePreferencesProposal();
+    return _readPreferences();
+  });
   Future<Uint8List?> _readPreferences() async {
-    var response = await _call(host.Action.readPreferences);
+    return _downloadPreferences(await _call(host.Action.readPreferences));
+  }
+
+  Future<Uint8List?> _downloadPreferences(host.ResponseReader response) async {
     if (response.totalLength == 0 && (response.payload?.isEmpty ?? true)) {
       return null;
     }
@@ -1864,56 +2242,144 @@ class RustWorkbench
     }
   }
 
+  (String, Uint8List)? _pendingPreferences;
+  PreferencesEffect _preferencesEffect = PreferencesEffect.notSubmitted;
+  Uint8List? _preferencesCommitDigest;
+  int _preferencesFailureEpoch = 0;
+  String? get pendingPreferencesOperation => _pendingPreferences?.$1;
+
   Future<Uint8List> savePreferences(Uint8List value) {
     // The caller may reuse its buffer while queued: freeze this proposal now.
     final bytes = Uint8List.fromList(value);
+    final admittedEpoch = _preferencesFailureEpoch;
     return _preferencesJob(() async {
-      if (bytes.isEmpty || bytes.length > maxPreferencesBytes) {
-        throw const FormatException('配置超过 4 MiB，原设置保留');
+      try {
+        await _restorePreferencesProposal();
+        if (admittedEpoch != _preferencesFailureEpoch) {
+          throw StateError(
+            'An earlier preferences proposal requires explicit reconciliation',
+          );
+        }
+        if (bytes.isEmpty || bytes.length > maxPreferencesBytes) {
+          throw const FormatException('配置超过 4 MiB，原设置保留');
+        }
+        if (_pendingPreferences case final pending?) {
+          // Explicit retry reconciles the original fixed proposal before a newer
+          // draft may be sent. Aborting staging never proves commit rollback.
+          final stored =
+              _preferencesEffect == PreferencesEffect.locallyCommitted
+              ? await _acknowledgeCommittedPreferences(pending)
+              : await _sendPreferences(pending);
+          if (_same(pending.$2, bytes)) return stored;
+        }
+        final request = _pendingPreferences = (
+          'prefs-${DateTime.now().microsecondsSinceEpoch}-${_sequence++}',
+          bytes,
+        );
+        _preferencesEffect = PreferencesEffect.notSubmitted;
+        _preferencesCommitDigest = null;
+        return await _sendPreferences(request);
+      } catch (_) {
+        // Increment before the serialized job completes, so already queued
+        // drafts cannot race ahead of this failed/unknown proposal.
+        _preferencesFailureEpoch++;
+        rethrow;
       }
+    });
+  }
+
+  Future<Uint8List> _acknowledgeCommittedPreferences(
+    (String, Uint8List) request,
+  ) async {
+    try {
+      final stored = await _readPreferences();
+      if (stored == null) {
+        throw const FormatException('Committed preferences missing');
+      }
+      await _call(
+        host.Action.acknowledgePreferences,
+        configure: (r) {
+          r.operation = request.$1;
+          // The host may canonicalize the submitted wire. Confirm its receipt
+          // digest, not a hash of the caller's noncanonical representation.
+          r.sha256 = _preferencesCommitDigest;
+        },
+      );
+      _pendingPreferences = null;
+      return stored; // The current snapshot may be newer than the old receipt.
+    } catch (error) {
+      throw PreferencesSaveFailure(request.$1, _preferencesEffect, error);
+    }
+  }
+
+  Future<Uint8List> _sendPreferences((String, Uint8List) request) async {
+    final bytes = request.$2;
+    var token = '';
+    try {
       final begin = await _call(
         host.Action.beginPreferences,
         configure: (r) {
-          r.operation =
-              'prefs-${DateTime.now().microsecondsSinceEpoch}-${_sequence++}';
+          r.operation = request.$1;
           r.totalLength = bytes.length;
           r.sha256 = Uint8List.fromList(sha256.convert(bytes).bytes);
         },
       );
-      final token = begin.transfer ?? '';
+      token = begin.transfer ?? '';
       if (token.isEmpty) throw const FormatException('缺少配置传输标识');
-      try {
-        for (var offset = 0; offset < bytes.length;) {
-          final end = (offset + _partBytes).clamp(0, bytes.length);
-          final reply = await _call(
-            host.Action.appendPreferences,
-            configure: (r) {
-              r.transfer = token;
-              r.offset = offset;
-              r.payload = Uint8List.sublistView(bytes, offset, end);
-            },
-          );
-          if (reply.transfer != token || reply.offset != end) {
-            throw const FormatException('配置上传确认不匹配');
-          }
-          offset = end;
-        }
-        final committed = await _call(
-          host.Action.finishPreferences,
-          configure: (r) => r.transfer = token,
+      for (var offset = 0; offset < bytes.length;) {
+        final end = (offset + _partBytes).clamp(0, bytes.length);
+        final reply = await _call(
+          host.Action.appendPreferences,
+          configure: (r) {
+            r.transfer = token;
+            r.offset = offset;
+            r.payload = Uint8List.sublistView(bytes, offset, end);
+          },
         );
-        final stored = await _readPreferences();
-        if (stored == null ||
-            committed.totalLength != stored.length ||
-            !_same(committed.sha256, sha256.convert(stored).bytes)) {
-          throw const FormatException('配置提交后快照不匹配，请重新打开工作台确认');
+        if (reply.transfer != token || reply.offset != end) {
+          throw const FormatException('配置上传确认不匹配');
         }
-        return stored;
-      } catch (_) {
-        await _abortPreferences(token);
-        rethrow;
+        offset = end;
       }
-    });
+      if (_preferencesEffect != PreferencesEffect.locallyCommitted) {
+        _preferencesEffect = PreferencesEffect.unknown;
+      }
+      final committed = await _call(
+        host.Action.finishPreferences,
+        configure: (r) => r.transfer = token,
+      );
+      if (committed.totalLength <= 0 ||
+          committed.totalLength > maxPreferencesBytes ||
+          committed.sha256?.length != 32) {
+        throw const FormatException('Invalid preferences commit receipt');
+      }
+      _preferencesEffect = PreferencesEffect.locallyCommitted;
+      _preferencesCommitDigest = Uint8List.fromList(committed.sha256!);
+      final stored = await _readPreferences();
+      if (stored == null ||
+          committed.totalLength != stored.length ||
+          !_same(committed.sha256, sha256.convert(stored).bytes)) {
+        throw const FormatException('配置提交后快照不匹配，请重新打开工作台确认');
+      }
+      await _call(
+        host.Action.acknowledgePreferences,
+        configure: (r) {
+          r.operation = request.$1;
+          r.sha256 = committed.sha256;
+        },
+      );
+      _pendingPreferences = null;
+      return stored;
+    } catch (error) {
+      if (token.isNotEmpty) await _abortPreferences(token);
+      if (error is _HostResponseError &&
+          error.code == 120 &&
+          _preferencesEffect != PreferencesEffect.locallyCommitted) {
+        _preferencesEffect = PreferencesEffect.notSubmitted;
+        _pendingPreferences = null;
+      }
+      throw PreferencesSaveFailure(request.$1, _preferencesEffect, error);
+    }
   }
 
   Future<void> close() => _closingProcess ??= _closeProcess();
@@ -1943,6 +2409,16 @@ class RustWorkbench
       failure ??= error;
       failureStack ??= stack;
     }
+    // Only this host session's exported preview files are removed. A live
+    // workspace view may still use its file until the host itself is closed.
+    for (final path in _sessionPreviewFiles) {
+      try {
+        await File(path).delete();
+      } catch (_) {}
+    }
+    _sessionPreviewFiles.clear();
+    _workspaceAssetCache.clear();
+    _assets.clear();
     if (code != 0) {
       throw StateError('Content service shutdown failed ($code)');
     }
@@ -2060,7 +2536,8 @@ class _WorkbenchUiTransport implements PluginUiTransport {
   }
 }
 
-class _NativeEditorSession implements WorkbenchEditorSession {
+class _NativeEditorSession
+    implements WorkbenchEditorSession, WorkbenchEditorContinuation {
   _NativeEditorSession(
     this.owner,
     this.targetId,
@@ -2087,6 +2564,10 @@ class _NativeEditorSession implements WorkbenchEditorSession {
   final _attachments = <IdeaAttachment>[];
   Uint8List? _pendingBytes;
   Future<Idea>? _inFlight;
+  Idea? _confirmed;
+  String? _confirmedSnapshot;
+  Future<WorkbenchEditorSession>? _continuation;
+  bool _continued = false;
 
   @override
   Future<void> recordPaste(PasteInsertion insertion) async {
@@ -2118,6 +2599,9 @@ class _NativeEditorSession implements WorkbenchEditorSession {
   @override
   Future<Idea> save(Idea draft, EditorFields fields) {
     if (_closed) return Future.error(StateError('编辑器会话已关闭。'));
+    if (_continuation != null) {
+      return Future.error(StateError('The successor editor is opening'));
+    }
     final fingerprint = jsonEncode([
       draft.toJson(),
       fields.title,
@@ -2216,7 +2700,79 @@ class _NativeEditorSession implements WorkbenchEditorSession {
     );
     // Decoding/export can fail after a successful commit. Keep the exact operation and
     // payload so another save asks for its historical receipt, never a new mutation.
-    return owner._idea(reply);
+    final current = await owner._currentAfterCommit(targetId, reply);
+    if (current.id == targetId &&
+        identical(current.contentOwner, owner) &&
+        current.versioned == null &&
+        !current.contentDeleted &&
+        !current.historicalReceipt &&
+        current.contentRevision ==
+            RustWorkbench._revision(revision) + BigInt.one &&
+        current.contentRevision == RustWorkbench._revision(reply.revision)) {
+      _confirmed = current;
+      _confirmedSnapshot = jsonEncode(current.toJson());
+    } else {
+      _confirmed = null;
+      _confirmedSnapshot = null;
+    }
+    return current;
+  }
+
+  bool _matchesConfirmed(Idea confirmed) =>
+      identical(confirmed, _confirmed) &&
+      identical(confirmed.contentOwner, owner) &&
+      confirmed.id == targetId &&
+      confirmed.contentRevision ==
+          RustWorkbench._revision(revision) + BigInt.one &&
+      confirmed.versioned == null &&
+      !confirmed.contentDeleted &&
+      !confirmed.historicalReceipt &&
+      jsonEncode(confirmed.toJson()) == _confirmedSnapshot;
+
+  @override
+  Future<WorkbenchEditorSession> continueAfterCommit(Idea confirmed) {
+    if (_closed || _continued || owner._closingProcess != null) {
+      return Future.error(StateError('The editor is no longer current'));
+    }
+    if (_inFlight != null || !_matchesConfirmed(confirmed)) {
+      return Future.error(
+        StateError('The original edit is not confirmed at this revision'),
+      );
+    }
+    return _continuation ??= _openSuccessor(confirmed).catchError((
+      Object error,
+    ) {
+      _continuation = null;
+      throw error;
+    });
+  }
+
+  Future<WorkbenchEditorSession> _openSuccessor(Idea confirmed) async {
+    final next = await owner._openLegacyEditor(
+      targetId,
+      create: false,
+      expectedRevision: VersionedContentCodec.wireU64(
+        confirmed.contentRevision!,
+      ),
+    );
+    if (_closed ||
+        owner._closingProcess != null ||
+        !_matchesConfirmed(confirmed) ||
+        next.targetId != targetId) {
+      try {
+        await next.close();
+      } catch (_) {
+        // The old editor stays frozen; the new scope is no longer usable.
+      }
+      throw StateError('The successor editor is no longer current');
+    }
+    _continued = true;
+    try {
+      await close();
+    } catch (_) {
+      // The successor is valid; the old local session is already closed.
+    }
+    return next;
   }
 
   @override

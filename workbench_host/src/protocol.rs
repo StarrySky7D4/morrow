@@ -1,11 +1,11 @@
 //! Private binary UI transport. The child process and all paths are selected by
 //! the trusted Flutter host; plugins receive only the registered business task.
-use crate::{Result, Workbench, WorkbenchState, host_capnp as wire};
+use crate::{host_capnp as wire, Result, Workbench, WorkbenchState};
 use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-use morrow_workbench_plugin::{Action, Response, codec};
+use morrow_workbench_plugin::{codec, Action, Response};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
 #[path = "service_run_protocol.rs"]
@@ -152,6 +152,21 @@ fn requires_writable_state(action: wire::Action) -> bool {
     !matches!(
         action,
         wire::Action::Read
+            | wire::Action::InspectEditorRecoveries
+            | wire::Action::ReadEditorDraft
+            | wire::Action::ReadEditorDraftPart
+            | wire::Action::AbortEditorDraftTransfer
+            | wire::Action::ListEditorDrafts
+            | wire::Action::ExportEditorDraftAsset
+            | wire::Action::InspectEditorDraftImport
+            | wire::Action::ListEditorDraftImports
+            | wire::Action::ExportEditorDraftImport
+            | wire::Action::InspectEditorDraftImportDecision
+            | wire::Action::ListEditorDraftImportDecisions
+            | wire::Action::ListEditorDraftImportDecisionScopes
+            | wire::Action::ListEditorDraftLineages
+            | wire::Action::ReadVersioned
+            | wire::Action::PageVersioned
             | wire::Action::Page
             | wire::Action::ExportFile
             | wire::Action::BackupSnapshot
@@ -159,6 +174,7 @@ fn requires_writable_state(action: wire::Action) -> bool {
             | wire::Action::PluginCatalog
             | wire::Action::PluginInspect
             | wire::Action::ReadUiLocale
+            | wire::Action::ReadUiFont
     )
 }
 
@@ -339,6 +355,28 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
                 (false, false) => 0,
             });
         }
+        if e.downcast_ref::<crate::preferences_evidence::PreferencesRejected>()
+            .is_some()
+        {
+            out.set_ui_code(120); // Validated rejection before preference submission.
+        }
+        if let Some(no_commit) = e.downcast_ref::<crate::tasks_content::VersionedNoCommit>() {
+            // The marker is scoped to the exact direct edit request. A nested
+            // command frame or any mismatched outer identity stays unknown.
+            if let Ok(message) = validated_request(bytes, 128 * 1024) {
+                if let Ok(request) = message.get_root::<wire::request::Reader>() {
+                    if matches!(
+                        request.get_action(),
+                        Ok(wire::Action::EditTasks | wire::Action::EditCard)
+                    ) && text(request.get_id()).is_ok_and(|id| id == no_commit.card_id)
+                        && text(request.get_operation())
+                            .is_ok_and(|operation| operation == no_commit.operation)
+                    {
+                        out.set_ui_code(crate::tasks_content::VERSIONED_NO_COMMIT_UI_CODE);
+                    }
+                }
+            }
+        }
         out.set_error(e.to_string().as_str());
     }
     {
@@ -433,6 +471,29 @@ fn handle_business(
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     let action = r.get_action()?;
+    if matches!(
+        action,
+        wire::Action::ReadVersioned
+            | wire::Action::PageVersioned
+            | wire::Action::PlanTasksMigration
+            | wire::Action::MigrateTasks
+            | wire::Action::EditTasks
+            | wire::Action::EditCard
+            | wire::Action::QueryVersioned
+    ) {
+        if !text(r.get_capture_scope())?.is_empty() || !text(r.get_capture_parent())?.is_empty() {
+            return Err(
+                "versioned content does not accept incomplete editor capture metadata".into(),
+            );
+        }
+        return crate::content_api::handle(host, r, out);
+    }
+    if crate::editor_draft_staging_api::is_action(action) {
+        return crate::editor_draft_staging_api::handle(host, r, out);
+    }
+    if crate::editor_draft_api::is_action(action) {
+        return crate::editor_draft_api::handle(host, r, out);
+    }
     // This owner already runs inside a worker; scheduling here would recursively move it.
     if is_scheduler_action(action) {
         return Err("scheduler actions require the outer application".into());
@@ -562,6 +623,26 @@ fn handle_business(
                 out.reborrow(),
             );
         }
+        wire::Action::ReadUiFont | wire::Action::SaveUiFont => {
+            let (font, revision) = if action == wire::Action::SaveUiFont {
+                let value = r.get_ui_font()?;
+                let font = crate::ui_preferences::FontPreference {
+                    family: text(value.get_family())?,
+                    asset: text(value.get_asset())?,
+                    name: text(value.get_name())?,
+                };
+                let revision =
+                    host.save_ui_font(&text(r.get_operation())?, r.get_revision(), &font)?;
+                (font, revision)
+            } else {
+                host.read_ui_font()?
+            };
+            out.set_revision(revision);
+            let mut value = out.reborrow().init_ui_font();
+            value.set_family(&font.family);
+            value.set_asset(&font.asset);
+            value.set_name(&font.name);
+        }
         wire::Action::ReadUiLocale => {
             let (locale, revision) = host.read_ui_locale()?;
             out.set_payload(locale.as_bytes());
@@ -676,6 +757,13 @@ fn handle_business(
         wire::Action::BackupProtection => {
             host.backup_key(std::path::Path::new(&text(r.get_selected_path())?))?;
         }
+        wire::Action::ReadVersioned
+        | wire::Action::PageVersioned
+        | wire::Action::PlanTasksMigration
+        | wire::Action::MigrateTasks
+        | wire::Action::EditTasks
+        | wire::Action::EditCard
+        | wire::Action::QueryVersioned => unreachable!("versioned content was routed above"),
         wire::Action::Read => {
             let record = host.read(&id)?;
             out.set_revision(record.revision);
@@ -793,6 +881,21 @@ fn handle_business(
                 write_chunk(out.reborrow(), &part);
             }
         }
+        wire::Action::PendingPreferences => {
+            if let Some((operation, bytes)) = host.pending_preferences()? {
+                let part = host.transfers.open(bytes, crate::now(host.start))?;
+                write_chunk(out.reborrow(), &part);
+                out.set_preferences_operation(operation.as_str());
+                out.set_preferences_committed(host.preferences_proposal_committed()?);
+                out.set_preferences_conflict(host.preferences_proposal_conflict()?);
+            }
+        }
+        wire::Action::AcknowledgePreferences => {
+            host.acknowledge_preferences(&text(r.get_operation())?, r.get_sha256()?)?;
+        }
+        wire::Action::AbandonPreferences => {
+            host.abandon_preferences(&text(r.get_operation())?, r.get_sha256()?)?;
+        }
         wire::Action::ReadPreferencesPart => {
             let part = host.transfers.read(
                 &text(r.get_transfer())?,
@@ -827,7 +930,7 @@ fn handle_business(
         wire::Action::FinishPreferences => {
             let token = text(r.get_transfer())?;
             let (operation, bytes) = host.transfers.finish(&token, crate::now(host.start))?;
-            let bytes = host.save_preferences(&operation, bytes)?;
+            let bytes = host.submit_preferences(&operation, bytes)?;
             // A committed result is acknowledged by its full digest; download is a separate snapshot.
             out.set_sha256(&Sha256::digest(&bytes));
             out.set_total_length(bytes.len() as u64);
@@ -841,7 +944,7 @@ fn handle_business(
             if input.len() > 65536 {
                 return Err("inline preferences budget".into());
             }
-            out.set_payload(&host.save_preferences(&text(r.get_operation())?, input.to_vec())?);
+            out.set_payload(&host.submit_preferences(&text(r.get_operation())?, input.to_vec())?);
         }
         wire::Action::OpenCaptureScope => {
             let scope = host.open_capture_scope(&id, r.get_revision())?;
@@ -885,6 +988,97 @@ fn handle_business(
                 return Err("paste upload identity mismatch".into());
             }
             host.record_paste(&text(upload.get_scope())?, event)?;
+        }
+        wire::Action::InspectEditorRecoveries => {
+            let entries = if id.is_empty() {
+                host.list_editor_recoveries()?
+            } else {
+                host.editor_recovery(&id)?
+                    .filter(|v| v.active)
+                    .into_iter()
+                    .collect()
+            };
+            let mut list = out
+                .reborrow()
+                .init_editor_recoveries(entries.len().try_into()?);
+            for (index, value) in entries.iter().enumerate() {
+                let mut row = list.reborrow().get(index as u32);
+                row.set_id(&value.card_id);
+                row.set_operation(&value.operation_id);
+                row.set_digest(&value.evidence_digest);
+                row.set_source_revision(value.source_revision);
+                row.set_current_revision(value.current_revision);
+                row.set_title(&value.title.chars().take(256).collect::<String>());
+                row.set_status(match value.status {
+                    crate::editor_recovery::EditorRecoveryStatus::Pending => 0,
+                    crate::editor_recovery::EditorRecoveryStatus::Committed => 1,
+                    crate::editor_recovery::EditorRecoveryStatus::Conflict => 2,
+                });
+            }
+        }
+        wire::Action::ResumeEditorRecovery => {
+            let operation = text(r.get_operation())?;
+            let observed = host.editor_recovery(&id)?.ok_or("editor recovery absent")?;
+            if observed.source_revision != r.get_revision() {
+                return Err("editor recovery source revision changed".into());
+            }
+            let result = host.resume_editor_recovery(&id, &operation, r.get_sha256()?)?;
+            let record = crate::versioned_record::VersionedRecord::Tasks(result.committed);
+            out.set_revision(result.receipt.revision);
+            out.set_payload(&crate::content_api::encode_envelope(
+                crate::content_api_capnp::EnvelopeKind::Commit,
+                &id,
+                &operation,
+                observed.source_revision,
+                result.receipt.revision,
+                result.repeated,
+                Some(&record),
+            )?);
+        }
+        wire::Action::AcknowledgeEditorRecovery => {
+            host.acknowledge_editor_recovery(&id, &text(r.get_operation())?, r.get_sha256()?)?;
+        }
+        wire::Action::AbandonEditorRecovery => {
+            let observed = host.editor_recovery(&id)?.ok_or("editor recovery absent")?;
+            if observed.source_revision != r.get_revision() {
+                return Err("editor recovery source revision changed".into());
+            }
+            host.abandon_editor_recovery(&id, &text(r.get_operation())?, r.get_sha256()?)?;
+        }
+        wire::Action::FinishCapturedCard => {
+            let (operation, bytes) = host
+                .capture_transfers
+                .finish(&text(r.get_transfer())?, crate::now(host.start))?;
+            let message = editor_message(&bytes)?;
+            let upload = message.get_root::<wire::captured_card_save::Reader>()?;
+            if text(upload.get_operation())? != operation {
+                return Err("versioned save upload identity mismatch".into());
+            }
+            let target = text(upload.get_target())?;
+            let scope = text(upload.get_scope())?;
+            let revision = upload.get_revision();
+            if revision == 0 || scope.is_empty() {
+                return Err("versioned captured edit requires an existing editor baseline".into());
+            }
+            let crate::cards_content::CardAction::Edit(fields) =
+                crate::content_api::card_edit(upload.get_payload()?)?
+            else {
+                return Err("captured card save must be an Edit".into());
+            };
+            let snapshot = editor_snapshot(upload.get_snapshot()?)?;
+            let result =
+                host.edit_card_captured(&operation, &target, revision, &fields, &scope, snapshot)?;
+            let record = crate::versioned_record::VersionedRecord::Tasks(result.committed);
+            out.set_revision(result.receipt.revision);
+            out.set_payload(&crate::content_api::encode_envelope(
+                crate::content_api_capnp::EnvelopeKind::Commit,
+                &target,
+                &operation,
+                revision,
+                result.receipt.revision,
+                result.repeated,
+                Some(&record),
+            )?);
         }
         wire::Action::FinishCapturedSave => {
             let (operation, bytes) = host
@@ -946,7 +1140,32 @@ fn handle_business(
         wire::Action::CommandFrameBegin
         | wire::Action::CommandFrameAppend
         | wire::Action::CommandFrameFinish
-        | wire::Action::CommandFrameAbort => unreachable!(),
+        | wire::Action::CommandFrameAbort
+        | wire::Action::BeginEditorDraft
+        | wire::Action::AppendEditorDraft
+        | wire::Action::FinishEditorDraft
+        | wire::Action::AbortEditorDraftTransfer
+        | wire::Action::ReadEditorDraft
+        | wire::Action::ReadEditorDraftPart
+        | wire::Action::ListEditorDrafts
+        | wire::Action::DiscardEditorDraft
+        | wire::Action::ImportEditorDraftAsset
+        | wire::Action::ExportEditorDraftAsset
+        | wire::Action::BeginEditorDraftImport
+        | wire::Action::CompleteEditorDraftImport
+        | wire::Action::InspectEditorDraftImport
+        | wire::Action::ListEditorDraftImports
+        | wire::Action::ExportEditorDraftImport
+        | wire::Action::AbandonEditorDraftImport
+        | wire::Action::ReconcileEditorDraftImports
+        | wire::Action::PrepareEditorDraftImportDecision
+        | wire::Action::InspectEditorDraftImportDecision
+        | wire::Action::ListEditorDraftImportDecisions
+        | wire::Action::CancelEditorDraftImportDecision
+        | wire::Action::ListEditorDraftImportDecisionScopes
+        | wire::Action::FinishEditorDraftHandoff
+        | wire::Action::RetireEditorDraftParent
+        | wire::Action::ListEditorDraftLineages => unreachable!(),
     }
     Ok(())
 }
@@ -1204,4 +1423,46 @@ fn endpoint_reply(
         methods.set(i as u32, method);
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod editor_draft_route_tests {
+    use super::*;
+
+    #[test]
+    fn draft_read_export_and_transfer_abort_remain_available_read_only() {
+        for action in [
+            wire::Action::ReadEditorDraft,
+            wire::Action::ReadEditorDraftPart,
+            wire::Action::ListEditorDrafts,
+            wire::Action::ExportEditorDraftAsset,
+            wire::Action::AbortEditorDraftTransfer,
+            wire::Action::InspectEditorDraftImport,
+            wire::Action::ListEditorDraftImports,
+            wire::Action::ExportEditorDraftImport,
+            wire::Action::InspectEditorDraftImportDecision,
+            wire::Action::ListEditorDraftImportDecisions,
+            wire::Action::ListEditorDraftImportDecisionScopes,
+            wire::Action::ListEditorDraftLineages,
+        ] {
+            assert!(!requires_writable_state(action));
+        }
+        for action in [
+            wire::Action::BeginEditorDraft,
+            wire::Action::AppendEditorDraft,
+            wire::Action::FinishEditorDraft,
+            wire::Action::DiscardEditorDraft,
+            wire::Action::ImportEditorDraftAsset,
+            wire::Action::BeginEditorDraftImport,
+            wire::Action::CompleteEditorDraftImport,
+            wire::Action::AbandonEditorDraftImport,
+            wire::Action::ReconcileEditorDraftImports,
+            wire::Action::PrepareEditorDraftImportDecision,
+            wire::Action::CancelEditorDraftImportDecision,
+            wire::Action::FinishEditorDraftHandoff,
+            wire::Action::RetireEditorDraftParent,
+        ] {
+            assert!(requires_writable_state(action));
+        }
+    }
 }

@@ -1,4 +1,5 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
+import 'preferences_save_failure.dart';
 
 /// Compatibility display mapping for trusted host v1 diagnostics only.
 /// Do not apply this to plugin literals or user content.
@@ -27,6 +28,12 @@ String? hostStorageNotice(AppLocalizations l, String detail) =>
 
 /// Present a known host failure without leaking paths, plugin payloads or keys.
 String? storageFailureNotice(AppLocalizations l, Object error) {
+  if (error is PreferencesSaveFailure) {
+    if (error.effect == PreferencesEffect.notSubmitted) return l.mainSaveFailed;
+    return error.effect == PreferencesEffect.locallyCommitted
+        ? l.mainSaveReadbackPending
+        : l.mainSaveConnectionUnknown;
+  }
   if (error is! StateError) return null;
   final detail = error.message.toString();
   return hostStorageNotice(l, detail) ??

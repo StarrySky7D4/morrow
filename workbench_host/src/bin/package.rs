@@ -7,6 +7,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let module = std::fs::read(args.next().ok_or("module")?)?;
     let destination = args.next().ok_or("archive")?;
     let handlers = [
+        (
+            "workbench.query.v2",
+            "morrow.workbench.query.request.v2",
+            "morrow.workbench.query.response.v2",
+        ),
+        (
+            "workbench.cards.v2",
+            "morrow.workbench.cards.request.v2",
+            "morrow.workbench.cards.response.v2",
+        ),
+        (
+            "workbench.tasks.v2",
+            "morrow.workbench.tasks.request.v2",
+            "morrow.workbench.tasks.response.v2",
+        ),
         ("ui.form", "text.utf8", "morrow.ui.document.v1"),
         ("ui.edit", "morrow.ui.event.v1", "morrow.ui.document.v1"),
         (

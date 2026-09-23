@@ -80,6 +80,48 @@ enum Action {
   tlsIdentityPage,
   tlsIdentitySave,
   tlsIdentityDisable,
+  readUiFont,
+  saveUiFont,
+  pendingPreferences,
+  acknowledgePreferences,
+  abandonPreferences,
+  readVersioned,
+  pageVersioned,
+  planTasksMigration,
+  migrateTasks,
+  editTasks,
+  editCard,
+  queryVersioned,
+  finishCapturedCard,
+  inspectEditorRecoveries,
+  resumeEditorRecovery,
+  acknowledgeEditorRecovery,
+  abandonEditorRecovery,
+  beginEditorDraft,
+  appendEditorDraft,
+  finishEditorDraft,
+  abortEditorDraftTransfer,
+  readEditorDraft,
+  readEditorDraftPart,
+  listEditorDrafts,
+  discardEditorDraft,
+  importEditorDraftAsset,
+  exportEditorDraftAsset,
+  beginEditorDraftImport,
+  completeEditorDraftImport,
+  inspectEditorDraftImport,
+  listEditorDraftImports,
+  exportEditorDraftImport,
+  abandonEditorDraftImport,
+  reconcileEditorDraftImports,
+  prepareEditorDraftImportDecision,
+  inspectEditorDraftImportDecision,
+  listEditorDraftImportDecisions,
+  cancelEditorDraftImportDecision,
+  listEditorDraftImportDecisionScopes,
+  finishEditorDraftHandoff,
+  retireEditorDraftParent,
+  listEditorDraftLineages,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -190,6 +232,144 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'tlsIdentityPage', codeOrder: 72, ordinal: 72),
     EnumerantSchemaInfo(name: 'tlsIdentitySave', codeOrder: 73, ordinal: 73),
     EnumerantSchemaInfo(name: 'tlsIdentityDisable', codeOrder: 74, ordinal: 74),
+    EnumerantSchemaInfo(name: 'readUiFont', codeOrder: 75, ordinal: 75),
+    EnumerantSchemaInfo(name: 'saveUiFont', codeOrder: 76, ordinal: 76),
+    EnumerantSchemaInfo(name: 'pendingPreferences', codeOrder: 77, ordinal: 77),
+    EnumerantSchemaInfo(
+      name: 'acknowledgePreferences',
+      codeOrder: 78,
+      ordinal: 78,
+    ),
+    EnumerantSchemaInfo(name: 'abandonPreferences', codeOrder: 79, ordinal: 79),
+    EnumerantSchemaInfo(name: 'readVersioned', codeOrder: 80, ordinal: 80),
+    EnumerantSchemaInfo(name: 'pageVersioned', codeOrder: 81, ordinal: 81),
+    EnumerantSchemaInfo(name: 'planTasksMigration', codeOrder: 82, ordinal: 82),
+    EnumerantSchemaInfo(name: 'migrateTasks', codeOrder: 83, ordinal: 83),
+    EnumerantSchemaInfo(name: 'editTasks', codeOrder: 84, ordinal: 84),
+    EnumerantSchemaInfo(name: 'editCard', codeOrder: 85, ordinal: 85),
+    EnumerantSchemaInfo(name: 'queryVersioned', codeOrder: 86, ordinal: 86),
+    EnumerantSchemaInfo(name: 'finishCapturedCard', codeOrder: 87, ordinal: 87),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorRecoveries',
+      codeOrder: 88,
+      ordinal: 88,
+    ),
+    EnumerantSchemaInfo(
+      name: 'resumeEditorRecovery',
+      codeOrder: 89,
+      ordinal: 89,
+    ),
+    EnumerantSchemaInfo(
+      name: 'acknowledgeEditorRecovery',
+      codeOrder: 90,
+      ordinal: 90,
+    ),
+    EnumerantSchemaInfo(
+      name: 'abandonEditorRecovery',
+      codeOrder: 91,
+      ordinal: 91,
+    ),
+    EnumerantSchemaInfo(name: 'beginEditorDraft', codeOrder: 92, ordinal: 92),
+    EnumerantSchemaInfo(name: 'appendEditorDraft', codeOrder: 93, ordinal: 93),
+    EnumerantSchemaInfo(name: 'finishEditorDraft', codeOrder: 94, ordinal: 94),
+    EnumerantSchemaInfo(
+      name: 'abortEditorDraftTransfer',
+      codeOrder: 95,
+      ordinal: 95,
+    ),
+    EnumerantSchemaInfo(name: 'readEditorDraft', codeOrder: 96, ordinal: 96),
+    EnumerantSchemaInfo(
+      name: 'readEditorDraftPart',
+      codeOrder: 97,
+      ordinal: 97,
+    ),
+    EnumerantSchemaInfo(name: 'listEditorDrafts', codeOrder: 98, ordinal: 98),
+    EnumerantSchemaInfo(name: 'discardEditorDraft', codeOrder: 99, ordinal: 99),
+    EnumerantSchemaInfo(
+      name: 'importEditorDraftAsset',
+      codeOrder: 100,
+      ordinal: 100,
+    ),
+    EnumerantSchemaInfo(
+      name: 'exportEditorDraftAsset',
+      codeOrder: 101,
+      ordinal: 101,
+    ),
+    EnumerantSchemaInfo(
+      name: 'beginEditorDraftImport',
+      codeOrder: 102,
+      ordinal: 102,
+    ),
+    EnumerantSchemaInfo(
+      name: 'completeEditorDraftImport',
+      codeOrder: 103,
+      ordinal: 103,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorDraftImport',
+      codeOrder: 104,
+      ordinal: 104,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftImports',
+      codeOrder: 105,
+      ordinal: 105,
+    ),
+    EnumerantSchemaInfo(
+      name: 'exportEditorDraftImport',
+      codeOrder: 106,
+      ordinal: 106,
+    ),
+    EnumerantSchemaInfo(
+      name: 'abandonEditorDraftImport',
+      codeOrder: 107,
+      ordinal: 107,
+    ),
+    EnumerantSchemaInfo(
+      name: 'reconcileEditorDraftImports',
+      codeOrder: 108,
+      ordinal: 108,
+    ),
+    EnumerantSchemaInfo(
+      name: 'prepareEditorDraftImportDecision',
+      codeOrder: 109,
+      ordinal: 109,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorDraftImportDecision',
+      codeOrder: 110,
+      ordinal: 110,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftImportDecisions',
+      codeOrder: 111,
+      ordinal: 111,
+    ),
+    EnumerantSchemaInfo(
+      name: 'cancelEditorDraftImportDecision',
+      codeOrder: 112,
+      ordinal: 112,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftImportDecisionScopes',
+      codeOrder: 113,
+      ordinal: 113,
+    ),
+    EnumerantSchemaInfo(
+      name: 'finishEditorDraftHandoff',
+      codeOrder: 114,
+      ordinal: 114,
+    ),
+    EnumerantSchemaInfo(
+      name: 'retireEditorDraftParent',
+      codeOrder: 115,
+      ordinal: 115,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftLineages',
+      codeOrder: 116,
+      ordinal: 116,
+    ),
   ],
 );
 
@@ -318,6 +498,11 @@ final class RequestReader extends StructReader {
   ServiceTlsSelectionReader? get serviceTls => getStructFieldWith(
     38,
     (r) => ServiceTlsSelectionReader(r, capabilities: capabilityTable),
+  );
+
+  UiFontReader? get uiFont => getStructFieldWith(
+    39,
+    (r) => UiFontReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -543,6 +728,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasServiceTls() => hasPointerField(38);
+
+  UiFontBuilder initUiFont() {
+    return initStructFieldWith(39, (r) => UiFontBuilder(r), 0, 3);
+  }
+
+  bool hasUiFont() => hasPointerField(39);
 }
 
 final class _RequestFactory
@@ -552,7 +743,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 39;
+  int get ptrWords => 40;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -569,7 +760,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 39,
+  pointerWords: 40,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -971,6 +1162,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0xf1d1c57be59caa45),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'uiFont',
+      codeOrder: 50,
+      body: SlotFieldSchemaInfo(
+        offset: 39,
+        type: StructRefTypeSchemaInfo(0x8ff59f17fc3bb080),
+      ),
+    ),
   ],
 );
 
@@ -1097,6 +1296,23 @@ final class ResponseReader extends StructReader {
       getStructListFieldWith(
         29,
         (r) => TlsIdentityInfoReader(r, capabilities: capabilityTable),
+      );
+
+  UiFontReader? get uiFont => getStructFieldWith(
+    30,
+    (r) => UiFontReader(r, capabilities: capabilityTable),
+  );
+
+  String? get preferencesOperation => getTextField(31);
+
+  bool get preferencesCommitted => getBoolField(20);
+
+  bool get preferencesConflict => getBoolField(21);
+
+  ListReader<EditorRecoveryReader>? get editorRecoveries =>
+      getStructListFieldWith(
+        32,
+        (r) => EditorRecoveryReader(r, capabilities: capabilityTable),
       );
 }
 
@@ -1315,6 +1531,34 @@ final class ResponseBuilder extends StructBuilder {
       1,
     );
   }
+
+  UiFontBuilder initUiFont() {
+    return initStructFieldWith(30, (r) => UiFontBuilder(r), 0, 3);
+  }
+
+  bool hasUiFont() => hasPointerField(30);
+
+  set preferencesOperation(String? v) {
+    setTextField(31, v);
+  }
+
+  set preferencesCommitted(bool v) {
+    setBoolField(20, v);
+  }
+
+  set preferencesConflict(bool v) {
+    setBoolField(21, v);
+  }
+
+  ListBuilder<EditorRecoveryBuilder> initEditorRecoveries(int length) {
+    return initStructListFieldWith(
+      32,
+      length,
+      (r) => EditorRecoveryBuilder(r),
+      3,
+      4,
+    );
+  }
 }
 
 final class _ResponseFactory
@@ -1324,7 +1568,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 30;
+  int get ptrWords => 33;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1341,7 +1585,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 30,
+  pointerWords: 33,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1669,6 +1913,46 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 29,
         type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xcf706275cfdfc99d)),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'uiFont',
+      codeOrder: 41,
+      body: SlotFieldSchemaInfo(
+        offset: 30,
+        type: StructRefTypeSchemaInfo(0x8ff59f17fc3bb080),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'preferencesOperation',
+      codeOrder: 42,
+      body: SlotFieldSchemaInfo(
+        offset: 31,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'preferencesCommitted',
+      codeOrder: 43,
+      body: SlotFieldSchemaInfo(
+        offset: 20,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'preferencesConflict',
+      codeOrder: 44,
+      body: SlotFieldSchemaInfo(
+        offset: 21,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'editorRecoveries',
+      codeOrder: 45,
+      body: SlotFieldSchemaInfo(
+        offset: 32,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xee7e7702bb7039cc)),
       ),
     ),
   ],
@@ -5986,3 +6270,367 @@ const StructSchemaInfo tlsIdentityInfoSchema = StructSchemaInfo(
 );
 
 final tlsIdentityInfoFactory = _TlsIdentityInfoFactory();
+
+final class UiFontReader extends StructReader {
+  UiFontReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = uiFontSchema;
+
+  String? get family => getTextField(0);
+
+  String? get asset => getTextField(1);
+
+  String? get name => getTextField(2);
+}
+
+final class UiFontBuilder extends StructBuilder {
+  UiFontBuilder(super.raw);
+
+  @override
+  UiFontReader asReader() => UiFontReader(rawToReader());
+
+  set family(String? v) {
+    setTextField(0, v);
+  }
+
+  set asset(String? v) {
+    setTextField(1, v);
+  }
+
+  set name(String? v) {
+    setTextField(2, v);
+  }
+}
+
+final class _UiFontFactory extends StructFactory<UiFontReader, UiFontBuilder> {
+  @override
+  StructSchemaInfo get schema => uiFontSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 3;
+  @override
+  UiFontReader fromRawReader(RawStructReader r) => UiFontReader(r);
+  @override
+  UiFontReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => UiFontReader(r, capabilities: capabilities);
+  @override
+  UiFontBuilder fromRawBuilder(RawStructBuilder r) => UiFontBuilder(r);
+}
+
+const StructSchemaInfo uiFontSchema = StructSchemaInfo(
+  id: 0x8ff59f17fc3bb080,
+  displayName: 'host.capnp:UiFont',
+  shortName: 'UiFont',
+  dataWords: 0,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'family',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'asset',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'name',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final uiFontFactory = _UiFontFactory();
+
+final class CapturedCardSaveReader extends StructReader {
+  CapturedCardSaveReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = capturedCardSaveSchema;
+
+  String? get scope => getTextField(0);
+
+  String? get operation => getTextField(1);
+
+  String? get target => getTextField(2);
+
+  int get revision => getUint64Field(0);
+
+  Uint8List? get payload => getDataField(3);
+
+  EditorSnapshotReader? get snapshot => getStructFieldWith(
+    4,
+    (r) => EditorSnapshotReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class CapturedCardSaveBuilder extends StructBuilder {
+  CapturedCardSaveBuilder(super.raw);
+
+  @override
+  CapturedCardSaveReader asReader() => CapturedCardSaveReader(rawToReader());
+
+  set scope(String? v) {
+    setTextField(0, v);
+  }
+
+  set operation(String? v) {
+    setTextField(1, v);
+  }
+
+  set target(String? v) {
+    setTextField(2, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set payload(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  EditorSnapshotBuilder initSnapshot() {
+    return initStructFieldWith(4, (r) => EditorSnapshotBuilder(r), 0, 6);
+  }
+
+  bool hasSnapshot() => hasPointerField(4);
+}
+
+final class _CapturedCardSaveFactory
+    extends StructFactory<CapturedCardSaveReader, CapturedCardSaveBuilder> {
+  @override
+  StructSchemaInfo get schema => capturedCardSaveSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 5;
+  @override
+  CapturedCardSaveReader fromRawReader(RawStructReader r) =>
+      CapturedCardSaveReader(r);
+  @override
+  CapturedCardSaveReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => CapturedCardSaveReader(r, capabilities: capabilities);
+  @override
+  CapturedCardSaveBuilder fromRawBuilder(RawStructBuilder r) =>
+      CapturedCardSaveBuilder(r);
+}
+
+const StructSchemaInfo capturedCardSaveSchema = StructSchemaInfo(
+  id: 0xc948da16ec9a6e74,
+  displayName: 'host.capnp:CapturedCardSave',
+  shortName: 'CapturedCardSave',
+  dataWords: 1,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'scope',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operation',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'target',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'payload',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'snapshot',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: StructRefTypeSchemaInfo(0xc12df185fc53d9c0),
+      ),
+    ),
+  ],
+);
+
+final capturedCardSaveFactory = _CapturedCardSaveFactory();
+
+final class EditorRecoveryReader extends StructReader {
+  EditorRecoveryReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = editorRecoverySchema;
+
+  String? get id => getTextField(0);
+
+  String? get operation => getTextField(1);
+
+  Uint8List? get digest => getDataField(2);
+
+  int get sourceRevision => getUint64Field(0);
+
+  int get currentRevision => getUint64Field(8);
+
+  String? get title => getTextField(3);
+
+  int get status => getUint16Field(16);
+}
+
+final class EditorRecoveryBuilder extends StructBuilder {
+  EditorRecoveryBuilder(super.raw);
+
+  @override
+  EditorRecoveryReader asReader() => EditorRecoveryReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set operation(String? v) {
+    setTextField(1, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set sourceRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set currentRevision(int v) {
+    setUint64Field(8, v);
+  }
+
+  set title(String? v) {
+    setTextField(3, v);
+  }
+
+  set status(int v) {
+    setUint16Field(16, v);
+  }
+}
+
+final class _EditorRecoveryFactory
+    extends StructFactory<EditorRecoveryReader, EditorRecoveryBuilder> {
+  @override
+  StructSchemaInfo get schema => editorRecoverySchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 4;
+  @override
+  EditorRecoveryReader fromRawReader(RawStructReader r) =>
+      EditorRecoveryReader(r);
+  @override
+  EditorRecoveryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EditorRecoveryReader(r, capabilities: capabilities);
+  @override
+  EditorRecoveryBuilder fromRawBuilder(RawStructBuilder r) =>
+      EditorRecoveryBuilder(r);
+}
+
+const StructSchemaInfo editorRecoverySchema = StructSchemaInfo(
+  id: 0xee7e7702bb7039cc,
+  displayName: 'host.capnp:EditorRecovery',
+  shortName: 'EditorRecovery',
+  dataWords: 3,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operation',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sourceRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'currentRevision',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'title',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'status',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final editorRecoveryFactory = _EditorRecoveryFactory();

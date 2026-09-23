@@ -382,6 +382,27 @@ impl CardRecord {
         }
         Ok(edited)
     }
+    /// Only the baseline-bound migration proposal may change the format discriminator.
+    pub(crate) fn with_migrated_content(
+        &self,
+        target_format_version: u32,
+        body: &[u8],
+        preview: &str,
+    ) -> Result<Self> {
+        let summary = self.summary();
+        if target_format_version <= summary.format_version {
+            return Err(Error::Invalid("forward migration required"));
+        }
+        let mut edited = self.with_content(summary.revision, &summary.title, body, preview)?;
+        edited
+            .message
+            .set_field_by_name("format_version", Value::U32(target_format_version));
+        validate(&edited.message)?;
+        if edited.encode().len() > MAX_RECORD_BYTES {
+            return Err(Error::Limit);
+        }
+        Ok(edited)
+    }
     /// Pure edit proposal. This does not persist, authorize, audit, or deduplicate.
     pub fn with_title(&self, expected_revision: u64, new_title: &str) -> Result<Self> {
         if expected_revision != revision(&self.message) {

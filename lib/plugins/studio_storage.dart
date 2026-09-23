@@ -3,13 +3,15 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:capnproto_dart/capnproto_dart.dart';
 import '../storage.dart';
+import '../save_recovery.dart';
+import '../fonts/font_choice.dart';
 import 'workbench_native.dart';
 import 'generated/studio.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 
 /// Presentation maps are temporary Flutter adapters. Only typed preferences go
 /// across the boundary; individual ideas already belong to core transactions.
-class RustStudioStorage implements StudioStorage {
+class RustStudioStorage implements StudioStorage, SaveRecoveryStorage {
   RustStudioStorage._(this.backend, this._snapshot);
   final RustWorkbench backend;
   Map<String, dynamic> _snapshot;
@@ -23,45 +25,97 @@ class RustStudioStorage implements StudioStorage {
             'background': 'ambient',
           }
         : decodePreferences(bytes);
-    final ideas = await backend.load();
+    final ideas = await backend.loadWorkspaceContent();
     return RustStudioStorage._(backend, {
       ...config,
       'uiLocale': await backend.readUiLocale(),
-      'ideas': ideas.map((i) => i.toJson()).toList(),
+      'uiFont': (await backend.readUiFont()).toJson(),
+      'ideas': <Map<String, dynamic>>[],
+      'workspaceIdeas': List.unmodifiable(ideas),
     });
   }
 
   @override
   Map<String, dynamic> read() => _copyValue(_snapshot) as Map<String, dynamic>;
   Future<void> _pending = Future.value();
+  int _writeFailureEpoch = 0;
+  @override
+  Future<SaveRecovery?> inspectSaveRecovery() =>
+      _pending.then((_) => backend.inspectSaveRecovery());
+
+  @override
+  Future<void> resolveSaveRecovery(
+    SaveRecovery observed, {
+    required bool abandon,
+  }) {
+    final result = _pending.then((_) async {
+      _writeFailureEpoch++; // Already queued drafts are not explicit decisions.
+      final saved = await backend.resolveSaveRecovery(
+        observed,
+        abandon: abandon,
+      );
+      // Only refresh the confirmed snapshot. The application's newer draft and
+      // separately confirmed locale/font must not be replaced by this receipt.
+      _snapshot = {
+        ..._snapshot,
+        ...decodePreferences(saved ?? encodePreferences({})),
+      };
+    });
+    _pending = result.catchError((Object _) {});
+    return result;
+  }
+
   @override
   Future<void> write(Map<String, dynamic> data) {
+    final admittedEpoch = _writeFailureEpoch;
     // Freeze this caller's proposal before any queued or asynchronous work.
     // In particular, changing a track/completion list after write() must not
     // change the original request or the confirmed presentation snapshot.
     late final Uint8List encoded;
     late final String locale;
+    late final FontChoice font;
     late final dynamic ideas;
+    late final dynamic workspaceIdeas;
     try {
       encoded = encodePreferences(data);
       locale = data['uiLocale'] as String? ?? 'system';
+      font = FontChoice.fromJson(data['uiFont']);
       ideas = _copyValue(data['ideas']);
+      workspaceIdeas = data['workspaceIdeas'];
     } catch (error, stack) {
       return Future.error(error, stack);
     }
     final result = _pending.then((_) async {
-      await backend.saveUiLocale(locale);
-      // Locale remains writable without a guest plugin. Preserve its confirmed
-      // value even if an independent appearance write subsequently fails.
-      _snapshot = {..._snapshot, 'uiLocale': locale};
-      final saved = listEquals(encoded, encodePreferences(_snapshot))
-          ? encoded
-          : await backend.savePreferences(encoded);
-      _snapshot = {
-        ...decodePreferences(saved),
-        'uiLocale': locale,
-        'ideas': ideas,
-      };
+      try {
+        await backend.saveUiLocale(locale);
+        // Locale remains writable without a guest plugin. Preserve its confirmed
+        // value even if an independent appearance write subsequently fails.
+        _snapshot = {..._snapshot, 'uiLocale': locale};
+        await backend.saveUiFont(font);
+        _snapshot = {..._snapshot, 'uiFont': font.toJson()};
+        if (admittedEpoch != _writeFailureEpoch &&
+            (backend.pendingPreferencesOperation != null ||
+                !listEquals(encoded, encodePreferences(_snapshot)))) {
+          throw StateError(
+            'An earlier preferences proposal requires explicit reconciliation',
+          );
+        }
+        final saved =
+            backend.pendingPreferencesOperation == null &&
+                listEquals(encoded, encodePreferences(_snapshot))
+            ? encoded
+            : await backend.savePreferences(encoded);
+        _snapshot = {
+          ...decodePreferences(saved),
+          'uiLocale': locale,
+          'uiFont': font.toJson(),
+          'ideas': ideas,
+          'workspaceIdeas': ?workspaceIdeas,
+        };
+      } catch (_) {
+        _writeFailureEpoch++;
+        rethrow;
+      }
     });
     _pending = result.catchError((Object _) {});
     return result;
@@ -104,6 +158,7 @@ Uint8List encodePreferences(Map<String, dynamic> data) {
   a.theme = data['theme'] as String? ?? 'white';
   a.glass = data['glass'] as String? ?? 'frosted';
   a.background = data['background'] as String? ?? 'ambient';
+  a.visualStyle = data['visualStyle'] as String? ?? 'flat';
   a.solidTint = data['solidTint'] as int? ?? 0;
   a.opacity = (data['frostedOpacity'] as num?)?.toDouble() ?? 0.76;
   a.cornerRadius = (data['cornerRadius'] as num?)?.toDouble() ?? 20;
@@ -166,6 +221,7 @@ Uint8List encodePreferences(Map<String, dynamic> data) {
     out.hasColor = value['color'] != null;
     out.color = value['color'] as int? ?? 0;
     out.mode = value['mode'] as String? ?? '';
+    out.followComponent = value['followComponent'] as String? ?? '';
     out.cornerRadius = (value['cornerRadius'] as num?)?.toDouble() ?? 0;
     out.hasCornerRadius = value['cornerRadius'] != null;
   }
@@ -206,12 +262,15 @@ Map<String, dynamic> decodePreferences(Uint8List bytes) {
           'opacity': c.opacity,
           'color': c.hasColor ? c.color : null,
           if ((c.mode ?? '').isNotEmpty) 'mode': c.mode,
+          if ((c.followComponent ?? '').isNotEmpty)
+            'followComponent': c.followComponent,
           if (c.hasCornerRadius) 'cornerRadius': c.cornerRadius,
         },
     },
     'theme': a.theme,
     'glass': a.glass,
     'background': a.background,
+    'visualStyle': (a.visualStyle ?? '').isEmpty ? 'flat' : a.visualStyle,
     'solidTint': a.solidTint,
     'frostedOpacity': a.opacity,
     'cornerRadius': a.cornerRadius,

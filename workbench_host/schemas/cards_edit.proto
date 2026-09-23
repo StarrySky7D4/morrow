@@ -1,0 +1,25 @@
+syntax = "proto3";
+package morrow.workbench.cards_edit.v1;
+
+// Frozen trusted host facts. The source Card retains its unknown fields;
+// request is the exact plugin input, never reconstructed from current state.
+message Facts {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  bytes source_card = 3;
+  bytes package_sha256 = 4;
+  bytes request = 5;
+  repeated Attachment attachments = 6;
+  Undo undo = 7;
+}
+message Attachment {
+  string id = 1;
+  string display_name = 2;
+  string media_type = 3;
+  uint64 byte_length = 4;
+  bytes sha256 = 5;
+}
+message Undo {
+  uint64 revision = 1;
+  uint64 deadline = 2;
+}

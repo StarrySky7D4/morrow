@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'session_view_state.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'service_run_control.dart';
@@ -35,7 +36,8 @@ class ServiceTlsPicker extends StatefulWidget {
   State<ServiceTlsPicker> createState() => _ServiceTlsPickerState();
 }
 
-class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
+class _ServiceTlsPickerState extends State<ServiceTlsPicker>
+    with SessionViewState<ServiceTlsPicker> {
   DateTime get _now => widget.now?.call() ?? DateTime.now();
   final _localDraft = ServiceTlsDraft();
   ServiceTlsDraft get _draft => widget.draft ?? _localDraft;
@@ -60,15 +62,38 @@ class _ServiceTlsPickerState extends State<ServiceTlsPicker> {
         widget.onChanged(_accepted ? _checked : null);
       });
     }
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      final validity = _checked?.validity;
-      if (validity == null) return;
-      if (_accepted && !validity.validAt(_now)) {
-        _accepted = false;
-        widget.onChanged(null);
-      }
-      setState(() {});
-    });
+    _scheduleDisplay();
+  }
+
+  void _checkValidity() {
+    final validity = _checked?.validity;
+    if (validity == null) return;
+    if (_accepted && !validity.validAt(_now)) {
+      _accepted = false;
+      widget.onChanged(null);
+    }
+    markSessionViewDirty();
+  }
+
+  void _scheduleDisplay() {
+    _timer?.cancel();
+    _timer = null;
+    if (sessionViewActive) {
+      _timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (_) => _checkValidity(),
+      );
+    }
+  }
+
+  @override
+  void sessionViewVisibilityChanged() {
+    _scheduleDisplay();
+    if (sessionViewActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && sessionViewActive) _checkValidity();
+      });
+    }
   }
 
   @override

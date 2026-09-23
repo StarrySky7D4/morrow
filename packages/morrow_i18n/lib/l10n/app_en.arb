@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "Quick capture",
   "mainComponentSearch": "Search bar",
   "mainComponentSettings": "Components and cards · Settings",
+  "mainContentCommittedRefreshFailed": "The operation was committed, but the latest content could not be loaded. Refresh to view it.",
   "mainContentProtection": "Content protection",
   "mainContentRead": "Content read",
   "mainContentReadFiles": "Content read; {count} attachments preserved",
@@ -916,9 +1001,36 @@
   "mainDeleted": "Deleted “{title}”",
   "mainDiagnosticDetails": "Diagnostic details",
   "mainDone": "Done",
+  "mainDraftImportRecoveryCancelBody": "After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.",
+  "mainDraftImportRecoveryCancelDecision": "Cancel abandonment request",
+  "mainDraftImportRecoveryCancelTitle": "Cancel this abandonment request?",
+  "mainDraftImportRecoveryCancelled": "Cancelled: the original abandonment request will no longer run.",
+  "mainDraftImportRecoveryClose": "Close",
+  "mainDraftImportRecoveryCommitted": "Completed: this attachment import was abandoned.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Action confirmed, but the list has not refreshed. Refresh to see its latest status.",
+  "mainDraftImportRecoveryConflict": "Conflict: the draft changed. This request can only be cancelled.",
+  "mainDraftImportRecoveryEmpty": "No attachment decisions need review.",
+  "mainDraftImportRecoveryFailed": "Could not review this decision. Refresh and try again.",
+  "mainDraftImportRecoveryPending": "Pending: the original abandonment request is not confirmed.",
+  "mainDraftImportRecoveryRetry": "Retry original abandonment",
+  "mainDraftImportRecoveryTitle": "Review attachment decisions",
   "mainEdit": "Edit",
   "mainEditIdeaTitle": "Make your idea clearer",
   "mainEditorClosedUnknown": "The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.",
+  "mainEditorContinueDraft": "Continue editing",
+  "mainEditorContinueFailed": "The previous edit is confirmed and your newer draft remains in this window. Could not open the next editor; please retry.",
+  "mainEditorNewerDraft": "The previous edit was saved. Your newer draft is still unsaved.",
+  "mainEditorPendingDraft": "You can keep typing. Resolve the previous save first; newer edits will not be sent automatically.",
+  "mainEditorRecoveryAbandonBody": "Abandon this uncommitted edit? Its original operation will be sealed. Saved content and newer drafts stay unchanged. This does not undo a committed edit.",
+  "mainEditorRecoveryAbandonTitle": "Abandon old edit",
+  "mainEditorRecoveryCommitted": "The original edit committed. Review the current content and acknowledge it without saving again.",
+  "mainEditorRecoveryConfirm": "Review and acknowledge",
+  "mainEditorRecoveryConflict": "The content baseline or operation history changed. The original proposal is retained and cannot overwrite current content.",
+  "mainEditorRecoveryEmpty": "No persistent edit proposals need review.",
+  "mainEditorRecoveryFailed": "Review could not finish. The original proposal is retained. Refresh and try again.",
+  "mainEditorRecoveryPending": "The original edit is unconfirmed. Continue retries only that proposal, without submitting newer changes.",
+  "mainEditorRecoveryResume": "Continue original edit",
+  "mainEditorRecoveryTitle": "Review pending edits",
   "mainEditorSubtitle": "Text, tables, images—keep them here while your idea takes shape.",
   "mainEditorUnavailable": "The editor is unavailable. Check the content service and retry.",
   "mainEndpointSettings": "Outbound endpoints",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "To do",
   "mainFilterText": "Text",
   "mainFollowTheme": "Follow theme",
+  "mainFontApply": "Apply font",
+  "mainFontDefault": "Default font",
+  "mainFontFailed": "Unable to load this font. Check the file or restart the app and try again.",
+  "mainFontFamily": "System font family",
+  "mainFontHelp": "TTF / OTF, up to 20 MiB. Unavailable system fonts fall back automatically.",
+  "mainFontHint": "For example: Arial or Microsoft YaHei",
+  "mainFontImport": "Import font file",
+  "mainFontReset": "Restore default",
+  "mainFontSettings": "Fonts",
+  "mainFontUnavailable": "The saved font is unavailable. Using the default font for now.",
   "mainFrostDetail": "Soften the background and give your thoughts room.",
   "mainFrostEffect": "Blur",
   "mainFrostOpacity": "Frost opacity",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "System default",
   "mainLavender": "Lavender",
+  "mainLegacyStageComplete": "The legacy format will check every task and complete the project. Continue?",
+  "mainLegacyStageReopen": "Returning to another stage in the legacy format will uncheck the last task “{task}” and every task with that name. Continue?",
+  "mainLegacyTodoContinue": "Continue",
+  "mainLegacyTodoGroup": "The legacy format identifies tasks by text. This changes every task named “{task}”. Continue?",
+  "mainLegacyTodoTitle": "Legacy checklist changes",
   "mainLightOpacity": "20% · Light",
   "mainLiquidAllCanvases": "Available independently on all four canvas types",
   "mainLiquidDetail": "Flowing highlights and gentle refraction, like a suspended drop of water.",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "Save idea",
   "mainSaveNotSubmitted": "Not submitted. Your draft and attachments are preserved; you can edit and save again.",
   "mainSaveReadOnly": "Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.",
+  "mainSaveReadbackPending": "Settings were committed, but readback is unconfirmed. Your draft is preserved; retry will reconcile the original submission first.",
+  "mainSaveRecoveryAbandon": "Abandon old proposal",
+  "mainSaveRecoveryAbandonConfirm": "Abandon only the uncommitted proposal? Your current draft and saved content stay intact. This does not undo committed settings.",
+  "mainSaveRecoveryCommitted": "The old settings were committed. Reviewing confirms the result without replacing your current draft.",
+  "mainSaveRecoveryConflict": "The library has changed. The old proposal cannot overwrite newer settings. Keep it pending or abandon the uncommitted proposal.",
+  "mainSaveRecoveryDone": "The old proposal is resolved. Your draft is unchanged; retry saving when ready.",
+  "mainSaveRecoveryEmpty": "No persistent save proposal needs review.",
+  "mainSaveRecoveryPending": "The old proposal is not confirmed. Continue to reconcile and attempt the original save; your newer draft stays intact.",
+  "mainSaveRecoveryResolve": "Resolve original save",
+  "mainSaveRecoveryReview": "Review save",
+  "mainSaveRecoveryTitle": "A save needs review",
   "mainSaveUnknown": "This save is not yet confirmed. Your draft and attachments are preserved. Retry this submission; closing will refresh the workspace to check.",
   "mainSaving": "Saving…",
   "mainSearchHint": "Search your ideas…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "{done}/{total} steps",
   "mainStorageUnavailable": "Local storage is unavailable. Changes will last for this session only.",
   "mainStorageUnreadable": "Saved content could not be read. The original data is preserved and will not be overwritten.",
+  "mainStyleFlat": "Flat · Default",
+  "mainStyleFlatDescription": "Light edges and clear layers",
+  "mainStyleNeumorphism": "Neumorphism",
+  "mainStyleNeumorphismDescription": "Soft paired shadows and gentle relief",
+  "mainTaskAdd": "Add task",
+  "mainTaskAmbiguousDecision": "The completion of these legacy tasks with matching names is uncertain. Confirm each task separately.",
+  "mainTaskCompleteAllAndSetStage": "Complete all and set stage",
+  "mainTaskCompleteAllConfirm": "Mark every task complete and set the stage to “{stage}”?",
+  "mainTaskLegacyReadOnly": "Legacy tasks are matched by text. After upgrading, tasks with matching names can be managed separately.",
+  "mainTaskMarkComplete": "Confirm complete",
+  "mainTaskMarkIncomplete": "Confirm incomplete",
+  "mainTaskMoveDown": "Move down",
+  "mainTaskMoveUp": "Move up",
+  "mainTaskProgressThreeWay": "{complete} complete · {incomplete} incomplete · {ambiguous} to confirm",
+  "mainTaskRemoveConfirm": "Remove task “{task}”?",
+  "mainTaskRename": "Rename",
+  "mainTaskSetStage": "Change stage only",
+  "mainTaskStagePrompt": "Project stage",
+  "mainTaskTextPrompt": "Task text",
   "mainTenMinutesAgo": "10 minutes ago",
   "mainTextureCanvas": "Texture",
   "mainTextureDetail": "Fine paper-like texture adds a tactile feel.",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "To test",
   "mainView": "View",
   "mainViewAll": "Show all",
+  "mainVisualStyle": "Interface style",
   "mainWarmSand": "Warm sand",
   "mainWhiteTheme": "White",
   "mainWindowRadius": "Window corners",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "This library is in use by another process. Close the other window and try again.",
   "recoveryChooseKey": "Choose recovery file",
   "recoveryCloseFirst": "The workspace is still running. Close it before switching libraries.",
+  "recoveryClosing": "Waiting for the original content service to exit. Reopening and recovery remain unavailable until exit is confirmed.",
+  "recoveryClosingUnconfirmed": "Shutdown is still unconfirmed; the original service remains under observation. A timeout does not cancel committed or remote effects.",
   "recoveryFailed": "Recovery did not finish. Keep the original files and try again.",
   "recoveryIdentityBusy": "Another copy of this library is in use. Close that workspace before opening this copy.",
   "recoveryIdentityMismatch": "The registered library identity does not match. Keep the original data and restore the correct backup.",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "The recovery result needs checking. Try opening again; a copy of the previous protection file was retained if one existed.",
   "recoveryLibraryInvalid": "The library could not be verified or opened. Keep the original library and protection key, then try again.",
   "recoveryMaintenance": "The library needs attention. Keep the original files and review the diagnostic details.",
+  "recoveryMigrationIncomplete": "This library migration is incomplete. Check the migration report in its folder, keep the source library, and retry with a new destination.",
   "recoveryMissingKey": "The library protection key is missing. Restore the original .audit-key file and try again.",
   "recoveryMissingLibrary": "The protection key exists, but the library is missing or empty. Restore the original library.",
   "recoveryOpenFailed": "The workspace could not open. Check the plugin files and data folder, then try again.",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "File operation failed. Try again.",
   "visualFindLyrics": "Find lyrics",
   "visualFindLyricsGuide": "Search LRCLIB by song and artist, then choose the matching version.",
+  "visualFollowChain": "Follow chain: {path}",
+  "visualFollowComponent": "Follows: {name}",
+  "visualFollowCycle": "Would create a cycle",
+  "visualFollowGuide": "Follow another component; unlink to restore your own settings.",
   "visualFollowTheme": "Follow theme",
   "visualFooterLyrics": "Show lyrics in footer",
   "visualFooterTips": "Show tips in footer",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "Local file → Embedded → LRCLIB",
   "visualLyricsVersions": "Multiple versions found. Choose one in search.",
   "visualMaterialPreview": "Material preview",
+  "visualMaterialSource": "Material source",
   "visualMaximize": "Maximize",
   "visualMediaAddress": "Media address",
   "visualMediaAddressInvalid": "Enter a valid HTTP or HTTPS address without login information.",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "No timing data",
   "visualOpacity": "Opacity",
   "visualOptionalArtist": "Artist (optional)",
+  "visualOwnMaterial": "Theme or own settings",
   "visualPauseMusic": "Pause music",
   "visualPaused": "Paused",
   "visualPlainLyrics": "Plain-text lyrics",

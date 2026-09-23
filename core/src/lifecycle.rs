@@ -711,6 +711,60 @@ impl HostPolicy {
         })
     }
     #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
+    pub fn edit_versioned_content_guarded_with_evidence(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        change: &crate::versioned_content_change::VersionedContentChange,
+        evidence: &[crate::task_evidence::Evidence],
+        mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
+        change.validate()?;
+        let card_id = change.source()?.summary().id;
+        store.edit_versioned_content_with_evidence(change, evidence, || {
+            let now = clock();
+            self.expire_drains(now)?;
+            guard(now)?;
+            self.authorize_scope(
+                instance,
+                grant,
+                (GrantKind::EditContent, &card_id, None),
+                now,
+                false,
+            )
+        })
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+    #[allow(clippy::too_many_arguments)]
+    pub fn migrate_content_guarded_with_evidence(
+        &mut self,
+        instance: Instance,
+        grant: Grant,
+        store: &mut crate::store::Store,
+        change: &crate::content_migration::ContentMigration,
+        evidence: &[crate::task_evidence::Evidence],
+        mut clock: impl FnMut() -> u64,
+        mut guard: impl FnMut(u64) -> Result<()>,
+    ) -> Result<crate::transaction::Receipt> {
+        change.validate()?;
+        let card_id = change.source()?.summary().id;
+        store.migrate_content_with_evidence(change, evidence, || {
+            let now = clock();
+            self.expire_drains(now)?;
+            guard(now)?;
+            self.authorize_scope(
+                instance,
+                grant,
+                (GrantKind::EditContent, &card_id, None),
+                now,
+                false,
+            )
+        })
+    }
+    #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
     pub fn create_content(
         &mut self,
         instance: Instance,

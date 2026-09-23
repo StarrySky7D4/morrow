@@ -1,0 +1,14 @@
+syntax = "proto3";
+package morrow.workbench.editor_draft_handoff_proposal.v1;
+import "editor_draft.proto";
+
+// The exact proposed first child save and the later parent retirement are
+// fixed before either operation is sent. Revision 2 is a permanent tombstone.
+message Slot {
+  uint32 schema_version = 1;
+  morrow.workbench.editor_draft.v1.WriteRequest request = 2;
+  morrow.workbench.editor_draft.v1.ParentLink parent_link = 3;
+  string retirement_operation = 4;
+  uint64 revision = 5;
+  bool cancelled = 6;
+}

@@ -378,5 +378,135 @@
   "mainHttpSettings": "HTTP-задачи",
   "mainCredentialSettings": "Учётные данные",
   "mainEndpointSettings": "Исходящие конечные точки",
-  "mainExpandSettings": "Развернуть настройки"
+  "mainExpandSettings": "Развернуть настройки",
+  "mainFontSettings": "Шрифты",
+  "mainFontDefault": "Шрифт по умолчанию",
+  "mainFontFamily": "Название системного шрифта",
+  "mainFontHint": "Например: Arial или Microsoft YaHei",
+  "mainFontImport": "Импортировать файл шрифта",
+  "mainFontHelp": "TTF / OTF, до 20 МиБ. Отсутствующие системные шрифты заменяются автоматически.",
+  "mainFontFailed": "Не удалось загрузить шрифт. Проверьте файл или перезапустите приложение и повторите попытку.",
+  "mainFontUnavailable": "Сохранённый шрифт недоступен. Временно используется шрифт по умолчанию.",
+  "mainFontApply": "Применить шрифт",
+  "mainFontReset": "Восстановить стандартный",
+  "mainSaveReadbackPending": "Настройки сохранены, но чтение результата не подтверждено. Черновик сохранён; повтор сначала проверит исходную операцию.",
+  "mainLegacyTodoTitle": "Изменение старого списка",
+  "mainLegacyTodoContinue": "Продолжить",
+  "mainLegacyStageComplete": "Старый формат отметит все задачи и завершит проект. Продолжить?",
+  "mainLegacyStageReopen": "Переход на другой этап снимет отметку с последней задачи «{task}» и всех одноимённых задач. Продолжить?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "В старом формате задачи определяются текстом. Изменятся все задачи «{task}». Продолжить?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "Нужно проверить сохранение",
+  "mainSaveRecoveryReview": "Проверить сохранение",
+  "mainSaveRecoveryCommitted": "Прежние настройки сохранены. Проверка подтвердит результат, не заменяя текущий черновик.",
+  "mainSaveRecoveryConflict": "Библиотека изменилась. Прежний вариант не может перезаписать новые настройки. Оставьте его на рассмотрении или отмените несохранённый вариант.",
+  "mainSaveRecoveryPending": "Прежний вариант ещё не подтверждён. Продолжение проверит и попытается завершить исходное сохранение; новый черновик останется.",
+  "mainSaveRecoveryResolve": "Проверить исходное сохранение",
+  "mainSaveRecoveryAbandon": "Отменить прежний вариант",
+  "mainSaveRecoveryAbandonConfirm": "Отменить только несохранённый вариант? Текущий черновик и сохранённые данные останутся. Уже сохранённые настройки не будут отменены.",
+  "mainSaveRecoveryDone": "Прежний вариант обработан. Черновик не изменён; сохраните его повторно, когда будете готовы.",
+  "mainSaveRecoveryEmpty": "Нет сохранённых предложений, требующих проверки.",
+  "mainContentCommittedRefreshFailed": "Операция сохранена, но не удалось загрузить актуальное содержимое. Обновите страницу для просмотра.",
+  "mainTaskProgressThreeWay": "Выполнено: {complete} · Не выполнено: {incomplete} · Уточнить: {ambiguous}",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "Состояние этих старых задач с одинаковыми названиями неизвестно. Подтвердите каждую задачу отдельно.",
+  "mainTaskMarkComplete": "Подтвердить выполнение",
+  "mainTaskMarkIncomplete": "Подтвердить невыполнение",
+  "mainTaskAdd": "Добавить задачу",
+  "mainTaskTextPrompt": "Текст задачи",
+  "mainTaskRename": "Переименовать",
+  "mainTaskMoveUp": "Вверх",
+  "mainTaskMoveDown": "Вниз",
+  "mainTaskRemoveConfirm": "Удалить задачу «{task}»?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Этап проекта",
+  "mainTaskSetStage": "Изменить только этап",
+  "mainTaskCompleteAllAndSetStage": "Выполнить все и задать этап",
+  "mainTaskCompleteAllConfirm": "Отметить все задачи выполненными и задать этап «{stage}»?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "Старые задачи сопоставляются по тексту. После обновления одноимёнными задачами можно управлять отдельно.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Действие подтверждено, но список не обновился. Обновите его, чтобы увидеть текущее состояние.",
+  "mainDraftImportRecoveryTitle": "Проверка решений по вложениям",
+  "mainDraftImportRecoveryEmpty": "Нет решений по вложениям для проверки.",
+  "mainDraftImportRecoveryPending": "Ожидание: исходный запрос на отказ не подтвержден.",
+  "mainDraftImportRecoveryCommitted": "Завершено: от импорта этого вложения отказались.",
+  "mainDraftImportRecoveryCancelled": "Отменено: исходный запрос на отказ больше не будет выполняться.",
+  "mainDraftImportRecoveryConflict": "Конфликт: черновик изменился. Этот запрос можно только отменить.",
+  "mainDraftImportRecoveryRetry": "Повторить исходный отказ",
+  "mainDraftImportRecoveryCancelDecision": "Отменить запрос на отказ",
+  "mainDraftImportRecoveryCancelTitle": "Отменить этот запрос на отказ?",
+  "mainDraftImportRecoveryCancelBody": "После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.",
+  "mainDraftImportRecoveryFailed": "Не удалось проверить решение. Обновите данные и повторите попытку.",
+  "mainDraftImportRecoveryClose": "Закрыть",
+  "mainEditorRecoveryTitle": "Проверить изменения",
+  "mainEditorRecoveryEmpty": "Нет сохранённых предложений для проверки.",
+  "mainEditorRecoveryPending": "Исходное изменение не подтверждено. Продолжение повторит только его, без отправки новых изменений.",
+  "mainEditorRecoveryCommitted": "Исходное изменение сохранено. Проверьте текущее содержимое и подтвердите без повторного сохранения.",
+  "mainEditorRecoveryConflict": "Исходная версия или история операций изменилась. Предложение сохранено, но не может перезаписать текущее содержимое.",
+  "mainEditorRecoveryResume": "Продолжить исходное изменение",
+  "mainEditorRecoveryConfirm": "Проверить и подтвердить",
+  "mainEditorRecoveryFailed": "Проверка не завершена. Исходное предложение сохранено. Обновите и повторите.",
+  "mainEditorRecoveryAbandonTitle": "Отказаться от старой правки",
+  "mainEditorRecoveryAbandonBody": "Отказаться от этой неподтверждённой правки? Исходная операция будет заблокирована для повторного выполнения. Сохранённое содержимое и новые черновики останутся без изменений. Подтверждённая правка не будет отменена.",
+  "mainEditorPendingDraft": "Можно продолжать ввод. Сначала проверьте предыдущее сохранение; новые правки не отправляются автоматически.",
+  "mainEditorNewerDraft": "Предыдущая правка сохранена. Новый черновик ещё не сохранён.",
+  "mainEditorContinueFailed": "Предыдущая правка подтверждена, новый черновик остаётся в этом окне. Не удалось открыть следующий редактор. Повторите попытку.",
+  "mainEditorContinueDraft": "Продолжить редактирование",
+  "mainVisualStyle": "Стиль интерфейса",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Плоский · По умолчанию",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Лёгкие контуры и чёткие слои",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Неоморфизм",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Мягкие светотени и лёгкий рельеф",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

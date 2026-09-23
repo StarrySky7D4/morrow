@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'host_notices.dart';
+import 'session_coordinator.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
@@ -36,10 +37,12 @@ class WorkbenchRecovery extends StatefulWidget {
     required this.onRetry,
     this.onRestore,
     this.onRestoreSnapshot,
+    this.session,
   });
   final String? message;
   final Object? failure;
   final Locale? locale;
+  final SessionCoordinator? session;
   final Future<void> Function() onRetry;
   final Future<void> Function()? onRestore;
   final Future<void> Function()? onRestoreSnapshot;
@@ -48,10 +51,36 @@ class WorkbenchRecovery extends StatefulWidget {
 }
 
 class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
+  @override
+  void initState() {
+    super.initState();
+    widget.session?.addListener(_sessionChanged);
+  }
+
+  @override
+  void didUpdateWidget(WorkbenchRecovery oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.session != widget.session) {
+      oldWidget.session?.removeListener(_sessionChanged);
+      widget.session?.addListener(_sessionChanged);
+    }
+  }
+
+  void _sessionChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.session?.removeListener(_sessionChanged);
+    super.dispose();
+  }
+
+  bool get _blocked => _busy || !(widget.session?.mayRecover ?? true);
   bool _busy = false;
   Object? _error;
   Future<void> _run(Future<void> Function() action) async {
-    if (_busy) return;
+    if (_blocked) return;
     setState(() {
       _busy = true;
       _error = null;
@@ -128,6 +157,15 @@ class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
                             ),
                           ),
                           const SizedBox(height: 12),
+                          if (widget.session?.waitingForExit ?? false) ...[
+                            Text(
+                              widget.session!.phase ==
+                                      SessionPhase.closingUnconfirmed
+                                  ? l.recoveryClosingUnconfirmed
+                                  : l.recoveryClosing,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           Text(
                             widget.message ??
                                 workbenchFailureMessage(
@@ -145,7 +183,7 @@ class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
                             const SizedBox(height: 10),
                             OutlinedButton.icon(
                               key: const ValueKey('restore-library-snapshot'),
-                              onPressed: _busy
+                              onPressed: _blocked
                                   ? null
                                   : () => _run(widget.onRestoreSnapshot!),
                               icon: const Icon(
@@ -190,14 +228,14 @@ class _WorkbenchRecoveryState extends State<WorkbenchRecovery> {
                             runSpacing: 12,
                             children: [
                               FilledButton.tonal(
-                                onPressed: _busy
+                                onPressed: _blocked
                                     ? null
                                     : () => _run(widget.onRetry),
                                 child: Text(l.recoveryRetry),
                               ),
                               if (widget.onRestore != null)
                                 OutlinedButton.icon(
-                                  onPressed: _busy
+                                  onPressed: _blocked
                                       ? null
                                       : () => _run(widget.onRestore!),
                                   icon: const Icon(Icons.key_rounded, size: 18),

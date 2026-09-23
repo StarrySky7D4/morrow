@@ -131,5 +131,7 @@ install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/release/morrow-workbench-host.exe"
   DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/release/morrow-migrate-library.exe"
+  DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/bundle/workbench.morrowplugin"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/plugins" COMPONENT Runtime)

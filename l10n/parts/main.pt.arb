@@ -378,5 +378,135 @@
   "mainHttpSettings": "Tarefas HTTP",
   "mainCredentialSettings": "Credenciais",
   "mainEndpointSettings": "Endpoints de saída",
-  "mainExpandSettings": "Expandir configurações"
+  "mainExpandSettings": "Expandir configurações",
+  "mainFontSettings": "Fontes",
+  "mainFontDefault": "Fonte padrão",
+  "mainFontFamily": "Nome da fonte do sistema",
+  "mainFontHint": "Por exemplo: Arial ou Microsoft YaHei",
+  "mainFontImport": "Importar arquivo de fonte",
+  "mainFontHelp": "TTF / OTF, até 20 MiB. Fontes do sistema indisponíveis são substituídas automaticamente.",
+  "mainFontFailed": "Não foi possível carregar a fonte. Verifique o arquivo ou reinicie o aplicativo e tente novamente.",
+  "mainFontUnavailable": "A fonte salva está indisponível. A fonte padrão será usada temporariamente.",
+  "mainFontApply": "Aplicar fonte",
+  "mainFontReset": "Restaurar padrão",
+  "mainSaveReadbackPending": "As configurações foram salvas, mas a releitura não foi confirmada. O rascunho foi preservado; tentar novamente verificará primeiro o envio original.",
+  "mainLegacyTodoTitle": "Alterações na lista antiga",
+  "mainLegacyTodoContinue": "Continuar",
+  "mainLegacyStageComplete": "O formato antigo marcará todas as tarefas e concluirá o projeto. Continuar?",
+  "mainLegacyStageReopen": "Mudar de etapa desmarcará a última tarefa “{task}” e todas as tarefas com esse nome. Continuar?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "O formato antigo identifica tarefas pelo texto. Todas as tarefas “{task}” serão alteradas. Continuar?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "Há um salvamento para revisar",
+  "mainSaveRecoveryReview": "Revisar salvamento",
+  "mainSaveRecoveryCommitted": "As configurações anteriores foram salvas. A revisão confirma o resultado sem substituir o rascunho atual.",
+  "mainSaveRecoveryConflict": "A biblioteca mudou. A proposta anterior não pode substituir configurações mais recentes. Mantenha-a pendente ou descarte a proposta não salva.",
+  "mainSaveRecoveryPending": "A proposta anterior não foi confirmada. Continuar verifica e tenta o salvamento original; o novo rascunho será preservado.",
+  "mainSaveRecoveryResolve": "Resolver salvamento original",
+  "mainSaveRecoveryAbandon": "Descartar proposta anterior",
+  "mainSaveRecoveryAbandonConfirm": "Descartar apenas a proposta não salva? O rascunho atual e os dados salvos serão preservados. As configurações já salvas não serão desfeitas.",
+  "mainSaveRecoveryDone": "A proposta anterior foi resolvida. O rascunho não mudou; tente salvá-lo novamente quando desejar.",
+  "mainSaveRecoveryEmpty": "Não há proposta persistente para revisar.",
+  "mainContentCommittedRefreshFailed": "A operação foi salva, mas não foi possível carregar o conteúdo atualizado. Atualize para visualizá-lo.",
+  "mainTaskProgressThreeWay": "{complete} concluídas · {incomplete} pendentes · {ambiguous} por confirmar",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "O estado destas tarefas antigas com o mesmo nome é incerto. Confirme cada tarefa separadamente.",
+  "mainTaskMarkComplete": "Confirmar concluída",
+  "mainTaskMarkIncomplete": "Confirmar pendente",
+  "mainTaskAdd": "Adicionar tarefa",
+  "mainTaskTextPrompt": "Texto da tarefa",
+  "mainTaskRename": "Renomear",
+  "mainTaskMoveUp": "Mover para cima",
+  "mainTaskMoveDown": "Mover para baixo",
+  "mainTaskRemoveConfirm": "Remover a tarefa “{task}”?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Etapa do projeto",
+  "mainTaskSetStage": "Alterar apenas a etapa",
+  "mainTaskCompleteAllAndSetStage": "Concluir todas e definir etapa",
+  "mainTaskCompleteAllConfirm": "Marcar todas as tarefas como concluídas e definir a etapa como “{stage}”?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "As tarefas antigas são identificadas pelo texto. Após a atualização, tarefas com o mesmo nome podem ser geridas separadamente.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Ação confirmada, mas a lista não foi atualizada. Atualize para ver o estado mais recente.",
+  "mainDraftImportRecoveryTitle": "Rever decisões de anexos",
+  "mainDraftImportRecoveryEmpty": "Não há decisões de anexos para rever.",
+  "mainDraftImportRecoveryPending": "Pendente: o pedido original de abandono não foi confirmado.",
+  "mainDraftImportRecoveryCommitted": "Concluído: a importação deste anexo foi abandonada.",
+  "mainDraftImportRecoveryCancelled": "Cancelado: o pedido original de abandono já não será executado.",
+  "mainDraftImportRecoveryConflict": "Conflito: o rascunho mudou. Este pedido só pode ser cancelado.",
+  "mainDraftImportRecoveryRetry": "Repetir abandono original",
+  "mainDraftImportRecoveryCancelDecision": "Cancelar pedido de abandono",
+  "mainDraftImportRecoveryCancelTitle": "Cancelar este pedido de abandono?",
+  "mainDraftImportRecoveryCancelBody": "Após o cancelamento, o pedido original de abandono já não será executado. Isto não elimina o anexo nem desfaz outras alterações.",
+  "mainDraftImportRecoveryFailed": "Não foi possível rever esta decisão. Atualize e tente novamente.",
+  "mainDraftImportRecoveryClose": "Fechar",
+  "mainEditorRecoveryTitle": "Rever edições pendentes",
+  "mainEditorRecoveryEmpty": "Não há propostas guardadas para rever.",
+  "mainEditorRecoveryPending": "A edição original não está confirmada. Continuar tenta novamente apenas essa proposta, sem enviar alterações mais recentes.",
+  "mainEditorRecoveryCommitted": "A edição original foi guardada. Reveja o conteúdo atual e confirme sem guardar novamente.",
+  "mainEditorRecoveryConflict": "A versão de base ou o histórico mudou. A proposta é mantida e não pode substituir o conteúdo atual.",
+  "mainEditorRecoveryResume": "Continuar edição original",
+  "mainEditorRecoveryConfirm": "Rever e confirmar",
+  "mainEditorRecoveryFailed": "Não foi possível concluir a revisão. A proposta original é mantida. Atualize e tente novamente.",
+  "mainEditorRecoveryAbandonTitle": "Descartar edição anterior",
+  "mainEditorRecoveryAbandonBody": "Descartar esta edição não confirmada? A operação original será bloqueada. O conteúdo guardado e os rascunhos mais recentes não serão alterados. Isto não desfaz uma edição já confirmada.",
+  "mainEditorPendingDraft": "Pode continuar a escrever. Verifique primeiro a gravação anterior; as novas edições não serão enviadas automaticamente.",
+  "mainEditorNewerDraft": "A edição anterior foi guardada. O novo rascunho ainda não foi guardado.",
+  "mainEditorContinueFailed": "A edição anterior está confirmada e o novo rascunho permanece nesta janela. Não foi possível abrir o editor seguinte; tente novamente.",
+  "mainEditorContinueDraft": "Continuar a editar",
+  "mainVisualStyle": "Estilo da interface",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Plano · Padrão",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Contornos leves e camadas claras",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Neumorfismo",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Sombras suaves e relevo sutil",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

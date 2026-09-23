@@ -2,8 +2,11 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'media/texture_source.dart';
 import 'liquid_glass.dart';
+import 'neumorphic_controls.dart';
 
 enum GlassMode { frosted, clear, liquid }
+
+enum VisualStyle { flat, neumorphism }
 
 enum StudioTheme { white, custom, dark }
 
@@ -18,7 +21,9 @@ class ComponentMaterial {
     this.color,
     this.mode,
     this.cornerRadius,
+    this.followComponent,
   });
+  final String? followComponent;
   final GlassMode? mode;
   final double? cornerRadius;
   final bool enabled;
@@ -31,6 +36,8 @@ class ComponentMaterial {
     Color? color,
     GlassMode? mode,
     double? cornerRadius,
+    String? followComponent,
+    bool clearFollow = false,
     bool inheritColor = false,
     bool inheritMode = false,
     bool inheritRadius = false,
@@ -41,6 +48,9 @@ class ComponentMaterial {
     color: inheritColor ? null : color ?? this.color,
     mode: inheritMode ? null : mode ?? this.mode,
     cornerRadius: inheritRadius ? null : cornerRadius ?? this.cornerRadius,
+    followComponent: clearFollow
+        ? null
+        : followComponent ?? this.followComponent,
   );
   Map<String, dynamic> toJson() => {
     'enabled': enabled,
@@ -49,13 +59,17 @@ class ComponentMaterial {
     'color': color?.toARGB32(),
     if (mode != null) 'mode': mode!.name,
     if (cornerRadius != null) 'cornerRadius': cornerRadius,
+    if (followComponent != null) 'followComponent': followComponent,
   };
   factory ComponentMaterial.fromJson(Map<String, dynamic> data) {
     final blur = (data['blur'] as num?)?.toDouble() ?? 22;
     final opacity = (data['opacity'] as num?)?.toDouble() ?? .76;
     final radius = (data['cornerRadius'] as num?)?.toDouble();
     final modeName = data['mode'] as String?;
-    if ((radius != null && (!radius.isFinite || radius < 0 || radius > 32)) ||
+    final follow = data['followComponent'];
+    if ((follow != null &&
+            (follow is! String || follow.isEmpty || follow.length > 256)) ||
+        (radius != null && (!radius.isFinite || radius < 0 || radius > 32)) ||
         (modeName != null &&
             !GlassMode.values.any((m) => m.name == modeName)) ||
         !blur.isFinite ||
@@ -73,6 +87,7 @@ class ComponentMaterial {
       color: data['color'] == null ? null : Color(data['color'] as int),
       mode: modeName == null ? null : GlassMode.values.byName(modeName),
       cornerRadius: radius,
+      followComponent: follow as String?,
     );
   }
 }
@@ -82,6 +97,7 @@ class ComponentMaterial {
 class SurfaceSettings {
   const SurfaceSettings({
     this.components = const {},
+    this.visualStyle = VisualStyle.flat,
     this.canvasBlur = 0,
     this.canvasOpacity = 0,
     this.canvasColor,
@@ -91,11 +107,34 @@ class SurfaceSettings {
     this.componentColor,
   });
   final Map<String, ComponentMaterial> components;
+  final VisualStyle visualStyle;
   final double canvasBlur, canvasOpacity, componentBlur, componentOpacity;
   final Color? canvasColor, componentColor;
   final bool componentCustom;
+
+  /// A missing target inherits the theme. Each hop is checked, so a cycle is
+  /// never silently truncated.
+  ComponentMaterial? resolveComponent(String? id) {
+    if (id == null) return null;
+    final visited = <String>{};
+    var current = id;
+    while (true) {
+      if (!visited.add(current)) {
+        throw const FormatException('Component material cycle');
+      }
+      final material = components[current];
+      if (material == null) {
+        return current == id ? null : const ComponentMaterial();
+      }
+      final target = material.followComponent;
+      if (target == null) return material;
+      current = target;
+    }
+  }
+
   SurfaceSettings copyWith({
     Map<String, ComponentMaterial>? components,
+    VisualStyle? visualStyle,
     double? canvasBlur,
     double? canvasOpacity,
     Color? canvasColor,
@@ -105,6 +144,7 @@ class SurfaceSettings {
     Color? componentColor,
   }) => SurfaceSettings(
     components: components ?? this.components,
+    visualStyle: visualStyle ?? this.visualStyle,
     canvasBlur: canvasBlur ?? this.canvasBlur,
     canvasOpacity: canvasOpacity ?? this.canvasOpacity,
     canvasColor: canvasColor ?? this.canvasColor,
@@ -114,6 +154,7 @@ class SurfaceSettings {
     componentColor: componentColor ?? this.componentColor,
   );
   Map<String, dynamic> toJson() => {
+    'visualStyle': visualStyle.name,
     'componentMaterials': components.map(
       (key, value) => MapEntry(key, value.toJson()),
     ),
@@ -134,7 +175,16 @@ class SurfaceSettings {
 
     Color? color(String key) =>
         data[key] == null ? null : Color(data[key] as int).withValues(alpha: 1);
-    return SurfaceSettings(
+    final style = data['visualStyle'];
+    if (style != null &&
+        (style is! String ||
+            !VisualStyle.values.any((value) => value.name == style))) {
+      throw const FormatException('Invalid visual style');
+    }
+    final settings = SurfaceSettings(
+      visualStyle: style == null
+          ? VisualStyle.flat
+          : VisualStyle.values.byName(style),
       components: (data['componentMaterials'] as Map<String, dynamic>? ?? {})
           .map(
             (key, value) => MapEntry(
@@ -154,6 +204,10 @@ class SurfaceSettings {
       ),
       componentColor: color('componentColor'),
     );
+    for (final id in settings.components.keys) {
+      settings.resolveComponent(id);
+    }
+    return settings;
   }
 }
 
@@ -341,16 +395,18 @@ class Glass extends StatelessWidget {
     this.radius = 20,
     this.dialog = false,
     this.componentId,
+    this.recessed = false,
   });
   final Palette p;
   final Widget child;
   final double radius;
   final bool dialog;
   final String? componentId;
+  final bool recessed;
 
   @override
   Widget build(BuildContext context) {
-    final local = p.surfaces.components[componentId];
+    final local = p.surfaces.resolveComponent(componentId);
     final custom = local?.enabled ?? false;
     final inheritedTint = dialog && p.backdrop == BackgroundMode.solid
         ? p.solidColor
@@ -402,11 +458,43 @@ class Glass extends StatelessWidget {
               border: Border.all(color: p.glassEdge, width: 1),
             ),
           );
+    final neumorphism = p.surfaces.visualStyle == VisualStyle.neumorphism;
+    final softShadows = <BoxShadow>[
+      BoxShadow(
+        color: Colors.white.withValues(alpha: p.dark ? .09 : .56),
+        blurRadius: 12,
+        blurStyle: BlurStyle.outer,
+        offset: const Offset(-4, -4),
+      ),
+      BoxShadow(
+        color: (p.dark ? Colors.black : const Color(0xFF8A8299)).withValues(
+          alpha: p.dark ? .30 : .16,
+        ),
+        blurRadius: 12,
+        blurStyle: BlurStyle.outer,
+        offset: const Offset(4, 4),
+      ),
+    ];
+    final styled = neumorphism
+        ? GlassMaterial(
+            blur: inherited.blur,
+            liquid: inherited.liquid,
+            decoration: inherited.decoration.copyWith(
+              boxShadow: recessed ? const [] : softShadows,
+              border: Border.all(
+                color: p.dark
+                    ? Colors.white.withValues(alpha: .13)
+                    : Colors.white.withValues(alpha: .58),
+                width: 1,
+              ),
+            ),
+          )
+        : inherited;
     final target = custom
         ? GlassMaterial(
             blur: local!.blur,
-            liquid: inherited.liquid,
-            decoration: inherited.decoration.copyWith(
+            liquid: styled.liquid,
+            decoration: styled.decoration.copyWith(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -425,19 +513,24 @@ class Glass extends StatelessWidget {
               ),
             ),
           )
-        : inherited;
+        : styled;
     return TweenAnimationBuilder<GlassMaterial>(
       tween: GlassMaterialTween(end: target),
       duration: motionDuration(context, 360),
       curve: Curves.easeInOutCubic,
       child: child,
-      builder: (context, material, child) => LiquidGlassSurface(
-        material: material,
-        tint: tint,
-        dark: p.dark,
-        readable: dialog,
+      builder: (context, material, child) => NeumorphicSurface(
+        palette: p,
+        depth: recessed ? -1 : 0,
         borderRadius: material.decoration.borderRadius! as BorderRadius,
-        child: child!,
+        child: LiquidGlassSurface(
+          material: material,
+          tint: tint,
+          dark: p.dark,
+          readable: dialog,
+          borderRadius: material.decoration.borderRadius! as BorderRadius,
+          child: child!,
+        ),
       ),
     );
   }

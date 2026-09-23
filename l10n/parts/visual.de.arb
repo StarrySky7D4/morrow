@@ -602,5 +602,39 @@
   "visualTransparentTips": "Transparente Einblendung (Standard)",
   "visualTipsMaterialGuide": "Aus: transparente Tipps; ein: Material unten. Eigene Werte bleiben erhalten.",
   "visualResetMaterial": "Auf Thema zurücksetzen",
-  "visualInheritColor": "Themenfarbe verwenden"
+  "visualInheritColor": "Themenfarbe verwenden",
+  "visualMaterialSource": "Materialquelle",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "Design oder eigene Einstellungen",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "Folgt: {name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "Anderem Element folgen; nach dem Trennen gelten wieder die eigenen Einstellungen.",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "Würde einen Zyklus erzeugen",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "Verknüpfungskette: {path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

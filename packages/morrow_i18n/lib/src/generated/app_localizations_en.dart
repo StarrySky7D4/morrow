@@ -266,6 +266,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainComponentSettings => 'Components and cards · Settings';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      'The operation was committed, but the latest content could not be loaded. Refresh to view it.';
+
+  @override
   String get mainContentProtection => 'Content protection';
 
   @override
@@ -341,6 +345,55 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainDone => 'Done';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      'After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision =>
+      'Cancel abandonment request';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle =>
+      'Cancel this abandonment request?';
+
+  @override
+  String get mainDraftImportRecoveryCancelled =>
+      'Cancelled: the original abandonment request will no longer run.';
+
+  @override
+  String get mainDraftImportRecoveryClose => 'Close';
+
+  @override
+  String get mainDraftImportRecoveryCommitted =>
+      'Completed: this attachment import was abandoned.';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      'Action confirmed, but the list has not refreshed. Refresh to see its latest status.';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      'Conflict: the draft changed. This request can only be cancelled.';
+
+  @override
+  String get mainDraftImportRecoveryEmpty =>
+      'No attachment decisions need review.';
+
+  @override
+  String get mainDraftImportRecoveryFailed =>
+      'Could not review this decision. Refresh and try again.';
+
+  @override
+  String get mainDraftImportRecoveryPending =>
+      'Pending: the original abandonment request is not confirmed.';
+
+  @override
+  String get mainDraftImportRecoveryRetry => 'Retry original abandonment';
+
+  @override
+  String get mainDraftImportRecoveryTitle => 'Review attachment decisions';
+
+  @override
   String get mainEdit => 'Edit';
 
   @override
@@ -349,6 +402,57 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       'The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.';
+
+  @override
+  String get mainEditorContinueDraft => 'Continue editing';
+
+  @override
+  String get mainEditorContinueFailed =>
+      'The previous edit is confirmed and your newer draft remains in this window. Could not open the next editor; please retry.';
+
+  @override
+  String get mainEditorNewerDraft =>
+      'The previous edit was saved. Your newer draft is still unsaved.';
+
+  @override
+  String get mainEditorPendingDraft =>
+      'You can keep typing. Resolve the previous save first; newer edits will not be sent automatically.';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      'Abandon this uncommitted edit? Its original operation will be sealed. Saved content and newer drafts stay unchanged. This does not undo a committed edit.';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => 'Abandon old edit';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      'The original edit committed. Review the current content and acknowledge it without saving again.';
+
+  @override
+  String get mainEditorRecoveryConfirm => 'Review and acknowledge';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      'The content baseline or operation history changed. The original proposal is retained and cannot overwrite current content.';
+
+  @override
+  String get mainEditorRecoveryEmpty =>
+      'No persistent edit proposals need review.';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      'Review could not finish. The original proposal is retained. Refresh and try again.';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      'The original edit is unconfirmed. Continue retries only that proposal, without submitting newer changes.';
+
+  @override
+  String get mainEditorRecoveryResume => 'Continue original edit';
+
+  @override
+  String get mainEditorRecoveryTitle => 'Review pending edits';
 
   @override
   String get mainEditorSubtitle =>
@@ -416,6 +520,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainFollowTheme => 'Follow theme';
+
+  @override
+  String get mainFontApply => 'Apply font';
+
+  @override
+  String get mainFontDefault => 'Default font';
+
+  @override
+  String get mainFontFailed =>
+      'Unable to load this font. Check the file or restart the app and try again.';
+
+  @override
+  String get mainFontFamily => 'System font family';
+
+  @override
+  String get mainFontHelp =>
+      'TTF / OTF, up to 20 MiB. Unavailable system fonts fall back automatically.';
+
+  @override
+  String get mainFontHint => 'For example: Arial or Microsoft YaHei';
+
+  @override
+  String get mainFontImport => 'Import font file';
+
+  @override
+  String get mainFontReset => 'Restore default';
+
+  @override
+  String get mainFontSettings => 'Fonts';
+
+  @override
+  String get mainFontUnavailable =>
+      'The saved font is unavailable. Using the default font for now.';
 
   @override
   String get mainFrostDetail =>
@@ -539,6 +676,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainLavender => 'Lavender';
+
+  @override
+  String get mainLegacyStageComplete =>
+      'The legacy format will check every task and complete the project. Continue?';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return 'Returning to another stage in the legacy format will uncheck the last task “$task” and every task with that name. Continue?';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => 'Continue';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return 'The legacy format identifies tasks by text. This changes every task named “$task”. Continue?';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => 'Legacy checklist changes';
 
   @override
   String get mainLightOpacity => '20% · Light';
@@ -808,6 +965,46 @@ class AppLocalizationsEn extends AppLocalizations {
       'Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.';
 
   @override
+  String get mainSaveReadbackPending =>
+      'Settings were committed, but readback is unconfirmed. Your draft is preserved; retry will reconcile the original submission first.';
+
+  @override
+  String get mainSaveRecoveryAbandon => 'Abandon old proposal';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      'Abandon only the uncommitted proposal? Your current draft and saved content stay intact. This does not undo committed settings.';
+
+  @override
+  String get mainSaveRecoveryCommitted =>
+      'The old settings were committed. Reviewing confirms the result without replacing your current draft.';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      'The library has changed. The old proposal cannot overwrite newer settings. Keep it pending or abandon the uncommitted proposal.';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      'The old proposal is resolved. Your draft is unchanged; retry saving when ready.';
+
+  @override
+  String get mainSaveRecoveryEmpty =>
+      'No persistent save proposal needs review.';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      'The old proposal is not confirmed. Continue to reconcile and attempt the original save; your newer draft stays intact.';
+
+  @override
+  String get mainSaveRecoveryResolve => 'Resolve original save';
+
+  @override
+  String get mainSaveRecoveryReview => 'Review save';
+
+  @override
+  String get mainSaveRecoveryTitle => 'A save needs review';
+
+  @override
   String get mainSaveUnknown =>
       'This save is not yet confirmed. Your draft and attachments are preserved. Retry this submission; closing will refresh the workspace to check.';
 
@@ -902,6 +1099,72 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved content could not be read. The original data is preserved and will not be overwritten.';
 
   @override
+  String get mainStyleFlat => 'Flat · Default';
+
+  @override
+  String get mainStyleFlatDescription => 'Light edges and clear layers';
+
+  @override
+  String get mainStyleNeumorphism => 'Neumorphism';
+
+  @override
+  String get mainStyleNeumorphismDescription =>
+      'Soft paired shadows and gentle relief';
+
+  @override
+  String get mainTaskAdd => 'Add task';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      'The completion of these legacy tasks with matching names is uncertain. Confirm each task separately.';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage => 'Complete all and set stage';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return 'Mark every task complete and set the stage to “$stage”?';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      'Legacy tasks are matched by text. After upgrading, tasks with matching names can be managed separately.';
+
+  @override
+  String get mainTaskMarkComplete => 'Confirm complete';
+
+  @override
+  String get mainTaskMarkIncomplete => 'Confirm incomplete';
+
+  @override
+  String get mainTaskMoveDown => 'Move down';
+
+  @override
+  String get mainTaskMoveUp => 'Move up';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '$complete complete · $incomplete incomplete · $ambiguous to confirm';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return 'Remove task “$task”?';
+  }
+
+  @override
+  String get mainTaskRename => 'Rename';
+
+  @override
+  String get mainTaskSetStage => 'Change stage only';
+
+  @override
+  String get mainTaskStagePrompt => 'Project stage';
+
+  @override
+  String get mainTaskTextPrompt => 'Task text';
+
+  @override
   String get mainTenMinutesAgo => '10 minutes ago';
 
   @override
@@ -962,6 +1225,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mainViewAll => 'Show all';
+
+  @override
+  String get mainVisualStyle => 'Interface style';
 
   @override
   String get mainWarmSand => 'Warm sand';
@@ -2513,6 +2779,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'The workspace is still running. Close it before switching libraries.';
 
   @override
+  String get recoveryClosing =>
+      'Waiting for the original content service to exit. Reopening and recovery remain unavailable until exit is confirmed.';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      'Shutdown is still unconfirmed; the original service remains under observation. A timeout does not cancel committed or remote effects.';
+
+  @override
   String get recoveryFailed =>
       'Recovery did not finish. Keep the original files and try again.';
 
@@ -2546,6 +2820,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recoveryMaintenance =>
       'The library needs attention. Keep the original files and review the diagnostic details.';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      'This library migration is incomplete. Check the migration report in its folder, keep the source library, and retry with a new destination.';
 
   @override
   String get recoveryMissingKey =>
@@ -2759,6 +3037,23 @@ class AppLocalizationsEn extends AppLocalizations {
       'Search LRCLIB by song and artist, then choose the matching version.';
 
   @override
+  String visualFollowChain(String path) {
+    return 'Follow chain: $path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return 'Follows: $name';
+  }
+
+  @override
+  String get visualFollowCycle => 'Would create a cycle';
+
+  @override
+  String get visualFollowGuide =>
+      'Follow another component; unlink to restore your own settings.';
+
+  @override
   String get visualFollowTheme => 'Follow theme';
 
   @override
@@ -2930,6 +3225,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get visualMaterialPreview => 'Material preview';
 
   @override
+  String get visualMaterialSource => 'Material source';
+
+  @override
   String get visualMaximize => 'Maximize';
 
   @override
@@ -2977,6 +3275,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => 'Artist (optional)';
+
+  @override
+  String get visualOwnMaterial => 'Theme or own settings';
 
   @override
   String get visualPauseMusic => 'Pause music';

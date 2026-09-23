@@ -68,6 +68,7 @@ struct Pending {
 struct Scope {
     target: String,
     revision: u64,
+    format_version: u32,
     prior: Option<[u8; 32]>,
     binding: Binding,
     archive: Arc<[u8]>,
@@ -326,18 +327,21 @@ impl WorkbenchState {
             card_id: target.into(),
         }
         .validate()?;
-        let prior = if revision == 0 {
+        let (prior, format_version) = if revision == 0 {
             if self.host.store_local().card(target)?.is_some() {
                 return Err("capture create target already exists".into());
             }
-            None
+            (None, 1)
         } else {
             let card = self.authorized_read(target)?;
             if card.summary().revision != revision {
                 return Err("capture editor revision conflict".into());
             }
-            Self::decode(&card)?;
-            Some(<[u8; 32]>::from(Sha256::digest(card.encode())))
+            crate::versioned_record::decode(&card)?;
+            (
+                Some(<[u8; 32]>::from(Sha256::digest(card.encode()))),
+                card.summary().format_version,
+            )
         };
         let binding = self.capture_binding()?;
         self.capture_scopes
@@ -372,6 +376,7 @@ impl WorkbenchState {
             Scope {
                 target: target.into(),
                 revision,
+                format_version,
                 prior,
                 binding,
                 archive,
@@ -497,6 +502,9 @@ impl WorkbenchState {
         self.check_capture_scope(scope, false)?;
         v2::event_bounds(&event)?;
         let s = &self.capture_scopes.scopes[scope];
+        if s.format_version == 2 && event.field == "todos" {
+            return Err("TaskId editor does not accept checklist paste".into());
+        }
         if let Some(old) = s.events.iter().find(|e| e.id == event.id) {
             return if old == &event {
                 Ok(())
@@ -823,6 +831,347 @@ impl Workbench {
     }
 }
 
+fn card_save_fingerprint(
+    source: &CardRecord,
+    fields: &morrow_workbench_plugin::cards_v2::Fields,
+    snapshot: &EditorSnapshot,
+) -> Result<[u8; 32]> {
+    use morrow_workbench_plugin::{cards_v2::Command, cards_v2_codec};
+    let summary = source.summary();
+    let request = cards_v2_codec::encode_request(
+        &summary.id,
+        &summary.title,
+        &source.body(),
+        &Command::Edit(fields.clone()),
+    )?;
+    let endpoint = v2::snapshot_proto(snapshot)?.encode_to_vec();
+    let mut hash = Sha256::new();
+    hash.update((request.len() as u64).to_le_bytes());
+    hash.update(&request);
+    hash.update((endpoint.len() as u64).to_le_bytes());
+    hash.update(&endpoint);
+    Ok(hash.finalize().into())
+}
+
+impl WorkbenchState {
+    fn commit_captured_card(
+        &mut self,
+        projected: &crate::captured_cards::ProjectedEdit,
+    ) -> Result<transaction::Receipt> {
+        use morrow_core::lifecycle::GrantKind;
+        let id = projected.card().summary().id;
+        self.grant(&id, GrantKind::EditContent)?;
+        let start = self.start;
+        let result = projected.commit(
+            &mut self.host,
+            self.pool
+                .root(self.plugin.as_ref().ok_or("plugin unavailable")?)?
+                .connection(),
+            || now(start),
+        );
+        let revoked = self.revoke(&id, GrantKind::EditContent);
+        let receipt = result?;
+        revoked?;
+        Ok(receipt)
+    }
+
+    pub(crate) fn edit_card_captured(
+        &mut self,
+        operation: &str,
+        id: &str,
+        revision: u64,
+        fields: &morrow_workbench_plugin::cards_v2::Fields,
+        scope: &str,
+        snapshot: EditorSnapshot,
+    ) -> Result<crate::tasks_content::TaskCommit> {
+        use crate::{
+            captured_cards,
+            cards_content::CardAction,
+            cards_edit,
+            tasks_content::{TaskCommit, task_record},
+        };
+        use morrow_workbench_plugin::cards_v2::Command;
+
+        self.prepare_write()?;
+        let command = Command::Edit(fields.clone());
+        if let Some((commit, expected, evidence)) = self.task_history(id, operation)? {
+            let projected = captured_cards::verify_commit(&commit, &evidence)?;
+            if projected.card().summary().id != id
+                || !projected.matches_intent(operation, revision, &command, scope, &snapshot)?
+            {
+                return Err("captured card retry differs from original request".into());
+            }
+            let committed = task_record(projected.card())?;
+            let receipt = self.commit_captured_card(&projected)?;
+            if receipt != expected {
+                return Err("historical captured card receipt mismatch".into());
+            }
+            // Historical retry never revives a scope or discards newly staged assets.
+            return Ok(TaskCommit {
+                receipt,
+                committed,
+                repeated: true,
+            });
+        }
+
+        // A journal tombstone seals an abandoned operation even after its slot
+        // has been reused. Reject it before opening capture/guest work.
+        if !matches!(
+            self.host.store_local().lookup(operation)?,
+            morrow_core::transaction::Lookup::Absent
+        ) {
+            return Err("captured editor operation already used".into());
+        }
+
+        // A prior attempt may have failed after its exact proposal was stored.
+        // Keep that proposal bound to its original intent and never rerun its guest.
+        if let Some(recovery) = self.editor_recovery(id)? {
+            if recovery.active {
+                if recovery.operation_id != operation {
+                    return Err("card has an unresolved captured editor proposal".into());
+                }
+                let projected = self
+                    .load_editor_recovery(id)?
+                    .ok_or("captured editor proposal disappeared")?;
+                if projected.card().summary().id != id
+                    || projected.evidence().digest() != recovery.evidence_digest
+                    || !projected.matches_intent(operation, revision, &command, scope, &snapshot)?
+                {
+                    return Err("captured card retry differs from durable proposal".into());
+                }
+                self.check_capture_scope(scope, true)?;
+                let pending = self
+                    .capture_scopes
+                    .scopes
+                    .get(scope)
+                    .and_then(|scope| scope.pending.as_ref())
+                    .ok_or("use explicit editor recovery after capture scope ended")?;
+                if pending.operation != operation
+                    || pending.evidence.digest() != recovery.evidence_digest
+                {
+                    return Err("capture scope differs from durable proposal".into());
+                }
+                let committed = task_record(projected.card())?;
+                let receipt = self.commit_captured_card(&projected)?;
+                self.close_capture_scope(scope);
+                self.undo.remove(id);
+                self.staged.retain(|(card, _), _| card != id);
+                return Ok(TaskCommit {
+                    receipt,
+                    committed,
+                    repeated: false,
+                });
+            }
+        }
+
+        let source = self.authorized_read(id)?;
+        if source.summary().revision != revision {
+            return Err("captured card source revision conflict".into());
+        }
+        task_record(&source)?;
+        if !snapshot.todos.is_empty() {
+            return Err("TaskId editor snapshot cannot contain checklist text".into());
+        }
+        self.check_capture_scope(scope, true)?;
+        let fingerprint = card_save_fingerprint(&source, fields, &snapshot)?;
+        let source_hash = <[u8; 32]>::from(Sha256::digest(source.encode()));
+        let scoped = &self.capture_scopes.scopes[scope];
+        if scoped.format_version != 2
+            || scoped.target != id
+            || scoped.revision != revision
+            || scoped.prior != Some(source_hash)
+        {
+            return Err("editor scope target or original revision changed".into());
+        }
+        if scoped.events.iter().any(|event| event.field == "todos") {
+            return Err("TaskId editor does not accept checklist paste".into());
+        }
+        if let Some(pending) = &scoped.pending {
+            if pending.operation != operation || pending.fingerprint != fingerprint {
+                return Err("capture scope is locked to its original save intent".into());
+            }
+            let projected = captured_cards::derive(&pending.evidence)?;
+            if projected.source_card() != source.encode()
+                || !projected.matches_intent(operation, revision, &command, scope, &snapshot)?
+            {
+                return Err("pending captured card source or intent changed".into());
+            }
+            let committed = task_record(projected.card())?;
+            self.persist_editor_proposal(&projected)?;
+            let receipt = self.commit_captured_card(&projected)?;
+            self.close_capture_scope(scope);
+            self.undo.remove(id);
+            self.staged.retain(|(card, _), _| card != id);
+            return Ok(TaskCommit {
+                receipt,
+                committed,
+                repeated: false,
+            });
+        }
+
+        let bundle = bundle(scoped)?;
+        let endpoint = v2::snapshot_proto(&snapshot)?;
+        let rough = bundle.archive.len()
+            + bundle
+                .observations
+                .iter()
+                .map(Message::encoded_len)
+                .sum::<usize>()
+            + bundle
+                .applications
+                .iter()
+                .map(Message::encoded_len)
+                .sum::<usize>()
+            + endpoint.encoded_len()
+            + source.encode().len();
+        if rough > task_evidence::MAX_RAW_BYTES {
+            return Err("adopted paste evidence exceeds save capacity".into());
+        }
+        let attachments = self.card_attachments(id, &source, &CardAction::Edit(fields.clone()))?;
+        let plan = cards_edit::Plan::prepare(
+            &source,
+            self.bundle.as_ref().ok_or("plugin unavailable")?,
+            operation,
+            &command,
+            &attachments,
+            None,
+        )?;
+        let reserved = self.reserve_capture_fuel(scope)?;
+        let actual = self.captured_task(plan.invocation())?;
+        let final_observation = observation(&actual)?;
+        self.refund_capture_fuel(scope, reserved, &final_observation)?;
+        self.check_capture_scope(scope, false)?;
+        if actual.data().package_archive.as_slice() != bundle.archive.as_ref() {
+            return Err("capture package changed before save".into());
+        }
+        let final_edit = plan.capture(&actual)?;
+        let projected = captured_cards::compose(
+            &final_edit,
+            scope,
+            &snapshot,
+            bundle.parents,
+            bundle.applications,
+            bundle.observations,
+        )?;
+        let committed = task_record(projected.card())?;
+        let evidence = projected.evidence().clone();
+        let extra = evidence
+            .raw()
+            .len()
+            .checked_mul(2)
+            .and_then(|n| n.checked_add(evidence.container().len()))
+            .ok_or("capture pending size overflow")?;
+        self.capture_scopes.room(scope, extra)?;
+        let scoped = self
+            .capture_scopes
+            .scopes
+            .get_mut(scope)
+            .expect("checked scope");
+        scoped.bytes += extra;
+        scoped.pending = Some(Pending {
+            operation: operation.into(),
+            fingerprint,
+            evidence: Arc::new(evidence),
+        });
+        self.persist_editor_proposal(&projected)?;
+        let receipt = self.commit_captured_card(&projected)?;
+        self.close_capture_scope(scope);
+        self.undo.remove(id);
+        self.staged.retain(|(card, _), _| card != id);
+        Ok(TaskCommit {
+            receipt,
+            committed,
+            repeated: false,
+        })
+    }
+
+    pub(crate) fn resume_editor_recovery(
+        &mut self,
+        id: &str,
+        operation: &str,
+        digest: &[u8],
+    ) -> Result<crate::tasks_content::TaskCommit> {
+        use crate::tasks_content::{TaskCommit, task_record};
+
+        // Stored evidence does not carry a permission grant. Check the current
+        // package selection, approval, session and write access first.
+        self.prepare_write()?;
+        let recovery = self
+            .editor_recovery(id)?
+            .ok_or("editor recovery not found")?;
+        if !recovery.active
+            || recovery.card_id != id
+            || recovery.operation_id != operation
+            || recovery.evidence_digest.as_slice() != digest
+        {
+            return Err("editor recovery identity changed".into());
+        }
+        let projected = self
+            .load_editor_recovery(id)?
+            .ok_or("editor recovery evidence missing")?;
+        if projected.card().summary().id != id
+            || projected.operation_id() != operation
+            || projected.evidence().digest().as_slice() != digest
+        {
+            return Err("editor recovery evidence differs from metadata".into());
+        }
+        let committed = task_record(projected.card())?;
+        if let Some((commit, expected, evidence)) = self.task_history(id, operation)? {
+            let historical = crate::captured_cards::verify_commit(&commit, &evidence)?;
+            if historical.evidence().digest().as_slice() != digest {
+                return Err("historical captured card differs from recovery".into());
+            }
+            let receipt = self.commit_captured_card(&projected)?;
+            if receipt != expected {
+                return Err("historical captured card receipt mismatch".into());
+            }
+            return Ok(TaskCommit {
+                receipt,
+                committed,
+                repeated: true,
+            });
+        }
+        let source = self.authorized_read(id)?;
+        if source.summary().revision != recovery.source_revision
+            || source.encode() != projected.source_card()
+        {
+            return Err("editor recovery source changed".into());
+        }
+        let receipt = self.commit_captured_card(&projected)?;
+        Ok(TaskCommit {
+            receipt,
+            committed,
+            repeated: false,
+        })
+    }
+}
+
+impl Workbench {
+    pub fn edit_card_captured(
+        &mut self,
+        operation: &str,
+        id: &str,
+        revision: u64,
+        fields: &morrow_workbench_plugin::cards_v2::Fields,
+        scope: &str,
+        snapshot: EditorSnapshot,
+    ) -> Result<crate::tasks_content::TaskCommit> {
+        self.local_state_mut()?
+            .edit_card_captured(operation, id, revision, fields, scope, snapshot)
+    }
+
+    /// Explicitly submit the original durable proposal; callers read current
+    /// card state separately from this operation's historical TaskCommit.
+    pub fn resume_editor_recovery(
+        &mut self,
+        id: &str,
+        operation: &str,
+        digest: &[u8],
+    ) -> Result<crate::tasks_content::TaskCommit> {
+        self.local_state_mut()?
+            .resume_editor_recovery(id, operation, digest)
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -843,6 +1192,7 @@ mod tests {
         Scope {
             target: "synthetic-card".into(),
             revision: 0,
+            format_version: 1,
             prior: None,
             binding,
             archive: Arc::from([]),

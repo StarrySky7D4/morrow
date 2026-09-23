@@ -13,8 +13,64 @@ import 'desktop_frame.dart';
 import 'window_effects.dart';
 import 'plugins/workbench_native.dart';
 import 'plugins/studio_storage.dart';
+import 'dart:async';
+import 'plugins/session_coordinator.dart';
+import 'package:window_manager/window_manager.dart';
+
+final _sessions = SessionCoordinator();
+Future<void>? _desktopInitialization;
+final _applicationClose = _ApplicationClose();
+
+class _ApplicationClose with WindowListener {
+  bool requested = false, destroying = false;
+  void observe() {
+    if (!requested || destroying) return;
+    if (_sessions.owner == null && _sessions.phase == SessionPhase.opening) {
+      return;
+    }
+    if (_sessions.mayRecover) {
+      destroying = true;
+      unawaited(windowManager.destroy());
+    } else {
+      unawaited(_sessions.close().catchError((Object _) {}));
+    }
+  }
+
+  @override
+  void onWindowClose() {
+    if (requested) return;
+    requested = true;
+    runApp(
+      WorkbenchRecovery(
+        session: _sessions,
+        message: L10n.forLocale(
+          WidgetsBinding.instance.platformDispatcher.locale,
+        ).recoveryClosing,
+        onRetry: () async {
+          observe();
+        },
+      ),
+    );
+    observe();
+  }
+}
+
+Future<void> _initializeApplicationWindow() async {
+  await initializeDesktopFrame();
+  if (isWindowsDesktop) {
+    await windowManager.setPreventClose(true);
+    windowManager.addListener(_applicationClose);
+    _sessions.addListener(_applicationClose.observe);
+  }
+}
 
 Future<void> main(List<String> arguments) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  _desktopInitialization ??= _initializeApplicationWindow();
+  await _sessions.run(() => _startSession(arguments));
+}
+
+Future<void> _startSession(List<String> arguments) async {
   final startupCheck = arguments
       .where((v) => v.startsWith('--startup-check='))
       .firstOrNull
@@ -27,7 +83,7 @@ Future<void> main(List<String> arguments) async {
       .where((v) => v.startsWith('--canvas-check='))
       .firstOrNull;
   if (canvasCheck != null) {
-    await initializeDesktopFrame();
+    await _desktopInitialization;
     await qualifyCanvas(canvasCheck.substring('--canvas-check='.length));
     return;
   }
@@ -75,6 +131,9 @@ Future<void> main(List<String> arguments) async {
           : selected.substring('--data-directory='.length),
     );
     recoveryDirectory = directory;
+    if (await File('${directory.path}/MIGRATION_INCOMPLETE.txt').exists()) {
+      throw StateError(startupMessages.recoveryMigrationIncomplete);
+    }
     if (check != null &&
         (selected == null ||
             await File('${directory.path}/workbench.db').exists())) {
@@ -85,20 +144,34 @@ Future<void> main(List<String> arguments) async {
     // Both branches must finish before failure cleanup, so an open host never
     // escapes if desktop initialization fails. Neither branch needs the other.
     await Future.wait<void>([
-      initializeDesktopFrame().then((_) => startup.mark('desktop')),
+      _desktopInitialization!.then((_) => startup.mark('desktop')),
       RustWorkbench.open(
         executable: '$executable/morrow-workbench-host.exe',
         package: '$executable/plugins/workbench.morrowplugin',
         directory: directory,
         managed: managed,
+        onStarted: (backend) {
+          opened = backend;
+          _sessions.attach(
+            process: backend.process,
+            library: directory.absolute.path,
+            exited: backend.process.exitCode,
+            close: backend.close,
+          );
+        },
       ).then((backend) {
         opened = backend;
         startup.mark('host');
       }),
     ]);
     final backend = opened!;
+    if (_applicationClose.requested) {
+      _applicationClose.observe();
+      return;
+    }
     if (check != null) await seedQualification(backend, directory);
     final storage = await RustStudioStorage.open(backend);
+    _sessions.active();
     startup.mark('storage');
     final boundary = GlobalKey();
     startup.mark('runApp');
@@ -110,6 +183,7 @@ Future<void> main(List<String> arguments) async {
         child: RepaintBoundary(
           key: boundary,
           child: MorrowApp(
+            libraryDirectory: directory.path,
             storage: storage,
             onFirstFrame: () {
               startup.workbenchPainted();
@@ -145,11 +219,9 @@ Future<void> main(List<String> arguments) async {
       });
     }
   } catch (error, stack) {
-    try {
-      await opened?.close();
-    } catch (_) {
-      // Keep the original library/preference failure actionable in recovery.
-    }
+    // Render recovery immediately. Waiting for a worker is owned and observed
+    // outside the ordinary RPC lane, and does not authorize another writer.
+    unawaited(_sessions.close().catchError((Object _) {}));
     final check = arguments
         .where((v) => v.startsWith('--self-check='))
         .firstOrNull;
@@ -166,12 +238,16 @@ Future<void> main(List<String> arguments) async {
     final targetDirectory = recoveryDirectory;
     runApp(
       WorkbenchRecovery(
+        session: _sessions,
         failure: error,
         locale: previewLocale,
-        onRetry: () => main(arguments),
+        onRetry: () => _sessions.run(() => _startSession(arguments)),
         onRestoreSnapshot: !managed || targetDirectory == null
             ? null
             : () async {
+                if (!_sessions.mayRecover) {
+                  throw StateError('Previous library owner has not exited');
+                }
                 final selected = await openFile(
                   acceptedTypeGroups: [
                     XTypeGroup(
@@ -200,11 +276,14 @@ Future<void> main(List<String> arguments) async {
                 } catch (_) {
                   throw RecoverySwitchUnconfirmed(destination.path);
                 }
-                await main(arguments);
+                await _sessions.run(() => _startSession(arguments));
               },
         onRestore: targetDirectory == null
             ? null
             : () async {
+                if (!_sessions.mayRecover) {
+                  throw StateError('Previous library owner has not exited');
+                }
                 final selected = await openFile(
                   acceptedTypeGroups: [
                     XTypeGroup(
@@ -221,7 +300,7 @@ Future<void> main(List<String> arguments) async {
                   selected: selected.path,
                   managed: managed,
                 );
-                await main(arguments);
+                await _sessions.run(() => _startSession(arguments));
               },
       ),
     );

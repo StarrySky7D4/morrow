@@ -9,6 +9,7 @@ import 'package:morrow_studio/main.dart';
 import 'package:morrow_studio/attachments/attachment.dart';
 import 'package:morrow_studio/media/texture_source.dart';
 import 'package:morrow_studio/plugins/editor_session.dart';
+import 'package:morrow_studio/plugins/workbench_backend.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 
 Future<T> hostFuture<T>(WidgetTester tester, Future<T> request) async {
@@ -116,6 +117,43 @@ void main() {
         expect(saved.description, contains('attachment:$filename\u0085keep'));
         final retry = await editor.save(draft, fields);
         expect(retry.description, saved.description);
+        final newerEditor = await backend.openEditor(
+          'capture-native',
+          create: false,
+        );
+        late final Idea newer;
+        try {
+          final newerDraft = Idea(
+            'Newer committed title',
+            saved.description,
+            saved.category,
+            saved.icon,
+            saved.color,
+            id: saved.id,
+            stage: saved.stage,
+            attachments: saved.attachments,
+            hypothesis: saved.hypothesis,
+            conclusion: saved.conclusion,
+            todos: saved.todos,
+            completed: saved.completed,
+          );
+          final newerFields = EditorFields(
+            title: newerDraft.title,
+            description: newerDraft.description,
+            hypothesis: newerDraft.hypothesis,
+            conclusion: newerDraft.conclusion,
+            todos: newerDraft.todos.join('\n'),
+          );
+          newer = await newerEditor.save(newerDraft, newerFields);
+          expect(newer.historicalReceipt, isFalse);
+        } finally {
+          await newerEditor.close();
+        }
+        final oldReceipt = await editor.save(draft, fields);
+        expect(oldReceipt.historicalReceipt, isTrue);
+        expect(oldReceipt.title, newer.title);
+        expect(oldReceipt.contentRevision, newer.contentRevision);
+        expect((await backend.load()).single.title, newer.title);
         expect(await backend.load(), hasLength(1));
         draft.title = 'different intention';
         await expectLater(editor.save(draft, fields), throwsStateError);
@@ -136,9 +174,9 @@ void main() {
           PasteInsertion(
             id: 'paste-rtf-chain',
             field: 'title',
-            before: saved.title,
+            before: newer.title,
             startUtf16: 0,
-            endUtf16: saved.title.length,
+            endUtf16: newer.title.length,
             parts: [
               PastePart.ticket(plain.ticket!, selection: 'inputPlainText'),
             ],
@@ -412,7 +450,7 @@ void main() {
         );
         await expectLater(
           editor.save(changed, changedFields),
-          throwsStateError,
+          throwsA(isA<WorkbenchCommittedRefreshFailure>()),
         );
         await editor.close();
         editor = null;

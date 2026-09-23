@@ -378,5 +378,135 @@
   "mainHttpSettings": "HTTP-Aufgaben",
   "mainCredentialSettings": "Zugangsdaten",
   "mainEndpointSettings": "Ausgehende Endpunkte",
-  "mainExpandSettings": "Einstellungen erweitern"
+  "mainExpandSettings": "Einstellungen erweitern",
+  "mainFontSettings": "Schriftarten",
+  "mainFontDefault": "Standardschrift",
+  "mainFontFamily": "Name der Systemschrift",
+  "mainFontHint": "Zum Beispiel: Arial oder Microsoft YaHei",
+  "mainFontImport": "Schriftdatei importieren",
+  "mainFontHelp": "TTF / OTF, bis zu 20 MiB. Nicht verfügbare Systemschriften werden automatisch ersetzt.",
+  "mainFontFailed": "Die Schrift konnte nicht geladen werden. Prüfe die Datei oder starte die App neu und versuche es erneut.",
+  "mainFontUnavailable": "Die gespeicherte Schrift ist nicht verfügbar. Vorübergehend wird die Standardschrift verwendet.",
+  "mainFontApply": "Schrift anwenden",
+  "mainFontReset": "Standard wiederherstellen",
+  "mainSaveReadbackPending": "Die Einstellungen wurden gespeichert, das erneute Lesen ist noch unbestätigt. Der Entwurf bleibt erhalten; ein erneuter Versuch prüft zuerst den ursprünglichen Vorgang.",
+  "mainLegacyTodoTitle": "Änderung einer alten Aufgabenliste",
+  "mainLegacyTodoContinue": "Fortfahren",
+  "mainLegacyStageComplete": "Das alte Format markiert alle Aufgaben als erledigt und schließt das Projekt ab. Fortfahren?",
+  "mainLegacyStageReopen": "Ein anderer Projektstatus entfernt die Markierung der letzten Aufgabe „{task}“ und aller gleichnamigen Aufgaben. Fortfahren?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "Das alte Format identifiziert Aufgaben anhand ihres Textes. Alle Aufgaben „{task}“ werden geändert. Fortfahren?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "Ein Speichervorgang muss geprüft werden",
+  "mainSaveRecoveryReview": "Speichern prüfen",
+  "mainSaveRecoveryCommitted": "Die alten Einstellungen wurden gespeichert. Die Prüfung bestätigt das Ergebnis, ohne Ihren aktuellen Entwurf zu ersetzen.",
+  "mainSaveRecoveryConflict": "Die Bibliothek hat sich geändert. Der alte Vorschlag darf neuere Einstellungen nicht überschreiben. Behalten Sie ihn bei oder verwerfen Sie ihn, falls er nicht gespeichert wurde.",
+  "mainSaveRecoveryPending": "Der alte Vorschlag ist noch nicht bestätigt. Fortfahren prüft und versucht den ursprünglichen Speichervorgang; Ihr neuer Entwurf bleibt erhalten.",
+  "mainSaveRecoveryResolve": "Ursprüngliches Speichern klären",
+  "mainSaveRecoveryAbandon": "Alten Vorschlag verwerfen",
+  "mainSaveRecoveryAbandonConfirm": "Nur den nicht gespeicherten Vorschlag verwerfen? Ihr Entwurf und gespeicherte Inhalte bleiben erhalten. Gespeicherte Einstellungen werden nicht rückgängig gemacht.",
+  "mainSaveRecoveryDone": "Der alte Vorschlag ist geklärt. Ihr Entwurf bleibt unverändert; speichern Sie ihn bei Bedarf erneut.",
+  "mainSaveRecoveryEmpty": "Kein dauerhaft gespeicherter Vorschlag muss geprüft werden.",
+  "mainContentCommittedRefreshFailed": "Der Vorgang wurde gespeichert, aber der aktuelle Inhalt konnte nicht geladen werden. Aktualisieren Sie die Ansicht.",
+  "mainTaskProgressThreeWay": "{complete} erledigt · {incomplete} offen · {ambiguous} zu bestätigen",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "Der Status dieser alten Aufgaben mit gleichem Namen ist unklar. Bestätigen Sie jede Aufgabe einzeln.",
+  "mainTaskMarkComplete": "Als erledigt bestätigen",
+  "mainTaskMarkIncomplete": "Als offen bestätigen",
+  "mainTaskAdd": "Aufgabe hinzufügen",
+  "mainTaskTextPrompt": "Aufgabentext",
+  "mainTaskRename": "Umbenennen",
+  "mainTaskMoveUp": "Nach oben",
+  "mainTaskMoveDown": "Nach unten",
+  "mainTaskRemoveConfirm": "Aufgabe „{task}“ entfernen?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Projektphase",
+  "mainTaskSetStage": "Nur Phase ändern",
+  "mainTaskCompleteAllAndSetStage": "Alle erledigen und Phase setzen",
+  "mainTaskCompleteAllConfirm": "Alle Aufgaben als erledigt markieren und die Phase auf „{stage}“ setzen?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "Alte Aufgaben werden nach Text zugeordnet. Nach dem Upgrade lassen sich gleichnamige Aufgaben einzeln verwalten.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Aktion bestätigt, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie sie, um den aktuellen Status zu sehen.",
+  "mainDraftImportRecoveryTitle": "Anhangentscheidungen prüfen",
+  "mainDraftImportRecoveryEmpty": "Keine Anhangentscheidungen zur Prüfung.",
+  "mainDraftImportRecoveryPending": "Ausstehend: Der ursprüngliche Verzicht wurde nicht bestätigt.",
+  "mainDraftImportRecoveryCommitted": "Abgeschlossen: Der Import dieses Anhangs wurde aufgegeben.",
+  "mainDraftImportRecoveryCancelled": "Abgebrochen: Die ursprüngliche Verzichtsanfrage wird nicht mehr ausgeführt.",
+  "mainDraftImportRecoveryConflict": "Konflikt: Der Entwurf hat sich geändert. Diese Anfrage kann nur abgebrochen werden.",
+  "mainDraftImportRecoveryRetry": "Ursprünglichen Verzicht wiederholen",
+  "mainDraftImportRecoveryCancelDecision": "Verzichtsanfrage abbrechen",
+  "mainDraftImportRecoveryCancelTitle": "Diese Verzichtsanfrage abbrechen?",
+  "mainDraftImportRecoveryCancelBody": "Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.",
+  "mainDraftImportRecoveryFailed": "Diese Entscheidung konnte nicht geprüft werden. Aktualisieren und erneut versuchen.",
+  "mainDraftImportRecoveryClose": "Schließen",
+  "mainEditorRecoveryTitle": "Änderungen prüfen",
+  "mainEditorRecoveryEmpty": "Keine gespeicherten Änderungsvorschläge zu prüfen.",
+  "mainEditorRecoveryPending": "Die ursprüngliche Änderung ist unbestätigt. Fortsetzen wiederholt nur diesen Vorschlag, ohne neuere Änderungen zu senden.",
+  "mainEditorRecoveryCommitted": "Die ursprüngliche Änderung wurde gespeichert. Prüfen und bestätigen Sie den aktuellen Inhalt, ohne erneut zu speichern.",
+  "mainEditorRecoveryConflict": "Die Ausgangsversion oder der Verlauf hat sich geändert. Der Vorschlag bleibt erhalten und kann den aktuellen Inhalt nicht überschreiben.",
+  "mainEditorRecoveryResume": "Ursprüngliche Änderung fortsetzen",
+  "mainEditorRecoveryConfirm": "Prüfen und bestätigen",
+  "mainEditorRecoveryFailed": "Die Prüfung konnte nicht abgeschlossen werden. Der ursprüngliche Vorschlag bleibt erhalten. Aktualisieren Sie und versuchen Sie es erneut.",
+  "mainEditorRecoveryAbandonTitle": "Alte Änderung verwerfen",
+  "mainEditorRecoveryAbandonBody": "Diese noch nicht übernommene Änderung verwerfen? Der ursprüngliche Vorgang wird gesperrt. Gespeicherte Inhalte und neuere Entwürfe bleiben unverändert. Bereits übernommene Änderungen werden nicht rückgängig gemacht.",
+  "mainEditorPendingDraft": "Sie können weiterschreiben. Klären Sie zuerst den vorherigen Speichervorgang; neue Änderungen werden nicht automatisch gesendet.",
+  "mainEditorNewerDraft": "Die vorherige Änderung wurde gespeichert. Ihr neuer Entwurf ist noch ungespeichert.",
+  "mainEditorContinueFailed": "Die vorherige Änderung ist bestätigt. Ihr neuer Entwurf bleibt in diesem Fenster. Der nächste Editor konnte nicht geöffnet werden. Bitte erneut versuchen.",
+  "mainEditorContinueDraft": "Weiter bearbeiten",
+  "mainVisualStyle": "Oberflächenstil",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Flach · Standard",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Dezente Konturen, klare Ebenen",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Neumorphismus",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Weiche Lichtkanten und sanfte Schatten",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

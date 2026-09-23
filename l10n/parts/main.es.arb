@@ -378,5 +378,135 @@
   "mainHttpSettings": "Tareas HTTP",
   "mainCredentialSettings": "Credenciales",
   "mainEndpointSettings": "Puntos de conexión salientes",
-  "mainExpandSettings": "Expandir ajustes"
+  "mainExpandSettings": "Expandir ajustes",
+  "mainFontSettings": "Fuentes",
+  "mainFontDefault": "Fuente predeterminada",
+  "mainFontFamily": "Nombre de la fuente del sistema",
+  "mainFontHint": "Por ejemplo: Arial o Microsoft YaHei",
+  "mainFontImport": "Importar archivo de fuente",
+  "mainFontHelp": "TTF / OTF, hasta 20 MiB. Las fuentes del sistema no disponibles se sustituyen automáticamente.",
+  "mainFontFailed": "No se pudo cargar la fuente. Comprueba el archivo o reinicia la aplicación e inténtalo de nuevo.",
+  "mainFontUnavailable": "La fuente guardada no está disponible. Se usa temporalmente la fuente predeterminada.",
+  "mainFontApply": "Aplicar fuente",
+  "mainFontReset": "Restaurar predeterminada",
+  "mainSaveReadbackPending": "Los ajustes se guardaron, pero la lectura no está confirmada. El borrador se conserva; reintentar comprobará primero el envío original.",
+  "mainLegacyTodoTitle": "Cambios en una lista antigua",
+  "mainLegacyTodoContinue": "Continuar",
+  "mainLegacyStageComplete": "El formato antiguo marcará todas las tareas y completará el proyecto. ¿Continuar?",
+  "mainLegacyStageReopen": "Cambiar de etapa desmarcará la última tarea «{task}» y todas las del mismo nombre. ¿Continuar?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "El formato antiguo identifica las tareas por su texto. Cambiarán todas las tareas «{task}». ¿Continuar?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "Hay un guardado por revisar",
+  "mainSaveRecoveryReview": "Revisar guardado",
+  "mainSaveRecoveryCommitted": "Los ajustes anteriores se guardaron. La revisión confirma el resultado sin sustituir el borrador actual.",
+  "mainSaveRecoveryConflict": "La biblioteca ha cambiado. La propuesta anterior no puede sobrescribir ajustes más recientes. Déjela pendiente o descarte la propuesta sin guardar.",
+  "mainSaveRecoveryPending": "La propuesta anterior no está confirmada. Continuar comprobará e intentará el guardado original; el nuevo borrador se conservará.",
+  "mainSaveRecoveryResolve": "Resolver el guardado original",
+  "mainSaveRecoveryAbandon": "Descartar propuesta anterior",
+  "mainSaveRecoveryAbandonConfirm": "¿Descartar solo la propuesta sin guardar? El borrador actual y los datos guardados se conservarán. Los ajustes ya guardados no se desharán.",
+  "mainSaveRecoveryDone": "La propuesta anterior está resuelta. El borrador no ha cambiado; vuelva a guardarlo cuando quiera.",
+  "mainSaveRecoveryEmpty": "No hay propuestas persistentes que revisar.",
+  "mainContentCommittedRefreshFailed": "La operación se ha guardado, pero no se ha podido cargar el contenido actualizado. Actualiza para verlo.",
+  "mainTaskProgressThreeWay": "{complete} completadas · {incomplete} pendientes · {ambiguous} por confirmar",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "El estado de estas tareas antiguas con el mismo nombre es incierto. Confirma cada tarea por separado.",
+  "mainTaskMarkComplete": "Confirmar completada",
+  "mainTaskMarkIncomplete": "Confirmar pendiente",
+  "mainTaskAdd": "Añadir tarea",
+  "mainTaskTextPrompt": "Texto de la tarea",
+  "mainTaskRename": "Cambiar nombre",
+  "mainTaskMoveUp": "Subir",
+  "mainTaskMoveDown": "Bajar",
+  "mainTaskRemoveConfirm": "¿Eliminar la tarea «{task}»?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Etapa del proyecto",
+  "mainTaskSetStage": "Cambiar solo la etapa",
+  "mainTaskCompleteAllAndSetStage": "Completar todas y fijar etapa",
+  "mainTaskCompleteAllConfirm": "¿Marcar todas las tareas como completadas y fijar la etapa en «{stage}»?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "Las tareas antiguas se identifican por su texto. Tras actualizar, las tareas con el mismo nombre se pueden gestionar por separado.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Acción confirmada, pero la lista no se ha actualizado. Actualízala para ver el estado más reciente.",
+  "mainDraftImportRecoveryTitle": "Revisar decisiones sobre adjuntos",
+  "mainDraftImportRecoveryEmpty": "No hay decisiones sobre adjuntos pendientes de revisión.",
+  "mainDraftImportRecoveryPending": "Pendiente: la solicitud original de abandono no está confirmada.",
+  "mainDraftImportRecoveryCommitted": "Completada: se abandonó la importación de este adjunto.",
+  "mainDraftImportRecoveryCancelled": "Cancelada: la solicitud original de abandono ya no se ejecutará.",
+  "mainDraftImportRecoveryConflict": "Conflicto: el borrador cambió. Esta solicitud solo se puede cancelar.",
+  "mainDraftImportRecoveryRetry": "Reintentar el abandono original",
+  "mainDraftImportRecoveryCancelDecision": "Cancelar solicitud de abandono",
+  "mainDraftImportRecoveryCancelTitle": "¿Cancelar esta solicitud de abandono?",
+  "mainDraftImportRecoveryCancelBody": "Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.",
+  "mainDraftImportRecoveryFailed": "No se pudo revisar esta decisión. Actualiza e inténtalo de nuevo.",
+  "mainDraftImportRecoveryClose": "Cerrar",
+  "mainEditorRecoveryTitle": "Revisar ediciones pendientes",
+  "mainEditorRecoveryEmpty": "No hay propuestas guardadas que revisar.",
+  "mainEditorRecoveryPending": "La edición original no está confirmada. Continuar reintenta solo esa propuesta, sin enviar cambios posteriores.",
+  "mainEditorRecoveryCommitted": "La edición original se guardó. Revisa el contenido actual y confirma sin volver a guardar.",
+  "mainEditorRecoveryConflict": "La versión inicial o el historial cambió. La propuesta se conserva y no puede sobrescribir el contenido actual.",
+  "mainEditorRecoveryResume": "Continuar la edición original",
+  "mainEditorRecoveryConfirm": "Revisar y confirmar",
+  "mainEditorRecoveryFailed": "No se pudo completar la revisión. La propuesta original se conserva. Actualiza e inténtalo de nuevo.",
+  "mainEditorRecoveryAbandonTitle": "Descartar edición anterior",
+  "mainEditorRecoveryAbandonBody": "¿Descartar esta edición sin confirmar? Su operación original quedará bloqueada. El contenido guardado y los nuevos borradores no cambiarán. Esto no deshace una edición ya confirmada.",
+  "mainEditorPendingDraft": "Puedes seguir escribiendo. Revisa primero el guardado anterior; las nuevas ediciones no se enviarán automáticamente.",
+  "mainEditorNewerDraft": "La edición anterior se guardó. El nuevo borrador sigue sin guardar.",
+  "mainEditorContinueFailed": "La edición anterior está confirmada y el nuevo borrador sigue en esta ventana. No se pudo abrir el siguiente editor; inténtalo de nuevo.",
+  "mainEditorContinueDraft": "Seguir editando",
+  "mainVisualStyle": "Estilo de interfaz",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Plano · Predeterminado",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Bordes ligeros y capas claras",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Neumorfismo",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Sombras suaves y relieve sutil",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

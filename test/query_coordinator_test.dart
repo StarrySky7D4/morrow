@@ -59,6 +59,77 @@ Future<void> waitForLocalizedWorkbench(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets(
+    'completed view references re-deliver through the host and invalidate',
+    (t) async {
+      final backend = QueryBackend();
+      final q = QueryCoordinator(onChanged: () {}, debounce: Duration.zero);
+      q.select(backend, conditions('A'));
+      await t.pump(const Duration(milliseconds: 1));
+      backend.requests.last.complete(['a']);
+      await t.pump(const Duration(milliseconds: 1));
+      final original = backend.operations.last;
+      q.select(backend, conditions('B'));
+      await t.pump(const Duration(milliseconds: 1));
+      backend.requests.last.complete(['b']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.select(backend, conditions('A'));
+      expect(q.ids, isEmpty); // No unverified cached delivery.
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, original);
+      backend.requests.last.completeError(
+        const QueryFailure('revoked', terminal: true),
+      );
+      await t.pump(const Duration(milliseconds: 1));
+      expect(q.phase, QueryPhase.failed);
+      expect(q.ids, isEmpty);
+      q.retry();
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, isNot(original));
+      backend.requests.last.complete(['new']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.invalidate();
+      q.select(backend, conditions('A'));
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, isNot(original));
+      backend.requests.last.complete(['authorized']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.dispose();
+    },
+  );
+
+  testWidgets(
+    'completed operations have an eight-view bound and generation isolation',
+    (t) async {
+      final backend = QueryBackend();
+      final q = QueryCoordinator(onChanged: () {}, debounce: Duration.zero);
+      for (var i = 0; i < 10; i++) {
+        q.select(backend, conditions('$i'));
+        await t.pump(const Duration(milliseconds: 1));
+        backend.requests.last.complete(['$i']);
+        await t.pump(const Duration(milliseconds: 1));
+      }
+      final first = backend.operations.first;
+      final recent = backend.operations[8];
+      q.select(backend, conditions('8'));
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, recent);
+      backend.requests.last.complete(['8']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.select(backend, conditions('0'));
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, isNot(first));
+      backend.requests.last.complete(['0']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.select(backend, conditions('8', generation: 1));
+      await t.pump(const Duration(milliseconds: 1));
+      expect(backend.operations.last, isNot(recent));
+      backend.requests.last.complete(['8-new']);
+      await t.pump(const Duration(milliseconds: 1));
+      q.dispose();
+    },
+  );
+
   testWidgets('debounce coalesces input and A B A never accepts old A', (
     tester,
   ) async {

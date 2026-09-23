@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "Schnellerfassung",
   "mainComponentSearch": "Suchleiste",
   "mainComponentSettings": "Komponenten und Karten · Einstellungen",
+  "mainContentCommittedRefreshFailed": "Der Vorgang wurde gespeichert, aber der aktuelle Inhalt konnte nicht geladen werden. Aktualisieren Sie die Ansicht.",
   "mainContentProtection": "Inhaltsschutz",
   "mainContentRead": "Inhalt gelesen",
   "mainContentReadFiles": "Inhalt gelesen; {count} Anhänge erhalten",
@@ -916,9 +1001,36 @@
   "mainDeleted": "„{title}“ gelöscht",
   "mainDiagnosticDetails": "Diagnosedetails",
   "mainDone": "Fertig",
+  "mainDraftImportRecoveryCancelBody": "Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.",
+  "mainDraftImportRecoveryCancelDecision": "Verzichtsanfrage abbrechen",
+  "mainDraftImportRecoveryCancelTitle": "Diese Verzichtsanfrage abbrechen?",
+  "mainDraftImportRecoveryCancelled": "Abgebrochen: Die ursprüngliche Verzichtsanfrage wird nicht mehr ausgeführt.",
+  "mainDraftImportRecoveryClose": "Schließen",
+  "mainDraftImportRecoveryCommitted": "Abgeschlossen: Der Import dieses Anhangs wurde aufgegeben.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Aktion bestätigt, aber die Liste wurde nicht aktualisiert. Aktualisieren Sie sie, um den aktuellen Status zu sehen.",
+  "mainDraftImportRecoveryConflict": "Konflikt: Der Entwurf hat sich geändert. Diese Anfrage kann nur abgebrochen werden.",
+  "mainDraftImportRecoveryEmpty": "Keine Anhangentscheidungen zur Prüfung.",
+  "mainDraftImportRecoveryFailed": "Diese Entscheidung konnte nicht geprüft werden. Aktualisieren und erneut versuchen.",
+  "mainDraftImportRecoveryPending": "Ausstehend: Der ursprüngliche Verzicht wurde nicht bestätigt.",
+  "mainDraftImportRecoveryRetry": "Ursprünglichen Verzicht wiederholen",
+  "mainDraftImportRecoveryTitle": "Anhangentscheidungen prüfen",
   "mainEdit": "Bearbeiten",
   "mainEditIdeaTitle": "Gib deiner Idee mehr Klarheit",
   "mainEditorClosedUnknown": "Der Editor ist geschlossen, das Speichern aber nicht bestätigt. Öffne den Arbeitsbereich zur Prüfung, bevor du eine weitere Kopie erstellst.",
+  "mainEditorContinueDraft": "Weiter bearbeiten",
+  "mainEditorContinueFailed": "Die vorherige Änderung ist bestätigt. Ihr neuer Entwurf bleibt in diesem Fenster. Der nächste Editor konnte nicht geöffnet werden. Bitte erneut versuchen.",
+  "mainEditorNewerDraft": "Die vorherige Änderung wurde gespeichert. Ihr neuer Entwurf ist noch ungespeichert.",
+  "mainEditorPendingDraft": "Sie können weiterschreiben. Klären Sie zuerst den vorherigen Speichervorgang; neue Änderungen werden nicht automatisch gesendet.",
+  "mainEditorRecoveryAbandonBody": "Diese noch nicht übernommene Änderung verwerfen? Der ursprüngliche Vorgang wird gesperrt. Gespeicherte Inhalte und neuere Entwürfe bleiben unverändert. Bereits übernommene Änderungen werden nicht rückgängig gemacht.",
+  "mainEditorRecoveryAbandonTitle": "Alte Änderung verwerfen",
+  "mainEditorRecoveryCommitted": "Die ursprüngliche Änderung wurde gespeichert. Prüfen und bestätigen Sie den aktuellen Inhalt, ohne erneut zu speichern.",
+  "mainEditorRecoveryConfirm": "Prüfen und bestätigen",
+  "mainEditorRecoveryConflict": "Die Ausgangsversion oder der Verlauf hat sich geändert. Der Vorschlag bleibt erhalten und kann den aktuellen Inhalt nicht überschreiben.",
+  "mainEditorRecoveryEmpty": "Keine gespeicherten Änderungsvorschläge zu prüfen.",
+  "mainEditorRecoveryFailed": "Die Prüfung konnte nicht abgeschlossen werden. Der ursprüngliche Vorschlag bleibt erhalten. Aktualisieren Sie und versuchen Sie es erneut.",
+  "mainEditorRecoveryPending": "Die ursprüngliche Änderung ist unbestätigt. Fortsetzen wiederholt nur diesen Vorschlag, ohne neuere Änderungen zu senden.",
+  "mainEditorRecoveryResume": "Ursprüngliche Änderung fortsetzen",
+  "mainEditorRecoveryTitle": "Änderungen prüfen",
   "mainEditorSubtitle": "Texte, Tabellen, Bilder – bewahre sie hier, während deine Idee Gestalt annimmt.",
   "mainEditorUnavailable": "Editor nicht verfügbar. Prüfe den Inhaltsdienst und versuche es erneut.",
   "mainEndpointSettings": "Ausgehende Endpunkte",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "Zu erledigen",
   "mainFilterText": "Text",
   "mainFollowTheme": "Thema folgen",
+  "mainFontApply": "Schrift anwenden",
+  "mainFontDefault": "Standardschrift",
+  "mainFontFailed": "Die Schrift konnte nicht geladen werden. Prüfe die Datei oder starte die App neu und versuche es erneut.",
+  "mainFontFamily": "Name der Systemschrift",
+  "mainFontHelp": "TTF / OTF, bis zu 20 MiB. Nicht verfügbare Systemschriften werden automatisch ersetzt.",
+  "mainFontHint": "Zum Beispiel: Arial oder Microsoft YaHei",
+  "mainFontImport": "Schriftdatei importieren",
+  "mainFontReset": "Standard wiederherstellen",
+  "mainFontSettings": "Schriftarten",
+  "mainFontUnavailable": "Die gespeicherte Schrift ist nicht verfügbar. Vorübergehend wird die Standardschrift verwendet.",
   "mainFrostDetail": "Ein weicher Hintergrund schafft Raum für Gedanken.",
   "mainFrostEffect": "Unschärfe",
   "mainFrostOpacity": "Glasdeckkraft",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "Systemsprache",
   "mainLavender": "Lavendel",
+  "mainLegacyStageComplete": "Das alte Format markiert alle Aufgaben als erledigt und schließt das Projekt ab. Fortfahren?",
+  "mainLegacyStageReopen": "Ein anderer Projektstatus entfernt die Markierung der letzten Aufgabe „{task}“ und aller gleichnamigen Aufgaben. Fortfahren?",
+  "mainLegacyTodoContinue": "Fortfahren",
+  "mainLegacyTodoGroup": "Das alte Format identifiziert Aufgaben anhand ihres Textes. Alle Aufgaben „{task}“ werden geändert. Fortfahren?",
+  "mainLegacyTodoTitle": "Änderung einer alten Aufgabenliste",
   "mainLightOpacity": "20 % · Leicht",
   "mainLiquidAllCanvases": "Für alle vier Hintergrundtypen separat verfügbar",
   "mainLiquidDetail": "Fließende Lichtreflexe und sanfte Brechung wie ein schwebender Wassertropfen.",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "Idee speichern",
   "mainSaveNotSubmitted": "Nicht übermittelt. Entwurf und Anhänge bleiben erhalten; bearbeite und speichere erneut.",
   "mainSaveReadOnly": "Änderungen nicht gespeichert. Aktiviere das Arbeitsbereich-Plugin unter Plugins und Dienste und versuche es erneut.",
+  "mainSaveReadbackPending": "Die Einstellungen wurden gespeichert, das erneute Lesen ist noch unbestätigt. Der Entwurf bleibt erhalten; ein erneuter Versuch prüft zuerst den ursprünglichen Vorgang.",
+  "mainSaveRecoveryAbandon": "Alten Vorschlag verwerfen",
+  "mainSaveRecoveryAbandonConfirm": "Nur den nicht gespeicherten Vorschlag verwerfen? Ihr Entwurf und gespeicherte Inhalte bleiben erhalten. Gespeicherte Einstellungen werden nicht rückgängig gemacht.",
+  "mainSaveRecoveryCommitted": "Die alten Einstellungen wurden gespeichert. Die Prüfung bestätigt das Ergebnis, ohne Ihren aktuellen Entwurf zu ersetzen.",
+  "mainSaveRecoveryConflict": "Die Bibliothek hat sich geändert. Der alte Vorschlag darf neuere Einstellungen nicht überschreiben. Behalten Sie ihn bei oder verwerfen Sie ihn, falls er nicht gespeichert wurde.",
+  "mainSaveRecoveryDone": "Der alte Vorschlag ist geklärt. Ihr Entwurf bleibt unverändert; speichern Sie ihn bei Bedarf erneut.",
+  "mainSaveRecoveryEmpty": "Kein dauerhaft gespeicherter Vorschlag muss geprüft werden.",
+  "mainSaveRecoveryPending": "Der alte Vorschlag ist noch nicht bestätigt. Fortfahren prüft und versucht den ursprünglichen Speichervorgang; Ihr neuer Entwurf bleibt erhalten.",
+  "mainSaveRecoveryResolve": "Ursprüngliches Speichern klären",
+  "mainSaveRecoveryReview": "Speichern prüfen",
+  "mainSaveRecoveryTitle": "Ein Speichervorgang muss geprüft werden",
   "mainSaveUnknown": "Speichern noch nicht bestätigt. Entwurf und Anhänge bleiben erhalten. Wiederhole diese Übermittlung; beim Schließen wird der Arbeitsbereich zur Prüfung aktualisiert.",
   "mainSaving": "Wird gespeichert…",
   "mainSearchHint": "Ideen durchsuchen…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "{done}/{total} Schritte",
   "mainStorageUnavailable": "Lokaler Speicher nicht verfügbar. Änderungen bleiben nur für diese Sitzung erhalten.",
   "mainStorageUnreadable": "Gespeicherte Inhalte konnten nicht gelesen werden. Originaldaten bleiben erhalten und werden nicht überschrieben.",
+  "mainStyleFlat": "Flach · Standard",
+  "mainStyleFlatDescription": "Dezente Konturen, klare Ebenen",
+  "mainStyleNeumorphism": "Neumorphismus",
+  "mainStyleNeumorphismDescription": "Weiche Lichtkanten und sanfte Schatten",
+  "mainTaskAdd": "Aufgabe hinzufügen",
+  "mainTaskAmbiguousDecision": "Der Status dieser alten Aufgaben mit gleichem Namen ist unklar. Bestätigen Sie jede Aufgabe einzeln.",
+  "mainTaskCompleteAllAndSetStage": "Alle erledigen und Phase setzen",
+  "mainTaskCompleteAllConfirm": "Alle Aufgaben als erledigt markieren und die Phase auf „{stage}“ setzen?",
+  "mainTaskLegacyReadOnly": "Alte Aufgaben werden nach Text zugeordnet. Nach dem Upgrade lassen sich gleichnamige Aufgaben einzeln verwalten.",
+  "mainTaskMarkComplete": "Als erledigt bestätigen",
+  "mainTaskMarkIncomplete": "Als offen bestätigen",
+  "mainTaskMoveDown": "Nach unten",
+  "mainTaskMoveUp": "Nach oben",
+  "mainTaskProgressThreeWay": "{complete} erledigt · {incomplete} offen · {ambiguous} zu bestätigen",
+  "mainTaskRemoveConfirm": "Aufgabe „{task}“ entfernen?",
+  "mainTaskRename": "Umbenennen",
+  "mainTaskSetStage": "Nur Phase ändern",
+  "mainTaskStagePrompt": "Projektphase",
+  "mainTaskTextPrompt": "Aufgabentext",
   "mainTenMinutesAgo": "Vor 10 Minuten",
   "mainTextureCanvas": "Textur",
   "mainTextureDetail": "Eine feine Papierstruktur verleiht ein griffiges Gefühl.",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "Zu testen",
   "mainView": "Ansehen",
   "mainViewAll": "Alle anzeigen",
+  "mainVisualStyle": "Oberflächenstil",
   "mainWarmSand": "Warmer Sand",
   "mainWhiteTheme": "Hell",
   "mainWindowRadius": "Fensterecken",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "Bibliothek wird von einem anderen Prozess verwendet. Schließe das andere Fenster und versuche es erneut.",
   "recoveryChooseKey": "Wiederherstellungsdatei wählen",
   "recoveryCloseFirst": "Arbeitsbereich läuft noch. Schließe ihn vor dem Bibliothekswechsel.",
+  "recoveryClosing": "Warten auf das Ende des ursprünglichen Dienstes. Erneutes Öffnen und Wiederherstellen sind erst nach bestätigtem Ende möglich.",
+  "recoveryClosingUnconfirmed": "Das Beenden ist noch nicht bestätigt. Die Überwachung läuft weiter; ein Zeitablauf macht ausgeführte Vorgänge nicht rückgängig.",
   "recoveryFailed": "Wiederherstellung nicht abgeschlossen. Bewahre Originaldateien auf und versuche es erneut.",
   "recoveryIdentityBusy": "Eine andere Kopie dieser Bibliothek ist geöffnet. Schließe sie, bevor du diese öffnest.",
   "recoveryIdentityMismatch": "Registrierte Bibliotheksidentität stimmt nicht überein. Bewahre Originaldaten auf und stelle die passende Sicherung wieder her.",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "Wiederherstellungsergebnis prüfen. Versuche erneut zu öffnen; die vorherige Schutzdatei wurde, falls vorhanden, als Kopie aufbewahrt.",
   "recoveryLibraryInvalid": "Bibliothek konnte nicht geprüft oder geöffnet werden. Bewahre Originalbibliothek und Schlüssel auf und versuche es erneut.",
   "recoveryMaintenance": "Die Bibliothek benötigt Aufmerksamkeit. Bewahre Originaldateien auf und prüfe die Diagnose.",
+  "recoveryMigrationIncomplete": "Die Migration dieser Bibliothek ist unvollständig. Prüfen Sie den Bericht im Ordner, behalten Sie die Quellbibliothek und versuchen Sie es mit einem neuen Zielordner erneut.",
   "recoveryMissingKey": "Bibliotheksschlüssel fehlt. Stelle die ursprüngliche .audit-key-Datei wieder her und versuche es erneut.",
   "recoveryMissingLibrary": "Schlüssel vorhanden, Bibliothek fehlt oder ist leer. Stelle die ursprüngliche Bibliothek wieder her.",
   "recoveryOpenFailed": "Arbeitsbereich konnte nicht geöffnet werden. Prüfe Plugin-Dateien und Datenordner und versuche es erneut.",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "Dateivorgang fehlgeschlagen. Versuche es erneut.",
   "visualFindLyrics": "Liedtext finden",
   "visualFindLyricsGuide": "Suche in LRCLIB nach Titel und Interpret und wähle die passende Version.",
+  "visualFollowChain": "Verknüpfungskette: {path}",
+  "visualFollowComponent": "Folgt: {name}",
+  "visualFollowCycle": "Würde einen Zyklus erzeugen",
+  "visualFollowGuide": "Anderem Element folgen; nach dem Trennen gelten wieder die eigenen Einstellungen.",
   "visualFollowTheme": "Thema folgen",
   "visualFooterLyrics": "Liedtext unten anzeigen",
   "visualFooterTips": "Tipps unten anzeigen",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "Lokale Datei → Eingebettet → LRCLIB",
   "visualLyricsVersions": "Mehrere Versionen gefunden. Wähle eine in der Suche.",
   "visualMaterialPreview": "Materialvorschau",
+  "visualMaterialSource": "Materialquelle",
   "visualMaximize": "Maximieren",
   "visualMediaAddress": "Medienadresse",
   "visualMediaAddressInvalid": "Gib eine gültige HTTP- oder HTTPS-Adresse ohne Anmeldedaten ein.",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "Keine Zeitangaben",
   "visualOpacity": "Deckkraft",
   "visualOptionalArtist": "Interpret (optional)",
+  "visualOwnMaterial": "Design oder eigene Einstellungen",
   "visualPauseMusic": "Musik pausieren",
   "visualPaused": "Pausiert",
   "visualPlainLyrics": "Liedtext ohne Zeitangaben",

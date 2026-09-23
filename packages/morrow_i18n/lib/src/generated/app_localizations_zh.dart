@@ -231,6 +231,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainComponentSettings => '组件与卡片 · 独立设置';
 
   @override
+  String get mainContentCommittedRefreshFailed => '操作已提交，但最新内容暂时无法加载。请刷新后查看。';
+
+  @override
   String get mainContentProtection => '内容保护';
 
   @override
@@ -304,6 +307,47 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainDone => '收好';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      '取消后，原来的放弃请求将失效。这不会删除附件，也不会撤销其他修改。';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision => '取消放弃请求';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle => '取消这笔放弃请求？';
+
+  @override
+  String get mainDraftImportRecoveryCancelled => '已取消：原来的放弃请求不会再执行。';
+
+  @override
+  String get mainDraftImportRecoveryClose => '关闭';
+
+  @override
+  String get mainDraftImportRecoveryCommitted => '已完成：已放弃这次附件导入。';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      '操作已确认，但列表尚未刷新。请刷新查看最新状态。';
+
+  @override
+  String get mainDraftImportRecoveryConflict => '冲突：草稿已变化，只能取消这笔请求。';
+
+  @override
+  String get mainDraftImportRecoveryEmpty => '没有需要核对的附件决定。';
+
+  @override
+  String get mainDraftImportRecoveryFailed => '未能核对这笔决定。请刷新后重试。';
+
+  @override
+  String get mainDraftImportRecoveryPending => '待确认：原放弃请求尚未确认。';
+
+  @override
+  String get mainDraftImportRecoveryRetry => '重试原放弃请求';
+
+  @override
+  String get mainDraftImportRecoveryTitle => '核对附件放弃决定';
+
+  @override
   String get mainEdit => '编辑';
 
   @override
@@ -311,6 +355,49 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainEditorClosedUnknown => '编辑器已关闭，但保存状态暂时无法确认。请重新打开工作台检查，避免重复创建。';
+
+  @override
+  String get mainEditorContinueDraft => '继续编辑';
+
+  @override
+  String get mainEditorContinueFailed => '上一笔已确认，新草稿仍保留在此窗口。未能打开后续编辑，请重试。';
+
+  @override
+  String get mainEditorNewerDraft => '上一笔已保存，当前新草稿尚未保存。';
+
+  @override
+  String get mainEditorPendingDraft => '可继续输入。先核对上一笔保存，新草稿不会自动提交。';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      '确认放弃这笔尚未提交的旧编辑？原操作将被封存，当前已保存内容和新的草稿不会改变。此操作不会撤销已提交的编辑。';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => '放弃旧编辑';
+
+  @override
+  String get mainEditorRecoveryCommitted => '原编辑已提交。核对当前内容后确认，不会再次执行保存。';
+
+  @override
+  String get mainEditorRecoveryConfirm => '核对并确认';
+
+  @override
+  String get mainEditorRecoveryConflict => '内容基线或操作记录已变化。原提案保留，不能覆盖当前内容。';
+
+  @override
+  String get mainEditorRecoveryEmpty => '没有需要核对的持久编辑提案。';
+
+  @override
+  String get mainEditorRecoveryFailed => '未能完成核对，原提案仍保留。请刷新后重试。';
+
+  @override
+  String get mainEditorRecoveryPending => '原编辑尚未确认。继续仅重试这份原提案，不会自动提交新的修改。';
+
+  @override
+  String get mainEditorRecoveryResume => '继续原编辑';
+
+  @override
+  String get mainEditorRecoveryTitle => '待核对编辑';
 
   @override
   String get mainEditorSubtitle => '文字、表格、图片，先放在这里。让一个念头慢慢成形。';
@@ -375,6 +462,36 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainFollowTheme => '跟随主题';
+
+  @override
+  String get mainFontApply => '应用字体';
+
+  @override
+  String get mainFontDefault => '默认字体';
+
+  @override
+  String get mainFontFailed => '字体无法加载，请检查文件或重启应用后重试。';
+
+  @override
+  String get mainFontFamily => '系统字体名称';
+
+  @override
+  String get mainFontHelp => '支持 TTF / OTF，最大 20 MiB。未安装的系统字体会自动回退。';
+
+  @override
+  String get mainFontHint => '例如：Microsoft YaHei、Arial';
+
+  @override
+  String get mainFontImport => '导入字体文件';
+
+  @override
+  String get mainFontReset => '恢复默认';
+
+  @override
+  String get mainFontSettings => '字体';
+
+  @override
+  String get mainFontUnavailable => '已保存的字体不可用，暂时使用默认字体。';
 
   @override
   String get mainFrostDetail => '柔化背景，让思绪安静地浮现。';
@@ -489,6 +606,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainLavender => '淡紫';
+
+  @override
+  String get mainLegacyStageComplete => '旧格式将同时勾选全部待办并完成项目。是否继续？';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return '旧格式返回其他阶段时，会取消最后一项“$task”及所有同名项的完成状态。是否继续？';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => '继续此操作';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return '旧格式使用文字识别待办。此操作会同时修改所有“$task”同名项。是否继续？';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => '旧格式待办联动';
 
   @override
   String get mainLightOpacity => '20% · 轻盈';
@@ -742,6 +878,41 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainSaveReadOnly => '改动尚未保存。请在“插件与服务”中启用工作台插件，然后重试。';
 
   @override
+  String get mainSaveReadbackPending => '设置已提交，但回读尚未确认。当前草稿保留；重试将先核对原提交。';
+
+  @override
+  String get mainSaveRecoveryAbandon => '放弃旧提案';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      '仅放弃尚未提交的旧提案，当前草稿与已保存内容均保留。此操作不会撤销已经提交的设置。是否继续？';
+
+  @override
+  String get mainSaveRecoveryCommitted => '旧设置已经提交。核对只会确认结果，不会覆盖当前草稿。';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      '内容库已发生变化，旧提案不能直接覆盖新设置。可以保留待处理，或放弃未提交的旧提案。';
+
+  @override
+  String get mainSaveRecoveryDone => '旧提案已处理，当前草稿未改动。需要保存草稿时，请重试保存。';
+
+  @override
+  String get mainSaveRecoveryEmpty => '没有待处理的持久保存提案。';
+
+  @override
+  String get mainSaveRecoveryPending => '旧提案尚未确认提交。继续将核对并尝试完成原保存；当前新草稿会保留。';
+
+  @override
+  String get mainSaveRecoveryResolve => '核对原保存';
+
+  @override
+  String get mainSaveRecoveryReview => '检查保存';
+
+  @override
+  String get mainSaveRecoveryTitle => '有一项保存需要核对';
+
+  @override
   String get mainSaveUnknown => '这次保存尚未确认。草稿与附件已保留，请重试同一次提交；关闭后会重新读取工作台确认。';
 
   @override
@@ -833,6 +1004,69 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainStorageUnreadable => '存储内容无法读取，原数据仍保留。当前会话不会覆盖它。';
 
   @override
+  String get mainStyleFlat => '扁平 · 默认';
+
+  @override
+  String get mainStyleFlatDescription => '轻盈边界，清晰层次';
+
+  @override
+  String get mainStyleNeumorphism => 'Neumorphism · 新拟态';
+
+  @override
+  String get mainStyleNeumorphismDescription => '柔和双向光影，细腻浮雕触感';
+
+  @override
+  String get mainTaskAdd => '添加待办';
+
+  @override
+  String get mainTaskAmbiguousDecision => '旧版同名待办的完成状态无法确定，请分别确认。';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage => '全部勾选并设置阶段';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return '将所有待办标为完成，并将阶段设为“$stage”？';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly => '旧版待办仍按文字匹配，升级后可分别管理同名条目。';
+
+  @override
+  String get mainTaskMarkComplete => '确认已完成';
+
+  @override
+  String get mainTaskMarkIncomplete => '确认未完成';
+
+  @override
+  String get mainTaskMoveDown => '下移';
+
+  @override
+  String get mainTaskMoveUp => '上移';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '已完成 $complete · 未完成 $incomplete · 待确认 $ambiguous';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return '删除待办“$task”？';
+  }
+
+  @override
+  String get mainTaskRename => '重命名';
+
+  @override
+  String get mainTaskSetStage => '仅修改阶段';
+
+  @override
+  String get mainTaskStagePrompt => '项目阶段';
+
+  @override
+  String get mainTaskTextPrompt => '待办内容';
+
+  @override
   String get mainTenMinutesAgo => '10 分钟前';
 
   @override
@@ -890,6 +1124,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mainViewAll => '查看全部';
+
+  @override
+  String get mainVisualStyle => '界面风格';
 
   @override
   String get mainWarmSand => '暖沙';
@@ -2313,6 +2550,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get recoveryCloseFirst => '工作台仍在运行，请先关闭后再切换内容库。';
 
   @override
+  String get recoveryClosing => '正在等待原内容服务退出。确认退出前，暂不能重新打开或恢复资料库。';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      '关闭尚未确认，仍在观察原服务。界面可以继续使用；超时不代表操作已撤销。';
+
+  @override
   String get recoveryFailed => '恢复未完成，请保留原文件并重试。';
 
   @override
@@ -2338,6 +2582,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recoveryMaintenance => '内容库需要检查，请保留原文件并核对诊断信息。';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      '此内容库的迁移尚未完成。请查看目录内的迁移报告，保留原库并使用新的目标目录重试。';
 
   @override
   String get recoveryMissingKey => '内容库保护密钥缺失，请恢复原 .audit-key 文件后重试。';
@@ -2524,6 +2772,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get visualFindLyricsGuide => '按歌名和歌手查询 LRCLIB，选择对应版本。';
 
   @override
+  String visualFollowChain(String path) {
+    return '跟随链：$path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return '跟随：$name';
+  }
+
+  @override
+  String get visualFollowCycle => '会形成循环';
+
+  @override
+  String get visualFollowGuide => '可跟随其他组件；解除跟随后恢复自己的设置。';
+
+  @override
   String get visualFollowTheme => '跟随主题';
 
   @override
@@ -2672,6 +2936,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get visualMaterialPreview => '材质预览';
 
   @override
+  String get visualMaterialSource => '材质来源';
+
+  @override
   String get visualMaximize => '最大化';
 
   @override
@@ -2717,6 +2984,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => '歌手（可选）';
+
+  @override
+  String get visualOwnMaterial => '主题或自身设置';
 
   @override
   String get visualPauseMusic => '暂停音乐';

@@ -378,5 +378,135 @@
   "mainHttpSettings": "HTTP tasks",
   "mainCredentialSettings": "Credentials",
   "mainEndpointSettings": "Outbound endpoints",
-  "mainExpandSettings": "Expand settings"
+  "mainExpandSettings": "Expand settings",
+  "mainFontSettings": "Fonts",
+  "mainFontDefault": "Default font",
+  "mainFontFamily": "System font family",
+  "mainFontHint": "For example: Arial or Microsoft YaHei",
+  "mainFontImport": "Import font file",
+  "mainFontHelp": "TTF / OTF, up to 20 MiB. Unavailable system fonts fall back automatically.",
+  "mainFontFailed": "Unable to load this font. Check the file or restart the app and try again.",
+  "mainFontUnavailable": "The saved font is unavailable. Using the default font for now.",
+  "mainFontApply": "Apply font",
+  "mainFontReset": "Restore default",
+  "mainSaveReadbackPending": "Settings were committed, but readback is unconfirmed. Your draft is preserved; retry will reconcile the original submission first.",
+  "mainLegacyTodoTitle": "Legacy checklist changes",
+  "mainLegacyTodoContinue": "Continue",
+  "mainLegacyStageComplete": "The legacy format will check every task and complete the project. Continue?",
+  "mainLegacyStageReopen": "Returning to another stage in the legacy format will uncheck the last task “{task}” and every task with that name. Continue?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "The legacy format identifies tasks by text. This changes every task named “{task}”. Continue?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "A save needs review",
+  "mainSaveRecoveryReview": "Review save",
+  "mainSaveRecoveryCommitted": "The old settings were committed. Reviewing confirms the result without replacing your current draft.",
+  "mainSaveRecoveryConflict": "The library has changed. The old proposal cannot overwrite newer settings. Keep it pending or abandon the uncommitted proposal.",
+  "mainSaveRecoveryPending": "The old proposal is not confirmed. Continue to reconcile and attempt the original save; your newer draft stays intact.",
+  "mainSaveRecoveryResolve": "Resolve original save",
+  "mainSaveRecoveryAbandon": "Abandon old proposal",
+  "mainSaveRecoveryAbandonConfirm": "Abandon only the uncommitted proposal? Your current draft and saved content stay intact. This does not undo committed settings.",
+  "mainSaveRecoveryDone": "The old proposal is resolved. Your draft is unchanged; retry saving when ready.",
+  "mainSaveRecoveryEmpty": "No persistent save proposal needs review.",
+  "mainContentCommittedRefreshFailed": "The operation was committed, but the latest content could not be loaded. Refresh to view it.",
+  "mainTaskProgressThreeWay": "{complete} complete · {incomplete} incomplete · {ambiguous} to confirm",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "The completion of these legacy tasks with matching names is uncertain. Confirm each task separately.",
+  "mainTaskMarkComplete": "Confirm complete",
+  "mainTaskMarkIncomplete": "Confirm incomplete",
+  "mainTaskAdd": "Add task",
+  "mainTaskTextPrompt": "Task text",
+  "mainTaskRename": "Rename",
+  "mainTaskMoveUp": "Move up",
+  "mainTaskMoveDown": "Move down",
+  "mainTaskRemoveConfirm": "Remove task “{task}”?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Project stage",
+  "mainTaskSetStage": "Change stage only",
+  "mainTaskCompleteAllAndSetStage": "Complete all and set stage",
+  "mainTaskCompleteAllConfirm": "Mark every task complete and set the stage to “{stage}”?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "Legacy tasks are matched by text. After upgrading, tasks with matching names can be managed separately.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Action confirmed, but the list has not refreshed. Refresh to see its latest status.",
+  "mainDraftImportRecoveryTitle": "Review attachment decisions",
+  "mainDraftImportRecoveryEmpty": "No attachment decisions need review.",
+  "mainDraftImportRecoveryPending": "Pending: the original abandonment request is not confirmed.",
+  "mainDraftImportRecoveryCommitted": "Completed: this attachment import was abandoned.",
+  "mainDraftImportRecoveryCancelled": "Cancelled: the original abandonment request will no longer run.",
+  "mainDraftImportRecoveryConflict": "Conflict: the draft changed. This request can only be cancelled.",
+  "mainDraftImportRecoveryRetry": "Retry original abandonment",
+  "mainDraftImportRecoveryCancelDecision": "Cancel abandonment request",
+  "mainDraftImportRecoveryCancelTitle": "Cancel this abandonment request?",
+  "mainDraftImportRecoveryCancelBody": "After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.",
+  "mainDraftImportRecoveryFailed": "Could not review this decision. Refresh and try again.",
+  "mainDraftImportRecoveryClose": "Close",
+  "mainEditorRecoveryTitle": "Review pending edits",
+  "mainEditorRecoveryEmpty": "No persistent edit proposals need review.",
+  "mainEditorRecoveryPending": "The original edit is unconfirmed. Continue retries only that proposal, without submitting newer changes.",
+  "mainEditorRecoveryCommitted": "The original edit committed. Review the current content and acknowledge it without saving again.",
+  "mainEditorRecoveryConflict": "The content baseline or operation history changed. The original proposal is retained and cannot overwrite current content.",
+  "mainEditorRecoveryResume": "Continue original edit",
+  "mainEditorRecoveryConfirm": "Review and acknowledge",
+  "mainEditorRecoveryFailed": "Review could not finish. The original proposal is retained. Refresh and try again.",
+  "mainEditorRecoveryAbandonTitle": "Abandon old edit",
+  "mainEditorRecoveryAbandonBody": "Abandon this uncommitted edit? Its original operation will be sealed. Saved content and newer drafts stay unchanged. This does not undo a committed edit.",
+  "mainEditorPendingDraft": "You can keep typing. Resolve the previous save first; newer edits will not be sent automatically.",
+  "mainEditorNewerDraft": "The previous edit was saved. Your newer draft is still unsaved.",
+  "mainEditorContinueFailed": "The previous edit is confirmed and your newer draft remains in this window. Could not open the next editor; please retry.",
+  "mainEditorContinueDraft": "Continue editing",
+  "mainVisualStyle": "Interface style",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Flat · Default",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Light edges and clear layers",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Neumorphism",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Soft paired shadows and gentle relief",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

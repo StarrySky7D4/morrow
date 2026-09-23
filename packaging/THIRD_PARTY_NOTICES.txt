@@ -43,3 +43,9 @@ See licenses/super_native_extensions-LICENSE.txt. The Dart plugin license is
 also included in Flutter's generated NOTICES.
 
 No external image, animation or movie used during development is bundled.
+
+flutter_staggered_grid_view 0.7.0 is MIT licensed, copyright Romain Rastel.
+Source: https://github.com/letsar/flutter_staggered_grid_view
+See licenses/flutter_staggered_grid_view-LICENSE.txt. Its Dart license is also
+included in Flutter's generated NOTICES. Morrow supplies a local render adapter
+to invalidate stale masonry placement hints when stable-key children move.

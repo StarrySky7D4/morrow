@@ -213,7 +213,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(editor.closed, 0);
       expect(find.byKey(const ValueKey('idea-save-error')), findsOneWidget);
-      expect(tester.widget<TextField>(field).readOnly, isTrue);
+      expect(tester.widget<TextField>(field).readOnly, isFalse);
       expect(editor.fields.single.description, 'A**x**B + manual');
       expect(editor.drafts.single.attachments.length, 1);
       await tester.tap(find.byKey(const ValueKey('idea-save')));

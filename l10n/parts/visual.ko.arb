@@ -602,5 +602,39 @@
   "visualTransparentTips": "투명 오버레이(기본값)",
   "visualTipsMaterialGuide": "끄면 팁을 투명하게 표시하고 켜면 아래 질감을 사용합니다. 사용자 값은 유지됩니다.",
   "visualResetMaterial": "테마로 초기화",
-  "visualInheritColor": "테마 색조 사용"
+  "visualInheritColor": "테마 색조 사용",
+  "visualMaterialSource": "재질 설정 출처",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "테마 또는 자체 설정",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "따르는 대상: {name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "다른 구성 요소의 설정을 따릅니다. 연결을 해제하면 자체 설정으로 돌아갑니다.",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "순환 참조 발생",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "연결 경로: {path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

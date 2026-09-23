@@ -6,6 +6,9 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import '../appearance.dart';
+import '../collapsible_panel.dart';
+import '../surface_motion.dart';
+import '../neumorphic_controls.dart';
 import '../media/texture_repository.dart';
 import '../media/texture_source.dart';
 import 'music_controller.dart';
@@ -34,6 +37,7 @@ class _MusicPanelState extends State<MusicPanel> {
     'lrc',
   ];
   bool expanded = false, importing = false;
+  bool _playlistVisited = false;
   MusicController get music => widget.controller;
   Future<void> pick(String type) async {
     if (importing) return;
@@ -211,354 +215,406 @@ class _MusicPanelState extends State<MusicPanel> {
     final p = AppearanceScope.of(context);
     return ListenableBuilder(
       listenable: music,
-      builder: (context, _) => Glass(
-        componentId: 'music',
-        p: p,
-        radius: 22,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.graphic_eq_rounded, size: 17, color: p.accent),
-                  const SizedBox(width: 7),
-                  Expanded(
-                    child: Text(
-                      L10n.of(context).visualMusicPlayer,
-                      style: TextStyle(
-                        color: p.ink,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    key: const ValueKey('music-add'),
-                    tooltip: L10n.of(context).visualImportMusic,
-                    onPressed: importing ? null : () => pick('songs'),
-                    icon: const Icon(Icons.add_rounded, size: 18),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Tooltip(
-                    message: L10n.of(context).visualChangeCover,
-                    child: InkWell(
-                      onTap: music.current == null || importing
-                          ? null
-                          : () => pick('cover'),
-                      borderRadius: p.borderRadius(12),
-                      child: ClipRRect(
-                        borderRadius: p.borderRadius(12),
-                        child: SizedBox(
-                          width: 48,
-                          height: 48,
-                          child: TrackCover(source: music.current?.cover),
+      builder: (context, _) => SurfaceInteraction(
+        borderRadius: p.borderRadius(22),
+        child: Glass(
+          componentId: 'music',
+          p: p,
+          radius: 22,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.graphic_eq_rounded, size: 17, color: p.accent),
+                    const SizedBox(width: 7),
+                    Expanded(
+                      child: Text(
+                        L10n.of(context).visualMusicPlayer,
+                        style: TextStyle(
+                          color: p.ink,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    IconButton(
+                      key: const ValueKey('music-add'),
+                      tooltip: L10n.of(context).visualImportMusic,
+                      onPressed: importing ? null : () => pick('songs'),
+                      icon: const Icon(Icons.add_rounded, size: 18),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                NeumorphicSurface(
+                  palette: p,
+                  depth: -0.8,
+                  borderRadius: p.borderRadius(14),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
                       children: [
-                        Text(
-                          music.current?.title ??
-                              L10n.of(context).visualMusicEmptyTitle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: p.ink,
-                            height: 1.4,
+                        Tooltip(
+                          message: L10n.of(context).visualChangeCover,
+                          child: InkWell(
+                            onTap: music.current == null || importing
+                                ? null
+                                : () => pick('cover'),
+                            borderRadius: p.borderRadius(12),
+                            child: ClipRRect(
+                              borderRadius: p.borderRadius(12),
+                              child: SizedBox(
+                                width: 48,
+                                height: 48,
+                                child: TrackCover(source: music.current?.cover),
+                              ),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          music.loading
-                              ? L10n.of(context).visualLoading
-                              : music.current == null
-                              ? L10n.of(context).visualImportMusicHint
-                              : L10n.of(context).visualPlaybackPosition(
-                                  music.tracks.length,
-                                  music.index + 1,
-                                  music.playing
-                                      ? L10n.of(context).visualPlaying
-                                      : L10n.of(context).visualPaused,
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                music.current?.title ??
+                                    L10n.of(context).visualMusicEmptyTitle,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: p.ink,
+                                  height: 1.4,
                                 ),
-                          style: TextStyle(fontSize: 9, color: p.muted),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                music.loading
+                                    ? L10n.of(context).visualLoading
+                                    : music.current == null
+                                    ? L10n.of(context).visualImportMusicHint
+                                    : L10n.of(context).visualPlaybackPosition(
+                                        music.tracks.length,
+                                        music.index + 1,
+                                        music.playing
+                                            ? L10n.of(context).visualPlaying
+                                            : L10n.of(context).visualPaused,
+                                      ),
+                                style: TextStyle(fontSize: 9, color: p.muted),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    key: const ValueKey('music-previous'),
-                    tooltip: L10n.of(context).visualPreviousTrack,
-                    onPressed: music.current == null ? null : music.previous,
-                    icon: const Icon(Icons.skip_previous_rounded),
-                  ),
-                  IconButton.filledTonal(
-                    key: const ValueKey('music-play'),
-                    tooltip: music.playing
-                        ? L10n.of(context).visualPauseMusic
-                        : L10n.of(context).visualPlayMusic,
-                    onPressed:
-                        music.current == null || music.loading || music.blocked
-                        ? null
-                        : music.toggle,
-                    icon: Icon(
-                      music.playing
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                    ),
-                  ),
-                  IconButton(
-                    key: const ValueKey('music-next'),
-                    tooltip: L10n.of(context).visualNextTrack,
-                    onPressed: music.current == null ? null : music.next,
-                    icon: const Icon(Icons.skip_next_rounded),
-                  ),
-                  IconButton(
-                    key: const ValueKey('music-list-toggle'),
-                    tooltip: expanded
-                        ? L10n.of(context).visualCollapsePlaylist
-                        : L10n.of(context).visualExpandPlaylist,
-                    onPressed: () => setState(() => expanded = !expanded),
-                    icon: Icon(
-                      Icons.queue_music_rounded,
-                      color: expanded ? p.accent : p.muted,
-                      size: 21,
-                    ),
-                  ),
-                ],
-              ),
-              if (music.current != null) ...[
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 2,
-                    thumbShape: const RoundSliderThumbShape(
-                      enabledThumbRadius: 4,
-                    ),
-                    overlayShape: const RoundSliderOverlayShape(
-                      overlayRadius: 10,
-                    ),
-                  ),
-                  child: Slider(
-                    key: const ValueKey('music-seek'),
-                    value: music.position.inMilliseconds.toDouble().clamp(
-                      0,
-                      music.duration.inMilliseconds.toDouble().clamp(
-                        1,
-                        double.infinity,
-                      ),
-                    ),
-                    max: music.duration.inMilliseconds.toDouble().clamp(
-                      1,
-                      double.infinity,
-                    ),
-                    onChanged: music.duration == Duration.zero
-                        ? null
-                        : (value) =>
-                              music.seek(Duration(milliseconds: value.round())),
-                  ),
                 ),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      clock(music.position),
-                      style: TextStyle(fontSize: 9, color: p.muted),
+                    IconButton(
+                      key: const ValueKey('music-previous'),
+                      tooltip: L10n.of(context).visualPreviousTrack,
+                      onPressed: music.current == null ? null : music.previous,
+                      icon: const Icon(Icons.skip_previous_rounded),
                     ),
-                    Text(
-                      clock(music.duration),
-                      style: TextStyle(fontSize: 9, color: p.muted),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 7),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        L10n.of(context).visualFooterLyrics,
-                        style: TextStyle(fontSize: 10, color: p.muted),
+                    IconButton.filledTonal(
+                      key: const ValueKey('music-play'),
+                      tooltip: music.playing
+                          ? L10n.of(context).visualPauseMusic
+                          : L10n.of(context).visualPlayMusic,
+                      onPressed:
+                          music.current == null ||
+                              music.loading ||
+                              music.blocked
+                          ? null
+                          : music.toggle,
+                      icon: Icon(
+                        music.playing
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
                       ),
                     ),
-                    Switch(
-                      key: const ValueKey('music-lyrics-toggle'),
-                      value: music.showLyrics,
-                      onChanged: music.setShowLyrics,
+                    IconButton(
+                      key: const ValueKey('music-next'),
+                      tooltip: L10n.of(context).visualNextTrack,
+                      onPressed: music.current == null ? null : music.next,
+                      icon: const Icon(Icons.skip_next_rounded),
+                    ),
+                    IconButton(
+                      key: const ValueKey('music-list-toggle'),
+                      tooltip: expanded
+                          ? L10n.of(context).visualCollapsePlaylist
+                          : L10n.of(context).visualExpandPlaylist,
+                      onPressed: () => setState(() {
+                        expanded = !expanded;
+                        if (expanded) _playlistVisited = true;
+                      }),
+                      icon: Icon(
+                        Icons.queue_music_rounded,
+                        color: expanded ? p.accent : p.muted,
+                        size: 21,
+                      ),
                     ),
                   ],
                 ),
-                Semantics(
-                  container: true,
-                  child: Text(
-                    music.showLyrics && music.current!.lyrics.isEmpty
-                        ? L10n.of(context).visualPlaylistLyricsHint
-                        : L10n.of(context).visualPlaylistSaved,
-                    style: TextStyle(fontSize: 9, color: p.muted),
-                  ),
-                ),
-              ],
-              if (music.error != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    musicErrorLabel(context, music.error!),
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Theme.of(context).colorScheme.error,
+                if (music.current != null) ...[
+                  SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight:
+                          p.surfaces.visualStyle == VisualStyle.neumorphism
+                          ? 6
+                          : 2,
+                      thumbShape:
+                          p.surfaces.visualStyle == VisualStyle.neumorphism
+                          ? SliderTheme.of(context).thumbShape
+                          : const RoundSliderThumbShape(enabledThumbRadius: 4),
+                      overlayShape: const RoundSliderOverlayShape(
+                        overlayRadius: 10,
+                      ),
+                    ),
+                    child: Slider(
+                      key: const ValueKey('music-seek'),
+                      value: music.position.inMilliseconds.toDouble().clamp(
+                        0,
+                        music.duration.inMilliseconds.toDouble().clamp(
+                          1,
+                          double.infinity,
+                        ),
+                      ),
+                      max: music.duration.inMilliseconds.toDouble().clamp(
+                        1,
+                        double.infinity,
+                      ),
+                      onChanged: music.duration == Duration.zero
+                          ? null
+                          : (value) => music.seek(
+                              Duration(milliseconds: value.round()),
+                            ),
                     ),
                   ),
-                ),
-              if (importing) const LinearProgressIndicator(minHeight: 2),
-              SoftSize(
-                duration: motionDuration(context, 250),
-                alignment: Alignment.topCenter,
-                child: expanded
-                    ? Column(
-                        key: const ValueKey('music-playlist'),
-                        children: [
-                          Divider(color: p.line, height: 24),
-                          if (music.tracks.isEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Text(
-                                L10n.of(context).visualPlaylistEmpty,
-                                style: TextStyle(color: p.muted, fontSize: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        clock(music.position),
+                        style: TextStyle(fontSize: 9, color: p.muted),
+                      ),
+                      Text(
+                        clock(music.duration),
+                        style: TextStyle(fontSize: 9, color: p.muted),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 7),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          L10n.of(context).visualFooterLyrics,
+                          style: TextStyle(fontSize: 10, color: p.muted),
+                        ),
+                      ),
+                      NeumorphicSwitch(
+                        palette: p,
+                        key: const ValueKey('music-lyrics-toggle'),
+                        value: music.showLyrics,
+                        onChanged: music.setShowLyrics,
+                      ),
+                    ],
+                  ),
+                  Semantics(
+                    container: true,
+                    child: Text(
+                      music.showLyrics && music.current!.lyrics.isEmpty
+                          ? L10n.of(context).visualPlaylistLyricsHint
+                          : L10n.of(context).visualPlaylistSaved,
+                      style: TextStyle(fontSize: 9, color: p.muted),
+                    ),
+                  ),
+                ],
+                if (music.error != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      musicErrorLabel(context, music.error!),
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+                if (importing) const LinearProgressIndicator(minHeight: 2),
+                CollapsiblePanel(
+                  expanded: expanded,
+                  child: _playlistVisited
+                      ? SurfaceAttachment(
+                          attached: expanded,
+                          child: Column(
+                            key: const ValueKey('music-playlist'),
+                            children: [
+                              Divider(color: p.line, height: 24),
+                              if (music.tracks.isEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Text(
+                                    L10n.of(context).visualPlaylistEmpty,
+                                    style: TextStyle(
+                                      color: p.muted,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxHeight: 240,
+                                ),
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  primary: false,
+                                  itemCount: music.tracks.length,
+                                  itemBuilder: (context, index) =>
+                                      NeumorphicSurface(
+                                        palette: p,
+                                        depth: index == music.index ? -0.8 : 0,
+                                        borderRadius: p.borderRadius(10),
+                                        child: ListTile(
+                                          dense: true,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 8,
+                                              ),
+                                          title: Text(
+                                            music.tracks[index].title,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 10,
+                                              color: index == music.index
+                                                  ? p.accent
+                                                  : p.ink,
+                                            ),
+                                          ),
+                                          leading: Text(
+                                            '${index + 1}'.padLeft(2, '0'),
+                                            style: TextStyle(
+                                              fontSize: 9,
+                                              color: p.muted,
+                                            ),
+                                          ),
+                                          minLeadingWidth: 12,
+                                          onTap: () => music.select(index),
+                                          trailing: IconButton(
+                                            tooltip: L10n.of(
+                                              context,
+                                            ).visualRemoveTrack,
+                                            onPressed: () =>
+                                                music.remove(index),
+                                            icon: const Icon(
+                                              Icons.close_rounded,
+                                              size: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                ),
                               ),
-                            ),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxHeight: 240),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              primary: false,
-                              itemCount: music.tracks.length,
-                              itemBuilder: (context, index) => ListTile(
+                              NeumorphicSwitchListTile(
+                                palette: p,
                                 dense: true,
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
-                                  music.tracks[index].title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                  L10n.of(context).visualAutoLyrics,
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                subtitle: Text(
+                                  L10n.of(context).visualLyricsSources,
+                                  style: TextStyle(fontSize: 9),
+                                ),
+                                value: music.onlineLyrics,
+                                onChanged: music.setOnlineLyrics,
+                              ),
+                              if (music.current != null)
+                                Text(
+                                  music.lyricStatus.isEmpty
+                                      ? L10n.of(context).visualLyricsOnPlay
+                                      : musicStatusLabel(
+                                          context,
+                                          music.lyricStatus,
+                                        ),
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: index == music.index
-                                        ? p.accent
-                                        : p.ink,
+                                    color: p.muted,
                                   ),
                                 ),
-                                leading: Text(
-                                  '${index + 1}'.padLeft(2, '0'),
-                                  style: TextStyle(fontSize: 9, color: p.muted),
-                                ),
-                                minLeadingWidth: 12,
-                                onTap: () => music.select(index),
-                                trailing: IconButton(
-                                  tooltip: L10n.of(context).visualRemoveTrack,
-                                  onPressed: () => music.remove(index),
-                                  icon: const Icon(
-                                    Icons.close_rounded,
-                                    size: 14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SwitchListTile.adaptive(
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                            title: Text(
-                              L10n.of(context).visualAutoLyrics,
-                              style: TextStyle(fontSize: 10),
-                            ),
-                            subtitle: Text(
-                              L10n.of(context).visualLyricsSources,
-                              style: TextStyle(fontSize: 9),
-                            ),
-                            value: music.onlineLyrics,
-                            onChanged: music.setOnlineLyrics,
-                          ),
-                          if (music.current != null)
-                            Text(
-                              music.lyricStatus.isEmpty
-                                  ? L10n.of(context).visualLyricsOnPlay
-                                  : musicStatusLabel(
-                                      context,
-                                      music.lyricStatus,
+                              if (music.current != null)
+                                Wrap(
+                                  spacing: 4,
+                                  children: [
+                                    TextButton.icon(
+                                      onPressed: importing
+                                          ? null
+                                          : () => pick('cover'),
+                                      icon: const Icon(
+                                        Icons.image_outlined,
+                                        size: 14,
+                                      ),
+                                      label: Text(
+                                        L10n.of(context).visualCover,
+                                        style: TextStyle(fontSize: 10),
+                                      ),
                                     ),
-                              style: TextStyle(fontSize: 10, color: p.muted),
-                            ),
-                          if (music.current != null)
-                            Wrap(
-                              spacing: 4,
-                              children: [
-                                TextButton.icon(
-                                  onPressed: importing
-                                      ? null
-                                      : () => pick('cover'),
-                                  icon: const Icon(
-                                    Icons.image_outlined,
-                                    size: 14,
-                                  ),
-                                  label: Text(
-                                    L10n.of(context).visualCover,
-                                    style: TextStyle(fontSize: 10),
-                                  ),
+                                    TextButton.icon(
+                                      key: const ValueKey(
+                                        'music-search-lyrics',
+                                      ),
+                                      onPressed: searchLyrics,
+                                      icon: const Icon(
+                                        Icons.travel_explore,
+                                        size: 14,
+                                      ),
+                                      label: Text(
+                                        L10n.of(context).visualSearchLyrics,
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                    TextButton.icon(
+                                      onPressed: showAllLyrics,
+                                      icon: const Icon(Icons.subject, size: 14),
+                                      label: Text(
+                                        L10n.of(context).visualViewLyrics,
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                    TextButton.icon(
+                                      key: const ValueKey(
+                                        'music-import-lyrics',
+                                      ),
+                                      onPressed: importing
+                                          ? null
+                                          : () => pick('lyrics'),
+                                      icon: const Icon(
+                                        Icons.lyrics_outlined,
+                                        size: 14,
+                                      ),
+                                      label: Text(
+                                        L10n.of(context).visualImportLyrics,
+                                        style: TextStyle(fontSize: 10),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                TextButton.icon(
-                                  key: const ValueKey('music-search-lyrics'),
-                                  onPressed: searchLyrics,
-                                  icon: const Icon(
-                                    Icons.travel_explore,
-                                    size: 14,
-                                  ),
-                                  label: Text(
-                                    L10n.of(context).visualSearchLyrics,
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                                TextButton.icon(
-                                  onPressed: showAllLyrics,
-                                  icon: const Icon(Icons.subject, size: 14),
-                                  label: Text(
-                                    L10n.of(context).visualViewLyrics,
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                                TextButton.icon(
-                                  key: const ValueKey('music-import-lyrics'),
-                                  onPressed: importing
-                                      ? null
-                                      : () => pick('lyrics'),
-                                  icon: const Icon(
-                                    Icons.lyrics_outlined,
-                                    size: 14,
-                                  ),
-                                  label: Text(
-                                    L10n.of(context).visualImportLyrics,
-                                    style: TextStyle(fontSize: 10),
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
-              ),
-            ],
+                            ],
+                          ),
+                        )
+                      : const SizedBox.shrink(),
+                ),
+              ],
+            ),
           ),
         ),
       ),

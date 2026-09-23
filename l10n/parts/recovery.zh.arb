@@ -38,5 +38,8 @@
   "recoveryIdentityMismatch": "已登记的内容库身份不匹配，请保留原资料并选择正确备份恢复。",
   "recoveryRegistryInvalid": "活动内容库登记已损坏或不受支持，已停止打开以保护资料。",
   "recoverySwitchUnknown": "内容库切换结果尚未确认，请重新打开工作台核对。",
-  "recoveryRegistryUnreadable": "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。"
+  "recoveryRegistryUnreadable": "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。",
+  "recoveryClosing": "正在等待原内容服务退出。确认退出前，暂不能重新打开或恢复资料库。",
+  "recoveryClosingUnconfirmed": "关闭尚未确认，仍在观察原服务。界面可以继续使用；超时不代表操作已撤销。",
+  "recoveryMigrationIncomplete": "此内容库的迁移尚未完成。请查看目录内的迁移报告，保留原库并使用新的目标目录重试。"
 }

@@ -378,5 +378,135 @@
   "mainHttpSettings": "HTTP タスク",
   "mainCredentialSettings": "認証情報",
   "mainEndpointSettings": "送信先エンドポイント",
-  "mainExpandSettings": "設定を展開"
+  "mainExpandSettings": "設定を展開",
+  "mainFontSettings": "フォント",
+  "mainFontDefault": "標準フォント",
+  "mainFontFamily": "システムフォント名",
+  "mainFontHint": "例：Arial、Microsoft YaHei",
+  "mainFontImport": "フォントファイルを読み込む",
+  "mainFontHelp": "TTF / OTF、最大 20 MiB。未インストールのフォントは自動的に代替されます。",
+  "mainFontFailed": "フォントを読み込めません。ファイルを確認するか、アプリを再起動して再試行してください。",
+  "mainFontUnavailable": "保存したフォントを利用できないため、標準フォントを一時的に使用します。",
+  "mainFontApply": "フォントを適用",
+  "mainFontReset": "標準に戻す",
+  "mainSaveReadbackPending": "設定は保存されましたが、読み戻しは未確認です。下書きを保持し、再試行時に元の送信を先に確認します。",
+  "mainLegacyTodoTitle": "旧形式のタスク連動",
+  "mainLegacyTodoContinue": "続行",
+  "mainLegacyStageComplete": "旧形式ではすべてのタスクを完了にしてプロジェクトを完了します。続行しますか？",
+  "mainLegacyStageReopen": "別の段階に戻すと、最後のタスク「{task}」と同名のすべてのタスクが未完了になります。続行しますか？",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "旧形式は文字列でタスクを識別します。「{task}」というすべてのタスクが変更されます。続行しますか？",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "確認が必要な保存があります",
+  "mainSaveRecoveryReview": "保存を確認",
+  "mainSaveRecoveryCommitted": "以前の設定は保存済みです。確認しても現在の下書きは置き換わりません。",
+  "mainSaveRecoveryConflict": "ライブラリが変更されています。以前の提案で新しい設定を上書きできません。保留するか、未保存の提案を破棄してください。",
+  "mainSaveRecoveryPending": "以前の提案は保存が未確認です。続行すると元の保存を確認して再試行します。新しい下書きは保持されます。",
+  "mainSaveRecoveryResolve": "元の保存を確認",
+  "mainSaveRecoveryAbandon": "以前の提案を破棄",
+  "mainSaveRecoveryAbandonConfirm": "未保存の提案のみを破棄しますか？現在の下書きと保存済みの内容は保持されます。保存済みの設定は取り消されません。",
+  "mainSaveRecoveryDone": "以前の提案を処理しました。下書きは変更されていません。必要なときに保存を再試行してください。",
+  "mainSaveRecoveryEmpty": "確認が必要な永続保存の提案はありません。",
+  "mainContentCommittedRefreshFailed": "操作は保存されましたが、最新の内容を読み込めませんでした。再読み込みして確認してください。",
+  "mainTaskProgressThreeWay": "完了 {complete} · 未完了 {incomplete} · 要確認 {ambiguous}",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "旧形式の同名タスクの完了状態は不明です。各タスクを個別に確認してください。",
+  "mainTaskMarkComplete": "完了として確定",
+  "mainTaskMarkIncomplete": "未完了として確定",
+  "mainTaskAdd": "タスクを追加",
+  "mainTaskTextPrompt": "タスクの内容",
+  "mainTaskRename": "名前を変更",
+  "mainTaskMoveUp": "上へ移動",
+  "mainTaskMoveDown": "下へ移動",
+  "mainTaskRemoveConfirm": "タスク「{task}」を削除しますか？",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "プロジェクトの段階",
+  "mainTaskSetStage": "段階のみ変更",
+  "mainTaskCompleteAllAndSetStage": "すべて完了して段階を設定",
+  "mainTaskCompleteAllConfirm": "すべてのタスクを完了にして、段階を「{stage}」に設定しますか？",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "旧形式ではタスクを文字列で照合します。更新後は同名タスクを個別に管理できます。",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "操作は確定しましたが、一覧は更新されていません。更新して最新の状態を確認してください。",
+  "mainDraftImportRecoveryTitle": "添付ファイルの決定を確認",
+  "mainDraftImportRecoveryEmpty": "確認が必要な添付ファイルの決定はありません。",
+  "mainDraftImportRecoveryPending": "保留中：元の破棄要求はまだ確認されていません。",
+  "mainDraftImportRecoveryCommitted": "完了：この添付ファイルの取り込みを破棄しました。",
+  "mainDraftImportRecoveryCancelled": "取消済み：元の破棄要求は今後実行されません。",
+  "mainDraftImportRecoveryConflict": "競合：下書きが変更されました。この要求は取り消すことしかできません。",
+  "mainDraftImportRecoveryRetry": "元の破棄要求を再試行",
+  "mainDraftImportRecoveryCancelDecision": "破棄要求を取り消す",
+  "mainDraftImportRecoveryCancelTitle": "この破棄要求を取り消しますか？",
+  "mainDraftImportRecoveryCancelBody": "取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。",
+  "mainDraftImportRecoveryFailed": "この決定を確認できませんでした。更新して再試行してください。",
+  "mainDraftImportRecoveryClose": "閉じる",
+  "mainEditorRecoveryTitle": "未確認の編集を確認",
+  "mainEditorRecoveryEmpty": "確認が必要な保存済み編集案はありません。",
+  "mainEditorRecoveryPending": "元の編集は未確認です。続行すると元の編集案だけを再試行し、新しい変更は送信しません。",
+  "mainEditorRecoveryCommitted": "元の編集は保存済みです。現在の内容を確認して承認します。再保存はしません。",
+  "mainEditorRecoveryConflict": "基準の内容または操作履歴が変わりました。元の編集案は保持され、現在の内容を上書きできません。",
+  "mainEditorRecoveryResume": "元の編集を続行",
+  "mainEditorRecoveryConfirm": "確認して承認",
+  "mainEditorRecoveryFailed": "確認を完了できませんでした。元の編集案は保持されています。更新して再試行してください。",
+  "mainEditorRecoveryAbandonTitle": "以前の編集を破棄",
+  "mainEditorRecoveryAbandonBody": "この未確定の編集を破棄しますか？元の操作は再実行できなくなります。保存済みの内容や新しい下書きは変わりません。確定済みの編集は取り消されません。",
+  "mainEditorPendingDraft": "入力は続けられます。先に前回の保存を確認してください。新しい編集は自動送信されません。",
+  "mainEditorNewerDraft": "前回の編集は保存されました。新しい下書きはまだ保存されていません。",
+  "mainEditorContinueFailed": "前回の編集は確定済みです。新しい下書きはこのウィンドウに残っています。次の編集を開けませんでした。再試行してください。",
+  "mainEditorContinueDraft": "編集を続ける",
+  "mainVisualStyle": "インターフェースのスタイル",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "フラット · 標準",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "軽やかな輪郭と明確な階層",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "ニューモーフィズム",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "柔らかな光と影で穏やかな立体感",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

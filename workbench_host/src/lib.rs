@@ -20,28 +20,51 @@ use std::{
 };
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 pub mod capture_provenance;
+pub mod captured_cards;
+pub mod cards_content;
+pub mod cards_edit;
 mod command_frame;
+pub mod content_api;
 mod content_projection;
 pub mod credential_control;
+pub mod editor_draft;
+pub mod editor_draft_staging;
+pub mod editor_draft_import_decision;
+mod editor_draft_api;
+mod editor_draft_staging_api;
+pub mod editor_recovery;
 pub mod endpoint_control;
 mod evidence;
 pub mod http_tasks;
 pub mod io_tasks;
 pub mod plugin_catalog;
 mod preferences_evidence;
+mod preferences_proposal;
 pub mod projection;
 pub mod projection_v2;
+pub mod tasks_content;
+pub mod tasks_edit;
+pub mod tasks_migration;
+pub mod legacy_json_preferences;
+pub mod versioned_record;
+#[allow(clippy::all)]
+pub mod content_api_capnp {
+    include!(concat!(env!("OUT_DIR"), "/content_api_capnp.rs"));
+}
 pub mod query_capture;
+pub mod query_capture_v2;
 pub mod query_plan;
+pub mod query_plan_v2;
 mod query_source;
 pub mod service_control;
+mod service_protocol;
 pub mod service_tls;
+mod storage;
 pub mod tls_identity_control;
 pub mod tls_validity;
-mod service_protocol;
-mod storage;
 pub mod transfer;
 mod ui_preferences;
+pub use ui_preferences::FontPreference;
 
 pub struct Record {
     pub idea: Idea,
@@ -80,9 +103,14 @@ pub(crate) struct WorkbenchState {
     query_owner: [u8; 32],
     undo: BTreeMap<String, (u64, u64)>,
     staged: BTreeMap<(String, String), Attachment>,
+    draft_staged: BTreeMap<(String, String, String), editor_draft::DraftStagedAsset>,
     command_frame: command_frame::FrameUpload,
     transfers: transfer::Transfers,
     pub(crate) capture_transfers: transfer::Transfers,
+    pub(crate) draft_transfers: transfer::Transfers,
+    pub(crate) draft_download_revision: u64,
+    pub(crate) draft_reply_owner: Option<(String, String)>,
+    pub(crate) draft_reply_sequence: Option<u64>,
     capture_scopes: capture_provenance::CaptureScopes,
 }
 fn command(action: Action) -> Request {
@@ -198,12 +226,18 @@ impl WorkbenchState {
             query_owner,
             undo: BTreeMap::new(),
             staged: BTreeMap::new(),
+            draft_staged: BTreeMap::new(),
             command_frame: command_frame::FrameUpload::default(),
             transfers: transfer::Transfers::default(),
             capture_transfers: transfer::Transfers::default(),
+            draft_transfers: transfer::Transfers::draft(),
+            draft_download_revision: 0,
+            draft_reply_owner: None,
+            draft_reply_sequence: None,
             capture_scopes: capture_provenance::CaptureScopes::default(),
         };
         workbench.recover_queries()?;
+        workbench.recover_queries_v2()?;
         Ok(workbench)
     }
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
@@ -617,6 +651,16 @@ impl Drop for WorkbenchState {
         self.plugin = None;
         self.capture_scopes.clear();
     }
+}
+
+#[allow(clippy::all)]
+pub mod editor_draft_staging_api_capnp {
+    include!(concat!(env!("OUT_DIR"), "/editor_draft_staging_api_capnp.rs"));
+}
+
+#[allow(clippy::all)]
+pub mod editor_draft_api_capnp {
+    include!(concat!(env!("OUT_DIR"), "/editor_draft_api_capnp.rs"));
 }
 
 pub mod protocol;

@@ -267,6 +267,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainComponentSettings => 'Компоненты и карточки · Настройки';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      'Операция сохранена, но не удалось загрузить актуальное содержимое. Обновите страницу для просмотра.';
+
+  @override
   String get mainContentProtection => 'Защита содержимого';
 
   @override
@@ -340,6 +344,55 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainDone => 'Готово';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      'После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision =>
+      'Отменить запрос на отказ';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle =>
+      'Отменить этот запрос на отказ?';
+
+  @override
+  String get mainDraftImportRecoveryCancelled =>
+      'Отменено: исходный запрос на отказ больше не будет выполняться.';
+
+  @override
+  String get mainDraftImportRecoveryClose => 'Закрыть';
+
+  @override
+  String get mainDraftImportRecoveryCommitted =>
+      'Завершено: от импорта этого вложения отказались.';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      'Действие подтверждено, но список не обновился. Обновите его, чтобы увидеть текущее состояние.';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      'Конфликт: черновик изменился. Этот запрос можно только отменить.';
+
+  @override
+  String get mainDraftImportRecoveryEmpty =>
+      'Нет решений по вложениям для проверки.';
+
+  @override
+  String get mainDraftImportRecoveryFailed =>
+      'Не удалось проверить решение. Обновите данные и повторите попытку.';
+
+  @override
+  String get mainDraftImportRecoveryPending =>
+      'Ожидание: исходный запрос на отказ не подтвержден.';
+
+  @override
+  String get mainDraftImportRecoveryRetry => 'Повторить исходный отказ';
+
+  @override
+  String get mainDraftImportRecoveryTitle => 'Проверка решений по вложениям';
+
+  @override
   String get mainEdit => 'Изменить';
 
   @override
@@ -348,6 +401,57 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       'Редактор закрыт, но сохранение не подтверждено. Откройте рабочую область и проверьте результат, прежде чем создавать копию.';
+
+  @override
+  String get mainEditorContinueDraft => 'Продолжить редактирование';
+
+  @override
+  String get mainEditorContinueFailed =>
+      'Предыдущая правка подтверждена, новый черновик остаётся в этом окне. Не удалось открыть следующий редактор. Повторите попытку.';
+
+  @override
+  String get mainEditorNewerDraft =>
+      'Предыдущая правка сохранена. Новый черновик ещё не сохранён.';
+
+  @override
+  String get mainEditorPendingDraft =>
+      'Можно продолжать ввод. Сначала проверьте предыдущее сохранение; новые правки не отправляются автоматически.';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      'Отказаться от этой неподтверждённой правки? Исходная операция будет заблокирована для повторного выполнения. Сохранённое содержимое и новые черновики останутся без изменений. Подтверждённая правка не будет отменена.';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => 'Отказаться от старой правки';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      'Исходное изменение сохранено. Проверьте текущее содержимое и подтвердите без повторного сохранения.';
+
+  @override
+  String get mainEditorRecoveryConfirm => 'Проверить и подтвердить';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      'Исходная версия или история операций изменилась. Предложение сохранено, но не может перезаписать текущее содержимое.';
+
+  @override
+  String get mainEditorRecoveryEmpty =>
+      'Нет сохранённых предложений для проверки.';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      'Проверка не завершена. Исходное предложение сохранено. Обновите и повторите.';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      'Исходное изменение не подтверждено. Продолжение повторит только его, без отправки новых изменений.';
+
+  @override
+  String get mainEditorRecoveryResume => 'Продолжить исходное изменение';
+
+  @override
+  String get mainEditorRecoveryTitle => 'Проверить изменения';
 
   @override
   String get mainEditorSubtitle =>
@@ -415,6 +519,39 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mainFollowTheme => 'По теме';
+
+  @override
+  String get mainFontApply => 'Применить шрифт';
+
+  @override
+  String get mainFontDefault => 'Шрифт по умолчанию';
+
+  @override
+  String get mainFontFailed =>
+      'Не удалось загрузить шрифт. Проверьте файл или перезапустите приложение и повторите попытку.';
+
+  @override
+  String get mainFontFamily => 'Название системного шрифта';
+
+  @override
+  String get mainFontHelp =>
+      'TTF / OTF, до 20 МиБ. Отсутствующие системные шрифты заменяются автоматически.';
+
+  @override
+  String get mainFontHint => 'Например: Arial или Microsoft YaHei';
+
+  @override
+  String get mainFontImport => 'Импортировать файл шрифта';
+
+  @override
+  String get mainFontReset => 'Восстановить стандартный';
+
+  @override
+  String get mainFontSettings => 'Шрифты';
+
+  @override
+  String get mainFontUnavailable =>
+      'Сохранённый шрифт недоступен. Временно используется шрифт по умолчанию.';
 
   @override
   String get mainFrostDetail => 'Смягчите фон и освободите место для мыслей.';
@@ -538,6 +675,26 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mainLavender => 'Лаванда';
+
+  @override
+  String get mainLegacyStageComplete =>
+      'Старый формат отметит все задачи и завершит проект. Продолжить?';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return 'Переход на другой этап снимет отметку с последней задачи «$task» и всех одноимённых задач. Продолжить?';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => 'Продолжить';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return 'В старом формате задачи определяются текстом. Изменятся все задачи «$task». Продолжить?';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => 'Изменение старого списка';
 
   @override
   String get mainLightOpacity => '20% · Лёгкое';
@@ -809,6 +966,46 @@ class AppLocalizationsRu extends AppLocalizations {
       'Изменения не сохранены. Включите плагин рабочей области в разделе «Плагины и службы» и повторите.';
 
   @override
+  String get mainSaveReadbackPending =>
+      'Настройки сохранены, но чтение результата не подтверждено. Черновик сохранён; повтор сначала проверит исходную операцию.';
+
+  @override
+  String get mainSaveRecoveryAbandon => 'Отменить прежний вариант';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      'Отменить только несохранённый вариант? Текущий черновик и сохранённые данные останутся. Уже сохранённые настройки не будут отменены.';
+
+  @override
+  String get mainSaveRecoveryCommitted =>
+      'Прежние настройки сохранены. Проверка подтвердит результат, не заменяя текущий черновик.';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      'Библиотека изменилась. Прежний вариант не может перезаписать новые настройки. Оставьте его на рассмотрении или отмените несохранённый вариант.';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      'Прежний вариант обработан. Черновик не изменён; сохраните его повторно, когда будете готовы.';
+
+  @override
+  String get mainSaveRecoveryEmpty =>
+      'Нет сохранённых предложений, требующих проверки.';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      'Прежний вариант ещё не подтверждён. Продолжение проверит и попытается завершить исходное сохранение; новый черновик останется.';
+
+  @override
+  String get mainSaveRecoveryResolve => 'Проверить исходное сохранение';
+
+  @override
+  String get mainSaveRecoveryReview => 'Проверить сохранение';
+
+  @override
+  String get mainSaveRecoveryTitle => 'Нужно проверить сохранение';
+
+  @override
   String get mainSaveUnknown =>
       'Сохранение не подтверждено. Черновик и вложения сохранены. Повторите эту отправку; при закрытии рабочая область обновится для проверки.';
 
@@ -903,6 +1100,72 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.';
 
   @override
+  String get mainStyleFlat => 'Плоский · По умолчанию';
+
+  @override
+  String get mainStyleFlatDescription => 'Лёгкие контуры и чёткие слои';
+
+  @override
+  String get mainStyleNeumorphism => 'Неоморфизм';
+
+  @override
+  String get mainStyleNeumorphismDescription =>
+      'Мягкие светотени и лёгкий рельеф';
+
+  @override
+  String get mainTaskAdd => 'Добавить задачу';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      'Состояние этих старых задач с одинаковыми названиями неизвестно. Подтвердите каждую задачу отдельно.';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage => 'Выполнить все и задать этап';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return 'Отметить все задачи выполненными и задать этап «$stage»?';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      'Старые задачи сопоставляются по тексту. После обновления одноимёнными задачами можно управлять отдельно.';
+
+  @override
+  String get mainTaskMarkComplete => 'Подтвердить выполнение';
+
+  @override
+  String get mainTaskMarkIncomplete => 'Подтвердить невыполнение';
+
+  @override
+  String get mainTaskMoveDown => 'Вниз';
+
+  @override
+  String get mainTaskMoveUp => 'Вверх';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return 'Выполнено: $complete · Не выполнено: $incomplete · Уточнить: $ambiguous';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return 'Удалить задачу «$task»?';
+  }
+
+  @override
+  String get mainTaskRename => 'Переименовать';
+
+  @override
+  String get mainTaskSetStage => 'Изменить только этап';
+
+  @override
+  String get mainTaskStagePrompt => 'Этап проекта';
+
+  @override
+  String get mainTaskTextPrompt => 'Текст задачи';
+
+  @override
   String get mainTenMinutesAgo => '10 минут назад';
 
   @override
@@ -964,6 +1227,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get mainViewAll => 'Показать всё';
+
+  @override
+  String get mainVisualStyle => 'Стиль интерфейса';
 
   @override
   String get mainWarmSand => 'Тёплый песок';
@@ -2532,6 +2798,14 @@ class AppLocalizationsRu extends AppLocalizations {
       'Рабочая область ещё открыта. Закройте её перед сменой библиотеки.';
 
   @override
+  String get recoveryClosing =>
+      'Ожидание завершения исходной службы. Повторное открытие и восстановление доступны только после подтверждения выхода.';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      'Завершение ещё не подтверждено. Наблюдение продолжается; истечение времени не отменяет выполненные операции.';
+
+  @override
   String get recoveryFailed =>
       'Восстановление не завершено. Сохраните исходные файлы и повторите.';
 
@@ -2565,6 +2839,10 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get recoveryMaintenance =>
       'Библиотеке требуется обслуживание. Сохраните исходные файлы и изучите диагностику.';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      'Миграция этой библиотеки не завершена. Проверьте отчёт в её папке, сохраните исходную библиотеку и повторите попытку с новой папкой назначения.';
 
   @override
   String get recoveryMissingKey =>
@@ -2779,6 +3057,23 @@ class AppLocalizationsRu extends AppLocalizations {
       'Ищите в LRCLIB по песне и исполнителю, затем выберите нужную версию.';
 
   @override
+  String visualFollowChain(String path) {
+    return 'Цепочка связей: $path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return 'Следует за: $name';
+  }
+
+  @override
+  String get visualFollowCycle => 'Создаст цикл';
+
+  @override
+  String get visualFollowGuide =>
+      'Следуйте настройкам другого компонента; разорвите связь, чтобы вернуть свои.';
+
+  @override
   String get visualFollowTheme => 'По теме';
 
   @override
@@ -2952,6 +3247,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get visualMaterialPreview => 'Предпросмотр материала';
 
   @override
+  String get visualMaterialSource => 'Источник оформления';
+
+  @override
   String get visualMaximize => 'Развернуть';
 
   @override
@@ -2999,6 +3297,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => 'Исполнитель (необязательно)';
+
+  @override
+  String get visualOwnMaterial => 'Тема или свои настройки';
 
   @override
   String get visualPauseMusic => 'Приостановить музыку';

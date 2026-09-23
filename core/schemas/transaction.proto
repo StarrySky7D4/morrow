@@ -9,6 +9,8 @@ message Command {
     Rename rename = 4;
     SetAttachments set_attachments = 5;
     SetContent set_content = 6;
+    MigrateContent migrate_content = 7; // Command schema_version 2 only
+    SetVersionedContent set_versioned_content = 8; // Command schema_version 2 only
   }
 }
 message Rename {
@@ -47,3 +49,33 @@ message SetContent {
 }
 
 message AttachmentList { repeated AttachmentRef items = 1; }
+
+// Exact baseline, including unknown fields, permits independent result validation.
+// Identity, title, attachments, relations and creation time remain owned by the source.
+message MigrateContent {
+  bytes source_card = 1;
+  uint32 target_format_version = 2;
+  bytes body = 3;
+  string preview_text = 4;
+}
+// Exact source Card binds type, outer format, revision and unknown fields.
+// This action preserves the source type and format while replacing its content.
+message SetVersionedContent {
+  bytes source_card = 1;
+  string title = 2;
+  bytes body = 3;
+  string preview_text = 4;
+  AttachmentList attachments = 5;
+}
+// Frozen v1 decoding shape. A field unknown to v1 must not acquire v2 semantics
+// when historical command bytes are read by a newer core.
+message LegacyCommand {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  oneof action {
+    bytes create_card = 3;
+    Rename rename = 4;
+    SetAttachments set_attachments = 5;
+    SetContent set_content = 6;
+  }
+}

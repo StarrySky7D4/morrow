@@ -53,6 +53,21 @@ fn run() -> morrow_workbench_host::Result<()> {
     if managed {
         database = args.next().ok_or("library root")?;
     }
+    #[cfg(target_os = "windows")]
+    {
+        let requested = std::path::Path::new(&database);
+        let parent = if managed { requested } else { requested.parent().unwrap_or(std::path::Path::new(".")) };
+        if parent.join("MIGRATION_INCOMPLETE.txt").exists() {
+            return Err("迁移目标尚未完成验证，请保留原库并查看 MIGRATION_INCOMPLETE.txt。".into());
+        }
+        if managed {
+            let registry = morrow_audit::library::Registry::open(requested)?;
+            let selected = registry.selected_database()?;
+            if selected.parent().unwrap().join("MIGRATION_INCOMPLETE.txt").exists() {
+                return Err("迁移目标尚未完成验证，请保留原库并查看 MIGRATION_INCOMPLETE.txt。".into());
+            }
+        }
+    }
     let package = args.next().ok_or("package path")?;
     if args.next().is_some() {
         return Err("unexpected host arguments".into());

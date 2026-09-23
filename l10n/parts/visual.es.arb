@@ -602,5 +602,39 @@
   "visualTransparentTips": "Superposición transparente (predeterminada)",
   "visualTipsMaterialGuide": "Desactivado: consejos transparentes; activado: material de abajo. Los valores se conservan.",
   "visualResetMaterial": "Restablecer al tema",
-  "visualInheritColor": "Usar tinte del tema"
+  "visualInheritColor": "Usar tinte del tema",
+  "visualMaterialSource": "Origen del material",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "Tema o ajustes propios",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "Sigue a: {name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "Sigue a otro componente; desvincúlalo para recuperar tus ajustes.",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "Crearía un ciclo",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "Cadena de seguimiento: {path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

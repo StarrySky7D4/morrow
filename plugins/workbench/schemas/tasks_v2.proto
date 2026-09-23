@@ -1,0 +1,26 @@
+syntax = "proto3";
+package morrow.workbench.tasks.v2;
+import "properties.proto";
+enum Completion { INCOMPLETE = 0; COMPLETE = 1; LEGACY_AMBIGUOUS = 2; }
+message Task {
+ string id = 1; string text = 2; Completion completion = 3;
+ // Immutable provenance, not current completion. Present for migrated tasks only.
+ bool legacy_completed = 4; uint32 legacy_duplicates = 5;
+}
+message Mapping { uint32 source_index = 1; string task_id = 2; }
+message Origin {
+ string card_id = 1; uint64 source_revision = 2; bytes source_sha256 = 3;
+ uint32 migrator_version = 4; uint32 target_version = 5;
+ bytes original_properties = 6; repeated Mapping mapping = 7;
+ string historical_project_stage = 8;
+ string original_title = 9;
+}
+message Properties {
+ uint32 version = 1; string description = 2; string category = 3; string stage = 4;
+ string hypothesis = 5; string conclusion = 6; bool favorite = 7;
+ reserved 8, 9; // Never reinterpret the V1 text checklist fields.
+ repeated morrow.workbench.v1.AssetInfo assets = 10; uint32 icon = 11; uint32 color = 12;
+ bool deleted = 13; uint64 deleted_at = 14;
+ repeated Task tasks = 20; Origin origin = 21;
+ repeated string retired_task_ids = 22;
+}

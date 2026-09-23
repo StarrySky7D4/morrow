@@ -241,23 +241,27 @@ Widget page(
   BigInt? revision,
   bool confirmed = true,
   String locale = 'en',
+  bool visible = true,
   VoidCallback? onChanged,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
   supportedLocales: AppLocalizations.supportedLocales,
   home: Scaffold(
-    body: SingleChildScrollView(
-      child: HttpTaskManager(
-        backend: tasks,
-        endpointBackend: endpoints,
-        plugins: plugins ?? [plugin()],
-        registryRevision: confirmed ? revision ?? BigInt.from(7) : null,
-        ink: Colors.black,
-        muted: Colors.grey,
-        line: Colors.grey,
-        radius: BorderRadius.circular(12),
-        onChanged: onChanged,
+    body: TickerMode(
+      enabled: visible,
+      child: SingleChildScrollView(
+        child: HttpTaskManager(
+          backend: tasks,
+          endpointBackend: endpoints,
+          plugins: plugins ?? [plugin()],
+          registryRevision: confirmed ? revision ?? BigInt.from(7) : null,
+          ink: Colors.black,
+          muted: Colors.grey,
+          line: Colors.grey,
+          radius: BorderRadius.circular(12),
+          onChanged: onChanged,
+        ),
       ),
     ),
   ),
@@ -329,6 +333,60 @@ Future<void> disposePage(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets(
+    'HTTP drafts survive remount with selection; hidden views stop polling',
+    (t) async {
+      final tasks = FakeTasks(), endpoints = FakeEndpoints();
+      await mount(t, tasks, endpoints);
+      await enter(t, 'target', '/draft');
+      await enter(t, 'body', 'unfinished body');
+      final field = t.widget<TextField>(
+        find.byKey(const ValueKey('http-task-body')),
+      );
+      field.controller!.selection = const TextSelection(
+        baseOffset: 2,
+        extentOffset: 5,
+      );
+      final value = field.controller!.value;
+      await disposePage(t);
+      await mount(t, tasks, endpoints);
+      expect(
+        t
+            .widget<TextField>(find.byKey(const ValueKey('http-task-body')))
+            .controller!
+            .value,
+        value,
+      );
+      expect(
+        t
+            .widget<TextField>(find.byKey(const ValueKey('http-task-target')))
+            .controller!
+            .text,
+        '/draft',
+      );
+      expect(tasks.starts, isEmpty);
+      tasks.state = snapshot();
+      await disposePage(t);
+      await mount(t, tasks, endpoints);
+      await t.pump(const Duration(seconds: 2));
+      await settle(t);
+      expect(tasks.polls, isNotEmpty);
+      await t.pumpWidget(page(tasks, endpoints, visible: false));
+      await settle(t);
+      final count = tasks.polls.length;
+      await t.pump(const Duration(seconds: 5));
+      await settle(t);
+      expect(tasks.polls.length, count);
+      expect(tasks.cancels, isEmpty);
+      final statuses = tasks.statuses;
+      await t.pumpWidget(page(tasks, endpoints));
+      await settle(t);
+      expect(tasks.statuses, greaterThan(statuses));
+      expect(tasks.starts, isEmpty);
+      await disposePage(t);
+    },
+  );
+
   testWidgets(
     'only explicit submit sends every field and never changes approval',
     (tester) async {

@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "クイックメモ",
   "mainComponentSearch": "検索バー",
   "mainComponentSettings": "コンポーネントとカード · 設定",
+  "mainContentCommittedRefreshFailed": "操作は保存されましたが、最新の内容を読み込めませんでした。再読み込みして確認してください。",
   "mainContentProtection": "コンテンツの保護",
   "mainContentRead": "内容を読み取りました",
   "mainContentReadFiles": "内容を読み取り、添付 {count} 件を保持しました",
@@ -916,9 +1001,36 @@
   "mainDeleted": "「{title}」を削除しました",
   "mainDiagnosticDetails": "診断の詳細",
   "mainDone": "完了",
+  "mainDraftImportRecoveryCancelBody": "取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。",
+  "mainDraftImportRecoveryCancelDecision": "破棄要求を取り消す",
+  "mainDraftImportRecoveryCancelTitle": "この破棄要求を取り消しますか？",
+  "mainDraftImportRecoveryCancelled": "取消済み：元の破棄要求は今後実行されません。",
+  "mainDraftImportRecoveryClose": "閉じる",
+  "mainDraftImportRecoveryCommitted": "完了：この添付ファイルの取り込みを破棄しました。",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "操作は確定しましたが、一覧は更新されていません。更新して最新の状態を確認してください。",
+  "mainDraftImportRecoveryConflict": "競合：下書きが変更されました。この要求は取り消すことしかできません。",
+  "mainDraftImportRecoveryEmpty": "確認が必要な添付ファイルの決定はありません。",
+  "mainDraftImportRecoveryFailed": "この決定を確認できませんでした。更新して再試行してください。",
+  "mainDraftImportRecoveryPending": "保留中：元の破棄要求はまだ確認されていません。",
+  "mainDraftImportRecoveryRetry": "元の破棄要求を再試行",
+  "mainDraftImportRecoveryTitle": "添付ファイルの決定を確認",
   "mainEdit": "編集",
   "mainEditIdeaTitle": "アイデアをより明確に",
   "mainEditorClosedUnknown": "エディターを閉じましたが、保存結果は未確認です。別のコピーを作る前にワークスペースを開き直して確認してください。",
+  "mainEditorContinueDraft": "編集を続ける",
+  "mainEditorContinueFailed": "前回の編集は確定済みです。新しい下書きはこのウィンドウに残っています。次の編集を開けませんでした。再試行してください。",
+  "mainEditorNewerDraft": "前回の編集は保存されました。新しい下書きはまだ保存されていません。",
+  "mainEditorPendingDraft": "入力は続けられます。先に前回の保存を確認してください。新しい編集は自動送信されません。",
+  "mainEditorRecoveryAbandonBody": "この未確定の編集を破棄しますか？元の操作は再実行できなくなります。保存済みの内容や新しい下書きは変わりません。確定済みの編集は取り消されません。",
+  "mainEditorRecoveryAbandonTitle": "以前の編集を破棄",
+  "mainEditorRecoveryCommitted": "元の編集は保存済みです。現在の内容を確認して承認します。再保存はしません。",
+  "mainEditorRecoveryConfirm": "確認して承認",
+  "mainEditorRecoveryConflict": "基準の内容または操作履歴が変わりました。元の編集案は保持され、現在の内容を上書きできません。",
+  "mainEditorRecoveryEmpty": "確認が必要な保存済み編集案はありません。",
+  "mainEditorRecoveryFailed": "確認を完了できませんでした。元の編集案は保持されています。更新して再試行してください。",
+  "mainEditorRecoveryPending": "元の編集は未確認です。続行すると元の編集案だけを再試行し、新しい変更は送信しません。",
+  "mainEditorRecoveryResume": "元の編集を続行",
+  "mainEditorRecoveryTitle": "未確認の編集を確認",
   "mainEditorSubtitle": "テキスト、表、画像。アイデアが形になるまで、ここに。",
   "mainEditorUnavailable": "エディターを利用できません。コンテンツサービスを確認して再試行してください。",
   "mainEndpointSettings": "送信先エンドポイント",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "未完了",
   "mainFilterText": "テキスト",
   "mainFollowTheme": "テーマに合わせる",
+  "mainFontApply": "フォントを適用",
+  "mainFontDefault": "標準フォント",
+  "mainFontFailed": "フォントを読み込めません。ファイルを確認するか、アプリを再起動して再試行してください。",
+  "mainFontFamily": "システムフォント名",
+  "mainFontHelp": "TTF / OTF、最大 20 MiB。未インストールのフォントは自動的に代替されます。",
+  "mainFontHint": "例：Arial、Microsoft YaHei",
+  "mainFontImport": "フォントファイルを読み込む",
+  "mainFontReset": "標準に戻す",
+  "mainFontSettings": "フォント",
+  "mainFontUnavailable": "保存したフォントを利用できないため、標準フォントを一時的に使用します。",
   "mainFrostDetail": "背景をやわらげ、思考に余白を。",
   "mainFrostEffect": "ぼかし",
   "mainFrostOpacity": "ガラスの不透明度",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "システムに合わせる",
   "mainLavender": "ラベンダー",
+  "mainLegacyStageComplete": "旧形式ではすべてのタスクを完了にしてプロジェクトを完了します。続行しますか？",
+  "mainLegacyStageReopen": "別の段階に戻すと、最後のタスク「{task}」と同名のすべてのタスクが未完了になります。続行しますか？",
+  "mainLegacyTodoContinue": "続行",
+  "mainLegacyTodoGroup": "旧形式は文字列でタスクを識別します。「{task}」というすべてのタスクが変更されます。続行しますか？",
+  "mainLegacyTodoTitle": "旧形式のタスク連動",
   "mainLightOpacity": "20% · 淡い",
   "mainLiquidAllCanvases": "4 種類すべての背景で個別に使用できます",
   "mainLiquidDetail": "浮かぶ水滴のような、流れる光とやわらかな屈折。",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "アイデアを保存",
   "mainSaveNotSubmitted": "未送信です。下書きと添付ファイルは保持されています。編集して再保存できます。",
   "mainSaveReadOnly": "変更は保存されていません。「プラグインとサービス」でワークスペースプラグインを有効にして再試行してください。",
+  "mainSaveReadbackPending": "設定は保存されましたが、読み戻しは未確認です。下書きを保持し、再試行時に元の送信を先に確認します。",
+  "mainSaveRecoveryAbandon": "以前の提案を破棄",
+  "mainSaveRecoveryAbandonConfirm": "未保存の提案のみを破棄しますか？現在の下書きと保存済みの内容は保持されます。保存済みの設定は取り消されません。",
+  "mainSaveRecoveryCommitted": "以前の設定は保存済みです。確認しても現在の下書きは置き換わりません。",
+  "mainSaveRecoveryConflict": "ライブラリが変更されています。以前の提案で新しい設定を上書きできません。保留するか、未保存の提案を破棄してください。",
+  "mainSaveRecoveryDone": "以前の提案を処理しました。下書きは変更されていません。必要なときに保存を再試行してください。",
+  "mainSaveRecoveryEmpty": "確認が必要な永続保存の提案はありません。",
+  "mainSaveRecoveryPending": "以前の提案は保存が未確認です。続行すると元の保存を確認して再試行します。新しい下書きは保持されます。",
+  "mainSaveRecoveryResolve": "元の保存を確認",
+  "mainSaveRecoveryReview": "保存を確認",
+  "mainSaveRecoveryTitle": "確認が必要な保存があります",
   "mainSaveUnknown": "保存結果は未確認です。下書きと添付は保持されています。この送信を再試行してください。閉じるとワークスペースを更新して確認します。",
   "mainSaving": "保存中…",
   "mainSearchHint": "アイデアを検索…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "{done}/{total} ステップ",
   "mainStorageUnavailable": "ローカル保存領域を利用できません。変更はこのセッション中のみ保持されます。",
   "mainStorageUnreadable": "保存済みの内容を読み取れませんでした。元のデータは保持され、上書きされません。",
+  "mainStyleFlat": "フラット · 標準",
+  "mainStyleFlatDescription": "軽やかな輪郭と明確な階層",
+  "mainStyleNeumorphism": "ニューモーフィズム",
+  "mainStyleNeumorphismDescription": "柔らかな光と影で穏やかな立体感",
+  "mainTaskAdd": "タスクを追加",
+  "mainTaskAmbiguousDecision": "旧形式の同名タスクの完了状態は不明です。各タスクを個別に確認してください。",
+  "mainTaskCompleteAllAndSetStage": "すべて完了して段階を設定",
+  "mainTaskCompleteAllConfirm": "すべてのタスクを完了にして、段階を「{stage}」に設定しますか？",
+  "mainTaskLegacyReadOnly": "旧形式ではタスクを文字列で照合します。更新後は同名タスクを個別に管理できます。",
+  "mainTaskMarkComplete": "完了として確定",
+  "mainTaskMarkIncomplete": "未完了として確定",
+  "mainTaskMoveDown": "下へ移動",
+  "mainTaskMoveUp": "上へ移動",
+  "mainTaskProgressThreeWay": "完了 {complete} · 未完了 {incomplete} · 要確認 {ambiguous}",
+  "mainTaskRemoveConfirm": "タスク「{task}」を削除しますか？",
+  "mainTaskRename": "名前を変更",
+  "mainTaskSetStage": "段階のみ変更",
+  "mainTaskStagePrompt": "プロジェクトの段階",
+  "mainTaskTextPrompt": "タスクの内容",
   "mainTenMinutesAgo": "10 分前",
   "mainTextureCanvas": "テクスチャ",
   "mainTextureDetail": "繊細な紙のような質感を添えます。",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "未検証",
   "mainView": "表示",
   "mainViewAll": "すべて表示",
+  "mainVisualStyle": "インターフェースのスタイル",
   "mainWarmSand": "ウォームサンド",
   "mainWhiteTheme": "ライト",
   "mainWindowRadius": "ウィンドウの角",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "別のプロセスが使用中です。他のウィンドウを閉じて再試行してください。",
   "recoveryChooseKey": "復旧ファイルを選択",
   "recoveryCloseFirst": "ワークスペースは実行中です。ライブラリを切り替える前に閉じてください。",
+  "recoveryClosing": "元のサービスの終了を待っています。終了が確認されるまで、再起動や復元はできません。",
+  "recoveryClosingUnconfirmed": "終了はまだ確認されていません。監視を続けます。タイムアウトしても実行済みの操作は取り消されません。",
   "recoveryFailed": "復旧が完了しませんでした。元のファイルを保持して再試行してください。",
   "recoveryIdentityBusy": "このライブラリの別のコピーが使用中です。そちらを閉じてから開いてください。",
   "recoveryIdentityMismatch": "登録されたライブラリ識別情報が一致しません。元のデータを保持し、正しいバックアップを復元してください。",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "復旧結果の確認が必要です。再度開いてください。以前の保護ファイルがあった場合、そのコピーは保持されています。",
   "recoveryLibraryInvalid": "ライブラリを検証または開けませんでした。元のライブラリと保護キーを保持して再試行してください。",
   "recoveryMaintenance": "ライブラリの確認が必要です。元のファイルを保持し、診断の詳細を確認してください。",
+  "recoveryMigrationIncomplete": "このライブラリの移行は未完了です。フォルダー内の移行レポートを確認し、元のライブラリを残して、新しい保存先で再試行してください。",
   "recoveryMissingKey": "保護キーがありません。元の .audit-key を復元して再試行してください。",
   "recoveryMissingLibrary": "キーはありますが、ライブラリがないか空です。元のライブラリを復元してください。",
   "recoveryOpenFailed": "ワークスペースを開けませんでした。プラグインとデータフォルダーを確認して再試行してください。",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "ファイル操作に失敗しました。再試行してください。",
   "visualFindLyrics": "歌詞を探す",
   "visualFindLyricsGuide": "LRCLIB で曲名とアーティストを検索し、合うバージョンを選んでください。",
+  "visualFollowChain": "参照チェーン：{path}",
+  "visualFollowComponent": "参照先：{name}",
+  "visualFollowCycle": "循環が発生します",
+  "visualFollowGuide": "別のコンポーネントの設定を参照できます。解除すると独自設定に戻ります。",
   "visualFollowTheme": "テーマに合わせる",
   "visualFooterLyrics": "フッターに歌詞を表示",
   "visualFooterTips": "フッターにヒントを表示",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "ローカルファイル → 埋め込み → LRCLIB",
   "visualLyricsVersions": "複数のバージョンが見つかりました。検索画面で選んでください。",
   "visualMaterialPreview": "質感のプレビュー",
+  "visualMaterialSource": "マテリアルの参照元",
   "visualMaximize": "最大化",
   "visualMediaAddress": "メディアのアドレス",
   "visualMediaAddressInvalid": "ログイン情報を含まない有効な HTTP / HTTPS アドレスを入力してください。",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "時間情報なし",
   "visualOpacity": "不透明度",
   "visualOptionalArtist": "アーティスト（省略可）",
+  "visualOwnMaterial": "テーマまたは独自設定",
   "visualPauseMusic": "音楽を一時停止",
   "visualPaused": "一時停止中",
   "visualPlainLyrics": "通常の歌詞",

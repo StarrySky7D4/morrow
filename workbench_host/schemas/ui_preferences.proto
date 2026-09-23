@@ -5,3 +5,21 @@ message Preferences {
   uint32 schema_version = 1;
   string locale = 2; // system, zh (Simplified Chinese), en
 }
+
+message FontPreference {
+ uint32 schema_version = 1;
+ string family = 2;
+ string asset = 3;
+ string name = 4;
+}
+
+// One private, core-owned recovery slot. The card belongs to the library and
+// travels with its verified history; it is never the authoritative settings.
+message PreferencesProposal {
+ uint32 schema_version = 1;
+ string operation = 2;
+ uint64 base_revision = 3;
+ bytes intent = 4;
+ bytes sha256 = 5;
+ bool active = 6;
+}

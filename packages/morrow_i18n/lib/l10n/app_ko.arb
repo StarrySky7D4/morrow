@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "빠른 기록",
   "mainComponentSearch": "검색창",
   "mainComponentSettings": "구성 요소 및 카드 · 설정",
+  "mainContentCommittedRefreshFailed": "작업이 저장되었지만 최신 내용을 불러오지 못했습니다. 새로고침하여 확인하세요.",
   "mainContentProtection": "콘텐츠 보호",
   "mainContentRead": "내용을 읽었습니다",
   "mainContentReadFiles": "내용을 읽고 첨부 {count}개를 보존했습니다",
@@ -916,9 +1001,36 @@
   "mainDeleted": "“{title}” 삭제됨",
   "mainDiagnosticDetails": "진단 세부 정보",
   "mainDone": "완료",
+  "mainDraftImportRecoveryCancelBody": "취소하면 원래 포기 요청은 더 이상 실행되지 않습니다. 첨부 파일이 삭제되거나 다른 변경 사항이 되돌려지지는 않습니다.",
+  "mainDraftImportRecoveryCancelDecision": "포기 요청 취소",
+  "mainDraftImportRecoveryCancelTitle": "이 포기 요청을 취소할까요?",
+  "mainDraftImportRecoveryCancelled": "취소됨: 원래 포기 요청은 더 이상 실행되지 않습니다.",
+  "mainDraftImportRecoveryClose": "닫기",
+  "mainDraftImportRecoveryCommitted": "완료: 이 첨부 파일 가져오기를 포기했습니다.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "작업은 확인되었지만 목록이 새로고침되지 않았습니다. 새로고침하여 최신 상태를 확인하세요.",
+  "mainDraftImportRecoveryConflict": "충돌: 초안이 변경되었습니다. 이 요청은 취소만 할 수 있습니다.",
+  "mainDraftImportRecoveryEmpty": "검토할 첨부 파일 결정이 없습니다.",
+  "mainDraftImportRecoveryFailed": "이 결정을 검토할 수 없습니다. 새로고침한 뒤 다시 시도하세요.",
+  "mainDraftImportRecoveryPending": "대기 중: 원래 포기 요청이 확인되지 않았습니다.",
+  "mainDraftImportRecoveryRetry": "원래 포기 요청 다시 시도",
+  "mainDraftImportRecoveryTitle": "첨부 파일 결정 검토",
   "mainEdit": "편집",
   "mainEditIdeaTitle": "아이디어 다듬기",
   "mainEditorClosedUnknown": "편집기가 닫혔지만 저장 결과는 확인되지 않았습니다. 다른 사본을 만들기 전에 작업 공간을 다시 열어 확인하세요.",
+  "mainEditorContinueDraft": "계속 편집",
+  "mainEditorContinueFailed": "이전 편집은 확정되었고 새 초안은 이 창에 남아 있습니다. 다음 편집기를 열지 못했습니다. 다시 시도하세요.",
+  "mainEditorNewerDraft": "이전 편집이 저장되었습니다. 새 초안은 아직 저장되지 않았습니다.",
+  "mainEditorPendingDraft": "계속 입력할 수 있습니다. 이전 저장을 먼저 확인하세요. 새 편집 내용은 자동으로 전송되지 않습니다.",
+  "mainEditorRecoveryAbandonBody": "확정되지 않은 이 편집을 폐기할까요? 원래 작업은 다시 실행할 수 없게 됩니다. 저장된 내용과 새 초안은 변경되지 않습니다. 이미 확정된 편집은 취소되지 않습니다.",
+  "mainEditorRecoveryAbandonTitle": "이전 편집 폐기",
+  "mainEditorRecoveryCommitted": "원래 편집이 저장되었습니다. 현재 내용을 확인하고 승인합니다. 다시 저장하지 않습니다.",
+  "mainEditorRecoveryConfirm": "확인 및 승인",
+  "mainEditorRecoveryConflict": "기준 내용 또는 작업 기록이 변경되었습니다. 원래 제안은 유지되며 현재 내용을 덮어쓸 수 없습니다.",
+  "mainEditorRecoveryEmpty": "확인할 저장된 편집 제안이 없습니다.",
+  "mainEditorRecoveryFailed": "확인을 완료하지 못했습니다. 원래 제안은 유지됩니다. 새로 고친 후 다시 시도하세요.",
+  "mainEditorRecoveryPending": "원래 편집이 확인되지 않았습니다. 계속하면 해당 제안만 다시 시도하며 새 변경 사항은 보내지 않습니다.",
+  "mainEditorRecoveryResume": "원래 편집 계속",
+  "mainEditorRecoveryTitle": "미확인 편집 확인",
   "mainEditorSubtitle": "글, 표, 이미지. 아이디어가 형태를 갖출 때까지 여기에 담으세요.",
   "mainEditorUnavailable": "편집기를 사용할 수 없습니다. 콘텐츠 서비스를 확인한 뒤 다시 시도하세요.",
   "mainEndpointSettings": "아웃바운드 엔드포인트",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "할 일",
   "mainFilterText": "텍스트",
   "mainFollowTheme": "테마 따르기",
+  "mainFontApply": "글꼴 적용",
+  "mainFontDefault": "기본 글꼴",
+  "mainFontFailed": "글꼴을 불러올 수 없습니다. 파일을 확인하거나 앱을 다시 시작한 후 재시도하세요.",
+  "mainFontFamily": "시스템 글꼴 이름",
+  "mainFontHelp": "TTF / OTF, 최대 20 MiB. 설치되지 않은 시스템 글꼴은 자동으로 대체됩니다.",
+  "mainFontHint": "예: Arial 또는 Microsoft YaHei",
+  "mainFontImport": "글꼴 파일 가져오기",
+  "mainFontReset": "기본값 복원",
+  "mainFontSettings": "글꼴",
+  "mainFontUnavailable": "저장된 글꼴을 사용할 수 없어 기본 글꼴을 임시로 사용합니다.",
   "mainFrostDetail": "배경을 부드럽게 하고 생각에 여유를 주세요.",
   "mainFrostEffect": "흐림",
   "mainFrostOpacity": "유리 불투명도",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "시스템 기본값",
   "mainLavender": "라벤더",
+  "mainLegacyStageComplete": "이전 형식은 모든 할 일을 완료로 표시하고 프로젝트를 완료합니다. 계속할까요?",
+  "mainLegacyStageReopen": "다른 단계로 돌아가면 마지막 할 일 “{task}”와 같은 이름의 모든 할 일이 미완료로 바뀝니다. 계속할까요?",
+  "mainLegacyTodoContinue": "계속",
+  "mainLegacyTodoGroup": "이전 형식은 텍스트로 할 일을 구분합니다. 이름이 “{task}”인 모든 항목이 바뀝니다. 계속할까요?",
+  "mainLegacyTodoTitle": "이전 형식의 할 일 연동",
   "mainLightOpacity": "20% · 옅게",
   "mainLiquidAllCanvases": "네 가지 배경 유형 모두에서 개별적으로 사용할 수 있습니다",
   "mainLiquidDetail": "공중에 떠 있는 물방울처럼 흐르는 빛과 부드러운 굴절.",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "아이디어 저장",
   "mainSaveNotSubmitted": "제출되지 않았습니다. 초안과 첨부 파일은 보존되며 수정 후 다시 저장할 수 있습니다.",
   "mainSaveReadOnly": "변경 사항이 저장되지 않았습니다. 플러그인 및 서비스에서 작업 공간 플러그인을 켜고 다시 시도하세요.",
+  "mainSaveReadbackPending": "설정은 저장되었지만 다시 읽기는 확인되지 않았습니다. 초안을 유지하며 재시도 시 원래 제출을 먼저 확인합니다.",
+  "mainSaveRecoveryAbandon": "이전 제안 버리기",
+  "mainSaveRecoveryAbandonConfirm": "저장되지 않은 제안만 버릴까요? 현재 초안과 저장된 내용은 유지됩니다. 이미 저장된 설정은 취소되지 않습니다.",
+  "mainSaveRecoveryCommitted": "이전 설정은 저장되었습니다. 확인해도 현재 초안은 바뀌지 않습니다.",
+  "mainSaveRecoveryConflict": "라이브러리가 변경되었습니다. 이전 제안으로 새 설정을 덮어쓸 수 없습니다. 보류하거나 저장되지 않은 제안을 버리세요.",
+  "mainSaveRecoveryDone": "이전 제안을 처리했습니다. 초안은 그대로입니다. 준비되면 저장을 다시 시도하세요.",
+  "mainSaveRecoveryEmpty": "확인할 영구 저장 제안이 없습니다.",
+  "mainSaveRecoveryPending": "이전 제안의 저장이 확인되지 않았습니다. 계속하면 원래 저장을 확인하고 시도합니다. 새 초안은 유지됩니다.",
+  "mainSaveRecoveryResolve": "원래 저장 확인",
+  "mainSaveRecoveryReview": "저장 확인",
+  "mainSaveRecoveryTitle": "확인이 필요한 저장이 있습니다",
   "mainSaveUnknown": "저장 결과가 확인되지 않았습니다. 초안과 첨부 파일은 보존됩니다. 이 제출을 다시 시도하세요. 닫으면 작업 공간을 새로 고쳐 확인합니다.",
   "mainSaving": "저장 중…",
   "mainSearchHint": "아이디어 검색…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "{done}/{total}단계",
   "mainStorageUnavailable": "로컬 저장소를 사용할 수 없습니다. 변경 사항은 이번 세션에만 유지됩니다.",
   "mainStorageUnreadable": "저장된 내용을 읽지 못했습니다. 원본 데이터는 보존되며 덮어쓰지 않습니다.",
+  "mainStyleFlat": "플랫 · 기본",
+  "mainStyleFlatDescription": "가벼운 테두리와 명확한 계층",
+  "mainStyleNeumorphism": "뉴모피즘",
+  "mainStyleNeumorphismDescription": "부드러운 빛과 그림자의 입체감",
+  "mainTaskAdd": "작업 추가",
+  "mainTaskAmbiguousDecision": "이름이 같은 이전 형식 작업의 완료 상태가 불확실합니다. 각 작업을 개별적으로 확인하세요.",
+  "mainTaskCompleteAllAndSetStage": "모두 완료하고 단계 설정",
+  "mainTaskCompleteAllConfirm": "모든 작업을 완료로 표시하고 단계를 “{stage}”(으)로 설정할까요?",
+  "mainTaskLegacyReadOnly": "이전 형식은 텍스트로 작업을 구분합니다. 업그레이드 후 같은 이름의 작업을 개별적으로 관리할 수 있습니다.",
+  "mainTaskMarkComplete": "완료로 확인",
+  "mainTaskMarkIncomplete": "미완료로 확인",
+  "mainTaskMoveDown": "아래로 이동",
+  "mainTaskMoveUp": "위로 이동",
+  "mainTaskProgressThreeWay": "완료 {complete} · 미완료 {incomplete} · 확인 필요 {ambiguous}",
+  "mainTaskRemoveConfirm": "작업 “{task}”을(를) 삭제할까요?",
+  "mainTaskRename": "이름 변경",
+  "mainTaskSetStage": "단계만 변경",
+  "mainTaskStagePrompt": "프로젝트 단계",
+  "mainTaskTextPrompt": "작업 내용",
   "mainTenMinutesAgo": "10분 전",
   "mainTextureCanvas": "텍스처",
   "mainTextureDetail": "고운 종이 질감이 촉감을 더합니다.",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "검증 대기",
   "mainView": "보기",
   "mainViewAll": "모두 보기",
+  "mainVisualStyle": "인터페이스 스타일",
   "mainWarmSand": "따뜻한 모래",
   "mainWhiteTheme": "밝게",
   "mainWindowRadius": "창 모서리",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "다른 프로세스가 라이브러리를 사용 중입니다. 다른 창을 닫고 다시 시도하세요.",
   "recoveryChooseKey": "복구 파일 선택",
   "recoveryCloseFirst": "작업 공간이 실행 중입니다. 라이브러리를 전환하기 전에 닫으세요.",
+  "recoveryClosing": "기존 서비스가 종료되기를 기다리고 있습니다. 종료가 확인될 때까지 다시 열기와 복원을 사용할 수 없습니다.",
+  "recoveryClosingUnconfirmed": "종료가 아직 확인되지 않았습니다. 계속 관찰하며, 시간 초과가 실행된 작업을 취소하지는 않습니다.",
   "recoveryFailed": "복구가 완료되지 않았습니다. 원본 파일을 보존하고 다시 시도하세요.",
   "recoveryIdentityBusy": "이 라이브러리의 다른 사본이 사용 중입니다. 해당 작업 공간을 닫은 후 여세요.",
   "recoveryIdentityMismatch": "등록된 라이브러리 식별 정보가 일치하지 않습니다. 원본 데이터를 보존하고 올바른 백업을 복원하세요.",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "복구 결과를 확인해야 합니다. 다시 열어 보세요. 이전 보호 파일이 있었다면 사본을 보존했습니다.",
   "recoveryLibraryInvalid": "라이브러리를 검증하거나 열지 못했습니다. 원래 라이브러리와 보호 키를 보존하고 다시 시도하세요.",
   "recoveryMaintenance": "라이브러리 점검이 필요합니다. 원본 파일을 보존하고 진단 내용을 확인하세요.",
+  "recoveryMigrationIncomplete": "이 라이브러리의 마이그레이션이 완료되지 않았습니다. 폴더의 마이그레이션 보고서를 확인하고 원본 라이브러리를 보존한 채 새 대상 폴더로 다시 시도하세요.",
   "recoveryMissingKey": "보호 키가 없습니다. 원래 .audit-key 파일을 복원하고 다시 시도하세요.",
   "recoveryMissingLibrary": "키는 있지만 라이브러리가 없거나 비어 있습니다. 원래 라이브러리를 복원하세요.",
   "recoveryOpenFailed": "작업 공간을 열지 못했습니다. 플러그인 파일과 데이터 폴더를 확인하고 다시 시도하세요.",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "파일 작업에 실패했습니다. 다시 시도하세요.",
   "visualFindLyrics": "가사 찾기",
   "visualFindLyricsGuide": "LRCLIB에서 곡명과 아티스트로 검색한 뒤 맞는 버전을 선택하세요.",
+  "visualFollowChain": "연결 경로: {path}",
+  "visualFollowComponent": "따르는 대상: {name}",
+  "visualFollowCycle": "순환 참조 발생",
+  "visualFollowGuide": "다른 구성 요소의 설정을 따릅니다. 연결을 해제하면 자체 설정으로 돌아갑니다.",
   "visualFollowTheme": "테마 따르기",
   "visualFooterLyrics": "하단에 가사 표시",
   "visualFooterTips": "하단에 팁 표시",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "로컬 파일 → 내장 가사 → LRCLIB",
   "visualLyricsVersions": "여러 버전을 찾았습니다. 검색에서 하나를 선택하세요.",
   "visualMaterialPreview": "질감 미리보기",
+  "visualMaterialSource": "재질 설정 출처",
   "visualMaximize": "최대화",
   "visualMediaAddress": "미디어 주소",
   "visualMediaAddressInvalid": "로그인 정보가 없는 올바른 HTTP 또는 HTTPS 주소를 입력하세요.",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "시간 정보 없음",
   "visualOpacity": "불투명도",
   "visualOptionalArtist": "아티스트(선택 사항)",
+  "visualOwnMaterial": "테마 또는 자체 설정",
   "visualPauseMusic": "음악 일시 정지",
   "visualPaused": "일시 정지됨",
   "visualPlainLyrics": "일반 텍스트 가사",

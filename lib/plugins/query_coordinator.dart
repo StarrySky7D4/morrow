@@ -29,6 +29,11 @@ class QueryCoordinator {
   bool _disposed = false, _running = false, _due = false, _deferred = false;
   QueryPhase phase = QueryPhase.idle;
   List<String> ids = const [];
+  // Only completed operation references, never a second authority for results.
+  // Returning to a view re-delivers via the host, which checks current access
+  // and the original observation. No fabricated query execution or audit event.
+  final _completed = <QueryConditions, String>{};
+  static const _maxCompletedViews = 8;
 
   /// Synchronous selection is safe during build: only asynchronous completion notifies.
   void select(
@@ -47,16 +52,29 @@ class QueryCoordinator {
         _deferred == deferred) {
       return;
     }
-    invalidate();
+    if (!identical(_backend, backend) ||
+        _conditions?.contentGeneration != conditions.contentGeneration) {
+      _completed.clear();
+    }
+    _resetSelection();
     _backend = backend;
     _conditions = conditions;
-    _operation = newQueryOperationId();
+    final previous = _completed.remove(conditions);
+    if (previous != null) _completed[conditions] = previous;
+    _operation = previous ?? newQueryOperationId();
     _deferred = deferred;
     phase = QueryPhase.loading;
     if (!deferred) _schedule();
   }
 
+  void releaseCompletedViews() => _completed.clear();
+
   void invalidate() {
+    _completed.clear();
+    _resetSelection();
+  }
+
+  void _resetSelection() {
     _serial++;
     _timer?.cancel();
     _timer = null;
@@ -106,12 +124,18 @@ class QueryCoordinator {
       );
       if (!_disposed && serial == _serial) {
         ids = List.unmodifiable(result);
+        _completed.remove(conditions);
+        _completed[conditions] = operation;
+        while (_completed.length > _maxCompletedViews) {
+          _completed.remove(_completed.keys.first);
+        }
         phase = QueryPhase.ready;
         onChanged();
       }
     } catch (error) {
       if (!_disposed && serial == _serial) {
         failure = error is QueryFailure ? error : null;
+        if (failure?.terminal ?? false) _completed.remove(conditions);
         phase = QueryPhase.failed;
         onChanged();
       }

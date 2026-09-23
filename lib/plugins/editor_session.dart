@@ -22,6 +22,11 @@ abstract interface class WorkbenchEditorSession {
   Future<void> close();
 }
 
+/// Optional capability for starting a new edit from an exact confirmed save.
+abstract interface class WorkbenchEditorContinuation {
+  Future<WorkbenchEditorSession> continueAfterCommit(Idea confirmed);
+}
+
 /// No captured-save request was sent. The draft may safely be changed before a new attempt.
 class EditorPreparationException implements Exception {
   const EditorPreparationException(this.cause);

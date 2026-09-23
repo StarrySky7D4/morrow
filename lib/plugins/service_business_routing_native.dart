@@ -18,7 +18,15 @@ bool _isScheduler(host.Action action) => switch (action) {
 };
 
 class _HostResponseError extends StateError {
-  _HostResponseError(super.message);
+  _HostResponseError(
+    super.message, {
+    this.code = 0,
+    this.emptyPayload = false,
+    this.revision = 0,
+  });
+  final int code;
+  final bool emptyPayload;
+  final int revision;
 }
 
 extension _ServiceBusinessRouting on RustWorkbench {
@@ -33,14 +41,19 @@ extension _ServiceBusinessRouting on RustWorkbench {
       maintenanceWarning = notice.isEmpty ? null : notice;
     }
     if ((reply.error ?? '').isEmpty) return;
-    if (action == host.Action.query) {
+    if (action == host.Action.query || action == host.Action.queryVersioned) {
       throw QueryFailure(
         reply.error!,
         terminal: reply.uiCode == 100 || reply.uiCode == 101,
         capacity: reply.uiCode == 101 || reply.uiCode == 102,
       );
     }
-    throw _HostResponseError(reply.error!);
+    throw _HostResponseError(
+      reply.error!,
+      code: reply.uiCode,
+      emptyPayload: reply.payload == null || reply.payload!.isEmpty,
+      revision: reply.revision,
+    );
   }
 
   void _observeScheduler(
@@ -370,8 +383,9 @@ extension _ServiceBusinessRouting on RustWorkbench {
         r.totalLength = input.length;
         r.sha256 = digest;
       });
-      if (offset != 0)
+      if (offset != 0) {
         throw const FormatException('Invalid frame begin acknowledgement');
+      }
       for (var offset = 0; offset < input.length;) {
         final end = (offset + 32768).clamp(0, input.length);
         final acknowledged = await stage(host.Action.commandFrameAppend, (r) {
@@ -379,8 +393,9 @@ extension _ServiceBusinessRouting on RustWorkbench {
           r.offset = offset;
           r.payload = Uint8List.sublistView(input, offset, end);
         });
-        if (acknowledged != end)
+        if (acknowledged != end) {
           throw const FormatException('Invalid frame part acknowledgement');
+        }
         offset = end;
       }
       final result = await _throughService<T>(

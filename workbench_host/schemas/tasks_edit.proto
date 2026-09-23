@@ -1,0 +1,15 @@
+syntax = "proto3";
+package morrow.workbench.tasks_edit.v1;
+// Frozen, canonical host facts for seven TaskId V2 edits.
+// The source Card includes outer type, format, revision, attachments and unknown fields.
+message Facts {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  bytes source_card = 3;
+  bytes package_sha256 = 4;
+  uint32 action = 5; // 1 completion, 2 rename, 3 reorder, 4 stage, 5 complete-all, 6 add, 7 remove
+  string task_id = 6;
+  string text = 7;
+  bool complete = 8;
+  repeated string order = 9;
+}

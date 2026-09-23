@@ -532,6 +532,12 @@ abstract class AppLocalizations {
   /// **'Components and cards · Settings'**
   String get mainComponentSettings;
 
+  /// No description provided for @mainContentCommittedRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation was committed, but the latest content could not be loaded. Refresh to view it.'**
+  String get mainContentCommittedRefreshFailed;
+
   /// No description provided for @mainContentProtection.
   ///
   /// In en, this message translates to:
@@ -670,6 +676,84 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get mainDone;
 
+  /// No description provided for @mainDraftImportRecoveryCancelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.'**
+  String get mainDraftImportRecoveryCancelBody;
+
+  /// No description provided for @mainDraftImportRecoveryCancelDecision.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel abandonment request'**
+  String get mainDraftImportRecoveryCancelDecision;
+
+  /// No description provided for @mainDraftImportRecoveryCancelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this abandonment request?'**
+  String get mainDraftImportRecoveryCancelTitle;
+
+  /// No description provided for @mainDraftImportRecoveryCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled: the original abandonment request will no longer run.'**
+  String get mainDraftImportRecoveryCancelled;
+
+  /// No description provided for @mainDraftImportRecoveryClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get mainDraftImportRecoveryClose;
+
+  /// No description provided for @mainDraftImportRecoveryCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed: this attachment import was abandoned.'**
+  String get mainDraftImportRecoveryCommitted;
+
+  /// No description provided for @mainDraftImportRecoveryConfirmedRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action confirmed, but the list has not refreshed. Refresh to see its latest status.'**
+  String get mainDraftImportRecoveryConfirmedRefreshFailed;
+
+  /// No description provided for @mainDraftImportRecoveryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict: the draft changed. This request can only be cancelled.'**
+  String get mainDraftImportRecoveryConflict;
+
+  /// No description provided for @mainDraftImportRecoveryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No attachment decisions need review.'**
+  String get mainDraftImportRecoveryEmpty;
+
+  /// No description provided for @mainDraftImportRecoveryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not review this decision. Refresh and try again.'**
+  String get mainDraftImportRecoveryFailed;
+
+  /// No description provided for @mainDraftImportRecoveryPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending: the original abandonment request is not confirmed.'**
+  String get mainDraftImportRecoveryPending;
+
+  /// No description provided for @mainDraftImportRecoveryRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry original abandonment'**
+  String get mainDraftImportRecoveryRetry;
+
+  /// No description provided for @mainDraftImportRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review attachment decisions'**
+  String get mainDraftImportRecoveryTitle;
+
   /// No description provided for @mainEdit.
   ///
   /// In en, this message translates to:
@@ -687,6 +771,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The editor closed, but the save is not yet confirmed. Reopen the workspace to check before creating another copy.'**
   String get mainEditorClosedUnknown;
+
+  /// No description provided for @mainEditorContinueDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue editing'**
+  String get mainEditorContinueDraft;
+
+  /// No description provided for @mainEditorContinueFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The previous edit is confirmed and your newer draft remains in this window. Could not open the next editor; please retry.'**
+  String get mainEditorContinueFailed;
+
+  /// No description provided for @mainEditorNewerDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'The previous edit was saved. Your newer draft is still unsaved.'**
+  String get mainEditorNewerDraft;
+
+  /// No description provided for @mainEditorPendingDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'You can keep typing. Resolve the previous save first; newer edits will not be sent automatically.'**
+  String get mainEditorPendingDraft;
+
+  /// No description provided for @mainEditorRecoveryAbandonBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon this uncommitted edit? Its original operation will be sealed. Saved content and newer drafts stay unchanged. This does not undo a committed edit.'**
+  String get mainEditorRecoveryAbandonBody;
+
+  /// No description provided for @mainEditorRecoveryAbandonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon old edit'**
+  String get mainEditorRecoveryAbandonTitle;
+
+  /// No description provided for @mainEditorRecoveryCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'The original edit committed. Review the current content and acknowledge it without saving again.'**
+  String get mainEditorRecoveryCommitted;
+
+  /// No description provided for @mainEditorRecoveryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and acknowledge'**
+  String get mainEditorRecoveryConfirm;
+
+  /// No description provided for @mainEditorRecoveryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The content baseline or operation history changed. The original proposal is retained and cannot overwrite current content.'**
+  String get mainEditorRecoveryConflict;
+
+  /// No description provided for @mainEditorRecoveryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No persistent edit proposals need review.'**
+  String get mainEditorRecoveryEmpty;
+
+  /// No description provided for @mainEditorRecoveryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Review could not finish. The original proposal is retained. Refresh and try again.'**
+  String get mainEditorRecoveryFailed;
+
+  /// No description provided for @mainEditorRecoveryPending.
+  ///
+  /// In en, this message translates to:
+  /// **'The original edit is unconfirmed. Continue retries only that proposal, without submitting newer changes.'**
+  String get mainEditorRecoveryPending;
+
+  /// No description provided for @mainEditorRecoveryResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue original edit'**
+  String get mainEditorRecoveryResume;
+
+  /// No description provided for @mainEditorRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review pending edits'**
+  String get mainEditorRecoveryTitle;
 
   /// No description provided for @mainEditorSubtitle.
   ///
@@ -807,6 +975,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Follow theme'**
   String get mainFollowTheme;
+
+  /// No description provided for @mainFontApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply font'**
+  String get mainFontApply;
+
+  /// No description provided for @mainFontDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default font'**
+  String get mainFontDefault;
+
+  /// No description provided for @mainFontFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load this font. Check the file or restart the app and try again.'**
+  String get mainFontFailed;
+
+  /// No description provided for @mainFontFamily.
+  ///
+  /// In en, this message translates to:
+  /// **'System font family'**
+  String get mainFontFamily;
+
+  /// No description provided for @mainFontHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'TTF / OTF, up to 20 MiB. Unavailable system fonts fall back automatically.'**
+  String get mainFontHelp;
+
+  /// No description provided for @mainFontHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: Arial or Microsoft YaHei'**
+  String get mainFontHint;
+
+  /// No description provided for @mainFontImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import font file'**
+  String get mainFontImport;
+
+  /// No description provided for @mainFontReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore default'**
+  String get mainFontReset;
+
+  /// No description provided for @mainFontSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Fonts'**
+  String get mainFontSettings;
+
+  /// No description provided for @mainFontUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The saved font is unavailable. Using the default font for now.'**
+  String get mainFontUnavailable;
 
   /// No description provided for @mainFrostDetail.
   ///
@@ -1029,6 +1257,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lavender'**
   String get mainLavender;
+
+  /// No description provided for @mainLegacyStageComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'The legacy format will check every task and complete the project. Continue?'**
+  String get mainLegacyStageComplete;
+
+  /// No description provided for @mainLegacyStageReopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning to another stage in the legacy format will uncheck the last task “{task}” and every task with that name. Continue?'**
+  String mainLegacyStageReopen(String task);
+
+  /// No description provided for @mainLegacyTodoContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get mainLegacyTodoContinue;
+
+  /// No description provided for @mainLegacyTodoGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'The legacy format identifies tasks by text. This changes every task named “{task}”. Continue?'**
+  String mainLegacyTodoGroup(String task);
+
+  /// No description provided for @mainLegacyTodoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy checklist changes'**
+  String get mainLegacyTodoTitle;
 
   /// No description provided for @mainLightOpacity.
   ///
@@ -1516,6 +1774,72 @@ abstract class AppLocalizations {
   /// **'Changes are not saved. Enable the workbench plugin in Plugins and services, then retry.'**
   String get mainSaveReadOnly;
 
+  /// No description provided for @mainSaveReadbackPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings were committed, but readback is unconfirmed. Your draft is preserved; retry will reconcile the original submission first.'**
+  String get mainSaveReadbackPending;
+
+  /// No description provided for @mainSaveRecoveryAbandon.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon old proposal'**
+  String get mainSaveRecoveryAbandon;
+
+  /// No description provided for @mainSaveRecoveryAbandonConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Abandon only the uncommitted proposal? Your current draft and saved content stay intact. This does not undo committed settings.'**
+  String get mainSaveRecoveryAbandonConfirm;
+
+  /// No description provided for @mainSaveRecoveryCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'The old settings were committed. Reviewing confirms the result without replacing your current draft.'**
+  String get mainSaveRecoveryCommitted;
+
+  /// No description provided for @mainSaveRecoveryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The library has changed. The old proposal cannot overwrite newer settings. Keep it pending or abandon the uncommitted proposal.'**
+  String get mainSaveRecoveryConflict;
+
+  /// No description provided for @mainSaveRecoveryDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The old proposal is resolved. Your draft is unchanged; retry saving when ready.'**
+  String get mainSaveRecoveryDone;
+
+  /// No description provided for @mainSaveRecoveryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No persistent save proposal needs review.'**
+  String get mainSaveRecoveryEmpty;
+
+  /// No description provided for @mainSaveRecoveryPending.
+  ///
+  /// In en, this message translates to:
+  /// **'The old proposal is not confirmed. Continue to reconcile and attempt the original save; your newer draft stays intact.'**
+  String get mainSaveRecoveryPending;
+
+  /// No description provided for @mainSaveRecoveryResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve original save'**
+  String get mainSaveRecoveryResolve;
+
+  /// No description provided for @mainSaveRecoveryReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review save'**
+  String get mainSaveRecoveryReview;
+
+  /// No description provided for @mainSaveRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A save needs review'**
+  String get mainSaveRecoveryTitle;
+
   /// No description provided for @mainSaveUnknown.
   ///
   /// In en, this message translates to:
@@ -1690,6 +2014,120 @@ abstract class AppLocalizations {
   /// **'Saved content could not be read. The original data is preserved and will not be overwritten.'**
   String get mainStorageUnreadable;
 
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Flat · Default'**
+  String get mainStyleFlat;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Light edges and clear layers'**
+  String get mainStyleFlatDescription;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Neumorphism'**
+  String get mainStyleNeumorphism;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Soft paired shadows and gentle relief'**
+  String get mainStyleNeumorphismDescription;
+
+  /// No description provided for @mainTaskAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add task'**
+  String get mainTaskAdd;
+
+  /// No description provided for @mainTaskAmbiguousDecision.
+  ///
+  /// In en, this message translates to:
+  /// **'The completion of these legacy tasks with matching names is uncertain. Confirm each task separately.'**
+  String get mainTaskAmbiguousDecision;
+
+  /// No description provided for @mainTaskCompleteAllAndSetStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete all and set stage'**
+  String get mainTaskCompleteAllAndSetStage;
+
+  /// No description provided for @mainTaskCompleteAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark every task complete and set the stage to “{stage}”?'**
+  String mainTaskCompleteAllConfirm(String stage);
+
+  /// No description provided for @mainTaskLegacyReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Legacy tasks are matched by text. After upgrading, tasks with matching names can be managed separately.'**
+  String get mainTaskLegacyReadOnly;
+
+  /// No description provided for @mainTaskMarkComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm complete'**
+  String get mainTaskMarkComplete;
+
+  /// No description provided for @mainTaskMarkIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm incomplete'**
+  String get mainTaskMarkIncomplete;
+
+  /// No description provided for @mainTaskMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get mainTaskMoveDown;
+
+  /// No description provided for @mainTaskMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get mainTaskMoveUp;
+
+  /// No description provided for @mainTaskProgressThreeWay.
+  ///
+  /// In en, this message translates to:
+  /// **'{complete} complete · {incomplete} incomplete · {ambiguous} to confirm'**
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete);
+
+  /// No description provided for @mainTaskRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove task “{task}”?'**
+  String mainTaskRemoveConfirm(String task);
+
+  /// No description provided for @mainTaskRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename'**
+  String get mainTaskRename;
+
+  /// No description provided for @mainTaskSetStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change stage only'**
+  String get mainTaskSetStage;
+
+  /// No description provided for @mainTaskStagePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Project stage'**
+  String get mainTaskStagePrompt;
+
+  /// No description provided for @mainTaskTextPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Task text'**
+  String get mainTaskTextPrompt;
+
   /// No description provided for @mainTenMinutesAgo.
   ///
   /// In en, this message translates to:
@@ -1803,6 +2241,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show all'**
   String get mainViewAll;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Interface style'**
+  String get mainVisualStyle;
 
   /// No description provided for @mainWarmSand.
   ///
@@ -4458,6 +4902,18 @@ abstract class AppLocalizations {
   /// **'The workspace is still running. Close it before switching libraries.'**
   String get recoveryCloseFirst;
 
+  /// No description provided for @recoveryClosing.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the original content service to exit. Reopening and recovery remain unavailable until exit is confirmed.'**
+  String get recoveryClosing;
+
+  /// No description provided for @recoveryClosingUnconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Shutdown is still unconfirmed; the original service remains under observation. A timeout does not cancel committed or remote effects.'**
+  String get recoveryClosingUnconfirmed;
+
   /// No description provided for @recoveryFailed.
   ///
   /// In en, this message translates to:
@@ -4511,6 +4967,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The library needs attention. Keep the original files and review the diagnostic details.'**
   String get recoveryMaintenance;
+
+  /// No description provided for @recoveryMigrationIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'This library migration is incomplete. Check the migration report in its folder, keep the source library, and retry with a new destination.'**
+  String get recoveryMigrationIncomplete;
 
   /// No description provided for @recoveryMissingKey.
   ///
@@ -4866,6 +5328,30 @@ abstract class AppLocalizations {
   /// **'Search LRCLIB by song and artist, then choose the matching version.'**
   String get visualFindLyricsGuide;
 
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Follow chain: {path}'**
+  String visualFollowChain(String path);
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Follows: {name}'**
+  String visualFollowComponent(String name);
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Would create a cycle'**
+  String get visualFollowCycle;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Follow another component; unlink to restore your own settings.'**
+  String get visualFollowGuide;
+
   /// Visual interface: FollowTheme
   ///
   /// In en, this message translates to:
@@ -5142,6 +5628,12 @@ abstract class AppLocalizations {
   /// **'Material preview'**
   String get visualMaterialPreview;
 
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Material source'**
+  String get visualMaterialSource;
+
   /// Visual interface: Maximize
   ///
   /// In en, this message translates to:
@@ -5231,6 +5723,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Artist (optional)'**
   String get visualOptionalArtist;
+
+  /// Interface style and component material inheritance
+  ///
+  /// In en, this message translates to:
+  /// **'Theme or own settings'**
+  String get visualOwnMaterial;
 
   /// Visual interface: PauseMusic
   ///

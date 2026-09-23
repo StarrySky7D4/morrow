@@ -316,6 +316,34 @@ Future<void> mount(
 }
 
 void main() {
+  testWidgets(
+    'return checks revision but reuses catalog pages; manual refresh is full',
+    (t) async {
+      final backend = FakeBackend([
+        entry('a'),
+        entry('b'),
+        entry('c'),
+        entry('d'),
+        entry('e'),
+      ]);
+      await mount(t, backend);
+      expect(backend.pages.length, 3);
+      await t.pumpWidget(const SizedBox());
+      await mount(t, backend);
+      expect(backend.pages.length, 4);
+      await click(t, 'plugin-refresh');
+      expect(backend.pages.length, 7);
+      await t.pumpWidget(const SizedBox());
+      backend.revision += BigInt.one;
+      backend.entries.removeLast();
+      await mount(t, backend);
+      expect(backend.pages.length, 9);
+      expect(find.text('插件 e'), findsNothing);
+      expect(backend.configurations, 0);
+      expect(backend.views, isEmpty);
+    },
+  );
+
   testWidgets('IO is a separate page and returning refreshes the library', (
     tester,
   ) async {

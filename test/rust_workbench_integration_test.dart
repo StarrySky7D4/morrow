@@ -9,10 +9,58 @@ import 'package:morrow_studio/plugins/workbench_backend.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 import 'package:morrow_studio/plugins/studio_storage.dart';
 import 'package:morrow_studio/music/lyrics_service.dart';
+import 'package:morrow_studio/fonts/font_choice.dart';
+import 'package:morrow_studio/plugins/preferences_save_failure.dart';
 
 void main() {
   final executable = Platform.environment['MORROW_WORKBENCH_HOST'];
   final package = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
+  test(
+    'completed query delivery rechecks current plugin authorization',
+    () async {
+      final directory = await Directory.systemTemp.createTemp(
+        'morrow-query-view-',
+      );
+      RustWorkbench? backend;
+      try {
+        backend = await RustWorkbench.open(
+          executable: executable!,
+          package: package!,
+          directory: directory,
+        );
+        await backend.apply(
+          PluginAction.create,
+          Idea(
+            'view snapshot',
+            'query delivery',
+            '灵感',
+            Idea.icons[0],
+            const Color(0xff8866aa),
+            id: 'query-view-card',
+          ),
+        );
+        Future<List<String>> readA() =>
+            backend!.query('概览', '全部', '', '最近添加', operation: 'query-view-a');
+        expect(await readA(), ['query-view-card']);
+        await backend.query(
+          '灵感收件箱',
+          '全部',
+          '',
+          '最近添加',
+          operation: 'query-view-b',
+        );
+        expect(await readA(), ['query-view-card']);
+        await backend.configurePlugin(await backend.pluginState(), false);
+        await expectLater(readA(), throwsA(isA<QueryFailure>()));
+      } finally {
+        await backend?.close();
+        // This directory was created by this test; no user library is opened.
+        await directory.delete(recursive: true);
+      }
+    },
+    skip: executable == null || package == null || !Platform.isWindows,
+    timeout: const Timeout(Duration(minutes: 1)),
+  );
   test(
     'real Rust guest, Flutter client, persistent records and preferences',
     () async {
@@ -76,6 +124,11 @@ void main() {
           isNot(contains(Uri.encodeComponent(file.path))),
         );
         final storage = await RustStudioStorage.open(backend);
+        await storage.write({
+          ...storage.read(),
+          'uiFont': const FontChoice(family: 'Arial').toJson(),
+        });
+        expect(await backend.readUiFont(), const FontChoice(family: 'Arial'));
         expect(storage.read()['uiLocale'], 'system');
         await storage.write({...storage.read(), 'uiLocale': 'en'});
         expect(await backend.readUiLocale(), 'en');
@@ -176,10 +229,19 @@ void main() {
               'index': 23,
             },
           }),
-          throwsStateError,
+          throwsA(
+            isA<PreferencesSaveFailure>().having(
+              (e) => e.effect,
+              'effect',
+              PreferencesEffect.notSubmitted,
+            ),
+          ),
         );
         expect(await backend.readPreferences(), beforeFailure);
         expect(storage.read()['canvasOpacity'], 0.4);
+        expect(backend.pendingPreferencesOperation, isNull);
+        await storage.write({...large, 'canvasOpacity': 0.5});
+        expect(storage.read()['canvasOpacity'], 0.5);
 
         final lines = await backend.studio.parseLyrics(
           '[offset:100]\n[00:01.20][00:02:345]中文',
@@ -257,10 +319,11 @@ void main() {
           directory: directory,
         );
         final restored = await RustStudioStorage.open(backend);
+        expect(restored.read()['uiFont']['family'], 'Arial');
         expect(restored.read()['themeColor'], 0xff3355bb);
         expect(restored.read()['liquidCanvas'], isTrue);
         expect(restored.read()['completed'], ['喝水']);
-        expect(restored.read()['canvasOpacity'], 0.4);
+        expect(restored.read()['canvasOpacity'], 0.5);
         expect(restored.read()['componentCustom'], isTrue);
         expect(
           restored.read()['componentMaterials'],
@@ -422,7 +485,12 @@ void main() {
         await readOnlyStorage.write({
           ...readOnlyStorage.read(),
           'uiLocale': 'en',
+          'uiFont': const FontChoice(family: 'Microsoft YaHei').toJson(),
         });
+        expect(
+          await backend.readUiFont(),
+          const FontChoice(family: 'Microsoft YaHei'),
+        );
         expect(await backend.readUiLocale(), 'en');
         expect(readOnlyStorage.read()['uiLocale'], 'en');
         final withoutPlugin = '${directory.path}/without-plugin.backup';

@@ -267,6 +267,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mainComponentSettings => 'Composants et cartes · Réglages';
 
   @override
+  String get mainContentCommittedRefreshFailed =>
+      'L’opération a été enregistrée, mais le contenu à jour n’a pas pu être chargé. Actualisez pour l’afficher.';
+
+  @override
   String get mainContentProtection => 'Protection du contenu';
 
   @override
@@ -343,6 +347,56 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mainDone => 'Terminé';
 
   @override
+  String get mainDraftImportRecoveryCancelBody =>
+      'Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.';
+
+  @override
+  String get mainDraftImportRecoveryCancelDecision =>
+      'Annuler la demande d’abandon';
+
+  @override
+  String get mainDraftImportRecoveryCancelTitle =>
+      'Annuler cette demande d’abandon ?';
+
+  @override
+  String get mainDraftImportRecoveryCancelled =>
+      'Annulée : la demande d’abandon initiale ne sera plus exécutée.';
+
+  @override
+  String get mainDraftImportRecoveryClose => 'Fermer';
+
+  @override
+  String get mainDraftImportRecoveryCommitted =>
+      'Terminée : l’importation de cette pièce jointe a été abandonnée.';
+
+  @override
+  String get mainDraftImportRecoveryConfirmedRefreshFailed =>
+      'Action confirmée, mais la liste n’a pas été actualisée. Actualisez-la pour voir son état actuel.';
+
+  @override
+  String get mainDraftImportRecoveryConflict =>
+      'Conflit : le brouillon a changé. Cette demande peut seulement être annulée.';
+
+  @override
+  String get mainDraftImportRecoveryEmpty =>
+      'Aucune décision sur une pièce jointe à vérifier.';
+
+  @override
+  String get mainDraftImportRecoveryFailed =>
+      'Impossible de vérifier cette décision. Actualisez, puis réessayez.';
+
+  @override
+  String get mainDraftImportRecoveryPending =>
+      'En attente : la demande d’abandon initiale n’est pas confirmée.';
+
+  @override
+  String get mainDraftImportRecoveryRetry => 'Réessayer l’abandon initial';
+
+  @override
+  String get mainDraftImportRecoveryTitle =>
+      'Vérifier les décisions sur les pièces jointes';
+
+  @override
   String get mainEdit => 'Modifier';
 
   @override
@@ -351,6 +405,57 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get mainEditorClosedUnknown =>
       'L’éditeur est fermé, mais l’enregistrement n’est pas confirmé. Rouvrez l’espace de travail pour vérifier avant de créer une copie.';
+
+  @override
+  String get mainEditorContinueDraft => 'Continuer la modification';
+
+  @override
+  String get mainEditorContinueFailed =>
+      'La modification précédente est confirmée et le nouveau brouillon reste dans cette fenêtre. Impossible d’ouvrir l’éditeur suivant ; réessayez.';
+
+  @override
+  String get mainEditorNewerDraft =>
+      'La modification précédente est enregistrée. Le nouveau brouillon ne l’est pas encore.';
+
+  @override
+  String get mainEditorPendingDraft =>
+      'Vous pouvez continuer à écrire. Vérifiez d’abord l’enregistrement précédent ; les nouvelles modifications ne seront pas envoyées automatiquement.';
+
+  @override
+  String get mainEditorRecoveryAbandonBody =>
+      'Abandonner cette modification non validée ? Son opération d’origine sera bloquée. Le contenu enregistré et les nouveaux brouillons resteront inchangés. Une modification déjà validée ne sera pas annulée.';
+
+  @override
+  String get mainEditorRecoveryAbandonTitle => 'Abandonner la modification';
+
+  @override
+  String get mainEditorRecoveryCommitted =>
+      'La modification initiale a été enregistrée. Vérifiez le contenu actuel et confirmez sans enregistrer à nouveau.';
+
+  @override
+  String get mainEditorRecoveryConfirm => 'Vérifier et confirmer';
+
+  @override
+  String get mainEditorRecoveryConflict =>
+      'La version de référence ou l’historique a changé. La proposition est conservée et ne peut pas remplacer le contenu actuel.';
+
+  @override
+  String get mainEditorRecoveryEmpty =>
+      'Aucune proposition enregistrée à vérifier.';
+
+  @override
+  String get mainEditorRecoveryFailed =>
+      'La vérification a échoué. La proposition initiale est conservée. Actualisez et réessayez.';
+
+  @override
+  String get mainEditorRecoveryPending =>
+      'La modification initiale reste non confirmée. Continuer réessaie uniquement cette proposition, sans envoyer de nouvelles modifications.';
+
+  @override
+  String get mainEditorRecoveryResume => 'Reprendre la modification initiale';
+
+  @override
+  String get mainEditorRecoveryTitle => 'Vérifier les modifications';
 
   @override
   String get mainEditorSubtitle =>
@@ -418,6 +523,39 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mainFollowTheme => 'Suivre le thème';
+
+  @override
+  String get mainFontApply => 'Appliquer la police';
+
+  @override
+  String get mainFontDefault => 'Police par défaut';
+
+  @override
+  String get mainFontFailed =>
+      'Impossible de charger cette police. Vérifiez le fichier ou redémarrez l’application et réessayez.';
+
+  @override
+  String get mainFontFamily => 'Nom de la police système';
+
+  @override
+  String get mainFontHelp =>
+      'TTF / OTF, 20 Mio maximum. Les polices système indisponibles sont remplacées automatiquement.';
+
+  @override
+  String get mainFontHint => 'Par exemple : Arial ou Microsoft YaHei';
+
+  @override
+  String get mainFontImport => 'Importer une police';
+
+  @override
+  String get mainFontReset => 'Rétablir la police par défaut';
+
+  @override
+  String get mainFontSettings => 'Polices';
+
+  @override
+  String get mainFontUnavailable =>
+      'La police enregistrée est indisponible. La police par défaut est utilisée temporairement.';
 
   @override
   String get mainFrostDetail =>
@@ -542,6 +680,26 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mainLavender => 'Lavande';
+
+  @override
+  String get mainLegacyStageComplete =>
+      'L’ancien format cochera toutes les tâches et terminera le projet. Continuer ?';
+
+  @override
+  String mainLegacyStageReopen(String task) {
+    return 'Changer d’étape décochera la dernière tâche « $task » et toutes les tâches du même nom. Continuer ?';
+  }
+
+  @override
+  String get mainLegacyTodoContinue => 'Continuer';
+
+  @override
+  String mainLegacyTodoGroup(String task) {
+    return 'L’ancien format identifie les tâches par leur texte. Toutes les tâches « $task » seront modifiées. Continuer ?';
+  }
+
+  @override
+  String get mainLegacyTodoTitle => 'Modification d’une ancienne liste';
 
   @override
   String get mainLightOpacity => '20 % · Léger';
@@ -813,6 +971,46 @@ class AppLocalizationsFr extends AppLocalizations {
       'Modifications non enregistrées. Activez l’extension de l’espace de travail dans Extensions et services, puis réessayez.';
 
   @override
+  String get mainSaveReadbackPending =>
+      'Les paramètres ont été enregistrés, mais leur relecture reste non confirmée. Le brouillon est conservé ; réessayer vérifiera d’abord l’envoi initial.';
+
+  @override
+  String get mainSaveRecoveryAbandon => 'Abandonner l’ancienne proposition';
+
+  @override
+  String get mainSaveRecoveryAbandonConfirm =>
+      'Abandonner uniquement la proposition non enregistrée ? Votre brouillon et les données enregistrées restent intacts. Les paramètres déjà enregistrés ne seront pas annulés.';
+
+  @override
+  String get mainSaveRecoveryCommitted =>
+      'Les anciens paramètres ont été enregistrés. La vérification confirme le résultat sans remplacer votre brouillon actuel.';
+
+  @override
+  String get mainSaveRecoveryConflict =>
+      'La bibliothèque a changé. L’ancienne proposition ne peut pas écraser les nouveaux paramètres. Conservez-la en attente ou abandonnez-la si elle n’a pas été enregistrée.';
+
+  @override
+  String get mainSaveRecoveryDone =>
+      'L’ancienne proposition est traitée. Votre brouillon est inchangé ; réessayez de l’enregistrer quand vous le souhaitez.';
+
+  @override
+  String get mainSaveRecoveryEmpty =>
+      'Aucune proposition persistante à vérifier.';
+
+  @override
+  String get mainSaveRecoveryPending =>
+      'L’ancienne proposition n’est pas confirmée. Continuer vérifie et tente l’enregistrement initial ; votre nouveau brouillon est conservé.';
+
+  @override
+  String get mainSaveRecoveryResolve => 'Vérifier l’enregistrement initial';
+
+  @override
+  String get mainSaveRecoveryReview => 'Vérifier';
+
+  @override
+  String get mainSaveRecoveryTitle => 'Un enregistrement doit être vérifié';
+
+  @override
   String get mainSaveUnknown =>
       'Enregistrement non confirmé. Brouillon et pièces jointes conservés. Réessayez cet envoi ; la fermeture actualisera l’espace de travail pour vérifier.';
 
@@ -907,6 +1105,73 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de lire le contenu enregistré. Les données originales sont conservées et ne seront pas écrasées.';
 
   @override
+  String get mainStyleFlat => 'Plat · Par défaut';
+
+  @override
+  String get mainStyleFlatDescription => 'Contours légers et niveaux lisibles';
+
+  @override
+  String get mainStyleNeumorphism => 'Neumorphisme';
+
+  @override
+  String get mainStyleNeumorphismDescription =>
+      'Ombres douces et relief subtil';
+
+  @override
+  String get mainTaskAdd => 'Ajouter une tâche';
+
+  @override
+  String get mainTaskAmbiguousDecision =>
+      'L’état de ces anciennes tâches de même nom est incertain. Confirmez chaque tâche séparément.';
+
+  @override
+  String get mainTaskCompleteAllAndSetStage =>
+      'Tout terminer et définir l’étape';
+
+  @override
+  String mainTaskCompleteAllConfirm(String stage) {
+    return 'Marquer toutes les tâches comme terminées et définir l’étape sur « $stage » ?';
+  }
+
+  @override
+  String get mainTaskLegacyReadOnly =>
+      'Les anciennes tâches sont associées par leur texte. Après la mise à niveau, les tâches de même nom peuvent être gérées séparément.';
+
+  @override
+  String get mainTaskMarkComplete => 'Confirmer : terminée';
+
+  @override
+  String get mainTaskMarkIncomplete => 'Confirmer : non terminée';
+
+  @override
+  String get mainTaskMoveDown => 'Descendre';
+
+  @override
+  String get mainTaskMoveUp => 'Monter';
+
+  @override
+  String mainTaskProgressThreeWay(int ambiguous, int complete, int incomplete) {
+    return '$complete terminées · $incomplete restantes · $ambiguous à confirmer';
+  }
+
+  @override
+  String mainTaskRemoveConfirm(String task) {
+    return 'Supprimer la tâche « $task » ?';
+  }
+
+  @override
+  String get mainTaskRename => 'Renommer';
+
+  @override
+  String get mainTaskSetStage => 'Modifier seulement l’étape';
+
+  @override
+  String get mainTaskStagePrompt => 'Étape du projet';
+
+  @override
+  String get mainTaskTextPrompt => 'Texte de la tâche';
+
+  @override
   String get mainTenMinutesAgo => 'Il y a 10 minutes';
 
   @override
@@ -967,6 +1232,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mainViewAll => 'Tout afficher';
+
+  @override
+  String get mainVisualStyle => 'Style de l’interface';
 
   @override
   String get mainWarmSand => 'Sable chaud';
@@ -2554,6 +2822,14 @@ class AppLocalizationsFr extends AppLocalizations {
       'L’espace de travail est encore ouvert. Fermez-le avant de changer de bibliothèque.';
 
   @override
+  String get recoveryClosing =>
+      'En attente de la fermeture du service initial. La réouverture et la restauration restent indisponibles jusqu’à sa confirmation.';
+
+  @override
+  String get recoveryClosingUnconfirmed =>
+      'La fermeture reste non confirmée. La surveillance continue ; le délai écoulé n’annule pas les opérations effectuées.';
+
+  @override
   String get recoveryFailed =>
       'La récupération n’est pas terminée. Conservez les fichiers originaux et réessayez.';
 
@@ -2587,6 +2863,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get recoveryMaintenance =>
       'La bibliothèque nécessite une intervention. Conservez les originaux et consultez le diagnostic.';
+
+  @override
+  String get recoveryMigrationIncomplete =>
+      'La migration de cette bibliothèque est incomplète. Consultez le rapport dans son dossier, conservez la bibliothèque source et réessayez dans un nouveau dossier.';
 
   @override
   String get recoveryMissingKey =>
@@ -2802,6 +3082,23 @@ class AppLocalizationsFr extends AppLocalizations {
       'Cherchez sur LRCLIB par titre et artiste, puis choisissez la bonne version.';
 
   @override
+  String visualFollowChain(String path) {
+    return 'Chaîne de suivi : $path';
+  }
+
+  @override
+  String visualFollowComponent(String name) {
+    return 'Suit : $name';
+  }
+
+  @override
+  String get visualFollowCycle => 'Créerait une boucle';
+
+  @override
+  String get visualFollowGuide =>
+      'Suivez un autre composant ; dissociez-le pour retrouver vos réglages.';
+
+  @override
   String get visualFollowTheme => 'Suivre le thème';
 
   @override
@@ -2976,6 +3273,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get visualMaterialPreview => 'Aperçu du matériau';
 
   @override
+  String get visualMaterialSource => 'Source du matériau';
+
+  @override
   String get visualMaximize => 'Agrandir';
 
   @override
@@ -3023,6 +3323,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get visualOptionalArtist => 'Artiste (facultatif)';
+
+  @override
+  String get visualOwnMaterial => 'Thème ou réglages propres';
 
   @override
   String get visualPauseMusic => 'Mettre en pause';

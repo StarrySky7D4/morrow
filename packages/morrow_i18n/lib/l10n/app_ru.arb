@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "Быстрая запись",
   "mainComponentSearch": "Строка поиска",
   "mainComponentSettings": "Компоненты и карточки · Настройки",
+  "mainContentCommittedRefreshFailed": "Операция сохранена, но не удалось загрузить актуальное содержимое. Обновите страницу для просмотра.",
   "mainContentProtection": "Защита содержимого",
   "mainContentRead": "Содержимое прочитано",
   "mainContentReadFiles": "Содержимое прочитано; вложений сохранено: {count}",
@@ -916,9 +1001,36 @@
   "mainDeleted": "«{title}» удалено",
   "mainDiagnosticDetails": "Диагностические сведения",
   "mainDone": "Готово",
+  "mainDraftImportRecoveryCancelBody": "После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.",
+  "mainDraftImportRecoveryCancelDecision": "Отменить запрос на отказ",
+  "mainDraftImportRecoveryCancelTitle": "Отменить этот запрос на отказ?",
+  "mainDraftImportRecoveryCancelled": "Отменено: исходный запрос на отказ больше не будет выполняться.",
+  "mainDraftImportRecoveryClose": "Закрыть",
+  "mainDraftImportRecoveryCommitted": "Завершено: от импорта этого вложения отказались.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Действие подтверждено, но список не обновился. Обновите его, чтобы увидеть текущее состояние.",
+  "mainDraftImportRecoveryConflict": "Конфликт: черновик изменился. Этот запрос можно только отменить.",
+  "mainDraftImportRecoveryEmpty": "Нет решений по вложениям для проверки.",
+  "mainDraftImportRecoveryFailed": "Не удалось проверить решение. Обновите данные и повторите попытку.",
+  "mainDraftImportRecoveryPending": "Ожидание: исходный запрос на отказ не подтвержден.",
+  "mainDraftImportRecoveryRetry": "Повторить исходный отказ",
+  "mainDraftImportRecoveryTitle": "Проверка решений по вложениям",
   "mainEdit": "Изменить",
   "mainEditIdeaTitle": "Сделайте идею яснее",
   "mainEditorClosedUnknown": "Редактор закрыт, но сохранение не подтверждено. Откройте рабочую область и проверьте результат, прежде чем создавать копию.",
+  "mainEditorContinueDraft": "Продолжить редактирование",
+  "mainEditorContinueFailed": "Предыдущая правка подтверждена, новый черновик остаётся в этом окне. Не удалось открыть следующий редактор. Повторите попытку.",
+  "mainEditorNewerDraft": "Предыдущая правка сохранена. Новый черновик ещё не сохранён.",
+  "mainEditorPendingDraft": "Можно продолжать ввод. Сначала проверьте предыдущее сохранение; новые правки не отправляются автоматически.",
+  "mainEditorRecoveryAbandonBody": "Отказаться от этой неподтверждённой правки? Исходная операция будет заблокирована для повторного выполнения. Сохранённое содержимое и новые черновики останутся без изменений. Подтверждённая правка не будет отменена.",
+  "mainEditorRecoveryAbandonTitle": "Отказаться от старой правки",
+  "mainEditorRecoveryCommitted": "Исходное изменение сохранено. Проверьте текущее содержимое и подтвердите без повторного сохранения.",
+  "mainEditorRecoveryConfirm": "Проверить и подтвердить",
+  "mainEditorRecoveryConflict": "Исходная версия или история операций изменилась. Предложение сохранено, но не может перезаписать текущее содержимое.",
+  "mainEditorRecoveryEmpty": "Нет сохранённых предложений для проверки.",
+  "mainEditorRecoveryFailed": "Проверка не завершена. Исходное предложение сохранено. Обновите и повторите.",
+  "mainEditorRecoveryPending": "Исходное изменение не подтверждено. Продолжение повторит только его, без отправки новых изменений.",
+  "mainEditorRecoveryResume": "Продолжить исходное изменение",
+  "mainEditorRecoveryTitle": "Проверить изменения",
   "mainEditorSubtitle": "Текст, таблицы, изображения — храните их здесь, пока идея обретает форму.",
   "mainEditorUnavailable": "Редактор недоступен. Проверьте службу содержимого и повторите.",
   "mainEndpointSettings": "Исходящие конечные точки",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "К выполнению",
   "mainFilterText": "Текст",
   "mainFollowTheme": "По теме",
+  "mainFontApply": "Применить шрифт",
+  "mainFontDefault": "Шрифт по умолчанию",
+  "mainFontFailed": "Не удалось загрузить шрифт. Проверьте файл или перезапустите приложение и повторите попытку.",
+  "mainFontFamily": "Название системного шрифта",
+  "mainFontHelp": "TTF / OTF, до 20 МиБ. Отсутствующие системные шрифты заменяются автоматически.",
+  "mainFontHint": "Например: Arial или Microsoft YaHei",
+  "mainFontImport": "Импортировать файл шрифта",
+  "mainFontReset": "Восстановить стандартный",
+  "mainFontSettings": "Шрифты",
+  "mainFontUnavailable": "Сохранённый шрифт недоступен. Временно используется шрифт по умолчанию.",
   "mainFrostDetail": "Смягчите фон и освободите место для мыслей.",
   "mainFrostEffect": "Размытие",
   "mainFrostOpacity": "Непрозрачность стекла",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "Как в системе",
   "mainLavender": "Лаванда",
+  "mainLegacyStageComplete": "Старый формат отметит все задачи и завершит проект. Продолжить?",
+  "mainLegacyStageReopen": "Переход на другой этап снимет отметку с последней задачи «{task}» и всех одноимённых задач. Продолжить?",
+  "mainLegacyTodoContinue": "Продолжить",
+  "mainLegacyTodoGroup": "В старом формате задачи определяются текстом. Изменятся все задачи «{task}». Продолжить?",
+  "mainLegacyTodoTitle": "Изменение старого списка",
   "mainLightOpacity": "20% · Лёгкое",
   "mainLiquidAllCanvases": "Отдельно доступен для всех четырёх типов фона",
   "mainLiquidDetail": "Плавные блики и мягкое преломление, словно капля воды в воздухе.",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "Сохранить идею",
   "mainSaveNotSubmitted": "Не отправлено. Черновик и вложения сохранены; можно исправить и сохранить снова.",
   "mainSaveReadOnly": "Изменения не сохранены. Включите плагин рабочей области в разделе «Плагины и службы» и повторите.",
+  "mainSaveReadbackPending": "Настройки сохранены, но чтение результата не подтверждено. Черновик сохранён; повтор сначала проверит исходную операцию.",
+  "mainSaveRecoveryAbandon": "Отменить прежний вариант",
+  "mainSaveRecoveryAbandonConfirm": "Отменить только несохранённый вариант? Текущий черновик и сохранённые данные останутся. Уже сохранённые настройки не будут отменены.",
+  "mainSaveRecoveryCommitted": "Прежние настройки сохранены. Проверка подтвердит результат, не заменяя текущий черновик.",
+  "mainSaveRecoveryConflict": "Библиотека изменилась. Прежний вариант не может перезаписать новые настройки. Оставьте его на рассмотрении или отмените несохранённый вариант.",
+  "mainSaveRecoveryDone": "Прежний вариант обработан. Черновик не изменён; сохраните его повторно, когда будете готовы.",
+  "mainSaveRecoveryEmpty": "Нет сохранённых предложений, требующих проверки.",
+  "mainSaveRecoveryPending": "Прежний вариант ещё не подтверждён. Продолжение проверит и попытается завершить исходное сохранение; новый черновик останется.",
+  "mainSaveRecoveryResolve": "Проверить исходное сохранение",
+  "mainSaveRecoveryReview": "Проверить сохранение",
+  "mainSaveRecoveryTitle": "Нужно проверить сохранение",
   "mainSaveUnknown": "Сохранение не подтверждено. Черновик и вложения сохранены. Повторите эту отправку; при закрытии рабочая область обновится для проверки.",
   "mainSaving": "Сохранение…",
   "mainSearchHint": "Поиск идей…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "Шаги: {done}/{total}",
   "mainStorageUnavailable": "Локальное хранилище недоступно. Изменения сохранятся только до конца сеанса.",
   "mainStorageUnreadable": "Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.",
+  "mainStyleFlat": "Плоский · По умолчанию",
+  "mainStyleFlatDescription": "Лёгкие контуры и чёткие слои",
+  "mainStyleNeumorphism": "Неоморфизм",
+  "mainStyleNeumorphismDescription": "Мягкие светотени и лёгкий рельеф",
+  "mainTaskAdd": "Добавить задачу",
+  "mainTaskAmbiguousDecision": "Состояние этих старых задач с одинаковыми названиями неизвестно. Подтвердите каждую задачу отдельно.",
+  "mainTaskCompleteAllAndSetStage": "Выполнить все и задать этап",
+  "mainTaskCompleteAllConfirm": "Отметить все задачи выполненными и задать этап «{stage}»?",
+  "mainTaskLegacyReadOnly": "Старые задачи сопоставляются по тексту. После обновления одноимёнными задачами можно управлять отдельно.",
+  "mainTaskMarkComplete": "Подтвердить выполнение",
+  "mainTaskMarkIncomplete": "Подтвердить невыполнение",
+  "mainTaskMoveDown": "Вниз",
+  "mainTaskMoveUp": "Вверх",
+  "mainTaskProgressThreeWay": "Выполнено: {complete} · Не выполнено: {incomplete} · Уточнить: {ambiguous}",
+  "mainTaskRemoveConfirm": "Удалить задачу «{task}»?",
+  "mainTaskRename": "Переименовать",
+  "mainTaskSetStage": "Изменить только этап",
+  "mainTaskStagePrompt": "Этап проекта",
+  "mainTaskTextPrompt": "Текст задачи",
   "mainTenMinutesAgo": "10 минут назад",
   "mainTextureCanvas": "Текстура",
   "mainTextureDetail": "Тонкая бумажная текстура создаёт ощущение материала.",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "Нужно проверить",
   "mainView": "Просмотр",
   "mainViewAll": "Показать всё",
+  "mainVisualStyle": "Стиль интерфейса",
   "mainWarmSand": "Тёплый песок",
   "mainWhiteTheme": "Светлая",
   "mainWindowRadius": "Углы окна",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "Библиотека занята другим процессом. Закройте другое окно и повторите.",
   "recoveryChooseKey": "Выбрать файл восстановления",
   "recoveryCloseFirst": "Рабочая область ещё открыта. Закройте её перед сменой библиотеки.",
+  "recoveryClosing": "Ожидание завершения исходной службы. Повторное открытие и восстановление доступны только после подтверждения выхода.",
+  "recoveryClosingUnconfirmed": "Завершение ещё не подтверждено. Наблюдение продолжается; истечение времени не отменяет выполненные операции.",
   "recoveryFailed": "Восстановление не завершено. Сохраните исходные файлы и повторите.",
   "recoveryIdentityBusy": "Другая копия библиотеки уже открыта. Закройте её перед открытием этой.",
   "recoveryIdentityMismatch": "Идентификатор библиотеки не совпадает с регистрацией. Сохраните исходные данные и восстановите правильную копию.",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "Результат восстановления требует проверки. Попробуйте открыть заново; прежний файл защиты, если был, сохранён в копии.",
   "recoveryLibraryInvalid": "Не удалось проверить или открыть библиотеку. Сохраните исходную библиотеку и ключ защиты, затем повторите.",
   "recoveryMaintenance": "Библиотеке требуется обслуживание. Сохраните исходные файлы и изучите диагностику.",
+  "recoveryMigrationIncomplete": "Миграция этой библиотеки не завершена. Проверьте отчёт в её папке, сохраните исходную библиотеку и повторите попытку с новой папкой назначения.",
   "recoveryMissingKey": "Ключ защиты библиотеки отсутствует. Восстановите исходный .audit-key и повторите.",
   "recoveryMissingLibrary": "Ключ есть, но библиотека отсутствует или пуста. Восстановите исходную библиотеку.",
   "recoveryOpenFailed": "Рабочая область не открылась. Проверьте файлы плагинов и папку данных и повторите.",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "Ошибка работы с файлом. Повторите.",
   "visualFindLyrics": "Найти текст песни",
   "visualFindLyricsGuide": "Ищите в LRCLIB по песне и исполнителю, затем выберите нужную версию.",
+  "visualFollowChain": "Цепочка связей: {path}",
+  "visualFollowComponent": "Следует за: {name}",
+  "visualFollowCycle": "Создаст цикл",
+  "visualFollowGuide": "Следуйте настройкам другого компонента; разорвите связь, чтобы вернуть свои.",
   "visualFollowTheme": "По теме",
   "visualFooterLyrics": "Показывать текст песни внизу",
   "visualFooterTips": "Показывать подсказки внизу",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "Файл → Встроенный текст → LRCLIB",
   "visualLyricsVersions": "Найдено несколько версий. Выберите нужную в поиске.",
   "visualMaterialPreview": "Предпросмотр материала",
+  "visualMaterialSource": "Источник оформления",
   "visualMaximize": "Развернуть",
   "visualMediaAddress": "Адрес медиа",
   "visualMediaAddressInvalid": "Введите корректный HTTP- или HTTPS-адрес без данных входа.",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "Нет временных меток",
   "visualOpacity": "Непрозрачность",
   "visualOptionalArtist": "Исполнитель (необязательно)",
+  "visualOwnMaterial": "Тема или свои настройки",
   "visualPauseMusic": "Приостановить музыку",
   "visualPaused": "На паузе",
   "visualPlainLyrics": "Обычный текст песни",

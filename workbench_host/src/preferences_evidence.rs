@@ -13,6 +13,17 @@ const WIRE_TYPE: &str = "morrow.studio.preferences.v1";
 const HANDLER: &str = "studio.preferences";
 const TOTAL_FUEL: u64 = 1_000_000_000;
 
+/// Only validation performed before any preference commit can produce this.
+/// The private transport maps it to a controlled, definite rejection code.
+#[derive(Debug)]
+pub(crate) struct PreferencesRejected;
+impl std::fmt::Display for PreferencesRejected {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("invalid preferences proposal")
+    }
+}
+impl std::error::Error for PreferencesRejected {}
+
 enum Change {
     Create(CardRecord),
     Edit(ContentChange),
@@ -30,10 +41,10 @@ impl WorkbenchState {
         input: Vec<u8>,
     ) -> Result<Vec<u8>> {
         self.prepare_write()?;
-        let preferences = preferences::decode_wire(&input)?;
+        let preferences = preferences::decode_wire(&input).map_err(|_| PreferencesRejected)?;
         let intent = preferences::encode_wire(&preferences)?;
         // Also retain the existing individual 64 KiB page bound for a no-op.
-        let pages = preferences::validation_pages(&preferences)?;
+        let pages = preferences::validation_pages(&preferences).map_err(|_| PreferencesRejected)?;
         if self.retry_preferences(operation, &intent, &pages)? {
             return Ok(intent);
         }

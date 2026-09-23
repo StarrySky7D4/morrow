@@ -13,6 +13,20 @@ i18n = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(i18n)
 
 class I18nCatalogTests(unittest.TestCase):
+    def test_adding_language_only_changes_manifest_and_fragments(self):
+        path = self.root / 'packages/morrow_i18n/languages.json'
+        config = json.loads(path.read_text(encoding='utf-8'))
+        config['languages'].append({'code': 'it', 'nativeName': 'Italiano'})
+        path.write_text(json.dumps(config), encoding='utf-8')
+        data = copy.deepcopy(self.en); data['@@locale'] = 'it'
+        (self.parts / 'main.it.arb').write_text(json.dumps(data), encoding='utf-8')
+        i18n.build(self.root)
+        self.assertIn('Italiano', (self.root / 'packages/morrow_i18n/lib/locale_codes.dart').read_text(encoding='utf-8'))
+        self.assertIn('"it"', (self.root / 'workbench_host/src/generated_ui_locales.rs').read_text())
+        self.assertTrue((self.root / 'packages/morrow_i18n/assets/languages/it.mlang').exists())
+        config['languages'].append({'code': 'it', 'nativeName': 'duplicate'})
+        path.write_text(json.dumps(config))
+        with self.assertRaises(i18n.CatalogError): i18n.build(self.root)
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -21,9 +35,14 @@ class I18nCatalogTests(unittest.TestCase):
         self.parts.mkdir(parents=True)
         self.en = {'@@locale': 'en', 'mainHello': 'Hello {name}', '@mainHello': {'placeholders': {'name': {'type': 'String'}}}}
         self.zh = {'@@locale': 'zh', 'mainHello': '你好 {name}', '@mainHello': copy.deepcopy(self.en['@mainHello'])}
+        config = Path(__file__).resolve().parents[2] / 'packages/morrow_i18n/languages.json'
+        target = self.root / 'packages/morrow_i18n/languages.json'
+        target.parent.mkdir(parents=True)
+        target.write_bytes(config.read_bytes())
+        self.locales = i18n.locale_codes(i18n.language_config(self.root))
         self.write()
     def write(self):
-        for locale in i18n.LOCALES:
+        for locale in self.locales:
             data = copy.deepcopy(self.zh if locale == 'zh' else self.en)
             data['@@locale'] = locale
             (self.parts / f'main.{locale}.arb').write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
@@ -31,7 +50,7 @@ class I18nCatalogTests(unittest.TestCase):
         result = subprocess.run([sys.executable, str(TOOL), '--root', str(self.root)], capture_output=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         first = i18n.outputs(self.root)
-        self.assertEqual(i18n.build(self.root, check=True), 2 * len(i18n.LOCALES) + 1)
+        self.assertEqual(i18n.build(self.root, check=True), 2 * len(self.locales) + 4)
         self.assertEqual(first, i18n.outputs(self.root))
         binary = self.root / 'packages/morrow_i18n/assets/languages/en.mlang'
         self.assertTrue(binary.read_bytes().startswith(b'MROWLNG1'))

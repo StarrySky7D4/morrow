@@ -378,5 +378,135 @@
   "mainHttpSettings": "HTTP 작업",
   "mainCredentialSettings": "자격 증명",
   "mainEndpointSettings": "아웃바운드 엔드포인트",
-  "mainExpandSettings": "설정 펼치기"
+  "mainExpandSettings": "설정 펼치기",
+  "mainFontSettings": "글꼴",
+  "mainFontDefault": "기본 글꼴",
+  "mainFontFamily": "시스템 글꼴 이름",
+  "mainFontHint": "예: Arial 또는 Microsoft YaHei",
+  "mainFontImport": "글꼴 파일 가져오기",
+  "mainFontHelp": "TTF / OTF, 최대 20 MiB. 설치되지 않은 시스템 글꼴은 자동으로 대체됩니다.",
+  "mainFontFailed": "글꼴을 불러올 수 없습니다. 파일을 확인하거나 앱을 다시 시작한 후 재시도하세요.",
+  "mainFontUnavailable": "저장된 글꼴을 사용할 수 없어 기본 글꼴을 임시로 사용합니다.",
+  "mainFontApply": "글꼴 적용",
+  "mainFontReset": "기본값 복원",
+  "mainSaveReadbackPending": "설정은 저장되었지만 다시 읽기는 확인되지 않았습니다. 초안을 유지하며 재시도 시 원래 제출을 먼저 확인합니다.",
+  "mainLegacyTodoTitle": "이전 형식의 할 일 연동",
+  "mainLegacyTodoContinue": "계속",
+  "mainLegacyStageComplete": "이전 형식은 모든 할 일을 완료로 표시하고 프로젝트를 완료합니다. 계속할까요?",
+  "mainLegacyStageReopen": "다른 단계로 돌아가면 마지막 할 일 “{task}”와 같은 이름의 모든 할 일이 미완료로 바뀝니다. 계속할까요?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "이전 형식은 텍스트로 할 일을 구분합니다. 이름이 “{task}”인 모든 항목이 바뀝니다. 계속할까요?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "확인이 필요한 저장이 있습니다",
+  "mainSaveRecoveryReview": "저장 확인",
+  "mainSaveRecoveryCommitted": "이전 설정은 저장되었습니다. 확인해도 현재 초안은 바뀌지 않습니다.",
+  "mainSaveRecoveryConflict": "라이브러리가 변경되었습니다. 이전 제안으로 새 설정을 덮어쓸 수 없습니다. 보류하거나 저장되지 않은 제안을 버리세요.",
+  "mainSaveRecoveryPending": "이전 제안의 저장이 확인되지 않았습니다. 계속하면 원래 저장을 확인하고 시도합니다. 새 초안은 유지됩니다.",
+  "mainSaveRecoveryResolve": "원래 저장 확인",
+  "mainSaveRecoveryAbandon": "이전 제안 버리기",
+  "mainSaveRecoveryAbandonConfirm": "저장되지 않은 제안만 버릴까요? 현재 초안과 저장된 내용은 유지됩니다. 이미 저장된 설정은 취소되지 않습니다.",
+  "mainSaveRecoveryDone": "이전 제안을 처리했습니다. 초안은 그대로입니다. 준비되면 저장을 다시 시도하세요.",
+  "mainSaveRecoveryEmpty": "확인할 영구 저장 제안이 없습니다.",
+  "mainContentCommittedRefreshFailed": "작업이 저장되었지만 최신 내용을 불러오지 못했습니다. 새로고침하여 확인하세요.",
+  "mainTaskProgressThreeWay": "완료 {complete} · 미완료 {incomplete} · 확인 필요 {ambiguous}",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "이름이 같은 이전 형식 작업의 완료 상태가 불확실합니다. 각 작업을 개별적으로 확인하세요.",
+  "mainTaskMarkComplete": "완료로 확인",
+  "mainTaskMarkIncomplete": "미완료로 확인",
+  "mainTaskAdd": "작업 추가",
+  "mainTaskTextPrompt": "작업 내용",
+  "mainTaskRename": "이름 변경",
+  "mainTaskMoveUp": "위로 이동",
+  "mainTaskMoveDown": "아래로 이동",
+  "mainTaskRemoveConfirm": "작업 “{task}”을(를) 삭제할까요?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "프로젝트 단계",
+  "mainTaskSetStage": "단계만 변경",
+  "mainTaskCompleteAllAndSetStage": "모두 완료하고 단계 설정",
+  "mainTaskCompleteAllConfirm": "모든 작업을 완료로 표시하고 단계를 “{stage}”(으)로 설정할까요?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "이전 형식은 텍스트로 작업을 구분합니다. 업그레이드 후 같은 이름의 작업을 개별적으로 관리할 수 있습니다.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "작업은 확인되었지만 목록이 새로고침되지 않았습니다. 새로고침하여 최신 상태를 확인하세요.",
+  "mainDraftImportRecoveryTitle": "첨부 파일 결정 검토",
+  "mainDraftImportRecoveryEmpty": "검토할 첨부 파일 결정이 없습니다.",
+  "mainDraftImportRecoveryPending": "대기 중: 원래 포기 요청이 확인되지 않았습니다.",
+  "mainDraftImportRecoveryCommitted": "완료: 이 첨부 파일 가져오기를 포기했습니다.",
+  "mainDraftImportRecoveryCancelled": "취소됨: 원래 포기 요청은 더 이상 실행되지 않습니다.",
+  "mainDraftImportRecoveryConflict": "충돌: 초안이 변경되었습니다. 이 요청은 취소만 할 수 있습니다.",
+  "mainDraftImportRecoveryRetry": "원래 포기 요청 다시 시도",
+  "mainDraftImportRecoveryCancelDecision": "포기 요청 취소",
+  "mainDraftImportRecoveryCancelTitle": "이 포기 요청을 취소할까요?",
+  "mainDraftImportRecoveryCancelBody": "취소하면 원래 포기 요청은 더 이상 실행되지 않습니다. 첨부 파일이 삭제되거나 다른 변경 사항이 되돌려지지는 않습니다.",
+  "mainDraftImportRecoveryFailed": "이 결정을 검토할 수 없습니다. 새로고침한 뒤 다시 시도하세요.",
+  "mainDraftImportRecoveryClose": "닫기",
+  "mainEditorRecoveryTitle": "미확인 편집 확인",
+  "mainEditorRecoveryEmpty": "확인할 저장된 편집 제안이 없습니다.",
+  "mainEditorRecoveryPending": "원래 편집이 확인되지 않았습니다. 계속하면 해당 제안만 다시 시도하며 새 변경 사항은 보내지 않습니다.",
+  "mainEditorRecoveryCommitted": "원래 편집이 저장되었습니다. 현재 내용을 확인하고 승인합니다. 다시 저장하지 않습니다.",
+  "mainEditorRecoveryConflict": "기준 내용 또는 작업 기록이 변경되었습니다. 원래 제안은 유지되며 현재 내용을 덮어쓸 수 없습니다.",
+  "mainEditorRecoveryResume": "원래 편집 계속",
+  "mainEditorRecoveryConfirm": "확인 및 승인",
+  "mainEditorRecoveryFailed": "확인을 완료하지 못했습니다. 원래 제안은 유지됩니다. 새로 고친 후 다시 시도하세요.",
+  "mainEditorRecoveryAbandonTitle": "이전 편집 폐기",
+  "mainEditorRecoveryAbandonBody": "확정되지 않은 이 편집을 폐기할까요? 원래 작업은 다시 실행할 수 없게 됩니다. 저장된 내용과 새 초안은 변경되지 않습니다. 이미 확정된 편집은 취소되지 않습니다.",
+  "mainEditorPendingDraft": "계속 입력할 수 있습니다. 이전 저장을 먼저 확인하세요. 새 편집 내용은 자동으로 전송되지 않습니다.",
+  "mainEditorNewerDraft": "이전 편집이 저장되었습니다. 새 초안은 아직 저장되지 않았습니다.",
+  "mainEditorContinueFailed": "이전 편집은 확정되었고 새 초안은 이 창에 남아 있습니다. 다음 편집기를 열지 못했습니다. 다시 시도하세요.",
+  "mainEditorContinueDraft": "계속 편집",
+  "mainVisualStyle": "인터페이스 스타일",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "플랫 · 기본",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "가벼운 테두리와 명확한 계층",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "뉴모피즘",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "부드러운 빛과 그림자의 입체감",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

@@ -38,5 +38,8 @@
   "recoveryIdentityMismatch": "Identité de bibliothèque différente de l’enregistrement. Conservez les données originales et restaurez la bonne sauvegarde.",
   "recoveryRegistryInvalid": "Enregistrement de bibliothèque actif endommagé ou non pris en charge. Ouverture arrêtée pour préserver les données.",
   "recoverySwitchUnknown": "Changement de bibliothèque non confirmé. Rouvrez l’espace de travail pour vérifier.",
-  "recoveryRegistryUnreadable": "Impossible de lire la bibliothèque active ou son enregistrement. Vérifiez l’emplacement original ; aucune bibliothèque de remplacement ne sera créée automatiquement."
+  "recoveryRegistryUnreadable": "Impossible de lire la bibliothèque active ou son enregistrement. Vérifiez l’emplacement original ; aucune bibliothèque de remplacement ne sera créée automatiquement.",
+  "recoveryClosing": "En attente de la fermeture du service initial. La réouverture et la restauration restent indisponibles jusqu’à sa confirmation.",
+  "recoveryClosingUnconfirmed": "La fermeture reste non confirmée. La surveillance continue ; le délai écoulé n’annule pas les opérations effectuées.",
+  "recoveryMigrationIncomplete": "La migration de cette bibliothèque est incomplète. Consultez le rapport dans son dossier, conservez la bibliothèque source et réessayez dans un nouveau dossier."
 }

@@ -122,6 +122,8 @@ final class AppearanceReader extends StructReader {
   int get componentColor => getUint32Field(88);
 
   bool get hasComponentColor => getBoolField(25);
+
+  String? get visualStyle => getTextField(3);
 }
 
 final class AppearanceBuilder extends StructBuilder {
@@ -237,6 +239,10 @@ final class AppearanceBuilder extends StructBuilder {
   set hasComponentColor(bool v) {
     setBoolField(25, v);
   }
+
+  set visualStyle(String? v) {
+    setTextField(3, v);
+  }
 }
 
 final class _AppearanceFactory
@@ -246,7 +252,7 @@ final class _AppearanceFactory
   @override
   int get dataWords => 12;
   @override
-  int get ptrWords => 3;
+  int get ptrWords => 4;
   @override
   AppearanceReader fromRawReader(RawStructReader r) => AppearanceReader(r);
   @override
@@ -263,7 +269,7 @@ const StructSchemaInfo appearanceSchema = StructSchemaInfo(
   displayName: 'studio.capnp:Appearance',
   shortName: 'Appearance',
   dataWords: 12,
-  pointerWords: 3,
+  pointerWords: 4,
   fields: [
     FieldSchemaInfo(
       name: 'theme',
@@ -483,6 +489,14 @@ const StructSchemaInfo appearanceSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 25,
         type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'visualStyle',
+      codeOrder: 27,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
       ),
     ),
   ],
@@ -870,7 +884,7 @@ final class ServiceRequestBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 3);
+    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 4);
   }
 
   bool hasAppearance() => hasPointerField(1);
@@ -1127,7 +1141,7 @@ final class ServiceResponseBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 3);
+    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 4);
   }
 
   bool hasAppearance() => hasPointerField(1);
@@ -1581,7 +1595,7 @@ final class PreferencesBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(0, (r) => AppearanceBuilder(r), 12, 3);
+    return initStructFieldWith(0, (r) => AppearanceBuilder(r), 12, 4);
   }
 
   bool hasAppearance() => hasPointerField(0);
@@ -1626,7 +1640,7 @@ final class PreferencesBuilder extends StructBuilder {
       length,
       (r) => ComponentMaterialBuilder(r),
       4,
-      2,
+      3,
     );
   }
 }
@@ -1773,6 +1787,8 @@ final class ComponentMaterialReader extends StructReader {
   double get cornerRadius => getFloat64Field(24);
 
   bool get hasCornerRadius => getBoolField(2);
+
+  String? get followComponent => getTextField(2);
 }
 
 final class ComponentMaterialBuilder extends StructBuilder {
@@ -1816,6 +1832,10 @@ final class ComponentMaterialBuilder extends StructBuilder {
   set hasCornerRadius(bool v) {
     setBoolField(2, v);
   }
+
+  set followComponent(String? v) {
+    setTextField(2, v);
+  }
 }
 
 final class _ComponentMaterialFactory
@@ -1825,7 +1845,7 @@ final class _ComponentMaterialFactory
   @override
   int get dataWords => 4;
   @override
-  int get ptrWords => 2;
+  int get ptrWords => 3;
   @override
   ComponentMaterialReader fromRawReader(RawStructReader r) =>
       ComponentMaterialReader(r);
@@ -1844,7 +1864,7 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
   displayName: 'studio.capnp:ComponentMaterial',
   shortName: 'ComponentMaterial',
   dataWords: 4,
-  pointerWords: 2,
+  pointerWords: 3,
   fields: [
     FieldSchemaInfo(
       name: 'id',
@@ -1916,6 +1936,14 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 2,
         type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'followComponent',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
       ),
     ),
   ],

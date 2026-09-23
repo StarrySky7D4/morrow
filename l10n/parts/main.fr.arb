@@ -378,5 +378,135 @@
   "mainHttpSettings": "Tâches HTTP",
   "mainCredentialSettings": "Identifiants",
   "mainEndpointSettings": "Points de terminaison sortants",
-  "mainExpandSettings": "Développer les paramètres"
+  "mainExpandSettings": "Développer les paramètres",
+  "mainFontSettings": "Polices",
+  "mainFontDefault": "Police par défaut",
+  "mainFontFamily": "Nom de la police système",
+  "mainFontHint": "Par exemple : Arial ou Microsoft YaHei",
+  "mainFontImport": "Importer une police",
+  "mainFontHelp": "TTF / OTF, 20 Mio maximum. Les polices système indisponibles sont remplacées automatiquement.",
+  "mainFontFailed": "Impossible de charger cette police. Vérifiez le fichier ou redémarrez l’application et réessayez.",
+  "mainFontUnavailable": "La police enregistrée est indisponible. La police par défaut est utilisée temporairement.",
+  "mainFontApply": "Appliquer la police",
+  "mainFontReset": "Rétablir la police par défaut",
+  "mainSaveReadbackPending": "Les paramètres ont été enregistrés, mais leur relecture reste non confirmée. Le brouillon est conservé ; réessayer vérifiera d’abord l’envoi initial.",
+  "mainLegacyTodoTitle": "Modification d’une ancienne liste",
+  "mainLegacyTodoContinue": "Continuer",
+  "mainLegacyStageComplete": "L’ancien format cochera toutes les tâches et terminera le projet. Continuer ?",
+  "mainLegacyStageReopen": "Changer d’étape décochera la dernière tâche « {task} » et toutes les tâches du même nom. Continuer ?",
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainLegacyTodoGroup": "L’ancien format identifie les tâches par leur texte. Toutes les tâches « {task} » seront modifiées. Continuer ?",
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainSaveRecoveryTitle": "Un enregistrement doit être vérifié",
+  "mainSaveRecoveryReview": "Vérifier",
+  "mainSaveRecoveryCommitted": "Les anciens paramètres ont été enregistrés. La vérification confirme le résultat sans remplacer votre brouillon actuel.",
+  "mainSaveRecoveryConflict": "La bibliothèque a changé. L’ancienne proposition ne peut pas écraser les nouveaux paramètres. Conservez-la en attente ou abandonnez-la si elle n’a pas été enregistrée.",
+  "mainSaveRecoveryPending": "L’ancienne proposition n’est pas confirmée. Continuer vérifie et tente l’enregistrement initial ; votre nouveau brouillon est conservé.",
+  "mainSaveRecoveryResolve": "Vérifier l’enregistrement initial",
+  "mainSaveRecoveryAbandon": "Abandonner l’ancienne proposition",
+  "mainSaveRecoveryAbandonConfirm": "Abandonner uniquement la proposition non enregistrée ? Votre brouillon et les données enregistrées restent intacts. Les paramètres déjà enregistrés ne seront pas annulés.",
+  "mainSaveRecoveryDone": "L’ancienne proposition est traitée. Votre brouillon est inchangé ; réessayez de l’enregistrer quand vous le souhaitez.",
+  "mainSaveRecoveryEmpty": "Aucune proposition persistante à vérifier.",
+  "mainContentCommittedRefreshFailed": "L’opération a été enregistrée, mais le contenu à jour n’a pas pu être chargé. Actualisez pour l’afficher.",
+  "mainTaskProgressThreeWay": "{complete} terminées · {incomplete} restantes · {ambiguous} à confirmer",
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      },
+      "ambiguous": {
+        "type": "int"
+      }
+    }
+  },
+  "mainTaskAmbiguousDecision": "L’état de ces anciennes tâches de même nom est incertain. Confirmez chaque tâche séparément.",
+  "mainTaskMarkComplete": "Confirmer : terminée",
+  "mainTaskMarkIncomplete": "Confirmer : non terminée",
+  "mainTaskAdd": "Ajouter une tâche",
+  "mainTaskTextPrompt": "Texte de la tâche",
+  "mainTaskRename": "Renommer",
+  "mainTaskMoveUp": "Monter",
+  "mainTaskMoveDown": "Descendre",
+  "mainTaskRemoveConfirm": "Supprimer la tâche « {task} » ?",
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskStagePrompt": "Étape du projet",
+  "mainTaskSetStage": "Modifier seulement l’étape",
+  "mainTaskCompleteAllAndSetStage": "Tout terminer et définir l’étape",
+  "mainTaskCompleteAllConfirm": "Marquer toutes les tâches comme terminées et définir l’étape sur « {stage} » ?",
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "mainTaskLegacyReadOnly": "Les anciennes tâches sont associées par leur texte. Après la mise à niveau, les tâches de même nom peuvent être gérées séparément.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Action confirmée, mais la liste n’a pas été actualisée. Actualisez-la pour voir son état actuel.",
+  "mainDraftImportRecoveryTitle": "Vérifier les décisions sur les pièces jointes",
+  "mainDraftImportRecoveryEmpty": "Aucune décision sur une pièce jointe à vérifier.",
+  "mainDraftImportRecoveryPending": "En attente : la demande d’abandon initiale n’est pas confirmée.",
+  "mainDraftImportRecoveryCommitted": "Terminée : l’importation de cette pièce jointe a été abandonnée.",
+  "mainDraftImportRecoveryCancelled": "Annulée : la demande d’abandon initiale ne sera plus exécutée.",
+  "mainDraftImportRecoveryConflict": "Conflit : le brouillon a changé. Cette demande peut seulement être annulée.",
+  "mainDraftImportRecoveryRetry": "Réessayer l’abandon initial",
+  "mainDraftImportRecoveryCancelDecision": "Annuler la demande d’abandon",
+  "mainDraftImportRecoveryCancelTitle": "Annuler cette demande d’abandon ?",
+  "mainDraftImportRecoveryCancelBody": "Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.",
+  "mainDraftImportRecoveryFailed": "Impossible de vérifier cette décision. Actualisez, puis réessayez.",
+  "mainDraftImportRecoveryClose": "Fermer",
+  "mainEditorRecoveryTitle": "Vérifier les modifications",
+  "mainEditorRecoveryEmpty": "Aucune proposition enregistrée à vérifier.",
+  "mainEditorRecoveryPending": "La modification initiale reste non confirmée. Continuer réessaie uniquement cette proposition, sans envoyer de nouvelles modifications.",
+  "mainEditorRecoveryCommitted": "La modification initiale a été enregistrée. Vérifiez le contenu actuel et confirmez sans enregistrer à nouveau.",
+  "mainEditorRecoveryConflict": "La version de référence ou l’historique a changé. La proposition est conservée et ne peut pas remplacer le contenu actuel.",
+  "mainEditorRecoveryResume": "Reprendre la modification initiale",
+  "mainEditorRecoveryConfirm": "Vérifier et confirmer",
+  "mainEditorRecoveryFailed": "La vérification a échoué. La proposition initiale est conservée. Actualisez et réessayez.",
+  "mainEditorRecoveryAbandonTitle": "Abandonner la modification",
+  "mainEditorRecoveryAbandonBody": "Abandonner cette modification non validée ? Son opération d’origine sera bloquée. Le contenu enregistré et les nouveaux brouillons resteront inchangés. Une modification déjà validée ne sera pas annulée.",
+  "mainEditorPendingDraft": "Vous pouvez continuer à écrire. Vérifiez d’abord l’enregistrement précédent ; les nouvelles modifications ne seront pas envoyées automatiquement.",
+  "mainEditorNewerDraft": "La modification précédente est enregistrée. Le nouveau brouillon ne l’est pas encore.",
+  "mainEditorContinueFailed": "La modification précédente est confirmée et le nouveau brouillon reste dans cette fenêtre. Impossible d’ouvrir l’éditeur suivant ; réessayez.",
+  "mainEditorContinueDraft": "Continuer la modification",
+  "mainVisualStyle": "Style de l’interface",
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlat": "Plat · Par défaut",
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleFlatDescription": "Contours légers et niveaux lisibles",
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphism": "Neumorphisme",
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "mainStyleNeumorphismDescription": "Ombres douces et relief subtil",
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  }
 }

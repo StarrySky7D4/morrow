@@ -602,5 +602,39 @@
   "visualTransparentTips": "Прозрачное наложение (по умолчанию)",
   "visualTipsMaterialGuide": "Выключено — прозрачные подсказки; включено — материал ниже. Свои значения сохраняются.",
   "visualResetMaterial": "Вернуть тему",
-  "visualInheritColor": "Использовать цвет темы"
+  "visualInheritColor": "Использовать цвет темы",
+  "visualMaterialSource": "Источник оформления",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "Тема или свои настройки",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "Следует за: {name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "Следуйте настройкам другого компонента; разорвите связь, чтобы вернуть свои.",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "Создаст цикл",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "Цепочка связей: {path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

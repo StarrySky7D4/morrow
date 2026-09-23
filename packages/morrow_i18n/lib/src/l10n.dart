@@ -6,10 +6,15 @@ import '../locale_codes.dart';
 
 /// Use [delegate] in the app: it validates bundled PB/LZ4 before intl execution.
 abstract final class L10n {
+  static const fallbackLocale = Locale(uiFallbackLocale);
   static AppLocalizations of(BuildContext context) =>
-      AppLocalizations.of(context) ?? forLocale(const Locale('zh'));
+      AppLocalizations.of(context) ?? forLocale(const Locale(uiFallbackLocale));
   static AppLocalizations forLocale(Locale locale) => lookupAppLocalizations(
-    Locale(isSupportedCode(locale.languageCode) ? locale.languageCode : 'zh'),
+    Locale(
+      isSupportedCode(locale.languageCode)
+          ? locale.languageCode
+          : uiFallbackLocale,
+    ),
   );
   static bool isSupportedCode(String? code) =>
       supportedLocales.any((locale) => locale.languageCode == code);

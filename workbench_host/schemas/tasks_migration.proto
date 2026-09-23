@@ -1,0 +1,11 @@
+syntax = "proto3";
+package morrow.workbench.tasks_migration.v1;
+// Frozen facts for TaskId migrator 1. The exact source remains in its own format.
+message Facts {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  bytes source_card = 3;
+  bytes package_sha256 = 4;
+  uint32 migrator_version = 5;
+  uint32 target_format_version = 6;
+}

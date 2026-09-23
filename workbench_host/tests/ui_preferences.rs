@@ -1,5 +1,60 @@
 #![cfg(windows)]
+use morrow_workbench_host::FontPreference;
 use morrow_workbench_host::Workbench;
+#[test]
+fn font_preferences_are_independent_bounded_and_retryable() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("font.db");
+    let mut host = Workbench::open(&path, None).unwrap();
+    assert_eq!(host.read_ui_font().unwrap(), (FontPreference::default(), 0));
+    let font = FontPreference {
+        family: "Microsoft YaHei".into(),
+        ..Default::default()
+    };
+    assert_eq!(host.save_ui_font("font-create", 0, &font).unwrap(), 1);
+    assert_eq!(host.save_ui_font("font-create", 0, &font).unwrap(), 1);
+    assert!(
+        host.save_ui_font("font-create", 0, &FontPreference::default())
+            .is_err()
+    );
+    assert!(host.save_ui_font("font-stale", 0, &font).is_err());
+    host.save_ui_locale("locale-create", 0, "de").unwrap();
+    let imported = FontPreference {
+        family: String::new(),
+        asset: "a".repeat(64),
+        name: "My Font.ttf".into(),
+    };
+    assert_eq!(host.save_ui_font("font-import", 1, &imported).unwrap(), 2);
+    for invalid in [
+        FontPreference {
+            family: "x".repeat(129),
+            ..Default::default()
+        },
+        FontPreference {
+            asset: "../outside".into(),
+            name: "bad.ttf".into(),
+            ..Default::default()
+        },
+        FontPreference {
+            family: "bad\nname".into(),
+            ..Default::default()
+        },
+    ] {
+        assert!(host.save_ui_font("font-invalid", 2, &invalid).is_err());
+    }
+    assert!(host.page("", 100).unwrap().0.is_empty());
+    host.finish().unwrap();
+    drop(host);
+    let mut host = Workbench::open(&path, None).unwrap();
+    assert_eq!(host.read_ui_font().unwrap(), (imported, 2));
+    assert_eq!(host.read_ui_locale().unwrap().0, "de");
+    assert_eq!(
+        host.save_ui_font("font-reset", 2, &FontPreference::default())
+            .unwrap(),
+        3
+    );
+    host.finish().unwrap();
+}
 #[test]
 fn locale_persists_without_a_plugin_and_retries_original_operation() {
     let dir = tempfile::tempdir().unwrap();

@@ -602,5 +602,39 @@
   "visualTransparentTips": "透明浮层（默认）",
   "visualTipsMaterialGuide": "关闭时保持透明浮层；开启后使用下方材质。自定义参数会保留。",
   "visualResetMaterial": "重置为跟随主题",
-  "visualInheritColor": "使用主题染色"
+  "visualInheritColor": "使用主题染色",
+  "visualMaterialSource": "材质来源",
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualOwnMaterial": "主题或自身设置",
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowComponent": "跟随：{name}",
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "visualFollowGuide": "可跟随其他组件；解除跟随后恢复自己的设置。",
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowCycle": "会形成循环",
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "visualFollowChain": "跟随链：{path}",
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -262,11 +262,32 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
     _metadata = ServiceSession.forBackend(widget.metadataBackend);
     _run.addListener(_changed);
     _metadata.addListener(_metadataChanged);
+    _schedulePolling();
+    unawaited(_refresh());
+  }
+
+  void _schedulePolling() {
+    _timer?.cancel();
+    _timer = null;
+    if (!sessionViewActive) return;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (_run.shouldPoll) unawaited(_run.refresh());
       if (_outbound.isNotEmpty && !_outboundCurrent) markSessionViewDirty();
     });
-    unawaited(_refresh());
+  }
+
+  @override
+  void sessionViewVisibilityChanged() {
+    _schedulePolling();
+    if (sessionViewActive) {
+      if (_boundDirectory != _directory) {
+        _scheduleRefresh();
+      } else {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && sessionViewActive) unawaited(_run.refresh());
+        });
+      }
+    }
   }
 
   void _detach([ServiceRunManager? previous]) {
@@ -340,14 +361,14 @@ class _ServiceRunManagerState extends State<ServiceRunManager>
   }
 
   void _scheduleRefresh() {
-    if (_refreshQueued || !mounted) return;
+    if (_refreshQueued || !mounted || !sessionViewActive) return;
     _refreshQueued = true;
     final attachment = _attachment;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || attachment != _attachment) return;
       _refreshQueued = false;
       // An in-flight refresh checks for a newer directory on completion.
-      if (!_refreshing) unawaited(_refresh());
+      if (sessionViewActive && !_refreshing) unawaited(_refresh());
     });
   }
 

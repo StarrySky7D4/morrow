@@ -77,6 +77,20 @@
       }
     }
   },
+  "@mainLegacyStageReopen": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainLegacyTodoGroup": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainMoreSteps": {
     "placeholders": {
       "count": {
@@ -125,12 +139,54 @@
       }
     }
   },
+  "@mainStyleFlat": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleFlatDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphism": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainStyleNeumorphismDescription": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@mainTaskCompleteAllConfirm": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "@mainTaskProgressThreeWay": {
+    "placeholders": {
+      "ambiguous": {
+        "type": "int"
+      },
+      "complete": {
+        "type": "int"
+      },
+      "incomplete": {
+        "type": "int"
+      }
+    }
+  },
+  "@mainTaskRemoveConfirm": {
+    "placeholders": {
+      "task": {
+        "type": "String"
+      }
+    }
+  },
   "@mainUnfavoriteTooltip": {
     "placeholders": {
       "title": {
         "type": "String"
       }
     }
+  },
+  "@mainVisualStyle": {
+    "description": "Interface style and component material inheritance"
   },
   "@pluginsBinaryPreview": {
     "placeholders": {
@@ -506,6 +562,28 @@
   "@visualFindLyricsGuide": {
     "description": "Visual interface: FindLyricsGuide"
   },
+  "@visualFollowChain": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowComponent": {
+    "description": "Interface style and component material inheritance",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@visualFollowCycle": {
+    "description": "Interface style and component material inheritance"
+  },
+  "@visualFollowGuide": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualFollowTheme": {
     "description": "Visual interface: FollowTheme"
   },
@@ -672,6 +750,9 @@
   "@visualMaterialPreview": {
     "description": "Visual interface: MaterialPreview"
   },
+  "@visualMaterialSource": {
+    "description": "Interface style and component material inheritance"
+  },
   "@visualMaximize": {
     "description": "Visual interface: Maximize"
   },
@@ -721,6 +802,9 @@
   },
   "@visualOptionalArtist": {
     "description": "Visual interface: OptionalArtist"
+  },
+  "@visualOwnMaterial": {
+    "description": "Interface style and component material inheritance"
   },
   "@visualPauseMusic": {
     "description": "Visual interface: PauseMusic"
@@ -893,6 +977,7 @@
   "mainComponentQuickCapture": "Nota rápida",
   "mainComponentSearch": "Barra de búsqueda",
   "mainComponentSettings": "Componentes y tarjetas · Ajustes",
+  "mainContentCommittedRefreshFailed": "La operación se ha guardado, pero no se ha podido cargar el contenido actualizado. Actualiza para verlo.",
   "mainContentProtection": "Protección del contenido",
   "mainContentRead": "Contenido leído",
   "mainContentReadFiles": "Contenido leído; {count} adjuntos conservados",
@@ -916,9 +1001,36 @@
   "mainDeleted": "«{title}» eliminado",
   "mainDiagnosticDetails": "Detalles de diagnóstico",
   "mainDone": "Listo",
+  "mainDraftImportRecoveryCancelBody": "Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.",
+  "mainDraftImportRecoveryCancelDecision": "Cancelar solicitud de abandono",
+  "mainDraftImportRecoveryCancelTitle": "¿Cancelar esta solicitud de abandono?",
+  "mainDraftImportRecoveryCancelled": "Cancelada: la solicitud original de abandono ya no se ejecutará.",
+  "mainDraftImportRecoveryClose": "Cerrar",
+  "mainDraftImportRecoveryCommitted": "Completada: se abandonó la importación de este adjunto.",
+  "mainDraftImportRecoveryConfirmedRefreshFailed": "Acción confirmada, pero la lista no se ha actualizado. Actualízala para ver el estado más reciente.",
+  "mainDraftImportRecoveryConflict": "Conflicto: el borrador cambió. Esta solicitud solo se puede cancelar.",
+  "mainDraftImportRecoveryEmpty": "No hay decisiones sobre adjuntos pendientes de revisión.",
+  "mainDraftImportRecoveryFailed": "No se pudo revisar esta decisión. Actualiza e inténtalo de nuevo.",
+  "mainDraftImportRecoveryPending": "Pendiente: la solicitud original de abandono no está confirmada.",
+  "mainDraftImportRecoveryRetry": "Reintentar el abandono original",
+  "mainDraftImportRecoveryTitle": "Revisar decisiones sobre adjuntos",
   "mainEdit": "Editar",
   "mainEditIdeaTitle": "Aclara tu idea",
   "mainEditorClosedUnknown": "El editor se cerró, pero el guardado no está confirmado. Reabre el espacio de trabajo y compruébalo antes de crear otra copia.",
+  "mainEditorContinueDraft": "Seguir editando",
+  "mainEditorContinueFailed": "La edición anterior está confirmada y el nuevo borrador sigue en esta ventana. No se pudo abrir el siguiente editor; inténtalo de nuevo.",
+  "mainEditorNewerDraft": "La edición anterior se guardó. El nuevo borrador sigue sin guardar.",
+  "mainEditorPendingDraft": "Puedes seguir escribiendo. Revisa primero el guardado anterior; las nuevas ediciones no se enviarán automáticamente.",
+  "mainEditorRecoveryAbandonBody": "¿Descartar esta edición sin confirmar? Su operación original quedará bloqueada. El contenido guardado y los nuevos borradores no cambiarán. Esto no deshace una edición ya confirmada.",
+  "mainEditorRecoveryAbandonTitle": "Descartar edición anterior",
+  "mainEditorRecoveryCommitted": "La edición original se guardó. Revisa el contenido actual y confirma sin volver a guardar.",
+  "mainEditorRecoveryConfirm": "Revisar y confirmar",
+  "mainEditorRecoveryConflict": "La versión inicial o el historial cambió. La propuesta se conserva y no puede sobrescribir el contenido actual.",
+  "mainEditorRecoveryEmpty": "No hay propuestas guardadas que revisar.",
+  "mainEditorRecoveryFailed": "No se pudo completar la revisión. La propuesta original se conserva. Actualiza e inténtalo de nuevo.",
+  "mainEditorRecoveryPending": "La edición original no está confirmada. Continuar reintenta solo esa propuesta, sin enviar cambios posteriores.",
+  "mainEditorRecoveryResume": "Continuar la edición original",
+  "mainEditorRecoveryTitle": "Revisar ediciones pendientes",
   "mainEditorSubtitle": "Textos, tablas, imágenes: guárdalos aquí mientras tu idea toma forma.",
   "mainEditorUnavailable": "Editor no disponible. Comprueba el servicio de contenido y reintenta.",
   "mainEndpointSettings": "Puntos de conexión salientes",
@@ -939,6 +1051,16 @@
   "mainFilterPending": "Pendientes",
   "mainFilterText": "Texto",
   "mainFollowTheme": "Seguir tema",
+  "mainFontApply": "Aplicar fuente",
+  "mainFontDefault": "Fuente predeterminada",
+  "mainFontFailed": "No se pudo cargar la fuente. Comprueba el archivo o reinicia la aplicación e inténtalo de nuevo.",
+  "mainFontFamily": "Nombre de la fuente del sistema",
+  "mainFontHelp": "TTF / OTF, hasta 20 MiB. Las fuentes del sistema no disponibles se sustituyen automáticamente.",
+  "mainFontHint": "Por ejemplo: Arial o Microsoft YaHei",
+  "mainFontImport": "Importar archivo de fuente",
+  "mainFontReset": "Restaurar predeterminada",
+  "mainFontSettings": "Fuentes",
+  "mainFontUnavailable": "La fuente guardada no está disponible. Se usa temporalmente la fuente predeterminada.",
   "mainFrostDetail": "Suaviza el fondo y deja espacio para tus ideas.",
   "mainFrostEffect": "Desenfoque",
   "mainFrostOpacity": "Opacidad del cristal",
@@ -976,6 +1098,11 @@
   "mainLanguageEnglish": "English",
   "mainLanguageSystem": "Idioma del sistema",
   "mainLavender": "Lavanda",
+  "mainLegacyStageComplete": "El formato antiguo marcará todas las tareas y completará el proyecto. ¿Continuar?",
+  "mainLegacyStageReopen": "Cambiar de etapa desmarcará la última tarea «{task}» y todas las del mismo nombre. ¿Continuar?",
+  "mainLegacyTodoContinue": "Continuar",
+  "mainLegacyTodoGroup": "El formato antiguo identifica las tareas por su texto. Cambiarán todas las tareas «{task}». ¿Continuar?",
+  "mainLegacyTodoTitle": "Cambios en una lista antigua",
   "mainLightOpacity": "20 % · Ligero",
   "mainLiquidAllCanvases": "Disponible por separado en los cuatro tipos de fondo",
   "mainLiquidDetail": "Reflejos fluidos y refracción suave, como una gota de agua suspendida.",
@@ -1057,6 +1184,17 @@
   "mainSaveIdea": "Guardar idea",
   "mainSaveNotSubmitted": "No se ha enviado. El borrador y los adjuntos se conservan; puedes editar y guardar de nuevo.",
   "mainSaveReadOnly": "Los cambios no se guardaron. Activa el complemento del espacio de trabajo en Complementos y servicios y reintenta.",
+  "mainSaveReadbackPending": "Los ajustes se guardaron, pero la lectura no está confirmada. El borrador se conserva; reintentar comprobará primero el envío original.",
+  "mainSaveRecoveryAbandon": "Descartar propuesta anterior",
+  "mainSaveRecoveryAbandonConfirm": "¿Descartar solo la propuesta sin guardar? El borrador actual y los datos guardados se conservarán. Los ajustes ya guardados no se desharán.",
+  "mainSaveRecoveryCommitted": "Los ajustes anteriores se guardaron. La revisión confirma el resultado sin sustituir el borrador actual.",
+  "mainSaveRecoveryConflict": "La biblioteca ha cambiado. La propuesta anterior no puede sobrescribir ajustes más recientes. Déjela pendiente o descarte la propuesta sin guardar.",
+  "mainSaveRecoveryDone": "La propuesta anterior está resuelta. El borrador no ha cambiado; vuelva a guardarlo cuando quiera.",
+  "mainSaveRecoveryEmpty": "No hay propuestas persistentes que revisar.",
+  "mainSaveRecoveryPending": "La propuesta anterior no está confirmada. Continuar comprobará e intentará el guardado original; el nuevo borrador se conservará.",
+  "mainSaveRecoveryResolve": "Resolver el guardado original",
+  "mainSaveRecoveryReview": "Revisar guardado",
+  "mainSaveRecoveryTitle": "Hay un guardado por revisar",
   "mainSaveUnknown": "Guardado sin confirmar. El borrador y los adjuntos se conservan. Reintenta este envío; al cerrar se actualizará el espacio de trabajo para comprobarlo.",
   "mainSaving": "Guardando…",
   "mainSearchHint": "Buscar ideas…",
@@ -1086,6 +1224,25 @@
   "mainSteps": "{done}/{total} pasos",
   "mainStorageUnavailable": "El almacenamiento local no está disponible. Los cambios durarán solo esta sesión.",
   "mainStorageUnreadable": "No se pudo leer el contenido guardado. Los datos originales se conservan y no se sobrescribirán.",
+  "mainStyleFlat": "Plano · Predeterminado",
+  "mainStyleFlatDescription": "Bordes ligeros y capas claras",
+  "mainStyleNeumorphism": "Neumorfismo",
+  "mainStyleNeumorphismDescription": "Sombras suaves y relieve sutil",
+  "mainTaskAdd": "Añadir tarea",
+  "mainTaskAmbiguousDecision": "El estado de estas tareas antiguas con el mismo nombre es incierto. Confirma cada tarea por separado.",
+  "mainTaskCompleteAllAndSetStage": "Completar todas y fijar etapa",
+  "mainTaskCompleteAllConfirm": "¿Marcar todas las tareas como completadas y fijar la etapa en «{stage}»?",
+  "mainTaskLegacyReadOnly": "Las tareas antiguas se identifican por su texto. Tras actualizar, las tareas con el mismo nombre se pueden gestionar por separado.",
+  "mainTaskMarkComplete": "Confirmar completada",
+  "mainTaskMarkIncomplete": "Confirmar pendiente",
+  "mainTaskMoveDown": "Bajar",
+  "mainTaskMoveUp": "Subir",
+  "mainTaskProgressThreeWay": "{complete} completadas · {incomplete} pendientes · {ambiguous} por confirmar",
+  "mainTaskRemoveConfirm": "¿Eliminar la tarea «{task}»?",
+  "mainTaskRename": "Cambiar nombre",
+  "mainTaskSetStage": "Cambiar solo la etapa",
+  "mainTaskStagePrompt": "Etapa del proyecto",
+  "mainTaskTextPrompt": "Texto de la tarea",
   "mainTenMinutesAgo": "Hace 10 minutos",
   "mainTextureCanvas": "Textura",
   "mainTextureDetail": "Una fina textura de papel añade una sensación táctil.",
@@ -1105,6 +1262,7 @@
   "mainUnverifiedCount": "Por probar",
   "mainView": "Ver",
   "mainViewAll": "Mostrar todo",
+  "mainVisualStyle": "Estilo de interfaz",
   "mainWarmSand": "Arena cálida",
   "mainWhiteTheme": "Claro",
   "mainWindowRadius": "Esquinas de la ventana",
@@ -1546,6 +1704,8 @@
   "recoveryBusy": "Otro proceso usa esta biblioteca. Cierra la otra ventana y reintenta.",
   "recoveryChooseKey": "Elegir archivo de recuperación",
   "recoveryCloseFirst": "El espacio de trabajo sigue abierto. Ciérralo antes de cambiar de biblioteca.",
+  "recoveryClosing": "Esperando a que termine el servicio original. No se puede reabrir ni restaurar hasta confirmar su salida.",
+  "recoveryClosingUnconfirmed": "El cierre sigue sin confirmarse. Continúa la supervisión; el tiempo de espera no revierte las operaciones realizadas.",
   "recoveryFailed": "La recuperación no terminó. Conserva los archivos originales y reintenta.",
   "recoveryIdentityBusy": "Otra copia de esta biblioteca está abierta. Ciérrala antes de abrir esta.",
   "recoveryIdentityMismatch": "La identidad registrada no coincide. Conserva los datos originales y restaura la copia correcta.",
@@ -1555,6 +1715,7 @@
   "recoveryKeyUnknown": "Verifica el resultado de la recuperación. Intenta abrir de nuevo; se guardó una copia del archivo de protección anterior, si existía.",
   "recoveryLibraryInvalid": "No se pudo verificar o abrir la biblioteca. Conserva la biblioteca y la clave originales y reintenta.",
   "recoveryMaintenance": "La biblioteca requiere atención. Conserva los originales y revisa el diagnóstico.",
+  "recoveryMigrationIncomplete": "La migración de esta biblioteca está incompleta. Revise el informe en su carpeta, conserve la biblioteca de origen y vuelva a intentarlo con una nueva carpeta de destino.",
   "recoveryMissingKey": "Falta la clave de protección. Restaura el archivo .audit-key original y reintenta.",
   "recoveryMissingLibrary": "La clave existe, pero la biblioteca falta o está vacía. Restaura la biblioteca original.",
   "recoveryOpenFailed": "No se pudo abrir el espacio de trabajo. Revisa los complementos y la carpeta de datos y reintenta.",
@@ -1614,6 +1775,10 @@
   "visualFileRetry": "La operación de archivo falló. Reintenta.",
   "visualFindLyrics": "Encontrar letras",
   "visualFindLyricsGuide": "Busca en LRCLIB por canción y artista y elige la versión correcta.",
+  "visualFollowChain": "Cadena de seguimiento: {path}",
+  "visualFollowComponent": "Sigue a: {name}",
+  "visualFollowCycle": "Crearía un ciclo",
+  "visualFollowGuide": "Sigue a otro componente; desvincúlalo para recuperar tus ajustes.",
   "visualFollowTheme": "Seguir tema",
   "visualFooterLyrics": "Mostrar letras al pie",
   "visualFooterTips": "Mostrar consejos al pie",
@@ -1660,6 +1825,7 @@
   "visualLyricsSources": "Archivo local → Incrustadas → LRCLIB",
   "visualLyricsVersions": "Se encontraron varias versiones. Elige una en la búsqueda.",
   "visualMaterialPreview": "Vista previa del material",
+  "visualMaterialSource": "Origen del material",
   "visualMaximize": "Maximizar",
   "visualMediaAddress": "Dirección del medio",
   "visualMediaAddressInvalid": "Introduce una dirección HTTP o HTTPS válida sin datos de acceso.",
@@ -1675,6 +1841,7 @@
   "visualNoTimeline": "Sin datos de tiempo",
   "visualOpacity": "Opacidad",
   "visualOptionalArtist": "Artista (opcional)",
+  "visualOwnMaterial": "Tema o ajustes propios",
   "visualPauseMusic": "Pausar música",
   "visualPaused": "En pausa",
   "visualPlainLyrics": "Letras sin sincronizar",

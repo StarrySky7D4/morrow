@@ -288,6 +288,24 @@ class _HttpSession extends ChangeNotifier {
 
 final _sessions = Expando<_HttpSession>('HTTP task backend sessions');
 
+class _HttpViewDraft {
+  _HttpViewDraft(
+    this.endpointBackend,
+    this.directory,
+    this.fields,
+    this.endpoint,
+    this.method,
+    this.bodyFormat,
+  );
+  final Object endpointBackend;
+  final String directory;
+  final List<TextEditingValue> fields;
+  final String? endpoint;
+  final String method, bodyFormat;
+}
+
+final _viewDrafts = Expando<_HttpViewDraft>('HTTP form drafts');
+
 class HttpTaskManager extends StatefulWidget {
   const HttpTaskManager({
     super.key,
@@ -331,6 +349,50 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   bool _availabilityQueued = false;
   int _endpointEpoch = 0, _attachmentEpoch = 0;
   Timer? _timer;
+  List<TextEditingController> get _fields => [
+    _target,
+    _headers,
+    _body,
+    _timeout,
+  ];
+  void _saveDraft(HttpTaskManager source) {
+    _viewDrafts[source.backend] = _HttpViewDraft(
+      source.endpointBackend,
+      _directory,
+      [for (final field in _fields) field.value],
+      _endpoint,
+      _method,
+      _bodyFormat,
+    );
+  }
+
+  void _restoreDraft() {
+    final draft = _viewDrafts[widget.backend];
+    if (draft == null ||
+        !identical(draft.endpointBackend, widget.endpointBackend)) {
+      return;
+    }
+    for (var i = 0; i < _fields.length; i++) {
+      _fields[i].value = draft.fields[i];
+    }
+    _method = draft.method;
+    _bodyFormat = draft.bodyFormat;
+    // A saved selection is not permission. _loadEndpoints revalidates it.
+    _endpoint = draft.directory == _directory ? draft.endpoint : null;
+  }
+
+  @override
+  void sessionViewVisibilityChanged() {
+    _schedule();
+    if (sessionViewActive) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && sessionViewActive && !_serviceOwnsTask) {
+          unawaited(_session.refresh());
+        }
+      });
+    }
+  }
+
   bool get _serviceOwnsTask =>
       widget.serviceSession?.service != null &&
       _equal(
@@ -341,7 +403,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!mounted) return;
     markSessionViewDirty();
     _schedule();
-    if (!_serviceOwnsTask) {
+    if (sessionViewActive && !_serviceOwnsTask) {
       if (_session.busy) {
         _refreshOnIdle = true;
       } else {
@@ -386,7 +448,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!mounted) return;
     markSessionViewDirty();
     _schedule();
-    if (_refreshOnIdle && !_session.busy) {
+    if (sessionViewActive && _refreshOnIdle && !_session.busy) {
       _refreshOnIdle = false;
       unawaited(_session.refresh());
     }
@@ -396,10 +458,11 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   void _schedule() {
     _timer?.cancel();
     _timer = null;
-    if (!_session.shouldPoll || _serviceOwnsTask) return;
+    if (!sessionViewActive || !_session.shouldPoll || _serviceOwnsTask) return;
     final session = _session, epoch = _attachmentEpoch;
     _timer = Timer(const Duration(seconds: 1), () {
       if (mounted &&
+          sessionViewActive &&
           epoch == _attachmentEpoch &&
           identical(session, _session)) {
         unawaited(session.refresh(poll: true, silent: true));
@@ -411,6 +474,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   void initState() {
     super.initState();
     _directory = _fingerprint();
+    _restoreDraft();
     widget.serviceSession?.addListener(_serviceChanged);
     _attach();
     unawaited(_loadEndpoints());
@@ -426,6 +490,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     final changedBackend = !identical(oldWidget.backend, widget.backend);
     final directory = _fingerprint();
     if (changedBackend) {
+      _saveDraft(oldWidget);
       _attachmentEpoch++;
       _availabilityQueued = false;
       _session.removeListener(_changed);
@@ -436,6 +501,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
       _body.clear();
       _timeout.text = '10000';
       _bodyFormat = 'text';
+      _method = 'GET';
     }
     if (changedBackend ||
         !identical(oldWidget.endpointBackend, widget.endpointBackend) ||
@@ -447,12 +513,14 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
       _endpoints = [];
       _endpoint = null;
       _formNotice = null;
+      if (changedBackend) _restoreDraft();
       unawaited(_loadEndpoints());
     }
   }
 
   @override
   void dispose() {
+    _saveDraft(widget);
     widget.serviceSession?.removeListener(_serviceChanged);
     _attachmentEpoch++;
     _endpointEpoch++;

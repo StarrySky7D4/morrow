@@ -1,7 +1,7 @@
 //! Verify pinned historical inputs without opening a content store or acquiring credentials.
 use morrow_core::{task_evidence, transaction};
 use morrow_plugin_runtime::{Limits, replay};
-use morrow_workbench_host::projection;
+use morrow_workbench_host::{captured_cards, cards_edit, projection, tasks_edit, tasks_migration};
 use sha2::{Digest, Sha256};
 use std::{io::Read, path::Path, process::ExitCode};
 
@@ -46,7 +46,37 @@ fn run() -> Result<bool, Box<dyn std::error::Error>> {
         evidence_pin,
     )?;
     // Reject inconsistent host facts or final commands before executing untrusted guest code.
-    projection::verify_commit(&commit, &evidence)?;
+    if evidence
+        .data()
+        .batch
+        .as_ref()
+        .is_some_and(|b| b.intent_type == tasks_migration::INTENT_TYPE)
+    {
+        tasks_migration::verify_commit(&commit, &evidence)?;
+    } else if evidence
+        .data()
+        .batch
+        .as_ref()
+        .is_some_and(|b| b.intent_type == tasks_edit::INTENT_TYPE)
+    {
+        tasks_edit::verify_commit(&commit, &evidence)?;
+    } else if evidence
+        .data()
+        .batch
+        .as_ref()
+        .is_some_and(|b| b.intent_type == cards_edit::INTENT_TYPE)
+    {
+        cards_edit::verify_commit(&commit, &evidence)?;
+    } else if evidence
+        .data()
+        .batch
+        .as_ref()
+        .is_some_and(|b| b.intent_type == captured_cards::INTENT_TYPE)
+    {
+        captured_cards::verify_commit(&commit, &evidence)?;
+    } else {
+        projection::verify_commit(&commit, &evidence)?;
+    }
     let observed = replay::replay_batch(&evidence, Limits::default(), 1_000_000_000)?;
     println!(
         "{}: versioned content projection and {}/{} pure observations; external pins checked; no signature, source-authority or permission claim",

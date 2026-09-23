@@ -1,0 +1,19 @@
+syntax = "proto3";
+package morrow.workbench.editor_recovery.v1;
+
+// Host-owned recovery metadata. The full projected edit lives in the evidence
+// attachment and the business card remains the only content authority.
+message Slot {
+  uint32 schema_version = 1;
+  string card_id = 2;
+  string operation_id = 3;
+  bytes evidence_sha256 = 4;
+  uint64 source_revision = 5;
+  string evidence_attachment_id = 6;
+  uint64 evidence_container_bytes = 7;
+  bool active = 8;
+  string title = 9;
+  // Set when the original operation was reserved by the journal instead of
+  // committed to the business card.
+  bool abandoned = 10;
+}

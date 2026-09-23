@@ -4,9 +4,10 @@ use crate::Result;
 use morrow_workbench_plugin::preferences::MAX_BYTES;
 use sha2::{Digest, Sha256};
 pub const PART_BYTES: usize = 32768;
+pub const MAX_DRAFT_BYTES: usize = 8 * 1024 * 1024;
 pub const TTL_MS: u64 = 120000;
-#[derive(Default)]
 pub struct Transfers {
+    max_bytes: usize,
     sequence: u64,
     upload: Option<Upload>,
     download: Option<Download>,
@@ -33,7 +34,23 @@ pub struct Chunk {
     pub sha: [u8; 32],
     pub bytes: Vec<u8>,
 }
+impl Default for Transfers {
+    fn default() -> Self {
+        Self {
+            max_bytes: MAX_BYTES,
+            sequence: 0,
+            upload: None,
+            download: None,
+        }
+    }
+}
 impl Transfers {
+    pub fn draft() -> Self {
+        Self {
+            max_bytes: MAX_DRAFT_BYTES,
+            ..Self::default()
+        }
+    }
     fn expire(&mut self, now: u64) {
         if self.upload.as_ref().is_some_and(|v| now >= v.deadline) {
             self.upload = None;
@@ -54,7 +71,7 @@ impl Transfers {
         if self.upload.is_some() {
             return Err("preference upload busy".into());
         }
-        if total == 0 || total > MAX_BYTES as u64 || sha.len() != 32 {
+        if total == 0 || total > self.max_bytes as u64 || sha.len() != 32 {
             return Err("preference upload bounds".into());
         }
         morrow_core::runtime::Command::ReadSummary {
@@ -110,7 +127,7 @@ impl Transfers {
         if self.download.is_some() {
             return Err("preference download busy".into());
         }
-        if bytes.is_empty() || bytes.len() > MAX_BYTES {
+        if bytes.is_empty() || bytes.len() > self.max_bytes {
             return Err("preference download bounds".into());
         }
         let token = self.token("download")?;
@@ -185,6 +202,28 @@ mod tests {
         assert!(t.finish(&bad, 10).is_err());
         assert!(t.upload.is_none());
     }
+    #[test]
+    fn draft_limit_is_isolated_from_preference_limit() {
+        let mut preferences = Transfers::default();
+        let mut draft = Transfers::draft();
+        assert!(
+            preferences
+                .begin("save".into(), MAX_BYTES as u64 + 1, &[0; 32], 0)
+                .is_err()
+        );
+        assert!(
+            draft
+                .begin("save".into(), MAX_DRAFT_BYTES as u64, &[0; 32], 0)
+                .is_ok()
+        );
+        draft.abort("upload-1");
+        assert!(
+            draft
+                .begin("save".into(), MAX_DRAFT_BYTES as u64 + 1, &[0; 32], 0)
+                .is_err()
+        );
+    }
+
     #[test]
     fn bounds_expiry_abort_and_immutable_download() {
         let mut t = Transfers::default();

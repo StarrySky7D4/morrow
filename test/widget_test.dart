@@ -198,7 +198,7 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Page navigation crossfades and respects reduced motion', (
+  testWidgets('Page navigation reveals one tree and respects reduced motion', (
     tester,
   ) async {
     await launch(tester, const Size(1440, 1000));
@@ -207,7 +207,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(
       find.byKey(const ValueKey('page-workbench.page.overview')),
-      findsOneWidget,
+      findsNothing,
     );
     expect(
       find.byKey(const ValueKey('page-workbench.page.projects')),
@@ -233,15 +233,15 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('概览').first);
     await tester.pumpAndSettle();
-    final transition = tester.widget<AnimatedSwitcher>(
+    final transition = tester.widget<FadeTransition>(
       find
           .ancestor(
             of: find.byKey(const ValueKey('page-workbench.page.overview')),
-            matching: find.byType(AnimatedSwitcher),
+            matching: find.byType(FadeTransition),
           )
           .first,
     );
-    expect(transition.duration, Duration.zero);
+    expect(transition.opacity.value, 1);
   });
 
   testWidgets('Edit, tasks, delete undo and appearance survive a fresh app', (
