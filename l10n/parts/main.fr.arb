@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "Ombres douces et relief subtil",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "Expérimental",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Papier",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Surfaces mates, bordures fines et relief discret",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Argile",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Formes arrondies aux couleurs doucement en relief",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Surfaces translucides superposées et lignes accentuées",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Brutalisme",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Angles nets, bordures marquées et ombres décalées",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Industriel",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Panneaux métallisés, commandes compactes et lignes précises",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Récupération du transfert de brouillon",
+  "mainDraftHandoffRecoveryIntro": "Cette page affiche uniquement les transferts enregistrés. Son ouverture ne soumet aucun contenu automatiquement.",
+  "mainDraftHandoffRecoveryEmpty": "Aucun transfert à vérifier",
+  "mainDraftHandoffRecoveryPending": "Le brouillon successeur n’a pas encore été créé",
+  "mainDraftHandoffRecoveryChildCommitted": "Brouillon successeur enregistré ; brouillon parent pas encore retiré",
+  "mainDraftHandoffRecoveryParentRetired": "Transfert terminé",
+  "mainDraftHandoffRecoveryCancelled": "Transfert annulé",
+  "mainDraftHandoffRecoveryConflict": "L’état actuel a changé ; vérifiez-le",
+  "mainDraftHandoffRecoveryInspect": "Afficher et vérifier",
+  "mainDraftHandoffRecoveryComplete": "Créer le brouillon successeur",
+  "mainDraftHandoffRecoveryRetire": "Retirer le brouillon parent",
+  "mainDraftHandoffRecoveryCancel": "Annuler le transfert",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirmer l’action sur le transfert",
+  "mainDraftHandoffRecoveryCompleteBody": "Créer le brouillon successeur à partir de la proposition initiale enregistrée. Aucune autre carte définitive ne sera soumise.",
+  "mainDraftHandoffRecoveryRetireBody": "Après avoir confirmé l’enregistrement du brouillon successeur, marquer le brouillon parent comme retiré.",
+  "mainDraftHandoffRecoveryCancelBody": "Annuler ce transfert inachevé. L’opération initiale ne pourra plus créer de brouillon successeur. Le brouillon parent reste inchangé.",
+  "mainDraftHandoffRecoveryUnknown": "Le résultat de l’opération n’est pas encore confirmé. Vérifiez l’enregistrement initial ; ne répétez pas l’opération.",
+  "mainDraftHandoffRecoveryFailed": "Impossible de terminer l’opération. Actualisez et vérifiez l’enregistrement.",
+  "mainDraftHandoffRecoveryConfirmed": "L’opération a été confirmée et enregistrée.",
+  "mainDraftHandoffRecoveryReadOnly": "Cet espace de travail est en lecture seule",
+  "mainDraftHandoffRecoveryFields": "Contenu du brouillon initial",
+  "mainDraftHandoffRecoveryAssets": "Pièces jointes fixées",
+  "mainDraftHandoffRecoverySelection": "Sélectionnez un enregistrement pour voir le brouillon complet.",
+  "mainStyleDepth": "Profondeur du relief",
+  "mainStyleDepthGuide": "Réglez les reliefs et les creux sans modifier l’opacité du verre.",
+  "mainStyleDepthReset": "Rétablir 100 %"
 }

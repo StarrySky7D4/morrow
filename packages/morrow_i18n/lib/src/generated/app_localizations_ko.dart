@@ -325,6 +325,82 @@ class AppLocalizationsKo extends AppLocalizations {
   String get mainDone => '완료';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => '고정된 첨부 파일';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => '인계 취소';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      '완료되지 않은 인계를 취소합니다. 원래 작업으로 후속 초안을 다시 만들 수 없게 됩니다. 상위 초안은 그대로 유지됩니다.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => '인계가 취소되었습니다';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      '후속 초안이 저장되었지만 상위 초안은 아직 종료되지 않았습니다';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => '후속 초안 만들기';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      '저장된 원래 제안으로 후속 초안을 만듭니다. 정식 카드를 다시 제출하지 않습니다.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle => '초안 인계 처리 확인';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed => '작업이 확인되어 저장되었습니다.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict => '현재 상태가 변경되었습니다. 확인이 필요합니다';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty => '확인할 인계 기록이 없습니다';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      '작업을 완료할 수 없습니다. 새로고침한 뒤 기록을 확인하세요.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => '원래 초안 내용';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => '보기 및 확인';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      '저장된 인계 기록만 확인합니다. 이 페이지를 열어도 내용이 자동으로 제출되지 않습니다.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => '인계가 완료되었습니다';
+
+  @override
+  String get mainDraftHandoffRecoveryPending => '후속 초안이 아직 생성되지 않았습니다';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly => '현재 작업 공간은 보기만 허용됩니다';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => '상위 초안 종료';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      '후속 초안이 저장되었음을 확인한 뒤 상위 초안을 종료 상태로 표시합니다.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection => '기록을 선택하여 전체 초안을 확인하세요.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle => '초안 인계 복구';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      '작업 결과가 아직 확인되지 않았습니다. 원래 기록을 확인하고 작업을 반복하지 마세요.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '취소하면 원래 포기 요청은 더 이상 실행되지 않습니다. 첨부 파일이 삭제되거나 다른 변경 사항이 되돌려지지는 않습니다.';
 
@@ -1048,16 +1124,58 @@ class AppLocalizationsKo extends AppLocalizations {
       '저장된 내용을 읽지 못했습니다. 원본 데이터는 보존되며 덮어쓰지 않습니다.';
 
   @override
+  String get mainStyleBrutalist => '브루탈리즘';
+
+  @override
+  String get mainStyleBrutalistDescription => '각진 모서리, 굵은 테두리와 어긋난 그림자';
+
+  @override
+  String get mainStyleClay => '클레이';
+
+  @override
+  String get mainStyleClayDescription => '둥근 형태와 부드럽게 떠오른 색면';
+
+  @override
+  String get mainStyleDepth => '입체 깊이';
+
+  @override
+  String get mainStyleDepthGuide => '유리 불투명도를 바꾸지 않고 돌출과 함몰의 강도를 조절합니다.';
+
+  @override
+  String get mainStyleDepthReset => '100%로 초기화';
+
+  @override
+  String get mainStyleExperimental => '실험적';
+
+  @override
   String get mainStyleFlat => '플랫 · 기본';
 
   @override
   String get mainStyleFlatDescription => '가벼운 테두리와 명확한 계층';
 
   @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription => '반투명한 층과 강조색 선';
+
+  @override
+  String get mainStyleIndustrial => '인더스트리얼';
+
+  @override
+  String get mainStyleIndustrialDescription => '금속 느낌의 패널, 간결한 컨트롤과 정교한 선';
+
+  @override
   String get mainStyleNeumorphism => '뉴모피즘';
 
   @override
   String get mainStyleNeumorphismDescription => '부드러운 빛과 그림자의 입체감';
+
+  @override
+  String get mainStylePaper => '페이퍼';
+
+  @override
+  String get mainStylePaperDescription => '무광 종이 표면, 얇은 테두리와 절제된 깊이감';
 
   @override
   String get mainTaskAdd => '작업 추가';
@@ -2746,6 +2864,26 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get recoveryTitle => '작업 공간 다시 열기';
+
+  @override
+  String get shutdownBackground => '백그라운드에서 종료 계속';
+
+  @override
+  String get shutdownBackgroundHint =>
+      '서비스가 종료되면 Morrow도 닫힙니다. 오류가 발생하거나 오래 걸리면 이 창이 다시 나타납니다.';
+
+  @override
+  String get shutdownFailure => '종료 중 문제가 발생했습니다. 콘텐츠 서비스를 계속 관찰하고 있습니다.';
+
+  @override
+  String get shutdownStillRunning => '종료가 예상보다 오래 걸립니다. 콘텐츠 서비스를 계속 관찰하고 있습니다.';
+
+  @override
+  String get shutdownTitle => '작업 공간 닫는 중';
+
+  @override
+  String get shutdownWaiting =>
+      '콘텐츠 서비스가 종료되기를 기다리고 있습니다. 종료가 확인될 때까지 라이브러리는 기존 서비스가 소유합니다.';
 
   @override
   String get visualApplyColor => '색상 적용';

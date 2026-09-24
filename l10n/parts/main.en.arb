@@ -508,5 +508,84 @@
   "mainStyleNeumorphismDescription": "Soft paired shadows and gentle relief",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "mainStyleExperimental": "Experimental",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Paper",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Matte sheets, fine borders and restrained depth",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Clay",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Rounded forms with softly raised color",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Layered translucent surfaces and accent lines",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Brutalist",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Hard edges, bold borders and offset shadows",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Industrial",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Metal-like panels, compact controls and precise lines",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Draft handoff recovery",
+  "mainDraftHandoffRecoveryIntro": "View saved handoff records only. Opening this page does not submit content.",
+  "mainDraftHandoffRecoveryEmpty": "No handoff records to review",
+  "mainDraftHandoffRecoveryPending": "Successor draft has not been created",
+  "mainDraftHandoffRecoveryChildCommitted": "Successor draft saved; parent draft not yet retired",
+  "mainDraftHandoffRecoveryParentRetired": "Handoff complete",
+  "mainDraftHandoffRecoveryCancelled": "Handoff cancelled",
+  "mainDraftHandoffRecoveryConflict": "The current state has changed; review it",
+  "mainDraftHandoffRecoveryInspect": "View and review",
+  "mainDraftHandoffRecoveryComplete": "Create successor draft",
+  "mainDraftHandoffRecoveryRetire": "Retire parent draft",
+  "mainDraftHandoffRecoveryCancel": "Cancel handoff",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirm draft handoff action",
+  "mainDraftHandoffRecoveryCompleteBody": "Create the successor draft from the saved original proposal. This will not submit another final card.",
+  "mainDraftHandoffRecoveryRetireBody": "After confirming the successor draft was saved, mark the parent draft as retired.",
+  "mainDraftHandoffRecoveryCancelBody": "Cancel this unfinished handoff. The original operation can no longer create a successor draft. The parent draft remains unchanged.",
+  "mainDraftHandoffRecoveryUnknown": "The operation result is not confirmed. Review the original record; do not repeat the operation.",
+  "mainDraftHandoffRecoveryFailed": "Could not complete the operation. Refresh and review the record.",
+  "mainDraftHandoffRecoveryConfirmed": "The operation was confirmed and saved.",
+  "mainDraftHandoffRecoveryReadOnly": "This workspace is view-only",
+  "mainDraftHandoffRecoveryFields": "Original draft content",
+  "mainDraftHandoffRecoveryAssets": "Pinned attachments",
+  "mainDraftHandoffRecoverySelection": "Select a record to view the complete draft.",
+  "mainStyleDepth": "Relief depth",
+  "@mainStyleDepth": {
+    "description": "Visual style relief depth control"
+  },
+  "mainStyleDepthGuide": "Adjust raised and inset depth without changing glass opacity.",
+  "@mainStyleDepthGuide": {
+    "description": "Visual style relief depth control"
+  },
+  "mainStyleDepthReset": "Reset to 100%",
+  "@mainStyleDepthReset": {
+    "description": "Visual style relief depth control"
   }
 }

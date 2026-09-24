@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "Мягкие светотени и лёгкий рельеф",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "Экспериментально",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Бумага",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Матовые поверхности, тонкие рамки и сдержанная глубина",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Глина",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Округлые формы с мягко приподнятым цветом",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Полупрозрачные слои и акцентные линии",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Брутализм",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Жёсткие углы, выразительные рамки и смещённые тени",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Индустриальный",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Панели под металл, компактные элементы и точные линии",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Восстановление передачи черновика",
+  "mainDraftHandoffRecoveryIntro": "Здесь можно только просмотреть сохранённые записи о передаче. Открытие страницы не отправляет содержимое автоматически.",
+  "mainDraftHandoffRecoveryEmpty": "Нет записей о передаче для проверки",
+  "mainDraftHandoffRecoveryPending": "Последующий черновик ещё не создан",
+  "mainDraftHandoffRecoveryChildCommitted": "Последующий черновик сохранён, родительский ещё не выведен из работы",
+  "mainDraftHandoffRecoveryParentRetired": "Передача завершена",
+  "mainDraftHandoffRecoveryCancelled": "Передача отменена",
+  "mainDraftHandoffRecoveryConflict": "Текущее состояние изменилось; проверьте его",
+  "mainDraftHandoffRecoveryInspect": "Просмотреть и проверить",
+  "mainDraftHandoffRecoveryComplete": "Создать последующий черновик",
+  "mainDraftHandoffRecoveryRetire": "Вывести родительский черновик из работы",
+  "mainDraftHandoffRecoveryCancel": "Отменить передачу",
+  "mainDraftHandoffRecoveryConfirmTitle": "Подтвердить действие с передачей черновика",
+  "mainDraftHandoffRecoveryCompleteBody": "Создать последующий черновик из сохранённого исходного предложения. Итоговая карточка не будет отправлена повторно.",
+  "mainDraftHandoffRecoveryRetireBody": "Убедившись, что последующий черновик сохранён, отметьте родительский черновик как выведенный из работы.",
+  "mainDraftHandoffRecoveryCancelBody": "Отменить незавершённую передачу. Исходная операция больше не сможет создать последующий черновик. Родительский черновик останется без изменений.",
+  "mainDraftHandoffRecoveryUnknown": "Результат операции ещё не подтверждён. Проверьте исходную запись и не повторяйте операцию.",
+  "mainDraftHandoffRecoveryFailed": "Не удалось завершить операцию. Обновите данные и проверьте запись.",
+  "mainDraftHandoffRecoveryConfirmed": "Операция подтверждена и сохранена.",
+  "mainDraftHandoffRecoveryReadOnly": "В этой рабочей области доступен только просмотр",
+  "mainDraftHandoffRecoveryFields": "Содержимое исходного черновика",
+  "mainDraftHandoffRecoveryAssets": "Закреплённые вложения",
+  "mainDraftHandoffRecoverySelection": "Выберите запись, чтобы просмотреть черновик целиком.",
+  "mainStyleDepth": "Глубина рельефа",
+  "mainStyleDepthGuide": "Настройте выпуклости и углубления, не меняя непрозрачность стекла.",
+  "mainStyleDepthReset": "Сбросить до 100 %"
 }

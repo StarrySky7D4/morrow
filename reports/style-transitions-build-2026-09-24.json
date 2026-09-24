@@ -1,0 +1,102 @@
+{
+  "created_utc": "2026-09-24T03:42:38.363383+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local surface/input style transitions; no commit, push or release",
+  "sources_sha256": {
+    "l10n/parts/main.de.arb": "20bf682163140d89b0df6c3f54e8576945baa17b292fca2ba674ada962bf7775",
+    "l10n/parts/main.en.arb": "6cd0efe3d91dd1ae21c827408ba4a034fe2921a8fc3d66ea0187d73bea9dd733",
+    "l10n/parts/main.es.arb": "8a762cfe1048ed0e34b396f28c64429da2ae19c4232632deb412b18907467c76",
+    "l10n/parts/main.fr.arb": "aa9a5d10d554577eaa318f9f6cde1611e9a18f5b4a3c42626946d7ab8720bc63",
+    "l10n/parts/main.ja.arb": "f8abe13a7a2156c3e814cfac115bd5a0613a97c7a89098e0804427c025b9d848",
+    "l10n/parts/main.ko.arb": "f8c0d5935e43e878dd40cecce9858996201014f0d8596661d837ab01753d3863",
+    "l10n/parts/main.pt.arb": "baec826bdb7af67170116331d9e9458f150d551a2b440c4c9490c8df0e5605d8",
+    "l10n/parts/main.ru.arb": "620ebd7db60c5ef18a6b67b1d403a543ddb5790b746e41303377b4e94d7b8bc5",
+    "l10n/parts/main.zh.arb": "5c56dd7d3d45bf37031c7e7fb4ce8ea4a54babb484c5a0dd2cd31d141f549cae",
+    "lib/appearance.dart": "9166eaa3a62861a9c337234523f7f33953b8faadfb7dee40cf9c2efe051400ed",
+    "lib/experimental_controls.dart": "ce0051e7e6590dde00a38d180dfe48370beaf352c6619428651561f14a73a827",
+    "lib/main.dart": "c6d7004bbe46fe480d2882c4971ddf9caa8337ac5f9c7fd63e8c0b37ab1cc428",
+    "lib/music/music_panel.dart": "e0bfa539ecd8ff88de7536f5fed99cd14305b9ac2909214a244f067316fc20e9",
+    "lib/neumorphic_controls.dart": "9f8e7e8bf3c7409fbeff17194e77f075f1a7b0e01d7147e6844c1bfc81ad38ac",
+    "lib/visual_style_picker.dart": "a8d581ce3f7106e304c29d864354bbcf40f6ffa284c590ad9601a5ed05ed4cae",
+    "packages/morrow_i18n/assets/languages/de.mlang": "95faf39e5db4c5e20cbd367b4144fc7130870436d98af5d8fbeb8c5f5df7e667",
+    "packages/morrow_i18n/assets/languages/en.mlang": "f69a1e5efe35fb14bbbda43da0546b19e8b5cf795fda02b51f9446dec6eb188c",
+    "packages/morrow_i18n/assets/languages/es.mlang": "b053af2b7565e3c7c7c376123a862f49c100d5472c06ed91b155fb8f2ca3e62c",
+    "packages/morrow_i18n/assets/languages/fr.mlang": "e0c8c3457e1d197c57cd46015f9bb7639bb347570e693b90d30e70b796cf5ac3",
+    "packages/morrow_i18n/assets/languages/ja.mlang": "fa8e4f4e7735d668816640bc0dcd7246006f7a66b9bccd9d12cd4fe22ef6fc24",
+    "packages/morrow_i18n/assets/languages/ko.mlang": "08596f07f4f52f6349f3ef56b502960de7496f076e811ed38fcdca1eef228d03",
+    "packages/morrow_i18n/assets/languages/pt.mlang": "c8c079a3d63ed9b1c5ee96df271e0cc658638fc76b8fd1621696b2fa6d2a5a41",
+    "packages/morrow_i18n/assets/languages/ru.mlang": "09bc1977e426943cbb8ec161f297306c1df1c80bf163f65d2e9841db0fcf0fd1",
+    "packages/morrow_i18n/assets/languages/zh.mlang": "a12faa7abe9af2c984732d4d47f42cfe18ca24e4198482d9286713d39245fa19",
+    "packages/morrow_i18n/lib/l10n/app_de.arb": "3fcb4141f3a443c1b30d5d721aba428a45743fb40ad049881827c2ec29827ee8",
+    "packages/morrow_i18n/lib/l10n/app_en.arb": "6e51c91f4ec84ed0149a7e6733c2b47eace4c22ac17e0e80efa220b27c5baf34",
+    "packages/morrow_i18n/lib/l10n/app_es.arb": "b02e693ddb1dbed539b4f0ed24a204f3d7140a25ebe7ef98542c96ffbe5d9576",
+    "packages/morrow_i18n/lib/l10n/app_fr.arb": "f036e1eb566bbec83072cbe3a2d6669c3eae3125a4c81db360c50b334215f058",
+    "packages/morrow_i18n/lib/l10n/app_ja.arb": "9b2bf39f7b4a139e0464e0b17c1276fcbd018f07d88a58a7cd94f87cacbdd50a",
+    "packages/morrow_i18n/lib/l10n/app_ko.arb": "14efeca3ab90f3538cfa88875911e885226771600cdabddb40dffc7e3bcbbd05",
+    "packages/morrow_i18n/lib/l10n/app_pt.arb": "b774731234b10e852a537584ab296b060a8c32360fd70d72febe13bf204d1e86",
+    "packages/morrow_i18n/lib/l10n/app_ru.arb": "ff4232e4bf7c3c31f3e4cef8853ae28ca208e9f5dc6f769150ec56e9720706f0",
+    "packages/morrow_i18n/lib/l10n/app_zh.arb": "9bc0d15843c47cd75235ac7ee4544a342ee5d4bfe12c64abe44530a823e32554",
+    "packages/morrow_i18n/lib/src/generated/app_localizations.dart": "bce60f809ccdb2499b122da962548d69ca1270f6ab60a5c4062a9e7d5d9dd3e1",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart": "a2adfae4c22216dac308836a3b15213218570969a299a2d08bd9e459cb413f3a",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart": "7ccb71908bb03a8cc8cf1764117d61c037a5875ab3baa922c7efec086d45e8b7",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart": "cfa850b32c8727ecf74bf94029f828f1c036fb94920a54dd0c3b420cf42e5882",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart": "826a9941af9dd16de4d48fbdbfabad7f85920373ac31979efd9f8a014767876a",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart": "8c21c2c400b0c3d861b20ce7ad4888613999201fe66a86b4f2022b94a39c365c",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart": "0043660bcbbaa144b476ec5ae2e383e74da5f354ce322f8fbf6f7299bb438d36",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart": "6b90c80f31417b25ab65e4b9a054a05d4f434d81b35002a4b1276ec2460d8cd2",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart": "a1fabbff039c1c5cb629c1cf3ceb6b8280e51cd6c9255070685cc350975bacb3",
+    "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart": "ae8d9e63d05743c6f33dd64d288c03abf2c9cf586428c94216493863944cb878",
+    "packages/morrow_i18n/lib/src/generated/language_pins.dart": "23b90f13bada3c47a8cf29278eef2eb56db6f7dd572ae3fee361066866dc694b",
+    "plugins/workbench/Cargo.lock": "3dd7d72c33dcbee4059f7757c2e098f20d1a9ad4a21d4e48972c19f9ca3206d9",
+    "plugins/workbench/Cargo.toml": "57ed080ad286be7c71a205434865cbb7d30faa58153a8b1cb272c4030a0e64ee",
+    "plugins/workbench/src/services.rs": "6103f004b9bab383e6d403fbea2fcffed646c270e97437cc21a65e4c674d5721",
+    "plugins/workbench/tests/preferences.rs": "b7ecb2782e58b84cd1071c077c50390fd6dcdac03086837c064a74e67ad34d95",
+    "test/experimental_controls_test.dart": "9b48c9239eb47f33e7327c1a3f33ae8a75c082f3997d16994d562badad4ffdeb",
+    "test/experimental_input_transition_test.dart": "5e8b7b13a6f031a1c4f3fc12e85d43cf942465d253be5c2ebbec720c42a38d92",
+    "test/experimental_style_workflow_test.dart": "ed2af05cf82811cdbad9ed87c04f45b770fc0b4bdb031b24773ba851d817d109",
+    "test/surface_style_transition_test.dart": "fd1b95796253135d58e8c662ef0bbdfbf52ec3c46fe5229d14dc86482ea69177",
+    "test/visual_preferences_native_test.dart": "58a4bcffa8d9a840818db8172a57e94f87ddf119df8a8903e825c82cf93877e3",
+    "test/visual_style_picker_test.dart": "e674260112c900f3997ca7851c5d985577d6ed2f83055155cac8bf3a982b1d3c",
+    "workbench_host/Cargo.lock": "b87d3ef4655843974e09924a327f41e0a0483ff9b9d4dfbda6edc0d05b8d6ea5",
+    "workbench_host/build.rs": "19c2ddadbb1e4c76185d6e106bafddd9ac3bddeda8d8825f722d977fa200db43",
+    "workbench_host/tests/preferences_evidence.rs": "32c4e337fdff027a653880a17fd81cca36287ac5fc99bbae13387279a8c890da"
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "c2ba76fec996cc1f4e64e683293e86b38a38e3c436930f6991e444c27751a648",
+      "bytes": 13075344
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "736836383cc61e9ff39b9a39f2d9b98d2debbaf9c68a83a2f0a64a77c77c7edc",
+      "bytes": 15531520
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "cbd3e604a3edfc507daed0bbb15664897ed3d228dcb542fc216a8e89dd18d6e1",
+      "bytes": 8734720
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "ui_test_count": 45,
+    "ui_log": "build/style-transitions-final-ui.log",
+    "windows_build_log": "build/style-transitions-windows.log",
+    "analysis_log": "build/style-transition-analyze.log",
+    "native_host_and_plugin_unchanged": true,
+    "native_evidence_reused_from": "experimental-styles-build-2026-09-24.json",
+    "not_verified": [
+      "GPU frame performance",
+      "Android/Web",
+      "long-term memory",
+      "all InputDecorator interruption paths"
+    ]
+  }
+}

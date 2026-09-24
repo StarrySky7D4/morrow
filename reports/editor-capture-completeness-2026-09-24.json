@@ -1,0 +1,70 @@
+{
+  "created_utc": "2026-09-24T12:36:39.140382+00:00",
+  "sources": {
+    "lib/plugins/editor_draft_session.dart": {
+      "sha256": "422a4ac7c7cace0115cc50290e027fe63348c6b8273e89a659c24c5302015e7e",
+      "bytes": 21602
+    },
+    "lib/plugins/editor_draft_binding.dart": {
+      "sha256": "c782ad86229efdd33debc1a5ce77f3f2c5abf5f387025ae6b70d7ad319293e20",
+      "bytes": 8138
+    },
+    "test/editor_draft_binding_test.dart": {
+      "sha256": "8c92ee2b81e674f5ba40735a5260247ab5e6935ee7127d908effee93221d99cf",
+      "bytes": 12770
+    },
+    "test/editor_draft_capture_barrier_test.dart": {
+      "sha256": "8cae914b40be52300ee58452f4564ad3eda85d90d9817bcad9ec99b7a6b8d8b9",
+      "bytes": 13075
+    },
+    "test/editor_draft_capture_barrier_native_test.dart": {
+      "sha256": "da7522130b76aef8d987b2858f29dea80cd642fca4159c1ed8e26b4fe4ae5962",
+      "bytes": 8173
+    },
+    "docs/EDITOR_UI_PERSISTENCE_PLAN.md": {
+      "sha256": "86e39c9a5a3239fb2990585047487e878b7997f5a3e4f31c4e73a5218fc70c7b",
+      "bytes": 12239
+    },
+    "docs/EDITOR_HANDOFF_PROPOSAL_WIRE_PLAN.md": {
+      "sha256": "746fa4b03eeeb7286a318c8ec20206ad1a884266bbdbc38f924dfceddbb1f2f0",
+      "bytes": 5652
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "b2e0c2af7207e427ef1afaf0f1154ba01a9416127f27000ed74023c1159654f7",
+      "bytes": 90799
+    },
+    "reports/editor-capture-completeness-2026-09-24.md": {
+      "sha256": "c23963a43015ba814994d38cc49fc89aea43fac452e7ab08fb5735b34bf510cb",
+      "bytes": 3263
+    }
+  },
+  "logs": {
+    "build/editor-capture-barrier-final.log": {
+      "sha256": "47c935244e975768fe444b309e896eedf3998d2060ec68c9a1bfaef4574b065d",
+      "bytes": 14449
+    },
+    "build/editor-capture-barrier-analyze.log": {
+      "sha256": "2800892434b4a91c64ca12c0496fad4356f4c71368778e928b2ab8e34384c557",
+      "bytes": 98
+    }
+  },
+  "native_test_artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "698d48d203fd1fe669cfd4060d7287317deb41a47ef114a155d7753768879358",
+      "bytes": 15543808
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "c71dc27866378894d5288053238fef9e0ef15f6b578449279bc681e7fe8b560e",
+      "bytes": 878357
+    }
+  },
+  "validation": {
+    "dart_tests": 73,
+    "skipped": 0,
+    "analyze_targets": 6,
+    "full_application_rebuilt": false,
+    "formal_ui_autosave_enabled": false,
+    "pushed_or_released": false
+  },
+  "next_required": "Workbench ownership of raw editor values, attachment provenance and recoverable rich-capture evidence; enforce current complete S2 persistence before deferred S1 acknowledgement."
+}

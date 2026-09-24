@@ -4,7 +4,16 @@
 import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 
-enum ResultKind { absent, record, list, imported, exported, lineages }
+enum ResultKind {
+  absent,
+  record,
+  list,
+  imported,
+  exported,
+  lineages,
+  handoffProposal,
+  handoffProposals,
+}
 
 const EnumSchemaInfo resultKindSchema = EnumSchemaInfo(
   id: 0xf57686d6980b2b61,
@@ -17,6 +26,8 @@ const EnumSchemaInfo resultKindSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'imported', codeOrder: 3, ordinal: 3),
     EnumerantSchemaInfo(name: 'exported', codeOrder: 4, ordinal: 4),
     EnumerantSchemaInfo(name: 'lineages', codeOrder: 5, ordinal: 5),
+    EnumerantSchemaInfo(name: 'handoffProposal', codeOrder: 6, ordinal: 6),
+    EnumerantSchemaInfo(name: 'handoffProposals', codeOrder: 7, ordinal: 7),
   ],
 );
 
@@ -1003,6 +1014,445 @@ const StructSchemaInfo handoffRequestSchema = StructSchemaInfo(
 
 final handoffRequestFactory = _HandoffRequestFactory();
 
+final class HandoffProposalReader extends StructReader {
+  HandoffProposalReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = handoffProposalSchema;
+
+  int get version => getUint16Field(0);
+
+  Uint8List? get digest => getDataField(0);
+
+  WriteRequestReader? get request => getStructFieldWith(
+    1,
+    (r) => WriteRequestReader(r, capabilities: capabilityTable),
+  );
+
+  ParentLinkReader? get parentLink => getStructFieldWith(
+    2,
+    (r) => ParentLinkReader(r, capabilities: capabilityTable),
+  );
+
+  String? get retirementOperation => getTextField(3);
+}
+
+final class HandoffProposalBuilder extends StructBuilder {
+  HandoffProposalBuilder(super.raw);
+
+  @override
+  HandoffProposalReader asReader() => HandoffProposalReader(rawToReader());
+
+  set version(int v) {
+    setUint16Field(0, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  WriteRequestBuilder initRequest() {
+    return initStructFieldWith(1, (r) => WriteRequestBuilder(r), 3, 8);
+  }
+
+  bool hasRequest() => hasPointerField(1);
+
+  ParentLinkBuilder initParentLink() {
+    return initStructFieldWith(2, (r) => ParentLinkBuilder(r), 1, 6);
+  }
+
+  bool hasParentLink() => hasPointerField(2);
+
+  set retirementOperation(String? v) {
+    setTextField(3, v);
+  }
+}
+
+final class _HandoffProposalFactory
+    extends StructFactory<HandoffProposalReader, HandoffProposalBuilder> {
+  @override
+  StructSchemaInfo get schema => handoffProposalSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 4;
+  @override
+  HandoffProposalReader fromRawReader(RawStructReader r) =>
+      HandoffProposalReader(r);
+  @override
+  HandoffProposalReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HandoffProposalReader(r, capabilities: capabilities);
+  @override
+  HandoffProposalBuilder fromRawBuilder(RawStructBuilder r) =>
+      HandoffProposalBuilder(r);
+}
+
+const StructSchemaInfo handoffProposalSchema = StructSchemaInfo(
+  id: 0x8d16afa329001ea8,
+  displayName: 'editor_draft_api.capnp:HandoffProposal',
+  shortName: 'HandoffProposal',
+  dataWords: 1,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'version',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'request',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0x905784bd64bdaed0),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'parentLink',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: StructRefTypeSchemaInfo(0x88f7526340d0a69a),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'retirementOperation',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final handoffProposalFactory = _HandoffProposalFactory();
+
+final class HandoffProposalSummaryReader extends StructReader {
+  HandoffProposalSummaryReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = handoffProposalSummarySchema;
+
+  String? get cardId => getTextField(0);
+
+  String? get parentDraftId => getTextField(1);
+
+  String? get childDraftId => getTextField(2);
+
+  String? get childOperation => getTextField(3);
+
+  String? get retirementOperation => getTextField(4);
+
+  int get revision => getUint64Field(0);
+
+  int get status => getUint16Field(8);
+
+  int get parentGeneration => getUint64Field(16);
+
+  bool get parentActive => getBoolField(80);
+
+  int get childGeneration => getUint64Field(24);
+
+  bool get childActive => getBoolField(81);
+
+  String? get cursor => getTextField(5);
+}
+
+final class HandoffProposalSummaryBuilder extends StructBuilder {
+  HandoffProposalSummaryBuilder(super.raw);
+
+  @override
+  HandoffProposalSummaryReader asReader() =>
+      HandoffProposalSummaryReader(rawToReader());
+
+  set cardId(String? v) {
+    setTextField(0, v);
+  }
+
+  set parentDraftId(String? v) {
+    setTextField(1, v);
+  }
+
+  set childDraftId(String? v) {
+    setTextField(2, v);
+  }
+
+  set childOperation(String? v) {
+    setTextField(3, v);
+  }
+
+  set retirementOperation(String? v) {
+    setTextField(4, v);
+  }
+
+  set revision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set status(int v) {
+    setUint16Field(8, v);
+  }
+
+  set parentGeneration(int v) {
+    setUint64Field(16, v);
+  }
+
+  set parentActive(bool v) {
+    setBoolField(80, v);
+  }
+
+  set childGeneration(int v) {
+    setUint64Field(24, v);
+  }
+
+  set childActive(bool v) {
+    setBoolField(81, v);
+  }
+
+  set cursor(String? v) {
+    setTextField(5, v);
+  }
+}
+
+final class _HandoffProposalSummaryFactory
+    extends
+        StructFactory<
+          HandoffProposalSummaryReader,
+          HandoffProposalSummaryBuilder
+        > {
+  @override
+  StructSchemaInfo get schema => handoffProposalSummarySchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 6;
+  @override
+  HandoffProposalSummaryReader fromRawReader(RawStructReader r) =>
+      HandoffProposalSummaryReader(r);
+  @override
+  HandoffProposalSummaryReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HandoffProposalSummaryReader(r, capabilities: capabilities);
+  @override
+  HandoffProposalSummaryBuilder fromRawBuilder(RawStructBuilder r) =>
+      HandoffProposalSummaryBuilder(r);
+}
+
+const StructSchemaInfo handoffProposalSummarySchema = StructSchemaInfo(
+  id: 0xe3eae6cbc02ef559,
+  displayName: 'editor_draft_api.capnp:HandoffProposalSummary',
+  shortName: 'HandoffProposalSummary',
+  dataWords: 4,
+  pointerWords: 6,
+  fields: [
+    FieldSchemaInfo(
+      name: 'cardId',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'parentDraftId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'childDraftId',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'childOperation',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'retirementOperation',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'revision',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'status',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'parentGeneration',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'parentActive',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 80,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'childGeneration',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'childActive',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 81,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'cursor',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+  ],
+);
+
+final handoffProposalSummaryFactory = _HandoffProposalSummaryFactory();
+
+final class HandoffProposalRecordReader extends StructReader {
+  HandoffProposalRecordReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = handoffProposalRecordSchema;
+
+  HandoffProposalReader? get proposal => getStructFieldWith(
+    0,
+    (r) => HandoffProposalReader(r, capabilities: capabilityTable),
+  );
+
+  HandoffProposalSummaryReader? get summary => getStructFieldWith(
+    1,
+    (r) => HandoffProposalSummaryReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class HandoffProposalRecordBuilder extends StructBuilder {
+  HandoffProposalRecordBuilder(super.raw);
+
+  @override
+  HandoffProposalRecordReader asReader() =>
+      HandoffProposalRecordReader(rawToReader());
+
+  HandoffProposalBuilder initProposal() {
+    return initStructFieldWith(0, (r) => HandoffProposalBuilder(r), 1, 4);
+  }
+
+  bool hasProposal() => hasPointerField(0);
+
+  HandoffProposalSummaryBuilder initSummary() {
+    return initStructFieldWith(
+      1,
+      (r) => HandoffProposalSummaryBuilder(r),
+      4,
+      6,
+    );
+  }
+
+  bool hasSummary() => hasPointerField(1);
+}
+
+final class _HandoffProposalRecordFactory
+    extends
+        StructFactory<
+          HandoffProposalRecordReader,
+          HandoffProposalRecordBuilder
+        > {
+  @override
+  StructSchemaInfo get schema => handoffProposalRecordSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  HandoffProposalRecordReader fromRawReader(RawStructReader r) =>
+      HandoffProposalRecordReader(r);
+  @override
+  HandoffProposalRecordReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => HandoffProposalRecordReader(r, capabilities: capabilities);
+  @override
+  HandoffProposalRecordBuilder fromRawBuilder(RawStructBuilder r) =>
+      HandoffProposalRecordBuilder(r);
+}
+
+const StructSchemaInfo handoffProposalRecordSchema = StructSchemaInfo(
+  id: 0xd632e114a612a946,
+  displayName: 'editor_draft_api.capnp:HandoffProposalRecord',
+  shortName: 'HandoffProposalRecord',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'proposal',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0x8d16afa329001ea8),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'summary',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xe3eae6cbc02ef559),
+      ),
+    ),
+  ],
+);
+
+final handoffProposalRecordFactory = _HandoffProposalRecordFactory();
+
 final class StoredAssetReader extends StructReader {
   StoredAssetReader(super.raw, {super.capabilities});
 
@@ -1807,6 +2257,17 @@ final class EnvelopeReader extends StructReader {
   String? get requestCursor => getTextField(9);
 
   int get requestLimit => getUint32Field(4);
+
+  HandoffProposalRecordReader? get handoffProposal => getStructFieldWith(
+    10,
+    (r) => HandoffProposalRecordReader(r, capabilities: capabilityTable),
+  );
+
+  ListReader<HandoffProposalSummaryReader>? get handoffProposalSummaries =>
+      getStructListFieldWith(
+        11,
+        (r) => HandoffProposalSummaryReader(r, capabilities: capabilityTable),
+      );
 }
 
 final class EnvelopeBuilder extends StructBuilder {
@@ -1874,6 +2335,29 @@ final class EnvelopeBuilder extends StructBuilder {
   set requestLimit(int v) {
     setUint32Field(4, v);
   }
+
+  HandoffProposalRecordBuilder initHandoffProposal() {
+    return initStructFieldWith(
+      10,
+      (r) => HandoffProposalRecordBuilder(r),
+      0,
+      2,
+    );
+  }
+
+  bool hasHandoffProposal() => hasPointerField(10);
+
+  ListBuilder<HandoffProposalSummaryBuilder> initHandoffProposalSummaries(
+    int length,
+  ) {
+    return initStructListFieldWith(
+      11,
+      length,
+      (r) => HandoffProposalSummaryBuilder(r),
+      4,
+      6,
+    );
+  }
 }
 
 final class _EnvelopeFactory
@@ -1883,7 +2367,7 @@ final class _EnvelopeFactory
   @override
   int get dataWords => 2;
   @override
-  int get ptrWords => 10;
+  int get ptrWords => 12;
   @override
   EnvelopeReader fromRawReader(RawStructReader r) => EnvelopeReader(r);
   @override
@@ -1900,7 +2384,7 @@ const StructSchemaInfo envelopeSchema = StructSchemaInfo(
   displayName: 'editor_draft_api.capnp:Envelope',
   shortName: 'Envelope',
   dataWords: 2,
-  pointerWords: 10,
+  pointerWords: 12,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2012,6 +2496,22 @@ const StructSchemaInfo envelopeSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 1,
         type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handoffProposal',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 10,
+        type: StructRefTypeSchemaInfo(0xd632e114a612a946),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handoffProposalSummaries',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 11,
+        type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xe3eae6cbc02ef559)),
       ),
     ),
   ],

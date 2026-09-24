@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "柔らかな光と影で穏やかな立体感",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "実験的",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "ペーパー",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "マットな紙面、細い枠線と控えめな奥行き",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "クレイ",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "丸みのある形と柔らかく浮き上がる色",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "半透明の重なりとアクセントライン",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "ブルータリズム",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "直線的な角、太い枠線とずらした影",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "インダストリアル",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "金属風のパネル、コンパクトな操作部と精密な線",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "下書き引き継ぎの復旧",
+  "mainDraftHandoffRecoveryIntro": "保存済みの引き継ぎ記録のみ表示します。このページを開いても内容は自動送信されません。",
+  "mainDraftHandoffRecoveryEmpty": "確認する引き継ぎ記録はありません",
+  "mainDraftHandoffRecoveryPending": "後継の下書きはまだ作成されていません",
+  "mainDraftHandoffRecoveryChildCommitted": "後継の下書きは保存済み、親の下書きはまだ退役していません",
+  "mainDraftHandoffRecoveryParentRetired": "引き継ぎは完了しました",
+  "mainDraftHandoffRecoveryCancelled": "引き継ぎは取り消されました",
+  "mainDraftHandoffRecoveryConflict": "現在の状態が変わりました。確認してください",
+  "mainDraftHandoffRecoveryInspect": "表示して確認",
+  "mainDraftHandoffRecoveryComplete": "後継の下書きを作成",
+  "mainDraftHandoffRecoveryRetire": "親の下書きを退役にする",
+  "mainDraftHandoffRecoveryCancel": "引き継ぎを取り消す",
+  "mainDraftHandoffRecoveryConfirmTitle": "下書きの引き継ぎ操作を確認",
+  "mainDraftHandoffRecoveryCompleteBody": "保存済みの元の提案から後継の下書きを作成します。正式なカードは再送信しません。",
+  "mainDraftHandoffRecoveryRetireBody": "後継の下書きが保存済みであることを確認してから、親の下書きを退役にします。",
+  "mainDraftHandoffRecoveryCancelBody": "未完了の引き継ぎを取り消します。元の操作で後継の下書きを再作成することはできなくなります。親の下書きはそのまま残ります。",
+  "mainDraftHandoffRecoveryUnknown": "操作結果はまだ確認できていません。元の記録を確認し、操作を繰り返さないでください。",
+  "mainDraftHandoffRecoveryFailed": "操作を完了できませんでした。更新して記録を確認してください。",
+  "mainDraftHandoffRecoveryConfirmed": "操作が確認され、保存されました。",
+  "mainDraftHandoffRecoveryReadOnly": "現在のワークスペースは閲覧のみ可能です",
+  "mainDraftHandoffRecoveryFields": "元の下書きの内容",
+  "mainDraftHandoffRecoveryAssets": "固定済みの添付ファイル",
+  "mainDraftHandoffRecoverySelection": "記録を選択すると、下書き全体を確認できます。",
+  "mainStyleDepth": "立体感の深さ",
+  "mainStyleDepthGuide": "ガラスの不透明度を変えずに、浮き上がりとくぼみの強さを調整します。",
+  "mainStyleDepthReset": "100% に戻す"
 }

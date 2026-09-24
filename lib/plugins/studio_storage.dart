@@ -159,6 +159,7 @@ Uint8List encodePreferences(Map<String, dynamic> data) {
   a.glass = data['glass'] as String? ?? 'frosted';
   a.background = data['background'] as String? ?? 'ambient';
   a.visualStyle = data['visualStyle'] as String? ?? 'flat';
+  a.styleDepth = (data['styleDepth'] as num?)?.toDouble() ?? 1;
   a.solidTint = data['solidTint'] as int? ?? 0;
   a.opacity = (data['frostedOpacity'] as num?)?.toDouble() ?? 0.76;
   a.cornerRadius = (data['cornerRadius'] as num?)?.toDouble() ?? 20;
@@ -224,6 +225,8 @@ Uint8List encodePreferences(Map<String, dynamic> data) {
     out.followComponent = value['followComponent'] as String? ?? '';
     out.cornerRadius = (value['cornerRadius'] as num?)?.toDouble() ?? 0;
     out.hasCornerRadius = value['cornerRadius'] != null;
+    out.styleDepth = (value['styleDepth'] as num?)?.toDouble() ?? 0;
+    out.hasStyleDepth = value['styleDepth'] != null;
   }
   final done = data['completed'] as List? ?? [];
   final completed = b.initCompleted(done.length);
@@ -265,12 +268,14 @@ Map<String, dynamic> decodePreferences(Uint8List bytes) {
           if ((c.followComponent ?? '').isNotEmpty)
             'followComponent': c.followComponent,
           if (c.hasCornerRadius) 'cornerRadius': c.cornerRadius,
+          if (c.hasStyleDepth) 'styleDepth': c.styleDepth,
         },
     },
     'theme': a.theme,
     'glass': a.glass,
     'background': a.background,
     'visualStyle': (a.visualStyle ?? '').isEmpty ? 'flat' : a.visualStyle,
+    'styleDepth': a.styleDepth,
     'solidTint': a.solidTint,
     'frostedOpacity': a.opacity,
     'cornerRadius': a.cornerRadius,

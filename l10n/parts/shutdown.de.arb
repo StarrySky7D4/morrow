@@ -1,0 +1,9 @@
+{
+  "@@locale": "de",
+  "shutdownTitle": "Arbeitsbereich wird geschlossen",
+  "shutdownWaiting": "Der Inhaltsdienst wird beendet. Die Bibliothek bleibt bis zum bestätigten Ende in seinem Besitz.",
+  "shutdownStillRunning": "Das Beenden dauert länger als erwartet. Der Inhaltsdienst wird weiter überwacht.",
+  "shutdownBackground": "Im Hintergrund weiter schließen",
+  "shutdownBackgroundHint": "Morrow schließt sich nach dem Ende des Dienstes. Bei einem Fehler oder einer langen Verzögerung erscheint dieses Fenster wieder.",
+  "shutdownFailure": "Beim Beenden ist ein Problem aufgetreten. Der Inhaltsdienst wird weiter überwacht."
+}

@@ -28,6 +28,7 @@ fn appearance(v: &proto::Appearance) -> services::Appearance {
         } else {
             v.visual_style.clone()
         },
+        style_depth: v.style_depth.unwrap_or(1.),
         solid_tint: v.solid_tint as u16,
         opacity: v.opacity,
         corner_radius: v.corner_radius,
@@ -98,6 +99,8 @@ pub fn validate(v: &Preferences) -> Result<(), &'static str> {
         if c.id.is_empty()
             || c.id.len() > 256
             || !ids.insert(&c.id)
+            || c.style_depth
+                .is_some_and(|v| !v.is_finite() || !(0.0..=2.0).contains(&v))
             || !c.blur.is_finite()
             || !(0.0..=40.0).contains(&c.blur)
             || !c.opacity.is_finite()
@@ -201,6 +204,7 @@ pub fn decode_wire(bytes: &[u8]) -> Result<Preferences, &'static str> {
         glass: a.glass,
         background: a.background,
         visual_style: a.visual_style,
+        style_depth: Some(a.style_depth),
         solid_tint: a.solid_tint as u32,
         opacity: a.opacity,
         corner_radius: a.corner_radius,
@@ -269,6 +273,7 @@ pub fn decode_wire(bytes: &[u8]) -> Result<Preferences, &'static str> {
             corner_radius: c.get_corner_radius(),
             has_corner_radius: c.get_has_corner_radius(),
             follow_component: txt(c.get_follow_component())?,
+            style_depth: c.get_has_style_depth().then(|| c.get_style_depth()),
         });
     }
     let p = Preferences {
@@ -337,6 +342,8 @@ pub fn encode_wire(v: &Preferences) -> Result<Vec<u8>, &'static str> {
             out.set_corner_radius(c.corner_radius);
             out.set_has_corner_radius(c.has_corner_radius);
             out.set_follow_component(c.follow_component.as_str());
+            out.set_style_depth(c.style_depth.unwrap_or(0.));
+            out.set_has_style_depth(c.style_depth.is_some());
         }
     }
     let mut completed = b.init_completed(v.completed.len() as u32);

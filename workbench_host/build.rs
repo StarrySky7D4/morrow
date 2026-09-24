@@ -10,9 +10,17 @@ fn main() {
     println!("cargo:rerun-if-changed=schemas/editor_draft_import_decision.proto");
     println!("cargo:rerun-if-changed=schemas/editor_draft_handoff_proposal.proto");
     println!("cargo:rerun-if-changed=schemas/query_capture.proto");
+    let protoc = protoc_bin_vendored::protoc_bin_path().expect("protoc");
     prost_build::Config::new()
-        .extern_path(".morrow.workbench.editor_draft.v1", "crate::editor_draft::model::proto")
-        .protoc_executable(protoc_bin_vendored::protoc_bin_path().expect("protoc"))
+        .protoc_executable(&protoc)
+        .compile_protos(&["schemas/editor_draft.proto"], &["schemas"])
+        .expect("editor draft schema");
+    prost_build::Config::new()
+        .extern_path(
+            ".morrow.workbench.editor_draft.v1",
+            "crate::editor_draft::model::proto",
+        )
+        .protoc_executable(&protoc)
         .compile_protos(
             &[
                 "schemas/projection.proto",
@@ -22,7 +30,6 @@ fn main() {
                 "schemas/tasks_edit.proto",
                 "schemas/cards_edit.proto",
                 "schemas/editor_recovery.proto",
-                "schemas/editor_draft.proto",
                 "schemas/editor_draft_staging.proto",
                 "schemas/editor_draft_import_decision.proto",
                 "schemas/editor_draft_handoff_proposal.proto",

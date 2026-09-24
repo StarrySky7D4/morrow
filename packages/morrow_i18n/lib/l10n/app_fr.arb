@@ -139,17 +139,50 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1034,29 @@
   "mainDeleted": "« {title} » supprimé",
   "mainDiagnosticDetails": "Détails du diagnostic",
   "mainDone": "Terminé",
+  "mainDraftHandoffRecoveryAssets": "Pièces jointes fixées",
+  "mainDraftHandoffRecoveryCancel": "Annuler le transfert",
+  "mainDraftHandoffRecoveryCancelBody": "Annuler ce transfert inachevé. L’opération initiale ne pourra plus créer de brouillon successeur. Le brouillon parent reste inchangé.",
+  "mainDraftHandoffRecoveryCancelled": "Transfert annulé",
+  "mainDraftHandoffRecoveryChildCommitted": "Brouillon successeur enregistré ; brouillon parent pas encore retiré",
+  "mainDraftHandoffRecoveryComplete": "Créer le brouillon successeur",
+  "mainDraftHandoffRecoveryCompleteBody": "Créer le brouillon successeur à partir de la proposition initiale enregistrée. Aucune autre carte définitive ne sera soumise.",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirmer l’action sur le transfert",
+  "mainDraftHandoffRecoveryConfirmed": "L’opération a été confirmée et enregistrée.",
+  "mainDraftHandoffRecoveryConflict": "L’état actuel a changé ; vérifiez-le",
+  "mainDraftHandoffRecoveryEmpty": "Aucun transfert à vérifier",
+  "mainDraftHandoffRecoveryFailed": "Impossible de terminer l’opération. Actualisez et vérifiez l’enregistrement.",
+  "mainDraftHandoffRecoveryFields": "Contenu du brouillon initial",
+  "mainDraftHandoffRecoveryInspect": "Afficher et vérifier",
+  "mainDraftHandoffRecoveryIntro": "Cette page affiche uniquement les transferts enregistrés. Son ouverture ne soumet aucun contenu automatiquement.",
+  "mainDraftHandoffRecoveryParentRetired": "Transfert terminé",
+  "mainDraftHandoffRecoveryPending": "Le brouillon successeur n’a pas encore été créé",
+  "mainDraftHandoffRecoveryReadOnly": "Cet espace de travail est en lecture seule",
+  "mainDraftHandoffRecoveryRetire": "Retirer le brouillon parent",
+  "mainDraftHandoffRecoveryRetireBody": "Après avoir confirmé l’enregistrement du brouillon successeur, marquer le brouillon parent comme retiré.",
+  "mainDraftHandoffRecoverySelection": "Sélectionnez un enregistrement pour voir le brouillon complet.",
+  "mainDraftHandoffRecoveryTitle": "Récupération du transfert de brouillon",
+  "mainDraftHandoffRecoveryUnknown": "Le résultat de l’opération n’est pas encore confirmé. Vérifiez l’enregistrement initial ; ne répétez pas l’opération.",
   "mainDraftImportRecoveryCancelBody": "Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.",
   "mainDraftImportRecoveryCancelDecision": "Annuler la demande d’abandon",
   "mainDraftImportRecoveryCancelTitle": "Annuler cette demande d’abandon ?",
@@ -1224,10 +1280,24 @@
   "mainSteps": "Étapes : {done}/{total}",
   "mainStorageUnavailable": "Stockage local indisponible. Les modifications ne dureront que pendant cette session.",
   "mainStorageUnreadable": "Impossible de lire le contenu enregistré. Les données originales sont conservées et ne seront pas écrasées.",
+  "mainStyleBrutalist": "Brutalisme",
+  "mainStyleBrutalistDescription": "Angles nets, bordures marquées et ombres décalées",
+  "mainStyleClay": "Argile",
+  "mainStyleClayDescription": "Formes arrondies aux couleurs doucement en relief",
+  "mainStyleDepth": "Profondeur du relief",
+  "mainStyleDepthGuide": "Réglez les reliefs et les creux sans modifier l’opacité du verre.",
+  "mainStyleDepthReset": "Rétablir 100 %",
+  "mainStyleExperimental": "Expérimental",
   "mainStyleFlat": "Plat · Par défaut",
   "mainStyleFlatDescription": "Contours légers et niveaux lisibles",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "Surfaces translucides superposées et lignes accentuées",
+  "mainStyleIndustrial": "Industriel",
+  "mainStyleIndustrialDescription": "Panneaux métallisés, commandes compactes et lignes précises",
   "mainStyleNeumorphism": "Neumorphisme",
   "mainStyleNeumorphismDescription": "Ombres douces et relief subtil",
+  "mainStylePaper": "Papier",
+  "mainStylePaperDescription": "Surfaces mates, bordures fines et relief discret",
   "mainTaskAdd": "Ajouter une tâche",
   "mainTaskAmbiguousDecision": "L’état de ces anciennes tâches de même nom est incertain. Confirmez chaque tâche séparément.",
   "mainTaskCompleteAllAndSetStage": "Tout terminer et définir l’étape",
@@ -1731,6 +1801,12 @@
   "recoverySwitchUnknown": "Changement de bibliothèque non confirmé. Rouvrez l’espace de travail pour vérifier.",
   "recoveryTargetExists": "La destination existe déjà. Choisissez un nouveau dossier qui n’existe pas encore.",
   "recoveryTitle": "Rouvrir l’espace de travail",
+  "shutdownBackground": "Poursuivre en arrière-plan",
+  "shutdownBackgroundHint": "Morrow se fermera quand le service s’arrêtera. En cas d’erreur ou d’attente prolongée, cette fenêtre réapparaîtra.",
+  "shutdownFailure": "Un problème est survenu pendant la fermeture. Le service de contenu reste sous surveillance.",
+  "shutdownStillRunning": "La fermeture prend plus de temps que prévu. Le service de contenu reste sous surveillance.",
+  "shutdownTitle": "Fermeture de l’espace de travail",
+  "shutdownWaiting": "En attente de l’arrêt du service de contenu. Il conserve la bibliothèque jusqu’à confirmation de sa sortie.",
   "visualApplyColor": "Appliquer la couleur",
   "visualApplyComponent": "Appliquer à ce composant",
   "visualApplyTexture": "Appliquer le média",

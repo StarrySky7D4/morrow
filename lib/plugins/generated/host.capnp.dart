@@ -122,6 +122,13 @@ enum Action {
   finishEditorDraftHandoff,
   retireEditorDraftParent,
   listEditorDraftLineages,
+  prepareEditorDraftHandoffProposal,
+  inspectEditorDraftHandoffProposal,
+  listEditorDraftHandoffProposals,
+  completeEditorDraftHandoffProposal,
+  retireEditorDraftHandoffProposal,
+  cancelEditorDraftHandoffProposal,
+  inspectEditorCommit,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -369,6 +376,41 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       name: 'listEditorDraftLineages',
       codeOrder: 116,
       ordinal: 116,
+    ),
+    EnumerantSchemaInfo(
+      name: 'prepareEditorDraftHandoffProposal',
+      codeOrder: 117,
+      ordinal: 117,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorDraftHandoffProposal',
+      codeOrder: 118,
+      ordinal: 118,
+    ),
+    EnumerantSchemaInfo(
+      name: 'listEditorDraftHandoffProposals',
+      codeOrder: 119,
+      ordinal: 119,
+    ),
+    EnumerantSchemaInfo(
+      name: 'completeEditorDraftHandoffProposal',
+      codeOrder: 120,
+      ordinal: 120,
+    ),
+    EnumerantSchemaInfo(
+      name: 'retireEditorDraftHandoffProposal',
+      codeOrder: 121,
+      ordinal: 121,
+    ),
+    EnumerantSchemaInfo(
+      name: 'cancelEditorDraftHandoffProposal',
+      codeOrder: 122,
+      ordinal: 122,
+    ),
+    EnumerantSchemaInfo(
+      name: 'inspectEditorCommit',
+      codeOrder: 123,
+      ordinal: 123,
     ),
   ],
 );
@@ -1314,6 +1356,11 @@ final class ResponseReader extends StructReader {
         32,
         (r) => EditorRecoveryReader(r, capabilities: capabilityTable),
       );
+
+  EditorCommitProofReader? get editorCommitProof => getStructFieldWith(
+    33,
+    (r) => EditorCommitProofReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1559,6 +1606,12 @@ final class ResponseBuilder extends StructBuilder {
       4,
     );
   }
+
+  EditorCommitProofBuilder initEditorCommitProof() {
+    return initStructFieldWith(33, (r) => EditorCommitProofBuilder(r), 2, 3);
+  }
+
+  bool hasEditorCommitProof() => hasPointerField(33);
 }
 
 final class _ResponseFactory
@@ -1568,7 +1621,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 33;
+  int get ptrWords => 34;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1585,7 +1638,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 33,
+  pointerWords: 34,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1955,10 +2008,134 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
         type: ListTypeSchemaInfo(StructRefTypeSchemaInfo(0xee7e7702bb7039cc)),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'editorCommitProof',
+      codeOrder: 46,
+      body: SlotFieldSchemaInfo(
+        offset: 33,
+        type: StructRefTypeSchemaInfo(0xd4ed675bdd2f4399),
+      ),
+    ),
   ],
 );
 
 final responseFactory = _ResponseFactory();
+
+final class EditorCommitProofReader extends StructReader {
+  EditorCommitProofReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = editorCommitProofSchema;
+
+  String? get id => getTextField(0);
+
+  String? get operation => getTextField(1);
+
+  Uint8List? get digest => getDataField(2);
+
+  int get sourceRevision => getUint64Field(0);
+
+  int get committedRevision => getUint64Field(8);
+}
+
+final class EditorCommitProofBuilder extends StructBuilder {
+  EditorCommitProofBuilder(super.raw);
+
+  @override
+  EditorCommitProofReader asReader() => EditorCommitProofReader(rawToReader());
+
+  set id(String? v) {
+    setTextField(0, v);
+  }
+
+  set operation(String? v) {
+    setTextField(1, v);
+  }
+
+  set digest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set sourceRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set committedRevision(int v) {
+    setUint64Field(8, v);
+  }
+}
+
+final class _EditorCommitProofFactory
+    extends StructFactory<EditorCommitProofReader, EditorCommitProofBuilder> {
+  @override
+  StructSchemaInfo get schema => editorCommitProofSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 3;
+  @override
+  EditorCommitProofReader fromRawReader(RawStructReader r) =>
+      EditorCommitProofReader(r);
+  @override
+  EditorCommitProofReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => EditorCommitProofReader(r, capabilities: capabilities);
+  @override
+  EditorCommitProofBuilder fromRawBuilder(RawStructBuilder r) =>
+      EditorCommitProofBuilder(r);
+}
+
+const StructSchemaInfo editorCommitProofSchema = StructSchemaInfo(
+  id: 0xd4ed675bdd2f4399,
+  displayName: 'host.capnp:EditorCommitProof',
+  shortName: 'EditorCommitProof',
+  dataWords: 2,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'id',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operation',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'digest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sourceRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'committedRevision',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final editorCommitProofFactory = _EditorCommitProofFactory();
 
 final class ServiceRunStartReader extends StructReader {
   ServiceRunStartReader(super.raw, {super.capabilities});

@@ -73,3 +73,6 @@ app.*.map.json
 /plugin_runtime/target/
 
 /network_node/target/
+
+# Generated Flutter golden-test failure images
+/test/failures/

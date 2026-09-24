@@ -1,0 +1,227 @@
+{
+  "created_utc": "2026-09-24T10:34:41.418193+00:00",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.6",
+  "sources": {
+    "lib/appearance.dart": {
+      "sha256": "634c3986adbc27ba09861beb8d9f58296804550b986e6a351d3420b738cc1179",
+      "bytes": 28500
+    },
+    "lib/neumorphic_controls.dart": {
+      "sha256": "33ecde892721a4e31d941b737ad0458f0fda5fa4350805331f92fa248062b2a2",
+      "bytes": 49003
+    },
+    "lib/experimental_controls.dart": {
+      "sha256": "82768479039e2589c968881ed4f57e3a5fbdcb3ea1961d3ab82adb8c1cd7d603",
+      "bytes": 20374
+    },
+    "lib/style_input_border.dart": {
+      "sha256": "463796941f3876a99c5fdf440b5debd8580c5d8e3bd8e09d7e0a8051b63a86f6",
+      "bytes": 5585
+    },
+    "lib/animated_slider_style.dart": {
+      "sha256": "54e9eda98dca50e019b56b64c2da6e2e60aea3dc0ca9b2fc7f575eb363f18197",
+      "bytes": 14791
+    },
+    "lib/style_depth_slider.dart": {
+      "sha256": "abb4f6c738ae45c68500ad86498ec61e5eb0db2c74c12566524fd3f923e48143",
+      "bytes": 1922
+    },
+    "lib/main.dart": {
+      "sha256": "f9dc1111731de94cc37146909e9d9122792182622d6f930e6f2163906f0cfb3e",
+      "bytes": 218329
+    },
+    "lib/component_material_page.dart": {
+      "sha256": "0b13e03b3dc1846db698d6aa193f006487b23f7e781a3516b007b47461563957",
+      "bytes": 22691
+    },
+    "lib/plugins/studio_storage.dart": {
+      "sha256": "25bbf36588c4b71bee5aa8f1413eff2eecc244750cd6cfe12f2110360d5b26d3",
+      "bytes": 12993
+    },
+    "lib/plugins/generated/studio.capnp.dart": {
+      "sha256": "9106479c67ef83481fb2e960f2eb6cd7a9db08a5f6c2354db38dc0cb5965c2da",
+      "bytes": 47998
+    },
+    "lib/plugins/generated/identity.dart": {
+      "sha256": "dc21b1909abb789109b2289c312191188ede3f58fbb3916777dae56280594a6d",
+      "bytes": 2302
+    },
+    "plugins/workbench/schemas/studio.capnp": {
+      "sha256": "0b5e2748f4299c30ab0e3debaddf94ec6d5ea26d745239d666918d446cb9a0a0",
+      "bytes": 2783
+    },
+    "plugins/workbench/schemas/preferences.proto": {
+      "sha256": "c3bdb89aa5a517ea9781ab1a6e4f92bb6c64bcb1267509fea41a0bb386fc552d",
+      "bytes": 1719
+    },
+    "plugins/workbench/src/services.rs": {
+      "sha256": "360a63a2b9031ffe04ff34da2a5aa6eea5a2908f6fe71fad27224e9b00165113",
+      "bytes": 19668
+    },
+    "plugins/workbench/src/preferences.rs": {
+      "sha256": "ebd5467a8393a4700622bdb5f575dca75d7ded7b1095f8cba565fd43c22b3d88",
+      "bytes": 18747
+    },
+    "plugins/workbench/tests/preferences.rs": {
+      "sha256": "5e6c413cb67dffa21f2fd30df6bf9dcaca9ee1f2c73904edcb43ab253c605ef3",
+      "bytes": 9966
+    },
+    "plugins/workbench/Cargo.toml": {
+      "sha256": "551a0282d477a6f219206edbd2a31c3981b6e29e03a748765aab08c128359950",
+      "bytes": 619
+    },
+    "plugins/workbench/Cargo.lock": {
+      "sha256": "9ed802d56f86ec06be3b72d43ee0304776f4b9a0a3ed9c8e463571091eae462e",
+      "bytes": 22768
+    },
+    "workbench_host/Cargo.lock": {
+      "sha256": "bfae713e14d05d7eda29e7a66220c535488dd37152fc225bb685b628b4995412",
+      "bytes": 66421
+    },
+    "workbench_host/src/legacy_json_preferences.rs": {
+      "sha256": "c2c5fe2837fc17e44847ecade524f4ac0d9c6763b18dc94e93a294883ad23ac4",
+      "bytes": 15646
+    },
+    "workbench_host/src/bin/migrate_library/legacy_json.rs": {
+      "sha256": "ec7f23f894cda2487f9ce00df6dc93f322d7e60cbbe5a8b93b9091b28383da8f",
+      "bytes": 22681
+    },
+    "workbench_host/tests/preferences_evidence.rs": {
+      "sha256": "7cc97a1f6c43ddb9e663e038f0733c968c79c0f2a709f95e79e3999f0d10d79c",
+      "bytes": 14104
+    },
+    "test/style_depth_test.dart": {
+      "sha256": "02e24afc7770d147aa3870a339777c5881b6e668647ff659367a7e1bc9171502",
+      "bytes": 8727
+    },
+    "test/style_depth_preview_test.dart": {
+      "sha256": "9c6d1e9f78bf7f30a660b8222a28158159bcc62a234028310521db3433fc6a76",
+      "bytes": 6461
+    },
+    "test/visual_preferences_native_test.dart": {
+      "sha256": "659d1f94f385fda416dcfbffb0da8b580d893993e57c0d146e9b52f3b4fce1b8",
+      "bytes": 3921
+    },
+    "reports/style-depth-2026-09-24.md": {
+      "sha256": "07b5e0b8ee4d8441f3dbf7529d365002d9412635703a0b05074e24de9062f581",
+      "bytes": 4075
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "bdad0ddbefa60f180d939727d4d878c754f4564d488b64450f2fd6ad46de800b",
+      "bytes": 89674
+    },
+    "l10n/parts/main.de.arb": {
+      "sha256": "45bd7de215f2d6d204ec65e2107912819697ee3886bdb3d9e66c28526f0ce4c2",
+      "bytes": 29795
+    },
+    "l10n/parts/main.en.arb": {
+      "sha256": "06576bc49ce887a780048a4536445b9ddfafb0c279f7d3e93e16529a55599167",
+      "bytes": 27577
+    },
+    "l10n/parts/main.es.arb": {
+      "sha256": "d90acb19b31a35b1fdd946a45338d871c329e101262c7cf42679a176ef2263b1",
+      "bytes": 29101
+    },
+    "l10n/parts/main.fr.arb": {
+      "sha256": "6d7ece9960ba2e01b86227bd71bb345669fab6bd9a3c02349e8594537b67cd80",
+      "bytes": 30129
+    },
+    "l10n/parts/main.ja.arb": {
+      "sha256": "ded03ff4a7da2db3e9d9b5e026642837f2d870408ff33c699a5fa3b07bcd57fa",
+      "bytes": 31977
+    },
+    "l10n/parts/main.ko.arb": {
+      "sha256": "51180eb52c081177f513455400420558e11824b7c7a3453c9c2b76ea96822d63",
+      "bytes": 30579
+    },
+    "l10n/parts/main.pt.arb": {
+      "sha256": "caec7a8683c1d9d792aa050a1a00d510449ff256cad0ec81c97919665ff27722",
+      "bytes": 29032
+    },
+    "l10n/parts/main.ru.arb": {
+      "sha256": "9bab7a826bd54f837d4d7e290d2f669b460d3cbc98371190247b45e073e2d9c3",
+      "bytes": 38819
+    },
+    "l10n/parts/main.zh.arb": {
+      "sha256": "3bfc2230bd54229452f8aff84acc1e6acd5e7b5fa428b8813f0fbc78fda0169c",
+      "bytes": 26471
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "5828e7d60abfa7dd813bd3d48002f60ffd44ece7909bd36f141bdf3e070c86b7",
+      "bytes": 13288336
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "fd1a9d2a476965460b572ad151828442eeb575ad826ee43cdb48971cfbf62c6e",
+      "bytes": 15587840
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "d896727c231ef25ade9dff1ffe66a8bf1871c5091d24c517fe66f96e60f14c78",
+      "bytes": 8720384
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "c71dc27866378894d5288053238fef9e0ef15f6b578449279bc681e7fe8b560e",
+      "bytes": 878357
+    }
+  },
+  "reviewed_capture": {
+    "build/ui-style-preview/style-depth-comparison.png": {
+      "sha256": "3ba55eaa3d1c38c3f737a8d279929941a56e6f59a5551fc602b28398497ab235",
+      "bytes": 117604
+    }
+  },
+  "logs": {
+    "build/style-depth-regression.log": {
+      "sha256": "d7b469a0f81bc58f86f81e1b82960994b39e348cbe2e50d301630f6bc2d25ed3",
+      "bytes": 13360
+    },
+    "build/style-depth-preview.log": {
+      "sha256": "a6f3e185665c3eb9f4b48511a7c1cb244e32dfd5d511670f4c9977c811a9b413",
+      "bytes": 223
+    },
+    "build/style-depth-rust-final.log": {
+      "sha256": "9f7689805ab413e4894bc10124f7d2b64c140c223ba14d1cc55848e5c7a6315a",
+      "bytes": 1083
+    },
+    "build/style-depth-host-final.log": {
+      "sha256": "afa0e3d465535c57e31f4055bfada0eff3c89236253a44ef80f4105eaa57d5eb",
+      "bytes": 2006
+    },
+    "build/style-depth-final-analyze.log": {
+      "sha256": "72bc7567919607b575ee371231d4e52fc8544e3f126818217de2ac8531734e6b",
+      "bytes": 98
+    },
+    "build/style-depth-preview-analyze.log": {
+      "sha256": "0fc0a2d93f2ca81e28d0b568a3ff6f361390cf8941e433ff115400804c435e9c",
+      "bytes": 98
+    },
+    "build/style-depth-bundle.log": {
+      "sha256": "75c57ee6005538dcca19c0b2488e9c088f690eb48212733f1a845c107a8004bb",
+      "bytes": 3653
+    },
+    "build/style-depth-windows.log": {
+      "sha256": "551958246f87e6f0acecf97ea755f7aea8747464407f3b29267293ceb375cf8a",
+      "bytes": 17396
+    }
+  },
+  "validation": {
+    "dart_combination_tests": 67,
+    "includes_real_host_tests": 7,
+    "additional_preview_test": 1,
+    "rust_plugin_tests": 9,
+    "rust_host_tests": 10,
+    "dart_analyze_targets": 12,
+    "windows_install_exit": 0,
+    "installed_native_artifacts_match_builds": true,
+    "public_sdk_changed": false,
+    "gpu_profile": false,
+    "android_web_qualified": false,
+    "pushed_or_released": false
+  }
+}

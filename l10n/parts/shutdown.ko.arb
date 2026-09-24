@@ -1,0 +1,9 @@
+{
+  "@@locale": "ko",
+  "shutdownTitle": "작업 공간 닫는 중",
+  "shutdownWaiting": "콘텐츠 서비스가 종료되기를 기다리고 있습니다. 종료가 확인될 때까지 라이브러리는 기존 서비스가 소유합니다.",
+  "shutdownStillRunning": "종료가 예상보다 오래 걸립니다. 콘텐츠 서비스를 계속 관찰하고 있습니다.",
+  "shutdownBackground": "백그라운드에서 종료 계속",
+  "shutdownBackgroundHint": "서비스가 종료되면 Morrow도 닫힙니다. 오류가 발생하거나 오래 걸리면 이 창이 다시 나타납니다.",
+  "shutdownFailure": "종료 중 문제가 발생했습니다. 콘텐츠 서비스를 계속 관찰하고 있습니다."
+}

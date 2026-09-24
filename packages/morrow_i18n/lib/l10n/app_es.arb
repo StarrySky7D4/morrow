@@ -139,17 +139,50 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1034,29 @@
   "mainDeleted": "«{title}» eliminado",
   "mainDiagnosticDetails": "Detalles de diagnóstico",
   "mainDone": "Listo",
+  "mainDraftHandoffRecoveryAssets": "Adjuntos fijados",
+  "mainDraftHandoffRecoveryCancel": "Cancelar traspaso",
+  "mainDraftHandoffRecoveryCancelBody": "Cancelar este traspaso inacabado. La operación original ya no podrá crear otro borrador sucesor. El borrador principal permanecerá igual.",
+  "mainDraftHandoffRecoveryCancelled": "Traspaso cancelado",
+  "mainDraftHandoffRecoveryChildCommitted": "Borrador sucesor guardado; borrador principal aún no retirado",
+  "mainDraftHandoffRecoveryComplete": "Crear borrador sucesor",
+  "mainDraftHandoffRecoveryCompleteBody": "Crear el borrador sucesor a partir de la propuesta original guardada. Esto no volverá a enviar una tarjeta definitiva.",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirmar acción del traspaso",
+  "mainDraftHandoffRecoveryConfirmed": "La operación se confirmó y guardó.",
+  "mainDraftHandoffRecoveryConflict": "El estado actual ha cambiado; revísalo",
+  "mainDraftHandoffRecoveryEmpty": "No hay traspasos pendientes de revisión",
+  "mainDraftHandoffRecoveryFailed": "No se pudo completar la operación. Actualiza y revisa el registro.",
+  "mainDraftHandoffRecoveryFields": "Contenido del borrador original",
+  "mainDraftHandoffRecoveryInspect": "Ver y revisar",
+  "mainDraftHandoffRecoveryIntro": "Aquí solo se muestran los traspasos guardados. Abrir esta página no envía contenido automáticamente.",
+  "mainDraftHandoffRecoveryParentRetired": "Traspaso completado",
+  "mainDraftHandoffRecoveryPending": "Aún no se ha creado el borrador sucesor",
+  "mainDraftHandoffRecoveryReadOnly": "Este espacio de trabajo es de solo lectura",
+  "mainDraftHandoffRecoveryRetire": "Retirar borrador principal",
+  "mainDraftHandoffRecoveryRetireBody": "Tras confirmar que se guardó el borrador sucesor, marca el borrador principal como retirado.",
+  "mainDraftHandoffRecoverySelection": "Selecciona un registro para ver el borrador completo.",
+  "mainDraftHandoffRecoveryTitle": "Recuperación del traspaso de borradores",
+  "mainDraftHandoffRecoveryUnknown": "El resultado de la operación aún no está confirmado. Revisa el registro original; no repitas la operación.",
   "mainDraftImportRecoveryCancelBody": "Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.",
   "mainDraftImportRecoveryCancelDecision": "Cancelar solicitud de abandono",
   "mainDraftImportRecoveryCancelTitle": "¿Cancelar esta solicitud de abandono?",
@@ -1224,10 +1280,24 @@
   "mainSteps": "{done}/{total} pasos",
   "mainStorageUnavailable": "El almacenamiento local no está disponible. Los cambios durarán solo esta sesión.",
   "mainStorageUnreadable": "No se pudo leer el contenido guardado. Los datos originales se conservan y no se sobrescribirán.",
+  "mainStyleBrutalist": "Brutalismo",
+  "mainStyleBrutalistDescription": "Esquinas duras, bordes marcados y sombras desplazadas",
+  "mainStyleClay": "Arcilla",
+  "mainStyleClayDescription": "Formas redondeadas con colores suavemente elevados",
+  "mainStyleDepth": "Profundidad del relieve",
+  "mainStyleDepthGuide": "Ajusta el relieve y las hendiduras sin cambiar la opacidad del vidrio.",
+  "mainStyleDepthReset": "Restablecer al 100 %",
+  "mainStyleExperimental": "Experimental",
   "mainStyleFlat": "Plano · Predeterminado",
   "mainStyleFlatDescription": "Bordes ligeros y capas claras",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "Superficies translúcidas superpuestas y líneas de acento",
+  "mainStyleIndustrial": "Industrial",
+  "mainStyleIndustrialDescription": "Paneles de aspecto metálico, controles compactos y líneas precisas",
   "mainStyleNeumorphism": "Neumorfismo",
   "mainStyleNeumorphismDescription": "Sombras suaves y relieve sutil",
+  "mainStylePaper": "Papel",
+  "mainStylePaperDescription": "Superficies mates, bordes finos y profundidad discreta",
   "mainTaskAdd": "Añadir tarea",
   "mainTaskAmbiguousDecision": "El estado de estas tareas antiguas con el mismo nombre es incierto. Confirma cada tarea por separado.",
   "mainTaskCompleteAllAndSetStage": "Completar todas y fijar etapa",
@@ -1731,6 +1801,12 @@
   "recoverySwitchUnknown": "Cambio de biblioteca sin confirmar. Reabre el espacio de trabajo para verificar.",
   "recoveryTargetExists": "El destino ya existe. Elige una carpeta nueva que aún no exista.",
   "recoveryTitle": "Reabrir espacio de trabajo",
+  "shutdownBackground": "Continuar el cierre en segundo plano",
+  "shutdownBackgroundHint": "Morrow se cerrará cuando termine el servicio. Si hay un error o la espera se prolonga, esta ventana volverá a aparecer.",
+  "shutdownFailure": "Se produjo un problema al cerrar. Se sigue observando el servicio de contenido.",
+  "shutdownStillRunning": "El cierre tarda más de lo esperado. Se sigue observando el servicio de contenido.",
+  "shutdownTitle": "Cerrando el espacio de trabajo",
+  "shutdownWaiting": "Esperando a que termine el servicio de contenido. La biblioteca sigue bajo su control hasta que se confirme la salida.",
   "visualApplyColor": "Aplicar color",
   "visualApplyComponent": "Aplicar a este componente",
   "visualApplyTexture": "Aplicar medio",

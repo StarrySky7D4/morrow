@@ -14,6 +14,9 @@ final class EditorDraftSnapshot {
 
   final EditorDraftValues values;
   final List<EditorDraftAssetSelection> assets;
+
+  /// Raw editing state and ordered asset provenance both participate.
+  bool sameAs(EditorDraftSnapshot other) => _sameSnapshot(this, other);
 }
 
 bool _sameText(EditorDraftTextValue a, EditorDraftTextValue b) =>
@@ -158,6 +161,12 @@ final class EditorDraftSession extends ChangeNotifier {
   bool _conflicted = false;
   bool _disposed = false;
   bool _autoSavePaused = false;
+  Object? _captureFailure;
+
+  /// The view has newer input whose complete metadata is not yet available.
+  /// A previous host receipt remains valid history, but cannot certify this view.
+  bool get captureBlocked => _captureFailure != null;
+  Object? get captureFailure => _captureFailure;
 
   EditorDraftSnapshot get current => _current;
   int get localGeneration => _localGeneration;
@@ -165,6 +174,7 @@ final class EditorDraftSession extends ChangeNotifier {
   EditorDraftWriteRequest? get pendingRequest => _pending;
   EditorDraftSaveFailure? get lastFailure => _lastFailure;
   bool get dirty =>
+      captureBlocked ||
       (sourceKind == EditorDraftSourceKind.newCard && _confirmed == null) ||
       !_sameSnapshot(_current, _confirmedSnapshot);
   bool get saving => _inFlight != null;
@@ -214,6 +224,7 @@ final class EditorDraftSession extends ChangeNotifier {
         !_fresh ||
         _conflicted ||
         _unknown ||
+        captureBlocked ||
         saving ||
         !dirty) {
       return;
@@ -225,6 +236,7 @@ final class EditorDraftSession extends ChangeNotifier {
           !_fresh ||
           _conflicted ||
           _unknown ||
+          captureBlocked ||
           saving ||
           !dirty) {
         return;
@@ -256,12 +268,37 @@ final class EditorDraftSession extends ChangeNotifier {
     _notify();
   }
 
-  /// A structurally equal observation is a no-op, including for autosave.
+  /// Invalidates completeness without changing the last captured snapshot or
+  /// the identity of an already sent operation. Even after a view detaches,
+  /// workspace close/eviction must retain this session until capture succeeds.
+  void markCaptureIncomplete(Object cause) {
+    if (_disposed) throw StateError('Editor draft session is disposed');
+    final firstFailure = !captureBlocked;
+    _captureFailure = cause;
+    _localGeneration++;
+    _cancelTimer();
+    // Repeated failing capture must not create a synchronous listener loop.
+    if (firstFailure) _notify();
+  }
+
+  void _requireCompleteCapture() {
+    if (captureBlocked) {
+      throw StateError(
+        'Latest editor draft capture is incomplete: $_captureFailure',
+      );
+    }
+  }
+
+  /// A complete observation is the only way to clear a capture failure. A
+  /// structurally equal retry still resolves the completeness barrier, without
+  /// changing or replaying any pending/unknown host operation.
   void observe(EditorDraftSnapshot snapshot) {
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
-    if (_sameSnapshot(_current, snapshot)) return;
+    final wasBlocked = captureBlocked;
+    if (_sameSnapshot(_current, snapshot) && !wasBlocked) return;
     _current = snapshot;
+    _captureFailure = null;
     _localGeneration++;
     if (!_unknown && !saving && _lastFailure?.outcomeUnknown == false) {
       _lastFailure = null;
@@ -271,6 +308,7 @@ final class EditorDraftSession extends ChangeNotifier {
   }
 
   EditorDraftWriteRequest _freeze() {
+    _requireCompleteCapture();
     final request = EditorDraftWriteRequest(
       cardId: cardId,
       draftId: draftId,
@@ -438,6 +476,7 @@ final class EditorDraftSession extends ChangeNotifier {
   Future<EditorDraftRecord> ensureJournal() async {
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
+    _requireCompleteCapture();
     if (_inFlight case final flight?) return flight;
     if (_conflicted) throw StateError('Editor draft journal changed');
     if (_unknown) {
@@ -459,6 +498,7 @@ final class EditorDraftSession extends ChangeNotifier {
     if (timeout <= Duration.zero) {
       throw ArgumentError.value(timeout, 'timeout', 'Must be positive');
     }
+    _requireCompleteCapture();
     pauseAutoSave();
     final clock = Stopwatch()..start();
     Duration remaining() {
@@ -474,6 +514,7 @@ final class EditorDraftSession extends ChangeNotifier {
     }
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
+    _requireCompleteCapture();
     if (_conflicted) throw StateError('Editor draft journal changed');
     if (_unknown) {
       throw _lastFailure ?? StateError('Editor draft outcome is unknown');
@@ -485,6 +526,7 @@ final class EditorDraftSession extends ChangeNotifier {
     }
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
+    _requireCompleteCapture();
     if (_localGeneration != visibleGeneration || dirty) {
       throw StateError('Editor draft changed during handoff save');
     }
@@ -496,6 +538,7 @@ final class EditorDraftSession extends ChangeNotifier {
   Future<EditorDraftRecord?> flush() async {
     if (_disposed) throw StateError('Editor draft session is disposed');
     if (!_fresh) throw StateError('Editor draft workspace changed');
+    _requireCompleteCapture();
     _cancelTimer();
     if (_inFlight case final flight?) return flight;
     if (_conflicted) throw StateError('Editor draft journal changed');

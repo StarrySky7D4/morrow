@@ -1,3 +1,6 @@
+import 'editor_draft_handoff_recovery_dialog.dart';
+import 'plugins/editor_draft.dart';
+import 'plugins/editor_draft_handoff_coordinator.dart';
 import 'editor_draft_import_recovery_dialog.dart';
 import 'plugins/editor_draft_import.dart';
 import 'plugins/editor_draft_import_decision_coordinator.dart';
@@ -40,8 +43,12 @@ import 'music/music_panel.dart';
 import 'little_tips.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
+import 'animated_slider_style.dart';
+import 'style_depth_slider.dart';
 import 'visual_style_picker.dart';
 import 'neumorphic_controls.dart';
+import 'experimental_controls.dart';
+import 'style_input_border.dart';
 import 'surface_motion.dart';
 import 'component_context_menu.dart';
 import 'component_material_page.dart';
@@ -486,7 +493,7 @@ class _MorrowAppState extends State<MorrowApp> {
           ),
         );
       },
-      theme: applyNeumorphicControls(
+      theme: applyVisualStyleControls(
         ThemeData(
           useMaterial3: true,
           brightness: palette.dark ? Brightness.dark : Brightness.light,
@@ -533,15 +540,15 @@ class _MorrowAppState extends State<MorrowApp> {
               vertical: 15,
             ),
             labelStyle: TextStyle(color: palette.muted, fontSize: 12),
-            enabledBorder: OutlineInputBorder(
+            enabledBorder: StyledInputBorder(
               borderRadius: palette.borderRadius(13),
               borderSide: BorderSide(color: palette.line),
             ),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: StyledInputBorder(
               borderRadius: palette.borderRadius(13),
               borderSide: BorderSide(color: palette.accent),
             ),
-            border: OutlineInputBorder(borderRadius: palette.borderRadius(13)),
+            border: StyledInputBorder(borderRadius: palette.borderRadius(13)),
           ),
           popupMenuTheme: PopupMenuThemeData(
             color: palette.surface.withValues(alpha: .95),
@@ -821,6 +828,10 @@ class Studio extends StatefulWidget {
 }
 
 class _StudioState extends State<Studio> with WidgetsBindingObserver {
+  EditorDraftHandoffCoordinator? _draftHandoffRecovery;
+  EditorDraftHandoffCoordinator? _draftHandoffDialogOwner;
+  DialogRoute<void>? _draftHandoffRoute;
+
   AppLocalizations get l => L10n.of(context);
   WorkbenchPage section = WorkbenchPage.overview;
   WorkbenchLabels get workbenchLabels => WorkbenchLabelsScope.of(context);
@@ -1193,6 +1204,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _queries.dispose();
+    _dismissDraftHandoffRoute();
+    _draftHandoffRecovery?.dispose();
     music.dispose();
     search.dispose();
     quickNote.dispose();
@@ -1204,6 +1217,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   void didUpdateWidget(Studio oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(widget.workbench, oldWidget.workbench)) {
+      _dismissDraftHandoffRoute();
+      _draftHandoffRecovery?.dispose();
+      _draftHandoffRecovery = null;
+      _draftHandoffDialogOwner = null;
       _localViews.clear();
       _frameIdeas = null;
       _knownContentRevisions.clear();
@@ -2106,30 +2123,41 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       else
         Expanded(child: searchField()),
       const SizedBox(width: 8),
-      if (widget.workbench is WorkbenchEditorRecovery &&
-          widget.workbench is WorkbenchEditorDraftImportSupport)
+      if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport ||
+          (widget.workbench is WorkbenchEditorRecovery &&
+              widget.workbench is WorkbenchEditorDraftImportSupport))
         PopupMenuButton<String>(
           key: const ValueKey('editor-recovery-open'),
           tooltip: l.mainEditorRecoveryTitle,
           icon: Icon(Icons.history_rounded, size: 19, color: p.muted),
           onSelected: (value) {
-            if (value == 'imports') {
+            if (value == 'handoffs') {
+              unawaited(reviewDraftHandoffRecovery());
+            } else if (value == 'imports') {
               unawaited(reviewDraftImportRecovery());
             } else {
               unawaited(reviewEditorRecovery());
             }
           },
           itemBuilder: (_) => [
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-edits'),
-              value: 'edits',
-              child: Text(l.mainEditorRecoveryTitle),
-            ),
-            PopupMenuItem(
-              key: const ValueKey('editor-recovery-menu-imports'),
-              value: 'imports',
-              child: Text(l.mainDraftImportRecoveryTitle),
-            ),
+            if (widget.workbench is WorkbenchEditorRecovery)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-edits'),
+                value: 'edits',
+                child: Text(l.mainEditorRecoveryTitle),
+              ),
+            if (widget.workbench is WorkbenchEditorDraftImportSupport)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-imports'),
+                value: 'imports',
+                child: Text(l.mainDraftImportRecoveryTitle),
+              ),
+            if (widget.workbench is WorkbenchEditorDraftHandoffProposalSupport)
+              PopupMenuItem(
+                key: const ValueKey('editor-recovery-menu-handoffs'),
+                value: 'handoffs',
+                child: Text(l.mainDraftHandoffRecoveryTitle),
+              ),
           ],
         )
       else if (widget.workbench is WorkbenchEditorRecovery)
@@ -2709,8 +2737,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 8,
-                  runSpacing: 6,
+                  spacing: 12,
+                  runSpacing: 12,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -2864,15 +2892,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           ),
         ],
       ),
-      SliderTheme(
-        data: SliderTheme.of(context).copyWith(
-          trackHeight: p.surfaces.visualStyle == VisualStyle.neumorphism
-              ? 7
-              : 3,
-          thumbShape: p.surfaces.visualStyle == VisualStyle.neumorphism
-              ? SliderTheme.of(context).thumbShape
-              : const RoundSliderThumbShape(enabledThumbRadius: 6),
-        ),
+      AnimatedSliderStyle(
+        palette: p,
+        flatThumbRadius: 6,
+        flatTrackHeight: 3,
         child: Slider(
           key: ValueKey(key),
           value: value,
@@ -3115,7 +3138,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         alignment: WrapAlignment.spaceBetween,
         crossAxisAlignment: WrapCrossAlignment.center,
         spacing: 12,
-        runSpacing: 8,
+        runSpacing: 12,
         children: [
           Text(
             l.mainReadOnlySettings,
@@ -3270,6 +3293,21 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               widget.onAppearanceCommit();
             },
           ),
+          if (p.surfaces.visualStyle.supportsDepth) ...[
+            const SizedBox(height: 16),
+            StyleDepthSlider(
+              key: const ValueKey('style-depth'),
+              palette: p,
+              value: p.surfaces.styleDepth,
+              onChanged: (v) =>
+                  updateSurfaces(p.surfaces.copyWith(styleDepth: v)),
+              onChangeEnd: (_) => widget.onAppearanceCommit(),
+              onReset: () {
+                updateSurfaces(p.surfaces.copyWith(styleDepth: 1));
+                widget.onAppearanceCommit();
+              },
+            ),
+          ],
           const SizedBox(height: 16),
           languagePicker(),
           const SizedBox(height: 12),
@@ -3279,7 +3317,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             leading: Icon(Icons.font_download_outlined, color: p.ink),
             title: Text(l.mainFontSettings, style: TextStyle(color: p.ink)),
             trailing: Icon(Icons.chevron_right, color: p.muted),
-            onTap: () => Navigator.of(context).push(
+            onTap: () => settingsNavigator.currentState!.push(
               CanvasSettingsRoute<void>(
                 builder: (_) => const FontSettingsPage(),
               ),
@@ -3337,20 +3375,11 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight:
-                          p.surfaces.visualStyle == VisualStyle.neumorphism
-                          ? 7
-                          : 3,
-                      thumbShape:
-                          p.surfaces.visualStyle == VisualStyle.neumorphism
-                          ? SliderTheme.of(context).thumbShape
-                          : const RoundSliderThumbShape(enabledThumbRadius: 6),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 12,
-                      ),
-                    ),
+                  AnimatedSliderStyle(
+                    palette: p,
+                    flatThumbRadius: 6,
+                    flatTrackHeight: 3,
+                    overlayRadius: 12,
                     child: Slider(
                       key: const ValueKey('frosted-opacity'),
                       min: .2,
@@ -3569,13 +3598,16 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                             label('${(p.grayscale * 100).round()}%'),
                           ],
                         ),
-                        Slider(
-                          key: const ValueKey('theme-grayscale'),
-                          value: p.grayscale,
-                          divisions: 100,
-                          label: '${(p.grayscale * 100).round()}%',
-                          onChanged: widget.onGrayscale,
-                          onChangeEnd: (_) => widget.onAppearanceCommit(),
+                        AnimatedSliderStyle(
+                          palette: p,
+                          child: Slider(
+                            key: const ValueKey('theme-grayscale'),
+                            value: p.grayscale,
+                            divisions: 100,
+                            label: '${(p.grayscale * 100).round()}%',
+                            onChanged: widget.onGrayscale,
+                            onChangeEnd: (_) => widget.onAppearanceCommit(),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3591,13 +3623,16 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                             label('${(p.lightness * 100).round()}%'),
                           ],
                         ),
-                        Slider(
-                          key: const ValueKey('theme-lightness'),
-                          value: p.lightness,
-                          divisions: 100,
-                          label: '${(p.lightness * 100).round()}%',
-                          onChanged: widget.onLightness,
-                          onChangeEnd: (_) => widget.onAppearanceCommit(),
+                        AnimatedSliderStyle(
+                          palette: p,
+                          child: Slider(
+                            key: const ValueKey('theme-lightness'),
+                            value: p.lightness,
+                            divisions: 100,
+                            label: '${(p.lightness * 100).round()}%',
+                            onChanged: widget.onLightness,
+                            onChangeEnd: (_) => widget.onAppearanceCommit(),
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -3618,15 +3653,18 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               label('${p.cornerRadius.round()} / 32'),
             ],
           ),
-          Slider(
-            key: const ValueKey('corner-radius'),
-            value: p.cornerRadius,
-            min: 0,
-            max: 32,
-            divisions: 32,
-            label: '${p.cornerRadius.round()}',
-            onChanged: widget.onRadius,
-            onChangeEnd: (_) => widget.onAppearanceCommit(),
+          AnimatedSliderStyle(
+            palette: p,
+            child: Slider(
+              key: const ValueKey('corner-radius'),
+              value: p.cornerRadius,
+              min: 0,
+              max: 32,
+              divisions: 32,
+              label: '${p.cornerRadius.round()}',
+              onChanged: widget.onRadius,
+              onChangeEnd: (_) => widget.onAppearanceCommit(),
+            ),
           ),
           Text(
             l.mainSquareCorners,
@@ -3640,14 +3678,17 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                 label('${p.windowRadius.round()} / 32'),
               ],
             ),
-            Slider(
-              key: const ValueKey('window-radius'),
-              value: p.windowRadius,
-              max: 32,
-              divisions: 32,
-              label: '${p.windowRadius.round()}',
-              onChanged: widget.onWindowRadius,
-              onChangeEnd: (_) => widget.onAppearanceCommit(),
+            AnimatedSliderStyle(
+              palette: p,
+              child: Slider(
+                key: const ValueKey('window-radius'),
+                value: p.windowRadius,
+                max: 32,
+                divisions: 32,
+                label: '${p.windowRadius.round()}',
+                onChanged: widget.onWindowRadius,
+                onChangeEnd: (_) => widget.onAppearanceCommit(),
+              ),
             ),
             Text(
               l.mainWindowRadiusDetail,
@@ -3659,8 +3700,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           const SizedBox(height: 10),
           LayoutBuilder(
             builder: (_, constraints) => Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 12,
+              runSpacing: 12,
               children: BackgroundMode.values
                   .map(
                     (mode) => SizedBox(
@@ -3767,8 +3808,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   if (p.backdrop == BackgroundMode.texture) ...[
                     const SizedBox(height: 14),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: 12,
+                      runSpacing: 12,
                       children: [
                         OutlinedButton.icon(
                           key: const ValueKey('texture-file'),
@@ -4397,6 +4438,77 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       search.clear();
     });
     persist();
+  }
+
+  void _dismissDraftHandoffRoute() {
+    final route = _draftHandoffRoute;
+    _draftHandoffRoute = null;
+    if (route == null) return;
+    // Navigation can be locked while Studio updates/disposes. Remove only our
+    // owned route after this frame, never pop an unrelated new-workspace page.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (route.isActive) route.navigator?.removeRoute(route);
+    });
+  }
+
+  Future<void> reviewDraftHandoffRecovery() async {
+    final backend = widget.workbench;
+    if (backend is! WorkbenchEditorDraftHandoffProposalSupport) return;
+    bool current() => mounted && identical(widget.workbench, backend);
+    bool canWrite() => current() && backend!.writable;
+    final coordinator = _draftHandoffRecovery ??= EditorDraftHandoffCoordinator(
+      (backend as WorkbenchEditorDraftHandoffProposalSupport)
+          .editorDraftHandoffProposals,
+      isCurrent: current,
+      canWrite: canWrite,
+      beforeAction: (record, action) async {
+        if (backend is! WorkbenchPluginControl) {
+          throw StateError('Current plugin state is unavailable');
+        }
+        final plugin = await (backend as WorkbenchPluginControl).pluginState();
+        if (!canWrite() || !plugin.writable) {
+          throw StateError('Draft recovery workspace permission changed');
+        }
+        // Cancellation/retirement release host-owned draft state; they do not
+        // require executing an installed plugin or replaying business content.
+        if (action == EditorDraftHandoffAction.complete) {
+          if (!plugin.enabled ||
+              !plugin.approved ||
+              !plugin.available ||
+              backend is! WorkbenchVersionedContent) {
+            throw StateError('Draft recovery source plugin is unavailable');
+          }
+          final source = await (backend as WorkbenchVersionedContent)
+              .versionedContent
+              .read(record.summary.cardId);
+          if (!canWrite() ||
+              source.deleted ||
+              source.revision !=
+                  record.proposal.handoff.request.sourceRevision) {
+            throw StateError('Draft recovery source changed');
+          }
+        }
+      },
+    );
+    if (identical(_draftHandoffDialogOwner, coordinator)) return;
+    _draftHandoffDialogOwner = coordinator;
+    final route = DialogRoute<void>(
+      context: context,
+      builder: (_) => EditorDraftHandoffRecoveryDialog(
+        coordinator: coordinator,
+        isCurrent: current,
+        canWrite: canWrite,
+      ),
+    );
+    _draftHandoffRoute = route;
+    try {
+      await Navigator.of(context, rootNavigator: true).push(route);
+    } finally {
+      if (identical(_draftHandoffRoute, route)) _draftHandoffRoute = null;
+      if (identical(_draftHandoffDialogOwner, coordinator)) {
+        _draftHandoffDialogOwner = null;
+      }
+    }
   }
 
   Future<void> reviewDraftImportRecovery() async {
@@ -5485,8 +5597,8 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   ),
                   const SizedBox(height: 12),
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                    spacing: 12,
+                    runSpacing: 12,
                     children: [
                       FilledButton.tonalIcon(
                         key: const ValueKey('idea-paste'),

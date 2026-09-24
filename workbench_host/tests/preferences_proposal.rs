@@ -64,7 +64,7 @@ fn committed_proposal_survives_reopen_without_reexecution_and_ack_is_bound() {
         h.operation_evidence("morrow-studio-preferences", "original")
             .unwrap()
             .len(),
-        1
+        0
     );
     h.submit_preferences("original", bytes.clone()).unwrap();
     h.acknowledge_preferences("original", &digest).unwrap();
@@ -76,30 +76,33 @@ fn committed_proposal_survives_reopen_without_reexecution_and_ack_is_bound() {
     assert_eq!(h.read_preferences().unwrap(), Some(bytes));
 }
 #[test]
-fn unexecuted_proposal_is_not_replayed_on_reopen_and_cannot_rebase() {
+fn unexecuted_noop_proposal_is_not_replayed_on_reopen_and_cannot_rebase() {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("store.db");
     let bytes = config("dark");
     let mut h = Workbench::open(&path, Some(package())).unwrap();
+    h.save_preferences("baseline", bytes.clone()).unwrap();
     enabled(&mut h, false);
-    assert!(h.submit_preferences("original", bytes.clone()).is_err());
-    assert!(h.read_preferences().unwrap().is_none());
+    // An unchanged value leaves no business receipt, but the proposal remains durable.
+    h.submit_preferences("original", bytes.clone()).unwrap();
+    assert!(
+        h.operation_evidence("morrow-studio-preferences", "original")
+            .is_err()
+    );
     drop(h);
     let mut h = Workbench::open(&path, Some(package())).unwrap();
     assert_eq!(
         h.pending_preferences().unwrap(),
         Some(("original".into(), bytes.clone()))
     );
-    assert!(h.read_preferences().unwrap().is_none());
+    assert_eq!(h.read_preferences().unwrap(), Some(bytes.clone()));
+    enabled(&mut h, true);
+    h.save_preferences("other-writer", config("white")).unwrap();
+    assert!(h.submit_preferences("original", bytes.clone()).is_err());
     assert!(
         h.acknowledge_preferences("original", &Sha256::digest(&bytes))
             .is_err()
     );
-    enabled(&mut h, true);
-    // A trusted older writer advanced settings; the frozen proposal must not
-    // silently acquire that new revision when explicitly retried.
-    h.save_preferences("other-writer", config("white")).unwrap();
-    assert!(h.submit_preferences("original", bytes.clone()).is_err());
     assert_eq!(h.read_preferences().unwrap(), Some(config("white")));
     assert_eq!(
         h.pending_preferences().unwrap(),
@@ -126,8 +129,9 @@ fn explicit_abandonment_reserves_original_id_across_slot_reuse_and_restart() {
     let path = dir.path().join("store.db");
     let mut h = Workbench::open(&path, Some(package())).unwrap();
     let dark = config("dark");
+    h.save_preferences("baseline", dark.clone()).unwrap();
     enabled(&mut h, false);
-    assert!(h.submit_preferences("abandoned", dark.clone()).is_err());
+    h.submit_preferences("abandoned", dark.clone()).unwrap();
     enabled(&mut h, true);
     h.save_preferences("other-writer", config("white")).unwrap();
     assert!(
@@ -183,4 +187,92 @@ fn explicit_abandonment_reserves_original_id_across_slot_reuse_and_restart() {
     assert!(h.submit_preferences("abandoned", dark).is_err());
     assert!(h.pending_preferences().unwrap().is_none());
     assert_eq!(h.read_preferences().unwrap(), Some(config("dark")));
+}
+
+#[test]
+fn private_settings_save_without_plugin_has_no_guest_evidence() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("store.db");
+    let dark = config("dark");
+    let mut h = Workbench::open(&path, None).unwrap();
+    assert!(!h.writable(), "content commands still require the plugin");
+    assert!(h.save_preferences("guest-route", dark.clone()).is_err());
+    assert_eq!(h.submit_preferences("local", dark.clone()).unwrap(), dark);
+    assert_eq!(h.read_preferences().unwrap(), Some(dark.clone()));
+    assert!(h.pending_preferences().unwrap().is_some());
+    assert!(
+        h.operation_evidence("morrow-studio-preferences", "local")
+            .unwrap()
+            .is_empty()
+    );
+    h.acknowledge_preferences("local", &Sha256::digest(&dark))
+        .unwrap();
+    drop(h);
+    let mut h = Workbench::open(&path, None).unwrap();
+    assert_eq!(h.read_preferences().unwrap(), Some(dark.clone()));
+    assert!(h.pending_preferences().unwrap().is_none());
+    assert!(h.save_preferences("guest-route", dark).is_err());
+}
+
+#[test]
+fn disabled_plugin_keeps_private_settings_writable_and_content_gated() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("store.db");
+    let mut h = Workbench::open(&path, Some(package())).unwrap();
+    enabled(&mut h, false);
+    let dark = config("dark");
+    assert!(!h.writable());
+    assert!(h.save_preferences("guest-route", dark.clone()).is_err());
+    assert!(h.create("card", common::idea("card")).is_err());
+    h.submit_preferences("local", dark.clone()).unwrap();
+    assert!(
+        h.operation_evidence("morrow-studio-preferences", "local")
+            .unwrap()
+            .is_empty()
+    );
+    h.acknowledge_preferences("local", &Sha256::digest(&dark))
+        .unwrap();
+    drop(h);
+    let h = Workbench::open(&path, Some(package())).unwrap();
+    assert_eq!(h.read_preferences().unwrap(), Some(dark));
+    assert!(!h.writable());
+}
+
+#[test]
+fn private_historical_retry_never_overwrites_later_value_or_accepts_changed_intent() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("store.db");
+    let mut h = Workbench::open(&path, None).unwrap();
+    let dark = config("dark");
+    let white = config("white");
+    h.submit_preferences("first", dark.clone()).unwrap();
+    h.acknowledge_preferences("first", &Sha256::digest(&dark))
+        .unwrap();
+    h.submit_preferences("second", white.clone()).unwrap();
+    h.acknowledge_preferences("second", &Sha256::digest(&white))
+        .unwrap();
+    assert_eq!(h.submit_preferences("first", dark.clone()).unwrap(), dark);
+    assert_eq!(h.read_preferences().unwrap(), Some(white.clone()));
+    assert!(h.submit_preferences("first", white.clone()).is_err());
+    assert_eq!(h.read_preferences().unwrap(), Some(white.clone()));
+    drop(h);
+    let mut h = Workbench::open(&path, None).unwrap();
+    assert_eq!(
+        h.pending_preferences().unwrap(),
+        Some(("first".into(), dark.clone()))
+    );
+    assert_eq!(h.submit_preferences("first", dark.clone()).unwrap(), dark);
+    assert_eq!(h.read_preferences().unwrap(), Some(white));
+}
+
+#[test]
+fn private_settings_reject_cross_card_operation_collision_before_journaling() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("store.db");
+    let mut h = Workbench::open(&path, Some(package())).unwrap();
+    h.create("occupied", common::idea("card")).unwrap();
+    enabled(&mut h, false);
+    assert!(h.submit_preferences("occupied", config("dark")).is_err());
+    assert!(h.pending_preferences().unwrap().is_none());
+    assert!(h.read_preferences().unwrap().is_none());
 }

@@ -1,0 +1,9 @@
+{
+  "@@locale": "zh",
+  "shutdownTitle": "正在关闭工作台",
+  "shutdownWaiting": "正在等待内容服务退出。确认退出前，资料库仍由原服务持有。",
+  "shutdownStillRunning": "关闭所需时间超出预期。仍在观察内容服务。",
+  "shutdownBackground": "转入后台继续关闭",
+  "shutdownBackgroundHint": "内容服务退出后 Morrow 会自动关闭。如果关闭失败或长时间未结束，此窗口会重新显示。",
+  "shutdownFailure": "关闭过程出现问题。仍在观察内容服务。"
+}

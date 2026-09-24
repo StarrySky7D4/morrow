@@ -1,0 +1,9 @@
+{
+  "@@locale": "es",
+  "shutdownTitle": "Cerrando el espacio de trabajo",
+  "shutdownWaiting": "Esperando a que termine el servicio de contenido. La biblioteca sigue bajo su control hasta que se confirme la salida.",
+  "shutdownStillRunning": "El cierre tarda más de lo esperado. Se sigue observando el servicio de contenido.",
+  "shutdownBackground": "Continuar el cierre en segundo plano",
+  "shutdownBackgroundHint": "Morrow se cerrará cuando termine el servicio. Si hay un error o la espera se prolonga, esta ventana volverá a aparecer.",
+  "shutdownFailure": "Se produjo un problema al cerrar. Se sigue observando el servicio de contenido."
+}

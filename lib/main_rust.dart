@@ -1,5 +1,7 @@
 import 'package:file_selector/file_selector.dart';
 import 'plugins/workbench_recovery.dart';
+import 'plugins/workbench_shutdown.dart';
+import 'plugins/application_shutdown.dart';
 import 'plugins/workbench_self_check.dart';
 import 'plugins/canvas_self_check.dart';
 import 'dart:io';
@@ -22,37 +24,29 @@ Future<void>? _desktopInitialization;
 final _applicationClose = _ApplicationClose();
 
 class _ApplicationClose with WindowListener {
-  bool requested = false, destroying = false;
-  void observe() {
-    if (!requested || destroying) return;
-    if (_sessions.owner == null && _sessions.phase == SessionPhase.opening) {
-      return;
-    }
-    if (_sessions.mayRecover) {
-      destroying = true;
-      unawaited(windowManager.destroy());
-    } else {
-      unawaited(_sessions.close().catchError((Object _) {}));
-    }
-  }
+  late final ApplicationShutdown shutdown = ApplicationShutdown(
+    session: _sessions,
+    showClosing: () => runApp(
+      WorkbenchShutdown(
+        session: _sessions,
+        locale: WidgetsBinding.instance.platformDispatcher.locale,
+        onBackground: shutdown.continueInBackground,
+        windowError: shutdown.windowError,
+      ),
+    ),
+    hideWindow: windowManager.hide,
+    showWindow: () async {
+      await windowManager.show();
+      await windowManager.focus();
+    },
+    destroyWindow: windowManager.destroy,
+  );
+
+  bool get requested => shutdown.requested;
+  void observe() => shutdown.observe();
 
   @override
-  void onWindowClose() {
-    if (requested) return;
-    requested = true;
-    runApp(
-      WorkbenchRecovery(
-        session: _sessions,
-        message: L10n.forLocale(
-          WidgetsBinding.instance.platformDispatcher.locale,
-        ).recoveryClosing,
-        onRetry: () async {
-          observe();
-        },
-      ),
-    );
-    observe();
-  }
+  void onWindowClose() => shutdown.request();
 }
 
 Future<void> _initializeApplicationWindow() async {
@@ -131,6 +125,7 @@ Future<void> _startSession(List<String> arguments) async {
           : selected.substring('--data-directory='.length),
     );
     recoveryDirectory = directory;
+    if (_applicationClose.requested) return;
     if (await File('${directory.path}/MIGRATION_INCOMPLETE.txt').exists()) {
       throw StateError(startupMessages.recoveryMigrationIncomplete);
     }
@@ -170,7 +165,15 @@ Future<void> _startSession(List<String> arguments) async {
       return;
     }
     if (check != null) await seedQualification(backend, directory);
+    if (_applicationClose.requested) {
+      _applicationClose.observe();
+      return;
+    }
     final storage = await RustStudioStorage.open(backend);
+    if (_applicationClose.requested) {
+      _applicationClose.observe();
+      return;
+    }
     _sessions.active();
     startup.mark('storage');
     final boundary = GlobalKey();
@@ -222,6 +225,15 @@ Future<void> _startSession(List<String> arguments) async {
     // Render recovery immediately. Waiting for a worker is owned and observed
     // outside the ordinary RPC lane, and does not authorize another writer.
     unawaited(_sessions.close().catchError((Object _) {}));
+    if (_applicationClose.requested) {
+      FlutterError.reportError(FlutterErrorDetails(
+        exception: error,
+        stack: stack,
+        context: ErrorDescription('while closing the workspace'),
+      ));
+      _applicationClose.observe();
+      return;
+    }
     final check = arguments
         .where((v) => v.startsWith('--self-check='))
         .firstOrNull;

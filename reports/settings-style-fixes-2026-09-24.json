@@ -1,0 +1,166 @@
+{
+  "created_utc": "2026-09-24T12:12:06.912724+00:00",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.6",
+  "sources": {
+    "lib/main.dart": {
+      "sha256": "8801ce2413d2b6b66c3dfcc3a5cb4deaf3672cdaa13268c91d420b916b3cf3f9",
+      "bytes": 218339
+    },
+    "lib/neumorphic_controls.dart": {
+      "sha256": "e81cfad30d1773bcbb03cf4672d726088b565194f4d4762881c0407e4ee2dfb5",
+      "bytes": 47470
+    },
+    "lib/experimental_controls.dart": {
+      "sha256": "49fca4c997258716377f9359e02b0fd6cb2a794b4feb3c1f1f785d6ca94c0272",
+      "bytes": 20678
+    },
+    "lib/styled_checkbox.dart": {
+      "sha256": "4b81ab35c364a45a44a920a6bbb7d951e662d983fb56627e65c578401b1bf6f8",
+      "bytes": 15516
+    },
+    "lib/switch_icon_transition.dart": {
+      "sha256": "4677f206c3a4206733091e918dd11172a277c5e7527d2a01cae37a79a8391a2e",
+      "bytes": 4435
+    },
+    "lib/versioned_task_panel.dart": {
+      "sha256": "634cf9165e5eb4a6ba178e1832565ba04daa1a7d26cf34254b3bea0fd4ca2318",
+      "bytes": 18905
+    },
+    "workbench_host/src/lib.rs": {
+      "sha256": "3fe8124948e36341d16ff419fff2968c29e5a1a1eb8e7933dd47be201ca91fa1",
+      "bytes": 31690
+    },
+    "workbench_host/src/protocol.rs": {
+      "sha256": "a106d12b552c6b39d46bf3bf021fad5b6ae787aab3f6a026fe131d810d64b303",
+      "bytes": 64825
+    },
+    "workbench_host/src/preferences_local.rs": {
+      "sha256": "de048befa44bc472f14aaf5f729f62a47f7b52a151b177b0051ffa3d2f0735f5",
+      "bytes": 4486
+    },
+    "workbench_host/src/preferences_proposal.rs": {
+      "sha256": "8656b1e01c636cb89745d7b40c14b1408a9c6d1fa5685929d7cb05f6a08fed72",
+      "bytes": 11711
+    },
+    "workbench_host/tests/preferences_proposal.rs": {
+      "sha256": "3dc0ce1dce834250257495fc27fd83364f33651316daf82a0b7fbec40771fa3a",
+      "bytes": 11251
+    },
+    "test/font_settings_test.dart": {
+      "sha256": "47647ca9cd47e8ebfcd679180f6e231b2026eee41e2463a35d65b73259745066",
+      "bytes": 5720
+    },
+    "test/disabled_plugin_preferences_native_test.dart": {
+      "sha256": "6ebdc7abe184045b33d30db1491693ef722111937baaa96687e48f01cd8ca105",
+      "bytes": 2254
+    },
+    "test/switch_icon_transition_test.dart": {
+      "sha256": "555d50f99af381fdd6b97dbd3aec71a7e42cbc496de474317e16f8f835eff138",
+      "bytes": 3509
+    },
+    "test/styled_checkbox_transition_test.dart": {
+      "sha256": "f7b11727d19ef6058c340d04db1de9ecd8f25488fee481dc90e6ebbd92eec75a",
+      "bytes": 13146
+    },
+    "test/style_depth_states_preview_test.dart": {
+      "sha256": "bcfe6dfc2fe309fb0d13944eb71dfd1c3bd459c88c0d8d1ab4d9e9e74eeab8c6",
+      "bytes": 9917
+    },
+    "test/goldens/neumorphic_controls_light.png": {
+      "sha256": "4a2288dc2f442cd76488b75434d4843c5d68535d8da0ce9b2ae4e1c1474ec117",
+      "bytes": 35568
+    },
+    "test/goldens/neumorphic_controls_dark.png": {
+      "sha256": "8250b4d65605c3ccdb739bcccc43281c68d3095df3a9cd9e54ca6b9c6b0b87fc",
+      "bytes": 36092
+    },
+    "reports/settings-style-fixes-2026-09-24.md": {
+      "sha256": "4366dbac6e23ddab47429980e1507535661d365bf35bae261c9b46b716875daf",
+      "bytes": 4278
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "124029ece6423f5644962d54b5bd464359ab2ec750b34928ec5bb781193714d1",
+      "bytes": 90276
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "1fdb2468fdc433c587dadf4f7d0e77c971f5f0e03b1bf00ee2002b2cc9e8e34d",
+      "bytes": 13321104
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "698d48d203fd1fe669cfd4060d7287317deb41a47ef114a155d7753768879358",
+      "bytes": 15543808
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "75ef78073f2d3e9e2977f0db4046f378da4e87a7608e10d83d5ec15eb4ff5bd3",
+      "bytes": 8715776
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "c71dc27866378894d5288053238fef9e0ef15f6b578449279bc681e7fe8b560e",
+      "bytes": 878357
+    }
+  },
+  "logs": {
+    "build/settings-style-fixes-regression.log": {
+      "sha256": "2cfa65a6ea0f42326ba8e5c647c03f0e0d7b204b15d3537ec5929939db06ae69",
+      "bytes": 15364
+    },
+    "build/settings-style-checkbox-final.log": {
+      "sha256": "815778918ef1082c48cfc6ede0048749facd8a3378f17aeed138c4fea1f49de7",
+      "bytes": 2904
+    },
+    "build/settings-style-task-panel.log": {
+      "sha256": "f22b3b666f8873218e0b5b729f5cc39e48484501b513d61411e6056c77670ddf",
+      "bytes": 904
+    },
+    "build/settings-save-fixes-native.log": {
+      "sha256": "ea771751988d68184b53192a839d0c3706d0d294eaa75315d58fa1778ba87cda",
+      "bytes": 4660
+    },
+    "build/settings-style-fixes-installed-native.log": {
+      "sha256": "ccb07be4978a24ac48e969865dd3e76bbab25a7de1ee99dc30d2f828319601aa",
+      "bytes": 3321
+    },
+    "build/settings-style-fixes-analyze.log": {
+      "sha256": "72fbb46d9502b08a57299fba8dc8b9beb4210a3c4d730a9606c7affd5a4f1d79",
+      "bytes": 98
+    },
+    "build/settings-style-fixes-windows.log": {
+      "sha256": "fc0387f763de956ebecc462ca17c0b216da1bcfcd59594aa27581a8f1c9f665f",
+      "bytes": 17396
+    }
+  },
+  "reviewed_previews": {
+    "build/ui-style-preview/style-depth-comparison-before.png": {
+      "sha256": "3ba55eaa3d1c38c3f737a8d279929941a56e6f59a5551fc602b28398497ab235",
+      "bytes": 117604
+    },
+    "build/ui-style-preview/style-depth-comparison.png": {
+      "sha256": "52981380d219b4ab429c483d4ca9524773d9101c5dbdc6a7797bd8f737143cb9",
+      "bytes": 108448
+    },
+    "build/ui-style-preview/style-depth-states.png": {
+      "sha256": "6027244b8169baee892d824f1a24d1035558941d11396476d63ffa4685216ae2",
+      "bytes": 82145
+    }
+  },
+  "validation": {
+    "dart_unique_tests": 106,
+    "installed_host_tests": 14,
+    "rust_proposal_tests": 8,
+    "rust_evidence_tests": 10,
+    "rust_test_evidence": "subagent preferences_save_validation tool outputs; no separate persisted log",
+    "windows_install_exit": 0,
+    "installed_artifacts_match_builds": true,
+    "gpu_profile": false,
+    "android_web_build": false,
+    "desktop_automation": false,
+    "pushed_or_released": false
+  }
+}

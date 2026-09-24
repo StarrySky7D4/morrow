@@ -139,17 +139,50 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1034,29 @@
   "mainDeleted": "«{title}» удалено",
   "mainDiagnosticDetails": "Диагностические сведения",
   "mainDone": "Готово",
+  "mainDraftHandoffRecoveryAssets": "Закреплённые вложения",
+  "mainDraftHandoffRecoveryCancel": "Отменить передачу",
+  "mainDraftHandoffRecoveryCancelBody": "Отменить незавершённую передачу. Исходная операция больше не сможет создать последующий черновик. Родительский черновик останется без изменений.",
+  "mainDraftHandoffRecoveryCancelled": "Передача отменена",
+  "mainDraftHandoffRecoveryChildCommitted": "Последующий черновик сохранён, родительский ещё не выведен из работы",
+  "mainDraftHandoffRecoveryComplete": "Создать последующий черновик",
+  "mainDraftHandoffRecoveryCompleteBody": "Создать последующий черновик из сохранённого исходного предложения. Итоговая карточка не будет отправлена повторно.",
+  "mainDraftHandoffRecoveryConfirmTitle": "Подтвердить действие с передачей черновика",
+  "mainDraftHandoffRecoveryConfirmed": "Операция подтверждена и сохранена.",
+  "mainDraftHandoffRecoveryConflict": "Текущее состояние изменилось; проверьте его",
+  "mainDraftHandoffRecoveryEmpty": "Нет записей о передаче для проверки",
+  "mainDraftHandoffRecoveryFailed": "Не удалось завершить операцию. Обновите данные и проверьте запись.",
+  "mainDraftHandoffRecoveryFields": "Содержимое исходного черновика",
+  "mainDraftHandoffRecoveryInspect": "Просмотреть и проверить",
+  "mainDraftHandoffRecoveryIntro": "Здесь можно только просмотреть сохранённые записи о передаче. Открытие страницы не отправляет содержимое автоматически.",
+  "mainDraftHandoffRecoveryParentRetired": "Передача завершена",
+  "mainDraftHandoffRecoveryPending": "Последующий черновик ещё не создан",
+  "mainDraftHandoffRecoveryReadOnly": "В этой рабочей области доступен только просмотр",
+  "mainDraftHandoffRecoveryRetire": "Вывести родительский черновик из работы",
+  "mainDraftHandoffRecoveryRetireBody": "Убедившись, что последующий черновик сохранён, отметьте родительский черновик как выведенный из работы.",
+  "mainDraftHandoffRecoverySelection": "Выберите запись, чтобы просмотреть черновик целиком.",
+  "mainDraftHandoffRecoveryTitle": "Восстановление передачи черновика",
+  "mainDraftHandoffRecoveryUnknown": "Результат операции ещё не подтверждён. Проверьте исходную запись и не повторяйте операцию.",
   "mainDraftImportRecoveryCancelBody": "После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.",
   "mainDraftImportRecoveryCancelDecision": "Отменить запрос на отказ",
   "mainDraftImportRecoveryCancelTitle": "Отменить этот запрос на отказ?",
@@ -1224,10 +1280,24 @@
   "mainSteps": "Шаги: {done}/{total}",
   "mainStorageUnavailable": "Локальное хранилище недоступно. Изменения сохранятся только до конца сеанса.",
   "mainStorageUnreadable": "Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.",
+  "mainStyleBrutalist": "Брутализм",
+  "mainStyleBrutalistDescription": "Жёсткие углы, выразительные рамки и смещённые тени",
+  "mainStyleClay": "Глина",
+  "mainStyleClayDescription": "Округлые формы с мягко приподнятым цветом",
+  "mainStyleDepth": "Глубина рельефа",
+  "mainStyleDepthGuide": "Настройте выпуклости и углубления, не меняя непрозрачность стекла.",
+  "mainStyleDepthReset": "Сбросить до 100 %",
+  "mainStyleExperimental": "Экспериментально",
   "mainStyleFlat": "Плоский · По умолчанию",
   "mainStyleFlatDescription": "Лёгкие контуры и чёткие слои",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "Полупрозрачные слои и акцентные линии",
+  "mainStyleIndustrial": "Индустриальный",
+  "mainStyleIndustrialDescription": "Панели под металл, компактные элементы и точные линии",
   "mainStyleNeumorphism": "Неоморфизм",
   "mainStyleNeumorphismDescription": "Мягкие светотени и лёгкий рельеф",
+  "mainStylePaper": "Бумага",
+  "mainStylePaperDescription": "Матовые поверхности, тонкие рамки и сдержанная глубина",
   "mainTaskAdd": "Добавить задачу",
   "mainTaskAmbiguousDecision": "Состояние этих старых задач с одинаковыми названиями неизвестно. Подтвердите каждую задачу отдельно.",
   "mainTaskCompleteAllAndSetStage": "Выполнить все и задать этап",
@@ -1731,6 +1801,12 @@
   "recoverySwitchUnknown": "Переключение библиотеки не подтверждено. Откройте рабочую область заново для проверки.",
   "recoveryTargetExists": "Папка восстановления уже существует. Выберите новую, ещё не существующую папку.",
   "recoveryTitle": "Открыть рабочую область заново",
+  "shutdownBackground": "Продолжить закрытие в фоне",
+  "shutdownBackgroundHint": "Morrow закроется после выхода службы. При ошибке или длительном ожидании это окно появится снова.",
+  "shutdownFailure": "При закрытии возникла проблема. Наблюдение за службой продолжается.",
+  "shutdownStillRunning": "Завершение занимает больше времени, чем ожидалось. Наблюдение за службой продолжается.",
+  "shutdownTitle": "Закрытие рабочего пространства",
+  "shutdownWaiting": "Ожидание завершения службы содержимого. Библиотека остаётся за ней, пока выход не подтверждён.",
   "visualApplyColor": "Применить цвет",
   "visualApplyComponent": "Применить к этому компоненту",
   "visualApplyTexture": "Применить медиа",

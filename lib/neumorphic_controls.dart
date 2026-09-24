@@ -1,12 +1,18 @@
+import 'surface_paint_boundary.dart';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import 'appearance.dart';
+import 'experimental_controls.dart';
+import 'style_input_border.dart';
+import 'switch_icon_transition.dart';
+import 'styled_checkbox.dart';
 
 /// A visual layer only: the child keeps its own gestures, focus and semantics.
-/// Positive depth is raised, negative depth is recessed, and zero is unchanged.
-class NeumorphicSurface extends StatelessWidget {
+/// Positive depth is raised, negative depth is recessed; at zero only an
+/// requested fill and explicit focus or high-contrast outlines remain.
+class NeumorphicSurface extends StatefulWidget {
   const NeumorphicSurface({
     super.key,
     required this.palette,
@@ -29,64 +35,311 @@ class NeumorphicSurface extends StatelessWidget {
   final bool focused;
 
   @override
+  State<NeumorphicSurface> createState() => _NeumorphicSurfaceState();
+}
+
+class _NeumorphicSurfaceState extends State<NeumorphicSurface>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 160),
+    value: 1,
+  );
+  late _SurfaceFrame _from = _SurfaceFrame.target(widget);
+  late _SurfaceFrame _to = _from;
+  bool _reduceMotion = false;
+  bool _tickerEnabled = true;
+
+  _SurfaceFrame get _displayed => _controller.value >= 1
+      ? _to
+      : _SurfaceFrame.lerp(
+          _from,
+          _to,
+          Curves.easeOutCubic.transform(_controller.value),
+        );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduceMotion = MediaQuery.disableAnimationsOf(context);
+    _tickerEnabled = TickerMode.valuesOf(context).enabled;
+    if ((_reduceMotion || !_tickerEnabled) && _controller.isAnimating) {
+      _controller.stop();
+      _from = _to;
+      _controller.value = 1;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant NeumorphicSurface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final next = _SurfaceFrame.target(widget);
+    if (_to.sameAs(next)) return;
+    final current = _displayed;
+    _from = current;
+    _to = next;
+    if (_reduceMotion ||
+        !_tickerEnabled ||
+        (current.depth == 0 && next.depth == 0)) {
+      _controller.stop();
+      _from = _to;
+      _controller.value = 1;
+    } else {
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final active =
-        palette.surfaces.visualStyle == VisualStyle.neumorphism && depth != 0;
-    final targetDepth = active ? depth : 0.0;
     final highContrast = MediaQuery.highContrastOf(context);
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: targetDepth, end: targetDepth),
-      duration: motionDuration(context, 160),
-      curve: Curves.easeOutCubic,
-      child: child,
-      builder: (context, paintedDepth, child) {
-        final painter = paintedDepth == 0
-            ? null
-            : NeumorphicSurfacePainter(
-                depth: paintedDepth,
-                radius: borderRadius ?? palette.borderRadius(12),
-                surface: color ?? palette.surface,
-                dark: palette.dark,
-                enabled: enabled,
-                highContrast: highContrast,
-                fill: fill && paintedDepth > 0,
-                focused: focused,
-                focusColor: palette.accent,
-              );
-        return CustomPaint(
-          painter: paintedDepth > 0
-              ? painter
-              : paintedDepth < 0 && fill
-              ? _NeumorphicFillPainter(
-                  color: color ?? palette.surface,
-                  radius: borderRadius ?? palette.borderRadius(12),
-                )
-              : null,
-          foregroundPainter: paintedDepth < 0 ? painter : null,
-          child: child,
+    return AnimatedBuilder(
+      animation: _controller,
+      child: widget.child,
+      builder: (context, child) {
+        final frame = _displayed;
+        final settled = _controller.value >= 1;
+        final active =
+            frame.activeWeight > 0 &&
+            (frame.depth != 0 || widget.fill || widget.focused || highContrast);
+        CustomPainter? edge;
+        if (active) {
+          if (settled) {
+            final style = widget.palette.surfaces.visualStyle;
+            edge = style == VisualStyle.neumorphism
+                ? NeumorphicSurfacePainter(
+                    depth: frame.depth,
+                    radius: frame.radius,
+                    surface: frame.surface,
+                    dark: frame.dark,
+                    enabled: widget.enabled,
+                    highContrast: highContrast,
+                    fill: widget.fill && frame.depth > 0,
+                    focused: widget.focused,
+                    focusColor: frame.focusColor,
+                  )
+                : style == VisualStyle.flat
+                ? null
+                : ExperimentalSurfacePainter(
+                    style: style,
+                    depth: frame.depth,
+                    radius: frame.radius,
+                    surface: frame.surface,
+                    dark: frame.dark,
+                    enabled: widget.enabled,
+                    highContrast: highContrast,
+                    fill: widget.fill && frame.depth > 0,
+                    focused: widget.focused,
+                    focusColor: frame.focusColor,
+                  );
+          } else {
+            edge = SurfaceStyleBlendPainter._(
+              frame: frame,
+              enabled: widget.enabled,
+              highContrast: highContrast,
+              fill: widget.fill && frame.depth > 0,
+              focused: widget.focused,
+            );
+          }
+        }
+        return SurfacePaintBoundary(
+          child: CustomPaint(
+            painter: frame.depth > 0
+                ? edge
+                : widget.fill && active
+                ? _NeumorphicFillPainter(
+                    color: frame.surface,
+                    radius: frame.radius,
+                    opacity: frame.activeWeight,
+                  )
+                : null,
+            foregroundPainter: frame.depth <= 0 ? edge : null,
+            child: child,
+          ),
         );
       },
     );
   }
 }
 
+/// A fixed seven-slot visual state. Reversals interpolate from the actual
+/// displayed weights, so an interrupted A to B to C transition does not jump to B.
+class _SurfaceFrame {
+  _SurfaceFrame({
+    required this.weights,
+    required this.depth,
+    required this.radius,
+    required this.surface,
+    required this.focusColor,
+    required this.darkness,
+  });
+
+  factory _SurfaceFrame.target(NeumorphicSurface widget) {
+    final weights = List<double>.filled(VisualStyle.values.length, 0);
+    weights[widget.palette.surfaces.visualStyle.index] = 1;
+    return _SurfaceFrame(
+      weights: weights,
+      depth: widget.depth * widget.palette.surfaces.styleDepth,
+      radius: widget.borderRadius ?? widget.palette.borderRadius(12),
+      surface: widget.color ?? widget.palette.surface,
+      focusColor: widget.palette.accent,
+      darkness: widget.palette.dark ? 1 : 0,
+    );
+  }
+
+  final List<double> weights;
+  final double depth;
+  final BorderRadius radius;
+  final Color surface;
+  final Color focusColor;
+  final double darkness;
+  bool get dark => darkness >= .5;
+
+  double get activeWeight => 1 - weights[VisualStyle.flat.index];
+
+  bool sameAs(_SurfaceFrame other) {
+    if (depth != other.depth ||
+        radius != other.radius ||
+        surface != other.surface ||
+        focusColor != other.focusColor ||
+        darkness != other.darkness) {
+      return false;
+    }
+    for (var i = 0; i < weights.length; i++) {
+      if (weights[i] != other.weights[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static _SurfaceFrame lerp(_SurfaceFrame a, _SurfaceFrame b, double t) =>
+      _SurfaceFrame(
+        weights: List<double>.generate(
+          VisualStyle.values.length,
+          (i) => a.weights[i] + (b.weights[i] - a.weights[i]) * t,
+        ),
+        depth: a.depth + (b.depth - a.depth) * t,
+        radius: BorderRadius.lerp(a.radius, b.radius, t)!,
+        surface: Color.lerp(a.surface, b.surface, t)!,
+        focusColor: Color.lerp(a.focusColor, b.focusColor, t)!,
+        darkness: a.darkness + (b.darkness - a.darkness) * t,
+      );
+}
+
+/// Paints a bounded blend of style edges. No extra child, opacity layer or
+/// saveLayer is created; the seven weights only affect border geometry.
+class SurfaceStyleBlendPainter extends CustomPainter {
+  const SurfaceStyleBlendPainter._({
+    required this._frame,
+    required this.enabled,
+    required this.highContrast,
+    required this.fill,
+    required this.focused,
+  });
+
+  final _SurfaceFrame _frame;
+  final bool enabled;
+  final bool highContrast;
+  final bool fill;
+  final bool focused;
+
+  List<double> get styleWeights => List<double>.unmodifiable(_frame.weights);
+  BorderRadius get radius => _frame.radius;
+  Color get surface => _frame.surface;
+  double get depth => _frame.depth;
+  double get darkness => _frame.darkness;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty || (depth == 0 && !fill && !focused && !highContrast)) {
+      return;
+    }
+    if (fill && _frame.activeWeight > 0) {
+      canvas.drawRRect(
+        _frame.radius.toRRect(Offset.zero & size),
+        Paint()
+          ..color = _frame.surface.withValues(
+            alpha: _frame.surface.a * _frame.activeWeight,
+          ),
+      );
+    }
+    for (final style in VisualStyle.values) {
+      final opacity = _frame.weights[style.index];
+      if (style == VisualStyle.flat || opacity <= .001) {
+        continue;
+      }
+      if (style == VisualStyle.neumorphism) {
+        NeumorphicSurfacePainter(
+          depth: depth,
+          radius: _frame.radius,
+          surface: _frame.surface,
+          dark: _frame.dark,
+          darkMix: darkness,
+          enabled: enabled,
+          highContrast: highContrast,
+          fill: false,
+          focused: focused,
+          focusColor: _frame.focusColor,
+          opacity: opacity,
+        ).paint(canvas, size);
+      } else {
+        ExperimentalSurfacePainter(
+          style: style,
+          depth: depth,
+          radius: _frame.radius,
+          surface: _frame.surface,
+          dark: _frame.dark,
+          darkMix: darkness,
+          enabled: enabled,
+          highContrast: highContrast,
+          fill: false,
+          focused: focused,
+          focusColor: _frame.focusColor,
+          opacity: opacity,
+        ).paint(canvas, size);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SurfaceStyleBlendPainter old) =>
+      !_frame.sameAs(old._frame) ||
+      enabled != old.enabled ||
+      highContrast != old.highContrast ||
+      fill != old.fill ||
+      focused != old.focused;
+}
+
 class _NeumorphicFillPainter extends CustomPainter {
-  const _NeumorphicFillPainter({required this.color, required this.radius});
+  const _NeumorphicFillPainter({
+    required this.color,
+    required this.radius,
+    this.opacity = 1,
+  });
 
   final Color color;
   final BorderRadius radius;
+  final double opacity;
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRRect(
       radius.toRRect(Offset.zero & size),
-      Paint()..color = color,
+      Paint()..color = color.withValues(alpha: color.a * opacity),
     );
   }
 
   @override
   bool shouldRepaint(covariant _NeumorphicFillPainter oldDelegate) =>
-      color != oldDelegate.color || radius != oldDelegate.radius;
+      color != oldDelegate.color ||
+      radius != oldDelegate.radius ||
+      opacity != oldDelegate.opacity;
 }
 
 /// Paints the same top-left light source for raised and recessed controls.
@@ -102,40 +355,62 @@ class NeumorphicSurfacePainter extends CustomPainter {
     required this.fill,
     required this.focused,
     required this.focusColor,
+    this.opacity = 1,
+    this.darkMix,
   });
 
   final double depth;
   final BorderRadius radius;
   final Color surface;
   final bool dark;
+  final double? darkMix;
+  double get darkness => (darkMix ?? (dark ? 1.0 : 0.0)).clamp(0.0, 1.0);
+  double _lightValue(double light, double dark) =>
+      light + (dark - light) * darkness;
   final bool enabled;
   final bool highContrast;
   final bool fill;
   final bool focused;
   final Color focusColor;
+  final double opacity;
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (size.isEmpty || depth == 0) return;
+    if (size.isEmpty || (depth == 0 && !fill && !focused && !highContrast)) {
+      return;
+    }
     final rect = Offset.zero & size;
     final rrect = radius.toRRect(rect);
     final strength = depth.abs().clamp(0.0, 2.0);
-    final alpha = (enabled ? 1.0 : .38) * (highContrast ? 0.0 : 1.0);
+    final reliefStrength = strength.clamp(0.0, 1.0);
+    final alpha =
+        (enabled ? 1.0 : .38) *
+        (highContrast ? 0.0 : 1.0) *
+        opacity *
+        reliefStrength;
     final light = Color.lerp(
       surface,
       Colors.white,
-      dark ? .28 : .8,
-    )!.withValues(alpha: (dark ? .20 : .82) * alpha);
+      _lightValue(.8, .28),
+    )!.withValues(alpha: (_lightValue(.82, .20)) * alpha);
     final shade = Color.lerp(
       surface,
       Colors.black,
-      dark ? .85 : .75,
-    )!.withValues(alpha: (dark ? .52 : .24) * alpha);
-    final shift = 2.0 * strength;
-    final blur = 4.0 * strength;
+      _lightValue(.75, .85),
+    )!.withValues(alpha: (_lightValue(.24, .52)) * alpha);
+    final shift = 1.25 * strength;
+    // Keep the Gaussian kernel stable while depth animates.
+    const blur = 2.0;
 
-    if (fill) canvas.drawRRect(rrect, Paint()..color = surface);
-    if (!highContrast) {
+    // Raised relief restores its fill after painting outer casts. Paint only
+    // once: a translucent color must not become more opaque before a press.
+    if (fill && (depth <= 0 || highContrast)) {
+      canvas.drawRRect(
+        rrect,
+        Paint()..color = surface.withValues(alpha: surface.a * opacity),
+      );
+    }
+    if (!highContrast && depth != 0) {
       if (depth > 0) {
         // Outer casts are visible on free surfaces. The inner edge also reads
         // clearly when Material clips a button's background builder.
@@ -155,24 +430,33 @@ class NeumorphicSurfacePainter extends CustomPainter {
             ..strokeWidth = 1.5 * strength
             ..maskFilter = MaskFilter.blur(BlurStyle.normal, blur),
         );
-        if (fill) canvas.drawRRect(rrect, Paint()..color = surface);
+        if (fill) {
+          canvas.drawRRect(
+            rrect,
+            Paint()..color = surface.withValues(alpha: surface.a * opacity),
+          );
+        }
         _paintEdge(canvas, rrect, light, shade, strength);
       } else {
-        _paintInset(canvas, rrect, shade, light, shift, blur);
+        paintInset(canvas, rrect, shade, light, shift, blur);
       }
     }
     if (highContrast || focused) {
       canvas.drawRRect(
         rrect.deflate(1),
         Paint()
-          ..color = focused ? focusColor : (dark ? Colors.white : Colors.black)
+          ..color =
+              (focused
+                      ? focusColor
+                      : Color.lerp(Colors.black, Colors.white, darkness)!)
+                  .withValues(alpha: opacity)
           ..style = PaintingStyle.stroke
           ..strokeWidth = highContrast ? 2 : 1.5,
       );
     }
   }
 
-  static void _paintInset(
+  static void paintInset(
     Canvas canvas,
     RRect rrect,
     Color topShade,
@@ -231,17 +515,21 @@ class NeumorphicSurfacePainter extends CustomPainter {
       radius != oldDelegate.radius ||
       surface != oldDelegate.surface ||
       dark != oldDelegate.dark ||
+      darkMix != oldDelegate.darkMix ||
       enabled != oldDelegate.enabled ||
       highContrast != oldDelegate.highContrast ||
       fill != oldDelegate.fill ||
       focused != oldDelegate.focused ||
-      focusColor != oldDelegate.focusColor;
+      focusColor != oldDelegate.focusColor ||
+      opacity != oldDelegate.opacity;
 }
 
-class NeumorphicInputBorder extends OutlineInputBorder {
+class NeumorphicInputBorder extends StyledInputBorder {
   const NeumorphicInputBorder({
     required this.surface,
     required this.dark,
+    this.darkMix,
+    this.styleDepth = 1,
     super.borderRadius,
     super.borderSide,
     super.gapPadding,
@@ -249,6 +537,13 @@ class NeumorphicInputBorder extends OutlineInputBorder {
 
   final Color surface;
   final bool dark;
+  final double? darkMix;
+  final double styleDepth;
+  double get darkness => darkMix ?? (dark ? 1 : 0);
+
+  @override
+  InputRelief get relief =>
+      InputRelief(neumorphic: 1, darkness: darkness, depth: styleDepth);
 
   @override
   NeumorphicInputBorder copyWith({
@@ -258,6 +553,8 @@ class NeumorphicInputBorder extends OutlineInputBorder {
   }) => NeumorphicInputBorder(
     surface: surface,
     dark: dark,
+    darkMix: darkMix,
+    styleDepth: styleDepth,
     borderSide: borderSide ?? this.borderSide,
     borderRadius: borderRadius ?? this.borderRadius,
     gapPadding: gapPadding ?? this.gapPadding,
@@ -267,6 +564,8 @@ class NeumorphicInputBorder extends OutlineInputBorder {
   NeumorphicInputBorder scale(double t) => NeumorphicInputBorder(
     surface: surface,
     dark: dark,
+    darkMix: darkMix,
+    styleDepth: styleDepth,
     borderSide: borderSide.scale(t),
     borderRadius: borderRadius * t,
     gapPadding: gapPadding * t,
@@ -278,6 +577,8 @@ class NeumorphicInputBorder extends OutlineInputBorder {
       return NeumorphicInputBorder(
         surface: Color.lerp(a.surface, surface, t)!,
         dark: t < .5 ? a.dark : dark,
+        darkMix: a.darkness + (darkness - a.darkness) * t,
+        styleDepth: a.styleDepth + (styleDepth - a.styleDepth) * t,
         borderSide: BorderSide.lerp(a.borderSide, borderSide, t),
         borderRadius: BorderRadius.lerp(a.borderRadius, borderRadius, t)!,
         gapPadding: a.gapPadding + (gapPadding - a.gapPadding) * t,
@@ -297,37 +598,10 @@ class NeumorphicInputBorder extends OutlineInputBorder {
       other is NeumorphicInputBorder &&
       super == other &&
       surface == other.surface &&
-      dark == other.dark;
+      darkness == other.darkness;
 
   @override
-  int get hashCode => Object.hash(super.hashCode, surface, dark);
-
-  @override
-  void paint(
-    Canvas canvas,
-    Rect rect, {
-    double? gapStart,
-    double gapExtent = 0,
-    double gapPercentage = 0,
-    TextDirection? textDirection,
-  }) {
-    NeumorphicSurfacePainter._paintInset(
-      canvas,
-      borderRadius.toRRect(rect),
-      Colors.black.withValues(alpha: dark ? .48 : .20),
-      Colors.white.withValues(alpha: dark ? .14 : .75),
-      2,
-      4,
-    );
-    super.paint(
-      canvas,
-      rect,
-      gapStart: gapStart,
-      gapExtent: gapExtent,
-      gapPercentage: gapPercentage,
-      textDirection: textDirection,
-    );
-  }
+  int get hashCode => Object.hash(super.hashCode, surface, darkness);
 }
 
 /// Changes only visual theme fields. State, callbacks, padding, text and
@@ -343,6 +617,9 @@ ThemeData applyNeumorphicControls(ThemeData base, Palette palette) {
     return (original ?? const ButtonStyle()).copyWith(
       elevation: const WidgetStatePropertyAll(0),
       shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(borderRadius: palette.borderRadius(radius)),
+      ),
       backgroundBuilder: (context, states, child) => NeumorphicSurface(
         palette: palette,
         depth:
@@ -364,6 +641,7 @@ ThemeData applyNeumorphicControls(ThemeData base, Palette palette) {
       NeumorphicInputBorder(
         surface: palette.surface,
         dark: palette.dark,
+        styleDepth: palette.surfaces.styleDepth,
         borderRadius: palette.borderRadius(13),
         borderSide: BorderSide(color: line, width: width),
       );
@@ -390,9 +668,8 @@ ThemeData applyNeumorphicControls(ThemeData base, Palette palette) {
       border: border(palette.line, 1),
     ),
     checkboxTheme: base.checkboxTheme.copyWith(
-      shape: _NeumorphicCheckboxBorder(
-        palette: palette,
-        enabled: true,
+      shape: StyledCheckboxThemeShape(
+        insetPalette: palette,
         borderRadius: palette.borderRadius(5),
       ),
       side: BorderSide(color: palette.line, width: 1.5),
@@ -410,18 +687,39 @@ ThemeData applyNeumorphicControls(ThemeData base, Palette palette) {
         palette.dark ? Colors.black.withValues(alpha: .45) : palette.line,
       ),
       trackOutlineWidth: const WidgetStatePropertyAll(2),
-      thumbColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.disabled)
-            ? palette.surface.withValues(alpha: .55)
-            : palette.surface,
-      ),
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        // Contrast belongs to the native moving thumb, not a separately
+        // positioned cast that would remain behind during a drag.
+        final raised = Color.lerp(
+          palette.surface,
+          Colors.white,
+          palette.dark ? .14 : .5,
+        )!;
+        return states.contains(WidgetState.disabled)
+            ? raised.withValues(alpha: .55)
+            : raised;
+      }),
     ),
     sliderTheme: base.sliderTheme.copyWith(
       trackHeight: 7,
       trackShape: _NeumorphicSliderTrack(palette),
       thumbShape: _NeumorphicSliderThumb(palette),
       inactiveTrackColor: palette.surface,
-      activeTrackColor: palette.accent,
+      disabledInactiveTrackColor: palette.surface.withValues(
+        alpha: palette.surface.a * .45,
+      ),
+      activeTrackColor: palette.accent.withValues(
+        alpha: palette.accent.a * .76,
+      ),
+      disabledActiveTrackColor: palette.accent.withValues(
+        alpha: palette.accent.a * .3,
+      ),
+      secondaryActiveTrackColor:
+          base.sliderTheme.secondaryActiveTrackColor ??
+          palette.accent.withValues(alpha: palette.accent.a * .36),
+      disabledSecondaryActiveTrackColor:
+          base.sliderTheme.disabledSecondaryActiveTrackColor ??
+          palette.accent.withValues(alpha: palette.accent.a * .16),
       thumbColor: palette.surface,
       disabledThumbColor: palette.surface.withValues(alpha: .5),
     ),
@@ -458,6 +756,14 @@ class _NeumorphicSliderTrack extends SliderTrackShape
     bool isDiscrete = false,
     required TextDirection textDirection,
   }) {
+    if ((sliderTheme.trackHeight ?? 0) <= 0) return;
+    final progress = enableAnimation.value.clamp(0.0, 1.0);
+    Color animated(Color? disabled, Color? enabled, Color fallback) =>
+        Color.lerp(
+          disabled ?? fallback.withValues(alpha: fallback.a * .45),
+          enabled ?? fallback,
+          progress,
+        )!;
     final rect = getPreferredRect(
       parentBox: parentBox,
       offset: offset,
@@ -473,9 +779,11 @@ class _NeumorphicSliderTrack extends SliderTrackShape
     canvas.drawRRect(
       rrect,
       Paint()
-        ..color = isEnabled
-            ? palette.surface
-            : palette.surface.withValues(alpha: .45),
+        ..color = animated(
+          sliderTheme.disabledInactiveTrackColor,
+          sliderTheme.inactiveTrackColor,
+          palette.surface,
+        ),
     );
     final active = textDirection == TextDirection.ltr
         ? Rect.fromLTRB(rect.left, rect.top, thumbCenter.dx, rect.bottom)
@@ -485,17 +793,60 @@ class _NeumorphicSliderTrack extends SliderTrackShape
     canvas.drawRect(
       active,
       Paint()
-        ..color = isEnabled
-            ? palette.accent.withValues(alpha: .76)
-            : palette.accent.withValues(alpha: .3),
+        ..color = animated(
+          sliderTheme.disabledActiveTrackColor,
+          sliderTheme.activeTrackColor,
+          palette.accent,
+        ),
     );
+    final isLTR = textDirection == TextDirection.ltr;
+    if (secondaryOffset != null &&
+        (isLTR
+            ? secondaryOffset.dx > thumbCenter.dx
+            : secondaryOffset.dx < thumbCenter.dx)) {
+      final buffer = isLTR
+          ? Rect.fromLTRB(
+              thumbCenter.dx,
+              rect.top,
+              secondaryOffset.dx,
+              rect.bottom,
+            )
+          : Rect.fromLTRB(
+              secondaryOffset.dx,
+              rect.top,
+              thumbCenter.dx,
+              rect.bottom,
+            );
+      final radius = Radius.circular(rect.height / 2);
+      canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          buffer,
+          topLeft: isLTR ? Radius.zero : radius,
+          bottomLeft: isLTR ? Radius.zero : radius,
+          topRight: isLTR ? radius : Radius.zero,
+          bottomRight: isLTR ? radius : Radius.zero,
+        ),
+        Paint()
+          ..color = animated(
+            sliderTheme.disabledSecondaryActiveTrackColor,
+            sliderTheme.secondaryActiveTrackColor,
+            palette.accent.withValues(alpha: .36),
+          ),
+      );
+    }
     canvas.restore();
-    NeumorphicSurfacePainter._paintInset(
+    final reliefOpacity =
+        (.45 + .55 * progress) * palette.surfaces.styleDepth.clamp(0, 1);
+    NeumorphicSurfacePainter.paintInset(
       canvas,
       rrect,
-      Colors.black.withValues(alpha: palette.dark ? .48 : .24),
-      Colors.white.withValues(alpha: palette.dark ? .12 : .72),
-      1.5,
+      Colors.black.withValues(
+        alpha: (palette.dark ? .48 : .24) * reliefOpacity,
+      ),
+      Colors.white.withValues(
+        alpha: (palette.dark ? .12 : .72) * reliefOpacity,
+      ),
+      1.5 * palette.surfaces.styleDepth,
       2.5,
     );
   }
@@ -531,29 +882,41 @@ class _NeumorphicSliderThumb extends SliderComponentShape {
       const Radius.circular(10),
     );
     canvas.drawRRect(
-      rrect.shift(const Offset(-1.5, -1.5)),
+      rrect.shift(const Offset(-1.5, -1.5) * palette.surfaces.styleDepth),
       Paint()
         ..color = Colors.white.withValues(
-          alpha: (palette.dark ? .16 : .8) * alpha,
+          alpha:
+              (palette.dark ? .16 : .8) *
+              alpha *
+              palette.surfaces.styleDepth.clamp(0, 1),
         )
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
     );
     canvas.drawRRect(
-      rrect.shift(const Offset(1.5, 1.5)),
+      rrect.shift(const Offset(1.5, 1.5) * palette.surfaces.styleDepth),
       Paint()
         ..color = Colors.black.withValues(
-          alpha: (palette.dark ? .55 : .25) * alpha,
+          alpha:
+              (palette.dark ? .55 : .25) *
+              alpha *
+              palette.surfaces.styleDepth.clamp(0, 1),
         )
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
     );
     canvas.drawRRect(
       rrect,
-      Paint()..color = palette.surface.withValues(alpha: alpha),
+      Paint()
+        ..color = Color.lerp(
+          sliderTheme.disabledThumbColor ??
+              palette.surface.withValues(alpha: palette.surface.a * .45),
+          sliderTheme.thumbColor ?? palette.surface,
+          enableAnimation.value.clamp(0.0, 1.0),
+        )!,
     );
     canvas.drawRRect(
       rrect.deflate(.6),
       Paint()
-        ..color = palette.line
+        ..color = palette.line.withValues(alpha: palette.line.a * alpha)
         ..style = PaintingStyle.stroke,
     );
   }
@@ -562,7 +925,7 @@ class _NeumorphicSliderThumb extends SliderComponentShape {
 /// Uses the native Switch for gestures, keyboard focus, animation and semantics.
 /// Its exact Material track bounds receive the recessed painter underneath it.
 /// Adaptive switches on Apple platforms keep their native Cupertino appearance.
-class NeumorphicSwitch extends StatelessWidget {
+class NeumorphicSwitch extends StatefulWidget {
   const NeumorphicSwitch({
     super.key,
     required this.palette,
@@ -589,82 +952,270 @@ class NeumorphicSwitch extends StatelessWidget {
   final WidgetStateProperty<Icon?>? thumbIcon;
 
   @override
-  Widget build(BuildContext context) {
+  State<NeumorphicSwitch> createState() => _NeumorphicSwitchState();
+}
+
+class _NeumorphicSwitchState extends State<NeumorphicSwitch>
+    with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 180),
+    value: 1,
+  );
+  _SwitchRelief? _from, _to;
+  bool _motion = true, _apple = false, _highContrast = false;
+
+  _SwitchRelief get displayed => _controller.value == 1
+      ? _to!
+      : _SwitchRelief.lerp(
+          _from!,
+          _to!,
+          Curves.easeOutCubic.transform(_controller.value),
+        );
+
+  void retarget() {
+    final p = widget.palette;
+    final next = _SwitchRelief(
+      amount:
+          p.surfaces.visualStyle == VisualStyle.neumorphism &&
+              !_apple &&
+              !_highContrast
+          ? 1
+          : 0,
+      depth: p.surfaces.styleDepth,
+      darkness: p.dark ? 1 : 0,
+      enabled: widget.onChanged == null ? 0 : 1,
+      surface: p.surface,
+      accent: p.accent,
+    );
+    if (_to == null) {
+      _from = _to = next;
+    } else if (!_to!.sameAs(next)) {
+      _from = displayed;
+      _to = next;
+      if (_motion && !_apple && !_highContrast) {
+        _controller.forward(from: 0);
+      } else {
+        _controller.stop();
+        _from = _to;
+        _controller.value = 1;
+      }
+    }
+    if (!_motion || _apple || _highContrast) {
+      _controller.stop();
+      _from = _to;
+      _controller.value = 1;
+    }
+  }
+
+  void readEnvironment() {
     final theme = Theme.of(context);
-    final appleAdaptive =
-        adaptive &&
+    _apple =
+        widget.adaptive &&
         (theme.platform == TargetPlatform.iOS ||
             theme.platform == TargetPlatform.macOS);
-    final active =
-        palette.surfaces.visualStyle == VisualStyle.neumorphism &&
-        !appleAdaptive &&
-        !MediaQuery.highContrastOf(context);
-    const transparent = WidgetStatePropertyAll<Color>(Colors.transparent);
-    final native = adaptive
-        ? Switch.adaptive(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: activeThumbColor,
-            focusNode: focusNode,
-            autofocus: autofocus,
-            materialTapTargetSize: materialTapTargetSize,
-            mouseCursor: mouseCursor,
-            thumbIcon: thumbIcon,
-            trackColor: active ? transparent : null,
-            trackOutlineColor: active ? transparent : null,
-            trackOutlineWidth: active
-                ? const WidgetStatePropertyAll<double>(0)
-                : null,
-          )
-        : Switch(
-            value: value,
-            onChanged: onChanged,
-            activeThumbColor: activeThumbColor,
-            focusNode: focusNode,
-            autofocus: autofocus,
-            materialTapTargetSize: materialTapTargetSize,
-            mouseCursor: mouseCursor,
-            thumbIcon: thumbIcon,
-            trackColor: active ? transparent : null,
-            trackOutlineColor: active ? transparent : null,
-            trackOutlineWidth: active
-                ? const WidgetStatePropertyAll<double>(0)
-                : null,
-          );
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: value ? 1 : 0, end: value ? 1 : 0),
-      duration: motionDuration(context, theme.useMaterial3 ? 300 : 200),
-      curve: theme.useMaterial3 ? Curves.easeOutBack : Curves.easeInOut,
-      child: native,
-      builder: (context, position, child) => CustomPaint(
-        painter: active
-            ? _NeumorphicSwitchPainter(
-                palette: palette,
-                position: position,
-                textDirection: Directionality.of(context),
-                enabled: onChanged != null,
-                material3: theme.useMaterial3,
-              )
-            : null,
-        child: child,
-      ),
-    );
+    _highContrast = MediaQuery.highContrastOf(context);
+    _motion =
+        !MediaQuery.disableAnimationsOf(context) &&
+        TickerMode.valuesOf(context).enabled;
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    readEnvironment();
+    retarget();
+  }
+
+  @override
+  void didUpdateWidget(NeumorphicSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    readEnvironment();
+    retarget();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: _controller,
+    builder: (context, _) {
+      final theme = Theme.of(context);
+      final frame = displayed;
+      final weight = frame.amount;
+      // Resolve fallbacks only during the handoff. At zero native defaults,
+      // custom SwitchThemes and Cupertino adaptations own the entire track.
+      final track = weight == 0
+          ? null
+          : WidgetStateProperty.resolveWith<Color?>((states) {
+              final color =
+                  SwitchTheme.of(context).trackColor?.resolve(states) ??
+                  (states.contains(WidgetState.selected) &&
+                          !states.contains(WidgetState.disabled) &&
+                          widget.activeThumbColor != null
+                      ? widget.activeThumbColor!.withAlpha(0x80)
+                      : _switchTrackFallback(theme, states));
+              return color.withValues(alpha: color.a * (1 - weight));
+            });
+      final outline = weight == 0
+          ? null
+          : WidgetStateProperty.resolveWith<Color?>((states) {
+              final color =
+                  SwitchTheme.of(context).trackOutlineColor?.resolve(states) ??
+                  (!theme.useMaterial3 || states.contains(WidgetState.selected)
+                      ? Colors.transparent
+                      : states.contains(WidgetState.disabled)
+                      ? theme.colorScheme.onSurface.withValues(alpha: .12)
+                      : theme.colorScheme.outline);
+              return color.withValues(alpha: color.a * (1 - weight));
+            });
+      // Keep an icon slot in all Material styles. A transparent slot uses the
+      // same native thumb radius, avoiding a size jump when glyphs appear.
+      final targetIcons = WidgetStateProperty.resolveWith<Icon?>((states) {
+        final custom = widget.thumbIcon?.resolve(states);
+        if (custom != null) return custom;
+        final glyph = switch (widget.palette.surfaces.visualStyle) {
+          VisualStyle.industrial => Icons.power_settings_new_rounded,
+          VisualStyle.brutalist => Icons.stop_rounded,
+          _ => null,
+        };
+        return Icon(
+          glyph,
+          size: 14,
+          color:
+              (widget.palette.surfaces.visualStyle == VisualStyle.brutalist
+                      ? widget.palette.surface
+                      : widget.palette.ink)
+                  .withValues(
+                    alpha: states.contains(WidgetState.disabled) ? .38 : 1,
+                  ),
+        );
+      });
+      return SwitchIconTransition(
+        icons: targetIcons,
+        animate: _motion && !_apple && !_highContrast,
+        fallbackColor: widget.palette.ink,
+        builder: (context, icons) {
+          final native = widget.adaptive
+              ? Switch.adaptive(
+                  value: widget.value,
+                  onChanged: widget.onChanged,
+                  activeThumbColor: widget.activeThumbColor,
+                  focusNode: widget.focusNode,
+                  autofocus: widget.autofocus,
+                  materialTapTargetSize: widget.materialTapTargetSize,
+                  mouseCursor: widget.mouseCursor,
+                  thumbIcon: _apple ? widget.thumbIcon : icons,
+                  trackColor: track,
+                  trackOutlineColor: outline,
+                )
+              : Switch(
+                  value: widget.value,
+                  onChanged: widget.onChanged,
+                  activeThumbColor: widget.activeThumbColor,
+                  focusNode: widget.focusNode,
+                  autofocus: widget.autofocus,
+                  materialTapTargetSize: widget.materialTapTargetSize,
+                  mouseCursor: widget.mouseCursor,
+                  thumbIcon: _apple ? widget.thumbIcon : icons,
+                  trackColor: track,
+                  trackOutlineColor: outline,
+                );
+          return TweenAnimationBuilder<double>(
+            tween: Tween<double>(
+              begin: widget.value ? 1 : 0,
+              end: widget.value ? 1 : 0,
+            ),
+            duration: _motion
+                ? motionDuration(context, theme.useMaterial3 ? 300 : 200)
+                : Duration.zero,
+            curve: theme.useMaterial3 ? Curves.easeOutBack : Curves.easeInOut,
+            child: native,
+            builder: (context, position, child) => CustomPaint(
+              painter: weight == 0
+                  ? null
+                  : _NeumorphicSwitchPainter(
+                      frame: frame,
+                      position: position,
+                      textDirection: Directionality.of(context),
+                      material3: theme.useMaterial3,
+                    ),
+              child: child,
+            ),
+          );
+        },
+      );
+    },
+  );
+}
+
+// Matches the installed Material Switch defaults. Keep endpoint tests against
+// the native control when upgrading Flutter; no fallback applies on Cupertino.
+Color _switchTrackFallback(ThemeData theme, Set<WidgetState> states) {
+  final disabled = states.contains(WidgetState.disabled);
+  final selected = states.contains(WidgetState.selected);
+  if (theme.useMaterial3) {
+    if (disabled) {
+      return (selected
+              ? theme.colorScheme.onSurface
+              : theme.colorScheme.surfaceContainerHighest)
+          .withValues(alpha: .12);
+    }
+    return selected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.surfaceContainerHighest;
+  }
+  final dark = theme.brightness == Brightness.dark;
+  if (disabled) return dark ? Colors.white10 : Colors.black12;
+  if (selected) return theme.colorScheme.secondary.withAlpha(0x80);
+  return dark ? Colors.white30 : const Color(0x52000000);
+}
+
+@immutable
+class _SwitchRelief {
+  const _SwitchRelief({
+    required this.amount,
+    required this.depth,
+    required this.darkness,
+    required this.enabled,
+    required this.surface,
+    required this.accent,
+  });
+  final double amount, depth, darkness, enabled;
+  final Color surface, accent;
+  bool sameAs(_SwitchRelief b) =>
+      amount == b.amount &&
+      depth == b.depth &&
+      darkness == b.darkness &&
+      enabled == b.enabled &&
+      surface == b.surface &&
+      accent == b.accent;
+  static _SwitchRelief lerp(_SwitchRelief a, _SwitchRelief b, double t) =>
+      _SwitchRelief(
+        amount: a.amount + (b.amount - a.amount) * t,
+        depth: a.depth + (b.depth - a.depth) * t,
+        darkness: a.darkness + (b.darkness - a.darkness) * t,
+        enabled: a.enabled + (b.enabled - a.enabled) * t,
+        surface: Color.lerp(a.surface, b.surface, t)!,
+        accent: Color.lerp(a.accent, b.accent, t)!,
+      );
 }
 
 class _NeumorphicSwitchPainter extends CustomPainter {
   const _NeumorphicSwitchPainter({
-    required this.palette,
+    required this.frame,
     required this.position,
     required this.textDirection,
-    required this.enabled,
     required this.material3,
   });
 
-  final Palette palette;
+  final _SwitchRelief frame;
   final double position;
   final TextDirection textDirection;
-  final bool enabled;
   final bool material3;
 
   @override
@@ -677,59 +1228,32 @@ class _NeumorphicSwitchPainter extends CustomPainter {
       height: height,
     );
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(height / 2));
-    final opacity = enabled ? 1.0 : .42;
+    final opacity = (.42 + .58 * frame.enabled) * frame.amount;
+    final darkness = frame.darkness;
+    final relief = opacity * frame.depth.clamp(0, 1);
     final fill = Color.lerp(
-      Color.lerp(palette.surface, Colors.black, palette.dark ? .12 : .02)!,
-      palette.accent,
+      Color.lerp(frame.surface, Colors.black, .02 + .10 * darkness)!,
+      frame.accent,
       position * .55,
     )!;
     canvas.drawRRect(rrect, Paint()..color = fill.withValues(alpha: opacity));
-    NeumorphicSurfacePainter._paintInset(
+    NeumorphicSurfacePainter.paintInset(
       canvas,
       rrect,
-      Colors.black.withValues(alpha: (palette.dark ? .5 : .23) * opacity),
-      Colors.white.withValues(alpha: (palette.dark ? .12 : .8) * opacity),
-      2,
+      Colors.black.withValues(alpha: (.23 + .27 * darkness) * relief),
+      Colors.white.withValues(alpha: (.8 - .68 * darkness) * relief),
+      2 * frame.depth,
       3,
     );
-    // Flutter paints the native thumb above this layer; these two casts sit
-    // directly behind its actual circular area and leave its icon intact.
-    final center = Offset(
-      rect.left +
-          height / 2 +
-          (textDirection == TextDirection.rtl ? 1 - position : position) *
-              (width - height),
-      rect.center.dy,
-    );
-    final radius = material3 ? 8 + 4 * position : 10.0;
-    for (final (shift, color) in [
-      (
-        const Offset(-1.5, -1.5),
-        Colors.white.withValues(alpha: (palette.dark ? .34 : .78) * opacity),
-      ),
-      (
-        const Offset(1.5, 1.5),
-        Colors.black.withValues(alpha: (palette.dark ? .52 : .25) * opacity),
-      ),
-    ]) {
-      canvas.drawCircle(
-        center + shift,
-        radius,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
-      );
-    }
+    // The native switch alone owns its moving thumb and reaction. A second
+    // logical-value shadow cannot follow native drag/pressed geometry.
   }
 
   @override
   bool shouldRepaint(covariant _NeumorphicSwitchPainter oldDelegate) =>
-      palette != oldDelegate.palette ||
+      !frame.sameAs(oldDelegate.frame) ||
       position != oldDelegate.position ||
       textDirection != oldDelegate.textDirection ||
-      enabled != oldDelegate.enabled ||
       material3 != oldDelegate.material3;
 }
 
@@ -760,94 +1284,17 @@ class NeumorphicCheckbox extends StatelessWidget {
   final bool isError;
 
   @override
-  Widget build(BuildContext context) {
-    final platform = Theme.of(context).platform;
-    final appleAdaptive =
-        adaptive &&
-        (platform == TargetPlatform.iOS || platform == TargetPlatform.macOS);
-    final active =
-        palette.surfaces.visualStyle == VisualStyle.neumorphism &&
-        !appleAdaptive &&
-        !MediaQuery.highContrastOf(context);
-    final shape = active
-        ? _NeumorphicCheckboxBorder(
-            palette: palette,
-            enabled: onChanged != null,
-            side: BorderSide(color: palette.line),
-            borderRadius: palette.borderRadius(5),
-          )
-        : null;
-    return adaptive
-        ? Checkbox.adaptive(
-            value: value,
-            tristate: tristate,
-            onChanged: onChanged,
-            focusNode: focusNode,
-            autofocus: autofocus,
-            semanticLabel: semanticLabel,
-            isError: isError,
-            shape: shape,
-          )
-        : Checkbox(
-            value: value,
-            tristate: tristate,
-            onChanged: onChanged,
-            focusNode: focusNode,
-            autofocus: autofocus,
-            semanticLabel: semanticLabel,
-            isError: isError,
-            shape: shape,
-          );
-  }
-}
-
-class _NeumorphicCheckboxBorder extends RoundedRectangleBorder {
-  const _NeumorphicCheckboxBorder({
-    required this.palette,
-    required this.enabled,
-    super.side,
-    super.borderRadius,
-  });
-
-  final Palette palette;
-  final bool enabled;
-
-  @override
-  _NeumorphicCheckboxBorder copyWith({
-    BorderSide? side,
-    BorderRadiusGeometry? borderRadius,
-  }) => _NeumorphicCheckboxBorder(
+  Widget build(BuildContext context) => StyledCheckbox(
     palette: palette,
-    enabled: enabled,
-    side: side ?? this.side,
-    borderRadius: borderRadius ?? this.borderRadius,
+    value: value,
+    onChanged: onChanged,
+    tristate: tristate,
+    adaptive: adaptive,
+    focusNode: focusNode,
+    autofocus: autofocus,
+    semanticLabel: semanticLabel,
+    isError: isError,
   );
-
-  @override
-  bool operator ==(Object other) =>
-      other is _NeumorphicCheckboxBorder &&
-      super == other &&
-      identical(palette, other.palette) &&
-      enabled == other.enabled;
-
-  @override
-  int get hashCode => Object.hash(super.hashCode, palette, enabled);
-  @override
-  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
-    super.paint(canvas, rect, textDirection: textDirection);
-    NeumorphicSurfacePainter._paintInset(
-      canvas,
-      borderRadius.resolve(textDirection).toRRect(rect),
-      Colors.black.withValues(
-        alpha: (palette.dark ? .5 : .24) * (enabled ? 1 : .38),
-      ),
-      Colors.white.withValues(
-        alpha: (palette.dark ? .16 : .8) * (enabled ? 1 : .38),
-      ),
-      1.5,
-      2.5,
-    );
-  }
 }
 
 /// A native ChoiceChip with state-specific bevels at its actual chip bounds.
@@ -934,14 +1381,15 @@ class _NeumorphicChipBorder extends StadiumBorder {
       rect,
       Radius.circular(rect.height / 2),
     );
-    final opacity = enabled ? 1.0 : .38;
+    final opacity =
+        (enabled ? 1.0 : .38) * palette.surfaces.styleDepth.clamp(0, 1);
     if (selected) {
-      NeumorphicSurfacePainter._paintInset(
+      NeumorphicSurfacePainter.paintInset(
         canvas,
         rrect,
         Colors.black.withValues(alpha: (palette.dark ? .48 : .22) * opacity),
         Colors.white.withValues(alpha: (palette.dark ? .14 : .72) * opacity),
-        1.5,
+        1.5 * palette.surfaces.styleDepth,
         3,
       );
     } else {
@@ -950,7 +1398,7 @@ class _NeumorphicChipBorder extends StadiumBorder {
         rrect,
         Colors.white.withValues(alpha: (palette.dark ? .18 : .75) * opacity),
         Colors.black.withValues(alpha: (palette.dark ? .48 : .22) * opacity),
-        1,
+        palette.surfaces.styleDepth,
       );
     }
   }

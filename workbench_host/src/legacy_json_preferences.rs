@@ -1,7 +1,7 @@
 //! Strict conversion of the old shared-preferences snapshot. The original JSON
 //! is retained separately by the migration command for forensic comparison.
 use crate::{FontPreference, Result, Workbench};
-use morrow_workbench_plugin::preferences::{self, Preferences, Source, Track, proto};
+use morrow_workbench_plugin::preferences::{self, proto, Preferences, Source, Track};
 use serde_json::{Map, Value};
 use std::path::Path;
 
@@ -167,6 +167,7 @@ fn parse(snapshot: &Value) -> Result<Parsed> {
             "glass",
             "background",
             "visualStyle",
+            "styleDepth",
             "solidTint",
             "frostedOpacity",
             "cornerRadius",
@@ -227,6 +228,7 @@ fn parse(snapshot: &Value) -> Result<Parsed> {
         glass: str_field(data, "glass", "frosted")?,
         background: str_field(data, "background", "ambient")?,
         visual_style: str_field(data, "visualStyle", "flat")?,
+        style_depth: Some(f64_field(data, "styleDepth", 1.)?),
         solid_tint: u32_field(data, "solidTint", 0)?.min(3),
         opacity,
         corner_radius,
@@ -337,6 +339,7 @@ fn parse(snapshot: &Value) -> Result<Parsed> {
                     "mode",
                     "followComponent",
                     "cornerRadius",
+                    "styleDepth",
                 ],
                 "component material",
             )?;
@@ -353,6 +356,7 @@ fn parse(snapshot: &Value) -> Result<Parsed> {
                 corner_radius: radius.unwrap_or(0.),
                 has_corner_radius: radius.is_some(),
                 follow_component: str_field(material, "followComponent", "")?,
+                style_depth: optional_f64(material, "styleDepth")?,
             });
         }
     }

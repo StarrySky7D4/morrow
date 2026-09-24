@@ -1,0 +1,73 @@
+{
+  "created_utc": "2026-09-24T13:05:56.008051+00:00",
+  "dart_unique_tests": 47,
+  "rust_tests": 31,
+  "windows_build": "passed",
+  "application_version": "0.1.9-test.54+58",
+  "files": {
+    "lib/appearance.dart": {
+      "sha256": "ff5a52e6d4b2424ca5562db6aafeca054c2f9515ae3e7c0e068f7f3d2f99e9c9",
+      "bytes": 28699
+    },
+    "lib/neumorphic_controls.dart": {
+      "sha256": "a9056a753acad2162d7a354b4711c5a22002028492f9aa81da1e35a8675cf9c3",
+      "bytes": 47586
+    },
+    "lib/experimental_controls.dart": {
+      "sha256": "cff13bcb48722b6d55c528419d6b9685c6fec96743fb6519f0652922bd384b22",
+      "bytes": 20678
+    },
+    "lib/surface_motion.dart": {
+      "sha256": "1f61ad127c0795f3b5418b52a58d68a4cba3c7934a4d30f71186ab77492ebd8e",
+      "bytes": 5418
+    },
+    "lib/surface_paint_boundary.dart": {
+      "sha256": "03f8e63493be32a81441db087748fb61186a29ca09042aba0410b102981398c9",
+      "bytes": 874
+    },
+    "lib/main.dart": {
+      "sha256": "4a6fad3c324f77b7db055d7c335229f764f9a59c71b24b667eae5eb75ea9a6a5",
+      "bytes": 218348
+    },
+    "lib/main_rust.dart": {
+      "sha256": "e026669bdd2b160a6fce9522dcfaf350f514c28413f51872df478f61824b2cf0",
+      "bytes": 11511
+    },
+    "lib/plugins/application_shutdown.dart": {
+      "sha256": "2d0ede384e7ce32478ed0c31a4b280f1af582f68d85e1dcc2fcd0fc9c2f9eb53",
+      "bytes": 4051
+    },
+    "lib/plugins/workbench_shutdown.dart": {
+      "sha256": "ea9e6b8e9a23f8a6c073ca4c9dec889cf6aaf889626262fa28422c4eacb0b0bf",
+      "bytes": 5311
+    },
+    "workbench_host/src/service_tasks.rs": {
+      "sha256": "2adc5799aee9f903edeabe4459dd44ffe1c7ab4ca35e3e858378facc34736efa",
+      "bytes": 28992
+    },
+    "test/surface_separation_test.dart": {
+      "sha256": "081ecab7a58a2a56a000a03e090ccd9042f65f17d1d6f200f5ed24d6f2e68433",
+      "bytes": 5703
+    },
+    "test/application_shutdown_test.dart": {
+      "sha256": "dba653bd4a8aff154d54a72ba453d3dda4fc77b75770f4049c5d01e7221827b9",
+      "bytes": 8600
+    },
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b65feca241154b547a5eade6e826b6dbdadb9072b54c73002ac8f94a1cd7f2c7",
+      "bytes": 15580160
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "ee6c5faebb6b18cbc6db629d9a8176b57a71e09470524f9782471707a0e57903",
+      "bytes": 13337488
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "c71dc27866378894d5288053238fef9e0ef15f6b578449279bc681e7fe8b560e",
+      "bytes": 878357
+    }
+  }
+}

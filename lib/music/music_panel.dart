@@ -9,6 +9,7 @@ import '../appearance.dart';
 import '../collapsible_panel.dart';
 import '../surface_motion.dart';
 import '../neumorphic_controls.dart';
+import '../animated_slider_style.dart';
 import '../media/texture_repository.dart';
 import '../media/texture_source.dart';
 import 'music_controller.dart';
@@ -363,20 +364,12 @@ class _MusicPanelState extends State<MusicPanel> {
                   ],
                 ),
                 if (music.current != null) ...[
-                  SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight:
-                          p.surfaces.visualStyle == VisualStyle.neumorphism
-                          ? 6
-                          : 2,
-                      thumbShape:
-                          p.surfaces.visualStyle == VisualStyle.neumorphism
-                          ? SliderTheme.of(context).thumbShape
-                          : const RoundSliderThumbShape(enabledThumbRadius: 4),
-                      overlayShape: const RoundSliderOverlayShape(
-                        overlayRadius: 10,
-                      ),
-                    ),
+                  AnimatedSliderStyle(
+                    palette: p,
+                    flatThumbRadius: 4,
+                    flatTrackHeight: 2,
+                    neumorphicTrackHeight: 6,
+                    overlayRadius: 10,
                     child: Slider(
                       key: const ValueKey('music-seek'),
                       value: music.position.inMilliseconds.toDouble().clamp(

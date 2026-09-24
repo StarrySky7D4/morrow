@@ -131,6 +131,9 @@ impl WorkbenchState {
             .host
             .store_local()
             .operation_evidence(SETTINGS, &p.operation)?;
+        if evidence.is_empty() {
+            return self.preferences_commit_matches(&p.operation, &p.intent);
+        }
         Ok(evidence.len() == 1
             && evidence[0].data().batch.as_ref().is_some_and(|b| {
                 b.intent_type == "morrow.studio.preferences-save.v1" && b.intent == p.intent
@@ -234,9 +237,9 @@ impl WorkbenchState {
         {
             return Err("preferences recovery base revision conflict".into());
         }
-        // Existing historical retry verifies the original intent, evidence and
-        // fresh permissions; it never overwrites a later version with old intent.
-        self.save_preferences(operation, p.intent)
+        // Host-owned settings need no enabled guest; core transactions and the
+        // durable proposal still enforce identity, base revision and recovery.
+        self.save_local_preferences(operation, p.intent)
     }
 
     pub(crate) fn acknowledge_preferences(&mut self, operation: &str, digest: &[u8]) -> Result<()> {

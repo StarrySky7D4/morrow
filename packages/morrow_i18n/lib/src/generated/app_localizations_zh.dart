@@ -307,6 +307,77 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainDone => '收好';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => '已固定附件';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => '取消交接';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      '取消这份尚未完成的交接，原操作不可再次建立后继草稿。父草稿保持原状。';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => '交接已取消';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted => '后继草稿已保存，父草稿尚未退休';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => '建立后继草稿';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      '使用已保存的原始提案建立后继草稿，不会再次提交正式卡片。';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle => '确认处理草稿交接';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed => '操作已确认保存。';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict => '当前状态已变化，需要核对';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty => '没有待查看的交接记录';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed => '无法完成操作，请刷新并核对记录。';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => '原始草稿内容';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => '查看与核对';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro => '仅查看已保存的交接记录。打开此页不会自动提交内容。';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => '交接已完成';
+
+  @override
+  String get mainDraftHandoffRecoveryPending => '后继草稿尚未建立';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly => '当前工作台只允许查看';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => '退休父草稿';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody => '确认后继草稿已保存后，将父草稿标记为退休。';
+
+  @override
+  String get mainDraftHandoffRecoverySelection => '选择一条记录查看完整草稿。';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle => '草稿交接恢复';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown => '操作结果尚未确认。请核对原记录，不要重复操作。';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '取消后，原来的放弃请求将失效。这不会删除附件，也不会撤销其他修改。';
 
@@ -1004,16 +1075,58 @@ class AppLocalizationsZh extends AppLocalizations {
   String get mainStorageUnreadable => '存储内容无法读取，原数据仍保留。当前会话不会覆盖它。';
 
   @override
+  String get mainStyleBrutalist => '粗野主义';
+
+  @override
+  String get mainStyleBrutalistDescription => '硬朗边角、醒目边框与错位阴影';
+
+  @override
+  String get mainStyleClay => '黏土';
+
+  @override
+  String get mainStyleClayDescription => '圆润造型与柔和隆起的色彩';
+
+  @override
+  String get mainStyleDepth => '立体深度';
+
+  @override
+  String get mainStyleDepthGuide => '调整浮起与下沉的强度，不改变玻璃透明度。';
+
+  @override
+  String get mainStyleDepthReset => '恢复 100%';
+
+  @override
+  String get mainStyleExperimental => '实验性';
+
+  @override
   String get mainStyleFlat => '扁平 · 默认';
 
   @override
   String get mainStyleFlatDescription => '轻盈边界，清晰层次';
 
   @override
+  String get mainStyleFluent => 'Fluent 流畅';
+
+  @override
+  String get mainStyleFluentDescription => '半透明层次与强调色线条';
+
+  @override
+  String get mainStyleIndustrial => '工业风';
+
+  @override
+  String get mainStyleIndustrialDescription => '金属质感面板、紧凑控件与利落线条';
+
+  @override
   String get mainStyleNeumorphism => 'Neumorphism · 新拟态';
 
   @override
   String get mainStyleNeumorphismDescription => '柔和双向光影，细腻浮雕触感';
+
+  @override
+  String get mainStylePaper => '纸感';
+
+  @override
+  String get mainStylePaperDescription => '哑光纸面、细边框与克制的层次';
 
   @override
   String get mainTaskAdd => '添加待办';
@@ -2634,6 +2747,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recoveryTitle => '重新打开工作台';
+
+  @override
+  String get shutdownBackground => '转入后台继续关闭';
+
+  @override
+  String get shutdownBackgroundHint =>
+      '内容服务退出后 Morrow 会自动关闭。如果关闭失败或长时间未结束，此窗口会重新显示。';
+
+  @override
+  String get shutdownFailure => '关闭过程出现问题。仍在观察内容服务。';
+
+  @override
+  String get shutdownStillRunning => '关闭所需时间超出预期。仍在观察内容服务。';
+
+  @override
+  String get shutdownTitle => '正在关闭工作台';
+
+  @override
+  String get shutdownWaiting => '正在等待内容服务退出。确认退出前，资料库仍由原服务持有。';
 
   @override
   String get visualApplyColor => '应用颜色';

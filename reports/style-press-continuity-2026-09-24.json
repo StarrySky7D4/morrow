@@ -1,0 +1,128 @@
+{
+  "created_utc": "2026-09-24T08:00:09.130961+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local UI implementation, golden review and Windows preview; no commit, push or release",
+  "sources": {
+    "lib/neumorphic_controls.dart": {
+      "sha256": "d33e7b5119916086d09fd27d891fed1eb438599e86b485f494444713690d4715",
+      "bytes": 40147
+    },
+    "lib/experimental_controls.dart": {
+      "sha256": "ce256ba19ea3605543ecdf3f8fbaf0d168e052a4fe8937dc1af4b4e66d478298",
+      "bytes": 19690
+    },
+    "test/surface_press_continuity_test.dart": {
+      "sha256": "9d2e29259d63b14c71944f5efaf8adba2c4a830b44e8b9568c62c69c8b757c6f",
+      "bytes": 8425
+    },
+    "test/goldens/neumorphic_controls_light.png": {
+      "sha256": "fe5a37bda049101bc01b9d4197fdfaeb3aa7bfa80e6544ac4e997f9c5b00c5bb",
+      "bytes": 36755
+    },
+    "test/goldens/neumorphic_controls_dark.png": {
+      "sha256": "af22aa6f07c18a7e25d941ba57a010a64a0cbed79daf78e124d826d7e15fb2ec",
+      "bytes": 37398
+    },
+    "reports/style-press-continuity-2026-09-24.md": {
+      "sha256": "5f0b3a90ab69b00e078a46806e44d800b719fa1055fa2c3847666907dc34fa8d",
+      "bytes": 3452
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "ef19bfe19dedc260d403a1237883455f914a971d51c8ca5fbcc48549976ebfcf",
+      "bytes": 87649
+    }
+  },
+  "logs": {
+    "build/style-press-baseline.log": {
+      "sha256": "c8bb9040011725fa6c56a6df21222e3dd1909dc6e8697e43eafabe64b6375cee",
+      "bytes": 4546
+    },
+    "build/style-press-translucent-baseline.log": {
+      "sha256": "fd69e5700a5b2792e691fa71ab9a3f5b178ff6c2001ff4856e711beae72dc160",
+      "bytes": 2176
+    },
+    "build/style-press-final-tests.log": {
+      "sha256": "7ee873ff39e886fcf447c0f52ea350c4815f782b5cb6a43c468f59cc77900a89",
+      "bytes": 7492
+    },
+    "build/style-press-final-analyze.log": {
+      "sha256": "26feac33a6d76733eb50639778ca998a54249ec10f8e8856b7dd5108c8281543",
+      "bytes": 98
+    },
+    "build/style-press-windows-final.log": {
+      "sha256": "ff30244dfb3b5775dbae75437e81ee31aec454cfd9eae1e4b23871ade7c06d39",
+      "bytes": 16426
+    }
+  },
+  "golden_review": {
+    "build/style-press-golden-review/difference.json": {
+      "sha256": "fcc3a626054712631d3b55cd6227d9bcd0ff7c114d88bd4ee7749c94db5fe290",
+      "bytes": 232
+    },
+    "build/style-press-golden-review/neumorphic_controls_dark_isolatedDiff.png": {
+      "sha256": "02a7607e0ec24d3c92d0358c42a5613050003120873168f6c8389b251966e4f0",
+      "bytes": 1787
+    },
+    "build/style-press-golden-review/neumorphic_controls_dark_masterImage.png": {
+      "sha256": "157b72e74555041096fc284dff161c337b06448e32065b244eb70c069d527f83",
+      "bytes": 37362
+    },
+    "build/style-press-golden-review/neumorphic_controls_dark_testImage.png": {
+      "sha256": "af22aa6f07c18a7e25d941ba57a010a64a0cbed79daf78e124d826d7e15fb2ec",
+      "bytes": 37398
+    },
+    "build/style-press-golden-review/neumorphic_controls_light_isolatedDiff.png": {
+      "sha256": "1f141cf33e54d75a0221523cfaefa7a8e8ef09aaebcc3c3ff30c7e7df82706a0",
+      "bytes": 1660
+    },
+    "build/style-press-golden-review/neumorphic_controls_light_masterImage.png": {
+      "sha256": "213c9e9ce6b641ba16e014843223c3b01f5d9948320045ad6ab9e9e4763c3f25",
+      "bytes": 36760
+    },
+    "build/style-press-golden-review/neumorphic_controls_light_testImage.png": {
+      "sha256": "fe5a37bda049101bc01b9d4197fdfaeb3aa7bfa80e6544ac4e997f9c5b00c5bb",
+      "bytes": 36755
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "80af11c51917cc917ed65f676aa74d39832703189c8f203fe81687d963dcd185",
+      "bytes": 13222800
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b69c77299dd87e7d691d83d8125c021e341ba0c84b6284d53b633dddddf908f1",
+      "bytes": 15606784
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "093e6a4b04c1d456ca0ea6979e82849cceab7330450e809526a124d18ce6dac9",
+      "bytes": 8732672
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "ui_tests": 39,
+    "new_test_functions": 3,
+    "direct_painter_cases": 72,
+    "surface_cases": 180,
+    "material_button_styles": 6,
+    "analysis_targets": 3,
+    "windows_build_exit_code": 0,
+    "golden_comparison": "ordinary mode after reviewed update",
+    "not_verified": [
+      "GPU performance",
+      "Android/Web",
+      "physical input acceptance",
+      "third-party custom components",
+      "formal autosave UI"
+    ]
+  }
+}

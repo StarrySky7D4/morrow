@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "Weiche Lichtkanten und sanfte Schatten",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "Experimentell",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Papier",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Matte Flächen, feine Ränder und dezente Tiefe",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Clay",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Runde Formen mit sanft erhabenen Farben",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Halbtransparente Ebenen und Akzentlinien",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Brutalismus",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Harte Kanten, kräftige Rahmen und versetzte Schatten",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Industriell",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Metallartige Flächen, kompakte Bedienelemente und präzise Linien",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Wiederherstellung der Entwurfsübergabe",
+  "mainDraftHandoffRecoveryIntro": "Hier werden nur gespeicherte Übergaben angezeigt. Beim Öffnen dieser Seite werden keine Inhalte eingereicht.",
+  "mainDraftHandoffRecoveryEmpty": "Keine Übergaben zur Prüfung vorhanden",
+  "mainDraftHandoffRecoveryPending": "Der Folgeentwurf wurde noch nicht erstellt",
+  "mainDraftHandoffRecoveryChildCommitted": "Folgeentwurf gespeichert; übergeordneter Entwurf noch nicht stillgelegt",
+  "mainDraftHandoffRecoveryParentRetired": "Übergabe abgeschlossen",
+  "mainDraftHandoffRecoveryCancelled": "Übergabe abgebrochen",
+  "mainDraftHandoffRecoveryConflict": "Der aktuelle Zustand hat sich geändert und muss geprüft werden",
+  "mainDraftHandoffRecoveryInspect": "Anzeigen und prüfen",
+  "mainDraftHandoffRecoveryComplete": "Folgeentwurf erstellen",
+  "mainDraftHandoffRecoveryRetire": "Übergeordneten Entwurf stilllegen",
+  "mainDraftHandoffRecoveryCancel": "Übergabe abbrechen",
+  "mainDraftHandoffRecoveryConfirmTitle": "Aktion zur Entwurfsübergabe bestätigen",
+  "mainDraftHandoffRecoveryCompleteBody": "Folgeentwurf aus dem gespeicherten ursprünglichen Vorschlag erstellen. Dabei wird keine weitere endgültige Karte eingereicht.",
+  "mainDraftHandoffRecoveryRetireBody": "Nachdem Sie geprüft haben, dass der Folgeentwurf gespeichert wurde, markieren Sie den übergeordneten Entwurf als stillgelegt.",
+  "mainDraftHandoffRecoveryCancelBody": "Diese unvollendete Übergabe abbrechen. Mit dem ursprünglichen Vorgang kann danach kein Folgeentwurf mehr erstellt werden. Der übergeordnete Entwurf bleibt unverändert.",
+  "mainDraftHandoffRecoveryUnknown": "Das Ergebnis des Vorgangs ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Eintrag und wiederholen Sie den Vorgang nicht.",
+  "mainDraftHandoffRecoveryFailed": "Der Vorgang konnte nicht abgeschlossen werden. Aktualisieren und prüfen Sie den Eintrag.",
+  "mainDraftHandoffRecoveryConfirmed": "Der Vorgang wurde bestätigt und gespeichert.",
+  "mainDraftHandoffRecoveryReadOnly": "Dieser Arbeitsbereich erlaubt nur die Ansicht",
+  "mainDraftHandoffRecoveryFields": "Inhalt des ursprünglichen Entwurfs",
+  "mainDraftHandoffRecoveryAssets": "Fest zugeordnete Anhänge",
+  "mainDraftHandoffRecoverySelection": "Wählen Sie einen Eintrag, um den vollständigen Entwurf anzuzeigen.",
+  "mainStyleDepth": "Relieftiefe",
+  "mainStyleDepthGuide": "Stärke von Erhebungen und Vertiefungen anpassen, ohne die Glasdeckkraft zu ändern.",
+  "mainStyleDepthReset": "Auf 100 % zurücksetzen"
 }

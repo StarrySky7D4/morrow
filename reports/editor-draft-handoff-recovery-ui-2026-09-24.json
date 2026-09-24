@@ -1,0 +1,274 @@
+{
+  "created_utc": "2026-09-24T06:15:45.647983+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "version": "0.1.9-test.54+58",
+  "scope": "Handoff recovery UI and workspace coordinator; local Windows only; no commit push release",
+  "sources": {
+    "l10n/parts/main.de.arb": {
+      "sha256": "16e246e5480170a196e25ad3bfdc66779925fb6eabae1079eef2ab1d4cf04d54",
+      "bytes": 29482
+    },
+    "l10n/parts/main.en.arb": {
+      "sha256": "c70d0670e7d58acbe95cf58b15c4d6043d6a7ed2d70d1c581ef775f3130e69fd",
+      "bytes": 27028
+    },
+    "l10n/parts/main.es.arb": {
+      "sha256": "b4c4cd56f54bd6dd61e5f56b6585001ed354fb8c08fbe0ebeff3255bce40a09e",
+      "bytes": 28793
+    },
+    "l10n/parts/main.fr.arb": {
+      "sha256": "71ad6c11b34ef0b8d441312baf15faabde1029ffafffb3facbe91c81934cdfc0",
+      "bytes": 29830
+    },
+    "l10n/parts/main.ja.arb": {
+      "sha256": "0e7e9ab6e6048355e8fd60b9e431855d7a8167f51d71e18f598ddaf9d135588f",
+      "bytes": 31651
+    },
+    "l10n/parts/main.ko.arb": {
+      "sha256": "aa91e6c6b5d4fc2ecb8ec6bf526d9e15b3fc75db9407ad773438041ab51f4f94",
+      "bytes": 30268
+    },
+    "l10n/parts/main.pt.arb": {
+      "sha256": "ca47c4909213498f7ae04cbbfb42991384aec822ab860544301e4faac57601a5",
+      "bytes": 28730
+    },
+    "l10n/parts/main.ru.arb": {
+      "sha256": "6ec6cedb573c929cb95a53b2640cd733ff4ae0b7ac2587e1b4c970b9484a8b0e",
+      "bytes": 38445
+    },
+    "l10n/parts/main.zh.arb": {
+      "sha256": "3a1f51cf536c51109a030304e4efe59359b4b8830237c0ef2492d359db0f7f38",
+      "bytes": 26193
+    },
+    "lib/editor_draft_handoff_recovery_dialog.dart": {
+      "sha256": "1a32591bea556c2ba82be1ad5dc5e41e78a4488a30bdb6321487562adc02d1ac",
+      "bytes": 12182
+    },
+    "lib/main.dart": {
+      "sha256": "88e1d25923ac6de26ccb8620168ebf29277ea9a998e13843e75a6cc81e38cc0a",
+      "bytes": 217899
+    },
+    "lib/plugins/editor_draft_handoff_coordinator.dart": {
+      "sha256": "f9be662d0f53bb3d024cf75abddbfb6496e5c39c69ff1e097776a9d4b53e7f7c",
+      "bytes": 11562
+    },
+    "packages/morrow_i18n/assets/languages/de.mlang": {
+      "sha256": "ee0970255f24741ed464658b546822bb3745ebd69cba9baedddb18ff01ae68ab",
+      "bytes": 90286
+    },
+    "packages/morrow_i18n/assets/languages/en.mlang": {
+      "sha256": "e6eafc903583b19704daea33e6c30e8ee78b30fefa06396f24abdfb601f624b5",
+      "bytes": 82564
+    },
+    "packages/morrow_i18n/assets/languages/es.mlang": {
+      "sha256": "8d4426b361d4e9551f55dadfe9c55a96fc11b9473aa09fb87241ca7b47a1fd5a",
+      "bytes": 87365
+    },
+    "packages/morrow_i18n/assets/languages/fr.mlang": {
+      "sha256": "0732bfb6651d94c909b6c31bb1ac7a2519fee549a8f39ba735ea783d05e97f9b",
+      "bytes": 91474
+    },
+    "packages/morrow_i18n/assets/languages/ja.mlang": {
+      "sha256": "0ddca64f839ee3347e90ddf8415de85113b3084e7a8709b34dc374b7756eacc0",
+      "bytes": 98779
+    },
+    "packages/morrow_i18n/assets/languages/ko.mlang": {
+      "sha256": "e8774cdabdd92ace1732518339514268601bacffa8ea5731a92f9f1d81eac16b",
+      "bytes": 92147
+    },
+    "packages/morrow_i18n/assets/languages/pt.mlang": {
+      "sha256": "fbddaa72798af22d91c9c9ea70cedb73df8e06c47d6c722661365cbf8af7b13c",
+      "bytes": 87027
+    },
+    "packages/morrow_i18n/assets/languages/ru.mlang": {
+      "sha256": "6e0baabe7a28b2384f797575a6a57c731a7452208ed94876be6fa08a6372ec7e",
+      "bytes": 120533
+    },
+    "packages/morrow_i18n/assets/languages/zh.mlang": {
+      "sha256": "36f4eff85a714b5394a45a0022c4934211adc14a84d18057446fa2d10427190e",
+      "bytes": 77726
+    },
+    "packages/morrow_i18n/lib/l10n/app_de.arb": {
+      "sha256": "3cc6ccc9f0660e67e305a3678ad318e4921d372181b81fe84097f838b20e6d82",
+      "bytes": 100070
+    },
+    "packages/morrow_i18n/lib/l10n/app_en.arb": {
+      "sha256": "756e0fb3666836c7ace659dd6cf79e4087ffb5e4355225c8dfc1039625844eb6",
+      "bytes": 92452
+    },
+    "packages/morrow_i18n/lib/l10n/app_es.arb": {
+      "sha256": "bfe22acd8b31b99dbbf7148ab80dc75c3e396276fcf83a3344013d2301073c63",
+      "bytes": 97203
+    },
+    "packages/morrow_i18n/lib/l10n/app_fr.arb": {
+      "sha256": "a01b92e0cbffb3214d8f0bc75f6eed357a65246f53f9426c561ac267a253c833",
+      "bytes": 101257
+    },
+    "packages/morrow_i18n/lib/l10n/app_ja.arb": {
+      "sha256": "0c1c65fb63d09ce34a63c32f55b9df8c119b24b4ecab91da50b88f58ac6b2c20",
+      "bytes": 108441
+    },
+    "packages/morrow_i18n/lib/l10n/app_ko.arb": {
+      "sha256": "a3a428ddd8fce1efaebfbf2cc396a570665960fa542aee688b8a04a06c328df1",
+      "bytes": 101879
+    },
+    "packages/morrow_i18n/lib/l10n/app_pt.arb": {
+      "sha256": "fa106973e4cf77512af34f7d43b35e1767d0104c5890dfa8eaccf3750e573846",
+      "bytes": 96867
+    },
+    "packages/morrow_i18n/lib/l10n/app_ru.arb": {
+      "sha256": "2dc19cce5b231873a19f5ba05622b6602d9f8a0c1059e19c0b99787ad3a110e4",
+      "bytes": 129941
+    },
+    "packages/morrow_i18n/lib/l10n/app_zh.arb": {
+      "sha256": "ce6e5de95e9cd3bc183ef83160cc0c13d56ba7d4273eff0b1f92686a15082e35",
+      "bytes": 87702
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations.dart": {
+      "sha256": "c8b89237e49dfda87c565411b4384715b776f35028329062a715e6f4c7593551",
+      "bytes": 204944
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_de.dart": {
+      "sha256": "e29837d9e21340e5f97002ecc22071c07967cb8aa0f1febe8af8ba188f1d628c",
+      "bytes": 110937
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_en.dart": {
+      "sha256": "4874f13cf8042fb287e8c4f2a8a586393cd1dba2861cc5f2e17b2261a51a6e01",
+      "bytes": 103234
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_es.dart": {
+      "sha256": "ed4fe945492935d0745a967d288c0d9fea8dbacd7e748ff5bcead180b72746d3",
+      "bytes": 108336
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_fr.dart": {
+      "sha256": "e879883e432ae8848d3573f507bd1078d7c48e62712d44be92f160ea1c3e0a6c",
+      "bytes": 112386
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ja.dart": {
+      "sha256": "e4435ce1407cbd85bf012d8c8b2d433f967263288ce9ef0b4999fc9ca1be7431",
+      "bytes": 117506
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ko.dart": {
+      "sha256": "d8d27a708880a1a4cb5b126d45cc9eb47a0b4eab174b7779c51010ca2e261a13",
+      "bytes": 111110
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_pt.dart": {
+      "sha256": "45952c912a4418f505596d881ebc4ad8d2474013eaed15abcce905a98d1adaf3",
+      "bytes": 107874
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_ru.dart": {
+      "sha256": "727c9d5759344707cb93b0c4d16b59b650b4f6e2947d89d6d7bd62d52faffaac",
+      "bytes": 140916
+    },
+    "packages/morrow_i18n/lib/src/generated/app_localizations_zh.dart": {
+      "sha256": "4ae1b3bc990e411505413d0bcb439bb32d443e4e0e0361291f63d712cbca35d6",
+      "bytes": 95974
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pack.pb.dart": {
+      "sha256": "2aaf5f89c5b6c6d52a43c80ad245d67655a34fec62472a86da42ecb179ceda2f",
+      "bytes": 6946
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pack.pbenum.dart": {
+      "sha256": "ef1a34b0f83216d39562f24bd9b57c61291dd91fa6fdeb690aa84aa26c8f45f2",
+      "bytes": 449
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pack.pbjson.dart": {
+      "sha256": "e409f3c59a998fbf3078bb0fa04399f985fbbd493bd0ead14bca701dae1119f9",
+      "bytes": 2119
+    },
+    "packages/morrow_i18n/lib/src/generated/language_pins.dart": {
+      "sha256": "9c447472f757c2fd0e71e7eb2481addf38875aeec779680f871518c98a07a365",
+      "bytes": 1743
+    },
+    "test/editor_draft_handoff_coordinator_test.dart": {
+      "sha256": "7702a9176f8ddcfaf7467e9cf7ce72dc50bd7fa45253c86af7c614ca3ae3033a",
+      "bytes": 16159
+    },
+    "test/editor_draft_handoff_recovery_dialog_test.dart": {
+      "sha256": "9f3cfbb2a160915ec489d326560b8eb301aec791320636f644eede87ce36caa7",
+      "bytes": 9248
+    },
+    "test/editor_draft_handoff_recovery_workspace_test.dart": {
+      "sha256": "119435bb4e5408e909078e7409f24114087728e451249485f3414fabcbde94d3",
+      "bytes": 8906
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "9b2219da1ead68849e6eebf8e1dcdfc2e3752ef2a7865ee2095a481b7e9bdded",
+      "bytes": 13222800
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "0619912f18227e5bf5b6b9c2a82a9e7a288164e2770c2e523e4a31d5c1bdd5c0",
+      "bytes": 15585792
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "dd20b8727d2a8904ebe7e06f5df3971f3d95c470eb1dbe0cbe1085680e653396",
+      "bytes": 8733696
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "logs": {
+    "build/handoff-recovery-final-analyze.log": {
+      "sha256": "b0aae469171ea9b13f69e5f2aca276676f50ea6f9c16b3a6fd295e84cdaae2e3",
+      "bytes": 98
+    },
+    "build/handoff-recovery-final-tests.log": {
+      "sha256": "fa96f4c43924d1307b0149b647d5092afba7b73c31d5721e37c8fc7bcdc12502",
+      "bytes": 9079
+    },
+    "build/handoff-recovery-i18n-check.log": {
+      "sha256": "22bf28ec604b74e3e77d52d44c5496fcb0b98a51e28e2ee9fc645fb9bb3df235",
+      "bytes": 56
+    },
+    "build/handoff-recovery-native-ui-timeout.log": {
+      "sha256": "84b4e9e5679aa7fae1e51398d76861498aba8dbdbed085acf204f749a487c0e8",
+      "bytes": 1242
+    },
+    "build/handoff-recovery-native-ui.log": {
+      "sha256": "da119227781835aebdee2a20a6176b7b2df34f2ca4be3f83d8004ef7a6fec863",
+      "bytes": 276
+    },
+    "build/handoff-recovery-review-analyze.log": {
+      "sha256": "9b6655e74e2b9e14a2ef290524f623b61f267680e03e3fcb98298e0dd7bd4fa2",
+      "bytes": 296
+    },
+    "build/handoff-recovery-reviewed-tests.log": {
+      "sha256": "eedd081463fa287e20154c957c72b4d70a6160cca37e5643e786fb51131e66e4",
+      "bytes": 3724
+    },
+    "build/handoff-recovery-ui-tests.log": {
+      "sha256": "e46c8089981fa7707ead7300540ee9fc89e183f48d18105cda4087662175a887",
+      "bytes": 580
+    },
+    "build/handoff-recovery-windows-final.log": {
+      "sha256": "a3dde3b3ac79dc918cf3ea9fc6470a0562ca09b8c06d4d9f95f68ee206ac5fdf",
+      "bytes": 16426
+    }
+  },
+  "report": {
+    "sha256": "cc8d07ce30edfefebd6d76679e84951bebf69342b4bb33ebc9aea56990cef5bc",
+    "bytes": 5283
+  },
+  "validation": {
+    "tests_passed": 41,
+    "tests_skipped": 0,
+    "coordinator_tests": 11,
+    "new_dialog_tests": 6,
+    "existing_dialog_tests": 22,
+    "native_workspace_tests": 2,
+    "analyze_targets": 6,
+    "i18n_artifacts_checked": 22,
+    "windows_build_exit_code": 0,
+    "formal_editor_autosave_enabled": false,
+    "new_desktop_manual_review": false,
+    "Android_Web": false
+  }
+}

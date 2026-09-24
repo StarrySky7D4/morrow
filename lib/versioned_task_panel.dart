@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
+import 'appearance.dart';
+import 'neumorphic_controls.dart';
 import 'plugins/versioned_content.dart';
 import 'plugins/versioned_idea_view.dart';
 import 'plugins/workbench_ids.dart';
@@ -318,8 +320,9 @@ class _VersionedTaskPanelState extends State<VersionedTaskPanel> {
               if (task.needsExplicitDecision)
                 const Icon(Icons.help_outline, size: 20)
               else
-                Checkbox(
+                NeumorphicCheckbox(
                   key: ValueKey('task-checkbox-${task.taskId}'),
+                  palette: AppearanceScope.of(context),
                   value: task.completion == VersionedTaskCompletion.complete,
                   onChanged: enabled
                       ? (value) {

@@ -139,17 +139,59 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleDepth": {
+    "description": "Visual style relief depth control"
+  },
+  "@mainStyleDepthGuide": {
+    "description": "Visual style relief depth control"
+  },
+  "@mainStyleDepthReset": {
+    "description": "Visual style relief depth control"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1043,29 @@
   "mainDeleted": "Deleted “{title}”",
   "mainDiagnosticDetails": "Diagnostic details",
   "mainDone": "Done",
+  "mainDraftHandoffRecoveryAssets": "Pinned attachments",
+  "mainDraftHandoffRecoveryCancel": "Cancel handoff",
+  "mainDraftHandoffRecoveryCancelBody": "Cancel this unfinished handoff. The original operation can no longer create a successor draft. The parent draft remains unchanged.",
+  "mainDraftHandoffRecoveryCancelled": "Handoff cancelled",
+  "mainDraftHandoffRecoveryChildCommitted": "Successor draft saved; parent draft not yet retired",
+  "mainDraftHandoffRecoveryComplete": "Create successor draft",
+  "mainDraftHandoffRecoveryCompleteBody": "Create the successor draft from the saved original proposal. This will not submit another final card.",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirm draft handoff action",
+  "mainDraftHandoffRecoveryConfirmed": "The operation was confirmed and saved.",
+  "mainDraftHandoffRecoveryConflict": "The current state has changed; review it",
+  "mainDraftHandoffRecoveryEmpty": "No handoff records to review",
+  "mainDraftHandoffRecoveryFailed": "Could not complete the operation. Refresh and review the record.",
+  "mainDraftHandoffRecoveryFields": "Original draft content",
+  "mainDraftHandoffRecoveryInspect": "View and review",
+  "mainDraftHandoffRecoveryIntro": "View saved handoff records only. Opening this page does not submit content.",
+  "mainDraftHandoffRecoveryParentRetired": "Handoff complete",
+  "mainDraftHandoffRecoveryPending": "Successor draft has not been created",
+  "mainDraftHandoffRecoveryReadOnly": "This workspace is view-only",
+  "mainDraftHandoffRecoveryRetire": "Retire parent draft",
+  "mainDraftHandoffRecoveryRetireBody": "After confirming the successor draft was saved, mark the parent draft as retired.",
+  "mainDraftHandoffRecoverySelection": "Select a record to view the complete draft.",
+  "mainDraftHandoffRecoveryTitle": "Draft handoff recovery",
+  "mainDraftHandoffRecoveryUnknown": "The operation result is not confirmed. Review the original record; do not repeat the operation.",
   "mainDraftImportRecoveryCancelBody": "After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.",
   "mainDraftImportRecoveryCancelDecision": "Cancel abandonment request",
   "mainDraftImportRecoveryCancelTitle": "Cancel this abandonment request?",
@@ -1224,10 +1289,24 @@
   "mainSteps": "{done}/{total} steps",
   "mainStorageUnavailable": "Local storage is unavailable. Changes will last for this session only.",
   "mainStorageUnreadable": "Saved content could not be read. The original data is preserved and will not be overwritten.",
+  "mainStyleBrutalist": "Brutalist",
+  "mainStyleBrutalistDescription": "Hard edges, bold borders and offset shadows",
+  "mainStyleClay": "Clay",
+  "mainStyleClayDescription": "Rounded forms with softly raised color",
+  "mainStyleDepth": "Relief depth",
+  "mainStyleDepthGuide": "Adjust raised and inset depth without changing glass opacity.",
+  "mainStyleDepthReset": "Reset to 100%",
+  "mainStyleExperimental": "Experimental",
   "mainStyleFlat": "Flat · Default",
   "mainStyleFlatDescription": "Light edges and clear layers",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "Layered translucent surfaces and accent lines",
+  "mainStyleIndustrial": "Industrial",
+  "mainStyleIndustrialDescription": "Metal-like panels, compact controls and precise lines",
   "mainStyleNeumorphism": "Neumorphism",
   "mainStyleNeumorphismDescription": "Soft paired shadows and gentle relief",
+  "mainStylePaper": "Paper",
+  "mainStylePaperDescription": "Matte sheets, fine borders and restrained depth",
   "mainTaskAdd": "Add task",
   "mainTaskAmbiguousDecision": "The completion of these legacy tasks with matching names is uncertain. Confirm each task separately.",
   "mainTaskCompleteAllAndSetStage": "Complete all and set stage",
@@ -1731,6 +1810,12 @@
   "recoverySwitchUnknown": "The library switch is unconfirmed. Reopen the workspace to check.",
   "recoveryTargetExists": "The restore destination already exists. Choose a new folder that does not exist yet.",
   "recoveryTitle": "Reopen workspace",
+  "shutdownBackground": "Continue in background",
+  "shutdownBackgroundHint": "Morrow will close when the service exits. If shutdown fails or takes much longer, this window will reappear.",
+  "shutdownFailure": "Shutdown reported a problem. The content service is still being observed.",
+  "shutdownStillRunning": "Shutdown is taking longer than expected. The content service is still being observed.",
+  "shutdownTitle": "Closing workspace",
+  "shutdownWaiting": "Waiting for the content service to exit. The library stays owned until its exit is confirmed.",
   "visualApplyColor": "Apply color",
   "visualApplyComponent": "Apply to this component",
   "visualApplyTexture": "Apply media",

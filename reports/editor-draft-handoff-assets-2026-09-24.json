@@ -1,0 +1,93 @@
+{
+  "created_utc": "2026-09-24T06:40:52.847240+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "scope": "Dart handoff asset catalog and controller/native tests; no complete application rebuild or remote writes",
+  "tests_passed": 29,
+  "tests_skipped": 0,
+  "analyzed_targets": 5,
+  "sources": {
+    "lib/plugins/editor_draft_assets.dart": {
+      "sha256": "c21fe4f25c0106ccb0f7f13287deb7688665f3b33e6aa0e1c56e2a0fc342682b",
+      "bytes": 26172
+    },
+    "test/editor_draft_assets_test.dart": {
+      "sha256": "9e48d614e27ac67a65b53422af54a721849ebec594d3ba1ad6b7eb26c0f83b96",
+      "bytes": 16633
+    },
+    "test/editor_draft_handoff_assets_test.dart": {
+      "sha256": "bef2eed1f7d34ad830951d59e08213dc9abeb47889a6aa075b2d6e93c4127f8d",
+      "bytes": 13815
+    },
+    "test/editor_draft_handoff_assets_native_test.dart": {
+      "sha256": "644ca6ab3f9c321f6907c5fc126a70d9845cc7de30f0014b25ca2c7b68f5bd2c",
+      "bytes": 12377
+    },
+    "test/fixtures/editor_draft_handoff_proposal_fixture.dart": {
+      "sha256": "daf908159d22e9056484a62181ef40eb85f09b027c2a6d667d316d0dc96f4af2",
+      "bytes": 6642
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "2aca7a19a4d7a951e43987d620fb172b0d5d2c2ff0f42c5cdf51da5df8a46829",
+      "bytes": 85982
+    },
+    "docs/EDITOR_UI_PERSISTENCE_PLAN.md": {
+      "sha256": "7045e6e11bc40afad037f3f1d695a7cd1a592efeb37369d3cbf7c86c3a60b661",
+      "bytes": 10944
+    },
+    "docs/EDITOR_HANDOFF_PROPOSAL_WIRE_PLAN.md": {
+      "sha256": "b18997c82cf710bcb9baab367d329691d1c8c8bee74d1eb7bb2cd51ac4d2522d",
+      "bytes": 4918
+    },
+    "reports/editor-draft-handoff-assets-2026-09-24.md": {
+      "sha256": "4b74f36e1dcc7bb2d74d917439248b8782206b1822bde23b2a98a3aaddc8b47d",
+      "bytes": 3782
+    },
+    "lib/plugins/editor_draft_session.dart": {
+      "sha256": "91ba5ff1bd25762c8999992ee40dcea34df8f0d0f821904ecb10bcd2945df071",
+      "bytes": 19875
+    },
+    "lib/plugins/editor_draft_binding.dart": {
+      "sha256": "8ad9ad2ff28c9a07eb3ee7024c2963498f86b4c81790383a2b7915271faa83f1",
+      "bytes": 6660
+    },
+    "lib/plugins/editor_draft_codec.dart": {
+      "sha256": "fa1faf0088183adc0e6e147b1f2d34565e6bc9be6357b38f47ef2444faa6bf60",
+      "bytes": 45975
+    },
+    "lib/plugins/editor_draft_handoff_proposal_native.dart": {
+      "sha256": "deb43d6bfd2e9f3536ff6aaa1b498856b07b3ea2c0acbd5322c5c15177e57e82",
+      "bytes": 10388
+    },
+    "lib/plugins/workbench_native.dart": {
+      "sha256": "dbb0123988c7a66beb6f4c8941b696e1e6535fefbd5ef1f02d1bf2aaa4aed867",
+      "bytes": 95470
+    }
+  },
+  "logs": {
+    "build/handoff-assets-final-tests.log": {
+      "sha256": "2769d6e4f74312bbbd509ae4e5ec86831f78221ca689a345ad175f2ea426c2d8",
+      "bytes": 6137
+    },
+    "build/handoff-assets-final-analyze.log": {
+      "sha256": "49974e3c859dfb1ba423e52fbc7428d80c22cd1946d71fcafb6e1800116786cf",
+      "bytes": 98
+    }
+  },
+  "existing_native_test_artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "0619912f18227e5bf5b6b9c2a82a9e7a288164e2770c2e523e4a31d5c1bdd5c0",
+      "bytes": 15585792
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "open_items": [
+    "Formal NewIdeaDialog autosave/handoff/close integration",
+    "V2 deferred acknowledgement",
+    "V1 first Create commit-proof API",
+    "Capture provenance lifecycle and capacity maintenance",
+    "Cross-platform and fault qualification"
+  ]
+}

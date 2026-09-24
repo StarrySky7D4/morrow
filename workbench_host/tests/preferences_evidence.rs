@@ -1,15 +1,16 @@
 #![cfg(target_os = "windows")]
 mod common;
 use morrow_core::{
-    plugin_package::{Package, proto::TransformHandler},
+    plugin_package::{proto::TransformHandler, Package},
     task::Invocation,
     task_evidence::Evidence,
 };
-use morrow_plugin_runtime::{Limits, replay};
+use morrow_plugin_runtime::{replay, Limits};
 use morrow_workbench_host::Workbench;
 use morrow_workbench_plugin::preferences::{
-    self as p, Preferences, Source, Track,
+    self as p,
     proto::{Appearance, ComponentMaterial},
+    Preferences, Source, Track,
 };
 const CARD: &str = "morrow-studio-preferences";
 fn package() -> Package {
@@ -28,6 +29,8 @@ fn config() -> Preferences {
     Preferences {
         version: 1,
         appearance: Some(Appearance {
+            style_depth: Some(1.),
+            visual_style: "flat".into(),
             theme: "white".into(),
             glass: "frosted".into(),
             background: "transparent".into(),
@@ -84,6 +87,36 @@ fn assert_pages(e: &Evidence, prefs: &Preferences) {
         assert_eq!(o.fault, 0);
         assert_eq!(o.exit_code, Some(0));
     }
+}
+#[test]
+fn legacy_json_preflight_accepts_experimental_styles_and_rejects_unknown() {
+    for style in ["paper", "clay", "fluent", "brutalist", "industrial"] {
+        let snapshot = serde_json::json!({"version": 1, "visualStyle": style});
+        morrow_workbench_host::legacy_json_preferences::validate_preferences(&snapshot).unwrap();
+    }
+    let unknown = serde_json::json!({"version": 1, "visualStyle": "unsupported"});
+    assert!(
+        morrow_workbench_host::legacy_json_preferences::validate_preferences(&unknown).is_err()
+    );
+}
+#[test]
+fn experimental_styles_save_and_reload_through_real_host() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut h = Workbench::open_managed(dir.path(), Some(package())).unwrap();
+    for style in ["paper", "clay", "fluent", "brutalist", "industrial"] {
+        let mut prefs = config();
+        prefs.appearance.as_mut().unwrap().visual_style = style.into();
+        let input = p::encode_wire(&prefs).unwrap();
+        assert_eq!(h.save_preferences(style, input.clone()).unwrap(), input);
+        assert_pages(&original(&h, style), &prefs);
+        h.finish().unwrap();
+        drop(h);
+        h = Workbench::open_managed(dir.path(), Some(package())).unwrap();
+        assert_eq!(h.read_preferences().unwrap(), Some(input));
+    }
+    let mut invalid = config();
+    invalid.appearance.as_mut().unwrap().visual_style = "unsupported".into();
+    assert!(p::encode_wire(&invalid).is_err());
 }
 #[test]
 fn actual_sdk_complete_649_pages_form_one_atomic_self_contained_batch() {
@@ -286,4 +319,25 @@ fn near_four_mib_actual_lyrics_batch_fits_total_fuel_and_keeps_full_intent() {
             .unwrap()
             .matches
     );
+}
+
+#[test]
+fn legacy_json_depth_preflight_rejects_out_of_range_and_accepts_defaults_and_zero() {
+    use morrow_workbench_host::legacy_json_preferences::validate_preferences;
+    for value in [
+        serde_json::json!({"version": 1}),
+        serde_json::json!({"version": 1, "styleDepth": 0}),
+        serde_json::json!({"version": 1, "styleDepth": 2,
+            "componentMaterials": {"card:a": {"enabled": true, "styleDepth": 0}}}),
+    ] {
+        validate_preferences(&value).unwrap();
+    }
+    for bad in [-0.1, 2.1] {
+        assert!(
+            validate_preferences(&serde_json::json!({"version": 1, "styleDepth": bad})).is_err()
+        );
+        assert!(validate_preferences(&serde_json::json!({"version": 1,
+            "componentMaterials": {"card:a": {"enabled": true, "styleDepth": bad}}}))
+        .is_err());
+    }
 }

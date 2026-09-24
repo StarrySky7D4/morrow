@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "shutdownTitle": "Closing workspace",
+  "shutdownWaiting": "Waiting for the content service to exit. The library stays owned until its exit is confirmed.",
+  "shutdownStillRunning": "Shutdown is taking longer than expected. The content service is still being observed.",
+  "shutdownBackground": "Continue in background",
+  "shutdownBackgroundHint": "Morrow will close when the service exits. If shutdown fails or takes much longer, this window will reappear.",
+  "shutdownFailure": "Shutdown reported a problem. The content service is still being observed."
+}

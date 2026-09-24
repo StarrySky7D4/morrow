@@ -346,6 +346,92 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mainDone => 'Fertig';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => 'Fest zugeordnete Anhänge';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => 'Übergabe abbrechen';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      'Diese unvollendete Übergabe abbrechen. Mit dem ursprünglichen Vorgang kann danach kein Folgeentwurf mehr erstellt werden. Der übergeordnete Entwurf bleibt unverändert.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => 'Übergabe abgebrochen';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      'Folgeentwurf gespeichert; übergeordneter Entwurf noch nicht stillgelegt';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => 'Folgeentwurf erstellen';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      'Folgeentwurf aus dem gespeicherten ursprünglichen Vorschlag erstellen. Dabei wird keine weitere endgültige Karte eingereicht.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle =>
+      'Aktion zur Entwurfsübergabe bestätigen';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed =>
+      'Der Vorgang wurde bestätigt und gespeichert.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict =>
+      'Der aktuelle Zustand hat sich geändert und muss geprüft werden';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty =>
+      'Keine Übergaben zur Prüfung vorhanden';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      'Der Vorgang konnte nicht abgeschlossen werden. Aktualisieren und prüfen Sie den Eintrag.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields =>
+      'Inhalt des ursprünglichen Entwurfs';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => 'Anzeigen und prüfen';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      'Hier werden nur gespeicherte Übergaben angezeigt. Beim Öffnen dieser Seite werden keine Inhalte eingereicht.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => 'Übergabe abgeschlossen';
+
+  @override
+  String get mainDraftHandoffRecoveryPending =>
+      'Der Folgeentwurf wurde noch nicht erstellt';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly =>
+      'Dieser Arbeitsbereich erlaubt nur die Ansicht';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire =>
+      'Übergeordneten Entwurf stilllegen';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      'Nachdem Sie geprüft haben, dass der Folgeentwurf gespeichert wurde, markieren Sie den übergeordneten Entwurf als stillgelegt.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection =>
+      'Wählen Sie einen Eintrag, um den vollständigen Entwurf anzuzeigen.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle =>
+      'Wiederherstellung der Entwurfsübergabe';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      'Das Ergebnis des Vorgangs ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Eintrag und wiederholen Sie den Vorgang nicht.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.';
 
@@ -1104,10 +1190,51 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gespeicherte Inhalte konnten nicht gelesen werden. Originaldaten bleiben erhalten und werden nicht überschrieben.';
 
   @override
+  String get mainStyleBrutalist => 'Brutalismus';
+
+  @override
+  String get mainStyleBrutalistDescription =>
+      'Harte Kanten, kräftige Rahmen und versetzte Schatten';
+
+  @override
+  String get mainStyleClay => 'Clay';
+
+  @override
+  String get mainStyleClayDescription =>
+      'Runde Formen mit sanft erhabenen Farben';
+
+  @override
+  String get mainStyleDepth => 'Relieftiefe';
+
+  @override
+  String get mainStyleDepthGuide =>
+      'Stärke von Erhebungen und Vertiefungen anpassen, ohne die Glasdeckkraft zu ändern.';
+
+  @override
+  String get mainStyleDepthReset => 'Auf 100 % zurücksetzen';
+
+  @override
+  String get mainStyleExperimental => 'Experimentell';
+
+  @override
   String get mainStyleFlat => 'Flach · Standard';
 
   @override
   String get mainStyleFlatDescription => 'Dezente Konturen, klare Ebenen';
+
+  @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription =>
+      'Halbtransparente Ebenen und Akzentlinien';
+
+  @override
+  String get mainStyleIndustrial => 'Industriell';
+
+  @override
+  String get mainStyleIndustrialDescription =>
+      'Metallartige Flächen, kompakte Bedienelemente und präzise Linien';
 
   @override
   String get mainStyleNeumorphism => 'Neumorphismus';
@@ -1115,6 +1242,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get mainStyleNeumorphismDescription =>
       'Weiche Lichtkanten und sanfte Schatten';
+
+  @override
+  String get mainStylePaper => 'Papier';
+
+  @override
+  String get mainStylePaperDescription =>
+      'Matte Flächen, feine Ränder und dezente Tiefe';
 
   @override
   String get mainTaskAdd => 'Aufgabe hinzufügen';
@@ -2903,6 +3037,28 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'Arbeitsbereich erneut öffnen';
+
+  @override
+  String get shutdownBackground => 'Im Hintergrund weiter schließen';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'Morrow schließt sich nach dem Ende des Dienstes. Bei einem Fehler oder einer langen Verzögerung erscheint dieses Fenster wieder.';
+
+  @override
+  String get shutdownFailure =>
+      'Beim Beenden ist ein Problem aufgetreten. Der Inhaltsdienst wird weiter überwacht.';
+
+  @override
+  String get shutdownStillRunning =>
+      'Das Beenden dauert länger als erwartet. Der Inhaltsdienst wird weiter überwacht.';
+
+  @override
+  String get shutdownTitle => 'Arbeitsbereich wird geschlossen';
+
+  @override
+  String get shutdownWaiting =>
+      'Der Inhaltsdienst wird beendet. Die Bibliothek bleibt bis zum bestätigten Ende in seinem Besitz.';
 
   @override
   String get visualApplyColor => 'Farbe anwenden';

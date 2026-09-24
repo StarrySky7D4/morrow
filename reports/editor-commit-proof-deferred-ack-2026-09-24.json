@@ -1,0 +1,161 @@
+{
+  "created_utc": "2026-09-24T07:34:36.538969+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local working tree and Windows preview; no commit, push or release",
+  "sources": {
+    "workbench_host/src/editor_commit_proof.rs": {
+      "sha256": "c0486a2330cd0319b6d4f4f8e5902e4beb64e7ed93e956c668dcb9839c183faf",
+      "bytes": 5660
+    },
+    "workbench_host/src/lib.rs": {
+      "sha256": "f6f3f19c0c4133ded03b12f9ea52479ced8f1bfa4c9d7eb584df3b6b1a30e9a6",
+      "bytes": 31666
+    },
+    "workbench_host/src/protocol.rs": {
+      "sha256": "8d6002295fc46b771eb740e73a0a5ec9570bce43468e82ecdb9b19a6678f68d9",
+      "bytes": 64885
+    },
+    "workbench_host/schemas/host.capnp": {
+      "sha256": "a9c8a771cbce2ac304567653e41fcda38ccc7f17ab2f9cd0b81ade64c2456104",
+      "bytes": 13964
+    },
+    "workbench_host/tests/editor_commit_proof.rs": {
+      "sha256": "9e7c0d1c4c93cdb195b4723fdbec6279136408f1a850cfe98f40d47c80bf7526",
+      "bytes": 9343
+    },
+    "lib/plugins/generated/host.capnp.dart": {
+      "sha256": "5a25f812d9c291bd0fb801f00ccd47e02432b120a0614fdd48a4ad77e8520c4b",
+      "bytes": 169907
+    },
+    "lib/plugins/generated/identity.dart": {
+      "sha256": "e5f647b87cf1e5833e214b63fc40c823d14b3acd7da8fa9e1648af78197f4fd7",
+      "bytes": 2308
+    },
+    "lib/plugins/editor_commit_proof.dart": {
+      "sha256": "5f203efebc5290f4f894b48eb79c96732321155bc64f5386e9e035b3bf35cb0f",
+      "bytes": 1900
+    },
+    "lib/plugins/editor_commit_proof_codec.dart": {
+      "sha256": "eedaf5687a6bd51579a2b60402751cb2e6a46c49be4b6410acb11ac21e4e2f23",
+      "bytes": 1688
+    },
+    "lib/plugins/editor_draft_assets.dart": {
+      "sha256": "fd5010cd7d06be3c86ea08bfe82f22c91ffd1e46ac03e8e3f6b372d82e841570",
+      "bytes": 25037
+    },
+    "lib/plugins/editor_recovery.dart": {
+      "sha256": "a5c7c76a24dbe1dd4f349c67f29c018d54740c9b3919204dc4b0574297f07d56",
+      "bytes": 2614
+    },
+    "lib/plugins/workbench_native.dart": {
+      "sha256": "00a83d4052a1cdc8021cee6d4f636552f5cec72980ffb075467568de7ee484cd",
+      "bytes": 97497
+    },
+    "lib/plugins/versioned_editor_native.dart": {
+      "sha256": "2b5fd1a969404f1fb3133f93db6b5a8077b425fdc8e4cf55939fc1c374d84133",
+      "bytes": 13438
+    },
+    "lib/plugins/versioned_editor_adapter.dart": {
+      "sha256": "e1ad98c236ec877f4db512567920f0da72abb8300673f5194f5dbfb90360e6c6",
+      "bytes": 18724
+    },
+    "test/editor_commit_proof_codec_test.dart": {
+      "sha256": "75e5228a1bd4aca9485c2f44dc1d945c561745bc53e0185ee8ab44be692bf1dd",
+      "bytes": 3150
+    },
+    "test/editor_commit_proof_native_test.dart": {
+      "sha256": "9d42a8a62e743435687d36723b387935dc8193f0e77021d3247cd05098ed8026",
+      "bytes": 20520
+    },
+    "test/versioned_editor_deferred_ack_test.dart": {
+      "sha256": "92eb192bac4b4dfb87e0d534624829b70592b3a11ac3e179559af5d82a819c5a",
+      "bytes": 11081
+    },
+    "test/fixtures/service_reply_proxy.py": {
+      "sha256": "06e5c4a3aaacf71819795946c63e8abcc995f59f776dfa36c26d2746b32eeca2",
+      "bytes": 4299
+    },
+    "docs/EDITOR_UI_PERSISTENCE_PLAN.md": {
+      "sha256": "95ed49698878939f99e54601cc77a3fda422ea9f42fb294ae67a4828afbb7a19",
+      "bytes": 11482
+    },
+    "docs/EDITOR_HANDOFF_PROPOSAL_WIRE_PLAN.md": {
+      "sha256": "89b1f604c9b979155826cb125ecb0a44b6191b1d33e136be5f9c3644b7fc1b34",
+      "bytes": 5273
+    },
+    "reports/editor-commit-proof-deferred-ack-2026-09-24.md": {
+      "sha256": "6cc5140673760c6d4c6e027bbebdf92c09f613c6d4d276e8ea7e0891244fdd6b",
+      "bytes": 4824
+    }
+  },
+  "logs": {
+    "build/editor-commit-proof-final-tests.log": {
+      "sha256": "852d8ece83a22bea564ae772c5764476165d794400783b9cccc9fe71450a8081",
+      "bytes": 11146
+    },
+    "build/editor-commit-proof-final-analyze.log": {
+      "sha256": "d190bda29728ac7f03bcd94b5324ce5103f03990040ec78503b3010b5cd52c08",
+      "bytes": 98
+    },
+    "build/editor-commit-proof-bindings-check.log": {
+      "sha256": "73053600804a903908d390418d2d78e7cbc11740d157ec1fbb6fbf0d413dceab",
+      "bytes": 29
+    },
+    "build/editor-commit-proof-rust-tests.log": {
+      "sha256": "7231296d73b108eedd57addefb8f055b660b233b68f8c2df01bf82ed73a00f56",
+      "bytes": 3125
+    },
+    "build/editor-commit-proof-host-build.log": {
+      "sha256": "5ded73105115c6332c1ecab8addbea11eaff3771f9090d7dc196852d3a03f0ee",
+      "bytes": 1758
+    },
+    "build/style-input-windows.log": {
+      "sha256": "79329ca3060eda6494898190fedceb9453815464cc50022bfa86c940ba2bda63",
+      "bytes": 16426
+    },
+    "build/editor-commit-proof-packaged-tests.log": {
+      "sha256": "e93e23adc4caf1997a52d9ccfff24e8810265fd006e2b4cbbeba6b47897e4d51",
+      "bytes": 524
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "f7faadd0e4751bc1ba022722fad35c0f7d206eba093f44d13cce1dd7f3e93053",
+      "bytes": 13222800
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b69c77299dd87e7d691d83d8125c021e341ba0c84b6284d53b633dddddf908f1",
+      "bytes": 15606784
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "093e6a4b04c1d456ca0ea6979e82849cceab7330450e809526a124d18ce6dac9",
+      "bytes": 8732672
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "prior_turn_dart_tests": 52,
+    "prior_turn_analysis_targets": 10,
+    "prior_turn_rust_executions": 16,
+    "prior_turn_rust_distinct_tests": 14,
+    "current_packaged_repeat_subset": 4,
+    "windows_build_exit_code": 0,
+    "formal_autosave_enabled": false,
+    "binary_also_contains_later_style_input_fix": true,
+    "not_verified": [
+      "formal autosave UI workflow",
+      "power loss",
+      "Android/Web",
+      "performance"
+    ]
+  }
+}

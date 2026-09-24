@@ -1,3 +1,4 @@
+import 'surface_paint_boundary.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
@@ -63,7 +64,8 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
     final active = widget.enabled && motion > Duration.zero;
     final pressed = active && _pointer != null;
     final hovered = active && _hovered && !pressed;
-    final scale = pressed ? 0.988 : (hovered ? 1.006 : 1.0);
+    // Hover must not grow with the card width and consume adjacent gutters.
+    final scale = pressed ? 0.988 : 1.0;
     final rise = hovered ? -2.0 : 0.0;
     return MouseRegion(
       onEnter: (_) {
@@ -92,25 +94,27 @@ class _SurfaceInteractionState extends State<SurfaceInteraction> {
         },
         onPointerUp: (event) => _release(event.pointer),
         onPointerCancel: (event) => _release(event.pointer),
-        child: AnimatedContainer(
-          duration: motion,
-          curve: Curves.easeOutCubic,
-          transformAlignment: Alignment.center,
-          transform: Matrix4.identity()
-            ..setEntry(0, 0, scale)
-            ..setEntry(1, 1, scale)
-            ..setEntry(1, 3, rise),
-          decoration: BoxDecoration(
-            borderRadius: widget.borderRadius,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: hovered ? 0.13 : 0),
-                blurRadius: hovered ? 20 : 0,
-                offset: Offset(0, hovered ? 9 : 0),
-              ),
-            ],
+        child: SurfacePaintBoundary(
+          child: AnimatedContainer(
+            duration: motion,
+            curve: Curves.easeOutCubic,
+            transformAlignment: Alignment.center,
+            transform: Matrix4.identity()
+              ..setEntry(0, 0, scale)
+              ..setEntry(1, 1, scale)
+              ..setEntry(1, 3, rise),
+            decoration: BoxDecoration(
+              borderRadius: widget.borderRadius,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: hovered ? 0.08 : 0),
+                  blurRadius: hovered ? 8 : 0,
+                  offset: Offset(0, hovered ? 3 : 0),
+                ),
+              ],
+            ),
+            child: widget.child,
           ),
-          child: widget.child,
         ),
       ),
     );

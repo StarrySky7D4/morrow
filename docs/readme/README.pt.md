@@ -8,9 +8,9 @@ Morrow (明隙) é um espaço de trabalho local baseado em cartões, em evoluç�
 
 ## Download e compatibilidade
 
-Versão atual: **0.1.9-test.54+58**, uma **prévia de teste para Windows x64**, não estável. Baixe o ZIP do Windows, o ZIP do código-fonte correspondente e a lista SHA-256. Extraia tudo e execute `morrow_studio.exe`, mantendo as DLLs, o host, `data`, `plugins` e os arquivos de licença.
+Versão atual: **0.1.9-test.55+59**, uma **prévia de teste para Windows x64**, não estável. Baixe o ZIP do Windows, o ZIP do código-fonte correspondente e a lista SHA-256. Extraia tudo e execute `morrow_studio.exe`, mantendo as DLLs, o host, `data`, `plugins` e os arquivos de licença.
 
-[Baixar test.54](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.54) · [Versão compatível test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[Baixar test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Versão compatível test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` é a última versão de teste `0.1.x` compatível com os tipos de dados originais. As versões seguintes avançam a reescrita e podem trazer alterações incompatíveis. `0.2.0` virá após a estabilização e validação da arquitetura e do modelo de dados. Os dados do test.1 não são importados nem sobrescritos automaticamente. Antes de atualizar, faça uma cópia da biblioteca e do arquivo de proteção original. A proteção é vinculada ao usuário do Windows; copiar apenas o banco não permite migrar entre contas.
 
@@ -25,9 +25,13 @@ Versão atual: **0.1.9-test.54+58**, uma **prévia de teste para Windows x64**, 
 
 ## Otimização e validação
 
+test.55 adiciona sete estilos visuais e ajuste de profundidade, melhora as animações dos controles e o espaçamento entre componentes, corrige o salvamento das configurações e a aplicação das fontes, melhora o encerramento seguro em segundo plano e estabelece a base da recuperação de rascunhos. O salvamento automático na interface principal ainda não está concluído.
+
+### Otimização e validação anteriores de test.54
+
 test.54 elimina verificações completas repetidas ao abrir bibliotecas, decodifica evidências com paralelismo limitado e reutiliza tamanhos e resumos de arquivos verificados na mesma transação. Cada abertura continua com verificação completa. O formato de armazenamento e o plugin incluído não mudam; o cache de validação não persiste entre execuções.
 
-A última otimização de leitura foi comparada com a versão paralela anterior em quatro inicializações alternadas por versão. Na mesma máquina, com uma cópia de biblioteca de cerca de 100 MB, a mediana até remover a tela de carregamento caiu de 2.222 para 1.299 s desde a entrada do Dart. Registrar a cópia pode aquecer o cache de arquivos; não é garantia de inicialização a frio com cache vazio. Passaram 568 testes Core, 97 Audit e 2 de integração com host real; um teste Core preexistente foi ignorado. Consulte as condições nas notas da versão.
+A última otimização de leitura foi comparada com a versão paralela anterior em quatro inicializações alternadas por versão. Na mesma máquina, com uma cópia de biblioteca de cerca de 100 MB, a mediana até remover a tela de carregamento caiu de 2.222 para 1.299 s desde a entrada do Dart. Registrar a cópia pode aquecer o cache de arquivos; não é garantia de inicialização a frio com cache vazio. Passaram 568 testes Core, 97 Audit e 2 de integração com host real; um teste Core preexistente foi ignorado. Consulte as condições nas [notas de test.54](../../reports/0.1.9-test.54-release.md).
 
 ## Executar a partir do código-fonte
 
@@ -61,7 +65,7 @@ O SDK completo ainda não está congelado. Requisições HTTP/HTTPS gerenciadas,
 
 ## Documentação
 
-- [Notas da versão e validação](../../reports/0.1.9-test.54-release.md)
+- [Notas da versão e validação](../../reports/0.1.9-test.55-release.md)
 - [Quadro de desenvolvimento](../../docs/DEVELOPMENT_BOARD.md)
 - [Roteiro de arquitetura](../../docs/FUTURE_ROADMAP.md)
 - [Migração de recursos e limites](../../docs/TEST1_RUST_PARITY.md)

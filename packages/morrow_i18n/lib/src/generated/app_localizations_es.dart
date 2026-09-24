@@ -347,6 +347,91 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mainDone => 'Listo';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => 'Adjuntos fijados';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => 'Cancelar traspaso';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      'Cancelar este traspaso inacabado. La operación original ya no podrá crear otro borrador sucesor. El borrador principal permanecerá igual.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => 'Traspaso cancelado';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      'Borrador sucesor guardado; borrador principal aún no retirado';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => 'Crear borrador sucesor';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      'Crear el borrador sucesor a partir de la propuesta original guardada. Esto no volverá a enviar una tarjeta definitiva.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle =>
+      'Confirmar acción del traspaso';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed =>
+      'La operación se confirmó y guardó.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict =>
+      'El estado actual ha cambiado; revísalo';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty =>
+      'No hay traspasos pendientes de revisión';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      'No se pudo completar la operación. Actualiza y revisa el registro.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields =>
+      'Contenido del borrador original';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => 'Ver y revisar';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      'Aquí solo se muestran los traspasos guardados. Abrir esta página no envía contenido automáticamente.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => 'Traspaso completado';
+
+  @override
+  String get mainDraftHandoffRecoveryPending =>
+      'Aún no se ha creado el borrador sucesor';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly =>
+      'Este espacio de trabajo es de solo lectura';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => 'Retirar borrador principal';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      'Tras confirmar que se guardó el borrador sucesor, marca el borrador principal como retirado.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection =>
+      'Selecciona un registro para ver el borrador completo.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle =>
+      'Recuperación del traspaso de borradores';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      'El resultado de la operación aún no está confirmado. Revisa el registro original; no repitas la operación.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Después de cancelar, la solicitud original de abandono ya no se ejecutará. Esto no elimina el adjunto ni deshace otros cambios.';
 
@@ -1105,10 +1190,51 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo leer el contenido guardado. Los datos originales se conservan y no se sobrescribirán.';
 
   @override
+  String get mainStyleBrutalist => 'Brutalismo';
+
+  @override
+  String get mainStyleBrutalistDescription =>
+      'Esquinas duras, bordes marcados y sombras desplazadas';
+
+  @override
+  String get mainStyleClay => 'Arcilla';
+
+  @override
+  String get mainStyleClayDescription =>
+      'Formas redondeadas con colores suavemente elevados';
+
+  @override
+  String get mainStyleDepth => 'Profundidad del relieve';
+
+  @override
+  String get mainStyleDepthGuide =>
+      'Ajusta el relieve y las hendiduras sin cambiar la opacidad del vidrio.';
+
+  @override
+  String get mainStyleDepthReset => 'Restablecer al 100 %';
+
+  @override
+  String get mainStyleExperimental => 'Experimental';
+
+  @override
   String get mainStyleFlat => 'Plano · Predeterminado';
 
   @override
   String get mainStyleFlatDescription => 'Bordes ligeros y capas claras';
+
+  @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription =>
+      'Superficies translúcidas superpuestas y líneas de acento';
+
+  @override
+  String get mainStyleIndustrial => 'Industrial';
+
+  @override
+  String get mainStyleIndustrialDescription =>
+      'Paneles de aspecto metálico, controles compactos y líneas precisas';
 
   @override
   String get mainStyleNeumorphism => 'Neumorfismo';
@@ -1116,6 +1242,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get mainStyleNeumorphismDescription =>
       'Sombras suaves y relieve sutil';
+
+  @override
+  String get mainStylePaper => 'Papel';
+
+  @override
+  String get mainStylePaperDescription =>
+      'Superficies mates, bordes finos y profundidad discreta';
 
   @override
   String get mainTaskAdd => 'Añadir tarea';
@@ -2923,6 +3056,28 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'Reabrir espacio de trabajo';
+
+  @override
+  String get shutdownBackground => 'Continuar el cierre en segundo plano';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'Morrow se cerrará cuando termine el servicio. Si hay un error o la espera se prolonga, esta ventana volverá a aparecer.';
+
+  @override
+  String get shutdownFailure =>
+      'Se produjo un problema al cerrar. Se sigue observando el servicio de contenido.';
+
+  @override
+  String get shutdownStillRunning =>
+      'El cierre tarda más de lo esperado. Se sigue observando el servicio de contenido.';
+
+  @override
+  String get shutdownTitle => 'Cerrando el espacio de trabajo';
+
+  @override
+  String get shutdownWaiting =>
+      'Esperando a que termine el servicio de contenido. La biblioteca sigue bajo su control hasta que se confirme la salida.';
 
   @override
   String get visualApplyColor => 'Aplicar color';

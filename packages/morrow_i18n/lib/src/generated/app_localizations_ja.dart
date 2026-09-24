@@ -325,6 +325,81 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainDone => '完了';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => '固定済みの添付ファイル';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => '引き継ぎを取り消す';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      '未完了の引き継ぎを取り消します。元の操作で後継の下書きを再作成することはできなくなります。親の下書きはそのまま残ります。';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => '引き継ぎは取り消されました';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      '後継の下書きは保存済み、親の下書きはまだ退役していません';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => '後継の下書きを作成';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      '保存済みの元の提案から後継の下書きを作成します。正式なカードは再送信しません。';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle => '下書きの引き継ぎ操作を確認';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed => '操作が確認され、保存されました。';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict => '現在の状態が変わりました。確認してください';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty => '確認する引き継ぎ記録はありません';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed => '操作を完了できませんでした。更新して記録を確認してください。';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => '元の下書きの内容';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => '表示して確認';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      '保存済みの引き継ぎ記録のみ表示します。このページを開いても内容は自動送信されません。';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => '引き継ぎは完了しました';
+
+  @override
+  String get mainDraftHandoffRecoveryPending => '後継の下書きはまだ作成されていません';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly => '現在のワークスペースは閲覧のみ可能です';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => '親の下書きを退役にする';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      '後継の下書きが保存済みであることを確認してから、親の下書きを退役にします。';
+
+  @override
+  String get mainDraftHandoffRecoverySelection => '記録を選択すると、下書き全体を確認できます。';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle => '下書き引き継ぎの復旧';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      '操作結果はまだ確認できていません。元の記録を確認し、操作を繰り返さないでください。';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       '取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。';
 
@@ -1038,16 +1113,58 @@ class AppLocalizationsJa extends AppLocalizations {
   String get mainStorageUnreadable => '保存済みの内容を読み取れませんでした。元のデータは保持され、上書きされません。';
 
   @override
+  String get mainStyleBrutalist => 'ブルータリズム';
+
+  @override
+  String get mainStyleBrutalistDescription => '直線的な角、太い枠線とずらした影';
+
+  @override
+  String get mainStyleClay => 'クレイ';
+
+  @override
+  String get mainStyleClayDescription => '丸みのある形と柔らかく浮き上がる色';
+
+  @override
+  String get mainStyleDepth => '立体感の深さ';
+
+  @override
+  String get mainStyleDepthGuide => 'ガラスの不透明度を変えずに、浮き上がりとくぼみの強さを調整します。';
+
+  @override
+  String get mainStyleDepthReset => '100% に戻す';
+
+  @override
+  String get mainStyleExperimental => '実験的';
+
+  @override
   String get mainStyleFlat => 'フラット · 標準';
 
   @override
   String get mainStyleFlatDescription => '軽やかな輪郭と明確な階層';
 
   @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription => '半透明の重なりとアクセントライン';
+
+  @override
+  String get mainStyleIndustrial => 'インダストリアル';
+
+  @override
+  String get mainStyleIndustrialDescription => '金属風のパネル、コンパクトな操作部と精密な線';
+
+  @override
   String get mainStyleNeumorphism => 'ニューモーフィズム';
 
   @override
   String get mainStyleNeumorphismDescription => '柔らかな光と影で穏やかな立体感';
+
+  @override
+  String get mainStylePaper => 'ペーパー';
+
+  @override
+  String get mainStylePaperDescription => 'マットな紙面、細い枠線と控えめな奥行き';
 
   @override
   String get mainTaskAdd => 'タスクを追加';
@@ -2727,6 +2844,26 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'ワークスペースを開き直す';
+
+  @override
+  String get shutdownBackground => 'バックグラウンドで終了を続ける';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'サービスが終了すると Morrow も閉じます。失敗した場合や長時間かかる場合は、この画面を再表示します。';
+
+  @override
+  String get shutdownFailure => '終了処理で問題が発生しました。コンテンツサービスの監視を続けています。';
+
+  @override
+  String get shutdownStillRunning => '終了に予想以上の時間がかかっています。コンテンツサービスの監視を続けています。';
+
+  @override
+  String get shutdownTitle => 'ワークスペースを閉じています';
+
+  @override
+  String get shutdownWaiting =>
+      'コンテンツサービスの終了を待っています。終了が確認されるまで、ライブラリは元のサービスが保持します。';
 
   @override
   String get visualApplyColor => '色を適用';

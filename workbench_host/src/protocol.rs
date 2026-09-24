@@ -1,11 +1,11 @@
 //! Private binary UI transport. The child process and all paths are selected by
 //! the trusted Flutter host; plugins receive only the registered business task.
-use crate::{host_capnp as wire, Result, Workbench, WorkbenchState};
+use crate::{Result, Workbench, WorkbenchState, host_capnp as wire};
 use capnp::{
     message::{Builder, ReaderOptions},
     serialize,
 };
-use morrow_workbench_plugin::{codec, Action, Response};
+use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
 #[path = "service_run_protocol.rs"]
@@ -153,6 +153,7 @@ fn requires_writable_state(action: wire::Action) -> bool {
         action,
         wire::Action::Read
             | wire::Action::InspectEditorRecoveries
+            | wire::Action::InspectEditorCommit
             | wire::Action::ReadEditorDraft
             | wire::Action::ReadEditorDraftPart
             | wire::Action::AbortEditorDraftTransfer
@@ -165,6 +166,8 @@ fn requires_writable_state(action: wire::Action) -> bool {
             | wire::Action::ListEditorDraftImportDecisions
             | wire::Action::ListEditorDraftImportDecisionScopes
             | wire::Action::ListEditorDraftLineages
+            | wire::Action::InspectEditorDraftHandoffProposal
+            | wire::Action::ListEditorDraftHandoffProposals
             | wire::Action::ReadVersioned
             | wire::Action::PageVersioned
             | wire::Action::Page
@@ -905,9 +908,7 @@ fn handle_business(
             write_chunk(out.reborrow(), &part);
         }
         wire::Action::BeginPreferences => {
-            if !host.writable() {
-                return Err("plugin unavailable".into());
-            }
+            host.prepare_preferences_write()?;
             let token = host.transfers.begin(
                 text(r.get_operation())?,
                 r.get_total_length(),
@@ -988,6 +989,66 @@ fn handle_business(
                 return Err("paste upload identity mismatch".into());
             }
             host.record_paste(&text(upload.get_scope())?, event)?;
+        }
+        wire::Action::InspectEditorCommit => {
+            let operation = text(r.get_operation())?;
+            if r.get_revision() != 0
+                || !r.get_payload()?.is_empty()
+                || !text(r.get_selected_path())?.is_empty()
+                || !text(r.get_name())?.is_empty()
+                || !text(r.get_kind())?.is_empty()
+                || !text(r.get_cursor())?.is_empty()
+                || r.get_limit() != 0
+                || !text(r.get_attachment())?.is_empty()
+                || !text(r.get_transfer())?.is_empty()
+                || r.get_offset() != 0
+                || r.get_total_length() != 0
+                || !r.get_sha256()?.is_empty()
+                || !text(r.get_capture_scope())?.is_empty()
+                || !text(r.get_capture_parent())?.is_empty()
+                || !r.get_approved_capabilities()?.is_empty()
+                || !text(r.get_handler())?.is_empty()
+                || !text(r.get_input_type())?.is_empty()
+                || !text(r.get_output_type())?.is_empty()
+                || r.get_catalog_revision_bound()
+                || !r.get_approved_io_capabilities()?.is_empty()
+                || !r.get_credential_reference()?.is_empty()
+                || !r.get_credential_snapshot()?.is_empty()
+                || !r.get_credential_cursor()?.is_empty()
+                || !text(r.get_credential_header())?.is_empty()
+                || !text(r.get_credential_secret())?.is_empty()
+                || r.get_credential_days() != 0
+                || !r.get_endpoint_cursor()?.is_empty()
+                || !r.get_endpoint_snapshot()?.is_empty()
+                || !r.get_endpoint_reference()?.is_empty()
+                || r.get_endpoint_registry_revision() != 0
+                || r.get_endpoint_days() != 0
+                || r.has_endpoint_policy()
+                || r.has_http_start()
+                || !r.get_io_key()?.is_empty()
+                || r.has_service_config()
+                || r.has_service_publication()
+                || !r.get_service_reference()?.is_empty()
+                || !r.get_service_snapshot()?.is_empty()
+                || !r.get_service_cursor()?.is_empty()
+                || !text(r.get_principal_id())?.is_empty()
+                || r.get_service_days() != 0
+                || r.has_service_run()
+                || !r.get_command_key()?.is_empty()
+                || !r.get_command_submission()?.is_empty()
+                || r.has_service_tls()
+                || r.has_ui_font()
+            {
+                return Err("editor commit inspect accepts only id and operation".into());
+            }
+            let proof = host.inspect_editor_commit(&id, &operation)?;
+            out.set_revision(proof.committed_revision);
+            let mut value = out.reborrow().init_editor_commit_proof();
+            value.set_id(&proof.id);
+            value.set_operation(&proof.operation);
+            value.set_digest(&proof.digest);
+            value.set_source_revision(proof.source_revision);
+            value.set_committed_revision(proof.committed_revision);
         }
         wire::Action::InspectEditorRecoveries => {
             let entries = if id.is_empty() {
@@ -1165,7 +1226,13 @@ fn handle_business(
         | wire::Action::ListEditorDraftImportDecisionScopes
         | wire::Action::FinishEditorDraftHandoff
         | wire::Action::RetireEditorDraftParent
-        | wire::Action::ListEditorDraftLineages => unreachable!(),
+        | wire::Action::ListEditorDraftLineages
+        | wire::Action::PrepareEditorDraftHandoffProposal
+        | wire::Action::InspectEditorDraftHandoffProposal
+        | wire::Action::ListEditorDraftHandoffProposals
+        | wire::Action::CompleteEditorDraftHandoffProposal
+        | wire::Action::RetireEditorDraftHandoffProposal
+        | wire::Action::CancelEditorDraftHandoffProposal => unreachable!(),
     }
     Ok(())
 }

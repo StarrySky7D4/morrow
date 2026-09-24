@@ -372,6 +372,8 @@ enum EditorDraftResultKind {
   imported,
   exported,
   lineages,
+  handoffProposal,
+  handoffProposals,
 }
 
 /// The caller must also compare this context with its outer host response.
@@ -386,6 +388,8 @@ final class EditorDraftEnvelope {
     List<EditorDraftSummary>? summaries,
     this.asset,
     this.lineagePage,
+    this.handoffProposal,
+    this.handoffProposalPage,
   }) : summaries = summaries == null ? null : List.unmodifiable(summaries);
 
   final EditorDraftResultKind kind;
@@ -395,4 +399,129 @@ final class EditorDraftEnvelope {
   final List<EditorDraftSummary>? summaries;
   final EditorDraftImportedAsset? asset;
   final EditorDraftLineagePage? lineagePage;
+  final EditorDraftHandoffProposalRecord? handoffProposal;
+  final EditorDraftHandoffProposalPage? handoffProposalPage;
+}
+
+/// A frozen first-child request with one reserved parent retirement operation.
+final class EditorDraftHandoffProposal {
+  const EditorDraftHandoffProposal({
+    required this.handoff,
+    required this.retirementOperation,
+  });
+
+  final EditorDraftHandoffRequest handoff;
+  final String retirementOperation;
+}
+
+enum EditorDraftHandoffProposalStatus {
+  pending,
+  childCommitted,
+  parentRetired,
+  cancelled,
+  conflict,
+}
+
+/// Historical proposal state and the current journal state are separate.
+final class EditorDraftHandoffProposalSummary {
+  const EditorDraftHandoffProposalSummary({
+    required this.cardId,
+    required this.parentDraftId,
+    required this.childDraftId,
+    required this.childOperation,
+    required this.retirementOperation,
+    required this.revision,
+    required this.status,
+    required this.parentGeneration,
+    required this.parentActive,
+    required this.childGeneration,
+    required this.childActive,
+    required this.cursor,
+  });
+
+  final String cardId, parentDraftId, childDraftId, childOperation;
+  final String retirementOperation, cursor;
+  final BigInt revision, parentGeneration, childGeneration;
+  final EditorDraftHandoffProposalStatus status;
+  final bool parentActive, childActive;
+}
+
+final class EditorDraftHandoffProposalRecord {
+  const EditorDraftHandoffProposalRecord({
+    required this.proposal,
+    required this.summary,
+  });
+
+  final EditorDraftHandoffProposal proposal;
+  final EditorDraftHandoffProposalSummary summary;
+}
+
+final class EditorDraftHandoffProposalPage {
+  EditorDraftHandoffProposalPage({
+    required List<EditorDraftHandoffProposalSummary> proposals,
+    required this.nextCursor,
+    required this.requestCursor,
+    required this.requestLimit,
+  }) : proposals = List.unmodifiable(proposals);
+
+  final List<EditorDraftHandoffProposalSummary> proposals;
+  final String nextCursor, requestCursor;
+  final int requestLimit;
+}
+
+abstract interface class WorkbenchEditorDraftHandoffProposalSupport {
+  EditorDraftHandoffProposalControl get editorDraftHandoffProposals;
+}
+
+abstract interface class EditorDraftHandoffProposalControl {
+  Future<EditorDraftHandoffProposalRecord> prepare(
+    EditorDraftHandoffProposal proposal,
+  );
+  Future<EditorDraftHandoffProposalRecord?> inspect({
+    required String cardId,
+    required String parentDraftId,
+    required String childOperation,
+  });
+  Future<EditorDraftHandoffProposalRecord> complete({
+    required String cardId,
+    required String parentDraftId,
+    required String childOperation,
+  });
+  Future<EditorDraftHandoffProposalRecord> retire({
+    required String cardId,
+    required String parentDraftId,
+    required String childOperation,
+  });
+  Future<EditorDraftHandoffProposalRecord> cancel({
+    required String cardId,
+    required String parentDraftId,
+    required String childOperation,
+  });
+  Future<EditorDraftHandoffProposalPage> page({
+    String cursor = '',
+    int limit = 32,
+  });
+  Future<List<EditorDraftHandoffProposalSummary>> discover({int pageSize = 32});
+}
+
+/// An uncertain result must be inspected under the original three-part identity.
+final class EditorDraftHandoffProposalFailure implements Exception {
+  const EditorDraftHandoffProposalFailure({
+    required this.cardId,
+    required this.parentDraftId,
+    required this.childOperation,
+    required this.outcomeUnknown,
+    required this.cause,
+    this.action,
+  });
+
+  final String cardId, parentDraftId, childOperation;
+  final bool outcomeUnknown;
+  final Object cause;
+  final String? action;
+
+  @override
+  String toString() => outcomeUnknown
+      ? 'Editor draft handoff proposal outcome is unknown; inspect the original operation'
+      : 'Editor draft handoff proposal was rejected before submission';
 }

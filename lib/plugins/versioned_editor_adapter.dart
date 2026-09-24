@@ -27,13 +27,15 @@ final class VersionedWorkbenchEditorAdapter
     implements
         WorkbenchEditorSession,
         WorkbenchEditorContinuation,
-        EditorDraftPredecessorSource {
+        EditorDraftPredecessorSource,
+        VersionedEditorDeferredAcknowledgement {
   VersionedWorkbenchEditorAdapter(
     this._session,
     this._source,
     this._present, {
     this.isCurrent,
     this.reopen,
+    this.deferRecoveryAcknowledgement = false,
   }) {
     if (_source.formatVersion != 2 ||
         _source.deleted ||
@@ -47,6 +49,10 @@ final class VersionedWorkbenchEditorAdapter
   final Future<Idea> Function(VersionedContentRecord) _present;
   final bool Function()? isCurrent;
   final Future<WorkbenchEditorSession> Function(Idea confirmed)? reopen;
+
+  /// Opt in only when a durable successor handoff owns cleanup. The formal
+  /// editor currently uses the default immediate acknowledgement.
+  final bool deferRecoveryAcknowledgement;
   bool get _active => !_closed && !_continued && (isCurrent?.call() ?? true);
   final Map<IdeaAttachment, Future<VersionedAsset>> _staged =
       HashMap<IdeaAttachment, Future<VersionedAsset>>.identity();
@@ -57,6 +63,9 @@ final class VersionedWorkbenchEditorAdapter
   Future<WorkbenchEditorSession>? _continuation;
   Future<void>? _closing;
   ({String id, BigInt revision, String operation})? _accepted;
+  EditorRecovery? _observedPredecessor;
+  Future<void>? _ackInFlight;
+  bool _acknowledged = false;
   bool _stageStarted = false;
   bool _closed = false;
   bool _continued = false;
@@ -67,11 +76,12 @@ final class VersionedWorkbenchEditorAdapter
   @override
   EditorRecovery? get draftPredecessor {
     final accepted = _accepted;
-    if (accepted == null || _session is! EditorDraftPredecessorSource) {
-      return null;
-    }
+    if (accepted == null) return null;
     final observed =
-        (_session as EditorDraftPredecessorSource).draftPredecessor;
+        _observedPredecessor ??
+        (_session is EditorDraftPredecessorSource
+            ? (_session as EditorDraftPredecessorSource).draftPredecessor
+            : null);
     return observed != null &&
             observed.id == accepted.id &&
             observed.operation == accepted.operation &&
@@ -213,7 +223,6 @@ final class VersionedWorkbenchEditorAdapter
       _intent = signature;
     }
     if (_inFlight != null) return _inFlight!;
-    _accepted = null;
     return _inFlight = _saveFrozen(_frozen!).whenComplete(() {
       _inFlight = null;
     });
@@ -336,20 +345,50 @@ final class VersionedWorkbenchEditorAdapter
             shown.deleted != presented.contentDeleted) {
           throw const FormatException('Versioned editor presentation changed');
         }
-        if (_session case VersionedEditorAcknowledgement confirmation) {
-          await confirmation.acknowledgePresented(result.receipt);
-          if (result.receipt.id == _source.id &&
-              result.receipt.operation.isNotEmpty &&
-              result.receipt.revision == _source.revision + BigInt.one &&
-              shown.revision == result.receipt.revision &&
-              !shown.deleted &&
-              !presented.contentDeleted) {
-            _accepted = (
-              id: presented.id,
-              revision: shown.revision,
-              operation: result.receipt.operation,
+        if (deferRecoveryAcknowledgement) {
+          if (_session is! VersionedEditorCommitObservation ||
+              _session is! VersionedEditorAcknowledgement) {
+            throw UnsupportedError(
+              'Deferred editor recovery proof is unavailable',
             );
           }
+          final observed = await (_session as VersionedEditorCommitObservation)
+              .observePresented(result.receipt);
+          if (observed.id != _source.id ||
+              observed.operation != result.receipt.operation ||
+              observed.sourceRevision != _source.revision ||
+              observed.currentRevision != result.receipt.revision ||
+              observed.digest.length != 32 ||
+              observed.status != EditorRecoveryStatus.committed ||
+              (_observedPredecessor != null &&
+                  (_observedPredecessor!.operation != observed.operation ||
+                      _observedPredecessor!.sourceRevision !=
+                          observed.sourceRevision ||
+                      _observedPredecessor!.currentRevision !=
+                          observed.currentRevision ||
+                      base64Encode(_observedPredecessor!.digest) !=
+                          base64Encode(observed.digest)))) {
+            throw StateError('Original editor commit proof changed');
+          }
+          _observedPredecessor ??= observed;
+        } else if (_session case VersionedEditorAcknowledgement confirmation) {
+          await confirmation.acknowledgePresented(result.receipt);
+        }
+        if (!_active) {
+          throw StateError('The editor changed during commit proof');
+        }
+        if ((_session is VersionedEditorAcknowledgement) &&
+            result.receipt.id == _source.id &&
+            result.receipt.operation.isNotEmpty &&
+            result.receipt.revision == _source.revision + BigInt.one &&
+            shown.revision == result.receipt.revision &&
+            !shown.deleted &&
+            !presented.contentDeleted) {
+          _accepted = (
+            id: presented.id,
+            revision: shown.revision,
+            operation: result.receipt.operation,
+          );
         }
         return presented;
       } catch (error) {
@@ -362,6 +401,40 @@ final class VersionedWorkbenchEditorAdapter
         rethrow;
       }
       throw StateError('The staged V2 edit remains frozen: $error');
+    }
+  }
+
+  @override
+  Future<void> acknowledgeAccepted(VersionedCommitReceipt receipt) {
+    final accepted = _accepted;
+    if (!deferRecoveryAcknowledgement ||
+        accepted == null ||
+        receipt.id != accepted.id ||
+        receipt.operation != accepted.operation ||
+        receipt.revision != accepted.revision ||
+        !(isCurrent?.call() ?? true) ||
+        _session is! VersionedEditorAcknowledgement) {
+      return Future.error(
+        StateError('Original deferred editor acknowledgement is unavailable'),
+      );
+    }
+    if (_acknowledged) return Future.value();
+    final active = _ackInFlight;
+    if (active != null) return active;
+    return _ackInFlight = _acknowledgeExact(receipt).whenComplete(() {
+      _ackInFlight = null;
+    });
+  }
+
+  Future<void> _acknowledgeExact(VersionedCommitReceipt receipt) async {
+    await (_session as VersionedEditorAcknowledgement).acknowledgePresented(
+      receipt,
+    );
+    // A valid host acknowledgement remains known even if its UI session has
+    // already continued or the workspace switches before this await resumes.
+    _acknowledged = true;
+    if (!(isCurrent?.call() ?? true)) {
+      throw StateError('The editor workspace changed after acknowledgement');
     }
   }
 

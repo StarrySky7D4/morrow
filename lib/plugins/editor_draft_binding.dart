@@ -39,6 +39,7 @@ final class EditorDraftBinding extends ChangeNotifier {
   final bool Function()? isCurrent;
   bool _attached = false, _disposed = false, _applying = false;
   bool _uncaptured = false;
+  int _captureSerial = 0;
   Object? _captureFailure;
 
   bool get attached => _attached;
@@ -95,35 +96,57 @@ final class EditorDraftBinding extends ChangeNotifier {
   /// is handed to autosave while attachment metadata cannot be captured.
   bool capture() {
     if (_disposed || !_attached || _applying) return false;
+    final serial = ++_captureSerial;
     try {
       if (!(isCurrent?.call() ?? true)) {
         throw StateError('The draft view belongs to an inactive workspace');
       }
-      final metadata = readMetadata();
-      final snapshot = EditorDraftSnapshot(
-        values: EditorDraftValues(
-          title: _read(title),
-          description: _read(description),
-          hypothesis: _read(hypothesis),
-          conclusion: _read(conclusion),
-          todos: _read(todos),
-          category: metadata.category,
-          stage: metadata.stage,
-        ),
-        assets: metadata.assets,
-      );
+      final snapshot = _readSnapshot();
+      if (serial != _captureSerial) return false;
       session.observe(snapshot);
+      // Session listeners may synchronously capture newer input or a metadata
+      // failure. Do not overwrite their result with this older observation.
+      if (serial != _captureSerial) {
+        return !_uncaptured && !session.captureBlocked;
+      }
+      if (session.captureBlocked) {
+        _uncaptured = true;
+        _captureFailure = session.captureFailure;
+        notifyListeners();
+        return false;
+      }
       final changed = _uncaptured || _captureFailure != null;
       _uncaptured = false;
       _captureFailure = null;
       if (changed) notifyListeners();
       return true;
     } catch (error) {
-      _uncaptured = true;
-      _captureFailure = error;
-      notifyListeners();
+      _markIncomplete(error);
       return false;
     }
+  }
+
+  EditorDraftSnapshot _readSnapshot() {
+    final metadata = readMetadata();
+    return EditorDraftSnapshot(
+      values: EditorDraftValues(
+        title: _read(title),
+        description: _read(description),
+        hypothesis: _read(hypothesis),
+        conclusion: _read(conclusion),
+        todos: _read(todos),
+        category: metadata.category,
+        stage: metadata.stage,
+      ),
+      assets: metadata.assets,
+    );
+  }
+
+  void _markIncomplete(Object error) {
+    _uncaptured = true;
+    _captureFailure = error;
+    if (!session.disposed) session.markCaptureIncomplete(error);
+    notifyListeners();
   }
 
   static TextEditingValue _value(EditorDraftTextValue raw) {
@@ -158,37 +181,54 @@ final class EditorDraftBinding extends ChangeNotifier {
   /// [applyMetadata] must synchronously apply the supplied selection as a unit.
   void applyCurrentToView(void Function(EditorDraftMetadata) applyMetadata) {
     if (_disposed) throw StateError('The draft binding was disposed');
-    if (!(isCurrent?.call() ?? true)) {
-      throw StateError('The draft view belongs to an inactive workspace');
-    }
-    final current = session.current;
-    final fields = current.values;
-    final values = [
-      for (final raw in [
-        fields.title,
-        fields.description,
-        fields.hypothesis,
-        fields.conclusion,
-        fields.todos,
-      ])
-        _value(raw),
-    ];
-    final metadata = EditorDraftMetadata(
-      category: fields.category,
-      stage: fields.stage,
-      assets: current.assets,
-    );
-    _applying = true;
     try {
-      applyMetadata(metadata);
-      final controllers = _controllers;
-      for (var i = 0; i < controllers.length; i++) {
-        controllers[i].value = values[i];
+      if (!(isCurrent?.call() ?? true)) {
+        throw StateError('The draft view belongs to an inactive workspace');
+      }
+      final current = session.current;
+      final fields = current.values;
+      final values = [
+        for (final raw in [
+          fields.title,
+          fields.description,
+          fields.hypothesis,
+          fields.conclusion,
+          fields.todos,
+        ])
+          _value(raw),
+      ];
+      final metadata = EditorDraftMetadata(
+        category: fields.category,
+        stage: fields.stage,
+        assets: current.assets,
+      );
+      _applying = true;
+      try {
+        applyMetadata(metadata);
+        final controllers = _controllers;
+        for (var i = 0; i < controllers.length; i++) {
+          controllers[i].value = values[i];
+        }
+      } finally {
+        _applying = false;
+      }
+      // Re-read all applied state, including attachment metadata, before
+      // clearing an old failure. This also supports explicit restore before
+      // attaching listeners without treating a partial restore as complete.
+      final restored = _readSnapshot();
+      if (!restored.sameAs(current)) {
+        throw StateError('Restored draft differs from the complete snapshot');
       }
       _captureFailure = null;
       _uncaptured = false;
-    } finally {
-      _applying = false;
+      session.observe(restored);
+      if (session.captureBlocked) {
+        throw session.captureFailure ??
+            StateError('Restored draft became incomplete');
+      }
+    } catch (error) {
+      _markIncomplete(error);
+      rethrow;
     }
     notifyListeners();
   }

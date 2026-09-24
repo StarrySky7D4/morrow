@@ -1,0 +1,9 @@
+{
+  "@@locale": "fr",
+  "shutdownTitle": "Fermeture de l’espace de travail",
+  "shutdownWaiting": "En attente de l’arrêt du service de contenu. Il conserve la bibliothèque jusqu’à confirmation de sa sortie.",
+  "shutdownStillRunning": "La fermeture prend plus de temps que prévu. Le service de contenu reste sous surveillance.",
+  "shutdownBackground": "Poursuivre en arrière-plan",
+  "shutdownBackgroundHint": "Morrow se fermera quand le service s’arrêtera. En cas d’erreur ou d’attente prolongée, cette fenêtre réapparaîtra.",
+  "shutdownFailure": "Un problème est survenu pendant la fermeture. Le service de contenu reste sous surveillance."
+}

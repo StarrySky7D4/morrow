@@ -8,9 +8,9 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 ## 下载与兼容性
 
-当前版本：**0.1.9-test.54+58**，仅发布 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
+当前版本：**0.1.9-test.55+59**，仅发布 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
 
-[下载 test.54](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.54) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[下载 test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` 是 `0.1.x` 最后一个兼容原有数据类型的测试版。后续 test 版本推进重写，可能包含破坏性变更；架构与数据模型锚定并完成验收后发布 `0.2.0`。旧 test.1 数据不会自动导入或覆盖。升级前备份内容库与原保护文件；保护文件绑定 Windows 用户，仅复制数据库不能完成跨账户迁移。
 
@@ -25,9 +25,13 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 ## 本版优化与验证
 
+test.55 新增七种外观风格与深度调节，完善控件动画和组件间距；修复设置保存与字体应用，改进安全后台关闭，并提供草稿恢复基础。正式界面的自动保存尚未完成。
+
+### test.54 历史优化与验证
+
 test.54 合并重复开库校验、以有界并行计算证据，并在同一校验事务内复用证据大小和归档摘要。每次开库仍完整校验；不改变存储格式或内置插件包，不引入跨启动验证缓存。
 
-最后一轮读取优化与上轮并行版各进行四次交替启动：同机约 100 MB 库副本的加载遮盖移除中位数从 2.222 s 降至 1.299 s（Dart 入口起）。副本注册可能预热文件缓存，这不是清空缓存后的冷启动保证。Core 568、Audit 97、真实宿主集成 2 项通过；Core 另有 1 项既有忽略。具体条件与限制见发布说明。
+最后一轮读取优化与上轮并行版各进行四次交替启动：同机约 100 MB 库副本的加载遮盖移除中位数从 2.222 s 降至 1.299 s（Dart 入口起）。副本注册可能预热文件缓存，这不是清空缓存后的冷启动保证。Core 568、Audit 97、真实宿主集成 2 项通过；Core 另有 1 项既有忽略。具体条件与限制见 [test.54 发布说明](reports/0.1.9-test.54-release.md)。
 
 ## 从源码运行
 
@@ -61,7 +65,7 @@ flutter build web --no-web-resources-cdn
 
 ## 文档
 
-- [本版发布说明与验证](reports/0.1.9-test.54-release.md)
+- [本版发布说明与验证](reports/0.1.9-test.55-release.md)
 - [开发看板与后续任务](docs/DEVELOPMENT_BOARD.md)
 - [未来架构路线](docs/FUTURE_ROADMAP.md)
 - [功能迁移与容量边界](docs/TEST1_RUST_PARITY.md)

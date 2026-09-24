@@ -13,6 +13,7 @@ pub struct Appearance {
     pub glass: String,
     pub background: String,
     pub visual_style: String,
+    pub style_depth: f64,
     pub solid_tint: u16,
     pub opacity: f64,
     pub corner_radius: f64,
@@ -45,6 +46,7 @@ impl Default for Appearance {
             glass: "frosted".into(),
             background: "ambient".into(),
             visual_style: "flat".into(),
+            style_depth: 1.,
             solid_tint: 0,
             opacity: 0.76,
             corner_radius: 20.,
@@ -76,7 +78,10 @@ impl Appearance {
     pub fn validate(&self) -> Result<(), &'static str> {
         if !matches!(self.theme.as_str(), "white" | "custom" | "dark")
             || !matches!(self.glass.as_str(), "frosted" | "clear" | "liquid")
-            || !matches!(self.visual_style.as_str(), "flat" | "neumorphism")
+            || !matches!(
+                self.visual_style.as_str(),
+                "flat" | "neumorphism" | "paper" | "clay" | "fluent" | "brutalist" | "industrial"
+            )
             || !matches!(
                 self.background.as_str(),
                 "ambient" | "solid" | "texture" | "transparent"
@@ -87,6 +92,7 @@ impl Appearance {
         }
         for (value, min, max) in [
             (self.opacity, 0.2, 1.),
+            (self.style_depth, 0., 2.),
             (self.canvas_blur, 0., 40.),
             (self.canvas_opacity, 0., 1.),
             (self.component_blur, 0., 40.),
@@ -356,6 +362,7 @@ pub(crate) fn read_appearance(r: wire::appearance::Reader<'_>) -> Result<Appeara
             "" => "flat".into(),
             value => value.into(),
         },
+        style_depth: r.get_style_depth(),
         solid_tint: r.get_solid_tint(),
         opacity: r.get_opacity(),
         corner_radius: r.get_corner_radius(),
@@ -387,6 +394,7 @@ pub(crate) fn write_appearance(mut b: wire::appearance::Builder<'_>, v: &Appeara
     b.set_glass(v.glass.as_str());
     b.set_background(v.background.as_str());
     b.set_visual_style(v.visual_style.as_str());
+    b.set_style_depth(v.style_depth);
     b.set_solid_tint(v.solid_tint);
     b.set_opacity(v.opacity);
     b.set_corner_radius(v.corner_radius);

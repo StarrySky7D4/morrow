@@ -495,6 +495,24 @@ void main() {
       ]),
       throwsFormatException,
     );
+    // Explicit MIME metadata cannot override a known rendering category.
+    expect(
+      () => EditorDraftAssetCatalog.restore(imageRecord, [
+        _view(
+          _attachment('same-id', 'one.bin'),
+          hash: _hash,
+          mediaType: 'image/png',
+        ),
+      ]),
+      throwsFormatException,
+    );
+    final image = _attachment('same-id', 'one.bin', kind: TextureKind.image);
+    expect(
+      EditorDraftAssetCatalog.restore(imageRecord, [
+        _view(image, hash: _hash, mediaType: 'image/png'),
+      ]).selectionsFor([image]).single.assetId,
+      'same-id',
+    );
     final unusual = _record(
       selections: [selection],
       assets: [_stored(selection, mediaType: 'model/gltf-binary')],

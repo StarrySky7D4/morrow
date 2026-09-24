@@ -1,10 +1,11 @@
 use morrow_workbench_plugin::preferences::{
-    self as p, Preferences, Source, Track, proto::Appearance,
+    self as p, proto::Appearance, Preferences, Source, Track,
 };
 fn config() -> Preferences {
     Preferences {
         version: 1,
         appearance: Some(Appearance {
+            style_depth: Some(1.),
             theme: "white".into(),
             glass: "frosted".into(),
             background: "transparent".into(),
@@ -189,6 +190,22 @@ fn visual_style_and_component_chains_roundtrip_and_reject_cycles() {
 }
 
 #[test]
+fn experimental_styles_survive_wire_and_persistent_updates() {
+    let mut v = config();
+    for style in ["paper", "clay", "fluent", "brutalist", "industrial"] {
+        v.appearance.as_mut().unwrap().visual_style = style.into();
+        let wire = p::encode_wire(&v).unwrap();
+        assert_eq!(p::decode_wire(&wire).unwrap(), v);
+        let stored = p::encode_persistent(&v, None).unwrap();
+        assert_eq!(p::decode_persistent(&stored).unwrap(), v);
+        let updated = p::encode_persistent(&v, Some(&stored)).unwrap();
+        assert_eq!(p::decode_persistent(&updated).unwrap(), v);
+    }
+    v.appearance.as_mut().unwrap().visual_style = "paper-unknown".into();
+    assert!(p::encode_wire(&v).is_err());
+    assert!(p::encode_persistent(&v, None).is_err());
+}
+#[test]
 fn legacy_empty_style_normalizes_to_flat_at_wire_boundary() {
     let mut v = config();
     v.appearance.as_mut().unwrap().visual_style.clear();
@@ -222,4 +239,43 @@ fn component_cycle_across_validation_pages_is_rejected_before_splitting() {
     assert!(p::encode_wire(&v).is_err());
     v.components[32].follow_component.clear();
     assert!(p::validation_pages(&v).is_ok());
+}
+
+#[test]
+fn depth_defaults_ranges_and_optional_component_roundtrip() {
+    let mut v = config();
+    v.appearance.as_mut().unwrap().style_depth = None;
+    let old = p::encode_persistent(&v, None).unwrap();
+    let old_restored = p::decode_persistent(&old).unwrap();
+    assert_eq!(old_restored.appearance.as_ref().unwrap().style_depth, None);
+    let normalized = p::decode_wire(&p::encode_wire(&old_restored).unwrap()).unwrap();
+    assert_eq!(normalized.appearance.unwrap().style_depth, Some(1.));
+    for depth in [0., 0.5, 1., 2.] {
+        v.appearance.as_mut().unwrap().style_depth = Some(depth);
+        v.components = vec![
+            p::proto::ComponentMaterial {
+                id: "card:depth".into(),
+                enabled: true,
+                style_depth: Some(depth),
+                ..Default::default()
+            },
+            p::proto::ComponentMaterial {
+                id: "card:inherit".into(),
+                ..Default::default()
+            },
+        ];
+        assert_eq!(p::decode_wire(&p::encode_wire(&v).unwrap()).unwrap(), v);
+        assert_eq!(
+            p::decode_persistent(&p::encode_persistent(&v, None).unwrap()).unwrap(),
+            v
+        );
+    }
+    for bad in [-0.1, 2.1, f64::NAN, f64::INFINITY] {
+        v.appearance.as_mut().unwrap().style_depth = Some(bad);
+        assert!(p::validate(&v).is_err());
+        v.appearance.as_mut().unwrap().style_depth = Some(1.);
+        v.components[0].style_depth = Some(bad);
+        assert!(p::validate(&v).is_err());
+        v.components[0].style_depth = None;
+    }
 }

@@ -8,9 +8,9 @@ Morrow (明隙) is a local-first, card-based workspace for ideas, evolving towar
 
 ## Download and compatibility
 
-Current version: **0.1.9-test.54+58**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
+Current version: **0.1.9-test.55+59**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
 
-[Download test.54](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.54) · [Compatible test.1 preview](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[Download test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Compatible test.1 preview](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` is the last `0.1.x` preview compatible with the original data types. Later test releases advance a rewrite and may introduce breaking changes. `0.2.0` follows architecture and data-model stabilization and acceptance. Old test.1 data is not imported or overwritten automatically. Back up the library and its original protection file before upgrading. Protection is bound to the Windows user; copying the database alone does not migrate it between accounts.
 
@@ -25,9 +25,13 @@ Current version: **0.1.9-test.54+58**, a **Windows x64 testing preview**, not a 
 
 ## This update and validation
 
+test.55 adds seven appearance styles and depth adjustment, improves control animations and spacing between components, fixes settings persistence and font application, improves safe background shutdown, and provides the groundwork for draft recovery. Autosave in the main UI is still unfinished.
+
+### Historical test.54 optimization and validation
+
 test.54 removes repeated full checks during library opening, decodes evidence with bounded parallelism and reuses verified evidence sizes and archive digests within one verification transaction. Every open still performs full verification. The storage format and bundled plugin are unchanged; verification results are not cached across launches.
 
-The final read optimization was compared with the preceding parallel version using four alternating launches each. On the same machine with a roughly 100 MB library copy, median loading-overlay removal fell from 2.222 s to 1.299 s from Dart entry. Registering the copy may warm the file cache; this is not a cleared-cache cold-start guarantee. Core: 568 passing tests; Audit: 97; real-host integration: 2; one existing Core test ignored. See release notes for conditions and limitations.
+The final read optimization was compared with the preceding parallel version using four alternating launches each. On the same machine with a roughly 100 MB library copy, median loading-overlay removal fell from 2.222 s to 1.299 s from Dart entry. Registering the copy may warm the file cache; this is not a cleared-cache cold-start guarantee. Core: 568 passing tests; Audit: 97; real-host integration: 2; one existing Core test ignored. See the [test.54 release notes](../../reports/0.1.9-test.54-release.md) for conditions and limitations.
 
 ## Run from source
 
@@ -61,7 +65,7 @@ The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service
 
 ## Documentation
 
-- [Release notes and validation](../../reports/0.1.9-test.54-release.md)
+- [Release notes and validation](../../reports/0.1.9-test.55-release.md)
 - [Development board and next tasks](../../docs/DEVELOPMENT_BOARD.md)
 - [Architecture roadmap](../../docs/FUTURE_ROADMAP.md)
 - [Feature migration and capacity limits](../../docs/TEST1_RUST_PARITY.md)

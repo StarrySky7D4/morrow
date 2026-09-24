@@ -1,0 +1,91 @@
+{
+  "created_utc": "2026-09-24T07:34:36.477172+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local working tree and Windows preview; no commit, push or release",
+  "sources": {
+    "lib/style_input_border.dart": {
+      "sha256": "bfcebcd7c2f295898b3e190f7e61ec74319269ff121ac20f90f3ad75732a7788",
+      "bytes": 5274
+    },
+    "lib/neumorphic_controls.dart": {
+      "sha256": "0af7d1537182286d8af22dbd1e16d36eb50bf5a12c186c2e32ab29da1024bec8",
+      "bytes": 39723
+    },
+    "lib/experimental_controls.dart": {
+      "sha256": "5cef9dec01d2a2a8841d1d91d7b4b559485875516aebde08644558fc8ba96659",
+      "bytes": 19431
+    },
+    "lib/main.dart": {
+      "sha256": "0ab70bbd3168a8cab6186bd3051c07e5266cfe4bf63a817f6ef65e89aed647d3",
+      "bytes": 217931
+    },
+    "test/experimental_input_transition_test.dart": {
+      "sha256": "cda06baf871531d0c1abaace65eac5bc7d40dd4f73ff5d041410a62308ff45e6",
+      "bytes": 10587
+    },
+    "reports/style-input-transitions-2026-09-24.md": {
+      "sha256": "2717cd114544e143a7f28a6f5bdd322534b0ad22c79770bd0f1a91d3b4ad43b7",
+      "bytes": 3174
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "ab66d26400278ba17cb28111def4647409b4e6e4186d609af82ae108985e5997",
+      "bytes": 87132
+    }
+  },
+  "logs": {
+    "build/style-input-all-baseline.log": {
+      "sha256": "b689c062ec34b71dc9f941c014296845ce7fe91d151b758555bae1c40e3f365c",
+      "bytes": 2566
+    },
+    "build/style-input-final-tests.log": {
+      "sha256": "232c1959ecfcf065d53f16f7860fd76d59bb9a900c6ceab3152e005554a80b84",
+      "bytes": 7202
+    },
+    "build/style-input-final-analyze.log": {
+      "sha256": "c1d24e44c7c040085b83040f22089cf6e62572fb08b66c77520835708cc64f37",
+      "bytes": 98
+    },
+    "build/style-input-windows.log": {
+      "sha256": "79329ca3060eda6494898190fedceb9453815464cc50022bfa86c940ba2bda63",
+      "bytes": 16426
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "f7faadd0e4751bc1ba022722fad35c0f7d206eba093f44d13cce1dd7f3e93053",
+      "bytes": 13222800
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b69c77299dd87e7d691d83d8125c021e341ba0c84b6284d53b633dddddf908f1",
+      "bytes": 15606784
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "093e6a4b04c1d456ca0ea6979e82849cceab7330450e809526a124d18ce6dac9",
+      "bytes": 8732672
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "ui_tests": 36,
+    "skips": 0,
+    "directed_pixel_paths": 182,
+    "analysis_targets": 5,
+    "windows_build_exit_code": 0,
+    "goldens_unchanged": true,
+    "not_verified": [
+      "GPU performance",
+      "Android/Web",
+      "physical input acceptance",
+      "arbitrary plugin custom painters"
+    ]
+  }
+}

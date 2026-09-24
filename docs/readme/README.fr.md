@@ -8,9 +8,9 @@ Morrow (明隙) est un espace de travail local organisé en cartes, qui évolue 
 
 ## Téléchargement et compatibilité
 
-Version actuelle : **0.1.9-test.54+58**, une **préversion de test Windows x64**, non stable. Téléchargez le ZIP Windows, les sources correspondantes et la liste SHA-256. Extrayez toute l’archive puis lancez `morrow_studio.exe`, en conservant les DLL, l’hôte, `data`, `plugins` et les licences.
+Version actuelle : **0.1.9-test.55+59**, une **préversion de test Windows x64**, non stable. Téléchargez le ZIP Windows, les sources correspondantes et la liste SHA-256. Extrayez toute l’archive puis lancez `morrow_studio.exe`, en conservant les DLL, l’hôte, `data`, `plugins` et les licences.
 
-[Télécharger test.54](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.54) · [Version compatible test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[Télécharger test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Version compatible test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` est la dernière version de test `0.1.x` compatible avec les types de données d’origine. Les versions suivantes accompagnent une réécriture et peuvent rompre la compatibilité. `0.2.0` suivra la stabilisation et la validation de l’architecture et du modèle de données. Les données test.1 ne sont ni importées ni écrasées automatiquement. Sauvegardez la bibliothèque et son fichier de protection d’origine avant toute mise à niveau. La protection dépend de l’utilisateur Windows ; copier la base seule ne permet pas un transfert entre comptes.
 
@@ -25,9 +25,13 @@ Version actuelle : **0.1.9-test.54+58**, une **préversion de test Windows x64**
 
 ## Optimisations et validation
 
+test.55 ajoute sept styles visuels et un réglage de profondeur, améliore les animations des commandes et l’espacement des composants, corrige l’enregistrement des réglages et l’application des polices, améliore la fermeture sûre en arrière-plan et pose les bases de la récupération des brouillons. L’enregistrement automatique dans l’interface principale reste à terminer.
+
+### Optimisation et validation antérieures de test.54
+
 test.54 supprime les vérifications complètes redondantes à l’ouverture, parallélise le décodage des preuves avec des limites et réutilise tailles et empreintes vérifiées dans une même transaction. Chaque ouverture reste entièrement vérifiée. Le format de stockage et le plugin intégré restent inchangés ; aucun cache de validation ne persiste entre les lancements.
 
-La dernière optimisation de lecture a été comparée à la version parallèle précédente sur quatre lancements alternés par version. Sur la même machine et une copie de bibliothèque d’environ 100 Mo, la médiane de disparition de l’écran de chargement passe de 2.222 à 1.299 s depuis l’entrée Dart. L’enregistrement de la copie peut réchauffer le cache : ce n’est pas une garantie de démarrage à froid après vidage du cache. Tests réussis : Core 568, Audit 97, intégration avec hôte réel 2 ; un test Core préexistant ignoré. Voir les notes de version.
+La dernière optimisation de lecture a été comparée à la version parallèle précédente sur quatre lancements alternés par version. Sur la même machine et une copie de bibliothèque d’environ 100 Mo, la médiane de disparition de l’écran de chargement passe de 2.222 à 1.299 s depuis l’entrée Dart. L’enregistrement de la copie peut réchauffer le cache : ce n’est pas une garantie de démarrage à froid après vidage du cache. Tests réussis : Core 568, Audit 97, intégration avec hôte réel 2 ; un test Core préexistant ignoré. Voir les [notes de test.54](../../reports/0.1.9-test.54-release.md).
 
 ## Exécution depuis les sources
 
@@ -61,7 +65,7 @@ Le SDK complet n’est pas figé. Les requêtes HTTP/HTTPS contrôlées, les nœ
 
 ## Documentation
 
-- [Notes de version et validation](../../reports/0.1.9-test.54-release.md)
+- [Notes de version et validation](../../reports/0.1.9-test.55-release.md)
 - [Tableau de développement](../../docs/DEVELOPMENT_BOARD.md)
 - [Feuille de route architecturale](../../docs/FUTURE_ROADMAP.md)
 - [Migration des fonctions et limites](../../docs/TEST1_RUST_PARITY.md)

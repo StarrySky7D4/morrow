@@ -35,6 +35,7 @@ final class _NativeVersionedEditorSession
     implements
         VersionedEditorSession,
         VersionedEditorAcknowledgement,
+        VersionedEditorCommitObservation,
         EditorDraftPredecessorSource {
   _NativeVersionedEditorSession(
     this.owner,
@@ -312,33 +313,80 @@ final class _NativeVersionedEditorSession
     }
   }
 
-  @override
-  Future<void> acknowledgePresented(VersionedCommitReceipt receipt) async {
+  bool _samePredecessor(EditorRecovery a, EditorRecovery b) =>
+      a.id == b.id &&
+      a.operation == b.operation &&
+      a.sourceRevision == b.sourceRevision &&
+      base64Encode(a.digest) == base64Encode(b.digest);
+
+  Future<({EditorRecovery? observed, bool pending})> _inspectPresented(
+    VersionedCommitReceipt receipt, {
+    required bool allowUnobservedAbsence,
+    required bool exactCurrentRevision,
+  }) async {
     if (receipt.id != targetId ||
         receipt.operation != _operation ||
         receipt.revision != revision + BigInt.one) {
       throw const FormatException('Editor acknowledgement identity changed');
     }
-    final pending = await owner.inspectEditorRecoveries(id: targetId);
-    if (pending.isEmpty) return;
-    final observed = pending.single;
-    if (observed.id != targetId ||
-        observed.operation != receipt.operation ||
-        observed.sourceRevision != revision ||
-        observed.digest.length != 32 ||
-        observed.status != EditorRecoveryStatus.committed) {
+    final rows = await owner.inspectEditorRecoveries(id: targetId);
+    if (rows.isEmpty) {
+      final prior = _draftPredecessor;
+      if (prior == null && allowUnobservedAbsence) {
+        // Preserve the previous acknowledgement replay behavior.
+        return (observed: null, pending: false);
+      }
+      if (prior == null ||
+          !prior.matchesPresentedReceipt(
+            receipt,
+            sourceRevision: revision,
+            exactCurrentRevision: exactCurrentRevision,
+          )) {
+        throw StateError('Original editor recovery proof is unavailable');
+      }
+      return (observed: prior, pending: false);
+    }
+    if (rows.length != 1) {
+      throw StateError('Editor recovery outcome changed');
+    }
+    final observed = rows.single;
+    if (!observed.matchesPresentedReceipt(
+      receipt,
+      sourceRevision: revision,
+      exactCurrentRevision: exactCurrentRevision,
+    )) {
       throw StateError('Editor recovery outcome changed');
     }
     final prior = _draftPredecessor;
-    if (prior != null &&
-        (prior.id != observed.id ||
-            prior.operation != observed.operation ||
-            prior.sourceRevision != observed.sourceRevision ||
-            base64Encode(prior.digest) != base64Encode(observed.digest))) {
+    if (prior != null && !_samePredecessor(prior, observed)) {
       throw StateError('Editor draft predecessor changed');
     }
     _draftPredecessor ??= observed;
-    await owner.acknowledgeEditorRecovery(observed);
+    return (observed: observed, pending: true);
+  }
+
+  @override
+  Future<EditorRecovery> observePresented(
+    VersionedCommitReceipt receipt,
+  ) async {
+    final observation = await _inspectPresented(
+      receipt,
+      allowUnobservedAbsence: false,
+      exactCurrentRevision: true,
+    );
+    return observation.observed!;
+  }
+
+  @override
+  Future<void> acknowledgePresented(VersionedCommitReceipt receipt) async {
+    final observation = await _inspectPresented(
+      receipt,
+      allowUnobservedAbsence: true,
+      exactCurrentRevision: false,
+    );
+    if (observation.pending) {
+      await owner.acknowledgeEditorRecovery(observation.observed!);
+    }
   }
 
   @override

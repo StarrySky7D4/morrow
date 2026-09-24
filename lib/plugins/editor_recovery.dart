@@ -17,6 +17,20 @@ final class EditorRecovery {
   final List<int> digest;
   final BigInt sourceRevision, currentRevision;
   final EditorRecoveryStatus status;
+
+  /// The historical acknowledgement may follow a later card revision. A
+  /// successor handoff instead needs the exact committed revision as source.
+  bool matchesPresentedReceipt(
+    VersionedCommitReceipt receipt, {
+    required BigInt sourceRevision,
+    required bool exactCurrentRevision,
+  }) =>
+      id == receipt.id &&
+      operation == receipt.operation &&
+      this.sourceRevision == sourceRevision &&
+      (!exactCurrentRevision || currentRevision == receipt.revision) &&
+      digest.length == 32 &&
+      status == EditorRecoveryStatus.committed;
 }
 
 abstract interface class WorkbenchEditorRecovery {
@@ -35,4 +49,16 @@ abstract interface class EditorDraftPredecessorSource {
 /// Presentation must succeed before the capture recovery record is cleared.
 abstract interface class VersionedEditorAcknowledgement {
   Future<void> acknowledgePresented(VersionedCommitReceipt receipt);
+}
+
+/// Verifies the original committed editor recovery without clearing it.
+abstract interface class VersionedEditorCommitObservation {
+  Future<EditorRecovery> observePresented(VersionedCommitReceipt receipt);
+}
+
+/// Optional delayed cleanup. The caller must first durably own the successor
+/// handoff. Continuing or closing the editor never calls this method; an
+/// explicit same-workspace call may follow a successful continuation or close.
+abstract interface class VersionedEditorDeferredAcknowledgement {
+  Future<void> acknowledgeAccepted(VersionedCommitReceipt receipt);
 }

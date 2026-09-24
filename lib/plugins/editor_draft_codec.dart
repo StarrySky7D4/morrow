@@ -301,6 +301,67 @@ abstract final class EditorDraftCodec {
     return bytes;
   }
 
+  static void _proposal(EditorDraftHandoffProposal proposal) {
+    final handoff = proposal.handoff;
+    if (handoff.request.expectedGeneration != BigInt.zero) {
+      throw const FormatException('Proposal must create the first child draft');
+    }
+    _parentLink(handoff.request, handoff.parentLink);
+    _identity(proposal.retirementOperation);
+    if (proposal.retirementOperation == handoff.request.operation ||
+        proposal.retirementOperation ==
+            handoff.parentLink.parentSaveOperation ||
+        proposal.retirementOperation == handoff.parentLink.committedOperation) {
+      throw const FormatException('Reused editor draft proposal operation');
+    }
+  }
+
+  static Uint8List encodeHandoffProposal(EditorDraftHandoffProposal proposal) {
+    // Validate the entire immutable input before allocating the wire frame.
+    _proposal(proposal);
+    final message = MessageBuilder();
+    final out = message.initRoot(wire.handoffProposalFactory);
+    out.version = 1;
+    out.digest = Uint8List.fromList(contract.editor_draft_apiDigest);
+    _writeRequest(out.initRequest(), proposal.handoff.request);
+    _writeParentLink(out.initParentLink(), proposal.handoff.parentLink);
+    out.retirementOperation = proposal.retirementOperation;
+    final bytes = message.serialize();
+    if (bytes.length > maxFrameBytes) {
+      throw const FormatException('Editor draft proposal frame limit');
+    }
+    return bytes;
+  }
+
+  static EditorDraftHandoffProposal _decodeProposal(
+    wire.HandoffProposalReader? value,
+  ) {
+    if (value == null || value.retirementOperation == null) {
+      throw const FormatException('Missing editor draft handoff proposal');
+    }
+    _header(value.version, value.digest);
+    final request = _decodeRequest(value.request);
+    final result = EditorDraftHandoffProposal(
+      handoff: EditorDraftHandoffRequest(
+        request: request,
+        parentLink: _decodeParentLink(value.parentLink, request),
+      ),
+      retirementOperation: value.retirementOperation!,
+    );
+    _proposal(result);
+    return result;
+  }
+
+  static EditorDraftHandoffProposal decodeHandoffProposal(Uint8List bytes) {
+    try {
+      return _decodeProposal(_read(bytes).getRoot(wire.handoffProposalFactory));
+    } on FormatException {
+      rethrow;
+    } catch (_) {
+      throw const FormatException('Malformed editor draft handoff proposal');
+    }
+  }
+
   static Uint8List encodeWrite(EditorDraftWriteRequest request) {
     _request(request);
     final message = MessageBuilder();
@@ -823,6 +884,168 @@ abstract final class EditorDraftCodec {
     );
   }
 
+  static bool _proposalCursor(String value, {bool allowEmpty = false}) =>
+      (allowEmpty && value.isEmpty) ||
+      RegExp(
+        r'^morrow-host-editor-handoff-proposal-[0-9a-f]{64}$',
+      ).hasMatch(value);
+
+  static void validateHandoffProposalIdentity(
+    String cardId,
+    String parentDraftId,
+    String childOperation,
+  ) {
+    _identity(cardId);
+    _identity(parentDraftId);
+    _identity(childOperation);
+  }
+
+  static void validateHandoffProposalPageRequest({
+    required String cursor,
+    required int limit,
+  }) {
+    if (!_proposalCursor(cursor, allowEmpty: true) || limit < 1 || limit > 32) {
+      throw const FormatException('Invalid editor draft proposal page request');
+    }
+  }
+
+  static EditorDraftHandoffProposalSummary _decodeProposalSummary(
+    wire.HandoffProposalSummaryReader value,
+  ) {
+    if (value.cardId == null ||
+        value.parentDraftId == null ||
+        value.childDraftId == null ||
+        value.childOperation == null ||
+        value.retirementOperation == null ||
+        value.cursor == null) {
+      throw const FormatException('Missing editor draft proposal summary');
+    }
+    validateHandoffProposalIdentity(
+      value.cardId!,
+      value.parentDraftId!,
+      value.childOperation!,
+    );
+    _identity(value.childDraftId!);
+    _identity(value.retirementOperation!);
+    final statusIndex = value.status;
+    if (statusIndex >= EditorDraftHandoffProposalStatus.values.length) {
+      throw const FormatException('Unknown editor draft proposal status');
+    }
+    final status = EditorDraftHandoffProposalStatus.values[statusIndex];
+    final revision = unsigned(value.revision);
+    final parentGeneration = unsigned(value.parentGeneration);
+    final childGeneration = unsigned(value.childGeneration);
+    _u64(revision, positive: true);
+    _u64(parentGeneration);
+    _u64(childGeneration);
+    if (value.parentDraftId == value.childDraftId ||
+        value.childOperation == value.retirementOperation ||
+        !_proposalCursor(value.cursor!) ||
+        (parentGeneration == BigInt.zero && value.parentActive) ||
+        (childGeneration == BigInt.zero && value.childActive) ||
+        (status == EditorDraftHandoffProposalStatus.cancelled &&
+            revision != BigInt.from(2)) ||
+        (status != EditorDraftHandoffProposalStatus.cancelled &&
+            status != EditorDraftHandoffProposalStatus.conflict &&
+            revision != BigInt.one) ||
+        (status == EditorDraftHandoffProposalStatus.pending &&
+            (!value.parentActive || childGeneration != BigInt.zero)) ||
+        (status == EditorDraftHandoffProposalStatus.childCommitted &&
+            (!value.parentActive ||
+                !value.childActive ||
+                childGeneration == BigInt.zero)) ||
+        (status == EditorDraftHandoffProposalStatus.parentRetired &&
+            (value.parentActive ||
+                parentGeneration == BigInt.zero ||
+                childGeneration == BigInt.zero)) ||
+        (status == EditorDraftHandoffProposalStatus.cancelled &&
+            childGeneration != BigInt.zero)) {
+      throw const FormatException('Invalid editor draft proposal summary');
+    }
+    return EditorDraftHandoffProposalSummary(
+      cardId: value.cardId!,
+      parentDraftId: value.parentDraftId!,
+      childDraftId: value.childDraftId!,
+      childOperation: value.childOperation!,
+      retirementOperation: value.retirementOperation!,
+      revision: revision,
+      status: status,
+      parentGeneration: parentGeneration,
+      parentActive: value.parentActive,
+      childGeneration: childGeneration,
+      childActive: value.childActive,
+      cursor: value.cursor!,
+    );
+  }
+
+  static EditorDraftHandoffProposalRecord _decodeProposalRecord(
+    wire.HandoffProposalRecordReader? value,
+  ) {
+    if (value == null || value.summary == null) {
+      throw const FormatException('Missing editor draft proposal record');
+    }
+    final proposal = _decodeProposal(value.proposal);
+    final summary = _decodeProposalSummary(value.summary!);
+    final request = proposal.handoff.request;
+    final linkedGeneration = proposal.handoff.parentLink.parentGeneration;
+    if (summary.cardId != request.cardId ||
+        summary.parentDraftId != proposal.handoff.parentLink.parentDraftId ||
+        summary.childDraftId != request.draftId ||
+        summary.childOperation != request.operation ||
+        summary.retirementOperation != proposal.retirementOperation ||
+        ((summary.status == EditorDraftHandoffProposalStatus.pending ||
+                summary.status ==
+                    EditorDraftHandoffProposalStatus.childCommitted) &&
+            summary.parentGeneration != linkedGeneration) ||
+        (summary.status == EditorDraftHandoffProposalStatus.parentRetired &&
+            summary.parentGeneration != linkedGeneration + BigInt.one)) {
+      throw const FormatException('Editor draft proposal record mismatch');
+    }
+    return EditorDraftHandoffProposalRecord(
+      proposal: proposal,
+      summary: summary,
+    );
+  }
+
+  static EditorDraftHandoffProposalPage _decodeProposalPage(
+    wire.EnvelopeReader value,
+  ) {
+    final rows = value.handoffProposalSummaries;
+    if (rows == null ||
+        value.nextCursor == null ||
+        value.requestCursor == null ||
+        value.requestLimit < 1 ||
+        value.requestLimit > 32 ||
+        rows.length > value.requestLimit ||
+        !_proposalCursor(value.requestCursor!, allowEmpty: true) ||
+        !_proposalCursor(value.nextCursor!, allowEmpty: true)) {
+      throw const FormatException('Invalid editor draft proposal page');
+    }
+    final proposals = <EditorDraftHandoffProposalSummary>[
+      for (final row in rows) _decodeProposalSummary(row),
+    ];
+    var cursor = value.requestCursor!;
+    final seen = <String>{};
+    for (final row in proposals) {
+      final identity =
+          '${row.cardId.length}:${row.cardId}${row.parentDraftId.length}:${row.parentDraftId}${row.childOperation}';
+      if (row.cursor.compareTo(cursor) <= 0 || !seen.add(identity)) {
+        throw const FormatException('Unordered or duplicate draft proposal');
+      }
+      cursor = row.cursor;
+    }
+    if (value.nextCursor!.isNotEmpty &&
+        (proposals.isEmpty || value.nextCursor != proposals.last.cursor)) {
+      throw const FormatException('Invalid next draft proposal cursor');
+    }
+    return EditorDraftHandoffProposalPage(
+      proposals: proposals,
+      nextCursor: value.nextCursor!,
+      requestCursor: value.requestCursor!,
+      requestLimit: value.requestLimit,
+    );
+  }
+
   static EditorDraftEnvelope decodeEnvelope(Uint8List bytes) {
     try {
       final value = _read(bytes).getRoot(wire.envelopeFactory);
@@ -842,7 +1065,20 @@ abstract final class EditorDraftCodec {
       List<EditorDraftSummary>? summaries;
       EditorDraftImportedAsset? asset;
       EditorDraftLineagePage? lineagePage;
+      EditorDraftHandoffProposalRecord? handoffProposal;
+      EditorDraftHandoffProposalPage? handoffProposalPage;
+      if (kind != EditorDraftResultKind.handoffProposal &&
+          value.handoffProposal != null) {
+        throw const FormatException('Unexpected editor draft proposal record');
+      }
+      if (kind != EditorDraftResultKind.handoffProposals &&
+          value.handoffProposalSummaries != null) {
+        throw const FormatException(
+          'Unexpected editor draft proposal summaries',
+        );
+      }
       if (kind != EditorDraftResultKind.lineages &&
+          kind != EditorDraftResultKind.handoffProposals &&
           (value.lineages != null ||
               value.nextCursor != null ||
               value.requestCursor != null ||
@@ -853,7 +1089,12 @@ abstract final class EditorDraftCodec {
         case EditorDraftResultKind.absent:
           _identity(cardId);
           _identity(draftId);
-          if (operation.isNotEmpty ||
+          // A draft read has no operation; a missing proposal inspect retains
+          // its original child operation so the caller can bind the reply.
+          if (operation.isNotEmpty) {
+            _identity(operation);
+          }
+          if ((operation.isNotEmpty && expected != BigInt.zero) ||
               value.record != null ||
               value.summaries != null ||
               value.asset != null) {
@@ -924,6 +1165,39 @@ abstract final class EditorDraftCodec {
             );
           }
           lineagePage = _decodeLineagePage(value);
+        case EditorDraftResultKind.handoffProposal:
+          _identity(cardId);
+          _identity(draftId);
+          _identity(operation);
+          if (expected != BigInt.zero ||
+              value.record != null ||
+              value.summaries != null ||
+              value.asset != null) {
+            throw const FormatException(
+              'Invalid draft proposal record envelope',
+            );
+          }
+          handoffProposal = _decodeProposalRecord(value.handoffProposal);
+          final summary = handoffProposal.summary;
+          if (summary.cardId != cardId ||
+              summary.parentDraftId != draftId ||
+              summary.childOperation != operation) {
+            throw const FormatException(
+              'Draft proposal envelope target mismatch',
+            );
+          }
+        case EditorDraftResultKind.handoffProposals:
+          if (cardId.isNotEmpty ||
+              draftId.isNotEmpty ||
+              operation.isNotEmpty ||
+              expected != BigInt.zero ||
+              value.lineages != null ||
+              value.record != null ||
+              value.summaries != null ||
+              value.asset != null) {
+            throw const FormatException('Invalid draft proposal page envelope');
+          }
+          handoffProposalPage = _decodeProposalPage(value);
       }
       return EditorDraftEnvelope(
         kind: kind,
@@ -935,6 +1209,8 @@ abstract final class EditorDraftCodec {
         summaries: summaries,
         asset: asset,
         lineagePage: lineagePage,
+        handoffProposal: handoffProposal,
+        handoffProposalPage: handoffProposalPage,
       );
     } on FormatException {
       rethrow;

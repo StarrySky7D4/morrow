@@ -344,6 +344,91 @@ class AppLocalizationsRu extends AppLocalizations {
   String get mainDone => 'Готово';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => 'Закреплённые вложения';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => 'Отменить передачу';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      'Отменить незавершённую передачу. Исходная операция больше не сможет создать последующий черновик. Родительский черновик останется без изменений.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => 'Передача отменена';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      'Последующий черновик сохранён, родительский ещё не выведен из работы';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => 'Создать последующий черновик';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      'Создать последующий черновик из сохранённого исходного предложения. Итоговая карточка не будет отправлена повторно.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle =>
+      'Подтвердить действие с передачей черновика';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed =>
+      'Операция подтверждена и сохранена.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict =>
+      'Текущее состояние изменилось; проверьте его';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty =>
+      'Нет записей о передаче для проверки';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      'Не удалось завершить операцию. Обновите данные и проверьте запись.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => 'Содержимое исходного черновика';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => 'Просмотреть и проверить';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      'Здесь можно только просмотреть сохранённые записи о передаче. Открытие страницы не отправляет содержимое автоматически.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => 'Передача завершена';
+
+  @override
+  String get mainDraftHandoffRecoveryPending =>
+      'Последующий черновик ещё не создан';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly =>
+      'В этой рабочей области доступен только просмотр';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire =>
+      'Вывести родительский черновик из работы';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      'Убедившись, что последующий черновик сохранён, отметьте родительский черновик как выведенный из работы.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection =>
+      'Выберите запись, чтобы просмотреть черновик целиком.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle =>
+      'Восстановление передачи черновика';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      'Результат операции ещё не подтверждён. Проверьте исходную запись и не повторяйте операцию.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'После отмены исходный запрос на отказ больше не будет выполняться. Это не удаляет вложение и не отменяет другие изменения.';
 
@@ -1100,10 +1185,51 @@ class AppLocalizationsRu extends AppLocalizations {
       'Не удалось прочитать сохранённые данные. Исходные данные сохранены и не будут перезаписаны.';
 
   @override
+  String get mainStyleBrutalist => 'Брутализм';
+
+  @override
+  String get mainStyleBrutalistDescription =>
+      'Жёсткие углы, выразительные рамки и смещённые тени';
+
+  @override
+  String get mainStyleClay => 'Глина';
+
+  @override
+  String get mainStyleClayDescription =>
+      'Округлые формы с мягко приподнятым цветом';
+
+  @override
+  String get mainStyleDepth => 'Глубина рельефа';
+
+  @override
+  String get mainStyleDepthGuide =>
+      'Настройте выпуклости и углубления, не меняя непрозрачность стекла.';
+
+  @override
+  String get mainStyleDepthReset => 'Сбросить до 100 %';
+
+  @override
+  String get mainStyleExperimental => 'Экспериментально';
+
+  @override
   String get mainStyleFlat => 'Плоский · По умолчанию';
 
   @override
   String get mainStyleFlatDescription => 'Лёгкие контуры и чёткие слои';
+
+  @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription =>
+      'Полупрозрачные слои и акцентные линии';
+
+  @override
+  String get mainStyleIndustrial => 'Индустриальный';
+
+  @override
+  String get mainStyleIndustrialDescription =>
+      'Панели под металл, компактные элементы и точные линии';
 
   @override
   String get mainStyleNeumorphism => 'Неоморфизм';
@@ -1111,6 +1237,13 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get mainStyleNeumorphismDescription =>
       'Мягкие светотени и лёгкий рельеф';
+
+  @override
+  String get mainStylePaper => 'Бумага';
+
+  @override
+  String get mainStylePaperDescription =>
+      'Матовые поверхности, тонкие рамки и сдержанная глубина';
 
   @override
   String get mainTaskAdd => 'Добавить задачу';
@@ -2901,6 +3034,28 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'Открыть рабочую область заново';
+
+  @override
+  String get shutdownBackground => 'Продолжить закрытие в фоне';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'Morrow закроется после выхода службы. При ошибке или длительном ожидании это окно появится снова.';
+
+  @override
+  String get shutdownFailure =>
+      'При закрытии возникла проблема. Наблюдение за службой продолжается.';
+
+  @override
+  String get shutdownStillRunning =>
+      'Завершение занимает больше времени, чем ожидалось. Наблюдение за службой продолжается.';
+
+  @override
+  String get shutdownTitle => 'Закрытие рабочего пространства';
+
+  @override
+  String get shutdownWaiting =>
+      'Ожидание завершения службы содержимого. Библиотека остаётся за ней, пока выход не подтверждён.';
 
   @override
   String get visualApplyColor => 'Применить цвет';

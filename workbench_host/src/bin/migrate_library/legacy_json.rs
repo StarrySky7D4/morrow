@@ -290,6 +290,7 @@ fn inspect(path: &Path) -> Result<Legacy> {
         "glass",
         "background",
         "visualStyle",
+        "styleDepth",
         "solidTint",
         "frostedOpacity",
         "customColor",

@@ -345,6 +345,87 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainDone => 'Done';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => 'Pinned attachments';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => 'Cancel handoff';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      'Cancel this unfinished handoff. The original operation can no longer create a successor draft. The parent draft remains unchanged.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => 'Handoff cancelled';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      'Successor draft saved; parent draft not yet retired';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete => 'Create successor draft';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      'Create the successor draft from the saved original proposal. This will not submit another final card.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle =>
+      'Confirm draft handoff action';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed =>
+      'The operation was confirmed and saved.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict =>
+      'The current state has changed; review it';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty => 'No handoff records to review';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      'Could not complete the operation. Refresh and review the record.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => 'Original draft content';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => 'View and review';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      'View saved handoff records only. Opening this page does not submit content.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => 'Handoff complete';
+
+  @override
+  String get mainDraftHandoffRecoveryPending =>
+      'Successor draft has not been created';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly => 'This workspace is view-only';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => 'Retire parent draft';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      'After confirming the successor draft was saved, mark the parent draft as retired.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection =>
+      'Select a record to view the complete draft.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle => 'Draft handoff recovery';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      'The operation result is not confirmed. Review the original record; do not repeat the operation.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'After cancellation, the original abandonment request will no longer run. This does not delete the attachment or undo other changes.';
 
@@ -1099,10 +1180,51 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved content could not be read. The original data is preserved and will not be overwritten.';
 
   @override
+  String get mainStyleBrutalist => 'Brutalist';
+
+  @override
+  String get mainStyleBrutalistDescription =>
+      'Hard edges, bold borders and offset shadows';
+
+  @override
+  String get mainStyleClay => 'Clay';
+
+  @override
+  String get mainStyleClayDescription =>
+      'Rounded forms with softly raised color';
+
+  @override
+  String get mainStyleDepth => 'Relief depth';
+
+  @override
+  String get mainStyleDepthGuide =>
+      'Adjust raised and inset depth without changing glass opacity.';
+
+  @override
+  String get mainStyleDepthReset => 'Reset to 100%';
+
+  @override
+  String get mainStyleExperimental => 'Experimental';
+
+  @override
   String get mainStyleFlat => 'Flat · Default';
 
   @override
   String get mainStyleFlatDescription => 'Light edges and clear layers';
+
+  @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription =>
+      'Layered translucent surfaces and accent lines';
+
+  @override
+  String get mainStyleIndustrial => 'Industrial';
+
+  @override
+  String get mainStyleIndustrialDescription =>
+      'Metal-like panels, compact controls and precise lines';
 
   @override
   String get mainStyleNeumorphism => 'Neumorphism';
@@ -1110,6 +1232,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mainStyleNeumorphismDescription =>
       'Soft paired shadows and gentle relief';
+
+  @override
+  String get mainStylePaper => 'Paper';
+
+  @override
+  String get mainStylePaperDescription =>
+      'Matte sheets, fine borders and restrained depth';
 
   @override
   String get mainTaskAdd => 'Add task';
@@ -2882,6 +3011,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'Reopen workspace';
+
+  @override
+  String get shutdownBackground => 'Continue in background';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'Morrow will close when the service exits. If shutdown fails or takes much longer, this window will reappear.';
+
+  @override
+  String get shutdownFailure =>
+      'Shutdown reported a problem. The content service is still being observed.';
+
+  @override
+  String get shutdownStillRunning =>
+      'Shutdown is taking longer than expected. The content service is still being observed.';
+
+  @override
+  String get shutdownTitle => 'Closing workspace';
+
+  @override
+  String get shutdownWaiting =>
+      'Waiting for the content service to exit. The library stays owned until its exit is confirmed.';
 
   @override
   String get visualApplyColor => 'Apply color';

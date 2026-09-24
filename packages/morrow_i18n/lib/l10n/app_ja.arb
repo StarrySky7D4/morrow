@@ -139,17 +139,50 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1034,29 @@
   "mainDeleted": "「{title}」を削除しました",
   "mainDiagnosticDetails": "診断の詳細",
   "mainDone": "完了",
+  "mainDraftHandoffRecoveryAssets": "固定済みの添付ファイル",
+  "mainDraftHandoffRecoveryCancel": "引き継ぎを取り消す",
+  "mainDraftHandoffRecoveryCancelBody": "未完了の引き継ぎを取り消します。元の操作で後継の下書きを再作成することはできなくなります。親の下書きはそのまま残ります。",
+  "mainDraftHandoffRecoveryCancelled": "引き継ぎは取り消されました",
+  "mainDraftHandoffRecoveryChildCommitted": "後継の下書きは保存済み、親の下書きはまだ退役していません",
+  "mainDraftHandoffRecoveryComplete": "後継の下書きを作成",
+  "mainDraftHandoffRecoveryCompleteBody": "保存済みの元の提案から後継の下書きを作成します。正式なカードは再送信しません。",
+  "mainDraftHandoffRecoveryConfirmTitle": "下書きの引き継ぎ操作を確認",
+  "mainDraftHandoffRecoveryConfirmed": "操作が確認され、保存されました。",
+  "mainDraftHandoffRecoveryConflict": "現在の状態が変わりました。確認してください",
+  "mainDraftHandoffRecoveryEmpty": "確認する引き継ぎ記録はありません",
+  "mainDraftHandoffRecoveryFailed": "操作を完了できませんでした。更新して記録を確認してください。",
+  "mainDraftHandoffRecoveryFields": "元の下書きの内容",
+  "mainDraftHandoffRecoveryInspect": "表示して確認",
+  "mainDraftHandoffRecoveryIntro": "保存済みの引き継ぎ記録のみ表示します。このページを開いても内容は自動送信されません。",
+  "mainDraftHandoffRecoveryParentRetired": "引き継ぎは完了しました",
+  "mainDraftHandoffRecoveryPending": "後継の下書きはまだ作成されていません",
+  "mainDraftHandoffRecoveryReadOnly": "現在のワークスペースは閲覧のみ可能です",
+  "mainDraftHandoffRecoveryRetire": "親の下書きを退役にする",
+  "mainDraftHandoffRecoveryRetireBody": "後継の下書きが保存済みであることを確認してから、親の下書きを退役にします。",
+  "mainDraftHandoffRecoverySelection": "記録を選択すると、下書き全体を確認できます。",
+  "mainDraftHandoffRecoveryTitle": "下書き引き継ぎの復旧",
+  "mainDraftHandoffRecoveryUnknown": "操作結果はまだ確認できていません。元の記録を確認し、操作を繰り返さないでください。",
   "mainDraftImportRecoveryCancelBody": "取り消すと、元の破棄要求は無効になります。添付ファイルは削除されず、ほかの変更も元に戻りません。",
   "mainDraftImportRecoveryCancelDecision": "破棄要求を取り消す",
   "mainDraftImportRecoveryCancelTitle": "この破棄要求を取り消しますか？",
@@ -1224,10 +1280,24 @@
   "mainSteps": "{done}/{total} ステップ",
   "mainStorageUnavailable": "ローカル保存領域を利用できません。変更はこのセッション中のみ保持されます。",
   "mainStorageUnreadable": "保存済みの内容を読み取れませんでした。元のデータは保持され、上書きされません。",
+  "mainStyleBrutalist": "ブルータリズム",
+  "mainStyleBrutalistDescription": "直線的な角、太い枠線とずらした影",
+  "mainStyleClay": "クレイ",
+  "mainStyleClayDescription": "丸みのある形と柔らかく浮き上がる色",
+  "mainStyleDepth": "立体感の深さ",
+  "mainStyleDepthGuide": "ガラスの不透明度を変えずに、浮き上がりとくぼみの強さを調整します。",
+  "mainStyleDepthReset": "100% に戻す",
+  "mainStyleExperimental": "実験的",
   "mainStyleFlat": "フラット · 標準",
   "mainStyleFlatDescription": "軽やかな輪郭と明確な階層",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "半透明の重なりとアクセントライン",
+  "mainStyleIndustrial": "インダストリアル",
+  "mainStyleIndustrialDescription": "金属風のパネル、コンパクトな操作部と精密な線",
   "mainStyleNeumorphism": "ニューモーフィズム",
   "mainStyleNeumorphismDescription": "柔らかな光と影で穏やかな立体感",
+  "mainStylePaper": "ペーパー",
+  "mainStylePaperDescription": "マットな紙面、細い枠線と控えめな奥行き",
   "mainTaskAdd": "タスクを追加",
   "mainTaskAmbiguousDecision": "旧形式の同名タスクの完了状態は不明です。各タスクを個別に確認してください。",
   "mainTaskCompleteAllAndSetStage": "すべて完了して段階を設定",
@@ -1731,6 +1801,12 @@
   "recoverySwitchUnknown": "ライブラリの切り替えは未確認です。ワークスペースを開き直して確認してください。",
   "recoveryTargetExists": "復元先は既に存在します。まだ存在しない新しいフォルダーを選んでください。",
   "recoveryTitle": "ワークスペースを開き直す",
+  "shutdownBackground": "バックグラウンドで終了を続ける",
+  "shutdownBackgroundHint": "サービスが終了すると Morrow も閉じます。失敗した場合や長時間かかる場合は、この画面を再表示します。",
+  "shutdownFailure": "終了処理で問題が発生しました。コンテンツサービスの監視を続けています。",
+  "shutdownStillRunning": "終了に予想以上の時間がかかっています。コンテンツサービスの監視を続けています。",
+  "shutdownTitle": "ワークスペースを閉じています",
+  "shutdownWaiting": "コンテンツサービスの終了を待っています。終了が確認されるまで、ライブラリは元のサービスが保持します。",
   "visualApplyColor": "色を適用",
   "visualApplyComponent": "このコンポーネントに適用",
   "visualApplyTexture": "メディアを適用",

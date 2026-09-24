@@ -96,7 +96,7 @@ def merge(root):
     fragments = {}
     for directory in sources:
         for path in sorted(directory.glob('*.arb')):
-            match = re.fullmatch(r'(common|main|visual|plugins|imports|recovery)\.(' + '|'.join(locales) + r')\.arb', path.name)
+            match = re.fullmatch(r'(common|main|visual|plugins|imports|recovery|shutdown)\.(' + '|'.join(locales) + r')\.arb', path.name)
             if not match:
                 raise CatalogError(f'unrecognized fragment: {path.name}')
             prefix, locale = match.groups()

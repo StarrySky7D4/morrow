@@ -8,6 +8,7 @@ import 'package:morrow_studio/fonts/font_choice.dart';
 import 'package:morrow_studio/fonts/font_repository.dart';
 import 'package:morrow_studio/fonts/font_storage_native.dart' as native_fonts;
 import 'package:morrow_studio/fonts/font_settings.dart';
+import 'package:morrow_studio/settings_surface.dart';
 
 void main() {
   test(
@@ -87,6 +88,14 @@ void main() {
       }
 
       await open();
+      expect(
+        find.ancestor(
+          of: find.byType(FontSettingsPage),
+          matching: find.byType(CanvasNavigation),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(Studio), findsOneWidget);
       await t.enterText(find.byKey(const ValueKey('font-family')), 'Arial');
       await t.tap(find.byKey(const ValueKey('font-apply')));
       await t.pumpAndSettle();

@@ -139,17 +139,50 @@
       }
     }
   },
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleFlat": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleFlatDescription": {
     "description": "Interface style and component material inheritance"
   },
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
   "@mainStyleNeumorphism": {
     "description": "Interface style and component material inheritance"
   },
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
+  },
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
   },
   "@mainTaskCompleteAllConfirm": {
     "placeholders": {
@@ -1001,6 +1034,29 @@
   "mainDeleted": "„{title}“ gelöscht",
   "mainDiagnosticDetails": "Diagnosedetails",
   "mainDone": "Fertig",
+  "mainDraftHandoffRecoveryAssets": "Fest zugeordnete Anhänge",
+  "mainDraftHandoffRecoveryCancel": "Übergabe abbrechen",
+  "mainDraftHandoffRecoveryCancelBody": "Diese unvollendete Übergabe abbrechen. Mit dem ursprünglichen Vorgang kann danach kein Folgeentwurf mehr erstellt werden. Der übergeordnete Entwurf bleibt unverändert.",
+  "mainDraftHandoffRecoveryCancelled": "Übergabe abgebrochen",
+  "mainDraftHandoffRecoveryChildCommitted": "Folgeentwurf gespeichert; übergeordneter Entwurf noch nicht stillgelegt",
+  "mainDraftHandoffRecoveryComplete": "Folgeentwurf erstellen",
+  "mainDraftHandoffRecoveryCompleteBody": "Folgeentwurf aus dem gespeicherten ursprünglichen Vorschlag erstellen. Dabei wird keine weitere endgültige Karte eingereicht.",
+  "mainDraftHandoffRecoveryConfirmTitle": "Aktion zur Entwurfsübergabe bestätigen",
+  "mainDraftHandoffRecoveryConfirmed": "Der Vorgang wurde bestätigt und gespeichert.",
+  "mainDraftHandoffRecoveryConflict": "Der aktuelle Zustand hat sich geändert und muss geprüft werden",
+  "mainDraftHandoffRecoveryEmpty": "Keine Übergaben zur Prüfung vorhanden",
+  "mainDraftHandoffRecoveryFailed": "Der Vorgang konnte nicht abgeschlossen werden. Aktualisieren und prüfen Sie den Eintrag.",
+  "mainDraftHandoffRecoveryFields": "Inhalt des ursprünglichen Entwurfs",
+  "mainDraftHandoffRecoveryInspect": "Anzeigen und prüfen",
+  "mainDraftHandoffRecoveryIntro": "Hier werden nur gespeicherte Übergaben angezeigt. Beim Öffnen dieser Seite werden keine Inhalte eingereicht.",
+  "mainDraftHandoffRecoveryParentRetired": "Übergabe abgeschlossen",
+  "mainDraftHandoffRecoveryPending": "Der Folgeentwurf wurde noch nicht erstellt",
+  "mainDraftHandoffRecoveryReadOnly": "Dieser Arbeitsbereich erlaubt nur die Ansicht",
+  "mainDraftHandoffRecoveryRetire": "Übergeordneten Entwurf stilllegen",
+  "mainDraftHandoffRecoveryRetireBody": "Nachdem Sie geprüft haben, dass der Folgeentwurf gespeichert wurde, markieren Sie den übergeordneten Entwurf als stillgelegt.",
+  "mainDraftHandoffRecoverySelection": "Wählen Sie einen Eintrag, um den vollständigen Entwurf anzuzeigen.",
+  "mainDraftHandoffRecoveryTitle": "Wiederherstellung der Entwurfsübergabe",
+  "mainDraftHandoffRecoveryUnknown": "Das Ergebnis des Vorgangs ist noch nicht bestätigt. Prüfen Sie den ursprünglichen Eintrag und wiederholen Sie den Vorgang nicht.",
   "mainDraftImportRecoveryCancelBody": "Nach dem Abbruch wird die ursprüngliche Verzichtsanfrage nicht mehr ausgeführt. Dadurch wird der Anhang nicht gelöscht und andere Änderungen werden nicht rückgängig gemacht.",
   "mainDraftImportRecoveryCancelDecision": "Verzichtsanfrage abbrechen",
   "mainDraftImportRecoveryCancelTitle": "Diese Verzichtsanfrage abbrechen?",
@@ -1224,10 +1280,24 @@
   "mainSteps": "{done}/{total} Schritte",
   "mainStorageUnavailable": "Lokaler Speicher nicht verfügbar. Änderungen bleiben nur für diese Sitzung erhalten.",
   "mainStorageUnreadable": "Gespeicherte Inhalte konnten nicht gelesen werden. Originaldaten bleiben erhalten und werden nicht überschrieben.",
+  "mainStyleBrutalist": "Brutalismus",
+  "mainStyleBrutalistDescription": "Harte Kanten, kräftige Rahmen und versetzte Schatten",
+  "mainStyleClay": "Clay",
+  "mainStyleClayDescription": "Runde Formen mit sanft erhabenen Farben",
+  "mainStyleDepth": "Relieftiefe",
+  "mainStyleDepthGuide": "Stärke von Erhebungen und Vertiefungen anpassen, ohne die Glasdeckkraft zu ändern.",
+  "mainStyleDepthReset": "Auf 100 % zurücksetzen",
+  "mainStyleExperimental": "Experimentell",
   "mainStyleFlat": "Flach · Standard",
   "mainStyleFlatDescription": "Dezente Konturen, klare Ebenen",
+  "mainStyleFluent": "Fluent",
+  "mainStyleFluentDescription": "Halbtransparente Ebenen und Akzentlinien",
+  "mainStyleIndustrial": "Industriell",
+  "mainStyleIndustrialDescription": "Metallartige Flächen, kompakte Bedienelemente und präzise Linien",
   "mainStyleNeumorphism": "Neumorphismus",
   "mainStyleNeumorphismDescription": "Weiche Lichtkanten und sanfte Schatten",
+  "mainStylePaper": "Papier",
+  "mainStylePaperDescription": "Matte Flächen, feine Ränder und dezente Tiefe",
   "mainTaskAdd": "Aufgabe hinzufügen",
   "mainTaskAmbiguousDecision": "Der Status dieser alten Aufgaben mit gleichem Namen ist unklar. Bestätigen Sie jede Aufgabe einzeln.",
   "mainTaskCompleteAllAndSetStage": "Alle erledigen und Phase setzen",
@@ -1731,6 +1801,12 @@
   "recoverySwitchUnknown": "Bibliothekswechsel nicht bestätigt. Öffne den Arbeitsbereich erneut zur Prüfung.",
   "recoveryTargetExists": "Wiederherstellungsziel existiert bereits. Wähle einen neuen, noch nicht vorhandenen Ordner.",
   "recoveryTitle": "Arbeitsbereich erneut öffnen",
+  "shutdownBackground": "Im Hintergrund weiter schließen",
+  "shutdownBackgroundHint": "Morrow schließt sich nach dem Ende des Dienstes. Bei einem Fehler oder einer langen Verzögerung erscheint dieses Fenster wieder.",
+  "shutdownFailure": "Beim Beenden ist ein Problem aufgetreten. Der Inhaltsdienst wird weiter überwacht.",
+  "shutdownStillRunning": "Das Beenden dauert länger als erwartet. Der Inhaltsdienst wird weiter überwacht.",
+  "shutdownTitle": "Arbeitsbereich wird geschlossen",
+  "shutdownWaiting": "Der Inhaltsdienst wird beendet. Die Bibliothek bleibt bis zum bestätigten Ende in seinem Besitz.",
   "visualApplyColor": "Farbe anwenden",
   "visualApplyComponent": "Auf diese Komponente anwenden",
   "visualApplyTexture": "Medium anwenden",

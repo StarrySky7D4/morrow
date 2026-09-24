@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "柔和双向光影，细腻浮雕触感",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "实验性",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "纸感",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "哑光纸面、细边框与克制的层次",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "黏土",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "圆润造型与柔和隆起的色彩",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent 流畅",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "半透明层次与强调色线条",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "粗野主义",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "硬朗边角、醒目边框与错位阴影",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "工业风",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "金属质感面板、紧凑控件与利落线条",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "草稿交接恢复",
+  "mainDraftHandoffRecoveryIntro": "仅查看已保存的交接记录。打开此页不会自动提交内容。",
+  "mainDraftHandoffRecoveryEmpty": "没有待查看的交接记录",
+  "mainDraftHandoffRecoveryPending": "后继草稿尚未建立",
+  "mainDraftHandoffRecoveryChildCommitted": "后继草稿已保存，父草稿尚未退休",
+  "mainDraftHandoffRecoveryParentRetired": "交接已完成",
+  "mainDraftHandoffRecoveryCancelled": "交接已取消",
+  "mainDraftHandoffRecoveryConflict": "当前状态已变化，需要核对",
+  "mainDraftHandoffRecoveryInspect": "查看与核对",
+  "mainDraftHandoffRecoveryComplete": "建立后继草稿",
+  "mainDraftHandoffRecoveryRetire": "退休父草稿",
+  "mainDraftHandoffRecoveryCancel": "取消交接",
+  "mainDraftHandoffRecoveryConfirmTitle": "确认处理草稿交接",
+  "mainDraftHandoffRecoveryCompleteBody": "使用已保存的原始提案建立后继草稿，不会再次提交正式卡片。",
+  "mainDraftHandoffRecoveryRetireBody": "确认后继草稿已保存后，将父草稿标记为退休。",
+  "mainDraftHandoffRecoveryCancelBody": "取消这份尚未完成的交接，原操作不可再次建立后继草稿。父草稿保持原状。",
+  "mainDraftHandoffRecoveryUnknown": "操作结果尚未确认。请核对原记录，不要重复操作。",
+  "mainDraftHandoffRecoveryFailed": "无法完成操作，请刷新并核对记录。",
+  "mainDraftHandoffRecoveryConfirmed": "操作已确认保存。",
+  "mainDraftHandoffRecoveryReadOnly": "当前工作台只允许查看",
+  "mainDraftHandoffRecoveryFields": "原始草稿内容",
+  "mainDraftHandoffRecoveryAssets": "已固定附件",
+  "mainDraftHandoffRecoverySelection": "选择一条记录查看完整草稿。",
+  "mainStyleDepth": "立体深度",
+  "mainStyleDepthGuide": "调整浮起与下沉的强度，不改变玻璃透明度。",
+  "mainStyleDepthReset": "恢复 100%"
 }

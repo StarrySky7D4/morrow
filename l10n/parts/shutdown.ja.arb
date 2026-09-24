@@ -1,0 +1,9 @@
+{
+  "@@locale": "ja",
+  "shutdownTitle": "ワークスペースを閉じています",
+  "shutdownWaiting": "コンテンツサービスの終了を待っています。終了が確認されるまで、ライブラリは元のサービスが保持します。",
+  "shutdownStillRunning": "終了に予想以上の時間がかかっています。コンテンツサービスの監視を続けています。",
+  "shutdownBackground": "バックグラウンドで終了を続ける",
+  "shutdownBackgroundHint": "サービスが終了すると Morrow も閉じます。失敗した場合や長時間かかる場合は、この画面を再表示します。",
+  "shutdownFailure": "終了処理で問題が発生しました。コンテンツサービスの監視を続けています。"
+}

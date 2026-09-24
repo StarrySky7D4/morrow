@@ -58,7 +58,31 @@ struct HandoffRequest {
   request @2 :WriteRequest;
   parentLink @3 :ParentLink;
 }
-struct StoredAsset {
+struct HandoffProposal {
+  version @0 :UInt16;
+  digest @1 :Data;
+  request @2 :WriteRequest;
+  parentLink @3 :ParentLink;
+  retirementOperation @4 :Text;
+}
+struct HandoffProposalSummary {
+  cardId @0 :Text;
+  parentDraftId @1 :Text;
+  childDraftId @2 :Text;
+  childOperation @3 :Text;
+  retirementOperation @4 :Text;
+  revision @5 :UInt64;
+  status @6 :UInt16;
+  parentGeneration @7 :UInt64;
+  parentActive @8 :Bool;
+  childGeneration @9 :UInt64;
+  childActive @10 :Bool;
+  cursor @11 :Text;
+}
+struct HandoffProposalRecord {
+  proposal @0 :HandoffProposal;
+  summary @1 :HandoffProposalSummary;
+}struct StoredAsset {
   selection @0 :AssetSelection;
   name @1 :Text;
   mediaType @2 :Text;
@@ -104,7 +128,7 @@ struct ImportedAsset {
   kind @2 :Text;
   bytes @3 :UInt64;
 }
-enum ResultKind { absent @0; record @1; list @2; imported @3; exported @4; lineages @5; }
+enum ResultKind { absent @0; record @1; list @2; imported @3; exported @4; lineages @5; handoffProposal @6; handoffProposals @7; }
 struct Envelope {
   version @0 :UInt16;
   digest @1 :Data;
@@ -120,4 +144,6 @@ struct Envelope {
   nextCursor @11 :Text;
   requestCursor @12 :Text;
   requestLimit @13 :UInt32;
+  handoffProposal @14 :HandoffProposalRecord;
+  handoffProposalSummaries @15 :List(HandoffProposalSummary);
 }

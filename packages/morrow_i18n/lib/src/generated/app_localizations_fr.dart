@@ -347,6 +347,90 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mainDone => 'Terminé';
 
   @override
+  String get mainDraftHandoffRecoveryAssets => 'Pièces jointes fixées';
+
+  @override
+  String get mainDraftHandoffRecoveryCancel => 'Annuler le transfert';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelBody =>
+      'Annuler ce transfert inachevé. L’opération initiale ne pourra plus créer de brouillon successeur. Le brouillon parent reste inchangé.';
+
+  @override
+  String get mainDraftHandoffRecoveryCancelled => 'Transfert annulé';
+
+  @override
+  String get mainDraftHandoffRecoveryChildCommitted =>
+      'Brouillon successeur enregistré ; brouillon parent pas encore retiré';
+
+  @override
+  String get mainDraftHandoffRecoveryComplete =>
+      'Créer le brouillon successeur';
+
+  @override
+  String get mainDraftHandoffRecoveryCompleteBody =>
+      'Créer le brouillon successeur à partir de la proposition initiale enregistrée. Aucune autre carte définitive ne sera soumise.';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmTitle =>
+      'Confirmer l’action sur le transfert';
+
+  @override
+  String get mainDraftHandoffRecoveryConfirmed =>
+      'L’opération a été confirmée et enregistrée.';
+
+  @override
+  String get mainDraftHandoffRecoveryConflict =>
+      'L’état actuel a changé ; vérifiez-le';
+
+  @override
+  String get mainDraftHandoffRecoveryEmpty => 'Aucun transfert à vérifier';
+
+  @override
+  String get mainDraftHandoffRecoveryFailed =>
+      'Impossible de terminer l’opération. Actualisez et vérifiez l’enregistrement.';
+
+  @override
+  String get mainDraftHandoffRecoveryFields => 'Contenu du brouillon initial';
+
+  @override
+  String get mainDraftHandoffRecoveryInspect => 'Afficher et vérifier';
+
+  @override
+  String get mainDraftHandoffRecoveryIntro =>
+      'Cette page affiche uniquement les transferts enregistrés. Son ouverture ne soumet aucun contenu automatiquement.';
+
+  @override
+  String get mainDraftHandoffRecoveryParentRetired => 'Transfert terminé';
+
+  @override
+  String get mainDraftHandoffRecoveryPending =>
+      'Le brouillon successeur n’a pas encore été créé';
+
+  @override
+  String get mainDraftHandoffRecoveryReadOnly =>
+      'Cet espace de travail est en lecture seule';
+
+  @override
+  String get mainDraftHandoffRecoveryRetire => 'Retirer le brouillon parent';
+
+  @override
+  String get mainDraftHandoffRecoveryRetireBody =>
+      'Après avoir confirmé l’enregistrement du brouillon successeur, marquer le brouillon parent comme retiré.';
+
+  @override
+  String get mainDraftHandoffRecoverySelection =>
+      'Sélectionnez un enregistrement pour voir le brouillon complet.';
+
+  @override
+  String get mainDraftHandoffRecoveryTitle =>
+      'Récupération du transfert de brouillon';
+
+  @override
+  String get mainDraftHandoffRecoveryUnknown =>
+      'Le résultat de l’opération n’est pas encore confirmé. Vérifiez l’enregistrement initial ; ne répétez pas l’opération.';
+
+  @override
   String get mainDraftImportRecoveryCancelBody =>
       'Après l’annulation, la demande d’abandon initiale ne sera plus exécutée. Cela ne supprime pas la pièce jointe et n’annule pas les autres modifications.';
 
@@ -1105,10 +1189,51 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de lire le contenu enregistré. Les données originales sont conservées et ne seront pas écrasées.';
 
   @override
+  String get mainStyleBrutalist => 'Brutalisme';
+
+  @override
+  String get mainStyleBrutalistDescription =>
+      'Angles nets, bordures marquées et ombres décalées';
+
+  @override
+  String get mainStyleClay => 'Argile';
+
+  @override
+  String get mainStyleClayDescription =>
+      'Formes arrondies aux couleurs doucement en relief';
+
+  @override
+  String get mainStyleDepth => 'Profondeur du relief';
+
+  @override
+  String get mainStyleDepthGuide =>
+      'Réglez les reliefs et les creux sans modifier l’opacité du verre.';
+
+  @override
+  String get mainStyleDepthReset => 'Rétablir 100 %';
+
+  @override
+  String get mainStyleExperimental => 'Expérimental';
+
+  @override
   String get mainStyleFlat => 'Plat · Par défaut';
 
   @override
   String get mainStyleFlatDescription => 'Contours légers et niveaux lisibles';
+
+  @override
+  String get mainStyleFluent => 'Fluent';
+
+  @override
+  String get mainStyleFluentDescription =>
+      'Surfaces translucides superposées et lignes accentuées';
+
+  @override
+  String get mainStyleIndustrial => 'Industriel';
+
+  @override
+  String get mainStyleIndustrialDescription =>
+      'Panneaux métallisés, commandes compactes et lignes précises';
 
   @override
   String get mainStyleNeumorphism => 'Neumorphisme';
@@ -1116,6 +1241,13 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get mainStyleNeumorphismDescription =>
       'Ombres douces et relief subtil';
+
+  @override
+  String get mainStylePaper => 'Papier';
+
+  @override
+  String get mainStylePaperDescription =>
+      'Surfaces mates, bordures fines et relief discret';
 
   @override
   String get mainTaskAdd => 'Ajouter une tâche';
@@ -2925,6 +3057,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recoveryTitle => 'Rouvrir l’espace de travail';
+
+  @override
+  String get shutdownBackground => 'Poursuivre en arrière-plan';
+
+  @override
+  String get shutdownBackgroundHint =>
+      'Morrow se fermera quand le service s’arrêtera. En cas d’erreur ou d’attente prolongée, cette fenêtre réapparaîtra.';
+
+  @override
+  String get shutdownFailure =>
+      'Un problème est survenu pendant la fermeture. Le service de contenu reste sous surveillance.';
+
+  @override
+  String get shutdownStillRunning =>
+      'La fermeture prend plus de temps que prévu. Le service de contenu reste sous surveillance.';
+
+  @override
+  String get shutdownTitle => 'Fermeture de l’espace de travail';
+
+  @override
+  String get shutdownWaiting =>
+      'En attente de l’arrêt du service de contenu. Il conserve la bibliothèque jusqu’à confirmation de sa sortie.';
 
   @override
   String get visualApplyColor => 'Appliquer la couleur';

@@ -1,3 +1,4 @@
+import 'surface_paint_boundary.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'media/texture_source.dart';
@@ -6,7 +7,30 @@ import 'neumorphic_controls.dart';
 
 enum GlassMode { frosted, clear, liquid }
 
-enum VisualStyle { flat, neumorphism }
+enum VisualStyle {
+  flat,
+  neumorphism,
+  paper,
+  clay,
+  fluent,
+  brutalist,
+  industrial;
+
+  bool get supportsDepth => this != flat;
+
+  bool get experimental => this != flat && this != neumorphism;
+
+  // Scale the existing radius preference rather than overwriting it. An
+  // explicitly square theme stays square in every style.
+  double get radiusScale => switch (this) {
+    flat || neumorphism => 1,
+    paper => .24,
+    clay => 1.3,
+    fluent => .55,
+    brutalist => .18,
+    industrial => .4,
+  };
+}
 
 enum StudioTheme { white, custom, dark }
 
@@ -21,11 +45,13 @@ class ComponentMaterial {
     this.color,
     this.mode,
     this.cornerRadius,
+    this.styleDepth,
     this.followComponent,
   });
   final String? followComponent;
   final GlassMode? mode;
   final double? cornerRadius;
+  final double? styleDepth;
   final bool enabled;
   final double blur, opacity;
   final Color? color;
@@ -36,6 +62,8 @@ class ComponentMaterial {
     Color? color,
     GlassMode? mode,
     double? cornerRadius,
+    double? styleDepth,
+    bool inheritDepth = false,
     String? followComponent,
     bool clearFollow = false,
     bool inheritColor = false,
@@ -48,6 +76,7 @@ class ComponentMaterial {
     color: inheritColor ? null : color ?? this.color,
     mode: inheritMode ? null : mode ?? this.mode,
     cornerRadius: inheritRadius ? null : cornerRadius ?? this.cornerRadius,
+    styleDepth: inheritDepth ? null : styleDepth ?? this.styleDepth,
     followComponent: clearFollow
         ? null
         : followComponent ?? this.followComponent,
@@ -59,16 +88,19 @@ class ComponentMaterial {
     'color': color?.toARGB32(),
     if (mode != null) 'mode': mode!.name,
     if (cornerRadius != null) 'cornerRadius': cornerRadius,
+    if (styleDepth != null) 'styleDepth': styleDepth,
     if (followComponent != null) 'followComponent': followComponent,
   };
   factory ComponentMaterial.fromJson(Map<String, dynamic> data) {
     final blur = (data['blur'] as num?)?.toDouble() ?? 22;
     final opacity = (data['opacity'] as num?)?.toDouble() ?? .76;
     final radius = (data['cornerRadius'] as num?)?.toDouble();
+    final depth = (data['styleDepth'] as num?)?.toDouble();
     final modeName = data['mode'] as String?;
     final follow = data['followComponent'];
     if ((follow != null &&
             (follow is! String || follow.isEmpty || follow.length > 256)) ||
+        (depth != null && (!depth.isFinite || depth < 0 || depth > 2)) ||
         (radius != null && (!radius.isFinite || radius < 0 || radius > 32)) ||
         (modeName != null &&
             !GlassMode.values.any((m) => m.name == modeName)) ||
@@ -87,6 +119,7 @@ class ComponentMaterial {
       color: data['color'] == null ? null : Color(data['color'] as int),
       mode: modeName == null ? null : GlassMode.values.byName(modeName),
       cornerRadius: radius,
+      styleDepth: depth,
       followComponent: follow as String?,
     );
   }
@@ -98,6 +131,7 @@ class SurfaceSettings {
   const SurfaceSettings({
     this.components = const {},
     this.visualStyle = VisualStyle.flat,
+    this.styleDepth = 1,
     this.canvasBlur = 0,
     this.canvasOpacity = 0,
     this.canvasColor,
@@ -108,6 +142,14 @@ class SurfaceSettings {
   });
   final Map<String, ComponentMaterial> components;
   final VisualStyle visualStyle;
+  final double styleDepth;
+  double depthFor(String? id) {
+    final local = resolveComponent(id);
+    return local?.enabled == true
+        ? local!.styleDepth ?? styleDepth
+        : styleDepth;
+  }
+
   final double canvasBlur, canvasOpacity, componentBlur, componentOpacity;
   final Color? canvasColor, componentColor;
   final bool componentCustom;
@@ -135,6 +177,7 @@ class SurfaceSettings {
   SurfaceSettings copyWith({
     Map<String, ComponentMaterial>? components,
     VisualStyle? visualStyle,
+    double? styleDepth,
     double? canvasBlur,
     double? canvasOpacity,
     Color? canvasColor,
@@ -145,6 +188,7 @@ class SurfaceSettings {
   }) => SurfaceSettings(
     components: components ?? this.components,
     visualStyle: visualStyle ?? this.visualStyle,
+    styleDepth: styleDepth ?? this.styleDepth,
     canvasBlur: canvasBlur ?? this.canvasBlur,
     canvasOpacity: canvasOpacity ?? this.canvasOpacity,
     canvasColor: canvasColor ?? this.canvasColor,
@@ -155,6 +199,7 @@ class SurfaceSettings {
   );
   Map<String, dynamic> toJson() => {
     'visualStyle': visualStyle.name,
+    'styleDepth': styleDepth,
     'componentMaterials': components.map(
       (key, value) => MapEntry(key, value.toJson()),
     ),
@@ -181,7 +226,12 @@ class SurfaceSettings {
             !VisualStyle.values.any((value) => value.name == style))) {
       throw const FormatException('Invalid visual style');
     }
+    final depth = (data['styleDepth'] as num?)?.toDouble() ?? 1;
+    if (!depth.isFinite || depth < 0 || depth > 2) {
+      throw const FormatException('Invalid style depth');
+    }
     final settings = SurfaceSettings(
+      styleDepth: depth,
       visualStyle: style == null
           ? VisualStyle.flat
           : VisualStyle.values.byName(style),
@@ -260,8 +310,9 @@ class Palette {
   final bool liquidCanvas;
   final double cornerRadius, grayscale, windowRadius;
   final double? themeLightness;
-  BorderRadius borderRadius(double base) =>
-      BorderRadius.circular(base * cornerRadius.clamp(0, 32) / 20);
+  BorderRadius borderRadius(double base) => BorderRadius.circular(
+    base * cornerRadius.clamp(0, 32) / 20 * surfaces.visualStyle.radiusScale,
+  );
   Color tone(Color color) {
     final gray = .2126 * color.r + .7152 * color.g + .0722 * color.b;
     return Color.lerp(
@@ -387,6 +438,95 @@ class Palette {
         );
 }
 
+// Style changes affect edges and depth only. Glass opacity, blur, tint and
+// refraction remain independent, including component-specific overrides.
+GlassMaterial _styleGlass(
+  GlassMaterial inherited,
+  Palette p, {
+  required bool recessed,
+}) {
+  final style = p.surfaces.visualStyle;
+  if (style == VisualStyle.flat) return inherited;
+  final depth = p.surfaces.styleDepth;
+  BoxShadow shadow(Color color, Offset offset, double blur) => BoxShadow(
+    color: color.withValues(alpha: color.a * depth.clamp(0, 1)),
+    offset: offset * depth,
+    blurRadius: blur,
+    // A shifted filled shadow must not darken a transparent panel's interior.
+    blurStyle: BlurStyle.outer,
+  );
+  final darkEdge = p.ink.withValues(alpha: p.dark ? .28 : .18);
+  final lightEdge = Colors.white.withValues(alpha: p.dark ? .1 : .58);
+  final shadows = switch (style) {
+    VisualStyle.flat => <BoxShadow>[],
+    VisualStyle.neumorphism => [
+      shadow(
+        Colors.white.withValues(alpha: p.dark ? .09 : .26),
+        const Offset(-1.5, -1.5),
+        5,
+      ),
+      shadow(
+        (p.dark ? Colors.black : const Color(0xFF8A8299)).withValues(
+          alpha: p.dark ? .24 : .12,
+        ),
+        const Offset(1.5, 1.5),
+        5,
+      ),
+    ],
+    VisualStyle.paper => [shadow(darkEdge, const Offset(0, 2), 1)],
+    VisualStyle.clay => [
+      shadow(
+        lightEdge.withValues(alpha: p.dark ? .08 : .26),
+        const Offset(-1, -1.5),
+        3,
+      ),
+      shadow(
+        Colors.black.withValues(alpha: p.dark ? .28 : .13),
+        const Offset(1, 2),
+        4,
+      ),
+    ],
+    VisualStyle.fluent => [
+      shadow(
+        Colors.black.withValues(alpha: p.dark ? .22 : .07),
+        const Offset(0, 1.5),
+        4,
+      ),
+    ],
+    VisualStyle.brutalist => [
+      shadow(
+        p.ink.withValues(alpha: p.dark ? .48 : .65),
+        const Offset(2.5, 2.5),
+        0,
+      ),
+    ],
+    VisualStyle.industrial => [
+      shadow(lightEdge, const Offset(0, -1), 0),
+      shadow(darkEdge, const Offset(0, 2), 1),
+    ],
+  };
+  final edge = switch (style) {
+    VisualStyle.neumorphism => Colors.white.withValues(
+      alpha: p.dark ? .13 : .58,
+    ),
+    VisualStyle.clay => lightEdge,
+    VisualStyle.brutalist => p.ink.withValues(alpha: .65),
+    VisualStyle.paper || VisualStyle.industrial => darkEdge,
+    _ => p.glassEdge,
+  };
+  return GlassMaterial(
+    blur: inherited.blur,
+    liquid: inherited.liquid,
+    decoration: inherited.decoration.copyWith(
+      boxShadow: recessed ? const [] : shadows,
+      border: Border.all(
+        color: edge,
+        width: style == VisualStyle.brutalist ? 1.8 : 1,
+      ),
+    ),
+  );
+}
+
 class Glass extends StatelessWidget {
   const Glass({
     super.key,
@@ -458,38 +598,10 @@ class Glass extends StatelessWidget {
               border: Border.all(color: p.glassEdge, width: 1),
             ),
           );
-    final neumorphism = p.surfaces.visualStyle == VisualStyle.neumorphism;
-    final softShadows = <BoxShadow>[
-      BoxShadow(
-        color: Colors.white.withValues(alpha: p.dark ? .09 : .56),
-        blurRadius: 12,
-        blurStyle: BlurStyle.outer,
-        offset: const Offset(-4, -4),
-      ),
-      BoxShadow(
-        color: (p.dark ? Colors.black : const Color(0xFF8A8299)).withValues(
-          alpha: p.dark ? .30 : .16,
-        ),
-        blurRadius: 12,
-        blurStyle: BlurStyle.outer,
-        offset: const Offset(4, 4),
-      ),
-    ];
-    final styled = neumorphism
-        ? GlassMaterial(
-            blur: inherited.blur,
-            liquid: inherited.liquid,
-            decoration: inherited.decoration.copyWith(
-              boxShadow: recessed ? const [] : softShadows,
-              border: Border.all(
-                color: p.dark
-                    ? Colors.white.withValues(alpha: .13)
-                    : Colors.white.withValues(alpha: .58),
-                width: 1,
-              ),
-            ),
-          )
-        : inherited;
+    final styledPalette = p.withSurfaces(
+      p.surfaces.copyWith(styleDepth: p.surfaces.depthFor(componentId)),
+    );
+    final styled = _styleGlass(inherited, styledPalette, recessed: recessed);
     final target = custom
         ? GlassMaterial(
             blur: local!.blur,
@@ -519,17 +631,19 @@ class Glass extends StatelessWidget {
       duration: motionDuration(context, 360),
       curve: Curves.easeInOutCubic,
       child: child,
-      builder: (context, material, child) => NeumorphicSurface(
-        palette: p,
-        depth: recessed ? -1 : 0,
-        borderRadius: material.decoration.borderRadius! as BorderRadius,
-        child: LiquidGlassSurface(
-          material: material,
-          tint: tint,
-          dark: p.dark,
-          readable: dialog,
+      builder: (context, material, child) => SurfacePaintBoundary(
+        child: NeumorphicSurface(
+          palette: styledPalette,
+          depth: recessed ? -1 : 0,
           borderRadius: material.decoration.borderRadius! as BorderRadius,
-          child: child!,
+          child: LiquidGlassSurface(
+            material: material,
+            tint: tint,
+            dark: p.dark,
+            readable: dialog,
+            borderRadius: material.decoration.borderRadius! as BorderRadius,
+            child: child!,
+          ),
         ),
       ),
     );

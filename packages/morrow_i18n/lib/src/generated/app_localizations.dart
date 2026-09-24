@@ -676,6 +676,144 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get mainDone;
 
+  /// No description provided for @mainDraftHandoffRecoveryAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned attachments'**
+  String get mainDraftHandoffRecoveryAssets;
+
+  /// No description provided for @mainDraftHandoffRecoveryCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel handoff'**
+  String get mainDraftHandoffRecoveryCancel;
+
+  /// No description provided for @mainDraftHandoffRecoveryCancelBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this unfinished handoff. The original operation can no longer create a successor draft. The parent draft remains unchanged.'**
+  String get mainDraftHandoffRecoveryCancelBody;
+
+  /// No description provided for @mainDraftHandoffRecoveryCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Handoff cancelled'**
+  String get mainDraftHandoffRecoveryCancelled;
+
+  /// No description provided for @mainDraftHandoffRecoveryChildCommitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Successor draft saved; parent draft not yet retired'**
+  String get mainDraftHandoffRecoveryChildCommitted;
+
+  /// No description provided for @mainDraftHandoffRecoveryComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Create successor draft'**
+  String get mainDraftHandoffRecoveryComplete;
+
+  /// No description provided for @mainDraftHandoffRecoveryCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the successor draft from the saved original proposal. This will not submit another final card.'**
+  String get mainDraftHandoffRecoveryCompleteBody;
+
+  /// No description provided for @mainDraftHandoffRecoveryConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm draft handoff action'**
+  String get mainDraftHandoffRecoveryConfirmTitle;
+
+  /// No description provided for @mainDraftHandoffRecoveryConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation was confirmed and saved.'**
+  String get mainDraftHandoffRecoveryConfirmed;
+
+  /// No description provided for @mainDraftHandoffRecoveryConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The current state has changed; review it'**
+  String get mainDraftHandoffRecoveryConflict;
+
+  /// No description provided for @mainDraftHandoffRecoveryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No handoff records to review'**
+  String get mainDraftHandoffRecoveryEmpty;
+
+  /// No description provided for @mainDraftHandoffRecoveryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not complete the operation. Refresh and review the record.'**
+  String get mainDraftHandoffRecoveryFailed;
+
+  /// No description provided for @mainDraftHandoffRecoveryFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Original draft content'**
+  String get mainDraftHandoffRecoveryFields;
+
+  /// No description provided for @mainDraftHandoffRecoveryInspect.
+  ///
+  /// In en, this message translates to:
+  /// **'View and review'**
+  String get mainDraftHandoffRecoveryInspect;
+
+  /// No description provided for @mainDraftHandoffRecoveryIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'View saved handoff records only. Opening this page does not submit content.'**
+  String get mainDraftHandoffRecoveryIntro;
+
+  /// No description provided for @mainDraftHandoffRecoveryParentRetired.
+  ///
+  /// In en, this message translates to:
+  /// **'Handoff complete'**
+  String get mainDraftHandoffRecoveryParentRetired;
+
+  /// No description provided for @mainDraftHandoffRecoveryPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Successor draft has not been created'**
+  String get mainDraftHandoffRecoveryPending;
+
+  /// No description provided for @mainDraftHandoffRecoveryReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This workspace is view-only'**
+  String get mainDraftHandoffRecoveryReadOnly;
+
+  /// No description provided for @mainDraftHandoffRecoveryRetire.
+  ///
+  /// In en, this message translates to:
+  /// **'Retire parent draft'**
+  String get mainDraftHandoffRecoveryRetire;
+
+  /// No description provided for @mainDraftHandoffRecoveryRetireBody.
+  ///
+  /// In en, this message translates to:
+  /// **'After confirming the successor draft was saved, mark the parent draft as retired.'**
+  String get mainDraftHandoffRecoveryRetireBody;
+
+  /// No description provided for @mainDraftHandoffRecoverySelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a record to view the complete draft.'**
+  String get mainDraftHandoffRecoverySelection;
+
+  /// No description provided for @mainDraftHandoffRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft handoff recovery'**
+  String get mainDraftHandoffRecoveryTitle;
+
+  /// No description provided for @mainDraftHandoffRecoveryUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'The operation result is not confirmed. Review the original record; do not repeat the operation.'**
+  String get mainDraftHandoffRecoveryUnknown;
+
   /// No description provided for @mainDraftImportRecoveryCancelBody.
   ///
   /// In en, this message translates to:
@@ -2014,6 +2152,54 @@ abstract class AppLocalizations {
   /// **'Saved content could not be read. The original data is preserved and will not be overwritten.'**
   String get mainStorageUnreadable;
 
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Brutalist'**
+  String get mainStyleBrutalist;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Hard edges, bold borders and offset shadows'**
+  String get mainStyleBrutalistDescription;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Clay'**
+  String get mainStyleClay;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Rounded forms with softly raised color'**
+  String get mainStyleClayDescription;
+
+  /// Visual style relief depth control
+  ///
+  /// In en, this message translates to:
+  /// **'Relief depth'**
+  String get mainStyleDepth;
+
+  /// Visual style relief depth control
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust raised and inset depth without changing glass opacity.'**
+  String get mainStyleDepthGuide;
+
+  /// Visual style relief depth control
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to 100%'**
+  String get mainStyleDepthReset;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Experimental'**
+  String get mainStyleExperimental;
+
   /// Interface style and component material inheritance
   ///
   /// In en, this message translates to:
@@ -2026,6 +2212,30 @@ abstract class AppLocalizations {
   /// **'Light edges and clear layers'**
   String get mainStyleFlatDescription;
 
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Fluent'**
+  String get mainStyleFluent;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Layered translucent surfaces and accent lines'**
+  String get mainStyleFluentDescription;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Industrial'**
+  String get mainStyleIndustrial;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Metal-like panels, compact controls and precise lines'**
+  String get mainStyleIndustrialDescription;
+
   /// Interface style and component material inheritance
   ///
   /// In en, this message translates to:
@@ -2037,6 +2247,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Soft paired shadows and gentle relief'**
   String get mainStyleNeumorphismDescription;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Paper'**
+  String get mainStylePaper;
+
+  /// Experimental interface style
+  ///
+  /// In en, this message translates to:
+  /// **'Matte sheets, fine borders and restrained depth'**
+  String get mainStylePaperDescription;
 
   /// No description provided for @mainTaskAdd.
   ///
@@ -5063,6 +5285,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reopen workspace'**
   String get recoveryTitle;
+
+  /// No description provided for @shutdownBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue in background'**
+  String get shutdownBackground;
+
+  /// No description provided for @shutdownBackgroundHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Morrow will close when the service exits. If shutdown fails or takes much longer, this window will reappear.'**
+  String get shutdownBackgroundHint;
+
+  /// No description provided for @shutdownFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Shutdown reported a problem. The content service is still being observed.'**
+  String get shutdownFailure;
+
+  /// No description provided for @shutdownStillRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Shutdown is taking longer than expected. The content service is still being observed.'**
+  String get shutdownStillRunning;
+
+  /// No description provided for @shutdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing workspace'**
+  String get shutdownTitle;
+
+  /// No description provided for @shutdownWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the content service to exit. The library stays owned until its exit is confirmed.'**
+  String get shutdownWaiting;
 
   /// Visual interface: ApplyColor
   ///

@@ -161,6 +161,40 @@ pub(crate) fn decode_handoff(bytes: &[u8]) -> Result<(proto::WriteRequest, proto
     Ok((request, link))
 }
 
+pub(crate) fn decode_proposal(
+    bytes: &[u8],
+) -> Result<(proto::WriteRequest, proto::ParentLink, String)> {
+    if bytes.is_empty() || bytes.len() > MAX_WRITE_FRAME {
+        return Err("editor draft proposal wire frame budget".into());
+    }
+    let mut cursor = Cursor::new(bytes);
+    let message = serialize::read_message(
+        &mut cursor,
+        ReaderOptions {
+            traversal_limit_in_words: Some(4 * 1024 * 1024),
+            nesting_limit: 20,
+        },
+    )?;
+    if cursor.position() != bytes.len() as u64 {
+        return Err("trailing editor draft proposal wire bytes".into());
+    }
+    let value = message.get_root::<wire::handoff_proposal::Reader>()?;
+    if value.get_version() != 1 || value.get_digest()? != digest() {
+        return Err("editor draft proposal wire contract mismatch".into());
+    }
+    if !value.has_request() || !value.has_parent_link() {
+        return Err("editor draft proposal identity missing".into());
+    }
+    let request = decode_request(value.get_request()?)?;
+    let link = decode_parent_link(value.get_parent_link()?)?;
+    editor_draft::model::validate_parent_link(&request, &link)?;
+    let retirement = text(value.get_retirement_operation())?;
+    if retirement.is_empty() {
+        return Err("editor draft proposal retirement operation missing".into());
+    }
+    Ok((request, link, retirement))
+}
+
 fn text_reply(value: &proto::TextValue, mut out: wire::text_value::Builder<'_>) {
     out.set_text(&value.text);
     out.set_selection_base(value.selection_base);
@@ -406,6 +440,116 @@ fn lineages_envelope(
     Ok(bytes)
 }
 
+fn proposal_summary_reply(
+    value: &editor_draft::HandoffProposalRecord,
+    mut out: wire::handoff_proposal_summary::Builder<'_>,
+) {
+    use editor_draft::HandoffProposalStatus;
+    out.set_card_id(&value.request.card_id);
+    out.set_parent_draft_id(&value.parent_link.parent_draft_id);
+    out.set_child_draft_id(&value.request.draft_id);
+    out.set_child_operation(&value.request.operation_id);
+    out.set_retirement_operation(&value.retirement_operation);
+    out.set_revision(value.revision);
+    out.set_status(match value.status {
+        HandoffProposalStatus::Pending => 0,
+        HandoffProposalStatus::ChildCommitted => 1,
+        HandoffProposalStatus::ParentRetired => 2,
+        HandoffProposalStatus::Cancelled => 3,
+        HandoffProposalStatus::Conflict => 4,
+    });
+    out.set_parent_generation(value.parent_generation);
+    out.set_parent_active(value.parent_active);
+    out.set_child_generation(value.child_generation);
+    out.set_child_active(value.child_active);
+    out.set_cursor(&value.cursor);
+}
+
+fn proposal_envelope(
+    kind: wire::ResultKind,
+    card: &str,
+    parent: &str,
+    operation: &str,
+    record: Option<&editor_draft::HandoffProposalRecord>,
+    summaries: &[editor_draft::HandoffProposalRecord],
+    request_cursor: &str,
+    request_limit: u32,
+    next_cursor: &str,
+) -> Result<Vec<u8>> {
+    let mut message = Builder::new_default();
+    {
+        let mut out = message.init_root::<wire::envelope::Builder>();
+        out.set_version(1);
+        out.set_digest(&digest());
+        out.set_kind(kind);
+        out.set_card_id(card);
+        out.set_draft_id(parent);
+        out.set_operation(operation);
+        out.set_expected_generation(0);
+        if kind == wire::ResultKind::HandoffProposals {
+            out.set_request_cursor(request_cursor);
+            out.set_request_limit(request_limit);
+            out.set_next_cursor(next_cursor);
+        }
+        if let Some(value) = record {
+            let mut item = out.reborrow().init_handoff_proposal();
+            let mut proposal = item.reborrow().init_proposal();
+            proposal.set_version(1);
+            proposal.set_digest(&digest());
+            request_reply(&value.request, proposal.reborrow().init_request())?;
+            parent_link_reply(&value.parent_link, proposal.reborrow().init_parent_link());
+            proposal.set_retirement_operation(&value.retirement_operation);
+            proposal_summary_reply(value, item.init_summary());
+        }
+        if kind == wire::ResultKind::HandoffProposals {
+            let mut list = out.init_handoff_proposal_summaries(summaries.len().try_into()?);
+            for (index, summary) in summaries.iter().enumerate() {
+                proposal_summary_reply(summary, list.reborrow().get(index as u32));
+            }
+        }
+    }
+    let bytes = serialize::write_message_to_words(&message);
+    if bytes.len() > MAX_ENVELOPE {
+        return Err("editor draft proposal envelope budget".into());
+    }
+    Ok(bytes)
+}
+
+fn proposal_chunk(
+    host: &mut WorkbenchState,
+    out: host_capnp::response::Builder<'_>,
+    card: &str,
+    parent: &str,
+    operation: &str,
+    record: Option<&editor_draft::HandoffProposalRecord>,
+) -> Result<String> {
+    let kind = if record.is_some() {
+        wire::ResultKind::HandoffProposal
+    } else {
+        wire::ResultKind::Absent
+    };
+    let bytes = proposal_envelope(kind, card, parent, operation, record, &[], "", 0, "")?;
+    envelope_chunk(host, out, bytes, record.map_or(0, |r| r.revision))
+}
+
+fn proposal_outer_fields(r: host_capnp::request::Reader<'_>, list: bool) -> Result<()> {
+    if r.get_revision() != 0
+        || !r.get_payload()?.is_empty()
+        || !text(r.get_selected_path())?.is_empty()
+        || !text(r.get_name())?.is_empty()
+        || !text(r.get_kind())?.is_empty()
+        || r.get_offset() != 0
+        || r.get_total_length() != 0
+        || !r.get_sha256()?.is_empty()
+        || !text(r.get_capture_scope())?.is_empty()
+        || !text(r.get_capture_parent())?.is_empty()
+        || (!list && (!text(r.get_cursor())?.is_empty() || r.get_limit() != 0))
+    {
+        return Err("editor draft proposal outer fields".into());
+    }
+    Ok(())
+}
+
 fn valid_lineage_cursor(cursor: &str) -> bool {
     const PREFIX: &str = "morrow-host-editor-draft-";
     cursor.is_empty()
@@ -477,6 +621,12 @@ pub(crate) fn is_action(action: host_capnp::Action) -> bool {
             | Action::FinishEditorDraftHandoff
             | Action::RetireEditorDraftParent
             | Action::ListEditorDraftLineages
+            | Action::PrepareEditorDraftHandoffProposal
+            | Action::InspectEditorDraftHandoffProposal
+            | Action::ListEditorDraftHandoffProposals
+            | Action::CompleteEditorDraftHandoffProposal
+            | Action::RetireEditorDraftHandoffProposal
+            | Action::CancelEditorDraftHandoffProposal
     )
 }
 
@@ -507,10 +657,26 @@ pub(crate) fn reply_correlation(
             | Action::ListEditorDraftImportDecisionScopes
             | Action::RetireEditorDraftParent
             | Action::ListEditorDraftLineages
+            | Action::InspectEditorDraftHandoffProposal
+            | Action::ListEditorDraftHandoffProposals
+            | Action::CompleteEditorDraftHandoffProposal
+            | Action::RetireEditorDraftHandoffProposal
+            | Action::CancelEditorDraftHandoffProposal
     ) {
         return Ok(String::new());
     }
     let key = text(request.get_transfer())?;
+    if matches!(
+        action,
+        Action::InspectEditorDraftHandoffProposal
+            | Action::ListEditorDraftHandoffProposals
+            | Action::CompleteEditorDraftHandoffProposal
+            | Action::RetireEditorDraftHandoffProposal
+            | Action::CancelEditorDraftHandoffProposal
+    ) && key.is_empty()
+    {
+        return Err("editor draft proposal reply correlation missing".into());
+    }
     if key.is_empty() {
         return Ok(key); // Compatibility for callers predating reply correlations.
     }
@@ -626,6 +792,83 @@ pub(crate) fn handle(
             let record = host.handoff_editor_draft(&request, &link)?;
             let reply_token = record_chunk(host, out, &card, &draft, &operation, 0, &record)?;
             bind_reply(host, &upload_token, reply_token);
+        }
+        Action::PrepareEditorDraftHandoffProposal => {
+            proposal_outer_fields(r, false)?;
+            let operation = text(r.get_operation())?;
+            let upload = text(r.get_transfer())?;
+            let (uploaded_operation, bytes) = host.draft_transfers.finish(&upload, now)?;
+            let (request, link, retirement) = decode_proposal(&bytes)?;
+            if uploaded_operation != request.operation_id
+                || operation != request.operation_id
+                || operation != link.child_operation
+                || card != request.card_id
+                || draft != link.parent_draft_id
+            {
+                return Err("editor draft proposal outer binding changed".into());
+            }
+            let record =
+                host.prepare_editor_draft_handoff_proposal(&request, &link, &retirement)?;
+            let download = proposal_chunk(host, out, &card, &draft, &operation, Some(&record))?;
+            bind_reply(host, &upload, download);
+        }
+        Action::InspectEditorDraftHandoffProposal
+        | Action::CompleteEditorDraftHandoffProposal
+        | Action::RetireEditorDraftHandoffProposal
+        | Action::CancelEditorDraftHandoffProposal => {
+            proposal_outer_fields(r, false)?;
+            let operation = text(r.get_operation())?;
+            let record = match action {
+                Action::InspectEditorDraftHandoffProposal => {
+                    host.inspect_editor_draft_handoff_proposal(&card, &draft, &operation)?
+                }
+                Action::CompleteEditorDraftHandoffProposal => {
+                    Some(host.complete_editor_draft_handoff_proposal(&card, &draft, &operation)?)
+                }
+                Action::RetireEditorDraftHandoffProposal => {
+                    Some(host.retire_editor_draft_handoff_proposal(&card, &draft, &operation)?)
+                }
+                Action::CancelEditorDraftHandoffProposal => {
+                    Some(host.cancel_editor_draft_handoff_proposal(&card, &draft, &operation)?)
+                }
+                _ => unreachable!(),
+            };
+            let download = proposal_chunk(host, out, &card, &draft, &operation, record.as_ref())?;
+            bind_reply(host, &reply_owner, download);
+        }
+        Action::ListEditorDraftHandoffProposals => {
+            proposal_outer_fields(r, true)?;
+            if !card.is_empty()
+                || !draft.is_empty()
+                || !text(r.get_operation())?.is_empty()
+                || r.get_limit() == 0
+                || r.get_limit() > 32
+            {
+                return Err("editor draft proposal page outer fields".into());
+            }
+            let cursor = text(r.get_cursor())?;
+            let (page, next) =
+                host.list_editor_draft_handoff_proposals(&cursor, r.get_limit() as usize)?;
+            if page.iter().any(|record| record.cursor <= cursor) {
+                return Err("editor draft proposal page cursor did not advance".into());
+            }
+            let next = next.unwrap_or_default();
+            if !next.is_empty() && page.last().is_none_or(|last| last.cursor != next) {
+                return Err("editor draft proposal next cursor changed".into());
+            }
+            let bytes = proposal_envelope(
+                wire::ResultKind::HandoffProposals,
+                "",
+                "",
+                "",
+                None,
+                &page,
+                &cursor,
+                r.get_limit(),
+                &next,
+            )?;
+            let download = envelope_chunk(host, out, bytes, 0)?;
+            bind_reply(host, &reply_owner, download);
         }
         Action::AbortEditorDraftTransfer => {
             let token = text(r.get_transfer())?;
@@ -1101,5 +1344,100 @@ mod tests {
             "morrow-host-editor-imports-{}",
             "a".repeat(64)
         )));
+    }
+
+    #[test]
+    fn proposal_absence_keeps_child_operation_without_page_fields() {
+        let bytes = proposal_envelope(
+            wire::ResultKind::Absent,
+            "card",
+            "parent",
+            "child-operation",
+            None,
+            &[],
+            "",
+            0,
+            "",
+        )
+        .unwrap();
+        let decoded =
+            serialize::read_message(&mut Cursor::new(bytes), ReaderOptions::default()).unwrap();
+        let value = decoded.get_root::<wire::envelope::Reader>().unwrap();
+        assert_eq!(value.get_kind().unwrap(), wire::ResultKind::Absent);
+        assert_eq!(text(value.get_card_id()).unwrap(), "card");
+        assert_eq!(text(value.get_draft_id()).unwrap(), "parent");
+        assert_eq!(text(value.get_operation()).unwrap(), "child-operation");
+        assert_eq!(value.get_expected_generation(), 0);
+        assert!(!value.has_request_cursor());
+        assert_eq!(value.get_request_limit(), 0);
+        assert!(!value.has_next_cursor());
+        assert!(!value.has_handoff_proposal());
+    }
+
+    #[test]
+    fn proposal_page_of_32_exposes_only_bounded_summaries() {
+        let mut request = small_request();
+        request
+            .values
+            .as_mut()
+            .unwrap()
+            .description
+            .as_mut()
+            .unwrap()
+            .text = "S2".repeat(120000);
+        let mut records = Vec::new();
+        for index in 0..32 {
+            let mut child = request.clone();
+            child.operation_id = format!("child-{index}");
+            child.draft_id = format!("draft-{index}");
+            let mut parent_link = link();
+            parent_link.child_operation = child.operation_id.clone();
+            records.push(editor_draft::HandoffProposalRecord {
+                request: child,
+                parent_link,
+                retirement_operation: format!("retire-{index}"),
+                status: editor_draft::HandoffProposalStatus::Pending,
+                revision: 1,
+                parent_generation: 1,
+                parent_active: true,
+                child_generation: 0,
+                child_active: false,
+                cursor: format!("proposal-{index:02}"),
+            });
+        }
+        let bytes = proposal_envelope(
+            wire::ResultKind::HandoffProposals,
+            "",
+            "",
+            "",
+            None,
+            &records,
+            "",
+            32,
+            "",
+        )
+        .unwrap();
+        assert!(
+            bytes.len() < 16 * 1024,
+            "summary page included a request body"
+        );
+        let decoded =
+            serialize::read_message(&mut Cursor::new(bytes), ReaderOptions::default()).unwrap();
+        let page = decoded.get_root::<wire::envelope::Reader>().unwrap();
+        assert_eq!(page.get_request_limit(), 32);
+        assert!(!page.has_handoff_proposal());
+        let summaries = page.get_handoff_proposal_summaries().unwrap();
+        assert_eq!(summaries.len(), 32);
+        for (index, summary) in summaries.iter().enumerate() {
+            assert_eq!(
+                text(summary.get_child_operation()).unwrap(),
+                records[index].request.operation_id
+            );
+            assert_eq!(
+                text(summary.get_parent_draft_id()).unwrap(),
+                records[index].parent_link.parent_draft_id
+            );
+            assert_eq!(text(summary.get_cursor()).unwrap(), records[index].cursor);
+        }
     }
 }

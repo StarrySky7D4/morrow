@@ -1,6 +1,8 @@
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
 import 'appearance.dart';
+import 'animated_slider_style.dart';
+import 'style_depth_slider.dart';
 import 'color_compass.dart';
 import 'settings_surface.dart';
 import 'neumorphic_controls.dart';
@@ -260,12 +262,15 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
           Text('${(current / max * 100).round()}%'),
         ],
       ),
-      Slider(
-        key: ValueKey(key),
-        value: current,
-        max: max,
-        divisions: 100,
-        onChanged: editingOwn ? (v) => setState(() => change(v)) : null,
+      AnimatedSliderStyle(
+        palette: currentPalette,
+        child: Slider(
+          key: ValueKey(key),
+          value: current,
+          max: max,
+          divisions: 100,
+          onChanged: editingOwn ? (v) => setState(() => change(v)) : null,
+        ),
       ),
     ],
   );
@@ -475,6 +480,35 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                             (v) => value = value.copyWith(opacity: v),
                           ),
                           const SizedBox(height: 12),
+                          if (p.surfaces.visualStyle.supportsDepth) ...[
+                            StyleDepthSlider(
+                              key: const ValueKey('component-style-depth'),
+                              palette: p,
+                              value: p.surfaces.depthFor(widget.id),
+                              onChanged: editingOwn
+                                  ? (v) => setState(
+                                      () =>
+                                          value = value.copyWith(styleDepth: v),
+                                    )
+                                  : null,
+                            ),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                key: const ValueKey('component-depth-inherit'),
+                                onPressed:
+                                    editingOwn && value.styleDepth != null
+                                    ? () => setState(
+                                        () => value = value.copyWith(
+                                          inheritDepth: true,
+                                        ),
+                                      )
+                                    : null,
+                                child: Text(l.visualFollowTheme),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
                           slider(
                             'component-radius',
                             l.mainCornerRadius,

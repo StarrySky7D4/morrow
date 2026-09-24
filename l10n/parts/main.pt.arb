@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "Sombras suaves e relevo sutil",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "Experimental",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Papel",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Superfícies foscas, bordas finas e profundidade discreta",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Argila",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Formas arredondadas com cores suavemente elevadas",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Superfícies translúcidas em camadas e linhas de destaque",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Brutalismo",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Cantos rígidos, bordas fortes e sombras deslocadas",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Industrial",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Painéis com aspecto metálico, controles compactos e linhas precisas",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Recuperação da transferência de rascunhos",
+  "mainDraftHandoffRecoveryIntro": "Esta página mostra apenas transferências guardadas. Abri-la não envia conteúdo automaticamente.",
+  "mainDraftHandoffRecoveryEmpty": "Não há transferências para rever",
+  "mainDraftHandoffRecoveryPending": "O rascunho sucessor ainda não foi criado",
+  "mainDraftHandoffRecoveryChildCommitted": "Rascunho sucessor guardado; rascunho principal ainda não retirado",
+  "mainDraftHandoffRecoveryParentRetired": "Transferência concluída",
+  "mainDraftHandoffRecoveryCancelled": "Transferência cancelada",
+  "mainDraftHandoffRecoveryConflict": "O estado atual mudou; reveja-o",
+  "mainDraftHandoffRecoveryInspect": "Ver e rever",
+  "mainDraftHandoffRecoveryComplete": "Criar rascunho sucessor",
+  "mainDraftHandoffRecoveryRetire": "Retirar rascunho principal",
+  "mainDraftHandoffRecoveryCancel": "Cancelar transferência",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirmar ação da transferência",
+  "mainDraftHandoffRecoveryCompleteBody": "Criar o rascunho sucessor a partir da proposta original guardada. Isto não volta a enviar um cartão final.",
+  "mainDraftHandoffRecoveryRetireBody": "Depois de confirmar que o rascunho sucessor foi guardado, marcar o rascunho principal como retirado.",
+  "mainDraftHandoffRecoveryCancelBody": "Cancelar esta transferência inacabada. A operação original já não poderá criar um rascunho sucessor. O rascunho principal mantém-se inalterado.",
+  "mainDraftHandoffRecoveryUnknown": "O resultado da operação ainda não foi confirmado. Reveja o registo original; não repita a operação.",
+  "mainDraftHandoffRecoveryFailed": "Não foi possível concluir a operação. Atualize e reveja o registo.",
+  "mainDraftHandoffRecoveryConfirmed": "A operação foi confirmada e guardada.",
+  "mainDraftHandoffRecoveryReadOnly": "Este espaço de trabalho permite apenas a visualização",
+  "mainDraftHandoffRecoveryFields": "Conteúdo do rascunho original",
+  "mainDraftHandoffRecoveryAssets": "Anexos fixados",
+  "mainDraftHandoffRecoverySelection": "Selecione um registo para ver o rascunho completo.",
+  "mainStyleDepth": "Profundidade do relevo",
+  "mainStyleDepthGuide": "Ajuste as elevações e reentrâncias sem alterar a opacidade do vidro.",
+  "mainStyleDepthReset": "Restaurar 100%"
 }

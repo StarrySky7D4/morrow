@@ -101,6 +101,82 @@ class _Harness {
 }
 
 void main() {
+  test(
+    'restore cannot clear newer incomplete input from a session listener',
+    () {
+      final h = _Harness(_snapshot());
+      addTearDown(h.dispose);
+      h.binding.attach();
+      h.session.markCaptureIncomplete(StateError('before restore'));
+      var newer = false;
+      h.session.addListener(() {
+        if (newer) return;
+        newer = true;
+        h.metadataError = true;
+        h.controllers[0].text = 'newer input during restore notification';
+      });
+      expect(
+        () => h.binding.applyCurrentToView((metadata) => h.metadata = metadata),
+        throwsStateError,
+      );
+      expect(h.session.captureBlocked, isTrue);
+      expect(h.binding.hasUncapturedChanges, isTrue);
+      expect(h.controllers[0].text, 'newer input during restore notification');
+    },
+  );
+
+  test(
+    'reentrant incomplete capture cannot be cleared by an older callback',
+    () {
+      final h = _Harness(_snapshot());
+      addTearDown(h.dispose);
+      h.binding.attach();
+      var nested = false;
+      h.session.addListener(() {
+        if (nested) return;
+        nested = true;
+        h.metadataError = true;
+        h.controllers[1].text = 'new unresolved body';
+      });
+      h.controllers[0].text = 'first observation';
+      expect(h.session.captureBlocked, isTrue);
+      expect(h.binding.hasUncapturedChanges, isTrue);
+      expect(h.binding.captureFailure, isNotNull);
+      expect(h.controllers[1].text, 'new unresolved body');
+    },
+  );
+
+  test('partial metadata restore does not certify a complete snapshot', () {
+    final h = _Harness(_snapshot());
+    addTearDown(h.dispose);
+    h.binding.attach();
+    expect(
+      () => h.binding.applyCurrentToView((_) {
+        h.metadata = EditorDraftMetadata(
+          category: 'wrong',
+          stage: 'stage',
+          assets: [],
+        );
+      }),
+      throwsStateError,
+    );
+    expect(h.session.current.values.category, 'category');
+    expect(h.session.captureBlocked, isTrue);
+    expect(h.binding.hasUncapturedChanges, isTrue);
+  });
+
+  test('explicit complete restore works before listener attachment', () {
+    final h = _Harness(_snapshot());
+    addTearDown(h.dispose);
+    h.session.markCaptureIncomplete(StateError('old capture failed'));
+    h.controllers[0].text = 'replace only through explicit restore';
+    h.binding.applyCurrentToView((metadata) => h.metadata = metadata);
+    expect(h.controllers[0].text, 'draft');
+    expect(h.session.captureBlocked, isFalse);
+    expect(h.binding.hasUncapturedChanges, isFalse);
+    expect(h.binding.attached, isFalse);
+  });
+
   test('attaching a disposed session does not retain controller listeners', () {
     final h = _Harness(_snapshot());
     addTearDown(h.dispose);
@@ -251,7 +327,9 @@ void main() {
       );
       expect(metadataApplied, isFalse);
       expect(h.controllers[0].text, 'keep local input');
-      expect(h.session.localGeneration, 0);
+      // Validation changed no raw field, but invalidated close/save eligibility.
+      expect(h.session.localGeneration, 1);
+      expect(h.session.captureBlocked, isTrue);
     },
   );
 

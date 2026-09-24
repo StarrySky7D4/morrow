@@ -2,6 +2,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'appearance.dart';
+import 'animated_slider_style.dart';
 
 class ColorCompassDialog extends StatefulWidget {
   const ColorCompassDialog({
@@ -95,11 +96,14 @@ class _ColorCompassDialogState extends State<ColorCompassDialog> {
             children: [
               Icon(Icons.brightness_6_outlined, size: 17, color: p.muted),
               Expanded(
-                child: Slider(
-                  key: const ValueKey('color-brightness'),
-                  value: hsv.value,
-                  onChanged: (value) => setColor(hsv.withValue(value)),
-                  label: '${(hsv.value * 100).round()}%',
+                child: AnimatedSliderStyle(
+                  palette: p,
+                  child: Slider(
+                    key: const ValueKey('color-brightness'),
+                    value: hsv.value,
+                    onChanged: (value) => setColor(hsv.withValue(value)),
+                    label: '${(hsv.value * 100).round()}%',
+                  ),
                 ),
               ),
               Text(

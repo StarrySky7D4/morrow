@@ -1,0 +1,95 @@
+{
+  "created_utc": "2026-09-24T09:13:46.754496+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local working tree and Windows preview; no commit, push or release",
+  "sources": {
+    "lib/animated_slider_style.dart": {
+      "sha256": "c1db8708cc50a5e756b7f3b5e4216adf71af11530ebb8719916d22c87bdd11e9",
+      "bytes": 14617
+    },
+    "lib/main.dart": {
+      "sha256": "c11e6f00a5ef53686a93d60e3801f57b03f7b1fa5600b6be14f049351c03c94c",
+      "bytes": 217681
+    },
+    "lib/music/music_panel.dart": {
+      "sha256": "7e866d1688fe0b51adc89ae42fce424ce1f820b31579642e3ee23bb6f4882c43",
+      "bytes": 29519
+    },
+    "lib/component_material_page.dart": {
+      "sha256": "ca748dfc0fa1f032fa40e04663cc0a9082a3bd93d44474ce97caf4d73ce0b65e",
+      "bytes": 21106
+    },
+    "lib/color_compass.dart": {
+      "sha256": "1b907b85cde74b19fa5de73be36eeea0f5b7d12d24b77c7d982cc02d7f3c179f",
+      "bytes": 7221
+    },
+    "test/animated_slider_style_test.dart": {
+      "sha256": "99069c72cde95b9de2cbf0c5912012195bcee0f4fcb4e6a45828271debaf82c5",
+      "bytes": 10250
+    },
+    "test/styled_slider_contract_test.dart": {
+      "sha256": "2440bee99e6ab8173e69358334d3229daac0303c024411944b9ec5761af4cc38",
+      "bytes": 10855
+    },
+    "reports/style-slider-morph-2026-09-24.md": {
+      "sha256": "c55167489ab7972fa39544b4ea8742c7d774416fd2aba0bc21630d28af7cec0b",
+      "bytes": 3131
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "c47d72d698bec0c7ef80db7516e7b71d7b9d0d8aa3d58e9b60654affa1c7030f",
+      "bytes": 88652
+    }
+  },
+  "logs": {
+    "build/style-slider-morph-tests.log": {
+      "sha256": "f57c51c4d3eae005bb129694c95b0227fbed40ae2ad46ca818389024d17027ed",
+      "bytes": 11007
+    },
+    "build/style-slider-morph-analyze.log": {
+      "sha256": "96981a02d7deac95229a8dc6f98e62300964536358de5f890045799139c099a4",
+      "bytes": 98
+    },
+    "build/style-slider-morph-windows.log": {
+      "sha256": "99847ba082a45d3d53ed8aebd3ea698cfaa9a4dbdd5620f4cacf10daa8d11c44",
+      "bytes": 16426
+    }
+  },
+  "reviewed_captures": {
+    "build/ui-style-preview/experimental-industrial-dark.png": {
+      "sha256": "5f5261039bfdc1933c0fe92e03c3297f1315d5980430cf460b18cdf4a5be2fb5",
+      "bytes": 804133
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "544e9c3e9fc3accca4a40d461c0eb2e2a91ca1f50a866b8c1e5188e1f93fa752",
+      "bytes": 13239184
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b69c77299dd87e7d691d83d8125c021e341ba0c84b6284d53b633dddddf908f1",
+      "bytes": 15606784
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "093e6a4b04c1d456ca0ea6979e82849cceab7330450e809526a124d18ce6dac9",
+      "bytes": 8732672
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "tests_passed": 57,
+    "analyze_targets": 7,
+    "windows_install_exit": 0,
+    "goldens_updated_this_round": false,
+    "new_gpu_profile": false,
+    "android_web_qualification": false
+  }
+}

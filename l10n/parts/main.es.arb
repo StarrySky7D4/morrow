@@ -508,5 +508,75 @@
   "mainStyleNeumorphismDescription": "Sombras suaves y relieve sutil",
   "@mainStyleNeumorphismDescription": {
     "description": "Interface style and component material inheritance"
-  }
+  },
+  "mainStyleExperimental": "Experimental",
+  "@mainStyleExperimental": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaper": "Papel",
+  "@mainStylePaper": {
+    "description": "Experimental interface style"
+  },
+  "mainStylePaperDescription": "Superficies mates, bordes finos y profundidad discreta",
+  "@mainStylePaperDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClay": "Arcilla",
+  "@mainStyleClay": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleClayDescription": "Formas redondeadas con colores suavemente elevados",
+  "@mainStyleClayDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluent": "Fluent",
+  "@mainStyleFluent": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleFluentDescription": "Superficies translúcidas superpuestas y líneas de acento",
+  "@mainStyleFluentDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalist": "Brutalismo",
+  "@mainStyleBrutalist": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleBrutalistDescription": "Esquinas duras, bordes marcados y sombras desplazadas",
+  "@mainStyleBrutalistDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrial": "Industrial",
+  "@mainStyleIndustrial": {
+    "description": "Experimental interface style"
+  },
+  "mainStyleIndustrialDescription": "Paneles de aspecto metálico, controles compactos y líneas precisas",
+  "@mainStyleIndustrialDescription": {
+    "description": "Experimental interface style"
+  },
+  "mainDraftHandoffRecoveryTitle": "Recuperación del traspaso de borradores",
+  "mainDraftHandoffRecoveryIntro": "Aquí solo se muestran los traspasos guardados. Abrir esta página no envía contenido automáticamente.",
+  "mainDraftHandoffRecoveryEmpty": "No hay traspasos pendientes de revisión",
+  "mainDraftHandoffRecoveryPending": "Aún no se ha creado el borrador sucesor",
+  "mainDraftHandoffRecoveryChildCommitted": "Borrador sucesor guardado; borrador principal aún no retirado",
+  "mainDraftHandoffRecoveryParentRetired": "Traspaso completado",
+  "mainDraftHandoffRecoveryCancelled": "Traspaso cancelado",
+  "mainDraftHandoffRecoveryConflict": "El estado actual ha cambiado; revísalo",
+  "mainDraftHandoffRecoveryInspect": "Ver y revisar",
+  "mainDraftHandoffRecoveryComplete": "Crear borrador sucesor",
+  "mainDraftHandoffRecoveryRetire": "Retirar borrador principal",
+  "mainDraftHandoffRecoveryCancel": "Cancelar traspaso",
+  "mainDraftHandoffRecoveryConfirmTitle": "Confirmar acción del traspaso",
+  "mainDraftHandoffRecoveryCompleteBody": "Crear el borrador sucesor a partir de la propuesta original guardada. Esto no volverá a enviar una tarjeta definitiva.",
+  "mainDraftHandoffRecoveryRetireBody": "Tras confirmar que se guardó el borrador sucesor, marca el borrador principal como retirado.",
+  "mainDraftHandoffRecoveryCancelBody": "Cancelar este traspaso inacabado. La operación original ya no podrá crear otro borrador sucesor. El borrador principal permanecerá igual.",
+  "mainDraftHandoffRecoveryUnknown": "El resultado de la operación aún no está confirmado. Revisa el registro original; no repitas la operación.",
+  "mainDraftHandoffRecoveryFailed": "No se pudo completar la operación. Actualiza y revisa el registro.",
+  "mainDraftHandoffRecoveryConfirmed": "La operación se confirmó y guardó.",
+  "mainDraftHandoffRecoveryReadOnly": "Este espacio de trabajo es de solo lectura",
+  "mainDraftHandoffRecoveryFields": "Contenido del borrador original",
+  "mainDraftHandoffRecoveryAssets": "Adjuntos fijados",
+  "mainDraftHandoffRecoverySelection": "Selecciona un registro para ver el borrador completo.",
+  "mainStyleDepth": "Profundidad del relieve",
+  "mainStyleDepthGuide": "Ajusta el relieve y las hendiduras sin cambiar la opacidad del vidrio.",
+  "mainStyleDepthReset": "Restablecer al 100 %"
 }

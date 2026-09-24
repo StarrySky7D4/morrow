@@ -3,8 +3,11 @@ import 'dart:collection';
 import '../attachments/attachment.dart';
 import '../media/texture_source.dart';
 import 'editor_draft.dart';
+import 'editor_draft_codec.dart';
 import 'editor_draft_import.dart';
 import 'editor_recovery.dart';
+import 'editor_commit_proof.dart';
+export 'editor_commit_proof.dart' show EditorDraftCommitEvidence;
 import 'versioned_content.dart';
 
 /// A view explicitly paired with host metadata. A local path or pluginId alone
@@ -53,7 +56,38 @@ bool _selectionEqual(
     a.origin == b.origin &&
     a.assetId == b.assetId &&
     _aliasesEqual(a.aliases, b.aliases);
-bool _mediaMatches(TextureKind kind, String mediaType) {
+bool _textEqual(EditorDraftTextValue a, EditorDraftTextValue b) =>
+    a.text == b.text &&
+    a.selectionBase == b.selectionBase &&
+    a.selectionExtent == b.selectionExtent &&
+    a.affinity == b.affinity &&
+    a.directional == b.directional &&
+    a.composingStart == b.composingStart &&
+    a.composingEnd == b.composingEnd;
+
+bool _valuesEqual(EditorDraftValues a, EditorDraftValues b) =>
+    _textEqual(a.title, b.title) &&
+    _textEqual(a.description, b.description) &&
+    _textEqual(a.hypothesis, b.hypothesis) &&
+    _textEqual(a.conclusion, b.conclusion) &&
+    _textEqual(a.todos, b.todos) &&
+    a.category == b.category &&
+    a.stage == b.stage;
+
+bool _linkEqual(EditorDraftParentLink a, EditorDraftParentLink b) =>
+    a.parentDraftId == b.parentDraftId &&
+    a.parentGeneration == b.parentGeneration &&
+    a.parentSaveOperation == b.parentSaveOperation &&
+    _bytesEqual(a.parentRequestSha256, b.parentRequestSha256) &&
+    a.committedOperation == b.committedOperation &&
+    _bytesEqual(a.committedSha256, b.committedSha256) &&
+    a.childOperation == b.childOperation;
+
+bool _mediaMatches(
+  TextureKind kind,
+  String mediaType, {
+  bool allowUnrecognized = false,
+}) {
   final bare = mediaType.split(';').first.trim().toLowerCase();
   if (!bare.contains('/') || bare.startsWith('/') || bare.endsWith('/')) {
     return false;
@@ -65,7 +99,7 @@ bool _mediaMatches(TextureKind kind, String mediaType) {
   if (bare.startsWith('text/') || bare.startsWith('application/')) {
     return kind == TextureKind.file;
   }
-  return false;
+  return allowUnrecognized;
 }
 
 void _checkView(
@@ -82,9 +116,12 @@ void _checkView(
       attachment.pluginId != id ||
       attachment.source.name != name ||
       (isMediaType
-          ? (view.mediaType != null
-                ? view.mediaType != kind
-                : !_mediaMatches(attachment.source.kind, kind))
+          ? ((view.mediaType != null && view.mediaType != kind) ||
+                !_mediaMatches(
+                  attachment.source.kind,
+                  kind,
+                  allowUnrecognized: view.mediaType == kind,
+                ))
           : attachment.source.kind.name != kind) ||
       attachment.byteLength != bytes ||
       view.aliases.length > 8 ||
@@ -108,15 +145,19 @@ final class EditorDraftAssetCatalog {
     this.predecessorOperation,
     List<int> predecessorDigest,
     this.confirmedGeneration,
-    List<_BoundAsset> entries,
-  ) : predecessorDigest = List.unmodifiable(predecessorDigest),
-      _entries = List.unmodifiable(entries);
+    List<_BoundAsset> entries, {
+    this._handoffLink,
+    this._handoffParentRequest,
+  }) : predecessorDigest = List.unmodifiable(predecessorDigest),
+       _entries = List.unmodifiable(entries);
 
   final String cardId, draftId, predecessorOperation;
   final EditorDraftSourceKind sourceKind;
   final BigInt sourceRevision, confirmedGeneration;
   final List<int> predecessorDigest;
   final List<_BoundAsset> _entries;
+  final EditorDraftParentLink? _handoffLink;
+  final EditorDraftWriteRequest? _handoffParentRequest;
 
   static List<_BoundAsset> _versioned(
     VersionedContentRecord record,
@@ -386,6 +427,123 @@ final class EditorDraftAssetCatalog {
     }
   }
 
+  /// Cross-draft handoff from one exact current parent save and one verified
+  /// committed business source. The first child save must carry every parent
+  /// pin in order; no source-card asset is inferred from a path or plugin ID.
+  factory EditorDraftAssetCatalog.handoff({
+    required EditorDraftRecord parent,
+    required EditorDraftParentLink parentLink,
+    required String childDraftId,
+    required VersionedContentRecord source,
+    required EditorDraftCommitEvidence committed,
+    required List<EditorDraftAssetView> parentViews,
+  }) {
+    final request = parent.request;
+    EditorDraftCodec.validateHandoffProposalIdentity(
+      request.cardId,
+      request.draftId,
+      request.operation,
+    );
+    EditorDraftCodec.validateHandoffProposalIdentity(
+      request.cardId,
+      childDraftId,
+      parentLink.childOperation,
+    );
+    EditorDraftCodec.validateHandoffProposalIdentity(
+      request.cardId,
+      request.draftId,
+      parentLink.committedOperation,
+    );
+    final hasPredecessor = request.predecessorOperation.isNotEmpty;
+    final sameCommit =
+        hasPredecessor &&
+        request.predecessorOperation == parentLink.committedOperation;
+    final effectiveRevision =
+        request.sourceKind == EditorDraftSourceKind.newCard
+        ? BigInt.zero
+        : (hasPredecessor && !sameCommit
+              ? parent.predecessorRevision
+              : request.sourceRevision);
+    if (request.cardId.isEmpty ||
+        request.draftId.isEmpty ||
+        childDraftId.isEmpty ||
+        childDraftId == request.draftId ||
+        request.operation.isEmpty ||
+        parentLink.childOperation.isEmpty ||
+        source.id != request.cardId ||
+        source.deleted ||
+        source.formatVersion < 1 ||
+        source.formatVersion > 2 ||
+        source.revision != effectiveRevision + BigInt.one ||
+        (request.sourceKind == EditorDraftSourceKind.newCard &&
+            (request.sourceRevision != BigInt.zero ||
+                hasPredecessor ||
+                parent.sourceFormat != 0 ||
+                source.formatVersion != 1)) ||
+        (request.sourceKind == EditorDraftSourceKind.existingCard &&
+            (request.sourceRevision <= BigInt.zero ||
+                parent.sourceFormat < 1 ||
+                parent.sourceFormat > 2)) ||
+        parent.sourceRevision != request.sourceRevision ||
+        (hasPredecessor &&
+            (parent.predecessorRevision !=
+                    request.sourceRevision + BigInt.one ||
+                parent.predecessorSha256.length != 32)) ||
+        (!hasPredecessor &&
+            (parent.predecessorRevision != BigInt.zero ||
+                parent.predecessorSha256.isNotEmpty)) ||
+        !parent.active ||
+        !parent.currentActive ||
+        parent.generation != parent.currentGeneration ||
+        parent.generation != request.expectedGeneration + BigInt.one ||
+        parent.requestSha256.length != 32 ||
+        parentLink.parentDraftId != request.draftId ||
+        parentLink.parentGeneration != parent.generation ||
+        parentLink.parentSaveOperation != request.operation ||
+        parentLink.parentRequestSha256.length != 32 ||
+        !_bytesEqual(parentLink.parentRequestSha256, parent.requestSha256) ||
+        parentLink.committedSha256.length != 32 ||
+        parentLink.committedOperation.isEmpty ||
+        parentLink.committedOperation == parentLink.childOperation ||
+        parentLink.committedOperation == request.operation ||
+        (sameCommit &&
+            !_bytesEqual(
+              request.predecessorDigest,
+              parentLink.committedSha256,
+            )) ||
+        committed.id != request.cardId ||
+        committed.operation != parentLink.committedOperation ||
+        committed.digest.length != 32 ||
+        !_bytesEqual(committed.digest, parentLink.committedSha256) ||
+        committed.sourceRevision != effectiveRevision ||
+        committed.committedRevision != source.revision) {
+      throw const FormatException('Draft handoff source proof changed');
+    }
+    final pinned = _stored(parent, parentViews, promote: false);
+    return EditorDraftAssetCatalog._(
+      request.cardId,
+      childDraftId,
+      EditorDraftSourceKind.existingCard,
+      source.revision,
+      '',
+      const [],
+      BigInt.zero,
+      [
+        for (final entry in pinned)
+          _BoundAsset(
+            entry.view,
+            EditorDraftAssetSelection(
+              origin: EditorDraftAssetOrigin.parentDraft,
+              assetId: entry.selection.assetId,
+              aliases: entry.selection.aliases,
+            ),
+          ),
+      ],
+      handoffLink: parentLink,
+      handoffParentRequest: request,
+    );
+  }
+
   /// Restore the exact original selections from a current host journal. Every
   /// view must be supplied in stored order with a measured SHA-256 digest.
   factory EditorDraftAssetCatalog.restore(
@@ -419,6 +577,18 @@ final class EditorDraftAssetCatalog {
     final usedIds = <String>{};
     final usedViews = HashSet<IdeaAttachment>.identity();
     final result = <EditorDraftAssetSelection>[];
+    if (_handoffLink != null && confirmedGeneration == BigInt.zero) {
+      if (selected.length != _entries.length) {
+        throw const FormatException(
+          'First child save must inherit every parent pin',
+        );
+      }
+      for (var i = 0; i < selected.length; i++) {
+        if (!identical(selected[i], _entries[i].view.attachment)) {
+          throw const FormatException('First child pin order changed');
+        }
+      }
+    }
     for (final attachment in selected) {
       final bound = byView[attachment];
       if (bound == null ||
@@ -468,6 +638,35 @@ final class EditorDraftAssetCatalog {
       if (!_selectionEqual(selected[i], request.assets[i])) {
         throw const FormatException('Confirmed draft changed asset selection');
       }
+    }
+    final link = _handoffLink;
+    if (link != null) {
+      final parentRequest = _handoffParentRequest!;
+      if (record.generation != BigInt.one ||
+          !record.active ||
+          !record.currentActive ||
+          record.currentGeneration != record.generation ||
+          record.requestSha256.length != 32 ||
+          request.operation != link.childOperation ||
+          record.parentLink == null ||
+          !_linkEqual(record.parentLink!, link) ||
+          !_valuesEqual(request.values, parentRequest.values) ||
+          request.assets.length != parentRequest.assets.length ||
+          request.assets.any(
+            (asset) => asset.origin != EditorDraftAssetOrigin.parentDraft,
+          )) {
+        throw const FormatException('First child save changed parent snapshot');
+      }
+      return EditorDraftAssetCatalog._(
+        cardId,
+        draftId,
+        sourceKind,
+        sourceRevision,
+        predecessorOperation,
+        predecessorDigest,
+        record.generation,
+        _stored(record, views, promote: true),
+      );
     }
     return EditorDraftAssetCatalog._(
       cardId,

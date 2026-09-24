@@ -1,0 +1,75 @@
+{
+  "created_utc": "2026-09-24T09:40:57.104053+00:00",
+  "base_commit": "e89f4ff04d6e4560c68c3d3627a7a7fea35845c1",
+  "application_version": "0.1.9-test.54+58",
+  "builtin_plugin_version": "0.1.9-test.54.5",
+  "scope": "Local working tree and Windows preview; no commit, push or release",
+  "sources": {
+    "lib/neumorphic_controls.dart": {
+      "sha256": "90fbceae51e80c8f5d508d2776bc0fe5d23b07d4bc3f4f87aea41d01fdfd7d2c",
+      "bytes": 47864
+    },
+    "test/switch_style_transition_test.dart": {
+      "sha256": "85d137309ab908180c98c19c0d4b35216eb871942e8eddc431223bcced645afb",
+      "bytes": 13488
+    },
+    "reports/switch-style-transition-2026-09-24.md": {
+      "sha256": "58c65a524fd327f7b99dc008534207d48323c809fdff720b030ea6b3134ba500",
+      "bytes": 3771
+    },
+    "docs/DEVELOPMENT_BOARD.md": {
+      "sha256": "d41b9cc90603039c308f562c261315caf1b3899144da0897c6edeb755d9e23e3",
+      "bytes": 89119
+    }
+  },
+  "logs": {
+    "build/switch-style-baseline.log": {
+      "sha256": "e7aab95687400713cdaaa9e72352ee897eb68980c07290fce7635bfe811900d8",
+      "bytes": 2146
+    },
+    "build/switch-style-tests.log": {
+      "sha256": "93de33425306d89f0c588f358817c2e0b33e20219ac54c04986ebda53a2d0221",
+      "bytes": 11876
+    },
+    "build/switch-style-analyze.log": {
+      "sha256": "4036e230b2629128e55f17b4ff89c61088f417a9c0214fb6f35f326cd0be663e",
+      "bytes": 98
+    },
+    "build/switch-style-windows.log": {
+      "sha256": "c3d5200b41a3fc9e8f690d2959432970fb02c07b405bef0cd2d11da0919a2deb",
+      "bytes": 16426
+    }
+  },
+  "artifacts": {
+    "build/windows-corners/x64/runner/Release/morrow_studio.exe": {
+      "sha256": "2c916dc9b544881b73e96501e13d28fba847412931bd26f2dc86e90036d8b306",
+      "bytes": 239616
+    },
+    "build/windows-corners/x64/runner/Release/data/app.so": {
+      "sha256": "73f0648044119fc5850eb987c68925b2bdc6f570d4e57bfed3e0fd560016e991",
+      "bytes": 13255568
+    },
+    "build/windows-corners/x64/runner/Release/morrow-workbench-host.exe": {
+      "sha256": "b69c77299dd87e7d691d83d8125c021e341ba0c84b6284d53b633dddddf908f1",
+      "bytes": 15606784
+    },
+    "build/windows-corners/x64/runner/Release/morrow-migrate-library.exe": {
+      "sha256": "093e6a4b04c1d456ca0ea6979e82849cceab7330450e809526a124d18ce6dac9",
+      "bytes": 8732672
+    },
+    "build/windows-corners/x64/runner/Release/plugins/workbench.morrowplugin": {
+      "sha256": "71c34eada9bf2cd0ecb0b10aa14b9758195824fd647a63ce2dcb4dc8bffcf154",
+      "bytes": 880103
+    }
+  },
+  "validation": {
+    "tests_passed": 62,
+    "new_tests": 5,
+    "track_endpoint_cases": 32,
+    "analyze_targets": 2,
+    "windows_install_exit": 0,
+    "goldens_updated": false,
+    "new_gpu_profile": false,
+    "apple_device_qualified": false
+  }
+}

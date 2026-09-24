@@ -1,3 +1,5 @@
+import 'editor_commit_proof.dart';
+import 'editor_commit_proof_codec.dart';
 import 'editor_recovery.dart';
 import 'editor_draft.dart';
 import 'editor_draft_codec.dart';
@@ -48,6 +50,7 @@ part 'versioned_content_native.dart';
 part 'editor_recovery_native.dart';
 part 'editor_draft_native.dart';
 part 'editor_draft_handoff_native.dart';
+part 'editor_draft_handoff_proposal_native.dart';
 part 'editor_draft_import_native.dart';
 part 'versioned_editor_native.dart';
 part 'versioned_workspace_native.dart';
@@ -59,8 +62,10 @@ class RustWorkbench
         WorkbenchMixedContent,
         WorkbenchVersionedEditorSupport,
         WorkbenchEditorRecovery,
+        WorkbenchEditorCommitInspection,
         WorkbenchEditorDraftSupport,
         WorkbenchEditorDraftHandoffSupport,
+        WorkbenchEditorDraftHandoffProposalSupport,
         WorkbenchEditorDraftImportSupport,
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
@@ -95,6 +100,10 @@ class RustWorkbench
       NativeEditorDraftHandoffControl(this);
 
   @override
+  late final EditorDraftHandoffProposalControl editorDraftHandoffProposals =
+      NativeEditorDraftHandoffProposalControl(this);
+
+  @override
   late final EditorDraftImportControl editorDraftImports =
       NativeEditorDraftImportControl(this);
 
@@ -103,6 +112,23 @@ class RustWorkbench
     String id, {
     BigInt? expectedRevision,
   }) => openNativeVersionedEditor(this, id, expectedRevision: expectedRevision);
+
+  @override
+  Future<EditorDraftCommitEvidence> inspectEditorCommit({
+    required String id,
+    required String operation,
+  }) {
+    EditorCommitProofCodec.validateIdentity(id, operation);
+    return _callDecoded(
+      host.Action.inspectEditorCommit,
+      configure: (request) {
+        request.id = id;
+        request.operation = operation;
+      },
+      decode: (response) =>
+          EditorCommitProofCodec.decode(response, id: id, operation: operation),
+    );
+  }
 
   @override
   Future<List<EditorRecovery>> inspectEditorRecoveries({String? id}) =>
@@ -2537,7 +2563,10 @@ class _WorkbenchUiTransport implements PluginUiTransport {
 }
 
 class _NativeEditorSession
-    implements WorkbenchEditorSession, WorkbenchEditorContinuation {
+    implements
+        WorkbenchEditorSession,
+        WorkbenchEditorContinuation,
+        WorkbenchEditorCommitSource {
   _NativeEditorSession(
     this.owner,
     this.targetId,
@@ -2568,6 +2597,40 @@ class _NativeEditorSession
   String? _confirmedSnapshot;
   Future<WorkbenchEditorSession>? _continuation;
   bool _continued = false;
+
+  EditorDraftCommitEvidence? _committedEvidence;
+  Future<EditorDraftCommitEvidence>? _inspectingCommit;
+
+  @override
+  Future<EditorDraftCommitEvidence> inspectCommittedSource() {
+    final operation = _operation;
+    if (operation == null || _pendingBytes == null) {
+      return Future.error(StateError('No original captured save to inspect'));
+    }
+    final cached = _committedEvidence;
+    if (cached != null) return Future.value(cached);
+    return _inspectingCommit ??= _inspectCommit(operation).whenComplete(() {
+      _inspectingCommit = null;
+    });
+  }
+
+  Future<EditorDraftCommitEvidence> _inspectCommit(String operation) async {
+    final evidence = await owner.inspectEditorCommit(
+      id: targetId,
+      operation: operation,
+    );
+    if (operation != _operation ||
+        evidence.id != targetId ||
+        evidence.operation != operation ||
+        evidence.sourceRevision != RustWorkbench._revision(revision) ||
+        evidence.committedRevision !=
+            RustWorkbench._revision(revision) + BigInt.one) {
+      throw const FormatException('Original editor commit proof changed');
+    }
+    // This historical evidence survives view/capture closure. It grants no
+    // fresh permission and never replaces the current presentation baseline.
+    return _committedEvidence = evidence;
+  }
 
   @override
   Future<void> recordPaste(PasteInsertion insertion) async {

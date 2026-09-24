@@ -263,24 +263,85 @@ fn supervise(
     control.progress().phase = ServicePhase::Stopping;
     listener.revoke();
     let _ = host.request_stop();
-    let listener_result = runtime.block_on(async {
-        if let Some(node) = &mut node {
-            node.request_stop();
-            node.join().await
-        } else {
-            Ok(())
-        }
-    });
+    // Socket teardown and the worker's durable exit are independent after
+    // revocation. Drive both at once so a slow connection cannot add its full
+    // grace period to an already pending worker/Store shutdown. The supervisor
+    // still returns only after both actual joins have completed.
+    let (listener_result, result) = runtime.block_on(join_shutdown(
+        async {
+            if let Some(node) = &mut node {
+                node.request_stop();
+                node.join().await
+            } else {
+                Ok(())
+            }
+        },
+        host.shutdown_owned(),
+    ));
     control.progress().listener = Some(listener_result);
     // Even listener failure cannot release the worker-owned Storage early.
-    let result = runtime
-        .block_on(host.shutdown_owned())
-        .map_err(|_| JobError::Unavailable);
+    let result = result.map_err(|_| JobError::Unavailable);
     // Only StateSlot marks Exited after joining this supervisor. Returning a
     // worker result is not proof that runtime teardown and this thread ended.
     result
 }
 
+async fn join_shutdown<L, W>(
+    listener: impl std::future::Future<Output = L>,
+    worker: impl std::future::Future<Output = W>,
+) -> (L, W) {
+    tokio::join!(listener, worker)
+}
+
+#[cfg(test)]
+mod shutdown_overlap_tests {
+    use super::join_shutdown;
+    use tokio::sync::oneshot;
+
+    #[test]
+    fn listener_error_still_waits_for_actual_worker_exit() {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(2)
+            .enable_all()
+            .build()
+            .unwrap();
+        runtime.block_on(async {
+            let (listener_started_tx, listener_started_rx) = oneshot::channel();
+            let (worker_started_tx, worker_started_rx) = oneshot::channel();
+            let (listener_release_tx, listener_release_rx) = oneshot::channel::<()>();
+            let (worker_release_tx, worker_release_rx) = oneshot::channel::<()>();
+            let joined = tokio::spawn(join_shutdown(
+                async move {
+                    listener_started_tx.send(()).unwrap();
+                    listener_release_rx.await.unwrap();
+                    Err::<(), &'static str>("listener failed")
+                },
+                async move {
+                    worker_started_tx.send(()).unwrap();
+                    worker_release_rx.await.unwrap();
+                    Ok::<(), &'static str>(())
+                },
+            ));
+            // Both must be polled before either is allowed to complete.
+            tokio::time::timeout(std::time::Duration::from_secs(1), async {
+                listener_started_rx.await.unwrap();
+                worker_started_rx.await.unwrap();
+            })
+            .await
+            .unwrap();
+            listener_release_tx.send(()).unwrap();
+            tokio::task::yield_now().await;
+            assert!(
+                !joined.is_finished(),
+                "a failed listener cannot release the owner"
+            );
+            worker_release_tx.send(()).unwrap();
+            let (listener, worker) = joined.await.unwrap();
+            assert_eq!(listener, Err("listener failed"));
+            assert_eq!(worker, Ok(()));
+        });
+    }
+}
 struct DenyOutbound;
 impl BrokerRouter for DenyOutbound {
     fn route(

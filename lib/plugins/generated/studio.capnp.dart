@@ -124,6 +124,8 @@ final class AppearanceReader extends StructReader {
   bool get hasComponentColor => getBoolField(25);
 
   String? get visualStyle => getTextField(3);
+
+  double get styleDepth => getFloat64Field(96, defaultValue: 1.0);
 }
 
 final class AppearanceBuilder extends StructBuilder {
@@ -243,6 +245,10 @@ final class AppearanceBuilder extends StructBuilder {
   set visualStyle(String? v) {
     setTextField(3, v);
   }
+
+  set styleDepth(double v) {
+    setFloat64Field(96, v, defaultValue: 1.0);
+  }
 }
 
 final class _AppearanceFactory
@@ -250,7 +256,7 @@ final class _AppearanceFactory
   @override
   StructSchemaInfo get schema => appearanceSchema;
   @override
-  int get dataWords => 12;
+  int get dataWords => 13;
   @override
   int get ptrWords => 4;
   @override
@@ -268,7 +274,7 @@ const StructSchemaInfo appearanceSchema = StructSchemaInfo(
   id: 0xf0b6a153a2a5fa59,
   displayName: 'studio.capnp:Appearance',
   shortName: 'Appearance',
-  dataWords: 12,
+  dataWords: 13,
   pointerWords: 4,
   fields: [
     FieldSchemaInfo(
@@ -497,6 +503,16 @@ const StructSchemaInfo appearanceSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 3,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'styleDepth',
+      codeOrder: 28,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: PrimitiveTypeSchemaInfo('Float64'),
+        hadExplicitDefault: true,
+        defaultValue: 1.0,
       ),
     ),
   ],
@@ -884,7 +900,7 @@ final class ServiceRequestBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 4);
+    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 13, 4);
   }
 
   bool hasAppearance() => hasPointerField(1);
@@ -1141,7 +1157,7 @@ final class ServiceResponseBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 12, 4);
+    return initStructFieldWith(1, (r) => AppearanceBuilder(r), 13, 4);
   }
 
   bool hasAppearance() => hasPointerField(1);
@@ -1595,7 +1611,7 @@ final class PreferencesBuilder extends StructBuilder {
   }
 
   AppearanceBuilder initAppearance() {
-    return initStructFieldWith(0, (r) => AppearanceBuilder(r), 12, 4);
+    return initStructFieldWith(0, (r) => AppearanceBuilder(r), 13, 4);
   }
 
   bool hasAppearance() => hasPointerField(0);
@@ -1639,7 +1655,7 @@ final class PreferencesBuilder extends StructBuilder {
       5,
       length,
       (r) => ComponentMaterialBuilder(r),
-      4,
+      5,
       3,
     );
   }
@@ -1789,6 +1805,10 @@ final class ComponentMaterialReader extends StructReader {
   bool get hasCornerRadius => getBoolField(2);
 
   String? get followComponent => getTextField(2);
+
+  double get styleDepth => getFloat64Field(32);
+
+  bool get hasStyleDepth => getBoolField(3);
 }
 
 final class ComponentMaterialBuilder extends StructBuilder {
@@ -1836,6 +1856,14 @@ final class ComponentMaterialBuilder extends StructBuilder {
   set followComponent(String? v) {
     setTextField(2, v);
   }
+
+  set styleDepth(double v) {
+    setFloat64Field(32, v);
+  }
+
+  set hasStyleDepth(bool v) {
+    setBoolField(3, v);
+  }
 }
 
 final class _ComponentMaterialFactory
@@ -1843,7 +1871,7 @@ final class _ComponentMaterialFactory
   @override
   StructSchemaInfo get schema => componentMaterialSchema;
   @override
-  int get dataWords => 4;
+  int get dataWords => 5;
   @override
   int get ptrWords => 3;
   @override
@@ -1863,7 +1891,7 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
   id: 0xb066b97201e60c1a,
   displayName: 'studio.capnp:ComponentMaterial',
   shortName: 'ComponentMaterial',
-  dataWords: 4,
+  dataWords: 5,
   pointerWords: 3,
   fields: [
     FieldSchemaInfo(
@@ -1944,6 +1972,22 @@ const StructSchemaInfo componentMaterialSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 2,
         type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'styleDepth',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Float64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'hasStyleDepth',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Bool'),
       ),
     ),
   ],
