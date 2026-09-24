@@ -6,13 +6,13 @@ Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求
 
 ## 开发入口
 
-新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖四类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
+新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖、实验 IO 五类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
 
 ```powershell
 python -B -X utf8 tool/morrow_plugin.py doctor --language rust
 python -B -X utf8 tool/morrow_plugin.py new "build/My plugin" --language rust --kind transform --id org.example.my-plugin
 python -B -X utf8 tool/morrow_plugin.py pack "build/My plugin"
-# 独立新目录保留全部生成项目与日志，运行三语言四类完整包及失败保护检查。
+# 独立新目录保留全部生成项目与日志，运行三语言项目完整包及失败保护检查。
 python -B -X utf8 tool/verify_plugin_projects.py
 ```
 
@@ -28,7 +28,9 @@ SDK 不链接可信核心，不提供自建宿主、打开 Store、自选身份�
 
 ## 当前接口
 
-主应用使用流程见 [第三方插件管理](../docs/PLUGIN_APPLICATION_MANAGEMENT.md)。目前没有插件网络请求或通用文件系统 API；文件选择／转换输入不等于插件获得文件访问权。下一优先项是独立授权的文件 IO 与完整网络 API：HTTP 方法/正文、Key/OAuth/多账号、上传下载、分页限流、SSE/WebSocket、取消恢复和录制重放；GET 仅是内部验证步骤。范围与 NET-1–NET-8 任务见 [网络 API](../docs/PLUGIN_NETWORK_API.md)，共同底座见 [IO 设计](../docs/PLUGIN_IO_DESIGN.md)，其中签名和能力均尚未实现。完整 SDK 的稳定门槛包含这些能力，现有 guest-v1-rc1 候选不因此扩大承诺。
+主应用使用流程见 [第三方插件管理](../docs/PLUGIN_APPLICATION_MANAGEMENT.md)。宿主已有受管文件读取和 HTTP 传输路径；新增实验性 C／C++／Rust [IO SDK](IO_API.md)，提供有界请求编解码、原请求关联回执和 `morrow_io_v1.call` 包装。当前可对接 Read、Finish、Cancel、SubmitHttp；文件资源、端点、凭据和权限仍由宿主绑定，SDK 不获得任意路径或 socket。SubmitFileRead、Poll、QueryOperation 仅有实验编码形状，当前核心会标记 Unsupported。
+
+完整文件系统、写入、OAuth／多账号、上传下载流、SSE／WebSocket、跨重启 Unknown 核对与完整录制重放仍需推进。范围见 [网络 API](../docs/PLUGIN_NETWORK_API.md) 和 [IO 设计](../docs/PLUGIN_IO_DESIGN.md)。新 IO 接口不纳入旧 guest-v1-rc1 兼容候选，也不表示完整 SDK 已冻结。
 
 七种内容命令包括重命名、读取摘要、查询操作结果、读取附件片段、创建正文、编辑正文、读取正文片段。类型化输入／响应保留 UInt64 修订与偏移，响应必须与原请求及适用的操作 ID、目标、修订和片段范围关联。详细用法见 [正文 API](CONTENT_API.md)。
 
@@ -44,7 +46,7 @@ C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可�
 
 ## 双向网络目标
 
-插件既要能调用外部 API，也要能通过宿主发布 API 服务。路由、监听、远端身份与插件实例授权分别管理，第三方无需提供 Dart 插件。详见 [双向 API 节点](../docs/PLUGIN_API_NODE.md)。`network_node/` 是新建的受信任原生传输原型，带显式纯转换适配；它不是当前 guest SDK 可任意调用的网络接口。通用入站服务契约、guest出站调用、凭据/管理UI、TLS公开部署/证书轮换及网络录制重放尚未完成。
+插件既要能调用外部 API，也要能通过宿主发布 API 服务。路由、监听、远端身份与插件实例授权分别管理，第三方无需提供 Dart 插件。详见 [双向 API 节点](../docs/PLUGIN_API_NODE.md)。`network_node/` 承载受信任原生传输；guest 经批准的端点／凭据引用调用受管 IO，不能任意创建监听或选择远端身份。新增 IO SDK 补齐开发者编解码与调用层；它不等同于完整入站服务 SDK、任意公网部署资格、流式传输或全平台验收。
 
 ## 编译与验证
 
@@ -55,13 +57,15 @@ C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可�
 pwsh -File tool/verify_plugin_sdk_compat.ps1
 # 当前源码、本地编解码器、类型化 C/C++ 与真实核心适配验证。
 pwsh -File tool/verify_plugin_sdk.ps1
+# 实验 IO：构建三语言 Wasm，并运行宿主管理与回执关联测试。
+pwsh -File tool/verify_plugin_io_sdk.ps1 -Sysroot "build/tools/wasi-34/wasi-sysroot-34.0"
 # 当前三语言 Wasm 构建与运行验证（内部也先执行旧原件兼容检查）。
 pwsh -File tool/verify_plugin_runtime.ps1
 ```
 
 固定契约随 SDK 分发，可脱离宿主源码构建。`tool/sync_plugin_sdk_contracts.py --check` 核对包括依赖调用在内的契约；更新它们之前必须遵守兼容规则，不能为消除检查失败而直接覆盖旧契约。
 
-三语言内容／转换／UI／依赖样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
+三语言内容／转换／UI／依赖／IO 样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
 
 历史 test.11 的原生和正文增量、test.28–31 的依赖增量是当时的阶段结果；最新范围以源码、[路线](../docs/FUTURE_ROADMAP.md)及各版本报告为准。SDK 源码 API、本地回调 ABI、预编译库分发及更多开发诊断仍在推进；test.49 已补充项目模板和完整包验证入口。
 

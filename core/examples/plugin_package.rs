@@ -4,6 +4,7 @@ mod native {
     use morrow_core::plugin_package::{
         DEPENDENCIES_FEATURE, DEPENDENCY_CALLS_FEATURE, MAX_MODULE_BYTES, Package,
         catalog::{self, Catalog},
+        io::{self, IoCapability},
         proto::{Capability, DependencyRequirement, TransformHandler},
     };
     use std::{
@@ -13,7 +14,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use] [--io-handler NAME] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -21,6 +22,17 @@ mod native {
             "create-content"=>Capability::CreateContent,"edit-content"=>Capability::EditContent,
             "read-content"=>Capability::ReadContent,
             _=>return Err(format!("unknown capability '{name}'; expected rename, summary, operation, attachment, create-content, edit-content or read-content").into()),
+        })
+    }
+    fn io_capability(name: &str) -> Result<IoCapability> {
+        Ok(match name {
+            "file-read" => IoCapability::FileRead,
+            "http-request" => IoCapability::HttpRequest,
+            "credential-use" => IoCapability::CredentialUse,
+            _ => return Err(format!(
+                "unknown IO capability '{name}'; expected file-read, http-request or credential-use"
+            )
+            .into()),
         })
     }
     fn read_module(path: &str) -> Result<Vec<u8>> {
@@ -73,6 +85,8 @@ mod native {
         handlers: Vec<TransformHandler>,
         dependencies: Vec<DependencyRequirement>,
         dependency_calls: bool,
+        io_caps: Vec<IoCapability>,
+        io_handlers: Vec<String>,
         fuel: Option<u64>,
         memory: Option<u64>,
         calls: Option<u32>,
@@ -144,6 +158,12 @@ mod native {
                     });
                 }
                 "--dependency-calls" => o.dependency_calls = true,
+                "--io-capability" => o
+                    .io_caps
+                    .push(io_capability(value(args, &mut i, flag, "NAME")?)?),
+                "--io-handler" => o
+                    .io_handlers
+                    .push(value(args, &mut i, flag, "NAME")?.into()),
                 "--fuel" => {
                     o.fuel = Some(number(
                         value(args, &mut i, flag, "N")?,
@@ -173,6 +193,25 @@ mod native {
         if o.dependency_calls && o.handlers.is_empty() {
             return Err("--dependency-calls requires at least one --handler".into());
         }
+        if o.io_caps.is_empty() != o.io_handlers.is_empty() {
+            return Err("IO declaration requires both --io-capability and --io-handler".into());
+        }
+        if o.io_caps.contains(&IoCapability::CredentialUse)
+            && !o.io_caps.contains(&IoCapability::HttpRequest)
+        {
+            return Err("credential-use requires http-request".into());
+        }
+        if !o.io_caps.is_empty()
+            && (!o.caps.is_empty()
+                || !o.handlers.is_empty()
+                || !o.dependencies.is_empty()
+                || o.dependency_calls)
+        {
+            return Err(
+                "IO profile cannot be mixed with content capabilities, pure handlers or dependency calls by this tool"
+                    .into(),
+            );
+        }
         Ok(o)
     }
     fn pack_v2(args: &[String]) -> Result<Package> {
@@ -199,6 +238,19 @@ mod native {
                 .push(DEPENDENCY_CALLS_FEATURE.into());
             manifest.dependency_schema_sha256 =
                 morrow_core::dependency_call::schema_digest().to_vec();
+        }
+        if !o.io_caps.is_empty() {
+            manifest.required_features.push(io::FEATURE.into());
+            let mut declaration = io::declaration(o.io_caps, o.io_handlers);
+            let io_budget = declaration
+                .budget
+                .as_mut()
+                .expect("IO declaration factory supplies budget");
+            io_budget.max_resources = 2;
+            io_budget.max_jobs = 1;
+            io_budget.max_bytes = 1024 * 1024;
+            io_budget.max_job_bytes = 1024 * 1024;
+            manifest.io_declaration = Some(declaration);
         }
         let budget = manifest
             .budget
@@ -305,6 +357,23 @@ mod native {
                 d.provider_version,
                 if d.optional { "optional" } else { "required" }
             )?;
+        }
+        if let Some(declaration) = &m.io_declaration {
+            writeln!(
+                out,
+                "io-version={} io-schema-sha256={} io-capabilities={:?} io-handlers={:?} (declarations only; no grants)",
+                declaration.io_version,
+                hex(&declaration.io_schema_sha256),
+                package.io_capabilities(),
+                declaration.handlers
+            )?;
+            if let Some(b) = &declaration.budget {
+                writeln!(
+                    out,
+                    "io-budget resources={} jobs={} bytes={} job-bytes={} duration-ms={}",
+                    b.max_resources, b.max_jobs, b.max_bytes, b.max_job_bytes, b.max_duration_ms
+                )?;
+            }
         }
         writeln!(
             out,

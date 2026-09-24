@@ -52,3 +52,7 @@ pwsh -File tool/verify_plugin_sdk_compat.ps1
 ## 仍需完成的 SDK 稳定化工作
 
 基础 guest 候选还需后续真实宿主变更持续复验、独立第三方插件接入、开发模板与分发说明，以及平台支持矩阵。扩展 UI、完整内容 API、异步长期任务分别按能力推进。SDK 可分层稳定，不等待全部产品功能完成；也不能把这一基线当作安装管理、数据迁移或全平台验收已完成。
+
+## 2026-09-24 实验 IO SDK 增量
+
+新增三语言 [IO SDK](../sdk/IO_API.md)，复用既有 `core/schemas/io.capnp` 和 `morrow_io_v1.call`；旧八份契约与 36 个固定文件均未修改。IO 不纳入 guest-v1-rc1，也未建立新的 IO 冻结原件。新接口的宿主授权／回执验证和旧二进制兼容分别执行，不能用重新编译的新样例替代旧原件。`tool/verify_plugin_io_sdk.ps1` 强制三语言产物齐备后运行专项验证。

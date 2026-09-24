@@ -7,7 +7,7 @@ import tempfile
 import unittest
 
 REPOSITORY = Path(__file__).resolve().parents[2]
-SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp")
+SCHEMAS = ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp")
 VERSIONS = ("version.txt", "task-version.txt", "ui-version.txt")
 
 
@@ -55,6 +55,15 @@ class ContractSyncTests(unittest.TestCase):
         result = self.run_sync("--check")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Stale guest SDK contract: dependency_call.capnp", result.stderr)
+        self.assertEqual(self.snapshot(), before)
+
+    def test_io_only_drift_is_detected_without_repair(self):
+        source = self.root / "core/schemas/io.capnp"
+        source.write_bytes(source.read_bytes() + b"\n# Changed IO contract\n")
+        before = self.snapshot()
+        result = self.run_sync("--check")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Stale guest SDK contract: io.capnp", result.stderr)
         self.assertEqual(self.snapshot(), before)
 
     def test_missing_dependency_normal_sync_restores_and_check_passes(self):

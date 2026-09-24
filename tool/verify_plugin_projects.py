@@ -9,6 +9,12 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "tool/morrow_plugin.py"
 
+def project_command(arguments, sysroot=None):
+    command = [sys.executable, "-B", "-X", "utf8", TOOL, arguments[0]]
+    if sysroot is not None:
+        command += ["--sysroot", sysroot]
+    return [*command, *arguments[1:]]
+
 
 def check_result(returncode, diagnostic, *, success=True, required=()):
     if not success and not required:
@@ -23,6 +29,7 @@ def check_result(returncode, diagnostic, *, success=True, required=()):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path)
+    parser.add_argument("--sysroot", type=Path, help="WASI sysroot for C/C++ project builds")
     args = parser.parse_args()
     output = (args.output_root or ROOT / "build" / ("SDK projects 空间 " + uuid.uuid4().hex)).absolute()
     if output.exists() or output.is_symlink():
@@ -42,13 +49,13 @@ def main():
             raise RuntimeError(f"{name}: {error}; see {output}") from error
 
     def cli(name, *arguments, success=True, required=()):
-        run(name, [sys.executable, "-B", "-X", "utf8", TOOL, *arguments], success, required)
+        run(name, project_command(arguments, args.sysroot), success, required)
 
     run("unit", [sys.executable, "-B", "-X", "utf8", "-m", "unittest", "discover", "-s", ROOT / "tool/tests", "-p", "test_plugin_project*.py", "-v"])
     cli("doctor", "doctor")
     packages = {}
     for language in ("rust", "c", "cpp"):
-        for kind in ("content", "transform", "ui", "dependency"):
+        for kind in ("content", "transform", "ui", "dependency", "io"):
             key = f"{language}-{kind}"
             project = output / key
             cli(key + "-new", "new", project, "--language", language, "--kind", kind,
@@ -66,7 +73,7 @@ def main():
     run("execution", ["cargo", "run", "--locked", "--offline", "--release", "--manifest-path",
                       ROOT / "plugin_runtime/Cargo.toml", "--features", "packages", "--example",
                       "qualify_sdk_projects", "--", output])
-    print("EXECUTION PASS all 12 original generated packages", flush=True)
+    print("EXECUTION PASS 12 original generated packages; 3 IO packages prepared only", flush=True)
     binary = output / "input.bin"
     binary.write_bytes(b"a\0\xffz")
     for language in ("rust", "c", "cpp"):
@@ -111,7 +118,7 @@ def main():
     finally:
         archive.write_bytes(original)
     (output / "RESULT.txt").write_text(
-        "PASS_SCOPED: 12 generated packages executed; binary CLI transforms, no-clobber, business failures, "
+        "PASS_SCOPED: 12 original generated packages executed and 3 IO packages prepared; binary CLI transforms, no-clobber, business failures, "
         "identical rebuild, failed-build stale-artifact rejection and corrupt-package preservation passed.\n"
         "Trusted local builds. Not Flutter pixels, independent third-party adoption or all-platform qualification.\n",
         encoding="utf-8")

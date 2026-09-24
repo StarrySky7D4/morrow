@@ -61,7 +61,7 @@ flutter build web --no-web-resources-cdn
 
 目标架构为 Flutter／Dart 界面、可移植 Rust 核心及可替换插件执行后端。运行期边界采用固定契约；持久化与自有交换采用 Protobuf＋LZ4。C／C++／Rust SDK 与声明式插件 UI 正在推进，暂不支持 TS／JS 插件，也不要求动态 Dart 插件。
 
-完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；跨重启 Unknown 结果核对、完整文件系统、三语言 IO SDK 与跨平台资格仍待完成。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
+完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；test.55 后的源码新增 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。入站服务 SDK、跨重启 Unknown 完整核对、完整文件系统、认证／流式网络与跨平台资格仍待完成。本次仅同步源码，不更新 Release；下载的 test.55 包不含这轮 SDK 增量。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
 
 ## 文档
 

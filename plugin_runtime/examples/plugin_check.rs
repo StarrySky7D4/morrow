@@ -99,6 +99,25 @@ fn check(path: &Path) -> Result<String> {
             dependency.slot, dependency.handler, dependency.optional, dependency.provider_version
         ));
     }
+    if let Some(declaration) = &manifest.io_declaration {
+        lines.push(format!(
+            "io_version={} io_schema_sha256={} io_capabilities={:?} io_handlers={:?} (declarations only; no grants)",
+            declaration.io_version,
+            hex(&declaration.io_schema_sha256),
+            package.io_capabilities(),
+            declaration.handlers
+        ));
+        if let Some(budget) = &declaration.budget {
+            lines.push(format!(
+                "io_budget resources={} jobs={} bytes={} job_bytes={} duration_ms={}",
+                budget.max_resources,
+                budget.max_jobs,
+                budget.max_bytes,
+                budget.max_job_bytes,
+                budget.max_duration_ms
+            ));
+        }
+    }
     Ok(lines.join("\n"))
 }
 fn hex(bytes: &[u8]) -> String {

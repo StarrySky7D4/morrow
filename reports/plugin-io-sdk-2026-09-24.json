@@ -1,0 +1,68 @@
+{
+  "date": "2026-09-24",
+  "status": "PASS_SCOPED",
+  "base_commit": "c04ae1407faf44688fd006d2fbee0e5b2b7ffec4",
+  "platform": "Windows x64",
+  "sdk_version": "0.1.9-test.50",
+  "app_version_unchanged": "0.1.9-test.55+59",
+  "checks": {
+    "sdk_rust_tests": 53,
+    "sdk_python_contract_and_baseline_tests": 15,
+    "frozen_runtime_tests": 12,
+    "frozen_original_files": 36,
+    "frozen_original_wasm_package_pairs": 13,
+    "io_runtime_tests": 5,
+    "languages_per_io_test": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "io_runtime_skips": 0,
+    "strict_clippy": "passed",
+    "native_c_cpp_io": "passed",
+    "native_core_adapter_and_sqlite_integrity": "passed"
+  },
+  "limits": [
+    "HTTP outcome fixture via real Wasm runner, not external HTTP transport qualification",
+    "IO experimental; guest-v1-rc1 originals unchanged",
+    "File write, streaming, OAuth, restart Unknown reconciliation and platform matrix remain open",
+    "No app rebuild, commit, push or release in this slice"
+  ],
+  "artifacts": [
+    {
+      "path": "build/sdk-io-guest/wasm32-unknown-unknown/release/morrow_example_io.wasm",
+      "bytes": 181899,
+      "sha256": "12bc941c99251323242663c20bb273502d2ac1f4eaa70772f0ddfdbbad3ee614"
+    },
+    {
+      "path": "build/io-sdk/wasm/c_io.wasm",
+      "bytes": 71690,
+      "sha256": "d870bcff151dce0dccd766b0a44d2aa8fd53903cd6454ff8f13fa656e12599fa"
+    },
+    {
+      "path": "build/io-sdk/wasm/cpp_io.wasm",
+      "bytes": 72062,
+      "sha256": "3311c0b08b1a106bd1739636e9b024b58ccaee8553e622949bb88b034fd97d57"
+    },
+    {
+      "path": "build/sdk-io-qualification.log",
+      "bytes": 2257,
+      "sha256": "46a3f0298ece70627031926aea6f48b42ea79ed9c12d2e927c09807535242ccf"
+    },
+    {
+      "path": "build/sdk-full-qualification.log",
+      "bytes": 12243,
+      "sha256": "8bdc893c9601e7f5379877b6f099ed3eaceada4cd46e2e3f5b0c1fe01c992793"
+    },
+    {
+      "path": "core/schemas/io.capnp",
+      "bytes": 2418,
+      "sha256": "148b8417b0a6713e4c70e2627e3fb044a9dd43db43b2e13d840da41b78052073"
+    },
+    {
+      "path": "sdk/rust/contracts/io.capnp",
+      "bytes": 2418,
+      "sha256": "148b8417b0a6713e4c70e2627e3fb044a9dd43db43b2e13d840da41b78052073"
+    }
+  ]
+}

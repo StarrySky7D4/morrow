@@ -195,9 +195,39 @@ impl Running {
         stored: Option<StoredSetup>,
         extra: Option<EndpointApproval>,
     ) -> morrow_network_node::Result<Self> {
+        Self::build_with_guest(approval, credentials, second_instance, stored, extra, None)
+    }
+    fn build_with_guest(
+        approval: EndpointApproval,
+        credentials: bool,
+        second_instance: bool,
+        stored: Option<StoredSetup>,
+        extra: Option<EndpointApproval>,
+        guest: Option<&[u8]>,
+    ) -> morrow_network_node::Result<Self> {
+        Self::build_with_package(
+            approval,
+            credentials,
+            second_instance,
+            stored,
+            extra,
+            guest,
+            None,
+        )
+    }
+    fn build_with_package(
+        approval: EndpointApproval,
+        credentials: bool,
+        second_instance: bool,
+        stored: Option<StoredSetup>,
+        extra: Option<EndpointApproval>,
+        guest: Option<&[u8]>,
+        original_package: Option<&Package>,
+    ) -> morrow_network_node::Result<Self> {
         let dir = tempfile::tempdir().unwrap();
-        let wasm = wat::parse_str(
-            r#"(module
+        let wasm = guest.map(<[u8]>::to_vec).unwrap_or_else(|| {
+            wat::parse_str(
+                r#"(module
           (import "morrow_task_v1" "read_input" (func $read (param i32 i32) (result i32)))
           (import "morrow_task_v1" "complete" (func $done (param i32 i32) (result i32)))
           (import "morrow_io_v1" "call" (func $io (param i32 i32 i32 i32) (result i32)))
@@ -206,8 +236,9 @@ impl Running {
             i32.const 0 i32.const 131072 call $read local.set $n
             i32.const 131072 i32.const 0 local.get $n i32.const 131072 i32.const 131072
             call $io call $done drop i32.const 0))"#,
-        )
-        .unwrap();
+            )
+            .unwrap()
+        });
         let mut caps = BTreeSet::from([IoCapability::HttpRequest]);
         if credentials {
             caps.insert(IoCapability::CredentialUse);
@@ -222,7 +253,23 @@ impl Running {
         budget.max_bytes = 4 * 1024 * 1024;
         manifest.required_features.push(io::FEATURE.into());
         manifest.io_declaration = Some(declaration);
-        let package = Package::build(manifest, &wasm).unwrap();
+        let package = if let Some(original) = original_package {
+            // Exercise the generated archive as-is, never repair its declaration/budget.
+            assert_eq!(original.manifest().package_id, ID);
+            assert_eq!(original.module(), wasm.as_slice());
+            let decoded = Package::decode(original.archive()).unwrap();
+            assert_eq!(decoded.digest(), original.digest());
+            decoded
+        } else {
+            Package::build(manifest, &wasm).unwrap()
+        };
+        let declared_io_budget = package.io_declaration().unwrap().budget.as_ref().unwrap();
+        let worker_limits = JobLimits::new(
+            1,
+            declared_io_budget.max_job_bytes.min(1024 * 1024),
+            declared_io_budget.max_bytes.min(4 * 1024 * 1024),
+        )
+        .unwrap();
         let digest = package.digest();
         let catalog = Catalog::open(&dir.path().join("catalog")).unwrap();
         catalog.install(&package).unwrap();
@@ -369,7 +416,7 @@ impl Running {
             binding,
             || 2,
             1,
-            JobLimits::new(1, 1024 * 1024, 4 * 1024 * 1024).unwrap(),
+            worker_limits,
         )
         .unwrap();
         Ok(Self {
@@ -1210,3 +1257,7 @@ mod gated_http;
 
 #[path = "support/stored_http_identity.rs"]
 mod stored_http_identity;
+
+// Explicit compiled SDK qualification; ordinary tests continue using the WAT fixture.
+#[path = "support/sdk_http_guest.rs"]
+mod sdk_http_guest;

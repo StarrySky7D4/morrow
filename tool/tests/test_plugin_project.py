@@ -63,7 +63,7 @@ class ProjectTests(unittest.TestCase):
             tool.new_project(args)
         return args, tool.project(args.path)
 
-    def test_all_three_languages_and_four_starters_have_expected_sources_and_locks(self):
+    def test_all_three_languages_and_five_starters_have_expected_sources_and_locks(self):
         for language in tool.LANGUAGES:
             for kind in tool.KINDS:
                 with self.subTest(language=language, kind=kind):
@@ -73,8 +73,12 @@ class ProjectTests(unittest.TestCase):
                     self.assertEqual(source.read_bytes(), (self.sdk / "examples" / f"{language}-{profile}" / name).read_bytes())
                     self.assertEqual(config["build"]["language"], language)
                     self.assertEqual(config["plugin"]["dependency_calls"], kind == "dependency")
-                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1}[kind])
+                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0}[kind])
                     self.assertEqual(config["plugin"]["capabilities"], list(tool.CAPABILITIES) if kind == "content" else ["read-content", "edit-content"] if kind == "dependency" else [])
+                    if kind == "io":
+                        self.assertEqual(config["build"]["kind"], "io")
+                        self.assertEqual(config["io"], {"capabilities": ["file-read"], "handlers": ["io.request"]})
+                        self.assertIn("host approval", (root / "README.md").read_text(encoding="utf-8"))
                     self.assertEqual((root / "LICENSE").read_bytes(), (self.sdk / "LICENSE").read_bytes())
                     self.assertFalse((root / "build").exists())
                     self.assertFalse((root / "dist").exists())
@@ -101,6 +105,57 @@ class ProjectTests(unittest.TestCase):
             tool.new_project(self.args(target))
         self.assertEqual(marker.read_bytes(), b"keep")
         self.assertEqual(list(target.iterdir()), [marker])
+
+    def test_io_capability_selection_and_invalid_profiles_fail_before_build(self):
+        custom = self.args(self.root / "io-custom", "rust", "io")
+        custom.io_capability = ["http-request", "credential-use"]
+        with contextlib.redirect_stdout(io.StringIO()):
+            tool.new_project(custom)
+        root, config, _ = tool.project(custom.path)
+        self.assertEqual(config["io"]["capabilities"], custom.io_capability)
+        self.assertEqual(config["io"]["handlers"], ["morrow.http.forward.v1"])
+        self.assertIn("morrow.http.forward.v1", (root / "README.md").read_text(encoding="utf-8"))
+        arguments = tool.package_arguments(config)
+        self.assertEqual(arguments[arguments.index("--io-capability"):arguments.index("--fuel")],
+                         ["--io-capability", "http-request", "--io-capability", "credential-use", "--io-handler", "morrow.http.forward.v1"])
+        mixed = self.args(self.root / "io-mixed", "c", "io")
+        mixed.io_capability = ["file-read", "http-request"]
+        with contextlib.redirect_stdout(io.StringIO()):
+            tool.new_project(mixed)
+        self.assertEqual(tool.project(mixed.path)[1]["io"]["handlers"], ["morrow.http.forward.v1"])
+        ordinary = self.args(self.root / "ordinary", "rust", "transform")
+        ordinary.io_capability = ["file-read"]
+        with self.assertRaisesRegex(tool.ToolError, "requires --kind io"):
+            tool.new_project(ordinary)
+        self.assertFalse(Path(ordinary.path).exists())
+        cases = [
+            ("io", "capabilities", ["file-read", "file-read"], "unique"),
+            ("io", "capabilities", ["file-delete"], "unique"),
+            ("io", "capabilities", ["credential-use"], "requires http-request"),
+            ("io", "handlers", ["io.request", "io.request"], "unique"),
+            ("io", "handlers", [], "1..16"),
+            ("io", "misspelled", True, "unknown field"),
+            ("build", "kind", "transform", "build.kind"),
+            ("plugin", "dependency_calls", True, "dependency_calls"),
+            ("plugin", "capabilities", ["read-content"], "does not mix content capabilities"),
+        ]
+        for table, field, value, expected in cases:
+            with self.subTest(table=table, field=field, value=value):
+                changed = copy.deepcopy(config)
+                changed[table][field] = value
+                write_config(root / "plugin.toml", changed)
+                with self.assertRaisesRegex(tool.ToolError, expected):
+                    tool.project(root)
+        changed = copy.deepcopy(config)
+        changed["handlers"] = [tool.handler("io.request")]
+        write_config(root / "plugin.toml", changed)
+        with self.assertRaisesRegex(tool.ToolError, "does not mix content capabilities, pure handlers"):
+            tool.project(root)
+        changed = copy.deepcopy(config)
+        del changed["io"]
+        write_config(root / "plugin.toml", changed)
+        with self.assertRaisesRegex(tool.ToolError, "require build.kind"):
+            tool.project(root)
 
     def test_unknown_keys_in_all_tables_are_rejected(self):
         args, (root, original, _) = self.new()

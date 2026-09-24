@@ -21,6 +21,17 @@ try {
  Checked './build/plugin-sdk/cpp_transport.exe' @()
  Checked $ClangXX @('-std=c++17','-Wall','-Wextra','-Werror','-Isdk/c/include','-Isdk/cpp/include','sdk/tests/cpp_codec.cpp','build/plugin-sdk/rust/debug/morrow_plugin_sdk.dll.lib','-o','build/plugin-sdk/cpp_codec.exe')
  Checked './build/plugin-sdk/cpp_codec.exe' @('sdk/tests/fixtures')
+ # IO is experimental and independently qualified; keep old SDK originals unchanged.
+ $ioFixtures=Join-Path $repo 'build/plugin-sdk/io-smoke'
+ $priorIoFixtures=$env:MORROW_IO_SMOKE_DIR
+ try {
+  $env:MORROW_IO_SMOKE_DIR=$ioFixtures
+  Checked cargo @('test','--locked','--manifest-path','sdk/rust/Cargo.toml','--target-dir','build/plugin-sdk/rust','--test','io_ffi','c_digest_and_optional_native_fixture')
+ } finally {$env:MORROW_IO_SMOKE_DIR=$priorIoFixtures}
+ Checked $Clang @('-std=c11','-Wall','-Wextra','-Werror','-Isdk/c/include','sdk/tests/c_io.c','build/plugin-sdk/rust/debug/morrow_plugin_sdk.dll.lib','-o','build/plugin-sdk/c_io.exe')
+ Checked './build/plugin-sdk/c_io.exe' @((Join-Path $ioFixtures 'request.capnp'),(Join-Path $ioFixtures 'response.capnp'))
+ Checked $ClangXX @('-std=c++17','-Wall','-Wextra','-Werror','-Isdk/c/include','-Isdk/cpp/include','sdk/tests/cpp_io.cpp','build/plugin-sdk/rust/debug/morrow_plugin_sdk.dll.lib','-o','build/plugin-sdk/cpp_io.exe')
+ Checked './build/plugin-sdk/cpp_io.exe' @((Join-Path $ioFixtures 'request.capnp'),(Join-Path $ioFixtures 'response.capnp'))
  if(-not $IsWindows){throw 'Native adapter qualification currently requires Windows'}
  Checked cargo @('build','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/plugin-sdk/core','--lib','--bin','morrow-core-store')
  Checked cargo @('run','--locked','--manifest-path','core/Cargo.toml','--target-dir','build/plugin-sdk/core','--example','sdk_codec_vectors','--','build/plugin-sdk/codec-vectors')

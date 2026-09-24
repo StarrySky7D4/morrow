@@ -14,8 +14,9 @@ import unicodedata
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ("rename", "summary", "operation", "attachment", "create-content", "edit-content", "read-content")
-KINDS = ("content", "transform", "ui", "dependency")
+KINDS = ("content", "transform", "ui", "dependency", "io")
 LANGUAGES = ("rust", "c", "cpp")
+IO_CAPABILITIES = ("file-read", "http-request", "credential-use")
 
 class ToolError(Exception):
     pass
@@ -122,7 +123,7 @@ def project(path):
         if root.name != "plugin.toml":
             raise ToolError("expected a project directory or plugin.toml")
         root = root.parent
-    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies"), "project")
+    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io"), "project")
     integer(config.get("schema"), 1, 1, "schema")
     plugin = only(config.get("plugin"), ("id", "version", "name", "capabilities", "dependency_calls"), "plugin")
     identifier = string(plugin.get("id"), "plugin.id")
@@ -134,9 +135,13 @@ def project(path):
     if not isinstance(caps, list) or any(c not in CAPABILITIES for c in caps) or len(caps) != len(set(caps)):
         raise ToolError("plugin.capabilities: use unique supported capability names")
     boolean(plugin.get("dependency_calls", False), "plugin.dependency_calls")
-    build = only(config.get("build"), ("language", "source"), "build")
+    build = only(config.get("build"), ("language", "source", "kind"), "build")
     if build.get("language") not in LANGUAGES:
         raise ToolError("build.language: expected rust, c or cpp")
+    if build.get("kind") not in (None, "io"):
+        raise ToolError("build.kind: only io is supported as an explicit project kind")
+    if (build.get("kind") == "io") != ("io" in config):
+        raise ToolError("IO projects require build.kind = io and an [io] declaration")
     source = child(root, build.get("source"))
     if not source.is_file():
         raise ToolError("build.source does not exist: " + str(source))
@@ -173,6 +178,27 @@ def project(path):
             seen.add(entry[identity])
     if plugin.get("dependency_calls", False) and not config.get("handlers"):
         raise ToolError("dependency_calls requires at least one handler")
+    if "io" in config:
+        io = only(config["io"], ("capabilities", "handlers"), "io")
+        caps = io.get("capabilities")
+        handlers = io.get("handlers")
+        if (not isinstance(caps, list) or not caps or len(caps) > len(IO_CAPABILITIES)
+                or any(type(cap) is not str or cap not in IO_CAPABILITIES for cap in caps)
+                or len(caps) != len(set(caps))):
+            raise ToolError("io.capabilities: use unique file-read, http-request or credential-use names")
+        if "credential-use" in caps and "http-request" not in caps:
+            raise ToolError("io.capabilities: credential-use requires http-request")
+        if (not isinstance(handlers, list) or not 1 <= len(handlers) <= 16
+                or any(type(name) is not str for name in handlers)
+                or len(handlers) != len(set(handlers))):
+            raise ToolError("io.handlers: expected 1..16 unique handler identifiers")
+        for handler_name in handlers:
+            value = string(handler_name, "io.handler")
+            if any(character in value for character in "/\\:"):
+                raise ToolError("io.handler: identifier must not contain path separators or colon")
+        if (plugin.get("capabilities") or config.get("handlers") or config.get("dependencies")
+                or plugin.get("dependency_calls", False)):
+            raise ToolError("IO starter does not mix content capabilities, pure handlers or dependency calls")
     return root, config, source
 
 def sdk(args):
@@ -196,6 +222,22 @@ def sdk(args):
     if dependency_versions[0] != dependency_versions[1]:
         raise ToolError("SDK and host packager dependency-call versions differ")
     return root
+
+def sdk_io(root):
+    for name in ("rust/src/io.rs", "c/include/morrow_plugin_io.h", "cpp/include/morrow_plugin_io.hpp"):
+        if not (root / name).is_file():
+            raise ToolError("incomplete IO SDK root: " + str(root / name))
+    name = "io.capnp"
+    if (root / "rust/contracts" / name).read_bytes() != (ROOT / "core/schemas" / name).read_bytes():
+        raise ToolError("SDK and host packager IO contracts differ: " + name)
+    versions = []
+    for source in (root / "rust/src/io.rs", ROOT / "core/src/io.rs"):
+        match = re.search(r"pub const VERSION: u16 = ([0-9]+);", source.read_text(encoding="utf-8"))
+        if match is None:
+            raise ToolError("missing IO codec version: " + str(source))
+        versions.append(match.group(1))
+    if versions[0] != versions[1]:
+        raise ToolError("SDK and host packager IO codec versions differ")
 
 
 def executable(name):
@@ -221,6 +263,8 @@ def handler(name, input_type="bytes", output_type="bytes", max_input=65536):
 
 def new_project(args):
     sdk_root = sdk(args)
+    if args.kind == "io":
+        sdk_io(sdk_root)
     target = path_text(args.path).absolute()
     if target.exists() or reparse(target):
         raise ToolError("new refuses an existing project path: " + str(target))
@@ -228,6 +272,13 @@ def new_project(args):
     if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", args.id):
         raise ToolError("invalid plugin.id")
     semver(args.version, "plugin.version"); string(args.name or args.id, "plugin.name", 128)
+    io_caps = getattr(args, "io_capability", None) or ["file-read"]
+    if args.kind != "io" and getattr(args, "io_capability", None):
+        raise ToolError("--io-capability requires --kind io")
+    if args.kind == "io" and (any(type(cap) is not str or cap not in IO_CAPABILITIES for cap in io_caps)
+                              or len(io_caps) != len(set(io_caps))
+                              or ("credential-use" in io_caps and "http-request" not in io_caps)):
+        raise ToolError("--io-capability requires unique supported names; credential-use requires http-request")
     profile = "task" if args.kind == "content" else "dependency-caller" if args.kind == "dependency" else args.kind
     example = sdk_root / "examples" / f"{args.language}-{profile}"
     source_name = "src/lib.rs" if args.language == "rust" else "src/plugin.cpp" if args.language == "cpp" else "src/plugin.c"
@@ -241,7 +292,13 @@ def new_project(args):
     config = ["schema = 1", "", "[plugin]", "id = " + quote(args.id), "version = " + quote(args.version),
               "name = " + quote(args.name or args.id), "capabilities = [" + ", ".join(quote(c) for c in caps) + "]",
               "dependency_calls = " + str(args.kind == "dependency").lower(), "", "[build]", "language = " + quote(args.language),
-              "source = " + quote(source_name), "", "[budget]", "fuel = 20000000", "memory_bytes = 16777216", "host_calls = 16"]
+              "source = " + quote(source_name)]
+    if args.kind == "io":
+        config.append('kind = "io"')
+    config.extend(["", "[budget]", "fuel = 20000000", "memory_bytes = 16777216", "host_calls = 16"])
+    if args.kind == "io":
+        config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(cap) for cap in io_caps) + "]",
+                       'handlers = ["' + ("morrow.http.forward.v1" if "http-request" in io_caps else "io.request") + '"]'])
     for entry in handlers:
         config.extend(["", "[[handlers]]"] + [f"{k} = {v if type(v) is int else quote(v)}" for k, v in entry.items()])
     if args.kind == "dependency":
@@ -287,7 +344,7 @@ Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 - `build PROJECT` compiles the current source into PROJECT/build/plugin.wasm.
 - `pack PROJECT` builds again, prepares the candidate and publishes an immutable hash-named package in PROJECT/dist.
 - `check PACKAGE` prepares only; it does not execute, grant permissions or resolve dependencies.
-- `transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants.
+{('- `transform PACKAGE HANDLER INPUT_TYPE OUTPUT_TYPE INPUT_FILE OUTPUT_FILE` explicitly runs one transform without content grants.' if args.kind != 'io' else '- IO packages require the host IO execution route; the transform command cannot run them.')}
 
 plugin.toml is compiler input. The application reads only the Protobuf+LZ4 package.
 Build failures stop packaging; previous packages remain available under their own hashes.
@@ -297,6 +354,7 @@ Current complete qualification is Windows; other platforms need their own valida
 Content templates need host-provided task identities and per-card grants.
 UI templates need a host renderer and session event validation.
 Dependency templates call slot reverse, require a bytes.tag-reverse provider (^1.0.0), and need an explicitly approved host dependency lock; the simple transform command cannot supply this context.
+{('IO templates relay one host-selected IO request through the experimental io-v1 codec. The declaration is only an upper bound; installation, binding and each operation still require host approval. HTTP projects declare morrow.http.forward.v1 so the workbench can recognize the exact-frame forwarding profile; changing that handler may remove workbench compatibility. No path, URL, credential text or OS handle belongs in plugin.toml.' if args.kind == 'io' else '')}
 Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update that dependency and pass the matching --sdk-root.
 """.encode()
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -309,8 +367,10 @@ Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update tha
     print("PROJECT", target.resolve())
 
 def compile_project(args, loaded=None):
-    sdk_root = sdk(args)
     root, config, source = loaded or project(args.path)
+    sdk_root = sdk(args)
+    if config["build"].get("kind") == "io":
+        sdk_io(sdk_root)
     validate_build_tree(root)
     output = child(root, "build", output=True); output.mkdir(exist_ok=True)
     module = child(root, "build/plugin.wasm", output=True)
@@ -387,6 +447,11 @@ def package_arguments(config):
         arguments += ["--dependency", entry["slot"], entry["handler"], entry["input_type"], entry["output_type"], entry["provider_version"], "optional" if entry.get("optional", False) else "required"]
     if plugin.get("dependency_calls", False):
         arguments += ["--dependency-calls"]
+    if "io" in config:
+        for capability in config["io"]["capabilities"]:
+            arguments += ["--io-capability", capability]
+        for handler_name in config["io"]["handlers"]:
+            arguments += ["--io-handler", handler_name]
     for key, flag in (("fuel", "--fuel"), ("memory_bytes", "--memory-bytes"), ("host_calls", "--host-calls")):
         if key in config.get("budget", {}):
             arguments += [flag, str(config["budget"][key])]
@@ -457,6 +522,8 @@ def main(argv=None):
         if name == "new":
             command.add_argument("--language", choices=LANGUAGES, required=True)
             command.add_argument("--kind", choices=KINDS, default="transform")
+            command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
+                                 help="requested IO ceiling for --kind io (default: file-read)")
             command.add_argument("--id", required=True)
             command.add_argument("--version", default="0.1.0")
             command.add_argument("--name")

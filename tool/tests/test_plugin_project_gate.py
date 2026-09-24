@@ -4,7 +4,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from verify_plugin_projects import check_result
+from verify_plugin_projects import check_result, project_command
 
 
 CASES = {
@@ -16,6 +16,13 @@ CASES = {
 
 
 class ProjectQualificationGateTests(unittest.TestCase):
+    def test_explicit_sysroot_is_forwarded_to_each_project_command(self):
+        for kind in ("new", "build", "pack", "doctor"):
+            with self.subTest(kind=kind):
+                command = project_command((kind, "target"), Path("C:/wasi sysroot"))
+                self.assertEqual(command[5:], [kind, "--sysroot", Path("C:/wasi sysroot"), "target"])
+                self.assertEqual(project_command((kind, "target"))[5:], [kind, "target"])
+
     def test_missing_cargo_cannot_satisfy_any_expected_negative_case(self):
         diagnostic = "ERROR: missing tool: cargo\n"
         for name, required in CASES.items():

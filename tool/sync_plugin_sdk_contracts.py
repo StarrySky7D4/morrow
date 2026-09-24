@@ -13,7 +13,7 @@ if match is None:
     raise SystemExit("Host protocol version not found")
 files = {
     name: (root / "core/schemas" / name).read_text(encoding="utf-8")
-    for name in ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp")
+    for name in ("runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp", "io.capnp")
 }
 files["version.txt"] = match.group(1) + "\n"
 task_source = (root / "core/src/task.rs").read_text(encoding="utf-8")

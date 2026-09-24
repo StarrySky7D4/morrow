@@ -1,0 +1,109 @@
+{
+  "date": "2026-09-24",
+  "status": "PASS_SCOPED",
+  "platform": "Windows x64",
+  "transport": "real loopback HTTP via managed worker and three compiled SDK guests",
+  "checks": {
+    "managed_http_existing": 29,
+    "sdk_http_tests": 4,
+    "languages": [
+      "Rust",
+      "C",
+      "C++"
+    ],
+    "sdk_cases_by_dimension": {
+      "methods": 21,
+      "credential_and_429": 3,
+      "denied_before_network": 9,
+      "disconnect_unknown_no_retry_and_store_reopen": 3
+    },
+    "sdk_tests_skipped_in_explicit_gate": 0,
+    "strict_clippy": "passed",
+    "file_io_gate": "5 tests, all three languages",
+    "frozen_guest_gate": "12 runtime tests and 36 pinned files passed",
+    "project_python_tests": 31,
+    "package_cli_tests": 9,
+    "original_generated_http_packages": 3,
+    "package_http_profile": "morrow.http.forward.v1",
+    "package_mode": "29 existing and 4 explicit SDK network tests passed without changing archive bytes"
+  },
+  "not_proven": [
+    "public API provider interoperability",
+    "three-language incoming service SDK",
+    "OAuth or streaming",
+    "automatic reconciliation after a process restart",
+    "non-Windows platform qualification"
+  ],
+  "artifacts": [
+    {
+      "path": "build/sdk-io-network-qualification.log",
+      "bytes": 7763,
+      "sha256": "3c3e17bddef26aa466219833c15a1f0df4ef829db6903d4e4311c44f5b782793"
+    },
+    {
+      "path": "build/sdk-io-network-clippy.log",
+      "bytes": 213,
+      "sha256": "8f27fa8386ba01dd01893fbdef62fe4c52515584134cbff9320b519376115bf4"
+    },
+    {
+      "path": "build/sdk-io-guest/wasm32-unknown-unknown/release/morrow_example_io.wasm",
+      "bytes": 181899,
+      "sha256": "12bc941c99251323242663c20bb273502d2ac1f4eaa70772f0ddfdbbad3ee614"
+    },
+    {
+      "path": "build/io-sdk/wasm/c_io.wasm",
+      "bytes": 71690,
+      "sha256": "d870bcff151dce0dccd766b0a44d2aa8fd53903cd6454ff8f13fa656e12599fa"
+    },
+    {
+      "path": "build/io-sdk/wasm/cpp_io.wasm",
+      "bytes": 72062,
+      "sha256": "3311c0b08b1a106bd1739636e9b024b58ccaee8553e622949bb88b034fd97d57"
+    },
+    {
+      "path": "build/sdk-io-network-packages.log",
+      "bytes": 7763,
+      "sha256": "80322de72a53c332a7df17b6f3dc6788ef267ca65e7c40c0bb971e9f4ec62a18"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/tool-unit-http-profile.log",
+      "bytes": 5756,
+      "sha256": "581059a6ee84d6ac9c3b69a10346432f933b9ca3bf67afb89f1e8cc03b2adf7f"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/package-cli.log",
+      "bytes": 1089,
+      "sha256": "8b6ee5841a272ed672d85f64b5cc494b94092d39a155b26d217b6b41b1ecf991"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/rust/dist/6fb63ce804aa2a5a16149a4e5af432ed22724aa51cf147c56e89491ffbdafd3c.mplugin",
+      "bytes": 91283,
+      "sha256": "6fb63ce804aa2a5a16149a4e5af432ed22724aa51cf147c56e89491ffbdafd3c"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/rust-http-profile-pack.log",
+      "bytes": 5398,
+      "sha256": "cee039f716fa3d4ed61132a7add598b97a1d2cac16921cde457c8d1b1317095a"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/c/dist/4f3bf9e39cab4da6f1d469fefdf0f763dd71c907d71fee68a25275341d08e45c.mplugin",
+      "bytes": 39413,
+      "sha256": "4f3bf9e39cab4da6f1d469fefdf0f763dd71c907d71fee68a25275341d08e45c"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/c-http-profile-pack.log",
+      "bytes": 5639,
+      "sha256": "17a4bf4e381ed582714ab1c4de5e48d7ddf5143f0fbfc1e3b3005494b8603719"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/cpp/dist/92c88959e948770e6681098cb414f059e6ff32561949498146c40d1bc1a048de.mplugin",
+      "bytes": 39649,
+      "sha256": "92c88959e948770e6681098cb414f059e6ff32561949498146c40d1bc1a048de"
+    },
+    {
+      "path": "build/plugin-sdk/projects-io-20260924/cpp-http-profile-pack.log",
+      "bytes": 5263,
+      "sha256": "80d82796c66a2ff460ae23b79edbb985a4a6171f4c5512238180b6fb473aaaf8"
+    }
+  ]
+}

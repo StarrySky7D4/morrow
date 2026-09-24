@@ -165,6 +165,135 @@ fn task_dependency_without_dynamic_call_feature_is_valid() {
     assert!(p.manifest().dependency_schema_sha256.is_empty());
 }
 #[test]
+fn io_declaration_is_explicit_bounded_and_visible_without_grants() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--io-capability",
+            "file-read",
+            "--io-capability",
+            "http-request",
+            "--io-handler",
+            "io.request",
+        ],
+    );
+    let output = execute(&args);
+    let package = catalog::read_file(Path::new(&args[2])).unwrap();
+    let manifest = package.manifest();
+    assert_eq!(manifest.guest_abi_version, 2);
+    assert_eq!(manifest.required_features, vec![io::FEATURE]);
+    assert!(package.capabilities().is_empty());
+    assert_eq!(
+        package.io_capabilities(),
+        &std::collections::BTreeSet::from([IoCapability::FileRead, IoCapability::HttpRequest])
+    );
+    let declaration = manifest.io_declaration.as_ref().unwrap();
+    assert_eq!(declaration.io_schema_sha256, io::schema_digest());
+    assert_eq!(declaration.handlers, ["io.request"]);
+    let budget = declaration.budget.as_ref().unwrap();
+    assert_eq!(
+        (
+            budget.max_resources,
+            budget.max_jobs,
+            budget.max_bytes,
+            budget.max_job_bytes
+        ),
+        (2, 1, 1024 * 1024, 1024 * 1024)
+    );
+    for text in [output, execute(&["inspect".into(), args[2].clone()])] {
+        for expected in [
+            "io-schema-sha256=",
+            "io-capabilities=",
+            "io-handlers=",
+            "io-budget resources=2",
+            "no grants",
+        ] {
+            assert!(text.contains(expected), "{text}");
+        }
+    }
+}
+#[test]
+fn invalid_io_cli_declarations_fail_before_publishing() {
+    let cases: &[(&[&str], &str)] = &[
+        (
+            &[
+                "--io-capability",
+                "file-delete",
+                "--io-handler",
+                "io.request",
+            ],
+            "unknown IO capability",
+        ),
+        (&["--io-capability", "file-read"], "requires both"),
+        (&["--io-handler", "io.request"], "requires both"),
+        (
+            &[
+                "--io-capability",
+                "credential-use",
+                "--io-handler",
+                "io.request",
+            ],
+            "requires http-request",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+            ],
+            "duplicate IO capability",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--io-handler",
+                "io.request",
+            ],
+            "duplicate IO handler",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--handler",
+                "io.request",
+                "bytes",
+                "bytes",
+                "1",
+                "1",
+            ],
+            "cannot be mixed",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--capability",
+                "read-content",
+            ],
+            "cannot be mixed",
+        ),
+    ];
+    for (extra, expected) in cases {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, extra);
+        let error = run(&args, &mut vec![]).unwrap_err().to_string();
+        assert!(error.contains(expected), "{extra:?}: {error}");
+        assert!(!Path::new(&args[2]).exists());
+    }
+}
+#[test]
 fn malformed_options_leave_no_output_or_catalog() {
     let cases: [(&[&str], &str); 16] = [
         (&["--unknown"], "unknown option"),

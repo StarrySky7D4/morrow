@@ -44,9 +44,9 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 
 `pack` 发布到项目目录仅是开发产物；要接入真实应用，还需宿主选择包、批准能力及依赖、启用并创建实际实例。见 [包格式](PLUGIN_PACKAGE.md)、[注册表](PLUGIN_REGISTRY.md) 和 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。
 
-## 十二个起始模板
+## 十五个起始模板
 
-每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，共 12 个组合。`--kind` 默认 `transform`。
+每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，共 15 个组合。`--kind` 默认 `transform`。
 
 | `--kind` | 来源示例 | 实际起点与后续条件 |
 | --- | --- | --- |
@@ -54,10 +54,20 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 | `transform` | `*-transform` | `bytes.reverse`、`bytes.ascii-uppercase`、`bytes.require-ascii`；输入／输出类型均为 `bytes` |
 | `ui` | `*-ui` | `ui.form` 接收 `text.utf8`，`ui.edit` 接收 `morrow.ui.event.v1`，均输出 `morrow.ui.document.v1`；需宿主渲染与会话验证 |
 | `dependency` | `*-dependency-caller` | `bytes.dependency-wrap` 调用 slot `reverse`；需 `bytes.tag-reverse` 提供者、`^1.0.0` 版本范围及显式批准锁 |
+| `io` | `*-io` | 接收宿主选择的原始 IO 请求帧，调用一次受管 IO 并原样完成已验证响应；实验性 `io-v1`，需宿主绑定和逐项批准 |
 
 UI 模板的 `ui.form` 输入上限为 32 字节，`ui.edit` 为 65536 字节；输出上限均为 65536 字节。依赖包装模板输入上限为 65531 字节，声明 `read-content`、`edit-content` 能力，但调用依赖或产出结果都不自动取得保存权限。这些值描述原模板，修改源码后应同步修改相应声明。
 
 模板复制现有 SDK 适配实现，不生成任意本地 shell 命令，也不新增 TS／JS 或 Dart 插件支持。UI 文档结果不是已经绘制的 Flutter 页面；依赖模板准备通过不等于完整依赖调用已通过。
+
+IO 模板默认只声明 `file-read` 和 `io.request` handler。选择 `http-request` 时生成器改为声明固定 `morrow.http.forward.v1` handler，以便现有工作台识别这个恰好转发一次原始请求帧的 guest；即使同时选 `file-read`，也仅声明此 HTTP profile。需 HTTP 时明确选择相应上限：
+
+```powershell
+python tool/morrow_plugin.py new "build/HTTP IO 示例" --language cpp --kind io --id org.example.http --io-capability http-request --io-capability credential-use
+python tool/morrow_plugin.py pack "build/HTTP IO 示例" --sysroot "C:/path/to/wasi-sysroot"
+```
+
+`--io-capability` 仅用于 `--kind io`，可取 `file-read`、`http-request`、`credential-use`，不得重复；`credential-use` 必须同时声明 `http-request`。这些是包的能力上限，不是批准、资源句柄或连接参数。工作台还会独立核对 `morrow.http.forward.v1` 声明、原始请求帧逐字节相等及调用序号；仅有 `http-request` 能力不足以进入该 HTTP 入口。插件只处理宿主下发的受限引用；路径、URL、凭据原文及 OS 句柄不写入 `plugin.toml`。此 starter 不支持普通内容能力、纯转换 handler 或依赖调用混用。`transform` 命令不能执行 IO 包，需受管 IO 宿主运行。
 
 ## `plugin.toml`
 
@@ -100,11 +110,13 @@ max_output_bytes = 65536
 | `plugin.capabilities` | 可省略，默认空；七种支持的能力名且不可重复 |
 | `plugin.dependency_calls` | 可省略，默认 false；true 要求声明处理器，生成固定依赖调用功能标记 |
 | `build.language`／`source` | 必需，语言为 rust/c/cpp；source 为项目内存在的入口文件 |
+| `build.kind` | 仅 IO 项目使用固定值 `io`，并且必须有 `[io]` 声明 |
 | `budget.fuel` | 1–100000000，默认 20000000 |
 | `budget.memory_bytes` | 65536–67108864，64 KiB 的整数倍；默认 16777216 |
 | `budget.host_calls` | 0–1024，默认 16 |
 | `handlers` | 最多 16 项；name 唯一，输入／输出类型精确匹配，两个限额必需且各为 0–65536 |
 | `dependencies` | 最多 16 项；slot 唯一；handler、类型、提供者版本范围必需，optional 默认 false |
+| `io.capabilities`／`handlers` | IO 项目必需；能力为上述三种名称且不重复；1–16 个唯一 handler 标识，不与普通转换及依赖声明混用 |
 
 七种能力名为 `rename`、`summary`、`operation`、`attachment`、`create-content`、`edit-content`、`read-content`。处理器／slot／类型标识非空、最多 256 UTF-8 字节，不含控制字符、斜杠、反斜杠或冒号。提供者版本范围最多 128 UTF-8 字节，完整语义由核心 SemVer 校验。
 
@@ -121,6 +133,21 @@ optional = false
 ```
 
 该声明不指定提供者包身份。批准者在运行期选择具体提供者及包摘要，guest 仅使用 slot。不要只给普通 transform 源码加此声明，就把它当作已实现依赖调用。
+
+IO 项目的 `plugin.toml` 额外包含以下结构；核心打包器生成精确 `io-v1` Schema 摘要和 guest ABI 2 清单，不以 TOML 本身作为宿主授权：
+
+```toml
+[build]
+language = "cpp"
+source = "src/plugin.cpp"
+kind = "io"
+
+[io]
+capabilities = ["http-request", "credential-use"]
+handlers = ["morrow.http.forward.v1"]
+```
+
+当前项目打包入口给 IO 声明固定上限：2 个资源、1 个作业、总量及单作业各 1 MiB、持续最多 30000 毫秒。HTTP 端点和活动调用可各占一个资源。受管宿主为该包创建的 worker `JobLimits` 也必须落在这些包上限内；超过上限会被拒绝，不能靠静态准备通过。`pack` 与 `check` 输出 IO 能力、handler、Schema 摘要和预算；它们只做打包及静态准备，不能证明运行时授权或实际 HTTP 成功。
 
 清单预算不是资源保证：`plugin_check` 的当前默认宿主政策为 2000 万 fuel、16 MiB 内存、16 次调用，实际取较小值并在 `check` 中报告。C/C++ 链接模块的最大内存使用项目声明预算；运行时仍有独立限制。较小预算可能不足以实例化标准库或完成任务，静态准备不替代执行验证。
 
@@ -141,10 +168,10 @@ Rust 的 Cargo `[lib]` 必须命名 `morrow_plugin`、包含 `cdylib`，入口�
 ```powershell
 python -B -X utf8 tool/verify_plugin_projects.py
 # 可选；指定目录必须尚不存在。
-python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工具 本次资格"
+python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工具 本次资格" --sysroot "C:/path/to/wasi-sysroot"
 ```
 
-默认创建 `build/SDK projects 空间 <UUID>`，保留各步骤日志、项目源码、包和输出，不覆盖先前证据。当前入口运行元数据单元测试与 doctor，创建并打包全部 12 个模板，再由 `qualify_sdk_projects` 执行这些实际生成的原包；不通过重打包替换传入的原件使运行通过。
+默认创建 `build/SDK projects 空间 <UUID>`，保留各步骤日志、项目源码、包和输出，不覆盖先前证据。当前入口运行元数据单元测试与 doctor，创建并打包全部 15 个模板；`qualify_sdk_projects` 继续执行原有 12 个非 IO 原包，新增 3 个 IO 包仅静态准备。IO 的真实运行需要独立的受管宿主测试；不通过重打包替换传入的原件使运行通过。`--sysroot` 会传给项目工具的 doctor、新建、构建和打包命令；默认路径在当前工作树不存在时，应显式提供已验证的 WASI sysroot。
 
 另对 C／C++／Rust 转换 CLI 检查含零字节和非 ASCII 字节的输入、精确输出、业务失败不发布文件、已有输出不覆盖。负面用例同时核对预期阶段、诊断及适用的底层退出码，不把任意非零退出视为通过。生成的 Rust 项目用于同源重编译摘要一致性、故意坏源拒绝旧产物、已有摘要包损坏时拒绝且不覆盖；故意修改的样本在 `finally` 中恢复。这个本机重复构建检查不等于跨机器可复现构建证明。
 
