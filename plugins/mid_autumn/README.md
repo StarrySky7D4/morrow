@@ -4,8 +4,8 @@
 
 ## 安装与管理
 
-1. 打开支持主题协议的 Windows 客户端，或 [Web 工作台](https://starrysky7d4.github.io/morrow/)。已安装 1.0.0 主题包无需重复导入。
-2. 在「空间外观」中的插件管理入口选择插件文件：`dist/plugins/morrow-mid-autumn-1.0.0.morrowplugin`。
+1. 打开 [Windows 测试预览版 0.1.9-test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) 或更新的兼容客户端，或 [Web 工作台](https://starrysky7d4.github.io/morrow/)。已安装 1.0.0 主题包无需重复导入。
+2. 从[独立主题发布页](https://github.com/StarrySky7D4/morrow/releases/tag/theme-mid-autumn-v1.0.0)下载 `.morrowplugin`，在「空间外观」中的插件管理入口选择该文件。本地构建输出为 `dist/plugins/morrow-mid-autumn-1.0.0.morrowplugin`。
 3. 确认导入后，插件默认停用；在该插件条目点击批准并启用。
 4. 已安装主题会出现在「界面风格」列表上方，可快速切换或停用；原有的平面、纸张、黏土等风格始终可以叠加。
 5. 在插件管理中停用或卸载。卸载取消登记，原有内容和插件包缓存按现有插件系统规则保留，不会自动重新安装。

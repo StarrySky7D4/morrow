@@ -170,8 +170,9 @@ void main() {
       );
       await c.setFullOverride(true);
       await t.pumpAndSettle();
+      // Text-only tips remain editable even when the theme owns materials.
+      expect(find.byKey(const ValueKey('component-settings')), findsOneWidget);
       for (final key in [
-        'component-settings',
         'corner-radius',
         'background-transparent',
         'frosted-opacity',
