@@ -43,6 +43,7 @@ jobs:
             build/workbench-host
             build/web-channel-core
           key: web-windows-rust-1.96.0-bindgen-0.2.128-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: web-windows-rust-1.96.0-bindgen-0.2.128-
       - name: Install wasm-bindgen
         run: |
           if (!(Test-Path build/tools/wasm-bindgen/bin/wasm-bindgen.exe)) {
@@ -53,20 +54,43 @@ jobs:
         run: flutter pub get --enforce-lockfile
       - name: Build production application
         run: ./tool/build_web_workbench.ps1 -BaseHref /morrow/
-      - name: Browser acceptance before publication
+      - name: Theme admission and presentation regression
+        run: |
+          $bundleHash = (Get-FileHash build/web/workbench/workbench.morrowplugin -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($bundleHash -ne 'b28aea5f6989967d33b6c2797624a64068da0b4d1aadc57b8db1c74cc4a79985') { throw 'Bundled workbench bytes changed; existing approvals require review' }
+          cargo test --locked --manifest-path workbench_host/Cargo.toml --target-dir build/workbench-host --test theme_import
+          if ($LASTEXITCODE -ne 0) { throw 'Theme host admission failed' }
+          flutter test --no-pub test/theme_package_selection_test.dart test/theme_plugin_test.dart test/theme_plugin_business_compatibility_test.dart test/mid_autumn_workflow_test.dart test/plugin_library_test.dart
+          if ($LASTEXITCODE -ne 0) { throw 'Theme presentation regression failed' }
+      - name: Browser fresh workspace and offline editing
+        timeout-minutes: 8
         run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --offline-edits
           if ($LASTEXITCODE -ne 0) { throw 'Fresh workspace acceptance failed' }
+      - name: Browser legacy content
+        timeout-minutes: 5
+        run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --legacy
           if ($LASTEXITCODE -ne 0) { throw 'Legacy content acceptance failed' }
+      - name: Browser orphaned data protection
+        timeout-minutes: 5
+        run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --orphan
           if ($LASTEXITCODE -ne 0) { throw 'Orphaned data acceptance failed' }
+      - name: Browser media persistence
+        timeout-minutes: 8
+        run: |
           node tool/test_core_browser.mjs --app --base-path /morrow/ --media
           if ($LASTEXITCODE -ne 0) { throw 'Imported media preferences acceptance failed' }
+      - name: Browser theme import and recovery under CPU throttling
+        timeout-minutes: 12
+        run: |
+          node tool/test_core_browser.mjs --app --base-path /morrow/ --theme --slow-ui 4
+          if ($LASTEXITCODE -ne 0) { throw 'Theme import and recovery acceptance failed' }
       - name: Add source and distribution notices
         run: ./tool/package_web_release.ps1
       - name: Retain browser failure diagnostics
-        if: failure()
+        if: always() && (failure() || cancelled())
         uses: actions/upload-artifact@v4
         with:
           name: browser-failure

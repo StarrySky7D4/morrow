@@ -118,10 +118,15 @@ void main() {
   test(
     'bad payload, asset digest and changed registry cannot publish a theme',
     () async {
-      for (final fault in ['descriptor', 'digest', 'revision']) {
+      for (final fault in ['descriptor', 'digest', 'dimensions', 'revision']) {
         final api = ThemeBackend(artwork: fault != 'descriptor');
         if (fault == 'descriptor') api.descriptions[themeId] = '{}';
         if (fault == 'digest') api.image![0] ^= 1;
+        if (fault == 'dimensions') {
+          final descriptor = jsonDecode(api.descriptions[themeId]!) as Map;
+          (descriptor['artwork'] as Map)['width'] = 1;
+          api.descriptions[themeId] = jsonEncode(descriptor);
+        }
         if (fault == 'revision') api.staleImage = true;
         final c = ThemePluginController(
           store: MemoryThemePluginStore(),

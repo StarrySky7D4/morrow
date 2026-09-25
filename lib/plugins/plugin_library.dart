@@ -17,6 +17,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'theme_package_import.dart';
 import 'package:morrow_plugin_ui/online.dart';
 
 class PluginLibraryPage {
@@ -153,6 +154,7 @@ class PluginLibrary extends StatefulWidget {
     required this.line,
     required this.radius,
     this.pickPackage,
+    this.pickThemePackage,
     this.openIo,
     this.mode = PluginLibraryMode.library,
   });
@@ -162,6 +164,7 @@ class PluginLibrary extends StatefulWidget {
   final Color ink, muted, line;
   final BorderRadius radius;
   final Future<String?> Function()? pickPackage;
+  final Future<XFile?> Function()? pickThemePackage;
   final Future<void> Function()? openIo;
   @override
   State<PluginLibrary> createState() => _PluginLibraryState();
@@ -198,6 +201,10 @@ class _PluginLibraryState extends State<PluginLibrary> {
   bool _busy = false, _confirmed = false;
   int _epoch = 0;
   String? _candidatePath, _toolId, _fileName;
+  ThemePackageSelection? _candidateTheme;
+  bool get _themeImport =>
+      widget.backend is ThemePackageImportControl &&
+      (widget.backend as ThemePackageImportControl).supportsThemePackageImport;
   String Function(AppLocalizations)? _message, _result;
   PluginLibraryPage? _preview;
   final Map<String, Set<String>> _approvals = {};
@@ -387,6 +394,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       }
       _preview = null;
       _candidatePath = null;
+      _candidateTheme = null;
     });
   }
 
@@ -405,11 +413,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
       await _drainReleases(backend);
       if (!_current(backend, epoch)) return;
       await action(backend, epoch);
-    } catch (_) {
+    } catch (error) {
       if (!_current(backend, epoch)) return;
       setState(() {
         _confirmed = false;
-        _message = (l) => l.pluginsUnconfirmed(failure(l));
+        _message = (l) =>
+            '${l.pluginsUnconfirmed(failure(l))}${_themeImport ? '\n$error' : ''}';
       });
       try {
         await _loadPages(backend, epoch);
@@ -449,6 +458,32 @@ class _PluginLibraryState extends State<PluginLibrary> {
   }
 
   Future<void> _inspect() => _guard((backend, epoch) async {
+    if (_themeImport) {
+      final file =
+          await (widget.pickThemePackage?.call() ??
+              openFile(
+                acceptedTypeGroups: [
+                  XTypeGroup(
+                    label: 'Theme plugin',
+                    extensions: ['morrowplugin', 'mplugin'],
+                  ),
+                ],
+              ));
+      if (file == null || !_current(backend, epoch)) return;
+      final selected = await ThemePackageSelection.read(file);
+      final preview = await (backend as ThemePackageImportControl)
+          .inspectThemePackage(selected);
+      if (!_current(backend, epoch)) return;
+      if (preview.entries.length != 1) {
+        throw const FormatException('Incomplete theme preview');
+      }
+      setState(() {
+        _candidateTheme = selected;
+        _candidatePath = null;
+        _preview = preview;
+      });
+      return;
+    }
     final path = await (widget.pickPackage ?? _pickPackage)();
     if (path == null || !_current(backend, epoch)) return;
     final preview = await backend.inspectPlugin(path);
@@ -462,14 +497,23 @@ class _PluginLibraryState extends State<PluginLibrary> {
   Future<void> _import() => _guard((backend, epoch) async {
     final preview = _preview;
     final path = _candidatePath;
-    if (preview == null || path == null) return;
+    final theme = _candidateTheme;
+    if (preview == null || (path == null && theme == null)) return;
     await _closeForm(epoch);
     if (!_current(backend, epoch)) return;
-    await backend.importPlugin(
-      path,
-      Uint8List.fromList(preview.entries.single.digest),
-      preview.revision,
-    );
+    if (theme != null) {
+      await (backend as ThemePackageImportControl).importThemePackage(
+        theme,
+        Uint8List.fromList(preview.entries.single.digest),
+        preview.revision,
+      );
+    } else {
+      await backend.importPlugin(
+        path!,
+        Uint8List.fromList(preview.entries.single.digest),
+        preview.revision,
+      );
+    }
     if (!_current(backend, epoch)) return;
     _clearTool();
     await _loadPages(backend, epoch);
@@ -1090,12 +1134,22 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ),
               const SizedBox(height: 16),
               _note(L10n.of(context).pluginsImportDetails),
+              if (_themeImport && _confirmed)
+                _note(
+                  Localizations.localeOf(context).languageCode == 'zh'
+                      ? '已读取此设备的插件目录。当前 Web 入口仅支持主题插件；若上次导入中断，请核对下方记录，不会自动重复导入或启用。'
+                      : 'Loaded this device’s plugin catalog. Web imports support theme plugins only. After an interrupted import, check the list below; imports and activation are never retried automatically.',
+                ),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   _button(
-                    L10n.of(context).pluginsChoosePackage,
+                    _themeImport
+                        ? (Localizations.localeOf(context).languageCode == 'zh'
+                              ? '选择主题插件'
+                              : 'Choose theme plugin')
+                        : L10n.of(context).pluginsChoosePackage,
                     'plugin-pick',
                     _inspect,
                     icon: Icons.add,
@@ -1148,6 +1202,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                             () => setState(() {
                               _preview = null;
                               _candidatePath = null;
+                              _candidateTheme = null;
                             }),
                           ),
                         ],

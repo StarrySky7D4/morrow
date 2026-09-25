@@ -114,6 +114,18 @@ fn approval(values: &[String]) -> Result<BTreeSet<GrantKind>> {
     }
     Ok(set)
 }
+/// Browser theme admission never grants content, IO, service or dependency access.
+pub(crate) fn validate_browser_theme(p: &Package) -> Result<()> {
+    if !p.is_ui_theme() || !p.capabilities().is_empty()
+        || p.io_declaration().is_some() || !p.manifest().dependencies.is_empty()
+        || p.manifest().required_features.iter().any(|f|
+            f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE)
+    {
+        return Err("当前 Web 入口仅支持无业务权限、IO 或依赖的主题插件 / This Web entry supports pure theme plugins only".into());
+    }
+    Ok(())
+}
+
 impl WorkbenchState {
     fn builtin_id(&self, id: &str) -> bool {
         id == "org.morrow.workbench"
@@ -285,7 +297,10 @@ impl WorkbenchState {
     }
     pub fn inspect_plugin_bytes(&self, bytes: &[u8]) -> Result<PluginCatalogPage> {
         self.catalog_revision(None)?;
-        self.inspect_package(Package::decode(bytes)?)
+        let p = Package::decode(bytes)?;
+        #[cfg(target_arch = "wasm32")]
+        validate_browser_theme(&p)?;
+        self.inspect_package(p)
     }
     fn inspect_package(&self, p: Package) -> Result<PluginCatalogPage> {
         let revision = self.catalog_revision(None)?;
@@ -309,7 +324,10 @@ impl WorkbenchState {
     }
     pub fn import_plugin_bytes(&mut self, bytes: &[u8], expected_digest: &[u8], revision: u64) -> Result<()> {
         self.catalog_revision(Some(revision))?;
-        self.import_package(Package::decode(bytes)?, expected_digest, revision)
+        let p = Package::decode(bytes)?;
+        #[cfg(target_arch = "wasm32")]
+        validate_browser_theme(&p)?;
+        self.import_package(p, expected_digest, revision)
     }
     fn import_package(&mut self, p: Package, expected_digest: &[u8], revision: u64) -> Result<()> {
         if expected_digest != p.digest() {
@@ -412,6 +430,8 @@ impl WorkbenchState {
         }
         if enable {
             let p = self.external_package(id, digest, revision)?;
+            #[cfg(target_arch = "wasm32")]
+            validate_browser_theme(&p)?;
             if !allowed.is_subset(p.capabilities()) {
                 return Err("批准权限必须属于当前包声明。".into());
             }

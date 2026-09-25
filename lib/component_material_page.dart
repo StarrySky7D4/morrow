@@ -442,9 +442,9 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
       context: context,
       completeAfterTransition: true,
       builder: (_) => ColorCompassDialog(
+        canEdit: (p) => p.uiTheme == null,
         title: L10n.of(context).visualComponentCompass(widget.title),
         initial: value.color ?? currentPalette.surface,
-        canEdit: (palette) => palette.uiTheme == null,
       ),
     );
     if (mounted && chosen != null && currentPalette.uiTheme == null) {

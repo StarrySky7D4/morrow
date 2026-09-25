@@ -48,12 +48,16 @@ async function handle(data) {
       await markDeviceIdentityReady(identity);
       opening = false;
       self.postMessage({kind: 'ready'});
-    } else if (data?.kind === 'request') {
+    } else if (data?.kind === 'request' || data?.kind === 'theme-package') {
       if (!host || opening || !(data.frame instanceof Uint8Array) || !data.frame.length || data.frame.length > 128 * 1024) {
         throw Error('Invalid host request');
       }
       let reply;
-      try { reply = host.request(data.frame); }
+      try {
+        reply = data.kind === 'theme-package'
+          ? host.request_theme_package(data.frame, data.blob)
+          : host.request(data.frame);
+      }
       finally { data.frame.fill(0); }
       if (!reply.length || reply.length > 256 * 1024) throw Error('Invalid host response');
       self.postMessage({kind: 'reply', frame: reply}, [reply.buffer]);

@@ -25,6 +25,7 @@ import 'io_task_codec_native.dart';
 import 'host_request.dart';
 import 'workbench_channel.dart';
 import 'workbench_device_files.dart';
+import 'theme_package_import.dart';
 import 'workbench_channel_native.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
@@ -73,6 +74,7 @@ class RustWorkbench
         WorkbenchProtectionBackup,
         WorkbenchPluginControl,
         ExternalPluginControl,
+        ThemePackageImportControl,
         WorkbenchCredentialControl,
         WorkbenchEndpointControl,
         WorkbenchServiceControl,
@@ -375,6 +377,33 @@ class RustWorkbench
       host.Action.pluginInspect,
       configure: (r) => r.selectedPath = path,
     ),
+  );
+
+  @override
+  bool get supportsThemePackageImport => channel is WorkbenchDeviceThemes;
+
+  @override
+  Future<PluginLibraryPage> inspectThemePackage(
+    ThemePackageSelection selected,
+  ) => _callDecoded(
+    host.Action.pluginInspect,
+    themeSelection: selected,
+    decode: _libraryPage,
+  );
+
+  @override
+  Future<void> importThemePackage(
+    ThemePackageSelection selected,
+    Uint8List digest,
+    BigInt revision,
+  ) => _callDecoded<void>(
+    host.Action.pluginImport,
+    themeSelection: selected,
+    configure: (r) {
+      r.sha256 = digest;
+      r.revisionBigInt = revision;
+    },
+    decode: (_) {},
   );
 
   @override
@@ -1362,6 +1391,7 @@ class RustWorkbench
     required T Function(host.ResponseReader) decode,
     bool clearReply = false,
     bool updatePresentation = true,
+    ThemePackageSelection? themeSelection,
   }) {
     if (_isScheduler(action)) {
       return _exchangeDecoded(
@@ -1385,6 +1415,7 @@ class RustWorkbench
             clearReply: clearReply,
             updatePresentation: updatePresentation,
             routeBusiness: true,
+            themeSelection: themeSelection,
           ),
         );
       } catch (error, stack) {
@@ -1403,6 +1434,7 @@ class RustWorkbench
     bool updatePresentation = true,
     bool routeBusiness = false,
     Duration Function()? remainingBudget,
+    ThemePackageSelection? themeSelection,
   }) {
     // Preserve the original fenced-transport diagnosis while EOF cleanup runs.
     if (_failure != null) return Future.error(_failure!);
@@ -1424,6 +1456,12 @@ class RustWorkbench
 
       try {
         if (_failure != null) throw _failure!;
+        if (themeSelection != null &&
+            (channel is! WorkbenchDeviceThemes ||
+                _serviceRoute != null ||
+                _serviceAdmissionUncertain)) {
+          throw StateError('Theme import requires the local browser workbench');
+        }
         remainingBudget?.call();
         // Choose only when this actual pipe slot is reached. A preceding
         // service-start receipt has already updated the observed owner here.
@@ -1459,8 +1497,12 @@ class RustWorkbench
           },
           send: (payload) async {
             response = _response = pendingReply = Completer<Uint8List>();
-            await channel
-                .send(payload)
+            await (themeSelection == null
+                    ? channel.send(payload)
+                    : (channel as WorkbenchDeviceThemes).sendThemePackage(
+                        payload,
+                        themeSelection,
+                      ))
                 .timeout(
                   remainingBudget?.call() ?? requestTimeout,
                   onTimeout: transportTimeout,

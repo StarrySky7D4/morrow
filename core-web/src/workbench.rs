@@ -43,6 +43,22 @@ impl BrowserWorkbench {
     pub fn request(&mut self, bytes: &[u8]) -> Result<Vec<u8>, JsValue> {
         protocol::respond(self.host.as_mut().ok_or_else(|| error("workbench closed"))?, bytes).map_err(error)
     }
+    pub fn request_theme_package(&mut self, frame: &[u8], blob: JsValue) -> Result<Vec<u8>, JsValue> {
+        use std::io::Read;
+        let archive = (|| -> morrow_workbench_host::Result<Vec<u8>> {
+            let mut reader = crate::device_files::BlobReader::new(blob)
+                .map_err(|_| "Could not read the selected theme file")?;
+            let limit = morrow_core::plugin_package::MAX_PACKAGE_BYTES;
+            if reader.size == 0 || reader.size > limit as u64 {
+                return Err("Theme package size exceeds the supported limit".into());
+            }
+            let mut bytes = Vec::with_capacity(reader.size as usize);
+            reader.by_ref().take(limit as u64 + 1).read_to_end(&mut bytes)?;
+            if bytes.len() != reader.size as usize { return Err("Theme file length changed".into()); }
+            Ok(bytes)
+        })();
+        protocol::respond_theme_package(self.host.as_mut().ok_or_else(|| error("workbench closed"))?, frame, archive).map_err(error)
+    }
     pub fn integrity_check(&self) -> Result<(), JsValue> {
         self.host.as_ref().ok_or_else(|| error("workbench closed"))?.browser_integrity_check().map_err(error)
     }

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:web/web.dart' as web;
 import 'workbench_channel.dart';
 import 'workbench_device_files.dart';
+import 'theme_package_import.dart';
 import '../attachments/attachment.dart';
 import '../media/texture_source.dart';
 import '../media/texture_storage_web.dart' as textures;
@@ -33,7 +34,7 @@ extension type _Reply(JSObject _) implements JSObject {
 }
 
 final class BrowserWorkbenchChannel
-    implements WorkbenchChannel, WorkbenchDeviceFiles {
+    implements WorkbenchChannel, WorkbenchDeviceFiles, WorkbenchDeviceThemes {
   BrowserWorkbenchChannel._(this._worker) {
     _worker.onmessage = ((web.MessageEvent event) {
       try {
@@ -58,6 +59,7 @@ final class BrowserWorkbenchChannel
   bool _pending = false, _closing = false;
   Completer<_Reply>? _fileReply;
   final _previews = <TextureSource>[];
+  final _themeBlobs = Expando<web.Blob>();
 
   /// The Worker loads the selected device identity. Private seed bytes never
   /// cross into this UI channel; create must be an explicit library intent.
@@ -172,6 +174,19 @@ final class BrowserWorkbenchChannel
 
   @override
   Future<void> send(Uint8List frame) async {
+    _send(frame);
+  }
+
+  @override
+  Future<void> sendThemePackage(
+    Uint8List frame,
+    ThemePackageSelection selected,
+  ) async {
+    final blob = _themeBlobs[selected] ??= web.Blob([selected.bytes.toJS].toJS);
+    _send(frame, blob: blob);
+  }
+
+  void _send(Uint8List frame, {web.Blob? blob}) {
     if (_exit.isCompleted ||
         _closing ||
         _pending ||
@@ -184,7 +199,13 @@ final class BrowserWorkbenchChannel
     }
     _pending = true;
     try {
-      _worker.postMessage(_Message(kind: 'request', frame: frame.toJS));
+      _worker.postMessage(
+        _Message(
+          kind: blob == null ? 'request' : 'theme-package',
+          frame: frame.toJS,
+          blob: blob,
+        ),
+      );
     } catch (error) {
       _abort(error);
       rethrow;

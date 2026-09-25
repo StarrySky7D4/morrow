@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as encoded_image;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../plugins/plugin_library.dart';
 import 'ui_theme_tokens.dart';
@@ -248,19 +249,29 @@ class ThemePluginController extends ChangeNotifier {
         if (sha256.convert(image).toString() != spec['sha256']) {
           throw const FormatException('Artwork integrity mismatch');
         }
-        final buffer = await ui.ImmutableBuffer.fromUint8List(image);
+        // Check encoded dimensions before allocating pixels. ImageDescriptor's
+        // encoded width/height getters are unavailable on Flutter Web.
+        final info = encoded_image
+            .findDecoderForData(image)
+            ?.startDecode(image);
+        if (info == null ||
+            info.width != spec['width'] ||
+            info.height != spec['height']) {
+          throw const FormatException('Artwork dimensions mismatch');
+        }
+        final codec = await ui.instantiateImageCodec(image);
         try {
-          final descriptor = await ui.ImageDescriptor.encoded(buffer);
+          final frame = await codec.getNextFrame();
           try {
-            if (descriptor.width != spec['width'] ||
-                descriptor.height != spec['height']) {
+            if (frame.image.width != spec['width'] ||
+                frame.image.height != spec['height']) {
               throw const FormatException('Artwork dimensions mismatch');
             }
           } finally {
-            descriptor.dispose();
+            frame.image.dispose();
           }
         } finally {
-          buffer.dispose();
+          codec.dispose();
         }
         theme.artwork = image;
       }
