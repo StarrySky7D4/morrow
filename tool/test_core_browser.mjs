@@ -116,6 +116,7 @@ try {
       // fixtures deterministic without modifying application preferences.
       await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
       await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
+      if(process.argv.includes('--slow-ui'))await call('Emulation.setCPUThrottlingRate',{rate:4},sessionId);
     }
     if(app) {
       try {await prepareWebApp(call,sessionId,site,appVariant);}

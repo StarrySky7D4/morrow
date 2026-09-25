@@ -21,6 +21,28 @@ function context(call,sessionId) {
 }
 export async function prepareWebApp(call,sessionId,site,variant) {
   const {evaluate,until}=context(call,sessionId);
+  if(variant==='media')await call('Page.addScriptToEvaluateOnNewDocument',{source:`
+    // Observe transport receipts in the isolated test page, without changing
+    // the application or acknowledging/retrying any transaction ourselves.
+    const NativeWorker=globalThis.Worker;
+    globalThis.__mediaWorkerActivity={pending:0,sent:0,last:performance.now()};
+    globalThis.Worker=class extends NativeWorker {
+      constructor(url,options) {
+        super(url,options);
+        if(new URL(url,location.href).pathname.endsWith('/host-worker.mjs')) {
+          const activity=globalThis.__mediaWorkerActivity;
+          const send=this.postMessage.bind(this);
+          this.postMessage=(message,...args)=>{
+            if(message?.kind==='request'){activity.pending++;activity.sent++;activity.last=performance.now();}
+            return send(message,...args);
+          };
+          this.addEventListener('message',({data})=>{
+            if(data?.kind==='reply'){activity.pending--;activity.last=performance.now();}
+          });
+        }
+      }
+    };
+  `},sessionId);
   // Establish the real HTML origin with app startup blocked until test data
   // is seeded. JSON document viewers differ between browser builds and are
   // unsuitable as fixture documents. Only harness-owned profiles are used.
@@ -69,9 +91,13 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
         if(await rect('Review save')||await rect('Could not save. Your changes remain in this session.'))throw Error('Imported media broke preferences persistence');
       };
       const reopen=async()=>{
-        // The UI writes preferences asynchronously; allow its queued proposal
-        // to finish before navigating. Host-level tests also await its receipt.
-        await delay(1500);await noSaveFailure();
+        // Wait for actual Worker receipts, including preference confirmation.
+        // A fixed sleep can cut a committed operation off before its receipt
+        // is acknowledged on slower CI machines, correctly triggering review.
+        await until(async()=>{
+          await noSaveFailure();
+          return await evaluate('(()=>{const a=globalThis.__mediaWorkerActivity;return a.sent>0&&a.pending===0&&performance.now()-a.last>1000;})()');
+        },'media preference receipts');
         await call('Page.reload',{ignoreCache:true},sessionId);await enable();
         await waitLabel('New idea');await noSaveFailure();
       };
