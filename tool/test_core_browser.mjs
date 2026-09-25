@@ -133,7 +133,7 @@ try {
     let result;
     if(app) {
       try {result=await qualifyWebApp(call,sessionId,base,root,appVariant);}
-      catch(error){console.error(appDiagnostics.join('\n'));throw error;}
+      catch(error){console.error(error.stack??error);console.error(appDiagnostics.join('\n'));throw error;}
     }
     const deadline = Date.now() + (process.argv.includes('--store') ? 300000 : 60000);
     while (!result && Date.now() < deadline) {
@@ -203,5 +203,9 @@ try {
   }
   for (const waiter of pending.values()) waiter.reject(new Error('Browser runner closed'));
   process_.kill();
+  // Browser crashes can leave a child holding stderr or an HTTP connection.
+  // Neither may hide a finished acceptance result or its original failure.
+  process_.stderr.destroy();
+  server.closeAllConnections();
   await new Promise((resolve) => server.close(resolve));
 }

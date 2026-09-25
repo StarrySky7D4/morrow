@@ -24,6 +24,7 @@ export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enab
   const manager=async()=>{await click('Plugins and services');await waitLabel('Choose theme plugin');await idle();};
   const expand=async()=>{await click(name);await idle();};
   await click('Create local workspace');await waitLabel('New idea');await idle();
+  console.log('Theme acceptance: workspace ready; checking previews and rejection');
   await manager();
   // Inspection and cancellation do not install a package.
   await select(fixture);await waitLabel('Import');await click('Cancel');await idle();
@@ -40,26 +41,32 @@ export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enab
   // Lose only the UI receipt after the real Worker commits. Reload must discover
   // the installed-but-disabled package without replaying or granting approval.
   await select(fixture);await waitLabel('Import');await idle();
+  console.log('Theme acceptance: valid preview; simulating lost import receipt');
   await evaluate('globalThis.__holdThemeReceipt=true');await click('Import');
   await until(()=>evaluate('globalThis.__themeReceiptHeld===true'),'held theme import receipt');
   await reload();
   if(await rect(caption))throw Error('Unconfirmed import auto-enabled theme');
+  console.log('Theme acceptance: interrupted import recovered disabled; enabling');
   await manager();await expand();await click('Approve and enable');await waitLabel('Disable');await idle();
   await reload();
   if(await rect('Interface style: Flat · Default'))await click('Interface style: Flat · Default');
   await waitLabel(caption);
+  console.log('Theme acceptance: light theme restored; closing and reopening tab');
   const light=await call('Page.captureScreenshot',{format:'png'},sessionId);
   await writeFile(path.join(root,'build/web-theme-light.png'),Buffer.from(light.data,'base64'));
   await reopenPage();await enable();await waitLabel('New idea');await idle();await waitLabel(caption);
+  console.log('Theme acceptance: new tab restored theme; checking dark mode');
   await click('Dark');await idle();await reload();await waitLabel(caption);
   const dark=await call('Page.captureScreenshot',{format:'png'},sessionId);
   await writeFile(path.join(root,'build/web-theme-dark.png'),Buffer.from(dark.data,'base64'));
+  console.log('Theme acceptance: dark theme restored; disabling and uninstalling');
   await manager();await expand();await click('Disable');await waitLabel('Approve and enable');await idle();await reload();
   if(await rect(caption))throw Error('Disabled theme still active after reopen');
   await manager();await expand();await click('Uninstall (keep content)');await idle();await reload();
   if(await rect(caption))throw Error('Uninstalled theme still active');
   await manager();if(await rect(name))throw Error('Uninstalled theme still registered');
   await reload();await click('White');await idle();await reload();
+  console.log('Theme acceptance: uninstalled; checking content and media saves');
   // The same library remains writable after every rejected/interrupted import.
   await click('New idea');await waitLabel('Save idea');
   await until(()=>evaluate("['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)"),'recovery editor focus');

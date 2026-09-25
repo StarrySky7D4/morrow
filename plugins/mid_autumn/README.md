@@ -4,7 +4,7 @@
 
 ## 安装与管理
 
-1. 保存并退出旧预览，打开支持主题协议并修复组件调色的客户端：`build/mid-autumn-v3.1-windows/Release/morrow_studio.exe`。保留整个 Release 目录。已安装 1.0.0 主题包无需重复导入。
+1. 打开支持主题协议的 Windows 客户端，或 [Web 工作台](https://starrysky7d4.github.io/morrow/)。已安装 1.0.0 主题包无需重复导入。
 2. 在「空间外观」中的插件管理入口选择插件文件：`dist/plugins/morrow-mid-autumn-1.0.0.morrowplugin`。
 3. 确认导入后，插件默认停用；在该插件条目点击批准并启用。
 4. 已安装主题会出现在「界面风格」列表上方，可快速切换或停用；原有的平面、纸张、黏土等风格始终可以叠加。
@@ -44,6 +44,4 @@
 
 `artwork/moonlit-garden-source.png` 为内置 imagegen 生成的原创源图；`artwork/moonlit-garden.webp` 为保持构图与尺寸的交付编码。最终提示词见 `artwork/PROMPT.md`。
 
-参考案例、实现与验证见 `reports/mid-autumn-v3-2026-09-25.md`。
-
-组件调色崩溃修复与 Windows 原生验证见 `reports/component-color-fix-2026-09-25.md`。
+Web 导入、设备侧保存、Windows 回归及发布验收见 [主题支持报告](../../reports/web-theme-plugins-2026-09-25.md)。Web 当前只接收无业务权限、IO/服务声明或依赖的主题包；原始验收文件位于 `test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin`。
