@@ -116,7 +116,7 @@ class SliderStyleFrame {
     double flatTrackHeight = 4,
     double neumorphicTrackHeight = 7,
   }) {
-    final style = p.surfaces.visualStyle;
+    final style = p.visualStyle;
     final flat = style == VisualStyle.flat;
     final neumo = style == VisualStyle.neumorphism;
     final clay = style == VisualStyle.clay;

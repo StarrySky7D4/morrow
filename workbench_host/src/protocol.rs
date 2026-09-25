@@ -127,6 +127,45 @@ pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
     { respond_state(&mut host.state, bytes) }
 }
 
+/// The selected device Blob is separate from the bounded control frame.
+/// Reuse the normal reply/error envelope and the authoritative registry owner.
+pub fn respond_theme_package(
+    host: &mut Workbench, frame: &[u8], archive: Result<Vec<u8>>,
+) -> Result<Vec<u8>> {
+    struct ThemeTarget<'a> {
+        state: &'a mut WorkbenchState,
+        archive: Option<Result<Vec<u8>>>,
+    }
+    impl ResponseTarget for ThemeTarget<'_> {
+        fn writable(&self) -> bool { self.state.writable() }
+        fn warning(&self) -> Option<&str> { self.state.maintenance_warning() }
+        fn dispatch(&mut self, r: wire::request::Reader<'_>, mut out: wire::response::Builder<'_>) -> Result<()> {
+            let action = r.get_action()?;
+            if !matches!(action, wire::Action::PluginInspect | wire::Action::PluginImport)
+                || !text(r.get_selected_path())?.is_empty() || !r.get_payload()?.is_empty() {
+                return Err("invalid theme package request".into());
+            }
+            let archive = self.archive.take().ok_or("theme request already consumed")??;
+            if archive.is_empty() || archive.len() > morrow_core::plugin_package::MAX_PACKAGE_BYTES {
+                return Err("theme package size limit".into());
+            }
+            let package = morrow_core::plugin_package::Package::decode(&archive)?;
+            crate::plugin_catalog::validate_browser_theme(&package)?;
+            match action {
+                wire::Action::PluginInspect => {
+                    plugin_catalog_reply(self.state.inspect_plugin_bytes(&archive)?, out.reborrow());
+                }
+                wire::Action::PluginImport => {
+                    self.state.import_plugin_bytes(&archive, r.get_sha256()?, r.get_revision())?;
+                }
+                _ => unreachable!(),
+            }
+            Ok(())
+        }
+    }
+    respond_target(&mut ThemeTarget { state: host.local_state_mut()?, archive: Some(archive) }, frame)
+}
+
 /// The original owner executes business commands while a worker holds it.
 /// Scheduler commands are unavailable here, including nested HttpStart.
 pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<Vec<u8>> {

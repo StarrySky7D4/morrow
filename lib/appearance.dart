@@ -1,3 +1,4 @@
+import 'theme_plugins/ui_theme_tokens.dart';
 import 'surface_paint_boundary.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:flutter/material.dart';
@@ -278,7 +279,13 @@ class Palette {
     this.liquidCanvas = false,
     this.themeColor,
     this.surfaces = const SurfaceSettings(),
+    this.uiTheme,
+    this.themeFullOverride = false,
   ]);
+  final UiThemeTokens? uiTheme;
+  final bool themeFullOverride;
+  bool get overridesMaterials => uiTheme != null && themeFullOverride;
+  VisualStyle get visualStyle => surfaces.visualStyle;
   final SurfaceSettings surfaces;
   Palette withSurfaces(SurfaceSettings value) => Palette(
     theme,
@@ -296,6 +303,8 @@ class Palette {
     liquidCanvas,
     themeColor,
     value,
+    uiTheme,
+    themeFullOverride,
   );
 
   final StudioTheme theme;
@@ -311,7 +320,10 @@ class Palette {
   final double cornerRadius, grayscale, windowRadius;
   final double? themeLightness;
   BorderRadius borderRadius(double base) => BorderRadius.circular(
-    base * cornerRadius.clamp(0, 32) / 20 * surfaces.visualStyle.radiusScale,
+    base *
+        (overridesMaterials ? uiTheme!.radius : cornerRadius.clamp(0, 32)) /
+        20 *
+        visualStyle.radiusScale,
   );
   Color tone(Color color) {
     final gray = .2126 * color.r + .7152 * color.g + .0722 * color.b;
@@ -329,15 +341,20 @@ class Palette {
     StudioTheme.dark => .095,
   };
   bool get dark => isCustom ? lightness < .46 : theme == StudioTheme.dark;
-  bool get clear => mode == GlassMode.clear;
-  bool get liquid => mode == GlassMode.liquid;
-  Color themeTint(Color color, [double amount = .08]) => tone(
-    themeColor == null
-        ? color
-        : Color.lerp(color, themeColor!.withValues(alpha: 1), amount)!,
-  );
-  Color componentColor(Color original) =>
-      themeColor == null ? tone(original) : accent;
+  bool get clear => !overridesMaterials && mode == GlassMode.clear;
+  bool get liquid => !overridesMaterials && mode == GlassMode.liquid;
+  Color themeTint(Color color, [double amount = .08]) => uiTheme != null
+      ? Color.lerp(color, uiTheme!.accent, amount)!
+      : tone(
+          themeColor == null
+              ? color
+              : Color.lerp(color, themeColor!.withValues(alpha: 1), amount)!,
+        );
+  Color componentColor(Color original) => uiTheme != null
+      ? uiTheme!.secondary
+      : themeColor == null
+      ? tone(original)
+      : accent;
   static double _contrast(Color a, Color b) {
     final x = a.computeLuminance(), y = b.computeLuminance();
     return ((x > y ? x : y) + .05) / ((x > y ? y : x) + .05);
@@ -347,13 +364,22 @@ class Palette {
       _contrast(accent, Colors.white) >= _contrast(accent, Colors.black)
       ? Colors.white
       : Colors.black;
-  Color get ink => isCustom
-      ? themeTint(dark ? Colors.white : Colors.black)
-      : themeTint(dark ? const Color(0xFFF0EDF8) : const Color(0xFF302D43));
-  Color get muted => isCustom
-      ? Color.lerp(ink, background, .12)!
-      : themeTint(dark ? const Color(0xFFB4AEC5) : const Color(0xFF777184));
+  Color get ink =>
+      uiTheme?.ink ??
+      (isCustom
+          ? themeTint(dark ? Colors.white : Colors.black)
+          : themeTint(
+              dark ? const Color(0xFFF0EDF8) : const Color(0xFF302D43),
+            ));
+  Color get muted =>
+      uiTheme?.muted ??
+      (isCustom
+          ? Color.lerp(ink, background, .12)!
+          : themeTint(
+              dark ? const Color(0xFFB4AEC5) : const Color(0xFF777184),
+            ));
   Color get accent {
+    if (uiTheme != null) return uiTheme!.accent;
     if (themeColor == null) {
       return tone(dark ? const Color(0xFFC0AFFA) : const Color(0xFF7662BA));
     }
@@ -375,31 +401,36 @@ class Palette {
     return Color.lerp(selected, target, high)!;
   }
 
-  Color get background => isCustom
-      ? themeTint(
-          Color.from(
-            alpha: 1,
-            red: lightness,
-            green: lightness,
-            blue: lightness,
-          ),
-          .04,
-        )
-      : themeTint(switch (theme) {
-          StudioTheme.white => const Color(0xFFF9F8FC),
-          StudioTheme.custom => const Color(0xFFE1E3E9),
-          StudioTheme.dark => const Color(0xFF181720),
-        });
-  Color get surface => isCustom
-      ? themeTint(
-          Color.lerp(
-            background,
-            dark ? Colors.white : Colors.black,
-            dark ? .065 : .015,
-          )!,
-        )
-      : themeTint(dark ? const Color(0xFF292634) : Colors.white);
+  Color get background =>
+      uiTheme?.background ??
+      (isCustom
+          ? themeTint(
+              Color.from(
+                alpha: 1,
+                red: lightness,
+                green: lightness,
+                blue: lightness,
+              ),
+              .04,
+            )
+          : themeTint(switch (theme) {
+              StudioTheme.white => const Color(0xFFF9F8FC),
+              StudioTheme.custom => const Color(0xFFE1E3E9),
+              StudioTheme.dark => const Color(0xFF181720),
+            }));
+  Color get surface =>
+      uiTheme?.surface ??
+      (isCustom
+          ? themeTint(
+              Color.lerp(
+                background,
+                dark ? Colors.white : Colors.black,
+                dark ? .065 : .015,
+              )!,
+            )
+          : themeTint(dark ? const Color(0xFF292634) : Colors.white));
   Color get solidColor =>
+      (overridesMaterials ? uiTheme?.background : null) ??
       customColor ??
       (solidTint == 0
           ? background
@@ -416,26 +447,28 @@ class Palette {
                     Color(0xFFDDE9E2),
                     Color(0xFFF0E3D8),
                   ])[solidTint]);
-  Color get line => ink.withValues(alpha: dark ? .13 : .075);
-  Color get glassEdge => clear
-      ? Color.lerp(
-          surface,
-          Colors.white,
-          .75,
-        )!.withValues(alpha: dark ? .28 : .50)
-      : Color.lerp(
-          backdrop == BackgroundMode.solid ? solidColor : surface,
-          ink,
-          .18,
-        )!.withValues(alpha: .32 * frostedOpacity.clamp(.2, 1));
+  Color get line => uiTheme?.line ?? ink.withValues(alpha: dark ? .13 : .075);
+  Color get glassEdge =>
+      uiTheme?.line ??
+      (clear
+          ? Color.lerp(
+              surface,
+              Colors.white,
+              .75,
+            )!.withValues(alpha: dark ? .28 : .50)
+          : Color.lerp(
+              backdrop == BackgroundMode.solid ? solidColor : surface,
+              ink,
+              .18,
+            )!.withValues(alpha: .32 * frostedOpacity.clamp(.2, 1)));
 
   Color get captionColor =>
-      backdrop == BackgroundMode.transparent ||
-          backdrop == BackgroundMode.texture
-      ? Colors.transparent
-      : (backdrop == BackgroundMode.solid ? solidColor : surface).withValues(
-          alpha: clear ? .06 : frostedOpacity.clamp(.2, 1),
-        );
+      (overridesMaterials ? uiTheme?.surface : null) ??
+      (backdrop == BackgroundMode.transparent ||
+              backdrop == BackgroundMode.texture
+          ? Colors.transparent
+          : (backdrop == BackgroundMode.solid ? solidColor : surface)
+                .withValues(alpha: clear ? .06 : frostedOpacity.clamp(.2, 1)));
 }
 
 // Style changes affect edges and depth only. Glass opacity, blur, tint and
@@ -445,7 +478,7 @@ GlassMaterial _styleGlass(
   Palette p, {
   required bool recessed,
 }) {
-  final style = p.surfaces.visualStyle;
+  final style = p.visualStyle;
   if (style == VisualStyle.flat) return inherited;
   final depth = p.surfaces.styleDepth;
   BoxShadow shadow(Color color, Offset offset, double blur) => BoxShadow(
@@ -546,13 +579,23 @@ class Glass extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final local = p.surfaces.resolveComponent(componentId);
+    final local = !p.overridesMaterials
+        ? p.surfaces.resolveComponent(componentId)
+        : null;
     final custom = local?.enabled ?? false;
-    final inheritedTint = dialog && p.backdrop == BackgroundMode.solid
+    final inheritedTint = p.overridesMaterials
+        ? p.surface
+        : dialog && p.backdrop == BackgroundMode.solid
         ? p.solidColor
         : p.surface;
-    final tint = custom ? local!.color ?? inheritedTint : inheritedTint;
-    final mode = custom ? local!.mode ?? p.mode : p.mode;
+    final tint = custom && p.uiTheme == null
+        ? local!.color ?? inheritedTint
+        : inheritedTint;
+    final mode = p.overridesMaterials
+        ? GlassMode.frosted
+        : custom
+        ? local!.mode ?? p.mode
+        : p.mode;
     final clear = mode == GlassMode.clear;
     final liquid = mode == GlassMode.liquid;
     final borderRadius = custom && local!.cornerRadius != null
@@ -562,9 +605,13 @@ class Glass extends StatelessWidget {
     final readable = dialog || MediaQuery.highContrastOf(context);
     final top = clear
         ? (readable ? .86 : (p.dark ? .12 : .10))
+        : p.overridesMaterials
+        ? .95
         : p.frostedOpacity.clamp(.2, 1).toDouble();
     final bottom = clear
         ? (readable ? .80 : .025)
+        : p.overridesMaterials
+        ? .95
         : p.frostedOpacity.clamp(.2, 1).toDouble();
     final inherited = liquid
         ? GlassMaterial.liquid(
@@ -599,7 +646,11 @@ class Glass extends StatelessWidget {
             ),
           );
     final styledPalette = p.withSurfaces(
-      p.surfaces.copyWith(styleDepth: p.surfaces.depthFor(componentId)),
+      p.surfaces.copyWith(
+        styleDepth: p.overridesMaterials
+            ? p.surfaces.styleDepth
+            : p.surfaces.depthFor(componentId),
+      ),
     );
     final styled = _styleGlass(inherited, styledPalette, recessed: recessed);
     final target = custom
@@ -792,26 +843,34 @@ class StudioDialog extends StatelessWidget {
 Future<T?> showStudioDialog<T>({
   required BuildContext context,
   required WidgetBuilder builder,
-}) => showGeneralDialog<T>(
-  context: context,
-  barrierDismissible: true,
-  barrierLabel: L10n.of(context).visualCloseDialog,
-  barrierColor: AppearanceScope.of(context).backdrop == BackgroundMode.texture
-      ? Colors.black.withValues(alpha: .12)
-      : Colors.black.withValues(alpha: .20),
-  transitionDuration: motionDuration(context, 260),
-  pageBuilder: (context, _, _) => builder(context),
-  transitionBuilder: (context, animation, _, child) => FadeTransition(
-    opacity: animation,
-    child: ScaleTransition(
-      scale: Tween<double>(
-        begin: .96,
-        end: 1,
-      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-      child: child,
+  bool completeAfterTransition = false,
+}) async {
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final route = RawDialogRoute<T>(
+    barrierDismissible: true,
+    barrierLabel: L10n.of(context).visualCloseDialog,
+    barrierColor: AppearanceScope.of(context).backdrop == BackgroundMode.texture
+        ? Colors.black.withValues(alpha: .12)
+        : Colors.black.withValues(alpha: .20),
+    transitionDuration: motionDuration(context, 260),
+    pageBuilder: (context, _, _) => builder(context),
+    transitionBuilder: (context, animation, _, child) => FadeTransition(
+      opacity: animation,
+      alwaysIncludeSemantics: true,
+      child: ScaleTransition(
+        scale: Tween<double>(begin: .96, end: 1).animate(
+          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+        ),
+        child: child,
+      ),
     ),
-  ),
-);
+  );
+  final result = await navigator.push(route);
+  // Editors must not repaint their parent while its dialog's native
+  // accessibility subtree is still being removed by the reverse transition.
+  if (completeAfterTransition) await route.completed;
+  return result;
+}
 
 class SoftSwap extends StatelessWidget {
   const SoftSwap({super.key, required this.child});

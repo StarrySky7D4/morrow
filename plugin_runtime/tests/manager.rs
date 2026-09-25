@@ -68,6 +68,39 @@ fn read() -> Vec<u8> {
     .unwrap()
 }
 #[test]
+fn switching_theme_revokes_the_previous_theme_but_keeps_business_instances() {
+    use morrow_core::plugin_package::proto::TransformHandler;
+    let (dir, mut manager, mut host, business) = setup();
+    activate(&mut manager, &business, &[GrantKind::ReadSummary]);
+    let business_instance = manager.connect(ID, &mut host).unwrap();
+    let make = |id: &str| {
+        let m = Package::manifest_for_transform(id, "1.0.0", business.module(), vec![TransformHandler {
+            handler: "theme.describe".into(), input_type: "morrow.ui.theme.request.v1".into(),
+            output_type: "morrow.ui.theme.v1".into(), max_input_bytes: 1, max_output_bytes: 16384,
+        }]);
+        Package::build(m, business.module()).unwrap()
+    };
+    let one = make("org.example.theme.one");
+    let two = make("org.example.theme.two");
+    for theme in [&one, &two] {
+        Catalog::open(&dir.path().join("packages")).unwrap().install(theme).unwrap();
+        manager.select(theme, manager.revision()).unwrap();
+    }
+    let a = one.manifest().package_id.as_str();
+    let b = two.manifest().package_id.as_str();
+    manager.set_enabled(a, one.digest(), true, manager.revision()).unwrap();
+    let first = manager.connect(a, &mut host).unwrap();
+    assert!(manager.set_enabled(b, two.digest(), true, manager.revision() - 1).is_err());
+    assert_eq!(host.connection_phase(first.connection()).unwrap(), InstancePhase::Ready);
+    manager.set_enabled(b, two.digest(), true, manager.revision()).unwrap();
+    assert_eq!(host.connection_phase(first.connection()).unwrap(), InstancePhase::Revoked);
+    assert_eq!(host.connection_phase(business_instance.connection()).unwrap(), InstancePhase::Ready);
+    let second = manager.connect(b, &mut host).unwrap();
+    first.close(&mut host).unwrap();
+    second.close(&mut host).unwrap();
+    business_instance.close(&mut host).unwrap();
+}
+#[test]
 fn enabled_registry_approval_is_bound_to_the_real_connection() {
     let (_dir, mut manager, mut host, package) = setup();
     assert!(manager.connect(ID, &mut host).is_err());

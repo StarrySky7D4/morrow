@@ -1,6 +1,7 @@
 import {writeFile,readFile,mkdtemp} from 'node:fs/promises';
 import path from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
+import {qualifyTheme} from './web_theme_qualification.mjs';
 
 const legacySnapshot=JSON.stringify({version:1,theme:'white',glass:'frosted',background:'ambient',ideas:[{
   id:'legacy-browser-card',title:'Legacy browser content',description:'Preserved source',category:'灵感',
@@ -21,7 +22,7 @@ function context(call,sessionId) {
 }
 export async function prepareWebApp(call,sessionId,site,variant) {
   const {evaluate,until}=context(call,sessionId);
-  if(variant==='media')await call('Page.addScriptToEvaluateOnNewDocument',{source:`
+  if(['media','theme'].includes(variant))await call('Page.addScriptToEvaluateOnNewDocument',{source:`
     // Observe transport receipts in the isolated test page, without changing
     // the application or acknowledging/retrying any transaction ourselves.
     const NativeWorker=globalThis.Worker;
@@ -32,11 +33,15 @@ export async function prepareWebApp(call,sessionId,site,variant) {
         if(new URL(url,location.href).pathname.endsWith('/host-worker.mjs')) {
           const activity=globalThis.__mediaWorkerActivity;
           const send=this.postMessage.bind(this);
+          let holdTheme=false;
           this.postMessage=(message,...args)=>{
-            if(message?.kind==='request'){activity.pending++;activity.sent++;activity.last=performance.now();}
+            if(message?.kind==='request'||message?.kind==='theme-package'){activity.pending++;activity.sent++;activity.last=performance.now();}
+            if(message?.kind==='theme-package'&&globalThis.__holdThemeReceipt)holdTheme=true;
             return send(message,...args);
           };
-          this.addEventListener('message',({data})=>{
+          this.addEventListener('message',(event)=>{
+            const {data}=event;
+            if(data?.kind==='reply'&&holdTheme){event.stopImmediatePropagation();globalThis.__themeReceiptHeld=true;return;}
             if(data?.kind==='reply'){activity.pending--;activity.last=performance.now();}
           });
         }
@@ -53,10 +58,28 @@ export async function prepareWebApp(call,sessionId,site,variant) {
   if(variant==='legacy')await evaluate(`localStorage.setItem('flutter.daemon.studio.v1',${JSON.stringify(JSON.stringify(legacySnapshot))})`);
   if(variant==='orphan')await evaluate(`(async()=>{const root=await navigator.storage.getDirectory();const d=await root.getDirectoryHandle('morrow-workbench-v1',{create:true});await d.getFileHandle('preserved-fixture',{create:true});})()`);
   await call('Network.setBlockedURLs',{urls:[]},sessionId);
-  await call('Emulation.setDeviceMetricsOverride',{width:1280,height:variant==='media'?2200:900,deviceScaleFactor:1,mobile:false},sessionId);
+  await call('Emulation.setDeviceMetricsOverride',{width:1280,height:['media','theme'].includes(variant)?2200:900,deviceScaleFactor:1,mobile:false},sessionId);
 }
 export async function qualifyWebApp(call,sessionId,base,root,variant) {
+  const rawCall=call;
+  let activeSession=sessionId;
+  call=(method,params={},target)=>rawCall(method,params,target===sessionId?activeSession:target);
   const {evaluate,until}=context(call,sessionId);
+  const reopenPage=async()=>{
+    const site=await evaluate('location.href');
+    const {targetInfo}=await rawCall('Target.getTargetInfo',{},activeSession);
+    await rawCall('Target.closeTarget',{targetId:targetInfo.targetId});
+    const {targetId}=await rawCall('Target.createTarget',{url:'about:blank'});
+    const next=await rawCall('Target.attachToTarget',{targetId,flatten:true});
+    activeSession=next.sessionId;
+    for(const domain of ['Page','Runtime','Log','Network'])await call(`${domain}.enable`,{},sessionId);
+    const version=await rawCall('Browser.getVersion');
+    await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
+    await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
+    if(process.argv.includes('--slow-ui'))await call('Emulation.setCPUThrottlingRate',{rate:4},sessionId);
+    await prepareWebApp(rawCall,activeSession,site,variant);
+    await call('Page.navigate',{url:site},sessionId);
+  };
   const rect=label=>evaluate(`(()=>{
     const nodes=[...document.querySelectorAll('[aria-label], [role=button], flt-semantics')];
     const e=nodes.find(e=>(e.getAttribute('aria-label')??e.textContent??'').trim().split(/\\r?\\n/).includes(${JSON.stringify(label)})&&e.getBoundingClientRect().width>0);
@@ -77,7 +100,9 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
   const state=()=>evaluate("import('./workbench/device-identity.mjs').then(m=>m.inspectDeviceLibrary('main'))");
   try {
     await enable();
-    if(variant==='media') {
+    if(variant==='theme') {
+      await qualifyTheme({call,sessionId,root,evaluate,until,rect,enable,waitLabel,click,reopenPage});
+    } else if(variant==='media') {
       await click('Create local workspace');await waitLabel('New idea');
       const selectFile=async(label,file)=>{
         await call('Page.setInterceptFileChooserDialog',{enabled:true},sessionId);
@@ -192,7 +217,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     }
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}.png`),Buffer.from(screenshot.data,'base64'));
-    return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='media'?'real PNG/WAV/WebM file imports, later theme edits and full page reload preserve media and settings':variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
+    return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='theme'?'original theme file inspection, rejected files, interrupted import recovery, light/dark rendering, persistent enable/disable and uninstall':variant==='media'?'real PNG/WAV/WebM file imports, later theme edits and full page reload preserve media and settings':variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
   } catch(error) {
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.png`),Buffer.from(screenshot.data,'base64'));

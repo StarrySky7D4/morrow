@@ -27,6 +27,7 @@ dependencies:
   html: ^0.15.7
   http: ^1.6.0
   idb_shim: ^2.9.8
+  image: 4.9.2
   media_kit: ^1.2.6
   media_kit_libs_video: ^1.0.7
   media_kit_video: ^2.0.1

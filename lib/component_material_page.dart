@@ -29,6 +29,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
   SurfaceSettings get activeSurfaces =>
       AppearanceScope.maybeOf(context)?.surfaces ?? surfaces;
   Future<void> edit(String id, String title) async {
+    if (currentPalette.overridesMaterials) return;
     // Legacy global values seed new entries; they never override other cards.
     final initial =
         activeSurfaces.components[id] ??
@@ -60,7 +61,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
         ),
       ),
     );
-    if (!mounted || result == null) return;
+    if (!mounted || result == null || currentPalette.overridesMaterials) return;
     setState(
       () => surfaces = activeSurfaces.copyWith(
         components: {...activeSurfaces.components, id: result},
@@ -72,6 +73,7 @@ class _ComponentMaterialListPageState extends State<ComponentMaterialListPage> {
   @override
   Widget build(BuildContext context) {
     final p = currentPalette.withSurfaces(activeSurfaces);
+    if (p.overridesMaterials) return _themeMaterialNotice(context);
     final entries = widget.entries.entries.toList(growable: false);
     return AppearanceScope(
       palette: p,
@@ -275,14 +277,16 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
     ],
   );
   Future<void> color() async {
+    if (currentPalette.uiTheme != null) return;
     final chosen = await showStudioDialog<Color>(
       context: context,
       builder: (_) => ColorCompassDialog(
+        canEdit: (p) => p.uiTheme == null,
         title: L10n.of(context).visualComponentCompass(widget.title),
         initial: value.color ?? currentPalette.surface,
       ),
     );
-    if (mounted && chosen != null) {
+    if (mounted && chosen != null && currentPalette.uiTheme == null) {
       setState(() => value = value.copyWith(color: chosen));
     }
   }
@@ -306,6 +310,7 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
         components: {...currentPalette.surfaces.components, widget.id: value},
       ),
     );
+    if (p.overridesMaterials) return _themeMaterialNotice(context);
     final previewContent = Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -532,27 +537,29 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          OutlinedButton.icon(
-                            key: const ValueKey('component-color'),
-                            onPressed: editingOwn ? color : null,
-                            icon: Icon(
-                              Icons.palette_outlined,
-                              size: 16,
-                              color: value.color ?? p.accent,
+                          if (p.uiTheme == null) ...[
+                            OutlinedButton.icon(
+                              key: const ValueKey('component-color'),
+                              onPressed: editingOwn ? color : null,
+                              icon: Icon(
+                                Icons.palette_outlined,
+                                size: 16,
+                                color: value.color ?? p.accent,
+                              ),
+                              label: Text(l.visualCustomCompass),
                             ),
-                            label: Text(l.visualCustomCompass),
-                          ),
-                          TextButton(
-                            key: const ValueKey('component-color-inherit'),
-                            onPressed: editingOwn && value.color != null
-                                ? () => setState(
-                                    () => value = value.copyWith(
-                                      inheritColor: true,
-                                    ),
-                                  )
-                                : null,
-                            child: Text(l.visualInheritColor),
-                          ),
+                            TextButton(
+                              key: const ValueKey('component-color-inherit'),
+                              onPressed: editingOwn && value.color != null
+                                  ? () => setState(
+                                      () => value = value.copyWith(
+                                        inheritColor: true,
+                                      ),
+                                    )
+                                  : null,
+                              child: Text(l.visualInheritColor),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -566,3 +573,13 @@ class _ComponentMaterialPageState extends State<ComponentMaterialPage> {
     );
   }
 }
+
+Widget _themeMaterialNotice(BuildContext context) => SettingsSurface(
+  key: const ValueKey('theme-material-notice'),
+  title: L10n.of(context).visualComponents,
+  child: Text(
+    Localizations.localeOf(context).languageCode == 'zh'
+        ? '当前主题接管材质。关闭「主题材质与背景」后可继续编辑，原设置和草稿已保留。'
+        : 'The theme controls materials. Turn off Theme materials & backdrop to continue editing. Your settings and draft are preserved.',
+  ),
+);

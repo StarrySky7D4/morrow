@@ -1,3 +1,5 @@
+import 'theme_plugins/theme_plugin_controller.dart';
+import 'theme_plugins/theme_artwork.dart';
 import 'editor_draft_handoff_recovery_dialog.dart';
 import 'plugins/editor_draft.dart';
 import 'plugins/editor_draft_handoff_coordinator.dart';
@@ -110,7 +112,9 @@ class MorrowApp extends StatefulWidget {
     this.initialLocale,
     this.onFirstFrame,
     this.libraryDirectory,
+    this.themePlugins,
   });
+  final ThemePluginController? themePlugins;
   final Locale? initialLocale;
   final String? libraryDirectory;
 
@@ -125,6 +129,19 @@ class MorrowApp extends StatefulWidget {
 }
 
 class _MorrowAppState extends State<MorrowApp> {
+  late final ThemePluginController themePlugins;
+
+  void _themePluginChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    themePlugins.removeListener(_themePluginChanged);
+    if (widget.themePlugins == null) themePlugins.dispose();
+    super.dispose();
+  }
+
   bool _reportedFirstFrame = false;
   String uiLocale = 'system';
   FontChoice uiFont = const FontChoice();
@@ -209,6 +226,18 @@ class _MorrowAppState extends State<MorrowApp> {
   void initState() {
     super.initState();
     storage = widget.storage ?? MemoryStorage();
+    themePlugins =
+        widget.themePlugins ??
+        ThemePluginController(
+          backend: widget.workbench is ExternalPluginControl
+              ? widget.workbench as ExternalPluginControl
+              : null,
+          store: storage is MemoryStorage
+              ? MemoryThemePluginStore()
+              : LocalThemePluginStore(),
+        );
+    themePlugins.addListener(_themePluginChanged);
+    if (widget.themePlugins == null) unawaited(themePlugins.restore());
     warning = widget.initialWarning;
     try {
       restored = storage.read();
@@ -442,9 +471,14 @@ class _MorrowAppState extends State<MorrowApp> {
       liquidCanvas,
       themeColor,
       surfaces,
+      themePlugins.tokens(
+        theme == StudioTheme.dark ||
+            (theme == StudioTheme.custom && (themeLightness ?? .885) < .46),
+      ),
+      themePlugins.fullOverride,
     );
     final labelOverrides = WorkbenchLabelsScope.maybeOf(context);
-    return MaterialApp(
+    final app = MaterialApp(
       navigatorKey: navigation,
       scrollBehavior: const StudioScrollBehavior(),
       onGenerateTitle: (context) => L10n.of(context).mainAppTitle,
@@ -643,6 +677,7 @@ class _MorrowAppState extends State<MorrowApp> {
         },
       ),
     );
+    return ThemePluginScope(controller: themePlugins, child: app);
   }
 }
 
@@ -918,6 +953,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   bool backgroundAudible = false;
   int soundRevision = 0;
   bool get soundRequested =>
+      !p.overridesMaterials &&
       backgroundSound &&
       p.backdrop == BackgroundMode.texture &&
       p.texture?.kind == TextureKind.video &&
@@ -1070,26 +1106,37 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   Future<void> chooseThemeColor() async {
+    if (p.uiTheme != null) return;
     final previous = p.themeColor;
     final color = await showStudioDialog<Color>(
       context: context,
+      completeAfterTransition: true,
       builder: (_) => ColorCompassDialog(
         initial: previous ?? p.accent,
         title: l.mainThemeCompass,
+        canEdit: (palette) => palette.uiTheme == null,
         onChanged: widget.onThemeColor,
       ),
     );
     if (!mounted) return;
-    widget.onThemeColor(color ?? previous);
-    if (color != null) widget.onAppearanceCommit();
+    final selected = p.uiTheme == null ? color : null;
+    widget.onThemeColor(selected ?? previous);
+    if (selected != null) widget.onAppearanceCommit();
   }
 
   Future<void> chooseColor() async {
+    if (p.overridesMaterials) return;
     final color = await showStudioDialog<Color>(
       context: context,
-      builder: (_) => ColorCompassDialog(initial: p.solidColor),
+      completeAfterTransition: true,
+      builder: (_) => ColorCompassDialog(
+        initial: p.solidColor,
+        canEdit: (palette) => !palette.overridesMaterials,
+      ),
     );
-    if (color != null && mounted) widget.onColor(color);
+    if (color != null && mounted && !p.overridesMaterials) {
+      widget.onColor(color);
+    }
   }
 
   @override
@@ -1682,13 +1729,21 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
                   ),
                   child: SizedBox.expand(
-                    child: CustomPaint(painter: AmbientPainter(p)),
+                    child:
+                        p.uiTheme != null &&
+                            p.backdrop == BackgroundMode.ambient
+                        ? ThemeCanvas(
+                            key: const ValueKey('theme-plugin-canvas'),
+                            tokens: p.uiTheme!,
+                          )
+                        : CustomPaint(painter: AmbientPainter(p)),
                   ),
                 ),
               ),
             ),
-            Positioned.fill(child: mediaCanvas()),
-            if (p.backdrop == BackgroundMode.transparent)
+            if (!p.overridesMaterials) Positioned.fill(child: mediaCanvas()),
+            if (!p.overridesMaterials &&
+                p.backdrop == BackgroundMode.transparent)
               Positioned.fill(
                 child: IgnorePointer(
                   child: AnimatedContainer(
@@ -1700,7 +1755,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-            if (p.liquidCanvas)
+            if (p.liquidCanvas && !p.overridesMaterials)
               Positioned.fill(
                 child: IgnorePointer(
                   child: LiquidGlassSurface(
@@ -1712,6 +1767,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     borderRadius: BorderRadius.circular(p.windowRadius),
                     child: const SizedBox.expand(),
                   ),
+                ),
+              ),
+            if (p.overridesMaterials && p.backdrop != BackgroundMode.ambient)
+              Positioned.fill(
+                child: ThemeCanvas(
+                  key: const ValueKey('theme-plugin-canvas'),
+                  tokens: p.uiTheme!,
                 ),
               ),
             SafeArea(
@@ -2286,21 +2348,44 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       p: p,
       radius: 23,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 214),
+        constraints: BoxConstraints(minHeight: p.uiTheme == null ? 214 : 254),
         child: Stack(
           children: [
-            Positioned(
-              right: constraints.maxWidth < 520 ? -145 : -20,
-              top: -70,
-              bottom: -70,
-              width: 340,
-              child: IgnorePointer(
-                child: Opacity(
-                  opacity: constraints.maxWidth < 520 ? .24 : 1,
-                  child: CustomPaint(painter: OrbPainter(p)),
+            if (p.uiTheme != null &&
+                ThemePluginScope.of(context)?.plugin != null)
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: p.borderRadius(23),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: constraints.maxWidth < 520
+                          ? constraints.maxWidth
+                          : math.min(constraints.maxWidth * .57, 381),
+                      height: double.infinity,
+                      child: Opacity(
+                        opacity: constraints.maxWidth < 520 ? .18 : 1,
+                        child: ThemeArtwork(
+                          plugin: ThemePluginScope.of(context)!.plugin!,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Positioned(
+                right: constraints.maxWidth < 520 ? -145 : -20,
+                top: -70,
+                bottom: -70,
+                width: 340,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: constraints.maxWidth < 520 ? .24 : 1,
+                    child: CustomPaint(painter: OrbPainter(p)),
+                  ),
                 ),
               ),
-            ),
             Padding(
               padding: const EdgeInsets.all(25),
               child: Column(
@@ -2319,7 +2404,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                       ),
                       const SizedBox(width: 7),
                       Text(
-                        l.mainHeroCaption,
+                        ThemePluginScope.of(context)?.plugin?.caption(
+                              Localizations.localeOf(context),
+                            ) ??
+                            l.mainHeroCaption,
                         style: TextStyle(
                           fontSize: 8,
                           letterSpacing: 1.6,
@@ -2911,11 +2999,15 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   );
 
   Future<void> chooseSurfaceColor(bool canvas) async {
+    if (p.overridesMaterials || (!canvas && p.uiTheme != null)) return;
     final before = p.surfaces;
     final chosen = await showStudioDialog<Color>(
       context: context,
+      completeAfterTransition: true,
       builder: (_) => ColorCompassDialog(
         title: canvas ? l.mainCanvasCompass : l.mainComponentCompass,
+        canEdit: (palette) =>
+            !palette.overridesMaterials && (canvas || palette.uiTheme == null),
         initial:
             (canvas ? before.canvasColor : before.componentColor) ?? p.surface,
         onChanged: (color) => updateSurfaces(
@@ -2926,14 +3018,17 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       ),
     );
     if (!mounted) return;
+    final selected = !p.overridesMaterials && (canvas || p.uiTheme == null)
+        ? chosen
+        : null;
     updateSurfaces(
-      chosen == null
+      selected == null
           ? before
           : canvas
-          ? before.copyWith(canvasColor: chosen)
-          : before.copyWith(componentColor: chosen),
+          ? before.copyWith(canvasColor: selected)
+          : before.copyWith(componentColor: selected),
     );
-    if (chosen != null) widget.onAppearanceCommit();
+    if (selected != null) widget.onAppearanceCommit();
   }
 
   Widget surfaceColorButton(bool canvas) => OutlinedButton.icon(
@@ -3036,6 +3131,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   };
 
   Future<void> openComponentSettings(String id, String title) async {
+    if (p.overridesMaterials) {
+      return;
+    }
     final result = await settingsNavigator.currentState!
         .push<ComponentMaterial>(
           CanvasSettingsRoute<ComponentMaterial>(
@@ -3066,7 +3164,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
           ),
         );
-    if (!mounted || result == null) return;
+    if (!mounted || result == null || p.overridesMaterials) return;
     updateSurfaces(
       p.surfaces.copyWith(components: {...p.surfaces.components, id: result}),
     );
@@ -3101,13 +3199,14 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               }
             },
           ),
-          ComponentMenuAction(
-            label: l.mainComponentSettings,
-            icon: Icons.tune,
-            enabled: widget.workbench == null || widget.workbench!.writable,
-            onSelected: () =>
-                openComponentSettings('card:${idea.id}', displayTitle(idea)),
-          ),
+          if (!p.overridesMaterials)
+            ComponentMenuAction(
+              label: l.mainComponentSettings,
+              icon: Icons.tune,
+              enabled: widget.workbench == null || widget.workbench!.writable,
+              onSelected: () =>
+                  openComponentSettings('card:${idea.id}', displayTitle(idea)),
+            ),
         ],
         child: SurfaceInteraction(
           borderRadius: p.borderRadius(20),
@@ -3116,6 +3215,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       );
 
   Future<void> openPluginSettings() async {
+    final themes = ThemePluginScope.of(context);
     final backend = widget.workbench;
     if (backend == null) return;
     await settingsNavigator.currentState!.push<void>(
@@ -3123,11 +3223,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         builder: (_) => PluginSettingsPage(
           backend: backend,
           onChanged: () {
+            if (themes != null) unawaited(themes.refresh());
             if (mounted) setState(() => _queries.invalidate());
           },
         ),
       ),
     );
+    if (themes != null) await themes.refresh();
     if (mounted) setState(() => _queries.invalidate());
   }
 
@@ -3294,7 +3396,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               widget.onAppearanceCommit();
             },
           ),
-          if (p.surfaces.visualStyle.supportsDepth) ...[
+          if (p.visualStyle.supportsDepth) ...[
             const SizedBox(height: 16),
             StyleDepthSlider(
               key: const ValueKey('style-depth'),
@@ -3325,248 +3427,255 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
           ),
           const SizedBox(height: 18),
-          label(l.mainGlassTexture),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: modeOption(
-                  GlassMode.frosted,
-                  l.mainFrosted,
-                  Icons.blur_on_rounded,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: modeOption(
-                  GlassMode.clear,
-                  l.mainCrystal,
-                  Icons.water_drop_outlined,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: modeOption(
-                  GlassMode.liquid,
-                  l.mainLiquidGlass,
-                  Icons.lens_blur,
-                ),
-              ),
-            ],
-          ),
-          SoftSize(
-            duration: motionDuration(context, 220),
-            alignment: Alignment.topCenter,
-            child: Column(
+          if (!p.overridesMaterials) ...[
+            label(l.mainGlassTexture),
+            const SizedBox(height: 10),
+            Row(
               children: [
-                if (p.mode == GlassMode.frosted) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l.mainFrostOpacity,
-                          style: TextStyle(fontSize: 10, color: p.muted),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${(p.frostedOpacity * 100).round()}%',
-                        style: TextStyle(fontSize: 11, color: p.accent),
-                      ),
-                    ],
+                Expanded(
+                  child: modeOption(
+                    GlassMode.frosted,
+                    l.mainFrosted,
+                    Icons.blur_on_rounded,
                   ),
-                  AnimatedSliderStyle(
-                    palette: p,
-                    flatThumbRadius: 6,
-                    flatTrackHeight: 3,
-                    overlayRadius: 12,
-                    child: Slider(
-                      key: const ValueKey('frosted-opacity'),
-                      min: .2,
-                      max: 1,
-                      divisions: 80,
-                      value: p.frostedOpacity,
-                      label: '${(p.frostedOpacity * 100).round()}%',
-                      onChanged: widget.onOpacity,
-                      onChangeEnd: (_) => widget.onAppearanceCommit(),
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: modeOption(
+                    GlassMode.clear,
+                    l.mainCrystal,
+                    Icons.water_drop_outlined,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l.mainLightOpacity,
-                          style: TextStyle(fontSize: 9, color: p.muted),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l.mainSolidOpacity,
-                          textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 9, color: p.muted),
-                        ),
-                      ),
-                    ],
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: modeOption(
+                    GlassMode.liquid,
+                    l.mainLiquidGlass,
+                    Icons.lens_blur,
                   ),
-                ],
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          componentMaterialSettings(),
-          const SizedBox(height: 14),
-          SizedBox(
-            height: 108,
-            width: double.infinity,
-            child: ClipRRect(
-              borderRadius: p.borderRadius(14),
-              child: Stack(
+            SoftSize(
+              duration: motionDuration(context, 220),
+              alignment: Alignment.topCenter,
+              child: Column(
                 children: [
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: p.dark
-                              ? [
-                                  p.themeTint(const Color(0xFF424260), .6),
-                                  p.themeTint(const Color(0xFF736381), .6),
-                                  p.themeTint(const Color(0xFF343E45), .6),
-                                ]
-                              : [
-                                  p.themeTint(const Color(0xFFD9E5DB), .6),
-                                  p.themeTint(const Color(0xFFD6C3E5), .6),
-                                  p.themeTint(const Color(0xFFEDDED6), .6),
-                                ],
+                  if (p.mode == GlassMode.frosted) ...[
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l.mainFrostOpacity,
+                            style: TextStyle(fontSize: 10, color: p.muted),
+                          ),
                         ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${(p.frostedOpacity * 100).round()}%',
+                          style: TextStyle(fontSize: 11, color: p.accent),
+                        ),
+                      ],
+                    ),
+                    AnimatedSliderStyle(
+                      palette: p,
+                      flatThumbRadius: 6,
+                      flatTrackHeight: 3,
+                      overlayRadius: 12,
+                      child: Slider(
+                        key: const ValueKey('frosted-opacity'),
+                        min: .2,
+                        max: 1,
+                        divisions: 80,
+                        value: p.frostedOpacity,
+                        label: '${(p.frostedOpacity * 100).round()}%',
+                        onChanged: widget.onOpacity,
+                        onChangeEnd: (_) => widget.onAppearanceCommit(),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 20,
-                    top: 13,
-                    child: Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: p.themeTint(const Color(0xFFA18AC7), .6),
-                        shape: BoxShape.circle,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l.mainLightOpacity,
+                            style: TextStyle(fontSize: 9, color: p.muted),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l.mainSolidOpacity,
+                            textAlign: TextAlign.end,
+                            style: TextStyle(fontSize: 9, color: p.muted),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Positioned(
-                    right: 24,
-                    bottom: -10,
-                    child: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: p.themeTint(const Color(0xFFDBC1A6), .6),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: 140,
-                      height: 68,
-                      child: Glass(
-                        p: p,
-                        radius: 13,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                p.clear
-                                    ? Icons.water_drop_outlined
-                                    : Icons.blur_on_rounded,
-                                color: p.ink,
-                                size: 19,
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                p.liquid
-                                    ? l.mainLiquidGlass
-                                    : p.clear
-                                    ? l.mainCrystal
-                                    : l.mainFrosted,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: p.ink,
-                                  letterSpacing: .4,
-                                ),
-                              ),
-                            ],
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            componentMaterialSettings(),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 108,
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: p.borderRadius(14),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: p.dark
+                                ? [
+                                    p.themeTint(const Color(0xFF424260), .6),
+                                    p.themeTint(const Color(0xFF736381), .6),
+                                    p.themeTint(const Color(0xFF343E45), .6),
+                                  ]
+                                : [
+                                    p.themeTint(const Color(0xFFD9E5DB), .6),
+                                    p.themeTint(const Color(0xFFD6C3E5), .6),
+                                    p.themeTint(const Color(0xFFEDDED6), .6),
+                                  ],
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      left: 20,
+                      top: 13,
+                      child: Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: p.themeTint(const Color(0xFFA18AC7), .6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 24,
+                      bottom: -10,
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: p.themeTint(const Color(0xFFDBC1A6), .6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: 140,
+                        height: 68,
+                        child: Glass(
+                          p: p,
+                          radius: 13,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  p.clear
+                                      ? Icons.water_drop_outlined
+                                      : Icons.blur_on_rounded,
+                                  color: p.ink,
+                                  size: 19,
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  p.liquid
+                                      ? l.mainLiquidGlass
+                                      : p.clear
+                                      ? l.mainCrystal
+                                      : l.mainFrosted,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: p.ink,
+                                    letterSpacing: .4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            p.liquid
-                ? l.mainLiquidDetail
-                : p.clear
-                ? l.mainCrystalDetail
-                : l.mainFrostDetail,
-            style: TextStyle(fontSize: 9, color: p.muted),
-          ),
+            const SizedBox(height: 10),
+            Text(
+              p.liquid
+                  ? l.mainLiquidDetail
+                  : p.clear
+                  ? l.mainCrystalDetail
+                  : l.mainFrostDetail,
+              style: TextStyle(fontSize: 9, color: p.muted),
+            ),
+          ],
           const SizedBox(height: 22),
           label(l.mainThemeTone),
           const SizedBox(height: 12),
           Row(
             children: StudioTheme.values
+                .where(
+                  (theme) => p.uiTheme == null || theme != StudioTheme.custom,
+                )
                 .map((theme) => Expanded(child: themeOption(theme)))
                 .toList(),
           ),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
-            key: const ValueKey('theme-color-compass'),
-            onPressed: chooseThemeColor,
-            icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
-            label: Text(l.mainThemeCompass, style: TextStyle(fontSize: 11)),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(38),
-              side: BorderSide(color: p.line),
-              shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+          if (p.uiTheme == null) ...[
+            OutlinedButton.icon(
+              key: const ValueKey('theme-color-compass'),
+              onPressed: chooseThemeColor,
+              icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
+              label: Text(l.mainThemeCompass, style: TextStyle(fontSize: 11)),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(38),
+                side: BorderSide(color: p.line),
+                shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+              ),
             ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  p.themeColor == null
-                      ? l.mainDefaultGlobalColor
-                      : l.mainGlobalColor(
-                          '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                        ),
-                  style: TextStyle(color: p.muted, fontSize: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    p.themeColor == null
+                        ? l.mainDefaultGlobalColor
+                        : l.mainGlobalColor(
+                            '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                          ),
+                    style: TextStyle(color: p.muted, fontSize: 10),
+                  ),
                 ),
-              ),
-              Flexible(
-                child: TextButton(
-                  key: const ValueKey('theme-color-reset'),
-                  onPressed: p.themeColor == null
-                      ? null
-                      : () {
-                          widget.onThemeColor(null);
-                          widget.onAppearanceCommit();
-                        },
-                  child: Text(l.mainRestoreDefault),
+                Flexible(
+                  child: TextButton(
+                    key: const ValueKey('theme-color-reset'),
+                    onPressed: p.themeColor == null
+                        ? null
+                        : () {
+                            widget.onThemeColor(null);
+                            widget.onAppearanceCommit();
+                          },
+                    child: Text(l.mainRestoreDefault),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          if (p.isCustom) ...[
+              ],
+            ),
+          ],
+          if (p.isCustom && p.uiTheme == null) ...[
             const SizedBox(height: 12),
             TextButton(
               key: const ValueKey('custom-tone-toggle'),
@@ -3647,30 +3756,32 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   : const SizedBox.shrink(),
             ),
           ],
-          Divider(height: 28, color: p.line),
-          Row(
-            children: [
-              Expanded(child: label(l.mainCornerRadius)),
-              label('${p.cornerRadius.round()} / 32'),
-            ],
-          ),
-          AnimatedSliderStyle(
-            palette: p,
-            child: Slider(
-              key: const ValueKey('corner-radius'),
-              value: p.cornerRadius,
-              min: 0,
-              max: 32,
-              divisions: 32,
-              label: '${p.cornerRadius.round()}',
-              onChanged: widget.onRadius,
-              onChangeEnd: (_) => widget.onAppearanceCommit(),
+          if (!p.overridesMaterials) ...[
+            Divider(height: 28, color: p.line),
+            Row(
+              children: [
+                Expanded(child: label(l.mainCornerRadius)),
+                label('${p.cornerRadius.round()} / 32'),
+              ],
             ),
-          ),
-          Text(
-            l.mainSquareCorners,
-            style: TextStyle(fontSize: 9, color: p.muted),
-          ),
+            AnimatedSliderStyle(
+              palette: p,
+              child: Slider(
+                key: const ValueKey('corner-radius'),
+                value: p.cornerRadius,
+                min: 0,
+                max: 32,
+                divisions: 32,
+                label: '${p.cornerRadius.round()}',
+                onChanged: widget.onRadius,
+                onChangeEnd: (_) => widget.onAppearanceCommit(),
+              ),
+            ),
+            Text(
+              l.mainSquareCorners,
+              style: TextStyle(fontSize: 9, color: p.muted),
+            ),
+          ],
           if (widget.desktopCaption) ...[
             const SizedBox(height: 16),
             Row(
@@ -3696,256 +3807,259 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               style: TextStyle(fontSize: 9, color: p.muted),
             ),
           ],
-          Divider(height: 24, color: p.line),
-          label(l.mainBackgroundCanvas),
-          const SizedBox(height: 10),
-          LayoutBuilder(
-            builder: (_, constraints) => Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: BackgroundMode.values
-                  .map(
-                    (mode) => SizedBox(
-                      width: (constraints.maxWidth - 8) / 2,
-                      child: backgroundOption(mode),
-                    ),
-                  )
-                  .toList(),
+          if (!p.overridesMaterials) ...[
+            Divider(height: 24, color: p.line),
+            label(l.mainBackgroundCanvas),
+            const SizedBox(height: 10),
+            LayoutBuilder(
+              builder: (_, constraints) => Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: BackgroundMode.values
+                    .map(
+                      (mode) => SizedBox(
+                        width: (constraints.maxWidth - 8) / 2,
+                        child: backgroundOption(mode),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-          ),
-          NeumorphicSwitchListTile(
-            palette: p,
-            key: const ValueKey('canvas-liquid-toggle'),
-            contentPadding: EdgeInsets.zero,
-            title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
-            subtitle: Text(
-              l.mainLiquidAllCanvases,
-              style: TextStyle(fontSize: 10),
+            NeumorphicSwitchListTile(
+              palette: p,
+              key: const ValueKey('canvas-liquid-toggle'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
+              subtitle: Text(
+                l.mainLiquidAllCanvases,
+                style: TextStyle(fontSize: 10),
+              ),
+              value: p.liquidCanvas,
+              onChanged: widget.onLiquidCanvas,
             ),
-            value: p.liquidCanvas,
-            onChanged: widget.onLiquidCanvas,
-          ),
-          SoftSize(
-            duration: motionDuration(context, 240),
-            alignment: Alignment.topCenter,
-            child: AnimatedSwitcher(
-              duration: motionDuration(context, 220),
-              child: Column(
-                key: ValueKey(p.backdrop),
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (p.backdrop == BackgroundMode.transparent)
-                    transparentMaterialSettings(),
-                  if (p.backdrop == BackgroundMode.solid) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: List.generate(
-                        4,
-                        (index) => Tooltip(
-                          message: [
-                            l.mainFollowTheme,
-                            l.mainLavender,
-                            l.mainSage,
-                            l.mainWarmSand,
-                          ][index],
-                          child: InkWell(
-                            key: ValueKey('tint-$index'),
-                            onTap: () => widget.onTint(index),
-                            borderRadius: p.borderRadius(20),
-                            child: Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: Palette(
-                                  p.theme,
-                                  p.mode,
-                                  p.backdrop,
-                                  index,
-                                ).solidColor,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color:
-                                      p.customColor == null &&
-                                          p.solidTint == index
-                                      ? p.accent
-                                      : p.line,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child:
-                                  p.customColor == null && p.solidTint == index
-                                  ? Icon(Icons.check, size: 13, color: p.ink)
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      key: const ValueKey('custom-color'),
-                      onPressed: chooseColor,
-                      icon: Icon(
-                        Icons.palette_outlined,
-                        size: 16,
-                        color: p.accent,
-                      ),
-                      label: Text(
-                        p.customColor == null
-                            ? l.mainCustomCompass
-                            : '#${p.customColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(38),
-                        side: BorderSide(color: p.line),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: p.borderRadius(11),
-                        ),
-                      ),
-                    ),
-                  ],
-                  if (p.backdrop == BackgroundMode.texture) ...[
-                    const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        OutlinedButton.icon(
-                          key: const ValueKey('texture-file'),
-                          onPressed: importing ? null : () => chooseTexture(),
-                          icon: const Icon(
-                            Icons.upload_file_outlined,
-                            size: 15,
-                          ),
-                          label: Text(
-                            l.mainLocalMedia,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          key: const ValueKey('texture-link'),
-                          onPressed: importing
-                              ? null
-                              : () => chooseTexture(online: true),
-                          icon: const Icon(Icons.link, size: 15),
-                          label: Text(
-                            l.mainOnlineMedia,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (importing)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: LinearProgressIndicator(minHeight: 2),
-                      ),
-                    if (p.texture != null) ...[
-                      const SizedBox(height: 10),
-                      if (p.texture!.kind == TextureKind.video)
-                        Row(
-                          children: [
-                            Expanded(child: label(l.mainBackgroundSound)),
-                            NeumorphicSwitch(
-                              palette: p,
-                              key: const ValueKey('background-audio'),
-                              value: backgroundSound,
-                              onChanged: setBackgroundSound,
-                            ),
-                          ],
-                        ),
-                      Text(
-                        p.texture!.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 10, color: p.ink),
-                      ),
+            SoftSize(
+              duration: motionDuration(context, 240),
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: motionDuration(context, 220),
+                child: Column(
+                  key: ValueKey(p.backdrop),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (p.backdrop == BackgroundMode.transparent)
+                      transparentMaterialSettings(),
+                    if (p.backdrop == BackgroundMode.solid) ...[
+                      const SizedBox(height: 12),
                       Row(
-                        children: [
-                          if (p.texture!.kind != TextureKind.image)
-                            TextButton.icon(
-                              key: const ValueKey('media-play'),
-                              onPressed: () =>
-                                  widget.onPlaying(!p.mediaPlaying),
-                              icon: SoftSwap(
-                                child: Icon(
-                                  p.mediaPlaying
-                                      ? Icons.pause_rounded
-                                      : Icons.play_arrow_rounded,
-                                  key: ValueKey(p.mediaPlaying),
-                                  size: 16,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: List.generate(
+                          4,
+                          (index) => Tooltip(
+                            message: [
+                              l.mainFollowTheme,
+                              l.mainLavender,
+                              l.mainSage,
+                              l.mainWarmSand,
+                            ][index],
+                            child: InkWell(
+                              key: ValueKey('tint-$index'),
+                              onTap: () => widget.onTint(index),
+                              borderRadius: p.borderRadius(20),
+                              child: Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: Palette(
+                                    p.theme,
+                                    p.mode,
+                                    p.backdrop,
+                                    index,
+                                  ).solidColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color:
+                                        p.customColor == null &&
+                                            p.solidTint == index
+                                        ? p.accent
+                                        : p.line,
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                              label: Text(
-                                p.mediaPlaying ? l.mainPause : l.mainPlay,
-                                style: const TextStyle(fontSize: 10),
+                                child:
+                                    p.customColor == null &&
+                                        p.solidTint == index
+                                    ? Icon(Icons.check, size: 13, color: p.ink)
+                                    : null,
                               ),
                             ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() => mediaError = null);
-                                widget.onTexture(null);
-                              },
-                              child: Text(
-                                l.mainBuiltinTexture,
-                                style: TextStyle(fontSize: 10),
-                              ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        key: const ValueKey('custom-color'),
+                        onPressed: chooseColor,
+                        icon: Icon(
+                          Icons.palette_outlined,
+                          size: 16,
+                          color: p.accent,
+                        ),
+                        label: Text(
+                          p.customColor == null
+                              ? l.mainCustomCompass
+                              : '#${p.customColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(38),
+                          side: BorderSide(color: p.line),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: p.borderRadius(11),
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (p.backdrop == BackgroundMode.texture) ...[
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          OutlinedButton.icon(
+                            key: const ValueKey('texture-file'),
+                            onPressed: importing ? null : () => chooseTexture(),
+                            icon: const Icon(
+                              Icons.upload_file_outlined,
+                              size: 15,
+                            ),
+                            label: Text(
+                              l.mainLocalMedia,
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            key: const ValueKey('texture-link'),
+                            onPressed: importing
+                                ? null
+                                : () => chooseTexture(online: true),
+                            icon: const Icon(Icons.link, size: 15),
+                            label: Text(
+                              l.mainOnlineMedia,
+                              style: TextStyle(fontSize: 10),
                             ),
                           ),
                         ],
                       ),
-                    ] else
-                      Text(
-                        l.mainMediaLimits,
-                        style: TextStyle(fontSize: 9, color: p.muted),
-                      ),
-                    if (mediaError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          mediaError!,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).colorScheme.error,
-                            height: 1.6,
+                      if (importing)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: LinearProgressIndicator(minHeight: 2),
+                        ),
+                      if (p.texture != null) ...[
+                        const SizedBox(height: 10),
+                        if (p.texture!.kind == TextureKind.video)
+                          Row(
+                            children: [
+                              Expanded(child: label(l.mainBackgroundSound)),
+                              NeumorphicSwitch(
+                                palette: p,
+                                key: const ValueKey('background-audio'),
+                                value: backgroundSound,
+                                onChanged: setBackgroundSound,
+                              ),
+                            ],
+                          ),
+                        Text(
+                          p.texture!.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 10, color: p.ink),
+                        ),
+                        Row(
+                          children: [
+                            if (p.texture!.kind != TextureKind.image)
+                              TextButton.icon(
+                                key: const ValueKey('media-play'),
+                                onPressed: () =>
+                                    widget.onPlaying(!p.mediaPlaying),
+                                icon: SoftSwap(
+                                  child: Icon(
+                                    p.mediaPlaying
+                                        ? Icons.pause_rounded
+                                        : Icons.play_arrow_rounded,
+                                    key: ValueKey(p.mediaPlaying),
+                                    size: 16,
+                                  ),
+                                ),
+                                label: Text(
+                                  p.mediaPlaying ? l.mainPause : l.mainPlay,
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() => mediaError = null);
+                                  widget.onTexture(null);
+                                },
+                                child: Text(
+                                  l.mainBuiltinTexture,
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ] else
+                        Text(
+                          l.mainMediaLimits,
+                          style: TextStyle(fontSize: 9, color: p.muted),
+                        ),
+                      if (mediaError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            mediaError!,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Theme.of(context).colorScheme.error,
+                              height: 1.6,
+                            ),
                           ),
                         ),
-                      ),
+                    ],
                   ],
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(switch (p.backdrop) {
-            BackgroundMode.ambient => l.mainAmbientDetail,
-            BackgroundMode.solid => l.mainSolidDetail,
-            BackgroundMode.texture => l.mainTextureDetail,
-            BackgroundMode.transparent =>
-              !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-                  ? l.mainOpaqueFallback
-                  : l.mainTransparentDetail,
-          }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
-          const SizedBox(height: 13),
-          Row(
-            children: [
-              Icon(
-                Icons.check_circle_outline_rounded,
-                size: 12,
-                color: p.accent,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  l.mainAutosaveNotice,
-                  style: TextStyle(fontSize: 9, color: p.muted),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+            Text(switch (p.backdrop) {
+              BackgroundMode.ambient => l.mainAmbientDetail,
+              BackgroundMode.solid => l.mainSolidDetail,
+              BackgroundMode.texture => l.mainTextureDetail,
+              BackgroundMode.transparent =>
+                !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                    ? l.mainOpaqueFallback
+                    : l.mainTransparentDetail,
+            }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
+            const SizedBox(height: 13),
+            Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 12,
+                  color: p.accent,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    l.mainAutosaveNotice,
+                    style: TextStyle(fontSize: 9, color: p.muted),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     ),
@@ -4061,7 +4175,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   Widget themeOption(StudioTheme theme) {
-    final selected = p.theme == theme;
+    final selected = p.uiTheme == null
+        ? p.theme == theme
+        : (p.dark ? StudioTheme.dark : StudioTheme.white) == theme;
     final color = switch (theme) {
       StudioTheme.white => const Color(0xFFFAFAFC),
       StudioTheme.custom => const Color(0xFFCFD1DA),

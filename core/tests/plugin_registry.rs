@@ -29,6 +29,46 @@ fn reopen(dir: &TempDir) -> morrow_core::Result<Registry> {
     )
 }
 #[test]
+fn theme_slot_switch_is_one_snapshot_and_keeps_business_approvals() {
+    use morrow_core::plugin_package::proto::TransformHandler;
+    let (dir, mut r) = setup();
+    let theme = |id: &str| {
+        let wasm = b"\0asm\x01\0\0\0";
+        let m = Package::manifest_for_transform(id, "1.0.0", wasm, vec![TransformHandler {
+            handler: "theme.describe".into(), input_type: "morrow.ui.theme.request.v1".into(),
+            output_type: "morrow.ui.theme.v1".into(), max_input_bytes: 1, max_output_bytes: 16384,
+        }]);
+        Package::build(m, wasm).unwrap()
+    };
+    let first = theme("org.example.theme.first");
+    let second = theme("org.example.theme.second");
+    let business = package("org.example.business", "1.0.0", vec![Capability::ReadContent]);
+    for p in [&first, &second, &business] {
+        install(&dir, p);
+        r.select(p.digest(), r.revision()).unwrap();
+    }
+    let biz = business.manifest().package_id.as_str();
+    r.approve(biz, business.digest(), BTreeSet::from([GrantKind::ReadContent]), r.revision()).unwrap();
+    r.set_enabled(biz, business.digest(), true, r.revision()).unwrap();
+    let business_before = r.selection(biz).unwrap().clone();
+    let a = first.manifest().package_id.as_str();
+    let b = second.manifest().package_id.as_str();
+    r.set_enabled(a, first.digest(), true, r.revision()).unwrap();
+    let revision = r.revision();
+    assert!(r.set_enabled(b, second.digest(), true, revision - 1).is_err());
+    assert!(r.selection(a).unwrap().enabled);
+    r.set_enabled(b, second.digest(), true, revision).unwrap();
+    assert_eq!(r.revision(), revision + 1);
+    assert!(!r.selection(a).unwrap().enabled);
+    assert!(r.selection(b).unwrap().enabled);
+    assert_eq!(r.selection(biz).unwrap(), &business_before);
+    drop(r);
+    let r = reopen(&dir).unwrap();
+    assert!(!r.selection(a).unwrap().enabled);
+    assert!(r.selection(b).unwrap().enabled);
+    assert_eq!(r.selection(biz).unwrap(), &business_before);
+}
+#[test]
 fn persistence_upgrade_requires_enable_and_never_expands_approval() {
     let (dir, mut registry) = setup();
     let first = package(

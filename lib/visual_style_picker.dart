@@ -1,3 +1,5 @@
+import 'theme_plugins/theme_plugin_controller.dart';
+import 'theme_plugins/theme_plugin_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'appearance.dart';
@@ -27,6 +29,9 @@ class _VisualStylePickerState extends State<VisualStylePicker> {
     final l = L10n.of(context);
     final p = widget.palette;
     final selected = p.surfaces.visualStyle;
+    final plugins = ThemePluginScope.of(context);
+    final pluginActive = plugins?.active == true;
+    final pluginTitle = plugins?.plugin?.name(Localizations.localeOf(context));
     String title(VisualStyle style) => switch (style) {
       VisualStyle.flat => l.mainStyleFlat,
       VisualStyle.neumorphism => l.mainStyleNeumorphism,
@@ -63,7 +68,8 @@ class _VisualStylePickerState extends State<VisualStylePicker> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
-          label: '${l.mainVisualStyle}: ${semanticTitle(selected)}',
+          label:
+              '${l.mainVisualStyle}: ${pluginActive ? '$pluginTitle + ${semanticTitle(selected)}' : semanticTitle(selected)}',
           expanded: expanded,
           button: true,
           onTap: toggle,
@@ -101,7 +107,9 @@ class _VisualStylePickerState extends State<VisualStylePicker> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                styleTitle(selected),
+                                pluginActive
+                                    ? '$pluginTitle + ${styleTitle(selected)}'
+                                    : styleTitle(selected),
                                 style: TextStyle(color: p.muted, fontSize: 10),
                               ),
                             ],
@@ -131,6 +139,14 @@ class _VisualStylePickerState extends State<VisualStylePicker> {
             padding: const EdgeInsets.only(top: 12),
             child: Column(
               children: [
+                if (plugins != null)
+                  ThemePluginTile(
+                    controller: plugins,
+                    palette: p,
+                    onSelected: () {
+                      if (mounted) setState(() => expanded = false);
+                    },
+                  ),
                 for (final style in VisualStyle.values)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 14),

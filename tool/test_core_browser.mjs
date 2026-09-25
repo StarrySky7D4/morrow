@@ -23,7 +23,7 @@ if(remoteSite&&(!app||remoteSite.protocol!=='https:'||!remoteSite.pathname.endsW
 const baseArg=process.argv.indexOf('--base-path');
 const basePath=remoteSite?.pathname??(baseArg<0?'/preview/':process.argv[baseArg+1]);
 if(!/^\/([A-Za-z0-9_.-]+\/)*$/.test(basePath))throw Error('Invalid base path');
-const appVariant=process.argv.includes('--legacy')?'legacy':process.argv.includes('--orphan')?'orphan':process.argv.includes('--media')?'media':'fresh';
+const appVariant=process.argv.includes('--legacy')?'legacy':process.argv.includes('--orphan')?'orphan':process.argv.includes('--media')?'media':process.argv.includes('--theme')?'theme':'fresh';
 const webFolder=app?'build/web':process.argv.includes('--channel')?'build/web-channel-parity':process.argv.includes('--identity')?'build/web-identity-parity':process.argv.includes('--workbench')?'build/web-workbench-parity':process.argv.includes('--packages')?'build/web-package-parity':process.argv.includes('--renderer')?'build/ui-renderer/web':process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
 const allowed = [basePath];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
@@ -97,7 +97,7 @@ try {
     }
     if(app && ['Runtime.exceptionThrown','Log.entryAdded','Runtime.consoleAPICalled'].includes(reply.method) && appDiagnostics.length<30) {
       const p=reply.params;
-      if(reply.method!=='Runtime.consoleAPICalled'||['error','warning'].includes(p.type))appDiagnostics.push(JSON.stringify(p).slice(0,3500));
+      if(reply.method!=='Runtime.consoleAPICalled'||['error','warning'].includes(p.type)||p.args?.some(a=>String(a.value).startsWith('Theme operation failed:')))appDiagnostics.push(JSON.stringify(p).slice(0,3500));
     }
     const waiter = pending.get(reply.id);
     if (!waiter) return;
@@ -190,7 +190,7 @@ try {
       if(!Array.isArray(bytes)||bytes.length<8||bytes.length>65536||bytes.some(n=>!Number.isInteger(n)||n<0||n>255))throw Error('Invalid browser event bytes');
       await writeFile(path.join(root,'build/ui-protocol/browser-event.capnp'),Buffer.from(bytes));
     }
-    await call('Target.closeTarget', { targetId });
+    if((await call('Target.getTargets')).targetInfos.some(t=>t.targetId===targetId))await call('Target.closeTarget', { targetId });
   }
 } finally {
   if (socket?.readyState === WebSocket.OPEN) {

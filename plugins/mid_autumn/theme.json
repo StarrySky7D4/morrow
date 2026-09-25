@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "org.morrow.theme.mid-autumn",
+  "version": "1.0.0",
+  "name": {
+    "zh": "中秋 · 月满庭",
+    "en": "Mid-Autumn · Moonlit Court"
+  },
+  "description": {
+    "zh": "月白作底，桂金点睛；保留玻璃与背景的自由。",
+    "en": "Quiet moonlight and osmanthus gold, with your materials intact."
+  },
+  "light": {
+    "background": "#F1EFE8",
+    "surface": "#FEFCF6",
+    "ink": "#303B39",
+    "muted": "#656A61",
+    "accent": "#80602F",
+    "secondary": "#527369",
+    "line": "#DAD8CD",
+    "radius": 18
+  },
+  "dark": {
+    "background": "#172725",
+    "surface": "#223430",
+    "ink": "#EEECE1",
+    "muted": "#B9BDB0",
+    "accent": "#D9B77C",
+    "secondary": "#91B5A5",
+    "line": "#41544B",
+    "radius": 18
+  },
+  "caption": {
+    "zh": "桂香入庭 · 月满人间",
+    "en": "MOONLIT COURT / MID-AUTUMN"
+  },
+  "artwork": {
+    "bytes": 563932,
+    "sha256": "1d54dde515a192ccc8ee184a34815a4c03fd351f02e1226ab830ebf4f7987aa8",
+    "width": 1536,
+    "height": 1024
+  }
+}

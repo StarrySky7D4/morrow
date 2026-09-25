@@ -663,10 +663,12 @@ impl Manager {
         revision: u64,
     ) -> Result<()> {
         let selection = self.checked_selection(id, digest, revision)?;
-        if selection.enabled == enabled {
+        let peers = if enabled { self.registry.exclusive_peers(id, digest, revision)? } else { vec![] };
+        if selection.enabled == enabled && peers.is_empty() {
             return Ok(());
         }
         self.revoke_required_tree(id);
+        for peer in peers { self.revoke_required_tree(&peer); }
         self.registry.set_enabled(id, digest, enabled, revision)?;
         Ok(())
     }
