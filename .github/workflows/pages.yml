@@ -55,11 +55,12 @@ jobs:
         run: ./tool/build_web_workbench.ps1 -BaseHref /morrow/
       - name: Browser acceptance before publication
         run: |
-          foreach ($variant in @('fresh','legacy','orphan')) {
-            $extra = if ($variant -eq 'fresh') { @() } else { @("--$variant") }
-            node tool/test_core_browser.mjs --app --base-path /morrow/ @extra
-            if ($LASTEXITCODE -ne 0) { throw "Browser acceptance failed: $variant" }
-          }
+          node tool/test_core_browser.mjs --app --base-path /morrow/ --offline-edits
+          if ($LASTEXITCODE -ne 0) { throw 'Fresh workspace acceptance failed' }
+          node tool/test_core_browser.mjs --app --base-path /morrow/ --legacy
+          if ($LASTEXITCODE -ne 0) { throw 'Legacy content acceptance failed' }
+          node tool/test_core_browser.mjs --app --base-path /morrow/ --orphan
+          if ($LASTEXITCODE -ne 0) { throw 'Orphaned data acceptance failed' }
       - name: Add source and distribution notices
         run: ./tool/package_web_release.ps1
       - uses: actions/upload-pages-artifact@v4

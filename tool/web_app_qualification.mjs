@@ -69,6 +69,10 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
       await waitLabel('New idea');
       const identity=await evaluate("import('./workbench/device-identity.mjs').then(m=>m.inspectDeviceIdentity('main')).then(v=>v.logId)");
       if(await state()!=='ready')throw Error('Identity not ready after application startup');
+      if(process.argv.includes('--offline-edits')) {
+        await call('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:-1,uploadThroughput:-1},sessionId);
+        if(await evaluate('navigator.onLine'))throw Error('Offline acceptance did not disconnect the page');
+      }
       await click('New idea');
       await waitLabel('Save idea');
       await until(()=>evaluate("['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)"),'editor focus');
@@ -93,6 +97,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
       await waitLabel('Browser application card');
       if(await rect('Review save')||await rect('Retry query'))throw Error('Committed card left a preferences or query failure');
       if(await evaluate("localStorage.getItem('flutter.daemon.studio.v1')")!==null)throw Error('Application wrote new content to old storage');
+      if(process.argv.includes('--offline-edits'))await call('Network.emulateNetworkConditions',{offline:false,latency:0,downloadThroughput:-1,uploadThroughput:-1},sessionId);
       await call('Page.reload',{ignoreCache:true},sessionId);
       await enable();
       await waitLabel('Browser application card');
@@ -122,7 +127,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     }
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}.png`),Buffer.from(screenshot.data,'base64'));
-    return `PASS: formal Web application ${variant}: ${variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
+    return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
   } catch(error) {
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.png`),Buffer.from(screenshot.data,'base64'));

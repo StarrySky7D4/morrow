@@ -34,6 +34,11 @@ browser profile and test files under ignored `build/`; it never uses the
 operator's browser profile. Post-deployment acceptance runs the same commands
 with `--site https://starrysky7d4.github.io/morrow/` instead of `--base-path`.
 `build/web-network-*.json` records page network requests for inspection.
+Add `--offline-edits` to the fresh UI scenario to disconnect the loaded page
+while creating a card, importing an attachment, and saving, then reconnect
+for page reload. This checks local execution; it does not claim cold startup
+without an Internet connection. Validate deployed asset hashes and MIME types
+with `python tool/verify_deployed_web.py --commit <deployed-source-commit>`.
 
 `release.json` identifies the source commit. `SOURCE.txt`, `LICENSE`,
 `THIRD_PARTY_NOTICES.txt`, `licenses/`, and `SHA256SUMS.txt` accompany each
