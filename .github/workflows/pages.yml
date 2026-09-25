@@ -63,7 +63,16 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Orphaned data acceptance failed' }
       - name: Add source and distribution notices
         run: ./tool/package_web_release.ps1
+      - name: Retain browser failure diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure
+          path: |
+            build/web-bootstrap-*-failure.*
+            build/web-network-*.json
       - uses: actions/upload-pages-artifact@v4
+        if: success()
         with:
           path: build/web
   deploy:

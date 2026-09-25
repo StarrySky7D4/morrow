@@ -21,13 +21,16 @@ function context(call,sessionId) {
 }
 export async function prepareWebApp(call,sessionId,site,variant) {
   const {evaluate,until}=context(call,sessionId);
-  // Fresh, harness-owned profile only. A static asset establishes the real
-  // origin without starting the app or requiring production test endpoints.
-  const fixture=new URL('manifest.json',site).href;
-  await call('Page.navigate',{url:fixture},sessionId);
-  await until(async()=>{try{return await evaluate(`location.href===${JSON.stringify(fixture)}`);}catch{return false;}},'fixture origin');
+  // Establish the real HTML origin with app startup blocked until test data
+  // is seeded. JSON document viewers differ between browser builds and are
+  // unsuitable as fixture documents. Only harness-owned profiles are used.
+  await call('Network.setBlockedURLs',{urls:[new URL('flutter_bootstrap.js',site).href+'*']},sessionId);
+  const navigation=await call('Page.navigate',{url:site},sessionId);
+  if(navigation.errorText)throw Error('Fixture navigation: '+navigation.errorText);
+  await until(async()=>{try{return await evaluate(`location.href===${JSON.stringify(site)}&&document.readyState!=='loading'`);}catch{return false;}},'fixture origin');
   if(variant==='legacy')await evaluate(`localStorage.setItem('flutter.daemon.studio.v1',${JSON.stringify(JSON.stringify(legacySnapshot))})`);
   if(variant==='orphan')await evaluate(`(async()=>{const root=await navigator.storage.getDirectory();const d=await root.getDirectoryHandle('morrow-workbench-v1',{create:true});await d.getFileHandle('preserved-fixture',{create:true});})()`);
+  await call('Network.setBlockedURLs',{urls:[]},sessionId);
   await call('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false},sessionId);
 }
 export async function qualifyWebApp(call,sessionId,base,root,variant) {

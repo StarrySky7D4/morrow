@@ -110,8 +110,23 @@ try {
     const { targetId } = await call('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await call('Target.attachToTarget', { targetId, flatten: true });
     await call('Page.enable', {}, sessionId);
-    if(app) {await call('Runtime.enable',{},sessionId);await call('Log.enable',{},sessionId);await call('Network.enable',{},sessionId);}
-    if(app)await prepareWebApp(call,sessionId,site,appVariant);
+    if(app) {
+      await call('Runtime.enable',{},sessionId);await call('Log.enable',{},sessionId);await call('Network.enable',{},sessionId);
+      // Edge can follow the OS language despite --lang. Keep semantic-label
+      // fixtures deterministic without modifying application preferences.
+      await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
+      await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
+    }
+    if(app) {
+      try {await prepareWebApp(call,sessionId,site,appVariant);}
+      catch(error) {
+        console.error(appDiagnostics.join('\n'));
+        const frames=await call('Page.getFrameTree',{},sessionId);console.error(JSON.stringify(frames));
+        const shot=await call('Page.captureScreenshot',{format:'png'},sessionId);
+        await writeFile(path.join(root,`build/web-bootstrap-${appVariant}-preparation-failure.png`),Buffer.from(shot.data,'base64'));
+        throw error;
+      }
+    }
     if(process.argv.includes('--renderer')) await call('Emulation.setDeviceMetricsOverride',{width:360,height:640,deviceScaleFactor:1,mobile:false},sessionId);
     await call('Page.navigate', { url: `${site}${mode==='restore'?'?restore=1':''}` }, sessionId);
     let result;
