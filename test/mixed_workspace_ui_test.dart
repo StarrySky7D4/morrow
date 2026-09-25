@@ -545,7 +545,7 @@ void main() {
       );
       expect(
         find.descendant(
-          of: find.byType(PopupMenuButton<String>).first,
+          of: find.byKey(const ValueKey('card-drag:v2-card')),
           matching: find.text('Planned'),
         ),
         findsOneWidget,

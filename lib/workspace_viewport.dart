@@ -139,6 +139,7 @@ class _WorkspaceViewportState extends State<WorkspaceViewport>
                 sliver: SliverLayoutBuilder(
                   key: widget.cardRegionKey,
                   builder: (context, constraints) => StableMasonryGrid(
+                    ids: ids,
                     gridDelegate:
                         SliverSimpleGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount:

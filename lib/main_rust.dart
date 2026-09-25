@@ -1,4 +1,5 @@
 import 'package:file_selector/file_selector.dart';
+import 'pending_ui_writes.dart';
 import 'plugins/workbench_recovery.dart';
 import 'plugins/workbench_shutdown.dart';
 import 'plugins/application_shutdown.dart';
@@ -22,18 +23,43 @@ import 'package:window_manager/window_manager.dart';
 final _sessions = SessionCoordinator();
 Future<void>? _desktopInitialization;
 final _applicationClose = _ApplicationClose();
+final _closingViewRevision = ValueNotifier(0);
+bool _retireWorkbench = false;
+
+void _renderApplication(Widget child) => runApp(
+  ValueListenableBuilder<int>(
+    valueListenable: _closingViewRevision,
+    child: child,
+    builder: (_, _, child) => ApplicationCloseSurface(
+      closing: _applicationClose.requested,
+      retired: _retireWorkbench,
+      closingView: WorkbenchShutdown(
+        session: _sessions,
+        locale: WidgetsBinding.instance.platformDispatcher.locale,
+        onBackground: _applicationClose.shutdown.continueInBackground,
+        windowError: _applicationClose.shutdown.windowError,
+      ),
+      child: child!,
+    ),
+  ),
+);
 
 class _ApplicationClose with WindowListener {
   late final ApplicationShutdown shutdown = ApplicationShutdown(
     session: _sessions,
-    showClosing: () => runApp(
-      WorkbenchShutdown(
-        session: _sessions,
-        locale: WidgetsBinding.instance.platformDispatcher.locale,
-        onBackground: shutdown.continueInBackground,
-        windowError: shutdown.windowError,
-      ),
-    ),
+    hideOnRequest: true,
+    prepareClose: () async {
+      // Freeze interaction without disposing live editors mid-commit. Retire
+      // their scopes only after admitted writes have completed.
+      await pendingUiWrites.drain();
+      _retireWorkbench = true;
+      _closingViewRevision.value++;
+      await WidgetsBinding.instance.endOfFrame.timeout(
+        const Duration(milliseconds: 100),
+        onTimeout: () {},
+      );
+    },
+    showClosing: () => _closingViewRevision.value++,
     hideWindow: windowManager.hide,
     showWindow: () async {
       await windowManager.show();
@@ -95,7 +121,9 @@ Future<void> _startSession(List<String> arguments) async {
       previewLocale ?? WidgetsBinding.instance.platformDispatcher.locale;
   final startupMessages = L10n.forLocale(startupLocale);
   final workbenchReady = ValueNotifier(false);
-  runApp(WorkbenchStartup(ready: workbenchReady, locale: previewLocale));
+  _renderApplication(
+    WorkbenchStartup(ready: workbenchReady, locale: previewLocale),
+  );
   Directory? recoveryDirectory;
   RustWorkbench? opened;
   final executable = File(Platform.resolvedExecutable).parent.path;
@@ -178,7 +206,7 @@ Future<void> _startSession(List<String> arguments) async {
     startup.mark('storage');
     final boundary = GlobalKey();
     startup.mark('runApp');
-    runApp(
+    _renderApplication(
       WorkbenchStartup(
         ready: workbenchReady,
         locale: previewLocale,
@@ -226,11 +254,13 @@ Future<void> _startSession(List<String> arguments) async {
     // outside the ordinary RPC lane, and does not authorize another writer.
     unawaited(_sessions.close().catchError((Object _) {}));
     if (_applicationClose.requested) {
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: error,
-        stack: stack,
-        context: ErrorDescription('while closing the workspace'),
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stack,
+          context: ErrorDescription('while closing the workspace'),
+        ),
+      );
       _applicationClose.observe();
       return;
     }
@@ -248,7 +278,7 @@ Future<void> _startSession(List<String> arguments) async {
       exit(1);
     }
     final targetDirectory = recoveryDirectory;
-    runApp(
+    _renderApplication(
       WorkbenchRecovery(
         session: _sessions,
         failure: error,

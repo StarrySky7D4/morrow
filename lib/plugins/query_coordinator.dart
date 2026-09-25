@@ -29,6 +29,10 @@ class QueryCoordinator {
   bool _disposed = false, _running = false, _due = false, _deferred = false;
   QueryPhase phase = QueryPhase.idle;
   List<String> ids = const [];
+
+  /// Same-view content refresh keeps the last confirmed membership visible.
+  /// New search/page/access conditions never reuse those rows.
+  bool refreshing = false;
   // Only completed operation references, never a second authority for results.
   // Returning to a view re-delivers via the host, which checks current access
   // and the original observation. No fabricated query execution or audit event.
@@ -52,6 +56,20 @@ class QueryCoordinator {
         _deferred == deferred) {
       return;
     }
+    final previousConditions = _conditions;
+    final sameView =
+        identical(_backend, backend) &&
+        previousConditions != null &&
+        previousConditions.section == conditions.section &&
+        previousConditions.filter == conditions.filter &&
+        previousConditions.text == conditions.text &&
+        previousConditions.sort == conditions.sort;
+    final retain =
+        sameView && !deferred && (phase == QueryPhase.ready || refreshing);
+    final previousIds = ids;
+    final typing =
+        previousConditions != null &&
+        previousConditions.text != conditions.text;
     if (!identical(_backend, backend) ||
         _conditions?.contentGeneration != conditions.contentGeneration) {
       _completed.clear();
@@ -64,7 +82,11 @@ class QueryCoordinator {
     _operation = previous ?? newQueryOperationId();
     _deferred = deferred;
     phase = QueryPhase.loading;
-    if (!deferred) _schedule();
+    refreshing = retain;
+    if (retain) ids = previousIds;
+    // Only text input needs debounce. Tabs, sorting and confirmed edits should
+    // reach the host immediately, while the serialized lane still coalesces.
+    if (!deferred) _schedule(typing ? debounce : Duration.zero);
   }
 
   void releaseCompletedViews() => _completed.clear();
@@ -83,6 +105,7 @@ class QueryCoordinator {
     failure = null;
     _due = false;
     ids = const [];
+    refreshing = false;
     phase = QueryPhase.idle;
   }
 
@@ -93,12 +116,12 @@ class QueryCoordinator {
     failure = null;
     ids = const [];
     phase = QueryPhase.loading;
-    _schedule();
+    _schedule(Duration.zero);
     onChanged();
   }
 
-  void _schedule() {
-    _timer = Timer(debounce, () {
+  void _schedule(Duration delay) {
+    _timer = Timer(delay, () {
       _timer = null;
       _due = true;
       _drain();
@@ -130,11 +153,14 @@ class QueryCoordinator {
           _completed.remove(_completed.keys.first);
         }
         phase = QueryPhase.ready;
+        refreshing = false;
         onChanged();
       }
     } catch (error) {
       if (!_disposed && serial == _serial) {
         failure = error is QueryFailure ? error : null;
+        ids = const [];
+        refreshing = false;
         if (failure?.terminal ?? false) _completed.remove(conditions);
         phase = QueryPhase.failed;
         onChanged();

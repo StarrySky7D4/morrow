@@ -189,7 +189,7 @@ fn disabling_invalidates_ui_and_reenabled_view_rejects_old_generation() {
 }
 
 #[test]
-fn upgrading_disables_new_bundle_and_downgrade_preserves_read_only_content() {
+fn upgrading_requires_approval_and_older_app_preserves_approved_installed_bundle() {
     let root = tempfile::tempdir().unwrap();
     let mut old = Workbench::open_managed(root.path(), Some(common::package())).unwrap();
     old.create("seed", common::idea("card")).unwrap();
@@ -206,10 +206,47 @@ fn upgrading_disables_new_bundle_and_downgrade_preserves_read_only_content() {
     assert!(current.writable());
     drop(current);
     let old = Workbench::open_managed(root.path(), Some(common::package())).unwrap();
-    assert!(!old.writable());
-    assert!(old.maintenance_warning().is_some());
-    assert!(!old.plugin_status().unwrap().available);
+    assert!(old.writable());
+    assert!(old.maintenance_warning().is_none());
+    assert_eq!(old.plugin_status().unwrap().digest, package().digest());
+    assert!(old.plugin_status().unwrap().available);
     assert_eq!(old.read("card").unwrap().revision, 1);
+}
+
+#[test]
+fn same_version_different_bundle_preserves_exact_selection_and_explicit_disable() {
+    for enabled in [true, false] {
+        let root = tempfile::tempdir().unwrap();
+        let original = package();
+        let mut manifest = original.manifest().clone();
+        manifest.display_name = "UI preview bundle".into();
+        let offered = Package::build(manifest, original.module()).unwrap();
+        assert_ne!(original.digest(), offered.digest());
+        let mut host = Workbench::open_managed(root.path(), Some(original)).unwrap();
+        if !enabled {
+            let s = host.plugin_status().unwrap();
+            host.configure_plugin(s.revision, &s.digest, false).unwrap();
+        }
+        let before = host.plugin_status().unwrap();
+        host.finish().unwrap();
+        drop(host);
+        let registry_path = root.path().join("plugin-manager/state/selection.morrow");
+        let saved = std::fs::read(&registry_path).unwrap();
+        let mut reopened = Workbench::open_managed(root.path(), Some(offered)).unwrap();
+        let after = reopened.plugin_status().unwrap();
+        assert_eq!(after.digest, before.digest);
+        assert_eq!(after.revision, before.revision);
+        assert_eq!(after.enabled, enabled);
+        assert_eq!(reopened.writable(), enabled);
+        assert!(after.available);
+        assert!(reopened.maintenance_warning().is_none());
+        assert_eq!(std::fs::read(&registry_path).unwrap(), saved);
+        if enabled {
+            reopened.create("still-working", common::idea("card")).unwrap();
+            assert!(reopened.ui_open("active").unwrap().failure.is_none());
+        }
+        reopened.finish().unwrap();
+    }
 }
 #[test]
 fn corrupted_plugin_registry_is_preserved_while_library_stays_readable() {

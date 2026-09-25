@@ -2,6 +2,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'appearance.dart';
+import 'tip_preferences.dart';
 import 'music/music_controller.dart';
 
 // Compatibility default for callers without a locale; visible UI uses the context helper.
@@ -25,6 +26,11 @@ List<String> _cornerTips(AppLocalizations labels) => [
 
 List<String> localizedFooterTips(BuildContext context) =>
     _footerTips(L10n.of(context));
+
+List<String> localizedDailyTips(BuildContext context) {
+  final l = L10n.of(context);
+  return [l.mainDailyWater, l.mainDailyIdea, l.mainDailyExplore];
+}
 
 List<String> _footerTips(AppLocalizations labels) => [
   labels.visualFooterTips1,
@@ -77,6 +83,12 @@ class _RotatingTipState extends State<RotatingTip> {
   void dispose() {
     timer?.cancel();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant RotatingTip oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.lines.join('\n') != widget.lines.join('\n')) index = 0;
   }
 
   @override
@@ -153,7 +165,11 @@ class MusicFooter extends StatelessWidget {
           Expanded(
             child: RotatingTip(
               key: const ValueKey('footer-tips'),
-              lines: localizedFooterTips(context),
+              lines:
+                  TipPreferencesScope.maybeOf(
+                    context,
+                  )?.lines('footer', localizedFooterTips(context)) ??
+                  localizedFooterTips(context),
               textOverride: music.playing && music.showLyrics
                   ? (music.lyricForDisplay(
                           untimedLabel: L10n.of(context).visualNoTimeline,

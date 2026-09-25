@@ -7,11 +7,14 @@ class ComponentMenuAction {
     required this.icon,
     required this.onSelected,
     this.enabled = true,
+    this.isEnabled,
   });
   final String label;
   final IconData icon;
   final VoidCallback onSelected;
   final bool enabled;
+  final bool Function()? isEnabled;
+  bool get isAvailable => enabled && (isEnabled?.call() ?? true);
 }
 
 /// Secondary click and keyboard context menu share the existing command paths.
@@ -30,6 +33,14 @@ class ComponentContextMenu extends StatefulWidget {
 
 class _ComponentContextMenuState extends State<ComponentContextMenu> {
   bool _open = false;
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
   Future<void> _show([Offset? position]) async {
     if (_open) return;
     final actions = widget.actions();
@@ -38,6 +49,7 @@ class _ComponentContextMenuState extends State<ComponentContextMenu> {
         Navigator.of(context).overlay?.context.findRenderObject() as RenderBox?;
     final box = context.findRenderObject() as RenderBox?;
     if (overlay == null || box == null || !box.hasSize) return;
+    _focus.requestFocus();
     final point = overlay.globalToLocal(
       position ?? box.localToGlobal(box.size.center(Offset.zero)),
     );
@@ -53,7 +65,7 @@ class _ComponentContextMenuState extends State<ComponentContextMenu> {
           for (var i = 0; i < actions.length; i++)
             PopupMenuItem<int>(
               value: i,
-              enabled: actions[i].enabled,
+              enabled: actions[i].isAvailable,
               child: Row(
                 children: [
                   Icon(actions[i].icon, size: 18),
@@ -64,7 +76,7 @@ class _ComponentContextMenuState extends State<ComponentContextMenu> {
             ),
         ],
       );
-      if (mounted && selected != null && actions[selected].enabled) {
+      if (mounted && selected != null && actions[selected].isAvailable) {
         actions[selected].onSelected();
       }
     } finally {
@@ -79,9 +91,9 @@ class _ComponentContextMenuState extends State<ComponentContextMenu> {
       const SingleActivator(LogicalKeyboardKey.contextMenu): () => _show(),
     },
     child: Focus(
-      canRequestFocus: false,
+      focusNode: _focus,
       child: GestureDetector(
-        behavior: HitTestBehavior.deferToChild,
+        behavior: HitTestBehavior.opaque,
         onSecondaryTapUp: (details) => _show(details.globalPosition),
         child: widget.child,
       ),

@@ -110,7 +110,7 @@ class _NeumorphicSurfaceState extends State<NeumorphicSurface>
         CustomPainter? edge;
         if (active) {
           if (settled) {
-            final style = widget.palette.surfaces.visualStyle;
+            final style = widget.palette.visualStyle;
             edge = style == VisualStyle.neumorphism
                 ? NeumorphicSurfacePainter(
                     depth: frame.depth,
@@ -181,7 +181,7 @@ class _SurfaceFrame {
 
   factory _SurfaceFrame.target(NeumorphicSurface widget) {
     final weights = List<double>.filled(VisualStyle.values.length, 0);
-    weights[widget.palette.surfaces.visualStyle.index] = 1;
+    weights[widget.palette.visualStyle.index] = 1;
     return _SurfaceFrame(
       weights: weights,
       depth: widget.depth * widget.palette.surfaces.styleDepth,
@@ -607,7 +607,7 @@ class NeumorphicInputBorder extends StyledInputBorder {
 /// Changes only visual theme fields. State, callbacks, padding, text and
 /// accessibility behavior remain owned by each standard Material control.
 ThemeData applyNeumorphicControls(ThemeData base, Palette palette) {
-  if (palette.surfaces.visualStyle != VisualStyle.neumorphism) return base;
+  if (palette.visualStyle != VisualStyle.neumorphism) return base;
 
   ButtonStyle buttonStyle(
     ButtonStyle? original,
@@ -977,9 +977,7 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
     final p = widget.palette;
     final next = _SwitchRelief(
       amount:
-          p.surfaces.visualStyle == VisualStyle.neumorphism &&
-              !_apple &&
-              !_highContrast
+          p.visualStyle == VisualStyle.neumorphism && !_apple && !_highContrast
           ? 1
           : 0,
       depth: p.surfaces.styleDepth,
@@ -1078,7 +1076,7 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
       final targetIcons = WidgetStateProperty.resolveWith<Icon?>((states) {
         final custom = widget.thumbIcon?.resolve(states);
         if (custom != null) return custom;
-        final glyph = switch (widget.palette.surfaces.visualStyle) {
+        final glyph = switch (widget.palette.visualStyle) {
           VisualStyle.industrial => Icons.power_settings_new_rounded,
           VisualStyle.brutalist => Icons.stop_rounded,
           _ => null,
@@ -1087,7 +1085,7 @@ class _NeumorphicSwitchState extends State<NeumorphicSwitch>
           glyph,
           size: 14,
           color:
-              (widget.palette.surfaces.visualStyle == VisualStyle.brutalist
+              (widget.palette.visualStyle == VisualStyle.brutalist
                       ? widget.palette.surface
                       : widget.palette.ink)
                   .withValues(
@@ -1323,7 +1321,7 @@ class NeumorphicChoiceChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active =
-        palette.surfaces.visualStyle == VisualStyle.neumorphism &&
+        palette.visualStyle == VisualStyle.neumorphism &&
         !MediaQuery.highContrastOf(context);
     return ChoiceChip(
       avatar: avatar,

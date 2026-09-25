@@ -1,46 +1,62 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-/// 0.7.0 retains a moved child's column after Flutter invalidates its offset.
-/// Clear that placement hint before layout; keep the Element/State itself.
-class StableMasonryGrid extends SliverMasonryGrid {
+import 'render_stable_masonry_grid.dart';
+
+/// Keeps keyed card state while invalidating positions when order changes.
+class StableMasonryGrid extends SliverMultiBoxAdaptorWidget {
   const StableMasonryGrid({
     super.key,
     required super.delegate,
-    required super.gridDelegate,
-    super.mainAxisSpacing,
-    super.crossAxisSpacing,
+    required this.ids,
+    required this.gridDelegate,
+    this.mainAxisSpacing = 0,
+    this.crossAxisSpacing = 0,
   });
 
+  final List<String> ids;
+  final SliverSimpleGridDelegate gridDelegate;
+  final double mainAxisSpacing;
+  final double crossAxisSpacing;
+
   @override
-  RenderSliverMasonryGrid createRenderObject(BuildContext context) =>
-      _StableRenderMasonryGrid(
+  RenderStableMasonryGrid createRenderObject(BuildContext context) =>
+      _IdentityMasonryGrid(
+        ids: ids,
         childManager: context as SliverMultiBoxAdaptorElement,
         gridDelegate: gridDelegate,
         mainAxisSpacing: mainAxisSpacing,
         crossAxisSpacing: crossAxisSpacing,
       );
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    RenderStableMasonryGrid renderObject,
+  ) {
+    (renderObject as _IdentityMasonryGrid).updateIds(ids);
+    renderObject
+      ..gridDelegate = gridDelegate
+      ..mainAxisSpacing = mainAxisSpacing
+      ..crossAxisSpacing = crossAxisSpacing;
+  }
 }
 
-class _StableRenderMasonryGrid extends RenderSliverMasonryGrid {
-  _StableRenderMasonryGrid({
+class _IdentityMasonryGrid extends RenderStableMasonryGrid {
+  _IdentityMasonryGrid({
+    required List<String> ids,
     required super.childManager,
     required super.gridDelegate,
     required super.mainAxisSpacing,
     required super.crossAxisSpacing,
-  });
+  }) : _ids = List.of(ids);
 
-  @override
-  void performLayout() {
-    RenderBox? child = firstChild;
-    while (child != null) {
-      final data = child.parentData! as SliverMasonryGridParentData;
-      if (data.layoutOffset == null) {
-        data.crossAxisIndex = null;
-        if (data.index == 0) data.layoutOffset = 0;
-      }
-      child = childAfter(child);
-    }
-    super.performLayout();
+  List<String> _ids;
+
+  void updateIds(List<String> ids) {
+    if (listEquals(_ids, ids)) return;
+    _ids = List.of(ids);
+    resetPlacement();
   }
 }

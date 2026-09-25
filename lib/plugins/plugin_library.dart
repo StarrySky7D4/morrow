@@ -54,6 +54,12 @@ class PluginLibraryEntry {
   final List<String> declared, approved, dependencies, declaredIo, approvedIo;
   final List<PluginTransformHandler> handlers;
   final List<String> ioHandlers;
+  bool get isTheme => handlers.any(
+    (h) =>
+        h.name == 'theme.describe' &&
+        h.inputType == 'morrow.ui.theme.request.v1' &&
+        h.outputType == 'morrow.ui.theme.v1',
+  );
 }
 
 class PluginTransformHandler {
@@ -506,7 +512,6 @@ class _PluginLibraryState extends State<PluginLibrary> {
     }
     if (!_current(backend, epoch)) return;
     await _loadPages(backend, epoch, reuseCatalog: true);
-    if (_current(backend, epoch)) widget.onChanged();
   }, (l) => l.pluginsApprovalUnknown);
 
   Future<void> _configureIo(PluginLibraryEntry entry, {bool revoke = false}) =>
@@ -813,6 +818,12 @@ class _PluginLibraryState extends State<PluginLibrary> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       _note('${entry.id} · ${entry.version}'),
+      if (entry.isTheme)
+        _note(
+          Localizations.localeOf(context).languageCode == 'zh'
+              ? '主题插件 · 可叠加界面风格；启用时会停用其他主题。'
+              : 'Theme plugin · combines with styles; enabling disables other themes.',
+        ),
       _note(
         entry.declared.isEmpty
             ? L10n.of(context).pluginsNoPermissions
@@ -892,16 +903,19 @@ class _PluginLibraryState extends State<PluginLibrary> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _button(
-                  entry.enabled
-                      ? L10n.of(context).pluginsSavePermissions
-                      : L10n.of(context).pluginsApproveEnable,
-                  'plugin-approve-${entry.id}',
-                  !_confirmed || !entry.available
-                      ? null
-                      : () => _configure(entry, true),
-                  icon: Icons.check_circle_outline,
-                ),
+                if (!entry.isTheme ||
+                    !entry.enabled ||
+                    entry.declared.isNotEmpty)
+                  _button(
+                    entry.enabled
+                        ? L10n.of(context).pluginsSavePermissions
+                        : L10n.of(context).pluginsApproveEnable,
+                    'plugin-approve-${entry.id}',
+                    !_confirmed || !entry.available
+                        ? null
+                        : () => _configure(entry, true),
+                    icon: Icons.check_circle_outline,
+                  ),
                 if (entry.enabled)
                   _button(
                     L10n.of(context).pluginsDisable,
@@ -915,7 +929,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
                   !_confirmed ? null : () => _remove(entry),
                   icon: Icons.remove_circle_outline,
                 ),
-                if (_transforms(entry).isNotEmpty)
+                if (!entry.isTheme && _transforms(entry).isNotEmpty)
                   _button(
                     L10n.of(context).pluginsUseTransform,
                     'plugin-transform-${entry.id}',

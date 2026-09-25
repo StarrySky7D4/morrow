@@ -402,11 +402,10 @@ class _StyledCheckboxState extends State<StyledCheckbox>
 
   _CheckboxFrame _target(ThemeData theme) {
     final palette = widget.palette;
-    final isNeumorphic =
-        palette.surfaces.visualStyle == VisualStyle.neumorphism;
+    final isNeumorphic = palette.visualStyle == VisualStyle.neumorphism;
     final outline =
         _customShape ??
-        (palette.surfaces.visualStyle == VisualStyle.flat
+        (palette.visualStyle == VisualStyle.flat
             ? _defaultShape(theme)
             : RoundedRectangleBorder(borderRadius: palette.borderRadius(5)));
     final factor = widget.onChanged == null ? .38 : 1.0;

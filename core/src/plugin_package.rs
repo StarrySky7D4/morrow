@@ -111,6 +111,12 @@ impl Package {
         manifest.transform_handlers = handlers;
         manifest
     }
+    /// Presentation providers share one active slot; styles remain client settings.
+    pub fn is_ui_theme(&self) -> bool {
+        self.manifest.transform_handlers.iter().any(|h|
+            h.handler == "theme.describe" && h.input_type == "morrow.ui.theme.request.v1"
+                && h.output_type == "morrow.ui.theme.v1")
+    }
     /// Package declarations are not grants or proof that the guest implements the handler.
     pub fn transform_handler(
         &self,

@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/versioned_content.dart';
 import 'package:morrow_studio/plugins/versioned_idea_view.dart';
 import 'package:morrow_studio/versioned_task_panel.dart';
+import 'reorder_test.dart' show holdMove;
 
 VersionedIdeaView _view({
   int formatVersion = 2,
@@ -95,6 +97,128 @@ const _ambiguousB = VersionedTask(
 );
 
 void main() {
+  testWidgets(
+    'task long-press uses stable IDs and rejects a replaced revision',
+    (t) async {
+      final commands = <TaskEditCommand>[];
+      Future<void> submit(TaskEditCommand c) async => commands.add(c);
+      await t.pumpWidget(
+        _frame(_view(tasks: [_ambiguousA, _ambiguousB], ambiguous: 2), submit),
+      );
+      await holdMove(
+        t,
+        find.byKey(const ValueKey('drag-handle:task-a')),
+        find.byKey(const ValueKey('task-row-task-b')),
+      );
+      expect(commands.single.kind, TaskEditKind.reorder);
+      expect(commands.single.order, ['task-b', 'task-a']);
+      await t.pumpWidget(
+        _frame(
+          _view(revision: 8, tasks: [_ambiguousA, _ambiguousB], ambiguous: 2),
+          submit,
+        ),
+      );
+      final g = await t.startGesture(
+        t.getCenter(find.byKey(const ValueKey('drag-handle:task-a'))),
+      );
+      await t.pump(const Duration(milliseconds: 450));
+      await t.pumpWidget(
+        _frame(
+          _view(revision: 9, tasks: [_ambiguousA, _ambiguousB], ambiguous: 2),
+          submit,
+        ),
+      );
+      await g.moveTo(
+        t.getCenter(find.byKey(const ValueKey('task-row-task-b'))),
+      );
+      await g.up();
+      await t.pumpAndSettle();
+      expect(commands, hasLength(1));
+      await t.pumpWidget(
+        _frame(
+          _view(tasks: [_ambiguousA, _ambiguousB], ambiguous: 2),
+          submit,
+          writable: false,
+        ),
+      );
+      await holdMove(
+        t,
+        find.byKey(const ValueKey('drag-handle:task-a')),
+        find.byKey(const ValueKey('task-row-task-b')),
+      );
+      expect(commands, hasLength(1));
+    },
+  );
+  Future<void> rightClick(WidgetTester t, String id) async {
+    final row = find.byKey(ValueKey('task-row-$id'));
+    final mouse = await t.createGesture(
+      kind: PointerDeviceKind.mouse,
+      buttons: kSecondaryMouseButton,
+    );
+    await mouse.down(t.getTopLeft(row) + const Offset(30, 12));
+    await mouse.up();
+    await mouse.removePointer();
+    await t.pumpAndSettle();
+  }
+
+  testWidgets('task context menu targets stable ID among duplicate labels', (
+    t,
+  ) async {
+    final commands = <TaskEditCommand>[];
+    await t.pumpWidget(
+      _frame(
+        _view(tasks: [_ambiguousA, _ambiguousB], ambiguous: 2),
+        (c) async => commands.add(c),
+      ),
+    );
+    await rightClick(t, 'task-b');
+    await t.tap(
+      find.descendant(
+        of: find.byType(PopupMenuItem<int>),
+        matching: find.text('Confirm complete'),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(commands.single.taskId, 'task-b');
+    expect(commands.single.kind, TaskEditKind.setCompletion);
+  });
+
+  testWidgets('task menu cannot mutate a replaced revision or read-only card', (
+    t,
+  ) async {
+    final commands = <TaskEditCommand>[];
+    Future<void> submit(TaskEditCommand c) async => commands.add(c);
+    await t.pumpWidget(
+      _frame(_view(tasks: [_ambiguousA], ambiguous: 1), submit),
+    );
+    await rightClick(t, 'task-a');
+    await t.pumpWidget(
+      _frame(_view(revision: 8, tasks: [_ambiguousA], ambiguous: 1), submit),
+    );
+    await t.tap(
+      find.descendant(
+        of: find.byType(PopupMenuItem<int>),
+        matching: find.text('Confirm complete'),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(commands, isEmpty);
+    await t.pumpWidget(
+      _frame(
+        _view(tasks: [_ambiguousA], ambiguous: 1),
+        submit,
+        writable: false,
+      ),
+    );
+    await rightClick(t, 'task-a');
+    final action = find.ancestor(
+      of: find.text('Confirm complete').last,
+      matching: find.byType(PopupMenuItem<int>),
+    );
+    expect(t.widget<PopupMenuItem<int>>(action).enabled, isFalse);
+    expect(commands, isEmpty);
+  });
+
   testWidgets('narrow task controls remain usable with enlarged text', (
     tester,
   ) async {
@@ -613,8 +737,21 @@ void main() {
           .onPressed,
       isNotNull,
     );
+    // In a real Windows window, finish the failed-submit transition and
+    // establish the native input client before replacing its previous text.
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('task-add-input')));
+    await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('task-add-input')),
+      'fixed',
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('task-add-input')))
+          .controller!
+          .text,
       'fixed',
     );
     await tester.tap(find.byKey(const ValueKey('task-add')));

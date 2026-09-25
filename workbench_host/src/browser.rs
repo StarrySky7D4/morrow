@@ -5,19 +5,20 @@ use std::path::Path;
 impl Workbench {
     /// The trusted owner loads the locally protected key before calling this.
     /// `create` must come from library selection, never from a failed open retry.
-    pub fn open_browser(name: &str, create: bool, trust: TrustedLog, key: SigningKey, package: Option<Package>) -> Result<Self> {
+    pub fn open_browser(name: &str, create: bool, trust: TrustedLog, key: SigningKey, mut package: Option<Package>) -> Result<Self> {
         if name.is_empty() || name.len() > 64 || !name.bytes().all(|c| c.is_ascii_alphanumeric() || matches!(c, b'-' | b'_')) {
             return Err("invalid browser library name".into());
         }
         let path = format!("workbench-{name}.sqlite3");
         let host = Storage::open_browser(Path::new(&path), create, trust, key)?;
-        let initialize = || -> Result<_> {
+        let mut initialize = || -> Result<_> {
             let path = format!("plugin-registry-{name}.sqlite3");
             let storage = SqliteRegistryStorage::open_opfs(Path::new(&path), true)?;
             if let Some(bundle) = &package { storage.install_package(bundle)?; }
-            initialize_manager(Registry::from_storage(Box::new(storage))?, &package)
+            initialize_manager(Registry::from_storage(Box::new(storage))?, &mut package)
         };
-        Ok(Self {state:WorkbenchState::with_manager(host, initialize(), package)?})
+        let initialized = initialize();
+        Ok(Self {state:WorkbenchState::with_manager(host, initialized, package)?})
     }
     pub(crate) fn local_state(&self) -> Result<&WorkbenchState> { Ok(&self.state) }
     pub(crate) fn local_state_mut(&mut self) -> Result<&mut WorkbenchState> { Ok(&mut self.state) }

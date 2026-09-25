@@ -480,6 +480,13 @@ extension _PageContent on _StudioState {
   };
 
   Widget pageIntro() {
+    return componentInteractions(
+      WorkbenchV1.summaryComponentId(section),
+      pageIntroBody(),
+    );
+  }
+
+  Widget pageIntroBody() {
     final (icon, text, stats) = switch (section) {
       WorkbenchPage.inbox => (
         Icons.inbox_outlined,

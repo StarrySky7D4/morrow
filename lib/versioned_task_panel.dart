@@ -1,9 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'appearance.dart';
+import 'hold_reorder.dart';
+import 'component_context_menu.dart';
 import 'neumorphic_controls.dart';
 import 'plugins/versioned_content.dart';
 import 'plugins/versioned_idea_view.dart';
@@ -307,6 +310,86 @@ class _VersionedTaskPanelState extends State<VersionedTaskPanel> {
   );
 
   Widget _identifiedRow(IdentifiedIdeaTaskView task, int index) {
+    return ComponentContextMenu(
+      key: ValueKey('task-menu-${task.taskId}'),
+      actions: () {
+        final l = L10n.of(context);
+        final openedView = widget.view;
+        bool canSelect() =>
+            mounted && _canEdit && identical(widget.view, openedView);
+        return [
+          for (final done
+              in task.needsExplicitDecision
+                  ? [true, false]
+                  : [task.completion != VersionedTaskCompletion.complete])
+            ComponentMenuAction(
+              label: done ? l.mainTaskMarkComplete : l.mainTaskMarkIncomplete,
+              icon: done ? Icons.check_circle_outline : Icons.circle_outlined,
+              isEnabled: canSelect,
+              onSelected: () =>
+                  _submit(TaskEditCommand.setCompletion(task.taskId, done)),
+            ),
+          ComponentMenuAction(
+            label: l.mainTaskRename,
+            icon: Icons.edit_outlined,
+            isEnabled: canSelect,
+            onSelected: () => _rename(task),
+          ),
+          ComponentMenuAction(
+            label: MaterialLocalizations.of(context).copyButtonLabel,
+            icon: Icons.copy_outlined,
+            onSelected: () => Clipboard.setData(ClipboardData(text: task.text)),
+          ),
+          ComponentMenuAction(
+            label: l.mainTaskMoveUp,
+            icon: Icons.arrow_upward,
+            enabled: index > 0,
+            isEnabled: canSelect,
+            onSelected: () => _reorder(index, -1),
+          ),
+          ComponentMenuAction(
+            label: l.mainTaskMoveDown,
+            icon: Icons.arrow_downward,
+            enabled: index < widget.view.tasks.length - 1,
+            isEnabled: canSelect,
+            onSelected: () => _reorder(index, 1),
+          ),
+          ComponentMenuAction(
+            label: l.mainDelete,
+            icon: Icons.delete_outline,
+            isEnabled: canSelect,
+            onSelected: () => _remove(task),
+          ),
+        ];
+      },
+      child: HoldReorder(
+        scope: this,
+        id: task.taskId,
+        revision: widget.view,
+        label: task.text,
+        enabled: _canEdit,
+        onMove: (source, target, after) {
+          if (!_canEdit) return;
+          final order = [
+            for (final row in widget.view.tasks)
+              (row as IdentifiedIdeaTaskView).taskId,
+          ];
+          _submit(
+            TaskEditCommand.reorder(
+              moveRelative(order, source as String, target as String, after),
+            ),
+          );
+        },
+        builder: (handle) => _identifiedRowBody(task, index, handle),
+      ),
+    );
+  }
+
+  Widget _identifiedRowBody(
+    IdentifiedIdeaTaskView task,
+    int index,
+    Widget handle,
+  ) {
     final l = L10n.of(context);
     final enabled = _canEdit;
     return Padding(
@@ -317,6 +400,7 @@ class _VersionedTaskPanelState extends State<VersionedTaskPanel> {
         children: [
           Row(
             children: [
+              handle,
               if (task.needsExplicitDecision)
                 const Icon(Icons.help_outline, size: 20)
               else

@@ -43,7 +43,10 @@ void main() {
         expect(
           t
               .widget<ChoiceChip>(
-                find.byKey(const ValueKey('component-mode-liquid')),
+                find.descendant(
+                  of: find.byKey(const ValueKey('component-mode-liquid')),
+                  matching: find.byType(ChoiceChip),
+                ),
               )
               .selected,
           isTrue,

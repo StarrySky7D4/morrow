@@ -11,7 +11,11 @@
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
 
-FlutterWindow::~FlutterWindow() {}
+FlutterWindow::~FlutterWindow() {
+  // Also cover partially created windows. OnDestroy clears owned resources
+  // before member destructors and before Win32Window's base destructor runs.
+  Destroy();
+}
 
 bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {

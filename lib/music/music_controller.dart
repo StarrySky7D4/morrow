@@ -186,6 +186,7 @@ class MusicController extends ChangeNotifier {
     _readLyrics();
   }
   final List<MusicTrack> tracks;
+  Object orderRevision = Object();
   final LyricsService lyricsService;
   bool onlineLyrics;
   final _lyricRequests = <MusicTrack>{};
@@ -299,6 +300,7 @@ class MusicController extends ChangeNotifier {
 
   void add(List<MusicTrack> values) {
     tracks.addAll(values);
+    orderRevision = Object();
     _readLyrics();
     save();
   }
@@ -565,6 +567,25 @@ class MusicController extends ChangeNotifier {
 
   Future<void> next() => select(index + 1);
   Future<void> previous() => select(index - 1);
+  void reorder(MusicTrack source, MusicTrack target, bool after) {
+    if (_disposed ||
+        blocked ||
+        loading ||
+        identical(source, target) ||
+        !tracks.contains(source) ||
+        !tracks.contains(target)) {
+      return;
+    }
+    final selected = current;
+    ++_selectionIntent;
+    tracks.remove(source);
+    tracks.insert(tracks.indexOf(target) + (after ? 1 : 0), source);
+    index = selected == null ? 0 : tracks.indexOf(selected);
+    orderRevision = Object();
+    // The same transport and track stay active: no reopen, seek or play call.
+    save();
+  }
+
   Future<void> seek(Duration value) => _run(() async {
     if (plugin != null) {
       final decision = await _policy('seek', value: value.inMilliseconds);
@@ -595,6 +616,7 @@ class MusicController extends ChangeNotifier {
     }
     ++_selectionIntent;
     tracks.removeAt(value);
+    orderRevision = Object();
     if (decision != null) {
       index = decision.index;
     } else if (value < index || index >= tracks.length) {

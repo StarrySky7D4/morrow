@@ -1,3 +1,5 @@
+import 'theme_plugins/theme_plugin_controller.dart';
+import 'theme_plugins/theme_artwork.dart';
 import 'editor_draft_handoff_recovery_dialog.dart';
 import 'plugins/editor_draft.dart';
 import 'plugins/editor_draft_handoff_coordinator.dart';
@@ -42,6 +44,11 @@ import 'attachments/clipboard_import.dart';
 import 'music/music_controller.dart';
 import 'music/music_panel.dart';
 import 'little_tips.dart';
+import 'tip_preferences.dart';
+import 'card_tips_editor.dart';
+import 'pending_ui_writes.dart';
+import 'card_order_preferences.dart';
+import 'hold_reorder.dart';
 import 'dart:math' as math;
 import 'appearance.dart';
 import 'animated_slider_style.dart';
@@ -77,6 +84,8 @@ import 'storage_migration.dart';
 import 'window_effects.dart';
 
 part 'pages/workspace_pages.dart';
+part 'pages/component_menus.dart';
+part 'pages/card_order.dart';
 
 Future<void> main(List<String> arguments) async {
   if (await bootstrap.startRustWorkbench(arguments)) return;
@@ -110,7 +119,13 @@ class MorrowApp extends StatefulWidget {
     this.initialLocale,
     this.onFirstFrame,
     this.libraryDirectory,
+    this.themePlugins,
+    this.tipPreferences,
+    this.cardOrderPreferences,
   });
+  final CardOrderPreferences? cardOrderPreferences;
+  final TipPreferences? tipPreferences;
+  final ThemePluginController? themePlugins;
   final Locale? initialLocale;
   final String? libraryDirectory;
 
@@ -125,6 +140,23 @@ class MorrowApp extends StatefulWidget {
 }
 
 class _MorrowAppState extends State<MorrowApp> {
+  late final ThemePluginController themePlugins;
+  late final TipPreferences tipPreferences;
+  late final CardOrderPreferences cardOrderPreferences;
+
+  void _themePluginChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    themePlugins.removeListener(_themePluginChanged);
+    if (widget.themePlugins == null) themePlugins.dispose();
+    if (widget.tipPreferences == null) tipPreferences.dispose();
+    if (widget.cardOrderPreferences == null) cardOrderPreferences.dispose();
+    super.dispose();
+  }
+
   bool _reportedFirstFrame = false;
   String uiLocale = 'system';
   FontChoice uiFont = const FontChoice();
@@ -209,6 +241,36 @@ class _MorrowAppState extends State<MorrowApp> {
   void initState() {
     super.initState();
     storage = widget.storage ?? MemoryStorage();
+    cardOrderPreferences =
+        widget.cardOrderPreferences ??
+        CardOrderPreferences(
+          storage is MemoryStorage
+              ? MemoryTipStore()
+              : LocalCardOrderStore(widget.libraryDirectory),
+        );
+    if (widget.cardOrderPreferences == null) {
+      unawaited(cardOrderPreferences.restore());
+    }
+    tipPreferences =
+        widget.tipPreferences ??
+        TipPreferences(
+          storage is MemoryStorage
+              ? MemoryTipStore()
+              : LocalTipStore(libraryDirectory: widget.libraryDirectory),
+        );
+    if (widget.tipPreferences == null) unawaited(tipPreferences.restore());
+    themePlugins =
+        widget.themePlugins ??
+        ThemePluginController(
+          backend: widget.workbench is ExternalPluginControl
+              ? widget.workbench as ExternalPluginControl
+              : null,
+          store: storage is MemoryStorage
+              ? MemoryThemePluginStore()
+              : LocalThemePluginStore(),
+        );
+    themePlugins.addListener(_themePluginChanged);
+    if (widget.themePlugins == null) unawaited(themePlugins.restore());
     warning = widget.initialWarning;
     try {
       restored = storage.read();
@@ -348,27 +410,29 @@ class _MorrowAppState extends State<MorrowApp> {
     restored = content;
     if (storageReadFailed) return;
     try {
-      await storage.write({
-        ...content,
-        'version': 1,
-        'uiLocale': uiLocale,
-        'uiFont': uiFont.toJson(),
-        'theme': theme.name,
-        'glass': mode.name,
-        'background': background.name,
-        'solidTint': solidTint,
-        'frostedOpacity': frostedOpacity,
-        'customColor': customColor?.toARGB32(),
-        'themeColor': committedThemeColor?.toARGB32(),
-        'texture': texture?.toJson(),
-        'mediaPlaying': mediaPlaying,
-        'liquidCanvas': liquidCanvas,
-        ...committedSurfaces.toJson(),
-        'themeLightness': themeLightness,
-        'windowRadius': windowRadius,
-        'cornerRadius': cornerRadius,
-        'grayscale': grayscale,
-      });
+      await pendingUiWrites.track(
+        storage.write({
+          ...content,
+          'version': 1,
+          'uiLocale': uiLocale,
+          'uiFont': uiFont.toJson(),
+          'theme': theme.name,
+          'glass': mode.name,
+          'background': background.name,
+          'solidTint': solidTint,
+          'frostedOpacity': frostedOpacity,
+          'customColor': customColor?.toARGB32(),
+          'themeColor': committedThemeColor?.toARGB32(),
+          'texture': texture?.toJson(),
+          'mediaPlaying': mediaPlaying,
+          'liquidCanvas': liquidCanvas,
+          ...committedSurfaces.toJson(),
+          'themeLightness': themeLightness,
+          'windowRadius': windowRadius,
+          'cornerRadius': cornerRadius,
+          'grayscale': grayscale,
+        }),
+      );
     } catch (error) {
       if (mounted) {
         messages.currentState?.hideCurrentSnackBar();
@@ -442,9 +506,14 @@ class _MorrowAppState extends State<MorrowApp> {
       liquidCanvas,
       themeColor,
       surfaces,
+      themePlugins.tokens(
+        theme == StudioTheme.dark ||
+            (theme == StudioTheme.custom && (themeLightness ?? .885) < .46),
+      ),
+      themePlugins.fullOverride,
     );
     final labelOverrides = WorkbenchLabelsScope.maybeOf(context);
-    return MaterialApp(
+    final app = MaterialApp(
       navigatorKey: navigation,
       scrollBehavior: const StudioScrollBehavior(),
       onGenerateTitle: (context) => L10n.of(context).mainAppTitle,
@@ -641,6 +710,13 @@ class _MorrowAppState extends State<MorrowApp> {
             });
           }
         },
+      ),
+    );
+    return CardOrderScope(
+      controller: cardOrderPreferences,
+      child: TipPreferencesScope(
+        controller: tipPreferences,
+        child: ThemePluginScope(controller: themePlugins, child: app),
       ),
     );
   }
@@ -918,6 +994,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   bool backgroundAudible = false;
   int soundRevision = 0;
   bool get soundRequested =>
+      !p.overridesMaterials &&
       backgroundSound &&
       p.backdrop == BackgroundMode.texture &&
       p.texture?.kind == TextureKind.video &&
@@ -933,28 +1010,11 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
   Widget musicPanel() => CollapsiblePanel(
     expanded: !backgroundAudible,
-    child: ComponentContextMenu(
-      actions: () => [
-        ComponentMenuAction(
-          label: music.playing ? l.visualPauseMusic : l.visualPlayMusic,
-          icon: music.playing ? Icons.pause : Icons.play_arrow,
-          enabled: music.tracks.isNotEmpty && !music.blocked && !music.loading,
-          onSelected: () => music.toggle(),
-        ),
-        ComponentMenuAction(
-          label: l.visualNextTrack,
-          icon: Icons.skip_next,
-          enabled: music.tracks.isNotEmpty && !music.blocked && !music.loading,
-          onSelected: () => music.next(),
-        ),
-        ComponentMenuAction(
-          label: l.mainComponentSettings,
-          icon: Icons.tune,
-          enabled: widget.workbench == null || widget.workbench!.writable,
-          onSelected: () => openComponentSettings('music', l.mainMusic),
-        ),
-      ],
-      child: MusicPanel(key: const ValueKey('music-panel'), controller: music),
+    child: MusicPanel(
+      key: const ValueKey('music-panel'),
+      controller: music,
+      writable: menuWritable,
+      extraActions: () => componentActions('music'),
     ),
   );
   final completed = <String>{};
@@ -1070,26 +1130,37 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   Future<void> chooseThemeColor() async {
+    if (p.uiTheme != null) return;
     final previous = p.themeColor;
     final color = await showStudioDialog<Color>(
       context: context,
+      completeAfterTransition: true,
       builder: (_) => ColorCompassDialog(
         initial: previous ?? p.accent,
         title: l.mainThemeCompass,
+        canEdit: (palette) => palette.uiTheme == null,
         onChanged: widget.onThemeColor,
       ),
     );
     if (!mounted) return;
-    widget.onThemeColor(color ?? previous);
-    if (color != null) widget.onAppearanceCommit();
+    final selected = p.uiTheme == null ? color : null;
+    widget.onThemeColor(selected ?? previous);
+    if (selected != null) widget.onAppearanceCommit();
   }
 
   Future<void> chooseColor() async {
+    if (p.overridesMaterials) return;
     final color = await showStudioDialog<Color>(
       context: context,
-      builder: (_) => ColorCompassDialog(initial: p.solidColor),
+      completeAfterTransition: true,
+      builder: (_) => ColorCompassDialog(
+        initial: p.solidColor,
+        canEdit: (palette) => !palette.overridesMaterials,
+      ),
     );
-    if (color != null && mounted) widget.onColor(color);
+    if (color != null && mounted && !p.overridesMaterials) {
+      widget.onColor(color);
+    }
   }
 
   @override
@@ -1359,19 +1430,19 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     _pendingVersioned[idea.id] = intent;
     _pluginBusyOwner = backend;
     try {
-      final current = switch (intent.command) {
-        final TaskEditCommand task => await mixed.applyWorkspaceTask(
+      final current = await pendingUiWrites.track(switch (intent.command) {
+        final TaskEditCommand task => mixed.applyWorkspaceTask(
           intent.operation,
           intent.source,
           task,
         ),
-        final CardEditCommand card => await mixed.applyWorkspaceCard(
+        final CardEditCommand card => mixed.applyWorkspaceCard(
           intent.operation,
           intent.source,
           card,
         ),
         _ => throw StateError('Unsupported versioned UI operation'),
-      };
+      });
       if (!mounted || !identical(widget.workbench, backend)) return current;
       _pendingVersioned.remove(idea.id);
       if (!_acceptContentResult(
@@ -1523,7 +1594,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     }
     _pluginBusyOwner = backend;
     try {
-      final result = await backend.apply(action, idea, text: text, flag: flag);
+      final result = await pendingUiWrites.track(
+        backend.apply(action, idea, text: text, flag: flag),
+      );
       if (!mounted || !identical(widget.workbench, backend)) return null;
       final remove = result.contentRevision == null
           ? action == PluginAction.delete
@@ -1592,7 +1665,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         List<Idea>
       >{};
   List<Idea>? _frameIdeas;
-  List<Idea> get visibleIdeas => _frameIdeas ??= _calculateVisibleIdeas();
+  List<Idea> get visibleIdeas =>
+      _frameIdeas ??= applyCardOrder(_calculateVisibleIdeas());
 
   List<Idea> _calculateVisibleIdeas() {
     pluginProjection();
@@ -1682,13 +1756,21 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     '${p.theme.name}-${p.backdrop.name}-${p.solidColor.toARGB32()}',
                   ),
                   child: SizedBox.expand(
-                    child: CustomPaint(painter: AmbientPainter(p)),
+                    child:
+                        p.uiTheme != null &&
+                            p.backdrop == BackgroundMode.ambient
+                        ? ThemeCanvas(
+                            key: const ValueKey('theme-plugin-canvas'),
+                            tokens: p.uiTheme!,
+                          )
+                        : CustomPaint(painter: AmbientPainter(p)),
                   ),
                 ),
               ),
             ),
-            Positioned.fill(child: mediaCanvas()),
-            if (p.backdrop == BackgroundMode.transparent)
+            if (!p.overridesMaterials) Positioned.fill(child: mediaCanvas()),
+            if (!p.overridesMaterials &&
+                p.backdrop == BackgroundMode.transparent)
               Positioned.fill(
                 child: IgnorePointer(
                   child: AnimatedContainer(
@@ -1700,7 +1782,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   ),
                 ),
               ),
-            if (p.liquidCanvas)
+            if (p.liquidCanvas && !p.overridesMaterials)
               Positioned.fill(
                 child: IgnorePointer(
                   child: LiquidGlassSurface(
@@ -1712,6 +1794,13 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     borderRadius: BorderRadius.circular(p.windowRadius),
                     child: const SizedBox.expand(),
                   ),
+                ),
+              ),
+            if (p.overridesMaterials && p.backdrop != BackgroundMode.ambient)
+              Positioned.fill(
+                child: ThemeCanvas(
+                  key: const ValueKey('theme-plugin-canvas'),
+                  tokens: p.uiTheme!,
                 ),
               ),
             SafeArea(
@@ -1819,7 +1908,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                                           ? 276
                                           : 0,
                                       bottom: 0,
-                                      child: FooterOverlay(music: music),
+                                      child: componentInteractions(
+                                        'footer',
+                                        FooterOverlay(music: music),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -1839,7 +1931,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Widget navigation() => Glass(
+  Widget navigation() => componentInteractions('navigation', navigationBody());
+  Widget navigationBody() => Glass(
     componentId: 'navigation',
     p: p,
     radius: 26,
@@ -1917,31 +2010,34 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                     Icons.bookmark_border_rounded,
                   ),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: p.accent.withValues(alpha: .065),
-                      borderRadius: p.borderRadius(16),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(
-                          Icons.wb_twilight_rounded,
-                          color: p.accent,
-                          size: 23,
-                        ),
-                        const SizedBox(height: 9),
-                        RotatingTip(
-                          key: const ValueKey('corner-tips'),
-                          lines: localizedCornerTips(context),
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: p.muted,
-                            height: 1.8,
+                  componentInteractions(
+                    'corner-tips',
+                    cornerTipSurface(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.wb_twilight_rounded,
+                            color: p.accent,
+                            size: 23,
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 9),
+                          RotatingTip(
+                            key: const ValueKey('corner-tips'),
+                            lines:
+                                TipPreferencesScope.maybeOf(context)?.lines(
+                                  'corner-tips',
+                                  localizedCornerTips(context),
+                                ) ??
+                                localizedCornerTips(context),
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: p.muted,
+                              height: 1.8,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 22),
@@ -2194,7 +2290,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     ],
   );
 
-  Widget searchField() => SizedBox(
+  Widget searchField() => componentInteractions('search', searchFieldBody());
+  Widget searchFieldBody() => SizedBox(
     key: const ValueKey('header-search'),
     height: 38,
     child: Glass(
@@ -2280,27 +2377,51 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     ],
   );
 
-  Widget hero() => LayoutBuilder(
+  Widget hero() => componentInteractions('hero', heroBody());
+  Widget heroBody() => LayoutBuilder(
     builder: (context, constraints) => Glass(
       componentId: 'hero',
       p: p,
       radius: 23,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 214),
+        constraints: BoxConstraints(minHeight: p.uiTheme == null ? 214 : 254),
         child: Stack(
           children: [
-            Positioned(
-              right: constraints.maxWidth < 520 ? -145 : -20,
-              top: -70,
-              bottom: -70,
-              width: 340,
-              child: IgnorePointer(
-                child: Opacity(
-                  opacity: constraints.maxWidth < 520 ? .24 : 1,
-                  child: CustomPaint(painter: OrbPainter(p)),
+            if (p.uiTheme != null &&
+                ThemePluginScope.of(context)?.plugin != null)
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: p.borderRadius(23),
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: SizedBox(
+                      width: constraints.maxWidth < 520
+                          ? constraints.maxWidth
+                          : math.min(constraints.maxWidth * .57, 381),
+                      height: double.infinity,
+                      child: Opacity(
+                        opacity: constraints.maxWidth < 520 ? .18 : 1,
+                        child: ThemeArtwork(
+                          plugin: ThemePluginScope.of(context)!.plugin!,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Positioned(
+                right: constraints.maxWidth < 520 ? -145 : -20,
+                top: -70,
+                bottom: -70,
+                width: 340,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: constraints.maxWidth < 520 ? .24 : 1,
+                    child: CustomPaint(painter: OrbPainter(p)),
+                  ),
                 ),
               ),
-            ),
             Padding(
               padding: const EdgeInsets.all(25),
               child: Column(
@@ -2319,7 +2440,10 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                       ),
                       const SizedBox(width: 7),
                       Text(
-                        l.mainHeroCaption,
+                        ThemePluginScope.of(context)?.plugin?.caption(
+                              Localizations.localeOf(context),
+                            ) ??
+                            l.mainHeroCaption,
                         style: TextStyle(
                           fontSize: 8,
                           letterSpacing: 1.6,
@@ -2404,7 +2528,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           const SizedBox(width: 8),
           Text(
             (widget.workbench?.writable ?? false) &&
-                    _queries.phase != QueryPhase.ready
+                    _queries.phase != QueryPhase.ready &&
+                    !_queries.refreshing
                 ? '…'
                 : visibleIdeas.length.toString().padLeft(2, '0'),
             style: TextStyle(fontSize: 10, color: p.muted),
@@ -2462,7 +2587,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       session: widget.workbench ?? this,
       queryPending:
           (widget.workbench?.writable ?? false) &&
-          _queries.phase == QueryPhase.loading,
+          _queries.phase == QueryPhase.loading &&
+          !_queries.refreshing,
       cardRegionKey: ValueKey(switch (section) {
         WorkbenchPage.inbox => 'inbox-list',
         WorkbenchPage.projects => 'project-board',
@@ -2486,48 +2612,16 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
           const SizedBox(height: 28),
           collectionHeader(),
           const SizedBox(height: 6),
-          Align(
-            alignment: Alignment.centerRight,
-            child: PopupMenuButton<WorkbenchSort>(
-              key: const ValueKey('workbench-sort'),
-              tooltip: l.mainArrangeIdeas,
-              initialValue: sort,
-              onSelected: (value) => setState(() => sort = value),
-              itemBuilder: (_) =>
-                  [
-                        WorkbenchSort.recent,
-                        WorkbenchSort.favoritesFirst,
-                        WorkbenchSort.title,
-                      ]
-                      .map(
-                        (label) => PopupMenuItem(
-                          value: label,
-                          child: Text(workbenchLabels.sort(label)),
-                        ),
-                      )
-                      .toList(),
-              child: Padding(
-                padding: const EdgeInsets.all(6),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.sort_rounded, size: 13, color: p.muted),
-                    const SizedBox(width: 5),
-                    Text(
-                      workbenchLabels.sort(sort),
-                      style: TextStyle(fontSize: 10, color: p.muted),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          Align(alignment: Alignment.centerRight, child: cardSortMenu()),
           const SizedBox(height: 16),
         ],
       ),
-      itemBuilder: (_, index) => section == WorkbenchPage.overview
-          ? ideaCard(items[index])
-          : specializedCard(items[index], index),
+      itemBuilder: (_, index) => sortableCard(
+        items[index],
+        section == WorkbenchPage.overview
+            ? ideaCard(items[index])
+            : specializedCard(items[index], index),
+      ),
       footer: Padding(
         padding: const EdgeInsets.only(top: 22, bottom: 94),
         child: quickCapture(),
@@ -2537,7 +2631,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
   Widget? cardsStatus(List<Idea> items) {
     if ((widget.workbench?.writable ?? false) &&
-        _queries.phase != QueryPhase.ready) {
+        _queries.phase != QueryPhase.ready &&
+        !_queries.refreshing) {
       final failed = _queries.phase == QueryPhase.failed;
       final capacity = failed && (_queries.failure?.capacity ?? false);
       return Glass(
@@ -2784,7 +2879,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     ),
   );
 
-  Widget quickCapture() => Glass(
+  Widget quickCapture() =>
+      componentInteractions('quick-capture', quickCaptureBody());
+  Widget quickCaptureBody() => Glass(
     componentId: 'quick-capture',
     p: p,
     radius: 17,
@@ -2911,11 +3008,15 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   );
 
   Future<void> chooseSurfaceColor(bool canvas) async {
+    if (p.overridesMaterials || (!canvas && p.uiTheme != null)) return;
     final before = p.surfaces;
     final chosen = await showStudioDialog<Color>(
       context: context,
+      completeAfterTransition: true,
       builder: (_) => ColorCompassDialog(
         title: canvas ? l.mainCanvasCompass : l.mainComponentCompass,
+        canEdit: (palette) =>
+            !palette.overridesMaterials && (canvas || palette.uiTheme == null),
         initial:
             (canvas ? before.canvasColor : before.componentColor) ?? p.surface,
         onChanged: (color) => updateSurfaces(
@@ -2926,14 +3027,17 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       ),
     );
     if (!mounted) return;
+    final selected = !p.overridesMaterials && (canvas || p.uiTheme == null)
+        ? chosen
+        : null;
     updateSurfaces(
-      chosen == null
+      selected == null
           ? before
           : canvas
-          ? before.copyWith(canvasColor: chosen)
-          : before.copyWith(componentColor: chosen),
+          ? before.copyWith(canvasColor: selected)
+          : before.copyWith(componentColor: selected),
     );
-    if (chosen != null) widget.onAppearanceCommit();
+    if (selected != null) widget.onAppearanceCommit();
   }
 
   Widget surfaceColorButton(bool canvas) => OutlinedButton.icon(
@@ -2976,6 +3080,23 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     ],
   );
 
+  Widget cornerTipSurface({required Widget child}) =>
+      p.surfaces.resolveComponent('corner-tips')?.enabled == true
+      ? Glass(
+          componentId: 'corner-tips',
+          p: p,
+          radius: 16,
+          child: Padding(padding: const EdgeInsets.all(14), child: child),
+        )
+      : Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: p.accent.withValues(alpha: .065),
+            borderRadius: p.borderRadius(16),
+          ),
+          child: child,
+        );
+
   Widget componentMaterialSettings() => OutlinedButton.icon(
     key: const ValueKey('component-settings'),
     onPressed: () => settingsNavigator.currentState!.push(
@@ -3003,6 +3124,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
 
   Map<String, String> get componentEntries => {
     'navigation': l.mainComponentNavigation,
+    'corner-tips': Localizations.localeOf(context).languageCode == 'zh'
+        ? '侧栏提示'
+        : 'Sidebar tips',
     'search': l.mainComponentSearch,
     'hero': l.mainComponentHero,
     'quick-capture': l.mainComponentQuickCapture,
@@ -3036,6 +3160,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   };
 
   Future<void> openComponentSettings(String id, String title) async {
+    if (p.overridesMaterials && !TipPreferences.componentIds.contains(id)) {
+      return;
+    }
     final result = await settingsNavigator.currentState!
         .push<ComponentMaterial>(
           CanvasSettingsRoute<ComponentMaterial>(
@@ -3066,7 +3193,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
           ),
         );
-    if (!mounted || result == null) return;
+    if (!mounted || result == null || p.overridesMaterials) return;
     updateSurfaces(
       p.surfaces.copyWith(components: {...p.surfaces.components, id: result}),
     );
@@ -3082,6 +3209,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             icon: Icons.open_in_new,
             onSelected: () => openIdea(idea),
           ),
+          ...extraCardActions(idea),
           ComponentMenuAction(
             label: idea.favorite
                 ? l.mainUnfavoriteTooltip(displayTitle(idea))
@@ -3089,9 +3217,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             icon: idea.favorite
                 ? Icons.bookmark_remove_outlined
                 : Icons.bookmark_add_outlined,
-            enabled:
-                (widget.workbench == null || widget.workbench!.writable) &&
-                _pluginBusyOwner == null,
+            isEnabled: () => canChangeCard(idea),
             onSelected: () {
               if (widget.workbench != null) {
                 pluginChange(PluginAction.favorite, idea, flag: !idea.favorite);
@@ -3101,13 +3227,14 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               }
             },
           ),
-          ComponentMenuAction(
-            label: l.mainComponentSettings,
-            icon: Icons.tune,
-            enabled: widget.workbench == null || widget.workbench!.writable,
-            onSelected: () =>
-                openComponentSettings('card:${idea.id}', displayTitle(idea)),
-          ),
+          if (!p.overridesMaterials)
+            ComponentMenuAction(
+              label: l.mainComponentSettings,
+              icon: Icons.tune,
+              enabled: widget.workbench == null || widget.workbench!.writable,
+              onSelected: () =>
+                  openComponentSettings('card:${idea.id}', displayTitle(idea)),
+            ),
         ],
         child: SurfaceInteraction(
           borderRadius: p.borderRadius(20),
@@ -3116,6 +3243,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       );
 
   Future<void> openPluginSettings() async {
+    final themes = ThemePluginScope.of(context);
     final backend = widget.workbench;
     if (backend == null) return;
     await settingsNavigator.currentState!.push<void>(
@@ -3123,12 +3251,15 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         builder: (_) => PluginSettingsPage(
           backend: backend,
           onChanged: () {
+            if (themes != null) unawaited(themes.refresh());
             if (mounted) setState(() => _queries.invalidate());
           },
         ),
       ),
     );
-    if (mounted) setState(() => _queries.invalidate());
+    if (themes != null) await themes.refresh();
+    // Successful plugin mutations invalidate through onChanged above. Merely
+    // opening and closing settings must not clear the current query.
   }
 
   Widget readOnlyNotice() => Glass(
@@ -3294,7 +3425,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               widget.onAppearanceCommit();
             },
           ),
-          if (p.surfaces.visualStyle.supportsDepth) ...[
+          if (p.visualStyle.supportsDepth) ...[
             const SizedBox(height: 16),
             StyleDepthSlider(
               key: const ValueKey('style-depth'),
@@ -3325,248 +3456,256 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ),
           ),
           const SizedBox(height: 18),
-          label(l.mainGlassTexture),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: modeOption(
-                  GlassMode.frosted,
-                  l.mainFrosted,
-                  Icons.blur_on_rounded,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: modeOption(
-                  GlassMode.clear,
-                  l.mainCrystal,
-                  Icons.water_drop_outlined,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: modeOption(
-                  GlassMode.liquid,
-                  l.mainLiquidGlass,
-                  Icons.lens_blur,
-                ),
-              ),
-            ],
-          ),
-          SoftSize(
-            duration: motionDuration(context, 220),
-            alignment: Alignment.topCenter,
-            child: Column(
+          if (!p.overridesMaterials) ...[
+            label(l.mainGlassTexture),
+            const SizedBox(height: 10),
+            Row(
               children: [
-                if (p.mode == GlassMode.frosted) ...[
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l.mainFrostOpacity,
-                          style: TextStyle(fontSize: 10, color: p.muted),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${(p.frostedOpacity * 100).round()}%',
-                        style: TextStyle(fontSize: 11, color: p.accent),
-                      ),
-                    ],
+                Expanded(
+                  child: modeOption(
+                    GlassMode.frosted,
+                    l.mainFrosted,
+                    Icons.blur_on_rounded,
                   ),
-                  AnimatedSliderStyle(
-                    palette: p,
-                    flatThumbRadius: 6,
-                    flatTrackHeight: 3,
-                    overlayRadius: 12,
-                    child: Slider(
-                      key: const ValueKey('frosted-opacity'),
-                      min: .2,
-                      max: 1,
-                      divisions: 80,
-                      value: p.frostedOpacity,
-                      label: '${(p.frostedOpacity * 100).round()}%',
-                      onChanged: widget.onOpacity,
-                      onChangeEnd: (_) => widget.onAppearanceCommit(),
-                    ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: modeOption(
+                    GlassMode.clear,
+                    l.mainCrystal,
+                    Icons.water_drop_outlined,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l.mainLightOpacity,
-                          style: TextStyle(fontSize: 9, color: p.muted),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          l.mainSolidOpacity,
-                          textAlign: TextAlign.end,
-                          style: TextStyle(fontSize: 9, color: p.muted),
-                        ),
-                      ),
-                    ],
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: modeOption(
+                    GlassMode.liquid,
+                    l.mainLiquidGlass,
+                    Icons.lens_blur,
                   ),
-                ],
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          componentMaterialSettings(),
-          const SizedBox(height: 14),
-          SizedBox(
-            height: 108,
-            width: double.infinity,
-            child: ClipRRect(
-              borderRadius: p.borderRadius(14),
-              child: Stack(
+            SoftSize(
+              duration: motionDuration(context, 220),
+              alignment: Alignment.topCenter,
+              child: Column(
                 children: [
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: p.dark
-                              ? [
-                                  p.themeTint(const Color(0xFF424260), .6),
-                                  p.themeTint(const Color(0xFF736381), .6),
-                                  p.themeTint(const Color(0xFF343E45), .6),
-                                ]
-                              : [
-                                  p.themeTint(const Color(0xFFD9E5DB), .6),
-                                  p.themeTint(const Color(0xFFD6C3E5), .6),
-                                  p.themeTint(const Color(0xFFEDDED6), .6),
-                                ],
+                  if (p.mode == GlassMode.frosted) ...[
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l.mainFrostOpacity,
+                            style: TextStyle(fontSize: 10, color: p.muted),
+                          ),
                         ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${(p.frostedOpacity * 100).round()}%',
+                          style: TextStyle(fontSize: 11, color: p.accent),
+                        ),
+                      ],
+                    ),
+                    AnimatedSliderStyle(
+                      palette: p,
+                      flatThumbRadius: 6,
+                      flatTrackHeight: 3,
+                      overlayRadius: 12,
+                      child: Slider(
+                        key: const ValueKey('frosted-opacity'),
+                        min: .2,
+                        max: 1,
+                        divisions: 80,
+                        value: p.frostedOpacity,
+                        label: '${(p.frostedOpacity * 100).round()}%',
+                        onChanged: widget.onOpacity,
+                        onChangeEnd: (_) => widget.onAppearanceCommit(),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 20,
-                    top: 13,
-                    child: Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        color: p.themeTint(const Color(0xFFA18AC7), .6),
-                        shape: BoxShape.circle,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l.mainLightOpacity,
+                            style: TextStyle(fontSize: 9, color: p.muted),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            l.mainSolidOpacity,
+                            textAlign: TextAlign.end,
+                            style: TextStyle(fontSize: 9, color: p.muted),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Positioned(
-                    right: 24,
-                    bottom: -10,
-                    child: Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: p.themeTint(const Color(0xFFDBC1A6), .6),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      width: 140,
-                      height: 68,
-                      child: Glass(
-                        p: p,
-                        radius: 13,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                p.clear
-                                    ? Icons.water_drop_outlined
-                                    : Icons.blur_on_rounded,
-                                color: p.ink,
-                                size: 19,
-                              ),
-                              const SizedBox(height: 5),
-                              Text(
-                                p.liquid
-                                    ? l.mainLiquidGlass
-                                    : p.clear
-                                    ? l.mainCrystal
-                                    : l.mainFrosted,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: p.ink,
-                                  letterSpacing: .4,
-                                ),
-                              ),
-                            ],
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            componentMaterialSettings(),
+            const SizedBox(height: 14),
+            SizedBox(
+              height: 108,
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: p.borderRadius(14),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: p.dark
+                                ? [
+                                    p.themeTint(const Color(0xFF424260), .6),
+                                    p.themeTint(const Color(0xFF736381), .6),
+                                    p.themeTint(const Color(0xFF343E45), .6),
+                                  ]
+                                : [
+                                    p.themeTint(const Color(0xFFD9E5DB), .6),
+                                    p.themeTint(const Color(0xFFD6C3E5), .6),
+                                    p.themeTint(const Color(0xFFEDDED6), .6),
+                                  ],
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      left: 20,
+                      top: 13,
+                      child: Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: p.themeTint(const Color(0xFFA18AC7), .6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 24,
+                      bottom: -10,
+                      child: Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: p.themeTint(const Color(0xFFDBC1A6), .6),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: SizedBox(
+                        width: 140,
+                        height: 68,
+                        child: Glass(
+                          p: p,
+                          radius: 13,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  p.clear
+                                      ? Icons.water_drop_outlined
+                                      : Icons.blur_on_rounded,
+                                  color: p.ink,
+                                  size: 19,
+                                ),
+                                const SizedBox(height: 5),
+                                Text(
+                                  p.liquid
+                                      ? l.mainLiquidGlass
+                                      : p.clear
+                                      ? l.mainCrystal
+                                      : l.mainFrosted,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: p.ink,
+                                    letterSpacing: .4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            p.liquid
-                ? l.mainLiquidDetail
-                : p.clear
-                ? l.mainCrystalDetail
-                : l.mainFrostDetail,
-            style: TextStyle(fontSize: 9, color: p.muted),
-          ),
+            const SizedBox(height: 10),
+            Text(
+              p.liquid
+                  ? l.mainLiquidDetail
+                  : p.clear
+                  ? l.mainCrystalDetail
+                  : l.mainFrostDetail,
+              style: TextStyle(fontSize: 9, color: p.muted),
+            ),
+          ],
+          if (p.overridesMaterials) componentMaterialSettings(),
           const SizedBox(height: 22),
           label(l.mainThemeTone),
           const SizedBox(height: 12),
           Row(
             children: StudioTheme.values
+                .where(
+                  (theme) => p.uiTheme == null || theme != StudioTheme.custom,
+                )
                 .map((theme) => Expanded(child: themeOption(theme)))
                 .toList(),
           ),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
-            key: const ValueKey('theme-color-compass'),
-            onPressed: chooseThemeColor,
-            icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
-            label: Text(l.mainThemeCompass, style: TextStyle(fontSize: 11)),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(38),
-              side: BorderSide(color: p.line),
-              shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+          if (p.uiTheme == null) ...[
+            OutlinedButton.icon(
+              key: const ValueKey('theme-color-compass'),
+              onPressed: chooseThemeColor,
+              icon: Icon(Icons.palette_outlined, color: p.accent, size: 16),
+              label: Text(l.mainThemeCompass, style: TextStyle(fontSize: 11)),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(38),
+                side: BorderSide(color: p.line),
+                shape: RoundedRectangleBorder(borderRadius: p.borderRadius(11)),
+              ),
             ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  p.themeColor == null
-                      ? l.mainDefaultGlobalColor
-                      : l.mainGlobalColor(
-                          '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                        ),
-                  style: TextStyle(color: p.muted, fontSize: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    p.themeColor == null
+                        ? l.mainDefaultGlobalColor
+                        : l.mainGlobalColor(
+                            '#${p.themeColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                          ),
+                    style: TextStyle(color: p.muted, fontSize: 10),
+                  ),
                 ),
-              ),
-              Flexible(
-                child: TextButton(
-                  key: const ValueKey('theme-color-reset'),
-                  onPressed: p.themeColor == null
-                      ? null
-                      : () {
-                          widget.onThemeColor(null);
-                          widget.onAppearanceCommit();
-                        },
-                  child: Text(l.mainRestoreDefault),
+                Flexible(
+                  child: TextButton(
+                    key: const ValueKey('theme-color-reset'),
+                    onPressed: p.themeColor == null
+                        ? null
+                        : () {
+                            widget.onThemeColor(null);
+                            widget.onAppearanceCommit();
+                          },
+                    child: Text(l.mainRestoreDefault),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          if (p.isCustom) ...[
+              ],
+            ),
+          ],
+          if (p.isCustom && p.uiTheme == null) ...[
             const SizedBox(height: 12),
             TextButton(
               key: const ValueKey('custom-tone-toggle'),
@@ -3647,30 +3786,32 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
                   : const SizedBox.shrink(),
             ),
           ],
-          Divider(height: 28, color: p.line),
-          Row(
-            children: [
-              Expanded(child: label(l.mainCornerRadius)),
-              label('${p.cornerRadius.round()} / 32'),
-            ],
-          ),
-          AnimatedSliderStyle(
-            palette: p,
-            child: Slider(
-              key: const ValueKey('corner-radius'),
-              value: p.cornerRadius,
-              min: 0,
-              max: 32,
-              divisions: 32,
-              label: '${p.cornerRadius.round()}',
-              onChanged: widget.onRadius,
-              onChangeEnd: (_) => widget.onAppearanceCommit(),
+          if (!p.overridesMaterials) ...[
+            Divider(height: 28, color: p.line),
+            Row(
+              children: [
+                Expanded(child: label(l.mainCornerRadius)),
+                label('${p.cornerRadius.round()} / 32'),
+              ],
             ),
-          ),
-          Text(
-            l.mainSquareCorners,
-            style: TextStyle(fontSize: 9, color: p.muted),
-          ),
+            AnimatedSliderStyle(
+              palette: p,
+              child: Slider(
+                key: const ValueKey('corner-radius'),
+                value: p.cornerRadius,
+                min: 0,
+                max: 32,
+                divisions: 32,
+                label: '${p.cornerRadius.round()}',
+                onChanged: widget.onRadius,
+                onChangeEnd: (_) => widget.onAppearanceCommit(),
+              ),
+            ),
+            Text(
+              l.mainSquareCorners,
+              style: TextStyle(fontSize: 9, color: p.muted),
+            ),
+          ],
           if (widget.desktopCaption) ...[
             const SizedBox(height: 16),
             Row(
@@ -3696,256 +3837,259 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               style: TextStyle(fontSize: 9, color: p.muted),
             ),
           ],
-          Divider(height: 24, color: p.line),
-          label(l.mainBackgroundCanvas),
-          const SizedBox(height: 10),
-          LayoutBuilder(
-            builder: (_, constraints) => Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: BackgroundMode.values
-                  .map(
-                    (mode) => SizedBox(
-                      width: (constraints.maxWidth - 8) / 2,
-                      child: backgroundOption(mode),
-                    ),
-                  )
-                  .toList(),
+          if (!p.overridesMaterials) ...[
+            Divider(height: 24, color: p.line),
+            label(l.mainBackgroundCanvas),
+            const SizedBox(height: 10),
+            LayoutBuilder(
+              builder: (_, constraints) => Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: BackgroundMode.values
+                    .map(
+                      (mode) => SizedBox(
+                        width: (constraints.maxWidth - 8) / 2,
+                        child: backgroundOption(mode),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-          ),
-          NeumorphicSwitchListTile(
-            palette: p,
-            key: const ValueKey('canvas-liquid-toggle'),
-            contentPadding: EdgeInsets.zero,
-            title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
-            subtitle: Text(
-              l.mainLiquidAllCanvases,
-              style: TextStyle(fontSize: 10),
+            NeumorphicSwitchListTile(
+              palette: p,
+              key: const ValueKey('canvas-liquid-toggle'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(l.mainLiquidEffect, style: TextStyle(fontSize: 12)),
+              subtitle: Text(
+                l.mainLiquidAllCanvases,
+                style: TextStyle(fontSize: 10),
+              ),
+              value: p.liquidCanvas,
+              onChanged: widget.onLiquidCanvas,
             ),
-            value: p.liquidCanvas,
-            onChanged: widget.onLiquidCanvas,
-          ),
-          SoftSize(
-            duration: motionDuration(context, 240),
-            alignment: Alignment.topCenter,
-            child: AnimatedSwitcher(
-              duration: motionDuration(context, 220),
-              child: Column(
-                key: ValueKey(p.backdrop),
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (p.backdrop == BackgroundMode.transparent)
-                    transparentMaterialSettings(),
-                  if (p.backdrop == BackgroundMode.solid) ...[
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: List.generate(
-                        4,
-                        (index) => Tooltip(
-                          message: [
-                            l.mainFollowTheme,
-                            l.mainLavender,
-                            l.mainSage,
-                            l.mainWarmSand,
-                          ][index],
-                          child: InkWell(
-                            key: ValueKey('tint-$index'),
-                            onTap: () => widget.onTint(index),
-                            borderRadius: p.borderRadius(20),
-                            child: Container(
-                              width: 28,
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: Palette(
-                                  p.theme,
-                                  p.mode,
-                                  p.backdrop,
-                                  index,
-                                ).solidColor,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color:
-                                      p.customColor == null &&
-                                          p.solidTint == index
-                                      ? p.accent
-                                      : p.line,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child:
-                                  p.customColor == null && p.solidTint == index
-                                  ? Icon(Icons.check, size: 13, color: p.ink)
-                                  : null,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton.icon(
-                      key: const ValueKey('custom-color'),
-                      onPressed: chooseColor,
-                      icon: Icon(
-                        Icons.palette_outlined,
-                        size: 16,
-                        color: p.accent,
-                      ),
-                      label: Text(
-                        p.customColor == null
-                            ? l.mainCustomCompass
-                            : '#${p.customColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                        style: const TextStyle(fontSize: 11),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(38),
-                        side: BorderSide(color: p.line),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: p.borderRadius(11),
-                        ),
-                      ),
-                    ),
-                  ],
-                  if (p.backdrop == BackgroundMode.texture) ...[
-                    const SizedBox(height: 14),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        OutlinedButton.icon(
-                          key: const ValueKey('texture-file'),
-                          onPressed: importing ? null : () => chooseTexture(),
-                          icon: const Icon(
-                            Icons.upload_file_outlined,
-                            size: 15,
-                          ),
-                          label: Text(
-                            l.mainLocalMedia,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ),
-                        OutlinedButton.icon(
-                          key: const ValueKey('texture-link'),
-                          onPressed: importing
-                              ? null
-                              : () => chooseTexture(online: true),
-                          icon: const Icon(Icons.link, size: 15),
-                          label: Text(
-                            l.mainOnlineMedia,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (importing)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: LinearProgressIndicator(minHeight: 2),
-                      ),
-                    if (p.texture != null) ...[
-                      const SizedBox(height: 10),
-                      if (p.texture!.kind == TextureKind.video)
-                        Row(
-                          children: [
-                            Expanded(child: label(l.mainBackgroundSound)),
-                            NeumorphicSwitch(
-                              palette: p,
-                              key: const ValueKey('background-audio'),
-                              value: backgroundSound,
-                              onChanged: setBackgroundSound,
-                            ),
-                          ],
-                        ),
-                      Text(
-                        p.texture!.name,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 10, color: p.ink),
-                      ),
+            SoftSize(
+              duration: motionDuration(context, 240),
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: motionDuration(context, 220),
+                child: Column(
+                  key: ValueKey(p.backdrop),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (p.backdrop == BackgroundMode.transparent)
+                      transparentMaterialSettings(),
+                    if (p.backdrop == BackgroundMode.solid) ...[
+                      const SizedBox(height: 12),
                       Row(
-                        children: [
-                          if (p.texture!.kind != TextureKind.image)
-                            TextButton.icon(
-                              key: const ValueKey('media-play'),
-                              onPressed: () =>
-                                  widget.onPlaying(!p.mediaPlaying),
-                              icon: SoftSwap(
-                                child: Icon(
-                                  p.mediaPlaying
-                                      ? Icons.pause_rounded
-                                      : Icons.play_arrow_rounded,
-                                  key: ValueKey(p.mediaPlaying),
-                                  size: 16,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: List.generate(
+                          4,
+                          (index) => Tooltip(
+                            message: [
+                              l.mainFollowTheme,
+                              l.mainLavender,
+                              l.mainSage,
+                              l.mainWarmSand,
+                            ][index],
+                            child: InkWell(
+                              key: ValueKey('tint-$index'),
+                              onTap: () => widget.onTint(index),
+                              borderRadius: p.borderRadius(20),
+                              child: Container(
+                                width: 28,
+                                height: 28,
+                                decoration: BoxDecoration(
+                                  color: Palette(
+                                    p.theme,
+                                    p.mode,
+                                    p.backdrop,
+                                    index,
+                                  ).solidColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color:
+                                        p.customColor == null &&
+                                            p.solidTint == index
+                                        ? p.accent
+                                        : p.line,
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                              label: Text(
-                                p.mediaPlaying ? l.mainPause : l.mainPlay,
-                                style: const TextStyle(fontSize: 10),
+                                child:
+                                    p.customColor == null &&
+                                        p.solidTint == index
+                                    ? Icon(Icons.check, size: 13, color: p.ink)
+                                    : null,
                               ),
                             ),
-                          Expanded(
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() => mediaError = null);
-                                widget.onTexture(null);
-                              },
-                              child: Text(
-                                l.mainBuiltinTexture,
-                                style: TextStyle(fontSize: 10),
-                              ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        key: const ValueKey('custom-color'),
+                        onPressed: chooseColor,
+                        icon: Icon(
+                          Icons.palette_outlined,
+                          size: 16,
+                          color: p.accent,
+                        ),
+                        label: Text(
+                          p.customColor == null
+                              ? l.mainCustomCompass
+                              : '#${p.customColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(38),
+                          side: BorderSide(color: p.line),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: p.borderRadius(11),
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (p.backdrop == BackgroundMode.texture) ...[
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          OutlinedButton.icon(
+                            key: const ValueKey('texture-file'),
+                            onPressed: importing ? null : () => chooseTexture(),
+                            icon: const Icon(
+                              Icons.upload_file_outlined,
+                              size: 15,
+                            ),
+                            label: Text(
+                              l.mainLocalMedia,
+                              style: TextStyle(fontSize: 10),
+                            ),
+                          ),
+                          OutlinedButton.icon(
+                            key: const ValueKey('texture-link'),
+                            onPressed: importing
+                                ? null
+                                : () => chooseTexture(online: true),
+                            icon: const Icon(Icons.link, size: 15),
+                            label: Text(
+                              l.mainOnlineMedia,
+                              style: TextStyle(fontSize: 10),
                             ),
                           ),
                         ],
                       ),
-                    ] else
-                      Text(
-                        l.mainMediaLimits,
-                        style: TextStyle(fontSize: 9, color: p.muted),
-                      ),
-                    if (mediaError != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          mediaError!,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).colorScheme.error,
-                            height: 1.6,
+                      if (importing)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8),
+                          child: LinearProgressIndicator(minHeight: 2),
+                        ),
+                      if (p.texture != null) ...[
+                        const SizedBox(height: 10),
+                        if (p.texture!.kind == TextureKind.video)
+                          Row(
+                            children: [
+                              Expanded(child: label(l.mainBackgroundSound)),
+                              NeumorphicSwitch(
+                                palette: p,
+                                key: const ValueKey('background-audio'),
+                                value: backgroundSound,
+                                onChanged: setBackgroundSound,
+                              ),
+                            ],
+                          ),
+                        Text(
+                          p.texture!.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 10, color: p.ink),
+                        ),
+                        Row(
+                          children: [
+                            if (p.texture!.kind != TextureKind.image)
+                              TextButton.icon(
+                                key: const ValueKey('media-play'),
+                                onPressed: () =>
+                                    widget.onPlaying(!p.mediaPlaying),
+                                icon: SoftSwap(
+                                  child: Icon(
+                                    p.mediaPlaying
+                                        ? Icons.pause_rounded
+                                        : Icons.play_arrow_rounded,
+                                    key: ValueKey(p.mediaPlaying),
+                                    size: 16,
+                                  ),
+                                ),
+                                label: Text(
+                                  p.mediaPlaying ? l.mainPause : l.mainPlay,
+                                  style: const TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  setState(() => mediaError = null);
+                                  widget.onTexture(null);
+                                },
+                                child: Text(
+                                  l.mainBuiltinTexture,
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ] else
+                        Text(
+                          l.mainMediaLimits,
+                          style: TextStyle(fontSize: 9, color: p.muted),
+                        ),
+                      if (mediaError != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                            mediaError!,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Theme.of(context).colorScheme.error,
+                              height: 1.6,
+                            ),
                           ),
                         ),
-                      ),
+                    ],
                   ],
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(switch (p.backdrop) {
-            BackgroundMode.ambient => l.mainAmbientDetail,
-            BackgroundMode.solid => l.mainSolidDetail,
-            BackgroundMode.texture => l.mainTextureDetail,
-            BackgroundMode.transparent =>
-              !kIsWeb && defaultTargetPlatform == TargetPlatform.android
-                  ? l.mainOpaqueFallback
-                  : l.mainTransparentDetail,
-          }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
-          const SizedBox(height: 13),
-          Row(
-            children: [
-              Icon(
-                Icons.check_circle_outline_rounded,
-                size: 12,
-                color: p.accent,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  l.mainAutosaveNotice,
-                  style: TextStyle(fontSize: 9, color: p.muted),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+            Text(switch (p.backdrop) {
+              BackgroundMode.ambient => l.mainAmbientDetail,
+              BackgroundMode.solid => l.mainSolidDetail,
+              BackgroundMode.texture => l.mainTextureDetail,
+              BackgroundMode.transparent =>
+                !kIsWeb && defaultTargetPlatform == TargetPlatform.android
+                    ? l.mainOpaqueFallback
+                    : l.mainTransparentDetail,
+            }, style: TextStyle(fontSize: 9, color: p.muted, height: 1.6)),
+            const SizedBox(height: 13),
+            Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 12,
+                  color: p.accent,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    l.mainAutosaveNotice,
+                    style: TextStyle(fontSize: 9, color: p.muted),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     ),
@@ -4061,7 +4205,9 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
   }
 
   Widget themeOption(StudioTheme theme) {
-    final selected = p.theme == theme;
+    final selected = p.uiTheme == null
+        ? p.theme == theme
+        : (p.dark ? StudioTheme.dark : StudioTheme.white) == theme;
     final color = switch (theme) {
       StudioTheme.white => const Color(0xFFFAFAFC),
       StudioTheme.custom => const Color(0xFFCFD1DA),
@@ -4142,7 +4288,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Widget scratchpad() => Glass(
+  Widget scratchpad() => componentInteractions('daily', scratchpadBody());
+  Widget scratchpadBody() => Glass(
     componentId: 'daily',
     p: p,
     radius: 22,
@@ -4166,51 +4313,23 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
             ],
           ),
           const SizedBox(height: 17),
-          LittleTask(
-            title: l.mainDailyWater,
-            done: completed.contains('给自己倒一杯水'),
-            onChanged: (done) {
-              setState(() {
-                if (done) {
-                  completed.add('给自己倒一杯水');
-                } else {
-                  completed.remove('给自己倒一杯水');
-                }
-              });
-              persist();
-            },
-          ),
-          LittleTask(
-            title: l.mainDailyIdea,
-            done: completed.contains('把一个想法写下来'),
-            onChanged: (done) {
-              setState(() {
-                if (done) {
-                  completed.add('把一个想法写下来');
-                } else {
-                  completed.remove('把一个想法写下来');
-                }
-              });
-              persist();
-            },
-          ),
-          LittleTask(
-            title: l.mainDailyExplore,
-            done: completed.contains('留十分钟，随便探索'),
-            onChanged: (done) {
-              setState(() {
-                if (done) {
-                  completed.add('留十分钟，随便探索');
-                } else {
-                  completed.remove('留十分钟，随便探索');
-                }
-              });
-              persist();
-            },
-          ),
+          for (final item in dailyTipItems)
+            LittleTask(
+              key: ValueKey('daily-task:${item.id}'),
+              title: item.text,
+              canChange: () =>
+                  mounted &&
+                  menuWritable &&
+                  dailyTipItems.any((current) => current.id == item.id),
+              done: completed.contains(item.id),
+              onChanged: (done) => setDailyTipCompletion(item.id, done),
+            ),
           const SizedBox(height: 9),
           Text(
-            l.mainSlowProgress,
+            TipPreferencesScope.maybeOf(
+                  context,
+                )?.dailyCaption(l.mainSlowProgress) ??
+                l.mainSlowProgress,
             style: TextStyle(fontSize: 9, color: p.muted),
           ),
         ],
@@ -4351,6 +4470,7 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
               })) {
             continue;
           }
+          if (_sameContent(current)) return;
           setState(() {
             ideas
               ..clear()
@@ -4374,6 +4494,28 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
         }
       }
     }
+  }
+
+  bool _sameContent(List<Idea> current) {
+    if (current.length != ideas.length) return false;
+    for (var i = 0; i < current.length; i++) {
+      final a = ideas[i], b = current[i];
+      // Native content revisions cover tasks/assets too. Legacy backends without
+      // revisions deliberately take the existing full refresh path.
+      if (a.contentRevision == null ||
+          a.contentRevision != b.contentRevision ||
+          a.id != b.id ||
+          a.contentDeleted != b.contentDeleted ||
+          a.title != b.title ||
+          a.description != b.description ||
+          a.category != b.category ||
+          a.stage != b.stage ||
+          a.favorite != b.favorite ||
+          a.versioned?.projectedStage != b.versioned?.projectedStage) {
+        return false;
+      }
+    }
+    return true;
   }
 
   Future<void> createIdea() async {
@@ -4567,7 +4709,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> openIdea(Idea idea) async {
+  Future<void> openIdea(Idea idea, {String? initialAction}) async {
+    if (initialAction != null && !canChangeCard(idea)) return;
     final backend = widget.workbench;
     void rebindVersionedDialog(
       BuildContext dialogContext,
@@ -4593,220 +4736,238 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       }
     }
 
-    final action = await showStudioDialog<String>(
-      context: context,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (_, refresh) => StudioDialog(
-          icon: idea.icon,
-          title: displayTitle(idea),
-          subtitle: l.mainIdeaDetails,
-          content: SizedBox(
-            width: 390,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    categoryLabel(idea.category),
-                    style: TextStyle(color: p.accent, fontSize: 12),
-                  ),
-                  const SizedBox(height: 18),
-                  IdeaMarkdown(
-                    data: displayDescription(idea),
-                    attachments: idea.attachments,
-                  ),
-                  if (idea.attachments.isNotEmpty) ...[
-                    const SizedBox(height: 18),
-                    Text(
-                      l.mainAttachmentCount(idea.attachments.length),
-                      style: TextStyle(color: p.accent),
-                    ),
-                    ...idea.attachments.map(
-                      (item) => AttachmentTile(attachment: item),
-                    ),
-                  ],
-                  if (idea.category == '实验') ...[
-                    const SizedBox(height: 18),
-                    Text(l.mainHypothesis, style: TextStyle(color: p.accent)),
-                    SelectableText(
-                      idea.hypothesis.isEmpty
-                          ? l.mainNoHypothesis
-                          : idea.hypothesis,
-                    ),
-                    const SizedBox(height: 12),
-                    Text(l.mainObservations, style: TextStyle(color: p.accent)),
-                    SelectableText(
-                      idea.conclusion.isEmpty
-                          ? l.mainAwaitDiscovery
-                          : idea.conclusion,
-                    ),
-                  ],
-                  if (idea.versioned != null) ...[
-                    const SizedBox(height: 18),
-                    DropdownButtonFormField<String>(
-                      key: ValueKey(
-                        'versioned-category-${idea.id}-${idea.contentRevision}',
+    final action =
+        initialAction ??
+        await showStudioDialog<String>(
+          context: context,
+          builder: (dialogContext) => StatefulBuilder(
+            builder: (_, refresh) => StudioDialog(
+              icon: idea.icon,
+              title: displayTitle(idea),
+              subtitle: l.mainIdeaDetails,
+              content: SizedBox(
+                width: 390,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        categoryLabel(idea.category),
+                        style: TextStyle(color: p.accent, fontSize: 12),
                       ),
-                      initialValue: idea.category,
-                      decoration: InputDecoration(
-                        labelText: l.mainCategoryPrompt,
+                      const SizedBox(height: 18),
+                      IdeaMarkdown(
+                        data: displayDescription(idea),
+                        attachments: idea.attachments,
                       ),
-                      items: ['灵感', '进行中', '实验']
-                          .map(
-                            (value) => DropdownMenuItem(
-                              value: value,
-                              child: Text(
-                                value == '灵感'
-                                    ? l.mainPageInbox
-                                    : value == '进行中'
-                                    ? l.mainPageProjects
-                                    : l.mainPageLaboratory,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: backend?.writable != true
-                          ? null
-                          : (value) async {
-                              if (!mounted ||
-                                  !identical(widget.workbench, backend) ||
-                                  value == null ||
-                                  value == idea.category) {
+                      if (idea.attachments.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        Text(
+                          l.mainAttachmentCount(idea.attachments.length),
+                          style: TextStyle(color: p.accent),
+                        ),
+                        ...idea.attachments.map(
+                          (item) => AttachmentTile(attachment: item),
+                        ),
+                      ],
+                      if (idea.category == '实验') ...[
+                        const SizedBox(height: 18),
+                        Text(
+                          l.mainHypothesis,
+                          style: TextStyle(color: p.accent),
+                        ),
+                        SelectableText(
+                          idea.hypothesis.isEmpty
+                              ? l.mainNoHypothesis
+                              : idea.hypothesis,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          l.mainObservations,
+                          style: TextStyle(color: p.accent),
+                        ),
+                        SelectableText(
+                          idea.conclusion.isEmpty
+                              ? l.mainAwaitDiscovery
+                              : idea.conclusion,
+                        ),
+                      ],
+                      if (idea.versioned != null) ...[
+                        const SizedBox(height: 18),
+                        DropdownButtonFormField<String>(
+                          key: ValueKey(
+                            'versioned-category-${idea.id}-${idea.contentRevision}',
+                          ),
+                          initialValue: idea.category,
+                          decoration: InputDecoration(
+                            labelText: l.mainCategoryPrompt,
+                          ),
+                          items: ['灵感', '进行中', '实验']
+                              .map(
+                                (value) => DropdownMenuItem(
+                                  value: value,
+                                  child: Text(
+                                    value == '灵感'
+                                        ? l.mainPageInbox
+                                        : value == '进行中'
+                                        ? l.mainPageProjects
+                                        : l.mainPageLaboratory,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: backend?.writable != true
+                              ? null
+                              : (value) async {
+                                  if (!mounted ||
+                                      !identical(widget.workbench, backend) ||
+                                      value == null ||
+                                      value == idea.category) {
+                                    return;
+                                  }
+                                  try {
+                                    final updated = await versionedChange(
+                                      idea,
+                                      CardEditCommand.setCategory(
+                                        value,
+                                        value == '进行中'
+                                            ? '计划中'
+                                            : value == '实验'
+                                            ? '待验证'
+                                            : '待整理',
+                                      ),
+                                    );
+                                    if (mounted &&
+                                        dialogContext.mounted &&
+                                        identical(widget.workbench, backend)) {
+                                      refresh(() => idea = updated);
+                                    }
+                                  } catch (error) {
+                                    if (dialogContext.mounted &&
+                                        (error is VersionedMutationNoCommit ||
+                                            error
+                                                is VersionedMutationNotSubmitted)) {
+                                      rebindVersionedDialog(
+                                        dialogContext,
+                                        refresh,
+                                      );
+                                    }
+                                  }
+                                },
+                        ),
+                        VersionedTaskPanel(
+                          key: ValueKey('versioned-tasks-${idea.id}'),
+                          view: idea.versioned!,
+                          writable: backend?.writable == true,
+                          busy: _pluginBusyOwner != null,
+                          onCommand: (command) async {
+                            if (!mounted ||
+                                !identical(widget.workbench, backend)) {
+                              throw const VersionedMutationNotSubmitted();
+                            }
+                            try {
+                              final updated = await versionedChange(
+                                idea,
+                                command,
+                              );
+                              if (mounted &&
+                                  dialogContext.mounted &&
+                                  identical(widget.workbench, backend)) {
+                                refresh(() => idea = updated);
+                              }
+                            } catch (error) {
+                              if (dialogContext.mounted &&
+                                  (error is VersionedMutationNoCommit ||
+                                      error is VersionedMutationNotSubmitted)) {
+                                rebindVersionedDialog(dialogContext, refresh);
+                              }
+                              rethrow;
+                            }
+                          },
+                        ),
+                      ],
+                      if (idea.todos.isNotEmpty) ...[
+                        const SizedBox(height: 22),
+                        Text(
+                          l.mainProgress(
+                            idea.legacyCompletedCount,
+                            idea.todos.length,
+                          ),
+                          style: TextStyle(color: p.accent, fontSize: 11),
+                        ),
+                        const SizedBox(height: 8),
+                        ...idea.todos.map(
+                          (todo) => LittleTask(
+                            canChange: () => canChangeCard(idea),
+                            title: displayTodo(idea, todo),
+                            done: idea.completed.contains(todo),
+                            onChanged: (done) async {
+                              if (idea.todos
+                                          .where((value) => value == todo)
+                                          .length >
+                                      1 &&
+                                  !await confirmLegacyTodoChange(
+                                    l.mainLegacyTodoGroup(todo),
+                                  )) {
                                 return;
                               }
-                              try {
-                                final updated = await versionedChange(
+                              if (!mounted ||
+                                  !dialogContext.mounted ||
+                                  !identical(widget.workbench, backend)) {
+                                return;
+                              }
+                              if (widget.workbench != null) {
+                                final updated = await pluginChange(
+                                  PluginAction.todo,
                                   idea,
-                                  CardEditCommand.setCategory(
-                                    value,
-                                    value == '进行中'
-                                        ? '计划中'
-                                        : value == '实验'
-                                        ? '待验证'
-                                        : '待整理',
-                                  ),
+                                  text: todo,
+                                  flag: done,
                                 );
-                                if (mounted &&
-                                    dialogContext.mounted &&
-                                    identical(widget.workbench, backend)) {
+                                if (updated != null && dialogContext.mounted) {
                                   refresh(() => idea = updated);
                                 }
-                              } catch (error) {
-                                if (dialogContext.mounted &&
-                                    (error is VersionedMutationNoCommit ||
-                                        error
-                                            is VersionedMutationNotSubmitted)) {
-                                  rebindVersionedDialog(dialogContext, refresh);
-                                }
+                                return;
                               }
+                              setState(() {
+                                if (done) {
+                                  idea.completed.add(todo);
+                                } else {
+                                  idea.completed.remove(todo);
+                                }
+                              });
+                              refresh(() {});
+                              persist();
                             },
-                    ),
-                    VersionedTaskPanel(
-                      key: ValueKey('versioned-tasks-${idea.id}'),
-                      view: idea.versioned!,
-                      writable: backend?.writable == true,
-                      busy: _pluginBusyOwner != null,
-                      onCommand: (command) async {
-                        if (!mounted || !identical(widget.workbench, backend)) {
-                          throw const VersionedMutationNotSubmitted();
-                        }
-                        try {
-                          final updated = await versionedChange(idea, command);
-                          if (mounted &&
-                              dialogContext.mounted &&
-                              identical(widget.workbench, backend)) {
-                            refresh(() => idea = updated);
-                          }
-                        } catch (error) {
-                          if (dialogContext.mounted &&
-                              (error is VersionedMutationNoCommit ||
-                                  error is VersionedMutationNotSubmitted)) {
-                            rebindVersionedDialog(dialogContext, refresh);
-                          }
-                          rethrow;
-                        }
-                      },
-                    ),
-                  ],
-                  if (idea.todos.isNotEmpty) ...[
-                    const SizedBox(height: 22),
-                    Text(
-                      l.mainProgress(
-                        idea.legacyCompletedCount,
-                        idea.todos.length,
-                      ),
-                      style: TextStyle(color: p.accent, fontSize: 11),
-                    ),
-                    const SizedBox(height: 8),
-                    ...idea.todos.map(
-                      (todo) => LittleTask(
-                        title: displayTodo(idea, todo),
-                        done: idea.completed.contains(todo),
-                        onChanged: (done) async {
-                          if (idea.todos
-                                      .where((value) => value == todo)
-                                      .length >
-                                  1 &&
-                              !await confirmLegacyTodoChange(
-                                l.mainLegacyTodoGroup(todo),
-                              )) {
-                            return;
-                          }
-                          if (!mounted ||
-                              !dialogContext.mounted ||
-                              !identical(widget.workbench, backend)) {
-                            return;
-                          }
-                          if (widget.workbench != null) {
-                            final updated = await pluginChange(
-                              PluginAction.todo,
-                              idea,
-                              text: todo,
-                              flag: done,
-                            );
-                            if (updated != null && dialogContext.mounted) {
-                              refresh(() => idea = updated);
-                            }
-                            return;
-                          }
-                          setState(() {
-                            if (done) {
-                              idea.completed.add(todo);
-                            } else {
-                              idea.completed.remove(todo);
-                            }
-                          });
-                          refresh(() {});
-                          persist();
-                        },
-                      ),
-                    ),
-                  ],
-                ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, 'delete'),
+                  child: Text(
+                    l.mainDelete,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, 'edit'),
+                  child: Text(l.mainEdit),
+                ),
+                FilledButton.tonal(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: Text(l.mainDone),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, 'delete'),
-              child: Text(
-                l.mainDelete,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
-              ),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, 'edit'),
-              child: Text(l.mainEdit),
-            ),
-            FilledButton.tonal(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l.mainDone),
-            ),
-          ],
-        ),
-      ),
-    );
+        );
     if (!mounted || !identical(widget.workbench, backend)) return;
     if (action == 'edit') {
       WorkbenchEditorSession? editor;
@@ -4927,14 +5088,30 @@ class LittleTask extends StatelessWidget {
     required this.title,
     required this.done,
     required this.onChanged,
+    this.canChange,
   });
   final String title;
   final bool done;
   final ValueChanged<bool> onChanged;
+  final bool Function()? canChange;
   @override
-  Widget build(BuildContext context) => InkWell(
+  Widget build(BuildContext context) => ComponentContextMenu(
+    actions: () => [
+      ComponentMenuAction(
+        label: done
+            ? L10n.of(context).mainTaskMarkIncomplete
+            : L10n.of(context).mainTaskMarkComplete,
+        icon: done ? Icons.circle_outlined : Icons.check_circle_outline,
+        isEnabled: canChange,
+        onSelected: () => onChanged(!done),
+      ),
+    ],
+    child: taskBody(context),
+  );
+
+  Widget taskBody(BuildContext context) => InkWell(
     borderRadius: AppearanceScope.of(context).borderRadius(7),
-    onTap: () => onChanged(!done),
+    onTap: (canChange?.call() ?? true) ? () => onChanged(!done) : null,
     child: Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(
@@ -5209,7 +5386,9 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
     try {
       final result = _editor == null
           ? _frozenDraft!
-          : await _editor!.save(_frozenDraft!, _frozenFields!);
+          : await pendingUiWrites.track(
+              _editor!.save(_frozenDraft!, _frozenFields!),
+            );
       if (!mounted) return;
       if (!(widget.isCurrent?.call() ?? true)) {
         throw WorkbenchCommittedRefreshFailure(
@@ -5714,18 +5893,12 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
                   ],
                   const SizedBox(height: 18),
                   if (_baseline?.versioned == null)
-                    TextField(
+                    CardTipsEditor(
                       key: const ValueKey('idea-todos'),
                       controller: todos,
-                      readOnly: importing,
+                      enabled: !importing,
                       focusNode: todosFocus,
-                      minLines: 2,
-                      maxLines: 4,
-                      maxLength: 1000,
-                      decoration: InputDecoration(
-                        labelText: l.mainTodosPrompt,
-                        alignLabelWithHint: true,
-                      ),
+                      title: l.mainTodosPrompt,
                     ),
                 ],
               ),

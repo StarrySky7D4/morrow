@@ -7,7 +7,7 @@ import 'styled_checkbox.dart';
 
 /// Keeps Material's controls in charge of state, focus, gestures and semantics.
 ThemeData applyVisualStyleControls(ThemeData base, Palette palette) {
-  final style = palette.surfaces.visualStyle;
+  final style = palette.visualStyle;
   if (style == VisualStyle.flat) return base;
   if (style == VisualStyle.neumorphism) {
     return applyNeumorphicControls(base, palette);

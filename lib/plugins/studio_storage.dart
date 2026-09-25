@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import '../media/local_source_uri_native.dart'
     if (dart.library.js_interop) '../media/local_source_uri_web.dart'
     as media_uri;
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/foundation.dart' show listEquals, mapEquals;
 import 'package:capnproto_dart/capnproto_dart.dart';
 import '../storage.dart';
 import '../save_recovery.dart';
@@ -89,11 +89,13 @@ class RustStudioStorage implements StudioStorage, SaveRecoveryStorage {
     }
     final result = _pending.then((_) async {
       try {
-        await backend.saveUiLocale(locale);
+        if (_snapshot['uiLocale'] != locale) await backend.saveUiLocale(locale);
         // Locale remains writable without a guest plugin. Preserve its confirmed
         // value even if an independent appearance write subsequently fails.
         _snapshot = {..._snapshot, 'uiLocale': locale};
-        await backend.saveUiFont(font);
+        if (!mapEquals(_snapshot['uiFont'] as Map?, font.toJson())) {
+          await backend.saveUiFont(font);
+        }
         _snapshot = {..._snapshot, 'uiFont': font.toJson()};
         if (admittedEpoch != _writeFailureEpoch &&
             (backend.pendingPreferencesOperation != null ||

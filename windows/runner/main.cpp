@@ -38,6 +38,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
     ::DispatchMessage(&msg);
   }
 
+  // window_manager posts WM_QUIT without destroying the HWND. Tear down the
+  // live Flutter view while derived handlers and COM are still valid. Letting
+  // member destruction do this after CoUninitialize leaves callbacks pointing
+  // at a partly destroyed controller during native child-window teardown.
+  window.Destroy();
   ::CoUninitialize();
   return EXIT_SUCCESS;
 }

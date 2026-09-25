@@ -12,6 +12,8 @@ class ApplicationShutdown {
     required this.showWindow,
     required this.destroyWindow,
     this.backgroundReminder = const Duration(seconds: 30),
+    this.hideOnRequest = false,
+    this.prepareClose,
   });
 
   final SessionCoordinator session;
@@ -20,6 +22,9 @@ class ApplicationShutdown {
   final Future<void> Function() showWindow;
   final Future<void> Function() destroyWindow;
   final Duration backgroundReminder;
+  final bool hideOnRequest;
+  final Future<void> Function()? prepareClose;
+  bool _preparing = false, _prepared = false;
 
   bool requested = false;
   bool hidden = false;
@@ -58,12 +63,33 @@ class ApplicationShutdown {
     }
     requested = true;
     showClosing();
+    if (hideOnRequest) unawaited(continueInBackground());
     observe();
   }
 
   void observe() {
     if (!requested || destroying) return;
     if (session.owner == null && session.phase == SessionPhase.opening) {
+      return;
+    }
+    if (!_prepared && prepareClose != null) {
+      if (!_preparing) {
+        _preparing = true;
+        unawaited(
+          prepareClose!().then(
+            (_) {
+              _prepared = true;
+              observe();
+            },
+            onError: (Object error, StackTrace _) {
+              _preparing = false;
+              windowError = error;
+              showClosing();
+              if (hidden) unawaited(_reveal());
+            },
+          ),
+        );
+      }
       return;
     }
     if (session.mayRecover) {

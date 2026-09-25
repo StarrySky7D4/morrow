@@ -174,18 +174,19 @@ impl WorkbenchState {
     fn with_storage(
         host: storage::Storage,
         root: &Path,
-        package: Option<Package>,
+        mut package: Option<Package>,
     ) -> Result<Self> {
         use morrow_core::plugin_package::{catalog::Catalog, registry::Registry};
-        let initialize = || -> Result<Manager> {
+        let mut initialize = || -> Result<Manager> {
             let catalog = Catalog::open(&root.join("plugin-manager/packages"))?;
             if let Some(bundle) = &package {
                 catalog.install(bundle)?;
             }
             let registry = Registry::open(&root.join("plugin-manager/state"), catalog)?;
-            initialize_manager(registry, &package)
+            initialize_manager(registry, &mut package)
         };
-        Self::with_manager(host, initialize(), package)
+        let initialized = initialize();
+        Self::with_manager(host, initialized, package)
     }
     fn with_manager(mut host: storage::Storage, initialized: Result<Manager>, package: Option<Package>) -> Result<Self> {
         let (mut manager, mut plugin_warning) = match initialized {
@@ -742,10 +743,27 @@ pub fn restore_active_key(root: &Path, selected: &Path) -> Result<()> {
     }
 }
 
-fn initialize_manager(registry: morrow_core::plugin_package::registry::Registry, package: &Option<Package>) -> Result<Manager> {
+fn initialize_manager(registry: morrow_core::plugin_package::registry::Registry, package: &mut Option<Package>) -> Result<Manager> {
     let mut manager = Manager::new(registry, Limits::default());
-    if let Some(bundle) = &package {
+    if let Some(bundle) = package.as_ref() {
         let id = &bundle.manifest().package_id;
+        if let Some(selected) = manager.selection(id) {
+            if selected.digest != bundle.digest() {
+                let installed = manager.installed_package(selected.digest)?;
+                let offered_version = semver::Version::parse(&bundle.manifest().package_version)?;
+                let installed_version = semver::Version::parse(&installed.manifest().package_version)?;
+                if offered_version.cmp_precedence(&installed_version)
+                    != std::cmp::Ordering::Greater
+                {
+                    // A UI-only preview or an older app must not downgrade the
+                    // library's immutable selection, discard approvals, or make
+                    // every plugin unavailable with RevisionConflict. Reuse only
+                    // the exact installed digest; disabled stays disabled.
+                    *package = Some(installed);
+                    return Ok(manager);
+                }
+            }
+        }
         let first = manager.revision() == 0 && manager.selection(id).is_none();
         manager.select(bundle, manager.revision())?;
         if first {

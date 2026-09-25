@@ -126,7 +126,15 @@ Future<void> finishQualification(
     try {
       if (player.playing) throw StateError('Unexpected playback on restore');
       await player.select(0);
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+      // Decoder startup and the first position event vary by audio device.
+      // Wait for evidence with a deadline instead of assuming 500 ms is enough.
+      final playbackDeadline = Stopwatch()..start();
+      while (player.error == null &&
+          (player.position == Duration.zero ||
+              player.duration == Duration.zero) &&
+          playbackDeadline.elapsed < const Duration(seconds: 5)) {
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+      }
       if (player.error != null ||
           player.position.inMilliseconds <= 0 ||
           player.duration.inMilliseconds <= 0) {

@@ -13,6 +13,10 @@ import '../animated_slider_style.dart';
 import '../media/texture_repository.dart';
 import '../media/texture_source.dart';
 import 'music_controller.dart';
+import '../component_context_menu.dart';
+import '../hold_reorder.dart';
+
+part 'music_context_menu.dart';
 
 enum _ImportFailure implements Exception {
   audioType,
@@ -22,8 +26,15 @@ enum _ImportFailure implements Exception {
 }
 
 class MusicPanel extends StatefulWidget {
-  const MusicPanel({super.key, required this.controller});
+  const MusicPanel({
+    super.key,
+    required this.controller,
+    this.extraActions,
+    this.writable = true,
+  });
   final MusicController controller;
+  final bool writable;
+  final List<ComponentMenuAction> Function()? extraActions;
   @override
   State<MusicPanel> createState() => _MusicPanelState();
 }
@@ -38,6 +49,10 @@ class _MusicPanelState extends State<MusicPanel> {
     'lrc',
   ];
   bool expanded = false, importing = false;
+  void togglePlaylist() => setState(() {
+    expanded = !expanded;
+    _playlistVisited = true;
+  });
   bool _playlistVisited = false;
   MusicController get music => widget.controller;
   Future<void> pick(String type) async {
@@ -212,7 +227,13 @@ class _MusicPanelState extends State<MusicPanel> {
   String clock(Duration value) =>
       '${value.inMinutes}:${(value.inSeconds % 60).toString().padLeft(2, '0')}';
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ComponentContextMenu(
+    key: const ValueKey('music-context-menu'),
+    actions: panelActions,
+    child: panelBody(context),
+  );
+
+  Widget panelBody(BuildContext context) {
     final p = AppearanceScope.of(context);
     return ListenableBuilder(
       listenable: music,
@@ -470,7 +491,28 @@ class _MusicPanelState extends State<MusicPanel> {
                                   shrinkWrap: true,
                                   primary: false,
                                   itemCount: music.tracks.length,
-                                  itemBuilder: (context, index) =>
+                                  itemBuilder: (context, index) => HoldReorder(
+                                    key: ObjectKey(music.tracks[index]),
+                                    scope: this,
+                                    id: music.tracks[index],
+                                    revision: music.orderRevision,
+                                    label: music.tracks[index].title,
+                                    enabled:
+                                        widget.writable &&
+                                        !importing &&
+                                        !music.loading &&
+                                        !music.blocked,
+                                    onMove: (source, target, after) {
+                                      if (widget.writable && !importing) {
+                                        music.reorder(
+                                          source as MusicTrack,
+                                          target as MusicTrack,
+                                          after,
+                                        );
+                                      }
+                                    },
+                                    builder: (handle) => trackMenu(
+                                      music.tracks[index],
                                       NeumorphicSurface(
                                         palette: p,
                                         depth: index == music.index ? -0.8 : 0,
@@ -492,12 +534,18 @@ class _MusicPanelState extends State<MusicPanel> {
                                                   : p.ink,
                                             ),
                                           ),
-                                          leading: Text(
-                                            '${index + 1}'.padLeft(2, '0'),
-                                            style: TextStyle(
-                                              fontSize: 9,
-                                              color: p.muted,
-                                            ),
+                                          leading: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              handle,
+                                              Text(
+                                                '${index + 1}'.padLeft(2, '0'),
+                                                style: TextStyle(
+                                                  fontSize: 9,
+                                                  color: p.muted,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           minLeadingWidth: 12,
                                           onTap: () => music.select(index),
@@ -514,6 +562,8 @@ class _MusicPanelState extends State<MusicPanel> {
                                           ),
                                         ),
                                       ),
+                                    ),
+                                  ),
                                 ),
                               ),
                               NeumorphicSwitchListTile(

@@ -4,6 +4,38 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'session_coordinator.dart';
 
+/// The waiting view owns input immediately, but active editor scopes remain
+/// alive until submitted writes settle. Then media and editors are disposed.
+class ApplicationCloseSurface extends StatelessWidget {
+  const ApplicationCloseSurface({
+    super.key,
+    required this.closing,
+    required this.retired,
+    required this.child,
+    required this.closingView,
+  });
+  final bool closing, retired;
+  final Widget child, closingView;
+  @override
+  Widget build(BuildContext context) => Stack(
+    fit: StackFit.expand,
+    alignment: Alignment.topLeft,
+    children: [
+      Offstage(
+        offstage: closing,
+        child: TickerMode(
+          enabled: !closing,
+          child: ExcludeFocus(
+            excluding: closing,
+            child: retired ? const SizedBox.shrink() : child,
+          ),
+        ),
+      ),
+      if (closing) closingView,
+    ],
+  );
+}
+
 /// Closing has no recovery actions: the original host remains the library owner
 /// until its process exit is observed.
 class WorkbenchShutdown extends StatefulWidget {

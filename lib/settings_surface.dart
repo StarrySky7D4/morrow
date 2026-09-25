@@ -58,6 +58,9 @@ class CanvasSettingsRoute<T> extends PageRouteBuilder<T> {
                 child: Opacity(
                   key: const ValueKey('settings-route-opacity'),
                   opacity: enter * (1 - leave),
+                  // Navigator owns when a covered route leaves semantics.
+                  // Do not independently detach it at the zero-opacity frame.
+                  alwaysIncludeSemantics: true,
                   child: child,
                 ),
               );
