@@ -4,11 +4,13 @@
 
 留一点空间给明天的想法。
 
-Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全平台插件架构演进。项目原名 daemon，代码包名为 `morrow_studio`。Windows 当前由 Flutter 提供界面、Rust 宿主与受限 Wasm 插件处理工作台业务；Web／Android 暂保留旧路径，不代表插件系统已完成全平台验收。
+Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全平台插件架构演进。项目原名 daemon，代码包名为 `morrow_studio`。Windows 当前由 Flutter 提供界面、Rust 宿主与受限 Wasm 插件处理工作台业务；Web 在浏览器本地运行 Rust/Wasm，Android 暂保留旧路径。完整平台功能对齐仍在进行。
+
+[打开 Web 预览](https://starrysky7d4.github.io/morrow/)：无需安装，工作区和附件原件保存在设备的浏览器存储中。已验证 Chrome 和 Windows Edge 的保存、刷新恢复与附件下载；完整功能边界见 [Web 进度表](docs/WEB_PARITY.md)，发布方式见 [部署说明](docs/WEB_DEPLOYMENT.md)。
 
 ## 下载与兼容性
 
-当前版本：**0.1.9-test.55+59**，仅发布 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
+当前版本：**0.1.9-test.55+59**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
 
 [下载 test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
