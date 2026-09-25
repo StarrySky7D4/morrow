@@ -1,5 +1,5 @@
 use morrow_workbench_plugin::preferences::{
-    self as p, proto::Appearance, Preferences, Source, Track,
+    self as p, Preferences, Source, Track, proto::Appearance,
 };
 fn config() -> Preferences {
     Preferences {
@@ -31,6 +31,40 @@ fn track(i: usize) -> Track {
         }),
         lyrics: "a".repeat(49152),
         ..Default::default()
+    }
+}
+
+#[test]
+fn persistent_browser_media_roundtrips_but_transient_and_remote_local_uris_fail() {
+    let mut v = config();
+    for location in [
+        "file:///__morrow_browser_media__/1720000000000000",
+        "file:///__morrow_browser_media__/media-12345678-abcd-1234-abcd-123456789abc",
+        "file:///C:/test/image.png",
+    ] {
+        v.texture = Some(Source {
+            location: location.into(),
+            name: "image.png".into(),
+            kind: "image".into(),
+            local: true,
+        });
+        let mut audio = track(0);
+        audio.source.as_mut().unwrap().location = location.into();
+        audio.cover = v.texture.clone();
+        v.tracks = vec![audio];
+        let wire = p::encode_wire(&v).unwrap();
+        assert_eq!(p::decode_wire(&wire).unwrap(), v);
+        let saved = p::encode_persistent(&v, None).unwrap();
+        assert_eq!(p::decode_persistent(&saved).unwrap(), v);
+    }
+    for location in [
+        "media-123",
+        "blob:https://example.com/id",
+        "morrow-preview:id",
+        "https://example.com/image.png",
+    ] {
+        v.texture.as_mut().unwrap().location = location.into();
+        assert!(p::encode_wire(&v).is_err(), "accepted {location}");
     }
 }
 #[test]

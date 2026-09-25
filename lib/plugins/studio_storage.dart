@@ -1,5 +1,7 @@
-import 'dart:io';
 import 'dart:typed_data';
+import '../media/local_source_uri_native.dart'
+    if (dart.library.js_interop) '../media/local_source_uri_web.dart'
+    as media_uri;
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:capnproto_dart/capnproto_dart.dart';
 import '../storage.dart';
@@ -139,12 +141,12 @@ void _source(wire.SourceBuilder b, Map<String, dynamic> source) {
   b.name = source['name'] as String;
   b.kind = source['kind'] as String;
   b.location = local
-      ? File(source['location'] as String).uri.toString()
+      ? media_uri.encodeLocalSource(source['location'] as String)
       : source['location'] as String;
 }
 
 Map<String, dynamic> _readSource(wire.SourceReader s) => {
-  'location': s.local ? Uri.parse(s.location!).toFilePath() : s.location!,
+  'location': s.local ? media_uri.decodeLocalSource(s.location!) : s.location!,
   'name': s.name!,
   'kind': s.kind!,
   'local': s.local,

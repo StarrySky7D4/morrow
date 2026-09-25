@@ -13,6 +13,8 @@ import 'package:morrow_studio/plugins/workbench_native.dart';
 import 'package:morrow_studio/plugins/studio_storage.dart';
 import 'package:morrow_studio/attachments/attachment.dart';
 import 'package:morrow_studio/media/texture_repository.dart';
+import 'package:morrow_studio/media/texture_source.dart';
+import 'package:morrow_studio/media/texture_storage_web.dart' as browser_media;
 
 @JS('coreProbeResult')
 external set result(JSString value);
@@ -138,6 +140,14 @@ Future<void> main() async {
       );
     }, 'stale edit');
     stage = 'workspace query and preferences';
+    final mediaSources = <TextureSource>[];
+    for (final name in ['background.png', 'background.mp4', 'music.wav']) {
+      mediaSources.add(
+        await TextureRepository.importFile(
+          XFile.fromData(Uint8List.fromList([11, 22, 33, 44]), name: name),
+        ),
+      );
+    }
     final failures = <String>[];
     try {
       final ids = await host.query('概览', '全部', '', '最近添加');
@@ -147,6 +157,31 @@ Future<void> main() async {
     }
     try {
       final storage = await RustStudioStorage.open(host);
+      for (final background in mediaSources.take(2)) {
+        await storage.write({
+          ...storage.read(),
+          'texture': background.toJson(),
+          'music': {
+            'tracks': [
+              {
+                'source': mediaSources[2].toJson(),
+                'cover': mediaSources[0].toJson(),
+              },
+            ],
+          },
+        });
+      }
+      // A later unrelated edit must still commit while media remains selected.
+      await rejects(
+        () => storage.write({
+          ...storage.read(),
+          'texture': {
+            ...mediaSources[0].toJson(),
+            'location': 'blob:https://example.com/transient',
+          },
+        }),
+        'transient media preference',
+      );
       await storage.write({...storage.read(), 'theme': 'dark'});
       check(
         (await RustStudioStorage.open(host)).read()['theme'] == 'dark',
@@ -209,6 +244,40 @@ Future<void> main() async {
       ),
     );
     final record = await restored.versionedContent.read(edited.id);
+    stage = 'reopened local media preferences';
+    final mediaPreferences = (await RustStudioStorage.open(restored)).read();
+    check(mediaPreferences['theme'] == 'dark', 'later appearance edit lost');
+    final texture = TextureSource.fromJson(
+      mediaPreferences['texture'] as Map<String, dynamic>,
+    );
+    final music = mediaPreferences['music'] as Map<String, dynamic>;
+    final track = (music['tracks'] as List).single as Map<String, dynamic>;
+    final recoveredSources = [
+      texture,
+      TextureSource.fromJson(track['source'] as Map<String, dynamic>),
+      TextureSource.fromJson(track['cover'] as Map<String, dynamic>),
+    ];
+    check(
+      texture.location == mediaSources[1].location,
+      'video preference lost',
+    );
+    check(
+      recoveredSources[1].location == mediaSources[2].location,
+      'music preference lost',
+    );
+    check(
+      recoveredSources[2].location == mediaSources[0].location,
+      'cover preference lost',
+    );
+    for (final source in recoveredSources) {
+      final blob = await browser_media.resolveBlob(source);
+      final data = (await blob.arrayBuffer().toDart).toDart;
+      check(
+        sha256.convert(data.asUint8List()).toString() ==
+            sha256.convert([11, 22, 33, 44]).toString(),
+        'media original changed',
+      );
+    }
     stage = 'reopened attachment';
     final restoredIdea = (await restored.loadWorkspaceContent()).single;
     final restoredBytes = await TextureRepository.resolve(
@@ -245,7 +314,7 @@ Future<void> main() async {
     await restored.close();
     active = null;
     result =
-        'PASS: production Worker + device identity + Flutter shared controller; 5 MiB streamed local attachment and preview lifetime, query/preferences, stable task IDs, stale edit rejection, long Unicode draft, settings/approval and independent Worker reopen'
+        'PASS: production Worker + device identity + Flutter shared controller; 5 MiB streamed local attachment, image/video/music/cover preferences and later edits persist across independent Worker reopen; stable tasks, drafts and approval'
             .toJS;
   } catch (error, stack) {
     result = 'FAIL: $stage: $error\n$stack'.toJS;

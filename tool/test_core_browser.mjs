@@ -23,7 +23,7 @@ if(remoteSite&&(!app||remoteSite.protocol!=='https:'||!remoteSite.pathname.endsW
 const baseArg=process.argv.indexOf('--base-path');
 const basePath=remoteSite?.pathname??(baseArg<0?'/preview/':process.argv[baseArg+1]);
 if(!/^\/([A-Za-z0-9_.-]+\/)*$/.test(basePath))throw Error('Invalid base path');
-const appVariant=process.argv.includes('--legacy')?'legacy':process.argv.includes('--orphan')?'orphan':'fresh';
+const appVariant=process.argv.includes('--legacy')?'legacy':process.argv.includes('--orphan')?'orphan':process.argv.includes('--media')?'media':'fresh';
 const webFolder=app?'build/web':process.argv.includes('--channel')?'build/web-channel-parity':process.argv.includes('--identity')?'build/web-identity-parity':process.argv.includes('--workbench')?'build/web-workbench-parity':process.argv.includes('--packages')?'build/web-package-parity':process.argv.includes('--renderer')?'build/ui-renderer/web':process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
 const allowed = [basePath];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',

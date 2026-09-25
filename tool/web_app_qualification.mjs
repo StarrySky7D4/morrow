@@ -31,7 +31,7 @@ export async function prepareWebApp(call,sessionId,site,variant) {
   if(variant==='legacy')await evaluate(`localStorage.setItem('flutter.daemon.studio.v1',${JSON.stringify(JSON.stringify(legacySnapshot))})`);
   if(variant==='orphan')await evaluate(`(async()=>{const root=await navigator.storage.getDirectory();const d=await root.getDirectoryHandle('morrow-workbench-v1',{create:true});await d.getFileHandle('preserved-fixture',{create:true});})()`);
   await call('Network.setBlockedURLs',{urls:[]},sessionId);
-  await call('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false},sessionId);
+  await call('Emulation.setDeviceMetricsOverride',{width:1280,height:variant==='media'?2200:900,deviceScaleFactor:1,mobile:false},sessionId);
 }
 export async function qualifyWebApp(call,sessionId,base,root,variant) {
   const {evaluate,until}=context(call,sessionId);
@@ -55,7 +55,43 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
   const state=()=>evaluate("import('./workbench/device-identity.mjs').then(m=>m.inspectDeviceLibrary('main'))");
   try {
     await enable();
-    if(variant==='legacy') {
+    if(variant==='media') {
+      await click('Create local workspace');await waitLabel('New idea');
+      const selectFile=async(label,file)=>{
+        await call('Page.setInterceptFileChooserDialog',{enabled:true},sessionId);
+        await click(label);
+        await until(()=>evaluate("!!document.querySelector('input[type=file]')"),'media file picker');
+        const input=await call('Runtime.evaluate',{expression:"document.querySelector('input[type=file]')"},sessionId);
+        await call('DOM.setFileInputFiles',{files:[file],objectId:input.result.objectId},sessionId);
+        await call('Page.setInterceptFileChooserDialog',{enabled:false},sessionId);
+      };
+      const noSaveFailure=async()=>{
+        if(await rect('Review save')||await rect('Could not save. Your changes remain in this session.'))throw Error('Imported media broke preferences persistence');
+      };
+      const reopen=async()=>{
+        // The UI writes preferences asynchronously; allow its queued proposal
+        // to finish before navigating. Host-level tests also await its receipt.
+        await delay(1500);await noSaveFailure();
+        await call('Page.reload',{ignoreCache:true},sessionId);await enable();
+        await waitLabel('New idea');await noSaveFailure();
+      };
+      await click('Texture');
+      await selectFile('Local media',path.join(root,'test/fixtures/texture.png'));
+      await waitLabel('texture.png');
+      const wav=Buffer.alloc(44+1600);wav.write('RIFF');wav.writeUInt32LE(wav.length-8,4);wav.write('WAVEfmt ',8);wav.writeUInt32LE(16,16);wav.writeUInt16LE(1,20);wav.writeUInt16LE(1,22);wav.writeUInt32LE(8000,24);wav.writeUInt32LE(16000,28);wav.writeUInt16LE(2,32);wav.writeUInt16LE(16,34);wav.write('data',36);wav.writeUInt32LE(1600,40);
+      const audioPath=path.join(root,'build/browser-media-track.wav');await writeFile(audioPath,wav);
+      await selectFile('Import music',audioPath);await waitLabel('browser-media-track');
+      await click('Dark');await reopen();
+      await waitLabel('texture.png');await waitLabel('browser-media-track');
+      const selectedTheme=label=>evaluate(`(()=>{const e=[...document.querySelectorAll('[role=button]')].find(e=>(e.getAttribute('aria-label')??e.textContent??'').trim()===${JSON.stringify(label)});return e?.getAttribute('aria-current')==='true'||e?.getAttribute('aria-checked')==='true'||e?.getAttribute('aria-selected')==='true';})()`);
+      if(!await selectedTheme('Dark'))throw Error('Theme edit following media import was not restored');
+      const videoBytes=await evaluate(`(async()=>{const c=document.createElement('canvas');c.width=32;c.height=32;const stream=c.captureStream(10);const recorder=new MediaRecorder(stream,{mimeType:'video/webm;codecs=vp8'});const parts=[];recorder.ondataavailable=e=>parts.push(e.data);const done=new Promise(r=>recorder.onstop=r);recorder.start();c.getContext('2d').fillRect(0,0,32,32);await new Promise(r=>setTimeout(r,350));recorder.stop();await done;stream.getTracks().forEach(t=>t.stop());return Array.from(new Uint8Array(await new Blob(parts).arrayBuffer()));})()`);
+      const videoPath=path.join(root,'build/browser-background.webm');await writeFile(videoPath,Buffer.from(videoBytes));
+      await selectFile('Local media',videoPath);await waitLabel('browser-background.webm');
+      await click('White');await reopen();
+      await waitLabel('browser-background.webm');await waitLabel('browser-media-track');
+      if(!await selectedTheme('White'))throw Error('Later settings were not saved after video import');
+    } else if(variant==='legacy') {
       await waitLabel('Open existing content');
       if(await rect('Create local workspace'))throw Error('Legacy content offered replacement');
       await click('Open existing content');
@@ -130,7 +166,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     }
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}.png`),Buffer.from(screenshot.data,'base64'));
-    return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
+    return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='media'?'real PNG/WAV/WebM file imports, later theme edits and full page reload preserve media and settings':variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
   } catch(error) {
     const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
     await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.png`),Buffer.from(screenshot.data,'base64'));

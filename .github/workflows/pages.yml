@@ -61,6 +61,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Legacy content acceptance failed' }
           node tool/test_core_browser.mjs --app --base-path /morrow/ --orphan
           if ($LASTEXITCODE -ne 0) { throw 'Orphaned data acceptance failed' }
+          node tool/test_core_browser.mjs --app --base-path /morrow/ --media
+          if ($LASTEXITCODE -ne 0) { throw 'Imported media preferences acceptance failed' }
       - name: Add source and distribution notices
         run: ./tool/package_web_release.ps1
       - name: Retain browser failure diagnostics
