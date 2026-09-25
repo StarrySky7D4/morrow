@@ -18,7 +18,9 @@ export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enab
     await call('Page.setInterceptFileChooserDialog',{enabled:false},sessionId);
   };
   const reload=async()=>{
-    await call('Page.reload',{ignoreCache:true},sessionId);await enable();await waitLabel('New idea');await idle();
+    // Recreate the page and Worker, retaining the browser's static-code cache.
+    // Device data must still be read afresh from persistent storage.
+    await call('Page.reload',{},sessionId);await enable();await waitLabel('New idea');await idle();
     if(await rect('Review save'))throw Error('Theme operation broke settings persistence');
   };
   const manager=async()=>{await click('Plugins and services');await waitLabel('Choose theme plugin');await idle();};
@@ -80,4 +82,5 @@ export async function qualifyTheme({call,sessionId,root,evaluate,until,rect,enab
   const music=path.join(root,'build/theme-recovery-music.wav');await writeFile(music,wav);
   await select(music,'Import music');await waitLabel('theme-recovery-music');await idle();
   await reload();await waitLabel('Theme recovery content');await waitLabel('texture.png');await waitLabel('theme-recovery-music');
+  console.log('Theme acceptance: all lifecycle and persistence assertions passed');
 }

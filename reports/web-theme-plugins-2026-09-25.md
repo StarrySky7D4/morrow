@@ -38,7 +38,21 @@
 
 ## 发布结果
 
-待正式 Pages 部署后记录源提交、CI 运行、Chrome/Edge 复验及产物哈希。
+正式网址：https://starrysky7d4.github.io/morrow/ 。已部署应用源提交为 `52f7345fb331b6101082e0bf8862020faf720537`。
+
+[GitHub Actions 36112225032](https://github.com/StarrySky7D4/morrow/actions/runs/36112225032) 的 build 与 deploy 均成功。主题宿主及界面回归、fresh/offline、legacy、orphan、media、theme/CPU 4 倍限速全部通过。
+
+正式网址复验：Chrome `154.0.8037.57` 与 Edge `153.0.4234.48` 均完成原始文件选择、取消/拒绝、导入中断恢复、明确启用、浅深色显示、刷新与关闭标签后恢复、停用、卸载，并继续保存内容和背景音乐。浅深色截图已人工检查。
+
+`verify_deployed_web.py --commit 52f7345fb331b6101082e0bf8862020faf720537` 通过 HTTPS、源版本、基础路径、MIME 和 36 项产物 SHA-256 校验。正式内置工作台包仍为 872,568 字节，SHA-256 为 `b28aea5f6989967d33b6c2797624a64068da0b4d1aadc57b8db1c74cc4a79985`，与此前部署完全一致。
+
+Chrome 成功复验记录 285 次 HTTP 请求、0 次上传；增强后的 Edge 记录包含 Worker 资源，共 341 次 HTTP 请求、0 次上传。请求为静态程序、素材和 Flutter 备用字体读取；未出现携带内容、媒体或主题包的网络请求。Worker 代码也仅新增本机 Blob 通道。
+
+本地回归结果：Flutter/真实 Windows 宿主共 32 项；插件目录 10 项、主题导入 2 项、登记库 11 项、运行时管理 11 项均通过。主题相关 Dart 分析无问题。
+
+验证过程曾遇到一轮 CI 主题场景未结束，取消后补充退出清理、阶段日志和分组时限，最终上述运行通过。Edge 线上尝试也曾出现初始化和截图超时；同一应用产物最终完成全流程。后续诊断脚本保留原始错误、记录 Worker 网络请求、延长线上加载及截图等待，并在重建页面/Worker 时保留浏览器静态代码缓存。所有功能和持久化断言均保留；这些诊断改动不改变已发布应用。
+
+本地完整证据位于隔离工作区 `build/theme-pages-http.json`、`build/theme-live-chrome.log`、`build/theme-live-edge-worker.log`、`build/theme-live-*-network.json` 和 `build/theme-live-*-light.png` / `build/theme-live-*-dark.png`。
 
 ## 后续完整方案（本次不执行）
 

@@ -67,10 +67,11 @@ const pending = new Map();
 let nextId = 1;
 const appDiagnostics=[];
 const appRequests=[];
+const appNetworkErrors=[];
 function call(method, params = {}, sessionId) {
   const id = nextId++;
   return new Promise((resolve, reject) => {
-    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`CDP timeout: ${method}`)); }, 15000);
+    const timer = setTimeout(() => { pending.delete(id); reject(new Error(`CDP timeout: ${method}`)); }, method==='Page.captureScreenshot'?60000:30000);
     pending.set(id, { resolve: (v) => { clearTimeout(timer); resolve(v); }, reject: (e) => { clearTimeout(timer); reject(e); } });
     socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
   });
@@ -91,6 +92,14 @@ try {
   await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
   socket.addEventListener('message', ({ data }) => {
     const reply = JSON.parse(data);
+    if(app&&reply.method==='Target.attachedToTarget') {
+      const workerSession=reply.params.sessionId;
+      void (async()=>{
+        try { await call('Network.enable',{},workerSession); }
+        finally { await call('Runtime.runIfWaitingForDebugger',{},workerSession); }
+      })().catch(error=>appNetworkErrors.push({errorText:error.message}));
+    }
+    if(app&&reply.method==='Network.loadingFailed')appNetworkErrors.push(reply.params);
     if(app&&reply.method==='Network.requestWillBeSent') {
       const r=reply.params.request;
       if(/^https?:/.test(r.url))appRequests.push({url:r.url,method:r.method,hasPostData:!!r.hasPostData});
@@ -112,6 +121,7 @@ try {
     await call('Page.enable', {}, sessionId);
     if(app) {
       await call('Runtime.enable',{},sessionId);await call('Log.enable',{},sessionId);await call('Network.enable',{},sessionId);
+      await call('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);
       // Edge can follow the OS language despite --lang. Keep semantic-label
       // fixtures deterministic without modifying application preferences.
       await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
@@ -133,7 +143,10 @@ try {
     let result;
     if(app) {
       try {result=await qualifyWebApp(call,sessionId,base,root,appVariant);}
-      catch(error){console.error(error.stack??error);console.error(appDiagnostics.join('\n'));throw error;}
+      catch(error){
+        await writeFile(path.join(root,`build/web-network-${appVariant}-failure.json`),JSON.stringify({site,requests:appRequests,errors:appNetworkErrors},null,2));
+        console.error(error.stack??error);console.error(appDiagnostics.join('\n'));throw error;
+      }
     }
     const deadline = Date.now() + (process.argv.includes('--store') ? 300000 : 60000);
     while (!result && Date.now() < deadline) {

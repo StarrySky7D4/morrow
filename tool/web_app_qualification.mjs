@@ -14,7 +14,7 @@ function context(call,sessionId) {
     return response.result?.value;
   };
   const until=async(check,label)=>{
-    const deadline=Date.now()+45000;
+    const deadline=Date.now()+(process.argv.includes('--site')?90000:45000);
     while(Date.now()<deadline){if(await check())return;await delay(150);}
     throw Error('Timed out: '+label);
   };
@@ -31,6 +31,7 @@ export async function prepareWebApp(call,sessionId,site,variant) {
       constructor(url,options) {
         super(url,options);
         if(new URL(url,location.href).pathname.endsWith('/host-worker.mjs')) {
+          this.addEventListener('error',event=>console.warn('Device worker error:',event.message));
           const activity=globalThis.__mediaWorkerActivity;
           const send=this.postMessage.bind(this);
           let holdTheme=false;
@@ -41,6 +42,7 @@ export async function prepareWebApp(call,sessionId,site,variant) {
           };
           this.addEventListener('message',(event)=>{
             const {data}=event;
+            if(data?.kind==='exit'&&data.code)console.warn('Device worker failed:',data.message);
             if(data?.kind==='reply'&&holdTheme){event.stopImmediatePropagation();globalThis.__themeReceiptHeld=true;return;}
             if(data?.kind==='reply'){activity.pending--;activity.last=performance.now();}
           });
@@ -73,6 +75,7 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     const next=await rawCall('Target.attachToTarget',{targetId,flatten:true});
     activeSession=next.sessionId;
     for(const domain of ['Page','Runtime','Log','Network'])await call(`${domain}.enable`,{},sessionId);
+    await call('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);
     const version=await rawCall('Browser.getVersion');
     await call('Network.setUserAgentOverride',{userAgent:version.userAgent,acceptLanguage:'en-US,en'},sessionId);
     await call('Emulation.setLocaleOverride',{locale:'en_US'},sessionId);
@@ -219,9 +222,12 @@ export async function qualifyWebApp(call,sessionId,base,root,variant) {
     await writeFile(path.join(root,`build/web-bootstrap-${variant}.png`),Buffer.from(screenshot.data,'base64'));
     return `PASS: formal Web application ${variant}${process.argv.includes('--offline-edits')?' (offline editing)':''}: ${variant==='theme'?'original theme file inspection, rejected files, interrupted import recovery, light/dark rendering, persistent enable/disable and uninstall':variant==='media'?'real PNG/WAV/WebM file imports, later theme edits and full page reload preserve media and settings':variant==='fresh'?'UI file selection/save, OPFS attachment persistence, full page reload, exact original file download and explicit access to coexisting old/new content':variant==='legacy'?'existing content remains accessible and unchanged':'missing identity preserves orphaned data and prevents creation'}`;
   } catch(error) {
-    const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
-    await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.png`),Buffer.from(screenshot.data,'base64'));
-    await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.html`),await evaluate('document.body.outerHTML'));
+    console.error('Application acceptance failed:',error.stack??error);
+    try {
+      const screenshot=await call('Page.captureScreenshot',{format:'png'},sessionId);
+      await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.png`),Buffer.from(screenshot.data,'base64'));
+      await writeFile(path.join(root,`build/web-bootstrap-${variant}-failure.html`),await evaluate('document.body.outerHTML'));
+    } catch(diagnosticError) { console.error('Failure capture unavailable:',diagnosticError.message); }
     throw error;
   }
 }
