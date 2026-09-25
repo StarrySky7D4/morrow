@@ -1,15 +1,40 @@
 //! Owned native read transactions. Logical source checks are not OS file-handle attestation.
 //! Frozen records are trusted-local data and never grants. No implicit current-store fallback.
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod copied_snapshot_tests {
+    use super::*;
+
+    #[test]
+    fn bounded_copy_pins_membership_bytes_and_source_while_owner_writes() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut store = Store::open_exclusive(&dir.path().join("source.db"), Default::default(), true).unwrap();
+        let original = CardRecord::new("before", "test.card", 1, "before", vec![7]).unwrap();
+        store.create_local("create-before", &original).unwrap();
+        assert!(matches!(store.copy_card_snapshot(1), Err(Error::Limit)));
+        let mut snapshot = store.copy_card_snapshot(128 * 1024 * 1024).unwrap();
+        let point = snapshot.readpoint().clone();
+        let later = CardRecord::new("after", "test.card", 1, "after", vec![8]).unwrap();
+        store.create_local("create-after", &later).unwrap();
+        store.validate_card_snapshot(&snapshot).unwrap();
+        let page = snapshot.next_page(128, 1024 * 1024).unwrap();
+        assert!(page.done);
+        assert_eq!(page.entries.len(), 1);
+        assert_eq!(page.entries[0].original_bytes(), store.card("before").unwrap().unwrap().original_bytes());
+        assert_eq!(snapshot.readpoint(), &point);
+        assert_eq!(snapshot.finish().unwrap().count, 1);
+        let mut fresh = store.copy_card_snapshot(128 * 1024 * 1024).unwrap();
+        assert_eq!(fresh.next_page(128, 1024 * 1024).unwrap().entries.len(), 2);
+        let foreign = Store::open(&dir.path().join("foreign.db"), Default::default()).unwrap();
+        assert!(foreign.validate_card_snapshot(&snapshot).is_err());
+    }
+}
 use super::APPLICATION_ID;
 use super::{Store, sql};
 use crate::{Error, Result, content::CardRecord, envelope, identity, transaction};
-#[cfg(not(target_arch = "wasm32"))]
 use rusqlite::OptionalExtension;
 use rusqlite::{Connection, params};
 use sha2::{Digest, Sha256};
 use std::{path::PathBuf, sync::Arc};
-#[cfg(not(target_arch = "wasm32"))]
 const CENSUS_DOMAIN: &[u8] = b"Morrow/card-census/v1\0";
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ReadPoint {
@@ -109,7 +134,6 @@ pub(super) fn origin(connection: &Connection, supported: bool) -> Result<Option<
 pub(super) fn origin(_: &Connection, _: bool) -> Result<Option<PathBuf>> {
     Ok(None)
 }
-#[cfg(not(target_arch = "wasm32"))]
 fn point(connection: &Connection) -> Result<ReadPoint> {
     // Reading the permanent index fixes the SQLite snapshot, even for an empty index.
     let sequence: i64 = sql(connection.query_row(
@@ -184,7 +208,6 @@ fn point(connection: &Connection) -> Result<ReadPoint> {
         operation_sha256,
     })
 }
-#[cfg(not(target_arch = "wasm32"))]
 fn audit_identity(connection: &Connection, version: u32) -> Result<Option<Vec<u8>>> {
     if version < 6 {
         return Ok(None);
@@ -193,14 +216,15 @@ fn audit_identity(connection: &Connection, version: u32) -> Result<Option<Vec<u8
     raw.map(|v| v.ok_or(Error::Limit)).transpose()
 }
 impl Store {
-    /// Native ordinary-WAL discovery; unsupported storage profiles explicitly reject.
+    /// Native ordinary-WAL reader; Web uses a bounded private SQLite copy because
+    /// OPFS owns an exclusive rollback-journal connection. Both pin the same
+    /// original records and validate their source before capture starts writing.
     /// Source/reader logical heads are compared under pinned read transactions. A concurrent
     /// commit during acquisition may require retry. This is not adversarial file identity proof.
     pub fn open_card_snapshot(&self) -> Result<CardReadSnapshot> {
         #[cfg(target_arch = "wasm32")]
         {
-            let _ = &self.snapshot_origin;
-            Err(Error::Invalid("card snapshot unavailable"))
+            self.copy_card_snapshot(128 * 1024 * 1024)
         }
         #[cfg(not(target_arch = "wasm32"))]
         {
@@ -249,6 +273,48 @@ impl Store {
                 census,
             })
         }
+    }
+    #[cfg(any(target_arch = "wasm32", test))]
+    fn copy_card_snapshot(&self, max_bytes: u64) -> Result<CardReadSnapshot> {
+        let source = sql(self.connection.unchecked_transaction())?;
+        let source_point = point(&source)?;
+        super::binding::verify(&source, self.audit_trust.as_ref())?;
+        let source_identity = audit_identity(&source, source_point.database_version)?;
+        let pages: i64 = sql(source.query_row("PRAGMA page_count", [], |r| r.get(0)))?;
+        let page_size: i64 = sql(source.query_row("PRAGMA page_size", [], |r| r.get(0)))?;
+        let pages = u64::try_from(pages).map_err(|_| Error::Integrity)?;
+        let page_size = u64::try_from(page_size).map_err(|_| Error::Integrity)?;
+        if pages.checked_mul(page_size).ok_or(Error::Limit)? > max_bytes {
+            return Err(Error::Limit);
+        }
+        // This is a transient read snapshot, never an authoritative fallback.
+        // No await or guest execution occurs while the source transaction is held.
+        let mut connection = sql(Connection::open_in_memory())?;
+        let backup = sql(rusqlite::backup::Backup::new(&source, &mut connection))?;
+        let mut done = false;
+        for _ in 0..=pages.div_ceil(128) {
+            match sql(backup.step(128))? {
+                rusqlite::backup::StepResult::Done => { done = true; break; }
+                rusqlite::backup::StepResult::More => {}
+                rusqlite::backup::StepResult::Busy | rusqlite::backup::StepResult::Locked => return Err(Error::StorageBusy),
+                _ => return Err(Error::Storage),
+            }
+        }
+        drop(backup);
+        if !done { return Err(Error::Limit); }
+        sql(connection.execute_batch("PRAGMA query_only=ON; PRAGMA trusted_schema=OFF; BEGIN DEFERRED;"))?;
+        let reader_point = point(&connection)?;
+        super::binding::verify(&connection, self.audit_trust.as_ref())?;
+        if reader_point != source_point || audit_identity(&connection, reader_point.database_version)? != source_identity {
+            return Err(Error::RevisionConflict);
+        }
+        let mut census = Sha256::new();
+        census.update(CENSUS_DOMAIN);
+        Ok(CardReadSnapshot {
+            connection, store: self.snapshot_identity.clone(), snapshot: Arc::new(()),
+            point: reader_point, cursor: String::new(), done: false,
+            poisoned: false, closed: false, count: 0, census,
+        })
     }
     /// Source admission includes empty snapshots; it establishes no plugin permission.
     pub fn validate_card_snapshot(&self, snapshot: &CardReadSnapshot) -> Result<()> {

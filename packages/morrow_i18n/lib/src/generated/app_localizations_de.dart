@@ -3039,6 +3039,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get recoveryTitle => 'Arbeitsbereich erneut öffnen';
 
   @override
+  String get recoveryWebCreate => 'Lokalen Arbeitsbereich erstellen';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Vorhandene Browser-Inhalte wurden gefunden. Öffnen Sie diese zum Fortfahren. Sie wurden weder migriert noch ersetzt.';
+
+  @override
+  String get recoveryWebLocal =>
+      'Ihre Inhalte bleiben in diesem Browser auf diesem Gerät.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Vorhandene Inhalte öffnen';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'Dieser Arbeitsbereich konnte nicht geöffnet werden. Schließen Sie andere Morrow-Tabs und versuchen Sie es erneut. Vorhandene Daten wurden nicht ersetzt.';
+
+  @override
   String get shutdownBackground => 'Im Hintergrund weiter schließen';
 
   @override

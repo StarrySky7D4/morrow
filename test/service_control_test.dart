@@ -190,8 +190,8 @@ void main() {
                 expect(r.serviceSnapshot, key(1));
               case host.Action.serviceConfigSave:
                 final p = r.serviceConfig!;
-                expect(BigInt.from(p.expectedRevision).toUnsigned(64), exact);
-                expect(BigInt.from(p.registryRevision).toUnsigned(64), uint64);
+                expect(p.expectedRevisionBigInt, exact);
+                expect(p.registryRevisionBigInt, uint64);
                 expect(p.packageId, 'package.test');
                 expect(p.packageDigest, key(3));
                 expect(p.retentionMs, 1000);
@@ -202,7 +202,7 @@ void main() {
                 );
               case host.Action.serviceConfigDisable:
                 expect(r.id, 'service-test');
-                expect(BigInt.from(r.revision).toUnsigned(64), exact);
+                expect(r.revisionBigInt, exact);
               case host.Action.serviceAuthorityPage:
                 expect(r.serviceCursor, key(2));
                 expect(r.serviceSnapshot, key(1));
@@ -210,16 +210,16 @@ void main() {
                 expect(r.principalId, 'alice');
                 expect(r.serviceDays, 30);
                 expect(r.serviceReference, key(2));
-                expect(BigInt.from(r.revision).toUnsigned(64), exact);
+                expect(r.revisionBigInt, exact);
               case host.Action.serviceAuthorityDisable:
                 expect(r.serviceReference, key(2));
-                expect(BigInt.from(r.revision).toUnsigned(64), exact);
+                expect(r.revisionBigInt, exact);
               case host.Action.servicePublicationSave:
                 final p = r.servicePublication!;
                 expect(p.reference, key(5));
-                expect(BigInt.from(p.expectedRevision).toUnsigned(64), exact);
-                expect(BigInt.from(p.configRevision).toUnsigned(64), exact);
-                expect(BigInt.from(p.registryRevision).toUnsigned(64), uint64);
+                expect(p.expectedRevisionBigInt, exact);
+                expect(p.configRevisionBigInt, exact);
+                expect(p.registryRevisionBigInt, uint64);
                 expect(p.policy!.configDigest, key(4));
                 expect(p.policy!.queryPath, '/history');
               default:
@@ -525,7 +525,7 @@ void main() {
       final r = response();
       final c = r.initServiceConfigs(1)[0];
       fillConfig(c, refs: 64);
-      c.revision = ServiceValidation.maxRevision.toInt();
+      c.revisionBigInt = ServiceValidation.maxRevision;
       expect(
         ServiceCodec.configResult(r.asReader()).revision,
         ServiceValidation.maxRevision,

@@ -86,7 +86,7 @@ void _writeProposal(
   wr.draftId = request.draftId;
   wr.operation = request.operation;
   wr.expectedGeneration = 0;
-  wr.sourceRevision = EditorDraftCodec.wireU64(request.sourceRevision);
+  wr.sourceRevisionBigInt = request.sourceRevision;
   wr.sourceKind = request.sourceKind.index;
   wr.predecessorOperation = '';
   wr.predecessorDigest = Uint8List(0);
@@ -101,7 +101,7 @@ void _writeProposal(
   wr.initAssets(0);
   final parent = out.initParentLink();
   parent.parentDraftId = link.parentDraftId;
-  parent.parentGeneration = EditorDraftCodec.wireU64(link.parentGeneration);
+  parent.parentGenerationBigInt = link.parentGeneration;
   parent.parentSaveOperation = link.parentSaveOperation;
   parent.parentRequestSha256 = Uint8List.fromList(link.parentRequestSha256);
   parent.committedOperation = link.committedOperation;
@@ -132,7 +132,7 @@ void _writeSummary(
   out.status = status;
   out.parentGeneration = parentGeneration;
   out.parentActive = parentActive;
-  out.childGeneration = EditorDraftCodec.wireU64(childGeneration ?? _maxU64);
+  out.childGenerationBigInt = childGeneration ?? _maxU64;
   out.childActive = childActive;
   out.cursor = cursor ?? _cursor1;
 }

@@ -28,7 +28,7 @@ abstract final class ServiceTlsIdentityCodec {
     if (value == null) throw const FormatException('Missing TLS identity');
     final choice = ServiceTlsIdentityChoice(
       reference: value.reference ?? Uint8List(0),
-      revision: BigInt.from(value.revision).toUnsigned(64),
+      revision: value.revisionBigInt,
       certificateSha256: value.certificateSha256 ?? Uint8List(0),
     );
     ServiceRunValidation.tlsIdentity(choice);

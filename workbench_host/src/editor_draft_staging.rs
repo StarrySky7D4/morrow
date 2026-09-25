@@ -10,7 +10,6 @@ use morrow_core::{
 };
 use prost::Message;
 use sha2::{Digest, Sha256};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 pub(crate) mod v1 {
     pub use super::proto::ImportRequest;
@@ -653,7 +652,7 @@ impl WorkbenchState {
         // A matching existing Snapshot owner makes this a read-only Core retry:
         // the supplied reader is not touched, even when the source path vanished.
         self.host.prepare_write()?;
-        let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+        let clock = crate::platform::unix_millis()?;
         let blob = self.host.store_local_mut().stage_blob_retained(
             reader,
             request.byte_length,
@@ -1036,7 +1035,7 @@ impl WorkbenchState {
             }
             if let Some(blob) = self.retained_for(&current)? {
                 let clock =
-                    i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+                    crate::platform::unix_millis()?;
                 self.host.store_local_mut().release_retention_local(
                     &blob.id,
                     &current.owner,

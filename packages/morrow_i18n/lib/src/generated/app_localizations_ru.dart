@@ -3036,6 +3036,24 @@ class AppLocalizationsRu extends AppLocalizations {
   String get recoveryTitle => 'Открыть рабочую область заново';
 
   @override
+  String get recoveryWebCreate => 'Создать локальное рабочее пространство';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Найдены данные в браузере. Откройте их, чтобы продолжить. Они не были перенесены или заменены.';
+
+  @override
+  String get recoveryWebLocal =>
+      'Ваши данные остаются в этом браузере на этом устройстве.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Открыть существующие данные';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'Не удалось открыть рабочее пространство. Закройте другие вкладки Morrow и повторите попытку. Данные не заменены.';
+
+  @override
   String get shutdownBackground => 'Продолжить закрытие в фоне';
 
   @override

@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "活动内容库或登记文件无法读取，请检查原位置；不会自动创建替代内容库。",
   "recoveryClosing": "正在等待原内容服务退出。确认退出前，暂不能重新打开或恢复资料库。",
   "recoveryClosingUnconfirmed": "关闭尚未确认，仍在观察原服务。界面可以继续使用；超时不代表操作已撤销。",
-  "recoveryMigrationIncomplete": "此内容库的迁移尚未完成。请查看目录内的迁移报告，保留原库并使用新的目标目录重试。"
+  "recoveryMigrationIncomplete": "此内容库的迁移尚未完成。请查看目录内的迁移报告，保留原库并使用新的目标目录重试。",
+  "recoveryWebCreate": "创建本地工作区",
+  "recoveryWebLocal": "内容保存在当前设备的浏览器中。",
+  "recoveryWebLegacy": "发现已有的浏览器内容。可打开继续使用；原数据尚未迁移或替换。",
+  "recoveryWebOpenLegacy": "打开现有内容",
+  "recoveryWebUnavailable": "暂时无法打开此浏览器工作区。请关闭其他 Morrow 标签页后重试。已有数据未被替换。"
 }

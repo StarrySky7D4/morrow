@@ -1,4 +1,11 @@
-//! Trusted first-party browser adapter. No third-party plugin is hosted here.
+//! Trusted browser adapters. Plugin execution remains inside bounded Wasm.
+mod package;
+pub use package::BrowserTransformPackage;
+mod registry;
+pub use registry::{BrowserPluginRegistry, BrowserPluginSession};
+mod workbench;
+mod device_files;
+pub use workbench::BrowserWorkbench;
 use morrow_core::{
     content::{Attachment, CardRecord},
     dispatch::{Connection, HostRuntime},
@@ -32,6 +39,11 @@ fn clock() -> u64 {
 #[wasm_bindgen]
 pub async fn install_opfs() -> Result<(), JsValue> {
     install_opfs_at("morrow-test10").await
+}
+/// Device-local application pool, separate from qualification storage.
+#[wasm_bindgen]
+pub async fn install_workbench_opfs() -> Result<(), JsValue> {
+    install_opfs_at("morrow-workbench-v1").await
 }
 /// Isolated fault fixtures keep the production 64-slot pool unchanged.
 #[cfg(feature = "fault-injection")]

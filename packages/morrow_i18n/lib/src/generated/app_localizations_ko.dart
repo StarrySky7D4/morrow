@@ -2866,6 +2866,23 @@ class AppLocalizationsKo extends AppLocalizations {
   String get recoveryTitle => '작업 공간 다시 열기';
 
   @override
+  String get recoveryWebCreate => '로컬 작업 공간 만들기';
+
+  @override
+  String get recoveryWebLegacy =>
+      '기존 콘텐츠를 찾았습니다. 열어서 계속 사용할 수 있습니다. 데이터는 이전되거나 교체되지 않았습니다.';
+
+  @override
+  String get recoveryWebLocal => '콘텐츠는 이 기기의 브라우저에 저장됩니다.';
+
+  @override
+  String get recoveryWebOpenLegacy => '기존 콘텐츠 열기';
+
+  @override
+  String get recoveryWebUnavailable =>
+      '작업 공간을 열 수 없습니다. 다른 Morrow 탭을 닫고 다시 시도하세요. 기존 데이터는 교체되지 않았습니다.';
+
+  @override
   String get shutdownBackground => '백그라운드에서 종료 계속';
 
   @override

@@ -9,6 +9,12 @@ license = "AGPL-3.0-only"
 crate-type = ["cdylib", "rlib"]
 [dependencies]
 morrow-core = { path = "../core", features = ["web-storage"] }
+morrow-plugin-runtime = { path = "../plugin_runtime", features = ["web-packages"] }
+morrow-workbench-host = { path = "../workbench_host" }
+zeroize = "=1.9.0"
+capnp = { version = "=0.24.1", optional = true }
+sha2 = "=0.10.9"
+morrow-workbench-plugin = { path = "../plugins/workbench", optional = true, default-features = false }
 wasm-bindgen = "=0.2.128"
 wasm-bindgen-futures = "=0.4.78"
 sqlite-wasm-rs = "=0.5.5"
@@ -17,3 +23,4 @@ js-sys = "=0.3.105"
 
 [features]
 fault-injection = ["morrow-core/web-test-hooks"]
+workbench-qualification = ["dep:capnp", "dep:morrow-workbench-plugin"]

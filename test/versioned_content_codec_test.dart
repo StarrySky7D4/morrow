@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:morrow_studio/plugins/generated/content_api.capnp.dart' as wire;
 import 'package:morrow_studio/plugins/generated/identity.dart' as contract;
 import 'package:morrow_studio/plugins/versioned_content.dart';
@@ -26,12 +27,12 @@ Uint8List recordFrame(
   envelope.kind = wire.EnvelopeKind.record;
   envelope.id = envelopeId;
   envelope.operation = '';
-  envelope.sourceRevision = VersionedContentCodec.wireU64(revision);
-  envelope.revision = VersionedContentCodec.wireU64(revision);
+  envelope.sourceRevisionBigInt = revision;
+  envelope.revisionBigInt = revision;
   final card = envelope.initRecord();
   card.id = 'card-1';
   card.title = 'title';
-  card.revision = VersionedContentCodec.wireU64(revision);
+  card.revisionBigInt = revision;
   card.formatVersion = formatVersion;
   card.description = '';
   card.category = '灵感';
@@ -44,7 +45,7 @@ Uint8List recordFrame(
     asset.id = 'asset-1';
     asset.name = 'asset.bin';
     asset.kind = 'file';
-    asset.bytes = VersionedContentCodec.wireU64(assetBytes);
+    asset.bytesBigInt = assetBytes;
   }
   card.completeCount = completeCount ?? (formatVersion == 2 ? 0 : 0);
   card.incompleteCount = formatVersion == 2 ? 1 : 0;
@@ -64,9 +65,7 @@ Uint8List recordFrame(
     final bytes = Uint8List.fromList([0x08, 0x01, 0xa2, 0x06, 0x01, 0xff]);
     final origin = card.initOrigin();
     origin.cardId = 'card-1';
-    origin.sourceRevision = VersionedContentCodec.wireU64(
-      revision - BigInt.one,
-    );
+    origin.sourceRevisionBigInt = revision - BigInt.one;
     origin.sourceSha256 = Uint8List.fromList(sha256.convert(bytes).bytes);
     origin.migratorVersion = 1;
     origin.targetVersion = 2;
@@ -85,8 +84,8 @@ Uint8List planFrame(BigInt revision, {String operation = 'migrate-card-1'}) {
   out.kind = wire.EnvelopeKind.plan;
   out.id = 'card-1';
   out.operation = operation;
-  out.sourceRevision = VersionedContentCodec.wireU64(revision);
-  out.revision = VersionedContentCodec.wireU64(revision);
+  out.sourceRevisionBigInt = revision;
+  out.revisionBigInt = revision;
   return message.serialize();
 }
 
@@ -103,14 +102,12 @@ Uint8List commitFrame(
   out.kind = wire.EnvelopeKind.commit;
   out.id = 'card-1';
   out.operation = operation;
-  out.sourceRevision = VersionedContentCodec.wireU64(
-    reportedSource ?? sourceRevision,
-  );
-  out.revision = VersionedContentCodec.wireU64(revision);
+  out.sourceRevisionBigInt = reportedSource ?? sourceRevision;
+  out.revisionBigInt = revision;
   final card = out.initRecord();
   card.id = 'card-1';
   card.title = 'title';
-  card.revision = VersionedContentCodec.wireU64(revision);
+  card.revisionBigInt = revision;
   card.formatVersion = 1;
   card.description = '';
   card.category = '灵感';
@@ -122,7 +119,7 @@ Uint8List commitFrame(
 }
 
 void main() {
-  test('u64 signed carrier preserves the top bit and adjacent revisions', () {
+  test('exact u64 fields preserve the top bit and adjacent revisions', () {
     final top = BigInt.one << 63;
     final max = VersionedContentCodec.maxU64;
     final precise = BigInt.one << 53;
@@ -136,10 +133,17 @@ void main() {
       max - BigInt.one,
       max,
     ]) {
-      expect(
-        VersionedContentCodec.unsigned(VersionedContentCodec.wireU64(value)),
-        value,
-      );
+      if (kIsWeb && value.toSigned(64).abs() > BigInt.from(9007199254740991)) {
+        expect(
+          () => VersionedContentCodec.wireU64(value),
+          throwsFormatException,
+        );
+      } else {
+        expect(
+          VersionedContentCodec.unsigned(VersionedContentCodec.wireU64(value)),
+          value,
+        );
+      }
       final record = VersionedContentCodec.decodeRecord(
         recordFrame(value),
         id: 'card-1',

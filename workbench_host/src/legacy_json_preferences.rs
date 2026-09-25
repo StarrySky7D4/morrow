@@ -102,6 +102,9 @@ fn source(value: &Value, where_: &str) -> Result<Source> {
     let local = bool_field(map, "local", false)?;
     let location = str_field(map, "location", "")?;
     let location = if local {
+        #[cfg(target_arch = "wasm32")]
+        return Err(format!("{where_}.location requires explicit device asset migration").into());
+        #[cfg(not(target_arch = "wasm32"))]
         url::Url::from_file_path(Path::new(&location))
             .map_err(|_| format!("{where_}.location must be an absolute local path"))?
             .to_string()

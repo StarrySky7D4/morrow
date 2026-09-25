@@ -18,17 +18,19 @@ wire.ResponseReader reply({
   final message = MessageBuilder();
   final response = message.initRoot(wire.responseFactory);
   final revision = committed ?? (source ?? BigInt.zero) + BigInt.one;
-  response.revision = VersionedContentCodec.wireU64(outer ?? revision);
+  response.revisionBigInt = outer ?? revision;
   if (payload) response.payload = Uint8List.fromList([1]);
   if (present) {
     final proof = response.initEditorCommitProof();
     proof.id = id;
     proof.operation = operation;
     proof.digest = Uint8List.fromList(List.filled(digestLength, 73));
-    proof.sourceRevision = VersionedContentCodec.wireU64(source ?? BigInt.zero);
-    proof.committedRevision = VersionedContentCodec.wireU64(revision);
+    proof.sourceRevisionBigInt = source ?? BigInt.zero;
+    proof.committedRevisionBigInt = revision;
   }
-  return MessageReader.deserialize(message.serialize()).getRoot(wire.responseFactory);
+  return MessageReader.deserialize(
+    message.serialize(),
+  ).getRoot(wire.responseFactory);
 }
 
 void main() {

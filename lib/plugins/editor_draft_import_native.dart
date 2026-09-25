@@ -19,8 +19,8 @@ final class NativeEditorDraftImportControl implements EditorDraftImportControl {
     host.ResponseReader response,
   ) async {
     final token = response.transfer ?? '';
-    final total = VersionedContentCodec.unsigned(response.totalLength);
-    final revision = VersionedContentCodec.unsigned(response.revision);
+    final total = response.totalLengthBigInt;
+    final revision = response.revisionBigInt;
     final digest = List<int>.of(response.sha256 ?? const <int>[]);
     try {
       if (token.isEmpty ||
@@ -35,10 +35,9 @@ final class NativeEditorDraftImportControl implements EditorDraftImportControl {
       while (true) {
         final part = response.payload;
         if (response.transfer != token ||
-            VersionedContentCodec.unsigned(response.totalLength) != total ||
-            VersionedContentCodec.unsigned(response.revision) != revision ||
-            VersionedContentCodec.unsigned(response.offset) !=
-                BigInt.from(offset) ||
+            response.totalLengthBigInt != total ||
+            response.revisionBigInt != revision ||
+            response.offsetBigInt != BigInt.from(offset) ||
             !RustWorkbench._same(response.sha256, digest) ||
             part == null ||
             part.isEmpty ||
@@ -99,7 +98,7 @@ final class NativeEditorDraftImportControl implements EditorDraftImportControl {
   ) {
     out.id = cardId;
     out.attachment = draftId;
-    out.revision = EditorDraftImportCodec.wireU64(generation);
+    out.revisionBigInt = generation;
     out.operation = operation;
     out.name = importOperation;
   }

@@ -27,20 +27,16 @@ final class NativeVersionedContent implements VersionedContentControl {
         decode: (reply) => VersionedContentCodec.decodeRecord(
           reply.payload ?? Uint8List(0),
           id: id,
-          outerRevision: VersionedContentCodec.unsigned(reply.revision),
+          outerRevision: reply.revisionBigInt,
         ),
       );
       final known = _owner._revisions[id];
       if (current.revision < (minimum ?? BigInt.zero) ||
-          (known != null &&
-              current.revision < VersionedContentCodec.unsigned(known))) {
+          (known != null && current.revision < known)) {
         continue;
       }
       // No await between the last revision comparison and publication.
-      _owner._rememberRevision(
-        id,
-        VersionedContentCodec.wireU64(current.revision),
-      );
+      _owner._rememberRevision(id, current.revision);
       _owner._knownDeleted[id] = current.deleted;
       return current;
     }
@@ -91,7 +87,7 @@ final class NativeVersionedContent implements VersionedContentControl {
       decode: (reply) => VersionedContentCodec.decodePlan(
         reply.payload ?? Uint8List(0),
         id: id,
-        outerRevision: VersionedContentCodec.unsigned(reply.revision),
+        outerRevision: reply.revisionBigInt,
       ),
     );
   }
@@ -106,7 +102,6 @@ final class NativeVersionedContent implements VersionedContentControl {
     if (operation.isEmpty || id.isEmpty || sourceRevision == BigInt.zero) {
       throw const FormatException('Missing versioned mutation identity');
     }
-    final carrier = VersionedContentCodec.wireU64(sourceRevision);
     late final VersionedCommitReceipt receipt;
     try {
       receipt = await _owner._callDecoded<VersionedCommitReceipt>(
@@ -114,7 +109,7 @@ final class NativeVersionedContent implements VersionedContentControl {
         configure: (request) {
           request.id = id;
           request.operation = operation;
-          request.revision = carrier;
+          request.revisionBigInt = sourceRevision;
           if (payload != null) request.payload = payload;
         },
         decode: (reply) => VersionedContentCodec.decodeCommit(
@@ -122,7 +117,7 @@ final class NativeVersionedContent implements VersionedContentControl {
           id: id,
           operation: operation,
           sourceRevision: sourceRevision,
-          outerRevision: VersionedContentCodec.unsigned(reply.revision),
+          outerRevision: reply.revisionBigInt,
         ),
       );
     } on _HostResponseError catch (error) {
@@ -131,7 +126,7 @@ final class NativeVersionedContent implements VersionedContentControl {
       if ((action == host.Action.editTasks || action == host.Action.editCard) &&
           error.code == 1001 &&
           error.emptyPayload &&
-          error.revision == 0) {
+          error.revision == BigInt.zero) {
         throw VersionedMutationNoCommit(
           id: id,
           operation: operation,
@@ -141,10 +136,7 @@ final class NativeVersionedContent implements VersionedContentControl {
       rethrow;
     }
     // Fence later reads at the confirmed revision before awaiting refresh.
-    _owner._rememberRevision(
-      id,
-      VersionedContentCodec.wireU64(receipt.revision),
-    );
+    _owner._rememberRevision(id, receipt.revision);
     try {
       final current = await _readCurrent(id, minimum: receipt.revision);
       return VersionedMutationResult(receipt: receipt, current: current);

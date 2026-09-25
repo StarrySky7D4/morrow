@@ -25,9 +25,9 @@ abstract final class HttpTaskCodec {
     validateRequest(request);
     out.submission = request.submission;
     out.endpoint = request.endpoint;
-    out.endpointRevision = request.endpointRevision.toSigned(64).toInt();
+    out.endpointRevisionBigInt = request.endpointRevision;
     out.packageDigest = request.packageDigest;
-    out.registryRevision = request.registryRevision.toSigned(64).toInt();
+    out.registryRevisionBigInt = request.registryRevision;
     out.method = request.method;
     out.target = request.target;
     out.timeoutMs = request.timeoutMs;
@@ -132,7 +132,7 @@ abstract final class HttpTaskCodec {
       cancelled: row.cancelled,
       unknown: row.unknown,
       calls: BigInt.from(row.calls),
-      chargedBytes: BigInt.from(row.chargedBytes).toUnsigned(64),
+      chargedBytes: row.chargedBytesBigInt,
       executionFault: fault,
       exitCode: row.exitCode,
       http: http,

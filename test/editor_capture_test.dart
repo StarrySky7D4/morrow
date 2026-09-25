@@ -196,6 +196,11 @@ void main() {
       await tester.tap(find.byKey(const ValueKey('idea-save')));
       await tester.pump();
       expect(editor.attempts.length, 1);
+      // The pending save button keeps its focus in Web. Another activation
+      // must still be ignored rather than submitting the frozen draft twice.
+      await tester.tap(find.byKey(const ValueKey('idea-save')));
+      await tester.pump();
+      expect(editor.attempts.length, 1);
       expect(
         tester
             .widget<IconButton>(

@@ -136,7 +136,7 @@ impl CaptureScopes {
     fn key(&mut self) -> Result<String> {
         if self.nonce.is_none() {
             let mut bytes = [0u8; 16];
-            getrandom::fill(&mut bytes).map_err(|_| "capture scope entropy unavailable")?;
+            crate::platform::random(&mut bytes).map_err(|_| "capture scope entropy unavailable")?;
             self.nonce = Some(bytes.iter().map(|b| format!("{b:02x}")).collect());
         }
         self.sequence = self

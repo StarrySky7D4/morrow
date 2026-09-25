@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "활성 라이브러리나 등록 파일을 읽을 수 없습니다. 원래 위치를 확인하세요. 대체 라이브러리는 자동 생성하지 않습니다.",
   "recoveryClosing": "기존 서비스가 종료되기를 기다리고 있습니다. 종료가 확인될 때까지 다시 열기와 복원을 사용할 수 없습니다.",
   "recoveryClosingUnconfirmed": "종료가 아직 확인되지 않았습니다. 계속 관찰하며, 시간 초과가 실행된 작업을 취소하지는 않습니다.",
-  "recoveryMigrationIncomplete": "이 라이브러리의 마이그레이션이 완료되지 않았습니다. 폴더의 마이그레이션 보고서를 확인하고 원본 라이브러리를 보존한 채 새 대상 폴더로 다시 시도하세요."
+  "recoveryMigrationIncomplete": "이 라이브러리의 마이그레이션이 완료되지 않았습니다. 폴더의 마이그레이션 보고서를 확인하고 원본 라이브러리를 보존한 채 새 대상 폴더로 다시 시도하세요.",
+  "recoveryWebCreate": "로컬 작업 공간 만들기",
+  "recoveryWebLocal": "콘텐츠는 이 기기의 브라우저에 저장됩니다.",
+  "recoveryWebLegacy": "기존 콘텐츠를 찾았습니다. 열어서 계속 사용할 수 있습니다. 데이터는 이전되거나 교체되지 않았습니다.",
+  "recoveryWebOpenLegacy": "기존 콘텐츠 열기",
+  "recoveryWebUnavailable": "작업 공간을 열 수 없습니다. 다른 Morrow 탭을 닫고 다시 시도하세요. 기존 데이터는 교체되지 않았습니다."
 }

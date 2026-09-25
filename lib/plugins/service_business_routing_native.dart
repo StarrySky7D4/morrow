@@ -22,11 +22,11 @@ class _HostResponseError extends StateError {
     super.message, {
     this.code = 0,
     this.emptyPayload = false,
-    this.revision = 0,
+    this.revision,
   });
   final int code;
   final bool emptyPayload;
-  final int revision;
+  final BigInt? revision;
 }
 
 extension _ServiceBusinessRouting on RustWorkbench {
@@ -52,7 +52,7 @@ extension _ServiceBusinessRouting on RustWorkbench {
       reply.error!,
       code: reply.uiCode,
       emptyPayload: reply.payload == null || reply.payload!.isEmpty,
-      revision: reply.revision,
+      revision: reply.revisionBigInt,
     );
   }
 

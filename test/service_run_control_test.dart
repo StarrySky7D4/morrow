@@ -207,7 +207,7 @@ void main() {
           ).getRoot(host.requestFactory).serviceRun!.outbound!;
           expect(selections.length, 1);
           expect(selections[0].reference, orderedEquals(identity(7)));
-          expect(BigInt.from(selections[0].revision).toUnsigned(64), max);
+          expect(selections[0].revisionBigInt, max);
         },
       );
     },
@@ -266,9 +266,9 @@ void main() {
           final r = MessageReader.deserialize(
             bytes,
           ).getRoot(host.requestFactory).serviceRun!;
-          expect(BigInt.from(r.configRevision).toUnsigned(64), max);
-          expect(BigInt.from(r.publicationRevision).toUnsigned(64), max);
-          expect(BigInt.from(r.registryRevision).toUnsigned(64), max);
+          expect(r.configRevisionBigInt, max);
+          expect(r.publicationRevisionBigInt, max);
+          expect(r.registryRevisionBigInt, max);
           expect(r.submission, orderedEquals(identity(1)));
           expect(r.configDigest, orderedEquals(identity(2)));
           expect(r.publication, orderedEquals(identity(3)));

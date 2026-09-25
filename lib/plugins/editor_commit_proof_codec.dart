@@ -27,11 +27,11 @@ abstract final class EditorCommitProofCodec {
         value.digest!.length != 32) {
       throw const FormatException('Editor commit proof identity changed');
     }
-    final source = VersionedContentCodec.unsigned(value.sourceRevision);
-    final committed = VersionedContentCodec.unsigned(value.committedRevision);
+    final source = value.sourceRevisionBigInt;
+    final committed = value.committedRevisionBigInt;
     if (source == VersionedContentCodec.maxU64 ||
         committed != source + BigInt.one ||
-        VersionedContentCodec.unsigned(response.revision) != committed ||
+        response.revisionBigInt != committed ||
         (response.payload?.isNotEmpty ?? false)) {
       throw const FormatException('Editor commit proof revision changed');
     }

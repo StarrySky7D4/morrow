@@ -14,8 +14,9 @@ use morrow_core::{
 use std::{
     collections::BTreeSet,
     sync::{Arc, Mutex, Weak},
-    time::{Duration, Instant},
+    time::Duration,
 };
+use crate::monotonic::Instant;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {

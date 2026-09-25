@@ -53,8 +53,7 @@ final class NativeEditorDraftHandoffControl
             },
           );
           if (reply.transfer != token ||
-              VersionedContentCodec.unsigned(reply.offset) !=
-                  BigInt.from(end)) {
+              reply.offsetBigInt != BigInt.from(end)) {
             throw const FormatException(
               'Draft handoff upload receipt mismatch',
             );

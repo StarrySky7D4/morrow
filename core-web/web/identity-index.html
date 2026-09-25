@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><title>Device identity qualification</title>
+<pre id="result">Running</pre><script type="module">
+function run(message) {
+  return new Promise((resolve,reject)=>{
+    const worker=new Worker('./identity-worker.mjs',{type:'module'});
+    worker.onerror=event=>{worker.terminate();reject(Error(event.message));};
+    worker.onmessage=({data})=>{worker.terminate();data.ok?resolve(data):reject(Error(data.error));};
+    worker.postMessage(message);
+  });
+}
+try {
+  const first=await run({kind:'create'});
+  await run({kind:'restore',identity:first.identity});
+  globalThis.coreProbeResult='PASS: random device identity, atomic creation, non-extractable wrapping key, separate Worker reopen/signing, seed erasure, interrupted initialization, seven corruption cases and future schema rejection';
+} catch(error){globalThis.coreProbeResult='FAIL: '+(error?.stack??String(error));}
+document.querySelector('#result').textContent=globalThis.coreProbeResult;
+</script>

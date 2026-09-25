@@ -33,7 +33,8 @@ fn preflight(bytes: &[u8], name: &str) -> Result<()> {
         0,
     )
 }
-fn capability(raw: i32) -> Result<GrantKind> {
+/// Decode the manifest/registry content-capability namespace at a trusted boundary.
+pub fn capability(raw: i32) -> Result<GrantKind> {
     match proto::Capability::try_from(raw).map_err(|_| Error::UnsupportedVersion)? {
         proto::Capability::RenameCard => Ok(GrantKind::Rename),
         proto::Capability::ReadSummary => Ok(GrantKind::ReadSummary),
@@ -506,5 +507,4 @@ pub mod catalog {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
 pub mod registry;

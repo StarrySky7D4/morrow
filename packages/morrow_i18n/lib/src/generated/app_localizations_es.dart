@@ -3058,6 +3058,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recoveryTitle => 'Reabrir espacio de trabajo';
 
   @override
+  String get recoveryWebCreate => 'Crear espacio local';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Se encontró contenido existente. Ábrelo para continuar; no se ha migrado ni reemplazado.';
+
+  @override
+  String get recoveryWebLocal =>
+      'Tu contenido permanece en este navegador y en este dispositivo.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Abrir contenido existente';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'No se pudo abrir este espacio. Cierra las otras pestañas de Morrow e inténtalo de nuevo. Los datos existentes no se han reemplazado.';
+
+  @override
   String get shutdownBackground => 'Continuar el cierre en segundo plano';
 
   @override

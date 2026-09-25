@@ -5,8 +5,6 @@ import 'service_control.dart';
 
 /// Private native transport only. The platform-neutral models never import it.
 abstract final class ServiceCodec {
-  static BigInt _u64(int value) => BigInt.from(value).toUnsigned(64);
-  static int _wire(BigInt value) => value.toSigned(64).toInt();
   static Uint8List _data(Uint8List? value) => value ?? Uint8List(0);
   static void _noToken(host.ResponseReader value) {
     final token = value.issuedToken;
@@ -73,13 +71,13 @@ abstract final class ServiceCodec {
   ) {
     ServiceValidation.configUpdate(value);
     out.id = value.id;
-    out.expectedRevision = _wire(value.expectedRevision);
-    out.registryRevision = _wire(value.registryRevision);
+    out.expectedRevisionBigInt = value.expectedRevision;
+    out.registryRevisionBigInt = value.registryRevision;
     out.packageId = value.packageId;
     out.packageDigest = value.packageDigest;
     out.service = value.service;
     out.handler = value.handler;
-    out.retentionMs = _wire(value.retentionMs);
+    out.retentionMsBigInt = value.retentionMs;
     final principals = out.initPrincipals(value.principals.length);
     for (var i = 0; i < value.principals.length; i++) {
       _writePrincipal(value.principals[i], principals[i]);
@@ -94,7 +92,7 @@ abstract final class ServiceCodec {
     ServiceValidation.identity(id);
     ServiceValidation.revision(revision);
     out.id = id;
-    out.revision = _wire(revision);
+    out.revisionBigInt = revision;
   }
 
   static void writeAuthentication(
@@ -113,7 +111,7 @@ abstract final class ServiceCodec {
     ServiceValidation.principalId(principalId);
     ServiceValidation.days(lifetimeDays);
     out.serviceReference = reference;
-    out.revision = _wire(expectedRevision);
+    out.revisionBigInt = expectedRevision;
     out.principalId = principalId;
     out.serviceDays = lifetimeDays;
   }
@@ -125,7 +123,7 @@ abstract final class ServiceCodec {
   ) {
     ServiceValidation.referenceRevision(reference, revision);
     out.serviceReference = reference;
-    out.revision = _wire(revision);
+    out.revisionBigInt = revision;
   }
 
   static void writePublication(
@@ -134,9 +132,9 @@ abstract final class ServiceCodec {
   ) {
     ServiceValidation.publicationUpdate(value);
     out.reference = value.reference;
-    out.expectedRevision = _wire(value.expectedRevision);
-    out.configRevision = _wire(value.configRevision);
-    out.registryRevision = _wire(value.registryRevision);
+    out.expectedRevisionBigInt = value.expectedRevision;
+    out.configRevisionBigInt = value.configRevision;
+    out.registryRevisionBigInt = value.registryRevision;
     out.packageId = value.packageId;
     out.lifetimeDays = value.lifetimeDays;
     final p = out.initPolicy(), v = value.policy;
@@ -186,9 +184,9 @@ abstract final class ServiceCodec {
     }
     final value = StoredServiceConfig(
       id: row.id ?? '',
-      revision: _u64(row.revision),
+      revision: row.revisionBigInt,
       namespace: _data(row.namespace),
-      retentionMs: _u64(row.retentionMs),
+      retentionMs: row.retentionMsBigInt,
       service: row.service ?? '',
       handler: row.handler ?? '',
       packageDigest: _data(row.packageDigest),
@@ -221,9 +219,9 @@ abstract final class ServiceCodec {
     final policy = row.publication;
     final value = StoredServiceAuthority(
       reference: _data(row.reference),
-      revision: _u64(row.revision),
-      createdMs: _u64(row.createdMs),
-      expiresMs: _u64(row.expiresMs),
+      revision: row.revisionBigInt,
+      createdMs: row.createdMsBigInt,
+      expiresMs: row.expiresMsBigInt,
       disabled: row.disabled,
       kind: row.kind,
       principalId: row.principalId ?? '',

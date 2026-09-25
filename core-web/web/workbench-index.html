@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Morrow local workbench qualification</title>
+<script type="module">
+let worker, first, reopenDeadline;
+const timeout=setTimeout(()=>{worker?.terminate();globalThis.coreProbeResult='FAIL: workbench worker timeout';},55000);
+function finish(value){clearTimeout(timeout);globalThis.coreProbeResult=value;}
+function start(restore){
+  worker=new Worker(`./workbench-worker.mjs${restore?'?restore=1':''}`,{type:'module'});
+  worker.onmessage=({data})=>{
+    if(data.startsWith('PASS:')&&!restore){first=data;reopenDeadline=Date.now()+5000;setTimeout(()=>start(true),100);}
+    else if(data.startsWith('RETRY:')&&Date.now()<reopenDeadline){setTimeout(()=>start(true),100);}
+    else finish(restore&&data.startsWith('PASS:')?`${first}; ${data}`:data.replace(/^RETRY:/,'FAIL:'));
+  };
+  worker.onerror=event=>{finish(`FAIL: ${event.message}`);worker.terminate();};
+}
+start(false);
+</script>

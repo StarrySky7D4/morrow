@@ -252,7 +252,7 @@ impl WorkbenchState {
         sort: &str,
     ) -> Result<Vec<String>> {
         let mut nonce = [0; 16];
-        getrandom::fill(&mut nonce)?;
+        crate::platform::random(&mut nonce)?;
         let operation = format!("query-{:032x}", u128::from_le_bytes(nonce));
         self.query_with_operation(&operation, section, filter, text, sort)
     }

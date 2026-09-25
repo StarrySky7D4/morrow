@@ -5,37 +5,38 @@ use std::sync::{
     Arc, Mutex,
     atomic::{AtomicBool, Ordering},
 };
-use std::time::Instant;
+pub mod monotonic;
+use monotonic::Instant;
 use wasmi::{
     Caller, Config, EnforcedLimits, Engine, ExternType, Linker, Module, Store, StoreLimits,
     StoreLimitsBuilder, ValType,
 };
 mod continuation;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod dependency;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod file_io;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod http_io;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod inline_ui;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod instance_pool;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod io_binding;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_execution;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod io_jobs;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod manager;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-execution")]
 pub mod package;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod proposal;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(feature = "package-management")]
 pub mod replay;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod service_authority;
@@ -55,7 +56,10 @@ pub mod remote_reader;
 #[cfg(not(target_arch = "wasm32"))]
 #[allow(unsafe_code)]
 pub mod shared_memory;
-#[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+#[cfg(target_arch = "wasm32")]
+#[path = "shared_memory_web.rs"]
+pub mod shared_memory;
+#[cfg(feature = "package-management")]
 pub mod shared_objects;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;
@@ -95,7 +99,7 @@ impl Cancellation {
         let mut current = self.deadline.lock().unwrap_or_else(|e| e.into_inner());
         *current = Some(current.map_or(deadline, |old| old.min(deadline)));
     }
-    #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
+    #[cfg(feature = "package-management")]
     pub(crate) fn linked(first: Self, second: Self) -> Self {
         Self {
             parents: Some(Arc::new([first, second])),

@@ -26,10 +26,10 @@ void writeRequest(wire.ImportRequestBuilder out, EditorDraftImportRequest r) {
   out.cardId = r.cardId;
   out.draftId = r.draftId;
   out.operation = r.operation;
-  out.expectedGeneration = EditorDraftImportCodec.wireU64(r.expectedGeneration);
+  out.expectedGenerationBigInt = r.expectedGeneration;
   out.name = r.name;
   out.kind = r.kind;
-  out.bytes = EditorDraftImportCodec.wireU64(r.bytes);
+  out.bytesBigInt = r.bytes;
   out.sha256 = Uint8List.fromList(r.sha256);
 }
 
@@ -53,7 +53,7 @@ Uint8List envelope(
   out.cardId = r.cardId;
   out.draftId = r.draftId;
   out.operation = r.operation;
-  out.expectedGeneration = EditorDraftImportCodec.wireU64(r.expectedGeneration);
+  out.expectedGenerationBigInt = r.expectedGeneration;
   out.importOperation = r.operation;
   out.currentGeneration = 1;
   out.mainActive = true;
@@ -193,7 +193,7 @@ void main() {
       encoded,
     ).getRoot(wire.importRequestFactory);
     expect(
-      EditorDraftImportCodec.unsigned(wireRequest.expectedGeneration),
+      wireRequest.expectedGenerationBigInt,
       BigInt.parse('9007199254740993'),
     );
     expect(wireRequest.sha256!.first, 7);

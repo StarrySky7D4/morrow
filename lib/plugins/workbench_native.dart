@@ -23,6 +23,9 @@ import 'service_tls_identity_codec_native.dart';
 import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'host_request.dart';
+import 'workbench_channel.dart';
+import 'workbench_device_files.dart';
+import 'workbench_channel_native.dart';
 import 'package:morrow_plugin_ui/online.dart';
 import 'studio_native.dart';
 import 'dart:async';
@@ -80,9 +83,9 @@ class RustWorkbench
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
-  RustWorkbench._(this.process, this.cache) {
-    process.stdout.listen(_receive, onError: _fail, onDone: _ended);
-    _stderrDone = process.stderr.listen((bytes) {
+  RustWorkbench._(this.channel, this._cache, [this._nativeProcess]) {
+    channel.output.listen(_receive, onError: _fail, onDone: _ended);
+    _stderrDone = channel.diagnostics.listen((bytes) {
       final remaining = 4096 - _stderr.length;
       if (remaining > 0) _stderr.addAll(bytes.take(remaining));
     }).asFuture<void>();
@@ -151,14 +154,52 @@ class RustWorkbench
     try {
       await _stderrDone;
     } catch (_) {}
-    final code = await process.exitCode;
+    final code = await channel.exitCode;
     final detail = utf8.decode(_stderr, allowMalformed: true).trim();
     _fail(StateError(detail.isEmpty ? '内容服务已退出 ($code)' : detail));
   }
 
-  final Process process;
-  final Directory cache;
-  final _revisions = <String, int>{};
+  final WorkbenchChannel channel;
+  WorkbenchDeviceFiles? get _deviceFiles =>
+      channel is WorkbenchDeviceFiles ? channel as WorkbenchDeviceFiles : null;
+  Future<T> _deviceFileJob<T>(
+    Future<T> Function(WorkbenchDeviceFiles files) action,
+  ) {
+    if (_failure != null) return Future.error(_failure!);
+    if (_closingProcess != null) {
+      return Future.error(StateError('Content service is closing'));
+    }
+    final result = _businessQueue.then((_) {
+      final job = _queue.then((_) {
+        if (_failure != null) throw _failure!;
+        if (_serviceRoute != null ||
+            _serviceAdmissionUncertain ||
+            _closingProcess != null) {
+          throw StateError(
+            'Device files require the active local workbench owner',
+          );
+        }
+        return action(_deviceFiles!);
+      });
+      _queue = job.then<void>((_) {}, onError: (Object _, StackTrace _) {});
+      return job;
+    });
+    _businessQueue = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return result;
+  }
+
+  final Process? _nativeProcess;
+  final Directory? _cache;
+  Process get process =>
+      _nativeProcess ??
+      (throw StateError('This workbench has no native process'));
+  Directory get cache =>
+      _cache ??
+      (throw UnsupportedError('Device preview adapter is not connected'));
+  final _revisions = <String, BigInt>{};
   final _knownDeleted = <String, bool>{};
   final _assets = <String, IdeaAttachment>{};
   final _workspaceAssetCache = <String, _WorkspaceCachedAsset>{};
@@ -193,7 +234,11 @@ class RustWorkbench
       managed ? directory.path : '${directory.path}/workbench.db',
       package,
     ]);
-    final result = RustWorkbench._(process, cache);
+    final result = RustWorkbench._(
+      NativeWorkbenchChannel(process),
+      cache,
+      process,
+    );
     try {
       onStarted?.call(result);
       await result._call(
@@ -217,9 +262,27 @@ class RustWorkbench
     }
   }
 
+  /// Connect the shared controller to an already opened device-local host.
+  /// Startup failure closes that owner; it never retries or initializes a library.
+  static Future<RustWorkbench> connect(WorkbenchChannel channel) async {
+    final result = RustWorkbench._(channel, null);
+    try {
+      await result._call(
+        host.Action.pageVersioned,
+        configure: (r) => r.limit = 1,
+      );
+      return result;
+    } catch (error, stack) {
+      try {
+        await result.close();
+      } catch (_) {}
+      Error.throwWithStackTrace(error, stack);
+    }
+  }
+
   PluginManagementState _pluginState(host.ResponseReader r) =>
       PluginManagementState(
-        revision: BigInt.from(r.revision).toUnsigned(64),
+        revision: r.revisionBigInt,
         digest: Uint8List.fromList(r.sha256 ?? []),
         enabled: r.pluginEnabled,
         approved: r.pluginApproved,
@@ -237,7 +300,7 @@ class RustWorkbench
     await _call(
       host.Action.pluginConfigure,
       configure: (r) {
-        r.revision = expected.revision.toSigned(64).toInt();
+        r.revisionBigInt = expected.revision;
         r.sha256 = expected.digest;
         r.limit = enable ? 1 : 0;
       },
@@ -256,7 +319,7 @@ class RustWorkbench
         if (value != null) value else throw const FormatException('插件资料不完整'),
     ];
     return PluginLibraryPage(
-      revision: BigInt.from(response.revision).toUnsigned(64),
+      revision: response.revisionBigInt,
       cursor: response.cursor ?? '',
       entries: [
         for (final row in rows ?? <host.PluginEntryReader>[])
@@ -301,7 +364,7 @@ class RustWorkbench
       configure: (r) {
         r.cursor = cursor;
         r.catalogRevisionBound = revision != null;
-        if (revision != null) r.revision = revision.toSigned(64).toInt();
+        if (revision != null) r.revisionBigInt = revision;
       },
     ),
   );
@@ -325,7 +388,7 @@ class RustWorkbench
       configure: (r) {
         r.selectedPath = path;
         r.sha256 = digest;
-        r.revision = revision.toSigned(64).toInt();
+        r.revisionBigInt = revision;
       },
     );
   }
@@ -337,7 +400,7 @@ class RustWorkbench
   ) {
     r.id = entry.id;
     r.sha256 = entry.digest;
-    r.revision = revision.toSigned(64).toInt();
+    r.revisionBigInt = revision;
   }
 
   @override
@@ -596,9 +659,9 @@ class RustWorkbench
 
   StoredEndpoint _endpoint(host.EndpointInfoReader row) {
     final reference = Uint8List.fromList(row.reference ?? []);
-    final revision = BigInt.from(row.revision).toUnsigned(64);
-    final created = BigInt.from(row.createdMs).toUnsigned(64);
-    final expires = BigInt.from(row.expiresMs).toUnsigned(64);
+    final revision = row.revisionBigInt;
+    final created = row.createdMsBigInt;
+    final expires = row.expiresMsBigInt;
     _credentialIdentity(reference, revision);
     if (created <= BigInt.zero ||
         expires <= created ||
@@ -678,8 +741,8 @@ class RustWorkbench
         host.Action.endpointSave,
         configure: (r) {
           r.endpointReference = reference;
-          r.revision = expectedRevision.toSigned(64).toInt();
-          r.endpointRegistryRevision = registryRevision.toSigned(64).toInt();
+          r.revisionBigInt = expectedRevision;
+          r.endpointRegistryRevisionBigInt = registryRevision;
           r.endpointDays = lifetimeDays;
           final p = r.initEndpointPolicy();
           p.packageId = policy.packageId;
@@ -711,7 +774,7 @@ class RustWorkbench
         host.Action.endpointDisable,
         configure: (r) {
           r.endpointReference = expected.reference;
-          r.revision = expected.revision.toSigned(64).toInt();
+          r.revisionBigInt = expected.revision;
         },
       ),
     );
@@ -719,9 +782,9 @@ class RustWorkbench
 
   StoredCredential _credential(host.CredentialInfoReader row) {
     final reference = Uint8List.fromList(row.reference ?? []);
-    final revision = BigInt.from(row.revision).toUnsigned(64);
-    final created = BigInt.from(row.createdMs).toUnsigned(64);
-    final expires = BigInt.from(row.expiresMs).toUnsigned(64);
+    final revision = row.revisionBigInt;
+    final created = row.createdMsBigInt;
+    final expires = row.expiresMsBigInt;
     if (reference.length != 32 ||
         reference.every((b) => b == 0) ||
         revision <= BigInt.zero ||
@@ -816,7 +879,7 @@ class RustWorkbench
         host.Action.credentialSave,
         configure: (r) {
           r.credentialReference = reference;
-          r.revision = expectedRevision.toSigned(64).toInt();
+          r.revisionBigInt = expectedRevision;
           r.credentialHeader = headerName;
           r.credentialSecret = headerValue;
           r.credentialDays = lifetimeDays;
@@ -833,7 +896,7 @@ class RustWorkbench
         host.Action.credentialDisable,
         configure: (r) {
           r.credentialReference = expected.reference;
-          r.revision = expected.revision.toSigned(64).toInt();
+          r.revisionBigInt = expected.revision;
         },
       ),
     );
@@ -1048,7 +1111,7 @@ class RustWorkbench
       host.Action.tlsIdentitySave,
       configure: (r) {
         r.serviceReference = frozenReference;
-        r.revision = expectedRevision.toInt();
+        r.revisionBigInt = expectedRevision;
         ServiceRunCodec.writeTls(frozen, r.initServiceTls());
       },
       decode: (r) => ServiceTlsIdentityCodec.saved(
@@ -1077,7 +1140,7 @@ class RustWorkbench
       host.Action.tlsIdentityDisable,
       configure: (r) {
         r.serviceReference = choice.reference;
-        r.revision = choice.revision.toInt();
+        r.revisionBigInt = choice.revision;
       },
       decode: (r) => ServiceTlsIdentityCodec.saved(
         r,
@@ -1395,15 +1458,13 @@ class RustWorkbench
             if (_isScheduler(action)) schedulerKey = r.asReader().ioKey;
           },
           send: (payload) async {
-            final header = ByteData(4)
-              ..setUint32(0, payload.length, Endian.little);
             response = _response = pendingReply = Completer<Uint8List>();
-            process.stdin.add(header.buffer.asUint8List());
-            process.stdin.add(payload);
-            await process.stdin.flush().timeout(
-              remainingBudget?.call() ?? requestTimeout,
-              onTimeout: transportTimeout,
-            );
+            await channel
+                .send(payload)
+                .timeout(
+                  remainingBudget?.call() ?? requestTimeout,
+                  onTimeout: transportTimeout,
+                );
           },
         );
         final bytes = receivedBytes = await response.future.timeout(
@@ -1473,27 +1534,23 @@ class RustWorkbench
     return r;
   }
 
-  static BigInt _revision(int signedCarrier) =>
-      unsignedContentRevision(signedCarrier);
-
   @override
   Iterable<String> knownContentIds() => _revisions.keys.toList(growable: false);
 
   @override
-  BigInt? knownContentRevision(String id) =>
-      _revisions[id] == null ? null : _revision(_revisions[id]!);
+  BigInt? knownContentRevision(String id) => _revisions[id];
 
   @override
   bool? knownContentDeleted(String id) => _knownDeleted[id];
 
-  void _rememberRevision(String id, int signedCarrier) {
+  void _rememberRevision(String id, BigInt revision) {
     final previous = _revisions[id];
-    if (previous == null || _revision(previous) <= _revision(signedCarrier)) {
-      _revisions[id] = signedCarrier;
+    if (previous == null || previous <= revision) {
+      _revisions[id] = revision;
     }
   }
 
-  Future<({Idea idea, int revision})> _readCurrent(
+  Future<({Idea idea, BigInt revision})> _readCurrent(
     String id, {
     BigInt? minimum,
     BigInt? receiptRevision,
@@ -1503,10 +1560,10 @@ class RustWorkbench
         host.Action.read,
         configure: (r) => r.id = id,
       );
-      final revision = _revision(current.revision);
+      final revision = current.revisionBigInt;
       final known = _revisions[id];
       if (revision < (minimum ?? BigInt.zero) ||
-          (known != null && revision < _revision(known))) {
+          (known != null && revision < known)) {
         continue;
       }
       final idea = await _idea(
@@ -1516,10 +1573,10 @@ class RustWorkbench
             receiptRevision != null && revision != receiptRevision,
       );
       final latestKnown = _revisions[id];
-      if (latestKnown != null && revision < _revision(latestKnown)) continue;
-      _rememberRevision(id, current.revision);
+      if (latestKnown != null && revision < latestKnown) continue;
+      _rememberRevision(id, revision);
       _knownDeleted[id] = idea.contentDeleted;
-      return (idea: idea, revision: current.revision);
+      return (idea: idea, revision: revision);
     }
     throw StateError('Current content changed during read');
   }
@@ -1533,8 +1590,8 @@ class RustWorkbench
     try {
       return (await _readCurrent(
         id,
-        minimum: _revision(receipt.revision),
-        receiptRevision: _revision(receipt.revision),
+        minimum: receipt.revisionBigInt,
+        receiptRevision: receipt.revisionBigInt,
       )).idea;
     } catch (error) {
       throw WorkbenchCommittedRefreshFailure(error);
@@ -1552,6 +1609,32 @@ class RustWorkbench
     for (final a in r.assets ?? <wire.AssetReader>[]) {
       final key = '$id/${a.id}';
       var item = _assets[key];
+      if (_deviceFiles case final files?) {
+        if (item == null || !files.hasDevicePreview(item.source)) {
+          final exported = await _deviceFileJob(
+            (files) => files.exportDeviceFile(
+              id,
+              a.id!,
+              a.name!,
+              TextureKind.values.byName(a.kind!),
+            ),
+          );
+          if (exported.bytes != a.bytesBigInt) {
+            files.releaseDevicePreview(exported.source);
+            throw const FormatException(
+              'Attachment length differs from current content',
+            );
+          }
+          item = IdeaAttachment.versioned(
+            source: exported.source,
+            byteLength: exported.bytes,
+            pluginId: a.id!,
+          );
+          _assets[key] = item;
+        }
+        attachments.add(item);
+        continue;
+      }
       if (item != null &&
           item.source.local &&
           !await File(item.source.location).exists()) {
@@ -1607,12 +1690,12 @@ class RustWorkbench
       hypothesis: r.hypothesis ?? '',
       conclusion: r.conclusion ?? '',
       attachments: attachments,
-      contentRevision: _revision(reply.revision),
+      contentRevision: reply.revisionBigInt,
       contentOwner: this,
       contentDeleted: r.deleted,
       historicalReceipt: historicalReceipt,
     );
-    if (trackRevision) _rememberRevision(id, reply.revision);
+    if (trackRevision) _rememberRevision(id, reply.revisionBigInt);
     return idea;
   }
 
@@ -1624,8 +1707,7 @@ class RustWorkbench
         versionedContent,
         pageLimit: pageLimit,
         knownRevisions: () => {
-          for (final entry in _revisions.entries)
-            entry.key: _revision(entry.value),
+          for (final entry in _revisions.entries) entry.key: entry.value,
         },
       );
 
@@ -1651,7 +1733,7 @@ class RustWorkbench
   ) => _applyWorkspaceCard(this, operation, idea, command);
   Future<List<Idea>> load() async {
     final ideas = <String, Idea>{};
-    final revisions = <String, int>{};
+    final revisions = <String, BigInt>{};
     var cursor = '';
     do {
       final page = await _call(
@@ -1676,7 +1758,7 @@ class RustWorkbench
       for (final id in _revisions.keys.toList()) {
         final known = _revisions[id]!;
         final scanned = revisions[id];
-        if (scanned != null && _revision(scanned) >= _revision(known)) continue;
+        if (scanned != null && scanned >= known) continue;
         final current = await _readCurrent(id);
         revisions[id] = current.revision;
         if (current.idea.contentDeleted) {
@@ -1687,7 +1769,7 @@ class RustWorkbench
       }
       final complete = _revisions.entries.every((entry) {
         final scanned = revisions[entry.key];
-        return scanned != null && _revision(scanned) >= _revision(entry.value);
+        return scanned != null && scanned >= entry.value;
       });
       if (complete) return ideas.values.toList().reversed.toList();
     }
@@ -1754,22 +1836,27 @@ class RustWorkbench
     IdeaAttachment a,
   ) async {
     if (a.pluginId != null) return a;
-    final r = await _call(
-      host.Action.importFile,
-      configure: (r) {
-        r.id = target;
-        r.selectedPath = a.source.location;
-        r.name = a.source.name;
-        r.kind = a.source.kind.name;
-      },
-    );
-    final asset = _payload(r.payload).idea!.assets![0];
-    final item = IdeaAttachment(
-      source: a.source,
-      size: asset.bytes,
-      pluginId: asset.id,
-    );
-    _importAliases['$target/${asset.id}'] = {
+    late final IdeaAttachment item;
+    if (_deviceFiles != null) {
+      item = await _deviceFileJob((files) => files.importDeviceFile(target, a));
+    } else {
+      final r = await _call(
+        host.Action.importFile,
+        configure: (r) {
+          r.id = target;
+          r.selectedPath = a.source.location;
+          r.name = a.source.name;
+          r.kind = a.source.kind.name;
+        },
+      );
+      final asset = _payload(r.payload).idea!.assets![0];
+      item = IdeaAttachment(
+        source: a.source,
+        size: asset.bytes,
+        pluginId: asset.id,
+      );
+    }
+    _importAliases['$target/${item.pluginId}'] = {
       a.source.location,
       a.source.name,
       Uri.encodeComponent(a.source.location),
@@ -1793,15 +1880,17 @@ class RustWorkbench
   Future<WorkbenchEditorSession> _openLegacyEditor(
     String target, {
     required bool create,
-    int? expectedRevision,
+    BigInt? expectedRevision,
   }) async {
-    final revision = expectedRevision ?? (create ? 0 : _revisions[target] ?? 0);
-    if (!create && revision == 0) throw StateError('请先重新读取要编辑的卡片。');
+    final revision =
+        expectedRevision ??
+        (create ? BigInt.zero : _revisions[target] ?? BigInt.zero);
+    if (!create && revision == BigInt.zero) throw StateError('请先重新读取要编辑的卡片。');
     final response = await _call(
       host.Action.openCaptureScope,
       configure: (r) {
         r.id = target;
-        r.revision = revision;
+        r.revisionBigInt = revision;
       },
     );
     final scope = response.captureScope ?? '';
@@ -1930,9 +2019,9 @@ class RustWorkbench
         r.id = idea.id;
         r.operation =
             'ui-${DateTime.now().microsecondsSinceEpoch}-${_sequence++}';
-        r.revision = action == PluginAction.create
-            ? 0
-            : _revisions[idea.id] ?? 0;
+        r.revisionBigInt = action == PluginAction.create
+            ? BigInt.zero
+            : _revisions[idea.id] ?? BigInt.zero;
         r.payload = bytes;
       },
     );
@@ -1985,9 +2074,9 @@ class RustWorkbench
   }
 
   static const maxPreferencesBytes = 4 * 1024 * 1024;
-  int? _fontRevision;
+  BigInt? _fontRevision;
   FontChoice? _fontChoice;
-  (String, int, FontChoice)? _pendingFont;
+  (String, BigInt, FontChoice)? _pendingFont;
   Future<void> _fontQueue = Future.value();
   FontChoice _readFontReply(host.ResponseReader reply) {
     final value = reply.uiFont;
@@ -2004,17 +2093,17 @@ class RustWorkbench
   Future<FontChoice> readUiFont() async {
     final reply = await _call(host.Action.readUiFont);
     final font = _readFontReply(reply);
-    _fontRevision = reply.revision;
+    _fontRevision = reply.revisionBigInt;
     _fontChoice = font;
     return font;
   }
 
-  Future<void> _confirmFont((String, int, FontChoice) request) async {
+  Future<void> _confirmFont((String, BigInt, FontChoice) request) async {
     final reply = await _call(
       host.Action.saveUiFont,
       configure: (r) {
         r.operation = request.$1;
-        r.revision = request.$2;
+        r.revisionBigInt = request.$2;
         final value = r.initUiFont();
         value.family = request.$3.family;
         value.asset = request.$3.asset;
@@ -2022,10 +2111,10 @@ class RustWorkbench
       },
     );
     if (_readFontReply(reply) != request.$3 ||
-        reply.revision != request.$2 + 1) {
+        reply.revisionBigInt != request.$2 + BigInt.one) {
       throw const FormatException('Font receipt mismatch');
     }
-    _fontRevision = reply.revision;
+    _fontRevision = reply.revisionBigInt;
     _fontChoice = request.$3;
     _pendingFont = null;
   }
@@ -2048,9 +2137,9 @@ class RustWorkbench
   }
 
   static const _partBytes = 32768;
-  int? _uiLocaleRevision;
+  BigInt? _uiLocaleRevision;
   String? _uiLocale;
-  (String, int, String)? _pendingUiLocale;
+  (String, BigInt, String)? _pendingUiLocale;
   Future<void> _uiLocaleQueue = Future.value();
   Future<String> readUiLocale() async {
     final reply = await _call(host.Action.readUiLocale);
@@ -2058,26 +2147,26 @@ class RustWorkbench
     if (!isUiLocale(locale)) {
       throw const FormatException('Unsupported UI locale');
     }
-    _uiLocaleRevision = reply.revision;
+    _uiLocaleRevision = reply.revisionBigInt;
     _uiLocale = locale;
     return locale;
   }
 
-  Future<void> _confirmUiLocale((String, int, String) request) async {
+  Future<void> _confirmUiLocale((String, BigInt, String) request) async {
     final reply = await _call(
       host.Action.saveUiLocale,
       configure: (r) {
         r.operation = request.$1;
-        r.revision = request.$2;
+        r.revisionBigInt = request.$2;
         r.payload = Uint8List.fromList(utf8.encode(request.$3));
       },
     );
     if (utf8.decode(reply.payload ?? []) != request.$3 ||
-        reply.revision != request.$2 + 1) {
+        reply.revisionBigInt != request.$2 + BigInt.one) {
       throw const FormatException('Language preference receipt mismatch');
     }
     _uiLocale = request.$3;
-    _uiLocaleRevision = reply.revision;
+    _uiLocaleRevision = reply.revisionBigInt;
     _pendingUiLocale = null;
   }
 
@@ -2421,14 +2510,14 @@ class RustWorkbench
       failureStack = stack;
     }
     try {
-      await process.stdin.close();
+      await channel.closeInput();
     } catch (error, stack) {
       failure ??= error;
       failureStack ??= stack;
     }
     // EOF asks the CLI to stop and join its actual worker. A stop request is not
     // proof of exit, and forcibly killing it after five seconds loses the owner.
-    final code = await process.exitCode;
+    final code = await channel.exitCode;
     try {
       await _stderrDone;
     } catch (error, stack) {
@@ -2443,6 +2532,7 @@ class RustWorkbench
       } catch (_) {}
     }
     _sessionPreviewFiles.clear();
+    _deviceFiles?.releaseDevicePreviews();
     _workspaceAssetCache.clear();
     _assets.clear();
     if (code != 0) {
@@ -2464,7 +2554,7 @@ class _WorkbenchUiTransport implements PluginUiTransport {
   Future<void>? _closing;
   bool _closed = false;
   PluginUiReply _reply(host.ResponseReader r) {
-    final generation = BigInt.from(r.uiGeneration).toUnsigned(64);
+    final generation = r.uiGenerationBigInt;
     _generation ??= generation;
     if (_generation != generation) throw const FormatException('表单代次不匹配');
     final failure = switch (r.uiCode) {
@@ -2478,8 +2568,8 @@ class _WorkbenchUiTransport implements PluginUiTransport {
     return PluginUiReply(
       view: r.uiView ?? '',
       generation: generation,
-      revision: BigInt.from(r.revision).toUnsigned(64),
-      serial: BigInt.from(r.uiSerial).toUnsigned(64),
+      revision: r.revisionBigInt,
+      serial: r.uiSerialBigInt,
       documentBytes: failure == null ? r.payload : null,
       failure: failure == null
           ? null
@@ -2521,7 +2611,7 @@ class _WorkbenchUiTransport implements PluginUiTransport {
         entry == null ? host.Action.uiEvent : host.Action.externalUiEvent,
         configure: (r) {
           if (entry != null) r.id = entry!.id;
-          r.offset = _generation!.toSigned(64).toInt();
+          r.offsetBigInt = _generation!;
           r.payload = bytes;
         },
       ),
@@ -2555,7 +2645,7 @@ class _WorkbenchUiTransport implements PluginUiTransport {
         entry == null ? host.Action.uiClose : host.Action.externalUiClose,
         configure: (r) {
           if (entry != null) r.id = entry!.id;
-          r.offset = _generation!.toSigned(64).toInt();
+          r.offsetBigInt = _generation!;
         },
       );
     }
@@ -2577,7 +2667,7 @@ class _NativeEditorSession
   final RustWorkbench owner;
   @override
   final String targetId;
-  final int revision;
+  final BigInt revision;
   final String scope;
   final bool create;
   @override
@@ -2622,9 +2712,8 @@ class _NativeEditorSession
     if (operation != _operation ||
         evidence.id != targetId ||
         evidence.operation != operation ||
-        evidence.sourceRevision != RustWorkbench._revision(revision) ||
-        evidence.committedRevision !=
-            RustWorkbench._revision(revision) + BigInt.one) {
+        evidence.sourceRevision != revision ||
+        evidence.committedRevision != revision + BigInt.one) {
       throw const FormatException('Original editor commit proof changed');
     }
     // This historical evidence survives view/capture closure. It grants no
@@ -2728,7 +2817,7 @@ class _NativeEditorSession
         save.scope = scope;
         save.operation = _operation;
         save.target = targetId;
-        save.revision = revision;
+        save.revisionBigInt = revision;
         save.payload = payload;
         final snapshot = save.initSnapshot();
         snapshot.title = fields.title;
@@ -2769,9 +2858,8 @@ class _NativeEditorSession
         current.versioned == null &&
         !current.contentDeleted &&
         !current.historicalReceipt &&
-        current.contentRevision ==
-            RustWorkbench._revision(revision) + BigInt.one &&
-        current.contentRevision == RustWorkbench._revision(reply.revision)) {
+        current.contentRevision == revision + BigInt.one &&
+        current.contentRevision == reply.revisionBigInt) {
       _confirmed = current;
       _confirmedSnapshot = jsonEncode(current.toJson());
     } else {
@@ -2785,8 +2873,7 @@ class _NativeEditorSession
       identical(confirmed, _confirmed) &&
       identical(confirmed.contentOwner, owner) &&
       confirmed.id == targetId &&
-      confirmed.contentRevision ==
-          RustWorkbench._revision(revision) + BigInt.one &&
+      confirmed.contentRevision == revision + BigInt.one &&
       confirmed.versioned == null &&
       !confirmed.contentDeleted &&
       !confirmed.historicalReceipt &&
@@ -2814,9 +2901,7 @@ class _NativeEditorSession
     final next = await owner._openLegacyEditor(
       targetId,
       create: false,
-      expectedRevision: VersionedContentCodec.wireU64(
-        confirmed.contentRevision!,
-      ),
+      expectedRevision: confirmed.contentRevision!,
     );
     if (_closed ||
         owner._closingProcess != null ||

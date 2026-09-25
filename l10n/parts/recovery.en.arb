@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "The active library or registration file cannot be read. Check the original location; no replacement library will be created automatically.",
   "recoveryClosing": "Waiting for the original content service to exit. Reopening and recovery remain unavailable until exit is confirmed.",
   "recoveryClosingUnconfirmed": "Shutdown is still unconfirmed; the original service remains under observation. A timeout does not cancel committed or remote effects.",
-  "recoveryMigrationIncomplete": "This library migration is incomplete. Check the migration report in its folder, keep the source library, and retry with a new destination."
+  "recoveryMigrationIncomplete": "This library migration is incomplete. Check the migration report in its folder, keep the source library, and retry with a new destination.",
+  "recoveryWebCreate": "Create local workspace",
+  "recoveryWebLocal": "Your content stays in this browser on this device.",
+  "recoveryWebLegacy": "Existing browser content was found. Open it to continue; it has not been migrated or replaced.",
+  "recoveryWebOpenLegacy": "Open existing content",
+  "recoveryWebUnavailable": "This browser workspace could not be opened. Close other Morrow tabs and try again. Existing data has not been replaced."
 }

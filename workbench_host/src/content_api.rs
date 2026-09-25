@@ -642,7 +642,7 @@ fn outer_page_size(ids: &[String], cursor: &str, read_only: bool, warning: Optio
     {
         let mut out = message.init_root::<host_wire::response::Builder>();
         out.set_version(1);
-        out.set_digest(&crate::protocol::digest());
+        out.set_digest(&crate::host_protocol_digest());
         let mut list = out.reborrow().init_ids(ids.len() as u32);
         for (i, id) in ids.iter().enumerate() {
             list.set(i as u32, id);

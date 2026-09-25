@@ -5286,6 +5286,36 @@ abstract class AppLocalizations {
   /// **'Reopen workspace'**
   String get recoveryTitle;
 
+  /// No description provided for @recoveryWebCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create local workspace'**
+  String get recoveryWebCreate;
+
+  /// No description provided for @recoveryWebLegacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing browser content was found. Open it to continue; it has not been migrated or replaced.'**
+  String get recoveryWebLegacy;
+
+  /// No description provided for @recoveryWebLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Your content stays in this browser on this device.'**
+  String get recoveryWebLocal;
+
+  /// No description provided for @recoveryWebOpenLegacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Open existing content'**
+  String get recoveryWebOpenLegacy;
+
+  /// No description provided for @recoveryWebUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This browser workspace could not be opened. Close other Morrow tabs and try again. Existing data has not been replaced.'**
+  String get recoveryWebUnavailable;
+
   /// No description provided for @shutdownBackground.
   ///
   /// In en, this message translates to:

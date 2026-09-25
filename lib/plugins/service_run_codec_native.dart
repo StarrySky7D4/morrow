@@ -46,7 +46,6 @@ abstract final class ServiceRunCodec {
 
   static int responseMaxBytes(host.Action action) =>
       action == host.Action.commandRead ? 256 * 1024 : 128 * 1024;
-  static int _wire(BigInt value) => value.toSigned(64).toInt();
   static T _enum<T>(List<T> values, int code) {
     if (code < 0 || code >= values.length) {
       throw const FormatException('Unknown service runtime state');
@@ -82,18 +81,18 @@ abstract final class ServiceRunCodec {
     out.submission = value.submission;
     out.configId = value.configId;
     out.configDigest = value.configDigest;
-    out.configRevision = _wire(value.configRevision);
+    out.configRevisionBigInt = value.configRevision;
     out.publication = value.publication;
-    out.publicationRevision = _wire(value.publicationRevision);
+    out.publicationRevisionBigInt = value.publicationRevision;
     out.packageId = value.packageId;
     out.packageDigest = value.packageDigest;
-    out.registryRevision = _wire(value.registryRevision);
+    out.registryRevisionBigInt = value.registryRevision;
     out.lifetimeMs = value.lifetimeMs;
-    out.maxJobs = _wire(value.maxJobs);
-    out.maxBytes = _wire(value.maxBytes);
+    out.maxJobsBigInt = value.maxJobs;
+    out.maxBytesBigInt = value.maxBytes;
     out.maxCalls = value.maxCalls;
-    out.maxJobBytes = _wire(value.maxJobBytes);
-    out.maxTotalBytes = _wire(value.maxTotalBytes);
+    out.maxJobBytesBigInt = value.maxJobBytes;
+    out.maxTotalBytesBigInt = value.maxTotalBytes;
     out.maxRequestBytes = value.maxRequestBytes;
     out.maxResponseBytes = value.maxResponseBytes;
     out.maxHeaderBytes = value.maxHeaderBytes;
@@ -105,13 +104,13 @@ abstract final class ServiceRunCodec {
     if (value.protectedTls case final ServiceTlsIdentityChoice selected) {
       final choice = out.initProtectedTls();
       choice.reference = selected.reference;
-      choice.revision = _wire(selected.revision);
+      choice.revisionBigInt = selected.revision;
       choice.certificateSha256 = selected.certificateSha256;
     }
     final outbound = out.initOutbound(value.outbound.length);
     for (var i = 0; i < value.outbound.length; i++) {
       outbound[i].reference = value.outbound[i].reference;
-      outbound[i].revision = _wire(value.outbound[i].revision);
+      outbound[i].revisionBigInt = value.outbound[i].revision;
     }
   }
 

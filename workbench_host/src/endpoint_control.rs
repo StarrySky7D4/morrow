@@ -145,10 +145,10 @@ impl WorkbenchState {
             return Err("plugin digest changed".into());
         }
         let package = self
-            .catalog
+            .manager
             .as_ref()
             .ok_or("plugin catalog unavailable")?
-            .load(selection.digest)?;
+            .installed_package(selection.digest)?;
         if package.manifest().package_id != policy.package_id {
             return Err("plugin package identity mismatch".into());
         }

@@ -39,6 +39,47 @@ Future<List<IdeaAttachment>> _workspaceAssets(
     final kind = TextureKind.values.byName(asset.kind);
     final key = '${record.id}/${asset.id}';
     final cached = owner._workspaceAssetCache[key];
+    if (owner._deviceFiles case final files?) {
+      if (cached != null &&
+          cached.revision == record.revision &&
+          cached.matches(asset) &&
+          files.hasDevicePreview(cached.attachment.source)) {
+        attachments.add(cached.attachment);
+        continue;
+      }
+      final exported = await owner._deviceFileJob(
+        (files) =>
+            files.exportDeviceFile(record.id, asset.id, asset.name, kind),
+      );
+      if (exported.bytes != asset.bytes) {
+        files.releaseDevicePreview(exported.source);
+        throw const FormatException(
+          'Attachment length differs from current content',
+        );
+      }
+      final IdeaAttachment item;
+      if (cached != null &&
+          cached.matches(asset) &&
+          cached.sha256 == exported.sha256 &&
+          files.hasDevicePreview(cached.attachment.source)) {
+        files.releaseDevicePreview(exported.source);
+        item = cached.attachment;
+      } else {
+        item = IdeaAttachment.versioned(
+          source: exported.source,
+          byteLength: asset.bytes,
+          pluginId: asset.id,
+        );
+      }
+      owner._workspaceAssetCache[key] = _WorkspaceCachedAsset(
+        revision: record.revision,
+        metadata: asset,
+        attachment: item,
+        sha256: exported.sha256,
+      );
+      attachments.add(item);
+      continue;
+    }
     if (cached != null &&
         cached.revision == record.revision &&
         cached.matches(asset) &&
@@ -152,10 +193,7 @@ Future<Idea> _workspaceRecord(
       contentDeleted: record.deleted,
       versioned: record.formatVersion == 2 ? view : null,
     );
-    owner._rememberRevision(
-      record.id,
-      VersionedContentCodec.wireU64(record.revision),
-    );
+    owner._rememberRevision(record.id, record.revision);
     owner._knownDeleted[record.id] = record.deleted;
     return idea;
   }
@@ -180,7 +218,7 @@ Future<List<Idea>> _loadWorkspaceContent(RustWorkbench owner) async {
   }
   for (var attempt = 0; attempt < 3; attempt++) {
     for (final entry in owner._revisions.entries.toList(growable: false)) {
-      final known = VersionedContentCodec.unsigned(entry.value);
+      final known = entry.value;
       final shown = revisions[entry.key];
       if (shown != null && shown >= known) continue;
       retain(
@@ -192,8 +230,7 @@ Future<List<Idea>> _loadWorkspaceContent(RustWorkbench owner) async {
     }
     final complete = owner._revisions.entries.every((entry) {
       final shown = revisions[entry.key];
-      return shown != null &&
-          shown >= VersionedContentCodec.unsigned(entry.value);
+      return shown != null && shown >= entry.value;
     });
     if (complete) {
       return List<Idea>.unmodifiable(visible.values.toList().reversed);

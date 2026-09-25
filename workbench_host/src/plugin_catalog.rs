@@ -2,7 +2,7 @@
 use crate::{Result, Workbench, WorkbenchState, now};
 use morrow_core::{
     lifecycle::{GrantKind, InstancePhase},
-    plugin_package::{Package, catalog, io::IoCapability, registry::Selection},
+    plugin_package::{Package, io::IoCapability, registry::Selection},
     task::{Invocation, Transform},
 };
 use morrow_plugin_runtime::{
@@ -11,7 +11,11 @@ use morrow_plugin_runtime::{
     instance_pool::Session,
     package::PreparedPackage,
 };
-use std::{collections::BTreeSet, path::Path, time::Duration};
+use std::{collections::BTreeSet, time::Duration};
+#[cfg(not(target_arch = "wasm32"))]
+use std::path::Path;
+#[cfg(not(target_arch = "wasm32"))]
+use morrow_core::plugin_package::catalog;
 #[derive(Debug)]
 pub struct PluginCatalogPage {
     pub revision: u64,
@@ -140,10 +144,10 @@ impl WorkbenchState {
             return Err("插件摘要已变化，请重新确认。".into());
         }
         Ok(self
-            .catalog
+            .manager
             .as_ref()
             .ok_or("插件目录不可用。")?
-            .load(s.digest)?)
+            .installed_package(s.digest)?)
     }
     fn entry(&self, p: &Package, s: Option<&Selection>) -> PluginEntry {
         let m = p.manifest();
@@ -239,10 +243,10 @@ impl WorkbenchState {
                 break;
             }
             match self
-                .catalog
+                .manager
                 .as_ref()
                 .ok_or("插件目录不可用。")?
-                .load(s.digest)
+                .installed_package(s.digest)
             {
                 Ok(p) => entries.push(self.entry(&p, Some(s))),
                 Err(e) => entries.push(PluginEntry {
@@ -274,9 +278,17 @@ impl WorkbenchState {
             cursor: next,
         })
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn inspect_plugin(&self, path: &Path) -> Result<PluginCatalogPage> {
+        self.catalog_revision(None)?;
+        self.inspect_package(catalog::read_file(path)?)
+    }
+    pub fn inspect_plugin_bytes(&self, bytes: &[u8]) -> Result<PluginCatalogPage> {
+        self.catalog_revision(None)?;
+        self.inspect_package(Package::decode(bytes)?)
+    }
+    fn inspect_package(&self, p: Package) -> Result<PluginCatalogPage> {
         let revision = self.catalog_revision(None)?;
-        let p = catalog::read_file(path)?;
         let entry = self.entry(
             &p,
             self.manager
@@ -290,14 +302,16 @@ impl WorkbenchState {
             cursor: String::new(),
         })
     }
-    pub fn import_plugin(
-        &mut self,
-        path: &Path,
-        expected_digest: &[u8],
-        revision: u64,
-    ) -> Result<()> {
+    #[cfg(not(target_arch = "wasm32"))]
+    pub fn import_plugin(&mut self, path: &Path, expected_digest: &[u8], revision: u64) -> Result<()> {
         self.catalog_revision(Some(revision))?;
-        let p = catalog::read_file(path)?;
+        self.import_package(catalog::read_file(path)?, expected_digest, revision)
+    }
+    pub fn import_plugin_bytes(&mut self, bytes: &[u8], expected_digest: &[u8], revision: u64) -> Result<()> {
+        self.catalog_revision(Some(revision))?;
+        self.import_package(Package::decode(bytes)?, expected_digest, revision)
+    }
+    fn import_package(&mut self, p: Package, expected_digest: &[u8], revision: u64) -> Result<()> {
         if expected_digest != p.digest() {
             return Err("文件内容已变化，请重新检查插件包。".into());
         }
@@ -317,20 +331,20 @@ impl WorkbenchState {
             && previous.digest != p.digest()
         {
             let old = self
-                .catalog
+                .manager
                 .as_ref()
                 .ok_or("插件目录不可用。")?
-                .load(previous.digest)?;
+                .installed_package(previous.digest)?;
             let old_version = semver::Version::parse(&old.manifest().package_version)?;
             let new_version = semver::Version::parse(&p.manifest().package_version)?;
             if new_version.cmp_precedence(&old_version) != std::cmp::Ordering::Greater {
                 return Err("升级必须使用更高版本；同版本不同内容与降级不能覆盖当前选择。".into());
             }
         }
-        self.catalog
+        self.manager
             .as_ref()
             .ok_or("插件目录不可用。")?
-            .install(&p)?;
+            .install_package(p.archive())?;
         let result = self.manager.as_mut().unwrap().select(&p, revision);
         let cleanup = self.maintain_external();
         result?;
@@ -665,12 +679,21 @@ impl WorkbenchState {
 }
 
 impl Workbench {
+    pub fn inspect_plugin_bytes(&self, bytes: &[u8]) -> Result<PluginCatalogPage> {
+        self.local_state()?.inspect_plugin_bytes(bytes)
+    }
+    pub fn import_plugin_bytes(&mut self, bytes: &[u8], digest: &[u8], revision: u64) -> Result<()> {
+        self.local_state_mut()?.import_plugin_bytes(bytes, digest, revision)
+    }
+
     pub fn catalog_page(&self, cursor: &str, expected: Option<u64>) -> Result<PluginCatalogPage> {
         self.local_state()?.catalog_page(cursor, expected)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn inspect_plugin(&self, path: &Path) -> Result<PluginCatalogPage> {
         self.local_state()?.inspect_plugin(path)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn import_plugin(
         &mut self,
         path: &Path,

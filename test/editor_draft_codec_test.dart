@@ -109,8 +109,8 @@ void writeRequest(wire.WriteRequestBuilder out, EditorDraftWriteRequest value) {
   out.cardId = value.cardId;
   out.draftId = value.draftId;
   out.operation = value.operation;
-  out.expectedGeneration = EditorDraftCodec.wireU64(value.expectedGeneration);
-  out.sourceRevision = EditorDraftCodec.wireU64(value.sourceRevision);
+  out.expectedGenerationBigInt = value.expectedGeneration;
+  out.sourceRevisionBigInt = value.sourceRevision;
   out.sourceKind = value.sourceKind.index;
   out.predecessorOperation = value.predecessorOperation;
   out.predecessorDigest = Uint8List.fromList(value.predecessorDigest);
@@ -156,7 +156,7 @@ Uint8List frame(
     record.sourceFormat = source.sourceKind == EditorDraftSourceKind.newCard
         ? 0
         : 2;
-    record.sourceRevision = EditorDraftCodec.wireU64(source.sourceRevision);
+    record.sourceRevisionBigInt = source.sourceRevision;
     record.sourceSha256 = source.sourceKind == EditorDraftSourceKind.newCard
         ? Uint8List(0)
         : Uint8List.fromList(List<int>.filled(32, 7));

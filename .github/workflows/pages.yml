@@ -1,0 +1,80 @@
+name: Build and deploy Web
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: windows-2025
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.4'
+          channel: stable
+          cache: true
+      - name: Install pinned native and Wasm tools
+        run: ./tool/setup_web_ci.ps1
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            build/tools/wasm-bindgen
+            build/first-party-plugins
+            build/workbench-host
+            build/web-channel-core
+          key: web-windows-rust-1.96.0-bindgen-0.2.128-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install wasm-bindgen
+        run: |
+          if (!(Test-Path build/tools/wasm-bindgen/bin/wasm-bindgen.exe)) {
+            cargo install wasm-bindgen-cli --version 0.2.128 --locked --root build/tools/wasm-bindgen
+            if ($LASTEXITCODE -ne 0) { throw 'wasm-bindgen installation failed' }
+          }
+      - name: Resolve Flutter packages
+        run: flutter pub get --enforce-lockfile
+      - name: Build production application
+        run: ./tool/build_web_workbench.ps1 -BaseHref /morrow/
+      - name: Browser acceptance before publication
+        run: |
+          foreach ($variant in @('fresh','legacy','orphan')) {
+            $extra = if ($variant -eq 'fresh') { @() } else { @("--$variant") }
+            node tool/test_core_browser.mjs --app --base-path /morrow/ @extra
+            if ($LASTEXITCODE -ne 0) { throw "Browser acceptance failed: $variant" }
+          }
+      - name: Add source and distribution notices
+        run: ./tool/package_web_release.ps1
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: build/web
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@v5
+      - uses: actions/deploy-pages@v4
+        id: deployment

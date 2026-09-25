@@ -31,4 +31,19 @@ class AdapterTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             module.adapt("ui.capnp.dart", self.source().replace("EnumRefTypeSchemaInfo(0x9374a4065674ce61)", "EnumRefTypeSchemaInfo(0xffffffffffffffff)"))
 
+    def test_exact64_splits_words_and_rejects_unknown_defaults(self):
+        result = module.adapt("ui.capnp.dart", self.source(), exact64=True)
+        for platform in ("native", "web"):
+            output = result[f"ui.capnp.{platform}.dart"]
+            self.assertIn("BigInt get generationBigInt", output)
+            self.assertIn("getUint32Field(12)", output)
+            self.assertIn("setUint32Field(8,", output)
+        self.assertIn("_checkedWireInt(generationBigInt)", result["ui.capnp.web.dart"])
+        with self.assertRaisesRegex(ValueError, "64-bit field shape"):
+            module.adapt("ui.capnp.dart", self.source().replace("getUint64Field(8)", "getUint64Field(8, defaultValue: 1)"), exact64=True)
+
+    def test_unknown_float_shape_refuses(self):
+        with self.assertRaisesRegex(ValueError, 'Float64 field shape'):
+            module.float_fields('getFloat64Field(offset, defaultValue: mask)')
+
 if __name__ == "__main__": unittest.main()

@@ -9,13 +9,17 @@ license = "AGPL-3.0-only"
 [lib]
 crate-type = ["rlib", "cdylib"]
 [dependencies]
-morrow-plugin-sdk = {path = "../../sdk/rust", features = ["wasm-guest"]}
+morrow-plugin-sdk = {path = "../../sdk/rust"}
 capnp = "=0.24.1"
 sha2 = "=0.10.9"
 prost = "=0.14.4"
 prost-reflect = {version = "=0.16.5", default-features = false}
 regex = "=1.13.1"
 url = "=2.5.8"
+
+[features]
+default = ["wasm-guest"]
+wasm-guest = ["morrow-plugin-sdk/wasm-guest"]
 
 [build-dependencies]
 capnpc = "=0.24.0"

@@ -5,6 +5,18 @@ import 'package:idb_shim/idb_browser.dart';
 import 'package:web/web.dart' as web;
 import 'texture_source.dart';
 
+// Immutable, session-owned previews exported from the authoritative workbench.
+// These never enter the legacy media database or survive as stale file paths.
+final _previews = <String, web.Blob>{};
+bool hasPreview(TextureSource source) => _previews.containsKey(source.location);
+TextureSource retainPreview(web.Blob blob, String name, TextureKind kind) {
+  final key = 'morrow-preview:${web.window.crypto.randomUUID()}';
+  _previews[key] = blob;
+  return TextureSource(location: key, name: name, kind: kind, local: true);
+}
+
+void releasePreview(TextureSource source) => _previews.remove(source.location);
+
 Future<Database> _open() => idbFactoryWeb.open(
   // Keep the existing browser database so saved media remains available.
   'daemon-media',
@@ -17,10 +29,10 @@ Future<Database> _open() => idbFactoryWeb.open(
 Future<TextureSource> store(XFile file, TextureKind kind) async {
   final data = await file.readAsBytes();
   final database = await _open();
-  final key = '${DateTime.now().microsecondsSinceEpoch}';
+  final key = 'media-${web.window.crypto.randomUUID()}';
   try {
     final transaction = database.transaction('textures', idbModeReadWrite);
-    await transaction.objectStore('textures').put(data, key);
+    await transaction.objectStore('textures').add(data, key);
     await transaction.completed;
   } finally {
     database.close();
@@ -28,7 +40,14 @@ Future<TextureSource> store(XFile file, TextureKind kind) async {
   return TextureSource(location: key, name: file.name, kind: kind, local: true);
 }
 
-Future<ResolvedTexture> resolve(TextureSource source) async {
+Future<web.Blob> resolveBlob(TextureSource source) async {
+  if (!source.local) {
+    throw const FormatException('Expected a selected local file');
+  }
+  if (source.location.startsWith('morrow-preview:')) {
+    return _previews[source.location] ??
+        (throw const FormatException('Attachment preview session has closed'));
+  }
   final database = await _open();
   Uint8List data;
   try {
@@ -42,8 +61,16 @@ Future<ResolvedTexture> resolve(TextureSource source) async {
   } finally {
     database.close();
   }
+  return web.Blob([data.toJS].toJS);
+}
+
+Future<ResolvedTexture> resolve(TextureSource source) async {
+  final blob = await resolveBlob(source);
   if (source.kind != TextureKind.video && source.kind != TextureKind.audio) {
-    return ResolvedTexture(uri: '', bytes: data);
+    return ResolvedTexture(
+      uri: '',
+      bytes: Uint8List.view((await blob.arrayBuffer().toDart).toDart),
+    );
   }
   final extension = source.name.toLowerCase().split('.').last;
   final mime = source.kind == TextureKind.audio
@@ -61,13 +88,15 @@ Future<ResolvedTexture> resolve(TextureSource source) async {
       : extension == 'webm'
       ? 'video/webm'
       : 'video/mp4';
-  final url = web.URL.createObjectURL(
-    web.Blob([data.toJS].toJS, web.BlobPropertyBag(type: mime)),
-  );
+  final url = web.URL.createObjectURL(blob.slice(0, blob.size, mime));
   return ResolvedTexture(uri: url, release: () => web.URL.revokeObjectURL(url));
 }
 
 Future<void> remove(TextureSource source) async {
+  if (source.location.startsWith('morrow-preview:')) {
+    releasePreview(source);
+    return;
+  }
   final database = await _open();
   try {
     final transaction = database.transaction('textures', idbModeReadWrite);

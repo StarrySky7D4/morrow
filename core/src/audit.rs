@@ -5,6 +5,8 @@ pub use ed25519_dalek::{SigningKey, VerifyingKey};
 use prost::Message;
 use sha2::{Digest, Sha256};
 use std::collections::HashSet;
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+pub mod sealing;
 pub mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.audit.v1.rs"));
 }

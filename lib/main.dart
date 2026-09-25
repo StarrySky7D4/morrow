@@ -28,6 +28,7 @@ import 'plugins/plugin_tools.dart';
 import 'plugins/plugin_library.dart';
 import 'plugins/bootstrap_stub.dart'
     if (dart.library.io) 'plugins/bootstrap_native.dart'
+    if (dart.library.js_interop) 'plugins/bootstrap_web.dart'
     as bootstrap;
 import 'plugins/studio_backend.dart';
 import 'plugins/workbench_backend.dart';
@@ -5769,7 +5770,11 @@ class _NewIdeaDialogState extends State<NewIdeaDialog> {
           ),
           FilledButton(
             key: const ValueKey('idea-save'),
-            onPressed: importing || saving ? null : _save,
+            // Keep focus while a save is pending. Disabling the focused Web
+            // button returns focus to the autofocus title field and changes
+            // its selection, falsely creating a successor draft. _save guards
+            // repeated activation while saving; actual edits remain tracked.
+            onPressed: importing ? null : _save,
             child: Text(
               saving
                   ? l.mainSaving

@@ -2749,6 +2749,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get recoveryTitle => '重新打开工作台';
 
   @override
+  String get recoveryWebCreate => '创建本地工作区';
+
+  @override
+  String get recoveryWebLegacy => '发现已有的浏览器内容。可打开继续使用；原数据尚未迁移或替换。';
+
+  @override
+  String get recoveryWebLocal => '内容保存在当前设备的浏览器中。';
+
+  @override
+  String get recoveryWebOpenLegacy => '打开现有内容';
+
+  @override
+  String get recoveryWebUnavailable =>
+      '暂时无法打开此浏览器工作区。请关闭其他 Morrow 标签页后重试。已有数据未被替换。';
+
+  @override
   String get shutdownBackground => '转入后台继续关闭';
 
   @override

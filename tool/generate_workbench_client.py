@@ -1,5 +1,6 @@
 """Generate Dart bindings from the same Cap'n Proto schema Rust compiles."""
 import hashlib, json, os, re, shutil, subprocess, tempfile, sys
+from capnp_web_metadata import adapt
 from pathlib import Path
 from urllib.parse import urljoin, urlparse, unquote
 ROOT=Path(__file__).resolve().parents[1]
@@ -34,7 +35,16 @@ with tempfile.TemporaryDirectory(prefix="workbench-codegen-",dir=ROOT/"build") a
     names.append("identity.dart")
     (Path(directory)/"identity.dart").write_text("\n".join(lines)+"\n",encoding="utf-8")
     subprocess.run([dart_executable(),"format",directory],check=True,stdout=subprocess.DEVNULL)
+    outputs = ["identity.dart"]
     for name in names:
+        if name == "identity.dart":
+            continue
+        original = (Path(directory)/name).read_text(encoding="utf-8")
+        for filename, contents in adapt(name, original, generator="tool/generate_workbench_client.py", exact64=True).items():
+            (Path(directory)/filename).write_text(contents, encoding="utf-8")
+            outputs.append(filename)
+    subprocess.run([dart_executable(),"format",directory],check=True,stdout=subprocess.DEVNULL)
+    for name in outputs:
         generated=(Path(directory)/name).read_text(encoding="utf-8");target=TARGET/name
         if "--check" in sys.argv:
             if not target.exists() or target.read_text(encoding="utf-8")!=generated:raise SystemExit("Stale binding: "+name)

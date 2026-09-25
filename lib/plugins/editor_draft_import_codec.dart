@@ -132,10 +132,10 @@ abstract final class EditorDraftImportCodec {
     out.cardId = request.cardId;
     out.draftId = request.draftId;
     out.operation = request.operation;
-    out.expectedGeneration = wireU64(request.expectedGeneration);
+    out.expectedGenerationBigInt = request.expectedGeneration;
     out.name = request.name;
     out.kind = request.kind;
-    out.bytes = wireU64(request.bytes);
+    out.bytesBigInt = request.bytes;
     out.sha256 = Uint8List.fromList(request.sha256);
     final bytes = message.serialize();
     if (bytes.length > maxRequestBytes) {
@@ -201,10 +201,10 @@ abstract final class EditorDraftImportCodec {
       cardId: value.cardId!,
       draftId: value.draftId!,
       operation: value.operation!,
-      expectedGeneration: unsigned(value.expectedGeneration),
+      expectedGeneration: value.expectedGenerationBigInt,
       name: value.name!,
       kind: value.kind!,
-      bytes: unsigned(value.bytes),
+      bytes: value.bytesBigInt,
       sha256: value.sha256!,
     );
     validateRequest(request);
@@ -217,8 +217,8 @@ abstract final class EditorDraftImportCodec {
     }
     final request = _decodeRequest(value.request);
     identity(value.assetId!);
-    final revision = unsigned(value.stagingRevision);
-    final currentGeneration = unsigned(value.currentGeneration);
+    final revision = value.stagingRevisionBigInt;
+    final currentGeneration = value.currentGenerationBigInt;
     if (revision == BigInt.zero ||
         revision > BigInt.from(256) ||
         currentGeneration < request.expectedGeneration ||
@@ -250,11 +250,11 @@ abstract final class EditorDraftImportCodec {
       throw const FormatException('Missing draft import decision');
     }
     final request = _decodeRequest(value.request);
-    final expected = unsigned(value.expectedGeneration);
-    final current = unsigned(value.currentGeneration);
-    final staging = unsigned(value.stagingRevision);
-    final decisionRevision = unsigned(value.decisionRevision);
-    final committedRevision = unsigned(value.committedRevision);
+    final expected = value.expectedGenerationBigInt;
+    final current = value.currentGenerationBigInt;
+    final staging = value.stagingRevisionBigInt;
+    final decisionRevision = value.decisionRevisionBigInt;
+    final committedRevision = value.committedRevisionBigInt;
     final intent = EditorDraftImportAbandon(
       cardId: request.cardId,
       draftId: request.draftId,
@@ -304,9 +304,9 @@ abstract final class EditorDraftImportCodec {
       final draft = value.draftId!;
       final op = value.operation!;
       final importOp = value.importOperation!;
-      final expected = unsigned(value.expectedGeneration);
-      final current = unsigned(value.currentGeneration);
-      final staging = unsigned(value.stagingRevision);
+      final expected = value.expectedGenerationBigInt;
+      final current = value.currentGenerationBigInt;
+      final staging = value.stagingRevisionBigInt;
       u64(expected);
       u64(current);
       u64(staging);
@@ -323,7 +323,7 @@ abstract final class EditorDraftImportCodec {
       final requestCursor = value.requestCursor ?? '';
       final nextCursor = value.nextCursor ?? '';
       final requestLimit = value.requestLimit;
-      final exportedBytes = unsigned(value.exportBytes);
+      final exportedBytes = value.exportBytesBigInt;
       if (kind != EditorDraftImportResultKind.decision &&
           kind != EditorDraftImportResultKind.decisions &&
           kind != EditorDraftImportResultKind.scopes &&

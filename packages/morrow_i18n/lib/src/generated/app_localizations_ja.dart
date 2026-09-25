@@ -2846,6 +2846,23 @@ class AppLocalizationsJa extends AppLocalizations {
   String get recoveryTitle => 'ワークスペースを開き直す';
 
   @override
+  String get recoveryWebCreate => 'ローカルワークスペースを作成';
+
+  @override
+  String get recoveryWebLegacy =>
+      '既存のコンテンツが見つかりました。開いて引き続き利用できます。データは移行も置換もされていません。';
+
+  @override
+  String get recoveryWebLocal => 'コンテンツはこの端末のブラウザー内に保存されます。';
+
+  @override
+  String get recoveryWebOpenLegacy => '既存のコンテンツを開く';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'ワークスペースを開けませんでした。他の Morrow タブを閉じて再試行してください。既存のデータは置換されていません。';
+
+  @override
   String get shutdownBackground => 'バックグラウンドで終了を続ける';
 
   @override

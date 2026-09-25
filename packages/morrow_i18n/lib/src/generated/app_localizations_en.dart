@@ -3013,6 +3013,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recoveryTitle => 'Reopen workspace';
 
   @override
+  String get recoveryWebCreate => 'Create local workspace';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Existing browser content was found. Open it to continue; it has not been migrated or replaced.';
+
+  @override
+  String get recoveryWebLocal =>
+      'Your content stays in this browser on this device.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Open existing content';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'This browser workspace could not be opened. Close other Morrow tabs and try again. Existing data has not been replaced.';
+
+  @override
   String get shutdownBackground => 'Continue in background';
 
   @override

@@ -11,7 +11,8 @@ use morrow_core::{
     task::{Invocation, PluginFailure, Transform},
     ui::{self, Document},
 };
-use std::time::{Duration, Instant};
+use crate::monotonic::Instant;
+use std::time::Duration;
 const DOCUMENT: &str = "morrow.ui.document.v1";
 #[derive(Debug)]
 pub enum Error {

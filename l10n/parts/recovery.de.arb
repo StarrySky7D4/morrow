@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "Aktive Bibliothek oder Registrierung nicht lesbar. Prüfe den ursprünglichen Speicherort; es wird nicht automatisch eine Ersatzbibliothek erstellt.",
   "recoveryClosing": "Warten auf das Ende des ursprünglichen Dienstes. Erneutes Öffnen und Wiederherstellen sind erst nach bestätigtem Ende möglich.",
   "recoveryClosingUnconfirmed": "Das Beenden ist noch nicht bestätigt. Die Überwachung läuft weiter; ein Zeitablauf macht ausgeführte Vorgänge nicht rückgängig.",
-  "recoveryMigrationIncomplete": "Die Migration dieser Bibliothek ist unvollständig. Prüfen Sie den Bericht im Ordner, behalten Sie die Quellbibliothek und versuchen Sie es mit einem neuen Zielordner erneut."
+  "recoveryMigrationIncomplete": "Die Migration dieser Bibliothek ist unvollständig. Prüfen Sie den Bericht im Ordner, behalten Sie die Quellbibliothek und versuchen Sie es mit einem neuen Zielordner erneut.",
+  "recoveryWebCreate": "Lokalen Arbeitsbereich erstellen",
+  "recoveryWebLocal": "Ihre Inhalte bleiben in diesem Browser auf diesem Gerät.",
+  "recoveryWebLegacy": "Vorhandene Browser-Inhalte wurden gefunden. Öffnen Sie diese zum Fortfahren. Sie wurden weder migriert noch ersetzt.",
+  "recoveryWebOpenLegacy": "Vorhandene Inhalte öffnen",
+  "recoveryWebUnavailable": "Dieser Arbeitsbereich konnte nicht geöffnet werden. Schließen Sie andere Morrow-Tabs und versuchen Sie es erneut. Vorhandene Daten wurden nicht ersetzt."
 }

@@ -2,22 +2,33 @@ import 'dart:typed_data';
 
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'generated/content_api.capnp.dart' as wire;
 import 'generated/identity.dart' as contract;
 import 'versioned_content.dart';
 
-/// The private UI protocol carries unsigned u64 through signed Dart ints.
+/// Exact wire values use generated BigInt fields on both platforms.
 abstract final class VersionedContentCodec {
   static final BigInt maxU64 = (BigInt.one << 64) - BigInt.one;
 
-  static BigInt unsigned(int carrier) => BigInt.from(carrier).toUnsigned(64);
+  static BigInt unsigned(int carrier) {
+    final value = BigInt.from(carrier);
+    if (kIsWeb && value.abs() > BigInt.from(9007199254740991)) {
+      throw const FormatException('Use the exact BigInt protocol field');
+    }
+    return value.toUnsigned(64);
+  }
 
   static int wireU64(BigInt value) {
     if (value < BigInt.zero || value > maxU64) {
       throw const FormatException('Content revision is outside u64');
     }
-    return value.toSigned(64).toInt();
+    final carrier = value.toSigned(64);
+    if (kIsWeb && carrier.abs() > BigInt.from(9007199254740991)) {
+      throw const FormatException('Use the exact BigInt protocol field');
+    }
+    return carrier.toInt();
   }
 
   static bool _same(List<int>? a, List<int> b) {
@@ -96,14 +107,14 @@ abstract final class VersionedContentCodec {
       id: id,
       name: name,
       kind: kind,
-      bytes: unsigned(value.bytes),
+      bytes: value.bytesBigInt,
     );
   }
 
   static VersionedContentRecord _card(wire.CardReader value) {
     final id = value.id;
     final title = value.title;
-    final revision = unsigned(value.revision);
+    final revision = value.revisionBigInt;
     if (id == null ||
         id.isEmpty ||
         title == null ||
@@ -145,7 +156,7 @@ abstract final class VersionedContentCodec {
       final sha = source.sourceSha256;
       final original = source.originalProperties;
       if (source.cardId != id ||
-          source.sourceRevision == 0 ||
+          source.sourceRevisionBigInt == BigInt.zero ||
           source.migratorVersion != 1 ||
           source.targetVersion != 2 ||
           sha == null ||
@@ -173,7 +184,7 @@ abstract final class VersionedContentCodec {
       }
       origin = VersionedOrigin(
         cardId: id,
-        sourceRevision: unsigned(source.sourceRevision),
+        sourceRevision: source.sourceRevisionBigInt,
         sourceSha256: sha,
         migratorVersion: source.migratorVersion,
         targetVersion: source.targetVersion,
@@ -213,7 +224,7 @@ abstract final class VersionedContentCodec {
         hypothesis == null ||
         conclusion == null ||
         projectedStage == null ||
-        (value.deleted && value.deletedAt == 0)) {
+        (value.deleted && value.deletedAtBigInt == BigInt.zero)) {
       throw const FormatException('Incomplete versioned record');
     }
     return VersionedContentRecord(
@@ -231,7 +242,7 @@ abstract final class VersionedContentCodec {
       icon: value.icon,
       color: value.color,
       deleted: value.deleted,
-      deletedAt: unsigned(value.deletedAt),
+      deletedAt: value.deletedAtBigInt,
       todos: todos,
       completed: completed,
       tasks: tasks,
@@ -251,12 +262,12 @@ abstract final class VersionedContentCodec {
   }) {
     final value = _envelope(bytes, wire.EnvelopeKind.record);
     final record = value.record;
-    final revision = unsigned(value.revision);
+    final revision = value.revisionBigInt;
     if (value.id != id ||
         value.operation != '' ||
         record == null ||
         value.repeated ||
-        unsigned(value.sourceRevision) != revision ||
+        value.sourceRevisionBigInt != revision ||
         revision != outerRevision) {
       throw const FormatException('Versioned read identity mismatch');
     }
@@ -273,13 +284,13 @@ abstract final class VersionedContentCodec {
     required BigInt outerRevision,
   }) {
     final value = _envelope(bytes, wire.EnvelopeKind.plan);
-    final revision = unsigned(value.sourceRevision);
+    final revision = value.sourceRevisionBigInt;
     if (value.id != id ||
         value.operation == null ||
         value.operation!.isEmpty ||
         value.record != null ||
         value.repeated ||
-        unsigned(value.revision) != revision ||
+        value.revisionBigInt != revision ||
         revision != outerRevision ||
         revision == BigInt.zero) {
       throw const FormatException('Migration plan identity mismatch');
@@ -299,10 +310,10 @@ abstract final class VersionedContentCodec {
     required BigInt outerRevision,
   }) {
     final value = _envelope(bytes, wire.EnvelopeKind.commit);
-    final revision = unsigned(value.revision);
+    final revision = value.revisionBigInt;
     if (value.id != id ||
         value.operation != operation ||
-        unsigned(value.sourceRevision) != sourceRevision ||
+        value.sourceRevisionBigInt != sourceRevision ||
         revision != outerRevision ||
         revision <= sourceRevision ||
         value.record == null) {
@@ -385,7 +396,7 @@ abstract final class VersionedContentCodec {
           asset.id = source.id;
           asset.name = source.name;
           asset.kind = source.kind;
-          asset.bytes = wireU64(source.bytes);
+          asset.bytesBigInt = source.bytes;
         }
       case CardEditKind.setFavorite:
         out.favorite = command.favorite;

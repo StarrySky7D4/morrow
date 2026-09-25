@@ -89,8 +89,8 @@ void _writeRequest(
   out.cardId = request.cardId;
   out.draftId = request.draftId;
   out.operation = request.operation;
-  out.expectedGeneration = EditorDraftCodec.wireU64(request.expectedGeneration);
-  out.sourceRevision = EditorDraftCodec.wireU64(request.sourceRevision);
+  out.expectedGenerationBigInt = request.expectedGeneration;
+  out.sourceRevisionBigInt = request.sourceRevision;
   out.sourceKind = request.sourceKind.index;
   out.predecessorOperation = request.predecessorOperation;
   out.predecessorDigest = Uint8List.fromList(request.predecessorDigest);
@@ -115,7 +115,7 @@ void _writeRequest(
 
 void _writeLink(wire.ParentLinkBuilder out, EditorDraftParentLink link) {
   out.parentDraftId = link.parentDraftId;
-  out.parentGeneration = EditorDraftCodec.wireU64(link.parentGeneration);
+  out.parentGenerationBigInt = link.parentGeneration;
   out.parentSaveOperation = link.parentSaveOperation;
   out.parentRequestSha256 = Uint8List.fromList(link.parentRequestSha256);
   out.committedOperation = link.committedOperation;
@@ -138,7 +138,7 @@ Uint8List _recordFrame({
   out.cardId = source.cardId;
   out.draftId = source.draftId;
   out.operation = source.operation;
-  out.expectedGeneration = EditorDraftCodec.wireU64(source.expectedGeneration);
+  out.expectedGenerationBigInt = source.expectedGeneration;
   final record = out.initRecord();
   _writeRequest(record.initRequest(), source);
   record.generation = active ? 1 : 2;
@@ -147,7 +147,7 @@ Uint8List _recordFrame({
   record.currentActive = active;
   record.repeated = false;
   record.sourceFormat = 2;
-  record.sourceRevision = EditorDraftCodec.wireU64(source.sourceRevision);
+  record.sourceRevisionBigInt = source.sourceRevision;
   record.sourceSha256 = Uint8List(32);
   record.predecessorRevision = 0;
   record.predecessorSha256 = Uint8List(0);
@@ -197,9 +197,7 @@ Uint8List _lineageFrame({
     final entry = entries[i];
     entry.cardId = 'card';
     entry.childDraftId = i == 0 ? 'child-one' : 'child-two';
-    entry.childGeneration = EditorDraftCodec.wireU64(
-      _maxU64 - BigInt.from(i + 1),
-    );
+    entry.childGenerationBigInt = _maxU64 - BigInt.from(i + 1);
     entry.childActive = true;
     entry.parentGeneration = 2;
     entry.parentActive = false;

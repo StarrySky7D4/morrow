@@ -1,5 +1,5 @@
 //! test.1 workspace business rules, executed by the ordinary Rust Wasm guest.
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "wasm-guest"))]
 use morrow_plugin_sdk::{task::FailureCode, wasm};
 use sha2::{Digest, Sha256};
 /// Immutable bundled package version. Bump whenever guest bytes or manifest change.
@@ -320,7 +320,7 @@ pub fn execute(r: Request) -> Result<Response, &'static str> {
         ids: vec![],
     })
 }
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", feature = "wasm-guest"))]
 #[unsafe(no_mangle)]
 pub extern "C" fn morrow_run() -> i32 {
     let Ok(task) = wasm::read_task() else {

@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "No se puede leer la biblioteca activa o su registro. Revisa la ubicación original; no se creará otra biblioteca automáticamente.",
   "recoveryClosing": "Esperando a que termine el servicio original. No se puede reabrir ni restaurar hasta confirmar su salida.",
   "recoveryClosingUnconfirmed": "El cierre sigue sin confirmarse. Continúa la supervisión; el tiempo de espera no revierte las operaciones realizadas.",
-  "recoveryMigrationIncomplete": "La migración de esta biblioteca está incompleta. Revise el informe en su carpeta, conserve la biblioteca de origen y vuelva a intentarlo con una nueva carpeta de destino."
+  "recoveryMigrationIncomplete": "La migración de esta biblioteca está incompleta. Revise el informe en su carpeta, conserve la biblioteca de origen y vuelva a intentarlo con una nueva carpeta de destino.",
+  "recoveryWebCreate": "Crear espacio local",
+  "recoveryWebLocal": "Tu contenido permanece en este navegador y en este dispositivo.",
+  "recoveryWebLegacy": "Se encontró contenido existente. Ábrelo para continuar; no se ha migrado ni reemplazado.",
+  "recoveryWebOpenLegacy": "Abrir contenido existente",
+  "recoveryWebUnavailable": "No se pudo abrir este espacio. Cierra las otras pestañas de Morrow e inténtalo de nuevo. Los datos existentes no se han reemplazado."
 }

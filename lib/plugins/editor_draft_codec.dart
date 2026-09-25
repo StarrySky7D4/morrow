@@ -228,8 +228,8 @@ abstract final class EditorDraftCodec {
     out.cardId = request.cardId;
     out.draftId = request.draftId;
     out.operation = request.operation;
-    out.expectedGeneration = wireU64(request.expectedGeneration);
-    out.sourceRevision = wireU64(request.sourceRevision);
+    out.expectedGenerationBigInt = request.expectedGeneration;
+    out.sourceRevisionBigInt = request.sourceRevision;
     out.sourceKind = request.sourceKind.index;
     out.predecessorOperation = request.predecessorOperation;
     out.predecessorDigest = Uint8List.fromList(request.predecessorDigest);
@@ -275,7 +275,7 @@ abstract final class EditorDraftCodec {
     EditorDraftParentLink link,
   ) {
     out.parentDraftId = link.parentDraftId;
-    out.parentGeneration = wireU64(link.parentGeneration);
+    out.parentGenerationBigInt = link.parentGeneration;
     out.parentSaveOperation = link.parentSaveOperation;
     out.parentRequestSha256 = Uint8List.fromList(link.parentRequestSha256);
     out.committedOperation = link.committedOperation;
@@ -506,13 +506,13 @@ abstract final class EditorDraftCodec {
     }
     final sourceKind = EditorDraftSourceKind.values[value.sourceKind];
     final hasPredecessor = value.predecessorOperation!.isNotEmpty;
-    final expected = unsigned(value.expectedGeneration);
+    final expected = value.expectedGenerationBigInt;
     final result = EditorDraftWriteRequest(
       cardId: value.cardId!,
       draftId: value.draftId!,
       operation: value.operation!,
       expectedGeneration: expected,
-      sourceRevision: unsigned(value.sourceRevision),
+      sourceRevision: value.sourceRevisionBigInt,
       sourceKind: sourceKind,
       predecessorOperation: value.predecessorOperation!,
       predecessorDigest: value.predecessorDigest!,
@@ -546,7 +546,7 @@ abstract final class EditorDraftCodec {
     }
     final result = EditorDraftParentLink(
       parentDraftId: value.parentDraftId!,
-      parentGeneration: unsigned(value.parentGeneration),
+      parentGeneration: value.parentGenerationBigInt,
       parentSaveOperation: value.parentSaveOperation!,
       parentRequestSha256: value.parentRequestSha256!,
       committedOperation: value.committedOperation!,
@@ -601,7 +601,7 @@ abstract final class EditorDraftCodec {
     ]) {
       _identity(id);
     }
-    final parentGeneration = unsigned(value.parentGeneration);
+    final parentGeneration = value.parentGenerationBigInt;
     _u64(parentGeneration, positive: true, canBeMax: false);
     if (active ||
         value.childDraftId == request.draftId ||
@@ -648,7 +648,7 @@ abstract final class EditorDraftCodec {
     _string(value.name!, 16 * 1024);
     _string(value.mediaType!, 1024);
     _digest(value.sha256!, emptyAllowed: false);
-    final bytes = unsigned(value.bytes);
+    final bytes = value.bytesBigInt;
     if (bytes > BigInt.from(64 * 1024 * 1024)) {
       throw const FormatException('Stored editor draft asset budget');
     }
@@ -666,10 +666,10 @@ abstract final class EditorDraftCodec {
       throw const FormatException('Missing editor draft record');
     }
     final request = _decodeRequest(value.request);
-    final generation = unsigned(value.generation);
-    final current = unsigned(value.currentGeneration);
-    final source = unsigned(value.sourceRevision);
-    final predecessor = unsigned(value.predecessorRevision);
+    final generation = value.generationBigInt;
+    final current = value.currentGenerationBigInt;
+    final source = value.sourceRevisionBigInt;
+    final predecessor = value.predecessorRevisionBigInt;
     if (generation == BigInt.zero ||
         current < generation ||
         (request.sourceKind == EditorDraftSourceKind.newCard
@@ -760,7 +760,7 @@ abstract final class EditorDraftCodec {
     }
     _identity(value.cardId!);
     _identity(value.draftId!);
-    final generation = unsigned(value.generation);
+    final generation = value.generationBigInt;
     _u64(generation, positive: true);
     return EditorDraftSummary(
       cardId: value.cardId!,
@@ -786,7 +786,7 @@ abstract final class EditorDraftCodec {
       id: value.id!,
       name: value.name!,
       kind: value.kind!,
-      bytes: unsigned(value.bytes),
+      bytes: value.bytesBigInt,
     );
   }
 
@@ -824,8 +824,8 @@ abstract final class EditorDraftCodec {
     }
     _identity(value.cardId!);
     _identity(value.childDraftId!);
-    final childGeneration = unsigned(value.childGeneration);
-    final parentGeneration = unsigned(value.parentGeneration);
+    final childGeneration = value.childGenerationBigInt;
+    final parentGeneration = value.parentGenerationBigInt;
     _u64(childGeneration, positive: true);
     _u64(parentGeneration, positive: true);
     final link = _decodeParentLink(value.parentLink, null);
@@ -932,9 +932,9 @@ abstract final class EditorDraftCodec {
       throw const FormatException('Unknown editor draft proposal status');
     }
     final status = EditorDraftHandoffProposalStatus.values[statusIndex];
-    final revision = unsigned(value.revision);
-    final parentGeneration = unsigned(value.parentGeneration);
-    final childGeneration = unsigned(value.childGeneration);
+    final revision = value.revisionBigInt;
+    final parentGeneration = value.parentGenerationBigInt;
+    final childGeneration = value.childGenerationBigInt;
     _u64(revision, positive: true);
     _u64(parentGeneration);
     _u64(childGeneration);
@@ -1060,7 +1060,7 @@ abstract final class EditorDraftCodec {
       final cardId = value.cardId!;
       final draftId = value.draftId!;
       final operation = value.operation!;
-      final expected = unsigned(value.expectedGeneration);
+      final expected = value.expectedGenerationBigInt;
       EditorDraftRecord? record;
       List<EditorDraftSummary>? summaries;
       EditorDraftImportedAsset? asset;

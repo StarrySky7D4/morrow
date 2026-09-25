@@ -11,17 +11,24 @@ x509-parser = { version = "=0.18.1", default-features = false }
 rustls-pki-types = "=1.15.1"
 zeroize = "=1.9.0"
 semver = "=1.0.28"
-getrandom = "=0.4.3"
 prost = "=0.14.4"
 morrow-core = {path = "../core"}
-morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
-morrow-workbench-plugin = {path = "../plugins/workbench"}
-morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
+morrow-plugin-runtime = {path = "../plugin_runtime"}
+morrow-workbench-plugin = {path = "../plugins/workbench", default-features = false}
 capnp = { version = "=0.24.1", features = ["unaligned"] }
 sha2 = "=0.10.9"
 serde_json = "=1.0.151"
 url = "=2.5.8"
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+getrandom = "=0.4.3"
+morrow-plugin-runtime = {path = "../plugin_runtime", features = ["packages"]}
+morrow-network-node = { path = "../network_node", features = ["plugin-adapter"] }
 tokio = { version = "=1.53.1", features = ["rt-multi-thread", "net", "io-util", "sync", "time"] }
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.128"
+js-sys = "=0.3.105"
+morrow-core = {path = "../core", features = ["web-storage"]}
+morrow-plugin-runtime = {path = "../plugin_runtime", features = ["web-packages"]}
 [build-dependencies]
 prost-build = "=0.14.4"
 protoc-bin-vendored = "=3.2.0"

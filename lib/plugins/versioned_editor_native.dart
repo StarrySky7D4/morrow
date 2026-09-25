@@ -17,7 +17,7 @@ Future<VersionedEditorSession> openNativeVersionedEditor(
     host.Action.openCaptureScope,
     configure: (request) {
       request.id = id;
-      request.revision = VersionedContentCodec.wireU64(current.revision);
+      request.revisionBigInt = current.revision;
     },
   );
   final scope = reply.captureScope ?? '';
@@ -126,7 +126,7 @@ final class _NativeVersionedEditorSession
       id: id,
       name: attachment.source.name,
       kind: attachment.source.kind.name,
-      bytes: VersionedContentCodec.unsigned(imported.size),
+      bytes: BigInt.from(imported.size),
     );
     _staged[id] = _StagedVersionedAsset(asset, attachment);
     return asset;
@@ -261,7 +261,7 @@ final class _NativeVersionedEditorSession
         save.scope = scope;
         save.operation = _operation;
         save.target = targetId;
-        save.revision = VersionedContentCodec.wireU64(revision);
+        save.revisionBigInt = revision;
         save.payload = payload;
         final snapshot = save.initSnapshot();
         snapshot.title = editor.title;
@@ -299,12 +299,9 @@ final class _NativeVersionedEditorSession
       id: targetId,
       operation: _operation!,
       sourceRevision: revision,
-      outerRevision: VersionedContentCodec.unsigned(reply.revision),
+      outerRevision: reply.revisionBigInt,
     );
-    owner._rememberRevision(
-      targetId,
-      VersionedContentCodec.wireU64(receipt.revision),
-    );
+    owner._rememberRevision(targetId, receipt.revision);
     try {
       final current = await owner.versionedContent.read(targetId);
       return VersionedMutationResult(receipt: receipt, current: current);

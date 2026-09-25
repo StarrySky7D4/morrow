@@ -64,8 +64,8 @@ void main() {
           expect(r.submission, orderedEquals(identity(1)));
           expect(r.endpoint, orderedEquals(identity(2)));
           expect(r.packageDigest, orderedEquals(identity(3)));
-          expect(BigInt.from(r.endpointRevision).toUnsigned(64), max);
-          expect(BigInt.from(r.registryRevision).toUnsigned(64), exact);
+          expect(r.endpointRevisionBigInt, max);
+          expect(r.registryRevisionBigInt, exact);
           expect(r.method, 'POST');
           expect(r.target, '/v1/test?a=1');
           expect(r.timeoutMs, 10000);

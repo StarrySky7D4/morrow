@@ -1,6 +1,6 @@
 # Morrow Web core — test.10
 
-独立的第一方浏览器实验适配层，复用 `core::Store`、内容契约、附件事务和 HostPolicy。尚未接入 Flutter 工作台，也不承载第三方插件。
+独立的第一方浏览器实验适配层，复用 `core::Store`、内容契约、附件事务和 HostPolicy。尚未接入 Flutter 工作台；已有受限纯变换、OPFS 包/审批持久化和共享插件管理器适配，尚无正式第三方插件管理页面或内容授权入口。
 
 ## 实际路径
 
@@ -41,3 +41,13 @@ test.10 提供 workspace_local、placement_local、layout_local、draft_local／
 故障探针的工作区／视图／草稿矩阵使用独立 morrow-test10-record-tests 测试池，仍限 64 个槽位。扩展矩阵曾在同一池达到 64／64 时被 SQLite CannotOpen 拒绝；分离测试数据集避免场景数量耗尽池，不增加默认应用容量、不删数据库或退回内存。仅 fault 构建包含该测试安装入口与 SQL／池占用诊断，默认构建不导出它。此资源边界不代表浏览器磁盘配额耗尽已验收。
 
 核心 test.16 已提供 open_opfs_audited 与原子封存 API，但 BrowserStore 尚未绑定可信审计身份或暴露封存流程。普通 OPFS 存储回归不等于浏览器审计端到端验收。
+
+## 同原包执行对照
+
+`BrowserTransformPackage` 使用共用 `PreparedPackage`，校验选择摘要、ABI、处理器注册、调用关联及输出界限，保留燃料与内存上限。它不发放内容授权，每次调用都释放连接；当前拒绝 IO 声明、依赖调用和内容命令。可信宿主必须先完成包选择与审批，不能把传入摘要当作用户授权。
+
+先用 `tool/build_workbench_bundle.ps1` 构建 Windows 原包，再运行 `tool/verify_web_packages.ps1`。后者在原生运行真实原包生成 9 组命令、查询及失败向量，在 Chrome Worker 中执行同一字节的包，逐字节比较完成回执；还验证摘要拒绝、越权写入拒绝、燃料耗尽和 130 次连接回收。产物仅在 `build/web-package-parity`，不是 Flutter 应用入口。完整产品对齐进度见 [工作表](../docs/WEB_PARITY.md)。
+
+`BrowserPluginRegistry` 将不可变包和原生格式的审批快照保存到设备本地 OPFS SQLite，复用 Rust `Registry`、`Manager`、`Pool` 和依赖路由。安装不自动选择或审批，升级收窄授权并停用新版本，撤销立即停止存量会话。验证器比较 12 个原生快照，并运行冻结的 Rust/C/C++ 依赖包及重开后的调用。适配器在 OPFS 池的跨 Worker 所有权之外，另行阻止同一 Wasm 实例重复打开同名审批库；SQLite xLock 本身不能提供这一保证。持久化结果未知时停止决策，必须重开，不自动重放。
+
+调用者必须在释放 registry 前调用 `close_all(store)`，再释放会话/registry/store；不把可信管理方法交给插件。浏览器不可变输入采用 Worker 私有只读字节和受限 guest 内存复制，不声称拥有 Windows 的进程映射能力。服务允许运行在云端，但内容、附件、草稿、设置、审批及凭据的权威持久化仍须在设备侧；当前资格测试不连接云端服务。

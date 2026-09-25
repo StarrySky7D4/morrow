@@ -3041,6 +3041,24 @@ class AppLocalizationsPt extends AppLocalizations {
   String get recoveryTitle => 'Reabrir espaço de trabalho';
 
   @override
+  String get recoveryWebCreate => 'Criar espaço local';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Foi encontrado conteúdo existente. Abra-o para continuar; não foi migrado nem substituído.';
+
+  @override
+  String get recoveryWebLocal =>
+      'O conteúdo permanece neste navegador e neste dispositivo.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Abrir conteúdo existente';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'Não foi possível abrir este espaço. Feche os outros separadores do Morrow e tente novamente. Os dados existentes não foram substituídos.';
+
+  @override
   String get shutdownBackground => 'Continuar em segundo plano';
 
   @override

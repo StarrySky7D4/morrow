@@ -3059,6 +3059,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recoveryTitle => 'Rouvrir l’espace de travail';
 
   @override
+  String get recoveryWebCreate => 'Créer un espace local';
+
+  @override
+  String get recoveryWebLegacy =>
+      'Du contenu existant a été trouvé. Ouvrez-le pour continuer ; il n’a été ni migré ni remplacé.';
+
+  @override
+  String get recoveryWebLocal =>
+      'Votre contenu reste dans ce navigateur, sur cet appareil.';
+
+  @override
+  String get recoveryWebOpenLegacy => 'Ouvrir le contenu existant';
+
+  @override
+  String get recoveryWebUnavailable =>
+      'Impossible d’ouvrir cet espace. Fermez les autres onglets Morrow et réessayez. Les données existantes n’ont pas été remplacées.';
+
+  @override
   String get shutdownBackground => 'Poursuivre en arrière-plan';
 
   @override

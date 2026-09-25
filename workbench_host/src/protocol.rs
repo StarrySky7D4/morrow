@@ -9,18 +9,14 @@ use morrow_workbench_plugin::{Action, Response, codec};
 use sha2::{Digest, Sha256};
 use zeroize::{Zeroize, Zeroizing};
 #[path = "service_run_protocol.rs"]
+#[cfg(not(target_arch = "wasm32"))]
 mod service_run;
-pub fn digest() -> [u8; 32] {
-    Sha256::digest(
-        include_str!("../schemas/host.capnp")
-            .replace("\r\n", "\n")
-            .as_bytes(),
-    )
-    .into()
-}
+pub fn digest() -> [u8; 32] { crate::host_protocol_digest() }
+
 fn text(v: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
     Ok(v?.to_str()?.to_owned())
 }
+#[cfg(not(target_arch = "wasm32"))]
 fn io_error(value: std::result::Result<(), morrow_plugin_runtime::io_jobs::JobError>) -> u16 {
     use morrow_plugin_runtime::io_jobs::JobError::*;
     match value {
@@ -36,6 +32,7 @@ fn io_error(value: std::result::Result<(), morrow_plugin_runtime::io_jobs::JobEr
         Err(Disconnect) => 9,
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 fn io_state_reply(
     value: &crate::io_tasks::Snapshot,
     submission: Option<[u8; 32]>,
@@ -71,6 +68,7 @@ fn io_state_reply(
         out.set_maintenance(io_error(exit.maintenance));
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 fn io_result_reply(
     value: &morrow_plugin_runtime::io_jobs::JobReport,
     mut out: wire::io_result::Builder<'_>,
@@ -123,7 +121,10 @@ trait ResponseTarget {
 }
 
 pub fn respond(host: &mut Workbench, bytes: &[u8]) -> Result<Vec<u8>> {
-    respond_target(host, bytes)
+    #[cfg(not(target_arch = "wasm32"))]
+    { respond_target(host, bytes) }
+    #[cfg(target_arch = "wasm32")]
+    { respond_state(&mut host.state, bytes) }
 }
 
 /// The original owner executes business commands while a worker holds it.
@@ -132,8 +133,37 @@ pub(crate) fn respond_state(host: &mut WorkbenchState, bytes: &[u8]) -> Result<V
     respond_target(host, bytes)
 }
 
+pub(crate) fn is_service_run_action(action: wire::Action) -> bool {
+    matches!(
+        action,
+        wire::Action::ServiceRunStart
+            | wire::Action::ServiceRunStatus
+            | wire::Action::CommandSubmit
+            | wire::Action::CommandStatus
+            | wire::Action::CommandRead
+            | wire::Action::CommandCancel
+    )
+}
+
+pub(crate) fn is_service_admin_action(action: wire::Action) -> bool {
+    matches!(
+        action,
+        wire::Action::ServiceConfigPage
+            | wire::Action::ServiceConfigSave
+            | wire::Action::ServiceConfigDisable
+            | wire::Action::ServiceAuthorityPage
+            | wire::Action::ServiceAuthenticationIssue
+            | wire::Action::ServiceAuthorityDisable
+            | wire::Action::ServicePublicationSave
+            | wire::Action::ServiceTlsInspect
+            | wire::Action::TlsIdentityPage
+            | wire::Action::TlsIdentitySave
+            | wire::Action::TlsIdentityDisable
+    )
+}
+
 fn is_scheduler_action(action: wire::Action) -> bool {
-    service_run::is_action(action)
+    is_service_run_action(action)
         || matches!(
             action,
             wire::Action::HttpStart
@@ -146,6 +176,7 @@ fn is_scheduler_action(action: wire::Action) -> bool {
         )
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn requires_writable_state(action: wire::Action) -> bool {
     // These routes previously borrowed only &WorkbenchState. Administrative pages and
     // preference downloads mutate authority/transfer state and intentionally stay gated.
@@ -181,6 +212,7 @@ fn requires_writable_state(action: wire::Action) -> bool {
     )
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl ResponseTarget for Workbench {
     fn response_budget(&self, action: wire::Action) -> usize {
         if action == wire::Action::CommandRead {
@@ -216,7 +248,7 @@ impl ResponseTarget for Workbench {
             };
             return handle_business(state, r, out);
         }
-        if service_run::is_action(action) {
+        if is_service_run_action(action) {
             return service_run::handle(self, r, out);
         }
         let host = self;
@@ -341,6 +373,7 @@ fn respond_target(host: &mut impl ResponseTarget, bytes: &[u8]) -> Result<Vec<u8
         let mut out = output.init_root::<wire::response::Builder>();
         out.set_version(1);
         out.set_digest(&digest());
+        #[cfg(not(target_arch = "wasm32"))]
         if let Some(access) = e.downcast_ref::<crate::io_tasks::AccessError>() {
             out.set_ui_code(match access {
                 crate::io_tasks::AccessError::Busy => 110,
@@ -474,6 +507,18 @@ fn handle_business(
     mut out: wire::response::Builder<'_>,
 ) -> Result<()> {
     let action = r.get_action()?;
+    #[cfg(target_arch = "wasm32")]
+    {
+        if !text(r.get_selected_path())?.is_empty() {
+            return Err("browser requests cannot name native file paths".into());
+        }
+        if matches!(action, wire::Action::ImportFile | wire::Action::ExportFile
+            | wire::Action::ImportEditorDraftAsset | wire::Action::ExportEditorDraftAsset
+            | wire::Action::CompleteEditorDraftImport | wire::Action::ExportEditorDraftImport) {
+            return Err("device file transfer adapter is not connected".into());
+        }
+    }
+
     if matches!(
         action,
         wire::Action::ReadVersioned
@@ -503,7 +548,7 @@ fn handle_business(
     }
     if is_command_frame(action) {
         let token = text(r.get_transfer())?;
-        let now = std::time::Instant::now();
+        let now = crate::platform::Instant::now();
         match action {
             wire::Action::CommandFrameBegin => {
                 host.command_frame
@@ -535,12 +580,15 @@ fn handle_business(
         }
         return Ok(());
     }
-    let id = if crate::service_protocol::is_action(action) {
+    let id = if is_service_admin_action(action) {
         String::new()
     } else {
         text(r.get_id())?
     };
     match action {
+        #[cfg(target_arch = "wasm32")]
+        wire::Action::ServiceConfigPage | wire::Action::ServiceConfigSave | wire::Action::ServiceConfigDisable | wire::Action::ServiceAuthorityPage | wire::Action::ServiceAuthenticationIssue | wire::Action::ServiceAuthorityDisable | wire::Action::ServicePublicationSave | wire::Action::ServiceTlsInspect | wire::Action::TlsIdentityPage | wire::Action::TlsIdentitySave | wire::Action::TlsIdentityDisable | wire::Action::EndpointPage | wire::Action::EndpointSave | wire::Action::EndpointDisable | wire::Action::CredentialPage | wire::Action::CredentialSave | wire::Action::CredentialDisable | wire::Action::BackupSnapshot | wire::Action::BackupProtection => return Err("platform service adapter is not connected".into()),
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::ServiceConfigPage
         | wire::Action::ServiceConfigSave
         | wire::Action::ServiceConfigDisable
@@ -572,6 +620,7 @@ fn handle_business(
         | wire::Action::CommandCancel => {
             return Err("scheduler actions require the outer application".into());
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::EndpointPage => {
             let page = host.endpoint_page(r.get_endpoint_cursor()?, r.get_endpoint_snapshot()?)?;
             out.set_endpoint_snapshot(&page.snapshot);
@@ -581,6 +630,7 @@ fn handle_business(
                 endpoint_reply(entry, entries.reborrow().get(i as u32))?;
             }
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::EndpointSave => {
             let entry = host.save_endpoint(crate::endpoint_control::EndpointUpdate {
                 reference: r.get_endpoint_reference()?.to_vec(),
@@ -591,10 +641,12 @@ fn handle_business(
             })?;
             endpoint_reply(&entry, out.reborrow().init_endpoints(1).get(0))?;
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::EndpointDisable => {
             let entry = host.disable_endpoint(r.get_endpoint_reference()?, r.get_revision())?;
             endpoint_reply(&entry, out.reborrow().init_endpoints(1).get(0))?;
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::CredentialPage => {
             let page =
                 host.credential_page(r.get_credential_cursor()?, r.get_credential_snapshot()?)?;
@@ -605,6 +657,7 @@ fn handle_business(
                 credential_reply(entry, entries.reborrow().get(i as u32));
             }
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::CredentialSave => {
             let entry = host.save_credential(
                 r.get_credential_reference()?,
@@ -615,6 +668,7 @@ fn handle_business(
             )?;
             credential_reply(&entry, out.reborrow().init_credentials(1).get(0));
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::CredentialDisable => {
             let entry = host.disable_credential(r.get_credential_reference()?, r.get_revision())?;
             credential_reply(&entry, out.reborrow().init_credentials(1).get(0));
@@ -659,12 +713,16 @@ fn handle_business(
             out.set_revision(revision);
         }
         wire::Action::PluginInspect => {
-            plugin_catalog_reply(
-                host.inspect_plugin(std::path::Path::new(&text(r.get_selected_path())?))?,
-                out.reborrow(),
-            );
+            #[cfg(not(target_arch = "wasm32"))]
+            let page = host.inspect_plugin(std::path::Path::new(&text(r.get_selected_path())?))?;
+            #[cfg(target_arch = "wasm32")]
+            let page = host.inspect_plugin_bytes(r.get_payload()?)?;
+            plugin_catalog_reply(page, out.reborrow());
         }
         wire::Action::PluginImport => {
+            #[cfg(target_arch = "wasm32")]
+            host.import_plugin_bytes(r.get_payload()?, r.get_sha256()?, r.get_revision())?;
+            #[cfg(not(target_arch = "wasm32"))]
             host.import_plugin(
                 std::path::Path::new(&text(r.get_selected_path())?),
                 r.get_sha256()?,
@@ -754,9 +812,11 @@ fn handle_business(
             host.ui_close(r.get_offset());
         }
 
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::BackupSnapshot => {
             host.backup_snapshot(std::path::Path::new(&text(r.get_selected_path())?))?;
         }
+        #[cfg(not(target_arch = "wasm32"))]
         wire::Action::BackupProtection => {
             host.backup_key(std::path::Path::new(&text(r.get_selected_path())?))?;
         }
@@ -1428,6 +1488,7 @@ fn plugin_catalog_reply(
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn credential_reply(
     value: &crate::credential_control::CredentialInfo,
     mut out: wire::credential_info::Builder<'_>,
@@ -1439,6 +1500,7 @@ fn credential_reply(
     out.set_disabled(value.disabled);
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 fn endpoint_policy(
     value: wire::endpoint_policy::Reader<'_>,
 ) -> Result<morrow_core::outbound_authority::proto::Endpoint> {
@@ -1462,6 +1524,7 @@ fn endpoint_policy(
         max_frame_bytes: u64::from(value.get_max_frame_bytes()),
     })
 }
+#[cfg(not(target_arch = "wasm32"))]
 fn endpoint_reply(
     value: &crate::endpoint_control::EndpointInfo,
     mut out: wire::endpoint_info::Builder<'_>,

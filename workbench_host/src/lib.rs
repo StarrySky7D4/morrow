@@ -16,9 +16,16 @@ use morrow_workbench_plugin::{Action, Asset, Idea, Request, Response, codec, per
 use std::{
     collections::BTreeMap,
     path::Path,
-    time::{Instant, SystemTime, UNIX_EPOCH},
 };
+mod platform;
+use platform::Instant;
+#[cfg(target_arch = "wasm32")]
+mod browser;
 pub type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
+pub fn host_protocol_digest() -> [u8; 32] {
+    use sha2::{Digest, Sha256};
+    Sha256::digest(include_str!("../schemas/host.capnp").replace("\r\n", "\n").as_bytes()).into()
+}
 pub mod capture_provenance;
 pub mod captured_cards;
 pub mod cards_content;
@@ -26,6 +33,7 @@ pub mod cards_edit;
 mod command_frame;
 pub mod content_api;
 mod content_projection;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod credential_control;
 pub mod editor_draft;
 pub mod editor_draft_staging;
@@ -34,9 +42,12 @@ mod editor_draft_api;
 mod editor_draft_staging_api;
 pub mod editor_recovery;
 pub mod editor_commit_proof;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod endpoint_control;
 mod evidence;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod http_tasks;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod io_tasks;
 pub mod plugin_catalog;
 mod preferences_evidence;
@@ -58,11 +69,20 @@ pub mod query_capture_v2;
 pub mod query_plan;
 pub mod query_plan_v2;
 mod query_source;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod service_control;
+#[cfg(not(target_arch = "wasm32"))]
 mod service_protocol;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod service_tls;
+#[cfg(not(target_arch = "wasm32"))]
 mod storage;
+#[cfg(target_arch = "wasm32")]
+#[path = "storage_web.rs"]
+mod storage;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod tls_identity_control;
+#[cfg(not(target_arch = "wasm32"))]
 pub mod tls_validity;
 pub mod transfer;
 mod ui_preferences;
@@ -82,8 +102,12 @@ pub struct Mutation<'a> {
     pub flag: bool,
 }
 pub struct Workbench {
+    #[cfg(not(target_arch = "wasm32"))]
     http_tasks: http_tasks::HttpTasks,
+    #[cfg(not(target_arch = "wasm32"))]
     state: crate::io_tasks::StateSlot,
+    #[cfg(target_arch = "wasm32")]
+    state: WorkbenchState,
 }
 
 /// All authoritative business state moves together; no worker handle lives here.
@@ -93,7 +117,6 @@ pub(crate) struct WorkbenchState {
     pool: Pool,
     manager: Option<Manager>,
     bundle: Option<Package>,
-    catalog: Option<morrow_core::plugin_package::catalog::Catalog>,
     external_ui: Option<plugin_catalog::ExternalUi>,
     external_ui_generation: u64,
     external_ui_closed: std::collections::VecDeque<(String, u64)>,
@@ -135,6 +158,7 @@ fn now(start: Instant) -> u64 {
         .saturating_add(1)
 }
 impl WorkbenchState {
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
         Self::with_storage(
             storage::Storage::open(path)?,
@@ -142,47 +166,31 @@ impl WorkbenchState {
             package,
         )
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn open_managed(root: &Path, package: Option<Package>) -> Result<Self> {
         Self::with_storage(storage::Storage::open_managed(root)?, root, package)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     fn with_storage(
-        mut host: storage::Storage,
+        host: storage::Storage,
         root: &Path,
         package: Option<Package>,
     ) -> Result<Self> {
         use morrow_core::plugin_package::{catalog::Catalog, registry::Registry};
-        let initialize = || -> Result<(Manager, Catalog)> {
+        let initialize = || -> Result<Manager> {
             let catalog = Catalog::open(&root.join("plugin-manager/packages"))?;
             if let Some(bundle) = &package {
                 catalog.install(bundle)?;
             }
-            let reader = Catalog::open(&root.join("plugin-manager/packages"))?;
             let registry = Registry::open(&root.join("plugin-manager/state"), catalog)?;
-            let mut manager = Manager::new(registry, Limits::default());
-            if let Some(bundle) = &package {
-                let id = &bundle.manifest().package_id;
-                let first = manager.revision() == 0 && manager.selection(id).is_none();
-                manager.select(bundle, manager.revision())?;
-                if first {
-                    // Explicit bundled-install policy for the existing content API only.
-                    // Later upgrades remain disabled until the user approves the new digest.
-                    let approved = default_approval()
-                        .intersection(bundle.capabilities())
-                        .copied()
-                        .collect();
-                    manager.approve(id, bundle.digest(), approved, manager.revision())?;
-                    manager.set_enabled(id, bundle.digest(), true, manager.revision())?;
-                }
-            }
-            Ok((manager, reader))
+            initialize_manager(registry, &package)
         };
-        let (mut manager, catalog, mut plugin_warning) = match initialize() {
-            Ok((manager, catalog)) => (Some(manager), Some(catalog), None),
-            Err(error) => (
-                None,
-                None,
-                Some(format!("插件管理暂不可用，已有内容仍可读取。{error}")),
-            ),
+        Self::with_manager(host, initialize(), package)
+    }
+    fn with_manager(mut host: storage::Storage, initialized: Result<Manager>, package: Option<Package>) -> Result<Self> {
+        let (mut manager, mut plugin_warning) = match initialized {
+            Ok(manager) => (Some(manager), None),
+            Err(error) => (None, Some(format!("插件管理暂不可用，已有内容仍可读取。{error}"))),
         };
         let mut pool = Pool::new(&host, Default::default())?;
         let plugin = match (&mut manager, &package) {
@@ -209,14 +217,13 @@ impl WorkbenchState {
             _ => None,
         };
         let mut query_owner = [0; 32];
-        getrandom::fill(&mut query_owner)?;
+        platform::random(&mut query_owner)?;
         let mut workbench = Self {
             host,
             plugin,
             pool,
             manager,
             bundle: package,
-            catalog,
             external_ui: None,
             external_ui_generation: u64::from_le_bytes(query_owner[..8].try_into().unwrap()) >> 1,
             external_ui_closed: Default::default(),
@@ -242,9 +249,11 @@ impl WorkbenchState {
         workbench.recover_queries_v2()?;
         Ok(workbench)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
         self.host.backup_snapshot(destination)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
         self.host.backup_key(destination)
     }
@@ -450,7 +459,7 @@ impl WorkbenchState {
             ..Default::default()
         };
         probe.validate()?;
-        let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+        let clock = platform::unix_millis()?;
         let blob = self
             .host
             .store_local_mut()
@@ -733,6 +742,26 @@ pub fn restore_active_key(root: &Path, selected: &Path) -> Result<()> {
     }
 }
 
+fn initialize_manager(registry: morrow_core::plugin_package::registry::Registry, package: &Option<Package>) -> Result<Manager> {
+    let mut manager = Manager::new(registry, Limits::default());
+    if let Some(bundle) = &package {
+        let id = &bundle.manifest().package_id;
+        let first = manager.revision() == 0 && manager.selection(id).is_none();
+        manager.select(bundle, manager.revision())?;
+        if first {
+            // Explicit bundled-install policy for the existing content API only.
+            // Later upgrades remain disabled until the user approves the new digest.
+            let approved = default_approval()
+                .intersection(bundle.capabilities())
+                .copied()
+                .collect();
+            manager.approve(id, bundle.digest(), approved, manager.revision())?;
+            manager.set_enabled(id, bundle.digest(), true, manager.revision())?;
+        }
+    }
+    Ok(manager)
+}
+
 fn default_approval() -> std::collections::BTreeSet<GrantKind> {
     [
         GrantKind::CreateContent,
@@ -755,15 +784,18 @@ mod http_tasks_tests;
 mod test_common;
 
 impl Workbench {
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn backup_snapshot(&self, destination: &Path) -> Result<()> {
         self.local_state()?.backup_snapshot(destination)
     }
+    #[cfg(not(target_arch = "wasm32"))]
     pub fn backup_key(&self, destination: &Path) -> Result<()> {
         self.local_state()?.backup_key(destination)
     }
     pub fn writable(&self) -> bool {
-        self.state.require_writable().is_ok()
-            && self.local_state().is_ok_and(WorkbenchState::writable)
+        #[cfg(not(target_arch = "wasm32"))]
+        if self.state.require_writable().is_err() { return false; }
+        self.local_state().is_ok_and(WorkbenchState::writable)
     }
     #[cfg(test)]
     fn prepare_write(&mut self) -> Result<()> {
@@ -814,6 +846,7 @@ impl Workbench {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 impl Workbench {
     pub fn open(path: &Path, package: Option<Package>) -> Result<Self> {
         Ok(Self {
@@ -848,11 +881,13 @@ impl Workbench {
         self.state.local_mut()?.finish()
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl Drop for Workbench {
     fn drop(&mut self) {
         self.state.request_stop();
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl morrow_plugin_runtime::io_jobs::HostOwner for WorkbenchState {
     fn runtime(&self) -> &morrow_core::dispatch::HostRuntime {
         &self.host
@@ -869,11 +904,13 @@ impl morrow_plugin_runtime::io_jobs::HostOwner for WorkbenchState {
         morrow_plugin_runtime::io_jobs::HostOwner::finish_io(&mut self.host)
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl morrow_plugin_runtime::io_jobs::ManagedHostOwner for WorkbenchState {
     fn manager(&self) -> Option<&Manager> {
         self.manager.as_ref()
     }
 }
+#[cfg(not(target_arch = "wasm32"))]
 impl morrow_plugin_runtime::io_jobs::CommandOwner for WorkbenchState {
     fn command(
         &mut self,

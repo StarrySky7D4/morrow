@@ -90,7 +90,7 @@ final class NativeEditorDraftHandoffProposalControl
             },
           );
           if (reply.transfer != token ||
-              EditorDraftCodec.unsigned(reply.offset) != BigInt.from(end)) {
+              reply.offsetBigInt != BigInt.from(end)) {
             throw const FormatException(
               'Draft proposal upload receipt mismatch',
             );

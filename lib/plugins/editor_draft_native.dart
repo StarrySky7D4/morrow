@@ -38,8 +38,8 @@ final class NativeEditorDraftControl implements EditorDraftControl {
     host.ResponseReader response,
   ) async {
     final token = response.transfer ?? '';
-    final total = VersionedContentCodec.unsigned(response.totalLength);
-    final revision = VersionedContentCodec.unsigned(response.revision);
+    final total = response.totalLengthBigInt;
+    final revision = response.revisionBigInt;
     final digest = List<int>.of(response.sha256 ?? const <int>[]);
     try {
       if (token.isEmpty ||
@@ -54,10 +54,9 @@ final class NativeEditorDraftControl implements EditorDraftControl {
       while (true) {
         final part = response.payload;
         if (response.transfer != token ||
-            VersionedContentCodec.unsigned(response.totalLength) != total ||
-            VersionedContentCodec.unsigned(response.revision) != revision ||
-            VersionedContentCodec.unsigned(response.offset) !=
-                BigInt.from(offset) ||
+            response.totalLengthBigInt != total ||
+            response.revisionBigInt != revision ||
+            response.offsetBigInt != BigInt.from(offset) ||
             !RustWorkbench._same(response.sha256, digest) ||
             part == null ||
             part.isEmpty ||
@@ -143,7 +142,7 @@ final class NativeEditorDraftControl implements EditorDraftControl {
   ) {
     request.id = cardId;
     request.attachment = draftId;
-    request.revision = VersionedContentCodec.wireU64(generation);
+    request.revisionBigInt = generation;
   }
 
   @override
@@ -188,8 +187,7 @@ final class NativeEditorDraftControl implements EditorDraftControl {
             },
           );
           if (reply.transfer != token ||
-              VersionedContentCodec.unsigned(reply.offset) !=
-                  BigInt.from(end)) {
+              reply.offsetBigInt != BigInt.from(end)) {
             throw const FormatException('Editor draft upload receipt mismatch');
           }
           offset = end;
@@ -320,7 +318,7 @@ final class NativeEditorDraftControl implements EditorDraftControl {
         request.selectedPath = path;
         request.name = name;
         request.kind = kind;
-        request.totalLength = VersionedContentCodec.wireU64(bytes);
+        request.totalLengthBigInt = bytes;
       },
     );
     _context(envelope, cardId, draftId, '', generation);

@@ -41,5 +41,10 @@
   "recoveryRegistryUnreadable": "有効なライブラリまたは登録ファイルを読めません。元の場所を確認してください。代替ライブラリは自動作成しません。",
   "recoveryClosing": "元のサービスの終了を待っています。終了が確認されるまで、再起動や復元はできません。",
   "recoveryClosingUnconfirmed": "終了はまだ確認されていません。監視を続けます。タイムアウトしても実行済みの操作は取り消されません。",
-  "recoveryMigrationIncomplete": "このライブラリの移行は未完了です。フォルダー内の移行レポートを確認し、元のライブラリを残して、新しい保存先で再試行してください。"
+  "recoveryMigrationIncomplete": "このライブラリの移行は未完了です。フォルダー内の移行レポートを確認し、元のライブラリを残して、新しい保存先で再試行してください。",
+  "recoveryWebCreate": "ローカルワークスペースを作成",
+  "recoveryWebLocal": "コンテンツはこの端末のブラウザー内に保存されます。",
+  "recoveryWebLegacy": "既存のコンテンツが見つかりました。開いて引き続き利用できます。データは移行も置換もされていません。",
+  "recoveryWebOpenLegacy": "既存のコンテンツを開く",
+  "recoveryWebUnavailable": "ワークスペースを開けませんでした。他の Morrow タブを閉じて再試行してください。既存のデータは置換されていません。"
 }

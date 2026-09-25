@@ -5,6 +5,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
+import {prepareWebApp,qualifyWebApp} from './web_app_qualification.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const candidates = [process.env.CHROME_BIN, process.env.CHROME_EXECUTABLE,
@@ -15,13 +16,22 @@ let chrome;
 for (const file of candidates) { try { await access(file); chrome = file; break; } catch { /* Try next explicit path. */ } }
 if (!chrome) throw new Error('Set CHROME_BIN to a Chrome/Chromium executable');
 
-const webFolder=process.argv.includes('--renderer')?'build/ui-renderer/web':process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
-const allowed = ['/preview/'];
+const app=process.argv.includes('--app');
+const siteArg=process.argv.indexOf('--site');
+const remoteSite=siteArg<0?null:new URL(process.argv[siteArg+1]);
+if(remoteSite&&(!app||remoteSite.protocol!=='https:'||!remoteSite.pathname.endsWith('/')))throw Error('--site requires --app and an HTTPS directory URL');
+const baseArg=process.argv.indexOf('--base-path');
+const basePath=remoteSite?.pathname??(baseArg<0?'/preview/':process.argv[baseArg+1]);
+if(!/^\/([A-Za-z0-9_.-]+\/)*$/.test(basePath))throw Error('Invalid base path');
+const appVariant=process.argv.includes('--legacy')?'legacy':process.argv.includes('--orphan')?'orphan':'fresh';
+const webFolder=app?'build/web':process.argv.includes('--channel')?'build/web-channel-parity':process.argv.includes('--identity')?'build/web-identity-parity':process.argv.includes('--workbench')?'build/web-workbench-parity':process.argv.includes('--packages')?'build/web-package-parity':process.argv.includes('--renderer')?'build/ui-renderer/web':process.argv.includes('--ui')?'build/ui-protocol/web':process.argv.includes('--store')?'build/core-test.10/web-store':'build/core-test.10/web';
+const allowed = [basePath];
 const mime = { '.html': 'text/html', '.mjs': 'text/javascript', '.js': 'text/javascript',
   '.wasm': 'application/wasm', '.json': 'application/json', '.bin': 'application/octet-stream' };
 const server = createServer(async (request, response) => {
   try {
     const route = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    if(app&&route==='/preview/__fixture__.html') {response.setHeader('Content-Type','text/html');response.end('<!doctype html><title>Isolated fixture origin</title>');return;}
     if(process.argv.includes('--renderer')&&route.startsWith('/preview/assets/test-fonts/')){
       const fonts={'text':process.env.MORROW_UI_TEST_FONT??'C:/Windows/Fonts/msyh.ttc',
         'emoji':process.env.MORROW_UI_TEST_EMOJI_FONT??'C:/Windows/Fonts/seguiemj.ttf'};
@@ -36,7 +46,7 @@ const server = createServer(async (request, response) => {
       await writeFile(path.join(root,'build/core-test.10/browser-card.morrow'),Buffer.concat(chunks));response.writeHead(204).end();return;
     }
     if (!allowed.some((p) => p.endsWith('/') ? route.startsWith(p) : route === p)) { response.writeHead(404).end(); return; }
-    const target = path.resolve(root, webFolder, route.slice('/preview/'.length) || 'index.html');
+    const target = path.resolve(root, webFolder, route.slice(basePath.length) || 'index.html');
     const relative = path.relative(path.join(root, webFolder), target);
     if (relative.startsWith('..') || path.isAbsolute(relative)) { response.writeHead(403).end(); return; }
     response.setHeader('Content-Type', mime[path.extname(target)] ?? 'application/octet-stream');
@@ -46,13 +56,17 @@ const server = createServer(async (request, response) => {
 });
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
+const site=remoteSite?.href??`${base}${basePath}`;
 const profile = await mkdtemp(path.join(root, 'build/browser-core-'));
 const process_ = spawn(chrome, ['--headless=new', '--no-first-run', '--no-default-browser-check',
+  ...(app?['--lang=en-US']:[]),
   '--disable-background-networking', '--disable-extensions', '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=0',
   `--user-data-dir=${profile}`, 'about:blank'], { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'] });
 let socket;
 const pending = new Map();
 let nextId = 1;
+const appDiagnostics=[];
+const appRequests=[];
 function call(method, params = {}, sessionId) {
   const id = nextId++;
   return new Promise((resolve, reject) => {
@@ -77,6 +91,14 @@ try {
   await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }); });
   socket.addEventListener('message', ({ data }) => {
     const reply = JSON.parse(data);
+    if(app&&reply.method==='Network.requestWillBeSent') {
+      const r=reply.params.request;
+      if(/^https?:/.test(r.url))appRequests.push({url:r.url,method:r.method,hasPostData:!!r.hasPostData});
+    }
+    if(app && ['Runtime.exceptionThrown','Log.entryAdded','Runtime.consoleAPICalled'].includes(reply.method) && appDiagnostics.length<30) {
+      const p=reply.params;
+      if(reply.method!=='Runtime.consoleAPICalled'||['error','warning'].includes(p.type))appDiagnostics.push(JSON.stringify(p).slice(0,3500));
+    }
     const waiter = pending.get(reply.id);
     if (!waiter) return;
     pending.delete(reply.id);
@@ -88,11 +110,17 @@ try {
     const { targetId } = await call('Target.createTarget', { url: 'about:blank' });
     const { sessionId } = await call('Target.attachToTarget', { targetId, flatten: true });
     await call('Page.enable', {}, sessionId);
+    if(app) {await call('Runtime.enable',{},sessionId);await call('Log.enable',{},sessionId);await call('Network.enable',{},sessionId);}
+    if(app)await prepareWebApp(call,sessionId,site,appVariant);
     if(process.argv.includes('--renderer')) await call('Emulation.setDeviceMetricsOverride',{width:360,height:640,deviceScaleFactor:1,mobile:false},sessionId);
-    await call('Page.navigate', { url: `${base}/preview/${mode==='restore'?'?restore=1':''}` }, sessionId);
+    await call('Page.navigate', { url: `${site}${mode==='restore'?'?restore=1':''}` }, sessionId);
     let result;
+    if(app) {
+      try {result=await qualifyWebApp(call,sessionId,base,root,appVariant);}
+      catch(error){console.error(appDiagnostics.join('\n'));throw error;}
+    }
     const deadline = Date.now() + (process.argv.includes('--store') ? 300000 : 60000);
-    while (Date.now() < deadline) {
+    while (!result && Date.now() < deadline) {
       const evaluation = await call('Runtime.evaluate', { expression: 'globalThis.coreProbeResult ?? null', returnByValue: true }, sessionId);
       result = evaluation.result?.value;
       if (result) break;
@@ -135,6 +163,10 @@ try {
       result='PASS: actual Flutter Web form, Unicode keyboard edit, toggle and button events at 360px';
     }
     if (!result?.startsWith('PASS:')) throw new Error(result ?? 'Core protocol probe timed out');
+    if(app) {
+      await writeFile(path.join(root,`build/web-network-${appVariant}.json`),JSON.stringify({site,requests:appRequests},null,2));
+      if(appRequests.some(r=>!['GET','HEAD'].includes(r.method)||r.hasPostData))throw Error('Unexpected outbound data request during local-only acceptance');
+    }
     console.log(version.product + ': ' + result);
     if(process.argv.includes('--ui')){
       const response=await call('Runtime.evaluate',{expression:'Array.from(globalThis.uiEvent)',returnByValue:true},sessionId);

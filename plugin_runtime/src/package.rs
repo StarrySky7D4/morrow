@@ -4,6 +4,7 @@ use morrow_core::{
     dispatch::{Connection, HostRuntime},
     plugin_package::Package,
 };
+#[cfg(not(target_arch = "wasm32"))]
 mod frame;
 pub struct PreparedPackage {
     package: Package,
@@ -55,6 +56,7 @@ impl PreparedPackage {
         })
     }
     /// Internal fixed-resource adapter only; raw callbacks are not managed authority.
+    #[cfg(not(target_arch = "wasm32"))]
     pub(crate) fn run_file_frame<'a>(
         &self,
         input: &'a [u8],
@@ -64,6 +66,7 @@ impl PreparedPackage {
         self.run_io_frame(input, io, cancel)
     }
     /// Deny content imports; the managed adapter validates response binding.
+    #[cfg(not(target_arch = "wasm32"))]
     pub(crate) fn run_io_frame<'a>(
         &self,
         input: &'a [u8],

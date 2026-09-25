@@ -121,10 +121,10 @@ impl Workbench {
         }
         let package = self
             .local_state()?
-            .catalog
+            .manager
             .as_ref()
             .ok_or("catalog unavailable")?
-            .load(request.package_digest)?;
+            .installed_package(request.package_digest)?;
         let declaration = package.io_declaration().ok_or("plugin has no IO profile")?;
         if !declaration
             .handlers

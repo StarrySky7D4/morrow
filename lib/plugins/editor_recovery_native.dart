@@ -1,51 +1,50 @@
 part of 'workbench_native.dart';
 
 extension _NativeEditorRecovery on RustWorkbench {
-  Future<List<EditorRecovery>> _inspectEditorRecoveries({
-    String? id,
-  }) => _callDecoded(
-    host.Action.inspectEditorRecoveries,
-    configure: (request) {
-      if (id != null) request.id = id;
-    },
-    decode: (reply) {
-      final rows = reply.editorRecoveries;
-      if (rows == null || rows.length > 16) {
-        throw const FormatException('Invalid editor recovery list');
-      }
-      final seen = <String>{};
-      return List<EditorRecovery>.unmodifiable([
-        for (final row in rows)
-          (() {
-            final cardId = row.id ?? '';
-            final operation = row.operation ?? '';
-            final digest = row.digest;
-            final source = VersionedContentCodec.unsigned(row.sourceRevision);
-            if (cardId.isEmpty ||
-                !seen.add(cardId) ||
-                operation.isEmpty ||
-                (id != null && cardId != id) ||
-                digest == null ||
-                digest.length != 32 ||
-                source == BigInt.zero ||
-                row.status > 2) {
-              throw const FormatException('Invalid editor recovery identity');
-            }
-            return EditorRecovery(
-              id: cardId,
-              title: row.title ?? '',
-              operation: operation,
-              digest: digest,
-              sourceRevision: source,
-              currentRevision: VersionedContentCodec.unsigned(
-                row.currentRevision,
-              ),
-              status: EditorRecoveryStatus.values[row.status],
-            );
-          })(),
-      ]);
-    },
-  );
+  Future<List<EditorRecovery>> _inspectEditorRecoveries({String? id}) =>
+      _callDecoded(
+        host.Action.inspectEditorRecoveries,
+        configure: (request) {
+          if (id != null) request.id = id;
+        },
+        decode: (reply) {
+          final rows = reply.editorRecoveries;
+          if (rows == null || rows.length > 16) {
+            throw const FormatException('Invalid editor recovery list');
+          }
+          final seen = <String>{};
+          return List<EditorRecovery>.unmodifiable([
+            for (final row in rows)
+              (() {
+                final cardId = row.id ?? '';
+                final operation = row.operation ?? '';
+                final digest = row.digest;
+                final source = row.sourceRevisionBigInt;
+                if (cardId.isEmpty ||
+                    !seen.add(cardId) ||
+                    operation.isEmpty ||
+                    (id != null && cardId != id) ||
+                    digest == null ||
+                    digest.length != 32 ||
+                    source == BigInt.zero ||
+                    row.status > 2) {
+                  throw const FormatException(
+                    'Invalid editor recovery identity',
+                  );
+                }
+                return EditorRecovery(
+                  id: cardId,
+                  title: row.title ?? '',
+                  operation: operation,
+                  digest: digest,
+                  sourceRevision: source,
+                  currentRevision: row.currentRevisionBigInt,
+                  status: EditorRecoveryStatus.values[row.status],
+                );
+              })(),
+          ]);
+        },
+      );
 
   void _writeEditorRecovery(
     host.RequestBuilder request,
@@ -60,7 +59,7 @@ extension _NativeEditorRecovery on RustWorkbench {
     request.id = observed.id;
     request.operation = observed.operation;
     request.sha256 = Uint8List.fromList(observed.digest);
-    request.revision = VersionedContentCodec.wireU64(observed.sourceRevision);
+    request.revisionBigInt = observed.sourceRevision;
   }
 
   Future<VersionedMutationResult> _resumeEditorRecovery(
@@ -74,13 +73,10 @@ extension _NativeEditorRecovery on RustWorkbench {
         id: observed.id,
         operation: observed.operation,
         sourceRevision: observed.sourceRevision,
-        outerRevision: VersionedContentCodec.unsigned(reply.revision),
+        outerRevision: reply.revisionBigInt,
       ),
     );
-    _rememberRevision(
-      observed.id,
-      VersionedContentCodec.wireU64(receipt.revision),
-    );
+    _rememberRevision(observed.id, receipt.revision);
     try {
       final current = await versionedContent.read(observed.id);
       return VersionedMutationResult(receipt: receipt, current: current);

@@ -21,7 +21,6 @@ use prost::Message;
 use sha2::{Digest, Sha256};
 use std::{
     io::Cursor,
-    time::{SystemTime, UNIX_EPOCH},
 };
 
 const PREFIX: &str = "morrow-host-editor-draft-";
@@ -798,7 +797,7 @@ impl WorkbenchState {
         if let Some(bytes) = evidence_bytes {
             self.host.prepare_write()?;
             let timestamp =
-                i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+                crate::platform::unix_millis()?;
             let blob = self.host.store_local_mut().stage_blob(
                 &mut Cursor::new(&bytes),
                 bytes.len() as u64,
@@ -962,7 +961,7 @@ impl WorkbenchState {
         };
         probe.validate()?;
         self.prepare_write()?;
-        let clock = i64::try_from(SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis())?;
+        let clock = crate::platform::unix_millis()?;
         let blob = self
             .host
             .store_local_mut()

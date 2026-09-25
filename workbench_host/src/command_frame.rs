@@ -1,6 +1,7 @@
 use crate::Result;
 use sha2::{Digest, Sha256};
-use std::time::{Duration, Instant};
+use std::time::Duration;
+use crate::platform::Instant;
 use zeroize::Zeroizing;
 
 const MAX_TOTAL: usize = 128 * 1024;

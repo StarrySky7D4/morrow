@@ -68,7 +68,7 @@ impl WorkbenchState {
             GrantKind::CreateContent
         };
         let mut random = [0u8; 16];
-        getrandom::fill(&mut random).map_err(|_| "proposal identity unavailable")?;
+        crate::platform::random(&mut random).map_err(|_| "proposal identity unavailable")?;
         let operation = reserved.map(str::to_owned).unwrap_or_else(|| {
             format!(
                 "prefs-journal-{}",

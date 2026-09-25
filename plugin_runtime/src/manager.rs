@@ -216,6 +216,22 @@ impl Manager {
     pub fn revision(&self) -> u64 {
         self.registry.revision()
     }
+    /// Store immutable bytes without selecting, approving, or stopping a live instance.
+    pub fn install_package(&self, archive: &[u8]) -> Result<[u8; 32]> {
+        Ok(self.registry.install_package(archive)?)
+    }
+    pub fn installed_package(&self, digest: [u8; 32]) -> Result<Package> {
+        Ok(self.registry.installed_package(digest)?)
+    }
+    pub fn persisted_snapshot(&self) -> Result<Option<Vec<u8>>> {
+        Ok(self.registry.persisted_snapshot()?)
+    }
+    /// Revalidate installed bytes before using their identity for revocation.
+    pub fn select_digest(&mut self, digest: [u8; 32], revision: u64) -> Result<()> {
+        self.check_revision(revision)?;
+        let package = self.registry.installed_package(digest)?;
+        self.select(&package, revision)
+    }
     pub fn selection(&self, id: &str) -> Option<&Selection> {
         self.registry.selection(id)
     }
@@ -356,6 +372,7 @@ impl Manager {
         })
     }
     fn check_revision(&self, revision: u64) -> Result<()> {
+        self.registry.ensure_ready()?;
         if revision != self.revision() {
             return Err(Error::RevisionConflict.into());
         }

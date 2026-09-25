@@ -1,19 +1,18 @@
-//! Native, cooperative selection registry. This does not revoke running instances.
-use super::{Package, capability, catalog::Catalog, io::IoCapability, proto::Capability};
+//! Shared selection and approval rules. This does not revoke running instances.
+use super::{Package, capability, io::IoCapability, proto::Capability};
 use crate::{Error, Result, envelope, identity, lifecycle::GrantKind};
 use prost::Message;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    fs::{self, File, OpenOptions},
-    io::{Read, Write},
-    path::{Path, PathBuf},
-};
+use std::collections::{BTreeMap, BTreeSet};
+#[cfg(not(target_arch = "wasm32"))]
+mod native;
+#[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
+pub mod sqlite;
 mod proto {
     include!(concat!(env!("OUT_DIR"), "/morrow.plugin.registry.v1.rs"));
 }
 const MAGIC: &[u8; 8] = b"MORROWG1";
 const MAX_RAW: usize = 512 * 1024;
-const MAX_CONTAINER: usize = MAX_RAW + MAX_RAW / 255 + 128;
+pub const MAX_CONTAINER: usize = MAX_RAW + MAX_RAW / 255 + 128;
 pub const MAX_SELECTIONS: usize = 1024;
 pub const MAX_DEPENDENCY_LOCKS: usize = 1024;
 
@@ -37,22 +36,24 @@ pub struct LockedDependency {
     pub provider_digest: [u8; 32],
 }
 type DependencyLocks = BTreeMap<(String, String), LockedDependency>;
-/// Must remain owned by one trusted manager. The persistent lock file is not a PID marker.
+/// Trusted persistence boundary, never implemented by a guest. An implementation
+/// owns an exclusive lease until drop, validates immutable package bytes on load,
+/// and publishes a whole synced snapshot atomically. An uncertain commit must
+/// fail closed; the owner must reopen before attempting another decision.
+pub trait RegistryStorage: Send {
+    fn read(&self) -> Result<Option<Vec<u8>>>;
+    fn publish(&mut self, bytes: &[u8]) -> Result<()>;
+    fn load_package(&self, digest: [u8; 32]) -> Result<Package>;
+    fn install_package(&self, package: &Package) -> Result<()>;
+}
+
+/// Must remain owned by one trusted manager. Live grants are never restored.
 pub struct Registry {
-    root: PathBuf,
-    catalog: Catalog,
-    _lease: File,
+    storage: Box<dyn RegistryStorage>,
+    uncertain: std::cell::Cell<bool>,
     revision: u64,
     selections: BTreeMap<String, Selection>,
     dependencies: DependencyLocks,
-}
-fn regular_or_absent(path: &Path) -> Result<bool> {
-    match fs::symlink_metadata(path) {
-        Ok(meta) if meta.file_type().is_file() => Ok(true),
-        Ok(_) => Err(Error::Invalid("registry file type")),
-        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(false),
-        Err(_) => Err(Error::Io),
-    }
 }
 fn cap_number(kind: GrantKind) -> i32 {
     (match kind {
@@ -66,45 +67,19 @@ fn cap_number(kind: GrantKind) -> i32 {
     }) as i32
 }
 impl Registry {
-    /// Registry and catalog roots belong to the trusted host, not to package metadata.
-    pub fn open(root: &Path, catalog: Catalog) -> Result<Self> {
-        if let Ok(meta) = fs::symlink_metadata(root)
-            && !meta.file_type().is_dir()
-        {
-            return Err(Error::Invalid("registry directory type"));
-        }
-        fs::create_dir_all(root).map_err(|_| Error::Io)?;
-        let root = root.canonicalize().map_err(|_| Error::Io)?;
-        let lock = root.join("registry.lock");
-        regular_or_absent(&lock)?;
-        let mut options = OpenOptions::new();
-        options.read(true).write(true).create(true).truncate(false);
-        #[cfg(windows)]
-        {
-            use std::os::windows::fs::OpenOptionsExt;
-            options.share_mode(3); // Keep the locked file from being deleted/replaced while live.
-        }
-        let lease = options.open(lock).map_err(|_| Error::Io)?;
-        lease.try_lock().map_err(|e| match e {
-            std::fs::TryLockError::WouldBlock => Error::StorageBusy,
-            std::fs::TryLockError::Error(_) => Error::Io,
-        })?;
+    /// The adapter must hold its exclusive ownership lease before this call.
+    pub fn from_storage(storage: Box<dyn RegistryStorage>) -> Result<Self> {
         let mut result = Self {
-            root,
-            catalog,
-            _lease: lease,
+            storage,
+            uncertain: std::cell::Cell::new(false),
             revision: 0,
             selections: BTreeMap::new(),
             dependencies: BTreeMap::new(),
         };
-        let path = result.path();
-        if regular_or_absent(&path)? {
-            let mut bytes = Vec::new();
-            File::open(path)
-                .map_err(|_| Error::Io)?
-                .take(MAX_CONTAINER as u64 + 1)
-                .read_to_end(&mut bytes)
-                .map_err(|_| Error::Io)?;
+        if let Some(bytes) = result.storage.read()? {
+            if bytes.len() > MAX_CONTAINER {
+                return Err(Error::Limit);
+            }
             let raw = envelope::unpack(MAGIC, &bytes, MAX_RAW)?;
             let state = proto::Registry::decode(raw.as_slice())
                 .map_err(|_| Error::Invalid("registry protobuf"))?;
@@ -212,8 +187,36 @@ impl Registry {
         }
         Ok(result)
     }
-    fn path(&self) -> PathBuf {
-        self.root.join("selection.morrow")
+    /// Immutable installation is separate from selection and approval.
+    pub fn install_package(&self, archive: &[u8]) -> Result<[u8; 32]> {
+        self.ensure_ready()?;
+        let package = Package::decode(archive)?;
+        self.observe(self.storage.install_package(&package))?;
+        Ok(package.digest())
+    }
+    /// Native-compatible persisted envelope, for trusted export and verification.
+    pub fn persisted_snapshot(&self) -> Result<Option<Vec<u8>>> {
+        self.ensure_ready()?;
+        self.storage.read()
+    }
+    pub fn installed_package(&self, digest: [u8; 32]) -> Result<Package> {
+        self.ensure_ready()?;
+        self.storage.load_package(digest)
+    }
+    /// An uncertain publication requires reopening; even a semantic no-op may
+    /// otherwise falsely confirm the old in-memory state after a durable commit.
+    pub fn ensure_ready(&self) -> Result<()> {
+        if self.uncertain.get() {
+            Err(Error::CommitUnknown)
+        } else {
+            Ok(())
+        }
+    }
+    fn observe<T>(&self, result: Result<T>) -> Result<T> {
+        if matches!(result, Err(Error::CommitUnknown)) {
+            self.uncertain.set(true);
+        }
+        result
     }
     pub fn revision(&self) -> u64 {
         self.revision
@@ -225,7 +228,7 @@ impl Registry {
         self.selections.get(id)
     }
     fn load(&self, selection: &Selection) -> Result<Package> {
-        let package = self.catalog.load(selection.digest)?;
+        let package = self.storage.load_package(selection.digest)?;
         if package.manifest().package_id != selection.package_id
             || !selection.approved.is_subset(package.capabilities())
             || !selection.approved_io.is_subset(package.io_capabilities())
@@ -303,6 +306,7 @@ impl Registry {
     /// Returns a fresh validated package and a ceiling snapshot, not an execution permit.
     /// Every required edge must resolve; optional edges never gate starting the caller.
     pub fn resolve_enabled(&self, id: &str) -> Result<(Package, Selection)> {
+        self.ensure_ready()?;
         let mut root_package = None;
         let mut active = BTreeSet::new();
         let mut complete = BTreeSet::new();
@@ -431,6 +435,7 @@ impl Registry {
         self.commit(self.selections.clone(), next)
     }
     fn check_revision(&self, expected: u64) -> Result<()> {
+        self.ensure_ready()?;
         if expected != self.revision {
             return Err(Error::RevisionConflict);
         }
@@ -485,11 +490,8 @@ impl Registry {
                 .collect(),
         };
         let bytes = envelope::pack(MAGIC, &state.encode_to_vec(), MAX_RAW)?;
-        regular_or_absent(&self.path())?;
-        let mut staged = tempfile::NamedTempFile::new_in(&self.root).map_err(|_| Error::Io)?;
-        staged.write_all(&bytes).map_err(|_| Error::Io)?;
-        staged.as_file().sync_all().map_err(|_| Error::Io)?;
-        staged.persist(self.path()).map_err(|_| Error::Io)?;
+        let publication = self.storage.publish(&bytes);
+        self.observe(publication)?;
         self.selections = next;
         self.dependencies = dependencies;
         self.revision = revision;
@@ -499,7 +501,7 @@ impl Registry {
     /// retained approvals are intersected with the new manifest, never expanded.
     pub fn select(&mut self, digest: [u8; 32], expected_revision: u64) -> Result<()> {
         self.check_revision(expected_revision)?;
-        let package = self.catalog.load(digest)?;
+        let package = self.storage.load_package(digest)?;
         let id = &package.manifest().package_id;
         let mut selection = Selection {
             package_id: id.clone(),
@@ -632,9 +634,11 @@ impl Registry {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(target_arch = "wasm32")))]
 mod tests {
     use super::*;
+    use crate::plugin_package::catalog::Catalog;
+    use std::fs;
     fn reject(raw: &[u8]) -> Error {
         let dir = tempfile::tempdir().unwrap();
         let root = dir.path().join("registry");

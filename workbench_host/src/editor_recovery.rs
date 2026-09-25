@@ -12,7 +12,6 @@ use prost::Message;
 use sha2::{Digest, Sha256};
 use std::{
     io::{Cursor, Write},
-    time::{SystemTime, UNIX_EPOCH},
 };
 
 pub mod proto {
@@ -115,9 +114,7 @@ fn evidence_digest(slot: &proto::Slot) -> [u8; 32] {
 }
 
 fn unix_millis() -> Result<i64> {
-    Ok(i64::try_from(
-        SystemTime::now().duration_since(UNIX_EPOCH)?.as_millis(),
-    )?)
+    crate::platform::unix_millis()
 }
 
 struct BoundedBytes(Vec<u8>);
@@ -388,7 +385,7 @@ impl WorkbenchState {
         let id = slot_id(&card_id);
         let previous = self.host.store_local().card(&id)?;
         let mut random = [0u8; 16];
-        getrandom::fill(&mut random).map_err(|_| "editor recovery journal identity unavailable")?;
+        crate::platform::random(&mut random).map_err(|_| "editor recovery journal identity unavailable")?;
         let journal_op = format!(
             "editor-journal-{}",
             random
@@ -492,7 +489,7 @@ impl WorkbenchState {
             .ok_or("editor recovery journal missing")?;
         self.host.prepare_write()?;
         let mut random = [0u8; 16];
-        getrandom::fill(&mut random).map_err(|_| "editor recovery journal identity unavailable")?;
+        crate::platform::random(&mut random).map_err(|_| "editor recovery journal identity unavailable")?;
         let journal_op = format!(
             "editor-ack-{}",
             random

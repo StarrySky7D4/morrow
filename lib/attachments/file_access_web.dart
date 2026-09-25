@@ -1,13 +1,14 @@
-import 'dart:js_interop';
 import 'package:web/web.dart' as web;
-import '../media/texture_repository.dart';
+import '../media/texture_storage_web.dart' as storage;
 import 'attachment.dart';
 
 Future<void> exportAttachment(IdeaAttachment attachment) async {
-  final resolved = await TextureRepository.resolve(attachment.source);
-  final url = resolved.bytes == null
-      ? resolved.uri
-      : web.URL.createObjectURL(web.Blob([resolved.bytes!.toJS].toJS));
+  final local = attachment.source.local;
+  // Download the immutable browser Blob directly. Converting an entire file
+  // to Dart bytes and then to another Blob needlessly doubles large previews.
+  final url = local
+      ? web.URL.createObjectURL(await storage.resolveBlob(attachment.source))
+      : attachment.source.location;
   final anchor = web.HTMLAnchorElement()
     ..href = url
     ..download = attachment.source.name;
@@ -15,8 +16,7 @@ Future<void> exportAttachment(IdeaAttachment attachment) async {
   anchor.click();
   anchor.remove();
   Future<void>.delayed(const Duration(seconds: 30), () {
-    if (resolved.bytes != null) web.URL.revokeObjectURL(url);
-    resolved.release?.call();
+    if (local) web.URL.revokeObjectURL(url);
   });
 }
 
