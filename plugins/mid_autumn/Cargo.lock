@@ -97,7 +97,7 @@ dependencies = [
 
 [[package]]
 name = "morrow-theme-mid-autumn"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "morrow-plugin-sdk",
 ]

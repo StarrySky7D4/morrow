@@ -1,3 +1,13 @@
 # Frozen compatibility originals: preserve every byte across checkouts.
 /sdk/compat/guest-v1-rc1/** -text
 /sdk/compat/*.sha256 text eol=lf
+
+# build_i18n.py checks deterministic generated text byte for byte.
+/packages/morrow_i18n/lib/l10n/*.arb text eol=lf
+/packages/morrow_i18n/lib/locale_codes.dart text eol=lf
+/packages/morrow_i18n/lib/src/generated/language_pins.dart text eol=lf
+/packages/morrow_i18n/l10n.yaml text eol=lf
+/workbench_host/src/generated_ui_locales.rs text eol=lf
+
+# Theme descriptor is embedded verbatim in the immutable Wasm package.
+/plugins/mid_autumn/theme.json text eol=lf
