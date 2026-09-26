@@ -4,6 +4,23 @@
 
 2026-09-26 增加 `--kind service` 三语言模板：固定 `service.echo`、显式 `http-listen`／`http-publish`、原帧关联和现有服务 schema pin。打包器要求 `--service`，不产生监听授权；默认短期 profile，可显式声明有限长时运行。使用方法和有限范围见 [服务 SDK](../sdk/SERVICE_API.md)，本轮实际原包与真实 TCP 验证见 [报告](../reports/plugin-service-sdk-2026-09-26.md)。`verify_plugin_projects.py` 的旧五类完整流程保持原范围；新增服务流程使用 `verify_plugin_service_sdk.py`。
 
+## 离线工程预检（2026-09-26）
+
+`validate PROJECT` 或 `validate PROJECT/plugin.toml` 只读取工程声明、SDK 契约和相关 Rust Cargo 配置，检查工程路径及既有 build 树。无需 Cargo、Clang、WASI sysroot 或网络，不启动外部工具，不执行插件，不创建 build／dist，不使用旧二进制作为成功依据。成功时标准输出为可用 `tomllib` 解析的 TOML；失败时退出码为 1，只在标准错误给出原因。
+
+摘要包含插件 ID／版本、语言、源入口、声明的内容／IO 能力与 handler、依赖槽、资源发现标记、原打包参数和本 profile 已核对契约的 SHA-256。`kind = "standard"` 表示项目未声明 IO／service 类型，不据源码推断它属于 content／transform／UI／dependency 中哪一种。契约摘要不证明作者身份；输出不是签名、完整源码指纹或构建收据。SDK 基础契约／版本始终核对，IO 项目额外检查 IO，服务项目检查 service／service_resources，出站服务还必须检查 IO。
+
+`build` 与 `pack` 复用同一预检入口。Rust 的库名、cdylib 类型、源入口以及所选 SDK 路径／wasm-guest feature 不符时，在创建输出目录和查询编译器之前失败。预检不执行 Cargo 依赖求解，不验证锁文件完整可用性、编译脚本或业务实现，也不证明 handler 存在。实际依赖求解和构建继续由 `--locked` Cargo 与后续核心检查负责。文件读取不是原子快照，历史预检摘要不能替代构建时重新检查。
+
+`validate` 检查源工程声明，`doctor` 检查本机工具链，`check` 由 Rust 核心准备已有 `.mplugin` 包。三者均不授予能力，实际构建／执行验证仍需独立完成。
+
+```sh
+# 在新目录保留 21 个模板工程及每项生成／预检日志；不编译，不运行插件。
+python3 tool/verify_plugin_projects.py --preflight-only --output-root /absolute/new-directory
+```
+
+该模式覆盖三语言的六类基础模板及三种 service-http 模板，核对输出身份／检查范围，并比较预检前后全部生成文件。输出目录存在即拒绝，原证据不覆盖。未传 `--preflight-only` 时保留既有完整构建／执行路径，并在打包前加入预检；该完整路径仍需工具链。本轮范围见 [离线预检报告](../reports/plugin-project-preflight-2026-09-26.md)。
+
 ## 环境与分发边界
 
 需要 Python 3.11+（标准库 `tomllib`），不需要 Python 第三方包。构建依赖 Cargo、Rust、`wasm32-unknown-unknown` 目标及 Cap’n Proto 编译器；C/C++ 另需 Clang、对应 WASI sysroot，C++ 使用无异常的标准库、C++17、无 RTTI。
@@ -24,6 +41,7 @@ python tool/morrow_plugin.py doctor --language cpp --sysroot "C:/开发工具/WA
 
 ```powershell
 python tool/morrow_plugin.py new "build/示例插件 项目" --language rust --kind transform --id org.example.reverse --version 0.1.0 --name "字节转换"
+python tool/morrow_plugin.py validate "build/示例插件 项目"
 python tool/morrow_plugin.py build "build/示例插件 项目"
 python tool/morrow_plugin.py pack "build/示例插件 项目"
 ```

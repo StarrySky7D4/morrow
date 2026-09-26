@@ -4,7 +4,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from verify_plugin_projects import check_result, project_command
+from verify_plugin_projects import check_result, check_preflight_summary, project_command
 
 
 CASES = {
@@ -16,6 +16,24 @@ CASES = {
 
 
 class ProjectQualificationGateTests(unittest.TestCase):
+    def test_preflight_gate_checks_identity_and_scope_not_just_valid_marker(self):
+        import tomllib
+        summary = ('schema = 1\nresult = "valid"\nscope = "project-metadata-and-contracts"\n'
+                   'plugin_id = "fixture"\nlanguage = "rust"\n'
+                   'plugin_executed = false\npermissions_granted = false\n')
+        self.assertEqual(check_preflight_summary(summary, "fixture", "rust")["schema"], 1)
+        for old, new in [('schema = 1', 'schema = true'), ('"valid"', '"invalid"'),
+                         ('"fixture"', '"other"'), ('"rust"', '"c"'),
+                         ('"project-metadata-and-contracts"', '"executed"'),
+                         ('plugin_executed = false', 'plugin_executed = true'),
+                         ('permissions_granted = false', 'permissions_granted = true'),
+                         ('permissions_granted = false', '')]:
+            with self.subTest(old=old):
+                with self.assertRaises(RuntimeError):
+                    check_preflight_summary(summary.replace(old, new), "fixture", "rust")
+        with self.assertRaises(tomllib.TOMLDecodeError):
+            check_preflight_summary('unrelated valid message', "fixture", "rust")
+
     def test_explicit_sysroot_is_forwarded_to_each_project_command(self):
         for kind in ("new", "build", "pack", "doctor"):
             with self.subTest(kind=kind):

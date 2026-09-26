@@ -1,0 +1,6 @@
+{
+  "tool/morrow_plugin.py": "447a2fe80d0120829f339a0d2e2049bf42894a077940b332566a395517acda0b",
+  "tool/verify_plugin_projects.py": "b583baff06a55123a8042bc487ec8686aee87e86b6363e4ba471239f1415384b",
+  "tool/tests/test_plugin_project_preflight.py": "7dcad37ea5600bfd013a2accf7e46f1dd1191b2f59ca2de42def60c3f76e3e38",
+  "tool/tests/test_plugin_project_gate.py": "aa6389485fbe5d89ae387e7c0bb7d7b61ecf74c168056c10d738420d35d32cbc"
+}

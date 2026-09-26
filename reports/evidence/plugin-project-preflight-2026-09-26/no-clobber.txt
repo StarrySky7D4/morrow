@@ -1,0 +1,4 @@
+usage: verify_plugin_projects.py [-h] [--output-root OUTPUT_ROOT]
+                                 [--sysroot SYSROOT] [--preflight-only]
+verify_plugin_projects.py: error: output root must not exist; previous evidence is never overwritten
+EXPECTED exit 2; existing evidence unchanged.

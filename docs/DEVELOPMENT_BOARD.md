@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [SDK 工程离线预检](../reports/plugin-project-preflight-2026-09-26.md)：新增 validate 的 TOML 声明摘要、与正式构建共享的预检、21 模板批量预检模式；修复出站服务编译遗漏 IO 契约／版本检查。Python 106 项、21 工程真实 CLI、契约同步检查及 17 固定原件通过；不计为编译／运行资格。独立 SDK 分发与 Windows／Flutter 产品验收仍开放，未使用 CI、推送或发布。
+
 2026-09-26 [文件会话与选择器接线](../reports/plugin-file-session-2026-09-26.md)：新增跨页面保留的文件会话、按 offset／EOF／最终 SHA-256 增量校验、Unknown 不重放及取消迟到回复隔离；原生 IO 页接入选择器和控制，HTTP 面板隔离文件任务。独立 Dart 28 项、定向分析及 17 个固定原件通过。Flutter 页面仅源码／解析检查，Windows、完整 Flutter 验收和九语言文案仍开放；未推送、发布或使用 CI。
 
 2026-09-26 [文件私有协议与 Dart 客户端](../reports/plugin-file-wire-2026-09-26.md)：启动、块请求、结束和一次领取接入原任务控制；可信路径只在原 worker 打开，重复身份及嵌套调度拒绝。修复二进制文件／引用 seed 错用 schema 文本摘要。runtime 415、Workbench 64、IO SDK 5、Dart 7、严格 Clippy 与固定原件检查通过，计数有重叠。Flutter 启动的云元数据访问被自动审批拒绝；独立 Dart 真实帧验证通过，系统选择器／页面和 Windows 产品资格仍开放。未推送、发布或使用 CI。

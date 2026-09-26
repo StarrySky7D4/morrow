@@ -6,11 +6,12 @@ Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求
 
 ## 开发入口
 
-新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖、实验 IO、入站服务六类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
+新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`validate`、`doctor`、`build`、`pack`、`check` 和 `transform`。`validate` 无需编译器，核对工程声明、SDK 契约及 Rust 绑定，输出 TOML 摘要；不运行插件或授予权限。提供 C／C++／Rust 的内容、转换、UI、依赖、实验 IO、入站服务六类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
 
 ```powershell
 python -B -X utf8 tool/morrow_plugin.py doctor --language rust
 python -B -X utf8 tool/morrow_plugin.py new "build/My plugin" --language rust --kind transform --id org.example.my-plugin
+python -B -X utf8 tool/morrow_plugin.py validate "build/My plugin"
 python -B -X utf8 tool/morrow_plugin.py pack "build/My plugin"
 # 独立新目录保留全部生成项目与日志，运行三语言项目完整包及失败保护检查。
 python -B -X utf8 tool/verify_plugin_projects.py

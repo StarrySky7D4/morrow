@@ -397,6 +397,7 @@ strip = true
 
 Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 
+- `validate PROJECT` checks declarations and SDK contracts without running tools; prints a TOML summary.
 - `doctor --language {args.language}` checks the local toolchain.
 - `build PROJECT` compiles the current source into PROJECT/build/plugin.wasm.
 - `pack PROJECT` builds again, prepares the candidate and publishes an immutable hash-named package in PROJECT/dist.
@@ -425,39 +426,91 @@ Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update tha
     project(target)
     print("PROJECT", target.resolve())
 
-def compile_project(args, loaded=None):
+def validate_rust_project(root, source, sdk_root):
+    manifest = read_toml(root / "Cargo.toml")
+    library = manifest.get("lib", {})
+    dependencies = manifest.get("dependencies", {})
+    if not isinstance(library, dict) or not isinstance(dependencies, dict):
+        raise ToolError("Cargo.toml lib and dependencies must be tables")
+    crate_types = library.get("crate-type", [])
+    if not isinstance(crate_types, list) or any(not isinstance(item, str) for item in crate_types):
+        raise ToolError("Cargo.toml lib.crate-type must be an array of strings")
+    if library.get("name") != "morrow_plugin" or "cdylib" not in crate_types or child(root, library.get("path", "src/lib.rs")) != source:
+        raise ToolError("Cargo.toml [lib] must name morrow_plugin, use cdylib and match build.source")
+    dependency = dependencies.get("morrow-plugin-sdk", {})
+    if not isinstance(dependency, dict):
+        raise ToolError("Cargo.toml SDK dependency must be a table")
+    dependency_path = string(dependency.get("path"), "Cargo.toml SDK path", 32768)
+    features = dependency.get("features", [])
+    if not isinstance(features, list) or any(not isinstance(item, str) for item in features):
+        raise ToolError("Cargo.toml SDK features must be an array of strings")
+    if (root / dependency_path).resolve() != (sdk_root / "rust").resolve() or "wasm-guest" not in features:
+        raise ToolError("Cargo.toml must use the selected SDK path with wasm-guest")
+
+
+def preflight_project(args, loaded=None):
+    """Read-only declaration checks; never resolve dependencies or run tools."""
     root, config, source = loaded or project(args.path)
     sdk_root = sdk(args)
-    if config["build"].get("kind") == "io":
+    kind = config["build"].get("kind")
+    # Service outbounds use the IO codec too. A matching service schema alone
+    # cannot qualify a different IO contract/version in an external SDK.
+    if kind == "io" or (kind == "service" and "http-request" in config["io"]["capabilities"]):
         sdk_io(sdk_root)
-    elif config["build"].get("kind") == "service":
+    if kind == "service":
         sdk_service(sdk_root)
     validate_build_tree(root)
+    if config["build"]["language"] == "rust":
+        validate_rust_project(root, source, sdk_root)
+    return root, config, source, sdk_root
+
+
+def validate_project(args):
+    root, config, source, sdk_root = preflight_project(args)
+    # TOML output is a declaration summary, not a signed attestation or build
+    # receipt. Report exactly which contracts were compared for this profile.
+    contracts = ["runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp"]
+    kind = config["build"].get("kind", "standard")
+    if kind == "io" or (kind == "service" and "http-request" in config["io"]["capabilities"]):
+        contracts.append("io.capnp")
+    if kind == "service":
+        contracts += ["service.capnp", "service_resources.capnp"]
+    lines = ["schema = 1", 'result = "valid"', 'scope = "project-metadata-and-contracts"',
+             "plugin_executed = false", "permissions_granted = false",
+             "plugin_id = " + quote(config["plugin"]["id"]),
+             "plugin_version = " + quote(config["plugin"]["version"]),
+             "language = " + quote(config["build"]["language"]), "kind = " + quote(kind),
+             "source = " + quote(source.relative_to(root).as_posix()),
+             "sdk_root = " + quote(sdk_root.as_posix()),
+             "packager_arguments = [" + ", ".join(quote(v) for v in package_arguments(config)) + "]",
+             "limitations = [" + ", ".join(quote(v) for v in (
+                 "Compiler, dependency resolution, source behavior and platform compatibility are not tested.",
+                 "Declarations do not prove handler implementation or grant host authority.",
+                 "Host dependency locks, endpoints, credentials and resource grants must be approved separately.",
+             )) + "]"]
+    for label, values in (
+        ("content_capabilities", config["plugin"].get("capabilities", [])),
+        ("io_capabilities", config.get("io", {}).get("capabilities", [])),
+        ("io_handlers", config.get("io", {}).get("handlers", [])),
+        ("dependency_slots", [entry["slot"] for entry in config.get("dependencies", [])]),
+    ):
+        lines.append(label + " = [" + ", ".join(quote(value) for value in values) + "]")
+    lines += ["dependency_calls = " + str(config["plugin"].get("dependency_calls", False)).lower(),
+              "service_resources = " + str(config.get("io", {}).get("service_resources", False)).lower()]
+    for name in contracts:
+        digest = hashlib.sha256((sdk_root / "rust/contracts" / name).read_bytes()).hexdigest()
+        lines += ["", "[[contracts]]", "name = " + quote(name), "sha256 = " + quote(digest)]
+    print("\n".join(lines))
+
+
+def compile_project(args, loaded=None):
+    root, config, source, sdk_root = preflight_project(args, loaded)
     output = child(root, "build", output=True); output.mkdir(exist_ok=True)
     module = child(root, "build/plugin.wasm", output=True)
     cargo = executable("cargo")
     common_cargo = ["--locked"] + ([] if args.allow_network else ["--offline"])
     language = config["build"]["language"]
     if language == "rust":
-        manifest = read_toml(root / "Cargo.toml")
-        library = manifest.get("lib", {})
-        dependencies = manifest.get("dependencies", {})
-        if not isinstance(library, dict) or not isinstance(dependencies, dict):
-            raise ToolError("Cargo.toml lib and dependencies must be tables")
-        crate_types = library.get("crate-type", [])
-        if not isinstance(crate_types, list) or any(not isinstance(item, str) for item in crate_types):
-            raise ToolError("Cargo.toml lib.crate-type must be an array of strings")
-        if library.get("name") != "morrow_plugin" or "cdylib" not in crate_types or child(root, library.get("path", "src/lib.rs")) != source:
-            raise ToolError("Cargo.toml [lib] must name morrow_plugin, use cdylib and match build.source")
-        dependency = dependencies.get("morrow-plugin-sdk", {})
-        if not isinstance(dependency, dict):
-            raise ToolError("Cargo.toml SDK dependency must be a table")
-        dependency_path = string(dependency.get("path"), "Cargo.toml SDK path", 32768)
-        features = dependency.get("features", [])
-        if not isinstance(features, list) or any(not isinstance(item, str) for item in features):
-            raise ToolError("Cargo.toml SDK features must be an array of strings")
-        if (root / dependency_path).resolve() != (sdk_root / "rust").resolve() or "wasm-guest" not in features:
-            raise ToolError("Cargo.toml must use the selected SDK path with wasm-guest")
         target = child(root, "build/rust", output=True)
         run([cargo, "build", *common_cargo, "--manifest-path", root / "Cargo.toml", "--lib", "--target", "wasm32-unknown-unknown", "--release", "--target-dir", target], cwd=root)
         produced = child(root, "build/rust/wasm32-unknown-unknown/release/morrow_plugin.wasm", output=True)
@@ -582,12 +635,12 @@ def doctor(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("new", "build", "pack", "check", "transform", "doctor"):
+    for name in ("new", "validate", "build", "pack", "check", "transform", "doctor"):
         command = commands.add_parser(name)
         command.add_argument("--sdk-root", default=str(ROOT / "sdk"))
         command.add_argument("--sysroot", default=str(ROOT / "build/tools/wasi-34/wasi-sysroot-34.0"))
         command.add_argument("--allow-network", action="store_true", help="allow Cargo dependency downloads (offline by default)")
-        if name in ("new", "build", "pack"):
+        if name in ("new", "validate", "build", "pack"):
             command.add_argument("path")
         if name == "new":
             command.add_argument("--language", choices=LANGUAGES, required=True)
@@ -612,6 +665,8 @@ def main(argv=None):
     try:
         if args.command == "new":
             new_project(args)
+        elif args.command == "validate":
+            validate_project(args)
         elif args.command == "build":
             compile_project(args)
         elif args.command == "pack":

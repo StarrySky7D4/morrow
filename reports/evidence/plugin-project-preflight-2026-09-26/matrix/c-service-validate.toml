@@ -1,0 +1,47 @@
+schema = 1
+result = "valid"
+scope = "project-metadata-and-contracts"
+plugin_executed = false
+permissions_granted = false
+plugin_id = "org.example.c-service"
+plugin_version = "0.1.0"
+language = "c"
+kind = "service"
+source = "src/plugin.c"
+sdk_root = "/workspace/scratch/c3041ed82a57/morrow/sdk"
+packager_arguments = ["--name", "org.example.c-service", "--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--fuel", "20000000", "--memory-bytes", "16777216", "--host-calls", "16"]
+limitations = ["Compiler, dependency resolution, source behavior and platform compatibility are not tested.", "Declarations do not prove handler implementation or grant host authority.", "Host dependency locks, endpoints, credentials and resource grants must be approved separately."]
+content_capabilities = []
+io_capabilities = ["http-listen", "http-publish"]
+io_handlers = ["service.echo"]
+dependency_slots = []
+dependency_calls = false
+service_resources = false
+
+[[contracts]]
+name = "runtime.capnp"
+sha256 = "18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855"
+
+[[contracts]]
+name = "content.proto"
+sha256 = "8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4"
+
+[[contracts]]
+name = "task.capnp"
+sha256 = "6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b"
+
+[[contracts]]
+name = "ui.capnp"
+sha256 = "253f074420307ce737b61f8669d553b3ed7a825132f2ce449900a1d9b372bda6"
+
+[[contracts]]
+name = "dependency_call.capnp"
+sha256 = "8dd7821caed15769c80dee950ac71fbdb3aa1106a37f411d88ec4d3a37952cb8"
+
+[[contracts]]
+name = "service.capnp"
+sha256 = "a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2"
+
+[[contracts]]
+name = "service_resources.capnp"
+sha256 = "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842"

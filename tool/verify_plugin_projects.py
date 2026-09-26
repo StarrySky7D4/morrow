@@ -4,6 +4,7 @@ import hashlib
 from pathlib import Path
 import subprocess
 import sys
+import tomllib
 import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,10 +27,25 @@ def check_result(returncode, diagnostic, *, success=True, required=()):
             raise RuntimeError("expected diagnostic missing: " + text)
 
 
+def check_preflight_summary(diagnostic, identifier, language):
+    summary = tomllib.loads(diagnostic)
+    if (type(summary.get("schema")) is not int or summary["schema"] != 1
+            or summary.get("result") != "valid"
+            or summary.get("scope") != "project-metadata-and-contracts"
+            or summary.get("plugin_id") != identifier
+            or summary.get("language") != language
+            or summary.get("plugin_executed") is not False
+            or summary.get("permissions_granted") is not False):
+        raise RuntimeError("preflight summary does not match the requested project and scope")
+    return summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--sysroot", type=Path, help="WASI sysroot for C/C++ project builds")
+    parser.add_argument("--preflight-only", action="store_true",
+                        help="generate and validate all 21 starters without compilers or plugin execution")
     args = parser.parse_args()
     output = (args.output_root or ROOT / "build" / ("SDK projects 空间 " + uuid.uuid4().hex)).absolute()
     if output.exists() or output.is_symlink():
@@ -47,9 +63,30 @@ def main():
             check_result(result.returncode, diagnostic, success=success, required=required)
         except (RuntimeError, ValueError) as error:
             raise RuntimeError(f"{name}: {error}; see {output}") from error
+        return diagnostic
 
     def cli(name, *arguments, success=True, required=()):
-        run(name, project_command(arguments, args.sysroot), success, required)
+        return run(name, project_command(arguments, args.sysroot), success, required)
+
+    if args.preflight_only:
+        profiles = [(kind, False) for kind in ("content", "transform", "ui", "dependency", "io", "service")]
+        profiles.append(("service", True))
+        for language in ("rust", "c", "cpp"):
+            for kind, outbound in profiles:
+                key = f"{language}-{kind}" + ("-http" if outbound else "")
+                project = output / key
+                identifier = "org.example." + key
+                cli(key + "-new", "new", project, "--language", language, "--kind", kind,
+                    "--id", identifier, *(["--service-http"] if outbound else []))
+                before = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
+                diagnostic = cli(key + "-validate", "validate", project)
+                check_preflight_summary(diagnostic, identifier, language)
+                after = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
+                if before != after or (project / "build").exists() or (project / "dist").exists():
+                    raise RuntimeError("preflight changed the project: " + key)
+                print("PREFLIGHT PASS", key, flush=True)
+        print("PREFLIGHT PASS 21 projects; no builds or plugin execution", flush=True)
+        return
 
     run("unit", [sys.executable, "-B", "-X", "utf8", "-m", "unittest", "discover", "-s", ROOT / "tool/tests", "-p", "test_plugin_project*.py", "-v"])
     cli("doctor", "doctor")
@@ -60,6 +97,7 @@ def main():
             project = output / key
             cli(key + "-new", "new", project, "--language", language, "--kind", kind,
                 "--id", "org.example." + key)
+            check_preflight_summary(cli(key + "-validate", "validate", project), "org.example." + key, language)
             cli(key + "-pack", "pack", project)
             archives = list((project / "dist").glob("*.mplugin"))
             if len(archives) != 1:

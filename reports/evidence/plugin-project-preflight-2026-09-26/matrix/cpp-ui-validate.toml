@@ -1,0 +1,39 @@
+schema = 1
+result = "valid"
+scope = "project-metadata-and-contracts"
+plugin_executed = false
+permissions_granted = false
+plugin_id = "org.example.cpp-ui"
+plugin_version = "0.1.0"
+language = "cpp"
+kind = "standard"
+source = "src/plugin.cpp"
+sdk_root = "/workspace/scratch/c3041ed82a57/morrow/sdk"
+packager_arguments = ["--name", "org.example.cpp-ui", "--handler", "ui.form", "text.utf8", "morrow.ui.document.v1", "32", "65536", "--handler", "ui.edit", "morrow.ui.event.v1", "morrow.ui.document.v1", "65536", "65536", "--fuel", "20000000", "--memory-bytes", "16777216", "--host-calls", "16"]
+limitations = ["Compiler, dependency resolution, source behavior and platform compatibility are not tested.", "Declarations do not prove handler implementation or grant host authority.", "Host dependency locks, endpoints, credentials and resource grants must be approved separately."]
+content_capabilities = []
+io_capabilities = []
+io_handlers = []
+dependency_slots = []
+dependency_calls = false
+service_resources = false
+
+[[contracts]]
+name = "runtime.capnp"
+sha256 = "18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855"
+
+[[contracts]]
+name = "content.proto"
+sha256 = "8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4"
+
+[[contracts]]
+name = "task.capnp"
+sha256 = "6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b"
+
+[[contracts]]
+name = "ui.capnp"
+sha256 = "253f074420307ce737b61f8669d553b3ed7a825132f2ce449900a1d9b372bda6"
+
+[[contracts]]
+name = "dependency_call.capnp"
+sha256 = "8dd7821caed15769c80dee950ac71fbdb3aa1106a37f411d88ec4d3a37952cb8"

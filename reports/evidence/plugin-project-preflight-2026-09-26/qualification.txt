@@ -1,0 +1,23 @@
+EVIDENCE /workspace/scratch/c3041ed82a57/morrow-preflight-qualification
+PREFLIGHT PASS rust-content
+PREFLIGHT PASS rust-transform
+PREFLIGHT PASS rust-ui
+PREFLIGHT PASS rust-dependency
+PREFLIGHT PASS rust-io
+PREFLIGHT PASS rust-service
+PREFLIGHT PASS rust-service-http
+PREFLIGHT PASS c-content
+PREFLIGHT PASS c-transform
+PREFLIGHT PASS c-ui
+PREFLIGHT PASS c-dependency
+PREFLIGHT PASS c-io
+PREFLIGHT PASS c-service
+PREFLIGHT PASS c-service-http
+PREFLIGHT PASS cpp-content
+PREFLIGHT PASS cpp-transform
+PREFLIGHT PASS cpp-ui
+PREFLIGHT PASS cpp-dependency
+PREFLIGHT PASS cpp-io
+PREFLIGHT PASS cpp-service
+PREFLIGHT PASS cpp-service-http
+PREFLIGHT PASS 21 projects; no builds or plugin execution
