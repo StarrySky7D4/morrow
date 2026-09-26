@@ -303,6 +303,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1455,6 +1465,32 @@
   "pluginsEndpointWorking": "Updating endpoint status…",
   "pluginsExistingVersion": "This version is already installed. Its enabled state is unchanged.",
   "pluginsFileLimit": "The file is too large. Choose a file no larger than {limit} bytes.",
+  "pluginsFileTaskBudgets": "Approved plugin budgets may impose lower limits. Verification retains a digest and at most 4096 preview bytes.",
+  "pluginsFileTaskCancelled": "Cancellation requested; verify worker exit",
+  "pluginsFileTaskCapturing": "Capturing selected file",
+  "pluginsFileTaskCeiling": "File ceiling (bytes, up to 256 MiB)",
+  "pluginsFileTaskCommandUnknown": "Chunk or finish acknowledgement is unknown. Inspect status; do not resend.",
+  "pluginsFileTaskFailed": "File verification or task did not complete",
+  "pluginsFileTaskFinishing": "Finishing file session",
+  "pluginsFileTaskFormError": "Unable to select or submit the file. Check the selection, ceiling and lifetime.",
+  "pluginsFileTaskHexPreview": "Hex preview (first 64 bytes)",
+  "pluginsFileTaskIdentity": "Task identity does not match.",
+  "pluginsFileTaskIdle": "No file task started",
+  "pluginsFileTaskIntegrity": "File offset, length, EOF or digest verification failed.",
+  "pluginsFileTaskInterrupted": "Task interrupted or observation timed out. Check worker exit.",
+  "pluginsFileTaskIntro": "Select a file to read and verify through an approved plugin. The source file is not modified.",
+  "pluginsFileTaskOtherSession": "The current task belongs to another session. Use its original panel.",
+  "pluginsFileTaskPrevious": "Previous file task",
+  "pluginsFileTaskProgress": "{received} / {length} bytes",
+  "pluginsFileTaskReading": "Waiting or reading and verifying",
+  "pluginsFileTaskSelectFile": "Select file",
+  "pluginsFileTaskSelectHandler": "Select file handler",
+  "pluginsFileTaskStart": "Read and verify selected file",
+  "pluginsFileTaskTimeout": "Task lifetime (1–30000 ms)",
+  "pluginsFileTaskTitle": "File reading and verification",
+  "pluginsFileTaskUnknown": "Outcome unknown; no automatic retry",
+  "pluginsFileTaskVerified": "File bytes verified; file session finished",
+  "pluginsFileTaskVerify": "Read and verify",
   "pluginsHttpTaskAbandon": "End observation of this attempt",
   "pluginsHttpTaskAbandonDetails": "Only after fresh status confirms no active task and the original library is available, you may end this observation. This does not prove that no remote effects occurred. The identity and uncertainty remain in history; a new request requires another explicit submission.",
   "pluginsHttpTaskAbsent": "No result delivery",

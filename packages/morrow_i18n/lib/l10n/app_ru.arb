@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "Обновление состояния конечной точки…",
   "pluginsExistingVersion": "Эта версия уже установлена. Состояние включения не изменилось.",
   "pluginsFileLimit": "Файл слишком велик. Выберите файл размером не более {limit} байт.",
+  "pluginsFileTaskBudgets": "Одобренные лимиты плагина могут быть ниже. При проверке сохраняются хеш и не более 4096 байт предпросмотра.",
+  "pluginsFileTaskCancelled": "Отмена запрошена; проверьте завершение процесса",
+  "pluginsFileTaskCapturing": "Захват выбранного файла",
+  "pluginsFileTaskCeiling": "Лимит файла (байты, до 256 МиБ)",
+  "pluginsFileTaskCommandUnknown": "Подтверждение запроса блока или завершения неизвестно. Проверьте состояние; не отправляйте повторно.",
+  "pluginsFileTaskFailed": "Проверка файла или задача не завершилась",
+  "pluginsFileTaskFinishing": "Завершение файлового сеанса",
+  "pluginsFileTaskFormError": "Не удалось выбрать или отправить файл. Проверьте выбор, лимит и время.",
+  "pluginsFileTaskHexPreview": "Шестнадцатеричный просмотр (первые 64 байта)",
+  "pluginsFileTaskIdentity": "Идентификатор задачи не совпадает.",
+  "pluginsFileTaskIdle": "Задача с файлом не запущена",
+  "pluginsFileTaskIntegrity": "Проверка смещения, длины, конца файла или хеша не удалась.",
+  "pluginsFileTaskInterrupted": "Задача прервана или истекло время наблюдения. Проверьте завершение процесса.",
+  "pluginsFileTaskIntro": "Выберите файл для чтения и проверки через одобренный плагин. Исходный файл не изменяется.",
+  "pluginsFileTaskOtherSession": "Текущая задача относится к другому сеансу. Используйте её исходную панель.",
+  "pluginsFileTaskPrevious": "Предыдущая задача с файлом",
+  "pluginsFileTaskProgress": "{received} / {length} байт",
+  "pluginsFileTaskReading": "Ожидание или чтение и проверка",
+  "pluginsFileTaskSelectFile": "Выбрать файл",
+  "pluginsFileTaskSelectHandler": "Выберите обработчик файла",
+  "pluginsFileTaskStart": "Прочитать и проверить выбранный файл",
+  "pluginsFileTaskTimeout": "Время задачи (1–30000 мс)",
+  "pluginsFileTaskTitle": "Чтение и проверка файла",
+  "pluginsFileTaskUnknown": "Результат неизвестен; повторной попытки не будет",
+  "pluginsFileTaskVerified": "Байты файла проверены; сеанс завершён",
+  "pluginsFileTaskVerify": "Прочитать и проверить",
   "pluginsHttpTaskAbandon": "Завершить наблюдение за попыткой",
   "pluginsHttpTaskAbandonDetails": "Наблюдение можно завершить, только когда свежее состояние подтверждает отсутствие активной задачи и доступность исходной библиотеки. Это не доказывает отсутствие удалённых изменений. Идентификатор и неопределённость сохраняются в истории; новый запрос требует явной отправки.",
   "pluginsHttpTaskAbsent": "Результат не доставлен",

@@ -76,9 +76,9 @@ class PreflightTests(unittest.TestCase):
 
     def test_cli_succeeds_with_empty_path_and_unavailable_sysroot(self):
         args, root = self.create("cpp", "service", True)
-        result = subprocess.run([sys.executable, str(tool.ROOT / "tool/morrow_plugin.py"),
+        result = subprocess.run([sys.executable, "-X", "utf8", str(tool.ROOT / "tool/morrow_plugin.py"),
                                  "validate", str(root / "plugin.toml"), "--sysroot", str(root / "missing")],
-                                env={**os.environ, "PATH": ""}, capture_output=True, text=True)
+                                env={**os.environ, "PATH": ""}, capture_output=True, text=True, encoding="utf-8")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(tomllib.loads(result.stdout)["result"], "valid")
         self.assertEqual(result.stderr, "")

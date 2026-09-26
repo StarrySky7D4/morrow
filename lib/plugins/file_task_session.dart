@@ -159,8 +159,9 @@ class FileTaskSession {
 
   void _accept(IoTaskSnapshot value, {bool start = false}) {
     if (value.key != null) HttpTaskValidation.identity(value.key!);
-    if (value.submission != null)
+    if (value.submission != null) {
       HttpTaskValidation.identity(value.submission!);
+    }
     if (_key != null &&
         (!_same(value.key, _key) ||
             !_same(value.submission, _attempt?.submission))) {
@@ -270,8 +271,9 @@ class FileTaskSession {
           FileTaskPhase.capturing,
           FileTaskPhase.reading,
           FileTaskPhase.finishing,
-        ].contains(_phase))
+        ].contains(_phase)) {
       return;
+    }
     _busy = true;
     final epoch = _epoch;
     var delivering = false, decoded = false;
@@ -391,15 +393,17 @@ class FileTaskSession {
         await refresh();
         if (!_trusted || _cancelled) break;
         await advance();
-        if (_snapshot?.delivery != IoDeliveryPhase.ready)
+        if (_snapshot?.delivery != IoDeliveryPhase.ready) {
           await Future<void>.delayed(pollInterval);
+        }
       }
     } finally {
       _pumping = false;
       _notify();
     }
-    if (_phase == FileTaskPhase.failed && canCancel)
+    if (_phase == FileTaskPhase.failed && canCancel) {
       await cancel(preserveFailure: true);
+    }
   }
 
   Future<void> cancel({bool preserveFailure = false}) async {

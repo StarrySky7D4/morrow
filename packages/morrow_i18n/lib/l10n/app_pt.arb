@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "Atualizando estado do endpoint…",
   "pluginsExistingVersion": "Esta versão já está instalada. Seu estado de ativação não mudou.",
   "pluginsFileLimit": "O arquivo é muito grande. Escolha um de no máximo {limit} bytes.",
+  "pluginsFileTaskBudgets": "Os limites aprovados do plugin podem ser menores. A verificação mantém um resumo e até 4096 bytes de prévia.",
+  "pluginsFileTaskCancelled": "Cancelamento solicitado; verifique a saída do processo",
+  "pluginsFileTaskCapturing": "Capturando o arquivo selecionado",
+  "pluginsFileTaskCeiling": "Limite do arquivo (bytes, até 256 MiB)",
+  "pluginsFileTaskCommandUnknown": "Confirmação de bloco ou conclusão desconhecida. Verifique o estado; não reenvie.",
+  "pluginsFileTaskFailed": "A verificação do arquivo ou a tarefa não foi concluída",
+  "pluginsFileTaskFinishing": "Finalizando a sessão de arquivo",
+  "pluginsFileTaskFormError": "Não foi possível selecionar ou enviar o arquivo. Verifique a seleção, o limite e a duração.",
+  "pluginsFileTaskHexPreview": "Prévia hexadecimal (primeiros 64 bytes)",
+  "pluginsFileTaskIdentity": "A identidade da tarefa não corresponde.",
+  "pluginsFileTaskIdle": "Nenhuma tarefa de arquivo iniciada",
+  "pluginsFileTaskIntegrity": "Falha na verificação do deslocamento, tamanho, fim ou resumo do arquivo.",
+  "pluginsFileTaskInterrupted": "Tarefa interrompida ou tempo de observação esgotado. Verifique a saída do processo.",
+  "pluginsFileTaskIntro": "Selecione um arquivo para leitura e verificação por um plugin aprovado. O arquivo de origem não é alterado.",
+  "pluginsFileTaskOtherSession": "A tarefa atual pertence a outra sessão. Use o painel original.",
+  "pluginsFileTaskPrevious": "Tarefa de arquivo anterior",
+  "pluginsFileTaskProgress": "{received} / {length} bytes",
+  "pluginsFileTaskReading": "Aguardando ou lendo e verificando",
+  "pluginsFileTaskSelectFile": "Selecionar arquivo",
+  "pluginsFileTaskSelectHandler": "Selecionar processador de arquivos",
+  "pluginsFileTaskStart": "Ler e verificar o arquivo selecionado",
+  "pluginsFileTaskTimeout": "Duração da tarefa (1–30000 ms)",
+  "pluginsFileTaskTitle": "Leitura e verificação de arquivos",
+  "pluginsFileTaskUnknown": "Resultado desconhecido; sem nova tentativa automática",
+  "pluginsFileTaskVerified": "Bytes do arquivo verificados; sessão encerrada",
+  "pluginsFileTaskVerify": "Ler e verificar",
   "pluginsHttpTaskAbandon": "Encerrar observação desta tentativa",
   "pluginsHttpTaskAbandonDetails": "Só encerre a observação após um estado recente confirmar ausência de tarefa ativa e disponibilidade da biblioteca original. Isso não prova ausência de efeitos remotos. Identidade e incerteza ficam no histórico; uma nova solicitação exige outro envio explícito.",
   "pluginsHttpTaskAbsent": "Sem entrega de resultado",

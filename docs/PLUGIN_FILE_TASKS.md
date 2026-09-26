@@ -76,3 +76,14 @@ python tool/plugin_transport_baseline.py verify
 后续已新增 `FileTaskSession` 与原生 `FileTaskManager` 源码接线，见 [会话报告](../reports/plugin-file-session-2026-09-26.md)。会话按 Captured → 精确 offset 分块 → 最终 SHA-256 → Finished 消费，最多保留 4096 字节预览及五条摘要历史，不重放一次领取。已知 task／submission 不允许替换；丢启动可只读恢复，丢命令或消费保持 Unknown；取消使迟到字节失效，修复／确认仍以实际退出为门槛。状态按 backend 保留，离开页面不重启原任务。
 
 原生能力声明通过后才显示系统路径选择器；只列启用、可用且已声明／批准 FileRead 的插件，提交绑定原目录修订。HTTP 面板在文件尝试未解决时暂停自己的领取和控制。下一步是完整 Flutter 分析／widget 与 Windows 选中、取消、丢回执、修复、实际退出验收，以及完整本地化。Linux 测试 Store 仍不能代表生产受保护存储。此前 Flutter 启动自动审批因间接云元数据访问拒绝；本轮未重试该路径，独立 Dart 验证不记为 Flutter 窗口验收。
+
+
+## Windows 合并验收与复现（2026-09-27）
+
+九语界面、面板状态、Windows 原生服务 codec 及独立 Dart→宿主文件捕获验收见 [合并记录](../reports/drive-merge-acceptance-2026-09-27.md)。下列脚本从仓库固定的 Rust IO Wasm 临时构建 FileRead 专项包，使用全新临时库；不会安装到用户库。先构建当前 Windows 宿主并准备兼容的内置工作台包，再执行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File tool/verify_file_task_windows.ps1 -WorkbenchPackage C:\path\to\workbench.morrowplugin -HostExecutable build/workbench-host/release/morrow-workbench-host.exe
+```
+
+该验收包括捕获后删除源文件、分块读取与 SHA-256、Finished/退出/确认及撤权后的拒绝。系统文件选择器由 widget 注入选择结果验证取消和状态保持；这不等于原生对话框人工操作验收，也不补齐目录/写入权限能力。

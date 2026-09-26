@@ -64,10 +64,10 @@ impl Setup {
         let mut app = Workbench::open_managed(dir.path(), None).unwrap();
         app.local_state()
             .unwrap()
-            .catalog
+            .manager
             .as_ref()
             .unwrap()
-            .install(&package)
+            .install_package(package.archive())
             .unwrap();
         let manager = app.local_state_mut().unwrap().manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();

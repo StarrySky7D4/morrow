@@ -1779,6 +1779,101 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      'Les limites approuvées du plugin peuvent être plus basses. La vérification conserve une empreinte et au plus 4096 octets d’aperçu.';
+
+  @override
+  String get pluginsFileTaskCancelled =>
+      'Annulation demandée ; vérifiez l’arrêt du processus';
+
+  @override
+  String get pluginsFileTaskCapturing => 'Capture du fichier sélectionné';
+
+  @override
+  String get pluginsFileTaskCeiling =>
+      'Limite du fichier (octets, jusqu’à 256 Mio)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'Accusé de réception du bloc ou de la fin inconnu. Vérifiez l’état ; ne renvoyez rien.';
+
+  @override
+  String get pluginsFileTaskFailed =>
+      'Vérification du fichier ou tâche inachevée';
+
+  @override
+  String get pluginsFileTaskFinishing => 'Fin de la session de fichier';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'Impossible de sélectionner ou d’envoyer le fichier. Vérifiez le choix, la limite et la durée.';
+
+  @override
+  String get pluginsFileTaskHexPreview =>
+      'Aperçu hexadécimal (64 premiers octets)';
+
+  @override
+  String get pluginsFileTaskIdentity =>
+      'L’identité de la tâche ne correspond pas.';
+
+  @override
+  String get pluginsFileTaskIdle => 'Aucune tâche de fichier lancée';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      'Échec de la vérification du décalage, de la longueur, de la fin ou de l’empreinte du fichier.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'Tâche interrompue ou délai d’observation dépassé. Vérifiez l’arrêt du processus.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      'Sélectionnez un fichier à lire et vérifier avec un plugin approuvé. Le fichier source reste inchangé.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      'La tâche actuelle appartient à une autre session. Utilisez son panneau d’origine.';
+
+  @override
+  String get pluginsFileTaskPrevious => 'Tâche de fichier précédente';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length octets';
+  }
+
+  @override
+  String get pluginsFileTaskReading => 'En attente ou lecture et vérification';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'Choisir un fichier';
+
+  @override
+  String get pluginsFileTaskSelectHandler =>
+      'Choisir un gestionnaire de fichiers';
+
+  @override
+  String get pluginsFileTaskStart => 'Lire et vérifier le fichier sélectionné';
+
+  @override
+  String get pluginsFileTaskTimeout => 'Durée de la tâche (1–30000 ms)';
+
+  @override
+  String get pluginsFileTaskTitle => 'Lecture et vérification du fichier';
+
+  @override
+  String get pluginsFileTaskUnknown =>
+      'Résultat inconnu ; aucun nouvel essai automatique';
+
+  @override
+  String get pluginsFileTaskVerified =>
+      'Octets du fichier vérifiés ; session terminée';
+
+  @override
+  String get pluginsFileTaskVerify => 'Lire et vérifier';
+
+  @override
   String get pluginsHttpTaskAbandon =>
       'Terminer l’observation de cette tentative';
 

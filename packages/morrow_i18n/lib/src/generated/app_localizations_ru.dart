@@ -1772,6 +1772,97 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      'Одобренные лимиты плагина могут быть ниже. При проверке сохраняются хеш и не более 4096 байт предпросмотра.';
+
+  @override
+  String get pluginsFileTaskCancelled =>
+      'Отмена запрошена; проверьте завершение процесса';
+
+  @override
+  String get pluginsFileTaskCapturing => 'Захват выбранного файла';
+
+  @override
+  String get pluginsFileTaskCeiling => 'Лимит файла (байты, до 256 МиБ)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'Подтверждение запроса блока или завершения неизвестно. Проверьте состояние; не отправляйте повторно.';
+
+  @override
+  String get pluginsFileTaskFailed =>
+      'Проверка файла или задача не завершилась';
+
+  @override
+  String get pluginsFileTaskFinishing => 'Завершение файлового сеанса';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'Не удалось выбрать или отправить файл. Проверьте выбор, лимит и время.';
+
+  @override
+  String get pluginsFileTaskHexPreview =>
+      'Шестнадцатеричный просмотр (первые 64 байта)';
+
+  @override
+  String get pluginsFileTaskIdentity => 'Идентификатор задачи не совпадает.';
+
+  @override
+  String get pluginsFileTaskIdle => 'Задача с файлом не запущена';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      'Проверка смещения, длины, конца файла или хеша не удалась.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'Задача прервана или истекло время наблюдения. Проверьте завершение процесса.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      'Выберите файл для чтения и проверки через одобренный плагин. Исходный файл не изменяется.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      'Текущая задача относится к другому сеансу. Используйте её исходную панель.';
+
+  @override
+  String get pluginsFileTaskPrevious => 'Предыдущая задача с файлом';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length байт';
+  }
+
+  @override
+  String get pluginsFileTaskReading => 'Ожидание или чтение и проверка';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'Выбрать файл';
+
+  @override
+  String get pluginsFileTaskSelectHandler => 'Выберите обработчик файла';
+
+  @override
+  String get pluginsFileTaskStart => 'Прочитать и проверить выбранный файл';
+
+  @override
+  String get pluginsFileTaskTimeout => 'Время задачи (1–30000 мс)';
+
+  @override
+  String get pluginsFileTaskTitle => 'Чтение и проверка файла';
+
+  @override
+  String get pluginsFileTaskUnknown =>
+      'Результат неизвестен; повторной попытки не будет';
+
+  @override
+  String get pluginsFileTaskVerified => 'Байты файла проверены; сеанс завершён';
+
+  @override
+  String get pluginsFileTaskVerify => 'Прочитать и проверить';
+
+  @override
   String get pluginsHttpTaskAbandon => 'Завершить наблюдение за попыткой';
 
   @override

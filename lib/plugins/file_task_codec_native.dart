@@ -44,8 +44,9 @@ abstract final class FileTaskCodec {
       case 0:
         return null;
       case 1:
-        if (hash.length != 32)
+        if (hash.length != 32) {
           throw const FormatException('Invalid file digest');
+        }
         return FileTaskCaptured(length: length, sha256: hash);
       case 2:
         if (offset + BigInt.from(bytes.length) > _u64 ||

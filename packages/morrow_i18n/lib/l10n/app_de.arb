@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "Endpunktstatus wird aktualisiert…",
   "pluginsExistingVersion": "Diese Version ist bereits installiert. Ihr Aktivierungsstatus bleibt unverändert.",
   "pluginsFileLimit": "Die Datei ist zu groß. Wählen Sie eine Datei mit höchstens {limit} Bytes.",
+  "pluginsFileTaskBudgets": "Genehmigte Pluginbudgets können niedrigere Grenzen setzen. Die Prüfung behält eine Prüfsumme und höchstens 4096 Vorschau-Bytes.",
+  "pluginsFileTaskCancelled": "Abbruch angefordert; Prozessende prüfen",
+  "pluginsFileTaskCapturing": "Ausgewählte Datei wird erfasst",
+  "pluginsFileTaskCeiling": "Dateigrenze (Byte, bis 256 MiB)",
+  "pluginsFileTaskCommandUnknown": "Bestätigung für Block oder Abschluss unbekannt. Status prüfen; nicht erneut senden.",
+  "pluginsFileTaskFailed": "Dateiprüfung oder Aufgabe nicht abgeschlossen",
+  "pluginsFileTaskFinishing": "Dateisitzung wird beendet",
+  "pluginsFileTaskFormError": "Datei konnte nicht ausgewählt oder übermittelt werden. Auswahl, Grenze und Dauer prüfen.",
+  "pluginsFileTaskHexPreview": "Hex-Vorschau (erste 64 Byte)",
+  "pluginsFileTaskIdentity": "Aufgabenidentität stimmt nicht überein.",
+  "pluginsFileTaskIdle": "Noch keine Dateiaufgabe gestartet",
+  "pluginsFileTaskIntegrity": "Prüfung von Dateiversatz, Länge, Dateiende oder Prüfsumme fehlgeschlagen.",
+  "pluginsFileTaskInterrupted": "Aufgabe unterbrochen oder Beobachtung abgelaufen. Prozessende prüfen.",
+  "pluginsFileTaskIntro": "Wählen Sie eine Datei zum Lesen und Prüfen mit einem genehmigten Plugin. Die Quelldatei bleibt unverändert.",
+  "pluginsFileTaskOtherSession": "Die aktuelle Aufgabe gehört zu einer anderen Sitzung. Verwenden Sie deren ursprüngliches Panel.",
+  "pluginsFileTaskPrevious": "Vorherige Dateiaufgabe",
+  "pluginsFileTaskProgress": "{received} / {length} Byte",
+  "pluginsFileTaskReading": "Warten oder Lesen und Prüfen",
+  "pluginsFileTaskSelectFile": "Datei auswählen",
+  "pluginsFileTaskSelectHandler": "Dateiverarbeitung auswählen",
+  "pluginsFileTaskStart": "Ausgewählte Datei lesen und prüfen",
+  "pluginsFileTaskTimeout": "Aufgabendauer (1–30000 ms)",
+  "pluginsFileTaskTitle": "Datei lesen und prüfen",
+  "pluginsFileTaskUnknown": "Ergebnis unbekannt; kein automatischer Neuversuch",
+  "pluginsFileTaskVerified": "Dateibytes geprüft; Dateisitzung beendet",
+  "pluginsFileTaskVerify": "Lesen und prüfen",
   "pluginsHttpTaskAbandon": "Beobachtung dieses Versuchs beenden",
   "pluginsHttpTaskAbandonDetails": "Die Beobachtung darf erst enden, wenn ein aktueller Status keine aktive Aufgabe und die Verfügbarkeit der ursprünglichen Bibliothek bestätigt. Das beweist nicht, dass entfernte Auswirkungen ausgeblieben sind. Kennung und Ungewissheit bleiben im Verlauf; eine neue Anfrage erfordert eine ausdrückliche Übermittlung.",
   "pluginsHttpTaskAbsent": "Keine Ergebniszustellung",

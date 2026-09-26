@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "正在更新端点状态…",
   "pluginsExistingVersion": "此版本已在插件列表中，现有启用状态保持不变。",
   "pluginsFileLimit": "文件太大，请选择不超过 {limit} 字节的文件。",
+  "pluginsFileTaskBudgets": "实际可读大小和期限仍受插件批准额度限制。校验只保留摘要和最多 4096 字节预览。",
+  "pluginsFileTaskCancelled": "已请求取消，仍需确认后台退出",
+  "pluginsFileTaskCapturing": "正在捕获选中文件",
+  "pluginsFileTaskCeiling": "文件上限（字节，最多 256 MiB）",
+  "pluginsFileTaskCommandUnknown": "无法确认块请求或结束请求；只核对状态，不重复发送。",
+  "pluginsFileTaskFailed": "文件校验或任务未完成",
+  "pluginsFileTaskFinishing": "正在结束文件会话",
+  "pluginsFileTaskFormError": "无法选择或提交文件，请检查选择、字节上限与期限。",
+  "pluginsFileTaskHexPreview": "十六进制预览（前 64 字节）",
+  "pluginsFileTaskIdentity": "任务身份不匹配。",
+  "pluginsFileTaskIdle": "尚未开始文件任务",
+  "pluginsFileTaskIntegrity": "文件偏移、长度、结束标记或摘要校验失败。",
+  "pluginsFileTaskInterrupted": "任务已中断或观察超时，请核对退出状态。",
+  "pluginsFileTaskIntro": "选择一个文件，通过当前已批准的插件读取并校验。不会修改源文件。",
+  "pluginsFileTaskOtherSession": "当前任务不属于此文件会话，请在原任务面板操作。",
+  "pluginsFileTaskPrevious": "此前文件任务",
+  "pluginsFileTaskProgress": "{received} / {length} 字节",
+  "pluginsFileTaskReading": "等待或正在读取并校验",
+  "pluginsFileTaskSelectFile": "选择文件",
+  "pluginsFileTaskSelectHandler": "选择文件处理器",
+  "pluginsFileTaskStart": "读取并校验所选文件",
+  "pluginsFileTaskTimeout": "任务期限（1–30000 毫秒）",
+  "pluginsFileTaskTitle": "文件读取与校验",
+  "pluginsFileTaskUnknown": "结果未知，不会自动重试",
+  "pluginsFileTaskVerified": "文件字节校验通过；会话已结束",
+  "pluginsFileTaskVerify": "读取并校验",
   "pluginsHttpTaskAbandon": "结束本次尝试的观察",
   "pluginsHttpTaskAbandonDetails": "仅在刷新确认无活动任务且原内容库可用后，才能结束本次观察。这不证明远端未发生效果。身份与未知状态仍保留在历史中，新请求需要另一次明确提交。",
   "pluginsHttpTaskAbsent": "暂无结果交付",

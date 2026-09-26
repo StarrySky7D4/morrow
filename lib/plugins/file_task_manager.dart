@@ -58,8 +58,6 @@ class _FileTaskManagerState extends State<FileTaskManager>
   bool _picking = false, _availabilityQueued = false;
   int _epoch = 0;
   Timer? _timer;
-  String _text(String zh, String en) =>
-      Localizations.localeOf(context).languageCode == 'zh' ? zh : en;
   List<_Choice> get _choices => [
     for (final p in widget.plugins)
       if (p.enabled &&
@@ -81,7 +79,9 @@ class _FileTaskManagerState extends State<FileTaskManager>
   void _attach() {
     _session = FileTaskSession.forBackend(widget.backend, widget.ioBackend);
     _session.addListener(_changed);
-    if (!_session.busy) unawaited(_session.refresh());
+    if (!_session.busy) {
+      unawaited(_session.refresh());
+    }
   }
 
   @override
@@ -122,11 +122,15 @@ class _FileTaskManagerState extends State<FileTaskManager>
   @override
   void sessionViewVisibilityChanged() {
     _schedule();
-    if (sessionViewActive && !_session.busy) unawaited(_session.refresh());
+    if (sessionViewActive && !_session.busy) {
+      unawaited(_session.refresh());
+    }
   }
 
   void _changed() {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     markSessionViewDirty();
     _schedule();
     final availability =
@@ -135,7 +139,9 @@ class _FileTaskManagerState extends State<FileTaskManager>
       _availabilityQueued = true;
       final session = _session;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted || !identical(_session, session)) return;
+        if (!mounted || !identical(_session, session)) {
+          return;
+        }
         _availabilityQueued = false;
         _availability = availability;
         widget.onChanged?.call();
@@ -149,17 +155,21 @@ class _FileTaskManagerState extends State<FileTaskManager>
     if (!sessionViewActive ||
         _session.busy ||
         !_session.ownsTask ||
-        _session.snapshot?.exit != null)
+        _session.snapshot?.exit != null) {
       return;
+    }
     final session = _session;
     _timer = Timer(const Duration(seconds: 1), () {
-      if (mounted && sessionViewActive && identical(session, _session))
+      if (mounted && sessionViewActive && identical(session, _session)) {
         unawaited(session.refresh());
+      }
     });
   }
 
   Future<void> _pick() async {
-    if (!_canEdit) return;
+    if (!_canEdit) {
+      return;
+    }
     final epoch = ++_epoch, backend = widget.backend;
     setState(() {
       _picking = true;
@@ -167,13 +177,15 @@ class _FileTaskManagerState extends State<FileTaskManager>
     });
     try {
       final selected = await (widget.pickFile?.call() ?? openFile());
-      if (!mounted || epoch != _epoch || !identical(widget.backend, backend))
+      if (!mounted || epoch != _epoch || !identical(widget.backend, backend)) {
         return;
-      if (selected != null)
+      }
+      if (selected != null) {
         setState(() {
           _path = selected.path;
           _name = selected.name;
         });
+      }
     } catch (_) {
       if (mounted && epoch == _epoch) setState(() => _formError = 'selection');
     } finally {
@@ -182,7 +194,9 @@ class _FileTaskManagerState extends State<FileTaskManager>
   }
 
   Future<void> _start() async {
-    if (!_canEdit || _path == null) return;
+    if (!_canEdit || _path == null) {
+      return;
+    }
     final session = _session, epoch = _epoch;
     try {
       final selected = _choices.singleWhere((v) => v.key == _choice);
@@ -223,31 +237,17 @@ class _FileTaskManagerState extends State<FileTaskManager>
         ),
         child: Text(text),
       );
-  String _phase([FileTaskPhase? value]) => switch (value ?? _session.phase) {
-    FileTaskPhase.idle => _text('尚未开始文件任务', 'No file task started'),
-    FileTaskPhase.capturing => _text('正在捕获选中文件', 'Capturing selected file'),
-    FileTaskPhase.reading => _text(
-      '等待或正在读取并校验',
-      'Waiting or reading and verifying',
-    ),
-    FileTaskPhase.finishing => _text('正在结束文件会话', 'Finishing file session'),
-    FileTaskPhase.verified => _text(
-      '文件字节校验通过；会话已结束',
-      'File bytes verified; file session finished',
-    ),
-    FileTaskPhase.cancelled => _text(
-      '已请求取消，仍需确认后台退出',
-      'Cancellation requested; verify worker exit',
-    ),
-    FileTaskPhase.failed => _text(
-      '文件校验或任务未完成',
-      'File verification or task did not complete',
-    ),
-    FileTaskPhase.unknown => _text(
-      '结果未知，不会自动重试',
-      'Outcome unknown; no automatic retry',
-    ),
-  };
+  String _phase(AppLocalizations l, [FileTaskPhase? value]) =>
+      switch (value ?? _session.phase) {
+        FileTaskPhase.idle => l.pluginsFileTaskIdle,
+        FileTaskPhase.capturing => l.pluginsFileTaskCapturing,
+        FileTaskPhase.reading => l.pluginsFileTaskReading,
+        FileTaskPhase.finishing => l.pluginsFileTaskFinishing,
+        FileTaskPhase.verified => l.pluginsFileTaskVerified,
+        FileTaskPhase.cancelled => l.pluginsFileTaskCancelled,
+        FileTaskPhase.failed => l.pluginsFileTaskFailed,
+        FileTaskPhase.unknown => l.pluginsFileTaskUnknown,
+      };
   String _storage(AppLocalizations l, IoStoragePhase phase) => switch (phase) {
     IoStoragePhase.local => l.pluginsHttpTaskLocal,
     IoStoragePhase.running => l.pluginsHttpTaskRunning,
@@ -261,22 +261,10 @@ class _FileTaskManagerState extends State<FileTaskManager>
     FileTaskNotice.startUnknown => l.pluginsHttpTaskStartUnknown,
     FileTaskNotice.readUnknown => l.pluginsHttpTaskReadUnknown,
     FileTaskNotice.controlUnknown => l.pluginsHttpTaskControlUnknown,
-    FileTaskNotice.commandUnknown => _text(
-      '无法确认块请求或结束请求；只核对状态，不重复发送。',
-      'Chunk or finish acknowledgement is unknown. Inspect status; do not resend.',
-    ),
-    FileTaskNotice.integrity => _text(
-      '文件偏移、长度、结束标记或摘要校验失败。',
-      'File offset, length, EOF or digest verification failed.',
-    ),
-    FileTaskNotice.identity => _text(
-      '任务身份不匹配。',
-      'Task identity does not match.',
-    ),
-    FileTaskNotice.interrupted => _text(
-      '任务已中断或观察超时，请核对退出状态。',
-      'Task interrupted or observation timed out. Check worker exit.',
-    ),
+    FileTaskNotice.commandUnknown => l.pluginsFileTaskCommandUnknown,
+    FileTaskNotice.integrity => l.pluginsFileTaskIntegrity,
+    FileTaskNotice.identity => l.pluginsFileTaskIdentity,
+    FileTaskNotice.interrupted => l.pluginsFileTaskInterrupted,
   };
   @override
   Widget build(BuildContext context) {
@@ -287,22 +275,17 @@ class _FileTaskManagerState extends State<FileTaskManager>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _text('文件读取与校验', 'File reading and verification'),
+          l.pluginsFileTaskTitle,
           style: TextStyle(color: widget.ink, fontWeight: FontWeight.w600),
         ),
-        _note(
-          _text(
-            '选择一个文件，通过当前已批准的插件读取并校验。不会修改源文件。',
-            'Select a file to read and verify through an approved plugin. The source file is not modified.',
-          ),
-        ),
+        _note(l.pluginsFileTaskIntro),
         if (widget.registryRevision == null)
           _note(l.pluginsHttpTaskCatalogUnavailable),
         DropdownButton<String>(
           key: const ValueKey('file-task-handler'),
           isExpanded: true,
           value: selected,
-          hint: Text(_text('选择文件处理器', 'Select file handler')),
+          hint: Text(l.pluginsFileTaskSelectHandler),
           items: [
             for (final c in choices)
               DropdownMenuItem(
@@ -316,7 +299,7 @@ class _FileTaskManagerState extends State<FileTaskManager>
           onChanged: _canEdit ? (v) => setState(() => _choice = v) : null,
         ),
         _button(
-          _text('选择文件', 'Select file'),
+          l.pluginsFileTaskSelectFile,
           'file-task-pick',
           _canEdit ? _pick : null,
         ),
@@ -332,41 +315,23 @@ class _FileTaskManagerState extends State<FileTaskManager>
           controller: _ceiling,
           enabled: _canEdit,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: _text(
-              '文件上限（字节，最多 256 MiB）',
-              'File ceiling (bytes, up to 256 MiB)',
-            ),
-          ),
+          decoration: InputDecoration(labelText: l.pluginsFileTaskCeiling),
         ),
         TextField(
           key: const ValueKey('file-task-timeout'),
           controller: _timeout,
           enabled: _canEdit,
           keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-            labelText: _text('任务期限（1–30000 毫秒）', 'Task lifetime (1–30000 ms)'),
-          ),
+          decoration: InputDecoration(labelText: l.pluginsFileTaskTimeout),
         ),
-        _note(
-          _text(
-            '实际可读大小和期限仍受插件批准额度限制。校验只保留摘要和最多 4096 字节预览。',
-            'Approved plugin budgets may impose lower limits. Verification retains a digest and at most 4096 preview bytes.',
-          ),
-        ),
-        if (_formError != null)
-          _note(
-            _text(
-              '无法选择或提交文件，请检查选择、字节上限与期限。',
-              'Unable to select or submit the file. Check the selection, ceiling and lifetime.',
-            ),
-          ),
+        _note(l.pluginsFileTaskBudgets),
+        if (_formError != null) _note(l.pluginsFileTaskFormError),
         Wrap(
           spacing: 8,
           runSpacing: 6,
           children: [
             _button(
-              _text('读取并校验所选文件', 'Read and verify selected file'),
+              l.pluginsFileTaskStart,
               'file-task-start',
               _canEdit && selected != null && _path != null ? _start : null,
             ),
@@ -376,7 +341,7 @@ class _FileTaskManagerState extends State<FileTaskManager>
               !_session.busy ? _session.refresh : null,
             ),
             _button(
-              _text('读取并校验', 'Read and verify'),
+              l.pluginsFileTaskVerify,
               'file-task-verify',
               _session.canVerify ? _session.verify : null,
             ),
@@ -403,18 +368,18 @@ class _FileTaskManagerState extends State<FileTaskManager>
           ],
         ),
         if (_session.busy || _picking) const LinearProgressIndicator(),
-        _note(_phase()),
+        _note(_phase(l)),
         if (state != null) _note(_storage(l, state.storage)),
         if (state?.key != null && !_session.ownsTask)
-          _note(
-            _text(
-              '当前任务不属于此文件会话，请在原任务面板操作。',
-              'The current task belongs to another session. Use its original panel.',
-            ),
-          ),
+          _note(l.pluginsFileTaskOtherSession),
         if (_session.notice != null) _note(_notice(l, _session.notice!)),
         if (_session.length != null)
-          _note('${_session.received} / ${_session.length} bytes'),
+          _note(
+            l.pluginsFileTaskProgress(
+              _session.received.toString(),
+              _session.length.toString(),
+            ),
+          ),
         if (_session.digest != null)
           SelectableText(
             'SHA-256: ${_session.digest}',
@@ -422,11 +387,11 @@ class _FileTaskManagerState extends State<FileTaskManager>
           ),
         if (preview.isNotEmpty)
           _note(
-            '${_text('十六进制预览（前 64 字节）', 'Hex preview (first 64 bytes)')}: ${_hex(preview.take(64).toList())}',
+            '${l.pluginsFileTaskHexPreview}: ${_hex(preview.take(64).toList())}',
           ),
         for (final h in _session.history)
           _note(
-            '${_text('此前文件任务', 'Previous file task')}: ${_phase(h.phase)} · ${h.received} / ${h.length ?? '?'} bytes · ${h.digest ?? '—'}',
+            '${l.pluginsFileTaskPrevious}: ${_phase(l, h.phase)} · ${l.pluginsFileTaskProgress(h.received.toString(), h.length?.toString() ?? '?')} · ${h.digest ?? '—'}',
           ),
       ],
     );

@@ -1671,6 +1671,93 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      '승인된 플러그인 한도가 더 낮을 수 있습니다. 검증 시 다이제스트와 최대 4096바이트의 미리보기만 보관합니다.';
+
+  @override
+  String get pluginsFileTaskCancelled => '취소 요청됨; 작업자 종료를 확인하세요';
+
+  @override
+  String get pluginsFileTaskCapturing => '선택한 파일을 캡처하는 중';
+
+  @override
+  String get pluginsFileTaskCeiling => '파일 상한(바이트, 최대 256 MiB)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      '청크 또는 종료 요청의 확인 상태를 알 수 없습니다. 상태를 확인하고 다시 보내지 마세요.';
+
+  @override
+  String get pluginsFileTaskFailed => '파일 검증 또는 작업이 완료되지 않았습니다';
+
+  @override
+  String get pluginsFileTaskFinishing => '파일 세션을 종료하는 중';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      '파일을 선택하거나 제출할 수 없습니다. 선택, 상한 및 시간 제한을 확인하세요.';
+
+  @override
+  String get pluginsFileTaskHexPreview => '16진수 미리보기(처음 64바이트)';
+
+  @override
+  String get pluginsFileTaskIdentity => '작업 식별자가 일치하지 않습니다.';
+
+  @override
+  String get pluginsFileTaskIdle => '파일 작업이 시작되지 않았습니다';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      '파일 오프셋, 길이, 끝 표시 또는 다이제스트 검증에 실패했습니다.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      '작업이 중단되었거나 관찰 시간이 초과되었습니다. 작업자 종료를 확인하세요.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      '승인된 플러그인으로 읽고 검증할 파일을 선택하세요. 원본 파일은 변경되지 않습니다.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      '현재 작업은 다른 세션에 속합니다. 원래 패널에서 조작하세요.';
+
+  @override
+  String get pluginsFileTaskPrevious => '이전 파일 작업';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length바이트';
+  }
+
+  @override
+  String get pluginsFileTaskReading => '대기 중이거나 읽고 검증하는 중';
+
+  @override
+  String get pluginsFileTaskSelectFile => '파일 선택';
+
+  @override
+  String get pluginsFileTaskSelectHandler => '파일 처리기 선택';
+
+  @override
+  String get pluginsFileTaskStart => '선택한 파일 읽기 및 검증';
+
+  @override
+  String get pluginsFileTaskTimeout => '작업 시간 제한(1~30000ms)';
+
+  @override
+  String get pluginsFileTaskTitle => '파일 읽기 및 검증';
+
+  @override
+  String get pluginsFileTaskUnknown => '결과를 알 수 없음; 자동으로 재시도하지 않습니다';
+
+  @override
+  String get pluginsFileTaskVerified => '파일 바이트 검증 완료; 세션 종료됨';
+
+  @override
+  String get pluginsFileTaskVerify => '읽기 및 검증';
+
+  @override
   String get pluginsHttpTaskAbandon => '이 시도 관측 종료';
 
   @override

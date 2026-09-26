@@ -1779,6 +1779,100 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      'Los límites aprobados del complemento pueden ser menores. La verificación conserva un resumen y hasta 4096 bytes de vista previa.';
+
+  @override
+  String get pluginsFileTaskCancelled =>
+      'Cancelación solicitada; compruebe la salida del proceso';
+
+  @override
+  String get pluginsFileTaskCapturing => 'Capturando el archivo seleccionado';
+
+  @override
+  String get pluginsFileTaskCeiling =>
+      'Límite del archivo (bytes, hasta 256 MiB)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'Se desconoce la confirmación del bloque o cierre. Compruebe el estado; no vuelva a enviarlo.';
+
+  @override
+  String get pluginsFileTaskFailed =>
+      'La verificación del archivo o la tarea no finalizó';
+
+  @override
+  String get pluginsFileTaskFinishing => 'Finalizando la sesión de archivo';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'No se pudo seleccionar o enviar el archivo. Compruebe la selección, el límite y la duración.';
+
+  @override
+  String get pluginsFileTaskHexPreview =>
+      'Vista hexadecimal (primeros 64 bytes)';
+
+  @override
+  String get pluginsFileTaskIdentity => 'La identidad de la tarea no coincide.';
+
+  @override
+  String get pluginsFileTaskIdle =>
+      'No se ha iniciado ninguna tarea de archivo';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      'Falló la verificación del desplazamiento, la longitud, el fin o el resumen del archivo.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'Tarea interrumpida o tiempo de observación agotado. Compruebe la salida del proceso.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      'Seleccione un archivo para leerlo y verificarlo con un complemento aprobado. El archivo de origen no se modifica.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      'La tarea actual pertenece a otra sesión. Use su panel original.';
+
+  @override
+  String get pluginsFileTaskPrevious => 'Tarea de archivo anterior';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length bytes';
+  }
+
+  @override
+  String get pluginsFileTaskReading => 'Esperando o leyendo y verificando';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'Seleccionar archivo';
+
+  @override
+  String get pluginsFileTaskSelectHandler => 'Seleccionar gestor de archivos';
+
+  @override
+  String get pluginsFileTaskStart => 'Leer y verificar el archivo seleccionado';
+
+  @override
+  String get pluginsFileTaskTimeout => 'Duración de la tarea (1–30000 ms)';
+
+  @override
+  String get pluginsFileTaskTitle => 'Lectura y verificación de archivos';
+
+  @override
+  String get pluginsFileTaskUnknown =>
+      'Resultado desconocido; no se reintentará automáticamente';
+
+  @override
+  String get pluginsFileTaskVerified =>
+      'Bytes del archivo verificados; sesión finalizada';
+
+  @override
+  String get pluginsFileTaskVerify => 'Leer y verificar';
+
+  @override
   String get pluginsHttpTaskAbandon => 'Terminar observación de este intento';
 
   @override

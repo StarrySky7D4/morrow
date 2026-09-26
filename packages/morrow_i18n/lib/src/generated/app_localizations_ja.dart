@@ -1657,6 +1657,92 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      '承認済みプラグインの上限がさらに低い場合があります。検証ではダイジェストと最大 4096 バイトのプレビューのみ保持します。';
+
+  @override
+  String get pluginsFileTaskCancelled => 'キャンセルを要求しました。処理の終了を確認してください';
+
+  @override
+  String get pluginsFileTaskCapturing => '選択したファイルを取得中';
+
+  @override
+  String get pluginsFileTaskCeiling => 'ファイル上限（バイト、最大 256 MiB）';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'チャンクまたは終了要求の確認が不明です。状態を確認し、再送しないでください。';
+
+  @override
+  String get pluginsFileTaskFailed => 'ファイルの検証またはタスクが完了しませんでした';
+
+  @override
+  String get pluginsFileTaskFinishing => 'ファイルセッションを終了中';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'ファイルを選択または送信できません。選択内容、上限、制限時間を確認してください。';
+
+  @override
+  String get pluginsFileTaskHexPreview => '16 進プレビュー（先頭 64 バイト）';
+
+  @override
+  String get pluginsFileTaskIdentity => 'タスク ID が一致しません。';
+
+  @override
+  String get pluginsFileTaskIdle => 'ファイルタスクは未開始です';
+
+  @override
+  String get pluginsFileTaskIntegrity => 'ファイルのオフセット、長さ、終端、ダイジェストの検証に失敗しました。';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'タスクが中断されたか監視がタイムアウトしました。処理の終了を確認してください。';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      '承認済みプラグインで読み取りと検証を行うファイルを選択します。元のファイルは変更されません。';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      '現在のタスクは別のセッションに属します。元のパネルで操作してください。';
+
+  @override
+  String get pluginsFileTaskPrevious => '前のファイルタスク';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length バイト';
+  }
+
+  @override
+  String get pluginsFileTaskReading => '待機中、または読み取りと検証中';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'ファイルを選択';
+
+  @override
+  String get pluginsFileTaskSelectHandler => 'ファイルハンドラーを選択';
+
+  @override
+  String get pluginsFileTaskStart => '選択したファイルを読み取り検証';
+
+  @override
+  String get pluginsFileTaskTimeout => 'タスクの制限時間（1～30000 ミリ秒）';
+
+  @override
+  String get pluginsFileTaskTitle => 'ファイルの読み取りと検証';
+
+  @override
+  String get pluginsFileTaskUnknown => '結果は不明です。自動再試行はしません';
+
+  @override
+  String get pluginsFileTaskVerified => 'ファイルのバイトを検証済み。セッションは終了しました';
+
+  @override
+  String get pluginsFileTaskVerify => '読み取りと検証';
+
+  @override
   String get pluginsHttpTaskAbandon => 'この試行の観測を終了';
 
   @override

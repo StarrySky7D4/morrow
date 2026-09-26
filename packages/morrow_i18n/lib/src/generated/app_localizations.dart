@@ -3148,6 +3148,162 @@ abstract class AppLocalizations {
   /// **'The file is too large. Choose a file no larger than {limit} bytes.'**
   String pluginsFileLimit(int limit);
 
+  /// No description provided for @pluginsFileTaskBudgets.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved plugin budgets may impose lower limits. Verification retains a digest and at most 4096 preview bytes.'**
+  String get pluginsFileTaskBudgets;
+
+  /// No description provided for @pluginsFileTaskCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation requested; verify worker exit'**
+  String get pluginsFileTaskCancelled;
+
+  /// No description provided for @pluginsFileTaskCapturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing selected file'**
+  String get pluginsFileTaskCapturing;
+
+  /// No description provided for @pluginsFileTaskCeiling.
+  ///
+  /// In en, this message translates to:
+  /// **'File ceiling (bytes, up to 256 MiB)'**
+  String get pluginsFileTaskCeiling;
+
+  /// No description provided for @pluginsFileTaskCommandUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Chunk or finish acknowledgement is unknown. Inspect status; do not resend.'**
+  String get pluginsFileTaskCommandUnknown;
+
+  /// No description provided for @pluginsFileTaskFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'File verification or task did not complete'**
+  String get pluginsFileTaskFailed;
+
+  /// No description provided for @pluginsFileTaskFinishing.
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing file session'**
+  String get pluginsFileTaskFinishing;
+
+  /// No description provided for @pluginsFileTaskFormError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to select or submit the file. Check the selection, ceiling and lifetime.'**
+  String get pluginsFileTaskFormError;
+
+  /// No description provided for @pluginsFileTaskHexPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex preview (first 64 bytes)'**
+  String get pluginsFileTaskHexPreview;
+
+  /// No description provided for @pluginsFileTaskIdentity.
+  ///
+  /// In en, this message translates to:
+  /// **'Task identity does not match.'**
+  String get pluginsFileTaskIdentity;
+
+  /// No description provided for @pluginsFileTaskIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'No file task started'**
+  String get pluginsFileTaskIdle;
+
+  /// No description provided for @pluginsFileTaskIntegrity.
+  ///
+  /// In en, this message translates to:
+  /// **'File offset, length, EOF or digest verification failed.'**
+  String get pluginsFileTaskIntegrity;
+
+  /// No description provided for @pluginsFileTaskInterrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Task interrupted or observation timed out. Check worker exit.'**
+  String get pluginsFileTaskInterrupted;
+
+  /// No description provided for @pluginsFileTaskIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a file to read and verify through an approved plugin. The source file is not modified.'**
+  String get pluginsFileTaskIntro;
+
+  /// No description provided for @pluginsFileTaskOtherSession.
+  ///
+  /// In en, this message translates to:
+  /// **'The current task belongs to another session. Use its original panel.'**
+  String get pluginsFileTaskOtherSession;
+
+  /// No description provided for @pluginsFileTaskPrevious.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous file task'**
+  String get pluginsFileTaskPrevious;
+
+  /// No description provided for @pluginsFileTaskProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{received} / {length} bytes'**
+  String pluginsFileTaskProgress(String length, String received);
+
+  /// No description provided for @pluginsFileTaskReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting or reading and verifying'**
+  String get pluginsFileTaskReading;
+
+  /// No description provided for @pluginsFileTaskSelectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select file'**
+  String get pluginsFileTaskSelectFile;
+
+  /// No description provided for @pluginsFileTaskSelectHandler.
+  ///
+  /// In en, this message translates to:
+  /// **'Select file handler'**
+  String get pluginsFileTaskSelectHandler;
+
+  /// No description provided for @pluginsFileTaskStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Read and verify selected file'**
+  String get pluginsFileTaskStart;
+
+  /// No description provided for @pluginsFileTaskTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Task lifetime (1–30000 ms)'**
+  String get pluginsFileTaskTimeout;
+
+  /// No description provided for @pluginsFileTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File reading and verification'**
+  String get pluginsFileTaskTitle;
+
+  /// No description provided for @pluginsFileTaskUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome unknown; no automatic retry'**
+  String get pluginsFileTaskUnknown;
+
+  /// No description provided for @pluginsFileTaskVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'File bytes verified; file session finished'**
+  String get pluginsFileTaskVerified;
+
+  /// No description provided for @pluginsFileTaskVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Read and verify'**
+  String get pluginsFileTaskVerify;
+
   /// No description provided for @pluginsHttpTaskAbandon.
   ///
   /// In en, this message translates to:

@@ -1758,6 +1758,96 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      'Approved plugin budgets may impose lower limits. Verification retains a digest and at most 4096 preview bytes.';
+
+  @override
+  String get pluginsFileTaskCancelled =>
+      'Cancellation requested; verify worker exit';
+
+  @override
+  String get pluginsFileTaskCapturing => 'Capturing selected file';
+
+  @override
+  String get pluginsFileTaskCeiling => 'File ceiling (bytes, up to 256 MiB)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'Chunk or finish acknowledgement is unknown. Inspect status; do not resend.';
+
+  @override
+  String get pluginsFileTaskFailed =>
+      'File verification or task did not complete';
+
+  @override
+  String get pluginsFileTaskFinishing => 'Finishing file session';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'Unable to select or submit the file. Check the selection, ceiling and lifetime.';
+
+  @override
+  String get pluginsFileTaskHexPreview => 'Hex preview (first 64 bytes)';
+
+  @override
+  String get pluginsFileTaskIdentity => 'Task identity does not match.';
+
+  @override
+  String get pluginsFileTaskIdle => 'No file task started';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      'File offset, length, EOF or digest verification failed.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'Task interrupted or observation timed out. Check worker exit.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      'Select a file to read and verify through an approved plugin. The source file is not modified.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      'The current task belongs to another session. Use its original panel.';
+
+  @override
+  String get pluginsFileTaskPrevious => 'Previous file task';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length bytes';
+  }
+
+  @override
+  String get pluginsFileTaskReading => 'Waiting or reading and verifying';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'Select file';
+
+  @override
+  String get pluginsFileTaskSelectHandler => 'Select file handler';
+
+  @override
+  String get pluginsFileTaskStart => 'Read and verify selected file';
+
+  @override
+  String get pluginsFileTaskTimeout => 'Task lifetime (1–30000 ms)';
+
+  @override
+  String get pluginsFileTaskTitle => 'File reading and verification';
+
+  @override
+  String get pluginsFileTaskUnknown => 'Outcome unknown; no automatic retry';
+
+  @override
+  String get pluginsFileTaskVerified =>
+      'File bytes verified; file session finished';
+
+  @override
+  String get pluginsFileTaskVerify => 'Read and verify';
+
+  @override
   String get pluginsHttpTaskAbandon => 'End observation of this attempt';
 
   @override

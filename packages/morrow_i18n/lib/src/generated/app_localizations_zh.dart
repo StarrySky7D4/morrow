@@ -1606,6 +1606,87 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      '实际可读大小和期限仍受插件批准额度限制。校验只保留摘要和最多 4096 字节预览。';
+
+  @override
+  String get pluginsFileTaskCancelled => '已请求取消，仍需确认后台退出';
+
+  @override
+  String get pluginsFileTaskCapturing => '正在捕获选中文件';
+
+  @override
+  String get pluginsFileTaskCeiling => '文件上限（字节，最多 256 MiB）';
+
+  @override
+  String get pluginsFileTaskCommandUnknown => '无法确认块请求或结束请求；只核对状态，不重复发送。';
+
+  @override
+  String get pluginsFileTaskFailed => '文件校验或任务未完成';
+
+  @override
+  String get pluginsFileTaskFinishing => '正在结束文件会话';
+
+  @override
+  String get pluginsFileTaskFormError => '无法选择或提交文件，请检查选择、字节上限与期限。';
+
+  @override
+  String get pluginsFileTaskHexPreview => '十六进制预览（前 64 字节）';
+
+  @override
+  String get pluginsFileTaskIdentity => '任务身份不匹配。';
+
+  @override
+  String get pluginsFileTaskIdle => '尚未开始文件任务';
+
+  @override
+  String get pluginsFileTaskIntegrity => '文件偏移、长度、结束标记或摘要校验失败。';
+
+  @override
+  String get pluginsFileTaskInterrupted => '任务已中断或观察超时，请核对退出状态。';
+
+  @override
+  String get pluginsFileTaskIntro => '选择一个文件，通过当前已批准的插件读取并校验。不会修改源文件。';
+
+  @override
+  String get pluginsFileTaskOtherSession => '当前任务不属于此文件会话，请在原任务面板操作。';
+
+  @override
+  String get pluginsFileTaskPrevious => '此前文件任务';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length 字节';
+  }
+
+  @override
+  String get pluginsFileTaskReading => '等待或正在读取并校验';
+
+  @override
+  String get pluginsFileTaskSelectFile => '选择文件';
+
+  @override
+  String get pluginsFileTaskSelectHandler => '选择文件处理器';
+
+  @override
+  String get pluginsFileTaskStart => '读取并校验所选文件';
+
+  @override
+  String get pluginsFileTaskTimeout => '任务期限（1–30000 毫秒）';
+
+  @override
+  String get pluginsFileTaskTitle => '文件读取与校验';
+
+  @override
+  String get pluginsFileTaskUnknown => '结果未知，不会自动重试';
+
+  @override
+  String get pluginsFileTaskVerified => '文件字节校验通过；会话已结束';
+
+  @override
+  String get pluginsFileTaskVerify => '读取并校验';
+
+  @override
   String get pluginsHttpTaskAbandon => '结束本次尝试的观察';
 
   @override

@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-27 [Drive 增量合并验收](../reports/drive-merge-acceptance-2026-09-27.md)：在独立工作树合并检查点 `807b9cd` 与本地主题/构建检查点 `008db00`；补齐文件任务九语、Windows 测试夹具及真实 Dart→宿主文件捕获验证。新增能力、最终 Windows 构建与合并结果以验收记录为准；不变更应用版本、不推送、不发布。以下日期条目保留历史验证范围，不能据旧条目判断后续工作尚未完成。
+
 2026-09-26 [SDK 库源码锁](../reports/plugin-sdk-source-lock-2026-09-26.md)：新增可迁移源码摘要锁、显式更新与严格锁要求；预检和构建前后核对源码／锁身份，漂移停止打包。118 项 Python、21 模板真实锁定预检、契约及 17 固定原件检查通过；不计为真实编译／执行资格，不锁定完整工具链。SDK 独立分发、Windows／Flutter 验收等继续开放，未使用 CI、推送或发布。
 
 2026-09-26 [SDK 工程离线预检](../reports/plugin-project-preflight-2026-09-26.md)：新增 validate 的 TOML 声明摘要、与正式构建共享的预检、21 模板批量预检模式；修复出站服务编译遗漏 IO 契约／版本检查。Python 106 项、21 工程真实 CLI、契约同步检查及 17 固定原件通过；不计为编译／运行资格。独立 SDK 分发与 Windows／Flutter 产品验收仍开放，未使用 CI、推送或发布。
@@ -19,6 +21,14 @@
 2026-09-26 [插件底座本地稳定候选收尾](../reports/plugin-foundation-closeout-2026-09-26.md)：显式长时服务 profile、三语言资源目录 SDK、真实原包续租／耗尽／撤权／历史重开完成；新增 transport-v1-rc1 六对固定 IO／服务原件，保留旧 guest-v1-rc1。core 645、runtime 397、network 134、SDK 66、Python 92 及专项通过，分项有重叠。Windows 专属依赖、Flutter 与凭据／TLS 实际入口仍阻断整体收尾；本轮未发布或使用 CI。
 
 2026-09-26 [入站服务 SDK 与进度校准](../reports/plugin-service-sdk-2026-09-26.md)：基于最新主线 `d9c0431`（test.56），新增 Rust／C／C++ 服务 codec、原帧关联与一次完成、六类项目模板中的 service 原包流程和显式服务打包声明。Linux 本地已验证三语言原包→真实 TCP 节点的七方法、二进制正文、未批准绑定、错误认证及撤权；SDK、工具、核心打包与独立原生 codec 结果见报告。完整文件系统、长时/持久恢复、Windows／Flutter 和 SDK 冻结仍开放；未使用 Actions/CI，不创建 Release。
+
+2026-09-25 [开发分支同步与本地 Windows 编译](../reports/development-sync-2026-09-25.md)：开发分支快进主线 `d9c0431`，应用 `0.1.9-test.56+60`；纳入 Web 本地 Rust 工作台、媒体持久化、受限主题包导入及 Windows 交互/瀑布流/退出修复。当前状态以 [插件系统状态](PLUGIN_SYSTEM_STATUS.md) 与 [Web 对齐表](WEB_PARITY.md) 为准。以下旧条目保留当轮事实，不代表当前仍未发布。
+
+近期优先级：
+
+1. 排查 CI 36115685547 的孤立数据场景导航中断；重新验证 fresh/legacy/orphan/media/theme 全部浏览器门禁后再推进 Pages 部署。最新主线尚无全绿证据。
+2. 继续三语言入站服务 SDK、完整文件 IO、异步续接与跨重启核对；现有 IO codec 不等于完整 SDK 冻结。
+3. Web 推进旧库迁移、备份恢复、持久草稿/附件/字体、大库与配额，再补通用外部插件和网络/服务平台能力；正式 UI 完整自动保存仍开放。
 
 2026-09-24 [源码同步与插件系统状态](PLUGIN_SYSTEM_STATUS.md)：归档下列两轮三语言 IO SDK、真实网络及项目工具增量；主线与开发分支同步，不创建 Release、不变更版本或旧兼容原件。最新完成范围和七类开放工作以此状态页为准，下面“未推送”保留各轮报告完成时的历史状态。
 

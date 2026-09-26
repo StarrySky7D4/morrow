@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "Actualizando estado del punto de conexión…",
   "pluginsExistingVersion": "Esta versión ya está instalada. Su estado de activación no ha cambiado.",
   "pluginsFileLimit": "El archivo es demasiado grande. Elija uno de como máximo {limit} bytes.",
+  "pluginsFileTaskBudgets": "Los límites aprobados del complemento pueden ser menores. La verificación conserva un resumen y hasta 4096 bytes de vista previa.",
+  "pluginsFileTaskCancelled": "Cancelación solicitada; compruebe la salida del proceso",
+  "pluginsFileTaskCapturing": "Capturando el archivo seleccionado",
+  "pluginsFileTaskCeiling": "Límite del archivo (bytes, hasta 256 MiB)",
+  "pluginsFileTaskCommandUnknown": "Se desconoce la confirmación del bloque o cierre. Compruebe el estado; no vuelva a enviarlo.",
+  "pluginsFileTaskFailed": "La verificación del archivo o la tarea no finalizó",
+  "pluginsFileTaskFinishing": "Finalizando la sesión de archivo",
+  "pluginsFileTaskFormError": "No se pudo seleccionar o enviar el archivo. Compruebe la selección, el límite y la duración.",
+  "pluginsFileTaskHexPreview": "Vista hexadecimal (primeros 64 bytes)",
+  "pluginsFileTaskIdentity": "La identidad de la tarea no coincide.",
+  "pluginsFileTaskIdle": "No se ha iniciado ninguna tarea de archivo",
+  "pluginsFileTaskIntegrity": "Falló la verificación del desplazamiento, la longitud, el fin o el resumen del archivo.",
+  "pluginsFileTaskInterrupted": "Tarea interrumpida o tiempo de observación agotado. Compruebe la salida del proceso.",
+  "pluginsFileTaskIntro": "Seleccione un archivo para leerlo y verificarlo con un complemento aprobado. El archivo de origen no se modifica.",
+  "pluginsFileTaskOtherSession": "La tarea actual pertenece a otra sesión. Use su panel original.",
+  "pluginsFileTaskPrevious": "Tarea de archivo anterior",
+  "pluginsFileTaskProgress": "{received} / {length} bytes",
+  "pluginsFileTaskReading": "Esperando o leyendo y verificando",
+  "pluginsFileTaskSelectFile": "Seleccionar archivo",
+  "pluginsFileTaskSelectHandler": "Seleccionar gestor de archivos",
+  "pluginsFileTaskStart": "Leer y verificar el archivo seleccionado",
+  "pluginsFileTaskTimeout": "Duración de la tarea (1–30000 ms)",
+  "pluginsFileTaskTitle": "Lectura y verificación de archivos",
+  "pluginsFileTaskUnknown": "Resultado desconocido; no se reintentará automáticamente",
+  "pluginsFileTaskVerified": "Bytes del archivo verificados; sesión finalizada",
+  "pluginsFileTaskVerify": "Leer y verificar",
   "pluginsHttpTaskAbandon": "Terminar observación de este intento",
   "pluginsHttpTaskAbandonDetails": "Solo puede terminar la observación si un estado reciente confirma que no hay tarea activa y la biblioteca original está disponible. Esto no prueba ausencia de efectos remotos. La identidad y la incertidumbre permanecen en el historial; otra solicitud exige un envío explícito.",
   "pluginsHttpTaskAbsent": "Sin entrega de resultado",

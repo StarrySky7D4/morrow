@@ -1,9 +1,18 @@
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#include <fcntl.h>
+#include <io.h>
+#endif
 #include "morrow_plugin_service.hpp"
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
 #include <type_traits>
 int main() {
+#ifdef _WIN32
+  assert(_setmode(_fileno(stdin), _O_BINARY) != -1);
+  assert(_setmode(_fileno(stdout), _O_BINARY) != -1);
+#endif
   static_assert(!std::is_copy_constructible_v<morrow::service_request>);
   std::vector<uint8_t> input(MP_MAX_SERVICE_FRAME_BYTES);
   size_t count=std::fread(input.data(),1,input.size(),stdin);

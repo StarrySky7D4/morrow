@@ -6,7 +6,7 @@ $OutputDirectory = [IO.Path]::GetFullPath($OutputDirectory)
 Push-Location $projectRoot
 try {
     $theme = Get-Content 'plugins/mid_autumn/theme.json' -Raw -Encoding UTF8 | ConvertFrom-Json
-    if ($theme.version -ne '1.0.0') { throw 'Update package_mid_autumn.rs version together with the theme manifest.' }
+    if ($theme.version -ne '1.0.1') { throw 'Update package_mid_autumn.rs version together with the theme manifest.' }
     $artwork = Join-Path $projectRoot 'plugins/mid_autumn/artwork/moonlit-garden.webp'
     if ((Get-Item -LiteralPath $artwork).Length -ne $theme.artwork.bytes -or
         (Get-FileHash -LiteralPath $artwork).Hash.ToLowerInvariant() -ne $theme.artwork.sha256) {

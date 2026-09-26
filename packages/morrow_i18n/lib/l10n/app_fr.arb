@@ -294,6 +294,16 @@
       }
     }
   },
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "length": {
+        "type": "String"
+      },
+      "received": {
+        "type": "String"
+      }
+    }
+  },
   "@pluginsHttpTaskCounters": {
     "placeholders": {
       "bytes": {
@@ -1446,6 +1456,32 @@
   "pluginsEndpointWorking": "Actualisation de l’état du point d’accès…",
   "pluginsExistingVersion": "Cette version est déjà installée. Son état d’activation est inchangé.",
   "pluginsFileLimit": "Fichier trop volumineux. Choisissez un fichier de {limit} octets maximum.",
+  "pluginsFileTaskBudgets": "Les limites approuvées du plugin peuvent être plus basses. La vérification conserve une empreinte et au plus 4096 octets d’aperçu.",
+  "pluginsFileTaskCancelled": "Annulation demandée ; vérifiez l’arrêt du processus",
+  "pluginsFileTaskCapturing": "Capture du fichier sélectionné",
+  "pluginsFileTaskCeiling": "Limite du fichier (octets, jusqu’à 256 Mio)",
+  "pluginsFileTaskCommandUnknown": "Accusé de réception du bloc ou de la fin inconnu. Vérifiez l’état ; ne renvoyez rien.",
+  "pluginsFileTaskFailed": "Vérification du fichier ou tâche inachevée",
+  "pluginsFileTaskFinishing": "Fin de la session de fichier",
+  "pluginsFileTaskFormError": "Impossible de sélectionner ou d’envoyer le fichier. Vérifiez le choix, la limite et la durée.",
+  "pluginsFileTaskHexPreview": "Aperçu hexadécimal (64 premiers octets)",
+  "pluginsFileTaskIdentity": "L’identité de la tâche ne correspond pas.",
+  "pluginsFileTaskIdle": "Aucune tâche de fichier lancée",
+  "pluginsFileTaskIntegrity": "Échec de la vérification du décalage, de la longueur, de la fin ou de l’empreinte du fichier.",
+  "pluginsFileTaskInterrupted": "Tâche interrompue ou délai d’observation dépassé. Vérifiez l’arrêt du processus.",
+  "pluginsFileTaskIntro": "Sélectionnez un fichier à lire et vérifier avec un plugin approuvé. Le fichier source reste inchangé.",
+  "pluginsFileTaskOtherSession": "La tâche actuelle appartient à une autre session. Utilisez son panneau d’origine.",
+  "pluginsFileTaskPrevious": "Tâche de fichier précédente",
+  "pluginsFileTaskProgress": "{received} / {length} octets",
+  "pluginsFileTaskReading": "En attente ou lecture et vérification",
+  "pluginsFileTaskSelectFile": "Choisir un fichier",
+  "pluginsFileTaskSelectHandler": "Choisir un gestionnaire de fichiers",
+  "pluginsFileTaskStart": "Lire et vérifier le fichier sélectionné",
+  "pluginsFileTaskTimeout": "Durée de la tâche (1–30000 ms)",
+  "pluginsFileTaskTitle": "Lecture et vérification du fichier",
+  "pluginsFileTaskUnknown": "Résultat inconnu ; aucun nouvel essai automatique",
+  "pluginsFileTaskVerified": "Octets du fichier vérifiés ; session terminée",
+  "pluginsFileTaskVerify": "Lire et vérifier",
   "pluginsHttpTaskAbandon": "Terminer l’observation de cette tentative",
   "pluginsHttpTaskAbandonDetails": "Vous pouvez terminer l’observation seulement si un état récent confirme l’absence de tâche active et la disponibilité de la bibliothèque d’origine. Cela ne prouve pas l’absence d’effets distants. Identité et incertitude restent dans l’historique ; une nouvelle requête exige une soumission explicite.",
   "pluginsHttpTaskAbsent": "Aucun résultat livré",

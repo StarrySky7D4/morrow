@@ -1770,6 +1770,98 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileTaskBudgets =>
+      'Genehmigte Pluginbudgets können niedrigere Grenzen setzen. Die Prüfung behält eine Prüfsumme und höchstens 4096 Vorschau-Bytes.';
+
+  @override
+  String get pluginsFileTaskCancelled =>
+      'Abbruch angefordert; Prozessende prüfen';
+
+  @override
+  String get pluginsFileTaskCapturing => 'Ausgewählte Datei wird erfasst';
+
+  @override
+  String get pluginsFileTaskCeiling => 'Dateigrenze (Byte, bis 256 MiB)';
+
+  @override
+  String get pluginsFileTaskCommandUnknown =>
+      'Bestätigung für Block oder Abschluss unbekannt. Status prüfen; nicht erneut senden.';
+
+  @override
+  String get pluginsFileTaskFailed =>
+      'Dateiprüfung oder Aufgabe nicht abgeschlossen';
+
+  @override
+  String get pluginsFileTaskFinishing => 'Dateisitzung wird beendet';
+
+  @override
+  String get pluginsFileTaskFormError =>
+      'Datei konnte nicht ausgewählt oder übermittelt werden. Auswahl, Grenze und Dauer prüfen.';
+
+  @override
+  String get pluginsFileTaskHexPreview => 'Hex-Vorschau (erste 64 Byte)';
+
+  @override
+  String get pluginsFileTaskIdentity =>
+      'Aufgabenidentität stimmt nicht überein.';
+
+  @override
+  String get pluginsFileTaskIdle => 'Noch keine Dateiaufgabe gestartet';
+
+  @override
+  String get pluginsFileTaskIntegrity =>
+      'Prüfung von Dateiversatz, Länge, Dateiende oder Prüfsumme fehlgeschlagen.';
+
+  @override
+  String get pluginsFileTaskInterrupted =>
+      'Aufgabe unterbrochen oder Beobachtung abgelaufen. Prozessende prüfen.';
+
+  @override
+  String get pluginsFileTaskIntro =>
+      'Wählen Sie eine Datei zum Lesen und Prüfen mit einem genehmigten Plugin. Die Quelldatei bleibt unverändert.';
+
+  @override
+  String get pluginsFileTaskOtherSession =>
+      'Die aktuelle Aufgabe gehört zu einer anderen Sitzung. Verwenden Sie deren ursprüngliches Panel.';
+
+  @override
+  String get pluginsFileTaskPrevious => 'Vorherige Dateiaufgabe';
+
+  @override
+  String pluginsFileTaskProgress(String length, String received) {
+    return '$received / $length Byte';
+  }
+
+  @override
+  String get pluginsFileTaskReading => 'Warten oder Lesen und Prüfen';
+
+  @override
+  String get pluginsFileTaskSelectFile => 'Datei auswählen';
+
+  @override
+  String get pluginsFileTaskSelectHandler => 'Dateiverarbeitung auswählen';
+
+  @override
+  String get pluginsFileTaskStart => 'Ausgewählte Datei lesen und prüfen';
+
+  @override
+  String get pluginsFileTaskTimeout => 'Aufgabendauer (1–30000 ms)';
+
+  @override
+  String get pluginsFileTaskTitle => 'Datei lesen und prüfen';
+
+  @override
+  String get pluginsFileTaskUnknown =>
+      'Ergebnis unbekannt; kein automatischer Neuversuch';
+
+  @override
+  String get pluginsFileTaskVerified =>
+      'Dateibytes geprüft; Dateisitzung beendet';
+
+  @override
+  String get pluginsFileTaskVerify => 'Lesen und prüfen';
+
+  @override
   String get pluginsHttpTaskAbandon => 'Beobachtung dieses Versuchs beenden';
 
   @override
