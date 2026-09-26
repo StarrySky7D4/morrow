@@ -80,8 +80,7 @@ fn reject_truncation_trailing_and_contract_corruption() {
     let mut b = EVENT.to_vec();
     b.extend_from_slice(&[0; 8]);
     assert!(Event::decode(&b).is_err());
-    let r = capnp::serialize::read_message_from_flat_slice(&mut &EVENT[..], Default::default())
-        .unwrap();
+    let r = capnp::serialize::read_message(&mut &EVENT[..], Default::default()).unwrap();
     let mut m = capnp::message::Builder::new_default();
     m.set_root(
         r.get_root::<morrow_plugin_sdk::ui_capnp::event::Reader>()

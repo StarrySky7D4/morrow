@@ -32,9 +32,7 @@ const RENAMED: &[u8] = include_bytes!("../../tests/fixtures/renamed-reply.capnp"
 const SUMMARY: &[u8] = include_bytes!("../../tests/fixtures/summary-reply.capnp");
 const ATTACHMENT: &[u8] = include_bytes!("../../tests/fixtures/attachment-reply.capnp");
 fn mutate(bytes: &[u8], change: impl FnOnce(wire::response::Builder<'_>)) -> Vec<u8> {
-    let reader =
-        capnp::serialize::read_message_from_flat_slice(&mut &bytes[..], Default::default())
-            .unwrap();
+    let reader = capnp::serialize::read_message(&mut &bytes[..], Default::default()).unwrap();
     let mut builder = capnp::message::Builder::new_default();
     builder
         .set_root(reader.get_root::<wire::response::Reader>().unwrap())
