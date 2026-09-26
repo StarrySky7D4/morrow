@@ -7,6 +7,9 @@ import 'credential_manager.dart';
 import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
 import 'http_task_manager.dart';
+import 'file_task_manager.dart';
+import 'file_task_models.dart';
+import 'file_task_session.dart';
 import 'io_task_control.dart';
 import 'service_control.dart';
 import 'service_manager.dart';
@@ -1311,11 +1314,27 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ),
             ),
           ],
+          if (widget.backend is FileTaskBackend &&
+              widget.backend is FileTaskPlatformCapabilities &&
+              (widget.backend as FileTaskPlatformCapabilities).supportsSelectedFileTasks &&
+              widget.backend is WorkbenchIoTaskControl)
+            _ioGroup('FileTaskManager', FileTaskManager(
+              backend: widget.backend as FileTaskBackend,
+              ioBackend: widget.backend as WorkbenchIoTaskControl,
+              plugins: _confirmed ? _entries : const [],
+              registryRevision: _confirmed ? _revision : null,
+              ink: widget.ink, muted: widget.muted, line: widget.line,
+              radius: widget.radius, onChanged: widget.onChanged,
+            )),
           if (widget.backend is WorkbenchIoTaskControl &&
               widget.backend is WorkbenchEndpointControl) ...[
             _ioGroup(
               'HttpTaskManager',
               HttpTaskManager(
+                fileSession: widget.backend is FileTaskBackend
+                    ? FileTaskSession.forBackend(widget.backend as FileTaskBackend,
+                        widget.backend as WorkbenchIoTaskControl)
+                    : null,
                 backend: widget.backend as WorkbenchIoTaskControl,
                 serviceSession: widget.backend is WorkbenchServiceRunControl
                     ? ServiceRunSession.forBackend(

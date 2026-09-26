@@ -85,6 +85,7 @@ class RustWorkbench
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
         FileTaskBackend,
+        FileTaskPlatformCapabilities,
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
@@ -462,6 +463,9 @@ class RustWorkbench
     }
     return snapshot;
   }
+
+  @override
+  bool get supportsSelectedFileTasks => _nativeProcess != null;
 
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
   @override

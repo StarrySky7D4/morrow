@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [文件会话与选择器接线](../reports/plugin-file-session-2026-09-26.md)：新增跨页面保留的文件会话、按 offset／EOF／最终 SHA-256 增量校验、Unknown 不重放及取消迟到回复隔离；原生 IO 页接入选择器和控制，HTTP 面板隔离文件任务。独立 Dart 28 项、定向分析及 17 个固定原件通过。Flutter 页面仅源码／解析检查，Windows、完整 Flutter 验收和九语言文案仍开放；未推送、发布或使用 CI。
+
 2026-09-26 [文件私有协议与 Dart 客户端](../reports/plugin-file-wire-2026-09-26.md)：启动、块请求、结束和一次领取接入原任务控制；可信路径只在原 worker 打开，重复身份及嵌套调度拒绝。修复二进制文件／引用 seed 错用 schema 文本摘要。runtime 415、Workbench 64、IO SDK 5、Dart 7、严格 Clippy 与固定原件检查通过，计数有重叠。Flutter 启动的云元数据访问被自动审批拒绝；独立 Dart 真实帧验证通过，系统选择器／页面和 Windows 产品资格仍开放。未推送、发布或使用 CI。
 
 2026-09-26 [文件后台队列与工作台原生接线](../reports/plugin-file-owner-2026-09-26.md)：类型化捕获／分块／结束复用原 owner 队列、授权、停止与实际 join；工作台新增文件任务入口和一次领取。共享时钟检查串行化，宿主 ceiling 与实例实际预算同时生效。runtime 412、Workbench lib 60、network 134、三语言 IO 5 和服务原包 6 通过，分项有重叠；Linux 测试维护仍失败并保持 RecoveryRequired。私有协议、系统选择器、Flutter 与 Windows 实机待接，未推送、发布或使用 CI。

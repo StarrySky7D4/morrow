@@ -8,6 +8,7 @@ import 'package:morrow_i18n/morrow_i18n.dart';
 
 import 'endpoint_control.dart';
 import 'io_task_control.dart';
+import 'file_task_session.dart';
 import 'plugin_library.dart';
 import 'service_run_session.dart';
 import 'session_view_state.dart';
@@ -319,6 +320,7 @@ class HttpTaskManager extends StatefulWidget {
     required this.radius,
     this.onChanged,
     this.serviceSession,
+    this.fileSession,
   });
   final WorkbenchIoTaskControl backend;
   final WorkbenchEndpointControl endpointBackend;
@@ -328,6 +330,7 @@ class HttpTaskManager extends StatefulWidget {
   final BorderRadius radius;
   final VoidCallback? onChanged;
   final ServiceRunSession? serviceSession;
+  final FileTaskSession? fileSession;
   @override
   State<HttpTaskManager> createState() => _HttpTaskManagerState();
 }
@@ -386,14 +389,15 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     _schedule();
     if (sessionViewActive) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && sessionViewActive && !_serviceOwnsTask) {
+        if (mounted && sessionViewActive && !_otherOwnsTask) {
           unawaited(_session.refresh());
         }
       });
     }
   }
 
-  bool get _serviceOwnsTask =>
+  bool get _fileOwnsTask => widget.fileSession?.attempt != null;
+  bool get _otherOwnsTask => _fileOwnsTask ||
       widget.serviceSession?.service != null &&
       _equal(
         widget.serviceSession!.service!.task.key,
@@ -403,7 +407,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!mounted) return;
     markSessionViewDirty();
     _schedule();
-    if (sessionViewActive && !_serviceOwnsTask) {
+    if (sessionViewActive && !_otherOwnsTask) {
       if (_session.busy) {
         _refreshOnIdle = true;
       } else {
@@ -418,7 +422,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     _session = _sessions[widget.backend] ??= _HttpSession(widget.backend);
     _session.addListener(_changed);
     _refreshOnIdle = _session.busy;
-    if (!_session.busy) {
+    if (!_session.busy && !_otherOwnsTask) {
       unawaited(_session.refresh());
     }
     _schedule();
@@ -448,7 +452,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!mounted) return;
     markSessionViewDirty();
     _schedule();
-    if (sessionViewActive && _refreshOnIdle && !_session.busy) {
+    if (sessionViewActive && _refreshOnIdle && !_session.busy && !_otherOwnsTask) {
       _refreshOnIdle = false;
       unawaited(_session.refresh());
     }
@@ -458,7 +462,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   void _schedule() {
     _timer?.cancel();
     _timer = null;
-    if (!sessionViewActive || !_session.shouldPoll || _serviceOwnsTask) return;
+    if (!sessionViewActive || !_session.shouldPoll || _otherOwnsTask) return;
     final session = _session, epoch = _attachmentEpoch;
     _timer = Timer(const Duration(seconds: 1), () {
       if (mounted &&
@@ -476,6 +480,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     _directory = _fingerprint();
     _restoreDraft();
     widget.serviceSession?.addListener(_serviceChanged);
+    widget.fileSession?.addListener(_serviceChanged);
     _attach();
     unawaited(_loadEndpoints());
   }
@@ -486,6 +491,10 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
     if (!identical(oldWidget.serviceSession, widget.serviceSession)) {
       oldWidget.serviceSession?.removeListener(_serviceChanged);
       widget.serviceSession?.addListener(_serviceChanged);
+    }
+    if (!identical(oldWidget.fileSession, widget.fileSession)) {
+      oldWidget.fileSession?.removeListener(_serviceChanged);
+      widget.fileSession?.addListener(_serviceChanged);
     }
     final changedBackend = !identical(oldWidget.backend, widget.backend);
     final directory = _fingerprint();
@@ -522,6 +531,7 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   void dispose() {
     _saveDraft(widget);
     widget.serviceSession?.removeListener(_serviceChanged);
+    widget.fileSession?.removeListener(_serviceChanged);
     _attachmentEpoch++;
     _endpointEpoch++;
     _timer?.cancel();
@@ -971,11 +981,15 @@ class _HttpTaskManagerState extends State<HttpTaskManager>
   @override
   Widget build(BuildContext context) {
     final l = L10n.of(context), state = _session.snapshot, selected = _selected;
-    if (_serviceOwnsTask) {
+    if (_otherOwnsTask) {
       return Padding(
         key: const ValueKey('http-task-service-active'),
         padding: const EdgeInsets.all(19),
-        child: _note(l.pluginsServiceRunHttpPanel),
+        child: _note(_fileOwnsTask
+            ? Localizations.localeOf(context).languageCode == 'zh'
+                ? '文件任务尚未结束，请在文件任务面板核对结果与退出状态。'
+                : 'A file attempt is still open. Use the file panel to inspect its result and exit.'
+            : l.pluginsServiceRunHttpPanel),
       );
     }
     final key = state?.key, active = key != null && !_session.busy;

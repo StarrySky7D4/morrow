@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'io_task_models.dart';
 
 Uint8List _owned(Uint8List bytes) =>
@@ -63,4 +64,31 @@ abstract interface class FileTaskBackend {
   );
   Future<IoTaskSnapshot> finishFile(Uint8List key);
   Future<FileTaskRead> readFile(Uint8List key);
+}
+
+abstract final class FileTaskValidation {
+  static final _u64 = (BigInt.one << 64) - BigInt.one;
+  static final maxFileBytes = BigInt.from(256 * 1024 * 1024);
+  static void validateRequest(FileTaskRequest value) {
+    HttpTaskValidation.identity(value.submission);
+    HttpTaskValidation.identity(value.packageDigest);
+    bool text(String v, int max) =>
+        v.isNotEmpty && !v.contains('\u0000') && utf8.encode(v).length <= max;
+    if (!text(value.packageId, 256) ||
+        !text(value.handler, 256) ||
+        !text(value.selectedPath, 4096) ||
+        value.registryRevision < BigInt.zero ||
+        value.registryRevision > _u64 ||
+        value.maxBytes < BigInt.zero ||
+        value.maxBytes > maxFileBytes ||
+        value.timeoutMs < 1 ||
+        value.timeoutMs > 30000) {
+      throw const FormatException('Invalid selected file request');
+    }
+  }
+}
+
+/// The trusted channel must advertise native selected-path support explicitly.
+abstract interface class FileTaskPlatformCapabilities {
+  bool get supportsSelectedFileTasks;
 }

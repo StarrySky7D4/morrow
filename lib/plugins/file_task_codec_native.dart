@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'generated/host.capnp.dart' as host;
-import 'io_task_models.dart';
 import 'file_task_models.dart';
 
 abstract final class FileTaskCodec {
@@ -14,23 +12,8 @@ abstract final class FileTaskCodec {
     }
   }
 
-  static void validateRequest(FileTaskRequest value) {
-    HttpTaskValidation.identity(value.submission);
-    HttpTaskValidation.identity(value.packageDigest);
-    bool text(String v, int max) =>
-        v.isNotEmpty && !v.contains('\u0000') && utf8.encode(v).length <= max;
-    if (!text(value.packageId, 256) ||
-        !text(value.handler, 256) ||
-        !text(value.selectedPath, 4096) ||
-        value.registryRevision < BigInt.zero ||
-        value.registryRevision > _u64 ||
-        value.maxBytes < BigInt.zero ||
-        value.maxBytes > maxFileBytes ||
-        value.timeoutMs < 1 ||
-        value.timeoutMs > 30000) {
-      throw const FormatException('Invalid selected file request');
-    }
-  }
+  static void validateRequest(FileTaskRequest value) =>
+      FileTaskValidation.validateRequest(value);
 
   static void writeRequest(FileTaskRequest value, host.FileStartBuilder out) {
     validateRequest(value);

@@ -1,0 +1,11 @@
+{
+  "lib/plugins/file_task_models.dart": "1807053a23aeb22640d280ed8e2a5a462c0a0e56a7c84cbf01827612afa18126",
+  "lib/plugins/file_task_codec_native.dart": "7f936e10a2f6e5acfe6422ee9bdc48bc803c3c33857d480092f4d745fdd220f0",
+  "lib/plugins/file_task_session.dart": "bf8fea4170312f65f1dec2f79649631cd5cbd5ef5e51945990a906010b8354bb",
+  "lib/plugins/file_task_manager.dart": "f518b7bd45dcbe012b8dcbb9391bd034c2e8422a350bd9adad62fab83b7fcc74",
+  "lib/plugins/http_task_manager.dart": "ccd25872d99ed3901b4229c352a23283180bd4556daf8ff4df9f4a2f429f1c8d",
+  "lib/plugins/plugin_library.dart": "35fd56f6064efd36b8baa6751fe77e13062f7f4b7b626235ec870b6e944742f9",
+  "lib/plugins/workbench_native.dart": "ffa6b530f758fca7678bd78a6242194074d39e707bc05e0c9d12e9e67938dc5d",
+  "packages/morrow_core_client/test/file_task_session_test.dart": "dc4b4ca15bdd8b35f7782db7101c6e758fb2989fff05977d8afd04f1b8631f37",
+  "packages/morrow_core_client/test/file_task_client_test.dart": "f8b1edfe2489677dd738b5f114aaf1b81b533a796767c36fdd923c48c120ad07"
+}

@@ -1,0 +1,30 @@
+00:00 +0: loading test/file_task_session_test.dart
+00:00 +0: test/file_task_session_test.dart: sequential drain independently verifies bytes with bounded preview and waits for actual join
+00:00 +1: test/file_task_session_test.dart: empty file uses the empty digest and Finish without requesting a chunk
+00:00 +2: test/file_task_session_test.dart: rejects offset and stops instead of delivering a verified result
+00:00 +3: test/file_task_session_test.dart: rejects early-eof and stops instead of delivering a verified result
+00:00 +4: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +5: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +6: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +7: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +8: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +9: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +10: test/file_task_client_test.dart: start binds immutable identity and exact uint64 revision
+00:00 +11: test/file_task_session_test.dart: lost start recovers only exact submission and never opens a second file
+00:00 +12: test/file_task_client_test.dart: bounds rejected before sending, including integer narrowing
+00:00 +13: test/file_task_client_test.dart: bounds rejected before sending, including integer narrowing
+00:00 +14: test/file_task_session_test.dart: lost chunk reply stays unknown after status and is never replayed
+00:00 +15: test/file_task_client_test.dart: chunk and finish correlate keys and keep exact offsets
+00:00 +16: test/file_task_client_test.dart: chunk and finish correlate keys and keep exact offsets
+00:00 +17: test/file_task_client_test.dart: chunk and finish correlate keys and keep exact offsets
+00:00 +18: test/file_task_session_test.dart: cancel while once-only chunk delivery is in flight suppresses late bytes
+00:00 +19: test/file_task_client_test.dart: once-only read detaches bytes before private reply wipe
+00:00 +20: test/file_task_client_test.dart: once-only read detaches bytes before private reply wipe
+00:00 +21: test/file_task_client_test.dart: once-only read detaches bytes before private reply wipe
+00:00 +22: test/file_task_session_test.dart: lost acknowledgement is inspected using status without acknowledging again
+00:00 +23: test/file_task_client_test.dart: ambiguous transport failures never replay starts or reads
+00:00 +24: test/file_task_session_test.dart: observation time is bounded and pending data is not blindly consumed
+00:00 +25: test/file_task_session_test.dart: observation time is bounded and pending data is not blindly consumed
+00:00 +26: test/file_task_client_test.dart: real Rust private frames from original Rust C C++ guests decode unchanged
+00:00 +27: test/file_task_session_test.dart: session and consumed progress survive view listener detachment
+00:00 +28: All tests passed!

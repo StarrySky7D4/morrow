@@ -73,4 +73,6 @@ python tool/plugin_transport_baseline.py verify
 
 跨层验证发现旧文件 SHA-256 曾误用面向 schema 的文本规范化函数。现在文件内容摘要与文件引用的二进制熵 seed 均使用原始字节 SHA-256；回归覆盖非法 UTF-8、CRLF 和会被有损文本转换合并的两组 secret。引用只存活于原进程，不涉及持久引用迁移。
 
-下一步接真实平台选择器与文件任务控制／结果页面，并在 Windows 验证选中、取消、丢回执、修复和实际退出。Linux 测试 Store 仍不能代表生产受保护存储。本轮 Flutter 启动自动审批因其尝试云元数据地址而拒绝；独立 Dart 协议测试通过，不记为 Flutter 窗口或完整适配器静态验证。
+后续已新增 `FileTaskSession` 与原生 `FileTaskManager` 源码接线，见 [会话报告](../reports/plugin-file-session-2026-09-26.md)。会话按 Captured → 精确 offset 分块 → 最终 SHA-256 → Finished 消费，最多保留 4096 字节预览及五条摘要历史，不重放一次领取。已知 task／submission 不允许替换；丢启动可只读恢复，丢命令或消费保持 Unknown；取消使迟到字节失效，修复／确认仍以实际退出为门槛。状态按 backend 保留，离开页面不重启原任务。
+
+原生能力声明通过后才显示系统路径选择器；只列启用、可用且已声明／批准 FileRead 的插件，提交绑定原目录修订。HTTP 面板在文件尝试未解决时暂停自己的领取和控制。下一步是完整 Flutter 分析／widget 与 Windows 选中、取消、丢回执、修复、实际退出验收，以及完整本地化。Linux 测试 Store 仍不能代表生产受保护存储。此前 Flutter 启动自动审批因间接云元数据访问拒绝；本轮未重试该路径，独立 Dart 验证不记为 Flutter 窗口验收。
