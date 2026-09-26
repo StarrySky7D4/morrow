@@ -146,6 +146,8 @@ pub(crate) struct StateSlot {
     repair_needed: bool,
     lost: bool,
     service_submissions: BTreeSet<[u8; 32]>,
+    file_submissions: BTreeSet<[u8; 32]>,
+    pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
     pub(crate) fn has_service_task(&self) -> bool {
@@ -161,6 +163,8 @@ impl StateSlot {
             repair_needed: false,
             lost: false,
             service_submissions: BTreeSet::new(),
+            file_submissions: BTreeSet::new(),
+            submission: None,
         }
     }
     pub(crate) fn local(&self) -> Result<&WorkbenchState> {

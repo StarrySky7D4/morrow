@@ -1,5 +1,6 @@
 use super::*;
 use morrow_plugin_runtime::file_io::CaptureError;
+use sha2::Digest;
 use std::io::{Seek, SeekFrom, Write};
 
 #[test]
@@ -30,7 +31,7 @@ fn open_file_capture_survives_source_replacement_and_guest_reads_exact_chunks() 
     assert_eq!(selected.length, original.len() as u64);
     assert_eq!(
         selected.sha256,
-        morrow_core::runtime::schema_digest(&original)
+        <[u8; 32]>::from(sha2::Sha256::digest(&original))
     );
     assert_eq!(binding.usage().bytes, selected.length + 1);
     assert_eq!(binding.usage().jobs, 0);
@@ -221,7 +222,7 @@ fn empty_file_requires_probe_budget_and_has_empty_digest() {
         )
         .unwrap();
     assert_eq!(selected.length, 0);
-    assert_eq!(selected.sha256, morrow_core::runtime::schema_digest(&[]));
+    assert_eq!(selected.sha256, <[u8; 32]>::from(sha2::Sha256::digest([])));
     assert_eq!(binding.usage().bytes, 1);
     let request = Request::encode_read(1, &selected.reference, 0, 0).unwrap();
     let response = exchange(&f, &mut broker, &instance, &binding, &request, 3);
@@ -286,7 +287,7 @@ fn digest_describes_retained_bytes_even_when_source_changes_at_same_length() {
     retained.extend(vec![2; 90_007 - 65_536]);
     assert_eq!(
         selected.sha256,
-        morrow_core::runtime::schema_digest(&retained)
+        <[u8; 32]>::from(sha2::Sha256::digest(&retained))
     );
     let request = Request::encode_read(1, &selected.reference, 65_536, 0).unwrap();
     let response = exchange(&f, &mut broker, &instance, &binding, &request, 3);
@@ -343,4 +344,29 @@ fn file_list_only_binding_cannot_capture_or_advance_shared_clock() {
     instance.close(&mut f.host).unwrap();
     broker.reap(4);
     assert_eq!(broker.usage(), (0, 0));
+}
+
+#[test]
+fn binary_file_hash_and_reference_secret_never_use_text_canonicalization() {
+    let mut f = Fixture::new(true, 2, 2_000_000);
+    let instance = f.connect();
+    let binding = f.bind(&instance, 90, 1);
+    let bytes = b"\xff\r\n\x80\0";
+    let mut a = FileBroker::new([0x80; 32]);
+    let mut b = FileBroker::new([0x81; 32]);
+    let make = || {
+        let mut file = tempfile::tempfile().unwrap();
+        file.write_all(bytes).unwrap();
+        file
+    };
+    let first = a
+        .grant_open_file(&f.manager, &f.host, &instance, &binding, make(), 5, || 2)
+        .unwrap();
+    let second = b
+        .grant_open_file(&f.manager, &f.host, &instance, &binding, make(), 5, || 2)
+        .unwrap();
+    assert_eq!(first.sha256, <[u8; 32]>::from(sha2::Sha256::digest(bytes)));
+    assert_ne!(first.sha256, morrow_core::runtime::schema_digest(bytes));
+    // Both entropy values collapse to the same replacement text under lossy UTF-8.
+    assert_ne!(first.reference, second.reference);
 }

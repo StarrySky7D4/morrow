@@ -1,17 +1,33 @@
 //! Trusted selected-handle file tasks, using the same original-owner executor.
-//! Platform selection, private wire and UI are separate adapters; no path is opened here.
+//! Trusted private paths are opened only on the original worker, never by a guest.
 use super::{AccessError, Executor, PreparedJob, StartOptions, TaskKey};
 use crate::{Result, Workbench, WorkbenchState};
 use morrow_core::plugin_package::io::IoCapability;
 use morrow_plugin_runtime::io_jobs::{
     FileCommandHandle, FileResponse, FileSession, IoWorker, JobHandle, OwnerCommandPoll, Poll,
 };
-use std::{collections::BTreeSet, fs::File, time::Duration};
+use std::{collections::BTreeSet, fs::File, path::PathBuf, time::Duration};
+
+pub(super) enum Source {
+    Open(File),
+    SelectedPath(PathBuf),
+}
+
+pub struct FileStart {
+    pub submission: [u8; 32],
+    pub package_id: String,
+    pub digest: [u8; 32],
+    pub revision: u64,
+    pub handler: String,
+    pub selected_path: PathBuf,
+    pub max_bytes: u64,
+    pub timeout_ms: u32,
+}
 
 pub(super) enum Admission {
     Io(PreparedJob),
     File {
-        file: File,
+        source: Source,
         handler: String,
         max_bytes: u64,
         secret: [u8; 32],
@@ -37,13 +53,18 @@ impl Admission {
                     .map_err(|e| format!("IO submission: {e:?}"))?,
             )),
             Self::File {
-                file,
+                source,
                 handler,
                 max_bytes,
                 secret,
                 ..
             } => {
-                let (session, handle) = worker.capture_file(file, handler, max_bytes, secret)?;
+                let (session, handle) = match source {
+                    Source::Open(file) => worker.capture_file(file, handler, max_bytes, secret),
+                    Source::SelectedPath(path) => {
+                        worker.capture_selected_path(path, handler, max_bytes, secret)
+                    }
+                }?;
                 Ok(Submitted::File(FileTask {
                     session,
                     pending: Some(handle),
@@ -79,6 +100,77 @@ impl Workbench {
         handler: String,
         max_bytes: u64,
     ) -> Result<TaskKey> {
+        if self.io_status().key.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        self.local_state()?;
+        self.state.submission = None;
+        self.start_file_source(options, Source::Open(file), handler, max_bytes)
+    }
+    /// Explicit trusted native selection. No filesystem call occurs before
+    /// ownership moves. This path does not assert picker-time file identity.
+    pub fn start_selected_file(&mut self, request: FileStart) -> Result<TaskKey> {
+        if self.io_status().key.is_some() {
+            return Err(AccessError::UnacknowledgedTask.into());
+        }
+        let owner = self.local_state()?;
+        let path = request
+            .selected_path
+            .to_str()
+            .ok_or("invalid selected path")?;
+        if request.submission == [0; 32]
+            || self.state.file_submissions.contains(&request.submission)
+            || self.state.file_submissions.len() >= 512
+            || !request.selected_path.is_absolute()
+            || path.len() > 4096
+            || path.contains('\0')
+            || request.timeout_ms == 0
+            || request.timeout_ms > 30_000
+            || request.max_bytes > 256 * 1024 * 1024
+        {
+            return Err("invalid, repeated or exhausted file submission".into());
+        }
+        let package = owner
+            .manager
+            .as_ref()
+            .ok_or("catalog unavailable")?
+            .installed_package(request.digest)?;
+        let budget = package
+            .io_declaration()
+            .and_then(|d| d.budget.as_ref())
+            .ok_or("missing file IO budget")?;
+        if u64::from(request.timeout_ms) > budget.max_duration_ms {
+            return Err("file task exceeds declared duration".into());
+        }
+        let limits = morrow_plugin_runtime::io_jobs::JobLimits::new(
+            1,
+            budget.max_job_bytes.min(256 * 1024 * 1024 + 1),
+            budget.max_bytes.min(512 * 1024 * 1024),
+        )
+        .map_err(|_| "invalid file job budget")?;
+        self.state.file_submissions.insert(request.submission);
+        self.state.submission = Some(request.submission);
+        self.start_file_source(
+            StartOptions {
+                package_id: request.package_id,
+                digest: request.digest,
+                revision: request.revision,
+                capabilities: BTreeSet::from([IoCapability::FileRead]),
+                lifetime: Duration::from_millis(u64::from(request.timeout_ms)),
+                limits,
+            },
+            Source::SelectedPath(request.selected_path),
+            request.handler,
+            request.max_bytes,
+        )
+    }
+    fn start_file_source(
+        &mut self,
+        options: StartOptions,
+        source: Source,
+        handler: String,
+        max_bytes: u64,
+    ) -> Result<TaskKey> {
         if options.capabilities != BTreeSet::from([IoCapability::FileRead])
             || handler.is_empty()
             || handler.len() > 256
@@ -103,7 +195,7 @@ impl Workbench {
             let mut secret = [0; 32];
             getrandom::fill(&mut secret)?;
             Ok(Admission::File {
-                file,
+                source,
                 handler,
                 max_bytes,
                 secret,

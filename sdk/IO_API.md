@@ -73,8 +73,8 @@ pwsh -File tool/verify_plugin_io_sdk.ps1 -Sysroot "实际的/wasi-sysroot-34.0"
 
 原生宿主可使用 `FileBroker::grant_open_file` 把可信平台已选中的普通文件句柄转为当前实例的不透明 Read 引用。读取前预留长度加一字节 EOF 探测额度，按块检查撤权／期限，失败不发布半成品。返回摘要只描述固定的实际字节，不证明源对象的瞬时快照；guest API、wire 和旧 Vec 计费保持。
 
-三语言已有 Wasm 模块在 Linux 通过真实文件分块、删源和结束回收验证，使用测试内 FileRead 包，未修改冻结原件。完整调用边界与无需重编 guest 的命令见 [单文件合同](../docs/PLUGIN_SELECTED_FILE.md)。工作台选择器／私有协议／Flutter 页面、Windows 实机、持久证据及完整文件系统仍待补齐。
+三语言已有 Wasm 模块在 Linux 通过真实文件分块、删源和结束回收验证，使用测试内 FileRead 包，未修改冻结原件。完整调用边界与无需重编 guest 的命令见 [单文件合同](../docs/PLUGIN_SELECTED_FILE.md)。私有协议及独立 Dart 客户端已接入；工作台选择器／Flutter 页面、Windows 实机、持久证据及完整文件系统仍待补齐。
 
 ## 原 owner 后台文件任务（2026-09-26 后续）
 
-原生 IoWorker 和 Workbench Rust 已接入文件捕获／分块／结束及一次回执消费，guest Read／Finish／Cancel API 不变。宿主按队列、显式 ceiling 和实例预算共同准入；引用不能跨 executor 或重启恢复。私有协议、平台选择器和 Flutter 尚待接入，详见 [文件任务合同](../docs/PLUGIN_FILE_TASKS.md)。
+原生 IoWorker 和 Workbench Rust 已接入文件捕获／分块／结束及一次回执消费，guest Read／Finish／Cancel API 不变。宿主按队列、显式 ceiling 和实例预算共同准入；引用不能跨 executor 或重启恢复。私有协议和独立 Dart 客户端已接入，并修正宿主对二进制内容／引用 seed 的原始 SHA-256 计算；平台选择器和 Flutter 页面仍待接入，详见 [文件任务合同](../docs/PLUGIN_FILE_TASKS.md)。

@@ -18,6 +18,7 @@ use morrow_plugin_runtime::{
     },
     manager::Manager,
 };
+use sha2::Digest;
 use std::{
     collections::BTreeSet,
     fs::File,
@@ -212,7 +213,7 @@ fn three_original_modules_capture_read_finish_on_original_owner_thread() {
         let FileResponse::Captured(meta) = read(&mut capture).unwrap() else {
             panic!()
         };
-        assert_eq!(meta.sha256, morrow_core::runtime::schema_digest(&bytes));
+        assert_eq!(meta.sha256, <[u8; 32]>::from(sha2::Sha256::digest(&bytes)));
         std::fs::remove_file(&path).unwrap();
         let mut all = Vec::new();
         for offset in [0, 65_536] {
@@ -422,4 +423,62 @@ fn host_worker_ceiling_is_reserved_before_capture_and_never_refunded() {
     assert_eq!(observer.stream_position().unwrap(), 2);
     assert_eq!(worker.bytes(), 512 * 1024 + 1);
     assert_eq!(reclaim(&mut worker).disconnect, Ok(()));
+}
+
+#[test]
+fn selected_path_is_opened_on_original_worker_after_admission() {
+    let mut fixture = Fixture::new("rust");
+    let (entered_tx, entered_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    fixture.owner.gate = Some((entered_tx, release_rx));
+    let (dir, mut worker) = fixture.start();
+    let path = dir.path().join("created-after-admission");
+    let (_, mut capture) = worker
+        .capture_selected_path(path.clone(), HANDLER.into(), 3, [9; 32])
+        .unwrap();
+    entered_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+    assert_eq!(capture.poll(), OwnerCommandPoll::Pending);
+    // The source did not exist when admission returned; no caller-side open.
+    std::fs::write(path, b"abc").unwrap();
+    release_tx.send(()).unwrap();
+    let FileResponse::Captured(meta) = read(&mut capture).unwrap() else {
+        panic!()
+    };
+    assert_eq!(meta.length, 3);
+    reclaim(&mut worker);
+}
+#[test]
+fn selected_path_invalid_inputs_and_preopen_expiry_fail_closed() {
+    let mut fixture = Fixture::new("c");
+    let clock = fixture.clock.clone();
+    let (entered_tx, entered_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    fixture.owner.gate = Some((entered_tx, release_rx));
+    let (dir, mut worker) = fixture.start();
+    for path in [
+        "relative".into(),
+        std::path::PathBuf::from("/bad\0path"),
+        format!("/{}", "x".repeat(4096)).into(),
+    ] {
+        assert!(
+            worker
+                .capture_selected_path(path, HANDLER.into(), 1, [9; 32])
+                .is_err()
+        );
+    }
+    let (_, mut capture) = worker
+        .capture_selected_path(
+            dir.path().join("SECRET-does-not-exist"),
+            HANDLER.into(),
+            1,
+            [9; 32],
+        )
+        .unwrap();
+    entered_rx.recv_timeout(Duration::from_secs(5)).unwrap();
+    clock.store(40_000, Ordering::SeqCst);
+    release_tx.send(()).unwrap();
+    ready(&capture);
+    // Expired authority must suppress both opening and delivery. No path-bearing OS error.
+    assert!(capture.read().is_err());
+    reclaim(&mut worker);
 }

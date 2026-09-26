@@ -1,6 +1,6 @@
 # 宿主选中文件的有界固定读取
 
-2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；后续已接入 [工作台原生后台文件任务](PLUGIN_FILE_TASKS.md)，私有协议／文件选择器／任务页面、Windows 实机和其他平台适配仍未验收。本接口不开放目录或文件写入，也不改变 IO wire/schema。
+2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；后续已接入 [工作台原生后台文件任务](PLUGIN_FILE_TASKS.md)，私有协议和独立 Dart 客户端已补齐；文件选择器／任务页面、Windows 实机和其他平台适配仍未验收。本接口不开放目录或文件写入，也不改变 IO wire/schema。
 
 ## 授权与所有权
 
@@ -49,3 +49,5 @@ python tool/plugin_transport_baseline.py verify
 最后五项测试直接使用保留的三语言 Wasm 字节，并在测试内创建明确声明 FileRead 的临时测试包。它们没有改写冻结文件，但**不表示原来的 HTTP 包获得文件权限**，也不计为原包文件读取验收。目录／设备拒绝专项仅在 Unix 运行；Windows 需独立运行实际文件与共享句柄测试。
 
 完整结果与下一门槛见 [开发记录](../reports/plugin-selected-file-2026-09-26.md)。
+
+2026-09-26 协议接线补验修正：内容摘要改用原始字节 SHA-256，不再使用 schema 文本规范化函数；二进制引用 secret 的派生也作同样修正。先前历史报告的“实际摘要通过”不能替代这次独立二进制校验。详见 [协议报告](../reports/plugin-file-wire-2026-09-26.md)。

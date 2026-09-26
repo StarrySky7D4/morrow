@@ -2,6 +2,14 @@
 
 更新：2026-09-26。当前开发基线是主线 `d9c0431`，应用源码 `0.1.9-test.56+60`。本轮完成有界 IO／服务的本地稳定候选与兼容原件，不变更应用版本、不创建标签或 Release；现有安装包不包含本轮未发布增量。
 
+## 2026-09-26 文件私有协议与 Dart 客户端
+
+追加文件启动／块请求／结束／一次领取私有调度消息和类型化 Dart 客户端，绑定提交身份、精确包／修订／handler 和有界输入；可信选中路径在原 worker 才打开，停止／回收仍复用原所有权流程。真实跨层测试发现并修复二进制摘要误用 schema 文本规范化，以及二进制 secret 派生引用的同类问题。
+
+runtime 常规 415（6 ignored）、Workbench lib 64、显式 IO SDK 5、Dart 7、严格 runtime Clippy、绑定生成检查和 17 个 transport 固定原件验证通过；分项重叠。Dart 解析三语言原 guest 的真实 Rust 帧并独立核对内容和 SHA-256，详见 [协议报告](../reports/plugin-file-wire-2026-09-26.md)。
+
+系统选择器、Flutter 文件任务页面、Windows 及 DPAPI/TLS 实际产品资格继续开放。本轮 Flutter 启动因间接尝试云实例元数据访问被自动审批拒绝；停止该路径，独立 Dart 已验证，不算 Flutter 验收。Linux 工作台生产限制和 RecoveryRequired 语义保持；下一步见 [文件任务合同](PLUGIN_FILE_TASKS.md)。
+
 ## 2026-09-26 文件后台任务与原 owner 接线
 
 文件捕获、guest 分块读取和结束进入既有有界 owner 队列；资源留在执行线程，取消与实际 join 继续约束归还。Workbench Rust 新增文件启动／块请求／一次领取／结束入口，复用 TaskKey 和修复／确认。后台共享时钟的取时与授权检查已串行，宿主 ceiling 和实例真实预算同时计费。runtime 412、Workbench lib 60、network 134、IO 三语言 5、服务原包 6 与严格 Clippy 通过，分项重叠；详见 [本轮报告](../reports/plugin-file-owner-2026-09-26.md)。

@@ -14,6 +14,7 @@ use morrow_core::{
 use morrow_plugin_runtime::{
     Cancellation, Fault, Limits, Runner, file_io::FileBroker, manager::Manager,
 };
+use sha2::Digest;
 use std::{collections::BTreeSet, path::PathBuf};
 
 const ID: &str = "org.example.sdk.rust-io";
@@ -101,7 +102,7 @@ fn compiled_sdk_guest_reads_and_finishes_host_selected_file() {
             .unwrap();
         assert_eq!(
             selected.sha256,
-            morrow_core::runtime::schema_digest(&original)
+            <[u8; 32]>::from(sha2::Sha256::digest(&original))
         );
         std::fs::remove_file(&path).unwrap();
         let mut retained = Vec::new();

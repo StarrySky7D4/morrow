@@ -38,5 +38,7 @@ const schemaIds = <String, String>{
   'uiFontSchema': '8ff59f17fc3bb080',
   'capturedCardSaveSchema': 'c948da16ec9a6e74',
   'editorRecoverySchema': 'ee7e7702bb7039cc',
+  'fileStartSchema': '85aad5dfacc34977',
+  'fileResultSchema': 'a3409b45a3cf9630',
 };
 BigInt schemaId(String name) => BigInt.parse(schemaIds[name]!, radix: 16);

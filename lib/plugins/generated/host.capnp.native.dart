@@ -129,6 +129,10 @@ enum Action {
   retireEditorDraftHandoffProposal,
   cancelEditorDraftHandoffProposal,
   inspectEditorCommit,
+  fileStart,
+  fileChunk,
+  fileFinish,
+  fileRead,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -412,6 +416,10 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
       codeOrder: 123,
       ordinal: 123,
     ),
+    EnumerantSchemaInfo(name: 'fileStart', codeOrder: 124, ordinal: 124),
+    EnumerantSchemaInfo(name: 'fileChunk', codeOrder: 125, ordinal: 125),
+    EnumerantSchemaInfo(name: 'fileFinish', codeOrder: 126, ordinal: 126),
+    EnumerantSchemaInfo(name: 'fileRead', codeOrder: 127, ordinal: 127),
   ],
 );
 
@@ -557,6 +565,11 @@ final class RequestReader extends StructReader {
   UiFontReader? get uiFont => getStructFieldWith(
     39,
     (r) => UiFontReader(r, capabilities: capabilityTable),
+  );
+
+  FileStartReader? get fileStart => getStructFieldWith(
+    40,
+    (r) => FileStartReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -824,6 +837,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasUiFont() => hasPointerField(39);
+
+  FileStartBuilder initFileStart() {
+    return initStructFieldWith(40, (r) => FileStartBuilder(r), 3, 5);
+  }
+
+  bool hasFileStart() => hasPointerField(40);
 }
 
 final class _RequestFactory
@@ -833,7 +852,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 40;
+  int get ptrWords => 41;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -850,7 +869,7 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   displayName: 'host.capnp:Request',
   shortName: 'Request',
   dataWords: 7,
-  pointerWords: 40,
+  pointerWords: 41,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1260,6 +1279,14 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0x8ff59f17fc3bb080),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'fileStart',
+      codeOrder: 51,
+      body: SlotFieldSchemaInfo(
+        offset: 40,
+        type: StructRefTypeSchemaInfo(0x85aad5dfacc34977),
+      ),
+    ),
   ],
 );
 
@@ -1423,6 +1450,11 @@ final class ResponseReader extends StructReader {
   EditorCommitProofReader? get editorCommitProof => getStructFieldWith(
     33,
     (r) => EditorCommitProofReader(r, capabilities: capabilityTable),
+  );
+
+  FileResultReader? get fileResult => getStructFieldWith(
+    34,
+    (r) => FileResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1720,6 +1752,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasEditorCommitProof() => hasPointerField(33);
+
+  FileResultBuilder initFileResult() {
+    return initStructFieldWith(34, (r) => FileResultBuilder(r), 3, 2);
+  }
+
+  bool hasFileResult() => hasPointerField(34);
 }
 
 final class _ResponseFactory
@@ -1729,7 +1767,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 34;
+  int get ptrWords => 35;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1746,7 +1784,7 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   displayName: 'host.capnp:Response',
   shortName: 'Response',
   dataWords: 6,
-  pointerWords: 34,
+  pointerWords: 35,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2122,6 +2160,14 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 33,
         type: StructRefTypeSchemaInfo(0xd4ed675bdd2f4399),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'fileResult',
+      codeOrder: 47,
+      body: SlotFieldSchemaInfo(
+        offset: 34,
+        type: StructRefTypeSchemaInfo(0xa3409b45a3cf9630),
       ),
     ),
   ],
@@ -7365,5 +7411,337 @@ const StructSchemaInfo editorRecoverySchema = StructSchemaInfo(
 );
 
 final editorRecoveryFactory = _EditorRecoveryFactory();
+
+final class FileStartReader extends StructReader {
+  FileStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = fileStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  String? get selectedPath => getTextField(4);
+
+  int get maxBytes => getUint64Field(8);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get timeoutMs => getUint32Field(16);
+}
+
+final class FileStartBuilder extends StructBuilder {
+  FileStartBuilder(super.raw);
+
+  @override
+  FileStartReader asReader() => FileStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set selectedPath(String? v) {
+    setTextField(4, v);
+  }
+
+  set maxBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _FileStartFactory
+    extends StructFactory<FileStartReader, FileStartBuilder> {
+  @override
+  StructSchemaInfo get schema => fileStartSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  FileStartReader fromRawReader(RawStructReader r) => FileStartReader(r);
+  @override
+  FileStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FileStartReader(r, capabilities: capabilities);
+  @override
+  FileStartBuilder fromRawBuilder(RawStructBuilder r) => FileStartBuilder(r);
+}
+
+const StructSchemaInfo fileStartSchema = StructSchemaInfo(
+  id: 0x85aad5dfacc34977,
+  displayName: 'host.capnp:FileStart',
+  shortName: 'FileStart',
+  dataWords: 3,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'handler',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selectedPath',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxBytes',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final fileStartFactory = _FileStartFactory();
+
+final class FileResultReader extends StructReader {
+  FileResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = fileResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  int get length => getUint64Field(8);
+  BigInt get lengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get sha256 => getDataField(0);
+
+  int get offset => getUint64Field(16);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(1);
+
+  bool get eof => getBoolField(16);
+}
+
+final class FileResultBuilder extends StructBuilder {
+  FileResultBuilder(super.raw);
+
+  @override
+  FileResultReader asReader() => FileResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set length(int v) {
+    setUint64Field(8, v);
+  }
+
+  set lengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field length');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set sha256(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(16, v);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set eof(bool v) {
+    setBoolField(16, v);
+  }
+}
+
+final class _FileResultFactory
+    extends StructFactory<FileResultReader, FileResultBuilder> {
+  @override
+  StructSchemaInfo get schema => fileResultSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  FileResultReader fromRawReader(RawStructReader r) => FileResultReader(r);
+  @override
+  FileResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FileResultReader(r, capabilities: capabilities);
+  @override
+  FileResultBuilder fromRawBuilder(RawStructBuilder r) => FileResultBuilder(r);
+}
+
+const StructSchemaInfo fileResultSchema = StructSchemaInfo(
+  id: 0xa3409b45a3cf9630,
+  displayName: 'host.capnp:FileResult',
+  shortName: 'FileResult',
+  dataWords: 3,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'length',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'sha256',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'eof',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final fileResultFactory = _FileResultFactory();
 
 const schemaReflectionAvailable = true;

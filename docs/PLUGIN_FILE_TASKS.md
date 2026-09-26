@@ -1,6 +1,6 @@
 # 原 owner 后台文件任务
 
-2026-09-26：原生 `IoWorker` 的类型化文件命令与 Workbench Rust 文件任务已接通。Linux 的真实 Store／三语言既有 Wasm 模块和测试用 Workbench 所有权路径已验证。系统文件选择器、私有进程协议、Dart/Flutter 页面、Windows 实机仍未接入本轮资格。
+2026-09-26：原生 `IoWorker` 的类型化文件命令与 Workbench Rust 文件任务已接通。Linux 的真实 Store／三语言既有 Wasm 模块和测试用 Workbench 所有权路径已验证。后续已接私有进程协议及独立 Dart 客户端；系统选择器、Flutter 页面与 Windows 实机仍未验收。
 
 ## 一个 owner、一条现有队列
 
@@ -56,4 +56,21 @@ cargo test --locked --offline --manifest-path workbench_host/Cargo.toml \
 python tool/plugin_transport_baseline.py verify
 ```
 
-文件专项读取仓库保留的三语言 Wasm，测试内建立 FileRead 声明包；旧 HTTP 原包没有被增权或改写。详情见 [本轮报告](../reports/plugin-file-owner-2026-09-26.md)。下一步是基于此原生入口设计有界私有文件任务协议、平台选择句柄交接和 Dart/Flutter 消费，不把系统路径变成 guest 授权。
+文件专项读取仓库保留的三语言 Wasm，测试内建立 FileRead 声明包；旧 HTTP 原包没有被增权或改写。原生接线详见 [owner 报告](../reports/plugin-file-owner-2026-09-26.md)，最新私有协议、Dart 验证与限制见 [协议报告](../reports/plugin-file-wire-2026-09-26.md)。
+
+
+## 私有文件任务协议与 Dart（2026-09-26 后续）
+
+`host.capnp` 追加 `fileStart / fileChunk / fileFinish / fileRead`，沿现有 ioStatus / ioPoll / ioCancel / ioRepair / ioAcknowledge 控制所有权；属于最外层调度消息，不能放进原 owner 的嵌套业务命令。宿主与 Dart 绑定及私有 digest 同步生成；guest IO 协议和冻结 Wasm 不变。请求／响应沿用 128 KiB 帧上限，单块最多 64 KiB。
+
+`FileStart` 显式绑定随机非零 32 字节 submission、包 ID／摘要、注册表修订、声明 handler、可信宿主选中文件路径、捕获 ceiling 和最多 30 秒期限。一个宿主会话最多保留 512 个文件尝试身份，准入过程中消耗的身份不重用；任务忙时不能替换原身份。丢失启动回执只允许用 ioStatus 核对，不得自动再启动、重新打开路径或恢复旧引用。HTTP／文件状态使用当前共同的提交身份，避免文件任务带出陈旧 HTTP 身份。
+
+`start_file` 仍接受已打开的句柄。新增 `start_selected_file`／`capture_selected_path` 仅用于可信私有 UI 适配：接受绝对、无 NUL、UTF-8 最多 4096 字节的路径，原 worker 在实时 FileRead／原实例／取消检查后才执行 open，再按普通文件捕获规则读取。错误只携带 OS 错误类别。路径授权来自可信 UI；本接口不能证明路径一定由系统选择器产生，也不提供选中时刻对象、symlink/junction 根约束或原子快照保证。对象身份从实际 open 起建立。同步 open 也可能阻塞；停止回执不能代替实际 join。
+
+`fileRead` 每次返回一种结果：Pending、Captured(length + 原始字节 SHA-256)、Chunk(offset + bytes + eof)、Finished。不暴露内部文件 grant 引用。读取仍一次消费，错误响应不带部分结果；Rust 中间结果帧的文件字节在序列化后擦除，Dart 在复制为不可变自有模型后擦除其私有响应帧。这不是所有内存副本的全局擦除承诺。
+
+`NativeFileTaskClient` 提供类型化入口并接入 RustWorkbench，复用原传输和调度隔离。请求写入前验证范围，保留 UInt64 为 BigInt；解码拒绝混合结果字段、畸形摘要、超大块和偏移溢出。调用端仍需消费 Captured 后再请求块，对照期望 offset／length／hash 整理最终内容；此客户端不自动循环或重试。
+
+跨层验证发现旧文件 SHA-256 曾误用面向 schema 的文本规范化函数。现在文件内容摘要与文件引用的二进制熵 seed 均使用原始字节 SHA-256；回归覆盖非法 UTF-8、CRLF 和会被有损文本转换合并的两组 secret。引用只存活于原进程，不涉及持久引用迁移。
+
+下一步接真实平台选择器与文件任务控制／结果页面，并在 Windows 验证选中、取消、丢回执、修复和实际退出。Linux 测试 Store 仍不能代表生产受保护存储。本轮 Flutter 启动自动审批因其尝试云元数据地址而拒绝；独立 Dart 协议测试通过，不记为 Flutter 窗口或完整适配器静态验证。

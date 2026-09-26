@@ -1,6 +1,10 @@
 part of 'workbench_native.dart';
 
 bool _isScheduler(host.Action action) => switch (action) {
+  host.Action.fileStart ||
+  host.Action.fileChunk ||
+  host.Action.fileFinish ||
+  host.Action.fileRead ||
   host.Action.httpStart ||
   host.Action.ioStatus ||
   host.Action.ioPoll ||

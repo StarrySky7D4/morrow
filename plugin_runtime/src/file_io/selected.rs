@@ -5,6 +5,7 @@ use crate::{
     manager::{ManagedInstance, Manager},
 };
 use morrow_core::{dispatch::HostRuntime, plugin_package::io::IoCapability};
+use sha2::{Digest, Sha256};
 use std::{
     fs::File,
     io::{Read, Seek, SeekFrom},
@@ -165,7 +166,7 @@ impl FileBroker {
         if file.metadata()?.len() != length {
             return Err(CaptureError::SourceChanged);
         }
-        let sha256 = morrow_core::runtime::schema_digest(&bytes);
+        let sha256 = Sha256::digest(&bytes).into();
         check()?;
         self.publish_file(reference, next, lease, bytes);
         Ok(SelectedFile {

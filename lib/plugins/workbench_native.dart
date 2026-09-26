@@ -22,6 +22,8 @@ import 'service_run_codec_native.dart';
 import 'service_tls_identity_codec_native.dart';
 import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
+import 'file_task_models.dart';
+import 'file_task_native.dart';
 import 'host_request.dart';
 import 'workbench_channel.dart';
 import 'workbench_device_files.dart';
@@ -82,6 +84,7 @@ class RustWorkbench
         WorkbenchServiceTlsControl,
         WorkbenchTlsIdentityControl,
         WorkbenchIoTaskControl,
+        FileTaskBackend,
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
@@ -459,6 +462,20 @@ class RustWorkbench
     }
     return snapshot;
   }
+
+  late final _fileTasks = NativeFileTaskClient(_callDecoded);
+  @override
+  Future<IoTaskSnapshot> startFile(FileTaskRequest request) =>
+      _fileTasks.startFile(request);
+  @override
+  Future<IoTaskSnapshot> requestFileChunk(
+    Uint8List key, BigInt offset, int limit,
+  ) =>
+      _fileTasks.requestFileChunk(key, offset, limit);
+  @override
+  Future<IoTaskSnapshot> finishFile(Uint8List key) => _fileTasks.finishFile(key);
+  @override
+  Future<FileTaskRead> readFile(Uint8List key) => _fileTasks.readFile(key);
 
   @override
   Future<IoTaskSnapshot> startHttp(HttpTaskRequest request) async {

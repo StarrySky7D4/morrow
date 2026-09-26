@@ -8,6 +8,7 @@ use morrow_core::io::{MAX_PAYLOAD_BYTES, Request as IoRequest, Status as IoStatu
 use std::{
     collections::BTreeMap,
     fs::File,
+    path::PathBuf,
     sync::atomic::{AtomicU64, Ordering},
 };
 
@@ -80,7 +81,7 @@ pub(super) type Dispatch<O> = fn(
 pub(super) enum Request {
     Capture {
         id: FileSession,
-        file: File,
+        source: Source,
         handler: String,
         max_bytes: u64,
         secret: [u8; 32],
@@ -93,6 +94,10 @@ pub(super) enum Request {
     Finish {
         id: FileSession,
     },
+}
+pub(super) enum Source {
+    Open(File),
+    SelectedPath(PathBuf),
 }
 impl Request {
     pub(super) fn charge(&self) -> u64 {
@@ -142,6 +147,31 @@ impl<O: ManagedHostOwner> IoWorker<O> {
         max_bytes: u64,
         secret: [u8; 32],
     ) -> Result<(FileSession, FileCommandHandle), OwnerCommandError> {
+        self.capture_source(Source::Open(file), handler, max_bytes, secret)
+    }
+    /// Private trusted native adapter only. Selection authorizes opening this
+    /// path on the original worker; guests never supply paths. File identity is
+    /// established at open, not at picker time. OS open/read may block that worker.
+    pub fn capture_selected_path(
+        &self,
+        path: PathBuf,
+        handler: String,
+        max_bytes: u64,
+        secret: [u8; 32],
+    ) -> Result<(FileSession, FileCommandHandle), OwnerCommandError> {
+        let text = path.to_str().ok_or(OwnerCommandError::Limit)?;
+        if !path.is_absolute() || text.len() > 4096 || text.contains('\0') {
+            return Err(OwnerCommandError::Limit);
+        }
+        self.capture_source(Source::SelectedPath(path), handler, max_bytes, secret)
+    }
+    fn capture_source(
+        &self,
+        source: Source,
+        handler: String,
+        max_bytes: u64,
+        secret: [u8; 32],
+    ) -> Result<(FileSession, FileCommandHandle), OwnerCommandError> {
         if handler.is_empty() || handler.len() > 256 || max_bytes > 256 * 1024 * 1024 {
             return Err(OwnerCommandError::Limit);
         }
@@ -155,12 +185,16 @@ impl<O: ManagedHostOwner> IoWorker<O> {
             worker: self.control.id,
             serial,
         };
-        let bytes = size_of::<Request>() + handler.len() + size_of::<SelectedFile>();
+        let path_bytes = match &source {
+            Source::SelectedPath(path) => path.as_os_str().len(),
+            Source::Open(_) => 0,
+        };
+        let bytes = size_of::<Request>() + handler.len() + path_bytes + size_of::<SelectedFile>();
         let inner = self.enqueue_owner_command(
             CommandKind::File {
                 request: Request::Capture {
                     id,
-                    file,
+                    source,
                     handler,
                     max_bytes,
                     secret,
@@ -238,7 +272,7 @@ fn dispatch<O: ManagedHostOwner>(
     match request {
         Request::Capture {
             id,
-            file,
+            source,
             handler,
             max_bytes,
             secret,
@@ -253,6 +287,26 @@ fn dispatch<O: ManagedHostOwner>(
             {
                 return Err(FileCommandError::Invalid);
             }
+            if ticket.lock().cancelled {
+                return Err(FileCommandError::Rejected);
+            }
+            clock
+                .with(|now| {
+                    authority.binding.preflight_capability(
+                        manager,
+                        owner.runtime(),
+                        instance,
+                        morrow_core::plugin_package::io::IoCapability::FileRead,
+                        now,
+                    )
+                })
+                .map_err(|e| FileCommandError::Capture(e.into()))?;
+            let file = match source {
+                Source::Open(file) => file,
+                Source::SelectedPath(path) => {
+                    File::open(path).map_err(|e| FileCommandError::Capture(e.into()))?
+                }
+            };
             let mut broker = FileBroker::new(secret);
             let selected = broker
                 .capture_clock(

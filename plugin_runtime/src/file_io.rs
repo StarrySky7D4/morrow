@@ -1,6 +1,7 @@
 //! Experimental managed carrier for host-selected immutable file bytes.
 //! This is a single-frame read/finish/cancel profile, not an OS picker, durable
 //! evidence store, general IO handler ABI, filesystem path API or network backend.
+use sha2::{Digest, Sha256};
 mod selected;
 use crate::{
     Fault, Report,
@@ -126,7 +127,7 @@ impl FileBroker {
         let mut seed = b"morrow.selected-file.v1".to_vec();
         seed.extend_from_slice(&self.secret);
         seed.extend_from_slice(&next.to_le_bytes());
-        let token = morrow_core::runtime::schema_digest(&seed);
+        let token = Sha256::digest(&seed).into();
         if self.files.contains_key(&token) {
             return Err(io_binding::Error::Limit);
         }

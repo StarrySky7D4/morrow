@@ -133,6 +133,10 @@ enum Action {
   retireEditorDraftHandoffProposal,
   cancelEditorDraftHandoffProposal,
   inspectEditorCommit,
+  fileStart,
+  fileChunk,
+  fileFinish,
+  fileRead,
 }
 
 Action? actionFromUint16(int v) =>
@@ -276,6 +280,11 @@ final class RequestReader extends StructReader {
   UiFontReader? get uiFont => getStructFieldWith(
     39,
     (r) => UiFontReader(r, capabilities: capabilityTable),
+  );
+
+  FileStartReader? get fileStart => getStructFieldWith(
+    40,
+    (r) => FileStartReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -555,6 +564,12 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasUiFont() => hasPointerField(39);
+
+  FileStartBuilder initFileStart() {
+    return initStructFieldWith(40, (r) => FileStartBuilder(r), 3, 5);
+  }
+
+  bool hasFileStart() => hasPointerField(40);
 }
 
 final class _RequestFactory
@@ -562,7 +577,7 @@ final class _RequestFactory
   @override
   int get dataWords => 7;
   @override
-  int get ptrWords => 40;
+  int get ptrWords => 41;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -732,6 +747,11 @@ final class ResponseReader extends StructReader {
   EditorCommitProofReader? get editorCommitProof => getStructFieldWith(
     33,
     (r) => EditorCommitProofReader(r, capabilities: capabilityTable),
+  );
+
+  FileResultReader? get fileResult => getStructFieldWith(
+    34,
+    (r) => FileResultReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -1044,6 +1064,12 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasEditorCommitProof() => hasPointerField(33);
+
+  FileResultBuilder initFileResult() {
+    return initStructFieldWith(34, (r) => FileResultBuilder(r), 3, 2);
+  }
+
+  bool hasFileResult() => hasPointerField(34);
 }
 
 final class _ResponseFactory
@@ -1051,7 +1077,7 @@ final class _ResponseFactory
   @override
   int get dataWords => 6;
   @override
-  int get ptrWords => 34;
+  int get ptrWords => 35;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -4176,6 +4202,210 @@ final class _EditorRecoveryFactory
 }
 
 final editorRecoveryFactory = _EditorRecoveryFactory();
+
+final class FileStartReader extends StructReader {
+  FileStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get handler => getTextField(3);
+
+  String? get selectedPath => getTextField(4);
+
+  int get maxBytes => _checkedWireInt(maxBytesBigInt);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  int get timeoutMs => getUint32Field(16);
+}
+
+final class FileStartBuilder extends StructBuilder {
+  FileStartBuilder(super.raw);
+
+  @override
+  FileStartReader asReader() => FileStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set handler(String? v) {
+    setTextField(3, v);
+  }
+
+  set selectedPath(String? v) {
+    setTextField(4, v);
+  }
+
+  set maxBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(16, v);
+  }
+}
+
+final class _FileStartFactory
+    extends StructFactory<FileStartReader, FileStartBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  FileStartReader fromRawReader(RawStructReader r) => FileStartReader(r);
+  @override
+  FileStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FileStartReader(r, capabilities: capabilities);
+  @override
+  FileStartBuilder fromRawBuilder(RawStructBuilder r) => FileStartBuilder(r);
+}
+
+final fileStartFactory = _FileStartFactory();
+
+final class FileResultReader extends StructReader {
+  FileResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  int get length => _checkedWireInt(lengthBigInt);
+  BigInt get lengthBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get sha256 => getDataField(0);
+
+  int get offset => _checkedWireInt(offsetBigInt);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(1);
+
+  bool get eof => getBoolField(16);
+}
+
+final class FileResultBuilder extends StructBuilder {
+  FileResultBuilder(super.raw);
+
+  @override
+  FileResultReader asReader() => FileResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set length(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    lengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set lengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field length');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set sha256(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set offset(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    offsetBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set eof(bool v) {
+    setBoolField(16, v);
+  }
+}
+
+final class _FileResultFactory
+    extends StructFactory<FileResultReader, FileResultBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 2;
+  @override
+  FileResultReader fromRawReader(RawStructReader r) => FileResultReader(r);
+  @override
+  FileResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => FileResultReader(r, capabilities: capabilities);
+  @override
+  FileResultBuilder fromRawBuilder(RawStructBuilder r) => FileResultBuilder(r);
+}
+
+final fileResultFactory = _FileResultFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

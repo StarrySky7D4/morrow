@@ -1,0 +1,5 @@
+Warning: Package resolution error when reading "analysis_options.yaml" file:
+Failed to resolve package URI "package:flutter_lints/flutter.yaml" in include at "Instance of 'IOFileSystemPath'".
+Warning: Package resolution error when reading "analysis_options.yaml" file:
+Failed to resolve package URI "package:flutter_lints/flutter.yaml" in include at "Instance of 'IOFileSystemPath'".
+Verified workbench bindings

@@ -1,0 +1,9 @@
+00:00 +0: loading test/file_task_client_test.dart
+00:00 +0: start binds immutable identity and exact uint64 revision
+00:00 +1: bounds rejected before sending, including integer narrowing
+00:00 +2: chunk and finish correlate keys and keep exact offsets
+00:00 +3: once-only read detaches bytes before private reply wipe
+00:00 +4: ambiguous transport failures never replay starts or reads
+00:00 +5: malformed union shapes and oversized or overflowing chunks fail closed
+00:00 +6: real Rust private frames from original Rust C C++ guests decode unchanged
+00:00 +7: All tests passed!

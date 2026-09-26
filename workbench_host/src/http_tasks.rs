@@ -23,7 +23,6 @@ const MAX_SESSION_SUBMISSIONS: usize = 512;
 #[derive(Default)]
 pub(crate) struct HttpTasks {
     seen: BTreeSet<[u8; 32]>,
-    current: Option<[u8; 32]>,
 }
 pub struct HttpStart {
     pub submission: [u8; 32],
@@ -84,7 +83,7 @@ impl Workbench {
         if self.state.has_service_task() {
             None
         } else {
-            self.http_tasks.current
+            self.state.submission
         }
     }
 
@@ -174,7 +173,7 @@ impl Workbench {
         // credentials. Live endpoint validation remains inside actual admission.
         morrow_core::io::validate_http_submission(&input)?;
         self.http_tasks.seen.insert(request.submission);
-        self.http_tasks.current = Some(request.submission);
+        self.state.submission = Some(request.submission);
         self.start_io(
             StartOptions {
                 package_id,

@@ -11,6 +11,9 @@ use zeroize::{Zeroize, Zeroizing};
 #[path = "service_run_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod service_run;
+#[path = "file_task_protocol.rs"]
+#[cfg(not(target_arch = "wasm32"))]
+mod file_task;
 pub fn digest() -> [u8; 32] { crate::host_protocol_digest() }
 
 fn text(v: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
@@ -205,7 +208,11 @@ fn is_scheduler_action(action: wire::Action) -> bool {
     is_service_run_action(action)
         || matches!(
             action,
-            wire::Action::HttpStart
+            wire::Action::FileStart
+                | wire::Action::FileChunk
+                | wire::Action::FileFinish
+                | wire::Action::FileRead
+                | wire::Action::HttpStart
                 | wire::Action::IoStatus
                 | wire::Action::IoPoll
                 | wire::Action::IoRead
@@ -289,6 +296,15 @@ impl ResponseTarget for Workbench {
         }
         if is_service_run_action(action) {
             return service_run::handle(self, r, out);
+        }
+        if matches!(
+            action,
+            wire::Action::FileStart
+                | wire::Action::FileChunk
+                | wire::Action::FileFinish
+                | wire::Action::FileRead
+        ) {
+            return file_task::handle(self, r, out);
         }
         let host = self;
         if action == wire::Action::HttpStart {
@@ -483,6 +499,9 @@ fn wipe_sensitive_reply(output: &mut Builder<capnp::message::HeapAllocator>) -> 
     out.reborrow().get_issued_token()?.zeroize();
     // A nested business response can itself carry a one-time credential.
     out.reborrow().get_payload()?.zeroize();
+    if out.has_file_result() {
+        out.reborrow().get_file_result()?.get_bytes()?.zeroize();
+    }
     Ok(())
 }
 fn validated_request(
@@ -644,7 +663,11 @@ fn handle_business(
             crate::service_protocol::handle(host, r, out.reborrow())
                 .map_err(|_| "service administration request could not be completed")?;
         }
-        wire::Action::HttpStart
+        wire::Action::FileStart
+        | wire::Action::FileChunk
+        | wire::Action::FileFinish
+        | wire::Action::FileRead
+        | wire::Action::HttpStart
         | wire::Action::IoStatus
         | wire::Action::IoPoll
         | wire::Action::IoRead
@@ -1124,6 +1147,7 @@ fn handle_business(
                 || r.get_endpoint_days() != 0
                 || r.has_endpoint_policy()
                 || r.has_http_start()
+                || r.has_file_start()
                 || !r.get_io_key()?.is_empty()
                 || r.has_service_config()
                 || r.has_service_publication()

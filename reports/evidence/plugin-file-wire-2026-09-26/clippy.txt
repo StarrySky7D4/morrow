@@ -1,0 +1,2 @@
+    Checking morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+    Finished `dev` profile [unoptimized] target(s) in 1.01s

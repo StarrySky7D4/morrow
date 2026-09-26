@@ -1,0 +1,4 @@
+Warning: Package resolution error when reading "analysis_options.yaml" file:
+Failed to resolve package URI "package:flutter_lints/flutter.yaml" in include at "Instance of 'IOFileSystemPath'".
+Changed lib/plugins/workbench_native.dart
+Formatted 1 file (1 changed) in 0.05 seconds.

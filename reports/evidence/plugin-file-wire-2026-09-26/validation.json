@@ -1,0 +1,22 @@
+{
+  "base": "faf86d7b90b4f73153d9d7059c06a75cbf177821",
+  "rust": "1.98.1",
+  "capnp": "1.2.0",
+  "dart": "3.12.0",
+  "runtime": {
+    "passed": 415,
+    "ignored": 6
+  },
+  "workbench_lib": {
+    "passed": 64
+  },
+  "sdk_io_explicit": {
+    "passed": 5
+  },
+  "dart_file_client": {
+    "passed": 7,
+    "skipped": 0
+  },
+  "transport_pinned": 17,
+  "flutter": "startup/pub rejected by automatic approval: indirect instance metadata access; no Flutter qualification"
+}
