@@ -1,4 +1,72 @@
 use super::*;
+#[test]
+fn service_profile_pins_existing_schema_and_never_implies_a_run_grant() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--service",
+            "--io-capability",
+            "http-listen",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+    );
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    let declaration = p.manifest().io_declaration.as_ref().unwrap();
+    assert_eq!(
+        declaration.service_schema_sha256,
+        morrow_core::service::schema_digest()
+    );
+    assert!(declaration.service_run.is_none());
+    assert_eq!(p.manifest().required_features, vec![io::FEATURE]);
+    assert!(output.contains("service-schema-sha256="));
+    assert!(output.contains("no listener or run grant"));
+}
+#[test]
+fn incomplete_or_implicit_service_profiles_do_not_publish() {
+    for flags in [
+        vec!["--service"],
+        vec!["--service", "--service"],
+        vec![
+            "--io-capability",
+            "http-listen",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-listen",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-request",
+            "--io-handler",
+            "service.echo",
+        ],
+    ] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &flags);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+}
 fn setup(command: &str) -> (tempfile::TempDir, Vec<String>) {
     let dir = tempfile::tempdir().unwrap();
     let module = dir.path().join("module.wasm");

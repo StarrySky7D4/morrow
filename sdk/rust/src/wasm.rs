@@ -135,6 +135,38 @@ fn io_buffer() -> Result<Vec<u8>, crate::Error> {
     Ok(bytes)
 }
 
+/// Read the host-bound service frame once. Principal and route are host facts,
+/// not guest-selected permissions. Uses the existing task transport, not IO call.
+pub fn read_service_request() -> Result<crate::service::Request, crate::Error> {
+    let mut bytes = Vec::new();
+    bytes
+        .try_reserve_exact(crate::service::MAX_FRAME_BYTES)
+        .map_err(|_| crate::Error::NoMemory)?;
+    bytes.resize(crate::service::MAX_FRAME_BYTES, 0);
+    // SAFETY: The buffer remains writable for this synchronous bounded import.
+    let size = unsafe { read_input(bytes.as_mut_ptr(), bytes.len() as u32) };
+    if size <= 0 || size as usize > bytes.len() {
+        return Err(crate::Error::BadReply);
+    }
+    crate::service::Request::decode(&bytes[..size as usize]).map_err(|_| crate::Error::BadReply)
+}
+
+/// Encode a reply bound to the exact original request bytes and complete once.
+/// The runtime independently checks the response. This never retries a request.
+pub fn complete_service_response(
+    request: &crate::service::Request,
+    reply: &crate::service::Reply,
+) -> Result<(), crate::Error> {
+    let bytes = crate::service::Response::encode(request, reply)
+        .map_err(|_| crate::Error::InvalidArgument)?;
+    // SAFETY: Owned frame remains readable for this synchronous bounded import.
+    if unsafe { complete(bytes.as_ptr(), bytes.len() as u32) } == 0 {
+        Ok(())
+    } else {
+        Err(crate::Error::TransportFailure)
+    }
+}
+
 /// Read the IO-frame task mode's host-bound request once. This is separate from
 /// `read_task`: a managed IO invocation contains an IO Request, not Invocation.
 /// Decoding a resource reference grants no authority; the current host decides.

@@ -73,7 +73,7 @@ class ProjectTests(unittest.TestCase):
                     self.assertEqual(source.read_bytes(), (self.sdk / "examples" / f"{language}-{profile}" / name).read_bytes())
                     self.assertEqual(config["build"]["language"], language)
                     self.assertEqual(config["plugin"]["dependency_calls"], kind == "dependency")
-                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0}[kind])
+                    self.assertEqual(len(config.get("handlers", [])), {"content": 0, "transform": 3, "ui": 2, "dependency": 1, "io": 0, "service": 0}[kind])
                     self.assertEqual(config["plugin"]["capabilities"], list(tool.CAPABILITIES) if kind == "content" else ["read-content", "edit-content"] if kind == "dependency" else [])
                     if kind == "io":
                         self.assertEqual(config["build"]["kind"], "io")
@@ -95,6 +95,21 @@ class ProjectTests(unittest.TestCase):
                         self.assertEqual(tool.project(root / "plugin.toml")[0], root)
                     else:
                         self.assertFalse((root / "Cargo.toml").exists())
+
+    def test_service_profile_requires_both_capabilities_and_explicit_kind(self):
+        args, (root, config, _) = self.new("service", "rust", "service")
+        self.assertEqual(config["io"], {"capabilities": ["http-listen", "http-publish"], "handlers": ["service.echo"]})
+        self.assertIn("--service", tool.package_arguments(config))
+        for kind, caps in [("service", ["http-listen"]), ("service", ["http-publish"]),
+                           ("service", ["http-request"]), ("io", ["http-listen", "http-publish"])]:
+            changed = copy.deepcopy(config)
+            changed["build"]["kind"] = kind
+            changed["io"]["capabilities"] = caps
+            write_config(root / "plugin.toml", changed)
+            with mock.patch.object(tool, "compile_project") as compiler:
+                with self.assertRaises(tool.ToolError):
+                    tool.pack_project(args)
+                compiler.assert_not_called()
 
     def test_existing_directory_is_never_overwritten(self):
         target = self.root / "existing"

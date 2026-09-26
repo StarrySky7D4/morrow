@@ -2,6 +2,8 @@
 
 自 test.49 提供 `tool/morrow_plugin.py`，将 C11、C++17、Rust 的创建、构建和打包入口统一起来。本文描述工具合同；本轮实际运行范围、失败及限制以 [test.49 验证记录](../reports/test.49-sdk-project-tools.md) 为准，不把脚手架生成或静态检查当作功能验收。
 
+2026-09-26 增加 `--kind service` 三语言模板：固定 `service.echo`、显式 `http-listen`／`http-publish`、原帧关联和现有服务 schema pin。打包器要求 `--service`，不产生监听授权，不声明长时运行 profile。使用方法和有限范围见 [服务 SDK](../sdk/SERVICE_API.md)，本轮实际原包与真实 TCP 验证见 [报告](../reports/plugin-service-sdk-2026-09-26.md)。`verify_plugin_projects.py` 的旧五类完整流程保持原范围；新增服务流程使用 `verify_plugin_service_sdk.py`。
+
 ## 环境与分发边界
 
 需要 Python 3.11+（标准库 `tomllib`），不需要 Python 第三方包。构建依赖 Cargo、Rust、`wasm32-unknown-unknown` 目标及 Cap’n Proto 编译器；C/C++ 另需 Clang、对应 WASI sysroot，C++ 使用无异常的标准库、C++17、无 RTTI。
@@ -44,9 +46,9 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 
 `pack` 发布到项目目录仅是开发产物；要接入真实应用，还需宿主选择包、批准能力及依赖、启用并创建实际实例。见 [包格式](PLUGIN_PACKAGE.md)、[注册表](PLUGIN_REGISTRY.md) 和 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。
 
-## 十五个起始模板
+## 十八个起始模板
 
-每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，共 15 个组合。`--kind` 默认 `transform`。
+每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，共 18 个组合。`--kind` 默认 `transform`。
 
 | `--kind` | 来源示例 | 实际起点与后续条件 |
 | --- | --- | --- |
@@ -55,6 +57,7 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 | `ui` | `*-ui` | `ui.form` 接收 `text.utf8`，`ui.edit` 接收 `morrow.ui.event.v1`，均输出 `morrow.ui.document.v1`；需宿主渲染与会话验证 |
 | `dependency` | `*-dependency-caller` | `bytes.dependency-wrap` 调用 slot `reverse`；需 `bytes.tag-reverse` 提供者、`^1.0.0` 版本范围及显式批准锁 |
 | `io` | `*-io` | 接收宿主选择的原始 IO 请求帧，调用一次受管 IO 并原样完成已验证响应；实验性 `io-v1`，需宿主绑定和逐项批准 |
+| `service` | `*-service` | 接收已认证的宿主服务请求并回显正文；显式监听/发布声明与服务 schema pin，短期 IO profile，不授予真实监听能力 |
 
 UI 模板的 `ui.form` 输入上限为 32 字节，`ui.edit` 为 65536 字节；输出上限均为 65536 字节。依赖包装模板输入上限为 65531 字节，声明 `read-content`、`edit-content` 能力，但调用依赖或产出结果都不自动取得保存权限。这些值描述原模板，修改源码后应同步修改相应声明。
 
@@ -110,13 +113,13 @@ max_output_bytes = 65536
 | `plugin.capabilities` | 可省略，默认空；七种支持的能力名且不可重复 |
 | `plugin.dependency_calls` | 可省略，默认 false；true 要求声明处理器，生成固定依赖调用功能标记 |
 | `build.language`／`source` | 必需，语言为 rust/c/cpp；source 为项目内存在的入口文件 |
-| `build.kind` | 仅 IO 项目使用固定值 `io`，并且必须有 `[io]` 声明 |
+| `build.kind` | 出站 IO 使用 `io`，入站服务使用 `service`；两者均须有 `[io]` 声明 |
 | `budget.fuel` | 1–100000000，默认 20000000 |
 | `budget.memory_bytes` | 65536–67108864，64 KiB 的整数倍；默认 16777216 |
 | `budget.host_calls` | 0–1024，默认 16 |
 | `handlers` | 最多 16 项；name 唯一，输入／输出类型精确匹配，两个限额必需且各为 0–65536 |
 | `dependencies` | 最多 16 项；slot 唯一；handler、类型、提供者版本范围必需，optional 默认 false |
-| `io.capabilities`／`handlers` | IO 项目必需；能力为上述三种名称且不重复；1–16 个唯一 handler 标识，不与普通转换及依赖声明混用 |
+| `io.capabilities`／`handlers` | IO/服务项目必需；`io` 使用上述三种能力，`service` 恰为 `http-listen` 与 `http-publish`；1–16 个唯一 handler，不与普通转换及依赖声明混用 |
 
 七种能力名为 `rename`、`summary`、`operation`、`attachment`、`create-content`、`edit-content`、`read-content`。处理器／slot／类型标识非空、最多 256 UTF-8 字节，不含控制字符、斜杠、反斜杠或冒号。提供者版本范围最多 128 UTF-8 字节，完整语义由核心 SemVer 校验。
 

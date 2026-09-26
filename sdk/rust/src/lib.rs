@@ -1,6 +1,12 @@
 //! Guest transport and typed protocol. No trusted core linkage or loader.
 pub mod dependency_call;
 pub mod io;
+pub mod service;
+mod service_ffi;
+#[allow(clippy::all)]
+pub mod service_capnp {
+    include!(concat!(env!("OUT_DIR"), "/service_capnp.rs"));
+}
 #[allow(clippy::all)]
 pub mod io_capnp {
     include!(concat!(env!("OUT_DIR"), "/io_capnp.rs"));

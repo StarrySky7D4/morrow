@@ -1,0 +1,8 @@
+{
+  "platform": "linux",
+  "exclusions": [
+    "Native C/C++ executable codec test requires a separate explicit run.",
+    "No Flutter UI, TLS, long-running service profile, recovery or other-platform qualification.",
+    "Windows-only frozen dependency tests were not run; this is not the full guest-v1-rc1 gate."
+  ]
+}

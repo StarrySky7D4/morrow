@@ -1,5 +1,7 @@
 # 常驻服务运行与工作台调度实施方案
 
+2026-09-26 [入站服务 SDK 与进度校准](../reports/plugin-service-sdk-2026-09-26.md)：基于最新主线 `d9c0431`（test.56），新增 Rust／C／C++ 服务 codec、原帧关联与一次完成、六类项目模板中的 service 原包流程和显式服务打包声明。Linux 本地已验证三语言原包→真实 TCP 节点的七方法、二进制正文、未批准绑定、错误认证及撤权；SDK、工具、核心打包与独立原生 codec 结果见报告。完整文件系统、长时/持久恢复、Windows／Flutter 和 SDK 冻结仍开放；未使用 Actions/CI，不创建 Release。
+
 2026-09-21[TLS 身份管理界面与 Windows 验收](../reports/application-service-tls-identity-ui-2026-09-21.md)已完成：双语身份选择/保存/替换/禁用、后端会话草稿、冻结修订与 Unknown 核对接入工作台。86 项客户端组合、2 条完整 Windows 窗口流程、4 项语言包与 6 项目录测试、9 文件分析通过；Windows Release 已重建。真实窗口验证保存后删除源 PEM、HTTPS、运行中轮换停服、原拥有者回收后刷新并显式选择新修订、旧证书拒绝、禁用与同库重开。下一项转向跨重启 Unknown 持久核对，再推进完整文件系统、三语言 IO SDK 与平台资格；未推送/发布，SDK 尚未冻结。
 
 2026-09-21[TLS Dart 管理与真实进程闭环](../reports/application-service-tls-client-2026-09-21.md)已接通：不可变身份元数据、严格分页/回执校验、保存/禁用与冻结引用启动沿原拥有者通道执行。77 项客户端组合、9 项真实进程用例及 11 文件分析通过；实际 HTTPS 轮换/禁用、原库重开、保存提交后回执损坏/EOF 保持 Unknown 且不重复创建均已验证。原生宿主 Release 已重编译，完整 Flutter Windows 应用尚未重建。下一项是已保存身份选择与轮换 UI、草稿/Unknown 状态保留及真实窗口验收；未推送/发布。

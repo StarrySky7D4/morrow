@@ -1,0 +1,21 @@
+test_changed_package (test_sdk_baseline.BaselineTests.test_changed_package) ... ok
+test_changed_wasm (test_sdk_baseline.BaselineTests.test_changed_wasm) ... ok
+test_duplicate_entry (test_sdk_baseline.BaselineTests.test_duplicate_entry) ... ok
+test_empty_manifest (test_sdk_baseline.BaselineTests.test_empty_manifest) ... ok
+test_invalid_pin (test_sdk_baseline.BaselineTests.test_invalid_pin) ... ok
+test_missing_entry (test_sdk_baseline.BaselineTests.test_missing_entry) ... ok
+test_missing_file (test_sdk_baseline.BaselineTests.test_missing_file) ... ok
+test_original_inventory (test_sdk_baseline.BaselineTests.test_original_inventory) ... ok
+test_path_escape (test_sdk_baseline.BaselineTests.test_path_escape) ... ok
+test_refreshed_manifest_does_not_bypass_pin (test_sdk_baseline.BaselineTests.test_refreshed_manifest_does_not_bypass_pin) ... ok
+test_unlisted_file (test_sdk_baseline.BaselineTests.test_unlisted_file) ... ok
+test_dependency_only_drift_is_detected_without_repair (test_sdk_contract_sync.ContractSyncTests.test_dependency_only_drift_is_detected_without_repair) ... ok
+test_io_only_drift_is_detected_without_repair (test_sdk_contract_sync.ContractSyncTests.test_io_only_drift_is_detected_without_repair) ... ok
+test_missing_dependency_normal_sync_restores_and_check_passes (test_sdk_contract_sync.ContractSyncTests.test_missing_dependency_normal_sync_restores_and_check_passes) ... ok
+test_original_contracts_check_without_mutation (test_sdk_contract_sync.ContractSyncTests.test_original_contracts_check_without_mutation) ... ok
+test_service_only_drift_is_detected_without_repair (test_sdk_contract_sync.ContractSyncTests.test_service_only_drift_is_detected_without_repair) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.220s
+
+OK

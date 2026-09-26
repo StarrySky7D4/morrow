@@ -14,7 +14,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use] [--io-handler NAME] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--service] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -29,8 +29,10 @@ mod native {
             "file-read" => IoCapability::FileRead,
             "http-request" => IoCapability::HttpRequest,
             "credential-use" => IoCapability::CredentialUse,
+            "http-listen" => IoCapability::HttpListen,
+            "http-publish" => IoCapability::HttpPublish,
             _ => return Err(format!(
-                "unknown IO capability '{name}'; expected file-read, http-request or credential-use"
+                "unknown IO capability '{name}'; expected file-read, http-request, credential-use, http-listen or http-publish"
             )
             .into()),
         })
@@ -85,6 +87,7 @@ mod native {
         handlers: Vec<TransformHandler>,
         dependencies: Vec<DependencyRequirement>,
         dependency_calls: bool,
+        service: bool,
         io_caps: Vec<IoCapability>,
         io_handlers: Vec<String>,
         fuel: Option<u64>,
@@ -100,7 +103,12 @@ mod native {
             i += 1;
             if matches!(
                 flag,
-                "--name" | "--dependency-calls" | "--fuel" | "--memory-bytes" | "--host-calls"
+                "--name"
+                    | "--dependency-calls"
+                    | "--service"
+                    | "--fuel"
+                    | "--memory-bytes"
+                    | "--host-calls"
             ) && !seen.insert(flag)
             {
                 return Err(format!("duplicate single-value option {flag}").into());
@@ -158,6 +166,7 @@ mod native {
                     });
                 }
                 "--dependency-calls" => o.dependency_calls = true,
+                "--service" => o.service = true,
                 "--io-capability" => o
                     .io_caps
                     .push(io_capability(value(args, &mut i, flag, "NAME")?)?),
@@ -212,6 +221,16 @@ mod native {
                     .into(),
             );
         }
+        let inbound = o.io_caps.contains(&IoCapability::HttpListen)
+            || o.io_caps.contains(&IoCapability::HttpPublish);
+        if o.service != inbound
+            || (o.service
+                && (o.io_caps.len() != 2
+                    || !o.io_caps.contains(&IoCapability::HttpListen)
+                    || !o.io_caps.contains(&IoCapability::HttpPublish)))
+        {
+            return Err("--service requires exactly http-listen and http-publish; inbound capabilities require --service".into());
+        }
         Ok(o)
     }
     fn pack_v2(args: &[String]) -> Result<Package> {
@@ -242,6 +261,9 @@ mod native {
         if !o.io_caps.is_empty() {
             manifest.required_features.push(io::FEATURE.into());
             let mut declaration = io::declaration(o.io_caps, o.io_handlers);
+            if o.service {
+                declaration.service_schema_sha256 = morrow_core::service::schema_digest().to_vec();
+            }
             let io_budget = declaration
                 .budget
                 .as_mut()
@@ -367,6 +389,13 @@ mod native {
                 package.io_capabilities(),
                 declaration.handlers
             )?;
+            if !declaration.service_schema_sha256.is_empty() {
+                writeln!(
+                    out,
+                    "service-schema-sha256={} (finite IO binding; no listener or run grant)",
+                    hex(&declaration.service_schema_sha256)
+                )?;
+            }
             if let Some(b) = &declaration.budget {
                 writeln!(
                     out,

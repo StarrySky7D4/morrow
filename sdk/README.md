@@ -6,7 +6,7 @@ Flutter 负责宿主界面绘制，第三方插件使用声明式 UI，不要求
 
 ## 开发入口
 
-新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖、实验 IO 五类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
+新项目可使用仓库内 `tool/morrow_plugin.py` 的 `new`、`doctor`、`build`、`pack`、`check` 和 `transform`。提供 C／C++／Rust 的内容、转换、UI、依赖、实验 IO、入站服务六类模板；正式包仍由核心生成并在发布前检查运行准备。`plugin.toml` 只作构建输入，打包不产生授权或启用状态。详见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
 
 ```powershell
 python -B -X utf8 tool/morrow_plugin.py doctor --language rust
@@ -44,9 +44,13 @@ UI 提供有界文档节点、事件和三语言样例；宿主验证会话、�
 
 C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可复制、可移动；Rust 返回自有值。指针和回调仅在其本地适配器生命周期有效，不是可序列化身份或能力。
 
+## 实验入站服务接口
+
+新增 [服务 SDK v1](SERVICE_API.md)：三语言服务帧解码、精确原请求关联响应、一次读取／完成、C 所有权和 C++ RAII，以及 `--kind service` 生成原包。有限模板不声明长时 service-run profile，包声明不授予监听或发布权。Linux 真实 TCP 节点与权限专项已验证；Windows／Flutter、持久恢复及全平台资格分别保留。见 [本轮证据](../reports/plugin-service-sdk-2026-09-26.md)。
+
 ## 双向网络目标
 
-插件既要能调用外部 API，也要能通过宿主发布 API 服务。路由、监听、远端身份与插件实例授权分别管理，第三方无需提供 Dart 插件。详见 [双向 API 节点](../docs/PLUGIN_API_NODE.md)。`network_node/` 承载受信任原生传输；guest 经批准的端点／凭据引用调用受管 IO，不能任意创建监听或选择远端身份。新增 IO SDK 补齐开发者编解码与调用层；它不等同于完整入站服务 SDK、任意公网部署资格、流式传输或全平台验收。
+插件既要能调用外部 API，也要能通过宿主发布 API 服务。路由、监听、远端身份与插件实例授权分别管理，第三方无需提供 Dart 插件。详见 [双向 API 节点](../docs/PLUGIN_API_NODE.md)。`network_node/` 承载受信任原生传输；guest 经批准的端点／凭据引用调用受管 IO，不能任意创建监听或选择远端身份。新增 IO SDK 补齐开发者编解码与调用层；入站有界 SDK 见上节；任意公网部署、流式传输、完整业务恢复与全平台验收仍未完成。
 
 ## 编译与验证
 
@@ -65,7 +69,7 @@ pwsh -File tool/verify_plugin_runtime.ps1
 
 固定契约随 SDK 分发，可脱离宿主源码构建。`tool/sync_plugin_sdk_contracts.py --check` 核对包括依赖调用在内的契约；更新它们之前必须遵守兼容规则，不能为消除检查失败而直接覆盖旧契约。
 
-三语言内容／转换／UI／依赖／IO 样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
+三语言内容／转换／UI／依赖／IO／服务样例位于 `examples/`；wire 黄金样本位于 `tests/fixtures` 和 `tests/ui_fixtures`。另有 [固定 Wasm 和完整包](compat/guest-v1-rc1/)，用于验证旧二进制；两类样本不可相互替代。当前完整运行证据以 Windows 为限，Wasm 可编译不等于其他平台产品已验收。
 
 历史 test.11 的原生和正文增量、test.28–31 的依赖增量是当时的阶段结果；最新范围以源码、[路线](../docs/FUTURE_ROADMAP.md)及各版本报告为准。SDK 源码 API、本地回调 ABI、预编译库分发及更多开发诊断仍在推进；test.49 已补充项目模板和完整包验证入口。
 

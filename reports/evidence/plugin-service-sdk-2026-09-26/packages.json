@@ -1,0 +1,14 @@
+{
+  "rust": {
+    "path": "build/service-qualification-final-2026-09-26/rust/dist/c6db60c22a1807bff91047af67aa5ffee2b5c31b565e4d8b89d38d4076672cf9.mplugin",
+    "sha256": "c6db60c22a1807bff91047af67aa5ffee2b5c31b565e4d8b89d38d4076672cf9"
+  },
+  "c": {
+    "path": "build/service-qualification-final-2026-09-26/c/dist/1c0b53f418078120a1a32c22a754259123350ef7cb88e2dc3b9302cf314212cc.mplugin",
+    "sha256": "1c0b53f418078120a1a32c22a754259123350ef7cb88e2dc3b9302cf314212cc"
+  },
+  "cpp": {
+    "path": "build/service-qualification-final-2026-09-26/cpp/dist/a161fecf034f2f2541f71ca9b8344211fb923a852fcaf818a95233566039bc6e.mplugin",
+    "sha256": "a161fecf034f2f2541f71ca9b8344211fb923a852fcaf818a95233566039bc6e"
+  }
+}

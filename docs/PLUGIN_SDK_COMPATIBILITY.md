@@ -56,3 +56,7 @@ pwsh -File tool/verify_plugin_sdk_compat.ps1
 ## 2026-09-24 实验 IO SDK 增量
 
 新增三语言 [IO SDK](../sdk/IO_API.md)，复用既有 `core/schemas/io.capnp` 和 `morrow_io_v1.call`；旧八份契约与 36 个固定文件均未修改。IO 不纳入 guest-v1-rc1，也未建立新的 IO 冻结原件。新接口的宿主授权／回执验证和旧二进制兼容分别执行，不能用重新编译的新样例替代旧原件。`tool/verify_plugin_io_sdk.ps1` 强制三语言产物齐备后运行专项验证。
+
+## 2026-09-26 实验入站服务 SDK 增量
+
+新增三语言 [服务 SDK](../sdk/SERVICE_API.md)，复制并核对已有 service.capnp，不改核心契约或旧冻结原件。此接口仍实验性，尚无 service 专属冻结兼容原件。Linux 本地验证运行九项旧内容／转换／UI 原件检查；Windows 专属依赖测试未执行，不宣称完整十二项通过。36 个固定文件／13 对 Wasm 与完整包的摘要仍一致。当前新包与旧原件证据分别记录在 [验证报告](../reports/plugin-service-sdk-2026-09-26.md)。

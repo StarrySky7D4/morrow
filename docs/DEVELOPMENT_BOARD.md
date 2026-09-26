@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [入站服务 SDK 与进度校准](../reports/plugin-service-sdk-2026-09-26.md)：基于最新主线 `d9c0431`（test.56），新增 Rust／C／C++ 服务 codec、原帧关联与一次完成、六类项目模板中的 service 原包流程和显式服务打包声明。Linux 本地已验证三语言原包→真实 TCP 节点的七方法、二进制正文、未批准绑定、错误认证及撤权；SDK、工具、核心打包与独立原生 codec 结果见报告。完整文件系统、长时/持久恢复、Windows／Flutter 和 SDK 冻结仍开放；未使用 Actions/CI，不创建 Release。
+
 2026-09-24 [源码同步与插件系统状态](PLUGIN_SYSTEM_STATUS.md)：归档下列两轮三语言 IO SDK、真实网络及项目工具增量；主线与开发分支同步，不创建 Release、不变更版本或旧兼容原件。最新完成范围和七类开放工作以此状态页为准，下面“未推送”保留各轮报告完成时的历史状态。
 
 2026-09-24 [三语言 IO SDK 真实 HTTP](../reports/plugin-io-network-sdk-2026-09-24.md)：Rust／C／C++ guest 经受管 worker 与 TCP 验证七种方法、二进制／重复参数头、凭据注入和 429、发送前拒绝、断线 Unknown 不重发及同库重开保留。29 项既有 HTTP 与四项三语言专项、严格 Clippy 和前置 IO／旧插件门槛通过；新增 IO 项目模板、显式能力/预算输出，31 项工具及九项打包 CLI 用例通过，三个生成 HTTP 原包以工作台 forward profile 再次通过真实网络专项；公网服务商、入站服务 SDK、流式与完整跨进程恢复仍开放。未推送发布。
