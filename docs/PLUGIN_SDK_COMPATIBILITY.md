@@ -60,3 +60,12 @@ pwsh -File tool/verify_plugin_sdk_compat.ps1
 ## 2026-09-26 实验入站服务 SDK 增量
 
 新增三语言 [服务 SDK](../sdk/SERVICE_API.md)，复制并核对已有 service.capnp，不改核心契约或旧冻结原件。此接口仍实验性，尚无 service 专属冻结兼容原件。Linux 本地验证运行九项旧内容／转换／UI 原件检查；Windows 专属依赖测试未执行，不宣称完整十二项通过。36 个固定文件／13 对 Wasm 与完整包的摘要仍一致。当前新包与旧原件证据分别记录在 [验证报告](../reports/plugin-service-sdk-2026-09-26.md)。
+
+
+## 2026-09-26 独立 transport-v1-rc1 候选
+
+新增 [transport-v1-rc1](../sdk/compat/transport-v1-rc1/)：C／C++／Rust 有界 HTTP IO 与有限长时服务各一对原 Wasm／完整包，共六对；三份契约、源码摘要及来源合计 17 个固定文件。服务覆盖续租、累计额度、撤权、Observed／Unknown 原库重开；资源 schema 只作为记录，回显原件不执行目录发现。旧 guest-v1-rc1 原件、pin 和平台范围保持不变。
+
+`python tool/plugin_transport_baseline.py verify` 只读检查，`run` 只编译当前宿主并执行旧原包，不构建 guest／重包。执行前后均验证根摘要、条目集合及全部原件；另验证内嵌模块完全一致。`capture --io QUALIFIED_IO --service QUALIFIED_SERVICE` 只接受新 ID，并要求相关源码已提交；不得通过刷新现有 pin 解决回归。
+
+`verify_plugin_service_sdk.py` 在当前样例构建前执行此候选门槛。本轮 Linux 已通过模块一致性 1、HTTP 4 和服务 2 个用例，覆盖六个原包；这不等于 Windows／Flutter 或整个 SDK 已冻结。完整记录见 [底座收尾报告](../reports/plugin-foundation-closeout-2026-09-26.md)。

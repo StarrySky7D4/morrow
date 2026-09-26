@@ -1,0 +1,1094 @@
+   Compiling morrow-core v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/core)
+    Finished `test` profile [unoptimized] target(s) in 6.84s
+     Running unittests src/lib.rs (build/foundation-core/debug/deps/morrow_core-0317733e673eef91)
+
+running 41 tests
+test io_evidence::tests::noncanonical_unknown_duplicate_and_wrong_wire_fields_are_rejected ... ok
+test io_evidence::tests::identities_digests_lengths_and_containers_are_validated ... ok
+test io_evidence::tests::tampering_truncation_and_trailing_bytes_never_decode ... ok
+test io_evidence::tests::roundtrip_preserves_kind_bindings_and_exact_bytes ... ok
+test attachment::tests::future_blob_fields_survive_retirement_changes ... ok
+test attachment::tests::metadata_corruption_and_future_versions_are_rejected ... ok
+test plugin_package::registry::tests::duplicate_selection_and_unknown_approval_are_rejected ... ok
+test plugin_package::registry::tests::unknown_semantics_and_noncanonical_data_never_get_rewritten ... ok
+test store::disk_tests::native_unknown_backing_cannot_be_classified_as_memory_writer ... ok
+test io_evidence::tests::oversize_materials_and_fields_reject_with_limit ... ok
+test store::evidence_chunks::parallel_tests::parallel_batch_matches_serial_and_rejects_errors_on_either_lane ... ok
+test store::disk_tests::bound_current_wal_open_verifies_once_and_rechecks_on_every_open ... ok
+test store::disk_tests::explicit_native_vfs_uses_authority_lock_when_snapshots_are_disabled ... ok
+test store::disk_tests::sqlite_full_during_raw_stage_leaves_no_partial_blob ... ok
+test store::open_verification::tests::bounded_proofs_and_fallback_preserve_order_and_reject_later_writes ... ok
+test store::card_snapshot::copied_snapshot_tests::bounded_copy_pins_membership_bytes_and_source_while_owner_writes ... ok
+test store::service_authority_lock::resource_tests::exact_dependencies_shared_credentials_and_namespaces_do_not_alias ... ok
+test store::service_authority_lock::resource_tests::original_store_drop_invalidates_scoped_copies_even_after_same_identity_reopen ... ok
+test store::service_authority_lock::resource_tests::resource_epoch_capacity_is_atomic_and_dead_or_revoked_entries_are_reclaimed ... ok
+test store::service_authority_lock::resource_tests::revoked_resolution_cannot_mint_fresh_dependencies_and_scoped_lease_cannot_expand ... ok
+
+running 1 test
+test store::service_authority_lock::tests::active_authority_blocks_writers_in_an_independent_process ... ok
+test store::service_authority_lock::tests::child_cannot_acquire_another_process_authority_lock ... ignored, child harness; parent supplies a dedicated metadata identity
+test store::service_authority_lock::tests::independent_stores_cannot_write_or_pin_active_identity ... ok
+test store::service_authority_lock::tests::original_owner_epoch_rotation_and_drop_invalidate_all_copies ... ok
+test store::service_authority_lock::tests::preexisting_nonregular_lock_is_rejected_without_replacement ... ok
+test store::service_authority_lock::tests::symlink_lock_is_rejected_even_when_target_is_regular ... ok
+test store::service_authority_lock::tests::unsupported_memory_restore_rejects_live_lease_but_preserves_local_storage ... ok
+test tls_identity::tests::damaged_and_noncanonical_wire_is_rejected_before_copying_fields ... ok
+test tls_identity::tests::portable_envelope_roundtrip_and_metadata_bounds ... ok
+test transaction::tests::event_builder_rejects_wrong_card_or_wrong_revision ... ok
+test transaction::tests::legacy_unknown_field_cannot_acquire_new_migration_semantics ... ok
+test transaction::tests::record_hash_does_not_substitute_for_command_and_result_correspondence ... ok
+test store::open_verification::tests::repeated_references_charge_every_position_in_verified_metadata ... ok
+test transaction::tests::transaction_framing_and_decompression_limits_reject_damaged_input ... ok
+test transaction::tests::repeated_attachments_are_bounded_before_protobuf_allocation ... ok
+test store::io_evidence::disk_tests::full_disk_rolls_material_storage_back_without_partial_writes ... ok
+test store::disk_tests::sqlite_full_rolls_back_all_three_records ... ok
+test store::disk_tests::sqlite_full_rolls_back_forward_format_migration ... ok
+test store::open_verification::tests::no_proof_capacity_still_checks_all_physical_objects_and_associations ... ok
+test store::seals::tests::full_archive_write_preserves_pending_original_and_capacity ... ok
+test store::records::tests::sqlite_full_during_draft_save_preserves_last_durable_body ... ok
+
+test result: ok. 40 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.43s
+
+     Running unittests src/main.rs (build/foundation-core/debug/deps/morrow_core_check-ca77e881e97f2c93)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/store_cli.rs (build/foundation-core/debug/deps/morrow_core_store-63e549a4ad39375c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/attachment_crash.rs (build/foundation-core/debug/deps/attachment_crash-51f4cbc7f62ecdf1)
+
+running 4 tests
+test garbage_collection_is_atomic_at_three_exit_boundaries ... ok
+test attachment_publication_recovers_at_six_exit_boundaries ... ok
+test attachment_removal_retains_history_at_six_exit_boundaries ... ok
+test stage_recovers_at_five_exit_boundaries ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s
+
+     Running tests/attachment_reads.rs (build/foundation-core/debug/deps/attachment_reads-69ad5f7693fe6700)
+
+running 6 tests
+test runtime_chunk_bounds_reject_invalid_empty_or_overflow_packets ... ok
+test revoked_or_expired_read_never_releases_next_chunk ... ok
+test exact_scope_and_revision_prevent_sibling_reads_and_mixed_transfers ... ok
+test chunk_index_is_deduplicated_and_collected_atomically ... ok
+test block_crossing_partial_and_empty_reads_keep_original_bytes ... ok
+test corrupted_chunk_index_or_payload_is_rejected_before_delivery ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/attachments.rs (build/foundation-core/debug/deps/attachments-ec53fa0fa7148a6a)
+
+running 11 tests
+test new_storage_refuses_old_database_version_without_upgrade ... ok
+test snapshot_undo_and_evidence_retentions_block_collection ... ok
+test editing_attachment_metadata_preserves_nested_unknown_fields ... ok
+test removing_current_attachment_retains_original_for_history_and_retries ... ok
+test same_content_is_deduplicated_and_shared_by_logical_attachments ... ok
+test export_read_snapshot_survives_concurrent_collection ... ok
+test stage_failures_and_limits_leave_no_partial_payload ... ok
+test stages_need_explicit_retirement_and_grace_survives_restart ... ok
+test corrupted_raw_bytes_or_lost_historical_reference_fail_verification ... ok
+test reference_insert_failure_rolls_back_card_event_and_retirement_clear ... ok
+test raw_multichunk_and_empty_file_round_trip_across_reopen ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s
+
+     Running tests/batch_evidence.rs (build/foundation-core/debug/deps/batch_evidence-ad41206c210c7e30)
+
+running 8 tests
+test original_v1_container_is_retained_without_batch_reencoding ... ok
+test ordered_batch_roundtrip_retains_one_package_and_exact_unknown_bytes ... ok
+test cumulative_fuel_uses_actual_consumption_and_each_remaining_budget ... ok
+test legacy_and_batch_observation_fields_cannot_mix ... ok
+test duplicate_known_fields_at_all_three_nested_levels_fail_closed ... ok
+test batch_requires_every_successful_page_and_matching_completion ... ok
+test malformed_lengths_wire_types_groups_and_aggregate_size_are_bounded ... ok
+test batch_count_and_intent_boundaries_are_enforced_before_decode ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.53s
+
+     Running tests/card_snapshot.rs (build/foundation-core/debug/deps/card_snapshot-1598cec134747ea0)
+
+running 18 tests
+test empty_snapshot_requires_actual_eof_before_a_stable_zero_census ... ok
+test corrupt_read_event_head_cannot_be_used_as_a_valid_readpoint ... ok
+test corrupted_empty_id_is_not_silently_excluded_from_complete_census ... ok
+test empty_snapshots_have_store_identity_and_explicit_close_does_not_close_source ... ok
+test expiry_and_revocation_at_second_clock_prevent_frozen_bytes_delivery ... ok
+test census_matches_independent_fixed_encoding_and_exact_byte_page_boundaries ... ok
+test frozen_latest_content_commit_is_distinct_from_global_record_and_read_event_head ... ok
+test foreign_store_snapshot_instance_and_object_are_rejected_before_clock_and_do_not_poison_it ... ok
+test frozen_authorized_read_returns_old_bytes_even_after_current_card_changes ... ok
+test independent_writer_cannot_change_pinned_bytes_membership_or_readpoint ... ok
+test all_types_are_returned_and_page_boundaries_do_not_imply_workspace_eof ... ok
+test integrity_failure_poisoning_also_rejects_previously_frozen_authorized_cards ... ok
+test missing_card_referenced_by_permanent_content_history_cannot_complete_census ... ok
+test revoked_object_grant_cannot_be_recovered_from_frozen_card ... ok
+test readonly_audited_wal_snapshot_owns_source_after_store_drop ... ok
+test unsupported_memory_and_exclusive_profiles_fail_closed ... ok
+test corrupted_or_missing_card_commit_and_oversized_sql_data_cannot_complete_census ... ok
+test legal_eight_mib_unknown_fields_survive_and_small_budget_does_not_advance_cursor ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.16s
+
+     Running tests/cli.rs (build/foundation-core/debug/deps/cli-9775e9365ead82f1)
+
+running 2 tests
+test verifier_rejects_corrupt_input_and_does_not_create_missing_file ... ok
+test verifier_accepts_valid_container_without_modifying_it ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/content_changes.rs (build/foundation-core/debug/deps/content_changes-5be75a8bfb0b9a65)
+
+running 4 tests
+test edits_preserve_future_outer_and_nested_preview_fields ... ok
+test full_content_and_attachment_references_commit_or_rollback_together ... ok
+test scope_ceiling_revocation_and_expiry_gate_complete_content ... ok
+test expiry_and_revocation_at_final_commit_roll_back_all_three_records ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/content_guard.rs (build/foundation-core/debug/deps/content_guard-4bfc5c0748ccbe52)
+
+running 6 tests
+test final_guard_denial_rolls_back_content_receipt_and_event ... ok
+test revocation_observation_is_shared_read_only_and_one_way ... ok
+test guard_observes_exact_clock_values_and_no_extra_ticks_are_consumed ... ok
+test accepting_guard_cannot_supply_missing_wrong_or_expired_content_authority ... ok
+test scope_is_checked_after_guard_triggered_revocation ... ok
+test duplicate_receipt_requires_both_guards_without_undoing_committed_content ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+     Running tests/content_migrations.rs (build/foundation-core/debug/deps/content_migrations-aed6bb3a685f4ce3)
+
+running 5 tests
+test migration_version_and_exact_result_cannot_be_confused_with_legacy_commands ... ok
+test changed_baselines_unknowns_and_adjacent_high_revisions_are_not_rebased ... ok
+test migration_preserves_full_record_and_evidence_atomically_across_reopen_and_retry ... ok
+test capacity_and_post_content_evidence_failure_leave_no_partial_migration ... ok
+test scope_final_revocation_expiry_and_guard_rejection_rollback_even_evidence ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/contracts.rs (build/foundation-core/debug/deps/contracts-875cdf211e8c562c)
+
+running 20 tests
+test capnp_impossible_segment_or_far_pointer_is_rejected ... ok
+test altered_contract_digest_is_rejected_before_accepting_command ... ok
+test capnp_multisegment_messages_are_accepted_within_budget ... ok
+test capnp_truncation_trailing_and_unsupported_operations_fail ... ok
+test content_and_view_identity_are_independent_contracts ... ok
+test corrupt_truncated_and_trailing_containers_are_rejected ... ok
+test exact_decode_bytes_are_retained_separately_from_reencoding ... ok
+test lengths_are_bounded_before_decompression_or_message_allocation ... ok
+test malformed_protobuf_lengths_groups_and_wire_types_are_rejected ... ok
+test opaque_content_survives_edit_and_container_without_plugin ... ok
+test capnp_unicode_and_full_uint64_round_trip ... ok
+test future_top_level_nested_enum_and_oneof_survive_old_title_edit ... ok
+test persistent_identity_rejects_platform_paths_and_empty_values ... ok
+test revision_conflict_does_not_modify_record ... ok
+test request_for_another_card_cannot_propose_an_edit ... ok
+test missing_creation_time_is_not_fabricated ... ok
+test unsupported_schema_does_not_become_an_empty_card ... ok
+test revision_overflow_is_rejected ... ok
+test blob_reference_requires_content_digest_but_no_platform_location ... ok
+test repeated_messages_and_unknown_field_count_have_predecode_budget ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/dependency_call.rs (build/foundation-core/debug/deps/dependency_call-219ab0abb5e96c5d)
+
+running 9 tests
+test malformed_utf8_in_all_text_fields_is_rejected ... ok
+test schema_snapshots_share_lf_normalized_digest ... ok
+test owned_roundtrip_preserves_binary_and_distinguishes_empty_success_from_failure ... ok
+test truncated_tailed_joined_and_oversized_frames_fail_without_panics ... ok
+test incorrect_version_digest_and_union_tag_are_rejected ... ok
+test correlation_binds_call_slot_input_and_entire_original_frame ... ok
+test unaligned_transport_buffers_preserve_complete_frame_correlation ... ok
+test bounded_traversal_rejects_unknown_alias_amplification_and_nested_cycles ... ok
+test payload_and_identity_limits_apply_at_both_encoding_and_decoding ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/dependency_call_package.rs (build/foundation-core/debug/deps/dependency_call_package-fa20eb7ccfe19456)
+
+running 2 tests
+test old_manifests_keep_no_dynamic_authority_and_unknown_features_reject ... ok
+test dynamic_feature_requires_exact_schema_and_both_task_and_transform_contracts ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/dependency_registry.rs (build/foundation-core/debug/deps/dependency_registry-71c7cbbe7da0987f)
+
+running 13 tests
+test old_snapshot_without_locks_remains_readable ... ok
+test approval_checks_exact_digests_slot_contract_and_version_without_mutation ... ok
+test forged_required_cycle_refuses_open_and_corrupt_catalog_does_not_hide_dependents ... ok
+test failed_save_preserves_selections_locks_and_revision_together ... ok
+test incomplete_required_configuration_can_reopen_but_cannot_resolve ... ok
+test stale_cas_cannot_restore_removed_lock_or_remove_replaced_lock ... ok
+test canonical_lock_snapshot_rejects_unknown_tail_hash_duplicates_and_stale_identity ... ok
+test transitive_required_consumers_are_sorted_and_optional_failure_does_not_block_start ... ok
+test upgrade_and_remove_clear_all_incident_locks_in_same_snapshot ... ok
+test every_resolution_revalidates_root_and_required_provider_after_prior_success ... ok
+test shared_required_subgraph_and_unresolvable_optional_provider_are_distinct ... ok
+test required_cycles_reject_atomically_optional_and_mixed_cycles_do_not_recurse ... ok
+test maximum_lock_snapshot_opens_and_one_more_approval_preserves_it ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.82s
+
+     Running tests/dispatch.rs (build/foundation-core/debug/deps/dispatch-788d70907d11ee1d)
+
+running 10 tests
+test permissions_are_separate_and_denial_hides_existence ... ok
+test disconnected_endpoint_stays_invalid_after_reconnect ... ok
+test operation_query_is_scoped_and_separately_authorized ... ok
+test response_roundtrip_is_bounded_and_keeps_full_uint64 ... ok
+test malformed_or_old_protocol_cannot_reach_storage ... ok
+test query_expiry_during_lookup_does_not_deliver_a_receipt ... ok
+test expiry_is_rechecked_before_data_delivery ... ok
+test binary_commit_receipt_deduplicates_and_revocation_blocks_retry ... ok
+test read_policy_rejects_write_grants_and_draining_instances ... ok
+test read_grant_does_not_allow_write_and_other_connections_cannot_borrow_it ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/evidence_chunks.rs (build/foundation-core/debug/deps/evidence_chunks-a432a4b6bf1ad0bb)
+
+running 15 tests
+test evidence_chunks_crash_child ... ok
+test legacy_migration_preserves_raw_unknown_fields_exact_container_and_commit_bytes ... ok
+test orphan_chunk_is_not_accepted_as_valid_store ... ok
+test chunk_recipe_link_and_size_corruption_fail_closed_without_repair ... ok
+test format_eight_readonly_then_migration_preserve_unknown_v1_bytes_and_signed_history ... ok
+test same_package_observations_share_real_blocks_and_rebuild_exact_original_containers ... ok
+test audited_readonly_v7_does_not_migrate_and_v8_preserves_existing_signature ... ok
+test schema_two_hidden_in_format_eight_is_rejected_without_version_repair ... ok
+test expanded_intent_roundtrips_in_ten_but_cannot_be_smuggled_into_nine ... ok
+test signed_snapshot_contains_complete_shared_chunks_after_original_database_is_removed ... ok
+test write_crashes_never_leave_chunks_without_committed_content ... ok
+test format_eight_batch_migration_crashes_publish_only_whole_version_transition ... ok
+test migration_crashes_keep_whole_v7_or_whole_v8_and_original_evidence ... ok
+test projection_capacity_migration_crashes_leave_whole_nine_or_ten ... ok
+test format_nine_preserves_legacy_maximum_intent_and_signature_across_migration ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.49s
+
+     Running tests/guarded_dispatch.rs (build/foundation-core/debug/deps/guarded_dispatch-f67edc8c5fe53546)
+
+running 9 tests
+test probe_external_revocation_and_shared_host_clock_are_checked ... ok
+test probe_replacement_revocation_and_expiry_never_reauthorize_old_grant ... ok
+test probe_is_exact_scoped_and_host_stop_drop_are_terminal ... ok
+test successful_guard_cannot_replace_object_or_connection_permission ... ok
+test late_write_delivery_denial_keeps_commit_and_retry_still_requires_guard ... ok
+test all_writes_reject_final_transaction_guard_without_mutation ... ok
+test legacy_dispatch_retains_original_clock_boundaries ... ok
+test every_command_checks_guard_before_first_object_access ... ok
+test read_second_check_and_final_encoded_delivery_never_release_revoked_data ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+     Running tests/io_codec.rs (build/foundation-core/debug/deps/io_codec-19fd612bafe42d02)
+
+running 23 tests
+test crafted_http_submission_is_validated_on_decode ... ok
+test equivalent_fields_with_different_original_wire_bytes_do_not_share_responses ... ok
+test finish_cancel_and_empty_reference_value_are_decoded_without_grant_claim ... ok
+test http_invalid_result_status_is_rejected_on_encode_and_wire_decode ... ok
+test http_outcome_rejects_bad_status_fields_and_frame_binding ... ok
+test http_submission_rejects_runtime_headers_bad_targets_and_bounds ... ok
+test http_rejects_ambiguous_targets_on_encode_and_wire_decode ... ok
+test each_known_unimplemented_union_is_explicitly_unsupported_and_correlated ... ok
+test http_submission_roundtrip_binds_exact_references_and_headers ... ok
+test arbitrary_transport_alignment_is_supported_without_reencoding_originals ... ok
+test read_roundtrip_preserves_u64_values_binary_reference_and_exact_frame_digest ... ok
+test response_rejects_extra_resource_http_status_and_headers ... ok
+test read_response_enforces_limit_offset_overflow_empty_progress_and_eof ... ok
+test segment_allocation_bombs_and_recursive_structures_are_bounded ... ok
+test truncated_tail_concatenated_and_oversized_frames_are_rejected ... ok
+test http_rejects_guest_authority_headers_on_encode_and_wire_decode ... ok
+test unknown_outer_or_nested_union_and_response_status_tags_are_rejected ... ok
+test all_known_submission_variants_are_unsupported_but_wrong_variant_pointer_is_rejected ... ok
+test zero_limit_is_bounded_default_and_payload_upper_bound_is_enforced ... ok
+test response_requires_exact_request_hash_even_with_identical_call_id ... ok
+test wrong_versions_schema_sizes_reference_sizes_and_read_limits_are_rejected ... ok
+test all_known_statuses_have_no_unexpected_result_body_and_invalid_is_rejected ... ok
+test http_header_control_bytes_are_rejected_in_both_directions ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/io_dispatch_claim.rs (build/foundation-core/debug/deps/io_dispatch_claim-c7f237d8f06e66c6)
+
+running 7 tests
+test ordinary_append_remains_idempotent_without_conferring_a_second_claim ... ok
+test committed_claim_cannot_be_won_again_after_reopen ... ok
+test claim_requires_prepared_history_phase_and_complete_followup_reservation ... ok
+test changed_command_never_claims_an_existing_operation ... ok
+test rejected_final_authorization_rolls_back_history_outbox_and_claim ... ok
+test terminal_observation_or_cancellation_cannot_reopen_the_dispatch_boundary ... ok
+test simultaneous_independent_stores_have_exactly_one_committed_claim ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/io_evidence.rs (build/foundation-core/debug/deps/io_evidence-0ff6ad1b62836af8)
+
+running 19 tests
+test exact_admission_rejects_corrupted_existing_material ... ok
+test decode_preserves_accepted_original_container ... ok
+test noncanonical_unknown_and_duplicate_field_encodings_are_rejected ... ok
+test material_reservation_needs_bytes_not_an_unused_event_slot ... ok
+test cancelled_history_rejects_new_reservation ... ok
+test downgrade_with_new_objects_is_refused_and_honest_v16_migrates_cleanly ... ok
+test authorization_failures_leave_neither_reservations_nor_material ... ok
+test material_reservations_respect_the_shared_byte_budget_atomically ... ok
+test missing_material_is_classified_and_foreign_history_is_absence ... ok
+test reconciliation_releases_only_never_admitted_quota ... ok
+test protected_material_lifecycle_roundtrips_both_directions_exactly ... ok
+test read_rejects_payload_not_bound_to_original_command ... ok
+test repeats_are_idempotent_and_binding_mismatches_fail_explicitly ... ok
+test snapshot_preserves_original_and_reservation_without_source_database ... ok
+test terminal_transitions_close_material_quota ... ok
+test oversized_sql_material_and_revision_one_are_rejected_before_decode ... ok
+test response_read_rejects_over_limit_or_pre_dispatch_material ... ok
+test read_and_retry_reject_corrupted_mirror_columns ... ok
+test codec_roundtrip_tampering_and_limits_are_bounded ... ok
+
+test result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.04s
+
+     Running tests/io_evidence_crash.rs (build/foundation-core/debug/deps/io_evidence_crash-af9d66ec7779b7c6)
+
+running 5 tests
+test io_evidence_crash_child ... ignored, child harness; parent passes an isolated database and crash point
+test material_migration_crashes_keep_complete_old_or_new_schema_and_originals ... ok
+test material_reservation_commit_crashes_hold_or_release_exactly_once ... ok
+test request_material_commit_crashes_keep_reservation_or_original_exactly_once ... ok
+test response_material_commit_crashes_keep_exactly_one_slot_state ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/io_intent.rs (build/foundation-core/debug/deps/io_intent-bfc6f2452661f216)
+
+running 10 tests
+test corruption_truncation_trailing_bytes_and_invalid_lz4_never_decode ... ok
+test redecoding_original_unknown_bytes_stays_reconcile_only ... ok
+test ownership_lengths_and_compressed_container_limits_are_bounded ... ok
+test successor_requires_original_predecessor_and_same_command ... ok
+test unknown_duplicate_wrong_wire_and_noncanonical_protobuf_are_rejected ... ok
+test prepared_unknown_observed_preserve_exact_command_and_predecessors ... ok
+test every_command_field_is_bound_to_operation_identity ... ok
+test all_versions_capabilities_identities_and_digests_are_validated ... ok
+test unknown_cannot_resend_or_cancel_and_terminals_cannot_transition ... ok
+test phase_source_revision_and_observation_semantics_reject_invalid_records ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/io_intent_crash.rs (build/foundation-core/debug/deps/io_intent_crash-52cfe58f44a866dd)
+
+running 5 tests
+test io_intent_crash_child ... ignored, child harness; parent passes an isolated database and crash point
+test migration_crashes_keep_complete_old_or_new_schema_and_unchanged_originals ... ok
+test reservation_migration_crashes_keep_complete_old_or_new_schema_and_originals ... ok
+test reservation_commit_crashes_hold_or_release_the_quota_exactly_once ... ok
+test unknown_commit_crashes_leave_original_or_complete_revision_and_no_resend ... ok
+
+test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.47s
+
+     Running tests/io_intent_reservation.rs (build/foundation-core/debug/deps/io_intent_reservation-0f7cb27a1a88e28c)
+
+running 12 tests
+test reservation_counts_against_every_other_writer_until_terminal ... ok
+test release_only_works_before_dispatch_and_cancel_terminates_cleanly ... ok
+test held_reservation_protects_the_observation_slot_from_competition ... ok
+test reservation_is_idempotent_command_bound_and_phase_bound ... ok
+test boundary_refuses_without_reservation_and_consumes_exactly_once ... ok
+test held_reservation_guarantees_observation_even_under_lower_reopened_budget ... ok
+test authorize_failure_rolls_the_reservation_back_atomically ... ok
+test byte_reservation_blocks_other_bytes_and_survives_sealing ... ok
+test version_fifteen_with_prepared_intent_migrates_and_then_reserves ... ok
+test snapshot_at_prepared_phase_restores_reservation_and_continues ... ok
+test two_connections_observe_one_shared_logical_quota ... ok
+test tampered_reservation_state_is_rejected_by_integrity ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+     Running tests/io_intent_store.rs (build/foundation-core/debug/deps/io_intent_store-4f7df355c4a5edee)
+
+running 9 tests
+test immutable_command_predecessor_and_first_prepared_are_checked_before_publication ... ok
+test event_count_and_byte_capacity_roll_back_and_do_not_block_exact_retry ... ok
+test every_commit_and_historical_retry_require_current_authorization ... ok
+test reopening_and_exact_historical_retry_preserve_originals_without_new_events ... ok
+test recovered_unknown_is_reconcile_only_and_pre_dispatch_cancellation_is_terminal ... ok
+test missing_predecessor_and_orphan_io_event_reject_integrity_and_snapshot ... ok
+test version_fourteen_migrates_without_rewriting_existing_content_or_pending_bytes ... ok
+test ordinary_operation_ids_and_revision_event_ids_cannot_collide_in_either_direction ... ok
+test signed_events_snapshot_and_reopen_keep_every_original_container ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.32s
+
+     Running tests/lifecycle.rs (build/foundation-core/debug/deps/lifecycle-5ef4c1f7b1b89d1e)
+
+running 12 tests
+test hosts_cannot_use_each_others_handles ... ok
+test instance_capacity_can_be_reused_without_reusing_identity ... ok
+test drain_deadline_revokes_before_late_completion_and_stop_stays_stopped ... ok
+test exact_expiry_and_clock_regression_are_rejected ... ok
+test cancellation_frees_drain_without_executing ... ok
+test revocation_between_check_and_completion_blocks_proposal ... ok
+test normal_stop_refuses_new_tasks_and_waits_for_old_tasks ... ok
+test security_stop_revokes_before_cleanup_and_late_result_is_invalid ... ok
+test requests_are_fixed_and_completion_consumes_permit ... ok
+test timeout_does_not_claim_no_commit_or_undo_observed_commit ... ok
+test wrong_object_or_other_instance_does_not_inherit_grant ... ok
+test preparation_cannot_grant_or_execute ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/operation_commit.rs (build/foundation-core/debug/deps/operation_commit-224cd823b3990b34)
+
+running 5 tests
+test empty_refs_legacy_commits_are_queryable_without_inventing_evidence ... ok
+test original_command_receipt_and_ordered_refs_survive_later_edits_and_reopen ... ok
+test decoded_commit_ids_must_match_the_scoped_sql_row ... ok
+test absent_foreign_card_and_noncontent_operations_return_none_without_payload_access ... ok
+test missing_corrupt_reordered_and_extra_evidence_refs_are_never_returned_as_a_commit ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+     Running tests/operation_evidence.rs (build/foundation-core/debug/deps/operation_evidence-39d01274959de77d)
+
+running 14 tests
+test evidence_crash_child ... ok
+test malformed_commit_versions_and_evidence_refs_are_rejected ... ok
+test existing_orphan_evidence_cannot_be_silently_adopted_or_snapshotted ... ok
+test idempotency_requires_same_command_and_same_ordered_refs ... ok
+test ordinary_operations_remain_v1_and_cross_card_or_missing_queries_fail ... ok
+test create_and_edit_keep_exact_ordered_evidence_in_durable_commit ... ok
+test count_quota_rejects_seventeenth_ref_without_partial_rows ... ok
+test retry_after_revocation_cannot_undo_already_committed_evidence ... ok
+test oversized_operation_payload_is_rejected_by_existing_reader_without_repair ... ok
+test late_revocation_or_expiry_rolls_back_card_receipt_event_and_all_evidence ... ok
+test corrupted_payload_missing_payload_or_changed_association_fail_integrity ... ok
+test v6_migration_crash_is_atomic_and_preserves_existing_content ... ok
+test process_crash_keeps_evidence_card_receipt_and_event_all_or_none ... ok
+test byte_quota_counts_raw_and_container_even_for_deduplicated_payloads ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.91s
+
+     Running tests/outbound_authority.rs (build/foundation-core/debug/deps/outbound_authority-9dccc0445bea0444)
+
+running 24 tests
+test crash::outbound_authority_crash_child ... ignored, subprocess entry; exercised by parent fault-injection tests
+test duplicate_oneof_unknown_and_noncanonical_wire_fields_fail_closed ... ok
+test canonical_digest_binds_policy_and_protected_credential_even_without_revision_change ... ok
+test lexical_origin_rejects_credentials_paths_queries_and_noncanonical_ports ... ok
+test endpoint_limits_methods_and_references_are_strict ... ok
+test endpoint_and_ciphertext_hard_maximums_roundtrip ... ok
+test native::authority_listing_rejects_missing_snapshot_unknown_cursor_and_bad_limits ... ok
+test native::authority_listing_empty_reopens_without_writes_or_implicit_pin ... ok
+test native::authority_listing_detects_revision_addition_and_full_container_drift ... ok
+test native::authority_listing_rejects_more_than_the_bounded_table_count ... ok
+test native::authority_listing_orders_both_kinds_and_pages_exact_original_containers ... ok
+test native::cas_reopen_and_immutable_kind_package_identity ... ok
+test native::existing_inbound_material_consumes_outbound_byte_capacity ... ok
+test native::scoped_writes_revoke_dependents_but_preserve_unrelated_and_early_cas_conflicts ... ok
+test native::scoped_quota_rollback_never_revives_affected_epoch_or_revokes_unrelated_epoch ... ok
+test roundtrip_lifetime_and_ciphertext_only_provider_record ... ok
+test strict_record_and_credential_bounds_reject_before_decode_allocation ... ok
+test crash::migration_process_exit_preserves_original_authority_identity_and_schema ... ok
+test native::original_pin_blocks_foreign_outbound_writer_and_all_mutations_revoke ... ok
+test crash::replacement_process_exit_preserves_whole_old_or_new_credential ... ok
+test native::authority_listing_rejects_corruption_outside_current_page_before_allocating_large_rows ... ok
+test native::shared_quota_rollback_and_replacement_count_once ... ok
+test native::v19_migration_preserves_inbound_identity_and_event_bytes ... ok
+test native::count_limit_and_corrupted_payload_metadata_fail_closed ... ok
+
+test result: ok. 23 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.44s
+
+     Running tests/package_dependencies.rs (build/foundation-core/debug/deps/package_dependencies-d7f4108804da43b2)
+
+running 10 tests
+test legacy_manifest_defaults_remain_dependency_free ... ok
+test bounded_dependency_and_handler_lists_can_coexist_at_their_maxima ... ok
+test optional_does_not_bypass_provider_compatibility_or_imply_binding ... ok
+test malformed_empty_and_oversized_version_requirements_are_rejected ... ok
+test appended_dependency_wire_fields_cannot_bypass_feature_gating ... ok
+test declarations_roundtrip_and_change_package_identity_without_granting_capabilities ... ok
+test provider_package_semver_range_and_prerelease_rules_are_enforced ... ok
+test dependencies_require_known_feature_and_task_abi_even_when_optional ... ok
+test provider_must_register_the_exact_handler_and_input_output_types ... ok
+test duplicate_slots_and_invalid_dependency_identities_are_rejected ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/package_io.rs (build/foundation-core/debug/deps/package_io-8350eb7fd71f5fec)
+
+running 11 tests
+test io_package_cannot_enter_pure_handler_or_evidence_validation ... ok
+test declaration_feature_abi_and_both_versions_must_match ... ok
+test duplicate_declaration_and_unknown_nested_privilege_fields_reject ... ok
+test legacy_abi_one_and_two_have_no_io_declaration_or_approval ... ok
+test budgets_are_required_and_bounded_before_any_execution ... ok
+test handler_identity_and_pure_namespace_are_checked ... ok
+test actual_pure_evidence_plan_rejects_io_even_for_a_disjoint_handler ... ok
+test declaration_roundtrips_without_content_grants_or_byte_rewriting ... ok
+test truncated_nested_declaration_rejects_before_protobuf_allocation ... ok
+test resource_directory_profile_requires_service_and_outbound_contracts ... ok
+test unknown_duplicate_empty_or_excessive_capabilities_reject ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/plugin_package.rs (build/foundation-core/debug/deps/plugin_package-bd21ecb8fc9f08bc)
+
+running 11 tests
+test module_digest_header_and_size_checked ... ok
+test native::concurrent_same_package_install_publishes_one_complete_file ... ok
+test corrupt_truncated_trailing_and_inflated_containers_rejected ... ok
+test task_abi_requires_exact_task_contract_and_cannot_be_mislabelled_legacy ... ok
+test native::install_is_idempotent_and_detects_existing_tamper_without_overwrite ... ok
+test transform_resolution_is_package_scoped_and_enforces_declared_input ... ok
+test transform_declarations_require_supported_feature_and_unique_bounded_handlers ... ok
+test unknown_optional_fields_and_archive_are_preserved ... ok
+test invalid_metadata_capabilities_and_budgets_rejected ... ok
+test unsupported_versions_contracts_and_required_features_fail_closed ... ok
+test native::declarations_never_grant_and_cannot_be_exceeded ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/plugin_registry.rs (build/foundation-core/debug/deps/plugin_registry-30645895da5ffa23)
+
+running 11 tests
+test corrupt_and_oversized_state_fail_closed_without_overwrite ... ok
+test one_cooperative_manager_per_directory_and_reopen_after_drop ... ok
+test build_metadata_does_not_make_an_upgrade ... ok
+test persistence_upgrade_requires_enable_and_never_expands_approval ... ok
+test disable_remove_keep_package_and_content_and_reset_approvals ... ok
+test corrupt_selected_package_refuses_resolution_and_reopen ... ok
+test failed_publication_preserves_revision_and_selection ... ok
+test invalid_upgrade_and_approval_preserve_persisted_selection ... ok
+test stale_approval_and_enable_cannot_confirm_another_digest ... ok
+test stale_revision_cannot_revive_revoked_approval_or_remove_new_selection ... ok
+test theme_slot_switch_is_one_snapshot_and_keeps_business_approvals ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/plugin_registry_io.rs (build/foundation-core/debug/deps/plugin_registry_io-6c93e3b0fd4f4ecf)
+
+running 8 tests
+test v1_migration_is_durable_advances_once_and_never_infers_io_from_content ... ok
+test legacy_with_io_unknown_duplicate_out_of_order_and_excess_approvals_are_rejected_without_rewrite ... ok
+test io_approval_is_independent_subset_cas_and_noop_does_not_republish ... ok
+test all_ten_io_categories_roundtrip_without_touching_content_namespace ... ok
+test migration_revision_overflow_and_invalid_old_package_preserve_original_bytes ... ok
+test missing_package_can_only_clear_io_approval_with_current_identity_and_revision ... ok
+test upgrade_intersects_io_and_disable_remove_preserve_user_data ... ok
+test dependency_locks_never_inherit_caller_io_approval ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/read_archive.rs (build/foundation-core/debug/deps/read_archive-dc3c251e3b56914c)
+
+running 21 tests
+test exact_publication_retry_still_checks_guard_and_completed_archive_cannot_be_changed_or_aborted ... ok
+test abort_only_removes_its_own_pending_parts_and_keeps_other_completed_roots ... ok
+test backup_remains_self_contained_after_original_database_is_removed ... ok
+test actual_append_commit_unknown_rolls_back_part_and_manifest_together ... ok
+test part_and_count_limits_reject_before_advancing_pending_chain ... ok
+test part_codec_preserves_unknown_bytes_and_rejects_duplicate_bad_hash_and_future_version ... ok
+test append_crashes_preserve_whole_previous_or_new_chain_without_published_read ... ok
+test pending_archive_is_not_published_read_and_exact_append_is_idempotent ... ok
+test corrupt_missing_swapped_root_or_orphan_parts_are_not_repaired ... ok
+test final_crashes_never_publish_partial_archive_and_after_commit_retry_preserves_original ... ok
+test read_archive_crash_child ... ok
+test provisional_does_not_reserve_global_operation_and_cannot_replace_winning_content ... ok
+test preparation_crashes_leave_absent_or_whole_unpublished_manifest_and_retry_is_exact ... ok
+test self_consistent_tampered_nonfinal_part_is_rejected_by_single_part_read ... ok
+test abort_and_migration_crashes_are_atomic_and_do_not_delete_completed_archives ... ok
+test published_archive_disguised_as_pending_cannot_be_deleted_by_abort ... ok
+test provisional_cleanup_preserves_winning_legacy_read_or_auxiliary_record ... ok
+test rejected_guard_and_real_commit_unknown_leave_preparation_retryable_without_partial_publish ... ok
+test migration_preserves_original_legacy_read_and_signature_and_rejects_old_format_masquerade ... ok
+test sixty_four_mib_budget_charges_raw_and_container_not_just_data ... ok
+test eight_mib_parts_exceed_old_single_operation_capacity_and_preserve_fixed_random_offsets has been running for over 60 seconds
+test eight_mib_parts_exceed_old_single_operation_capacity_and_preserve_fixed_random_offsets ... ok
+
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.78s
+
+     Running tests/read_archive_budget.rs (build/foundation-core/debug/deps/read_archive_budget-4a0272e90be2e6ae)
+
+running 10 tests
+test manifest_bytes_are_charged_and_failed_admission_leaves_no_preparation ... ok
+test concurrent_store_admissions_cannot_both_consume_the_last_slot ... ok
+test pending_manifest_corruption_is_not_accepted_as_free_capacity ... ok
+test pending_scan_uses_rebuildable_sqlite_index_without_schema_or_signature_change ... ok
+test publishing_and_abort_release_only_unpublished_accounting ... ok
+test stricter_call_budget_cannot_exceed_hard_limits_or_mutate_on_invalid_policy ... ok
+test two_appends_cannot_both_consume_the_last_byte_budget ... ok
+test default_hard_count_is_shared_across_subjects_reopen_and_store_handles ... ok
+test append_charges_original_plus_container_and_manifest_delta_atomically ... ok
+test legacy_over_count_preparations_are_preserved_and_can_be_explicitly_drained ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.42s
+
+     Running tests/read_archive_cursor.rs (build/foundation-core/debug/deps/read_archive_cursor-52ca87316d1c8df5)
+
+running 12 tests
+test empty_archive_requires_real_eof_and_remains_stable_until_explicit_close ... ok
+test corrupt_last_part_is_rejected_before_first_page_can_be_obtained ... ok
+test byte_budget_counts_original_plus_container_and_failed_budget_does_not_advance ... ok
+test fixed_cursor_does_not_mix_concurrent_archive_publication_or_content_changes ... ok
+test exclusive_profile_is_rejected_without_current_read_fallback ... ok
+test owner_binding_rejects_another_store_even_when_it_opens_the_same_database ... ok
+test cursor_requires_expected_root_subject_and_published_archive ... ok
+test validly_encoded_forged_tail_cannot_pass_the_initial_whole_chain_check ... ok
+test verified_transaction_keeps_original_parts_after_later_storage_corruption ... ok
+test eof_retains_transaction_but_close_and_drop_release_the_wal_reader ... ok
+test range_query_uses_composite_index_and_large_archive_pages_preserve_exact_order ... ok
+test maximum_part_and_readonly_source_drop_preserve_exact_original_bytes ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.58s
+
+     Running tests/read_archive_retention_budget.rs (build/foundation-core/debug/deps/read_archive_retention_budget-d87a4e86f784a319)
+
+running 15 tests
+test final_authorization_failure_does_not_retain_metadata_charge_or_read_event ... ok
+test concurrent_byte_admission_reserves_actual_original_cost_across_store_handles ... ok
+test failed_begin_append_and_abort_only_charge_committed_originals ... ok
+test final_metadata_growth_is_rejected_atomically_but_original_retry_is_free_under_lower_policy ... ok
+test concurrent_subjects_and_stores_cannot_both_claim_last_published_plus_preparing_slot ... ok
+test per_store_policy_is_not_persistent_and_invalid_limits_do_not_replace_it ... ok
+test retention_crash_child ... ok
+test actual_commit_failure_rolls_back_ledger_together_with_each_archive_mutation ... ok
+test published_archives_and_final_metadata_remain_charged_exactly ... ok
+test tracked_capture_uses_same_retention_gate_and_cancellation_releases_only_archive_cost ... ok
+test migration_crashes_preserve_old_originals_and_publish_whole_derived_ledger ... ok
+test corrupted_accounting_is_rejected_by_integrity_and_reopening_without_rebuild ... ok
+test crash_after_accounting_or_commit_leaves_archive_and_ledger_in_same_version ... ok
+test migration_and_snapshot_preserve_originals_and_signatures_with_self_contained_ledger ... ok
+test legacy_over_hard_archive_count_is_preserved_readable_and_blocks_only_growth ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.76s
+
+     Running tests/read_capture.rs (build/foundation-core/debug/deps/read_capture-11b1366b4bdfa7fa)
+
+running 16 tests
+test deleted_state_cannot_turn_tracked_archive_into_an_untracked_preparation ... ok
+test lower_state_and_preparation_quotas_leave_no_half_capture_and_exact_retry_is_free ... ok
+test failed_terminal_commit_keeps_original_parts_and_retry_releases_them_once ... ok
+test listing_is_stable_bounded_and_terminal_intents_remain_visible ... ok
+test read_capture_crash_child ... ok
+test capture_operation_identity_remains_reserved_after_cancellation ... ok
+test preparing_is_not_a_read_and_cas_cannot_be_bypassed_by_generic_archive_writes ... ok
+test ready_publishes_exact_root_and_read_together_and_retry_rechecks_current_guard ... ok
+test state_codec_rejects_duplicate_fields_future_phase_zero_owner_and_oversized_sql ... ok
+test two_store_handles_cannot_append_with_one_revision_or_end_another_owner ... ok
+test actual_commit_unknown_rolls_back_begin_append_and_ready_without_partial_state ... ok
+test migration_crashes_keep_either_complete_database_version ... ok
+test terminal_failure_cancel_and_restart_interrupt_keep_intent_but_release_unpublished_bytes ... ok
+test malformed_state_and_broken_archive_association_are_rejected_without_repair ... ok
+test migration_preserves_legacy_read_archive_originals_and_sealed_signature ... ok
+test process_crashes_do_not_publish_partial_sources_and_committed_ready_is_retrievable ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.03s
+
+     Running tests/read_journal.rs (build/foundation-core/debug/deps/read_journal-ebdf1cb7a4a30218)
+
+running 16 tests
+test codec_preserves_unknown_raw_and_rejects_duplicate_or_forged_fields ... ok
+test exact_retry_requires_current_guard_and_all_original_fields_and_ordered_evidence ... ok
+test final_guard_failure_rolls_back_journal_evidence_chunks_and_outbox ... ok
+test actual_commit_unknown_rolls_back_and_retry_uses_same_original_observation ... ok
+test oversized_sql_payload_is_rejected_before_materializing_the_container ... ok
+test pending_event_budget_blocks_new_reads_but_exact_retry_remains_available ... ok
+test read_event_cannot_be_smuggled_into_old_format_ten ... ok
+test read_journal_crash_child ... ok
+test migration_crashes_keep_whole_ten_or_eleven_and_original_content ... ok
+test read_journal_changes_no_card_record_or_revision_and_has_typed_lookup ... ok
+test content_and_read_events_share_originals_and_chunks_without_cross_kind_lookup ... ok
+test maximum_values_and_reference_count_are_accepted_but_excess_is_rejected ... ok
+test corrupted_missing_swapped_and_orphan_evidence_are_rejected_without_repair ... ok
+test actual_crashes_publish_either_no_read_or_complete_original_with_exact_retry ... ok
+test format_ten_migration_preserves_original_content_evidence_and_signed_segment ... ok
+test repeated_evidence_is_charged_logically_even_when_physical_chunks_are_shared ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.25s
+
+     Running tests/record_crash.rs (build/foundation-core/debug/deps/record_crash-f55a9246919fd7e5)
+
+running 1 test
+test record_creation_and_draft_save_recover_at_twelve_exit_boundaries ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.88s
+
+     Running tests/records.rs (build/foundation-core/debug/deps/records-ea21ec695e4ff2b1)
+
+running 7 tests
+test record_revision_overflow_and_framing_limits_are_explicit ... ok
+test unknown_fields_survive_known_patches_and_container_roundtrip ... ok
+test retries_are_exact_global_and_queries_do_not_cross_kinds ... ok
+test event_budget_is_shared_with_card_writes_and_rollback_is_total ... ok
+test invalid_references_and_patch_fields_never_commit ... ok
+test multi_workspace_views_and_drafts_do_not_duplicate_or_overwrite_content ... ok
+test tampered_record_or_missing_record_is_detected_on_reopen ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/registry_sqlite.rs (build/foundation-core/debug/deps/registry_sqlite-d11ecba7e755c310)
+
+running 5 tests
+test unrelated_future_and_invalid_snapshots_fail_without_rewriting ... ok
+test full_u64_revision_survives_sqlite_and_overflow_never_publishes ... ok
+test exclusive_owner_and_corrupt_archive_are_never_bypassed_or_repaired ... ok
+test unknown_commit_blocks_even_noop_confirmation_until_reopen ... ok
+test sqlite_and_native_decisions_persist_identical_envelopes ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/retained_staging.rs (build/foundation-core/debug/deps/retained_staging-9cbce2501d9effe3)
+
+running 8 tests
+test retained_stage_child ... ok
+test ordinary_card_and_event_history_keep_bytes_after_snapshot_owner_releases ... ok
+test distinct_owners_share_one_blob_and_release_needs_both_then_full_grace ... ok
+test source_and_retention_insert_failures_roll_back_every_byte_and_owner ... ok
+test owner_and_payload_are_one_durable_fact_and_confirmed_retry_does_not_read_source ... ok
+test ambiguous_or_corrupted_owner_never_replays_or_creates_new_bytes ... ok
+test process_exit_before_and_after_commit_preserves_atomic_blob_and_owner ... ok
+test confirmed_replay_succeeds_at_physical_capacity_without_advancing_clock ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.13s
+
+     Running tests/retained_staging_compat.rs (build/foundation-core/debug/deps/retained_staging_compat-c757d4f89b35e3a3)
+
+running 1 test
+test retained_owner_preserves_large_valid_unknown_retention_fields ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/revision_boundaries.rs (build/foundation-core/debug/deps/revision_boundaries-c83e43903decea81)
+
+running 1 test
+test adjacent_u64_revisions_and_maximum_have_exact_transition_semantics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/revocation.rs (build/foundation-core/debug/deps/revocation-6155a23a06fd2656)
+
+running 2 tests
+test revocation_is_one_way_instance_scoped_and_prevents_pending_commit ... ok
+test foreign_host_cannot_obtain_revocation_signal ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/runtime_unaligned.rs (build/foundation-core/debug/deps/runtime_unaligned-f4a165828408ccd9)
+
+running 2 tests
+test owned_runtime_reader_keeps_framing_and_allocation_bounds ... ok
+test embedded_runtime_command_and_response_decode_at_every_byte_alignment ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/sealing.rs (build/foundation-core/debug/deps/sealing-2efca3decfb50823)
+
+running 6 tests
+test seal_child ... ok
+
+running 1 test
+test tampered_confirmation_and_missing_local_signed_original_block_reopen ... ok
+
+running 1 test
+test migration_preserves_v4_records_and_corrupt_migration_rolls_back ... ok
+
+running 1 test
+test invalid_evidence_never_confirms_and_historical_attachment_remains_retained ... ok
+test sealing_releases_budget_preserves_retries_records_and_pinned_reopen ... ok
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+
+running 1 test
+test crash_confirmation_and_migration_are_atomic ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.80s
+
+     Running tests/service_authority.rs (build/foundation-core/debug/deps/service_authority-d80846e35548a44f)
+
+running 16 tests
+test crash::service_authority_crash_child ... ignored, subprocess fault-injection entry; exercised by parent tests
+test native::immutable_reference_identity_blocks_type_and_subject_rebinding ... ok
+test native::exclusive_profile_cannot_bypass_a_pin_even_through_a_database_copy ... ok
+test native::existing_config_consumes_same_authority_budget_and_replacement_counts_once ... ok
+test native::cas_reopen_digest_binding_and_disable_survive_without_events ... ok
+test publication_requires_canonical_address_tls_and_fixed_uri_paths ... ok
+test references_revision_lifetime_principal_and_missing_kind_rejected ... ok
+test roundtrip_checks_half_open_time_and_never_retains_raw_token ... ok
+test unknown_duplicate_oneof_wire_overflow_and_noncanonical_fields_fail_closed ... ok
+test native::shared_quota_blocks_events_config_and_authority_with_atomic_rollback ... ok
+test native::store_pin_blocks_other_writers_and_mutations_invalidate_old_leases ... ok
+test crash::replacement_crashes_leave_whole_previous_or_new_record ... ok
+test native::v18_migration_preserves_configs_and_events_and_rejects_false_downgrade ... ok
+test crash::migration_crashes_preserve_old_or_complete_new_schema_and_identity ... ok
+test native::bounded_authority_count_and_identity_metadata_corruption_fail_closed ... ok
+test native::corrupt_metadata_payload_or_schema_cannot_be_loaded ... ok
+
+test result: ok. 15 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/service_codec.rs (build/foundation-core/debug/deps/service_codec-3a24475d2ed12333)
+
+running 8 tests
+test original_frames_and_binary_values_roundtrip_from_unaligned_slices ... ok
+test response_binds_exact_original_request_and_call_id ... ok
+test identity_method_and_origin_form_validation_is_not_display_text ... ok
+test versions_schema_utf8_truncation_and_trailing_frames_fail_closed ... ok
+test response_status_and_bodyless_statuses_are_strict ... ok
+test sensitive_and_transport_headers_are_rejected_on_encode_and_decode ... ok
+test body_header_count_and_header_byte_budgets_apply_in_both_directions ... ok
+test service_manifest_pin_requires_publish_and_preserves_legacy_empty_encoding ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/service_config.rs (build/foundation-core/debug/deps/service_config-333aadb04355e5d2)
+
+running 12 tests
+test crash::service_config_crash_child ... ignored, child process entry; parents exercise the crash boundaries
+test exact_codec_preserves_policy_and_opaque_references ... ok
+test duplicates_unknown_fields_noncanonical_and_nested_counts_rejected ... ok
+test malformed_refs_revisions_scopes_and_namespace_rejected ... ok
+test native::shared_quota_blocks_other_events_and_failed_replacement_rolls_back ... ok
+test native::historical_namespace_and_service_identity_cannot_be_rebound ... ok
+test native::cas_persist_disable_reopen_and_page_with_no_outbox_side_effect ... ok
+test native::migration_preserves_old_event_bytes_and_rejects_false_downgrade ... ok
+test native::replacement_is_charged_once_and_outbox_also_limits_config_admission ... ok
+test crash::replacement_crash_recovers_whole_old_or_new_configuration ... ok
+test crash::migration_crash_preserves_whole_old_or_new_schema ... ok
+test native::corrupted_index_identity_payload_and_schema_fail_closed ... ok
+
+test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.29s
+
+     Running tests/service_management_listing.rs (build/foundation-core/debug/deps/service_management_listing-65f437acf1707fc0)
+
+running 7 tests
+test invalid_limits_cursors_and_snapshots_are_rejected ... ok
+test sorted_pages_preserve_original_containers_and_historical_rows ... ok
+test empty_snapshots_reopen_and_listing_does_not_pin_or_revoke ... ok
+test maximum_counts_are_readable_but_one_extra_row_fails_closed ... ok
+test snapshots_reject_updates_additions_and_same_revision_container_changes ... ok
+test config_corruption_beyond_first_page_is_never_skipped ... ok
+test authority_corruption_beyond_first_page_is_never_skipped ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s
+
+     Running tests/service_record.rs (build/foundation-core/debug/deps/service_record-6441277b31c101cc)
+
+running 9 tests
+test policies_keys_and_timestamp_overflow_are_rejected_before_encoding ... ok
+test exact_original_and_expiry_survive_container_roundtrip_without_raw_key ... ok
+test corrupt_container_and_invalid_inner_service_are_never_accepted ... ok
+test matching_preserves_original_timestamps_and_compares_policy_and_exact_frame ... ok
+test namespace_principal_service_and_key_scope_identity ... ok
+test publish_command_binds_original_container_policy_package_and_scope ... ok
+test same_scoped_key_binds_changed_input_to_same_operation_but_matching_conflicts ... ok
+test service_digest_is_only_allowed_for_publish_while_legacy_publish_survives ... ok
+test protobuf_rejects_unknown_duplicate_wrong_wire_noncanonical_and_oversized_fields ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/service_request_atomic.rs (build/foundation-core/debug/deps/service_request_atomic-d49c0666a7b746eb)
+
+running 8 tests
+test service_request_atomic_crash_child ... ignored, child harness; parent supplies isolated database and fault boundary
+test complete_preparation_reopens_and_exact_retry_does_not_duplicate ... ok
+test independent_writes_keep_behavior_and_claim_remains_single_winner ... ok
+test unwinding_authorizer_rolls_back_and_releases_writer ... ok
+test real_process_crash_before_commit_is_empty_after_commit_is_complete ... ok
+test event_and_material_capacity_failure_leave_no_prepared_remnant ... ok
+test each_authorization_failure_and_final_guard_roll_back_all_four_writes ... ok
+test invalid_metadata_and_non_service_originals_never_create_history ... ok
+
+test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.54s
+
+     Running tests/service_resources.rs (build/foundation-core/debug/deps/service_resources-5bd215c3d2ef6090)
+
+running 6 tests
+test invalid_numeric_limits ... ok
+test header_duplicates_and_noncanonical_hex_reject ... ok
+test unknown_version_and_digest_reject_even_in_canonical_frame ... ok
+test invalid_endpoint_sets_and_credentials ... ok
+test truncated_trailing_and_oversize_frames_reject ... ok
+test positive_max_boundaries_inclusive_and_service_header_fits ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/service_run_budget.rs (build/foundation-core/debug/deps/service_run_budget-9a92277e42ac4d1d)
+
+running 7 tests
+test absent_budget_preserves_old_profile_bytes_and_package_acceptance ... ok
+test all_six_recognized_features_can_coexist ... ok
+test run_bytes_cannot_exceed_parent_but_may_be_stricter_than_a_job ... ok
+test finite_run_budget_roundtrips_without_granting_content_or_extending_request_limits ... ok
+test required_feature_and_nested_budget_must_both_be_present ... ok
+test canonical_nested_budget_rejects_unknown_duplicate_and_ambiguous_fields ... ok
+test run_budget_requires_supported_version_and_finite_nonzero_values ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/service_run_profile.rs (build/foundation-core/debug/deps/service_run_profile-02d3a73953c71f09)
+
+running 8 tests
+test old_declaration_bytes_and_absent_profile_remain_unchanged ... ok
+test all_five_recognized_features_can_coexist_with_distinct_handlers ... ok
+test unknown_outer_optional_metadata_is_preserved_with_new_profile ... ok
+test profile_and_feature_must_both_be_present ... ok
+test profile_requires_listen_publish_and_exact_service_schema ... ok
+test finite_profile_roundtrips_without_content_grants_or_request_budget_extension ... ok
+test nested_unknown_duplicate_noncanonical_and_wrong_wire_fields_reject ... ok
+test profile_version_and_finite_duration_are_required ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/shared_object.rs (build/foundation-core/debug/deps/shared_object-89525816f1c24019)
+
+running 10 tests
+test checked_segment_addition_rejects_wraparound ... ok
+test descriptor_decode_accepts_unaligned_transport_slices ... ok
+test byte_constructor_computes_sha256_and_checks_limits_before_hashing ... ok
+test minimum_and_maximum_objects_and_all_64_segments_are_supported ... ok
+test gaps_overlap_reordering_zero_length_and_partial_coverage_fail ... ok
+test mismatched_version_schema_and_content_hash_length_are_rejected ... ok
+test round_trip_preserves_u64_identity_hash_and_segment_layout ... ok
+test truncation_trailing_messages_and_oversized_frames_are_rejected ... ok
+test zero_identities_empty_oversize_and_excess_segments_fail_on_both_paths ... ok
+test all_identity_and_layout_variants_remain_descriptions_not_access_handles ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/shared_transfer.rs (build/foundation-core/debug/deps/shared_transfer-cde78684e29f361e)
+
+running 9 tests
+test offer_and_reply_kinds_cannot_be_substituted ... ok
+test standalone_reply_validation_does_not_claim_offer_correlation ... ok
+test offer_and_reply_round_trip_full_ids_bytes_and_probe_outcome ... ok
+test truncated_trailing_and_oversized_frames_never_decode ... ok
+test wrong_outer_version_and_schema_digest_are_rejected ... ok
+test unaligned_offer_and_reply_transport_frames_are_supported ... ok
+test zero_transfer_handle_and_invalid_nested_descriptor_are_rejected ... ok
+test empty_length_mismatch_oversize_and_wrong_payload_digest_are_rejected ... ok
+test full_offer_size_and_reply_copy_bound_are_distinct ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/storage.rs (build/foundation-core/debug/deps/storage-8eac39fa51af9d03)
+
+running 16 tests
+test exclusive_profile_does_not_change_an_unrelated_database ... ok
+test duplicate_returns_original_result_even_after_later_edits_and_capacity_reached ... ok
+test missing_attachment_payload_is_refused ... ok
+test event_insert_failure_rolls_back_card_and_dedup_record ... ok
+test exclusive_profile_reopens_deduplicates_and_rolls_back_capacity ... ok
+test drain_deadline_between_sql_writes_and_commit_rolls_back ... ok
+test atomic_create_rename_reopen_and_result_query ... ok
+test integrity_check_detects_valid_container_with_wrong_current_content ... ok
+test unrelated_or_future_database_is_not_reinitialized ... ok
+test missing_outbox_event_blocks_reopen_and_existing_query_does_not_create_file ... ok
+test revision_conflict_and_missing_card_leave_no_event_or_receipt ... ok
+test revoked_and_expired_authority_never_commit_or_read_dedup_results ... ok
+test reused_operation_id_with_changed_input_is_rejected ... ok
+test simultaneous_same_revision_writers_have_one_winner ... ok
+test unknown_fields_and_full_u64_revision_survive_storage ... ok
+test event_count_and_byte_budgets_fail_closed ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/storage_crash.rs (build/foundation-core/debug/deps/storage_crash-c83c31adfb99e3c6)
+
+running 2 tests
+test create_recovers_at_six_process_exit_boundaries ... ok
+test rename_recovers_at_six_process_exit_boundaries ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+     Running tests/store_cli.rs (build/foundation-core/debug/deps/store_cli-f6964cd489d9bfdb)
+
+running 3 tests
+test query_missing_database_is_not_a_creation_command ... ok
+test cli_create_query_export_import_and_check ... ok
+test cli_attachment_export_preserves_original_and_refuses_overwrite ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/task_evidence.rs (build/foundation-core/debug/deps/task_evidence-6cf4e5e819a74064)
+
+running 10 tests
+test container_lengths_compression_tampering_and_tail_are_bounded ... ok
+test completion_roundtrip_retains_original_bytes_and_fixed_external_digest ... ok
+test byte_granularity_memory_ceiling_is_preserved_but_dependency_graphs_are_not_evidence ... ok
+test successful_output_respects_the_actual_package_registration ... ok
+test protobuf_duplicates_groups_field_flood_and_oversized_spans_reject_before_decode ... ok
+test content_commands_dynamic_dependency_packages_and_wrong_contracts_reject ... ok
+test unknown_optional_fields_are_retained_but_unknown_versions_and_faults_rejected ... ok
+test budgets_observed_usage_and_backend_limits_are_checked ... ok
+test plugin_failures_and_all_stable_faults_have_distinct_observation_rules ... ok
+test full_module_full_task_and_64k_output_fit_without_losing_original_frames ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.38s
+
+     Running tests/tls_identity_store.rs (build/foundation-core/debug/deps/tls_identity_store-c6b1baadbfe0c279)
+
+running 10 tests
+test crash::child ... ignored, child harness; parent supplies isolated database and crash boundary
+test exact_revocation_cas_rejection_and_foreign_writer_keep_namespaces_separate ... ok
+test quota_failure_rolls_back_data_but_never_revives_revoked_lease ... ok
+test pagination_snapshots_reject_mutation_and_bad_cursors ... ok
+test record_count_and_corrupt_metadata_are_detected ... ok
+test v20_migration_preserves_original_identity_and_refuses_premature_table ... ok
+test crash::replacement_crash_boundaries_preserve_exact_committed_revision ... ok
+test cas_library_binding_tombstone_and_snapshot_survive_reopen ... ok
+test crash::migration_crash_boundaries_keep_identity_and_atomic_schema ... ok
+test malformed_oversized_and_foreign_library_rows_cannot_load_list_or_snapshot ... ok
+
+test result: ok. 9 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/ui.rs (build/foundation-core/debug/deps/ui-c3573c568337be75)
+
+running 4 tests
+test malformed_frames_and_payload_mixing_reject ... ok
+test expanded_text_budget_rejects_even_when_wire_frame_fits ... ok
+test events_bind_view_generation_revision_serial_action_and_field_type ... ok
+test document_bounds_and_tree_shape_are_enforced ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/versioned_content.rs (build/foundation-core/debug/deps/versioned_content-2e4f713fe45b0f3a)
+
+running 6 tests
+test schema_two_rejects_mixed_and_repeated_actions ... ok
+test historical_set_content_proposal_keeps_its_pure_high_format_interpretation ... ok
+test schema_one_field_eight_is_still_an_unknown_legacy_field ... ok
+test old_live_edit_cannot_overwrite_migrated_format_even_with_current_revision_and_grant ... ok
+test versioned_guard_and_revocation_roll_back_without_record_or_event ... ok
+test versioned_edit_binds_complete_source_and_reconstructs_receipt ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+   Doc-tests morrow_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,7 @@
+{
+  "platform": "linux",
+  "exclusions": [
+    "No Flutter UI, TLS or other-platform qualification; recovery covers observed/unknown history, not application transaction reconciliation.",
+    "Windows-only frozen dependency tests were not run; this is not the full guest-v1-rc1 gate."
+  ]
+}

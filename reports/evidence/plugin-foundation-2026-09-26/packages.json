@@ -1,0 +1,14 @@
+{
+  "rust": {
+    "path": "/workspace/scratch/c3041ed82a57/morrow/build/plugin-foundation-closeout-2026-09-26/rust/dist/ebd1ac473dc98f22b2eb01ec873345922bba01c1de3e29e8edacc0af84671d46.mplugin",
+    "sha256": "ebd1ac473dc98f22b2eb01ec873345922bba01c1de3e29e8edacc0af84671d46"
+  },
+  "c": {
+    "path": "/workspace/scratch/c3041ed82a57/morrow/build/plugin-foundation-closeout-2026-09-26/c/dist/adb081d71279d3c4409b272c39250c04fc9f95bbe289dd603ec183fa96174c88.mplugin",
+    "sha256": "adb081d71279d3c4409b272c39250c04fc9f95bbe289dd603ec183fa96174c88"
+  },
+  "cpp": {
+    "path": "/workspace/scratch/c3041ed82a57/morrow/build/plugin-foundation-closeout-2026-09-26/cpp/dist/77e8620760e0ea8e6f6f702c012a7917b709b270d3840abe410948360fc72cb0.mplugin",
+    "sha256": "77e8620760e0ea8e6f6f702c012a7917b709b270d3840abe410948360fc72cb0"
+  }
+}

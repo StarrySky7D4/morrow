@@ -1,0 +1,41 @@
+{
+  "source_commit": "b2fa7d074d2ffccd05782bba1153928aabb3cbaf",
+  "platform": "linux",
+  "packages": {
+    "io": {
+      "rust": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/io-foundation-final-2026-09-26/rust/dist/c925d62eb50bda2f292bb1d3ea52633dc5c58b52acb073d179542e97cdaa6e66.mplugin",
+        "sha256": "c925d62eb50bda2f292bb1d3ea52633dc5c58b52acb073d179542e97cdaa6e66"
+      },
+      "c": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/io-foundation-final-2026-09-26/c/dist/45f888c07e34fbc25acf7f4822a39aa911380d79f1cf8e0b13088f11ab783295.mplugin",
+        "sha256": "45f888c07e34fbc25acf7f4822a39aa911380d79f1cf8e0b13088f11ab783295"
+      },
+      "cpp": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/io-foundation-final-2026-09-26/cpp/dist/03ed861e5b68a1fc95d6235c763186365d08bb31aa3cdc617f8eef2b8f69b965.mplugin",
+        "sha256": "03ed861e5b68a1fc95d6235c763186365d08bb31aa3cdc617f8eef2b8f69b965"
+      }
+    },
+    "service": {
+      "rust": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/service-foundation-capture-2026-09-26/rust/dist/ebd1ac473dc98f22b2eb01ec873345922bba01c1de3e29e8edacc0af84671d46.mplugin",
+        "sha256": "ebd1ac473dc98f22b2eb01ec873345922bba01c1de3e29e8edacc0af84671d46"
+      },
+      "c": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/service-foundation-capture-2026-09-26/c/dist/adb081d71279d3c4409b272c39250c04fc9f95bbe289dd603ec183fa96174c88.mplugin",
+        "sha256": "adb081d71279d3c4409b272c39250c04fc9f95bbe289dd603ec183fa96174c88"
+      },
+      "cpp": {
+        "path": "/workspace/scratch/c3041ed82a57/morrow/build/service-foundation-capture-2026-09-26/cpp/dist/77e8620760e0ea8e6f6f702c012a7917b709b270d3840abe410948360fc72cb0.mplugin",
+        "sha256": "77e8620760e0ea8e6f6f702c012a7917b709b270d3840abe410948360fc72cb0"
+      }
+    }
+  },
+  "scope": "Bounded HTTP IO and finite service runs. Resource codec is recorded, not exercised by the echo guest. No whole-SDK, native ABI, Flutter or cross-platform promise.",
+  "tools": {
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+    "clang": "clang version 23.1.0-wasi-sdk (https://github.com/llvm/llvm-project 895aa2c896ada719451be2e3673c83da8ddf1141)\nTarget: wasm32-unknown-wasip1\nThread model: posix\nInstalledDir: /workspace/scratch/c3041ed82a57/toolchain/wasi-sdk-34.0-x86_64-linux/bin\nConfiguration file: /workspace/scratch/c3041ed82a57/toolchain/wasi-sdk-34.0-x86_64-linux/bin/clang.cfg",
+    "capnp": "Cap'n Proto version 1.2.0"
+  }
+}

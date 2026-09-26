@@ -1,0 +1,30 @@
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.26s
+     Running tests/sdk_transport_frozen.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/sdk_transport_frozen-b6fd934ea2fab505)
+
+running 1 test
+test six_original_transport_packages_keep_modules_profiles_and_bounded_budgets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running tests/sdk_service_guest.rs (build/service-foundation-2026-09-26/target-network/debug/deps/sdk_service_guest-d0ba1cee1bd02662)
+
+running 2 tests
+test generated_original_packages_serve_seven_methods_and_enforce_grants ... ok
+test generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.41s
+
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/managed_http.rs (build/service-foundation-2026-09-26/target-network/debug/deps/managed_http-b7c05913812a7508)
+
+running 4 tests
+test sdk_http_guest::credential_injection_and_http_error_are_observed_without_secret_in_request_material ... ok
+test sdk_http_guest::dropped_response_is_unknown_not_retried_and_survives_store_reopen ... ok
+test sdk_http_guest::unapproved_endpoint_method_and_credential_never_send_or_create_intent ... ok
+test sdk_http_guest::seven_methods_preserve_binary_bytes_headers_and_durable_receipts ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 28 filtered out; finished in 4.84s
+
+PASS: six original transport packages through current host; no guest build/repack

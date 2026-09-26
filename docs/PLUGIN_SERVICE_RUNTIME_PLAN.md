@@ -155,3 +155,8 @@ Windows完整应用集成现已通过：经真实窗口中的Flutter框架输入
 ## 2026-09-21 当前私有帧分段状态
 
 2026-09-21[服务期间完整私有请求分段](../reports/segmented-owner-frames-2026-09-21.md)已完成：64–128 KiB请求以32 KiB块进入同一原拥有者，完整摘要校验后一次执行；原64 KiB命令额度、停止/Unknown与旧插件ABI保留。实际71,408字节配置保存、认证HTTP共存和同库重开通过；68项宿主测试、37项客户端组合（新增Unknown后路由文件9项）与4项真实进程测试通过，严格Clippy/生成一致性和完整Windows Release通过。下一项为应用服务TLS/证书生命周期，再推进Unknown核对、文件系统与三语言IO SDK；不等于guest流式IO或SDK稳定，未推送/发布。
+
+
+## 2026-09-26 SDK 与运行入口声明收尾
+
+项目工具现生成工作台所需的有限 `service-run-v1`／累计预算声明，资源目录由三语言公共 SDK 解析。生成原包以原预算验证专用运行绑定、续租 CAS、31 秒后继续调用、额度耗尽、撤权与原 Store 历史重开。Observed 重放不执行 guest，Unknown 不重发，但两者仍占用准入预算。六个 IO／服务固定原件保存在独立兼容候选；细项和未完成的 Windows／Flutter 验收见 [底座收尾记录](../reports/plugin-foundation-closeout-2026-09-26.md)。

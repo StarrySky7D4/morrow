@@ -1,3 +1,5 @@
 # Frozen compatibility originals: preserve every byte across checkouts.
 /sdk/compat/guest-v1-rc1/** -text
 /sdk/compat/*.sha256 text eol=lf
+
+/sdk/compat/transport-v1-rc1/** -text

@@ -3,8 +3,11 @@
 use morrow_core::plugin_package::Package;
 #[test]
 fn six_original_transport_packages_keep_modules_profiles_and_bounded_budgets() {
-    let root =
-        std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../sdk/compat/transport-v1-rc1");
+    let root = std::env::var_os("MORROW_TRANSPORT_BASELINE")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../sdk/compat/transport-v1-rc1")
+        });
     for language in ["rust", "c", "cpp"] {
         for kind in ["io", "service"] {
             let stem = format!("{language}-{kind}");

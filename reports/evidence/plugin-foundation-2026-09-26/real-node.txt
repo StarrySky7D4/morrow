@@ -1,0 +1,9 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running tests/sdk_service_guest.rs (build/service-foundation-2026-09-26/target-network/debug/deps/sdk_service_guest-d0ba1cee1bd02662)
+
+running 2 tests
+test generated_original_packages_serve_seven_methods_and_enforce_grants ... ok
+test generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.30s
+

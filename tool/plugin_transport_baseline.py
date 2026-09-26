@@ -98,6 +98,7 @@ def run(args):
     verify(args.directory)
     env = os.environ.copy()
     folder = args.directory.resolve()
+    env["MORROW_TRANSPORT_BASELINE"] = str(folder)
     for language in ("rust", "c", "cpp"):
         env["MORROW_SERVICE_PACKAGE_" + language.upper()] = str(folder / (language + "-service.mplugin"))
         env["MORROW_SDK_IO_PACKAGE_" + language.upper()] = str(folder / (language + "-io.mplugin"))

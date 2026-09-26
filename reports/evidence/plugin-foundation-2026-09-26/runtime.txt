@@ -1,0 +1,738 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.23s
+     Running unittests src/lib.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/morrow_plugin_runtime-30be725de99f82b2)
+
+running 46 tests
+test continuation::tests::original_call_survives_dropped_runner_and_input_and_preserves_locals ... ok
+test continuation::tests::cancellation_before_dispatch_and_unanswered_finish_never_complete_task ... ok
+test continuation::tests::same_import_and_fuel_budgets_survive_all_resumptions ... ok
+test continuation::tests::synchronous_driver_uses_same_continuation_and_callback_order ... ok
+test continuation::tests::foreign_duplicate_and_stale_tokens_cannot_consume_current_continuation ... ok
+test continuation::tests::cancellation_and_deadline_during_pause_reject_ready_bytes_without_writing ... ok
+test continuation::tests::original_boundary_fault_wins_over_later_cancel ... ok
+test continuation::tests::paused_real_runner_leaves_original_host_free_for_durable_content_commands ... ok
+test io_execution::phase_tests::retired_unread_observation_holds_quota_until_original_owner_completion ... ok
+test io_execution::phase_tests::revoked_instance_denies_completion_but_retains_observation ... ok
+test io_execution::phase_tests::abandoned_dispatch_claim_cannot_authorize_resend ... ok
+test io_execution::phase_tests::revoked_after_claim_never_enters_backend_but_keeps_durable_unknown ... ok
+test io_execution::phase_tests::lost_observation_cannot_authorize_a_second_execution ... ok
+test io_execution::phase_tests::owned_ticket_dispatch_runs_on_thread_with_host_usable_in_main ... ok
+test io_jobs::transport_task::tests::drop_cancels_but_waits_for_real_exit ... ok
+test io_jobs::transport_task::tests::poll_returns_result_once_without_cancelling_consumed_task ... ok
+test package::frame::tests::denied_second_core_not_misrouted_to_io ... ok
+test package::frame::tests::earlier_denied_core_remains_protocol_fault_after_pending_io_cancellation ... ok
+test package::frame::tests::ordinary_package_cannot_enter_a_service_frame_or_run_its_guest ... ok
+test package::frame::tests::owned_service_frame_survives_package_and_input_and_exposes_exact_imports ... ok
+test io_jobs::owner_commands::sensitive_tests::stop_clears_unread_ready_payload_before_handle_is_polled_or_dropped ... ok
+test io_jobs::owner_commands::sensitive_tests::polling_revoked_control_clears_all_payloads_but_preserves_tickets ... ok
+test service_history::tests::claim_commit_crash_child ... ignored, child harness; parent supplies isolated database and crash point
+test io_jobs::owner_tests::failed_thread_spawn_returns_staged_original_owner ... ok
+test io_jobs::owner_commands::sensitive_tests::queued_cancel_clears_payload_before_dequeue_without_refunding_reservation ... ok
+test io_jobs::owner_commands::sensitive_tests::successful_read_transfers_original_allocation_to_caller_without_a_copy ... ok
+test io_jobs::owner_tests::readonly_malformed_input_does_not_invoke_owner_write_preparation ... ok
+
+running 1 test
+test service_history::tests::invalid_policy_and_zero_utc_fail_without_any_persisted_record ... ok
+test service_history::tests::changed_input_package_or_retention_cannot_reuse_the_original_key ... ok
+test service_history::tests::crash_after_committed_claim_reopens_unknown_without_executing_again ... ok
+test service_authority::tests::authority_dependency_validates_resource_and_control ... ok
+test service_history::tests::finish_rejects_bad_frame_and_conflicting_completion_without_overwriting_history ... ok
+test service_history::tests::final_claim_guard_failure_leaves_prepared_and_quota_failure_never_dispatches ... ok
+test service_history::tests::missing_original_or_observed_without_response_fails_closed ... ok
+test service_history::tests::prepared_recovery_keeps_original_creation_and_unknown_never_reexecutes ... ok
+test service_history::tests::query_changed_request_package_or_policy_conflicts_and_other_principal_is_missing ... ok
+test service_history::tests::observed_reopen_replays_exact_completion_without_another_event_and_rechecks_authority ... ok
+test service_history::tests::query_missing_material_cannot_report_prepared_or_observed_success ... ok
+test shared_memory::tests::non_windows_is_explicitly_unsupported ... ok
+test service_history::tests::validity_is_retained_and_clone_clock_rejects_regression_even_above_creation ... ok
+test service_history::tests::query_observed_reopens_exact_evidence_and_keeps_original_expiry ... ok
+test service_history::tests::two_connections_racing_the_same_prepared_request_have_exactly_one_execute ... ok
+test io_execution::phase_tests::foreign_completion_targets_cannot_write_or_sample_a_clock ... ok
+test service_history::tests::query_prepared_unknown_and_cancelled_keep_ttl_and_expire_during_final_guard ... ok
+test service_history::tests::query_missing_prepared_unknown_and_cancelled_never_change_records_or_reservations ... ok
+test service_history::tests::query_rechecks_authorization_for_every_successful_outcome ... ok
+
+test result: ok. 45 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.45s
+
+     Running unittests src/bin/shared_reader.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/morrow_shared_reader-bfd20722e01896b8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/transform_replay.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/morrow_transform_replay-7ed4202987b5bbb5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/activation_plan.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/activation_plan-afe441f35bf09255)
+
+running 8 tests
+test plain_task_root_is_supported_and_legacy_abi_is_rejected ... ok
+test unrelated_missing_duplicate_or_required_optional_requests_are_rejected_without_mutation ... ok
+test missing_lock_or_disabled_required_provider_cannot_produce_a_plan ... ok
+test optional_requests_expand_only_reachable_approved_slots_and_their_required_subtrees ... ok
+test optional_cycles_are_included_but_only_required_edges_control_order ... ok
+test upgrade_does_not_mutate_old_plan_or_reuse_its_approval ... ok
+test required_diamond_is_deduplicated_provider_first_and_plan_is_read_only ... ok
+test sixty_four_unique_nodes_are_allowed_and_the_next_is_rejected ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 13.87s
+
+     Running tests/bounds.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/bounds-7db08190ad580369)
+
+running 11 tests
+test module_and_administrative_limits_are_bounded ... ok
+test cannot_import_wasi_identity_or_memory ... ok
+test cancellation_prevents_submission_and_discards_late_reply ... ok
+test rejects_oversized_initial_memory ... ok
+test rejects_start_before_any_execution_and_requires_entrypoint ... ok
+test loop_exhausts_fuel_and_next_run_is_fresh ... ok
+test host_call_budget_terminates_spam_and_counts_attempts ... ok
+test invalid_host_response_is_not_exposed_as_success ... ok
+test traps_memory_growth_and_memory_load_outside_guest ... ok
+test owned_input_survives_and_output_views_are_reacquired_after_grow ... ok
+test all_foreign_buffer_checks_precede_submission ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/content_api.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/content_api-ab6f321f2a279184)
+
+running 1 test
+test guest_content_commands_commit_once_preserve_revision_and_respect_authority ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/dependency.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/dependency-df28473746879e89)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/dependency_bounds.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/dependency_bounds-6a7a9f3efca3ffc7)
+
+running 11 tests
+test dependency_mode_admits_only_the_exact_additional_function_signature ... ok
+test cancellation_before_and_during_callback_never_delivers_completion ... ok
+test maximum_input_output_and_adjacent_regions_are_supported ... ok
+test memory_growth_before_and_after_callback_preserves_returned_bytes ... ok
+test later_guest_trap_discards_completion_but_not_callback_count ... ok
+test ordinary_modes_reject_import_and_callbacks_cannot_cross_runner_modes ... ok
+test callback_failure_empty_and_oversized_responses_trap_without_completion ... ok
+test successful_dependency_exchange_delivers_bytes_and_counts_one_import_call ... ok
+test dependency_and_core_calls_share_one_limit_in_both_directions ... ok
+test task_input_must_be_read_and_completion_must_not_have_occurred ... ok
+test bad_offsets_lengths_capacities_and_any_overlap_never_reach_callback ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/dependency_graph.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/dependency_graph-215e750ae84de12a)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/durable_service_jobs.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/durable_service_jobs-b08de98e6191934b)
+
+running 12 tests
+test content_principal_revocation_inside_router_prevents_the_actual_backend ... ok
+test exact_retry_is_replayed_without_guest_fuel_and_charges_the_shared_input_completion_budget ... ok
+test content_history_cannot_be_opened_through_the_unscoped_service_submit_api ... ok
+test history_query_observed_returns_original_with_no_fuel_or_imports_and_charges_bytes ... ok
+test history_query_missing_never_prepares_or_executes_and_uses_original_job_budget ... ok
+test actual_guest_route_expiring_before_dispatch_never_calls_backend_and_remains_unknown ... ok
+test history_query_changed_input_conflicts_and_other_principal_sees_missing ... ok
+test history_query_prepared_ready_expiry_suppresses_stale_status_without_claim ... ok
+test ready_utc_expiry_suppresses_body_but_keeps_the_actual_observed_history ... ok
+test history_query_prepared_and_unknown_preserve_exact_records_and_never_dispatch ... ok
+test content_ready_and_replay_recheck_principal_policy_and_original_object_expiry ... ok
+test history_query_ready_rechecks_content_authority_and_never_opens_unscoped ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/dynamic_dependencies.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/dynamic_dependencies-e240d0b02d9de7c6)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/http_io.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/http_io-de1b29b4ab351a9e)
+
+running 5 tests
+test resource_only_admission_works_with_full_job_capacity_and_clones_hold_until_last_drop ... ok
+test live_guard_can_only_be_attached_once_to_an_unshared_active_grant ... ok
+test wrong_host_manager_same_package_instance_and_expiry_never_reserve_resources ... ok
+test declared_http_or_credentials_do_not_substitute_for_actual_io_approval ... ok
+test secret_preflight_checks_actual_owner_capabilities_without_advancing_accounting ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/inline_ui.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/inline_ui-17f393a7f83f5fa9)
+
+running 4 tests
+test nonzero_exit_and_closed_view_never_publish_a_document ... ok
+test real_wasm_open_and_event_replace_ui_without_business_writes ... ok
+test same_package_other_connection_foreign_host_and_revocation_cannot_rebind_view ... ok
+test rejected_events_preserve_serial_and_guest_failures_consume_it_without_revision ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s
+
+     Running tests/instance_pool.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/instance_pool-3326d6ae6b6dd883)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/io_binding.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_binding-adcfd24be95ea50c)
+
+running 9 tests
+test invalid_budget_deadline_and_clock_leave_shared_state_unchanged ... ok
+test declaration_and_live_connection_do_not_imply_io_approval ... ok
+test capability_subsets_share_budget_but_never_widen_a_binding ... ok
+test invalid_or_stale_approval_never_stops_a_healthy_instance ... ok
+test actual_manager_drop_revokes_control_even_when_binding_and_instance_survive ... ok
+test pool_restart_requires_fresh_binding_and_old_session_drop_revokes_immediately ... ok
+test narrowing_approval_and_stop_revoke_held_jobs_and_old_bindings ... ok
+test repeated_bindings_share_resources_jobs_and_nonrefundable_byte_budget ... ok
+test foreign_manager_host_connection_and_binding_attempts_cannot_poison_owner ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/io_execution.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_execution-752d7519a5b9698b)
+
+running 20 tests
+test cancel_before_dispatch_is_terminal_and_releases_quota ... ok
+test delivery_clock_can_retire_execution_without_registry_deadlock ... ok
+test foreign_instance_cannot_claim_slot_or_invoke_clock_and_delivery_advances_time ... ok
+test command_digest_must_match_the_actual_managed_package ... ok
+test begin_dispatch_retains_the_original_and_closes_the_history ... ok
+test io_execution_crash_child ... ignored, child harness; parent passes an isolated database and crash point
+test duplicate_bindings_and_repeats_never_create_a_second_execution ... ok
+test independent_managers_and_hosts_never_resend_an_unknown_outbound_execution ... ok
+test broker_administration_cannot_cancel_same_id_on_another_host ... ok
+test backend_stop_or_external_revocation_retains_facts_but_never_delivers_payload ... ok
+test reconciliation_requires_an_unknown_history_and_closes_without_original ... ok
+test independent_managers_and_hosts_claim_one_observed_outbound_execution ... ok
+test interrupted_backend_stays_unknown_and_survives_a_restart_without_resend ... ok
+test request_matching_precedes_every_admission ... ok
+test retirement_after_boundary_prevents_effect_and_requires_reconciliation ... ok
+test retirement_and_stop_reject_dispatch_before_any_external_effect ... ok
+test retiring_inside_backend_holds_capacity_until_execution_returns ... ok
+test store_final_authorization_checks_current_revocation ... ok
+test send_boundary_process_exit_never_resends_and_reconciles ... ok
+test fresh_clock_gates_admission_commit_effect_and_final_delivery ... ok
+
+test result: ok. 19 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/io_execution_gates.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_execution_gates-f41a5c8b3cf496d9)
+
+running 1 test
+test ordinary_run_and_task_never_execute_an_io_declared_module ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/io_jobs.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_jobs-60d69633c843416e)
+
+running 17 tests
+test a_call_that_exceeds_the_job_budget_is_denied_before_any_effect ... ok
+test dropping_running_handle_cannot_release_capacity_while_router_is_still_running ... ok
+test external_connection_revocation_must_block_router ... ok
+test external_revocation_during_route_prevents_further_calls_and_queued_effects ... ok
+test expired_ready_metadata_does_not_prevent_drain_from_ending ... ok
+test poll_is_nonblocking_and_read_honours_its_byte_bound ... ok
+test deadline_suppresses_a_late_result_without_retry ... ok
+test ready_reports_hold_capacity_through_read_bound_and_release_on_read_or_drop ... ok
+test multiple_calls_route_in_order_and_read_is_exactly_once ... ok
+test ready_then_worker_stop_must_not_deliver_success ... ok
+test drain_preserves_valid_ready_until_read_or_drop ... ok
+test ready_then_cancel_must_not_deliver_success ... ok
+test spawn_must_validate_public_limits ... ok
+test queue_capacity_and_byte_limits_are_enforced ... ok
+test stop_revokes_recycles_and_never_delivers_a_late_success ... ok
+test expiry_and_external_revocation_after_ready_suppress_delivery ... ok
+test manifest_limits_bound_slots_bytes_duration_and_runtime_calls ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/io_jobs_brokered.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_jobs_brokered-ce300c584f071152)
+
+running 11 tests
+test observed_operation_is_not_dispatched_again ... ok
+test one_managed_job_uses_one_slot_and_reserves_response_bytes_once ... ok
+test backend_error_retains_unknown_and_repeat_cannot_resend ... ok
+test persisted_unknown_cannot_be_downgraded_to_denied_by_router ... ok
+test actual_response_over_reserved_bound_is_unknown_not_safe_to_retry ... ok
+test repeated_dispatch_in_same_route_never_reenters_backend ... ok
+test valid_response_without_dispatch_cannot_be_delivered_as_broker_output ... ok
+test revocation_during_callback_keeps_observed_history_without_delivering_result ... ok
+test changed_or_denied_reply_after_dispatch_is_unknown_but_keeps_original_fact ... ok
+test response_reservation_is_admitted_before_backend_for_both_budget_domains ... ok
+test mismatched_command_never_calls_backend_or_creates_history ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.49s
+
+     Running tests/io_jobs_managed.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_jobs_managed-88257f357a9fd389)
+
+running 12 tests
+test an_unapproved_action_never_enters_the_trusted_router ... ok
+test manager_revocation_is_nonblocking_and_abandoned_running_job_holds_shared_slot ... ok
+test read_samples_current_trusted_clock_after_ready ... ok
+test managed_read_uses_one_shared_job_and_exact_cumulative_bytes ... ok
+test dropping_manager_revokes_already_ready_delivery ... ok
+test cumulative_shared_bytes_are_not_refunded_after_consumption ... ok
+test ready_result_is_not_delivered_after_io_approval_is_removed ... ok
+test approved_http_script_preserves_status_and_bounds_or_suppresses_all_response_data ... ok
+test http_credential_reference_requires_both_approved_capabilities_before_routing ... ok
+test response_exceeding_shared_instance_bytes_is_unknown_without_success_or_refund ... ok
+test ready_slots_compete_with_other_bindings_until_read_or_drop ... ok
+test wrong_manager_host_and_instance_are_rejected_before_clock ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s
+
+     Running tests/io_owner.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_owner-fd1ce28552136e26)
+
+running 10 tests
+test failed_disconnect_preserves_exact_instance_for_explicit_cleanup ... ok
+test preparation_failure_prevents_queued_store_mutation ... ok
+test dropped_worker_retains_owner_until_blocking_router_returns ... ok
+test router_panic_still_returns_original_owner_after_disconnect_and_maintenance ... ok
+test failed_admission_and_panicking_clock_return_original_owner_and_instance ... ok
+test maintenance_cannot_replace_owner_runtime_and_report_success ... ok
+test maintenance_error_or_panic_is_separate_from_successful_committed_update ... ok
+test same_owner_returns_after_jobs_and_original_store_mutation ... ok
+test preparation_cannot_replace_host_for_store_mutation_or_disconnection ... ok
+test preparation_failure_or_panic_revokes_ready_reports_and_preserves_owner ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/io_runtime.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/io_runtime-3182734efbe72f57)
+
+running 12 tests
+test callback_mode_mismatch_never_calls_callbacks ... ok
+test cancellation_inside_callback_rejects_late_success ... ok
+test host_call_budget_rejects_zero_and_repeated_calls_before_callback ... ok
+test exact_maximum_input_and_response_fit_nonoverlapping_regions ... ok
+test invalid_order_never_enters_callback ... ok
+test pre_cancelled_does_not_enter_callback ... ok
+test ordinary_modes_reject_io_and_combined_dependency_imports ... ok
+test exchange_and_io_share_one_budget ... ok
+test returned_length_and_actual_response_bytes_reach_guest ... ok
+test malformed_callback_response_is_not_delivered_as_success ... ok
+test transport_failure_returns_exact_negative_one_without_writing_output ... ok
+test invalid_ranges_and_full_capacity_are_checked_before_callback ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/managed_dependencies.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/managed_dependencies-43ebb56372ea17ba)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/managed_file_io.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/managed_file_io-1c777fb7c0e8fcf0)
+
+running 15 tests
+test foreign_instance_with_future_clock_cannot_reap_other_instances_files ... ok
+test approval_change_revokes_saved_binding_and_reaps_fixed_bytes ... ok
+test actual_guest_reads_multiple_chunks_and_finish_releases_only_held_capacity ... ok
+test cancel_releases_reference_without_refunding_bytes_or_revoking_other_file ... ok
+test file_list_only_binding_cannot_grant_read_or_mutate_clock_and_other_resources ... ok
+test expired_resources_reclaim_slots_but_do_not_refund_cumulative_bytes ... ok
+test actual_guest_late_result_is_rejected_after_expiry_or_instance_stop ... ok
+test declaration_without_approval_cannot_bind_and_other_instance_cannot_read ... ok
+test independent_io_handler_is_required_and_pure_task_entry_stays_closed ... ok
+test longer_binding_cannot_extend_original_file_lease_at_final_delivery ... ok
+test foreign_token_with_valid_binding_cannot_advance_clock_or_reap_owner ... ok
+test repeated_bindings_and_brokers_share_resource_limit_and_read_byte_charges ... ok
+test pool_close_invalidates_old_binding_and_reference ... ok
+test successful_guest_delivery_advances_shared_clock_to_final_observation ... ok
+test managed_run_rejects_duplicate_io_forged_completion_and_core_exchange ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.37s
+
+     Running tests/manager.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/manager-76430c8265c51391)
+
+running 11 tests
+test enabled_registry_approval_is_bound_to_the_real_connection ... ok
+test disable_at_read_release_refuses_late_data ... ok
+test managed_guest_trap_after_commit_preserves_receipt_without_automatic_retry ... ok
+test failed_persistence_keeps_old_state_but_never_revives_the_stopped_instance ... ok
+test manager_drop_stops_escaped_instances_and_foreign_hosts_cannot_grant ... ok
+test stale_confirmation_does_not_stop_a_valid_instance ... ok
+test close_retires_bounded_host_records_and_corrupt_package_cannot_reconnect ... ok
+test revoked_pure_transform_cannot_release_results_or_use_a_new_host ... ok
+test stopping_never_rolls_back_an_already_committed_operation ... ok
+test switching_theme_revokes_the_previous_theme_but_keeps_business_instances ... ok
+test every_selection_or_approval_change_revokes_all_prior_instances ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s
+
+     Running tests/manager_storage.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/manager_storage-1df6b369ba234df6)
+
+running 1 test
+test unknown_publication_revokes_live_instance_and_blocks_noop_confirmation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/owned_service_renewal.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/owned_service_renewal-9590f478f8353e72)
+
+running 11 tests
+test cancelled_queued_renewal_never_executes_or_changes_the_snapshot ... ok
+test missing_internal_manager_returns_denied_without_reconstructing_authority ... ok
+test original_manager_moves_with_owner_and_renewal_keeps_grants_and_usage ... ok
+test foreign_grant_is_rejected_before_sampling_the_callers_clock ... ok
+test budgetless_profile_cannot_be_promoted_through_the_management_queue ... ok
+test queued_renewal_cannot_restore_expired_or_revoked_authority ... ok
+test ready_generic_commands_and_renewals_share_the_same_eight_reservations ... ok
+test ready_renewal_suppressed_by_cancel_or_stop_reports_unknown_without_rollback ... ok
+test typed_renewal_does_not_require_generic_command_owner ... ok
+test two_queued_compare_and_swap_requests_have_exactly_one_success ... ok
+test semantic_rejections_are_definitive_results_and_do_not_change_the_run ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.36s
+
+     Running tests/owner_commands.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/owner_commands-5adae66629494494)
+
+running 16 tests
+test exact_input_and_reply_limits_are_accepted_and_fully_reserved ... ok
+test expiry_during_prepare_prevents_start_and_recovers_owner_without_business_effect ... ok
+test dropping_running_handle_cannot_refund_its_reservation_while_effect_is_running ... ok
+test expired_ready_payload_is_suppressed_while_blocked_handler_prevents_monitor_tick ... ok
+test invalid_bounds_have_no_effect_or_reservation_and_zero_reply_supports_empty_result ... ok
+test io_ready_queue_saturation_does_not_consume_reserved_owner_command_capacity ... ok
+test eight_ready_unread_commands_retain_count_and_reserved_bytes_until_consumed ... ok
+test queued_cancellation_never_enters_handler ... ok
+test running_cancellation_reports_unknown_and_retains_reservation_until_handler_returns ... ok
+test original_owner_executes_writes_and_reads_and_is_recovered_once ... ok
+test handler_error_or_oversize_after_effect_reports_unknown_without_automatic_replay ... ok
+test panicking_command_recovers_original_owner_and_never_runs_queued_command ... ok
+test runnable_guest_gets_a_turn_before_owner_queue_is_exhausted ... ok
+test stop_or_drain_rejects_queued_commands_and_suppresses_running_output ... ok
+test substituted_runtime_is_detected_and_queue_does_not_continue ... ok
+test missing_or_foreign_owned_manager_is_rejected_before_clock_and_returns_original_objects ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.41s
+
+     Running tests/packages.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/packages-d8827e7e043ab563)
+
+running 5 tests
+test preparation_rejects_executable_start_and_noncontract_imports ... ok
+test limits_are_intersected_and_initial_memory_obeys_host_ceiling ... ok
+test changed_archive_or_unbound_connection_cannot_execute ... ok
+test declared_fuel_and_call_budgets_stop_execution ... ok
+test stopped_and_foreign_connections_never_execute_guest_code ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/pool_tasks.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/pool_tasks-e298c958d181e761)
+
+running 10 tests
+test invalid_host_transform_request_does_not_quarantine_the_guest ... ok
+test actual_read_response_and_scope_revocation_are_per_real_root ... ok
+test business_failure_keeps_a_healthy_instance_available ... ok
+test revocation_during_actual_dispatch_stops_only_that_root_and_returns_no_summary ... ok
+test ordinary_transform_has_real_bound_output_without_dependency_providers ... ok
+test foreign_host_manager_and_session_are_rejected_without_revoking_valid_grants ... ok
+test trap_quarantines_only_the_actual_session_not_another_same_package_root ... ok
+test trap_after_real_commit_preserves_content_and_never_retries ... ok
+test protocol_and_fuel_faults_stop_roots_without_automatic_retry ... ok
+test failing_an_ordinary_root_preserves_the_same_package_shared_provider ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s
+
+     Running tests/remote_reader.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/remote_reader-511ffff23171e757)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk_frozen_compat.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/sdk_frozen_compat-48ea642e68031453)
+
+running 9 tests
+test c_ui ... ok
+test cpp_ui ... ok
+test rust_ui ... ok
+test cpp_transform ... ok
+test c_task ... ok
+test c_transform ... ok
+test cpp_task ... ok
+test rust_task ... ok
+test rust_transform ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.86s
+
+     Running tests/sdk_frozen_dependency.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/sdk_frozen_dependency-b728e5c28b1864b3)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk_io_guest.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/sdk_io_guest-e8efa9c4ddd2a6e6)
+
+running 5 tests
+test compiled_sdk_guest_reads_and_finishes_host_selected_file ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_sdk.ps1
+test cross_instance_file_denial_is_validated_and_completed_by_sdk_guest ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_sdk.ps1
+test package_declaration_without_manager_approval_cannot_bind ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_sdk.ps1
+test sdk_guest_completes_core_encoded_http_status_and_rejects_wrong_http_original ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_sdk.ps1
+test sdk_guest_rejects_bad_input_and_uncorrelated_broker_response ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_sdk.ps1
+
+test result: ok. 0 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk_service_codec.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/sdk_service_codec-045d69b53eea8dea)
+
+running 4 tests
+test native_c_and_cpp_handles_return_core_verified_frames ... ignored, requires compiled native C and C++ service codec executables
+test resource_directory_is_identical_across_independent_host_and_sdk_codecs ... ok
+test equivalent_layout_is_not_allowed_to_replace_original_request_digest ... ok
+test core_request_and_guest_reply_preserve_u64_binary_and_duplicate_headers ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/service_content.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_content-0b30159e9a29914b)
+
+running 11 tests
+test reserved_metadata_and_authenticated_route_must_match_exactly ... ok
+test removing_unused_policy_scope_does_not_revoke_the_effective_subset ... ok
+test effective_subset_is_exact_and_empty_scope_never_authorizes_content ... ok
+test invalid_scopes_fail_before_sampling_authority_and_limits_are_exact ... ok
+test every_command_kind_and_attachment_selects_only_its_exact_scope ... ok
+test policy_and_current_principal_revocation_reach_existing_clones ... ok
+test issue_rejects_missing_grants_foreign_instance_and_foreign_host ... ok
+test same_service_resource_accepts_listener_binding_but_rejects_fresh_grant ... ok
+test original_probe_rejects_revoke_replacement_and_expiry_without_renewal ... ok
+test scope_digest_is_canonical_and_independent_of_runtime_identity ... ok
+test service_revocation_and_disconnection_invalidate_effective_access ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+     Running tests/service_io.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_io-a69e58102b9d8da6)
+
+running 24 tests
+test listener_bound_ready_result_is_suppressed_without_a_monitor_tick ... ok
+test dropping_original_store_invalidates_configured_clones_and_listener ... ok
+test listener_claim_is_single_use_across_clones_and_resources_release_only_at_last_drop ... ok
+test listener_revocation_cancels_a_bound_service_inside_the_actual_router ... ok
+test listener_binding_and_worker_monitor_reject_another_live_instance ... ok
+test journal_config_checks_actual_package_service_handler_disabled_and_shared_revocation ... ok
+test identity_dependency_preserves_eight_outbound_slots_and_is_inherited_by_grants ... ok
+test persisted_config_reopen_uses_original_store_policy_with_fresh_actual_instance_grant ... ok
+test original_worker_updates_revoke_ready_results_even_if_cas_fails ... ok
+test restored_authority_requires_original_store_and_current_config_digest ... ok
+test persisted_approval_never_bypasses_actual_registry_or_content_grants ... ok
+test restored_authority_clock_regression_and_expiry_are_sticky ... ok
+test restricted_validity_rejects_future_empty_expired_and_monotonic_overrun ... ok
+test foreign_store_identity_dependency_cannot_attach_or_launder_original_authority ... ok
+test second_identity_dependency_is_rejected ... ok
+test revoked_identity_dependency_cannot_attach ... ok
+test ready_service_delivery_checks_service_manager_revocation_and_short_grant_expiry ... ok
+test service_revocation_during_running_router_cancels_before_a_second_guest_import ... ok
+test publish_approval_schema_and_registered_handler_are_all_required ... ok
+test unrelated_outbound_admin_update_uses_original_store_and_preserves_inbound_publication ... ok
+test restricted_validity_is_inherited_and_cannot_extend_or_revive_authority ... ok
+test wrong_actual_instance_and_request_route_are_rejected_without_job_or_byte_admission ... ok
+test service_completion_budget_and_wrong_request_binding_never_deliver_success ... ok
+test zero_io_service_returns_exact_typed_completion_and_charges_complete_frame ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.74s
+
+     Running tests/service_run_binding.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_run_binding-87d3588fdaecf10b)
+
+running 8 tests
+test clock_regression_permanently_invalidates_the_service_run_and_held_lease ... ok
+test clock_rollback_after_expiry_cannot_revive_a_service_run ... ok
+test sequential_requests_release_capacity_without_refunding_run_bytes ... ok
+test declaration_is_not_approval_and_revocation_invalidates_original_run ... ok
+test rejected_issuance_does_not_consume_first_valid_run ... ok
+test service_profile_requires_explicit_entry_and_legacy_remains_thirty_seconds ... ok
+test one_shot_issuance_survives_expiry_and_dropping_every_binding ... ok
+test frozen_host_clock_does_not_extend_real_service_deadline ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s
+
+     Running tests/service_run_broker_budget.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_run_broker_budget-84ffd4e28fb1dd0e)
+
+running 2 tests
+test host_run_response_sublimit_rejects_before_any_backend_effect ... ok
+test exact_run_byte_ceiling_preserves_reserved_response_and_final_job_delivery ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+     Running tests/service_run_budget.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_run_budget-0b28a3d3985016e7)
+
+running 7 tests
+test budget_entry_rejects_unbudgeted_profile_without_consuming_legacy_issuance ... ok
+test final_allowed_managed_job_keeps_its_ready_completion_after_next_job_is_denied ... ok
+test sequential_direct_admission_enforces_host_bytes_without_charging_rejected_jobs ... ok
+test zero_byte_jobs_are_cumulative_and_drop_does_not_refund_or_invalidate_live_lease ... ok
+test completion_cannot_exceed_host_run_bytes_even_when_declared_and_job_budgets_allow_it ... ok
+test invalid_budget_host_revision_and_old_api_preserve_first_issuance ... ok
+test cancelling_or_dropping_ready_managed_job_never_refunds_run_admission ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+     Running tests/service_run_renewal.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/service_run_renewal-f5c7c97650dde4bc)
+
+running 12 tests
+test concurrent_same_revision_can_only_renew_once ... ok
+test original_file_resource_survives_old_expiry_and_reaps_at_renewed_expiry ... ok
+test expiration_and_clock_rollback_are_sticky_and_cannot_be_renewed ... ok
+test budgetless_service_run_does_not_gain_renewal_permission ... ok
+test expired_ready_completion_cannot_be_restored_by_renewal ... ok
+test foreign_manager_or_grant_and_stale_registry_do_not_sample_callers_clock ... ok
+test manager_disable_and_approval_withdrawal_cannot_be_undone_by_renewal ... ok
+test renewal_updates_original_grant_and_listener_copies_without_resetting_usage ... ok
+test stale_noop_shrinking_and_over_ceiling_renewals_preserve_snapshot ... ok
+test renewal_does_not_extend_an_already_admitted_request_deadline ... ok
+test revoked_original_listener_or_service_and_stopping_or_draining_worker_cannot_be_renewed ... ok
+test frozen_clock_renewal_keeps_first_issuance_real_time_horizon ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.31s
+
+     Running tests/shared_objects.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/shared_objects-f82ff539ec863744)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/suspendable_probe.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/suspendable_probe-25e3b98552d96416)
+
+running 6 tests
+test same_stack_and_memory_resume_twice_without_restarting_entry ... ok
+test foreign_stale_and_oversize_replies_do_not_consume_or_refuel_pending_call ... ok
+test fuel_and_import_budgets_are_cumulative_across_suspensions ... ok
+test cancellation_discards_continuation_and_rejects_late_completion ... ok
+test malformed_memory_ranges_and_plain_traps_are_not_yields ... ok
+test real_owner_commits_during_delayed_transport_without_a_second_store ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/task_authority.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/task_authority-a6428c0425b9eb6e)
+
+running 1 test
+test altered_commands_and_forged_completions_never_become_authoritative ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/task_bounds.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/task_bounds-43869f9eba55f02f)
+
+running 2 tests
+test completion_is_copied_and_discarded_after_later_trap_or_cancellation ... ok
+test task_abi_rejects_wrong_modes_buffers_repetition_and_missing_completion ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/task_contracts.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/task_contracts-93c433c8b29b4705)
+
+running 2 tests
+test task_contract_and_provenance_reject_changed_ids_payloads_and_forged_success ... ok
+test independent_host_and_guest_task_codecs_agree_for_all_content_commands ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/task_failures.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/task_failures-fe20ec6dc8f1bd77)
+
+running 4 tests
+test plugin_failure_cannot_replace_or_accompany_core_response ... ok
+test malformed_or_mixed_failures_do_not_become_results ... ok
+test independent_failure_codecs_bind_all_codes_and_unicode_messages_to_input ... ok
+test guest_business_failure_is_distinct_from_trap_protocol_fault_and_cancel ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/transactions.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/transactions-78727200adbe1cf0)
+
+running 1 test
+test cancellation_trap_and_fuel_after_first_commit_never_roll_back ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running tests/transform_replay.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/transform_replay-4b99c679efa87408)
+
+running 20 tests
+test actual_fuel_exhaustion_uses_recorded_budget_and_remaining_fuel ... ok
+test archive_tamper_missing_bytes_and_wrong_external_pin_fail_before_execution ... ok
+test business_failure_is_preserved_without_quarantining_healthy_root ... ok
+test batch_replay_checks_all_page_policies_and_stops_at_first_observation_mismatch ... ok
+test batch_second_actual_trap_produces_no_partial_evidence_or_content ... ok
+test batch_preflights_later_input_before_executing_trapping_first_page ... ok
+test captured_archive_replays_after_catalog_loss_and_cannot_reactivate_stopped_session ... ok
+test caller_constructed_observation_has_integrity_but_does_not_match_real_execution ... ok
+test capture_observes_full_invocation_and_replay_repeats_actual_binary_output ... ok
+test complete_batch_uses_one_package_and_replays_in_order_with_total_policy ... ok
+test changing_original_invocation_yields_actual_guest_trap_not_constant_success ... ok
+test actual_trap_and_post_completion_trap_discard_output_and_stop_root ... ok
+test ignored_ordinary_exchange_cannot_complete_a_successful_pure_observation ... ok
+test content_commands_and_dependency_enabled_modules_are_rejected_without_executing ... ok
+test incremental_observation_retains_original_bytes_and_replays_without_host ... ok
+test replay_rejects_unsupported_backend_external_outcomes_and_insufficient_policy ... ok
+test batch_total_fuel_exhaustion_stops_execution_and_business_failure_does_not_poison_root ... ok
+test missing_completion_is_replayed_as_task_protocol_fault ... ok
+test foreign_or_revoked_session_cannot_issue_an_execution_capture ... ok
+test incremental_capture_rejects_failure_and_revoked_current_binding ... ok
+
+test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.63s
+
+     Running tests/transform_replay_cli.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/transform_replay_cli-a68cb00197e17965)
+
+running 6 tests
+test correctly_pinned_v1_mismatch_has_distinct_exit_code ... ok
+test v1_actual_process_matches_after_capture_host_is_removed ... ok
+test v2_declared_total_cannot_raise_trusted_cli_policy ... ok
+test correctly_pinned_v2_mismatch_reports_only_executed_prefix ... ok
+test v2_actual_process_matches_at_fixed_total_policy_boundary ... ok
+test tampered_container_and_wrong_pin_are_refused_before_replay ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/transforms.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/transforms-ca93b049a14a17fa)
+
+running 4 tests
+test transform_sizes_types_and_message_kinds_are_not_interchangeable ... ok
+test host_guest_transforms_preserve_empty_binary_and_maximum_data ... ok
+test pure_transform_cannot_write_even_with_instance_grants_or_expose_output_after_trap ... ok
+test registrations_reject_before_guest_and_bound_completed_output ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/ui_session.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/ui_session-39ac460fc50d340b)
+
+running 3 tests
+test wrong_task_completion_cannot_become_ui ... ok
+test malformed_document_is_failure_without_revision_or_content ... ok
+test runaway_guest_is_bounded_and_oversized_events_are_rejected ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/worker.rs (build/service-foundation-2026-09-26/target-runtime/debug/deps/worker-d95a3a165de028b3)
+
+running 7 tests
+test stop_revokes_before_commit_cancels_queue_and_remains_nonblocking ... ok
+test individual_and_dropped_handles_cancel_without_stopping_other_tasks ... ok
+test drain_deadline_suppresses_late_reply_and_never_starts_expired_queue ... ok
+test drain_finishes_admitted_jobs_and_retires_connection ... ok
+test stop_after_independently_observed_commit_preserves_result ... ok
+test worker_panic_reports_unavailable_without_claiming_rollback ... ok
+test idle_stop_and_option_validation_do_not_start_tasks ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s
+
+     Running unittests examples/plugin_check.rs (build/service-foundation-2026-09-26/target-runtime/debug/examples/plugin_check-ba1079d704cf75ad)
+
+running 8 tests
+test tests::check_rejects_forbidden_import_start_wrong_entry_and_invalid_wasm ... ok
+test tests::trap_after_successful_prepare_is_execution_failure_without_output ... ok
+test tests::mandatory_dependencies_require_the_managed_dependency_host ... ok
+test tests::arguments_and_extra_input_byte_are_bounded ... ok
+test tests::existing_output_and_same_input_path_are_never_overwritten ... ok
+test tests::mismatched_handler_and_types_reject_without_output ... ok
+test tests::frozen_business_failures_are_not_empty_successes ... ok
+test tests::frozen_three_language_checks_and_binary_transforms ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.50s
+
+   Doc-tests morrow_plugin_runtime
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

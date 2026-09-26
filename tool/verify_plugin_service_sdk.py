@@ -43,6 +43,8 @@ def main():
     cargo = ["cargo", "test", "--locked"] + ([] if args.allow_network else ["--offline"])
     run("contracts", [sys.executable, "tool/sync_plugin_sdk_contracts.py", "--check"])
     run("frozen-before", [sys.executable, "tool/verify_plugin_sdk_baseline.py"])
+    run("transport-originals", [sys.executable, "tool/plugin_transport_baseline.py", "run", "--build-root", build,
+                                *(["--allow-network"] if args.allow_network else [])])
     run("sdk", [*cargo, "--manifest-path", "sdk/rust/Cargo.toml", "--target-dir", build / "target-sdk"])
     run("host-codec-and-frozen", [*cargo, "--manifest-path", "plugin_runtime/Cargo.toml", "--features", "packages",
                                  "--target-dir", build / "target-runtime",
@@ -80,6 +82,7 @@ def main():
         if hashlib.sha256(Path(package["path"]).read_bytes()).hexdigest() != package["sha256"]:
             raise RuntimeError("generated package changed during qualification")
     run("frozen-after", [sys.executable, "tool/verify_plugin_sdk_baseline.py"])
+    run("transport-after", [sys.executable, "tool/plugin_transport_baseline.py", "verify"])
     (output / "packages.json").write_text(json.dumps(packages, indent=2) + "\n", encoding="utf-8")
     exclusions = ["No Flutter UI, TLS or other-platform qualification; recovery covers observed/unknown history, not application transaction reconciliation."]
     if not args.native:
