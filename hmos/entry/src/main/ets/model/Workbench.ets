@@ -10,6 +10,7 @@ export class Command {
   source: string = ''; title: string = ''; description: string = ''; hypothesis: string = '';
   conclusion: string = ''; category: string = ''; stage: string = ''; task_id: string = '';
   text: string = ''; flag: boolean = false; now_ms: string = '';
+  order: string[] = [];
 }
 export interface Reply {
   ok: boolean; error: string; cards: CardView[]; receipt_revision: string; profile: string; effect: string;

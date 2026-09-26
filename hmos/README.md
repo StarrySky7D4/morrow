@@ -1,6 +1,8 @@
 # Morrow HMOS
 
-Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.3 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
+Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.4 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
+
+2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 
 已提供实际 HAP、Rust OHOS 双架构构建、ArkTS 界面、ArkUI NDK 原生外观预览、N-API 异步桥与共享核心事务。已在 Pura X View / HarmonyOS API 26 x86_64 模拟器安装、启动、建卡保存；另有设备侧 Rust 自检。
 
@@ -28,7 +30,7 @@ HAP 输出：`entry/build/default/outputs/default/entry-default-unsigned.hap`。
 ## 已接通范围
 
 - 卡片标题、正文、假设、结论，新建和修改；类别、阶段、收藏、搜索和删除视图。
-- V2 TaskId 待办新增、独立勾选和移除；同名任务不会联动。阶段修改保留既有独立语义。
+- V2 TaskId 待办新增、独立勾选、重命名、上下移动、确认移除；同名任务不会联动。批量勾选经确认后与当前阶段在同一事务提交，普通排序/重命名保持阶段和完成状态。
 - 直接调用现有 `cards_v2` / `tasks_v2`，通过 `morrow-core::HostRuntime` 的对象授权、版本化 CAS 与原操作幂等事务保存。
 - 删除后仅允许 **8 秒内撤销**，沿用共享核心的规则，不提供永久恢复承诺。
 - `u64` 修订和时间戳跨 ArkTS 边界使用十进制字符串；完整源记录随修改请求绑定，不用界面投影覆盖正式内容。
@@ -46,7 +48,7 @@ HAP 输出：`entry/build/default/outputs/default/entry-default-unsigned.hap`。
 
 功能参照：[检查项目并完成更名](codex://threads/01a085bd-7a94-7f93-8a1f-1ecf417f5ee3)。环境参照：[安装 Deveco CLI](codex://threads/01a0cc0a-76a5-7973-a6c8-eb7566100932)。
 
-实际参照目录为 `../build/io-safety-refactor`，HEAD `ddd9cc8eec224af51f4e58654c9b297332147d96`，版本 `0.1.9-test.54+58`，包含未提交增量。没有以当前根目录旧 HEAD 代替它。
+初始快照来自 `../build/io-safety-refactor`，HEAD `ddd9cc8eec224af51f4e58654c9b297332147d96`，版本 `0.1.9-test.54+58`，包含未提交增量。2026-09-27 实时核对的参照 HEAD 为 `b9225f64f6c62584ad7243e30249d8a088bcb155`，仍有在途修改；本轮没有整体替换该快照。87 个共享路径发生变化，文件 IO、服务 SDK、新视觉风格/材质跟随仍需独立审查和移植，不能当作已同步。
 
 `shared/reference.json` 固定 228 个共享文件的 SHA-256，包括 V2 新增源码。`check-reference.ps1` 比较真实工作树与快照并写入差异报告；不自动覆盖正在使用的源码。后续同步必须审查差异、更新功能清单、重跑 Rust/HAP/设备验证。没有创建定时任务或向原任务发送消息。
 

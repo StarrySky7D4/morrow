@@ -6,7 +6,7 @@
 |---|---|---|
 | Protobuf/LZ4、完整记录/未知字段、SQLite 事务、CAS、原操作查询 | `core` | 原样快照并编译 ARM64/x64；设备侧自检覆盖建卡、重启、幂等和 CAS；不是全核心平台回归 |
 | 卡片 V2、类别/阶段、收藏、删除与限时撤销 | `plugins/workbench/cards_v2.rs` | 直接复用；UI 接入；共享 5 项专项测试在 Windows 通过，设备 UI 建卡保存通过 |
-| TaskId 待办、同名独立、历史歧义 | `plugins/workbench/tasks_v2.rs` | 新增/勾选/移除接入，设备侧同名独立验证；共享 7 项专项测试通过；正式 V1→V2 迁移入口未接入 |
+| TaskId 待办、同名独立、历史歧义 | `plugins/workbench/tasks_v2.rs` | dev.4 补重命名、上下移动、批量勾选与当前阶段原子提交、移除确认；主机适配器 5 项、OHOS runner 10 项检查通过，并验证 UI 重启读回。共享模块与 9/27 参照哈希一致。正式 V1→V2 迁移、拖动排序和复制菜单未接入 |
 | 搜索和查询 | `query_v2` / `workbench_host/query_*` | 当前只有已加载 256 张卡片内的标题/正文筛选；上游查询计划、捕获证据、排序未接入 |
 | ArkUI 原生节点 | 新 `entry/src/main/cpp/bridge.cpp` | 实际 NativeNode Column/Text 外观预览，NodeContent 挂载和销毁；编辑控件/导航为 ArkTS，非全 NDK UI |
 | ArkTS ↔ Rust | 新 N-API async work + Rust C ABI | 异步执行、串行准入、长度/UTF-8 校验、配对释放；不是 IPC 隔离或插件授权通道 |
@@ -22,6 +22,8 @@
 | 平台分发 | DevEco API 26 | 双架构未签名 HAP 已构建；x64 模拟器安装/启动；ARM64 真机、签名、发布均未验收 |
 
 ## 后续顺序
+
+2026-09-27 跟进范围见 [dev.4 验证记录](../reports/ui-source/v4/validation.md)。原始共享快照保持固定；上游最新文件创建/删除、服务 SDK 及新增视觉风格和材质跟随尚未整体移植。上游 Windows Core/runtime 的测试数字不是 HMOS 验收证据。
 
 1. 从正式宿主提取平台存储会话接口；实现 HUKS 受保护密钥、稳定日志身份和单库所有者，再通过与 Windows 相同的 Store/封存/恢复契约验证。禁止用当前试验库直接替换正式库。
 2. 复用原私有二进制协议和宿主业务入口，覆盖版本化内容、草稿 S1/S2、附件暂存与回复未知状态；逐步替换开发适配器，保持上游证据链。

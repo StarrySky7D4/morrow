@@ -46,8 +46,30 @@ fn main() {
     assert_eq!(persisted["cards"][0]["revision"], "4");
     let replay = run(&mut reopened, add);
     assert_eq!(replay["receipt_revision"], "2");
+    let renamed = run(
+        &mut reopened,
+        json!({"action":"task_rename","id":"native-card","operation":"rename","source":persisted["cards"][0]["source"],"task_id":"task-2","text":"重命名步骤"}),
+    );
+    let reorder = json!({"action":"task_reorder","id":"native-card","operation":"reorder","source":renamed["cards"][0]["source"],"order":["task-2","task-1"]});
+    let reordered = run(&mut reopened, reorder.clone());
+    assert_eq!(reordered["cards"][0]["tasks"][0]["id"], "task-2");
+    assert_eq!(reordered["cards"][0]["tasks"][0]["text"], "重命名步骤");
+    assert_eq!(reordered["cards"][0]["tasks"][0]["completion"], 0);
+    assert_eq!(reordered["cards"][0]["tasks"][1]["completion"], 1);
+    let completed = run(
+        &mut reopened,
+        json!({"action":"task_complete_all","id":"native-card","operation":"complete","source":reordered["cards"][0]["source"],"stage":"已完成"}),
+    );
+    assert_eq!(completed["cards"][0]["stage"], "已完成");
+    assert_eq!(completed["cards"][0]["tasks"][0]["completion"], 1);
+    assert_eq!(completed["cards"][0]["tasks"][1]["completion"], 1);
+    drop(reopened);
+    let mut reopened = Engine::open(&path).unwrap();
+    let replay = run(&mut reopened, reorder);
+    assert_eq!(replay["receipt_revision"], "6");
+    assert_eq!(replay["cards"], completed["cards"]);
     println!(
         "{}",
-        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen"],"profile":"development-unsealed"})
+        json!({"result":"PASS","platform":std::env::consts::OS,"arch":std::env::consts::ARCH,"checks":["create","independent-duplicate-task-id","stale-cas-rejected","historical-receipt-vs-current","reopen","retry-after-reopen","rename-by-id","reorder-preserves-completion","complete-all-and-stage","reorder-replay-after-reopen"],"profile":"development-unsealed"})
     );
 }

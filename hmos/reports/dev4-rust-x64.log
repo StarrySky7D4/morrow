@@ -1,0 +1,10 @@
+warn: could not canonicalize path C:\Users\Administrator
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 1.49s
+warn: could not canonicalize path C:\Users\Administrator
+   Compiling morrow-hmos v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\hmos\rust)
+    Finished `release` profile [optimized] target(s) in 0.93s
+
+Algorithm       Hash                                                                   Path
+---------       ----                                                                   ----
+SHA256          F866367AC2D39B854202A7B9F9E8BD7D14422EF3B65E420B113DD879369492F4       C:\Users\Administrator\Desktop\C…

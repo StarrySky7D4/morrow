@@ -1,0 +1,102 @@
+{
+  "capturedUtc": "2026-09-23T08:39:43.8831964Z",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+  "head": "ddd9cc8eec224af51f4e58654c9b297332147d96",
+  "source": "active working tree, including uncommitted files",
+  "files": [
+    {
+      "path": "lib/main.dart",
+      "sha256": "7B9F721C9FE962F554D4254BC690FEA890BA9DC0E3D880F0644D75A3587518A1"
+    },
+    {
+      "path": "lib/appearance.dart",
+      "sha256": "C85918041A677D5BE2B535E6F45E500AB7490F1A62CB8E03BDF2EF9AE722AA63"
+    },
+    {
+      "path": "lib/pages/workspace_pages.dart",
+      "sha256": "2BA77D5F35C4E414C77E09B73A7D3534B7F4D9084D1E2099C339E088AE4063B6"
+    },
+    {
+      "path": "lib/little_tips.dart",
+      "sha256": "3BF0512B9FA6683C0AAC3712D3BE1BECB6B6EE129B2CA4BA3CFAE2579171E285"
+    },
+    {
+      "path": "lib/workspace_viewport.dart",
+      "sha256": "C59DB15FB7046E9C66B52C613FE97B67E8D5FD0FE9369B90844B615720508207"
+    },
+    {
+      "path": "lib/settings_surface.dart",
+      "sha256": "A5543A34B8DEA76BF4C64DC55EB66B820C805CD28CCE01F5487BA92FE9CA0033"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_zh.arb",
+      "sha256": "F095921893F47CECA819DBAB8AA9D5253F5F1A5B99A06CB60862336D54B9EEFC"
+    },
+    {
+      "path": "lib/versioned_task_panel.dart",
+      "sha256": "3C3D68B59AB84BCC0A1B95338900DD4786F86B2F1DC06E3E3A84EC17A1408538"
+    },
+    {
+      "path": "plugins/workbench/src/tasks_v2.rs",
+      "sha256": "43849B828B2C6F4605EA8FE677CBB4E95A64FCFB68EEC4639346556E9947C70D"
+    },
+    {
+      "path": "lib/component_material_page.dart",
+      "sha256": "16FB2E9D4D0BC250C76207F2E0CB4BB246E79A77210F0284BB571A73A04003C4"
+    },
+    {
+      "path": "lib/color_compass.dart",
+      "sha256": "BC463325DC3C4B0950C53428F14963E8E57BC6D4DBB2CE564B56943149727405"
+    },
+    {
+      "path": "lib/fonts/font_settings.dart",
+      "sha256": "723BB164FD3364DCD0E67713D65BE28A16D64EF390DCA6DF109EAB039734E98B"
+    },
+    {
+      "path": "lib/liquid_glass.dart",
+      "sha256": "511D766825EF503F9D37F669F62ABE10E00B6F4C945782D27A2B4DBFAC7B7C4F"
+    },
+    {
+      "path": "lib/music/music_panel.dart",
+      "sha256": "B3957A5F946E720B98F9D6FB1C36E9860697F9A829514EEAF372B00BBD3EE25D"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_en.arb",
+      "sha256": "6AD450D7854649CB397BA742E4C9916F712BEA0425A2A388509C319D61A69F96"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ja.arb",
+      "sha256": "31EB2510658B7648EA0EC4F4B94ED7C8B948533CD70DD85F5067E2BBB945FDAF"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ko.arb",
+      "sha256": "44F6B9876DFDFF51BF76206BE2A313D89920CB53D4DF8C055094475D9477D22C"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_de.arb",
+      "sha256": "C0B5734BC324D37ACB58E68B9F06FA04352EF379B1204028D5C9DF5D668264B0"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_fr.arb",
+      "sha256": "7F1746A6789FB10DBBC816E68BF23E1A2194C4A7B3D2378E0626FD4F89FBD7A1"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_es.arb",
+      "sha256": "098C27BFC344617884F751104B363367935FFB9C12E93A06CA7107407B2EE1BC"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_pt.arb",
+      "sha256": "FA34D6BCC48B193BAAC0B3A9EFFA780DB8A1D4E50FC26D99144ACACC3B9C80BA"
+    },
+    {
+      "path": "packages/morrow_i18n/lib/l10n/app_ru.arb",
+      "sha256": "755BF12A33618F433085FC0B6082D8CFEA9314209ED83D33B93556EA75A83288"
+    }
+  ],
+  "renderedBy": "tool/flutter_ui_reference_test.dart",
+  "mobileLogicalSize": "440x676",
+  "desktopLogicalSize": "1280x900",
+  "pixelRatio": 3,
+  "observedUtc": "2026-09-26T22:46:40.126Z",
+  "note": "Current source observation only, not a fresh Flutter screenshot run. Upstream working tree is active, not frozen; see validation.md for scope."
+}

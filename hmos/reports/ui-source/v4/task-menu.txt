@@ -1,0 +1,75 @@
+- Dumping layout…
+[0,0,1320,2232]
+  Button [36,156,156,270] clickable
+    Text [65,182,128,245] ""
+  Text [219,188,270,239] ""
+  TextInput [294,156,1046,270] "HMOS-dev4-task-check" clickable longClickable scrollable
+  Text [1070,182,1101,245] "×" clickable
+  Button [1164,156,1284,270] clickable
+    Text [1196,185,1253,242] "󰉘"
+  Scroll [36,339,1284,2112] scrollable
+    Text [114,339,744,404] "还没成形，也没关系。"
+    Text [114,434,708,556] "一个念头、一件小事、一个「万一呢」。\n这里是它们开始的地方。"
+    Row [114,616,420,691] clickable
+      Text [114,634,345,673] "记录此刻的想法"
+      Text [375,631,420,676] ""
+    Text [36,902,262,955] "最近的念头"
+    Text [286,911,321,946] "01"
+    Text [357,890,483,967] "全部" clickable
+    Text [495,890,651,967] "有待办" clickable
+    Text [663,890,819,967] "含附件" clickable
+    Text [831,890,987,967] "仅收藏" clickable
+    Row [36,1003,1284,1078] clickable
+      Text [1092,1021,1131,1060] "󰆨"
+      Text [1146,1023,1266,1058] "默认顺序"
+    Column [36,1126,1284,1620] clickable
+      Text [119,1200,176,1257] ""
+      Button [1146,1180,1242,1276] clickable
+        Text [1169,1203,1220,1254] ""
+      Text [96,1321,571,1370] "HMOS-dev4-task-check"
+      Text [96,1394,591,1453] "给这个念头，留一点生长的空间。"
+      Text [96,1510,192,1566] "灵感"
+      Text [1161,1522,1242,1554] "待整理"
+    Text [87,1733,138,1784] ""
+    TextInput [174,1689,1119,1827] clickable longClickable scrollable
+    Button [1155,1713,1245,1803] clickable
+      Text [1175,1733,1226,1784] ""
+  Text [129,2021,1158,2060] "没有紧迫的事。给好奇心一点时间。"
+  Text [1185,2015,1236,2066] "󰛹"
+  Rect [0,117,1320,2148] clickable
+  Text [161,278,224,341] ""
+  Text [285,253,743,281] "MORROW / A LITTLE POSSIBILITY"
+  Text [285,296,645,366] "让想法更清晰"
+  Button [1089,255,1185,363] clickable
+    Text [1110,282,1164,336] ""
+  Text [63,402,1257,458] "文字、表格、图片，先放在这里。让一个念头慢慢成形。"
+  Scroll [63,524,1257,1811] scrollable
+    Text [0,0,0,0] "20 / 4000"
+    TextArea [186,524,1134,741] clickable longClickable
+    Text [135,881,267,920] "放在哪里"
+    Select [303,840,529,960] "灵感" clickable
+    Select [933,840,1185,960] "待整理" clickable
+    Text [135,1057,292,1103] "待办事项"
+    Text [1095,1063,1185,1098] "待整理"
+    Button [135,1160,231,1250] "✓" clickable
+    Text [261,1184,1047,1226] "Duplicate"
+    Button [1077,1151,1185,1259] "···" clickable
+    Button [135,1316,231,1406] "○" clickable
+    Text [261,1340,1047,1382] "Duplicate"
+    Button [1077,1307,1185,1415] "···" clickable
+    TextInput [135,1463,1053,1583] clickable longClickable scrollable
+    Button [1077,1469,1185,1577] "+" clickable
+    Button [464,1631,857,1751] "全部勾选并设置阶段" clickable
+    Button [135,1799,297,1811] "收藏" clickable
+    Button [924,1799,1185,1811] "移入回收站" clickable
+  Text [63,1811,1257,1886] "已保存 · 操作修订 4"
+  Button [667,1929,872,2043] "再想想" clickable
+  Button [908,1929,1185,2043] "保存灵感" clickable
+  Option [645,1451,1173,1595] "重命名" clickable
+    Text [681,1495,826,1551] "重命名"
+  Option [645,1595,1173,1739] "上移" clickable
+    Text [681,1639,778,1695] "上移"
+  Option [645,1739,1173,1883] "下移"
+    Text [681,1783,778,1839] "下移"
+  Option [645,1883,1173,2027] "移除待办" clickable
+    Text [681,1927,874,1983] "移除待办"

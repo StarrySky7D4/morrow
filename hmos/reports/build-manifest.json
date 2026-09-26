@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-09-23T10:20:07.801Z",
+  "createdUtc": "2026-09-26T22:46:40.090Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.3",
+  "hmosVersion": "0.1.0-hmos-dev.4",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 21944378,
-    "sha256": "202DAF3817C7A36ADC06FD5F592DCADB4DDF876D08954D87DCCAB13D87CDBB58",
+    "bytes": 21970299,
+    "sha256": "219659D4FC85B061B0AB1346EF5268873F52AC2BF43A108C21A4D349BEC5C607",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "F407E860462E4CC7407AE9F4E05BE6E12D1FFFA1684A054E74800BE7A01F6BF2"
+      "sha256": "B3876DF5F02EED551C534EB5A47BCFB887505BFE4EF5727101545CD63A022687"
     },
     {
       "path": "entry/build-profile.json5",
@@ -72,11 +72,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Workbench.ets",
-      "sha256": "F7B07ED2BEE1A57E744170635719A7591F1FB5888BADEE6EBCF8B3144AFE7727"
+      "sha256": "669634D5DEFE38BB4085F6E251B11FB8B2DC792489E30CCFF855B610C1865603"
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "71A4D60B027DEC17C7E4B37C67A2CCEA1E0E4B58CC3917384ADCC6C52808B00D"
+      "sha256": "A0F1FC5307C5784464F3E0A3520916D8CFED521F4B223359F78A42C9BED4B602"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -92,11 +92,11 @@
     },
     {
       "path": "rust/src/lib.rs",
-      "sha256": "862233F627184B5986BBC6B6214C9D0FA502A7DA82DBCC465FD0011FB12D0799"
+      "sha256": "61FD15E7C90C797639687931ED005C4DE355E9FF813061EE13082825BD306C5C"
     },
     {
       "path": "rust/src/bin/hmos-self-check.rs",
-      "sha256": "640E4CFC1E39F235521554DF2B8109BDB56EC02DDF180FFE3F827A4B46F81310"
+      "sha256": "973863A2B3038FA86D127EA121C14CF008596D51144262B270D9B57547BC869F"
     },
     {
       "path": "scripts/build-hap.ps1",
@@ -1047,6 +1047,6 @@
       "sha256": "1DF284CD4D29821EF53CC10891218A397D978652E9CF3F1FEF2651C542440705"
     }
   ],
-  "uiValidation": "reports/ui-source/v3/validation.md",
+  "uiValidation": "reports/ui-source/v4/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

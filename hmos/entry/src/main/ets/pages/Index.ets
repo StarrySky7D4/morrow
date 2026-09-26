@@ -23,6 +23,8 @@ struct Index {
   @State conclusion: string = '';
   @State category: string = '灵感';
   @State taskText: string = '';
+  @State taskEditId: string = '';
+  @State taskRenameText: string = '';
   @State dirty: boolean = false;
   @State busy: boolean = false;
   @State ready: boolean = false;
@@ -117,6 +119,7 @@ struct Index {
   private select(c: CardView): void {
     if (this.busy || this.pending.length > 0) { return; }
     if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
+    this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
     this.previewBody = false; this.selected = c.id; this.title = c.title; this.description = c.description;
     this.hypothesis = c.hypothesis; this.conclusion = c.conclusion; this.category = c.category; this.editorOpen = true; this.message = ''; 
     this.refreshPreview();
@@ -124,6 +127,7 @@ struct Index {
   private newCard(): void {
     if (this.busy || this.pending.length > 0) { return; }
     if (this.dirty) { this.message = '请先保存当前编辑，输入已保留。'; return; }
+    this.taskEditId = ''; this.taskText = ''; this.taskRenameText = '';
     this.selected = ''; this.title = ''; this.description = ''; this.hypothesis = ''; this.conclusion = '';
     this.category = ['灵感', '进行中', '实验'].includes(this.section) ? this.section : '灵感'; this.previewBody = false; this.editorOpen = true; this.message = ''; this.refreshPreview();
   }
@@ -134,6 +138,7 @@ struct Index {
   }
   private async submit(cmd: Command): Promise<void> {
     if (this.busy || this.pending.length > 0) { return; }
+    if (this.taskEditId.length > 0 && cmd.action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     this.pending = JSON.stringify(cmd); await this.retry();
   }
   private async retry(): Promise<void> {
@@ -155,6 +160,8 @@ struct Index {
           this.hypothesis !== cmd.hypothesis || this.conclusion !== cmd.conclusion;
       }
       if (cmd.action === 'task_add' && this.taskText === cmd.text) { this.taskText = ''; }
+      if (cmd.action === 'task_rename' && this.selected === cmd.id && this.taskEditId === cmd.task_id &&
+        this.taskRenameText.trim() === cmd.text) { this.taskEditId = ''; this.taskRenameText = ''; }
       this.message = result.receipt_revision.length > 0 ? `已保存 · 操作修订 ${result.receipt_revision}` : '已刷新';
       if ((cmd.action === 'create' || cmd.action === 'edit') && !this.dirty) { this.editorOpen = false; }
       this.refreshPreview();
@@ -162,6 +169,7 @@ struct Index {
     finally { this.busy = false; }
   }
   private save(): void {
+    if (this.taskEditId.length > 0) { this.message = '请先保存或取消待办重命名'; return; }
     if (this.title.trim().length === 0) { this.message = '请输入卡片标题'; return; }
     const cmd = this.command(this.selected.length > 0 ? 'edit' : 'create');
     cmd.title = this.title; cmd.description = this.description; cmd.hypothesis = this.hypothesis;
@@ -170,6 +178,7 @@ struct Index {
     this.submit(cmd);
   }
   private mutate(action: string, task?: TaskView): void {
+    if (this.taskEditId.length > 0 && action !== 'task_rename') { this.message = '请先保存或取消待办重命名'; return; }
     if (this.dirty) { this.message = '请先保存正文编辑'; return; }
     const c = this.current(); if (!c) { return; }
     if (action === 'restore' && (Date.now() < Number(c.deleted_at) || Date.now() - Number(c.deleted_at) >= 8000)) {
@@ -178,11 +187,43 @@ struct Index {
     const cmd = this.command(action);
     if (action === 'favorite') { cmd.flag = !c.favorite; }
     if (task) { cmd.task_id = task.id; cmd.flag = task.completion !== 1; }
+    if (action === 'task_rename') {
+      if (!task || task.id !== this.taskEditId || this.taskRenameText.trim().length === 0) { return; }
+      cmd.text = this.taskRenameText.trim();
+    }
     if (action === 'task_add') {
       if (this.taskText.trim().length === 0) { return; }
       cmd.task_id = util.generateRandomUUID(true); cmd.text = this.taskText;
     }
     this.submit(cmd);
+  }
+  private canEditTasks(): boolean {
+    return this.ready && !this.busy && this.pending.length === 0 &&
+      !!this.current() && !this.current()?.deleted && !this.dirty && this.taskEditId.length === 0;
+  }
+  private renameTask(task: TaskView): void {
+    if (!this.canEditTasks()) { return; }
+    this.taskEditId = task.id; this.taskRenameText = task.text;
+  }
+  private moveTask(task: TaskView, delta: number): void {
+    if (!this.canEditTasks()) { return; }
+    const order = (this.current()?.tasks ?? []).map((t: TaskView): string => t.id);
+    const index = order.indexOf(task.id); const next = index + delta;
+    if (index < 0 || next < 0 || next >= order.length) { return; }
+    order.splice(index, 1); order.splice(next, 0, task.id);
+    const cmd = this.command('task_reorder'); cmd.order = order; this.submit(cmd);
+  }
+  private confirmTaskChange(task?: TaskView): void {
+    if (!this.canEditTasks()) { return; }
+    const cmd = this.command(task ? 'task_remove' : 'task_complete_all');
+    cmd.task_id = task?.id ?? ''; cmd.stage = this.current()?.stage ?? '';
+    this.getUIContext().showAlertDialog({ title: task ? '移除待办' : '全部勾选并设置阶段',
+      message: task ? `删除待办“${task.text}”？` : `将所有待办标为完成，并将阶段设为“${cmd.stage}”？`,
+      primaryButton: { value: this.t('取消'), action: () => {} },
+      secondaryButton: { value: this.t('确认'), action: () => {
+        // Confirmation belongs to this exact card revision, never a later view.
+        if (this.canEditTasks() && this.selected === cmd.id && this.current()?.source === cmd.source) { this.submit(cmd); }
+      } } });
   }
   private stages(): SelectOption[] {
     const category = this.current()?.category ?? this.category;
@@ -318,10 +359,10 @@ struct Index {
   private navigate(section: string): void { this.section = section; this.filter = '全部'; }
   private closeEditor(): void {
     if (this.busy || this.pending.length > 0) { this.message = '操作尚未确认，当前输入已保留。'; return; }
-    if (this.dirty) {
+    if (this.dirty || this.taskEditId.length > 0 || this.taskText.length > 0) {
       this.getUIContext().showAlertDialog({ title: '放弃这次修改？', message: '尚未保存的输入将被丢弃。',
         primaryButton: { value: '继续编辑', action: () => {} },
-        secondaryButton: { value: '放弃修改', action: () => { this.dirty = false; this.editorOpen = false; } } });
+        secondaryButton: { value: '放弃修改', action: () => { this.dirty = false; this.taskEditId = ''; this.taskRenameText = ''; this.taskText = ''; this.editorOpen = false; } } });
     } else { this.editorOpen = false; }
   }
   private favoriteCard(c: CardView): void {
@@ -1052,20 +1093,44 @@ struct Index {
             ForEach(this.current()?.tasks ?? [], (task: TaskView) => {
               Row({ space: 10 }) {
                 Button(task.completion === 1 ? '✓' : task.completion === 2 ? '?' : '○', { type: ButtonType.Normal })
-                  .fontSize(18).fontColor(this.accent()).width(30).height(30).backgroundColor('#147662BA').borderRadius(8)
-                  .onClick(() => this.mutate('task_toggle', task)).enabled(!this.busy && this.pending.length === 0 && !this.current()?.deleted)
+                  .fontSize(18).fontColor(this.accent()).width(30).height(30).padding(0).backgroundColor('#147662BA').borderRadius(8)
+                  .onClick(() => this.mutate('task_toggle', task)).enabled(this.canEditTasks())
                 Text(task.text).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontColor(this.ink()).layoutWeight(1)
-                Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf647,  16, () => this.muted()) }
-                  .width(28).height(28).backgroundColor(Color.Transparent).accessibilityText('移除待办').onClick(() => this.mutate('task_remove', task))
-                  .enabled(!this.busy && this.pending.length === 0 && !this.current()?.deleted)
+                Button('···', { type: ButtonType.Normal }).fontSize(20).fontColor(this.muted())
+                  .width(36).height(36).padding(0).backgroundColor(Color.Transparent).accessibilityText('待办操作：' + task.text)
+                  .enabled(this.canEditTasks()).bindMenu([
+                    { value: this.t('重命名'), action: () => this.renameTask(task) },
+                    { value: this.t('上移'), enabled: this.current()?.tasks[0]?.id !== task.id, action: () => this.moveTask(task, -1) },
+                    { value: this.t('下移'), enabled: this.current()?.tasks[this.current()!.tasks.length - 1]?.id !== task.id, action: () => this.moveTask(task, 1) },
+                    { value: this.t('移除待办'), action: () => this.confirmTaskChange(task) }
+                  ])
               }.width('100%')
+              if (this.taskEditId === task.id) {
+                Column({ space: 8 }) {
+                  TextInput({ text: this.taskRenameText, placeholder: this.t('重命名') }).fontFamily(this.fontFamily || 'HarmonyOS Sans')
+                    .fontSize(12).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
+                    .enabled(!this.busy && this.pending.length === 0).onChange((s: string) => { this.taskRenameText = s; })
+                  Row({ space: 8 }) {
+                    Blank()
+                    Button(this.t('取消')).fontSize(12).fontColor(this.muted()).backgroundColor(Color.Transparent)
+                      .enabled(!this.busy && this.pending.length === 0).onClick(() => { this.taskEditId = ''; this.taskRenameText = ''; })
+                    Button(this.t('保存')).fontSize(12).backgroundColor(this.accent())
+                      .enabled(!this.busy && this.pending.length === 0 && !this.dirty && this.taskRenameText.trim().length > 0)
+                      .onClick(() => this.mutate('task_rename', task))
+                  }.width('100%')
+                }.width('100%').padding({ left: 40, bottom: 8 })
+              }
             }, (task: TaskView) => task.id + ':' + task.completion.toString() + ':' + task.text)
             if (!this.current()?.deleted) {
               Row({ space: 8 }) {
                 TextInput({ text: this.taskText, placeholder: this.t('添加一个小步骤…') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).placeholderFont({ size: 12 }).fontColor(this.ink()).backgroundColor(this.glass()).maxLength(500)
                   .onChange((s: string) => { this.taskText = s; }).layoutWeight(1)
-                Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).backgroundColor('#147662BA').borderRadius(10)
-                  .onClick(() => this.mutate('task_add')).enabled(!this.busy && this.pending.length === 0)
+                Button(this.t('+'), { type: ButtonType.Normal }).fontSize(21).fontColor(this.accent()).width(36).height(36).padding(0).backgroundColor('#147662BA').borderRadius(10)
+                  .onClick(() => this.mutate('task_add')).enabled(this.canEditTasks())
+              }
+              if ((this.current()?.tasks.length ?? 0) > 0) {
+                Button(this.t('全部勾选并设置阶段'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent())
+                  .backgroundColor(Color.Transparent).enabled(this.canEditTasks()).onClick(() => this.confirmTaskChange())
               }
             }
             Row({ space: 12 }) {
@@ -1091,7 +1156,7 @@ struct Index {
       if (this.pending.length > 0 && !this.busy) {
         Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 }).onClick(() => this.retry())
       }
-    }.width(Math.min(820, this.viewportWidth - 40)).height(Math.max(160, Math.min(760, this.viewportHeight - 40))).backgroundColor(Color.Transparent)
+    }.width(Math.min(820, this.viewportWidth - 40)).height(Math.max(160, Math.min(760, this.viewportHeight - 40))).backgroundColor(alpha(this.surface(), .9))
       .backdropBlur(this.materialBlur()).linearGradient(this.gradient('', true)).overlay(this.Rim('', 28)).borderRadius(this.round(28)).border({ width: 1, color: this.line() }).clip(true)
       .shadow({ radius: 32, color: '#28716386', offsetY: 12 })
   }
@@ -1140,4 +1205,3 @@ struct Index {
       .onAreaChange((_, area: Area) => { this.viewportWidth = Number(area.width); this.viewportHeight = Number(area.height); })
   }
 }
-

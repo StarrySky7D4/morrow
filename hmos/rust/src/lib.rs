@@ -38,6 +38,7 @@ pub struct Request {
     category: String,
     stage: String,
     task_id: String,
+    order: Vec<String>,
     text: String,
     flag: bool,
     now_ms: String,
@@ -221,7 +222,8 @@ impl Engine {
                 let p = tasks_v2::decode(&r.id, &s.title, &card.body()).map_err(err)?;
                 let mut title = s.title.clone();
                 let body = match r.action.as_str() {
-                    "task_add" | "task_toggle" | "task_remove" | "task_rename" | "stage" => {
+                    "task_add" | "task_toggle" | "task_remove" | "task_rename" | "task_reorder"
+                    | "task_complete_all" | "stage" => {
                         if p.deleted {
                             return Err("DeletedCard".into());
                         }
@@ -239,6 +241,10 @@ impl Engine {
                                 id: r.task_id.clone(),
                                 text: r.text.clone(),
                             },
+                            "task_reorder" => tasks_v2::Command::Reorder(r.order.clone()),
+                            "task_complete_all" => {
+                                tasks_v2::Command::CompleteAllAndSetStage(r.stage.clone())
+                            }
                             _ => tasks_v2::Command::SetStage(r.stage.clone()),
                         };
                         tasks_v2::apply(&r.id, &s.title, &card.body(), cmd).map_err(err)?
@@ -467,6 +473,71 @@ mod tests {
                 .revision,
             "4"
         );
+        e.host.store_local().integrity_check().unwrap();
+    }
+    #[test]
+    fn task_edits_keep_identity_validate_order_and_replay_after_reopen() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("hmos-development.sqlite");
+        let mut e = Engine::open(&path).unwrap();
+        let mut card = create(&mut e).cards.remove(0);
+        for id in ["a", "b"] {
+            card = e.execute(req(serde_json::json!({"action":"task_add","operation":format!("add-{id}"),"id":"c1","source":card.source,"task_id":id,"text":"同名"}))).unwrap().cards.remove(0);
+        }
+        card = e.execute(req(serde_json::json!({"action":"task_toggle","operation":"toggle-a","id":"c1","source":card.source,"task_id":"a","flag":true}))).unwrap().cards.remove(0);
+        let rename = serde_json::json!({"action":"task_rename","operation":"rename-b","id":"c1","source":card.source,"task_id":"b","text":"修改后的步骤"});
+        card = e.execute(req(rename.clone())).unwrap().cards.remove(0);
+        assert_eq!(card.tasks[0].text, "同名");
+        assert_eq!(card.tasks[1].id, "b");
+        assert_eq!(card.tasks[1].completion, 0);
+        let reorder = serde_json::json!({"action":"task_reorder","operation":"reorder","id":"c1","source":card.source,"order":["b","a"]});
+        card = e.execute(req(reorder.clone())).unwrap().cards.remove(0);
+        assert_eq!(card.tasks[0].text, "修改后的步骤");
+        assert_eq!(card.tasks[0].completion, 0);
+        assert_eq!(card.tasks[1].completion, 1);
+        assert_eq!(card.stage, "待整理");
+        for (index, invalid) in [
+            serde_json::json!({"action":"task_reorder","order":["a","a"]}),
+            serde_json::json!({"action":"task_reorder","order":["a"]}),
+            serde_json::json!({"action":"task_reorder","order":["a","missing"]}),
+            serde_json::json!({"action":"task_rename","task_id":"missing","text":"x"}),
+            serde_json::json!({"action":"task_rename","task_id":"b","text":""}),
+            serde_json::json!({"action":"task_complete_all","stage":"已完成"}),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut invalid = invalid;
+            invalid["id"] = "c1".into();
+            invalid["operation"] = format!("invalid-{index}").into();
+            invalid["source"] = card.source.clone().into();
+            assert!(e.execute(req(invalid)).is_err());
+            assert_eq!(e.effect, "not_committed");
+            assert_eq!(e.cards().unwrap()[0].source, card.source);
+        }
+        let complete = serde_json::json!({"action":"task_complete_all","operation":"complete","id":"c1","source":card.source,"stage":"已整理"});
+        card = e.execute(req(complete.clone())).unwrap().cards.remove(0);
+        assert!(card.tasks.iter().all(|t| t.completion == 1));
+        assert_eq!(card.stage, "已整理");
+        let mut stale = reorder.clone();
+        stale["operation"] = "stale-reorder".into();
+        assert!(
+            e.execute(req(stale))
+                .unwrap_err()
+                .contains("RevisionConflict")
+        );
+        drop(e);
+        let mut e = Engine::open(&path).unwrap();
+        for (original, revision) in [(rename, "5"), (reorder, "6"), (complete, "7")] {
+            let replay = e.execute(req(original)).unwrap();
+            assert_eq!(replay.receipt_revision, revision);
+            assert_eq!(replay.cards[0].source, card.source);
+        }
+        let deleted = e.execute(req(serde_json::json!({"action":"delete","operation":"delete","id":"c1","source":card.source,"now_ms":"1000"}))).unwrap().cards.remove(0);
+        for action in ["task_rename", "task_reorder", "task_complete_all"] {
+            assert_eq!(e.execute(req(serde_json::json!({"action":action,"operation":action,"id":"c1","source":deleted.source,"task_id":"a","text":"x","order":["a","b"],"stage":"已整理"}))).unwrap_err(), "DeletedCard");
+            assert_eq!(e.effect, "not_committed");
+        }
         e.host.store_local().integrity_check().unwrap();
     }
     #[test]
