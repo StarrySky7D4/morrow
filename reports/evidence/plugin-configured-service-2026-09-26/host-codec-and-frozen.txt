@@ -1,0 +1,13 @@
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+    Finished `test` profile [unoptimized] target(s) in 0.49s
+     Running tests/sdk_frozen_compat.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_frozen_compat-e4daa2ace69926cd)
+
+running 9 tests
+test c_ui ... ok
+test cpp_ui ... ok
+test rust_ui ... ok
+test cpp_task ... ok
+test c_task ... ok
+test c_transform ... ok
+test cpp_transform ... ok
+test rust_task ... ok

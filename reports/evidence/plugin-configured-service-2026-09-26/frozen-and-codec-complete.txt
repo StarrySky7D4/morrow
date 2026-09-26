@@ -1,0 +1,31 @@
+    Finished `test` profile [unoptimized] target(s) in 0.06s
+     Running tests/sdk_frozen_compat.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_frozen_compat-e4daa2ace69926cd)
+
+running 9 tests
+test c_ui ... ok
+test cpp_ui ... ok
+test rust_ui ... ok
+test c_task ... ok
+test cpp_task ... ok
+test cpp_transform ... ok
+test c_transform ... ok
+test rust_task ... ok
+test rust_transform ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.08s
+
+     Running tests/sdk_frozen_dependency.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_frozen_dependency-e28cd1de0caeb82c)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk_service_codec.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_service_codec-a7cedfd9f413711c)
+
+running 4 tests
+test native_c_and_cpp_handles_return_core_verified_frames ... ignored, requires compiled native C and C++ service codec executables
+test resource_directory_is_identical_across_independent_host_and_sdk_codecs ... ok
+test equivalent_layout_is_not_allowed_to_replace_original_request_digest ... ok
+test core_request_and_guest_reply_preserve_u64_binary_and_duplicate_headers ... ok
+
+test result: ok. 3 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s

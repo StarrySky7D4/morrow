@@ -1,0 +1,9 @@
+{
+  "network_node/src/service_outbound.rs": "edead958c917f45e081c5f211c87ab2b77ee5f75bda8b91c69f70c8fa1a1f587",
+  "network_node/src/lib.rs": "552e4a06ccbfb59666ee9ec7d0fab6bbf9af507d29a2b4c559b7e6a238a9fe7d",
+  "network_node/tests/sdk_service_http.rs": "42e2e1cb5bff137b2f7a8ec991d6a157b18bbc4282b00e39d4784fa72c3226a5",
+  "network_node/tests/support/sdk_configured_http.rs": "363c26f970cb34a9cd7f0b430df0263c340e40bcd1f374df0d6b83bf44ab96ca",
+  "workbench_host/src/service_tasks.rs": "249543a212ddd415bd4c8f4bd275e5c32890da463ec85e3201eceac6adda77a6",
+  "tool/verify_plugin_service_sdk.py": "4992b655c8c7134652199616d027f19889406e9974f957e573523f7373c9a1d9",
+  "tool/tests/test_service_originals.py": "56c8f3a0a3269fe94a297848c7be08559919105e972d22d9b658c67d5ee85e6c"
+}

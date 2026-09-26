@@ -1,0 +1,43 @@
+    Checking morrow-workbench-host v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/workbench_host)
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/credential_control.rs:4:17
+  |
+4 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `encode_task_edit` is never used
+  --> src/content_api.rs:57:15
+   |
+57 | pub(crate) fn encode_task_edit(command: &TaskCommand) -> Vec<u8> {
+   |               ^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: function `fields_to_wire` is never used
+   --> src/content_api.rs:161:4
+    |
+161 | fn fields_to_wire(mut out: wire::card_fields::Builder<'_>, fields: &Fields) {
+    |    ^^^^^^^^^^^^^^
+
+warning: function `encode_card_edit` is never used
+   --> src/content_api.rs:177:15
+    |
+177 | pub(crate) fn encode_card_edit(action: &CardAction) -> Vec<u8> {
+    |               ^^^^^^^^^^^^^^^^
+
+warning: function `is_action` is never used
+ --> src/service_protocol.rs:8:15
+  |
+8 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_admin_action(action) }
+  |               ^^^^^^^^^
+
+warning: function `is_action` is never used
+  --> src/service_run_protocol.rs:16:15
+   |
+16 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_run_action(action) }
+   |               ^^^^^^^^^
+
+warning: `morrow-workbench-host` (lib) generated 6 warnings (run `cargo fix --lib -p morrow-workbench-host` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized] target(s) in 3.80s

@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [配置服务统一接线与原包复验](../reports/plugin-configured-service-2026-09-26.md)：从 Google Drive 恢复 `7d08b95`，核对主线未变。工作台改用同一宿主接线对象生成所选资源依赖、重放 scope、router 与目录；三语言原包覆盖配置服务撤权后的缓存隔离、等待中终止、重开不重发、空选择及错 worker 归还。网络 134、原包专项 6、SDK 66、工具 97 与旧原件回归通过，新增无需重编 guest 的恢复验收入口。Windows／Flutter／真实 DPAPI/TLS 产品验收仍开放，未推送、发布或使用 CI。
+
 2026-09-26 [公共 SDK 服务出站闭环](../reports/plugin-service-http-sdk-2026-09-26.md)：新增三语言 `--service-http` 原包模板、原帧摘要接口和显式四资源槽声明。真实网络三项覆盖 21 场景，验证敏感头隔离、宿主凭据、等待期间原 owner 写入、断线／停止／撤权 Unknown 与同库重开不重发；SDK 66、工具 94、打包 CLI 15、原生及旧原件回归通过。源码与证据保存 Google Drive。Windows／Flutter、实际 DPAPI/TLS 与完整业务核对仍开放，未使用 CI、推送或发布。
 
 2026-09-26 [插件底座本地稳定候选收尾](../reports/plugin-foundation-closeout-2026-09-26.md)：显式长时服务 profile、三语言资源目录 SDK、真实原包续租／耗尽／撤权／历史重开完成；新增 transport-v1-rc1 六对固定 IO／服务原件，保留旧 guest-v1-rc1。core 645、runtime 397、network 134、SDK 66、Python 92 及专项通过，分项有重叠。Windows 专属依赖、Flutter 与凭据／TLS 实际入口仍阻断整体收尾；本轮未发布或使用 CI。

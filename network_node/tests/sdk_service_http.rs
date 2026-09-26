@@ -638,3 +638,6 @@ async fn originals_reject_missing_directory_method_and_body_limit_without_io() {
         }
     }
 }
+
+#[path = "support/sdk_configured_http.rs"]
+mod configured;

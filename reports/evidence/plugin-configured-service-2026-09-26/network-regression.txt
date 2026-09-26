@@ -1,0 +1,261 @@
+   Compiling morrow-network-node v0.1.9-test.51 (/workspace/scratch/c3041ed82a57/morrow/network_node)
+    Finished `test` profile [unoptimized] target(s) in 7.13s
+     Running unittests src/lib.rs (build/selected-service-network/debug/deps/morrow_network_node-862c26ec4a8e15ac)
+
+running 1 test
+test managed_service::managed_node_join_tests::listener_terminal_errors_are_consumed_once_including_task_panics ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/main.rs (build/selected-service-network/debug/deps/morrow_api_node-d02756f00b65dd6f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/bidirectional.rs (build/selected-service-network/debug/deps/bidirectional-5da231bb82b3b0ed)
+
+running 3 tests
+test isolated_service_directory_refuses_existing_sidecars_without_touching_them ... ok
+test service_refuses_existing_database_and_content_capable_package ... ok
+test external_request_calls_node_then_upstream_then_real_three_language_guests ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/cli.rs (build/selected-service-network/debug/deps/cli-8cd2dc8512662467)
+
+running 2 tests
+test invalid_tls_identity_is_rejected_before_creating_service_data ... ok
+test invalid_token_is_rejected_before_creating_any_service_directory ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cli_tls.rs (build/selected-service-network/debug/deps/cli_tls-4b2aa8a16c9d4b42)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/client.rs (build/selected-service-network/debug/deps/client-912744897bc53f48)
+
+running 10 tests
+test origin_policy_is_exact_and_local_http_is_loopback_only ... ok
+test redirect_is_returned_without_contacting_second_origin ... ok
+test unapproved_origin_method_and_sensitive_framing_fail_before_connect ... ok
+test default_dns_policy_rejects_localhost_even_for_https_before_network_io ... ok
+test request_and_response_budgets_cover_known_and_streaming_lengths ... ok
+test raw_response_preserves_obs_text_while_text_api_remains_strict ... ok
+test http_error_status_is_a_response_not_transport_failure ... ok
+test all_approved_methods_preserve_body_and_duplicate_headers ... ok
+test cancellation_timeout_and_concurrency_are_bounded_and_release_permits ... ok
+test connection_closed_without_response_does_not_retry_or_leak_diagnostic ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.15s
+
+     Running tests/client_tls.rs (build/selected-service-network/debug/deps/client_tls-b85ded0e3a143400)
+
+running 4 tests
+test local_https_is_explicit_and_single_root_input_is_bounded ... ok
+test explicit_root_and_matching_hostname_preserve_actual_https_body_and_status ... ok
+test adding_root_does_not_disable_certificate_hostname_validation ... ok
+test untrusted_certificate_and_wrong_root_fail_before_node_handler ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/configured_service.rs (build/selected-service-network/debug/deps/configured_service-94f0500e1cc49555)
+
+running 8 tests
+test unrelated_authority_and_configuration_writes_preserve_live_service_and_replay ... ok
+test restrictive_dependency_bounds_and_live_probe_fence_cached_service_results ... ok
+test restrictive_validity_fences_cached_response_and_stays_invalid_after_clock_recovery ... ok
+test configured_native_factory_uses_persisted_approved_routes_and_recovers_after_restart ... ok
+test configured_factory_enforces_exact_tls_mode_and_serves_actual_approved_tls_request ... ok
+test configured_factory_rejects_foreign_worker_and_missing_required_tls_before_consuming_listener ... ok
+test configured_factory_absolute_expiry_and_queued_edits_revoke_original_authority ... ok
+test configured_auth_or_config_revocation_after_real_dispatch_never_delivers_late_guest_result ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+
+     Running tests/managed_content_service.rs (build/selected-service-network/debug/deps/managed_content_service-504e39a38e673c6a)
+
+running 10 tests
+test read_only_principal_scope_cannot_submit_the_actual_guest_rename ... ok
+test authenticated_other_principal_cannot_read_outside_its_effective_card_scope ... ok
+test actual_http_wasm_exchange_reads_live_card_bytes_and_strips_forged_scope_headers ... ok
+test narrowed_scope_after_restart_cannot_replay_old_same_key_result ... ok
+test content_history_query_preserves_scope_table_and_current_policy_revocation ... ok
+test service_http_wait::stop_waits_for_held_owner_callback_during_service_http ... ok
+test outbound_scope_replays_after_restart_but_changed_or_removed_scope_conflicts ... ok
+test actual_http_write_receipt_persists_and_same_key_replay_never_commits_twice ... ok
+test service_http_wait::endpoint_revoke_or_retention_expiry_during_outbound_keeps_both_intents_unknown ... ok
+test service_http_wait::inbound_outbound_wait_keeps_owner_available_and_replay_never_resends ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.39s
+
+     Running tests/managed_http.rs (build/selected-service-network/debug/deps/managed_http-0ebed1e13c5fdfe0)
+
+running 32 tests
+test disconnect_after_request_is_unknown_and_same_operation_is_not_sent_again ... ok
+test deferred_http_owner::owner_panic_joins_transport_and_preserves_committed_content_and_unknown ... ok
+test endpoint_revocation_after_request_prevents_delivery_without_claiming_rollback ... ok
+test deferred_http_owner::original_owner_commits_during_real_http_wait_and_reopens_same_database ... ok
+test http_route_set::retained_route_set_cannot_authorize_reconnected_instance_on_same_host ... ok
+test http_route_set::route_set_rejects_empty_duplicate_over_bound_and_unselected_reference ... ok
+test http_route_set::foreign_or_revoked_endpoint_does_not_gain_authority_from_membership ... ok
+test http_route_set::selected_live_endpoints_route_exactly_and_keep_deferred_owner_lane ... ok
+test original_endpoint_cannot_authorize_second_live_instance_of_same_package ... ok
+test ready_result_is_suppressed_if_endpoint_is_revoked_before_read ... ok
+test sdk_http_guest::credential_injection_and_http_error_are_observed_without_secret_in_request_material ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_network.ps1
+test sdk_http_guest::dropped_response_is_unknown_not_retried_and_survives_store_reopen ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_network.ps1
+test sdk_http_guest::seven_methods_preserve_binary_bytes_headers_and_durable_receipts ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_network.ps1
+test sdk_http_guest::unapproved_endpoint_method_and_credential_never_send_or_create_intent ... ignored, requires all three compiled IO guests; run tool/verify_plugin_io_network.ps1
+test positive_guest_deadline_limits_network_wait_and_keeps_unknown_history ... ok
+test real_post_preserves_binary_body_duplicate_headers_and_durable_frames ... ok
+test head_and_bodyless_statuses_do_not_reject_advertised_large_content_length ... ok
+test error_http_status_is_observed_and_redirect_never_contacts_second_origin ... ok
+test stored_endpoint_without_credential_never_calls_provider_and_uses_real_transport ... ok
+test oversized_or_unrepresentable_real_responses_remain_unknown ... ok
+test stored_http_identity::approved_directory_delivers_only_credential_reference_for_real_http ... ok
+test stored_endpoint_owner_queue_disable_suppresses_inflight_and_ready_responses ... ok
+test real_tls_keeps_root_and_hostname_validation_in_managed_path ... ok
+test stored_http_identity::ephemeral_stored_approval_keeps_session_reference ... ok
+test stored_http_identity::selection_digest_binds_complete_records_and_is_order_independent ... ok
+test stored_endpoint_utc_regression_and_expiry_are_sticky_at_ready_delivery ... ok
+test stored_http_identity::persistent_reference_requires_fresh_original_grant_after_disconnect ... ok
+test all_seven_approved_methods_reach_server_through_managed_wasm_and_are_observed ... ok
+test trusted_credential_is_injected_only_at_transport_not_into_protected_guest_frame ... ok
+test wrong_reference_method_or_credential_is_rejected_before_network_and_history ... ok
+test stored_http_identity::stored_unrelated_outbound_reference_mutation_preserves_request_ready ... ok
+test stored_endpoint_rejects_wrong_package_capability_policy_and_alias_before_secret_callback ... ok
+
+test result: ok. 28 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 1.37s
+
+     Running tests/managed_service.rs (build/selected-service-network/debug/deps/managed_service-e65e4965a533976f)
+
+running 22 tests
+test completion_for_another_call_cannot_be_delivered ... ok
+test dropped_http_response_is_recovered_after_restart_without_guest_execution ... ok
+test durable_key_header_is_required_unique_bounded_and_not_hop_by_hop ... ok
+test durable_unknown_expiry_and_revocation_never_reexecute_or_disclose ... ok
+test durable_cached_response_is_scoped_to_the_actual_authenticated_principal ... ok
+test durable_retry_survives_restart_without_executing_guest_again ... ok
+test listener_single_use_and_revocation_stop_actual_socket ... ok
+test foreign_listener_and_mixed_workers_fail_before_binding ... ok
+test ordinary_service_strips_content_scope_metadata_without_granting_content_access ... ok
+test observed_service_result_expires_without_reopening_its_key ... ok
+test expiry_manager_disable_and_drop_close_the_listener ... ok
+test persisted_service_configuration_reopens_original_history_with_fresh_grants ... ok
+test query_missing_is_read_only_then_original_executes_and_query_returns_observed ... ok
+test query_observed_preserves_response_at_exact_header_budget_without_added_metadata ... ok
+test query_observed_survives_restart_with_insufficient_guest_fuel_and_no_router_factory ... ok
+test service_revocation_prevents_existing_route_and_new_registration ... ok
+test query_unknown_survives_restart_without_execution_even_after_fuel_restored ... ok
+test query_route_requires_same_host_durable_origin_and_distinct_valid_path ... ok
+test tls_routes_use_the_same_typed_managed_execution ... ok
+test wrong_auth_does_not_consume_plugin_call_identity ... ok
+test query_prepared_and_cancelled_history_never_claims_or_creates_events ... ok
+test all_seven_methods_reach_real_typed_managed_wasm ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s
+
+     Running tests/managed_service_owned.rs (build/selected-service-network/debug/deps/managed_service_owned-084898fdd07df9c5)
+
+running 9 tests
+test legacy_bind_accepts_an_untyped_empty_route_list_and_returns_invalid ... ok
+test cancelling_shutdown_future_does_not_consume_the_original_owner ... ok
+test last_host_drop_only_releases_guards_after_the_worker_finishes ... ok
+test port_conflict_does_not_drop_or_replace_the_containing_owner ... ok
+test invalid_adapter_options_return_the_same_live_worker_for_explicit_reclamation ... ok
+test cancelled_listener_join_retains_supervision_until_explicit_stop_and_rejoin ... ok
+test stopping_or_dropping_listener_keeps_host_reclamation_separate ... ok
+test service_host_shutdown_with_held_owner_callback ... ok
+test stop_is_nonblocking_and_owned_shutdown_waits_for_maintenance_and_preserves_diagnostics ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.34s
+
+     Running tests/principal_server.rs (build/selected-service-network/debug/deps/principal_server-af518bc4d3c69bc8)
+
+running 11 tests
+test duplicate_identity_token_and_route_configs_fail_before_socket_binding ... ok
+test authorized_raw_header_values_keep_obs_text_without_lossy_conversion ... ok
+test duplicate_or_missing_authorization_never_reaches_handler ... ok
+test forbidden_scope_is_rejected_before_waiting_for_declared_body ... ok
+test authenticated_id_and_disjoint_scopes_cannot_be_overridden_by_headers ... ok
+test principal_inputs_are_bounded_and_clones_share_revocation ... ok
+test raw_response_still_rejects_framing_and_control_byte_headers ... ok
+test authorized_tls_uses_the_same_authenticated_principal_dispatch ... ok
+test revocation_while_body_is_incomplete_prevents_handler_entry ... ok
+test expired_and_revoked_principals_cannot_authenticate ... ok
+test late_handler_result_is_suppressed_after_revocation_or_expiry ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.11s
+
+     Running tests/sdk_service_guest.rs (build/selected-service-network/debug/deps/sdk_service_guest-44120cbf1576ef21)
+
+running 2 tests
+test generated_original_packages_serve_seven_methods_and_enforce_grants ... ignored, requires all three generated service packages; run tool/verify_plugin_service_sdk.py
+test generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend ... ignored, requires generated service-run packages; run tool/verify_plugin_service_sdk.py
+
+test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sdk_service_http.rs (build/selected-service-network/debug/deps/sdk_service_http-ce85d699a92c3231)
+
+running 6 tests
+test configured::configured_originals_cached_results_obey_selected_endpoint_and_credential_revocation ... ignored, requires three original service-http packages
+test configured::configured_originals_waiting_revocation_or_stop_never_redelivers_or_resends ... ignored, requires three original service-http packages
+test configured::configured_selection_rejects_stale_or_foreign_wiring_and_returns_original_worker ... ignored, requires three original service-http packages
+test originals_forward_and_reopen_without_resending_observed_or_unknown ... ignored, requires original three-language service-http packages; run verify_plugin_service_sdk.py --service-http
+test originals_reject_missing_directory_method_and_body_limit_without_io ... ignored, requires original three-language service-http packages; run verify_plugin_service_sdk.py --service-http
+test originals_stop_or_revoke_during_wait_preserve_unknown_without_resend ... ignored, requires original three-language service-http packages; run verify_plugin_service_sdk.py --service-http
+
+test result: ok. 0 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/server.rs (build/selected-service-network/debug/deps/server-9c8f93822c23c86a)
+
+running 13 tests
+test shutdown_cancels_active_handler_and_incomplete_header_socket_then_releases_port ... ok
+test concurrent_handler_limit_rejects_without_queuing_then_recovers ... ok
+test request_stream_and_header_limits_prevent_handler_execution ... ok
+test bearer_precedes_handler_and_exact_routes_preserve_custom_response ... ok
+test bad_handler_headers_bodies_and_statuses_never_reach_the_client ... ok
+test persisted_verifier_authenticates_current_bearer_and_shared_live_guard_revokes_clones ... ok
+test validation_denies_public_listening_and_ambiguous_routes ... ok
+test verifier_constructor_reuses_identity_scope_and_ttl_validation ... ok
+test verifier_guard_revoked_after_handler_admission_suppresses_late_response ... ok
+test ipv6_loopback_and_drop_release_actual_listening_ports ... ok
+test timeout_cancels_and_drops_pending_handler_and_rejects_late_output ... ok
+test incomplete_unauthenticated_connections_expire_and_capacity_recovers_without_shutdown ... ok
+test verifier_principal_clone_never_renews_original_monotonic_ttl ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s
+
+     Running tests/service_run.rs (build/selected-service-network/debug/deps/service_run-f1095642350f4110)
+
+running 8 tests
+test explicit_renewal_preserves_listener_instance_and_cumulative_http_usage ... ok
+test long_run_does_not_extend_a_short_request_deadline ... ok
+test manager_revocation_closes_long_running_listener ... ok
+test renewed_run_keeps_the_original_short_http_request_deadline ... ok
+test budgeted_http_node_delivers_final_allowed_response_then_returns_quota ... ok
+test renewal_cannot_extend_configured_authentication_publication_or_disabled_config ... ok
+test configured_earlier_authority_expiry_and_config_change_stop_long_run_publication ... ok
+test original_listener_executes_distinct_authenticated_request_after_thirty_seconds ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.18s
+
+     Running tests/tls.rs (build/selected-service-network/debug/deps/tls-bc608e1ab8cd3a04)
+
+running 5 tests
+test pem_input_is_bounded_and_private_key_must_match ... ok
+test trusted_https_preserves_authentication_routes_and_exact_response ... ok
+test shutdown_and_drop_close_half_tls_connections_and_release_port ... ok
+test untrusted_ca_and_wrong_hostname_never_reach_handler ... ok
+test half_handshakes_do_not_block_normal_tls_and_expire_without_shutdown ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s
+
+   Doc-tests morrow_network_node
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

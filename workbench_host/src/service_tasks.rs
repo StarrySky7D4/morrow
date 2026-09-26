@@ -3,28 +3,21 @@
 use super::{AccessError, Executor, ExitStatus, Snapshot, Task, TaskKey};
 use crate::{Result, Workbench, WorkbenchState, now};
 use morrow_core::{
-    io::Request,
-    plugin_package::io::{IoCapability, MAX_SERVICE_RUN_DURATION_MS},
-    service_authority::proto::record::Kind,
+    plugin_package::io::MAX_SERVICE_RUN_DURATION_MS, service_authority::proto::record::Kind,
 };
 use morrow_network_node::{
     Error as NetworkError, Limits as NetworkLimits,
-    managed_http::{HttpRouteSet, MAX_SERVICE_ENDPOINTS},
-    managed_service::{ManagedNode, RouterFactory, ServiceHost},
+    managed_service::{ManagedNode, ServiceHost},
     server::TlsIdentity,
-    stored_http::StoredHttpEndpoint,
+    service_outbound::SelectedService,
 };
 use morrow_plugin_runtime::{
     io_binding::ServiceRunBudget,
-    io_jobs::{
-        BrokerRouter, IoWorker, JobError, JobLimits, OwnerCommandHandle, RouteContext, RouterFault,
-        WorkerExit,
-    },
+    io_jobs::{IoWorker, JobError, JobLimits, OwnerCommandHandle, WorkerExit},
     service_authority::{ConfiguredService, ResolvedService},
     service_io::ListenerGrant,
 };
 use std::{
-    collections::BTreeSet,
     net::SocketAddr,
     panic::{AssertUnwindSafe, catch_unwind},
     sync::{
@@ -51,12 +44,7 @@ pub struct ServiceStart {
     pub limits: JobLimits,
     pub network_limits: NetworkLimits,
 }
-/// Exact saved endpoint selection made by the trusted application host.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct ServiceEndpointSelection {
-    pub reference: [u8; 32],
-    pub revision: u64,
-}
+pub use morrow_network_node::service_outbound::ServiceEndpointSelection;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ServicePhase {
@@ -342,17 +330,6 @@ mod shutdown_overlap_tests {
         });
     }
 }
-struct DenyOutbound;
-impl BrokerRouter for DenyOutbound {
-    fn route(
-        &mut self,
-        _: &mut RouteContext<'_>,
-        _: u32,
-        _: &Request,
-    ) -> std::result::Result<Vec<u8>, RouterFault> {
-        Err(RouterFault::Denied)
-    }
-}
 fn utc() -> u64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -403,18 +380,7 @@ impl Workbench {
         if tls.is_some() && protected.is_some() {
             return Err("ambiguous TLS identity choice".into());
         }
-        if outbound.len() > MAX_SERVICE_ENDPOINTS {
-            return Err("too many service outbound endpoints".into());
-        }
-        let mut references = BTreeSet::new();
-        for selection in outbound {
-            if selection.reference == [0; 32]
-                || selection.revision == 0
-                || !references.insert(selection.reference)
-            {
-                return Err("invalid or duplicate service outbound endpoint".into());
-            }
-        }
+        ServiceEndpointSelection::validate(outbound)?;
         self.state.try_reclaim()?;
         self.state.require_writable()?;
         if self.state.task.is_some() {
@@ -510,24 +476,8 @@ impl Workbench {
         } else {
             (resolved, None)
         };
-        let mut endpoints = Vec::with_capacity(outbound.len());
-        for selection in outbound {
-            let endpoint = StoredHttpEndpoint::resolve(
-                state.host.store_local_mut(),
-                &selection.reference,
-                utc,
-            )?;
-            if endpoint.revision() != selection.revision {
-                return Err("service outbound endpoint changed".into());
-            }
-            endpoints.push(endpoint);
-        }
-        let outbound_scope = StoredHttpEndpoint::selection_digest(&endpoints)?;
-        let dependencies = endpoints
-            .iter()
-            .map(|endpoint| endpoint.service_dependency(state.host.store_local()))
-            .collect::<std::result::Result<Vec<_>, _>>()?;
-        let resolved = resolved.with_dependencies(state.host.store_local(), dependencies)?;
+        let selected =
+            SelectedService::resolve(state.host.store_local_mut(), resolved, outbound, utc)?;
         let start = state.start;
         let time = now(start);
         let expires = time
@@ -535,23 +485,7 @@ impl Workbench {
             .ok_or("service expiry overflow")?;
         let instance = manager.connect(&options.package_id, &mut state.host)?;
         let prepared = catch_unwind(AssertUnwindSafe(|| -> Result<_> {
-            let resource_profile = instance
-                .package()
-                .package()
-                .manifest()
-                .required_features
-                .iter()
-                .any(|f| f == morrow_core::service_resources::FEATURE);
-            let mut caps = BTreeSet::from([IoCapability::HttpListen, IoCapability::HttpPublish]);
-            if !endpoints.is_empty() {
-                caps.insert(IoCapability::HttpRequest);
-            }
-            if endpoints
-                .iter()
-                .any(|endpoint| endpoint.credential_reference().is_some())
-            {
-                caps.insert(IoCapability::CredentialUse);
-            }
+            let caps = selected.capabilities();
             let binding = manager.bind_budgeted_service_run(
                 &state.host,
                 &instance,
@@ -562,47 +496,36 @@ impl Workbench {
                 time,
                 options.budget,
             )?;
-            let configured = resolved.issue(manager, &state.host, &instance, &binding, time)?;
-            let mut approved = Vec::with_capacity(endpoints.len());
-            for endpoint in endpoints {
+            let fresh_secret = || {
                 let mut secret = [0; 32];
-                getrandom::fill(&mut secret)?;
-                #[cfg(target_os = "windows")]
-                let endpoint = endpoint.approve_persistent_windows(
-                    manager,
-                    &state.host,
-                    &instance,
-                    &binding,
-                    secret,
-                    time,
-                )?;
-                #[cfg(not(target_os = "windows"))]
-                let endpoint = endpoint.approve_persistent(
-                    manager,
-                    &state.host,
-                    &instance,
-                    &binding,
-                    secret,
-                    time,
-                    |_| Err(NetworkError::Denied),
-                )?;
-                approved.push(endpoint);
-            }
-            let mut resources = None;
-            let routers: RouterFactory = if approved.is_empty() {
-                Arc::new(|| Box::new(DenyOutbound))
-            } else {
-                let routes = HttpRouteSet::new(approved, runtime.handle().clone())?;
-                if resource_profile {
-                    resources =
-                        Some(routes.resources(outbound_scope.ok_or("missing outbound scope")?)?);
-                }
-                Arc::new(move || Box::new(routes.clone()))
+                getrandom::fill(&mut secret).map_err(|_| NetworkError::Denied)?;
+                Ok(secret)
             };
-            Ok((binding, configured, routers, resources))
+            #[cfg(target_os = "windows")]
+            let service = selected.approve_windows(
+                manager,
+                &state.host,
+                &instance,
+                &binding,
+                time,
+                runtime.handle().clone(),
+                fresh_secret,
+            )?;
+            #[cfg(not(target_os = "windows"))]
+            let service = selected.approve(
+                manager,
+                &state.host,
+                &instance,
+                &binding,
+                time,
+                runtime.handle().clone(),
+                fresh_secret,
+                |_| Err(NetworkError::Denied),
+            )?;
+            Ok((binding, service))
         }))
         .unwrap_or_else(|_| Err("service preparation panicked; no listener started".into()));
-        let (binding, configured, routers, resources) = match prepared {
+        let (binding, service) = match prepared {
             Ok(prepared) => prepared,
             Err(error) => {
                 if self.state.cleanup_instance(instance).is_err() {
@@ -669,14 +592,8 @@ impl Workbench {
                 return Err("service worker admission failed; inspect task before retrying".into());
             }
         };
-        let host = match ServiceHost::new_owned_with_resources(
-            worker,
-            options.network_limits.timeout,
-            routers,
-            outbound_scope,
-            resources,
-        ) {
-            Ok(host) => host,
+        let (host, configured) = match service.attach(worker, options.network_limits.timeout) {
+            Ok(wiring) => wiring,
             Err(failure) => {
                 failure.worker.stop();
                 self.state.task = Some(Task {

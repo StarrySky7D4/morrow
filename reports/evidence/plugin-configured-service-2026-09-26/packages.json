@@ -1,0 +1,14 @@
+{
+  "rust": {
+    "path": "/workspace/scratch/c3041ed82a57/restored-evidence/rust/dist/c1939799edb363b32aeeab133ed427b382b0a35a26efa5965c2839042278b0d9.mplugin",
+    "sha256": "c1939799edb363b32aeeab133ed427b382b0a35a26efa5965c2839042278b0d9"
+  },
+  "c": {
+    "path": "/workspace/scratch/c3041ed82a57/restored-evidence/c/dist/1359644c8039c09088af19fbc9fb1c889a5f7d73079efd07675ecad33fc8605b.mplugin",
+    "sha256": "1359644c8039c09088af19fbc9fb1c889a5f7d73079efd07675ecad33fc8605b"
+  },
+  "cpp": {
+    "path": "/workspace/scratch/c3041ed82a57/restored-evidence/cpp/dist/ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a.mplugin",
+    "sha256": "ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a"
+  }
+}

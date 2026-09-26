@@ -1,0 +1,29 @@
+    Finished `test` profile [unoptimized] target(s) in 0.06s
+     Running tests/sdk_transport_frozen.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_transport_frozen-93c1da0aad692f08)
+
+running 1 test
+test six_original_transport_packages_keep_modules_profiles_and_bounded_budgets ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s
+
+    Finished `test` profile [unoptimized] target(s) in 0.11s
+     Running tests/sdk_service_guest.rs (build/selected-service-validation/target-network/debug/deps/sdk_service_guest-44120cbf1576ef21)
+
+running 2 tests
+test generated_original_packages_serve_seven_methods_and_enforce_grants ... ok
+test generated_runs_renew_without_reset_and_reopen_observed_and_unknown_without_resend ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.32s
+
+    Finished `test` profile [unoptimized] target(s) in 0.11s
+     Running tests/managed_http.rs (build/selected-service-validation/target-network/debug/deps/managed_http-0ebed1e13c5fdfe0)
+
+running 4 tests
+test sdk_http_guest::credential_injection_and_http_error_are_observed_without_secret_in_request_material ... ok
+test sdk_http_guest::dropped_response_is_unknown_not_retried_and_survives_store_reopen ... ok
+test sdk_http_guest::unapproved_endpoint_method_and_credential_never_send_or_create_intent ... ok
+test sdk_http_guest::seven_methods_preserve_binary_bytes_headers_and_durable_receipts ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 28 filtered out; finished in 4.93s
+
+PASS: six original transport packages through current host; no guest build/repack

@@ -1,0 +1,138 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.4
+   Compiling capnp v0.24.1
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling capnpc v0.24.0
+   Compiling morrow-plugin-sdk v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/sdk/rust)
+    Finished `test` profile [unoptimized] target(s) in 3.62s
+     Running unittests src/lib.rs (build/selected-service-validation/target-sdk/debug/deps/morrow_plugin_sdk-47f93311474b1c1b)
+
+running 16 tests
+test ffi::ui_tests::document_readback_owns_data_and_rejects_invalid_indices_and_frames ... ok
+test ffi::ui_tests::ui_event_ownership_and_exact_u64 ... ok
+test io::tests::receipt_is_bound_to_exact_request_and_preserves_status ... ok
+test ffi::ui_tests::ui_encode_bounds_flags_and_failure_atomicity ... ok
+test io::tests::malformed_text_reference_and_limits ... ok
+test io::tests::request_actions_round_trip_and_unaligned ... ok
+test io::tests::read_and_http_result_rules ... ok
+test io::tests::unimplemented_schema_action_is_explicit ... ok
+test tests::unsupported_abi_and_missing_callback_rejected ... ok
+test tests::invalid_and_oversized_input_do_not_submit ... ok
+test wasm_alloc::over_aligned_allocations_share_free_and_reallocation ... ok
+test tests::failure_never_retries_or_exposes_partial_bytes ... ok
+test wasm_alloc::tests::aligned_zero_overflow_and_failed_realloc_preserve_original ... ok
+test tests::exact_binary_reply_and_one_submission ... ok
+test tests::impossible_reply_lengths_rejected ... ok
+test ffi::task_failure_tests::c_failure_api_rejects_invalid_codes_utf8_lengths_and_short_buffers ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/codec.rs (build/selected-service-validation/target-sdk/debug/deps/codec-676b26136f911bd8)
+
+running 8 tests
+test content_matches_independent_host_fixtures_and_binds_body_parts ... ok
+test four_requests_equal_independent_host_encoding ... ok
+test decodes_every_host_response_and_exact_u64 ... ok
+test rejects_valid_but_unrelated_successes ... ok
+test request_bounds_prevent_invalid_submissions ... ok
+test rejects_stale_contract_or_request_identity ... ok
+test rejects_invalid_reply_fields_and_nested_receipt ... ok
+test rejects_malformed_trailing_or_oversized_messages ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/dependency_call.rs (build/selected-service-validation/target-sdk/debug/deps/dependency_call-db038ab80af4cbb4)
+
+running 9 tests
+test malformed_utf8_in_all_text_fields_is_rejected ... ok
+test owned_roundtrip_preserves_binary_and_distinguishes_empty_success_from_failure ... ok
+test correlation_binds_call_slot_input_and_entire_original_frame ... ok
+test schema_snapshots_share_lf_normalized_digest ... ok
+test incorrect_version_digest_and_union_tag_are_rejected ... ok
+test unaligned_transport_buffers_preserve_complete_frame_correlation ... ok
+test truncated_tailed_joined_and_oversized_frames_fail_without_panics ... ok
+test bounded_traversal_rejects_unknown_alias_amplification_and_nested_cycles ... ok
+test payload_and_identity_limits_apply_at_both_encoding_and_decoding ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/dependency_ffi.rs (build/selected-service-validation/target-sdk/debug/deps/dependency_ffi-0a391d22560e8acd)
+
+running 5 tests
+test write_explicit_smoke_fixture_when_requested ... ok
+test c_empty_result_and_digest_are_supported ... ok
+test c_response_binds_exact_original_frame_not_reencoded_fields ... ok
+test c_output_owns_data_and_verifies_request_correlation ... ok
+test c_request_encoding_matches_rust_and_bounds_fail_without_output_mutation ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/io_ffi.rs (build/selected-service-validation/target-sdk/debug/deps/io_ffi-fad707ef7d35bd22)
+
+running 6 tests
+test c_digest_and_optional_native_fixture ... ok
+test c_http_response_owns_payload_headers_and_original_frame ... ok
+test c_validator_rejects_bad_frame_and_exact_layout_is_bound ... ok
+test c_http_and_operation_descriptors_match_rust_codec ... ok
+test c_response_binds_exact_frame_and_preserves_unknown ... ok
+test c_file_read_matches_rust_and_failure_is_bounded ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/service.rs (build/selected-service-validation/target-sdk/debug/deps/service-5c96675f5977ef0b)
+
+running 7 tests
+test original_frames_and_binary_values_roundtrip_from_unaligned_slices ... ok
+test response_binds_exact_original_request_and_call_id ... ok
+test response_status_and_bodyless_statuses_are_strict ... ok
+test identity_method_and_origin_form_validation_is_not_display_text ... ok
+test versions_schema_utf8_truncation_and_trailing_frames_fail_closed ... ok
+test sensitive_and_transport_headers_are_rejected_on_encode_and_decode ... ok
+test body_header_count_and_header_byte_budgets_apply_in_both_directions ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/service_resources.rs (build/selected-service-validation/target-sdk/debug/deps/service_resources-89e6378462889575)
+
+running 6 tests
+test invalid_endpoint_sets_and_credentials ... ok
+test positive_max_boundaries_inclusive_and_service_header_fits ... ok
+test invalid_numeric_limits ... ok
+test header_duplicates_and_noncanonical_hex_reject ... ok
+test unknown_version_and_digest_reject_even_in_canonical_frame ... ok
+test truncated_trailing_and_oversize_frames_reject ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ui.rs (build/selected-service-validation/target-sdk/debug/deps/ui-cc9e3c4d3b7d5f01)
+
+running 4 tests
+test independent_host_form_and_event ... ok
+test rejected_tree_and_field_mixtures ... ok
+test reject_truncation_trailing_and_contract_corruption ... ok
+test node_depth_and_expanded_text_budgets ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/ui_alignment.rs (build/selected-service-validation/target-sdk/debug/deps/ui_alignment-eaac36d0f91cc05a)
+
+running 5 tests
+test original_ui_event_accepts_all_transport_byte_alignments ... ok
+test original_request_and_reply_keep_exact_u64_on_every_alignment ... ok
+test original_ui_document_accepts_all_transport_byte_alignments ... ok
+test task_alignment_preserves_original_request_and_completion_correlation ... ok
+test alignment_fix_keeps_truncation_tail_and_allocation_limits ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests morrow_plugin_sdk
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

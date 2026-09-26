@@ -69,6 +69,8 @@ python tool/morrow_plugin.py pack build/my-forward-service
 
 starter 只接受 POST，要求恰好一个宿主选择的端点且允许 POST，把二进制正文发送到该端点的 `/`。调用者的路径、查询、认证、Cookie、其他头均不转发。凭据只传 opaque 引用，由宿主在实际 HTTP 发送时注入；目录本身不携带秘密。HTTP 完成后返回上游状态与正文，不复制上游响应头。
 
+配置型宿主可使用 `SelectedService::resolve` → `approve` / `approve_windows` → `PreparedService::attach` → `bind_configured` 统一绑定资源依赖、目录和重放 scope，见 [宿主接线](../docs/PLUGIN_SERVICE_RESOURCES.md)。
+
 宿主必须使用持久路由 `durable_route`（工作台配置服务使用对应持久流程），保存原请求并保持 namespace。出站操作 ID 是 `service-http-` 加精确原服务帧摘要；每次 guest 执行只调用一次 HTTP，无自动重试。外层服务幂等键冲突不会产生新业务执行。重开必须重新批准原包及相同资源策略。目录/凭据策略改变应改变 scope，旧记录不能因此重新执行。
 
 | 结果 | 服务状态与正文 |
@@ -95,5 +97,15 @@ python tool/verify_plugin_service_sdk.py --sysroot /absolute/path/to/wasi-sysroo
 ```
 
 该入口在新目录生成、构建、检查三语言原包，在真实 loopback TCP 节点运行七种方法、权限拒绝、续租、耗尽、撤权和重开核对，并保存包摘要及日志；缺少工具或原包时失败，不伪造通过。每个 Rust workspace 使用独立目标目录；`--build-root` 可复用编译缓存，输出证据目录仍必须新建。`--native` 当前强制 Linux C/C++ 原生验证。`scope.json` 明列平台排除项。
+
+已有合格原包可在迁移工作区后直接复验，省去 guest 编译器和 WASI sysroot：
+
+```sh
+python tool/verify_plugin_service_sdk.py --service-http --native --original-packages reports/evidence/plugin-service-http-2026-09-26/packages.json --package-root /absolute/path/to/restored-evidence --output-root build/configured-check --build-root build/reusable-cache
+```
+
+`--package-root` 使用 `rust|c|cpp/dist/<清单 SHA-256>.mplugin` 固定布局；不设置时按清单路径读取（相对路径相对清单所在目录）。三个原包必须齐全且摘要匹配，缺失或损坏立即失败；不挑选其他包、不重编 guest、不改包或更新清单摘要。可在其他原生环境复用该入口，平台结论以实际运行结果为准；`--native` 仍只适用于 Linux。`scope.json` 区分重新生成与原包重放。
+
+`--service-http` 现同时执行低层服务路径和持久配置路径：已选端点/凭据撤权限制历史缓存，未选变更保持服务，等待期撤权/停止不迟到交付，空选择及错 worker 明确拒绝。
 
 另有 `plugin_runtime/tests/sdk_service_codec.rs` 验证核心与 SDK 双向互操作及不同分段原帧关联；其中原生 C/C++ 检查需先将 `sdk/tests/c_service.c`、`sdk/tests/cpp_service.cpp` 链接当前 SDK，再设置 `MORROW_SDK_SERVICE_NATIVE_C/CPP`，显式运行 ignored 用例。完整命令与本次实际结果见 [验证报告](../reports/plugin-service-sdk-2026-09-26.md)。Windows 专属冻结依赖门槛仍须在 Windows 运行。
