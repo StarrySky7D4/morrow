@@ -2,6 +2,11 @@
 pub mod dependency_call;
 pub mod io;
 pub mod service;
+pub mod service_resources;
+#[allow(clippy::all)]
+pub mod service_resources_capnp {
+    include!(concat!(env!("OUT_DIR"), "/service_resources_capnp.rs"));
+}
 mod service_ffi;
 #[allow(clippy::all)]
 pub mod service_capnp {

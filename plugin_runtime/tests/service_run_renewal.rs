@@ -458,16 +458,32 @@ fn expiration_and_clock_rollback_are_sticky_and_cannot_be_renewed() {
 fn concurrent_same_revision_can_only_renew_once() {
     let mut run = Running::new();
     let barrier = Barrier::new(3);
+    // RegistryStorage is Send, not Sync: concurrent host callers must serialize
+    // access to its original owner. Keep the same run CAS revision in both calls.
+    let revision = run.manager.revision();
+    let manager = std::sync::Mutex::new(run.manager);
+    let worker = &run.worker;
+    let grant = &run.grant;
     let successes = thread::scope(|scope| {
         let attempt = || {
             barrier.wait();
-            run.renew(1, NEXT_EXPIRES, initial_budget()).is_ok()
+            worker
+                .renew_service_run(
+                    &manager.lock().unwrap(),
+                    grant,
+                    revision,
+                    1,
+                    NEXT_EXPIRES,
+                    initial_budget(),
+                )
+                .is_ok()
         };
         let a = scope.spawn(attempt);
         let b = scope.spawn(attempt);
         barrier.wait();
         usize::from(a.join().unwrap()) + usize::from(b.join().unwrap())
     });
+    run.manager = manager.into_inner().unwrap();
     assert_eq!(successes, 1);
     assert_eq!(
         (run.snapshot().revision, run.snapshot().expires),

@@ -17,9 +17,13 @@ int main(void) {
   assert(mp_service_request_decode(input,(uint32_t)count,&request)==MP_CODEC_OK);
   memset(input,0,count); free(input); /* handle must own original request bytes */
   assert(mp_service_request_get(request,&view,sizeof(view))==MP_CODEC_OK);
-  assert(view.call_id==UINT64_MAX && view.header_count==2);
+  assert(view.call_id==UINT64_MAX && view.header_count>=2 && view.header_count<=4);
   assert(view.body.length==3 && view.body.data[0]==0 && view.body.data[1]==255);
   assert(view.principal.length==5 && memcmp(view.principal.data,"alice",5)==0);
+  mp_service_resources *resources=NULL;
+  uint32_t resources_status=mp_service_request_resources(request,&resources);
+  assert(resources_status==(view.header_count==4 ? MP_CODEC_INVALID : MP_CODEC_OK));
+  assert((resources!=NULL)==(view.header_count==3));
   reply.abi_version=MP_SERVICE_ABI_VERSION; reply.struct_size=sizeof(reply);
   reply.status=200; reply.body=view.body; reply.headers=view.headers; reply.header_count=view.header_count;
   memset(output,0xaa,MP_MAX_SERVICE_FRAME_BYTES);
@@ -31,6 +35,19 @@ int main(void) {
   reply.status=200;
   assert(mp_service_response_encode(request,&reply,output,MP_MAX_SERVICE_FRAME_BYTES,&length)==MP_CODEC_OK);
   mp_service_request_free(request); mp_service_request_free(NULL);
+  if(resources) {
+    mp_service_resources_view rv={0};
+    assert(mp_service_resources_get(resources,&rv,sizeof(rv)-1)==MP_CODEC_LIMIT);
+    assert(mp_service_resources_get(resources,&rv,sizeof(rv))==MP_CODEC_OK);
+    assert(rv.scope_sha256.length==32 && rv.scope_sha256.data[0]==7 && rv.endpoint_count==1);
+    const mp_service_endpoint *e=&rv.endpoints[0];
+    assert(e->reference.length==64 && e->reference.data[0]=='a');
+    assert(e->credential.length==16 && memcmp(e->credential.data,"opaque-reference",16)==0);
+    assert(e->method_count==2 && e->methods[1].length==4 && memcmp(e->methods[1].data,"POST",4)==0);
+    assert(e->max_request_bytes==1024 && e->max_response_bytes==2048 && e->timeout_ms==3000 && e->response_frame_limit==4096);
+    mp_service_resources_free(resources);
+  }
+  mp_service_resources_free(NULL);
   assert(fwrite(output,1,length,stdout)==length); free(output);
   return 0;
 }

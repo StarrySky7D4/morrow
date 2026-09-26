@@ -117,13 +117,22 @@ def read_toml(path):
     except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
         raise ToolError(f"Cannot read {path}: {error}") from error
 
+def service_run(value, kind):
+    if kind != "service":
+        raise ToolError("service_run requires build.kind = service")
+    value = only(value, ("duration_ms", "max_jobs", "max_bytes"), "service_run")
+    integer(value.get("duration_ms"), 1, 3600000, "service_run.duration_ms")
+    integer(value.get("max_jobs"), 1, 1000000, "service_run.max_jobs")
+    integer(value.get("max_bytes"), 1, 64 * 1024 * 1024, "service_run.max_bytes")
+    return value
+
 def project(path):
     root = path_text(path).resolve(strict=True)
     if root.is_file():
         if root.name != "plugin.toml":
             raise ToolError("expected a project directory or plugin.toml")
         root = root.parent
-    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io"), "project")
+    config = only(read_toml(root / "plugin.toml"), ("schema", "plugin", "build", "budget", "handlers", "dependencies", "io", "service_run"), "project")
     integer(config.get("schema"), 1, 1, "schema")
     plugin = only(config.get("plugin"), ("id", "version", "name", "capabilities", "dependency_calls"), "plugin")
     identifier = string(plugin.get("id"), "plugin.id")
@@ -142,6 +151,8 @@ def project(path):
         raise ToolError("build.kind: only io or service is supported as an explicit project kind")
     if (build.get("kind") in ("io", "service")) != ("io" in config):
         raise ToolError("IO projects require build.kind = io/service and an [io] declaration")
+    if "service_run" in config:
+        service_run(config["service_run"], build.get("kind"))
     source = child(root, build.get("source"))
     if not source.is_file():
         raise ToolError("build.source does not exist: " + str(source))
@@ -179,16 +190,19 @@ def project(path):
     if plugin.get("dependency_calls", False) and not config.get("handlers"):
         raise ToolError("dependency_calls requires at least one handler")
     if "io" in config:
-        io = only(config["io"], ("capabilities", "handlers"), "io")
-        allowed = ("http-listen", "http-publish") if build.get("kind") == "service" else IO_CAPABILITIES
+        io = only(config["io"], ("capabilities", "handlers", "service_resources"), "io")
+        allowed = ("http-listen", "http-publish", "http-request", "credential-use") if build.get("kind") == "service" else IO_CAPABILITIES
         caps = io.get("capabilities")
         handlers = io.get("handlers")
         if (not isinstance(caps, list) or not caps or len(caps) > len(allowed)
                 or any(type(cap) is not str or cap not in allowed for cap in caps)
                 or len(caps) != len(set(caps))):
             raise ToolError("io.capabilities: use unique names allowed by the project kind")
-        if build.get("kind") == "service" and set(caps) != set(allowed):
-            raise ToolError("service requires exactly http-listen and http-publish")
+        if build.get("kind") == "service" and not {"http-listen", "http-publish"}.issubset(caps):
+            raise ToolError("service requires http-listen and http-publish")
+        resources = boolean(io.get("service_resources", False), "io.service_resources")
+        if resources and (build.get("kind") != "service" or "http-request" not in caps):
+            raise ToolError("service_resources requires service with http-request")
         if "credential-use" in caps and "http-request" not in caps:
             raise ToolError("io.capabilities: credential-use requires http-request")
         if (not isinstance(handlers, list) or not 1 <= len(handlers) <= 16
@@ -247,17 +261,18 @@ def sdk_service(root):
     for name in ("rust/src/service.rs", "c/include/morrow_plugin_service.h", "cpp/include/morrow_plugin_service.hpp"):
         if not (root / name).is_file():
             raise ToolError("incomplete service SDK root: " + str(root / name))
-    name = "service.capnp"
-    if (root / "rust/contracts" / name).read_bytes() != (ROOT / "core/schemas" / name).read_bytes():
-        raise ToolError("SDK and host packager service contracts differ: " + name)
-    versions = []
-    for source in (root / "rust/src/service.rs", ROOT / "core/src/service.rs"):
-        match = re.search(r"pub const VERSION: u16 = ([0-9]+);", source.read_text(encoding="utf-8"))
-        if match is None:
-            raise ToolError("missing service codec version: " + str(source))
-        versions.append(match.group(1))
-    if versions[0] != versions[1]:
-        raise ToolError("SDK and host packager service codec versions differ")
+    for stem in ("service", "service_resources"):
+        name = stem + ".capnp"
+        if (root / "rust/contracts" / name).read_bytes() != (ROOT / "core/schemas" / name).read_bytes():
+            raise ToolError("SDK and host packager service contracts differ: " + name)
+        versions = []
+        for source in (root / "rust/src" / (stem + ".rs"), ROOT / "core/src" / (stem + ".rs")):
+            match = re.search(r"pub const VERSION: u16 = ([0-9]+);", source.read_text(encoding="utf-8"))
+            if match is None:
+                raise ToolError("missing service codec version: " + str(source))
+            versions.append(match.group(1))
+        if versions[0] != versions[1]:
+            raise ToolError("SDK and host packager service codec versions differ")
 
 
 def executable(name):
@@ -301,6 +316,9 @@ def new_project(args):
                               or len(io_caps) != len(set(io_caps))
                               or ("credential-use" in io_caps and "http-request" not in io_caps)):
         raise ToolError("--io-capability requires unique supported names; credential-use requires http-request")
+    run_values = {key: getattr(args, arg, None) for key, arg in
+                  (("duration_ms", "service_run_ms"), ("max_jobs", "service_run_jobs"), ("max_bytes", "service_run_bytes"))}
+    run_profile = service_run(run_values, args.kind) if any(v is not None for v in run_values.values()) else None
     profile = "task" if args.kind == "content" else "dependency-caller" if args.kind == "dependency" else args.kind
     example = sdk_root / "examples" / f"{args.language}-{profile}"
     source_name = "src/lib.rs" if args.language == "rust" else "src/plugin.cpp" if args.language == "cpp" else "src/plugin.c"
@@ -323,6 +341,8 @@ def new_project(args):
                        'handlers = ["' + ("morrow.http.forward.v1" if "http-request" in io_caps else "io.request") + '"]'])
     if args.kind == "service":
         config.extend(["", "[io]", 'capabilities = ["http-listen", "http-publish"]', 'handlers = ["service.echo"]'])
+    if run_profile is not None:
+        config.extend(["", "[service_run]"] + [f"{k} = {v}" for k, v in run_profile.items()])
     for entry in handlers:
         config.extend(["", "[[handlers]]"] + [f"{k} = {v if type(v) is int else quote(v)}" for k, v in entry.items()])
     if args.kind == "dependency":
@@ -379,7 +399,7 @@ Content templates need host-provided task identities and per-card grants.
 UI templates need a host renderer and session event validation.
 Dependency templates call slot reverse, require a bytes.tag-reverse provider (^1.0.0), and need an explicitly approved host dependency lock; the simple transform command cannot supply this context.
 {('IO templates relay one host-selected IO request through the experimental io-v1 codec. The declaration is only an upper bound; installation, binding and each operation still require host approval. HTTP projects declare morrow.http.forward.v1 so the workbench can recognize the exact-frame forwarding profile; changing that handler may remove workbench compatibility. No path, URL, credential text or OS handle belongs in plugin.toml.' if args.kind == 'io' else '')}
-{('Service templates echo a bounded binary body. The host owns authentication, route, listener and publication; host approval is required. This finite IO profile does not request service-run-v1, TLS, outbound IO or content grants. Do not treat an echoed caller header as an authenticated principal.' if args.kind == 'service' else '')}
+{('Service templates echo a bounded binary body. The host owns authentication, route, listener and publication; host approval is required. Longer runs require explicit service_run duration/jobs/bytes; absent that table the short IO profile is retained. Run declarations grant no authority or automatic renewal. TLS, outbound IO and content grants remain host decisions. Do not treat an echoed caller header as an authenticated principal.' if args.kind == 'service' else '')}
 Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update that dependency and pass the matching --sdk-root.
 """.encode()
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -476,6 +496,11 @@ def package_arguments(config):
         arguments += ["--dependency-calls"]
     if config["build"].get("kind") == "service":
         arguments += ["--service"]
+    if config.get("io", {}).get("service_resources", False):
+        arguments += ["--service-resources"]
+    if "service_run" in config:
+        run_profile = service_run(config["service_run"], config["build"].get("kind"))
+        arguments += ["--service-run", str(run_profile["duration_ms"]), str(run_profile["max_jobs"]), str(run_profile["max_bytes"])]
     if "io" in config:
         for capability in config["io"]["capabilities"]:
             arguments += ["--io-capability", capability]
@@ -553,6 +578,9 @@ def main(argv=None):
             command.add_argument("--kind", choices=KINDS, default="transform")
             command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
                                  help="requested IO ceiling for --kind io (default: file-read)")
+            command.add_argument("--service-run-ms", type=int, help="finite run duration; requires jobs and bytes")
+            command.add_argument("--service-run-jobs", type=int, help="cumulative task reservation ceiling")
+            command.add_argument("--service-run-bytes", type=int, help="cumulative byte ceiling, max 64 MiB")
             command.add_argument("--id", required=True)
             command.add_argument("--version", default="0.1.0")
             command.add_argument("--name")

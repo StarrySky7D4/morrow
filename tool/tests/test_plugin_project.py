@@ -111,6 +111,56 @@ class ProjectTests(unittest.TestCase):
                     tool.pack_project(args)
                 compiler.assert_not_called()
 
+    def test_service_resources_requires_explicit_outbound_capability(self):
+        args, (root, config, _) = self.new("resources", "rust", "service")
+        config["io"]["service_resources"] = True
+        write_config(root / "plugin.toml", config)
+        with self.assertRaisesRegex(tool.ToolError, "http-request"):
+            tool.project(root)
+        config["io"]["capabilities"] += ["http-request", "credential-use"]
+        write_config(root / "plugin.toml", config)
+        self.assertIn("--service-resources", tool.package_arguments(tool.project(root)[1]))
+        config["io"]["service_resources"] = 1
+        write_config(root / "plugin.toml", config)
+        with self.assertRaises(tool.ToolError):
+            tool.project(root)
+
+    def test_service_run_is_explicit_complete_and_bounded_before_compilation(self):
+        args, (root, config, _) = self.new("run", "rust", "service")
+        self.assertNotIn("service_run", config)
+        valid = {"duration_ms": 3600000, "max_jobs": 1000000, "max_bytes": 67108864}
+        config["service_run"] = valid
+        write_config(root / "plugin.toml", config)
+        parsed = tool.project(root)[1]
+        arguments = tool.package_arguments(parsed)
+        i = arguments.index("--service-run")
+        self.assertEqual(arguments[i:i+4], ["--service-run", "3600000", "1000000", "67108864"])
+        for field in valid:
+            for value in [0, -1, True, "1", valid[field] + 1, None]:
+                changed = copy.deepcopy(config)
+                if value is None:
+                    del changed["service_run"][field]
+                else:
+                    changed["service_run"][field] = value
+                write_config(root / "plugin.toml", changed)
+                with mock.patch.object(tool, "compile_project") as compiler:
+                    with self.assertRaises(tool.ToolError):
+                        tool.pack_project(args)
+                    compiler.assert_not_called()
+        for kind, values in [("service", (60000, None, None)), ("io", (60000, 10, 1024))]:
+            invalid = self.args(self.root / (kind + "-invalid"), "rust", kind)
+            invalid.service_run_ms, invalid.service_run_jobs, invalid.service_run_bytes = values
+            with self.assertRaises(tool.ToolError):
+                tool.new_project(invalid)
+            self.assertFalse(Path(invalid.path).exists())
+        for language in tool.LANGUAGES:
+            complete = self.args(self.root / (language + "-long"), language, "service")
+            complete.service_run_ms, complete.service_run_jobs, complete.service_run_bytes = 60000, 10, 2048
+            with contextlib.redirect_stdout(io.StringIO()):
+                tool.new_project(complete)
+            self.assertEqual(tool.project(complete.path)[1]["service_run"],
+                             {"duration_ms": 60000, "max_jobs": 10, "max_bytes": 2048})
+
     def test_existing_directory_is_never_overwritten(self):
         target = self.root / "existing"
         target.mkdir()

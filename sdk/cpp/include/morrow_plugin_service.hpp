@@ -3,6 +3,29 @@
 #include "morrow_plugin_service.h"
 #include "morrow_plugin_codec.hpp"
 namespace morrow {
+class service_resources {
+  friend class service_request;
+  mp_service_resources *value_=nullptr;
+  uint32_t status_=MP_CODEC_INVALID;
+public:
+  service_resources()=default;
+  ~service_resources(){mp_service_resources_free(value_);}
+  service_resources(const service_resources&)=delete;
+  service_resources& operator=(const service_resources&)=delete;
+  service_resources(service_resources&& other) noexcept
+      :value_(std::exchange(other.value_,nullptr)),status_(std::exchange(other.status_,MP_CODEC_INVALID)){}
+  service_resources& operator=(service_resources&& other) noexcept {
+    if(this!=&other){mp_service_resources_free(value_);value_=std::exchange(other.value_,nullptr);status_=std::exchange(other.status_,MP_CODEC_INVALID);}
+    return *this;
+  }
+  uint32_t status() const{return status_;}
+  bool present() const{return status_==MP_CODEC_OK && value_!=nullptr;}
+  mp_service_resources_view view() const {
+    mp_service_resources_view v{};
+    if(!present() || mp_service_resources_get(value_,&v,sizeof(v))!=MP_CODEC_OK)detail::codec_logic_error();
+    return v;
+  }
+};
 class service_request {
   mp_service_request *value_=nullptr;
   uint32_t status_=MP_CODEC_INVALID;
@@ -28,6 +51,11 @@ public:
     mp_service_request_view v{};
     if(status_!=MP_CODEC_OK || mp_service_request_get(value_,&v,sizeof(v))!=MP_CODEC_OK)detail::codec_logic_error();
     return v;
+  }
+  service_resources resources() const {
+    service_resources out;
+    out.status_=status_==MP_CODEC_OK?mp_service_request_resources(value_,&out.value_):status_;
+    return out;
   }
   // Descriptor spans only borrow during this call. Returned frame owns bytes.
   encoded_request response(const mp_service_reply_v1& reply) const {

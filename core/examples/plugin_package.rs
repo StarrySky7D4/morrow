@@ -14,7 +14,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--service] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -88,6 +88,8 @@ mod native {
         dependencies: Vec<DependencyRequirement>,
         dependency_calls: bool,
         service: bool,
+        service_resources: bool,
+        service_run: Option<io::proto::ServiceRunProfile>,
         io_caps: Vec<IoCapability>,
         io_handlers: Vec<String>,
         fuel: Option<u64>,
@@ -106,6 +108,8 @@ mod native {
                 "--name"
                     | "--dependency-calls"
                     | "--service"
+                    | "--service-resources"
+                    | "--service-run"
                     | "--fuel"
                     | "--memory-bytes"
                     | "--host-calls"
@@ -167,6 +171,36 @@ mod native {
                 }
                 "--dependency-calls" => o.dependency_calls = true,
                 "--service" => o.service = true,
+                "--service-resources" => o.service_resources = true,
+                "--service-run" => {
+                    let max_duration_ms = number(
+                        value(args, &mut i, flag, "DURATION_MS")?,
+                        flag,
+                        1,
+                        io::MAX_SERVICE_RUN_DURATION_MS,
+                    )?;
+                    let max_jobs = number(
+                        value(args, &mut i, flag, "MAX_JOBS")?,
+                        flag,
+                        1,
+                        io::MAX_SERVICE_RUN_JOBS,
+                    )?;
+                    let max_bytes = number(
+                        value(args, &mut i, flag, "MAX_BYTES")?,
+                        flag,
+                        1,
+                        io::MAX_BYTES,
+                    )?;
+                    o.service_run = Some(io::proto::ServiceRunProfile {
+                        schema_version: io::SERVICE_RUN_VERSION,
+                        max_duration_ms,
+                        budget: Some(io::proto::ServiceRunBudget {
+                            schema_version: io::SERVICE_RUN_BUDGET_VERSION,
+                            max_jobs,
+                            max_bytes,
+                        }),
+                    });
+                }
                 "--io-capability" => o
                     .io_caps
                     .push(io_capability(value(args, &mut i, flag, "NAME")?)?),
@@ -221,15 +255,28 @@ mod native {
                     .into(),
             );
         }
+        if o.service_run.is_some() && !o.service {
+            return Err("--service-run requires --service".into());
+        }
+        if o.service_resources && (!o.service || !o.io_caps.contains(&IoCapability::HttpRequest)) {
+            return Err("--service-resources requires --service and http-request".into());
+        }
         let inbound = o.io_caps.contains(&IoCapability::HttpListen)
             || o.io_caps.contains(&IoCapability::HttpPublish);
         if o.service != inbound
             || (o.service
-                && (o.io_caps.len() != 2
-                    || !o.io_caps.contains(&IoCapability::HttpListen)
+                && (o.io_caps.iter().any(|cap| {
+                    ![
+                        IoCapability::HttpListen,
+                        IoCapability::HttpPublish,
+                        IoCapability::HttpRequest,
+                        IoCapability::CredentialUse,
+                    ]
+                    .contains(cap)
+                }) || !o.io_caps.contains(&IoCapability::HttpListen)
                     || !o.io_caps.contains(&IoCapability::HttpPublish)))
         {
-            return Err("--service requires exactly http-listen and http-publish; inbound capabilities require --service".into());
+            return Err("--service requires http-listen and http-publish; inbound capabilities require --service".into());
         }
         Ok(o)
     }
@@ -249,6 +296,11 @@ mod native {
         }
         if !o.dependencies.is_empty() || o.dependency_calls {
             manifest.required_features.push(DEPENDENCIES_FEATURE.into());
+        }
+        if o.service_resources {
+            manifest
+                .required_features
+                .push(morrow_core::service_resources::FEATURE.into());
         }
         manifest.dependencies = o.dependencies;
         if o.dependency_calls {
@@ -272,6 +324,18 @@ mod native {
             io_budget.max_jobs = 1;
             io_budget.max_bytes = 1024 * 1024;
             io_budget.max_job_bytes = 1024 * 1024;
+            if let Some(profile) = o.service_run {
+                // Explicit cumulative ceiling changes only total capacity. The
+                // one-job, 1 MiB job and 30-second request ceilings stay bounded.
+                io_budget.max_bytes = io_budget
+                    .max_job_bytes
+                    .max(profile.budget.as_ref().expect("run budget").max_bytes);
+                manifest.required_features.extend([
+                    io::SERVICE_RUN_FEATURE.into(),
+                    io::SERVICE_RUN_BUDGET_FEATURE.into(),
+                ]);
+                declaration.service_run = Some(profile);
+            }
             manifest.io_declaration = Some(declaration);
         }
         let budget = manifest
@@ -392,9 +456,23 @@ mod native {
             if !declaration.service_schema_sha256.is_empty() {
                 writeln!(
                     out,
-                    "service-schema-sha256={} (finite IO binding; no listener or run grant)",
+                    "service-schema-sha256={} (declaration only; no listener or run grant)",
                     hex(&declaration.service_schema_sha256)
                 )?;
+            }
+            if let Some(profile) = &declaration.service_run {
+                writeln!(
+                    out,
+                    "service-run duration-ms={} (finite ceiling; explicit host approval and renewal)",
+                    profile.max_duration_ms
+                )?;
+                if let Some(budget) = &profile.budget {
+                    writeln!(
+                        out,
+                        "service-run-budget jobs={} bytes={} (cumulative, not refundable)",
+                        budget.max_jobs, budget.max_bytes
+                    )?;
+                }
             }
             if let Some(b) = &declaration.budget {
                 writeln!(

@@ -480,6 +480,10 @@ mod native {
     #[test]
     fn bounded_authority_count_and_identity_metadata_corruption_fail_closed() {
         let (_dir, path, mut store) = setup();
+        // This batch checks the record ceiling, not transient writer admission.
+        // Retain this Store's native pin while neighboring crash tests spawn
+        // processes (POSIX children can temporarily inherit open file locks).
+        let _lease = store.pin_service_authority().unwrap();
         for index in 0..service_authority::MAX_RECORDS {
             let mut value = auth();
             value.reference[..8].copy_from_slice(&(index as u64 + 1).to_le_bytes());

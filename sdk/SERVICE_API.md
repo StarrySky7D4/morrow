@@ -26,7 +26,7 @@ C 的 reply descriptor 仅在同步调用期间借用；输出与输入／descri
 - 响应状态为 200–599；204、205、304 不允许正文。错误 schema、尾随字节、畸形输入、错误关联和超限均拒绝。
 - 编码成功不证明响应已送达远端；完成错误不推断业务回滚，不自动重发。
 
-本轮只新增同步有界服务 SDK，不新增流式响应、异步续接、内容与出站组合 profile、TLS 配置或持久 Unknown 恢复接口。
+SDK 保持同步有界；历史查询、续租、监听与授权由可信宿主管理。流式响应、通用异步续接和完整业务核对仍是后续范围。
 
 ## 创建服务插件
 
@@ -38,15 +38,31 @@ python tool/morrow_plugin.py pack build/my-service
 
 生成模板回显二进制正文，声明 `service.echo` handler 和恰好 `http-listen` / `http-publish`。`build.kind = "service"` 与 `[io]` 声明成对出现。核心打包器要求显式 `--service`，固定现有服务 schema 摘要；普通出站 IO 项目不能隐式升级为监听服务。
 
-模板仍为有限 IO profile：30 秒声明上限、单作业、1 MiB 累计预算，不声明 `service-run-v1`。它适合验证短期节点调用，**不等于已有工作台长时服务运行入口所需的完整包配置**。批准、路由、TLS、认证和运行租约须由宿主另行管理，打包不授予能力。重复运行不是恢复旧租约。
+缺省模板保留短期 IO profile。工作台长时入口需要显式有限运行声明：
+
+```sh
+python tool/morrow_plugin.py new build/my-long-service --language rust --kind service --id org.example.long-service --service-run-ms 120000 --service-run-jobs 16 --service-run-bytes 4194304
+```
+
+等价配置为 `[service_run]` 的 `duration_ms = 120000`、`max_jobs = 16`、`max_bytes = 4194304`。三个值必须同时提供：期限最多 3600000 ms、累计任务保留最多 1000000 次、累计字节最多 64 MiB。打包加入 `service-run-v1` 和 `service-run-budget-v1`，保留原单作业 1 MiB／30 秒上限；宿主通过 `bind_budgeted_service_run` 另行批准，可进一步收紧，不能用普通 `bind_io` 绕过。
+
+续租针对原 Manager、实例和运行修订执行 CAS，增加累计上限不会重置已消费用量；已撤销、已停止、到期的授权不能复活。历史重放也占用本次准入预算，但不重新执行 guest。重开数据库只保留历史，必须重新签发运行与监听授权；Unknown 不自动重发。
+
+## 出站资源目录
+
+`service_resources::Directory::from_headers`（Rust）、`mp_service_request_resources`（C）、`service_request.resources()`（C++）解析宿主注入的可选目录。C 成功返回空句柄、C++ `present()==false` 表示未注入；重复或非法目录明确失败。独立资源句柄拥有所有端点、方法和引用视图，可在原请求释放后继续读取，资源句柄释放后视图失效。
+
+目录最多 8 个端点／4096 字节原帧，保留 scope 摘要、端点及凭据引用、允许方法和各项限额。只接受规范编码；它不包含凭据值，也不产生 IO 授权。
+
+自定义服务可在 `[io]` 中显式加入 `http-request`（需要凭据时另加 `credential-use`），并设置 `service_resources = true`。对应核心选项 `--service-resources` 只在服务且有 HTTP 出站声明时接受。回显模板不会因此自动转发；插件需实现业务调用，宿主仍独立批准并校验每次 IO。
 
 ## 本地验证
 
 ```sh
-python tool/verify_plugin_service_sdk.py --sysroot /absolute/path/to/wasi-sysroot
+python tool/verify_plugin_service_sdk.py --sysroot /absolute/path/to/wasi-sysroot --native
 # 首次缓存依赖可显式添加 --allow-network；不使用 Actions/CI。
 ```
 
-该入口在新目录生成、构建、检查三语言原包，在真实 loopback TCP 节点运行七种方法和权限拒绝，并保存包摘要及日志；缺少工具或原包时失败，不伪造通过。每个 Rust workspace 使用独立目标目录。`scope.json` 明列平台排除项。
+该入口在新目录生成、构建、检查三语言原包，在真实 loopback TCP 节点运行七种方法、权限拒绝、续租、耗尽、撤权和重开核对，并保存包摘要及日志；缺少工具或原包时失败，不伪造通过。每个 Rust workspace 使用独立目标目录；`--build-root` 可复用编译缓存，输出证据目录仍必须新建。`--native` 当前强制 Linux C/C++ 原生验证。`scope.json` 明列平台排除项。
 
 另有 `plugin_runtime/tests/sdk_service_codec.rs` 验证核心与 SDK 双向互操作及不同分段原帧关联；其中原生 C/C++ 检查需先将 `sdk/tests/c_service.c`、`sdk/tests/cpp_service.cpp` 链接当前 SDK，再设置 `MORROW_SDK_SERVICE_NATIVE_C/CPP`，显式运行 ignored 用例。完整命令与本次实际结果见 [验证报告](../reports/plugin-service-sdk-2026-09-26.md)。Windows 专属冻结依赖门槛仍须在 Windows 运行。

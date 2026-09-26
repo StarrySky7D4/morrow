@@ -33,6 +33,24 @@ uint32_t mp_service_request_decode(const uint8_t*,uint32_t,mp_service_request**)
 uint32_t mp_service_request_get(const mp_service_request*,mp_service_request_view*,uint32_t);
 uint32_t mp_service_response_encode(const mp_service_request*,const mp_service_reply_v1*,uint8_t*,uint32_t,uint32_t*);
 void mp_service_request_free(mp_service_request*);
+/* Independently owned optional metadata. Never grants IO authority. */
+typedef struct mp_service_resources mp_service_resources;
+typedef struct mp_service_endpoint {
+  mp_span reference, credential;
+  const mp_span *methods;
+  uint32_t method_count;
+  uint64_t max_request_bytes, max_response_bytes, timeout_ms, response_frame_limit;
+} mp_service_endpoint;
+typedef struct mp_service_resources_view {
+  mp_span scope_sha256;
+  const mp_service_endpoint *endpoints;
+  uint32_t endpoint_count;
+} mp_service_resources_view;
+/* OK + NULL means absent. Failure sets out NULL. Views live until resources_free,
+ * independently of the request lifetime; malformed/duplicate headers fail closed. */
+uint32_t mp_service_request_resources(const mp_service_request*,mp_service_resources**);
+uint32_t mp_service_resources_get(const mp_service_resources*,mp_service_resources_view*,uint32_t);
+void mp_service_resources_free(mp_service_resources*);
 #ifdef __cplusplus
 }
 #endif

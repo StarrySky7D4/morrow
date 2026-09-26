@@ -179,3 +179,10 @@ python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工�
 另对 C／C++／Rust 转换 CLI 检查含零字节和非 ASCII 字节的输入、精确输出、业务失败不发布文件、已有输出不覆盖。负面用例同时核对预期阶段、诊断及适用的底层退出码，不把任意非零退出视为通过。生成的 Rust 项目用于同源重编译摘要一致性、故意坏源拒绝旧产物、已有摘要包损坏时拒绝且不覆盖；故意修改的样本在 `finally` 中恢复。这个本机重复构建检查不等于跨机器可复现构建证明。
 
 验证会执行可信本机构建和受限插件任务，遵循同样的非源码沙箱边界，当前完整资格范围为 Windows。流程不是插件 UI 的逐像素验收，也不代替 Android、Web 或其他系统的实际运行验证。执行中的步骤和最终结果分别保留；不能仅因验证脚本存在就宣称全部通过，实际结论见 [test.49 记录](../reports/test.49-sdk-project-tools.md)。
+
+
+## 显式长时服务与资源发现（2026-09-26）
+
+`new --kind service` 可同时指定 `--service-run-ms`、`--service-run-jobs`、`--service-run-bytes`，生成完整 `[service_run]` 声明。三个参数缺失、非正数或超界会在编译前失败；其他模板不能带运行声明。单请求的原短期限和单作业额度继续有效，运行上限不产生授权或自动续租。
+
+自定义服务配置还可显式声明 HTTP 出站能力和 `[io] service_resources = true`；不提供出站能力时拒绝该选项。三语言资源目录解析及调用边界见 [服务 SDK](../sdk/SERVICE_API.md)。`verify_plugin_service_sdk.py --native` 增加 Linux 原生句柄检查，并实测生成长时原包的续租、累计额度、撤权和历史重开。

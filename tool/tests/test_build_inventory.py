@@ -31,7 +31,7 @@ class InventoryTests(unittest.TestCase):
         self.root.mkdir()
         required = [
             "pubspec.yaml", "core/src/plugin_package.rs", "core/src/store.rs",
-            "sdk/rust/src/dependency_call.rs",
+            "sdk/rust/src/dependency_call.rs", "sdk/rust/src/io.rs", "sdk/rust/src/service.rs", "sdk/rust/src/service_resources.rs",
             "sdk/compat/guest-v1-rc1.sha256", "android/app/build.gradle.kts",
             "lib/plugins/bootstrap_native.dart",
         ]
@@ -93,8 +93,8 @@ class InventoryTests(unittest.TestCase):
     def test_original_copied_sources_and_fixed_baseline_are_consistent(self):
         data = self.collect()
         self.assertEqual(data["frozen_count"], 36)
-        self.assertEqual(len(data["protocols"]), 4)
-        self.assertEqual(len(data["mirrors"]), 5)
+        self.assertEqual(len(data["protocols"]), 7)
+        self.assertEqual(len(data["mirrors"]), 8)
         self.assertTrue(data["schemas"])
         self.assertEqual(data["pin"], (REPO / "sdk/compat/guest-v1-rc1.sha256").read_text().strip())
 
@@ -135,7 +135,7 @@ class InventoryTests(unittest.TestCase):
     def test_crlf_only_schema_difference_preserves_declared_normalized_contract(self):
         path = self.root / "sdk/rust/contracts/runtime.capnp"
         path.write_bytes(path.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
-        self.assertEqual(len(self.collect()["mirrors"]), 5)
+        self.assertEqual(len(self.collect()["mirrors"]), 8)
 
     def test_database_migration_and_all_acceptance_predicates_must_agree(self):
         path = "core/src/store.rs"
@@ -144,11 +144,14 @@ class InventoryTests(unittest.TestCase):
         modifications = [
             saved.replace(f'pragma_update(None, "user_version", {current})',
                           f'pragma_update(None, "user_version", {current + 1})'),
-            re.sub(r'!matches!\(version, ([0-9]+)\.\.=[0-9]+\)',
+            re.sub(r'!matches!\(version, ([0-9]+)\.\.=(?:[0-9]+|SCHEMA_VERSION)\)',
                    lambda m: f'!matches!(version, {m[1]}..={current + 1})', saved, count=1),
             saved + f"\n!matches!(version, 4..={current})\n",
         ]
+        modifications.append(saved.replace(f'const SCHEMA_VERSION: i64 = {current};',
+                                           f'const SCHEMA_VERSION: i64 = {current + 1};'))
         for changed in modifications:
+            self.assertNotEqual(changed, saved)
             with self.subTest(change=modifications.index(changed)):
                 self.write(path, changed)
                 with self.assertRaises(inventory.InventoryError):

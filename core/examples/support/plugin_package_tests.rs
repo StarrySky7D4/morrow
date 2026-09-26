@@ -508,3 +508,47 @@ fn legacy_modes_install_and_explicit_file_no_clobber_remain_compatible() {
         );
     }
 }
+
+#[test]
+fn explicit_service_run_retains_short_job_limits_and_has_finite_cumulative_budget() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-run", "3600000", "1000000", "67108864"]);
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    let d = p.manifest().io_declaration.as_ref().unwrap();
+    let run = d.service_run.as_ref().unwrap();
+    assert_eq!(run.max_duration_ms, io::MAX_SERVICE_RUN_DURATION_MS);
+    assert_eq!(run.budget.as_ref().unwrap().max_jobs, io::MAX_SERVICE_RUN_JOBS);
+    let b = d.budget.as_ref().unwrap();
+    assert_eq!((b.max_jobs, b.max_job_bytes, b.max_duration_ms), (1, 1024*1024, 30_000));
+    assert_eq!(b.max_bytes, io::MAX_BYTES);
+    assert!(p.manifest().required_features.iter().any(|f| f == io::SERVICE_RUN_BUDGET_FEATURE));
+    assert!(output.contains("cumulative, not refundable"));
+}
+#[test]
+fn invalid_run_options_never_publish() {
+    for values in [vec!["0", "1", "1"], vec!["3600001", "1", "1"], vec!["1", "0", "1"], vec!["1", "1000001", "1"], vec!["1", "1", "0"], vec!["1", "1", "67108865"], vec!["60000"], vec!["-1", "1", "1"]] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-run"]);
+        add(&mut args, &values);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service-run", "60000", "1", "1"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+}
+
+#[test]
+fn resource_discovery_requires_explicit_service_and_outbound_declarations() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-resources"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+    add(&mut args, &["--io-capability", "http-request"]);
+    execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert!(p.manifest().required_features.iter().any(|f| f == morrow_core::service_resources::FEATURE));
+    assert_eq!(p.io_capabilities().len(), 3);
+}

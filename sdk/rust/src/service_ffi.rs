@@ -251,3 +251,128 @@ pub unsafe extern "C" fn mp_service_request_free(raw: *mut c_void) {
         }
     }
 }
+
+#[repr(C)]
+pub struct CEndpoint {
+    reference: Span,
+    credential: Span,
+    methods: *const Span,
+    method_count: u32,
+    max_request_bytes: u64,
+    max_response_bytes: u64,
+    timeout_ms: u64,
+    response_frame_limit: u64,
+}
+#[repr(C)]
+#[derive(Default)]
+pub struct CResourcesView {
+    scope_sha256: Span,
+    endpoints: *const CEndpoint,
+    endpoint_count: u32,
+}
+struct ResourcesHandle {
+    directory: crate::service_resources::Directory,
+    // Own both levels of views; underlying strings belong to directory.
+    _methods: Vec<Vec<Span>>,
+    endpoints: Vec<CEndpoint>,
+}
+/// # Safety
+/// Request is a live SDK handle; out is an aligned disjoint writable slot.
+/// Success with null out means no resource header. Otherwise the independent
+/// handle owns all views and can outlive the request. References confer no grant.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_service_request_resources(
+    request: *const c_void,
+    out: *mut *mut c_void,
+) -> u32 {
+    if out.is_null() {
+        return 16;
+    }
+    unsafe {
+        *out = std::ptr::null_mut();
+    }
+    guard(|| {
+        if request.is_null() {
+            return Err(Error::Invalid);
+        }
+        let request = unsafe { &*request.cast::<RequestHandle>() };
+        let Some(directory) = crate::service_resources::Directory::from_headers(
+            &request.request.invocation().headers,
+        )?
+        else {
+            return Ok(());
+        };
+        let methods: Vec<Vec<Span>> = directory
+            .endpoints
+            .iter()
+            .map(|e| e.methods.iter().map(|m| span(m.as_bytes())).collect())
+            .collect();
+        let endpoints = directory
+            .endpoints
+            .iter()
+            .zip(&methods)
+            .map(|(e, m)| CEndpoint {
+                reference: span(e.reference.as_bytes()),
+                credential: span(&e.credential),
+                methods: m.as_ptr(),
+                method_count: m.len() as u32,
+                max_request_bytes: e.max_request_bytes,
+                max_response_bytes: e.max_response_bytes,
+                timeout_ms: e.timeout_ms,
+                response_frame_limit: e.response_frame_limit,
+            })
+            .collect();
+        let handle = Box::new(ResourcesHandle {
+            directory,
+            _methods: methods,
+            endpoints,
+        });
+        unsafe {
+            *out = Box::into_raw(handle).cast();
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Handle is live and SDK-owned; out is an aligned disjoint writable view.
+/// All spans and arrays expire at resources_free, even after the request is freed.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_service_resources_get(
+    raw: *const c_void,
+    out: *mut CResourcesView,
+    size: u32,
+) -> u32 {
+    guard(|| {
+        if out.is_null() {
+            return Err(Error::Invalid);
+        }
+        if size < size_of::<CResourcesView>() as u32 {
+            return Err(Error::Limit);
+        }
+        unsafe {
+            out.write(CResourcesView::default());
+        }
+        if raw.is_null() {
+            return Err(Error::Invalid);
+        }
+        let handle = unsafe { &*raw.cast::<ResourcesHandle>() };
+        unsafe {
+            out.write(CResourcesView {
+                scope_sha256: span(&handle.directory.scope_sha256),
+                endpoints: handle.endpoints.as_ptr(),
+                endpoint_count: handle.endpoints.len() as u32,
+            });
+        }
+        Ok(())
+    })
+}
+/// # Safety
+/// Null or an SDK-created resource handle, freed exactly once after views expire.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_service_resources_free(raw: *mut c_void) {
+    if !raw.is_null() {
+        unsafe {
+            drop(Box::from_raw(raw.cast::<ResourcesHandle>()));
+        }
+    }
+}

@@ -21,12 +21,15 @@ import verify_plugin_sdk_baseline as baseline
 ROOT = Path(__file__).resolve().parents[1]
 CRATES = ('core', 'core-web', 'audit', 'plugin_runtime', 'workbench_host',
           'sdk/rust', 'plugins/workbench', 'network_node')
-CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp')
+CONTRACTS = ('runtime.capnp', 'content.proto', 'task.capnp', 'ui.capnp', 'dependency_call.capnp', 'io.capnp', 'service.capnp', 'service_resources.capnp')
 PROTOCOLS = (
     ('runtime', 'core/src/runtime.rs', 'PROTOCOL_VERSION', 'version.txt'),
     ('task', 'core/src/task.rs', 'VERSION', 'task-version.txt'),
     ('ui', 'core/src/ui.rs', 'VERSION', 'ui-version.txt'),
     ('dependency-call', 'core/src/dependency_call.rs', 'VERSION', None),
+    ('io', 'core/src/io.rs', 'VERSION', None),
+    ('service', 'core/src/service.rs', 'VERSION', None),
+    ('service-resources', 'core/src/service_resources.rs', 'VERSION', None),
 )
 REPORTS = ('reports/test.50-application-plugin-management.md',
            'reports/network-node-initial.md', 'docs/PLUGIN_SDK_COMPATIBILITY.md')
@@ -94,7 +97,7 @@ def collect(root: Path) -> dict:
     protocols = []
     for name, path, symbol, sdk_file in PROTOCOLS:
         value = constant(reader.text(path), symbol, path)
-        sdk_path = 'sdk/rust/contracts/' + sdk_file if sdk_file else 'sdk/rust/src/dependency_call.rs'
+        sdk_path = 'sdk/rust/contracts/' + sdk_file if sdk_file else 'sdk/rust/src/' + name.replace('-', '_') + '.rs'
         sdk_value = int(reader.text(sdk_path).strip()) if sdk_file else constant(reader.text(sdk_path), 'VERSION', sdk_path)
         if value != sdk_value:
             raise InventoryError('Host/SDK version mismatch: ' + name)
@@ -105,12 +108,14 @@ def collect(root: Path) -> dict:
     if len(set(accepted_abis)) != len(accepted_abis):
         raise InventoryError('Duplicate guest ABI acceptance')
     store = reader.text('core/src/store.rs')
-    ranges = re.findall(r'!matches!\(version, ([0-9]+)\.\.=([0-9]+)\)', store)
+    schema_version = int(one(r'^pub const SCHEMA_VERSION: i64 = ([0-9]+);$', store, 'database schema version'))
+    raw_ranges = re.findall(r'!matches!\(version, ([0-9]+)\.\.=(SCHEMA_VERSION|[0-9]+)\)', store)
+    ranges = [(start, str(schema_version) if end == 'SCHEMA_VERSION' else end) for start, end in raw_ranges]
     if len(ranges) != 3 or len({end for _, end in ranges}) != 1 or ranges[1] != ranges[2]:
         raise InventoryError('Unsupported/ambiguous database source format')
     migrations = [int(v) for v in re.findall(r'pragma_update\(None, "user_version", ([0-9]+)\)', store)]
     database = int(ranges[1][1])
-    if not migrations or max(migrations) != database:
+    if not migrations or max(migrations) != database or database != schema_version:
         raise InventoryError('Database accepted version and migration target differ')
     mirrors = []
     for name in CONTRACTS:
@@ -256,7 +261,7 @@ def render(data: dict, git: tuple[str, str], artifacts: list, tools: list) -> st
                ('database migration target (source; no user database read)', data['database'], 'core/src/store.rs')]),
         '', '## Current schema digests', '',
         'LF SHA-256 normalizes CRLF only, matching existing contract hashing. Raw SHA-256 identifies file bytes. '
-        'All five current host/SDK mirrors and three version snapshots were compared; this is not old-binary compatibility execution.', '',
+        f'{len(data["mirrors"])} current host/SDK mirrors and {len(data["protocols"])} protocol versions were compared; this is not old-binary compatibility execution.', '',
         table(('Source schema', 'Raw SHA-256', 'LF SHA-256'), data['schemas']),
         '', '## Frozen baseline integrity', '',
         f'PASS_SCOPED: {data["frozen_count"]} pinned files checked by the existing verifier; root `{data["pin"]}`. '

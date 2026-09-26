@@ -83,28 +83,73 @@ fn native_c_and_cpp_handles_return_core_verified_frames() {
         io::Write,
         process::{Command, Stdio},
     };
-    let request = host::Request::encode(u64::MAX, &invocation()).unwrap();
-    for key in [
-        "MORROW_SDK_SERVICE_NATIVE_C",
-        "MORROW_SDK_SERVICE_NATIVE_CPP",
-    ] {
-        let executable = std::env::var_os(key).expect("native service test executable required");
-        let mut child = Command::new(executable)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn()
-            .unwrap();
-        child
-            .stdin
-            .take()
-            .unwrap()
-            .write_all(request.bytes())
-            .unwrap();
-        let output = child.wait_with_output().unwrap();
-        assert!(output.status.success(), "{key}");
-        let reply = host::Response::decode(&request, &output.stdout).unwrap();
-        assert_eq!(reply.status, 200);
-        assert_eq!(reply.body, invocation().body);
-        assert_eq!(reply.headers, invocation().headers);
+    for count in 0..=2 {
+        let mut value = invocation();
+        for _ in 0..count {
+            value.headers.push(resources().to_header().unwrap());
+        }
+        let request = host::Request::encode(u64::MAX, &value).unwrap();
+        for key in [
+            "MORROW_SDK_SERVICE_NATIVE_C",
+            "MORROW_SDK_SERVICE_NATIVE_CPP",
+        ] {
+            let executable =
+                std::env::var_os(key).expect("native service test executable required");
+            let mut child = Command::new(executable)
+                .stdin(Stdio::piped())
+                .stdout(Stdio::piped())
+                .spawn()
+                .unwrap();
+            child
+                .stdin
+                .take()
+                .unwrap()
+                .write_all(request.bytes())
+                .unwrap();
+            let output = child.wait_with_output().unwrap();
+            assert!(output.status.success(), "{key}");
+            let reply = host::Response::decode(&request, &output.stdout).unwrap();
+            assert_eq!(reply.status, 200);
+            assert_eq!(reply.body, invocation().body);
+            assert_eq!(reply.headers, value.headers);
+        }
     }
+}
+
+fn resources() -> morrow_core::service_resources::Directory {
+    use morrow_core::service_resources::{Directory, Endpoint};
+    Directory {
+        scope_sha256: [7; 32],
+        endpoints: vec![Endpoint {
+            reference: "a".repeat(64),
+            credential: b"opaque-reference".to_vec(),
+            methods: vec!["GET".into(), "POST".into()],
+            max_request_bytes: 1024,
+            max_response_bytes: 2048,
+            timeout_ms: 3000,
+            response_frame_limit: 4096,
+        }],
+    }
+}
+#[test]
+fn resource_directory_is_identical_across_independent_host_and_sdk_codecs() {
+    use morrow_plugin_sdk::service_resources as sdk;
+    assert_eq!(
+        sdk::schema_digest(),
+        morrow_core::service_resources::schema_digest()
+    );
+    let host = resources();
+    let bytes = host.encode().unwrap();
+    let guest = sdk::Directory::decode(&bytes).unwrap();
+    assert_eq!(guest.encode().unwrap(), bytes);
+    let header = host.to_header().unwrap();
+    let parsed = sdk::Directory::from_headers(&[morrow_plugin_sdk::io::Header {
+        name: header.name,
+        value: header.value,
+    }])
+    .unwrap()
+    .unwrap();
+    assert_eq!(parsed, guest);
+    assert_eq!(parsed.scope_sha256, [7; 32]);
+    assert_eq!(parsed.endpoints[0].credential, b"opaque-reference");
 }
