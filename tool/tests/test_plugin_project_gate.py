@@ -22,6 +22,14 @@ class ProjectQualificationGateTests(unittest.TestCase):
                    'plugin_id = "fixture"\nlanguage = "rust"\n'
                    'plugin_executed = false\npermissions_granted = false\n')
         self.assertEqual(check_preflight_summary(summary, "fixture", "rust")["schema"], 1)
+        with self.assertRaisesRegex(RuntimeError, "SDK source lock"):
+            check_preflight_summary(summary, "fixture", "rust", require_lock=True)
+        locked = summary + 'sdk_lock_status = "verified"\nsdk_lock_files = 50\nsdk_lock_sha256 = "' + 'a' * 64 + '"\n'
+        self.assertEqual(check_preflight_summary(locked, "fixture", "rust", require_lock=True)["sdk_lock_files"], 50)
+        for old, new in [('"verified"', '"absent"'), ('sdk_lock_files = 50', 'sdk_lock_files = true'),
+                         ('a' * 64, 'z' * 64), ('a' * 64, 'a' * 63)]:
+            with self.assertRaisesRegex(RuntimeError, "SDK source lock"):
+                check_preflight_summary(locked.replace(old, new), "fixture", "rust", require_lock=True)
         for old, new in [('schema = 1', 'schema = true'), ('"valid"', '"invalid"'),
                          ('"fixture"', '"other"'), ('"rust"', '"c"'),
                          ('"project-metadata-and-contracts"', '"executed"'),

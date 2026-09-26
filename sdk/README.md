@@ -19,6 +19,8 @@ python -B -X utf8 tool/verify_plugin_projects.py
 
 项目工具需要 Python 3.11+，默认 Cargo 离线构建，使用受信任的本地工具链；它不是源码沙箱。当前打包与诊断仍依赖本仓库的核心／运行时工具，尚非完整独立预编译 SDK 分发。
 
+可用 `new --lock-sdk` 或 `lock-sdk PROJECT` 生成可迁移的 `sdk.lock.toml`，锁定 SDK 库源码／契约输入；预检和构建自动核对已有锁，`--require-sdk-lock` 拒绝未锁定项目。SDK 更新需审查后显式执行 `lock-sdk PROJECT --update`。它不锁定工具链、项目自身或外部依赖全部源码，不等同于完整可重现构建。范围见 [项目工具](../docs/PLUGIN_PROJECT_TOOLS.md)。
+
 | 语言 | 入口 | 说明 |
 | --- | --- | --- |
 | C11 | `c/include/morrow_plugin_*.h` | 类型化命令、任务、UI、依赖调用；编解码复用 Rust 库 |

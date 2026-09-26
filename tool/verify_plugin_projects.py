@@ -27,7 +27,7 @@ def check_result(returncode, diagnostic, *, success=True, required=()):
             raise RuntimeError("expected diagnostic missing: " + text)
 
 
-def check_preflight_summary(diagnostic, identifier, language):
+def check_preflight_summary(diagnostic, identifier, language, *, require_lock=False):
     summary = tomllib.loads(diagnostic)
     if (type(summary.get("schema")) is not int or summary["schema"] != 1
             or summary.get("result") != "valid"
@@ -37,6 +37,12 @@ def check_preflight_summary(diagnostic, identifier, language):
             or summary.get("plugin_executed") is not False
             or summary.get("permissions_granted") is not False):
         raise RuntimeError("preflight summary does not match the requested project and scope")
+    if require_lock and (summary.get("sdk_lock_status") != "verified"
+                         or type(summary.get("sdk_lock_files")) is not int or summary["sdk_lock_files"] < 1
+                         or not isinstance(summary.get("sdk_lock_sha256"), str)
+                         or len(summary["sdk_lock_sha256"]) != 64
+                         or any(c not in "0123456789abcdef" for c in summary["sdk_lock_sha256"])):
+        raise RuntimeError("preflight summary has no verified SDK source lock")
     return summary
 
 
@@ -46,6 +52,7 @@ def main():
     parser.add_argument("--sysroot", type=Path, help="WASI sysroot for C/C++ project builds")
     parser.add_argument("--preflight-only", action="store_true",
                         help="generate and validate all 21 starters without compilers or plugin execution")
+    parser.add_argument("--lock-sdk", action="store_true", help="pin SDK sources in generated projects and require pins throughout")
     args = parser.parse_args()
     output = (args.output_root or ROOT / "build" / ("SDK projects 空间 " + uuid.uuid4().hex)).absolute()
     if output.exists() or output.is_symlink():
@@ -66,6 +73,11 @@ def main():
         return diagnostic
 
     def cli(name, *arguments, success=True, required=()):
+        if args.lock_sdk:
+            if arguments[0] == "new":
+                arguments += ("--lock-sdk",)
+            elif arguments[0] in ("validate", "build", "pack"):
+                arguments += ("--require-sdk-lock",)
         return run(name, project_command(arguments, args.sysroot), success, required)
 
     if args.preflight_only:
@@ -80,7 +92,7 @@ def main():
                     "--id", identifier, *(["--service-http"] if outbound else []))
                 before = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
                 diagnostic = cli(key + "-validate", "validate", project)
-                check_preflight_summary(diagnostic, identifier, language)
+                check_preflight_summary(diagnostic, identifier, language, require_lock=args.lock_sdk)
                 after = {p.relative_to(project): p.read_bytes() for p in project.rglob("*") if p.is_file()}
                 if before != after or (project / "build").exists() or (project / "dist").exists():
                     raise RuntimeError("preflight changed the project: " + key)
@@ -97,7 +109,7 @@ def main():
             project = output / key
             cli(key + "-new", "new", project, "--language", language, "--kind", kind,
                 "--id", "org.example." + key)
-            check_preflight_summary(cli(key + "-validate", "validate", project), "org.example." + key, language)
+            check_preflight_summary(cli(key + "-validate", "validate", project), "org.example." + key, language, require_lock=args.lock_sdk)
             cli(key + "-pack", "pack", project)
             archives = list((project / "dist").glob("*.mplugin"))
             if len(archives) != 1:

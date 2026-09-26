@@ -1,0 +1,7 @@
+{
+  "tool/plugin_sdk_lock.py": "bbc54cf67927756fef73b3401c9c54e0af3b0d8864d3ade036dd62b42c728bb2",
+  "tool/morrow_plugin.py": "ccd8b853e793270c0b6767d6bba12fd5aedde705677ae0ba6efdb0d1894d4430",
+  "tool/verify_plugin_projects.py": "037d13bd469e77425134a8452c0230d0165c75da7f29a5e07abc07f1d096573f",
+  "tool/tests/test_plugin_project_sdk_lock.py": "ecec4ee17067bab63a35fc94dae015990b0f2e98ce54f3bef1f121bac9beb6a1",
+  "tool/tests/test_plugin_project_gate.py": "c181ef79747b28f6ef72a71e8b70db63b7438473e6e7ea7fb21798594f087d79"
+}

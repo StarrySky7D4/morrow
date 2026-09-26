@@ -1,0 +1,247 @@
+schema = 1
+profile = "morrow-sdk-source-v1"
+
+[[files]]
+path = "LICENSE"
+size = 34020
+sha256 = "d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee"
+
+[[files]]
+path = "c/include/morrow_plugin_codec.h"
+size = 3555
+sha256 = "b73a42fb42c023d9eede44c6e4c5f12c6c3298a43515ac0621733a070ba02499"
+
+[[files]]
+path = "c/include/morrow_plugin_dependency.h"
+size = 3318
+sha256 = "99a82a24d0bf63b6eac536743a11d520cb92ff427b740bd4d0ed0b654021f0b9"
+
+[[files]]
+path = "c/include/morrow_plugin_io.h"
+size = 4936
+sha256 = "a88be6148e796dc719acf7313fbd53b6f6d04b6d2ec53e26bb642bfb373e0638"
+
+[[files]]
+path = "c/include/morrow_plugin_sdk.h"
+size = 2071
+sha256 = "2354b6b7d7a7e11da8765267370f4b0510f0e643b02c1333944c66c4b323d9bd"
+
+[[files]]
+path = "c/include/morrow_plugin_service.h"
+size = 3955
+sha256 = "9ece0ac3110a3ca4e208706f57ecc32b024345c7273bc5ef9c36f62edbed9869"
+
+[[files]]
+path = "c/include/morrow_plugin_task.h"
+size = 1737
+sha256 = "26c5495fcfc6c6a36a8fbf874dc48dd88be16c7ed6099715a9b8693aa724c840"
+
+[[files]]
+path = "c/include/morrow_plugin_ui.h"
+size = 2428
+sha256 = "e82bc45580ceb9bdf83df83093b421d0934a61f76179c35e0ee58a598eeecc16"
+
+[[files]]
+path = "c/include/morrow_plugin_wasm.h"
+size = 277
+sha256 = "670a1dc4f34c1689e5a0cd90cd761f167b2a76736534b9e24326dcfa6196d05c"
+
+[[files]]
+path = "c/src/morrow_plugin_sdk.c"
+size = 1354
+sha256 = "55d3657bfdcb3fe10a40a004a07585b5698ab7ade5d8779426f96ae2b3c134b6"
+
+[[files]]
+path = "c/src/morrow_plugin_task.c"
+size = 569
+sha256 = "b4c4cc9d9226d48e1c46f9c8c2dcfffa6f3d3ab22a47c2195aa5a89cbbcc0e56"
+
+[[files]]
+path = "c/src/morrow_plugin_wasm.c"
+size = 717
+sha256 = "1c21f2a3c71df6a3609e4496e6ce1ed99248ed5ff569395284e3401e86740aaf"
+
+[[files]]
+path = "c/src/morrow_plugin_wasm_libc.c"
+size = 1382
+sha256 = "549f76e1d5bb7bd20082603c59cde5ce3adee6c6899f43183e33ac7658616a75"
+
+[[files]]
+path = "cpp/include/morrow_plugin_codec.hpp"
+size = 7859
+sha256 = "7341ad6079dfbb934902e547f55cda2c01203070e71aa78301c7c210cc1c1b7b"
+
+[[files]]
+path = "cpp/include/morrow_plugin_dependency.hpp"
+size = 3423
+sha256 = "ef756fcb84ac2404534529732228e27b7ffae712b46dd7c904af8884196ff43f"
+
+[[files]]
+path = "cpp/include/morrow_plugin_io.hpp"
+size = 6102
+sha256 = "02ed6e42589a8b841d955bdc300fe29885bb04fba7b7d98992f15335aa4cbf4d"
+
+[[files]]
+path = "cpp/include/morrow_plugin_sdk.hpp"
+size = 1101
+sha256 = "394ed94ae0f7eccddc1a3eeff1e8a125588f6a870f8ddff97671b6ea4063836f"
+
+[[files]]
+path = "cpp/include/morrow_plugin_service.hpp"
+size = 3733
+sha256 = "1c643a936d04985b4a2c8f607f809bb652cb1ba44370700c0108ac80437ed300"
+
+[[files]]
+path = "cpp/include/morrow_plugin_task.hpp"
+size = 3138
+sha256 = "f06ecc04cfc02993e7a75dde01c0f03251b392cdfdf54f928c570f62adbdcd77"
+
+[[files]]
+path = "cpp/include/morrow_plugin_ui.hpp"
+size = 2846
+sha256 = "4bcd275f3488f4a5bb65f4d521dfdd34a2b336326df64ba90802be85c313239f"
+
+[[files]]
+path = "cpp/src/morrow_plugin_wasm_runtime.cpp"
+size = 926
+sha256 = "78d60e2fce7e85d6a7b5c15a4687ae9e2006be4ce99ae09ab550deb2f0a8bfbd"
+
+[[files]]
+path = "rust/Cargo.lock"
+size = 3069
+sha256 = "395ffb285db0cf70876872b1f98c5fea95d84db0e1ccc7a798de7f648b6ed164"
+
+[[files]]
+path = "rust/Cargo.toml"
+size = 335
+sha256 = "9581f49056fdfec7dbf0ae0b3b6d0feec2f387e0b802fdd923c794051d4afc23"
+
+[[files]]
+path = "rust/LICENSE"
+size = 34020
+sha256 = "d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee"
+
+[[files]]
+path = "rust/build.rs"
+size = 2069
+sha256 = "431c401c886667fac96ca6e09c72d3f04d8b65836aea1b56e57507643c9b945f"
+
+[[files]]
+path = "rust/contracts/content.proto"
+size = 1396
+sha256 = "8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4"
+
+[[files]]
+path = "rust/contracts/dependency_call.capnp"
+size = 738
+sha256 = "8dd7821caed15769c80dee950ac71fbdb3aa1106a37f411d88ec4d3a37952cb8"
+
+[[files]]
+path = "rust/contracts/io.capnp"
+size = 2311
+sha256 = "78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5"
+
+[[files]]
+path = "rust/contracts/runtime.capnp"
+size = 2953
+sha256 = "18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855"
+
+[[files]]
+path = "rust/contracts/service.capnp"
+size = 572
+sha256 = "a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2"
+
+[[files]]
+path = "rust/contracts/service_resources.capnp"
+size = 429
+sha256 = "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842"
+
+[[files]]
+path = "rust/contracts/task-version.txt"
+size = 2
+sha256 = "1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2"
+
+[[files]]
+path = "rust/contracts/task.capnp"
+size = 782
+sha256 = "6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b"
+
+[[files]]
+path = "rust/contracts/ui-version.txt"
+size = 2
+sha256 = "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865"
+
+[[files]]
+path = "rust/contracts/ui.capnp"
+size = 820
+sha256 = "253f074420307ce737b61f8669d553b3ed7a825132f2ce449900a1d9b372bda6"
+
+[[files]]
+path = "rust/contracts/version.txt"
+size = 2
+sha256 = "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58"
+
+[[files]]
+path = "rust/src/dependency_call.rs"
+size = 6511
+sha256 = "3a45843b85b063baeaedf361b018fa658fed22d3b5bf655e218efad1a77813f0"
+
+[[files]]
+path = "rust/src/ffi.rs"
+size = 45765
+sha256 = "59d5079918a094625df3a5bfee7dcc05710f5d5a400423a1fa84013299718601"
+
+[[files]]
+path = "rust/src/io.rs"
+size = 28017
+sha256 = "4011e3d7d366575a550a4aba67248ae015b57766cd8192e207c8616c44df9e56"
+
+[[files]]
+path = "rust/src/io_ffi.rs"
+size = 10899
+sha256 = "e9606b0cc2a9ad88c5387465237a42fd79e2b5e1b208b43de120902a8afc00f1"
+
+[[files]]
+path = "rust/src/lib.rs"
+size = 7388
+sha256 = "583e3a4b857e9bea2dbe832567c3ec25c1ee71a12a58f58cc8e46614636189ff"
+
+[[files]]
+path = "rust/src/protocol.rs"
+size = 20371
+sha256 = "89545f93276f2128f81681cc3ff5895f46a83301668c05b9a55fa38175a9431b"
+
+[[files]]
+path = "rust/src/service.rs"
+size = 10632
+sha256 = "85de0f7864287500a46d5a94739cc5e4831cffbb764c7fadd60d13cc677939ec"
+
+[[files]]
+path = "rust/src/service_ffi.rs"
+size = 11846
+sha256 = "34f23eec1e305d7d54512668882044369403e0ef87175fbcfa5bf676dd30b993"
+
+[[files]]
+path = "rust/src/service_resources.rs"
+size = 8148
+sha256 = "138abd75f85b616e21c143043c4fd9c40fa5e14d5e9c67f165b68fb860a6a41f"
+
+[[files]]
+path = "rust/src/task.rs"
+size = 6762
+sha256 = "fbf6505f98f06bf04fa99b24dd2481050b990034f2875c743a0c7f27c11b9c3d"
+
+[[files]]
+path = "rust/src/ui.rs"
+size = 9918
+sha256 = "db3ed99ac81cfd1e6881b79c528f6d28386f301ac340c38dc581b078fac37997"
+
+[[files]]
+path = "rust/src/wasm.rs"
+size = 9094
+sha256 = "186f3a8f672b8b81781be650f99326f87351cf129e00f7399251227936d7cbab"
+
+[[files]]
+path = "rust/src/wasm_alloc.rs"
+size = 4337
+sha256 = "979004be62171d5d1a2b3456ba5f47c27fdafa282f6f87997203ecb7661dd00b"

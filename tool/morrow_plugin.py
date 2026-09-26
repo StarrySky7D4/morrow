@@ -11,6 +11,7 @@ import sys
 import tempfile
 import tomllib
 import unicodedata
+import plugin_sdk_lock as sdk_lock
 
 ROOT = Path(__file__).resolve().parents[1]
 CAPABILITIES = ("rename", "summary", "operation", "attachment", "create-content", "edit-content", "read-content")
@@ -398,6 +399,7 @@ strip = true
 Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 
 - `validate PROJECT` checks declarations and SDK contracts without running tools; prints a TOML summary.
+- `lock-sdk PROJECT` records portable SDK library source pins; review changes before explicit `--update`.
 - `doctor --language {args.language}` checks the local toolchain.
 - `build PROJECT` compiles the current source into PROJECT/build/plugin.wasm.
 - `pack PROJECT` builds again, prepares the candidate and publishes an immutable hash-named package in PROJECT/dist.
@@ -424,6 +426,8 @@ Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update tha
         with path.open("xb") as stream:
             stream.write(data)
     project(target)
+    if getattr(args, "lock_sdk", False):
+        sdk_lock.write(target, sdk_root)
     print("PROJECT", target.resolve())
 
 def validate_rust_project(root, source, sdk_root):
@@ -448,7 +452,7 @@ def validate_rust_project(root, source, sdk_root):
         raise ToolError("Cargo.toml must use the selected SDK path with wasm-guest")
 
 
-def preflight_project(args, loaded=None):
+def preflight_project(args, loaded=None, *, check_lock=True):
     """Read-only declaration checks; never resolve dependencies or run tools."""
     root, config, source = loaded or project(args.path)
     sdk_root = sdk(args)
@@ -462,11 +466,20 @@ def preflight_project(args, loaded=None):
     validate_build_tree(root)
     if config["build"]["language"] == "rust":
         validate_rust_project(root, source, sdk_root)
-    return root, config, source, sdk_root
+    lock = sdk_lock.verify(root, sdk_root, required=getattr(args, "require_sdk_lock", False)) if check_lock else None
+    return root, config, source, sdk_root, lock
+
+
+def lock_project_sdk(args):
+    # Only the explicitly requested lock creation/update can replace pins.
+    # Still require the selected SDK's contracts and Cargo binding to match.
+    root, _, _, sdk_root, _ = preflight_project(args, check_lock=False)
+    result = sdk_lock.write(root, sdk_root, update=args.update)
+    print('schema = 1\nstatus = "locked"\nsha256 = "' + result["sha256"] + '"\nfiles = ' + str(result["files"]))
 
 
 def validate_project(args):
-    root, config, source, sdk_root = preflight_project(args)
+    root, config, source, sdk_root, lock = preflight_project(args)
     # TOML output is a declaration summary, not a signed attestation or build
     # receipt. Report exactly which contracts were compared for this profile.
     contracts = ["runtime.capnp", "content.proto", "task.capnp", "ui.capnp", "dependency_call.capnp"]
@@ -497,6 +510,9 @@ def validate_project(args):
         lines.append(label + " = [" + ", ".join(quote(value) for value in values) + "]")
     lines += ["dependency_calls = " + str(config["plugin"].get("dependency_calls", False)).lower(),
               "service_resources = " + str(config.get("io", {}).get("service_resources", False)).lower()]
+    lines.append("sdk_lock_status = " + quote(lock["status"]))
+    if lock["status"] == "verified":
+        lines += ["sdk_lock_sha256 = " + quote(lock["sha256"]), "sdk_lock_files = " + str(lock["files"])]
     for name in contracts:
         digest = hashlib.sha256((sdk_root / "rust/contracts" / name).read_bytes()).hexdigest()
         lines += ["", "[[contracts]]", "name = " + quote(name), "sha256 = " + quote(digest)]
@@ -504,7 +520,7 @@ def validate_project(args):
 
 
 def compile_project(args, loaded=None):
-    root, config, source, sdk_root = preflight_project(args, loaded)
+    root, config, source, sdk_root, lock = preflight_project(args, loaded)
     output = child(root, "build", output=True); output.mkdir(exist_ok=True)
     module = child(root, "build/plugin.wasm", output=True)
     cargo = executable("cargo")
@@ -539,6 +555,9 @@ def compile_project(args, loaded=None):
             run([clangxx, *cppcommon, "-Dmorrow_run=mp_guest_run", source, runtime, *objects, codec, *link, "-Wl,--export=__wasm_call_ctors", "-L" + str(stdlib / "noeh"), "-L" + str(stdlib), "-lc++", "-lc++abi", "-lc", "-o", module])
     if not module.is_file() or not 8 <= module.stat().st_size <= 4 * 1024 * 1024 or module.read_bytes()[:8] != b"\x00asm\x01\x00\x00\x00":
         raise ToolError("compiler did not produce a supported Wasm module")
+    current_lock = sdk_lock.verify(root, sdk_root, required=lock["status"] == "verified")
+    if current_lock != lock:
+        raise sdk_lock.SdkLockError("SDK lock changed during build; candidate was not qualified")
     print("MODULE", module)
     return module
 
@@ -635,14 +654,19 @@ def doctor(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    for name in ("new", "validate", "build", "pack", "check", "transform", "doctor"):
+    for name in ("new", "lock-sdk", "validate", "build", "pack", "check", "transform", "doctor"):
         command = commands.add_parser(name)
         command.add_argument("--sdk-root", default=str(ROOT / "sdk"))
         command.add_argument("--sysroot", default=str(ROOT / "build/tools/wasi-34/wasi-sysroot-34.0"))
         command.add_argument("--allow-network", action="store_true", help="allow Cargo dependency downloads (offline by default)")
-        if name in ("new", "validate", "build", "pack"):
+        if name in ("new", "lock-sdk", "validate", "build", "pack"):
             command.add_argument("path")
+        if name == "lock-sdk":
+            command.add_argument("--update", action="store_true", help="explicitly replace existing SDK pins after review")
+        if name in ("validate", "build", "pack"):
+            command.add_argument("--require-sdk-lock", action="store_true", help="reject projects without sdk.lock.toml")
         if name == "new":
+            command.add_argument("--lock-sdk", action="store_true", help="record selected SDK library source pins in the new project")
             command.add_argument("--language", choices=LANGUAGES, required=True)
             command.add_argument("--kind", choices=KINDS, default="transform")
             command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
@@ -665,6 +689,8 @@ def main(argv=None):
     try:
         if args.command == "new":
             new_project(args)
+        elif args.command == "lock-sdk":
+            lock_project_sdk(args)
         elif args.command == "validate":
             validate_project(args)
         elif args.command == "build":
@@ -678,7 +704,7 @@ def main(argv=None):
             if args.command == "transform":
                 arguments += [args.handler, args.input_type, args.output_type, path_text(args.input_file).resolve(strict=True), path_text(args.output_file).absolute()]
             print(host_tool("plugin_check", arguments, args), end="")
-    except (ToolError, OSError, subprocess.TimeoutExpired, UnicodeError) as error:
+    except (ToolError, sdk_lock.SdkLockError, OSError, subprocess.TimeoutExpired, UnicodeError) as error:
         print("ERROR:", error, file=sys.stderr)
         return 1
     return 0

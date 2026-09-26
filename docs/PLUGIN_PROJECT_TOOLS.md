@@ -21,6 +21,28 @@ python3 tool/verify_plugin_projects.py --preflight-only --output-root /absolute/
 
 该模式覆盖三语言的六类基础模板及三种 service-http 模板，核对输出身份／检查范围，并比较预检前后全部生成文件。输出目录存在即拒绝，原证据不覆盖。未传 `--preflight-only` 时保留既有完整构建／执行路径，并在打包前加入预检；该完整路径仍需工具链。本轮范围见 [离线预检报告](../reports/plugin-project-preflight-2026-09-26.md)。
 
+## SDK 源码锁（2026-09-26 后续）
+
+工程可用 `sdk.lock.toml` 锁定所选 SDK 库输入。锁中只有相对文件名、字节长度及 SHA-256，没有 SDK 绝对路径，源码不变时可迁移到新目录。`validate`／`build`／`pack` 发现锁文件便自动检查；`--require-sdk-lock` 额外拒绝没有锁的工程。旧工程不强制迁移，预检摘要明确报告 `sdk_lock_status = "absent"` 或 `"verified"`，已验证时带锁文件摘要和文件数。
+
+```sh
+# 新建并锁定；也可对既有项目单独执行 lock-sdk。
+python3 tool/morrow_plugin.py new /absolute/project --language rust --kind transform --id org.example.pinned --lock-sdk
+python3 tool/morrow_plugin.py lock-sdk /absolute/existing-project
+python3 tool/morrow_plugin.py validate /absolute/project --require-sdk-lock
+python3 tool/morrow_plugin.py pack /absolute/project --require-sdk-lock
+# 审查 SDK 改动后，显式更新已有锁；不会由 build/pack 自动更新。
+python3 tool/morrow_plugin.py lock-sdk /absolute/project --update
+# 对全部 21 种模板启用锁定资格模式。
+python3 tool/verify_plugin_projects.py --preflight-only --lock-sdk --output-root /absolute/new-locked-evidence
+```
+
+profile `morrow-sdk-source-v1` 固定 SDK 根 LICENSE、rust/LICENSE、rust/Cargo.toml、rust/Cargo.lock、rust/build.rs，以及 rust/src、rust/contracts、c/include、c/src、cpp/include、cpp/src 中的全部文件。文件新增、删除或修改都会失败；最多 2048 个文件、8192 个目录内条目、单文件 4 MiB、总计 16 MiB，锁元数据最多 1 MiB。拒绝符号链接、junction、非普通文件、重复或越界记录。SDK 生成示例、测试、缓存、工程本身、编译器、环境变量、传递依赖的实际源码和宿主打包器不在该锁范围；不是完整可重现构建或供应链签名。
+
+创建锁不覆盖已有文件；更新必须显式传 `--update`，仍需通过所选 SDK 与宿主的契约检查以及 Rust 路径绑定。写入使用同目录暂存，首次创建依赖文件系统硬链接以避免覆盖竞争，更新使用原子替换；文件系统不支持时明确失败，不降级为截断已有锁。失败清理暂存文件，原锁保持。多写者不能把它当作完整事务或跨进程互斥机制。
+
+构建前和编译成功后均检查 SDK 文件及同一锁身份，发生变化时不接受候选供打包；失败时可能保留编译器写出的候选文件，后续 pack 仍必须重新构建，不使用旧候选替代。该检查不是原子文件快照，也不能检测两次检查间变化后又还原的输入；工具面向受信任本地开发环境，不提供恶意编译脚本沙箱。检查结果见 [SDK 源码锁报告](../reports/plugin-sdk-source-lock-2026-09-26.md)。
+
 ## 环境与分发边界
 
 需要 Python 3.11+（标准库 `tomllib`），不需要 Python 第三方包。构建依赖 Cargo、Rust、`wasm32-unknown-unknown` 目标及 Cap’n Proto 编译器；C/C++ 另需 Clang、对应 WASI sysroot，C++ 使用无异常的标准库、C++17、无 RTTI。
