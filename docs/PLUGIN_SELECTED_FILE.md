@@ -1,6 +1,6 @@
 # 宿主选中文件的有界固定读取
 
-2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；工作台文件选择器／任务页面、Windows 实机和其他平台适配尚未接入验收。本接口不开放目录或文件写入，也不改变 IO wire/schema。
+2026-09-26：原生运行时新增 `FileBroker::grant_open_file`。Linux 本地及三语言既有 guest 模块已验证；后续已接入 [工作台原生后台文件任务](PLUGIN_FILE_TASKS.md)，私有协议／文件选择器／任务页面、Windows 实机和其他平台适配仍未验收。本接口不开放目录或文件写入，也不改变 IO wire/schema。
 
 ## 授权与所有权
 

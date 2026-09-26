@@ -13,6 +13,8 @@ use std::{
     time::Duration,
 };
 
+#[path = "file_tasks.rs"]
+pub mod file;
 #[path = "service_tasks.rs"]
 pub mod service;
 #[path = "service_commands.rs"]
@@ -104,6 +106,7 @@ struct Task {
     stopping: bool,
     exit: Option<ExitStatus>,
     service: Option<service::Progress>,
+    file: Option<file::FileTask>,
 }
 enum Executor {
     Io(Box<IoWorker<WorkbenchState>>),
@@ -268,10 +271,12 @@ impl StateSlot {
         Snapshot {
             key: self.task.as_ref().map(|t| t.key),
             storage,
-            delivery: self
-                .task
-                .as_mut()
-                .and_then(|t| t.handle.as_mut().map(JobHandle::poll)),
+            delivery: self.task.as_mut().and_then(|t| {
+                t.handle
+                    .as_mut()
+                    .map(JobHandle::poll)
+                    .or_else(|| t.file.as_ref().and_then(file::FileTask::poll))
+            }),
             exit: self.task.as_ref().and_then(|t| t.exit),
         }
     }
@@ -354,6 +359,13 @@ impl Workbench {
         options: StartOptions,
         prepare: impl FnOnce(Preparation<'_>) -> Result<PreparedJob>,
     ) -> Result<TaskKey> {
+        self.start_task(options, |p| prepare(p).map(file::Admission::Io))
+    }
+    fn start_task(
+        &mut self,
+        options: StartOptions,
+        prepare: impl FnOnce(Preparation<'_>) -> Result<file::Admission>,
+    ) -> Result<TaskKey> {
         self.state.try_reclaim()?;
         self.state.local()?;
         if self.state.repair_needed {
@@ -408,7 +420,7 @@ impl Workbench {
                 binding: &binding,
                 now: time,
             })?;
-            if job.timeout.is_zero() || job.timeout > options.lifetime {
+            if job.timeout().is_zero() || job.timeout() > options.lifetime {
                 return Err("invalid IO job timeout".into());
             }
             Ok((binding, job))
@@ -426,6 +438,7 @@ impl Workbench {
                         handle: None,
                         stopping: false,
                         service: None,
+                        file: None,
                         exit: Some(ExitStatus {
                             execution: Err(JobError::InvalidOptions),
                             disconnect: Err(JobError::Disconnect),
@@ -463,6 +476,7 @@ impl Workbench {
                     handle: None,
                     stopping: false,
                     service: None,
+                    file: None,
                     exit: Some(ExitStatus {
                         execution: Err(error),
                         disconnect,
@@ -472,7 +486,8 @@ impl Workbench {
                 return Err(format!("IO worker admission failed: {error:?}").into());
             }
         };
-        let submitted = worker.submit_brokered(job.input, job.router, job.timeout);
+        let file_job = matches!(&job, file::Admission::File { .. });
+        let submitted = job.submit(&worker);
         self.state.task = Some(Task {
             commands: Default::default(),
             key,
@@ -481,10 +496,12 @@ impl Workbench {
             stopping: false,
             exit: None,
             service: None,
+            file: None,
         });
         let task = self.state.checked_task(key)?;
         match submitted {
-            Ok(handle) => task.handle = Some(handle),
+            Ok(file::Submitted::Io(handle)) => task.handle = Some(handle),
+            Ok(file::Submitted::File(file)) => task.file = Some(file),
             Err(error) => {
                 self.state.request_stop();
                 return Err(format!(
@@ -495,7 +512,8 @@ impl Workbench {
         }
         // Draining preserves Ready until read, abandonment or deadline, so final
         // delivery can still check the original active instance and authority.
-        if let Some(Executor::Io(worker)) = &task.worker
+        if !file_job
+            && let Some(Executor::Io(worker)) = &task.worker
             && let Err(error) = worker.drain(options.lifetime)
         {
             self.state.request_stop();

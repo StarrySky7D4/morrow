@@ -1,0 +1,24 @@
+{
+  "base": "e63d49f5b2de543d870b1c829f69112ed38fd637",
+  "platform": "Linux",
+  "runtime_regular": 412,
+  "runtime_ignored": 6,
+  "workbench_lib": 60,
+  "workbench_file_final": 3,
+  "network_regular": 134,
+  "network_ignored": 12,
+  "io_sdk_explicit": 5,
+  "service_originals_explicit": 6,
+  "new_file_owner_tests_in_runtime": 8,
+  "old_file_tests_in_runtime": 23,
+  "no_ci": true,
+  "platform_test_storage": "cfg(test) only; Linux production open and protected maintenance remain unsupported",
+  "pending": [
+    "private file protocol",
+    "platform file picker",
+    "Dart/Flutter file flow",
+    "Windows actual ownership and protected storage",
+    "durable file evidence",
+    "directory and writes"
+  ]
+}

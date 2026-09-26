@@ -10,6 +10,11 @@ use super::{
 use std::sync::{Arc, Mutex, Weak, mpsc};
 use zeroize::Zeroizing;
 
+#[path = "file_commands.rs"]
+mod files;
+pub(super) use files::Resources as FileResources;
+pub use files::{FileCommandError, FileCommandHandle, FileResponse, FileSession};
+
 pub const MAX_OWNER_COMMANDS: usize = 8;
 pub const MAX_OWNER_COMMAND_INPUT: usize = 64 * 1024;
 pub const MAX_OWNER_COMMAND_REPLY: usize = 1024 * 1024;
@@ -67,6 +72,7 @@ pub(super) struct Status {
     started: bool,
     cancelled: bool,
     finished: bool,
+    delivered: bool,
     input: Option<Zeroizing<Vec<u8>>>,
     reply: Option<Reply>,
 }
@@ -74,6 +80,7 @@ pub(super) struct Status {
 enum Reply {
     Data(Zeroizing<Vec<u8>>),
     Renewal(Result<ServiceRunSnapshot, BindingError>),
+    File(Result<FileResponse, FileCommandError>),
 }
 
 struct Ticket {
@@ -168,7 +175,7 @@ impl OwnerCommandHandle {
     pub fn read(&mut self) -> Result<Option<Vec<u8>>, OwnerCommandError> {
         match self.read_reply()? {
             Some(Reply::Data(mut bytes)) => Ok(Some(std::mem::take(&mut *bytes))),
-            Some(Reply::Renewal(_)) => Err(OwnerCommandError::Unknown),
+            Some(_) => Err(OwnerCommandError::Unknown),
             None => Ok(None),
         }
     }
@@ -194,6 +201,7 @@ impl OwnerCommandHandle {
                     OwnerCommandError::Closed
                 })
             } else if status.finished {
+                status.delivered = status.reply.is_some();
                 status
                     .reply
                     .take()
@@ -240,7 +248,7 @@ impl ServiceRunRenewalHandle {
     ) -> Result<Option<Result<ServiceRunSnapshot, BindingError>>, OwnerCommandError> {
         match self.inner.read_reply()? {
             Some(Reply::Renewal(result)) => Ok(Some(result)),
-            Some(Reply::Data(_)) => Err(OwnerCommandError::Unknown),
+            Some(_) => Err(OwnerCommandError::Unknown),
             None => Ok(None),
         }
     }
@@ -255,6 +263,10 @@ struct RenewalRequest {
 }
 
 enum CommandKind<O: HostOwner> {
+    File {
+        request: files::Request,
+        dispatch: files::Dispatch<O>,
+    },
     Data {
         max_reply_bytes: usize,
         dispatch: fn(&mut O, Vec<u8>) -> Result<Vec<u8>, JobError>,
@@ -275,7 +287,13 @@ pub(super) struct Command<O: HostOwner> {
     ticket: Arc<Ticket>,
 }
 impl<O: HostOwner> Command<O> {
-    pub(super) fn execute(self, owner: &mut O, control: &Arc<Control>) -> Result<(), JobError> {
+    pub(super) fn execute(
+        self,
+        owner: &mut O,
+        control: &Arc<Control>,
+        instance: Option<&crate::manager::ManagedInstance>,
+        files: &mut FileResources,
+    ) -> Result<(), JobError> {
         {
             let state = control.lock();
             let status = self.ticket.lock();
@@ -298,6 +316,14 @@ impl<O: HostOwner> Command<O> {
         // No control/response lock spans application code. A panic propagates
         // to the existing worker recovery boundary and retains the same owner.
         let reply = match self.kind {
+            CommandKind::File { request, dispatch } => Some(Reply::File(dispatch(
+                owner,
+                instance,
+                control,
+                &self.ticket,
+                files,
+                request,
+            ))),
             CommandKind::Data {
                 max_reply_bytes,
                 dispatch,
@@ -351,12 +377,28 @@ impl<O: HostOwner> IoWorker<O> {
         if state.owner_commands >= MAX_OWNER_COMMANDS {
             return Err(OwnerCommandError::Busy);
         }
+        if let CommandKind::File { request, .. } = &kind {
+            let charge = request.charge();
+            let total = state
+                .bytes
+                .checked_add(charge)
+                .ok_or(OwnerCommandError::Limit)?;
+            if charge > self.control.limits.max_job_bytes
+                || total > self.control.limits.max_total_bytes
+            {
+                return Err(OwnerCommandError::Limit);
+            }
+            // Host ceilings, separate from exact instance admission in FileBroker.
+            // Admitted cancellation/failure never refunds this cumulative charge.
+            state.bytes = total;
+        }
         state.owner_commands += 1;
         state.owner_command_bytes += bytes;
         let status = Arc::new(Mutex::new(Status {
             started: false,
             cancelled: false,
             finished: false,
+            delivered: false,
             input,
             reply: None,
         }));
@@ -528,6 +570,7 @@ mod sensitive_tests {
                 started,
                 cancelled: false,
                 finished: started,
+                delivered: false,
                 input: input.map(Zeroizing::new),
                 reply: reply.map(Zeroizing::new).map(Reply::Data),
             }));

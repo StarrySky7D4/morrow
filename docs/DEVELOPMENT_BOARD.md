@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [文件后台队列与工作台原生接线](../reports/plugin-file-owner-2026-09-26.md)：类型化捕获／分块／结束复用原 owner 队列、授权、停止与实际 join；工作台新增文件任务入口和一次领取。共享时钟检查串行化，宿主 ceiling 与实例实际预算同时生效。runtime 412、Workbench lib 60、network 134、三语言 IO 5 和服务原包 6 通过，分项有重叠；Linux 测试维护仍失败并保持 RecoveryRequired。私有协议、系统选择器、Flutter 与 Windows 实机待接，未推送、发布或使用 CI。
+
 2026-09-26 [选中文件真实句柄入口](../reports/plugin-selected-file-2026-09-26.md)：新增 FileBroker 原句柄有界捕获，读取前共享额度预留、块间／最终撤权检查、固定字节摘要及失败释放；旧 Vec 计费保持。最终文件 23、三语言模块 5、runtime 常规 403、network 常规 134 与严格 Clippy 通过，范围有重叠。工作台选择器／任务协议／Flutter 接线、Windows 真实文件和完整文件系统继续开放；未使用 CI、推送或发布。
 
 2026-09-26 [配置服务统一接线与原包复验](../reports/plugin-configured-service-2026-09-26.md)：从 Google Drive 恢复 `7d08b95`，核对主线未变。工作台改用同一宿主接线对象生成所选资源依赖、重放 scope、router 与目录；三语言原包覆盖配置服务撤权后的缓存隔离、等待中终止、重开不重发、空选择及错 worker 归还。网络 134、原包专项 6、SDK 66、工具 97 与旧原件回归通过，新增无需重编 guest 的恢复验收入口。Windows／Flutter／真实 DPAPI/TLS 产品验收仍开放，未推送、发布或使用 CI。

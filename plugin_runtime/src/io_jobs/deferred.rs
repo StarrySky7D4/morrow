@@ -33,6 +33,7 @@ pub(super) struct PendingDispatch {
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn route<O: HostOwner>(
+    files: &mut owner_commands::FileResources,
     router: &mut dyn BrokerRouter,
     call: u32,
     parsed: &Request,
@@ -99,13 +100,14 @@ pub(super) fn route<O: HostOwner>(
                 Err(_) => return Ok(Err(RouterFault::Unknown)),
             };
             let observation = loop {
+                files.reap_cancelled();
                 if let Some(result) = task.poll() {
                     break result;
                 }
                 // Only the reserved owner lane runs here; later guest jobs and
                 // queued service updates keep their original FIFO ordering.
                 if let Ok(command) = commands.try_recv() {
-                    command.execute(owner, control)?;
+                    command.execute(owner, control, Some(instance), files)?;
                 }
                 thread::sleep(Duration::from_millis(2));
             };

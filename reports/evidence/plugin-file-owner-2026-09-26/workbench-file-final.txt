@@ -1,0 +1,79 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+   Compiling morrow-network-node v0.1.9-test.51 (/workspace/scratch/c3041ed82a57/morrow/network_node)
+   Compiling morrow-workbench-host v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/workbench_host)
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/credential_control.rs:4:17
+  |
+4 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `run` is never used
+   --> src/lib.rs:333:8
+    |
+160 | impl WorkbenchState {
+    | ------------------- method in this implementation
+...
+333 |     fn run(&mut self, input: Request) -> Result<Response> {
+    |        ^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `prepare_write` is never used
+   --> src/lib.rs:819:8
+    |
+804 | impl Workbench {
+    | -------------- method in this implementation
+...
+819 |     fn prepare_write(&mut self) -> Result<()> {
+    |        ^^^^^^^^^^^^^
+
+warning: struct `Live` is never constructed
+  --> src/query_source.rs:12:8
+   |
+12 | struct Live<'a> {
+   |        ^^^^
+
+warning: method `query_snapshot` is never used
+  --> src/query_source.rs:56:8
+   |
+55 | impl WorkbenchState {
+   | ------------------- method in this implementation
+56 |     fn query_snapshot(
+   |        ^^^^^^^^^^^^^^
+
+warning: method `query_snapshot` is never used
+  --> src/query_source.rs:95:8
+   |
+94 | impl Workbench {
+   | -------------- method in this implementation
+95 |     fn query_snapshot(
+   |        ^^^^^^^^^^^^^^
+
+warning: function `is_action` is never used
+ --> src/service_protocol.rs:8:15
+  |
+8 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_admin_action(action) }
+  |               ^^^^^^^^^
+
+warning: function `is_action` is never used
+  --> src/service_run_protocol.rs:16:15
+   |
+16 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_run_action(action) }
+   |               ^^^^^^^^^
+
+warning: `morrow-workbench-host` (lib test) generated 8 warnings (run `cargo fix --lib -p morrow-workbench-host --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized] target(s) in 7.42s
+     Running unittests src/lib.rs (build/selected-service-workbench/debug/deps/morrow_workbench_host-cc8b2ba41e00f73d)
+
+running 3 tests
+test io_tasks::file::tests::wrong_task_and_unread_cancel_do_not_deliver_ready_file_bytes ... ok
+test io_tasks::file::tests::invalid_handler_revision_or_capability_never_reads_or_moves_owner ... ok
+test io_tasks::file::tests::three_language_file_task_keeps_owner_busy_until_finished_and_joined ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 57 filtered out; finished in 2.29s
+

@@ -44,8 +44,9 @@ mod deferred;
 mod owner_commands;
 mod transport_task;
 pub use owner_commands::{
-    CommandOwner, MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS,
-    OwnerCommandError, OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
+    CommandOwner, FileCommandError, FileCommandHandle, FileResponse, FileSession,
+    MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS, OwnerCommandError,
+    OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
 };
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -1807,7 +1808,9 @@ fn execute<O: HostOwner>(
 ) -> Result<(), JobError> {
     let package = session.package();
     let broker = Broker::new();
+    let mut files = owner_commands::FileResources::default();
     loop {
+        files.reap_cancelled();
         {
             let mut state = control.lock();
             if control.fault(&Cancellation::default()).is_some()
@@ -1841,7 +1844,15 @@ fn execute<O: HostOwner>(
         // One reserved host command per iteration still leaves the guest lane
         // a turn. Synchronous handlers/routers cannot be preempted by this lane.
         if let Ok(command) = owner_receiver.try_recv() {
-            command.execute(owner, control)?;
+            command.execute(
+                owner,
+                control,
+                match session {
+                    Session::Managed(i) => Some(i),
+                    _ => None,
+                },
+                &mut files,
+            )?;
         }
         let message = match receiver.recv_timeout(Duration::from_millis(10)) {
             Ok(message) => message,
@@ -1923,6 +1934,7 @@ fn execute<O: HostOwner>(
                 ) {
                     Err(report) => *report,
                     Ok(history) => run_job(
+                        &mut files,
                         package,
                         &input,
                         &cancel,
@@ -2239,6 +2251,7 @@ fn dispatch_service_content(
 }
 #[allow(clippy::too_many_arguments)]
 fn run_job<O: HostOwner>(
+    files: &mut owner_commands::FileResources,
     package: &PreparedPackage,
     input: &[u8],
     cancel: &Cancellation,
@@ -2395,6 +2408,7 @@ fn run_job<O: HostOwner>(
                                 match (instance, lease, Request::decode(request)) {
                                     (Some(instance), Some(lease), Ok(parsed)) => {
                                         match deferred::route(
+                                            files,
                                             router.as_mut(),
                                             call,
                                             &parsed,

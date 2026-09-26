@@ -1,0 +1,14 @@
+{
+  "plugin_runtime/src/file_io.rs": "bbf176619238c7929e360b8d172d7bf98af7771e1173ec6611862b5c5cdd0aaa",
+  "plugin_runtime/src/file_io/selected.rs": "00e31cfc5f764e720e1bc20ad738f67d13a94eed515212cb47e5c39213d5d0dd",
+  "plugin_runtime/src/io_jobs.rs": "1bcb39aad0488cd9e47370a6e1971123f6a8b20d8e6cb51e87e2a8716a9420a1",
+  "plugin_runtime/src/io_jobs/deferred.rs": "9dad678d91f1813a62f54f95458490a67ed1124d7799a65ccc3e0bd7c07de0f3",
+  "plugin_runtime/src/io_jobs/owner_commands.rs": "856a990dc669c356b7f0c0211dbb5078c5a9a7238d46a3ca7932ca9c2f44fde2",
+  "plugin_runtime/src/io_jobs/file_commands.rs": "8cf92ce3367ac036866a6b3ed64b3645ffd95b4417ec5a0da18ca2d9577948c8",
+  "plugin_runtime/tests/file_owner.rs": "541deb93b3b69a4aa0e21473bc9b331781518c603bf147e0c124a964cf1ecad4",
+  "workbench_host/src/io_tasks.rs": "307958caa5fe63df78bf467a1390e62c1c945a999f1f87381f766ae89f4fc16e",
+  "workbench_host/src/file_tasks.rs": "7c205050dc57892730496e392526592734a18d53e5aec6571f40dba7b06fcea1",
+  "workbench_host/src/file_tasks_tests.rs": "74aca28e5db5a91b764a46761326c637c9764dc949bdf962ffd1a67a927bac94",
+  "workbench_host/src/service_tasks.rs": "6a2b0bdb8b57a6b48749afdf8ec427cec6a1d11e5cb0e8dc2fa84841931370b2",
+  "workbench_host/src/storage.rs": "d5d031ceca4ed75c4c490b5033a3416ba49d7def25f0a437dbbccb0ead6786e5"
+}

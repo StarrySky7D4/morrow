@@ -1,0 +1,15 @@
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+   Compiling morrow-network-node v0.1.9-test.51 (/workspace/scratch/c3041ed82a57/morrow/network_node)
+    Finished `test` profile [unoptimized] target(s) in 3.51s
+     Running tests/sdk_service_http.rs (build/selected-service-network/debug/deps/sdk_service_http-ce85d699a92c3231)
+
+running 6 tests
+test configured::configured_selection_rejects_stale_or_foreign_wiring_and_returns_original_worker ... ok
+test originals_reject_missing_directory_method_and_body_limit_without_io ... ok
+test originals_stop_or_revoke_during_wait_preserve_unknown_without_resend ... ok
+test originals_forward_and_reopen_without_resending_observed_or_unknown ... ok
+test configured::configured_originals_cached_results_obey_selected_endpoint_and_credential_revocation ... ok
+test configured::configured_originals_waiting_revocation_or_stop_never_redelivers_or_resends ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.33s
+

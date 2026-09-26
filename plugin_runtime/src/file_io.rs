@@ -15,6 +15,19 @@ use morrow_core::{
 pub use selected::{CaptureError, SelectedFile};
 use std::collections::BTreeMap;
 
+// Keep clock sampling and the corresponding admission/validation atomic when
+// a background owner shares its clock with status/read callers. Never hold this
+// serialization across a filesystem syscall or guest execution.
+pub(crate) trait FileClock {
+    fn with<T>(&mut self, action: impl FnOnce(u64) -> T) -> T;
+}
+struct LocalClock<F>(F);
+impl<F: FnMut() -> u64> FileClock for LocalClock<F> {
+    fn with<T>(&mut self, action: impl FnOnce(u64) -> T) -> T {
+        action((self.0)())
+    }
+}
+
 const MAX_RESOURCES: usize = 128;
 const MAX_SPOOL_BYTES: u64 = 256 * 1024 * 1024;
 struct File {
@@ -232,15 +245,39 @@ impl FileBroker {
         binding: &IoBinding,
         handler: &str,
         request: &Request,
-        mut clock: impl FnMut() -> u64,
+        clock: impl FnMut() -> u64,
     ) -> FileIoReport {
-        let now = clock();
+        self.run_clock(
+            manager,
+            host,
+            instance,
+            binding,
+            handler,
+            request,
+            &mut LocalClock(clock),
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn run_clock(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        handler: &str,
+        request: &Request,
+        clock: &mut impl FileClock,
+    ) -> FileIoReport {
         let prepared = instance.package();
         let declared = prepared
             .package()
             .io_declaration()
             .is_some_and(|d| d.handlers.iter().any(|h| h == handler));
-        if !declared || binding.preflight(manager, host, instance, now).is_err() {
+        if !declared
+            || clock
+                .with(|now| binding.preflight(manager, host, instance, now))
+                .is_err()
+        {
             return FileIoReport {
                 execution: Report {
                     outcome: Err(Fault::InactiveConnection),
@@ -273,8 +310,8 @@ impl FileBroker {
                     return Err(());
                 }
                 called = true;
-                let response = self
-                    .exchange(manager, host, instance, binding, request, clock())
+                let response = clock
+                    .with(|now| self.exchange(manager, host, instance, binding, request, now))
                     .map_err(|_| ())?;
                 actual = Some(response.clone());
                 Ok(response)
@@ -282,49 +319,54 @@ impl FileBroker {
             instance.cancellation(),
         );
         let mut execution = run.report;
-        let after = clock();
-        if called && owns_resource {
-            self.reap(after);
-        }
-        let mut response = None;
-        if execution.outcome.is_ok() {
-            if binding.preflight(manager, host, instance, after).is_err()
-                || guard
-                    .as_ref()
-                    .is_some_and(|g| g.preflight(manager, host, instance, after).is_err())
-            {
-                execution.outcome = Err(Fault::InactiveConnection);
-            } else {
-                match (run.completion, actual) {
-                    (Some(done), Some(actual)) if !protocol_fault && called && done == actual => {
-                        match Response::decode(request, &actual) {
-                            Ok(value) => {
-                                let delivery = if owns_resource {
-                                    binding.check(manager, host, instance, after).and_then(|_| {
-                                        guard
-                                            .as_ref()
-                                            .expect("owned resource guard")
-                                            .check(manager, host, instance, after)
-                                    })
-                                } else {
-                                    Ok(())
-                                };
-                                if delivery.is_ok() {
-                                    response = Some(value);
-                                } else {
-                                    execution.outcome = Err(Fault::InactiveConnection);
+        clock.with(|after| {
+            if called && owns_resource {
+                self.reap(after);
+            }
+            let mut response = None;
+            if execution.outcome.is_ok() {
+                if binding.preflight(manager, host, instance, after).is_err()
+                    || guard
+                        .as_ref()
+                        .is_some_and(|g| g.preflight(manager, host, instance, after).is_err())
+                {
+                    execution.outcome = Err(Fault::InactiveConnection);
+                } else {
+                    match (run.completion, actual) {
+                        (Some(done), Some(actual))
+                            if !protocol_fault && called && done == actual =>
+                        {
+                            match Response::decode(request, &actual) {
+                                Ok(value) => {
+                                    let delivery = if owns_resource {
+                                        binding.check(manager, host, instance, after).and_then(
+                                            |_| {
+                                                guard
+                                                    .as_ref()
+                                                    .expect("owned resource guard")
+                                                    .check(manager, host, instance, after)
+                                            },
+                                        )
+                                    } else {
+                                        Ok(())
+                                    };
+                                    if delivery.is_ok() {
+                                        response = Some(value);
+                                    } else {
+                                        execution.outcome = Err(Fault::InactiveConnection);
+                                    }
                                 }
+                                Err(_) => execution.outcome = Err(Fault::TaskProtocol),
                             }
-                            Err(_) => execution.outcome = Err(Fault::TaskProtocol),
                         }
+                        _ => execution.outcome = Err(Fault::TaskProtocol),
                     }
-                    _ => execution.outcome = Err(Fault::TaskProtocol),
                 }
             }
-        }
-        FileIoReport {
-            execution,
-            response,
-        }
+            FileIoReport {
+                execution,
+                response,
+            }
+        })
     }
 }

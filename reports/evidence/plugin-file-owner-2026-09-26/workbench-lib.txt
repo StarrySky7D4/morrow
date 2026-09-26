@@ -1,0 +1,136 @@
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+   Compiling morrow-network-node v0.1.9-test.51 (/workspace/scratch/c3041ed82a57/morrow/network_node)
+   Compiling morrow-workbench-host v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/workbench_host)
+warning: unused imports: `SystemTime` and `UNIX_EPOCH`
+ --> src/credential_control.rs:4:17
+  |
+4 | use std::time::{SystemTime, UNIX_EPOCH};
+  |                 ^^^^^^^^^^  ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `run` is never used
+   --> src/lib.rs:333:8
+    |
+160 | impl WorkbenchState {
+    | ------------------- method in this implementation
+...
+333 |     fn run(&mut self, input: Request) -> Result<Response> {
+    |        ^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: method `prepare_write` is never used
+   --> src/lib.rs:819:8
+    |
+804 | impl Workbench {
+    | -------------- method in this implementation
+...
+819 |     fn prepare_write(&mut self) -> Result<()> {
+    |        ^^^^^^^^^^^^^
+
+warning: struct `Live` is never constructed
+  --> src/query_source.rs:12:8
+   |
+12 | struct Live<'a> {
+   |        ^^^^
+
+warning: method `query_snapshot` is never used
+  --> src/query_source.rs:56:8
+   |
+55 | impl WorkbenchState {
+   | ------------------- method in this implementation
+56 |     fn query_snapshot(
+   |        ^^^^^^^^^^^^^^
+
+warning: method `query_snapshot` is never used
+  --> src/query_source.rs:95:8
+   |
+94 | impl Workbench {
+   | -------------- method in this implementation
+95 |     fn query_snapshot(
+   |        ^^^^^^^^^^^^^^
+
+warning: function `is_action` is never used
+ --> src/service_protocol.rs:8:15
+  |
+8 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_admin_action(action) }
+  |               ^^^^^^^^^
+
+warning: function `is_action` is never used
+  --> src/service_run_protocol.rs:16:15
+   |
+16 | pub(crate) fn is_action(action: wire::Action) -> bool { crate::protocol::is_service_run_action(action) }
+   |               ^^^^^^^^^
+
+warning: `morrow-workbench-host` (lib test) generated 8 warnings (run `cargo fix --lib -p morrow-workbench-host --tests` to apply 1 suggestion)
+    Finished `test` profile [unoptimized] target(s) in 11.58s
+     Running unittests src/lib.rs (build/selected-service-workbench/debug/deps/morrow_workbench_host-cc8b2ba41e00f73d)
+
+running 60 tests
+test command_frame::tests::expiry_abort_clear_and_corruption_retire_only_the_original_staging_bytes ... ok
+test content_api::tests::envelope_retains_full_uint64_revisions ... ok
+test content_api::tests::equivalent_multisegment_payloads_are_accepted ... ok
+test content_api::tests::private_edit_and_query_payloads_require_canonical_action_specific_fields ... ok
+test editor_draft::accounting_tests::active_budget_accepts_exact_boundary_and_rejects_next_byte ... ok
+test editor_draft::accounting_tests::charge_includes_encoded_metadata_evidence_and_selected_asset_lengths ... ok
+test editor_draft::accounting_tests::charge_rejects_u64_overflow ... ok
+test editor_draft::model::tests::emoji_code_unit_offsets_roundtrip_even_inside_surrogate_pair ... ok
+test editor_draft::model::tests::empty_and_intermediate_values_are_retained ... ok
+test command_frame::tests::boundaries_order_metadata_and_digest_are_enforced_without_early_consumption ... ok
+test editor_draft::model::tests::enforces_text_alias_and_encoded_body_budgets ... ok
+test editor_draft::model::tests::mixed_sentinels_roundtrip_and_out_of_range_offsets_reject ... ok
+test editor_draft::model::tests::new_card_has_no_source_or_predecessor_and_only_draft_assets ... ok
+test editor_draft::model::tests::parent_link_accepts_first_and_later_child_generations ... ok
+test editor_draft::model::tests::parent_link_requires_existing_source_without_predecessor_and_first_operation ... ok
+test editor_draft::model::tests::rejects_reversed_composition_and_unknown_affinity ... ok
+test editor_draft::model::tests::validates_origins_predecessor_and_all_identities ... ok
+test editor_draft::model::tests::parent_link_rejects_bad_identity_generation_and_digests ... ok
+test editor_draft_api::tests::handoff_frame_binds_parent_and_rejects_old_upload_origin_four ... ok
+test editor_draft_api::tests::lineage_cursor_rejects_foreign_and_noncanonical_keys ... ok
+test cards_edit::tests::attachment_selection_and_restore_facts_are_strict ... ok
+test editor_draft_api::tests::proposal_absence_keeps_child_operation_without_page_fields ... ok
+test editor_draft_api::tests::lineage_page_echoes_cursor_limit_and_full_parent_binding ... ok
+test cards_edit::tests::canonical_facts_and_exact_captured_projection ... ok
+test editor_draft_api::tests::record_wire_includes_parent_link_and_distinct_retirement_marker ... ok
+test editor_draft_staging_api::tests::empty_list_is_explicit_and_record_has_exact_current_context ... ok
+test editor_draft_staging_api::tests::typed_import_request_roundtrip_and_frame_contract ... ok
+test editor_draft_staging_api::tests::export_retry_accepts_only_exact_existing_regular_bytes ... ok
+test editor_draft_api::tests::proposal_page_of_32_exposes_only_bounded_summaries ... ok
+test capture_provenance::tests::scope_and_global_quota_checks_do_not_silently_truncate_or_mutate_usage ... ok
+test io_tasks::service::shutdown_overlap_tests::listener_error_still_waits_for_actual_worker_exit ... ok
+test io_tasks::service_commands::tests::command_key_requires_exact_identity_length ... ok
+test io_tasks::service_commands::tests::consumed_submission_recovers_same_identity_and_terminal_without_replay ... ok
+test io_tasks::service_commands::tests::full_history_retains_deduplication_and_preparation_does_not_reserve ... ok
+test io_tasks::service_commands::tests::submission_conflict_preserves_original_tombstone_and_history ... ok
+test protocol::editor_draft_route_tests::draft_read_export_and_transfer_abort_remain_available_read_only ... ok
+test capture_provenance::tests::failed_attempts_keep_fuel_charged_and_trusted_reports_refund_only_unused_fuel ... ok
+test service_tls::tests::exact_read_limit_is_accepted_but_invalid_pem_is_not_an_identity ... ok
+test service_tls::tests::leaf_and_parent_symlinks_are_rejected_before_canonicalization ... ok
+test service_tls::tests::mismatched_key_and_cert_rejected_at_inspect ... ok
+test service_tls::tests::key_replacement_and_removal_are_rechecked_without_path_or_pem_errors ... ok
+test service_tls::tests::read_bounded_rejects_bad_inputs ... ok
+test tasks_edit::tests::canonical_facts_reject_duplicate_unknown_noncanonical_and_wrong_wire ... ok
+test service_tls::tests::valid_pair_hash_matches_and_rotation ... ok
+test tasks_edit::tests::pure_capture_receipt_and_intent_bind_exact_frozen_contract ... ok
+test content_api::tests::query_pages_fit_actual_outer_frame_and_cursor_binds_identity ... ok
+test tls_validity::tests::intersects_every_certificate_and_preserves_inclusive_seconds ... ok
+test tasks_edit::tests::unrelated_action_fields_wrong_source_and_operation_identity_are_rejected ... ok
+test tls_validity::tests::rejects_empty_disjoint_inverted_oversized_and_excess_chains ... ok
+test transfer::tests::draft_limit_is_isolated_from_preference_limit ... ok
+test versioned_record::tests::future_format_and_other_type_are_explicitly_unsupported ... ok
+test transfer::tests::bounds_expiry_abort_and_immutable_download ... ok
+test versioned_record::tests::legacy_and_migrated_tasks_are_distinct_read_views ... ok
+test transfer::tests::upload_rejects_bad_sequences_without_advancing_and_checks_digest ... ok
+test versioned_record::tests::malformed_v2_and_attachment_mismatch_are_rejected ... ok
+test capture_provenance::tests::idle_expiration_releases_actual_scope_accounting_at_the_exact_boundary ... ok
+test editor_draft_api::tests::capnp_write_over_four_mib_still_decodes_when_protobuf_fits ... ok
+test io_tasks::file::tests::wrong_task_and_unread_cancel_do_not_deliver_ready_file_bytes ... ok
+test io_tasks::file::tests::invalid_handler_revision_or_capability_never_reads_or_moves_owner ... ok
+test io_tasks::file::tests::three_language_file_task_keeps_owner_busy_until_finished_and_joined ... ok
+
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.38s
+

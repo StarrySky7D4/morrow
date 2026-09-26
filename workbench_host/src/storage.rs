@@ -21,6 +21,16 @@ pub struct Storage {
     _registry: Option<morrow_audit::library::Registry>,
 }
 impl Storage {
+    // Tests may exercise native ownership without inventing a platform key
+    // provider. Production open stays unsupported; maintenance still fails.
+    #[cfg(all(test, not(target_os = "windows")))]
+    pub(crate) fn test_from_runtime(host: HostRuntime) -> Self {
+        Self { host, warning: None,
+            #[cfg(feature = "fault-injection")]
+            fail_next_seal: false,
+        }
+    }
+
     #[cfg(target_os = "windows")]
     pub fn open(path: &Path) -> Result<Self> {
         let session = Session::open(path, Default::default(), OpenMode::Initialize)

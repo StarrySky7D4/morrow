@@ -1,5 +1,5 @@
 //! Trusted-host capture of an already selected, open regular file.
-use super::{FileBroker, MAX_SPOOL_BYTES};
+use super::{FileBroker, FileClock, LocalClock, MAX_SPOOL_BYTES};
 use crate::{
     io_binding::{self, IoBinding},
     manager::{ManagedInstance, Manager},
@@ -25,6 +25,7 @@ pub struct SelectedFile {
 pub enum CaptureError {
     Admission(io_binding::Error),
     NotRegularFile,
+    Cancelled,
     SourceChanged,
     Io(std::io::ErrorKind),
     Allocation,
@@ -72,11 +73,39 @@ impl FileBroker {
         host: &HostRuntime,
         instance: &ManagedInstance,
         binding: &IoBinding,
+        file: File,
+        max_bytes: u64,
+        clock: impl FnMut() -> u64,
+    ) -> Result<SelectedFile, CaptureError> {
+        self.capture_clock(
+            manager,
+            host,
+            instance,
+            binding,
+            file,
+            max_bytes,
+            &mut LocalClock(clock),
+            || false,
+        )
+    }
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn capture_clock(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
         mut file: File,
         max_bytes: u64,
-        mut clock: impl FnMut() -> u64,
+        clock: &mut impl FileClock,
+        mut cancelled: impl FnMut() -> bool,
     ) -> Result<SelectedFile, CaptureError> {
-        binding.preflight_capability(manager, host, instance, IoCapability::FileRead, clock())?;
+        if cancelled() {
+            return Err(CaptureError::Cancelled);
+        }
+        clock.with(|now| {
+            binding.preflight_capability(manager, host, instance, IoCapability::FileRead, now)
+        })?;
         let metadata = file.metadata()?;
         if !metadata.is_file() {
             return Err(CaptureError::NotRegularFile);
@@ -87,10 +116,17 @@ impl FileBroker {
         }
         let size = usize::try_from(length).map_err(|_| io_binding::Error::Limit)?;
         let charged = length.checked_add(1).ok_or(io_binding::Error::Limit)?;
-        let (reference, next, lease) =
-            self.reserve_file(manager, host, instance, binding, length, charged, clock())?;
+        if cancelled() {
+            return Err(CaptureError::Cancelled);
+        }
+        let (reference, next, lease) = clock.with(|now| {
+            self.reserve_file(manager, host, instance, binding, length, charged, now)
+        })?;
         let mut check = || -> Result<(), CaptureError> {
-            lease.check(manager, host, instance, clock())?;
+            if cancelled() {
+                return Err(CaptureError::Cancelled);
+            }
+            clock.with(|now| lease.check(manager, host, instance, now))?;
             Ok(())
         };
         check()?;
