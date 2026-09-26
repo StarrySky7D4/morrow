@@ -808,3 +808,6 @@ fn managed_run_rejects_duplicate_io_forged_completion_and_core_exchange() {
         assert!(report.response.is_none(), "{label}");
     }
 }
+
+#[path = "support/selected_file.rs"]
+mod selected_file;

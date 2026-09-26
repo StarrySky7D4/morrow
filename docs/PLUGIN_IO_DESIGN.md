@@ -165,3 +165,7 @@ Web 的 manual redirect 可产生不可读 `opaqueredirect`，所以首版以 `r
 ## 2026-09-24：三语言 SDK 接入
 
 已在现有宿主能力上补充 C／C++／Rust codec 和 Wasm 调用包装，详见 [IO SDK](../sdk/IO_API.md) 与 [专项报告](../reports/plugin-io-sdk-2026-09-24.md)。本轮不修改原 IO schema、不扩大旧兼容基线；Read／Finish／Cancel／SubmitHttp 与仅有编码形状的 SubmitFileRead／Poll／QueryOperation 明确区分。完整文件写入、异步恢复与网络流式能力仍开放，不能将 SDK 包装完成理解为本文所有设计均已实现。
+
+## 2026-09-26：已选普通文件句柄
+
+原生运行时已提供 `FileBroker::grant_open_file`，从可信宿主传入的已选文件句柄有界捕获字节，先准入后读取，并返回实际固定字节摘要。没有路径打开、目录或写入能力。分块时可能观察跨时刻字节，不以 stat 校验宣称源文件原子快照；工作台选择器／任务所有权与平台资格仍开放。详见 [单文件合同](PLUGIN_SELECTED_FILE.md) 和 [实现记录](../reports/plugin-selected-file-2026-09-26.md)。

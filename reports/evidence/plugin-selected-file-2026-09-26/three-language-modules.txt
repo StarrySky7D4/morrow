@@ -1,0 +1,13 @@
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+    Finished `test` profile [unoptimized] target(s) in 0.36s
+     Running tests/sdk_io_guest.rs (build/selected-service-validation/target-runtime/debug/deps/sdk_io_guest-a8415f75c1518894)
+
+running 5 tests
+test sdk_guest_rejects_bad_input_and_uncorrelated_broker_response ... ok
+test sdk_guest_completes_core_encoded_http_status_and_rejects_wrong_http_original ... ok
+test package_declaration_without_manager_approval_cannot_bind ... ok
+test cross_instance_file_denial_is_validated_and_completed_by_sdk_guest ... ok
+test compiled_sdk_guest_reads_and_finishes_host_selected_file ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18s
+

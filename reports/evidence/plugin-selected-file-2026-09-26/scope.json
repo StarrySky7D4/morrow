@@ -1,0 +1,21 @@
+{
+  "base": "601fb0b78e403335629dd17d6254bb90ba2eefe7",
+  "remote_main": "d9c043191a400df972832d398b80cb73dfc51f56",
+  "platform": "Linux",
+  "file_tests": 23,
+  "sdk_io_module_tests": 5,
+  "runtime_full_before_last_test": 403,
+  "runtime_ignored": 6,
+  "network_regular": 134,
+  "network_ignored": 12,
+  "guest_source": "unchanged transport-v1-rc1 Wasm modules; test-only FileRead manifests",
+  "no_ci": true,
+  "not_qualified": [
+    "workbench file picker and task protocol",
+    "Flutter file flow",
+    "Windows actual file handles",
+    "atomic source snapshot",
+    "durable file evidence",
+    "directory and write capabilities"
+  ]
+}

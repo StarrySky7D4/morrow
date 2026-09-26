@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [选中文件真实句柄入口](../reports/plugin-selected-file-2026-09-26.md)：新增 FileBroker 原句柄有界捕获，读取前共享额度预留、块间／最终撤权检查、固定字节摘要及失败释放；旧 Vec 计费保持。最终文件 23、三语言模块 5、runtime 常规 403、network 常规 134 与严格 Clippy 通过，范围有重叠。工作台选择器／任务协议／Flutter 接线、Windows 真实文件和完整文件系统继续开放；未使用 CI、推送或发布。
+
 2026-09-26 [配置服务统一接线与原包复验](../reports/plugin-configured-service-2026-09-26.md)：从 Google Drive 恢复 `7d08b95`，核对主线未变。工作台改用同一宿主接线对象生成所选资源依赖、重放 scope、router 与目录；三语言原包覆盖配置服务撤权后的缓存隔离、等待中终止、重开不重发、空选择及错 worker 归还。网络 134、原包专项 6、SDK 66、工具 97 与旧原件回归通过，新增无需重编 guest 的恢复验收入口。Windows／Flutter／真实 DPAPI/TLS 产品验收仍开放，未推送、发布或使用 CI。
 
 2026-09-26 [公共 SDK 服务出站闭环](../reports/plugin-service-http-sdk-2026-09-26.md)：新增三语言 `--service-http` 原包模板、原帧摘要接口和显式四资源槽声明。真实网络三项覆盖 21 场景，验证敏感头隔离、宿主凭据、等待期间原 owner 写入、断线／停止／撤权 Unknown 与同库重开不重发；SDK 66、工具 94、打包 CLI 15、原生及旧原件回归通过。源码与证据保存 Google Drive。Windows／Flutter、实际 DPAPI/TLS 与完整业务核对仍开放，未使用 CI、推送或发布。

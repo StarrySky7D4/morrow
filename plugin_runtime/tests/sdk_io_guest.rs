@@ -84,25 +84,41 @@ fn compiled_sdk_guest_reads_and_finishes_host_selected_file() {
             )
             .unwrap();
         let mut broker = FileBroker::new([0x63; 32]);
-        let file_ref = broker
-            .grant_file(
+        // The original compiled SDK module receives no OS path or handle.
+        let original = (0..90_007).map(|i| (i % 251) as u8).collect::<Vec<_>>();
+        let path = dir.path().join("host-selected.bin");
+        std::fs::write(&path, &original).unwrap();
+        let selected = broker
+            .grant_open_file(
                 &manager,
                 &host,
                 &instance,
                 &binding,
-                b"selected bytes".to_vec(),
-                2,
+                std::fs::File::open(&path).unwrap(),
+                original.len() as u64,
+                || 2,
             )
             .unwrap();
-        let read = Request::encode_read(1, &file_ref, 0, 14).unwrap();
-        let result = broker.run(&manager, &host, &instance, &binding, HANDLER, &read, || 3);
-        assert_eq!(result.execution.outcome, Ok(0));
-        assert_eq!(result.execution.host_calls, 1);
-        let response = result.response.expect("host verified guest-delivered read");
-        assert_eq!(response.status, Status::Completed);
-        assert_eq!(response.payload, b"selected bytes");
-        assert_eq!(broker.usage(), (1, 14));
-        let finish = Request::encode_finish(2, &file_ref).unwrap();
+        assert_eq!(
+            selected.sha256,
+            morrow_core::runtime::schema_digest(&original)
+        );
+        std::fs::remove_file(&path).unwrap();
+        let mut retained = Vec::new();
+        for (id, offset) in [(1, 0), (2, 65_536)] {
+            let read = Request::encode_read(id, &selected.reference, offset, 0).unwrap();
+            let result = broker.run(&manager, &host, &instance, &binding, HANDLER, &read, || 3);
+            assert_eq!(result.execution.outcome, Ok(0));
+            assert_eq!(result.execution.host_calls, 1);
+            let response = result.response.expect("host verified guest-delivered read");
+            assert_eq!(response.status, Status::Completed);
+            assert_eq!(response.offset, offset);
+            assert_eq!(response.eof, offset > 0);
+            retained.extend(response.payload);
+        }
+        assert_eq!(retained, original);
+        assert_eq!(broker.usage(), (1, original.len() as u64));
+        let finish = Request::encode_finish(3, &selected.reference).unwrap();
         let result = broker.run(&manager, &host, &instance, &binding, HANDLER, &finish, || 4);
         assert_eq!(result.execution.outcome, Ok(0));
         assert_eq!(result.execution.host_calls, 1);

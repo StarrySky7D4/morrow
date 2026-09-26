@@ -1,0 +1,31 @@
+   Compiling morrow-plugin-runtime v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/plugin_runtime)
+    Finished `test` profile [unoptimized] target(s) in 2.24s
+     Running tests/managed_file_io.rs (build/selected-service-validation/target-runtime/debug/deps/managed_file_io-83697491f7483fed)
+
+running 23 tests
+test file_list_only_binding_cannot_grant_read_or_mutate_clock_and_other_resources ... ok
+test approval_change_revokes_saved_binding_and_reaps_fixed_bytes ... ok
+test expired_resources_reclaim_slots_but_do_not_refund_cumulative_bytes ... ok
+test foreign_instance_with_future_clock_cannot_reap_other_instances_files ... ok
+test cancel_releases_reference_without_refunding_bytes_or_revoking_other_file ... ok
+test actual_guest_reads_multiple_chunks_and_finish_releases_only_held_capacity ... ok
+test foreign_token_with_valid_binding_cannot_advance_clock_or_reap_owner ... ok
+test declaration_without_approval_cannot_bind_and_other_instance_cannot_read ... ok
+test longer_binding_cannot_extend_original_file_lease_at_final_delivery ... ok
+test pool_close_invalidates_old_binding_and_reference ... ok
+test actual_guest_late_result_is_rejected_after_expiry_or_instance_stop ... ok
+test independent_io_handler_is_required_and_pure_task_entry_stays_closed ... ok
+test repeated_bindings_and_brokers_share_resource_limit_and_read_byte_charges ... ok
+test selected_file::directory_and_device_are_rejected_without_reservation ... ok
+test selected_file::digest_describes_retained_bytes_even_when_source_changes_at_same_length ... ok
+test selected_file::empty_file_requires_probe_budget_and_has_empty_digest ... ok
+test selected_file::file_list_only_binding_cannot_capture_or_advance_shared_clock ... ok
+test selected_file::open_file_capture_survives_source_replacement_and_guest_reads_exact_chunks ... ok
+test successful_guest_delivery_advances_shared_clock_to_final_observation ... ok
+test managed_run_rejects_duplicate_io_forged_completion_and_core_exchange ... ok
+test selected_file::capture_limits_and_foreign_identity_fail_before_seek_read_or_charge ... ok
+test selected_file::source_growth_shrink_and_read_failure_release_reserved_slots ... ok
+test selected_file::capture_stop_expiry_and_clock_rollback_never_publish_or_refund ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.78s
+

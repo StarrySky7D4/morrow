@@ -1,0 +1,7 @@
+{
+  "plugin_runtime/src/file_io.rs": "e3a572e888aab06a9354a699c48beffd747230b0b23c70a228e3fd30adfe0d11",
+  "plugin_runtime/src/file_io/selected.rs": "3abb81c18edb0e7dcffca12f95e085db4beef10507ec6931fd5f8945e9701c84",
+  "plugin_runtime/tests/managed_file_io.rs": "69edf34a47db4ee6bd5c8d85e32ff142d514dc17eef9fcffe2b9ba3a7cfaa09a",
+  "plugin_runtime/tests/support/selected_file.rs": "c1b060f631e3ab6d213b927af863998d05306bf97758d82d8bfe84524034986d",
+  "plugin_runtime/tests/sdk_io_guest.rs": "1b7b43510689001acba107b94728152037715d3aa8f00a1228fe4ac4dbe266d2"
+}

@@ -68,3 +68,9 @@ pwsh -File tool/verify_plugin_io_sdk.ps1 -Sysroot "实际的/wasi-sysroot-34.0"
 ## 后续真实网络验证（2026-09-24）
 
 在上述 codec／文件验证后，新增 `tool/verify_plugin_io_network.ps1`：三语言 guest 经现有受管 worker 发出真实本地 HTTP，七种方法、重复参数和头、二进制正文、宿主凭据注入、429、发送前拒绝、断线 Unknown 与同操作不重发均通过。关闭并重开数据库后仍能读取 Unknown；这不等于完整跨进程业务核对。范围和复现见 [网络资格报告](../reports/plugin-io-network-sdk-2026-09-24.md)。公网服务商互操作、入站服务 SDK、流式和完整恢复仍开放。
+
+## 真实选中文件捕获（2026-09-26）
+
+原生宿主可使用 `FileBroker::grant_open_file` 把可信平台已选中的普通文件句柄转为当前实例的不透明 Read 引用。读取前预留长度加一字节 EOF 探测额度，按块检查撤权／期限，失败不发布半成品。返回摘要只描述固定的实际字节，不证明源对象的瞬时快照；guest API、wire 和旧 Vec 计费保持。
+
+三语言已有 Wasm 模块在 Linux 通过真实文件分块、删源和结束回收验证，使用测试内 FileRead 包，未修改冻结原件。完整调用边界与无需重编 guest 的命令见 [单文件合同](../docs/PLUGIN_SELECTED_FILE.md)。工作台选择器／私有协议／Flutter 页面、Windows 实机、持久证据及完整文件系统仍待补齐。

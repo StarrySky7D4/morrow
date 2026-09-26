@@ -1,6 +1,7 @@
 //! Experimental managed carrier for host-selected immutable file bytes.
 //! This is a single-frame read/finish/cancel profile, not an OS picker, durable
 //! evidence store, general IO handler ABI, filesystem path API or network backend.
+mod selected;
 use crate::{
     Fault, Report,
     io_binding::{self, IoBinding, IoResourceLease},
@@ -11,6 +12,7 @@ use morrow_core::{
     io::{Action, MAX_PAYLOAD_BYTES, Request, Response, Status},
     plugin_package::io::IoCapability,
 };
+pub use selected::{CaptureError, SelectedFile};
 use std::collections::BTreeMap;
 
 const MAX_RESOURCES: usize = 128;
@@ -70,12 +72,36 @@ impl FileBroker {
         bytes: Vec<u8>,
         now: u64,
     ) -> io_binding::Result<[u8; 32]> {
+        let (token, next, lease) = self.reserve_file(
+            manager,
+            host,
+            instance,
+            binding,
+            bytes.len() as u64,
+            bytes.len() as u64,
+            now,
+        )?;
+        lease.check(manager, host, instance, now)?;
+        self.publish_file(token, next, lease, bytes);
+        Ok(token)
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn reserve_file(
+        &mut self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        binding: &IoBinding,
+        resident_bytes: u64,
+        charged_bytes: u64,
+        now: u64,
+    ) -> io_binding::Result<([u8; 32], u64, io_binding::IoLease)> {
         binding.preflight_capability(manager, host, instance, IoCapability::FileRead, now)?;
         self.reap(now);
         let (count, used) = self.usage();
         if count >= MAX_RESOURCES
             || used
-                .checked_add(bytes.len() as u64)
+                .checked_add(resident_bytes)
                 .is_none_or(|n| n > MAX_SPOOL_BYTES)
         {
             return Err(io_binding::Error::Limit);
@@ -97,10 +123,18 @@ impl FileBroker {
             instance,
             IoCapability::FileRead,
             1,
-            bytes.len() as u64,
+            charged_bytes,
             now,
         )?;
-        lease.check(manager, host, instance, now)?;
+        Ok((token, next, lease))
+    }
+    fn publish_file(
+        &mut self,
+        token: [u8; 32],
+        next: u64,
+        lease: io_binding::IoLease,
+        bytes: Vec<u8>,
+    ) {
         self.sequence = next;
         self.files.insert(
             token,
@@ -109,7 +143,6 @@ impl FileBroker {
                 bytes,
             },
         );
-        Ok(token)
     }
     #[allow(clippy::too_many_arguments)]
     pub fn exchange(
