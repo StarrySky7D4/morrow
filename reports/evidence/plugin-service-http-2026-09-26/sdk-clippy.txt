@@ -1,0 +1,2 @@
+   Compiling morrow-plugin-sdk v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/sdk/rust)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.60s

@@ -552,3 +552,28 @@ fn resource_discovery_requires_explicit_service_and_outbound_declarations() {
     assert!(p.manifest().required_features.iter().any(|f| f == morrow_core::service_resources::FEATURE));
     assert_eq!(p.io_capabilities().len(), 3);
 }
+
+#[test]
+fn explicit_io_resource_budget_is_bounded_and_defaults_remain_two() {
+    for count in [None, Some("1"), Some("4"), Some("8")] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--io-capability", "http-request", "--io-handler", "io.request"]);
+        if let Some(count) = count { add(&mut args, &["--io-resources", count]); }
+        execute(&args);
+        let p = catalog::read_file(Path::new(&args[2])).unwrap();
+        let budget = p.manifest().io_declaration.as_ref().unwrap().budget.as_ref().unwrap();
+        assert_eq!(budget.max_resources, count.unwrap_or("2").parse::<u32>().unwrap());
+        assert_eq!((budget.max_jobs, budget.max_job_bytes), (1, 1024*1024));
+    }
+    for extra in [vec!["--io-resources", "0"], vec!["--io-resources", "9"], vec!["--io-resources", "-1"], vec!["--io-resources", "4", "--io-resources", "4"], vec!["--io-resources"]] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--io-capability", "http-request", "--io-handler", "io.request"]);
+        add(&mut args, &extra);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--io-resources", "4"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+}

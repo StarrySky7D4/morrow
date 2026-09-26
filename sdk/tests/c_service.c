@@ -20,6 +20,13 @@ int main(void) {
   assert(view.call_id==UINT64_MAX && view.header_count>=2 && view.header_count<=4);
   assert(view.body.length==3 && view.body.data[0]==0 && view.body.data[1]==255);
   assert(view.principal.length==5 && memcmp(view.principal.data,"alice",5)==0);
+  uint8_t digest[32];memset(digest,0xa5,sizeof(digest));
+  assert(mp_service_request_digest(request,digest,31)==MP_CODEC_LIMIT && digest[0]==0xa5);
+  assert(mp_service_request_digest(NULL,digest,32)==MP_CODEC_INVALID && digest[0]==0xa5);
+  assert(mp_service_request_digest(request,digest,32)==MP_CODEC_OK);
+  const char *expected=getenv("MORROW_SDK_EXPECTED_SERVICE_DIGEST"), *hex="0123456789abcdef";
+  assert(expected && strlen(expected)==64);
+  for(uint32_t i=0;i<32;i++){assert(expected[2*i]==hex[digest[i]>>4]);assert(expected[2*i+1]==hex[digest[i]&15]);}
   mp_service_resources *resources=NULL;
   uint32_t resources_status=mp_service_request_resources(request,&resources);
   assert(resources_status==(view.header_count==4 ? MP_CODEC_INVALID : MP_CODEC_OK));

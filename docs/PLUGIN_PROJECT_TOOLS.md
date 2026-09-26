@@ -2,7 +2,7 @@
 
 自 test.49 提供 `tool/morrow_plugin.py`，将 C11、C++17、Rust 的创建、构建和打包入口统一起来。本文描述工具合同；本轮实际运行范围、失败及限制以 [test.49 验证记录](../reports/test.49-sdk-project-tools.md) 为准，不把脚手架生成或静态检查当作功能验收。
 
-2026-09-26 增加 `--kind service` 三语言模板：固定 `service.echo`、显式 `http-listen`／`http-publish`、原帧关联和现有服务 schema pin。打包器要求 `--service`，不产生监听授权，不声明长时运行 profile。使用方法和有限范围见 [服务 SDK](../sdk/SERVICE_API.md)，本轮实际原包与真实 TCP 验证见 [报告](../reports/plugin-service-sdk-2026-09-26.md)。`verify_plugin_projects.py` 的旧五类完整流程保持原范围；新增服务流程使用 `verify_plugin_service_sdk.py`。
+2026-09-26 增加 `--kind service` 三语言模板：固定 `service.echo`、显式 `http-listen`／`http-publish`、原帧关联和现有服务 schema pin。打包器要求 `--service`，不产生监听授权；默认短期 profile，可显式声明有限长时运行。使用方法和有限范围见 [服务 SDK](../sdk/SERVICE_API.md)，本轮实际原包与真实 TCP 验证见 [报告](../reports/plugin-service-sdk-2026-09-26.md)。`verify_plugin_projects.py` 的旧五类完整流程保持原范围；新增服务流程使用 `verify_plugin_service_sdk.py`。
 
 ## 环境与分发边界
 
@@ -46,9 +46,9 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 
 `pack` 发布到项目目录仅是开发产物；要接入真实应用，还需宿主选择包、批准能力及依赖、启用并创建实际实例。见 [包格式](PLUGIN_PACKAGE.md)、[注册表](PLUGIN_REGISTRY.md) 和 [依赖锁](PLUGIN_DEPENDENCY_LOCKS.md)。
 
-## 十八个起始模板
+## 起始模板与服务出站变体
 
-每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，共 18 个组合。`--kind` 默认 `transform`。
+每一行均可搭配 `--language c`、`--language cpp` 或 `--language rust`，基本模板共 18 个组合，服务出站另有三语言可选变体。`--kind` 默认 `transform`。
 
 | `--kind` | 来源示例 | 实际起点与后续条件 |
 | --- | --- | --- |
@@ -58,6 +58,10 @@ python tool/morrow_plugin.py transform "build/示例插件 项目/dist/<sha256>.
 | `dependency` | `*-dependency-caller` | `bytes.dependency-wrap` 调用 slot `reverse`；需 `bytes.tag-reverse` 提供者、`^1.0.0` 版本范围及显式批准锁 |
 | `io` | `*-io` | 接收宿主选择的原始 IO 请求帧，调用一次受管 IO 并原样完成已验证响应；实验性 `io-v1`，需宿主绑定和逐项批准 |
 | `service` | `*-service` | 接收已认证的宿主服务请求并回显正文；显式监听/发布声明与服务 schema pin，短期 IO profile，不授予真实监听能力 |
+
+`--kind service --service-http` 选择公共 SDK 的 `*-service-http` 变体，声明 `service.http.forward`、四项服务/HTTP 能力、资源目录及四个资源槽。仅把 POST 正文转发到恰好一个宿主端点的 `/`，无任意 URL、调用者凭据转发或自动重试。使用持久宿主路由；缺少或含多个端点时明确失败。行为与 Unknown 边界见 [服务 SDK](../sdk/SERVICE_API.md)。
+
+`[io].max_resources` 可显式设置 1–8，映射 `--io-resources N`；缺省仍为 2。服务出站的四个槽对应监听、发布、端点及在途 HTTP。设置不授予能力，不改变单作业、字节及期限预算。`[service_run]` 另声明累计期限/任务/字节，三个字段须同时提供。
 
 UI 模板的 `ui.form` 输入上限为 32 字节，`ui.edit` 为 65536 字节；输出上限均为 65536 字节。依赖包装模板输入上限为 65531 字节，声明 `read-content`、`edit-content` 能力，但调用依赖或产出结果都不自动取得保存权限。这些值描述原模板，修改源码后应同步修改相应声明。
 

@@ -190,7 +190,7 @@ def project(path):
     if plugin.get("dependency_calls", False) and not config.get("handlers"):
         raise ToolError("dependency_calls requires at least one handler")
     if "io" in config:
-        io = only(config["io"], ("capabilities", "handlers", "service_resources"), "io")
+        io = only(config["io"], ("capabilities", "handlers", "service_resources", "max_resources"), "io")
         allowed = ("http-listen", "http-publish", "http-request", "credential-use") if build.get("kind") == "service" else IO_CAPABILITIES
         caps = io.get("capabilities")
         handlers = io.get("handlers")
@@ -200,6 +200,8 @@ def project(path):
             raise ToolError("io.capabilities: use unique names allowed by the project kind")
         if build.get("kind") == "service" and not {"http-listen", "http-publish"}.issubset(caps):
             raise ToolError("service requires http-listen and http-publish")
+        if "max_resources" in io:
+            integer(io["max_resources"], 1, 8, "io.max_resources")
         resources = boolean(io.get("service_resources", False), "io.service_resources")
         if resources and (build.get("kind") != "service" or "http-request" not in caps):
             raise ToolError("service_resources requires service with http-request")
@@ -297,7 +299,12 @@ def handler(name, input_type="bytes", output_type="bytes", max_input=65536):
     return {"name": name, "input_type": input_type, "output_type": output_type, "max_input_bytes": max_input, "max_output_bytes": 65536}
 
 def new_project(args):
+    service_http = getattr(args, "service_http", False)
+    if service_http and args.kind != "service":
+        raise ToolError("--service-http requires --kind service")
     sdk_root = sdk(args)
+    if service_http:
+        sdk_io(sdk_root)
     if args.kind == "io":
         sdk_io(sdk_root)
     elif args.kind == "service":
@@ -320,6 +327,8 @@ def new_project(args):
                   (("duration_ms", "service_run_ms"), ("max_jobs", "service_run_jobs"), ("max_bytes", "service_run_bytes"))}
     run_profile = service_run(run_values, args.kind) if any(v is not None for v in run_values.values()) else None
     profile = "task" if args.kind == "content" else "dependency-caller" if args.kind == "dependency" else args.kind
+    if service_http:
+        profile = "service-http"
     example = sdk_root / "examples" / f"{args.language}-{profile}"
     source_name = "src/lib.rs" if args.language == "rust" else "src/plugin.cpp" if args.language == "cpp" else "src/plugin.c"
     original = example / ("src/lib.rs" if args.language == "rust" else "plugin.cpp" if args.language == "cpp" else "plugin.c")
@@ -340,7 +349,11 @@ def new_project(args):
         config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(cap) for cap in io_caps) + "]",
                        'handlers = ["' + ("morrow.http.forward.v1" if "http-request" in io_caps else "io.request") + '"]'])
     if args.kind == "service":
-        config.extend(["", "[io]", 'capabilities = ["http-listen", "http-publish"]', 'handlers = ["service.echo"]'])
+        service_caps = ["http-listen", "http-publish"] + (["http-request", "credential-use"] if service_http else [])
+        config.extend(["", "[io]", "capabilities = [" + ", ".join(quote(c) for c in service_caps) + "]",
+                       'handlers = ["' + ("service.http.forward" if service_http else "service.echo") + '"]'])
+        if service_http:
+            config.extend(["service_resources = true", "max_resources = 4"])
     if run_profile is not None:
         config.extend(["", "[service_run]"] + [f"{k} = {v}" for k, v in run_profile.items()])
     for entry in handlers:
@@ -393,13 +406,14 @@ Use Python 3.11+ and the Morrow repository's tool/morrow_plugin.py:
 plugin.toml is compiler input. The application reads only the Protobuf+LZ4 package.
 Build failures stop packaging; previous packages remain available under their own hashes.
 Build runs trusted local compiler/Cargo code and is not a source-code sandbox.
-Current complete qualification is Windows; other platforms need their own validation.
+Platform qualification is profile-specific; consult SDK documentation and the recorded validation reports.
 
 Content templates need host-provided task identities and per-card grants.
 UI templates need a host renderer and session event validation.
 Dependency templates call slot reverse, require a bytes.tag-reverse provider (^1.0.0), and need an explicitly approved host dependency lock; the simple transform command cannot supply this context.
 {('IO templates relay one host-selected IO request through the experimental io-v1 codec. The declaration is only an upper bound; installation, binding and each operation still require host approval. HTTP projects declare morrow.http.forward.v1 so the workbench can recognize the exact-frame forwarding profile; changing that handler may remove workbench compatibility. No path, URL, credential text or OS handle belongs in plugin.toml.' if args.kind == 'io' else '')}
-{('Service templates echo a bounded binary body. The host owns authentication, route, listener and publication; host approval is required. Longer runs require explicit service_run duration/jobs/bytes; absent that table the short IO profile is retained. Run declarations grant no authority or automatic renewal. TLS, outbound IO and content grants remain host decisions. Do not treat an echoed caller header as an authenticated principal.' if args.kind == 'service' else '')}
+{('Service templates echo a bounded binary body. The host owns authentication, route, listener and publication; host approval is required. Longer runs require explicit service_run duration/jobs/bytes; absent that table the short IO profile is retained. Run declarations grant no authority or automatic renewal. TLS, outbound IO and content grants remain host decisions. Do not treat an echoed caller header as an authenticated principal.' if args.kind == 'service' and not service_http else '')}
+{('This service accepts POST and forwards its binary body once to / on exactly one host-selected endpoint. The resource directory is mandatory; absent/ambiguous selection fails without outbound IO. No inbound headers or caller credentials are forwarded. Use a durable host route: the exact original service frame digest forms the outbound operation ID. Unknown is returned as 409 outcome-unknown, never retried. Other denial/status bodies are documented in sdk/SERVICE_API.md. Long runs require the explicit service_run profile.' if service_http else '')}
 Rust uses the selected SDK path in Cargo.toml. If relocating the SDK, update that dependency and pass the matching --sdk-root.
 """.encode()
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -502,6 +516,8 @@ def package_arguments(config):
         run_profile = service_run(config["service_run"], config["build"].get("kind"))
         arguments += ["--service-run", str(run_profile["duration_ms"]), str(run_profile["max_jobs"]), str(run_profile["max_bytes"])]
     if "io" in config:
+        if "max_resources" in config["io"]:
+            arguments += ["--io-resources", str(config["io"]["max_resources"])]
         for capability in config["io"]["capabilities"]:
             arguments += ["--io-capability", capability]
         for handler_name in config["io"]["handlers"]:
@@ -578,6 +594,7 @@ def main(argv=None):
             command.add_argument("--kind", choices=KINDS, default="transform")
             command.add_argument("--io-capability", action="append", choices=IO_CAPABILITIES,
                                  help="requested IO ceiling for --kind io (default: file-read)")
+            command.add_argument("--service-http", action="store_true", help="service starter: one explicitly approved POST endpoint with resource discovery")
             command.add_argument("--service-run-ms", type=int, help="finite run duration; requires jobs and bytes")
             command.add_argument("--service-run-jobs", type=int, help="cumulative task reservation ceiling")
             command.add_argument("--service-run-bytes", type=int, help="cumulative byte ceiling, max 64 MiB")

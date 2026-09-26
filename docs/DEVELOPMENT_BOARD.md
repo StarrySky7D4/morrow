@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-26 [公共 SDK 服务出站闭环](../reports/plugin-service-http-sdk-2026-09-26.md)：新增三语言 `--service-http` 原包模板、原帧摘要接口和显式四资源槽声明。真实网络三项覆盖 21 场景，验证敏感头隔离、宿主凭据、等待期间原 owner 写入、断线／停止／撤权 Unknown 与同库重开不重发；SDK 66、工具 94、打包 CLI 15、原生及旧原件回归通过。源码与证据保存 Google Drive。Windows／Flutter、实际 DPAPI/TLS 与完整业务核对仍开放，未使用 CI、推送或发布。
+
 2026-09-26 [插件底座本地稳定候选收尾](../reports/plugin-foundation-closeout-2026-09-26.md)：显式长时服务 profile、三语言资源目录 SDK、真实原包续租／耗尽／撤权／历史重开完成；新增 transport-v1-rc1 六对固定 IO／服务原件，保留旧 guest-v1-rc1。core 645、runtime 397、network 134、SDK 66、Python 92 及专项通过，分项有重叠。Windows 专属依赖、Flutter 与凭据／TLS 实际入口仍阻断整体收尾；本轮未发布或使用 CI。
 
 2026-09-26 [入站服务 SDK 与进度校准](../reports/plugin-service-sdk-2026-09-26.md)：基于最新主线 `d9c0431`（test.56），新增 Rust／C／C++ 服务 codec、原帧关联与一次完成、六类项目模板中的 service 原包流程和显式服务打包声明。Linux 本地已验证三语言原包→真实 TCP 节点的七方法、二进制正文、未批准绑定、错误认证及撤权；SDK、工具、核心打包与独立原生 codec 结果见报告。完整文件系统、长时/持久恢复、Windows／Flutter 和 SDK 冻结仍开放；未使用 Actions/CI，不创建 Release。

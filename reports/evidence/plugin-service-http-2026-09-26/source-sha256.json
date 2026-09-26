@@ -1,0 +1,12 @@
+{
+  "sdk/examples/rust-service-http/src/lib.rs": "5b280ee0fb1f9a6b5717c5bdd65ffc83f15c730f4d1cfbcbb2990596dcdc487c",
+  "sdk/examples/c-service-http/plugin.c": "cc1fdc9176d1fd9efd0d52aae50ab160a651d3b31070f26f8431070d39b36ce6",
+  "sdk/examples/cpp-service-http/plugin.cpp": "2c6d106988c842308b342c15c5a4886b97f079e6f0bec98b09b0f935509f76eb",
+  "sdk/rust/src/service_ffi.rs": "34f23eec1e305d7d54512668882044369403e0ef87175fbcfa5bf676dd30b993",
+  "sdk/c/include/morrow_plugin_service.h": "9ece0ac3110a3ca4e208706f57ecc32b024345c7273bc5ef9c36f62edbed9869",
+  "sdk/cpp/include/morrow_plugin_service.hpp": "1c643a936d04985b4a2c8f607f809bb652cb1ba44370700c0108ac80437ed300",
+  "tool/morrow_plugin.py": "18bd819faf95ec91382ca700c79a6e71a84d2d61d611a482693cf8cf151ba294",
+  "tool/verify_plugin_service_sdk.py": "0716b87255c77fee9a217ac3b9846599ff45d4c3ea4e54578d980581f8dfcb3a",
+  "core/examples/plugin_package.rs": "f82645a7bbf259ead977b9e325b1bbbac545c109901baeb9915f3bf8aa44f7fd",
+  "network_node/tests/sdk_service_http.rs": "6121d03fa428f2aaee171cc28be69f9887ea6ab87882ad6968fb4245dee32141"
+}

@@ -1,0 +1,36 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running tests/sdk_service_http.rs (build/service-foundation-2026-09-26/target-network/debug/deps/sdk_service_http-920968b1cdf2358e)
+
+running 3 tests
+
+thread 'originals_stop_or_revoke_during_wait_preserve_unknown_without_resend' (1444) panicked at tests/sdk_service_http.rs:573:85:
+ended before outbound: HTTP/1.1 409 Conflict
+content-type: text/plain; charset=utf-8
+content-length: 39
+connection: close
+date: Sat, 26 Sep 2026 05:06:50 GMT
+
+Service outcome requires reconciliation
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test originals_stop_or_revoke_during_wait_preserve_unknown_without_resend ... FAILED
+
+thread 'originals_forward_and_reopen_without_resending_observed_or_unknown' (1442) panicked at tests/sdk_service_http.rs:513:85:
+ended before outbound: HTTP/1.1 409 Conflict
+content-type: text/plain; charset=utf-8
+content-length: 39
+connection: close
+date: Sat, 26 Sep 2026 05:06:50 GMT
+
+Service outcome requires reconciliation
+test originals_forward_and_reopen_without_resending_observed_or_unknown ... FAILED
+test originals_reject_missing_directory_method_and_body_limit_without_io ... ok
+
+failures:
+
+failures:
+    originals_forward_and_reopen_without_resending_observed_or_unknown
+    originals_stop_or_revoke_during_wait_preserve_unknown_without_resend
+
+test result: FAILED. 1 passed; 2 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.18s
+
+error: test failed, to rerun pass `--test sdk_service_http`

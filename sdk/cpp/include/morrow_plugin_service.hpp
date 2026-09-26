@@ -2,6 +2,7 @@
 #define MORROW_PLUGIN_SERVICE_HPP
 #include "morrow_plugin_service.h"
 #include "morrow_plugin_codec.hpp"
+#include <array>
 namespace morrow {
 class service_resources {
   friend class service_request;
@@ -51,6 +52,11 @@ public:
     mp_service_request_view v{};
     if(status_!=MP_CODEC_OK || mp_service_request_get(value_,&v,sizeof(v))!=MP_CODEC_OK)detail::codec_logic_error();
     return v;
+  }
+  std::array<uint8_t,32> digest() const {
+    std::array<uint8_t,32> out{};
+    if(status_!=MP_CODEC_OK || mp_service_request_digest(value_,out.data(),out.size())!=MP_CODEC_OK)detail::codec_logic_error();
+    return out;
   }
   service_resources resources() const {
     service_resources out;

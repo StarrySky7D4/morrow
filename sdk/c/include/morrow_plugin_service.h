@@ -33,6 +33,8 @@ uint32_t mp_service_request_decode(const uint8_t*,uint32_t,mp_service_request**)
 uint32_t mp_service_request_get(const mp_service_request*,mp_service_request_view*,uint32_t);
 uint32_t mp_service_response_encode(const mp_service_request*,const mp_service_reply_v1*,uint8_t*,uint32_t,uint32_t*);
 void mp_service_request_free(mp_service_request*);
+/* Exact original request hash, 32 bytes; no grant. Failure preserves output. */
+uint32_t mp_service_request_digest(const mp_service_request*,uint8_t*,uint32_t);
 /* Independently owned optional metadata. Never grants IO authority. */
 typedef struct mp_service_resources mp_service_resources;
 typedef struct mp_service_endpoint {

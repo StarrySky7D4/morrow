@@ -1,5 +1,6 @@
 #include "morrow_plugin_service.hpp"
 #include <cassert>
+#include <cstdlib>
 #include <cstdio>
 #include <type_traits>
 int main() {
@@ -14,6 +15,10 @@ int main() {
   assert(original.status()==MP_CODEC_INVALID);
   morrow::service_request request; request=std::move(moved);
   assert(moved.status()==MP_CODEC_INVALID);
+  const char *expected=std::getenv("MORROW_SDK_EXPECTED_SERVICE_DIGEST");assert(expected);
+  std::string digest_text;const char *hex="0123456789abcdef";
+  for(auto b:request.digest()){digest_text+=hex[b>>4];digest_text+=hex[b&15];}
+  assert(digest_text==expected);
   auto view=request.view();
   assert(view.call_id==UINT64_MAX && view.header_count>=2 && view.header_count<=4 && view.body.length==3);
   static_assert(!std::is_copy_constructible_v<morrow::service_resources>);

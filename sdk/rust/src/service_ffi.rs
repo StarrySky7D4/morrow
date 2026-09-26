@@ -376,3 +376,29 @@ pub unsafe extern "C" fn mp_service_resources_free(raw: *mut c_void) {
         }
     }
 }
+
+/// Copy the exact original service request digest for guest operation identity.
+/// # Safety
+/// Request is a live SDK handle. Output covers capacity writable, disjoint bytes.
+/// Failure leaves output untouched. This digest is not an authorization token.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn mp_service_request_digest(
+    raw: *const c_void,
+    out: *mut u8,
+    capacity: u32,
+) -> u32 {
+    guard(|| {
+        if raw.is_null() || out.is_null() {
+            return Err(Error::Invalid);
+        }
+        if capacity < 32 {
+            return Err(Error::Limit);
+        }
+        let handle = unsafe { &*raw.cast::<RequestHandle>() };
+        let digest = handle.request.digest();
+        unsafe {
+            std::ptr::copy_nonoverlapping(digest.as_ptr(), out, digest.len());
+        }
+        Ok(())
+    })
+}

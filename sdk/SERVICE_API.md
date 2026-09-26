@@ -9,7 +9,7 @@
 | 语言 | 入口 | 生命周期 |
 | --- | --- | --- |
 | Rust | `service::{Request, Invocation, Reply, Response}`、`wasm::{read_service_request, complete_service_response}` | 请求拥有原始帧与摘要；响应按该请求编码 |
-| C | `morrow_plugin_service.h`、`mp_service_request_decode/get/free`、`mp_service_response_encode` | 不透明请求句柄拥有全部视图；输入缓冲可在解码后释放，视图在句柄释放后失效 |
+| C | `morrow_plugin_service.h`、`mp_service_request_decode/get/free/digest`、`mp_service_response_encode` | 不透明请求句柄拥有全部视图；输入缓冲可在解码后释放，视图在句柄释放后失效 |
 | C++ | `morrow_plugin_service.hpp`、`morrow::service_request` | 不可复制、可移动的 RAII 句柄；`read` / `complete` 提供 Wasm 接线 |
 
 C 的 reply descriptor 仅在同步调用期间借用；输出与输入／descriptor 必须按头文件约定保持有效、对齐且不重叠。编码失败清零输出长度并保留输出缓冲。C/C++ 类型和指针不是 wire 身份或能力。
@@ -18,7 +18,7 @@ C 的 reply descriptor 仅在同步调用期间借用；输出与输入／descri
 
 ## 原帧、限额与失败
 
-响应同时绑定精确 UInt64 `callId` 与完整原始请求帧 SHA-256。语义相同、Cap’n Proto 分段不同的请求也具有不同摘要；不能重编码请求后替代原件。重复头、二进制正文及非 ASCII 头值保持原顺序和字节。
+响应同时绑定精确 UInt64 `callId` 与完整原始请求帧 SHA-256。Rust `Request::digest()`、C `mp_service_request_digest`、C++ `service_request.digest()` 返回这份原件摘要；C 输出须至少 32 字节，失败保留原缓冲。语义相同、Cap’n Proto 分段不同的请求也具有不同摘要；不能重编码请求后替代原件。重复头、二进制正文及非 ASCII 头值保持原顺序和字节。
 
 - 帧上限 128 KiB，正文上限 64 KiB；最多 64 个头，累计头预算 16 KiB（包含每项四字节分隔成本），字段与嵌套解码同核心限额。
 - 支持 GET、HEAD、POST、PUT、PATCH、DELETE、OPTIONS；目标必须是有界 origin-form，拒绝绝对 URL、非法转义、控制字符等。
@@ -56,10 +56,41 @@ python tool/morrow_plugin.py new build/my-long-service --language rust --kind se
 
 自定义服务可在 `[io]` 中显式加入 `http-request`（需要凭据时另加 `credential-use`），并设置 `service_resources = true`。对应核心选项 `--service-resources` 只在服务且有 HTTP 出站声明时接受。回显模板不会因此自动转发；插件需实现业务调用，宿主仍独立批准并校验每次 IO。
 
+## 入站服务调用受管 HTTP
+
+三语言可选 starter 将两个公共 SDK 接在一起，无需链接宿主核心：
+
+```sh
+python tool/morrow_plugin.py new build/my-forward-service --language rust --kind service --service-http --id org.example.my-forward --service-run-ms 120000 --service-run-jobs 64 --service-run-bytes 4194304
+python tool/morrow_plugin.py pack build/my-forward-service
+```
+
+`--service-http` 仅适用于 `--kind service`，选择 `service.http.forward` handler，显式声明四项能力 `http-listen`、`http-publish`、`http-request`、`credential-use` 及资源目录。`[io].max_resources = 4` 为监听、发布、一个端点和在途 HTTP 分别预留槽位；它是声明上限，不是实时授权。自定义项目可显式设置 1–8，对应核心 `--io-resources N`；未设置时仍为 2，不会因组合能力自动放宽。当前仍为单作业、单请求有界执行。
+
+starter 只接受 POST，要求恰好一个宿主选择的端点且允许 POST，把二进制正文发送到该端点的 `/`。调用者的路径、查询、认证、Cookie、其他头均不转发。凭据只传 opaque 引用，由宿主在实际 HTTP 发送时注入；目录本身不携带秘密。HTTP 完成后返回上游状态与正文，不复制上游响应头。
+
+宿主必须使用持久路由 `durable_route`（工作台配置服务使用对应持久流程），保存原请求并保持 namespace。出站操作 ID 是 `service-http-` 加精确原服务帧摘要；每次 guest 执行只调用一次 HTTP，无自动重试。外层服务幂等键冲突不会产生新业务执行。重开必须重新批准原包及相同资源策略。目录/凭据策略改变应改变 scope，旧记录不能因此重新执行。
+
+| 结果 | 服务状态与正文 |
+| --- | --- |
+| 不是 POST | `405 post-required` |
+| 目录缺失或不是恰好一个端点 | `503 one-endpoint-required` |
+| POST 不在目录允许方法中 | `403 method-denied` |
+| 正文超出端点输入限额 | `413 request-too-large` |
+| IO 返回 OutcomeUnknown | `409 outcome-unknown` |
+| IO 返回 Conflict | `409 operation-conflict` |
+| IO 返回 Denied / Revoked | `403 outbound-denied` |
+| IO 返回 Expired / Quota | `504 outbound-expired` / `429 outbound-quota` |
+| 其他 IO 状态 | `502 outbound-unavailable` |
+
+这些是 guest 收到有效 IO 回执时的映射。停止、撤权或宿主完成失败也可能直接终止 guest，由宿主持久历史入口返回 Unknown，不能保证经过上述正文。外层已观察到 `409 outcome-unknown` 响应也不意味着内层 HTTP 结果已核对。应用须保持未知状态并使用提供者证据核对；更换幂等键不是恢复手段。流式与业务级事务恢复仍未实现。
+
 ## 本地验证
 
 ```sh
 python tool/verify_plugin_service_sdk.py --sysroot /absolute/path/to/wasi-sysroot --native
+# 三语言服务 → 受管 HTTP，包含等待期间本地写入、停止/撤权及历史重开。
+python tool/verify_plugin_service_sdk.py --sysroot /absolute/path/to/wasi-sysroot --native --service-http
 # 首次缓存依赖可显式添加 --allow-network；不使用 Actions/CI。
 ```
 

@@ -111,6 +111,43 @@ class ProjectTests(unittest.TestCase):
                     tool.pack_project(args)
                 compiler.assert_not_called()
 
+    def test_service_http_uses_public_sdk_and_explicit_resource_declarations(self):
+        for language in tool.LANGUAGES:
+            args = self.args(self.root / (language + "-service-http"), language, "service")
+            args.service_http = True
+            with contextlib.redirect_stdout(io.StringIO()):
+                tool.new_project(args)
+            root, config, source = tool.project(args.path)
+            original = self.sdk / "examples" / (language + "-service-http") / ("src/lib.rs" if language == "rust" else "plugin." + language)
+            self.assertEqual(source.read_bytes(), original.read_bytes())
+            self.assertEqual(config["io"]["handlers"], ["service.http.forward"])
+            self.assertEqual(config["io"]["capabilities"], ["http-listen", "http-publish", "http-request", "credential-use"])
+            self.assertTrue(config["io"]["service_resources"])
+            self.assertEqual(config["io"]["max_resources"], 4)
+            self.assertIn("--io-resources", tool.package_arguments(config))
+            self.assertIn("--service-resources", tool.package_arguments(config))
+        bad = self.args(self.root / "bad", "rust", "io")
+        bad.service_http = True
+        with self.assertRaisesRegex(tool.ToolError, "requires --kind service"):
+            tool.new_project(bad)
+        self.assertFalse(Path(bad.path).exists())
+
+    def test_io_resource_ceiling_is_explicit_and_validated_before_compilation(self):
+        args, (root, config, _) = self.new("resource-ceiling", "rust", "service")
+        self.assertNotIn("--io-resources", tool.package_arguments(config))
+        for value in [1, 4, 8]:
+            config["io"]["max_resources"] = value
+            write_config(root / "plugin.toml", config)
+            arguments = tool.package_arguments(tool.project(root)[1])
+            self.assertEqual(arguments[arguments.index("--io-resources") + 1], str(value))
+        for value in [0, 9, -1, True, "4"]:
+            config["io"]["max_resources"] = value
+            write_config(root / "plugin.toml", config)
+            with mock.patch.object(tool, "compile_project") as compiler:
+                with self.assertRaises(tool.ToolError):
+                    tool.pack_project(args)
+                compiler.assert_not_called()
+
     def test_service_resources_requires_explicit_outbound_capability(self):
         args, (root, config, _) = self.new("resources", "rust", "service")
         config["io"]["service_resources"] = True

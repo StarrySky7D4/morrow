@@ -14,7 +14,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -92,6 +92,7 @@ mod native {
         service_run: Option<io::proto::ServiceRunProfile>,
         io_caps: Vec<IoCapability>,
         io_handlers: Vec<String>,
+        io_resources: Option<u32>,
         fuel: Option<u64>,
         memory: Option<u64>,
         calls: Option<u32>,
@@ -110,6 +111,7 @@ mod native {
                     | "--service"
                     | "--service-resources"
                     | "--service-run"
+                    | "--io-resources"
                     | "--fuel"
                     | "--memory-bytes"
                     | "--host-calls"
@@ -172,6 +174,14 @@ mod native {
                 "--dependency-calls" => o.dependency_calls = true,
                 "--service" => o.service = true,
                 "--service-resources" => o.service_resources = true,
+                "--io-resources" => {
+                    o.io_resources = Some(number(
+                        value(args, &mut i, flag, "N")?,
+                        flag,
+                        1,
+                        io::MAX_RESOURCES as u64,
+                    )? as u32);
+                }
                 "--service-run" => {
                     let max_duration_ms = number(
                         value(args, &mut i, flag, "DURATION_MS")?,
@@ -235,6 +245,9 @@ mod native {
         }
         if o.dependency_calls && o.handlers.is_empty() {
             return Err("--dependency-calls requires at least one --handler".into());
+        }
+        if o.io_resources.is_some() && o.io_caps.is_empty() {
+            return Err("--io-resources requires an IO declaration".into());
         }
         if o.io_caps.is_empty() != o.io_handlers.is_empty() {
             return Err("IO declaration requires both --io-capability and --io-handler".into());
@@ -320,7 +333,7 @@ mod native {
                 .budget
                 .as_mut()
                 .expect("IO declaration factory supplies budget");
-            io_budget.max_resources = 2;
+            io_budget.max_resources = o.io_resources.unwrap_or(2);
             io_budget.max_jobs = 1;
             io_budget.max_bytes = 1024 * 1024;
             io_budget.max_job_bytes = 1024 * 1024;

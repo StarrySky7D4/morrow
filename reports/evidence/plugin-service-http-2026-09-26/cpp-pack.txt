@@ -1,0 +1,58 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.4
+   Compiling capnp v0.24.1
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling capnpc v0.24.0
+   Compiling morrow-plugin-sdk v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/sdk/rust)
+    Finished `release` profile [optimized] target(s) in 3.92s
+    Finished `release` profile [optimized] target(s) in 0.03s
+     Running `/workspace/scratch/c3041ed82a57/toolchain/target/release/examples/plugin_package pack-v2 /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/plugin.wasm /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/package-uwtb8dls/candidate.mplugin org.example.service.cpp 0.1.0 --name org.example.service.cpp --service --service-resources --service-run 120000 64 4194304 --io-resources 4 --io-capability http-listen --io-capability http-publish --io-capability http-request --io-capability credential-use --io-handler service.http.forward --fuel 20000000 --memory-bytes 16777216 --host-calls 16`
+    Finished `release` profile [optimized] target(s) in 0.06s
+     Running `/workspace/scratch/c3041ed82a57/toolchain/target/release/examples/plugin_check check /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/package-uwtb8dls/candidate.mplugin`
+    Finished `release` profile [optimized] target(s) in 0.04s
+     Running `/workspace/scratch/c3041ed82a57/toolchain/target/release/examples/plugin_package install /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/package-uwtb8dls/candidate.mplugin /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/dist`
+MODULE /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/plugin.wasm
+published /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/build/package-uwtb8dls/candidate.mplugin
+org.example.service.cpp 0.1.0 archive-sha256=ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a module-bytes=135833 capabilities={}
+name="org.example.service.cpp" guest-abi=2 features=["service-resources-v1", "io-v1", "service-run-v1", "service-run-budget-v1"]
+fuel=20000000 memory-bytes=16777216 host-calls=16
+runtime-schema-sha256=18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855 content-schema-sha256=8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4 task-schema-sha256=6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b dependency-schema-sha256=
+io-version=1 io-schema-sha256=78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5 io-capabilities={HttpRequest, HttpListen, HttpPublish, CredentialUse} io-handlers=["service.http.forward"] (declarations only; no grants)
+service-schema-sha256=a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2 (declaration only; no listener or run grant)
+service-run duration-ms=120000 (finite ceiling; explicit host approval and renewal)
+service-run-budget jobs=64 bytes=4194304 (cumulative, not refundable)
+io-budget resources=4 jobs=1 bytes=4194304 job-bytes=1048576 duration-ms=30000
+Container integrity only; no guest execution, author trust, authorization, runtime preparation or activation implied.
+PREPARED: checked only; not executed, installed, or authorized
+package=org.example.service.cpp version=0.1.0
+package_sha256=ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a
+manifest_schema=1 guest_abi=2 runtime_protocol=7
+runtime_schema_sha256=18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855
+content_schema_sha256=8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4
+task_schema_sha256=6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b
+dependency_schema_sha256=
+requested_capabilities={} (declarations only; no grants)
+declared_budget=Some(ExecutionBudget { fuel: 20000000, memory_bytes: 16777216, host_calls: 16 })
+effective_budget fuel=20000000 memory_bytes=16777216 host_calls=16
+required_features=["service-resources-v1", "io-v1", "service-run-v1", "service-run-budget-v1"]
+io_version=1 io_schema_sha256=78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5 io_capabilities={HttpRequest, HttpListen, HttpPublish, CredentialUse} io_handlers=["service.http.forward"] (declarations only; no grants)
+io_budget resources=4 jobs=1 bytes=4194304 job_bytes=1048576 duration_ms=30000
+installed /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/dist/ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a.mplugin
+org.example.service.cpp 0.1.0 archive-sha256=ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a module-bytes=135833 capabilities={}
+name="org.example.service.cpp" guest-abi=2 features=["service-resources-v1", "io-v1", "service-run-v1", "service-run-budget-v1"]
+fuel=20000000 memory-bytes=16777216 host-calls=16
+runtime-schema-sha256=18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855 content-schema-sha256=8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4 task-schema-sha256=6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b dependency-schema-sha256=
+io-version=1 io-schema-sha256=78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5 io-capabilities={HttpRequest, HttpListen, HttpPublish, CredentialUse} io-handlers=["service.http.forward"] (declarations only; no grants)
+service-schema-sha256=a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2 (declaration only; no listener or run grant)
+service-run duration-ms=120000 (finite ceiling; explicit host approval and renewal)
+service-run-budget jobs=64 bytes=4194304 (cumulative, not refundable)
+io-budget resources=4 jobs=1 bytes=4194304 job-bytes=1048576 duration-ms=30000
+Container integrity only; no guest execution, author trust, authorization, runtime preparation or activation implied.
+PACKAGE /workspace/scratch/c3041ed82a57/morrow/build/service-http-sdk-2026-09-26-r3/cpp/dist/ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a.mplugin
+SHA256 ea10e8139dc17ec5a65441517335e00f9e76337f77b576ae8cf5323559207f6a

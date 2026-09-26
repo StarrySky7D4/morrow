@@ -95,7 +95,13 @@ fn native_c_and_cpp_handles_return_core_verified_frames() {
         ] {
             let executable =
                 std::env::var_os(key).expect("native service test executable required");
+            let expected: String = request
+                .digest()
+                .iter()
+                .map(|b| format!("{b:02x}"))
+                .collect();
             let mut child = Command::new(executable)
+                .env("MORROW_SDK_EXPECTED_SERVICE_DIGEST", expected)
                 .stdin(Stdio::piped())
                 .stdout(Stdio::piped())
                 .spawn()

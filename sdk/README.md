@@ -46,7 +46,7 @@ C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可�
 
 ## 实验入站服务接口
 
-新增 [服务 SDK v1](SERVICE_API.md)：三语言服务帧解码、精确原请求关联响应、一次读取／完成、C 所有权和 C++ RAII，以及 `--kind service` 生成原包。有限模板不声明长时 service-run profile，包声明不授予监听或发布权。Linux 真实 TCP 节点与权限专项已验证；Windows／Flutter、持久恢复及全平台资格分别保留。见 [本轮证据](../reports/plugin-service-sdk-2026-09-26.md)。
+新增 [服务 SDK v1](SERVICE_API.md)：三语言服务帧解码、精确原请求关联响应、一次读取／完成、C 所有权和 C++ RAII，以及 `--kind service` 生成原包。默认短期 profile，可显式声明有限长时 service-run 与资源目录。`--kind service --service-http` 提供单端点 POST 出站变体，使用精确原服务帧摘要绑定出站操作，不自动重试。包声明不授予监听、发布或出站权。Linux 原包真实 TCP、累计预算与持久 Observed/Unknown 重开已验证；Windows／Flutter、完整业务核对及全平台资格分别保留。见 [底座记录](../reports/plugin-foundation-closeout-2026-09-26.md) 和 [服务出站验证](../reports/plugin-service-http-sdk-2026-09-26.md)。
 
 ## 双向网络目标
 

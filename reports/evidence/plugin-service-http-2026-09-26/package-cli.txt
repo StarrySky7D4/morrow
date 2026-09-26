@@ -1,0 +1,22 @@
+   Compiling morrow-core v0.1.9-test.50 (/workspace/scratch/c3041ed82a57/morrow/core)
+    Finished `test` profile [unoptimized] target(s) in 5.19s
+     Running unittests examples/plugin_package.rs (build/foundation-core/debug/examples/plugin_package-704c7a81a9dde540)
+
+running 15 tests
+test native::tests::incomplete_or_implicit_service_profiles_do_not_publish ... ok
+test native::tests::invalid_run_options_never_publish ... ok
+test native::tests::explicit_service_run_retains_short_job_limits_and_has_finite_cumulative_budget ... ok
+test native::tests::malformed_options_leave_no_output_or_catalog ... ok
+test native::tests::catalog_retries_are_idempotent_and_corrupt_existing_archive_is_not_overwritten ... ok
+test native::tests::handlers_capabilities_dependencies_and_budgets_keep_exact_range ... ok
+test native::tests::io_declaration_is_explicit_bounded_and_visible_without_grants ... ok
+test native::tests::invalid_io_cli_declarations_fail_before_publishing ... ok
+test native::tests::explicit_io_resource_budget_is_bounded_and_defaults_remain_two ... ok
+test native::tests::task_dependency_without_dynamic_call_feature_is_valid ... ok
+test native::tests::seven_capabilities_and_task_defaults_are_roundtripped ... ok
+test native::tests::service_profile_pins_existing_schema_and_never_implies_a_run_grant ... ok
+test native::tests::resource_discovery_requires_explicit_service_and_outbound_declarations ... ok
+test native::tests::package_validation_failures_never_publish ... ok
+test native::tests::legacy_modes_install_and_explicit_file_no_clobber_remain_compatible ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
