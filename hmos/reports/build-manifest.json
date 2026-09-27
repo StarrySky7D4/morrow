@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-09-27T04:12:51.866Z",
+  "createdUtc": "2026-09-27T05:29:39.688Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.6",
+  "hmosVersion": "0.1.0-hmos-dev.7",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 22138775,
-    "sha256": "37AF70A58339E73658CE8D320ED966EAFA6216753691FA23D2F6ECC9A7E2BCE9",
+    "bytes": 22155283,
+    "sha256": "E80224964CDB055AB85364FEBD91A21D6409299B2398354D3998E4390F269C1A",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "B6A9ED88CA930B6C9BA964BB6049133409D857B0D6EE7353F098519980E8E1A3"
+      "sha256": "3161BD4C30A2CF3B92564BFE2882F9FEC9F74D7C33357D20B44CA048B7553660"
     },
     {
       "path": "entry/build-profile.json5",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "B9AEDAA24A5D924AF705D4555016E65E09F7058FF5D37F82A65FA06A21B16BDD"
+      "sha256": "7E033997B74CA428ECDE8ABF9A8258DAD1A80396C5DB0A386288B0C33FEF16CA"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -1049,8 +1049,12 @@
     {
       "path": "entry/src/main/ets/pages/SurfaceRelief.ets",
       "sha256": "BB057E63CD84ACEDCA603D003D3ACECBCF250AE2E4A00636CF314C8876F80688"
+    },
+    {
+      "path": "entry/src/main/ets/model/CardDataSource.ets",
+      "sha256": "D94192F38F0FD29572DA3FBC7EAB55390A9893BB65355085244FB4573236DEEB"
     }
   ],
-  "uiValidation": "reports/ui-source/v6/validation.md",
+  "uiValidation": "reports/ui-source/v7/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

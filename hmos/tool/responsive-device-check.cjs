@@ -1,22 +1,32 @@
 const d=require('./style-device-check.cjs'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const originalLayout=d.layout;d.layout=()=>{const tree=originalLayout();assert.deepEqual(tree[0].bounds,[0,0,2232,1320],'keep the test emulator in landscape');return tree;};
 const out=process.env.HMOS_REPORT_DIR || path.resolve(__dirname,'../reports/ui-source/v6/verified');fs.mkdirSync(out,{recursive:true});
+const receiptClose=d.flatten(d.layout()).find(x=>x.n.text==='×'&&x.n.bounds[1]>120);
+if(receiptClose)d.click(receiptClose.n);
 function node(text){const found=d.flatten(d.layout()).find(x=>x.n.text===text);assert.ok(found,text);return found.n;}
-function capture(name){const t=d.layout();fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(t,null,2)+'\n');for(let attempt=0;attempt<3;attempt++){try{d.run('screenshot','--path',path.join(out,name+'.png'));break;}catch(error){if(attempt===2 || !String(error).includes('Screenshot was not created on device'))throw error;}}return t;}
+function capture(name){const t=d.layout();
+const columns=new Map();for(const {n} of d.flatten(t)){if(!n.id?.startsWith('workspace-card:')||n.bounds[3]-n.bounds[1]<1)continue;const x=n.bounds[0];if(!columns.has(x))columns.set(x,[]);columns.get(x).push(n);}
+for(const column of columns.values()){column.sort((a,b)=>a.bounds[1]-b.bounds[1]);for(let i=1;i<column.length;i++)assert.ok(column[i].bounds[1]-column[i-1].bounds[3]>=19,'14 vp card separation after responsive layout');}
+fs.writeFileSync(path.join(out,name+'.json'),JSON.stringify(t,null,2)+'\n');for(let attempt=0;attempt<3;attempt++){try{d.run('screenshot','--path',path.join(out,name+'.png'));break;}catch(error){if(attempt===2 || !String(error).includes('Screenshot was not created on device'))throw error;}}return t;}
 if(!process.argv.includes('--panels-only')) {
-const first=node('HMOSHMOS-native-check').bounds[1];
+const first=d.flatten(d.layout()).find(x=>x.n.id?.startsWith('workspace-card:')).n.bounds[1];
 const viewport=d.flatten(d.layout()).find(x=>x.n.type==='Scroll').n.bounds;
 const x=Math.round((viewport[0]+viewport[2])/2);
 d.run('swipe',String(x),String(viewport[3]-150),String(x),String(viewport[1]+180));
-const saved=node('HMOSHMOS-native-check').bounds[1];assert.ok(saved<first-100,'workspace actually scrolled');capture('wide-scrolled');
+const visible=d.flatten(d.layout()).map(x=>x.n);
+const anchor=visible.find(n=>n.id?.startsWith('workspace-card:')&&n.bounds[1]>viewport[1]+20&&n.bounds[3]<viewport[3]-20);
+assert.ok(anchor,'find a fully visible stable card after scrolling');
+const saved=anchor.bounds[1],anchorId=anchor.id;
+const anchorY=()=>{const n=d.flatten(d.layout()).find(x=>x.n.id===anchorId)?.n;assert.ok(n,'restored anchor card');return n.bounds[1];};
+assert.ok(!visible.some(n=>n.text==='A LITTLE SPACE FOR BIG IDEAS'),'workspace actually scrolled');capture('wide-scrolled');
 d.click(node('小项目'));
 const intro=node('A LITTLE SPACE FOR BIG IDEAS').bounds[1];assert.ok(intro>=viewport[1] && intro<viewport[1]+20,'fresh page starts at top');capture('wide-projects');
 d.click(node('概览'));
-assert.ok(Math.abs(node('HMOSHMOS-native-check').bounds[1]-saved)<4,'overview offset restored');capture('wide-restored');
+assert.ok(Math.abs(anchorY()-saved)<4,'overview offset restored');capture('wide-restored');
 d.click(node('⤢'));capture('wide-settings');
 d.click(d.flatten(d.layout()).find(x=>x.n.type==='Button').n);
-assert.ok(Math.abs(node('HMOSHMOS-native-check').bounds[1]-saved)<4,'settings return restores overview offset');capture('wide-settings-return');
-console.log(JSON.stringify({firstCardY:first,scrolledCardY:saved,projectGreetingY:intro,pass:['top-aligned short page','page-specific offset','settings return offset']}));
+assert.ok(Math.abs(anchorY()-saved)<4,'settings return restores overview offset');capture('wide-settings-return');
+console.log(JSON.stringify({firstCardY:first,anchorId,scrolledCardY:saved,projectGreetingY:intro,pass:['top-aligned short page','page-specific offset','settings return offset']}));
 
 }
 const bounds=d.flatten(d.layout()).find(x=>x.n.type==='Scroll').n.bounds;

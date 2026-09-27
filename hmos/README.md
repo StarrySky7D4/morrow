@@ -1,6 +1,6 @@
 # Morrow HMOS
 
-Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.6 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
+Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.7 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
 
 2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 
@@ -11,6 +11,8 @@ Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0
 2026-09-27 dev.6：修复短内容被滚动容器居中造成的大块留白，按 Flutter 固定 14 vp 列间距排列卡片；增加侧栏收起/展开、五页滚动位置保留和设置返回恢复，并支持遵循系统旋转锁定的自适应方向。880 vp 竖屏与 1488 vp 横屏的实际设备证据见 [dev.6 布局验证](reports/ui-source/v6/validation.md)。
 
 ## UI 源码对齐
+
+2026-09-27 dev.7：卡片区改为单滚动视口中的原生懒加载瀑布流，按页面/卡片身份维护视图，按修订刷新内容；排序、过滤及卡片高度变化同步使位置缓存失效，避免错位或重叠。16 张长短交错记录通过设备上的收藏、正文增减、排序、空结果及完整遍历检查。见 [dev.7 验证记录](reports/ui-source/v7/validation.md)。这不解除现有 Rust 查询的 256 张限制，也不是内存峰值或真机验收。
 
 已按活跃 Flutter 的 main.dart / appearance.dart 补齐紫灰玻璃工作台、专用分类卡片、外观与材质子页、色盘、字体、日常清单、音乐空状态和独立编辑弹窗，并实际渲染源码参照图与鸿蒙截图比对。详见 [源码对应和验证](docs/UI_DESIGN_DEV3.md)，可查看 [并排截图](reports/ui-source/compare.html)。这不是完整 UI 等价声明。
 

@@ -1,0 +1,51 @@
+{
+  "pass": [
+    "shortest-column placement",
+    "14 vp gaps",
+    "same-id favorite refresh",
+    "sort identity",
+    "16 records reachable",
+    "empty result clears cards",
+    "query restoration"
+  ],
+  "firstThree": [
+    [
+      306,
+      781,
+      794,
+      1057
+    ],
+    [
+      815,
+      781,
+      1302,
+      1027
+    ],
+    [
+      815,
+      1048,
+      1302,
+      1324
+    ]
+  ],
+  "visibleAccessibilityPeak": 15,
+  "seen": [
+    "HMOS-masonry-01",
+    "HMOS-masonry-02",
+    "HMOS-masonry-03",
+    "HMOS-masonry-04",
+    "HMOS-masonry-05",
+    "HMOS-masonry-06",
+    "HMOS-masonry-07",
+    "HMOS-masonry-08",
+    "HMOS-masonry-09",
+    "HMOS-masonry-10",
+    "HMOS-masonry-11",
+    "HMOS-masonry-12",
+    "HMOS-masonry-13",
+    "HMOS-masonry-14",
+    "HMOS-masonry-15",
+    "HMOS-masonry-16"
+  ],
+  "note": "Accessibility visibility is not a heap or native cache allocation measurement."
+}

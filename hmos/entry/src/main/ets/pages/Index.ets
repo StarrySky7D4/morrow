@@ -6,17 +6,31 @@ import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles,
 import { SurfaceRelief } from './SurfaceRelief';
 import { AmbientBackdrop, IdeaOrb, GlassRim, PaperBackdrop } from './StudioArtwork';
 import { common } from '@kit.AbilityKit';
-import { NodeContent } from '@kit.ArkUI';
+import { NodeContent, LazyVWaterFlowLayout, LazyVWaterFlowLayoutAttribute, LengthMetrics } from '@kit.ArkUI';
 import { util } from '@kit.ArkTS';
 import native from 'libmorrow.so';
 import { CardView, Command, Reply, TaskView, workbench } from '../model/Workbench';
+import { CardDataSource, WorkspaceCard } from '../model/CardDataSource';
+
+@Component
+struct WorkspaceCardSlot {
+  @ObjectLink value: WorkspaceCard;
+  @BuilderParam content: (card: CardView) => void;
+  build() {
+    // Keep the outer page/id node through sorting. Recreate only a revised
+    // card's presentation so event handlers also receive the current CAS data.
+    ForEach([this.value.card], (card: CardView) => {
+      this.content(card)
+    }, (card: CardView) => card.revision)
+  }
+}
 
 @Entry
 @Component
 struct Index {
-  @State cards: CardView[] = [];
-  @State section: string = '概览';
-  @State search: string = '';
+  @State @Watch('updateWorkspaceCards') cards: CardView[] = [];
+  @State @Watch('updateWorkspaceCards') section: string = '概览';
+  @State @Watch('updateWorkspaceCards') search: string = '';
   @State selected: string = '';
   @State title: string = '';
   @State description: string = '';
@@ -38,8 +52,8 @@ struct Index {
   @State viewportWidth: number = 440;
   @State viewportHeight: number = 676;
   @State contentWidth: number = 416;
-  @State filter: string = '全部';
-  @State sort: string = '默认顺序';
+  @State @Watch('updateWorkspaceCards') filter: string = '全部';
+  @State @Watch('updateWorkspaceCards') sort: string = '默认顺序';
   @State capture: string = '';
   @State showAppearance: boolean = true;
   @State sidebarExpanded: boolean = true;
@@ -75,6 +89,8 @@ struct Index {
   private appearanceWrites: Promise<void> = Promise.resolve();
   private settingsScroller: Scroller = new Scroller();
   private workspaceScroller: Scroller = new Scroller();
+  private workspaceCards: CardDataSource = new CardDataSource();
+  private updateWorkspaceCards(): void { this.workspaceCards.replace(this.section, this.visibleCards()); }
   private workspaceOffsets: Map<string, number> = new Map();
   private workspaceRestoreTimer: number = -1;
   private restoringWorkspace: boolean = false;
@@ -660,34 +676,52 @@ struct Index {
       .onClick(() => this.select(c))
   }
   @Builder
+  WorkspaceHeader() {
+    Column() {
+      this.Greeting()
+      Column() { if (this.section === '概览') { this.Hero() } else { this.PageIntro() } }.width('100%').margin({ top: 24, bottom: 28 })
+      this.CollectionHeader()
+    }.width('100%').padding({ bottom: 16 })
+  }
+  @Builder
+  WorkspaceFooter() {
+    Column() {
+      if (this.visibleCards().length === 0) {
+        Column({ space: 12 }) {
+          this.Glyph(() => 0xf013c,  24, () => this.muted()); Text(this.t('没有找到匹配的想法')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted())
+          Text(this.t('查看全部')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).onClick(() => { this.search = ''; this.navigate('概览'); })
+        }.width('100%').height(160).justifyContent(FlexAlign.Center).backgroundColor(this.glass()).borderRadius(this.round(20))
+      }
+      Row({ space: 12 }) {
+        this.Glyph(() => 0xf00d,  17, () => this.muted())
+        TextInput({ text: this.capture, placeholder: this.t('脑海中闪过了什么？') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).placeholderFont({ size: 11 }).fontColor(this.ink()).placeholderColor(this.muted())
+          .padding(0).height(46).backgroundColor(Color.Transparent).layoutWeight(1).onChange((s: string) => { this.capture = s; }).onSubmit(() => this.captureIdea())
+        Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf57e,  17, () => this.accent()) }
+          .width(30).height(30).borderRadius(this.round(10)).backgroundColor('#147662BA').accessibilityText('记录想法').onClick(() => this.captureIdea())
+      }.padding({ left: 16, right: 12 }).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('quick')).linearGradient(this.gradient('quick')).overlay(this.Rim('quick', 15)).onAreaChange((_, area: Area) => this.rememberSurface('quick',  15, area)).shadow(this.surfaceShadow('quick'))
+        .borderRadius(this.round(15, 'quick')).border({ width: this.styleEdgeWidth(), color: this.line() }).margin({ top: 22, bottom: 94 })
+    }.width('100%')
+  }
+  @Builder
+  WorkspaceCardContent(card: CardView) {
+    if (this.section === '概览') { this.IdeaCard(card) }
+    else { this.SpecializedCard(card) }
+  }
+  @Builder
   Workspace() {
     Stack({ alignContent: Alignment.Bottom }) {
       Scroll(this.workspaceScroller) {
-        Column() {
-          this.Greeting()
-          Column() { if (this.section === '概览') { this.Hero() } else { this.PageIntro() } }.width('100%').margin({ top: 24, bottom: 28 })
-          this.CollectionHeader()
-          if (this.visibleCards().length === 0) {
-            Column({ space: 12 }) {
-              this.Glyph(() => 0xf013c,  24, () => this.muted()); Text(this.t('没有找到匹配的想法')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted())
-              Text(this.t('查看全部')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).onClick(() => { this.search = ''; this.navigate('概览'); })
-            }.width('100%').height(160).justifyContent(FlexAlign.Center).backgroundColor(this.glass()).borderRadius(this.round(20)).margin({ top: 16 })
-          } else {
-            Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.SpaceBetween }) {
-              ForEach(this.visibleCards(), (c: CardView) => {
-                Column() { if (this.section === '概览') { this.IdeaCard(c) } else { this.SpecializedCard(c) } }.width((this.section === '概览' && this.contentWidth >= 460) || (this.section === '进行中' && this.contentWidth >= 660) ? (this.contentWidth - 14) / 2 : this.contentWidth).margin({ bottom: 14 })
-              }, (c: CardView) => c.id + ':' + c.revision)
-            }.width('100%').margin({ top: 16 })
-          }
-          Row({ space: 12 }) {
-            this.Glyph(() => 0xf00d,  17, () => this.muted())
-            TextInput({ text: this.capture, placeholder: this.t('脑海中闪过了什么？') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).placeholderFont({ size: 11 }).fontColor(this.ink()).placeholderColor(this.muted())
-              .padding(0).height(46).backgroundColor(Color.Transparent).layoutWeight(1).onChange((s: string) => { this.capture = s; }).onSubmit(() => this.captureIdea())
-            Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf57e,  17, () => this.accent()) }
-              .width(30).height(30).borderRadius(this.round(10)).backgroundColor('#147662BA').accessibilityText('记录想法').onClick(() => this.captureIdea())
-          }.padding({ left: 16, right: 12 }).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('quick')).linearGradient(this.gradient('quick')).overlay(this.Rim('quick', 15)).onAreaChange((_, area: Area) => this.rememberSurface('quick',  15, area)).shadow(this.surfaceShadow('quick'))
-            .borderRadius(this.round(15, 'quick')).border({ width: this.styleEdgeWidth(), color: this.line() }).margin({ top: 8, bottom: 94 })
-        }.width('100%')
+        // Keep one viewport. Native lazy layout measures visible cards and
+        // nearby prefetch; the header/footer cannot sit in a parent Column.
+        LazyVWaterFlowLayout() {
+          LazyForEach(this.workspaceCards, (item: WorkspaceCard) => {
+            Column() {
+              WorkspaceCardSlot({ value: item, content: this.WorkspaceCardContent.bind(this) })
+            }.width('100%').id('workspace-card:' + item.card.id)
+          }, (item: WorkspaceCard) => item.key)
+        }.columnsTemplate((this.section === '概览' && this.contentWidth >= 460) || (this.section === '进行中' && this.contentWidth >= 660) ? '1fr 1fr' : '1fr')
+          .columnsGap(LengthMetrics.vp(14)).rowsGap(LengthMetrics.vp(14))
+          .header(this.WorkspaceHeader).footer(this.WorkspaceFooter).width('100%')
       }.scrollBar(BarState.Off).width('100%').height('100%').align(Alignment.TopStart)
         .onAppear(() => this.restoreWorkspace()).onDidScroll(() => this.rememberWorkspace())
       Row({ space: 9 }) {
