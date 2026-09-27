@@ -1,0 +1,54 @@
+- Dumping layout…
+[0,0,1320,2232]
+  Button [36,94,93,151] clickable
+    Text [47,105,83,141] ""
+  Text [111,107,297,139] "材质 / 首页引导"
+  Text [72,217,133,235] "材质来源"
+  Select [72,262,228,322] "自身材质" clickable
+  Text [72,366,1182,391] "自定义材质"
+  Toggle [1188,363,1242,393] clickable checkable
+  Text [528,514,792,542] "一个想法，正悄悄发芽。"
+  Text [553,560,768,579] "给尚未成形的念头一点空间。"
+  Select [582,686,738,746] "跟随主题" clickable
+  Text [72,774,103,792] "模糊"
+  Text [1229,773,1248,792] "22"
+  Slider [72,819,1248,867] "22.000000" clickable scrollable
+  Text [72,895,133,913] "不透明度"
+  Text [1216,894,1248,913] "40%"
+  Slider [72,940,1248,988] "40.000000" clickable scrollable
+  Text [72,1016,103,1034] "圆角"
+  Text [1238,1015,1248,1034] "8"
+  Slider [72,1061,1248,1109] "8.000000" clickable scrollable
+  Text [72,1137,133,1155] "立体深度"
+  Text [1207,1136,1248,1155] "149%"
+  Slider [72,1182,1248,1230] "149.000000" clickable scrollable
+  Button [600,1257,720,1317] "跟随主题" clickable
+  Button [591,1344,729,1404] "自定义颜色" clickable
+  Text [72,1431,567,1459] "预览中的改动仅在应用后保存。关闭自定义即可重新跟随全局主题。"
+  Button [960,1486,1080,1546] "恢复默认" clickable
+  Button [1080,1486,1164,1546] "取消" clickable
+  Button [1164,1486,1248,1546] "应用" clickable
+  Option [78,340,409,412] "自身材质" clickable
+    Text [96,362,192,390] "自身材质"
+  Option [78,412,409,484] "侧边导航" clickable
+    Text [96,434,192,462] "侧边导航"
+  Option [78,484,409,556] "空间外观" clickable
+    Text [96,506,192,534] "空间外观"
+  Option [78,556,409,628] "此刻的小事" clickable
+    Text [96,578,216,606] "此刻的小事"
+  Option [78,628,409,700] "随身听" clickable
+    Text [96,650,168,678] "随身听"
+  Option [78,700,409,772] "底部提示" clickable
+    Text [96,722,192,750] "底部提示"
+  Option [78,772,409,844] "快捷记录" clickable
+    Text [96,794,192,822] "快捷记录"
+  Option [78,844,409,916] "分区摘要" clickable
+    Text [96,866,192,894] "分区摘要"
+  Option [78,916,409,988] "HMOSHMOS-native-check" clickable
+    Text [96,938,391,966] "HMOSHMOS-native-check"
+  Option [78,988,409,1060] "HMOS-UI-lab" clickable
+    Text [96,1010,248,1038] "HMOS-UI-lab"
+  Option [78,1060,409,1132] "Flutter-source-UI-check" clickable
+    Text [96,1082,364,1110] "Flutter-source-UI-check"
+  Option [78,1132,409,1204] "HMOS-dev4-task-check" clickable
+    Text [96,1154,364,1182] "HMOS-dev4-task-check"

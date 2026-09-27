@@ -63,11 +63,19 @@ export struct IdeaOrb {
 // Flutter LiquidRimPainter geometry, with pointer-following lighting.
 @Component
 export struct GlassRim {
-  @Prop @Watch('draw') dark: boolean = false;
-  @Prop @Watch('draw') radius: number = 20;
-  @Prop @Watch('draw') lightX: number = -.65;
-  @Prop @Watch('draw') lightY: number = -.8;
+  @Prop @Watch('resized') dark: boolean = false;
+  @Prop @Watch('resized') radius: number = 20;
+  @Prop @Watch('resized') lightX: number = -.65;
+  @Prop @Watch('resized') lightY: number = -.8;
   private ctx: CanvasRenderingContext2D = new CanvasRenderingContext2D(new RenderingContextSettings(true));
+  private resizeTimer: number = -1;
+  private resized(): void {
+    // Canvas dimensions settle after layout; redraw the final size, including
+    // radius/theme changes, without leaving strokes from the previous bounds.
+    if (this.resizeTimer !== -1) { clearTimeout(this.resizeTimer); }
+    this.resizeTimer = setTimeout(() => { this.resizeTimer = -1; this.draw(); }, 16);
+  }
+  aboutToDisappear(): void { if (this.resizeTimer !== -1) { clearTimeout(this.resizeTimer); } }
   private rimPath(inset: number, radius: number): void {
     const c = this.ctx; const w = c.width - inset * 2; const h = c.height - inset * 2;
     const r = Math.max(0, Math.min(radius, w / 2, h / 2));
@@ -79,8 +87,8 @@ export struct GlassRim {
   }
   private draw(): void {
     const c = this.ctx; const w = c.width; const h = c.height;
-    if (w < 12 || h < 12) { return; }
     c.clearRect(0, 0, w, h);
+    if (w < 12 || h < 12) { return; }
     const g = c.createLinearGradient((1 + this.lightX) * w / 2, (1 + this.lightY) * h / 2, (1 - this.lightX) * w / 2, (1 - this.lightY) * h / 2);
     g.addColorStop(0, this.dark ? 'rgba(255,255,255,0.70)' : 'rgba(255,255,255,0.94)');
     g.addColorStop(.36, 'rgba(255,255,255,0.08)'); g.addColorStop(.66, 'rgba(119,121,159,0.12)'); g.addColorStop(1, 'rgba(255,255,255,0.55)');
@@ -89,7 +97,7 @@ export struct GlassRim {
     c.strokeStyle = inner; c.lineWidth = 3; this.rimPath(2.8, this.radius - 2);
     c.strokeStyle = 'rgba(255,255,255,0.1)'; c.lineWidth = .65; this.rimPath(5.8, this.radius - 5);
   }
-  build() { Canvas(this.ctx).width('100%').height('100%').onReady(() => this.draw()).onAreaChange(() => this.draw()).hitTestBehavior(HitTestMode.None) }
+  build() { Canvas(this.ctx).width('100%').height('100%').onReady(() => this.draw()).onAreaChange(() => this.resized()).hitTestBehavior(HitTestMode.None) }
 }
 
 @Component

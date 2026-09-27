@@ -1,0 +1,398 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          153,
+          150,
+          267
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              57,
+              174,
+              129,
+              246
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "设置",
+        "bounds": [
+          186,
+          179,
+          294,
+          242
+        ],
+        "children": []
+      },
+      {
+        "type": "Scroll",
+        "bounds": [
+          36,
+          327,
+          1284,
+          2112
+        ],
+        "scrollable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              132,
+              423,
+              180,
+              471
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "空间外观",
+            "bounds": [
+              240,
+              424,
+              1056,
+              470
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "打造你的风格",
+            "bounds": [
+              1080,
+              435,
+              1224,
+              460
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "界面语言",
+            "bounds": [
+              123,
+              603,
+              1197,
+              638
+            ],
+            "children": []
+          },
+          {
+            "type": "Select",
+            "text": "简体中文",
+            "bounds": [
+              123,
+              650,
+              1197,
+              770
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              797,
+              1224,
+              965
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  96,
+                  851,
+                  156,
+                  911
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "字体",
+                "bounds": [
+                  192,
+                  858,
+                  1164,
+                  904
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "›",
+                "bounds": [
+                  1200,
+                  839,
+                  1224,
+                  923
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Row",
+            "bounds": [
+              96,
+              1013,
+              1224,
+              1220
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰉘",
+                "bounds": [
+                  138,
+                  1088,
+                  195,
+                  1145
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "界面风格",
+                "bounds": [
+                  231,
+                  1072,
+                  376,
+                  1114
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "Neumorphism · 新拟态",
+                "bounds": [
+                  231,
+                  1126,
+                  545,
+                  1161
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "⌄",
+                "bounds": [
+                  1151,
+                  1055,
+                  1182,
+                  1178
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Text",
+            "text": "立体深度",
+            "bounds": [
+              96,
+              1258,
+              216,
+              1293
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "100%",
+            "bounds": [
+              1142,
+              1256,
+              1224,
+              1295
+            ],
+            "children": []
+          },
+          {
+            "type": "Slider",
+            "text": "100.000000",
+            "bounds": [
+              96,
+              1331,
+              1224,
+              1427
+            ],
+            "clickable": true,
+            "scrollable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "调整浮起与下沉的强度，不改变玻璃透明度。",
+            "bounds": [
+              96,
+              1463,
+              1224,
+              1498
+            ],
+            "children": []
+          },
+          {
+            "type": "Button",
+            "text": "恢复 100%",
+            "bounds": [
+              533,
+              1534,
+              788,
+              1654
+            ],
+            "clickable": true,
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "玻璃质感",
+            "bounds": [
+              96,
+              1708,
+              216,
+              1743
+            ],
+            "children": []
+          },
+          {
+            "type": "Column",
+            "bounds": [
+              96,
+              1773,
+              456,
+              1959
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  254,
+                  1817,
+                  299,
+                  1862
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "磨砂",
+                "bounds": [
+                  243,
+                  1877,
+                  309,
+                  1916
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Column",
+            "bounds": [
+              480,
+              1773,
+              840,
+              1959
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "󰚕",
+                "bounds": [
+                  638,
+                  1817,
+                  683,
+                  1862
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "超透",
+                "bounds": [
+                  627,
+                  1877,
+                  693,
+                  1916
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Column",
+            "bounds": [
+              864,
+              1773,
+              1224,
+              1959
+            ],
+            "clickable": true,
+            "children": [
+              {
+                "type": "Text",
+                "text": "",
+                "bounds": [
+                  1022,
+                  1817,
+                  1067,
+                  1862
+                ],
+                "children": []
+              },
+              {
+                "type": "Text",
+                "text": "液体玻璃",
+                "bounds": [
+                  978,
+                  1877,
+                  1110,
+                  1916
+                ],
+                "children": []
+              }
+            ]
+          },
+          {
+            "type": "Button",
+            "text": "组件与卡片 · 独立设置",
+            "bounds": [
+              96,
+              2007,
+              1224,
+              2112
+            ],
+            "clickable": true,
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-09-26T22:46:40.090Z",
+  "createdUtc": "2026-09-27T00:47:00.380Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.4",
+  "hmosVersion": "0.1.0-hmos-dev.5",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 21970299,
-    "sha256": "219659D4FC85B061B0AB1346EF5268873F52AC2BF43A108C21A4D349BEC5C607",
+    "bytes": 22128532,
+    "sha256": "D36E45753D74EBC698A2C9A3E3B34F841DF657D367C88899CE15CBEAAEBBF9DD",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "B3876DF5F02EED551C534EB5A47BCFB887505BFE4EF5727101545CD63A022687"
+      "sha256": "51962A7FD630B532CC7EAB3A4FAE49EF9DC528A72B7137C8BBF4932208BAE51A"
     },
     {
       "path": "entry/build-profile.json5",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "A0F1FC5307C5784464F3E0A3520916D8CFED521F4B223359F78A42C9BED4B602"
+      "sha256": "10D24BC18318F244A5F843BAE58285699C02944A0709819FF7E4A93791052A9E"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -1016,7 +1016,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/StudioArtwork.ets",
-      "sha256": "46EFE49D4388A877253D5928CB072EA2398678628E91C482D9BEA75F2BB9D299"
+      "sha256": "9CA8D8BBC1580E1B2A0D5D9F3251765DF44A04D78BA3E0791E778FBD74E4983D"
     },
     {
       "path": "entry/src/main/cpp/types/libmorrow/index.d.ts",
@@ -1032,11 +1032,11 @@
     },
     {
       "path": "entry/src/main/ets/model/Appearance.ets",
-      "sha256": "928456AD3ADC400FEF3BF98EE902CDDA45393397C5A1CB2070C0F019874E7A54"
+      "sha256": "0FCAA587D24B1FD0A1B4D066F465BC2178FF16B830187E1E2A250E3F5B4A67B2"
     },
     {
       "path": "entry/src/main/ets/model/UiStrings.ets",
-      "sha256": "80D1B84466757F136633D7AFDD9F92DCA69317E1B6CE4CEEDA9A16C83EE8A7E2"
+      "sha256": "17801DD05B1AFD9684F452B0E5B736FFBA7C5520FB5413A8B6D002216CB1A576"
     },
     {
       "path": "entry/src/main/ets/model/Markdown.ets",
@@ -1045,8 +1045,12 @@
     {
       "path": "entry/src/main/ets/pages/ColorWheel.ets",
       "sha256": "1DF284CD4D29821EF53CC10891218A397D978652E9CF3F1FEF2651C542440705"
+    },
+    {
+      "path": "entry/src/main/ets/pages/SurfaceRelief.ets",
+      "sha256": "BB057E63CD84ACEDCA603D003D3ACECBCF250AE2E4A00636CF314C8876F80688"
     }
   ],
-  "uiValidation": "reports/ui-source/v4/validation.md",
+  "uiValidation": "reports/ui-source/v5/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

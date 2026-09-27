@@ -1,0 +1,336 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Button",
+        "bounds": [
+          36,
+          94,
+          93,
+          151
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              47,
+              105,
+              83,
+              141
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "材质 / 搜索框",
+        "bounds": [
+          111,
+          107,
+          270,
+          139
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "材质来源",
+        "bounds": [
+          72,
+          217,
+          133,
+          235
+        ],
+        "children": []
+      },
+      {
+        "type": "Select",
+        "text": "首页引导",
+        "bounds": [
+          72,
+          262,
+          228,
+          322
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "跟随目标的完整材质；目标未自定义时继承主题。循环引用不可选择。",
+        "bounds": [
+          72,
+          349,
+          584,
+          368
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "自定义材质",
+        "bounds": [
+          72,
+          412,
+          1182,
+          437
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "一个想法，正悄悄发芽。",
+        "bounds": [
+          528,
+          560,
+          792,
+          588
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "给尚未成形的念头一点空间。",
+        "bounds": [
+          553,
+          606,
+          768,
+          625
+        ],
+        "children": []
+      },
+      {
+        "type": "Select",
+        "text": "跟随主题",
+        "bounds": [
+          582,
+          732,
+          738,
+          792
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "模糊",
+        "bounds": [
+          72,
+          820,
+          103,
+          838
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "22",
+        "bounds": [
+          1229,
+          819,
+          1248,
+          838
+        ],
+        "children": []
+      },
+      {
+        "type": "Slider",
+        "text": "22.000000",
+        "bounds": [
+          72,
+          865,
+          1248,
+          913
+        ],
+        "clickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "不透明度",
+        "bounds": [
+          72,
+          941,
+          133,
+          959
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "76%",
+        "bounds": [
+          1216,
+          940,
+          1248,
+          959
+        ],
+        "children": []
+      },
+      {
+        "type": "Slider",
+        "text": "76.000000",
+        "bounds": [
+          72,
+          986,
+          1248,
+          1034
+        ],
+        "clickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "圆角",
+        "bounds": [
+          72,
+          1062,
+          103,
+          1080
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "20",
+        "bounds": [
+          1229,
+          1061,
+          1248,
+          1080
+        ],
+        "children": []
+      },
+      {
+        "type": "Slider",
+        "text": "20.000000",
+        "bounds": [
+          72,
+          1107,
+          1248,
+          1155
+        ],
+        "clickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "立体深度",
+        "bounds": [
+          72,
+          1183,
+          133,
+          1201
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "149%",
+        "bounds": [
+          1207,
+          1182,
+          1248,
+          1201
+        ],
+        "children": []
+      },
+      {
+        "type": "Slider",
+        "text": "149.000000",
+        "bounds": [
+          72,
+          1228,
+          1248,
+          1276
+        ],
+        "clickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "跟随主题",
+        "bounds": [
+          600,
+          1303,
+          720,
+          1363
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "自定义颜色",
+        "bounds": [
+          591,
+          1390,
+          729,
+          1450
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "预览中的改动仅在应用后保存。关闭自定义即可重新跟随全局主题。",
+        "bounds": [
+          72,
+          1477,
+          567,
+          1505
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "恢复默认",
+        "bounds": [
+          960,
+          1532,
+          1080,
+          1592
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "取消",
+        "bounds": [
+          1080,
+          1532,
+          1164,
+          1592
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "text": "应用",
+        "bounds": [
+          1164,
+          1532,
+          1248,
+          1592
+        ],
+        "clickable": true,
+        "children": []
+      }
+    ]
+  }
+]

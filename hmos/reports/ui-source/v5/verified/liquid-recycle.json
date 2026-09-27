@@ -1,0 +1,691 @@
+[
+  {
+    "bounds": [
+      0,
+      0,
+      1320,
+      2232
+    ],
+    "children": [
+      {
+        "type": "Text",
+        "text": "∞",
+        "bounds": [
+          61,
+          116,
+          109,
+          164
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "Morrow",
+        "bounds": [
+          126,
+          120,
+          241,
+          160
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "杂事有序，奇想自由。",
+        "bounds": [
+          43,
+          186,
+          257,
+          204
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "我的空间",
+        "bounds": [
+          43,
+          258,
+          257,
+          293
+        ],
+        "children": []
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          293,
+          257,
+          357
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              312,
+              87,
+              338
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "概览",
+            "bounds": [
+              102,
+              314,
+              138,
+              335
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          363,
+          257,
+          427
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              382,
+              87,
+              408
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "灵感收件箱",
+            "bounds": [
+              102,
+              384,
+              192,
+              405
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "2",
+            "bounds": [
+              230,
+              386,
+              239,
+              404
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          432,
+          257,
+          496
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              451,
+              87,
+              477
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "小项目",
+            "bounds": [
+              102,
+              453,
+              156,
+              474
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          502,
+          257,
+          566
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              521,
+              87,
+              547
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "实验室",
+            "bounds": [
+              102,
+              523,
+              156,
+              544
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          571,
+          257,
+          635
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              590,
+              87,
+              616
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "已收藏",
+            "bounds": [
+              102,
+              592,
+              156,
+              613
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          43,
+          641,
+          257,
+          705
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              61,
+              660,
+              87,
+              686
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "回收站",
+            "bounds": [
+              102,
+              662,
+              156,
+              683
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "慢一点，也是在向前。\n给念头一点生长的时间。",
+        "bounds": [
+          43,
+          1975,
+          257,
+          2075
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "D",
+        "bounds": [
+          43,
+          2105,
+          85,
+          2147
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "个人工作台",
+        "bounds": [
+          99,
+          2117,
+          182,
+          2136
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          306,
+          93,
+          332,
+          119
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "工作台  /  回收站",
+        "bounds": [
+          344,
+          97,
+          466,
+          116
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          880,
+          94,
+          906,
+          120
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "bounds": [
+          918,
+          78,
+          1165,
+          135
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "Ctrl K",
+        "bounds": [
+          1176,
+          99,
+          1211,
+          115
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1242,
+          78,
+          1302,
+          135
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰉘",
+            "bounds": [
+              1258,
+              92,
+              1287,
+              121
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "A LITTLE SPACE FOR BIG IDEAS",
+        "bounds": [
+          306,
+          760,
+          586,
+          776
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "回收站",
+        "bounds": [
+          306,
+          789,
+          425,
+          841
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "收纳日常的零碎，也留住灵光一闪。",
+        "bounds": [
+          306,
+          853,
+          594,
+          874
+        ],
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1156,
+          783,
+          1302,
+          852
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1178,
+              805,
+              1204,
+              831
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "新建灵感",
+            "bounds": [
+              1214,
+              808,
+              1280,
+              827
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          340,
+          944,
+          382,
+          986
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "删除后 8 秒内，可在卡片中撤销。",
+        "bounds": [
+          406,
+          949,
+          1268,
+          981
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "回收站",
+        "bounds": [
+          306,
+          1068,
+          374,
+          1094
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "01",
+        "bounds": [
+          386,
+          1072,
+          404,
+          1090
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "全部",
+        "bounds": [
+          422,
+          1062,
+          485,
+          1100
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "有待办",
+        "bounds": [
+          491,
+          1062,
+          569,
+          1100
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "含附件",
+        "bounds": [
+          575,
+          1062,
+          653,
+          1100
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "仅收藏",
+        "bounds": [
+          659,
+          1062,
+          737,
+          1100
+        ],
+        "clickable": true,
+        "children": []
+      },
+      {
+        "type": "Row",
+        "bounds": [
+          306,
+          1118,
+          1302,
+          1156
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰆨",
+            "bounds": [
+              1205,
+              1127,
+              1225,
+              1147
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "默认顺序",
+            "bounds": [
+              1232,
+              1128,
+              1293,
+              1146
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Column",
+        "bounds": [
+          306,
+          1180,
+          1302,
+          1336
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "󰀣",
+            "bounds": [
+              357,
+              1231,
+              395,
+              1269
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "00000",
+            "bounds": [
+              439,
+              1208,
+              505,
+              1234
+            ],
+            "children": []
+          },
+          {
+            "type": "Text",
+            "text": "发发发发发发\n",
+            "bounds": [
+              439,
+              1246,
+              547,
+              1308
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "",
+        "bounds": [
+          331,
+          1392,
+          357,
+          1418
+        ],
+        "children": []
+      },
+      {
+        "type": "TextInput",
+        "bounds": [
+          375,
+          1370,
+          1221,
+          1439
+        ],
+        "clickable": true,
+        "longClickable": true,
+        "scrollable": true,
+        "children": []
+      },
+      {
+        "type": "Button",
+        "bounds": [
+          1238,
+          1382,
+          1283,
+          1427
+        ],
+        "clickable": true,
+        "children": [
+          {
+            "type": "Text",
+            "text": "",
+            "bounds": [
+              1248,
+              1392,
+              1274,
+              1418
+            ],
+            "children": []
+          }
+        ]
+      },
+      {
+        "type": "Text",
+        "text": "没有紧迫的事。给好奇心一点时间。",
+        "bounds": [
+          353,
+          2127,
+          1240,
+          2146
+        ],
+        "children": []
+      },
+      {
+        "type": "Text",
+        "text": "󰛹",
+        "bounds": [
+          1253,
+          2123,
+          1279,
+          2149
+        ],
+        "children": []
+      }
+    ]
+  }
+]

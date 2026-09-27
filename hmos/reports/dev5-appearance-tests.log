@@ -1,0 +1,14 @@
+✔ old material preferences retain values and inherit depth (0.8047ms)
+✔ follow resolves complete terminal material even through disabled links (0.2599ms)
+✔ all cycles rejected including disabled components, missing targets allowed (0.5089ms)
+✔ invalid material data fails before replacing accepted values (0.4127ms)
+✔ maximum chain is bounded and survives JSON restart without losing overrides (16.2717ms)
+✔ seven style radius rules match Flutter and keep a square radius square (0.1659ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28.846

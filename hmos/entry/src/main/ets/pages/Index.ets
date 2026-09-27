@@ -2,7 +2,8 @@ import { ColorWheel } from './ColorWheel';
 import { MarkdownLine, markdownLines } from '../model/Markdown';
 import { uiText } from '../model/UiStrings';
 import { preferences } from '@kit.ArkData';
-import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast } from '../model/Appearance';
+import { AppearanceSnapshot, MaterialChoice, alpha, mix, contrast, visualStyles, visualStyleLabels, styleRadiusScale, resolveMaterial, normalizeMaterials, canFollow } from '../model/Appearance';
+import { SurfaceRelief } from './SurfaceRelief';
 import { AmbientBackdrop, IdeaOrb, GlassRim, PaperBackdrop } from './StudioArtwork';
 import { common } from '@kit.AbilityKit';
 import { NodeContent } from '@kit.ArkUI';
@@ -43,6 +44,10 @@ struct Index {
   @State showAppearance: boolean = true;
   @State pending: string = '';
   @State mode: string = '磨砂';
+  @State visualStyle: string = 'flat';
+  @State styleDepth: number = 1;
+  @State stylePickerOpen: boolean = false;
+  @State surfaceAreas: Record<string, number[]> = {};
   @State theme: string = '白色';
   @State themeColor: string = '';
   @State toneGray: number = 0;
@@ -239,13 +244,17 @@ struct Index {
       const raw = this.preferenceStore.getSync('appearance-v1', '') as string;
       if (raw.length === 0) { return; }
       const v = JSON.parse(raw) as AppearanceSnapshot;
+      const materials = normalizeMaterials(v.materials ?? []);
+      const style = v.visualStyle ?? 'flat'; const depth = v.styleDepth ?? 1;
+      if (!visualStyles.includes(style) || !Number.isFinite(depth) || depth < 0 || depth > 2) { throw new Error('Invalid style'); }
       this.theme = ['白色', '自定义', '深色'].includes(v.theme) ? v.theme : '白色';
       this.mode = ['磨砂', '超透', '液体玻璃'].includes(v.mode) ? v.mode : '磨砂';
       this.glassOpacity = Math.max(20, Math.min(100, v.opacity)); this.radius = Math.max(0, Math.min(32, v.radius));
       this.themeColor = v.accent; this.toneGray = v.grayscale; this.lightness = v.lightness;
       this.canvasBackground = v.background; this.solid = v.solid; this.canvasLiquid = v.canvasLiquid;
       this.canvasBlur = v.canvasBlur; this.canvasOpacity = v.canvasOpacity;
-      this.fontFamily = v.font; this.locale = v.locale; this.daily = v.daily; this.materials = v.materials;
+      this.fontFamily = v.font; this.locale = v.locale; this.daily = v.daily; this.materials = materials;
+      this.visualStyle = style; this.styleDepth = depth;
       this.dark = this.theme === '深色' || (this.theme === '自定义' && this.lightness < 46);
     } catch (_) { this.appearanceStatus = '外观设置未能读取，已使用默认值。'; }
   }
@@ -258,6 +267,7 @@ struct Index {
     v.background = this.canvasBackground; v.solid = this.solid; v.canvasLiquid = this.canvasLiquid;
     v.canvasBlur = this.canvasBlur; v.canvasOpacity = this.canvasOpacity;
     v.font = this.fontFamily; v.locale = this.locale; v.daily = this.daily; v.materials = this.materials;
+    v.visualStyle = this.visualStyle; v.styleDepth = this.styleDepth;
     const serialized = JSON.stringify(v);
     this.appearanceWrites = this.appearanceWrites.then(async () => {
       if (!this.preferenceStore) { return; }
@@ -292,11 +302,27 @@ struct Index {
   }
   private canvasBackgroundColorValue(): string { return this.canvasBackground === '纯色' && this.solid.length > 0 ? this.solid : this.baseColor(); }
   private surface(): string { return this.theme === '自定义' ? mix(this.baseColor(), this.dark ? '#FFFFFF' : '#000000', this.dark ? .065 : .015) : this.tone(this.dark ? '#292634' : '#FFFFFF'); }
-  private material(id: string): MaterialChoice | undefined { return this.materials.find((m: MaterialChoice) => m.id === id && m.enabled); }
+  private material(id: string): MaterialChoice | undefined { return resolveMaterial(this.materials, id); }
+  private depthFor(id: string = ''): number { const depth = this.material(id)?.depth ?? -1; return depth < 0 ? this.styleDepth : depth; }
+  private surfaceShadow(id: string = '', style: string = this.visualStyle, depth: number = this.depthFor(id)): ShadowOptions {
+    const d = depth; const opacity = Math.min(1, d);
+    switch (style) {
+      case 'neumorphism': return { radius: 5, offsetX: 1.5 * d, offsetY: 1.5 * d, color: alpha(this.dark ? '#000000' : '#8A8299', (this.dark ? .24 : .12) * opacity) };
+      case 'paper': return { radius: 1, offsetX: 0, offsetY: 2 * d, color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity) };
+      case 'clay': return { radius: 4, offsetX: d, offsetY: 2 * d, color: alpha('#000000', (this.dark ? .28 : .13) * opacity) };
+      case 'fluent': return { radius: 4, offsetX: 0, offsetY: 1.5 * d, color: alpha('#000000', (this.dark ? .22 : .07) * opacity) };
+      case 'brutalist': return { radius: 0, offsetX: 2.5 * d, offsetY: 2.5 * d, color: alpha(this.ink(), (this.dark ? .48 : .65) * opacity) };
+      case 'industrial': return { radius: 1, offsetX: 0, offsetY: 2 * d, color: alpha(this.ink(), (this.dark ? .28 : .18) * opacity) };
+      default: return { radius: 18, offsetX: 0, offsetY: 8, color: '#09716386' };
+    }
+  }
   private modeFor(id: string = ''): string { const m = this.material(id); return m && m.mode !== '跟随主题' ? m.mode : this.mode; }
   private materialBlur(id: string = ''): number { return this.material(id)?.blur ?? (this.modeFor(id) === '磨砂' ? 22 : this.modeFor(id) === '超透' ? 1 : 5); }
   private gradient(id: string = '', readable: boolean = false): LinearGradientOptions {
-    const mode = this.modeFor(id); const m = this.material(id); const tint = m?.color || this.surface();
+    return this.materialGradient(this.material(id), this.modeFor(id), readable);
+  }
+  private materialGradient(m: MaterialChoice | undefined, mode: string, readable: boolean = false): LinearGradientOptions {
+    const tint = m?.color || this.surface();
     const opacity = m ? m.opacity / 100 : this.glassOpacity / 100;
     if (m || mode === '磨砂') { return { direction: GradientDirection.RightBottom, colors: [[alpha(tint, opacity), 0], [alpha(tint, opacity), 1]] }; }
     if (mode === '超透') { return { direction: GradientDirection.RightBottom, colors: [[alpha(tint, readable ? .86 : this.dark ? .12 : .1), 0], [alpha(tint, readable ? .8 : .025), 1]] }; }
@@ -314,12 +340,13 @@ struct Index {
     return names[ids.indexOf(id)] ?? id;
   }
   private applyMaterial(): void {
-    this.materials = [...this.materials.filter((m: MaterialChoice) => m.id !== this.materialDraft.id), this.materialDraft];
+    try { this.materials = normalizeMaterials(this.previewMaterials()); }
+    catch (_) { this.message = '材质无效或形成循环跟随，未应用。'; return; }
     this.persistAppearance(); this.settingsPage = '组件与卡片';
   }
   private setMaterialValue(field: string, value: number): void {
     const v = JSON.parse(JSON.stringify(this.materialDraft)) as MaterialChoice;
-    if (field === 'blur') { v.blur = value; } else if (field === 'opacity') { v.opacity = value; } else { v.radius = value; }
+    if (field === 'blur') { v.blur = value; } else if (field === 'opacity') { v.opacity = value; } else if (field === 'depth') { v.depth = value; } else { v.radius = value; }
     this.materialDraft = v;
   }
   private cardAction(c: CardView, action: string, value: string = ''): void {
@@ -332,8 +359,19 @@ struct Index {
   @Builder
   Rim(id: string = '', base: number = 20) {
     Stack() {
+      SurfaceRelief({ style: this.visualStyle, depth: this.depthFor(id), dark: this.dark, radius: this.round(base, id) })
       if (this.modeFor(id) === '液体玻璃') { GlassRim({ dark: this.dark, radius: this.round(base, id) }).hitTestBehavior(HitTestMode.None) }
-    }.width('100%').height('100%').hitTestBehavior(HitTestMode.None)
+    }.width(this.surfaceAreas[id + ':' + base]?.[0] ?? 0).height(this.surfaceAreas[id + ':' + base]?.[1] ?? 0).clip(true).hitTestBehavior(HitTestMode.None)
+  }
+  private rememberSurface(id: string, base: number, area: Area): void {
+    const key = id + ':' + base; const w = Number(area.width); const h = Number(area.height);
+    const prior = this.surfaceAreas[key];
+    if (prior && Math.abs(prior[0] - w) < .1 && Math.abs(prior[1] - h) < .1) { return; }
+    // Overlay percentages resolve against the padded content box. Use the
+    // actual panel bounds so relief and liquid rims trace the outside edge.
+    const next: Record<string, number[]> = {};
+    Object.keys(this.surfaceAreas).forEach((k: string) => { next[k] = this.surfaceAreas[k]; });
+    next[key] = [w, h]; this.surfaceAreas = next;
   }
 
   private ink(): string { return this.tone(this.theme === '自定义' ? (this.dark ? '#FFFFFF' : '#000000') : this.dark ? '#F0EDF8' : '#302D43'); }
@@ -348,8 +386,16 @@ struct Index {
     return mix(selected, target, high);
   }
   private glass(): string { return '#00FFFFFF'; }
-  private line(): string { return this.dark ? '#26F0EDF8' : '#14302D43'; }
-  private round(value: number, id: string = ''): number { return value * (this.material(id)?.radius ?? this.radius) / 20; }
+  private line(): string {
+    if (this.visualStyle === 'brutalist') { return alpha(this.ink(), .65); }
+    if (this.visualStyle === 'paper' || this.visualStyle === 'industrial') { return alpha(this.ink(), this.dark ? .28 : .18); }
+    if (this.visualStyle === 'neumorphism' || this.visualStyle === 'clay') { return alpha('#FFFFFF', this.dark ? .13 : .58); }
+    return this.dark ? '#26F0EDF8' : '#14302D43';
+  }
+  private styleEdgeWidth(): number { return this.visualStyle === 'brutalist' ? 1.8 : 1; }
+  private round(value: number, id: string = ''): number {
+    const local = this.material(id); return value * (local ? local.radius : this.radius * styleRadiusScale(this.visualStyle)) / 20;
+  }
   private label(section: string): string {
     return this.t(section === '灵感' ? '灵感收件箱' : section === '进行中' ? '小项目' : section === '实验' ? '实验室' : section === '收藏' ? '已收藏' : section);
   }
@@ -409,7 +455,7 @@ struct Index {
         Text(this.t('个人工作台')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.ink())
       }.width('100%').margin({ top: 20 })
     }.padding({ left: 16, right: 16, top: 26, bottom: 16 }).height('100%').width(this.viewportWidth >= 1050 ? 208 : 176)
-      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('navigation')).linearGradient(this.gradient('navigation')).overlay(this.Rim('navigation', 26)).borderRadius(this.round(26, 'navigation')).border({ width: 1, color: this.line() })
+      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('navigation')).linearGradient(this.gradient('navigation')).overlay(this.Rim('navigation', 26)).onAreaChange((_, area: Area) => this.rememberSurface('navigation',  26, area)).shadow(this.surfaceShadow('navigation')).borderRadius(this.round(26, 'navigation')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   Header() {
@@ -439,7 +485,7 @@ struct Index {
         else { Text(this.t('×')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(18).fontColor(this.muted()).onClick(() => { this.search = ''; }) }
       }.padding({ left: 12, right: 12 }).height(38).width(this.viewportWidth >= 760 ? 246 : undefined)
         .layoutWeight(this.viewportWidth >= 760 ? 0 : 1).borderRadius(this.round(12, 'search')).backgroundColor(this.glass())
-        .backdropBlur(this.materialBlur('search')).linearGradient(this.gradient('search')).overlay(this.Rim('search', 12)).border({ width: 1, color: this.line() })
+        .backdropBlur(this.materialBlur('search')).linearGradient(this.gradient('search')).overlay(this.Rim('search', 12)).onAreaChange((_, area: Area) => this.rememberSurface('search',  12, area)).shadow(this.surfaceShadow('search')).border({ width: this.styleEdgeWidth(), color: this.line() })
       Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf0258,  19, () => this.muted()) }
         .width(40).height(38).backgroundColor(Color.Transparent).accessibilityText('空间外观')
         .onClick(() => { if (this.viewportWidth >= 1050) { this.showAppearance = !this.showAppearance; } else { this.openSettings('设置'); } })
@@ -475,7 +521,7 @@ struct Index {
           .padding({ top: 5, bottom: 5 }).margin({ top: 20 }).onClick(() => this.newCard())
       }.alignItems(HorizontalAlign.Start).padding(25).width('100%')
     }.width('100%').height(214).borderRadius(this.round(23, 'hero')).clip(true)
-      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('hero')).linearGradient(this.gradient('hero')).overlay(this.Rim('hero', 23)).border({ width: 1, color: this.line() })
+      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('hero')).linearGradient(this.gradient('hero')).overlay(this.Rim('hero', 23)).onAreaChange((_, area: Area) => this.rememberSurface('hero',  23, area)).shadow(this.surfaceShadow('hero')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   private introText(): string {
     return this.section === '灵感' ? '先接住，再整理。把值得继续的念头转成小项目。' :
@@ -512,8 +558,8 @@ struct Index {
           if (this.section !== '收藏') { Text(`${this.statLabel(true)}  ${this.statCount(true)}`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontColor(this.ink()) }
         }.width('100%')
       }
-    }.alignItems(HorizontalAlign.Start).padding(22).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('summary')).linearGradient(this.gradient('summary')).overlay(this.Rim('summary', 20))
-      .borderRadius(this.round(20, 'summary')).border({ width: 1, color: this.line() })
+    }.alignItems(HorizontalAlign.Start).padding(22).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('summary')).linearGradient(this.gradient('summary')).overlay(this.Rim('summary', 20)).onAreaChange((_, area: Area) => this.rememberSurface('summary',  20, area)).shadow(this.surfaceShadow('summary'))
+      .borderRadius(this.round(20, 'summary')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   CollectionHeader() {
@@ -564,8 +610,8 @@ struct Index {
         Text(`待办  ${c.tasks.filter((t: TaskView) => t.completion === 1).length} / ${c.tasks.length}`).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).margin({ top: 12 })
       }
     }.alignItems(HorizontalAlign.Start).padding({ left: 19, right: 13, top: 16, bottom: 17 }).width('100%')
-      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('card:' + c.id + '')).linearGradient(this.gradient('card:' + c.id + '')).overlay(this.Rim('card:' + c.id + '', 19)).borderRadius(this.round(19, 'card:' + c.id + '')).border({ width: 1, color: this.line() })
-      .shadow({ radius: 18, color: '#09716386', offsetY: 8 }).onClick(() => this.select(c))
+      .backgroundColor(this.glass()).backdropBlur(this.materialBlur('card:' + c.id + '')).linearGradient(this.gradient('card:' + c.id + '')).overlay(this.Rim('card:' + c.id + '', 19)).onAreaChange((_, area: Area) => this.rememberSurface('card:' + c.id + '',  19, area)).shadow(this.surfaceShadow('card:' + c.id + '')).borderRadius(this.round(19, 'card:' + c.id + '')).border({ width: this.styleEdgeWidth(), color: this.line() })
+      .onClick(() => this.select(c))
   }
   @Builder
   Workspace() {
@@ -593,8 +639,8 @@ struct Index {
               .padding(0).height(46).backgroundColor(Color.Transparent).layoutWeight(1).onChange((s: string) => { this.capture = s; }).onSubmit(() => this.captureIdea())
             Button({ type: ButtonType.Normal }) { this.Glyph(() => 0xf57e,  17, () => this.accent()) }
               .width(30).height(30).borderRadius(this.round(10)).backgroundColor('#147662BA').accessibilityText('记录想法').onClick(() => this.captureIdea())
-          }.padding({ left: 16, right: 12 }).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('quick')).linearGradient(this.gradient('quick')).overlay(this.Rim('quick', 15))
-            .borderRadius(this.round(15, 'quick')).border({ width: 1, color: this.line() }).margin({ top: 8, bottom: 94 })
+          }.padding({ left: 16, right: 12 }).width('100%').backgroundColor(this.glass()).backdropBlur(this.materialBlur('quick')).linearGradient(this.gradient('quick')).overlay(this.Rim('quick', 15)).onAreaChange((_, area: Area) => this.rememberSurface('quick',  15, area)).shadow(this.surfaceShadow('quick'))
+            .borderRadius(this.round(15, 'quick')).border({ width: this.styleEdgeWidth(), color: this.line() }).margin({ top: 8, bottom: 94 })
         }.width('100%')
       }.scrollBar(BarState.Off).width('100%').height('100%')
       Row({ space: 9 }) {
@@ -602,7 +648,7 @@ struct Index {
         Text(this.t('没有紧迫的事。给好奇心一点时间。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).layoutWeight(1)
         this.Glyph(() => 0xf06f9,  17, () => this.muted())
       }.width('100%').height(48).padding({ left: 16, right: 16 }).borderRadius(this.round(15))
-        .backgroundColor(this.material('footer') ? alpha(this.material('footer')?.color || this.surface(), (this.material('footer')?.opacity ?? 0) / 100) : Color.Transparent).backdropBlur(this.material('footer')?.blur ?? 0).overlay(this.Rim('footer', 15)).hitTestBehavior(HitTestMode.None)
+        .backgroundColor(this.material('footer') ? alpha(this.material('footer')?.color || this.surface(), (this.material('footer')?.opacity ?? 0) / 100) : Color.Transparent).backdropBlur(this.material('footer')?.blur ?? 0).overlay(this.Rim('footer', 15)).onAreaChange((_, area: Area) => this.rememberSurface('footer',  15, area)).shadow(this.surfaceShadow('footer')).hitTestBehavior(HitTestMode.None)
     }.layoutWeight(1).height('100%').onAreaChange((_, area: Area) => { this.contentWidth = Number(area.width); })
   }
   @Builder
@@ -650,7 +696,7 @@ struct Index {
               .fontColor(this.accent()).backgroundColor(Color.Transparent).enabled(!this.busy && this.pending.length === 0)
               .onClick(() => this.cardAction(c, 'stage', c.stage === '已整理' ? '待整理' : '已整理')).margin({ right: 8 })
             Button(this.t('→ 转为项目'), { type: ButtonType.Normal }).fontSize(12).height(36).padding({ left: 12, right: 12 })
-              .fontColor(this.accent()).backgroundColor(Color.Transparent).border({ width: 1, color: this.line(), radius: this.round(10) })
+              .fontColor(this.accent()).backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(10) })
               .enabled(!this.busy && this.pending.length === 0).onClick(() => this.cardAction(c, 'category'))
           }.width('100%').margin({ top: 12 })
         }
@@ -683,7 +729,7 @@ struct Index {
       }
     }.alignItems(HorizontalAlign.Start).padding(18).width('100%').borderRadius(this.round(20, 'card:' + c.id))
       .backgroundColor(Color.Transparent).backdropBlur(this.materialBlur('card:' + c.id)).linearGradient(this.gradient('card:' + c.id))
-      .border({ width: 1, color: this.line() }).overlay(this.Rim('card:' + c.id)).onClick(() => this.select(c))
+      .border({ width: this.styleEdgeWidth(), color: this.line() }).overlay(this.Rim('card:' + c.id)).onAreaChange((_, area: Area) => this.rememberSurface('card:' + c.id, 20, area)).shadow(this.surfaceShadow('card:' + c.id)).onClick(() => this.select(c))
   }
   @Builder
   SettingLabel(text: string, value: () => string = () => '') {
@@ -714,6 +760,49 @@ struct Index {
     }.width('100%')
   }
   @Builder
+  StylePicker() {
+    Column({ space: 12 }) {
+      Row({ space: 12 }) {
+        this.Glyph(() => 0xf0258, 19, () => this.accent())
+        Column({ space: 4 }) {
+          Text(this.t('界面风格')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontWeight(FontWeight.Medium).fontColor(this.ink())
+          Text(this.t(visualStyleLabels[visualStyles.indexOf(this.visualStyle)])).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
+        }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+        Text(this.stylePickerOpen ? '⌃' : '⌄').fontSize(20).fontColor(this.muted())
+      }.padding(13).width('100%').border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(13) })
+        .accessibilityText('界面风格 · ' + visualStyleLabels[visualStyles.indexOf(this.visualStyle)])
+        .onClick(() => { this.stylePickerOpen = !this.stylePickerOpen; })
+      if (this.stylePickerOpen) {
+        ForEach(visualStyles, (style: string, i: number) => {
+          Row({ space: 12 }) {
+            Stack() {
+              Text('Aa').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(18).fontColor(this.ink())
+              SurfaceRelief({ style: style, depth: this.styleDepth, dark: this.dark, radius: 13 * styleRadiusScale(style) })
+            }.width(58).height(50).backgroundColor(alpha(this.surface(), .6)).borderRadius(13 * styleRadiusScale(style))
+              .border({ width: style === 'brutalist' ? 1.8 : 1, color: style === 'brutalist' ? this.ink() : this.line() })
+              .shadow(this.surfaceShadow('', style)).hitTestBehavior(HitTestMode.None)
+            Column({ space: 4 }) {
+              Text(this.t(visualStyleLabels[i])).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).fontColor(this.ink())
+              Text(this.t(['轻盈边界，清晰层次', '柔和双向光影，细腻浮雕触感', '哑光纸面、细边框与克制的层次', '圆润造型与柔和隆起的色彩', '半透明层次与强调色线条', '硬朗边角、醒目边框与错位阴影', '金属质感面板、紧凑控件与利落线条'][i]))
+                .fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
+              if (i > 1) { Text(this.t('实验性')).fontSize(9).fontColor(this.accent()) }
+            }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+            if (this.visualStyle === style) { Text('✓').fontSize(17).fontColor(this.accent()) }
+          }.padding(12).width('100%').backgroundColor(alpha(this.accent(), this.visualStyle === style ? .055 : .015))
+            .borderRadius(this.round(13)).border({ width: 1, color: this.visualStyle === style ? alpha(this.accent(), .4) : this.line() })
+            .onClick(() => { this.visualStyle = style; this.stylePickerOpen = false; this.persistAppearance(); })
+        })
+      }
+      if (this.visualStyle !== 'flat') {
+        this.SettingLabel('立体深度', () => Math.round(this.styleDepth * 100) + '%')
+        this.SettingsSlider(() => this.styleDepth * 100, 200, (v: number) => { this.styleDepth = v / 100; this.persistAppearance(); })
+        Text(this.t('调整浮起与下沉的强度，不改变玻璃透明度。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).width('100%')
+        Button(this.t('恢复 100%'), { type: ButtonType.Normal }).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .onClick(() => { this.styleDepth = 1; this.persistAppearance(); })
+      }
+    }.width('100%').margin({ top: 16 })
+  }
+  @Builder
   Appearance() {
     Column() {
       Row({ space: 8 }) {
@@ -727,8 +816,9 @@ struct Index {
         Select([{ value: '简体中文' }, { value: 'English' }, { value: '日本語' }, { value: '한국어' }, { value: 'Deutsch' }, { value: 'Français' }, { value: 'Español' }, { value: 'Português' }, { value: 'Русский' }])
           .value(this.languageName()).font({ size: 14 }).fontColor(this.ink()).backgroundColor(Color.Transparent).width('100%')
           .onSelect((i: number) => { this.locale = ['zh', 'en', 'ja', 'ko', 'de', 'fr', 'es', 'pt', 'ru'][i]; this.persistAppearance(); })
-      }.width('100%').margin({ top: 23 }).padding(8).border({ width: 1, color: this.line(), radius: this.round(12) })
+      }.width('100%').margin({ top: 23 }).padding(8).border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(12) })
       this.SettingLink(0xf096, '字体', '字体设置')
+      this.StylePicker()
       Column({ space: 10 }) { this.SettingLabel('玻璃质感'); this.ModeButtons() }.width('100%').margin({ top: 18 })
       if (this.mode === '磨砂') {
         Column() {
@@ -738,11 +828,11 @@ struct Index {
         }.width('100%').margin({ top: 16 })
       }
       Button(this.t('组件与卡片 · 独立设置'), { type: ButtonType.Normal }).width('100%').height(38).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
-        .border({ width: 1, color: this.line(), radius: this.round(11) }).margin({ top: 16, bottom: 14 }).onClick(() => this.openSettings('组件与卡片'))
+        .border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(11) }).margin({ top: 16, bottom: 14 }).onClick(() => this.openSettings('组件与卡片'))
       Stack() {
         Circle().width(58).height(58).fill('#C9B4E0').position({ x: 20, y: 13 })
         Circle().width(76).height(76).fill('#D7E5D9').position({ right: 12, bottom: -10 })
-        Column() { this.Glyph(() => this.mode === '磨砂' ? 0xf5c9 : this.mode === '超透' ? 0xf0695 : 0xe374,  19, () => this.ink()); ContentSlot(this.preview) }.justifyContent(FlexAlign.Center).width('38%').height(75).borderRadius(this.round(13)).backdropBlur(this.materialBlur()).linearGradient(this.gradient()).overlay(this.Rim())
+        Column() { this.Glyph(() => this.mode === '磨砂' ? 0xf5c9 : this.mode === '超透' ? 0xf0695 : 0xe374,  19, () => this.ink()); ContentSlot(this.preview) }.justifyContent(FlexAlign.Center).width('38%').height(75).borderRadius(this.round(13)).backdropBlur(this.materialBlur()).linearGradient(this.gradient()).overlay(this.Rim('preview', 13)).onAreaChange((_, area: Area) => this.rememberSurface('preview', 13, area)).shadow(this.surfaceShadow(''))
           .onAppear(() => { this.mounted = true; this.refreshPreview(); }).onDisAppear(() => { this.mounted = false; native.releasePreview(this.preview); })
       }.height(108).width('100%').borderRadius(this.round(14)).clip(true)
         .linearGradient({ direction: GradientDirection.RightBottom, colors: [[this.dark ? '#424260' : '#D9E5DB', 0], [this.dark ? '#736381' : '#D6C3E5', .5], [this.dark ? '#343E45' : '#EDDED6', 1]] })
@@ -760,7 +850,7 @@ struct Index {
           })
         }.width('100%')
         Button(this.t('主题色彩色罗盘'), { type: ButtonType.Normal }).width('100%').height(38).fontSize(11).fontColor(this.accent()).backgroundColor(Color.Transparent)
-          .border({ width: 1, color: this.line(), radius: this.round(11) }).onClick(() => { this.colorTarget = 'theme'; this.colorDraft = this.themeColor || '#7662BA'; this.openSettings('色彩罗盘'); })
+          .border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(11) }).onClick(() => { this.colorTarget = 'theme'; this.colorDraft = this.themeColor || '#7662BA'; this.openSettings('色彩罗盘'); })
         Row() {
           Text(this.themeColor ? '全局颜色 · ' + this.themeColor : '默认主题色 · 全局控件').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted()).layoutWeight(1)
           Text(this.t('恢复默认')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.accent()).onClick(() => { this.themeColor = ''; this.persistAppearance(); })
@@ -787,7 +877,7 @@ struct Index {
             this.Glyph(() => bg === '默认' ? 0xf7ba : bg === '纹理' ? 0xf7bc : bg === '透明' ? 0xf156 : 0xe3fa,  15, () => this.canvasBackground === bg ? this.accent() : this.muted())
             Text(this.t(bg)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.canvasBackground === bg ? this.accent() : this.muted())
           }.justifyContent(FlexAlign.Center).width('48%').height(38).margin({ top: 8 }).borderRadius(this.round(10))
-            .backgroundColor(this.canvasBackground === bg ? alpha(this.accent(), .14) : Color.Transparent).border({ width: 1, color: this.line() })
+            .backgroundColor(this.canvasBackground === bg ? alpha(this.accent(), .14) : Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() })
             .onClick(() => { this.canvasBackground = bg; this.persistAppearance(); })
         })
       }.width('100%').margin({ top: 2 })
@@ -811,13 +901,13 @@ struct Index {
       }
       if (this.canvasBackground === '纹理') {
         Button(this.t('导入背景图片 / 视频'), { type: ButtonType.Normal }).width('100%').height(36).fontSize(11).fontColor(this.muted()).backgroundColor(Color.Transparent)
-          .border({ width: 1, color: this.line(), radius: this.round(10) }).enabled(false)
+          .border({ width: this.styleEdgeWidth(), color: this.line(), radius: this.round(10) }).enabled(false)
       }
       Text(this.canvasBackground === '默认' ? '流动的光晕，为灵感留一点色彩。' : this.canvasBackground === '纯色' ? '一张安静的纯色画布。' : this.canvasBackground === '纹理' ? '细密的纸感网点，让空间多一点触感。' : '移动端使用主题底色；透明参数作用于应用画布。').fontFamily(this.fontFamily || 'HarmonyOS Sans')
         .fontSize(9).lineHeight(15).fontColor(this.muted()).margin({ top: 10 }).width('100%')
       Text(this.appearanceStatus || '✓ 外观设置自动保存在本机').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(9).fontColor(this.muted()).margin({ top: 13 }).width('100%')
     }.alignItems(HorizontalAlign.Start).padding(19).width('100%').borderRadius(this.round(22, 'appearance'))
-      .backdropBlur(this.materialBlur('appearance')).linearGradient(this.gradient('appearance')).overlay(this.Rim('appearance', 22)).border({ width: 1, color: this.line() })
+      .backdropBlur(this.materialBlur('appearance')).linearGradient(this.gradient('appearance')).overlay(this.Rim('appearance', 22)).onAreaChange((_, area: Area) => this.rememberSurface('appearance',  22, area)).shadow(this.surfaceShadow('appearance')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   DailyPanel() {
@@ -830,7 +920,7 @@ struct Index {
         }.width('100%').padding({ top: 4, bottom: 4 }).onClick(() => { this.daily = this.daily.includes(s) ? this.daily.filter((v: string) => v !== s) : [...this.daily, s]; this.persistAppearance(); })
       })
       Text(this.t('慢一点，也是在向前。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(9).fontColor(this.muted()).width('100%')
-    }.padding(19).width('100%').borderRadius(this.round(22, 'daily')).backdropBlur(this.materialBlur('daily')).linearGradient(this.gradient('daily')).overlay(this.Rim('daily', 22)).border({ width: 1, color: this.line() })
+    }.padding(19).width('100%').borderRadius(this.round(22, 'daily')).backdropBlur(this.materialBlur('daily')).linearGradient(this.gradient('daily')).overlay(this.Rim('daily', 22)).onAreaChange((_, area: Area) => this.rememberSurface('daily',  22, area)).shadow(this.surfaceShadow('daily')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   MusicPanel() {
@@ -847,7 +937,7 @@ struct Index {
         Text(this.t('☷')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(24).fontColor(this.accent()).onClick(() => { this.playlistOpen = !this.playlistOpen; })
       }.width('100%').justifyContent(FlexAlign.SpaceAround)
       if (this.playlistOpen) { Divider().color(this.line()); Text(this.t('播放列表还是空的')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).padding(16) }
-    }.padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music')).linearGradient(this.gradient('music')).overlay(this.Rim('music', 22)).border({ width: 1, color: this.line() })
+    }.padding(16).width('100%').borderRadius(this.round(22, 'music')).backdropBlur(this.materialBlur('music')).linearGradient(this.gradient('music')).overlay(this.Rim('music', 22)).onAreaChange((_, area: Area) => this.rememberSurface('music',  22, area)).shadow(this.surfaceShadow('music')).border({ width: this.styleEdgeWidth(), color: this.line() })
   }
   @Builder
   Quote() {
@@ -869,8 +959,30 @@ struct Index {
   }
   private changeMaterial(field: string, value: string): void {
     const v = JSON.parse(JSON.stringify(this.materialDraft)) as MaterialChoice;
-    if (field === 'mode') { v.mode = value; } else if (field === 'enabled') { v.enabled = value === 'true'; } else { v.color = value; }
+    if (field === 'mode') { v.mode = value; } else if (field === 'enabled') { v.enabled = value === 'true'; }
+    else if (field === 'follow') { v.follow = value; } else { v.color = value; }
     this.materialDraft = v;
+  }
+  private materialIds(): string[] {
+    return Array.from(new Set<string>(['navigation', 'search', 'hero', 'appearance', 'daily', 'music', 'footer', 'quick', 'summary',
+      ...this.cards.filter((c: CardView) => !c.deleted).map((c: CardView) => 'card:' + c.id), ...this.materials.map((m: MaterialChoice) => m.id)]));
+  }
+  private followIds(): string[] {
+    return ['', ...Array.from(new Set<string>([...this.materialIds(), this.materialDraft.follow]))
+      .filter((id: string) => id.length > 0 && canFollow(this.materials, this.materialDraft.id, id))];
+  }
+  private previewMaterials(): MaterialChoice[] {
+    return [...this.materials.filter((m: MaterialChoice) => m.id !== this.materialDraft.id), this.materialDraft];
+  }
+  private previewMaterial(): MaterialChoice | undefined { return resolveMaterial(this.previewMaterials(), this.materialDraft.id); }
+  private editingOwnMaterial(): boolean { return this.materialDraft.enabled && this.materialDraft.follow.length === 0; }
+  private previewRadius(): number { return this.previewMaterial()?.radius ?? this.radius * styleRadiusScale(this.visualStyle); }
+  private previewDepth(): number { const depth = this.previewMaterial()?.depth ?? -1; return depth < 0 ? this.styleDepth : depth; }
+  private previewMode(): string { const m = this.previewMaterial(); return m && m.mode !== '跟随主题' ? m.mode : this.mode; }
+  private followDescription(id: string): string {
+    const m = this.materials.find((v: MaterialChoice) => v.id === id);
+    if (m?.follow) { return '跟随 · ' + this.materialTitle(m.follow); }
+    return this.material(id) ? this.modeFor(id) + ' · ' + Math.round(this.material(id)?.opacity ?? 76) + '%' : '跟随主题';
   }
   private colorBrightness(): number {
     if (!/^#[0-9a-fA-F]{6}$/.test(this.colorDraft)) { return 100; }
@@ -886,34 +998,43 @@ struct Index {
   MaterialList() {
     Column({ space: 14 }) {
       Text(this.t('为组件或单张卡片设置独立材质；未开启自定义时跟随空间外观。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(12).lineHeight(21).fontColor(this.muted()).width('100%')
-      ForEach(['navigation', 'search', 'hero', 'appearance', 'daily', 'music', 'footer', 'quick', 'summary', ...this.cards.filter((c: CardView) => !c.deleted).map((c: CardView) => 'card:' + c.id)], (id: string) => {
+      ForEach(this.materialIds(), (id: string) => {
         Row({ space: 12 }) {
           this.Glyph(() => id.startsWith('card:') ? 0xf0023 : 0xf0258,  20, () => this.accent())
           Column({ space: 5 }) {
             Text(this.materialTitle(id)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.ink()).maxLines(2)
-            Text(this.material(id) ? this.modeFor(id) + ' · ' + Math.round(this.material(id)?.opacity ?? 76) + '%' : '跟随主题').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
+            Text(this.followDescription(id)).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(10).fontColor(this.muted())
           }.alignItems(HorizontalAlign.Start).layoutWeight(1)
           Text(this.t('›')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(23).fontColor(this.muted())
-        }.padding(20).width('100%').borderRadius(16).linearGradient(this.gradient('', true)).border({ width: 1, color: this.line() }).onClick(() => this.beginMaterial(id))
+        }.padding(20).width('100%').borderRadius(16).linearGradient(this.gradient('', true)).border({ width: this.styleEdgeWidth(), color: this.line() }).onClick(() => this.beginMaterial(id))
       })
     }.width('100%')
   }
   @Builder
   MaterialEditor() {
     Column({ space: 18 }) {
+      this.SettingLabel('材质来源')
+      Select(this.followIds().map((id: string): SelectOption => { return { value: id ? this.materialTitle(id) : '自身材质' }; }))
+        .value(this.materialDraft.follow ? this.materialTitle(this.materialDraft.follow) : '自身材质').font({ size: 13 })
+        .fontColor(this.ink()).backgroundColor(Color.Transparent).onSelect((i: number) => this.changeMaterial('follow', this.followIds()[i]))
+      if (this.materialDraft.follow) {
+        Text('跟随目标的完整材质；目标未自定义时继承主题。循环引用不可选择。').fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
+      }
       Row() {
         Text(this.t('自定义材质')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(14).fontColor(this.ink()).layoutWeight(1)
-        Toggle({ type: ToggleType.Switch, isOn: this.materialDraft.enabled }).selectedColor(this.accent()).onChange((v: boolean) => this.changeMaterial('enabled', v.toString()))
+        Toggle({ type: ToggleType.Switch, isOn: this.materialDraft.enabled }).selectedColor(this.accent()).enabled(this.materialDraft.follow.length === 0).onChange((v: boolean) => this.changeMaterial('enabled', v.toString()))
       }.width('100%')
       Stack() {
         Circle().width(110).height(110).fill('#CAB5E1').position({ left: 14, top: 3 })
         Circle().width(90).height(90).fill('#C5DCCB').position({ right: 14, bottom: 0 })
         Column({ space: 12 }) { Text(this.t('一个想法，正悄悄发芽。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(16).fontColor(this.ink()); Text(this.t('给尚未成形的念头一点空间。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()) }
-          .justifyContent(FlexAlign.Center).width('88%').height(110).borderRadius(this.materialDraft.enabled ? this.materialDraft.radius : this.radius)
-          .backdropBlur(this.materialDraft.enabled ? this.materialDraft.blur : this.materialBlur())
-          .backgroundColor(alpha(this.materialDraft.color || this.surface(), (this.materialDraft.enabled ? this.materialDraft.opacity : this.glassOpacity) / 100))
-          .border({ width: 1, color: this.line() })
+          .justifyContent(FlexAlign.Center).width('88%').height(110).borderRadius(this.previewRadius())
+          .backdropBlur(this.previewMaterial()?.blur ?? this.materialBlur())
+          .linearGradient(this.materialGradient(this.previewMaterial(), this.previewMode()))
+          .border({ width: this.styleEdgeWidth(), color: this.line() })
+          .overlay(this.DraftRim()).onAreaChange((_, area: Area) => this.rememberSurface('material-preview', 0, area)).shadow(this.surfaceShadow('', this.visualStyle, this.previewDepth()))
       }.height(150).width('100%').clip(true)
+      Column({ space: 18 }) {
       Select(['跟随主题', '磨砂', '超透', '液体玻璃'].map((s: string): SelectOption => { return { value: this.t(s) }; }))
         .value(this.t(this.materialDraft.mode)).font({ size: 13 }).fontColor(this.ink()).backgroundColor(Color.Transparent)
         .onSelect((i: number) => this.changeMaterial('mode', ['跟随主题', '磨砂', '超透', '液体玻璃'][i]))
@@ -923,9 +1044,16 @@ struct Index {
       this.SettingsSlider(() => this.materialDraft.opacity, 100, (v: number) => this.setMaterialValue('opacity', v))
       this.SettingLabel('圆角', () => Math.round(this.materialDraft.radius).toString())
       this.SettingsSlider(() => this.materialDraft.radius, 32, (v: number) => this.setMaterialValue('radius', v))
+      if (this.visualStyle !== 'flat') {
+        this.SettingLabel('立体深度', () => Math.round(this.previewDepth() * 100) + '%')
+        this.SettingsSlider(() => this.previewDepth() * 100, 200, (v: number) => this.setMaterialValue('depth', v / 100))
+        Button(this.t('跟随主题'), { type: ButtonType.Normal }).fontSize(12).fontColor(this.accent()).backgroundColor(Color.Transparent)
+          .onClick(() => this.setMaterialValue('depth', -1))
+      }
       Button(this.t('自定义颜色'), { type: ButtonType.Normal }).fontSize(12).borderRadius(this.round(11)).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => {
         this.colorTarget = 'material'; this.colorDraft = this.materialDraft.color || this.surface(); this.settingsPage = '色彩罗盘';
       })
+      }.width('100%').enabled(this.editingOwnMaterial()).opacity(this.editingOwnMaterial() ? 1 : .5)
       Text(this.t('预览中的改动仅在应用后保存。关闭自定义即可重新跟随全局主题。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(19).fontColor(this.muted())
       Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.End }) {
         Button(this.t('恢复默认'), { type: ButtonType.Normal }).fontSize(12).borderRadius(this.round(11)).backgroundColor(Color.Transparent).fontColor(this.accent()).onClick(() => { const v = new MaterialChoice(); v.id = this.materialDraft.id; this.materialDraft = v; })
@@ -935,6 +1063,13 @@ struct Index {
     }.alignItems(HorizontalAlign.Start).padding(24).width('100%').borderRadius(this.round(20)).linearGradient(this.gradient('', true))
   }
   @Builder
+  DraftRim() {
+    Stack() {
+      SurfaceRelief({ style: this.visualStyle, depth: this.previewDepth(), dark: this.dark, radius: this.previewRadius() })
+      if (this.previewMode() === '液体玻璃') { GlassRim({ dark: this.dark, radius: this.previewRadius() }) }
+    }.width(this.surfaceAreas['material-preview:0']?.[0] ?? 0).height(this.surfaceAreas['material-preview:0']?.[1] ?? 0).clip(true).hitTestBehavior(HitTestMode.None)
+  }
+  @Builder
   FontSettings() {
     Column({ space: 20 }) {
       Text(this.t('为你的空间选择字体')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(18).fontColor(this.ink())
@@ -942,7 +1077,7 @@ struct Index {
       TextInput({ text: this.fontDraft, placeholder: this.t('输入系统字体名称') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(14).fontColor(this.ink()).backgroundColor(alpha(this.surface(), .6)).maxLength(128).onChange((v: string) => { this.fontDraft = v; })
       Select(this.systemFonts().map((s: string): SelectOption => { return { value: s }; }))
         .value(this.fontDraft || this.t('选择系统字体')).font({ size: 13 }).fontColor(this.ink()).backgroundColor(Color.Transparent).onSelect((_: number, s: string) => { this.fontDraft = s; })
-      Text(this.t('一个想法，正悄悄发芽。\nA little space for big ideas.\n0123456789')).fontFamily(this.fontDraft || 'HarmonyOS Sans').fontSize(22).lineHeight(35).fontColor(this.ink()).width('100%').padding(20).border({ width: 1, color: this.line(), radius: 16 })
+      Text(this.t('一个想法，正悄悄发芽。\nA little space for big ideas.\n0123456789')).fontFamily(this.fontDraft || 'HarmonyOS Sans').fontSize(22).lineHeight(35).fontColor(this.ink()).width('100%').padding(20).border({ width: this.styleEdgeWidth(), color: this.line(), radius: 16 })
       Text(this.t('可选择本机已安装的系统字体；字体文件导入仍在适配。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted()).lineHeight(19)
       Flex({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.End }) {
         Button(this.t('恢复默认'), { type: ButtonType.Normal }).fontSize(12).borderRadius(this.round(11)).fontColor(this.accent()).backgroundColor(Color.Transparent).onClick(() => { this.fontFamily = ''; this.fontDraft = ''; this.persistAppearance(); })
@@ -1042,7 +1177,7 @@ struct Index {
             Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe192,  16, () => this.muted()); Text(this.t('粘贴内容')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
               .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor('#217662BA').enabled(false)
             Button({ type: ButtonType.Normal }) { Row({ space: 6 }) { this.Glyph(() => 0xe0b1,  16, () => this.muted()); Text(this.t('导入文件')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).fontColor(this.muted()) } }
-              .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor(Color.Transparent).border({ width: 1, color: this.line() }).enabled(false)
+              .height(40).padding({ left: 16, right: 16 }).borderRadius(this.round(12)).backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).enabled(false)
           }.justifyContent(FlexAlign.Center).width('100%')
           Text(this.t('富文本粘贴与附件导入正在适配；纯文字可使用输入框的粘贴菜单。')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).lineHeight(18).fontColor(this.muted()).width('100%')
           Column({ space: 10 }) {
@@ -1054,9 +1189,9 @@ struct Index {
             Divider().color(this.line())
             if (this.previewBody) { this.BodyPreview() }
             else { TextArea({ text: this.description, placeholder: this.t('写下思路，或粘贴一段内容…') }).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(13).placeholderFont({ size: 13 }).fontColor(this.ink()).placeholderColor(this.muted())
-              .backgroundColor(Color.Transparent).border({ width: 1, color: this.line() }).borderRadius(this.round(12)).height(160).maxLength(16000)
+              .backgroundColor(Color.Transparent).border({ width: this.styleEdgeWidth(), color: this.line() }).borderRadius(this.round(12)).height(160).maxLength(16000)
               .onChange((s: string) => { if (this.description !== s) { this.description = s; this.dirty = true; } }) }
-          }.padding(16).width('100%').backgroundColor('#077662BA').borderRadius(this.round(16)).border({ width: 1, color: this.line() })
+          }.padding(16).width('100%').backgroundColor('#077662BA').borderRadius(this.round(16)).border({ width: this.styleEdgeWidth(), color: this.line() })
           Row({ space: 12 }) {
             Text(this.t('放在哪里')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(11).fontColor(this.muted())
             Select([{ value: '灵感' }, { value: '进行中' }, { value: '实验' }]).value(this.current()?.category ?? this.category)
@@ -1157,8 +1292,8 @@ struct Index {
         Button(this.t('使用原操作重试 / 核对')).fontSize(12).backgroundColor(this.accent()).margin({ bottom: 12 }).onClick(() => this.retry())
       }
     }.width(Math.min(820, this.viewportWidth - 40)).height(Math.max(160, Math.min(760, this.viewportHeight - 40))).backgroundColor(alpha(this.surface(), .9))
-      .backdropBlur(this.materialBlur()).linearGradient(this.gradient('', true)).overlay(this.Rim('', 28)).borderRadius(this.round(28)).border({ width: 1, color: this.line() }).clip(true)
-      .shadow({ radius: 32, color: '#28716386', offsetY: 12 })
+      .backdropBlur(this.materialBlur()).linearGradient(this.gradient('', true)).overlay(this.Rim('', 28)).onAreaChange((_, area: Area) => this.rememberSurface('',  28, area)).shadow(this.surfaceShadow('')).borderRadius(this.round(28)).border({ width: this.styleEdgeWidth(), color: this.line() }).clip(true)
+
   }
   build() {
     Stack() {
@@ -1199,7 +1334,7 @@ struct Index {
           if (this.pending.length > 0 && !this.busy) { Button(this.t('核对')).fontSize(11).backgroundColor(this.accent()).onClick(() => this.retry()) }
           else { Text(this.t('×')).fontFamily(this.fontFamily || 'HarmonyOS Sans').fontSize(18).fontColor(this.muted()).onClick(() => { this.message = ''; }) }
         }.padding(14).width('90%').backgroundColor(this.dark ? '#F5292634' : '#F5FFFFFF').borderRadius(this.round(12))
-          .border({ width: 1, color: this.line() }).position({ x: '5%', y: Math.max(0, this.viewportHeight - 124) })
+          .border({ width: this.styleEdgeWidth(), color: this.line() }).position({ x: '5%', y: Math.max(0, this.viewportHeight - 124) })
       }
     }.width('100%').height('100%').backgroundColor(this.canvasBackgroundColorValue())
       .onAreaChange((_, area: Area) => { this.viewportWidth = Number(area.width); this.viewportHeight = Number(area.height); })

@@ -19,11 +19,12 @@
 | 捕获/转换、富文本、表格/RTF | `plugins/workbench/capture.rs` | 源码复用编译；剪贴板来源、捕获证据和 ArkUI 编辑通路未接入 |
 | 歌词/媒体与格式解密 | Flutter lyrics/media + `third_party/um_decrypt` | 未移植；不能把共享 Rust 核心当作这些功能已经具备 |
 | 语言、字体、主题、玻璃效果、稳定瀑布流 | Flutter `morrow_i18n`, fonts/layout/shaders | dev.3 已补齐专用分类卡片、外观/独立材质/色盘/系统字体设置、基础正文预览、日常清单和音乐空状态；复用九语 ARB、外观持久保存。模拟器验证详见 UI_DESIGN_DEV3.md；折射 shader、完整九语动态文案、字体/背景文件导入、媒体与宽屏设备验收仍待完成 |
+| 七种风格、立体深度、组件材质跟随 | Flutter `appearance.dart`, `component_material_page.dart` | dev.5 基础面板圆角/边缘/阴影和完整材质引用；循环拒绝、取消/应用和重启验证通过。公共描边使用面板实测尺寸并限制绘制范围，修复跨卡片框线。控件浮起/按压动画及 shader 尚未复现；详见 dev.5 验证记录 |
 | 平台分发 | DevEco API 26 | 双架构未签名 HAP 已构建；x64 模拟器安装/启动；ARM64 真机、签名、发布均未验收 |
 
 ## 后续顺序
 
-2026-09-27 跟进范围见 [dev.4 验证记录](../reports/ui-source/v4/validation.md)。原始共享快照保持固定；上游最新文件创建/删除、服务 SDK 及新增视觉风格和材质跟随尚未整体移植。上游 Windows Core/runtime 的测试数字不是 HMOS 验收证据。
+2026-09-27 跟进范围见 [dev.4 验证记录](../reports/ui-source/v4/validation.md)。原始共享快照保持固定；上游最新文件创建/删除、服务 SDK 尚未整体移植；dev.5 另行移植基础面板风格与材质跟随（[验证记录](../reports/ui-source/v5/validation.md)）。上游 Windows Core/runtime 的测试数字不是 HMOS 验收证据。
 
 1. 从正式宿主提取平台存储会话接口；实现 HUKS 受保护密钥、稳定日志身份和单库所有者，再通过与 Windows 相同的 Store/封存/恢复契约验证。禁止用当前试验库直接替换正式库。
 2. 复用原私有二进制协议和宿主业务入口，覆盖版本化内容、草稿 S1/S2、附件暂存与回复未知状态；逐步替换开发适配器，保持上游证据链。
