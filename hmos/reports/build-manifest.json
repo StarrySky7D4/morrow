@@ -1,15 +1,15 @@
 {
-  "createdUtc": "2026-09-27T00:47:00.380Z",
+  "createdUtc": "2026-09-27T04:12:51.866Z",
   "sourceThread": "01a085bd-7a94-7f93-8a1f-1ecf417f5ee3",
-  "hmosVersion": "0.1.0-hmos-dev.5",
+  "hmosVersion": "0.1.0-hmos-dev.6",
   "sdk": "HarmonyOS API26 26.0.0.105",
   "abis": [
     "arm64-v8a",
     "x86_64"
   ],
   "artifact": {
-    "bytes": 22128532,
-    "sha256": "D36E45753D74EBC698A2C9A3E3B34F841DF657D367C88899CE15CBEAAEBBF9DD",
+    "bytes": 22138775,
+    "sha256": "37AF70A58339E73658CE8D320ED966EAFA6216753691FA23D2F6ECC9A7E2BCE9",
     "path": "entry\\build\\default\\outputs\\default\\entry-default-unsigned.hap",
     "signed": false
   },
@@ -32,7 +32,7 @@
     },
     {
       "path": "AppScope/app.json5",
-      "sha256": "51962A7FD630B532CC7EAB3A4FAE49EF9DC528A72B7137C8BBF4932208BAE51A"
+      "sha256": "B6A9ED88CA930B6C9BA964BB6049133409D857B0D6EE7353F098519980E8E1A3"
     },
     {
       "path": "entry/build-profile.json5",
@@ -48,7 +48,7 @@
     },
     {
       "path": "entry/src/main/module.json5",
-      "sha256": "95045053098CED28F3F807767014815B5A26B0203F16DE619B0C66ECA93C42DC"
+      "sha256": "279A06E9FC8A8E38349E943215EFD6B540228ECED81A763DF9D9B19C5E8CAEFC"
     },
     {
       "path": "entry/src/main/cpp/bridge.cpp",
@@ -64,7 +64,7 @@
     },
     {
       "path": "entry/src/main/ets/entryability/EntryAbility.ets",
-      "sha256": "555BB41DF07C1D76EFB9656111D8D44695B017A180603B4204A2B5EEC6C9D473"
+      "sha256": "9D9D3D304EDCC475C65ACD9CBD3FC2C62F1F8504AACC8400CAF370AF9537BA1A"
     },
     {
       "path": "entry/src/main/ets/entrybackupability/EntryBackupAbility.ets",
@@ -76,7 +76,7 @@
     },
     {
       "path": "entry/src/main/ets/pages/Index.ets",
-      "sha256": "10D24BC18318F244A5F843BAE58285699C02944A0709819FF7E4A93791052A9E"
+      "sha256": "B9AEDAA24A5D924AF705D4555016E65E09F7058FF5D37F82A65FA06A21B16BDD"
     },
     {
       "path": "hvigor/hvigor-config.json5",
@@ -1051,6 +1051,6 @@
       "sha256": "BB057E63CD84ACEDCA603D003D3ACECBCF250AE2E4A00636CF314C8876F80688"
     }
   ],
-  "uiValidation": "reports/ui-source/v5/validation.md",
+  "uiValidation": "reports/ui-source/v6/validation.md",
   "upstreamDrift": "reports/reference-drift.json"
 }

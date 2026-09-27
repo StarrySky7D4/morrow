@@ -22,7 +22,7 @@ const refFile = path.join(root, 'reports/ui-source/flutter-reference.json');
 const ref = JSON.parse(fs.readFileSync(refFile, 'utf8'));
 ref.observedUtc = new Date().toISOString();
 ref.note = 'Current source observation. Screenshot provenance and verification scope are recorded in validation.md; the upstream working tree is active, not frozen.';
-const extra = ['lib/visual_style_picker.dart','lib/style_depth_slider.dart','lib/neumorphic_controls.dart','lib/versioned_task_panel.dart','plugins/workbench/src/tasks_v2.rs','lib/component_material_page.dart','lib/color_compass.dart','lib/fonts/font_settings.dart','lib/liquid_glass.dart','lib/music/music_panel.dart'];
+const extra = ['lib/workspace_viewport.dart','lib/stable_masonry_grid.dart','lib/little_tips.dart','lib/visual_style_picker.dart','lib/style_depth_slider.dart','lib/neumorphic_controls.dart','lib/versioned_task_panel.dart','plugins/workbench/src/tasks_v2.rs','lib/component_material_page.dart','lib/color_compass.dart','lib/fonts/font_settings.dart','lib/liquid_glass.dart','lib/music/music_panel.dart'];
 for (const language of ['en','ja','ko','de','fr','es','pt','ru']) extra.push(`packages/morrow_i18n/lib/l10n/app_${language}.arb`);
 ref.files = [...new Set([...ref.files.map(x => x.path), ...extra])].map(p => ({ path: p, sha256: hash(path.join(ref.root, p)) }));
 fs.writeFileSync(path.join(root, reportDir, 'flutter-reference.json'), JSON.stringify(ref, null, 2) + '\n');

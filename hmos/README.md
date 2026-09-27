@@ -1,12 +1,14 @@
 # Morrow HMOS
 
-Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.5 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
+Rust + ArkUI 的鸿蒙迁移工程，独立保存在本目录。当前交付 **0.1.0-hmos-dev.6 开发预览**，尚未与 Flutter 功能等价，不能替代正式资料库。
 
 2026-09-27 跟进：按 Flutter `versioned_task_panel.dart` 接入待办重命名、上下移动、批量完成与移除确认。共享 Rust TaskId 模块与当日参照一致；通过主机测试、双架构构建和 x64 模拟器验证。见 [dev.4 验证记录](reports/ui-source/v4/validation.md)。
 
 已提供实际 HAP、Rust OHOS 双架构构建、ArkTS 界面、ArkUI NDK 原生外观预览、N-API 异步桥与共享核心事务。已在 Pura X View / HarmonyOS API 26 x86_64 模拟器安装、启动、建卡保存；另有设备侧 Rust 自检。
 
 2026-09-27 dev.5：接入七种面板风格、独立深度及完整材质跟随关系；修复公共边缘层百分比尺寸造成的错位/贯穿框线。最终安装包的设备截图与此前诊断图分开保存，见 [dev.5 验证记录](reports/ui-source/v5/validation.md)。持续追平目标见 [对齐计划](docs/ALIGNMENT_PLAN.md)。
+
+2026-09-27 dev.6：修复短内容被滚动容器居中造成的大块留白，按 Flutter 固定 14 vp 列间距排列卡片；增加侧栏收起/展开、五页滚动位置保留和设置返回恢复，并支持遵循系统旋转锁定的自适应方向。880 vp 竖屏与 1488 vp 横屏的实际设备证据见 [dev.6 布局验证](reports/ui-source/v6/validation.md)。
 
 ## UI 源码对齐
 

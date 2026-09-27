@@ -37,6 +37,14 @@ export default class EntryAbility extends UIAbility {
     // Main window is created, set main page for this ability
     hilog.info(DOMAIN, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
+    // Keep the responsive workspace usable in both orientations while
+    // respecting the user's system rotation lock.
+    windowStage.getMainWindow().then((mainWindow: window.Window) => {
+      return mainWindow.setPreferredOrientation(window.Orientation.AUTO_ROTATION_RESTRICTED);
+    }).catch((err: Error) => {
+      hilog.warn(DOMAIN, 'Morrow', 'Could not set adaptive orientation: %{public}s', err.message);
+    });
+
     windowStage.loadContent('pages/Index', (err) => {
       if (err.code) {
         hilog.error(DOMAIN, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err));
