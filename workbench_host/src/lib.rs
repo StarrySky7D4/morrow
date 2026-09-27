@@ -927,6 +927,13 @@ impl morrow_plugin_runtime::io_jobs::ManagedHostOwner for WorkbenchState {
     fn manager(&self) -> Option<&Manager> {
         self.manager.as_ref()
     }
+    fn with_managed_runtime<T>(
+        &mut self,
+        action: impl FnOnce(&Manager, &mut morrow_core::dispatch::HostRuntime) -> T,
+    ) -> Option<T> {
+        let manager = self.manager.as_ref()?;
+        Some(action(manager, &mut self.host))
+    }
 }
 #[cfg(not(target_arch = "wasm32"))]
 impl morrow_plugin_runtime::io_jobs::CommandOwner for WorkbenchState {

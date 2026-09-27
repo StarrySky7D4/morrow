@@ -26,6 +26,8 @@ pub struct FileStart {
 
 pub(super) enum Admission {
     Io(PreparedJob),
+    #[cfg(windows)]
+    Mutation(super::mutation::Admission),
     File {
         source: Source,
         handler: String,
@@ -36,17 +38,23 @@ pub(super) enum Admission {
 }
 pub(super) enum Submitted {
     Io(JobHandle),
+    #[cfg(windows)]
+    Mutation(super::mutation::MutationTask),
     File(FileTask),
 }
 impl Admission {
     pub(super) fn timeout(&self) -> Duration {
         match self {
             Self::Io(job) => job.timeout,
+            #[cfg(windows)]
+            Self::Mutation(job) => job.timeout,
             Self::File { timeout, .. } => *timeout,
         }
     }
     pub(super) fn submit(self, worker: &IoWorker<WorkbenchState>) -> Result<Submitted> {
         match self {
+            #[cfg(windows)]
+            Self::Mutation(job) => Ok(Submitted::Mutation(job.submit(worker)?)),
             Self::Io(job) => Ok(Submitted::Io(
                 worker
                     .submit_brokered(job.input, job.router, job.timeout)

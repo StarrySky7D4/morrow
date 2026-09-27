@@ -34,6 +34,11 @@ message DependencyRequirement {
   string provider_version = 5; // SemVer VersionReq for the selected provider package.
   bool optional = 6;
 }
+// Mutation-only accounting ceiling. It grants neither a file target nor a live budget.
+message MutationBudget {
+  uint64 max_job_bytes = 1;
+  uint64 max_bytes = 2;
+}
 message Manifest {
   uint32 schema_version = 1;
   string package_id = 2;
@@ -54,6 +59,8 @@ message Manifest {
   repeated DependencyRequirement dependencies = 16; // Requires dependencies-v1; guest ABI v2 only.
   morrow.plugin.io.v1.IoDeclaration io_declaration = 18; // Requires io-v1; never a grant.
   bytes dependency_schema_sha256 = 17; // Required only with dependency-calls-v1.
+  bytes mutation_schema_sha256 = 19; // Required only with mutation-v1; independent guest import, not approval.
+  MutationBudget mutation_budget = 20; // Requires mutation-budget-v1 and explicit trusted-host approval.
 }
 message Package {
   uint32 schema_version = 1;

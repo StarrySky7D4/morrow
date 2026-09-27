@@ -3148,6 +3148,168 @@ abstract class AppLocalizations {
   /// **'The file is too large. Choose a file no larger than {limit} bytes.'**
   String pluginsFileLimit(int limit);
 
+  /// No description provided for @pluginsFileMutationCancelPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel prepared plan'**
+  String get pluginsFileMutationCancelPlan;
+
+  /// No description provided for @pluginsFileMutationCleanupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Task cleanup error'**
+  String get pluginsFileMutationCleanupError;
+
+  /// No description provided for @pluginsFileMutationContentLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Content length'**
+  String get pluginsFileMutationContentLength;
+
+  /// No description provided for @pluginsFileMutationContentSha256.
+  ///
+  /// In en, this message translates to:
+  /// **'Content SHA-256'**
+  String get pluginsFileMutationContentSha256;
+
+  /// No description provided for @pluginsFileMutationEmptyContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an empty file'**
+  String get pluginsFileMutationEmptyContent;
+
+  /// No description provided for @pluginsFileMutationExecute.
+  ///
+  /// In en, this message translates to:
+  /// **'Execute prepared operation'**
+  String get pluginsFileMutationExecute;
+
+  /// No description provided for @pluginsFileMutationExecuteCreateConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Create this file'**
+  String get pluginsFileMutationExecuteCreateConfirm;
+
+  /// No description provided for @pluginsFileMutationExecuteDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this file permanently'**
+  String get pluginsFileMutationExecuteDeleteConfirm;
+
+  /// No description provided for @pluginsFileMutationExecuteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm file operation'**
+  String get pluginsFileMutationExecuteTitle;
+
+  /// No description provided for @pluginsFileMutationFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'The file operation needs attention. Check its state before trying anything else.'**
+  String get pluginsFileMutationFailure;
+
+  /// No description provided for @pluginsFileMutationFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'New file name'**
+  String get pluginsFileMutationFileName;
+
+  /// No description provided for @pluginsFileMutationFileTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Content exceeds 16 MiB.'**
+  String get pluginsFileMutationFileTooLarge;
+
+  /// No description provided for @pluginsFileMutationIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an authorized package and a local target. Review the operation before preparation, then confirm execution separately.'**
+  String get pluginsFileMutationIntro;
+
+  /// No description provided for @pluginsFileMutationOperationError.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation error'**
+  String get pluginsFileMutationOperationError;
+
+  /// No description provided for @pluginsFileMutationPickContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose content file (optional)'**
+  String get pluginsFileMutationPickContent;
+
+  /// No description provided for @pluginsFileMutationPickDirectory.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose folder'**
+  String get pluginsFileMutationPickDirectory;
+
+  /// No description provided for @pluginsFileMutationPickFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get pluginsFileMutationPickFile;
+
+  /// No description provided for @pluginsFileMutationPrepareConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare this operation'**
+  String get pluginsFileMutationPrepareConfirm;
+
+  /// No description provided for @pluginsFileMutationPrepareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review file operation'**
+  String get pluginsFileMutationPrepareTitle;
+
+  /// No description provided for @pluginsFileMutationQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Query operation history'**
+  String get pluginsFileMutationQuery;
+
+  /// No description provided for @pluginsFileMutationRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Open file recovery'**
+  String get pluginsFileMutationRecovery;
+
+  /// No description provided for @pluginsFileMutationRecoveryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'After closing and acknowledging the task, inspect the original operation in file recovery.'**
+  String get pluginsFileMutationRecoveryHint;
+
+  /// No description provided for @pluginsFileMutationReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and prepare'**
+  String get pluginsFileMutationReview;
+
+  /// No description provided for @pluginsFileMutationScopeChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Package authorization changed. Review the operation again.'**
+  String get pluginsFileMutationScopeChanged;
+
+  /// No description provided for @pluginsFileMutationSelectionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a target and package first.'**
+  String get pluginsFileMutationSelectionRequired;
+
+  /// No description provided for @pluginsFileMutationTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get pluginsFileMutationTarget;
+
+  /// No description provided for @pluginsFileMutationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File creation and deletion'**
+  String get pluginsFileMutationTitle;
+
   /// No description provided for @pluginsFileTaskBudgets.
   ///
   /// In en, this message translates to:
@@ -3303,6 +3465,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read and verify'**
   String get pluginsFileTaskVerify;
+
+  /// No description provided for @pluginsGuestExecutionBudgetError.
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets must be positive and within the declared ceilings. The cumulative budget must be at least the per-job budget.'**
+  String get pluginsGuestExecutionBudgetError;
+
+  /// No description provided for @pluginsGuestExecutionDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorization lasts at most 30 seconds. On expiry, stop the task and wait for it to exit; repair if needed, acknowledge reclamation, then review again.'**
+  String get pluginsGuestExecutionDeadline;
+
+  /// No description provided for @pluginsGuestExecutionDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve budget and generate plan'**
+  String get pluginsGuestExecutionDraft;
+
+  /// No description provided for @pluginsGuestExecutionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'The local approval window has ended. Stop the task and wait for it to exit; repair and acknowledge reclamation as prompted. Verify the outcome of any submitted operation. Do not execute it again.'**
+  String get pluginsGuestExecutionExpired;
+
+  /// No description provided for @pluginsGuestExecutionFrame.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugin execution result'**
+  String get pluginsGuestExecutionFrame;
+
+  /// No description provided for @pluginsGuestExecutionHostQuery.
+  ///
+  /// In en, this message translates to:
+  /// **'Query original host history'**
+  String get pluginsGuestExecutionHostQuery;
+
+  /// No description provided for @pluginsGuestExecutionIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the original plan, then confirm preparation and execution separately. Preparation does not create or delete the target file.'**
+  String get pluginsGuestExecutionIntro;
+
+  /// No description provided for @pluginsGuestExecutionJobBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved bytes per job'**
+  String get pluginsGuestExecutionJobBudget;
+
+  /// No description provided for @pluginsGuestExecutionNoReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome uncertain; plugin commands and file operations are never resent automatically.'**
+  String get pluginsGuestExecutionNoReplay;
+
+  /// No description provided for @pluginsGuestExecutionOrdinaryBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'This plugin uses the ordinary budget; no extended budget is granted.'**
+  String get pluginsGuestExecutionOrdinaryBudget;
+
+  /// No description provided for @pluginsGuestExecutionOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Host verification result'**
+  String get pluginsGuestExecutionOwner;
+
+  /// No description provided for @pluginsGuestExecutionPlanSha256.
+  ///
+  /// In en, this message translates to:
+  /// **'Original plan SHA-256'**
+  String get pluginsGuestExecutionPlanSha256;
+
+  /// No description provided for @pluginsGuestExecutionRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'Release task'**
+  String get pluginsGuestExecutionRelease;
+
+  /// No description provided for @pluginsGuestExecutionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Plugin file creation and deletion'**
+  String get pluginsGuestExecutionTitle;
+
+  /// No description provided for @pluginsGuestExecutionTotalBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved cumulative bytes'**
+  String get pluginsGuestExecutionTotalBudget;
+
+  /// No description provided for @pluginsGuestMutationBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Declared ceiling: {maxJobBytes} bytes per job; {maxBytes} bytes total.'**
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes);
+
+  /// No description provided for @pluginsGuestMutationBudgetNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'These are package limits, not an active grant. Each operation still requires separate approval.'**
+  String get pluginsGuestMutationBudgetNotice;
+
+  /// No description provided for @pluginsGuestMutationDeclared.
+  ///
+  /// In en, this message translates to:
+  /// **'Package declares guest file mutations.'**
+  String get pluginsGuestMutationDeclared;
 
   /// No description provided for @pluginsHttpTaskAbandon.
   ///
@@ -3979,6 +4249,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Plugin management is unavailable. Existing content remains readable.'**
   String get pluginsManagementUnavailable;
+
+  /// No description provided for @pluginsMutationAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching record found'**
+  String get pluginsMutationAbsent;
+
+  /// No description provided for @pluginsMutationCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled before dispatch'**
+  String get pluginsMutationCancelled;
+
+  /// No description provided for @pluginsMutationCheckpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'The scan position is valid only in this host session. You can continue after task cleanup.'**
+  String get pluginsMutationCheckpoint;
+
+  /// No description provided for @pluginsMutationCleanup.
+  ///
+  /// In en, this message translates to:
+  /// **'End the scan and confirm that the task has exited before reconciling the selected plan.'**
+  String get pluginsMutationCleanup;
+
+  /// No description provided for @pluginsMutationContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue from saved position'**
+  String get pluginsMutationContinue;
+
+  /// No description provided for @pluginsMutationDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Find original plans'**
+  String get pluginsMutationDiscover;
+
+  /// No description provided for @pluginsMutationDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Current scan complete'**
+  String get pluginsMutationDone;
+
+  /// No description provided for @pluginsMutationEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching plan on this page; more pages may follow.'**
+  String get pluginsMutationEmpty;
+
+  /// No description provided for @pluginsMutationFormError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not submit the recovery request. Check the subject, plugin scope, and task timeout.'**
+  String get pluginsMutationFormError;
+
+  /// No description provided for @pluginsMutationIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Find and reconcile existing plans in read-only mode. File operations are not run again.'**
+  String get pluginsMutationIntro;
+
+  /// No description provided for @pluginsMutationLastResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Most recent reconciliation result'**
+  String get pluginsMutationLastResult;
+
+  /// No description provided for @pluginsMutationNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Read next page'**
+  String get pluginsMutationNext;
+
+  /// No description provided for @pluginsMutationObserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing observation record'**
+  String get pluginsMutationObserved;
+
+  /// No description provided for @pluginsMutationPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Most recent discovery page'**
+  String get pluginsMutationPage;
+
+  /// No description provided for @pluginsMutationPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Original plan'**
+  String get pluginsMutationPlan;
+
+  /// No description provided for @pluginsMutationPrepared.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepared; file effect not confirmed'**
+  String get pluginsMutationPrepared;
+
+  /// No description provided for @pluginsMutationReconcile.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconcile selected plan'**
+  String get pluginsMutationReconcile;
+
+  /// No description provided for @pluginsMutationRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Operating system rejected the operation'**
+  String get pluginsMutationRejected;
+
+  /// No description provided for @pluginsMutationRelease.
+  ///
+  /// In en, this message translates to:
+  /// **'End scan'**
+  String get pluginsMutationRelease;
+
+  /// No description provided for @pluginsMutationResultLost.
+  ///
+  /// In en, this message translates to:
+  /// **'The result for this page was lost. Clean up the task, then continue from the last saved position or scan again.'**
+  String get pluginsMutationResultLost;
+
+  /// No description provided for @pluginsMutationRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrieve original submission receipt'**
+  String get pluginsMutationRetry;
+
+  /// No description provided for @pluginsMutationScopeUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The original plan scope is currently unavailable. Refresh the plugin catalog and review approvals.'**
+  String get pluginsMutationScopeUnavailable;
+
+  /// No description provided for @pluginsMutationSelectPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a plan to reconcile'**
+  String get pluginsMutationSelectPlan;
+
+  /// No description provided for @pluginsMutationSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected plan retained'**
+  String get pluginsMutationSelected;
+
+  /// No description provided for @pluginsMutationSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Original operation subject'**
+  String get pluginsMutationSubject;
+
+  /// No description provided for @pluginsMutationSubmissionUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission receipt uncertain. Refresh status, then explicitly retrieve only the original receipt; do not create a duplicate request.'**
+  String get pluginsMutationSubmissionUnknown;
+
+  /// No description provided for @pluginsMutationSucceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Operating system confirmed success'**
+  String get pluginsMutationSucceeded;
+
+  /// No description provided for @pluginsMutationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File mutation recovery'**
+  String get pluginsMutationTitle;
+
+  /// No description provided for @pluginsMutationUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Outcome unknown; no automatic retry'**
+  String get pluginsMutationUnknown;
+
+  /// No description provided for @pluginsMutationUnspecified.
+  ///
+  /// In en, this message translates to:
+  /// **'No proof of file effect'**
+  String get pluginsMutationUnspecified;
 
   /// No description provided for @pluginsNoPermissions.
   ///

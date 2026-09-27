@@ -28,6 +28,15 @@ pub use service_authority::ServiceAuthorityPage;
 mod service_authority_lock;
 mod service_config;
 pub use service_config::ServiceConfigPage;
+mod file_content;
+mod file_content_receipt;
+mod file_mutation;
+mod file_mutation_discovery;
+pub use file_mutation_discovery::{
+    FileMutationPlanCheckpoint, FileMutationPlanCursor, FileMutationPlanPage,
+    MAX_FILE_MUTATION_PLAN_BYTES, MAX_FILE_MUTATION_PLAN_MATERIAL_BYTES,
+    MAX_FILE_MUTATION_PLAN_READ_BYTES_PER_CANDIDATE, MAX_FILE_MUTATION_PLAN_SCAN_LIMIT,
+};
 mod service_request;
 pub use binding::{AuditBinding, AuditBindingState};
 pub use io_evidence::IoMaterialReservation;
@@ -45,7 +54,7 @@ mod records;
 mod seals;
 const APPLICATION_ID: i64 = 0x4d4f5252;
 /// Latest supported persistent Store schema; historical feature floors stay fixed.
-pub const SCHEMA_VERSION: i64 = 21;
+pub const SCHEMA_VERSION: i64 = 23;
 #[derive(Clone, Copy)]
 pub struct EventBudget {
     pub max_count: u32,
@@ -150,6 +159,7 @@ fn capacity_room(
             .saturating_add(service_authority::accounted(c)?)
             .saturating_add(outbound_authority::accounted(c)?)
             .saturating_add(tls_identity::accounted(c)?)
+            .saturating_add(file_content::accounted(c)?)
             .saturating_add(incoming_bytes)
             > budget.max_bytes
     {
@@ -614,6 +624,27 @@ impl Store {
             tx.commit().map_err(|_| Error::CommitUnknown)?;
             boundary("tls-identity-migration-after-commit");
         }
+        if version < 22 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(file_content::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 22))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("file-content-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("file-content-migration-after-commit");
+        }
+        if version < 23 {
+            let tx = sql(connection.transaction_with_behavior(TransactionBehavior::Immediate))?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            sql(tx.execute_batch(file_content_receipt::SCHEMA))?;
+            sql(tx.pragma_update(None, "user_version", 23))?;
+            file_content_receipt::migrate(&tx, budget)?;
+            Self::integrity_connection(&tx, audit_trust.as_ref())?;
+            boundary("file-content-receipt-migration-before-commit");
+            tx.commit().map_err(|_| Error::CommitUnknown)?;
+            boundary("file-content-receipt-migration-after-commit");
+        }
         // Rebuildable SQLite access index; no business-payload change.
         sql(connection.execute_batch(read_archive_budget::INDEX))?;
         sql(connection.pragma_update(None, "foreign_keys", true))?;
@@ -1023,7 +1054,15 @@ impl Store {
             if total > 32 * 1024 * 1024 {
                 return Err(Error::Limit);
             }
-            if value.starts_with(crate::io_intent::MAGIC) {
+            if value.starts_with(crate::file_content_receipt::MAGIC) {
+                let receipt = crate::file_content_receipt::Receipt::decode(value)?;
+                file_content_receipt::verify_operation(
+                    &self.connection,
+                    &receipt.event_id(),
+                    receipt.subject(),
+                    value,
+                )?;
+            } else if value.starts_with(crate::io_intent::MAGIC) {
                 let record = crate::io_intent::Record::decode(value)?;
                 io_intent::verify_operation(
                     &self.connection,
@@ -1069,6 +1108,8 @@ impl Store {
         }
         io_intent::verify_schema(snapshot)?;
         io_evidence::verify_schema(snapshot)?;
+        file_content::verify_schema(snapshot)?;
+        file_content_receipt::verify_schema(snapshot)?;
         service_config::verify_schema(snapshot)?;
         service_authority::verify_schema(snapshot)?;
         outbound_authority::verify_schema(snapshot)?;
@@ -1085,6 +1126,8 @@ impl Store {
         read_archive_retention::verify(snapshot)?;
         io_intent::verify(snapshot)?;
         io_evidence::verify(snapshot)?;
+        file_content_receipt::verify(snapshot)?;
+        file_content::verify(snapshot)?;
         let mut operations = sql(snapshot.prepare(
             "SELECT id,card_id,CASE WHEN length(payload)<=?1 THEN payload ELSE NULL END,object_kind FROM operations",
         ))?;
@@ -1096,6 +1139,15 @@ impl Store {
             }
             let raw = value.as_blob().map_err(|_| Error::Integrity)?;
             let kind: i64 = sql(row.get(3))?;
+            if kind == 6 {
+                file_content_receipt::verify_operation(
+                    snapshot,
+                    &sql(row.get::<_, String>(0))?,
+                    &sql(row.get::<_, String>(1))?,
+                    raw,
+                )?;
+                continue;
+            }
             if kind == 5 {
                 io_intent::verify_operation(
                     snapshot,

@@ -1,5 +1,18 @@
 {
   "@@locale": "ru",
+  "pluginsGuestMutationDeclared": "Пакет заявляет изменение файлов гостевым кодом.",
+  "pluginsGuestMutationBudget": "Заявленный предел: {maxJobBytes} байт на задание; всего {maxBytes} байт.",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "Это пределы пакета, а не действующее разрешение. Каждая операция требует отдельного подтверждения.",
   "pluginsWorkbench": "Плагин рабочего пространства",
   "pluginsReadingState": "Загрузка состояния плагина…",
   "pluginsManagementUnavailable": "Управление плагинами недоступно. Существующее содержимое можно читать.",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "Шестнадцатеричный просмотр (первые 64 байта)",
   "pluginsFileTaskPrevious": "Предыдущая задача с файлом",
   "pluginsFileTaskProgress": "{received} / {length} байт",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "Восстановление файловых изменений",
+  "pluginsMutationIntro": "Найдите и проверьте существующие планы в режиме только чтения. Файловые операции не выполняются повторно.",
+  "pluginsMutationSubject": "Субъект исходной операции",
+  "pluginsMutationDiscover": "Найти исходные планы",
+  "pluginsMutationNext": "Прочитать следующую страницу",
+  "pluginsMutationRelease": "Завершить поиск",
+  "pluginsMutationContinue": "Продолжить с сохранённого места",
+  "pluginsMutationReconcile": "Проверить выбранный план",
+  "pluginsMutationSelectPlan": "Выбрать план для проверки",
+  "pluginsMutationPlan": "Исходный план",
+  "pluginsMutationPage": "Последняя найденная страница",
+  "pluginsMutationCheckpoint": "Позиция поиска действительна только в текущем сеансе хоста. После очистки задачи можно продолжить.",
+  "pluginsMutationCleanup": "Завершите поиск и убедитесь, что задача завершилась, прежде чем проверять выбранный план.",
+  "pluginsMutationRetry": "Повторно получить подтверждение исходной отправки",
+  "pluginsMutationResultLost": "Результат этой страницы утерян. Очистите задачу и продолжите с последней сохранённой позиции либо начните поиск заново.",
+  "pluginsMutationPrepared": "Подготовлено; результат файловой операции не подтверждён",
+  "pluginsMutationUnknown": "Результат неизвестен; автоматического повтора не будет",
+  "pluginsMutationObserved": "Имеется запись наблюдения",
+  "pluginsMutationCancelled": "Отменено до выполнения",
+  "pluginsMutationAbsent": "Совпадающая запись не найдена",
+  "pluginsMutationSucceeded": "Операционная система подтвердила успех",
+  "pluginsMutationRejected": "Операционная система отклонила операцию",
+  "pluginsMutationUnspecified": "Нет подтверждения результата файловой операции",
+  "pluginsMutationDone": "Текущий поиск завершён",
+  "pluginsMutationSelected": "Выбранный план сохранён",
+  "pluginsMutationEmpty": "На этой странице нет подходящих планов; могут быть следующие страницы.",
+  "pluginsMutationScopeUnavailable": "Область исходного плана сейчас недоступна. Обновите каталог плагинов и проверьте разрешения.",
+  "pluginsMutationLastResult": "Последний результат проверки",
+  "pluginsMutationFormError": "Не удалось отправить запрос на восстановление. Проверьте субъект, область плагина и срок задачи.",
+  "pluginsMutationSubmissionUnknown": "Подтверждение отправки не определено. Обновите статус и явно получите только исходное подтверждение; не создавайте повторный запрос.",
+  "pluginsFileMutationTitle": "Создание и удаление файлов",
+  "pluginsFileMutationIntro": "Выберите разрешённый плагин и локальный объект. Проверьте операцию перед подготовкой, затем отдельно подтвердите выполнение.",
+  "pluginsFileMutationPickDirectory": "Выбрать папку",
+  "pluginsFileMutationPickFile": "Выбрать файл",
+  "pluginsFileMutationPickContent": "Выбрать файл содержимого (необязательно)",
+  "pluginsFileMutationFileName": "Имя нового файла",
+  "pluginsFileMutationEmptyContent": "Создать пустой файл",
+  "pluginsFileMutationTarget": "Объект",
+  "pluginsFileMutationContentLength": "Размер содержимого",
+  "pluginsFileMutationContentSha256": "SHA-256 содержимого",
+  "pluginsFileMutationReview": "Проверить и подготовить",
+  "pluginsFileMutationPrepareTitle": "Проверка операции с файлом",
+  "pluginsFileMutationPrepareConfirm": "Подготовить операцию",
+  "pluginsFileMutationExecute": "Выполнить подготовленную операцию",
+  "pluginsFileMutationExecuteTitle": "Подтверждение операции с файлом",
+  "pluginsFileMutationExecuteCreateConfirm": "Создать этот файл",
+  "pluginsFileMutationExecuteDeleteConfirm": "Удалить этот файл навсегда",
+  "pluginsFileMutationSelectionRequired": "Сначала выберите объект и плагин.",
+  "pluginsFileMutationScopeChanged": "Разрешения плагина изменились. Проверьте операцию заново.",
+  "pluginsFileMutationFileTooLarge": "Размер содержимого превышает 16 МиБ.",
+  "pluginsFileMutationFailure": "Операция с файлом требует внимания. Перед дальнейшими действиями проверьте её состояние.",
+  "pluginsFileMutationRecoveryHint": "После закрытия задачи и подтверждения завершения проверьте исходную операцию в разделе восстановления файлов.",
+  "pluginsFileMutationRecovery": "Открыть восстановление файлов",
+  "pluginsFileMutationQuery": "Проверить историю операции",
+  "pluginsFileMutationCancelPlan": "Отменить подготовленный план",
+  "pluginsFileMutationOperationError": "Ошибка операции",
+  "pluginsFileMutationCleanupError": "Ошибка освобождения задачи",
+  "pluginsGuestExecutionTitle": "Создание и удаление файлов плагином",
+  "pluginsGuestExecutionIntro": "Проверьте исходный план, затем отдельно подтвердите подготовку и выполнение. Подготовка не создаёт и не удаляет целевой файл.",
+  "pluginsGuestExecutionDraft": "Подтвердить лимиты и создать план",
+  "pluginsGuestExecutionPlanSha256": "SHA-256 исходного плана",
+  "pluginsGuestExecutionJobBudget": "Разрешено байт на задание",
+  "pluginsGuestExecutionTotalBudget": "Разрешено байт суммарно",
+  "pluginsGuestExecutionOrdinaryBudget": "Плагин использует обычные лимиты; расширенные лимиты не предоставляются.",
+  "pluginsGuestExecutionBudgetError": "Лимиты должны быть положительными и не превышать заявленные пределы. Суммарный лимит должен быть не меньше лимита на задание.",
+  "pluginsGuestExecutionHostQuery": "Запросить историю исходного хоста",
+  "pluginsGuestExecutionFrame": "Результат выполнения плагина",
+  "pluginsGuestExecutionOwner": "Результат проверки хоста",
+  "pluginsGuestExecutionNoReplay": "Результат неизвестен; команды плагина и файловые операции не повторяются автоматически.",
+  "pluginsGuestExecutionDeadline": "Разрешение действует не более 30 секунд. По истечении срока остановите задание и дождитесь завершения; при необходимости выполните восстановление, подтвердите освобождение ресурсов и заново проверьте план.",
+  "pluginsGuestExecutionExpired": "Локальный срок одобрения истёк. Остановите задание и дождитесь завершения; следуя подсказкам, выполните восстановление и подтвердите освобождение ресурсов. Проверьте результат уже отправленной операции. Не выполняйте её повторно.",
+  "pluginsGuestExecutionRelease": "Освободить задание"
 }

@@ -8,6 +8,13 @@ import 'endpoint_control.dart';
 import 'endpoint_manager.dart';
 import 'http_task_manager.dart';
 import 'file_task_manager.dart';
+import 'mutation_recovery_manager.dart';
+import 'mutation_execution_manager.dart';
+import 'mutation_execution_session.dart';
+import 'guest_mutation_execution_manager.dart';
+import 'guest_mutation_execution_session.dart';
+import 'guest_mutation_models.dart';
+import 'mutation_task_models.dart';
 import 'file_task_models.dart';
 import 'file_task_session.dart';
 import 'io_task_control.dart';
@@ -34,8 +41,22 @@ class PluginLibraryPage {
   final String cursor;
 }
 
+/// Package-declared ceilings only. Constructing this never grants a live budget.
+final class PluginMutationBudget {
+  PluginMutationBudget({required this.maxJobBytes, required this.maxBytes}) {
+    if (maxJobBytes <= BigInt.zero ||
+        maxJobBytes > BigInt.from(32 * 1024 * 1024) ||
+        maxBytes < maxJobBytes ||
+        maxBytes > BigInt.from(256 * 1024 * 1024)) {
+      throw const FormatException('Invalid declared mutation budget');
+    }
+  }
+
+  final BigInt maxJobBytes, maxBytes;
+}
+
 class PluginLibraryEntry {
-  const PluginLibraryEntry({
+  PluginLibraryEntry({
     required this.id,
     required this.name,
     required this.version,
@@ -51,13 +72,21 @@ class PluginLibraryEntry {
     this.declaredIo = const [],
     this.approvedIo = const [],
     this.ioHandlers = const [],
-  });
+    this.mutationSupported = false,
+    this.mutationBudget,
+  }) {
+    if (mutationBudget != null && !mutationSupported) {
+      throw const FormatException('Mutation budget without mutation feature');
+    }
+  }
   final String id, name, version, issue;
   final Uint8List digest;
   final bool enabled, builtin, available;
   final List<String> declared, approved, dependencies, declaredIo, approvedIo;
   final List<PluginTransformHandler> handlers;
   final List<String> ioHandlers;
+  final bool mutationSupported;
+  final PluginMutationBudget? mutationBudget;
   bool get isTheme => handlers.any(
     (h) =>
         h.name == 'theme.describe' &&
@@ -140,6 +169,9 @@ String _pageFingerprint(PluginLibraryPage page) => jsonEncode([
       e.declaredIo,
       e.approvedIo,
       e.ioHandlers,
+      e.mutationSupported,
+      e.mutationBudget?.maxJobBytes.toString(),
+      e.mutationBudget?.maxBytes.toString(),
       for (final h in e.handlers)
         [h.name, h.inputType, h.outputType, h.maxInputBytes, h.maxOutputBytes],
     ],
@@ -199,6 +231,8 @@ class _ObservedTransport implements PluginUiTransport {
 }
 
 class _PluginLibraryState extends State<PluginLibrary> {
+  final _mutationRecoveryKey = GlobalKey();
+  MutationRecoverySeed? _mutationRecoverySeed;
   List<PluginLibraryEntry> _entries = [];
   BigInt? _revision;
   bool _busy = false, _confirmed = false;
@@ -234,6 +268,7 @@ class _PluginLibraryState extends State<PluginLibrary> {
       _epoch++;
       _releaseForm(oldWidget.backend);
       _busy = false;
+      _mutationRecoverySeed = null;
       _confirmed = false;
       _entries = [];
       _revision = null;
@@ -884,6 +919,18 @@ class _PluginLibraryState extends State<PluginLibrary> {
             context,
           ).pluginsIoDeclared(entry.declaredIo.map(_ioCapability).join(', ')),
         ),
+      if (entry.mutationSupported) ...[
+        _note(L10n.of(context).pluginsGuestMutationDeclared),
+        if (entry.mutationBudget case final budget?) ...[
+          _note(
+            L10n.of(context).pluginsGuestMutationBudget(
+              budget.maxBytes.toString(),
+              budget.maxJobBytes.toString(),
+            ),
+          ),
+          _note(L10n.of(context).pluginsGuestMutationBudgetNotice),
+        ],
+      ],
       if (entry.dependencies.isNotEmpty) ...[
         _note(L10n.of(context).pluginsDependenciesNotice),
         ...entry.dependencies.map(_note),
@@ -1219,6 +1266,63 @@ class _PluginLibraryState extends State<PluginLibrary> {
             ],
           ),
         );
+  void _openMutationRecovery() {
+    final owner = widget.backend;
+    if (owner is! MutationTaskSupport || owner is! WorkbenchIoTaskControl) {
+      return;
+    }
+    final request = MutationExecutionSession.forBackend(
+      (owner as MutationTaskSupport).mutationTasks,
+      owner as WorkbenchIoTaskControl,
+    ).request;
+    if (request == null) return;
+    _showMutationRecovery(request);
+  }
+
+  void _openGuestMutationRecovery() {
+    final owner = widget.backend;
+    if (owner is! GuestMutationSupport ||
+        owner is! MutationTaskSupport ||
+        owner is! WorkbenchIoTaskControl) {
+      return;
+    }
+    final guest = owner as GuestMutationSupport;
+    final native = owner as MutationTaskSupport;
+    if (!guest.supportsGuestMutationTasks || !native.supportsMutationTasks) {
+      return;
+    }
+    final request = GuestMutationExecutionSession.forBackend(
+      guest.guestMutationTasks,
+      owner as WorkbenchIoTaskControl,
+    ).request?.selection;
+    if (request == null) return;
+    _showMutationRecovery(request);
+  }
+
+  void _showMutationRecovery(MutationStartRequest request) {
+    setState(
+      () => _mutationRecoverySeed = MutationRecoverySeed(
+        packageId: request.packageId,
+        packageDigest: request.packageDigest,
+        subject: request.subject,
+        disposition: request.disposition,
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final target = _mutationRecoveryKey.currentContext;
+      if (target != null) {
+        unawaited(
+          Scrollable.ensureVisible(
+            target,
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+          ),
+        );
+      }
+    });
+  }
+
   Widget _ioGroup(String id, Widget child) => Glass(
     key: ValueKey('io-group:$id'),
     componentId: 'io:$id',
@@ -1314,26 +1418,97 @@ class _PluginLibraryState extends State<PluginLibrary> {
               ),
             ),
           ],
+          if (widget.backend is GuestMutationSupport &&
+              (widget.backend as GuestMutationSupport)
+                  .supportsGuestMutationTasks &&
+              widget.backend is WorkbenchIoTaskControl)
+            _ioGroup(
+              'GuestMutationExecutionManager',
+              GuestMutationExecutionManager(
+                backend:
+                    (widget.backend as GuestMutationSupport).guestMutationTasks,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+                onOpenRecovery:
+                    widget.backend is MutationTaskSupport &&
+                        (widget.backend as MutationTaskSupport)
+                            .supportsMutationTasks
+                    ? _openGuestMutationRecovery
+                    : null,
+              ),
+            ),
+          if (widget.backend is MutationTaskSupport &&
+              (widget.backend as MutationTaskSupport).supportsMutationTasks &&
+              widget.backend is WorkbenchIoTaskControl)
+            _ioGroup(
+              'MutationExecutionManager',
+              MutationExecutionManager(
+                backend: (widget.backend as MutationTaskSupport).mutationTasks,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+                onOpenRecovery: _openMutationRecovery,
+              ),
+            ),
+          if (widget.backend is MutationTaskSupport &&
+              (widget.backend as MutationTaskSupport).supportsMutationTasks &&
+              widget.backend is WorkbenchIoTaskControl)
+            _ioGroup(
+              'MutationRecoveryManager',
+              MutationRecoveryManager(
+                key: _mutationRecoveryKey,
+                seed: _mutationRecoverySeed,
+                backend: (widget.backend as MutationTaskSupport).mutationTasks,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
           if (widget.backend is FileTaskBackend &&
               widget.backend is FileTaskPlatformCapabilities &&
-              (widget.backend as FileTaskPlatformCapabilities).supportsSelectedFileTasks &&
+              (widget.backend as FileTaskPlatformCapabilities)
+                  .supportsSelectedFileTasks &&
               widget.backend is WorkbenchIoTaskControl)
-            _ioGroup('FileTaskManager', FileTaskManager(
-              backend: widget.backend as FileTaskBackend,
-              ioBackend: widget.backend as WorkbenchIoTaskControl,
-              plugins: _confirmed ? _entries : const [],
-              registryRevision: _confirmed ? _revision : null,
-              ink: widget.ink, muted: widget.muted, line: widget.line,
-              radius: widget.radius, onChanged: widget.onChanged,
-            )),
+            _ioGroup(
+              'FileTaskManager',
+              FileTaskManager(
+                backend: widget.backend as FileTaskBackend,
+                ioBackend: widget.backend as WorkbenchIoTaskControl,
+                plugins: _confirmed ? _entries : const [],
+                registryRevision: _confirmed ? _revision : null,
+                ink: widget.ink,
+                muted: widget.muted,
+                line: widget.line,
+                radius: widget.radius,
+                onChanged: widget.onChanged,
+              ),
+            ),
           if (widget.backend is WorkbenchIoTaskControl &&
               widget.backend is WorkbenchEndpointControl) ...[
             _ioGroup(
               'HttpTaskManager',
               HttpTaskManager(
                 fileSession: widget.backend is FileTaskBackend
-                    ? FileTaskSession.forBackend(widget.backend as FileTaskBackend,
-                        widget.backend as WorkbenchIoTaskControl)
+                    ? FileTaskSession.forBackend(
+                        widget.backend as FileTaskBackend,
+                        widget.backend as WorkbenchIoTaskControl,
+                      )
                     : null,
                 backend: widget.backend as WorkbenchIoTaskControl,
                 serviceSession: widget.backend is WorkbenchServiceRunControl

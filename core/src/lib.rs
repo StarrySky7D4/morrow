@@ -8,7 +8,13 @@ pub mod content_migration;
 pub mod dependency_call;
 #[cfg(any(not(target_arch = "wasm32"), feature = "web-storage"))]
 pub mod dispatch;
+pub mod file_content;
+pub mod file_content_receipt;
+pub mod file_effect;
+pub mod file_mutation;
+pub mod file_path;
 pub mod io;
+pub mod mutation;
 pub mod io_evidence;
 pub mod io_intent;
 pub mod lifecycle;
@@ -110,6 +116,11 @@ pub(crate) fn title(value: &str) -> Result<()> {
 #[allow(clippy::all, unsafe_code)]
 pub mod io_capnp {
     include!(concat!(env!("OUT_DIR"), "/io_capnp.rs"));
+}
+
+#[allow(clippy::all, unsafe_code)]
+pub mod mutation_capnp {
+    include!(concat!(env!("OUT_DIR"), "/mutation_capnp.rs"));
 }
 
 /// Bounded inbound service messages; decoding never authenticates a principal.

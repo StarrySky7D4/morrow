@@ -18,6 +18,8 @@ pub mod dependency;
 pub mod dynamic_dependencies;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod file_io;
+#[cfg(all(feature = "packages", windows))]
+pub mod file_target;
 #[cfg(all(feature = "packages", not(target_arch = "wasm32")))]
 pub mod http_io;
 #[cfg(feature = "package-management")]
@@ -63,6 +65,9 @@ pub mod shared_memory;
 pub mod shared_objects;
 pub const MAX_MESSAGE_BYTES: usize = 65536;
 pub const MAX_TASK_BYTES: usize = 128 * 1024;
+/// Mutation v1 uses the task-frame ceiling; package negotiation checks the
+/// independent schema bound before this import can run.
+pub const MAX_MUTATION_FRAME_BYTES: usize = MAX_TASK_BYTES;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 #[derive(Debug, Clone, Copy)]
 pub struct Limits {
@@ -163,6 +168,7 @@ struct State {
     task: Option<TaskState>,
     dependency: bool,
     io: bool,
+    mutation: bool,
     pending: Option<continuation::PendingCall>,
     session: Arc<()>,
     limits: StoreLimits,
@@ -175,25 +181,31 @@ pub struct Runner {
     task_abi: bool,
     dependency_abi: bool,
     io_abi: bool,
+    mutation_abi: bool,
     engine: Engine,
     module: Module,
     limits: Limits,
 }
 impl Runner {
     pub fn new(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, false, false, false)
+        Self::prepare(bytes, limits, false, false, false, false)
     }
     pub fn new_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, false)
+        Self::prepare(bytes, limits, true, false, false, false)
     }
     /// Task ABI with one additional fixed dependency import. The callback is host-routed;
     /// it must not re-enter this guest and cannot be supplied to ordinary task runners.
     pub fn new_dependency_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, true, false)
+        Self::prepare(bytes, limits, true, true, false, false)
     }
     /// Task ABI with the fixed IO import. Combined with dependency imports is rejected.
     pub fn new_io_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
-        Self::prepare(bytes, limits, true, false, true)
+        Self::prepare(bytes, limits, true, false, true, false)
+    }
+    /// The separate mutation import is available only to an explicitly negotiated
+    /// package frame. Ordinary synchronous Runner entry points fail closed.
+    pub fn new_mutation_task(bytes: &[u8], limits: Limits) -> Result<Self, Fault> {
+        Self::prepare(bytes, limits, true, false, false, true)
     }
     fn prepare(
         bytes: &[u8],
@@ -201,8 +213,11 @@ impl Runner {
         task_abi: bool,
         dependency_abi: bool,
         io_abi: bool,
+        mutation_abi: bool,
     ) -> Result<Self, Fault> {
-        if io_abi && dependency_abi {
+        if !task_abi && (dependency_abi || io_abi || mutation_abi)
+            || u8::from(dependency_abi) + u8::from(io_abi) + u8::from(mutation_abi) > 1
+        {
             return Err(Fault::UnsupportedAbi);
         }
         if bytes.len() > MAX_MODULE_BYTES
@@ -238,6 +253,7 @@ impl Runner {
                 ("morrow_v1", "exchange") => 4,
                 ("morrow_dependency_v1", "call") if dependency_abi => 4,
                 ("morrow_io_v1", "call") if io_abi => 4,
+                ("morrow_mutation_v1", "call") if mutation_abi => 4,
                 ("morrow_task_v1", "read_input" | "complete") if task_abi => 2,
                 _ => return Err(Fault::UnsupportedAbi),
             };
@@ -247,6 +263,9 @@ impl Runner {
             {
                 return Err(Fault::UnsupportedAbi);
             }
+        }
+        if mutation_abi && !imports.contains(&("morrow_mutation_v1", "call")) {
+            return Err(Fault::UnsupportedAbi);
         }
         let mut memory = false;
         let mut run = false;
@@ -268,6 +287,7 @@ impl Runner {
             task_abi,
             dependency_abi,
             io_abi,
+            mutation_abi,
             engine,
             module,
             limits,
@@ -320,7 +340,9 @@ impl Runner {
         cancel: Cancellation,
         input: Option<&'a [u8]>,
     ) -> TaskRun {
-        let started = if self.dependency_abi != dependency.is_some() || self.io_abi != io.is_some()
+        let started = if self.mutation_abi
+            || self.dependency_abi != dependency.is_some()
+            || self.io_abi != io.is_some()
         {
             Err(Fault::UnsupportedAbi)
         } else {
@@ -350,6 +372,7 @@ impl Runner {
                     dependency.as_mut().expect("checked mode")(&pending.bytes)
                 }
                 continuation::Kind::Io => io.as_mut().expect("checked mode")(&pending.bytes),
+                continuation::Kind::Mutation => Err(()),
             };
             execution
                 .resume(&token, response)
@@ -612,5 +635,69 @@ fn io_call(
         memory,
         output,
         MAX_TASK_BYTES,
+    ))
+}
+
+// Independent framed mutation import. The paused original owner supplies a
+// separately authorized response; this function grants no target or permit.
+fn mutation_call(
+    mut caller: Caller<'_, State>,
+    input: i32,
+    length: i32,
+    output: i32,
+    capacity: i32,
+) -> Result<i32, wasmi::Error> {
+    if let Some(fault) = caller.data().cancel.fault() {
+        return Err(trap(caller.data_mut(), fault));
+    }
+    if !caller.data().mutation
+        || caller
+            .data()
+            .task
+            .as_ref()
+            .is_none_or(|t| !t.read || t.completion.is_some())
+    {
+        return Err(trap(caller.data_mut(), Fault::TaskProtocol));
+    }
+    if input < 0
+        || output < 0
+        || length <= 0
+        || length as usize > MAX_MUTATION_FRAME_BYTES
+        || capacity as usize != MAX_MUTATION_FRAME_BYTES
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    let memory = caller
+        .get_export("memory")
+        .and_then(|v| v.into_memory())
+        .ok_or_else(|| wasmi::Error::new("missing memory"))?;
+    let input = input as usize;
+    let output = output as usize;
+    let length = length as usize;
+    let Some(input_end) = input.checked_add(length) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let Some(output_end) = output.checked_add(MAX_MUTATION_FRAME_BYTES) else {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    };
+    let memory_len = memory.data(&caller).len();
+    if input_end > memory_len
+        || output_end > memory_len
+        || (input < output_end && output < input_end)
+    {
+        return Err(trap(caller.data_mut(), Fault::Trap));
+    }
+    if caller.data().calls >= caller.data().max_calls {
+        return Err(trap(caller.data_mut(), Fault::Limits));
+    }
+    let fixed = memory.data(&caller)[input..input_end].to_vec();
+    caller.data_mut().calls += 1;
+    Err(continuation::suspend(
+        caller.data_mut(),
+        continuation::Kind::Mutation,
+        fixed,
+        memory,
+        output,
+        MAX_MUTATION_FRAME_BYTES,
     ))
 }

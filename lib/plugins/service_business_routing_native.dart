@@ -1,6 +1,18 @@
 part of 'workbench_native.dart';
 
 bool _isScheduler(host.Action action) => switch (action) {
+  host.Action.guestMutationStart ||
+  host.Action.guestMutationSubmit ||
+  host.Action.guestMutationStatus ||
+  host.Action.guestMutationRead ||
+  host.Action.guestMutationCancelCommand ||
+  host.Action.mutationStart ||
+  host.Action.mutationSubmit ||
+  host.Action.mutationStatus ||
+  host.Action.mutationRead ||
+  host.Action.mutationCancelCommand ||
+  host.Action.mutationReconcile ||
+  host.Action.mutationDiscover ||
   host.Action.fileStart ||
   host.Action.fileChunk ||
   host.Action.fileFinish ||

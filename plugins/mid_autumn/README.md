@@ -1,11 +1,11 @@
 # 中秋 · 月满庭：独立主题插件
 
-标准 Morrow `.morrowplugin` 插件，ID `org.morrow.theme.mid-autumn`，版本 `1.0.0`。颜色、文案与原创插画均随包分发，客户端没有内置中秋 JSON、图案或自动重装逻辑。无需网络、内容读写或 IO 权限。
+标准 Morrow `.morrowplugin` 插件，ID `org.morrow.theme.mid-autumn`，已发布版本 `1.0.0`，当前本地构建版本 `1.0.2`。颜色、文案与原创插画均随包分发，客户端没有内置中秋 JSON、图案或自动重装逻辑。无需网络、内容读写或 IO 权限。
 
 ## 安装与管理
 
 1. 打开 [Windows 测试预览版 0.1.9-test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) 或更新的兼容客户端，或 [Web 工作台](https://starrysky7d4.github.io/morrow/)。已安装 1.0.0 主题包无需重复导入。
-2. 从[独立主题发布页](https://github.com/StarrySky7D4/morrow/releases/tag/theme-mid-autumn-v1.0.0)下载 `.morrowplugin`，在「空间外观」中的插件管理入口选择该文件。本地构建输出为 `dist/plugins/morrow-mid-autumn-1.0.1.morrowplugin`。
+2. 从[独立主题发布页](https://github.com/StarrySky7D4/morrow/releases/tag/theme-mid-autumn-v1.0.0)下载 `.morrowplugin`，在「空间外观」中的插件管理入口选择该文件。单独构建默认输出为 `dist/plugins/morrow-mid-autumn-1.0.2.morrowplugin`；完整 Windows 构建将主题安装至应用的 `plugins/` 目录，仍需显式导入和启用。
 3. 确认导入后，插件默认停用；在该插件条目点击批准并启用。
 4. 已安装主题会出现在「界面风格」列表上方，可快速切换或停用；原有的平面、纸张、黏土等风格始终可以叠加。
 5. 在插件管理中停用或卸载。卸载取消登记，原有内容和插件包缓存按现有插件系统规则保留，不会自动重新安装。
@@ -32,9 +32,9 @@
 - 每段读取和最终发布都检查登记版本。资源损坏、格式错误或授权变化会回退基础界面并显示错误，业务插件保持独立。
 - `theme.describe` 的准确 handler/input/output 类型组合标识主题槽位，任意符合协议的其他主题包同样受互斥规则约束。没有为中秋 ID 写特例。
 
-当前本地包版本 **1.0.1**，大小 658,949 字节。SHA-256：`34230d83e4fb0d5883630973a6261e275cf0ca63a4d37e61f6b6d307b5dfacdd`。
+当前本地包版本 **1.0.2**，大小 688,674 字节。SHA-256：`16798557bccc387189445902bfe22a3adfe9289545269f10debd886eb3c1379c`。
 
-1.0.1 是本地重建修订，视觉与业务权限不变。由于当前工具链/检出字节与已发布 1.0.0 原包不同，使用新版本避免同版本摘要冲突；同时固定嵌入主题 JSON 的 LF 换行。已通过真实 Windows 宿主的新安装、1.0.0 升级、启用、重启恢复、停用和卸载。旧发布与原始 1.0.0 测试夹具保留；本地 1.0.1 未发布到 GitHub。
+1.0.2 是本地重建修订，视觉与业务权限不变。当前重编字节与已有 1.0.1 不同，经不可变包检查拒绝后递增版本，未覆盖旧包。最终 Windows 预览目录中的宿主与主题已通过新安装、分别从 1.0.0/1.0.1 升级、启用、重启恢复、停用和卸载测试，见 [完整构建报告](../../reports/windows-mutation-preview-2026-09-27.md)。原始 1.0.0 测试夹具和本地 1.0.1 包保留；1.0.2 未发布到 GitHub。历史 1.0.1 修订还固定了嵌入主题 JSON 的 LF 换行。
 
 ## 构建
 
@@ -50,4 +50,4 @@
 
 组件调色崩溃修复与 Windows 原生验证见 `reports/component-color-fix-2026-09-25.md`。
 
-Web 导入、设备侧保存、Windows 回归及发布验收见 [主题支持报告](../../reports/web-theme-plugins-2026-09-25.md)。Web 当前只接收无业务权限、IO/服务声明或依赖的主题包；已发布 1.0.0 的原始验收文件位于 `test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin`；1.0.1 的 Web 导入尚未复验。
+Web 导入、设备侧保存、Windows 回归及发布验收见 [主题支持报告](../../reports/web-theme-plugins-2026-09-25.md)。Web 当前只接收无业务权限、IO/服务声明或依赖的主题包；已发布 1.0.0 的原始验收文件位于 `test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin`；1.0.1 与 1.0.2 的 Web 导入尚未复验。

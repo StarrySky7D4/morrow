@@ -287,7 +287,7 @@ fn invalid_io_cli_declarations_fail_before_publishing() {
         (
             &[
                 "--io-capability",
-                "file-delete",
+                "file-unknown",
                 "--io-handler",
                 "io.request",
             ],
@@ -576,4 +576,34 @@ fn explicit_io_resource_budget_is_bounded_and_defaults_remain_two() {
     add(&mut args, &["--io-resources", "4"]);
     assert!(run(&args, &mut Vec::new()).is_err());
     assert!(!Path::new(&args[2]).exists());
+}
+
+#[test]
+fn mutation_profiles_pack_explicit_scopes_without_content_or_service_grants() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--io-capability", "file-create",
+            "--io-capability", "file-replace",
+            "--io-capability", "file-delete",
+            "--io-handler", "mutation.unused",
+            "--io-resources", "8",
+        ],
+    );
+    let output = execute(&args);
+    let package = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert_eq!(
+        package.io_capabilities(),
+        &BTreeSet::from([
+            IoCapability::FileCreate,
+            IoCapability::FileReplace,
+            IoCapability::FileDelete,
+        ]),
+    );
+    assert!(package.manifest().requested_capabilities.is_empty());
+    let declaration = package.manifest().io_declaration.as_ref().unwrap();
+    assert!(declaration.service_run.is_none());
+    assert!(declaration.service_schema_sha256.is_empty());
+    assert!(output.contains("declarations only; no grants"));
 }

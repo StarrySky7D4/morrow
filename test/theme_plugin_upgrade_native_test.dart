@@ -8,9 +8,16 @@ void main() {
   final executable = Platform.environment['MORROW_WORKBENCH_HOST'];
   final bundle = Platform.environment['MORROW_WORKBENCH_PACKAGE'];
   final nextPackage = Platform.environment['MORROW_THEME_PACKAGE'];
+  final previousPackage = Platform.environment['MORROW_PREVIOUS_THEME_PACKAGE'];
+  final previousVersion = Platform.environment['MORROW_PREVIOUS_THEME_VERSION'];
   test(
     'released theme upgrades to rebuilt package and survives restart',
     () async {
+      if ((previousPackage == null) != (previousVersion == null)) {
+        throw const FormatException(
+          'Previous theme package and version must be supplied together',
+        );
+      }
       final directory = await Directory.systemTemp.createTemp(
         'morrow-theme-upgrade-',
       );
@@ -24,11 +31,13 @@ void main() {
       try {
         final businessBefore = await host.pluginState();
         final oldPath = File(
-          'test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin',
+          previousPackage ??
+              'test/fixtures/plugins/morrow-mid-autumn-1.0.0.morrowplugin',
         ).absolute.path;
         final oldPreview = await host.inspectPlugin(oldPath);
         final old = oldPreview.entries.single;
-        expect(old.version, '1.0.0');
+        expect(old.version, previousVersion ?? '1.0.0');
+        expect(old.version, isNot('1.0.2'));
         await host.importPlugin(oldPath, old.digest, oldPreview.revision);
         await controller.restore();
         expect(
@@ -39,7 +48,7 @@ void main() {
         final preview = await host.inspectPlugin(nextPackage!);
         final next = preview.entries.single;
         expect(next.id, old.id);
-        expect(next.version, '1.0.1');
+        expect(next.version, '1.0.2');
         expect(next.digest, isNot(orderedEquals(old.digest)));
         expect(next.declared, isEmpty);
         expect(next.declaredIo, isEmpty);
@@ -62,7 +71,7 @@ void main() {
         controller = ThemePluginController(store: store, backend: host);
         await controller.restore();
         expect(controller.active, isTrue, reason: '${controller.error}');
-        expect(controller.entries.single.version, '1.0.1');
+        expect(controller.entries.single.version, '1.0.2');
         expect(controller.entries.single.digest, orderedEquals(next.digest));
         expect(controller.plugin!.artwork, isNotEmpty);
         final businessAfter = await host.pluginState();

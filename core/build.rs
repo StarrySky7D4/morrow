@@ -19,6 +19,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
         .compile_protos(&["schemas/service_record.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/file_content_receipt.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/file_content_receipt.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/file_content.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/file_content.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/file_effect.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/file_effect.proto"], &["schemas"])?;
+    println!("cargo:rerun-if-changed=schemas/file_mutation.proto");
+    prost_build::Config::new()
+        .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
+        .compile_protos(&["schemas/file_mutation.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/io_intent.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
@@ -80,6 +96,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .compile_protos(&["schemas/record_transaction.proto"], &["schemas"])?;
     println!("cargo:rerun-if-changed=schemas/io_manifest.proto");
     println!("cargo:rerun-if-changed=schemas/io.capnp");
+    println!("cargo:rerun-if-changed=schemas/mutation.capnp");
     println!("cargo:rerun-if-changed=schemas/plugin_package.proto");
     prost_build::Config::new()
         .protoc_executable(protoc_bin_vendored::protoc_bin_path()?)
@@ -105,6 +122,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .file("schemas/runtime.capnp")
         .file("schemas/task.capnp")
         .file("schemas/io.capnp")
+        .file("schemas/mutation.capnp")
         .file("schemas/service.capnp")
         .file("schemas/service_resources.capnp")
         .file("schemas/ui.capnp")

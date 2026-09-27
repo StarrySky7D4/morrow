@@ -1,5 +1,18 @@
 {
   "@@locale": "en",
+  "pluginsGuestMutationDeclared": "Package declares guest file mutations.",
+  "pluginsGuestMutationBudget": "Declared ceiling: {maxJobBytes} bytes per job; {maxBytes} bytes total.",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "These are package limits, not an active grant. Each operation still requires separate approval.",
   "pluginsWorkbench": "Workbench plugin",
   "pluginsReadingState": "Loading plugin status…",
   "pluginsManagementUnavailable": "Plugin management is unavailable. Existing content remains readable.",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "Hex preview (first 64 bytes)",
   "pluginsFileTaskPrevious": "Previous file task",
   "pluginsFileTaskProgress": "{received} / {length} bytes",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "File mutation recovery",
+  "pluginsMutationIntro": "Find and reconcile existing plans in read-only mode. File operations are not run again.",
+  "pluginsMutationSubject": "Original operation subject",
+  "pluginsMutationDiscover": "Find original plans",
+  "pluginsMutationNext": "Read next page",
+  "pluginsMutationRelease": "End scan",
+  "pluginsMutationContinue": "Continue from saved position",
+  "pluginsMutationReconcile": "Reconcile selected plan",
+  "pluginsMutationSelectPlan": "Select a plan to reconcile",
+  "pluginsMutationPlan": "Original plan",
+  "pluginsMutationPage": "Most recent discovery page",
+  "pluginsMutationCheckpoint": "The scan position is valid only in this host session. You can continue after task cleanup.",
+  "pluginsMutationCleanup": "End the scan and confirm that the task has exited before reconciling the selected plan.",
+  "pluginsMutationRetry": "Retrieve original submission receipt",
+  "pluginsMutationResultLost": "The result for this page was lost. Clean up the task, then continue from the last saved position or scan again.",
+  "pluginsMutationPrepared": "Prepared; file effect not confirmed",
+  "pluginsMutationUnknown": "Outcome unknown; no automatic retry",
+  "pluginsMutationObserved": "Existing observation record",
+  "pluginsMutationCancelled": "Cancelled before dispatch",
+  "pluginsMutationAbsent": "No matching record found",
+  "pluginsMutationSucceeded": "Operating system confirmed success",
+  "pluginsMutationRejected": "Operating system rejected the operation",
+  "pluginsMutationUnspecified": "No proof of file effect",
+  "pluginsMutationDone": "Current scan complete",
+  "pluginsMutationSelected": "Selected plan retained",
+  "pluginsMutationEmpty": "No matching plan on this page; more pages may follow.",
+  "pluginsMutationScopeUnavailable": "The original plan scope is currently unavailable. Refresh the plugin catalog and review approvals.",
+  "pluginsMutationLastResult": "Most recent reconciliation result",
+  "pluginsMutationFormError": "Could not submit the recovery request. Check the subject, plugin scope, and task timeout.",
+  "pluginsMutationSubmissionUnknown": "Submission receipt uncertain. Refresh status, then explicitly retrieve only the original receipt; do not create a duplicate request.",
+  "pluginsFileMutationTitle": "File creation and deletion",
+  "pluginsFileMutationIntro": "Choose an authorized package and a local target. Review the operation before preparation, then confirm execution separately.",
+  "pluginsFileMutationPickDirectory": "Choose folder",
+  "pluginsFileMutationPickFile": "Choose file",
+  "pluginsFileMutationPickContent": "Choose content file (optional)",
+  "pluginsFileMutationFileName": "New file name",
+  "pluginsFileMutationEmptyContent": "Create an empty file",
+  "pluginsFileMutationTarget": "Target",
+  "pluginsFileMutationContentLength": "Content length",
+  "pluginsFileMutationContentSha256": "Content SHA-256",
+  "pluginsFileMutationReview": "Review and prepare",
+  "pluginsFileMutationPrepareTitle": "Review file operation",
+  "pluginsFileMutationPrepareConfirm": "Prepare this operation",
+  "pluginsFileMutationExecute": "Execute prepared operation",
+  "pluginsFileMutationExecuteTitle": "Confirm file operation",
+  "pluginsFileMutationExecuteCreateConfirm": "Create this file",
+  "pluginsFileMutationExecuteDeleteConfirm": "Delete this file permanently",
+  "pluginsFileMutationSelectionRequired": "Choose a target and package first.",
+  "pluginsFileMutationScopeChanged": "Package authorization changed. Review the operation again.",
+  "pluginsFileMutationFileTooLarge": "Content exceeds 16 MiB.",
+  "pluginsFileMutationFailure": "The file operation needs attention. Check its state before trying anything else.",
+  "pluginsFileMutationRecoveryHint": "After closing and acknowledging the task, inspect the original operation in file recovery.",
+  "pluginsFileMutationRecovery": "Open file recovery",
+  "pluginsFileMutationQuery": "Query operation history",
+  "pluginsFileMutationCancelPlan": "Cancel prepared plan",
+  "pluginsFileMutationOperationError": "Operation error",
+  "pluginsFileMutationCleanupError": "Task cleanup error",
+  "pluginsGuestExecutionTitle": "Plugin file creation and deletion",
+  "pluginsGuestExecutionIntro": "Review the original plan, then confirm preparation and execution separately. Preparation does not create or delete the target file.",
+  "pluginsGuestExecutionDraft": "Approve budget and generate plan",
+  "pluginsGuestExecutionPlanSha256": "Original plan SHA-256",
+  "pluginsGuestExecutionJobBudget": "Approved bytes per job",
+  "pluginsGuestExecutionTotalBudget": "Approved cumulative bytes",
+  "pluginsGuestExecutionOrdinaryBudget": "This plugin uses the ordinary budget; no extended budget is granted.",
+  "pluginsGuestExecutionBudgetError": "Budgets must be positive and within the declared ceilings. The cumulative budget must be at least the per-job budget.",
+  "pluginsGuestExecutionHostQuery": "Query original host history",
+  "pluginsGuestExecutionFrame": "Plugin execution result",
+  "pluginsGuestExecutionOwner": "Host verification result",
+  "pluginsGuestExecutionNoReplay": "Outcome uncertain; plugin commands and file operations are never resent automatically.",
+  "pluginsGuestExecutionDeadline": "Authorization lasts at most 30 seconds. On expiry, stop the task and wait for it to exit; repair if needed, acknowledge reclamation, then review again.",
+  "pluginsGuestExecutionExpired": "The local approval window has ended. Stop the task and wait for it to exit; repair and acknowledge reclamation as prompted. Verify the outcome of any submitted operation. Do not execute it again.",
+  "pluginsGuestExecutionRelease": "Release task"
 }

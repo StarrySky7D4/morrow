@@ -146,9 +146,8 @@ fn stream(
 /// it; multiple blobs under one owner are never an ambiguous successful import.
 fn retained_snapshot(connection: &Connection, owner: &str) -> Result<Option<BlobInfo>> {
     identity(owner)?;
-    let mut statement = sql(connection.prepare(
-        "SELECT blob_id,metadata FROM retentions WHERE owner=?1 AND kind=?2 LIMIT 2",
-    ))?;
+    let mut statement = sql(connection
+        .prepare("SELECT blob_id,metadata FROM retentions WHERE owner=?1 AND kind=?2 LIMIT 2"))?;
     let mut rows = sql(statement.query(params![owner, RetentionKind::Snapshot as i32]))?;
     let Some(row) = sql(rows.next())? else {
         return Ok(None);
@@ -205,7 +204,13 @@ impl Store {
         owner: &str,
         now_unix_ms: i64,
     ) -> Result<BlobInfo> {
-        self.stage_blob_inner(reader, byte_length, Some(expected), Some(owner), now_unix_ms)
+        self.stage_blob_inner(
+            reader,
+            byte_length,
+            Some(expected),
+            Some(owner),
+            now_unix_ms,
+        )
     }
     fn stage_blob_inner(
         &mut self,
@@ -312,8 +317,7 @@ impl Store {
             value
         };
         if let Some(owner) = owner {
-            let metadata =
-                attachment::encode_retention(owner, &value.id, RetentionKind::Snapshot)?;
+            let metadata = attachment::encode_retention(owner, &value.id, RetentionKind::Snapshot)?;
             sql(tx.execute(
                 "INSERT INTO retentions(owner,kind,blob_id,metadata) VALUES(?1,?2,?3,?4)",
                 params![owner, RetentionKind::Snapshot as i32, value.id, metadata],

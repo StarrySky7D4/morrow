@@ -1772,6 +1772,96 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => 'Отменить подготовленный план';
+
+  @override
+  String get pluginsFileMutationCleanupError => 'Ошибка освобождения задачи';
+
+  @override
+  String get pluginsFileMutationContentLength => 'Размер содержимого';
+
+  @override
+  String get pluginsFileMutationContentSha256 => 'SHA-256 содержимого';
+
+  @override
+  String get pluginsFileMutationEmptyContent => 'Создать пустой файл';
+
+  @override
+  String get pluginsFileMutationExecute => 'Выполнить подготовленную операцию';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => 'Создать этот файл';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm =>
+      'Удалить этот файл навсегда';
+
+  @override
+  String get pluginsFileMutationExecuteTitle =>
+      'Подтверждение операции с файлом';
+
+  @override
+  String get pluginsFileMutationFailure =>
+      'Операция с файлом требует внимания. Перед дальнейшими действиями проверьте её состояние.';
+
+  @override
+  String get pluginsFileMutationFileName => 'Имя нового файла';
+
+  @override
+  String get pluginsFileMutationFileTooLarge =>
+      'Размер содержимого превышает 16 МиБ.';
+
+  @override
+  String get pluginsFileMutationIntro =>
+      'Выберите разрешённый плагин и локальный объект. Проверьте операцию перед подготовкой, затем отдельно подтвердите выполнение.';
+
+  @override
+  String get pluginsFileMutationOperationError => 'Ошибка операции';
+
+  @override
+  String get pluginsFileMutationPickContent =>
+      'Выбрать файл содержимого (необязательно)';
+
+  @override
+  String get pluginsFileMutationPickDirectory => 'Выбрать папку';
+
+  @override
+  String get pluginsFileMutationPickFile => 'Выбрать файл';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => 'Подготовить операцию';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => 'Проверка операции с файлом';
+
+  @override
+  String get pluginsFileMutationQuery => 'Проверить историю операции';
+
+  @override
+  String get pluginsFileMutationRecovery => 'Открыть восстановление файлов';
+
+  @override
+  String get pluginsFileMutationRecoveryHint =>
+      'После закрытия задачи и подтверждения завершения проверьте исходную операцию в разделе восстановления файлов.';
+
+  @override
+  String get pluginsFileMutationReview => 'Проверить и подготовить';
+
+  @override
+  String get pluginsFileMutationScopeChanged =>
+      'Разрешения плагина изменились. Проверьте операцию заново.';
+
+  @override
+  String get pluginsFileMutationSelectionRequired =>
+      'Сначала выберите объект и плагин.';
+
+  @override
+  String get pluginsFileMutationTarget => 'Объект';
+
+  @override
+  String get pluginsFileMutationTitle => 'Создание и удаление файлов';
+
+  @override
   String get pluginsFileTaskBudgets =>
       'Одобренные лимиты плагина могут быть ниже. При проверке сохраняются хеш и не более 4096 байт предпросмотра.';
 
@@ -1861,6 +1951,72 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => 'Прочитать и проверить';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      'Лимиты должны быть положительными и не превышать заявленные пределы. Суммарный лимит должен быть не меньше лимита на задание.';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      'Разрешение действует не более 30 секунд. По истечении срока остановите задание и дождитесь завершения; при необходимости выполните восстановление, подтвердите освобождение ресурсов и заново проверьте план.';
+
+  @override
+  String get pluginsGuestExecutionDraft => 'Подтвердить лимиты и создать план';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      'Локальный срок одобрения истёк. Остановите задание и дождитесь завершения; следуя подсказкам, выполните восстановление и подтвердите освобождение ресурсов. Проверьте результат уже отправленной операции. Не выполняйте её повторно.';
+
+  @override
+  String get pluginsGuestExecutionFrame => 'Результат выполнения плагина';
+
+  @override
+  String get pluginsGuestExecutionHostQuery =>
+      'Запросить историю исходного хоста';
+
+  @override
+  String get pluginsGuestExecutionIntro =>
+      'Проверьте исходный план, затем отдельно подтвердите подготовку и выполнение. Подготовка не создаёт и не удаляет целевой файл.';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => 'Разрешено байт на задание';
+
+  @override
+  String get pluginsGuestExecutionNoReplay =>
+      'Результат неизвестен; команды плагина и файловые операции не повторяются автоматически.';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget =>
+      'Плагин использует обычные лимиты; расширенные лимиты не предоставляются.';
+
+  @override
+  String get pluginsGuestExecutionOwner => 'Результат проверки хоста';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => 'SHA-256 исходного плана';
+
+  @override
+  String get pluginsGuestExecutionRelease => 'Освободить задание';
+
+  @override
+  String get pluginsGuestExecutionTitle =>
+      'Создание и удаление файлов плагином';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => 'Разрешено байт суммарно';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return 'Заявленный предел: $maxJobBytes байт на задание; всего $maxBytes байт.';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      'Это пределы пакета, а не действующее разрешение. Каждая операция требует отдельного подтверждения.';
+
+  @override
+  String get pluginsGuestMutationDeclared =>
+      'Пакет заявляет изменение файлов гостевым кодом.';
 
   @override
   String get pluginsHttpTaskAbandon => 'Завершить наблюдение за попыткой';
@@ -2261,6 +2417,110 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get pluginsManagementUnavailable =>
       'Управление плагинами недоступно. Существующее содержимое можно читать.';
+
+  @override
+  String get pluginsMutationAbsent => 'Совпадающая запись не найдена';
+
+  @override
+  String get pluginsMutationCancelled => 'Отменено до выполнения';
+
+  @override
+  String get pluginsMutationCheckpoint =>
+      'Позиция поиска действительна только в текущем сеансе хоста. После очистки задачи можно продолжить.';
+
+  @override
+  String get pluginsMutationCleanup =>
+      'Завершите поиск и убедитесь, что задача завершилась, прежде чем проверять выбранный план.';
+
+  @override
+  String get pluginsMutationContinue => 'Продолжить с сохранённого места';
+
+  @override
+  String get pluginsMutationDiscover => 'Найти исходные планы';
+
+  @override
+  String get pluginsMutationDone => 'Текущий поиск завершён';
+
+  @override
+  String get pluginsMutationEmpty =>
+      'На этой странице нет подходящих планов; могут быть следующие страницы.';
+
+  @override
+  String get pluginsMutationFormError =>
+      'Не удалось отправить запрос на восстановление. Проверьте субъект, область плагина и срок задачи.';
+
+  @override
+  String get pluginsMutationIntro =>
+      'Найдите и проверьте существующие планы в режиме только чтения. Файловые операции не выполняются повторно.';
+
+  @override
+  String get pluginsMutationLastResult => 'Последний результат проверки';
+
+  @override
+  String get pluginsMutationNext => 'Прочитать следующую страницу';
+
+  @override
+  String get pluginsMutationObserved => 'Имеется запись наблюдения';
+
+  @override
+  String get pluginsMutationPage => 'Последняя найденная страница';
+
+  @override
+  String get pluginsMutationPlan => 'Исходный план';
+
+  @override
+  String get pluginsMutationPrepared =>
+      'Подготовлено; результат файловой операции не подтверждён';
+
+  @override
+  String get pluginsMutationReconcile => 'Проверить выбранный план';
+
+  @override
+  String get pluginsMutationRejected =>
+      'Операционная система отклонила операцию';
+
+  @override
+  String get pluginsMutationRelease => 'Завершить поиск';
+
+  @override
+  String get pluginsMutationResultLost =>
+      'Результат этой страницы утерян. Очистите задачу и продолжите с последней сохранённой позиции либо начните поиск заново.';
+
+  @override
+  String get pluginsMutationRetry =>
+      'Повторно получить подтверждение исходной отправки';
+
+  @override
+  String get pluginsMutationScopeUnavailable =>
+      'Область исходного плана сейчас недоступна. Обновите каталог плагинов и проверьте разрешения.';
+
+  @override
+  String get pluginsMutationSelectPlan => 'Выбрать план для проверки';
+
+  @override
+  String get pluginsMutationSelected => 'Выбранный план сохранён';
+
+  @override
+  String get pluginsMutationSubject => 'Субъект исходной операции';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      'Подтверждение отправки не определено. Обновите статус и явно получите только исходное подтверждение; не создавайте повторный запрос.';
+
+  @override
+  String get pluginsMutationSucceeded =>
+      'Операционная система подтвердила успех';
+
+  @override
+  String get pluginsMutationTitle => 'Восстановление файловых изменений';
+
+  @override
+  String get pluginsMutationUnknown =>
+      'Результат неизвестен; автоматического повтора не будет';
+
+  @override
+  String get pluginsMutationUnspecified =>
+      'Нет подтверждения результата файловой операции';
 
   @override
   String get pluginsNoPermissions => 'Разрешения для содержимого не заявлены.';

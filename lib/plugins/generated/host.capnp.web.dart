@@ -137,6 +137,18 @@ enum Action {
   fileChunk,
   fileFinish,
   fileRead,
+  mutationStart,
+  mutationSubmit,
+  mutationStatus,
+  mutationRead,
+  mutationCancelCommand,
+  mutationReconcile,
+  mutationDiscover,
+  guestMutationStart,
+  guestMutationSubmit,
+  guestMutationStatus,
+  guestMutationRead,
+  guestMutationCancelCommand,
 }
 
 Action? actionFromUint16(int v) =>
@@ -285,6 +297,41 @@ final class RequestReader extends StructReader {
   FileStartReader? get fileStart => getStructFieldWith(
     40,
     (r) => FileStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationStartReader? get mutationStart => getStructFieldWith(
+    41,
+    (r) => MutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationCommandReader? get mutationCommand => getStructFieldWith(
+    42,
+    (r) => MutationCommandReader(r, capabilities: capabilityTable),
+  );
+
+  int get mutationCommandId => _checkedWireInt(mutationCommandIdBigInt);
+  BigInt get mutationCommandIdBigInt =>
+      ((BigInt.from(getUint32Field(60).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(56).toUnsigned(32)));
+
+  MutationReconcileReader? get mutationReconcile => getStructFieldWith(
+    43,
+    (r) => MutationReconcileReader(r, capabilities: capabilityTable),
+  );
+
+  MutationDiscoverReader? get mutationDiscover => getStructFieldWith(
+    44,
+    (r) => MutationDiscoverReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationStartReader? get guestMutationStart => getStructFieldWith(
+    45,
+    (r) => GuestMutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationCommandReader? get guestMutationCommand => getStructFieldWith(
+    46,
+    (r) => GuestMutationCommandReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -570,14 +617,66 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasFileStart() => hasPointerField(40);
+
+  MutationStartBuilder initMutationStart() {
+    return initStructFieldWith(41, (r) => MutationStartBuilder(r), 2, 7);
+  }
+
+  bool hasMutationStart() => hasPointerField(41);
+
+  MutationCommandBuilder initMutationCommand() {
+    return initStructFieldWith(42, (r) => MutationCommandBuilder(r), 3, 5);
+  }
+
+  bool hasMutationCommand() => hasPointerField(42);
+
+  set mutationCommandId(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    mutationCommandIdBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set mutationCommandIdBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field mutationCommandId');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(56, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(60, (bits >> 32).toInt());
+  }
+
+  MutationReconcileBuilder initMutationReconcile() {
+    return initStructFieldWith(43, (r) => MutationReconcileBuilder(r), 2, 4);
+  }
+
+  bool hasMutationReconcile() => hasPointerField(43);
+
+  MutationDiscoverBuilder initMutationDiscover() {
+    return initStructFieldWith(44, (r) => MutationDiscoverBuilder(r), 2, 5);
+  }
+
+  bool hasMutationDiscover() => hasPointerField(44);
+
+  GuestMutationStartBuilder initGuestMutationStart() {
+    return initStructFieldWith(45, (r) => GuestMutationStartBuilder(r), 0, 2);
+  }
+
+  bool hasGuestMutationStart() => hasPointerField(45);
+
+  GuestMutationCommandBuilder initGuestMutationCommand() {
+    return initStructFieldWith(46, (r) => GuestMutationCommandBuilder(r), 3, 5);
+  }
+
+  bool hasGuestMutationCommand() => hasPointerField(46);
 }
 
 final class _RequestFactory
     extends StructFactory<RequestReader, RequestBuilder> {
   @override
-  int get dataWords => 7;
+  int get dataWords => 8;
   @override
-  int get ptrWords => 41;
+  int get ptrWords => 47;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -753,6 +852,31 @@ final class ResponseReader extends StructReader {
     34,
     (r) => FileResultReader(r, capabilities: capabilityTable),
   );
+
+  MutationStateReader? get mutationState => getStructFieldWith(
+    35,
+    (r) => MutationStateReader(r, capabilities: capabilityTable),
+  );
+
+  MutationResultReader? get mutationResult => getStructFieldWith(
+    36,
+    (r) => MutationResultReader(r, capabilities: capabilityTable),
+  );
+
+  int get mutationCommandId => _checkedWireInt(mutationCommandIdBigInt);
+  BigInt get mutationCommandIdBigInt =>
+      ((BigInt.from(getUint32Field(52).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(48).toUnsigned(32)));
+
+  GuestMutationStateReader? get guestMutationState => getStructFieldWith(
+    37,
+    (r) => GuestMutationStateReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationResultReader? get guestMutationResult => getStructFieldWith(
+    38,
+    (r) => GuestMutationResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -919,7 +1043,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      12,
+      13,
     );
   }
 
@@ -1070,14 +1194,54 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasFileResult() => hasPointerField(34);
+
+  MutationStateBuilder initMutationState() {
+    return initStructFieldWith(35, (r) => MutationStateBuilder(r), 2, 2);
+  }
+
+  bool hasMutationState() => hasPointerField(35);
+
+  MutationResultBuilder initMutationResult() {
+    return initStructFieldWith(36, (r) => MutationResultBuilder(r), 4, 8);
+  }
+
+  bool hasMutationResult() => hasPointerField(36);
+
+  set mutationCommandId(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    mutationCommandIdBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set mutationCommandIdBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field mutationCommandId');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(48, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(52, (bits >> 32).toInt());
+  }
+
+  GuestMutationStateBuilder initGuestMutationState() {
+    return initStructFieldWith(37, (r) => GuestMutationStateBuilder(r), 3, 3);
+  }
+
+  bool hasGuestMutationState() => hasPointerField(37);
+
+  GuestMutationResultBuilder initGuestMutationResult() {
+    return initStructFieldWith(38, (r) => GuestMutationResultBuilder(r), 1, 2);
+  }
+
+  bool hasGuestMutationResult() => hasPointerField(38);
 }
 
 final class _ResponseFactory
     extends StructFactory<ResponseReader, ResponseBuilder> {
   @override
-  int get dataWords => 6;
+  int get dataWords => 7;
   @override
-  int get ptrWords => 35;
+  int get ptrWords => 39;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -2310,6 +2474,13 @@ final class PluginEntryReader extends StructReader {
   ListReader<String?>? get approvedIo => getTextListField(10);
 
   ListReader<String?>? get ioHandlers => getTextListField(11);
+
+  bool get mutationSupported => getBoolField(3);
+
+  MutationBudgetReader? get mutationBudget => getStructFieldWith(
+    12,
+    (r) => MutationBudgetReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -2383,6 +2554,16 @@ final class PluginEntryBuilder extends StructBuilder {
   ListBuilder<String?> initIoHandlers(int length) {
     return initTextListField(11, length);
   }
+
+  set mutationSupported(bool v) {
+    setBoolField(3, v);
+  }
+
+  MutationBudgetBuilder initMutationBudget() {
+    return initStructFieldWith(12, (r) => MutationBudgetBuilder(r), 2, 0);
+  }
+
+  bool hasMutationBudget() => hasPointerField(12);
 }
 
 final class _PluginEntryFactory
@@ -2390,7 +2571,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 12;
+  int get ptrWords => 13;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -2404,6 +2585,80 @@ final class _PluginEntryFactory
 }
 
 final pluginEntryFactory = _PluginEntryFactory();
+
+final class MutationBudgetReader extends StructReader {
+  MutationBudgetReader(super.raw, {super.capabilities});
+
+  int get maxJobBytes => _checkedWireInt(maxJobBytesBigInt);
+  BigInt get maxJobBytesBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get maxBytes => _checkedWireInt(maxBytesBigInt);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+}
+
+final class MutationBudgetBuilder extends StructBuilder {
+  MutationBudgetBuilder(super.raw);
+
+  @override
+  MutationBudgetReader asReader() => MutationBudgetReader(rawToReader());
+
+  set maxJobBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxJobBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxJobBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxJobBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set maxBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    maxBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+}
+
+final class _MutationBudgetFactory
+    extends StructFactory<MutationBudgetReader, MutationBudgetBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 0;
+  @override
+  MutationBudgetReader fromRawReader(RawStructReader r) =>
+      MutationBudgetReader(r);
+  @override
+  MutationBudgetReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationBudgetReader(r, capabilities: capabilities);
+  @override
+  MutationBudgetBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationBudgetBuilder(r);
+}
+
+final mutationBudgetFactory = _MutationBudgetFactory();
 
 final class CredentialInfoReader extends StructReader {
   CredentialInfoReader(super.raw, {super.capabilities});
@@ -4406,6 +4661,1046 @@ final class _FileResultFactory
 }
 
 final fileResultFactory = _FileResultFactory();
+
+final class MutationStartReader extends StructReader {
+  MutationStartReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get disposition => getUint16Field(8);
+
+  String? get selectedPath => getTextField(3);
+
+  String? get relativePath => getTextField(4);
+
+  String? get subject => getTextField(5);
+
+  Uint8List? get approvalSha256 => getDataField(6);
+
+  int get timeoutMs => getUint32Field(12);
+}
+
+final class MutationStartBuilder extends StructBuilder {
+  MutationStartBuilder(super.raw);
+
+  @override
+  MutationStartReader asReader() => MutationStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set disposition(int v) {
+    setUint16Field(8, v);
+  }
+
+  set selectedPath(String? v) {
+    setTextField(3, v);
+  }
+
+  set relativePath(String? v) {
+    setTextField(4, v);
+  }
+
+  set subject(String? v) {
+    setTextField(5, v);
+  }
+
+  set approvalSha256(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+}
+
+final class _MutationStartFactory
+    extends StructFactory<MutationStartReader, MutationStartBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 7;
+  @override
+  MutationStartReader fromRawReader(RawStructReader r) =>
+      MutationStartReader(r);
+  @override
+  MutationStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationStartReader(r, capabilities: capabilities);
+  @override
+  MutationStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationStartBuilder(r);
+}
+
+final mutationStartFactory = _MutationStartFactory();
+
+final class MutationReconcileReader extends StructReader {
+  MutationReconcileReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get plan => getDataField(3);
+
+  int get timeoutMs => getUint32Field(8);
+}
+
+final class MutationReconcileBuilder extends StructBuilder {
+  MutationReconcileBuilder(super.raw);
+
+  @override
+  MutationReconcileReader asReader() => MutationReconcileReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(8, v);
+  }
+}
+
+final class _MutationReconcileFactory
+    extends StructFactory<MutationReconcileReader, MutationReconcileBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 4;
+  @override
+  MutationReconcileReader fromRawReader(RawStructReader r) =>
+      MutationReconcileReader(r);
+  @override
+  MutationReconcileReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationReconcileReader(r, capabilities: capabilities);
+  @override
+  MutationReconcileBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationReconcileBuilder(r);
+}
+
+final mutationReconcileFactory = _MutationReconcileFactory();
+
+final class MutationDiscoverReader extends StructReader {
+  MutationDiscoverReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => _checkedWireInt(registryRevisionBigInt);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get subject => getTextField(3);
+
+  int get disposition => getUint16Field(8);
+
+  int get scanLimit => getUint16Field(10);
+
+  int get timeoutMs => getUint32Field(12);
+
+  Uint8List? get checkpoint => getDataField(4);
+}
+
+final class MutationDiscoverBuilder extends StructBuilder {
+  MutationDiscoverBuilder(super.raw);
+
+  @override
+  MutationDiscoverReader asReader() => MutationDiscoverReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    registryRevisionBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set subject(String? v) {
+    setTextField(3, v);
+  }
+
+  set disposition(int v) {
+    setUint16Field(8, v);
+  }
+
+  set scanLimit(int v) {
+    setUint16Field(10, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+
+  set checkpoint(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _MutationDiscoverFactory
+    extends StructFactory<MutationDiscoverReader, MutationDiscoverBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 5;
+  @override
+  MutationDiscoverReader fromRawReader(RawStructReader r) =>
+      MutationDiscoverReader(r);
+  @override
+  MutationDiscoverReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationDiscoverReader(r, capabilities: capabilities);
+  @override
+  MutationDiscoverBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationDiscoverBuilder(r);
+}
+
+final mutationDiscoverFactory = _MutationDiscoverFactory();
+
+final class MutationCommandReader extends StructReader {
+  MutationCommandReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get plan => getDataField(1);
+
+  int get offset => _checkedWireInt(offsetBigInt);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(2);
+
+  String? get operationId => getTextField(3);
+
+  int get contentLength => _checkedWireInt(contentLengthBigInt);
+  BigInt get contentLengthBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get contentSha256 => getDataField(4);
+
+  int get scanLimit => getUint16Field(2);
+}
+
+final class MutationCommandBuilder extends StructBuilder {
+  MutationCommandBuilder(super.raw);
+
+  @override
+  MutationCommandReader asReader() => MutationCommandReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set offset(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    offsetBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(3, v);
+  }
+
+  set contentLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    contentLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set contentLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field contentLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set scanLimit(int v) {
+    setUint16Field(2, v);
+  }
+}
+
+final class _MutationCommandFactory
+    extends StructFactory<MutationCommandReader, MutationCommandBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  MutationCommandReader fromRawReader(RawStructReader r) =>
+      MutationCommandReader(r);
+  @override
+  MutationCommandReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationCommandReader(r, capabilities: capabilities);
+  @override
+  MutationCommandBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationCommandBuilder(r);
+}
+
+final mutationCommandFactory = _MutationCommandFactory();
+
+final class MutationStateReader extends StructReader {
+  MutationStateReader(super.raw, {super.capabilities});
+
+  int get command => _checkedWireInt(commandBigInt);
+  BigInt get commandBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get kind => getUint16Field(8);
+
+  int get delivery => getUint16Field(10);
+
+  bool get selected => getBoolField(96);
+
+  bool get reconcileRequired => getBoolField(97);
+
+  bool get terminal => getBoolField(98);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+}
+
+final class MutationStateBuilder extends StructBuilder {
+  MutationStateBuilder(super.raw);
+
+  @override
+  MutationStateReader asReader() => MutationStateReader(rawToReader());
+
+  set command(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    commandBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set commandBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field command');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(10, v);
+  }
+
+  set selected(bool v) {
+    setBoolField(96, v);
+  }
+
+  set reconcileRequired(bool v) {
+    setBoolField(97, v);
+  }
+
+  set terminal(bool v) {
+    setBoolField(98, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _MutationStateFactory
+    extends StructFactory<MutationStateReader, MutationStateBuilder> {
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 2;
+  @override
+  MutationStateReader fromRawReader(RawStructReader r) =>
+      MutationStateReader(r);
+  @override
+  MutationStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationStateReader(r, capabilities: capabilities);
+  @override
+  MutationStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationStateBuilder(r);
+}
+
+final mutationStateFactory = _MutationStateFactory();
+
+final class MutationResultReader extends StructReader {
+  MutationResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+
+  Uint8List? get record => getDataField(2);
+
+  Uint8List? get outcome => getDataField(3);
+
+  int get stagedBytes => _checkedWireInt(stagedBytesBigInt);
+  BigInt get stagedBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  bool get durableContent => getBoolField(16);
+
+  int get failureLayer => getUint16Field(4);
+
+  int get failureCode => getUint16Field(6);
+
+  int get phase => getUint16Field(16);
+
+  String? get operationId => getTextField(4);
+
+  int get effect => getUint16Field(18);
+
+  int get osCode => getUint32Field(20);
+
+  Uint8List? get plan => getDataField(5);
+
+  ListReader<Uint8List?>? get plans => getDataListField(6);
+
+  int get scanned => getUint32Field(24);
+
+  bool get done => getBoolField(17);
+
+  Uint8List? get checkpoint => getDataField(7);
+}
+
+final class MutationResultBuilder extends StructBuilder {
+  MutationResultBuilder(super.raw);
+
+  @override
+  MutationResultReader asReader() => MutationResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set record(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set outcome(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set stagedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    stagedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set stagedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field stagedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set durableContent(bool v) {
+    setBoolField(16, v);
+  }
+
+  set failureLayer(int v) {
+    setUint16Field(4, v);
+  }
+
+  set failureCode(int v) {
+    setUint16Field(6, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(16, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(4, v);
+  }
+
+  set effect(int v) {
+    setUint16Field(18, v);
+  }
+
+  set osCode(int v) {
+    setUint32Field(20, v);
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  ListBuilder<Uint8List?> initPlans(int length) {
+    return initDataListField(6, length);
+  }
+
+  set scanned(int v) {
+    setUint32Field(24, v);
+  }
+
+  set done(bool v) {
+    setBoolField(17, v);
+  }
+
+  set checkpoint(Uint8List? v) {
+    setDataField(7, v);
+  }
+}
+
+final class _MutationResultFactory
+    extends StructFactory<MutationResultReader, MutationResultBuilder> {
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 8;
+  @override
+  MutationResultReader fromRawReader(RawStructReader r) =>
+      MutationResultReader(r);
+  @override
+  MutationResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationResultReader(r, capabilities: capabilities);
+  @override
+  MutationResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationResultBuilder(r);
+}
+
+final mutationResultFactory = _MutationResultFactory();
+
+final class GuestMutationStartReader extends StructReader {
+  GuestMutationStartReader(super.raw, {super.capabilities});
+
+  MutationStartReader? get selection => getStructFieldWith(
+    0,
+    (r) => MutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationBudgetReader? get approvedBudget => getStructFieldWith(
+    1,
+    (r) => MutationBudgetReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class GuestMutationStartBuilder extends StructBuilder {
+  GuestMutationStartBuilder(super.raw);
+
+  @override
+  GuestMutationStartReader asReader() =>
+      GuestMutationStartReader(rawToReader());
+
+  MutationStartBuilder initSelection() {
+    return initStructFieldWith(0, (r) => MutationStartBuilder(r), 2, 7);
+  }
+
+  bool hasSelection() => hasPointerField(0);
+
+  MutationBudgetBuilder initApprovedBudget() {
+    return initStructFieldWith(1, (r) => MutationBudgetBuilder(r), 2, 0);
+  }
+
+  bool hasApprovedBudget() => hasPointerField(1);
+}
+
+final class _GuestMutationStartFactory
+    extends StructFactory<GuestMutationStartReader, GuestMutationStartBuilder> {
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  GuestMutationStartReader fromRawReader(RawStructReader r) =>
+      GuestMutationStartReader(r);
+  @override
+  GuestMutationStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationStartReader(r, capabilities: capabilities);
+  @override
+  GuestMutationStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationStartBuilder(r);
+}
+
+final guestMutationStartFactory = _GuestMutationStartFactory();
+
+final class GuestMutationCommandReader extends StructReader {
+  GuestMutationCommandReader(super.raw, {super.capabilities});
+
+  Uint8List? get submission => getDataField(0);
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get planSha256 => getDataField(1);
+
+  int get offset => _checkedWireInt(offsetBigInt);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(2);
+
+  String? get operationId => getTextField(3);
+
+  int get contentLength => _checkedWireInt(contentLengthBigInt);
+  BigInt get contentLengthBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get contentSha256 => getDataField(4);
+}
+
+final class GuestMutationCommandBuilder extends StructBuilder {
+  GuestMutationCommandBuilder(super.raw);
+
+  @override
+  GuestMutationCommandReader asReader() =>
+      GuestMutationCommandReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set planSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set offset(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    offsetBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(3, v);
+  }
+
+  set contentLength(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    contentLengthBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set contentLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field contentLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _GuestMutationCommandFactory
+    extends
+        StructFactory<GuestMutationCommandReader, GuestMutationCommandBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  GuestMutationCommandReader fromRawReader(RawStructReader r) =>
+      GuestMutationCommandReader(r);
+  @override
+  GuestMutationCommandReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationCommandReader(r, capabilities: capabilities);
+  @override
+  GuestMutationCommandBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationCommandBuilder(r);
+}
+
+final guestMutationCommandFactory = _GuestMutationCommandFactory();
+
+final class GuestMutationStateReader extends StructReader {
+  GuestMutationStateReader(super.raw, {super.capabilities});
+
+  int get command => _checkedWireInt(commandBigInt);
+  BigInt get commandBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get kind => getUint16Field(8);
+
+  int get delivery => getUint16Field(10);
+
+  bool get selected => getBoolField(96);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+
+  Uint8List? get reviewedPlanSha256 => getDataField(2);
+
+  bool get approvalDelivered => getBoolField(97);
+
+  bool get permitDelivered => getBoolField(98);
+
+  int get stagedBytes => _checkedWireInt(stagedBytesBigInt);
+  BigInt get stagedBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  bool get durableContent => getBoolField(99);
+
+  bool get effectAttempted => getBoolField(100);
+
+  bool get reconcileRequired => getBoolField(101);
+
+  bool get terminal => getBoolField(102);
+}
+
+final class GuestMutationStateBuilder extends StructBuilder {
+  GuestMutationStateBuilder(super.raw);
+
+  @override
+  GuestMutationStateReader asReader() =>
+      GuestMutationStateReader(rawToReader());
+
+  set command(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    commandBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set commandBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field command');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(10, v);
+  }
+
+  set selected(bool v) {
+    setBoolField(96, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set reviewedPlanSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set approvalDelivered(bool v) {
+    setBoolField(97, v);
+  }
+
+  set permitDelivered(bool v) {
+    setBoolField(98, v);
+  }
+
+  set stagedBytes(int v) {
+    if (BigInt.from(v).abs() > BigInt.from(9007199254740991)) {
+      throw RangeError('Use the BigInt field for an exact 64-bit value');
+    }
+    stagedBytesBigInt = BigInt.from(v).toUnsigned(64);
+  }
+
+  set stagedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field stagedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set durableContent(bool v) {
+    setBoolField(99, v);
+  }
+
+  set effectAttempted(bool v) {
+    setBoolField(100, v);
+  }
+
+  set reconcileRequired(bool v) {
+    setBoolField(101, v);
+  }
+
+  set terminal(bool v) {
+    setBoolField(102, v);
+  }
+}
+
+final class _GuestMutationStateFactory
+    extends StructFactory<GuestMutationStateReader, GuestMutationStateBuilder> {
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 3;
+  @override
+  GuestMutationStateReader fromRawReader(RawStructReader r) =>
+      GuestMutationStateReader(r);
+  @override
+  GuestMutationStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationStateReader(r, capabilities: capabilities);
+  @override
+  GuestMutationStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationStateBuilder(r);
+}
+
+final guestMutationStateFactory = _GuestMutationStateFactory();
+
+final class GuestMutationResultReader extends StructReader {
+  GuestMutationResultReader(super.raw, {super.capabilities});
+
+  int get kind => getUint16Field(0);
+
+  MutationResultReader? get owner => getStructFieldWith(
+    0,
+    (r) => MutationResultReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get frame => getDataField(1);
+
+  int get failureKind => getUint16Field(2);
+
+  int get failureCode => getUint16Field(4);
+}
+
+final class GuestMutationResultBuilder extends StructBuilder {
+  GuestMutationResultBuilder(super.raw);
+
+  @override
+  GuestMutationResultReader asReader() =>
+      GuestMutationResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  MutationResultBuilder initOwner() {
+    return initStructFieldWith(0, (r) => MutationResultBuilder(r), 4, 8);
+  }
+
+  bool hasOwner() => hasPointerField(0);
+
+  set frame(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set failureKind(int v) {
+    setUint16Field(2, v);
+  }
+
+  set failureCode(int v) {
+    setUint16Field(4, v);
+  }
+}
+
+final class _GuestMutationResultFactory
+    extends
+        StructFactory<GuestMutationResultReader, GuestMutationResultBuilder> {
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  GuestMutationResultReader fromRawReader(RawStructReader r) =>
+      GuestMutationResultReader(r);
+  @override
+  GuestMutationResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationResultReader(r, capabilities: capabilities);
+  @override
+  GuestMutationResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationResultBuilder(r);
+}
+
+final guestMutationResultFactory = _GuestMutationResultFactory();
 
 int _checkedWireInt(BigInt value) {
   final signed = value.toSigned(64);

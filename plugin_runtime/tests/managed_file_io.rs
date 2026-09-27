@@ -67,6 +67,16 @@ impl Fixture {
         wasm: Vec<u8>,
     ) -> Self {
         let dir = tempfile::tempdir().unwrap();
+        Self::with_module_at(dir, approve, resources, bytes, declared, wasm)
+    }
+    fn with_module_at(
+        dir: tempfile::TempDir,
+        approve: bool,
+        resources: u32,
+        bytes: u64,
+        declared: BTreeSet<IoCapability>,
+        wasm: Vec<u8>,
+    ) -> Self {
         let mut manifest = Package::manifest_for_task(ID, "1.0.0", &wasm, vec![]);
         let mut declaration =
             io::declaration(declared.iter().copied().collect(), vec![HANDLER.into()]);
@@ -811,3 +821,38 @@ fn managed_run_rejects_duplicate_io_forged_completion_and_core_exchange() {
 
 #[path = "support/selected_file.rs"]
 mod selected_file;
+
+#[cfg(windows)]
+#[path = "support/mutation_target.rs"]
+mod mutation_target;
+
+#[cfg(windows)]
+#[path = "support/file_delete.rs"]
+mod file_delete;
+
+#[cfg(all(windows, feature = "fault-injection"))]
+#[path = "support/file_delete_crash.rs"]
+mod file_delete_crash;
+
+#[cfg(windows)]
+#[path = "support/create_target.rs"]
+mod create_target;
+
+#[cfg(windows)]
+#[path = "support/file_create.rs"]
+mod file_create;
+
+#[cfg(all(windows, feature = "fault-injection"))]
+#[path = "support/file_create_crash.rs"]
+mod file_create_crash;
+
+#[cfg(windows)]
+#[path = "support/file_replace.rs"]
+mod file_replace;
+
+#[cfg(windows)]
+#[path = "support/mutation_control.rs"]
+mod mutation_control;
+#[cfg(windows)]
+#[path = "support/preparation_control.rs"]
+mod preparation_control;

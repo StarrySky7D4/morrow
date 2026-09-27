@@ -7,6 +7,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_i18n/morrow_i18n.dart';
 import 'package:morrow_studio/plugins/endpoint_control.dart';
 import 'package:morrow_studio/plugins/http_task_manager.dart';
+import 'package:morrow_studio/plugins/file_task_models.dart';
+import 'package:morrow_studio/plugins/file_task_session.dart';
 import 'package:morrow_studio/plugins/io_task_control.dart';
 import 'package:morrow_studio/plugins/plugin_library.dart';
 
@@ -234,6 +236,20 @@ class FakeTasks implements WorkbenchIoTaskControl {
   }
 }
 
+class LostFileStart implements FileTaskBackend {
+  final reply = Completer<IoTaskSnapshot>();
+  int starts = 0;
+  @override
+  Future<IoTaskSnapshot> startFile(FileTaskRequest request) {
+    starts++;
+    return reply.future;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw StateError('Unexpected file operation: ${invocation.memberName}');
+}
+
 Widget page(
   FakeTasks tasks,
   FakeEndpoints endpoints, {
@@ -243,6 +259,7 @@ Widget page(
   String locale = 'en',
   bool visible = true,
   VoidCallback? onChanged,
+  FileTaskSession? fileSession,
 }) => MaterialApp(
   locale: Locale(locale),
   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -252,6 +269,7 @@ Widget page(
       enabled: visible,
       child: SingleChildScrollView(
         child: HttpTaskManager(
+          fileSession: fileSession,
           backend: tasks,
           endpointBackend: endpoints,
           plugins: plugins ?? [plugin()],
@@ -333,6 +351,62 @@ Future<void> disposePage(WidgetTester tester) async {
 }
 
 void main() {
+  testWidgets(
+    'file attempt including Unknown suspends HTTP controls and polling without losing its draft',
+    (t) async {
+      final tasks = FakeTasks(), endpoints = FakeEndpoints();
+      final files = LostFileStart();
+      final fileSession = FileTaskSession(files, tasks);
+      await fileSession.refresh();
+      await t.pumpWidget(page(tasks, endpoints, fileSession: fileSession));
+      await settle(t);
+      await enter(t, 'target', '/keep-my-draft');
+      final pending = fileSession.start(
+        FileTaskRequest(
+          submission: identity(9),
+          packageId: 'org.example.file',
+          packageDigest: identity(4),
+          registryRevision: BigInt.one,
+          handler: 'file.read-selected',
+          selectedPath: '/chosen',
+          maxBytes: BigInt.from(1024),
+          timeoutMs: 1000,
+        ),
+      );
+      await settle(t);
+      expect(enabled(t, 'start'), isFalse);
+      expect(enabled(t, 'read'), isFalse);
+      expect(enabled(t, 'cancel'), isFalse);
+      final statusCount = tasks.statuses;
+      await t.pump(const Duration(seconds: 3));
+      expect(tasks.statuses, statusCount);
+      expect(tasks.polls, isEmpty);
+      files.reply.completeError(StateError('lost acknowledgement'));
+      await pending;
+      await settle(t);
+      expect(fileSession.phase, FileTaskPhase.unknown);
+      expect(enabled(t, 'start'), isFalse);
+      expect(tasks.starts, isEmpty);
+      expect(tasks.reads, isEmpty);
+      expect(tasks.cancels, isEmpty);
+      await fileSession.refresh();
+      expect(fileSession.canAbandon, isTrue);
+      fileSession.abandon();
+      await settle(t);
+      expect(find.byKey(const ValueKey('http-task-target')), findsOneWidget);
+      expect(
+        t
+            .widget<TextField>(find.byKey(const ValueKey('http-task-target')))
+            .controller!
+            .text,
+        '/keep-my-draft',
+      );
+      expect(files.starts, 1);
+      expect(tasks.starts, isEmpty);
+      await disposePage(t);
+    },
+  );
+
   testWidgets(
     'HTTP drafts survive remount with selection; hidden views stop polling',
     (t) async {

@@ -101,6 +101,8 @@ Pool::run_io_task(&mut self, manager: &Manager, host: &mut HostRuntime,
 
 写入分阶段：`beginWrite(target, disposition, expectedIdentity/version, expectedLength)`→分块 staged→`commitWrite`→查询稳定结果。create 使用不可覆盖语义；replace 必须专门批准且复核预期对象，平台不能提供条件替换时返回不支持，不能偷偷改成无条件覆盖。删除首期仅明确选定普通文件，禁止递归删除；rename／移动、符号链接、设备与可执行文件加载不在首版。文件变更不等于卡片变更，导入附件仍须走既有内容提交 API。
 
+2026-09-27 平台核验：Windows 当前 `TargetBroker::replace` 在原选择校验后明确返回 `UnsupportedConditionalReplacement`，不 claim 或改变文件。NTFS 原型中，原对象 share=0 阻止 POSIX replacement；放宽 DELETE 共享虽可发布，但会覆盖并发新目标，不能满足条件语义。Core 已有独立 Replace 结果和 claim／observe 事务，不能据此推导 OS 执行可用。实际测量及限制见 [报告](../reports/file-replace-boundary-2026-09-27.md)。
+
 外部写入与 SQLite 审计不能成为一个原子事务。先将稳定 operationId、目标说明、原请求摘要与预期效果写入持久意图，再执行副作用，再保存结果；崩溃间隙标 `OutcomeUnknown`，通过目标状态与已录制凭据核对，不能猜测未写入或自动换 ID 重试。写入撤权后丢弃未发布 staged；已完成外部效果不能因取消而被宣称回滚。临时文件／spool 删除仅限宿主管理的精确范围。
 
 ## 5. HTTP 访问与网络边界
@@ -169,3 +171,28 @@ Web 的 manual redirect 可产生不可读 `opaqueredirect`，所以首版以 `r
 ## 2026-09-26：已选普通文件句柄
 
 原生运行时已提供 `FileBroker::grant_open_file`，从可信宿主传入的已选文件句柄有界捕获字节，先准入后读取，并返回实际固定字节摘要。没有路径打开、目录或写入能力。分块时可能观察跨时刻字节，不以 stat 校验宣称源文件原子快照；工作台选择器／任务所有权与平台资格仍开放。详见 [单文件合同](PLUGIN_SELECTED_FILE.md) 和 [实现记录](../reports/plugin-selected-file-2026-09-26.md)。
+
+
+## 2026-09-27：文件变更控制接口
+
+2026-09-27 [文件变更取消与同 owner 接口](../reports/file-mutation-control-2026-09-27.md)：完成单操作取消、持锁取时／准入及原 Manager／Runtime 分借用；修复取消遮蔽已派发历史的问题。Windows runtime 相关回归 216 项通过、0 失败，Clippy 与实际宿主编译通过。下一步为原 owner 队列、分块正文及 SDK/UI 接线；条件替换仍明确不支持，未打包或推送。
+
+可信宿主 `TargetControl::with` 必须在原共享单调时钟的同一序列化边界内执行取时及对应权限／配额检查，取消位在当前操作内锁存。它不包含 OS 操作和 Store 事务主体，也不能替代实时实例权限；旧无取消包装仅用于相应同步调用方。最终 worker 适配仍须遵守 state→clock→IO 锁顺序。
+
+取消的结果按持久边界区分：未提交的本次操作可停止；准备／暂存提交后报告交付取消；claim 后保持 Unknown；真实效果已发生时保存 Observed。对已派发选择重入时，先验证原 owner，再报告既有派发状态，不用“派发前取消”遮蔽事实。`with_managed_runtime` 只从原 owner 借用原 Manager 和可变 Runtime，未启用的 owner 默认拒绝。
+
+
+## 2026-09-27：原 owner 文件变更队列
+
+2026-09-27 [文件变更原 owner 队列](../reports/file-mutation-owner-2026-09-27.md)：Windows 创建／删除接入原后台队列，补齐 60 KiB 分块、取消、一次领取、历史查询与资源释放；Core 先匹配请求再核验正文，终态查询避免重复正文核验。Core 全量 739、runtime 相关 228 项通过，0 失败；Clippy 与实际宿主编译检查通过。下一步接 Workbench 协议／任务模型、三语言 SDK 与 UI，持久取消／跨重启核对仍开放；条件替换继续明确不支持，未打包或推送。
+
+命令沿现有有界队列和原 Manager／Runtime 执行；锁顺序为 state→ticket 状态→原共享 clock→实例 IO 检查，OS 调用和 Store 事务主体不持该锁。目标选择与计划持久化、内容暂存、实际外部效果、结果保存及结果交付分别核验，不用取消回执推断事务回滚。
+
+队列输入按容量计费并擦除，单块最多 60 KiB，保留 spool 合计最多 64 MiB；该限制不是进程峰值内存保证。历史查询先匹配命令再完整校验，同次终态查询复用已验证结果。查询仍需当前实例权限与预算，不重建旧授权或隐式执行。
+
+
+## 2026-09-27：持久计划取消接线
+
+2026-09-27 [文件计划显式持久取消](../reports/file-plan-cancel-2026-09-27.md)：原 owner 队列新增 cancel_mutation_plan，精确 Prepared 可持久取消，保留证据并清除未提交缓冲；已派发结果不可改写，丢回执只读核对。runtime 组合 232 项通过，最后预算修正后专项 16 项通过，0 失败（分项重叠）；Clippy 与宿主编译检查通过。SDK／工作台界面接线、分块恢复和跨重启核对继续开放，未打包或推送。
+
+当前已区分命令取消、持久计划取消和本地资源释放。持久取消保留历史原件，释放原事务预留并禁止再次执行；不会自动关闭仍保留的选择句柄，也不会改写 Unknown／Observed。下一步将这些独立结果接入工作台任务状态与 SDK，不把取消命令成功等同于线程已退出。

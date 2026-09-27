@@ -16,6 +16,8 @@ use crate::{
     service_io::{ListenerGrant, ServiceGrant},
     worker::TaskId,
 };
+#[cfg(windows)]
+use morrow_core::mutation as mutation_wire;
 use morrow_core::{
     dispatch::{Connection, HostBinding, HostRuntime},
     io::{Action, HttpOutcome, MAX_FRAME_BYTES, Request, Response},
@@ -35,11 +37,37 @@ use std::{
     thread::{self, JoinHandle},
     time::{Duration, Instant},
 };
+#[cfg(windows)]
+use zeroize::Zeroize;
+use zeroize::Zeroizing;
+
+/// Own decoded chunk bytes across early returns and callback failures.
+#[cfg(windows)]
+struct SensitiveMutationRequest(mutation_wire::Request);
+#[cfg(windows)]
+impl std::ops::Deref for SensitiveMutationRequest {
+    type Target = mutation_wire::Request;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+#[cfg(windows)]
+impl Drop for SensitiveMutationRequest {
+    fn drop(&mut self) {
+        if let mutation_wire::Action::Chunk { bytes, .. } = &mut self.0.action {
+            bytes.zeroize();
+        }
+    }
+}
 pub const MAX_PENDING: usize = 64;
 pub const MAX_TIMEOUT: Duration = Duration::from_secs(3600);
 pub const MAX_CALLS: u32 = 1024;
 pub const MAX_JOB_BYTES: u64 = 16 * 1024 * 1024;
 pub const MAX_TOTAL_BYTES: u64 = 64 * 1024 * 1024;
+/// Exact envelope and response reservation beyond a history read's original
+/// content length. This is available only to a read-only history binding.
+pub const MAX_MUTATION_HISTORY_METADATA_BYTES: u64 =
+    morrow_core::file_mutation::MAX_HISTORY_METADATA_BYTES;
 mod deferred;
 mod owner_commands;
 mod transport_task;
@@ -47,6 +75,12 @@ pub use owner_commands::{
     CommandOwner, FileCommandError, FileCommandHandle, FileResponse, FileSession,
     MAX_OWNER_COMMAND_INPUT, MAX_OWNER_COMMAND_REPLY, MAX_OWNER_COMMANDS, OwnerCommandError,
     OwnerCommandHandle, OwnerCommandPoll, ServiceRunRenewalHandle,
+};
+#[cfg(windows)]
+pub use owner_commands::{
+    MAX_MUTATION_CHUNK, MutationBudgetEstimate, MutationDiscoverySession,
+    MutationGuestExecutionPermit, MutationGuestJobMode, MutationGuestLease, MutationHandle,
+    MutationOutcome, MutationResponse, MutationSession,
 };
 static NEXT_EXECUTOR: AtomicU64 = AtomicU64::new(1);
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -78,6 +112,17 @@ pub trait HostOwner: Send + 'static {
 /// allows admission to borrow the manager before moving the owner as a whole.
 pub trait ManagedHostOwner: HostOwner {
     fn manager(&self) -> Option<&Manager>;
+    /// Opt-in split borrow of the original manager and mutable runtime. The
+    /// default keeps existing owners unchanged and never invokes the action.
+    fn with_managed_runtime<T>(
+        &mut self,
+        _action: impl FnOnce(&Manager, &mut HostRuntime) -> T,
+    ) -> Option<T>
+    where
+        Self: Sized,
+    {
+        None
+    }
 }
 impl HostOwner for HostRuntime {
     fn runtime(&self) -> &HostRuntime {
@@ -174,6 +219,24 @@ enum JobRouter {
     ReadOnly,
     Raw(Box<dyn Router>),
     Brokered(Box<dyn BrokerRouter>),
+    #[cfg(windows)]
+    Mutation(Box<MutationJob>),
+}
+#[cfg(windows)]
+type MutationDispatch = fn(
+    &mut dyn std::any::Any,
+    Option<&ManagedInstance>,
+    &Control,
+    &mut owner_commands::FileResources,
+    &Cancellation,
+    Instant,
+    MutationGuestJobMode,
+    &mutation_wire::Request,
+) -> Result<mutation_wire::Response, crate::file_target::Error>;
+#[cfg(windows)]
+struct MutationJob {
+    mode: MutationGuestJobMode,
+    dispatch: MutationDispatch,
 }
 /// Scope of one actual guest IO import. Private fields prevent a router from
 /// substituting a host, managed identity, request or job reservation.
@@ -447,6 +510,59 @@ impl JobLimits {
             max_total_bytes,
         })
     }
+    /// Explicit mutation-only profile. A caller cannot activate these larger
+    /// values by choosing them: managed worker spawn also requires the exact
+    /// package declaration and live manager-approved mutation binding.
+    pub fn mutation(
+        max_calls: u32,
+        max_job_bytes: u64,
+        max_total_bytes: u64,
+    ) -> Result<Self, JobError> {
+        if !(1..=MAX_CALLS).contains(&max_calls)
+            || !(1..=morrow_core::plugin_package::MAX_MUTATION_JOB_BYTES).contains(&max_job_bytes)
+            || !(max_job_bytes..=morrow_core::plugin_package::MAX_MUTATION_BYTES)
+                .contains(&max_total_bytes)
+        {
+            return Err(JobError::InvalidOptions);
+        }
+        Ok(Self {
+            max_calls,
+            max_job_bytes,
+            max_total_bytes,
+        })
+    }
+    /// Per-read history limit from the original ordinary content ceiling plus
+    /// the exact bounded plan/response reservation. It does not raise the
+    /// cumulative ordinary ceiling or enable guest/native file effects.
+    pub fn mutation_history(
+        max_calls: u32,
+        max_content_bytes: u64,
+        max_total_bytes: u64,
+    ) -> Result<Self, JobError> {
+        let max_job_bytes = max_content_bytes
+            .checked_add(MAX_MUTATION_HISTORY_METADATA_BYTES)
+            .ok_or(JobError::InvalidOptions)?;
+        if !(1..=MAX_CALLS).contains(&max_calls)
+            || !(1..=MAX_JOB_BYTES).contains(&max_content_bytes)
+            || !(max_job_bytes..=MAX_TOTAL_BYTES).contains(&max_total_bytes)
+        {
+            return Err(JobError::InvalidOptions);
+        }
+        Ok(Self {
+            max_calls,
+            max_job_bytes,
+            max_total_bytes,
+        })
+    }
+}
+
+/// Read-only, non-transactional snapshots of the two cumulative mutation
+/// byte ledgers. No capacity is reserved or authority conferred.
+#[cfg(windows)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MutationBudgetUsage {
+    pub worker_bytes: u64,
+    pub instance_bytes: u64,
 }
 /// Historical request handling does not imply the guest executed on this attempt.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -471,6 +587,12 @@ pub struct JobReport {
     pub task: TaskReport,
     /// The last brokered IO response, decoded against its own request.
     pub response: Option<Response>,
+    #[cfg(windows)]
+    pub mutation_response: Option<mutation_wire::Response>,
+    /// Exact validated guest completion, retained without re-encoding a reply.
+    /// Present only alongside a successfully correlated mutation response.
+    #[cfg(windows)]
+    pub mutation_frame: Option<Vec<u8>>,
     /// HTTP result, validated against its exact submission frame.
     pub http_response: Option<HttpOutcome>,
     /// Service completion bound to its original request, independent of IO responses.
@@ -488,9 +610,15 @@ pub struct JobReport {
 }
 impl std::fmt::Debug for JobReport {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("JobReport")
-            .field("execution", &self.task.execution)
-            .field("response_present", &self.response.is_some())
+        let mut debug = f.debug_struct("JobReport");
+        debug.field("execution", &self.task.execution);
+        debug.field("response_present", &self.response.is_some());
+        #[cfg(windows)]
+        debug.field(
+            "mutation_response_present",
+            &self.mutation_response.is_some(),
+        );
+        debug
             .field(
                 "http_status",
                 &self.http_response.as_ref().map(|r| r.http_status),
@@ -529,6 +657,19 @@ impl JobReport {
                     .map(|h| h.name.len() + h.value.len())
                     .sum::<usize>()
         }) + self.response.as_ref().map_or(0, |r| r.payload.len())
+            + {
+                #[cfg(windows)]
+                {
+                    self.mutation_response
+                        .as_ref()
+                        .map_or(0, |r| r.operation_id.len())
+                        + self.mutation_frame.as_ref().map_or(0, Vec::len)
+                }
+                #[cfg(not(windows))]
+                {
+                    0
+                }
+            }
             + self.task.output.as_ref().map_or(0, |o| o.bytes.len())
             + self.task.failure.as_ref().map_or(0, |f| f.message.len())
     }
@@ -611,6 +752,8 @@ struct Control {
     capacity: usize,
     limits: JobLimits,
     timeout: Duration,
+    mutation_enabled: bool,
+    mutation_history: bool,
     state: Mutex<State>,
 }
 impl Control {
@@ -780,6 +923,11 @@ fn suppress(report: &mut JobReport, fault: Fault) {
     report.task.output = None;
     report.task.failure = None;
     report.response = None;
+    #[cfg(windows)]
+    {
+        report.mutation_response = None;
+        report.mutation_frame = None;
+    }
     report.http_response = None;
     report.service_response = None;
     report.service_persistence = None;
@@ -801,7 +949,7 @@ struct ServicePersistence {
 struct Job {
     serial: u64,
     cancel: Cancellation,
-    input: Vec<u8>,
+    input: Zeroizing<Vec<u8>>,
     router: JobRouter,
     lease: Option<Arc<IoJobLease>>,
     service: Option<Box<ServiceJob>>,
@@ -1074,19 +1222,94 @@ impl<O: HostOwner> IoWorker<O> {
             let host = owner.runtime();
             let package = session.package();
             let connection = session.connection();
-            JobLimits::new(
-                limits.max_calls,
-                limits.max_job_bytes,
-                limits.max_total_bytes,
-            )?;
+            #[cfg(not(windows))]
+            if package.package().mutation_enabled() {
+                return Err(JobError::InvalidOptions);
+            }
+            let declared_mutation_budget = package.package().mutation_budget();
+            let approved_mutation_budget = authority
+                .as_ref()
+                .and_then(|authority| authority.binding.mutation_budget());
+            let mutation_history = authority
+                .as_ref()
+                .is_some_and(|authority| authority.binding.is_mutation_history());
             let budget = package
                 .package()
                 .io_declaration()
                 .and_then(|declaration| declaration.budget.as_ref())
                 .ok_or(JobError::InvalidOptions)?;
+            let mutation_budget = if let (Some(declared), Some(approved)) =
+                (declared_mutation_budget, approved_mutation_budget)
+            {
+                if !package.package().mutation_enabled() || mutation_history {
+                    return Err(JobError::InvalidOptions);
+                }
+                JobLimits::mutation(
+                    limits.max_calls,
+                    limits.max_job_bytes,
+                    limits.max_total_bytes,
+                )?;
+                if limits.max_job_bytes > declared.max_job_bytes
+                    || limits.max_total_bytes > declared.max_bytes
+                    || limits.max_job_bytes > approved.max_job_bytes
+                    || limits.max_total_bytes > approved.max_bytes
+                {
+                    return Err(JobError::InvalidOptions);
+                }
+                Some(approved)
+            } else {
+                if approved_mutation_budget.is_some()
+                    || declared_mutation_budget.is_some() && !mutation_history
+                    || mutation_history
+                        && (declared_mutation_budget.is_none()
+                            || !package.package().mutation_enabled())
+                {
+                    return Err(JobError::InvalidOptions);
+                }
+                if mutation_history {
+                    // Existing ordinary limits remain valid for earlier
+                    // history readers. A larger single read must be the exact
+                    // bounded-metadata profile on a history-only binding.
+                    if limits.max_job_bytes > MAX_JOB_BYTES {
+                        let content = limits
+                            .max_job_bytes
+                            .checked_sub(MAX_MUTATION_HISTORY_METADATA_BYTES)
+                            .ok_or(JobError::InvalidOptions)?;
+                        JobLimits::mutation_history(
+                            limits.max_calls,
+                            content,
+                            limits.max_total_bytes,
+                        )?;
+                    } else {
+                        JobLimits::new(
+                            limits.max_calls,
+                            limits.max_job_bytes,
+                            limits.max_total_bytes,
+                        )?;
+                    }
+                    if limits.max_job_bytes
+                        > budget
+                            .max_job_bytes
+                            .checked_add(MAX_MUTATION_HISTORY_METADATA_BYTES)
+                            .ok_or(JobError::InvalidOptions)?
+                        || limits.max_total_bytes > budget.max_bytes
+                    {
+                        return Err(JobError::InvalidOptions);
+                    }
+                } else {
+                    JobLimits::new(
+                        limits.max_calls,
+                        limits.max_job_bytes,
+                        limits.max_total_bytes,
+                    )?;
+                }
+                None
+            };
             if capacity > budget.max_jobs as usize
-                || limits.max_job_bytes > budget.max_job_bytes
-                || limits.max_total_bytes > budget.max_bytes
+                || mutation_budget.is_none()
+                    && !mutation_history
+                    && (limits.max_job_bytes > budget.max_job_bytes
+                        || limits.max_total_bytes > budget.max_bytes)
                 || limits.max_calls > package.limits().host_calls
             {
                 return Err(JobError::InvalidOptions);
@@ -1113,6 +1336,8 @@ impl<O: HostOwner> IoWorker<O> {
                 capacity,
                 limits,
                 timeout,
+                mutation_enabled: package.package().mutation_enabled(),
+                mutation_history,
                 state: Mutex::new(State {
                     phase: Phase::Running,
                     next: 1,
@@ -1531,6 +1756,18 @@ impl<O: HostOwner> IoWorker<O> {
         timeout: Duration,
         service: Option<Box<ServiceJob>>,
     ) -> Result<JobHandle, JobError> {
+        let input = Zeroizing::new(input);
+        // A history worker owns the original Store but is not a guest executor,
+        // even if the installed package negotiated the mutation import.
+        if self.control.mutation_history {
+            return Err(JobError::InvalidOptions);
+        }
+        #[cfg(windows)]
+        if matches!(router, JobRouter::Mutation(_))
+            && (self.control.authority.is_none() || !self.control.mutation_enabled)
+        {
+            return Err(JobError::InvalidOptions);
+        }
         if timeout.is_zero()
             || timeout > self.control.timeout
             || input.is_empty()
@@ -1687,6 +1924,21 @@ impl<O: HostOwner> IoWorker<O> {
     pub fn bytes(&self) -> u64 {
         self.control.lock().bytes
     }
+    /// Two read-only cumulative counters. This is not an atomic reservation;
+    /// callers must ensure no concurrent jobs when comparing snapshots.
+    #[cfg(windows)]
+    pub fn mutation_budget_usage(&self) -> Option<MutationBudgetUsage> {
+        if !self.control.mutation_enabled {
+            return None;
+        }
+        let authority = self.control.authority.as_ref()?;
+        authority.binding.mutation_budget()?;
+        let worker_bytes = self.control.lock().bytes;
+        Some(MutationBudgetUsage {
+            worker_bytes,
+            instance_bytes: authority.binding.usage().bytes,
+        })
+    }
     /// Returns exclusive core ownership only after the thread ended.
     pub fn try_reclaim(&mut self) -> Result<Option<WorkerExit<O>>, JobError> {
         let join = self.join.as_ref().ok_or(JobError::Consumed)?;
@@ -1702,6 +1954,46 @@ impl<O: HostOwner> IoWorker<O> {
     }
 }
 impl<O: ManagedHostOwner> IoWorker<O> {
+    /// A host-reviewed guest invocation. The supplied lease is only a selector;
+    /// each paused import is checked against the original owner's delivered
+    /// approval and, for Execute, its delivered one-shot permit.
+    #[cfg(windows)]
+    pub fn submit_mutation_guest_frame(
+        &self,
+        input: Vec<u8>,
+        mode: MutationGuestJobMode,
+        timeout: Duration,
+    ) -> Result<JobHandle, JobError> {
+        let mut input = Zeroizing::new(input);
+        if !self.control.mutation_enabled || mode.lease().worker() != self.control.id {
+            return Err(JobError::InvalidOptions);
+        }
+        let request = SensitiveMutationRequest(
+            mutation_wire::Request::decode(&input).map_err(|_| JobError::InvalidOptions)?,
+        );
+        if request.reference != mode.lease().reference()
+            || matches!(mode, MutationGuestJobMode::Stage(_))
+                && matches!(request.action, mutation_wire::Action::Execute)
+            || matches!(mode, MutationGuestJobMode::Execute(_))
+                && !matches!(
+                    request.action,
+                    mutation_wire::Action::Execute
+                        | mutation_wire::Action::Query
+                        | mutation_wire::Action::Release
+                )
+        {
+            return Err(JobError::InvalidOptions);
+        }
+        self.submit_routed(
+            std::mem::take(&mut *input),
+            JobRouter::Mutation(Box::new(MutationJob {
+                mode,
+                dispatch: owner_commands::dispatch_mutation_guest::<O>,
+            })),
+            timeout,
+            None,
+        )
+    }
     /// Authenticate with the manager inside the complete owner, then move that
     /// same owner and original managed instance onto the execution thread.
     pub fn spawn_managed_owner(
@@ -1933,25 +2225,67 @@ fn execute<O: HostOwner>(
                     input.len(),
                 ) {
                     Err(report) => *report,
-                    Ok(history) => run_job(
-                        &mut files,
-                        package,
-                        &input,
-                        &cancel,
-                        control,
-                        &mut router,
-                        lease.as_ref(),
-                        owner,
-                        owner_receiver,
-                        match session {
-                            Session::Managed(i) => Some(i),
-                            Session::Raw(..) => None,
-                        },
-                        &broker,
-                        &mut http_guards,
-                        service.as_deref(),
-                        history.as_ref(),
-                    )?,
+                    Ok(history) => {
+                        #[cfg(windows)]
+                        if let JobRouter::Mutation(mutation) = &mut router {
+                            run_mutation_job(
+                                &mut files,
+                                package,
+                                &input,
+                                &cancel,
+                                control,
+                                mutation,
+                                lease.as_ref(),
+                                owner,
+                                match session {
+                                    Session::Managed(i) => Some(i),
+                                    Session::Raw(..) => None,
+                                },
+                            )?
+                        } else {
+                            run_job(
+                                &mut files,
+                                package,
+                                &input,
+                                &cancel,
+                                control,
+                                &mut router,
+                                lease.as_ref(),
+                                owner,
+                                owner_receiver,
+                                match session {
+                                    Session::Managed(i) => Some(i),
+                                    Session::Raw(..) => None,
+                                },
+                                &broker,
+                                &mut http_guards,
+                                service.as_deref(),
+                                history.as_ref(),
+                            )?
+                        }
+                        #[cfg(not(windows))]
+                        {
+                            run_job(
+                                &mut files,
+                                package,
+                                &input,
+                                &cancel,
+                                control,
+                                &mut router,
+                                lease.as_ref(),
+                                owner,
+                                owner_receiver,
+                                match session {
+                                    Session::Managed(i) => Some(i),
+                                    Session::Raw(..) => None,
+                                },
+                                &broker,
+                                &mut http_guards,
+                                service.as_deref(),
+                                history.as_ref(),
+                            )?
+                        }
+                    }
                 }
             }
         };
@@ -1992,6 +2326,10 @@ fn cancelled_report(package: &PreparedPackage, fault: Fault) -> JobReport {
             failure: None,
         },
         response: None,
+        #[cfg(windows)]
+        mutation_response: None,
+        #[cfg(windows)]
+        mutation_frame: None,
         http_response: None,
         service_response: None,
         service_persistence: None,
@@ -2249,6 +2587,180 @@ fn dispatch_service_content(
     )
     .map_err(|_| RouterFault::Unknown)
 }
+#[cfg(windows)]
+#[allow(clippy::too_many_arguments)]
+fn run_mutation_job<O: HostOwner>(
+    files: &mut owner_commands::FileResources,
+    package: &PreparedPackage,
+    input: &[u8],
+    cancel: &Cancellation,
+    control: &Arc<Control>,
+    mutation: &MutationJob,
+    lease: Option<&Arc<IoJobLease>>,
+    owner: &mut O,
+    instance: Option<&ManagedInstance>,
+) -> Result<JobReport, JobError> {
+    if !package.package().mutation_enabled() || instance.is_none() || lease.is_none() {
+        return Err(JobError::InvalidOptions);
+    }
+    let mut calls = 0u32;
+    let mut bytes = input.len() as u64;
+    let mut fault = None;
+    let mut unknown = false;
+    let mut last_response: Option<(SensitiveMutationRequest, Vec<u8>, mutation_wire::Response)> =
+        None;
+    let run = match package.start_mutation_frame(input, cancel.clone()) {
+        Err(run) => run,
+        Ok(mut frame) => {
+            while let Some(pending) = frame.pending() {
+                let token = pending.token.clone();
+                let reply = (|| {
+                    if pending.kind != crate::continuation::Kind::Mutation
+                        || calls != 0
+                        || pending.bytes != input
+                        || pending.bytes.len() > mutation_wire::MAX_FRAME_BYTES
+                    {
+                        fault = Some(Fault::TaskProtocol);
+                        return Err(());
+                    }
+                    if let Some(late) = control.fault(cancel) {
+                        fault = Some(late);
+                        return Err(());
+                    }
+                    let request = match mutation_wire::Request::decode(&pending.bytes) {
+                        Ok(request) => SensitiveMutationRequest(request),
+                        Err(_) => {
+                            fault = Some(Fault::TaskProtocol);
+                            return Err(());
+                        }
+                    };
+                    // Charge request and worst-case reply to this job and its
+                    // authenticated capability lease before original-owner work.
+                    let reserved =
+                        pending.bytes.len() as u64 + mutation_wire::MAX_FRAME_BYTES as u64;
+                    if bytes
+                        .checked_add(reserved)
+                        .is_none_or(|n| n > control.limits.max_job_bytes)
+                    {
+                        fault = Some(Fault::Limits);
+                        return Err(());
+                    }
+                    if let Err(error) = control.charge(
+                        reserved,
+                        &[mutation.mode.lease().capability()],
+                        lease.map(Arc::as_ref),
+                    ) {
+                        fault = Some(error);
+                        return Err(());
+                    }
+                    bytes += reserved;
+                    let deadline = match Instant::now()
+                        .checked_add(Duration::from_millis(request.deadline_ms as u64))
+                    {
+                        Some(deadline) => deadline,
+                        None => {
+                            fault = Some(Fault::Deadline);
+                            return Err(());
+                        }
+                    };
+                    let call_cancel =
+                        Cancellation::linked(cancel.clone(), Cancellation::until(deadline));
+                    if let Some(late) = control.fault(cancel) {
+                        fault = Some(late);
+                        return Err(());
+                    }
+                    calls += 1;
+                    let response = match (mutation.dispatch)(
+                        owner as &mut dyn std::any::Any,
+                        instance,
+                        control,
+                        files,
+                        &call_cancel,
+                        deadline,
+                        mutation.mode,
+                        &request,
+                    ) {
+                        Ok(response) => response,
+                        Err(_) => {
+                            fault = Some(Fault::TaskProtocol);
+                            unknown |= matches!(request.action, mutation_wire::Action::Execute);
+                            return Err(());
+                        }
+                    };
+                    unknown |= response.status == mutation_wire::Status::OutcomeUnknown;
+                    if let Some(late) = control.fault(&call_cancel) {
+                        fault = Some(late);
+                        unknown = true;
+                        return Err(());
+                    }
+                    if Instant::now() > deadline {
+                        fault = Some(Fault::Deadline);
+                        unknown = true;
+                        return Err(());
+                    }
+                    let encoded = match response.encode(&request) {
+                        Ok(encoded) if encoded.len() <= mutation_wire::MAX_FRAME_BYTES => encoded,
+                        _ => {
+                            fault = Some(Fault::TaskProtocol);
+                            unknown = true;
+                            return Err(());
+                        }
+                    };
+                    last_response = Some((request, encoded.clone(), response));
+                    Ok(encoded)
+                })();
+                frame
+                    .resume(&token, reply)
+                    .expect("same mutation pending call");
+            }
+            frame.finish()
+        }
+    };
+    checked_runtime(owner, control.host)?;
+    let mut execution = run.report;
+    if let Some(fault) = fault.or_else(|| control.fault(cancel)) {
+        execution.outcome = Err(fault);
+        unknown |= calls > 0;
+    }
+    let mut mutation_response = None;
+    let mut mutation_frame = None;
+    if execution.outcome == Ok(0) {
+        match (run.completion.as_ref(), last_response.as_ref()) {
+            (Some(done), Some((request, encoded, response))) if done == encoded => {
+                if mutation_wire::Response::decode(request, done).is_ok() {
+                    mutation_response = Some(response.clone());
+                    mutation_frame = Some(done.clone());
+                } else {
+                    execution.outcome = Err(Fault::TaskProtocol);
+                }
+            }
+            _ => execution.outcome = Err(Fault::TaskProtocol),
+        }
+    }
+    if execution.outcome != Ok(0) {
+        unknown |= calls > 0;
+    }
+    Ok(JobReport {
+        task: TaskReport {
+            execution,
+            response: None,
+            output: None,
+            failure: None,
+        },
+        response: None,
+        mutation_response,
+        mutation_frame,
+        http_response: None,
+        service_response: None,
+        service_persistence: None,
+        service_validity: None,
+        calls,
+        bytes,
+        cancelled: false,
+        unknown,
+    })
+}
+
 #[allow(clippy::too_many_arguments)]
 fn run_job<O: HostOwner>(
     files: &mut owner_commands::FileResources,
@@ -2403,6 +2915,8 @@ fn run_job<O: HostOwner>(
                     } else {
                         match router {
                             JobRouter::ReadOnly => Err(RouterFault::Denied),
+                            #[cfg(windows)]
+                            JobRouter::Mutation(_) => Err(RouterFault::Denied),
                             JobRouter::Raw(router) => router.route(call, request),
                             JobRouter::Brokered(router) => {
                                 match (instance, lease, Request::decode(request)) {
@@ -2603,6 +3117,10 @@ fn run_job<O: HostOwner>(
             failure: None,
         },
         response,
+        #[cfg(windows)]
+        mutation_response: None,
+        #[cfg(windows)]
+        mutation_frame: None,
         http_response,
         service_response,
         service_persistence,

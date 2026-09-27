@@ -75,7 +75,7 @@ endif()
 include(flutter/generated_plugins.cmake)
 
 
-# The ordinary Windows build includes the same package/host as the release tool.
+# The ordinary Windows build includes the workbench and independent theme.
 add_custom_target(morrow_workbench_bundle
   COMMAND powershell.exe -NoProfile -ExecutionPolicy Bypass -File
     "${CMAKE_CURRENT_SOURCE_DIR}/../tool/build_workbench_bundle.ps1"
@@ -140,4 +140,16 @@ install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/release/morro
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/release/morrow-migrate-library.exe"
   DESTINATION "${INSTALL_BUNDLE_LIB_DIR}" COMPONENT Runtime)
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/workbench-host/bundle/workbench.morrowplugin"
+  DESTINATION "${CMAKE_INSTALL_PREFIX}/plugins" COMPONENT Runtime)
+
+# Match the versioned file produced by build_mid_autumn_theme.ps1. Its own
+# descriptor/artwork checks and immutable-package version check remain active.
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/../plugins/mid_autumn/theme.json" MORROW_THEME_DESCRIPTOR)
+string(REGEX MATCH "\"version\"[ \t\r\n]*:[ \t\r\n]*\"([^\"]+)\"" MORROW_THEME_VERSION_FIELD
+  "${MORROW_THEME_DESCRIPTOR}")
+set(MORROW_THEME_VERSION "${CMAKE_MATCH_1}")
+if(NOT MORROW_THEME_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+$")
+  message(FATAL_ERROR "Invalid Mid-Autumn theme package version")
+endif()
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../build/mid-autumn-plugin/bundle/morrow-mid-autumn-${MORROW_THEME_VERSION}.morrowplugin"
   DESTINATION "${CMAKE_INSTALL_PREFIX}/plugins" COMPONENT Runtime)

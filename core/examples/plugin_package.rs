@@ -14,7 +14,7 @@ mod native {
         path::{Path, PathBuf},
     };
     type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
+    const USAGE: &str = "usage: plugin_package pack|pack-task MODULE OUTPUT ID VERSION CAPS; pack-transform MODULE OUTPUT ID VERSION HANDLERS; pack-v2|pack-v2-catalog MODULE OUTPUT ID VERSION [--name VALUE] [--capability NAME] [--handler NAME INPUT OUTPUT MAX_INPUT MAX_OUTPUT] [--dependency SLOT HANDLER INPUT OUTPUT VERSION_RANGE required|optional] [--dependency-calls] [--io-capability file-read|file-create|file-replace|file-delete|http-request|credential-use|http-listen|http-publish] [--io-handler NAME] [--io-resources N] [--service] [--service-resources] [--service-run DURATION_MS MAX_JOBS MAX_BYTES] [--fuel N] [--memory-bytes N] [--host-calls N]; inspect PACKAGE; install PACKAGE CATALOG";
     fn capability(name: &str) -> Result<Capability> {
         Ok(match name {
             "rename"=>Capability::RenameCard,"summary"=>Capability::ReadSummary,
@@ -27,12 +27,15 @@ mod native {
     fn io_capability(name: &str) -> Result<IoCapability> {
         Ok(match name {
             "file-read" => IoCapability::FileRead,
+            "file-create" => IoCapability::FileCreate,
+            "file-replace" => IoCapability::FileReplace,
+            "file-delete" => IoCapability::FileDelete,
             "http-request" => IoCapability::HttpRequest,
             "credential-use" => IoCapability::CredentialUse,
             "http-listen" => IoCapability::HttpListen,
             "http-publish" => IoCapability::HttpPublish,
             _ => return Err(format!(
-                "unknown IO capability '{name}'; expected file-read, http-request, credential-use, http-listen or http-publish"
+                "unknown IO capability '{name}'; expected file-read, file-create, file-replace, file-delete, http-request, credential-use, http-listen or http-publish"
             )
             .into()),
         })

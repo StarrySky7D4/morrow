@@ -202,7 +202,12 @@ impl Fixture {
         let mut app = Workbench::open_managed(dir.path(), Some(workbench_package())).unwrap();
         let package_digest = package.digest();
         let state = app.local_state_mut().unwrap();
-        state.manager.as_ref().unwrap().install_package(package.archive()).unwrap();
+        state
+            .manager
+            .as_ref()
+            .unwrap()
+            .install_package(package.archive())
+            .unwrap();
         let manager = state.manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();
         manager

@@ -22,6 +22,65 @@ void expectCleared(List<Uint8List> buffers) {
 }
 
 void main() {
+  for (final action in [
+    host.Action.mutationStart,
+    host.Action.mutationSubmit,
+    host.Action.guestMutationStart,
+    host.Action.guestMutationSubmit,
+    host.Action.mutationReconcile,
+    host.Action.mutationDiscover,
+  ]) {
+    for (final failWrite in [false, true]) {
+      test(
+        'mutation request copies clear after $action, failed=$failWrite',
+        () async {
+          final source = Uint8List(8192)..fillRange(0, 8192, 91);
+          late List<Uint8List> segments;
+          late Uint8List frame;
+          final operation = sendHostRequest(
+            action,
+            configure: (r) {
+              if (action == host.Action.mutationStart) {
+                r.initMutationStart().selectedPath = 's' * 8192;
+              } else if (action == host.Action.mutationSubmit) {
+                r.initMutationCommand().bytes = source;
+              } else if (action == host.Action.guestMutationStart) {
+                r.initGuestMutationStart().initSelection().selectedPath =
+                    's' * 8192;
+              } else if (action == host.Action.guestMutationSubmit) {
+                r.initGuestMutationCommand().bytes = source;
+              } else if (action == host.Action.mutationDiscover) {
+                r.initMutationDiscover().subject = 's' * 8192;
+              } else {
+                r.initMutationReconcile().plan = source;
+              }
+              segments = buffers(r);
+            },
+            send: (bytes) async {
+              frame = bytes;
+              expectCleared(segments);
+              expect(bytes.any((value) => value != 0), isTrue);
+              expect(
+                MessageReader.deserialize(
+                  bytes,
+                ).getRoot(host.requestFactory).action,
+                action,
+              );
+              if (failWrite) throw StateError('unknown write');
+            },
+          );
+          if (failWrite) {
+            await expectLater(operation, throwsStateError);
+          } else {
+            await operation;
+          }
+          expectCleared([...segments, frame]);
+          expect(source.every((value) => value == 91), isTrue);
+        },
+      );
+    }
+  }
+
   test(
     'service routing bounds the complete frame and clears ordinary request copies',
     () async {

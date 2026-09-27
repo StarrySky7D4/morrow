@@ -42,7 +42,7 @@ impl PreparedPackage {
         input: &[u8],
         cancel: Cancellation,
     ) -> Result<FrameExecution, TaskRun> {
-        self.start_frame(input, cancel, true)
+        self.start_frame(input, cancel, true, false)
     }
 
     /// Start the frame in IO-only mode: every `Core` call is denied.
@@ -51,7 +51,17 @@ impl PreparedPackage {
         input: &[u8],
         cancel: Cancellation,
     ) -> Result<FrameExecution, TaskRun> {
-        self.start_frame(input, cancel, false)
+        self.start_frame(input, cancel, false, false)
+    }
+
+    /// Only the explicitly negotiated mutation package uses this owned frame.
+    /// The worker must still bind a live trusted permit and original owner.
+    pub(crate) fn start_mutation_frame(
+        &self,
+        input: &[u8],
+        cancel: Cancellation,
+    ) -> Result<FrameExecution, TaskRun> {
+        self.start_frame(input, cancel, false, true)
     }
 
     fn start_frame(
@@ -59,8 +69,12 @@ impl PreparedPackage {
         input: &[u8],
         cancel: Cancellation,
         allow_content: bool,
+        mutation: bool,
     ) -> Result<FrameExecution, TaskRun> {
-        if !self.runner.io_abi {
+        if mutation != self.package.mutation_enabled()
+            || (mutation && !self.runner.mutation_abi)
+            || (!mutation && !self.runner.io_abi)
+        {
             return Err(TaskRun {
                 report: Report {
                     outcome: Err(Fault::UnsupportedAbi),

@@ -12,6 +12,10 @@ pub const TRANSFORM_HANDLERS_FEATURE: &str = "transform-handlers-v1";
 pub const MAX_TRANSFORM_HANDLERS: usize = 16;
 pub const DEPENDENCY_CALLS_FEATURE: &str = "dependency-calls-v1";
 pub const DEPENDENCIES_FEATURE: &str = "dependencies-v1";
+pub const MUTATION_FEATURE: &str = "mutation-v1";
+pub const MUTATION_BUDGET_FEATURE: &str = "mutation-budget-v1";
+pub const MAX_MUTATION_JOB_BYTES: u64 = 32 * 1024 * 1024;
+pub const MAX_MUTATION_BYTES: u64 = 256 * 1024 * 1024;
 pub const MAX_DEPENDENCIES: usize = 16;
 pub const MAX_MODULE_BYTES: usize = 4 * 1024 * 1024;
 pub const MAX_MANIFEST_BYTES: usize = 64 * 1024;
@@ -32,6 +36,41 @@ fn preflight(bytes: &[u8], name: &str) -> Result<()> {
         &mut 256,
         0,
     )
+}
+fn validate_mutation_budget_wire(
+    mut manifest: &[u8],
+    value: Option<&proto::MutationBudget>,
+) -> Result<()> {
+    use prost::encoding::{DecodeContext, WireType, decode_key, decode_varint, skip_field};
+    let mut seen = false;
+    while !manifest.is_empty() {
+        let (number, wire) =
+            decode_key(&mut manifest).map_err(|_| Error::Invalid("manifest key"))?;
+        if number != 20 {
+            skip_field(wire, number, &mut manifest, DecodeContext::default())
+                .map_err(|_| Error::Invalid("manifest field"))?;
+            continue;
+        }
+        if seen || wire != WireType::LengthDelimited {
+            return Err(Error::Invalid("duplicate or malformed mutation budget"));
+        }
+        seen = true;
+        let length =
+            decode_varint(&mut manifest).map_err(|_| Error::Invalid("mutation budget length"))?;
+        if length > manifest.len() as u64 {
+            return Err(Error::Invalid("mutation budget length"));
+        }
+        let (bytes, rest) = manifest.split_at(length as usize);
+        manifest = rest;
+        let value = value.ok_or(Error::Invalid("missing mutation budget"))?;
+        if value.encode_to_vec() != bytes {
+            return Err(Error::Invalid("noncanonical mutation budget"));
+        }
+    }
+    if seen != value.is_some() {
+        return Err(Error::Invalid("mutation budget presence"));
+    }
+    Ok(())
 }
 /// Decode the manifest/registry content-capability namespace at a trusted boundary.
 pub fn capability(raw: i32) -> Result<GrantKind> {
@@ -85,6 +124,8 @@ impl Package {
             dependencies: vec![],
             dependency_schema_sha256: vec![],
             io_declaration: None,
+            mutation_schema_sha256: vec![],
+            mutation_budget: None,
         }
     }
     pub fn manifest_for_task(
@@ -206,7 +247,7 @@ impl Package {
             || manifest.runtime_protocol_version != u32::from(runtime::PROTOCOL_VERSION)
             || manifest.runtime_schema_sha256 != runtime::runtime_digest()
             || manifest.content_schema_sha256 != runtime::content_digest()
-            || manifest.required_features.len() > 7
+            || manifest.required_features.len() > 9
             || manifest.required_features.iter().any(|f| {
                 f != TRANSFORM_HANDLERS_FEATURE
                     && f != DEPENDENCIES_FEATURE
@@ -215,6 +256,8 @@ impl Package {
                     && f != io::SERVICE_RUN_FEATURE
                     && f != io::SERVICE_RUN_BUDGET_FEATURE
                     && f != crate::service_resources::FEATURE
+                    && f != MUTATION_FEATURE
+                    && f != MUTATION_BUDGET_FEATURE
             })
             || manifest
                 .required_features
@@ -303,6 +346,7 @@ impl Package {
             }
         }
         io::validate_wire(&package.manifest, manifest.io_declaration.as_ref())?;
+        validate_mutation_budget_wire(&package.manifest, manifest.mutation_budget.as_ref())?;
         let io_feature = manifest.required_features.iter().any(|f| f == io::FEATURE);
         if io_feature != manifest.io_declaration.is_some()
             || (io_feature && manifest.guest_abi_version != 2)
@@ -343,6 +387,50 @@ impl Package {
         } else {
             BTreeSet::new()
         };
+        let mutation_feature = manifest
+            .required_features
+            .iter()
+            .any(|f| f == MUTATION_FEATURE);
+        if mutation_feature {
+            if manifest.guest_abi_version != 2
+                || !io_feature
+                || dependency_calls
+                || manifest.mutation_schema_sha256 != crate::mutation::schema_digest()
+                || !io_ceiling.contains(&io::IoCapability::FileCreate)
+                    && !io_ceiling.contains(&io::IoCapability::FileDelete)
+            {
+                return Err(Error::Invalid("mutation feature declaration"));
+            }
+        } else if !manifest.mutation_schema_sha256.is_empty() {
+            return Err(Error::Invalid("unexpected mutation schema"));
+        }
+        let mutation_budget_feature = manifest
+            .required_features
+            .iter()
+            .any(|f| f == MUTATION_BUDGET_FEATURE);
+        if mutation_budget_feature != manifest.mutation_budget.is_some() {
+            return Err(Error::Invalid("mutation budget declaration feature"));
+        }
+        if let Some(budget) = &manifest.mutation_budget {
+            if !mutation_feature
+                || dependencies_feature
+                || dependency_calls
+                || service_run_feature
+                || service_run_budget_feature
+                || io_ceiling.iter().any(|cap| {
+                    !matches!(
+                        cap,
+                        io::IoCapability::FileCreate | io::IoCapability::FileDelete
+                    )
+                })
+                || budget.max_job_bytes == 0
+                || budget.max_job_bytes > MAX_MUTATION_JOB_BYTES
+                || budget.max_bytes < budget.max_job_bytes
+                || budget.max_bytes > MAX_MUTATION_BYTES
+            {
+                return Err(Error::Invalid("mutation budget declaration"));
+            }
+        }
         if manifest
             .required_features
             .iter()
@@ -424,6 +512,15 @@ impl Package {
     }
     pub fn io_declaration(&self) -> Option<&io::proto::IoDeclaration> {
         self.manifest.io_declaration.as_ref()
+    }
+    pub fn mutation_enabled(&self) -> bool {
+        self.manifest
+            .required_features
+            .iter()
+            .any(|f| f == MUTATION_FEATURE)
+    }
+    pub fn mutation_budget(&self) -> Option<&proto::MutationBudget> {
+        self.manifest.mutation_budget.as_ref()
     }
     pub fn io_capabilities(&self) -> &BTreeSet<io::IoCapability> {
         &self.io_ceiling

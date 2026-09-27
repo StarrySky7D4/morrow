@@ -133,6 +133,18 @@ enum Action {
   fileChunk,
   fileFinish,
   fileRead,
+  mutationStart,
+  mutationSubmit,
+  mutationStatus,
+  mutationRead,
+  mutationCancelCommand,
+  mutationReconcile,
+  mutationDiscover,
+  guestMutationStart,
+  guestMutationSubmit,
+  guestMutationStatus,
+  guestMutationRead,
+  guestMutationCancelCommand,
 }
 
 const EnumSchemaInfo actionSchema = EnumSchemaInfo(
@@ -420,6 +432,46 @@ const EnumSchemaInfo actionSchema = EnumSchemaInfo(
     EnumerantSchemaInfo(name: 'fileChunk', codeOrder: 125, ordinal: 125),
     EnumerantSchemaInfo(name: 'fileFinish', codeOrder: 126, ordinal: 126),
     EnumerantSchemaInfo(name: 'fileRead', codeOrder: 127, ordinal: 127),
+    EnumerantSchemaInfo(name: 'mutationStart', codeOrder: 128, ordinal: 128),
+    EnumerantSchemaInfo(name: 'mutationSubmit', codeOrder: 129, ordinal: 129),
+    EnumerantSchemaInfo(name: 'mutationStatus', codeOrder: 130, ordinal: 130),
+    EnumerantSchemaInfo(name: 'mutationRead', codeOrder: 131, ordinal: 131),
+    EnumerantSchemaInfo(
+      name: 'mutationCancelCommand',
+      codeOrder: 132,
+      ordinal: 132,
+    ),
+    EnumerantSchemaInfo(
+      name: 'mutationReconcile',
+      codeOrder: 133,
+      ordinal: 133,
+    ),
+    EnumerantSchemaInfo(name: 'mutationDiscover', codeOrder: 134, ordinal: 134),
+    EnumerantSchemaInfo(
+      name: 'guestMutationStart',
+      codeOrder: 135,
+      ordinal: 135,
+    ),
+    EnumerantSchemaInfo(
+      name: 'guestMutationSubmit',
+      codeOrder: 136,
+      ordinal: 136,
+    ),
+    EnumerantSchemaInfo(
+      name: 'guestMutationStatus',
+      codeOrder: 137,
+      ordinal: 137,
+    ),
+    EnumerantSchemaInfo(
+      name: 'guestMutationRead',
+      codeOrder: 138,
+      ordinal: 138,
+    ),
+    EnumerantSchemaInfo(
+      name: 'guestMutationCancelCommand',
+      codeOrder: 139,
+      ordinal: 139,
+    ),
   ],
 );
 
@@ -570,6 +622,41 @@ final class RequestReader extends StructReader {
   FileStartReader? get fileStart => getStructFieldWith(
     40,
     (r) => FileStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationStartReader? get mutationStart => getStructFieldWith(
+    41,
+    (r) => MutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationCommandReader? get mutationCommand => getStructFieldWith(
+    42,
+    (r) => MutationCommandReader(r, capabilities: capabilityTable),
+  );
+
+  int get mutationCommandId => getUint64Field(56);
+  BigInt get mutationCommandIdBigInt =>
+      ((BigInt.from(getUint32Field(60).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(56).toUnsigned(32)));
+
+  MutationReconcileReader? get mutationReconcile => getStructFieldWith(
+    43,
+    (r) => MutationReconcileReader(r, capabilities: capabilityTable),
+  );
+
+  MutationDiscoverReader? get mutationDiscover => getStructFieldWith(
+    44,
+    (r) => MutationDiscoverReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationStartReader? get guestMutationStart => getStructFieldWith(
+    45,
+    (r) => GuestMutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationCommandReader? get guestMutationCommand => getStructFieldWith(
+    46,
+    (r) => GuestMutationCommandReader(r, capabilities: capabilityTable),
   );
 }
 
@@ -843,6 +930,55 @@ final class RequestBuilder extends StructBuilder {
   }
 
   bool hasFileStart() => hasPointerField(40);
+
+  MutationStartBuilder initMutationStart() {
+    return initStructFieldWith(41, (r) => MutationStartBuilder(r), 2, 7);
+  }
+
+  bool hasMutationStart() => hasPointerField(41);
+
+  MutationCommandBuilder initMutationCommand() {
+    return initStructFieldWith(42, (r) => MutationCommandBuilder(r), 3, 5);
+  }
+
+  bool hasMutationCommand() => hasPointerField(42);
+
+  set mutationCommandId(int v) {
+    setUint64Field(56, v);
+  }
+
+  set mutationCommandIdBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field mutationCommandId');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(56, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(60, (bits >> 32).toInt());
+  }
+
+  MutationReconcileBuilder initMutationReconcile() {
+    return initStructFieldWith(43, (r) => MutationReconcileBuilder(r), 2, 4);
+  }
+
+  bool hasMutationReconcile() => hasPointerField(43);
+
+  MutationDiscoverBuilder initMutationDiscover() {
+    return initStructFieldWith(44, (r) => MutationDiscoverBuilder(r), 2, 5);
+  }
+
+  bool hasMutationDiscover() => hasPointerField(44);
+
+  GuestMutationStartBuilder initGuestMutationStart() {
+    return initStructFieldWith(45, (r) => GuestMutationStartBuilder(r), 0, 2);
+  }
+
+  bool hasGuestMutationStart() => hasPointerField(45);
+
+  GuestMutationCommandBuilder initGuestMutationCommand() {
+    return initStructFieldWith(46, (r) => GuestMutationCommandBuilder(r), 3, 5);
+  }
+
+  bool hasGuestMutationCommand() => hasPointerField(46);
 }
 
 final class _RequestFactory
@@ -850,9 +986,9 @@ final class _RequestFactory
   @override
   StructSchemaInfo get schema => requestSchema;
   @override
-  int get dataWords => 7;
+  int get dataWords => 8;
   @override
-  int get ptrWords => 41;
+  int get ptrWords => 47;
   @override
   RequestReader fromRawReader(RawStructReader r) => RequestReader(r);
   @override
@@ -868,8 +1004,8 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
   id: 0x98af3617e14b2953,
   displayName: 'host.capnp:Request',
   shortName: 'Request',
-  dataWords: 7,
-  pointerWords: 41,
+  dataWords: 8,
+  pointerWords: 47,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -1287,6 +1423,62 @@ const StructSchemaInfo requestSchema = StructSchemaInfo(
         type: StructRefTypeSchemaInfo(0x85aad5dfacc34977),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'mutationStart',
+      codeOrder: 52,
+      body: SlotFieldSchemaInfo(
+        offset: 41,
+        type: StructRefTypeSchemaInfo(0xf0119eaaa7f2d237),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationCommand',
+      codeOrder: 53,
+      body: SlotFieldSchemaInfo(
+        offset: 42,
+        type: StructRefTypeSchemaInfo(0xd6c333b6b7ef6b65),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationCommandId',
+      codeOrder: 54,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationReconcile',
+      codeOrder: 55,
+      body: SlotFieldSchemaInfo(
+        offset: 43,
+        type: StructRefTypeSchemaInfo(0xb255361c70318dd3),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationDiscover',
+      codeOrder: 56,
+      body: SlotFieldSchemaInfo(
+        offset: 44,
+        type: StructRefTypeSchemaInfo(0xab663dbc87ed6d1e),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'guestMutationStart',
+      codeOrder: 57,
+      body: SlotFieldSchemaInfo(
+        offset: 45,
+        type: StructRefTypeSchemaInfo(0xd1b6405977479d5d),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'guestMutationCommand',
+      codeOrder: 58,
+      body: SlotFieldSchemaInfo(
+        offset: 46,
+        type: StructRefTypeSchemaInfo(0xc2f0721cdbc28651),
+      ),
+    ),
   ],
 );
 
@@ -1456,6 +1648,31 @@ final class ResponseReader extends StructReader {
     34,
     (r) => FileResultReader(r, capabilities: capabilityTable),
   );
+
+  MutationStateReader? get mutationState => getStructFieldWith(
+    35,
+    (r) => MutationStateReader(r, capabilities: capabilityTable),
+  );
+
+  MutationResultReader? get mutationResult => getStructFieldWith(
+    36,
+    (r) => MutationResultReader(r, capabilities: capabilityTable),
+  );
+
+  int get mutationCommandId => getUint64Field(48);
+  BigInt get mutationCommandIdBigInt =>
+      ((BigInt.from(getUint32Field(52).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(48).toUnsigned(32)));
+
+  GuestMutationStateReader? get guestMutationState => getStructFieldWith(
+    37,
+    (r) => GuestMutationStateReader(r, capabilities: capabilityTable),
+  );
+
+  GuestMutationResultReader? get guestMutationResult => getStructFieldWith(
+    38,
+    (r) => GuestMutationResultReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class ResponseBuilder extends StructBuilder {
@@ -1607,7 +1824,7 @@ final class ResponseBuilder extends StructBuilder {
       length,
       (r) => PluginEntryBuilder(r),
       1,
-      12,
+      13,
     );
   }
 
@@ -1758,6 +1975,43 @@ final class ResponseBuilder extends StructBuilder {
   }
 
   bool hasFileResult() => hasPointerField(34);
+
+  MutationStateBuilder initMutationState() {
+    return initStructFieldWith(35, (r) => MutationStateBuilder(r), 2, 2);
+  }
+
+  bool hasMutationState() => hasPointerField(35);
+
+  MutationResultBuilder initMutationResult() {
+    return initStructFieldWith(36, (r) => MutationResultBuilder(r), 4, 8);
+  }
+
+  bool hasMutationResult() => hasPointerField(36);
+
+  set mutationCommandId(int v) {
+    setUint64Field(48, v);
+  }
+
+  set mutationCommandIdBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field mutationCommandId');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(48, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(52, (bits >> 32).toInt());
+  }
+
+  GuestMutationStateBuilder initGuestMutationState() {
+    return initStructFieldWith(37, (r) => GuestMutationStateBuilder(r), 3, 3);
+  }
+
+  bool hasGuestMutationState() => hasPointerField(37);
+
+  GuestMutationResultBuilder initGuestMutationResult() {
+    return initStructFieldWith(38, (r) => GuestMutationResultBuilder(r), 1, 2);
+  }
+
+  bool hasGuestMutationResult() => hasPointerField(38);
 }
 
 final class _ResponseFactory
@@ -1765,9 +2019,9 @@ final class _ResponseFactory
   @override
   StructSchemaInfo get schema => responseSchema;
   @override
-  int get dataWords => 6;
+  int get dataWords => 7;
   @override
-  int get ptrWords => 35;
+  int get ptrWords => 39;
   @override
   ResponseReader fromRawReader(RawStructReader r) => ResponseReader(r);
   @override
@@ -1783,8 +2037,8 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
   id: 0xccbd3dd94b141a74,
   displayName: 'host.capnp:Response',
   shortName: 'Response',
-  dataWords: 6,
-  pointerWords: 35,
+  dataWords: 7,
+  pointerWords: 39,
   fields: [
     FieldSchemaInfo(
       name: 'version',
@@ -2168,6 +2422,46 @@ const StructSchemaInfo responseSchema = StructSchemaInfo(
       body: SlotFieldSchemaInfo(
         offset: 34,
         type: StructRefTypeSchemaInfo(0xa3409b45a3cf9630),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationState',
+      codeOrder: 48,
+      body: SlotFieldSchemaInfo(
+        offset: 35,
+        type: StructRefTypeSchemaInfo(0xeee5de8e18037563),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationResult',
+      codeOrder: 49,
+      body: SlotFieldSchemaInfo(
+        offset: 36,
+        type: StructRefTypeSchemaInfo(0x8f225c0f4efe6a74),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationCommandId',
+      codeOrder: 50,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'guestMutationState',
+      codeOrder: 51,
+      body: SlotFieldSchemaInfo(
+        offset: 37,
+        type: StructRefTypeSchemaInfo(0x88db4a5d603dd674),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'guestMutationResult',
+      codeOrder: 52,
+      body: SlotFieldSchemaInfo(
+        offset: 38,
+        type: StructRefTypeSchemaInfo(0xefd23c868c2b10a7),
       ),
     ),
   ],
@@ -4193,6 +4487,13 @@ final class PluginEntryReader extends StructReader {
   ListReader<String?>? get approvedIo => getTextListField(10);
 
   ListReader<String?>? get ioHandlers => getTextListField(11);
+
+  bool get mutationSupported => getBoolField(3);
+
+  MutationBudgetReader? get mutationBudget => getStructFieldWith(
+    12,
+    (r) => MutationBudgetReader(r, capabilities: capabilityTable),
+  );
 }
 
 final class PluginEntryBuilder extends StructBuilder {
@@ -4266,6 +4567,16 @@ final class PluginEntryBuilder extends StructBuilder {
   ListBuilder<String?> initIoHandlers(int length) {
     return initTextListField(11, length);
   }
+
+  set mutationSupported(bool v) {
+    setBoolField(3, v);
+  }
+
+  MutationBudgetBuilder initMutationBudget() {
+    return initStructFieldWith(12, (r) => MutationBudgetBuilder(r), 2, 0);
+  }
+
+  bool hasMutationBudget() => hasPointerField(12);
 }
 
 final class _PluginEntryFactory
@@ -4275,7 +4586,7 @@ final class _PluginEntryFactory
   @override
   int get dataWords => 1;
   @override
-  int get ptrWords => 12;
+  int get ptrWords => 13;
   @override
   PluginEntryReader fromRawReader(RawStructReader r) => PluginEntryReader(r);
   @override
@@ -4293,7 +4604,7 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
   displayName: 'host.capnp:PluginEntry',
   shortName: 'PluginEntry',
   dataWords: 1,
-  pointerWords: 12,
+  pointerWords: 13,
   fields: [
     FieldSchemaInfo(
       name: 'packageId',
@@ -4415,10 +4726,124 @@ const StructSchemaInfo pluginEntrySchema = StructSchemaInfo(
         type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Text')),
       ),
     ),
+    FieldSchemaInfo(
+      name: 'mutationSupported',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'mutationBudget',
+      codeOrder: 16,
+      body: SlotFieldSchemaInfo(
+        offset: 12,
+        type: StructRefTypeSchemaInfo(0xf40b68d6e3ae16f1),
+      ),
+    ),
   ],
 );
 
 final pluginEntryFactory = _PluginEntryFactory();
+
+final class MutationBudgetReader extends StructReader {
+  MutationBudgetReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationBudgetSchema;
+
+  int get maxJobBytes => getUint64Field(0);
+  BigInt get maxJobBytesBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get maxBytes => getUint64Field(8);
+  BigInt get maxBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+}
+
+final class MutationBudgetBuilder extends StructBuilder {
+  MutationBudgetBuilder(super.raw);
+
+  @override
+  MutationBudgetReader asReader() => MutationBudgetReader(rawToReader());
+
+  set maxJobBytes(int v) {
+    setUint64Field(0, v);
+  }
+
+  set maxJobBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxJobBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set maxBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set maxBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field maxBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+}
+
+final class _MutationBudgetFactory
+    extends StructFactory<MutationBudgetReader, MutationBudgetBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationBudgetSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 0;
+  @override
+  MutationBudgetReader fromRawReader(RawStructReader r) =>
+      MutationBudgetReader(r);
+  @override
+  MutationBudgetReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationBudgetReader(r, capabilities: capabilities);
+  @override
+  MutationBudgetBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationBudgetBuilder(r);
+}
+
+const StructSchemaInfo mutationBudgetSchema = StructSchemaInfo(
+  id: 0xf40b68d6e3ae16f1,
+  displayName: 'host.capnp:MutationBudget',
+  shortName: 'MutationBudget',
+  dataWords: 2,
+  pointerWords: 0,
+  fields: [
+    FieldSchemaInfo(
+      name: 'maxJobBytes',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'maxBytes',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+  ],
+);
+
+final mutationBudgetFactory = _MutationBudgetFactory();
 
 final class CredentialInfoReader extends StructReader {
   CredentialInfoReader(super.raw, {super.capabilities});
@@ -7743,5 +8168,1864 @@ const StructSchemaInfo fileResultSchema = StructSchemaInfo(
 );
 
 final fileResultFactory = _FileResultFactory();
+
+final class MutationStartReader extends StructReader {
+  MutationStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationStartSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get disposition => getUint16Field(8);
+
+  String? get selectedPath => getTextField(3);
+
+  String? get relativePath => getTextField(4);
+
+  String? get subject => getTextField(5);
+
+  Uint8List? get approvalSha256 => getDataField(6);
+
+  int get timeoutMs => getUint32Field(12);
+}
+
+final class MutationStartBuilder extends StructBuilder {
+  MutationStartBuilder(super.raw);
+
+  @override
+  MutationStartReader asReader() => MutationStartReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set disposition(int v) {
+    setUint16Field(8, v);
+  }
+
+  set selectedPath(String? v) {
+    setTextField(3, v);
+  }
+
+  set relativePath(String? v) {
+    setTextField(4, v);
+  }
+
+  set subject(String? v) {
+    setTextField(5, v);
+  }
+
+  set approvalSha256(Uint8List? v) {
+    setDataField(6, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+}
+
+final class _MutationStartFactory
+    extends StructFactory<MutationStartReader, MutationStartBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationStartSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 7;
+  @override
+  MutationStartReader fromRawReader(RawStructReader r) =>
+      MutationStartReader(r);
+  @override
+  MutationStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationStartReader(r, capabilities: capabilities);
+  @override
+  MutationStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationStartBuilder(r);
+}
+
+const StructSchemaInfo mutationStartSchema = StructSchemaInfo(
+  id: 0xf0119eaaa7f2d237,
+  displayName: 'host.capnp:MutationStart',
+  shortName: 'MutationStart',
+  dataWords: 2,
+  pointerWords: 7,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disposition',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selectedPath',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'relativePath',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'subject',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approvalSha256',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final mutationStartFactory = _MutationStartFactory();
+
+final class MutationReconcileReader extends StructReader {
+  MutationReconcileReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationReconcileSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  Uint8List? get plan => getDataField(3);
+
+  int get timeoutMs => getUint32Field(8);
+}
+
+final class MutationReconcileBuilder extends StructBuilder {
+  MutationReconcileBuilder(super.raw);
+
+  @override
+  MutationReconcileReader asReader() => MutationReconcileReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(8, v);
+  }
+}
+
+final class _MutationReconcileFactory
+    extends StructFactory<MutationReconcileReader, MutationReconcileBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationReconcileSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 4;
+  @override
+  MutationReconcileReader fromRawReader(RawStructReader r) =>
+      MutationReconcileReader(r);
+  @override
+  MutationReconcileReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationReconcileReader(r, capabilities: capabilities);
+  @override
+  MutationReconcileBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationReconcileBuilder(r);
+}
+
+const StructSchemaInfo mutationReconcileSchema = StructSchemaInfo(
+  id: 0xb255361c70318dd3,
+  displayName: 'host.capnp:MutationReconcile',
+  shortName: 'MutationReconcile',
+  dataWords: 2,
+  pointerWords: 4,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plan',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+  ],
+);
+
+final mutationReconcileFactory = _MutationReconcileFactory();
+
+final class MutationDiscoverReader extends StructReader {
+  MutationDiscoverReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationDiscoverSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  String? get packageId => getTextField(1);
+
+  Uint8List? get packageDigest => getDataField(2);
+
+  int get registryRevision => getUint64Field(0);
+  BigInt get registryRevisionBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  String? get subject => getTextField(3);
+
+  int get disposition => getUint16Field(8);
+
+  int get scanLimit => getUint16Field(10);
+
+  int get timeoutMs => getUint32Field(12);
+
+  Uint8List? get checkpoint => getDataField(4);
+}
+
+final class MutationDiscoverBuilder extends StructBuilder {
+  MutationDiscoverBuilder(super.raw);
+
+  @override
+  MutationDiscoverReader asReader() => MutationDiscoverReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set packageId(String? v) {
+    setTextField(1, v);
+  }
+
+  set packageDigest(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set registryRevision(int v) {
+    setUint64Field(0, v);
+  }
+
+  set registryRevisionBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field registryRevision');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set subject(String? v) {
+    setTextField(3, v);
+  }
+
+  set disposition(int v) {
+    setUint16Field(8, v);
+  }
+
+  set scanLimit(int v) {
+    setUint16Field(10, v);
+  }
+
+  set timeoutMs(int v) {
+    setUint32Field(12, v);
+  }
+
+  set checkpoint(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _MutationDiscoverFactory
+    extends StructFactory<MutationDiscoverReader, MutationDiscoverBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationDiscoverSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 5;
+  @override
+  MutationDiscoverReader fromRawReader(RawStructReader r) =>
+      MutationDiscoverReader(r);
+  @override
+  MutationDiscoverReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationDiscoverReader(r, capabilities: capabilities);
+  @override
+  MutationDiscoverBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationDiscoverBuilder(r);
+}
+
+const StructSchemaInfo mutationDiscoverSchema = StructSchemaInfo(
+  id: 0xab663dbc87ed6d1e,
+  displayName: 'host.capnp:MutationDiscover',
+  shortName: 'MutationDiscover',
+  dataWords: 2,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageId',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'packageDigest',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'registryRevision',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'subject',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'disposition',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'scanLimit',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'timeoutMs',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'checkpoint',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final mutationDiscoverFactory = _MutationDiscoverFactory();
+
+final class MutationCommandReader extends StructReader {
+  MutationCommandReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationCommandSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get plan => getDataField(1);
+
+  int get offset => getUint64Field(8);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(2);
+
+  String? get operationId => getTextField(3);
+
+  int get contentLength => getUint64Field(16);
+  BigInt get contentLengthBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get contentSha256 => getDataField(4);
+
+  int get scanLimit => getUint16Field(2);
+}
+
+final class MutationCommandBuilder extends StructBuilder {
+  MutationCommandBuilder(super.raw);
+
+  @override
+  MutationCommandReader asReader() => MutationCommandReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(3, v);
+  }
+
+  set contentLength(int v) {
+    setUint64Field(16, v);
+  }
+
+  set contentLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field contentLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+
+  set scanLimit(int v) {
+    setUint16Field(2, v);
+  }
+}
+
+final class _MutationCommandFactory
+    extends StructFactory<MutationCommandReader, MutationCommandBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationCommandSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  MutationCommandReader fromRawReader(RawStructReader r) =>
+      MutationCommandReader(r);
+  @override
+  MutationCommandReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationCommandReader(r, capabilities: capabilities);
+  @override
+  MutationCommandBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationCommandBuilder(r);
+}
+
+const StructSchemaInfo mutationCommandSchema = StructSchemaInfo(
+  id: 0xd6c333b6b7ef6b65,
+  displayName: 'host.capnp:MutationCommand',
+  shortName: 'MutationCommand',
+  dataWords: 3,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plan',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentLength',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentSha256',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'scanLimit',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final mutationCommandFactory = _MutationCommandFactory();
+
+final class MutationStateReader extends StructReader {
+  MutationStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationStateSchema;
+
+  int get command => getUint64Field(0);
+  BigInt get commandBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get kind => getUint16Field(8);
+
+  int get delivery => getUint16Field(10);
+
+  bool get selected => getBoolField(96);
+
+  bool get reconcileRequired => getBoolField(97);
+
+  bool get terminal => getBoolField(98);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+}
+
+final class MutationStateBuilder extends StructBuilder {
+  MutationStateBuilder(super.raw);
+
+  @override
+  MutationStateReader asReader() => MutationStateReader(rawToReader());
+
+  set command(int v) {
+    setUint64Field(0, v);
+  }
+
+  set commandBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field command');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(10, v);
+  }
+
+  set selected(bool v) {
+    setBoolField(96, v);
+  }
+
+  set reconcileRequired(bool v) {
+    setBoolField(97, v);
+  }
+
+  set terminal(bool v) {
+    setBoolField(98, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+}
+
+final class _MutationStateFactory
+    extends StructFactory<MutationStateReader, MutationStateBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationStateSchema;
+  @override
+  int get dataWords => 2;
+  @override
+  int get ptrWords => 2;
+  @override
+  MutationStateReader fromRawReader(RawStructReader r) =>
+      MutationStateReader(r);
+  @override
+  MutationStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationStateReader(r, capabilities: capabilities);
+  @override
+  MutationStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationStateBuilder(r);
+}
+
+const StructSchemaInfo mutationStateSchema = StructSchemaInfo(
+  id: 0xeee5de8e18037563,
+  displayName: 'host.capnp:MutationState',
+  shortName: 'MutationState',
+  dataWords: 2,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'command',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivery',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selected',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 96,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reconcileRequired',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 97,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'terminal',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 98,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedIdentity',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final mutationStateFactory = _MutationStateFactory();
+
+final class MutationResultReader extends StructReader {
+  MutationResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = mutationResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+
+  Uint8List? get record => getDataField(2);
+
+  Uint8List? get outcome => getDataField(3);
+
+  int get stagedBytes => getUint64Field(8);
+  BigInt get stagedBytesBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  bool get durableContent => getBoolField(16);
+
+  int get failureLayer => getUint16Field(4);
+
+  int get failureCode => getUint16Field(6);
+
+  int get phase => getUint16Field(16);
+
+  String? get operationId => getTextField(4);
+
+  int get effect => getUint16Field(18);
+
+  int get osCode => getUint32Field(20);
+
+  Uint8List? get plan => getDataField(5);
+
+  ListReader<Uint8List?>? get plans => getDataListField(6);
+
+  int get scanned => getUint32Field(24);
+
+  bool get done => getBoolField(17);
+
+  Uint8List? get checkpoint => getDataField(7);
+}
+
+final class MutationResultBuilder extends StructBuilder {
+  MutationResultBuilder(super.raw);
+
+  @override
+  MutationResultReader asReader() => MutationResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set record(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set outcome(Uint8List? v) {
+    setDataField(3, v);
+  }
+
+  set stagedBytes(int v) {
+    setUint64Field(8, v);
+  }
+
+  set stagedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field stagedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set durableContent(bool v) {
+    setBoolField(16, v);
+  }
+
+  set failureLayer(int v) {
+    setUint16Field(4, v);
+  }
+
+  set failureCode(int v) {
+    setUint16Field(6, v);
+  }
+
+  set phase(int v) {
+    setUint16Field(16, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(4, v);
+  }
+
+  set effect(int v) {
+    setUint16Field(18, v);
+  }
+
+  set osCode(int v) {
+    setUint32Field(20, v);
+  }
+
+  set plan(Uint8List? v) {
+    setDataField(5, v);
+  }
+
+  ListBuilder<Uint8List?> initPlans(int length) {
+    return initDataListField(6, length);
+  }
+
+  set scanned(int v) {
+    setUint32Field(24, v);
+  }
+
+  set done(bool v) {
+    setBoolField(17, v);
+  }
+
+  set checkpoint(Uint8List? v) {
+    setDataField(7, v);
+  }
+}
+
+final class _MutationResultFactory
+    extends StructFactory<MutationResultReader, MutationResultBuilder> {
+  @override
+  StructSchemaInfo get schema => mutationResultSchema;
+  @override
+  int get dataWords => 4;
+  @override
+  int get ptrWords => 8;
+  @override
+  MutationResultReader fromRawReader(RawStructReader r) =>
+      MutationResultReader(r);
+  @override
+  MutationResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => MutationResultReader(r, capabilities: capabilities);
+  @override
+  MutationResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      MutationResultBuilder(r);
+}
+
+const StructSchemaInfo mutationResultSchema = StructSchemaInfo(
+  id: 0x8f225c0f4efe6a74,
+  displayName: 'host.capnp:MutationResult',
+  shortName: 'MutationResult',
+  dataWords: 4,
+  pointerWords: 8,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedIdentity',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'record',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'outcome',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'stagedBytes',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'durableContent',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 16,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'failureLayer',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'failureCode',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'phase',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 8,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'effect',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 9,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'osCode',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plan',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'plans',
+      codeOrder: 14,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: ListTypeSchemaInfo(PrimitiveTypeSchemaInfo('Data')),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'scanned',
+      codeOrder: 15,
+      body: SlotFieldSchemaInfo(
+        offset: 6,
+        type: PrimitiveTypeSchemaInfo('UInt32'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'done',
+      codeOrder: 16,
+      body: SlotFieldSchemaInfo(
+        offset: 17,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'checkpoint',
+      codeOrder: 17,
+      body: SlotFieldSchemaInfo(
+        offset: 7,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final mutationResultFactory = _MutationResultFactory();
+
+final class GuestMutationStartReader extends StructReader {
+  GuestMutationStartReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = guestMutationStartSchema;
+
+  MutationStartReader? get selection => getStructFieldWith(
+    0,
+    (r) => MutationStartReader(r, capabilities: capabilityTable),
+  );
+
+  MutationBudgetReader? get approvedBudget => getStructFieldWith(
+    1,
+    (r) => MutationBudgetReader(r, capabilities: capabilityTable),
+  );
+}
+
+final class GuestMutationStartBuilder extends StructBuilder {
+  GuestMutationStartBuilder(super.raw);
+
+  @override
+  GuestMutationStartReader asReader() =>
+      GuestMutationStartReader(rawToReader());
+
+  MutationStartBuilder initSelection() {
+    return initStructFieldWith(0, (r) => MutationStartBuilder(r), 2, 7);
+  }
+
+  bool hasSelection() => hasPointerField(0);
+
+  MutationBudgetBuilder initApprovedBudget() {
+    return initStructFieldWith(1, (r) => MutationBudgetBuilder(r), 2, 0);
+  }
+
+  bool hasApprovedBudget() => hasPointerField(1);
+}
+
+final class _GuestMutationStartFactory
+    extends StructFactory<GuestMutationStartReader, GuestMutationStartBuilder> {
+  @override
+  StructSchemaInfo get schema => guestMutationStartSchema;
+  @override
+  int get dataWords => 0;
+  @override
+  int get ptrWords => 2;
+  @override
+  GuestMutationStartReader fromRawReader(RawStructReader r) =>
+      GuestMutationStartReader(r);
+  @override
+  GuestMutationStartReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationStartReader(r, capabilities: capabilities);
+  @override
+  GuestMutationStartBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationStartBuilder(r);
+}
+
+const StructSchemaInfo guestMutationStartSchema = StructSchemaInfo(
+  id: 0xd1b6405977479d5d,
+  displayName: 'host.capnp:GuestMutationStart',
+  shortName: 'GuestMutationStart',
+  dataWords: 0,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'selection',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0xf0119eaaa7f2d237),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approvedBudget',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: StructRefTypeSchemaInfo(0xf40b68d6e3ae16f1),
+      ),
+    ),
+  ],
+);
+
+final guestMutationStartFactory = _GuestMutationStartFactory();
+
+final class GuestMutationCommandReader extends StructReader {
+  GuestMutationCommandReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = guestMutationCommandSchema;
+
+  Uint8List? get submission => getDataField(0);
+
+  int get kind => getUint16Field(0);
+
+  Uint8List? get planSha256 => getDataField(1);
+
+  int get offset => getUint64Field(8);
+  BigInt get offsetBigInt =>
+      ((BigInt.from(getUint32Field(12).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(8).toUnsigned(32)));
+
+  Uint8List? get bytes => getDataField(2);
+
+  String? get operationId => getTextField(3);
+
+  int get contentLength => getUint64Field(16);
+  BigInt get contentLengthBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  Uint8List? get contentSha256 => getDataField(4);
+}
+
+final class GuestMutationCommandBuilder extends StructBuilder {
+  GuestMutationCommandBuilder(super.raw);
+
+  @override
+  GuestMutationCommandReader asReader() =>
+      GuestMutationCommandReader(rawToReader());
+
+  set submission(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  set planSha256(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set offset(int v) {
+    setUint64Field(8, v);
+  }
+
+  set offsetBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field offset');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(8, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(12, (bits >> 32).toInt());
+  }
+
+  set bytes(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set operationId(String? v) {
+    setTextField(3, v);
+  }
+
+  set contentLength(int v) {
+    setUint64Field(16, v);
+  }
+
+  set contentLengthBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field contentLength');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set contentSha256(Uint8List? v) {
+    setDataField(4, v);
+  }
+}
+
+final class _GuestMutationCommandFactory
+    extends
+        StructFactory<GuestMutationCommandReader, GuestMutationCommandBuilder> {
+  @override
+  StructSchemaInfo get schema => guestMutationCommandSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 5;
+  @override
+  GuestMutationCommandReader fromRawReader(RawStructReader r) =>
+      GuestMutationCommandReader(r);
+  @override
+  GuestMutationCommandReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationCommandReader(r, capabilities: capabilities);
+  @override
+  GuestMutationCommandBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationCommandBuilder(r);
+}
+
+const StructSchemaInfo guestMutationCommandSchema = StructSchemaInfo(
+  id: 0xc2f0721cdbc28651,
+  displayName: 'host.capnp:GuestMutationCommand',
+  shortName: 'GuestMutationCommand',
+  dataWords: 3,
+  pointerWords: 5,
+  fields: [
+    FieldSchemaInfo(
+      name: 'submission',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'planSha256',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'offset',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'bytes',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'operationId',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 3,
+        type: PrimitiveTypeSchemaInfo('Text'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentLength',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'contentSha256',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+  ],
+);
+
+final guestMutationCommandFactory = _GuestMutationCommandFactory();
+
+final class GuestMutationStateReader extends StructReader {
+  GuestMutationStateReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = guestMutationStateSchema;
+
+  int get command => getUint64Field(0);
+  BigInt get commandBigInt =>
+      ((BigInt.from(getUint32Field(4).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(0).toUnsigned(32)));
+
+  int get kind => getUint16Field(8);
+
+  int get delivery => getUint16Field(10);
+
+  bool get selected => getBoolField(96);
+
+  Uint8List? get reference => getDataField(0);
+
+  Uint8List? get expectedIdentity => getDataField(1);
+
+  Uint8List? get reviewedPlanSha256 => getDataField(2);
+
+  bool get approvalDelivered => getBoolField(97);
+
+  bool get permitDelivered => getBoolField(98);
+
+  int get stagedBytes => getUint64Field(16);
+  BigInt get stagedBytesBigInt =>
+      ((BigInt.from(getUint32Field(20).toUnsigned(32)) << 32) |
+      BigInt.from(getUint32Field(16).toUnsigned(32)));
+
+  bool get durableContent => getBoolField(99);
+
+  bool get effectAttempted => getBoolField(100);
+
+  bool get reconcileRequired => getBoolField(101);
+
+  bool get terminal => getBoolField(102);
+}
+
+final class GuestMutationStateBuilder extends StructBuilder {
+  GuestMutationStateBuilder(super.raw);
+
+  @override
+  GuestMutationStateReader asReader() =>
+      GuestMutationStateReader(rawToReader());
+
+  set command(int v) {
+    setUint64Field(0, v);
+  }
+
+  set commandBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field command');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(0, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(4, (bits >> 32).toInt());
+  }
+
+  set kind(int v) {
+    setUint16Field(8, v);
+  }
+
+  set delivery(int v) {
+    setUint16Field(10, v);
+  }
+
+  set selected(bool v) {
+    setBoolField(96, v);
+  }
+
+  set reference(Uint8List? v) {
+    setDataField(0, v);
+  }
+
+  set expectedIdentity(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set reviewedPlanSha256(Uint8List? v) {
+    setDataField(2, v);
+  }
+
+  set approvalDelivered(bool v) {
+    setBoolField(97, v);
+  }
+
+  set permitDelivered(bool v) {
+    setBoolField(98, v);
+  }
+
+  set stagedBytes(int v) {
+    setUint64Field(16, v);
+  }
+
+  set stagedBytesBigInt(BigInt v) {
+    if (v < BigInt.zero || v > (BigInt.one << 64) - BigInt.one) {
+      throw RangeError('64-bit field stagedBytes');
+    }
+    final bits = v.toUnsigned(64);
+    setUint32Field(16, (bits & BigInt.from(0xffffffff)).toInt());
+    setUint32Field(20, (bits >> 32).toInt());
+  }
+
+  set durableContent(bool v) {
+    setBoolField(99, v);
+  }
+
+  set effectAttempted(bool v) {
+    setBoolField(100, v);
+  }
+
+  set reconcileRequired(bool v) {
+    setBoolField(101, v);
+  }
+
+  set terminal(bool v) {
+    setBoolField(102, v);
+  }
+}
+
+final class _GuestMutationStateFactory
+    extends StructFactory<GuestMutationStateReader, GuestMutationStateBuilder> {
+  @override
+  StructSchemaInfo get schema => guestMutationStateSchema;
+  @override
+  int get dataWords => 3;
+  @override
+  int get ptrWords => 3;
+  @override
+  GuestMutationStateReader fromRawReader(RawStructReader r) =>
+      GuestMutationStateReader(r);
+  @override
+  GuestMutationStateReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationStateReader(r, capabilities: capabilities);
+  @override
+  GuestMutationStateBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationStateBuilder(r);
+}
+
+const StructSchemaInfo guestMutationStateSchema = StructSchemaInfo(
+  id: 0x88db4a5d603dd674,
+  displayName: 'host.capnp:GuestMutationState',
+  shortName: 'GuestMutationState',
+  dataWords: 3,
+  pointerWords: 3,
+  fields: [
+    FieldSchemaInfo(
+      name: 'command',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 4,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'delivery',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 5,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'selected',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 96,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reference',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'expectedIdentity',
+      codeOrder: 5,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reviewedPlanSha256',
+      codeOrder: 6,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'approvalDelivered',
+      codeOrder: 7,
+      body: SlotFieldSchemaInfo(
+        offset: 97,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'permitDelivered',
+      codeOrder: 8,
+      body: SlotFieldSchemaInfo(
+        offset: 98,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'stagedBytes',
+      codeOrder: 9,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt64'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'durableContent',
+      codeOrder: 10,
+      body: SlotFieldSchemaInfo(
+        offset: 99,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'effectAttempted',
+      codeOrder: 11,
+      body: SlotFieldSchemaInfo(
+        offset: 100,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'reconcileRequired',
+      codeOrder: 12,
+      body: SlotFieldSchemaInfo(
+        offset: 101,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'terminal',
+      codeOrder: 13,
+      body: SlotFieldSchemaInfo(
+        offset: 102,
+        type: PrimitiveTypeSchemaInfo('Bool'),
+      ),
+    ),
+  ],
+);
+
+final guestMutationStateFactory = _GuestMutationStateFactory();
+
+final class GuestMutationResultReader extends StructReader {
+  GuestMutationResultReader(super.raw, {super.capabilities});
+
+  static const StructSchemaInfo schema = guestMutationResultSchema;
+
+  int get kind => getUint16Field(0);
+
+  MutationResultReader? get owner => getStructFieldWith(
+    0,
+    (r) => MutationResultReader(r, capabilities: capabilityTable),
+  );
+
+  Uint8List? get frame => getDataField(1);
+
+  int get failureKind => getUint16Field(2);
+
+  int get failureCode => getUint16Field(4);
+}
+
+final class GuestMutationResultBuilder extends StructBuilder {
+  GuestMutationResultBuilder(super.raw);
+
+  @override
+  GuestMutationResultReader asReader() =>
+      GuestMutationResultReader(rawToReader());
+
+  set kind(int v) {
+    setUint16Field(0, v);
+  }
+
+  MutationResultBuilder initOwner() {
+    return initStructFieldWith(0, (r) => MutationResultBuilder(r), 4, 8);
+  }
+
+  bool hasOwner() => hasPointerField(0);
+
+  set frame(Uint8List? v) {
+    setDataField(1, v);
+  }
+
+  set failureKind(int v) {
+    setUint16Field(2, v);
+  }
+
+  set failureCode(int v) {
+    setUint16Field(4, v);
+  }
+}
+
+final class _GuestMutationResultFactory
+    extends
+        StructFactory<GuestMutationResultReader, GuestMutationResultBuilder> {
+  @override
+  StructSchemaInfo get schema => guestMutationResultSchema;
+  @override
+  int get dataWords => 1;
+  @override
+  int get ptrWords => 2;
+  @override
+  GuestMutationResultReader fromRawReader(RawStructReader r) =>
+      GuestMutationResultReader(r);
+  @override
+  GuestMutationResultReader fromRawReaderWithCapabilities(
+    RawStructReader r,
+    List<Object?> capabilities,
+  ) => GuestMutationResultReader(r, capabilities: capabilities);
+  @override
+  GuestMutationResultBuilder fromRawBuilder(RawStructBuilder r) =>
+      GuestMutationResultBuilder(r);
+}
+
+const StructSchemaInfo guestMutationResultSchema = StructSchemaInfo(
+  id: 0xefd23c868c2b10a7,
+  displayName: 'host.capnp:GuestMutationResult',
+  shortName: 'GuestMutationResult',
+  dataWords: 1,
+  pointerWords: 2,
+  fields: [
+    FieldSchemaInfo(
+      name: 'kind',
+      codeOrder: 0,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'owner',
+      codeOrder: 1,
+      body: SlotFieldSchemaInfo(
+        offset: 0,
+        type: StructRefTypeSchemaInfo(0x8f225c0f4efe6a74),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'frame',
+      codeOrder: 2,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('Data'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'failureKind',
+      codeOrder: 3,
+      body: SlotFieldSchemaInfo(
+        offset: 1,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+    FieldSchemaInfo(
+      name: 'failureCode',
+      codeOrder: 4,
+      body: SlotFieldSchemaInfo(
+        offset: 2,
+        type: PrimitiveTypeSchemaInfo('UInt16'),
+      ),
+    ),
+  ],
+);
+
+final guestMutationResultFactory = _GuestMutationResultFactory();
 
 const schemaReflectionAvailable = true;

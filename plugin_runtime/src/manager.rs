@@ -3,7 +3,7 @@
 use crate::{
     Cancellation, Fault, Limits, Report,
     dependency::{Dependency, Endpoint, Spec},
-    io_binding::{IoBinding, IoContext, ServiceRunBudget},
+    io_binding::{IoBinding, IoContext, MutationBudget, ServiceRunBudget},
     package::{PreparedPackage, TaskReport},
 };
 use morrow_core::{
@@ -547,6 +547,8 @@ impl Manager {
             now,
             false,
             None,
+            None,
+            false,
         )
     }
     /// Explicit trusted-host approval of one fixed service run on this exact instance.
@@ -579,6 +581,8 @@ impl Manager {
             now,
             true,
             None,
+            None,
+            false,
         )
     }
     /// Explicit initial run approval with cumulative task and byte ceilings.
@@ -612,6 +616,83 @@ impl Manager {
             now,
             true,
             Some(budget),
+            None,
+            false,
+        )
+    }
+    /// Explicit host approval for one mutation-only budget on this exact live
+    /// instance. The package declaration is a ceiling, never permission.
+    /// A second binding cannot reset the instance's cumulative ledger.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_budgeted_mutation(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+        budget: MutationBudget,
+    ) -> Result<IoBinding> {
+        if requested.is_empty()
+            || requested
+                .iter()
+                .any(|cap| !matches!(cap, IoCapability::FileCreate | IoCapability::FileDelete))
+        {
+            return Err(Error::Invalid("mutation budget requires create or delete").into());
+        }
+        self.bind_io_kind(
+            host,
+            instance,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+            false,
+            None,
+            Some(budget),
+            false,
+        )
+    }
+    /// Bind only bounded original-plan discovery and reconciliation on a live
+    /// mutation-budget package. This uses its ordinary IO declaration; a
+    /// published extended ceiling never becomes approved execution authority.
+    #[allow(clippy::too_many_arguments)]
+    pub fn bind_mutation_history(
+        &self,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        expected_digest: [u8; 32],
+        expected_revision: u64,
+        requested: &BTreeSet<IoCapability>,
+        expires: u64,
+        now: u64,
+    ) -> Result<IoBinding> {
+        if requested.len() != 1
+            || !requested
+                .iter()
+                .all(|cap| matches!(cap, IoCapability::FileCreate | IoCapability::FileDelete))
+            || !instance.package.package().mutation_enabled()
+            || instance.package.package().mutation_budget().is_none()
+        {
+            return Err(
+                Error::Invalid("mutation history requires a budgeted mutation package").into(),
+            );
+        }
+        self.bind_io_kind(
+            host,
+            instance,
+            expected_digest,
+            expected_revision,
+            requested,
+            expires,
+            now,
+            false,
+            None,
+            None,
+            true,
         )
     }
     #[allow(clippy::too_many_arguments)]
@@ -626,6 +707,8 @@ impl Manager {
         now: u64,
         service_run: bool,
         run_budget: Option<ServiceRunBudget>,
+        mutation_budget: Option<MutationBudget>,
+        mutation_history: bool,
     ) -> Result<IoBinding> {
         let package = instance.package.package();
         let selection = self.checked_selection(
@@ -640,6 +723,9 @@ impl Manager {
             || requested.is_empty()
             || !requested.is_subset(package.io_capabilities())
             || !requested.is_subset(&selection.approved_io)
+            || package.mutation_budget().is_some()
+                != (mutation_budget.is_some() || mutation_history)
+            || mutation_history && !package.mutation_enabled()
         {
             return Err(Error::Invalid("unapproved IO binding").into());
         }
@@ -652,6 +738,8 @@ impl Manager {
             now,
             service_run,
             run_budget,
+            mutation_budget,
+            mutation_history,
         )
         .map_err(ManagerError::Io)
     }
@@ -663,12 +751,18 @@ impl Manager {
         revision: u64,
     ) -> Result<()> {
         let selection = self.checked_selection(id, digest, revision)?;
-        let peers = if enabled { self.registry.exclusive_peers(id, digest, revision)? } else { vec![] };
+        let peers = if enabled {
+            self.registry.exclusive_peers(id, digest, revision)?
+        } else {
+            vec![]
+        };
         if selection.enabled == enabled && peers.is_empty() {
             return Ok(());
         }
         self.revoke_required_tree(id);
-        for peer in peers { self.revoke_required_tree(&peer); }
+        for peer in peers {
+            self.revoke_required_tree(&peer);
+        }
         self.registry.set_enabled(id, digest, enabled, revision)?;
         Ok(())
     }
@@ -795,6 +889,13 @@ impl Manager {
                 d.budget.as_ref().map(|b| {
                     Arc::new(IoContext::new(
                         b,
+                        package
+                            .package()
+                            .mutation_budget()
+                            .map(|budget| MutationBudget {
+                                max_job_bytes: budget.max_job_bytes,
+                                max_bytes: budget.max_bytes,
+                            }),
                         d.service_run.as_ref().map(|run| run.max_duration_ms),
                         d.service_run
                             .as_ref()

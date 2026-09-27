@@ -10,6 +10,10 @@ import 'package:morrow_core_client/src/generated/contract_identity.dart'
     as contract;
 import 'package:morrow_plugin_ui/online.dart';
 import 'package:morrow_studio/plugins/plugin_library.dart';
+import 'package:morrow_studio/plugins/guest_mutation_models.dart';
+import 'package:morrow_studio/plugins/guest_mutation_execution_manager.dart';
+import 'package:morrow_studio/plugins/io_task_models.dart';
+import 'package:morrow_studio/plugins/mutation_task_models.dart';
 
 const transform = PluginTransformHandler(
   name: 'bytes.reverse',
@@ -43,6 +47,8 @@ PluginLibraryEntry entry(
   List<String> approvedIo = const [],
   List<String> approved = const [],
   List<PluginTransformHandler> handlers = const [transform],
+  bool mutationSupported = false,
+  PluginMutationBudget? mutationBudget,
 }) => PluginLibraryEntry(
   id: id,
   name: '插件 $id',
@@ -58,6 +64,8 @@ PluginLibraryEntry entry(
   dependencies: const [],
   handlers: handlers,
   issue: '',
+  mutationSupported: mutationSupported,
+  mutationBudget: mutationBudget,
 );
 
 Uint8List document(String text) {
@@ -271,6 +279,51 @@ class FakeBackend implements ExternalPluginControl {
   }
 }
 
+class GuestLibraryBackend extends FakeBackend
+    implements
+        GuestMutationSupport,
+        GuestMutationBackend,
+        WorkbenchIoTaskControl {
+  GuestLibraryBackend({required this.supportsGuestMutationTasks}) : super([]);
+  @override
+  final bool supportsGuestMutationTasks;
+  @override
+  GuestMutationBackend get guestMutationTasks => this;
+  int mutationCalls = 0;
+
+  @override
+  Future<IoTaskSnapshot> ioStatus() async => IoTaskSnapshot(
+    storage: IoStoragePhase.local,
+    delivery: IoDeliveryPhase.absent,
+    exit: null,
+  );
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    mutationCalls++;
+    throw StateError('Opening plugin settings must not submit a mutation');
+  }
+}
+
+class _UnusedMutationBackend implements MutationTaskBackend {
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw StateError('Opening plugin settings must not submit a mutation');
+}
+
+class DualMutationLibraryBackend extends GuestLibraryBackend
+    implements MutationTaskSupport {
+  DualMutationLibraryBackend() : super(supportsGuestMutationTasks: true);
+
+  final MutationTaskBackend _native = _UnusedMutationBackend();
+
+  @override
+  bool get supportsMutationTasks => true;
+
+  @override
+  MutationTaskBackend get mutationTasks => _native;
+}
+
 Widget page(
   FakeBackend backend, {
   Future<String?> Function()? picker,
@@ -316,6 +369,118 @@ Future<void> mount(
 }
 
 void main() {
+  for (final supported in [false, true]) {
+    testWidgets(
+      'guest file actions are gated by native platform support: $supported',
+      (tester) async {
+        final backend = GuestLibraryBackend(
+          supportsGuestMutationTasks: supported,
+        );
+        await mount(tester, backend);
+        expect(find.byType(GuestMutationExecutionManager), findsNothing);
+        await click(tester, 'io-settings-open');
+        expect(
+          find.byType(GuestMutationExecutionManager),
+          supported ? findsOneWidget : findsNothing,
+        );
+        expect(backend.mutationCalls, 0);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+  testWidgets('guest recovery handoff is wired only with read-only recovery', (
+    tester,
+  ) async {
+    final guestOnly = GuestLibraryBackend(supportsGuestMutationTasks: true);
+    await mount(tester, guestOnly);
+    await click(tester, 'io-settings-open');
+    expect(
+      tester
+          .widget<GuestMutationExecutionManager>(
+            find.byType(GuestMutationExecutionManager),
+          )
+          .onOpenRecovery,
+      isNull,
+    );
+    expect(guestOnly.mutationCalls, 0);
+
+    final dual = DualMutationLibraryBackend();
+    await tester.pumpWidget(const SizedBox.shrink());
+    await mount(tester, dual);
+    await click(tester, 'io-settings-open');
+    expect(
+      tester
+          .widget<GuestMutationExecutionManager>(
+            find.byType(GuestMutationExecutionManager),
+          )
+          .onOpenRecovery,
+      isNotNull,
+    );
+    expect(dual.mutationCalls, 0);
+  });
+  test('mutation catalog budget is a bounded declaration, not an approval', () {
+    PluginMutationBudget budget(BigInt job, BigInt total) =>
+        PluginMutationBudget(maxJobBytes: job, maxBytes: total);
+    final jobLimit = BigInt.from(32 * 1024 * 1024);
+    final totalLimit = BigInt.from(256 * 1024 * 1024);
+    expect(() => budget(BigInt.zero, BigInt.zero), throwsFormatException);
+    expect(() => budget(BigInt.one, BigInt.zero), throwsFormatException);
+    expect(
+      () => budget(jobLimit + BigInt.one, totalLimit),
+      throwsFormatException,
+    );
+    expect(
+      () => budget(BigInt.one, totalLimit + BigInt.one),
+      throwsFormatException,
+    );
+    expect(() => budget(BigInt.two, BigInt.one), throwsFormatException);
+    final ceiling = budget(jobLimit, totalLimit);
+    expect(() => entry('a', mutationBudget: ceiling), throwsFormatException);
+    expect(entry('a').mutationSupported, isFalse);
+    expect(entry('a', mutationSupported: true).mutationBudget, isNull);
+    expect(
+      entry(
+        'a',
+        mutationSupported: true,
+        mutationBudget: ceiling,
+      ).mutationBudget,
+      same(ceiling),
+    );
+  });
+
+  testWidgets('guest mutation catalog shows ceilings without granting them', (
+    tester,
+  ) async {
+    final backend = FakeBackend([
+      entry(
+        'a',
+        mutationSupported: true,
+        mutationBudget: PluginMutationBudget(
+          maxJobBytes: BigInt.from(32 * 1024 * 1024),
+          maxBytes: BigInt.from(256 * 1024 * 1024),
+        ),
+      ),
+    ]);
+    await tester.pumpWidget(page(backend, locale: const Locale('en')));
+    await tester.pumpAndSettle();
+    await click(tester, 'plugin-entry-a');
+    expect(find.text('Package declares guest file mutations.'), findsOneWidget);
+    expect(
+      find.text(
+        'Declared ceiling: 33554432 bytes per job; 268435456 bytes total.',
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(
+        'These are package limits, not an active grant. Each operation still requires separate approval.',
+      ),
+      findsOneWidget,
+    );
+    expect(backend.configurations, 0);
+    expect(backend.ioConfigurations, 0);
+  });
+
   testWidgets(
     'return checks revision but reuses catalog pages; manual refresh is full',
     (t) async {

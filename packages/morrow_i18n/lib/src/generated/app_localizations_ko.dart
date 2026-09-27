@@ -1671,6 +1671,91 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => '준비된 계획 취소';
+
+  @override
+  String get pluginsFileMutationCleanupError => '작업 정리 오류';
+
+  @override
+  String get pluginsFileMutationContentLength => '내용 크기';
+
+  @override
+  String get pluginsFileMutationContentSha256 => '내용 SHA-256';
+
+  @override
+  String get pluginsFileMutationEmptyContent => '빈 파일 만들기';
+
+  @override
+  String get pluginsFileMutationExecute => '준비된 작업 실행';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => '이 파일 만들기';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm => '이 파일 영구 삭제';
+
+  @override
+  String get pluginsFileMutationExecuteTitle => '파일 작업 확인';
+
+  @override
+  String get pluginsFileMutationFailure =>
+      '파일 작업을 확인해야 합니다. 계속하기 전에 상태를 확인하세요.';
+
+  @override
+  String get pluginsFileMutationFileName => '새 파일 이름';
+
+  @override
+  String get pluginsFileMutationFileTooLarge => '내용이 16 MiB를 초과합니다.';
+
+  @override
+  String get pluginsFileMutationIntro =>
+      '승인된 플러그인과 로컬 대상을 선택하세요. 작업을 검토하고 준비한 뒤 실행을 별도로 확인하세요.';
+
+  @override
+  String get pluginsFileMutationOperationError => '작업 오류';
+
+  @override
+  String get pluginsFileMutationPickContent => '내용 파일 선택(선택 사항)';
+
+  @override
+  String get pluginsFileMutationPickDirectory => '폴더 선택';
+
+  @override
+  String get pluginsFileMutationPickFile => '파일 선택';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => '이 작업 준비';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => '파일 작업 검토';
+
+  @override
+  String get pluginsFileMutationQuery => '작업 기록 조회';
+
+  @override
+  String get pluginsFileMutationRecovery => '파일 복구 열기';
+
+  @override
+  String get pluginsFileMutationRecoveryHint =>
+      '작업을 닫고 종료를 확인한 후 파일 복구에서 원래 작업을 확인하세요.';
+
+  @override
+  String get pluginsFileMutationReview => '검토 및 준비';
+
+  @override
+  String get pluginsFileMutationScopeChanged =>
+      '플러그인 권한이 변경되었습니다. 작업을 다시 검토하세요.';
+
+  @override
+  String get pluginsFileMutationSelectionRequired => '먼저 대상과 플러그인을 선택하세요.';
+
+  @override
+  String get pluginsFileMutationTarget => '대상';
+
+  @override
+  String get pluginsFileMutationTitle => '파일 생성 및 삭제';
+
+  @override
   String get pluginsFileTaskBudgets =>
       '승인된 플러그인 한도가 더 낮을 수 있습니다. 검증 시 다이제스트와 최대 4096바이트의 미리보기만 보관합니다.';
 
@@ -1756,6 +1841,69 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => '읽기 및 검증';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      '한도는 양수여야 하며 선언된 상한을 넘을 수 없습니다. 누적 한도는 작업당 한도 이상이어야 합니다.';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      '승인은 최대 30초 동안 유효합니다. 만료되면 작업을 중지하고 종료를 기다린 뒤, 필요하면 복구하고 회수를 확인한 후 계획을 다시 검토하세요.';
+
+  @override
+  String get pluginsGuestExecutionDraft => '한도 승인 및 계획 생성';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      '로컬 승인 기간이 끝났습니다. 작업을 중지하고 종료를 기다리세요. 안내에 따라 복구하고 회수를 확인하세요. 이미 제출한 작업은 결과를 확인하고 다시 실행하지 마세요.';
+
+  @override
+  String get pluginsGuestExecutionFrame => '플러그인 실행 결과';
+
+  @override
+  String get pluginsGuestExecutionHostQuery => '원본 호스트 기록 조회';
+
+  @override
+  String get pluginsGuestExecutionIntro =>
+      '원본 계획을 검토한 다음 준비와 실행을 각각 승인하세요. 준비 단계에서는 대상 파일을 생성하거나 삭제하지 않습니다.';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => '작업당 승인된 바이트';
+
+  @override
+  String get pluginsGuestExecutionNoReplay =>
+      '결과가 불확실합니다. 플러그인 명령과 파일 작업은 자동으로 재실행되지 않습니다.';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget =>
+      '이 플러그인은 일반 한도를 사용하며 확장 한도는 부여되지 않습니다.';
+
+  @override
+  String get pluginsGuestExecutionOwner => '호스트 검증 결과';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => '원본 계획 SHA-256';
+
+  @override
+  String get pluginsGuestExecutionRelease => '작업 해제';
+
+  @override
+  String get pluginsGuestExecutionTitle => '플러그인 파일 생성 및 삭제';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => '승인된 누적 바이트';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return '선언된 상한: 작업당 $maxJobBytes바이트, 총 $maxBytes바이트.';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      '이는 패키지의 상한이며 현재 승인된 할당량이 아닙니다. 각 작업은 별도 승인이 필요합니다.';
+
+  @override
+  String get pluginsGuestMutationDeclared => '이 패키지는 게스트 코드의 파일 변경을 선언합니다.';
 
   @override
   String get pluginsHttpTaskAbandon => '이 시도 관측 종료';
@@ -2135,6 +2283,104 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get pluginsManagementUnavailable =>
       '플러그인 관리를 사용할 수 없습니다. 기존 콘텐츠는 계속 읽을 수 있습니다.';
+
+  @override
+  String get pluginsMutationAbsent => '일치하는 기록 없음';
+
+  @override
+  String get pluginsMutationCancelled => '실행 전 취소됨';
+
+  @override
+  String get pluginsMutationCheckpoint =>
+      '검색 위치는 현재 호스트 세션에서만 유효합니다. 작업 정리 후 계속할 수 있습니다.';
+
+  @override
+  String get pluginsMutationCleanup =>
+      '선택한 계획을 대조하기 전에 검색을 끝내고 작업이 종료되었는지 확인하세요.';
+
+  @override
+  String get pluginsMutationContinue => '저장된 위치에서 계속';
+
+  @override
+  String get pluginsMutationDiscover => '원래 계획 찾기';
+
+  @override
+  String get pluginsMutationDone => '현재 검색 완료';
+
+  @override
+  String get pluginsMutationEmpty =>
+      '이 페이지에는 일치하는 계획이 없습니다. 다음 페이지가 있을 수 있습니다.';
+
+  @override
+  String get pluginsMutationFormError =>
+      '복구 요청을 제출할 수 없습니다. 주체 식별자, 플러그인 범위, 작업 기한을 확인하세요.';
+
+  @override
+  String get pluginsMutationIntro =>
+      '기존 계획을 읽기 전용으로 찾아 대조합니다. 파일 작업을 다시 실행하지 않습니다.';
+
+  @override
+  String get pluginsMutationLastResult => '최근 대조 결과';
+
+  @override
+  String get pluginsMutationNext => '다음 페이지 읽기';
+
+  @override
+  String get pluginsMutationObserved => '기존 관찰 기록';
+
+  @override
+  String get pluginsMutationPage => '최근 발견 페이지';
+
+  @override
+  String get pluginsMutationPlan => '원래 계획';
+
+  @override
+  String get pluginsMutationPrepared => '준비됨; 파일 효과는 확인되지 않음';
+
+  @override
+  String get pluginsMutationReconcile => '선택한 계획 대조';
+
+  @override
+  String get pluginsMutationRejected => '운영 체제가 작업을 거부함';
+
+  @override
+  String get pluginsMutationRelease => '검색 종료';
+
+  @override
+  String get pluginsMutationResultLost =>
+      '이 페이지의 결과를 잃었습니다. 작업을 정리한 뒤 마지막 저장 위치에서 계속하거나 다시 검색하세요.';
+
+  @override
+  String get pluginsMutationRetry => '원래 제출의 수신 확인 다시 받기';
+
+  @override
+  String get pluginsMutationScopeUnavailable =>
+      '원래 계획의 범위를 현재 사용할 수 없습니다. 플러그인 목록을 새로 고치고 권한을 확인하세요.';
+
+  @override
+  String get pluginsMutationSelectPlan => '대조할 계획 선택';
+
+  @override
+  String get pluginsMutationSelected => '선택한 계획 보관됨';
+
+  @override
+  String get pluginsMutationSubject => '원래 작업의 주체 식별자';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      '제출 수신 확인이 불확실합니다. 상태를 새로 고친 뒤 원래 수신 확인만 명시적으로 다시 받으세요. 중복 요청을 만들지 마세요.';
+
+  @override
+  String get pluginsMutationSucceeded => '운영 체제가 성공을 확인함';
+
+  @override
+  String get pluginsMutationTitle => '파일 변경 복구';
+
+  @override
+  String get pluginsMutationUnknown => '결과 불명; 자동 재시도 없음';
+
+  @override
+  String get pluginsMutationUnspecified => '파일 효과의 증거 없음';
 
   @override
   String get pluginsNoPermissions => '선언된 콘텐츠 권한이 없습니다.';

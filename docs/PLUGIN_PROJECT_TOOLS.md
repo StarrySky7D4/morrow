@@ -230,3 +230,8 @@ python -B -X utf8 tool/verify_plugin_projects.py --output-root "build/插件工�
 `new --kind service` 可同时指定 `--service-run-ms`、`--service-run-jobs`、`--service-run-bytes`，生成完整 `[service_run]` 声明。三个参数缺失、非正数或超界会在编译前失败；其他模板不能带运行声明。单请求的原短期限和单作业额度继续有效，运行上限不产生授权或自动续租。
 
 自定义服务配置还可显式声明 HTTP 出站能力和 `[io] service_resources = true`；不提供出站能力时拒绝该选项。三语言资源目录解析及调用边界见 [服务 SDK](../sdk/SERVICE_API.md)。`verify_plugin_service_sdk.py --native` 增加 Linux 原生句柄检查，并实测生成长时原包的续租、累计额度、撤权和历史重开。
+
+
+### 原生文件变更声明的实验边界
+
+2026-09-27：底层 Rust `plugin_package pack-v2` 现可打包 `file-create`／`file-replace`／`file-delete` 声明，用于可信 Windows 宿主选择与恢复测试。它只写包声明，没有路径、选择权限或执行授权。上述 Python 项目生成器的 IO starter 能力范围仍如本节所述，尚未提供完整文件变更 guest SDK 模板；不要据此推断 guest 能直接调用私有宿主调度协议。Windows 条件替换继续明确 Unsupported。恢复会话及真实进程验证见 [本轮报告](../reports/mutation-recovery-session-2026-09-27.md)。

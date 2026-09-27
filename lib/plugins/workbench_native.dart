@@ -24,6 +24,11 @@ import 'io_task_control.dart';
 import 'io_task_codec_native.dart';
 import 'file_task_models.dart';
 import 'file_task_native.dart';
+import 'mutation_task_models.dart';
+import 'mutation_task_native.dart';
+import 'guest_mutation_models.dart';
+import 'guest_mutation_native.dart';
+import 'mutation_recovery_session.dart';
 import 'host_request.dart';
 import 'workbench_channel.dart';
 import 'workbench_device_files.dart';
@@ -41,6 +46,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:capnproto_dart/capnproto_dart.dart';
 import 'package:flutter/material.dart' show Color;
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import '../main.dart' show Idea;
 import '../fonts/font_choice.dart';
 import 'preferences_save_failure.dart';
@@ -60,6 +66,49 @@ part 'editor_draft_handoff_proposal_native.dart';
 part 'editor_draft_import_native.dart';
 part 'versioned_editor_native.dart';
 part 'versioned_workspace_native.dart';
+
+/// Decode package declarations for display only; no live authority is granted.
+@visibleForTesting
+PluginLibraryEntry decodePluginLibraryEntry(host.PluginEntryReader row) {
+  List<String> texts(Iterable<String?>? values) => [
+    for (final value in values ?? <String?>[])
+      if (value != null) value else throw const FormatException('插件资料不完整'),
+  ];
+  return PluginLibraryEntry(
+    id: row.packageId ?? '',
+    name: row.name ?? '',
+    version: row.packageVersion ?? '',
+    digest: Uint8List.fromList(row.digest ?? []),
+    enabled: row.enabled,
+    builtin: row.builtin,
+    available: row.available,
+    declared: texts(row.declared),
+    approved: texts(row.approved),
+    declaredIo: texts(row.declaredIo),
+    approvedIo: texts(row.approvedIo),
+    ioHandlers: texts(row.ioHandlers),
+    mutationSupported: row.mutationSupported,
+    mutationBudget: switch (row.mutationBudget) {
+      null => null,
+      final budget => PluginMutationBudget(
+        maxJobBytes: budget.maxJobBytesBigInt,
+        maxBytes: budget.maxBytesBigInt,
+      ),
+    },
+    dependencies: texts(row.dependencies),
+    issue: row.issue ?? '',
+    handlers: [
+      for (final handler in row.handlers ?? <host.PluginHandlerReader>[])
+        PluginTransformHandler(
+          name: handler.name ?? '',
+          inputType: handler.inputType ?? '',
+          outputType: handler.outputType ?? '',
+          maxInputBytes: handler.maxInputBytes,
+          maxOutputBytes: handler.maxOutputBytes,
+        ),
+    ],
+  );
+}
 
 class RustWorkbench
     implements
@@ -86,6 +135,8 @@ class RustWorkbench
         WorkbenchIoTaskControl,
         FileTaskBackend,
         FileTaskPlatformCapabilities,
+        MutationTaskSupport,
+        GuestMutationSupport,
         WorkbenchEditorSupport,
         WorkbenchContentRevisionSource,
         WorkbenchMutationFailureNeedsRefresh {
@@ -320,42 +371,12 @@ class RustWorkbench
     if (rows != null && rows.length > 2) {
       throw const FormatException('插件目录超出分页范围');
     }
-    List<String> texts(Iterable<String?>? values) => [
-      for (final value in values ?? <String?>[])
-        if (value != null) value else throw const FormatException('插件资料不完整'),
-    ];
     return PluginLibraryPage(
       revision: response.revisionBigInt,
       cursor: response.cursor ?? '',
       entries: [
         for (final row in rows ?? <host.PluginEntryReader>[])
-          PluginLibraryEntry(
-            id: row.packageId ?? '',
-            name: row.name ?? '',
-            version: row.packageVersion ?? '',
-            digest: Uint8List.fromList(row.digest ?? []),
-            enabled: row.enabled,
-            builtin: row.builtin,
-            available: row.available,
-            declared: texts(row.declared),
-            approved: texts(row.approved),
-            declaredIo: texts(row.declaredIo),
-            approvedIo: texts(row.approvedIo),
-            ioHandlers: texts(row.ioHandlers),
-            dependencies: texts(row.dependencies),
-            issue: row.issue ?? '',
-            handlers: [
-              for (final handler
-                  in row.handlers ?? <host.PluginHandlerReader>[])
-                PluginTransformHandler(
-                  name: handler.name ?? '',
-                  inputType: handler.inputType ?? '',
-                  outputType: handler.outputType ?? '',
-                  maxInputBytes: handler.maxInputBytes,
-                  maxOutputBytes: handler.maxOutputBytes,
-                ),
-            ],
-          ),
+          decodePluginLibraryEntry(row),
       ],
     );
   }
@@ -467,17 +488,40 @@ class RustWorkbench
   @override
   bool get supportsSelectedFileTasks => _nativeProcess != null;
 
+  @override
+  bool get supportsMutationTasks =>
+      Platform.isWindows && _nativeProcess != null;
+
+  @override
+  late final MutationTaskBackend mutationTasks = NativeMutationTaskClient(
+    _callDecoded,
+  );
+
+  @override
+  bool get supportsGuestMutationTasks =>
+      Platform.isWindows && _nativeProcess != null;
+
+  @override
+  late final GuestMutationBackend guestMutationTasks =
+      NativeGuestMutationClient(_callDecoded);
+
+  /// Retained per backend; attaching a recovery view never starts IO.
+  late final MutationRecoverySession mutationRecovery =
+      MutationRecoverySession.forBackend(mutationTasks, this);
+
   late final _fileTasks = NativeFileTaskClient(_callDecoded);
   @override
   Future<IoTaskSnapshot> startFile(FileTaskRequest request) =>
       _fileTasks.startFile(request);
   @override
   Future<IoTaskSnapshot> requestFileChunk(
-    Uint8List key, BigInt offset, int limit,
-  ) =>
-      _fileTasks.requestFileChunk(key, offset, limit);
+    Uint8List key,
+    BigInt offset,
+    int limit,
+  ) => _fileTasks.requestFileChunk(key, offset, limit);
   @override
-  Future<IoTaskSnapshot> finishFile(Uint8List key) => _fileTasks.finishFile(key);
+  Future<IoTaskSnapshot> finishFile(Uint8List key) =>
+      _fileTasks.finishFile(key);
   @override
   Future<FileTaskRead> readFile(Uint8List key) => _fileTasks.readFile(key);
 
@@ -1514,10 +1558,17 @@ class RustWorkbench
           action,
           configure: (r) {
             configure?.call(r);
-            if (_isScheduler(action)) schedulerKey = r.asReader().ioKey;
+            if (_isScheduler(action)) {
+              final key = r.asReader().ioKey;
+              schedulerKey = key == null ? null : Uint8List.fromList(key);
+            }
           },
           send: (payload) async {
             response = _response = pendingReply = Completer<Uint8List>();
+            // EOF can fail this response while send/flush is still pending.
+            // Observe it immediately to avoid an unhandled asynchronous error;
+            // awaiting the same future below still delivers the original error.
+            response.future.ignore();
             await (themeSelection == null
                     ? channel.send(payload)
                     : (channel as WorkbenchDeviceThemes).sendThemePackage(

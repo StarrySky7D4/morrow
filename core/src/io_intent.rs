@@ -35,9 +35,17 @@ impl Command {
         identity(&self.subject)?;
         // Existing HttpPublish records retain their legacy IO digest. Only this
         // capability can opt into the independent inbound service record contract.
+        // File mutation plans have a separate digest and cannot be relabelled
+        // as read or network requests. Legacy histories remain decodable.
         if self.protocol_sha256 != io::schema_digest()
             && !(self.capability == io::IoCapability::HttpPublish
                 && self.protocol_sha256 == crate::service_record::schema_digest())
+            && !(matches!(
+                self.capability,
+                io::IoCapability::FileCreate
+                    | io::IoCapability::FileReplace
+                    | io::IoCapability::FileDelete
+            ) && self.protocol_sha256 == crate::file_mutation::schema_digest())
         {
             return Err(Error::UnsupportedVersion);
         }

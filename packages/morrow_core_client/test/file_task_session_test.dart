@@ -30,7 +30,7 @@ class Backend implements FileTaskBackend, WorkbenchIoTaskControl {
       loseRead = false,
       loseFinish = false,
       loseAck = false;
-  bool alwaysPending = false, recovery = false;
+  bool alwaysPending = false, recovery = false, joinOnFinishedRead = false;
   int starts = 0, chunks = 0, reads = 0, finishes = 0, cancels = 0, acks = 0;
   Completer<void>? heldRead;
   FileTaskResult Function(FileTaskResult)? mutate;
@@ -105,7 +105,10 @@ class Backend implements FileTaskBackend, WorkbenchIoTaskControl {
     pending = null;
     await heldRead?.future;
     if (loseRead) throw StateError('lost consumed result');
-    if (result is FileTaskFinished) storage = IoStoragePhase.stopping;
+    if (result is FileTaskFinished) {
+      storage = IoStoragePhase.stopping;
+      if (joinOnFinishedRead) reclaimed();
+    }
     return FileTaskRead(
       snapshot: state(),
       result: result == null ? null : mutate?.call(result) ?? result,
@@ -184,6 +187,23 @@ void main() {
       expect(s.history.single.digest, sha256.convert(b.bytes).toString());
     },
   );
+  for (final maintenanceFailed in [false, true]) {
+    test('Finished and worker exit in one reply preserve verified status '
+        '(maintenance failed: $maintenanceFailed)', () async {
+      final b = Backend(Uint8List.fromList([1, 2, 3]))
+        ..joinOnFinishedRead = true
+        ..recovery = maintenanceFailed;
+      final s = await started(b);
+      await s.verify();
+      expect(s.phase, FileTaskPhase.verified);
+      expect(s.notice, isNull);
+      expect(s.digest, sha256.convert(b.bytes).toString());
+      expect(s.canRepair, maintenanceFailed);
+      expect(s.canAcknowledge, !maintenanceFailed);
+      expect(b.finishes, 1);
+      expect(b.cancels, 0);
+    });
+  }
   test(
     'empty file uses the empty digest and Finish without requesting a chunk',
     () async {

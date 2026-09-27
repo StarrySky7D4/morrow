@@ -6,7 +6,8 @@ use super::{Store, boundary, sql};
 use crate::{
     Error, Result, identity,
     io_evidence::{self, Kind, Material},
-    io_intent::{Phase, Record},
+    io_intent::{Command, Phase, Record},
+    plugin_package::io::IoCapability,
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 
@@ -50,12 +51,27 @@ fn held(c: &Connection, operation: &str, kind: Kind) -> Result<Option<(i64, Stri
 }
 // All callers hold one SQLite transaction. The command comes from the bounded,
 // fully verified immutable history, not merely the metadata in revision one.
-fn load_material(
+pub(super) fn load_material(
     c: &Connection,
     operation: &str,
     kind: Kind,
     history: &[Record],
 ) -> Result<Option<Material>> {
+    load_material_bounded(c, operation, kind, history, io_evidence::MAX_RAW_BYTES)
+}
+/// The discovery path supplies a smaller material envelope bound. Keep the
+/// generic historical read unchanged for existing callers.
+pub(super) fn load_material_bounded(
+    c: &Connection,
+    operation: &str,
+    kind: Kind,
+    history: &[Record],
+    max_raw_bytes: usize,
+) -> Result<Option<Material>> {
+    if max_raw_bytes > io_evidence::MAX_RAW_BYTES {
+        return Err(Error::Limit);
+    }
+    let max_container_bytes = max_raw_bytes + max_raw_bytes / 255 + 128;
     let command = history.first().ok_or(Error::Integrity)?.command();
     let mut statement = sql(c.prepare(
         "SELECT subject,request_sha256,payload_sha256,payload_bytes,digest,CASE WHEN length(container)<=?3 THEN container ELSE NULL END FROM io_evidence WHERE operation_id=?1 AND kind=?2",
@@ -63,7 +79,7 @@ fn load_material(
     let mut rows = sql(statement.query(params![
         operation,
         kind.number() as i64,
-        io_evidence::MAX_CONTAINER_BYTES as i64
+        max_container_bytes as i64
     ]))?;
     let Some(row) = sql(rows.next())? else {
         return Ok(None);
@@ -72,7 +88,10 @@ fn load_material(
     if matches!(container, rusqlite::types::ValueRef::Null) {
         return Err(Error::Limit);
     }
-    let material = Material::decode(container.as_blob().map_err(|_| Error::Integrity)?)?;
+    let material = Material::decode_bounded(
+        container.as_blob().map_err(|_| Error::Integrity)?,
+        max_raw_bytes,
+    )?;
     let subject_ref = sql(row.get_ref(0))?;
     let subject = subject_ref.as_str().map_err(|_| Error::Integrity)?;
     let request_sha256 = sql(row.get_ref(1))?;
@@ -113,6 +132,30 @@ fn load_material(
         _ => {}
     }
     Ok(Some(material))
+}
+fn is_file_command(command: &Command) -> bool {
+    matches!(
+        command.capability,
+        IoCapability::FileCreate | IoCapability::FileReplace | IoCapability::FileDelete
+    )
+}
+/// File response evidence and Observed must be committed atomically by the
+/// dedicated file backend. Before then the exact response budget must remain
+/// held, even after restart; generic reconciliation cannot give it away.
+pub(super) fn require_pending_file_response(c: &Connection, history: &[Record]) -> Result<()> {
+    let command = history.first().ok_or(Error::Integrity)?.command();
+    if !is_file_command(command) {
+        return Err(Error::Invalid("not a file command"));
+    }
+    if load_material(c, &command.operation_id, Kind::Response, history)?.is_some() {
+        return Err(Error::Integrity);
+    }
+    let expected = io_evidence::max_container_bytes(command.response_limit)? as i64;
+    if held(c, &command.operation_id, Kind::Response)? != Some((expected, command.subject.clone()))
+    {
+        return Err(Error::Integrity);
+    }
+    Ok(())
 }
 pub(super) fn verify(c: &Connection) -> Result<()> {
     verify_schema(c)?;
@@ -258,6 +301,9 @@ impl Store {
         if stored.command().subject != subject {
             return Err(Error::NotFound);
         }
+        if is_file_command(stored.command()) {
+            return Err(Error::UnsupportedVersion);
+        }
         // Reconciliation is only meaningful once the send boundary was crossed.
         if all.last().ok_or(Error::Integrity)?.phase() != Phase::OutcomeUnknown {
             return Err(Error::Invalid("IO material reconciliation phase"));
@@ -298,6 +344,15 @@ impl Store {
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
+        if kind == Kind::Response {
+            let history = super::io_intent::history(&tx, material.operation_id())?;
+            if history
+                .first()
+                .is_some_and(|record| is_file_command(record.command()))
+            {
+                return Err(Error::UnsupportedVersion);
+            }
+        }
         let changed = store_material_in_tx(&tx, subject, kind, material, authorize)?;
         if changed {
             boundary("io-material-before-commit");
@@ -332,6 +387,7 @@ impl Store {
             return Ok(None);
         }
         let history = super::io_intent::history(&snapshot, operation)?;
+        super::file_mutation::verify_history(&snapshot, &history)?;
         let command = history.first().ok_or(Error::Integrity)?.command();
         if command.subject != subject {
             return Err(Error::Integrity);

@@ -1,0 +1,133 @@
+{
+  "profile": "mutation-v1-experimental",
+  "schema_sha256": "f8143ed0ea177e4600841f9f64b598ba2c6c774df83646b76ebb44653b8d6c9f",
+  "request_for_responses": "execute",
+  "vectors": [
+    {
+      "name": "create-empty",
+      "type": "Request",
+      "valid": true,
+      "sha256": "a5c7e440b6701ddee31a69e5a18dc8742d4ab0c910796b34bab664cb915292ba"
+    },
+    {
+      "name": "create-content",
+      "type": "Request",
+      "valid": true,
+      "sha256": "d1cd68fa992b3864ad117ba01a8c8f3d5b6c51d87461ed2aab3f5ab4e55878a7"
+    },
+    {
+      "name": "delete",
+      "type": "Request",
+      "valid": true,
+      "sha256": "ee2b10a3b4eb25dc1e879aa9549d7f9eea728a4a5225faa0315e71222ea6091b"
+    },
+    {
+      "name": "chunk",
+      "type": "Request",
+      "valid": true,
+      "sha256": "926dc5356d1ff3ed95de81740c5102ac37f71fe9840d1472fbdbca7dfcd493c2"
+    },
+    {
+      "name": "commit",
+      "type": "Request",
+      "valid": true,
+      "sha256": "2cdd173d9f2be3d7c12d8274b92af97f2c11e3cebcd836565b42aab5305a6110"
+    },
+    {
+      "name": "execute",
+      "type": "Request",
+      "valid": true,
+      "sha256": "26ea2a71d17ddb99ae42e4452892f56b0d84ea38c88954d1e502835896581d84"
+    },
+    {
+      "name": "query",
+      "type": "Request",
+      "valid": true,
+      "sha256": "f9f3633040195c27be4ba67315ba698a05abb72794896dc967453567744d1b54"
+    },
+    {
+      "name": "cancel",
+      "type": "Request",
+      "valid": true,
+      "sha256": "0eb89051991d854eba5f0144453c9f87c55df506c1ae38699ec1a1839782261b"
+    },
+    {
+      "name": "release",
+      "type": "Request",
+      "valid": true,
+      "sha256": "8c37a103da96513d49a43c421e45de03ea3a5dc37700c95027e46baf7e6567de"
+    },
+    {
+      "name": "bad-zero-reference",
+      "type": "Request",
+      "valid": false,
+      "sha256": "fe905e30b1c9fbd4b257c59dab4301eeeedb28282dba1eb38855442ff5a65d13"
+    },
+    {
+      "name": "bad-empty-hash",
+      "type": "Request",
+      "valid": false,
+      "sha256": "b82fb109c7ecab1f2c4af1db57f81ff94e9001158e789043ffc13f51776ed4d9"
+    },
+    {
+      "name": "bad-chunk-overflow",
+      "type": "Request",
+      "valid": false,
+      "sha256": "4ac97e8e232e08ea709f31d4bef3b0f6e1f9584da820defb939252821eb85ec3"
+    },
+    {
+      "name": "bad-call",
+      "type": "Request",
+      "valid": false,
+      "sha256": "a4d67e9d68060b61a0f24367fd0563617c23b1a0d45faa1aed979f8792056eb1"
+    },
+    {
+      "name": "bad-deadline",
+      "type": "Request",
+      "valid": false,
+      "sha256": "12f646f958f416136788725db0e9e30eea9b1f6d3e13c38004d5dd6d2e2b4574"
+    },
+    {
+      "name": "created",
+      "type": "Response",
+      "valid": true,
+      "sha256": "748f702ef8d62f160da2435cdd827660f8ea6d70de403c89c9501d51a626d9bf"
+    },
+    {
+      "name": "unknown",
+      "type": "Response",
+      "valid": true,
+      "sha256": "13e14a999ef814779598bf4665566114de7304b151fa5c168550573f5f30b3d5"
+    },
+    {
+      "name": "denied",
+      "type": "Response",
+      "valid": true,
+      "sha256": "36103dec1cb9b4f7812bbffb46d3f78823f2c5e7a7111ffefa2614cd2c648efb"
+    },
+    {
+      "name": "bad-success-effect",
+      "type": "Response",
+      "valid": false,
+      "sha256": "5ed2da0a6cb1f6cdb75dc758bad6b7585d1c67730815a83239b9117890435b00"
+    },
+    {
+      "name": "bad-denied-effect",
+      "type": "Response",
+      "valid": false,
+      "sha256": "6103a9fd19b033feed4a4ed5257e3d25aa8cd0021d631a3e7fd2a878ac25b3df"
+    },
+    {
+      "name": "bad-trailing",
+      "type": "Request",
+      "valid": false,
+      "sha256": "ed16ff14e544ac63fb8101e2039ebbc81badf78197f78855dfa01a2c9088324b"
+    },
+    {
+      "name": "bad-unicode-control",
+      "type": "Request",
+      "valid": false,
+      "sha256": "d4d88bd73a3c4ab1735656f9e47ca526175e5161e60a522bb72743ed7d193cbb"
+    }
+  ]
+}

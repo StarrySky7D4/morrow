@@ -18,6 +18,129 @@ fn reply(execution: &mut Execution, value: i32) {
         .unwrap();
 }
 
+const MUTATION_GUEST: &str = r#"(module
+  (import "morrow_task_v1" "read_input" (func $read (param i32 i32) (result i32)))
+  (import "morrow_task_v1" "complete" (func $complete (param i32 i32) (result i32)))
+  (import "morrow_mutation_v1" "call" (func $mutate (param i32 i32 i32 i32) (result i32)))
+  (memory (export "memory") 6)
+  (data (i32.const 0) "wire")
+  (func (export "morrow_run") (result i32)
+    (drop (call $read (i32.const 131072) (i32.const 131072)))
+    (drop (call $mutate (i32.const INPUT) (i32.const LENGTH) (i32.const OUTPUT) (i32.const CAPACITY)))
+    (drop (call $complete (i32.const 0) (i32.const 4)))
+    (i32.const 0)))"#;
+
+fn mutation_wat(input: i32, length: i32, output: i32, capacity: i32) -> Vec<u8> {
+    let wat = MUTATION_GUEST
+        .replace("INPUT", &input.to_string())
+        .replace("LENGTH", &length.to_string())
+        .replace("OUTPUT", &output.to_string())
+        .replace("CAPACITY", &capacity.to_string());
+    wat::parse_str(wat).unwrap()
+}
+
+#[test]
+fn independent_mutation_import_requires_explicit_runner_and_owned_continuation() {
+    let guest = mutation_wat(0, 4, 262144, MAX_MUTATION_FRAME_BYTES as i32);
+    for ordinary in [
+        Runner::new(&guest, Limits::default()),
+        Runner::new_task(&guest, Limits::default()),
+        Runner::new_io_task(&guest, Limits::default()),
+        Runner::new_dependency_task(&guest, Limits::default()),
+    ] {
+        assert!(matches!(ordinary, Err(Fault::UnsupportedAbi)));
+    }
+    let runner = Runner::new_mutation_task(&guest, Limits::default()).unwrap();
+    assert_eq!(
+        runner
+            .run_task(&[1], &mut |_| Ok(vec![1]), Cancellation::default())
+            .report
+            .outcome,
+        Err(Fault::UnsupportedAbi)
+    );
+    let mut execution = Execution::start(&runner, Some(&[1]), Cancellation::default()).unwrap();
+    let pending = execution.pending().unwrap();
+    assert_eq!(pending.kind, Kind::Mutation);
+    assert_eq!(pending.bytes, b"wire");
+    assert_eq!(pending.capacity, MAX_MUTATION_FRAME_BYTES);
+    let token = pending.token.clone();
+    execution.resume(&token, Ok(b"reply".to_vec())).unwrap();
+    assert!(execution.pending().is_none());
+    let completed = execution.finish();
+    assert_eq!(completed.report.outcome, Ok(0));
+    assert_eq!(completed.report.host_calls, 1);
+    assert_eq!(completed.completion.as_deref(), Some(b"wire".as_slice()));
+}
+
+#[test]
+fn mutation_import_checks_bounded_disjoint_memory_and_call_budget_before_yield() {
+    for (input, length, output, capacity, expected) in [
+        (0, 0, 262144, 131072, Fault::Trap),
+        (0, 131073, 262144, 131072, Fault::Trap),
+        (0, 4, 2, 131072, Fault::Trap),
+        (0, 4, 262145, 131072, Fault::Trap),
+        (0, 4, 262144, 131071, Fault::Trap),
+        (-1, 4, 262144, 131072, Fault::Trap),
+    ] {
+        let runner = Runner::new_mutation_task(
+            &mutation_wat(input, length, output, capacity),
+            Limits::default(),
+        )
+        .unwrap();
+        let mut execution = Execution::start(&runner, Some(&[1]), Cancellation::default()).unwrap();
+        assert!(execution.pending().is_none());
+        let finished = execution.finish();
+        assert_eq!(finished.report.outcome, Err(expected));
+        assert_eq!(finished.report.host_calls, 0);
+    }
+    let runner = Runner::new_mutation_task(
+        &mutation_wat(0, 4, 262144, 131072),
+        Limits {
+            host_calls: 0,
+            ..Limits::default()
+        },
+    )
+    .unwrap();
+    let mut execution = Execution::start(&runner, Some(&[1]), Cancellation::default()).unwrap();
+    assert!(execution.pending().is_none());
+    assert_eq!(execution.finish().report.outcome, Err(Fault::Limits));
+}
+
+#[test]
+fn mutation_pending_call_rejects_cancelled_delivery() {
+    let runner =
+        Runner::new_mutation_task(&mutation_wat(0, 4, 262144, 131072), Limits::default()).unwrap();
+    let cancel = Cancellation::default();
+    let mut execution = Execution::start(&runner, Some(&[1]), cancel.clone()).unwrap();
+    let pending = execution.pending().unwrap();
+    let memory = pending.memory;
+    let output = pending.output;
+    let token = pending.token.clone();
+    let before = memory.data(&execution.store)[output..output + 5].to_vec();
+    cancel.cancel();
+    execution.resume(&token, Ok(b"reply".to_vec())).unwrap();
+    assert_eq!(&memory.data(&execution.store)[output..output + 5], before);
+    assert_eq!(execution.finish().report.outcome, Err(Fault::Cancelled));
+}
+
+#[test]
+fn mutation_frame_accepts_exact_ceiling_and_rejects_oversize_reply() {
+    let runner = Runner::new_mutation_task(
+        &mutation_wat(0, MAX_MUTATION_FRAME_BYTES as i32, 262144, 131072),
+        Limits::default(),
+    )
+    .unwrap();
+    let mut execution = Execution::start(&runner, Some(&[1]), Cancellation::default()).unwrap();
+    let pending = execution.pending().unwrap();
+    assert_eq!(pending.kind, Kind::Mutation);
+    assert_eq!(pending.bytes.len(), MAX_MUTATION_FRAME_BYTES);
+    let token = pending.token.clone();
+    execution
+        .resume(&token, Ok(vec![0; MAX_MUTATION_FRAME_BYTES + 1]))
+        .unwrap();
+    assert_eq!(execution.finish().report.outcome, Err(Fault::Trap));
+}
+
 #[test]
 fn original_call_survives_dropped_runner_and_input_and_preserves_locals() {
     let mut execution = start(Cancellation::default());

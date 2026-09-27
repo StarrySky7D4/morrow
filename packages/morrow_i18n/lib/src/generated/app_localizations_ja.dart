@@ -1657,6 +1657,90 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => '準備済みの計画を取り消す';
+
+  @override
+  String get pluginsFileMutationCleanupError => 'タスク終了処理のエラー';
+
+  @override
+  String get pluginsFileMutationContentLength => '内容のサイズ';
+
+  @override
+  String get pluginsFileMutationContentSha256 => '内容の SHA-256';
+
+  @override
+  String get pluginsFileMutationEmptyContent => '空のファイルを作成';
+
+  @override
+  String get pluginsFileMutationExecute => '準備済みの操作を実行';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => 'このファイルを作成';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm => 'このファイルを完全に削除';
+
+  @override
+  String get pluginsFileMutationExecuteTitle => 'ファイル操作の実行確認';
+
+  @override
+  String get pluginsFileMutationFailure => 'ファイル操作の確認が必要です。続行する前に状態を確認してください。';
+
+  @override
+  String get pluginsFileMutationFileName => '新しいファイル名';
+
+  @override
+  String get pluginsFileMutationFileTooLarge => '内容が 16 MiB を超えています。';
+
+  @override
+  String get pluginsFileMutationIntro =>
+      '許可済みのプラグインとローカルの対象を選択します。操作を確認して準備した後、実行を別途確認します。';
+
+  @override
+  String get pluginsFileMutationOperationError => '操作のエラー';
+
+  @override
+  String get pluginsFileMutationPickContent => '内容のファイルを選択（任意）';
+
+  @override
+  String get pluginsFileMutationPickDirectory => 'フォルダーを選択';
+
+  @override
+  String get pluginsFileMutationPickFile => 'ファイルを選択';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => 'この操作を準備';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => 'ファイル操作の確認';
+
+  @override
+  String get pluginsFileMutationQuery => '操作履歴を確認';
+
+  @override
+  String get pluginsFileMutationRecovery => 'ファイル復旧を開く';
+
+  @override
+  String get pluginsFileMutationRecoveryHint =>
+      'タスクを閉じて終了を確認した後、ファイル復旧で元の操作を確認できます。';
+
+  @override
+  String get pluginsFileMutationReview => '確認して準備';
+
+  @override
+  String get pluginsFileMutationScopeChanged =>
+      'プラグインの権限が変更されました。操作を再確認してください。';
+
+  @override
+  String get pluginsFileMutationSelectionRequired => '先に対象とプラグインを選択してください。';
+
+  @override
+  String get pluginsFileMutationTarget => '対象';
+
+  @override
+  String get pluginsFileMutationTitle => 'ファイルの作成と削除';
+
+  @override
   String get pluginsFileTaskBudgets =>
       '承認済みプラグインの上限がさらに低い場合があります。検証ではダイジェストと最大 4096 バイトのプレビューのみ保持します。';
 
@@ -1741,6 +1825,69 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => '読み取りと検証';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      '上限には宣言された最大値以下の正の数を指定してください。累計上限はジョブごとの上限以上である必要があります。';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      '承認の有効期間は最大30秒です。期限切れ後はタスクを停止して終了を待ち、必要なら修復と回収の確認を行ってから、計画を再審査してください。';
+
+  @override
+  String get pluginsGuestExecutionDraft => '上限を承認して計画を作成';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      'ローカルの承認期間が終了しました。タスクを停止して終了を待ち、案内に従って修復と回収の確認を行ってください。送信済みの操作は結果を照合し、再実行しないでください。';
+
+  @override
+  String get pluginsGuestExecutionFrame => 'プラグインの実行結果';
+
+  @override
+  String get pluginsGuestExecutionHostQuery => '元のホスト履歴を照会';
+
+  @override
+  String get pluginsGuestExecutionIntro =>
+      '元の計画を確認してから、準備と実行を別々に承認してください。準備段階では対象ファイルを作成・削除しません。';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => 'ジョブごとの承認バイト数';
+
+  @override
+  String get pluginsGuestExecutionNoReplay =>
+      '結果が不確定です。プラグインのコマンドやファイル操作は自動で再実行されません。';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget =>
+      'このプラグインは通常の上限を使用します。拡張上限は付与されません。';
+
+  @override
+  String get pluginsGuestExecutionOwner => 'ホストの検証結果';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => '元の計画の SHA-256';
+
+  @override
+  String get pluginsGuestExecutionRelease => 'タスクを解放';
+
+  @override
+  String get pluginsGuestExecutionTitle => 'プラグインによるファイルの作成と削除';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => '承認された累計バイト数';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return '宣言された上限：ジョブごとに $maxJobBytes バイト、合計 $maxBytes バイト。';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      'これはパッケージの上限であり、有効な許可ではありません。各操作には別途承認が必要です。';
+
+  @override
+  String get pluginsGuestMutationDeclared => 'このパッケージはゲストコードによるファイル変更を宣言しています。';
 
   @override
   String get pluginsHttpTaskAbandon => 'この試行の観測を終了';
@@ -2120,6 +2267,101 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get pluginsManagementUnavailable =>
       'プラグイン管理は利用できません。既存のコンテンツは引き続き閲覧できます。';
+
+  @override
+  String get pluginsMutationAbsent => '一致する記録はありません';
+
+  @override
+  String get pluginsMutationCancelled => '実行前にキャンセル';
+
+  @override
+  String get pluginsMutationCheckpoint =>
+      '検索位置は現在のホストセッションでのみ有効です。タスクの後処理後に続行できます。';
+
+  @override
+  String get pluginsMutationCleanup => '選択した計画を照合する前に、検索を終了してタスクの終了を確認してください。';
+
+  @override
+  String get pluginsMutationContinue => '保存した位置から続行';
+
+  @override
+  String get pluginsMutationDiscover => '元の計画を検索';
+
+  @override
+  String get pluginsMutationDone => '現在の検索は完了しました';
+
+  @override
+  String get pluginsMutationEmpty => 'このページに一致する計画はありません。続きのページがある場合があります。';
+
+  @override
+  String get pluginsMutationFormError =>
+      '復旧要求を送信できません。主体識別子、プラグインの範囲、タスクの期限を確認してください。';
+
+  @override
+  String get pluginsMutationIntro => '既存の計画を読み取り専用で検索して照合します。ファイル操作は再実行しません。';
+
+  @override
+  String get pluginsMutationLastResult => '直近の照合結果';
+
+  @override
+  String get pluginsMutationNext => '次のページを読み込む';
+
+  @override
+  String get pluginsMutationObserved => '既存の観測記録';
+
+  @override
+  String get pluginsMutationPage => '直近の検索ページ';
+
+  @override
+  String get pluginsMutationPlan => '元の計画';
+
+  @override
+  String get pluginsMutationPrepared => '準備済み。ファイルへの効果は未確認';
+
+  @override
+  String get pluginsMutationReconcile => '選択した計画を照合';
+
+  @override
+  String get pluginsMutationRejected => 'OSが操作を拒否';
+
+  @override
+  String get pluginsMutationRelease => '検索を終了';
+
+  @override
+  String get pluginsMutationResultLost =>
+      'このページの結果は失われました。タスクを後処理し、最後に保存した位置から続行するか、再検索してください。';
+
+  @override
+  String get pluginsMutationRetry => '元の送信の受領情報を再取得';
+
+  @override
+  String get pluginsMutationScopeUnavailable =>
+      '元の計画の範囲を現在利用できません。プラグイン一覧を更新し、権限を確認してください。';
+
+  @override
+  String get pluginsMutationSelectPlan => '照合する計画を選択';
+
+  @override
+  String get pluginsMutationSelected => '選択した計画を保持しました';
+
+  @override
+  String get pluginsMutationSubject => '元の操作の主体識別子';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      '送信の受領情報が不確かです。状態を更新した後、元の受領情報のみを明示的に再取得してください。重複する要求は作成しないでください。';
+
+  @override
+  String get pluginsMutationSucceeded => 'OSが成功を確認';
+
+  @override
+  String get pluginsMutationTitle => 'ファイル変更の復旧';
+
+  @override
+  String get pluginsMutationUnknown => '結果は不明です。自動再試行はしません';
+
+  @override
+  String get pluginsMutationUnspecified => 'ファイルへの効果を示す証拠がありません';
 
   @override
   String get pluginsNoPermissions => 'コンテンツの権限は宣言されていません。';

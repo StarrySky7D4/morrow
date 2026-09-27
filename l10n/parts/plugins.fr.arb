@@ -1,5 +1,18 @@
 {
   "@@locale": "fr",
+  "pluginsGuestMutationDeclared": "Le paquet déclare des modifications de fichiers par le code invité.",
+  "pluginsGuestMutationBudget": "Plafond déclaré : {maxJobBytes} octets par tâche ; {maxBytes} octets au total.",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "Ce sont des limites du paquet, pas une autorisation active. Chaque opération exige une approbation distincte.",
   "pluginsWorkbench": "Extension de l’espace de travail",
   "pluginsReadingState": "Chargement de l’état de l’extension…",
   "pluginsManagementUnavailable": "La gestion des extensions est indisponible. Le contenu existant reste lisible.",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "Aperçu hexadécimal (64 premiers octets)",
   "pluginsFileTaskPrevious": "Tâche de fichier précédente",
   "pluginsFileTaskProgress": "{received} / {length} octets",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "Récupération des modifications de fichiers",
+  "pluginsMutationIntro": "Recherchez et vérifiez les plans existants en lecture seule. Les opérations sur les fichiers ne sont pas relancées.",
+  "pluginsMutationSubject": "Sujet de l’opération d’origine",
+  "pluginsMutationDiscover": "Rechercher les plans d’origine",
+  "pluginsMutationNext": "Lire la page suivante",
+  "pluginsMutationRelease": "Terminer la recherche",
+  "pluginsMutationContinue": "Reprendre à la position enregistrée",
+  "pluginsMutationReconcile": "Vérifier le plan sélectionné",
+  "pluginsMutationSelectPlan": "Sélectionner un plan à vérifier",
+  "pluginsMutationPlan": "Plan d’origine",
+  "pluginsMutationPage": "Dernière page trouvée",
+  "pluginsMutationCheckpoint": "La position de recherche n’est valable que dans cette session hôte. Vous pouvez reprendre après le nettoyage de la tâche.",
+  "pluginsMutationCleanup": "Terminez la recherche et confirmez que la tâche s’est arrêtée avant de vérifier le plan sélectionné.",
+  "pluginsMutationRetry": "Récupérer l’accusé de réception de l’envoi initial",
+  "pluginsMutationResultLost": "Le résultat de cette page a été perdu. Nettoyez la tâche, puis reprenez à la dernière position enregistrée ou relancez la recherche.",
+  "pluginsMutationPrepared": "Préparé ; effet sur le fichier non confirmé",
+  "pluginsMutationUnknown": "Résultat incertain ; aucune nouvelle tentative automatique",
+  "pluginsMutationObserved": "Enregistrement d’observation existant",
+  "pluginsMutationCancelled": "Annulé avant l’exécution",
+  "pluginsMutationAbsent": "Aucun enregistrement correspondant",
+  "pluginsMutationSucceeded": "Succès confirmé par le système d’exploitation",
+  "pluginsMutationRejected": "Opération rejetée par le système d’exploitation",
+  "pluginsMutationUnspecified": "Aucune preuve de l’effet sur le fichier",
+  "pluginsMutationDone": "Recherche en cours terminée",
+  "pluginsMutationSelected": "Plan sélectionné conservé",
+  "pluginsMutationEmpty": "Aucun plan correspondant sur cette page ; d’autres pages peuvent suivre.",
+  "pluginsMutationScopeUnavailable": "La portée du plan d’origine est indisponible. Actualisez le catalogue des plugins et vérifiez les autorisations.",
+  "pluginsMutationLastResult": "Dernier résultat de vérification",
+  "pluginsMutationFormError": "Impossible d’envoyer la demande de récupération. Vérifiez le sujet, la portée du plugin et le délai de la tâche.",
+  "pluginsMutationSubmissionUnknown": "Accusé de réception incertain. Actualisez l’état, puis récupérez explicitement l’accusé initial uniquement ; ne créez pas de demande en double.",
+  "pluginsFileMutationTitle": "Création et suppression de fichiers",
+  "pluginsFileMutationIntro": "Choisissez une extension autorisée et une cible locale. Vérifiez l’opération avant sa préparation, puis confirmez séparément son exécution.",
+  "pluginsFileMutationPickDirectory": "Choisir un dossier",
+  "pluginsFileMutationPickFile": "Choisir un fichier",
+  "pluginsFileMutationPickContent": "Choisir un fichier de contenu (facultatif)",
+  "pluginsFileMutationFileName": "Nom du nouveau fichier",
+  "pluginsFileMutationEmptyContent": "Créer un fichier vide",
+  "pluginsFileMutationTarget": "Cible",
+  "pluginsFileMutationContentLength": "Taille du contenu",
+  "pluginsFileMutationContentSha256": "SHA-256 du contenu",
+  "pluginsFileMutationReview": "Vérifier et préparer",
+  "pluginsFileMutationPrepareTitle": "Vérifier l’opération sur le fichier",
+  "pluginsFileMutationPrepareConfirm": "Préparer cette opération",
+  "pluginsFileMutationExecute": "Exécuter l’opération préparée",
+  "pluginsFileMutationExecuteTitle": "Confirmer l’opération sur le fichier",
+  "pluginsFileMutationExecuteCreateConfirm": "Créer ce fichier",
+  "pluginsFileMutationExecuteDeleteConfirm": "Supprimer définitivement ce fichier",
+  "pluginsFileMutationSelectionRequired": "Choisissez d’abord une cible et une extension.",
+  "pluginsFileMutationScopeChanged": "Les autorisations de l’extension ont changé. Vérifiez à nouveau l’opération.",
+  "pluginsFileMutationFileTooLarge": "Le contenu dépasse 16 Mio.",
+  "pluginsFileMutationFailure": "L’opération sur le fichier nécessite votre attention. Vérifiez son état avant toute autre action.",
+  "pluginsFileMutationRecoveryHint": "Après avoir fermé la tâche et confirmé sa fin, vérifiez l’opération d’origine dans la récupération des fichiers.",
+  "pluginsFileMutationRecovery": "Ouvrir la récupération des fichiers",
+  "pluginsFileMutationQuery": "Consulter l’historique de l’opération",
+  "pluginsFileMutationCancelPlan": "Annuler le plan préparé",
+  "pluginsFileMutationOperationError": "Erreur de l’opération",
+  "pluginsFileMutationCleanupError": "Erreur de libération de la tâche",
+  "pluginsGuestExecutionTitle": "Création et suppression de fichiers par le plugin",
+  "pluginsGuestExecutionIntro": "Vérifiez le plan initial, puis confirmez séparément la préparation et l’exécution. La préparation ne crée ni ne supprime le fichier cible.",
+  "pluginsGuestExecutionDraft": "Approuver les quotas et créer le plan",
+  "pluginsGuestExecutionPlanSha256": "SHA-256 du plan initial",
+  "pluginsGuestExecutionJobBudget": "Octets autorisés par tâche",
+  "pluginsGuestExecutionTotalBudget": "Total des octets autorisés",
+  "pluginsGuestExecutionOrdinaryBudget": "Ce plugin utilise les quotas ordinaires ; aucun quota étendu n’est accordé.",
+  "pluginsGuestExecutionBudgetError": "Les quotas doivent être positifs et respecter les plafonds déclarés. Le quota total doit être au moins égal au quota par tâche.",
+  "pluginsGuestExecutionHostQuery": "Consulter l’historique de l’hôte initial",
+  "pluginsGuestExecutionFrame": "Résultat d’exécution du plugin",
+  "pluginsGuestExecutionOwner": "Résultat de vérification de l’hôte",
+  "pluginsGuestExecutionNoReplay": "Résultat incertain ; les commandes du plugin et les opérations sur les fichiers ne sont jamais répétées automatiquement.",
+  "pluginsGuestExecutionDeadline": "L’autorisation dure au maximum 30 secondes. À expiration, arrêtez la tâche et attendez sa fin ; réparez si nécessaire, confirmez la récupération, puis réexaminez le plan.",
+  "pluginsGuestExecutionExpired": "La fenêtre d’approbation locale est terminée. Arrêtez la tâche et attendez sa fin ; réparez et confirmez la récupération selon les indications. Vérifiez le résultat de toute opération soumise. Ne l’exécutez pas à nouveau.",
+  "pluginsGuestExecutionRelease": "Libérer la tâche"
 }

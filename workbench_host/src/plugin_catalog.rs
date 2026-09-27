@@ -36,9 +36,17 @@ pub struct PluginEntry {
     pub declared_io: Vec<String>,
     pub approved_io: Vec<String>,
     pub io_handlers: Vec<String>,
+    /// A declaration on this exact package, never a runtime approval.
+    pub mutation_supported: bool,
+    pub mutation_budget: Option<MutationBudgetDeclaration>,
     pub handlers: Vec<PluginHandler>,
     pub dependencies: Vec<String>,
     pub issue: String,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MutationBudgetDeclaration {
+    pub max_job_bytes: u64,
+    pub max_bytes: u64,
 }
 #[derive(Debug)]
 pub struct PluginHandler {
@@ -205,6 +213,11 @@ impl WorkbenchState {
             io_handlers: p
                 .io_declaration()
                 .map_or_else(Vec::new, |d| d.handlers.clone()),
+            mutation_supported: p.mutation_enabled(),
+            mutation_budget: p.mutation_budget().map(|budget| MutationBudgetDeclaration {
+                max_job_bytes: budget.max_job_bytes,
+                max_bytes: budget.max_bytes,
+            }),
             handlers: m
                 .transform_handlers
                 .iter()
@@ -273,6 +286,8 @@ impl WorkbenchState {
                     approved: s.approved.iter().map(|&k| capability(k).into()).collect(),
                     declared_io: vec![],
                     io_handlers: vec![],
+                    mutation_supported: false,
+                    mutation_budget: None,
                     approved_io: s
                         .approved_io
                         .iter()

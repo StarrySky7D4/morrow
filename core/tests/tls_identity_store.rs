@@ -251,7 +251,7 @@ fn v20_migration_preserves_original_identity_and_refuses_premature_table() {
     drop(sql);
     assert!(Store::open_existing(&path, Default::default()).is_err());
     let sql = rusqlite::Connection::open(&path).unwrap();
-    sql.execute_batch("DROP TABLE tls_identities;").unwrap();
+    sql.execute_batch("DROP TABLE IF EXISTS file_content_receipts; DROP TABLE IF EXISTS file_mutation_content; DROP TABLE tls_identities;").unwrap();
     drop(sql);
     let mut store = Store::open_existing(&path, Default::default()).unwrap();
     assert_eq!(store.tls_store_identity().unwrap(), id);
@@ -321,7 +321,7 @@ mod crash {
             let id = store.tls_store_identity().unwrap();
             drop(store);
             let sql = rusqlite::Connection::open(&path).unwrap();
-            sql.execute_batch("DROP TABLE tls_identities; PRAGMA user_version=20;")
+            sql.execute_batch("DROP TABLE IF EXISTS file_content_receipts; DROP TABLE IF EXISTS file_mutation_content; DROP TABLE tls_identities; PRAGMA user_version=20;")
                 .unwrap();
             drop(sql);
             run(&path, "migrate", point);

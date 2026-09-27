@@ -7,7 +7,8 @@ mod copied_snapshot_tests {
     #[test]
     fn bounded_copy_pins_membership_bytes_and_source_while_owner_writes() {
         let dir = tempfile::tempdir().unwrap();
-        let mut store = Store::open_exclusive(&dir.path().join("source.db"), Default::default(), true).unwrap();
+        let mut store =
+            Store::open_exclusive(&dir.path().join("source.db"), Default::default(), true).unwrap();
         let original = CardRecord::new("before", "test.card", 1, "before", vec![7]).unwrap();
         store.create_local("create-before", &original).unwrap();
         assert!(matches!(store.copy_card_snapshot(1), Err(Error::Limit)));
@@ -19,7 +20,10 @@ mod copied_snapshot_tests {
         let page = snapshot.next_page(128, 1024 * 1024).unwrap();
         assert!(page.done);
         assert_eq!(page.entries.len(), 1);
-        assert_eq!(page.entries[0].original_bytes(), store.card("before").unwrap().unwrap().original_bytes());
+        assert_eq!(
+            page.entries[0].original_bytes(),
+            store.card("before").unwrap().unwrap().original_bytes()
+        );
         assert_eq!(snapshot.readpoint(), &point);
         assert_eq!(snapshot.finish().unwrap().count, 1);
         let mut fresh = store.copy_card_snapshot(128 * 1024 * 1024).unwrap();
@@ -198,6 +202,9 @@ fn point(connection: &Connection) -> Result<ReadPoint> {
             1..=3 => super::records::verify_operation(connection, kind, operation, subject, raw)?,
             4 => super::read_journal::verify_operation(connection, operation, subject, raw)?,
             5 => super::io_intent::verify_operation(connection, operation, subject, raw)?,
+            6 => {
+                super::file_content_receipt::verify_operation(connection, operation, subject, raw)?
+            }
             _ => return Err(Error::Integrity),
         }
         Some(Sha256::digest(raw).into())
@@ -294,26 +301,43 @@ impl Store {
         let mut done = false;
         for _ in 0..=pages.div_ceil(128) {
             match sql(backup.step(128))? {
-                rusqlite::backup::StepResult::Done => { done = true; break; }
+                rusqlite::backup::StepResult::Done => {
+                    done = true;
+                    break;
+                }
                 rusqlite::backup::StepResult::More => {}
-                rusqlite::backup::StepResult::Busy | rusqlite::backup::StepResult::Locked => return Err(Error::StorageBusy),
+                rusqlite::backup::StepResult::Busy | rusqlite::backup::StepResult::Locked => {
+                    return Err(Error::StorageBusy);
+                }
                 _ => return Err(Error::Storage),
             }
         }
         drop(backup);
-        if !done { return Err(Error::Limit); }
-        sql(connection.execute_batch("PRAGMA query_only=ON; PRAGMA trusted_schema=OFF; BEGIN DEFERRED;"))?;
+        if !done {
+            return Err(Error::Limit);
+        }
+        sql(connection
+            .execute_batch("PRAGMA query_only=ON; PRAGMA trusted_schema=OFF; BEGIN DEFERRED;"))?;
         let reader_point = point(&connection)?;
         super::binding::verify(&connection, self.audit_trust.as_ref())?;
-        if reader_point != source_point || audit_identity(&connection, reader_point.database_version)? != source_identity {
+        if reader_point != source_point
+            || audit_identity(&connection, reader_point.database_version)? != source_identity
+        {
             return Err(Error::RevisionConflict);
         }
         let mut census = Sha256::new();
         census.update(CENSUS_DOMAIN);
         Ok(CardReadSnapshot {
-            connection, store: self.snapshot_identity.clone(), snapshot: Arc::new(()),
-            point: reader_point, cursor: String::new(), done: false,
-            poisoned: false, closed: false, count: 0, census,
+            connection,
+            store: self.snapshot_identity.clone(),
+            snapshot: Arc::new(()),
+            point: reader_point,
+            cursor: String::new(),
+            done: false,
+            poisoned: false,
+            closed: false,
+            count: 0,
+            census,
         })
     }
     /// Source admission includes empty snapshots; it establishes no plugin permission.

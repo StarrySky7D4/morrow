@@ -1758,6 +1758,93 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => 'Cancel prepared plan';
+
+  @override
+  String get pluginsFileMutationCleanupError => 'Task cleanup error';
+
+  @override
+  String get pluginsFileMutationContentLength => 'Content length';
+
+  @override
+  String get pluginsFileMutationContentSha256 => 'Content SHA-256';
+
+  @override
+  String get pluginsFileMutationEmptyContent => 'Create an empty file';
+
+  @override
+  String get pluginsFileMutationExecute => 'Execute prepared operation';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => 'Create this file';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm =>
+      'Delete this file permanently';
+
+  @override
+  String get pluginsFileMutationExecuteTitle => 'Confirm file operation';
+
+  @override
+  String get pluginsFileMutationFailure =>
+      'The file operation needs attention. Check its state before trying anything else.';
+
+  @override
+  String get pluginsFileMutationFileName => 'New file name';
+
+  @override
+  String get pluginsFileMutationFileTooLarge => 'Content exceeds 16 MiB.';
+
+  @override
+  String get pluginsFileMutationIntro =>
+      'Choose an authorized package and a local target. Review the operation before preparation, then confirm execution separately.';
+
+  @override
+  String get pluginsFileMutationOperationError => 'Operation error';
+
+  @override
+  String get pluginsFileMutationPickContent => 'Choose content file (optional)';
+
+  @override
+  String get pluginsFileMutationPickDirectory => 'Choose folder';
+
+  @override
+  String get pluginsFileMutationPickFile => 'Choose file';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => 'Prepare this operation';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => 'Review file operation';
+
+  @override
+  String get pluginsFileMutationQuery => 'Query operation history';
+
+  @override
+  String get pluginsFileMutationRecovery => 'Open file recovery';
+
+  @override
+  String get pluginsFileMutationRecoveryHint =>
+      'After closing and acknowledging the task, inspect the original operation in file recovery.';
+
+  @override
+  String get pluginsFileMutationReview => 'Review and prepare';
+
+  @override
+  String get pluginsFileMutationScopeChanged =>
+      'Package authorization changed. Review the operation again.';
+
+  @override
+  String get pluginsFileMutationSelectionRequired =>
+      'Choose a target and package first.';
+
+  @override
+  String get pluginsFileMutationTarget => 'Target';
+
+  @override
+  String get pluginsFileMutationTitle => 'File creation and deletion';
+
+  @override
   String get pluginsFileTaskBudgets =>
       'Approved plugin budgets may impose lower limits. Verification retains a digest and at most 4096 preview bytes.';
 
@@ -1846,6 +1933,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => 'Read and verify';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      'Budgets must be positive and within the declared ceilings. The cumulative budget must be at least the per-job budget.';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      'Authorization lasts at most 30 seconds. On expiry, stop the task and wait for it to exit; repair if needed, acknowledge reclamation, then review again.';
+
+  @override
+  String get pluginsGuestExecutionDraft => 'Approve budget and generate plan';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      'The local approval window has ended. Stop the task and wait for it to exit; repair and acknowledge reclamation as prompted. Verify the outcome of any submitted operation. Do not execute it again.';
+
+  @override
+  String get pluginsGuestExecutionFrame => 'Plugin execution result';
+
+  @override
+  String get pluginsGuestExecutionHostQuery => 'Query original host history';
+
+  @override
+  String get pluginsGuestExecutionIntro =>
+      'Review the original plan, then confirm preparation and execution separately. Preparation does not create or delete the target file.';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => 'Approved bytes per job';
+
+  @override
+  String get pluginsGuestExecutionNoReplay =>
+      'Outcome uncertain; plugin commands and file operations are never resent automatically.';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget =>
+      'This plugin uses the ordinary budget; no extended budget is granted.';
+
+  @override
+  String get pluginsGuestExecutionOwner => 'Host verification result';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => 'Original plan SHA-256';
+
+  @override
+  String get pluginsGuestExecutionRelease => 'Release task';
+
+  @override
+  String get pluginsGuestExecutionTitle => 'Plugin file creation and deletion';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => 'Approved cumulative bytes';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return 'Declared ceiling: $maxJobBytes bytes per job; $maxBytes bytes total.';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      'These are package limits, not an active grant. Each operation still requires separate approval.';
+
+  @override
+  String get pluginsGuestMutationDeclared =>
+      'Package declares guest file mutations.';
 
   @override
   String get pluginsHttpTaskAbandon => 'End observation of this attempt';
@@ -2241,6 +2392,105 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pluginsManagementUnavailable =>
       'Plugin management is unavailable. Existing content remains readable.';
+
+  @override
+  String get pluginsMutationAbsent => 'No matching record found';
+
+  @override
+  String get pluginsMutationCancelled => 'Cancelled before dispatch';
+
+  @override
+  String get pluginsMutationCheckpoint =>
+      'The scan position is valid only in this host session. You can continue after task cleanup.';
+
+  @override
+  String get pluginsMutationCleanup =>
+      'End the scan and confirm that the task has exited before reconciling the selected plan.';
+
+  @override
+  String get pluginsMutationContinue => 'Continue from saved position';
+
+  @override
+  String get pluginsMutationDiscover => 'Find original plans';
+
+  @override
+  String get pluginsMutationDone => 'Current scan complete';
+
+  @override
+  String get pluginsMutationEmpty =>
+      'No matching plan on this page; more pages may follow.';
+
+  @override
+  String get pluginsMutationFormError =>
+      'Could not submit the recovery request. Check the subject, plugin scope, and task timeout.';
+
+  @override
+  String get pluginsMutationIntro =>
+      'Find and reconcile existing plans in read-only mode. File operations are not run again.';
+
+  @override
+  String get pluginsMutationLastResult => 'Most recent reconciliation result';
+
+  @override
+  String get pluginsMutationNext => 'Read next page';
+
+  @override
+  String get pluginsMutationObserved => 'Existing observation record';
+
+  @override
+  String get pluginsMutationPage => 'Most recent discovery page';
+
+  @override
+  String get pluginsMutationPlan => 'Original plan';
+
+  @override
+  String get pluginsMutationPrepared => 'Prepared; file effect not confirmed';
+
+  @override
+  String get pluginsMutationReconcile => 'Reconcile selected plan';
+
+  @override
+  String get pluginsMutationRejected =>
+      'Operating system rejected the operation';
+
+  @override
+  String get pluginsMutationRelease => 'End scan';
+
+  @override
+  String get pluginsMutationResultLost =>
+      'The result for this page was lost. Clean up the task, then continue from the last saved position or scan again.';
+
+  @override
+  String get pluginsMutationRetry => 'Retrieve original submission receipt';
+
+  @override
+  String get pluginsMutationScopeUnavailable =>
+      'The original plan scope is currently unavailable. Refresh the plugin catalog and review approvals.';
+
+  @override
+  String get pluginsMutationSelectPlan => 'Select a plan to reconcile';
+
+  @override
+  String get pluginsMutationSelected => 'Selected plan retained';
+
+  @override
+  String get pluginsMutationSubject => 'Original operation subject';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      'Submission receipt uncertain. Refresh status, then explicitly retrieve only the original receipt; do not create a duplicate request.';
+
+  @override
+  String get pluginsMutationSucceeded => 'Operating system confirmed success';
+
+  @override
+  String get pluginsMutationTitle => 'File mutation recovery';
+
+  @override
+  String get pluginsMutationUnknown => 'Outcome unknown; no automatic retry';
+
+  @override
+  String get pluginsMutationUnspecified => 'No proof of file effect';
 
   @override
   String get pluginsNoPermissions => 'No content permissions declared.';

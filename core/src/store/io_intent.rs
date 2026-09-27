@@ -4,7 +4,7 @@
 use super::{Store, boundary, sql};
 use crate::{
     Error, Result, identity,
-    io_intent::{MAX_CONTAINER_BYTES, Phase, Record},
+    io_intent::{Command, MAX_CONTAINER_BYTES, Phase, Record},
 };
 use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 
@@ -134,6 +134,27 @@ pub(super) fn history(c: &Connection, operation: &str) -> Result<Vec<Record>> {
     }
     Ok(records)
 }
+// Keep subject isolation and the small metadata history check shared by both
+// lookup variants. The caller decides when to verify protected material bodies.
+fn scoped_history(c: &Connection, subject: &str, operation: &str) -> Result<Option<Vec<Record>>> {
+    identity(subject)?;
+    identity(operation)?;
+    // Avoid returning another subject's historical command.
+    if version(c)? < 15 {
+        return Ok(None);
+    }
+    let (present, initial, owned): (bool, bool, bool) = sql(c.query_row(
+        "SELECT EXISTS(SELECT 1 FROM io_intents WHERE operation_id=?1),EXISTS(SELECT 1 FROM io_intents i JOIN operations o ON o.id=i.event_id WHERE i.operation_id=?1 AND i.revision=1),EXISTS(SELECT 1 FROM io_intents i JOIN operations o ON o.id=i.event_id WHERE i.operation_id=?1 AND i.revision=1 AND o.card_id=?2)",
+        params![operation, subject], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+    ))?;
+    if present && !initial {
+        return Err(Error::Integrity);
+    }
+    if !owned {
+        return Ok(None);
+    }
+    Ok(Some(history(c, operation)?))
+}
 pub(super) fn verify_operation(
     c: &Connection,
     event: &str,
@@ -151,6 +172,7 @@ pub(super) fn verify_operation(
         return Err(Error::Integrity);
     }
     let all = history(c, &record.command().operation_id)?;
+    super::file_mutation::verify_history(c, &all)?;
     let stored = all
         .get(record.revision() as usize - 1)
         .ok_or(Error::Integrity)?;
@@ -190,6 +212,7 @@ pub(super) fn verify(c: &Connection) -> Result<()> {
         let operation_ref = sql(row.get_ref(0))?;
         let operation = operation_ref.as_str().map_err(|_| Error::Integrity)?;
         let records = history(c, operation)?;
+        super::file_mutation::verify_history(c, &records)?;
         if v >= 16 {
             // OutcomeUnknown means the dispatch boundary was crossed, which the
             // append path only permits with a held reservation; terminal phases
@@ -313,9 +336,22 @@ impl Store {
         authorize: impl FnOnce() -> Result<()>,
         strict_claim: bool,
     ) -> Result<Record> {
+        // File mutations currently admit plans and cancellation only. Generic
+        // append must not bypass atomic material admission or enable OS effects.
+        if matches!(
+            candidate.command().capability,
+            crate::plugin_package::io::IoCapability::FileCreate
+                | crate::plugin_package::io::IoCapability::FileReplace
+                | crate::plugin_package::io::IoCapability::FileDelete
+        ) && candidate.phase() != Phase::CancelledBeforeDispatch
+        {
+            return Err(Error::UnsupportedVersion);
+        }
         let tx = sql(self
             .connection
             .transaction_with_behavior(TransactionBehavior::Immediate))?;
+        let existing = history(&tx, &candidate.command().operation_id)?;
+        super::file_mutation::verify_history(&tx, &existing)?;
         let (result, changed) = append_in_tx(&tx, self.budget, candidate, authorize, strict_claim)?;
         if changed {
             boundary("io-intent-before-commit");
@@ -330,21 +366,27 @@ impl Store {
         identity(subject)?;
         identity(operation)?;
         let tx = sql(self.connection.unchecked_transaction())?;
-        // Avoid returning another subject's historical command.
-        if version(&tx)? < 15 {
+        let Some(all) = scoped_history(&tx, subject, operation)? else {
             return Ok(None);
-        }
-        let (present, initial, owned): (bool, bool, bool) = sql(tx.query_row(
-            "SELECT EXISTS(SELECT 1 FROM io_intents WHERE operation_id=?1),EXISTS(SELECT 1 FROM io_intents i JOIN operations o ON o.id=i.event_id WHERE i.operation_id=?1 AND i.revision=1),EXISTS(SELECT 1 FROM io_intents i JOIN operations o ON o.id=i.event_id WHERE i.operation_id=?1 AND i.revision=1 AND o.card_id=?2)",
-            params![operation, subject], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
-        ))?;
-        if present && !initial {
-            return Err(Error::Integrity);
-        }
-        if !owned {
+        };
+        super::file_mutation::verify_history(&tx, &all)?;
+        Ok(all.last().cloned())
+    }
+
+    /// Match the exact original command before loading protected mutation bodies.
+    /// This remains a historical read, not a live dispatch authorization.
+    pub fn lookup_matching_io_intent(&self, expected: &Command) -> Result<Option<Record>> {
+        // Validate even when no history exists; the comparison below validates
+        // each persisted revision before the potentially large body check.
+        Record::prepared(expected.clone())?;
+        let tx = sql(self.connection.unchecked_transaction())?;
+        let Some(all) = scoped_history(&tx, &expected.subject, &expected.operation_id)? else {
             return Ok(None);
+        };
+        for record in &all {
+            record.matches_command(expected)?;
         }
-        let all = history(&tx, operation)?;
+        super::file_mutation::verify_history(&tx, &all)?;
         Ok(all.last().cloned())
     }
 }
@@ -388,28 +430,18 @@ pub(super) fn reserve_followup_in_tx(
             false,
         ));
     }
-    let (count, bytes): (i64, i64) = sql(tx.query_row(
-        "SELECT count(*),coalesce(sum(length(payload)),0) FROM outbox",
-        [],
-        |r| Ok((r.get(0)?, r.get(1)?)),
-    ))?;
-    let (reserved_events, reserved_bytes) = reservations(tx)?;
-    // Protected IO material is held and stored in the same byte budget, so a
-    // dispatched command can never be crowded out by material it must keep.
-    let material_bytes =
-        u64::try_from(super::io_evidence::accounted(tx)?).map_err(|_| Error::Integrity)?;
+    let count: i64 = sql(tx.query_row("SELECT count(*) FROM outbox", [], |r| r.get(0)))?;
+    let (reserved_events, _) = reservations(tx)?;
     if count
         .saturating_add(reserved_events)
         .saturating_add(FOLLOWUP_EVENTS as i64)
         >= i64::from(budget.max_count)
-        || (bytes as u64)
-            .saturating_add(reserved_bytes as u64)
-            .saturating_add(material_bytes)
-            .saturating_add(FOLLOWUP_BYTES)
-            > budget.max_bytes
     {
         return Err(Error::EventCapacity);
     }
+    // Use the shared byte accounting, including staged file content and every
+    // protected service/identity record. Do not duplicate a partial quota sum.
+    super::byte_room(tx, budget, FOLLOWUP_BYTES)?;
     sql(tx.execute(
         "INSERT INTO io_reservations(operation_id,subject,events,bytes) VALUES(?1,?2,1,?3)",
         params![

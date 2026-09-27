@@ -69,7 +69,12 @@ impl Setup {
         manifest.io_declaration = Some(declaration);
         let package = Package::build(manifest, &wasm).unwrap();
         let state = app.local_state_mut().unwrap();
-        state.manager.as_ref().unwrap().install_package(package.archive()).unwrap();
+        state
+            .manager
+            .as_ref()
+            .unwrap()
+            .install_package(package.archive())
+            .unwrap();
         let manager = state.manager.as_mut().unwrap();
         manager.select(&package, manager.revision()).unwrap();
         manager

@@ -602,14 +602,29 @@ impl Registry {
         self.commit(next, self.dependencies.clone())
     }
     /// Preflight the active presentation slot without changing any selection.
-    pub fn exclusive_peers(&self, id: &str, digest: [u8; 32], revision: u64) -> Result<Vec<String>> {
+    pub fn exclusive_peers(
+        &self,
+        id: &str,
+        digest: [u8; 32],
+        revision: u64,
+    ) -> Result<Vec<String>> {
         self.check_revision(revision)?;
         let selected = self.selections.get(id).ok_or(Error::NotFound)?;
-        if selected.digest != digest { return Err(Error::RevisionConflict); }
-        if !self.load(selected)?.is_ui_theme() { return Ok(vec![]); }
+        if selected.digest != digest {
+            return Err(Error::RevisionConflict);
+        }
+        if !self.load(selected)?.is_ui_theme() {
+            return Ok(vec![]);
+        }
         let mut peers = vec![];
-        for other in self.selections.values().filter(|s| s.enabled && s.package_id != id) {
-            if self.load(other)?.is_ui_theme() { peers.push(other.package_id.clone()); }
+        for other in self
+            .selections
+            .values()
+            .filter(|s| s.enabled && s.package_id != id)
+        {
+            if self.load(other)?.is_ui_theme() {
+                peers.push(other.package_id.clone());
+            }
         }
         Ok(peers)
     }
@@ -628,7 +643,9 @@ impl Registry {
         }
         let peers = if enabled {
             self.exclusive_peers(id, expected_digest, expected_revision)?
-        } else { vec![] };
+        } else {
+            vec![]
+        };
         let mut next = self.selections.clone();
         next.get_mut(id).expect("existing selection").enabled = enabled;
         for peer in peers {

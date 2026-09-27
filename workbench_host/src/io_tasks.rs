@@ -3,7 +3,7 @@
 use crate::{Result, Workbench, WorkbenchState, now};
 use morrow_core::{dispatch::HostRuntime, plugin_package::io::IoCapability};
 use morrow_plugin_runtime::{
-    io_binding::IoBinding,
+    io_binding::{IoBinding, MutationBudget},
     io_jobs::{BrokerRouter, IoWorker, JobError, JobHandle, JobLimits, JobReport, Poll},
     manager::{ManagedInstance, Manager},
 };
@@ -12,6 +12,10 @@ use std::{
     panic::{AssertUnwindSafe, catch_unwind},
     time::Duration,
 };
+
+#[cfg(windows)]
+#[path = "mutation_tasks.rs"]
+pub mod mutation;
 
 #[path = "file_tasks.rs"]
 pub mod file;
@@ -85,6 +89,14 @@ pub struct StartOptions {
     pub lifetime: Duration,
     pub limits: JobLimits,
 }
+/// Only a trusted guest mutation start may select the extended binding.
+/// Historical reads use ordinary ceilings and cannot execute guest or effect jobs.
+#[derive(Clone, Copy)]
+enum BindingProfile {
+    Ordinary,
+    Mutation(MutationBudget),
+    MutationHistory,
+}
 /// Resources must be approved on these exact references, before ownership moves.
 pub struct Preparation<'a> {
     pub manager: &'a Manager,
@@ -107,6 +119,8 @@ struct Task {
     exit: Option<ExitStatus>,
     service: Option<service::Progress>,
     file: Option<file::FileTask>,
+    #[cfg(windows)]
+    mutation: Option<mutation::MutationTask>,
 }
 enum Executor {
     Io(Box<IoWorker<WorkbenchState>>),
@@ -147,6 +161,11 @@ pub(crate) struct StateSlot {
     lost: bool,
     service_submissions: BTreeSet<[u8; 32]>,
     file_submissions: BTreeSet<[u8; 32]>,
+    #[cfg(windows)]
+    mutation_submissions: std::collections::BTreeMap<[u8; 32], ([u8; 32], Option<TaskKey>)>,
+    #[cfg(windows)]
+    mutation_checkpoints:
+        std::collections::VecDeque<([u8; 32], morrow_core::store::FileMutationPlanCheckpoint)>,
     pub(crate) submission: Option<[u8; 32]>,
 }
 impl StateSlot {
@@ -164,6 +183,10 @@ impl StateSlot {
             lost: false,
             service_submissions: BTreeSet::new(),
             file_submissions: BTreeSet::new(),
+            #[cfg(windows)]
+            mutation_submissions: Default::default(),
+            #[cfg(windows)]
+            mutation_checkpoints: Default::default(),
             submission: None,
         }
     }
@@ -280,6 +303,16 @@ impl StateSlot {
                     .as_mut()
                     .map(JobHandle::poll)
                     .or_else(|| t.file.as_ref().and_then(file::FileTask::poll))
+                    .or_else(|| {
+                        #[cfg(windows)]
+                        {
+                            t.mutation.as_mut().and_then(mutation::MutationTask::poll)
+                        }
+                        #[cfg(not(windows))]
+                        {
+                            None
+                        }
+                    })
             }),
             exit: self.task.as_ref().and_then(|t| t.exit),
         }
@@ -370,6 +403,14 @@ impl Workbench {
         options: StartOptions,
         prepare: impl FnOnce(Preparation<'_>) -> Result<file::Admission>,
     ) -> Result<TaskKey> {
+        self.start_task_with_binding(options, BindingProfile::Ordinary, prepare)
+    }
+    fn start_task_with_binding(
+        &mut self,
+        options: StartOptions,
+        binding_profile: BindingProfile,
+        prepare: impl FnOnce(Preparation<'_>) -> Result<file::Admission>,
+    ) -> Result<TaskKey> {
         self.state.try_reclaim()?;
         self.state.local()?;
         if self.state.repair_needed {
@@ -408,15 +449,36 @@ impl Workbench {
         state.host.prepare_write()?;
         let instance = manager.connect(&options.package_id, &mut state.host)?;
         let prepared = catch_unwind(AssertUnwindSafe(|| -> Result<_> {
-            let binding = manager.bind_io(
-                &state.host,
-                &instance,
-                options.digest,
-                options.revision,
-                &options.capabilities,
-                expires,
-                time,
-            )?;
+            let binding = match binding_profile {
+                BindingProfile::Ordinary => manager.bind_io(
+                    &state.host,
+                    &instance,
+                    options.digest,
+                    options.revision,
+                    &options.capabilities,
+                    expires,
+                    time,
+                )?,
+                BindingProfile::Mutation(approved) => manager.bind_budgeted_mutation(
+                    &state.host,
+                    &instance,
+                    options.digest,
+                    options.revision,
+                    &options.capabilities,
+                    expires,
+                    time,
+                    approved,
+                )?,
+                BindingProfile::MutationHistory => manager.bind_mutation_history(
+                    &state.host,
+                    &instance,
+                    options.digest,
+                    options.revision,
+                    &options.capabilities,
+                    expires,
+                    time,
+                )?,
+            };
             let job = prepare(Preparation {
                 manager,
                 host: &state.host,
@@ -443,6 +505,8 @@ impl Workbench {
                         stopping: false,
                         service: None,
                         file: None,
+                        #[cfg(windows)]
+                        mutation: None,
                         exit: Some(ExitStatus {
                             execution: Err(JobError::InvalidOptions),
                             disconnect: Err(JobError::Disconnect),
@@ -481,6 +545,8 @@ impl Workbench {
                     stopping: false,
                     service: None,
                     file: None,
+                    #[cfg(windows)]
+                    mutation: None,
                     exit: Some(ExitStatus {
                         execution: Err(error),
                         disconnect,
@@ -490,7 +556,7 @@ impl Workbench {
                 return Err(format!("IO worker admission failed: {error:?}").into());
             }
         };
-        let file_job = matches!(&job, file::Admission::File { .. });
+        let persistent_job = !matches!(&job, file::Admission::Io(_));
         let submitted = job.submit(&worker);
         self.state.task = Some(Task {
             commands: Default::default(),
@@ -501,11 +567,15 @@ impl Workbench {
             exit: None,
             service: None,
             file: None,
+            #[cfg(windows)]
+            mutation: None,
         });
         let task = self.state.checked_task(key)?;
         match submitted {
             Ok(file::Submitted::Io(handle)) => task.handle = Some(handle),
             Ok(file::Submitted::File(file)) => task.file = Some(file),
+            #[cfg(windows)]
+            Ok(file::Submitted::Mutation(mutation)) => task.mutation = Some(mutation),
             Err(error) => {
                 self.state.request_stop();
                 return Err(format!(
@@ -516,7 +586,7 @@ impl Workbench {
         }
         // Draining preserves Ready until read, abandonment or deadline, so final
         // delivery can still check the original active instance and authority.
-        if !file_job
+        if !persistent_job
             && let Some(Executor::Io(worker)) = &task.worker
             && let Err(error) = worker.drain(options.lifetime)
         {

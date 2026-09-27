@@ -17,25 +17,48 @@ pub fn flush(
     mut sign: impl FnMut(&proto::Segment) -> super::Result<Vec<u8>>,
     mut after_batch: impl FnMut(),
 ) -> Result<Progress> {
-    if max_batches == 0 || max_batches > 16 { return Err("sealing batch budget".into()); }
-    let mut progress = Progress { segments: 0, events: 0, more_pending: false };
+    if max_batches == 0 || max_batches > 16 {
+        return Err("sealing batch budget".into());
+    }
+    let mut progress = Progress {
+        segments: 0,
+        events: 0,
+        more_pending: false,
+    };
     let tip = store.last_sealed_segment()?;
     let (mut index, mut previous) = if let Some(bytes) = tip {
         let value = verify(&bytes, trust)?;
-        (value.segment().index.checked_add(1).ok_or("segment overflow")?, value.digest())
-    } else { (1, [0;32]) };
+        (
+            value
+                .segment()
+                .index
+                .checked_add(1)
+                .ok_or("segment overflow")?,
+            value.digest(),
+        )
+    } else {
+        (1, [0; 32])
+    };
     for _ in 0..max_batches {
         let mut limit = 128;
         let (signed, count) = loop {
             let pending = match store.pending(0, limit) {
                 Ok(value) => value,
-                Err(crate::Error::Limit) if limit > 1 => { limit /= 2; continue; },
+                Err(crate::Error::Limit) if limit > 1 => {
+                    limit /= 2;
+                    continue;
+                }
                 Err(error) => return Err(error.into()),
             };
-            if pending.is_empty() { return Ok(progress); }
+            if pending.is_empty() {
+                return Ok(progress);
+            }
             let segment = match from_pending(trust, index, previous, &pending) {
                 Ok(value) => value,
-                Err(AuditError::Limit) if limit > 1 => { limit /= 2; continue; },
+                Err(AuditError::Limit) if limit > 1 => {
+                    limit /= 2;
+                    continue;
+                }
                 Err(error) => return Err(error.into()),
             };
             break (sign(&segment)?, pending.len() as u32);

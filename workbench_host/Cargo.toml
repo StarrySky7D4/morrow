@@ -48,7 +48,7 @@ rusqlite = { version = "=0.40.2", features = ["backup"] }
 tempfile = "=3.27.0"
 
 [features]
-fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection"]
+fault-injection = ["morrow-core/fault-injection", "morrow-audit/fault-injection", "morrow-plugin-runtime/fault-injection"]
 
 [[example]]
 name = "qualify_shared_evidence"

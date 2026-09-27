@@ -157,7 +157,11 @@ class FileTaskSession {
   bool get canAbandon =>
       !busy && _trusted && _local && _attempt != null && _key == null;
 
-  void _accept(IoTaskSnapshot value, {bool start = false}) {
+  void _accept(
+    IoTaskSnapshot value, {
+    bool start = false,
+    bool receivedFinish = false,
+  }) {
     if (value.key != null) HttpTaskValidation.identity(value.key!);
     if (value.submission != null) {
       HttpTaskValidation.identity(value.submission!);
@@ -176,6 +180,7 @@ class FileTaskSession {
     _snapshot = value;
     _trusted = true;
     if (value.exit != null &&
+        !receivedFinish &&
         _attempt != null &&
         _phase != FileTaskPhase.verified &&
         _phase != FileTaskPhase.cancelled &&
@@ -289,7 +294,17 @@ class FileTaskSession {
         delivering = true;
         final value = await files.readFile(_key!);
         if (epoch != _epoch) return;
-        _accept(value.snapshot);
+        // The host may join the worker while creating the Finished reply.
+        // Validate its identity first, but do not classify that normal exit as
+        // an interruption of the already verified file. Maintenance still uses
+        // the snapshot's independent recovery/acknowledgement gates.
+        _accept(
+          value.snapshot,
+          receivedFinish:
+              value.result is FileTaskFinished &&
+              _expected == _Expected.finished &&
+              _verifiedBytes,
+        );
         if (value.result != null) {
           decoded = true;
           _consume(value.result!);

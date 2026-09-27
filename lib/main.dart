@@ -3137,6 +3137,8 @@ class _StudioState extends State<Studio> with WidgetsBindingObserver {
       'io:ServiceManager': l.mainServiceSettings,
       'io:ServiceRunManager': l.mainServiceRunSettings,
       'io:HttpTaskManager': l.mainHttpSettings,
+      'io:MutationExecutionManager': l.pluginsFileMutationTitle,
+      'io:MutationRecoveryManager': l.pluginsMutationTitle,
       'io:CredentialManager': l.mainCredentialSettings,
       'io:EndpointManager': l.mainEndpointSettings,
     },

@@ -1,5 +1,18 @@
 {
   "@@locale": "ja",
+  "pluginsGuestMutationDeclared": "このパッケージはゲストコードによるファイル変更を宣言しています。",
+  "pluginsGuestMutationBudget": "宣言された上限：ジョブごとに {maxJobBytes} バイト、合計 {maxBytes} バイト。",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "これはパッケージの上限であり、有効な許可ではありません。各操作には別途承認が必要です。",
   "pluginsWorkbench": "ワークスペースプラグイン",
   "pluginsReadingState": "プラグインの状態を読み込み中…",
   "pluginsManagementUnavailable": "プラグイン管理は利用できません。既存のコンテンツは引き続き閲覧できます。",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "16 進プレビュー（先頭 64 バイト）",
   "pluginsFileTaskPrevious": "前のファイルタスク",
   "pluginsFileTaskProgress": "{received} / {length} バイト",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "ファイル変更の復旧",
+  "pluginsMutationIntro": "既存の計画を読み取り専用で検索して照合します。ファイル操作は再実行しません。",
+  "pluginsMutationSubject": "元の操作の主体識別子",
+  "pluginsMutationDiscover": "元の計画を検索",
+  "pluginsMutationNext": "次のページを読み込む",
+  "pluginsMutationRelease": "検索を終了",
+  "pluginsMutationContinue": "保存した位置から続行",
+  "pluginsMutationReconcile": "選択した計画を照合",
+  "pluginsMutationSelectPlan": "照合する計画を選択",
+  "pluginsMutationPlan": "元の計画",
+  "pluginsMutationPage": "直近の検索ページ",
+  "pluginsMutationCheckpoint": "検索位置は現在のホストセッションでのみ有効です。タスクの後処理後に続行できます。",
+  "pluginsMutationCleanup": "選択した計画を照合する前に、検索を終了してタスクの終了を確認してください。",
+  "pluginsMutationRetry": "元の送信の受領情報を再取得",
+  "pluginsMutationResultLost": "このページの結果は失われました。タスクを後処理し、最後に保存した位置から続行するか、再検索してください。",
+  "pluginsMutationPrepared": "準備済み。ファイルへの効果は未確認",
+  "pluginsMutationUnknown": "結果は不明です。自動再試行はしません",
+  "pluginsMutationObserved": "既存の観測記録",
+  "pluginsMutationCancelled": "実行前にキャンセル",
+  "pluginsMutationAbsent": "一致する記録はありません",
+  "pluginsMutationSucceeded": "OSが成功を確認",
+  "pluginsMutationRejected": "OSが操作を拒否",
+  "pluginsMutationUnspecified": "ファイルへの効果を示す証拠がありません",
+  "pluginsMutationDone": "現在の検索は完了しました",
+  "pluginsMutationSelected": "選択した計画を保持しました",
+  "pluginsMutationEmpty": "このページに一致する計画はありません。続きのページがある場合があります。",
+  "pluginsMutationScopeUnavailable": "元の計画の範囲を現在利用できません。プラグイン一覧を更新し、権限を確認してください。",
+  "pluginsMutationLastResult": "直近の照合結果",
+  "pluginsMutationFormError": "復旧要求を送信できません。主体識別子、プラグインの範囲、タスクの期限を確認してください。",
+  "pluginsMutationSubmissionUnknown": "送信の受領情報が不確かです。状態を更新した後、元の受領情報のみを明示的に再取得してください。重複する要求は作成しないでください。",
+  "pluginsFileMutationTitle": "ファイルの作成と削除",
+  "pluginsFileMutationIntro": "許可済みのプラグインとローカルの対象を選択します。操作を確認して準備した後、実行を別途確認します。",
+  "pluginsFileMutationPickDirectory": "フォルダーを選択",
+  "pluginsFileMutationPickFile": "ファイルを選択",
+  "pluginsFileMutationPickContent": "内容のファイルを選択（任意）",
+  "pluginsFileMutationFileName": "新しいファイル名",
+  "pluginsFileMutationEmptyContent": "空のファイルを作成",
+  "pluginsFileMutationTarget": "対象",
+  "pluginsFileMutationContentLength": "内容のサイズ",
+  "pluginsFileMutationContentSha256": "内容の SHA-256",
+  "pluginsFileMutationReview": "確認して準備",
+  "pluginsFileMutationPrepareTitle": "ファイル操作の確認",
+  "pluginsFileMutationPrepareConfirm": "この操作を準備",
+  "pluginsFileMutationExecute": "準備済みの操作を実行",
+  "pluginsFileMutationExecuteTitle": "ファイル操作の実行確認",
+  "pluginsFileMutationExecuteCreateConfirm": "このファイルを作成",
+  "pluginsFileMutationExecuteDeleteConfirm": "このファイルを完全に削除",
+  "pluginsFileMutationSelectionRequired": "先に対象とプラグインを選択してください。",
+  "pluginsFileMutationScopeChanged": "プラグインの権限が変更されました。操作を再確認してください。",
+  "pluginsFileMutationFileTooLarge": "内容が 16 MiB を超えています。",
+  "pluginsFileMutationFailure": "ファイル操作の確認が必要です。続行する前に状態を確認してください。",
+  "pluginsFileMutationRecoveryHint": "タスクを閉じて終了を確認した後、ファイル復旧で元の操作を確認できます。",
+  "pluginsFileMutationRecovery": "ファイル復旧を開く",
+  "pluginsFileMutationQuery": "操作履歴を確認",
+  "pluginsFileMutationCancelPlan": "準備済みの計画を取り消す",
+  "pluginsFileMutationOperationError": "操作のエラー",
+  "pluginsFileMutationCleanupError": "タスク終了処理のエラー",
+  "pluginsGuestExecutionTitle": "プラグインによるファイルの作成と削除",
+  "pluginsGuestExecutionIntro": "元の計画を確認してから、準備と実行を別々に承認してください。準備段階では対象ファイルを作成・削除しません。",
+  "pluginsGuestExecutionDraft": "上限を承認して計画を作成",
+  "pluginsGuestExecutionPlanSha256": "元の計画の SHA-256",
+  "pluginsGuestExecutionJobBudget": "ジョブごとの承認バイト数",
+  "pluginsGuestExecutionTotalBudget": "承認された累計バイト数",
+  "pluginsGuestExecutionOrdinaryBudget": "このプラグインは通常の上限を使用します。拡張上限は付与されません。",
+  "pluginsGuestExecutionBudgetError": "上限には宣言された最大値以下の正の数を指定してください。累計上限はジョブごとの上限以上である必要があります。",
+  "pluginsGuestExecutionHostQuery": "元のホスト履歴を照会",
+  "pluginsGuestExecutionFrame": "プラグインの実行結果",
+  "pluginsGuestExecutionOwner": "ホストの検証結果",
+  "pluginsGuestExecutionNoReplay": "結果が不確定です。プラグインのコマンドやファイル操作は自動で再実行されません。",
+  "pluginsGuestExecutionDeadline": "承認の有効期間は最大30秒です。期限切れ後はタスクを停止して終了を待ち、必要なら修復と回収の確認を行ってから、計画を再審査してください。",
+  "pluginsGuestExecutionExpired": "ローカルの承認期間が終了しました。タスクを停止して終了を待ち、案内に従って修復と回収の確認を行ってください。送信済みの操作は結果を照合し、再実行しないでください。",
+  "pluginsGuestExecutionRelease": "タスクを解放"
 }

@@ -1,5 +1,6 @@
 //! Trusted broker admission only: no file/network execution, resource path or guest grant.
 //! Every delivery must check its lease again. Reservations do not prove an external effect.
+use crate::monotonic::Instant;
 use crate::{
     Cancellation, Fault,
     manager::{Control, ManagedInstance, Manager},
@@ -16,7 +17,6 @@ use std::{
     sync::{Arc, Mutex, Weak},
     time::Duration,
 };
-use crate::monotonic::Instant;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Error {
@@ -46,6 +46,13 @@ pub struct ServiceRunBudget {
     pub max_jobs: u64,
     pub max_bytes: u64,
 }
+/// Explicit host approval of the independent mutation accounting ceiling.
+/// The package declaration is only an upper bound and never creates this value.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct MutationBudget {
+    pub max_job_bytes: u64,
+    pub max_bytes: u64,
+}
 /// Cumulative successful task reservations, not successful business operations.
 /// Release, cancellation, result reads and post-reservation enqueue failure never refund.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -66,6 +73,7 @@ struct State {
     usage: Usage,
     last_tick: u64,
     service_run: Option<ServiceRun>,
+    mutation_bound: bool,
 }
 struct ServiceRun {
     jobs: u64,
@@ -98,6 +106,7 @@ impl State {
 /// One context per actual managed instance, owned by its Control, never by a bind request.
 pub(crate) struct IoContext {
     budget: IoBudget,
+    mutation_ceiling: Option<MutationBudget>,
     max_run_ms: Option<u64>,
     run_budget_ceiling: Option<ServiceRunBudget>,
     state: Mutex<State>,
@@ -105,11 +114,13 @@ pub(crate) struct IoContext {
 impl IoContext {
     pub(crate) fn new(
         budget: &IoBudget,
+        mutation_ceiling: Option<MutationBudget>,
         max_run_ms: Option<u64>,
         run_budget_ceiling: Option<ServiceRunBudget>,
     ) -> Self {
         Self {
             budget: *budget,
+            mutation_ceiling,
             max_run_ms,
             run_budget_ceiling,
             state: Mutex::new(State::default()),
@@ -125,12 +136,43 @@ pub struct IoBinding {
     host: HostBinding,
     connection: ConnectionBinding,
     context: Arc<IoContext>,
+    mutation_budget: Option<MutationBudget>,
+    mutation_history: bool,
     capabilities: BTreeSet<IoCapability>,
     package_id: String,
     package_digest: [u8; 32],
     expires: u64,
 }
 impl IoBinding {
+    fn budget(&self) -> IoBudget {
+        let mut budget = self.context.budget;
+        if let Some(approved) = self.mutation_budget {
+            budget.max_job_bytes = approved.max_job_bytes;
+            budget.max_bytes = approved.max_bytes;
+        }
+        budget
+    }
+    /// The host-approved immutable extension, never the unapproved manifest ceiling.
+    pub fn mutation_budget(&self) -> Option<MutationBudget> {
+        self.mutation_budget
+    }
+    /// This binding can only read original mutation plans and history. It is
+    /// never an approved guest budget or an authority to select a new target.
+    pub fn is_mutation_history(&self) -> bool {
+        self.mutation_history
+    }
+    /// Original ordinary per-job content ceiling, without the read-only
+    /// plan/response allowance. Never a guest or effect budget.
+    pub(crate) fn mutation_history_content_ceiling(&self) -> Option<u64> {
+        self.mutation_history
+            .then_some(self.context.budget.max_job_bytes)
+    }
+    /// Internal diagnostic preflight for the original owner; it never reserves bytes.
+    pub(crate) fn mutation_budget_usage(&self) -> Option<(u64, u64)> {
+        let approved = self.mutation_budget?;
+        let state = self.context.state.lock().ok()?;
+        Some((state.usage.bytes, state.byte_ceiling(approved.max_bytes)))
+    }
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         manager: &Manager,
@@ -141,6 +183,8 @@ impl IoBinding {
         now: u64,
         service_run: bool,
         run_budget: Option<ServiceRunBudget>,
+        mutation_budget: Option<MutationBudget>,
+        mutation_history: bool,
     ) -> Result<Self> {
         let control = instance.io_control();
         let context = control.io.as_ref().ok_or(Error::Denied)?.clone();
@@ -151,6 +195,21 @@ impl IoBinding {
         // A service profile cannot escape its one-shot lifetime through the legacy API.
         if service_run != context.max_run_ms.is_some() {
             return Err(Error::Denied);
+        }
+        if (mutation_budget.is_some() || mutation_history) != context.mutation_ceiling.is_some()
+            || (mutation_budget.is_some() || mutation_history)
+                && (service_run || run_budget.is_some())
+            || (mutation_history && mutation_budget.is_some())
+        {
+            return Err(Error::Denied);
+        }
+        if let (Some(approved), Some(ceiling)) = (mutation_budget, context.mutation_ceiling)
+            && (approved.max_job_bytes == 0
+                || approved.max_job_bytes > ceiling.max_job_bytes
+                || approved.max_bytes < approved.max_job_bytes
+                || approved.max_bytes > ceiling.max_bytes)
+        {
+            return Err(Error::Limit);
         }
         if duration > context.max_run_ms.unwrap_or(context.budget.max_duration_ms) {
             return Err(Error::Limit);
@@ -172,6 +231,12 @@ impl IoBinding {
         }
         if !control.active() {
             return Err(Error::Denied);
+        }
+        if mutation_budget.is_some() || mutation_history {
+            if state.mutation_bound {
+                return Err(Error::Denied);
+            }
+            state.mutation_bound = true;
         }
         if service_run {
             if state.service_run.is_some() {
@@ -200,6 +265,8 @@ impl IoBinding {
             host: host.binding(),
             connection: instance.connection().binding(),
             context,
+            mutation_budget,
+            mutation_history,
             capabilities,
             package_id: instance.package().package().manifest().package_id.clone(),
             package_digest: instance.package().package().digest(),
@@ -472,6 +539,47 @@ impl IoBinding {
         bytes: u64,
         now: u64,
     ) -> Result<IoLease> {
+        if self.mutation_history {
+            return Err(Error::Denied);
+        }
+        self.admit_impl(
+            manager, host, instance, capability, resources, bytes, now, false,
+        )
+    }
+    /// Charge a history read without opening the general effect-bearing admit path.
+    /// Only the original-owner discovery/reconciliation dispatcher calls this.
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) fn admit_mutation_history_read(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        capability: IoCapability,
+        bytes: u64,
+        now: u64,
+    ) -> Result<IoLease> {
+        if !self.mutation_history
+            || !matches!(
+                capability,
+                IoCapability::FileCreate | IoCapability::FileDelete
+            )
+        {
+            return Err(Error::Denied);
+        }
+        self.admit_impl(manager, host, instance, capability, 0, bytes, now, true)
+    }
+    #[allow(clippy::too_many_arguments)]
+    fn admit_impl(
+        &self,
+        manager: &Manager,
+        host: &HostRuntime,
+        instance: &ManagedInstance,
+        capability: IoCapability,
+        resources: u32,
+        bytes: u64,
+        now: u64,
+        history_read: bool,
+    ) -> Result<IoLease> {
         // Invalid identity/capability, time or quota cannot mutate another instance's clock/budget.
         self.validate_identity(manager, host, instance)?;
         if !self.capabilities.contains(&capability) {
@@ -488,11 +596,19 @@ impl IoBinding {
             jobs: state.usage.jobs.checked_add(1).ok_or(Error::Limit)?,
             bytes: state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?,
         };
-        let budget = &self.context.budget;
+        let budget = self.budget();
+        let job_ceiling = if history_read {
+            budget
+                .max_job_bytes
+                .checked_add(morrow_core::file_mutation::MAX_HISTORY_METADATA_BYTES)
+                .ok_or(Error::Limit)?
+        } else {
+            budget.max_job_bytes
+        };
         if next.resources > budget.max_resources
             || next.jobs > budget.max_jobs
             || next.bytes > state.byte_ceiling(budget.max_bytes)
-            || bytes > budget.max_job_bytes
+            || bytes > job_ceiling
         {
             return Err(Error::Limit);
         }
@@ -522,6 +638,11 @@ impl IoBinding {
         capabilities: &[IoCapability],
         now: u64,
     ) -> Result<IoResourceLease> {
+        // History reads charge jobs/bytes through admit; they never retain a
+        // selected target, listener, or other effect-bearing resource.
+        if self.mutation_history {
+            return Err(Error::Denied);
+        }
         self.validate_identity(manager, host, instance)?;
         if capabilities.is_empty() || capabilities.iter().any(|c| !self.capabilities.contains(c)) {
             return Err(Error::Denied);
@@ -529,7 +650,7 @@ impl IoBinding {
         let mut state = self.context.state.lock().map_err(|_| Error::Denied)?;
         self.validate_time(&mut state, now)?;
         let resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
-        if resources > self.context.budget.max_resources {
+        if resources > self.budget().max_resources {
             return Err(Error::Limit);
         }
         self.validate_owner(host, instance)?;
@@ -553,7 +674,7 @@ impl IoBinding {
             return Err(Error::Denied);
         }
         self.validate_time(&mut state, now)?;
-        let budget = &self.context.budget;
+        let budget = self.budget();
         let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
         if limit == 0
             || limit > budget.max_job_bytes
@@ -594,6 +715,8 @@ impl IoBinding {
             host: self.host,
             connection: self.connection,
             context: self.context.clone(),
+            mutation_budget: self.mutation_budget,
+            mutation_history: self.mutation_history,
             capabilities: self.capabilities.clone(),
             package_id: self.package_id.clone(),
             package_digest: self.package_digest,
@@ -794,8 +917,8 @@ impl IoJobLease {
             .ok_or(Error::Limit)?;
         let next_resources = state.usage.resources.checked_add(1).ok_or(Error::Limit)?;
         if next_job > self.limit
-            || next_bytes > state.byte_ceiling(self.binding.context.budget.max_bytes)
-            || next_resources > self.binding.context.budget.max_resources
+            || next_bytes > state.byte_ceiling(self.binding.budget().max_bytes)
+            || next_resources > self.binding.budget().max_resources
         {
             return Err(Error::Limit);
         }
@@ -835,9 +958,7 @@ impl IoJobLease {
         }
         let next_job = job.checked_add(bytes).ok_or(Error::Limit)?;
         let total = state.usage.bytes.checked_add(bytes).ok_or(Error::Limit)?;
-        if next_job > self.limit
-            || total > state.byte_ceiling(self.binding.context.budget.max_bytes)
-        {
+        if next_job > self.limit || total > state.byte_ceiling(self.binding.budget().max_bytes) {
             return Err(Error::Limit);
         }
         *job = next_job;

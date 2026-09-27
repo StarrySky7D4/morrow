@@ -19,6 +19,7 @@ const schemaIds = <String, String>{
   'capturedSaveSchema': 'a95f9bc2619c5db5',
   'pluginHandlerSchema': '8970e629b64acfe8',
   'pluginEntrySchema': 'e383b408b900ece2',
+  'mutationBudgetSchema': 'f40b68d6e3ae16f1',
   'credentialInfoSchema': 'd6240ef6d779aa99',
   'endpointPolicySchema': '92d12e9515591f54',
   'endpointInfoSchema': 'd59a7350b2afe3bd',
@@ -40,5 +41,15 @@ const schemaIds = <String, String>{
   'editorRecoverySchema': 'ee7e7702bb7039cc',
   'fileStartSchema': '85aad5dfacc34977',
   'fileResultSchema': 'a3409b45a3cf9630',
+  'mutationStartSchema': 'f0119eaaa7f2d237',
+  'mutationReconcileSchema': 'b255361c70318dd3',
+  'mutationDiscoverSchema': 'ab663dbc87ed6d1e',
+  'mutationCommandSchema': 'd6c333b6b7ef6b65',
+  'mutationStateSchema': 'eee5de8e18037563',
+  'mutationResultSchema': '8f225c0f4efe6a74',
+  'guestMutationStartSchema': 'd1b6405977479d5d',
+  'guestMutationCommandSchema': 'c2f0721cdbc28651',
+  'guestMutationStateSchema': '88db4a5d603dd674',
+  'guestMutationResultSchema': 'efd23c868c2b10a7',
 };
 BigInt schemaId(String name) => BigInt.parse(schemaIds[name]!, radix: 16);

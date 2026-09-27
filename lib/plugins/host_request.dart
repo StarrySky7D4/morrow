@@ -22,7 +22,13 @@ Future<void> sendHostRequest(
   final sensitive =
       clearAfterSend ||
       action == host.Action.credentialSave ||
-      action == host.Action.commandSubmit;
+      action == host.Action.commandSubmit ||
+      action == host.Action.mutationStart ||
+      action == host.Action.mutationSubmit ||
+      action == host.Action.guestMutationStart ||
+      action == host.Action.guestMutationSubmit ||
+      action == host.Action.mutationReconcile ||
+      action == host.Action.mutationDiscover;
   Uint8List? payload;
   try {
     try {

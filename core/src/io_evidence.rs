@@ -109,7 +109,15 @@ impl Material {
         })
     }
     pub fn decode(container: &[u8]) -> Result<Self> {
-        let raw = envelope::unpack(MAGIC, container, MAX_RAW_BYTES)?;
+        Self::decode_bounded(container, MAX_RAW_BYTES)
+    }
+    /// Internal read path for small protected originals. The limit bounds both
+    /// the compressed container and LZ4 output before protobuf allocation.
+    pub(crate) fn decode_bounded(container: &[u8], max_raw_bytes: usize) -> Result<Self> {
+        if max_raw_bytes > MAX_RAW_BYTES {
+            return Err(Error::Limit);
+        }
+        let raw = envelope::unpack(MAGIC, container, max_raw_bytes)?;
         preflight(&raw)?;
         let value = proto::Material::decode(raw.as_slice())
             .map_err(|_| Error::Invalid("IO evidence protobuf"))?;

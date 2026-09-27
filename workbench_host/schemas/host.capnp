@@ -1,6 +1,6 @@
 @0xeefcf786d6838bda;
 # Private trusted UI/host connection. Native selected paths never reach a guest.
-enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; }
+enum Action { read @0; page @1; mutate @2; importFile @3; exportFile @4; service @5; query @6; readPreferences @7; savePreferences @8; capture @9; beginPreferences @10; appendPreferences @11; finishPreferences @12; abortPreferences @13; readPreferencesPart @14; backupProtection @15; backupSnapshot @16; pluginState @17; pluginConfigure @18; uiOpen @19; uiEvent @20; uiClose @21; openCaptureScope @22; closeCaptureScope @23; beginCaptureUpload @24; appendCaptureUpload @25; finishPaste @26; finishCapturedSave @27; abortCaptureUpload @28; pluginCatalog @29; pluginInspect @30; pluginImport @31; pluginApprove @32; pluginRemove @33; pluginTransform @34; externalUiOpen @35; externalUiEvent @36; externalUiClose @37; readUiLocale @38; saveUiLocale @39; pluginApproveIo @40; credentialPage @41; credentialSave @42; credentialDisable @43; endpointPage @44; endpointSave @45; endpointDisable @46; httpStart @47; ioStatus @48; ioPoll @49; ioRead @50; ioCancel @51; ioRepair @52; ioAcknowledge @53; serviceConfigPage @54; serviceConfigSave @55; serviceConfigDisable @56; serviceAuthorityPage @57; serviceAuthenticationIssue @58; serviceAuthorityDisable @59; servicePublicationSave @60; serviceRunStart @61; serviceRunStatus @62; commandSubmit @63; commandStatus @64; commandRead @65; commandCancel @66; commandFrameBegin @67; commandFrameAppend @68; commandFrameFinish @69; commandFrameAbort @70; serviceTlsInspect @71; tlsIdentityPage @72; tlsIdentitySave @73; tlsIdentityDisable @74; readUiFont @75; saveUiFont @76; pendingPreferences @77; acknowledgePreferences @78; abandonPreferences @79; readVersioned @80; pageVersioned @81; planTasksMigration @82; migrateTasks @83; editTasks @84; editCard @85; queryVersioned @86; finishCapturedCard @87; inspectEditorRecoveries @88; resumeEditorRecovery @89; acknowledgeEditorRecovery @90; abandonEditorRecovery @91; beginEditorDraft @92; appendEditorDraft @93; finishEditorDraft @94; abortEditorDraftTransfer @95; readEditorDraft @96; readEditorDraftPart @97; listEditorDrafts @98; discardEditorDraft @99; importEditorDraftAsset @100; exportEditorDraftAsset @101; beginEditorDraftImport @102; completeEditorDraftImport @103; inspectEditorDraftImport @104; listEditorDraftImports @105; exportEditorDraftImport @106; abandonEditorDraftImport @107; reconcileEditorDraftImports @108; prepareEditorDraftImportDecision @109; inspectEditorDraftImportDecision @110; listEditorDraftImportDecisions @111; cancelEditorDraftImportDecision @112; listEditorDraftImportDecisionScopes @113; finishEditorDraftHandoff @114; retireEditorDraftParent @115; listEditorDraftLineages @116; prepareEditorDraftHandoffProposal @117; inspectEditorDraftHandoffProposal @118; listEditorDraftHandoffProposals @119; completeEditorDraftHandoffProposal @120; retireEditorDraftHandoffProposal @121; cancelEditorDraftHandoffProposal @122; inspectEditorCommit @123; fileStart @124; fileChunk @125; fileFinish @126; fileRead @127; mutationStart @128; mutationSubmit @129; mutationStatus @130; mutationRead @131; mutationCancelCommand @132; mutationReconcile @133; mutationDiscover @134; guestMutationStart @135; guestMutationSubmit @136; guestMutationStatus @137; guestMutationRead @138; guestMutationCancelCommand @139; }
 struct Request {
  version @0 :UInt16; digest @1 :Data; action @2 :Action;
  id @3 :Text; operation @4 :Text; revision @5 :UInt64;
@@ -23,6 +23,8 @@ struct Request {
  serviceTls @49 :ServiceTlsSelection;
  uiFont @50 :UiFont;
  fileStart @51 :FileStart;
+ mutationStart @52 :MutationStart; mutationCommand @53 :MutationCommand;
+ mutationCommandId @54 :UInt64; mutationReconcile @55 :MutationReconcile; mutationDiscover @56 :MutationDiscover; guestMutationStart @57 :GuestMutationStart; guestMutationCommand @58 :GuestMutationCommand;
 }
 struct Response {
  version @0 :UInt16; digest @1 :Data; payload @2 :Data;
@@ -52,6 +54,8 @@ struct Response {
  editorRecoveries @45 :List(EditorRecovery);
  editorCommitProof @46 :EditorCommitProof;
  fileResult @47 :FileResult;
+ mutationState @48 :MutationState; mutationResult @49 :MutationResult;
+ mutationCommandId @50 :UInt64; guestMutationState @51 :GuestMutationState; guestMutationResult @52 :GuestMutationResult;
 }
 
 struct EditorCommitProof {
@@ -124,7 +128,10 @@ struct PluginEntry {
  handlers @9 :List(PluginHandler); dependencies @10 :List(Text); issue @11 :Text;
  declaredIo @12 :List(Text); approvedIo @13 :List(Text);
  ioHandlers @14 :List(Text);
+ mutationSupported @15 :Bool;
+ mutationBudget @16 :MutationBudget;
 }
+struct MutationBudget { maxJobBytes @0 :UInt64; maxBytes @1 :UInt64; }
 
 # Redacted administration metadata only. No ciphertext or secret readback.
 struct CredentialInfo {
@@ -225,4 +232,78 @@ struct FileStart {
 struct FileResult {
  kind @0 :UInt16; length @1 :UInt64; sha256 @2 :Data;
  offset @3 :UInt64; bytes @4 :Data; eof @5 :Bool;
+}
+
+# Trusted private file mutation. Request.ioKey carries the task key.
+# disposition: 1 create, 2 replace, 3 delete. For create, selectedPath is the root.
+struct MutationStart {
+ submission @0 :Data; packageId @1 :Text; packageDigest @2 :Data;
+ registryRevision @3 :UInt64; disposition @4 :UInt16;
+ selectedPath @5 :Text; relativePath @6 :Text; subject @7 :Text;
+ approvalSha256 @8 :Data; timeoutMs @9 :UInt32;
+}
+# Private history-start request. plan is the raw Core RequestRecord container,
+# never an OS path; reconciliation still rechecks the current package binding.
+struct MutationReconcile {
+ submission @0 :Data; packageId @1 :Text; packageDigest @2 :Data;
+ registryRevision @3 :UInt64; plan @4 :Data; timeoutMs @5 :UInt32;
+}
+# kind: 1 prepare, 2 chunk, 3 commit content, 4 execute, 5 query,
+# 6 cancel plan, 7 release, 9 build plan, 10 next plans (scanLimit only). plan encodes RequestRecord.
+# Build plan accepts only operationId/contentLength/contentSha256; target and
+# approval metadata come from the original retained selection. No persistence.
+struct MutationDiscover {
+ submission @0 :Data; packageId @1 :Text; packageDigest @2 :Data;
+ registryRevision @3 :UInt64; subject @4 :Text; disposition @5 :UInt16;
+ scanLimit @6 :UInt16; timeoutMs @7 :UInt32; checkpoint @8 :Data;
+}
+struct MutationCommand {
+ submission @0 :Data; kind @1 :UInt16; plan @2 :Data;
+ offset @3 :UInt64; bytes @4 :Data;
+ operationId @5 :Text; contentLength @6 :UInt64; contentSha256 @7 :Data; scanLimit @8 :UInt16;
+}
+# kind: 0 select, then the MutationCommand kinds above, 8 reconcile.
+# delivery: 0 pending, 1 ready, 2 consumed.
+struct MutationState {
+ command @0 :UInt64; kind @1 :UInt16; delivery @2 :UInt16;
+ selected @3 :Bool; reconcileRequired @4 :Bool; terminal @5 :Bool;
+ reference @6 :Data; expectedIdentity @7 :Data;
+}
+# kind: 0 pending, 1 selected, 2 prepared, 3 staged, 4 created,
+# 5 deleted, 6 history, 7 released, 8 plan cancelled, 9 failure,
+# 10 reconciled, 11 planned (draft Core RequestRecord; no durable phase),
+# 12 plans (original plans/scanned/done only; no phase or effect projection).
+# failureLayer: 1 delivery, 2 target. record/outcome are Core containers.
+# phase: 0 no record, 1 prepared, 2 outcome unknown, 3 observed,
+# 4 cancelled before dispatch. The projection is authoritative for display.
+# effect: 0 no effect projection, 1 OS confirmed success, 2 OS rejected.
+# Result kind 4/5 alone does not establish that an OS mutation succeeded.
+struct MutationResult {
+ kind @0 :UInt16; reference @1 :Data; expectedIdentity @2 :Data;
+ record @3 :Data; outcome @4 :Data; stagedBytes @5 :UInt64;
+ durableContent @6 :Bool; failureLayer @7 :UInt16; failureCode @8 :UInt16;
+ phase @9 :UInt16; operationId @10 :Text;
+ effect @11 :UInt16; osCode @12 :UInt32; plan @13 :Data;
+ plans @14 :List(Data); scanned @15 :UInt32; done @16 :Bool; checkpoint @17 :Data;
+}
+
+# Guest mutation is a separate trusted private domain; tokens remain in the host.
+struct GuestMutationStart { selection @0 :MutationStart; approvedBudget @1 :MutationBudget; }
+struct GuestMutationCommand {
+ submission @0 :Data; kind @1 :UInt16; planSha256 @2 :Data;
+ offset @3 :UInt64; bytes @4 :Data; operationId @5 :Text;
+ contentLength @6 :UInt64; contentSha256 @7 :Data;
+}
+# delivery: 0 pending, 1 ready, 2 consumed, 3 unavailable.
+struct GuestMutationState {
+ command @0 :UInt64; kind @1 :UInt16; delivery @2 :UInt16; selected @3 :Bool;
+ reference @4 :Data; expectedIdentity @5 :Data; reviewedPlanSha256 @6 :Data;
+ approvalDelivered @7 :Bool; permitDelivered @8 :Bool; stagedBytes @9 :UInt64;
+ durableContent @10 :Bool; effectAttempted @11 :Bool; reconcileRequired @12 :Bool; terminal @13 :Bool;
+}
+# kind: 0 pending, 1 owner, 2 exact Core response frame, 3 failure.
+# failureKind: 1 job, 2 guest execution, 3 protocol, 4 cancelled.
+struct GuestMutationResult {
+ kind @0 :UInt16; owner @1 :MutationResult; frame @2 :Data;
+ failureKind @3 :UInt16; failureCode @4 :UInt16;
 }

@@ -1,5 +1,18 @@
 {
   "@@locale": "pt",
+  "pluginsGuestMutationDeclared": "O pacote declara alterações de arquivos pelo código convidado.",
+  "pluginsGuestMutationBudget": "Limite declarado: {maxJobBytes} bytes por tarefa; {maxBytes} bytes no total.",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "Estes são limites do pacote, não uma autorização ativa. Cada operação ainda exige aprovação separada.",
   "pluginsWorkbench": "Plugin da área de trabalho",
   "pluginsReadingState": "Carregando estado do plugin…",
   "pluginsManagementUnavailable": "O gerenciamento de plugins está indisponível. O conteúdo existente continua legível.",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "Prévia hexadecimal (primeiros 64 bytes)",
   "pluginsFileTaskPrevious": "Tarefa de arquivo anterior",
   "pluginsFileTaskProgress": "{received} / {length} bytes",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "Recuperação de alterações em ficheiros",
+  "pluginsMutationIntro": "Procure e confira planos existentes em modo só de leitura. As operações em ficheiros não são executadas novamente.",
+  "pluginsMutationSubject": "Sujeito da operação original",
+  "pluginsMutationDiscover": "Procurar planos originais",
+  "pluginsMutationNext": "Ler página seguinte",
+  "pluginsMutationRelease": "Terminar pesquisa",
+  "pluginsMutationContinue": "Continuar da posição guardada",
+  "pluginsMutationReconcile": "Conferir plano selecionado",
+  "pluginsMutationSelectPlan": "Selecionar plano para conferir",
+  "pluginsMutationPlan": "Plano original",
+  "pluginsMutationPage": "Página encontrada mais recente",
+  "pluginsMutationCheckpoint": "A posição da pesquisa só é válida nesta sessão do anfitrião. Pode continuar após a limpeza da tarefa.",
+  "pluginsMutationCleanup": "Termine a pesquisa e confirme que a tarefa terminou antes de conferir o plano selecionado.",
+  "pluginsMutationRetry": "Obter novamente o recibo do envio original",
+  "pluginsMutationResultLost": "O resultado desta página perdeu-se. Limpe a tarefa e continue da última posição guardada ou pesquise novamente.",
+  "pluginsMutationPrepared": "Preparado; efeito no ficheiro ainda não confirmado",
+  "pluginsMutationUnknown": "Resultado incerto; sem nova tentativa automática",
+  "pluginsMutationObserved": "Registo de observação existente",
+  "pluginsMutationCancelled": "Cancelado antes da execução",
+  "pluginsMutationAbsent": "Nenhum registo correspondente encontrado",
+  "pluginsMutationSucceeded": "O sistema operativo confirmou o êxito",
+  "pluginsMutationRejected": "O sistema operativo rejeitou a operação",
+  "pluginsMutationUnspecified": "Sem prova do efeito no ficheiro",
+  "pluginsMutationDone": "Pesquisa atual concluída",
+  "pluginsMutationSelected": "Plano selecionado mantido",
+  "pluginsMutationEmpty": "Não há planos correspondentes nesta página; podem existir mais páginas.",
+  "pluginsMutationScopeUnavailable": "O âmbito do plano original está indisponível. Atualize o catálogo de plugins e reveja as autorizações.",
+  "pluginsMutationLastResult": "Resultado da conferência mais recente",
+  "pluginsMutationFormError": "Não foi possível enviar o pedido de recuperação. Verifique o sujeito, o âmbito do plugin e o prazo da tarefa.",
+  "pluginsMutationSubmissionUnknown": "O recibo do envio é incerto. Atualize o estado e obtenha explicitamente apenas o recibo original; não crie um pedido duplicado.",
+  "pluginsFileMutationTitle": "Criação e exclusão de arquivos",
+  "pluginsFileMutationIntro": "Escolha um plugin autorizado e um destino local. Revise a operação antes de prepará-la e confirme a execução separadamente.",
+  "pluginsFileMutationPickDirectory": "Escolher pasta",
+  "pluginsFileMutationPickFile": "Escolher arquivo",
+  "pluginsFileMutationPickContent": "Escolher arquivo de conteúdo (opcional)",
+  "pluginsFileMutationFileName": "Nome do novo arquivo",
+  "pluginsFileMutationEmptyContent": "Criar um arquivo vazio",
+  "pluginsFileMutationTarget": "Destino",
+  "pluginsFileMutationContentLength": "Tamanho do conteúdo",
+  "pluginsFileMutationContentSha256": "SHA-256 do conteúdo",
+  "pluginsFileMutationReview": "Revisar e preparar",
+  "pluginsFileMutationPrepareTitle": "Revisar operação de arquivo",
+  "pluginsFileMutationPrepareConfirm": "Preparar esta operação",
+  "pluginsFileMutationExecute": "Executar operação preparada",
+  "pluginsFileMutationExecuteTitle": "Confirmar operação de arquivo",
+  "pluginsFileMutationExecuteCreateConfirm": "Criar este arquivo",
+  "pluginsFileMutationExecuteDeleteConfirm": "Excluir este arquivo permanentemente",
+  "pluginsFileMutationSelectionRequired": "Escolha primeiro um destino e um plugin.",
+  "pluginsFileMutationScopeChanged": "A autorização do plugin mudou. Revise a operação novamente.",
+  "pluginsFileMutationFileTooLarge": "O conteúdo excede 16 MiB.",
+  "pluginsFileMutationFailure": "A operação de arquivo requer atenção. Verifique o estado antes de continuar.",
+  "pluginsFileMutationRecoveryHint": "Após fechar a tarefa e confirmar seu término, verifique a operação original na recuperação de arquivos.",
+  "pluginsFileMutationRecovery": "Abrir recuperação de arquivos",
+  "pluginsFileMutationQuery": "Consultar histórico da operação",
+  "pluginsFileMutationCancelPlan": "Cancelar plano preparado",
+  "pluginsFileMutationOperationError": "Erro da operação",
+  "pluginsFileMutationCleanupError": "Erro ao liberar a tarefa",
+  "pluginsGuestExecutionTitle": "Criação e exclusão de arquivos por plugins",
+  "pluginsGuestExecutionIntro": "Revise o plano original e confirme a preparação e a execução separadamente. A preparação não cria nem exclui o arquivo de destino.",
+  "pluginsGuestExecutionDraft": "Aprovar cotas e gerar plano",
+  "pluginsGuestExecutionPlanSha256": "SHA-256 do plano original",
+  "pluginsGuestExecutionJobBudget": "Bytes aprovados por tarefa",
+  "pluginsGuestExecutionTotalBudget": "Bytes acumulados aprovados",
+  "pluginsGuestExecutionOrdinaryBudget": "Este plugin usa as cotas comuns; nenhuma cota ampliada é concedida.",
+  "pluginsGuestExecutionBudgetError": "As cotas devem ser positivas e respeitar os limites declarados. A cota acumulada deve ser pelo menos igual à cota por tarefa.",
+  "pluginsGuestExecutionHostQuery": "Consultar o histórico do host original",
+  "pluginsGuestExecutionFrame": "Resultado da execução do plugin",
+  "pluginsGuestExecutionOwner": "Resultado da verificação do host",
+  "pluginsGuestExecutionNoReplay": "Resultado incerto; os comandos do plugin e as operações em arquivos nunca são repetidos automaticamente.",
+  "pluginsGuestExecutionDeadline": "A autorização dura no máximo 30 segundos. Ao expirar, pare a tarefa e aguarde sua saída; repare se necessário, confirme a recuperação e revise o plano novamente.",
+  "pluginsGuestExecutionExpired": "A janela de aprovação local terminou. Pare a tarefa e aguarde sua saída; repare e confirme a recuperação conforme indicado. Verifique o resultado de qualquer operação enviada. Não a execute novamente.",
+  "pluginsGuestExecutionRelease": "Liberar tarefa"
 }

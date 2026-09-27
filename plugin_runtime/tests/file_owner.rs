@@ -71,6 +71,26 @@ impl ManagedHostOwner for Owner {
     fn manager(&self) -> Option<&Manager> {
         Some(&self.manager)
     }
+    fn with_managed_runtime<T>(
+        &mut self,
+        action: impl FnOnce(&Manager, &mut HostRuntime) -> T,
+    ) -> Option<T> {
+        Some(action(&self.manager, &mut self.host))
+    }
+}
+struct NoOptInOwner(Owner);
+impl HostOwner for NoOptInOwner {
+    fn runtime(&self) -> &HostRuntime {
+        &self.0.host
+    }
+    fn runtime_mut(&mut self) -> &mut HostRuntime {
+        &mut self.0.host
+    }
+}
+impl ManagedHostOwner for NoOptInOwner {
+    fn manager(&self) -> Option<&Manager> {
+        Some(&self.0.manager)
+    }
 }
 struct Fixture {
     dir: tempfile::TempDir,
@@ -481,4 +501,44 @@ fn selected_path_invalid_inputs_and_preopen_expiry_fail_closed() {
     // Expired authority must suppress both opening and delivery. No path-bearing OS error.
     assert!(capture.read().is_err());
     reclaim(&mut worker);
+}
+
+#[test]
+fn managed_runtime_split_borrow_uses_original_manager_and_store() {
+    let mut fixture = Fixture::new("rust");
+    let manager_ptr = std::ptr::from_ref(&fixture.owner.manager);
+    let runtime_ptr = std::ptr::from_ref(&fixture.owner.host);
+    let original_binding = fixture.owner.host.binding();
+    let card = morrow_core::content::CardRecord::new("owner-card", "text", 1, "retained", vec![1])
+        .unwrap();
+    let borrowed_binding = fixture.owner.with_managed_runtime(|manager, runtime| {
+        assert!(std::ptr::eq(std::ptr::from_ref(manager), manager_ptr));
+        assert!(std::ptr::eq(std::ptr::from_ref(runtime), runtime_ptr));
+        runtime
+            .store_local_mut()
+            .create_local("owner-create", &card)
+            .unwrap();
+        runtime.binding()
+    });
+    assert_eq!(borrowed_binding, Some(original_binding));
+    assert_eq!(
+        fixture
+            .owner
+            .host
+            .store_local()
+            .card_ids_local("", 10)
+            .unwrap(),
+        vec!["owner-card"],
+    );
+}
+
+#[test]
+fn managed_runtime_default_does_not_call_action() {
+    let fixture = Fixture::new("rust");
+    let mut owner = NoOptInOwner(fixture.owner);
+    assert!(owner.manager().is_some());
+    assert_eq!(
+        owner.with_managed_runtime::<()>(|_, _| panic!("default must not invoke action")),
+        None,
+    );
 }

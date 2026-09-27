@@ -38,4 +38,7 @@ try {
     & build/workbench-host/release/package.exe build/first-party-plugins/wasm32-unknown-unknown/release/morrow_workbench_plugin.wasm build/workbench-host/bundle/workbench.morrowplugin
     if ($LASTEXITCODE -ne 0) {throw 'Rust workbench package verification failed'}
   }
+  # The ordinary Windows build and the preview packager use this same target.
+  # Keep the immutable, versioned theme in a build cache, never in dist/plugins.
+  & ./tool/build_mid_autumn_theme.ps1 -OutputDirectory (Join-Path $projectRoot 'build/mid-autumn-plugin/bundle')
 } finally {Pop-Location}

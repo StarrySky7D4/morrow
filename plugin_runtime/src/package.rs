@@ -37,7 +37,15 @@ impl PreparedPackage {
             .required_features
             .iter()
             .any(|f| f == morrow_core::plugin_package::DEPENDENCY_CALLS_FEATURE);
-        let runner = if package.io_declaration().is_some() {
+        let runner = if package.mutation_enabled() {
+            if dependency
+                || package.io_declaration().is_none()
+                || morrow_core::mutation::MAX_FRAME_BYTES != crate::MAX_MUTATION_FRAME_BYTES
+            {
+                return Err(Fault::UnsupportedAbi);
+            }
+            Runner::new_mutation_task(package.module(), limits)?
+        } else if package.io_declaration().is_some() {
             if dependency {
                 return Err(Fault::UnsupportedAbi);
             }

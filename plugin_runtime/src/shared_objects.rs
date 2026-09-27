@@ -391,7 +391,7 @@ impl SharedObjects {
         self.tick(now)
     }
     /// Only a host-selected trusted reader may receive this raw mapping. No guest chooses the command.
-    #[cfg(windows)]
+    #[cfg(all(feature = "packages", windows))]
     pub fn start_reader(
         &mut self,
         host: &HostRuntime,

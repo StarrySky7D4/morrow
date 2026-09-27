@@ -1606,6 +1606,87 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => '取消已准备的计划';
+
+  @override
+  String get pluginsFileMutationCleanupError => '任务清理错误';
+
+  @override
+  String get pluginsFileMutationContentLength => '内容长度';
+
+  @override
+  String get pluginsFileMutationContentSha256 => '内容 SHA-256';
+
+  @override
+  String get pluginsFileMutationEmptyContent => '创建空文件';
+
+  @override
+  String get pluginsFileMutationExecute => '执行已准备的操作';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => '创建此文件';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm => '永久删除此文件';
+
+  @override
+  String get pluginsFileMutationExecuteTitle => '确认文件操作';
+
+  @override
+  String get pluginsFileMutationFailure => '文件操作需要处理。继续前请先核对其状态。';
+
+  @override
+  String get pluginsFileMutationFileName => '新文件名';
+
+  @override
+  String get pluginsFileMutationFileTooLarge => '内容超过 16 MiB。';
+
+  @override
+  String get pluginsFileMutationIntro => '选择已授权的插件和本地目标。先审核并准备操作，再单独确认执行。';
+
+  @override
+  String get pluginsFileMutationOperationError => '操作错误';
+
+  @override
+  String get pluginsFileMutationPickContent => '选择内容文件（可选）';
+
+  @override
+  String get pluginsFileMutationPickDirectory => '选择文件夹';
+
+  @override
+  String get pluginsFileMutationPickFile => '选择文件';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => '准备此操作';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => '审核文件操作';
+
+  @override
+  String get pluginsFileMutationQuery => '查询操作历史';
+
+  @override
+  String get pluginsFileMutationRecovery => '打开文件恢复';
+
+  @override
+  String get pluginsFileMutationRecoveryHint => '关闭并确认任务退出后，可在文件恢复中核对原操作。';
+
+  @override
+  String get pluginsFileMutationReview => '审核并准备';
+
+  @override
+  String get pluginsFileMutationScopeChanged => '插件授权已变化，请重新审核操作。';
+
+  @override
+  String get pluginsFileMutationSelectionRequired => '请先选择目标和插件。';
+
+  @override
+  String get pluginsFileMutationTarget => '目标';
+
+  @override
+  String get pluginsFileMutationTitle => '文件创建与删除';
+
+  @override
   String get pluginsFileTaskBudgets =>
       '实际可读大小和期限仍受插件批准额度限制。校验只保留摘要和最多 4096 字节预览。';
 
@@ -1685,6 +1766,66 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => '读取并校验';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      '额度必须为正数且不得超过插件声明上限；累计额度不得小于单任务额度。';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      '授权有效期最长 30 秒；到期后停止任务并等待退出，必要时修复并确认回收，再重新审阅。';
+
+  @override
+  String get pluginsGuestExecutionDraft => '确认额度并生成计划';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      '本地审批窗口已结束。停止任务并等待退出，按提示修复并确认回收；已提交的操作须核对结果，不得重复执行。';
+
+  @override
+  String get pluginsGuestExecutionFrame => '插件执行结果';
+
+  @override
+  String get pluginsGuestExecutionHostQuery => '查询原宿主历史';
+
+  @override
+  String get pluginsGuestExecutionIntro => '先审核原计划，再分别确认准备与执行。准备阶段不会创建或删除目标文件。';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => '本次每任务额度（字节）';
+
+  @override
+  String get pluginsGuestExecutionNoReplay => '结果不确定；不会自动重发插件命令或执行文件操作。';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget => '此插件使用普通额度，无扩展额度授权。';
+
+  @override
+  String get pluginsGuestExecutionOwner => '宿主核验结果';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => '原计划 SHA-256';
+
+  @override
+  String get pluginsGuestExecutionRelease => '释放任务';
+
+  @override
+  String get pluginsGuestExecutionTitle => '插件文件创建与删除';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => '本次累计额度（字节）';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return '声明上限：每项任务 $maxJobBytes 字节，累计 $maxBytes 字节。';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      '这些是插件声明的上限，并非当前授权额度；每次操作仍需单独批准。';
+
+  @override
+  String get pluginsGuestMutationDeclared => '插件声明由访客代码执行文件变更。';
 
   @override
   String get pluginsHttpTaskAbandon => '结束本次尝试的观察';
@@ -2052,6 +2193,97 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pluginsManagementUnavailable => '插件管理暂不可用，已有内容仍可读取。';
+
+  @override
+  String get pluginsMutationAbsent => '未找到匹配记录';
+
+  @override
+  String get pluginsMutationCancelled => '派发前已取消';
+
+  @override
+  String get pluginsMutationCheckpoint => '续扫位置仅在当前宿主会话有效，清理任务后可继续。';
+
+  @override
+  String get pluginsMutationCleanup => '请先结束扫描并确认任务已退出，再核对所选计划。';
+
+  @override
+  String get pluginsMutationContinue => '从已保存位置继续';
+
+  @override
+  String get pluginsMutationDiscover => '查找原计划';
+
+  @override
+  String get pluginsMutationDone => '当前扫描已完成';
+
+  @override
+  String get pluginsMutationEmpty => '本页未找到匹配计划，可能仍有后续页。';
+
+  @override
+  String get pluginsMutationFormError => '无法提交恢复请求，请检查主体标识、插件范围与任务期限。';
+
+  @override
+  String get pluginsMutationIntro => '只读查找并核对已有计划，不重新执行文件操作。';
+
+  @override
+  String get pluginsMutationLastResult => '最近核对结果';
+
+  @override
+  String get pluginsMutationNext => '读取下一页';
+
+  @override
+  String get pluginsMutationObserved => '已有观察记录';
+
+  @override
+  String get pluginsMutationPage => '最近发现页';
+
+  @override
+  String get pluginsMutationPlan => '原计划';
+
+  @override
+  String get pluginsMutationPrepared => '已准备，尚未确认文件效果';
+
+  @override
+  String get pluginsMutationReconcile => '核对所选计划';
+
+  @override
+  String get pluginsMutationRejected => '操作系统已拒绝';
+
+  @override
+  String get pluginsMutationRelease => '结束扫描';
+
+  @override
+  String get pluginsMutationResultLost => '本页回执已丢失。请清理任务后从上次已保存位置继续，或重新扫描。';
+
+  @override
+  String get pluginsMutationRetry => '重取原提交回执';
+
+  @override
+  String get pluginsMutationScopeUnavailable => '原计划范围当前不可用，请刷新插件目录并核对授权。';
+
+  @override
+  String get pluginsMutationSelectPlan => '选择待核对的计划';
+
+  @override
+  String get pluginsMutationSelected => '已保留所选计划';
+
+  @override
+  String get pluginsMutationSubject => '原操作主体标识';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      '提交回执不确定。刷新状态后，仅可明确重取原提交回执，不要新建重复请求。';
+
+  @override
+  String get pluginsMutationSucceeded => '操作系统已确认成功';
+
+  @override
+  String get pluginsMutationTitle => '文件变更恢复';
+
+  @override
+  String get pluginsMutationUnknown => '结果不确定，不会自动重试';
+
+  @override
+  String get pluginsMutationUnspecified => '未提供文件效果证明';
 
   @override
   String get pluginsNoPermissions => '未声明内容权限。';

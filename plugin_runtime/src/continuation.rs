@@ -10,6 +10,7 @@ pub(super) enum Kind {
     Core,
     Dependency,
     Io,
+    Mutation,
 }
 
 #[derive(Clone)]
@@ -81,6 +82,7 @@ impl Execution {
             }),
             dependency: runner.dependency_abi,
             io: runner.io_abi,
+            mutation: runner.mutation_abi,
             pending: None,
             session: Arc::new(()),
             limits: StoreLimitsBuilder::new()
@@ -120,6 +122,11 @@ impl Execution {
             linker
                 .func_wrap("morrow_io_v1", "call", io_call)
                 .expect("io call import");
+        }
+        if runner.mutation_abi {
+            linker
+                .func_wrap("morrow_mutation_v1", "call", mutation_call)
+                .expect("mutation call import");
         }
         let step = (|| {
             let instance = linker

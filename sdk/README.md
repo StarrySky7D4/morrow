@@ -51,6 +51,16 @@ C 响应句柄拥有其视图，释放后 span 失效；C++ 响应对象不可�
 
 新增 [服务 SDK v1](SERVICE_API.md)：三语言服务帧解码、精确原请求关联响应、一次读取／完成、C 所有权和 C++ RAII，以及 `--kind service` 生成原包。默认短期 profile，可显式声明有限长时 service-run 与资源目录。`--kind service --service-http` 提供单端点 POST 出站变体，使用精确原服务帧摘要绑定出站操作，不自动重试。包声明不授予监听、发布或出站权。Linux 原包真实 TCP、累计预算与持久 Observed/Unknown 重开已验证；Windows／Flutter、完整业务核对及全平台资格分别保留。见 [底座记录](../reports/plugin-foundation-closeout-2026-09-26.md) 和 [服务出站验证](../reports/plugin-service-http-sdk-2026-09-26.md)。
 
+## 实验性文件创建／删除
+
+独立 `mutation-v1` 扩展提供 Rust `mutation`、C `morrow_plugin_mutation.h` 和 C++ `morrow_plugin_mutation.hpp` 的编解码及 Wasm 调用封装。示例位于 `examples/rust-mutation`、`examples/c-mutation`、`examples/cpp-mutation`；当前通用项目脚手架尚未提供 mutation 模板。
+
+插件不提交本机路径或自行签发权限。可信宿主选择目标并批准精确内容，每个 Stage job 处理一次准备／分块／提交请求，宿主另行签发执行许可后才可提交 Execute job。独立 import 为 `morrow_mutation_v1.call`，不能送入旧 IO v1；helper 不自动重试 Unknown。Windows 三语言实际创建／删除及旧原件兼容测试已通过，详见 [契约与使用边界](../docs/PLUGIN_MUTATION_GUEST.md) 和 [验证报告](../reports/mutation-guest-wasm-2026-09-27.md)。
+
+此扩展尚未冻结。旧 16／64 MiB IO 预算不能覆盖最大 16 MiB 内容；新增 `mutation-budget-v1` 由包声明、可信宿主显式批准及签发前预检共同控制，单次／累计上限为 32／256 MiB。Windows Release 的三语言普通及最大内容流程六项已通过，Debug Rust 最大流程仍会超时；详见[预算报告](../reports/mutation-budget-2026-09-27.md)。Replace、产品侧审批整合及其他平台资格仍有待完成。可用 `tool/verify_plugin_mutation_wasm.ps1 -Sysroot <WASI-sysroot>` 重复编译并在 Release 宿主上运行临时目录验证。
+
+多块丢回执与实际进程退出验证使用 `tool/verify_plugin_mutation_recovery.ps1 -Sysroot <WASI-sysroot>`。三语言非空四块丢回执 3/3、十二边界各三语言共 36/36，以及普通构建控制 3/3 已通过；这是 Windows 原 owner 的有限故障资格，详见[恢复报告](../reports/mutation-guest-recovery-2026-09-27.md)，不代表断电或产品恢复 UI 验收。
+
 ## 双向网络目标
 
 插件既要能调用外部 API，也要能通过宿主发布 API 服务。路由、监听、远端身份与插件实例授权分别管理，第三方无需提供 Dart 插件。详见 [双向 API 节点](../docs/PLUGIN_API_NODE.md)。`network_node/` 承载受信任原生传输；guest 经批准的端点／凭据引用调用受管 IO，不能任意创建监听或选择远端身份。新增 IO SDK 补齐开发者编解码与调用层；入站有界 SDK 见上节；任意公网部署、流式传输、完整业务恢复与全平台验收仍未完成。

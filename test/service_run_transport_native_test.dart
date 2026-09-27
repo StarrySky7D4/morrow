@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:morrow_studio/plugins/generated/host.capnp.dart' as host;
 import 'package:morrow_studio/plugins/generated/identity.dart' as contract;
 import 'package:morrow_studio/plugins/service_run_control.dart';
+import 'package:morrow_studio/plugins/mutation_task_models.dart';
 import 'package:morrow_studio/plugins/workbench_native.dart';
 
 import 'external_plugin_native_test.dart' show removeTestDirectory;
@@ -194,6 +195,97 @@ void _originalPresentation(RustWorkbench backend) {
 void main() {
   final python = Platform.environment['MORROW_CLOSE_TEST_PYTHON'];
   test(
+    'guest mutation controls stay on outer scheduler while service owns store',
+    () async {
+      final child = await _Child.open(python!, [
+        _initial(),
+        _runReply(),
+        _reply((r) => r.error = 'guest mutation task is not active'),
+      ]);
+      try {
+        await child.backend.startServiceRun(_startRequest());
+        await expectLater(
+          child.backend.guestMutationTasks.status(_task),
+          throwsStateError,
+        );
+        _originalPresentation(child.backend);
+        expect(await child.actions(), [
+          host.Action.pageVersioned,
+          host.Action.serviceRunStart,
+          host.Action.guestMutationStatus,
+        ]);
+      } finally {
+        await child.close();
+      }
+    },
+    skip: python == null,
+  );
+  test(
+    'mutation controls stay on outer scheduler while a service owns the store',
+    () async {
+      final child = await _Child.open(python!, [
+        _initial(),
+        _runReply(),
+        _reply((r) => r.error = 'mutation task is not active'),
+      ]);
+      try {
+        await child.backend.startServiceRun(_startRequest());
+        await expectLater(
+          child.backend.mutationTasks.status(_task),
+          throwsStateError,
+        );
+        _originalPresentation(child.backend);
+        expect(await child.actions(), [
+          host.Action.pageVersioned,
+          host.Action.serviceRunStart,
+          host.Action.mutationStatus,
+        ]);
+      } finally {
+        await child.close();
+      }
+    },
+    skip: python == null,
+  );
+
+  test(
+    'discovery stays on outer scheduler while a service owns the store',
+    () async {
+      final child = await _Child.open(python!, [
+        _initial(),
+        _runReply(),
+        _reply((r) => r.error = 'unacknowledged task'),
+      ]);
+      try {
+        await child.backend.startServiceRun(_startRequest());
+        await expectLater(
+          child.backend.mutationTasks.startDiscovery(
+            MutationDiscoverRequest(
+              submission: _submission,
+              packageId: 'example.plugin',
+              packageDigest: _task,
+              registryRevision: BigInt.one,
+              subject: 'workspace',
+              disposition: MutationDisposition.create,
+              scanLimit: 1,
+              timeoutMs: 1000,
+            ),
+          ),
+          throwsStateError,
+        );
+        _originalPresentation(child.backend);
+        expect(await child.actions(), [
+          host.Action.pageVersioned,
+          host.Action.serviceRunStart,
+          host.Action.mutationDiscover,
+        ]);
+      } finally {
+        await child.close();
+      }
+    },
+    skip: python == null,
+  );
+
+  test(
     'validated host start error preserves exact diagnostic without retry',
     () async {
       const detail =
@@ -224,7 +316,7 @@ void main() {
               }
             },
           ),
-          [host.Action.page, host.Action.serviceRunStart],
+          [host.Action.pageVersioned, host.Action.serviceRunStart],
         );
       } finally {
         await child.close();
@@ -270,7 +362,7 @@ void main() {
           _originalPresentation(child.backend);
           await Future<void>.delayed(const Duration(milliseconds: 80));
           expect(await child.actions(), [
-            host.Action.page,
+            host.Action.pageVersioned,
             host.Action.serviceRunStart,
           ]);
         } finally {
@@ -380,7 +472,7 @@ void main() {
         );
         expect(inspectedLookup, isTrue);
         expect(actions, [
-          host.Action.page,
+          host.Action.pageVersioned,
           host.Action.serviceRunStart,
           host.Action.serviceRunStatus,
           host.Action.commandSubmit,
@@ -409,7 +501,7 @@ void main() {
         await expectLater(child.backend.pluginState(), throwsFormatException);
         _originalPresentation(child.backend);
         expect(await child.actions(), [
-          host.Action.page,
+          host.Action.pageVersioned,
           host.Action.pluginState,
         ]);
       } finally {
@@ -432,7 +524,7 @@ void main() {
         );
         _originalPresentation(child.backend);
         expect(await child.actions(), [
-          host.Action.page,
+          host.Action.pageVersioned,
           host.Action.commandRead,
         ]);
       } finally {

@@ -1,6 +1,6 @@
 use super::*;
 use crate::Limits;
-use morrow_core::plugin_package::{Package, io};
+use morrow_core::plugin_package::{MUTATION_FEATURE, Package, io};
 
 fn prepared(core_calls: usize) -> PreparedPackage {
     let core = "i32.const 0 i32.const 1 i32.const 131072 i32.const 65536 call $core i32.const -1 i32.ne if unreachable end ".repeat(core_calls);
@@ -50,6 +50,7 @@ fn owned_service_frame_survives_package_and_input_and_exposes_exact_imports() {
             Kind::Core => Err(()),
             Kind::Io => Ok(vec![9]),
             Kind::Dependency => panic!("not an admitted IO import"),
+            Kind::Mutation => panic!("not an admitted IO import"),
         };
         frame.resume(&token, reply).unwrap();
     }
@@ -116,4 +117,69 @@ fn denied_second_core_not_misrouted_to_io() {
     assert_eq!(result.report.host_calls, 3);
     assert_eq!(result.report.outcome, Err(Fault::TaskProtocol));
     assert!(result.completion.is_none());
+}
+
+#[test]
+fn negotiated_mutation_package_only_enters_its_independent_frame() {
+    let io_package = prepared(0);
+    let denied = match io_package.start_mutation_frame(&[7], Cancellation::default()) {
+        Ok(_) => panic!("IO package admitted to mutation frame"),
+        Err(run) => run,
+    };
+    assert_eq!(denied.report.outcome, Err(Fault::UnsupportedAbi));
+    assert_eq!(denied.report.host_calls, 0);
+
+    let module = wat::parse_str(
+        r#"(module
+          (import "morrow_task_v1" "read_input" (func $read (param i32 i32) (result i32)))
+          (import "morrow_mutation_v1" "call" (func $mutate (param i32 i32 i32 i32) (result i32)))
+          (memory (export "memory") 6)
+          (data (i32.const 0) "wire")
+          (func (export "morrow_run") (result i32)
+            (drop (call $read (i32.const 131072) (i32.const 131072)))
+            (drop (call $mutate (i32.const 0) (i32.const 4) (i32.const 262144) (i32.const 131072)))
+            (i32.const 0)))"#,
+    )
+    .unwrap();
+    let mut manifest = Package::manifest_for_task("mutation.frame", "1.0.0", &module, vec![]);
+    manifest.required_features.push(io::FEATURE.into());
+    manifest.required_features.push(MUTATION_FEATURE.into());
+    manifest.mutation_schema_sha256 = morrow_core::mutation::schema_digest().to_vec();
+    manifest.io_declaration = Some(io::declaration(
+        vec![io::IoCapability::FileCreate],
+        vec!["mutation.run".into()],
+    ));
+    let package = PreparedPackage::new(
+        Package::build(manifest, &module).unwrap(),
+        Limits::default(),
+    )
+    .unwrap();
+    for legacy in [
+        package.start_io_frame(&[7], Cancellation::default()),
+        package.start_service_frame(&[7], Cancellation::default()),
+    ] {
+        let run = match legacy {
+            Ok(_) => panic!("mutation package admitted to legacy frame"),
+            Err(run) => run,
+        };
+        assert_eq!(run.report.outcome, Err(Fault::UnsupportedAbi));
+        assert_eq!(run.report.host_calls, 0);
+    }
+    let mut old_io_calls = 0;
+    let run = package.run_io_frame(
+        &[7],
+        &mut |_| {
+            old_io_calls += 1;
+            Err(())
+        },
+        Cancellation::default(),
+    );
+    assert_eq!(old_io_calls, 0);
+    assert_eq!(run.report.outcome, Err(Fault::UnsupportedAbi));
+    let mut frame = package
+        .start_mutation_frame(&[7], Cancellation::default())
+        .unwrap();
+    let pending = frame.pending().unwrap();
+    assert_eq!(pending.kind, Kind::Mutation);
+    assert_eq!(pending.bytes, b"wire");
 }

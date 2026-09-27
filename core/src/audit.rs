@@ -98,7 +98,9 @@ fn preflight(mut raw: &[u8], level: u8, budget: &mut usize) -> Result<()> {
     Ok(())
 }
 fn operation_id(raw: &[u8]) -> Result<String> {
-    if raw.starts_with(crate::io_intent::MAGIC) {
+    if raw.starts_with(crate::file_content_receipt::MAGIC) {
+        crate::file_content_receipt::Receipt::decode(raw).map(|receipt| receipt.event_id())
+    } else if raw.starts_with(crate::io_intent::MAGIC) {
         // Each immutable revision has a distinct event identity. The command ID
         // inside the original remains stable across its transition history.
         crate::io_intent::Record::decode(raw).map(|record| record.event_id())

@@ -1,5 +1,18 @@
 {
   "@@locale": "de",
+  "pluginsGuestMutationDeclared": "Das Paket deklariert Dateiänderungen durch Gastcode.",
+  "pluginsGuestMutationBudget": "Deklarierte Obergrenze: {maxJobBytes} Byte pro Auftrag; insgesamt {maxBytes} Byte.",
+  "@pluginsGuestMutationBudget": {
+    "placeholders": {
+      "maxJobBytes": {
+        "type": "String"
+      },
+      "maxBytes": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsGuestMutationBudgetNotice": "Dies sind Paketgrenzen, keine aktive Freigabe. Jeder Vorgang muss gesondert genehmigt werden.",
   "pluginsWorkbench": "Arbeitsbereich-Plugin",
   "pluginsReadingState": "Plugin-Status wird geladen…",
   "pluginsManagementUnavailable": "Die Plugin-Verwaltung ist nicht verfügbar. Vorhandene Inhalte bleiben lesbar.",
@@ -669,5 +682,86 @@
   "pluginsFileTaskHexPreview": "Hex-Vorschau (erste 64 Byte)",
   "pluginsFileTaskPrevious": "Vorherige Dateiaufgabe",
   "pluginsFileTaskProgress": "{received} / {length} Byte",
-  "@pluginsFileTaskProgress": {"placeholders": {"received": {"type": "String"}, "length": {"type": "String"}}}
+  "@pluginsFileTaskProgress": {
+    "placeholders": {
+      "received": {
+        "type": "String"
+      },
+      "length": {
+        "type": "String"
+      }
+    }
+  },
+  "pluginsMutationTitle": "Wiederherstellung von Dateiänderungen",
+  "pluginsMutationIntro": "Vorhandene Pläne schreibgeschützt suchen und prüfen. Dateioperationen werden nicht erneut ausgeführt.",
+  "pluginsMutationSubject": "Subjekt des ursprünglichen Vorgangs",
+  "pluginsMutationDiscover": "Ursprüngliche Pläne suchen",
+  "pluginsMutationNext": "Nächste Seite lesen",
+  "pluginsMutationRelease": "Suche beenden",
+  "pluginsMutationContinue": "Ab gespeicherter Position fortfahren",
+  "pluginsMutationReconcile": "Ausgewählten Plan prüfen",
+  "pluginsMutationSelectPlan": "Zu prüfenden Plan auswählen",
+  "pluginsMutationPlan": "Ursprünglicher Plan",
+  "pluginsMutationPage": "Zuletzt gefundene Seite",
+  "pluginsMutationCheckpoint": "Die Suchposition gilt nur in dieser Host-Sitzung. Nach der Bereinigung der Aufgabe können Sie fortfahren.",
+  "pluginsMutationCleanup": "Beenden Sie die Suche und bestätigen Sie, dass die Aufgabe beendet ist, bevor Sie den ausgewählten Plan prüfen.",
+  "pluginsMutationRetry": "Ursprüngliche Eingangsbestätigung erneut abrufen",
+  "pluginsMutationResultLost": "Das Ergebnis dieser Seite ging verloren. Bereinigen Sie die Aufgabe und fahren Sie an der zuletzt gespeicherten Position fort oder starten Sie die Suche neu.",
+  "pluginsMutationPrepared": "Vorbereitet; Dateiwirkung nicht bestätigt",
+  "pluginsMutationUnknown": "Ergebnis ungewiss; kein automatischer Wiederholungsversuch",
+  "pluginsMutationObserved": "Vorhandener Beobachtungseintrag",
+  "pluginsMutationCancelled": "Vor Ausführung abgebrochen",
+  "pluginsMutationAbsent": "Kein passender Eintrag gefunden",
+  "pluginsMutationSucceeded": "Betriebssystem hat den Erfolg bestätigt",
+  "pluginsMutationRejected": "Betriebssystem hat den Vorgang abgelehnt",
+  "pluginsMutationUnspecified": "Kein Nachweis einer Dateiwirkung",
+  "pluginsMutationDone": "Aktuelle Suche abgeschlossen",
+  "pluginsMutationSelected": "Ausgewählter Plan beibehalten",
+  "pluginsMutationEmpty": "Auf dieser Seite wurde kein passender Plan gefunden; weitere Seiten können folgen.",
+  "pluginsMutationScopeUnavailable": "Der Bereich des ursprünglichen Plans ist derzeit nicht verfügbar. Aktualisieren Sie den Plugin-Katalog und prüfen Sie die Berechtigungen.",
+  "pluginsMutationLastResult": "Letztes Prüfergebnis",
+  "pluginsMutationFormError": "Wiederherstellungsanfrage konnte nicht gesendet werden. Prüfen Sie Subjekt, Plugin-Bereich und Aufgabenfrist.",
+  "pluginsMutationSubmissionUnknown": "Eingangsbestätigung ungewiss. Aktualisieren Sie den Status und rufen Sie nur die ursprüngliche Bestätigung ausdrücklich erneut ab; erstellen Sie keine doppelte Anfrage.",
+  "pluginsFileMutationTitle": "Dateien erstellen und löschen",
+  "pluginsFileMutationIntro": "Wählen Sie ein berechtigtes Plugin und ein lokales Ziel. Prüfen Sie den Vorgang vor der Vorbereitung und bestätigen Sie die Ausführung separat.",
+  "pluginsFileMutationPickDirectory": "Ordner auswählen",
+  "pluginsFileMutationPickFile": "Datei auswählen",
+  "pluginsFileMutationPickContent": "Inhaltsdatei auswählen (optional)",
+  "pluginsFileMutationFileName": "Neuer Dateiname",
+  "pluginsFileMutationEmptyContent": "Leere Datei erstellen",
+  "pluginsFileMutationTarget": "Ziel",
+  "pluginsFileMutationContentLength": "Inhaltsgröße",
+  "pluginsFileMutationContentSha256": "SHA-256 des Inhalts",
+  "pluginsFileMutationReview": "Prüfen und vorbereiten",
+  "pluginsFileMutationPrepareTitle": "Dateivorgang prüfen",
+  "pluginsFileMutationPrepareConfirm": "Diesen Vorgang vorbereiten",
+  "pluginsFileMutationExecute": "Vorbereiteten Vorgang ausführen",
+  "pluginsFileMutationExecuteTitle": "Dateivorgang bestätigen",
+  "pluginsFileMutationExecuteCreateConfirm": "Diese Datei erstellen",
+  "pluginsFileMutationExecuteDeleteConfirm": "Diese Datei endgültig löschen",
+  "pluginsFileMutationSelectionRequired": "Wählen Sie zuerst ein Ziel und ein Plugin.",
+  "pluginsFileMutationScopeChanged": "Die Plugin-Berechtigung wurde geändert. Prüfen Sie den Vorgang erneut.",
+  "pluginsFileMutationFileTooLarge": "Der Inhalt überschreitet 16 MiB.",
+  "pluginsFileMutationFailure": "Der Dateivorgang erfordert Aufmerksamkeit. Prüfen Sie seinen Status, bevor Sie fortfahren.",
+  "pluginsFileMutationRecoveryHint": "Prüfen Sie nach dem Schließen und Bestätigen der Aufgabe den ursprünglichen Vorgang in der Dateiwiederherstellung.",
+  "pluginsFileMutationRecovery": "Dateiwiederherstellung öffnen",
+  "pluginsFileMutationQuery": "Vorgangsverlauf abfragen",
+  "pluginsFileMutationCancelPlan": "Vorbereiteten Plan abbrechen",
+  "pluginsFileMutationOperationError": "Vorgangsfehler",
+  "pluginsFileMutationCleanupError": "Fehler bei der Aufgabenbereinigung",
+  "pluginsGuestExecutionTitle": "Dateien durch Plugins erstellen und löschen",
+  "pluginsGuestExecutionIntro": "Prüfen Sie den ursprünglichen Plan und bestätigen Sie Vorbereitung und Ausführung getrennt. Die Vorbereitung erstellt oder löscht die Zieldatei nicht.",
+  "pluginsGuestExecutionDraft": "Limits genehmigen und Plan erstellen",
+  "pluginsGuestExecutionPlanSha256": "SHA-256 des ursprünglichen Plans",
+  "pluginsGuestExecutionJobBudget": "Genehmigte Bytes pro Auftrag",
+  "pluginsGuestExecutionTotalBudget": "Genehmigte Bytes insgesamt",
+  "pluginsGuestExecutionOrdinaryBudget": "Dieses Plugin nutzt die regulären Limits; erweiterte Limits werden nicht gewährt.",
+  "pluginsGuestExecutionBudgetError": "Die Limits müssen positiv sein und innerhalb der angegebenen Obergrenzen liegen. Das Gesamtlimit muss mindestens dem Limit pro Auftrag entsprechen.",
+  "pluginsGuestExecutionHostQuery": "Verlauf des ursprünglichen Hosts abfragen",
+  "pluginsGuestExecutionFrame": "Ergebnis der Plugin-Ausführung",
+  "pluginsGuestExecutionOwner": "Ergebnis der Host-Prüfung",
+  "pluginsGuestExecutionNoReplay": "Ergebnis ungewiss; Plugin-Befehle und Dateivorgänge werden niemals automatisch wiederholt.",
+  "pluginsGuestExecutionDeadline": "Die Genehmigung gilt höchstens 30 Sekunden. Stoppen Sie den Auftrag nach Ablauf und warten Sie auf sein Ende; reparieren Sie ihn bei Bedarf, bestätigen Sie die Rückgewinnung und prüfen Sie den Plan erneut.",
+  "pluginsGuestExecutionExpired": "Das lokale Genehmigungsfenster ist abgelaufen. Stoppen Sie den Auftrag und warten Sie auf sein Ende; reparieren und bestätigen Sie die Rückgewinnung wie angegeben. Prüfen Sie das Ergebnis bereits eingereichter Vorgänge. Führen Sie sie nicht erneut aus.",
+  "pluginsGuestExecutionRelease": "Auftrag freigeben"
 }

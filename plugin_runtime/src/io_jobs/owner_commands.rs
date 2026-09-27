@@ -12,7 +12,53 @@ use zeroize::Zeroizing;
 
 #[path = "file_commands.rs"]
 mod files;
-pub(super) use files::Resources as FileResources;
+#[cfg(windows)]
+#[path = "mutation_commands.rs"]
+mod mutations;
+#[cfg(windows)]
+pub use mutations::{
+    MAX_MUTATION_CHUNK, MutationBudgetEstimate, MutationDiscoverySession,
+    MutationGuestExecutionPermit, MutationGuestJobMode, MutationGuestLease, MutationHandle,
+    MutationOutcome, MutationResponse, MutationSession,
+};
+
+#[cfg(windows)]
+#[allow(clippy::too_many_arguments)]
+pub(super) fn dispatch_mutation_guest<O: ManagedHostOwner>(
+    owner: &mut dyn std::any::Any,
+    instance: Option<&crate::manager::ManagedInstance>,
+    control: &Control,
+    files: &mut FileResources,
+    cancel: &Cancellation,
+    deadline: std::time::Instant,
+    mode: MutationGuestJobMode,
+    request: &morrow_core::mutation::Request,
+) -> Result<morrow_core::mutation::Response, crate::file_target::Error> {
+    mutations::dispatch_guest::<O>(
+        owner,
+        instance,
+        control,
+        &mut files.mutations,
+        cancel,
+        deadline,
+        mode,
+        request,
+    )
+}
+
+#[derive(Default)]
+pub(super) struct FileResources {
+    reads: files::Resources,
+    #[cfg(windows)]
+    mutations: mutations::Resources,
+}
+impl FileResources {
+    pub(super) fn reap_cancelled(&mut self) {
+        self.reads.reap_cancelled();
+        #[cfg(windows)]
+        self.mutations.reap_cancelled();
+    }
+}
 pub use files::{FileCommandError, FileCommandHandle, FileResponse, FileSession};
 
 pub const MAX_OWNER_COMMANDS: usize = 8;
@@ -81,6 +127,8 @@ enum Reply {
     Data(Zeroizing<Vec<u8>>),
     Renewal(Result<ServiceRunSnapshot, BindingError>),
     File(Result<FileResponse, FileCommandError>),
+    #[cfg(windows)]
+    Mutation(Box<Result<MutationResponse, crate::file_target::Error>>),
 }
 
 struct Ticket {
@@ -263,6 +311,11 @@ struct RenewalRequest {
 }
 
 enum CommandKind<O: HostOwner> {
+    #[cfg(windows)]
+    Mutation {
+        request: mutations::Request,
+        dispatch: mutations::Dispatch<O>,
+    },
     File {
         request: files::Request,
         dispatch: files::Dispatch<O>,
@@ -321,9 +374,21 @@ impl<O: HostOwner> Command<O> {
                 instance,
                 control,
                 &self.ticket,
-                files,
+                &mut files.reads,
                 request,
             ))),
+            #[cfg(windows)]
+            CommandKind::Mutation { request, dispatch } => {
+                Some(Reply::Mutation(Box::new(dispatch(
+                    owner,
+                    instance,
+                    control,
+                    &self.ticket,
+                    &mut files.mutations,
+                    request,
+                    input,
+                ))))
+            }
             CommandKind::Data {
                 max_reply_bytes,
                 dispatch,
@@ -369,6 +434,19 @@ impl<O: HostOwner> IoWorker<O> {
         bytes: usize,
         input: Option<Zeroizing<Vec<u8>>>,
     ) -> Result<OwnerCommandHandle, OwnerCommandError> {
+        // Recovery bindings may enter only the four read-only mutation history
+        // commands. This central gate also rejects raw CommandOwner, file,
+        // service-renewal, and any future owner command variant by default.
+        #[cfg(windows)]
+        if self.control.mutation_history
+            && !matches!(&kind, CommandKind::Mutation { request, .. } if request.is_history_only())
+        {
+            return Err(OwnerCommandError::Closed);
+        }
+        #[cfg(not(windows))]
+        if self.control.mutation_history {
+            return Err(OwnerCommandError::Closed);
+        }
         let mut state = self.control.lock();
         if closed(&self.control, state.phase) {
             clear_sensitive(&mut state);
@@ -377,8 +455,13 @@ impl<O: HostOwner> IoWorker<O> {
         if state.owner_commands >= MAX_OWNER_COMMANDS {
             return Err(OwnerCommandError::Busy);
         }
-        if let CommandKind::File { request, .. } = &kind {
-            let charge = request.charge();
+        let charge = match &kind {
+            CommandKind::File { request, .. } => request.charge(),
+            #[cfg(windows)]
+            CommandKind::Mutation { request, .. } => request.charge(),
+            _ => 0,
+        };
+        if charge != 0 {
             let total = state
                 .bytes
                 .checked_add(charge)
@@ -546,6 +629,7 @@ mod sensitive_tests {
                 capacity: 1,
                 limits: JobLimits::default(),
                 timeout: Duration::from_secs(1),
+                mutation_enabled: false,
                 state: Mutex::new(State {
                     phase: Phase::Running,
                     next: 1,

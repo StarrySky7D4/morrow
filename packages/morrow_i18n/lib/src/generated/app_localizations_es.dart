@@ -1779,6 +1779,96 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get pluginsFileMutationCancelPlan => 'Cancelar el plan preparado';
+
+  @override
+  String get pluginsFileMutationCleanupError => 'Error al liberar la tarea';
+
+  @override
+  String get pluginsFileMutationContentLength => 'Tamaño del contenido';
+
+  @override
+  String get pluginsFileMutationContentSha256 => 'SHA-256 del contenido';
+
+  @override
+  String get pluginsFileMutationEmptyContent => 'Crear un archivo vacío';
+
+  @override
+  String get pluginsFileMutationExecute => 'Ejecutar la operación preparada';
+
+  @override
+  String get pluginsFileMutationExecuteCreateConfirm => 'Crear este archivo';
+
+  @override
+  String get pluginsFileMutationExecuteDeleteConfirm =>
+      'Eliminar este archivo permanentemente';
+
+  @override
+  String get pluginsFileMutationExecuteTitle =>
+      'Confirmar operación de archivo';
+
+  @override
+  String get pluginsFileMutationFailure =>
+      'La operación de archivo requiere atención. Comprueba su estado antes de continuar.';
+
+  @override
+  String get pluginsFileMutationFileName => 'Nombre del nuevo archivo';
+
+  @override
+  String get pluginsFileMutationFileTooLarge =>
+      'El contenido supera los 16 MiB.';
+
+  @override
+  String get pluginsFileMutationIntro =>
+      'Elige un complemento autorizado y un destino local. Revisa la operación antes de prepararla y confirma su ejecución por separado.';
+
+  @override
+  String get pluginsFileMutationOperationError => 'Error de la operación';
+
+  @override
+  String get pluginsFileMutationPickContent =>
+      'Elegir archivo de contenido (opcional)';
+
+  @override
+  String get pluginsFileMutationPickDirectory => 'Elegir carpeta';
+
+  @override
+  String get pluginsFileMutationPickFile => 'Elegir archivo';
+
+  @override
+  String get pluginsFileMutationPrepareConfirm => 'Preparar esta operación';
+
+  @override
+  String get pluginsFileMutationPrepareTitle => 'Revisar operación de archivo';
+
+  @override
+  String get pluginsFileMutationQuery => 'Consultar historial de la operación';
+
+  @override
+  String get pluginsFileMutationRecovery => 'Abrir recuperación de archivos';
+
+  @override
+  String get pluginsFileMutationRecoveryHint =>
+      'Tras cerrar la tarea y confirmar su finalización, comprueba la operación original en la recuperación de archivos.';
+
+  @override
+  String get pluginsFileMutationReview => 'Revisar y preparar';
+
+  @override
+  String get pluginsFileMutationScopeChanged =>
+      'La autorización del complemento ha cambiado. Revisa la operación de nuevo.';
+
+  @override
+  String get pluginsFileMutationSelectionRequired =>
+      'Elige primero un destino y un complemento.';
+
+  @override
+  String get pluginsFileMutationTarget => 'Destino';
+
+  @override
+  String get pluginsFileMutationTitle => 'Creación y eliminación de archivos';
+
+  @override
   String get pluginsFileTaskBudgets =>
       'Los límites aprobados del complemento pueden ser menores. La verificación conserva un resumen y hasta 4096 bytes de vista previa.';
 
@@ -1871,6 +1961,72 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get pluginsFileTaskVerify => 'Leer y verificar';
+
+  @override
+  String get pluginsGuestExecutionBudgetError =>
+      'Las cuotas deben ser positivas y respetar los límites declarados. La cuota acumulada debe ser al menos igual a la cuota por tarea.';
+
+  @override
+  String get pluginsGuestExecutionDeadline =>
+      'La autorización dura como máximo 30 segundos. Al vencer, detenga la tarea y espere a que termine; repárela si es necesario, confirme la recuperación y vuelva a revisar el plan.';
+
+  @override
+  String get pluginsGuestExecutionDraft => 'Aprobar cuotas y generar el plan';
+
+  @override
+  String get pluginsGuestExecutionExpired =>
+      'La ventana local de aprobación ha terminado. Detenga la tarea y espere a que termine; repare y confirme la recuperación según se indique. Verifique el resultado de cualquier operación enviada. No la ejecute de nuevo.';
+
+  @override
+  String get pluginsGuestExecutionFrame => 'Resultado de ejecución del plugin';
+
+  @override
+  String get pluginsGuestExecutionHostQuery =>
+      'Consultar el historial del host original';
+
+  @override
+  String get pluginsGuestExecutionIntro =>
+      'Revise el plan original y confirme la preparación y la ejecución por separado. La preparación no crea ni elimina el archivo de destino.';
+
+  @override
+  String get pluginsGuestExecutionJobBudget => 'Bytes autorizados por tarea';
+
+  @override
+  String get pluginsGuestExecutionNoReplay =>
+      'Resultado incierto; los comandos del plugin y las operaciones con archivos nunca se repiten automáticamente.';
+
+  @override
+  String get pluginsGuestExecutionOrdinaryBudget =>
+      'Este plugin utiliza las cuotas ordinarias; no se concede ninguna cuota ampliada.';
+
+  @override
+  String get pluginsGuestExecutionOwner => 'Resultado de verificación del host';
+
+  @override
+  String get pluginsGuestExecutionPlanSha256 => 'SHA-256 del plan original';
+
+  @override
+  String get pluginsGuestExecutionRelease => 'Liberar tarea';
+
+  @override
+  String get pluginsGuestExecutionTitle =>
+      'Creación y eliminación de archivos mediante plugins';
+
+  @override
+  String get pluginsGuestExecutionTotalBudget => 'Bytes autorizados acumulados';
+
+  @override
+  String pluginsGuestMutationBudget(String maxBytes, String maxJobBytes) {
+    return 'Límite declarado: $maxJobBytes bytes por tarea; $maxBytes bytes en total.';
+  }
+
+  @override
+  String get pluginsGuestMutationBudgetNotice =>
+      'Estos son límites del paquete, no una autorización activa. Cada operación requiere una aprobación aparte.';
+
+  @override
+  String get pluginsGuestMutationDeclared =>
+      'El paquete declara modificaciones de archivos mediante código invitado.';
 
   @override
   String get pluginsHttpTaskAbandon => 'Terminar observación de este intento';
@@ -2274,6 +2430,110 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get pluginsManagementUnavailable =>
       'La gestión de complementos no está disponible. El contenido existente sigue siendo legible.';
+
+  @override
+  String get pluginsMutationAbsent =>
+      'No se encontró ningún registro coincidente';
+
+  @override
+  String get pluginsMutationCancelled => 'Cancelado antes de la ejecución';
+
+  @override
+  String get pluginsMutationCheckpoint =>
+      'La posición de búsqueda solo es válida en esta sesión del host. Puede continuar después de limpiar la tarea.';
+
+  @override
+  String get pluginsMutationCleanup =>
+      'Finalice la búsqueda y confirme que la tarea haya terminado antes de verificar el plan seleccionado.';
+
+  @override
+  String get pluginsMutationContinue => 'Continuar desde la posición guardada';
+
+  @override
+  String get pluginsMutationDiscover => 'Buscar planes originales';
+
+  @override
+  String get pluginsMutationDone => 'Búsqueda actual finalizada';
+
+  @override
+  String get pluginsMutationEmpty =>
+      'No hay planes coincidentes en esta página; puede haber más páginas.';
+
+  @override
+  String get pluginsMutationFormError =>
+      'No se pudo enviar la solicitud de recuperación. Revise el sujeto, el ámbito del complemento y el plazo de la tarea.';
+
+  @override
+  String get pluginsMutationIntro =>
+      'Busque y verifique planes existentes en modo de solo lectura. Las operaciones de archivo no se vuelven a ejecutar.';
+
+  @override
+  String get pluginsMutationLastResult => 'Último resultado de verificación';
+
+  @override
+  String get pluginsMutationNext => 'Leer la página siguiente';
+
+  @override
+  String get pluginsMutationObserved => 'Registro de observación existente';
+
+  @override
+  String get pluginsMutationPage => 'Última página encontrada';
+
+  @override
+  String get pluginsMutationPlan => 'Plan original';
+
+  @override
+  String get pluginsMutationPrepared =>
+      'Preparado; efecto en el archivo sin confirmar';
+
+  @override
+  String get pluginsMutationReconcile => 'Verificar el plan seleccionado';
+
+  @override
+  String get pluginsMutationRejected =>
+      'El sistema operativo rechazó la operación';
+
+  @override
+  String get pluginsMutationRelease => 'Finalizar búsqueda';
+
+  @override
+  String get pluginsMutationResultLost =>
+      'Se perdió el resultado de esta página. Limpie la tarea y continúe desde la última posición guardada o vuelva a buscar.';
+
+  @override
+  String get pluginsMutationRetry => 'Recuperar el acuse del envío original';
+
+  @override
+  String get pluginsMutationScopeUnavailable =>
+      'El ámbito del plan original no está disponible. Actualice el catálogo de complementos y revise las autorizaciones.';
+
+  @override
+  String get pluginsMutationSelectPlan => 'Seleccionar un plan para verificar';
+
+  @override
+  String get pluginsMutationSelected => 'Plan seleccionado conservado';
+
+  @override
+  String get pluginsMutationSubject => 'Sujeto de la operación original';
+
+  @override
+  String get pluginsMutationSubmissionUnknown =>
+      'El acuse de envío es incierto. Actualice el estado y recupere explícitamente solo el acuse original; no cree una solicitud duplicada.';
+
+  @override
+  String get pluginsMutationSucceeded =>
+      'El sistema operativo confirmó el éxito';
+
+  @override
+  String get pluginsMutationTitle => 'Recuperación de cambios en archivos';
+
+  @override
+  String get pluginsMutationUnknown =>
+      'Resultado desconocido; no se reintentará automáticamente';
+
+  @override
+  String get pluginsMutationUnspecified =>
+      'Sin prueba del efecto en el archivo';
 
   @override
   String get pluginsNoPermissions =>

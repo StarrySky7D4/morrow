@@ -14,6 +14,12 @@ mod service_run;
 #[path = "file_task_protocol.rs"]
 #[cfg(not(target_arch = "wasm32"))]
 mod file_task;
+#[cfg(windows)]
+#[path = "mutation_task_protocol.rs"]
+mod mutation_task;
+#[cfg(windows)]
+#[path = "guest_mutation_protocol.rs"]
+mod guest_mutation;
 pub fn digest() -> [u8; 32] { crate::host_protocol_digest() }
 
 fn text(v: capnp::Result<capnp::text::Reader<'_>>) -> Result<String> {
@@ -208,7 +214,18 @@ fn is_scheduler_action(action: wire::Action) -> bool {
     is_service_run_action(action)
         || matches!(
             action,
-            wire::Action::FileStart
+            wire::Action::MutationDiscover | wire::Action::MutationReconcile
+                | wire::Action::MutationStart
+                | wire::Action::MutationSubmit
+                | wire::Action::MutationStatus
+                | wire::Action::MutationRead
+                | wire::Action::MutationCancelCommand
+                | wire::Action::GuestMutationStart
+                | wire::Action::GuestMutationSubmit
+                | wire::Action::GuestMutationStatus
+                | wire::Action::GuestMutationRead
+                | wire::Action::GuestMutationCancelCommand
+                | wire::Action::FileStart
                 | wire::Action::FileChunk
                 | wire::Action::FileFinish
                 | wire::Action::FileRead
@@ -305,6 +322,41 @@ impl ResponseTarget for Workbench {
                 | wire::Action::FileRead
         ) {
             return file_task::handle(self, r, out);
+        }
+        if matches!(
+            action,
+            wire::Action::MutationDiscover | wire::Action::MutationReconcile
+                | wire::Action::MutationStart
+                | wire::Action::MutationSubmit
+                | wire::Action::MutationStatus
+                | wire::Action::MutationRead
+                | wire::Action::MutationCancelCommand
+        ) {
+            #[cfg(windows)]
+            {
+                return mutation_task::handle(self, r, out);
+            }
+            #[cfg(not(windows))]
+            {
+                return Err("file mutation adapter is unavailable on this platform".into());
+            }
+        }
+        if matches!(
+            action,
+            wire::Action::GuestMutationStart
+                | wire::Action::GuestMutationSubmit
+                | wire::Action::GuestMutationStatus
+                | wire::Action::GuestMutationRead
+                | wire::Action::GuestMutationCancelCommand
+        ) {
+            #[cfg(windows)]
+            {
+                return guest_mutation::handle(self, r, out);
+            }
+            #[cfg(not(windows))]
+            {
+                return Err("guest mutation adapter is unavailable on this platform".into());
+            }
         }
         let host = self;
         if action == wire::Action::HttpStart {
@@ -663,7 +715,18 @@ fn handle_business(
             crate::service_protocol::handle(host, r, out.reborrow())
                 .map_err(|_| "service administration request could not be completed")?;
         }
-        wire::Action::FileStart
+        wire::Action::MutationDiscover | wire::Action::MutationReconcile
+        | wire::Action::MutationStart
+        | wire::Action::MutationSubmit
+        | wire::Action::MutationStatus
+        | wire::Action::MutationRead
+        | wire::Action::MutationCancelCommand
+        | wire::Action::GuestMutationStart
+        | wire::Action::GuestMutationSubmit
+        | wire::Action::GuestMutationStatus
+        | wire::Action::GuestMutationRead
+        | wire::Action::GuestMutationCancelCommand
+        | wire::Action::FileStart
         | wire::Action::FileChunk
         | wire::Action::FileFinish
         | wire::Action::FileRead
@@ -1487,6 +1550,12 @@ fn plugin_catalog_reply(
         row.set_builtin(entry.builtin);
         row.set_available(entry.available);
         row.set_issue(entry.issue.as_str());
+        row.set_mutation_supported(entry.mutation_supported);
+        if let Some(budget) = entry.mutation_budget {
+            let mut declared = row.reborrow().init_mutation_budget();
+            declared.set_max_job_bytes(budget.max_job_bytes);
+            declared.set_max_bytes(budget.max_bytes);
+        }
         for (index, value) in entry.declared.iter().enumerate() {
             if index == 0 {
                 row.reborrow().init_declared(entry.declared.len() as u32);
