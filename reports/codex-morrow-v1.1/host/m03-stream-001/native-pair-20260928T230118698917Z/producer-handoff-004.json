@@ -1,0 +1,57 @@
+{
+  "status": "producer_first_positive_real_core_http_passed_ready_for_independent_joint_repeat",
+  "run": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T230118698917Z",
+  "fixed_host_candidate": "003",
+  "fixed_plugin_candidate": "002",
+  "host_sha256": "3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65",
+  "plugin_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+  "references": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-003\\manifest.json": "564b58185f5d022fb630fcdfb15367fc358937df23db6a31be1d31ae84e4aa37",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\native-candidate-002.json": "20135ba780b86a344eeb396fd8d8f0ba85ee3600f79308140380c3fc94fbf561",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_native_pair_004.py": "1f81a8065c9e792909f6ac0d27f5589e1b4c81992af156fbe7de91c6056651a3",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-004\\20260928T230118698917Z\\result.json": "655c11328950218fb9953e794ed78f87b17ef3c514b3b3ea58525952b87f6d45",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-004\\20260928T230118698917Z\\core-events.jsonl": "84149da33b06613bca5d504e2136fcebbbab48865b2173f6f24b8f73046e10ba"
+  },
+  "repeat_entrypoint": "python tool/m03_native_pair_004.py --coordinator-resumed",
+  "repeat_behavior": "fresh generated timestamp/profile/cwd/operation/grant/output directories; one POST maximum and no automatic retry; independent run must have coordinator authorization",
+  "limits": {
+    "handshake_ms": 6000,
+    "original_approval_ttl_ms": 10000,
+    "max_chunk": 1024,
+    "credit": 16384,
+    "response_cap": 65536
+  },
+  "facts": {
+    "post_count": 1,
+    "approved_original_core_request_bytes": 22025,
+    "actual_core_text_delta_bytes": 19,
+    "server_observed_core_delta_before_eof_margin_ns": 30490900,
+    "core_terminal": {
+      "Completed": {
+        "end_turn": null
+      }
+    },
+    "parser_yielded": 267,
+    "post_completed_drain": 14,
+    "full_body_and_all_host_delivery_offsets": 281,
+    "observed_material_and_eof": true,
+    "request_closed": true,
+    "network_worker_joined": true,
+    "plugin_data_thread_joined": true,
+    "matching_close_ack_and_final_control_ok": true,
+    "host_exit": 0,
+    "guest_exit": 0,
+    "dual_eof": true,
+    "durable_native_owner_released": true
+  },
+  "remaining_unqualified": [
+    "independent joint repeat",
+    "negative HTTP/error/redirect/limit/disconnect cases",
+    "native 16KiB credit pressure and actual OS-pending integration",
+    "revoke races and late business-output suppression under real host",
+    "OS partial control-write fault injection",
+    "full M03 or product gates"
+  ],
+  "old_failed_batches_preserved": true,
+  "no_product_gate_upgrade": true
+}

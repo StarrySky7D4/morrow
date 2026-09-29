@@ -1,0 +1,8 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling capnp v0.24.1
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+error: could not compile `generic-array` (build script) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

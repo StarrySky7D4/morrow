@@ -1,0 +1,12 @@
+   Compiling morrow-native-session-wire v0.2.0-experimental.2 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\contracts\experimental\agent_host_v2_capnp)
+error: linker `link.exe` not found
+  |
+  = note: program not found
+
+note: the msvc targets depend on the msvc linker but `link.exe` was not found
+
+note: please ensure that Visual Studio 2017 or later, or Build Tools for Visual Studio were installed with the Visual C++ option
+
+note: VS Code is a different product, and is not sufficient
+
+error: could not compile `morrow-native-session-wire` (build script) due to 1 previous error

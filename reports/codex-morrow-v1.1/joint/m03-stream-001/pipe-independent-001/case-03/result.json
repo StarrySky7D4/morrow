@@ -1,0 +1,26 @@
+{
+  "test": "stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+    "--exact",
+    "stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "process": {
+    "pid": 4132,
+    "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+    "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+    "creation_filetime": 134351051241571080,
+    "source": "held exact Popen process handle"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 80059400,
+  "passed": true,
+  "stdout_sha256": "3be49b8b437c2ce022fc3afe8775a9d4def2e10a917090ca1a87be005ea05ada",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "helper_pids_reported_by_fixed_test": [
+    16900
+  ]
+}

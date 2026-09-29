@@ -1,0 +1,61 @@
+# Entry point for GHA PR/CI validation. Mirrors the 1ES `1ES.Build.yml`
+# split: this file orchestrates, each stage lives in its own reusable.
+
+name: Build
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main, 'feature/*', 'user/*']
+
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  # Dependency feed check: resolve the locked graph through the public MxcDependencies
+  # feed so a crate not yet in the feed fails at PR time.
+  dependency-feed-check:
+    uses: ./.github/workflows/Dependency.Feed.Check.Job.yml
+
+  versioning-checks:
+    uses: ./.github/workflows/Versioning.Checks.Job.yml
+
+  lint:
+    needs: dependency-feed-check
+    uses: ./.github/workflows/Lint.Job.yml
+
+  windows:
+    needs: dependency-feed-check
+    uses: ./.github/workflows/Build.Windows.Job.yml
+
+  linux:
+    needs: dependency-feed-check
+    uses: ./.github/workflows/Build.Linux.Job.yml
+
+  macos:
+    needs: dependency-feed-check
+    uses: ./.github/workflows/Build.MacOS.Job.yml
+
+  sdk-unit-tests:
+    uses: ./.github/workflows/SDK.Unit.Test.Job.yml
+
+  sdk-dotnet-tests:
+    uses: ./.github/workflows/SDK.Dotnet.Test.Job.yml
+
+  package-npm-sdk:
+    needs: [windows, linux, macos]
+    uses: ./.github/workflows/Package.NpmSdk.Job.yml
+
+  sdk-integration-tests:
+    needs: package-npm-sdk
+    uses: ./.github/workflows/SDK.Integration.Test.Job.yml

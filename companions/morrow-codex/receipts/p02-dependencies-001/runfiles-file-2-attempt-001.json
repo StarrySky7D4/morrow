@@ -1,0 +1,10 @@
+{
+  "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/Cargo.lock",
+  "path": "rust/runfiles/Cargo.lock",
+  "expected_blob": "3db66fb68380ba57c9d0d33bf3d77ecf9c8eff51",
+  "status": "verified",
+  "size": 152,
+  "git_mode": "100644",
+  "git_blob_sha1": "3db66fb68380ba57c9d0d33bf3d77ecf9c8eff51",
+  "sha256": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7"
+}

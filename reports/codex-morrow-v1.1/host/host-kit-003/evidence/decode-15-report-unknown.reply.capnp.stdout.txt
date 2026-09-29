@@ -1,0 +1,9 @@
+( major = 1,
+  revision = 1,
+  schemaDigest = "\332\n\307\244.K\017j\354\f\373\335#X\317\206h\213\b\350bba\206\273\235\344\221O5Z\177",
+  requestId = 15,
+  sessionId = "fixture-session",
+  instanceEpoch = 1,
+  reply = (
+    qualificationOnly = true,
+    tool = (state = unknown, execute = false, exitCode = -1, outputClosed = false) ) )

@@ -1,0 +1,14 @@
+[
+  "upstream/p02-integration-004/codex-work/codex-rs/core/Cargo.toml",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/lib.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/client.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/morrow_network.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/morrow_network_qualification.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/morrow_p02_qualification.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/exec.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/unified_exec/process_manager.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/exec-server/src/environment.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/thread-store/Cargo.toml",
+  "upstream/p02-integration-004/codex-work/codex-rs/thread-store/src/live_thread.rs",
+  "upstream/p02-integration-004/codex-work/codex-rs/core/src/unified_exec/mod.rs"
+]

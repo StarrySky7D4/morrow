@@ -1,0 +1,92 @@
+{
+  "status": "final_identity_and_claim_binding_verified",
+  "successful_claim_bindings": [
+    {
+      "host": "two-hosts/a",
+      "successful_claim_grant": "5a9120836b7be3bdd24448c35edd4b9a17ca3f12bc44e86c6bf85c66fccf3039",
+      "generation": 3,
+      "actual_child_pid": 11928,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "two-hosts/b",
+      "successful_claim_grant": "dafb41b5eeb41fa6c9b4b0e97a01005f8bdb0b27e7236dca9fbeb17a3f25e90d",
+      "generation": 2,
+      "actual_child_pid": 4152,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "external-revoke/owner",
+      "successful_claim_grant": "2fa6d789368f8b0da0a27a1fbb6f126dae0159ab26074ec069b665cb2b376d37",
+      "generation": 1,
+      "actual_child_pid": 972,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "historical-replay/capture",
+      "successful_claim_grant": "817dd385a02d9ee1b06f045e141ec30a19f997a3d9020ea6ae062e280fb61a46",
+      "generation": 1,
+      "actual_child_pid": 26404,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "historical-replay/replay-hello",
+      "successful_claim_grant": "d19558bc42d4eff59204c3ee8aec04b27035d0e3591d4b67476d690362866069",
+      "generation": 2,
+      "actual_child_pid": 11012,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "historical-replay/replay-query",
+      "successful_claim_grant": "94de4baf8f7063817d19e8466f5ae4cbb32cacf396da227a2f954b17655bb84b",
+      "generation": 3,
+      "actual_child_pid": 8116,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "unconfirmed/contender",
+      "successful_claim_grant": "b83b76572cdf96c221e15f88000c97513d5dc7f86549c161ec0b88a5db8c3c5f",
+      "generation": 3,
+      "actual_child_pid": 13692,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "unconfirmed/owner",
+      "successful_claim_grant": "edf5166aa270ac5115ba204c5f0251aff390f24cfed793e7a191fb00e927a24b",
+      "generation": 1,
+      "actual_child_pid": 24116,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "crash-child-alive/owner",
+      "successful_claim_grant": "f182d2942c7b16d64411318de37ed1ffdacbc3ac920bb049a0de61447bbdb96d",
+      "generation": 1,
+      "actual_child_pid": 9900,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    },
+    {
+      "host": "old-issuer/replacement",
+      "successful_claim_grant": "826e64e40d0c41861f0f9e153a42a22d9e31deae49528b2b8ef1a56c34b9c3d8",
+      "generation": 2,
+      "actual_child_pid": 1840,
+      "matches_claim_record_and_initial_frame": true,
+      "all_frames_authoritative_schema": true
+    }
+  ],
+  "runtime_input_count": 2233,
+  "runtime_inputs_unchanged": true,
+  "unified_inputs_unchanged": true,
+  "gate_exit_code": 2,
+  "semantic_result_sha256": "50a8885dd075a8686f8815c59418e783b50fb966a8083174558e13cd98bde957",
+  "sealer_sha256": "03c61dcd8fcd360722bb68e70895321215b3de7062ce8cf39887bc440b95de88",
+  "product_pass_credit": 0
+}

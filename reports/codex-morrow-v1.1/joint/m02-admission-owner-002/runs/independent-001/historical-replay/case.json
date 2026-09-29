@@ -1,0 +1,33 @@
+{
+  "case": "historical-replay",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "sessions": [
+      {
+        "mode": "capture",
+        "grant_id": "817dd385a02d9ee1b06f045e141ec30a19f997a3d9020ea6ae062e280fb61a46",
+        "host_pid": 21804,
+        "child_pid": 26404,
+        "material": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\historical-replay\\capture-material",
+        "release_observed_before_next_host": true
+      },
+      {
+        "mode": "replay-hello",
+        "grant_id": "d19558bc42d4eff59204c3ee8aec04b27035d0e3591d4b67476d690362866069",
+        "host_pid": 2024,
+        "child_pid": 11012,
+        "material": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\historical-replay\\replay-hello-material",
+        "release_observed_before_next_host": true
+      },
+      {
+        "mode": "replay-query",
+        "grant_id": "94de4baf8f7063817d19e8466f5ae4cbb32cacf396da227a2f954b17655bb84b",
+        "host_pid": 12664,
+        "child_pid": 8116,
+        "material": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\historical-replay\\replay-query-material",
+        "release_observed_before_next_host": true
+      }
+    ],
+    "raw_replay_comparison_pending": true
+  }
+}

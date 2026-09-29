@@ -1,0 +1,102 @@
+{
+  "status": "platform_producer_tests_passed_native_runtime_not_run",
+  "before": {
+    "native_pipe_win_001/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "native_pipe_win_001/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "native_pipe_win_001/README.md": "75a32e631112cbd145ad3e0cd7d8b6ddcce1d5deb7cd688ef972043ee69e9078",
+    "native_pipe_win_001/src/lib.rs": "7b2849dc97620811472614750e89bdb4587310b3acbc60cf3cdd779d5da3cca3",
+    "native_pipe_win_001/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "frozen_count": 2292,
+  "commands": [
+    {
+      "name": "fmt",
+      "args": [
+        "fmt",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.06850189997931011,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compile",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--no-run",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 0.8931931999977678,
+      "stdout_sha256": "81280ab8048520c48f6acca29938e0a4ae7694efa4ce54bed153e55a7738de31",
+      "stderr_sha256": "fd394108c4b0353cf2e6e5a6845a62799b6624512998d2d8adbb696911409932"
+    },
+    {
+      "name": "tests",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.17134449997683987,
+      "stdout_sha256": "9a60f0e79a32de18f11a2ad29ac1647710dc68d53a8c377d750e73b48075f8e4",
+      "stderr_sha256": "c1ae28b289cf87d4aa1c5250eee60a8c6f63ab1d6b66a396d8c8d91061c3663a"
+    }
+  ],
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_NET_OFFLINE",
+    "COMSPEC",
+    "INCLUDE",
+    "LIB",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMDRIVE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "after": {
+    "native_pipe_win_001/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "native_pipe_win_001/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "native_pipe_win_001/README.md": "75a32e631112cbd145ad3e0cd7d8b6ddcce1d5deb7cd688ef972043ee69e9078",
+    "native_pipe_win_001/src/lib.rs": "7b2849dc97620811472614750e89bdb4587310b3acbc60cf3cdd779d5da3cca3",
+    "native_pipe_win_001/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "frozen_unchanged": true,
+  "artifacts": {
+    "target/m03-stream-001-pipe/debug/deps/morrow_native_pipe_win-3ee4baeb43321fe4.exe": "8ce210ddccf3f35321246cc24f88530e1429af9a843a2a2dae1d20517afcee01",
+    "target/m03-stream-001-pipe/debug/deps/platform-a95421a369e34f9f.exe": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467"
+  }
+}

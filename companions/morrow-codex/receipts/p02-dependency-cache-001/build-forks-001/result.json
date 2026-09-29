@@ -1,0 +1,58 @@
+{
+  "status": "declared_manifest_patch_prepared_not_cargo_verified",
+  "scope": "manifest-only dependency-source qualification patch",
+  "cargo_invoked": false,
+  "network_used": false,
+  "script_sha256": "c798c5a6848458eb39c0076dc43dfc1bfd162b691c2070e1810c6c102c26b7c5",
+  "packages": [
+    {
+      "name": "tokio-tungstenite",
+      "commit": "0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+      "original": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tokio-tungstenite-0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\build-forks\\tokio-tungstenite",
+      "file_count": 34,
+      "changed_files": [
+        "Cargo.toml"
+      ],
+      "manifest_before_sha256": "1bb36f490668711ad63b88c5805c64f25ea16101bea4c924858b874a35521290",
+      "manifest_after_sha256": "09496ed19470c582f77d2eaed057ac30d8627e91d6e5fd0ca347055e09e2652e",
+      "all_rust_sources_unchanged": true,
+      "all_non_manifest_files_match_fixed_blobs": true,
+      "proof_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\tokio-tungstenite-verification.json",
+      "proof_sha256": "d88952cb36455eb1fbaac9f8140adcdbbd9329f591011c4de33c06af6ab628ea"
+    },
+    {
+      "name": "tungstenite",
+      "commit": "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f",
+      "original": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tungstenite-rs-4fffad30fe373adbdcffab9545e9e9bf4f2fc19f",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\build-forks\\tungstenite",
+      "file_count": 888,
+      "changed_files": [],
+      "manifest_before_sha256": "d83cc5d81bfbf9c793e261be449cb3e115894e49b3d35d5ca7e7bce3d7190817",
+      "manifest_after_sha256": "d83cc5d81bfbf9c793e261be449cb3e115894e49b3d35d5ca7e7bce3d7190817",
+      "all_rust_sources_unchanged": true,
+      "all_non_manifest_files_match_fixed_blobs": true,
+      "proof_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\tungstenite-rs-verification.json",
+      "proof_sha256": "a5b7db499878abb7f9b751cd7216cc62493324b4341f30f8df2f64c4e56faa69"
+    },
+    {
+      "name": "runfiles",
+      "commit": "b56cbaa8465e74127f1ea216f813cd377295ad81",
+      "original": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package\\rust\\runfiles",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\build-forks\\runfiles",
+      "file_count": 5,
+      "changed_files": [],
+      "manifest_before_sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+      "manifest_after_sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+      "all_rust_sources_unchanged": true,
+      "all_non_manifest_files_match_fixed_blobs": true,
+      "proof_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\runfiles-package-verification.json",
+      "proof_sha256": "61ae5ff06cb8411a40997c2cfcdebf342175fd43433b5f1b105280034915dabc"
+    }
+  ],
+  "original_sources_unchanged": true,
+  "manifest_patch_sha256": "c03aff3a577c40863d64a6ec41d9db17acc8a1166679cfa657c3d8bca1c7af89",
+  "source_identity_limit": "Build copy is explicitly patched; it is not an unmodified upstream Git source",
+  "lock_source_id_change": "Root will switch these build dependencies to path identities; no lock was changed by this script",
+  "finished_utc": "2026-09-28T12:15:01.234627+00:00"
+}

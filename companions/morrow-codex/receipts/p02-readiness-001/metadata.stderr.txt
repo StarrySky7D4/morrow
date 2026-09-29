@@ -1,0 +1,14 @@
+error: failed to load manifest for workspace member `C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\reference\codex\codex-rs\aws-auth`
+referenced by workspace at `C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\reference\codex\codex-rs\Cargo.toml`
+
+Caused by:
+  failed to load manifest for dependency `codex-http-client`
+
+Caused by:
+  failed to load manifest for dependency `codex-utils-rustls-provider`
+
+Caused by:
+  failed to parse manifest at `C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\reference\codex\codex-rs\utils\rustls-provider\Cargo.toml`
+
+Caused by:
+  can't find library `codex_utils_rustls_provider`, rename file to `src/lib.rs` or specify lib.path

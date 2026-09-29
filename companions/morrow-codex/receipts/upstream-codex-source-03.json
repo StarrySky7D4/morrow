@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "codex-rs/rust-toolchain.toml",
+      "git_blob_sha1": "910c65114ec128a8317ee8257428451f3cd28230",
+      "sha256": "570656042681cfd8795403a455baf9a33035331a07db0645e866bbcea89a3d64",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/rust-toolchain.toml"
+    },
+    {
+      "path": "codex-rs/thread-store/src/local/mod.rs",
+      "git_blob_sha1": "24f1e54990d8a5dbf5007f2700eb87651f97e4b4",
+      "sha256": "c29f99688a9afc8d04dbcf7c58bb66708a04130f4cafd9bced9d96652afe2ac8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/thread-store/src/local/mod.rs"
+    },
+    {
+      "path": "codex-rs/codex-api/src/endpoint/responses.rs",
+      "git_blob_sha1": "9c41a802eadd57cf20ffc733121921d8d3ba9d08",
+      "sha256": "4f2fff3da4ca3ca9fcfa40ada8e98a0229af296094e03febb4d823f32ef932c8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-api/src/endpoint/responses.rs"
+    },
+    {
+      "path": "codex-rs/core/src/client.rs",
+      "git_blob_sha1": "f5ac495337fd8f29c08b0be8d5b75ba32185d7d2",
+      "sha256": "605ced35cd853fcc4e23f6edd724c96f96f74c736a45e6ea95bf5300f3ab814c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core/src/client.rs"
+    },
+    {
+      "path": "codex-rs/core/src/client_common.rs",
+      "git_blob_sha1": "4e76ac5905fa077279f8e9a032ddba6152f03874",
+      "sha256": "0125e520f71798e6c31a1d0147934c0d90288ab9cc4bfce6e8374ac587f2b43a",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core/src/client_common.rs"
+    }
+  ]
+}

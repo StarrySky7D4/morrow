@@ -1,0 +1,7 @@
+# Focused fixed002 response-code/sequence cross-check
+
+Confirmed mismatch: host002 source/src/supervisor.rs:922 emits Welcome(last_sequence, code2). Plugin002 native/m03-stream-002/src/admission.rs:184-201 rejects nonzero Welcome and requires sequence1/code0. This corroborates the coordinator-reported pair003 failure from source; Joint did not execute or independently audit that failed batch here.
+
+No additional definite code/direct-reply/notification-sequence mismatch was found in this focused check. All other successful host control construction sites use code0. Prepare/Commit/Query and revised Close echo the request sequence as State; Credit echoes as CreditState and Cancel as CancelAccepted. DataOffer/Proposed/Approved/Head/Terminal/RequestClosed use notification sequence0, matching the plugin whitelist. The separate host data lane begins with DataBound sequence1/code0 and continues BodyChunk from2/code0. Nonzero Denied/Stop remain permitted failure classes. Commit State is queued synchronously before the asynchronous ResponseHead is queued.
+
+This is a source comparison of the enumerated emission sites and plugin admission/dispatch checks, not a full protocol audit or runtime qualification. Source hashes match fixed002 manifests. No tests, build, host/client or HTTP were run. Keep002 frozen; host003 should change Welcome to0 and make the synthetic peer assert its sequence/code, then bind the new proof to its fixed executable. The prior host002 Close test peer checked Welcome kind alone, so its three passing cases did not detect this mismatch.

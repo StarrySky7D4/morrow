@@ -1,0 +1,1 @@
+fatal: unable to access 'https://github.com/farion1231/cc-switch.git/': Recv failure: Connection was reset

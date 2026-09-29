@@ -1,0 +1,5351 @@
+{
+  "schema_version": 1,
+  "qualification": "Keyword candidate inventory of the fetched source subset, including comments/tests; not a complete call graph, reachability proof, or absence-of-side-effects proof.",
+  "matches": [
+    {
+      "path": "upstream/reference/codex/codex-rs/build-info/build.rs",
+      "line": 4,
+      "classes": [
+        "env"
+      ],
+      "text": "let target = std::env::var(\"TARGET\")?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/models.rs",
+      "line": 6,
+      "classes": [
+        "net"
+      ],
+      "text": "use codex_client::HttpTransport;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/models.rs",
+      "line": 16,
+      "classes": [
+        "net"
+      ],
+      "text": "pub struct ModelsClient<T: HttpTransport> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/models.rs",
+      "line": 20,
+      "classes": [
+        "net"
+      ],
+      "text": "impl<T: HttpTransport> ModelsClient<T> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/models.rs",
+      "line": 163,
+      "classes": [
+        "net"
+      ],
+      "text": "impl HttpTransport for CapturingTransport {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 14,
+      "classes": [
+        "net"
+      ],
+      "text": "use codex_client::HttpTransport;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 23,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use std::sync::OnceLock;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 26,
+      "classes": [
+        "net"
+      ],
+      "text": "pub struct ResponsesClient<T: HttpTransport> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 38,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "pub turn_state: Option<Arc<OnceLock<String>>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 41,
+      "classes": [
+        "net"
+      ],
+      "text": "impl<T: HttpTransport> ResponsesClient<T> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 115,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "turn_state: Option<Arc<OnceLock<String>>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs",
+      "line": 128,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "turn_state: Option<Arc<OnceLock<String>>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 12,
+      "classes": [
+        "net"
+      ],
+      "text": "//! requests during that turn. It caches a Responses WebSocket connection (opened lazily) and stores"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 17,
+      "classes": [
+        "net"
+      ],
+      "text": "//! WebSocket prewarm is a v2-only `response.create` with `generate=false`; it waits for completion"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 25,
+      "classes": [
+        "net"
+      ],
+      "text": "//! WebSocket prewarm is treated as the first websocket connection attempt for a turn. If it"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 31,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use std::sync::OnceLock;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 60,
+      "classes": [
+        "net"
+      ],
+      "text": "use codex_api::ResponsesWebsocketClient as ApiWebSocketResponsesClient;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 61,
+      "classes": [
+        "net"
+      ],
+      "text": "use codex_api::ResponsesWebsocketConnection as ApiWebSocketConnection;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 175,
+      "classes": [
+        "net"
+      ],
+      "text": "const RESPONSES_WEBSOCKETS_V2_BETA_HEADER_VALUE: &str = \"responses_websockets=2026-02-06\";"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 218,
+      "classes": [
+        "net"
+      ],
+      "text": "disable_websockets: AtomicBool,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 220,
+      "classes": [
+        "net"
+      ],
+      "text": "cached_websocket_session: StdMutex<WebsocketSession>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 258,
+      "classes": [
+        "net"
+      ],
+      "text": "/// WebSocket fallback is session-scoped: once a turn activates the HTTP fallback, subsequent turns"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 279,
+      "classes": [
+        "net"
+      ],
+      "text": "/// The session establishes a Responses WebSocket connection lazily and reuses it across multiple"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 282,
+      "classes": [
+        "net"
+      ],
+      "text": "/// - The last full request, so subsequent calls can reuse incremental websocket request payloads"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 292,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_session: WebsocketSession,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 295,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "/// This is an `OnceLock` that stores the turn state value received from the server"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 304,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "turn_state: Arc<OnceLock<String>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 321,
+      "classes": [
+        "net"
+      ],
+      "text": "connection: Option<ApiWebSocketConnection>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 334,
+      "classes": [
+        "net"
+      ],
+      "text": "// `client_metadata`, while websocket reuse compares input and late tool-result metadata separately."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 451,
+      "classes": [
+        "net"
+      ],
+      "text": "/// ordinary Realtime WebSocket machinery can join the same in-progress call as a sideband"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 459,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Reuses the API-auth material that created the WebRTC call for the sideband WebSocket join."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 464,
+      "classes": [
+        "net"
+      ],
+      "text": "fn sideband_websocket_auth_headers(api_auth: &dyn AuthProvider) -> ApiHeaderMap {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 532,
+      "classes": [
+        "net"
+      ],
+      "text": "disable_websockets: AtomicBool::new(false),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 534,
+      "classes": [
+        "net"
+      ],
+      "text": "cached_websocket_session: StdMutex::new(WebsocketSession::default()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 601,
+      "classes": [
+        "net"
+      ],
+      "text": "/// This constructor does not perform network I/O itself; the session opens a websocket lazily"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 605,
+      "classes": [
+        "net"
+      ],
+      "text": "let mut websocket_session = self.take_cached_websocket_session();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 606,
+      "classes": [
+        "net"
+      ],
+      "text": "if websocket_session.auth_owner_generation != auth_owner_generation {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 608,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_session.reset(Some(\"other\"));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 609,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_session.auth_owner_generation = auth_owner_generation;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 613,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_session,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 614,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "turn_state: Arc::new(OnceLock::new()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 631,
+      "classes": [
+        "net"
+      ],
+      "text": "fn take_cached_websocket_session(&self) -> WebsocketSession {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 632,
+      "classes": [
+        "net"
+      ],
+      "text": "let mut cached_websocket_session = self"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 634,
+      "classes": [
+        "net"
+      ],
+      "text": ".cached_websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 637,
+      "classes": [
+        "net"
+      ],
+      "text": "std::mem::take(&mut *cached_websocket_session)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 640,
+      "classes": [
+        "net"
+      ],
+      "text": "fn store_cached_websocket_session(&self, websocket_session: WebsocketSession) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 643,
+      "classes": [
+        "net"
+      ],
+      "text": ".cached_websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 645,
+      "classes": [
+        "net"
+      ],
+      "text": ".unwrap_or_else(std::sync::PoisonError::into_inner) = websocket_session;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 653,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_enabled = self.responses_websocket_enabled();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 655,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_enabled && !self.state.disable_websockets.swap(true, Ordering::Relaxed);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 661,
+      "classes": [
+        "net"
+      ],
+      "text": "&[(\"from_wire_api\", \"responses_websocket\")],"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 665,
+      "classes": [
+        "net"
+      ],
+      "text": "self.store_cached_websocket_session(WebsocketSession::default());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 677,
+      "classes": [
+        "net"
+      ],
+      "text": "// the server-side control WebSocket to the call id from that HTTP response."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 685,
+      "classes": [
+        "net"
+      ],
+      "text": "sideband_headers.extend(sideband_websocket_auth_headers("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 715,
+      "classes": [
+        "net"
+      ],
+      "text": "extra_headers.extend(sideband_websocket_auth_headers("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1021,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Returns whether the Responses-over-WebSocket transport is active for this session."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1023,
+      "classes": [
+        "net"
+      ],
+      "text": "/// WebSocket use is controlled by provider capability and session-scoped fallback state."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1024,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn responses_websocket_enabled(&self) -> bool {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1025,
+      "classes": [
+        "net"
+      ],
+      "text": "if !self.state.provider.info().supports_websockets"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1026,
+      "classes": [
+        "net"
+      ],
+      "text": "|| self.state.disable_websockets.load(Ordering::Relaxed)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1077,
+      "classes": [
+        "net"
+      ],
+      "text": "// revisions so a refresh during setup still invalidates cached WebSocket state."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1206,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Opens a websocket connection using the same header and telemetry wiring as normal turns."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1211,
+      "classes": [
+        "net"
+      ],
+      "text": "async fn connect_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1220,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> std::result::Result<ApiWebSocketConnection, ApiError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1221,
+      "classes": [
+        "net"
+      ],
+      "text": "let mut headers = self.build_websocket_headers(responses_metadata).await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1223,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_telemetry = ModelClientSession::build_websocket_telemetry("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1229,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_connect_timeout = self.state.provider.info().websocket_connect_timeout();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1232,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_connect_timeout,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1233,
+      "classes": [
+        "net"
+      ],
+      "text": "ApiWebSocketResponsesClient::new(api_provider, api_auth).connect("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1238,
+      "classes": [
+        "net"
+      ],
+      "text": "Some(websocket_telemetry),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1253,
+      "classes": [
+        "net"
+      ],
+      "text": "session_telemetry.record_websocket_connect("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1297,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Builds websocket handshake headers for both prewarm and turn-time reconnect."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1298,
+      "classes": [
+        "net"
+      ],
+      "text": "async fn build_websocket_headers("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1337,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_session = std::mem::take(&mut self.websocket_session);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1339,
+      "classes": [
+        "net"
+      ],
+      "text": ".store_cached_websocket_session(websocket_session);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1389,
+      "classes": [
+        "net"
+      ],
+      "text": "let previous_request = self.websocket_session.last_request.as_ref()?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1391,
+      "classes": [
+        "net"
+      ],
+      "text": "trace!(\"incremental request failed, websocket reuse properties didn't match\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1420,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1429,
+      "classes": [
+        "net"
+      ],
+      "text": "fn prepare_websocket_request("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1444,
+      "classes": [
+        "net"
+      ],
+      "text": "from_untraced_warmup: self.websocket_session.last_response_from_untraced_warmup,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1448,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Opportunistically preconnects a websocket for this turn-scoped client session."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1451,
+      "classes": [
+        "net"
+      ],
+      "text": "pub async fn preconnect_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1458,
+      "classes": [
+        "net"
+      ],
+      "text": "if !self.client.responses_websocket_enabled() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1482,
+      "classes": [
+        "net"
+      ],
+      "text": "let mut websocket_metadata = responses_metadata.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1483,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_metadata.routing_hint = self.client.build_routing_hint_header("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1492,
+      "classes": [
+        "net"
+      ],
+      "text": ".websocket_connection(WebsocketConnectParams {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1498,
+      "classes": [
+        "net"
+      ],
+      "text": "responses_metadata: &websocket_metadata,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1533,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Returns a websocket connection for this turn."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1535,
+      "classes": [
+        "net"
+      ],
+      "text": "name = \"model_client.websocket_connection\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1541,
+      "classes": [
+        "net"
+      ],
+      "text": "transport = \"responses_websocket\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1546,
+      "classes": [
+        "net"
+      ],
+      "text": "async fn websocket_connection("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1549,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> std::result::Result<&ApiWebSocketConnection, ApiError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1562,
+      "classes": [
+        "net"
+      ],
+      "text": "let reset_reason = match self.websocket_session.connection.as_ref() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1564,
+      "classes": [
+        "net"
+      ],
+      "text": "if self.websocket_session.responses_headers != *responses_headers"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1565,
+      "classes": [
+        "net"
+      ],
+      "text": "|| self.websocket_session.connection_key.as_ref() != Some(&connection_key) =>"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1572,
+      "classes": [
+        "net"
+      ],
+      "text": "let needs_new = self.websocket_session.connection.is_none() || reset_reason.is_some();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1574,
+      "classes": [
+        "net"
+      ],
+      "text": "let owner_changed = self.websocket_session.auth_owner_generation != auth_owner_generation"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1577,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "self.turn_state = Arc::new(OnceLock::new());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1581,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.reset(if owner_changed {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1588,
+      "classes": [
+        "net"
+      ],
+      "text": ".connect_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1598,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.connection = Some(new_conn);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1599,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.responses_headers = responses_headers.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1600,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.auth_owner_generation = auth_owner_generation;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1601,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.connection_key = Some(connection_key);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1602,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1605,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1609,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1613,
+      "classes": [
+        "net"
+      ],
+      "text": "\"websocket connection is unavailable\".to_string(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1820,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Streams a turn via the Responses API over WebSocket transport."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1823,
+      "classes": [
+        "net"
+      ],
+      "text": "name = \"model_client.stream_responses_websocket\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1829,
+      "classes": [
+        "net"
+      ],
+      "text": "transport = \"responses_websocket\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1832,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket.warmup = warmup"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1835,
+      "classes": [
+        "net"
+      ],
+      "text": "async fn stream_responses_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1848,
+      "classes": [
+        "net"
+      ],
+      "text": "let after_prewarm = !warmup && self.websocket_session.last_response_from_untraced_warmup;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1893,
+      "classes": [
+        "net"
+      ],
+      "text": "let mut websocket_metadata = responses_metadata.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1894,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_metadata.routing_hint = self.client.build_routing_hint_header("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1907,
+      "classes": [
+        "net"
+      ],
+      "text": ".websocket_connection(WebsocketConnectParams {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1913,
+      "classes": [
+        "net"
+      ],
+      "text": "responses_metadata: &websocket_metadata,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1946,
+      "classes": [
+        "net"
+      ],
+      "text": "// Measure the complete logical request, not only the websocket delta."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1960,
+      "classes": [
+        "net"
+      ],
+      "text": "let continuation = self.prepare_websocket_request(&request);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1965,
+      "classes": [
+        "net"
+      ],
+      "text": ".websocket_session"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1968,
+      "classes": [
+        "net"
+      ],
+      "text": ".unwrap_or(if self.websocket_session.last_request.is_some() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 1990,
+      "classes": [
+        "net"
+      ],
+      "text": "// request rather than the compressed websocket delta."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2054,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_connection ="
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2055,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.connection.as_ref().ok_or_else(|| {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2057,
+      "classes": [
+        "net"
+      ],
+      "text": "\"websocket connection is unavailable\".to_string(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2073,
+      "classes": [
+        "net"
+      ],
+      "text": "let stream_result = websocket_connection"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2076,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.connection_reused(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2085,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.last_request = Some(request);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2086,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.last_response_from_untraced_warmup = warmup;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2104,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session.last_response_rx = Some(last_request_rx);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2127,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Builds telemetry for the Responses API WebSocket transport."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2128,
+      "classes": [
+        "net"
+      ],
+      "text": "fn build_websocket_telemetry("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2140,
+      "classes": [
+        "net"
+      ],
+      "text": "let websocket_telemetry: Arc<dyn WebsocketTelemetry> = telemetry;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2141,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_telemetry"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2146,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) async fn is_websocket_prewarmed(&self) -> bool {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2147,
+      "classes": [
+        "net"
+      ],
+      "text": "if self.websocket_session.last_request.is_some()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2148,
+      "classes": [
+        "net"
+      ],
+      "text": "&& let Some(connection) = self.websocket_session.connection.as_ref()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2157,
+      "classes": [
+        "net"
+      ],
+      "text": "pub async fn prewarm_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2167,
+      "classes": [
+        "net"
+      ],
+      "text": "if !self.client.responses_websocket_enabled() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2170,
+      "classes": [
+        "net"
+      ],
+      "text": "if self.is_websocket_prewarmed().await {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2176,
+      "classes": [
+        "net"
+      ],
+      "text": ".stream_responses_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2214,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Responses WebSocket transport when the provider supports it and it remains healthy, and will"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2232,
+      "classes": [
+        "net"
+      ],
+      "text": "if self.client.responses_websocket_enabled() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2235,
+      "classes": [
+        "net"
+      ],
+      "text": ".stream_responses_websocket("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2271,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Permanently disables WebSockets for this Codex session and resets WebSocket state."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2285,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_session = WebsocketSession::default();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2319,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "turn_state: Option<&Arc<OnceLock<String>>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2388,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2896,
+      "classes": [
+        "net"
+      ],
+      "text": "self.session_telemetry.record_websocket_request("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/client.rs",
+      "line": 2936,
+      "classes": [
+        "net"
+      ],
+      "text": ".record_websocket_event(result, duration);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 25,
+      "classes": [
+        "process"
+      ],
+      "text": "use crate::spawn::spawn_child_async;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 264,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 692,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let spawn_res = tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 959,
+      "classes": [
+        "process"
+      ],
+      "text": "let child = spawn_child_async(SpawnChildRequest {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 1003,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let stdout_handle = tokio::spawn(read_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/exec.rs",
+      "line": 1009,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let stderr_handle = tokio::spawn(read_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/hook_runtime.rs",
+      "line": 419,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok(thread) => thread.rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/hook_runtime.rs",
+      "line": 1146,
+      "classes": [
+        "env"
+      ],
+      "text": "env!(\"CARGO_PKG_VERSION\"),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 928,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let session_loop_handle = tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 2232,
+      "classes": [
+        "fs"
+      ],
+      "text": "let user_config = match std::fs::read_to_string(&config_toml_path) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 2512,
+      "classes": [
+        "fs"
+      ],
+      "text": "let persist = match self.current_rollout_path().await {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 2513,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok(Some(path)) => codex_rollout::existing_rollout_path(&path).await.is_some(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 5066,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub(crate) async fn current_rollout_path(&self) -> anyhow::Result<Option<PathBuf>> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 5070,
+      "classes": [
+        "fs"
+      ],
+      "text": "live_thread.local_rollout_path().await.map_err(Into::into)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 5074,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = match self.current_rollout_path().await {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/mod.rs",
+      "line": 5084,
+      "classes": [
+        "fs"
+      ],
+      "text": "Some(rollout_path)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 50,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use std::sync::OnceLock;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 79,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "pub(super) multi_agent_version: OnceLock<MultiAgentVersion>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 84,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "pub(super) mcp_elicitation_reviewer_handle: OnceLock<codex_mcp::ElicitationReviewerHandle>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 85,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "pub(super) mcp_elicitation_lifecycle_handle: OnceLock<codex_mcp::ElicitationLifecycle>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 825,
+      "classes": [
+        "fs"
+      ],
+      "text": "resumed.rollout_path.as_deref(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 849,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let multi_agent_version = multi_agent_version.map(OnceLock::from).unwrap_or_default();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1080,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: resumed_history.rollout_path.clone(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1148,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1189,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = if let Some(live_thread) = live_thread.as_ref() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1190,
+      "classes": [
+        "fs"
+      ],
+      "text": "live_thread.local_rollout_path().await?"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1208,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: rollout_path.clone(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1293,
+      "classes": [
+        "env"
+      ],
+      "text": "app_version: Some(env!(\"CARGO_PKG_VERSION\").to_string()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1573,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let mcp_runtime = Arc::new(McpRuntime::empty("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1782,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "mcp_elicitation_reviewer_handle: OnceLock::new(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1783,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "mcp_elicitation_lifecycle_handle: OnceLock::new(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/session/session.rs",
+      "line": 1836,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/spawn.rs",
+      "line": 38,
+      "classes": [
+        "process"
+      ],
+      "text": "/// For now, we take `NetworkSandboxPolicy` as a parameter to spawn_child()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/spawn.rs",
+      "line": 52,
+      "classes": [
+        "process"
+      ],
+      "text": "pub(crate) async fn spawn_child_async(request: SpawnChildRequest<'_>) -> std::io::Result<Child> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/spawn.rs",
+      "line": 67,
+      "classes": [
+        "process"
+      ],
+      "text": "\"spawn_child_async: {program:?} {args:?} {arg0:?} {cwd:?} {network_sandbox_policy:?} {stdio_policy:?} {env:?}\""
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/spawn.rs",
+      "line": 70,
+      "classes": [
+        "process"
+      ],
+      "text": "let mut cmd = Command::new(&program);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 166,
+      "classes": [
+        "fs"
+      ],
+      "text": "let _ = std::fs::remove_dir_all(&self.path);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 462,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "LocalThreadStore::new(LocalThreadStoreConfig::from_config(config), state_db)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 480,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 669,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::create_dir_all(&codex_home)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 728,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let thread_store: Arc<dyn ThreadStore> = Arc::new(LocalThreadStore::new("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 815,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1181,
+      "classes": [
+        "fs"
+      ],
+      "text": "let history = stored_thread_to_initial_history(stored_thread, fork_source.rollout_path())?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1205,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1211,
+      "classes": [
+        "fs"
+      ],
+      "text": ".legacy_initial_history_from_rollout_path(rollout_path)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1306,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1313,
+      "classes": [
+        "fs"
+      ],
+      "text": ".legacy_initial_history_from_rollout_path(rollout_path)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1444,
+      "classes": [
+        "fs"
+      ],
+      "text": "let history = self.legacy_initial_history_from_rollout_path(path).await?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1449,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn legacy_initial_history_from_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1451,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1453,
+      "classes": [
+        "fs"
+      ],
+      "text": "let requested_rollout_path = rollout_path.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1457,
+      "classes": [
+        "fs"
+      ],
+      "text": ".read_thread_by_rollout_path(ReadThreadByRolloutPathParams {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1458,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1464,
+      "classes": [
+        "fs"
+      ],
+      "text": "stored_thread_to_initial_history(stored_thread, Some(requested_rollout_path))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1497,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 1883,
+      "classes": [
+        "env"
+      ],
+      "text": "let env_originator = std::env::var(CODEX_INTERNAL_ORIGINATOR_OVERRIDE_ENV_VAR)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 2122,
+      "classes": [
+        "fs"
+      ],
+      "text": "if let Some(requested_rollout_path) = resumed.rollout_path.as_deref()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 2123,
+      "classes": [
+        "fs"
+      ],
+      "text": "&& thread.rollout_path().as_deref() != Some(requested_rollout_path)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 2389,
+      "classes": [
+        "fs"
+      ],
+      "text": "session_configured.rollout_path.clone(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 2446,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Option<PathBuf>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/thread_manager.rs",
+      "line": 2457,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: rollout_path.or(stored_thread.rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 815,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = UnifiedExecRuntime::new(&manager, UnifiedExecShellMode::Direct);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 846,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = UnifiedExecRuntime::new(&manager, UnifiedExecShellMode::Direct);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 888,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let direct_runtime = UnifiedExecRuntime::new(&manager, UnifiedExecShellMode::Direct);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 889,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let zsh_fork_runtime = UnifiedExecRuntime::new(&manager, zsh_fork_mode());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 913,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let zsh_fork_runtime = UnifiedExecRuntime::new(&manager, zsh_fork_mode());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "line": 932,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = UnifiedExecRuntime::new(&manager, zsh_fork_mode());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process.rs",
+      "line": 251,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process.rs",
+      "line": 401,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn({"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process.rs",
+      "line": 467,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process.rs",
+      "line": 631,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process_manager.rs",
+      "line": 432,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process_manager.rs",
+      "line": 1352,
+      "classes": [
+        "process"
+      ],
+      "text": "None => backend.start(params).await,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process_manager.rs",
+      "line": 1413,
+      "classes": [
+        "process"
+      ],
+      "text": "let spawn_result = codex_sandboxing::spawn_process(codex_sandboxing::SpawnRequest {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/core/src/unified_exec/process_manager.rs",
+      "line": 1465,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let mut runtime = UnifiedExecRuntime::new(self, request.shell_mode.clone());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 41,
+      "classes": [
+        "process"
+      ],
+      "text": "use crate::process::ExecBackend;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 290,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let local_environment = Arc::new(Environment::local("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 465,
+      "classes": [
+        "net"
+      ],
+      "text": "/// manager's default environment selection. Uses the default WebSocket"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 485,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Invalid headers and WebSocket-controlled handshake headers are rejected"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 656,
+      "classes": [
+        "env"
+      ],
+      "text": "std::env::var(name)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 675,
+      "classes": [
+        "process"
+      ],
+      "text": "exec_backend: Arc<dyn ExecBackend>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 745,
+      "classes": [
+        "net"
+      ],
+      "text": "ExecServerTransportParams::websocket_url("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 792,
+      "classes": [
+        "process"
+      ],
+      "text": "let exec_backend: Arc<dyn ExecBackend> = Arc::new(RemoteProcess::new(client.clone()));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1083,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "*startup_task = Some(AbortOnDropHandle::new(tokio::spawn("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1136,
+      "classes": [
+        "process"
+      ],
+      "text": "pub fn get_exec_backend(&self) -> Arc<dyn ExecBackend> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1185,
+      "classes": [
+        "net"
+      ],
+      "text": "use tokio::net::TcpListener;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1192,
+      "classes": [
+        "net"
+      ],
+      "text": "fn prepared_websocket_environment() -> ExecServerTransportParams {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1193,
+      "classes": [
+        "net"
+      ],
+      "text": "ExecServerTransportParams::websocket_url("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1359,
+      "classes": [
+        "net"
+      ],
+      "text": "prepared_websocket_environment(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1388,
+      "classes": [
+        "net"
+      ],
+      "text": "environments: vec![(\"\".to_string(), prepared_websocket_environment())],"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1410,
+      "classes": [
+        "net"
+      ],
+      "text": "prepared_websocket_environment(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1431,
+      "classes": [
+        "net"
+      ],
+      "text": "environments: vec![(\"devbox\".to_string(), prepared_websocket_environment())],"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1453,
+      "classes": [
+        "net"
+      ],
+      "text": "environments: vec![(\"devbox\".to_string(), prepared_websocket_environment())],"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1477,
+      "classes": [
+        "net"
+      ],
+      "text": "environments: vec![(\"devbox\".to_string(), prepared_websocket_environment())],"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1620,
+      "classes": [
+        "net"
+      ],
+      "text": "let listener = TcpListener::bind(\"127.0.0.1:0\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1622,
+      "classes": [
+        "net"
+      ],
+      "text": ".expect(\"bind websocket listener\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1756,
+      "classes": [
+        "net"
+      ],
+      "text": "let first_listener = TcpListener::bind(\"127.0.0.1:0\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1758,
+      "classes": [
+        "net"
+      ],
+      "text": ".expect(\"bind first websocket listener\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1759,
+      "classes": [
+        "net"
+      ],
+      "text": "let second_listener = TcpListener::bind(\"127.0.0.1:0\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1761,
+      "classes": [
+        "net"
+      ],
+      "text": ".expect(\"bind second websocket listener\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment.rs",
+      "line": 1859,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let environment = Environment::local(test_runtime_paths(), legacy_http_client_factory());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment_provider.rs",
+      "line": 64,
+      "classes": [
+        "env"
+      ],
+      "text": "Self::new(std::env::var(CODEX_EXEC_SERVER_URL_ENV_VAR).ok())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment_provider.rs",
+      "line": 74,
+      "classes": [
+        "net"
+      ],
+      "text": "ExecServerTransportParams::websocket_url("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment_provider.rs",
+      "line": 181,
+      "classes": [
+        "net"
+      ],
+      "text": "async fn default_provider_adds_remote_environment_for_websocket_url() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment_provider.rs",
+      "line": 195,
+      "classes": [
+        "net"
+      ],
+      "text": "ExecServerTransportParams::WebSocketUrl { websocket_url, .. }"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/environment_provider.rs",
+      "line": 196,
+      "classes": [
+        "net"
+      ],
+      "text": "if websocket_url == \"ws://127.0.0.1:8765\""
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/lib.rs",
+      "line": 53,
+      "classes": [
+        "net"
+      ],
+      "text": "mod websocket_pong_watchdog;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/lib.rs",
+      "line": 136,
+      "classes": [
+        "process"
+      ],
+      "text": "pub use process::ExecBackend;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/lib.rs",
+      "line": 137,
+      "classes": [
+        "process"
+      ],
+      "text": "pub use process::ExecBackendFuture;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 36,
+      "classes": [
+        "process"
+      ],
+      "text": "use crate::ExecBackend;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 37,
+      "classes": [
+        "process"
+      ],
+      "text": "use crate::ExecBackendFuture;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 201,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move { while outgoing_rx.recv().await.is_some() {} });"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 424,
+      "classes": [
+        "process"
+      ],
+      "text": "let spawned_result = codex_sandboxing::spawn_process(codex_sandboxing::SpawnRequest {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 501,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(stream_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 512,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(stream_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 524,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 805,
+      "classes": [
+        "process"
+      ],
+      "text": "impl ExecBackend for LocalProcess {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 806,
+      "classes": [
+        "process"
+      ],
+      "text": "fn start(&self, params: ExecParams) -> ExecBackendFuture<'_> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1202,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1269,
+      "classes": [
+        "fs"
+      ],
+      "text": "let command_line = std::fs::read(\"/proc/self/cmdline\").expect(\"test command line\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1355,
+      "classes": [
+        "fs"
+      ],
+      "text": ".write_all(b\"CONNECT 8.8.8.8:443 HTTP/1.1\\r\\nHost: 8.8.8.8:443\\r\\n\\r\\n\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1404,
+      "classes": [
+        "env"
+      ],
+      "text": "env!(\"CARGO_PKG_VERSION\"),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1410,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move { while outgoing_rx.recv().await.is_some() {} });"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 1896,
+      "classes": [
+        "fs"
+      ],
+      "text": ".write_all(b\"CONNECT 8.8.8.8:443 HTTP/1.1\\r\\nHost: 8.8.8.8:443\\r\\n\\r\\n\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 2037,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(stream_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 2044,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(stream_output("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/local_process.rs",
+      "line": 2051,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(watch_exit("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/process.rs",
+      "line": 223,
+      "classes": [
+        "process"
+      ],
+      "text": "pub trait ExecBackend: Send + Sync {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/process.rs",
+      "line": 224,
+      "classes": [
+        "process"
+      ],
+      "text": "fn start(&self, params: ExecParams) -> ExecBackendFuture<'_>;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/process.rs",
+      "line": 242,
+      "classes": [
+        "process"
+      ],
+      "text": ") -> ExecBackendFuture<'_> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/exec-server/src/process.rs",
+      "line": 251,
+      "classes": [
+        "process"
+      ],
+      "text": "pub type ExecBackendFuture<'a> ="
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/file-system/src/lib.rs",
+      "line": 670,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn create_directory<'a>("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/file-system/src/lib.rs",
+      "line": 673,
+      "classes": [
+        "fs"
+      ],
+      "text": "create_directory_options: CreateDirectoryOptions,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/history/src/lib.rs",
+      "line": 362,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub rollout_path: Option<PathBuf>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 8,
+      "classes": [
+        "net"
+      ],
+      "text": "use reqwest::IntoUrl;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 9,
+      "classes": [
+        "net"
+      ],
+      "text": "use reqwest::Method;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 37,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) inner: reqwest::Client,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 52,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn new(inner: reqwest::Client) -> Self {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 57,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn new_without_request_logging(inner: reqwest::Client) -> Self {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 73,
+      "classes": [
+        "net"
+      ],
+      "text": "inner: reqwest::Client,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 133,
+      "classes": [
+        "net"
+      ],
+      "text": "inner: reqwest::Client,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 146,
+      "classes": [
+        "net"
+      ],
+      "text": "request: reqwest::Request,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 147,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::Response, reqwest::Error> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 165,
+      "classes": [
+        "net"
+      ],
+      "text": "mut request: reqwest::Request,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 166,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::Response, reqwest::Error> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 172,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) fn log_response(&self, method: &Method, url: &str, response: &reqwest::Response) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 185,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) fn log_error(&self, method: &Method, url: &str, error: &reqwest::Error) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/client.rs",
+      "line": 196,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) fn log_error_summary(&self, method: &Method, url: &str, error: &reqwest::Error) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/lib.rs",
+      "line": 31,
+      "classes": [
+        "net"
+      ],
+      "text": "/// [`build_reqwest_client_with_custom_ca`] instead."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/lib.rs",
+      "line": 33,
+      "classes": [
+        "net"
+      ],
+      "text": "pub use crate::custom_ca::build_reqwest_client_for_subprocess_tests;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/lib.rs",
+      "line": 34,
+      "classes": [
+        "net"
+      ],
+      "text": "pub use crate::custom_ca::build_reqwest_client_with_custom_ca;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/lib.rs",
+      "line": 70,
+      "classes": [
+        "net"
+      ],
+      "text": "pub use crate::transport::HttpTransport;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 5,
+      "classes": [
+        "net"
+      ],
+      "text": "//! When disabled, callers retain the existing reqwest builder behavior."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 13,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use std::sync::OnceLock;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 24,
+      "classes": [
+        "net"
+      ],
+      "text": "use crate::custom_ca::build_reqwest_client_with_custom_ca;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 40,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Coarse semantic bucket for the HTTP or WebSocket client being constructed."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 44,
+      "classes": [
+        "net"
+      ],
+      "text": "/// distinguish auth, API, WebSocket, and miscellaneous traffic without exposing"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 52,
+      "classes": [
+        "net"
+      ],
+      "text": "/// WebSocket traffic."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 53,
+      "classes": [
+        "net"
+      ],
+      "text": "WebSocket,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 63,
+      "classes": [
+        "net"
+      ],
+      "text": "Self::WebSocket => \"wss\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 101,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Preserve reqwest's built-in proxy behavior."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 265,
+      "classes": [
+        "net"
+      ],
+      "text": "/// WebSocket schemes are resolved through their HTTP equivalents so platform PAC and system"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 304,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 325,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Builds a reqwest client for a concrete outbound route."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 326,
+      "classes": [
+        "net"
+      ],
+      "text": "pub(crate) fn build_reqwest_client("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 328,
+      "classes": [
+        "net"
+      ],
+      "text": "builder: reqwest::ClientBuilder,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 331,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::Client, BuildRouteAwareHttpClientError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 332,
+      "classes": [
+        "net"
+      ],
+      "text": "build_reqwest_client_for_route("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 387,
+      "classes": [
+        "net"
+      ],
+      "text": "EnvProxyKind::SecureWebSocket => proxy_env_value(env, \"HTTPS_PROXY\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 408,
+      "classes": [
+        "net"
+      ],
+      "text": "SecureWebSocket,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 421,
+      "classes": [
+        "net"
+      ],
+      "text": "Some(\"wss\") => Self::SecureWebSocket,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 437,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Error while building a resolver-aware reqwest client."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 444,
+      "classes": [
+        "net"
+      ],
+      "text": "ExplicitTls(reqwest::Error),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 460,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Builds a reqwest client with conservative route selection and shared CA handling."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 466,
+      "classes": [
+        "net"
+      ],
+      "text": "fn build_reqwest_client_for_route("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 467,
+      "classes": [
+        "net"
+      ],
+      "text": "builder: reqwest::ClientBuilder,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 471,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::Client, BuildRouteAwareHttpClientError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 480,
+      "classes": [
+        "net"
+      ],
+      "text": "build_reqwest_client_with_custom_ca(builder).map_err(Into::into)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 485,
+      "classes": [
+        "net"
+      ],
+      "text": "builder: reqwest::ClientBuilder,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 490,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::ClientBuilder, BuildRouteAwareHttpClientError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 501,
+      "classes": [
+        "net"
+      ],
+      "text": "builder: reqwest::ClientBuilder,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 504,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::ClientBuilder, BuildRouteAwareHttpClientError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 509,
+      "classes": [
+        "net"
+      ],
+      "text": "let no_proxy = no_proxy.as_deref().and_then(reqwest::NoProxy::from_string);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 516,
+      "classes": [
+        "net"
+      ],
+      "text": "builder: reqwest::ClientBuilder,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 519,
+      "classes": [
+        "net"
+      ],
+      "text": "no_proxy: Option<reqwest::NoProxy>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 520,
+      "classes": [
+        "net"
+      ],
+      "text": ") -> Result<reqwest::ClientBuilder, BuildRouteAwareHttpClientError> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 521,
+      "classes": [
+        "net"
+      ],
+      "text": "let proxy = match reqwest::Proxy::all(proxy_url) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 622,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "static SYSTEM_PROXY_CACHE: OnceLock<Mutex<HashMap<String, CachedSystemProxyDecision>>> ="
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 623,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "OnceLock::new();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/outbound_proxy.rs",
+      "line": 897,
+      "classes": [
+        "env"
+      ],
+      "text": "std::env::var(key).ok()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/transport.rs",
+      "line": 36,
+      "classes": [
+        "net"
+      ],
+      "text": "pub trait HttpTransport: Send + Sync {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/transport.rs",
+      "line": 59,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn new(client: reqwest::Client) -> Self {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/transport.rs",
+      "line": 174,
+      "classes": [
+        "net"
+      ],
+      "text": "impl HttpTransport for ReqwestTransport {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/http-client/src/transport.rs",
+      "line": 232,
+      "classes": [
+        "net"
+      ],
+      "text": "reqwest::Response::from(buffered).text().await.ok()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 65,
+      "classes": [
+        "env"
+      ],
+      "text": "let value = std::env::var(CODEX_INTERNAL_ORIGINATOR_OVERRIDE_ENV_VAR)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 107,
+      "classes": [
+        "env"
+      ],
+      "text": "if std::env::var(CODEX_INTERNAL_ORIGINATOR_OVERRIDE_ENV_VAR).is_ok() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 156,
+      "classes": [
+        "env"
+      ],
+      "text": "let build_version = env!(\"CARGO_PKG_VERSION\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 360,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 387,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/default_client.rs",
+      "line": 472,
+      "classes": [
+        "env"
+      ],
+      "text": "std::env::var(\"CODEX_SANDBOX\").as_deref() == Ok(\"seatbelt\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 9,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs::File;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 10,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs::OpenOptions;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 14,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::os::unix::fs::OpenOptionsExt;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 28,
+      "classes": [
+        "fs"
+      ],
+      "text": "use codex_keyring_store::DefaultKeyringStore;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 29,
+      "classes": [
+        "fs"
+      ],
+      "text": "use codex_keyring_store::KeyringStore;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 160,
+      "classes": [
+        "fs"
+      ],
+      "text": "match std::fs::remove_file(&auth_file) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 186,
+      "classes": [
+        "fs"
+      ],
+      "text": "let mut file = File::open(auth_file)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 188,
+      "classes": [
+        "fs"
+      ],
+      "text": "file.read_to_string(&mut contents)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 210,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::create_dir_all(parent)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 213,
+      "classes": [
+        "fs"
+      ],
+      "text": "let mut options = OpenOptions::new();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 220,
+      "classes": [
+        "fs"
+      ],
+      "text": "file.write_all(json_data.as_bytes())?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 254,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store: Arc<dyn KeyringStore>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 258,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn new(codex_home: PathBuf, keyring_store: Arc<dyn KeyringStore>) -> Self {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 261,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 265,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn load_from_keyring(&self, key: &str) -> std::io::Result<Option<AuthDotJson>> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 266,
+      "classes": [
+        "fs"
+      ],
+      "text": "match self.keyring_store.load(KEYRING_SERVICE, key) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 269,
+      "classes": [
+        "fs"
+      ],
+      "text": "\"failed to deserialize CLI auth from keyring: {err}\""
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 274,
+      "classes": [
+        "fs"
+      ],
+      "text": "\"failed to load CLI auth from keyring: {}\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 280,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn save_to_keyring(&self, key: &str, value: &str) -> std::io::Result<()> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 281,
+      "classes": [
+        "fs"
+      ],
+      "text": "match self.keyring_store.save(KEYRING_SERVICE, key, value) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 285,
+      "classes": [
+        "fs"
+      ],
+      "text": "\"failed to write OAuth tokens to keyring: {}\","
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 298,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.load_from_keyring(&key)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 305,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.save_to_keyring(&key, &serialized)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 314,
+      "classes": [
+        "fs"
+      ],
+      "text": "let keyring_removed = self"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 315,
+      "classes": [
+        "fs"
+      ],
+      "text": ".keyring_store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 318,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::io::Error::other(format!(\"failed to delete auth from keyring: {err}\"))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 321,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok(keyring_removed || file_removed)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 341,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn new(codex_home: PathBuf, keyring_store: Arc<dyn KeyringStore>) -> Self {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 343,
+      "classes": [
+        "fs"
+      ],
+      "text": "DirectKeyringAuthStorage::new(codex_home.clone(), Arc::clone(&keyring_store));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 344,
+      "classes": [
+        "fs"
+      ],
+      "text": "let secrets_manager = SecretsManager::new_with_keyring_store_and_namespace("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 347,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 394,
+      "classes": [
+        "fs"
+      ],
+      "text": "let keyring_removed = self"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 404,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok(keyring_removed || file_removed || direct_removed)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 410,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_storage: Arc<dyn AuthStorageBackend>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 417,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store: Arc<dyn KeyringStore>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 418,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 421,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_storage: create_keyring_auth_storage("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 423,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 424,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 433,
+      "classes": [
+        "fs"
+      ],
+      "text": "match self.keyring_storage.load() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 437,
+      "classes": [
+        "fs"
+      ],
+      "text": "warn!(\"failed to load CLI auth from keyring, falling back to file storage: {err}\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 444,
+      "classes": [
+        "fs"
+      ],
+      "text": "match self.keyring_storage.save(auth) {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 447,
+      "classes": [
+        "fs"
+      ],
+      "text": "warn!(\"failed to save auth to keyring, falling back to file storage: {err}\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 455,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.keyring_storage.delete()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 505,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 507,
+      "classes": [
+        "fs"
+      ],
+      "text": "let keyring_store: Arc<dyn KeyringStore> = Arc::new(DefaultKeyringStore);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 508,
+      "classes": [
+        "fs"
+      ],
+      "text": "create_auth_storage_with_store(codex_home, mode, keyring_store, keyring_backend_kind)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 514,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store: Arc<dyn KeyringStore>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 515,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 520,
+      "classes": [
+        "fs"
+      ],
+      "text": "create_keyring_auth_storage(codex_home, keyring_store, keyring_backend_kind)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 524,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 525,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 531,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn create_keyring_auth_storage("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 533,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_store: Arc<dyn KeyringStore>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 534,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 536,
+      "classes": [
+        "fs"
+      ],
+      "text": "match keyring_backend_kind {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 538,
+      "classes": [
+        "fs"
+      ],
+      "text": "Arc::new(DirectKeyringAuthStorage::new(codex_home, keyring_store))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/auth/storage.rs",
+      "line": 541,
+      "classes": [
+        "fs"
+      ],
+      "text": "Arc::new(SecretsKeyringAuthStorage::new(codex_home, keyring_store))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 74,
+      "classes": [
+        "net"
+      ],
+      "text": ".post(url)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 77,
+      "classes": [
+        "net"
+      ],
+      "text": ".send()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 118,
+      "classes": [
+        "net"
+      ],
+      "text": ".post(&url)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 121,
+      "classes": [
+        "net"
+      ],
+      "text": ".send()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 150,
+      "classes": [
+        "env"
+      ],
+      "text": "let version = env!(\"CARGO_PKG_VERSION\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/device_code_auth.rs",
+      "line": 233,
+      "classes": [
+        "fs"
+      ],
+      "text": "opts.auth_keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 98,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub auth_keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 109,
+      "classes": [
+        "fs"
+      ],
+      "text": "auth_keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 123,
+      "classes": [
+        "fs"
+      ],
+      "text": "auth_keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 204,
+      "classes": [
+        "process"
+      ],
+      "text": "let _ = webbrowser::open(&auth_url);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 229,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::spawn(async move {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 255,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let _ = tokio::task::spawn_blocking(move || req.respond(response)).await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 261,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let _ = tokio::task::spawn_blocking(move || req.respond(redirect)).await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 269,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let _ = tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 281,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "match tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 452,
+      "classes": [
+        "fs"
+      ],
+      "text": "opts.auth_keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 579,
+      "classes": [
+        "fs"
+      ],
+      "text": "writer.write_all(b\"\\r\\n\")?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 580,
+      "classes": [
+        "fs"
+      ],
+      "text": "writer.write_all(&body)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 626,
+      "classes": [
+        "fs"
+      ],
+      "text": "stream.write_all(b\"GET /cancel HTTP/1.1\\r\\n\")?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 627,
+      "classes": [
+        "fs"
+      ],
+      "text": "stream.write_all(format!(\"Host: 127.0.0.1:{port}\\r\\n\").as_bytes())?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 628,
+      "classes": [
+        "fs"
+      ],
+      "text": "stream.write_all(b\"Connection: close\\r\\n\\r\\n\")?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 838,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind: AuthKeyringBackendKind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 842,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 869,
+      "classes": [
+        "fs"
+      ],
+      "text": "keyring_backend_kind,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 1026,
+      "classes": [
+        "net"
+      ],
+      "text": ".post(token_endpoint)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/login/src/server.rs",
+      "line": 1036,
+      "classes": [
+        "net"
+      ],
+      "text": ".send()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 244,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Resolves routing for Responses HTTP, compaction, and WebSocket handshakes."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 707,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_connect_timeout_ms: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 709,
+      "classes": [
+        "net"
+      ],
+      "text": "supports_websockets: false,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 912,
+      "classes": [
+        "fs"
+      ],
+      "text": "let mut counter = std::fs::OpenOptions::new()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 917,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::io::Write::write_all(&mut counter, b\"1\").expect(\"write invocation counter\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 923,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::create_dir(&counter).expect(\"AWS command directory should be created\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 926,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::hard_link(&executable, &aws)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 927,
+      "classes": [
+        "fs"
+      ],
+      "text": ".or_else(|_| std::fs::copy(&executable, &aws).map(|_| ()))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 929,
+      "classes": [
+        "env"
+      ],
+      "text": "let existing_path = std::env::var_os(\"PATH\").unwrap_or_default();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 934,
+      "classes": [
+        "process"
+      ],
+      "text": "let output = tokio::process::Command::new(executable)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 942,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::remove_dir_all(&counter).expect(\"AWS command directory should be removed\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 946,
+      "classes": [
+        "fs"
+      ],
+      "text": "let _ = std::fs::remove_file(&counter);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 1021,
+      "classes": [
+        "fs"
+      ],
+      "text": "let read_counter = || std::fs::read_to_string(&counter).expect(\"read counter\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 1052,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::write("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 1105,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::write(&export_gate, []).expect(\"export gate should open\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 1113,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::read_to_string(export_counter)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/provider.rs",
+      "line": 1119,
+      "classes": [
+        "fs"
+      ],
+      "text": "std::fs::remove_file(&counter).expect(\"refresh invocation counter should be removed\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/shared_state.rs",
+      "line": 3,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use std::sync::OnceLock;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/shared_state.rs",
+      "line": 6,
+      "classes": [
+        "fs"
+      ],
+      "text": "use codex_keyring_store::DefaultKeyringStore;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider/src/shared_state.rs",
+      "line": 31,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "static STATE: OnceLock<ModelProviderSharedState> = OnceLock::new();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 180,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Maximum time (in milliseconds) to wait for a websocket connection attempt before treating"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 182,
+      "classes": [
+        "net"
+      ],
+      "text": "pub websocket_connect_timeout_ms: Option<u64>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 189,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Whether this provider supports the Responses API WebSocket transport."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 191,
+      "classes": [
+        "net"
+      ],
+      "text": "pub supports_websockets: bool,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 296,
+      "classes": [
+        "net"
+      ],
+      "text": "if self.supports_websockets {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 297,
+      "classes": [
+        "net"
+      ],
+      "text": "// TODO(celia-oai): Support AWS SigV4 signing for WebSocket"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 299,
+      "classes": [
+        "net"
+      ],
+      "text": "// to enable Responses-over-WebSocket."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 300,
+      "classes": [
+        "net"
+      ],
+      "text": "return Err(\"provider aws cannot be combined with supports_websockets\".to_string());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 405,
+      "classes": [
+        "env"
+      ],
+      "text": "if let Ok(val) = std::env::var(env_var)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 475,
+      "classes": [
+        "env"
+      ],
+      "text": "let api_key = std::env::var(env_key)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 511,
+      "classes": [
+        "net"
+      ],
+      "text": "/// Effective timeout for websocket connect attempts."
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 512,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn websocket_connect_timeout(&self) -> Duration {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 513,
+      "classes": [
+        "net"
+      ],
+      "text": "self.websocket_connect_timeout_ms"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 532,
+      "classes": [
+        "env"
+      ],
+      "text": "[(\"version\".to_string(), env!(\"CARGO_PKG_VERSION\").into())]"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 551,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_connect_timeout_ms: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 553,
+      "classes": [
+        "net"
+      ],
+      "text": "supports_websockets: true,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 590,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_connect_timeout_ms: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 592,
+      "classes": [
+        "net"
+      ],
+      "text": "supports_websockets: false,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 731,
+      "classes": [
+        "env"
+      ],
+      "text": "codex_oss_port = std::env::var(\"CODEX_OSS_PORT\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 738,
+      "classes": [
+        "env"
+      ],
+      "text": "let codex_oss_base_url = std::env::var(\"CODEX_OSS_BASE_URL\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 763,
+      "classes": [
+        "net"
+      ],
+      "text": "websocket_connect_timeout_ms: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/model-provider-info/src/lib.rs",
+      "line": 765,
+      "classes": [
+        "net"
+      ],
+      "text": "supports_websockets: false,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/lib.rs",
+      "line": 100,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub use compression::existing_rollout_path;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/lib.rs",
+      "line": 102,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub use compression::plain_rollout_path;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/lib.rs",
+      "line": 125,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub use list::find_rollout_path_by_rollout_id;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/lib.rs",
+      "line": 158,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub use search::search_rollout_paths;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 4,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 5,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs::File;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 89,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub(crate) rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 641,
+      "classes": [
+        "fs"
+      ],
+      "text": "state_db::read_repair_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 673,
+      "classes": [
+        "fs"
+      ],
+      "text": "item.rollout_path.as_path(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 714,
+      "classes": [
+        "fs"
+      ],
+      "text": "item.rollout_path.as_path(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 925,
+      "classes": [
+        "fs"
+      ],
+      "text": "precompute_new_rollout_path(config, conversation_id, rollout_id_override)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 948,
+      "classes": [
+        "env"
+      ],
+      "text": "cli_version: env!(\"CARGO_PKG_VERSION\").to_string(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 976,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 990,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 996,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = state.rollout_path.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1003,
+      "classes": [
+        "fs"
+      ],
+      "text": "// writes. Using `tokio::fs::File` keeps everything on the async I/O"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1007,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path_for_spawn = rollout_path.clone();"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1015,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path_for_spawn.display(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1027,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1031,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub fn rollout_path(&self) -> &Path {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1032,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.rollout_path.as_path()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1169,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(compression::plain_rollout_path(path)),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1722,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn precompute_new_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1747,
+      "classes": [
+        "fs"
+      ],
+      "text": "let refresh_modified_time = !compression::plain_rollout_path(path).try_exists()?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1755,
+      "classes": [
+        "fs"
+      ],
+      "text": "fs::create_dir_all(parent)?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1756,
+      "classes": [
+        "fs"
+      ],
+      "text": "let mut file = std::fs::OpenOptions::new()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1762,
+      "classes": [
+        "fs"
+      ],
+      "text": "file.set_times(std::fs::FileTimes::new().set_modified(std::time::SystemTime::now()))?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1780,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1854,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.rollout_path.display(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1868,
+      "classes": [
+        "fs"
+      ],
+      "text": "let file = open_log_file(self.rollout_path.as_path())?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 1870,
+      "classes": [
+        "fs"
+      ],
+      "text": "file: tokio::fs::File::from_std(file),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2006,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: &Path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2009,
+      "classes": [
+        "fs"
+      ],
+      "text": "let (_rollout_path, file, ordinal_state) ="
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2010,
+      "classes": [
+        "fs"
+      ],
+      "text": "open_rollout_for_append(rollout_path, /*writer_lock*/ None).await?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2019,
+      "classes": [
+        "fs"
+      ],
+      "text": ") -> std::io::Result<(PathBuf, tokio::fs::File, RolloutOrdinalState)> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2021,
+      "classes": [
+        "fs"
+      ],
+      "text": "!tokio::fs::try_exists(compression::plain_rollout_path(path)).await?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2024,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let (file, ordinal_state) = tokio::task::spawn_blocking(move || {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2026,
+      "classes": [
+        "fs"
+      ],
+      "text": "let mut file = File::options()"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2031,
+      "classes": [
+        "fs"
+      ],
+      "text": "file.set_times(std::fs::FileTimes::new().set_modified(std::time::SystemTime::now()))?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2039,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok((path, tokio::fs::File::from_std(file), ordinal_state))"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2051,
+      "classes": [
+        "fs"
+      ],
+      "text": "file.write_all(b\"\\n\")?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2058,
+      "classes": [
+        "fs"
+      ],
+      "text": "file: tokio::fs::File,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2093,
+      "classes": [
+        "fs"
+      ],
+      "text": "self.file.write_all(json.as_bytes()).await?;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2129,
+      "classes": [
+        "fs"
+      ],
+      "text": "path: item.rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2185,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: &Path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2194,
+      "classes": [
+        "fs"
+      ],
+      "text": "if let Ok((items, _, _)) = RolloutRecorder::load_rollout_items(rollout_path).await"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2213,
+      "classes": [
+        "fs"
+      ],
+      "text": "metadata::extract_metadata_from_rollout(rollout_path, default_provider)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2227,
+      "classes": [
+        "fs"
+      ],
+      "text": "item.rollout_path.as_path(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2234,
+      "classes": [
+        "fs"
+      ],
+      "text": "return Some(item.rollout_path.clone());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/rollout/src/recorder.rs",
+      "line": 2239,
+      "classes": [
+        "fs"
+      ],
+      "text": "None => page.items.first().map(|item| item.rollout_path.clone()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/build.rs",
+      "line": 1,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 49,
+      "classes": [
+        "fs"
+      ],
+      "text": "use std::fs;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 79,
+      "classes": [
+        "fs"
+      ],
+      "text": "fs::create_dir_all(skills_root_dir.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 104,
+      "classes": [
+        "fs"
+      ],
+      "text": "Ok(fs::read_to_string(path.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 147,
+      "classes": [
+        "fs"
+      ],
+      "text": "fs::create_dir_all(dest.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 154,
+      "classes": [
+        "fs"
+      ],
+      "text": "fs::create_dir_all(subdir_dest.as_path()).map_err(|source| {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/skills/src/lib.rs",
+      "line": 162,
+      "classes": [
+        "fs"
+      ],
+      "text": "fs::create_dir_all(parent).map_err(|source| {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/live_thread.rs",
+      "line": 409,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub async fn local_rollout_path(&self) -> ThreadStoreResult<Option<PathBuf>> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/live_thread.rs",
+      "line": 418,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(self.thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 53,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "use tokio::sync::OnceCell;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 147,
+      "classes": [
+        "fs",
+        "runtime_init"
+      ],
+      "text": "thread_history_db: Arc<OnceCell<sqlx::SqlitePool>>,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 265,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "thread_history_db: Arc::new(OnceCell::new()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 286,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn thread_history_db(&self) -> ThreadStoreResult<&sqlx::SqlitePool> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 303,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub async fn read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 305,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: PathBuf,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 309,
+      "classes": [
+        "fs"
+      ],
+      "text": "read_thread::read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 311,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 319,
+      "classes": [
+        "fs"
+      ],
+      "text": "pub async fn live_rollout_path(&self, thread_id: ThreadId) -> ThreadStoreResult<PathBuf> {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 320,
+      "classes": [
+        "fs"
+      ],
+      "text": "live_writer::rollout_path(self, thread_id).await"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 394,
+      "classes": [
+        "fs"
+      ],
+      "text": "if let Ok(rollout_path) = live_writer::rollout_path(self, params.thread_id).await {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 396,
+      "classes": [
+        "fs"
+      ],
+      "text": "&& helpers::rollout_path_is_archived("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 398,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path.as_path(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 405,
+      "classes": [
+        "fs"
+      ],
+      "text": "return read_thread::read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 407,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 433,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn read_thread_by_rollout_path_params("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 437,
+      "classes": [
+        "fs"
+      ],
+      "text": "read_thread::read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 439,
+      "classes": [
+        "fs"
+      ],
+      "text": "params.rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 497,
+      "classes": [
+        "fs"
+      ],
+      "text": "if patch.rollout_path.is_some() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 499,
+      "classes": [
+        "fs"
+      ],
+      "text": "message: \"pending thread metadata cannot set rollout_path\".to_string(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 589,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 593,
+      "classes": [
+        "fs"
+      ],
+      "text": "Box::pin(LocalThreadStore::read_thread_by_rollout_path_params("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 833,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 840,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 841,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 861,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert_rollout_contains_message(rollout_path.as_path(), \"first live write\").await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 885,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 891,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(config, Some(runtime.clone()));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 920,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 926,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 952,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn paginated_resume_prefers_explicit_rollout_path_over_stale_sqlite_path() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 955,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 961,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 964,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file_with_history_mode("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 971,
+      "classes": [
+        "fs"
+      ],
+      "text": "let stale_rollout_path = home.path().join(\"stale-rollout.jsonl\");"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 972,
+      "classes": [
+        "fs"
+      ],
+      "text": "tokio::fs::write(&stale_rollout_path, \"malformed session metadata\\n\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 977,
+      "classes": [
+        "fs"
+      ],
+      "text": "stale_rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 997,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path.clone()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1010,
+      "classes": [
+        "fs"
+      ],
+      "text": "resumed.local_rollout_path().await.expect(\"live rollout\"),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1011,
+      "classes": [
+        "fs"
+      ],
+      "text": "Some(rollout_path)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1038,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1044,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1116,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1122,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1213,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1219,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1224,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1225,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1232,
+      "classes": [
+        "fs"
+      ],
+      "text": "!tokio::fs::try_exists(rollout_path.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1249,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1255,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1289,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1295,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1300,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1301,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1317,
+      "classes": [
+        "fs"
+      ],
+      "text": "tokio::fs::try_exists(rollout_path.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1326,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert_eq!(metadata.rollout_path, rollout_path);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1333,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1339,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1342,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path ="
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1349,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1384,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn live_thread_resume_loads_history_from_explicit_external_rollout_path() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1388,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let runtime = codex_state::StateRuntime::init("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1394,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = Arc::new(LocalThreadStore::new(config, Some(runtime.clone())));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1397,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file(external_home.path(), \"2025-01-03T17-30-00\", uuid)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1404,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1441,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1443,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1473,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1483,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1484,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1501,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert!(!rollout_path.exists());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1513,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert!(!rollout_path.exists());"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1534,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let first_store = LocalThreadStore::new(config.clone(), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1554,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = first_store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1555,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1563,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let resumed_store = LocalThreadStore::new(config, /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1567,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: None,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1586,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert_rollout_contains_message(rollout_path.as_path(), \"before resume\").await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1587,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert_rollout_contains_message(rollout_path.as_path(), \"after resume\").await;"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1594,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let primary = LocalThreadStore::new(config.clone(), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1595,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let secondary = LocalThreadStore::new(config, /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1610,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = primary"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1611,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1616,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1648,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1668,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1675,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1676,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1682,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1696,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1698,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1701,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file_with_history_mode("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1711,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path.clone()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1729,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1739,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn load_history_uses_live_writer_rollout_path() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1742,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1745,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file(external_home.path(), \"2025-01-04T10-00-00\", uuid)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1751,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1787,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn read_thread_uses_live_writer_rollout_path_for_external_resume() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1790,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1793,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file(external_home.path(), \"2025-01-04T11-00-00\", uuid)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1799,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path.clone()),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1816,
+      "classes": [
+        "fs"
+      ],
+      "text": "assert_eq!(thread.rollout_path, Some(rollout_path));"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1835,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn load_history_uses_live_writer_rollout_path_for_archived_source() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1837,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1840,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_archived_session_file(home.path(), \"2025-01-04T10-30-00\", uuid)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1846,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1902,
+      "classes": [
+        "fs"
+      ],
+      "text": "async fn read_thread_by_rollout_path_includes_history() {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1904,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1919,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1920,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1925,
+      "classes": [
+        "fs"
+      ],
+      "text": ".read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1926,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path,"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1951,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1954,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = write_session_file_with_history_mode("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1974,
+      "classes": [
+        "fs"
+      ],
+      "text": ".read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1975,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path.clone(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1996,
+      "classes": [
+        "fs"
+      ],
+      "text": ".read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 1997,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path.clone(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 2016,
+      "classes": [
+        "fs"
+      ],
+      "text": "rollout_path: Some(rollout_path),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 2028,
+      "classes": [
+        "runtime_init"
+      ],
+      "text": "let store = LocalThreadStore::new(test_config(home.path()), /*state_db*/ None);"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 2057,
+      "classes": [
+        "fs"
+      ],
+      "text": "let rollout_path = store"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 2058,
+      "classes": [
+        "fs"
+      ],
+      "text": ".live_rollout_path(thread_id)"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/local/mod.rs",
+      "line": 2061,
+      "classes": [
+        "fs"
+      ],
+      "text": "let (items, _, _) = RolloutRecorder::load_rollout_items(rollout_path.as_path())"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/thread-store/src/store.rs",
+      "line": 241,
+      "classes": [
+        "fs"
+      ],
+      "text": "fn read_thread_by_rollout_path("
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/windows-sandbox-rs/build.rs",
+      "line": 10,
+      "classes": [
+        "env"
+      ],
+      "text": "if env::var(\"CARGO_CFG_TARGET_OS\").as_deref() != Ok(\"windows\") {"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/windows-sandbox-rs/build.rs",
+      "line": 14,
+      "classes": [
+        "env"
+      ],
+      "text": "let manifest_dir = env::var_os(\"CARGO_MANIFEST_DIR\")"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/windows-sandbox-rs/build.rs",
+      "line": 22,
+      "classes": [
+        "env"
+      ],
+      "text": "env::var(\"CARGO_CFG_TARGET_ENV\").as_deref(),"
+    },
+    {
+      "path": "upstream/reference/codex/codex-rs/windows-sandbox-rs/build.rs",
+      "line": 23,
+      "classes": [
+        "env"
+      ],
+      "text": "env::var(\"CARGO_CFG_TARGET_ABI\").as_deref(),"
+    },
+    {
+      "path": "upstream/reference/cc-switch/src-tauri/build.rs",
+      "line": 17,
+      "classes": [
+        "env"
+      ],
+      "text": "std::env::var(\"CARGO_MANIFEST_DIR\").expect(\"missing CARGO_MANIFEST_DIR\"),"
+    },
+    {
+      "path": "upstream/reference/cc-switch/src-tauri/src/proxy/error.rs",
+      "line": 196,
+      "classes": [
+        "net"
+      ],
+      "text": "pub fn categorize_error(error: &reqwest::Error) -> ErrorCategory {"
+    }
+  ]
+}

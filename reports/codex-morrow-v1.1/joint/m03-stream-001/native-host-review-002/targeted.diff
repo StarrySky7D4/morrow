@@ -1,0 +1,131 @@
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\m03-stream-001\native-host-candidate-001\source\src\supervisor.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\m03-stream-001\native-host-candidate-002\source\src\supervisor.rs
+@@ -276,6 +276,7 @@
+     }
+     fn cancel_http(&mut self, code: u32) -> Result<()> {
+         let first = !self.progress.revoke_applied;
++        let completed_close = code == 25 && self.progress.request_closed;
+         if !self.progress.revoke_persisted {
+             self.parent.revoke_native()?;
+             if let Some(g) = &mut self.grant {
+@@ -285,7 +286,9 @@
+         }
+         self.parent.gate.lock().map_err(|_| "gate poison")?.revoked = true;
+         self.progress.revoke_applied = true;
+-        self.progress.error_code = code;
++        if !completed_close {
++            self.progress.error_code = code;
++        }
+         self.cancel.cancel();
+         self.pipe.cancel();
+         self.body_pending.clear();
+@@ -301,7 +304,7 @@
+             "http_cancel_applied",
+             json!({"code":code,"progress":describe(&self.progress)}),
+         );
+-        if first {
++        if first && !completed_close {
+             self.state(w::Kind::HttpTerminal, 0)?;
+         }
+         Ok(())
+@@ -778,6 +781,8 @@
+     let mut exited = false;
+     let mut control_open = true;
+     let mut reason = 0u32;
++    let mut close_sequence: Option<u64> = None;
++    let mut close_ack_pending = false;
+     let mut closing: Option<Instant> = None;
+     let mut killed = false;
+     let mut unconfirmed = false;
+@@ -786,7 +791,15 @@
+     loop {
+         if reason != 0 && closing.is_none() {
+             shared.event("session_close_reason", json!({"reason":reason}));
++            let mut cancellation_proven = true;
+             if let Err(e) = http.cancel_http(reason) {
++                cancellation_proven = false;
++                if close_sequence.is_some() {
++                    shared.event(
++                        "close_ack_failed",
++                        json!({"reason":"cancellation persistence unconfirmed"}),
++                    );
++                }
+                 shared.event("cancel_persistence_unconfirmed", json!(e));
+                 http.cancel.cancel();
+                 http.pipe.cancel();
+@@ -796,7 +809,26 @@
+             shared.phase("Closing");
+             http.progress.owner = w::OwnerPhase::Closing;
+             closing = Some(Instant::now() + Duration::from_millis(spec.close_ms));
+-            if http.control.front().is_some_and(|o| o.offset > 0) {
++            if let Some(sequence) =
++                close_sequence.filter(|_| reason == 25 && cancellation_proven && stdin.is_some())
++            {
++                // Preserve earlier complete/partial frames. The closing ACK is appended
++                // after cancellation state and must itself finish before stdin closes.
++                match http.state(w::Kind::State, sequence) {
++                    Ok(()) => {
++                        close_ack_pending = true;
++                        shared.event("close_ack_pending", json!({"sequence":sequence}));
++                    }
++                    Err(error) => {
++                        shared.event(
++                            "close_ack_failed",
++                            json!({"reason":"enqueue","error":error}),
++                        );
++                        http.control.clear();
++                        stdin = None;
++                    }
++                }
++            } else if http.control.front().is_some_and(|o| o.offset > 0) {
+                 http.control.clear();
+                 stdin = None;
+                 shared.event("partial_control_write_cancelled", json!(true));
+@@ -850,6 +882,10 @@
+             },
+             _=tick.tick()=>{
+                 let now=Instant::now();
++                if close_ack_pending && (now>=expires || http.control.front().is_some_and(|o|now>=o.deadline) || closing.is_some_and(|d|now>=d)) {
++                    close_ack_pending=false;http.control.clear();stdin=None;
++                    shared.event("close_ack_failed",json!({"reason":"original/frame/close deadline"}));
++                }
+                 if closing.is_none(){
+                     if now>=expires{reason=20;}else if !ready&&now>=handshake{reason=23;}
+                     else if input_deadline.is_some_and(|d|now>=d)||http.control.front().is_some_and(|o|now>=o.deadline)||http.data_deadline.is_some_and(|d|now>=d){reason=16;}
+@@ -869,14 +905,14 @@
+                 http.publish();
+             },
+             result=async{let o=http.control.front().unwrap();stdin.as_mut().unwrap().write(&o.bytes[o.offset..]).await},if can_write=>{
+-                match result{Ok(0)|Err(_)=>{stdin=None;http.control.clear();reason=24;},Ok(n)=>{let o=http.control.front_mut().unwrap();o.offset+=n;if o.offset==o.bytes.len(){let o=http.control.pop_front().unwrap();let kind=w::Frame::decode(&o.bytes).unwrap().kind;shared.event("control_frame_sent",json!({"raw_hex":w::hex(&o.bytes)}));if kind==w::Kind::Stop{stdin=None;}}}}
++                match result{Ok(0)|Err(_)=>{if close_ack_pending{shared.event("close_ack_failed",json!({"reason":"write incomplete/error"}));close_ack_pending=false;}stdin=None;http.control.clear();reason=24;},Ok(n)=>{let o=http.control.front_mut().unwrap();o.offset+=n;if o.offset==o.bytes.len(){let o=http.control.pop_front().unwrap();let frame=w::Frame::decode(&o.bytes).unwrap();shared.event("control_frame_sent",json!({"raw_hex":w::hex(&o.bytes)}));if close_ack_pending && frame.kind==w::Kind::State && Some(frame.sequence)==close_sequence && frame.code==0 {close_ack_pending=false;shared.event("close_ack_written",json!({"sequence":frame.sequence,"bytes":o.bytes.len()}));stdin=None;http.control.clear();}else if frame.kind==w::Kind::Stop{stdin=None;}}}}
+             },
+             status=child.wait(),if !exited=>{
+                 exited=true;match status{Ok(status)=>{let mut s=shared.state.lock().unwrap();s.exit_observed=true;s.exit_code=status.code();drop(s);http.progress.child_exited=true;shared.event("exit",json!({"code":status.code(),"business_success":false}));},Err(error)=>shared.event("wait_unconfirmed",json!(error.to_string()))}reason=if reason==0{24}else{reason};
+             },
+             result=stdout.read(&mut scratch[..read_limit]),if !stdout_done&&(http.control.len()<8||closing.is_some())=>{
+                 match result{Ok(0)=>{stdout_done=true;shared.state.lock().unwrap().stdout_eof=true;http.progress.stdout_eof=true;if reason==0{reason=24;}shared.event("stdout_eof",json!(true));},Err(error)=>{stdout_done=true;reason=24;shared.event("stdout_error",json!(error.to_string()));},Ok(n)=>{
+-                    if closing.is_some(){continue;}if input.is_empty(){input_deadline=Some(Instant::now()+Duration::from_millis(spec.frame_ms));}input.extend_from_slice(&scratch[..n]);if input.len()!=target{continue;}
++                    if closing.is_some(){if close_sequence.is_some(){shared.event("close_ack_failed",json!({"reason":"unexpected guest bytes after Close","bytes":n}));close_ack_pending=false;stdin=None;http.control.clear();}continue;}if input.is_empty(){input_deadline=Some(Instant::now()+Duration::from_millis(spec.frame_ms));}input.extend_from_slice(&scratch[..n]);if input.len()!=target{continue;}
+                     if target==4{match w::payload_length(&input){Ok(n)=>{target=n+4;continue;},Err(_)=>{reason=16;continue;}}}
+                     shared.event("control_frame_received",json!({"raw_hex":w::hex(&input)}));let decoded=w::Frame::decode(&input);input.clear();target=4;input_deadline=None;
+                     let frame=match decoded{Ok(f)=>f,Err(_)=>{reason=16;continue;}};
+@@ -888,7 +924,7 @@
+                     let revoked={let g=http.parent.gate.lock().unwrap();http.progress.issued_offset=http.progress.issued_offset.max(g.issued_body_end);http.progress.last_write_ordinal=g.last_write;g.revoked};
+                     let cleanup=matches!(frame.kind,w::Kind::Query|w::Kind::HttpCancel|w::Kind::Close)||matches!(&frame.payload,w::Payload::Credit(c)if frame.kind==w::Kind::HttpCredit&&c.window_bytes==0);
+                     if revoked&&!cleanup{let _=http.queue(w::Kind::Denied,last_sequence,19,w::Payload::None);continue;}
+-                    if frame.kind==w::Kind::Close{reason=25;continue;}
++                    if frame.kind==w::Kind::Close{close_sequence=Some(last_sequence);reason=25;continue;}
+                     if let Err(error)=http.handle_control(frame){shared.event("request_denied",json!({"sequence":last_sequence,"error":error}));let _=http.queue(w::Kind::Denied,last_sequence,27,w::Payload::None);reason=27;}
+                     http.publish();
+                 }}
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\m03-stream-001\native-host-candidate-001\source\src\main.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\m03-stream-001\native-host-candidate-002\source\src\main.rs
+@@ -165,7 +165,7 @@
+           if let Some(s)=authority.snapshot(){
+            for event in &s.events[session_cursor..]{if output_ok{output_ok=emit(&mut out,json!({"event":"host_observation","pid":s.pid,"session":s.session,"epoch":s.epoch,"observation":event})).await.is_ok();}}session_cursor=s.events.len();
+            if released{
+-            let reason=s.events.iter().find(|e|e["event"]=="session_close_reason").and_then(|e|e["detail"]["reason"].as_u64());rejected|=!matches!(reason,Some(19|25));
++            let reason=s.events.iter().find(|e|e["event"]=="session_close_reason").and_then(|e|e["detail"]["reason"].as_u64());rejected|=!matches!(reason,Some(19|25))||s.events.iter().any(|e|e["event"]=="close_ack_failed");
+             if output_ok{output_ok=emit(&mut out,json!({"event":"final","snapshot":s,"state":authority.inspect(None)?})).await.is_ok();}
+             return if rejected||!output_ok{Err("rejected session/operator request; release observed".into())}else{Ok(())}
+            }

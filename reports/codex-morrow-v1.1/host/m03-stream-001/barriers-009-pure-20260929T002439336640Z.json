@@ -1,0 +1,22 @@
+{
+  "status": "pure_only_no_process_socket_or_http",
+  "script_sha256": "6906738999493abf941911dbb35db196cdecf4e64767c0080d493735ceafab56",
+  "cases": [
+    "core-revoke",
+    "data-pending"
+  ],
+  "fixed_fixture_ready": false,
+  "post_count": 0,
+  "runtime_tested": false,
+  "checks": [
+    "fixed-spec limits",
+    "qualified same-operation chain",
+    "cancel probe completed rejected",
+    "insufficient samples rejected",
+    "short sample interval rejected",
+    "wrong reap issue rejected",
+    "four cross-batch marker mutations rejected",
+    "valid marker accepted"
+  ],
+  "synthetic_marker_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-009-pure-markers-20260929T002439333933Z"
+}

@@ -1,0 +1,27 @@
+{
+  "captured_at": "2026-09-28T19:45:01.351722+00:00",
+  "scope": "identity_and_matrix_only",
+  "independent_host_run": false,
+  "independent_client_run": false,
+  "product_pass_credit": 0,
+  "M02_complete": false,
+  "G1_passed": false,
+  "checker_sha256": "34be42279d2e5f63f5f7384269a5b9f6b97a584c42f74c5e989e3ecb6574b639",
+  "issues": [],
+  "baseline_sha256": "d83f1a69e9666d41360359651f3bc1a34ab74ec80496f02f28463a33bad52a14",
+  "matrix_sha256": "683e4dd0f49afe3de4da9cb2d26ba6d133801db48987438672e90a17303233b2",
+  "head": "88557916aabf2e10619b1022110035178498898a",
+  "branch": "codex/io-safety-refactor",
+  "frozen_file_count": 1485,
+  "additional_file_count": 0,
+  "diagnostic_cases": 14,
+  "diagnostic_cases_executed": 0,
+  "pending": [
+    "host_authoritative_new_contract",
+    "ready_handoff_source_review",
+    "independent_real_host_child_ipc_and_lifecycle"
+  ],
+  "integrity_status": "verified",
+  "status": "blocked_pending_runtime_review",
+  "exit_code": 0
+}

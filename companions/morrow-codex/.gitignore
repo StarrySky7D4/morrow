@@ -1,0 +1,12 @@
+/upstream/codex/
+/upstream/cc-switch/
+/upstream/cache/
+/upstream/archives/
+/upstream/codex-*/
+/upstream/cc-switch-*/
+/out/
+/target/
+/wasm/target/
+/dist/
+**/__pycache__/
+*.pyc

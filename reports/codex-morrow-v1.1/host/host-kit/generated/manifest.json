@@ -1,0 +1,21 @@
+{
+  "source": "agent_host.capnp",
+  "source_sha256": "da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f",
+  "generator": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "capnp": "Cap'n Proto version 1.4.0"
+  },
+  "files": [
+    {
+      "path": "agent_host_capnp.rs",
+      "bytes": 344464,
+      "sha256": "015ec58be38f968cce8dbf7743a599acff863cf3e7a718117ecce0693252f6ed"
+    },
+    {
+      "path": "identity.rs",
+      "bytes": 183,
+      "sha256": "f60b8294bf6828e31bc62771b130cacd6ed617135d6c0b37e69b914e33a4d12e"
+    }
+  ]
+}

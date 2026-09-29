@@ -1,0 +1,12 @@
+{
+  "scope": "host_wire_identity_and_consumer_decode_only",
+  "independent_runtime": false,
+  "product_pass_credit": 0,
+  "handoff_sha256": "62dc56b74170096d74b51125c87a617bea98effd33686338598d19b2b78a1e8a",
+  "schema_sha256": "40d87f6a5dc07c134faef67a2767429531a292f4e85f22f3c53eb6296b63001a",
+  "reviewer_sha256": "8b557f17e5d837c3e9fceb2c94cae4964a4802a543d3eecc2443dd456658a164",
+  "status": "verified_wire_inputs_only",
+  "input_count": 4,
+  "issues": [],
+  "exit_code": 0
+}

@@ -1,0 +1,9 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-WindowsSandbox-Network-Isolated",
+  "containment": "windows_sandbox",
+  "process": {
+    "commandLine": "powershell -NoProfile -Command \"Invoke-WebRequest -Uri 'http://example.com' -TimeoutSec 5\"",
+    "timeout": 30000
+  }
+}

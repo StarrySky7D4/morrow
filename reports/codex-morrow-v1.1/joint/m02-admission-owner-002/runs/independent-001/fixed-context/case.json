@@ -1,0 +1,36 @@
+{
+  "case": "fixed-context",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "mutations": [
+      {
+        "field": "plugin_id",
+        "grant_id": "57b7232dc99e6d06ac326235c223b14dcfab4b7a8f8658842171d622b28bf0e7",
+        "before_sha256": "dc916e3070bfeb1a8db7e13c1b271ef3c81ba209f9e715d32c945630d504f857",
+        "after_sha256": "950b3b811af2ef2860499ca2b7b1b5fae883f20eea4fe8d857adee43206bc673",
+        "config_unchanged": true,
+        "claim_rejected": true,
+        "mutation_scope": "test-created record only, not authority restoration"
+      },
+      {
+        "field": "role",
+        "grant_id": "e1c8698d2dd7f037e112aa46d9196d1c6b2924cc18351f31db9f0949dd80dc4a",
+        "before_sha256": "153a45fb4985021b95f99b14d26e640f619b747c353d2c1aa5d59068d3e4ec42",
+        "after_sha256": "f56351985728e85f825ef98bfa422381c0f9756a3f7b8b4206873f91bb3e5651",
+        "config_unchanged": true,
+        "claim_rejected": true,
+        "mutation_scope": "test-created record only, not authority restoration"
+      },
+      {
+        "field": "operation",
+        "grant_id": "d84de0e9374ec42f6bfe25912f90d78e167075476db6bf32aaa4a69134673634",
+        "before_sha256": "95b8faa436a18b7617e075950a4faa4e748ef7d09d6a9104ab55f6d5a9b965b6",
+        "after_sha256": "2623c9c6a0faa05ee609085f4737877d061671f772d5091f7c68ecbaf372b4fa",
+        "config_unchanged": true,
+        "claim_rejected": true,
+        "mutation_scope": "test-created record only, not authority restoration"
+      }
+    ],
+    "no_known_spawn": true
+  }
+}

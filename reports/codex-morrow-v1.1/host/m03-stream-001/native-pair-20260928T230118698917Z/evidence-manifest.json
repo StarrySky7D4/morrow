@@ -1,0 +1,26 @@
+{
+  "files": {
+    "candidate/manifest.json": "f5cfe370873b048d82fe15bd2c6ecb88408778aef9758d8fe8e511adad1787a5",
+    "candidate/morrow-native-stream-host.exe": "3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65",
+    "final.json": "640626c2546931d68b22192a5d6a2c8fcee5d2b8c5c02002f49eb36af7d9e331",
+    "host-rows.json": "82059f6fb8440ce84159a6635854be420f827b35ba41ec390798c037b9469cef",
+    "host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-approval.json": "28b0899c6ce7602211c3e6f48a0a81ade5976f7edea4472f695ad98cf837b7f9",
+    "init.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "init.stdout": "7aabac07983ba92b9f1304a2b7275a73b9bf95623897414be2a5af2807345b69",
+    "launch.json": "c2238e24a463cc81445c4c31aba9d942aa795d6ab84cf8e834a8cccf5c49b46e",
+    "operator-commands.json": "f4202f1cf63c93e7313b7379fc2eda548bb01914f3abc2dce3a4d94fad7fbeb5",
+    "producer-handoff-004.json": "7a299acc1d08be05539c2179e8007d2057788923a07ce43cb344023f0b6fbd5a",
+    "profile/coordination.sqlite": "68f10cd59ad1d0f045484e749cbe2f2aeb07874adac0b2ba8835bc9ee701b86d",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "fbafc8c1d62e70ed11f85041c9cf3fdc4befd9d83d3f60d909663d715ac9df92",
+    "result.json": "e1443430d46dc8459e0cb2681c5cd43ce3623798b39f635fef6d1aa18c6310f0",
+    "retained-final.json": "640626c2546931d68b22192a5d6a2c8fcee5d2b8c5c02002f49eb36af7d9e331",
+    "server-events.json": "091aa5fe18ec7cf4ffcca29e1d50a88f125b38c51adc3824df15373a880932be"
+  },
+  "external_plugin_evidence": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-004\\20260928T230118698917Z\\core-events.jsonl": "84149da33b06613bca5d504e2136fcebbbab48865b2173f6f24b8f73046e10ba",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-004\\20260928T230118698917Z\\result.json": "655c11328950218fb9953e794ed78f87b17ef3c514b3b3ea58525952b87f6d45"
+  },
+  "fixed_inputs_unchanged": true
+}

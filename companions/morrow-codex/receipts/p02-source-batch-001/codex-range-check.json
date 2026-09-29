@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source": "codex",
+  "url": "https://codeload.github.com/openai/codex/tar.gz/44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "requested_range": "bytes=15296794-15296794",
+  "if_range": "\"f0fd82e2f01081ec4d643abf415fad803d957a16608f3b5de3eca6e127fcbc26\"",
+  "started_at": "2026-09-28T11:57:57.074749+00:00",
+  "maximum_body_read_bytes": 1,
+  "http_status": 200,
+  "headers": {
+    "Content-Length": "16560151",
+    "ETag": "\"f0fd82e2f01081ec4d643abf415fad803d957a16608f3b5de3eca6e127fcbc26\""
+  },
+  "resume_supported": false,
+  "probe_bytes_read": 0,
+  "ended_at": "2026-09-28T11:57:57.681999+00:00"
+}

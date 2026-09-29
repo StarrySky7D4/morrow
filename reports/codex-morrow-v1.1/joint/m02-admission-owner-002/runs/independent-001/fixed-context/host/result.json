@@ -1,0 +1,182 @@
+{
+  "status": "observed_pending_semantic_review",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+    "serve",
+    "--profile",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\fixed-context\\authority",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+    "--sha256",
+    "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\fixed-context\\host-work",
+    "--plugin-id",
+    "joint-plugin",
+    "--role",
+    "native-client",
+    "--operation",
+    "fixed-context-host",
+    "--ttl-ms",
+    "10000",
+    "--handshake-ms",
+    "2500",
+    "--frame-ms",
+    "500",
+    "--close-ms",
+    "200",
+    "--budget",
+    "64",
+    "--client-arg",
+    "--queries",
+    "--client-arg",
+    "64",
+    "--client-arg",
+    "--interval-ms",
+    "--client-arg",
+    "200"
+  ],
+  "host_pid": 15240,
+  "host_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+  "client_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "started_monotonic_ns": 168000208278400,
+  "finished_monotonic_ns": 168000344628400,
+  "host_exit_code": 2,
+  "controller_stdin_open_at_host_exit": true,
+  "reviewer_crash_injected": false,
+  "commands": [
+    {
+      "sent_at_ns": 168000222893800,
+      "action": "approve",
+      "request": {
+        "action": "approve"
+      },
+      "record_cursor": 1
+    },
+    {
+      "sent_at_ns": 168000251309200,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "57b7232dc99e6d06ac326235c223b14dcfab4b7a8f8658842171d622b28bf0e7"
+      },
+      "record_cursor": 2
+    },
+    {
+      "sent_at_ns": 168000259493700,
+      "action": "approve",
+      "request": {
+        "action": "approve"
+      },
+      "record_cursor": 4
+    },
+    {
+      "sent_at_ns": 168000285356400,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "e1c8698d2dd7f037e112aa46d9196d1c6b2924cc18351f31db9f0949dd80dc4a"
+      },
+      "record_cursor": 5
+    },
+    {
+      "sent_at_ns": 168000290076700,
+      "action": "approve",
+      "request": {
+        "action": "approve"
+      },
+      "record_cursor": 7
+    },
+    {
+      "sent_at_ns": 168000313280900,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "d84de0e9374ec42f6bfe25912f90d78e167075476db6bf32aaa4a69134673634"
+      },
+      "record_cursor": 8
+    },
+    {
+      "sent_at_ns": 168000318507900,
+      "action": "quit",
+      "request": {
+        "action": "quit"
+      },
+      "record_cursor": 10
+    }
+  ],
+  "OS_observations": [
+    {
+      "role": "host",
+      "stage": "initial",
+      "snapshot": {
+        "pid": 15240,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014839015802,
+        "first_observed_monotonic_ns": 168000209793000,
+        "observed_monotonic_ns": 168000215675000,
+        "handle_signaled": false,
+        "exit_code": null,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "host",
+      "stage": "host_exit",
+      "snapshot": {
+        "pid": 15240,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014839015802,
+        "first_observed_monotonic_ns": 168000209793000,
+        "observed_monotonic_ns": 168000344604100,
+        "handle_signaled": true,
+        "exit_code": 2,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "host",
+      "stage": "final",
+      "snapshot": {
+        "pid": 15240,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014839015802,
+        "first_observed_monotonic_ns": 168000209793000,
+        "observed_monotonic_ns": 168000344623400,
+        "handle_signaled": true,
+        "exit_code": 2,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    }
+  ],
+  "drains": {
+    "stdout": {
+      "eof": true,
+      "bytes": 2416,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 168000330622800
+    },
+    "stderr": {
+      "eof": true,
+      "bytes": 45,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 168000330738300
+    }
+  },
+  "failures": [],
+  "known_child_count": 0,
+  "known_holder_count": 0,
+  "provenance": "host captures child IPC/EOF; explicit known-PID OS handles independently observed; no PPID or whole-tree enumeration",
+  "product_pass_credit": 0
+}

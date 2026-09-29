@@ -1,0 +1,9 @@
+
+running 4 tests
+test tests::zero_budget_cannot_accept_nonempty_input_or_renew_deadline ... ok
+test tests::fragmented_boundary_accepts_then_poisoned_overflow_cannot_resume ... ok
+test process_io::tests::failed_write_is_reported_once_without_retry ... ok
+test process_io::tests::fragmented_input_is_bounded_and_reports_eof ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

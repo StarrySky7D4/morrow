@@ -1,0 +1,7 @@
+{
+  "status": "private_joint_run_ready_no_authority",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\final-seal-001",
+  "acl_sddl": "O:LAG:S-1-5-21-2110807130-2936985306-385909176-513D:PAI(A;OICI;FA;;;SY)(A;OICI;FA;;;LA)",
+  "raw_frames_are_test_material": true,
+  "tool_sha256": "4fba2c79f96ed35a509bc3ef2e5aa28f342bf00ee398c6e6098829d034d91e3d"
+}

@@ -1,0 +1,10 @@
+{
+  "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/Cargo.toml",
+  "path": "rust/runfiles/Cargo.toml",
+  "expected_blob": "dde46286abb79589370afd63d416d376495d3d21",
+  "status": "verified",
+  "size": 251,
+  "git_mode": "100644",
+  "git_blob_sha1": "dde46286abb79589370afd63d416d376495d3d21",
+  "sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084"
+}

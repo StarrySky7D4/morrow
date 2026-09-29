@@ -1,0 +1,50 @@
+{
+  "status": "local_ready_pending_read_only_harness_and_plugin_review_no_runtime_authority",
+  "harness_script": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_009.py",
+  "harness_sha256": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+  "harness_snapshot_sha256": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+  "host_A": "004",
+  "host_B": "005",
+  "host_B_manifest_sha256": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+  "plugin_manifest_sha256": "06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689",
+  "plugin_interface_sha256": "4853569274892ca0a1c26f9204f7c324dbbc6509c687e59814ba1126b1f15064",
+  "plugin_executable_sha256": "515ed83d1b27d45df5d4cdcc18c41244b5b6ac930528452cc45a64fe0ada89ad",
+  "host_minimal_diff": [
+    "src/pipe_driver.rs",
+    "src/pipe_observation_tests.rs",
+    "src/supervisor.rs"
+  ],
+  "host_local_tests_passed": 3,
+  "host_build_verified": true,
+  "host_joint_review": "read-only no new blocker; no independent test rerun",
+  "harness_checks": [
+    "syntax",
+    "pure pending/cancel/reap verdict mutations",
+    "pure marker identity/nonce/spec negative cases",
+    "read-only real local trace replay",
+    "host004/005 sources and binaries plus plugin55pins verified",
+    "spec exact equality with plugin example"
+  ],
+  "http_post_count": 0,
+  "real_guest_launched": false,
+  "A_runtime_verified": false,
+  "B_runtime_verified": false,
+  "remaining_boundaries": [
+    "A and B each require separate coordinator authorization",
+    "A first, B only after A review",
+    "OS completion-at-cancel race not independently exercised; classification and source reviewed",
+    "partial-write fault remains later independent work",
+    "no M03/product gate upgrade"
+  ],
+  "references": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_009.py": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_http_matrix_008.py": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\host005-ready-20260929.json": "8940da033e3e6d8204cc2346b58ed203902a3d0d6a30b72936c046c54850af6e",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\manifest.json": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-005\\manifest.json": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-009-fixed-preflight-20260929T005005147326Z.json": "85b41e530546ffaa18ec7dde412eefec9421b4e1d123aa62292007340c913ebd",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-009-pure-20260929T005005318093Z.json": "38efc86f465f7961d53cf9185452216cbafc8d812184911e83200254a982ba6a",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-001\\native-candidate-fixture-001.json": "06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-001\\fixture-interface.md": "4853569274892ca0a1c26f9204f7c324dbbc6509c687e59814ba1126b1f15064"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "batch": "p02-source-batch-001",
+  "repository": "openai/codex",
+  "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "url": "https://codeload.github.com/openai/codex/tar.gz/44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "method": "Python urllib HTTPS, no proxy/config/account loading",
+  "command": "python upstream/p02-source-batch-001/acquire_archive.py codex",
+  "started_at": "2026-09-28T11:39:43.886099+00:00",
+  "path": "upstream\\p02-source-batch-001\\codex-44fe510ce3ee61c8ef623adcbf89b901c73ddd61.tar.gz",
+  "status": "failed_incomplete_download",
+  "bytes_received": 15296794,
+  "total_limit_seconds": 1800,
+  "http_status": 200,
+  "response_headers": {
+    "content-disposition": "attachment; filename=codex-44fe510ce3ee61c8ef623adcbf89b901c73ddd61.tar.gz",
+    "Content-Length": "16560151",
+    "Content-Type": "application/x-gzip",
+    "ETag": "\"f0fd82e2f01081ec4d643abf415fad803d957a16608f3b5de3eca6e127fcbc26\""
+  },
+  "exit_code": 1,
+  "error": "ValueError: Content-Length mismatch",
+  "ended_at": "2026-09-28T11:56:50.290921+00:00",
+  "sha256_of_received_bytes": "887d6de60ed45d4349600fe5383578fd8f558e2a678ea41ff6074c8eceb218dc",
+  "actual_file_bytes": 15296794
+}

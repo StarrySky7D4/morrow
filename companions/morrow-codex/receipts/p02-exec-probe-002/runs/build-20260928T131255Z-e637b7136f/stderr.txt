@@ -1,0 +1,565 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling windows-sys v0.61.2
+   Compiling generic-array v0.14.7
+   Compiling typenum v1.20.0
+   Compiling const-oid v0.9.6
+   Compiling getrandom v0.3.4
+   Compiling futures-util v0.3.34
+   Compiling bitflags v2.13.1
+   Compiling ring v0.17.14
+   Compiling sha1_smol v1.0.1
+   Compiling rustls v0.23.45
+   Compiling num-integer v0.1.46
+   Compiling url v2.5.8
+   Compiling getrandom v0.4.2
+   Compiling windows-sys v0.52.0
+   Compiling cpufeatures v0.3.0
+   Compiling chacha20 v0.10.2
+   Compiling num-bigint v0.4.6
+   Compiling uuid v1.20.0
+   Compiling rand_core v0.9.5
+   Compiling ahash v0.8.12
+   Compiling rand_chacha v0.9.0
+   Compiling ts-rs v11.1.0
+   Compiling rand v0.9.3
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling cookie_store v0.22.1
+   Compiling digest v0.10.7
+   Compiling rand v0.10.1
+   Compiling sha2 v0.10.9
+   Compiling sha1 v0.10.6
+   Compiling windows-sys v0.59.0
+   Compiling arrayvec v0.7.6
+   Compiling moka v0.12.13
+   Compiling quickcheck v1.1.0
+   Compiling allocative v0.3.6
+   Compiling blake3 v1.8.2
+   Compiling der-parser v10.0.0
+   Compiling futures-executor v0.3.34
+   Compiling sorted_vector_map v0.2.1
+   Compiling futures v0.3.34
+   Compiling png v0.18.0
+   Compiling unicode-normalization v0.1.25
+   Compiling rand_regex v0.18.1
+   Compiling pagable v0.4.1
+   Compiling sha1-checked v0.10.0
+   Compiling concurrent-queue v2.5.0
+   Compiling gix-utils v0.3.1
+   Compiling winapi v0.3.9
+   Compiling event-listener v5.4.1
+   Compiling image v0.25.9
+   Compiling headers v0.4.1
+   Compiling starlark_map v0.14.2
+   Compiling rustls-webpki v0.103.15
+   Compiling x509-parser v0.18.1
+   Compiling fd-lock v4.0.4
+   Compiling starlark_syntax v0.14.2
+   Compiling inout v0.1.4
+   Compiling rcgen v0.14.9
+   Compiling cipher v0.4.4
+   Compiling rand v0.8.6
+   Compiling nix v0.28.0
+   Compiling event-listener-strategy v0.5.4
+   Compiling hmac v0.12.1
+   Compiling async-channel v2.5.0
+   Compiling gix-quote v0.7.0
+   Compiling universal-hash v0.5.1
+   Compiling serde_path_to_error v0.1.20
+   Compiling gix-command v0.8.0
+   Compiling windows-implement v0.60.2
+   Compiling windows-interface v0.59.3
+   Compiling aead v0.5.2
+   Compiling winreg v0.10.1
+   Compiling serial2 v0.2.33
+   Compiling socket2 v0.5.10
+   Compiling filedescriptor v0.8.3
+   Compiling codex-utils-rustls-provider v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\rustls-provider)
+   Compiling ipconfig v0.3.2
+   Compiling tungstenite v0.27.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tungstenite)
+   Compiling portable-pty v0.9.0
+   Compiling windows-core v0.62.2
+   Compiling gix-config-value v0.17.1
+   Compiling curve25519-dalek v4.1.3
+   Compiling windows-result v0.2.0
+   Compiling windows-strings v0.1.0
+   Compiling http v0.2.12
+   Compiling windows-interface v0.58.0
+   Compiling windows-implement v0.58.0
+   Compiling windows-threading v0.2.1
+   Compiling socket2 v0.6.3
+   Compiling mio v1.2.0
+   Compiling schannel v0.1.28
+   Compiling tokio v1.52.3
+   Compiling tempfile v3.27.0
+   Compiling winapi-util v0.1.11
+   Compiling rustls-native-certs v0.8.3
+   Compiling same-file v1.0.6
+   Compiling native-tls v0.2.14
+   Compiling dirs-sys v0.5.0
+   Compiling dirs v6.0.0
+   Compiling nu-ansi-term v0.50.3
+   Compiling codex-utils-absolute-path v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\absolute-path)
+   Compiling anstyle-query v1.1.5
+   Compiling anstyle-wincon v3.0.11
+   Compiling walkdir v2.5.0
+   Compiling rustls-platform-verifier v0.7.0
+   Compiling codex-utils-home-dir v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\home-dir)
+   Compiling tracing-subscriber v0.3.22
+   Compiling anstream v0.6.21
+   Compiling home v0.5.12
+   Compiling codex-utils-path-uri v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\path-uri)
+   Compiling rustyline v14.0.0
+   Compiling codex-extension-items v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\ext\items)
+   Compiling gix-features v0.46.2
+   Compiling clap_builder v4.5.58
+   Compiling gix-hash v0.23.0
+   Compiling jiff v0.2.23
+   Compiling gix-hashtable v0.13.0
+   Compiling gix-fs v0.19.2
+   Compiling starlark v0.14.2
+   Compiling gix-tempfile v21.0.2
+   Compiling tracing-opentelemetry v0.32.1
+   Compiling gix-lock v21.0.2
+   Compiling gix-commitgraph v0.35.0
+   Compiling gix-sec v0.13.2
+   Compiling clap v4.5.58
+   Compiling opentelemetry-appender-tracing v0.31.1
+   Compiling gix-glob v0.24.0
+   Compiling os_info v3.14.0
+   Compiling gix-transport v0.55.1
+   Compiling gix-shallow v0.10.0
+   Compiling base64ct v1.8.3
+   Compiling tokio-util v0.7.18
+   Compiling tokio-rustls v0.26.4
+   Compiling tokio-stream v0.1.18
+   Compiling tokio-graceful v0.2.2
+   Compiling rama-utils v0.3.0-alpha.4
+   Compiling tokio-native-tls v0.3.1
+   Compiling hickory-proto v0.25.2
+   Compiling tokio-test v0.4.5
+   Compiling h2 v0.4.16
+   Compiling tower v0.5.3
+   Compiling rama-core v0.3.0-alpha.4
+   Compiling codex-utils-cache v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\cache)
+   Compiling codex-utils-image v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\image)
+   Compiling codex-async-utils v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\async-utils)
+   Compiling gix-date v0.15.1
+   Compiling tower-http v0.6.8
+   Compiling gix-actor v0.40.0
+   Compiling gix-object v0.58.0
+   Compiling tokio-tungstenite v0.28.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tokio-tungstenite)
+   Compiling opentelemetry_sdk v0.31.0
+   Compiling rama-http-types v0.3.0-alpha.4
+   Compiling hickory-resolver v0.25.2
+   Compiling codex-utils-pty v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\pty)
+   Compiling gix-ref v0.61.0
+   Compiling hyper v1.8.1
+   Compiling rama-net v0.3.0-alpha.4
+   Compiling gix-revwalk v0.29.0
+   Compiling hyper-util v0.1.20
+   Compiling gix-revision v0.43.0
+   Compiling gix-pack v0.68.0
+   Compiling gix-traverse v0.55.0
+   Compiling gix-protocol v0.59.0
+   Compiling gix-refspec v0.39.0
+   Compiling gix-config v0.54.0
+   Compiling gix-discover v0.49.0
+   Compiling gix-diff v0.61.0
+   Compiling vsimd v0.8.0
+   Compiling hyper-rustls v0.27.7
+   Compiling hyper-tls v0.6.0
+   Compiling hyper-timeout v0.5.2
+   Compiling reqwest v0.12.28
+   Compiling gix-odb v0.78.0
+   Compiling tonic v0.14.3
+   Compiling outref v0.5.2
+   Compiling base64-simd v0.8.0
+   Compiling pem-rfc7468 v0.7.0
+   Compiling windows-core v0.58.0
+   Compiling gix v0.81.0
+   Compiling http-body v0.4.6
+   Compiling windows-future v0.3.2
+   Compiling tonic-prost v0.14.3
+   Compiling codex-http-client v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\http-client)
+   Compiling rama-http-headers v0.3.0-alpha.4
+   Compiling rama-dns v0.3.0-alpha.4
+   Compiling rama-udp v0.3.0-alpha.4
+   Compiling rama-tls-rustls v0.3.0-alpha.4
+   Compiling codex-client v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\codex-client)
+   Compiling rama-http v0.3.0-alpha.4
+   Compiling codex-websocket-client v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\websocket-client)
+   Compiling opentelemetry-proto v0.31.0
+   Compiling opentelemetry-http v0.31.0
+   Compiling rama-tcp v0.3.0-alpha.4
+   Compiling codex-execpolicy v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\execpolicy)
+   Compiling windows-sys v0.60.2
+   Compiling rama-socks5 v0.3.0-alpha.4
+   Compiling opentelemetry-otlp v0.31.0
+   Compiling windows-collections v0.3.2
+   Compiling windows-numerics v0.3.1
+   Compiling dirs-sys-next v0.1.2
+   Compiling bytes-utils v0.1.4
+   Compiling codex-windows-sandbox v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\windows-sandbox-rs)
+   Compiling dirs-next v2.0.0
+   Compiling aws-smithy-types v1.4.7
+   Compiling windows v0.62.2
+   Compiling windows v0.58.0
+   Compiling der v0.7.10
+   Compiling tracing-appender v0.2.4
+   Compiling glob v0.3.3
+   Compiling winnow v1.0.4
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling codex-utils-path v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\path-utils)
+   Compiling spki v0.7.3
+   Compiling x25519-dalek v2.0.1
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling toml_writer v1.0.6+spec-1.1.0
+   Compiling pkcs8 v0.10.2
+   Compiling aws-smithy-async v1.2.14
+   Compiling poly1305 v0.8.0
+   Compiling flatbuffers v25.12.19
+   Compiling mxc_telemetry v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\mxc_telemetry)
+   Compiling aws-smithy-runtime-api-macros v1.0.0
+   Compiling serde_spanned v1.0.4
+   Compiling tracelogging_macros v1.2.3
+   Compiling unicode-general-category v1.1.0
+   Compiling toml v0.9.11+spec-1.1.0
+   Compiling salsa20 v0.10.2
+   Compiling simple_asn1 v0.6.4
+   Compiling aws-smithy-runtime-api v1.12.0
+   Compiling rama-http-core v0.3.0-alpha.4
+   Compiling tracelogging v1.2.3
+   Compiling jsonwebtoken v9.3.1
+   Compiling toml_edit v0.24.0+spec-1.1.0
+   Compiling winreg v0.55.0
+   Compiling mxc_config_contract v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\mxc_config_contract)
+   Compiling cidr v0.3.2
+   Compiling rust-embed-utils v8.11.0
+   Compiling learning_mode_core v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\learning_mode_core)
+   Compiling pbkdf2 v0.12.2
+   Compiling chacha20 v0.9.1
+   Compiling signature v2.2.0
+   Compiling rustix v1.1.4
+   Compiling rust-embed v8.11.0
+   Compiling chacha20poly1305 v0.10.1
+   Compiling process_security_environment_spec v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\generated\process_security_environment_specification)
+   Compiling sandbox_spec v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\generated\base_container_specification)
+   Compiling codex-install-context v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\install-context)
+   Compiling errno v0.3.14
+   Compiling hkdf v0.12.4
+   Compiling cookie-factory v0.3.3
+   Compiling async-io v2.6.0
+   Compiling i18n-embed v0.15.4
+   Compiling scrypt v0.11.0
+   Compiling age-core v0.11.0
+   Compiling keyring v3.6.3
+   Compiling polling v3.11.0
+   Compiling polyval v0.6.2
+   Compiling aes v0.8.4
+   Compiling futures-lite v2.6.1
+   Compiling keccak v0.1.6
+   Compiling sha3 v0.10.9
+   Compiling age v0.11.2
+   Compiling ghash v0.5.1
+   Compiling codex-keyring-store v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\keyring-store)
+   Compiling aws-smithy-http v0.62.6
+   Compiling aws-credential-types v1.2.11
+   Compiling uds_windows v1.1.0
+   Compiling ctr v0.9.2
+   Compiling hybrid-array v0.2.3
+   Compiling thiserror-impl-no-std v2.0.2
+   Compiling notify-types v2.1.0
+   Compiling aws-types v1.3.11
+   Compiling kem v0.3.0-pre.0
+   Compiling include_dir_macros v0.7.4
+   Compiling codex-skills v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\skills)
+   Compiling unsafe-libyaml v0.2.11
+   Compiling codex-build-info v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\build-info)
+   Compiling rama-http-backend v0.3.0-alpha.4
+   Compiling ml-kem v0.2.3
+   Compiling sqlx-core v0.9.0
+   Compiling include_dir v0.7.4
+   Compiling serde_yaml v0.9.34+deprecated
+   Compiling notify v8.2.0
+   Compiling codex-network-proxy v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\network-proxy)
+   Compiling aes-gcm v0.10.3
+   Compiling thiserror-no-std v2.0.2
+   Compiling codex-uds v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\uds)
+   Compiling aws-smithy-observability v0.1.5
+   Compiling aws-smithy-http-client v1.1.12
+   Compiling axum-core v0.5.6
+   Compiling prettyplease v0.2.37
+   Compiling matchit v0.8.4
+   Compiling clatter v2.2.0
+   Compiling sqlx-sqlite v0.9.0
+   Compiling axum v0.8.8
+   Compiling aws-smithy-runtime v1.9.5
+   Compiling codex-file-watcher v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\file-watcher)
+   Compiling aws-sigv4 v1.3.7
+   Compiling ed25519 v2.2.3
+   Compiling codex-websocket-auth v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\websocket-auth)
+   Compiling crypto_secretbox v0.1.1
+   Compiling codex-core-plugin-common v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\core-plugin-common)
+   Compiling blake2 v0.10.6
+   Compiling ff v0.13.1
+   Compiling foldhash v0.1.5
+   Compiling base16ct v0.2.0
+   Compiling chunked_transfer v1.5.0
+   Compiling ascii v1.1.0
+   Compiling sec1 v0.7.3
+   Compiling hashbrown v0.15.5
+   Compiling tiny_http v0.12.0
+   Compiling crypto_box v0.9.1
+   Compiling group v0.13.0
+   Compiling aws-runtime v1.5.17
+   Compiling ed25519-dalek v2.2.0
+   Compiling sqlx v0.9.0
+   Compiling aws-smithy-json v0.61.9
+   Compiling prost v0.14.3
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher\src\utf32_str.rs:338:18
+    |
+338 |     pub fn slice(&self, range: impl RangeBounds<usize>) -> Utf32Str {
+    |                  ^^^^^ the lifetime is elided here         ^^^^^^^^ the same lifetime is hidden here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+338 |     pub fn slice(&self, range: impl RangeBounds<usize>) -> Utf32Str<'_> {
+    |                                                                    ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher\src\utf32_str.rs:358:22
+    |
+358 |     pub fn slice_u32(&self, range: impl RangeBounds<u32>) -> Utf32Str {
+    |                      ^^^^^ the lifetime is elided here       ^^^^^^^^ the same lifetime is hidden here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+358 |     pub fn slice_u32(&self, range: impl RangeBounds<u32>) -> Utf32Str<'_> {
+    |                                                                      ++++
+
+warning: `nucleo-matcher` (lib) generated 2 warnings (run `cargo fix --lib -p nucleo-matcher` to apply 2 suggestions)
+   Compiling crypto-bigint v0.5.5
+   Compiling webbrowser v1.2.4
+   Compiling fastrand v2.3.0
+   Compiling fixedbitset v0.5.7
+   Compiling codex-utils-template v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\template)
+   Compiling petgraph v0.8.3
+   Compiling prost-types v0.14.3
+   Compiling elliptic-curve v0.13.8
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\worker.rs:38:17
+   |
+38 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                 ^                      ^
+   |
+   = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+   |
+38 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+38 +     notify: Arc<dyn Fn() + Sync + Send >,
+   |
+
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\worker.rs:62:21
+   |
+62 |         notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                     ^                      ^
+   |
+help: remove these parentheses
+   |
+62 -         notify: Arc<(dyn Fn() + Sync + Send)>,
+62 +         notify: Arc<dyn Fn() + Sync + Send >,
+   |
+
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:61:17
+   |
+61 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                 ^                      ^
+   |
+help: remove these parentheses
+   |
+61 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+61 +     notify: Arc<dyn Fn() + Sync + Send>,
+   |
+
+warning: unnecessary parentheses around type
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:286:17
+    |
+286 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+    |                 ^                      ^
+    |
+help: remove these parentheses
+    |
+286 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+286 +     notify: Arc<dyn Fn() + Sync + Send>,
+    |
+
+warning: unnecessary parentheses around type
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:311:21
+    |
+311 |         notify: Arc<(dyn Fn() + Sync + Send)>,
+    |                     ^                      ^
+    |
+help: remove these parentheses
+    |
+311 -         notify: Arc<(dyn Fn() + Sync + Send)>,
+311 +         notify: Arc<dyn Fn() + Sync + Send>,
+    |
+
+warning: `nucleo` (lib) generated 5 warnings (run `cargo fix --lib -p nucleo` to apply 5 suggestions)
+   Compiling codex-workload-identity v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\workload-identity)
+   Compiling ignore v0.4.25
+   Compiling codex-terminal-detection v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\terminal-detection)
+   Compiling rmcp v3.2.0
+   Compiling multimap v0.10.1
+   Compiling tonic-build v0.14.3
+   Compiling oauth2 v5.0.0
+   Compiling codex-protocol v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\protocol)
+   Compiling prost-build v0.14.3
+   Compiling codex-file-search v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\file-search)
+   Compiling reqwest v0.13.4
+   Compiling rfc6979 v0.4.0
+   Compiling sse-stream v0.2.5
+   Compiling wxc_common v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\wxc_common)
+   Compiling process-wrap v9.0.1
+   Compiling debugid v0.8.0
+   Compiling protoc-bin-vendored-win32 v3.2.0
+   Compiling protoc-bin-vendored-linux-aarch_64 v3.2.0
+   Compiling xmlparser v0.13.6
+   Compiling protoc-bin-vendored-linux-ppcle_64 v3.2.0
+   Compiling protoc-bin-vendored-macos-x86_64 v3.2.0
+   Compiling protoc-bin-vendored-linux-x86_32 v3.2.0
+   Compiling protoc-bin-vendored-linux-s390_64 v3.2.0
+   Compiling protoc-bin-vendored-linux-x86_64 v3.2.0
+   Compiling protoc-bin-vendored-macos-aarch_64 v3.2.0
+   Compiling protoc-bin-vendored v3.2.0
+   Compiling aws-smithy-xml v0.60.13
+   Compiling sentry-types v0.46.1
+   Compiling ecdsa v0.16.9
+   Compiling tonic-prost-build v0.14.3
+   Compiling primeorder v0.13.6
+   Compiling aws-smithy-query v0.60.9
+   Compiling aws-sdk-sts v1.95.0
+   Compiling codex-code-mode-protocol v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\code-mode-protocol)
+   Compiling learning_mode_windows v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\backends\learning_mode\windows)
+   Compiling sentry-core v0.46.1
+   Compiling appcontainer_common v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\backends\appcontainer\common)
+   Compiling p256 v0.13.2
+   Compiling aws-sdk-sso v1.91.0
+   Compiling aws-sdk-signin v1.2.0
+   Compiling aws-sdk-ssooidc v1.93.0
+   Compiling num-complex v0.4.6
+   Compiling codex-collaboration-mode-templates v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\collaboration-mode-templates)
+   Compiling aws-config v1.8.12
+   Compiling symphonia-core v0.6.0
+   Compiling sentry v0.46.1
+   Compiling codex-diagnostics v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\diagnostics)
+   Compiling jsonptr v0.7.1
+   Compiling darling_core v0.20.11
+   Compiling lzma-sys v0.1.20
+   Compiling bzip2-sys v0.1.13+1.0.8
+   Compiling symphonia-metadata v0.6.0
+   Compiling symphonia-common v0.6.0
+   Compiling stop-words v0.9.0
+   Compiling zip v2.4.2
+   Compiling extended v0.1.0
+   Compiling symphonia-format-riff v0.6.0
+   Compiling symphonia-format-isomp4 v0.6.0
+   Compiling codex-aws-auth v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\aws-auth)
+   Compiling bzip2 v0.5.2
+   Compiling symphonia-format-mkv v0.6.0
+   Compiling symphonia-format-ogg v0.6.0
+   Compiling symphonia-bundle-mp3 v0.6.0
+   Compiling darling_macro v0.20.11
+   Compiling zopfli v0.8.3
+   Compiling lzma-rs v0.3.0
+   Compiling darling v0.20.11
+   Compiling cached_proc_macro v0.25.0
+   Compiling filetime v0.2.27
+   Compiling web-time v1.1.0
+   Compiling deflate64 v0.1.10
+   Compiling cached_proc_macro_types v0.1.1
+   Compiling tar v0.4.45
+   Compiling symphonia v0.6.0
+   Compiling pulldown-cmark v0.10.3
+   Compiling caseless v0.2.2
+   Compiling rust-stemmers v1.2.0
+   Compiling deunicode v1.6.2
+   Compiling cached v0.56.0
+   Compiling iana-time-zone v0.1.65
+   Compiling codex-attachment-store v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\attachment-store)
+   Compiling whoami v1.6.1
+   Compiling morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\host-kit-003)
+   Compiling bm25 v2.3.2
+   Compiling codex-api v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\codex-api)
+   Compiling codex-file-system v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\file-system)
+   Compiling codex-features v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\features)
+   Compiling codex-model-provider-info v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\model-provider-info)
+   Compiling codex-shell-command v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\shell-command)
+   Compiling codex-git-utils v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\git-utils)
+   Compiling codex-history v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\history)
+   Compiling codex-agent-identity v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\agent-identity)
+   Compiling codex-secrets v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\secrets)
+   Compiling codex-state v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\state)
+   Compiling codex-context-fragments v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\context-fragments)
+   Compiling codex-utils-output-truncation v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\output-truncation)
+   Compiling codex-otel v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\otel)
+   Compiling codex-guardian-context v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\guardian-context)
+   Compiling codex-response-debug-context v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\response-debug-context)
+   Compiling codex-prompts v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\prompts)
+   Compiling codex-utils-git-discovery v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\git-discovery)
+   Compiling codex-memories-read v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\memories\read)
+   Compiling codex-agent-graph-store v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\agent-graph-store)
+   Compiling codex-utils-audio v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\audio)
+   Compiling codex-rollout v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\rollout)
+   Compiling codex-code-mode v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\code-mode)
+   Compiling xz2 v0.1.7
+   Compiling codex-rollout-trace v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\rollout-trace)
+   Compiling codex-config v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\config)
+   Compiling codex-mxc-sandbox v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\mxc-sandbox)
+   Compiling codex-exec-server-protocol v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\exec-server-protocol)
+   Compiling codex-sandboxing v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\sandboxing)
+   Compiling codex-app-server-protocol v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\app-server-protocol)
+   Compiling codex-exec-server v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\exec-server)
+   Compiling codex-login v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\login)
+   Compiling codex-agent-roles v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\agent-roles)
+   Compiling codex-feedback v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\feedback)
+   Compiling codex-models-manager v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\models-manager)
+   Compiling codex-model-provider v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\model-provider)
+   Compiling codex-utils-plugins v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\utils\plugins)
+   Compiling codex-rmcp-client v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\rmcp-client)
+   Compiling codex-apply-patch v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\apply-patch)
+   Compiling codex-plugin v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\plugin)
+   Compiling codex-connectors v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\connectors)
+   Compiling codex-hooks v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\hooks)
+   Compiling codex-tools v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\tools)
+   Compiling codex-mcp v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\codex-mcp)
+   Compiling codex-analytics v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\analytics)
+   Compiling codex-thread-store v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\thread-store)
+   Compiling codex-extension-api v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\ext\extension-api)
+   Compiling codex-core-plugins v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\core-plugins)
+   Compiling codex-skills-extension v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\ext\skills)
+   Compiling codex-agent-message-board-extension v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\ext\agent-message-board)
+   Compiling codex-guardian-reviewer v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\ext\guardian-reviewer)
+   Compiling codex-core v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\core)
+warning: unused import: `crate::tools::context::ToolCallSource`
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\core\src\tools\registry.rs:16:5
+   |
+16 | use crate::tools::context::ToolCallSource;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `codex-core` (lib) generated 1 warning (run `cargo fix --lib -p codex-core` to apply 1 suggestion)
+   Compiling morrow-codex-p02-exec-probe v0.0.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\p02-exec-probe-002)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3m 46s

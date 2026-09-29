@@ -1,0 +1,84 @@
+{
+  "stage": "lock",
+  "status": "passed_bootstrap_lock",
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "generate-lockfile",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\Cargo.toml"
+      ],
+      "pid": 27340,
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 0.029398600017884746,
+      "stdout_eof": true,
+      "stderr_eof": true,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "qualification": "bootstrap local only, not IPC evidence",
+  "frozen_before": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+    "receipts/p02-exec-store-002/handoff.json": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+    "receipts/p02-core-network-003/handoff.json": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+    "receipts/p02-integration-004/handoff.json": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751"
+  },
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_INCREMENTAL",
+    "CARGO_NET_OFFLINE",
+    "CARGO_TARGET_DIR",
+    "CARGO_TERM_COLOR",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_TERMINAL_PROMPT",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "frozen_after": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+    "receipts/p02-exec-store-002/handoff.json": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+    "receipts/p02-core-network-003/handoff.json": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+    "receipts/p02-integration-004/handoff.json": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751"
+  },
+  "inputs_before": {
+    "receipts/m02-native-session-001/run_client.py": "db58a60342da22b25baf525a95ec7fdd4193560f3fd653cb3136f3ffccdcc9a6",
+    "out/m02-native-session-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "native/m02-native-session-001/Cargo.toml": "ddb6f9cf54c73160e5510e7e528c9785660329e7391028339ad863f0d55ab02b",
+    "native/m02-native-session-001/src/lib.rs": "c9dae6e7bebbf30ce553d573feea19609e26725e57b3e7089133a5edaf6eda38",
+    "native/m02-native-session-001/src/main.rs": "98243b7f105ad8a034d73f874615a2f024f3e0a2a4953d6de53a485396a1a637"
+  },
+  "inputs_after": {
+    "receipts/m02-native-session-001/run_client.py": "db58a60342da22b25baf525a95ec7fdd4193560f3fd653cb3136f3ffccdcc9a6",
+    "out/m02-native-session-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "native/m02-native-session-001/Cargo.lock": "ad302c513f8a1e2586868b6f6fefc5a9140a986fe3e320b9724d4b033ba0e21e",
+    "native/m02-native-session-001/Cargo.toml": "ddb6f9cf54c73160e5510e7e528c9785660329e7391028339ad863f0d55ab02b",
+    "native/m02-native-session-001/src/lib.rs": "c9dae6e7bebbf30ce553d573feea19609e26725e57b3e7089133a5edaf6eda38",
+    "native/m02-native-session-001/src/main.rs": "98243b7f105ad8a034d73f874615a2f024f3e0a2a4953d6de53a485396a1a637"
+  }
+}

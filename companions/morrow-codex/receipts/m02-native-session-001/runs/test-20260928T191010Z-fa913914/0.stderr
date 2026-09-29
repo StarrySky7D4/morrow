@@ -1,0 +1,3 @@
+   Compiling morrow-native-session-client v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m02-native-session-001)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.37s
+     Running unittests src\lib.rs (Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\m02-native-session-001\target\x86_64-pc-windows-msvc\debug\deps\morrow_native_session_client-d3573b4bf337bd1c.exe)

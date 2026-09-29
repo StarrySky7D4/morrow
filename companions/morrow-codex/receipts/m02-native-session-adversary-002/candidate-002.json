@@ -1,0 +1,49 @@
+{
+  "status": "test_peer_compiled_not_host_runtime_verified",
+  "exe": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+  "exe_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+  "normal_client_manifest_sha256": "9448e8167737df2ec706999c66a13ce4ce400e2cbcf5aceace1c30a8361058ee",
+  "arguments": [
+    "--morrow-native-session-v2",
+    "--scenario",
+    "SCENARIO"
+  ],
+  "scenarios": [
+    "wrong-pid",
+    "modified-epoch",
+    "wrong-artifact",
+    "unsupported-kind",
+    "no-hello",
+    "partial-frame",
+    "flood-invalid",
+    "ignore-stop",
+    "hold-output"
+  ],
+  "input_sha256": {
+    "native/m02-native-session-adversary-002/Cargo.lock": "b503612b0fd66634d4311f8034ce7b18559ef8f7ea6420aa0986a4e4dde13841",
+    "native/m02-native-session-adversary-002/Cargo.toml": "b4a1f44756433265ffbe0abb8ada98eabbe2adadbca84072a4459d1487864f70",
+    "native/m02-native-session-adversary-002/README.md": "1d876a81f5c409a3ebc49d8347019c3cf1ce22e6acb4c4fe37dfa5148ad3a36c",
+    "native/m02-native-session-adversary-002/src/main.rs": "49391fbc999f46dac6251d717d8d4f573cf8484770cf6268d2b60363bb184f66",
+    "receipts/m02-native-session-adversary-002/publish_peer002.py": "61e056b77e9174b0ab73ea1c039ae89ce92d22db8f16fb93bd4505e1d154cd72",
+    "receipts/m02-native-session-adversary-002/run_peer.py": "dedc99a28dce5dc203186b1febb02fb026776a8dc92177354e33567ae00337cb",
+    "receipts/m02-native-session-adversary-002/runs/build-20260928T193247Z-5d9da2cf/result.json": "2322ca58c026e5474d45048ab9a614b6cff1293238064c2882698256818660b4",
+    "receipts/m02-native-session-001/candidate-001.json": "9448e8167737df2ec706999c66a13ce4ce400e2cbcf5aceace1c30a8361058ee",
+    "out/m02-native-session-adversary-002/candidates/peer-002/morrow-native-session-adversary.exe": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+    "out/m02-native-session-adversary-002/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b"
+  },
+  "frozen_old_handoffs": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+    "receipts/p02-exec-store-002/handoff.json": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+    "receipts/p02-core-network-003/handoff.json": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+    "receipts/p02-integration-004/handoff.json": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751"
+  },
+  "limits": [
+    "Separate adversarial test peer, never a production client/host authority",
+    "No scenario run yet",
+    "Modified epoch is synthetic bad identity, not actual historical-session replay",
+    "Hold-output creates only this same fixed executable with inherited output handles for1.5s",
+    "Do not duplicate already sufficient host cases; independent reviewer selects necessary gaps",
+    "Parent watchdog10s; no arbitrary commands/accounts/user data"
+  ]
+}

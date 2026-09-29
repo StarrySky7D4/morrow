@@ -1,0 +1,347 @@
+{
+  "scope": "independent_real_host_and_child_observation_not_product_acceptance",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+    "--sha256",
+    "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\no-hello\\work",
+    "--ttl-ms",
+    "4000",
+    "--handshake-ms",
+    "250",
+    "--frame-ms",
+    "500",
+    "--close-ms",
+    "200",
+    "--budget",
+    "64",
+    "--client-arg",
+    "--scenario",
+    "--client-arg",
+    "no-hello"
+  ],
+  "host_pid": 20896,
+  "child_pid": 14944,
+  "host_sha256": "12ddcb1acc95a151aa52541d93c13756f50174d9f996a155ece4e0e8d7642e21",
+  "client_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+  "environment_keys": [
+    "APPDATA",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "environment_values_enumerated": false,
+  "started_monotonic_ns": 164286304573100,
+  "finished_monotonic_ns": 164286821181100,
+  "host_exit_code": 2,
+  "controller_stdin_open_at_host_exit": true,
+  "host_OS_observations": [
+    {
+      "pid": 20896,
+      "parent_pid": 2364,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+      "creation_filetime_100ns": 134350977699976099,
+      "first_observed_monotonic_ns": 164286306182400,
+      "observed_monotonic_ns": 164286311148200,
+      "process_handle_signaled": false,
+      "exit_code": null,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    },
+    {
+      "pid": 20896,
+      "parent_pid": 2364,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+      "creation_filetime_100ns": 134350977699976099,
+      "first_observed_monotonic_ns": 164286306182400,
+      "observed_monotonic_ns": 164286815793800,
+      "process_handle_signaled": true,
+      "exit_code": 2,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    }
+  ],
+  "child_OS_observations": [
+    {
+      "pid": 14944,
+      "parent_pid": 20896,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+      "creation_filetime_100ns": 134350977700251545,
+      "first_observed_monotonic_ns": 164286349380000,
+      "observed_monotonic_ns": 164286354303800,
+      "process_handle_signaled": false,
+      "exit_code": null,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF",
+      "image_path_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878"
+    },
+    {
+      "pid": 14944,
+      "parent_pid": 20896,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+      "creation_filetime_100ns": 134350977700251545,
+      "first_observed_monotonic_ns": 164286349380000,
+      "observed_monotonic_ns": 164286815801100,
+      "process_handle_signaled": true,
+      "exit_code": 1,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    }
+  ],
+  "descendant_OS_observations": {
+    "status": "observed",
+    "processes": [
+      {
+        "initial": {
+          "pid": 14944,
+          "parent_pid": 20896,
+          "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+          "creation_filetime_100ns": 134350977700251545,
+          "first_observed_monotonic_ns": 164286343569100,
+          "observed_monotonic_ns": 164286348297700,
+          "process_handle_signaled": false,
+          "exit_code": null,
+          "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF",
+          "image_path_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878"
+        },
+        "final": {
+          "pid": 14944,
+          "parent_pid": 20896,
+          "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+          "creation_filetime_100ns": 134350977700251545,
+          "first_observed_monotonic_ns": 164286343569100,
+          "observed_monotonic_ns": 164286821105100,
+          "process_handle_signaled": true,
+          "exit_code": 1,
+          "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+        }
+      }
+    ],
+    "errors": [
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation"
+    ],
+    "scope": "OS descendant PID/parent/image/times only; no process-tree containment proof"
+  },
+  "host_output_observations": {
+    "stdout": {
+      "eof": true,
+      "bytes": 5791,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 164286787321400
+    },
+    "stderr": {
+      "eof": true,
+      "bytes": 78,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 164286786912600
+    }
+  },
+  "controller_commands": [],
+  "final_host_snapshot": {
+    "epoch": 1,
+    "event_overflow": 0,
+    "events": [
+      {
+        "at_us": 18006,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+          "config_sha256": "0cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 14944,
+          "platform": "windows",
+          "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 18261,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000420db3369d821fe201000000000000000100000000000000603a0000000000008d0f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752dbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508780cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632"
+        },
+        "event": "frame_sent",
+        "ordinal": 1
+      },
+      {
+        "at_us": 250972,
+        "detail": {
+          "generation": 2,
+          "reason": 23
+        },
+        "event": "revoked",
+        "ordinal": 2
+      },
+      {
+        "at_us": 250982,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 3
+      },
+      {
+        "at_us": 250984,
+        "detail": {
+          "reason": 23
+        },
+        "event": "stop_requested",
+        "ordinal": 4
+      },
+      {
+        "at_us": 251072,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000420db3369d821fe201000000000000000200000000000000603a000017000000a50e0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752dbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508780cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632"
+        },
+        "event": "frame_sent",
+        "ordinal": 5
+      },
+      {
+        "at_us": 454211,
+        "detail": {
+          "error": null,
+          "ok": true
+        },
+        "event": "kill_requested",
+        "ordinal": 6
+      },
+      {
+        "at_us": 454707,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 7
+      },
+      {
+        "at_us": 454718,
+        "detail": {
+          "bytes": 0,
+          "chunks": 0,
+          "omitted_chunk_details": 0
+        },
+        "event": "stderr_eof",
+        "ordinal": 8
+      },
+      {
+        "at_us": 455090,
+        "detail": {
+          "business_success": false,
+          "code": 1
+        },
+        "event": "exit",
+        "ordinal": 9
+      },
+      {
+        "at_us": 455133,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 10
+      }
+    ],
+    "exit_code": 1,
+    "exit_observed": true,
+    "generation": 2,
+    "owner_retained": false,
+    "phase": "Released",
+    "pid": 14944,
+    "session": 16293885588588924226,
+    "stderr_eof": true,
+    "stdout_eof": true
+  },
+  "failures": [],
+  "frames": [
+    {
+      "direction": "frame_sent",
+      "host_at_us": 18261,
+      "observed_at_ns": 164286349835100,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000420db3369d821fe201000000000000000100000000000000603a0000000000008d0f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752dbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508780cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "challenge",
+        "sequence": 0,
+        "session": 16293885588588924226,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14944,
+        "code": 0,
+        "remainingMs": 3981,
+        "nonce": "420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752db",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+        "executionConfigSha256": "0cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_sent",
+      "host_at_us": 251072,
+      "observed_at_ns": 164286567535600,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000420db3369d821fe201000000000000000200000000000000603a000017000000a50e0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752dbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508780cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "stop",
+        "sequence": 0,
+        "session": 16293885588588924226,
+        "instanceEpoch": 1,
+        "revocationGeneration": 2,
+        "childPid": 14944,
+        "code": 23,
+        "remainingMs": 3749,
+        "nonce": "420db3369d821fe2e35f635f838665bcb8fb5935701598f01a82714fe91752db",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+        "executionConfigSha256": "0cf85a5cb080f0e0714939caebe4cca59d5a38fb824511e35b067912f246e632",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    }
+  ],
+  "frame_provenance": "host captured actual pipe bytes; independently decoded and cross-checked; not external pipe interception",
+  "child_EOF_provenance": "host reader evidence only; host stdout/stderr EOF independently observed",
+  "status": "observed_pending_semantic_review",
+  "product_pass_credit": 0
+}

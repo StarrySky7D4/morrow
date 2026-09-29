@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-09-28T11:09:48.980877+00:00",
+  "command": "generate",
+  "checker_sha256": "11fbc1fb6b3506d4d2ddc3629e463e8a41f03bc5d211ff7f84dc78110e8fbcb0",
+  "counts": {
+    "work_packages": 31,
+    "gates": 7,
+    "acceptance": 84,
+    "base48": 48,
+    "added36": 36
+  },
+  "integrity_status": "verified",
+  "issues": [],
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0,
+  "exit_code": 0,
+  "scope": "catalogue/reference/source identity only; not product acceptance",
+  "snapshot": "snapshot.json"
+}

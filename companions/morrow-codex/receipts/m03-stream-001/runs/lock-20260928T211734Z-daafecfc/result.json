@@ -1,0 +1,39 @@
+{
+  "stage": "lock",
+  "status": "blocked",
+  "network": "offline_no_native_or_http",
+  "product_success_claimed": false,
+  "old_refusal_suite_rerun": false,
+  "error": "VsDevCmd failed: C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\runs\\20260928T211734Z-daafecfc\\vs-diagnostics.txt",
+  "frozen_count": 8771,
+  "frozen_unchanged": true,
+  "inputs_before": {
+    "receipts/m03-stream-001/build_candidate.py": "3000a5ae2e7d0fb92e940dc36145b4dfe4ae63e95f031496ff5fb42b85646444",
+    "qualification/m03-stream-001/Cargo.toml": "f84640ce88bbec5079759923af7ad8a5a289cdffa9d3d6e710d93da2124167af",
+    "qualification/m03-stream-001/Cargo.lock": "9b9ec31cfe28a0703109742e9a9511b8dd337c1c64bf1ee6e7bf6fc5c068a438",
+    "qualification/m03-stream-001/README.md": "426830a58247f18536f408deaef2eebf31fd30b7977d430310f4ae3edc6f8533",
+    "out/m03-stream-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "qualification/m03-stream-001/src/driver.rs": "ca72d7ec974d7959590bfa7ec0f82c49b70705028d9d5ad5f76f178030390593",
+    "qualification/m03-stream-001/src/lib.rs": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+    "qualification/m03-stream-001/src/limits.rs": "d24915def3a15c548b9b973d696525b3b6e7979cc2b774827d37ffc76b6c9118",
+    "qualification/m03-stream-001/src/main.rs": "36233b7626aed2cdaccb48e4d295a6406cb10987332a1ac8eb708332d9d1987c",
+    "qualification/m03-stream-001/src/network.rs": "3f643cd76963ab4e6f925d2bc75b682db7b8d8666ae0d5d56061880034ae37be",
+    "qualification/m03-stream-001/src/request_task.rs": "aff5e77239bbb38ac4bed2903b340bd35462dc9daf244520d38ae81cf1cf3e7a"
+  },
+  "inputs_after": {
+    "receipts/m03-stream-001/build_candidate.py": "3000a5ae2e7d0fb92e940dc36145b4dfe4ae63e95f031496ff5fb42b85646444",
+    "qualification/m03-stream-001/Cargo.toml": "f84640ce88bbec5079759923af7ad8a5a289cdffa9d3d6e710d93da2124167af",
+    "qualification/m03-stream-001/Cargo.lock": "9b9ec31cfe28a0703109742e9a9511b8dd337c1c64bf1ee6e7bf6fc5c068a438",
+    "qualification/m03-stream-001/README.md": "426830a58247f18536f408deaef2eebf31fd30b7977d430310f4ae3edc6f8533",
+    "out/m03-stream-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "qualification/m03-stream-001/src/driver.rs": "ca72d7ec974d7959590bfa7ec0f82c49b70705028d9d5ad5f76f178030390593",
+    "qualification/m03-stream-001/src/lib.rs": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+    "qualification/m03-stream-001/src/limits.rs": "d24915def3a15c548b9b973d696525b3b6e7979cc2b774827d37ffc76b6c9118",
+    "qualification/m03-stream-001/src/main.rs": "36233b7626aed2cdaccb48e4d295a6406cb10987332a1ac8eb708332d9d1987c",
+    "qualification/m03-stream-001/src/network.rs": "3f643cd76963ab4e6f925d2bc75b682db7b8d8666ae0d5d56061880034ae37be",
+    "qualification/m03-stream-001/src/request_task.rs": "aff5e77239bbb38ac4bed2903b340bd35462dc9daf244520d38ae81cf1cf3e7a"
+  },
+  "changed_inputs": [],
+  "log_sha256": {},
+  "completed_utc": "2026-09-28T21:17:42.711314+00:00"
+}

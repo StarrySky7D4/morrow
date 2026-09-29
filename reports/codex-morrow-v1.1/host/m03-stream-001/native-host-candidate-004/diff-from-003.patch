@@ -1,0 +1,473 @@
+--- host003/schemas\native_admission.proto
++++ host004/schemas\native_admission.proto
+@@ -26,6 +26,8 @@
+   uint64 lifetime_ms = 14;
+   uint64 approved_unix_ms = 15; // diagnostics only; never renews Instant deadline
+   uint32 state = 16; // 1 approved,2 consumed,3 revoked,4 expired
++  uint32 revocation_source = 17; // first durable revocation: 0 none,1 operator,2 owner runtime
++  uint32 revocation_reason = 18; // operator=19; owner reason16..30; immutable once revoked
+ }
+ message Owner {
+   uint32 version = 1;
+--- host003/src\authority.rs
++++ host004/src\authority.rs
+@@ -14,7 +14,7 @@
+     include!(concat!(env!("OUT_DIR"), "/morrow.native_admission.v1.rs"));
+ }
+ const MAX: usize = 8192;
+-const MAGIC: &[u8; 8] = b"MRNADM03";
++const MAGIC: &[u8; 8] = b"MRNADM04";
+ fn err(e: impl std::fmt::Display) -> String {
+     e.to_string()
+ }
+@@ -279,7 +279,7 @@
+     let version: i64 = c
+         .query_row("PRAGMA user_version", [], |r| r.get(0))
+         .map_err(err)?;
+-    if version != 3 {
++    if version != 4 {
+         return Err("native ledger version".into());
+     }
+     Ok(c)
+@@ -338,10 +338,36 @@
+         || g.capabilities != 3
+         || !(1..=4).contains(&g.state)
+         || !(100..=60000).contains(&g.lifetime_ms)
++        || !valid_revocation(&g)
+     {
+         return Err("approval integrity".into());
+     }
+     Ok(g)
++}
++pub(crate) fn valid_revocation(g: &proto::Approval) -> bool {
++    if g.state == 3 {
++        (g.revocation_source == 1 && g.revocation_reason == 19)
++            || (g.revocation_source == 2 && (16..=30).contains(&g.revocation_reason))
++    } else {
++        g.revocation_source == 0 && g.revocation_reason == 0
++    }
++}
++pub(crate) fn record_revocation(
++    db: &Connection,
++    g: &mut proto::Approval,
++    source: u32,
++    reason: u32,
++) -> Result<()> {
++    if g.state != 3 {
++        g.state = 3;
++        g.revocation_source = source;
++        g.revocation_reason = reason;
++        if !valid_revocation(g) {
++            return Err("invalid revocation provenance".into());
++        }
++        save_grant(db, g)?;
++    }
++    Ok(())
+ }
+ pub(crate) fn save_grant(c: &Connection, g: &proto::Approval) -> Result<()> {
+     if c.execute(
+@@ -357,6 +383,23 @@
+ }
+ fn terminal(o: &proto::Owner) -> bool {
+     matches!(o.phase.as_str(), "Released" | "NotStarted")
++}
++#[cfg(test)]
++pub(crate) fn authority_with_simulated_session(
++    parent: &crate::http_authority::Parent,
++    shared: std::sync::Arc<crate::Shared>,
++) -> (HostAuthority, tokio::sync::mpsc::Receiver<crate::Control>) {
++    let mut authority = HostAuthority::open(&parent.root).unwrap();
++    let (tx, rx) = tokio::sync::mpsc::channel(8);
++    authority.issuer = parent.approval.issuer.clone();
++    authority.active = Some(parent.approval.id.clone());
++    authority.owner_phase = "Active".into();
++    authority.pin = Some(parent.store.clone());
++    authority.session = Some(crate::Session {
++        shared,
++        control: tx,
++    });
++    (authority, rx)
+ }
+ 
+ /// One explicit local profile/slot. This is NOT a network authority or UI approval provider.
+@@ -413,7 +456,7 @@
+         let tx = c
+             .transaction_with_behavior(TransactionBehavior::Immediate)
+             .map_err(err)?;
+-        tx.execute_batch("CREATE TABLE profile(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE approvals(seq INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT NOT NULL UNIQUE,payload BLOB NOT NULL) STRICT; CREATE TABLE owner(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE http_approvals(id TEXT PRIMARY KEY,payload BLOB NOT NULL) STRICT; PRAGMA user_version=3;").map_err(err)?;
++        tx.execute_batch("CREATE TABLE profile(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE approvals(seq INTEGER PRIMARY KEY AUTOINCREMENT,id TEXT NOT NULL UNIQUE,payload BLOB NOT NULL) STRICT; CREATE TABLE owner(singleton INTEGER PRIMARY KEY CHECK(singleton=1),payload BLOB NOT NULL) STRICT; CREATE TABLE http_approvals(id TEXT PRIMARY KEY,payload BLOB NOT NULL) STRICT; PRAGMA user_version=4;").map_err(err)?;
+         tx.execute("INSERT INTO profile VALUES(1,?1)", [pack(&p)?])
+             .map_err(err)?;
+         tx.commit().map_err(err)?;
+@@ -498,6 +541,8 @@
+                 .map_err(err)?
+                 .as_millis() as u64,
+             state: 1,
++            revocation_source: 0,
++            revocation_reason: 0,
+         };
+         let tx = self
+             .db
+@@ -686,8 +731,7 @@
+         if g.profile != self.profile.identity {
+             return Err("foreign profile".into());
+         }
+-        g.state = 3;
+-        save_grant(&tx, &g)?;
++        record_revocation(&tx, &mut g, 1, 19)?;
+         tx.commit().map_err(err)?;
+         self.live.remove(id);
+         let local = self.active.as_deref() == Some(id);
+@@ -703,9 +747,11 @@
+         };
+         self.event(
+             "approval_revoked",
+-            json!({"grant_id":id,"generation":g.generation,"runtime_applied":applied}),
++            json!({"grant_id":id,"generation":g.generation,"runtime_applied":applied,"first_revocation_source":g.revocation_source,"first_revocation_reason":g.revocation_reason}),
+         );
+-        Ok(json!({"persisted":true,"runtime_applied":applied,"application_pending":!applied}))
++        Ok(
++            json!({"persisted":true,"runtime_applied":applied,"application_pending":!applied,"first_revocation_source":g.revocation_source,"first_revocation_reason":g.revocation_reason}),
++        )
+     }
+     pub async fn stop(&self) -> Result<()> {
+         if let Some(s) = &self.session {
+@@ -730,7 +776,8 @@
+             return Ok(false);
+         };
+         let id = self.active.clone().ok_or("active identity missing")?;
+-        if load_grant(&self.db, &id)?.state == 3 && session.snapshot().generation == 1 {
++        let grant = load_grant(&self.db, &id)?;
++        if grant.state == 3 && grant.revocation_source == 1 && session.snapshot().generation == 1 {
+             session.revoke().await?;
+             self.event("external_revocation_applied", json!({"grant_id":id}));
+         }
+--- host003/src\http_authority.rs
++++ host004/src\http_authority.rs
+@@ -59,6 +59,11 @@
+     pub ordinal: u64,
+     pub owner: TicketOwnership,
+ }
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(crate) struct NativeRevocation {
++    pub source: u32,
++    pub reason: u32,
++}
+ fn err(e: impl std::fmt::Display) -> String {
+     e.to_string()
+ }
+@@ -76,17 +81,19 @@
+     Ok(())
+ }
+ impl Parent {
+-    pub(crate) fn revoke_native(&self) -> Result<()> {
++    pub(crate) fn revoke_native(&self, reason: u32) -> Result<NativeRevocation> {
+         let mut db = authority::connect(&self.root)?;
+         let tx = db
+             .transaction_with_behavior(TransactionBehavior::Immediate)
+             .map_err(err)?;
+         self.check_record(&tx, true)?;
+         let mut record = authority::load_grant(&tx, &self.approval.id)?;
+-        record.state = 3;
+-        authority::save_grant(&tx, &record)?;
++        authority::record_revocation(&tx, &mut record, 2, reason)?;
+         tx.commit().map_err(err)?;
+-        Ok(())
++        Ok(NativeRevocation {
++            source: record.revocation_source,
++            reason: record.revocation_reason,
++        })
+     }
+     fn check_record(&self, db: &rusqlite::Connection, history: bool) -> Result<()> {
+         let owner = authority::load_owner(db)?.ok_or("native owner missing")?;
+@@ -104,6 +111,8 @@
+         let mut expected = self.approval.clone();
+         if history && actual.state == 3 {
+             expected.state = 3;
++            expected.revocation_source = actual.revocation_source;
++            expected.revocation_reason = actual.revocation_reason;
+         }
+         if actual != expected || !matches!(actual.state, 2 | 3) || (!history && actual.state != 2) {
+             return Err("native parent drift/revoked".into());
+--- host003/src\http_authority_tests.rs
++++ host004/src\http_authority_tests.rs
+@@ -179,7 +179,7 @@
+             b"complete",
+         )
+         .unwrap();
+-    parent.revoke_native().unwrap();
++    parent.revoke_native(19).unwrap();
+     grant.revoke().unwrap();
+     assert_eq!(grant.intent_phase().unwrap(), wire::IntentPhase::Observed);
+     assert!(grant.claim(&d, CancellationToken::new()).is_err());
+--- host003/src\revocation_interleaving_tests.rs
++++ host004/src\revocation_interleaving_tests.rs
+@@ -0,0 +1,219 @@
++//! Deterministic API/owner interleavings. Real new native ledger and poll path,
++//! simulated completed-request progress; no child, HTTP request or Core response proof.
++use super::*;
++use crate::authority;
++
++async fn setup() -> (Http, authority::HostAuthority, mpsc::Receiver<Control>) {
++    let parent = authority::simulated_http_parent();
++    let shared = Arc::new(Shared {
++        created: Instant::now(),
++        gate: parent.gate.clone(),
++        state: std::sync::Mutex::new(crate::Snapshot {
++            session: parent.session,
++            epoch: parent.epoch,
++            pid: parent.pid,
++            generation: 1,
++            phase: "Active".into(),
++            owner_retained: true,
++            exit_code: None,
++            exit_observed: false,
++            stdout_eof: false,
++            stderr_eof: false,
++            event_overflow: 0,
++            events: vec![],
++            http: json!({}),
++        }),
++    });
++    let initial = w::Frame {
++        kind: w::Kind::Challenge,
++        sequence: 0,
++        session: parent.session,
++        instance_epoch: parent.epoch,
++        revocation_generation: 1,
++        child_pid: parent.pid,
++        code: 0,
++        remaining_ms: 10000,
++        nonce: vec![7; 32],
++        schema_sha256: w::schema_digest().to_vec(),
++        artifact_sha256: parent.approval.artifact_sha256.clone(),
++        execution_config_sha256: parent.approval.config_sha256.clone(),
++        request_budget: 128,
++        capabilities: 3,
++        operation_id: parent.approval.operation.as_bytes().to_vec(),
++        attempt: 1,
++        payload: w::Payload::None,
++    };
++    let (authority, rx) = authority::authority_with_simulated_session(&parent, shared.clone());
++    let mut http = Http::new(initial, parent, shared, 500).unwrap();
++    finish(&mut http).await; // Real data-thread cancellation/reap/join before RequestClosed.
++    // These are supplied state inputs, not a claim of real HTTP/material evidence.
++    http.progress.request_closed = true;
++    http.progress.http_eof = true;
++    http.progress.intent = w::IntentPhase::Observed;
++    http.progress.response_material_stored = true;
++    (http, authority, rx)
++}
++async fn finish(http: &mut Http) {
++    http.pipe.cancel();
++    tokio::time::timeout(Duration::from_secs(2), async {
++        while !http.pipe_joined {
++            http.pipe_events().unwrap();
++            tokio::time::sleep(Duration::from_millis(1)).await;
++        }
++    })
++    .await
++    .unwrap();
++    assert!(!http.progress.worker_started);
++    assert_eq!(http.parent.gate.lock().unwrap().ordinal, 0);
++}
++fn applied(http: &Http) -> usize {
++    http.shared
++        .state
++        .lock()
++        .unwrap()
++        .events
++        .iter()
++        .filter(|e| e["event"] == "http_cancel_applied")
++        .count()
++}
++
++#[tokio::test]
++async fn owner_commit_before_generation_publish_does_not_trigger_external_poll() {
++    let (mut http, mut authority, mut rx) = setup().await;
++    let receipt = http.parent.revoke_native(25).unwrap();
++    assert_eq!((receipt.source, receipt.reason), (2, 25));
++    assert_eq!(http.shared.state.lock().unwrap().generation, 1);
++    // Exact original bug window: row state3 committed, shared generation still1.
++    assert!(!authority.poll().await.unwrap());
++    assert!(matches!(
++        rx.try_recv(),
++        Err(tokio::sync::mpsc::error::TryRecvError::Empty)
++    ));
++    assert!(
++        !authority
++            .events
++            .iter()
++            .any(|e| e["event"] == "external_revocation_applied")
++    );
++    http.cancel_http(25).unwrap();
++    assert_eq!(http.progress.error_code, 0);
++    assert_eq!(applied(&http), 1);
++    assert_eq!(http.progress.intent, w::IntentPhase::Observed);
++    finish(&mut http).await;
++}
++
++#[tokio::test]
++async fn true_external_commit_is_applied_by_real_poll_path() {
++    let (mut http, mut authority, mut rx) = setup().await;
++    let mut external = authority::HostAuthority::open(&http.parent.root).unwrap();
++    let r = external.revoke(&http.parent.approval.id).await.unwrap();
++    assert_eq!(r["first_revocation_source"], 1);
++    assert_eq!(r["runtime_applied"], false);
++    let (poll, ()) = tokio::time::timeout(Duration::from_secs(2), async {
++        tokio::join!(authority.poll(), async {
++            match rx.recv().await.unwrap() {
++                Control::Revoke(ack) => {
++                    http.cancel_http(19).unwrap();
++                    ack.send(()).unwrap();
++                }
++                _ => panic!("expected external revoke"),
++            }
++        })
++    })
++    .await
++    .unwrap();
++    assert!(!poll.unwrap());
++    assert_eq!(http.progress.error_code, 19);
++    assert!(
++        authority
++            .events
++            .iter()
++            .any(|e| e["event"] == "external_revocation_applied")
++    );
++    assert!(http.parent.gate.lock().unwrap().revoked);
++    assert_eq!(http.progress.intent, w::IntentPhase::Observed);
++    assert!(!authority.poll().await.unwrap());
++    assert!(rx.try_recv().is_err());
++    finish(&mut http).await;
++}
++
++#[tokio::test]
++async fn external_commit_then_close_uses_durable_19_not_callers_25() {
++    let (mut http, mut authority, mut rx) = setup().await;
++    let mut external = authority::HostAuthority::open(&http.parent.root).unwrap();
++    external.revoke(&http.parent.approval.id).await.unwrap();
++    http.cancel_http(25).unwrap(); // Close wins scheduling; external already won commit.
++    assert_eq!(http.progress.error_code, 19);
++    assert_eq!(applied(&http), 1);
++    let record = authority::load_grant(
++        &authority::connect(&http.parent.root).unwrap(),
++        &http.parent.approval.id,
++    )
++    .unwrap();
++    assert_eq!(
++        (record.revocation_source, record.revocation_reason),
++        (1, 19)
++    );
++    http.cancel_http(19).unwrap();
++    assert_eq!(applied(&http), 1);
++    assert!(!authority.poll().await.unwrap());
++    assert!(rx.try_recv().is_err());
++    assert_eq!(http.progress.intent, w::IntentPhase::Observed);
++    finish(&mut http).await;
++}
++
++#[tokio::test]
++async fn owner_close_then_late_operator_preserves_first_result_and_ack_snapshot() {
++    let (mut http, mut authority, mut rx) = setup().await;
++    http.cancel_http(25).unwrap();
++    let ack = http.frame(
++        w::Kind::State,
++        2,
++        0,
++        w::Payload::Progress(http.progress.clone()),
++    );
++    let mut external = authority::HostAuthority::open(&http.parent.root).unwrap();
++    let result = external.revoke(&http.parent.approval.id).await.unwrap();
++    assert_eq!(result["first_revocation_source"], 2);
++    assert_eq!(result["first_revocation_reason"], 25);
++    http.cancel_http(19).unwrap(); // Redundant command must not change terminal facts.
++    assert_eq!(http.progress.error_code, 0);
++    assert_eq!(applied(&http), 1);
++    assert_eq!(ack.payload, w::Payload::Progress(http.progress.clone()));
++    assert!(!authority.poll().await.unwrap());
++    assert!(rx.try_recv().is_err());
++    finish(&mut http).await;
++}
++
++#[tokio::test]
++async fn unknown_incomplete_or_nonrevoked_provenance_fails_closed() {
++    let (mut http, _, _) = setup().await;
++    let db = authority::connect(&http.parent.root).unwrap();
++    let original = authority::load_grant(&db, &http.parent.approval.id).unwrap();
++    for (state, source, reason) in [(3, 0, 0), (3, 1, 25), (3, 2, 0), (3, 3, 19), (2, 1, 19)] {
++        let mut bad = original.clone();
++        bad.state = state;
++        bad.revocation_source = source;
++        bad.revocation_reason = reason;
++        authority::save_grant(&db, &bad).unwrap();
++        assert!(authority::load_grant(&db, &bad.id).is_err());
++    }
++    authority::save_grant(&db, &original).unwrap();
++    let mut drift = original.clone();
++    drift.state = 3;
++    drift.revocation_source = 1;
++    drift.revocation_reason = 19;
++    drift.config_sha256[0] ^= 1;
++    authority::save_grant(&db, &drift).unwrap();
++    assert!(http.parent.revoke_native(25).unwrap_err().contains("drift"));
++    authority::save_grant(&db, &original).unwrap();
++    db.execute_batch("PRAGMA user_version=3").unwrap();
++    assert!(
++        authority::HostAuthority::open(&http.parent.root)
++            .err()
++            .unwrap()
++            .contains("version")
++    );
++    db.execute_batch("PRAGMA user_version=4").unwrap();
++    finish(&mut http).await;
++}
+--- host003/src\supervisor.rs
++++ host004/src\supervisor.rs
+@@ -21,6 +21,9 @@
+ };
+ use tokio_util::sync::CancellationToken;
+ type ChunkResult = morrow_network_node_stream::Result<Option<Vec<u8>>>;
++#[cfg(test)]
++#[path = "revocation_interleaving_tests.rs"]
++mod revocation_interleaving_tests;
+ enum Network {
+     Opening(JoinHandle<morrow_network_node_stream::Result<StreamLease>>),
+     Reading(JoinHandle<(StreamLease, ChunkResult)>),
+@@ -276,9 +279,17 @@
+     }
+     fn cancel_http(&mut self, code: u32) -> Result<()> {
+         let first = !self.progress.revoke_applied;
++        let requested_code = code;
++        // Persist provenance together with state3. The first durable revocation wins;
++        // an external revocation that precedes Close must still apply as reason19.
++        let receipt = self.parent.revoke_native(code)?;
++        let code = receipt.reason;
++        if !first {
++            self.shared.event("http_cancel_already_applied",json!({"requested_code":requested_code,"effective_code":code,"source":receipt.source}));
++            return Ok(());
++        }
+         let completed_close = code == 25 && self.progress.request_closed;
+         if !self.progress.revoke_persisted {
+-            self.parent.revoke_native()?;
+             if let Some(g) = &mut self.grant {
+                 g.revoke()?;
+             }
+@@ -302,7 +313,7 @@
+         self.shared.state.lock().unwrap().generation = 2;
+         self.shared.event(
+             "http_cancel_applied",
+-            json!({"code":code,"progress":describe(&self.progress)}),
++            json!({"code":code,"requested_code":requested_code,"source":receipt.source,"progress":describe(&self.progress)}),
+         );
+         if first && !completed_close {
+             self.state(w::Kind::HttpTerminal, 0)?;
+@@ -876,7 +887,7 @@
+         tokio::select! {biased;
+             command=control.recv(),if control_open=>match command{
+                 Some(Control::ApproveHttp{proposal_ref,expected_hash,response_limit,ack})=>{let result=if ready&&closing.is_none(){http.approve(proposal_ref,expected_hash,response_limit)}else{Err("session not active".into())};http.publish();let _=ack.send(result);},
+-                Some(Control::Revoke(ack))=>{let result=http.cancel_http(19);if let Err(e)=result{shared.event("revoke_persistence_unconfirmed",json!(e));reason=27;}revoke(&policy,instance,&shared,19);http.progress.owner=w::OwnerPhase::Revoked;if closing.is_none(){shared.phase("Revoked");}shared.event("control_ack",json!({"action":"revoke","generation":2}));let _=ack.send(());},
++                Some(Control::Revoke(ack))=>{let result=http.cancel_http(19);if let Err(e)=result{shared.event("revoke_persistence_unconfirmed",json!(e));reason=27;}revoke(&policy,instance,&shared,19);if closing.is_none(){http.progress.owner=w::OwnerPhase::Revoked;shared.phase("Revoked");}shared.event("control_ack",json!({"action":"revoke","generation":2}));let _=ack.send(());},
+                 Some(Control::Stop(ack))=>{reason=25;http.cancel.cancel();http.pipe.cancel();shared.event("control_ack",json!({"action":"stop"}));let _=ack.send(());},
+                 None=>{control_open=false;reason=25;},
+             },

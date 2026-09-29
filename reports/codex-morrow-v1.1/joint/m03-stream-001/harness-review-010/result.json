@@ -1,0 +1,11 @@
+{
+  "status": "limited_interface_review_no_remaining_blocker",
+  "resolved_old_harness_issue": "H009-1",
+  "script_sha256": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b",
+  "fixture_source_review": "native-fixture-review-001",
+  "A_runtime_verified": false,
+  "B_runtime_verified": false,
+  "http_requests": 0,
+  "tests_rerun": false,
+  "product_gate_upgrade": false
+}

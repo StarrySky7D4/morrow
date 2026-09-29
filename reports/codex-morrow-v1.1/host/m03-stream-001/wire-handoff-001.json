@@ -1,0 +1,20 @@
+{
+  "status": "wire_codec_candidate_ready_for_consumer_review_runtime_not_ready",
+  "canonical_source": "contracts/experimental/agent_host_v3_http_stream",
+  "crate": "morrow-native-http-stream-wire",
+  "major": 3,
+  "revision": 1,
+  "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+  "generated_rust_sha256": "071955f822b2eab7a803ad2f8d6da50dde4d7371e1c1ef79009b272a4eb842c3",
+  "manifest": "reports/codex-morrow-v1.1/host/m03-stream-001/wire-kit-001/manifest.json",
+  "manifest_sha256": "9d43385067d09a016ef950edf5fe4d489803e02f7bee8c419014d6b6fc2af5ae",
+  "producer_receipt_sha256": "d77481f158cdcdb349c54d0d923a0e4626b7938a17df32c1e34ce72d61a00805",
+  "validation": "4 codec tests,24 standalone valid +2 invalid vectors, offline generator/compiler only",
+  "not_run": [
+    "native grant adapter",
+    "authenticated data pipe / OS pending",
+    "host/plugin request approval/dispatch/credit integration",
+    "real Core HTTP success",
+    "independent codec review"
+  ]
+}

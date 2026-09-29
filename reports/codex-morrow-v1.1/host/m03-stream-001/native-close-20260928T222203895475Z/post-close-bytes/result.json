@@ -1,0 +1,9 @@
+{
+  "mode": "post-close-bytes",
+  "passed": true,
+  "host_exit": 2,
+  "peer_exit": 0,
+  "ack_received": true,
+  "owner_released": true,
+  "no_http_worker": true
+}

@@ -1,0 +1,90 @@
+{
+  "status": "failed",
+  "before": {
+    "native_pipe_win_001/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "native_pipe_win_001/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "native_pipe_win_001/src/lib.rs": "8866f073ec9b77690bcb60e1b4d612a5041ba8fb89389ea81b6ef2721c08bc9a",
+    "native_pipe_win_001/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "frozen_count": 2292,
+  "commands": [
+    {
+      "name": "fmt",
+      "args": [
+        "fmt",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07289360000868328,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compile",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--no-run",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 1.8768061999871861,
+      "stdout_sha256": "26ec16244c0be7a8313c8d126bbbf77a631bcd2a1a9cc2f470d94c2c455c0bff",
+      "stderr_sha256": "c909823d35f41a2f784ca4a84727ed1f9b832bb17bf3a1537e78811645084fe5"
+    },
+    {
+      "name": "tests",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 101,
+      "seconds": 0.13435229999595322,
+      "stdout_sha256": "621503af76687a338d04b9494a63043255e91c8147ea00ef07c5d893518c0692",
+      "stderr_sha256": "d460df62ff8f50334bfb493a7b9a3c4b696bcf1c72fd22b245e87918f59a4580"
+    }
+  ],
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_NET_OFFLINE",
+    "COMSPEC",
+    "INCLUDE",
+    "LIB",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMDRIVE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "error": "RuntimeError('tests failed')"
+}

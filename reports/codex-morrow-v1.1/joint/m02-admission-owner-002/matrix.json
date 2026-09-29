@@ -1,0 +1,563 @@
+{
+  "kind": "joint_diagnostic_overlay_not_wire_or_approval_schema",
+  "batch": "m02-admission-owner-002",
+  "prior_handoff_sha256": "263be0729c12ff25ac68c5b37b864d0b4ec44eacf7ee66a80cc6f1a4df2e8418",
+  "original_acceptance": [
+    {
+      "id": "B05",
+      "group": "base48",
+      "scenario": "子进程逃逸/取消/挂起",
+      "must_prove": "实际进程树终止或Unconfirmed，许可撤销",
+      "work_packages": [
+        "M-02",
+        "M-06",
+        "P-09"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 240,
+        "text": "| B05 | 子进程逃逸/取消/挂起 | 实际进程树终止或Unconfirmed，许可撤销 |"
+      }
+    },
+    {
+      "id": "B06",
+      "group": "base48",
+      "scenario": "CLI与插件并发",
+      "must_prove": "同一宿主授权和记录，不出现第二Store",
+      "work_packages": [
+        "M-06",
+        "P-11"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 241,
+        "text": "| B06 | CLI与插件并发 | 同一宿主授权和记录，不出现第二Store |"
+      }
+    },
+    {
+      "id": "C05",
+      "group": "base48",
+      "scenario": "私有管理动作注入",
+      "must_prove": "不可凭tool参数批准插件、导出密钥或改端点",
+      "work_packages": [
+        "M-05",
+        "P-07"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G1",
+        "G2"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 229,
+        "text": "| C05 | 私有管理动作注入 | 不可凭tool参数批准插件、导出密钥或改端点 |"
+      }
+    },
+    {
+      "id": "L06",
+      "group": "base48",
+      "scenario": "固定原件兼容与来源",
+      "must_prove": "Wasm、原生产物、contracts、lock可核对",
+      "work_packages": [
+        "M-01",
+        "M-10",
+        "P-00",
+        "P-13"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G0",
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 274,
+        "text": "| L06 | 固定原件兼容与来源 | Wasm、原生产物、contracts、lock可核对 |"
+      }
+    },
+    {
+      "id": "NX-01",
+      "group": "added36",
+      "scenario": "A/B产物互换、伪造自报ID",
+      "must_prove": "M-02/P-13：启动链核对真实摘要/目标，拒绝假身份",
+      "work_packages": [
+        "M-02",
+        "P-13"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G1",
+        "G4",
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 122,
+        "text": "| NX-01 | A/B产物互换、伪造自报ID | M-02/P-13：启动链核对真实摘要/目标，拒绝假身份 |"
+      }
+    },
+    {
+      "id": "NX-02",
+      "group": "added36",
+      "scenario": "CLI借用旧pipe或旧permit",
+      "must_prove": "M-02/P-11：当前用户/连接/epoch校验，不复活旧授权",
+      "work_packages": [
+        "M-02",
+        "P-11"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 123,
+        "text": "| NX-02 | CLI借用旧pipe或旧permit | M-02/P-11：当前用户/连接/epoch校验，不复活旧授权 |"
+      }
+    },
+    {
+      "id": "NX-04",
+      "group": "added36",
+      "scenario": "A崩溃而B仍在运行",
+      "must_prove": "M-06/P-09：新许可撤销、旧结果保留，不新建重复执行",
+      "work_packages": [
+        "M-06",
+        "P-09"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 125,
+        "text": "| NX-04 | A崩溃而B仍在运行 | M-06/P-09：新许可撤销、旧结果保留，不新建重复执行 |"
+      }
+    },
+    {
+      "id": "NX-06",
+      "group": "added36",
+      "scenario": "Exited但输出尚未Closed",
+      "must_prove": "P-09：最后输出保留或明确gap，不提前释放",
+      "work_packages": [
+        "P-09"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 127,
+        "text": "| NX-06 | Exited但输出尚未Closed | P-09：最后输出保留或明确gap，不提前释放 |"
+      }
+    },
+    {
+      "id": "P01",
+      "group": "base48",
+      "scenario": "伪造permit与过期代次",
+      "must_prove": "发送与结果交付均拒绝，已发生事实仍保留",
+      "work_packages": [
+        "M-02",
+        "M-06"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 247,
+        "text": "| P01 | 伪造permit与过期代次 | 发送与结果交付均拒绝，已发生事实仍保留 |"
+      }
+    },
+    {
+      "id": "P06",
+      "group": "base48",
+      "scenario": "升级包/工具schema变化",
+      "must_prove": "旧任务固定原件，新能力重新批准",
+      "work_packages": [
+        "M-09",
+        "P-13"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 252,
+        "text": "| P06 | 升级包/工具schema变化 | 旧任务固定原件，新能力重新批准 |"
+      }
+    },
+    {
+      "id": "QX-01",
+      "group": "added36",
+      "scenario": "离线缺依赖、lock过期、缺target",
+      "must_prove": "P-00/M-10：预检/构建非零失败，不拉latest或改锁",
+      "work_packages": [
+        "M-10",
+        "P-00"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G0",
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 154,
+        "text": "| QX-01 | 离线缺依赖、lock过期、缺target | P-00/M-10：预检/构建非零失败，不拉latest或改锁 |"
+      }
+    },
+    {
+      "id": "QX-02",
+      "group": "added36",
+      "scenario": "构建失败而dist存在旧成功产物",
+      "must_prove": "P-13：拒绝复用，产物关联本次输入与状态",
+      "work_packages": [
+        "P-13"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 155,
+        "text": "| QX-02 | 构建失败而dist存在旧成功产物 | P-13：拒绝复用，产物关联本次输入与状态 |"
+      }
+    },
+    {
+      "id": "QX-03",
+      "group": "added36",
+      "scenario": "production混入fault/fake/test身份",
+      "must_prove": "M-10/P-13：静态/动态探针阻断发行",
+      "work_packages": [
+        "M-10",
+        "P-13"
+      ],
+      "mapping_basis": "explicit source ownership",
+      "review_gates": [
+        "G5",
+        "G6"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 156,
+        "text": "| QX-03 | production混入fault/fake/test身份 | M-10/P-13：静态/动态探针阻断发行 |"
+      }
+    },
+    {
+      "id": "R04",
+      "group": "base48",
+      "scenario": "A崩溃/B仍活跃",
+      "must_prove": "权限撤销、原B状态可观察，不启动重复任务",
+      "work_packages": [
+        "M-06",
+        "P-09"
+      ],
+      "mapping_basis": "reviewer routing; original table has no owner column",
+      "review_gates": [
+        "G1",
+        "G4"
+      ],
+      "gate_mapping_basis": "reviewer routing by owner intersection; not explicit scenario-to-gate requirements",
+      "status": "not_run",
+      "evidence": [],
+      "status_reason": "未执行该完整场景；清单/静态/fake检查不升级场景资格",
+      "boundary": "unexecuted_product_scenario",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 261,
+        "text": "| R04 | A崩溃/B仍活跃 | 权限撤销、原B状态可观察，不启动重复任务 |"
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "M02A-01",
+      "title": "批准权威及真实复用",
+      "original_ids": [
+        "C05",
+        "B06"
+      ],
+      "required_evidence": "追踪创建批准的可信调用至既有审批/生命周期/存储组件；查询/claim不得创建批准",
+      "boundary": "private bool或测试独有内存policy不接受；真实用户审批UI/完整CLI认证未接入须明确",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-02",
+      "title": "批准时固定启动身份",
+      "original_ids": [
+        "NX-01",
+        "P06"
+      ],
+      "required_evidence": "批准绑定artifact/config/schema/角色或plugin/slot/operation/能力/授权代次；批准后变更逐项拒绝且无spawn",
+      "boundary": "实际需要字段由宿主权威接口定义；不由联合另造grant wire",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-03",
+      "title": "一次性claim原子性",
+      "original_ids": [
+        "P01",
+        "B06"
+      ],
+      "required_evidence": "同一授权并发和重复claim；记录事务消费点、launch pending、实际spawn数和后续状态",
+      "boundary": "原子记录不能与spawn完全原子，须审查中间crash窗口并保守Unknown",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-04",
+      "title": "两个真实host争同slot",
+      "original_ids": [
+        "B06",
+        "NX-04"
+      ],
+      "required_evidence": "两个独立host在同库/profile并发，以同或不同批准争同slot；败者明确拒绝且不启动child",
+      "boundary": "不能只测同进程HashMap；无全机枚举，通过己方PID/句柄和spawn事件计数",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-05",
+      "title": "真实历史原字节重放",
+      "original_ids": [
+        "NX-02",
+        "P01"
+      ],
+      "required_evidence": "第一实际会话捕获Hello/Query原字节，与host日志逐字节一致；关闭后新会话原样重放并拒绝",
+      "boundary": "不修改epoch，不把synthetic字段篡改计历史重放；分别记录两次身份和自然绑定差异",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-06",
+      "title": "批准后撤销再claim",
+      "original_ids": [
+        "P01"
+      ],
+      "required_evidence": "实际创建批准、撤销、领取顺序；失效授权不能spawn，查询不恢复授权",
+      "boundary": "若仅本host内撤权则明确；跨host可见性与持久状态另列",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-07",
+      "title": "在运行会话撤权",
+      "original_ids": [
+        "P01",
+        "NX-04"
+      ],
+      "required_evidence": "跨可信管理入口撤销已claim授权；记录持久代次与实际拒绝/停止顺序",
+      "boundary": "不重复旧普通撤权案充数；在途部分写入本片若未触达仍not_run",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-08",
+      "title": "首次授权deadline",
+      "original_ids": [
+        "P01"
+      ],
+      "required_evidence": "先批准后延迟claim和重复claim跨首次截止；记录同一批准创建时刻与剩余期限",
+      "boundary": "claim/重连不能续期；host重启的时间可信边界需明确，墙钟回退不恢复许可",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-09",
+      "title": "ClosingUnconfirmed跨host挡接替",
+      "original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "required_evidence": "真实holder保持输出；第一host处于Unconfirmed且owner保留时第二host不得spawn",
+      "boundary": "根进程退出/TTL过去均非释放；只观察己方已知holder PID，不全树枚举",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-10",
+      "title": "host crash而child仍活着",
+      "original_ids": [
+        "NX-04",
+        "R04",
+        "B05"
+      ],
+      "required_evidence": "先持有host/child OS句柄后只终止己方host；独立证实child存活，第二host拒绝或Unknown且无新spawn",
+      "boundary": "测试清理不代表产品自动恢复；OS锁自然释放不得清除持久不确定状态",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-11",
+      "title": "完整释放后新批准启动",
+      "original_ids": [
+        "B06",
+        "NX-06"
+      ],
+      "required_evidence": "实际child退出和双EOF、owner释放后新批准可启动；旧批准仍不可复用",
+      "boundary": "对crash未知不能仅因清理成功/检查PID不存在就自动释放",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-12",
+      "title": "锁范围与恢复核对",
+      "original_ids": [
+        "B06",
+        "R04"
+      ],
+      "required_evidence": "明确库/profile/用户范围、持久identity、路径别名及锁原语；审查rename/reparse、锁释放和观察/核对API",
+      "boundary": "同一OS用户合作进程边界不等同恶意同用户防篡改或OS强隔离",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-13",
+      "title": "副作用前后故障窗口",
+      "original_ids": [
+        "NX-04",
+        "R04",
+        "P01"
+      ],
+      "required_evidence": "只读审claim消费、owner占有、spawn、登记child、Release落盘顺序，执行可控真实crash点",
+      "boundary": "不能以失败退出或数据库记录存在代替child退出；注入点与真实崩溃分开",
+      "status": "not_run",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-14",
+      "title": "输入封存与来源",
+      "original_ids": [
+        "L06",
+        "QX-01",
+        "QX-02",
+        "QX-03"
+      ],
+      "required_evidence": "冻结旧候选、新source/lock/build/exe对应；ready后先审再独立运行并前后校验",
+      "boundary": "不复跑旧10案/codec全套；构建/诊断通过不给84原产品场景信用",
+      "status": "not_run",
+      "product_pass_credit": 0
+    }
+  ],
+  "required_runtime_cases": [
+    "authority_fixed_binding",
+    "duplicate_claim",
+    "two_hosts_same_slot",
+    "historical_bytes_replay",
+    "revoke_before_claim",
+    "revoke_active_via_record",
+    "approve_delay_expiry",
+    "unconfirmed_blocks_second_host",
+    "host_crash_child_alive",
+    "released_fresh_approval"
+  ],
+  "product_status": {
+    "M-02": "partial",
+    "G0": "blocked",
+    "G1": "not_passed",
+    "P-02": "blocked",
+    "J-00": "blocked",
+    "graphs": "0/2",
+    "acceptance_not_run": 84
+  },
+  "observer_constraints": [
+    "only known self-created PIDs and held handles; no machine-wide enumeration",
+    "do not run before ready source/build/identity review",
+    "capture OS witness before crash; absence of a witness is a limitation",
+    "finite cleanup only for this batch self-created processes",
+    "separate test cleanup from product recovery",
+    "private ephemeral DB/profile only; no personal credentials/MCP/content",
+    "Capnp001 remains sole guest wire unless host versioned authority supersedes; no reviewer schema"
+  ]
+}

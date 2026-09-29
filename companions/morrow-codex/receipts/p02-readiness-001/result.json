@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "status": "blocked",
+  "command": "rustup run 1.95.0-x86_64-pc-windows-msvc cargo metadata --locked --offline --no-deps --format-version 1 --manifest-path upstream/reference/codex/codex-rs/exec-server/Cargo.toml",
+  "exit_code": 101,
+  "host_kit_review": "receipts/host-kit-review-002/review.json",
+  "host_kit_manifest_sha256": "bb02d3e4b0ac1efd3195b1036bdb00669036d1124733060cde3b2d279576f464",
+  "source_lock_sha256": "b651d6a8c017a2daf05411c252eacfe5245a3af82ef580809b7cc67c2f3bfe95",
+  "scope": "readiness metadata attempt only; not a seam probe",
+  "real_upstream_runtime_executed": false,
+  "fake_replacement_used": false,
+  "cargo_home": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-readiness\\cargo-home",
+  "target_dir": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-readiness\\target-native"
+}

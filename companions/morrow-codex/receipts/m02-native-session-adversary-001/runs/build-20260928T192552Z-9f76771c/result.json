@@ -1,0 +1,95 @@
+{
+  "stage": "build",
+  "status": "passed_bootstrap_build",
+  "commands": [
+    {
+      "argv": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "build",
+        "--locked",
+        "--offline",
+        "--message-format=json-render-diagnostics",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-adversary-001\\Cargo.toml",
+        "--target",
+        "x86_64-pc-windows-msvc",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-001\\target"
+      ],
+      "pid": 13040,
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_seconds": 3.156222399993567,
+      "stdout_eof": true,
+      "stderr_eof": true,
+      "stdout_sha256": "377eb612ae39b5bf0b2e968b3e5a8f298091127012ef1633b69a28c198dcd712",
+      "stderr_sha256": "7a19d15a5e30b4e3d90d3c88d3b51768c9b2639bd68ca4501733ef2d3bf96e58"
+    }
+  ],
+  "qualification": "bootstrap local only, not IPC evidence",
+  "frozen_before": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+    "receipts/p02-exec-store-002/handoff.json": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+    "receipts/p02-core-network-003/handoff.json": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+    "receipts/p02-integration-004/handoff.json": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751"
+  },
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_INCREMENTAL",
+    "CARGO_NET_OFFLINE",
+    "CARGO_TARGET_DIR",
+    "CARGO_TERM_COLOR",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_TERMINAL_PROMPT",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "artifact": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-native-session-adversary.exe",
+    "sha256": "8d104ce64df65f723079658fa53328099120208cf8611db40e82a41c34fd912a"
+  },
+  "frozen_after": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+    "receipts/p02-exec-store-002/handoff.json": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+    "receipts/p02-core-network-003/handoff.json": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+    "receipts/p02-integration-004/handoff.json": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751"
+  },
+  "inputs_before": {
+    "receipts/m02-native-session-adversary-001/run_peer.py": "26e1b2613d67dcaa721f165a95b3309b0129bde284b0c83a72ef9a27d07ab8ee",
+    "out/m02-native-session-adversary-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "native/m02-native-session-adversary-001/Cargo.lock": "b503612b0fd66634d4311f8034ce7b18559ef8f7ea6420aa0986a4e4dde13841",
+    "native/m02-native-session-adversary-001/Cargo.toml": "b4a1f44756433265ffbe0abb8ada98eabbe2adadbca84072a4459d1487864f70",
+    "native/m02-native-session-adversary-001/README.md": "df6791cf35620504c2d75bb34f0ebf7f6670bffbbe7a727009c4393245e2d25e",
+    "native/m02-native-session-adversary-001/src/main.rs": "f4ed4ac8531ad20933b6d7ef4092332cc3789fac49a48ff01c1e3282e213cf95"
+  },
+  "inputs_after": {
+    "receipts/m02-native-session-adversary-001/run_peer.py": "26e1b2613d67dcaa721f165a95b3309b0129bde284b0c83a72ef9a27d07ab8ee",
+    "out/m02-native-session-adversary-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+    "native/m02-native-session-adversary-001/Cargo.lock": "b503612b0fd66634d4311f8034ce7b18559ef8f7ea6420aa0986a4e4dde13841",
+    "native/m02-native-session-adversary-001/Cargo.toml": "b4a1f44756433265ffbe0abb8ada98eabbe2adadbca84072a4459d1487864f70",
+    "native/m02-native-session-adversary-001/README.md": "df6791cf35620504c2d75bb34f0ebf7f6670bffbbe7a727009c4393245e2d25e",
+    "native/m02-native-session-adversary-001/src/main.rs": "f4ed4ac8531ad20933b6d7ef4092332cc3789fac49a48ff01c1e3282e213cf95"
+  }
+}

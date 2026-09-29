@@ -1,0 +1,78 @@
+{
+  "status": "exact_git_directory_sources_prepared_not_cargo_verified",
+  "script_sha256": "bf04e2e1f80214fe5475bb2ca659caf163a480d2d8545a85bae28e0f06fa7e8e",
+  "cargo_invoked": false,
+  "network_used": false,
+  "original_sources_modified": false,
+  "documentation": "https://doc.rust-lang.org/cargo/reference/source-replacement.html",
+  "output": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources",
+  "mappings": [
+    {
+      "name": "morrow-p02-fixed-tokio-tungstenite",
+      "git": "https://github.com/openai-oss-forks/tokio-tungstenite",
+      "rev": "0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+      "replace_with": "morrow-p02-directory-tokio-tungstenite",
+      "directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tokio-tungstenite",
+      "package_directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tokio-tungstenite\\tokio-tungstenite-0.28.0",
+      "original_source": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tokio-tungstenite-0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+      "original_files": 34,
+      "package_checksum_files": 34,
+      "only_added_file": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tokio-tungstenite\\tokio-tungstenite-0.28.0\\.cargo-checksum.json",
+      "checksum_metadata_sha256": "e5e5695adf5986095c7b0442823dc5319a52e32a01bac5d56cc8406e76d64a2a",
+      "proof": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\tokio-tungstenite-verification.json",
+        "sha256": "d88952cb36455eb1fbaac9f8140adcdbbd9329f591011c4de33c06af6ab628ea"
+      },
+      "source_bytes_unchanged": true,
+      "complete_repository": true
+    },
+    {
+      "name": "morrow-p02-fixed-tungstenite",
+      "git": "https://github.com/openai-oss-forks/tungstenite-rs",
+      "rev": "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f",
+      "replace_with": "morrow-p02-directory-tungstenite",
+      "directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tungstenite",
+      "package_directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tungstenite\\tungstenite-0.27.0",
+      "original_source": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tungstenite-rs-4fffad30fe373adbdcffab9545e9e9bf4f2fc19f",
+      "original_files": 888,
+      "package_checksum_files": 888,
+      "only_added_file": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\tungstenite\\tungstenite-0.27.0\\.cargo-checksum.json",
+      "checksum_metadata_sha256": "eb56df68f76c847c86f920ea388a2cf1e6ae7aea254bcf7f581095697a85debf",
+      "proof": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\tungstenite-rs-verification.json",
+        "sha256": "a5b7db499878abb7f9b751cd7216cc62493324b4341f30f8df2f64c4e56faa69"
+      },
+      "source_bytes_unchanged": true,
+      "complete_repository": true
+    },
+    {
+      "name": "morrow-p02-fixed-runfiles",
+      "git": "https://github.com/dzbarsky/rules_rust",
+      "rev": "b56cbaa8465e74127f1ea216f813cd377295ad81",
+      "replace_with": "morrow-p02-directory-runfiles",
+      "directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\rules-rust-package\\rust",
+      "package_directory": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\rules-rust-package\\rust\\runfiles",
+      "original_source": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package",
+      "original_files": 6,
+      "package_checksum_files": 5,
+      "only_added_file": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\git-directory-sources\\rules-rust-package\\rust\\runfiles\\.cargo-checksum.json",
+      "checksum_metadata_sha256": "25f4ffb15ef8210135ad76212ee46d050704e1e189af9cff38f8a811130c57e1",
+      "proof": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-dependencies-001\\runfiles-package-verification.json",
+        "sha256": "61ae5ff06cb8411a40997c2cfcdebf342175fd43433b5f1b105280034915dabc"
+      },
+      "source_bytes_unchanged": true,
+      "complete_repository": false
+    }
+  ],
+  "config_before_sha256": "c721356a44054295b5e9b3bf9d14cad8073b0c238addd657cde9a4016d29da6b",
+  "config_after_sha256": "daa3a5c9cf8d3839d7b62cb2f19e8d61e0185d8d19413a84a85b9bf2ed3f57a2",
+  "config": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\cargo-home\\config.toml",
+  "limits": [
+    "No Cargo resolution/build/runtime was performed",
+    "runfiles is a complete package subset, not the complete rules_rust repository",
+    "Cargo checksum metadata detects accidental changes; original Git blob proofs establish source identity"
+  ],
+  "original_sources_unchanged": true,
+  "finished_utc": "2026-09-28T12:11:45.261697+00:00"
+}

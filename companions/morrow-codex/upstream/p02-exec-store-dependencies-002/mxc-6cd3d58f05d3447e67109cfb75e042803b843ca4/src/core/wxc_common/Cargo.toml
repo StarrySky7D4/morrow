@@ -1,0 +1,41 @@
+[package]
+name = "wxc_common"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+microvm = ["dep:nanvix_common", "dep:uuid"]
+# Enables JSON Schema generation from the dedicated wire model. Off by default
+# so normal builds don't carry schemars.
+schema-gen = ["dep:mxc_schema_support", "dep:schemars"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true, features = ["raw_value"] }
+serde_path_to_error = { workspace = true }
+unicode-general-category = { workspace = true }
+thiserror = { workspace = true }
+base64 = { workspace = true }
+cidr = { workspace = true }
+url = { workspace = true }
+getrandom = { workspace = true }
+semver = "1"
+schemars = { workspace = true, optional = true }
+nanvix_common = { path = "../../backends/nanvix/common", optional = true }
+uuid = { workspace = true, optional = true }
+mxc_config_contract = { workspace = true }
+mxc_schema_support = { workspace = true, optional = true }
+mxc_telemetry = { workspace = true }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { workspace = true, features = ["Win32_Globalization"] }
+windows-core = { workspace = true }
+widestring = { workspace = true }
+winreg = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+libc = { workspace = true }
+
+[dev-dependencies]
+tempfile.workspace = true

@@ -1,0 +1,355 @@
+{
+  "producer_tests": 3,
+  "rerun": false,
+  "facts": [
+    {
+      "samples": 1,
+      "gaps_ms": [],
+      "operation_id": 2,
+      "issue_ordinal": 1,
+      "initial_io_pending": true,
+      "cancel_probe_incomplete": true,
+      "reap_error": 995,
+      "reap_bytes": 0,
+      "original_owner_observations": [
+        {
+          "after_ns": 7162900,
+          "before_ns": 7079400,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 0,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "io_pending",
+            "win32_error": 997
+          },
+          "resolution": "not_measured",
+          "stage": "write_issue"
+        },
+        {
+          "after_ns": 33164200,
+          "before_ns": 33162700,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "incomplete_sample"
+        },
+        {
+          "after_ns": 36219500,
+          "before_ns": 36219500,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "gate_or_deadline": false
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_request_observed"
+        },
+        {
+          "after_ns": 36253300,
+          "before_ns": 36252700,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_probe"
+        },
+        {
+          "after_ns": 36286100,
+          "before_ns": 36272400,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "completion_claimed": false
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_requested"
+        },
+        {
+          "after_ns": 37747900,
+          "before_ns": 37739500,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-4250680675d804b6b112228e33bd35cc:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "bytes": 0,
+            "error": 995,
+            "id": 2,
+            "kind": "completed"
+          },
+          "resolution": "not_measured",
+          "stage": "write_reaped"
+        }
+      ]
+    },
+    {
+      "samples": 3,
+      "gaps_ms": [
+        25.1034,
+        25.9258
+      ],
+      "operation_id": 2,
+      "issue_ordinal": 1,
+      "initial_io_pending": true,
+      "cancel_probe_incomplete": true,
+      "reap_error": 995,
+      "reap_bytes": 0,
+      "original_owner_observations": [
+        {
+          "after_ns": 6159200,
+          "before_ns": 6091300,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 0,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "io_pending",
+            "win32_error": 997
+          },
+          "resolution": "not_measured",
+          "stage": "write_issue"
+        },
+        {
+          "after_ns": 31542100,
+          "before_ns": 31540000,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 1,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "incomplete_sample"
+        },
+        {
+          "after_ns": 56648100,
+          "before_ns": 56645500,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 2,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "incomplete_sample"
+        },
+        {
+          "after_ns": 82574800,
+          "before_ns": 82573900,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 3,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "incomplete_sample"
+        },
+        {
+          "after_ns": 85615000,
+          "before_ns": 85615000,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 3,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "gate_or_deadline": false
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_request_observed"
+        },
+        {
+          "after_ns": 85638300,
+          "before_ns": 85638000,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 3,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "kind": "incomplete",
+            "win32_error": 996
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_probe"
+        },
+        {
+          "after_ns": 85660300,
+          "before_ns": 85647500,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 3,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "completion_claimed": false
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_requested"
+        },
+        {
+          "after_ns": 87113600,
+          "before_ns": 87109600,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-observation-0a4cc38ac0c1e9a528e3de9b45ddad09:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": {
+            "body_end": 8192,
+            "frame_offset": 0,
+            "id": 2,
+            "incomplete_samples": 3,
+            "initial_pending": true,
+            "issue_ordinal": 1,
+            "requested_bytes": 8192
+          },
+          "outcome": {
+            "bytes": 0,
+            "error": 995,
+            "id": 2,
+            "kind": "completed"
+          },
+          "resolution": "not_measured",
+          "stage": "write_reaped"
+        }
+      ]
+    }
+  ]
+}

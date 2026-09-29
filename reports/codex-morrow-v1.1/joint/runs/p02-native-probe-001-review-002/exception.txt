@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 187, in main
+    result['independent_consumer']=build()
+                                   ~~~~~^^
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 167, in build
+    require(normalize(new['resolve'])==old['resolve'],'resolved graph semantic drift')
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 16, in require
+    if not ok: raise RuntimeError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: resolved graph semantic drift

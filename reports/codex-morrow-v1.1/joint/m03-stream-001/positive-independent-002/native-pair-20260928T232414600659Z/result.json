@@ -1,0 +1,171 @@
+{
+  "status": "single_positive_core_http_pair_passed_not_full_m03",
+  "run": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\positive-independent-002\\native-pair-20260928T232414600659Z",
+  "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-joint-001\\positive-independent-002\\20260928T232414600659Z",
+  "candidate_manifest_sha256": "68b5941b3ddb0aeb97ceaffa4a48fc56828df7007badf0e7072481e5d83d67e1",
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "timing": {
+    "complete_proposal_observed_at_ns": 3360365700,
+    "host_events_original_approval_clock": [
+      {
+        "at_us": 1987283,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+          "config_sha256": "e39e1cdea3ff054a04c3545436d11fa8891b341be0ab68b39856f578b1cfffad",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 12520,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 3071014,
+        "detail": {
+          "body_bytes": 22025,
+          "request_sha256": "1e5e70dd2c3b85c4505b886cabcfad6a597b3dfb77419e9bb9d53ae7148ad9f4"
+        },
+        "event": "proposal_complete",
+        "ordinal": 26
+      },
+      {
+        "at_us": 3084210,
+        "detail": {
+          "grant_ref": "38dfd1b525a125029a6c3f0534e8915f73acc488b49252119275ef5d7a5a9f7e",
+          "request_sha256": "1e5e70dd2c3b85c4505b886cabcfad6a597b3dfb77419e9bb9d53ae7148ad9f4",
+          "response_limit": 65536
+        },
+        "event": "http_approved",
+        "ordinal": 28
+      },
+      {
+        "at_us": 3109450,
+        "detail": {
+          "intent": "Unknown",
+          "ordinal": 2,
+          "server_received_proven": false
+        },
+        "event": "send_fence",
+        "ordinal": 31
+      },
+      {
+        "at_us": 3254280,
+        "detail": {
+          "reason": 25
+        },
+        "event": "session_close_reason",
+        "ordinal": 53
+      },
+      {
+        "at_us": 3272571,
+        "detail": {
+          "bytes": 428,
+          "sequence": 6
+        },
+        "event": "close_ack_written",
+        "ordinal": 58
+      },
+      {
+        "at_us": 3287391,
+        "detail": {
+          "business_success": false,
+          "code": 0
+        },
+        "event": "exit",
+        "ordinal": 61
+      }
+    ]
+  },
+  "held_guest_initial": {
+    "pid": 12520,
+    "creation_filetime": 134351114570730784,
+    "initial_wait": 258,
+    "identity_source": "this host claim reply only"
+  },
+  "host_exit_code": 0,
+  "progress": {
+    "cancel_discarded_bytes": 0,
+    "child_exited": true,
+    "connect_reaped": true,
+    "data_closed": true,
+    "drain_discarded_bytes": 14,
+    "error_code": 0,
+    "error_consumed_bytes": 0,
+    "http_eof": true,
+    "http_status": 200,
+    "intent": "Observed",
+    "issued_offset": 281,
+    "last_write_ordinal": 5,
+    "network": "Eof",
+    "os_completed_offset": 281,
+    "owner": "Released",
+    "owner_released": true,
+    "parser_yielded_bytes": 267,
+    "peer_consumed_offset": 281,
+    "read_reaped": true,
+    "received_offset": 281,
+    "request_closed": true,
+    "reserved_offset": 281,
+    "response_material_stored": true,
+    "revoke_applied": true,
+    "revoke_persisted": true,
+    "stderr_eof": true,
+    "stdout_eof": true,
+    "worker_joined": true,
+    "worker_started": true,
+    "write_reaped": true
+  },
+  "delta_before_eof_margin_ns": 30584500,
+  "held_guest_final": {
+    "wait_signaled": true,
+    "wait_result": 0,
+    "exit_code": 0
+  },
+  "guest_files_sha256": {
+    "result.json": "a915d2b259a98e0996a6119ab6ffa5a85e9420d76d0d68ac812edd683f1931ef",
+    "core-events.jsonl": "d8eab17dc61cfd43dc7a7384d816534254a5ee7c1aa715cf773f95ce2a2fcf85"
+  },
+  "byte_accounting": {
+    "total": 281,
+    "parser": 267,
+    "drain": 14,
+    "cancel_discard": 0,
+    "error_consume": 0,
+    "all_offsets_equal": true
+  },
+  "guest_final_control_ok": true,
+  "actual_core_events": 4,
+  "first_durable_revocation": {
+    "source": 2,
+    "reason": 25,
+    "applications": 1,
+    "false_external_revoke": false
+  },
+  "fixture_server_joined": true,
+  "root_close_reasons": [
+    {
+      "at_us": 3254280,
+      "detail": {
+        "reason": 25
+      },
+      "event": "session_close_reason",
+      "ordinal": 53
+    }
+  ],
+  "host_os_exit": 0,
+  "host_lifetime": {
+    "pid": 23724,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 12520,
+      "session": 13288638795535084499
+    },
+    "owner_release_verified": true
+  },
+  "inputs_unchanged": true
+}

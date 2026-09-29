@@ -1,0 +1,46 @@
+{
+  "disposition": "two_static_findings_addressed_local_producer_tests_reviewed",
+  "all_input_checks": 63,
+  "candidate_files": 31,
+  "old_review_pins_rechecked": 31,
+  "producer_core_tests": 4,
+  "producer_native_tests": 9,
+  "new_targeted_tests": 4,
+  "independent_tests_run": false,
+  "runtime_invoked": false,
+  "compiler_unique_package_ids": 907,
+  "native_artifact": {
+    "reason": "compiler-artifact",
+    "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/native/m03-stream-002#morrow-codex-native-http-client@0.3.1",
+    "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\Cargo.toml",
+    "target": {
+      "kind": [
+        "bin"
+      ],
+      "crate_types": [
+        "bin"
+      ],
+      "name": "morrow-codex-native-http-client",
+      "src_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\main.rs",
+      "edition": "2024",
+      "doc": true,
+      "doctest": false,
+      "test": true
+    },
+    "profile": {
+      "opt_level": "0",
+      "debuginfo": 0,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": false
+    },
+    "features": [],
+    "filenames": [
+      "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-codex-native-http-client.exe",
+      "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow_codex_native_http_client.pdb"
+    ],
+    "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-codex-native-http-client.exe",
+    "fresh": false
+  },
+  "full_matrix": "not_run"
+}

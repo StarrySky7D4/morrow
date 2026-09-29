@@ -1,0 +1,33 @@
+{
+  "reason": "compiler-artifact",
+  "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/io-safety-refactor/native_pipe_win_001#morrow-native-pipe-win@0.1.0",
+  "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+  "target": {
+    "kind": [
+      "test"
+    ],
+    "crate_types": [
+      "bin"
+    ],
+    "name": "platform",
+    "src_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\tests\\platform.rs",
+    "edition": "2024",
+    "doc": false,
+    "doctest": false,
+    "test": true
+  },
+  "profile": {
+    "opt_level": "0",
+    "debuginfo": 2,
+    "debug_assertions": true,
+    "overflow_checks": true,
+    "test": true
+  },
+  "features": [],
+  "filenames": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe\\debug\\deps\\platform-a95421a369e34f9f.exe",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe\\debug\\deps\\platform-a95421a369e34f9f.pdb"
+  ],
+  "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe\\debug\\deps\\platform-a95421a369e34f9f.exe",
+  "fresh": false
+}

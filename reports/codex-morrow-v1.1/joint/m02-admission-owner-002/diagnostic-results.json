@@ -1,0 +1,183 @@
+{
+  "scope": "append-only diagnostic overlay, zero original product credit",
+  "matrix_sha256": "564da158039c9a69024a8c091f8a36dcf2a3f5fe7fa2a7b240b77053bb2a49b5",
+  "diagnostics": [
+    {
+      "id": "M02A-01",
+      "title": "批准权威及真实复用",
+      "original_ids": [
+        "C05",
+        "B06"
+      ],
+      "status": "source_and_control_boundary_verified",
+      "evidence": "HostAuthority sole public entry, typed native ledger, approved injection rejected",
+      "remaining": "production approval UI/CLI and installed identity authentication absent",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-02",
+      "title": "批准时固定启动身份",
+      "original_ids": [
+        "NX-01",
+        "P06"
+      ],
+      "status": "partial_verified",
+      "evidence": "20 configs reconstructed; three record identity mutations and executable drift rejected",
+      "remaining": "other field mutations producer/API only; role labels not authenticated product identities",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-03",
+      "title": "一次性claim原子性",
+      "original_ids": [
+        "P01",
+        "B06"
+      ],
+      "status": "verified_limited_profile",
+      "evidence": "actual duplicate claims, consumed ledger and one initial child",
+      "remaining": "not all transaction failure/interleaving windows dynamically injected",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-04",
+      "title": "两个真实host争同slot",
+      "original_ids": [
+        "B06",
+        "NX-04"
+      ],
+      "status": "verified_limited_profile",
+      "evidence": "two real concurrent serve hosts, one initial winner, no loser spawn before release",
+      "remaining": "one fixed trusted profile/slot only; no global process inventory",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-05",
+      "title": "真实历史原字节重放",
+      "original_ids": [
+        "NX-02",
+        "P01"
+      ],
+      "status": "verified_limited_binding",
+      "evidence": "real prior Hello and Query byte-identical; new session rejects17",
+      "remaining": "multiple fields naturally differ; not isolated field or production CLI auth proof",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-06",
+      "title": "批准后撤销再claim",
+      "original_ids": [
+        "P01"
+      ],
+      "status": "verified_limited_control",
+      "evidence": "real approval then revoke prevents claim",
+      "remaining": "not all simultaneous pre-spawn transaction schedules covered independently",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-07",
+      "title": "在运行会话撤权",
+      "original_ids": [
+        "P01",
+        "NX-04"
+      ],
+      "status": "partial_verified",
+      "evidence": "second host persists revoke; owner runtime ACK, no later State",
+      "remaining": "pending not instantaneous revoke; in-flight partial response/saturation unqualified",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-08",
+      "title": "首次授权deadline",
+      "original_ids": [
+        "P01"
+      ],
+      "status": "verified_limited_control",
+      "evidence": "250ms original approval, delayed and repeated claims reject",
+      "remaining": "no wall-clock/restart revival; cross-issuer persisted data separately rejected",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-09",
+      "title": "ClosingUnconfirmed跨host挡接替",
+      "original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "status": "verified_limited_profile",
+      "evidence": "root OS exited, known holder alive, persistent Unconfirmed blocks host2",
+      "remaining": "no OS process-tree containment or complete inherited-handle proof",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-10",
+      "title": "host crash而child仍活着",
+      "original_ids": [
+        "NX-04",
+        "R04",
+        "B05"
+      ],
+      "status": "verified_fail_closed_only",
+      "evidence": "host OS exit/old child alive witnessed; refusal persists after natural child exit",
+      "remaining": "no full reconciliation or automatic recovery; last durable phase not live OS proof",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-11",
+      "title": "完整释放后新批准启动",
+      "original_ids": [
+        "B06",
+        "NX-06"
+      ],
+      "status": "verified_limited_profile",
+      "evidence": "new approvals launch only after normal complete release in two groups",
+      "remaining": "cannot reuse old issuer authority; crash Unknown remains blocked",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-12",
+      "title": "锁范围与恢复核对",
+      "original_ids": [
+        "B06",
+        "R04"
+      ],
+      "status": "partial_verified",
+      "evidence": "real identity lock, fixed root/profile metadata; profile copy rejected",
+      "remaining": "initialization race producer only; arbitrary backup/alias/hostile replacement excluded",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-13",
+      "title": "副作用前后故障窗口",
+      "original_ids": [
+        "NX-04",
+        "R04",
+        "P01"
+      ],
+      "status": "partial_verified",
+      "evidence": "transaction/spawn/register order source reviewed; running-host crash actual",
+      "remaining": "not all commit-uncertain or pre-registration fault points dynamically forced",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02A-14",
+      "title": "输入封存与来源",
+      "original_ids": [
+        "L06",
+        "QX-01",
+        "QX-02",
+        "QX-03"
+      ],
+      "status": "partial_verified",
+      "evidence": "2233 before/after pins, ready builds associated, preserved failed attempt, independent runs",
+      "remaining": "no independent rebuild this batch; no package/install/OS/platform product qualification",
+      "product_pass_credit": 0
+    }
+  ],
+  "M-02": "partial",
+  "G0": "blocked",
+  "G1": "not_passed",
+  "P-02": "blocked",
+  "J-00": "blocked",
+  "graphs": "0/2",
+  "acceptance_not_run": 84
+}

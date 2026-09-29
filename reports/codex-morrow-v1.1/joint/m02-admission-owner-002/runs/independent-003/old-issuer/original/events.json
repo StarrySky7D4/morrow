@@ -1,0 +1,95 @@
+[
+  {
+    "observed_at_ns": 168302227492200,
+    "event": {
+      "approval_required": true,
+      "artifact_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+      "event": "proposal",
+      "host_pid": 14724,
+      "operation": "old-issuer-original",
+      "plugin_id": "joint-plugin",
+      "production_cli_authenticated": false,
+      "role": "native-client",
+      "slot": "joint-slot"
+    }
+  },
+  {
+    "observed_at_ns": 168302242654100,
+    "event": {
+      "action": "approve",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "grant_id": "bae135168896ed46e712a29c38c4f144cba99b8cb970b0bc41e52681443b39b1"
+      }
+    }
+  },
+  {
+    "observed_at_ns": 168302242899900,
+    "event": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 15333,
+        "detail": {
+          "config_sha256": "c1f1cec290387fecc6f26b7fe3dc8088ad515c75946d1d331f9c108c4b82a82e",
+          "generation": 1,
+          "grant_id": "bae135168896ed46e712a29c38c4f144cba99b8cb970b0bc41e52681443b39b1",
+          "operation": "old-issuer-original",
+          "plugin_id": "joint-plugin",
+          "role": "native-client",
+          "ttl_ms": 10000
+        },
+        "event": "authorize_created"
+      }
+    }
+  },
+  {
+    "observed_at_ns": 168302243310500,
+    "event": {
+      "action": "inspect",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "failed_closed": false,
+        "grant": {
+          "config_sha256": "c1f1cec290387fecc6f26b7fe3dc8088ad515c75946d1d331f9c108c4b82a82e",
+          "generation": 1,
+          "grant_id": "bae135168896ed46e712a29c38c4f144cba99b8cb970b0bc41e52681443b39b1",
+          "issuer": "c18de7c078aec3a509ba09aa8c5c8548b7dcd0a96ee6df1e39c2b5296c7fbf3a",
+          "live_in_this_issuer": true,
+          "operation": "old-issuer-original",
+          "plugin_id": "joint-plugin",
+          "role": "native-client",
+          "state": 1
+        },
+        "owner": null,
+        "profile_id": "7ec1f5070eef2b2fe848d4e621ef43bb5d89914b74ad01349c936ace10aa7b1e",
+        "slot": "joint-slot"
+      }
+    }
+  },
+  {
+    "observed_at_ns": 168302243460200,
+    "event": {
+      "action": "quit",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "requested": true
+      }
+    }
+  },
+  {
+    "observed_at_ns": 168302254118900,
+    "event": {
+      "event": "final_without_session",
+      "state": {
+        "failed_closed": false,
+        "grant": null,
+        "owner": null,
+        "profile_id": "7ec1f5070eef2b2fe848d4e621ef43bb5d89914b74ad01349c936ace10aa7b1e",
+        "slot": "joint-slot"
+      }
+    }
+  }
+]

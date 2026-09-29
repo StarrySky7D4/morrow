@@ -1,0 +1,25 @@
+{
+  "files": {
+    "host-rows.json": "5d7c39c86de787550985cc7f9b829012b1ffb616f210d9fac447d09847a6a01d",
+    "host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-approval.json": "e0d334cf1d749db930da3aa6722898a1fa571586ba4303426469b984a335d6b0",
+    "init.json": "09416adb9c2439e1e167bc3e8c1d448abe06ba3d9c89436cc0a3528fe1044509",
+    "inputs.json": "466469412dd457060b3da5659c9e9cfc12b42572489af15aff0e04f70598786d",
+    "launch.json": "5dbf0528f66af56407e090d3f64e1545065746529d8ea4337ed0b15516410246",
+    "operator-commands.json": "56fe4975a3f3a41166f89705c823f41e61a37a41818bd4583b7947925842346d",
+    "pre-eof-host-snapshot.json": "1c680067d65bf9bd513d1cff476db905576c4a356afb0cd34efd60a152773ed6",
+    "pre-eof-inspections.json": "c169c09b9ed272db5450567392f941fc1f59ed06107ababc64574ce173d8dd44",
+    "profile/coordination.sqlite": "404002e43f8f980dd64175479297d077157278744fc7402f00e1484aa20547f5",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "893640ef3017f288d7e064e11733353426abc1f03f9321e6fdb700ddc657086e",
+    "response-body.bin": "bdef3ed2170ced39669228dd9cbc3d6495d365e91412212dbaad53b27dd071ba",
+    "result.json": "1082eec90784898452efa9ff20e9056632c857fe9eb079eaa5e81a9c371782cf",
+    "retained-final.json": "90d1b6eea77aeaa8b143bc51fb036d75eb12313d0071a76c18be1e93ee7428ea",
+    "server-events.json": "04968a497550eec5943d0f2a85c6237fc8d171cf20f97fc176aa8bb4898e3401",
+    "sink-events.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  },
+  "plugin_evidence": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-008\\20260928T235143862332Z\\exact\\core-events.jsonl": "c5ed4741bb0dec25ba14446b9d4ab176d98e4cf480611db16b4b4f0518a194de",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-008\\20260928T235143862332Z\\exact\\result.json": "01ef2194dc0cf422030dfbc842914224591d3f5ecdc785dc21487d25831f658c"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "status": "failed",
+  "scope": "complete fixed source identities and limited Windows refusal probe",
+  "P02": "blocked",
+  "G0": "blocked",
+  "product_graphs_built": 0,
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "sources": [
+    {
+      "id": "codex",
+      "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+      "files": 8697,
+      "bytes": 86130187,
+      "root_tree": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+      "trees": 985
+    },
+    {
+      "id": "cc-switch",
+      "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+      "files": 1322,
+      "bytes": 48415580,
+      "root_tree": "e373c27485681c074ddab7d4f085ee9a6667b891",
+      "trees": 133
+    }
+  ],
+  "error": "file membership C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package\\rust\\runfiles"
+}

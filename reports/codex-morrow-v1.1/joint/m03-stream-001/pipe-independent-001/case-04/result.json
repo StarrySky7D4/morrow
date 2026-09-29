@@ -1,0 +1,24 @@
+{
+  "test": "server_disconnect_completes_client_read_without_false_success",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+    "--exact",
+    "server_disconnect_completes_client_read_without_false_success",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "process": {
+    "pid": 1144,
+    "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+    "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+    "creation_filetime": 134351051242383951,
+    "source": "held exact Popen process handle"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 24191400,
+  "passed": true,
+  "stdout_sha256": "3d3d9367fafe736c1f3a0b6d70438923e74115275cf84313d994fcc852741d33",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "helper_pids_reported_by_fixed_test": []
+}

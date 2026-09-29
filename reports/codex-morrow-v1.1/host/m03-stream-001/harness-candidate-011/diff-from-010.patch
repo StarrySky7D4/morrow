@@ -1,0 +1,161 @@
+--- m03_revoke_barriers_010.py
++++ m03_revoke_barriers_011.py
+@@ -18,10 +18,10 @@
+ ROOT = pathlib.Path(__file__).resolve().parents[1]
+ BASE = ROOT / 'reports/codex-morrow-v1.1/host/m03-stream-001'
+ PLUGIN = pathlib.Path(r'C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex')
+-PM = PLUGIN / 'receipts/m03-fixture-001/native-candidate-fixture-001.json'
++PM = PLUGIN / 'receipts/m03-fixture-002/native-candidate-fixture-002.json'
+ # Filled only after receipt of a separately frozen fixture, never inferred at execution.
+-PLUGIN_MANIFEST_SHA = '06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689'
+-PLUGIN_EXE_SHA = '515ed83d1b27d45df5d4cdcc18c41244b5b6ac930528452cc45a64fe0ada89ad'
++PLUGIN_MANIFEST_SHA = '6a8d4d07aab156d72f5fce73dea7750f8b5424707dae84595182ff7f55c211a5'
++PLUGIN_EXE_SHA = 'b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc'
+ HOSTS = {
+     'core-revoke': ('004', 'a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2', 'c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224'),
+     'data-pending': ('005', '395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15', '9b2a2412ce9fe617729757b8be7eddb34a84718ad64aa507f2bfdc9de926d6af'),
+@@ -126,6 +126,48 @@
+             not any(e['kind']=='actual_core_output_text_delta' and e['sha256']==target['sha256'] for e in core_events)
+             for target in (held['detail']['event'],reserved['detail']['event'])),
+     }
++
++def host_cancel_transition_checks(received):
++    transition=received['detail'].get('cancel_transition')
++    if not isinstance(transition,dict):return {'host_cancel_transition_present':False}
++    return {
++        'host_cancel_transition_present':True,
++        'cancel_gate_previously_open':transition.get('cancel_gate_before') is False,
++        'cancel_gate_now_closed':transition.get('cancel_gate_after') is True,
++        'no_prior_cancellation_reason':'first_cancel_reason_before' in transition and transition['first_cancel_reason_before'] is None,
++        'host_cancelled_is_first_reason':transition.get('first_cancel_reason_after')=='HostCancelled',
++        'this_host_control_closed_gate':transition.get('host_control_closed_gate') is True,
++        # Data can end on either side of control reception; neither order is a
++        # failure by itself. Paused delivery is distinct from a cancelled gate.
++        'delivery_pause_state_observed':type(transition.get('delivery_paused_before')) is bool,
++    }
++
++def data_end_checks(guest):
++    """Array boundaries are captured with the pause under the native State lock.
++
++    Control write admission is a logical boundary, not a kernel WriteFile time.
++    A frame admitted before pause may finish its already admitted synchronous IO.
++    """
++    d=guest['data_end_observation'];frames=guest['frames'];io=guest['io']
++    checks={'fixed_wait_cap_500ms':d['wait_cap_ms']==500,
++        'authority_not_renewed':d['authority_deadline_renewed'] is False,
++        'delivery_not_resumed':d['delivery_resumed'] is False,
++        'pause_state_boolean':type(d['pause_observed']) is bool}
++    if d['pause_observed'] is True:
++        fi,ii=d['frames_index_at_pause'],d['io_index_at_pause']
++        valid=type(fi) is int and 0<=fi<=len(frames) and type(ii) is int and 0<=ii<=len(io)
++        checks['pause_indices_in_bounds']=valid
++        checks['disconnect_explained_by_valid_control']=d['control_explained'] is True
++        checks['fixed_positive_wait_budget_bounded']=type(d['fixed_wait_budget_ns']) is int and 0<d['fixed_wait_budget_ns']<=500_000_000
++        if valid:
++            admitted=[f for f in frames[fi:] if f['lane']=='guest_control_write_admitted']
++            checks['no_new_commit_admission_after_pause']=all(f['kind']!='HttpCommit' for f in admitted)
++            checks['no_positive_credit_admission_after_pause']=all(f['kind']!='HttpCredit' or (type(f['credit_window_bytes']) is int and f['credit_window_bytes']==0) for f in admitted)
++            checks['admission_records_preserve_pause']=all(f['delivery_paused'] is True for f in admitted)
++            checks['no_new_data_os_issue_after_pause']=all(o['action']!='os_issue' for o in io[ii:])
++    elif d['pause_observed'] is False:
++        checks['no_invented_pause_indices_or_budget']=all(d[k] is None for k in ('frames_index_at_pause','io_index_at_pause','fixed_wait_budget_ns'))
++    return checks
+ 
+ class OwnedServer(http.server.ThreadingHTTPServer):
+     daemon_threads=False
+@@ -195,12 +237,12 @@
+ 
+ def run(mode):
+     host_exe,guest_exe=verify(mode)
+-    batch_stamp=stamp();run=BASE/f'revoke-010-{mode}-{batch_stamp}';run.mkdir()
+-    evidence=PLUGIN/'out/m03-host-revoke-010'/batch_stamp;evidence.mkdir(parents=True)
++    batch_stamp=stamp();run=BASE/f'revoke-011-{mode}-{batch_stamp}';run.mkdir()
++    evidence=PLUGIN/'out/m03-host-revoke-011'/batch_stamp;evidence.mkdir(parents=True)
+     spec=fixture_spec(mode,secrets.token_hex(32));dump(evidence/'fixture-spec.json',spec);spec_sha=sha(evidence/'fixture-spec.json')
+     operation='m03-'+mode+'-'+batch_stamp
+     profile=run/'profile';cwd=run/'cwd';profile.mkdir();cwd.mkdir()
+-    dump(run/'locked-expectations.json',dict(mode=mode,spec=spec,spec_sha256=spec_sha,script_sha256=sha(pathlib.Path(__file__)),host=HOSTS[mode],plugin_manifest_sha256=PLUGIN_MANIFEST_SHA,plugin_exe_sha256=PLUGIN_EXE_SHA,original_ttl_ms=10000,handshake_ms=6000,close_ms=1000,one_post_only=True,automatic_retry=False,qualification='two independent cases; only current case authorized',expected=dict(core_terminal='Cancelled',transport_drain=None,host_exit=0,guest_exit=2,http_status=200,intent='Unknown',http_eof=False,response_material_stored=False,error_code=19,revocation_source=1,close_aggregate='Unknown',independent_control_clean=True,guest_threads_joined=True,fixture_threads_joined=True,owner_released=True,ack_observed_upper_bound_ms=500,core_targets_never_business_delivered=True if mode=='core-revoke' else None,read_issue_count_unchanged=True if mode=='data-pending' else None,cancel_probe_still_incomplete=True if mode=='data-pending' else None)))
++    dump(run/'locked-expectations.json',dict(mode=mode,spec=spec,spec_sha256=spec_sha,script_sha256=sha(pathlib.Path(__file__)),host=HOSTS[mode],plugin_manifest_sha256=PLUGIN_MANIFEST_SHA,plugin_exe_sha256=PLUGIN_EXE_SHA,original_ttl_ms=10000,handshake_ms=6000,close_ms=1000,one_post_only=True,automatic_retry=False,qualification='two independent cases; only current case authorized',expected=dict(core_terminal='Cancelled',host_first_cancel_reason='HostCancelled' if mode=='core-revoke' else None,host_control_must_close_previously_open_gate=mode=='core-revoke',data_end_wait_cap_ms=500,no_new_data_issue_after_pause=True,no_new_commit_or_positive_credit_admission_after_pause=True,transport_drain=None,host_exit=0,guest_exit=2,http_status=200,intent='Unknown',http_eof=False,response_material_stored=False,error_code=19,revocation_source=1,close_aggregate='Unknown',independent_control_clean=True,guest_threads_joined=True,fixture_threads_joined=True,owner_released=True,ack_observed_upper_bound_ms=500,core_targets_never_business_delivered=True if mode=='core-revoke' else None,read_issue_count_unchanged=True if mode=='data-pending' else None,cancel_probe_still_incomplete=True if mode=='data-pending' else None)))
+     abort=threading.Event();body_gate=threading.Event();server_events=[];approved_body=None
+     def event(kind,**detail):server_events.append(dict(kind=kind,at_ns=time.monotonic_ns(),**detail))
+     class Handler(http.server.BaseHTTPRequestHandler):
+@@ -289,6 +331,9 @@
+             received=markers.one('host_revoke_received');gate=markers.one('gate_closed')
+             if applied and received and gate:
+                 assert gate['ordinal']>received['ordinal']
++                if mode=='core-revoke':
++                    transition_checks=host_cancel_transition_checks(received)
++                    assert all(transition_checks.values()),transition_checks
+                 dump(run/'release-preconditions.json',{'harness_observed_ns':time.monotonic_ns(),'host_applied':applied,'guest_revoke':received,'guest_gate':gate})
+                 break
+             assert time.monotonic()<until,'host applied/guest revoke/gate not observed';time.sleep(.005)
+@@ -314,6 +359,9 @@
+         frozen.PLUGIN_SHA=PLUGIN_EXE_SHA
+         checks=frozen.control_checks('s503',final,guest,operation);assert all(checks.values()),checks
+         assert guest['local_data_thread_joined'] and not guest['frames_overflow'] and not guest['io_overflow'] and not guest['task']['audit']['overflow'] and not final['snapshot']['event_overflow']
++        end_checks=data_end_checks(guest);assert all(end_checks.values()),end_checks
++        result['data_end_checks']=end_checks
++        result['data_end_observation']=guest['data_end_observation']
+         observation=guest['fixture_observation']
+         assert observation['mode']==mode and observation['spec_sha256']==spec_sha and observation['nonce']==spec['nonce']
+         assert observation['failure'] is None and observation['evidence_complete'] is True and observation['stages_complete'] is True and observation['gate_closed'] is True
+@@ -322,6 +370,12 @@
+         marker_rows=markers.read();assert len(marker_rows)==observation['written_records']==observation['enqueued_records']
+         core_events=[json.loads(line)['event'] for line in (evidence/'core-events.jsonl').read_text().splitlines()]
+         if mode=='core-revoke':
++            transition_checks=host_cancel_transition_checks(markers.one('host_revoke_received'))
++            transition_checks['task_first_cancel_reason_is_host']=guest['task']['audit']['first_cancel_reason']=='HostCancelled'
++            received_detail=markers.one('host_revoke_received')['detail']
++            transition_checks['matching_validated_host_control_frame']=any(frame['lane']=='host_control' and all(frame[k]==received_detail[k] for k in ('kind','sequence','generation','code')) for frame in guest['frames'])
++            assert all(transition_checks.values()),transition_checks
++            result['host_cancel_causality_checks']=transition_checks
+             suppressed=markers.one('core_event_suppressed');reserved_suppressed=markers.one('core_reserved_suppressed')
+             core_checks=core_suppression_checks(qualified,suppressed,reserved_suppressed,markers.one('gate_closed'),core_events)
+             assert all(core_checks.values()),core_checks
+@@ -382,7 +436,7 @@
+     except AssertionError:pass
+     else:raise AssertionError('reap from another issue accepted')
+     # File-only synthetic marker tests: no socket/process/real fixture.
+-    directory=BASE/('barriers-010-pure-markers-'+stamp());directory.mkdir()
++    directory=BASE/('barriers-011-pure-markers-'+stamp());directory.mkdir()
+     s=fixture_spec('core-revoke','a'*64);identity={'synthetic':True}
+     good={'identity':identity,'mode':s['mode'],'nonce':s['nonce'],'spec_sha256':'b'*64,'ordinal':1,'kind':'core_event_held','detail':{}}
+     for index,(key,bad) in enumerate((('nonce','c'*64),('spec_sha256','c'*64),('mode','data-pending'),('identity',{'synthetic':False}))):
+@@ -410,8 +464,35 @@
+     bad_a=copy.deepcopy(suppressed);bad_a['ordinal']=5
+     assert not all(core_suppression_checks(qualified,bad_a,reserved_suppressed,gate,[]).values())
+     assert not all(core_suppression_checks(qualified,suppressed,reserved_suppressed,gate,[{'kind':'actual_core_output_text_delta','sha256':b['sha256']}]).values())
+-    receipt={'status':'pure_only_no_process_socket_or_http','script_sha256':sha(pathlib.Path(__file__)),'cases':list(HOSTS),'fixed_fixture_ready':bool(PLUGIN_MANIFEST_SHA),'post_count':0,'runtime_tested':False,'checks':['fixed-spec limits','qualified same-operation chain','cancel probe completed rejected','insufficient samples rejected','short sample interval rejected','wrong reap issue rejected','four cross-batch marker mutations rejected','valid marker accepted','B suppression before or after gate marker accepted with original gate/permit proof','six negative core suppression mutations rejected; A order remains strict'],'synthetic_marker_evidence':str(directory)}
+-    out=BASE/('barriers-010-pure-'+stamp()+'.json');dump(out,receipt);print(json.dumps({'receipt':str(out),**receipt}))
++    transition=dict(cancel_gate_before=False,cancel_gate_after=True,first_cancel_reason_before=None,first_cancel_reason_after='HostCancelled',delivery_paused_before=False,host_control_closed_gate=True)
++    marker={'detail':{'cancel_transition':transition}}
++    for paused in (False,True):
++        marker['detail']['cancel_transition']['delivery_paused_before']=paused
++        assert all(host_cancel_transition_checks(marker).values())
++    causal_rejections=[]
++    for key,value in (('cancel_gate_before',True),('cancel_gate_after',False),('first_cancel_reason_before','NativeFailure'),('first_cancel_reason_after','NativeFailure'),('host_control_closed_gate',False),('delivery_paused_before',None)):
++        bad=copy.deepcopy(marker);bad['detail']['cancel_transition'][key]=value
++        assert not all(host_cancel_transition_checks(bad).values());causal_rejections.append(key)
++    assert not all(host_cancel_transition_checks({'detail':{'cancel_transition':None}}).values())
++    missing=copy.deepcopy(marker);del missing['detail']['cancel_transition']['first_cancel_reason_before']
++    assert not all(host_cancel_transition_checks(missing).values())
++    end=dict(pause_observed=True,control_explained=True,frames_index_at_pause=1,io_index_at_pause=1,fixed_wait_budget_ns=500_000_000,wait_cap_ms=500,authority_deadline_renewed=False,delivery_resumed=False)
++    # Pre-pause admission may complete after pause. It is not a new admission.
++    frame=dict(lane='guest_control_write_admitted',kind='HttpCommit',delivery_paused=False,credit_window_bytes=None)
++    guest=dict(data_end_observation=end,frames=[frame,dict(lane='guest_control_written',kind='HttpCommit',delivery_paused=True,credit_window_bytes=None)],io=[{'action':'os_issue'},{'action':'os_completion'}])
++    assert all(data_end_checks(guest).values())
++    zero_window=copy.deepcopy(guest)
++    zero_window['frames'].append(dict(lane='guest_control_write_admitted',kind='HttpCredit',delivery_paused=True,credit_window_bytes=0))
++    assert all(data_end_checks(zero_window).values()), 'legal zero-window settlement must remain admissible'
++    no_pause=copy.deepcopy(guest);no_pause['data_end_observation'].update(pause_observed=False,control_explained=False,frames_index_at_pause=None,io_index_at_pause=None,fixed_wait_budget_ns=None)
++    assert all(data_end_checks(no_pause).values())
++    bad=copy.deepcopy(guest);bad['frames'].append(frame);assert not all(data_end_checks(bad).values())
++    bad=copy.deepcopy(guest);bad['frames'].append(dict(lane='guest_control_write_admitted',kind='HttpCredit',delivery_paused=True,credit_window_bytes=1));assert not all(data_end_checks(bad).values())
++    bad=copy.deepcopy(guest);bad['io'].append({'action':'os_issue'});assert not all(data_end_checks(bad).values())
++    for key,value in (('control_explained',False),('fixed_wait_budget_ns',500_000_001),('authority_deadline_renewed',True),('delivery_resumed',True),('frames_index_at_pause',-1)):
++        bad=copy.deepcopy(guest);bad['data_end_observation'][key]=value;assert not all(data_end_checks(bad).values())
++    receipt={'status':'pure_only_no_process_socket_or_http','script_sha256':sha(pathlib.Path(__file__)),'cases':list(HOSTS),'fixed_fixture_ready':bool(PLUGIN_MANIFEST_SHA),'post_count':0,'runtime_tested':False,'checks':['fixed-spec limits','qualified same-operation chain','cancel probe completed rejected','insufficient samples rejected','short sample interval rejected','wrong reap issue rejected','four cross-batch marker mutations rejected','valid marker accepted','B suppression before or after gate marker accepted with original gate/permit proof','six negative core suppression mutations rejected; A order remains strict','both delivery-pause orders accepted only with actual host cancel transition','missing transition/reason field and six causal mutations rejected','control-first and EOF-first accepted; pre-pause admitted completion allowed','legal zero-window settlement admission remains allowed','eight pause-boundary violations rejected including new Commit/positive credit/OS issue'],'causality_rejected_fields':causal_rejections,'synthetic_marker_evidence':str(directory)}
++    out=BASE/('barriers-011-pure-'+stamp()+'.json');dump(out,receipt);print(json.dumps({'receipt':str(out),**receipt}))
+ 
+ if __name__=='__main__':
+     if sys.argv[1:]==['--check']:pure_check()

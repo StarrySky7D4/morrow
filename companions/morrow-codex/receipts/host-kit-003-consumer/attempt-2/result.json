@@ -1,0 +1,33 @@
+{
+  "status": "passed_consumer_qualification_only",
+  "qualification": "host-kit-003 independent consumer only",
+  "P-02": "not_claimed",
+  "G0": "not_claimed",
+  "prior_attempt": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\host-kit-003-consumer\\result.json",
+  "source": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-003",
+  "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\sdk\\host-kit-003-copy",
+  "manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "cargo_home": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home",
+  "target_dir": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\target",
+  "toolchain": "1.95.0-x86_64-pc-windows-msvc",
+  "target": "x86_64-pc-windows-msvc",
+  "network_policy": "locked_offline; no dependency download",
+  "personal_config_or_credentials_read": false,
+  "tool_versions": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-pc-windows-msvc\nrelease: 1.95.0\nLLVM version: 22.1.2",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "capnp": "Cap'n Proto version 1.4.0"
+  },
+  "qualification_tests": {
+    "passed": 14,
+    "failed": 0,
+    "ignored": 0,
+    "maximum_event_batch_test": "maximum_event_batch_remains_readable_by_consumer_after_validation",
+    "maximum_event_batch_passed": true
+  },
+  "default_no_fake_check": "passed",
+  "source_unchanged": true,
+  "copy_unchanged": true,
+  "verified_file_count": 181,
+  "completed_utc": "2026-09-28T11:37:07.220499+00:00"
+}

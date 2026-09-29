@@ -1,0 +1,84 @@
+{
+  "case": "crash-child-alive",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "crashed_host_pid": 3732,
+    "old_child_pid": 9900,
+    "child_alive_after_host_OS_exit": {
+      "pid": 9900,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+      "image_file_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+      "creation_filetime_100ns": 134351016168550670,
+      "first_observed_monotonic_ns": 168133169911400,
+      "observed_monotonic_ns": 168133434661800,
+      "handle_signaled": false,
+      "exit_code": null,
+      "pid_source": "pinned host claim/spawn event; parentage not independently queried",
+      "OS_parent_independently_observed": false,
+      "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+    },
+    "diagnostic_drains_at_host_OS_exit": {
+      "stdout": {
+        "eof": false,
+        "bytes": 5840,
+        "dropped_bytes": 0,
+        "queue_drops": 0
+      },
+      "stderr": {
+        "eof": false,
+        "bytes": 0,
+        "dropped_bytes": 0,
+        "queue_drops": 0
+      }
+    },
+    "rejected_while_alive": {
+      "action": "claim",
+      "error": "owner unconfirmed: no automatic crash takeover",
+      "event": "operator_result",
+      "ok": false
+    },
+    "rejected_after_child_exit": {
+      "action": "claim",
+      "error": "owner unconfirmed: no automatic crash takeover",
+      "event": "operator_result",
+      "ok": false
+    },
+    "inspection_after_child_exit": {
+      "action": "inspect",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "failed_closed": false,
+        "grant": {
+          "config_sha256": "250dca33a601a2b2f9f6e552d110e7e8b4b180c073ce9c014b6808d58fa4a5a5",
+          "generation": 1,
+          "grant_id": "f182d2942c7b16d64411318de37ed1ffdacbc3ac920bb049a0de61447bbdb96d",
+          "issuer": "83d39e6bbeae458013ea2f4a65795ac7ad4135129cfff0ed13573ecdfa1e4f26",
+          "live_in_this_issuer": false,
+          "operation": "crash-child-alive-owner",
+          "plugin_id": "joint-plugin",
+          "role": "native-client",
+          "state": 2
+        },
+        "owner": {
+          "automatic_takeover": false,
+          "epoch": 1,
+          "exit_observed": false,
+          "generation": 1,
+          "grant_id": "f182d2942c7b16d64411318de37ed1ffdacbc3ac920bb049a0de61447bbdb96d",
+          "locally_observed": false,
+          "owner_retained": true,
+          "phase": "Active",
+          "pid": 9900,
+          "session": 5796768482184171731,
+          "stderr_eof": false,
+          "stdout_eof": false
+        },
+        "profile_id": "dfcce0d017b4715ce04942fcbe7e150766e76a9462022d10834336c418860d45",
+        "slot": "joint-slot"
+      }
+    },
+    "automatic_recovery_claimed": false,
+    "forced_child_cleanup": false
+  }
+}

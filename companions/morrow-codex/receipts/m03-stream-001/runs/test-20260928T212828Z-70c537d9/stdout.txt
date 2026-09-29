@@ -1,0 +1,8 @@
+
+running 3 tests
+test network::tests::ambiguous_or_compressed_sse_head_is_rejected ... ok
+test request_task::tests::cancelled_cleanup_wait_can_resume_same_receipt ... ok
+test request_task::tests::user_cancel_suppresses_queued_events_and_preserves_observed_completion ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

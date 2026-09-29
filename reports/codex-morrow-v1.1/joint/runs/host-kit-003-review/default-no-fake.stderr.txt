@@ -1,0 +1,12 @@
+   Compiling typenum v1.20.1
+   Compiling capnp v0.24.1
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+    Checking generic-array v0.14.7
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking digest v0.10.7
+    Checking sha2 v0.10.9
+   Compiling capnpc v0.24.0
+   Compiling morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\host-kit-003)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.85s

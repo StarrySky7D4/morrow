@@ -1,0 +1,101 @@
+{
+  "scope": "four fixed Windows platform tests independently executed",
+  "runner_sha256": "7219a8984c1191f5aa74083e37618b754fd6f4b33740025c962a91a299c508a6",
+  "files": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\identities-after.json",
+      "sha256": "aa6fb6194fa902b881c244e92b94f925c6992a82b0170ad48c960a224ea60ae3",
+      "bytes": 5379
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\identities-before.json",
+      "sha256": "aa6fb6194fa902b881c244e92b94f925c6992a82b0170ad48c960a224ea60ae3",
+      "bytes": 5379
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+      "sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+      "bytes": 941568
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\producer-compiler-association.json",
+      "sha256": "b7711a97f91c667a3f10217f0ad497046eb86df4e56d0e742a8855f9696b1251",
+      "bytes": 1400
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\result.json",
+      "sha256": "c123f9585082b177508bf193ee3276d172cdd3f0e9f9af4d6d612c36a378500c",
+      "bytes": 6042
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\review.md",
+      "sha256": "0db77463f62a4eabd65c7574d61df1df4c4303333d734fb2bf5fbb14969108e6",
+      "bytes": 6029
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\reviewer-inputs.json",
+      "sha256": "69ac7d5dc17784fd5ce3e2c51a3d8975be3a7978a79cd96d8b87c24928d4f948",
+      "bytes": 1627
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-01\\result.json",
+      "sha256": "6ed72bac34651e74628195401eae62563855460c29318437b77db19e77058d24",
+      "bytes": 1187
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-01\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-01\\stdout.txt",
+      "sha256": "9a327b5c498e99719ea456dc2226343bf15f644fc042791ffbb5aa07ceba544d",
+      "bytes": 374
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-02\\result.json",
+      "sha256": "1581a24fe5e9211a4021c15a446ce155ae086766be188a02a49e7dc52799651b",
+      "bytes": 1184
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-02\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-02\\stdout.txt",
+      "sha256": "87908c9d60a73637c0d1dddeda4db5dbd21f571659937e40d449eac91c128325",
+      "bytes": 266
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-03\\result.json",
+      "sha256": "30f7a475f2c938ab3e81109626c4fdb30444ddb3f0a0908ffb0176cf87ad862d",
+      "bytes": 1223
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-03\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-03\\stdout.txt",
+      "sha256": "3be49b8b437c2ce022fc3afe8775a9d4def2e10a917090ca1a87be005ea05ada",
+      "bytes": 440
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-04\\result.json",
+      "sha256": "fb3ec44715ef1a9dc18b5e0e7ae801594a8657e225a9c734138b6a0e09f27550",
+      "bytes": 1162
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-04\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\case-04\\stdout.txt",
+      "sha256": "3d3d9367fafe736c1f3a0b6d70438923e74115275cf84313d994fcc852741d33",
+      "bytes": 231
+    }
+  ]
+}

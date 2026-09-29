@@ -1,0 +1,39 @@
+{
+  "status": "minimal_patch_verified",
+  "fixed_upstream_files": 8697,
+  "fixed_upstream_unchanged": true,
+  "working_files": 8699,
+  "source_manifest_sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7",
+  "host_and_fork_copies_unchanged": true,
+  "changes": [
+    {
+      "path": "codex-rs/core/Cargo.toml",
+      "before_sha256": "d745357079c9163f69cd60295f46962c342c80a9cbf11d42afd5b4941df1a6d3",
+      "after_sha256": "dbd7dd034c60800589cc3df9e427342bdb8119ee862ef3afbb4dc16d13e003bf"
+    },
+    {
+      "path": "codex-rs/core/src/client.rs",
+      "before_sha256": "605ced35cd853fcc4e23f6edd724c96f96f74c736a45e6ea95bf5300f3ab814c",
+      "after_sha256": "5cd400740f5bc5016b71b66e3d103f12d4eb8cabff0a9a8247e4d985ee4d3b3e"
+    },
+    {
+      "path": "codex-rs/core/src/lib.rs",
+      "before_sha256": "77123e59406093fcaa2f10e549458c228e55d53c84fef06728a73933cc9f096b",
+      "after_sha256": "2d8b98082ac9775bd7b94cec5cce902ea2942a2e1f476ba5a90b75e6cc1a3b22"
+    },
+    {
+      "path": "codex-rs/core/src/morrow_network.rs",
+      "before_sha256": null,
+      "after_sha256": "001a8d720dbeaf41f0ebd79ab3cc8b70c222b7a2d5d735cb4affc9fb63f586d9"
+    },
+    {
+      "path": "codex-rs/core/src/morrow_network_qualification.rs",
+      "before_sha256": null,
+      "after_sha256": "d4ec32be1c6bc6487a0f2b4d9aefd92366faf3bdcdf720f914cda2058d175418"
+    }
+  ],
+  "patch_sha256": "5daaa46c41e5711f696f623ad7a3df580e1daa6a11132bd038069cd3b329cafa",
+  "patch_lines": 391,
+  "qualification_only": true,
+  "Bazel_validation": "not_run; qualification-only Cargo feature and bridge are not a Bazel/product delivery"
+}

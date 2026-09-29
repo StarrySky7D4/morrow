@@ -1,0 +1,46 @@
+
+running 5 tests
+test http_authority::http_api_tests::approval_checks_owner_identity_and_original_deadline ... FAILED
+test http_authority::http_api_tests::commit_binds_full_decision_and_expired_commit_does_not_consume ... FAILED
+test http_authority::http_api_tests::consumed_native_grant_cannot_repeat_after_existing_core_history ... FAILED
+test http_authority::http_api_tests::durable_observed_material_remains_observed_after_native_revoke ... FAILED
+test http_authority::http_api_tests::ticket_owns_pending_interval_and_revoke_prevents_another_fence ... FAILED
+
+failures:
+
+---- http_authority::http_api_tests::approval_checks_owner_identity_and_original_deadline stdout ----
+
+thread 'http_authority::http_api_tests::approval_checks_owner_identity_and_original_deadline' (15840) panicked at src\authority.rs:137:53:
+called `Result::unwrap()` on an `Err` value: "系统找不到指定的路径。 (os error 3)"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- http_authority::http_api_tests::commit_binds_full_decision_and_expired_commit_does_not_consume stdout ----
+
+thread 'http_authority::http_api_tests::commit_binds_full_decision_and_expired_commit_does_not_consume' (4996) panicked at src\authority.rs:137:53:
+called `Result::unwrap()` on an `Err` value: "系统找不到指定的路径。 (os error 3)"
+
+---- http_authority::http_api_tests::consumed_native_grant_cannot_repeat_after_existing_core_history stdout ----
+
+thread 'http_authority::http_api_tests::consumed_native_grant_cannot_repeat_after_existing_core_history' (5536) panicked at src\authority.rs:137:53:
+called `Result::unwrap()` on an `Err` value: "系统找不到指定的路径。 (os error 3)"
+
+---- http_authority::http_api_tests::durable_observed_material_remains_observed_after_native_revoke stdout ----
+
+thread 'http_authority::http_api_tests::durable_observed_material_remains_observed_after_native_revoke' (8044) panicked at src\authority.rs:137:53:
+called `Result::unwrap()` on an `Err` value: "系统找不到指定的路径。 (os error 3)"
+
+---- http_authority::http_api_tests::ticket_owns_pending_interval_and_revoke_prevents_another_fence stdout ----
+
+thread 'http_authority::http_api_tests::ticket_owns_pending_interval_and_revoke_prevents_another_fence' (16668) panicked at src\authority.rs:137:53:
+called `Result::unwrap()` on an `Err` value: "系统找不到指定的路径。 (os error 3)"
+
+
+failures:
+    http_authority::http_api_tests::approval_checks_owner_identity_and_original_deadline
+    http_authority::http_api_tests::commit_binds_full_decision_and_expired_commit_does_not_consume
+    http_authority::http_api_tests::consumed_native_grant_cannot_repeat_after_existing_core_history
+    http_authority::http_api_tests::durable_observed_material_remains_observed_after_native_revoke
+    http_authority::http_api_tests::ticket_owns_pending_interval_and_revoke_prevents_another_fence
+
+test result: FAILED. 0 passed; 5 failed; 0 ignored; 0 measured; 3 filtered out; finished in 0.02s
+

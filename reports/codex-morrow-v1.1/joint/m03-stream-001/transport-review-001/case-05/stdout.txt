@@ -1,0 +1,6 @@
+
+running 1 test
+test live_guard_revocation_is_checked_even_without_consumer_demand ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.00s
+

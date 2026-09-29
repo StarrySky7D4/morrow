@@ -1,0 +1,33 @@
+{
+  "ack": {
+    "application_pending": false,
+    "first_revocation_reason": 19,
+    "first_revocation_source": 1,
+    "persisted": true,
+    "runtime_applied": true
+  },
+  "row": {
+    "line_received_ns": 183776524370600,
+    "parsed_ns": 183776524394600,
+    "value": {
+      "action": "revoke",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "application_pending": false,
+        "first_revocation_reason": 19,
+        "first_revocation_source": 1,
+        "persisted": true,
+        "runtime_applied": true
+      }
+    }
+  },
+  "command": {
+    "before_write_ns": 183776509131900,
+    "after_flush_ns": 183776509152100,
+    "value": {
+      "action": "revoke",
+      "grant_id": "85cc93dcde6097ca2c1184f9ad01e38b383030f5aa78c921f838a09d27729446"
+    }
+  }
+}

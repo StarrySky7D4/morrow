@@ -1,0 +1,728 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-native-probe-001\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.45
+   Compiling unicode-ident v1.0.22
+   Compiling serde_core v1.0.228
+   Compiling cfg-if v1.0.4
+   Compiling serde v1.0.228
+   Compiling windows-link v0.2.1
+   Compiling memchr v2.8.1
+   Compiling getrandom v0.3.4
+   Compiling itoa v1.0.17
+   Compiling windows-sys v0.61.2
+   Compiling scopeguard v1.2.0
+   Compiling pin-project-lite v0.2.16
+   Compiling lock_api v0.4.14
+   Compiling version_check v0.9.5
+   Compiling parking_lot_core v0.9.12
+   Compiling portable-atomic v1.13.1
+   Compiling critical-section v1.2.0
+   Compiling thiserror v2.0.18
+   Compiling bytes v1.12.1
+   Compiling futures-core v0.3.34
+   Compiling zmij v1.0.19
+   Compiling jobserver v0.1.34
+   Compiling generic-array v0.14.7
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.9
+   Compiling stable_deref_trait v1.2.1
+   Compiling futures-sink v0.3.34
+   Compiling serde_json v1.0.149
+   Compiling subtle v2.6.1
+   Compiling syn v2.0.117
+   Compiling cc v1.2.55
+   Compiling regex-syntax v0.8.8
+   Compiling aho-corasick v1.1.4
+   Compiling once_cell v1.21.4
+   Compiling equivalent v1.0.2
+   Compiling typenum v1.20.0
+   Compiling slab v0.4.12
+   Compiling tracing-core v0.1.36
+   Compiling autocfg v1.5.0
+   Compiling syn v3.0.3
+   Compiling futures-channel v0.3.34
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling http v1.4.0
+   Compiling futures-task v0.3.34
+   Compiling regex-automata v0.4.13
+   Compiling digest v0.10.7
+   Compiling futures-io v0.3.34
+   Compiling log v0.4.34
+   Compiling zerocopy v0.8.37
+   Compiling num-traits v0.2.19
+   Compiling synstructure v0.13.2
+   Compiling allocator-api2 v0.2.21
+   Compiling foldhash v0.2.0
+   Compiling writeable v0.6.2
+   Compiling percent-encoding v2.3.2
+   Compiling crossbeam-utils v0.8.21
+   Compiling hashbrown v0.17.1
+   Compiling litemap v0.8.1
+   Compiling http-body v1.0.1
+   Compiling mio v1.2.0
+   Compiling socket2 v0.6.3
+   Compiling cmake v0.1.57
+   Compiling regex v1.12.3
+   Compiling rand_core v0.9.5
+   Compiling dunce v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling utf8_iter v1.0.4
+   Compiling fs_extra v1.3.0
+   Compiling fnv v1.0.7
+   Compiling mime v0.3.17
+   Compiling base64 v0.22.1
+   Compiling unicode-xid v0.2.6
+   Compiling icu_normalizer_data v2.2.0
+   Compiling ipnet v2.11.0
+   Compiling aws-lc-sys v0.45.0
+   Compiling windows_x86_64_msvc v0.52.6
+   Compiling icu_properties_data v2.2.0
+   Compiling zeroize v1.8.2
+   Compiling indexmap v2.14.0
+   Compiling ring v0.17.14
+   Compiling spin v0.9.8
+   Compiling aws-lc-rs v1.18.1
+   Compiling either v1.15.0
+   Compiling form_urlencoded v1.2.2
+   Compiling sync_wrapper v1.0.2
+   Compiling winnow v1.0.4
+   Compiling futures-macro v0.3.34
+   Compiling psl-types v2.0.11
+   Compiling windows-targets v0.52.6
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling itertools v0.14.0
+   Compiling serde_derive v1.0.228
+   Compiling thiserror-impl v2.0.18
+   Compiling tokio-macros v2.7.0
+   Compiling displaydoc v0.2.5
+   Compiling zerofrom-derive v0.1.6
+   Compiling yoke-derive v0.8.2
+   Compiling tracing-attributes v0.1.31
+   Compiling futures-util v0.3.34
+   Compiling zerovec-derive v0.11.3
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.9.0
+   Compiling rand v0.9.3
+   Compiling rustls-pki-types v1.14.0
+   Compiling http-body-util v0.1.3
+   Compiling getrandom v0.2.17
+   Compiling crossbeam-epoch v0.9.20
+   Compiling untrusted v0.7.1
+   Compiling toml_datetime v0.7.5+spec-1.1.0
+   Compiling zerofrom v0.1.6
+   Compiling untrusted v0.9.0
+   Compiling yoke v0.8.2
+   Compiling winnow v0.7.14
+   Compiling powerfmt v0.2.0
+   Compiling zerotrie v0.2.4
+   Compiling unicase v2.9.0
+   Compiling zerovec v0.11.6
+   Compiling tracing v0.1.44
+   Compiling time-core v0.1.8
+   Compiling futures-executor v0.3.34
+   Compiling num-conv v0.2.0
+   Compiling futures v0.3.34
+   Compiling time-macros v0.2.27
+   Compiling mime_guess v2.0.5
+   Compiling deranged v0.5.5
+   Compiling tinystr v0.8.3
+   Compiling potential_utf v0.1.4
+   Compiling const_format_proc_macros v0.2.34
+   Compiling icu_locale_core v2.2.0
+   Compiling icu_collections v2.2.0
+   Compiling sha2 v0.10.9
+   Compiling toml_edit v0.23.10+spec-1.0.0
+   Compiling uuid v1.20.0
+   Compiling ahash v0.8.12
+   Compiling bitflags v2.13.1
+   Compiling smallvec v1.15.1
+   Compiling semver v1.0.27
+   Compiling icu_provider v2.2.0
+   Compiling httparse v1.10.1
+   Compiling nibble_vec v0.1.0
+   Compiling proc-macro-crate v3.4.0
+   Compiling time v0.3.47
+   Compiling rustc_version v0.4.1
+   Compiling parking_lot v0.12.5
+   Compiling const_format v0.2.35
+   Compiling tokio v1.52.3
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling wildcard v0.3.0
+   Compiling windows-sys v0.52.0
+   Compiling rustls v0.23.45
+   Compiling smol_str v0.3.5
+   Compiling rama-macros v0.3.0-alpha.4
+   Compiling fastrand v2.3.0
+   Compiling idna_adapter v1.2.1
+   Compiling idna v1.1.0
+   Compiling asynk-strim v0.1.5
+   Compiling rama-error v0.3.0-alpha.4
+   Compiling data-encoding v2.10.0
+   Compiling url v2.5.8
+   Compiling async-trait v0.1.89
+   Compiling num-integer v0.1.46
+   Compiling schannel v0.1.28
+   Compiling nom v8.0.0
+   Compiling windows_x86_64_msvc v0.48.5
+   Compiling atomic-waker v1.1.2
+   Compiling try-lock v0.2.5
+   Compiling endian-type v0.2.0
+   Compiling heck v0.5.0
+   Compiling libc v0.2.186
+   Compiling radix_trie v0.3.0
+   Compiling want v0.3.1
+   Compiling num-bigint v0.4.6
+   Compiling flume v0.12.0
+   Compiling psl v2.1.184
+   Compiling sha1 v0.10.6
+   Compiling byteorder v1.5.0
+   Compiling md5 v0.8.0
+   Compiling getrandom v0.4.2
+   Compiling minimal-lexical v0.2.1
+   Compiling hex v0.4.3
+   Compiling ryu v1.0.22
+   Compiling httpdate v1.0.3
+   Compiling nom v7.1.3
+   Compiling lazy_static v1.5.0
+   Compiling tokio-util v0.7.18
+   Compiling rama-utils v0.3.0-alpha.4
+   Compiling tokio-graceful v0.2.2
+   Compiling h2 v0.4.16
+   Compiling rama-core v0.3.0-alpha.4
+   Compiling rand_core v0.10.1
+   Compiling winapi-util v0.1.11
+   Compiling windows-targets v0.48.5
+   Compiling serde_derive_internals v0.29.1
+   Compiling iri-string v0.7.10
+   Compiling schemars v0.8.22
+   Compiling crc32fast v1.5.0
+   Compiling tower-service v0.3.3
+   Compiling simd-adler32 v0.3.8
+   Compiling syn v1.0.109
+   Compiling pkg-config v0.3.32
+   Compiling rayon-core v1.13.0
+   Compiling windows-sys v0.48.0
+   Compiling termcolor v1.4.1
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling rama-http-types v0.3.0-alpha.4
+   Compiling schemars_derive v0.8.22
+   Compiling rustls-native-certs v0.8.3
+   Compiling heapless v0.7.17
+   Compiling dupe_derive v0.9.1
+   Compiling bytemuck_derive v1.10.2
+   Compiling env_filter v1.0.0
+   Compiling windows-result v0.4.1
+   Compiling windows-strings v0.5.1
+   Compiling ref-cast v1.0.25
+   Compiling rama-net v0.3.0-alpha.4
+   Compiling pin-utils v0.1.0
+   Compiling native-tls v0.2.14
+   Compiling typeid v1.0.3
+   Compiling dyn-clone v1.0.20
+   Compiling tinyvec_macros v0.1.1
+   Compiling option-ext v0.2.0
+   Compiling adler2 v2.0.1
+   Compiling anyhow v1.0.103
+   Compiling ipconfig v0.3.2
+   Compiling miniz_oxide v0.8.9
+   Compiling dirs-sys v0.5.0
+   Compiling tinyvec v1.10.0
+   Compiling bytemuck v1.25.0
+   Compiling hyper v1.8.1
+   Compiling windows-registry v0.6.1
+   Compiling winreg v0.50.0
+   Compiling env_logger v0.11.9
+   Compiling ts-rs-macros v11.1.0
+   Compiling rand v0.10.1
+   Compiling rusticata-macros v4.1.0
+   Compiling hash32 v0.2.1
+   Compiling enum-as-inner v0.6.1
+   Compiling socket2 v0.5.10
+   Compiling logos-codegen v0.15.1
+   Compiling crossbeam-deque v0.8.6
+   Compiling webpki-roots v1.0.5
+   Compiling ref-cast-impl v1.0.25
+   Compiling asn1-rs-impl v0.2.0
+   Compiling asn1-rs-derive v0.6.0
+   Compiling crossbeam-channel v0.5.15
+   Compiling blake3 v1.8.2
+   Compiling cookie v0.18.1
+   Compiling tagptr v0.2.0
+   Compiling erased-serde v0.4.10
+   Compiling allocative v0.3.6
+   Compiling linktime-proc-macro v0.1.0
+   Compiling atomic v0.5.3
+   Compiling link-section v0.17.2
+   Compiling crc-catalog v2.4.0
+   Compiling zlib-rs v0.5.5
+   Compiling bit-vec v0.8.0
+   Compiling widestring v1.2.1
+   Compiling lock_free_hashtable v0.1.4
+   Compiling bit-set v0.8.0
+   Compiling crc v3.4.0
+   Compiling ts-rs v11.1.0
+   Compiling asn1-rs v0.7.1
+   Compiling ctor v1.0.6
+   Compiling moka v0.12.13
+warning: blake3@1.8.2: ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_sse2_x86-64_windows_msvc.o" "-c" "c/blake3_sse2_x86-64_windows_msvc.asm"
+warning: blake3@1.8.2: ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_sse41_x86-64_windows_msvc.o" "-c" "c/blake3_sse41_x86-64_windows_msvc.asm"
+warning: blake3@1.8.2: ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_avx2_x86-64_windows_msvc.o" "-c" "c/blake3_avx2_x86-64_windows_msvc.asm"
+error: failed to run custom build command for `blake3 v1.8.2`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug\build\blake3-4db7c5ef57e683d6\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rustc-check-cfg=cfg(blake3_sse2_ffi, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_sse2_rust, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_sse41_ffi, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_sse41_rust, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_avx2_ffi, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_avx2_rust, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_avx512_ffi, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_neon, values(none()))
+  cargo:rustc-check-cfg=cfg(blake3_wasm32_simd, values(none()))
+  cargo:rerun-if-env-changed=CARGO_FEATURE_PURE
+  cargo:rerun-if-env-changed=CARGO_FEATURE_NO_NEON
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out)
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_ENCODED_RUSTFLAGS = Some()
+  VCINSTALLDIR = None
+  VSTEL_MSBuildProjectFullPath = None
+  VCToolsVersion = None
+  VSCMD_ARG_VCVARS_SPECTRE = None
+  WindowsSdkDir = None
+  WindowsSDKVersion = None
+  LIB = None
+  PATH = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug;C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug\deps;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\bin;C:\Users\Administrator\capnp-bin;C:\Program Files\PowerShell\7;C:\Users\Administrator\.codex\tmp\arg0\codex-arg0WvBYrC;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\libheif\libheif\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\jxrlib\jxrlib\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\override;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\LLVM\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2026.2.0\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\flutter\bin;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\GitHub CLI\;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\Program Files\PowerShell\7\;C:\Program Files\nodejs\;C:\Program Files (x86)\NetSarang\Xftp 8\;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\capnp-bin;C:\Users\Administrator\.cargo\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\Python\bin;C:\Users\Administrator\AppData\Local\GitHubDesktop\bin;C:\Users\Administrator\AppData\Local\Programs\Ollama;C:\Program Files\Huawei\DevEco Studio\bin;C:\Users\Administrator\.local\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\0ddb895c950eaeba;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\faa963e871dd422c)
+  INCLUDE = None
+  HOST = Some(x86_64-pc-windows-msvc)
+  CC_x86_64-pc-windows-msvc = None
+  CC_x86_64_pc_windows_msvc = None
+  HOST_CC = None
+  CC = None
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out)
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+  CRATE_CC_NO_DEFAULTS = None
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  HOST = Some(x86_64-pc-windows-msvc)
+  CFLAGS = None
+  HOST_CFLAGS = None
+  CFLAGS_x86_64_pc_windows_msvc = None
+  CFLAGS_x86_64-pc-windows-msvc = None
+  cargo:rerun-if-env-changed=CARGO_FEATURE_PREFER_INTRINSICS
+  cargo:rerun-if-env-changed=CARGO_FEATURE_PURE
+  cargo:rustc-cfg=blake3_sse2_ffi
+  cargo:rustc-cfg=blake3_sse41_ffi
+  cargo:rustc-cfg=blake3_avx2_ffi
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out)
+  OPT_LEVEL = Some(0)
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_ENCODED_RUSTFLAGS = Some()
+  VCINSTALLDIR = None
+  VSTEL_MSBuildProjectFullPath = None
+  VCToolsVersion = None
+  VSCMD_ARG_VCVARS_SPECTRE = None
+  WindowsSdkDir = None
+  WindowsSDKVersion = None
+  LIB = None
+  PATH = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug;C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug\deps;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\bin;C:\Users\Administrator\capnp-bin;C:\Program Files\PowerShell\7;C:\Users\Administrator\.codex\tmp\arg0\codex-arg0WvBYrC;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\libheif\libheif\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\jxrlib\jxrlib\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\override;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\LLVM\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2026.2.0\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\flutter\bin;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\GitHub CLI\;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\Program Files\PowerShell\7\;C:\Program Files\nodejs\;C:\Program Files (x86)\NetSarang\Xftp 8\;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\capnp-bin;C:\Users\Administrator\.cargo\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\Python\bin;C:\Users\Administrator\AppData\Local\GitHubDesktop\bin;C:\Users\Administrator\AppData\Local\Programs\Ollama;C:\Program Files\Huawei\DevEco Studio\bin;C:\Users\Administrator\.local\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\0ddb895c950eaeba;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\faa963e871dd422c)
+  INCLUDE = None
+  HOST = Some(x86_64-pc-windows-msvc)
+  CC_x86_64-pc-windows-msvc = None
+  CC_x86_64_pc_windows_msvc = None
+  HOST_CC = None
+  CC = None
+  CRATE_CC_NO_DEFAULTS = None
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  DEBUG = Some(true)
+  CFLAGS = None
+  HOST_CFLAGS = None
+  CFLAGS_x86_64_pc_windows_msvc = None
+  CFLAGS_x86_64-pc-windows-msvc = None
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+   Assembling: c/blake3_sse2_x86-64_windows_msvc.asm
+  MASM : fatal error A1009:line too long : C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out\5a6b5937ed079296-blake3_sse2_x86-64_windows_msvc.o
+  exit code: 1
+   Assembling: c/blake3_sse41_x86-64_windows_msvc.asm
+  MASM : fatal error A1009:line too long : C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out\5a6b5937ed079296-blake3_sse41_x86-64_windows_msvc.o
+  cargo:warning=ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_sse2_x86-64_windows_msvc.o" "-c" "c/blake3_sse2_x86-64_windows_msvc.asm"
+  exit code: 1
+   Assembling: c/blake3_avx2_x86-64_windows_msvc.asm
+  MASM : fatal error A1009:line too long : C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\blake3-b732c70305ccf569\out\5a6b5937ed079296-blake3_avx2_x86-64_windows_msvc.o
+  cargo:warning=ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_sse41_x86-64_windows_msvc.o" "-c" "c/blake3_sse41_x86-64_windows_msvc.asm"
+  exit code: 1
+  cargo:warning=ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_avx2_x86-64_windows_msvc.o" "-c" "c/blake3_avx2_x86-64_windows_msvc.asm"
+
+  --- stderr
+
+
+  error occurred in cc-rs: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\ml64.exe" "-nologo" "-Zi" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\blake3-b732c70305ccf569\\out\\5a6b5937ed079296-blake3_avx2_x86-64_windows_msvc.o" "-c" "c/blake3_avx2_x86-64_windows_msvc.asm"
+
+
+warning: build failed, waiting for other jobs to finish...
+warning: zstd-sys@2.0.16+zstd.1.5.7: Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\6257400995203987717detect_compiler_family.c"
+warning: zstd-sys@2.0.16+zstd.1.5.7: Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\8940612541795104128detect_compiler_family.c"
+warning: zstd-sys@2.0.16+zstd.1.5.7: Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\4359062282035318371detect_compiler_family.c"
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-nologo" "-MD" "-Z7" "-Brepro" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/lib/legacy" "-W0" "-fvisibility=hidden" "-DZSTD_DISABLE_ASM=" "-DZSTD_LIB_DEPRECATED=0" "-DXXH_PRIVATE_API=" "-DZSTDLIB_VISIBILITY=" "-DZDICTLIB_VISIBILITY=" "-DZSTDERRORLIB_VISIBILITY=" "-DZSTD_LEGACY_SUPPORT=1" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\fb80479a5fb81f6a-zstd_compress_superblock.o" "-c" "zstd/lib/compress\\zstd_compress_superblock.c"cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+warning: zstd-sys@2.0.16+zstd.1.5.7: cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+error: failed to run custom build command for `zstd-sys v2.0.16+zstd.1.5.7`
+
+Caused by:
+  process didn't exit successfully: `C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug\build\zstd-sys-41c644be67c4f802\build-script-build` (exit code: 1)
+  --- stdout
+  cargo:rerun-if-env-changed=ZSTD_SYS_USE_PKG_CONFIG
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\zstd-sys-3b6067b32277e321\out)
+  OPT_LEVEL = Some(0)
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_ENCODED_RUSTFLAGS = Some()
+  cargo:rerun-if-env-changed=VCINSTALLDIR
+  VCINSTALLDIR = None
+  cargo:rerun-if-env-changed=VSTEL_MSBuildProjectFullPath
+  VSTEL_MSBuildProjectFullPath = None
+  cargo:rerun-if-env-changed=VCToolsVersion
+  VCToolsVersion = None
+  cargo:rerun-if-env-changed=VSCMD_ARG_VCVARS_SPECTRE
+  VSCMD_ARG_VCVARS_SPECTRE = None
+  cargo:rerun-if-env-changed=WindowsSdkDir
+  WindowsSdkDir = None
+  cargo:rerun-if-env-changed=WindowsSDKVersion
+  WindowsSDKVersion = None
+  cargo:rerun-if-env-changed=LIB
+  LIB = None
+  PATH = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug;C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\debug\deps;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\lib\rustlib\x86_64-pc-windows-msvc\lib;C:\Users\Administrator\.rustup\toolchains\1.95.0-x86_64-pc-windows-msvc\bin;C:\Users\Administrator\capnp-bin;C:\Program Files\PowerShell\7;C:\Users\Administrator\.codex\tmp\arg0\codex-arg0WvBYrC;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\libheif\libheif\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\jxrlib\jxrlib\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\override;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin\x64;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\NVIDIA Corporation\NVIDIA App\NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\LLVM\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2026.2.0\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin;C:\flutter\bin;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\GitHub CLI\;C:\Strawberry\c\bin;C:\Strawberry\perl\site\bin;C:\Strawberry\perl\bin;C:\Program Files\PowerShell\7\;C:\Program Files\nodejs\;C:\Program Files (x86)\NetSarang\Xftp 8\;C:\Users\Administrator\AppData\Roaming\npm;C:\Users\Administrator\capnp-bin;C:\Users\Administrator\.cargo\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Administrator\AppData\Local\Python\bin;C:\Users\Administrator\AppData\Local\GitHubDesktop\bin;C:\Users\Administrator\AppData\Local\Programs\Ollama;C:\Program Files\Huawei\DevEco Studio\bin;C:\Users\Administrator\.local\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\bin\fallback;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin;C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\git\cmd;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\0ddb895c950eaeba;C:\Users\Administrator\AppData\Local\OpenAI\Codex\bin\faa963e871dd422c)
+  cargo:rerun-if-env-changed=INCLUDE
+  INCLUDE = None
+  HOST = Some(x86_64-pc-windows-msvc)
+  cargo:rerun-if-env-changed=CC_x86_64-pc-windows-msvc
+  CC_x86_64-pc-windows-msvc = None
+  cargo:rerun-if-env-changed=CC_x86_64_pc_windows_msvc
+  CC_x86_64_pc_windows_msvc = None
+  cargo:rerun-if-env-changed=HOST_CC
+  HOST_CC = None
+  cargo:rerun-if-env-changed=CC
+  CC = None
+  cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+  CRATE_CC_NO_DEFAULTS = None
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  DEBUG = Some(true)
+  cargo:rerun-if-env-changed=CFLAGS
+  CFLAGS = None
+  cargo:rerun-if-env-changed=HOST_CFLAGS
+  HOST_CFLAGS = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64_pc_windows_msvc
+  CFLAGS_x86_64_pc_windows_msvc = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64-pc-windows-msvc
+  CFLAGS_x86_64-pc-windows-msvc = None
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\zstd-sys-3b6067b32277e321\out)
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+  cargo:warning=Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\6257400995203987717detect_compiler_family.c"
+  cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+  CRATE_CC_NO_DEFAULTS = None
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  HOST = Some(x86_64-pc-windows-msvc)
+  cargo:rerun-if-env-changed=CFLAGS
+  CFLAGS = None
+  cargo:rerun-if-env-changed=HOST_CFLAGS
+  HOST_CFLAGS = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64_pc_windows_msvc
+  CFLAGS_x86_64_pc_windows_msvc = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64-pc-windows-msvc
+  CFLAGS_x86_64-pc-windows-msvc = None
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\zstd-sys-3b6067b32277e321\out)
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+  cargo:warning=Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\8940612541795104128detect_compiler_family.c"
+  cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+  CRATE_CC_NO_DEFAULTS = None
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  HOST = Some(x86_64-pc-windows-msvc)
+  cargo:rerun-if-env-changed=CFLAGS
+  CFLAGS = None
+  cargo:rerun-if-env-changed=HOST_CFLAGS
+  HOST_CFLAGS = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64_pc_windows_msvc
+  CFLAGS_x86_64_pc_windows_msvc = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64-pc-windows-msvc
+  CFLAGS_x86_64-pc-windows-msvc = None
+  OUT_DIR = Some(C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\runs\p02-native-probe-001-review-003\target\x86_64-pc-windows-msvc\debug\build\zstd-sys-3b6067b32277e321\out)
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+  cargo:warning=Compiler family detection failed due to error: ToolExecError: command did not execute successfully (status code exit code: 2): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-E" "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\4359062282035318371detect_compiler_family.c"
+  cargo:rerun-if-env-changed=CRATE_CC_NO_DEFAULTS
+  CRATE_CC_NO_DEFAULTS = None
+  TARGET = Some(x86_64-pc-windows-msvc)
+  CARGO_CFG_TARGET_FEATURE = Some(cmpxchg16b,fxsr,sse,sse2,sse3)
+  HOST = Some(x86_64-pc-windows-msvc)
+  cargo:rerun-if-env-changed=CFLAGS
+  CFLAGS = None
+  cargo:rerun-if-env-changed=HOST_CFLAGS
+  HOST_CFLAGS = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64_pc_windows_msvc
+  CFLAGS_x86_64_pc_windows_msvc = None
+  cargo:rerun-if-env-changed=CFLAGS_x86_64-pc-windows-msvc
+  CFLAGS_x86_64-pc-windows-msvc = None
+  cargo:rerun-if-env-changed=CC_ENABLE_DEBUG_OUTPUT
+  debug.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  entropy_common.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  error_private.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  fse_decompress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  pool.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  threading.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_common.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  fse_compress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  hist.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  huf_compress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  zstd_compress.c
+  exit code: cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_compress_literals.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_compress_sequences.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_compress_superblock.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-native-probe-001\vendor\zstd-sys-2.0.16+zstd.1.5.7\zstd\lib\compress\zstd_compress_superblock.c : fatal error C1083: Cannot open compiler generated file: '': Invalid argument
+  0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 1
+  zstd_double_fast.c
+  cargo:warning=ToolExecError: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-nologo" "-MD" "-Z7" "-Brepro" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/lib/legacy" "-W0" "-fvisibility=hidden" "-DZSTD_DISABLE_ASM=" "-DZSTD_LIB_DEPRECATED=0" "-DXXH_PRIVATE_API=" "-DZSTDLIB_VISIBILITY=" "-DZDICTLIB_VISIBILITY=" "-DZSTDERRORLIB_VISIBILITY=" "-DZSTD_LEGACY_SUPPORT=1" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\fb80479a5fb81f6a-zstd_compress_superblock.o" "-c" "zstd/lib/compress\\zstd_compress_superblock.c"cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_fast.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_lazy.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_ldm.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_opt.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_preSplit.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstdmt_compress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  huf_decompress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_ddict.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_decompress.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  zstd_decompress_block.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cover.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  divsufsort.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zdict.c
+  fastcover.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_v01.c
+  zstd_v02.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_v03.c
+  zstd_v04.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+  zstd_v05.c
+  zstd_v06.c
+  exit code: cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  zstd_v07.c
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  cargo:warning=cl : Command line warning D9002 : ignoring unknown option '-fvisibility=hidden'
+  
+  0
+  exit code: 0
+  exit code: 0
+  exit code: 0
+
+  --- stderr
+
+
+  error occurred in cc-rs: command did not execute successfully (status code exit code: 1): "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe" "-nologo" "-MD" "-Z7" "-Brepro" "-I" "zstd/lib/" "-I" "zstd/lib/common" "-I" "zstd/lib/legacy" "-W0" "-fvisibility=hidden" "-DZSTD_DISABLE_ASM=" "-DZSTD_LIB_DEPRECATED=0" "-DXXH_PRIVATE_API=" "-DZSTDLIB_VISIBILITY=" "-DZDICTLIB_VISIBILITY=" "-DZSTDERRORLIB_VISIBILITY=" "-DZSTD_LEGACY_SUPPORT=1" "-FoC:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-003\\target\\x86_64-pc-windows-msvc\\debug\\build\\zstd-sys-3b6067b32277e321\\out\\fb80479a5fb81f6a-zstd_compress_superblock.o" "-c" "zstd/lib/compress\\zstd_compress_superblock.c"
+
+

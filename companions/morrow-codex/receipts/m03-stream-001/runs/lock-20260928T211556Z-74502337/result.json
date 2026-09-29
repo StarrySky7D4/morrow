@@ -1,0 +1,11 @@
+{
+  "stage": "lock",
+  "status": "blocked",
+  "network": "offline_no_native_or_http",
+  "product_success_claimed": false,
+  "old_refusal_suite_rerun": false,
+  "error": "Frozen source mismatch: codex-rs/vendor/bubblewrap/LICENSE",
+  "verification_error": "Frozen source mismatch: codex-rs/vendor/bubblewrap/LICENSE",
+  "log_sha256": {},
+  "completed_utc": "2026-09-28T21:16:04.050931+00:00"
+}

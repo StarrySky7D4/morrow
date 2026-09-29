@@ -1,0 +1,28 @@
+{
+  "status": "fixed_dependency_inputs_mapped_not_compiled",
+  "manifest_sha256": "700ee6b3fd7a328af30da02c28e2e27d44037bf9ceb9659253dcfa5b2a8a0f75",
+  "evidence": [
+    {
+      "path": "receipts/p02-dependencies-001/tokio-tungstenite-verification.json",
+      "sha256": "d88952cb36455eb1fbaac9f8140adcdbbd9329f591011c4de33c06af6ab628ea"
+    },
+    {
+      "path": "receipts/p02-dependencies-001/tungstenite-rs-verification.json",
+      "sha256": "a5b7db499878abb7f9b751cd7216cc62493324b4341f30f8df2f64c4e56faa69"
+    },
+    {
+      "path": "receipts/p02-dependencies-001/runfiles-package-verification.json",
+      "sha256": "61ae5ff06cb8411a40997c2cfcdebf342175fd43433b5f1b105280034915dabc"
+    }
+  ],
+  "registry_vendor_receipt": {
+    "path": "receipts/p02-dependency-cache-001/vendor-result.json",
+    "sha256": "1a25295cb844db8c84d971daa21d03baf9612adf6018723dc19522dae985e29a"
+  },
+  "excluded_patch": {
+    "package": "crossterm",
+    "reason": "not present in conservative codex-api Cargo.lock dependency graph; no alternate crossterm source substituted"
+  },
+  "upstream_source_modifications": false,
+  "build_or_runtime_proof": false
+}

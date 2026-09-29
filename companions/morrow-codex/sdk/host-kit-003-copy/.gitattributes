@@ -1,0 +1,3 @@
+* text=auto eol=lf
+agent_host.capnp text eol=lf
+vectors/*.capnp -text

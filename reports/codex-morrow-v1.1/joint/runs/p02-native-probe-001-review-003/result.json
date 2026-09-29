@@ -1,0 +1,76 @@
+{
+  "status": "failed",
+  "scope": "complete fixed source identities and limited Windows refusal probe",
+  "P02": "blocked",
+  "G0": "blocked",
+  "product_graphs_built": 0,
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "sources": [
+    {
+      "id": "codex",
+      "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+      "files": 8697,
+      "bytes": 86130187,
+      "root_tree": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+      "trees": 985
+    },
+    {
+      "id": "cc-switch",
+      "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+      "files": 1322,
+      "bytes": 48415580,
+      "root_tree": "e373c27485681c074ddab7d4f085ee9a6667b891",
+      "trees": 133
+    }
+  ],
+  "forks": [
+    {
+      "name": "tokio-tungstenite",
+      "files": 34,
+      "changed_files": [
+        "Cargo.toml"
+      ],
+      "original_root_tree": "a17959271ba2e9b397586e2022ddbd876b68de44"
+    },
+    {
+      "name": "tungstenite",
+      "files": 888,
+      "changed_files": [],
+      "original_root_tree": "5b612114e9fdbdfb92194b69c05742313ba117d0"
+    },
+    {
+      "name": "runfiles",
+      "files": 5,
+      "changed_files": [],
+      "original_root_tree": "342aa196478568ccc273831235baf01a6dffb2f0"
+    }
+  ],
+  "graph": {
+    "resolved_packages": 598,
+    "registry_packages": 577,
+    "local_packages": 21,
+    "registry_unchanged_from_codex": 574,
+    "kit_additions": [
+      [
+        "capnp",
+        "0.24.1",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67"
+      ],
+      [
+        "capnpc",
+        "0.24.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0"
+      ],
+      [
+        "embedded-io",
+        "0.7.1",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7"
+      ]
+    ]
+  },
+  "error": "build failed; inspect joint logs"
+}

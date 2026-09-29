@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "qualification_only",
+  "manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "schema_sha256": "da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f",
+  "kit_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-003",
+  "kit_copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\sdk\\host-kit-003-copy",
+  "byte_review": "receipts/host-kit-review-003/byte-review.json",
+  "byte_review_sha256": "e353d4c76ba3fff63896df98b7c2402129753c2fffa5c85cf2d7da47e62a1b79",
+  "consumer_receipt": "receipts/host-kit-003-consumer/attempt-2/result.json",
+  "consumer_receipt_sha256": "7f0eb46af644f2247c00582037b53c9fc54f64d62bbf58b8465af411ff273423",
+  "qualification_tests_passed": 14,
+  "ignored": 0,
+  "maximum_event_batch_test_passed": true,
+  "default_no_fake_check": "passed",
+  "approved_scope": "Only four-family experimental Rust/fake host kit; suitable for next limited upstream probe",
+  "limitations": [
+    "No production backend or stable SDK",
+    "No actual Codex exec/net/store replacement proven",
+    "No G0 or 84-case product acceptance claim"
+  ],
+  "P-02": "blocked_on_complete_upstream_sources_and_adapter_implementation",
+  "G0": "blocked"
+}

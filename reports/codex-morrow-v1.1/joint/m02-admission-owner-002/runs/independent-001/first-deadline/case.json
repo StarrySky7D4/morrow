@@ -1,0 +1,9 @@
+{
+  "case": "first-deadline",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "grant_id": "a8f5eb2429192e96c81c16f590c4ef912f91a8882cc33f670e58330a5c039311",
+    "delay_ns": 551431100,
+    "expired_no_spawn": true
+  }
+}

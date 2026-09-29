@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 180, in main
+    result['sources']=sources(); result['forks']=forks(); result['graph']=graph()
+                                                 ~~~~~^^
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 86, in forks
+    checked=verify_files(orig,files)
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 38, in verify_files
+    require(members(root)=={f['path'] for f in records},'file membership '+str(root))
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\review_p02_batch.py", line 16, in require
+    if not ok: raise RuntimeError(message)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: file membership C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-dependencies-001\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package\rust\runfiles

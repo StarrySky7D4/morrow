@@ -1,0 +1,26 @@
+{
+  "status": "harness010_ready_for_read_only_review_no_run_authority",
+  "script": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_010.py",
+  "script_sha256": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b",
+  "change": "B reserved suppression may precede asynchronous gate marker; actual gate rejection/permit release/same event and independent host/guest revoke proof remain mandatory. A ordering remains strict.",
+  "old009_preserved_sha256": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+  "host_A": "004",
+  "host_B": "005",
+  "plugin_fixture": "001",
+  "plugin_manifest_sha256": "06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689",
+  "pure_core_checks": "two lawful B marker orders accepted; six negative mutations rejected",
+  "source_or_binary_changes": false,
+  "http_post_count": 0,
+  "real_guest_launched": false,
+  "A_runtime_verified": false,
+  "B_runtime_verified": false,
+  "references": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_010.py": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_009.py": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_http_matrix_008.py": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\manifest.json": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-005\\manifest.json": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-010-fixed-preflight-20260929T005435082074Z.json": "637c9f8919851c16dbb75f6cf4b77a26d5f703fd5cf8ecd990bd029b38c35443",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-010-pure-20260929T005435232416Z.json": "2eb15782a76361a2d5712e8389dad133b03b88d4a901e73755653d97f67a935f"
+  }
+}

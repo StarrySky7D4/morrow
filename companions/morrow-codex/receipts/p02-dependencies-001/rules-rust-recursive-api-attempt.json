@@ -1,0 +1,9 @@
+{
+  "status": "interrupted_after_no_result",
+  "reason": "Full recursive repository metadata call did not return after several minutes. Parent authorized a package-only snapshot; four direct shallow/subtree requests completed and cryptographically bind the selected package to the fixed commit instead.",
+  "functions_cell_id": "56",
+  "repository": "hermeticbuild/rules_rust",
+  "commit": "b56cbaa8465e74127f1ea216f813cd377295ad81",
+  "attempted_urls": ["https://api.github.com/repos/hermeticbuild/rules_rust/git/commits/b56cbaa8465e74127f1ea216f813cd377295ad81", "https://api.github.com/repos/hermeticbuild/rules_rust/git/trees/b56cbaa8465e74127f1ea216f813cd377295ad81?recursive=1"],
+  "result": "No response consumed from the interrupted batch; no full repository claim. Redirect and preceding error evidence remain preserved."
+}

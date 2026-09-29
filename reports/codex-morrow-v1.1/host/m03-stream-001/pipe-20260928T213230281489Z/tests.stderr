@@ -1,0 +1,10 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.01s
+     Running unittests src\lib.rs (target\m03-stream-001-pipe\debug\deps\morrow_native_pipe_win-3ee4baeb43321fe4.exe)
+     Running tests\platform.rs (target\m03-stream-001-pipe\debug\deps\platform-a95421a369e34f9f.exe)
+
+thread 'connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive' (2572) panicked at tests\platform.rs:115:5:
+assertion `left == right` failed
+  left: "D:P(A;;FA;;;SY)(A;;FA;;;LA)"
+ right: "D:P(A;;GA;;;SY)(A;;GA;;;LA)"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `--test platform`

@@ -1,0 +1,8 @@
+{
+  "ready": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\producer-ready-011.json",
+  "ready_sha256": "2ece47cec784d8454d855cdc2f375530d76a343e24aa9f65284bc32089801bb0",
+  "script_sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+  "snapshot_sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+  "diff_sha256": "75bb790299eb55bd56fb3f92338a15c6311d166a6edd73b6ef4ca00bd7e20d6f",
+  "runtime_run_at_freeze": false
+}

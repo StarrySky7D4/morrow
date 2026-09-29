@@ -1,0 +1,14 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling capnp v0.24.1
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling capnpc v0.24.0
+   Compiling morrow-native-session-wire v0.2.0-experimental.2 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m02-native-session-001\vendor\capnp-kit-001\wire)
+   Compiling morrow-native-session-client v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m02-native-session-001)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.02s

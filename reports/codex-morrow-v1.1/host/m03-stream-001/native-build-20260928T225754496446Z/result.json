@@ -1,0 +1,61 @@
+{
+  "status": "compiled_native_runtime_not_run",
+  "before": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "native_session_stream_001/schemas/native_admission.proto": "6d2ca43455eb881c53925d38c4519b6c3af708d41e7d20c14554c5301408fbbc",
+    "native_session_stream_001/src/authority.rs": "5b930e4710a7b36e5a7b935584bbbd3696e7c6d5ae9611791f9ae66073d15d53",
+    "native_session_stream_001/src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "native_session_stream_001/src/http_authority.rs": "bb37dbe29e359e4376825120ec32a6041d414262a29bac1e8b2ebd4707760d2c",
+    "native_session_stream_001/src/http_authority_tests.rs": "1ba21040628411d27926edebc77d6c60b88886599cd5e8fe9ae93bd4981d8e43",
+    "native_session_stream_001/src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "native_session_stream_001/src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "native_session_stream_001/src/pipe_driver.rs": "4b0873ac3b5a0c34e2d87ba5b6adc0b369f79af4f66c981fa4fb5b443c20a572",
+    "native_session_stream_001/src/supervisor.rs": "dd4faa96cdf4ffe7f75c708887de9bd1cdbf6970bdac3695b56f0526ed33a286"
+  },
+  "frozen_count": 2297,
+  "commands": [
+    {
+      "args": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "build",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-native",
+        "--bins",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 3.2341082000057213,
+      "stdout_sha256": "bf4b13d93e104e3245cb8e8031b73383065f8d1946b4c5b2e40ac98867e7e5f5",
+      "stderr_sha256": "70b021086e3afa9f0027493aaf4bf9a3d48b8a02f426094f5c3e3a08956170cc"
+    }
+  ],
+  "after": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "native_session_stream_001/schemas/native_admission.proto": "6d2ca43455eb881c53925d38c4519b6c3af708d41e7d20c14554c5301408fbbc",
+    "native_session_stream_001/src/authority.rs": "5b930e4710a7b36e5a7b935584bbbd3696e7c6d5ae9611791f9ae66073d15d53",
+    "native_session_stream_001/src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "native_session_stream_001/src/http_authority.rs": "bb37dbe29e359e4376825120ec32a6041d414262a29bac1e8b2ebd4707760d2c",
+    "native_session_stream_001/src/http_authority_tests.rs": "1ba21040628411d27926edebc77d6c60b88886599cd5e8fe9ae93bd4981d8e43",
+    "native_session_stream_001/src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "native_session_stream_001/src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "native_session_stream_001/src/pipe_driver.rs": "4b0873ac3b5a0c34e2d87ba5b6adc0b369f79af4f66c981fa4fb5b443c20a572",
+    "native_session_stream_001/src/supervisor.rs": "dd4faa96cdf4ffe7f75c708887de9bd1cdbf6970bdac3695b56f0526ed33a286"
+  },
+  "artifact": {
+    "path": "target/m03-stream-001-native/debug/morrow-native-stream-host.exe",
+    "sha256": "3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65"
+  },
+  "frozen_unchanged": true
+}

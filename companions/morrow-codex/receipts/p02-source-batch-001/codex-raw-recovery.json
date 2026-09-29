@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "attempted_files": 694,
+  "success_count": 691,
+  "failures": [
+    {
+      "path": "sdk/python/examples/08_local_image_and_text/sync.py",
+      "url": "https://raw.githubusercontent.com/openai/codex/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/sdk/python/examples/08_local_image_and_text/sync.py",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "third_party/v8/llvm_libc.BUILD.bazel",
+      "url": "https://raw.githubusercontent.com/openai/codex/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/third_party/v8/llvm_libc.BUILD.bazel",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "third_party/voice/assemble_package.py",
+      "url": "https://raw.githubusercontent.com/openai/codex/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/third_party/voice/assemble_package.py",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    }
+  ],
+  "ended_at": "2026-09-28T12:03:16.159102+00:00"
+}

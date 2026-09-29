@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "codex-rs/build-info/build.rs",
+      "git_blob_sha1": "4ac3e0d42c8a8a93c3c6c6827ac5a34469d5099c",
+      "sha256": "9b77c7670d6d2b4aa4acd917dfbfebd0e9b589b622c6362f42f77db5880e0c91",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/build-info/build.rs"
+    },
+    {
+      "path": "codex-rs/code-mode-protocol/build.rs",
+      "git_blob_sha1": "d8d8bbff320d48d870d179a7fd01dbb37494502c",
+      "sha256": "92171dbc25135066d8a17dbdab947566f56e44d8ff39629de67842fa01856658",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/code-mode-protocol/build.rs"
+    },
+    {
+      "path": "codex-rs/skills/build.rs",
+      "git_blob_sha1": "db4ef68416f17a3ec67e2260b80f14d01da4c196",
+      "sha256": "24c62df6f869f931b04e14645c539b715c97e96e6274c5a6313bb1c7bbd28dcc",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/skills/build.rs"
+    },
+    {
+      "path": "codex-rs/windows-sandbox-rs/build.rs",
+      "git_blob_sha1": "6ba79e6c75deb87067ced02e824eaf7faf79346d",
+      "sha256": "b656ced2ef8037f379c2d45d57116e937dc80ec3b23c7f9cb2501da98338774d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/windows-sandbox-rs/build.rs"
+    }
+  ]
+}

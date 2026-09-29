@@ -1,0 +1,51 @@
+{
+  "host_sha256": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224",
+  "guest_sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+  "script_sha256": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+  "case_order": [
+    "s503",
+    "r307",
+    "exact",
+    "over"
+  ],
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "all_cases": [
+    "one original POST",
+    "no redirect sink hit",
+    "host exit0",
+    "actual child exit and dual EOF",
+    "durable ownerReleased",
+    "RequestClosed and both worker joins",
+    "same-lock Close written/acked with exact batch identity/sequence/generation/code",
+    "control EOF and ended with clean verdict and independent failure null",
+    "control_end Ok alone insufficient",
+    "guest/host final progress and cleanup agreement",
+    "no evidence overflow"
+  ],
+  "s503_r307": [
+    "Core Failed, guest exit2",
+    "complete response retains Observed/material/EOF",
+    "all response offsets match error body",
+    "error body classification without parser output",
+    "aggregate Unknown and both existing close/finalcontrol ErrUnknown expected, independently clean control required",
+    "host reason19 from deliberate cancellation retained"
+  ],
+  "exact": [
+    "actual inspected cap offsets before EOF release",
+    "pre-EOF not Observed/material/RequestClosed",
+    "Core Completed, drain Ok, finalcontrol Ok, guest exit0",
+    "after real EOF Observed with error0"
+  ],
+  "over": [
+    "same exact cap gate then one extra byte",
+    "preserve earlier Core Completed, drain Err, guest exit2",
+    "Unknown with quota observation; no HTTP EOF/material/Observed",
+    "extra byte not delivered",
+    "aggregate Unknown and old close/finalcontrol ErrUnknown retained, clean independent control required",
+    "host final quota reason21 retained"
+  ],
+  "terminal_poll_observation": "not instrumented; source/state inference only",
+  "automatic_retry": false,
+  "on_unexpected_failure": "preserve evidence and stop remaining cases"
+}

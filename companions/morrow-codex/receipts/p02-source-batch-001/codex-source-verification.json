@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "batch": "p02-source-batch-001",
+  "repository": "https://github.com/openai/codex",
+  "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "tree_sha1": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+  "status": "complete_fixed_source_verified",
+  "source_method": "8003 complete members from failed archive + 691 fixed raw files + 3 fixed connector files; every blob verified against independently reconstructed Git tree",
+  "archive_status": "failed_incomplete_download_preserved",
+  "complete_commit_tree_verified": true,
+  "tree_count": 985,
+  "file_count": 8697,
+  "source_bytes": 86130187,
+  "materialization": "upstream/p02-source-batch-001/codex-source",
+  "content_manifest": {
+    "path": "receipts/p02-source-batch-001/codex-content-manifest.json",
+    "sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7"
+  },
+  "independent_tree_metadata": {
+    "path": "receipts/p02-source-batch-001/codex-complete-git-tree.json",
+    "sha256": "6857fd68ee32b790cac8137c0d2a7fecc49d0c3225b453c8c01642c0ea59e1a0"
+  },
+  "dirty_diff": {
+    "modified": [],
+    "missing": [],
+    "extra": [],
+    "basis": "Complete file-set and blob equality to independently reconstructed commit tree, not a Git checkout"
+  },
+  "mode_materialization": "Git regular/executable modes recorded in manifest; Windows permission bits are not represented as Unix executable permissions; one safe relative symlink materialized and verified",
+  "license_files": [
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "size": 10926,
+      "git_blob_sha1": "4606e72e042564097e8780d66c1d4dcb611869bd",
+      "sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc",
+      "provenance": "complete_member_from_failed_archive_with_independent_blob_check"
+    },
+    {
+      "path": "NOTICE",
+      "mode": "100644",
+      "size": 242,
+      "git_blob_sha1": "2805899d56d0332d175cfc613c67d45d6f006db7",
+      "sha256": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915",
+      "provenance": "complete_member_from_failed_archive_with_independent_blob_check"
+    }
+  ],
+  "verification_uses_assert": false,
+  "upstream_build_or_runtime_executed_by_source_audit": false,
+  "ended_at": "2026-09-28T12:06:52.996854+00:00"
+}

@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-09-28T11:13:26.354496+00:00",
+  "command": "generate",
+  "checker_sha256": "0755d92e60047ad039fe43f674a0065673591de49a619d6165d0893b8b42384a",
+  "counts": {
+    "work_packages": 31,
+    "gates": 7,
+    "acceptance": 84,
+    "base48": 48,
+    "added36": 36
+  },
+  "integrity_status": "verified",
+  "issues": [],
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0,
+  "exit_code": 0,
+  "scope": "catalogue/reference/source identity only; not product acceptance",
+  "snapshot": "snapshot.json",
+  "negative_self_tests": []
+}

@@ -1,0 +1,9 @@
+{
+  "status": "ready_for_independent_review_bounded_native_control_slice",
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\manifest.json",
+  "manifest_sha256": "178044ee85d0f1c15e0168e8fcf6b728b5105ac5b2c63b8d2134b16b49a23be9",
+  "host_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+  "host_sha256": "12ddcb1acc95a151aa52541d93c13756f50174d9f996a155ece4e0e8d7642e21",
+  "delivery": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\DELIVERY.md",
+  "delivery_sha256": "57f68ee87ef32eb57ce16aa2344b8840f5559f64a466fb81ed9355eb9da89ea5"
+}

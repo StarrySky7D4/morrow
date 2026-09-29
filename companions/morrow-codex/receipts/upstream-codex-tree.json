@@ -1,0 +1,1050 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "b3dc6716209116a311dce67ddd490d7d0b998031734720524ad407fe67c7cf48",
+      "git_blob_sha1": "fd0b9ed9e781bdb29bb11a8f62b777ad773fec81"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc",
+      "git_blob_sha1": "4606e72e042564097e8780d66c1d4dcb611869bd"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915",
+      "git_blob_sha1": "2805899d56d0332d175cfc613c67d45d6f006db7"
+    },
+    {
+      "path": "codex-rs/Cargo.lock",
+      "sha256": "16b915e94730a7e598182620923fc6eae19e32366d3b5ef91128002575ae24af",
+      "git_blob_sha1": "01a121bf78335f0c344af1beddfc6f634464f391"
+    },
+    {
+      "path": "codex-rs/Cargo.toml",
+      "sha256": "0bba3df88f58417fef69f8997028f150e4fccd08f0e12e38f551bdc179245172",
+      "git_blob_sha1": "adceeb5ed9022d3e9d54fb1a780354c2385be6b7"
+    },
+    {
+      "path": "codex-rs/agent-graph-store/Cargo.toml",
+      "sha256": "6d13bbf262fa180b318e43ff1295a7db31f4939bc5f174c1fc1f63c46b2ea568",
+      "git_blob_sha1": "1bb5ed2699fb0d986efb8740286775d76e76db92"
+    },
+    {
+      "path": "codex-rs/agent-identity/Cargo.toml",
+      "sha256": "6abd72371d8289b9a216491aee14eef2dde7627e42bf3dc4c4aa05979c0901b8",
+      "git_blob_sha1": "36d5eb41fd694a9eb283cbd6af4bc0977fa36c80"
+    },
+    {
+      "path": "codex-rs/agent-roles/Cargo.toml",
+      "sha256": "3af8b9b54fb46748eccf7ffa346d3ab6151e3d340840d52b0cdbf5bc4b748882",
+      "git_blob_sha1": "85fa40ce0863ec79c4e0ade1b8be92201be33d43"
+    },
+    {
+      "path": "codex-rs/analytics/Cargo.toml",
+      "sha256": "f5b5fca588cd4b70304bd252d348edbe76757dc9760148b52e9b48dff32a46c7",
+      "git_blob_sha1": "26d84441d9a4da8bbfa9af5a4d226978341d5778"
+    },
+    {
+      "path": "codex-rs/ansi-escape/Cargo.toml",
+      "sha256": "39fa775403ba399e193eb9e986dbc98bc519db77f20052fdf5668f7ae075a860",
+      "git_blob_sha1": "edb5b6e514cc2d36596a5dce7e9f6963cc2def8d"
+    },
+    {
+      "path": "codex-rs/app-server-client/Cargo.toml",
+      "sha256": "74fd9123b3697f600e1913c2665c4f235ca1c9999756b109361de41636e288c7",
+      "git_blob_sha1": "daa6ef661f00486af405e764705a60bdcf7b1036"
+    },
+    {
+      "path": "codex-rs/app-server-daemon/Cargo.toml",
+      "sha256": "f5606315c7fcfdd7fb071b4461429a75ee8e2dcdfa568e85bd1eb1415602abec",
+      "git_blob_sha1": "48e94a078265c2658baf4381941dedebb432b028"
+    },
+    {
+      "path": "codex-rs/app-server-protocol-noop-macros/Cargo.toml",
+      "sha256": "86cca540f740f40a7dd58b1d2d62f518517b54c14915c0f3f2171df9223c0226",
+      "git_blob_sha1": "93a24b070beffa187ab27f331e35cdcefe21c4b8"
+    },
+    {
+      "path": "codex-rs/app-server-protocol/Cargo.toml",
+      "sha256": "eed16bab0bada46556378b378820cc51c73f09db677802e9de14c652ef13b92d",
+      "git_blob_sha1": "2122f79ba5f6014c7b79ae86a0013076ab7a753f"
+    },
+    {
+      "path": "codex-rs/app-server-test-client/Cargo.toml",
+      "sha256": "1929e157ff492633b4dd806ef5627e1c53ccf9241e72dd73944ff5f489483080",
+      "git_blob_sha1": "901afb70d00f16e004913c764337d92afc82808b"
+    },
+    {
+      "path": "codex-rs/app-server-transport/Cargo.toml",
+      "sha256": "bfa7635164e851f166b7e12b07f890802ce8e1dee2fdd36eada21e9cf8f79237",
+      "git_blob_sha1": "f78bfebe55d4920081a35999859a70f0212034d0"
+    },
+    {
+      "path": "codex-rs/app-server/Cargo.toml",
+      "sha256": "0463b85d8a5094427c5beb52ff637d1ec6205b1d4ac1e42f81275d526df12aaf",
+      "git_blob_sha1": "ad0a5fbab36268a3e85baa3ff2c2069ea6fb8a91"
+    },
+    {
+      "path": "codex-rs/app-server/tests/common/Cargo.toml",
+      "sha256": "bdf6850d84b5a089ddca7fa26d5d6b79c844b768d1933c4c3087fc9d53c8d6c0",
+      "git_blob_sha1": "8efd1763c84ed2d1d2b93e5c8f96b7bb44745819"
+    },
+    {
+      "path": "codex-rs/apply-patch/Cargo.toml",
+      "sha256": "388b18e13d8e3f8aa419e30385e33fe58748b2bd972df32eb66aa1484ab3d54a",
+      "git_blob_sha1": "8e1d7f651f47a76de2a6ed6226aa2ec1a55cf5d6"
+    },
+    {
+      "path": "codex-rs/arg0/Cargo.toml",
+      "sha256": "2e8868bd7755fe0abf3365b01b448000d17761c159ad8ab6a92c655decd312fe",
+      "git_blob_sha1": "b6d4c2d404ece5b3030ead85f888fa8a29538c48"
+    },
+    {
+      "path": "codex-rs/async-utils/Cargo.toml",
+      "sha256": "880a0c8ea54a30e1db09db6398a01706ad501c834ba32eecd37b7ac3de8dcf4f",
+      "git_blob_sha1": "eee5fb73b8874e65d58953b347cd933336610593"
+    },
+    {
+      "path": "codex-rs/attachment-store/Cargo.toml",
+      "sha256": "740aa9e40fb205501ace3b6176c96e76a4737952fc47f2f07a456842225ae018",
+      "git_blob_sha1": "dd66412fa1621fbe762140498e9149a3676cace0"
+    },
+    {
+      "path": "codex-rs/aws-auth/Cargo.toml",
+      "sha256": "b42bbe49eea0f86ba859b05db8d3d948b5c493122cd607dcc8630412279cf8da",
+      "git_blob_sha1": "f9b5e7139a1dcffb97daab6f8e1c8712cd69473f"
+    },
+    {
+      "path": "codex-rs/backend-client/Cargo.toml",
+      "sha256": "3f536d6194f6e2221e10ec9ca11b7d1c5bdc89b71cb0ef35b28c6f6d7aa153ac",
+      "git_blob_sha1": "8a8948a9a219740e09e9e5399a4e8730e633d33d"
+    },
+    {
+      "path": "codex-rs/build-info/Cargo.toml",
+      "sha256": "492f56d0347f602e21786b2f432bd10aeba5266d9cac0fc83e639cbbb16c06da",
+      "git_blob_sha1": "bd9bb036dc36a5ab65e67b9911441859297d1536"
+    },
+    {
+      "path": "codex-rs/build-info/build.rs",
+      "sha256": "9b77c7670d6d2b4aa4acd917dfbfebd0e9b589b622c6362f42f77db5880e0c91",
+      "git_blob_sha1": "4ac3e0d42c8a8a93c3c6c6827ac5a34469d5099c"
+    },
+    {
+      "path": "codex-rs/chatgpt/Cargo.toml",
+      "sha256": "ed8da55f97753db776cbcc798e5deb68bc8da3089fa376004be29f0d8a579435",
+      "git_blob_sha1": "04b9cb7df6786401aa2c2cbad225cc40a26d277d"
+    },
+    {
+      "path": "codex-rs/cloud-config/Cargo.toml",
+      "sha256": "f653c97e72c417f3beb0dd0dbcfa613a539ab206d3004e3c236ec0b419043b1c",
+      "git_blob_sha1": "48ab0d870c3765bab7863d62cfdf6971707ad640"
+    },
+    {
+      "path": "codex-rs/cloud-tasks-client/Cargo.toml",
+      "sha256": "713fe5694a802106a72bdb245ed973ce80dd1bd977abfde5f308a14bf3180028",
+      "git_blob_sha1": "8efd78cb22d0b6458e9ec9138f0df03590f75d75"
+    },
+    {
+      "path": "codex-rs/cloud-tasks-mock-client/Cargo.toml",
+      "sha256": "c00ebb5e69c81d6d15793069773c1a84a521cc4d71a2a27b06854c71557f24d4",
+      "git_blob_sha1": "b249b654e02f36360389a12ccc14bffb787b9726"
+    },
+    {
+      "path": "codex-rs/code-mode-protocol/Cargo.toml",
+      "sha256": "2ac9af96867f5babb423d9865e1e1277329e6e1fb10a069d0cb9e380beef2b70",
+      "git_blob_sha1": "cad10b47ebf4e577d9d9278703424f266ba6cc71"
+    },
+    {
+      "path": "codex-rs/code-mode-protocol/build.rs",
+      "sha256": "92171dbc25135066d8a17dbdab947566f56e44d8ff39629de67842fa01856658",
+      "git_blob_sha1": "d8d8bbff320d48d870d179a7fd01dbb37494502c"
+    },
+    {
+      "path": "codex-rs/code-mode-runtime/Cargo.toml",
+      "sha256": "593ded78596279c8e6ce85f2d9708d549c44b3fe693cbbab9341aeb57e3ea923",
+      "git_blob_sha1": "5a4d9e1d0930806689a04bc5857b177656bd775b"
+    },
+    {
+      "path": "codex-rs/code-mode/Cargo.toml",
+      "sha256": "2646402e31d512209a03e1568ae81b5b5d85405f7f762d8aa169b3f0ac14959b",
+      "git_blob_sha1": "b6c0edf251f2d9a569d7e37739664b4478757cc1"
+    },
+    {
+      "path": "codex-rs/codex-api/Cargo.toml",
+      "sha256": "41fa3554b49fcfa0bfe7473e20fc41bff9a672bb3fc3da9aa4c1f3835c7e1266",
+      "git_blob_sha1": "82bec69218844915b5e986fc17d473966466e888"
+    },
+    {
+      "path": "codex-rs/codex-api/src/endpoint/models.rs",
+      "sha256": "b63ebf34bf4ae0490419a4cd976a0e935701d65f3e2be60f000d5fa6b692ad79",
+      "git_blob_sha1": "c00bc0115e4f79415e04e6c82fc6acffcdf1ba6f"
+    },
+    {
+      "path": "codex-rs/codex-api/src/endpoint/responses.rs",
+      "sha256": "4f2fff3da4ca3ca9fcfa40ada8e98a0229af296094e03febb4d823f32ef932c8",
+      "git_blob_sha1": "9c41a802eadd57cf20ffc733121921d8d3ba9d08"
+    },
+    {
+      "path": "codex-rs/codex-api/src/lib.rs",
+      "sha256": "33bb3d548fa5b39ccb3298f24556356ccdf73c3c9842c127f45a00bca091d77e",
+      "git_blob_sha1": "b7511d9e50f4b4eb02a32908be1ec3c88bf48df0"
+    },
+    {
+      "path": "codex-rs/codex-client/Cargo.toml",
+      "sha256": "76e3da92b54ed0c96b14be755fe8d072559d2a9ac6f11e82c1979487edb55b25",
+      "git_blob_sha1": "9ffe57d95f8c9c0cc51b215666969f3082bc4aa5"
+    },
+    {
+      "path": "codex-rs/codex-client/src/lib.rs",
+      "sha256": "e9ca23e97ed1ee775b201e54944dab3828acbdd9ddccb1b0374bc40b135724bf",
+      "git_blob_sha1": "e634a2b2947c0a5dede108ab5cf1f4e599cc0d1f"
+    },
+    {
+      "path": "codex-rs/codex-experimental-api-macros/Cargo.toml",
+      "sha256": "b8fcf3a548dfb052195e49969073aa22d8a2e0948d46732598cbeaaf9826f10b",
+      "git_blob_sha1": "2e148a21d782b2ca20f5c81fc4ea896523d4d80d"
+    },
+    {
+      "path": "codex-rs/codex-home/Cargo.toml",
+      "sha256": "6c80a87eaad697efc4dc24f5eca9e7268dd8de29d2f84bc8982af3f89733c92b",
+      "git_blob_sha1": "068ec55b4e274c002dc37e3584e96a2c9ab1f7c7"
+    },
+    {
+      "path": "codex-rs/codex-mcp/Cargo.toml",
+      "sha256": "eeec98bce70e10462c99b324958f4c8b48212a575c76d74115b10035ae5f298a",
+      "git_blob_sha1": "d989cf8b9c3ccff324aa86d829427bf6f5252e8b"
+    },
+    {
+      "path": "codex-rs/collaboration-mode-templates/Cargo.toml",
+      "sha256": "52aa162c5ba6085b0eead685bd21a15043150789fcd08000465c95db0044fef4",
+      "git_blob_sha1": "2c17b1fd2ad989bda8a38e80dee1c5380f887c03"
+    },
+    {
+      "path": "codex-rs/config/Cargo.toml",
+      "sha256": "9f1aebe46b78cf1fb2c47b9a9c61bbccd2b8076ce9274fc81d8ae17e7c8dc232",
+      "git_blob_sha1": "9be1fb4f4732201289737fbabd388ff72167d6dd"
+    },
+    {
+      "path": "codex-rs/connectors/Cargo.toml",
+      "sha256": "20515657b4ab715652a6be25d3b2ff408f36d8b53e0d1dddc1ea014910f95ea0",
+      "git_blob_sha1": "ac3ce9241c2d6f4deb3ac09ced64087fd51b29b3"
+    },
+    {
+      "path": "codex-rs/context-fragments/Cargo.toml",
+      "sha256": "e03ff3b43b8eb2763a545cb88e4ffe09c05a10873112c17263c4a7133041bb0f",
+      "git_blob_sha1": "74ecc5f209889b9aee2065c921004ec5b2cbf587"
+    },
+    {
+      "path": "codex-rs/core-api/Cargo.toml",
+      "sha256": "64d89566ae6c63d3dbd6c655fe9f5277dd93765330611be3f05ebf09e15dd015",
+      "git_blob_sha1": "b82d5ee4802d68b29f574bc8ebee1334cf751caa"
+    },
+    {
+      "path": "codex-rs/core-plugin-common/Cargo.toml",
+      "sha256": "d68f45e18a957624d9a22d18c206b22976887b2c06d27b1ae3036850ca0a0424",
+      "git_blob_sha1": "654faa8af18541b95f23a45183566e4c892bf904"
+    },
+    {
+      "path": "codex-rs/core-plugins/Cargo.toml",
+      "sha256": "90dc9794c6a5119d6dc2af7a367a7aad8b75774b19f21fb3181d6cfeed5717a6",
+      "git_blob_sha1": "af58b8e9e8aa59f721274c0a57bd909615c8d4dc"
+    },
+    {
+      "path": "codex-rs/core/Cargo.toml",
+      "sha256": "d745357079c9163f69cd60295f46962c342c80a9cbf11d42afd5b4941df1a6d3",
+      "git_blob_sha1": "693fbd7b78d2b62889528b8eef560d2e708554ee"
+    },
+    {
+      "path": "codex-rs/core/src/client.rs",
+      "sha256": "605ced35cd853fcc4e23f6edd724c96f96f74c736a45e6ea95bf5300f3ab814c",
+      "git_blob_sha1": "f5ac495337fd8f29c08b0be8d5b75ba32185d7d2"
+    },
+    {
+      "path": "codex-rs/core/src/client_common.rs",
+      "sha256": "0125e520f71798e6c31a1d0147934c0d90288ab9cc4bfce6e8374ac587f2b43a",
+      "git_blob_sha1": "4e76ac5905fa077279f8e9a032ddba6152f03874"
+    },
+    {
+      "path": "codex-rs/core/src/compact_remote_v2.rs",
+      "sha256": "f05e148d02f4ffdaa3249b4273976838b0f800d2b17ccb102d0d75edcc89a1cd",
+      "git_blob_sha1": "fcc6064f18cb353feb08ef8ab6e26eef883f20b8"
+    },
+    {
+      "path": "codex-rs/core/src/exec.rs",
+      "sha256": "a0217990bbfed2dfe5dd484725b1ea07aadc9e09ad6316ed2b968abb4cacb2dd",
+      "git_blob_sha1": "fa458ed1b71b74805a096df0862e4e3412be21fc"
+    },
+    {
+      "path": "codex-rs/core/src/hook_runtime.rs",
+      "sha256": "579a4cab9d82c9aaba7f925f2188fc14fa6940948e7f30ece02fdb24b20a2ae1",
+      "git_blob_sha1": "30c4162ffc06307dc0a73189cb4b7944b6a949c2"
+    },
+    {
+      "path": "codex-rs/core/src/lib.rs",
+      "sha256": "77123e59406093fcaa2f10e549458c228e55d53c84fef06728a73933cc9f096b",
+      "git_blob_sha1": "2595ce5bb9d08697234127c40ab46eabbee44adb"
+    },
+    {
+      "path": "codex-rs/core/src/session/mod.rs",
+      "sha256": "aa75ddc17c151ef8bde8f0a66f016b65fb8044f83cca934ab4bfb4fb6c35c28f",
+      "git_blob_sha1": "902d18377cb93e6bc378ebac9fc9b740cce65845"
+    },
+    {
+      "path": "codex-rs/core/src/session/session.rs",
+      "sha256": "de7eca05b55865c0ef03465a29bfb51e54d1eb78d253533d8b76e88712172f2d",
+      "git_blob_sha1": "62be2d34e26cf3ec143852b186cd17b097e8acdd"
+    },
+    {
+      "path": "codex-rs/core/src/session/turn_context.rs",
+      "sha256": "96c7e354170c784204d50cf3cd218133f9a906a887d9c06261f836f95dd0edd1",
+      "git_blob_sha1": "0d7b59d77ea6089bf4c157176a923a8069c1da62"
+    },
+    {
+      "path": "codex-rs/core/src/spawn.rs",
+      "sha256": "960e85b5f6ba7f6b9d55e6800cb4cae3454f38d19051a3e966dc33c146d87db0",
+      "git_blob_sha1": "bbae9308d7e8483476887cb1a1e82555001be06c"
+    },
+    {
+      "path": "codex-rs/core/src/state/service.rs",
+      "sha256": "8ecf72344eb7db6531bdc5d09c7174d2d9582b60da8bf57a2efd92ef9b184776",
+      "git_blob_sha1": "ded1f878e89d15afd1342266a519091d6313111f"
+    },
+    {
+      "path": "codex-rs/core/src/state_db_bridge.rs",
+      "sha256": "008a81a24eecdb9fe3cf915ad002359e30287aed97059bb36ac0963d49d81584",
+      "git_blob_sha1": "78d3cb11f906b878054901eb5a9f9c9f34180bc4"
+    },
+    {
+      "path": "codex-rs/core/src/thread_manager.rs",
+      "sha256": "4199282a0a7a566b4f6cce8a65be0563539f6ac15ae1ead515a371c7a7f21685",
+      "git_blob_sha1": "db3d358ecfc98be333d11a9c774c32dc25fe91f6"
+    },
+    {
+      "path": "codex-rs/core/src/tools/runtimes/unified_exec.rs",
+      "sha256": "278404e676d5659d850fb53189a7b10fd29f4d278390348ba6da9beda3b1d69b",
+      "git_blob_sha1": "722b8dffc142626cc7dfe05038a3ee8fff3d1c4a"
+    },
+    {
+      "path": "codex-rs/core/src/unified_exec/mod.rs",
+      "sha256": "b44a827c63f6906f4b76e69f2095cb207b4989e67a8a5fcd521a1150443ad240",
+      "git_blob_sha1": "3645306c27c8157cafe42cde651dcf15ab66607f"
+    },
+    {
+      "path": "codex-rs/core/src/unified_exec/process.rs",
+      "sha256": "c48415c5182fbd3515a64b9a58178d9fec3107aa9b4b88c51e7050cb189ff237",
+      "git_blob_sha1": "8305c02894737e70708a19b9dace6fee8d425ae5"
+    },
+    {
+      "path": "codex-rs/core/src/unified_exec/process_manager.rs",
+      "sha256": "ec4878fbe0da4d8e4ae40629702a6c509a7168fd5494c0453d4081cd8f7fc235",
+      "git_blob_sha1": "3dc3e97d91245b3326637817570b06ead902db96"
+    },
+    {
+      "path": "codex-rs/core/tests/common/Cargo.toml",
+      "sha256": "8befa624d00c33ca9a7bb8ed077d503265ccd7e625d9d4f06e9cd5cac483223e",
+      "git_blob_sha1": "5644a06e0a1e7f5962c7e9e1bb7e8a5225630777"
+    },
+    {
+      "path": "codex-rs/diagnostics/Cargo.toml",
+      "sha256": "11974d3cc33cfe81cc15a3def4cdaace9eae05d4ac3b22af0af2e35e12ef6d66",
+      "git_blob_sha1": "2eb2125a102e121ed5a51d8dad3013c7cc258cf0"
+    },
+    {
+      "path": "codex-rs/exec-server-protocol/Cargo.toml",
+      "sha256": "e8243f99de3f35c31107c562ef16e472211ebe27e16234e37b23651a59a5079e",
+      "git_blob_sha1": "62841ed97314b9bb1fca10b2ba2b68ad12f73e6e"
+    },
+    {
+      "path": "codex-rs/exec-server/Cargo.toml",
+      "sha256": "a409f86e607b090ab27b6032dd1f0f9f2f4d6b57112e850b0b6be0a30e4162da",
+      "git_blob_sha1": "fd9928db363b8400eb37ac7c8cb4d2fb0e9de1f0"
+    },
+    {
+      "path": "codex-rs/exec-server/src/environment.rs",
+      "sha256": "da4c5ac295eeb9f55d94f7a39aa8c476560f07ccb745762a7989b6f81b7c2bec",
+      "git_blob_sha1": "31a35e9be4849888b4f161eb0c2d5e3ab922ddc5"
+    },
+    {
+      "path": "codex-rs/exec-server/src/environment_provider.rs",
+      "sha256": "eaf79ed4e1f61c0f65a54a61027de0a1f025e766ff447e39236b68263f261da4",
+      "git_blob_sha1": "2366eb8be24b2d472dbc6245bc876fcc02704e6b"
+    },
+    {
+      "path": "codex-rs/exec-server/src/lib.rs",
+      "sha256": "99723cf10c7b1e85694dbce4d7154050905be782cfb20a73c4af8bd54971d095",
+      "git_blob_sha1": "2d850e9539bedfcf55232646c4881c6ebc837ecb"
+    },
+    {
+      "path": "codex-rs/exec-server/src/local_process.rs",
+      "sha256": "3f7ede21bfa47aa7133787f2e94409a12efc20f5f47c5a37e1e1c5eafc543c62",
+      "git_blob_sha1": "85cbd9bd455584ba66f985cec78ad53236586693"
+    },
+    {
+      "path": "codex-rs/exec-server/src/process.rs",
+      "sha256": "63b2029f79a5bc7f07575c66afe4025f888173f2932041b30e6d94315c356dc4",
+      "git_blob_sha1": "5e795faa1af2634ffd5eee36608f03e7459e07f7"
+    },
+    {
+      "path": "codex-rs/exec-server/tests/support/Cargo.toml",
+      "sha256": "9bec1539cc8fc173c4691863ca16386b3b0f683402160219bea89d2ef0db9048",
+      "git_blob_sha1": "073d4e341141ea59286b5563b4b6af1930d7ca51"
+    },
+    {
+      "path": "codex-rs/exec/Cargo.toml",
+      "sha256": "742151da541baf94826cdad699952e9c6f1da426615745f32134e32521caa471",
+      "git_blob_sha1": "42a75a05320223b99a21fc15a4380b6492f36728"
+    },
+    {
+      "path": "codex-rs/execpolicy/Cargo.toml",
+      "sha256": "a30850d1134be2b9a37a15d383d1cf7a3df72c81c3a4b970bcfac8bf15528e94",
+      "git_blob_sha1": "42040222336513132da0b6a274bcd3fc80589f99"
+    },
+    {
+      "path": "codex-rs/ext/agent-message-board/Cargo.toml",
+      "sha256": "314735cda3a3b9e8ad8b2aceb7496b37991ae749ef15fdba0b84dbb84e833eaf",
+      "git_blob_sha1": "f522893f599b3f766331315719e7be15c11437f2"
+    },
+    {
+      "path": "codex-rs/ext/agent/Cargo.toml",
+      "sha256": "684fe7c7a41900dd8c394b6cee6d1fcfd206a44c661811f356c846dcc07d51db",
+      "git_blob_sha1": "6c3f10a43319a122e2da129e31ba34aa4f1df49a"
+    },
+    {
+      "path": "codex-rs/ext/connectors/Cargo.toml",
+      "sha256": "d0dd96da7c42189b2e5a3c6976a54b565b02441bd2f4979652e3192b30b279a8",
+      "git_blob_sha1": "1aead727731475bc9590ac90efb37c2ae7adef64"
+    },
+    {
+      "path": "codex-rs/ext/extension-api/Cargo.toml",
+      "sha256": "fc9696d53a84326f578afc6cfa1084d083026dcfceb631df1db59f85cbf3b6ce",
+      "git_blob_sha1": "4b487226eb7deb0a44ad5d9ae16e53f90fd7ec8e"
+    },
+    {
+      "path": "codex-rs/ext/git-attribution/Cargo.toml",
+      "sha256": "15e8f2143ff99c657b40045c9b0609dd93f89b55cc37a95039b9aed89f5e6687",
+      "git_blob_sha1": "e96d0dbcd577bcc0645f3f6175bbe31429f87159"
+    },
+    {
+      "path": "codex-rs/ext/goal/Cargo.toml",
+      "sha256": "e03430bf9732d45b9aaebe6969d4a90e63daf348107f4b74bf227dfb38e33454",
+      "git_blob_sha1": "3939da1ab7f1c2e13c1263190abf91b17108fb7c"
+    },
+    {
+      "path": "codex-rs/ext/guardian-reviewer/Cargo.toml",
+      "sha256": "1eed62189d9f282ff45b464cdb505916951c95ece9eefff46c0b4eda08416717",
+      "git_blob_sha1": "6c7b9cd55b642b19303193df0c8cbbc5d49ce613"
+    },
+    {
+      "path": "codex-rs/ext/guardian-v2/Cargo.toml",
+      "sha256": "498eccfb5c6a3d21578fb6de83351b8391771b81287a430be6b925363b100ef7",
+      "git_blob_sha1": "02e69106b5988a848852525fdccb887a2910c5e9"
+    },
+    {
+      "path": "codex-rs/ext/history-notes/Cargo.toml",
+      "sha256": "1ef6280b0fd4c6a1cb9e6bda55212fdd8368359f1192a9a5855c87b2a6cdb368",
+      "git_blob_sha1": "df2f272945b956dfcd3c9f9af8e74ceb2060d6cc"
+    },
+    {
+      "path": "codex-rs/ext/image-generation/Cargo.toml",
+      "sha256": "aa8a6fec46b64f183014df9f6f410ab47c2d453714c543e8163089d572af7555",
+      "git_blob_sha1": "4b6155730645092549a69e2f46b926407091c78d"
+    },
+    {
+      "path": "codex-rs/ext/items/Cargo.toml",
+      "sha256": "bbb3630e5a2dd711a1ff6d118e095a062606afaa5ca970316d668114d45d7df5",
+      "git_blob_sha1": "4d58b29bc7004171361e4828e1dda712815ad8d1"
+    },
+    {
+      "path": "codex-rs/ext/mcp/Cargo.toml",
+      "sha256": "e60c59addd49727ad528724025c2a647e3ff8e38d88c0d6befcc62bae6263862",
+      "git_blob_sha1": "5185f6cab12c5b692dc558d15443b4934ea165ff"
+    },
+    {
+      "path": "codex-rs/ext/memories/Cargo.toml",
+      "sha256": "b53ffe9567465a01a696bb0de03bcc9c3fcaa0052a0aab794143a025c778526c",
+      "git_blob_sha1": "9111571fa40c4a37f4a3937a172796e806a18bc7"
+    },
+    {
+      "path": "codex-rs/ext/queue/Cargo.toml",
+      "sha256": "d7553e62f33e7cf4feb38f5f21b5e0c628773584340479dfa8155fca8886639e",
+      "git_blob_sha1": "4b5e5d04f4cf6bb414305a3badffda7038014e43"
+    },
+    {
+      "path": "codex-rs/ext/skills/Cargo.toml",
+      "sha256": "063185fdcc4597cd47a20d7d726d2e91aeedc30e13de8bdc43fb1944c32368a6",
+      "git_blob_sha1": "2891a1a5db7467674c32d1057bfbe2e769efa920"
+    },
+    {
+      "path": "codex-rs/ext/web-search/Cargo.toml",
+      "sha256": "b74df62ad7dd3159d96f68b3be17c8804cfc4ec280fbbfd9df06ab4326cfe9e4",
+      "git_blob_sha1": "a464b56beadec898c998c6ae6fdcae3ee01a8df4"
+    },
+    {
+      "path": "codex-rs/external-agent-migration/Cargo.toml",
+      "sha256": "1c69a91e9df522d46902c89444afd4a478f2b38d6d62cf3056142bef3220621c",
+      "git_blob_sha1": "5da3625c4da4a04ebdab4b549fcf4881a8989e6b"
+    },
+    {
+      "path": "codex-rs/features/Cargo.toml",
+      "sha256": "e3741eb42bc33d7c100d26dbd5f98dd691adf132f11267e6992dcd4b3534d7ae",
+      "git_blob_sha1": "edc96b64ae7a6f313dd65dde18b1710451f188a2"
+    },
+    {
+      "path": "codex-rs/feedback/Cargo.toml",
+      "sha256": "46898039515037022fa96ef6621bf6b824466287adeba74508a9fa0bd8c287c4",
+      "git_blob_sha1": "2fab1dd906c9b38d7fee598e07662e0bb8a0d430"
+    },
+    {
+      "path": "codex-rs/file-search/Cargo.toml",
+      "sha256": "ac012c6347e727e2a7a9cb927eec9fe4ece2c17a38474f7efa0563d3adbc98d4",
+      "git_blob_sha1": "e235898982f6eba908c5c0751eae91a5b25cdb1a"
+    },
+    {
+      "path": "codex-rs/file-system/Cargo.toml",
+      "sha256": "158866b3e775b98e57d73003f46143c07fde852d70d8d2014aae41e5c94de8ab",
+      "git_blob_sha1": "382eacb43d3353b2046806f91ba0f976866c9282"
+    },
+    {
+      "path": "codex-rs/file-system/src/lib.rs",
+      "sha256": "c57fa0ed1fb464f5d78b7e71652b946d2cd7bb3f5ef09fa7dad6e7f34869247d",
+      "git_blob_sha1": "cacff735cc0655e1b82bae869b87d46d917e0d16"
+    },
+    {
+      "path": "codex-rs/file-watcher/Cargo.toml",
+      "sha256": "901925f6f2141e4f9e70e4ad1850bab4f26826a232b3dbca7a15666716b8a535",
+      "git_blob_sha1": "781698794773a3b4b16205573510d296acce5f8a"
+    },
+    {
+      "path": "codex-rs/git-utils/Cargo.toml",
+      "sha256": "1b812bba7cc7dfa5339ab3ddb5e499e35fcafe42a6489e1e7a43208b291a816d",
+      "git_blob_sha1": "a0bd7872854cffa38dd559805a1dea2d06db85ae"
+    },
+    {
+      "path": "codex-rs/guardian-context/Cargo.toml",
+      "sha256": "6b52d813206446463c7aa8f01dc1616d1be917ae0d35edc6b712430874947b37",
+      "git_blob_sha1": "617d3c4454eb6455ec49bd9a9dfb309b529075ec"
+    },
+    {
+      "path": "codex-rs/history/Cargo.toml",
+      "sha256": "1efeca5a9781224b2682eb98ce880f0d1ed9ee614ff2d9a906195458924c0a89",
+      "git_blob_sha1": "bd938d2c2ea45333b8f040f41399674a28e54644"
+    },
+    {
+      "path": "codex-rs/history/src/lib.rs",
+      "sha256": "d056a444a1145666907acc087e2a011899bc828879d99a822591107ba5a803e2",
+      "git_blob_sha1": "090ca9178216f64b4f2815eedc716d6cc45da582"
+    },
+    {
+      "path": "codex-rs/hooks/Cargo.toml",
+      "sha256": "fa869d62a87ec1f3e65a6f062079f2c6e44800946448484a67579efc972ed5a0",
+      "git_blob_sha1": "cb234830aa95d1081fe1cde50b6303ddd9449293"
+    },
+    {
+      "path": "codex-rs/http-client/Cargo.toml",
+      "sha256": "5447af15cbf30ba615fa16d6094ffb13bef4b0d48ccab74ddb62204c5e8f4e53",
+      "git_blob_sha1": "d59c2e78f7703650176d7c62bc57d679b047b181"
+    },
+    {
+      "path": "codex-rs/http-client/src/client.rs",
+      "sha256": "a11dd7b8ef9a207bc2d967daf39bd899f09cb1847314e29a4398af230bcfc25e",
+      "git_blob_sha1": "c5c2e40bba02d337cbb7602909d9492054d55ed4"
+    },
+    {
+      "path": "codex-rs/http-client/src/lib.rs",
+      "sha256": "7f4187bf5774ecc4dbe96c43b4a71730aa696ca2d0912789ffc16e180741294f",
+      "git_blob_sha1": "5eb01f021b263fee0100435a2af5aec4a10c1d3b"
+    },
+    {
+      "path": "codex-rs/http-client/src/outbound_proxy.rs",
+      "sha256": "5c1fb52555ea4e9546cf66dd1c4ddee2a9d6ef136ba3f51a25ceafd368d3be36",
+      "git_blob_sha1": "7668333c6afbb53708f89a414bd4dcc1ea111521"
+    },
+    {
+      "path": "codex-rs/http-client/src/transport.rs",
+      "sha256": "88aa391e6893205336b3412b065600bd717da8d80d59c1c7dd094d19bee666b6",
+      "git_blob_sha1": "369d4ea68c0a0c882bd7338e9f21d4710d22b565"
+    },
+    {
+      "path": "codex-rs/install-context/Cargo.toml",
+      "sha256": "f3889e33551bedcf564069d27568c5f1ea01e9e696cf122e4b8f99a7292fbff8",
+      "git_blob_sha1": "ee84ad2962acf57a698e399b38dbc0a03c51bd11"
+    },
+    {
+      "path": "codex-rs/keyring-store/Cargo.toml",
+      "sha256": "6a6a49f225ecefe5b2d5c85e7b667001113363a4b75e4c30427c8e17adff1dc6",
+      "git_blob_sha1": "7a2f1e15bdc3c79b0d74866c3e8d371d13fa9193"
+    },
+    {
+      "path": "codex-rs/linux-sandbox/Cargo.toml",
+      "sha256": "9e0f2aabd5e0b529f8af9cd39c0116b356662ab1aa8950525b6820581ac59e11",
+      "git_blob_sha1": "17b3fa14b1de83b29a688d688eb504a693791055"
+    },
+    {
+      "path": "codex-rs/lmstudio/Cargo.toml",
+      "sha256": "f90889e3a31ae28b860e6a86da3d1fb9941f5b2232f82d42e178a777432cac48",
+      "git_blob_sha1": "e84bcfed51c3683e87ea7ae2e0a7809aade43a76"
+    },
+    {
+      "path": "codex-rs/login/Cargo.toml",
+      "sha256": "0c762d109c77508556e0d61badaba96a9e9a43ddd5dc1273113d2a8684e76593",
+      "git_blob_sha1": "2971dec6c1a81cb80379477333371bba6e8fbece"
+    },
+    {
+      "path": "codex-rs/login/src/auth/default_client.rs",
+      "sha256": "174e02e439013bf75cccdcfd36b9c23e31d9ee84835a0cc0b1f9d7a33391a064",
+      "git_blob_sha1": "28a952ea2d7affef05648affdc74f275efcf9680"
+    },
+    {
+      "path": "codex-rs/login/src/auth/mod.rs",
+      "sha256": "5d72ae39f74e2ed944b13bab4dbaab03d5e0ae1a5ec908d14cf4513606fe7b83",
+      "git_blob_sha1": "226255f39e25763c88110cb7481a116dcdd09a0c"
+    },
+    {
+      "path": "codex-rs/login/src/auth/storage.rs",
+      "sha256": "2e95a8998687e926675d41b5d941c3c3546a652c03d9680e6c7385e59bf459af",
+      "git_blob_sha1": "8a9d75f4487631b39faf057b39e23bbeb98aec04"
+    },
+    {
+      "path": "codex-rs/login/src/device_code_auth.rs",
+      "sha256": "a66f531d5cc5257ba99ec796f69e02f78bab1812bbde57b5aa809237910b3829",
+      "git_blob_sha1": "f9f8f1993bf4b2792dd66b72a7f4e1592824d768"
+    },
+    {
+      "path": "codex-rs/login/src/lib.rs",
+      "sha256": "c83451696298640d03f5d27a86943358bd811fbba610265aa8ccbb20f446af5a",
+      "git_blob_sha1": "abbbf1d8977e4efe31cf17e561a76a9e1bd76e0d"
+    },
+    {
+      "path": "codex-rs/login/src/outbound_proxy.rs",
+      "sha256": "fb4627d80bf4b8121f00241752028a48eb910e4f53cf0fc381b97db96ffe817c",
+      "git_blob_sha1": "430b99d453fad4b1a0d7692f887f5cfdf87b601c"
+    },
+    {
+      "path": "codex-rs/login/src/server.rs",
+      "sha256": "17b49a6da8fb54ec6d43efa037fbd867291c804038329035929322e15de830c8",
+      "git_blob_sha1": "d9dcb321563f3c0fa407ddf338c56575c71e3a10"
+    },
+    {
+      "path": "codex-rs/memories/read/Cargo.toml",
+      "sha256": "e51d8384f3a844f0687b9ea4864e19286b3fec7edfee69bd365cd02fd42886b5",
+      "git_blob_sha1": "2c0c5f2c954ceb8b986057bdd929badca4ecd64d"
+    },
+    {
+      "path": "codex-rs/memories/write/Cargo.toml",
+      "sha256": "2ce09ca433559076a62b478f42c5a820a531c79811834bc2084b48e12f1276c1",
+      "git_blob_sha1": "bf031a6a164f5a098757efdb6c791d9e2705ca50"
+    },
+    {
+      "path": "codex-rs/mermaid/Cargo.toml",
+      "sha256": "ceab314f8c1be29d0483813175f304e7114fb40442a66dbc2f3235a770432f67",
+      "git_blob_sha1": "b01437b433d7b8960d775041a9a59b0e9da24ee7"
+    },
+    {
+      "path": "codex-rs/message-history/Cargo.toml",
+      "sha256": "adb2d2b3f7c7a6068b87deb69cb2dcd4afcbe45ad86e9b0a41bc4b5dce724722",
+      "git_blob_sha1": "176b9579097499b050e24823217eec93502c004b"
+    },
+    {
+      "path": "codex-rs/model-provider-info/Cargo.toml",
+      "sha256": "026e69af570a3758282196acbd142a47984539e6dd9610d2977225adf52debe7",
+      "git_blob_sha1": "e6a740d25ddfc26edffa23a32e6b8f9123eef982"
+    },
+    {
+      "path": "codex-rs/model-provider-info/src/lib.rs",
+      "sha256": "078d1fd5e5c36d04d6405569b5a2ad50c17fb47a5a08501346754068d3e0b0c1",
+      "git_blob_sha1": "c18ce6c3221adac4dd9d81971beb79ddb27b81cb"
+    },
+    {
+      "path": "codex-rs/model-provider/Cargo.toml",
+      "sha256": "35869f1bc6337ee754fbca4fcd8b81ab9db62e6fe9b0235fee16373ab0edba9c",
+      "git_blob_sha1": "ecdcaa4b3e634e3e197b696f7a843878307647c0"
+    },
+    {
+      "path": "codex-rs/model-provider/src/lib.rs",
+      "sha256": "0ec8bc9a91e752099602042e33152e3a6c1477d2ca757ab54cb1489a5a94d1f2",
+      "git_blob_sha1": "2eefe68bb79fb83f32c61de5125c4b846a812377"
+    },
+    {
+      "path": "codex-rs/model-provider/src/models_endpoint.rs",
+      "sha256": "5c9e448f600a871c814ba3125750c218771f927398ba273386943464d94396d6",
+      "git_blob_sha1": "0fc8a0c8c303d1f13ec5b7d914a9c0c978352a57"
+    },
+    {
+      "path": "codex-rs/model-provider/src/provider.rs",
+      "sha256": "605262f70a18b4fc4499fe44a726c599fe95bd7b65adc8121f124751b93b0cd9",
+      "git_blob_sha1": "fa30479f7fa5b3cbfea8f5e931e8b3fdfbf7a352"
+    },
+    {
+      "path": "codex-rs/model-provider/src/shared_state.rs",
+      "sha256": "bb83922b3a46ac92946e3526899b48ba34675178fd71f2765c99f12fd34d0c3d",
+      "git_blob_sha1": "02dae76d79dce79942e071641312fe48352d2dab"
+    },
+    {
+      "path": "codex-rs/models-manager/Cargo.toml",
+      "sha256": "843d1a014174611f14256305ba2fcdcb1a0e150620a8a513bd20a4bef5648847",
+      "git_blob_sha1": "159f75023431e3bd579fac871ccda63d9ab8ccd2"
+    },
+    {
+      "path": "codex-rs/models-manager/src/manager.rs",
+      "sha256": "7cce0601fcb3abdf1d944412356ae541d0a1c30014a911ddda61a879b89e8358",
+      "git_blob_sha1": "7b4d613be409bdd5cd60b7509c6e6c9c06dc41ae"
+    },
+    {
+      "path": "codex-rs/mxc-sandbox/Cargo.toml",
+      "sha256": "4b63c247c7fe0429016aff95a605aae46ebf978f12a165f8174122cf4b92cd23",
+      "git_blob_sha1": "0518fa7976dc694747ccef8d6418843c71395205"
+    },
+    {
+      "path": "codex-rs/network-proxy/Cargo.toml",
+      "sha256": "34b4dc543a8264fe69096db686ff1c8d205624182148c8860f02d01e86153a48",
+      "git_blob_sha1": "bda42616020c4bf1ec094ccd8abf2800154f60cd"
+    },
+    {
+      "path": "codex-rs/ollama/Cargo.toml",
+      "sha256": "4acd659c88671e6be1ce2be7b2920977c221461245b198c81c195197789ce2eb",
+      "git_blob_sha1": "29c0852092c0ebdb9846f50f91384e4720f15d71"
+    },
+    {
+      "path": "codex-rs/otel-trace-websocket/Cargo.toml",
+      "sha256": "61b323decc2b50de473480971f498a580e3c89574530743bef685f33febde7bf",
+      "git_blob_sha1": "538666ec72de29f79eff181ed5fb34e6066af4b6"
+    },
+    {
+      "path": "codex-rs/otel/Cargo.toml",
+      "sha256": "02b7e6d1e204279c6aef6aef6d2c653ad69483ba138efb2ad536b686b67661ff",
+      "git_blob_sha1": "3197eaa846bc1e072f34ce60066383114570a451"
+    },
+    {
+      "path": "codex-rs/plugin/Cargo.toml",
+      "sha256": "1032b4bf35e2a8426d07840a371f09a48bc568cac97292b4a29dfeac6838a088",
+      "git_blob_sha1": "462fb5e1891c4033c84dc115268c6f8a5d2f62e8"
+    },
+    {
+      "path": "codex-rs/process-hardening/Cargo.toml",
+      "sha256": "93c8131ae5485a66d16cff10dd254bf56bd49fd33235399cd5f59ccf0d75396d",
+      "git_blob_sha1": "60a5729ff57a961dd9ccc145f8ae7171fe0b3176"
+    },
+    {
+      "path": "codex-rs/prompts/Cargo.toml",
+      "sha256": "922d79c1dcdfec2ab5c2698c01cc3c0f59a08d4e72f839765bef7d1aaa3b8fb5",
+      "git_blob_sha1": "7f0b492a4339b88ef20baf07d7f432f92c4f22bb"
+    },
+    {
+      "path": "codex-rs/protocol/Cargo.toml",
+      "sha256": "37a4347e2bb6975deddd3de4f470a7572f70f89bea709abaa4cd346246334af1",
+      "git_blob_sha1": "0ca5117c8cafd422f3d305539148109b0b358b95"
+    },
+    {
+      "path": "codex-rs/realtime-webrtc/Cargo.toml",
+      "sha256": "173d05a7519d2e5bc4230362f87bc2ee5b4dc59da15ab0f270e820d52a3f83f5",
+      "git_blob_sha1": "2d1b3b422f5b2da12353f42b09dbfa002d322757"
+    },
+    {
+      "path": "codex-rs/response-debug-context/Cargo.toml",
+      "sha256": "a6075edb089d3c6ab4588c5cf17604e15827821d67320508344e0af5a9c49070",
+      "git_blob_sha1": "fcdb6c9630c4d04da55b9c64318e4c111afce441"
+    },
+    {
+      "path": "codex-rs/responses-api-proxy/Cargo.toml",
+      "sha256": "b1d9acb9187527fd7dad5110f0a0e3755a728e8f79f67969304cd8777cfab305",
+      "git_blob_sha1": "05d638843f64eacad298a79011798f3a2ef924f7"
+    },
+    {
+      "path": "codex-rs/rmcp-client/Cargo.toml",
+      "sha256": "b495c45bfa7017f67faa3c7f0781a8e2ab9a9f4fcf66273055877a04740c1f29",
+      "git_blob_sha1": "c661aa0ed8f38d7c37ed386c50b898f748524de4"
+    },
+    {
+      "path": "codex-rs/rollout-trace/Cargo.toml",
+      "sha256": "1945dfdbca622a193f680d98cc0a733eec58510e9d3bc3a6efe0e3db153f4c62",
+      "git_blob_sha1": "b368c9acc5ffc3a0ba3a27ae7ea1ab48e38baa31"
+    },
+    {
+      "path": "codex-rs/rollout/Cargo.toml",
+      "sha256": "f01de658fcc48810495562069af132c828625bd8e6fa2b2c897c410c7b36b657",
+      "git_blob_sha1": "1bb4b54f146488e737a3d5bdaeef9dc1510d0b03"
+    },
+    {
+      "path": "codex-rs/rollout/src/lib.rs",
+      "sha256": "f4f9dbb751a467de8232e7d07cb4dd0fbd5440f0bc24e28dd6b86ce364351be8",
+      "git_blob_sha1": "6bcbf57fde3b524a6e09aef1719d5fd22a617998"
+    },
+    {
+      "path": "codex-rs/rollout/src/recorder.rs",
+      "sha256": "3a12d4f9813ceede9e6f616d4b669ba1b4af4c03d5e89c0f4a1c30704f53933d",
+      "git_blob_sha1": "cd05f6149b3d0ff97addf43ec243b7452a9de343"
+    },
+    {
+      "path": "codex-rs/rust-toolchain.toml",
+      "sha256": "570656042681cfd8795403a455baf9a33035331a07db0645e866bbcea89a3d64",
+      "git_blob_sha1": "910c65114ec128a8317ee8257428451f3cd28230"
+    },
+    {
+      "path": "codex-rs/sandboxing/Cargo.toml",
+      "sha256": "d5ccb10f965177886729f4cb8e9d6f489f01e0b21e6ce1889dcbca6a59e55655",
+      "git_blob_sha1": "14549e19af8e8bd431ae7966d74c6a980d3b203e"
+    },
+    {
+      "path": "codex-rs/secrets/Cargo.toml",
+      "sha256": "99d0a0c6bb4972d0ee5336949870ce0b2bc4b05c22bfe34f47edfb3655602150",
+      "git_blob_sha1": "2a294ee39134e0a4d4160ed7b422d5fe3c2ba6da"
+    },
+    {
+      "path": "codex-rs/shell-command/Cargo.toml",
+      "sha256": "6967abe322f82037b6c57f3e6bbe6425030c4ed0a388915527a59dea7317b856",
+      "git_blob_sha1": "999295ec314a37a523f65bd050e8b95453cc7c77"
+    },
+    {
+      "path": "codex-rs/shell-escalation/Cargo.toml",
+      "sha256": "154cd9240a02ee6c9075d5ab9543ff98a54768babb91d00e190c590ad3237dc2",
+      "git_blob_sha1": "92ae8b033f3c38edb1609e6347084be6dd9fdc47"
+    },
+    {
+      "path": "codex-rs/skills/Cargo.toml",
+      "sha256": "099f2da853fa6853df18b7923ccd55b6bd1374af7741fd6156ec84b7765ae086",
+      "git_blob_sha1": "7342975aaea0e3ecc61da41f145674cd154a12c9"
+    },
+    {
+      "path": "codex-rs/skills/build.rs",
+      "sha256": "24c62df6f869f931b04e14645c539b715c97e96e6274c5a6313bb1c7bbd28dcc",
+      "git_blob_sha1": "db4ef68416f17a3ec67e2260b80f14d01da4c196"
+    },
+    {
+      "path": "codex-rs/skills/src/lib.rs",
+      "sha256": "cbdea9b288d42851efbe3c302f62c5ab07f23134be27775139c772cf3e9b6a21",
+      "git_blob_sha1": "7b19d3278864ff7fff0cfc3db087914c0652d4c1"
+    },
+    {
+      "path": "codex-rs/state/Cargo.toml",
+      "sha256": "d4b46c8386a47a8a03e68d5aa4c4ad545d9b04fcec19c08b0c998f4b52ef3c0e",
+      "git_blob_sha1": "c6c2215fb46ac10f3124344c6b1a02bdf5e60c71"
+    },
+    {
+      "path": "codex-rs/stdio-to-uds/Cargo.toml",
+      "sha256": "86bc7744cb3455915a0dca21bdf9b95b1f446c03eee70dccda8ade7497ee1510",
+      "git_blob_sha1": "6b5c037d755d4dc8006424aa836b29036cea8185"
+    },
+    {
+      "path": "codex-rs/tcp-tunnel/Cargo.toml",
+      "sha256": "28342e9cc76b554fde97237814d2ac1d46fa45cb39d280a7a23aecb23c4751ff",
+      "git_blob_sha1": "617ed7e0670f2ad945e9796cd5bd61ab0fb237a6"
+    },
+    {
+      "path": "codex-rs/terminal-detection/Cargo.toml",
+      "sha256": "d6afc64a36ea33610d0fb4506f9b9fe809105ccde228bfa41c8ed24497dc4546",
+      "git_blob_sha1": "9b1bf3a51663289c68b61f566201df8d05e385cf"
+    },
+    {
+      "path": "codex-rs/test-binary-support/Cargo.toml",
+      "sha256": "72707d0f0238886c11269f3a9bf28fab63107120c13477e4e34b798add3dc9c5",
+      "git_blob_sha1": "12d995b9720b942daf802ce30c2976b3f36e7371"
+    },
+    {
+      "path": "codex-rs/thread-store/Cargo.toml",
+      "sha256": "2abe7eb1f6e1a5c48a7364b2453296840ad27f911b43f9c9601f353a72227853",
+      "git_blob_sha1": "31e16dd72a9523bbb1c9b3eea00dc5377037e2e2"
+    },
+    {
+      "path": "codex-rs/thread-store/src/lib.rs",
+      "sha256": "bcd8bf17d0b9024bd4b4391f02a936f5de2103a660103df0f46c306f04f328ed",
+      "git_blob_sha1": "26eba76b5a94d8a4b5941035e4dd0bf4f359fd3f"
+    },
+    {
+      "path": "codex-rs/thread-store/src/live_thread.rs",
+      "sha256": "2d8bee57c219d263e58bb00c14fe4ccaf1b07759d5427f07ef799093794bb785",
+      "git_blob_sha1": "f6f57e6dd0a224b9a540a963b3dfe0138346d6d6"
+    },
+    {
+      "path": "codex-rs/thread-store/src/local/mod.rs",
+      "sha256": "c29f99688a9afc8d04dbcf7c58bb66708a04130f4cafd9bced9d96652afe2ac8",
+      "git_blob_sha1": "24f1e54990d8a5dbf5007f2700eb87651f97e4b4"
+    },
+    {
+      "path": "codex-rs/thread-store/src/store.rs",
+      "sha256": "ca98fcc2e652a9ab88c9ce467169a3542f460c30c57c40a7e3fdd1ca237f2cba",
+      "git_blob_sha1": "d67c3b766a89d3a2f14a5c57deb5f4d2db19f2fb"
+    },
+    {
+      "path": "codex-rs/tools/Cargo.toml",
+      "sha256": "6b26eb5105a94c2d52637514b26bb5a9627ef784d482647016287c04d0177ba5",
+      "git_blob_sha1": "f47815537ffdd381161130ac0c26bc8d1fd30868"
+    },
+    {
+      "path": "codex-rs/tui/Cargo.toml",
+      "sha256": "89240b8f9298fd15022e20756d8407af8b78c8fa19d04ad46120bd9d7c62baa1",
+      "git_blob_sha1": "9d61157c421220bd70852e72ce59b89a79a025be"
+    },
+    {
+      "path": "codex-rs/uds/Cargo.toml",
+      "sha256": "89f1757d90316f8db00ba947131e96548b0e448a1b860e9cf53eb775383d3c09",
+      "git_blob_sha1": "a1f199ed465ac2a50378ff0657572bcc0f5619af"
+    },
+    {
+      "path": "codex-rs/user-verification/Cargo.toml",
+      "sha256": "fe1b79e40821aa32e765ef9a3e49cba3d75178058fc2b0260ae0877a2e3d7cb6",
+      "git_blob_sha1": "fe4d5298f0484de68d9e417e47206f5be74fc729"
+    },
+    {
+      "path": "codex-rs/utils/absolute-path/Cargo.toml",
+      "sha256": "ad98dc1a75333700db00f6bde0685ce7a3e0f5558b0520e7a09e9bbcc6576736",
+      "git_blob_sha1": "7c5b4840d15d81deed1d1ea30c0b269d399772bc"
+    },
+    {
+      "path": "codex-rs/utils/approval-presets/Cargo.toml",
+      "sha256": "a8a1723c8fc4fef9815fa02f426b1bee8b1e16f43e9382b5fb878c9a603cdaff",
+      "git_blob_sha1": "6efd2c482b4386b505a15d96bf60504050633e61"
+    },
+    {
+      "path": "codex-rs/utils/audio/Cargo.toml",
+      "sha256": "a8bd5661a23ac093df6f9a307dc9e440201e7bf7995044dbfc632869f62914c0",
+      "git_blob_sha1": "90540228a6bf5608329d2f2773225271229b9813"
+    },
+    {
+      "path": "codex-rs/utils/cache/Cargo.toml",
+      "sha256": "79bf902f30726d663ca11ab7dad4bcd617de94b36baaeb33016d188ec06ebe89",
+      "git_blob_sha1": "3c120c032e8d595a7675f0474ab6d91b0b52a59e"
+    },
+    {
+      "path": "codex-rs/utils/cargo-bin/Cargo.toml",
+      "sha256": "eecb409357a98472df8a81d9fd1a25902b967433f4df3403cf213f07e68f8786",
+      "git_blob_sha1": "a56e5758306799cc5962eaf57e8ad3a26b73033f"
+    },
+    {
+      "path": "codex-rs/utils/cli/Cargo.toml",
+      "sha256": "144258eae359f1b20753dcedff9d8c60a5947e261cec4ad97514b1daf1b35ca8",
+      "git_blob_sha1": "9d330c5ce6badd0d15e6c401cd777fb3d13c8d08"
+    },
+    {
+      "path": "codex-rs/utils/elapsed/Cargo.toml",
+      "sha256": "998e972175e47355bcc0f14b326e5c71955bd670a12ab3200890d9168855ff40",
+      "git_blob_sha1": "7ba5e6ae6614fddadaa1ba1e1f8299ffc251d78f"
+    },
+    {
+      "path": "codex-rs/utils/fuzzy-match/Cargo.toml",
+      "sha256": "d233d52afa20bbf405df269a31a76aeb7fe45de5e6e6bcc872dd331668996fbb",
+      "git_blob_sha1": "704386e74f6924a016c30bfbaa6447b093f70be0"
+    },
+    {
+      "path": "codex-rs/utils/git-discovery/Cargo.toml",
+      "sha256": "79bb0d98647a830492dda425dca98b6a5f89a62841db9824a339502dbcd2cb51",
+      "git_blob_sha1": "bb5345f9b2ef9b55111c9512546151e16f45c09f"
+    },
+    {
+      "path": "codex-rs/utils/home-dir/Cargo.toml",
+      "sha256": "9b81719e70c693dc156d90fb43a8d71b328e650ef566816b7bcc8014c4bd8e50",
+      "git_blob_sha1": "2d2de0230e38004d562b8ab5546888cd5da74851"
+    },
+    {
+      "path": "codex-rs/utils/image/Cargo.toml",
+      "sha256": "2f84e8c60810db1ec6ae392715d130117b27f6e3b94be089790a1a85221be9bd",
+      "git_blob_sha1": "3ac43b6df0dfad7087ec566af71df90104244cb7"
+    },
+    {
+      "path": "codex-rs/utils/json-to-toml/Cargo.toml",
+      "sha256": "aa9e8d0262bbc8e021f32488083d6d003a83c2bca10186da2d2b17f764bb77f9",
+      "git_blob_sha1": "57a28696c8fc2148525480511551b256b35d8b02"
+    },
+    {
+      "path": "codex-rs/utils/oss/Cargo.toml",
+      "sha256": "204e3ba8509541c37b2088dd6c8e596286f502a8990d2655e861c6babcac9b19",
+      "git_blob_sha1": "78cc0cb2f8ed60f3d4b8a3bb007b348d700024ac"
+    },
+    {
+      "path": "codex-rs/utils/output-truncation/Cargo.toml",
+      "sha256": "f6687530aec9b4c6db64237ab845ffc9ea4a5156c9b5dd1557ae6b1c35e5cd31",
+      "git_blob_sha1": "17176c9f5643b3a4f1d5a678a25076094cb7441d"
+    },
+    {
+      "path": "codex-rs/utils/path-uri/Cargo.toml",
+      "sha256": "d45031c71d6dbcf8c7770ce1feebabbc2f3224841c5eb770d9e2dc70d19d9d20",
+      "git_blob_sha1": "5bb6328139c7fe2f7759e7edf34be0de9e2f0371"
+    },
+    {
+      "path": "codex-rs/utils/path-utils/Cargo.toml",
+      "sha256": "4a622efd82b2b9d7925785a88c1dd795c8a010cf2b6fe0a5fb8ae7b04e182699",
+      "git_blob_sha1": "6757b3f69cc4518573694548c75fefa34211af20"
+    },
+    {
+      "path": "codex-rs/utils/plugins/Cargo.toml",
+      "sha256": "2aa0eb685dc9595b71c33740108080bea0f448e3439afee76c75e0701d275a28",
+      "git_blob_sha1": "1a4576d59d0fcf04a54236f57976e42683c266a6"
+    },
+    {
+      "path": "codex-rs/utils/pty/Cargo.toml",
+      "sha256": "f90c44bb515b08bd9699103132a2636518905d5a9adfec1248f2c0f7404ca5a7",
+      "git_blob_sha1": "d235d6995f0dff446cefba7c6f410dd3ce43aaaa"
+    },
+    {
+      "path": "codex-rs/utils/redacted-string/Cargo.toml",
+      "sha256": "b4db650414f5dff6c4823eeb5e05be5adb9bbf6bfaf87c5763a475379528d81d",
+      "git_blob_sha1": "39f60d8eb109312fba4b052e69649b1c9382a1a4"
+    },
+    {
+      "path": "codex-rs/utils/rustls-provider/Cargo.toml",
+      "sha256": "21fda73b6ea661f3626372e94b16bce766c5278e6c695c92fc490274d4582f33",
+      "git_blob_sha1": "af79eff69252fc01244e2ae721b5a263c1d2fc4c"
+    },
+    {
+      "path": "codex-rs/utils/sandbox-summary/Cargo.toml",
+      "sha256": "f8ee68013858432e2ff468e643345db592988e5482c59998d724deb0311dd58e",
+      "git_blob_sha1": "413b64214bd132c7dfbe4625dc5d110c38d974cc"
+    },
+    {
+      "path": "codex-rs/utils/sleep-inhibitor/Cargo.toml",
+      "sha256": "6ff5b93c06e9721e935e5e7798de9c799e41139fdc042f50d1501bebff14235f",
+      "git_blob_sha1": "f2abb6df2110e7f3de215cb34a0cd627c0345649"
+    },
+    {
+      "path": "codex-rs/utils/stream-parser/Cargo.toml",
+      "sha256": "d48dda6b4337f17002ae1698fa9a0aeb38df8fd6f35193980396f722afe09fe5",
+      "git_blob_sha1": "6eb5fb9a8747b95cb3dbd113f4ebfcda53b8fed5"
+    },
+    {
+      "path": "codex-rs/utils/string/Cargo.toml",
+      "sha256": "3d4f0131321ca76f08410c8a3278d1d2373c8a43118fafa5add9bd8fbb8672ff",
+      "git_blob_sha1": "8710cffe4697ae4cce6e97d6bac35566db426672"
+    },
+    {
+      "path": "codex-rs/utils/template/Cargo.toml",
+      "sha256": "5785b0365d1f99f5d719c8d6b16586fcaadedc373f4342c92aa28a52eb778368",
+      "git_blob_sha1": "f24caec190455f3ac685004fc1f6e474ee8f8ed9"
+    },
+    {
+      "path": "codex-rs/v8-poc/Cargo.toml",
+      "sha256": "e98d307ee1683087debb02cf5fba46cc1a23177a25cd6b03f74f1539239312c9",
+      "git_blob_sha1": "9615ab977f9dfdb35467d1eadaf0bc6dfa641625"
+    },
+    {
+      "path": "codex-rs/websocket-auth/Cargo.toml",
+      "sha256": "899992915b3b1d746389d3c7c5e7a284ea2af9bf819b8544013d9c29f04e708d",
+      "git_blob_sha1": "038b161237d596e4e2480089ccdab4bcf6e2c58a"
+    },
+    {
+      "path": "codex-rs/websocket-client/Cargo.toml",
+      "sha256": "7575122d37c47bbb011945d68541422dc0122ab7be1374c9bc9c78ec56a74231",
+      "git_blob_sha1": "19baf9842b591c6aba15d5253f124a737d0d1cdf"
+    },
+    {
+      "path": "codex-rs/windows-sandbox-rs/Cargo.toml",
+      "sha256": "04455d3957b1f34ece5488c7be75c23b51cb589f5d38d247654554358c792eca",
+      "git_blob_sha1": "b182ed8c9ecddd1729477ebdcb819c598214d717"
+    },
+    {
+      "path": "codex-rs/windows-sandbox-rs/build.rs",
+      "sha256": "b656ced2ef8037f379c2d45d57116e937dc80ec3b23c7f9cb2501da98338774d",
+      "git_blob_sha1": "6ba79e6c75deb87067ced02e824eaf7faf79346d"
+    },
+    {
+      "path": "codex-rs/workload-identity/Cargo.toml",
+      "sha256": "347f3a72058b81058498c83529b69d01a1055384ce6021112038193853a0d0fb",
+      "git_blob_sha1": "b64177282accbb1975aa7adbe2411ace4da52662"
+    },
+    {
+      "path": "codex-rs/worktree/Cargo.toml",
+      "sha256": "7930f78f75649c3da59ac4e1c6e548320d7ed9e5d071adc22e915a76077df128",
+      "git_blob_sha1": "648c5d10798b7600e5a37c257f07128e9353dfc1"
+    }
+  ]
+}

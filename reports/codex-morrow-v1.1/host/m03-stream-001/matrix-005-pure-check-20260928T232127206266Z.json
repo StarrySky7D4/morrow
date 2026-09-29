@@ -1,0 +1,43 @@
+{
+  "status": "syntax_and_pure_fixtures_checked_runtime_not_run",
+  "cases": [
+    {
+      "case": "s503",
+      "status": 503,
+      "content_type": "application/json",
+      "body_bytes": 59,
+      "body_sha256": "78a871e08c848755bd8c1fa4269e4e58e4695f28617266d7e7ea166b5ccf0c6b"
+    },
+    {
+      "case": "r307",
+      "status": 307,
+      "content_type": "application/json",
+      "body_bytes": 59,
+      "body_sha256": "b26bd8dca6094810be1eb672c8f6d680e1acb78e3b73e63ea94175f02c6a33d7"
+    },
+    {
+      "case": "exact",
+      "status": 200,
+      "content_type": "text/event-stream",
+      "body_bytes": 65536,
+      "body_sha256": "bdef3ed2170ced39669228dd9cbc3d6495d365e91412212dbaad53b27dd071ba"
+    },
+    {
+      "case": "over",
+      "status": 200,
+      "content_type": "text/event-stream",
+      "body_bytes": 65537,
+      "body_sha256": "3ce25931e9bf60f0d72520eb79c21d51c5dd7b2a3f423b5ba87236e3205542bf"
+    }
+  ],
+  "fixed_host": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-003\\morrow-native-stream-host.exe",
+  "fixed_plugin": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-002\\candidates\\native-002\\morrow-codex-native-http-client.exe",
+  "host_sha256": "3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65",
+  "plugin_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+  "script_sha256": "9ccc7816b23c7c07079eb27f7e8867616e08882318586971395108d5634025a1",
+  "socket_bound": false,
+  "subprocess_started": false,
+  "post_count": 0,
+  "gate_checks": "rejects EOF/Observed/material/RequestClosed and waits for all five exact-cap offsets",
+  "terminal_poll_claim": "no direct observation instrumentation; runtime will report source/state inference only"
+}

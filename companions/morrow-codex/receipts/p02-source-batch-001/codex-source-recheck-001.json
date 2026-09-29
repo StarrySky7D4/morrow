@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "complete_fixed_source_reverified",
+  "source": "codex",
+  "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "tree_sha1": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+  "file_count": 8697,
+  "tree_count": 985,
+  "source_bytes": 86130187,
+  "dirty_diff": {
+    "modified": [],
+    "missing": [],
+    "extra": []
+  },
+  "content_manifest_sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7",
+  "tree_metadata_sha256": "6857fd68ee32b790cac8137c0d2a7fecc49d0c3225b453c8c01642c0ea59e1a0",
+  "verifier_sha256": "32199531b7ac1960c21bd5c75d8442b84b4b2c3b1d9209f29fb195242782dee8",
+  "source_read_only": true,
+  "executed_upstream_code": false,
+  "windows_note": "Git executable modes are verified from immutable metadata; Unix filesystem execute-bit parity is not asserted",
+  "verified_at": "2026-09-28T12:11:33.099728+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt",
+  "args": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+    "--exact",
+    "dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "process": {
+    "pid": 12676,
+    "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+    "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+    "creation_filetime": 134351036478436339,
+    "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 232077800,
+  "stdout_sha256": "05b1a1cc704b4b4eec57c41f61f55e520dbbd25b62db6997af094aeefbfca945",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "passed": true
+}

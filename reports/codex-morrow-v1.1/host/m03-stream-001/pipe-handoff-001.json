@@ -1,0 +1,22 @@
+{
+  "status": "platform_candidate_ready_for_consumer_and_joint_review_native_not_ready",
+  "crate": "morrow-native-pipe-win",
+  "canonical_source": "native_pipe_win_001",
+  "manifest": "reports/codex-morrow-v1.1/host/m03-stream-001/pipe-kit-001/manifest.json",
+  "manifest_sha256": "d6eee6bdb2f933d59ebeddb10a550359204cb024fe09e58f98182739bbd1787b",
+  "producer_receipt_sha256": "3e9dbe7efb7a75f704fbfb8ecf85dd966b088a808f3c8cc90d03864ee84287dd",
+  "tests": {
+    "substantive": 4,
+    "helper": 1
+  },
+  "original_inputs_unchanged": 2292,
+  "prior_failure": "Initial actual-DACL comparison saw Windows map GenericAll GA to FileAll FA. Source made FileAll explicit; final actual kernel readback equals expected current-SID+SYSTEM protected DACL. Prior evidence retained.",
+  "limitations": [
+    "not native16KiB credit integration",
+    "not Core/HTTP/SSE",
+    "not independent platform acceptance",
+    "no pending-operation unexpected-error fault injection",
+    "no full host-death/process-tree or all-Windows-version coverage",
+    "blocking cleanup only on dedicated owned-I/O thread"
+  ]
+}

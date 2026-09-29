@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+    "init",
+    "--profile",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-002\\crash-child-alive\\authority",
+    "--slot",
+    "joint-slot"
+  ],
+  "exit_code": 0,
+  "stdout_sha256": "cfdfece199c12e3f0703cff30676c38d64ac79a6b760917cc07de6c1da874d8a",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "rows": [
+    {
+      "event": "initialized",
+      "slot": "joint-slot"
+    }
+  ],
+  "scope": "short initialization/inspection; not child runtime proof"
+}

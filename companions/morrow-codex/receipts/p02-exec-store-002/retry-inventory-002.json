@@ -1,0 +1,36 @@
+{
+  "scope": "Conservative codex-core plus codex-thread-store Cargo.lock graph, including dev/optional/all-target edges; not resolved native closure",
+  "archives": [
+    {
+      "name": "age",
+      "version": "0.11.2",
+      "url": "https://static.crates.io/crates/age/age-0.11.2.crate",
+      "expected_sha256": "bf640be7658959746f1f0f2faab798f6098a9436a8e18e148d18bc9875e13c4b",
+      "started_utc": "2026-09-28T12:45:40.488954+00:00",
+      "status": "missing",
+      "error": "TimeoutError: The read operation timed out",
+      "partial_bytes": 131072,
+      "finished_utc": "2026-09-28T12:47:07.197959+00:00"
+    },
+    {
+      "name": "async-io",
+      "version": "2.6.0",
+      "url": "https://static.crates.io/crates/async-io/async-io-2.6.0.crate",
+      "expected_sha256": "456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc",
+      "started_utc": "2026-09-28T12:45:40.550470+00:00",
+      "status": "missing",
+      "error": "URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>",
+      "finished_utc": "2026-09-28T12:46:28.007305+00:00"
+    },
+    {
+      "name": "oauth2",
+      "version": "5.0.0",
+      "url": "https://static.crates.io/crates/oauth2/oauth2-5.0.0.crate",
+      "expected_sha256": "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d",
+      "started_utc": "2026-09-28T12:46:16.608963+00:00",
+      "status": "missing",
+      "error": "URLError: <urlopen error [WinError 10054] \u8fdc\u7a0b\u4e3b\u673a\u5f3a\u8feb\u5173\u95ed\u4e86\u4e00\u4e2a\u73b0\u6709\u7684\u8fde\u63a5\u3002>",
+      "finished_utc": "2026-09-28T12:46:39.167761+00:00"
+    }
+  ]
+}

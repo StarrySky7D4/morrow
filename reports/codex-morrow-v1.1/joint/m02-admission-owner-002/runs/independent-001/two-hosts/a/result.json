@@ -1,0 +1,234 @@
+{
+  "status": "observed_pending_semantic_review",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+    "serve",
+    "--profile",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\two-hosts\\authority",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+    "--sha256",
+    "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-admission-owner-002\\runs\\independent-001\\two-hosts\\a-work",
+    "--plugin-id",
+    "joint-plugin",
+    "--role",
+    "native-client",
+    "--operation",
+    "two-hosts-a",
+    "--ttl-ms",
+    "10000",
+    "--handshake-ms",
+    "2500",
+    "--frame-ms",
+    "500",
+    "--close-ms",
+    "200",
+    "--budget",
+    "64",
+    "--client-arg",
+    "--queries",
+    "--client-arg",
+    "64",
+    "--client-arg",
+    "--interval-ms",
+    "--client-arg",
+    "200"
+  ],
+  "host_pid": 1504,
+  "host_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+  "client_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "started_monotonic_ns": 168000590349600,
+  "finished_monotonic_ns": 168000875830300,
+  "host_exit_code": 2,
+  "controller_stdin_open_at_host_exit": true,
+  "reviewer_crash_injected": false,
+  "commands": [
+    {
+      "sent_at_ns": 168000627404900,
+      "action": "approve",
+      "request": {
+        "action": "approve"
+      },
+      "record_cursor": 1
+    },
+    {
+      "sent_at_ns": 168000662968300,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "fa8aafea656bce5f8480e1950b0761af4b644bb2725f5f979e4e2288ddcbdd43"
+      },
+      "record_cursor": 2
+    },
+    {
+      "sent_at_ns": 168000728555500,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "fa8aafea656bce5f8480e1950b0761af4b644bb2725f5f979e4e2288ddcbdd43"
+      },
+      "record_cursor": 4
+    },
+    {
+      "sent_at_ns": 168000765701700,
+      "action": "inspect",
+      "request": {
+        "action": "inspect",
+        "grant_id": "dafb41b5eeb41fa6c9b4b0e97a01005f8bdb0b27e7236dca9fbeb17a3f25e90d"
+      },
+      "record_cursor": 5
+    },
+    {
+      "sent_at_ns": 168000766747700,
+      "action": "approve",
+      "request": {
+        "action": "approve"
+      },
+      "record_cursor": 6
+    },
+    {
+      "sent_at_ns": 168000785044300,
+      "action": "claim",
+      "request": {
+        "action": "claim",
+        "grant_id": "5a9120836b7be3bdd24448c35edd4b9a17ca3f12bc44e86c6bf85c66fccf3039"
+      },
+      "record_cursor": 7
+    },
+    {
+      "sent_at_ns": 168000836212000,
+      "action": "stop",
+      "request": {
+        "action": "stop"
+      },
+      "record_cursor": 19
+    }
+  ],
+  "OS_observations": [
+    {
+      "role": "host",
+      "stage": "initial",
+      "snapshot": {
+        "pid": 1504,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014842834734,
+        "first_observed_monotonic_ns": 168000591771900,
+        "observed_monotonic_ns": 168000598194600,
+        "handle_signaled": false,
+        "exit_code": null,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "child",
+      "stage": "initial",
+      "snapshot": {
+        "pid": 11928,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+        "image_file_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "creation_filetime_100ns": 134351014844985830,
+        "first_observed_monotonic_ns": 168000813012300,
+        "observed_monotonic_ns": 168000814248300,
+        "handle_signaled": false,
+        "exit_code": null,
+        "pid_source": "pinned host claim/spawn event; parentage not independently queried",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "host",
+      "stage": "host_exit",
+      "snapshot": {
+        "pid": 1504,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014842834734,
+        "first_observed_monotonic_ns": 168000591771900,
+        "observed_monotonic_ns": 168000875797700,
+        "handle_signaled": true,
+        "exit_code": 2,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "child",
+      "stage": "host_exit",
+      "snapshot": {
+        "pid": 11928,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+        "image_file_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "creation_filetime_100ns": 134351014844985830,
+        "first_observed_monotonic_ns": 168000813012300,
+        "observed_monotonic_ns": 168000875806100,
+        "handle_signaled": true,
+        "exit_code": 0,
+        "pid_source": "pinned host claim/spawn event; parentage not independently queried",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "host",
+      "stage": "final",
+      "snapshot": {
+        "pid": 1504,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+        "image_file_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+        "creation_filetime_100ns": 134351014842834734,
+        "first_observed_monotonic_ns": 168000591771900,
+        "observed_monotonic_ns": 168000875823700,
+        "handle_signaled": true,
+        "exit_code": 2,
+        "pid_source": "reviewer subprocess.Popen returned host PID",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    },
+    {
+      "role": "child",
+      "stage": "final",
+      "snapshot": {
+        "pid": 11928,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+        "image_file_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "creation_filetime_100ns": 134351014844985830,
+        "first_observed_monotonic_ns": 168000813012300,
+        "observed_monotonic_ns": 168000875827700,
+        "handle_signaled": true,
+        "exit_code": 0,
+        "pid_source": "pinned host claim/spawn event; parentage not independently queried",
+        "OS_parent_independently_observed": false,
+        "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+      }
+    }
+  ],
+  "drains": {
+    "stdout": {
+      "eof": true,
+      "bytes": 16422,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 168000875484900
+    },
+    "stderr": {
+      "eof": true,
+      "bytes": 71,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 168000872052800
+    }
+  },
+  "failures": [],
+  "known_child_count": 1,
+  "known_holder_count": 0,
+  "provenance": "host captures child IPC/EOF; explicit known-PID OS handles independently observed; no PPID or whole-tree enumeration",
+  "product_pass_credit": 0
+}

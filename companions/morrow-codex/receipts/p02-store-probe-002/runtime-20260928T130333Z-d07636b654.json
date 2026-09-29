@@ -1,0 +1,164 @@
+{
+  "G0": "not_claimed",
+  "P-02": "not_complete",
+  "assertions": 12,
+  "case_count": 6,
+  "cases": [
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread"
+      ],
+      "case": "resume_disconnected",
+      "error": "thread-store internal error: qualification-disconnected:open_writer",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": true,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        }
+      ]
+    },
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread",
+        "load_history",
+        "discard_thread"
+      ],
+      "case": "resume_history_failure_discards",
+      "error": "thread-store internal error: qualification-disconnected:read_after",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        },
+        {
+          "bytes": 144,
+          "disconnected": true,
+          "op": "read_after",
+          "sha256": "ab178b0d73cf7a2a8e417e2b84e348950e3f42b3f2e814ece39321dff41593a6"
+        }
+      ]
+    },
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread",
+        "load_history",
+        "append_items"
+      ],
+      "case": "append_disconnected_no_metadata",
+      "error": "thread-store internal error: qualification-disconnected:append_batch",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        },
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "read_after",
+          "sha256": "ab178b0d73cf7a2a8e417e2b84e348950e3f42b3f2e814ece39321dff41593a6"
+        },
+        {
+          "bytes": 440,
+          "disconnected": true,
+          "op": "append_batch",
+          "sha256": "52f82ac8708c66c70f093243344b971dbb7d555d8b2d9622a96db00015b28d6b"
+        }
+      ]
+    },
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread",
+        "load_history",
+        "persist_context:Standard",
+        "persist_thread_requires_M04"
+      ],
+      "case": "standard_persist_unsupported",
+      "error": "thread-store unsupported operation: persist_thread_requires_M04",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        },
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "read_after",
+          "sha256": "ab178b0d73cf7a2a8e417e2b84e348950e3f42b3f2e814ece39321dff41593a6"
+        }
+      ]
+    },
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread",
+        "load_history",
+        "flush_thread"
+      ],
+      "case": "flush_unsupported",
+      "error": "thread-store unsupported operation: flush_thread",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        },
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "read_after",
+          "sha256": "ab178b0d73cf7a2a8e417e2b84e348950e3f42b3f2e814ece39321dff41593a6"
+        }
+      ]
+    },
+    {
+      "assertions": 2,
+      "calls": [
+        "resume_thread",
+        "load_history",
+        "load_history"
+      ],
+      "case": "live_history_disconnected",
+      "error": "thread-store internal error: qualification-disconnected:read_after",
+      "frames": [
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "open_writer",
+          "sha256": "15ee34bf634a4e9b38c0dd5edf37a1d7444c4033ac62b31d8a1a56cb7831ac4b"
+        },
+        {
+          "bytes": 144,
+          "disconnected": false,
+          "op": "read_after",
+          "sha256": "ab178b0d73cf7a2a8e417e2b84e348950e3f42b3f2e814ece39321dff41593a6"
+        },
+        {
+          "bytes": 144,
+          "disconnected": true,
+          "op": "read_after",
+          "sha256": "615d59544893079b926e8edd7aaa76d1c0b880cc814bb9cd47d36532c0cfbd84"
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Legacy LiveThread only; no Core session/model loop",
+    "003 FakeHost memory qualification only; no production durable store",
+    "Local disconnected refusal is not OS isolation",
+    "No real executor, model, network, account or credentials"
+  ],
+  "status": "passed_limited_store_callsite_probe"
+}

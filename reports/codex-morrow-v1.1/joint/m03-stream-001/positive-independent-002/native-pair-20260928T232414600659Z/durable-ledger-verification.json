@@ -1,0 +1,28 @@
+{
+  "read_mode": "SQLite immutable read-only; no WAL present; record envelope lengths and raw SHA256 checked after bounded LZ4 decoding",
+  "database_sha256_unchanged": "f5dd0fdbf7e0b56e243cceababace8673cb117ee678dbf2241f527b0693a3519",
+  "schema_version": 4,
+  "owner": {
+    "phase": "Released",
+    "child_pid": 12520,
+    "session": 13288638795535084499,
+    "epoch": 1,
+    "exit_observed": true,
+    "stdout_eof": true,
+    "stderr_eof": true
+  },
+  "grant": {
+    "id": "2955820cceac037e93023d0a459d99801a93653d0f8791f0269f8a9469f24434",
+    "state": 3,
+    "first_source": 2,
+    "first_reason": 25,
+    "original_ttl_ms": 10000
+  },
+  "http_approval": {
+    "state": 3,
+    "send_budget": 1,
+    "request_hash_matches": true,
+    "body_hash_matches": true
+  },
+  "no_authority_restored": true
+}

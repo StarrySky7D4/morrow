@@ -1,0 +1,400 @@
+{
+  "candidate_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\native-candidate-003.json",
+    "sha256": "54f4c6cd38e1968d1dbc54d26b8bf40460ee660498f8590c7f44c10fe04396c5"
+  },
+  "candidate_inputs": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\Cargo.lock",
+      "sha256": "22eeb3106e9e6240d1aabce0a5f23d2edcc09431b54c8dafdef3c359ca3bb949",
+      "expected": "22eeb3106e9e6240d1aabce0a5f23d2edcc09431b54c8dafdef3c359ca3bb949",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\Cargo.toml",
+      "sha256": "0ba648f33a741461498a71f1005834b24376f40b97098a106666829f7f74164e",
+      "expected": "0ba648f33a741461498a71f1005834b24376f40b97098a106666829f7f74164e",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\README.md",
+      "sha256": "9dbbc2074f998f4be6681fdfaf4b322959ef09398e301e01b89cf309d10af42a",
+      "expected": "9dbbc2074f998f4be6681fdfaf4b322959ef09398e301e01b89cf309d10af42a",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\admission.rs",
+      "sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "expected": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\delivery.rs",
+      "sha256": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "expected": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\lib.rs",
+      "sha256": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+      "expected": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\main.rs",
+      "sha256": "6c9b59da3c081c339b8b301049fa369988ba6ed0c18405040a862a48ce957ebf",
+      "expected": "6c9b59da3c081c339b8b301049fa369988ba6ed0c18405040a862a48ce957ebf",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\session.rs",
+      "sha256": "a7c3389fa09a587c2954c0bef2014347b1658540c5eec0d5c26d6b1563f1dc78",
+      "expected": "a7c3389fa09a587c2954c0bef2014347b1658540c5eec0d5c26d6b1563f1dc78",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-003\\src\\workers.rs",
+      "sha256": "1b793b52230926eeda26941895b9fa6a9fe536423851810f23fb56a71c1139e6",
+      "expected": "1b793b52230926eeda26941895b9fa6a9fe536423851810f23fb56a71c1139e6",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\Cargo.lock",
+      "sha256": "5d24d37a919dc9c53c28ad1964a982b8ababcc9005d846243445eec7da8d86f2",
+      "expected": "5d24d37a919dc9c53c28ad1964a982b8ababcc9005d846243445eec7da8d86f2",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\Cargo.toml",
+      "sha256": "fbf8e0fa9fc9777022b6eabd1cb9e28ab31d10dd1cd9d27c39f8dd598f7d0ce8",
+      "expected": "fbf8e0fa9fc9777022b6eabd1cb9e28ab31d10dd1cd9d27c39f8dd598f7d0ce8",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\README.md",
+      "sha256": "b8848c5abbff4e9ab724881600b1588924a230f47eb3a67529e41084bfeed8ea",
+      "expected": "b8848c5abbff4e9ab724881600b1588924a230f47eb3a67529e41084bfeed8ea",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\driver.rs",
+      "sha256": "75fff60c926b2dbf5baf5f25cfd7b8d54bc0a88393af3b1fd61cf891b03f5ef0",
+      "expected": "75fff60c926b2dbf5baf5f25cfd7b8d54bc0a88393af3b1fd61cf891b03f5ef0",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\lib.rs",
+      "sha256": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+      "expected": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\limits.rs",
+      "sha256": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "expected": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\main.rs",
+      "sha256": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+      "expected": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\network.rs",
+      "sha256": "e059ec68a28c72dcd4917a9245c75be40b65e0a9ebcde864705ded2e7127cffb",
+      "expected": "e059ec68a28c72dcd4917a9245c75be40b65e0a9ebcde864705ded2e7127cffb",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\request_task.rs",
+      "sha256": "e2986c77343793f9e5bfd161c68b325934b73b9cc38fce018129aa514c61a962",
+      "expected": "e2986c77343793f9e5bfd161c68b325934b73b9cc38fce018129aa514c61a962",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\build_revision.py",
+      "sha256": "9e34f6d1e779df67d32c7153aa68e67fabf2b20bd703442c367a316166db1e92",
+      "expected": "9e34f6d1e779df67d32c7153aa68e67fabf2b20bd703442c367a316166db1e92",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\revision-notes.md",
+      "sha256": "6f81a3c1fab8bf89e73ac133e0e0697e4bf9bee6b85a8c1e90a3d73e7f24ba34",
+      "expected": "6f81a3c1fab8bf89e73ac133e0e0697e4bf9bee6b85a8c1e90a3d73e7f24ba34",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\freeze_revision.py",
+      "sha256": "545ce58405bc8ce127b9a6dd783705e64dd5714c7279502fe98fc51a9f0b6920",
+      "expected": "545ce58405bc8ce127b9a6dd783705e64dd5714c7279502fe98fc51a9f0b6920",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-003\\cargo-home\\config.toml",
+      "sha256": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+      "expected": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-003\\candidates\\native-003\\morrow-codex-native-http-client.exe",
+      "sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+      "expected": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\lock-20260928T233819Z-11a6110c\\result.json",
+      "sha256": "aee960c53647a8d4c55d07ff6357a59338e76166182a75bff06b9b4290190b6c",
+      "expected": "aee960c53647a8d4c55d07ff6357a59338e76166182a75bff06b9b4290190b6c",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\lock-20260928T233819Z-11a6110c\\stderr.txt",
+      "sha256": "a91e761de59dbcb54d5a6f58ffa51e2ee024034a1677d8477cd289d3519eded2",
+      "expected": "a91e761de59dbcb54d5a6f58ffa51e2ee024034a1677d8477cd289d3519eded2",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\lock-20260928T233819Z-11a6110c\\stdout.txt",
+      "sha256": "8ff5393a38d66a3cf8937fd82f13f46b494e11c1cfd43db35181efd43ef899e4",
+      "expected": "8ff5393a38d66a3cf8937fd82f13f46b494e11c1cfd43db35181efd43ef899e4",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\test-20260928T233831Z-b862505f\\result.json",
+      "sha256": "8a2449145ac0354740b9b458061bacbe5df88c4dded52caa8ed40628b1a2f1c8",
+      "expected": "8a2449145ac0354740b9b458061bacbe5df88c4dded52caa8ed40628b1a2f1c8",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\test-20260928T233831Z-b862505f\\stderr.txt",
+      "sha256": "72e4db26c3dbbfeeb04c7c57dea17c367aad510160fed498f6a2d55e02497eba",
+      "expected": "72e4db26c3dbbfeeb04c7c57dea17c367aad510160fed498f6a2d55e02497eba",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\test-20260928T233831Z-b862505f\\stdout.txt",
+      "sha256": "ef45b4472471dc73723f6127e47a104d70405617c0fda6776a04805fd221cbc3",
+      "expected": "ef45b4472471dc73723f6127e47a104d70405617c0fda6776a04805fd221cbc3",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\build-20260928T233853Z-1b06226d\\result.json",
+      "sha256": "79b95f6ee8229db63652a4a548c9fcbfa0897c75ee09bf04f12c1bcc68a2fa8b",
+      "expected": "79b95f6ee8229db63652a4a548c9fcbfa0897c75ee09bf04f12c1bcc68a2fa8b",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\build-20260928T233853Z-1b06226d\\stderr.txt",
+      "sha256": "a0e95ee7d795fa9fd8643b1e6da45abe8d3dd8e602181777aa90005ac5e69634",
+      "expected": "a0e95ee7d795fa9fd8643b1e6da45abe8d3dd8e602181777aa90005ac5e69634",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-003\\runs\\build-20260928T233853Z-1b06226d\\stdout.txt",
+      "sha256": "4c5907ee51c9bf2b2b9cf3343aa2e5b2aa3171c36d59a0b2d79b20aca57e8be5",
+      "expected": "4c5907ee51c9bf2b2b9cf3343aa2e5b2aa3171c36d59a0b2d79b20aca57e8be5",
+      "match": true
+    }
+  ],
+  "previous_candidate_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\native-candidate-002.json",
+    "sha256": "20135ba780b86a344eeb396fd8d8f0ba85ee3600f79308140380c3fc94fbf561"
+  },
+  "previous_inputs": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\Cargo.lock",
+      "sha256": "5d24d37a919dc9c53c28ad1964a982b8ababcc9005d846243445eec7da8d86f2",
+      "expected": "5d24d37a919dc9c53c28ad1964a982b8ababcc9005d846243445eec7da8d86f2",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\Cargo.toml",
+      "sha256": "fbf8e0fa9fc9777022b6eabd1cb9e28ab31d10dd1cd9d27c39f8dd598f7d0ce8",
+      "expected": "fbf8e0fa9fc9777022b6eabd1cb9e28ab31d10dd1cd9d27c39f8dd598f7d0ce8",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\README.md",
+      "sha256": "b8848c5abbff4e9ab724881600b1588924a230f47eb3a67529e41084bfeed8ea",
+      "expected": "b8848c5abbff4e9ab724881600b1588924a230f47eb3a67529e41084bfeed8ea",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\driver.rs",
+      "sha256": "75fff60c926b2dbf5baf5f25cfd7b8d54bc0a88393af3b1fd61cf891b03f5ef0",
+      "expected": "75fff60c926b2dbf5baf5f25cfd7b8d54bc0a88393af3b1fd61cf891b03f5ef0",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\lib.rs",
+      "sha256": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+      "expected": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\limits.rs",
+      "sha256": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "expected": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\main.rs",
+      "sha256": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+      "expected": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\network.rs",
+      "sha256": "e059ec68a28c72dcd4917a9245c75be40b65e0a9ebcde864705ded2e7127cffb",
+      "expected": "e059ec68a28c72dcd4917a9245c75be40b65e0a9ebcde864705ded2e7127cffb",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-stream-002\\src\\request_task.rs",
+      "sha256": "e2986c77343793f9e5bfd161c68b325934b73b9cc38fce018129aa514c61a962",
+      "expected": "e2986c77343793f9e5bfd161c68b325934b73b9cc38fce018129aa514c61a962",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\Cargo.lock",
+      "sha256": "012dda58ef57aa3c8cb5b078e3e6ec3b1f785da0126427d99bd8002ec447cf0b",
+      "expected": "012dda58ef57aa3c8cb5b078e3e6ec3b1f785da0126427d99bd8002ec447cf0b",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\Cargo.toml",
+      "sha256": "49609adf7ef5206879a29d02180e34b065f0ed53962a5da7eb7ccd9ea86e525b",
+      "expected": "49609adf7ef5206879a29d02180e34b065f0ed53962a5da7eb7ccd9ea86e525b",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\README.md",
+      "sha256": "d4a5f3562974861c7f8369459951a3f68e886a8aa8e18562e89323e944d09d14",
+      "expected": "d4a5f3562974861c7f8369459951a3f68e886a8aa8e18562e89323e944d09d14",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\admission.rs",
+      "sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "expected": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\delivery.rs",
+      "sha256": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "expected": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\lib.rs",
+      "sha256": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+      "expected": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\main.rs",
+      "sha256": "9d40600bf21f82bfdcb1bdc819c42472dee41ef3d1bb701ec7f6d6b02c9cc277",
+      "expected": "9d40600bf21f82bfdcb1bdc819c42472dee41ef3d1bb701ec7f6d6b02c9cc277",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\session.rs",
+      "sha256": "dce507a390f45091b5c0ee440c0a2e96503716fcc26e79254ce8faee63e41742",
+      "expected": "dce507a390f45091b5c0ee440c0a2e96503716fcc26e79254ce8faee63e41742",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\workers.rs",
+      "sha256": "c21c5cd1871a6d00739ed4c89d5a36ad5a77b2aeb5a1b0bb62259bfe739bfef6",
+      "expected": "c21c5cd1871a6d00739ed4c89d5a36ad5a77b2aeb5a1b0bb62259bfe739bfef6",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\build_revision.py",
+      "sha256": "640f01b161770e3ec5cf6fb6a6937ccc6067f47266b314ca67b52bae698670df",
+      "expected": "640f01b161770e3ec5cf6fb6a6937ccc6067f47266b314ca67b52bae698670df",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\revision-notes.md",
+      "sha256": "82be74361daf3342c46b64523b136067c15b94409319713c016d3a16b1e9dd44",
+      "expected": "82be74361daf3342c46b64523b136067c15b94409319713c016d3a16b1e9dd44",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\freeze_revision.py",
+      "sha256": "227a44801a086cd657cb8ec2b589e197c6e84310c57542c8be935a2d5f78b184",
+      "expected": "227a44801a086cd657cb8ec2b589e197c6e84310c57542c8be935a2d5f78b184",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-002\\candidates\\native-002\\morrow-codex-native-http-client.exe",
+      "sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+      "expected": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\build-20260928T221836Z-7f00cee4\\result.json",
+      "sha256": "e3f053bceec3dcdcea4722bd49c79662ca2288ccfdfe15d0f709d6c436f168f4",
+      "expected": "e3f053bceec3dcdcea4722bd49c79662ca2288ccfdfe15d0f709d6c436f168f4",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\build-20260928T221836Z-7f00cee4\\stderr.txt",
+      "sha256": "1caa988443ed66b939508a2778ac8266e6856e223cd480100d9300275f1f38df",
+      "expected": "1caa988443ed66b939508a2778ac8266e6856e223cd480100d9300275f1f38df",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\build-20260928T221836Z-7f00cee4\\stdout.txt",
+      "sha256": "eec53c188dce0d88f23d053c892b26e5a2f50a77b22ba9646045ae9ce7108e66",
+      "expected": "eec53c188dce0d88f23d053c892b26e5a2f50a77b22ba9646045ae9ce7108e66",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-core-20260928T221614Z-72673c77\\result.json",
+      "sha256": "abc0734a567d1a59c961c78e1d5c63f8822bb25a5517827c44383a3b43e13797",
+      "expected": "abc0734a567d1a59c961c78e1d5c63f8822bb25a5517827c44383a3b43e13797",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-core-20260928T221614Z-72673c77\\stderr.txt",
+      "sha256": "b88c04d3cb76c0fd9c58f6c7cd2b017f9be4bd0a087ef3f730cc7e84b6a2bf35",
+      "expected": "b88c04d3cb76c0fd9c58f6c7cd2b017f9be4bd0a087ef3f730cc7e84b6a2bf35",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-core-20260928T221614Z-72673c77\\stdout.txt",
+      "sha256": "1d36aac2a1e3692dd2c1580beeabaa55c48f55caaf6f5bd5e3ebb6463e01449a",
+      "expected": "1d36aac2a1e3692dd2c1580beeabaa55c48f55caaf6f5bd5e3ebb6463e01449a",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-20260928T221630Z-f26c2ac2\\result.json",
+      "sha256": "f9c429075779c773a64c0720af7ac7180195dc21b19a78905dfbb76617db9940",
+      "expected": "f9c429075779c773a64c0720af7ac7180195dc21b19a78905dfbb76617db9940",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-20260928T221630Z-f26c2ac2\\stderr.txt",
+      "sha256": "0d704e59273776ed73ecdaaaeb9abaf0f34ae32824641790f91052ef079f2aff",
+      "expected": "0d704e59273776ed73ecdaaaeb9abaf0f34ae32824641790f91052ef079f2aff",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\runs\\test-20260928T221630Z-f26c2ac2\\stdout.txt",
+      "sha256": "be904d5542c7a974cc85536aa853fa5f949ddbd25a2717174a11f9923bd1819c",
+      "expected": "be904d5542c7a974cc85536aa853fa5f949ddbd25a2717174a11f9923bd1819c",
+      "match": true
+    }
+  ],
+  "compiler_original": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-codex-native-http-client.exe",
+    "sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365"
+  },
+  "dependency_receipts": {
+    "wire-intake-001.json": "0699caf2bb4ee290402e1738b9dbabf02fadc73e90db6fd45592d4e5e23b9137",
+    "pipe-intake-001.json": "8b9d4a800616b709afaad897e0f7b38626ae28531eb771825e4342cf80ea6019"
+  }
+}

@@ -1,0 +1,3 @@
+   Compiling morrow-native-session-owner v0.2.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\native_session_owner_002)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.82s
+     Running unittests src\lib.rs (target\m02-admission-owner-002\debug\deps\morrow_native_session_owner-8c8162437da49cb7.exe)

@@ -1,0 +1,110 @@
+{
+  "kind": "read_only_host_guard_contract_source_receipt_review",
+  "created_utc": "2026-09-28T14:36:47.346039+00:00",
+  "independent_build": false,
+  "independent_runtime": false,
+  "handoff_sha256": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751",
+  "batch_inputs": {
+    "count": 83,
+    "mismatches": []
+  },
+  "prior_inputs": {
+    "receipts/handoff.json": {
+      "count": 17,
+      "mismatches": []
+    },
+    "receipts/p02-native-probe-001/handoff.json": {
+      "count": 35,
+      "mismatches": []
+    },
+    "receipts/p02-exec-store-002/handoff.json": {
+      "count": 129,
+      "mismatches": []
+    },
+    "receipts/p02-core-network-003/handoff.json": {
+      "count": 53,
+      "mismatches": []
+    }
+  },
+  "source": {
+    "fixed_files": 8697,
+    "working_files": 8700,
+    "delta_files": 12,
+    "patch_lines": 693,
+    "patch_sha256": "ce4af5db99badb4fc0c8d86e6701db710d5df8c1a989a101dd53b15f6d462a01",
+    "exact_patch_reconstructed": true
+  },
+  "host_kit": {
+    "count": 180,
+    "mismatches": []
+  },
+  "host_canonical": {
+    "count": 12,
+    "mismatches": []
+  },
+  "producer_stages": {
+    "build": {
+      "exit_code": 0,
+      "elapsed_seconds": 93.5685793000157,
+      "bound_inputs": {
+        "count": 956,
+        "mismatches": []
+      }
+    },
+    "run": {
+      "exit_code": 0,
+      "elapsed_seconds": 1.0513516000064556,
+      "bound_inputs": {
+        "count": 956,
+        "mismatches": []
+      }
+    }
+  },
+  "compiled_features_from_raw_build_log": {
+    "codex-core": [
+      "morrow-p02-network-qualification",
+      "morrow-p02-qualification",
+      "morrow-p02-restricted-qualification"
+    ],
+    "codex-thread-store": [
+      "morrow-p02-restricted-qualification"
+    ],
+    "codex-exec-server": [],
+    "codex-protocol": [],
+    "codex-rollout": []
+  },
+  "compiler_artifact_package_count": 905,
+  "runtime_receipt_checks": {
+    "cases": 24,
+    "counted_assertions": 109,
+    "new_guard_and_owner_receipts_rechecked": true,
+    "http_bodies_rehashed": [
+      {
+        "bytes": 22025,
+        "sha256": "03a9c7d64452ce5d67b8abcdd3804b27affb2ef13f5728762494bacfc6f3734b"
+      },
+      {
+        "bytes": 22025,
+        "sha256": "de3dc0d590e17b7aa6e1a584fdf3740f3b7b7911bd3d3796b3b84ab669bf8e3a"
+      },
+      {
+        "bytes": 22025,
+        "sha256": "b416b4a70fe8e0abbd1478169bde64aa072500b96bcdf77e8dc28dd49df303e4"
+      },
+      {
+        "bytes": 22025,
+        "sha256": "2d68cc17b866a558d6e0633646556b439d3071145b61cb06fe4413b1bbd99420"
+      },
+      {
+        "bytes": 22025,
+        "sha256": "67543037e03b3c07b39d67f5ab94b1eab3c462c6023c134c69b97b932c3c1c1c"
+      },
+      {
+        "bytes": 22025,
+        "sha256": "6f0cdd48b69483dffc3fdb591db42f3d6fcfeea7c420fd95218a312d833ae5ae"
+      }
+    ],
+    "runtime_sha256": "8c8c681c597a86e993c7252ba60048bb5f445d6ccc1f1deea700051c97643f35"
+  },
+  "status": "passed_read_only_review_not_independent_execution"
+}

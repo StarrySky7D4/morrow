@@ -1,0 +1,102 @@
+{
+  "status": "reviewed_passed_limited_net_callsite_probe",
+  "method": "Read-only hash/content/receipt checks; executable never rerun by reviewer",
+  "chain_checks": {
+    "build_exit_zero": true,
+    "run_exit_zero": true,
+    "build_finished_success": true,
+    "build_stdout_hash": true,
+    "build_stderr_hash": true,
+    "run_stdout_hash": true,
+    "run_stderr_hash": true,
+    "runtime_hash": true,
+    "runtime_equals_stdout": true,
+    "artifact_hash_matches_build_and_run": true,
+    "artifact_in_compiler_output": true,
+    "native_pe_x86_64": true,
+    "build_and_run_no_input_changes": true,
+    "frozen_handoff_before_after": true,
+    "P02_not_complete": true,
+    "G0_not_claimed": true
+  },
+  "current_build_and_run_recorded_input_hashes_match": true,
+  "current_frozen_17_input_hashes_match": true,
+  "artifact": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\target\\x86_64-pc-windows-msvc\\debug\\p02-native-probe.exe",
+    "sha256": "e0f5d6da9587cc3722b98701c52bd23474e935e302bd77b41f4796521aa5c9ca",
+    "pe_machine": "0x8664 x86_64"
+  },
+  "evidence_sha256": {
+    "receipts/p02-native-probe-001/runs/build-20260928T121551Z-457f497c21/result.json": "d89d8b65c8c5316ce7230f202376ce821b1a942c194460ecec60a26c9e1879d0",
+    "receipts/p02-native-probe-001/runs/build-20260928T121551Z-457f497c21/stdout.txt": "d0409237daeea6032908a7a084bf00fb2ed2dfc6a7089cbbc59ed9d2c2d43341",
+    "receipts/p02-native-probe-001/runs/build-20260928T121551Z-457f497c21/stderr.txt": "d059bfd3cd6aefce4bdeef1428132702c5b79591825d9a3713ad037639c0bb56",
+    "receipts/p02-native-probe-001/runs/run-20260928T121810Z-d60bc57149/result.json": "762b315e204862d088d9d0b8ab3ac7423c5baa5cd9f64275f01ea7ace4fe658e",
+    "receipts/p02-native-probe-001/runs/run-20260928T121810Z-d60bc57149/stdout.txt": "209e3ea22459138afaef1d3f08e7c7d93d541bd06ad7a82fb49f0266262e75c8",
+    "receipts/p02-native-probe-001/runs/run-20260928T121810Z-d60bc57149/stderr.txt": "40190bb7f7b617c62ecb78698f47eb887a9dbedd90cff7f15abe1f23c37d3be0",
+    "receipts/p02-native-probe-001/runtime-20260928T121810Z-d60bc57149.json": "209e3ea22459138afaef1d3f08e7c7d93d541bd06ad7a82fb49f0266262e75c8",
+    "receipts/p02-source-batch-001/codex-source-post-build-001.json": "001f58ff6648a8936c88f0a728da24c81dfa1f22fdcb0786f6e6a4d48dfe1990",
+    "qualification/p02-native-probe-001/src/main.rs": "c3259978d27b34f73a16ccc2df6ab1db3dd2d782f7b01980ea94e7ce2f4662f0",
+    "qualification/p02-native-probe-001/Cargo.toml": "5d543cba59604c836118a92303ee1912ec2e0effc39e1a831a870384353cebb9",
+    "qualification/p02-native-probe-001/Cargo.lock": "ec97e437d4ccc62025218d82202bd8593dbe7a3a137411e5878f232bf8d719ff",
+    "receipts/p02-probe-review-001/resolved-graph-review.json": "91bc62f106ca17ea9962746c86e7081b1d8a9bac07af80ca96181650b9f9ed43"
+  },
+  "case_count": 2,
+  "declared_assertion_count": 15,
+  "case_independent_checks": [
+    {
+      "name": "host_disconnected_before_open",
+      "checks": {
+        "declared_assertions_true": true,
+        "stream_called_once": true,
+        "no_nonstream": true,
+        "actual_host_exchange_count": true,
+        "no_commit": true,
+        "expected_error": true,
+        "body_independently_reconstructed": true,
+        "headers": true,
+        "request_method": true,
+        "actual_open_bound_to_prepared_body": true
+      },
+      "assertion_count": 8
+    },
+    {
+      "name": "unapproved_destination_rejected",
+      "checks": {
+        "declared_assertions_true": true,
+        "stream_called_once": true,
+        "no_nonstream": true,
+        "actual_host_exchange_count": true,
+        "no_commit": true,
+        "expected_error": true,
+        "body_independently_reconstructed": true,
+        "headers": true,
+        "request_method": true,
+        "no_open_for_unapproved_destination": true
+      },
+      "assertion_count": 7
+    }
+  ],
+  "prepared_body_bytes": 241,
+  "prepared_body_sha256": "e8a1ef22ef30a6c5a3ddb41be40e737a25adc091fdc87abf49dba5cea0075950",
+  "post_build_source_evidence": {
+    "status": "complete_fixed_source_reverified",
+    "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+    "tree_sha1": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+    "file_count": 8697,
+    "tree_count": 985,
+    "content_manifest_sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7"
+  },
+  "post_build_source_limit": "Independent source verifier receipt reviewed/hash-bound; reviewer did not repeat its 8697-file reconstruction",
+  "scope": "Pinned ResponsesClient -> EndpointSession -> concrete HttpTransport; valid Open reaches disconnected in-process kit Transport once, second unapproved destination never reaches host; both refuse without Commit",
+  "limits": [
+    "Disconnected in-process host fixture only; no actual host connection",
+    "No successful StreamResponse, HTTP metadata, SSE parser, login or model request",
+    "No ModelClient/Core loop, exec/store replacement or complete network-bypass qualification",
+    "No OS-level network monitor; this harness constructs no ReqwestTransport, socket or network client",
+    "Frame SHA256 is logged by the reviewed executable; raw frame bytes are not persisted for an independent Capnp re-decode.",
+    "Cargo build-script-executed messages are Cargo evidence, not an OS process/network trace."
+  ],
+  "findings": [],
+  "P-02": "not_complete",
+  "G0": "not_claimed"
+}

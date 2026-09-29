@@ -1,0 +1,16 @@
+   Compiling version_check v0.9.5
+   Compiling typenum v1.20.1
+   Compiling capnp v0.24.1
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling generic-array v0.14.7
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling sha2 v0.10.9
+   Compiling capnpc v0.24.0
+   Compiling morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\host-kit-003)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.84s
+     Running unittests src\lib.rs (target\debug\deps\morrow_agent_host_contract-e20ca4036d6a68a6.exe)
+     Running tests\qualification.rs (target\debug\deps\qualification-0dc683dc740757c8.exe)
+   Doc-tests morrow_agent_host_contract

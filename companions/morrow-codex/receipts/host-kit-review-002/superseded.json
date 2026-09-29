@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "status": "suspended_by_host",
+  "manifest_sha256": "bb02d3e4b0ac1efd3195b1036bdb00669036d1124733060cde3b2d279576f464",
+  "supersedes": "review.json",
+  "reason": "Host and coordinating session suspended final acceptance of kit-002 while investigating Capnp traversal budget exhaustion on an 8 x 4096 byte event batch and repeated consumer reads.",
+  "prior_byte_verification_preserved": true,
+  "may_be_used_as_accepted_baseline": false,
+  "action": "Await a new explicitly delivered kit and review its new manifest; do not patch the host schema or consumer to bypass the issue.",
+  "P-02": "blocked",
+  "G0": "blocked"
+}

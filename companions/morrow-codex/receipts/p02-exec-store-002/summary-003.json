@@ -1,0 +1,39 @@
+{
+  "scope": "exactly two pinned public core dependencies, mxc and nucleo",
+  "dependencies": [
+    {
+      "repository": "microsoft/mxc",
+      "commit": "6cd3d58f05d3447e67109cfb75e042803b843ca4",
+      "url": "https://codeload.github.com/microsoft/mxc/tar.gz/6cd3d58f05d3447e67109cfb75e042803b843ca4",
+      "attempt": 3,
+      "started_unix": 1790600477.3041196,
+      "network": "stdlib urllib direct HTTPS, ProxyHandler({}), no Git/Cargo invocation",
+      "verified_git_tree": "338c5bffbca87051c8f106fb35aeb015b2d235da",
+      "http_status": 200,
+      "final_url": "https://codeload.github.com/microsoft/mxc/tar.gz/6cd3d58f05d3447e67109cfb75e042803b843ca4",
+      "response_headers": {
+        "Access-Control-Allow-Origin": "https://render.githubusercontent.com",
+        "content-disposition": "attachment; filename=mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4.tar.gz",
+        "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+        "Content-Type": "application/x-gzip",
+        "cross-origin-resource-policy": "cross-origin",
+        "ETag": "\"1731f2e8a21d5933a295ccb8350353255d0cfe60e842f141b42af1e33dacbbf6\"",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Vary": "Authorization,Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "deny",
+        "X-XSS-Protection": "1; mode=block",
+        "Date": "Mon, 28 Sep 2026 13:01:22 GMT",
+        "Transfer-Encoding": "chunked",
+        "X-GitHub-Request-Id": "359B:3F96A3:DE08:12EE9:6ABA6521",
+        "x-github-edge-region": "sea",
+        "connection": "close"
+      },
+      "status": "failed_preserved",
+      "error": "IncompleteRead: IncompleteRead(0 bytes read)",
+      "elapsed_seconds": 378.013,
+      "partial_archive_size": 5947392,
+      "partial_archive_sha256": "33eb4af3ca63c8f8e491fe57e823c1db257356af9b65e873a8746a26466c9799"
+    }
+  ]
+}

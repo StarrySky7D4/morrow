@@ -1,0 +1,17 @@
+{
+  "case": "artifact-drift",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "grant_id": "56233b761910d26c2b10acbb72e0df590f821fa434e25f4d29a588ae89454b79",
+    "original_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+    "changed_fixture_sha256": "d50e4d6bffd8929fc055eb192df6e66d8c331e92af9b0fb9f8562440b091f4fb",
+    "claim_error": {
+      "action": "claim",
+      "error": "launch unconfirmed; owner retained: artifact changed before spawn",
+      "event": "operator_result",
+      "ok": false
+    },
+    "no_known_spawn": true,
+    "delivered_client_unchanged": true
+  }
+}

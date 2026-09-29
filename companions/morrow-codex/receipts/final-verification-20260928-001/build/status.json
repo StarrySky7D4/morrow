@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "run_id": "20260928T113016.617027Z-3bb21db34f2f",
+  "started_utc": "20260928T113016.617027Z",
+  "entry_sha256": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+  "stage": "build",
+  "scope": "full",
+  "status": "not_implemented",
+  "checks": [],
+  "artifacts": [],
+  "gates": {
+    "P-00": "not_claimed",
+    "G0": "not_claimed"
+  },
+  "network_used": false,
+  "locks_updated": false,
+  "old_dist_reused": false,
+  "output_dir": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\build",
+  "contract_sha256": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+  "error": {
+    "code": "not_implemented",
+    "message": "Stage build is not implemented; no artifact was produced"
+  },
+  "exit_code": 2,
+  "finished_utc": "2026-09-28T11:30:16.618721+00:00"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "harness011_frozen_review_accepted_before_new_A",
+  "script": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_011.py",
+  "script_sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+  "host_A": "004",
+  "host_B": "005",
+  "plugin_fixture": "002",
+  "plugin_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-002\\native-candidate-fixture-002.json",
+  "plugin_manifest_sha256": "6a8d4d07aab156d72f5fce73dea7750f8b5424707dae84595182ff7f55c211a5",
+  "plugin_executable_sha256": "b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc",
+  "pure_receipt": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-011-pure-20260929T014513567144Z.json",
+  "pure_receipt_sha256": "31023bee64e82fb8356049f5a21fbf15600df11e1b6aeda353dcb4df954ae7d9",
+  "pure_runtime_tested": false,
+  "existing_A010_status": "failed_preserved",
+  "new_A_authorized_once_by_coordinator": true,
+  "B_authorized": false,
+  "change": "Require actual host gate transition and HostCancelled first reason; bounded data EOF reconciliation; forbid new paused data IO and positive control admission while allowing zero-window settlement. All prior control, cleanup, event, counters and join checks retained."
+}

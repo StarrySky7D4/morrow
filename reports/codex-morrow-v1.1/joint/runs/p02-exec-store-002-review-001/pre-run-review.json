@@ -1,0 +1,80 @@
+{
+  "status": "failed",
+  "scope": "source/producer-build evidence review and independent replay of pinned executables",
+  "independent_compilation": false,
+  "P02": "blocked",
+  "J00": "blocked",
+  "G0": "blocked",
+  "product_graphs": "0/2",
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "sources": {
+    "original_files": 8697,
+    "working_files": 8698,
+    "source_tree": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+    "patch_sha256": "403f5fe49b107a4877324dc8560600c58e815e70e7257c7707480001ca3034b3",
+    "patch_lines": 163,
+    "changes": [
+      {
+        "path": "codex-rs/core/Cargo.toml",
+        "before_sha256": "d745357079c9163f69cd60295f46962c342c80a9cbf11d42afd5b4941df1a6d3",
+        "after_sha256": "8187e05959899bc5cdc4ce5c389b98bf7e8a287e060298a6d9e178b9a74e7c0c"
+      },
+      {
+        "path": "codex-rs/core/src/lib.rs",
+        "before_sha256": "77123e59406093fcaa2f10e549458c228e55d53c84fef06728a73933cc9f096b",
+        "after_sha256": "9d0f262352369a8313b9ec885b8b5366eaa4f25ce942443d44d3243f54452d7f"
+      },
+      {
+        "path": "codex-rs/core/src/unified_exec/process_manager.rs",
+        "before_sha256": "ec4878fbe0da4d8e4ae40629702a6c509a7168fd5494c0453d4081cd8f7fc235",
+        "after_sha256": "e5acf33cf021c2bf50f6bddc4c371732d26792709c5613df230e63cc14dee6af"
+      },
+      {
+        "path": "codex-rs/exec-server/src/environment.rs",
+        "before_sha256": "da4c5ac295eeb9f55d94f7a39aa8c476560f07ccb745762a7989b6f81b7c2bec",
+        "after_sha256": "8019f3491c6c3b6031896310498a28b5088f95ac04efa8cdb7769c0eb1b556b6"
+      },
+      {
+        "path": "codex-rs/core/src/morrow_p02_qualification.rs",
+        "before_sha256": null,
+        "after_sha256": "c4ad59541328e777ee6b53916d5196ac7be2392c8917168c82075465501a1a60"
+      }
+    ],
+    "copy_files": 1108,
+    "additional_dependencies": [
+      {
+        "name": "mxc",
+        "commit": "6cd3d58f05d3447e67109cfb75e042803b843ca4",
+        "files": 1740,
+        "tree": "338c5bffbca87051c8f106fb35aeb015b2d235da"
+      },
+      {
+        "name": "nucleo",
+        "commit": "4253de9faabb4e5c6d81d946a5e35a90f87347ee",
+        "files": 42,
+        "tree": "a878a0495e5f84266b7e36918a9e1a9432b0ddd8"
+      }
+    ]
+  },
+  "producer_builds_and_locks": [
+    {
+      "slice": "store",
+      "resolved_packages": 882,
+      "registry_packages": 841,
+      "local_packages": 41,
+      "producer_compilation": "evidence_verified_not_independently_rebuilt",
+      "executable_sha256": "935ff209a98004d3ff97eb79319f34ccc2e615d11088e65c7835d305f36b5963",
+      "producer_input_count": 1006
+    },
+    {
+      "slice": "exec",
+      "resolved_packages": 1117,
+      "registry_packages": 1013,
+      "local_packages": 104,
+      "producer_compilation": "evidence_verified_not_independently_rebuilt",
+      "executable_sha256": "61edda878479b093fe841e5d8c974af453da50cc220e5cdc09b033a7f489933e",
+      "producer_input_count": 947
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "kind": "read_only_preimplementation_review",
+  "created_utc": "2026-09-28T14:02:04.559102+00:00",
+  "inputs": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-integration-004\\preflight.md",
+      "sha256": "32b5f8954015819863a7935898d55002945156c0b592a2ff5eadc8fc85eeee71"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-exec-store-002\\handoff.json",
+      "sha256": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-core-network-003\\handoff.json",
+      "sha256": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\codex-source\\codex-rs\\core\\src\\exec.rs",
+      "sha256": "a0217990bbfed2dfe5dd484725b1ea07aadc9e09ad6316ed2b968abb4cacb2dd"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\codex-source\\codex-rs\\thread-store\\src\\live_thread.rs",
+      "sha256": "2d8bee57c219d263e58bb00c14fe4ccaf1b07759d5427f07ef799093794bb785"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\codex-source\\codex-rs\\thread-store\\src\\local\\mod.rs",
+      "sha256": "c29f99688a9afc8d04dbcf7c58bb66708a04130f4cafd9bced9d96652afe2ac8"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\codex-source\\codex-rs\\thread-store\\src\\thread_metadata_sync.rs",
+      "sha256": "6bc150cf6d82a844bd03d5d5be750b56a190ce2200ecee162c9ecd3d9213c2e2"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-exec-store-002\\codex-work\\codex-rs\\core\\src\\unified_exec\\process_manager.rs",
+      "sha256": "e5acf33cf021c2bf50f6bddc4c371732d26792709c5613df230e63cc14dee6af"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-exec-store-002\\codex-work\\codex-rs\\exec-server\\src\\environment.rs",
+      "sha256": "8019f3491c6c3b6031896310498a28b5088f95ac04efa8cdb7769c0eb1b556b6"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-core-network-003\\codex-work\\codex-rs\\core\\src\\client.rs",
+      "sha256": "5cd400740f5bc5016b71b66e3d103f12d4eb8cabff0a9a8247e4d985ee4d3b3e"
+    }
+  ],
+  "host_003_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "frozen_host_checks": [
+    {
+      "base": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-003",
+      "count": 180,
+      "mismatches": []
+    },
+    {
+      "base": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v1",
+      "count": 12,
+      "mismatches": []
+    }
+  ],
+  "build_or_runtime_executed": false
+}

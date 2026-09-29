@@ -1,0 +1,33 @@
+[source.crates-io]
+replace-with = "qualification-pinned-vendor"
+
+[source.qualification-pinned-vendor]
+directory = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/vendor"
+
+[net]
+offline = true
+
+# Exact public Git revisions; source bytes unchanged; prepared by prepare_git_sources.py.
+[source."morrow-p02-fixed-tokio-tungstenite"]
+git = "https://github.com/openai-oss-forks/tokio-tungstenite"
+rev = "0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186"
+replace-with = "morrow-p02-directory-tokio-tungstenite"
+
+[source."morrow-p02-directory-tokio-tungstenite"]
+directory = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/git-directory-sources/tokio-tungstenite"
+
+[source."morrow-p02-fixed-tungstenite"]
+git = "https://github.com/openai-oss-forks/tungstenite-rs"
+rev = "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f"
+replace-with = "morrow-p02-directory-tungstenite"
+
+[source."morrow-p02-directory-tungstenite"]
+directory = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/git-directory-sources/tungstenite"
+
+[source."morrow-p02-fixed-runfiles"]
+git = "https://github.com/dzbarsky/rules_rust"
+rev = "b56cbaa8465e74127f1ea216f813cd377295ad81"
+replace-with = "morrow-p02-directory-runfiles"
+
+[source."morrow-p02-directory-runfiles"]
+directory = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/git-directory-sources/rules-rust-package/rust"

@@ -1,0 +1,55 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Official-build Rust steps. Toolchain feed, registry auth, and target-dir
+# cache are supplied by the job-level `templateContext.rust` in
+# Rust.Build.Job.yml. Requires System.AccessToken — use
+# Rust.Build.Steps.Unofficial.yml for fork/PR builds.
+
+parameters:
+- name: targetTriple
+  type: string
+- name: workingDirectory
+  type: string
+- name: cargoFeatures
+  type: string
+  default: ''
+- name: cargoPackages
+  type: string
+  default: ''
+- name: enableTest
+  type: string
+  default: 'true'
+
+steps:
+  # Must run before 1ES.Build.Rust.Setup@1 so the merged config.toml
+  # exists at templateContext.rust.{authenticate,install}Options.configFile.
+  # 1ES.Build.Rust.Setup authenticates, so skip CargoAuthenticate here.
+  - template: Cargo.Setup.Private.yml@self
+    parameters:
+      authenticate: false
+
+  - task: 1ES.Build.Rust.Setup@1
+
+  - task: 1ES.Build.Rust.Restore@1
+
+  - task: 1ES.Build.Rust.Run@1
+    displayName: Build
+    inputs:
+      command: build
+      profile: release
+      target: ${{ parameters.targetTriple }}
+      enableTest: ${{ parameters.enableTest }}
+      testCondition: "eq('${{ parameters.enableTest }}', 'true')"
+      publishTestResults: false
+      enableClippy: false
+      enableCodeStyleCheck: false
+      checkAllCodeStyle: false
+      useNextest: false
+      testAllTargets: false
+      buildAllTargets: false
+      # Do NOT default to --all-features: `tier2_bfs` must not ship on
+      # Win 11 25H2 (bfscfg.exe risks OS hang). See T3-Workloads.ps1.
+      allFeatures: false
+      activatedFeatures: ${{ parameters.cargoFeatures }}
+      packages: ${{ parameters.cargoPackages }}

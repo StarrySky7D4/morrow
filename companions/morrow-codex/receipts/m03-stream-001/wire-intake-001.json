@@ -1,0 +1,23 @@
+{
+  "status": "authoritative_codec_inputs_copied_no_build_no_runtime",
+  "host_handoff_sha256": "3cb2e70480638d2094b82b2cff0a62739ebee2546fa1236650e81daa99e6286b",
+  "host_manifest_sha256": "9d43385067d09a016ef950edf5fe4d489803e02f7bee8c419014d6b6fc2af5ae",
+  "host_kit_files_verified": 70,
+  "input_sha256": {
+    "upstream/m03-stream-001/wire-kit-001/source/build.rs": "456dc6c326b765304828ae9b5a3dd3a87ce40a120a445e0f32bdf30a63df98ae",
+    "upstream/m03-stream-001/wire-kit-001/source/Cargo.lock": "7dba0d4d22d81519cb4a14b72bd03dc8fac1ecfd45c7127a0e8e8e3a404fde95",
+    "upstream/m03-stream-001/wire-kit-001/source/Cargo.toml": "7a58455f468a7d9e15551800c5ce697ad190d4b967d5c608b2aac125807cc6ba",
+    "upstream/m03-stream-001/wire-kit-001/source/examples/vectors.rs": "94765cd8cc0005b077e86a3b3f8535930d23889d2c3737f39c9adf5a3de3d295",
+    "upstream/m03-stream-001/wire-kit-001/source/native_http.capnp": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+    "upstream/m03-stream-001/wire-kit-001/source/README.md": "be6d7eeaf900e93da67fc37ab2ce9e6881ed8dfa10448cd8b0a91a903717266d",
+    "upstream/m03-stream-001/wire-kit-001/source/src/lib.rs": "26d53b1efe373279071dd6321cd8faf9854681fdf571dfdea5a1886a5324b970",
+    "upstream/m03-stream-001/wire-kit-001/source/src/rules.rs": "a71f74b06e39d254025e92a2e6099780953090b41f2ecac3a35930683a0a7794",
+    "upstream/m03-stream-001/wire-kit-001/source/tests/codec.rs": "ee8c8d3eb71878bc884dad4f3de19c65350cf28fc6073a54b22eb8ddf1408e7f",
+    "upstream/m03-stream-001/wire-kit-001/source/tests/common/mod.rs": "42d95c1c4abd1f874c42a7e12d51d2e778cf002e560a7689163d1a33692d7575",
+    "upstream/m03-stream-001/wire-kit-001/generated/native_http_capnp.rs": "071955f822b2eab7a803ad2f8d6da50dde4d7371e1c1ef79009b272a4eb842c3",
+    "upstream/m03-stream-001/wire-kit-001/wire-handoff-001.json": "3cb2e70480638d2094b82b2cff0a62739ebee2546fa1236650e81daa99e6286b",
+    "upstream/m03-stream-001/wire-kit-001/manifest.json": "9d43385067d09a016ef950edf5fe4d489803e02f7bee8c419014d6b6fc2af5ae"
+  },
+  "own_schema_created": false,
+  "native_http_runtime_verified": false
+}

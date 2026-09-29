@@ -1,0 +1,131 @@
+{
+  "scope": "independent transport six tests only",
+  "runner_sha256": "757b6a3a3100baf5294b0f745991118f7a629357588ceaac1e9c5bdcd1cf3ee4",
+  "files": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\execution-inputs.json",
+      "sha256": "83eda44b05ece89c7e1a933eceafa483b8f4c0af9efee9aed7a89315ee4fee98",
+      "bytes": 1796
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\identities-after.json",
+      "sha256": "784acb0ec4289405257062b1f4508b585978eb22f6eeee15c977a2d15e9146d9",
+      "bytes": 642797
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\identities-before.json",
+      "sha256": "784acb0ec4289405257062b1f4508b585978eb22f6eeee15c977a2d15e9146d9",
+      "bytes": 642797
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\independent-extraction.patch",
+      "sha256": "b70c581d6852f0e680a5c5f41a866a5dbf0cbd54c3938afa9a5c1f3d99debf6d",
+      "bytes": 10256
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\result.json",
+      "sha256": "f6800034ea284d6bdf1de1b5415648e3f4582a5f69f7fe94f8e1898bef2245f7",
+      "bytes": 8753
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\review.md",
+      "sha256": "811f592daaaee5c6c9f345e8e4c57e44b0a6da41d371108f288579d42ca5fd32",
+      "bytes": 7397
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+      "sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+      "bytes": 8349184
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-01\\result.json",
+      "sha256": "8a67deb0da89fd52e99451afc6e3c717e4da3b699c7b8e691906da37fe098d25",
+      "bytes": 1158
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-01\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-01\\stdout.txt",
+      "sha256": "6de480766f432d7489e544889470466a5c320385a3baa96eacce830e75025cbf",
+      "bytes": 189
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-02\\result.json",
+      "sha256": "8309dc2c06ba9d5c87b3e0cb72fe0588b976ac0d2bf0eb0b41a8de9a0c486b25",
+      "bytes": 1183
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-02\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-02\\stdout.txt",
+      "sha256": "5fb289505b8710005b340f25db1c3c2de5df129cafeda7179684af7081c09e9d",
+      "bytes": 202
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-03\\result.json",
+      "sha256": "9f1d660019754cb468e543918ec0e14374a70d70429bec64a94895eb1052dd32",
+      "bytes": 1166
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-03\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-03\\stdout.txt",
+      "sha256": "f660c14497a0acc900845d4e49f09b0dc2ceed9c08e8ab0fe559167eafde6a50",
+      "bytes": 194
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-04\\result.json",
+      "sha256": "2a567daae0e4c532666980fe557d2fa342ce50f750cb2db09bbef48b6203a814",
+      "bytes": 1158
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-04\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-04\\stdout.txt",
+      "sha256": "fb888018b7ed0ab00920976d22b68dfd7651a495847fa53e80f66432d10b0afe",
+      "bytes": 190
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-05\\result.json",
+      "sha256": "1b095e780f62fc92136cf9df87a97bd98b17c8cf8a7e447394980d3e1854bca3",
+      "bytes": 1150
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-05\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-05\\stdout.txt",
+      "sha256": "6a7d63108dd4106e3b7bcdccc66b8ba0e8ba5f46d895ca6bbc357f9c71fabea8",
+      "bytes": 186
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-06\\result.json",
+      "sha256": "49b27e38ab1eb1c0b857c19147ce493b59de0b7914ff04b7e87a25d6e856f5c9",
+      "bytes": 1185
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-06\\stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\case-06\\stdout.txt",
+      "sha256": "05b1a1cc704b4b4eec57c41f61f55e520dbbd25b62db6997af094aeefbfca945",
+      "bytes": 203
+    }
+  ]
+}

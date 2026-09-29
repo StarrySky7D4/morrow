@@ -1,0 +1,12 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-native-probe-001\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 6 packages to latest compatible versions
+      Adding capnp v0.24.1
+      Adding capnpc v0.24.0
+      Adding embedded-io v0.7.1
+      Adding morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\sdk\host-kit-003-copy)
+      Adding tokio-tungstenite v0.28.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-native-probe-001\build-forks\tokio-tungstenite)
+      Adding tungstenite v0.27.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-native-probe-001\build-forks\tungstenite)

@@ -1,0 +1,13 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-Filesystem-Test",
+  "containment": "processcontainer",
+  "process": {
+    "commandLine": "cmd /c echo Test process container for deletion"
+  },
+  "filesystem": {
+    "readwritePaths": [
+      "C:\\temp\\test"
+    ]
+  }
+}

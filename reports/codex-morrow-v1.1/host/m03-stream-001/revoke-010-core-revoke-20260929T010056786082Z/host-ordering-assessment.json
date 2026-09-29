@@ -1,0 +1,155 @@
+{
+  "scope": "read-only source and stored-frame decoding; no new host/guest/HTTP execution",
+  "clock_limit": "host at_us is supervisor observation/write-completion record, not an exact kernel transition time; no cross-process subtraction",
+  "source_host": "frozen native-host-candidate-004",
+  "host_events": [
+    {
+      "at_us": 3191225,
+      "detail": {
+        "code": 19,
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 19,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 200,
+          "intent": "Unknown",
+          "issued_offset": 197,
+          "last_write_ordinal": 3,
+          "network": "Cancelled",
+          "os_completed_offset": 197,
+          "owner": "Active",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 197,
+          "request_closed": false,
+          "reserved_offset": 197,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": true,
+          "write_reaped": true
+        },
+        "requested_code": 19,
+        "source": 1
+      },
+      "event": "http_cancel_applied",
+      "ordinal": 39
+    },
+    {
+      "at_us": 3191327,
+      "detail": {
+        "action": "revoke",
+        "generation": 2
+      },
+      "event": "control_ack",
+      "ordinal": 41
+    },
+    {
+      "at_us": 3191370,
+      "detail": true,
+      "event": "data_worker_joined",
+      "ordinal": 43
+    }
+  ],
+  "decoded_control": [
+    {
+      "ordinal": 46,
+      "host_supervisor_at_us": 3210566,
+      "event": "control_frame_sent",
+      "decoded": {
+        "kind": "httpTerminal",
+        "sequence": "0",
+        "revocationGeneration": "2"
+      }
+    },
+    {
+      "ordinal": 47,
+      "host_supervisor_at_us": 3210673,
+      "event": "control_frame_received",
+      "decoded": {
+        "kind": "httpCancel",
+        "sequence": "5",
+        "revocationGeneration": "1"
+      }
+    },
+    {
+      "ordinal": 49,
+      "host_supervisor_at_us": 3212072,
+      "event": "control_frame_sent",
+      "decoded": {
+        "kind": "cancelAccepted",
+        "sequence": "5",
+        "revocationGeneration": "2"
+      }
+    },
+    {
+      "ordinal": 51,
+      "host_supervisor_at_us": 3212404,
+      "event": "control_frame_sent",
+      "decoded": {
+        "kind": "requestClosed",
+        "sequence": "0",
+        "revocationGeneration": "2"
+      }
+    },
+    {
+      "ordinal": 52,
+      "host_supervisor_at_us": 3212450,
+      "event": "control_frame_received",
+      "decoded": {
+        "kind": "httpCredit",
+        "sequence": "6",
+        "revocationGeneration": "1"
+      }
+    },
+    {
+      "ordinal": 53,
+      "host_supervisor_at_us": 3212737,
+      "event": "control_frame_sent",
+      "decoded": {
+        "kind": "creditState",
+        "sequence": "6",
+        "revocationGeneration": "2"
+      }
+    },
+    {
+      "ordinal": 54,
+      "host_supervisor_at_us": 3225520,
+      "event": "control_frame_received",
+      "decoded": {
+        "kind": "close",
+        "sequence": "7",
+        "revocationGeneration": "1"
+      }
+    },
+    {
+      "ordinal": 59,
+      "host_supervisor_at_us": 3226829,
+      "event": "control_frame_sent",
+      "decoded": {
+        "kind": "state",
+        "sequence": "7",
+        "revocationGeneration": "2"
+      }
+    }
+  ],
+  "data_join_before_http_terminal_full_write_observation_us": 19196,
+  "recommendation": "do not use full host control write as a substitute for guest receipt/application. Keep immediate no-new-effect fence and bounded owned-I/O cancellation. Notification prioritization can be optional scheduling improvement, not a correctness proof. Merely deferring pipe.cancel cannot work because Session.control already closes the effect gate and pipe owner cancels on gate.revoked. A mandatory write-before-cancel ordering would require splitting no-new-issue fencing from pending-I/O cancellation and a bounded fallback for blocked control; it still cannot force cross-lane guest application order. Receiver-side bounded authenticated terminal reconciliation and independent cleanup/join are still required; never whitelist EOF/Protocol or erase real framing errors.",
+  "host_modifications": false,
+  "new_scenario_run": false,
+  "evidence_inputs": {
+    "host_rows_sha256": "1cfecfca33ff588f5dc4cea3aab259905487a1f7762f5e295f19e33dbebf4e9b",
+    "wire_schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+    "host004_manifest_sha256": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2"
+  }
+}

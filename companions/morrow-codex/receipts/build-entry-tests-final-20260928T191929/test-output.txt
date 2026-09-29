@@ -1,0 +1,49 @@
+Retained test evidence: C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\test-workspaces\build-entry-ktqx3wqi
+test_all_unimplemented_stages_fail_even_with_old_dist (__main__.BuildPlanTests.test_all_unimplemented_stages_fail_even_with_old_dist) ... ok
+test_archive_path_escape_rejected_without_extraction (__main__.BuildPlanTests.test_archive_path_escape_rejected_without_extraction) ... ok
+test_baseline_candidate_scope (__main__.BuildPlanTests.test_baseline_candidate_scope) ... ok
+test_baseline_mismatch (__main__.BuildPlanTests.test_baseline_mismatch) ... ok
+test_both_sources_required (__main__.BuildPlanTests.test_both_sources_required) ... ok
+test_changed_cargo_lock (__main__.BuildPlanTests.test_changed_cargo_lock) ... ok
+test_dirty_archive_tree_rejected (__main__.BuildPlanTests.test_dirty_archive_tree_rejected) ... ok
+test_each_run_uses_new_output (__main__.BuildPlanTests.test_each_run_uses_new_output) ... ok
+test_existing_output_preserved (__main__.BuildPlanTests.test_existing_output_preserved) ... ok
+test_fixed_command_environment_disables_implicit_network_and_redirects (__main__.BuildPlanTests.test_fixed_command_environment_disables_implicit_network_and_redirects) ... ok
+test_fixed_tool_commands_no_lock_command_execution (__main__.BuildPlanTests.test_fixed_tool_commands_no_lock_command_execution) ... ok
+test_full_preflight_missing_kit (__main__.BuildPlanTests.test_full_preflight_missing_kit) ... ok
+test_full_preflight_missing_toolchain_lock (__main__.BuildPlanTests.test_full_preflight_missing_toolchain_lock) ... ok
+test_full_preflight_never_claims_complete (__main__.BuildPlanTests.test_full_preflight_never_claims_complete) ... ok
+test_ignored_git_file_must_be_recorded (__main__.BuildPlanTests.test_ignored_git_file_must_be_recorded) ... ok
+test_kit_review_digest_mismatch (__main__.BuildPlanTests.test_kit_review_digest_mismatch) ... ok
+test_kit_review_required (__main__.BuildPlanTests.test_kit_review_required) ... ok
+test_license_digest_rejected (__main__.BuildPlanTests.test_license_digest_rejected) ... ok
+test_missing_build_graph (__main__.BuildPlanTests.test_missing_build_graph) ... ok
+test_missing_cargo_lock (__main__.BuildPlanTests.test_missing_cargo_lock) ... ok
+test_missing_digest_rejected (__main__.BuildPlanTests.test_missing_digest_rejected) ... ok
+test_missing_license_evidence (__main__.BuildPlanTests.test_missing_license_evidence) ... ok
+test_missing_source (__main__.BuildPlanTests.test_missing_source) ... ok
+test_missing_source_lock (__main__.BuildPlanTests.test_missing_source_lock) ... ok
+test_missing_target (__main__.BuildPlanTests.test_missing_target) ... ok
+test_native_wasm_cannot_share_manifest_and_lock (__main__.BuildPlanTests.test_native_wasm_cannot_share_manifest_and_lock) ... ok
+test_native_wasm_cannot_share_target_directory (__main__.BuildPlanTests.test_native_wasm_cannot_share_target_directory) ... ok
+test_output_escape (__main__.BuildPlanTests.test_output_escape) ... ok
+test_output_symlink_rejected (__main__.BuildPlanTests.test_output_symlink_rejected) ... ok
+test_partial_snapshot_checked_but_never_complete (__main__.BuildPlanTests.test_partial_snapshot_checked_but_never_complete) ... ok
+test_partial_snapshot_wrong_git_blob_rejected (__main__.BuildPlanTests.test_partial_snapshot_wrong_git_blob_rejected) ... ok
+test_recorded_git_dirty_patch_and_untracked (__main__.BuildPlanTests.test_recorded_git_dirty_patch_and_untracked) ... ok
+test_rewritten_manifest_cannot_hide_dirty_archive_tree (__main__.BuildPlanTests.test_rewritten_manifest_cannot_hide_dirty_archive_tree) ... ok
+test_source_path_escape (__main__.BuildPlanTests.test_source_path_escape) ... ok
+test_source_symlink_rejected (__main__.BuildPlanTests.test_source_symlink_rejected) ... ok
+test_sources_scope_pass_is_not_gate_completion (__main__.BuildPlanTests.test_sources_scope_pass_is_not_gate_completion) ... ok
+test_toolchain_not_installed_does_not_attempt_install (__main__.BuildPlanTests.test_toolchain_not_installed_does_not_attempt_install) ... ok
+test_toolchain_wrong_version (__main__.BuildPlanTests.test_toolchain_wrong_version) ... ok
+test_unrecorded_git_dirty_rejected (__main__.BuildPlanTests.test_unrecorded_git_dirty_rejected) ... ok
+test_untracked_archive_file_rejected (__main__.BuildPlanTests.test_untracked_archive_file_rejected) ... ok
+test_wrong_archive_digest_rejected (__main__.BuildPlanTests.test_wrong_archive_digest_rejected) ... ok
+test_wrong_commit_rejected (__main__.BuildPlanTests.test_wrong_commit_rejected) ... ok
+test_wrong_url_rejected (__main__.BuildPlanTests.test_wrong_url_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 43 tests in 0.745s
+
+OK

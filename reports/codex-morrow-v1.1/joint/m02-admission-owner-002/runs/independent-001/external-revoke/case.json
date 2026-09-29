@@ -1,0 +1,19 @@
+{
+  "case": "external-revoke",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "grant_id": "2fa6d789368f8b0da0a27a1fbb6f126dae0159ab26074ec069b665cb2b376d37",
+    "external_revoke_result": {
+      "action": "revoke",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "application_pending": true,
+        "persisted": true,
+        "runtime_applied": false
+      }
+    },
+    "persisted_and_runtime_ack_separate": true,
+    "child_exit": 19
+  }
+}

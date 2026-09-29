@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-native-session"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[dependencies]
+morrow-core = { path = "../core" }
+morrow-native-session-wire = { path = "../contracts/experimental/agent_host_v2_capnp" }
+tokio = { version = "=1.53.1", features = ["rt-multi-thread", "macros", "process", "io-util", "sync", "time", "io-std"] }
+getrandom = "=0.4.3"
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.151"
+
+[[bin]]
+name = "morrow-native-session-host"
+path = "src/main.rs"
+[[example]]
+name = "fixture-client"

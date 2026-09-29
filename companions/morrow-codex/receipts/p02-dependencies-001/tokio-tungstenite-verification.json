@@ -1,0 +1,285 @@
+{
+  "repository": "openai-oss-forks/tokio-tungstenite",
+  "commit": "0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+  "url": "https://codeload.github.com/openai-oss-forks/tokio-tungstenite/tar.gz/0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+  "attempt": 1,
+  "started_unix": 1790596520.2268927,
+  "network": "stdlib urllib direct HTTPS, ProxyHandler({}), no Git/Cargo invocation",
+  "verified_git_tree": "a17959271ba2e9b397586e2022ddbd876b68de44",
+  "http_status": 200,
+  "final_url": "https://codeload.github.com/openai-oss-forks/tokio-tungstenite/tar.gz/0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+  "response_headers": {
+    "Access-Control-Allow-Origin": "https://render.githubusercontent.com",
+    "content-disposition": "attachment; filename=tokio-tungstenite-0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186.tar.gz",
+    "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
+    "Content-Type": "application/x-gzip",
+    "cross-origin-resource-policy": "cross-origin",
+    "ETag": "\"14484214b7a2616d8a7fd63fdd0f793bb3ecd2ba56892280ca2896c5cd571ea4\"",
+    "Strict-Transport-Security": "max-age=31536000",
+    "Vary": "Authorization,Accept-Encoding",
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "deny",
+    "X-XSS-Protection": "1; mode=block",
+    "Date": "Mon, 28 Sep 2026 11:55:20 GMT",
+    "Transfer-Encoding": "chunked",
+    "X-GitHub-Request-Id": "3ACC:1AA9B5:83E9DA:EE28D2:6ABA55A7",
+    "x-github-edge-region": "sea",
+    "connection": "close"
+  },
+  "status": "complete_verified",
+  "source_root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tokio-tungstenite-0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186",
+  "archive_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\tokio-tungstenite-0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186-attempt-001.tar.gz",
+  "archive_size": 33055,
+  "archive_sha256": "a1d8bfedf41ea59d5ed375ebc280dad7099d0c3398e91406c51d485270196a3d",
+  "git_tree_sha1": "a17959271ba2e9b397586e2022ddbd876b68de44",
+  "blob_count": 34,
+  "content_bytes": 216607,
+  "commit_response_sha256": "8a3efcd5d078225f07f4a7bd5abe1c05c9802f65d894063d90dc0c4ebbbf4431",
+  "tree_response_sha256": "73a5de312278301517b7774719323953574d54e3470124413094a3ae48519f69",
+  "elapsed_seconds": 4.244,
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "size": 1448,
+      "git_mode": "100644",
+      "git_blob_sha1": "9bfad300845d00755743344edc8442d4c236ccb4",
+      "sha256": "570d83878fdbc20d80090936017a3f3e056f414472535da383bf3076c89d89dc"
+    },
+    {
+      "path": ".gitignore",
+      "size": 18,
+      "git_mode": "100644",
+      "git_blob_sha1": "a9d37c560c6ab8d4afbf47eda643e8c42e857716",
+      "sha256": "f9b1ca6ae27d1c18215265024629a8960c31379f206d9ed20f64e0b2dcf79805"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "size": 4568,
+      "git_mode": "100644",
+      "git_blob_sha1": "249a7c4ccb2ef2ed8f6e5614eb16d8b0c68ddd8f",
+      "sha256": "0cd1668a479da9a46905a3bc2be8d372e7d7940f403d9c38210beb12ed5ada5b"
+    },
+    {
+      "path": "Cargo.toml",
+      "size": 3325,
+      "git_mode": "100644",
+      "git_blob_sha1": "b3bd4ba0dc4b7d1c6651cf67a15a6def4fdc8407",
+      "sha256": "1bb36f490668711ad63b88c5805c64f25ea16101bea4c924858b874a35521290"
+    },
+    {
+      "path": "LICENSE",
+      "size": 1093,
+      "git_mode": "100644",
+      "git_blob_sha1": "4bf5242e2dd870f2a6ca6e8e54154cff018e0bee",
+      "sha256": "fdd55e2b2da854b0fbdc1e607df7c2ba1e1ebf91ecb77c515511ebeef972bc8f"
+    },
+    {
+      "path": "README.md",
+      "size": 3357,
+      "git_mode": "100644",
+      "git_blob_sha1": "705f8506c2c56fd2a71b55f64671e858d0dfd764",
+      "sha256": "d543fd49f55a9ce48a57c5469eca5cc9ebaa91ee15a6100cbb12f64f3ffdc479"
+    },
+    {
+      "path": "autobahn/expected-results.json",
+      "size": 104725,
+      "git_mode": "100644",
+      "git_blob_sha1": "c3d82f4b42f89e33d3029da96497842ecac2980a",
+      "sha256": "1ef1023a82e8602e10404c0d0cacfff9400b122131546972fe597d2298ab5c8f"
+    },
+    {
+      "path": "autobahn/fuzzingclient.json",
+      "size": 187,
+      "git_mode": "100644",
+      "git_blob_sha1": "a265c3782d8de4d256c00c79cbc60dd2882812ed",
+      "sha256": "8965f24e55a039652098fdd0bdcb7f97f957bed9caf747e23f6b35b1044b641f"
+    },
+    {
+      "path": "autobahn/fuzzingserver.json",
+      "size": 132,
+      "git_mode": "100644",
+      "git_blob_sha1": "dc89960c47c763632fec78a9faac71f2b202e3f0",
+      "sha256": "b92c284fc0ce81665cc015536f38dd4d18c680dd37223c4cb3fe7296ea88275a"
+    },
+    {
+      "path": "examples/README.md",
+      "size": 734,
+      "git_mode": "100644",
+      "git_blob_sha1": "b0bb00a12df2462151768e95f15d86ab1e5464c1",
+      "sha256": "067ceaf7b70949f087fd582d71bb114e88ef0313560dbd33b345158ffa33eff3"
+    },
+    {
+      "path": "examples/autobahn-client.rs",
+      "size": 1575,
+      "git_mode": "100644",
+      "git_blob_sha1": "86676b25eef6c791808fa76ba40708444e063fee",
+      "sha256": "b60afbb9979fcfd7a38348ea1571f9d23935692eafdc4117d9b24c98de66c732"
+    },
+    {
+      "path": "examples/autobahn-server.rs",
+      "size": 1374,
+      "git_mode": "100644",
+      "git_blob_sha1": "0542b0dc71e5459a4c3231b0a55e6076589b926f",
+      "sha256": "3d59e3c2d27fb2ec1439e1c429cdfe9b641387a251e23cf62e6808011941530f"
+    },
+    {
+      "path": "examples/client.rs",
+      "size": 1960,
+      "git_mode": "100644",
+      "git_blob_sha1": "05a737575e9f0bd6c587f6916560f50f410712df",
+      "sha256": "a4e5f1e82c4b352b99aea71f47eb2e5f0289d6e8eb67c8d719341115f506c3b7"
+    },
+    {
+      "path": "examples/echo-server.rs",
+      "size": 1629,
+      "git_mode": "100644",
+      "git_blob_sha1": "603b0f10cd95967ffdd2b8c5e164f32b855eef48",
+      "sha256": "5bb6b5d84a10086edd28d3d5b6d402e851b7558b90e2a9327bba8d1034a49b52"
+    },
+    {
+      "path": "examples/interval-server.rs",
+      "size": 2071,
+      "git_mode": "100644",
+      "git_blob_sha1": "4371c828a377c48782353377f6bf768987c18d52",
+      "sha256": "8775e9dec5ccb26473944fd4879a27de3bcb0a0a7a813329d40a15d3e78a092e"
+    },
+    {
+      "path": "examples/proxy-client.rs",
+      "size": 575,
+      "git_mode": "100644",
+      "git_blob_sha1": "94ba8bbd84f2bb3acb62a4964adf6bfd3a1cc009",
+      "sha256": "aeca2870a168b47f3e8e31e4b2c57fc789a9ed43b79187d0a2288ec8ad49d21a"
+    },
+    {
+      "path": "examples/server-custom-accept.rs",
+      "size": 6108,
+      "git_mode": "100644",
+      "git_blob_sha1": "5880871c18e9148a492dd631e3743eb0addad9f1",
+      "sha256": "66a2811054c188e74dcf393b776ca2040107f5a813bbbdc9960c89dd74f0c535"
+    },
+    {
+      "path": "examples/server-headers.rs",
+      "size": 2357,
+      "git_mode": "100644",
+      "git_blob_sha1": "f8b729f6f083b808ff8c437778f1ea4e7f3c7b1b",
+      "sha256": "f04770383986cf020b895ece939931c1a6b4ecd722f7df307e25bd577bf8d483"
+    },
+    {
+      "path": "examples/server.rs",
+      "size": 3133,
+      "git_mode": "100644",
+      "git_blob_sha1": "288aeaa509136b2a97ea8d5824930e02f2d1b298",
+      "sha256": "b3f8369b474af3e73ae544dae200e5634c45f84a62788c7d6ce50d2eefc8dd1e"
+    },
+    {
+      "path": "rustfmt.toml",
+      "size": 268,
+      "git_mode": "100644",
+      "git_blob_sha1": "0c9d0486b247aac0d6622e0a8c56fdc8bdb1baa0",
+      "sha256": "54ab71174a138c12018435d5b8baceffd7eec4da50d17f9d6e178b36b577a358"
+    },
+    {
+      "path": "scripts/autobahn-client.sh",
+      "size": 1013,
+      "git_mode": "100755",
+      "git_blob_sha1": "e636c5bafe8a282bb46a169ed735e082e01b5a8a",
+      "sha256": "64b652cf2254fcffb36d2b65e171d3c867bedccd87a40375ca00954bfeaf873d"
+    },
+    {
+      "path": "scripts/autobahn-server.sh",
+      "size": 938,
+      "git_mode": "100755",
+      "git_blob_sha1": "daaa2395e38619846ba2b61a4afa0b8a4aa7998d",
+      "sha256": "6b910f0f59876cfddae8dea4c4241c194d90ca0ecc111a1acd17c0301599d185"
+    },
+    {
+      "path": "scripts/proxy-test/start.sh",
+      "size": 1483,
+      "git_mode": "100755",
+      "git_blob_sha1": "003582b9146ed9d5c65f36239a83da24297a4cd5",
+      "sha256": "9831d3a942dee901a8e5eb49eeb3935fb4abda0f35e1258fe288801fa9a3958d"
+    },
+    {
+      "path": "scripts/proxy-test/stop.sh",
+      "size": 941,
+      "git_mode": "100755",
+      "git_blob_sha1": "ed1f9e42aeeb9aafb6c39eac5deab8e23068a231",
+      "sha256": "e46e39299d83843708055698e77afa4de98cb1b3135a0f6530229192842edbe0"
+    },
+    {
+      "path": "src/compat.rs",
+      "size": 7010,
+      "git_mode": "100644",
+      "git_blob_sha1": "17fbd1f95f3738cd6f4fa75c223432f45a82a6c5",
+      "sha256": "58e610b11d36e969ecb311d6e8f048db2f19049c8b3787752c53a511f86e39d9"
+    },
+    {
+      "path": "src/connect.rs",
+      "size": 10617,
+      "git_mode": "100644",
+      "git_blob_sha1": "f910f8d82e61b7060c95b011650cec70f31a9919",
+      "sha256": "f506c61203ea3034d792d49e508e6cbc315daf0a9090e8512d467bcf34050cbc"
+    },
+    {
+      "path": "src/handshake.rs",
+      "size": 5486,
+      "git_mode": "100644",
+      "git_blob_sha1": "aa51276960a061f2769e958317977399c6c78325",
+      "sha256": "2030d6e704a97606cd88c3cf16404e9fded9beef9b9f661c9ddb988528e1873d"
+    },
+    {
+      "path": "src/lib.rs",
+      "size": 15103,
+      "git_mode": "100644",
+      "git_blob_sha1": "db8fc290c426227709529f6d3c3296013aeb3052",
+      "sha256": "03b7bb1dbb1bd7f4d322c9c56823fe994b80445218572ae4bfe0217f4c018468"
+    },
+    {
+      "path": "src/proxy.rs",
+      "size": 8930,
+      "git_mode": "100644",
+      "git_blob_sha1": "6b103d6c3d5bd8cce2f8ecd7ccc48f0c88c19b44",
+      "sha256": "ed37642e0f3c02187f6b98bd41f395643f0ab8b5e1e21d9ded3b3dbba2067df2"
+    },
+    {
+      "path": "src/stream.rs",
+      "size": 3359,
+      "git_mode": "100644",
+      "git_blob_sha1": "67985c7d1cb680cc4b6881b1cc37ff767690b7c3",
+      "sha256": "1a3c9595145c913a4b29a7ff3fc8caaea171b1946e96243edb280986b6eb6172"
+    },
+    {
+      "path": "src/tls.rs",
+      "size": 9018,
+      "git_mode": "100644",
+      "git_blob_sha1": "9ad9e67bafe883bad8193bbbc2752012bca649aa",
+      "sha256": "ede833940750523f43aecad570e38d9b21de8e4128c8efc3f5e8900116d7c211"
+    },
+    {
+      "path": "tests/communication.rs",
+      "size": 3597,
+      "git_mode": "100644",
+      "git_blob_sha1": "a7b879547aebcae08fa92c9127b0fa9fa333a038",
+      "sha256": "a732fede8d0d3990ea0c4ca54976a512d2f688ba7e9955d20b0be294d5cdca5f"
+    },
+    {
+      "path": "tests/handshakes.rs",
+      "size": 857,
+      "git_mode": "100644",
+      "git_blob_sha1": "8d4fbff2b04f06e0ca699c42b6ecef75dc979489",
+      "sha256": "afc5ed5d9559d8e055ec8a53512f25e1cff9e4bff9bb8ca55cc731f96b2351e0"
+    },
+    {
+      "path": "tests/proxy_integration.rs",
+      "size": 7618,
+      "git_mode": "100644",
+      "git_blob_sha1": "b2c2876ce9fb804718136b35ce7aad61bbf54eb2",
+      "sha256": "b05bf3dce2e608d32441b5f6059a533b8d192df9eeacf66c96e2e04ae1c214ea"
+    }
+  ],
+  "limits": [
+    "Source preparation only; no build, test, Cargo invocation, or runtime proof.",
+    "Windows files preserve content; Git executable modes retained in this manifest.",
+    "No existing source/dependency lock modified."
+  ]
+}

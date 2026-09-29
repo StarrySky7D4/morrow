@@ -1,0 +1,23 @@
+{
+  "files": {
+    "host-rows.json": "75441a280f1a649eee3b2a982df5af5bfbb3787152c569c905646984ffcac7a6",
+    "host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-approval.json": "d0fd9b6397366095bcba4b0d227b023fce037f8875ce552e459b19282f7d825b",
+    "init.json": "09416adb9c2439e1e167bc3e8c1d448abe06ba3d9c89436cc0a3528fe1044509",
+    "inputs.json": "8ba4bff3964ea7128b27bb978f68e99620e99bad314d5d85a542cf8977f08e80",
+    "launch.json": "667a61800e7989230a9b94adf61418d018204bb305c304d2b261faf0f6522f89",
+    "operator-commands.json": "bbf27dad2a1a82b42682ff6a6708aa83885db6b28632a691cdda775e9aa4dde0",
+    "profile/coordination.sqlite": "36db251046928d568ae17cf03e2bc74d580f033e3967eed906989d01a64bbbcc",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "a1172f25be64f5265a54818514744af3ab91aa3e321faf3d0bdfc4893b5c3077",
+    "response-body.bin": "78a871e08c848755bd8c1fa4269e4e58e4695f28617266d7e7ea166b5ccf0c6b",
+    "result.json": "6da5bf0d805cfbab38ebcde508e91993fc505e0ead15f780a2f6681112ec12f9",
+    "retained-final.json": "3e443e88b9b608b85e0eed49d9b8a06ad78f4105d283ed66a07c7ae99c9a50a7",
+    "server-events.json": "c2889df7c00c5ead6c75fb6bd422b19c895777ca7a42dd5aa94d2064a3b3ca7b",
+    "sink-events.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  },
+  "plugin_evidence": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-008\\20260928T235143862332Z\\s503\\core-events.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-008\\20260928T235143862332Z\\s503\\result.json": "70c24a4f7ce62433986a64795d9ea2b44318146fffdbc070ad8ce382dabb22cc"
+  }
+}

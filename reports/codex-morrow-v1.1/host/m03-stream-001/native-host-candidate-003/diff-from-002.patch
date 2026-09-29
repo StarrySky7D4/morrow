@@ -1,0 +1,23 @@
+--- host002/src\bin\morrow-native-close-peer.rs
++++ host003/src\bin\morrow-native-close-peer.rs
+@@ -33,6 +33,9 @@
+     loop {
+         let f = read(&mut input)?;
+         if f.kind == w::Kind::Welcome {
++            if f.code != 0 || f.sequence != 1 {
++                return Err("Welcome requires success code0 and Hello sequence1".into());
++            }
+             break;
+         }
+         if f.kind == w::Kind::Stop {
+--- host002/src\supervisor.rs
++++ host003/src\supervisor.rs
+@@ -919,7 +919,7 @@
+                     let invalid=if frame.code!=0||!identity(&frame,&initial){17}else if frame.sequence!=last_sequence+1{18}else if !ready&&frame.kind!=w::Kind::Hello{23}else{0};
+                     if invalid!=0{let _=http.queue(w::Kind::Denied,frame.sequence,invalid,w::Payload::None);reason=invalid;continue;}
+                     last_sequence=frame.sequence;
+-                    if !ready{if policy.lock().unwrap().ready(instance).is_err(){reason=19;continue;}ready=true;shared.phase("Active");http.progress.owner=w::OwnerPhase::Active;if http.queue(w::Kind::Welcome,last_sequence,2,w::Payload::None).is_err(){reason=21;}continue;}
++                    if !ready{if policy.lock().unwrap().ready(instance).is_err(){reason=19;continue;}ready=true;shared.phase("Active");http.progress.owner=w::OwnerPhase::Active;if http.queue(w::Kind::Welcome,last_sequence,0,w::Payload::None).is_err(){reason=21;}continue;}
+                     if remaining==0{reason=21;continue;}remaining-=1;
+                     let revoked={let g=http.parent.gate.lock().unwrap();http.progress.issued_offset=http.progress.issued_offset.max(g.issued_body_end);http.progress.last_write_ordinal=g.last_write;g.revoked};
+                     let cleanup=matches!(frame.kind,w::Kind::Query|w::Kind::HttpCancel|w::Kind::Close)||matches!(&frame.payload,w::Payload::Credit(c)if frame.kind==w::Kind::HttpCredit&&c.window_bytes==0);

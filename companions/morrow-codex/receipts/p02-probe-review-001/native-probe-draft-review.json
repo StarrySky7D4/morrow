@@ -1,0 +1,44 @@
+{
+  "status": "static_review_complete_no_unresolved_material_blocker",
+  "method": "read-only source and fixed API comparison",
+  "findings": [],
+  "files": {
+    "qualification/p02-native-probe-001/Cargo.toml": {
+      "sha256": "700ee6b3fd7a328af30da02c28e2e27d44037bf9ceb9659253dcfa5b2a8a0f75",
+      "bytes": 1940
+    },
+    "qualification/p02-native-probe-001/src/main.rs": {
+      "sha256": "c3259978d27b34f73a16ccc2df6ab1db3dd2d782f7b01980ea94e7ce2f4662f0",
+      "bytes": 15846
+    },
+    "qualification/p02-native-probe-001/README.md": {
+      "sha256": "fb60a200cd718675d5ed73c23f7299eaf00921edf99ea77fda109a16929001ae",
+      "bytes": 3762
+    },
+    "sdk/host-kit-003-copy/src/lib.rs": {
+      "sha256": "bcd605bf8928b8a6f9c5cdc396cec61a75dea67562ee8bde0b0a703454d558fc",
+      "bytes": 9589
+    },
+    "sdk/host-kit-003-copy/manifest.json": {
+      "sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+      "bytes": 34769
+    },
+    "upstream/reference/codex/codex-rs/codex-api/src/endpoint/responses.rs": {
+      "sha256": "4f2fff3da4ca3ca9fcfa40ada8e98a0229af296094e03febb4d823f32ef932c8",
+      "bytes": 4961
+    },
+    "upstream/p02-source-batch-001/audit-peek/codex-rs/codex-api/src/endpoint/session.rs": {
+      "sha256": "355cc0f030ab32d21b3e6fcce569a15a59958fecdda85423bf05642497bdb1eb",
+      "bytes": 4446
+    },
+    "upstream/p02-source-batch-001/audit-peek/codex-rs/http-client/src/request.rs": {
+      "sha256": "e909859af99adabad04daf3663ff77fae736e7587870a3dc3545c7d5f3ffe4a1",
+      "bytes": 11131
+    }
+  },
+  "limits": [
+    "not compiled or executed by reviewer",
+    "root owns actual lock/build/runtime validation",
+    "does not prove core loop, exec/store replacement, host connection, P02 or G0"
+  ]
+}

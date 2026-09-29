@@ -1,0 +1,17 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-Cap-Test",
+  "containment": "processcontainer",
+  "process": {
+    "commandLine": "python -c \"import sys; import os; print(f'Python version: {sys.version}'); print(f'Current directory: {os.getcwd()}'); print('Script executed successfully')\"",
+    "timeout": 30000
+  },
+  "processContainer": {
+    "capabilities": [
+      "registryRead"
+    ]
+  },
+  "ui": {
+    "disable": false
+  }
+}

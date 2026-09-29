@@ -1,0 +1,10 @@
+{
+  "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/data/sample.txt",
+  "path": "rust/runfiles/data/sample.txt",
+  "expected_blob": "398ec97d8a49b4c36ce0f45b1a7435ba53c1eefa",
+  "status": "verified",
+  "size": 13,
+  "git_mode": "100644",
+  "git_blob_sha1": "398ec97d8a49b4c36ce0f45b1a7435ba53c1eefa",
+  "sha256": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4"
+}

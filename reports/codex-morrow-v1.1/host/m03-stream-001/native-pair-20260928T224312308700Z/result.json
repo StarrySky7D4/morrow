@@ -1,0 +1,99 @@
+{
+  "status": "failed",
+  "run": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T224312308700Z",
+  "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-003\\20260928T224312308700Z",
+  "candidate_manifest_sha256": "2d709b0482838d8ca0378963ef6a970c78e9e03c0391f7dd6b8f293f6058c655",
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "timing": {
+    "host_events_original_approval_clock": [
+      {
+        "at_us": 1913256,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+          "config_sha256": "68d0ec8ea2f817910b454b241b6d054fd7f19962f4f62c1a3d8b3a9b165d84bd",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 6984,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 5303595,
+        "detail": {
+          "reason": 24
+        },
+        "event": "session_close_reason",
+        "ordinal": 8
+      },
+      {
+        "at_us": 5314748,
+        "detail": {
+          "business_success": false,
+          "code": 2
+        },
+        "event": "exit",
+        "ordinal": 12
+      }
+    ]
+  },
+  "error": "RuntimeError('host terminal before expected result: [{\"reason\": 24}]')",
+  "progress": {
+    "cancel_discarded_bytes": 0,
+    "child_exited": true,
+    "connect_reaped": true,
+    "data_closed": true,
+    "drain_discarded_bytes": 0,
+    "error_code": 24,
+    "error_consumed_bytes": 0,
+    "http_eof": false,
+    "http_status": 0,
+    "intent": "Absent",
+    "issued_offset": 0,
+    "last_write_ordinal": 0,
+    "network": "Idle",
+    "os_completed_offset": 0,
+    "owner": "Released",
+    "owner_released": true,
+    "parser_yielded_bytes": 0,
+    "peer_consumed_offset": 0,
+    "read_reaped": true,
+    "received_offset": 0,
+    "request_closed": false,
+    "reserved_offset": 0,
+    "response_material_stored": false,
+    "revoke_applied": true,
+    "revoke_persisted": true,
+    "stderr_eof": true,
+    "stdout_eof": true,
+    "worker_joined": false,
+    "worker_started": false,
+    "write_reaped": true
+  },
+  "root_close_reasons": [
+    {
+      "at_us": 5303595,
+      "detail": {
+        "reason": 24
+      },
+      "event": "session_close_reason",
+      "ordinal": 8
+    }
+  ],
+  "host_os_exit": 2,
+  "host_lifetime": {
+    "pid": 5504,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 6984,
+      "session": 1678465189899793699
+    },
+    "owner_release_verified": true
+  },
+  "inputs_unchanged": true
+}

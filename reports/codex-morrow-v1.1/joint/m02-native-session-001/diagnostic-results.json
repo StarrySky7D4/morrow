@@ -1,0 +1,177 @@
+{
+  "scope": "append-only progress overlay; original matrix and product ledger frozen",
+  "matrix_sha256": "683e4dd0f49afe3de4da9cb2d26ba6d133801db48987438672e90a17303233b2",
+  "diagnostics": [
+    {
+      "id": "M02D-01",
+      "title": "宿主准入与实际子进程绑定",
+      "related_original_ids": [
+        "NX-01"
+      ],
+      "status": "partial_verified",
+      "evidence": "10 configured launches and digest bindings; 8 independent child OS handles",
+      "remaining": "production approval, trusted install, hash/load race, two fast negative OS witnesses",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-02",
+      "title": "真实握手和只读状态",
+      "related_original_ids": [
+        "NX-01",
+        "NX-02"
+      ],
+      "status": "verified_limited_control_slice",
+      "evidence": "real Challenge/Hello/Welcome/Query/State and 64 decoded frames",
+      "remaining": "read-own-session only; no business authority or external pipe interception",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-03",
+      "title": "伪造准入与绑定字段",
+      "related_original_ids": [
+        "NX-01",
+        "P01"
+      ],
+      "status": "partial_verified",
+      "evidence": "wrong-artifact Hello rejected, source authority reviewed",
+      "remaining": "other forged identity/platform/capability fields not fully run; no approved field",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-04",
+      "title": "旧实例和旧代次",
+      "related_original_ids": [
+        "NX-02",
+        "P01"
+      ],
+      "status": "not_run_historical_replay",
+      "evidence": "current epoch alteration rejected",
+      "remaining": "no prior-session/pipe/permit replay; alteration is not historical replay",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-05",
+      "title": "在线撤权和在途交付",
+      "related_original_ids": [
+        "P01",
+        "NX-04"
+      ],
+      "status": "partial_verified",
+      "evidence": "new query after revoke ack denied; no later State",
+      "remaining": "unsent and partial-write in-flight windows unexecuted",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-06",
+      "title": "首次准入到期不续期",
+      "related_original_ids": [
+        "P01"
+      ],
+      "status": "partial_verified",
+      "evidence": "700 ms TTL not renewed by seven queries",
+      "remaining": "authorize-to-launch delay/retry not independently executed",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-07",
+      "title": "控制路径独立且有界",
+      "related_original_ids": [
+        "NX-05"
+      ],
+      "status": "not_run_saturation",
+      "evidence": "ordinary control stop bounded; source priority reviewed",
+      "remaining": "no independent saturated output/control queue or OS backpressure proof",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-08",
+      "title": "畸形帧与读写超时",
+      "related_original_ids": [
+        "NX-05",
+        "NX-06"
+      ],
+      "status": "partial_verified",
+      "evidence": "real partial frame, no Hello, ignored Stop; independent codec negatives",
+      "remaining": "codec threshold depth/traversal, write backpressure and all malformed runtime variants unexecuted",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-09",
+      "title": "正常退出与输出关闭分开",
+      "related_original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "status": "partial_verified",
+      "evidence": "8 OS child exit witnesses, host-reported child EOF, independent host output EOF",
+      "remaining": "two rapid rejects lack independent child handles; child EOF is host evidence",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-10",
+      "title": "ClosingUnconfirmed保留所有权",
+      "related_original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "status": "partial_verified",
+      "evidence": "real holder PID, ClosingUnconfirmed, retained owner then release",
+      "remaining": "same-slot re-admission producer only; no tree containment proof",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-11",
+      "title": "断连与未知未决",
+      "related_original_ids": [
+        "NX-02",
+        "NX-04",
+        "P01"
+      ],
+      "status": "not_run_business_unknown",
+      "evidence": "client disconnect after revoke observed, no retry in this control exchange",
+      "remaining": "no business writer, pending operation ledger or crash reconciliation",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-12",
+      "title": "共享实现与fixture边界",
+      "related_original_ids": [
+        "QX-03"
+      ],
+      "status": "partial_source_and_build_verified",
+      "evidence": "shared Core HostPolicy and reusable native_session actual dependency path",
+      "remaining": "private per-host control policy; no production approval integration or release qualification",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-13",
+      "title": "旧合同与UI入口冻结",
+      "related_original_ids": [
+        "L06"
+      ],
+      "status": "verified_integrity_only",
+      "evidence": "1485 old paths unchanged",
+      "remaining": "no old UI or guest runtime compatibility regression",
+      "product_pass_credit": 0
+    },
+    {
+      "id": "M02D-14",
+      "title": "可重放证据与失败闭合",
+      "related_original_ids": [
+        "QX-01",
+        "QX-02"
+      ],
+      "status": "partial_verified",
+      "evidence": "frozen source/build/exe identities, fresh runs, codec independent build, negative exits",
+      "remaining": "no independent host/client rebuild or all production preflight fault cases",
+      "product_pass_credit": 0
+    }
+  ],
+  "M-02": "partial",
+  "G0": "blocked",
+  "G1": "not_passed",
+  "P-02": "blocked",
+  "J-00": "blocked",
+  "product_graphs": "0/2",
+  "original_acceptance_not_run": 84
+}

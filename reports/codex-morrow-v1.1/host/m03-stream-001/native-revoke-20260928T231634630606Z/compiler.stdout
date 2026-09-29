@@ -1,0 +1,28 @@
+
+running 5 tests
+test supervisor::revocation_interleaving_tests::external_commit_then_close_uses_durable_19_not_callers_25 ... FAILED
+test supervisor::revocation_interleaving_tests::owner_close_then_late_operator_preserves_first_result_and_ack_snapshot ... ok
+test supervisor::revocation_interleaving_tests::owner_commit_before_generation_publish_does_not_trigger_external_poll ... ok
+test supervisor::revocation_interleaving_tests::true_external_commit_is_applied_by_real_poll_path ... FAILED
+test supervisor::revocation_interleaving_tests::unknown_incomplete_or_nonrevoked_provenance_fails_closed ... ok
+
+failures:
+
+---- supervisor::revocation_interleaving_tests::external_commit_then_close_uses_durable_19_not_callers_25 stdout ----
+
+thread 'supervisor::revocation_interleaving_tests::external_commit_then_close_uses_durable_19_not_callers_25' (13444) panicked at src\revocation_interleaving_tests.rs:144:26:
+called `Result::unwrap()` on an `Err` value: "request cleanup facts"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- supervisor::revocation_interleaving_tests::true_external_commit_is_applied_by_real_poll_path stdout ----
+
+thread 'supervisor::revocation_interleaving_tests::true_external_commit_is_applied_by_real_poll_path' (9212) panicked at src\revocation_interleaving_tests.rs:115:42:
+called `Result::unwrap()` on an `Err` value: "request cleanup facts"
+
+
+failures:
+    supervisor::revocation_interleaving_tests::external_commit_then_close_uses_durable_19_not_callers_25
+    supervisor::revocation_interleaving_tests::true_external_commit_is_applied_by_real_poll_path
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 8 filtered out; finished in 3.89s
+

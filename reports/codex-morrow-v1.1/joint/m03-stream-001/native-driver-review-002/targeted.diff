@@ -1,0 +1,609 @@
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-001\src\driver.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-002\src\driver.rs
+@@ -4,7 +4,9 @@
+ use bytes::Bytes;
+ use http::{HeaderMap, StatusCode};
+ use serde::Serialize;
++use std::sync::{Arc, Mutex};
+ use std::{fmt, future::Future, pin::Pin};
++use tokio_util::sync::CancellationToken;
+ 
+ pub type DriverFuture<'a, T> = Pin<Box<dyn Future<Output = Result<T, BridgeError>> + Send + 'a>>;
+ 
+@@ -84,6 +86,47 @@
+     Deadline,
+     InvalidResponse,
+     ErrorBodyLimit,
++    HostCancelled,
++    NativeFailure,
++}
++
++/// A shared cancellation latch and event-delivery fence. Host application and
++/// local cancellation synchronously set the same first reason and wake token.
++/// with_live linearizes a nonblocking event enqueue/delivery before cancellation
++/// or refuses it after cancellation. No callback may await or acquire driver state.
++#[derive(Clone, Debug, Default)]
++pub struct CancellationSignal {
++    token: CancellationToken,
++    first_reason: Arc<Mutex<Option<CancelReason>>>,
++}
++impl CancellationSignal {
++    pub fn cancel(&self, reason: CancelReason) {
++        let mut first = self.first_reason.lock().unwrap();
++        if first.is_none() {
++            *first = Some(reason)
++        }
++        self.token.cancel();
++    }
++    pub fn reason(&self) -> Option<CancelReason> {
++        *self.first_reason.lock().unwrap()
++    }
++    pub fn token(&self) -> CancellationToken {
++        self.token.clone()
++    }
++    pub fn is_cancelled(&self) -> bool {
++        self.token.is_cancelled()
++    }
++    pub async fn cancelled(&self) {
++        self.token.cancelled().await
++    }
++    pub fn with_live<T>(&self, publish: impl FnOnce() -> T) -> Option<T> {
++        let first = self.first_reason.lock().unwrap();
++        if first.is_some() {
++            None
++        } else {
++            Some(publish())
++        }
++    }
+ }
+ 
+ /// Absolute classifications supplied by the consumer, never inferred by a wire
+@@ -124,6 +167,15 @@
+ }
+ 
+ pub trait NativeHttpSession: fmt::Debug + Send + Sync {
++    /// Bind once under the native cancellation lock, before operation use.
++    /// Replay any already-applied cancellation into this latch synchronously.
++    /// Host Stop/Denied/revoke/fatal must set it before returning from application,
++    /// not after another network read or an asynchronous forwarding task.
++    fn bind_cancellation(
++        &self,
++        key: RequestKey,
++        signal: CancellationSignal,
++    ) -> Result<(), BridgeError>;
+     /// Propose actual bytes only. No DNS/connect/HTTP and no implicit approval.
+     fn prepare(
+         &self,
+@@ -171,6 +223,9 @@
+ #[derive(Debug)]
+ pub struct WireNotReady;
+ impl NativeHttpSession for WireNotReady {
++    fn bind_cancellation(&self, _: RequestKey, _: CancellationSignal) -> Result<(), BridgeError> {
++        Ok(())
++    }
+     fn prepare(&self, _: RequestKey, _: PreparedHttpRequest) -> DriverFuture<'_, ProposalRef> {
+         Box::pin(async { Err(BridgeError::WireNotReady) })
+     }
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-001\src\network.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-002\src\network.rs
+@@ -51,7 +51,7 @@
+     key: RequestKey,
+     deadline: Instant,
+     started: Instant,
+-    cancellation: CancellationToken,
++    cancellation: CancellationSignal,
+     entered: AtomicBool,
+     received: AtomicU64,
+     acknowledged: AtomicU64,
+@@ -89,12 +89,14 @@
+             ));
+         }
+         let (detached, _) = watch::channel(true);
++        let cancellation = CancellationSignal::default();
++        driver.bind_cancellation(key, cancellation.clone())?;
+         Ok(Arc::new(Self {
+             driver,
+             key,
+             deadline,
+             started: Instant::now(),
+-            cancellation: CancellationToken::new(),
++            cancellation,
+             entered: AtomicBool::new(false),
+             received: AtomicU64::new(0),
+             acknowledged: AtomicU64::new(0),
+@@ -111,13 +113,24 @@
+         }))
+     }
+     pub fn token(&self) -> CancellationToken {
++        self.cancellation.token()
++    }
++    #[cfg(test)]
++    pub(crate) fn cancellation_signal(&self) -> CancellationSignal {
+         self.cancellation.clone()
+     }
+     pub fn deadline(&self) -> Instant {
+         self.deadline
+     }
+     pub fn first_cancel_reason(&self) -> Option<CancelReason> {
+-        self.audit.lock().unwrap().first_cancel_reason
++        self.cancellation.reason()
++    }
++    pub fn deliver_if_live<T>(&self, publish: impl FnOnce() -> T) -> Option<T> {
++        if Instant::now() >= self.deadline {
++            self.cancel(CancelReason::Deadline);
++            return None;
++        }
++        self.cancellation.with_live(publish)
+     }
+     pub fn observe_core_completion(&self, end_turn: Option<bool>) {
+         self.audit.lock().unwrap().core_completion = Some(CoreCompletion { end_turn });
+@@ -129,6 +142,7 @@
+         audit.drain_discarded_bytes = self.drain_discarded.load(Ordering::Acquire);
+         audit.error_body_consumed_bytes = self.error_consumed.load(Ordering::Acquire);
+         audit.ack_queued_offset = self.acknowledged.load(Ordering::Acquire);
++        audit.first_cancel_reason = self.cancellation.reason();
+         audit
+     }
+     pub fn note(&self, kind: &'static str, bytes: &[u8]) {
+@@ -150,16 +164,17 @@
+         });
+     }
+     pub fn cancel(&self, reason: CancelReason) {
++        self.cancellation.cancel(reason);
++        let first_reason = self.cancellation.reason().unwrap();
+         {
+             let mut audit = self.audit.lock().unwrap();
+             if audit.first_cancel_reason.is_some() {
+                 return;
+             }
+-            audit.first_cancel_reason = Some(reason);
+-        }
+-        self.cancellation.cancel();
++            audit.first_cancel_reason = Some(first_reason);
++        }
+         self.note("cancel_requested_not_release", &[]);
+-        if let Err(error) = self.driver.cancel(self.key, reason) {
++        if let Err(error) = self.driver.cancel(self.key, first_reason) {
+             self.audit.lock().unwrap().cancel_queue_error = Some(error);
+         }
+     }
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-001\src\request_task.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\m03-stream-002\src\request_task.rs
+@@ -64,7 +64,7 @@
+             _ = tokio::time::sleep_until(self.operation.deadline()) => {
+                 self.operation.cancel(CancelReason::Deadline); None
+             },
+-            event = self.events.recv() => event,
++            event = self.events.recv() => self.operation.deliver_if_live(||event).flatten(),
+         }
+     }
+     pub fn cancel(&self) {
+@@ -295,14 +295,17 @@
+             &[],
+         );
+         // Sending to a slow consumer must never hide cancellation/deadline.
+-        let sent = tokio::select! { biased;
++        let permit = tokio::select! { biased;
+             _ = token.cancelled() => return cancelled(&op, count),
+             _ = tokio::time::sleep_until(op.deadline()) => return expired(&op, count),
+-            result = events.send(Ok(event)) => result,
+-        };
+-        if sent.is_err() {
++            result = events.reserve() => result,
++        };
++        let Ok(permit) = permit else {
+             op.cancel(CancelReason::OwnerDropped);
+             return (CoreTerminal::Cancelled, count, None);
++        };
++        if op.deliver_if_live(|| permit.send(Ok(event))).is_none() {
++            return cancelled(&op, count);
+         }
+         if let Some(end_turn) = completed {
+             // API SSE parser may already have dropped its ByteStream, or may do
+@@ -336,6 +339,55 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    #[tokio::test]
++    async fn host_latch_suppresses_queued_and_reserved_late_events_without_network_read() {
++        let operation = Operation::new(
++            Arc::new(WireNotReady),
++            RequestKey(9),
++            "http://127.0.0.1:12345/v1",
++            Instant::now() + std::time::Duration::from_secs(30),
++            1024,
++        )
++        .unwrap();
++        let (sender, events) = mpsc::channel(2);
++        let (_completion_tx, completion) = oneshot::channel();
++        sender
++            .send(Ok(ResponseEvent::OutputTextDelta("already queued".into())))
++            .await
++            .unwrap();
++        let permit = sender.reserve().await.unwrap();
++        operation.observe_core_completion(Some(false));
++        operation
++            .cancellation_signal()
++            .cancel(CancelReason::HostCancelled);
++        assert!(
++            operation
++                .deliver_if_live(
++                    || permit.send(Ok(ResponseEvent::OutputTextDelta("late reserved".into())))
++                )
++                .is_none()
++        );
++        let mut task = RequestTask {
++            operation,
++            events,
++            completion: Some(completion),
++            finished: false,
++        };
++        assert!(task.next_event().await.is_none());
++        assert_eq!(
++            task.events.len(),
++            1,
++            "queued event stays suppressed, late reserve never published"
++        );
++        assert_eq!(
++            task.operation.audit().first_cancel_reason,
++            Some(CancelReason::HostCancelled)
++        );
++        assert_eq!(
++            task.operation.audit().core_completion.unwrap().end_turn,
++            Some(false)
++        );
++    }
+     #[tokio::test]
+     async fn user_cancel_suppresses_queued_events_and_preserves_observed_completion() {
+         let operation = Operation::new(
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-001\src\session.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\session.rs
+@@ -33,6 +33,8 @@
+     pub delivery: Option<Delivery>,
+     pub fatal: Option<BridgeError>,
+     pub cancel_requested: bool,
++    pub cancel_reason: Option<CancelReason>,
++    pub cancellation: Option<CancellationSignal>,
+     pub cancel_written: bool,
+     pub credit_dirty: bool,
+     pub last_credit: Option<wire::Credit>,
+@@ -52,6 +54,174 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    fn terminal_progress() -> wire::Progress {
++        wire::Progress {
++            intent: wire::IntentPhase::Observed,
++            network: wire::NetworkPhase::Eof,
++            owner: wire::OwnerPhase::Active,
++            http_status: 200,
++            error_code: 0,
++            received_offset: 0,
++            reserved_offset: 0,
++            issued_offset: 0,
++            os_completed_offset: 0,
++            peer_consumed_offset: 0,
++            parser_yielded_bytes: 0,
++            drain_discarded_bytes: 0,
++            cancel_discarded_bytes: 0,
++            error_consumed_bytes: 0,
++            last_write_ordinal: 0,
++            revoke_persisted: false,
++            revoke_applied: false,
++            http_eof: true,
++            response_material_stored: true,
++            worker_joined: false,
++            connect_reaped: true,
++            read_reaped: true,
++            write_reaped: true,
++            data_closed: true,
++            child_exited: false,
++            stdout_eof: false,
++            stderr_eof: false,
++            owner_released: false,
++            worker_started: false,
++            request_closed: true,
++        }
++    }
++    #[tokio::test]
++    async fn decoded_host_stop_denial_and_revoke_synchronously_close_core_event_gate() {
++        for kind in [
++            wire::Kind::Stop,
++            wire::Kind::Denied,
++            wire::Kind::HttpTerminal,
++        ] {
++            let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++            let op = morrow_codex_m03_stream::network::Operation::new(
++                session.clone(),
++                RequestKey(1),
++                "http://127.0.0.1:12345/v1",
++                tokio::time::Instant::now() + Duration::from_secs(30),
++                1024,
++            )
++            .unwrap();
++            op.observe_core_completion(Some(false));
++            let (tx, mut rx) = tokio::sync::mpsc::channel(2);
++            tx.send(codex_core::ResponseEvent::OutputTextDelta("queued".into()))
++                .await
++                .unwrap();
++            let permit = tx.reserve().await.unwrap();
++            let mut frame = session
++                .shared
++                .state
++                .lock()
++                .unwrap()
++                .admission
++                .initial()
++                .clone();
++            frame.kind = kind;
++            frame.sequence = 0;
++            frame.code = 19;
++            if kind == wire::Kind::HttpTerminal {
++                frame.revocation_generation = 2;
++                let mut p = terminal_progress();
++                p.intent = wire::IntentPhase::Unknown;
++                p.network = wire::NetworkPhase::Cancelled;
++                p.owner = wire::OwnerPhase::Revoked;
++                p.http_eof = false;
++                p.response_material_stored = false;
++                p.request_closed = false;
++                p.error_code = 19;
++                p.revoke_persisted = true;
++                p.revoke_applied = true;
++                frame.payload = wire::Payload::Progress(p);
++            }
++            let decoded = wire::Frame::decode(&frame.encode().unwrap()).unwrap();
++            session.shared.handle_control(decoded);
++            assert!(
++                op.token().is_cancelled(),
++                "host application must not wait for a network read"
++            );
++            assert!(op.deliver_if_live(|| rx.try_recv()).is_none());
++            assert!(
++                op.deliver_if_live(
++                    || permit.send(codex_core::ResponseEvent::OutputTextDelta("late".into()))
++                )
++                .is_none()
++            );
++            assert_eq!(rx.len(), 1);
++            assert_eq!(op.audit().core_completion.unwrap().end_turn, Some(false));
++            assert_eq!(op.first_cancel_reason(), Some(CancelReason::HostCancelled));
++        }
++    }
++    #[tokio::test]
++    async fn cancellation_before_core_binding_is_replayed_without_a_lost_wakeup() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        session.shared.state.lock().unwrap().cancel();
++        let op = morrow_codex_m03_stream::network::Operation::new(
++            session,
++            RequestKey(1),
++            "http://127.0.0.1:12345/v1",
++            tokio::time::Instant::now() + Duration::from_secs(30),
++            1024,
++        )
++        .unwrap();
++        assert!(op.token().is_cancelled());
++        assert!(op.deliver_if_live(|| ()).is_none());
++    }
++    #[tokio::test]
++    async fn bad_control_after_request_closed_then_valid_close_ack_stays_failed() {
++        // Synthetic terminal frames only: this is a protocol negative test,
++        // not proof of HTTP completion or native OS cleanup.
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let mut closed = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        closed.kind = wire::Kind::RequestClosed;
++        closed.sequence = 0;
++        closed.payload = wire::Payload::Progress(terminal_progress());
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&closed.encode().unwrap()).unwrap());
++        let mut bad = closed.clone();
++        bad.kind = wire::Kind::State;
++        bad.sequence = 99;
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&bad.encode().unwrap()).unwrap());
++        let close = {
++            let mut s = session.shared.state.lock().unwrap();
++            let close = s
++                .admission
++                .control(wire::Kind::Close, wire::Payload::None)
++                .unwrap();
++            s.requests.insert(close.sequence, wire::Kind::Close);
++            s.close_written = true;
++            close
++        };
++        let mut ack = closed;
++        ack.kind = wire::Kind::State;
++        ack.sequence = close.sequence;
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&ack.encode().unwrap()).unwrap());
++        assert!(
++            session.shared.state.lock().unwrap().close_acked,
++            "cleanup acknowledgement is still consumed"
++        );
++        assert!(session.wait_close().await.is_err());
++        assert!(session.final_control_status().is_err());
++        let state = session.shared.state.lock().unwrap();
++        assert!(state.closed.is_some());
++        assert_eq!(
++            state.progress.as_ref().unwrap().intent,
++            wire::IntentPhase::Observed
++        );
++    }
+     #[tokio::test]
+     async fn dropping_pending_read_wait_does_not_lose_session_owned_chunk() {
+         // Local queue/async ownership only; no pipe, approval, HTTP or Core run.
+@@ -134,6 +304,15 @@
+         });
+     }
+     pub(crate) fn cancel(&mut self) {
++        self.cancel_for(CancelReason::HostCancelled);
++    }
++    pub(crate) fn cancel_for(&mut self, reason: CancelReason) {
++        if self.cancel_reason.is_none() {
++            self.cancel_reason = Some(reason)
++        }
++        if let Some(signal) = &self.cancellation {
++            signal.cancel(self.cancel_reason.unwrap())
++        }
+         self.admission.cancel();
+         self.cancel_requested = true;
+         if let Some(delivery) = &mut self.delivery {
+@@ -146,10 +325,15 @@
+             .retain(|(kind, _)| matches!(kind, wire::Kind::Query | wire::Kind::Close));
+     }
+     pub(crate) fn fail(&mut self, error: BridgeError) {
++        let reason = match error {
++            BridgeError::Deadline => CancelReason::Deadline,
++            BridgeError::Denied => CancelReason::HostCancelled,
++            _ => CancelReason::NativeFailure,
++        };
+         if self.fatal.is_none() {
+             self.fatal = Some(error);
+         }
+-        self.cancel();
++        self.cancel_for(reason);
+     }
+     pub(crate) fn queue(
+         &mut self,
+@@ -357,6 +541,14 @@
+     pub work: Condvar,
+ }
+ impl Shared {
++    pub fn handle_control(&self, frame: wire::Frame) {
++        let mut state = self.state.lock().unwrap();
++        if let Err(error) = state.accept_control(frame) {
++            state.fail(error)
++        }
++        drop(state);
++        self.signal();
++    }
+     pub fn signal(&self) {
+         self.changed.notify_waiters();
+         self.work.notify_all();
+@@ -420,6 +612,8 @@
+                     delivery: None,
+                     fatal: None,
+                     cancel_requested: false,
++                    cancel_reason: None,
++                    cancellation: None,
+                     cancel_written: false,
+                     credit_dirty: false,
+                     last_credit: None,
+@@ -502,15 +696,47 @@
+     }
+     pub async fn wait_close(&self) -> Result<(), BridgeError> {
+         self.wait(true, |s| {
++            if s.close_acked && s.close_written {
++                return match &s.fatal {
++                    Some(error) => Err(error.clone()),
++                    None => Ok(Some(())),
++                };
++            }
+             if s.control_eof && !s.close_acked {
+                 return Err(BridgeError::CleanupUnconfirmed);
+             }
+-            Ok(s.close_acked.then_some(()))
++            Ok(None)
+         })
+         .await
+     }
++    pub fn final_control_status(&self) -> Result<(), BridgeError> {
++        let state = self.shared.state.lock().unwrap();
++        if let Some(error) = &state.fatal {
++            return Err(error.clone());
++        }
++        if !state.close_acked || !state.close_written {
++            return Err(BridgeError::CleanupUnconfirmed);
++        }
++        Ok(())
++    }
+ }
+ impl NativeHttpSession for Session {
++    fn bind_cancellation(
++        &self,
++        key: RequestKey,
++        signal: CancellationSignal,
++    ) -> Result<(), BridgeError> {
++        self.key(key)?;
++        let mut state = self.shared.state.lock().unwrap();
++        if state.cancellation.is_some() {
++            return Err(BridgeError::DuplicateRequest);
++        }
++        if let Some(reason) = state.cancel_reason {
++            signal.cancel(reason)
++        }
++        state.cancellation = Some(signal);
++        Ok(())
++    }
+     fn prepare(
+         &self,
+         key: RequestKey,
+@@ -674,9 +900,9 @@
+         self.shared.signal();
+         Ok(())
+     }
+-    fn cancel(&self, key: RequestKey, _reason: CancelReason) -> Result<(), BridgeError> {
++    fn cancel(&self, key: RequestKey, reason: CancelReason) -> Result<(), BridgeError> {
+         self.key(key)?;
+-        self.shared.state.lock().unwrap().cancel();
++        self.shared.state.lock().unwrap().cancel_for(reason);
+         self.shared.signal();
+         Ok(())
+     }
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-001\src\workers.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\workers.rs
+@@ -94,12 +94,7 @@
+                 loop {
+                     match self.input.recv_timeout(Duration::from_millis(10)) {
+                         Ok(Ok(frame)) => {
+-                            let result = routed.state.lock().unwrap().accept_control(frame);
+-                            if let Err(error) = result {
+-                                routed.fail(error)
+-                            } else {
+-                                routed.signal()
+-                            }
++                            routed.handle_control(frame);
+                         }
+                         Ok(Err(_)) | Err(mpsc::RecvTimeoutError::Disconnected) => {
+                             let mut s = routed.state.lock().unwrap();
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-001\src\main.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\main.rs
+@@ -147,6 +147,13 @@
+             // the fixture EOF barrier. This process never writes fixture control.
+         }
+         let receipt=task.wait_cleanup().await.map_err(|e|e.to_string())?;
++        let close=match session.close() {
++            Ok(())=>match tokio::time::timeout(Duration::from_millis(500),session.wait_close()).await {
++                Ok(result)=>result,Err(_)=>Err(morrow_codex_m03_stream::driver::BridgeError::CleanupUnconfirmed)
++            },
++            Err(error)=>Err(error),
++        };
++        let final_control=session.final_control_status();
+         let (frames,frames_overflow)=session.observations();
+         let (io,io_overflow,io_joined)=session.io_observations();
+         let local_cleanup_ok=receipt.cleanup.as_ref().is_ok_and(|r|r.request_closed&&r.data_channel_closed&&r.data_connect_reaped&&r.data_read_reaped&&r.data_write_reaped&&(!r.network_worker_started||r.network_worker_exited))&&io_joined;
+@@ -154,12 +161,11 @@
+         let transport_complete=matches!(receipt.transport_drain,Some(Ok(())));
+         let report=json!({"status":"native_fixture_observation","identity":session.identity(),"task":receipt,"frames":frames,"frames_overflow":frames_overflow,
+             "io":io,"io_overflow":io_overflow,"local_data_thread_joined":io_joined,"product_success_claimed":false,
++            "close_result":close,"final_control_result":final_control,"result_snapshot":"after_close_observation",
+             "whole_session_release":"external_operator_only"});
+         serde_json::to_writer_pretty(&mut result,&report).map_err(|_|"result serialization")?;
+         result.write_all(b"\n").and_then(|_|result.flush()).map_err(|_|"result evidence write")?;
+-        session.close().map_err(|e|e.to_string())?;
+-        let close=tokio::time::timeout(Duration::from_millis(500),session.wait_close()).await;
+-        if !matches!(close,Ok(Ok(()))){return Err("native Close acknowledgement unconfirmed".into())}
++        if close.is_err()||final_control.is_err(){return Err("native terminal control failure; see final close result".into())}
+         if !local_cleanup_ok||!model_complete||!transport_complete{return Err("request incomplete; inspect independent task/evidence/cleanup dimensions".into())}
+         Ok(())
+     })

@@ -1,0 +1,37 @@
+[
+  {
+    "path": "BUILD.bazel",
+    "git_blob_sha1": "695fa918f99cc349119f181f5468c1d514d6d680",
+    "fixed_sha256": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916",
+    "copy_sha256": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "Cargo.lock",
+    "git_blob_sha1": "3db66fb68380ba57c9d0d33bf3d77ecf9c8eff51",
+    "fixed_sha256": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7",
+    "copy_sha256": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "Cargo.toml",
+    "git_blob_sha1": "dde46286abb79589370afd63d416d376495d3d21",
+    "fixed_sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+    "copy_sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "data/sample.txt",
+    "git_blob_sha1": "398ec97d8a49b4c36ce0f45b1a7435ba53c1eefa",
+    "fixed_sha256": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4",
+    "copy_sha256": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "runfiles.rs",
+    "git_blob_sha1": "3dbcd7977412b180af598c692c4a641816305331",
+    "fixed_sha256": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591",
+    "copy_sha256": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591",
+    "fixed_bytes_unchanged": true
+  }
+]

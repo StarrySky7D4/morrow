@@ -1,0 +1,14 @@
+{
+  "status": "fixture_source_no_new_blocker_harness009_marker_order_blocker",
+  "candidate_manifest_sha256": "06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689",
+  "candidate_exe_sha256": "515ed83d1b27d45df5d4cdcc18c41244b5b6ac930528452cc45a64fe0ada89ad",
+  "pins_verified": 55,
+  "producer_core_tests": 11,
+  "producer_native_tests": 18,
+  "independent_tests_run": 0,
+  "http_requests": 0,
+  "old_harness_blocker": "H009-1 reserved suppression marker can precede gate marker",
+  "A_runtime_verified": false,
+  "B_runtime_verified": false,
+  "product_gate_upgrade": false
+}

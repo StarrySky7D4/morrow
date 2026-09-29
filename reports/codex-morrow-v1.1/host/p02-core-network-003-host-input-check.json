@@ -1,0 +1,99 @@
+{
+  "kind": "independent_read_only_receipt_and_source_check",
+  "created_utc": "2026-09-28T13:48:44.239815+00:00",
+  "independent_build": false,
+  "independent_probe_execution": false,
+  "handoff_sha256": "97501761be789decabc52de2a89311d1d6a877b6dd38fa8c795f649a7b91aacb",
+  "batch_inputs": {
+    "count": 53,
+    "mismatches": []
+  },
+  "prior_inputs": {
+    "receipts/handoff.json": {
+      "count": 17,
+      "mismatches": []
+    },
+    "receipts/p02-native-probe-001/handoff.json": {
+      "count": 35,
+      "mismatches": []
+    },
+    "receipts/p02-exec-store-002/handoff.json": {
+      "count": 129,
+      "mismatches": []
+    }
+  },
+  "fixed_source": {
+    "count": 8697,
+    "mismatches": []
+  },
+  "source_symlink_check": "Git mode 120000 hashes link text, not target bytes",
+  "working_source": {
+    "count": 8699,
+    "mismatches": [],
+    "unlisted_files": [],
+    "missing_files": []
+  },
+  "source_delta_files": 5,
+  "source_delta_patch_sha256": "5daaa46c41e5711f696f623ad7a3df580e1daa6a11132bd038069cd3b329cafa",
+  "host_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "host_canonical": {
+    "count": 12,
+    "mismatches": []
+  },
+  "host_kit": {
+    "count": 180,
+    "mismatches": []
+  },
+  "runtime_case_checks": [
+    {
+      "case": "http_direct",
+      "assertions_recorded": 7,
+      "receipt_values_rechecked": true
+    },
+    {
+      "case": "websocket_disconnect",
+      "assertions_recorded": 5,
+      "receipt_values_rechecked": true
+    },
+    {
+      "case": "prewarm_disconnect",
+      "assertions_recorded": 5,
+      "receipt_values_rechecked": true
+    },
+    {
+      "case": "stream_426_natural_fallback_and_next_session",
+      "assertions_recorded": 12,
+      "receipt_values_rechecked": true
+    },
+    {
+      "case": "prewarm_426_natural_fallback_then_stream",
+      "assertions_recorded": 9,
+      "receipt_values_rechecked": true
+    },
+    {
+      "case": "preconnect_426_natural_fallback_then_stream",
+      "assertions_recorded": 9,
+      "receipt_values_rechecked": true
+    }
+  ],
+  "http_bodies_independently_rehashed": 5,
+  "producer_build_run": {
+    "build": {
+      "exit_code": 0,
+      "elapsed_seconds": 333.87770250000176,
+      "bound_inputs": {
+        "count": 944,
+        "mismatches": []
+      }
+    },
+    "run": {
+      "exit_code": 0,
+      "elapsed_seconds": 1.1111160999862477,
+      "bound_inputs": {
+        "count": 944,
+        "mismatches": []
+      }
+    }
+  },
+  "status": "passed_read_only_source_and_receipt_review_not_runtime_reproduction"
+}

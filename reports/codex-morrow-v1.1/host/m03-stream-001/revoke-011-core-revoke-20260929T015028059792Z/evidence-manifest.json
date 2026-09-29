@@ -1,0 +1,26 @@
+{
+  "files": {
+    "host-rows.json": "d8e4c6a62fe26a4ddb90bc9e5dd23c7392ee7b970e5664319e174e494e941667",
+    "host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "independent-approval.json": "2448e66d3183142883c48346af1fc619504f3a8b45f09672b6d1c6b8b9eae4d7",
+    "init.json": "d8b7c972e7b09e82898d6241f39d219ae381da199c52c340f9e7567216dede7a",
+    "launch.json": "1e60e7be5ee0aea9ac58705ac0c6fb777452133c0422cfe880fd493d3a9fca6b",
+    "locked-expectations.json": "1f7464b7686ea444de5f87d78edaed9dfefc70355be76594416e3ca4f65c4f03",
+    "operator-commands.json": "ee4296fe202b5faacbd801c90e33e02e7e371424017e73bf21e0ce043e641941",
+    "profile/coordination.sqlite": "eb99c9f0cee44308f2a5ce58bf473507878b6e70ccb22959022f3ab1192fdbdd",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "cba09fea137249194d192dd5a8594f112351bc3ebd537e3656828d9695b4b107",
+    "qualified-before-revoke.json": "13ff81c2d937444e0abf89783645c92254558b82aeac07514a58ae0a84643655",
+    "release-preconditions.json": "660499d3fad72bb0d85a2f9c9dceeda5dc6448ef1d67e504fb395241729b0a1c",
+    "result.json": "84636aa83df189a8fa6cacaf076c2473a0a679e95c02d0b8bf183d0d7111ae99",
+    "revoke-ack.json": "f211b39855745e52187ee8a8a3a0433a7e4020c3b24b0ddfe22211be67dec738",
+    "server-events.json": "7a67f597732e15fa9cdd50b560956e256401441e5d21311563b07ed401d91046"
+  },
+  "plugin_files": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\core-events.jsonl": "1ab61db191e81d0b24454f9534d35b70c16e64a695d37cc36719c7c8abbffeeb",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\fixture-events.jsonl": "6a3146c836fa523f3fc8d331f4b9ec388402139071a59465b2256f7eece01d3c",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\fixture-spec.json": "06b052e0007e9559af0a40c260a5e43b0afb1219ac292905d438b6ef35ab1413",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\release-consumer.json": "4237e97ac5bfc988fab013df9038fe9d0c415d54aa42f9ac41e1674e6f4f2374",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\result.json": "2000484372447304c00d8ac4f9282b4f5be1edb3b01b63e527e717fc5dff3dfe"
+  }
+}

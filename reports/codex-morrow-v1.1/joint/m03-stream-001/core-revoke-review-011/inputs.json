@@ -1,0 +1,122 @@
+{
+  "pins": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\result.json",
+      "sha256": "84636aa83df189a8fa6cacaf076c2473a0a679e95c02d0b8bf183d0d7111ae99"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\evidence-manifest.json",
+      "sha256": "888ab7bec35e60459251743171e154fad4b6aa8525a1a43a7cbe2d67ee84ad6a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\host-rows.json",
+      "sha256": "d8e4c6a62fe26a4ddb90bc9e5dd23c7392ee7b970e5664319e174e494e941667"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\host.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\independent-approval.json",
+      "sha256": "2448e66d3183142883c48346af1fc619504f3a8b45f09672b6d1c6b8b9eae4d7"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\init.json",
+      "sha256": "d8b7c972e7b09e82898d6241f39d219ae381da199c52c340f9e7567216dede7a"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\launch.json",
+      "sha256": "1e60e7be5ee0aea9ac58705ac0c6fb777452133c0422cfe880fd493d3a9fca6b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\locked-expectations.json",
+      "sha256": "1f7464b7686ea444de5f87d78edaed9dfefc70355be76594416e3ca4f65c4f03"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\operator-commands.json",
+      "sha256": "ee4296fe202b5faacbd801c90e33e02e7e371424017e73bf21e0ce043e641941"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\profile\\coordination.sqlite",
+      "sha256": "eb99c9f0cee44308f2a5ce58bf473507878b6e70ccb22959022f3ab1192fdbdd"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\profile\\init.guard",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\profile\\native-admissions.sqlite",
+      "sha256": "cba09fea137249194d192dd5a8594f112351bc3ebd537e3656828d9695b4b107"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\qualified-before-revoke.json",
+      "sha256": "13ff81c2d937444e0abf89783645c92254558b82aeac07514a58ae0a84643655"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\release-preconditions.json",
+      "sha256": "660499d3fad72bb0d85a2f9c9dceeda5dc6448ef1d67e504fb395241729b0a1c"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\result.json",
+      "sha256": "84636aa83df189a8fa6cacaf076c2473a0a679e95c02d0b8bf183d0d7111ae99"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\revoke-ack.json",
+      "sha256": "f211b39855745e52187ee8a8a3a0433a7e4020c3b24b0ddfe22211be67dec738"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\revoke-011-core-revoke-20260929T015028059792Z\\server-events.json",
+      "sha256": "7a67f597732e15fa9cdd50b560956e256401441e5d21311563b07ed401d91046"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\core-events.jsonl",
+      "sha256": "1ab61db191e81d0b24454f9534d35b70c16e64a695d37cc36719c7c8abbffeeb"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\fixture-events.jsonl",
+      "sha256": "6a3146c836fa523f3fc8d331f4b9ec388402139071a59465b2256f7eece01d3c"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\fixture-spec.json",
+      "sha256": "06b052e0007e9559af0a40c260a5e43b0afb1219ac292905d438b6ef35ab1413"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\release-consumer.json",
+      "sha256": "4237e97ac5bfc988fab013df9038fe9d0c415d54aa42f9ac41e1674e6f4f2374"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-revoke-011\\20260929T015028059792Z\\result.json",
+      "sha256": "2000484372447304c00d8ac4f9282b4f5be1edb3b01b63e527e717fc5dff3dfe"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_011.py",
+      "sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-002\\native-candidate-fixture-002.json",
+      "sha256": "6a8d4d07aab156d72f5fce73dea7750f8b5424707dae84595182ff7f55c211a5"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-fixture-002\\candidates\\fixture-002\\morrow-codex-native-http-client.exe",
+      "sha256": "b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\manifest.json",
+      "sha256": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\morrow-native-stream-host.exe",
+      "sha256": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\native-fixture-review-002\\result.json",
+      "sha256": "877381bab95263f2cdd27cce9c8b463e5b13fba5fc48822f568ef97c614806e9"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v3_http_stream\\native_http.capnp",
+      "sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+    }
+  ],
+  "original_batch_files": 20,
+  "fixed79_rescanned": false
+}

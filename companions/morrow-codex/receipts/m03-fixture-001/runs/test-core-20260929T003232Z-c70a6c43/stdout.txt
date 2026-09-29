@@ -1,0 +1,16 @@
+
+running 11 tests
+test fixture::tests::concurrent_marker_producers_preserve_sequence_without_disk_under_gate ... ok
+test fixture::tests::disk_records_flush_and_atomic_release_reaches_waiter_without_gate_lock ... ok
+test fixture::tests::failed_disk_write_remains_failure_while_owner_can_stop_and_join ... ok
+test fixture::tests::full_evidence_queue_fails_nonblocking_and_join_wait_is_bounded ... ok
+test fixture::tests::release_requires_same_event_and_identity_after_gate_close_and_is_once_only ... ok
+test fixture::tests::strict_spec_rejects_wider_limits_and_unknown_controls ... ok
+test network::tests::ambiguous_or_compressed_sse_head_is_rejected ... ok
+test request_task::tests::cancelled_cleanup_wait_can_resume_same_receipt ... ok
+test request_task::tests::held_received_event_and_reserved_event_use_original_gates_after_cancel ... ok
+test request_task::tests::host_latch_suppresses_queued_and_reserved_late_events_without_network_read ... ok
+test request_task::tests::user_cancel_suppresses_queued_events_and_preserves_observed_completion ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+

@@ -1,0 +1,211 @@
+{
+  "status": "original_A_failed_preserved_no_retry",
+  "original_result_sha256": "b39c0907d5df6d3c0964abfec454eb5568d2069c11534221bb05b23fab23cf7e",
+  "original_evidence_manifest_sha256": "1aee8877b1c10743ae086295a6c25407be058d98945298d0388d111dde918417",
+  "original_file_hashes_verified": {
+    "host": 15,
+    "plugin": 5
+  },
+  "post_count": 1,
+  "B_run": false,
+  "revoke_ack_observed_upper_bound_ms": 15.2387,
+  "revoke_ack": {
+    "application_pending": false,
+    "first_revocation_reason": 19,
+    "first_revocation_source": 1,
+    "persisted": true,
+    "runtime_applied": true
+  },
+  "core_terminal": "Cancelled",
+  "first_cancel_reason": "NativeFailure",
+  "aggregate_error": {
+    "Protocol": "unexpected data EOF/error"
+  },
+  "guest_cleanup": {
+    "Err": "CleanupUnconfirmed"
+  },
+  "guest_data_thread_joined": false,
+  "guest_control_threads_joined": true,
+  "guest_fixture_writer_joined": true,
+  "independent_control": {
+    "close_written": true,
+    "close_acked": true,
+    "matching_ack": {
+      "attempt": 1,
+      "child_pid": 15456,
+      "code": 0,
+      "epoch": 1,
+      "generation": 2,
+      "sequence": 7,
+      "session": 16864094044687674934
+    },
+    "control_eof": true,
+    "control_stream_ended": true,
+    "control_protocol_clean": true,
+    "sticky_control_failure": null
+  },
+  "last_data_read_completion": {
+    "action": "os_completion",
+    "bytes": 0,
+    "error": 109,
+    "id": 9,
+    "kind": "Read",
+    "pending": false
+  },
+  "marker_order": [
+    {
+      "ordinal": 1,
+      "kind": "core_event_queued",
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "a778104ab881e35af592407ca330380f5ef08d41327e723ed9f01cfb71f8dd42",
+        "stream_ordinal": 3
+      }
+    },
+    {
+      "ordinal": 2,
+      "kind": "core_event_reserved",
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 2,
+        "kind": "OutputTextDelta",
+        "sha256": "a1f2bc28d32cfadebf9946832195d2290face13cce9d5ce0c35df29876e2a402",
+        "stream_ordinal": 4
+      }
+    },
+    {
+      "ordinal": 3,
+      "kind": "core_event_held",
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "a778104ab881e35af592407ca330380f5ef08d41327e723ed9f01cfb71f8dd42",
+        "stream_ordinal": 3
+      }
+    },
+    {
+      "ordinal": 4,
+      "kind": "core_reserved_suppressed",
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 2,
+        "kind": "OutputTextDelta",
+        "sha256": "a1f2bc28d32cfadebf9946832195d2290face13cce9d5ce0c35df29876e2a402",
+        "stream_ordinal": 4
+      }
+    },
+    {
+      "ordinal": 5,
+      "kind": "host_revoke_received",
+      "event": null
+    },
+    {
+      "ordinal": 6,
+      "kind": "gate_closed",
+      "event": null
+    },
+    {
+      "ordinal": 7,
+      "kind": "core_event_suppressed",
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "a778104ab881e35af592407ca330380f5ef08d41327e723ed9f01cfb71f8dd42",
+        "stream_ordinal": 3
+      }
+    }
+  ],
+  "business_events": [
+    {
+      "elapsed_us": 211056,
+      "event": {
+        "kind": "actual_core_other_event",
+        "ordinal": 1
+      }
+    },
+    {
+      "elapsed_us": 246047,
+      "event": {
+        "kind": "actual_core_other_event",
+        "ordinal": 2
+      }
+    }
+  ],
+  "host_progress": {
+    "cancel_discarded_bytes": 0,
+    "child_exited": true,
+    "connect_reaped": true,
+    "data_closed": true,
+    "drain_discarded_bytes": 0,
+    "error_code": 19,
+    "error_consumed_bytes": 0,
+    "http_eof": false,
+    "http_status": 200,
+    "intent": "Unknown",
+    "issued_offset": 197,
+    "last_write_ordinal": 3,
+    "network": "Cancelled",
+    "os_completed_offset": 197,
+    "owner": "Released",
+    "owner_released": true,
+    "parser_yielded_bytes": 197,
+    "peer_consumed_offset": 197,
+    "read_reaped": true,
+    "received_offset": 197,
+    "request_closed": true,
+    "reserved_offset": 197,
+    "response_material_stored": false,
+    "revoke_applied": true,
+    "revoke_persisted": true,
+    "stderr_eof": true,
+    "stdout_eof": true,
+    "worker_joined": true,
+    "worker_started": true,
+    "write_reaped": true
+  },
+  "host_authority_owner": {
+    "automatic_takeover": false,
+    "epoch": 1,
+    "exit_observed": true,
+    "generation": 1,
+    "grant_id": "85cc93dcde6097ca2c1184f9ad01e38b383030f5aa78c921f838a09d27729446",
+    "locally_observed": true,
+    "owner_retained": false,
+    "phase": "Released",
+    "pid": 15456,
+    "session": 16864094044687674934,
+    "stderr_eof": true,
+    "stdout_eof": true
+  },
+  "host_exit": 0,
+  "guest_exit": 2,
+  "harness_threads": {
+    "reader_joined": true,
+    "fixture": [
+      {
+        "thread": "fixture-accept",
+        "joined": true
+      },
+      {
+        "thread": "fixture-handler",
+        "joined": true
+      },
+      {
+        "thread": "original_cleanup_budget",
+        "joined": true
+      }
+    ]
+  },
+  "source_supported_diagnosis": "data-owner read id9 completes zero bytes/error109 before validated control revocation reaches guest; unexpected data EOF/error latches native Protocol and signals Operation cancellation (first_cancel_reason NativeFailure). Later control HttpTerminal/gate marker does not erase it. Session cleanup returns CleanupUnconfirmed on io_result Err before confirming data-thread join. This is a real data-lane/cleanup failure, not B marker ordering or an acceptable Unknown variant.",
+  "limits": [
+    "host owner Released/guest OS exit do not prove guest data-thread explicit join",
+    "no cross-process elapsed subtraction; RTT is harness one-clock observed upper bound",
+    "suppressed A/B markers and absent business deltas do not qualify the intended clean host-control cancellation path because native data failure won first",
+    "raw native ledger not independently decoded in this analysis",
+    "do not whitelist Protocol or regrade this failed run; no source/predicate changes or new execution authorized here"
+  ]
+}

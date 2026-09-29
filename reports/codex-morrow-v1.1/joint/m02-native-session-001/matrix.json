@@ -1,0 +1,337 @@
+{
+  "kind": "joint_diagnostic_matrix_not_wire_schema",
+  "batch": "m02-native-session-001",
+  "dependencies": [
+    {
+      "owner": "host",
+      "input": "new authoritative versioned contract, kit, fixed vectors, reusable session module, safe fixture launch CLI",
+      "state": "awaiting_ready"
+    },
+    {
+      "owner": "plugin",
+      "input": "client consuming exact host contract, new lock/build/exe identity, controlled adversarial modes",
+      "state": "awaiting_ready"
+    },
+    {
+      "owner": "joint",
+      "input": "source and identity audit before independent real host/client runs",
+      "state": "preflight_only"
+    }
+  ],
+  "work_package_source": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\01_Morrow侧扩充实施路径.md",
+    "line": 36,
+    "text": "| M-02 | 原生连接、包准入与执行域 | M-01 | A/B 分别握手、资源约束、失联撤权、实际退出观察及 CLI 认证 |"
+  },
+  "original_acceptance": [
+    {
+      "id": "NX-01",
+      "scenario": "A/B产物互换、伪造自报ID",
+      "must_prove": "M-02/P-13：启动链核对真实摘要/目标，拒绝假身份",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 122,
+        "text": "| NX-01 | A/B产物互换、伪造自报ID | M-02/P-13：启动链核对真实摘要/目标，拒绝假身份 |"
+      }
+    },
+    {
+      "id": "NX-02",
+      "scenario": "CLI借用旧pipe或旧permit",
+      "must_prove": "M-02/P-11：当前用户/连接/epoch校验，不复活旧授权",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 123,
+        "text": "| NX-02 | CLI借用旧pipe或旧permit | M-02/P-11：当前用户/连接/epoch校验，不复活旧授权 |"
+      }
+    },
+    {
+      "id": "NX-04",
+      "scenario": "A崩溃而B仍在运行",
+      "must_prove": "M-06/P-09：新许可撤销、旧结果保留，不新建重复执行",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 125,
+        "text": "| NX-04 | A崩溃而B仍在运行 | M-06/P-09：新许可撤销、旧结果保留，不新建重复执行 |"
+      }
+    },
+    {
+      "id": "NX-05",
+      "scenario": "业务输出塞满时停止",
+      "must_prove": "M-02/M-03：控制保留额度有效，及时观察停止请求",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 126,
+        "text": "| NX-05 | 业务输出塞满时停止 | M-02/M-03：控制保留额度有效，及时观察停止请求 |"
+      }
+    },
+    {
+      "id": "NX-06",
+      "scenario": "Exited但输出尚未Closed",
+      "must_prove": "P-09：最后输出保留或明确gap，不提前释放",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 127,
+        "text": "| NX-06 | Exited但输出尚未Closed | P-09：最后输出保留或明确gap，不提前释放 |"
+      }
+    },
+    {
+      "id": "QX-01",
+      "scenario": "离线缺依赖、lock过期、缺target",
+      "must_prove": "P-00/M-10：预检/构建非零失败，不拉latest或改锁",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 154,
+        "text": "| QX-01 | 离线缺依赖、lock过期、缺target | P-00/M-10：预检/构建非零失败，不拉latest或改锁 |"
+      }
+    },
+    {
+      "id": "QX-02",
+      "scenario": "构建失败而dist存在旧成功产物",
+      "must_prove": "P-13：拒绝复用，产物关联本次输入与状态",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 155,
+        "text": "| QX-02 | 构建失败而dist存在旧成功产物 | P-13：拒绝复用，产物关联本次输入与状态 |"
+      }
+    },
+    {
+      "id": "QX-03",
+      "scenario": "production混入fault/fake/test身份",
+      "must_prove": "M-10/P-13：静态/动态探针阻断发行",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 156,
+        "text": "| QX-03 | production混入fault/fake/test身份 | M-10/P-13：静态/动态探针阻断发行 |"
+      }
+    },
+    {
+      "id": "B05",
+      "scenario": "子进程逃逸/取消/挂起",
+      "must_prove": "实际进程树终止或Unconfirmed，许可撤销",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 240,
+        "text": "| B05 | 子进程逃逸/取消/挂起 | 实际进程树终止或Unconfirmed，许可撤销 |"
+      }
+    },
+    {
+      "id": "P01",
+      "scenario": "伪造permit与过期代次",
+      "must_prove": "发送与结果交付均拒绝，已发生事实仍保留",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 247,
+        "text": "| P01 | 伪造permit与过期代次 | 发送与结果交付均拒绝，已发生事实仍保留 |"
+      }
+    },
+    {
+      "id": "L06",
+      "scenario": "固定原件兼容与来源",
+      "must_prove": "Wasm、原生产物、contracts、lock可核对",
+      "source": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+        "line": 274,
+        "text": "| L06 | 固定原件兼容与来源 | Wasm、原生产物、contracts、lock可核对 |"
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "M02D-01",
+      "title": "宿主准入与实际子进程绑定",
+      "related_original_ids": [
+        "NX-01"
+      ],
+      "required_observations": "独立核对启动exe摘要、固定argv/cwd/env策略/平台、父子PID、实际通道与宿主创建的实例代次；审共享准入代码",
+      "rejection_or_limit": "客户端自报artifact/pluginId/approved不能创建权限；未证明可信安装/防换包或OS强隔离",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-02",
+      "title": "真实握手和只读状态",
+      "related_original_ids": [
+        "NX-01",
+        "NX-02"
+      ],
+      "required_observations": "保存真实双向帧原字节/长度/摘要、宿主会话状态、关联请求与host/child PID；帧按唯一宿主合同独立解码",
+      "rejection_or_limit": "只读状态成功不计网络/执行/存储业务成功，认证/业务能力明确unsupported",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-03",
+      "title": "伪造准入与绑定字段",
+      "related_original_ids": [
+        "NX-01",
+        "P01"
+      ],
+      "required_observations": "真实客户端分别伪造approved/身份/摘要/平台/协议或请求能力；审不可由自报升级的宿主状态并观察明确拒绝",
+      "rejection_or_limit": "拒绝不能隐式fallback；未覆盖字段逐项not_run",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-04",
+      "title": "旧实例和旧代次",
+      "related_original_ids": [
+        "NX-02",
+        "P01"
+      ],
+      "required_observations": "新一轮真实实例发送已关闭或撤销实例的代次/连接数据；独立关联新旧PID和帧",
+      "rejection_or_limit": "拒绝旧代次，不能通过重连恢复权限；不能将测试代次替代正式CLI认证",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-05",
+      "title": "在线撤权和在途交付",
+      "related_original_ids": [
+        "P01",
+        "NX-04"
+      ],
+      "required_observations": "记录发送、宿主撤权、结果交付的单调顺序与权限代次；覆盖撤权后的新查询及可控在途结果",
+      "rejection_or_limit": "新操作及失效结果拒绝，已发生事实保留；若无在途窗口则明确not_run",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-06",
+      "title": "首次准入到期不续期",
+      "related_original_ids": [
+        "P01"
+      ],
+      "required_observations": "实际延迟/重试跨过首次准入创建的单调截止时间；记录初次deadline与所有重试结果",
+      "rejection_or_limit": "任何重试/握手/查询不能重置审批期限；墙钟时间不作期限依据",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-07",
+      "title": "控制路径独立且有界",
+      "related_original_ids": [
+        "NX-05"
+      ],
+      "required_observations": "真实业务/无效帧饱和期间发出停止或撤权；记录限额、控制到达、处理和退出的单调时差",
+      "rejection_or_limit": "不能仅静态声明双队列；不允许正文或畸形队列长期饿死控制，观察不足不通过",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-08",
+      "title": "畸形帧与读写超时",
+      "related_original_ids": [
+        "NX-05",
+        "NX-06"
+      ],
+      "required_observations": "真实截断/超长/错误版本帧或客户端不响应；观察拒绝、停止、有限线程等待、EOF",
+      "rejection_or_limit": "长度界限在分配前验证；超时不重用旧成功或无限join",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-09",
+      "title": "正常退出与输出关闭分开",
+      "related_original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "required_observations": "父宿主实际等待child并记录退出码；联合独立观察PID终止、stdout/stderr EOF及保留尾部输出或gap",
+      "rejection_or_limit": "退出事件本身不代表输出关闭或业务成功",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-10",
+      "title": "ClosingUnconfirmed保留所有权",
+      "related_original_ids": [
+        "NX-06",
+        "B05"
+      ],
+      "required_observations": "针对无法确认关闭的受控情形观察ClosingUnconfirmed/owner留存、后续准入拒绝及最终回收；区分实际故障与注入观察",
+      "rejection_or_limit": "无法确认就不能释放owner或启动第二writer，注入观测不能冒充真实进程树隔离",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-11",
+      "title": "断连与未知未决",
+      "related_original_ids": [
+        "NX-02",
+        "NX-04",
+        "P01"
+      ],
+      "required_observations": "真实通道断开后查询/交付拒绝；记录未决操作身份，确认只核对而不创建新操作重试",
+      "rejection_or_limit": "首片无writer/业务执行，因此其未知业务恢复仍not_run",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-12",
+      "title": "共享实现与fixture边界",
+      "related_original_ids": [
+        "QX-03"
+      ],
+      "required_observations": "追踪真实host入口至可复用会话/审批/timeout所有权模块；检查临时fixture准入受限入口及生产构建依赖",
+      "rejection_or_limit": "测试特供第二授权体系、fixture泄漏普通生产入口不得通过；本片不是安装版产品",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-13",
+      "title": "旧合同与UI入口冻结",
+      "related_original_ids": [
+        "L06"
+      ],
+      "required_observations": "003 kit、v1 canonical、旧UI stdio入口和旧边界文件逐字节核验，旧handoff/工具/回执保持原摘要",
+      "rejection_or_limit": "静态身份一致不替代旧UI或guest运行兼容性回归",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    },
+    {
+      "id": "M02D-14",
+      "title": "可重放证据与失败闭合",
+      "related_original_ids": [
+        "QX-01",
+        "QX-02"
+      ],
+      "required_observations": "新源码/锁/构建输入/exe/原始帧/运行目录关联；独立观察超时与非零失败，未复用旧成功",
+      "rejection_or_limit": "本地临时host和受控client不证明可信安装、平台全覆盖或生产OS隔离",
+      "status": "not_run",
+      "product_pass_credit": 0,
+      "mapping_basis": "reviewer diagnostic relevance, not original scenario completion"
+    }
+  ],
+  "product_status": {
+    "M-02": "not_run",
+    "P-02": "blocked",
+    "J-00": "blocked",
+    "G0": "blocked",
+    "G1": "not_run",
+    "graphs": "0/2",
+    "acceptance_not_run": 84
+  },
+  "contract_adapter": "pending_host_authority_no_local_schema",
+  "excluded": [
+    "success HTTP/SSE/WS",
+    "durable writer",
+    "arbitrary B commands",
+    "real accounts and secrets",
+    "full trusted installation",
+    "OS strong isolation",
+    "other platform runtime qualification"
+  ]
+}

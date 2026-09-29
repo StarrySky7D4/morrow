@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "docs/release-notes/v3.11.1-zh.md",
+      "mode": "100644",
+      "size": 6160,
+      "git_blob_sha1": "1df412104bd4559ccc6cfbfdf3bb7d4083497126",
+      "sha256": "fbb0b90dabcf1ebaf5e370a56b544d19d757fed6b3342fe77de98513283e57f2",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/guides/codex-kimi-routing-guide-ja.md",
+      "mode": "100644",
+      "size": 14178,
+      "git_blob_sha1": "fe56864ec6914ade02475072ff8c66399dc4cccd",
+      "sha256": "931525312de013092e2bc7bc74857ead137de7914f6f48ac29e3b4cda10c63ba",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/images/codex-claude-routing/02-claude-codex-provider-form.png",
+      "mode": "100644",
+      "size": 332297,
+      "git_blob_sha1": "bd192753b2ed088063d7bbcccc113d7444cc2934",
+      "sha256": "66ef14d526b7f60847a76ab564d624c462485932abc779cd59903a4bd930f2f2",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/images/codex-deepseek-routing/02-deepseek-codex-routing-form.png",
+      "mode": "100644",
+      "size": 163093,
+      "git_blob_sha1": "a76a79cc5b1f4352e2e04aa1e57be32bbed4b781",
+      "sha256": "5787d4a6bd26a3a187e2f697843d72fb35ea79481a610ab5fa7cbf96b689fb2f",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/release-notes/v3.16.0-en.md",
+      "mode": "100644",
+      "size": 30416,
+      "git_blob_sha1": "357f290e930e9d0ba018394c5a3ae4f145d66072",
+      "sha256": "a2cb22660d370e37f52baf4bf801586e77e8e27bba2b9847f0f2142dabb80bbf",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/user-manual/en/1-getting-started/1.1-introduction.md",
+      "mode": "100644",
+      "size": 4098,
+      "git_blob_sha1": "779ba2af1cc926feaa64f8b6b6a4d32cf92164ce",
+      "sha256": "94f464961a5695306b8200a67ba618f0c834e4d48c43010d50ee58c8f6f1eea9",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/release-notes/v3.8.0-zh.md",
+      "mode": "100644",
+      "size": 9689,
+      "git_blob_sha1": "506451e408ae473dc8e662dab3bf42b0d26b9eac",
+      "sha256": "177766fcf52f71e3a8c5556249cd3d74b818b0674d6f917b1fb0f00d5dd54b77",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "docs/user-manual/assets/image-20260108004946288.png",
+      "mode": "100644",
+      "size": 434812,
+      "git_blob_sha1": "438fef1d1ea5ea95d13f63e19b8d3689ea956da2",
+      "sha256": "60fbc7b91be2eb0adba62c0449549be909449f4951dfd21965c7cd34c3ab8a37",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/proxy/providers/codex.rs",
+      "mode": "100644",
+      "size": 84305,
+      "git_blob_sha1": "cf55481bc17d921c090617f311c72d3d7330dbc8",
+      "sha256": "326724a9ee7176f68b0efa7f478becec13fa0b488208d3fa9e541d57a8cee1e2",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/icons/tray/macos/statusTemplate.png",
+      "mode": "100644",
+      "size": 577533,
+      "git_blob_sha1": "e51224effeaf21bb27b1c5a7c716579e1bab2fbe",
+      "sha256": "65c365e7c32929807deec2d7469eed2d5c06f21ce86854a4848057d2df588ab8",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/services/provider/pi.rs",
+      "mode": "100644",
+      "size": 33222,
+      "git_blob_sha1": "4e978fb62c3f0bc679388cfaa9c4fe7341329031",
+      "sha256": "eee362290c6031dd2decbef9727f9235eb17394f1e7a4285ab7c2eb2dd25264d",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/panic_hook.rs",
+      "mode": "100644",
+      "size": 8947,
+      "git_blob_sha1": "0022abd77a225e403867a9c1ac3cc1437dbca6c2",
+      "sha256": "4575849e0084c50e6af58263c3faf0c83f0ace7c003845d7d8eaa5747b583597",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/session_manager/providers/claude.rs",
+      "mode": "100644",
+      "size": 20185,
+      "git_blob_sha1": "620f6522056011172ffe12b87410f40996f50228",
+      "sha256": "cc95222c8970ed7f9883b1da8ad93c140e8442f9b5331f6c5c07b883e6cd0466",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/wix/per-user-main.wxs",
+      "mode": "100644",
+      "size": 17298,
+      "git_blob_sha1": "95a42db41aeb41e74a92b2de8e51f53e204988c7",
+      "sha256": "dd7bc3eef1df06be50a163425f18427f7eee18868ef9948f0016e7827929cb55",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/components/UpdateBadge.tsx",
+      "mode": "100644",
+      "size": 1142,
+      "git_blob_sha1": "04566a1bc77d747107c7d28a8861026df93ff8d7",
+      "sha256": "7e634ab0345a76dde73e1ff96ea646ccceb5475b944a4fa6dfe35c05bde15687",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/services/session_usage_pi.rs",
+      "mode": "100644",
+      "size": 59897,
+      "git_blob_sha1": "7cda0d8436a9f496455e8cbb33008d636f616277",
+      "sha256": "8e8065b8dcca900ebb70ea0e9d47401176a88e2145a3fe105730061e6ef019f8",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src-tauri/src/services/s3.rs",
+      "mode": "100644",
+      "size": 31648,
+      "git_blob_sha1": "c9d44dd146e00a0749e9ac80e4159eb64f0ccdad",
+      "sha256": "a905bd79ce65cc0ecf213b0d3b7d907034add00e9d9bfb7f907a8c5b32d1c1ad",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/components/skills/SkillCard.tsx",
+      "mode": "100644",
+      "size": 5327,
+      "git_blob_sha1": "3fbedff1cceb5b9c2d17b1afbe5741c960e60210",
+      "sha256": "b9b07255d0ce72fa1ea1ed94f42c040fed2114bd89359176faaacffefe5062e7",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/components/providers/forms/hooks/useOpenclawFormState.ts",
+      "mode": "100644",
+      "size": 6000,
+      "git_blob_sha1": "7f32424c5eff9e659bed1db294afc386ea87b3d8",
+      "sha256": "e3de1411b699f4639dffdbfaadbd8507b01c00f10b73f27932323edba96a83e1",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/icons/extracted/qiniu.png",
+      "mode": "100644",
+      "size": 70218,
+      "git_blob_sha1": "e5efd604b3b2cd2f22c8a156d225198a1a1ae818",
+      "sha256": "ba7c77f49bc8ed75df6d62f3509270aca59453949675d1dfb4cf3a79f542f0fc",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/utils/grokBuildConfig.test.ts",
+      "mode": "100644",
+      "size": 4328,
+      "git_blob_sha1": "58b614f85a40e535d84c20d3971a45959f1abead",
+      "sha256": "703658d6c0c26af9a3b6cfef4129320bcc29e3c03dc4a6f925c96128b7947769",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "src/lib/version.test.ts",
+      "mode": "100644",
+      "size": 2011,
+      "git_blob_sha1": "17f3bb433d33238fcb8046cabd38f11202fef804",
+      "sha256": "ca777ab8eda15a01bdca10983fa70814296251b75fc3a4753c8dcd433bf2939d",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    }
+  ],
+  "success_count": 22
+}

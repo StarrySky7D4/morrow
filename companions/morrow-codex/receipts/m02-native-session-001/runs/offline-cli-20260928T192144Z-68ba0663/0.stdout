@@ -1,0 +1,4 @@
+morrow-session-client: host-owned native session client
+Offline: --help, --version, --check
+Host launch: --morrow-native-session-v2 [--queries 1..64] [--interval-ms 0..10000] [--io-timeout-ms 100..5000]
+Only host-owned read-only session status is supported. No launch option grants authority.

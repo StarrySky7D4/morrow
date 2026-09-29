@@ -1,0 +1,3 @@
+morrow-session-client: host-owned native session client
+Offline options: --help, --version, --check
+Session operation requires a verified host launch contract.

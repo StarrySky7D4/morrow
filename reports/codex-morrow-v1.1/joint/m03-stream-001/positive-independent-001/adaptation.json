@@ -1,0 +1,15 @@
+{
+  "source_script": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_native_pair_004.py",
+  "source_sha256": "1f81a8065c9e792909f6ac0d27f5589e1b4c81992af156fbe7de91c6056651a3",
+  "script_sha256": "c9fe3424a3ddc2259a62233f1745732bbfa1f868281561692072e437c0350185",
+  "producer_handoff_sha256": "7a299acc1d08be05539c2179e8007d2057788923a07ce43cb344023f0b6fbd5a",
+  "scope": "one fresh synthetic positive; no retry; no component rebuild",
+  "changes": [
+    "new joint and authorized plugin output roots",
+    "structured actual Core delta gate",
+    "held known guest OS handle",
+    "full parser/drain/offset/Close/resource assertions",
+    "fixture shutdown and joined server",
+    "persist independent request preimage and response bytes"
+  ]
+}

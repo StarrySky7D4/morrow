@@ -1,0 +1,24 @@
+{
+  "clock_domain": "guest-fixture-monotonic",
+  "detail": {
+    "framer_bytes": 0,
+    "framer_expected": 4,
+    "last_read_id": 3,
+    "read_issue_count": 2,
+    "read_operation_present": false
+  },
+  "elapsed_ns": 965680800,
+  "identity": {
+    "attempt": 1,
+    "child_pid": 24040,
+    "epoch": 1,
+    "host_execution_config_sha256": "d3670cb3f6866945345d805f71f3db6f2a428330125db051b918feca85e885af",
+    "operation_id_sha256": "729d91d9f0e509fc315499db5cdf0f9aa8b915808e1fa3fbed95709faec5edae",
+    "session": 592339913578303713
+  },
+  "kind": "data_read_paused",
+  "mode": "data-pending",
+  "nonce": "d9f3da799d66d8676e5ee10d123aab7905d12bdd2546838bd96281eeb510c0b4",
+  "ordinal": 1,
+  "spec_sha256": "5cf402ce014b515d0f475422e281e03dcef2b331d10402921b1d71158cf73803"
+}

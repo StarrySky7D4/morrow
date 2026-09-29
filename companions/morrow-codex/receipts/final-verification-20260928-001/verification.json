@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "qualification": "entry_failure_behavior_only",
+  "inputs_before": {
+    "tools/build_plan.py": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+    "tests/test_build_plan.py": "775cac93752ce932367e25611040644cd5832e795d2aca0705d195d09eae2cae",
+    "tools/build-contract.json": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+    "sources.lock.json": "a92a49bea924d836edc3fbb3fad2cf4ff2859ea5be34e2b9f56eb4da7c4605e7",
+    "toolchain.lock.json": "198d99f8536ab32e5afa2e5d8eb865fda42de619571b54c7bedc2e0c14ab482a",
+    "rust-toolchain.toml": "28ba63ba51f7635afd6b0663f2613a1037ab602a039a889e991b1164b84d4714",
+    "receipts/upstream-inventory.json": "6fa9ebdebf3ec271f7c1f9c38f1e4c4790d2ecdebfa800856acf1855372ec285",
+    "receipts/upstream-codex-tree.json": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6",
+    "receipts/upstream-cc-switch-tree.json": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd",
+    "receipts/upstream-codex-dependency-closure.json": "34b4d76c8e73ae5255014b302380647002c4926eb0ffe3ce1f7c165b8468416b",
+    "receipts/upstream-cc-switch-dependency-closure.json": "3d863817586496d4fd36a6db3fb4429400db8c801774963aa86fd5188ad11af1",
+    "receipts/upstream-side-effect-candidates.json": "1290fe707ca47c6477dd40a5e55c49b90175c24b53b91f38e2673828a8d10bfc",
+    "docs/upstream-audit.md": "43e815011d74f9c504a283cfaa94d00fb4fd0c7b56a859e6449fee3ce7a84279",
+    "docs/cc-switch-review.md": "06c0a35d1ebb049e8320ab21aef3e603800ef20b12ae44d039c4b3d0f260da72",
+    "docs/build-entry.md": "559efafa10324c7603fa30d012d6fdbb0491152ce840743173462935638462b9",
+    "docs/implementation-status.md": "d889c37c3819bcc5ddfec015ba22e235ace7727b4ab7c827b7f3ec13f35e487f",
+    "README.md": "6078addd62c80eb1bcf4036da0229c3e4a66080e96b9c5c8a97d757d9672f6ca"
+  },
+  "inputs_after": {
+    "tools/build_plan.py": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+    "tests/test_build_plan.py": "775cac93752ce932367e25611040644cd5832e795d2aca0705d195d09eae2cae",
+    "tools/build-contract.json": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+    "sources.lock.json": "a92a49bea924d836edc3fbb3fad2cf4ff2859ea5be34e2b9f56eb4da7c4605e7",
+    "toolchain.lock.json": "198d99f8536ab32e5afa2e5d8eb865fda42de619571b54c7bedc2e0c14ab482a",
+    "rust-toolchain.toml": "28ba63ba51f7635afd6b0663f2613a1037ab602a039a889e991b1164b84d4714",
+    "receipts/upstream-inventory.json": "6fa9ebdebf3ec271f7c1f9c38f1e4c4790d2ecdebfa800856acf1855372ec285",
+    "receipts/upstream-codex-tree.json": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6",
+    "receipts/upstream-cc-switch-tree.json": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd",
+    "receipts/upstream-codex-dependency-closure.json": "34b4d76c8e73ae5255014b302380647002c4926eb0ffe3ce1f7c165b8468416b",
+    "receipts/upstream-cc-switch-dependency-closure.json": "3d863817586496d4fd36a6db3fb4429400db8c801774963aa86fd5188ad11af1",
+    "receipts/upstream-side-effect-candidates.json": "1290fe707ca47c6477dd40a5e55c49b90175c24b53b91f38e2673828a8d10bfc",
+    "docs/upstream-audit.md": "43e815011d74f9c504a283cfaa94d00fb4fd0c7b56a859e6449fee3ce7a84279",
+    "docs/cc-switch-review.md": "06c0a35d1ebb049e8320ab21aef3e603800ef20b12ae44d039c4b3d0f260da72",
+    "docs/build-entry.md": "559efafa10324c7603fa30d012d6fdbb0491152ce840743173462935638462b9",
+    "docs/implementation-status.md": "d889c37c3819bcc5ddfec015ba22e235ace7727b4ab7c827b7f3ec13f35e487f",
+    "README.md": "6078addd62c80eb1bcf4036da0229c3e4a66080e96b9c5c8a97d757d9672f6ca"
+  },
+  "inputs_stable": true,
+  "checks": [
+    {
+      "name": "entry_tests",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "passed": true,
+      "stdout": "tests.stdout.txt",
+      "stderr": "tests.stderr.txt"
+    },
+    {
+      "name": "baseline",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "error": null,
+      "passed": true,
+      "status": "baseline/status.json"
+    },
+    {
+      "name": "sources",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "source_incomplete",
+        "message": "Partial source snapshots were verified; complete pinned upstream sources are still missing"
+      },
+      "passed": true,
+      "status": "sources/status.json"
+    },
+    {
+      "name": "full",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "source_incomplete",
+        "message": "Partial source snapshots were verified; complete pinned upstream sources are still missing"
+      },
+      "passed": true,
+      "status": "full/status.json"
+    },
+    {
+      "name": "generate",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage generate is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "generate/status.json"
+    },
+    {
+      "name": "deps",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage deps is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "deps/status.json"
+    },
+    {
+      "name": "test",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage test is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "test/status.json"
+    },
+    {
+      "name": "build",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage build is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "build/status.json"
+    },
+    {
+      "name": "inspect",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage inspect is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "inspect/status.json"
+    },
+    {
+      "name": "pack",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage pack is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "pack/status.json"
+    },
+    {
+      "name": "bundle",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage bundle is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "bundle/status.json"
+    },
+    {
+      "name": "qualify",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage qualify is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "qualify/status.json"
+    },
+    {
+      "name": "release-plan",
+      "exit_code": 2,
+      "expected_exit_code": 2,
+      "error": {
+        "code": "not_implemented",
+        "message": "Stage release-plan is not implemented; no artifact was produced"
+      },
+      "passed": true,
+      "status": "release-plan/status.json"
+    }
+  ],
+  "verification_passed": true,
+  "source_files_verified": {
+    "codex": 209,
+    "cc-switch": 13
+  },
+  "upstream_sources_complete": false,
+  "rust_product_builds_run": 0,
+  "P-02": "not_implemented",
+  "G0": "blocked",
+  "product_acceptance_passed": 0
+}

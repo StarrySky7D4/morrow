@@ -1,0 +1,5 @@
+   Compiling libsqlite3-sys v0.38.2
+   Compiling rusqlite v0.40.2
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\core)
+   Compiling morrow-native-session v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\native_session)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.61s

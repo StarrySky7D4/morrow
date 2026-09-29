@@ -1,0 +1,57 @@
+{
+  "status": "compiled_native_runtime_not_run",
+  "before": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "50107f30fa17867cb784773e85ed103229e566b1c76ecf4c1888b9254cf12922",
+    "native_session_stream_001/schemas/native_admission.proto": "6d2ca43455eb881c53925d38c4519b6c3af708d41e7d20c14554c5301408fbbc",
+    "native_session_stream_001/src/authority.rs": "44ba82dc84b9c4a4ba198249c4f07587eebb4c7e833a5b3e428a12f25be98258",
+    "native_session_stream_001/src/http_authority.rs": "defce045447f8b9d61072ab28e5605e3c150381f2a5f1033967371795a858627",
+    "native_session_stream_001/src/lib.rs": "3dae71835d002985cb511490452bd6bde90e14f80bccb5a0534b8b866a2573d1",
+    "native_session_stream_001/src/main.rs": "922361872fa4b0a22bc75272adcb2660bd78d328f33dd5e73888f84e3693202c",
+    "native_session_stream_001/src/pipe_driver.rs": "052ef0f6a2fbafd50de3d6ac2cfa29e95bbd5655815891fda841beb550e4e628",
+    "native_session_stream_001/src/supervisor.rs": "7d266c73acb591fe35e76c9613ed8bad717cdf38fce6c8babb16e004fe1b85ef"
+  },
+  "frozen_count": 2297,
+  "commands": [
+    {
+      "args": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "build",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-native",
+        "--bins",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 30.52640789997531,
+      "stdout_sha256": "6d1dac8c8c4f86d5e3322752cfda3dda6875f9f6384e62eb3ff976aa942526ba",
+      "stderr_sha256": "2c9fb7562cd291997def61ba51da21c66e752997b8a446811546a8983d6c22ca"
+    }
+  ],
+  "after": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "50107f30fa17867cb784773e85ed103229e566b1c76ecf4c1888b9254cf12922",
+    "native_session_stream_001/schemas/native_admission.proto": "6d2ca43455eb881c53925d38c4519b6c3af708d41e7d20c14554c5301408fbbc",
+    "native_session_stream_001/src/authority.rs": "44ba82dc84b9c4a4ba198249c4f07587eebb4c7e833a5b3e428a12f25be98258",
+    "native_session_stream_001/src/http_authority.rs": "defce045447f8b9d61072ab28e5605e3c150381f2a5f1033967371795a858627",
+    "native_session_stream_001/src/lib.rs": "3dae71835d002985cb511490452bd6bde90e14f80bccb5a0534b8b866a2573d1",
+    "native_session_stream_001/src/main.rs": "922361872fa4b0a22bc75272adcb2660bd78d328f33dd5e73888f84e3693202c",
+    "native_session_stream_001/src/pipe_driver.rs": "052ef0f6a2fbafd50de3d6ac2cfa29e95bbd5655815891fda841beb550e4e628",
+    "native_session_stream_001/src/supervisor.rs": "7d266c73acb591fe35e76c9613ed8bad717cdf38fce6c8babb16e004fe1b85ef"
+  },
+  "artifact": {
+    "path": "target/m03-stream-001-native/debug/morrow-native-stream-host.exe",
+    "sha256": "339f20ae12710a9a75b40f50f80ce3e4ce12a8b941699d7f87e9f4b40ee9229e"
+  },
+  "frozen_unchanged": true
+}

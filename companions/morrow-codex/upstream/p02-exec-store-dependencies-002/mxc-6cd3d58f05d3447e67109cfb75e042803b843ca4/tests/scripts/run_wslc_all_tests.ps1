@@ -1,0 +1,391 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# WSLC (WSL Container) E2E test runner.
+# Requires: Windows 11, WSL2 enabled, WSLC SDK installed, pre-pulled images.
+# Cannot run in GitHub Actions CI (needs WSL2 + WSLC runtime).
+#
+# Runs the one-shot WSLC configs directly, then delegates to
+# run_wslc_state_aware_tests.ps1 for the state-aware lifecycle suite, folding its
+# result into the overall summary (so this is the single entry point for all
+# WSLC E2E coverage).
+#
+# Usage:
+#   .\run_wslc_all_tests.ps1              # release build (default), pulls images first
+#   .\run_wslc_all_tests.ps1 -Debug       # debug build
+#   .\run_wslc_all_tests.ps1 -SkipSetup   # skip pre-pull (assume cache is warm)
+#
+# Image pre-pull:
+#   This script invokes scripts\setup-wslc.ps1 as a preflight to populate the
+#   WSLC image cache. MXC's runner no longer auto-pulls images at run time
+#   (see issue #165), so the cache must be warmed before any test that
+#   references a registry image. Pass -SkipSetup to bypass.
+#
+# Prerequisites for tar import tests:
+#
+#   1. Rootfs tar (wslc_tar_import_rootfs.json):
+#      docker pull alpine:latest
+#      docker run --name alpine-tmp alpine:latest true
+#      docker export alpine-tmp -o C:\workspace\alpine.tar
+#      docker rm alpine-tmp
+#
+#   2. Docker image archive (wslc_tar_import_docker_save.json):
+#      docker save alpine:latest -o C:\workspace\alpine-docker-save.tar
+#
+# Notes:
+#   - wslc_custom_registry.json requires network access to mcr.microsoft.com
+#   - Tar import tests are skipped if the tar files are not present
+
+param(
+    [switch]$Debug,
+    [string]$WxcExecPath,
+    [switch]$SkipSetup
+)
+
+$ErrorActionPreference = "Stop"
+$RepoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$TestConfigs = Join-Path $RepoRoot "tests\configs"
+
+# Find binary -- prefer explicit path, then probe target-specific and default dirs.
+$Target = "x86_64-pc-windows-msvc"
+$Profile = if ($Debug) { "debug" } else { "release" }
+
+if ($WxcExecPath) {
+    $WxcExec = $WxcExecPath
+} else {
+    $CandidatePaths = @(
+        (Join-Path $RepoRoot "src\target\$Target\$Profile\wxc-exec.exe"),
+        (Join-Path $RepoRoot "src\target\$Profile\wxc-exec.exe")
+    )
+    $WxcExec = $CandidatePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+}
+
+if (-not $WxcExec -or -not (Test-Path $WxcExec)) {
+    Write-Host "ERROR: wxc-exec.exe not found." -ForegroundColor Red
+    Write-Host "Searched:" -ForegroundColor Yellow
+    foreach ($p in $CandidatePaths) { Write-Host "  - $p" -ForegroundColor Yellow }
+    Write-Host "Build with: cargo build --features wslc $(if (-not $Debug) { '--release ' })--target $Target" -ForegroundColor Yellow
+    Write-Host "Or pass -WxcExecPath explicitly." -ForegroundColor Yellow
+    exit 1
+}
+
+# Preflight: ensure the WSLC image cache is populated. The runner no longer
+# auto-pulls (see scripts\setup-wslc.ps1 and #165). Skipping is supported for
+# the common case where the caller has already pre-pulled or wants to test
+# a hermetic environment.
+if (-not $SkipSetup) {
+    $SetupScript = Join-Path $RepoRoot "scripts\setup-wslc.ps1"
+    if (Test-Path $SetupScript) {
+        Write-Host "Pre-pulling WSLC images (pass -SkipSetup to skip)..." -ForegroundColor Cyan
+        # Pull every image referenced by the wslc_*.json test configs except
+        # the tar-import variants (those are imported at run time from the
+        # caller-supplied tar file, not pulled from a registry).
+        $images = @(
+            "alpine:latest",
+            "python:3.12-alpine",
+            "mcr.microsoft.com/cbl-mariner/base/core:2.0",
+            "ghcr.io/linuxserver/baseimage-alpine:3.21",
+            "quay.io/fedora/fedora-minimal:latest"
+        )
+        & $SetupScript -WxcExecPath $WxcExec -Image $images -Force
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "WARN: setup-wslc.ps1 reported failures; continuing with tests anyway." -ForegroundColor Yellow
+        }
+        Write-Host ""
+    } else {
+        Write-Host "WARN: $SetupScript not found; assuming images are pre-pulled." -ForegroundColor Yellow
+    }
+}
+
+# Helper: run a single WSLC test config
+function Run-WslcTest {
+    param(
+        [string]$ConfigFile,
+        [int]$ExpectedExit = 0,
+        [string]$OutputContains = "",
+        [string]$OutputMatches = "",
+        [scriptblock]$PostExitCheck = $null
+    )
+
+    $configPath = Join-Path $TestConfigs $ConfigFile
+    if (-not (Test-Path $configPath)) {
+        Write-Host "  $ConfigFile ... " -NoNewline
+        Write-Host "SKIP (file not found)" -ForegroundColor Yellow
+        return @{ Name = $ConfigFile; Pass = $true; Skipped = $true; Reason = "File not found" }
+    }
+
+    # Skip if the config references a tar file that doesn't exist locally
+    $configJson = Get-Content $configPath -Raw | ConvertFrom-Json
+    $tarPath = $configJson.experimental.wslc.imageTarPath
+    if ($tarPath -and -not (Test-Path $tarPath)) {
+        Write-Host "  $ConfigFile ... " -NoNewline
+        Write-Host "SKIP (tar not found: $tarPath)" -ForegroundColor Yellow
+        return @{ Name = $ConfigFile; Pass = $true; Skipped = $true; Reason = "Tar file not found: $tarPath" }
+    }
+
+    Write-Host "  $ConfigFile ... " -NoNewline
+
+    $prevPref = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $wxcArgs = @("--experimental")
+    if ($Debug) {
+        $wxcArgs += "--debug"
+    }
+    $wxcArgs += $configPath
+    $output = & $WxcExec @wxcArgs 2>&1 | Out-String
+    $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = $prevPref
+
+    # Access violation (0xC0000005) or other hard crashes corrupt WSL runtime
+    # state, causing subsequent WslcCreateSession calls to fail with
+    # ERROR_SHARING_VIOLATION. Recover by restarting WSL.
+    $isCrash = ($exitCode -lt -1000000000) -or ($exitCode -eq -2147483645)
+    if ($isCrash) {
+        Write-Host "" # newline before recovery message
+        Write-Host "    [recovery] Process crashed (exit $exitCode) -- restarting WSL..." -ForegroundColor Yellow
+        $null = wsl --shutdown 2>&1
+        Start-Sleep 15
+    }
+
+    $pass = $true
+    $reason = ""
+
+    if ($exitCode -ne $ExpectedExit) {
+        $pass = $false
+        $reason = "Expected exit $ExpectedExit, got $exitCode"
+    }
+
+    if ($pass -and $OutputContains -and $output -notmatch [regex]::Escape($OutputContains)) {
+        $pass = $false
+        $reason = "Output missing '$OutputContains'"
+    }
+
+    # OutputMatches is a regex pattern (no escaping).
+    if ($pass -and $OutputMatches -and $output -notmatch $OutputMatches) {
+        $pass = $false
+        $reason = "Output did not match regex '$OutputMatches'"
+    }
+
+    # PostExitCheck runs after exit/output gates pass. Receives ($id, $output)
+    # and must return truthy. Use for externally-observable state assertions.
+    if ($pass -and $PostExitCheck) {
+        $containerId = $configJson.containerId
+        try {
+            $checkResult = & $PostExitCheck $containerId $output
+            if (-not $checkResult) {
+                $pass = $false
+                $reason = "PostExitCheck returned false"
+            }
+        } catch {
+            $pass = $false
+            $reason = "PostExitCheck threw: $_"
+        }
+    }
+
+    if ($pass) {
+        Write-Host "PASS" -ForegroundColor Green
+    } else {
+        Write-Host "FAIL" -ForegroundColor Red
+        Write-Host "    Reason: $reason" -ForegroundColor Red
+        $meaningful = $output -split "`n" | Where-Object { $_.Trim() -ne "" } | Select-Object -Last 5
+        foreach ($line in $meaningful) {
+            Write-Host "    > $($line.TrimEnd())" -ForegroundColor Gray
+        }
+    }
+
+    # Brief delay between tests to let the WSLC runtime fully release
+    # session resources (mounts, networking) before the next test starts.
+    Start-Sleep 2
+
+    return @{ Name = $ConfigFile; Pass = $pass; Skipped = $false; Reason = $reason }
+}
+
+# Banner
+Write-Host "`nWSLC E2E Tests" -ForegroundColor Cyan
+Write-Host "==============" -ForegroundColor Cyan
+Write-Host "Binary: $WxcExec`n" -ForegroundColor Gray
+
+# Run tests
+[System.Collections.ArrayList]$results = @()
+
+Write-Host "--- Basic Tests ---" -ForegroundColor Cyan
+$null = $results.Add((Run-WslcTest "wslc_env_vars.json" -OutputContains "MY_VAR="))
+$null = $results.Add((Run-WslcTest "wslc_exit_code.json" -ExpectedExit 42 -OutputContains "About to exit with code 42"))
+$null = $results.Add((Run-WslcTest "wslc_stderr.json" -OutputContains "stdout message"))
+$null = $results.Add((Run-WslcTest "wslc_large_output.json"))
+
+Write-Host "`n--- Filesystem Tests ---" -ForegroundColor Cyan
+
+# Fixed paths must match tests\configs\wslc_filesystem.json and
+# tests\configs\wslc_readonly_mount.json.
+$fsFixtureDir = "C:\wslcfs"
+$readonlyFixtureDir = "C:\wslcro"
+$readonlyFixture = Join-Path $readonlyFixtureDir "test.txt"
+
+function Remove-FilesystemFixtures {
+    Remove-Item -Recurse -Force $fsFixtureDir -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force $readonlyFixtureDir -ErrorAction SilentlyContinue
+}
+
+# Both filesystem configs mount a host directory the suite owns outright, so a
+# run needs nothing hand-made and never touches C:\workspace, where the
+# prerequisites above tell the developer to keep alpine.tar.  wslc_filesystem
+# only needs its mount target to exist; wslc_readonly_mount also reads
+# test.txt, seeded the way the LXC and bubblewrap suites seed theirs
+# (run_lxc_filesystem_test.sh:21, run_bwrap_filesystem_test.sh:25).  The
+# finally removes both roots, including the probe file a wrongly-writable
+# mount would leave behind.
+Remove-FilesystemFixtures
+try {
+    $null = New-Item -ItemType Directory -Path $fsFixtureDir -Force
+    $null = New-Item -ItemType Directory -Path $readonlyFixtureDir -Force
+    Set-Content -Path $readonlyFixture -Value "test content" -Encoding ascii
+
+    # wslc_filesystem.json also asserts cpuCount + memoryMb enforcement via nproc and /proc/meminfo.
+    $null = $results.Add((Run-WslcTest "wslc_filesystem.json" `
+        -OutputMatches "(?s)PASS: filesystem mount visible.*PASS: cpuCount enforced.*PASS: memoryMb enforced"))
+    $null = $results.Add((Run-WslcTest "wslc_readonly_mount.json" -OutputContains "Read succeeded"))
+} finally {
+    Remove-FilesystemFixtures
+}
+
+Write-Host "`n--- Object Validation Tests ---" -ForegroundColor Cyan
+# Object-based validation (roadmap D6): a directory under readwritePaths and a
+# Windows junction to that same directory under deniedPaths resolve to one
+# filesystem object; the runner tightens both aliases to denied so the
+# directory is not mounted and its secret is masked. Delegated to a standalone
+# script that owns the directory+junction fixture (the config is never run
+# without its on-disk aliasing).
+$objScript = Join-Path $PSScriptRoot "run_wslc_object_test.ps1"
+$objArgs = @{ WxcExecPath = $WxcExec }
+if ($Debug) { $objArgs.Debug = $true }
+& $objScript @objArgs
+$objPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "wslc_filesystem_object.json"
+    Pass    = $objPass
+    Skipped = $false
+    Reason  = $(if ($objPass) { "" } else { "object-validation test failed" })
+})
+
+# Denied-path `..`-through-junction pre-flight validation (comment 1): a deny
+# that only lands inside a mounted tree after following a junction AND folding
+# `..` across not-yet-created components must be rejected at pre-flight. Owns its
+# own directory+junction fixture, like the object test above.
+$ddtScript = Join-Path $PSScriptRoot "run_wslc_dotdot_alias_test.ps1"
+$ddtArgs = @{ WxcExecPath = $WxcExec }
+if ($Debug) { $ddtArgs.Debug = $true }
+& $ddtScript @ddtArgs
+$ddtPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "wslc_denied_dotdot_alias.json"
+    Pass    = $ddtPass
+    Skipped = $false
+    Reason  = $(if ($ddtPass) { "" } else { "dotdot-alias validation test failed" })
+})
+
+Write-Host "`n--- Denied Masking / Most-Specific Tests ---" -ForegroundColor Cyan
+# Denied-path masking and most-specific-path-wins on WSLC. Each is delegated to
+# a standalone script that owns its on-disk fixture (a read-write mount plus
+# unmounted denied siblings / parent), since the config is meaningless without
+# the fixture. WSLC masks by NOT mounting the denied path (see policy_mapping.rs).
+$maskScript = Join-Path $PSScriptRoot "run_wslc_denied_masking_test.ps1"
+$maskArgs = @{ WxcExecPath = $WxcExec }
+if ($Debug) { $maskArgs.Debug = $true }
+& $maskScript @maskArgs
+$maskPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "wslc_denied_masking.json"
+    Pass    = $maskPass
+    Skipped = $false
+    Reason  = $(if ($maskPass) { "" } else { "denied-masking test failed" })
+})
+
+$mspScript = Join-Path $PSScriptRoot "run_wslc_most_specific_test.ps1"
+$mspArgs = @{ WxcExecPath = $WxcExec }
+if ($Debug) { $mspArgs.Debug = $true }
+& $mspScript @mspArgs
+$mspPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "wslc_most_specific_denied_parent.json"
+    Pass    = $mspPass
+    Skipped = $false
+    Reason  = $(if ($mspPass) { "" } else { "most-specific test failed" })
+})
+
+Write-Host "`n--- Network Tests ---" -ForegroundColor Cyan
+$null = $results.Add((Run-WslcTest "wslc_network_isolated.json"))
+# Delegate the cooperative proxy fixture to its owning script, which asserts
+# HTTP_PROXY injection/scrub, NO_PROXY neutralization, and attacker-value
+# removal -- assertions the marker-only Run-WslcTest path cannot make.
+$proxyScript = Join-Path $PSScriptRoot "run_wslc_proxy_test.ps1"
+$proxyArgs = @{ WxcExecPath = $WxcExec }
+if ($Debug) { $proxyArgs.Debug = $true }
+& $proxyScript @proxyArgs
+$proxyPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "wslc_network_proxy.json"
+    Pass    = $proxyPass
+    Skipped = $false
+    Reason  = $(if ($proxyPass) { "" } else { "cooperative proxy test failed" })
+})
+$null = $results.Add((Run-WslcTest "wslc_port_mapping_tcp.json" -OutputContains "PORT_MAPPING_TCP_OK"))
+$null = $results.Add((Run-WslcTest "wslc_port_mapping_multiple.json" -OutputContains "PORT_MAPPING_MULTI_OK"))
+
+Write-Host "`n--- Image Tests ---" -ForegroundColor Cyan
+$null = $results.Add((Run-WslcTest "wslc_python_hello.json" -OutputContains "Hello from Python"))
+$null = $results.Add((Run-WslcTest "wslc_python_stdlib.json"))
+$null = $results.Add((Run-WslcTest "wslc_custom_registry.json" -OutputContains "Image pulled from MCR"))
+$null = $results.Add((Run-WslcTest "wslc_custom_registry_ghcr.json" -OutputContains "Image pulled from GHCR"))
+$null = $results.Add((Run-WslcTest "wslc_custom_registry_quay.json" -OutputContains "Image pulled from Quay"))
+$null = $results.Add((Run-WslcTest "wslc_tar_import_rootfs.json" -OutputContains "Hello from tar-imported image"))
+$null = $results.Add((Run-WslcTest "wslc_tar_import_docker_save.json" -OutputContains "Hello from docker-save image"))
+
+Write-Host "`n--- Timeout Tests ---" -ForegroundColor Cyan
+$null = $results.Add((Run-WslcTest "wslc_timeout.json" -ExpectedExit -1 -OutputContains "Starting long task"))
+
+Write-Host "`n--- Lifecycle Tests ---" -ForegroundColor Cyan
+# Smoke tests only: assert config parses and payload runs. WSLC's session
+# teardown reaps session-scoped containers regardless of AutoRemove, so
+# destroyOnExit has no externally observable effect via `wslc list`.
+# True semantic verification requires a runner-side log assertion (TODO).
+$null = $results.Add((Run-WslcTest "wslc_destroy_on_exit_true.json" `
+    -OutputContains "PASS: container ran (destroyOnExit=true)"))
+$null = $results.Add((Run-WslcTest "wslc_destroy_on_exit_false.json" `
+    -OutputContains "PASS: container ran (destroyOnExit=false)"))
+
+Write-Host "`n--- State-Aware Lifecycle Tests ---" -ForegroundColor Cyan
+# Delegate the multi-invocation provision/start/exec/stop/deprovision lifecycle
+# to its owning harness (it needs the daemon binary, mints + threads sandbox ids,
+# and drives the idle-teardown watchdog). Images are already pre-pulled above, so
+# skip its redundant preflight. Fold its exit code into the summary.
+$saScript = Join-Path $PSScriptRoot "run_wslc_state_aware_tests.ps1"
+$saArgs = @{ WxcExecPath = $WxcExec; SkipSetup = $true }
+if ($Debug) { $saArgs.Debug = $true }
+& $saScript @saArgs
+$saPass = ($LASTEXITCODE -eq 0)
+$null = $results.Add(@{
+    Name    = "run_wslc_state_aware_tests.ps1 (lifecycle suite)"
+    Pass    = $saPass
+    Skipped = $false
+    Reason  = $(if ($saPass) { "" } else { "state-aware lifecycle suite failed" })
+})
+
+# Summary
+$passed = @($results | Where-Object { $_.Pass -and -not $_.Skipped }).Count
+$failed = @($results | Where-Object { -not $_.Pass -and -not $_.Skipped }).Count
+$skipped = @($results | Where-Object { $_.Skipped }).Count
+$total = $results.Count
+$executed = $passed + $failed
+
+Write-Host "`n==============" -ForegroundColor Cyan
+if ($failed -eq 0) {
+    Write-Host "$passed/$total passed$(if ($skipped -gt 0) { ", $skipped skipped" })" -ForegroundColor Green
+} else {
+    Write-Host "$passed/$executed passed, $failed FAILED$(if ($skipped -gt 0) { " ($skipped skipped)" }):" -ForegroundColor Red
+    $results | Where-Object { -not $_.Pass -and -not $_.Skipped } | ForEach-Object {
+        Write-Host "  FAIL: $($_.Name) - $($_.Reason)" -ForegroundColor Red
+    }
+}
+
+exit $(if ($failed -gt 0) { 1 } else { 0 })

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "batch": "p02-source-batch-001",
+  "repository": "farion1231/cc-switch",
+  "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "url": "https://codeload.github.com/farion1231/cc-switch/tar.gz/846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "method": "Python urllib HTTPS, no proxy/config/account loading",
+  "command": "python upstream/p02-source-batch-001/acquire_archive.py cc-switch",
+  "started_at": "2026-09-28T11:40:19.419552+00:00",
+  "path": "upstream\\p02-source-batch-001\\cc-switch-846de29c13ac4d65f164db8c15dd5fd58e29f972.tar.gz",
+  "status": "failed_incomplete_download",
+  "bytes_received": 12845056,
+  "total_limit_seconds": 1800,
+  "http_status": 200,
+  "response_headers": {
+    "content-disposition": "attachment; filename=cc-switch-846de29c13ac4d65f164db8c15dd5fd58e29f972.tar.gz",
+    "Content-Type": "application/x-gzip",
+    "ETag": "\"f577db22c75c457912f059a664c1c13ef5c0e4056c78d271a9705addb4d6bfcd\""
+  },
+  "exit_code": 1,
+  "error": "IncompleteRead: IncompleteRead(180224 bytes read)",
+  "ended_at": "2026-09-28T11:55:33.006682+00:00",
+  "sha256_of_received_bytes": "52f3713fddacb3aa50b517eacc77cc4059c763ddb9f6b7c4bb110b8886738aa4",
+  "actual_file_bytes": 12845056
+}

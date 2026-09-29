@@ -1,0 +1,12 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-native-session-wire"
+version = "0.2.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+sha2 = "=0.10.9"

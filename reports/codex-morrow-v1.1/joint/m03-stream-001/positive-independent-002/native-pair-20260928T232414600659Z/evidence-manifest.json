@@ -1,0 +1,36 @@
+{
+  "local_sha256": {
+    "adaptation.diff": "545c9d28ffb55547b96604c75019d39ba7ea11887eb12277ee582903029d639f",
+    "adaptation.json": "ba657e2a708aedc62547fc23fdec491d8d9dbf7bea011d73b98f035e93fcea43",
+    "joint_positive_once.py": "76fa0cd8b77dfb0aad6dd4baf621cc6c94cbc284d5a3e8c92c1e1bef23467ea5",
+    "native-pair-20260928T232414600659Z/approved-body.bin": "0d52c2b309adb84e600c89b09bc957f575cf5b3aa98963c8c22a3091950174b3",
+    "native-pair-20260928T232414600659Z/candidate/manifest.json": "68b5941b3ddb0aeb97ceaffa4a48fc56828df7007badf0e7072481e5d83d67e1",
+    "native-pair-20260928T232414600659Z/candidate/morrow-native-stream-host.exe": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224",
+    "native-pair-20260928T232414600659Z/durable-ledger-verification.json": "32bfe22d3d52f5844398054538eaada657e9b4ae06d520b4da8fed54eff9fc2a",
+    "native-pair-20260928T232414600659Z/final.json": "44fd3c3b7650f81929aa4db39d070e2330025116904fac383a789b65d1e5c392",
+    "native-pair-20260928T232414600659Z/fixture-response.bin": "9a72578b51e47dbc34659fba6ae6a1ef9a3592146454bf8259ba988f52132959",
+    "native-pair-20260928T232414600659Z/handoff.json": "232b5a81655ad30cb7fb69e5798ddd76eccad72d227ecf302bac8d14163bff07",
+    "native-pair-20260928T232414600659Z/host-rows.json": "4da12b62760814c71b26c165bf2b75fea6089ebaaa99737ce78a76c735566e96",
+    "native-pair-20260928T232414600659Z/host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-pair-20260928T232414600659Z/independent-approval.json": "bcd04f1ae9205bf76a0dc937a3f13d2aaaca4d96db4d6f33f90c21202e2d177e",
+    "native-pair-20260928T232414600659Z/init.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-pair-20260928T232414600659Z/init.stdout": "7aabac07983ba92b9f1304a2b7275a73b9bf95623897414be2a5af2807345b69",
+    "native-pair-20260928T232414600659Z/launch.json": "e6193702b84d5704e4874dd8bb06e170dd3b68c7eeaa557d2fa55d12704b79a3",
+    "native-pair-20260928T232414600659Z/operator-commands.json": "714514614707eb56072f51e38c6d0728b7c0905f0d23b17b3ff58aba4050d105",
+    "native-pair-20260928T232414600659Z/profile/coordination.sqlite": "3adfc59a0e98681eb9e76f7509e1a63087fe95f43110ad8a8489ea2fb6b3ef53",
+    "native-pair-20260928T232414600659Z/profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-pair-20260928T232414600659Z/profile/native-admissions.sqlite": "f5dd0fdbf7e0b56e243cceababace8673cb117ee678dbf2241f527b0693a3519",
+    "native-pair-20260928T232414600659Z/request-preimage.bin": "1e5e70dd2c3b85c4505b886cabcfad6a597b3dfb77419e9bb9d53ae7148ad9f4",
+    "native-pair-20260928T232414600659Z/result.json": "be72b887c60e209eb5a411bf54bbc3c2122b6901685ea29d7ac0de5afedf807a",
+    "native-pair-20260928T232414600659Z/retained-final.json": "44fd3c3b7650f81929aa4db39d070e2330025116904fac383a789b65d1e5c392",
+    "native-pair-20260928T232414600659Z/review.md": "85394040c1bb38571e86bd82d1d099945e1916593d4fa879e8bcdf4028ca6d64",
+    "native-pair-20260928T232414600659Z/server-events.json": "1c5c33ea5e67d37013e0acccbad1cab00fa7624bd41e52794a172386e20c1932"
+  },
+  "external_guest_sha256": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-joint-001\\positive-independent-002\\20260928T232414600659Z\\result.json": "a915d2b259a98e0996a6119ab6ffa5a85e9420d76d0d68ac812edd683f1931ef",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-joint-001\\positive-independent-002\\20260928T232414600659Z\\core-events.jsonl": "d8eab17dc61cfd43dc7a7384d816534254a5ee7c1aa715cf773f95ce2a2fcf85"
+  },
+  "runtime_invocations": 1,
+  "single_positive_pass": true,
+  "full_matrix_pass": false
+}

@@ -1,0 +1,258 @@
+{
+  "format_version": 1,
+  "captured_at": "2026-09-28T15:02:00.874580+00:00",
+  "gate": "G0",
+  "status": "blocked",
+  "source": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+    "lines": [
+      69,
+      77,
+      180
+    ]
+  },
+  "checks": [
+    {
+      "id": "G0-C01",
+      "requirement": "31工作包、G0–G6、84验收与W01–W28原编号及来源一致",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\source-bound-index-002\\result.json",
+          "sha256": "a2d05ba1028a11798fa67f8bf25975635763048d5ad0e155d494c0f0cced5a35",
+          "scope": "catalogue_integrity"
+        }
+      ],
+      "limit": "不证明任何产品场景通过"
+    },
+    {
+      "id": "G0-C02",
+      "requirement": "M-00基线、输入摘要、能力台账与本地前置",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\m00-handoff-001\\result.json",
+          "sha256": "9cc6b0e43ad8599798a08cf19a0378ae51366a1a3c6a895521e46318d751d03b",
+          "scope": "baseline_handoff"
+        }
+      ],
+      "limit": "178输入与7计划/校验文件复核；运行目标存在不证明平台资格"
+    },
+    {
+      "id": "G0-C03",
+      "requirement": "旧Wasm/guest合同、原件与旧wire保留",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\m00-handoff-001\\result.json",
+          "sha256": "9cc6b0e43ad8599798a08cf19a0378ae51366a1a3c6a895521e46318d751d03b",
+          "scope": "frozen_original_identity"
+        }
+      ],
+      "limit": "36固定文件/13原件对与SDK副本；未执行旧guest运行兼容回归"
+    },
+    {
+      "id": "G0-C04",
+      "requirement": "唯一宿主Schema与版本化新wire、kit、向量、失败回执一致",
+      "status": "verified",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\host-kit-003-review\\result.json",
+          "sha256": "5e20b01e87a65c17265383b10804223641ce76a6089346a10692f0e05d85a78f",
+          "scope": "four_family_experimental_rust_kit"
+        }
+      ],
+      "limit": "003正式静止候选：180文件、14测试含8x4096消费回归、38独立语义解码、40向量文件重产通过；仅四类实验Rust/fake，无完整M01/生产后端/Dart-C资格"
+    },
+    {
+      "id": "G0-C05",
+      "requirement": "插件native/Wasm两构建图、锁与缺依赖失败传播",
+      "status": "blocked",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\plugin-ready-review\\result.json",
+          "sha256": "a830bdd6420e22a371466d991fc240a259eaa80c126fe83eadc655ab875296b7",
+          "scope": "P00_entry_P01_partial_static_handoff"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\result.json",
+          "sha256": "fe6f5309c18a9f3f452ef881e96d3ae060663fce9046d54419ec2de3d4c44153",
+          "scope": "complete_sources_and_independent_limited_net_refusal"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\final-identity.json",
+          "sha256": "8f12807657bd5843e92e2d0660cb5c6e7fb661e56ae309fcca8862396a3ec23b",
+          "scope": "consumer_relocation_kit_and_build_identity"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-exec-store-002-review-001\\result.json",
+          "sha256": "d6f2713826d5618e6a6250c61e5bc193cb5a0ba487b9b7f404fdf5e49812bbcf",
+          "scope": "source_and_producer_build_review_independent_exec_store_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-core-network-003-review-001\\result.json",
+          "sha256": "3e2297be643561eaaf872aa10c4fb8f6464e20fc7655865580a92c35d5578428",
+          "scope": "Core_selected_network_branches_independent_pinned_exe_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+          "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862",
+          "scope": "integrated_source_features_and_producer_build"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\result.json",
+          "sha256": "f9a2621816f6b71ae722f68d08a5527008883eabf6435f1040e8f5040ddb6a8f",
+          "scope": "independent_pinned_integrated_exe_replay"
+        }
+      ],
+      "limit": "同一受限资格构建的三接缝24案109计数断言独立复跑通过，未独立编译；native/Wasm产品图仍0/2"
+    },
+    {
+      "id": "G0-C06",
+      "requirement": "固定Codex/CC Switch源码原件、补丁和候选闭包审查",
+      "status": "blocked",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\plugin-ready-review\\result.json",
+          "sha256": "a830bdd6420e22a371466d991fc240a259eaa80c126fe83eadc655ab875296b7",
+          "scope": "P00_entry_P01_partial_static_handoff"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\result.json",
+          "sha256": "fe6f5309c18a9f3f452ef881e96d3ae060663fce9046d54419ec2de3d4c44153",
+          "scope": "complete_sources_and_independent_limited_net_refusal"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\final-identity.json",
+          "sha256": "8f12807657bd5843e92e2d0660cb5c6e7fb661e56ae309fcca8862396a3ec23b",
+          "scope": "consumer_relocation_kit_and_build_identity"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-exec-store-002-review-001\\result.json",
+          "sha256": "d6f2713826d5618e6a6250c61e5bc193cb5a0ba487b9b7f404fdf5e49812bbcf",
+          "scope": "source_and_producer_build_review_independent_exec_store_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-core-network-003-review-001\\result.json",
+          "sha256": "3e2297be643561eaaf872aa10c4fb8f6464e20fc7655865580a92c35d5578428",
+          "scope": "Core_selected_network_branches_independent_pinned_exe_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+          "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862",
+          "scope": "integrated_source_features_and_producer_build"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\result.json",
+          "sha256": "f9a2621816f6b71ae722f68d08a5527008883eabf6435f1040e8f5040ddb6a8f",
+          "scope": "independent_pinned_integrated_exe_replay"
+        }
+      ],
+      "limit": "固定8697/新8700文件、12处693行集成补丁、1117包锁及905编译artifact身份通过；90个Codex路径包同根，仍非产品目标/feature闭包"
+    },
+    {
+      "id": "G0-C07",
+      "requirement": "P-02真实上游执行/网络/存储截获与断开拒绝",
+      "status": "blocked",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\result.json",
+          "sha256": "fe6f5309c18a9f3f452ef881e96d3ae060663fce9046d54419ec2de3d4c44153",
+          "scope": "complete_sources_and_independent_limited_net_refusal"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\final-identity.json",
+          "sha256": "8f12807657bd5843e92e2d0660cb5c6e7fb661e56ae309fcca8862396a3ec23b",
+          "scope": "consumer_relocation_kit_and_build_identity"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-exec-store-002-review-001\\result.json",
+          "sha256": "d6f2713826d5618e6a6250c61e5bc193cb5a0ba487b9b7f404fdf5e49812bbcf",
+          "scope": "source_and_producer_build_review_independent_exec_store_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-core-network-003-review-001\\result.json",
+          "sha256": "3e2297be643561eaaf872aa10c4fb8f6464e20fc7655865580a92c35d5578428",
+          "scope": "Core_selected_network_branches_independent_pinned_exe_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+          "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862",
+          "scope": "integrated_source_features_and_producer_build"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\result.json",
+          "sha256": "f9a2621816f6b71ae722f68d08a5527008883eabf6435f1040e8f5040ddb6a8f",
+          "scope": "independent_pinned_integrated_exe_replay"
+        }
+      ],
+      "limit": "同一exe集成真实LiveThread、prepared exec、Core网络，新增共享生命周期与新Tokio task守卫已独立复现；仅选定入口拒绝，对象释放不等于writer释放，生产授权/成功后端/OS旁路仍缺"
+    },
+    {
+      "id": "G0-C08",
+      "requirement": "J-00双端消费同一kit与失败回执/向量一致",
+      "status": "blocked",
+      "evidence": [
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\result.json",
+          "sha256": "fe6f5309c18a9f3f452ef881e96d3ae060663fce9046d54419ec2de3d4c44153",
+          "scope": "complete_sources_and_independent_limited_net_refusal"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\final-identity.json",
+          "sha256": "8f12807657bd5843e92e2d0660cb5c6e7fb661e56ae309fcca8862396a3ec23b",
+          "scope": "consumer_relocation_kit_and_build_identity"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-exec-store-002-review-001\\result.json",
+          "sha256": "d6f2713826d5618e6a6250c61e5bc193cb5a0ba487b9b7f404fdf5e49812bbcf",
+          "scope": "source_and_producer_build_review_independent_exec_store_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-core-network-003-review-001\\result.json",
+          "sha256": "3e2297be643561eaaf872aa10c4fb8f6464e20fc7655865580a92c35d5578428",
+          "scope": "Core_selected_network_branches_independent_pinned_exe_replay"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+          "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862",
+          "scope": "integrated_source_features_and_producer_build"
+        },
+        {
+          "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\result.json",
+          "sha256": "f9a2621816f6b71ae722f68d08a5527008883eabf6435f1040e8f5040ddb6a8f",
+          "scope": "independent_pinned_integrated_exe_replay"
+        }
+      ],
+      "limit": "同构建本地资格已验；真实宿主IPC、M02授权及M03/M08/M04/M06生产生命周期尚未闭合"
+    },
+    {
+      "id": "G0-C09",
+      "requirement": "真实平台、账号/模型、隔离、掉电、安装与产品场景",
+      "status": "not_run",
+      "evidence": [],
+      "limit": "84产品场景均未执行；Windows本机清单/静态检查不替代其他平台或真实账号"
+    }
+  ],
+  "product_scenarios": {
+    "total": 84,
+    "verified": 0,
+    "not_run": 84
+  },
+  "findings": [
+    {
+      "id": "J-F01",
+      "severity": "blocker",
+      "status": "open",
+      "description": "G0要求P-02真实三接缝，不可凭P-00/P-01与最小kit闭门",
+      "source": "03_契约交接与验收.md:69,77; 02_插件侧编码构建路径.md:27"
+    },
+    {
+      "id": "J-F02",
+      "severity": "boundary",
+      "status": "open",
+      "description": "最小四类kit不等于完整七组契约后端；SDK仍experimental",
+      "source": "01_Morrow侧扩充实施路径.md:55; 03_契约交接与验收.md:180"
+    }
+  ]
+}

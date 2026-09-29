@@ -1,0 +1,22 @@
+{
+  "status": "single_A011_producer_run_independently_reviewed_pass",
+  "post_count": 1,
+  "request_bytes": 22025,
+  "response_bytes": 197,
+  "host_ack_upper_bound_ms": 14.6303,
+  "first_reason": "HostCancelled",
+  "data_first_pause": true,
+  "original_targets_suppressed": true,
+  "zero_credit_ack_before_close": true,
+  "cleanup_acknowledged_offset": 197,
+  "guest_data_joined": true,
+  "control_clean": true,
+  "aggregate": "Unknown",
+  "host_exit": 0,
+  "guest_exit": 2,
+  "durable_owner_released": true,
+  "independent_http_runs": 0,
+  "B_run": false,
+  "old_A010_still_failed": true,
+  "product_gate_upgrade": false
+}

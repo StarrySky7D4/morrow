@@ -1,0 +1,11 @@
+
+running 6 tests
+test admission::tests::original_generation_cleanup_is_allowed_without_renewing_work ... ok
+test admission::tests::stable_identity_does_not_allow_replayed_or_wrong_direction_control ... ok
+test delivery::tests::early_control_eof_waits_for_contiguous_data_and_survives_detached_waiter ... ok
+test delivery::tests::exact_limit_is_not_eof_and_cancel_never_relabels_unacked_parser_bytes ... ok
+test delivery::tests::late_cancel_bytes_only_extend_a_fully_classified_prefix ... ok
+test session::tests::dropping_pending_read_wait_does_not_lose_session_owned_chunk ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

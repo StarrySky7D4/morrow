@@ -1,0 +1,113 @@
+{
+  "stage": "build",
+  "status": "native_compiled_not_runtime_proof",
+  "native_runtime_run": false,
+  "host_or_http_launched": false,
+  "target_cache": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target",
+  "tools": [
+    {
+      "purpose": "isolated VS environment",
+      "exit_code": 0
+    },
+    {
+      "tool": "rustc",
+      "version": "rustc 1.95.0 (59807616e 2026-04-14)\nbinary: rustc\ncommit-hash: 59807616e1fa2540724bfbac14d7976d7e4a3860\ncommit-date: 2026-04-14\nhost: x86_64-pc-windows-msvc\nrelease: 1.95.0\nLLVM version: 22.1.2"
+    },
+    {
+      "tool": "cargo",
+      "version": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)"
+    }
+  ],
+  "argv": [
+    "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+    "build",
+    "--offline",
+    "--locked",
+    "--target",
+    "x86_64-pc-windows-msvc",
+    "--manifest-path",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-001\\Cargo.toml",
+    "--message-format=json-render-diagnostics"
+  ],
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_BUILD_JOBS",
+    "CARGO_HOME",
+    "CARGO_INCREMENTAL",
+    "CARGO_NET_OFFLINE",
+    "CARGO_PROFILE_DEV_DEBUG",
+    "CARGO_PROFILE_TEST_DEBUG",
+    "CARGO_TARGET_DIR",
+    "CARGO_TERM_COLOR",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_NO_LAZY_FETCH",
+    "GIT_TERMINAL_PROMPT",
+    "HOME",
+    "INCLUDE",
+    "LIB",
+    "LIBPATH",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "UCRTVERSION",
+    "UNIVERSALCRTSDKDIR",
+    "USERPROFILE",
+    "VCINSTALLDIR",
+    "VCTOOLSINSTALLDIR",
+    "VCTOOLSVERSION",
+    "VSCMD_ARG_HOST_ARCH",
+    "VSCMD_ARG_TGT_ARCH",
+    "VSCMD_SKIP_SENDTELEMETRY",
+    "VSINSTALLDIR",
+    "WINDIR",
+    "WINDOWSSDKDIR",
+    "WINDOWSSDKVERSION"
+  ],
+  "pid": 10272,
+  "exit_code": 0,
+  "protected_unchanged": true,
+  "inputs_before": {
+    "native/m03-stream-001/Cargo.lock": "ac75ba5b6e90d350144f310b05c274a6a78bc46bfa58f3b4f85349ea795f646d",
+    "native/m03-stream-001/Cargo.toml": "33feb18d9989a0f185494c1357d7e02472c80dd840c6edfbd1e2f970d8479a05",
+    "native/m03-stream-001/src/admission.rs": "d678eff5b4445284a0d48ca7a89529a70d295e76c374a2e8a3814fd48aa514a8",
+    "native/m03-stream-001/src/delivery.rs": "f63ebc5571b87dd62f5bf5c381454c1713c780dbce75872c5704134beb68d77a",
+    "native/m03-stream-001/src/lib.rs": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+    "native/m03-stream-001/src/main.rs": "04bedd6ef3c639cab6a5f2ee0efc26e33f091961a2acadbdb9674ea6fbe665d6",
+    "native/m03-stream-001/src/session.rs": "911717b829efdaeaab673e4a1245079f4d60dd8987b7c2d331a708b20e7ed01a",
+    "native/m03-stream-001/src/workers.rs": "d884606d791f933684479bb17a274b39b4524c47d6972903c00f72e67ba07a87",
+    "receipts/m03-stream-001/build_native.py": "c431819c05571966f24744b298fd55ef8098d33f24ae6b4379c1ac6caa08bcc0",
+    "out/m03-native-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b"
+  },
+  "inputs_after": {
+    "native/m03-stream-001/Cargo.lock": "ac75ba5b6e90d350144f310b05c274a6a78bc46bfa58f3b4f85349ea795f646d",
+    "native/m03-stream-001/Cargo.toml": "33feb18d9989a0f185494c1357d7e02472c80dd840c6edfbd1e2f970d8479a05",
+    "native/m03-stream-001/src/admission.rs": "d678eff5b4445284a0d48ca7a89529a70d295e76c374a2e8a3814fd48aa514a8",
+    "native/m03-stream-001/src/delivery.rs": "f63ebc5571b87dd62f5bf5c381454c1713c780dbce75872c5704134beb68d77a",
+    "native/m03-stream-001/src/lib.rs": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+    "native/m03-stream-001/src/main.rs": "04bedd6ef3c639cab6a5f2ee0efc26e33f091961a2acadbdb9674ea6fbe665d6",
+    "native/m03-stream-001/src/session.rs": "911717b829efdaeaab673e4a1245079f4d60dd8987b7c2d331a708b20e7ed01a",
+    "native/m03-stream-001/src/workers.rs": "d884606d791f933684479bb17a274b39b4524c47d6972903c00f72e67ba07a87",
+    "receipts/m03-stream-001/build_native.py": "c431819c05571966f24744b298fd55ef8098d33f24ae6b4379c1ac6caa08bcc0",
+    "out/m03-native-001/cargo-home/config.toml": "a931adb3f3b2989f736cb5a805cb8e7eeb11f062d3eccc177c8c2f03d7ba091b"
+  },
+  "changed_inputs": [],
+  "log_sha256": {
+    "stderr.txt": "c23b3bf37a0718cbf90ea19677ebc671ad64ced459ef5e5bda3e22aec66c1a39",
+    "stdout.txt": "534256cc0c3e26b34dc70bf0bbc6174929364afeab08c7849793991bc8b47072"
+  }
+}

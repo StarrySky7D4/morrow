@@ -1,0 +1,6 @@
+[source.crates-io]
+replace-with="pinned"
+[source.pinned]
+directory="C:/Users/Administrator/Desktop/CodeXProjext/morrow/build/io-safety-refactor/reports/codex-morrow-v1.1/joint/m03-stream-001/wire-independent-001/vendor"
+[net]
+offline=true

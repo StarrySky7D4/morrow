@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "batch": "p02-source-batch-001",
+  "repository": "https://github.com/farion1231/cc-switch",
+  "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "tree_sha1": "e373c27485681c074ddab7d4f085ee9a6667b891",
+  "status": "complete_fixed_source_verified",
+  "source_method": "81 complete members from failed archive + 1219 fixed raw files + 22 fixed connector files; every blob verified against independently reconstructed Git tree",
+  "archive_status": "failed_incomplete_download_preserved",
+  "complete_commit_tree_verified": true,
+  "tree_count": 133,
+  "file_count": 1322,
+  "source_bytes": 48415580,
+  "materialization": "upstream/p02-source-batch-001/cc-switch-source",
+  "content_manifest": {
+    "path": "receipts/p02-source-batch-001/cc-switch-content-manifest.json",
+    "sha256": "c2e97341dee980c523392d57b0f24d3ed896f633a5255c5d83e93f17dfba12d3"
+  },
+  "independent_tree_metadata": {
+    "path": "receipts/p02-source-batch-001/cc-switch-complete-git-tree.json",
+    "sha256": "da249843bf527b67a5f33e17338e9728e7ef1763dd1e1154adcdf24ccb6a9f93"
+  },
+  "dirty_diff": {
+    "modified": [],
+    "missing": [],
+    "extra": [],
+    "basis": "Complete file-set and blob equality to independently reconstructed commit tree, not a Git checkout"
+  },
+  "mode_materialization": "Git regular/executable modes recorded in manifest; Windows permission bits are not represented as Unix executable permissions; no source symlinks",
+  "license_files": [
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "size": 1067,
+      "git_blob_sha1": "d84c4f73112a9019312a332c1d04218ab1c03be7",
+      "sha256": "912b6a597d10c43b40a0909349ed95b052b17efb6502b4898e1b35dafb896755",
+      "provenance": "complete_member_from_failed_archive_with_independent_blob_check"
+    }
+  ],
+  "verification_uses_assert": false,
+  "upstream_build_or_runtime_executed_by_source_audit": false,
+  "ended_at": "2026-09-28T12:19:10.706052+00:00"
+}

@@ -1,0 +1,8 @@
+{
+  "case": "profile-copy",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "copied_profile_rejected": true,
+    "no_child_requested": true
+  }
+}

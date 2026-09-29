@@ -1,0 +1,682 @@
+--- a/codex-rs/core/Cargo.toml
++++ b/codex-rs/core/Cargo.toml
+@@ -174,3 +174,9 @@
+ [package.metadata.cargo-shear]
+ ignored = ["openssl-sys"]
+ ignored-paths = ["tests/remote_env_windows/*.rs"]
++
++[features]
++morrow-p02-qualification = []
++morrow-p02-network-qualification = []
++# Qualification only: deny selected default backends in this entire build.
++morrow-p02-restricted-qualification = ["morrow-p02-qualification", "morrow-p02-network-qualification", "codex-thread-store/morrow-p02-restricted-qualification"]
+--- a/codex-rs/core/src/client.rs
++++ b/codex-rs/core/src/client.rs
+@@ -36,6 +36,7 @@
+ mod tool_metadata;
+ 
+ use crate::CodexResponsesHeaders;
++use crate::morrow_network::{ModelHttpTransport, ModelNetworkBackend, WebsocketConnectRequest};
+ use crate::tools::ExecutedToolCalls;
+ use async_channel::Sender;
+ use codex_api::AgentIdentityTelemetry;
+@@ -263,6 +264,7 @@
+ /// call site.
+ #[derive(Debug, Clone)]
+ pub struct ModelClient {
++    network_backend: Option<Arc<dyn ModelNetworkBackend>>,
+     state: Arc<ModelClientState>,
+     agent_identity_policy: AgentIdentityAuthPolicy,
+     prompt_cache_key_override: Option<String>,
+@@ -513,6 +515,7 @@
+             && !crate::guardian::is_basic_session_source(&session_source)
+             && !memory_consolidation;
+         Self {
++            network_backend: None,
+             state: Arc::new(ModelClientState {
+                 thread_id,
+                 provider: model_provider,
+@@ -542,6 +545,13 @@
+             request_contributors,
+             executed_tool_calls: None,
+         }
++    }
++
++    /// Installs one explicit owner for both HTTP and WebSocket connection attempts.
++    /// Injected failures never retry through the default network implementation.
++    pub fn with_network_backend(mut self, backend: Arc<dyn ModelNetworkBackend>) -> Self {
++        self.network_backend = Some(backend);
++        self
+     }
+ 
+     pub(crate) fn with_executed_tool_calls(mut self, recorder: ExecutedToolCalls) -> Self {
+@@ -1178,7 +1188,15 @@
+         api_provider: &ApiProvider,
+         endpoint: &str,
+         redirect_policy: ClientRedirectPolicy,
+-    ) -> Result<ReqwestTransport> {
++    ) -> Result<ModelHttpTransport> {
++        if let Some(backend) = &self.network_backend {
++            return Ok(ModelHttpTransport::Injected(backend.clone()));
++        }
++        if cfg!(feature = "morrow-p02-restricted-qualification") {
++            return Err(crate::error::CodexErr::InvalidRequest(
++                "restricted-qualification: injected HTTP required".into(),
++            ));
++        }
+         let redirect_policy = if api_provider
+             .headers
+             .contains_key(codex_model_provider::ACCOUNT_ROUTING_HEADER)
+@@ -1194,7 +1212,9 @@
+             redirect_policy,
+         )
+         .map_err(std::io::Error::from)?;
+-        Ok(ReqwestTransport::from_http_client(client))
++        Ok(ModelHttpTransport::Default(
++            ReqwestTransport::from_http_client(client),
++        ))
+     }
+ 
+     pub(crate) async fn prewarm_auth(&self) -> Result<()> {
+@@ -1228,16 +1248,36 @@
+         );
+         let websocket_connect_timeout = self.state.provider.info().websocket_connect_timeout();
+         let start = Instant::now();
+-        let result = match tokio::time::timeout(
+-            websocket_connect_timeout,
+-            ApiWebSocketResponsesClient::new(api_provider, api_auth).connect(
+-                &self.http_client_factory,
+-                headers,
+-                codex_login::default_client::default_headers(),
+-                /*turn_state*/ None,
+-                Some(websocket_telemetry),
+-            ),
+-        )
++        let result = match tokio::time::timeout(websocket_connect_timeout, async {
++            match &self.network_backend {
++                Some(backend) => {
++                    backend
++                        .connect_websocket(WebsocketConnectRequest {
++                            provider: api_provider,
++                            auth: api_auth,
++                            extra_headers: headers,
++                            default_headers: codex_login::default_client::default_headers(),
++                        })
++                        .await
++                }
++                None => {
++                    if cfg!(feature = "morrow-p02-restricted-qualification") {
++                        return Err(ApiError::Transport(TransportError::Build(
++                            "restricted-qualification: injected WebSocket required".into(),
++                        )));
++                    }
++                    ApiWebSocketResponsesClient::new(api_provider, api_auth)
++                        .connect(
++                            &self.http_client_factory,
++                            headers,
++                            codex_login::default_client::default_headers(),
++                            /*turn_state*/ None,
++                            Some(websocket_telemetry),
++                        )
++                        .await
++                }
++            }
++        })
+         .await
+         {
+             Ok(result) => result,
+--- a/codex-rs/core/src/exec.rs
++++ b/codex-rs/core/src/exec.rs
+@@ -447,6 +447,11 @@
+     stdout_stream: Option<StdoutStream>,
+     after_spawn: Option<Box<dyn FnOnce() + Send>>,
+ ) -> Result<ExecToolCallOutput> {
++    if cfg!(feature = "morrow-p02-restricted-qualification") {
++        return Err(CodexErr::InvalidRequest(
++            "restricted-qualification: independent exec disabled".into(),
++        ));
++    }
+     let ExecRequest {
+         command,
+         cwd,
+--- a/codex-rs/core/src/lib.rs
++++ b/codex-rs/core/src/lib.rs
+@@ -131,6 +131,8 @@
+ mod skills;
+ pub(crate) use skills::maybe_emit_implicit_skill_invocation;
+ pub(crate) use skills::skills_load_input_from_config;
++#[cfg(feature = "morrow-p02-qualification")]
++pub mod morrow_p02_qualification;
+ mod stream_events_utils;
+ pub mod test_support;
+ mod unified_exec;
+@@ -244,3 +246,7 @@
+ // Captured environment bindings can be passed back to ThreadManager by internal reviewers.
+ pub use environment_selection::TurnEnvironmentSnapshot;
+ pub use environment_selection::validate_environment_ids_and_cwds;
++
++pub mod morrow_network;
++#[cfg(feature = "morrow-p02-network-qualification")]
++pub mod morrow_network_qualification;
+--- a/codex-rs/core/src/unified_exec/process_manager.rs
++++ b/codex-rs/core/src/unified_exec/process_manager.rs
+@@ -1317,9 +1317,19 @@
+         mut spawn_lifecycle: SpawnLifecycleHandle,
+         environment: &codex_exec_server::Environment,
+     ) -> Result<UnifiedExecProcess, UnifiedExecError> {
++        if cfg!(feature = "morrow-p02-restricted-qualification")
++            && !environment.has_injected_capabilities()
++        {
++            return Err(UnifiedExecError::create_process(
++                "restricted-qualification: injected exec required".into(),
++            ));
++        }
+         let inherited_fds = spawn_lifecycle.inherited_fds();
+ 
+-        if environment.is_remote() || request.exec_server_shell_snapshot.is_some() {
++        if environment.has_injected_capabilities()
++            || environment.is_remote()
++            || request.exec_server_shell_snapshot.is_some()
++        {
+             if !inherited_fds.is_empty() {
+                 return Err(UnifiedExecError::create_process(
+                     "remote exec-server does not support inherited file descriptors".to_string(),
+--- a/codex-rs/exec-server/src/environment.rs
++++ b/codex-rs/exec-server/src/environment.rs
+@@ -665,6 +665,7 @@
+ /// paths used by filesystem helpers.
+ #[derive(Clone)]
+ pub struct Environment {
++    injected_backend: Option<InjectedBackend>,
+     remote_client: Option<LazyRemoteExecServerClient>,
+     ready_info: Arc<ArcSwapOption<EnvironmentReadyInfo>>,
+     // No sender means an ordinary environment. A provisioned environment retains a sender whose
+@@ -678,10 +679,15 @@
+     local_runtime_paths: Option<ExecServerRuntimeOptions>,
+ }
+ 
++/// Marks caller-owned capabilities; unified exec must not choose its local spawn branch.
++#[derive(Clone)]
++struct InjectedBackend;
++
+ impl Environment {
+     /// Builds a test-only local environment without configured sandbox helper paths.
+     pub fn default_for_tests() -> Self {
+         Self {
++            injected_backend: None,
+             remote_client: None,
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+@@ -704,6 +710,31 @@
+ }
+ 
+ impl Environment {
++    /// Supplies every capability explicitly, without constructing local or remote defaults.
++    /// This is a routing boundary, not an OS isolation or durable capability guarantee.
++    pub fn with_injected_capabilities(
++        exec_backend: Arc<dyn ExecBackend>,
++        filesystem: Arc<dyn ExecutorFileSystem>,
++        http_client: Arc<dyn HttpClient>,
++    ) -> Self {
++        Self {
++            injected_backend: Some(InjectedBackend),
++            remote_client: None,
++            ready_info: Arc::new(ArcSwapOption::empty()),
++            provisioning_status_tx: None,
++            startup_task: Arc::new(Mutex::new(None)),
++            exec_backend,
++            filesystem,
++            http_client,
++            local_runtime_paths: None,
++        }
++    }
++
++    /// Whether unified exec must use the injected backend even for a local-shaped request.
++    pub fn has_injected_capabilities(&self) -> bool {
++        self.injected_backend.is_some()
++    }
++
+     /// Builds an environment using the caller's effective outbound HTTP policy.
+     pub fn create(
+         exec_server_url: Option<String>,
+@@ -761,6 +792,7 @@
+         http_client_factory: HttpClientFactory,
+     ) -> Self {
+         Self {
++            injected_backend: None,
+             remote_client: None,
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+@@ -794,6 +826,7 @@
+             Arc::new(RemoteFileSystem::new(client.clone()));
+ 
+         Self {
++            injected_backend: None,
+             remote_client: Some(client.clone()),
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+--- a/codex-rs/thread-store/Cargo.toml
++++ b/codex-rs/thread-store/Cargo.toml
+@@ -11,6 +11,9 @@
+ 
+ [lints]
+ workspace = true
++
++[features]
++morrow-p02-restricted-qualification = []
+ 
+ [dependencies]
+ chrono = { workspace = true, features = ["serde"] }
+--- a/codex-rs/thread-store/src/live_thread.rs
++++ b/codex-rs/thread-store/src/live_thread.rs
+@@ -139,6 +139,11 @@
+     ) -> ThreadStoreResult<Self> {
+         let thread_id = params.thread_id;
+         let history_mode = params.history_mode;
++        if cfg!(feature = "morrow-p02-restricted-qualification") {
++            return Err(ThreadStoreError::Unsupported {
++                operation: "restricted_qualification_create_before_git",
++            });
++        }
+         let metadata_sync = ThreadMetadataSync::for_create(&params).await;
+         thread_store.create_thread(params).await?;
+         Ok(Self {
+@@ -185,6 +190,13 @@
+         params: ResumeThreadParams,
+     ) -> ThreadStoreResult<Self> {
+         let thread_id = params.thread_id;
++        if cfg!(feature = "morrow-p02-restricted-qualification")
++            && thread_store.as_any().is::<LocalThreadStore>()
++        {
++            return Err(ThreadStoreError::Unsupported {
++                operation: "restricted_qualification_local_resume_before_state_db",
++            });
++        }
+         let should_load_history = params.history.is_none();
+         let include_archived = params.include_archived;
+         let metadata = if history_mode == ThreadHistoryMode::Paginated
+--- /dev/null
++++ b/codex-rs/core/src/morrow_network.rs
+@@ -0,0 +1,54 @@
++//! Explicit network ownership for ModelClient's HTTP and WebSocket creation paths.
++//! Implementations must enforce their own destination, credential and transport authority.
++use codex_api::{ApiError, Provider, ResponsesWebsocketConnection, SharedAuthProvider};
++use codex_http_client::{
++    HttpTransport, Request, ReqwestTransport, Response, StreamResponse, TransportError,
++};
++use http::HeaderMap;
++use std::future::Future;
++use std::pin::Pin;
++use std::sync::Arc;
++
++pub type NetworkFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
++
++/// Inputs at Core's connection boundary, before the default API client merges/authenticates headers.
++/// This does not represent a completed WebSocket handshake or a sent response.create frame.
++pub struct WebsocketConnectRequest {
++    pub provider: Provider,
++    pub auth: SharedAuthProvider,
++    pub extra_headers: HeaderMap,
++    pub default_headers: HeaderMap,
++}
++
++/// Caller-owned transport capability; failures must remain failures, without local fallback.
++/// Boxed futures allow one object-safe capability to serve cloned ModelClient instances.
++pub trait ModelNetworkBackend: std::fmt::Debug + Send + Sync {
++    fn execute(&self, request: Request) -> NetworkFuture<'_, Result<Response, TransportError>>;
++    fn stream(&self, request: Request)
++    -> NetworkFuture<'_, Result<StreamResponse, TransportError>>;
++    fn connect_websocket(
++        &self,
++        request: WebsocketConnectRequest,
++    ) -> NetworkFuture<'_, Result<ResponsesWebsocketConnection, ApiError>>;
++}
++
++#[derive(Clone, Debug)]
++pub(crate) enum ModelHttpTransport {
++    Default(ReqwestTransport),
++    Injected(Arc<dyn ModelNetworkBackend>),
++}
++
++impl HttpTransport for ModelHttpTransport {
++    async fn execute(&self, request: Request) -> Result<Response, TransportError> {
++        match self {
++            Self::Default(transport) => transport.execute(request).await,
++            Self::Injected(backend) => backend.execute(request).await,
++        }
++    }
++    async fn stream(&self, request: Request) -> Result<StreamResponse, TransportError> {
++        match self {
++            Self::Default(transport) => transport.stream(request).await,
++            Self::Injected(backend) => backend.stream(request).await,
++        }
++    }
++}
+--- /dev/null
++++ b/codex-rs/core/src/morrow_network_qualification.rs
+@@ -0,0 +1,220 @@
++//! Real ModelClientSession entrypoints with credential-free, local qualification inputs.
++use crate::client::ModelClient;
++use crate::client_common::Prompt;
++use crate::morrow_network::ModelNetworkBackend;
++use crate::test_support::{TestCodexResponsesRequestKind, responses_metadata};
++use codex_http_client::{HttpClientFactory, NetworkPolicyController, OutboundProxyPolicy};
++use codex_login::auth::AgentIdentityAuthPolicy;
++use codex_model_provider::WorkspaceRoutingContext;
++use codex_model_provider_info::{WireApi, create_oss_provider_with_base_url};
++use codex_otel::SessionTelemetry;
++use codex_protocol::ThreadId;
++use codex_protocol::config_types::ReasoningSummary;
++use codex_protocol::openai_models::ModelInfo;
++use codex_protocol::protocol::SessionSource;
++use codex_rollout_trace::InferenceTraceContext;
++use serde_json::{Value, json};
++use std::sync::Arc;
++
++/// Each scenario enters an existing Core branch, without changing fallback flags directly.
++#[derive(Clone, Copy)]
++pub enum Scenario {
++    Http,
++    Websocket,
++    Prewarm,
++    StreamFallback,
++    PrewarmFallback,
++    PreconnectFallback,
++}
++
++pub async fn run(backend: Arc<dyn ModelNetworkBackend>, scenario: Scenario) -> Value {
++    run_with_backend(Some(backend), scenario).await
++}
++
++/// Deliberately omit injection to reach the actual default-selection guards.
++pub async fn run_without_backend(scenario: Scenario) -> Value {
++    run_with_backend(None, scenario).await
++}
++
++async fn run_with_backend(
++    backend: Option<Arc<dyn ModelNetworkBackend>>,
++    scenario: Scenario,
++) -> Value {
++    // The runner launches an allowlisted, isolated environment. Refuse before
++    // ModelClient's unconditional auth-env telemetry if a credential key survives.
++    for key in [
++        "OPENAI_API_KEY",
++        "CODEX_API_KEY",
++        "CODEX_REFRESH_TOKEN_URL_OVERRIDE",
++    ] {
++        assert!(
++            std::env::var_os(key).is_none(),
++            "credential environment must be absent"
++        );
++    }
++    let thread_id = ThreadId::from_string("00000000-0000-4000-8000-000000000003").unwrap();
++    let mut provider =
++        create_oss_provider_with_base_url("https://fixture.invalid/v1", WireApi::Responses);
++    provider.supports_websockets = !matches!(scenario, Scenario::Http);
++    provider.request_max_retries = Some(0);
++    provider.stream_max_retries = Some(0);
++    provider.websocket_connect_timeout_ms = Some(1000);
++    assert!(
++        provider.auth.is_none()
++            && provider.gateway_oauth.is_none()
++            && provider.aws.is_none()
++            && provider.experimental_bearer_token.is_none()
++            && provider.env_key.is_none()
++            && provider.env_http_headers.is_none()
++            && !provider.requires_openai_auth
++    );
++    let policy = NetworkPolicyController::default();
++    let client = ModelClient::new(
++        /*auth_manager*/ None,
++        AgentIdentityAuthPolicy::JwtOnly,
++        thread_id,
++        provider,
++        SessionSource::Exec,
++        "qualification-local-fixture".into(),
++        /*model_verbosity*/ None,
++        /*content_item_kinds_enabled*/ false,
++        /*reasoning_effort_override_enabled*/ false,
++        /*enable_request_compression*/ false,
++        /*include_timing_metrics*/ false,
++        /*beta_features_header*/ None,
++        /*concurrent_reasoning_summaries_enabled*/ false,
++        /*attestation_provider*/ None,
++        HttpClientFactory::new(OutboundProxyPolicy::ReqwestDefault)
++            .with_network_policy(policy.policy()),
++        WorkspaceRoutingContext::new("https://fixture.invalid/backend-api".into()),
++        Vec::new(),
++    );
++    let client = match backend {
++        Some(backend) => client.with_network_backend(backend),
++        None => client,
++    };
++    let model: ModelInfo = serde_json::from_value(json!({
++        "slug":"qualification-model", "display_name":"qualification-model", "description":"local fixture",
++        "default_reasoning_level":"medium", "supported_reasoning_levels":[{"effort":"medium","description":"fixture"}],
++        "shell_type":"shell_command", "visibility":"list", "supported_in_api":true,"priority":1,
++        "upgrade":null,"model_messages":null,"support_verbosity":false,"default_verbosity":null,
++        "apply_patch_tool_type":null,"truncation_policy":{"mode":"bytes","limit":10000},
++        "supports_image_detail_original":false,"context_window":272000,"auto_compact_token_limit":null,"experimental_supported_tools":[]
++    })).unwrap();
++    let telemetry = SessionTelemetry::new(
++        thread_id,
++        "qualification-model",
++        "qualification-model",
++        None,
++        None,
++        None,
++        "qualification-local-fixture".into(),
++        false,
++        "fixture".into(),
++        SessionSource::Exec,
++    );
++    let prompt = Prompt::default();
++    let metadata = responses_metadata(
++        "11111111-1111-4111-8111-111111111111",
++        &thread_id.to_string(),
++        &thread_id.to_string(),
++        Some("fixture-turn"),
++        "fixture-window".into(),
++        &SessionSource::Exec,
++        None,
++        TestCodexResponsesRequestKind::Turn,
++    );
++    let prewarm_metadata = responses_metadata(
++        "11111111-1111-4111-8111-111111111111",
++        &thread_id.to_string(),
++        &thread_id.to_string(),
++        Some("fixture-turn"),
++        "fixture-window".into(),
++        &SessionSource::Exec,
++        None,
++        TestCodexResponsesRequestKind::Prewarm,
++    );
++    let trace = InferenceTraceContext::disabled();
++    let mut outcomes = vec![];
++    let mut states = vec![client.responses_websocket_enabled()];
++    let mut session = client.new_session();
++    if matches!(scenario, Scenario::PreconnectFallback) {
++        let connection_metadata = responses_metadata(
++            "11111111-1111-4111-8111-111111111111",
++            &thread_id.to_string(),
++            &thread_id.to_string(),
++            None,
++            "fixture-window".into(),
++            &SessionSource::Exec,
++            None,
++            TestCodexResponsesRequestKind::WebsocketConnection,
++        );
++        let outcome = session
++            .preconnect_websocket(&model, None, &telemetry, &connection_metadata)
++            .await;
++        outcomes.push(match outcome {
++            Ok(()) => "preconnect_setup_ok_without_network_success".into(),
++            Err(error) => format!("preconnect_error:{error}"),
++        });
++        states.push(client.responses_websocket_enabled());
++    }
++    if matches!(scenario, Scenario::Prewarm | Scenario::PrewarmFallback) {
++        let outcome = session
++            .prewarm_websocket(
++                &prompt,
++                &model,
++                &telemetry,
++                None,
++                ReasoningSummary::None,
++                None,
++                &prewarm_metadata,
++            )
++            .await;
++        outcomes.push(match outcome {
++            Ok(()) => "prewarm_setup_ok_without_network_success".into(),
++            Err(error) => format!("prewarm_error:{error}"),
++        });
++        states.push(client.responses_websocket_enabled());
++    }
++    if !matches!(scenario, Scenario::Prewarm) {
++        let result = session
++            .stream(
++                &prompt,
++                &model,
++                &telemetry,
++                None,
++                ReasoningSummary::None,
++                None,
++                &metadata,
++                &trace,
++            )
++            .await;
++        outcomes.push(match result {
++            Ok(_) => "unexpected_successful_stream".into(),
++            Err(error) => format!("stream_error:{error}"),
++        });
++        states.push(client.responses_websocket_enabled());
++    }
++    if matches!(scenario, Scenario::StreamFallback) {
++        drop(session);
++        let mut next_session = client.new_session();
++        let result = next_session
++            .stream(
++                &prompt,
++                &model,
++                &telemetry,
++                None,
++                ReasoningSummary::None,
++                None,
++                &metadata,
++                &trace,
++            )
++            .await;
++        outcomes.push(match result {
++            Ok(_) => "unexpected_successful_stream".into(),
++            Err(error) => format!("next_session_error:{error}"),
++        });
++        states.push(client.responses_websocket_enabled());
++    }
++    json!({"outcomes":outcomes,"websocket_enabled_states":states,"factory_policy":"unavailable","personal_auth_manager":false,"credential_environment_absent":true,"provider_auth_fields_absent":true})
++}
+--- /dev/null
++++ b/codex-rs/core/src/morrow_p02_qualification.rs
+@@ -0,0 +1,102 @@
++//! Bounded bridge into the original unified-exec dispatcher; no synthetic loop.
++use crate::exec::{ExecCapturePolicy, ExecExpiration};
++use crate::sandboxing::ExecRequest;
++use crate::unified_exec::{NoopSpawnLifecycle, UnifiedExecProcessManager};
++use codex_protocol::config_types::{WindowsSandboxLevel, WindowsSandboxProxySettingsMode};
++use codex_protocol::models::PermissionProfile;
++use codex_sandboxing::SandboxType;
++use codex_utils_absolute_path::AbsolutePathBuf;
++use std::collections::HashMap;
++
++/// Exercises one actual prepared-request dispatch. Callers must supply a refusing backend.
++/// A returned error proves only this call's propagation, never global spawn isolation.
++pub async fn dispatch_refusal_probe(
++    environment: &codex_exec_server::Environment,
++    tty: bool,
++) -> Result<(), String> {
++    let request = request();
++    UnifiedExecProcessManager::default()
++        .open_session_with_prepared_exec_env(
++            /*process_id*/ 2,
++            &request,
++            /*tool_ctx*/ None,
++            WindowsSandboxProxySettingsMode::Preserve,
++            /*network_policy_decider*/ None,
++            tty,
++            Box::new(NoopSpawnLifecycle),
++            environment,
++        )
++        .await
++        .map(|_| ())
++        .map_err(|error| error.to_string())
++}
++
++fn request() -> ExecRequest {
++    ExecRequest::new(
++        vec![
++            "morrow-qualification-never-launch".into(),
++            "fixture-argument".into(),
++        ],
++        AbsolutePathBuf::try_from(r"C:\morrow-qualification-nonexistent")
++            .expect("fixed absolute fixture path"),
++        HashMap::new(),
++        /*network*/ None,
++        /*network_environment_id*/ None,
++        ExecExpiration::DefaultTimeout,
++        ExecCapturePolicy::ShellTool,
++        SandboxType::None,
++        vec![],
++        WindowsSandboxLevel::Disabled,
++        PermissionProfile::read_only(),
++        /*arg0*/ None,
++    )
++}
++
++/// Enter the independent Core path; never allow a successful spawn in this build.
++pub async fn independent_refusal_probe() -> serde_json::Value {
++    let spawned = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
++    let observed = spawned.clone();
++    let error = crate::exec::execute_exec_request(
++        request(),
++        None,
++        Some(Box::new(move || {
++            observed.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
++        })),
++    )
++    .await
++    .expect_err("independent execution must refuse");
++    serde_json::json!({"error":error.to_string(),"after_spawn_calls":spawned.load(std::sync::atomic::Ordering::SeqCst)})
++}
++
++/// Missing injection must refuse before even asking the spawn lifecycle for FDs.
++pub async fn default_refusal_probe(tty: bool) -> serde_json::Value {
++    use std::sync::{Arc, Mutex};
++    #[derive(Debug)]
++    struct ObservedLifecycle(Arc<Mutex<Vec<&'static str>>>);
++    impl crate::unified_exec::SpawnLifecycle for ObservedLifecycle {
++        fn inherited_fds(&self) -> Vec<i32> {
++            self.0.lock().unwrap().push("inherited_fds");
++            vec![]
++        }
++        fn after_spawn(&mut self) {
++            self.0.lock().unwrap().push("after_spawn");
++        }
++    }
++    let calls = Arc::new(Mutex::new(vec![]));
++    let environment = codex_exec_server::Environment::default_for_tests();
++    let error = UnifiedExecProcessManager::default()
++        .open_session_with_prepared_exec_env(
++            2,
++            &request(),
++            None,
++            WindowsSandboxProxySettingsMode::Preserve,
++            None,
++            tty,
++            Box::new(ObservedLifecycle(calls.clone())),
++            &environment,
++        )
++        .await
++        .err()
++        .expect("default execution must refuse");
++    serde_json::json!({"error":error.to_string(),"spawn_lifecycle_calls":*calls.lock().unwrap()})
++}

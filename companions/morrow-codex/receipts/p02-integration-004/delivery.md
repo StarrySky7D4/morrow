@@ -1,0 +1,19 @@
+# P02 same-source integration 004 — limited delivery
+
+Completed one restricted qualification executable containing the real prepared unified-exec entry, Core ModelClientSession and LiveThread adapter. It passed **24 cases / 109 counted assertions**, including one shared adapter-lifetime case and eight new-task guard cases. Prior cases were rebuilt from the new combined source; old executable results were not added together as integration evidence.
+
+The new working copy contains 8,700 files, based on the unchanged 8,697-file fixed upstream `44fe510ce3ee61c8ef623adcbf89b901c73ddd61`. Delta: **12 files (9 modified + 3 added), 693 patch lines**. Reviewed 002 and 003 Cargo/lib overlap was merged explicitly. New refusal checks occur at six original caller boundaries; an additional qualification-only Windows trait re-export permits observation of lifecycle callback order. Normal default branches are retained in source; the normal product build was not tested.
+
+Actual build `runs/build-20260928T141112Z-cab3c0ded0/result.json` exited 0 in 93.57 seconds after one preserved failed build. Actual run `runs/run-20260928T141315Z-6ee6091f3e/result.json` exited 0 in 1.05 seconds. The initial failure was an incorrect error-type path and a Unix-only lifecycle trait re-export; those repairs stayed within the new copy. Existing unrelated upstream warnings remain. This is not a full upstream test suite or Bazel build.
+
+The single lock resolves 1,117 packages (1,013 registry + 104 path); exact versions/archive checksums match the fixed Codex and host-kit locks. Compiler evidence records 905 unique artifact package identities and verifies Core and thread-store actually compiled with the restricted feature. All relevant Codex path packages resolve to the new source root. No fresh dependency version/download, provider/account or personal configuration was used.
+
+Artifact: `out/p02-integration-004/target/x86_64-pc-windows-msvc/debug/p02-integration-probe.exe` SHA256 `0592d5e69bfe7fe1c6a5ecdcb86eb3e6f6ce703e4a4f80a66c409146e4bfb682`.
+
+Runtime: `runtime-20260928T141315Z-6ee6091f3e.json` SHA256 `8c8c681c597a86e993c7252ba60048bb5f445d6ccc1f1deea700051c97643f35`. Six captured HTTP request bodies have independently recomputed byte length/SHA256 in the handoff builder; JSON field ordering and generated exec identifiers can vary across separate executions, so no cross-run byte identity is claimed.
+
+Observed: missing injection returns precise guard errors from real callers; default exec has no lifecycle callback calls; independent exec has zero after_spawn callbacks; Legacy/Paginated local resume and create refuse at the intended boundaries. The shared case records actual calls and four Arc owner counts reaching zero after explicitly awaited discard. **Discard is Unsupported: no successful host writer release is established.** Runtime drop precedes report writing; process exit is recorded separately. No successful process, network response, durable commit or unknown-operation replay was manufactured.
+
+See `bypass-audit.md` for uncovered direct LocalThreadStore/LocalProcess, shell capture, Realtime/auth and metadata/cancellation paths; `guard-order-and-host-inputs.json` distinguishes source ordering from runtime/OS evidence. Missing-backend remote/shell-snapshot variants, network-policy decider, unary execute, established reconnect, full metadata contexts and normal product mode remain untested. All LiveThread creates are intentionally refused, including injected ones; this is not safe creation support.
+
+All prior frozen handoffs/input sets and host 003 are unchanged. G0/P02/J00 remain blocked, product graphs 0/2 and 84 cases not_run. M-02/M-03/M-04/M-06/M-08 need coordinated contracts; no second schema was introduced. This slice is ready for joint review; no further product work is claimed or started.

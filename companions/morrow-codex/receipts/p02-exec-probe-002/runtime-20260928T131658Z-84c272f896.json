@@ -1,0 +1,109 @@
+{
+  "G0": "not_claimed",
+  "P-02": "not_complete",
+  "assertions": 27,
+  "case_count": 3,
+  "cases": [
+    {
+      "assertions": 8,
+      "calls": [
+        {
+          "method": "ExecBackend::start",
+          "params": {
+            "arg0": null,
+            "argv": [
+              "morrow-qualification-never-launch",
+              "fixture-argument"
+            ],
+            "cwd": "file:///C:/morrow-qualification-nonexistent",
+            "enforceManagedNetwork": false,
+            "env": {},
+            "envPolicy": null,
+            "managedNetwork": null,
+            "pipeStdin": false,
+            "processId": "2-79a234bb-cb6c-40bc-8659-d5c666486a63",
+            "sandbox": null,
+            "tty": false
+          },
+          "params_sha256": "c912a873b62d42df155cf7b4f28244cad19fcd0c78f0cf7f3bc605a1e720ebe3",
+          "proposal_bytes": 440,
+          "proposal_sha256": "50c07ebda9c101fa4cee6e02c5e26eca3a085c04b67ddbc49296c6ddd14c6af5"
+        }
+      ],
+      "case": "qualification-disconnected",
+      "error": "Failed to create unified exec process: exec-server protocol error: qualification-disconnected:Invalid",
+      "filesystem_http_adapter_calls": [],
+      "tty": false
+    },
+    {
+      "assertions": 8,
+      "calls": [
+        {
+          "method": "ExecBackend::start",
+          "params": {
+            "arg0": null,
+            "argv": [
+              "morrow-qualification-never-launch",
+              "fixture-argument"
+            ],
+            "cwd": "file:///C:/morrow-qualification-nonexistent",
+            "enforceManagedNetwork": false,
+            "env": {},
+            "envPolicy": null,
+            "managedNetwork": null,
+            "pipeStdin": false,
+            "processId": "2-fa87adad-c00d-4937-869d-6f8160b7613b",
+            "sandbox": null,
+            "tty": true
+          },
+          "params_sha256": "31b84c4c51cbaef312289d0ddf6c6340095f5dcf8e06fa47d5a8aee15e96b68d",
+          "proposal_bytes": 440,
+          "proposal_sha256": "1801b428b6d04bd235113df41a747281ec2a5d74d5bcbf3a853f4ca491f988dd"
+        }
+      ],
+      "case": "qualification-disconnected",
+      "error": "Failed to create unified exec process: exec-server protocol error: qualification-disconnected:Invalid",
+      "filesystem_http_adapter_calls": [],
+      "tty": true
+    },
+    {
+      "assertions": 11,
+      "calls": [
+        {
+          "method": "ExecBackend::start",
+          "params": {
+            "arg0": null,
+            "argv": [
+              "morrow-qualification-never-launch",
+              "fixture-argument"
+            ],
+            "cwd": "file:///C:/morrow-qualification-nonexistent",
+            "enforceManagedNetwork": false,
+            "env": {},
+            "envPolicy": null,
+            "managedNetwork": null,
+            "pipeStdin": false,
+            "processId": "2-9fd1a7fc-0a46-41f0-9b25-ca102c835571",
+            "sandbox": null,
+            "tty": false
+          },
+          "params_sha256": "3bb0f4c544c05f635068b13dcf055f31c2aa6f62d67a9e65ffc80e1d2e2b4c6f",
+          "proposal_bytes": 440,
+          "proposal_sha256": "df42936f3420c9e2f277043c137779c8eba0190167dda3b8661895b45ecfbed3"
+        }
+      ],
+      "case": "qualification-unsupported",
+      "error": "Failed to create unified exec process: exec-server protocol error: qualification-unsupported:003 has no argv execution, PTY or process IO contract; requires M-06 (related M-02)",
+      "filesystem_http_adapter_calls": [],
+      "tty": false
+    }
+  ],
+  "limits": [
+    "Actual prepared unified-exec dispatch only, not tool orchestration or complete core loop",
+    "No process, PTY, claim, report or IO success",
+    "Local refusal is not an OS isolation proof",
+    "Other core direct spawn paths remain uncovered",
+    "003 unchanged; execution lifecycle requires M-06 (related M-02)"
+  ],
+  "status": "passed_limited_exec_callsite_probe"
+}

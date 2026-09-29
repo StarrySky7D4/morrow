@@ -1,0 +1,48 @@
+{
+  "status": "host005_compiled_3_local_observation_tests_no_guest_or_http",
+  "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-005\\morrow-native-stream-host.exe",
+  "executable_sha256": "9b2a2412ce9fe617729757b8be7eddb34a84718ad64aa507f2bfdc9de926d6af",
+  "source_files": {
+    "build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "schemas/native_admission.proto": "cbb397037a06baaa33c1b2c5773109fb0466108e3b3d38070099c63362496903",
+    "src/authority.rs": "09ae9f1ca088d2c470f2dff4aa90e2b304849237752b290eacb11602f67a6971",
+    "src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "src/http_authority.rs": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc",
+    "src/http_authority_tests.rs": "dd3d6beea24e87528b1dc1afb22e26203752f125eab9b529df9be70feced6a6f",
+    "src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "src/pipe_driver.rs": "e9528e9793d9645549dc5f054f29076024fe23e72ce9b6ba370f37e89611b6fe",
+    "src/pipe_observation_tests.rs": "68b51f6d3ccb2090ad104c7222caad0b4dfc0544ebd43c64e11219ea2d94d4e6",
+    "src/revocation_interleaving_tests.rs": "93d6a747230d61b084323d3452faece0a12f6b19f65372a1f117bb403a5afb4d",
+    "src/supervisor.rs": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0"
+  },
+  "changed_files_from_004": [
+    "src/pipe_driver.rs",
+    "src/pipe_observation_tests.rs",
+    "src/supervisor.rs"
+  ],
+  "diff_sha256": "1956adb3b4f0923bcd27c4b8071fd12ec868a3ca8cb279998a393c248f2f4e75",
+  "revision_note_sha256": "43a9a106f57c529eb64c5ab0c0a6ed9bdb03318d44364e6b033384167e8c38d8",
+  "references": {
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-build-20260929T001444332362Z/result.json": "069c473afecb5144c1bbf524821ba25eea1a5866bc763225f3613acd093f3952",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-observation-20260929T001441361090Z/result.json": "cb88c93a30809446a353527d8f24dd1ce2e99d705a2311037e022df7f827147b",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-observation-20260929T001441361090Z/compiler.stdout": "13104db7f86167da545b0b4e5624b942c6e83798a8f160fb80353e3053f515ae",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-observation-20260929T001441361090Z/compiler.stderr": "70fba43cdef68d3344ac72632d889eb210cc579f78d71a569b84022f5f02a6fb",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-host-candidate-004/manifest.json": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2",
+    "tool/m03_native_observation_check_005.py": "cfefdcc7c8bc8aeda3252aedc6531e69cecf15c953a6d26cbbca1deced78e098",
+    "tool/m03_native_build_001.py": "ff7ea2464314f16a646fe8a0307170a0796f894b4e700c24fa0f746085614ceb",
+    "tool/m03_native_seal_005.py": "8d01242bf080a8aa593db66f43bc78d754cbd1ab4c044b6fde1988bc839b1319"
+  },
+  "wire_changed": false,
+  "platform_pipe_changed": false,
+  "core_changed": false,
+  "ledger_version": 4,
+  "local_tests": 3,
+  "runtime_http_tested": false,
+  "runtime_guest_tested": false,
+  "product_gate_upgrade": false
+}

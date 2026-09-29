@@ -1,0 +1,32 @@
+{
+  "scope": "pinned_ordinary_client_source_and_producer_build_only",
+  "independent_client_run": false,
+  "real_ipc_verified": false,
+  "product_pass_credit": 0,
+  "candidate_sha256": "9448e8167737df2ec706999c66a13ce4ce400e2cbcf5aceace1c30a8361058ee",
+  "reviewer_sha256": "77a81eb1909ab397c2a384da34f59ca5a6f1a1a7047e3da9162495f25bf5c3be",
+  "status": "verified_read_only",
+  "exit_code": 0,
+  "client_inputs": 56,
+  "old_handoffs": 5,
+  "registry_lock_packages": 13,
+  "compiler_artifact_package_ids": 13,
+  "actual_wire_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\vendor\\capnp-kit-001\\wire\\Cargo.toml",
+  "exe_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "source_review": [
+    "Challenge checks own PID/schema/self image digest and fixed capabilities",
+    "all requests copy initial binding; strict sequence, no pipelining or retry",
+    "responses check binding, monotonic generation<=2, remaining TTL/budget nonincrease",
+    "input polled before output completion and during bounded interval; Stop supported",
+    "one-slot worker queues; failed writer cannot resend; partial/operation deadlines and 60-second safety cap",
+    "workers not joined; process exit must be observed independently",
+    "CLI cannot set approved/identity/fault modes; withdrawn wire retained as unreferenced evidence only"
+  ],
+  "limits": [
+    "No actual host/client launch in this result",
+    "No independent client compilation",
+    "No trusted installation/image-load race closure",
+    "Host authority remains authoritative; client checks are not a grant",
+    "Raw process/thread/output lifecycle remains pending real IPC"
+  ]
+}

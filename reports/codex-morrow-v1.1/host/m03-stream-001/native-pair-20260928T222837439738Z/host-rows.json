@@ -1,0 +1,3147 @@
+[
+  {
+    "at_ns": 308977000,
+    "value": {
+      "approval_required": true,
+      "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+      "event": "proposal",
+      "host_pid": 13576,
+      "operation": "m03-20260928T222837439738Z",
+      "plugin_id": "morrow-codex",
+      "production_cli_authenticated": false,
+      "role": "synthetic-http",
+      "slot": "m03-slot"
+    }
+  },
+  {
+    "at_ns": 1274936400,
+    "value": {
+      "action": "approve",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e"
+      }
+    }
+  },
+  {
+    "at_ns": 1275110900,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 966105,
+        "detail": {
+          "config_sha256": "fbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b",
+          "generation": 1,
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "operation": "m03-20260928T222837439738Z",
+          "plugin_id": "morrow-codex",
+          "role": "synthetic-http",
+          "ttl_ms": 10000
+        },
+        "event": "authorize_created"
+      }
+    }
+  },
+  {
+    "at_ns": 2237038800,
+    "value": {
+      "action": "claim",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "epoch": 1,
+        "pid": 8000,
+        "session": 3373148247497888253
+      }
+    }
+  },
+  {
+    "at_ns": 2237257000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2237573500,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 976029,
+        "detail": {
+          "generation": 1,
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e"
+        },
+        "event": "claim_committed"
+      }
+    }
+  },
+  {
+    "at_ns": 2237688300,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 1928088,
+        "detail": {
+          "epoch": 1,
+          "generation": 1,
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "pid": 8000,
+          "session": 3373148247497888253
+        },
+        "event": "owner_registered"
+      }
+    }
+  },
+  {
+    "at_ns": 2237769600,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 1910969,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+          "config_sha256": "fbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 8000,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2237840300,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 1911829,
+        "detail": {
+          "raw_hex": "380100000000000026000000000000000b00060003000100000000000000000000000000fdd1d79a75d4cf2e01000000000000000100000000000000401f000000000000981f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000d20000000000000000000000fdd1d79a75d4cf2e29e2ecf37610c28052c8b2e052f5c228bb598f29179b4d368da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32efbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b6d30332d3230323630393238543232323833373433393733385a000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 1
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2237899900,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 1915810,
+        "detail": {
+          "dacl_sha256": "d31f829edec290dbb3710f75760fcc9cd34382683850676f83c312dff3d44054",
+          "inbound": 1024,
+          "noninherited": true,
+          "outbound": 1024
+        },
+        "event": "data_created",
+        "ordinal": 2
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2252717300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2268344500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2284053100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2299626400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2315031400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2330783400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2346251000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2361819000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2377242400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2392885900,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2408550800,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2424211200,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2439665800,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2455246700,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2470725300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2486434000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2502106900,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2517812800,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2533243400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2548547700,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2564149100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2579827300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2595302500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2610742500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2626222300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2641731100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2657113600,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2672686000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2688742400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2704072900,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2719464300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2735166700,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2750554000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2766125000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2781804800,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2797512100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2813145000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2817365900,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2507868,
+        "detail": {
+          "reason": 23
+        },
+        "event": "session_close_reason",
+        "ordinal": 3
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2828810000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2842653100,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2533807,
+        "detail": {
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "phase": "Closing"
+        },
+        "event": "owner_phase"
+      }
+    }
+  },
+  {
+    "at_ns": 2842723300,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2525469,
+        "detail": {
+          "code": 23,
+          "progress": {
+            "cancel_discarded_bytes": 0,
+            "child_exited": false,
+            "connect_reaped": false,
+            "data_closed": false,
+            "drain_discarded_bytes": 0,
+            "error_code": 23,
+            "error_consumed_bytes": 0,
+            "http_eof": false,
+            "http_status": 0,
+            "intent": "Absent",
+            "issued_offset": 0,
+            "last_write_ordinal": 0,
+            "network": "Idle",
+            "os_completed_offset": 0,
+            "owner": "Preparing",
+            "owner_released": false,
+            "parser_yielded_bytes": 0,
+            "peer_consumed_offset": 0,
+            "read_reaped": false,
+            "received_offset": 0,
+            "request_closed": false,
+            "reserved_offset": 0,
+            "response_material_stored": false,
+            "revoke_applied": true,
+            "revoke_persisted": true,
+            "stderr_eof": false,
+            "stdout_eof": false,
+            "worker_joined": false,
+            "worker_started": false,
+            "write_reaped": false
+          }
+        },
+        "event": "http_cancel_applied",
+        "ordinal": 4
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2842738000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2525585,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 5
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2842850000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2525776,
+        "detail": {
+          "raw_hex": "380100000000000026000000000000000b00060003000100060000000000000000000000fdd1d79a75d4cf2e01000000000000000200000000000000401f000017000000321d0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000d20000000000000000000000fdd1d79a75d4cf2e29e2ecf37610c28052c8b2e052f5c228bb598f29179b4d368da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32efbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b6d30332d3230323630393238543232323833373433393733385a000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 6
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2844610500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2848760700,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2539259,
+        "detail": {
+          "bytes": 0,
+          "error": 995,
+          "id": 1,
+          "kind": "Connect"
+        },
+        "event": "data_operation_reaped",
+        "ordinal": 7
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2848871900,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2539293,
+        "detail": true,
+        "event": "data_worker_joined",
+        "ordinal": 8
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 2860084400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2875647500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2891225200,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2906757900,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2922137000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2937518900,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2953034700,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2968547400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2984272000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 2999787500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3015492400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3031326100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3046826100,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3062590500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3077968400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3093729500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3109559500,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3125245000,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Closing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3140915300,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": true,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 23,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Released",
+          "owner_released": true,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": true,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": true,
+          "stdout_eof": true,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "at_ns": 3150984000,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2841688,
+        "detail": {
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "phase": "Released"
+        },
+        "event": "owner_phase"
+      }
+    }
+  },
+  {
+    "at_ns": 3151084300,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2842177,
+        "detail": {
+          "generation": 1,
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "pid": 8000
+        },
+        "event": "released"
+      }
+    }
+  },
+  {
+    "at_ns": 3151190300,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2819200,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 9
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 3151247000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2819207,
+        "detail": {
+          "bytes": 78
+        },
+        "event": "stderr_eof",
+        "ordinal": 10
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 3151312600,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2820472,
+        "detail": {
+          "business_success": false,
+          "code": 2
+        },
+        "event": "exit",
+        "ordinal": 11
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 3151382000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2820533,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 12
+      },
+      "pid": 8000,
+      "session": 3373148247497888253
+    }
+  },
+  {
+    "at_ns": 3151950500,
+    "value": {
+      "event": "final",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 1910969,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+              "config_sha256": "fbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 8000,
+              "platform": "windows",
+              "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 1911829,
+            "detail": {
+              "raw_hex": "380100000000000026000000000000000b00060003000100000000000000000000000000fdd1d79a75d4cf2e01000000000000000100000000000000401f000000000000981f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000d20000000000000000000000fdd1d79a75d4cf2e29e2ecf37610c28052c8b2e052f5c228bb598f29179b4d368da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32efbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b6d30332d3230323630393238543232323833373433393733385a000000000000"
+            },
+            "event": "control_frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 1915810,
+            "detail": {
+              "dacl_sha256": "d31f829edec290dbb3710f75760fcc9cd34382683850676f83c312dff3d44054",
+              "inbound": 1024,
+              "noninherited": true,
+              "outbound": 1024
+            },
+            "event": "data_created",
+            "ordinal": 2
+          },
+          {
+            "at_us": 2507868,
+            "detail": {
+              "reason": 23
+            },
+            "event": "session_close_reason",
+            "ordinal": 3
+          },
+          {
+            "at_us": 2525469,
+            "detail": {
+              "code": 23,
+              "progress": {
+                "cancel_discarded_bytes": 0,
+                "child_exited": false,
+                "connect_reaped": false,
+                "data_closed": false,
+                "drain_discarded_bytes": 0,
+                "error_code": 23,
+                "error_consumed_bytes": 0,
+                "http_eof": false,
+                "http_status": 0,
+                "intent": "Absent",
+                "issued_offset": 0,
+                "last_write_ordinal": 0,
+                "network": "Idle",
+                "os_completed_offset": 0,
+                "owner": "Preparing",
+                "owner_released": false,
+                "parser_yielded_bytes": 0,
+                "peer_consumed_offset": 0,
+                "read_reaped": false,
+                "received_offset": 0,
+                "request_closed": false,
+                "reserved_offset": 0,
+                "response_material_stored": false,
+                "revoke_applied": true,
+                "revoke_persisted": true,
+                "stderr_eof": false,
+                "stdout_eof": false,
+                "worker_joined": false,
+                "worker_started": false,
+                "write_reaped": false
+              }
+            },
+            "event": "http_cancel_applied",
+            "ordinal": 4
+          },
+          {
+            "at_us": 2525585,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 2525776,
+            "detail": {
+              "raw_hex": "380100000000000026000000000000000b00060003000100060000000000000000000000fdd1d79a75d4cf2e01000000000000000200000000000000401f000017000000321d0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000d20000000000000000000000fdd1d79a75d4cf2e29e2ecf37610c28052c8b2e052f5c228bb598f29179b4d368da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32efbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b6d30332d3230323630393238543232323833373433393733385a000000000000"
+            },
+            "event": "control_frame_sent",
+            "ordinal": 6
+          },
+          {
+            "at_us": 2539259,
+            "detail": {
+              "bytes": 0,
+              "error": 995,
+              "id": 1,
+              "kind": "Connect"
+            },
+            "event": "data_operation_reaped",
+            "ordinal": 7
+          },
+          {
+            "at_us": 2539293,
+            "detail": true,
+            "event": "data_worker_joined",
+            "ordinal": 8
+          },
+          {
+            "at_us": 2819200,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 2819207,
+            "detail": {
+              "bytes": 78
+            },
+            "event": "stderr_eof",
+            "ordinal": 10
+          },
+          {
+            "at_us": 2820472,
+            "detail": {
+              "business_success": false,
+              "code": 2
+            },
+            "event": "exit",
+            "ordinal": 11
+          },
+          {
+            "at_us": 2820533,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 12
+          }
+        ],
+        "exit_code": 2,
+        "exit_observed": true,
+        "generation": 2,
+        "http": {
+          "progress": {
+            "cancel_discarded_bytes": 0,
+            "child_exited": true,
+            "connect_reaped": true,
+            "data_closed": true,
+            "drain_discarded_bytes": 0,
+            "error_code": 23,
+            "error_consumed_bytes": 0,
+            "http_eof": false,
+            "http_status": 0,
+            "intent": "Absent",
+            "issued_offset": 0,
+            "last_write_ordinal": 0,
+            "network": "Idle",
+            "os_completed_offset": 0,
+            "owner": "Released",
+            "owner_released": true,
+            "parser_yielded_bytes": 0,
+            "peer_consumed_offset": 0,
+            "read_reaped": true,
+            "received_offset": 0,
+            "request_closed": true,
+            "reserved_offset": 0,
+            "response_material_stored": false,
+            "revoke_applied": true,
+            "revoke_persisted": true,
+            "stderr_eof": true,
+            "stdout_eof": true,
+            "worker_joined": false,
+            "worker_started": false,
+            "write_reaped": true
+          },
+          "proposal": null
+        },
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 8000,
+        "session": 3373148247497888253,
+        "stderr_eof": true,
+        "stdout_eof": true
+      },
+      "state": {
+        "failed_closed": false,
+        "grant": null,
+        "owner": {
+          "automatic_takeover": false,
+          "epoch": 1,
+          "exit_observed": true,
+          "generation": 1,
+          "grant_id": "00ccc0a183bc783e1aa92f40381e6f18cef77e1eff69e7de4292acbf37b0dc0e",
+          "locally_observed": true,
+          "owner_retained": false,
+          "phase": "Released",
+          "pid": 8000,
+          "session": 3373148247497888253,
+          "stderr_eof": true,
+          "stdout_eof": true
+        },
+        "profile_id": "7a9e3b15e723b703d98faeecdf257961b34af2796c8f167bd04514e99ee1c3d8",
+        "slot": "m03-slot"
+      }
+    }
+  }
+]

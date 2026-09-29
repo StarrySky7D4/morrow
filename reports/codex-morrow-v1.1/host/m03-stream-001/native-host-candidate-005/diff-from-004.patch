@@ -1,0 +1,397 @@
+--- host004/src/pipe_driver.rs
++++ host005/src/pipe_driver.rs
+@@ -1,6 +1,7 @@
+ //! Dedicated owned-I/O thread. Never blocks control/Tokio workers on Pipe Drop/reap.
+ use crate::Result;
+ use morrow_native_pipe_win::{Kind, Pipe};
++use serde_json::{Value, json};
+ use std::{
+     collections::VecDeque,
+     sync::{
+@@ -64,6 +65,7 @@
+     },
+ }
+ pub(crate) enum Event {
++    OwnerObservation(Value),
+     Created {
+         inbound: u32,
+         outbound: u32,
+@@ -110,9 +112,51 @@
+     bytes: Vec<u8>,
+     offset: usize,
+     body_end: Option<u64>,
+-    last_pending: Instant,
++    last_sample_after_ns: u128,
+     pending_samples: u8,
+     active_id: u64,
++    active_ordinal: u64,
++    active_pending: bool,
++}
++
++// Bounded observations only: issue, three spaced incomplete samples, cancellation
++// probe and actual reap. This clock is owned by the I/O thread, not its consumer.
++struct OwnerClock {
++    origin: Instant,
++    domain: String,
++}
++impl OwnerClock {
++    fn now(&self) -> u128 {
++        self.origin.elapsed().as_nanos()
++    }
++    fn record(
++        &self,
++        stage: &str,
++        start: u128,
++        end: u128,
++        write: Option<&Write>,
++        outcome: Value,
++    ) -> Event {
++        Event::OwnerObservation(json!({
++            "clock_domain": self.domain, "clock": "std::time::Instant",
++            "duration_unit": "ns", "duration_units_per_second": 1_000_000_000u64,
++            "resolution": "not_measured", "stage": stage,
++            "before_ns": start, "after_ns": end,
++            "operation": write.map(|w|json!({"id":w.active_id,"issue_ordinal":w.active_ordinal,
++                "body_end":w.body_end,"frame_offset":w.offset,"requested_bytes":w.bytes.len()-w.offset,
++                "initial_pending":w.active_pending,"incomplete_samples":w.pending_samples})),
++            "outcome":outcome
++        }))
++    }
++}
++fn poll_outcome(result: &std::io::Result<Option<morrow_native_pipe_win::Completed>>) -> Value {
++    match result {
++        Ok(None) => json!({"kind":"incomplete","win32_error":996}),
++        Ok(Some(c)) => json!({"kind":"completed","id":c.id,"bytes":c.transferred,"error":c.error}),
++        Err(e) => {
++            json!({"kind":"unconfirmed_error","error":e.to_string(),"win32_error":e.raw_os_error()})
++        }
++    }
+ }
+ impl Driver {
+     pub(crate) fn spawn(locator: String, expected_pid: u32, gate: Gate) -> Result<Self> {
+@@ -166,6 +210,10 @@
+     events: mpsc::SyncSender<Event>,
+     cancel: Arc<AtomicBool>,
+ ) -> Closed {
++    let clock = OwnerClock {
++        origin: Instant::now(),
++        domain: format!("{}:pipe-owner", locator),
++    };
+     let mut pipe = match Pipe::create_private(&locator) {
+         Ok(p) => p,
+         Err(e) => {
+@@ -201,15 +249,55 @@
+         }
+     }
+     loop {
++        let mut cancellation_probe = None;
+         let expired = {
+             let g = gate.lock().unwrap();
+             g.revoked || Instant::now() >= g.deadline
+         };
+         if (cancel.load(Ordering::SeqCst) || expired) && !cancelling {
+             cancelling = true;
++            let request_at = clock.now();
++            pending.push_back(clock.record(
++                "cancel_request_observed",
++                request_at,
++                request_at,
++                write.as_ref(),
++                json!({"gate_or_deadline":expired}),
++            ));
++            // Poll exactly the existing operation BEFORE CancelIoEx. Retain a
++            // returned completion for the normal reap path; never poll it twice.
++            if pipe.has_operation(Kind::Write) {
++                let before = clock.now();
++                let result = pipe.poll(Kind::Write);
++                let after = clock.now();
++                pending.push_back(clock.record(
++                    "cancel_probe",
++                    before,
++                    after,
++                    write.as_ref(),
++                    poll_outcome(&result),
++                ));
++                cancellation_probe = Some((result, before, after));
++            } else {
++                pending.push_back(clock.record(
++                    "cancel_probe",
++                    request_at,
++                    clock.now(),
++                    None,
++                    json!({"kind":"no_operation"}),
++                ));
++            }
++            let before = clock.now();
+             if let Err(e) = pipe.cancel_all() {
+                 failure.get_or_insert_with(|| format!("cancel unconfirmed: {e}"));
+             }
++            pending.push_back(clock.record(
++                "cancel_requested",
++                before,
++                clock.now(),
++                write.as_ref(),
++                json!({"completion_claimed":false}),
++            ));
+         }
+         while let Some(event) = pending.pop_front() {
+             match events.try_send(event) {
+@@ -226,18 +314,32 @@
+             }
+         }
+         for kind in [Kind::Connect, Kind::Read, Kind::Write] {
+-            if !pipe.has_operation(kind) {
++            if !pipe.has_operation(kind) && !(kind == Kind::Write && cancellation_probe.is_some()) {
+                 continue;
+             }
+-            match pipe.poll(kind) {
++            let (result, before, after) = if kind == Kind::Write && cancellation_probe.is_some() {
++                cancellation_probe.take().unwrap()
++            } else {
++                let before = clock.now();
++                let result = pipe.poll(kind);
++                (result, before, clock.now())
++            };
++            match result {
+                 Ok(None) => {
+-                    if kind == Kind::Write {
++                    if kind == Kind::Write && !cancelling {
+                         if let Some(w) = write.as_mut() {
+                             if w.pending_samples < 3
+-                                && w.last_pending.elapsed() >= Duration::from_millis(25)
++                                && before.saturating_sub(w.last_sample_after_ns) >= 25_000_000
+                             {
+                                 w.pending_samples += 1;
+-                                w.last_pending = Instant::now();
++                                w.last_sample_after_ns = after;
++                                pending.push_back(clock.record(
++                                    "incomplete_sample",
++                                    before,
++                                    after,
++                                    Some(w),
++                                    json!({"kind":"incomplete","win32_error":996}),
++                                ));
+                                 pending.push_back(Event::WriteIncomplete {
+                                     id: w.active_id,
+                                     body_end: w.body_end,
+@@ -255,6 +357,9 @@
+                     cancel.store(true, Ordering::SeqCst);
+                 }
+                 Ok(Some(c)) => {
++                    if kind == Kind::Write {
++                        pending.push_back(clock.record("write_reaped", before, after, write.as_ref(), json!({"kind":"completed","id":c.id,"bytes":c.transferred,"error":c.error})));
++                    }
+                     pending.push_back(Event::Reaped {
+                         kind,
+                         id: c.id,
+@@ -334,9 +439,11 @@
+                             bytes,
+                             offset: 0,
+                             body_end,
+-                            last_pending: Instant::now(),
++                            last_sample_after_ns: clock.now(),
+                             pending_samples: 0,
+                             active_id: 0,
++                            active_ordinal: 0,
++                            active_pending: false,
+                         })
+                     }
+                     Err(mpsc::TryRecvError::Empty) => {}
+@@ -348,11 +455,18 @@
+             if let Some(w) = write.as_mut() {
+                 if !pipe.has_operation(Kind::Write) {
+                     let bytes = w.bytes[w.offset..].to_vec();
++                    let before = clock.now();
+                     match issue_write(&gate, w.body_end, || {
+                         pipe.begin_write(bytes).map_err(|e| e.to_string())
+                     }) {
+                         Ok((ordinal, started)) => {
++                            let after = clock.now();
+                             w.active_id = started.id;
++                            w.active_ordinal = ordinal;
++                            w.active_pending = started.pending;
++                            w.pending_samples = 0;
++                            w.last_sample_after_ns = after;
++                            pending.push_back(clock.record("write_issue", before, clock.now(), Some(w), json!({"kind":if started.pending {"io_pending"} else {"completed_inline"},"win32_error":if started.pending {Some(997)} else {None}})));
+                             pending.push_back(Event::WriteIssued {
+                                 id: started.id,
+                                 ordinal,
+@@ -372,3 +486,7 @@
+         thread::sleep(Duration::from_millis(1));
+     }
+ }
++
++#[cfg(test)]
++#[path = "pipe_observation_tests.rs"]
++mod observation_tests;
+--- host004/src/pipe_observation_tests.rs
++++ host005/src/pipe_observation_tests.rs
+@@ -0,0 +1,158 @@
++//! Real local pipe operations only: no child, protocol guest, Core or HTTP.
++use super::*;
++
++fn collect(driver: &Driver, observations: &mut Vec<Value>) {
++    while let Some(event) = driver.event() {
++        if let Event::OwnerObservation(value) = event {
++            observations.push(value);
++        }
++    }
++}
++fn finish(driver: &mut Driver, observations: &mut Vec<Value>) {
++    let until = Instant::now() + Duration::from_secs(2);
++    loop {
++        collect(driver, observations);
++        if let Some(result) = driver.join_if_finished() {
++            assert!(result.unwrap().error.is_none());
++            collect(driver, observations);
++            return;
++        }
++        assert!(Instant::now() < until, "owner join unconfirmed");
++        thread::sleep(Duration::from_millis(1));
++    }
++}
++fn exercise(samples: usize) -> Vec<Value> {
++    let mut nonce = [0; 16];
++    getrandom::fill(&mut nonce).unwrap();
++    let locator = format!(
++        r"\\.\pipe\morrow-m03-observation-{}",
++        crate::wire::hex(&nonce)
++    );
++    let gate = Arc::new(Mutex::new(EffectGate {
++        revoked: false,
++        deadline: Instant::now() + Duration::from_secs(5),
++        ordinal: 0,
++        last_write: 0,
++        issued_body_end: 0,
++        network_pending: false,
++    }));
++    let mut driver = Driver::spawn(locator.clone(), std::process::id(), gate).unwrap();
++    let until = Instant::now() + Duration::from_secs(1);
++    let client = loop {
++        if let Ok(client) = Pipe::open_client(&locator) {
++            break client;
++        }
++        assert!(Instant::now() < until);
++        thread::sleep(Duration::from_millis(1));
++    };
++    let mut connected = false;
++    while !connected {
++        while let Some(event) = driver.event() {
++            if matches!(event, Event::Connected { .. }) {
++                connected = true;
++            }
++        }
++        assert!(Instant::now() < until);
++        thread::sleep(Duration::from_millis(1));
++    }
++    // Peer owns the pipe but never issues a ReadFile. Existing 1024 buffer,
++    // one 8192-byte write, below the native 16KiB credit ceiling.
++    assert!(
++        driver
++            .send(Command::Write {
++                bytes: vec![7; 8192],
++                body_end: Some(8192)
++            })
++            .is_ok()
++    );
++    let mut observations = vec![];
++    loop {
++        collect(&driver, &mut observations);
++        if observations
++            .iter()
++            .filter(|o| o["stage"] == "incomplete_sample")
++            .count()
++            >= samples
++        {
++            break;
++        }
++        assert!(Instant::now() < until, "actual pending target not reached");
++        thread::sleep(Duration::from_millis(1));
++    }
++    driver.cancel();
++    finish(&mut driver, &mut observations);
++    drop(client);
++    println!("owner-observations={}", json!(observations));
++    observations
++}
++#[test]
++fn same_real_operation_sampled_then_probed_and_reaped_on_cancel() {
++    let observations = exercise(3);
++    let issue = observations
++        .iter()
++        .find(|o| o["stage"] == "write_issue")
++        .unwrap();
++    assert_eq!(issue["outcome"]["kind"], "io_pending");
++    let samples: Vec<_> = observations
++        .iter()
++        .filter(|o| o["stage"] == "incomplete_sample")
++        .collect();
++    assert_eq!(samples.len(), 3);
++    for pair in samples.windows(2) {
++        assert!(
++            pair[1]["before_ns"].as_u64().unwrap() - pair[0]["after_ns"].as_u64().unwrap()
++                >= 25_000_000
++        );
++    }
++    let probe = observations
++        .iter()
++        .find(|o| o["stage"] == "cancel_probe")
++        .unwrap();
++    assert_eq!(probe["outcome"]["kind"], "incomplete");
++    assert_eq!(probe["operation"]["incomplete_samples"], 3);
++    let reap = observations
++        .iter()
++        .find(|o| o["stage"] == "write_reaped")
++        .unwrap();
++    assert_eq!(reap["outcome"]["error"], 995);
++    for o in samples.into_iter().chain([probe, reap]) {
++        assert_eq!(o["operation"]["id"], issue["operation"]["id"]);
++        assert_eq!(
++            o["operation"]["issue_ordinal"],
++            issue["operation"]["issue_ordinal"]
++        );
++        assert_eq!(o["clock_domain"], issue["clock_domain"]);
++        assert!(o["before_ns"].as_u64().unwrap() <= o["after_ns"].as_u64().unwrap());
++    }
++}
++#[test]
++fn early_cancel_never_manufactures_three_samples() {
++    let observations = exercise(1);
++    let samples = observations
++        .iter()
++        .filter(|o| o["stage"] == "incomplete_sample")
++        .count();
++    assert!(samples < 3);
++    let probe = observations
++        .iter()
++        .find(|o| o["stage"] == "cancel_probe")
++        .unwrap();
++    assert!(probe["operation"]["incomplete_samples"].as_u64().unwrap() < 3);
++    assert!(observations.iter().any(|o| o["stage"] == "write_reaped"));
++}
++#[test]
++fn completed_probe_is_distinct_from_pending_or_unknown() {
++    let completed = Ok(Some(morrow_native_pipe_win::Completed {
++        id: 9,
++        kind: Kind::Write,
++        transferred: 12,
++        error: None,
++        bytes: vec![],
++    }));
++    assert_eq!(poll_outcome(&completed)["kind"], "completed");
++    assert_eq!(poll_outcome(&Ok(None))["kind"], "incomplete");
++    assert_eq!(
++        poll_outcome(&Err(std::io::Error::from_raw_os_error(6)))["kind"],
++        "unconfirmed_error"
++    );
++}
+--- host004/src/supervisor.rs
++++ host005/src/supervisor.rs
+@@ -467,6 +467,7 @@
+                         }
+                     }
+                 }
++                pipe_driver::Event::OwnerObservation(observation) => self.shared.event("pipe_owner_observation", observation),
+                 pipe_driver::Event::WriteIssued {
+                     id,
+                     ordinal,

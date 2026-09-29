@@ -1,0 +1,14 @@
+"""Seal platform source/lock and actual test artifacts; no native-session release claim."""
+import hashlib,json,pathlib,shutil
+ROOT=pathlib.Path(__file__).resolve().parents[1];BASE=ROOT/'reports/codex-morrow-v1.1/host/m03-stream-001';SRC=ROOT/'native_pipe_win_001';RUN=BASE/'pipe-20260928T213420613251Z/result.json'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+data=json.loads(RUN.read_text());assert data['status']=='platform_producer_tests_passed_native_runtime_not_run';assert data['before']==data['after'] and data['frozen_unchanged']
+for p,h in data['before'].items():assert sha(ROOT/p)==h,p
+kit=BASE/'pipe-kit-001';assert not kit.exists();kit.mkdir();shutil.copytree(SRC,kit/'source');(kit/'tests').mkdir()
+for p,h in data['artifacts'].items():assert sha(ROOT/p)==h;shutil.copy2(ROOT/p,kit/'tests'/pathlib.Path(p).name)
+for suffix in ['result.json','fmt.stdout','fmt.stderr','compile.stdout','compile.stderr','tests.stdout','tests.stderr']:shutil.copy2(RUN.parent/suffix,kit/suffix)
+manifest={'scope':'shared host/guest Windows owned-I/O platform candidate; native HTTP integration not run','source_files':{str(p.relative_to(SRC)).replace('\\','/'):sha(p) for p in sorted(SRC.rglob('*')) if p.is_file()},'files':{str(p.relative_to(kit)).replace('\\','/'):sha(p) for p in sorted(kit.rglob('*')) if p.is_file()},'producer_receipt_sha256':sha(RUN),'substantive_platform_tests':4,'helper_entries':1,'frozen_inputs_unchanged':data['frozen_count'],'actual_pending':'8KiB write; actual1024 pipe buffers;3 IO_INCOMPLETE samples25ms apart;independent stdio control;read+write cancellation completion995','limitations':['not native16KiB credit integration','not Core/HTTP/SSE','not independent platform acceptance','no pending-operation unexpected-error fault injection','no full host-death/process-tree or all-Windows-version coverage','blocking cleanup only on dedicated owned-I/O thread']}
+(kit/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+handoff={'status':'platform_candidate_ready_for_consumer_and_joint_review_native_not_ready','crate':'morrow-native-pipe-win','canonical_source':'native_pipe_win_001','manifest':str((kit/'manifest.json').relative_to(ROOT)).replace('\\','/'),'manifest_sha256':sha(kit/'manifest.json'),'producer_receipt_sha256':sha(RUN),'tests':{'substantive':4,'helper':1},'original_inputs_unchanged':data['frozen_count'],'prior_failure':'Initial actual-DACL comparison saw Windows map GenericAll GA to FileAll FA. Source made FileAll explicit; final actual kernel readback equals expected current-SID+SYSTEM protected DACL. Prior evidence retained.','limitations':manifest['limitations']}
+(BASE/'pipe-handoff-001.json').write_text(json.dumps(handoff,indent=2)+'\n')
+print(json.dumps({**handoff,'handoff_sha256':sha(BASE/'pipe-handoff-001.json')}))

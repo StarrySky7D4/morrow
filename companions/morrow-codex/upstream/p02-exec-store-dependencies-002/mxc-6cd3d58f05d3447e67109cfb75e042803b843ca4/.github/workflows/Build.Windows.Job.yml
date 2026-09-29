@@ -1,0 +1,92 @@
+name: Windows Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-2025
+            target: x86_64-pc-windows-msvc
+            # tier2_bfs must NOT ship on Win 11 25H2 (bfscfg.exe hangs the host).
+            features: hyperlight isolation_session microvm wslc
+          - arch: arm64
+            runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            # Hyperlight and MicroVM runtimes are x64-only.
+            features: isolation_session wslc
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        working-directory: src
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # actions-rust-lang/setup-rust-toolchain auto-reads rust-toolchain.toml
+      # from the repo root only. Surface src/rust-toolchain.toml there so the
+      # 1.93 pin is honored without duplicating the version in this workflow.
+      - name: Surface toolchain file at repo root
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: cp src/rust-toolchain.toml rust-toolchain.toml
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          target: ${{ matrix.target }}
+          components: rustfmt, clippy
+          override: false
+          rustflags: ''
+
+      - name: Point cargo at the MxcDependencies feed
+        uses: ./.github/actions/setup-cargo-feed
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: src -> target
+          key: ${{ matrix.target }}-v2
+          cache-on-failure: false
+
+      # hyperlight-host's build.rs writes hyperlight_surrogate.exe to a
+      # non-standard target/.../build/hls/ path that rust-cache prunes on save.
+      # On a cache hit, cargo thinks the build script is "fresh" and skips it,
+      # but the RustEmbed proc-macro then can't find the missing folder. Force
+      # the build script to re-run by clearing the crate's fingerprint.
+      - name: Force hyperlight-host rebuild (cache workaround)
+        if: matrix.target == 'x86_64-pc-windows-msvc'
+        shell: pwsh
+        run: cargo clean --release --target ${{ matrix.target }} -p hyperlight-host
+
+      - name: Build
+        run: cargo build --locked --release --target ${{ matrix.target }}
+             --no-default-features
+             --features "${{ matrix.features }}"
+
+      - name: Test
+        run: cargo test --locked --release --target ${{ matrix.target }}
+             --no-default-features
+             --features "${{ matrix.features }}"
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: wxc-binaries-${{ matrix.target }}
+          path: |
+            src/target/${{ matrix.target }}/release/wxc-exec.exe
+            src/target/${{ matrix.target }}/release/plm.exe
+            src/target/${{ matrix.target }}/release/wxc-host-prep.exe
+            src/target/${{ matrix.target }}/release/winhttp-proxy-shim.exe
+            src/target/${{ matrix.target }}/release/wxc-windows-sandbox-daemon.exe
+            src/target/${{ matrix.target }}/release/wxc-windows-sandbox-guest.exe
+            src/target/${{ matrix.target }}/release/wxc-wslc-daemon.exe
+            src/target/${{ matrix.target }}/release/wxc-test-proxy.exe
+            src/target/${{ matrix.target }}/release/mxc-diagnostic-console.exe
+            src/target/${{ matrix.target }}/release/wslcsdk.dll
+            src/target/${{ matrix.target }}/release/wxc-ui-probe.exe
+            src/target/${{ matrix.target }}/release/wxc-test-driver.exe
+          if-no-files-found: error
+          retention-days: 1

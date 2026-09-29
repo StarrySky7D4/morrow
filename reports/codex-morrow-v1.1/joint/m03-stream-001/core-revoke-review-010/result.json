@@ -1,0 +1,53 @@
+{
+  "status": "original_A_failure_independently_confirmed",
+  "original_result_sha256": "b39c0907d5df6d3c0964abfec454eb5568d2069c11534221bb05b23fab23cf7e",
+  "post_count": 1,
+  "request_body_bytes": 22025,
+  "revoke_ack_upper_bound_ms": 15.2387,
+  "first_cancel_reason": "NativeFailure",
+  "aggregate_error": {
+    "Protocol": "unexpected data EOF/error"
+  },
+  "guest_cleanup": "CleanupUnconfirmed",
+  "guest_data_thread_explicit_join_confirmed": false,
+  "independent_control_clean": true,
+  "host_exit": 0,
+  "guest_exit": 2,
+  "host_owner_durably_released": true,
+  "target_events_suppressed": true,
+  "clean_host_control_cancellation_qualified": false,
+  "marker_order": [
+    {
+      "ordinal": 1,
+      "kind": "core_event_queued"
+    },
+    {
+      "ordinal": 2,
+      "kind": "core_event_reserved"
+    },
+    {
+      "ordinal": 3,
+      "kind": "core_event_held"
+    },
+    {
+      "ordinal": 4,
+      "kind": "core_reserved_suppressed"
+    },
+    {
+      "ordinal": 5,
+      "kind": "host_revoke_received"
+    },
+    {
+      "ordinal": 6,
+      "kind": "gate_closed"
+    },
+    {
+      "ordinal": 7,
+      "kind": "core_event_suppressed"
+    }
+  ],
+  "independent_runtime_runs": 0,
+  "B_run": false,
+  "retry": false,
+  "product_gate_upgrade": false
+}

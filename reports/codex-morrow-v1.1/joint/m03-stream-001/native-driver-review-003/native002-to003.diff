@@ -1,0 +1,703 @@
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\Cargo.toml
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\Cargo.toml
+@@ -3,7 +3,7 @@
+ 
+ [package]
+ name = "morrow-codex-native-http-client"
+-version = "0.3.1"
++version = "0.3.2"
+ edition = "2024"
+ publish = false
+ 
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\Cargo.lock
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\Cargo.lock
+@@ -7197,7 +7197,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-native-http-client"
+-version = "0.3.1"
++version = "0.3.2"
+ dependencies = [
+  "bytes",
+  "codex-core",
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\README.md
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\README.md
+@@ -1,4 +1,4 @@
+-# M03 native v3 / real Core fixture client, revision002
++# M03 native v3 / real Core fixture client, revision003
+ 
+ This new crate consumes the revision002 `qualification/m03-stream-002` Core entry,
+ host v3 wire-kit-001 and shared Windows pipe-kit-001. It defines no new schema,
+@@ -73,10 +73,24 @@
+ observation, includes both close_result and final_control_result, and either error
+ prevents exit0. This does not wait for this process's own exit or owner release.
+ 
+-Current checks are compilation, nine native local state/async-ownership tests and
+-four Core-entry local lifecycle/policy tests only.
+-Those tests do not launch this native mode, a host, pipe, HTTP fixture or Core
+-request. Frozen producer/independent codec and platform results are dependencies,
++Revision003 adds a same-lock `close_observation`: written Close, matching ACK
++identity/sequence/generation/code, existing aggregate error, independently sticky
++control failure with its source, final progress and terminal reader facts.
++`wait_close` and `final_control_status` retain their aggregate failure semantics.
++A transport/cancellation `Unknown` is not durable intent `Unknown`; an ACK does
++not clear either an aggregate failure or a later independently recorded control
++failure. Core503 remains Failed and does not become a successful process result.
++
++Main consumes the router's terminal control event inside the same 500ms Close
++budget. Only boundary EOF after a matched ACK is expected; partial/decode errors
++remain errors even after RequestClosed/ACK. `control_protocol_clean` requires
++written Close, matching ACK, applied terminal boundary EOF and no control error.
++`control_end_result=Ok` merely confirms a terminal event, including abnormal end.
++No guest self-exit or host release is inferred from these local facts.
++
++Current checks are native local state/codec/async tests and compilation, reusing
++the unchanged qualification002 Core entry. Tests do not launch this native mode,
++a host, pipe, HTTP fixture or Core request. Frozen producer/independent codec and platform results are dependencies,
+ not this client's runtime credit. Fixed-candidate host integration is still required
+ for approval, actual first delta, no-retry server counts, data credit/OS pending,
+ cancel races and external release. Product gates remain unchanged.
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\main.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\src\main.rs
+@@ -147,12 +147,21 @@
+             // the fixture EOF barrier. This process never writes fixture control.
+         }
+         let receipt=task.wait_cleanup().await.map_err(|e|e.to_string())?;
++        let close_deadline=tokio::time::Instant::now()+Duration::from_millis(500);
+         let close=match session.close() {
+-            Ok(())=>match tokio::time::timeout(Duration::from_millis(500),session.wait_close()).await {
++            Ok(())=>match tokio::time::timeout_at(close_deadline,session.wait_close()).await {
+                 Ok(result)=>result,Err(_)=>Err(morrow_codex_m03_stream::driver::BridgeError::CleanupUnconfirmed)
+             },
+             Err(error)=>Err(error),
+         };
++        // Share the original 500ms observation budget. An ACK is not evidence
++        // that the reader has consumed every trailing control byte or EOF.
++        let control_end=match tokio::time::timeout_at(close_deadline,session.wait_control_end()).await {
++            Ok(result)=>result,
++            Err(_)=>Err(morrow_codex_m03_stream::driver::BridgeError::CleanupUnconfirmed),
++        };
++        let close_observation=session.close_observation();
++        let control_protocol_clean=close_observation.control_protocol_clean;
+         let final_control=session.final_control_status();
+         let (frames,frames_overflow)=session.observations();
+         let (io,io_overflow,io_joined)=session.io_observations();
+@@ -162,10 +171,12 @@
+         let report=json!({"status":"native_fixture_observation","identity":session.identity(),"task":receipt,"frames":frames,"frames_overflow":frames_overflow,
+             "io":io,"io_overflow":io_overflow,"local_data_thread_joined":io_joined,"product_success_claimed":false,
+             "close_result":close,"final_control_result":final_control,"result_snapshot":"after_close_observation",
++            "control_end_result":control_end,"close_observation":close_observation,
+             "whole_session_release":"external_operator_only"});
+         serde_json::to_writer_pretty(&mut result,&report).map_err(|_|"result serialization")?;
+         result.write_all(b"\n").and_then(|_|result.flush()).map_err(|_|"result evidence write")?;
+         if close.is_err()||final_control.is_err(){return Err("native terminal control failure; see final close result".into())}
++        if control_end.is_err()||!control_protocol_clean{return Err("control termination unconfirmed or failed; see close observation".into())}
+         if !local_cleanup_ok||!model_complete||!transport_complete{return Err("request incomplete; inspect independent task/evidence/cleanup dimensions".into())}
+         Ok(())
+     })
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\session.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\src\session.rs
+@@ -32,6 +32,7 @@
+     pub progress: Option<wire::Progress>,
+     pub delivery: Option<Delivery>,
+     pub fatal: Option<BridgeError>,
++    pub control_failure: Option<ControlFailureObservation>,
+     pub cancel_requested: bool,
+     pub cancel_reason: Option<CancelReason>,
+     pub cancellation: Option<CancellationSignal>,
+@@ -40,8 +41,10 @@
+     pub last_credit: Option<wire::Credit>,
+     pub closed: Option<wire::Progress>,
+     pub control_eof: bool,
++    pub control_stream_ended: bool,
+     pub close_written: bool,
+     pub close_acked: bool,
++    pub close_ack: Option<CloseAckObservation>,
+     pub max_chunk: usize,
+     pub io_result: Option<std::result::Result<(), &'static str>>,
+     pub io_joined: bool,
+@@ -215,12 +218,188 @@
+         );
+         assert!(session.wait_close().await.is_err());
+         assert!(session.final_control_status().is_err());
++        let observation = session.close_observation();
++        assert!(observation.close_written && observation.close_acked);
++        assert!(matches!(
++            observation.sticky_control_failure.unwrap().error,
++            BridgeError::Protocol(_)
++        ));
++        assert!(
++            !observation.control_protocol_clean,
++            "ACK alone is not terminal control evidence"
++        );
+         let state = session.shared.state.lock().unwrap();
+         assert!(state.closed.is_some());
+         assert_eq!(
+             state.progress.as_ref().unwrap().intent,
+             wire::IntentPhase::Observed
+         );
++    }
++    fn closed_with_transport_error() -> (Arc<Session>, wire::Frame) {
++        // State/codec only. No OS write, process, pipe, HTTP or Core invocation.
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        session
++            .cancel(RequestKey(1), CancelReason::CoreError)
++            .unwrap();
++        let mut frame = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        frame.kind = wire::Kind::RequestClosed;
++        frame.sequence = 0;
++        frame.revocation_generation = 2;
++        let mut progress = terminal_progress();
++        progress.http_status = 503;
++        progress.error_code = 19;
++        progress.revoke_applied = true;
++        progress.revoke_persisted = true;
++        frame.payload = wire::Payload::Progress(progress);
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&frame.encode().unwrap()).unwrap());
++        (session, frame)
++    }
++    fn receive_close_ack(session: &Session, mut frame: wire::Frame) -> u64 {
++        let sequence = {
++            let mut s = session.shared.state.lock().unwrap();
++            let close = s
++                .admission
++                .control(wire::Kind::Close, wire::Payload::None)
++                .unwrap();
++            s.requests.insert(close.sequence, wire::Kind::Close);
++            s.close_written = true; // Synthetic completed write, not OS proof.
++            close.sequence
++        };
++        frame.kind = wire::Kind::State;
++        frame.sequence = sequence;
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&frame.encode().unwrap()).unwrap());
++        sequence
++    }
++    #[tokio::test]
++    async fn cancelled_transport_keeps_unknown_but_close_and_clean_eof_are_observable() {
++        let (session, frame) = closed_with_transport_error();
++        let sequence = receive_close_ack(&session, frame);
++        assert!(matches!(
++            session.wait_close().await,
++            Err(BridgeError::Unknown)
++        ));
++        assert!(!session.close_observation().control_protocol_clean);
++        session.shared.finish_control(true, None);
++        session.wait_control_end().await.unwrap();
++        let observation = session.close_observation();
++        assert!(
++            observation.close_written
++                && observation.close_acked
++                && observation.control_protocol_clean
++        );
++        assert_eq!(observation.matching_ack.unwrap().sequence, sequence);
++        assert!(observation.sticky_control_failure.is_none());
++        assert!(matches!(
++            observation.aggregate_error,
++            Some(BridgeError::Unknown)
++        ));
++        assert!(matches!(
++            session.final_control_status(),
++            Err(BridgeError::Unknown)
++        ));
++        let progress = observation.final_progress.unwrap();
++        assert_eq!(progress["intent"], "Observed");
++        assert_eq!(progress["error_code"], 19);
++        assert_eq!(progress["http_status"], 503);
++    }
++    #[tokio::test]
++    async fn transport_unknown_cannot_hide_later_bad_sequence_before_valid_close_ack() {
++        let (session, frame) = closed_with_transport_error();
++        let mut bad = frame.clone();
++        bad.kind = wire::Kind::State;
++        bad.sequence = 99;
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&bad.encode().unwrap()).unwrap());
++        receive_close_ack(&session, frame);
++        session.shared.finish_control(true, None);
++        let observation = session.close_observation();
++        assert!(observation.close_written && observation.close_acked && observation.control_eof);
++        assert!(matches!(
++            observation.aggregate_error,
++            Some(BridgeError::Unknown)
++        ));
++        let failure = observation.sticky_control_failure.unwrap();
++        assert_eq!(failure.source, "control_validation");
++        assert!(matches!(failure.error, BridgeError::Protocol(_)));
++        assert!(!observation.control_protocol_clean);
++        assert!(session.wait_close().await.is_err());
++        assert!(session.final_control_status().is_err());
++    }
++    #[tokio::test]
++    async fn ack_does_not_end_observation_before_trailing_bad_frame_and_eof() {
++        let (session, frame) = closed_with_transport_error();
++        receive_close_ack(&session, frame.clone());
++        let mut end = Box::pin(session.wait_control_end());
++        assert!(
++            std::future::poll_fn(|cx| std::task::Poll::Ready(end.as_mut().poll(cx).is_pending()))
++                .await
++        );
++        assert!(!session.close_observation().control_protocol_clean);
++        let mut bad = frame;
++        bad.kind = wire::Kind::State;
++        bad.sequence = 99;
++        session
++            .shared
++            .handle_control(wire::Frame::decode(&bad.encode().unwrap()).unwrap());
++        session.shared.finish_control(true, None);
++        end.await.unwrap();
++        let observation = session.close_observation();
++        assert!(observation.control_stream_ended && observation.control_eof);
++        assert!(observation.sticky_control_failure.is_some());
++        assert!(!observation.control_protocol_clean);
++    }
++    #[test]
++    fn control_io_unknown_is_separate_from_existing_transport_unknown() {
++        let (session, frame) = closed_with_transport_error();
++        receive_close_ack(&session, frame);
++        session
++            .shared
++            .fail_control("control_writer", BridgeError::Unknown);
++        session.shared.finish_control(true, None);
++        let observation = session.close_observation();
++        assert!(matches!(
++            observation.aggregate_error,
++            Some(BridgeError::Unknown)
++        ));
++        assert_eq!(
++            observation.sticky_control_failure.unwrap().source,
++            "control_writer"
++        );
++        assert!(!observation.control_protocol_clean);
++    }
++    #[test]
++    fn malformed_control_after_request_closed_and_ack_is_never_normal_eof() {
++        for source in ["control_partial", "control_decode"] {
++            let (session, frame) = closed_with_transport_error();
++            receive_close_ack(&session, frame);
++            session.shared.finish_control(
++                false,
++                Some(ControlFailureObservation {
++                    source,
++                    error: BridgeError::Protocol("invalid trailing control bytes"),
++                }),
++            );
++            let observation = session.close_observation();
++            assert!(observation.close_acked && observation.control_stream_ended);
++            assert!(!observation.control_eof && !observation.control_protocol_clean);
++            assert_eq!(observation.sticky_control_failure.unwrap().source, source);
++            assert!(matches!(
++                observation.aggregate_error,
++                Some(BridgeError::Unknown)
++            ));
++        }
+     }
+     #[tokio::test]
+     async fn dropping_pending_read_wait_does_not_lose_session_owned_chunk() {
+@@ -261,6 +440,36 @@
+     pub generation: u64,
+     pub code: u32,
+ }
++#[derive(Clone, Debug, serde::Serialize)]
++pub struct ControlFailureObservation {
++    pub source: &'static str,
++    pub error: BridgeError,
++}
++#[derive(Clone, Debug, serde::Serialize)]
++pub struct CloseAckObservation {
++    pub session: u64,
++    pub epoch: u64,
++    pub child_pid: u32,
++    pub attempt: u64,
++    pub sequence: u64,
++    pub generation: u64,
++    pub code: u32,
++}
++/// One state-lock snapshot. Handshake facts never erase aggregate failures.
++/// A clean control conclusion requires a consumed boundary EOF after the ACK;
++/// an empty failure slot before the router terminates is not a clean verdict.
++#[derive(Clone, Debug, serde::Serialize)]
++pub struct CloseObservation {
++    pub close_written: bool,
++    pub close_acked: bool,
++    pub matching_ack: Option<CloseAckObservation>,
++    pub aggregate_error: Option<BridgeError>,
++    pub sticky_control_failure: Option<ControlFailureObservation>,
++    pub control_eof: bool,
++    pub control_stream_ended: bool,
++    pub control_protocol_clean: bool,
++    pub final_progress: Option<serde_json::Value>,
++}
+ #[derive(serde::Serialize)]
+ pub struct IdentityObservation {
+     pub session: u64,
+@@ -283,6 +492,17 @@
+     pub error: Option<u32>,
+ }
+ impl State {
++    pub(crate) fn fail_control(&mut self, source: &'static str, error: BridgeError) {
++        // Separate first-control-error latch: an earlier transport Unknown must
++        // not hide a later bad sequence, malformed frame or control I/O failure.
++        if self.control_failure.is_none() {
++            self.control_failure = Some(ControlFailureObservation {
++                source,
++                error: error.clone(),
++            });
++        }
++        self.fail(error);
++    }
+     pub(crate) fn io_event(&mut self, event: IoObservation) {
+         if self.io_events.len() >= 4096 {
+             self.io_events_overflow = true
+@@ -457,6 +677,15 @@
+                     }
+                     if request_kind == Some(wire::Kind::Close) {
+                         self.close_acked = true;
++                        self.close_ack = Some(CloseAckObservation {
++                            session: frame.session,
++                            epoch: frame.instance_epoch,
++                            child_pid: frame.child_pid,
++                            attempt: frame.attempt,
++                            sequence: frame.sequence,
++                            generation: frame.revocation_generation,
++                            code: frame.code,
++                        });
+                     }
+                     if request_kind == Some(wire::Kind::HttpCommit) {
+                         if !matches!(
+@@ -544,7 +773,7 @@
+     pub fn handle_control(&self, frame: wire::Frame) {
+         let mut state = self.state.lock().unwrap();
+         if let Err(error) = state.accept_control(frame) {
+-            state.fail(error)
++            state.fail_control("control_validation", error)
+         }
+         drop(state);
+         self.signal();
+@@ -555,6 +784,28 @@
+     }
+     pub fn fail(&self, error: BridgeError) {
+         self.state.lock().unwrap().fail(error);
++        self.signal();
++    }
++    pub(crate) fn fail_control(&self, source: &'static str, error: BridgeError) {
++        self.state.lock().unwrap().fail_control(source, error);
++        self.signal();
++    }
++    pub(crate) fn finish_control(
++        &self,
++        boundary_eof: bool,
++        failure: Option<ControlFailureObservation>,
++    ) {
++        let mut state = self.state.lock().unwrap();
++        state.control_eof = boundary_eof;
++        if let Some(failure) = failure {
++            state.fail_control(failure.source, failure.error);
++        } else if !boundary_eof || !state.close_acked {
++            state.fail_control("control_read", BridgeError::Unknown);
++        }
++        // Set only after all earlier channel entries have been applied. A
++        // boundary EOF is final for this single owned control reader.
++        state.control_stream_ended = true;
++        drop(state);
+         self.signal();
+     }
+ }
+@@ -611,6 +862,7 @@
+                     progress: None,
+                     delivery: None,
+                     fatal: None,
++                    control_failure: None,
+                     cancel_requested: false,
+                     cancel_reason: None,
+                     cancellation: None,
+@@ -619,8 +871,10 @@
+                     last_credit: None,
+                     closed: None,
+                     control_eof: false,
++                    control_stream_ended: false,
+                     close_written: false,
+                     close_acked: false,
++                    close_ack: None,
+                     max_chunk,
+                     io_result: None,
+                     io_joined: false,
+@@ -719,6 +973,49 @@
+         }
+         Ok(())
+     }
++    /// Additional terminal observation; does not redefine wait_close or renew
++    /// authority. The caller shares its existing bounded Close wait budget.
++    pub async fn wait_control_end(&self) -> Result<(), BridgeError> {
++        self.wait(true, |s| Ok(s.control_stream_ended.then_some(())))
++            .await
++    }
++    pub fn close_observation(&self) -> CloseObservation {
++        let s = self.shared.state.lock().unwrap();
++        CloseObservation {
++            close_written: s.close_written,
++            close_acked: s.close_acked,
++            matching_ack: s.close_ack.clone(),
++            aggregate_error: s.fatal.clone(),
++            sticky_control_failure: s.control_failure.clone(),
++            control_eof: s.control_eof,
++            control_stream_ended: s.control_stream_ended,
++            control_protocol_clean: s.control_stream_ended
++                && s.control_eof
++                && s.close_written
++                && s.close_acked
++                && s.control_failure.is_none(),
++            final_progress: s.progress.as_ref().map(progress_observation),
++        }
++    }
++}
++
++fn progress_observation(p: &wire::Progress) -> serde_json::Value {
++    serde_json::json!({
++        "intent": format!("{:?}", p.intent), "network": format!("{:?}", p.network),
++        "owner": format!("{:?}", p.owner), "http_status": p.http_status, "error_code": p.error_code,
++        "received_offset": p.received_offset, "reserved_offset": p.reserved_offset,
++        "issued_offset": p.issued_offset, "os_completed_offset": p.os_completed_offset,
++        "peer_consumed_offset": p.peer_consumed_offset, "parser_yielded_bytes": p.parser_yielded_bytes,
++        "drain_discarded_bytes": p.drain_discarded_bytes, "cancel_discarded_bytes": p.cancel_discarded_bytes,
++        "error_consumed_bytes": p.error_consumed_bytes, "last_write_ordinal": p.last_write_ordinal,
++        "revoke_persisted": p.revoke_persisted, "revoke_applied": p.revoke_applied,
++        "http_eof": p.http_eof, "response_material_stored": p.response_material_stored,
++        "worker_joined": p.worker_joined, "connect_reaped": p.connect_reaped,
++        "read_reaped": p.read_reaped, "write_reaped": p.write_reaped, "data_closed": p.data_closed,
++        "child_exited": p.child_exited, "stdout_eof": p.stdout_eof, "stderr_eof": p.stderr_eof,
++        "owner_released": p.owner_released, "worker_started": p.worker_started,
++        "request_closed": p.request_closed,
++    })
+ }
+ impl NativeHttpSession for Session {
+     fn bind_cancellation(
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-002\src\workers.rs
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-stream-003\src\workers.rs
+@@ -2,7 +2,7 @@
+ //! No async task or control dispatch owns its blocking cleanup operation.
+ use crate::{
+     admission::Admission,
+-    session::{IoObservation, Session, Shared},
++    session::{ControlFailureObservation, IoObservation, Session, Shared},
+ };
+ use morrow_codex_m03_stream::driver::{BridgeError, RequestKey};
+ use morrow_native_http_stream_wire as wire;
+@@ -14,7 +14,104 @@
+     time::{Duration, Instant},
+ };
+ 
+-type ControlInput = std::result::Result<wire::Frame, &'static str>;
++#[derive(Debug)]
++enum ControlReadEnd {
++    BoundaryEof,
++    Failure(ControlFailureObservation),
++}
++type ControlInput = std::result::Result<wire::Frame, ControlReadEnd>;
++
++fn control_read_failure(source: &'static str, reason: &'static str) -> ControlReadEnd {
++    ControlReadEnd::Failure(ControlFailureObservation {
++        source,
++        error: BridgeError::Protocol(reason),
++    })
++}
++
++fn read_control_frame(reader: &mut impl Read, partial: &Mutex<Option<Instant>>) -> ControlInput {
++    let mut prefix = [0u8; 4];
++    if let Err(error) = reader.read_exact(&mut prefix[..1]) {
++        return Err(if error.kind() == std::io::ErrorKind::UnexpectedEof {
++            ControlReadEnd::BoundaryEof
++        } else {
++            ControlReadEnd::Failure(ControlFailureObservation {
++                source: "control_read",
++                error: BridgeError::Unknown,
++            })
++        });
++    }
++    *partial.lock().unwrap() = Some(Instant::now());
++    reader
++        .read_exact(&mut prefix[1..])
++        .map_err(|_| control_read_failure("control_partial", "control partial prefix"))?;
++    let n =
++        wire::payload_length(&prefix).map_err(|e| control_read_failure("control_framing", e))?;
++    let mut bytes = Vec::with_capacity(n + 4);
++    bytes.extend(prefix);
++    bytes.resize(n + 4, 0);
++    reader
++        .read_exact(&mut bytes[4..])
++        .map_err(|_| control_read_failure("control_partial", "control partial payload"))?;
++    if partial
++        .lock()
++        .unwrap()
++        .is_some_and(|t| t.elapsed() > Duration::from_millis(500))
++    {
++        return Err(control_read_failure(
++            "control_partial",
++            "control partial timeout",
++        ));
++    }
++    *partial.lock().unwrap() = None;
++    wire::Frame::decode(&bytes).map_err(|e| control_read_failure("control_decode", e))
++}
++
++#[cfg(test)]
++mod control_read_tests {
++    use super::*;
++    #[test]
++    fn only_frame_boundary_eof_is_normal_and_trailing_failures_keep_their_source() {
++        let initial = crate::admission::tests::admitted().initial().clone();
++        let encoded = initial.encode().unwrap();
++        for (tail, expected) in [
++            (vec![], None),
++            (vec![8], Some("control_partial")),
++            (vec![8, 0, 0, 0, 1, 2], Some("control_partial")),
++            (vec![0, 0, 0, 0], Some("control_framing")),
++            (
++                [vec![8, 0, 0, 0], vec![255; 8]].concat(),
++                Some("control_decode"),
++            ),
++        ] {
++            let partial = Mutex::new(None);
++            let mut input = std::io::Cursor::new([encoded.clone(), tail].concat());
++            read_control_frame(&mut input, &partial).unwrap();
++            match (read_control_frame(&mut input, &partial), expected) {
++                (Err(ControlReadEnd::BoundaryEof), None) => {}
++                (Err(ControlReadEnd::Failure(failure)), Some(source)) => {
++                    assert_eq!(failure.source, source)
++                }
++                other => panic!("incorrect control end classification: {other:?}"),
++            }
++        }
++    }
++    #[test]
++    fn boundary_read_io_error_is_not_eof_even_if_error_enum_is_unknown() {
++        struct Broken;
++        impl Read for Broken {
++            fn read(&mut self, _: &mut [u8]) -> std::io::Result<usize> {
++                Err(std::io::ErrorKind::BrokenPipe.into())
++            }
++        }
++        match read_control_frame(&mut Broken, &Mutex::new(None)) {
++            Err(ControlReadEnd::Failure(failure)) => {
++                assert_eq!(failure.source, "control_read");
++                assert!(matches!(failure.error, BridgeError::Unknown));
++            }
++            other => panic!("I/O error incorrectly treated as EOF: {other:?}"),
++        }
++    }
++}
+ pub struct ControlReader {
+     input: mpsc::Receiver<ControlInput>,
+     partial: Arc<Mutex<Option<Instant>>>,
+@@ -34,32 +131,7 @@
+                 let stdin = std::io::stdin();
+                 let mut reader = stdin.lock();
+                 loop {
+-                    let mut prefix = [0u8; 4];
+-                    let result = (|| {
+-                        reader
+-                            .read_exact(&mut prefix[..1])
+-                            .map_err(|_| "control EOF/read")?;
+-                        *tracked.lock().unwrap() = Some(Instant::now());
+-                        reader
+-                            .read_exact(&mut prefix[1..])
+-                            .map_err(|_| "control partial prefix")?;
+-                        let n = wire::payload_length(&prefix)?;
+-                        let mut bytes = Vec::with_capacity(n + 4);
+-                        bytes.extend(prefix);
+-                        bytes.resize(n + 4, 0);
+-                        reader
+-                            .read_exact(&mut bytes[4..])
+-                            .map_err(|_| "control partial payload")?;
+-                        if tracked
+-                            .lock()
+-                            .unwrap()
+-                            .is_some_and(|t| t.elapsed() > Duration::from_millis(500))
+-                        {
+-                            return Err("control partial timeout");
+-                        }
+-                        *tracked.lock().unwrap() = None;
+-                        wire::Frame::decode(&bytes)
+-                    })();
++                    let result = read_control_frame(&mut reader, &tracked);
+                     let failed = result.is_err();
+                     if tx.send(result).is_err() || failed {
+                         break;
+@@ -83,7 +155,10 @@
+             .input
+             .recv_timeout(Duration::from_millis(500))
+             .map_err(|_| BridgeError::Protocol("initial Challenge timeout"))?
+-            .map_err(BridgeError::Protocol)?;
++            .map_err(|end| match end {
++                ControlReadEnd::BoundaryEof => BridgeError::Protocol("initial control EOF"),
++                ControlReadEnd::Failure(failure) => failure.error,
++            })?;
+         let admission = Admission::new(initial, self.started, std::process::id(), &artifact)
+             .map_err(BridgeError::Protocol)?;
+         let session = Session::new(admission, max_chunk, key);
+@@ -96,14 +171,22 @@
+                         Ok(Ok(frame)) => {
+                             routed.handle_control(frame);
+                         }
+-                        Ok(Err(_)) | Err(mpsc::RecvTimeoutError::Disconnected) => {
+-                            let mut s = routed.state.lock().unwrap();
+-                            s.control_eof = true;
+-                            if s.closed.is_none() {
+-                                s.fail(BridgeError::Unknown)
+-                            }
+-                            drop(s);
+-                            routed.signal();
++                        Ok(Err(ControlReadEnd::BoundaryEof)) => {
++                            routed.finish_control(true, None);
++                            break;
++                        }
++                        Ok(Err(ControlReadEnd::Failure(failure))) => {
++                            routed.finish_control(false, Some(failure));
++                            break;
++                        }
++                        Err(mpsc::RecvTimeoutError::Disconnected) => {
++                            routed.finish_control(
++                                false,
++                                Some(ControlFailureObservation {
++                                    source: "control_reader_disconnected",
++                                    error: BridgeError::Unknown,
++                                }),
++                            );
+                             break;
+                         }
+                         Err(mpsc::RecvTimeoutError::Timeout) => {}
+@@ -114,7 +197,13 @@
+                         .unwrap()
+                         .is_some_and(|t| t.elapsed() > Duration::from_millis(500))
+                     {
+-                        routed.fail(BridgeError::Protocol("control partial-frame timeout"));
++                        routed.finish_control(
++                            false,
++                            Some(ControlFailureObservation {
++                                source: "control_partial",
++                                error: BridgeError::Protocol("control partial-frame timeout"),
++                            }),
++                        );
+                         break;
+                     }
+                     let mut s = routed.state.lock().unwrap();
+@@ -134,7 +223,7 @@
+             .name("m03-control-write".into())
+             .spawn(move || {
+                 if let Err(error) = control_writer(&output) {
+-                    output.fail(error)
++                    output.fail_control("control_writer", error)
+                 }
+             })
+             .map_err(|_| BridgeError::Unknown)?;

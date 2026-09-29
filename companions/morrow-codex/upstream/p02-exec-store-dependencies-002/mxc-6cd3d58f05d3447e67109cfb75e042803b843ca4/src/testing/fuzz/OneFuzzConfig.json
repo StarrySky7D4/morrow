@@ -1,0 +1,86 @@
+{
+  "ConfigVersion": 3,
+  "Entries": [
+    {
+      "JobNotificationEmail": "anisk@microsoft.com",
+      "Fuzzer": {
+        "$type": "libfuzzer",
+        "FuzzingHarnessExecutableName": "config_parser.exe"
+      },
+      "JobDependencies": [
+        "config_parser.exe",
+        "config_parser.pdb",
+        "clang_rt.asan_dynamic-x86_64.dll"
+      ],
+      "OneFuzzJobs": [
+        {
+          "ProjectName": "MXC",
+          "TargetName": "config_parser"
+        }
+      ],
+      "AdoTemplate": {
+        "Org": "microsoft",
+        "Project": "OS",
+        "AreaPath": "OS\\Windows Client and Services\\WinPD\\AgOS-Agentic Platform\\Agent Runtime\\Tessera",
+        "IterationPath": "OS\\Future",
+        "AssignedTo": "anisk@microsoft.com",
+        "Type": "Bug"
+      },
+      "SdlWorkItemId": 62294501
+    },
+    {
+      "JobNotificationEmail": "anisk@microsoft.com",
+      "Fuzzer": {
+        "$type": "libfuzzer",
+        "FuzzingHarnessExecutableName": "base64_decode.exe"
+      },
+      "JobDependencies": [
+        "base64_decode.exe",
+        "base64_decode.pdb",
+        "clang_rt.asan_dynamic-x86_64.dll"
+      ],
+      "OneFuzzJobs": [
+        {
+          "ProjectName": "MXC",
+          "TargetName": "base64_decode"
+        }
+      ],
+      "AdoTemplate": {
+        "Org": "microsoft",
+        "Project": "OS",
+        "AreaPath": "OS\\Windows Client and Services\\WinPD\\AgOS-Agentic Platform\\Agent Runtime\\Tessera",
+        "IterationPath": "OS\\Future",
+        "AssignedTo": "anisk@microsoft.com",
+        "Type": "Bug"
+      },
+      "SdlWorkItemId": 62294501
+    },
+    {
+      "JobNotificationEmail": "anisk@microsoft.com",
+      "Fuzzer": {
+        "$type": "libfuzzer",
+        "FuzzingHarnessExecutableName": "validator.exe"
+      },
+      "JobDependencies": [
+        "validator.exe",
+        "validator.pdb",
+        "clang_rt.asan_dynamic-x86_64.dll"
+      ],
+      "OneFuzzJobs": [
+        {
+          "ProjectName": "MXC",
+          "TargetName": "validator"
+        }
+      ],
+      "AdoTemplate": {
+        "Org": "microsoft",
+        "Project": "OS",
+        "AreaPath": "OS\\Windows Client and Services\\WinPD\\AgOS-Agentic Platform\\Agent Runtime\\Tessera",
+        "IterationPath": "OS\\Future",
+        "AssignedTo": "anisk@microsoft.com",
+        "Type": "Bug"
+      },
+      "SdlWorkItemId": 62294501
+    }
+  ]
+}

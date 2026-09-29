@@ -1,0 +1,222 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: isOfficialBuild
+  type: boolean
+  default: false
+- name: matrix
+  type: object
+  default: {}
+- name: ESRPInfo
+  type: object
+  default: {}
+
+jobs:
+- ${{ each item in parameters.matrix }}:
+  - job: 'build_${{ item.arch }}_${{ item.component }}'
+    displayName: 'Build (${{ item.arch }} ${{ item.component }})'
+    dependsOn: []
+    timeoutInMinutes: 120
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      ${{ if eq(item.os, 'windows') }}:
+        image: windows-latest
+        os: windows
+      ${{ if eq(item.os, 'linux') }}:
+        image: ubuntu-latest #x64 host
+        os: linux
+
+    variables:
+
+      # Triplet
+      ${{ if and(eq(item.os, 'windows'), eq(item.arch, 'x64')) }}:
+        triplet: x86_64-pc-windows-msvc
+      ${{ if and(eq(item.os, 'windows'), eq(item.arch, 'arm64')) }}:
+        triplet: aarch64-pc-windows-msvc
+      ${{ if and(eq(item.os, 'linux'), eq(item.arch, 'x64')) }}:
+        triplet: x86_64-unknown-linux-gnu
+      ${{ if and(eq(item.os, 'linux'), eq(item.arch, 'arm64')) }}:
+        triplet: aarch64-unknown-linux-gnu
+
+      # Windows specific variables
+      ${{ if eq(item.os, 'windows') }}:
+        CARGO_TARGET_DIR: c:/t/target
+        artifactPrefix: wxc-binaries
+        workingDirectory: $(Build.SourcesDirectory)/src
+        # Explicit feature set (no --all-features): tier2_bfs must NOT ship
+        # on Win 11 25H2 (bfscfg.exe risks an OS hang).
+        cargoFeatures: hyperlight isolation_session microvm wslc
+        signPattern: |
+            wxc-exec.exe
+            plm.exe
+            wxc-host-prep.exe
+            winhttp-proxy-shim.exe
+            wxc-windows-sandbox-daemon.exe
+            wxc-windows-sandbox-guest.exe
+            wxc-wslc-daemon.exe
+            wxc-test-proxy.exe
+            mxc-diagnostic-console.exe
+
+      # Linux specific variables
+      ${{ if eq(item.os, 'linux') }}:
+        CARGO_TARGET_DIR: /tmp/target
+        artifactPrefix: lxc-binaries
+        workingDirectory: $(Build.SourcesDirectory)/src/core/lxc
+        cargoFeatures: hyperlight
+        signPattern: |
+          lxc-exec
+          unix-test-proxy
+
+      # Paths
+      targetTriple: $(triplet)
+      targetTripleDir: $(CARGO_TARGET_DIR)/$(targetTriple)/release
+      outputDirectory: $(Build.SourcesDirectory)/out
+      artifactBaseName: $(artifactPrefix)-$(targetTriple)
+      configTomlPath: $(Build.SourcesDirectory)/.cargo/config.toml
+
+    # 1ES Rust virtual tasks read these settings (toolchain feed, registry
+    # auth, target-dir cache) from the job's templateContext. Official-only
+    # because Mxc-Azure-Feed needs System.AccessToken.
+    ${{ if eq(parameters.isOfficialBuild, true) }}:
+      templateContext:
+        rust:
+          rustToolchain:
+            toolchainFeed: https://microsoft.pkgs.visualstudio.com/Dart/_packaging/Mxc-Azure-Feed/nuget/v3/index.json
+            version: 'ms-prod-1.93'
+            additionalTargets: $(triplet)
+          workingDirectory: $(workingDirectory)
+          authenticateOptions:
+            configFile: $(configTomlPath)
+          installOptions:
+            configFile: $(configTomlPath)
+          cacheOptions:
+            enabled: true
+            enableTargetCache: true
+
+    steps:
+      - checkout: self
+
+      # Install Linux ARM64 toolchain for arm64 linux builds
+      - script: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+        displayName: Install ARM64 toolchain
+        condition: and(eq('${{ item.os }}','linux'), eq('${{ item.arch }}','arm64'))
+
+      - ${{ if eq(parameters.isOfficialBuild, true) }}:
+        - template: Rust.Build.Steps.Official.yml@self
+          parameters:
+            targetTriple: $(triplet)
+            workingDirectory: $(workingDirectory)
+            cargoFeatures: $(cargoFeatures)
+            ${{ if eq(item.arch, 'x64') }}:
+              enableTest: 'true'
+            ${{ else }}:
+              enableTest: 'false'
+
+      - ${{ else }}:
+        # Fork-PR / Unofficial: plain rustup + crates.io, no auth tasks.
+        - template: Rust.Build.Steps.Unofficial.yml@self
+          parameters:
+            targetTriple: $(triplet)
+            workingDirectory: $(workingDirectory)
+            cargoArgs: --no-default-features --features "$(cargoFeatures)"
+            ${{ if eq(item.arch, 'x64') }}:
+              enableTest: 'true'
+            ${{ else }}:
+              enableTest: 'false'
+
+      # unix_test_proxy is a separate workspace member (not a dep of lxc), so
+      # the workspace-member-scoped build above doesn't pick it up. Build it
+      # explicitly here so it lands alongside lxc-exec in the target dir and
+      # gets copied into the artifact via signPattern.
+      - script: |
+          cargo build --release --target $(triplet) -p unix_test_proxy --manifest-path $(Build.SourcesDirectory)/src/Cargo.toml
+        displayName: Build unix-test-proxy
+        condition: eq('${{ item.os }}', 'linux')
+
+      # plm (Permissive Learning Mode) is functionally Windows-only, but it
+      # builds cross-platform via a no-op stub `fn main()` so it sits in the
+      # workspace default-members. Tests run on x64 only (arm64 emulation in
+      # 1ES windows-11-arm is too slow for the WPR-touching helpers).
+      - script: |
+          cargo test --release --target $(triplet) -p plm --manifest-path $(Build.SourcesDirectory)/src/Cargo.toml
+        displayName: Test plm
+        condition: and(eq('${{ item.os }}', 'windows'), eq('${{ item.arch }}', 'x64'))
+
+      - task: EsrpCodeSigning@5
+        displayName: Code Sign
+        condition: and(eq(${{ parameters.isOfficialBuild }}, true), eq('${{ item.os }}', 'windows'))
+        inputs:
+          ConnectedServiceName: ${{ parameters.ESRPInfo.serviceName }}
+          AppRegistrationClientId: ${{ parameters.ESRPInfo.clientId }}
+          AppRegistrationTenantId: ${{ parameters.ESRPInfo.tenantId }}
+          AuthAKVName: ${{ parameters.ESRPInfo.azureKeyVaultName }}
+          AuthCertName: ${{ parameters.ESRPInfo.authCertName }}
+          AuthSignCertName: ${{ parameters.ESRPInfo.signCertName }}
+          FolderPath: $(targetTripleDir)
+          Pattern: |
+            $(signPattern)
+          UseMinimatch: true
+          signConfigType: 'inlineSignParams'
+          inlineOperation: >-
+            [
+              {
+                "KeyCode": "CP-230012",
+                "OperationCode": "SigntoolSign",
+                "ToolName": "sign",
+                "ToolVersion": "1.0",
+                "Parameters": {
+                  "OpusName": "Microsoft",
+                  "OpusInfo": "https://www.microsoft.com",
+                  "FileDigest": "/fd SHA256",
+                  "PageHash": "/NPH",
+                  "TimeStamp": "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+                }
+              },
+              {
+                "KeyCode": "CP-230012",
+                "OperationCode": "SigntoolVerify",
+                "ToolName": "sign",
+                "ToolVersion": "1.0",
+                "Parameters": {}
+              }
+            ]
+
+      - task: CopyFiles@2
+        displayName: Copy binaries
+        inputs:
+          sourceFolder: $(targetTripleDir)
+          contents: |
+            $(signPattern)
+          targetFolder: $(outputDirectory)/$(targetTriple)
+
+      # Copy wslcsdk.dll
+      - task: CopyFiles@2
+        displayName: Copy wslcsdk.dll
+        inputs:
+          sourceFolder: $(targetTripleDir)
+          contents: wslcsdk.dll
+          targetFolder: $(outputDirectory)/$(targetTriple)
+
+      # Copy symbol files into a sibling `symbols/` subdir, NOT alongside the
+      # binaries. Workaround for BinSkim BA2007: when the pdb is co-located,
+      # BinSkim reads its S_COMPILE3 records and flags `-wd4146` in the
+      # statically-linked MS CRT obj files (libucrt.lib internals). We still
+      # want +crt-static so consumers don't need a vcruntime DLL — separating
+      # the pdb hides those records from BinSkim without changing the binary.
+      - task: CopyFiles@2
+        displayName: Copy symbol files
+        inputs:
+          sourceFolder: $(targetTripleDir)
+          contents: |
+            *.pdb
+            *.dwp
+          targetFolder: $(outputDirectory)/$(targetTriple)/symbols
+
+      - task: 1ES.PublishPipelineArtifact@1
+        displayName: Publish
+        inputs:
+          path: '$(outputDirectory)/$(targetTriple)'
+          artifactName: $(artifactBaseName)

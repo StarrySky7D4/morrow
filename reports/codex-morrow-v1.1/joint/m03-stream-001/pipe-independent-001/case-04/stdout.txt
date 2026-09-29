@@ -1,0 +1,7 @@
+
+running 1 test
+test server_disconnect_completes_client_read_without_false_success ... server_endpoint_closed client_read_error=109
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+

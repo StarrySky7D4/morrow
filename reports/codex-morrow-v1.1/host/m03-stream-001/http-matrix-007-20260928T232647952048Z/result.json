@@ -1,0 +1,110 @@
+{
+  "status": "stopped_on_failure",
+  "results": [
+    {
+      "case": "s503",
+      "status": "failed_expectations",
+      "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-007\\20260928T232647952048Z\\s503",
+      "terminal_poll": "not directly instrumented; source/state inference only",
+      "checks": {
+        "exactly_one_post": true,
+        "no_redirect_sink_hits": true,
+        "server_fixture_no_error": true,
+        "host_control_exit_0": true,
+        "guest_expected_exit": true,
+        "real_child_exit_and_dual_eof": true,
+        "durable_owner_released": true,
+        "request_and_native_workers_closed": true,
+        "guest_data_worker_joined": true,
+        "guest_matching_close_ack": false,
+        "no_evidence_overflow": true,
+        "http_status_preserved": true,
+        "classification_sum": true,
+        "complete_http_observed_separately": true,
+        "full_response_offsets": true,
+        "server_eof_sent": true,
+        "core_reports_error_not_completed": true,
+        "error_body_classified": true
+      },
+      "dimensions": {
+        "core_terminal": {
+          "Failed": "unexpected status 503 Service Unavailable: synthetic 503, url: http://127.0.0.1:54003/v1/responses"
+        },
+        "transport_drain": null,
+        "guest_cleanup": {
+          "Ok": {
+            "acknowledged_offset": 59,
+            "data_channel_closed": true,
+            "data_connect_reaped": true,
+            "data_read_reaped": true,
+            "data_write_reaped": true,
+            "delivered_offset": 59,
+            "durable_observed": true,
+            "network_eof": true,
+            "network_worker_exited": true,
+            "network_worker_started": true,
+            "received_offset": 59,
+            "request_closed": true,
+            "session_release": null
+          }
+        },
+        "guest_close": {
+          "Err": "Unknown"
+        },
+        "guest_final_control": {
+          "Err": "Unknown"
+        },
+        "http_and_native": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": true,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 19,
+          "error_consumed_bytes": 59,
+          "http_eof": true,
+          "http_status": 503,
+          "intent": "Observed",
+          "issued_offset": 59,
+          "last_write_ordinal": 3,
+          "network": "Eof",
+          "os_completed_offset": 59,
+          "owner": "Released",
+          "owner_released": true,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 59,
+          "read_reaped": true,
+          "received_offset": 59,
+          "request_closed": true,
+          "reserved_offset": 59,
+          "response_material_stored": true,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": true,
+          "stdout_eof": true,
+          "worker_joined": true,
+          "worker_started": true,
+          "write_reaped": true
+        },
+        "host_exit": 0,
+        "guest_exit": 2
+      },
+      "host_lifetime": {
+        "pid": 1088,
+        "exit": 0,
+        "status": "os_exit_observed",
+        "child_identity": {
+          "epoch": 1,
+          "pid": 4684,
+          "session": 9507469184801675686
+        },
+        "owner_release_verified": true
+      },
+      "post_count": 1,
+      "sink_count": 0,
+      "fixed_artifacts_unchanged": true
+    }
+  ],
+  "automatic_retry": false,
+  "full_m03_qualified": false
+}

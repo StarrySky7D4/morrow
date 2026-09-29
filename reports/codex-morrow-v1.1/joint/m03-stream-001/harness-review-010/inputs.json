@@ -1,0 +1,55 @@
+{
+  "pins": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\producer-ready-010.json",
+      "sha256": "7f9d67c986ff73c115f38e259826b8661c56c00243595084b2e21f32bd337a9b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_010.py",
+      "sha256": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\harness-candidate-010\\m03_revoke_barriers_010.py.snapshot",
+      "sha256": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\harness-candidate-010\\diff-from-009.patch",
+      "sha256": "eab590c304a635be01fe1cea502d85ec5add7e7e651f74116a1f9a6c33539509"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_010.py",
+      "sha256": "b90c9059a3dbb573a4ef0060c80d6d76da7b01cde1b66cc40d11051dbc41115b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_revoke_barriers_009.py",
+      "sha256": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\m03_http_matrix_008.py",
+      "sha256": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\manifest.json",
+      "sha256": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-005\\manifest.json",
+      "sha256": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-010-fixed-preflight-20260929T005435082074Z.json",
+      "sha256": "637c9f8919851c16dbb75f6cf4b77a26d5f703fd5cf8ecd990bd029b38c35443"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-010-pure-20260929T005435232416Z.json",
+      "sha256": "2eb15782a76361a2d5712e8389dad133b03b88d4a901e73755653d97f67a935f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\harness-candidate-010\\manifest.json",
+      "sha256": "2503e9deba4180fd534c2a0e05da5d75151474b5cced6be884d37845ef0599d7"
+    }
+  ],
+  "fixture_review": "../native-fixture-review-001/review.md",
+  "fixture_review_sha256": "303c07bfd16a1f5a7974611d55ab766da823b89a5363ab6c6b9655e3e5121faa",
+  "host005_review_sha256": "74b54acbde3f38c15604baf174d28ed9dc1a58954f40abd7eee296693f8e4455"
+}

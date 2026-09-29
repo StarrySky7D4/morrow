@@ -1,0 +1,270 @@
+{
+  "event": "final",
+  "snapshot": {
+    "epoch": 1,
+    "event_overflow": 0,
+    "events": [
+      {
+        "at_us": 105601,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "00ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78",
+          "config_sha256": "ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 19404,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 106323,
+        "detail": {
+          "raw_hex": "280100000000000024000000000000000b00060003000100000000000000000000000000e4e2ec7488f173f301000000000000000100000000000000cc4b000000000000a6260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000520000000000000000000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 1
+      },
+      {
+        "at_us": 116294,
+        "detail": {
+          "dacl_sha256": "d31f829edec290dbb3710f75760fcc9cd34382683850676f83c312dff3d44054",
+          "inbound": 1024,
+          "noninherited": true,
+          "outbound": 1024
+        },
+        "event": "data_created",
+        "ordinal": 2
+      },
+      {
+        "at_us": 116410,
+        "detail": {
+          "raw_hex": "280100000000000024000000000000000b00060003000100010000000100000000000000e4e2ec7488f173f301000000000000000100000000000000cc4b000000000000a6260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000520000000000000000000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000"
+        },
+        "event": "control_frame_received",
+        "ordinal": 3
+      },
+      {
+        "at_us": 116504,
+        "detail": "Active",
+        "event": "phase",
+        "ordinal": 4
+      },
+      {
+        "at_us": 116706,
+        "detail": {
+          "raw_hex": "280100000000000024000000000000000b00060003000100020000000100000000000000e4e2ec7488f173f301000000000000000100000000000000cc4b0000020000009b260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000520000000000000000000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 5
+      },
+      {
+        "at_us": 116921,
+        "detail": {
+          "raw_hex": "280100000000000024000000000000000b00060003000100070000000200000000000000e4e2ec7488f173f301000000000000000100000000000000cc4b000000000000a6260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d00000002010000390000000201000045000000520000000000000000000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000"
+        },
+        "event": "control_frame_received",
+        "ordinal": 6
+      },
+      {
+        "at_us": 116999,
+        "detail": {
+          "reason": 25
+        },
+        "event": "session_close_reason",
+        "ordinal": 7
+      },
+      {
+        "at_us": 125320,
+        "detail": {
+          "code": 25,
+          "progress": {
+            "cancel_discarded_bytes": 0,
+            "child_exited": false,
+            "connect_reaped": false,
+            "data_closed": false,
+            "drain_discarded_bytes": 0,
+            "error_code": 25,
+            "error_consumed_bytes": 0,
+            "http_eof": false,
+            "http_status": 0,
+            "intent": "Absent",
+            "issued_offset": 0,
+            "last_write_ordinal": 0,
+            "network": "Idle",
+            "os_completed_offset": 0,
+            "owner": "Active",
+            "owner_released": false,
+            "parser_yielded_bytes": 0,
+            "peer_consumed_offset": 0,
+            "read_reaped": false,
+            "received_offset": 0,
+            "request_closed": false,
+            "reserved_offset": 0,
+            "response_material_stored": false,
+            "revoke_applied": true,
+            "revoke_persisted": true,
+            "stderr_eof": false,
+            "stdout_eof": false,
+            "worker_joined": false,
+            "worker_started": false,
+            "write_reaped": false
+          }
+        },
+        "event": "http_cancel_applied",
+        "ordinal": 8
+      },
+      {
+        "at_us": 125424,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 9
+      },
+      {
+        "at_us": 125488,
+        "detail": {
+          "sequence": 2
+        },
+        "event": "close_ack_pending",
+        "ordinal": 10
+      },
+      {
+        "at_us": 125666,
+        "detail": {
+          "raw_hex": "880100000000000030000000000000000b00060003000100160007000000000000000000e4e2ec7488f173f301000000000000000200000000000000cc4b00000000000092260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d0000000201000039000000020100004500000052000000480000000c000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000000000000100000019000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 11
+      },
+      {
+        "at_us": 125783,
+        "detail": {
+          "raw_hex": "880100000000000030000000000000000b00060003000100040007000200000000000000e4e2ec7488f173f301000000000000000200000000000000cc4b00000000000092260000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d0000000201000039000000020100004500000052000000480000000c000000e4e2ec7488f173f340e6bfb0114af01c53095def1e2dbed0676e82b7386feeea8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc86400ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78ea6c20c4d9b92aa208484ebead147d799d3acf3ce8e8364a391c4f954ca4d4a7636c6f73652d74657374000000000000000000000300000019000000030000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 12
+      },
+      {
+        "at_us": 125785,
+        "detail": {
+          "bytes": 396,
+          "sequence": 2
+        },
+        "event": "close_ack_written",
+        "ordinal": 13
+      },
+      {
+        "at_us": 127648,
+        "detail": {
+          "bytes": 0,
+          "error": 995,
+          "id": 1,
+          "kind": "Connect"
+        },
+        "event": "data_operation_reaped",
+        "ordinal": 14
+      },
+      {
+        "at_us": 127668,
+        "detail": true,
+        "event": "data_worker_joined",
+        "ordinal": 15
+      },
+      {
+        "at_us": 127717,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 16
+      },
+      {
+        "at_us": 127721,
+        "detail": {
+          "bytes": 0
+        },
+        "event": "stderr_eof",
+        "ordinal": 17
+      },
+      {
+        "at_us": 127941,
+        "detail": {
+          "business_success": false,
+          "code": 0
+        },
+        "event": "exit",
+        "ordinal": 18
+      },
+      {
+        "at_us": 127985,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 19
+      }
+    ],
+    "exit_code": 0,
+    "exit_observed": true,
+    "generation": 2,
+    "http": {
+      "progress": {
+        "cancel_discarded_bytes": 0,
+        "child_exited": true,
+        "connect_reaped": true,
+        "data_closed": true,
+        "drain_discarded_bytes": 0,
+        "error_code": 25,
+        "error_consumed_bytes": 0,
+        "http_eof": false,
+        "http_status": 0,
+        "intent": "Absent",
+        "issued_offset": 0,
+        "last_write_ordinal": 0,
+        "network": "Idle",
+        "os_completed_offset": 0,
+        "owner": "Released",
+        "owner_released": true,
+        "parser_yielded_bytes": 0,
+        "peer_consumed_offset": 0,
+        "read_reaped": true,
+        "received_offset": 0,
+        "request_closed": false,
+        "reserved_offset": 0,
+        "response_material_stored": false,
+        "revoke_applied": true,
+        "revoke_persisted": true,
+        "stderr_eof": true,
+        "stdout_eof": true,
+        "worker_joined": false,
+        "worker_started": false,
+        "write_reaped": true
+      },
+      "proposal": null
+    },
+    "owner_retained": false,
+    "phase": "Released",
+    "pid": 19404,
+    "session": 17542630541917741796,
+    "stderr_eof": true,
+    "stdout_eof": true
+  },
+  "state": {
+    "failed_closed": false,
+    "grant": null,
+    "owner": {
+      "automatic_takeover": false,
+      "epoch": 1,
+      "exit_observed": true,
+      "generation": 1,
+      "grant_id": "e926b56e193698a81162abb56f4466a5f9ff4bbcb31e00136d7d6d8999465b42",
+      "locally_observed": true,
+      "owner_retained": false,
+      "phase": "Released",
+      "pid": 19404,
+      "session": 17542630541917741796,
+      "stderr_eof": true,
+      "stdout_eof": true
+    },
+    "profile_id": "15e79b7cfcb4f12771988d43b072487a8920c4ed26852f73a1732ed3a292293f",
+    "slot": "close-test"
+  }
+}

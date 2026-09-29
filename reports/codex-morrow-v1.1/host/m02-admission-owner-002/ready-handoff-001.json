@@ -1,0 +1,9 @@
+{
+  "status": "ready_for_independent_review_not_M02_complete",
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\manifest.json",
+  "manifest_sha256": "ee257b1cc15dcb72a4f92343406431fbc4a35153915e23e5f73e9265917e373e",
+  "host_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\runtime-kit-002\\bin\\morrow-native-owner-host.exe",
+  "host_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+  "delivery": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-admission-owner-002\\DELIVERY.md",
+  "delivery_sha256": "3f3578e936ddaca6551c5979c00c36a70ecbf4fa276de82cbc98d642cb8b3ec9"
+}

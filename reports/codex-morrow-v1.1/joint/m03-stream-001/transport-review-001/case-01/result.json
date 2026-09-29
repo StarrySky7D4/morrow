@@ -1,0 +1,23 @@
+{
+  "name": "first_chunk_precedes_server_eof_and_permit_survives_head_and_eof",
+  "args": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+    "--exact",
+    "first_chunk_precedes_server_eof_and_permit_survives_head_and_eof",
+    "--nocapture",
+    "--test-threads=1"
+  ],
+  "process": {
+    "pid": 12956,
+    "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+    "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+    "creation_filetime": 134351036453222892,
+    "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+  },
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_ns": 2085759500,
+  "stdout_sha256": "6de480766f432d7489e544889470466a5c320385a3baa96eacce830e75025cbf",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "passed": true
+}

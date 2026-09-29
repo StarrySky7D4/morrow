@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "src-tauri/Cargo.lock",
+      "git_blob_sha1": "110be7860b80d3a69aec339ca3c806a630c196fe",
+      "sha256": "7194c34773d7cb09bf912680ca89777eb94b404f8c7115b93484563a067e2a6c",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/Cargo.lock"
+    },
+    {
+      "path": "src-tauri/build.rs",
+      "git_blob_sha1": "7aaeff600e3713d7f0cdab65aa80deb0c8ff642c",
+      "sha256": "5eb7ce78521500c25981e169e4561bc0b5975f4e910017978b4855500be6bd12",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/build.rs"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "status": "executed_pending_semantic_review",
+  "cases": [
+    {
+      "case": "old-issuer",
+      "status": "executed_pending_semantic_review",
+      "facts": {
+        "old_grant": "bae135168896ed46e712a29c38c4f144cba99b8cb970b0bc41e52681443b39b1",
+        "fresh_grant": "826e64e40d0c41861f0f9e153a42a22d9e31deae49528b2b8ef1a56c34b9c3d8",
+        "original_issuer_exit_before_replacement": true,
+        "persisted_approved_did_not_restore_live_authority": true,
+        "rejected": {
+          "action": "claim",
+          "error": "no live approval in original issuer; persistent data cannot grant",
+          "event": "operator_result",
+          "ok": false
+        },
+        "fresh_approval_launched_once": true
+      }
+    }
+  ],
+  "failure": null,
+  "input_count": 2233,
+  "inputs_unchanged": true,
+  "host_processes_observed": 2,
+  "product_pass_credit": 0,
+  "M02_complete": false,
+  "G0_passed": false
+}

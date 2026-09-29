@@ -1,0 +1,95 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Standalone Lint stage (`cargo fmt --check` + `cargo clippy --all-features`)
+# that runs in parallel with Build_Binaries so clippy's full-feature recompile
+# doesn't extend the critical path.
+
+parameters:
+- name: isOfficialBuild
+  type: boolean
+  default: false
+- name: matrix
+  type: object
+  default:
+    - name: windows_x64
+      os: windows
+      triplet: x86_64-pc-windows-msvc
+      component: WXC
+      clippyArgs: --locked --all-targets --all-features --release
+    - name: linux_x64
+      os: linux
+      triplet: x86_64-unknown-linux-gnu
+      component: LXC
+      clippyArgs: --locked --all-targets --all-features --release
+    - name: macos_arm64
+      os: macos
+      triplet: aarch64-apple-darwin
+      component: MAC
+      # macOS-only crates (mxc_darwin, seatbelt_common) — the workspace
+      # has Windows-only crates that do not compile on macOS, so we can't
+      # use --all-features here.
+      clippyArgs: --locked --release -p mxc_darwin -p seatbelt_common
+
+jobs:
+- ${{ each item in parameters.matrix }}:
+  - job: 'lint_${{ item.name }}'
+    displayName: 'Lint (${{ item.component }} ${{ item.os }})'
+
+    pool:
+      ${{ if eq(item.os, 'macos') }}:
+        name: Azure Pipelines
+        vmImage: macOS-15-arm64
+        os: macOS
+      ${{ if ne(item.os, 'macos') }}:
+        name: Azure-Pipelines-1ESPT-ExDShared
+        ${{ if eq(item.os, 'windows') }}:
+          image: windows-latest
+          os: windows
+        ${{ if eq(item.os, 'linux') }}:
+          image: ubuntu-latest
+          os: linux
+
+    variables:
+      ${{ if eq(item.os, 'windows') }}:
+        CARGO_TARGET_DIR: c:/t/target
+        workingDirectory: src
+      ${{ if eq(item.os, 'linux') }}:
+        CARGO_TARGET_DIR: /tmp/target
+        # LXC build job uses src/core/lxc as cwd; mirror it so the cargo
+        # target-dir cache key matches and we benefit from any shared cache.
+        workingDirectory: $(Build.SourcesDirectory)/src/core/lxc
+      ${{ if eq(item.os, 'macos') }}:
+        CARGO_TARGET_DIR: $(Agent.TempDirectory)/target
+        workingDirectory: $(Build.SourcesDirectory)/src
+      targetTriple: ${{ item.triplet }}
+
+    steps:
+      - checkout: self
+
+      - template: Rust.Toolchain.Public.yml@self
+        parameters:
+          targetTriple: $(targetTriple)
+
+      # Official builds resolve crates through the internal Mxc-Azure-Feed; fork/unofficial
+      # builds use the public MxcDependencies mirror. 1ES network isolation blocks crates.io
+      # either way.
+      - ${{ if eq(parameters.isOfficialBuild, true) }}:
+        - template: Cargo.Setup.Private.yml@self
+      - ${{ else }}:
+        - template: Cargo.Setup.Public.yml@self
+
+      - script: cargo fmt --all -- --check
+        displayName: cargo fmt --check
+        workingDirectory: $(workingDirectory)
+
+      # Pre-fetch deps via system git so clippy only does incremental downloads.
+      - script: cargo fetch --locked --target $(targetTriple)
+        displayName: Fetch dependencies
+        workingDirectory: $(workingDirectory)
+        env:
+          CARGO_NET_GIT_FETCH_WITH_CLI: 'true'
+
+      - script: cargo clippy --target $(targetTriple) ${{ item.clippyArgs }} -- -D warnings
+        displayName: cargo clippy
+        workingDirectory: $(workingDirectory)

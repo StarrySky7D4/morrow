@@ -1,0 +1,28 @@
+{
+  "status": "Welcome_success_code_mismatch_zero_HTTP",
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "hello_received_at_us": 2774611,
+  "welcome_sent_at_us": 2774940,
+  "guest_final_control_result": {
+    "Err": {
+      "Protocol": "nonzero success response code"
+    }
+  },
+  "host_source_fact": "supervisor Hello branch sends Welcome with code2; plugin admission rejects nonzero successful response code",
+  "http_posts": 0,
+  "intent": "Absent",
+  "worker_started": false,
+  "core_prepared_request_bytes": 22025,
+  "host_exit_code": 2,
+  "guest_exit_code": 2,
+  "owner_release_verified": true,
+  "no_retry": true,
+  "next_candidate_suggestion": "host Welcome code0 and strict synthetic peer success-code assertion; no frozen input modification or further run by this report",
+  "evidence_sha256": {
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T224312308700Z\\result.json": "ba08b7a169eb3b1684b72d5b7c53d29dfaab22e4e0f787b8fd07c00238d73810",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T224312308700Z\\retained-final.json": "ae5c23240667566853a8b01521cdc63018ef40f42bdd7ff23dad25dc2cdcbff5",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T224312308700Z\\host-rows.json": "dfdc2c7709d82aa1cb28bfd5c1fdacc4ab5082e317e7d30a534f57e605122e81",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-003\\20260928T224312308700Z\\result.json": "37b7405f4d1debea3aa25676d16809c26a2d64960bd97cc7a4658b224ddf9051"
+  }
+}

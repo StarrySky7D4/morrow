@@ -1,0 +1,14 @@
+{
+  "status": "verified_reviewer_negative_checks_only",
+  "cases": [
+    "changed_identity_rejected",
+    "missing_identity_rejected",
+    "preflight_runtime_credit_rejected",
+    "all_frame_truncations_rejected",
+    "malformed_header_kind_reserved_rejected"
+  ],
+  "synthetic_decoder_fixture": true,
+  "real_ipc_executed": false,
+  "product_pass_credit": 0,
+  "test_sha256": "9d63dc687d9aee7cb8ac0433ec69fb708af71ca2d570961540310b51471239c3"
+}

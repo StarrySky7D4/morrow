@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "ready_for_review": true,
+  "scope": "host-kit-003 consumer qualification follow-up, separate from frozen P00/P01",
+  "frozen_handoff": "receipts/handoff.json",
+  "frozen_handoff_sha256": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+  "frozen_inputs_unchanged": true,
+  "review": "receipts/host-kit-review-003/review.json",
+  "review_sha256": "664b5802af5c3a83973730df4fa3b721c0ccfd9e724f9b71edbdcd4f9fdb0d5f",
+  "qualification_tests_passed": 14,
+  "G0": "blocked",
+  "next_batch": "upstream/p02-source-batch-001/ complete fixed source acquisition"
+}

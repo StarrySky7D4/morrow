@@ -1,0 +1,36 @@
+{
+  "status": "host_candidate_ready_no_guest_or_http",
+  "host_manifest_sha256": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+  "host_executable_sha256": "9b2a2412ce9fe617729757b8be7eddb34a84718ad64aa507f2bfdc9de926d6af",
+  "changed_files": [
+    "src/pipe_driver.rs",
+    "src/pipe_observation_tests.rs",
+    "src/supervisor.rs"
+  ],
+  "local_tests_passed": 3,
+  "local_test_scope": [
+    "real same-process owned pipe pending/cancel/reap/join",
+    "early cancellation does not manufacture samples",
+    "synthetic completed/error outcome classification"
+  ],
+  "joint_review_scope": "read-only source/artifact/log review; no test rerun",
+  "unverified": [
+    "real guest/HTTP pairing",
+    "reader-pause proof",
+    "revoke ACK RTT",
+    "actual Core queued-output suppression",
+    "deterministic OS completion-at-cancel race",
+    "partial-write fault"
+  ],
+  "harness_status": "prepared; awaits plugin fixed artifact pins",
+  "references": {
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-host-candidate-005/manifest.json": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-host-candidate-005/diff-from-004.patch": "1956adb3b4f0923bcd27c4b8071fd12ec868a3ca8cb279998a393c248f2f4e75",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-host-candidate-005/REVISION-005.md": "43a9a106f57c529eb64c5ab0c0a6ed9bdb03318d44364e6b033384167e8c38d8",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-observation-20260929T001441361090Z/result.json": "cb88c93a30809446a353527d8f24dd1ce2e99d705a2311037e022df7f827147b",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-build-20260929T001444332362Z/result.json": "069c473afecb5144c1bbf524821ba25eea1a5866bc763225f3613acd093f3952",
+    "reports/codex-morrow-v1.1/joint/m03-stream-001/native-host-review-005/review.md": "74b54acbde3f38c15604baf174d28ed9dc1a58954f40abd7eee296693f8e4455"
+  },
+  "old_candidates_preserved": true,
+  "product_gate_upgrade": false
+}

@@ -1,0 +1,2225 @@
+{
+  "status": "limited_semantic_checks_passed",
+  "checks": [
+    {
+      "check": "late_unified_handoff_identity",
+      "passed": true
+    },
+    {
+      "check": "late_handoff_current_inputs",
+      "passed": true
+    },
+    {
+      "check": "independent-001:2233_inputs_unchanged",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:run_independent_owner_001.py",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:observe_owner.py",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:known_process.py",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:ledger_codec.py",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:decode_frames.py",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:prepare_private_run.ps1",
+      "passed": true
+    },
+    {
+      "check": "independent-001:frozen_reviewer:check_review.py",
+      "passed": true
+    },
+    {
+      "check": "first_failed_crash_attempt_preserved",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "authority-boundary/host:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "first-deadline:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "first-deadline/host:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "fixed-context:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:controlled_mutation:plugin_id",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:controlled_mutation:role",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:controlled_mutation:operation",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:grant_original_binding:3",
+      "passed": true
+    },
+    {
+      "check": "fixed-context/host:independent_config_reconstruction:3",
+      "passed": true
+    },
+    {
+      "check": "two-hosts:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame5_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:frame5_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:grant_original_binding:3",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:independent_config_reconstruction:3",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/a:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame5_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:frame5_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "two-hosts/b:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "external-revoke:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/operator:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame5_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame5_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame6_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame6_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame6_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame7_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame7_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:frame7_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "external-revoke/owner:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "historical-replay:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame5_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame5_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame6_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame6_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:frame6_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/capture:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-hello:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:grant_original_binding:3",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:independent_config_reconstruction:3",
+      "passed": true
+    },
+    {
+      "check": "historical-replay/replay-query:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame5_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:frame5_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:grant_original_binding:3",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:independent_config_reconstruction:3",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/contender:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:holder_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:holder_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame5_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame5_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame6_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame6_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:frame6_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed/owner:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "independent-002:2233_inputs_unchanged",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:run_remaining_owner_002.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:run_independent_owner_001.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:observe_owner.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:known_process.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:ledger_codec.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:decode_frames.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:prepare_private_run.ps1",
+      "passed": true
+    },
+    {
+      "check": "independent-002:frozen_reviewer:check_review.py",
+      "passed": true
+    },
+    {
+      "check": "independent-002:completed_without_failure",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/contender:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "crash-child-alive/owner:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "artifact-drift/host:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "profile-copy:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "independent-003:2233_inputs_unchanged",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:run_old_issuer_003.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:run_independent_owner_001.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:observe_owner.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:known_process.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:ledger_codec.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:decode_frames.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:prepare_private_run.ps1",
+      "passed": true
+    },
+    {
+      "check": "independent-003:frozen_reviewer:check_review.py",
+      "passed": true
+    },
+    {
+      "check": "independent-003:completed_without_failure",
+      "passed": true
+    },
+    {
+      "check": "old-issuer:case_receipt_matches",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:no_child_frames_or_spawn",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:grant_original_binding:1",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/original:independent_config_reconstruction:1",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:raw_stdout_matches_observer_records",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:observer_no_errors_or_drops",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:controller_input_open_at_exit",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:no_owner_error",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:host_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:host_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:child_held_handle_identity",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:child_created_after_host",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:native_time_order",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:authority_time_order_separate_origin",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:final_has_complete_native_evidence",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:exit_and_double_EOF_before_persistent_release",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:native_release_after_three_facts",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:child_exit_matches_OS",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:challenge_actual_PID_artifact_capability",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame0_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame0_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame0_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame1_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame1_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame1_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame2_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame2_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame2_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame3_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame3_request_sequence_and_code",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame3_initial_request_limits",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame4_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame4_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame4_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame5_immutable_binding",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame5_reply_sequence",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:frame5_nonrenewing_reply",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:grant_original_binding:2",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:independent_config_reconstruction:2",
+      "passed": true
+    },
+    {
+      "check": "old-issuer/replacement:wire_config_and_generation_from_approval",
+      "passed": true
+    },
+    {
+      "check": "two_hosts_claims_both_outstanding",
+      "passed": true
+    },
+    {
+      "check": "two_hosts_one_initial_claim_success",
+      "passed": true
+    },
+    {
+      "check": "fresh_launch_after_previous_host_exit_release",
+      "passed": true
+    },
+    {
+      "check": "external_revoke_runtime_ack_and_no_later_success",
+      "passed": true
+    },
+    {
+      "check": "Revoked_persisted_before_final_release",
+      "passed": true
+    },
+    {
+      "check": "real_capture_seven_peer_frames_equal_host_capture",
+      "passed": true
+    },
+    {
+      "check": "capture_was_actually_accepted",
+      "passed": true
+    },
+    {
+      "check": "replay-hello:real_prior_bytes_exact",
+      "passed": true
+    },
+    {
+      "check": "replay-hello:rejection17_no_state",
+      "passed": true
+    },
+    {
+      "check": "replay-hello:previous_host_and_child_fully_closed",
+      "passed": true
+    },
+    {
+      "check": "replay-query:real_prior_bytes_exact",
+      "passed": true
+    },
+    {
+      "check": "replay-query:rejection17_no_state",
+      "passed": true
+    },
+    {
+      "check": "replay-query:previous_host_and_child_fully_closed",
+      "passed": true
+    },
+    {
+      "check": "old_query_after_real_new_welcome",
+      "passed": true
+    },
+    {
+      "check": "unconfirmed_real_root_exit_live_holder_then_EOF",
+      "passed": true
+    },
+    {
+      "check": "crash_host_OS_exited_while_child_alive",
+      "passed": true
+    },
+    {
+      "check": "crash_rejects_before_and_after_child_natural_exit",
+      "passed": true
+    },
+    {
+      "check": "crash_does_not_invent_exit_EOF_or_recovery",
+      "passed": true
+    },
+    {
+      "check": "claim_after_first_250ms_deadline_no_spawn",
+      "passed": true
+    },
+    {
+      "check": "persisted_approved_old_issuer_not_restored",
+      "passed": true
+    },
+    {
+      "check": "2233_runtime_inputs_still_frozen",
+      "passed": true
+    },
+    {
+      "check": "late_handoff_inputs_frozen_during_review",
+      "passed": true
+    }
+  ],
+  "check_count": 501,
+  "failed": [],
+  "accepted_case_groups": 11,
+  "accepted_serve_hosts": 17,
+  "independently_witnessed_children": 10,
+  "independently_witnessed_holders": 1,
+  "decoded_complete_frames": 59,
+  "reconstructed_approval_configs": 20,
+  "hosts": [
+    {
+      "host": "authority-boundary/host",
+      "host_pid": 25516,
+      "host_exit": 2,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "first-deadline/host",
+      "host_pid": 1652,
+      "host_exit": 2,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "fixed-context/host",
+      "host_pid": 15240,
+      "host_exit": 2,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "two-hosts/a",
+      "host_pid": 1504,
+      "host_exit": 2,
+      "child_pid": 11928,
+      "child_exit": 0,
+      "frames": 6,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "two-hosts/b",
+      "host_pid": 6488,
+      "host_exit": 2,
+      "child_pid": 4152,
+      "child_exit": 0,
+      "frames": 6,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "external-revoke/operator",
+      "host_pid": 23648,
+      "host_exit": 0,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "external-revoke/owner",
+      "host_pid": 2672,
+      "host_exit": 0,
+      "child_pid": 972,
+      "child_exit": 19,
+      "frames": 8,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "historical-replay/capture",
+      "host_pid": 21804,
+      "host_exit": 0,
+      "child_pid": 26404,
+      "child_exit": 0,
+      "frames": 7,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "historical-replay/replay-hello",
+      "host_pid": 2024,
+      "host_exit": 2,
+      "child_pid": 11012,
+      "child_exit": 0,
+      "frames": 3,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "historical-replay/replay-query",
+      "host_pid": 12664,
+      "host_exit": 2,
+      "child_pid": 8116,
+      "child_exit": 0,
+      "frames": 5,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "unconfirmed/contender",
+      "host_pid": 8256,
+      "host_exit": 2,
+      "child_pid": 13692,
+      "child_exit": 0,
+      "frames": 6,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "unconfirmed/owner",
+      "host_pid": 2788,
+      "host_exit": 0,
+      "child_pid": 24116,
+      "child_exit": 0,
+      "frames": 7,
+      "holder_count": 1,
+      "crash_injected": false
+    },
+    {
+      "host": "crash-child-alive/contender",
+      "host_pid": 24820,
+      "host_exit": 2,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "crash-child-alive/owner",
+      "host_pid": 3732,
+      "host_exit": 1,
+      "child_pid": 9900,
+      "child_exit": 91,
+      "frames": 5,
+      "holder_count": 0,
+      "crash_injected": true
+    },
+    {
+      "host": "artifact-drift/host",
+      "host_pid": 9852,
+      "host_exit": 2,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "old-issuer/original",
+      "host_pid": 14724,
+      "host_exit": 0,
+      "child_pid": null,
+      "child_exit": null,
+      "frames": 0,
+      "holder_count": 0,
+      "crash_injected": false
+    },
+    {
+      "host": "old-issuer/replacement",
+      "host_pid": 5924,
+      "host_exit": 2,
+      "child_pid": 1840,
+      "child_exit": 0,
+      "frames": 6,
+      "holder_count": 0,
+      "crash_injected": false
+    }
+  ],
+  "historical_replay_natural_binding_differences": [
+    {
+      "mode": "replay-hello",
+      "different_fields": [
+        "session",
+        "instanceEpoch",
+        "childPid",
+        "remainingMs",
+        "nonce",
+        "executionConfigSha256"
+      ]
+    },
+    {
+      "mode": "replay-query",
+      "different_fields": [
+        "session",
+        "instanceEpoch",
+        "childPid",
+        "remainingMs",
+        "nonce",
+        "executionConfigSha256"
+      ]
+    }
+  ],
+  "failed_attempt_excluded_from_pass_count": "independent-001/crash-child-alive; driver awaited diagnostic EOF with OS exit; preserved",
+  "unified_handoff_sha256": "948948b388ee0ce1c05e3e0742851cfc19f7aba917117a09e014abccfc55265b",
+  "late_handoff_plugin_inputs": 533,
+  "late_handoff_external_inputs": 402,
+  "late_handoff_scope": "review-time current hashes, not retroactive execution precheck",
+  "independent_compile": false,
+  "whole_process_tree_observation": false,
+  "product_pass_credit": 0,
+  "M02_complete": false,
+  "G0_passed": false,
+  "G1_passed": false,
+  "validator_sha256": "38a47364f2723ef5c848097a1c33c9004c17dbac019adbbaea137a4d64afb3fb"
+}

@@ -1,0 +1,9 @@
+{
+  "mode": "normal",
+  "passed": true,
+  "host_exit": 0,
+  "peer_exit": 0,
+  "ack_received": true,
+  "owner_released": true,
+  "no_http_worker": true
+}

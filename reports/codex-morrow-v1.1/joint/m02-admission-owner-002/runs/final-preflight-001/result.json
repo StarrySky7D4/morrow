@@ -1,0 +1,16 @@
+{
+  "scope": "identity_and_preparation_only",
+  "status": "integrity_verified_runtime_pending",
+  "issues": [],
+  "exit_code": 0,
+  "baseline_files": 2033,
+  "matrix_sha256": "564da158039c9a69024a8c091f8a36dcf2a3f5fe7fa2a7b240b77053bb2a49b5",
+  "baseline_sha256": "3dd3da286d2e410aa4f39bafe4e6ada4dec6d9234d54e9603aa0e7cecc0410c9",
+  "checker_sha256": "0f9e5521a4c357866b2e7f96e6817d8a59a7025149c79406610ed6510bd49f60",
+  "head": "88557916aabf2e10619b1022110035178498898a",
+  "branch": "codex/io-safety-refactor",
+  "independent_new_runtime_cases": 0,
+  "product_pass_credit": 0,
+  "M02_complete": false,
+  "G0_passed": false
+}

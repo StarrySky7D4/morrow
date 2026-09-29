@@ -1,0 +1,16 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tool/tests",
+    "-p",
+    "test_agent_host_build.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": "test_changed_or_missing_legacy_input_fails (test_agent_host_build.ExportSafety.test_changed_or_missing_legacy_input_fails) ... ok\ntest_existing_output_is_rejected_without_touching_success (test_agent_host_build.ExportSafety.test_existing_output_is_rejected_without_touching_success) ... ok\ntest_failed_build_keeps_evidence_without_success_and_cannot_reuse_candidate (test_agent_host_build.ExportSafety.test_failed_build_keeps_evidence_without_success_and_cannot_reuse_candidate) ... ok\ntest_missing_baseline_never_creates_success (test_agent_host_build.ExportSafety.test_missing_baseline_never_creates_success) ... ok\ntest_missing_cli_input_is_nonzero (test_agent_host_build.ExportSafety.test_missing_cli_input_is_nonzero) ... ok\ntest_partial_kit_and_manifest_path_escape_are_rejected (test_agent_host_build.ExportSafety.test_partial_kit_and_manifest_path_escape_are_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.282s\n\nOK\n"
+}

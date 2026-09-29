@@ -1,0 +1,8 @@
+
+running 3 tests
+test authority::tests::approved_data_cannot_be_claimed_by_new_issuer ... ok
+test authority::tests::revoke_committed_before_claim_prevents_spawn ... ok
+test authority::tests::every_fixed_approval_field_is_compared_to_original_host_record ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s
+

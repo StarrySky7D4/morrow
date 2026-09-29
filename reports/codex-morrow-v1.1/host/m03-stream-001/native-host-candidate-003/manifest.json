@@ -1,0 +1,51 @@
+{
+  "status": "compiled_host_candidate_003_strict_Welcome_positive_passed_no_http_pair",
+  "source_files": {
+    "build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "schemas/native_admission.proto": "6d2ca43455eb881c53925d38c4519b6c3af708d41e7d20c14554c5301408fbbc",
+    "src/authority.rs": "5b930e4710a7b36e5a7b935584bbbd3696e7c6d5ae9611791f9ae66073d15d53",
+    "src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "src/http_authority.rs": "bb37dbe29e359e4376825120ec32a6041d414262a29bac1e8b2ebd4707760d2c",
+    "src/http_authority_tests.rs": "1ba21040628411d27926edebc77d6c60b88886599cd5e8fe9ae93bd4981d8e43",
+    "src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "src/pipe_driver.rs": "4b0873ac3b5a0c34e2d87ba5b6adc0b369f79af4f66c981fa4fb5b443c20a572",
+    "src/supervisor.rs": "dd4faa96cdf4ffe7f75c708887de9bd1cdbf6970bdac3695b56f0526ed33a286"
+  },
+  "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-003\\morrow-native-stream-host.exe",
+  "executable_sha256": "3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65",
+  "references": {
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-build-20260928T225754496446Z/result.json": "43bce34e0d4e794c15ec4b9cda581467ff900b8e01f932aee0659acf6566a70b",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-api-20260928T221417555348Z/result.json": "5074ff431658db8fe80e35babef4630229d11d9f686223f83b6d68568c4838b9",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-welcome-20260928T225819377451Z/result.json": "44fb1efc964e62eb9f7719918b607f64c7baae407139f996ba80345c7877e773",
+    "tool/m03_native_welcome_check_003.py": "fbcb1a37f8b5b263e1638786c26ff3ef2d57c1cd05aab6c26ad219bc4b449357",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-code-audit-003.md": "4fe575067fe8b2216bf60261dbceda8a8ed3f017400e96e9ac61687abc56f432",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/native-host-candidate-002/manifest.json": "12b20faeee5e3bd352d8ee204ba7d2d155a9b416e5f8fa3edbf922bf5367a021",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/transport-20260928T210834849150Z/result.json": "0c4b74cc41dc39455869d5e8003eca336728a44c52b9b8ec9247cd8f21a28db2",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/transport-kit-001/manifest.json": "c19503dbb991377fd7df1a66618ab4a19c7a8658fc7e78529349ac5bce16abec",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/wire-kit-001/manifest.json": "9d43385067d09a016ef950edf5fe4d489803e02f7bee8c419014d6b6fc2af5ae",
+    "reports/codex-morrow-v1.1/host/m03-stream-001/pipe-kit-001/manifest.json": "d6eee6bdb2f933d59ebeddb10a550359204cb024fe09e58f98182739bbd1787b",
+    "tool/m03_native_build_001.py": "ff7ea2464314f16a646fe8a0307170a0796f894b4e700c24fa0f746085614ceb",
+    "tool/m03_native_api_check_001.py": "7efa302bd3e9ba7c80c320f479836332695fe0add95631b355f4e61c018cd8d9",
+    "tool/m03_native_seal_003.py": "39b82efa7505464079f967f1e35f23cb24a6dc42cdcaa37971ffbad4e627e40e"
+  },
+  "adapter_api_tests": 5,
+  "api_test_owner_rows": "simulated, actual Core Store/native ledger, no child and no HTTP",
+  "post_test_edits": "No source edit after final build/new positive; previous API/Close checks referenced only, not rerun",
+  "new_strict_welcome_positive_cases": 1,
+  "previous_close_cases_not_rerun": 3,
+  "partial_write_fault_injected": false,
+  "frozen_inputs_rechecked_by_build": 2297,
+  "pairing_status": "awaiting joint delta review and coordinator resume with fixed plugin002; prior candidates not reused for HTTP",
+  "core_endpoint_mapping": "32-byte v3 opaque endpoint_ref to 64 printable lowercase hex bytes in existing Core request",
+  "product_gate_credit": false,
+  "changed_files_from_002": [
+    "src/bin/morrow-native-close-peer.rs",
+    "src/supervisor.rs"
+  ],
+  "diff_sha256": "45005d95cb1d1b0803c31a605ce47b2eeb947a2ae946ada37e7be718c1b8ff88"
+}

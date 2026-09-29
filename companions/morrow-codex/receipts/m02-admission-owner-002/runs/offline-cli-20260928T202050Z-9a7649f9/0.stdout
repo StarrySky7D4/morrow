@@ -1,0 +1,1 @@
+Test peer only: --morrow-native-session-v2 --scenario capture|replay-hello|replay-query|hold-output --evidence-dir ABS [--capture-dir ABS]. Fixed observation delay150ms; lifetime watchdog10s. No approval API.

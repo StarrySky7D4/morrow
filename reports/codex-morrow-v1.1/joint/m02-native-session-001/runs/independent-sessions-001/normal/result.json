@@ -1,0 +1,602 @@
+{
+  "scope": "independent_real_host_and_child_observation_not_product_acceptance",
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+    "--sha256",
+    "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\normal\\work",
+    "--ttl-ms",
+    "4000",
+    "--handshake-ms",
+    "1000",
+    "--frame-ms",
+    "500",
+    "--close-ms",
+    "200",
+    "--budget",
+    "64",
+    "--client-arg",
+    "--queries",
+    "--client-arg",
+    "2",
+    "--client-arg",
+    "--interval-ms",
+    "--client-arg",
+    "200"
+  ],
+  "host_pid": 27048,
+  "child_pid": 14980,
+  "host_sha256": "12ddcb1acc95a151aa52541d93c13756f50174d9f996a155ece4e0e8d7642e21",
+  "client_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "environment_keys": [
+    "APPDATA",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "environment_values_enumerated": false,
+  "started_monotonic_ns": 164284411318400,
+  "finished_monotonic_ns": 164284757806800,
+  "host_exit_code": 0,
+  "controller_stdin_open_at_host_exit": true,
+  "host_OS_observations": [
+    {
+      "pid": 27048,
+      "parent_pid": 2364,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+      "creation_filetime_100ns": 134350977681047043,
+      "first_observed_monotonic_ns": 164284416769700,
+      "observed_monotonic_ns": 164284422473100,
+      "process_handle_signaled": false,
+      "exit_code": null,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    },
+    {
+      "pid": 27048,
+      "parent_pid": 2364,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+      "creation_filetime_100ns": 134350977681047043,
+      "first_observed_monotonic_ns": 164284416769700,
+      "observed_monotonic_ns": 164284753141800,
+      "process_handle_signaled": true,
+      "exit_code": 0,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    }
+  ],
+  "child_OS_observations": [
+    {
+      "pid": 14980,
+      "parent_pid": 27048,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+      "creation_filetime_100ns": 134350977681415591,
+      "first_observed_monotonic_ns": 164284453933900,
+      "observed_monotonic_ns": 164284461990500,
+      "process_handle_signaled": false,
+      "exit_code": null,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF",
+      "image_path_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b"
+    },
+    {
+      "pid": 14980,
+      "parent_pid": 27048,
+      "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+      "creation_filetime_100ns": 134350977681415591,
+      "first_observed_monotonic_ns": 164284453933900,
+      "observed_monotonic_ns": 164284753149000,
+      "process_handle_signaled": true,
+      "exit_code": 0,
+      "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+    }
+  ],
+  "descendant_OS_observations": {
+    "status": "observed",
+    "processes": [
+      {
+        "initial": {
+          "pid": 14980,
+          "parent_pid": 27048,
+          "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+          "creation_filetime_100ns": 134350977681415591,
+          "first_observed_monotonic_ns": 164284467918900,
+          "observed_monotonic_ns": 164284473254800,
+          "process_handle_signaled": false,
+          "exit_code": null,
+          "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF",
+          "image_path_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b"
+        },
+        "final": {
+          "pid": 14980,
+          "parent_pid": 27048,
+          "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+          "creation_filetime_100ns": 134350977681415591,
+          "first_observed_monotonic_ns": 164284467918900,
+          "observed_monotonic_ns": 164284757730600,
+          "process_handle_signaled": true,
+          "exit_code": 0,
+          "scope": "OS_handle_and_parent_snapshot_not_image_attestation_or_output_EOF"
+        }
+      }
+    ],
+    "errors": [
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation",
+      "unexpected_descendant_image_or_creation"
+    ],
+    "scope": "OS descendant PID/parent/image/times only; no process-tree containment proof"
+  },
+  "host_output_observations": {
+    "stdout": {
+      "eof": true,
+      "bytes": 16082,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 164284695519000
+    },
+    "stderr": {
+      "eof": true,
+      "bytes": 0,
+      "dropped_bytes": 0,
+      "queue_drops": 0,
+      "eof_at_ns": 164284694644500
+    }
+  },
+  "controller_commands": [],
+  "final_host_snapshot": {
+    "epoch": 1,
+    "event_overflow": 0,
+    "events": [
+      {
+        "at_us": 22987,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+          "config_sha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 14980,
+          "platform": "windows",
+          "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 23331,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_sent",
+        "ordinal": 1
+      },
+      {
+        "at_us": 44675,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_received",
+        "ordinal": 2
+      },
+      {
+        "at_us": 44710,
+        "detail": "Active",
+        "event": "phase",
+        "ordinal": 3
+      },
+      {
+        "at_us": 44759,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000730f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_sent",
+        "ordinal": 4
+      },
+      {
+        "at_us": 44878,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_received",
+        "ordinal": 5
+      },
+      {
+        "at_us": 44889,
+        "detail": {
+          "generation": 1,
+          "sequence": 2
+        },
+        "event": "state_read",
+        "ordinal": 6
+      },
+      {
+        "at_us": 44973,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000730f0000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_sent",
+        "ordinal": 7
+      },
+      {
+        "at_us": 246968,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100030000000300000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_received",
+        "ordinal": 8
+      },
+      {
+        "at_us": 247004,
+        "detail": {
+          "generation": 1,
+          "sequence": 3
+        },
+        "event": "state_read",
+        "ordinal": 9
+      },
+      {
+        "at_us": 247083,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100040000000300000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000a90e0000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_sent",
+        "ordinal": 10
+      },
+      {
+        "at_us": 247240,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100070000000400000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_received",
+        "ordinal": 11
+      },
+      {
+        "at_us": 247277,
+        "detail": {
+          "generation": 2,
+          "reason": 25
+        },
+        "event": "revoked",
+        "ordinal": 12
+      },
+      {
+        "at_us": 247280,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 13
+      },
+      {
+        "at_us": 247282,
+        "detail": {
+          "reason": 25
+        },
+        "event": "stop_requested",
+        "ordinal": 14
+      },
+      {
+        "at_us": 247332,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000282b781b369d3e2101000000000000000200000000000000843a000019000000a80e0000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4"
+        },
+        "event": "frame_sent",
+        "ordinal": 15
+      },
+      {
+        "at_us": 247453,
+        "detail": {
+          "bytes": 15,
+          "sha256": "5446eef4a4d479c9a376ee7eb33454878679ea3e92d093b044449f3512783ce6"
+        },
+        "event": "stderr_chunk",
+        "ordinal": 16
+      },
+      {
+        "at_us": 247500,
+        "detail": {
+          "bytes": 19,
+          "sha256": "23b5d1bd837e1f43e64c746db245b6f2f5e407a4e68547017fdea6784cb47219"
+        },
+        "event": "stderr_chunk",
+        "ordinal": 17
+      },
+      {
+        "at_us": 248382,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 18
+      },
+      {
+        "at_us": 248393,
+        "detail": {
+          "bytes": 34,
+          "chunks": 2,
+          "omitted_chunk_details": 0
+        },
+        "event": "stderr_eof",
+        "ordinal": 19
+      },
+      {
+        "at_us": 248685,
+        "detail": {
+          "business_success": false,
+          "code": 0
+        },
+        "event": "exit",
+        "ordinal": 20
+      },
+      {
+        "at_us": 248710,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 21
+      }
+    ],
+    "exit_code": 0,
+    "exit_observed": true,
+    "generation": 2,
+    "owner_retained": false,
+    "phase": "Released",
+    "pid": 14980,
+    "session": 2395524907522337576,
+    "stderr_eof": true,
+    "stdout_eof": true
+  },
+  "failures": [],
+  "frames": [
+    {
+      "direction": "frame_sent",
+      "host_at_us": 23331,
+      "observed_at_ns": 164284454208600,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "challenge",
+        "sequence": 0,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 0,
+        "remainingMs": 3976,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_received",
+      "host_at_us": 44675,
+      "observed_at_ns": 164284485156200,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "hello",
+        "sequence": 1,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 0,
+        "remainingMs": 3976,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_sent",
+      "host_at_us": 44759,
+      "observed_at_ns": 164284485684300,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000730f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "welcome",
+        "sequence": 1,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 2,
+        "remainingMs": 3955,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_received",
+      "host_at_us": 44878,
+      "observed_at_ns": 164284485938500,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "query",
+        "sequence": 2,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 0,
+        "remainingMs": 3976,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_sent",
+      "host_at_us": 44973,
+      "observed_at_ns": 164284486262700,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000730f0000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "state",
+        "sequence": 2,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 2,
+        "remainingMs": 3955,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 63,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_received",
+      "host_at_us": 246968,
+      "observed_at_ns": 164284689480900,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100030000000300000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "query",
+        "sequence": 3,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 0,
+        "remainingMs": 3976,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_sent",
+      "host_at_us": 247083,
+      "observed_at_ns": 164284690062500,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100040000000300000000000000282b781b369d3e2101000000000000000100000000000000843a000002000000a90e0000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "state",
+        "sequence": 3,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 2,
+        "remainingMs": 3753,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 62,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_received",
+      "host_at_us": 247240,
+      "observed_at_ns": 164284690414800,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100070000000400000000000000282b781b369d3e2101000000000000000100000000000000843a000000000000880f0000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "close",
+        "sequence": 4,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 1,
+        "childPid": 14980,
+        "code": 0,
+        "remainingMs": 3976,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 64,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    },
+    {
+      "direction": "frame_sent",
+      "host_at_us": 247332,
+      "observed_at_ns": 164284690870900,
+      "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000282b781b369d3e2101000000000000000200000000000000843a000019000000a80e0000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+      "decoded": {
+        "major": 2,
+        "revision": 1,
+        "kind": "stop",
+        "sequence": 0,
+        "session": 2395524907522337576,
+        "instanceEpoch": 1,
+        "revocationGeneration": 2,
+        "childPid": 14980,
+        "code": 25,
+        "remainingMs": 3752,
+        "nonce": "282b781b369d3e21a63f19bd941d07277f4e8a9cd82928b5ec1beb0c6d5749f8",
+        "schemaSha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+        "artifactSha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+        "executionConfigSha256": "27c1b0df06e2277897e36ffd91ff6d1c51076c644116e92301c84b4de1c447c4",
+        "requestBudget": 62,
+        "capabilities": 1,
+        "reserved": 0
+      }
+    }
+  ],
+  "frame_provenance": "host captured actual pipe bytes; independently decoded and cross-checked; not external pipe interception",
+  "child_EOF_provenance": "host reader evidence only; host stdout/stderr EOF independently observed",
+  "status": "observed_pending_semantic_review",
+  "product_pass_credit": 0
+}

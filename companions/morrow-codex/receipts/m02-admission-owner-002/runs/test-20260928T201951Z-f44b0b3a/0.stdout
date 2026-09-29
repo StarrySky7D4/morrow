@@ -1,0 +1,8 @@
+
+running 3 tests
+test tests::parser_disallows_approval_duplicate_and_missing_history ... ok
+test tests::response_validation_rejects_identity_swap_and_renewal ... ok
+test tests::replay_writer_preserves_exact_bytes_and_propagates_failure ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

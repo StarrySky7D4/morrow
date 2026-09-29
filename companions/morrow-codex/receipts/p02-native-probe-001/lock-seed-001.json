@@ -1,0 +1,8 @@
+{
+  "status": "independent_lock_seeded_not_resolved",
+  "source": "upstream/p02-source-batch-001/codex-source/codex-rs/Cargo.lock",
+  "target": "qualification/p02-native-probe-001/Cargo.lock",
+  "seed_sha256": "16b915e94730a7e598182620923fc6eae19e32366d3b5ef91128002575ae24af",
+  "purpose": "retain fixed Git precise revisions while preparing independent probe lock offline",
+  "original_source_unchanged": true
+}

@@ -1,0 +1,7 @@
+
+running 1 test
+test stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work ... child_pid=16900 requested_write=8192 buffers=BufferInfo { inbound: 1024, outbound: 1024, flags: 9, max_instances: 1 } write_id=2 read_id=3 stable_incomplete_samples=3 spacing_ms=25 control_ack=true read_write_cancel_completion=995
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.07s
+

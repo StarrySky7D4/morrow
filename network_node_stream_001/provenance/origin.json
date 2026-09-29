@@ -1,0 +1,10 @@
+{
+  "origins": {
+    "network_node/src/client.rs": "f5e6d7458867de39ee810f8f86974e5535853cc27d1a4184037ff27ee1f69895",
+    "network_node/src/lib.rs": "ce7cf99fe1025f7ba6290238b4349bd1b78354a551a8384bf813d7fdc171092f",
+    "network_node/Cargo.toml": "d79b5e0758dd4cff8b38a4704238df873d5a23e25c940a80cc392ea4324dad7a",
+    "network_node/Cargo.lock": "07d32472612ffc2b6fe5a68fa64c2381295d91db68a878b1e6c0734f106cb724",
+    "network_node/tests/client.rs": "5d6ff259197bd0b141c1c085b709539cd5313a7d54c47d4f54c185596e8992bf"
+  },
+  "scope": "versioned outbound-only extraction; no server or managed authority copied"
+}

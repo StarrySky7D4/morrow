@@ -1,0 +1,22 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 16 packages to latest compatible versions
+      Adding appcontainer_common v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\backends\appcontainer\common)
+      Adding capnp v0.24.1
+      Adding capnpc v0.24.0
+      Adding embedded-io v0.7.1
+      Adding learning_mode_core v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\learning_mode_core)
+      Adding learning_mode_windows v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\backends\learning_mode\windows)
+      Adding morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\host-kit-003)
+      Adding mxc_config_contract v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\mxc_config_contract)
+      Adding mxc_telemetry v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\mxc_telemetry)
+      Adding nucleo v0.5.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee)
+      Adding nucleo-matcher v0.3.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher)
+      Adding process_security_environment_spec v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\generated\process_security_environment_specification)
+      Adding sandbox_spec v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\generated\base_container_specification)
+      Adding tokio-tungstenite v0.28.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tokio-tungstenite)
+      Adding tungstenite v0.27.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tungstenite)
+      Adding wxc_common v0.8.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4\src\core\wxc_common)

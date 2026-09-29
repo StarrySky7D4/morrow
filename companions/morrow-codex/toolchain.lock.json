@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "toolchain": "1.95.0-x86_64-pc-windows-msvc",
+  "upstream_commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "upstream_toolchain_sha256": "570656042681cfd8795403a455baf9a33035331a07db0645e866bbcea89a3d64",
+  "versions": {
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "rustup": "rustup 1.29.0 (28d1352db 2026-03-05)"
+  },
+  "installed_components": [
+    "cargo-x86_64-pc-windows-msvc",
+    "clippy-x86_64-pc-windows-msvc",
+    "rust-std-wasm32-unknown-unknown",
+    "rust-std-x86_64-pc-windows-msvc",
+    "rustc-x86_64-pc-windows-msvc",
+    "rustfmt-x86_64-pc-windows-msvc"
+  ],
+  "installed_targets": [
+    "wasm32-unknown-unknown",
+    "x86_64-pc-windows-msvc"
+  ],
+  "qualification": "local Windows input lock only; no product build or platform acceptance"
+}

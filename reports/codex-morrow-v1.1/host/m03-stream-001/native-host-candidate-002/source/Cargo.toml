@@ -1,0 +1,28 @@
+[workspace]
+resolver = "2"
+[package]
+name = "morrow-native-session-stream"
+version = "0.3.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+[dependencies]
+morrow-core = { path = "../core" }
+morrow-native-http-stream-wire = { path = "../contracts/experimental/agent_host_v3_http_stream" }
+morrow-network-node-stream = { path = "../network_node_stream_001" }
+morrow-native-pipe-win = { path = "../native_pipe_win_001" }
+tokio-util = { version = "=0.7.19", features = ["rt"] }
+url = "=2.5.8"
+tokio = { version = "=1.53.1", features = ["rt-multi-thread", "macros", "process", "io-util", "sync", "time", "io-std"] }
+getrandom = "=0.4.3"
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.151"
+rusqlite = { version = "=0.40.2", features = ["bundled"] }
+prost = "=0.14.4"
+lz4_flex = { version = "=0.14.0", default-features = false, features = ["std", "safe-encode", "safe-decode", "checked-decode"] }
+[build-dependencies]
+prost-build = "=0.14.4"
+protoc-bin-vendored = "=3.2.0"
+[[bin]]
+name = "morrow-native-stream-host"
+path = "src/main.rs"

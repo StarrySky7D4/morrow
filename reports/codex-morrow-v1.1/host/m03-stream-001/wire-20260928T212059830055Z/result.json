@@ -1,0 +1,97 @@
+{
+  "status": "codec_tests_and_vectors_passed_runtime_not_run",
+  "before": {
+    "contracts/experimental/agent_host_v3_http_stream/build.rs": "456dc6c326b765304828ae9b5a3dd3a87ce40a120a445e0f32bdf30a63df98ae",
+    "contracts/experimental/agent_host_v3_http_stream/Cargo.lock": "7dba0d4d22d81519cb4a14b72bd03dc8fac1ecfd45c7127a0e8e8e3a404fde95",
+    "contracts/experimental/agent_host_v3_http_stream/Cargo.toml": "7a58455f468a7d9e15551800c5ce697ad190d4b967d5c608b2aac125807cc6ba",
+    "contracts/experimental/agent_host_v3_http_stream/examples/vectors.rs": "94765cd8cc0005b077e86a3b3f8535930d23889d2c3737f39c9adf5a3de3d295",
+    "contracts/experimental/agent_host_v3_http_stream/native_http.capnp": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+    "contracts/experimental/agent_host_v3_http_stream/README.md": "4a06ec4b7d0653fdd939364328c74f08aaf18942a4da3a26a0725f9847c3ad98",
+    "contracts/experimental/agent_host_v3_http_stream/src/lib.rs": "26d53b1efe373279071dd6321cd8faf9854681fdf571dfdea5a1886a5324b970",
+    "contracts/experimental/agent_host_v3_http_stream/src/rules.rs": "a71f74b06e39d254025e92a2e6099780953090b41f2ecac3a35930683a0a7794",
+    "contracts/experimental/agent_host_v3_http_stream/tests/codec.rs": "775bb842672c691e0c69a75d67c9751ad0b808a22568a4c73abbd375f54100f5",
+    "contracts/experimental/agent_host_v3_http_stream/tests/common/mod.rs": "b5ccefed97130c88f00b5b3ff58cb04071f6b7f1f450306ead1a860bd4fd7898"
+  },
+  "commands": [
+    {
+      "name": "fmt",
+      "args": [
+        "fmt",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v3_http_stream\\Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.07085059999371879,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "tests",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v3_http_stream\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-wire",
+        "--",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "seconds": 3.5940665999951307,
+      "stdout_sha256": "98f78722af6be336b67bc4f193bf4c7ae45631e7d779b9ec6d533c7663c0adcd",
+      "stderr_sha256": "20d1396a363779bd6119dd208995afec56e6fc501686d6f7773aa33ccdc74fff"
+    },
+    {
+      "name": "build",
+      "args": [
+        "build",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v3_http_stream\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-wire",
+        "--examples",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 0.030658499978017062,
+      "stdout_sha256": "a8f100fa5075b76f9054495239ba0790035723744596e66cd6c3979acf6e29b3",
+      "stderr_sha256": "b333534b308dc095467fa77fc804f5b2508deeacfe3a620c18561349a045a8a4"
+    },
+    {
+      "name": "vectors",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\wire-20260928T212059830055Z\\vectors"
+      ],
+      "exit_code": 0,
+      "seconds": 0.022520700003951788,
+      "stdout_sha256": "0a08e5895f1cc9bbbd3c1dd85c6d3e0df8849f6856549f76d6493ea584c61bf1",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "frozen_count": 2280,
+  "generator": "Cap'n Proto version 1.4.0",
+  "binding": {
+    "path": "target/m03-stream-001-wire/debug/build/morrow-native-http-stream-wire-dbcd35236a757d4e/out/native_http_capnp.rs",
+    "sha256": "071955f822b2eab7a803ad2f8d6da50dde4d7371e1c1ef79009b272a4eb842c3"
+  },
+  "vectors_exe_sha256": "bcf491af871f3d84e88b308545c643056b89b8b641916008ec90c64458c85b9f",
+  "after": {
+    "contracts/experimental/agent_host_v3_http_stream/build.rs": "456dc6c326b765304828ae9b5a3dd3a87ce40a120a445e0f32bdf30a63df98ae",
+    "contracts/experimental/agent_host_v3_http_stream/Cargo.lock": "7dba0d4d22d81519cb4a14b72bd03dc8fac1ecfd45c7127a0e8e8e3a404fde95",
+    "contracts/experimental/agent_host_v3_http_stream/Cargo.toml": "7a58455f468a7d9e15551800c5ce697ad190d4b967d5c608b2aac125807cc6ba",
+    "contracts/experimental/agent_host_v3_http_stream/examples/vectors.rs": "94765cd8cc0005b077e86a3b3f8535930d23889d2c3737f39c9adf5a3de3d295",
+    "contracts/experimental/agent_host_v3_http_stream/native_http.capnp": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+    "contracts/experimental/agent_host_v3_http_stream/README.md": "4a06ec4b7d0653fdd939364328c74f08aaf18942a4da3a26a0725f9847c3ad98",
+    "contracts/experimental/agent_host_v3_http_stream/src/lib.rs": "26d53b1efe373279071dd6321cd8faf9854681fdf571dfdea5a1886a5324b970",
+    "contracts/experimental/agent_host_v3_http_stream/src/rules.rs": "a71f74b06e39d254025e92a2e6099780953090b41f2ecac3a35930683a0a7794",
+    "contracts/experimental/agent_host_v3_http_stream/tests/codec.rs": "775bb842672c691e0c69a75d67c9751ad0b808a22568a4c73abbd375f54100f5",
+    "contracts/experimental/agent_host_v3_http_stream/tests/common/mod.rs": "b5ccefed97130c88f00b5b3ff58cb04071f6b7f1f450306ead1a860bd4fd7898"
+  },
+  "frozen_unchanged": true
+}

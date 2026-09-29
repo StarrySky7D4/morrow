@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "status": "partial_snapshot_verified_static_audit_only",
+  "sources": [
+    {
+      "id": "codex",
+      "kind": "partial_snapshot",
+      "url": "https://github.com/openai/codex",
+      "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+      "path": "upstream/reference/codex",
+      "files_manifest": {
+        "path": "receipts/upstream-codex-tree.json",
+        "sha256": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6"
+      },
+      "license_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc"
+        },
+        {
+          "path": "NOTICE",
+          "sha256": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915"
+        }
+      ],
+      "dirty": {
+        "allowed": false
+      },
+      "verified_files": 209,
+      "verification": "All fetched bytes match GitHub connector git blob SHA-1 and local SHA-256; this verifies only listed fixed-ref files, not a full commit tree",
+      "license": "Apache-2.0"
+    },
+    {
+      "id": "cc-switch",
+      "kind": "partial_snapshot",
+      "url": "https://github.com/farion1231/cc-switch",
+      "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+      "path": "upstream/reference/cc-switch",
+      "files_manifest": {
+        "path": "receipts/upstream-cc-switch-tree.json",
+        "sha256": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd"
+      },
+      "license_files": [
+        {
+          "path": "LICENSE",
+          "sha256": "912b6a597d10c43b40a0909349ed95b052b17efb6502b4898e1b35dafb896755"
+        }
+      ],
+      "dirty": {
+        "allowed": false
+      },
+      "verified_files": 13,
+      "verification": "All fetched bytes match GitHub connector git blob SHA-1 and local SHA-256; this verifies only listed fixed-ref files, not a full commit tree",
+      "license": "MIT"
+    }
+  ],
+  "acquisition_attempts": [
+    {
+      "id": "codex",
+      "method": "git fetch --no-tags --depth 1 fixed SHA",
+      "status": "failed",
+      "error": "schannel: server closed abruptly (missing close_notify)",
+      "path": "upstream/codex"
+    },
+    {
+      "id": "cc-switch",
+      "method": "git fetch --no-tags --depth 1 fixed SHA",
+      "status": "failed",
+      "error": "Failed to connect to github.com port 443 after 21083 ms",
+      "path": "upstream/cc-switch"
+    },
+    {
+      "id": "codex",
+      "method": "fixed codeload tar.gz",
+      "status": "incomplete_download_not_archive",
+      "received_bytes_reported": 6682470,
+      "error": "curl 28 timeout after 240011 milliseconds"
+    },
+    {
+      "id": "cc-switch",
+      "method": "fixed codeload tar.gz",
+      "status": "incomplete_download_not_archive",
+      "received_bytes_reported": 4720065,
+      "error": "curl 28 timeout after 180004 milliseconds"
+    },
+    {
+      "id": "codex",
+      "method": "recursive Git trees REST API",
+      "status": "failed_truncated_json",
+      "path": "upstream/codex-git-tree-complete.json",
+      "error": "curl 18 end of response with 1661998 bytes missing; never use as complete tree"
+    },
+    {
+      "id": "cc-switch",
+      "method": "recursive Git trees REST API",
+      "status": "complete_metadata_only",
+      "path": "upstream/cc-switch-git-tree-complete.json",
+      "entries": 1454,
+      "truncated": false
+    }
+  ],
+  "dirty_diff": {
+    "modified_files": [],
+    "comparison": "every snapshot file against fixed-ref Git blob SHA; snapshots are not Git checkouts"
+  },
+  "runtime_or_build_executed": false,
+  "registry_sources_downloaded": false,
+  "limitations": [
+    "Fixed source trees incomplete; full-source preflight must fail source_incomplete.",
+    "This source audit did not run Cargo metadata/build; later workflow readiness metadata failed (receipts/p02-readiness-001/result.json). Feature/target-resolved minimal graph remains unqualified.",
+    "P-02 fake execution/network/store interception not run.",
+    "Initial host-kit-002 byte/source review is preserved in receipts/host-kit-review-002/review.json, but acceptance was suspended by the host; superseded.json records that withdrawal. Await a new kit; full G0 remains unqualified."
+  ]
+}

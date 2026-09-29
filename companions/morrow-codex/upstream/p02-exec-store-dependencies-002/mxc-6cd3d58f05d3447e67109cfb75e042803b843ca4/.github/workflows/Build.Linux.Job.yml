@@ -1,0 +1,151 @@
+name: Linux Build
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            features: hyperlight
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            target: aarch64-unknown-linux-gnu
+            features: ''
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        working-directory: src/core/lxc
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # actions-rust-lang/setup-rust-toolchain auto-reads rust-toolchain.toml
+      # from the repo root only. Surface src/rust-toolchain.toml there so the
+      # 1.93 pin is honored without duplicating the version in this workflow.
+      - name: Surface toolchain file at repo root
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: cp src/rust-toolchain.toml rust-toolchain.toml
+
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        with:
+          target: ${{ matrix.target }}
+          components: rustfmt, clippy
+          override: false
+          rustflags: ''
+
+      - name: Point cargo at the MxcDependencies feed
+        uses: ./.github/actions/setup-cargo-feed
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: |
+            src -> target
+            src/core/lxc -> target
+          key: ${{ matrix.target }}-v2
+          cache-on-failure: false
+
+      - name: Install ARM64 cross linker
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu
+
+      - name: Build lxc
+        shell: bash
+        run: |
+          set -euo pipefail
+          features=()
+          if [[ -n "${{ matrix.features }}" ]]; then
+            features=(--features "${{ matrix.features }}")
+          fi
+          cargo build --locked --release --target "${{ matrix.target }}" \
+            --no-default-features "${features[@]}"
+
+      - name: Test lxc
+        shell: bash
+        run: |
+          set -euo pipefail
+          features=()
+          if [[ -n "${{ matrix.features }}" ]]; then
+            features=(--features "${{ matrix.features }}")
+          fi
+          cargo test --locked --release --target "${{ matrix.target }}" \
+            --no-default-features "${features[@]}"
+
+      # Bubblewrap is required to run the executor characterization tests in
+      # wxc_e2e_tests (they skip via has_bwrap() when it is absent). lxc-exec
+      # always includes the Bubblewrap backend (bwrap_common is a non-optional
+      # dependency), so the binary built above can drive it.
+      - name: Install Bubblewrap
+        working-directory: ${{ github.workspace }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bubblewrap slirp4netns iptables
+          # Ubuntu 24.04 runners restrict unprivileged user namespaces via
+          # AppArmor, which blocks `bwrap --unshare-user`. Relax it so the
+          # sandbox can start (no-op on kernels without this knob).
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      # The job defaults working-directory to src/core/lxc, so the `Test lxc`
+      # step above covers only the lxc package -- nothing else in this job runs
+      # mxc-sdk's tests, making this step their sole CI coverage. It must follow
+      # the install: these skip when bwrap is absent, so running them earlier
+      # would silently exercise nothing.
+      - name: Test Bubblewrap streaming (mxc-sdk)
+        working-directory: src
+        run: cargo test --locked --release --target ${{ matrix.target }}
+             -p mxc-sdk --test streaming_bubblewrap
+
+      # Runs the Bubblewrap executor characterization tests. lxc-exec was built
+      # into src/target/<triple>/release above, where find_binary() locates it.
+      - name: Test executor characterization (wxc_e2e_tests)
+        working-directory: src
+        run: cargo test --locked --release --target ${{ matrix.target }}
+             -p wxc_e2e_tests
+             
+      # PLM (Permissive Learning Mode) is functionally Windows-only, but the
+      # crate builds cross-platform: the lib's helper modules compile on every
+      # target, and the binary has a no-op stub `fn main()` for non-Windows so
+      # the crate lives in the workspace `default-members` list. This gate
+      # keeps the cross-platform/Windows-only split a CI-enforced contract — if
+      # someone adds a `use windows::…` without a `#[cfg]` gate the Linux
+      # build fails fast rather than rotting silently.
+      - name: Build plm (cross-platform stub + lib)
+        working-directory: src
+        run: cargo build --locked --release --target ${{ matrix.target }} -p plm
+
+      - name: Test plm (cross-platform modules)
+        working-directory: src
+        run: cargo test --locked --release --target ${{ matrix.target }} -p plm
+
+      # unix_test_proxy is a separate workspace member, not a dep of lxc.
+      - name: Build unix-test-proxy
+        working-directory: src
+        run: cargo build --locked --release --target ${{ matrix.target }}
+             -p unix_test_proxy
+
+      # Exercises the real binary against the real dependencies: launches the
+      # slirp4netns supervisor, joins its user namespace, and asserts the
+      # sandbox lands in a private network namespace. Needs unix-test-proxy
+      # (builtinTestServer) alongside lxc-exec, which the two build steps
+      # above place in the same target directory.
+      - name: Test Bubblewrap proxy networking (end-to-end)
+        working-directory: ${{ github.workspace }}
+        env:
+          LXC_EXEC: ${{ github.workspace }}/src/target/${{ matrix.target }}/release/lxc-exec
+        run: bash tests/scripts/run_bwrap_network_proxy_test.sh
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lxc-binaries-${{ matrix.target }}
+          path: |
+            src/target/${{ matrix.target }}/release/lxc-exec
+            src/target/${{ matrix.target }}/release/unix-test-proxy
+          if-no-files-found: error
+          retention-days: 1

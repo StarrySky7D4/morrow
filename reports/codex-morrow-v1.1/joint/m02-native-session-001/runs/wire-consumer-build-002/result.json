@@ -1,0 +1,72 @@
+{
+  "scope": "independent_new_wire_consumer_only",
+  "prior_failure_retained": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\wire-consumer-build-001\\result.json",
+  "real_host_client_ipc": false,
+  "product_pass_credit": 0,
+  "commands": [
+    {
+      "name": "build",
+      "argv": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.97.1-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "build",
+        "--offline",
+        "--locked",
+        "--message-format=json"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "91a35c450522c9b9ef714c066fceb884455a483296d42980c1674f662ca7681e",
+      "stderr_sha256": "624343bcbca09476ae74ba6ea58fd79f8e4771fb754635f09bdcfa4463d092cd"
+    },
+    {
+      "name": "run",
+      "argv": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\t-wire-002\\debug\\joint-m02-wire-consumer.exe",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\capnp-kit-001\\vectors"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "cd99332c58ceb176ace13a59d260e2945230e5b12d3e873a788f8dc7805492b8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_TARGET_DIR",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "environment_values_enumerated": false,
+  "compiler": {
+    "cargo": "ddfbad20b31b918d3439d070945ec59bbfe037a6ec0ab5b584459e69c8b37d1b",
+    "rustc": "cf79cfd77b0a144c56a0a6af6bf10bcdf095a73718cd4bf2b9d4fe2d2cbded55"
+  },
+  "consumer_sources": {
+    "Cargo.lock": "637e3050fc21317d51eb478a7bd8337125198f32babecdf2383e72b2539cf9f5",
+    "Cargo.toml": "2b576f7b2f20ecc1089833ec1936cb2be7ebe34b5551e6ca77dd336312cf05c0",
+    "src/main.rs": "4a456bb87dd9da5a7bc1ee0a35a6de5bfcc2273444269936b68d442b304dc27d"
+  },
+  "generated_binding_sha256": "2475cee0b5cc676fe36c637daf79eb0fafd4ac378478ac7c076612fe76bc5fc9",
+  "consumer_exe_sha256": "7061ad7f677f006785905b925d87030be04726aa2e36a99ce44680f50e3c1f08",
+  "status": "verified_limited",
+  "exit_code": 0,
+  "depth_threshold_exercised": false
+}

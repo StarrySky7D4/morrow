@@ -1,0 +1,240 @@
+[
+  {
+    "path": ".github/workflows/ci.yml",
+    "git_blob_sha1": "9bfad300845d00755743344edc8442d4c236ccb4",
+    "fixed_sha256": "570d83878fdbc20d80090936017a3f3e056f414472535da383bf3076c89d89dc",
+    "copy_sha256": "570d83878fdbc20d80090936017a3f3e056f414472535da383bf3076c89d89dc",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": ".gitignore",
+    "git_blob_sha1": "a9d37c560c6ab8d4afbf47eda643e8c42e857716",
+    "fixed_sha256": "f9b1ca6ae27d1c18215265024629a8960c31379f206d9ed20f64e0b2dcf79805",
+    "copy_sha256": "f9b1ca6ae27d1c18215265024629a8960c31379f206d9ed20f64e0b2dcf79805",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "CHANGELOG.md",
+    "git_blob_sha1": "249a7c4ccb2ef2ed8f6e5614eb16d8b0c68ddd8f",
+    "fixed_sha256": "0cd1668a479da9a46905a3bc2be8d372e7d7940f403d9c38210beb12ed5ada5b",
+    "copy_sha256": "0cd1668a479da9a46905a3bc2be8d372e7d7940f403d9c38210beb12ed5ada5b",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "Cargo.toml",
+    "git_blob_sha1": "b3bd4ba0dc4b7d1c6651cf67a15a6def4fdc8407",
+    "fixed_sha256": "1bb36f490668711ad63b88c5805c64f25ea16101bea4c924858b874a35521290",
+    "copy_sha256": "09496ed19470c582f77d2eaed057ac30d8627e91d6e5fd0ca347055e09e2652e",
+    "fixed_bytes_unchanged": false
+  },
+  {
+    "path": "LICENSE",
+    "git_blob_sha1": "4bf5242e2dd870f2a6ca6e8e54154cff018e0bee",
+    "fixed_sha256": "fdd55e2b2da854b0fbdc1e607df7c2ba1e1ebf91ecb77c515511ebeef972bc8f",
+    "copy_sha256": "fdd55e2b2da854b0fbdc1e607df7c2ba1e1ebf91ecb77c515511ebeef972bc8f",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "README.md",
+    "git_blob_sha1": "705f8506c2c56fd2a71b55f64671e858d0dfd764",
+    "fixed_sha256": "d543fd49f55a9ce48a57c5469eca5cc9ebaa91ee15a6100cbb12f64f3ffdc479",
+    "copy_sha256": "d543fd49f55a9ce48a57c5469eca5cc9ebaa91ee15a6100cbb12f64f3ffdc479",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "autobahn/expected-results.json",
+    "git_blob_sha1": "c3d82f4b42f89e33d3029da96497842ecac2980a",
+    "fixed_sha256": "1ef1023a82e8602e10404c0d0cacfff9400b122131546972fe597d2298ab5c8f",
+    "copy_sha256": "1ef1023a82e8602e10404c0d0cacfff9400b122131546972fe597d2298ab5c8f",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "autobahn/fuzzingclient.json",
+    "git_blob_sha1": "a265c3782d8de4d256c00c79cbc60dd2882812ed",
+    "fixed_sha256": "8965f24e55a039652098fdd0bdcb7f97f957bed9caf747e23f6b35b1044b641f",
+    "copy_sha256": "8965f24e55a039652098fdd0bdcb7f97f957bed9caf747e23f6b35b1044b641f",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "autobahn/fuzzingserver.json",
+    "git_blob_sha1": "dc89960c47c763632fec78a9faac71f2b202e3f0",
+    "fixed_sha256": "b92c284fc0ce81665cc015536f38dd4d18c680dd37223c4cb3fe7296ea88275a",
+    "copy_sha256": "b92c284fc0ce81665cc015536f38dd4d18c680dd37223c4cb3fe7296ea88275a",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/README.md",
+    "git_blob_sha1": "b0bb00a12df2462151768e95f15d86ab1e5464c1",
+    "fixed_sha256": "067ceaf7b70949f087fd582d71bb114e88ef0313560dbd33b345158ffa33eff3",
+    "copy_sha256": "067ceaf7b70949f087fd582d71bb114e88ef0313560dbd33b345158ffa33eff3",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/autobahn-client.rs",
+    "git_blob_sha1": "86676b25eef6c791808fa76ba40708444e063fee",
+    "fixed_sha256": "b60afbb9979fcfd7a38348ea1571f9d23935692eafdc4117d9b24c98de66c732",
+    "copy_sha256": "b60afbb9979fcfd7a38348ea1571f9d23935692eafdc4117d9b24c98de66c732",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/autobahn-server.rs",
+    "git_blob_sha1": "0542b0dc71e5459a4c3231b0a55e6076589b926f",
+    "fixed_sha256": "3d59e3c2d27fb2ec1439e1c429cdfe9b641387a251e23cf62e6808011941530f",
+    "copy_sha256": "3d59e3c2d27fb2ec1439e1c429cdfe9b641387a251e23cf62e6808011941530f",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/client.rs",
+    "git_blob_sha1": "05a737575e9f0bd6c587f6916560f50f410712df",
+    "fixed_sha256": "a4e5f1e82c4b352b99aea71f47eb2e5f0289d6e8eb67c8d719341115f506c3b7",
+    "copy_sha256": "a4e5f1e82c4b352b99aea71f47eb2e5f0289d6e8eb67c8d719341115f506c3b7",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/echo-server.rs",
+    "git_blob_sha1": "603b0f10cd95967ffdd2b8c5e164f32b855eef48",
+    "fixed_sha256": "5bb6b5d84a10086edd28d3d5b6d402e851b7558b90e2a9327bba8d1034a49b52",
+    "copy_sha256": "5bb6b5d84a10086edd28d3d5b6d402e851b7558b90e2a9327bba8d1034a49b52",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/interval-server.rs",
+    "git_blob_sha1": "4371c828a377c48782353377f6bf768987c18d52",
+    "fixed_sha256": "8775e9dec5ccb26473944fd4879a27de3bcb0a0a7a813329d40a15d3e78a092e",
+    "copy_sha256": "8775e9dec5ccb26473944fd4879a27de3bcb0a0a7a813329d40a15d3e78a092e",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/proxy-client.rs",
+    "git_blob_sha1": "94ba8bbd84f2bb3acb62a4964adf6bfd3a1cc009",
+    "fixed_sha256": "aeca2870a168b47f3e8e31e4b2c57fc789a9ed43b79187d0a2288ec8ad49d21a",
+    "copy_sha256": "aeca2870a168b47f3e8e31e4b2c57fc789a9ed43b79187d0a2288ec8ad49d21a",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/server-custom-accept.rs",
+    "git_blob_sha1": "5880871c18e9148a492dd631e3743eb0addad9f1",
+    "fixed_sha256": "66a2811054c188e74dcf393b776ca2040107f5a813bbbdc9960c89dd74f0c535",
+    "copy_sha256": "66a2811054c188e74dcf393b776ca2040107f5a813bbbdc9960c89dd74f0c535",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/server-headers.rs",
+    "git_blob_sha1": "f8b729f6f083b808ff8c437778f1ea4e7f3c7b1b",
+    "fixed_sha256": "f04770383986cf020b895ece939931c1a6b4ecd722f7df307e25bd577bf8d483",
+    "copy_sha256": "f04770383986cf020b895ece939931c1a6b4ecd722f7df307e25bd577bf8d483",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "examples/server.rs",
+    "git_blob_sha1": "288aeaa509136b2a97ea8d5824930e02f2d1b298",
+    "fixed_sha256": "b3f8369b474af3e73ae544dae200e5634c45f84a62788c7d6ce50d2eefc8dd1e",
+    "copy_sha256": "b3f8369b474af3e73ae544dae200e5634c45f84a62788c7d6ce50d2eefc8dd1e",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "rustfmt.toml",
+    "git_blob_sha1": "0c9d0486b247aac0d6622e0a8c56fdc8bdb1baa0",
+    "fixed_sha256": "54ab71174a138c12018435d5b8baceffd7eec4da50d17f9d6e178b36b577a358",
+    "copy_sha256": "54ab71174a138c12018435d5b8baceffd7eec4da50d17f9d6e178b36b577a358",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "scripts/autobahn-client.sh",
+    "git_blob_sha1": "e636c5bafe8a282bb46a169ed735e082e01b5a8a",
+    "fixed_sha256": "64b652cf2254fcffb36d2b65e171d3c867bedccd87a40375ca00954bfeaf873d",
+    "copy_sha256": "64b652cf2254fcffb36d2b65e171d3c867bedccd87a40375ca00954bfeaf873d",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "scripts/autobahn-server.sh",
+    "git_blob_sha1": "daaa2395e38619846ba2b61a4afa0b8a4aa7998d",
+    "fixed_sha256": "6b910f0f59876cfddae8dea4c4241c194d90ca0ecc111a1acd17c0301599d185",
+    "copy_sha256": "6b910f0f59876cfddae8dea4c4241c194d90ca0ecc111a1acd17c0301599d185",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "scripts/proxy-test/start.sh",
+    "git_blob_sha1": "003582b9146ed9d5c65f36239a83da24297a4cd5",
+    "fixed_sha256": "9831d3a942dee901a8e5eb49eeb3935fb4abda0f35e1258fe288801fa9a3958d",
+    "copy_sha256": "9831d3a942dee901a8e5eb49eeb3935fb4abda0f35e1258fe288801fa9a3958d",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "scripts/proxy-test/stop.sh",
+    "git_blob_sha1": "ed1f9e42aeeb9aafb6c39eac5deab8e23068a231",
+    "fixed_sha256": "e46e39299d83843708055698e77afa4de98cb1b3135a0f6530229192842edbe0",
+    "copy_sha256": "e46e39299d83843708055698e77afa4de98cb1b3135a0f6530229192842edbe0",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/compat.rs",
+    "git_blob_sha1": "17fbd1f95f3738cd6f4fa75c223432f45a82a6c5",
+    "fixed_sha256": "58e610b11d36e969ecb311d6e8f048db2f19049c8b3787752c53a511f86e39d9",
+    "copy_sha256": "58e610b11d36e969ecb311d6e8f048db2f19049c8b3787752c53a511f86e39d9",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/connect.rs",
+    "git_blob_sha1": "f910f8d82e61b7060c95b011650cec70f31a9919",
+    "fixed_sha256": "f506c61203ea3034d792d49e508e6cbc315daf0a9090e8512d467bcf34050cbc",
+    "copy_sha256": "f506c61203ea3034d792d49e508e6cbc315daf0a9090e8512d467bcf34050cbc",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/handshake.rs",
+    "git_blob_sha1": "aa51276960a061f2769e958317977399c6c78325",
+    "fixed_sha256": "2030d6e704a97606cd88c3cf16404e9fded9beef9b9f661c9ddb988528e1873d",
+    "copy_sha256": "2030d6e704a97606cd88c3cf16404e9fded9beef9b9f661c9ddb988528e1873d",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/lib.rs",
+    "git_blob_sha1": "db8fc290c426227709529f6d3c3296013aeb3052",
+    "fixed_sha256": "03b7bb1dbb1bd7f4d322c9c56823fe994b80445218572ae4bfe0217f4c018468",
+    "copy_sha256": "03b7bb1dbb1bd7f4d322c9c56823fe994b80445218572ae4bfe0217f4c018468",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/proxy.rs",
+    "git_blob_sha1": "6b103d6c3d5bd8cce2f8ecd7ccc48f0c88c19b44",
+    "fixed_sha256": "ed37642e0f3c02187f6b98bd41f395643f0ab8b5e1e21d9ded3b3dbba2067df2",
+    "copy_sha256": "ed37642e0f3c02187f6b98bd41f395643f0ab8b5e1e21d9ded3b3dbba2067df2",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/stream.rs",
+    "git_blob_sha1": "67985c7d1cb680cc4b6881b1cc37ff767690b7c3",
+    "fixed_sha256": "1a3c9595145c913a4b29a7ff3fc8caaea171b1946e96243edb280986b6eb6172",
+    "copy_sha256": "1a3c9595145c913a4b29a7ff3fc8caaea171b1946e96243edb280986b6eb6172",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "src/tls.rs",
+    "git_blob_sha1": "9ad9e67bafe883bad8193bbbc2752012bca649aa",
+    "fixed_sha256": "ede833940750523f43aecad570e38d9b21de8e4128c8efc3f5e8900116d7c211",
+    "copy_sha256": "ede833940750523f43aecad570e38d9b21de8e4128c8efc3f5e8900116d7c211",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "tests/communication.rs",
+    "git_blob_sha1": "a7b879547aebcae08fa92c9127b0fa9fa333a038",
+    "fixed_sha256": "a732fede8d0d3990ea0c4ca54976a512d2f688ba7e9955d20b0be294d5cdca5f",
+    "copy_sha256": "a732fede8d0d3990ea0c4ca54976a512d2f688ba7e9955d20b0be294d5cdca5f",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "tests/handshakes.rs",
+    "git_blob_sha1": "8d4fbff2b04f06e0ca699c42b6ecef75dc979489",
+    "fixed_sha256": "afc5ed5d9559d8e055ec8a53512f25e1cff9e4bff9bb8ca55cc731f96b2351e0",
+    "copy_sha256": "afc5ed5d9559d8e055ec8a53512f25e1cff9e4bff9bb8ca55cc731f96b2351e0",
+    "fixed_bytes_unchanged": true
+  },
+  {
+    "path": "tests/proxy_integration.rs",
+    "git_blob_sha1": "b2c2876ce9fb804718136b35ce7aad61bbf54eb2",
+    "fixed_sha256": "b05bf3dce2e608d32441b5f6059a533b8d192df9eeacf66c96e2e04ae1c214ea",
+    "copy_sha256": "b05bf3dce2e608d32441b5f6059a533b8d192df9eeacf66c96e2e04ae1c214ea",
+    "fixed_bytes_unchanged": true
+  }
+]

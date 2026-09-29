@@ -1,0 +1,29 @@
+{
+  "scope": "normative_runtime_contract_format_precondition",
+  "runtime_accepted": false,
+  "independent_runtime": false,
+  "product_pass_credit": 0,
+  "checker_sha256": "5e26777d5fa1611d8f6ef67656076acf8080cbe275dcaf6b6e6b23acf42d24fb",
+  "issues": [],
+  "requirement": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.md",
+    "line": 50,
+    "text": "自有跨边界消息使用 Cap’n Proto；自有持久化、配置、事件和套件清单使用 Protobuf＋LZ4。供应商 JSON/SSE、上游 App Server/MCP 原协议以及构建工具格式仅在相应边界使用，不把 Morrow 改成 JSON-RPC。当前 Windows UI↔宿主是长度前缀的 Cap’n Proto/stdio；新增原生插件通道另行版本化，不冒充已存在多路复用。",
+    "sha256": "152d1e6869cfad204a10903733c09f31a41342617e181139be98701de8524ecb"
+  },
+  "schema": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v2_capnp\\native_session.capnp",
+    "expected": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+    "actual": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+  },
+  "status": "source_format_only_pending_generated_and_runtime_verification",
+  "exit_code": 2,
+  "pending_for_formal_acceptance": [
+    "compiler_and_generated_binding_identity",
+    "actual_encoder_decoder_path_uses_authoritative_capnp",
+    "framing_and_reader_limits",
+    "positive_negative_vectors",
+    "source_authority_review",
+    "independent_real_ipc"
+  ]
+}

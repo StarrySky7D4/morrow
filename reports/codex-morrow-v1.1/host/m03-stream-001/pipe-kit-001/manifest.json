@@ -1,0 +1,39 @@
+{
+  "scope": "shared host/guest Windows owned-I/O platform candidate; native HTTP integration not run",
+  "source_files": {
+    "Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "README.md": "75a32e631112cbd145ad3e0cd7d8b6ddcce1d5deb7cd688ef972043ee69e9078",
+    "src/lib.rs": "7b2849dc97620811472614750e89bdb4587310b3acbc60cf3cdd779d5da3cca3",
+    "tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "files": {
+    "compile.stderr": "fd394108c4b0353cf2e6e5a6845a62799b6624512998d2d8adbb696911409932",
+    "compile.stdout": "81280ab8048520c48f6acca29938e0a4ae7694efa4ce54bed153e55a7738de31",
+    "fmt.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fmt.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "result.json": "3e9dbe7efb7a75f704fbfb8ecf85dd966b088a808f3c8cc90d03864ee84287dd",
+    "source/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "source/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "source/README.md": "75a32e631112cbd145ad3e0cd7d8b6ddcce1d5deb7cd688ef972043ee69e9078",
+    "source/src/lib.rs": "7b2849dc97620811472614750e89bdb4587310b3acbc60cf3cdd779d5da3cca3",
+    "source/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3",
+    "tests/morrow_native_pipe_win-3ee4baeb43321fe4.exe": "8ce210ddccf3f35321246cc24f88530e1429af9a843a2a2dae1d20517afcee01",
+    "tests/platform-a95421a369e34f9f.exe": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+    "tests.stderr": "c1ae28b289cf87d4aa1c5250eee60a8c6f63ab1d6b66a396d8c8d91061c3663a",
+    "tests.stdout": "9a60f0e79a32de18f11a2ad29ac1647710dc68d53a8c377d750e73b48075f8e4"
+  },
+  "producer_receipt_sha256": "3e9dbe7efb7a75f704fbfb8ecf85dd966b088a808f3c8cc90d03864ee84287dd",
+  "substantive_platform_tests": 4,
+  "helper_entries": 1,
+  "frozen_inputs_unchanged": 2292,
+  "actual_pending": "8KiB write; actual1024 pipe buffers;3 IO_INCOMPLETE samples25ms apart;independent stdio control;read+write cancellation completion995",
+  "limitations": [
+    "not native16KiB credit integration",
+    "not Core/HTTP/SSE",
+    "not independent platform acceptance",
+    "no pending-operation unexpected-error fault injection",
+    "no full host-death/process-tree or all-Windows-version coverage",
+    "blocking cleanup only on dedicated owned-I/O thread"
+  ]
+}

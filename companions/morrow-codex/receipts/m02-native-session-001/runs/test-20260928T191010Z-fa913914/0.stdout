@@ -1,0 +1,11 @@
+
+running 6 tests
+test framing::tests::oversized_prefix_rejected_without_body_and_cannot_resume ... ok
+test tests::fragmented_boundary_accepts_then_poisoned_overflow_cannot_resume ... ok
+test framing::tests::split_prefix_and_coalesced_messages_preserve_exact_payloads ... ok
+test tests::zero_budget_cannot_accept_nonempty_input_or_renew_deadline ... ok
+test process_io::tests::fragmented_input_is_bounded_and_reports_eof ... ok
+test process_io::tests::failed_write_is_reported_once_without_retry ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

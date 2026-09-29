@@ -1,0 +1,53 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Test artifacts
+*.etl
+*.log
+microvm-perf-results*.json
+
+# npm pack artifacts
+*.tgz
+
+# NuGet
+packages/
+nuget.exe
+vcpkg_installed/
+
+# build artifacts
+output
+**/target/
+*.pdb
+
+# Copilot
+.copilot/
+
+# Claude
+.claude/
+
+# iterative-review working artifacts
+.review/
+
+# OS generated files
+.DS_Store

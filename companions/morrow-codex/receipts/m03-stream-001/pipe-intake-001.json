@@ -1,0 +1,14 @@
+{
+  "status": "shared_platform_copied_no_runtime",
+  "verified_kit_files": 14,
+  "input_sha256": {
+    "upstream/m03-stream-001/pipe-kit-001/source/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "upstream/m03-stream-001/pipe-kit-001/source/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "upstream/m03-stream-001/pipe-kit-001/source/README.md": "75a32e631112cbd145ad3e0cd7d8b6ddcce1d5deb7cd688ef972043ee69e9078",
+    "upstream/m03-stream-001/pipe-kit-001/source/src/lib.rs": "7b2849dc97620811472614750e89bdb4587310b3acbc60cf3cdd779d5da3cca3",
+    "upstream/m03-stream-001/pipe-kit-001/source/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3",
+    "upstream/m03-stream-001/pipe-kit-001/pipe-handoff-001.json": "a7949c64c87319a77376a75d2535d7bf1b4bc8ad9fc9ca63c6b73b0304063600",
+    "upstream/m03-stream-001/pipe-kit-001/manifest.json": "d6eee6bdb2f933d59ebeddb10a550359204cb024fe09e58f98182739bbd1787b"
+  },
+  "unsafe_ffi_added_in_plugin": false
+}

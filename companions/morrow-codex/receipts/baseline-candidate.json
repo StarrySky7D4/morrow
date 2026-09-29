@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "status": "candidate_only",
+  "checked_at": "2026-09-28T19:08:49.1521064+08:00",
+  "host_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+  "host_commit": "88557916aabf2e10619b1022110035178498898a",
+  "host_branch": "codex/io-safety-refactor",
+  "initial_git_status": "",
+  "initial_plugin_directory_existed": false,
+  "plugin_branch": "codex/g0-plugin",
+  "m00_handoff": "pending",
+  "host_kit": "pending",
+  "g0": "not_passed",
+  "python": "3.14.5",
+  "rust_toolchain_candidate": "1.95.0",
+  "candidate_installed_targets": [
+    "x86_64-pc-windows-msvc",
+    "wasm32-unknown-unknown"
+  ],
+  "plan_inputs": [
+    {
+      "sha256": "c12604cb31b3e443b33d5cf08210416ab1af312155cbd41802fb7ecd7d90a4ab",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\README.md"
+    },
+    {
+      "sha256": "d775f93afd7b104d7a7dae30d470f2812d286ad95ee4f8c28c860f0e5379a20b",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\01_Morrow侧扩充实施路径.md"
+    },
+    {
+      "sha256": "459081253458013a6c171fa9128d30bb80fa5b9e31d9a5f985c2ce317fb78781",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\02_插件侧编码构建路径.md"
+    },
+    {
+      "sha256": "1008086b6a7184dc9cb3b534d4bc29a5b54b8a37cb07c4fbab1849bb312cc1e8",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md"
+    },
+    {
+      "sha256": "152d1e6869cfad204a10903733c09f31a41342617e181139be98701de8524ecb",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.md"
+    },
+    {
+      "sha256": "d90658b5b4da5e3638d15b6e15dac8242002c1eca8ca5ae5e9c52d45e356b942",
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.docx"
+    }
+  ]
+}

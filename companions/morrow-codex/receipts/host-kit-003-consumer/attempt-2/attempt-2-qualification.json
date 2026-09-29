@@ -1,0 +1,28 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+    "test",
+    "--locked",
+    "--offline",
+    "--manifest-path",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\sdk\\host-kit-003-copy\\Cargo.toml",
+    "--target",
+    "x86_64-pc-windows-msvc",
+    "--target-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\target",
+    "--features",
+    "qualification",
+    "--test",
+    "qualification",
+    "--",
+    "--nocapture"
+  ],
+  "cwd": "C:\\",
+  "started_utc": "2026-09-28T11:37:01.317590+00:00",
+  "elapsed_seconds": 4.205422400002135,
+  "exit_code": 0,
+  "stdout": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\attempt-2-qualification.stdout.txt",
+  "stderr": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\attempt-2-qualification.stderr.txt",
+  "stdout_sha256": "57aa30c6c71e17edcbe530b42e44351d03f5c6d5a5ca0060542e2206b5e6eda4",
+  "stderr_sha256": "8c59c8b224c9ab80764e32f59dc0112ff8c62b236dda2d1455810603d3ff2540"
+}

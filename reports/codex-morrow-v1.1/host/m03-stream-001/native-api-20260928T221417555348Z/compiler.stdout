@@ -1,0 +1,10 @@
+
+running 5 tests
+test http_authority::http_api_tests::approval_checks_owner_identity_and_original_deadline ... ok
+test http_authority::http_api_tests::commit_binds_full_decision_and_expired_commit_does_not_consume ... ok
+test http_authority::http_api_tests::consumed_native_grant_cannot_repeat_after_existing_core_history ... ok
+test http_authority::http_api_tests::durable_observed_material_remains_observed_after_native_revoke ... ok
+test http_authority::http_api_tests::ticket_owns_pending_interval_and_revoke_prevents_another_fence ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 3 filtered out; finished in 3.76s
+

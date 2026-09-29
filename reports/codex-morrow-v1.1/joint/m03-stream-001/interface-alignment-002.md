@@ -1,0 +1,15 @@
+# M03 接口预审补记002
+
+2026-09-29，仅设计评审。主报告interface-review-001.md保持原样；本补记纳入随后收到的host INTERFACE-SUPPLEMENT-002.md，SHA256 01dcdbd4ceeecfc1dbe0a392e63e221acfe1fd99157aa592284e8d357f9a68f9。它优先于host旧提案；没有执行或验证文中平台实现。
+
+补充已在设计层回应主报告R1与R2：唯一SendTicket在短临界区登记in-flight operation，外部持久撤权返回ApplicationPending；本owner应用取消后拒绝新许可，但在途OS效果可能晚完成；NetworkQuiesced不冒称全部HTTP库/内核任务撤销。overlapped操作拟由独立平台封装持有，并将取消请求、真正完成回收、Release分开。持续pending的拟验收门包含停读屏障、具体write id和两次间隔25ms的IO_INCOMPLETE；16KiB窗口未触达则不通过，不要求queue满/credit耗尽/OS pending同时成立。这些具体化使相关接口方向可进入合同落实，不需要重新设计同一问题。
+
+R3/R4也已基本对齐：reserved/issued/os_completed/peer_consumed分账，模型终态、HTTP EOF、Observed、worker与owner释放分账；下一步需在唯一schema固定字段及绝对ACK规则，并在plugin lease中明确parser_yielded/drain_discarded与未ACK尾部的接管。状态维度不得在序列化时重新压成一个互斥终态而丢失事实。
+
+R5为实际源代码发现，仍应修正plugin原矩阵预期：合法response.incomplete(reason=interrupted)会生成Completed(end_turn=false)。请在后续新增补充/实现验收中区分，勿修改已冻结旧方案。R6的无retry及真实请求摘要关联已被双方补充接受，保留实际server计数验收。
+
+追加定点核查：旧network_node/src/client.rs:172-196请求入口经HeaderValue::from_str，而Core io.rs的Header value保存原字节。新wire原始header进入旧String入口时，必须先完成可逆且HTTP合法的严格转换；无法无损表示则在dispatch前拒绝，不用lossy、不删header、不改批准摘要。新stream层若另提供raw请求入口，必须保留同源全部策略校验并单独列差异。响应走raw字节路径，不能落到旧client.rs:141的to_str文字接口。后续负例应区分非法HTTP字节与合法但旧文字入口不可表示的值；本预审没有运行这两类输入。
+
+双向pipe的完成回收也必须覆盖pending read和连接阶段，不能仅审write；释放OVERLAPPED及其buffer前需有对应完成事实。部分HTTP响应材料只作诊断/不完整材料，不能填充完整HttpOutcome冒充Observed；若已完整Observed，随后IPC失败仍保留该历史事实。
+
+联合结论：双方补充在提案层已无上述方向性冲突，可供主协调决定唯一合同和native集成实施边界；联合本身没有签收schema、编译物或任何M03运行结果。acceptance-matrix-001.json十组全部not_run，最终数量可按固定候选覆盖范围具体化，不给原产品通过信用。M02冻结结果与既有句柄继承/恢复等限制不变。

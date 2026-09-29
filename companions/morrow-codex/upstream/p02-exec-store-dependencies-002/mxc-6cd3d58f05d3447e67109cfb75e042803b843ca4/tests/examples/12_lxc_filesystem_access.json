@@ -1,0 +1,20 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-LXC-FilesystemAccess",
+  "containment": "lxc",
+  "process": {
+    "commandLine": "ls -la /mnt/shared && echo 'test' > /mnt/output/result.txt && cat /mnt/output/result.txt"
+  },
+  "lifecycle": {
+    "destroyOnExit": true
+  },
+  "lxc": {
+    "distribution": "alpine",
+    "release": "3.20"
+  },
+  "filesystem": {
+    "readonlyPaths": ["/mnt/shared"],
+    "readwritePaths": ["/mnt/output"],
+    "deniedPaths": ["/etc/shadow"]
+  }
+}

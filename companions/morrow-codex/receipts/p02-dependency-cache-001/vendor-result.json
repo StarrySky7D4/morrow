@@ -1,0 +1,4860 @@
+{
+  "status": "fixed_registry_source_prepared",
+  "scope": "Conservative codex-api lock graph plus reviewed host-kit-003 lock; not resolved target/feature closure",
+  "entry_sha256": "3f8f075d84a4b777ae647462ee1e7ada5ca25ea455296bc66e88e39d4aaf9ed7",
+  "inventory_sha256": "9abaa5186bf469f4af56b626d9e8fa69848270537da77c73126afe3820a7ff14",
+  "host_kit_lock_sha256": "aba83bdb6c9d8df55a3204bc0ca3c584af8b8a6890c45ad5d7746ac7b9e1fc5f",
+  "generated_config_sha256": "c721356a44054295b5e9b3bf9d14cad8073b0c238addd657cde9a4016d29da6b",
+  "vendor": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-native-probe-001\\vendor",
+  "packages": 692,
+  "expanded_bytes": 932849607,
+  "package_records": [
+    {
+      "name": "Inflector",
+      "version": "0.11.4",
+      "archive_sha256": "fe438c63458706e03479442743baae6c88256498e6431708f6dfc520a26515d3",
+      "files": 29,
+      "expanded_bytes": 182828
+    },
+    {
+      "name": "adler2",
+      "version": "2.0.1",
+      "archive_sha256": "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa",
+      "files": 13,
+      "expanded_bytes": 38832
+    },
+    {
+      "name": "ahash",
+      "version": "0.8.12",
+      "archive_sha256": "5a15f179cd60c4584b8a8c596927aadc462e27f2ca70c04e0071964a73ba7a75",
+      "files": 24,
+      "expanded_bytes": 180595
+    },
+    {
+      "name": "aho-corasick",
+      "version": "1.1.4",
+      "archive_sha256": "ddd31a130427c27518df266943a5308ed92d4b226cc639f5a8f1002816174301",
+      "files": 47,
+      "expanded_bytes": 835205
+    },
+    {
+      "name": "allocative",
+      "version": "0.3.6",
+      "archive_sha256": "d8cf9afc79c83d514444b55df3935d317da54b1ce3b17a133c646889cc260de8",
+      "files": 64,
+      "expanded_bytes": 154049
+    },
+    {
+      "name": "allocative_derive",
+      "version": "0.3.6",
+      "archive_sha256": "614043c56c1173b800acb007b81fd0cbc0a0d7d717b71ba705fc2230d0760a23",
+      "files": 6,
+      "expanded_bytes": 15575
+    },
+    {
+      "name": "allocator-api2",
+      "version": "0.2.21",
+      "archive_sha256": "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923",
+      "files": 25,
+      "expanded_bytes": 294003
+    },
+    {
+      "name": "android_system_properties",
+      "version": "0.1.5",
+      "archive_sha256": "819e7219dbd41043ac279b19830f2efc897156490d7fd6ea916720117ee66311",
+      "files": 10,
+      "expanded_bytes": 14475
+    },
+    {
+      "name": "annotate-snippets",
+      "version": "0.9.2",
+      "archive_sha256": "ccaf7e9dfbb6ab22c82e473cd1a8a7bd313c19a5b7e40970f3d89ef5a5c9e81e",
+      "files": 51,
+      "expanded_bytes": 152680
+    },
+    {
+      "name": "anstream",
+      "version": "0.6.21",
+      "archive_sha256": "43d5b281e737544384e969a5ccad3f1cdd24b48086a0fc1b2a5262a26b8f4f4a",
+      "files": 20,
+      "expanded_bytes": 125374
+    },
+    {
+      "name": "anstyle",
+      "version": "1.0.13",
+      "archive_sha256": "5192cca8006f1fd4f7237516f40fa183bb07f8fbdfedaa0036de5ea9b0b45e78",
+      "files": 14,
+      "expanded_bytes": 74796
+    },
+    {
+      "name": "anstyle-parse",
+      "version": "0.2.7",
+      "archive_sha256": "4e7644824f0aa2c7b9384579234ef10eb7efb6a0deb83f9630a49594dd9c15c2",
+      "files": 14,
+      "expanded_bytes": 103497
+    },
+    {
+      "name": "anstyle-query",
+      "version": "1.1.5",
+      "archive_sha256": "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc",
+      "files": 10,
+      "expanded_bytes": 29443
+    },
+    {
+      "name": "anstyle-wincon",
+      "version": "3.0.11",
+      "archive_sha256": "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d",
+      "files": 13,
+      "expanded_bytes": 44564
+    },
+    {
+      "name": "anyhow",
+      "version": "1.0.103",
+      "archive_sha256": "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3",
+      "files": 54,
+      "expanded_bytes": 234125
+    },
+    {
+      "name": "arrayref",
+      "version": "0.3.9",
+      "archive_sha256": "76a2e8124351fda1ef8aaaa3bbd7ebbcb486bbcd4225aca0aa0d84bb2db8fecb",
+      "files": 13,
+      "expanded_bytes": 30007
+    },
+    {
+      "name": "arrayvec",
+      "version": "0.7.6",
+      "archive_sha256": "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50",
+      "files": 21,
+      "expanded_bytes": 126479
+    },
+    {
+      "name": "asn1-rs",
+      "version": "0.7.1",
+      "archive_sha256": "56624a96882bb8c26d61312ae18cb45868e5a9992ea73c58e45c3101e56a1e60",
+      "files": 91,
+      "expanded_bytes": 459896
+    },
+    {
+      "name": "asn1-rs-derive",
+      "version": "0.6.0",
+      "archive_sha256": "3109e49b1e4909e9db6515a30c633684d68cdeaa252f215214cb4fa1a5bfee2c",
+      "files": 12,
+      "expanded_bytes": 44234
+    },
+    {
+      "name": "asn1-rs-impl",
+      "version": "0.2.0",
+      "archive_sha256": "7b18050c2cd6fe86c3a76584ef5e0baf286d038cda203eb6223df2cc413565f7",
+      "files": 5,
+      "expanded_bytes": 5662
+    },
+    {
+      "name": "assert-json-diff",
+      "version": "2.0.2",
+      "archive_sha256": "47e4f2b81832e72834d7518d8487a0396a28cc408186a2e8854c0f98011faf12",
+      "files": 14,
+      "expanded_bytes": 54028
+    },
+    {
+      "name": "assert_cmd",
+      "version": "2.1.2",
+      "archive_sha256": "9c5bcfa8749ac45dd12cb11055aeeb6b27a3895560d60d71e3c23bf979e60514",
+      "files": 18,
+      "expanded_bytes": 114609
+    },
+    {
+      "name": "assert_matches",
+      "version": "1.5.0",
+      "archive_sha256": "9b34d609dfbaf33d6889b2b7106d3ca345eacad44200913df5ba02bfd31d2ba9",
+      "files": 11,
+      "expanded_bytes": 25859
+    },
+    {
+      "name": "async-channel",
+      "version": "2.5.0",
+      "archive_sha256": "924ed96dd52d1b75e9c1a3e6275715fd320f5f9439fb5a4a11fa51f4221158d2",
+      "files": 11,
+      "expanded_bytes": 93415
+    },
+    {
+      "name": "async-trait",
+      "version": "0.1.89",
+      "archive_sha256": "9035ad2d096bed7955a320ee7e2230574d28fd3c3a0f186cbea1ff3c7eed5dbb",
+      "files": 53,
+      "expanded_bytes": 130443
+    },
+    {
+      "name": "asynk-strim",
+      "version": "0.1.5",
+      "archive_sha256": "52697735bdaac441a29391a9e97102c74c6ef0f9b60a40cf109b1b404e29d2f6",
+      "files": 11,
+      "expanded_bytes": 39516
+    },
+    {
+      "name": "atomic",
+      "version": "0.5.3",
+      "archive_sha256": "c59bdb34bc650a32731b31bd8f0829cc15d24a708ee31559e0bb34f2bc320cba",
+      "files": 11,
+      "expanded_bytes": 57388
+    },
+    {
+      "name": "atomic",
+      "version": "0.6.1",
+      "archive_sha256": "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340",
+      "files": 15,
+      "expanded_bytes": 66269
+    },
+    {
+      "name": "atomic-polyfill",
+      "version": "1.0.3",
+      "archive_sha256": "8cf2bce30dfe09ef0bfaef228b9d414faaf7e563035494d7fe092dba54b300f4",
+      "files": 16,
+      "expanded_bytes": 38842
+    },
+    {
+      "name": "atomic-waker",
+      "version": "1.1.2",
+      "archive_sha256": "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0",
+      "files": 11,
+      "expanded_bytes": 39099
+    },
+    {
+      "name": "autocfg",
+      "version": "1.5.0",
+      "archive_sha256": "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8",
+      "files": 24,
+      "expanded_bytes": 61273
+    },
+    {
+      "name": "aws-lc-rs",
+      "version": "1.18.1",
+      "archive_sha256": "b281d307588d634de920874890732659e2e7672f72b5e10e81badc1a8a83621e",
+      "files": 111,
+      "expanded_bytes": 1225492
+    },
+    {
+      "name": "aws-lc-sys",
+      "version": "0.45.0",
+      "archive_sha256": "9bff6c3b54fad79a2e60b8102caf565819711497c1f5f092f49508e2f5c31b27",
+      "files": 2029,
+      "expanded_bytes": 67030645
+    },
+    {
+      "name": "axum",
+      "version": "0.8.8",
+      "archive_sha256": "8b52af3cb4058c895d37317bb27508dccc8e5f2d39454016b297bf4a400597b8",
+      "files": 88,
+      "expanded_bytes": 835954
+    },
+    {
+      "name": "axum-core",
+      "version": "0.5.6",
+      "archive_sha256": "08c78f31d7b1291f7ee735c1c6780ccde7785daae9a9206026862dab7d8792d1",
+      "files": 25,
+      "expanded_bytes": 118616
+    },
+    {
+      "name": "base64",
+      "version": "0.22.1",
+      "archive_sha256": "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6",
+      "files": 38,
+      "expanded_bytes": 341982
+    },
+    {
+      "name": "beef",
+      "version": "0.5.2",
+      "archive_sha256": "3a8241f3ebb85c056b509d4327ad0358fbbba6ffb340bf388f26350aeda225b1",
+      "files": 20,
+      "expanded_bytes": 58640
+    },
+    {
+      "name": "bit-set",
+      "version": "0.8.0",
+      "archive_sha256": "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3",
+      "files": 12,
+      "expanded_bytes": 68194
+    },
+    {
+      "name": "bit-vec",
+      "version": "0.8.0",
+      "archive_sha256": "5e764a1d40d510daf35e07be9eb06e75770908c27d411ee6c92109c9840eaaf7",
+      "files": 14,
+      "expanded_bytes": 123587
+    },
+    {
+      "name": "bit-vec",
+      "version": "0.9.1",
+      "archive_sha256": "b71798fca2c1fe1086445a7258a4bc81e6e49dcd24c8d0dd9a1e57395b603f51",
+      "files": 14,
+      "expanded_bytes": 145642
+    },
+    {
+      "name": "bitflags",
+      "version": "1.3.2",
+      "archive_sha256": "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a",
+      "files": 38,
+      "expanded_bytes": 96170
+    },
+    {
+      "name": "bitflags",
+      "version": "2.13.1",
+      "archive_sha256": "b588b76d00fde79687d7646a9b5bdf3cc0f655e0bbd080335a95d7e96f3587da",
+      "files": 64,
+      "expanded_bytes": 244195
+    },
+    {
+      "name": "blake3",
+      "version": "1.8.2",
+      "archive_sha256": "3888aaa89e4b2a40fca9848e400f6a658a5a3978de7be858e209cafa8be9a4a0",
+      "files": 79,
+      "expanded_bytes": 1635484
+    },
+    {
+      "name": "block-buffer",
+      "version": "0.10.4",
+      "archive_sha256": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+      "files": 10,
+      "expanded_bytes": 35038
+    },
+    {
+      "name": "block2",
+      "version": "0.6.2",
+      "archive_sha256": "cdeb9d870516001442e364c5220d3574d2da8dc765554b4a617230d33fa58ef5",
+      "files": 17,
+      "expanded_bytes": 129370
+    },
+    {
+      "name": "borsh",
+      "version": "1.6.0",
+      "archive_sha256": "d1da5ab77c1437701eeff7c88d968729e7766172279eab0676857b3d63af7a6f",
+      "files": 93,
+      "expanded_bytes": 430936
+    },
+    {
+      "name": "bstr",
+      "version": "1.12.1",
+      "archive_sha256": "63044e1ae8e69f3b5a92c736ca6269b8d12fa7efe39bf34ddb06d102cf0e2cab",
+      "files": 61,
+      "expanded_bytes": 1671986
+    },
+    {
+      "name": "bumpalo",
+      "version": "3.19.1",
+      "archive_sha256": "5dd9dc738b7a8311c7ade152424974d8115f2cdad61e8dab8dac9f2362298510",
+      "files": 19,
+      "expanded_bytes": 417160
+    },
+    {
+      "name": "bytemuck",
+      "version": "1.25.0",
+      "archive_sha256": "c8efb64bd706a16a1bdde310ae86b351e4d21550d98d056f22f8a7f7a2183fec",
+      "files": 38,
+      "expanded_bytes": 228545
+    },
+    {
+      "name": "bytemuck_derive",
+      "version": "1.10.2",
+      "archive_sha256": "f9abbd1bc6865053c427f7198e6af43bfdedc55ab791faed4fbd361d789575ff",
+      "files": 12,
+      "expanded_bytes": 107609
+    },
+    {
+      "name": "byteorder",
+      "version": "1.5.0",
+      "archive_sha256": "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b",
+      "files": 14,
+      "expanded_bytes": 185488
+    },
+    {
+      "name": "byteorder-lite",
+      "version": "0.1.0",
+      "archive_sha256": "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495",
+      "files": 8,
+      "expanded_bytes": 145168
+    },
+    {
+      "name": "bytes",
+      "version": "1.12.1",
+      "archive_sha256": "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04",
+      "files": 40,
+      "expanded_bytes": 401619
+    },
+    {
+      "name": "capnp",
+      "version": "0.24.1",
+      "archive_sha256": "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67",
+      "files": 57,
+      "expanded_bytes": 1253583
+    },
+    {
+      "name": "capnpc",
+      "version": "0.24.0",
+      "archive_sha256": "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0",
+      "files": 14,
+      "expanded_bytes": 183795
+    },
+    {
+      "name": "cc",
+      "version": "1.2.55",
+      "archive_sha256": "47b26a0954ae34af09b50f0de26458fa95369a0d478d8236d3f93082b219bd29",
+      "files": 27,
+      "expanded_bytes": 384215
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.4",
+      "archive_sha256": "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801",
+      "files": 14,
+      "expanded_bytes": 25721
+    },
+    {
+      "name": "cfg-if",
+      "version": "1.0.5",
+      "archive_sha256": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600",
+      "files": 14,
+      "expanded_bytes": 26434
+    },
+    {
+      "name": "cfg_aliases",
+      "version": "0.1.1",
+      "archive_sha256": "fd16c4719339c4530435d38e511904438d07cce7950afa3718a84ac36c10e89e",
+      "files": 8,
+      "expanded_bytes": 21193
+    },
+    {
+      "name": "cfg_aliases",
+      "version": "0.2.1",
+      "archive_sha256": "613afe47fcd5fac7ccf1db93babcb082c5994d996f20b8b159f2ad1658eb5724",
+      "files": 9,
+      "expanded_bytes": 22440
+    },
+    {
+      "name": "chacha20",
+      "version": "0.10.2",
+      "archive_sha256": "65c35e4b699c7e15ccbe7ee35c005e4fc0a278d22238a2857e6ce2dadeda1b06",
+      "files": 25,
+      "expanded_bytes": 158505
+    },
+    {
+      "name": "chardetng",
+      "version": "0.1.17",
+      "archive_sha256": "14b8f0b65b7b08ae3c8187e8d77174de20cb6777864c6b832d8ad365999cf1ea",
+      "files": 12,
+      "expanded_bytes": 344524
+    },
+    {
+      "name": "chrono",
+      "version": "0.4.43",
+      "archive_sha256": "fac4744fb15ae8337dc853fee7fb3f4e48c0fbaa23d0afe49c447b4fab126118",
+      "files": 51,
+      "expanded_bytes": 1363888
+    },
+    {
+      "name": "clap",
+      "version": "4.5.58",
+      "archive_sha256": "63be97961acde393029492ce0be7a1af7e323e6bae9511ebfac33751be5e6806",
+      "files": 146,
+      "expanded_bytes": 261578
+    },
+    {
+      "name": "clap_builder",
+      "version": "4.5.58",
+      "archive_sha256": "7f13174bda5dfd69d7e947827e5af4b0f2f94a4a3ee92912fba07a66150f21e2",
+      "files": 63,
+      "expanded_bytes": 975043
+    },
+    {
+      "name": "clap_derive",
+      "version": "4.5.55",
+      "archive_sha256": "a92793da1a46a5f2a02a6f4c46c6496b28c43638adea8306fcb0caa1634f24e5",
+      "files": 23,
+      "expanded_bytes": 179917
+    },
+    {
+      "name": "clap_lex",
+      "version": "1.0.0",
+      "archive_sha256": "3a822ea5bc7590f9d40f1ba12c0dc3c2760f3482c6984db1573ad11031420831",
+      "files": 9,
+      "expanded_bytes": 45580
+    },
+    {
+      "name": "clipboard-win",
+      "version": "5.4.1",
+      "archive_sha256": "bde03770d3df201d4fb868f2c9c59e66a3e4e2bd06692a0fe701e7103c7e84d4",
+      "files": 17,
+      "expanded_bytes": 87647
+    },
+    {
+      "name": "cmake",
+      "version": "0.1.57",
+      "archive_sha256": "75443c44cd6b379beb8c5b45d85d0773baf31cce901fe7bb252f4eff3008ef7d",
+      "files": 14,
+      "expanded_bytes": 71102
+    },
+    {
+      "name": "cmp_any",
+      "version": "0.8.1",
+      "archive_sha256": "e9b18233253483ce2f65329a24072ec414db782531bdbb7d0bbc4bd2ce6b7e21",
+      "files": 7,
+      "expanded_bytes": 19375
+    },
+    {
+      "name": "cobs",
+      "version": "0.3.0",
+      "archive_sha256": "0fa961b519f0b462e3a3b4a34b64d119eeaca1d59af726fe450bbba07a9fc0a1",
+      "files": 14,
+      "expanded_bytes": 56985
+    },
+    {
+      "name": "color_quant",
+      "version": "1.1.0",
+      "archive_sha256": "3d7b894f5411737b7867f4827955924d7c254fc9f4d91a6aad6b097804b1018b",
+      "files": 10,
+      "expanded_bytes": 21282
+    },
+    {
+      "name": "colorchoice",
+      "version": "1.0.4",
+      "archive_sha256": "b05b61dc5112cbb17e4b6cd61790d9845d13888356391624cbe7e41efeac1e75",
+      "files": 8,
+      "expanded_bytes": 22131
+    },
+    {
+      "name": "combine",
+      "version": "4.6.7",
+      "archive_sha256": "ba5a308b75df32fe02788e748662718f03fde005016435c444eea572398219fd",
+      "files": 53,
+      "expanded_bytes": 719870
+    },
+    {
+      "name": "concurrent-queue",
+      "version": "2.5.0",
+      "archive_sha256": "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973",
+      "files": 17,
+      "expanded_bytes": 107576
+    },
+    {
+      "name": "condtype",
+      "version": "1.3.0",
+      "archive_sha256": "baf0a07a401f374238ab8e2f11a104d2851bf9ce711ec69804834de8af45c7af",
+      "files": 11,
+      "expanded_bytes": 39696
+    },
+    {
+      "name": "const-hex",
+      "version": "1.17.0",
+      "archive_sha256": "3bb320cac8a0750d7f25280aa97b09c26edfe161164238ecbbb31092b079e735",
+      "files": 23,
+      "expanded_bytes": 123773
+    },
+    {
+      "name": "const-oid",
+      "version": "0.9.6",
+      "archive_sha256": "c2459377285ad874054d797f3ccebf984978aa39129f6eafde5cdc8315b612f8",
+      "files": 16,
+      "expanded_bytes": 271751
+    },
+    {
+      "name": "const_format",
+      "version": "0.2.35",
+      "archive_sha256": "7faa7469a93a566e9ccc1c73fe783b4a65c274c5ace346038dca9c39fe0030ad",
+      "files": 57,
+      "expanded_bytes": 394403
+    },
+    {
+      "name": "const_format_proc_macros",
+      "version": "0.2.34",
+      "archive_sha256": "1d57c2eccfb16dbac1f4e61e206105db5820c9d26c3c472bc17c774259ef7744",
+      "files": 28,
+      "expanded_bytes": 107539
+    },
+    {
+      "name": "constant_time_eq",
+      "version": "0.3.1",
+      "archive_sha256": "7c74b8349d32d297c9134b8c88677813a227df8f779daa29bfc29c183fe3dca6",
+      "files": 13,
+      "expanded_bytes": 37792
+    },
+    {
+      "name": "convert_case",
+      "version": "0.6.0",
+      "archive_sha256": "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca",
+      "files": 13,
+      "expanded_bytes": 80878
+    },
+    {
+      "name": "cookie",
+      "version": "0.18.1",
+      "archive_sha256": "4ddef33a339a91ea89fb53151bd0a4689cfce27055c291dfa69945475d22c747",
+      "files": 25,
+      "expanded_bytes": 203911
+    },
+    {
+      "name": "cookie_store",
+      "version": "0.22.1",
+      "archive_sha256": "15b2c103cf610ec6cae3da84a766285b42fd16aad564758459e6ecf128c75206",
+      "files": 23,
+      "expanded_bytes": 194609
+    },
+    {
+      "name": "core-foundation",
+      "version": "0.10.1",
+      "archive_sha256": "b2a6cd9ae233e7f62ba4e9353e81a88df7fc8a5987b8d445b4d90c879bd156f6",
+      "files": 28,
+      "expanded_bytes": 134835
+    },
+    {
+      "name": "core-foundation",
+      "version": "0.9.4",
+      "archive_sha256": "91e195e091a93c46f7102ec7818a2aa394e1e1771c3ab4825963fa03e45afb8f",
+      "files": 27,
+      "expanded_bytes": 131600
+    },
+    {
+      "name": "core-foundation-sys",
+      "version": "0.8.7",
+      "archive_sha256": "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b",
+      "files": 45,
+      "expanded_bytes": 234052
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.2.17",
+      "archive_sha256": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+      "files": 16,
+      "expanded_bytes": 44343
+    },
+    {
+      "name": "cpufeatures",
+      "version": "0.3.0",
+      "archive_sha256": "8b2a41393f66f16b0823bb79094d54ac5fbd34ab292ddafb9a0456ac9f87d201",
+      "files": 16,
+      "expanded_bytes": 46443
+    },
+    {
+      "name": "crc",
+      "version": "3.4.0",
+      "archive_sha256": "5eb8a2a1cd12ab0d987a5d5e825195d372001a4094a0376319d5a0ad71c1ba0d",
+      "files": 19,
+      "expanded_bytes": 81690
+    },
+    {
+      "name": "crc-catalog",
+      "version": "2.4.0",
+      "archive_sha256": "19d374276b40fb8bbdee95aef7c7fa6b5316ec764510eb64b8dd0e2ed0d7e7f5",
+      "files": 11,
+      "expanded_bytes": 39702
+    },
+    {
+      "name": "crc32fast",
+      "version": "1.5.0",
+      "archive_sha256": "9481c1c90cbf2ac953f07c8d4a58aa3945c425b7185c9154d67a65e4230da511",
+      "files": 18,
+      "expanded_bytes": 104973
+    },
+    {
+      "name": "critical-section",
+      "version": "1.2.0",
+      "archive_sha256": "790eea4361631c5e7d22598ecd5723ff611904e3344ce8720784c93e3d83d40b",
+      "files": 18,
+      "expanded_bytes": 59388
+    },
+    {
+      "name": "crossbeam-channel",
+      "version": "0.5.15",
+      "archive_sha256": "82b8f8f868b36967f9606790d1903570de9ceaf870a7bf9fbbd3016d636a2cb2",
+      "files": 43,
+      "expanded_bytes": 602721
+    },
+    {
+      "name": "crossbeam-deque",
+      "version": "0.8.6",
+      "archive_sha256": "9dd111b7b7f7d55b72c0a6ae361660ee5853c9af73f70c3c2ef6858b950e2e51",
+      "files": 13,
+      "expanded_bytes": 129457
+    },
+    {
+      "name": "crossbeam-epoch",
+      "version": "0.9.20",
+      "archive_sha256": "2d6914041f254d6e9176c01941b21115dcfb7089e55135a35411081bd106ef3f",
+      "files": 26,
+      "expanded_bytes": 204792
+    },
+    {
+      "name": "crossbeam-utils",
+      "version": "0.8.21",
+      "archive_sha256": "d0a5c400df2834b80a4c3327b3aad3a4c4cd4de0629063962b03235697506a28",
+      "files": 31,
+      "expanded_bytes": 189439
+    },
+    {
+      "name": "crunchy",
+      "version": "0.2.4",
+      "archive_sha256": "460fbee9c2c2f33933d720630a6a0bac33ba7053db5344fac858d4b8952d77d5",
+      "files": 9,
+      "expanded_bytes": 11945
+    },
+    {
+      "name": "crypto-common",
+      "version": "0.1.7",
+      "archive_sha256": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+      "files": 9,
+      "expanded_bytes": 28565
+    },
+    {
+      "name": "csv",
+      "version": "1.4.0",
+      "archive_sha256": "52cd9d68cf7efc6ddfaaee42e7288d3a99d613d4b50f76ce9827ae0c6e14f938",
+      "files": 71,
+      "expanded_bytes": 6115205
+    },
+    {
+      "name": "csv-core",
+      "version": "0.1.13",
+      "archive_sha256": "704a3c26996a80471189265814dbc2c257598b96b8a7feae2d31ace646bb9782",
+      "files": 12,
+      "expanded_bytes": 120900
+    },
+    {
+      "name": "ctor",
+      "version": "0.6.3",
+      "archive_sha256": "424e0138278faeb2b401f174ad17e715c829512d74f3d1e81eb43365c2e0590e",
+      "files": 10,
+      "expanded_bytes": 56424
+    },
+    {
+      "name": "ctor",
+      "version": "1.0.6",
+      "archive_sha256": "6d765eb1c0bda10d31e0ea185f5ee15da532d60b0912d2bd1441783439e749c5",
+      "files": 26,
+      "expanded_bytes": 228835
+    },
+    {
+      "name": "ctor-proc-macro",
+      "version": "0.0.7",
+      "archive_sha256": "52560adf09603e58c9a7ee1fe1dcb95a16927b17c127f0ac02d6e768a0e25bc1",
+      "files": 8,
+      "expanded_bytes": 18028
+    },
+    {
+      "name": "darling",
+      "version": "0.21.3",
+      "archive_sha256": "9cdf337090841a411e2a7f3deb9187445851f91b309c0c0a29e05f74a00a48c0",
+      "files": 83,
+      "expanded_bytes": 157388
+    },
+    {
+      "name": "darling_core",
+      "version": "0.21.3",
+      "archive_sha256": "1247195ecd7e3c85f83c8d2a366e4210d588e802133e1e355180a9870b517ea4",
+      "files": 77,
+      "expanded_bytes": 340849
+    },
+    {
+      "name": "darling_macro",
+      "version": "0.21.3",
+      "archive_sha256": "d38308df82d1080de0afee5d069fa14b0326a88c14f15c5ccda35b4a6c414c81",
+      "files": 6,
+      "expanded_bytes": 6068
+    },
+    {
+      "name": "dashmap",
+      "version": "6.1.0",
+      "archive_sha256": "5041cc499144891f3790297212f32a74fb938e5136a14943f338ef9e0ae276cf",
+      "files": 29,
+      "expanded_bytes": 133379
+    },
+    {
+      "name": "data-encoding",
+      "version": "2.10.0",
+      "archive_sha256": "d7a1e2f27636f116493b8b860f5546edb47c8d8f8ea73e1d2a20be88e28d1fea",
+      "files": 7,
+      "expanded_bytes": 132463
+    },
+    {
+      "name": "deadpool",
+      "version": "0.12.3",
+      "archive_sha256": "0be2b1d1d6ec8d846f05e137292d0b89133caf95ef33695424c09568bdd39b1b",
+      "files": 37,
+      "expanded_bytes": 184184
+    },
+    {
+      "name": "deadpool-runtime",
+      "version": "0.1.4",
+      "archive_sha256": "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b",
+      "files": 8,
+      "expanded_bytes": 21141
+    },
+    {
+      "name": "debugserver-types",
+      "version": "0.5.0",
+      "archive_sha256": "2bf6834a70ed14e8e4e41882df27190bea150f1f6ecf461f1033f8739cd8af4a",
+      "files": 9,
+      "expanded_bytes": 114380
+    },
+    {
+      "name": "der-parser",
+      "version": "10.0.0",
+      "archive_sha256": "07da5016415d5a3c4dd39b11ed26f915f52fc4e0dc197d87908bc916e51bc1a6",
+      "files": 40,
+      "expanded_bytes": 334883
+    },
+    {
+      "name": "deranged",
+      "version": "0.5.5",
+      "archive_sha256": "ececcb659e7ba858fb4f10388c250a7252eb0a27373f1a72b8748afdd248e587",
+      "files": 10,
+      "expanded_bytes": 135784
+    },
+    {
+      "name": "derivative",
+      "version": "2.2.0",
+      "archive_sha256": "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b",
+      "files": 126,
+      "expanded_bytes": 259859
+    },
+    {
+      "name": "derive_more",
+      "version": "1.0.0",
+      "archive_sha256": "4a9b99b9cbbe49445b21764dc0625032a89b145a2642e67603e1c936f5458d05",
+      "files": 141,
+      "expanded_bytes": 537035
+    },
+    {
+      "name": "derive_more-impl",
+      "version": "1.0.0",
+      "archive_sha256": "cb7330aeadfbe296029522e6c40f315320aba36fc43a5b3632f3795348f3bd22",
+      "files": 63,
+      "expanded_bytes": 396964
+    },
+    {
+      "name": "diff",
+      "version": "0.1.13",
+      "archive_sha256": "56254986775e3233ffa9c4d7d3faaf6d36a2c09d30b20687e9f88bc8bafc16c8",
+      "files": 16,
+      "expanded_bytes": 950838
+    },
+    {
+      "name": "difflib",
+      "version": "0.4.0",
+      "archive_sha256": "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8",
+      "files": 8,
+      "expanded_bytes": 38418
+    },
+    {
+      "name": "digest",
+      "version": "0.10.7",
+      "archive_sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+      "files": 21,
+      "expanded_bytes": 87395
+    },
+    {
+      "name": "dirs",
+      "version": "6.0.0",
+      "archive_sha256": "c3e8aa94d75141228480295a7d0e7feb620b1a5ad9f12bc40be62411e38cce4e",
+      "files": 14,
+      "expanded_bytes": 56329
+    },
+    {
+      "name": "dirs-next",
+      "version": "2.0.0",
+      "archive_sha256": "b98cf8ebf19c3d1b223e151f99a4f9f0690dca41414773390fc824184ac833e1",
+      "files": 12,
+      "expanded_bytes": 45324
+    },
+    {
+      "name": "dirs-sys",
+      "version": "0.5.0",
+      "archive_sha256": "e01a3366d27ee9890022452ee61b2b63a67e6f13f58900b651ff5665f0bb1fab",
+      "files": 11,
+      "expanded_bytes": 31040
+    },
+    {
+      "name": "dirs-sys-next",
+      "version": "0.1.2",
+      "archive_sha256": "4ebda144c4fe02d1f7ea1a7d9641b6fc6b580adcfa024ae48797ecdeb6825b4d",
+      "files": 9,
+      "expanded_bytes": 32357
+    },
+    {
+      "name": "dispatch2",
+      "version": "0.3.0",
+      "archive_sha256": "89a09f22a6c6069a18470eb92d2298acf25463f14256d24778e1230d789a2aec",
+      "files": 26,
+      "expanded_bytes": 288334
+    },
+    {
+      "name": "display_container",
+      "version": "0.9.0",
+      "archive_sha256": "0a110a75c96bedec8e65823dea00a1d710288b7a369d95fd8a0f5127639466fa",
+      "files": 3,
+      "expanded_bytes": 11470
+    },
+    {
+      "name": "displaydoc",
+      "version": "0.2.5",
+      "archive_sha256": "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0",
+      "files": 39,
+      "expanded_bytes": 91904
+    },
+    {
+      "name": "divan",
+      "version": "0.1.21",
+      "archive_sha256": "a405457ec78b8fe08b0e32b4a3570ab5dff6dd16eb9e76a5ee0a9d9cbd898933",
+      "files": 61,
+      "expanded_bytes": 399781
+    },
+    {
+      "name": "divan-macros",
+      "version": "0.1.21",
+      "archive_sha256": "9556bc800956545d6420a640173e5ba7dfa82f38d3ea5a167eb555bc69ac3323",
+      "files": 10,
+      "expanded_bytes": 55257
+    },
+    {
+      "name": "document-features",
+      "version": "0.2.12",
+      "archive_sha256": "d4b8a88685455ed29a21542a33abd9cb6510b6b129abadabdcef0f4c55bc8f61",
+      "files": 13,
+      "expanded_bytes": 50504
+    },
+    {
+      "name": "downcast-rs",
+      "version": "1.2.1",
+      "archive_sha256": "75b325c5dbd37f80359721ad39aca5a29fb04c89279657cffdda8736d0c0b9d2",
+      "files": 13,
+      "expanded_bytes": 49076
+    },
+    {
+      "name": "dtor",
+      "version": "0.1.1",
+      "archive_sha256": "404d02eeb088a82cfd873006cb713fe411306c7d182c344905e101fb1167d301",
+      "files": 10,
+      "expanded_bytes": 44535
+    },
+    {
+      "name": "dtor-proc-macro",
+      "version": "0.0.6",
+      "archive_sha256": "f678cf4a922c215c63e0de95eb1ff08a958a81d47e485cf9da1e27bf6305cfa5",
+      "files": 8,
+      "expanded_bytes": 18146
+    },
+    {
+      "name": "dunce",
+      "version": "1.0.5",
+      "archive_sha256": "92773504d58c093f6de2459af4af33faa518c13451eb8f2b5698ed3d36e7c813",
+      "files": 9,
+      "expanded_bytes": 23094
+    },
+    {
+      "name": "dupe",
+      "version": "0.9.1",
+      "archive_sha256": "6ed2bc011db9c93fbc2b6cdb341a53737a55bafb46dbb74cf6764fc33a2fbf9c",
+      "files": 8,
+      "expanded_bytes": 23471
+    },
+    {
+      "name": "dupe_derive",
+      "version": "0.9.1",
+      "archive_sha256": "83e195b4945e88836d826124af44fdcb262ec01ef94d44f14f4fb5103f19892a",
+      "files": 9,
+      "expanded_bytes": 24960
+    },
+    {
+      "name": "dyn-clone",
+      "version": "1.0.20",
+      "archive_sha256": "d0881ea181b1df73ff77ffaaf9c7544ecc11e82fba9b5f27b262a3c73a332555",
+      "files": 18,
+      "expanded_bytes": 44605
+    },
+    {
+      "name": "either",
+      "version": "1.15.0",
+      "archive_sha256": "48c757948c5ede0e46177b7add2e67155f70e33c07fea8284df6576da70b3719",
+      "files": 15,
+      "expanded_bytes": 82181
+    },
+    {
+      "name": "embedded-io",
+      "version": "0.4.0",
+      "archive_sha256": "ef1a6892d9eef45c8fa6b9e0086428a2cca8491aca8f787c534a3d6d0bcb3ced",
+      "files": 19,
+      "expanded_bytes": 53116
+    },
+    {
+      "name": "embedded-io",
+      "version": "0.6.1",
+      "archive_sha256": "edd0f118536f44f5ccd48bcb8b111bdc3de888b58c74639dfb034a357d0f206d",
+      "files": 13,
+      "expanded_bytes": 44186
+    },
+    {
+      "name": "embedded-io",
+      "version": "0.7.1",
+      "archive_sha256": "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7",
+      "files": 15,
+      "expanded_bytes": 56471
+    },
+    {
+      "name": "encoding_rs",
+      "version": "0.8.35",
+      "archive_sha256": "75030f3c4f45dafd7586dd6780965a8c7e8e285a5ecb86713e63a79c5b2766f3",
+      "files": 102,
+      "expanded_bytes": 5072401
+    },
+    {
+      "name": "endian-type",
+      "version": "0.1.2",
+      "archive_sha256": "c34f04666d835ff5d62e058c3995147c06f42fe86ff053337632bca83e42702d",
+      "files": 4,
+      "expanded_bytes": 5979
+    },
+    {
+      "name": "endian-type",
+      "version": "0.2.0",
+      "archive_sha256": "869b0adbda23651a9c5c0c3d270aac9fcb52e8622a8f2b17e57802d7791962f2",
+      "files": 7,
+      "expanded_bytes": 14304
+    },
+    {
+      "name": "enum-as-inner",
+      "version": "0.6.1",
+      "archive_sha256": "a1e6a265c649f3f5979b601d26f1d05ada116434c87741c9493cb56218f76cbc",
+      "files": 19,
+      "expanded_bytes": 47394
+    },
+    {
+      "name": "enumflags2",
+      "version": "0.7.12",
+      "archive_sha256": "1027f7680c853e056ebcec683615fb6fbbc07dbaa13b4d5d9442b146ded4ecef",
+      "files": 14,
+      "expanded_bytes": 66983
+    },
+    {
+      "name": "enumflags2_derive",
+      "version": "0.7.12",
+      "archive_sha256": "67c78a4d8fdf9953a5c9d458f9efe940fd97a0cab0941c075a813ac594733827",
+      "files": 7,
+      "expanded_bytes": 25015
+    },
+    {
+      "name": "env_filter",
+      "version": "1.0.0",
+      "archive_sha256": "7a1c3cc8e57274ec99de65301228b537f1e4eedc1b8e0f9411c6caac8ae7308f",
+      "files": 13,
+      "expanded_bytes": 68679
+    },
+    {
+      "name": "env_logger",
+      "version": "0.11.9",
+      "archive_sha256": "b2daee4ea451f429a58296525ddf28b45a3b64f1acf6587e2067437bb11e218d",
+      "files": 22,
+      "expanded_bytes": 135292
+    },
+    {
+      "name": "equivalent",
+      "version": "1.0.2",
+      "archive_sha256": "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f",
+      "files": 10,
+      "expanded_bytes": 19223
+    },
+    {
+      "name": "erased-serde",
+      "version": "0.3.31",
+      "archive_sha256": "6c138974f9d5e7fe373eb04df7cae98833802ae4b11c24ac7039a21d5af4b26c",
+      "files": 24,
+      "expanded_bytes": 149500
+    },
+    {
+      "name": "erased-serde",
+      "version": "0.4.10",
+      "archive_sha256": "d2add8a07dd6a8d93ff627029c51de145e12686fbc36ecb298ac22e74cf02dec",
+      "files": 27,
+      "expanded_bytes": 177512
+    },
+    {
+      "name": "errno",
+      "version": "0.3.14",
+      "archive_sha256": "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb",
+      "files": 18,
+      "expanded_bytes": 37652
+    },
+    {
+      "name": "error-code",
+      "version": "3.3.2",
+      "archive_sha256": "dea2df4cf52843e0452895c455a1a2cfbb842a1e7329671acf418fdc53ed4c59",
+      "files": 13,
+      "expanded_bytes": 28998
+    },
+    {
+      "name": "event-listener",
+      "version": "5.4.1",
+      "archive_sha256": "e13b66accf52311f30a0db42147dadea9850cb48cd070028831ae5f5d4b856ab",
+      "files": 17,
+      "expanded_bytes": 198997
+    },
+    {
+      "name": "event-listener-strategy",
+      "version": "0.5.4",
+      "archive_sha256": "8be9f3dfaaffdae2972880079a491a1a8bb7cbed0b8dd7a347f668b4150a3b93",
+      "files": 10,
+      "expanded_bytes": 56217
+    },
+    {
+      "name": "eventsource-stream",
+      "version": "0.2.3",
+      "archive_sha256": "74fef4569247a5f429d9156b9d0a2599914385dd189c539334c625d8099d90ab",
+      "files": 16,
+      "expanded_bytes": 60010
+    },
+    {
+      "name": "fancy-regex",
+      "version": "0.16.2",
+      "archive_sha256": "998b056554fbe42e03ae0e152895cd1a7e1002aec800fdc6635d20270260c46f",
+      "files": 36,
+      "expanded_bytes": 462884
+    },
+    {
+      "name": "fastrand",
+      "version": "2.3.0",
+      "archive_sha256": "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be",
+      "files": 12,
+      "expanded_bytes": 52883
+    },
+    {
+      "name": "fax",
+      "version": "0.2.6",
+      "archive_sha256": "f05de7d48f37cd6730705cbca900770cab77a89f413d23e100ad7fad7795a0ab",
+      "files": 17,
+      "expanded_bytes": 49986
+    },
+    {
+      "name": "fax_derive",
+      "version": "0.2.0",
+      "archive_sha256": "a0aca10fb742cb43f9e7bb8467c91aa9bcb8e3ffbc6a6f7389bb93ffc920577d",
+      "files": 5,
+      "expanded_bytes": 14434
+    },
+    {
+      "name": "fd-lock",
+      "version": "4.0.4",
+      "archive_sha256": "0ce92ff622d6dadf7349484f42c93271a0d49b7cc4d466a936405bacbe10aa78",
+      "files": 31,
+      "expanded_bytes": 52478
+    },
+    {
+      "name": "fdeflate",
+      "version": "0.3.7",
+      "archive_sha256": "1e6853b52649d4ac5c0bd02320cddc5ba956bdb407c4b75a2c6b75bf51500f8c",
+      "files": 16,
+      "expanded_bytes": 108270
+    },
+    {
+      "name": "filedescriptor",
+      "version": "0.8.3",
+      "archive_sha256": "e40758ed24c9b2eeb76c35fb0aebc66c626084edd827e07e1552279814c6682d",
+      "files": 9,
+      "expanded_bytes": 57302
+    },
+    {
+      "name": "find-msvc-tools",
+      "version": "0.1.9",
+      "archive_sha256": "5baebc0774151f905a1a2cc41989300b1e6fbb29aff0ceffa1064fdd3088d582",
+      "files": 18,
+      "expanded_bytes": 116366
+    },
+    {
+      "name": "fixed_decimal",
+      "version": "0.7.2",
+      "archive_sha256": "79c3c892f121fff406e5dd6b28c1b30096b95111c30701a899d4f2b18da6d1bd",
+      "files": 20,
+      "expanded_bytes": 363161
+    },
+    {
+      "name": "flate2",
+      "version": "1.1.8",
+      "archive_sha256": "b375d6465b98090a5f25b1c7703f3859783755aa9a80433b36e0379a3ec2f369",
+      "files": 64,
+      "expanded_bytes": 326804
+    },
+    {
+      "name": "float-cmp",
+      "version": "0.10.0",
+      "archive_sha256": "b09cf3155332e944990140d967ff5eceb70df778b34f77d8075db46e4704e6d8",
+      "files": 13,
+      "expanded_bytes": 49202
+    },
+    {
+      "name": "fluent-uri",
+      "version": "0.1.4",
+      "archive_sha256": "17c704e9dbe1ddd863da1e6ff3567795087b1eb201ce80d8fa81162e1516500d",
+      "files": 23,
+      "expanded_bytes": 163135
+    },
+    {
+      "name": "flume",
+      "version": "0.12.0",
+      "archive_sha256": "5e139bc46ca777eb5efaf62df0ab8cc5fd400866427e56c68b22e414e53bd3be",
+      "files": 37,
+      "expanded_bytes": 432966
+    },
+    {
+      "name": "fnv",
+      "version": "1.0.7",
+      "archive_sha256": "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1",
+      "files": 9,
+      "expanded_bytes": 34902
+    },
+    {
+      "name": "foldhash",
+      "version": "0.1.5",
+      "archive_sha256": "d9c4f5dac5e15c24eb999c26181a6ca40b39fe946cbe4c263c7209467bc83af2",
+      "files": 12,
+      "expanded_bytes": 80182
+    },
+    {
+      "name": "foldhash",
+      "version": "0.2.0",
+      "archive_sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb",
+      "files": 12,
+      "expanded_bytes": 84890
+    },
+    {
+      "name": "foreign-types",
+      "version": "0.3.2",
+      "archive_sha256": "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1",
+      "files": 6,
+      "expanded_bytes": 22746
+    },
+    {
+      "name": "foreign-types-shared",
+      "version": "0.1.1",
+      "archive_sha256": "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b",
+      "files": 5,
+      "expanded_bytes": 14971
+    },
+    {
+      "name": "form_urlencoded",
+      "version": "1.2.2",
+      "archive_sha256": "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf",
+      "files": 7,
+      "expanded_bytes": 27872
+    },
+    {
+      "name": "fs_extra",
+      "version": "1.3.0",
+      "archive_sha256": "42703706b716c37f96a77aea830392ad231f44c9e9a67872fa5548707e11b11c",
+      "files": 12,
+      "expanded_bytes": 436263
+    },
+    {
+      "name": "futures",
+      "version": "0.3.34",
+      "archive_sha256": "9a31d2a3fbaaeb2af2368bbdd904aa8e812d3c04a1ee10d3171f52d556e5d0a3",
+      "files": 68,
+      "expanded_bytes": 362809
+    },
+    {
+      "name": "futures-channel",
+      "version": "0.3.34",
+      "archive_sha256": "b1f9e3d69d39e4862ffed03ed071a76f9a13ba1d9109d355b0f0aa6b15e393c4",
+      "files": 19,
+      "expanded_bytes": 141730
+    },
+    {
+      "name": "futures-core",
+      "version": "0.3.34",
+      "archive_sha256": "92d699e522242e69e3003b94ecc1f960f3a5e015aa7c5d7486e65ad01dd94f5e",
+      "files": 14,
+      "expanded_bytes": 46877
+    },
+    {
+      "name": "futures-executor",
+      "version": "0.3.34",
+      "archive_sha256": "031b47cf1a3c6cc8bc2fc76cd437f521619387907d469316e7c0bc278f1f5432",
+      "files": 14,
+      "expanded_bytes": 67581
+    },
+    {
+      "name": "futures-io",
+      "version": "0.3.34",
+      "archive_sha256": "53c0fa8157de1303bfffdaa1cc2a673bfffb60102f76b0ef4441659124373fed",
+      "files": 8,
+      "expanded_bytes": 35716
+    },
+    {
+      "name": "futures-macro",
+      "version": "0.3.34",
+      "archive_sha256": "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44",
+      "files": 11,
+      "expanded_bytes": 40699
+    },
+    {
+      "name": "futures-sink",
+      "version": "0.3.34",
+      "archive_sha256": "1944426bf7d03f1d14f708785e4b33efd750b36d48a157b836b3efc15ede8e1d",
+      "files": 8,
+      "expanded_bytes": 23773
+    },
+    {
+      "name": "futures-task",
+      "version": "0.3.34",
+      "archive_sha256": "cd417de3d1d015fc3bfd2b1ea46dfc7bab72ef86f1cc7cc9c78e728b34a6d1fd",
+      "files": 14,
+      "expanded_bytes": 40308
+    },
+    {
+      "name": "futures-util",
+      "version": "0.3.34",
+      "archive_sha256": "0d50a92467f8ba5dd6e3ee5d4bd04d73ab2e4e1c44474a0674821dfce14b79bc",
+      "files": 193,
+      "expanded_bytes": 879393
+    },
+    {
+      "name": "fxhash",
+      "version": "0.2.1",
+      "archive_sha256": "c31b6d751ae2c7f11320402d34e41349dd1016f8d5d45e48c4312bc8625af50c",
+      "files": 6,
+      "expanded_bytes": 15812
+    },
+    {
+      "name": "generator",
+      "version": "0.8.8",
+      "archive_sha256": "52f04ae4152da20c76fe800fa48659201d5cf627c5149ca0b707b69d7eef6cf9",
+      "files": 52,
+      "expanded_bytes": 173239
+    },
+    {
+      "name": "generic-array",
+      "version": "0.14.7",
+      "archive_sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+      "files": 16,
+      "expanded_bytes": 67822
+    },
+    {
+      "name": "gethostname",
+      "version": "1.1.0",
+      "archive_sha256": "1bd49230192a3797a9a4d6abe9b3eed6f7fa4c8a8a4947977c6f80025f92cbd8",
+      "files": 11,
+      "expanded_bytes": 28736
+    },
+    {
+      "name": "getrandom",
+      "version": "0.2.17",
+      "archive_sha256": "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0",
+      "files": 38,
+      "expanded_bytes": 129665
+    },
+    {
+      "name": "getrandom",
+      "version": "0.3.4",
+      "archive_sha256": "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd",
+      "files": 43,
+      "expanded_bytes": 176212
+    },
+    {
+      "name": "getrandom",
+      "version": "0.4.2",
+      "archive_sha256": "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555",
+      "files": 48,
+      "expanded_bytes": 190385
+    },
+    {
+      "name": "gif",
+      "version": "0.14.1",
+      "archive_sha256": "f5df2ba84018d80c213569363bdcd0c64e6933c67fe4c1d60ecf822971a3c35e",
+      "files": 16,
+      "expanded_bytes": 147944
+    },
+    {
+      "name": "gix-path",
+      "version": "0.11.2",
+      "archive_sha256": "09c31d4373bda7fab9eb01822927b55185a378d6e1bf737e0a54c743ad806658",
+      "files": 16,
+      "expanded_bytes": 125104
+    },
+    {
+      "name": "gix-trace",
+      "version": "0.1.18",
+      "archive_sha256": "f69a13643b8437d4ca6845e08143e847a36ca82903eed13303475d0ae8b162e0",
+      "files": 9,
+      "expanded_bytes": 43192
+    },
+    {
+      "name": "gix-url",
+      "version": "0.35.2",
+      "archive_sha256": "d28e8af3d42581190da884f013caf254d2fd4d6ab102408f08d21bfa11de6c8d",
+      "files": 12,
+      "expanded_bytes": 78115
+    },
+    {
+      "name": "gix-validate",
+      "version": "0.11.0",
+      "archive_sha256": "0ec1eff98d91941f47766367cba1be746bab662bad761d9891ae6f7882f7840b",
+      "files": 11,
+      "expanded_bytes": 44279
+    },
+    {
+      "name": "glob",
+      "version": "0.3.3",
+      "archive_sha256": "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280",
+      "files": 15,
+      "expanded_bytes": 92030
+    },
+    {
+      "name": "globset",
+      "version": "0.4.18",
+      "archive_sha256": "52dfc19153a48bde0cbd630453615c8151bce3a5adfac7a0aebfbf0a1e1f57e3",
+      "files": 14,
+      "expanded_bytes": 121792
+    },
+    {
+      "name": "h2",
+      "version": "0.4.16",
+      "archive_sha256": "a9f37a958b41b3b19ee2707c06439c0e9e547e847223eb791ecb0cb821c65e27",
+      "files": 67,
+      "expanded_bytes": 810901
+    },
+    {
+      "name": "half",
+      "version": "2.7.1",
+      "archive_sha256": "6ea2d84b969582b4b1864a92dc5d27cd2b77b622a8d79306834f1be5ba20d84b",
+      "files": 24,
+      "expanded_bytes": 342696
+    },
+    {
+      "name": "hash32",
+      "version": "0.2.1",
+      "archive_sha256": "b0c35f58762feb77d74ebe43bdbc3210f09be9fe6742234d573bacc26ed92b67",
+      "files": 17,
+      "expanded_bytes": 32282
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.12.3",
+      "archive_sha256": "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888",
+      "files": 33,
+      "expanded_bytes": 591002
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.14.5",
+      "archive_sha256": "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1",
+      "files": 41,
+      "expanded_bytes": 832583
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.15.5",
+      "archive_sha256": "9229cfe53dfd69f0609a49f65461bd93001ea1ef889cd5529dd176593f5338a1",
+      "files": 46,
+      "expanded_bytes": 819655
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.16.1",
+      "archive_sha256": "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100",
+      "files": 48,
+      "expanded_bytes": 862972
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "archive_sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a",
+      "files": 50,
+      "expanded_bytes": 889648
+    },
+    {
+      "name": "headers",
+      "version": "0.4.1",
+      "archive_sha256": "b3314d5adb5d94bcdf56771f2e50dbbc80bb4bdf88967526706205ac9eff24eb",
+      "files": 86,
+      "expanded_bytes": 321402
+    },
+    {
+      "name": "headers-core",
+      "version": "0.3.0",
+      "archive_sha256": "54b4a22553d4242c49fddb9ba998a99962b5cc6f22cb5a3482bec22522403ce4",
+      "files": 6,
+      "expanded_bytes": 4196
+    },
+    {
+      "name": "heapless",
+      "version": "0.7.17",
+      "archive_sha256": "cdc6457c0eb62c71aac4bc17216026d8410337c4126773b9c5daba343f17964f",
+      "files": 40,
+      "expanded_bytes": 370927
+    },
+    {
+      "name": "heck",
+      "version": "0.5.0",
+      "archive_sha256": "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea",
+      "files": 16,
+      "expanded_bytes": 43332
+    },
+    {
+      "name": "hermit-abi",
+      "version": "0.5.2",
+      "archive_sha256": "fc0fef456e4baa96da950455cd02c081ca953b141298e41db3fc7e36b1da849c",
+      "files": 9,
+      "expanded_bytes": 56529
+    },
+    {
+      "name": "hex",
+      "version": "0.4.3",
+      "archive_sha256": "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70",
+      "files": 16,
+      "expanded_bytes": 42658
+    },
+    {
+      "name": "hickory-proto",
+      "version": "0.25.2",
+      "archive_sha256": "f8a6fe56c0038198998a6f217ca4e7ef3a5e51f46163bd6dd60b5c71ca6c6502",
+      "files": 171,
+      "expanded_bytes": 2048604
+    },
+    {
+      "name": "hickory-resolver",
+      "version": "0.25.2",
+      "archive_sha256": "dc62a9a99b0bfb44d2ab95a7208ac952d31060efc16241c87eaf36406fecf87a",
+      "files": 39,
+      "expanded_bytes": 425224
+    },
+    {
+      "name": "home",
+      "version": "0.5.12",
+      "archive_sha256": "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d",
+      "files": 10,
+      "expanded_bytes": 27962
+    },
+    {
+      "name": "http",
+      "version": "1.4.0",
+      "archive_sha256": "e3ba2a386d7f85a81f119ad7498ebe444d2e22c2af0b86b069416ace48b3311a",
+      "files": 35,
+      "expanded_bytes": 503488
+    },
+    {
+      "name": "http-body",
+      "version": "1.0.1",
+      "archive_sha256": "1efedce1fb8e6913f23e0c92de8e62cd5b772a67e7b3946df930a62566c93184",
+      "files": 10,
+      "expanded_bytes": 18656
+    },
+    {
+      "name": "http-body-util",
+      "version": "0.1.3",
+      "archive_sha256": "b021d93e26becf5dc7e1b75b1bed1fd93124b374ceb73f43d4d4eafec896a64a",
+      "files": 23,
+      "expanded_bytes": 74178
+    },
+    {
+      "name": "http-range-header",
+      "version": "0.4.2",
+      "archive_sha256": "9171a2ea8a68358193d15dd5d70c1c10a2afc3e7e4c5bc92bc9f025cebd7359c",
+      "files": 9,
+      "expanded_bytes": 35578
+    },
+    {
+      "name": "httparse",
+      "version": "1.10.1",
+      "archive_sha256": "6dbf3de79e51f3d586ab4cb9d5c3e2c14aa28ed23d180cf89b4df0454a69cc87",
+      "files": 25,
+      "expanded_bytes": 303724
+    },
+    {
+      "name": "httpdate",
+      "version": "1.0.3",
+      "archive_sha256": "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9",
+      "files": 11,
+      "expanded_bytes": 32923
+    },
+    {
+      "name": "hyper",
+      "version": "1.8.1",
+      "archive_sha256": "2ab2d4f250c3d7b1c9fcdff1cece94ea4e2dfbec68614f7b87cb205f24ca9d11",
+      "files": 69,
+      "expanded_bytes": 730944
+    },
+    {
+      "name": "hyper-rustls",
+      "version": "0.27.7",
+      "archive_sha256": "e3c93eb611681b207e1fe55d5a71ecf91572ec8a6705cdb6857f7d8d5242cf58",
+      "files": 26,
+      "expanded_bytes": 119057
+    },
+    {
+      "name": "hyper-timeout",
+      "version": "0.5.2",
+      "archive_sha256": "2b90d566bffbce6a75bd8b09a05aa8c2cb1fabb6cb348f8840c9e4c90a0d83b0",
+      "files": 13,
+      "expanded_bytes": 72409
+    },
+    {
+      "name": "hyper-tls",
+      "version": "0.6.0",
+      "archive_sha256": "70206fc6890eaca9fde8a0bf71caa2ddfc9fe045ac9e5c70df101a7dbde866e0",
+      "files": 13,
+      "expanded_bytes": 48326
+    },
+    {
+      "name": "hyper-util",
+      "version": "0.1.20",
+      "archive_sha256": "96547c2556ec9d12fb1578c4eaf448b04993e7fb79cbaad930a656880a6bdfa0",
+      "files": 61,
+      "expanded_bytes": 532469
+    },
+    {
+      "name": "iana-time-zone",
+      "version": "0.1.65",
+      "archive_sha256": "e31bc9ad994ba00e440a8aa5c9ef0ec67d5cb5e5cb0cc7f8b744a35b389cc470",
+      "files": 37,
+      "expanded_bytes": 180512
+    },
+    {
+      "name": "iana-time-zone-haiku",
+      "version": "0.1.2",
+      "archive_sha256": "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f",
+      "files": 9,
+      "expanded_bytes": 18662
+    },
+    {
+      "name": "icu_collections",
+      "version": "2.2.0",
+      "archive_sha256": "2984d1cd16c883d7935b9e07e44071dca8d917fd52ecc02c04d5fa0b5a3f191c",
+      "files": 75,
+      "expanded_bytes": 691670
+    },
+    {
+      "name": "icu_decimal",
+      "version": "2.2.0",
+      "archive_sha256": "288247df2e32aa776ac54fdd64de552149ac43cb840f2761811f0e8d09719dd4",
+      "files": 17,
+      "expanded_bytes": 118417
+    },
+    {
+      "name": "icu_decimal_data",
+      "version": "2.2.0",
+      "archive_sha256": "6f14a5ca9e8af29eef62064f269078424283d90dbaffeac5225addf62aaabc22",
+      "files": 13,
+      "expanded_bytes": 135553
+    },
+    {
+      "name": "icu_locale",
+      "version": "2.2.0",
+      "archive_sha256": "d5a396343c7208121dc86e35623d3dfe19814a7613cfd14964994cdc9c9a2e26",
+      "files": 22,
+      "expanded_bytes": 171253
+    },
+    {
+      "name": "icu_locale_core",
+      "version": "2.2.0",
+      "archive_sha256": "92219b62b3e2b4d88ac5119f8904c10f8f61bf7e95b640d25ba3075e6cac2c29",
+      "files": 87,
+      "expanded_bytes": 409821
+    },
+    {
+      "name": "icu_locale_data",
+      "version": "2.2.0",
+      "archive_sha256": "d5fdcc9ac77c6d74ff5cf6e65ef3181d6af32003b16fce3a77fb451d2f695993",
+      "files": 20,
+      "expanded_bytes": 731180
+    },
+    {
+      "name": "icu_normalizer",
+      "version": "2.2.0",
+      "archive_sha256": "c56e5ee99d6e3d33bd91c5d85458b6005a22140021cc324cea84dd0e72cff3b4",
+      "files": 39,
+      "expanded_bytes": 398992
+    },
+    {
+      "name": "icu_normalizer_data",
+      "version": "2.2.0",
+      "archive_sha256": "da3be0ae77ea334f4da67c12f149704f19f81d1adf7c51cf482943e84a2bad38",
+      "files": 16,
+      "expanded_bytes": 417763
+    },
+    {
+      "name": "icu_plurals",
+      "version": "2.2.0",
+      "archive_sha256": "2a50023f1d49ad5c4333380328a0d4a19e4b9d6d842ec06639affd5ba47c8103",
+      "files": 36,
+      "expanded_bytes": 245085
+    },
+    {
+      "name": "icu_plurals_data",
+      "version": "2.2.0",
+      "archive_sha256": "8485497155dc865f901decb93ecc20d3e467df67bfeceb91e3ba34e2b11e8e1d",
+      "files": 12,
+      "expanded_bytes": 56566
+    },
+    {
+      "name": "icu_properties",
+      "version": "2.2.0",
+      "archive_sha256": "bee3b67d0ea5c2cca5003417989af8996f8604e34fb9ddf96208a033901e70de",
+      "files": 19,
+      "expanded_bytes": 375066
+    },
+    {
+      "name": "icu_properties_data",
+      "version": "2.2.0",
+      "archive_sha256": "8e2bbb201e0c04f7b4b3e14382af113e17ba4f63e2c9d2ee626b720cbce54a14",
+      "files": 146,
+      "expanded_bytes": 1501361
+    },
+    {
+      "name": "icu_provider",
+      "version": "2.2.0",
+      "archive_sha256": "139c4cf31c8b5f33d7e199446eff9c1e02decfc2f0eec2c8d71f65befa45b421",
+      "files": 25,
+      "expanded_bytes": 228030
+    },
+    {
+      "name": "id-arena",
+      "version": "2.3.0",
+      "archive_sha256": "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954",
+      "files": 15,
+      "expanded_bytes": 46426
+    },
+    {
+      "name": "ident_case",
+      "version": "1.0.1",
+      "archive_sha256": "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39",
+      "files": 9,
+      "expanded_bytes": 9263
+    },
+    {
+      "name": "idna",
+      "version": "1.1.0",
+      "archive_sha256": "3b0875f23caa03898994f6ddc501886a45c7d3d62d04d2d90788d47be1b1e4de",
+      "files": 21,
+      "expanded_bytes": 965640
+    },
+    {
+      "name": "idna_adapter",
+      "version": "1.2.1",
+      "archive_sha256": "3acae9609540aa318d1bc588455225fb2085b9ed0c4f6bd0d9d5bcd86f1a0344",
+      "files": 9,
+      "expanded_bytes": 34644
+    },
+    {
+      "name": "image",
+      "version": "0.25.9",
+      "archive_sha256": "e6506c6c10786659413faa717ceebcb8f70731c0a60cbae39795fdf114519c1a",
+      "files": 85,
+      "expanded_bytes": 1375226
+    },
+    {
+      "name": "image-webp",
+      "version": "0.2.4",
+      "archive_sha256": "525e9ff3e1a4be2fbea1fdf0e98686a6d98b4d8f937e1bf7402245af1909e8c3",
+      "files": 21,
+      "expanded_bytes": 321713
+    },
+    {
+      "name": "indenter",
+      "version": "0.3.4",
+      "archive_sha256": "964de6e86d545b246d84badc0fef527924ace5134f30641c203ef52ba83f58d5",
+      "files": 13,
+      "expanded_bytes": 36061
+    },
+    {
+      "name": "indexmap",
+      "version": "1.9.3",
+      "archive_sha256": "bd070e393353796e801d209ad339e89596eb4c8d430d18ede6a1cced8fafbd99",
+      "files": 33,
+      "expanded_bytes": 284162
+    },
+    {
+      "name": "indexmap",
+      "version": "2.14.0",
+      "archive_sha256": "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9",
+      "files": 42,
+      "expanded_bytes": 533229
+    },
+    {
+      "name": "inventory",
+      "version": "0.3.24",
+      "archive_sha256": "a4f0c30c76f2f4ccee3fe55a2435f691ca00c0e4bd87abe4f4a851b1d4dac39b",
+      "files": 26,
+      "expanded_bytes": 50651
+    },
+    {
+      "name": "ipconfig",
+      "version": "0.3.2",
+      "archive_sha256": "b58db92f96b720de98181bbbe63c831e87005ab460c1bf306eb2622b4707997f",
+      "files": 20,
+      "expanded_bytes": 202860
+    },
+    {
+      "name": "ipnet",
+      "version": "2.11.0",
+      "archive_sha256": "469fb0b9cefa57e3ef31275ee7cacb78f2fdca44e4765491884a2b119d4eb130",
+      "files": 17,
+      "expanded_bytes": 159400
+    },
+    {
+      "name": "iri-string",
+      "version": "0.7.10",
+      "archive_sha256": "c91338f0783edbd6195decb37bae672fd3b165faffb89bf7b9e6942f8b1a731a",
+      "files": 87,
+      "expanded_bytes": 828076
+    },
+    {
+      "name": "is_terminal_polyfill",
+      "version": "1.70.2",
+      "archive_sha256": "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695",
+      "files": 8,
+      "expanded_bytes": 22218
+    },
+    {
+      "name": "itertools",
+      "version": "0.14.0",
+      "archive_sha256": "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285",
+      "files": 88,
+      "expanded_bytes": 744659
+    },
+    {
+      "name": "itoa",
+      "version": "1.0.17",
+      "archive_sha256": "92ecc6618181def0457392ccd0ee51198e065e016d1d527a7ac1b6dc7c1f09d2",
+      "files": 14,
+      "expanded_bytes": 50720
+    },
+    {
+      "name": "jni",
+      "version": "0.22.4",
+      "archive_sha256": "5efd9a482cf3a427f00d6b35f14332adc7902ce91efb778580e180ff90fa3498",
+      "files": 76,
+      "expanded_bytes": 889521
+    },
+    {
+      "name": "jni-macros",
+      "version": "0.22.4",
+      "archive_sha256": "a00109accc170f0bdb141fed3e393c565b6f5e072365c3bd58f5b062591560a3",
+      "files": 14,
+      "expanded_bytes": 331443
+    },
+    {
+      "name": "jni-sys",
+      "version": "0.4.1",
+      "archive_sha256": "c6377a88cb3910bee9b0fa88d4f42e1d2da8e79915598f65fb0c7ee14c878af2",
+      "files": 10,
+      "expanded_bytes": 65845
+    },
+    {
+      "name": "jni-sys-macros",
+      "version": "0.4.1",
+      "archive_sha256": "38c0b942f458fe50cdac086d2f946512305e5631e720728f2a61aabcd47a6264",
+      "files": 6,
+      "expanded_bytes": 9794
+    },
+    {
+      "name": "jobserver",
+      "version": "0.1.34",
+      "archive_sha256": "9afb3de4395d6b3e67a780b6de64b51c978ecf11cb9a462c66be7d4ca9039d33",
+      "files": 22,
+      "expanded_bytes": 105230
+    },
+    {
+      "name": "js-sys",
+      "version": "0.3.85",
+      "archive_sha256": "8c942ebf8e95485ca0d52d97da7c5a2c387d0e7f0ba4c35e93bfcaee045955b3",
+      "files": 9,
+      "expanded_bytes": 389480
+    },
+    {
+      "name": "landlock",
+      "version": "0.4.4",
+      "archive_sha256": "49fefd6652c57d68aaa32544a4c0e642929725bdc1fd929367cdeb673ab81088",
+      "files": 26,
+      "expanded_bytes": 205209
+    },
+    {
+      "name": "lazy_static",
+      "version": "1.5.0",
+      "archive_sha256": "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe",
+      "files": 21,
+      "expanded_bytes": 43551
+    },
+    {
+      "name": "leb128fmt",
+      "version": "0.1.0",
+      "archive_sha256": "09edd9e8b54e49e587e4f6295a7d29c3ea94d469cb40ab8ca70b288248a81db2",
+      "files": 8,
+      "expanded_bytes": 73991
+    },
+    {
+      "name": "libc",
+      "version": "0.2.186",
+      "archive_sha256": "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66",
+      "files": 360,
+      "expanded_bytes": 4372797
+    },
+    {
+      "name": "libc",
+      "version": "0.2.189",
+      "archive_sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2",
+      "files": 404,
+      "expanded_bytes": 4503684
+    },
+    {
+      "name": "libredox",
+      "version": "0.1.12",
+      "archive_sha256": "3d0b95e02c851351f877147b7deea7b1afb1df71b63aa5f8270716e0c5720616",
+      "files": 7,
+      "expanded_bytes": 27915
+    },
+    {
+      "name": "link-section",
+      "version": "0.17.2",
+      "archive_sha256": "4d1e908a416d6e9f725743b84a36feea40c4c131e805fbc26d61f9f451f36080",
+      "files": 47,
+      "expanded_bytes": 285264
+    },
+    {
+      "name": "linktime-proc-macro",
+      "version": "0.1.0",
+      "archive_sha256": "a44cd706ff0d503ee32b2071166510ca27e281228de10cd3aa8d35ff94560f81",
+      "files": 12,
+      "expanded_bytes": 36948
+    },
+    {
+      "name": "linux-raw-sys",
+      "version": "0.12.1",
+      "archive_sha256": "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53",
+      "files": 473,
+      "expanded_bytes": 16933579
+    },
+    {
+      "name": "litemap",
+      "version": "0.8.1",
+      "archive_sha256": "6373607a59f0be73a39b6fe456b8192fcc3585f602af20751600e974dd455e77",
+      "files": 23,
+      "expanded_bytes": 156710
+    },
+    {
+      "name": "litrs",
+      "version": "1.0.0",
+      "archive_sha256": "11d3d7f243d5c5a8b9bb5d6dd2b1602c0cb0b9db1621bafc7ed66e35ff9fe092",
+      "files": 33,
+      "expanded_bytes": 206843
+    },
+    {
+      "name": "lock_api",
+      "version": "0.4.14",
+      "archive_sha256": "224399e74b87b5f3557511d98dff8b14089b3dadafcab6bb93eab67d3aace965",
+      "files": 10,
+      "expanded_bytes": 207633
+    },
+    {
+      "name": "lock_free_hashtable",
+      "version": "0.1.4",
+      "archive_sha256": "ebf3631712f5b790675292ff827af269f5d9f920c920b77dc41d0485e3719612",
+      "files": 10,
+      "expanded_bytes": 50227
+    },
+    {
+      "name": "log",
+      "version": "0.4.34",
+      "archive_sha256": "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6",
+      "files": 23,
+      "expanded_bytes": 252091
+    },
+    {
+      "name": "logos",
+      "version": "0.15.1",
+      "archive_sha256": "ff472f899b4ec2d99161c51f60ff7075eeb3097069a36050d8037a6325eb8154",
+      "files": 66,
+      "expanded_bytes": 1842046
+    },
+    {
+      "name": "logos-codegen",
+      "version": "0.15.1",
+      "archive_sha256": "192a3a2b90b0c05b27a0b2c43eecdb7c415e29243acc3f89cc8247a5b693045c",
+      "files": 66,
+      "expanded_bytes": 282983
+    },
+    {
+      "name": "logos-derive",
+      "version": "0.15.1",
+      "archive_sha256": "605d9697bcd5ef3a42d38efc51541aa3d6a4a25f7ab6d1ed0da5ac632a26b470",
+      "files": 8,
+      "expanded_bytes": 20932
+    },
+    {
+      "name": "loom",
+      "version": "0.7.2",
+      "archive_sha256": "419e0dc8046cb947daa77eb95ae174acfbddb7673b4151f56d1eed8e93fbfaca",
+      "files": 76,
+      "expanded_bytes": 331550
+    },
+    {
+      "name": "lru",
+      "version": "0.18.2",
+      "archive_sha256": "5d2f2f9b4ba7e6b24d95e7e899329d35be83bcded72c8540cdd5368932d1d90a",
+      "files": 10,
+      "expanded_bytes": 122172
+    },
+    {
+      "name": "lru-slab",
+      "version": "0.1.2",
+      "archive_sha256": "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154",
+      "files": 8,
+      "expanded_bytes": 29310
+    },
+    {
+      "name": "lsp-types",
+      "version": "0.97.0",
+      "archive_sha256": "53353550a17c04ac46c585feb189c2db82154fc84b79c7a66c96c2c644f66071",
+      "files": 50,
+      "expanded_bytes": 388368
+    },
+    {
+      "name": "maplit",
+      "version": "1.0.2",
+      "archive_sha256": "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d",
+      "files": 9,
+      "expanded_bytes": 26700
+    },
+    {
+      "name": "matchers",
+      "version": "0.2.0",
+      "archive_sha256": "d1525a2a28c7f4fa0fc98bb91ae755d1e2d1505079e05539e35bc876b5d65ae9",
+      "files": 10,
+      "expanded_bytes": 27406
+    },
+    {
+      "name": "matchit",
+      "version": "0.8.4",
+      "archive_sha256": "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3",
+      "files": 21,
+      "expanded_bytes": 160432
+    },
+    {
+      "name": "matchit",
+      "version": "0.9.1",
+      "archive_sha256": "b3eede3bdf92f3b4f9dc04072a9ce5ab557d5ec9038773bf9ffcd5588b3cc05b",
+      "files": 25,
+      "expanded_bytes": 203831
+    },
+    {
+      "name": "md5",
+      "version": "0.8.0",
+      "archive_sha256": "ae960838283323069879657ca3de837e9f7bbb4c7bf6ea7f1b290d5e9476d2e0",
+      "files": 10,
+      "expanded_bytes": 22191
+    },
+    {
+      "name": "memchr",
+      "version": "2.8.1",
+      "archive_sha256": "6b947ae49db0d222b1dbc6b113ce7248a3fc3a6ca21b696717bfc000ba4484d8",
+      "files": 59,
+      "expanded_bytes": 587603
+    },
+    {
+      "name": "memoffset",
+      "version": "0.9.1",
+      "archive_sha256": "488016bfae457b036d996092f6cb448677611ce4449e970ceaf42695203f218a",
+      "files": 13,
+      "expanded_bytes": 39352
+    },
+    {
+      "name": "mime",
+      "version": "0.3.17",
+      "archive_sha256": "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a",
+      "files": 14,
+      "expanded_bytes": 57459
+    },
+    {
+      "name": "mime_guess",
+      "version": "2.0.5",
+      "archive_sha256": "f7c44f8e672c00fe5308fa235f821cb4198414e1c77935c1ab6948d3fd78550e",
+      "files": 15,
+      "expanded_bytes": 115174
+    },
+    {
+      "name": "minimal-lexical",
+      "version": "0.2.1",
+      "archive_sha256": "68354c5c6bd36d73ff3feceb05efa59b6acb7626617f4962be322a825e61f79a",
+      "files": 57,
+      "expanded_bytes": 330595
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.8.9",
+      "archive_sha256": "1fa76a2c86f704bdb222d66965fb3d63269ce38518b83cb0575fca855ebb6316",
+      "files": 23,
+      "expanded_bytes": 283463
+    },
+    {
+      "name": "mio",
+      "version": "1.2.0",
+      "archive_sha256": "50b7e5b27aa02a74bac8c3f23f448f8d87ff11f92d3aac1a6ed369ee08cc56c1",
+      "files": 69,
+      "expanded_bytes": 480154
+    },
+    {
+      "name": "moka",
+      "version": "0.12.13",
+      "archive_sha256": "b4ac832c50ced444ef6be0767a008b02c106a909ba79d1d830501e94b96f6b7e",
+      "files": 66,
+      "expanded_bytes": 1364069
+    },
+    {
+      "name": "moxcms",
+      "version": "0.7.11",
+      "archive_sha256": "ac9557c559cd6fc9867e122e20d2cbefc9ca29d80d027a8e39310920ed2f0a97",
+      "files": 127,
+      "expanded_bytes": 1534774
+    },
+    {
+      "name": "multimap",
+      "version": "0.10.1",
+      "archive_sha256": "1d87ecb2933e8aeadb3e3a02b828fed80a7528047e68b4f424523a0981a3a084",
+      "files": 10,
+      "expanded_bytes": 69289
+    },
+    {
+      "name": "native-tls",
+      "version": "0.2.14",
+      "archive_sha256": "87de3442987e9dbec73158d5c715e7ad9072fda936bb03d19d7fa10e00520f0e",
+      "files": 20,
+      "expanded_bytes": 135046
+    },
+    {
+      "name": "nibble_vec",
+      "version": "0.1.0",
+      "archive_sha256": "77a5d83df9f36fe23f0c3648c6bbb8b0298bb5f1939c8f2704431371f4b84d43",
+      "files": 13,
+      "expanded_bytes": 48211
+    },
+    {
+      "name": "nix",
+      "version": "0.28.0",
+      "archive_sha256": "ab2156c4fce2f8df6c499cc1c763e4394b7482525bf2a9701c9d79d215f519e4",
+      "files": 119,
+      "expanded_bytes": 1545864
+    },
+    {
+      "name": "nix",
+      "version": "0.30.1",
+      "archive_sha256": "74523f3a35e05aba87a1d978330aef40f67b0304ac79c1c00b294c9830543db6",
+      "files": 126,
+      "expanded_bytes": 1719409
+    },
+    {
+      "name": "nom",
+      "version": "7.1.3",
+      "archive_sha256": "d273983c5a657a70a3e8f2a01329822f3b8c8172b73826411a55751e404a0a4a",
+      "files": 52,
+      "expanded_bytes": 658898
+    },
+    {
+      "name": "nom",
+      "version": "8.0.0",
+      "archive_sha256": "df9761775871bdef83bee530e60050f7e54b1105350d6884eb0fb4f46c2f9405",
+      "files": 53,
+      "expanded_bytes": 791510
+    },
+    {
+      "name": "normalize-line-endings",
+      "version": "0.3.0",
+      "archive_sha256": "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be",
+      "files": 8,
+      "expanded_bytes": 15368
+    },
+    {
+      "name": "nu-ansi-term",
+      "version": "0.50.3",
+      "archive_sha256": "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5",
+      "files": 28,
+      "expanded_bytes": 125960
+    },
+    {
+      "name": "num-bigint",
+      "version": "0.4.6",
+      "archive_sha256": "a5e44f723f1133c9deac646763579fdb3ac745e418f2a7af9cd0c431da1f20b9",
+      "files": 51,
+      "expanded_bytes": 494575
+    },
+    {
+      "name": "num-conv",
+      "version": "0.2.0",
+      "archive_sha256": "cf97ec579c3c42f953ef76dbf8d55ac91fb219dde70e49aa4a6b7d74e9919050",
+      "files": 8,
+      "expanded_bytes": 20806
+    },
+    {
+      "name": "num-integer",
+      "version": "0.1.46",
+      "archive_sha256": "7969661fd2958a5cb096e56c8e1ad0444ac2bbcd0061bd28660485a44879858f",
+      "files": 16,
+      "expanded_bytes": 109878
+    },
+    {
+      "name": "num-traits",
+      "version": "0.2.19",
+      "archive_sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841",
+      "files": 29,
+      "expanded_bytes": 273981
+    },
+    {
+      "name": "num_cpus",
+      "version": "1.17.0",
+      "archive_sha256": "91df4bbde75afed763b708b7eee1e8e7651e02d97f6d5dd763e89367e957b23b",
+      "files": 32,
+      "expanded_bytes": 55998
+    },
+    {
+      "name": "num_threads",
+      "version": "0.1.7",
+      "archive_sha256": "5c7398b9c8b70908f6371f47ed36737907c87c52af34c268fed0bf0ceb92ead9",
+      "files": 11,
+      "expanded_bytes": 19732
+    },
+    {
+      "name": "objc2",
+      "version": "0.6.3",
+      "archive_sha256": "b7c2599ce0ec54857b29ce62166b0ed9b4f6f1a70ccc9a71165b6154caca8c05",
+      "files": 120,
+      "expanded_bytes": 1155467
+    },
+    {
+      "name": "objc2-cloud-kit",
+      "version": "0.3.2",
+      "archive_sha256": "73ad74d880bb43877038da939b7427bba67e9dd42004a18b809ba7d87cee241c",
+      "files": 61,
+      "expanded_bytes": 568862
+    },
+    {
+      "name": "objc2-core-data",
+      "version": "0.3.2",
+      "archive_sha256": "0b402a653efbb5e82ce4df10683b6b28027616a2715e90009947d50b8dd298fa",
+      "files": 65,
+      "expanded_bytes": 394667
+    },
+    {
+      "name": "objc2-core-foundation",
+      "version": "0.3.2",
+      "archive_sha256": "2a180dd8642fa45cdb7dd721cd4c11b1cadd4929ce112ebd8b9f5803cc79d536",
+      "files": 76,
+      "expanded_bytes": 1519913
+    },
+    {
+      "name": "objc2-core-graphics",
+      "version": "0.3.2",
+      "archive_sha256": "e022c9d066895efa1345f8e33e584b9f958da2fd4cd116792e15e07e4720a807",
+      "files": 61,
+      "expanded_bytes": 808308
+    },
+    {
+      "name": "objc2-core-image",
+      "version": "0.3.2",
+      "archive_sha256": "e5d563b38d2b97209f8e861173de434bd0214cf020e3423a52624cd1d989f006",
+      "files": 33,
+      "expanded_bytes": 870481
+    },
+    {
+      "name": "objc2-core-location",
+      "version": "0.3.2",
+      "archive_sha256": "ca347214e24bc973fc025fd0d36ebb179ff30536ed1f80252706db19ee452009",
+      "files": 37,
+      "expanded_bytes": 147141
+    },
+    {
+      "name": "objc2-core-text",
+      "version": "0.3.2",
+      "archive_sha256": "0cde0dfb48d25d2b4862161a4d5fcc0e3c24367869ad306b0c9ec0073bfed92d",
+      "files": 30,
+      "expanded_bytes": 799140
+    },
+    {
+      "name": "objc2-encode",
+      "version": "4.1.0",
+      "archive_sha256": "ef25abbcd74fb2609453eb695bd2f860d389e457f67dc17cafc8b8cbc89d0c33",
+      "files": 12,
+      "expanded_bytes": 94349
+    },
+    {
+      "name": "objc2-foundation",
+      "version": "0.3.2",
+      "archive_sha256": "e3e0adef53c21f888deb4fa59fc59f7eb17404926ee8a6f59f5df0fd7f9f3272",
+      "files": 239,
+      "expanded_bytes": 2975291
+    },
+    {
+      "name": "objc2-io-surface",
+      "version": "0.3.2",
+      "archive_sha256": "180788110936d59bab6bd83b6060ffdfffb3b922ba1396b312ae795e1de9d81d",
+      "files": 16,
+      "expanded_bytes": 95381
+    },
+    {
+      "name": "objc2-quartz-core",
+      "version": "0.3.2",
+      "archive_sha256": "96c1358452b371bf9f104e21ec536d37a650eb10f7ee379fff67d2e08d537f1f",
+      "files": 38,
+      "expanded_bytes": 266826
+    },
+    {
+      "name": "objc2-ui-kit",
+      "version": "0.3.2",
+      "archive_sha256": "d87d638e33c06f577498cbcc50491496a3ed4246998a7fbba7ccb98b1e7eab22",
+      "files": 459,
+      "expanded_bytes": 4736341
+    },
+    {
+      "name": "objc2-user-notifications",
+      "version": "0.3.2",
+      "archive_sha256": "9df9128cbbfef73cda168416ccf7f837b62737d748333bfe9ab71c245d76613e",
+      "files": 24,
+      "expanded_bytes": 96724
+    },
+    {
+      "name": "oid-registry",
+      "version": "0.8.1",
+      "archive_sha256": "12f40cff3dde1b6087cc5d5f5d4d65712f34016a03ed60e9c08dcc392736b5b7",
+      "files": 13,
+      "expanded_bytes": 52520
+    },
+    {
+      "name": "once_cell",
+      "version": "1.21.4",
+      "archive_sha256": "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50",
+      "files": 29,
+      "expanded_bytes": 151142
+    },
+    {
+      "name": "once_cell_polyfill",
+      "version": "1.70.2",
+      "archive_sha256": "384b8ab6d37215f3c5301a95a4accb5d64aa607f1fcb26a11b5303878451b4fe",
+      "files": 9,
+      "expanded_bytes": 21963
+    },
+    {
+      "name": "openssl",
+      "version": "0.10.75",
+      "archive_sha256": "08838db121398ad17ab8531ce9de97b244589089e290a384c900cb9ff7434328",
+      "files": 110,
+      "expanded_bytes": 1321628
+    },
+    {
+      "name": "openssl-macros",
+      "version": "0.1.1",
+      "archive_sha256": "a948666b637a0f465e8564c73e89d4dde00d72d4d473cc972f390fc3dcee7d9c",
+      "files": 6,
+      "expanded_bytes": 14387
+    },
+    {
+      "name": "openssl-probe",
+      "version": "0.1.6",
+      "archive_sha256": "d05e27ee213611ffe7d6348b942e8f942b37114c00cc03cec254295a4a17852e",
+      "files": 11,
+      "expanded_bytes": 22460
+    },
+    {
+      "name": "openssl-probe",
+      "version": "0.2.1",
+      "archive_sha256": "7c87def4c32ab89d880effc9e097653c8da5d6ef28e6b539d313baaacfbafcbe",
+      "files": 12,
+      "expanded_bytes": 25316
+    },
+    {
+      "name": "openssl-src",
+      "version": "300.6.1+3.6.3",
+      "archive_sha256": "46eb8fb9fb3b61ce1c0f8a026c4c1a0714d3a9e138e7fbde78753ce2babc3846",
+      "files": 2436,
+      "expanded_bytes": 33416253
+    },
+    {
+      "name": "openssl-sys",
+      "version": "0.9.111",
+      "archive_sha256": "82cab2d520aa75e3c58898289429321eb788c3106963d0dc886ec7a5f4adc321",
+      "files": 81,
+      "expanded_bytes": 442083
+    },
+    {
+      "name": "opentelemetry",
+      "version": "0.31.0",
+      "archive_sha256": "b84bcd6ae87133e903af7ef497404dda70c60d0ea14895fc8a5e6722754fc2a0",
+      "files": 48,
+      "expanded_bytes": 384097
+    },
+    {
+      "name": "opentelemetry-appender-tracing",
+      "version": "0.31.1",
+      "archive_sha256": "ef6a1ac5ca3accf562b8c306fa8483c85f4390f768185ab775f242f7fe8fdcc2",
+      "files": 12,
+      "expanded_bytes": 118992
+    },
+    {
+      "name": "opentelemetry-http",
+      "version": "0.31.0",
+      "archive_sha256": "d7a6d09a73194e6b66df7c8f1b680f156d916a1a942abf2de06823dd02b7855d",
+      "files": 7,
+      "expanded_bytes": 64309
+    },
+    {
+      "name": "opentelemetry-otlp",
+      "version": "0.31.0",
+      "archive_sha256": "7a2366db2dca4d2ad033cad11e6ee42844fd727007af5ad04a1730f4cb8163bf",
+      "files": 21,
+      "expanded_bytes": 241927
+    },
+    {
+      "name": "opentelemetry-proto",
+      "version": "0.31.0",
+      "archive_sha256": "a7175df06de5eaee9909d4805a3d07e28bb752c34cab57fa9cff549da596b30f",
+      "files": 29,
+      "expanded_bytes": 379470
+    },
+    {
+      "name": "opentelemetry-semantic-conventions",
+      "version": "0.31.0",
+      "archive_sha256": "e62e29dfe041afb8ed2a6c9737ab57db4907285d999ef8ad3a59092a36bdc846",
+      "files": 20,
+      "expanded_bytes": 565473
+    },
+    {
+      "name": "opentelemetry_sdk",
+      "version": "0.31.0",
+      "archive_sha256": "e14ae4f5991976fd48df6d843de219ca6d31b01daaab2dad5af2badeded372bd",
+      "files": 94,
+      "expanded_bytes": 1205034
+    },
+    {
+      "name": "option-ext",
+      "version": "0.2.0",
+      "archive_sha256": "04744f49eae99ab78e0d5c0b603ab218f515ea8cfe5a456d7629ad883a3b6e7d",
+      "files": 8,
+      "expanded_bytes": 22611
+    },
+    {
+      "name": "os_info",
+      "version": "3.14.0",
+      "archive_sha256": "e4022a17595a00d6a369236fdae483f0de7f0a339960a53118b818238e132224",
+      "files": 32,
+      "expanded_bytes": 138587
+    },
+    {
+      "name": "pagable",
+      "version": "0.4.1",
+      "archive_sha256": "3658968938a4d1eaa1987e69dcd84b01fb067c5b3416dccc8d71373b6ded6821",
+      "files": 29,
+      "expanded_bytes": 253787
+    },
+    {
+      "name": "pagable_derive",
+      "version": "0.4.1",
+      "archive_sha256": "838d17166587914f4e99353766c29160462b681511f08679545a0d07a0dc9415",
+      "files": 9,
+      "expanded_bytes": 36265
+    },
+    {
+      "name": "parking",
+      "version": "2.2.1",
+      "archive_sha256": "f38d5652c16fde515bb1ecef450ab0f6a219d619a7274976324d5e377f7dceba",
+      "files": 11,
+      "expanded_bytes": 35027
+    },
+    {
+      "name": "parking_lot",
+      "version": "0.12.5",
+      "archive_sha256": "93857453250e3077bd71ff98b6a65ea6621a19bb0f559a85248955ac12c45a1a",
+      "files": 28,
+      "expanded_bytes": 215389
+    },
+    {
+      "name": "parking_lot_core",
+      "version": "0.9.12",
+      "archive_sha256": "2621685985a2ebf1c516881c026032ac7deafcda1a2c9b7850dc81e3dfcb64c1",
+      "files": 24,
+      "expanded_bytes": 144235
+    },
+    {
+      "name": "paste",
+      "version": "1.0.15",
+      "archive_sha256": "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a",
+      "files": 47,
+      "expanded_bytes": 69589
+    },
+    {
+      "name": "pem",
+      "version": "3.0.6",
+      "archive_sha256": "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be",
+      "files": 13,
+      "expanded_bytes": 74048
+    },
+    {
+      "name": "percent-encoding",
+      "version": "2.3.2",
+      "archive_sha256": "9b4f627cb1b25917193a259e49bdad08f671f8d9708acfd5fe0a8c1455d87220",
+      "files": 8,
+      "expanded_bytes": 35542
+    },
+    {
+      "name": "pin-project",
+      "version": "1.1.10",
+      "archive_sha256": "677f1add503faace112b9f1373e43e9e054bfdd22ff1a63c1bc485eaec6a6a8a",
+      "files": 212,
+      "expanded_bytes": 455043
+    },
+    {
+      "name": "pin-project-internal",
+      "version": "1.1.10",
+      "archive_sha256": "6e918e4ff8c4549eb882f14b3a4bc8c8bc93de829416eacf579f1207a8fbf861",
+      "files": 14,
+      "expanded_bytes": 113100
+    },
+    {
+      "name": "pin-project-lite",
+      "version": "0.2.16",
+      "archive_sha256": "3b3cff922bd51709b605d9ead9aa71031d81447142d828eb4a6eba76fe619f9b",
+      "files": 80,
+      "expanded_bytes": 238145
+    },
+    {
+      "name": "pin-utils",
+      "version": "0.1.0",
+      "archive_sha256": "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184",
+      "files": 14,
+      "expanded_bytes": 19614
+    },
+    {
+      "name": "pkg-config",
+      "version": "0.3.32",
+      "archive_sha256": "7edddbd0b52d732b21ad9a5fab5c704c14cd949e5e9a1ec5929a24fded1b904c",
+      "files": 17,
+      "expanded_bytes": 77025
+    },
+    {
+      "name": "png",
+      "version": "0.18.0",
+      "archive_sha256": "97baced388464909d42d89643fe4361939af9b7ce7a31ee32a168f832a70f2a0",
+      "files": 36,
+      "expanded_bytes": 530529
+    },
+    {
+      "name": "portable-atomic",
+      "version": "1.13.1",
+      "archive_sha256": "c33a9471896f1c69cecef8d20cbe2f7accd12527ce60845ff44c153bb2a21b49",
+      "files": 67,
+      "expanded_bytes": 1272977
+    },
+    {
+      "name": "portable-pty",
+      "version": "0.9.0",
+      "archive_sha256": "b4a596a2b3d2752d94f51fac2d4a96737b8705dddd311a32b9af47211f08671e",
+      "files": 17,
+      "expanded_bytes": 113777
+    },
+    {
+      "name": "postcard",
+      "version": "1.1.3",
+      "archive_sha256": "6764c3b5dd454e283a30e6dfe78e9b31096d9e32036b5d1eaac7a6119ccb9a24",
+      "files": 24,
+      "expanded_bytes": 205573
+    },
+    {
+      "name": "potential_utf",
+      "version": "0.1.4",
+      "archive_sha256": "b73949432f5e2a09657003c25bca5e19a0e9c84f8058ca374f49e0ebe605af77",
+      "files": 10,
+      "expanded_bytes": 34599
+    },
+    {
+      "name": "powerfmt",
+      "version": "0.2.0",
+      "archive_sha256": "439ee305def115ba05938db6eb1644ff94165c5ab5e9420d1c1bcedbba909391",
+      "files": 11,
+      "expanded_bytes": 57276
+    },
+    {
+      "name": "ppv-lite86",
+      "version": "0.2.21",
+      "archive_sha256": "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9",
+      "files": 12,
+      "expanded_bytes": 132641
+    },
+    {
+      "name": "predicates",
+      "version": "3.1.3",
+      "archive_sha256": "a5d19ee57562043d37e82899fade9a22ebab7be9cef5026b07fda9cdd4293573",
+      "files": 32,
+      "expanded_bytes": 134436
+    },
+    {
+      "name": "predicates-core",
+      "version": "1.0.9",
+      "archive_sha256": "727e462b119fe9c93fd0eb1429a5f7647394014cf3c04ab2c0350eeb09095ffa",
+      "files": 10,
+      "expanded_bytes": 26496
+    },
+    {
+      "name": "predicates-tree",
+      "version": "1.0.12",
+      "archive_sha256": "72dd2d6d381dfb73a193c7fca536518d7caee39fc8503f74e7dc0be0531b425c",
+      "files": 9,
+      "expanded_bytes": 24077
+    },
+    {
+      "name": "pretty_assertions",
+      "version": "1.4.1",
+      "archive_sha256": "3ae130e2f271fbc2ac3a40fb1d07180839cdbbe443c7a27e1e3c13c5cac0116d",
+      "files": 15,
+      "expanded_bytes": 126190
+    },
+    {
+      "name": "prettyplease",
+      "version": "0.2.37",
+      "archive_sha256": "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b",
+      "files": 41,
+      "expanded_bytes": 416985
+    },
+    {
+      "name": "proc-macro-crate",
+      "version": "3.4.0",
+      "archive_sha256": "219cb19e96be00ab2e37d6e299658a0cfa83e52429179969b0f0121b4ac46983",
+      "files": 14,
+      "expanded_bytes": 41545
+    },
+    {
+      "name": "proc-macro2",
+      "version": "1.0.106",
+      "archive_sha256": "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934",
+      "files": 33,
+      "expanded_bytes": 270852
+    },
+    {
+      "name": "proptest",
+      "version": "1.9.0",
+      "archive_sha256": "bee689443a2bd0a16ab0348b52ee43e3b2d1b1f931c8aa5c9f8de4c86fbe8c40",
+      "files": 117,
+      "expanded_bytes": 899585
+    },
+    {
+      "name": "prost",
+      "version": "0.14.3",
+      "archive_sha256": "d2ea70524a2f82d518bce41317d0fae74151505651af45faf1ffbd6fd33f0568",
+      "files": 16,
+      "expanded_bytes": 139536
+    },
+    {
+      "name": "prost-derive",
+      "version": "0.14.3",
+      "archive_sha256": "27c6023962132f4b30eb4c172c91ce92d933da334c59c23cddee82358ddafb0b",
+      "files": 13,
+      "expanded_bytes": 107310
+    },
+    {
+      "name": "psl",
+      "version": "2.1.184",
+      "archive_sha256": "81dc6a90669f481b41cae3005c68efa36bef275b95aa9123a7af7f1c68c6e5b2",
+      "files": 15,
+      "expanded_bytes": 2655418
+    },
+    {
+      "name": "psl-types",
+      "version": "2.0.11",
+      "archive_sha256": "33cb294fe86a74cbcf50d4445b37da762029549ebeea341421c7c70370f86cac",
+      "files": 9,
+      "expanded_bytes": 25327
+    },
+    {
+      "name": "publicsuffix",
+      "version": "2.3.0",
+      "archive_sha256": "6f42ea446cab60335f76979ec15e12619a2165b5ae2c12166bef27d283a9fadf",
+      "files": 14,
+      "expanded_bytes": 275116
+    },
+    {
+      "name": "pxfm",
+      "version": "0.1.27",
+      "archive_sha256": "7186d3822593aa4393561d186d1393b3923e9d6163d3fbfd6e825e3e6cf3e6a8",
+      "files": 266,
+      "expanded_bytes": 3821694
+    },
+    {
+      "name": "quick-error",
+      "version": "2.0.1",
+      "archive_sha256": "a993555f31e5a609f617c12db6250dedcac1b0a85076912c436e6fc9b2c8e6a3",
+      "files": 13,
+      "expanded_bytes": 63355
+    },
+    {
+      "name": "quick-xml",
+      "version": "0.41.0",
+      "archive_sha256": "e660451e55124f798a69a5af3f49ccfbefbd41910eefd25caf2393e1f3473ec1",
+      "files": 43,
+      "expanded_bytes": 1389569
+    },
+    {
+      "name": "quickcheck",
+      "version": "1.1.0",
+      "archive_sha256": "95c589f335db0f6aaa168a7cd27b1fc6920f5e1470c804f814d9cd6e62a0f70b",
+      "files": 22,
+      "expanded_bytes": 117629
+    },
+    {
+      "name": "quinn",
+      "version": "0.11.9",
+      "archive_sha256": "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20",
+      "files": 29,
+      "expanded_bytes": 330058
+    },
+    {
+      "name": "quinn-proto",
+      "version": "0.11.15",
+      "archive_sha256": "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e",
+      "files": 58,
+      "expanded_bytes": 1096462
+    },
+    {
+      "name": "quinn-udp",
+      "version": "0.5.14",
+      "archive_sha256": "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd",
+      "files": 16,
+      "expanded_bytes": 129385
+    },
+    {
+      "name": "quote",
+      "version": "1.0.45",
+      "archive_sha256": "41f2619966050689382d2b44f664f4bc593e129785a36d6ee376ddf37259b924",
+      "files": 35,
+      "expanded_bytes": 138068
+    },
+    {
+      "name": "r-efi",
+      "version": "5.3.0",
+      "archive_sha256": "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f",
+      "files": 69,
+      "expanded_bytes": 288525
+    },
+    {
+      "name": "r-efi",
+      "version": "6.0.0",
+      "archive_sha256": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf",
+      "files": 69,
+      "expanded_bytes": 293758
+    },
+    {
+      "name": "radix_trie",
+      "version": "0.2.1",
+      "archive_sha256": "c069c179fcdc6a2fe24d8d18305cf085fdbd4f922c041943e203685d6a1c58fd",
+      "files": 29,
+      "expanded_bytes": 711662
+    },
+    {
+      "name": "radix_trie",
+      "version": "0.3.0",
+      "archive_sha256": "3b4431027dcd37fc2a73ef740b5f233aa805897935b8bce0195e41bbf9a3289a",
+      "files": 29,
+      "expanded_bytes": 692565
+    },
+    {
+      "name": "rama-core",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "0b93751ab27c9d151e84c1100057eab3f2a6a1378bc31b62abd416ecb1847658",
+      "files": 65,
+      "expanded_bytes": 357977
+    },
+    {
+      "name": "rama-dns",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "e340fef2799277e204260b17af01bc23604712092eacd6defe40167f304baed8",
+      "files": 14,
+      "expanded_bytes": 102827
+    },
+    {
+      "name": "rama-error",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "3c452aba1beb7e29b873ff32f304536164cffcc596e786921aea64e858ff8f40",
+      "files": 11,
+      "expanded_bytes": 31850
+    },
+    {
+      "name": "rama-http",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "453d60af031e23af2d48995e41b17023f6150044738680508b63671f8d7417dd",
+      "files": 212,
+      "expanded_bytes": 1529611
+    },
+    {
+      "name": "rama-http-backend",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "f3ff6a3c8ae690be8167e43777ba0bf6b0c8c2f6de165c538666affe2a32fd81",
+      "files": 25,
+      "expanded_bytes": 155028
+    },
+    {
+      "name": "rama-http-core",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "3822be6703e010afec0bcfeb5dbb6e5a3b23ca5689d9b1215b66ce6446653b77",
+      "files": 76,
+      "expanded_bytes": 1128148
+    },
+    {
+      "name": "rama-http-headers",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "9d74fe0cd9bd4440827dc6dc0f504cf66065396532e798891dee2c1b740b2285",
+      "files": 116,
+      "expanded_bytes": 640027
+    },
+    {
+      "name": "rama-http-types",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "b6dae655a72da5f2b97cfacb67960d8b28c5025e62707b4c8c5f0c5c9843a444",
+      "files": 479,
+      "expanded_bytes": 60619359
+    },
+    {
+      "name": "rama-macros",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "ea18a110bcf21e35c5f194168e6914ccea45ffdd0fea51bc4b169fbeafef6428",
+      "files": 47,
+      "expanded_bytes": 79789
+    },
+    {
+      "name": "rama-net",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "b28ee9e1e5d39264414b71f5c33e7fbb66b382c3fac456fe0daad39cf5509933",
+      "files": 109,
+      "expanded_bytes": 974575
+    },
+    {
+      "name": "rama-socks5",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "5468b263516daaf258de32542c1974b7cbe962363ad913dcb669f5d46db0ef3e",
+      "files": 32,
+      "expanded_bytes": 328150
+    },
+    {
+      "name": "rama-tcp",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "fe60cd604f91196b3659a1b28945add2e8b10bd0b4e6373c93d024fb3197704b",
+      "files": 17,
+      "expanded_bytes": 118976
+    },
+    {
+      "name": "rama-tls-rustls",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "536d47f6b269fb20dffd45e4c04aa8b340698b3509326e3c36e444b4f33ce0d6",
+      "files": 19,
+      "expanded_bytes": 120886
+    },
+    {
+      "name": "rama-udp",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "36ed05e0ecac73e084e92a3a8b1fbf16fdae8958c506f0f0eada180a2d99eef4",
+      "files": 7,
+      "expanded_bytes": 41618
+    },
+    {
+      "name": "rama-unix",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "91acb16d571428ba4cece072dfab90d2667cdfa910a7b3cb4530c3f31542d708",
+      "files": 14,
+      "expanded_bytes": 72101
+    },
+    {
+      "name": "rama-utils",
+      "version": "0.3.0-alpha.4",
+      "archive_sha256": "bf28b18ba4a57f8334d7992d3f8020194ea359b246ae6f8f98b8df524c7a14ef",
+      "files": 52,
+      "expanded_bytes": 315614
+    },
+    {
+      "name": "rand",
+      "version": "0.10.1",
+      "archive_sha256": "d2e8e8bcc7961af1fdac401278c6a831614941f6164ee3bf4ce61b7edb162207",
+      "files": 38,
+      "expanded_bytes": 437402
+    },
+    {
+      "name": "rand",
+      "version": "0.8.6",
+      "archive_sha256": "5ca0ecfa931c29007047d1bc58e623ab12e5590e8c7cc53200d5202b69266d8a",
+      "files": 35,
+      "expanded_bytes": 331742
+    },
+    {
+      "name": "rand",
+      "version": "0.9.3",
+      "archive_sha256": "7ec095654a25171c2124e9e3393a930bddbffdc939556c914957a4c3e0a87166",
+      "files": 40,
+      "expanded_bytes": 410038
+    },
+    {
+      "name": "rand_chacha",
+      "version": "0.3.1",
+      "archive_sha256": "e6c10a63a0fa32252be49d21e7709d4d4baf8d231c2dbce1eaa8141b9b127d88",
+      "files": 11,
+      "expanded_bytes": 52347
+    },
+    {
+      "name": "rand_chacha",
+      "version": "0.9.0",
+      "archive_sha256": "d3022b5f1df60f26e1ffddd6c66e8aa15de382ae63b3a0c1bfc0e4d3e3f325cb",
+      "files": 12,
+      "expanded_bytes": 61857
+    },
+    {
+      "name": "rand_core",
+      "version": "0.10.1",
+      "archive_sha256": "63b8176103e19a2643978565ca18b50549f6101881c443590420e4dc998a3c69",
+      "files": 19,
+      "expanded_bytes": 74489
+    },
+    {
+      "name": "rand_core",
+      "version": "0.6.4",
+      "archive_sha256": "ec0be4795e2f6a28069bec0b5ff3e2ac9bafc99e6a9a7dc3547996c5c816922c",
+      "files": 14,
+      "expanded_bytes": 78662
+    },
+    {
+      "name": "rand_core",
+      "version": "0.9.5",
+      "archive_sha256": "76afc826de14238e6e8c374ddcc1fa19e374fd8dd986b0d2af0d02377261d83c",
+      "files": 14,
+      "expanded_bytes": 83755
+    },
+    {
+      "name": "rand_regex",
+      "version": "0.18.1",
+      "archive_sha256": "04db2e382d13679a1e42400e90e306cdbb79dc5cd41bb035ba4eae72e78cdf37",
+      "files": 12,
+      "expanded_bytes": 75624
+    },
+    {
+      "name": "rand_xorshift",
+      "version": "0.4.0",
+      "archive_sha256": "513962919efc330f829edb2535844d1b912b0fbe2ca165d613e4e8788bb05a5a",
+      "files": 11,
+      "expanded_bytes": 27957
+    },
+    {
+      "name": "rayon-core",
+      "version": "1.13.0",
+      "archive_sha256": "22e18b0f0062d30d4230b2e85ff77fdfe4326feb054b9783a3460d8435c8ab91",
+      "files": 42,
+      "expanded_bytes": 286222
+    },
+    {
+      "name": "rcgen",
+      "version": "0.14.9",
+      "archive_sha256": "091e7a8e7d86e6feb87a27ce8e2cba29d49eff9507afeebefab7eeb2ca667fb4",
+      "files": 22,
+      "expanded_bytes": 240874
+    },
+    {
+      "name": "redox_syscall",
+      "version": "0.5.18",
+      "archive_sha256": "ed2bf2547551a7053d6fdfafda3f938979645c44812fbfcda098faae3f1a362d",
+      "files": 32,
+      "expanded_bytes": 155824
+    },
+    {
+      "name": "redox_syscall",
+      "version": "0.7.0",
+      "archive_sha256": "49f3fe0889e69e2ae9e41f4d6c4c0181701d00e4697b356fb1f74173a5e0ee27",
+      "files": 25,
+      "expanded_bytes": 118890
+    },
+    {
+      "name": "redox_users",
+      "version": "0.4.6",
+      "archive_sha256": "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43",
+      "files": 13,
+      "expanded_bytes": 59088
+    },
+    {
+      "name": "redox_users",
+      "version": "0.5.2",
+      "archive_sha256": "a4e608c6638b9c18977b00b475ac1f28d14e84b27d8d42f70e0bf1e3dec127ac",
+      "files": 14,
+      "expanded_bytes": 63985
+    },
+    {
+      "name": "ref-cast",
+      "version": "1.0.25",
+      "archive_sha256": "f354300ae66f76f1c85c5f84693f0ce81d747e2c3f21a45fef496d89c960bf7d",
+      "files": 43,
+      "expanded_bytes": 49517
+    },
+    {
+      "name": "ref-cast-impl",
+      "version": "1.0.25",
+      "archive_sha256": "b7186006dcb21920990093f30e3dea63b7d6e977bf1256be20c3563a5db070da",
+      "files": 7,
+      "expanded_bytes": 32303
+    },
+    {
+      "name": "regex",
+      "version": "1.12.3",
+      "archive_sha256": "e10754a14b9137dd7b1e3e5b0493cc9171fdd105e0ab477f51b72e7f3ac0e276",
+      "files": 55,
+      "expanded_bytes": 718979
+    },
+    {
+      "name": "regex-automata",
+      "version": "0.4.13",
+      "archive_sha256": "5276caf25ac86c8d810222b3dbb938e512c55c6831a10f3e6ed1c93b84041f1c",
+      "files": 122,
+      "expanded_bytes": 2746007
+    },
+    {
+      "name": "regex-lite",
+      "version": "0.1.8",
+      "archive_sha256": "8d942b98df5e658f56f20d592c7f868833fe38115e65c33003d8cd224b0155da",
+      "files": 23,
+      "expanded_bytes": 385035
+    },
+    {
+      "name": "regex-syntax",
+      "version": "0.8.8",
+      "archive_sha256": "7a2d987857b319362043e95f5353c0535c1f58eec5336fdfcf626430af7def58",
+      "files": 43,
+      "expanded_bytes": 1681419
+    },
+    {
+      "name": "reqwest",
+      "version": "0.12.28",
+      "archive_sha256": "eddd3ca559203180a307f12d114c268abf583f59b03cb906fd0b3ff8646c1147",
+      "files": 47,
+      "expanded_bytes": 735488
+    },
+    {
+      "name": "resolv-conf",
+      "version": "0.7.6",
+      "archive_sha256": "1e061d1b48cb8d38042de4ae0a7a6401009d6143dc80d2e2d6f31f0bdd6470c7",
+      "files": 20,
+      "expanded_bytes": 69596
+    },
+    {
+      "name": "ring",
+      "version": "0.17.14",
+      "archive_sha256": "a4689e6c2294d81e88dc6261c768b63bc4fcdb852be6d1352498b114f61383b7",
+      "files": 391,
+      "expanded_bytes": 7757116
+    },
+    {
+      "name": "rustc-hash",
+      "version": "2.1.1",
+      "archive_sha256": "357703d41365b4b27c590e3ed91eabb1b663f07c4c084095e60cbed4362dff0d",
+      "files": 14,
+      "expanded_bytes": 42014
+    },
+    {
+      "name": "rustc_version",
+      "version": "0.4.1",
+      "archive_sha256": "cfcb3a22ef46e85b45de6ee7e79d063319ebb6594faafcf1c225ea92ab6e9b92",
+      "files": 13,
+      "expanded_bytes": 43764
+    },
+    {
+      "name": "rusticata-macros",
+      "version": "4.1.0",
+      "archive_sha256": "faf0c4a6ece9950b9abdb62b1cfcf2a68b3b67a10ba445b3bb85be2a293d0632",
+      "files": 17,
+      "expanded_bytes": 38358
+    },
+    {
+      "name": "rustix",
+      "version": "1.1.4",
+      "archive_sha256": "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190",
+      "files": 332,
+      "expanded_bytes": 2358510
+    },
+    {
+      "name": "rustls",
+      "version": "0.23.45",
+      "archive_sha256": "0d41d731c7d2f962d1ccc364cec258de3c0e93b38c2fb3ba97ac74513048d634",
+      "files": 119,
+      "expanded_bytes": 1765728
+    },
+    {
+      "name": "rustls-native-certs",
+      "version": "0.8.3",
+      "archive_sha256": "612460d5f7bea540c490b2b6395d8e34a953e52b491accd6c86c8164c5932a63",
+      "files": 28,
+      "expanded_bytes": 94550
+    },
+    {
+      "name": "rustls-pki-types",
+      "version": "1.14.0",
+      "archive_sha256": "be040f8b0a225e40375822a563fa9524378b9d63112f53e19ffff34df5d33fdd",
+      "files": 32,
+      "expanded_bytes": 153015
+    },
+    {
+      "name": "rustls-platform-verifier",
+      "version": "0.7.0",
+      "archive_sha256": "26d1e2536ce4f35f4846aa13bff16bd0ff40157cdb14cc056c7b14ba41233ba0",
+      "files": 48,
+      "expanded_bytes": 190647
+    },
+    {
+      "name": "rustls-platform-verifier-android",
+      "version": "0.1.1",
+      "archive_sha256": "f87165f0995f63a9fbeea62b64d10b4d9d8e78ec6d7d51fb2125fda7bb36788f",
+      "files": 8,
+      "expanded_bytes": 18863
+    },
+    {
+      "name": "rustls-webpki",
+      "version": "0.103.15",
+      "archive_sha256": "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2",
+      "files": 28,
+      "expanded_bytes": 414735
+    },
+    {
+      "name": "rustversion",
+      "version": "1.0.22",
+      "archive_sha256": "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d",
+      "files": 39,
+      "expanded_bytes": 74770
+    },
+    {
+      "name": "rustyline",
+      "version": "14.0.0",
+      "archive_sha256": "7803e8936da37efd9b6d4478277f4b2b9bb5cdb37a113e8d63222e58da647e63",
+      "files": 53,
+      "expanded_bytes": 561422
+    },
+    {
+      "name": "ryu",
+      "version": "1.0.22",
+      "archive_sha256": "a50f4cf475b65d88e057964e0e9bb1f0aa9bbb2036dc65c64596b42932536984",
+      "files": 38,
+      "expanded_bytes": 177402
+    },
+    {
+      "name": "same-file",
+      "version": "1.0.6",
+      "archive_sha256": "93fc1dc3aaa9bfed95e02e6eadabb4baf7e3078b0bd1b4d7b6b0b68378900502",
+      "files": 16,
+      "expanded_bytes": 34899
+    },
+    {
+      "name": "schannel",
+      "version": "0.1.28",
+      "archive_sha256": "891d81b926048e76efe18581bf793546b4c0eaf8448d72be8de2bbee5fd166e1",
+      "files": 33,
+      "expanded_bytes": 179130
+    },
+    {
+      "name": "schemafy",
+      "version": "0.5.2",
+      "archive_sha256": "8aea5ba40287dae331f2c48b64dbc8138541f5e97ee8793caa7948c1f31d86d5",
+      "files": 29,
+      "expanded_bytes": 410820
+    },
+    {
+      "name": "schemafy_core",
+      "version": "0.5.2",
+      "archive_sha256": "41781ae092f4fd52c9287efb74456aea0d3b90032d2ecad272bd14dbbcb0511b",
+      "files": 7,
+      "expanded_bytes": 7694
+    },
+    {
+      "name": "schemafy_lib",
+      "version": "0.5.2",
+      "archive_sha256": "e953db32579999ca98c451d80801b6f6a7ecba6127196c5387ec0774c528befa",
+      "files": 7,
+      "expanded_bytes": 34820
+    },
+    {
+      "name": "schemars",
+      "version": "0.8.22",
+      "archive_sha256": "3fbf2ae1b8bc8e02df939598064d22402220cd5bbcca1c76f7d6a310974d5615",
+      "files": 214,
+      "expanded_bytes": 384130
+    },
+    {
+      "name": "schemars",
+      "version": "0.9.0",
+      "archive_sha256": "4cd191f9397d57d581cddd31014772520aa448f65ef991055d7f61582c65165f",
+      "files": 216,
+      "expanded_bytes": 425409
+    },
+    {
+      "name": "schemars",
+      "version": "1.2.1",
+      "archive_sha256": "a2b42f36aa1cd011945615b92222f6bf73c599a102a300334cd7f8dbeec726cc",
+      "files": 261,
+      "expanded_bytes": 544303
+    },
+    {
+      "name": "schemars_derive",
+      "version": "0.8.22",
+      "archive_sha256": "32e265784ad618884abaea0600a9adf15393368d840e0222d101a072f3f7534d",
+      "files": 17,
+      "expanded_bytes": 89200
+    },
+    {
+      "name": "schemars_derive",
+      "version": "1.2.1",
+      "archive_sha256": "7d115b50f4aaeea07e79c1912f645c7513d81715d0420f8bc77a18c6260b307f",
+      "files": 22,
+      "expanded_bytes": 139141
+    },
+    {
+      "name": "scoped-tls",
+      "version": "1.0.1",
+      "archive_sha256": "e1cf6437eb19a8f4a6cc0f7dca544973b0b78843adbfeb3683d1a94a0024a294",
+      "files": 9,
+      "expanded_bytes": 22426
+    },
+    {
+      "name": "scopeguard",
+      "version": "1.2.0",
+      "archive_sha256": "94143f37725109f92c262ed2cf5e59bce7498c01bcc1502d7b9afe439a4e9f49",
+      "files": 11,
+      "expanded_bytes": 35538
+    },
+    {
+      "name": "seccompiler",
+      "version": "0.5.0",
+      "archive_sha256": "a4ae55de56877481d112a559bbc12667635fdaf5e005712fd4e2b2fa50ffc884",
+      "files": 35,
+      "expanded_bytes": 311792
+    },
+    {
+      "name": "security-framework",
+      "version": "2.11.1",
+      "archive_sha256": "897b2245f0b511c87893af39b033e5ca9cce68824c4d7e7630b5a1d339658d02",
+      "files": 46,
+      "expanded_bytes": 377910
+    },
+    {
+      "name": "security-framework",
+      "version": "3.5.1",
+      "archive_sha256": "b3297343eaf830f66ede390ea39da1d462b6b0c1b000f420d0a83f898bbbe6ef",
+      "files": 47,
+      "expanded_bytes": 427937
+    },
+    {
+      "name": "security-framework-sys",
+      "version": "2.15.0",
+      "archive_sha256": "cc1f0cbffaac4852523ce30d8bd3c5cdc873501d96ff467ca09b6767bb8cd5c0",
+      "files": 31,
+      "expanded_bytes": 104251
+    },
+    {
+      "name": "semver",
+      "version": "1.0.27",
+      "archive_sha256": "d767eb0aabc880b29956c35734170f26ed551a859dbd361d140cdbeca61ab1e2",
+      "files": 25,
+      "expanded_bytes": 120968
+    },
+    {
+      "name": "sequence_trie",
+      "version": "0.3.6",
+      "archive_sha256": "1ee22067b7ccd072eeb64454b9c6e1b33b61cd0d49e895fd48676a184580e0c3",
+      "files": 15,
+      "expanded_bytes": 36270
+    },
+    {
+      "name": "serde",
+      "version": "1.0.228",
+      "archive_sha256": "9a8e94ea7f378bd32cbbd37198a4a91436180c5bb472411e48b5ec2e2124ae9e",
+      "files": 33,
+      "expanded_bytes": 561551
+    },
+    {
+      "name": "serde_core",
+      "version": "1.0.228",
+      "archive_sha256": "41d385c7d4ca58e59fc732af25c3983b67ac852c1a25000afe1175de458b67ad",
+      "files": 27,
+      "expanded_bytes": 392880
+    },
+    {
+      "name": "serde_derive",
+      "version": "1.0.228",
+      "archive_sha256": "d540f220d3187173da220f885ab66608367b6574e925011a9353e4badda91d79",
+      "files": 36,
+      "expanded_bytes": 333321
+    },
+    {
+      "name": "serde_derive_internals",
+      "version": "0.29.1",
+      "archive_sha256": "18d26a20a969b9e3fdf2fc2d9f21eda6c40e2de84c9408bb5d3b05d499aae711",
+      "files": 15,
+      "expanded_bytes": 130229
+    },
+    {
+      "name": "serde_html_form",
+      "version": "0.3.2",
+      "archive_sha256": "2acf96b1d9364968fce46ebb548f1c0e1d7eceae27bdff73865d42e6c7369d94",
+      "files": 25,
+      "expanded_bytes": 101519
+    },
+    {
+      "name": "serde_ignored",
+      "version": "0.1.14",
+      "archive_sha256": "115dffd5f3853e06e746965a20dcbae6ee747ae30b543d91b0e089668bb07798",
+      "files": 12,
+      "expanded_bytes": 61490
+    },
+    {
+      "name": "serde_json",
+      "version": "1.0.149",
+      "archive_sha256": "83fc039473c5595ace860d8c4fafa220ff474b3fc6bfdb4293327f1a37e94d86",
+      "files": 88,
+      "expanded_bytes": 747237
+    },
+    {
+      "name": "serde_path_to_error",
+      "version": "0.1.20",
+      "archive_sha256": "10a9ff822e371bb5403e391ecd83e182e0e77ba7f6fe0160b795797109d1b457",
+      "files": 17,
+      "expanded_bytes": 106357
+    },
+    {
+      "name": "serde_repr",
+      "version": "0.1.20",
+      "archive_sha256": "175ee3e80ae9982737ca543e96133087cbd9a485eecc3bc4de9c1a37b47ea59c",
+      "files": 26,
+      "expanded_bytes": 39876
+    },
+    {
+      "name": "serde_urlencoded",
+      "version": "0.7.1",
+      "archive_sha256": "d3491c14715ca2294c4d6a88f15e84739788c1d030eed8c110436aafdaa2f3fd",
+      "files": 18,
+      "expanded_bytes": 60085
+    },
+    {
+      "name": "serde_with",
+      "version": "3.17.0",
+      "archive_sha256": "381b283ce7bc6b476d903296fb59d0d36633652b633b27f64db4fb46dcbfc3b9",
+      "files": 164,
+      "expanded_bytes": 1244296
+    },
+    {
+      "name": "serde_with_macros",
+      "version": "3.17.0",
+      "archive_sha256": "a6d4e30573c8cb306ed6ab1dca8423eec9a463ea0e155f45399455e0368b27e0",
+      "files": 18,
+      "expanded_bytes": 147412
+    },
+    {
+      "name": "serial2",
+      "version": "0.2.33",
+      "archive_sha256": "8cc76fa68e25e771492ca1e3c53d447ef0be3093e05cd3b47f4b712ba10c6f3c",
+      "files": 36,
+      "expanded_bytes": 151819
+    },
+    {
+      "name": "sha1",
+      "version": "0.10.6",
+      "archive_sha256": "e3bf829a2d51ab4a5ddf1352d8470c140cadc8301b2ae1789db023f01cedd6ba",
+      "files": 16,
+      "expanded_bytes": 46122
+    },
+    {
+      "name": "sha1_smol",
+      "version": "1.0.1",
+      "archive_sha256": "bbfa15b3dddfee50a0fff136974b3e1bde555604ba463834a7eb7deb6417705d",
+      "files": 14,
+      "expanded_bytes": 34351
+    },
+    {
+      "name": "sha2",
+      "version": "0.10.9",
+      "archive_sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "files": 31,
+      "expanded_bytes": 114050
+    },
+    {
+      "name": "sharded-slab",
+      "version": "0.1.7",
+      "archive_sha256": "f40ca3c46823713e0d4209592e8d6e826aa57e928f09752619fc696c499637f6",
+      "files": 37,
+      "expanded_bytes": 269959
+    },
+    {
+      "name": "shared_library",
+      "version": "0.1.9",
+      "archive_sha256": "5a9e7e0f2bfae24d8a5b5a66c5b257a83c7412304311512a0c054cd5e619da11",
+      "files": 8,
+      "expanded_bytes": 33064
+    },
+    {
+      "name": "shell-words",
+      "version": "1.1.1",
+      "archive_sha256": "dc6fe69c597f9c37bfeeeeeb33da3530379845f10be461a66d16d03eca2ded77",
+      "files": 10,
+      "expanded_bytes": 30786
+    },
+    {
+      "name": "shlex",
+      "version": "1.3.0",
+      "archive_sha256": "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64",
+      "files": 12,
+      "expanded_bytes": 58582
+    },
+    {
+      "name": "signal-hook-registry",
+      "version": "1.4.8",
+      "archive_sha256": "c4db69cba1110affc0e9f7bcd48bbf87b3f4fc7c61fc9155afd4c469eb3d6c1b",
+      "files": 11,
+      "expanded_bytes": 68451
+    },
+    {
+      "name": "simd-adler32",
+      "version": "0.3.8",
+      "archive_sha256": "e320a6c5ad31d271ad523dcf3ad13e2767ad8b1cb8f047f75a8aeaf8da139da2",
+      "files": 22,
+      "expanded_bytes": 77842
+    },
+    {
+      "name": "simd_cesu8",
+      "version": "1.2.0",
+      "archive_sha256": "11031e251abf8611c80f460e19dbdeb54a66db918e49c65a7065b46ac7aec520",
+      "files": 30,
+      "expanded_bytes": 558746
+    },
+    {
+      "name": "simdutf8",
+      "version": "0.1.5",
+      "archive_sha256": "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e",
+      "files": 26,
+      "expanded_bytes": 129856
+    },
+    {
+      "name": "slab",
+      "version": "0.4.12",
+      "archive_sha256": "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5",
+      "files": 13,
+      "expanded_bytes": 80400
+    },
+    {
+      "name": "smallvec",
+      "version": "1.15.1",
+      "archive_sha256": "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03",
+      "files": 19,
+      "expanded_bytes": 158690
+    },
+    {
+      "name": "smol_str",
+      "version": "0.3.5",
+      "archive_sha256": "0f7a918bd2a9951d18ee6e48f076843e8e73a9a5d22cf05bcd4b7a81bdd04e17",
+      "files": 15,
+      "expanded_bytes": 95788
+    },
+    {
+      "name": "socket2",
+      "version": "0.5.10",
+      "archive_sha256": "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678",
+      "files": 13,
+      "expanded_bytes": 296850
+    },
+    {
+      "name": "socket2",
+      "version": "0.6.3",
+      "archive_sha256": "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e",
+      "files": 13,
+      "expanded_bytes": 295867
+    },
+    {
+      "name": "sorted_vector_map",
+      "version": "0.2.1",
+      "archive_sha256": "94bf565ee1681b4473aa5a9d71d807347c28021bd1d8947cb626b02f42a0141f",
+      "files": 10,
+      "expanded_bytes": 99059
+    },
+    {
+      "name": "spin",
+      "version": "0.9.8",
+      "archive_sha256": "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67",
+      "files": 23,
+      "expanded_bytes": 184561
+    },
+    {
+      "name": "stable_deref_trait",
+      "version": "1.2.1",
+      "archive_sha256": "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596",
+      "files": 9,
+      "expanded_bytes": 24348
+    },
+    {
+      "name": "starlark",
+      "version": "0.14.2",
+      "archive_sha256": "9062e866918dc4c9701c98ac99f7f4fa9e4b3b4edce306e147393bc75458c4fc",
+      "files": 685,
+      "expanded_bytes": 3535949
+    },
+    {
+      "name": "starlark_derive",
+      "version": "0.14.2",
+      "archive_sha256": "797e235eb70936bfa14fabf490bf7453e6f0caaf6b9c56fe4c9aff02aee7e66d",
+      "files": 34,
+      "expanded_bytes": 275880
+    },
+    {
+      "name": "starlark_map",
+      "version": "0.14.2",
+      "archive_sha256": "234877898fd216af93b2f5798b08cbbdc1a2e8f16a622a258b1db23a61a1c4ba",
+      "files": 30,
+      "expanded_bytes": 239303
+    },
+    {
+      "name": "starlark_syntax",
+      "version": "0.14.2",
+      "archive_sha256": "7492c571c531e68099c911cfd909d32659f1cc0910cf3adee9fce66e39d21f14",
+      "files": 274,
+      "expanded_bytes": 1227338
+    },
+    {
+      "name": "static_assertions",
+      "version": "1.1.0",
+      "archive_sha256": "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f",
+      "files": 17,
+      "expanded_bytes": 64595
+    },
+    {
+      "name": "static_interner",
+      "version": "0.1.2",
+      "archive_sha256": "fab44341fbf4deae6e8d5ab450f24e1b34e0b2439d39ac0e9b5215a4e5493263",
+      "files": 5,
+      "expanded_bytes": 40738
+    },
+    {
+      "name": "strong_hash",
+      "version": "0.1.0",
+      "archive_sha256": "0831334aea34390b6b6ec7af0a27f9ee6324ad3a69463e6b240d83d6b7bce9c9",
+      "files": 8,
+      "expanded_bytes": 14065
+    },
+    {
+      "name": "strong_hash_derive",
+      "version": "0.1.0",
+      "archive_sha256": "ace6b48b7c4383a39bd3b966cca41bc999003aab9f690a2f355525c924296928",
+      "files": 5,
+      "expanded_bytes": 7130
+    },
+    {
+      "name": "strsim",
+      "version": "0.10.0",
+      "archive_sha256": "73473c0e59e6d5812c5dfe2a064a6444949f089e20eec9a2e5506596494e4623",
+      "files": 14,
+      "expanded_bytes": 45289
+    },
+    {
+      "name": "strsim",
+      "version": "0.11.1",
+      "archive_sha256": "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f",
+      "files": 13,
+      "expanded_bytes": 54950
+    },
+    {
+      "name": "strum",
+      "version": "0.27.2",
+      "archive_sha256": "af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf",
+      "files": 8,
+      "expanded_bytes": 23806
+    },
+    {
+      "name": "strum_macros",
+      "version": "0.27.2",
+      "archive_sha256": "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7",
+      "files": 30,
+      "expanded_bytes": 147989
+    },
+    {
+      "name": "strum_macros",
+      "version": "0.28.0",
+      "archive_sha256": "ab85eea0270ee17587ed4156089e10b9e6880ee688791d45a905f5b1ca36f664",
+      "files": 30,
+      "expanded_bytes": 149923
+    },
+    {
+      "name": "subtle",
+      "version": "2.6.1",
+      "archive_sha256": "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292",
+      "files": 10,
+      "expanded_bytes": 57062
+    },
+    {
+      "name": "syn",
+      "version": "1.0.109",
+      "archive_sha256": "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237",
+      "files": 98,
+      "expanded_bytes": 1898666
+    },
+    {
+      "name": "syn",
+      "version": "2.0.117",
+      "archive_sha256": "e665b8803e7b1d2a727f4023456bbbbe74da67099c585258af0ad9c5013b9b99",
+      "files": 105,
+      "expanded_bytes": 2293470
+    },
+    {
+      "name": "syn",
+      "version": "3.0.3",
+      "archive_sha256": "53e9bae58849f64dfa4f5d5ae372c8341f7305f82a3868709269343628b659a3",
+      "files": 104,
+      "expanded_bytes": 2360752
+    },
+    {
+      "name": "sync_wrapper",
+      "version": "1.0.2",
+      "archive_sha256": "0bf256ce5efdfa370213c1dabab5935a12e49f2c58d15e9eac2870d3b4f27263",
+      "files": 7,
+      "expanded_bytes": 20799
+    },
+    {
+      "name": "synstructure",
+      "version": "0.13.2",
+      "archive_sha256": "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2",
+      "files": 8,
+      "expanded_bytes": 101423
+    },
+    {
+      "name": "sys-locale",
+      "version": "0.3.2",
+      "archive_sha256": "8eab9a99a024a169fe8a903cf9d4a3b3601109bcc13bd9e3c6fff259138626c4",
+      "files": 15,
+      "expanded_bytes": 46751
+    },
+    {
+      "name": "system-configuration",
+      "version": "0.7.0",
+      "archive_sha256": "a13f3d0daba03132c0aa9767f98351b3488edc2c100cda2d2ec2b04f3d8d3c8b",
+      "files": 14,
+      "expanded_bytes": 71736
+    },
+    {
+      "name": "system-configuration-sys",
+      "version": "0.6.0",
+      "archive_sha256": "8e1d1b10ced5ca923a1fcb8d03e96b8d3268065d724548c0211415ff6ac6bac4",
+      "files": 13,
+      "expanded_bytes": 55237
+    },
+    {
+      "name": "tagptr",
+      "version": "0.2.0",
+      "archive_sha256": "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417",
+      "files": 14,
+      "expanded_bytes": 71394
+    },
+    {
+      "name": "take_mut",
+      "version": "0.2.2",
+      "archive_sha256": "f764005d11ee5f36500a149ace24e00e3da98b0158b3e2d53a7495660d3f4d60",
+      "files": 7,
+      "expanded_bytes": 12848
+    },
+    {
+      "name": "tempfile",
+      "version": "3.27.0",
+      "archive_sha256": "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd",
+      "files": 27,
+      "expanded_bytes": 187847
+    },
+    {
+      "name": "termcolor",
+      "version": "1.4.1",
+      "archive_sha256": "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755",
+      "files": 11,
+      "expanded_bytes": 91707
+    },
+    {
+      "name": "terminal_size",
+      "version": "0.4.3",
+      "archive_sha256": "60b8cb979cb11c32ce1603f8137b22262a9d131aaa5c37b5678025f22b8becd0",
+      "files": 14,
+      "expanded_bytes": 32605
+    },
+    {
+      "name": "termtree",
+      "version": "0.5.1",
+      "archive_sha256": "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683",
+      "files": 10,
+      "expanded_bytes": 28520
+    },
+    {
+      "name": "textwrap",
+      "version": "0.11.0",
+      "archive_sha256": "d326610f408c7a4eb6f51c37c330e496b08506c9457c9d34287ecc38809fb060",
+      "files": 17,
+      "expanded_bytes": 68022
+    },
+    {
+      "name": "thiserror",
+      "version": "1.0.69",
+      "archive_sha256": "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52",
+      "files": 91,
+      "expanded_bytes": 91946
+    },
+    {
+      "name": "thiserror",
+      "version": "2.0.18",
+      "archive_sha256": "4288b5bcbc7920c07a1149a35cf9590a2aa808e0bc1eafaade0b80947865fbc4",
+      "files": 105,
+      "expanded_bytes": 116829
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "1.0.69",
+      "archive_sha256": "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1",
+      "files": 15,
+      "expanded_bytes": 81809
+    },
+    {
+      "name": "thiserror-impl",
+      "version": "2.0.18",
+      "archive_sha256": "ebc4ee7f67670e9b64d05fa4253e753e016c6c95ff35b89b7941d6b856dec1d5",
+      "files": 17,
+      "expanded_bytes": 96181
+    },
+    {
+      "name": "thread_local",
+      "version": "1.1.9",
+      "archive_sha256": "f60246a4944f24f6e018aa17cdeffb7818b76356965d03b07d6a9886e8962185",
+      "files": 16,
+      "expanded_bytes": 69170
+    },
+    {
+      "name": "tiff",
+      "version": "0.10.3",
+      "archive_sha256": "af9605de7fee8d9551863fd692cce7637f548dbd9db9180fcc07ccc6d26c336f",
+      "files": 46,
+      "expanded_bytes": 1760919
+    },
+    {
+      "name": "time",
+      "version": "0.3.47",
+      "archive_sha256": "743bd48c283afc0388f9b8827b976905fb217ad9e647fae3a379a9283c4def2c",
+      "files": 161,
+      "expanded_bytes": 1488034
+    },
+    {
+      "name": "time-core",
+      "version": "0.1.8",
+      "archive_sha256": "7694e1cfe791f8d31026952abf09c69ca6f6fa4e1a1229e18988f06a04a12dca",
+      "files": 10,
+      "expanded_bytes": 30036
+    },
+    {
+      "name": "time-macros",
+      "version": "0.2.27",
+      "archive_sha256": "2e70e4c5a0e0a8a4823ad65dfe1a6930e4f4d756dcd9dd7939022b5e8c501215",
+      "files": 25,
+      "expanded_bytes": 110357
+    },
+    {
+      "name": "tinystr",
+      "version": "0.8.3",
+      "archive_sha256": "c8323304221c2a851516f22236c5722a72eaa19749016521d6dff0824447d96d",
+      "files": 22,
+      "expanded_bytes": 113859
+    },
+    {
+      "name": "tinyvec",
+      "version": "1.10.0",
+      "archive_sha256": "bfa5fdc3bce6191a1dbc8c02d5c8bffcf557bafa17c124c5264a458f1b0613fa",
+      "files": 26,
+      "expanded_bytes": 233191
+    },
+    {
+      "name": "tinyvec_macros",
+      "version": "0.1.1",
+      "archive_sha256": "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20",
+      "files": 8,
+      "expanded_bytes": 14980
+    },
+    {
+      "name": "tokio",
+      "version": "1.52.3",
+      "archive_sha256": "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe",
+      "files": 555,
+      "expanded_bytes": 4624600
+    },
+    {
+      "name": "tokio-graceful",
+      "version": "0.2.2",
+      "archive_sha256": "45740b38b48641855471cd402922e89156bdfbd97b69b45eeff170369cc18c7d",
+      "files": 31,
+      "expanded_bytes": 147877
+    },
+    {
+      "name": "tokio-macros",
+      "version": "2.7.0",
+      "archive_sha256": "385a6cb71ab9ab790c5fe8d67f1645e6c450a7ce006a33de03daa956cf70a496",
+      "files": 10,
+      "expanded_bytes": 64904
+    },
+    {
+      "name": "tokio-native-tls",
+      "version": "0.3.1",
+      "archive_sha256": "bbae76ab933c85776efabc971569dd6119c580d8f5d448769dec1764bf796ef2",
+      "files": 18,
+      "expanded_bytes": 60020
+    },
+    {
+      "name": "tokio-rustls",
+      "version": "0.26.4",
+      "archive_sha256": "1729aa945f29d91ba541258c8df89027d5792d85a8841fb65e8bf0f4ede4ef61",
+      "files": 22,
+      "expanded_bytes": 140347
+    },
+    {
+      "name": "tokio-stream",
+      "version": "0.1.18",
+      "archive_sha256": "32da49809aab5c3bc678af03902d4ccddea2a87d028d86392a4b1560c6906c70",
+      "files": 72,
+      "expanded_bytes": 221975
+    },
+    {
+      "name": "tokio-test",
+      "version": "0.4.5",
+      "archive_sha256": "3f6d24790a10a7af737693a3e8f1d03faef7e6ca0cc99aae5066f533766de545",
+      "files": 17,
+      "expanded_bytes": 63217
+    },
+    {
+      "name": "tokio-util",
+      "version": "0.7.18",
+      "archive_sha256": "9ae9cec805b01e8fc3fd2fe289f89149a9b66dd16786abd8b19cfa7b48cb0098",
+      "files": 93,
+      "expanded_bytes": 687891
+    },
+    {
+      "name": "toml_datetime",
+      "version": "0.7.5+spec-1.1.0",
+      "archive_sha256": "92e1cfed4a3038bc5a127e35a2d360f145e1f4b971b551a2ba5fd7aedf7e1347",
+      "files": 11,
+      "expanded_bytes": 70944
+    },
+    {
+      "name": "toml_edit",
+      "version": "0.23.10+spec-1.0.0",
+      "archive_sha256": "84c8b9f757e028cee9fa244aea147aab2a9ec09d5325a9b01e0a49730c2b5269",
+      "files": 45,
+      "expanded_bytes": 345972
+    },
+    {
+      "name": "toml_parser",
+      "version": "1.1.3+spec-1.1.0",
+      "archive_sha256": "1d38ac1cf9b95face32296c0a3ede1fdc270627c9d9c02a7274dd6d960dc4d56",
+      "files": 22,
+      "expanded_bytes": 241619
+    },
+    {
+      "name": "tonic",
+      "version": "0.14.3",
+      "archive_sha256": "a286e33f82f8a1ee2df63f4fa35c0becf4a85a0cb03091a15fd7bf0b402dc94a",
+      "files": 67,
+      "expanded_bytes": 526159
+    },
+    {
+      "name": "tonic-prost",
+      "version": "0.14.3",
+      "archive_sha256": "d6c55a2d6a14174563de34409c9f92ff981d006f56da9c6ecd40d9d4a31500b0",
+      "files": 7,
+      "expanded_bytes": 22614
+    },
+    {
+      "name": "tower",
+      "version": "0.5.3",
+      "archive_sha256": "ebe5ef63511595f1344e2d5cfa636d973292adc0eec1f0ad45fae9f0851ab1d4",
+      "files": 127,
+      "expanded_bytes": 495285
+    },
+    {
+      "name": "tower-http",
+      "version": "0.6.8",
+      "archive_sha256": "d4e6559d53cc268e5031cd8429d05415bc4cb4aefc4aa5d6cc35fbf5b924a1f8",
+      "files": 101,
+      "expanded_bytes": 759545
+    },
+    {
+      "name": "tower-layer",
+      "version": "0.3.3",
+      "archive_sha256": "121c2a6cda46980bb0fcd1647ffaf6cd3fc79a013de288782836f6df9c48780e",
+      "files": 11,
+      "expanded_bytes": 24140
+    },
+    {
+      "name": "tower-service",
+      "version": "0.3.3",
+      "archive_sha256": "8df9b6e13f2d32c91b9bd719c00d1958837bc7dec474d94952798cc8e69eeec3",
+      "files": 7,
+      "expanded_bytes": 20438
+    },
+    {
+      "name": "tracing",
+      "version": "0.1.44",
+      "archive_sha256": "63e71662fa4b2a2c3a26f570f037eb95bb1f85397f3cd8076caed2f026a6d100",
+      "files": 93,
+      "expanded_bytes": 9818203
+    },
+    {
+      "name": "tracing-appender",
+      "version": "0.2.4",
+      "archive_sha256": "786d480bce6247ab75f005b14ae1624ad978d3029d9113f0a22fa1ac773faeaf",
+      "files": 14,
+      "expanded_bytes": 125420
+    },
+    {
+      "name": "tracing-attributes",
+      "version": "0.1.31",
+      "archive_sha256": "7490cfa5ec963746568740651ac6781f701c9c5ea257c58e057f3ba8cf69e8da",
+      "files": 30,
+      "expanded_bytes": 181867
+    },
+    {
+      "name": "tracing-core",
+      "version": "0.1.36",
+      "archive_sha256": "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a",
+      "files": 28,
+      "expanded_bytes": 255338
+    },
+    {
+      "name": "tracing-log",
+      "version": "0.2.0",
+      "archive_sha256": "ee855f1f400bd0e5c02d150ae5de3840039a3f54b025156404e34c23c03f47c3",
+      "files": 12,
+      "expanded_bytes": 66560
+    },
+    {
+      "name": "tracing-opentelemetry",
+      "version": "0.32.1",
+      "archive_sha256": "1ac28f2d093c6c477eaa76b23525478f38de514fa9aeb1285738d4b97a9552fc",
+      "files": 41,
+      "expanded_bytes": 441038
+    },
+    {
+      "name": "tracing-serde",
+      "version": "0.2.0",
+      "archive_sha256": "704b1aeb7be0d0a84fc9828cae51dab5970fee5088f83d1dd7ee6f6246fc6ff1",
+      "files": 8,
+      "expanded_bytes": 30539
+    },
+    {
+      "name": "tracing-subscriber",
+      "version": "0.3.22",
+      "archive_sha256": "2f30143827ddab0d256fd843b7a66d164e9f271cfa0dde49142c5ca0ca291f1e",
+      "files": 87,
+      "expanded_bytes": 1076380
+    },
+    {
+      "name": "triomphe",
+      "version": "0.1.15",
+      "archive_sha256": "dd69c5aa8f924c7519d6372789a74eac5b94fb0f8fcf0d4a97eb0bfc3e785f39",
+      "files": 22,
+      "expanded_bytes": 134263
+    },
+    {
+      "name": "try-lock",
+      "version": "0.2.5",
+      "archive_sha256": "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b",
+      "files": 8,
+      "expanded_bytes": 12213
+    },
+    {
+      "name": "ts-rs",
+      "version": "11.1.0",
+      "archive_sha256": "4994acea2522cd2b3b85c1d9529a55991e3ad5e25cdcd3de9d505972c4379424",
+      "files": 86,
+      "expanded_bytes": 264331
+    },
+    {
+      "name": "ts-rs-macros",
+      "version": "11.1.0",
+      "archive_sha256": "ee6ff59666c9cbaec3533964505d39154dc4e0a56151fdea30a09ed0301f62e2",
+      "files": 21,
+      "expanded_bytes": 98089
+    },
+    {
+      "name": "typeid",
+      "version": "1.0.3",
+      "archive_sha256": "bc7d623258602320d5c55d1bc22793b57daff0ec7efc270ea7d55ce1d5f5471c",
+      "files": 13,
+      "expanded_bytes": 26971
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.0",
+      "archive_sha256": "40ce102ab67701b8526c123c1bab5cbe42d7040ccfd0f64af1a385808d2f43de",
+      "files": 26,
+      "expanded_bytes": 1231531
+    },
+    {
+      "name": "typenum",
+      "version": "1.20.1",
+      "archive_sha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+      "files": 26,
+      "expanded_bytes": 1231427
+    },
+    {
+      "name": "unarray",
+      "version": "0.1.4",
+      "archive_sha256": "eaea85b334db583fe3274d12b4cd1880032beab409c0d774be044d4480ab9a94",
+      "files": 13,
+      "expanded_bytes": 43441
+    },
+    {
+      "name": "unicase",
+      "version": "2.9.0",
+      "archive_sha256": "dbc4bc3a9f746d862c45cb89d705aa10f187bb96c76001afab07a0d35ce60142",
+      "files": 13,
+      "expanded_bytes": 112271
+    },
+    {
+      "name": "unicode-ident",
+      "version": "1.0.22",
+      "archive_sha256": "9312f7c4f6ff9069b165498234ce8be658059c6728633667c526e27dc2cf1df5",
+      "files": 26,
+      "expanded_bytes": 339935
+    },
+    {
+      "name": "unicode-segmentation",
+      "version": "1.12.0",
+      "archive_sha256": "f6ccf251212114b54433ec949fd6a7841275f9ada20dddd2f29e9ceea4501493",
+      "files": 20,
+      "expanded_bytes": 648472
+    },
+    {
+      "name": "unicode-width",
+      "version": "0.1.14",
+      "archive_sha256": "7dd6e30e90baa6f72411720665d41d89b9a3d039dc45b8faea1ddd07f617f6af",
+      "files": 14,
+      "expanded_bytes": 2258513
+    },
+    {
+      "name": "unicode-xid",
+      "version": "0.2.6",
+      "archive_sha256": "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853",
+      "files": 13,
+      "expanded_bytes": 76872
+    },
+    {
+      "name": "untrusted",
+      "version": "0.7.1",
+      "archive_sha256": "a156c684c91ea7d62626509bce3cb4e1d9ed5c4d978f7b4352658f96a4c26b4a",
+      "files": 11,
+      "expanded_bytes": 23721
+    },
+    {
+      "name": "untrusted",
+      "version": "0.9.0",
+      "archive_sha256": "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1",
+      "files": 19,
+      "expanded_bytes": 43631
+    },
+    {
+      "name": "url",
+      "version": "2.5.8",
+      "archive_sha256": "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed",
+      "files": 19,
+      "expanded_bytes": 591772
+    },
+    {
+      "name": "urlencoding",
+      "version": "2.1.3",
+      "archive_sha256": "daf8dba3b7eb870caf1ddeed7bc9d2a049f3cfdfae7cb521b087cc33ae4c49da",
+      "files": 10,
+      "expanded_bytes": 19280
+    },
+    {
+      "name": "utf-8",
+      "version": "0.7.6",
+      "archive_sha256": "09cc8ee72d2a9becf2f2febe0205bbed8fc6615b7cb429ad062dc7b7ddd036a9",
+      "files": 12,
+      "expanded_bytes": 35059
+    },
+    {
+      "name": "utf8_iter",
+      "version": "1.0.4",
+      "archive_sha256": "b6c140620e7ffbb22c2dee59cafe6084a59b5ffc27a8859a5f0d494b5d52b6be",
+      "files": 11,
+      "expanded_bytes": 40417
+    },
+    {
+      "name": "utf8parse",
+      "version": "0.2.2",
+      "archive_sha256": "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821",
+      "files": 9,
+      "expanded_bytes": 34578
+    },
+    {
+      "name": "uuid",
+      "version": "1.20.0",
+      "archive_sha256": "ee48d38b119b0cd71fe4141b30f5ba9c7c5d9f4e7a3a8b4a674e4b6ef789976f",
+      "files": 30,
+      "expanded_bytes": 305406
+    },
+    {
+      "name": "valuable",
+      "version": "0.1.1",
+      "archive_sha256": "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65",
+      "files": 23,
+      "expanded_bytes": 154458
+    },
+    {
+      "name": "vcpkg",
+      "version": "0.2.15",
+      "archive_sha256": "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426",
+      "files": 833,
+      "expanded_bytes": 2480880
+    },
+    {
+      "name": "version_check",
+      "version": "0.9.5",
+      "archive_sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+      "files": 13,
+      "expanded_bytes": 60150
+    },
+    {
+      "name": "wait-timeout",
+      "version": "0.2.1",
+      "archive_sha256": "09ac3b126d3914f9849036f826e054cbabdc8519970b8998ddaf3b5bd3c65f11",
+      "files": 17,
+      "expanded_bytes": 31806
+    },
+    {
+      "name": "walkdir",
+      "version": "2.5.0",
+      "archive_sha256": "29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b",
+      "files": 19,
+      "expanded_bytes": 112748
+    },
+    {
+      "name": "want",
+      "version": "0.3.1",
+      "archive_sha256": "bfa7760aed19e106de2c7c0b581b509f2f25d3dacaf737cb82ac61bc6d760b0e",
+      "files": 8,
+      "expanded_bytes": 20455
+    },
+    {
+      "name": "wasi",
+      "version": "0.11.1+wasi-snapshot-preview1",
+      "archive_sha256": "ccf3ec651a847eb01de73ccad15eb7d99f80485de043efb2f370cd654f4ea44b",
+      "files": 17,
+      "expanded_bytes": 131235
+    },
+    {
+      "name": "wasip2",
+      "version": "1.0.2+wasi-0.2.9",
+      "archive_sha256": "9517f9239f02c069db75e65f174b3da828fe5f5b945c4dd26bd25d89c03ebcf5",
+      "files": 25,
+      "expanded_bytes": 1189253
+    },
+    {
+      "name": "wasip3",
+      "version": "0.4.0+wasi-0.3.0-rc-2026-01-06",
+      "archive_sha256": "5428f8bf88ea5ddc08faddef2ac4a67e390b88186c703ce6dbd955e1c145aca5",
+      "files": 22,
+      "expanded_bytes": 1148170
+    },
+    {
+      "name": "wasm-bindgen",
+      "version": "0.2.108",
+      "archive_sha256": "64024a30ec1e37399cf85a7ffefebdb72205ca1c972291c51512360d90bd8566",
+      "files": 23,
+      "expanded_bytes": 194929
+    },
+    {
+      "name": "wasm-bindgen-futures",
+      "version": "0.4.58",
+      "archive_sha256": "70a6e77fd0ae8029c9ea0063f87c46fde723e7d887703d74ad2616d792e51e6f",
+      "files": 14,
+      "expanded_bytes": 54496
+    },
+    {
+      "name": "wasm-bindgen-macro",
+      "version": "0.2.108",
+      "archive_sha256": "008b239d9c740232e71bd39e8ef6429d27097518b6b30bdf9086833bd5b6d608",
+      "files": 9,
+      "expanded_bytes": 25814
+    },
+    {
+      "name": "wasm-bindgen-macro-support",
+      "version": "0.2.108",
+      "archive_sha256": "5256bae2d58f54820e6490f9839c49780dff84c65aeab9e772f15d5f0e913a55",
+      "files": 13,
+      "expanded_bytes": 229082
+    },
+    {
+      "name": "wasm-bindgen-shared",
+      "version": "0.2.108",
+      "archive_sha256": "1f01b580c9ac74c8d8f0c0e4afb04eeef2acf145458e52c03845ee9cd23e3d12",
+      "files": 11,
+      "expanded_bytes": 29035
+    },
+    {
+      "name": "wasm-encoder",
+      "version": "0.244.0",
+      "archive_sha256": "990065f2fe63003fe337b932cfb5e3b80e0b4d0f5ff650e6985b1048f62c8319",
+      "files": 41,
+      "expanded_bytes": 585300
+    },
+    {
+      "name": "wasm-metadata",
+      "version": "0.244.0",
+      "archive_sha256": "bb0e353e6a2fbdc176932bbaab493762eb1255a7900fe0fea1a2f96c296cc909",
+      "files": 27,
+      "expanded_bytes": 118856
+    },
+    {
+      "name": "wasm-streams",
+      "version": "0.4.2",
+      "archive_sha256": "15053d8d85c7eccdbefef60f06769760a563c7f0a9d6902a13d35c7800b0ad65",
+      "files": 57,
+      "expanded_bytes": 184742
+    },
+    {
+      "name": "wasmparser",
+      "version": "0.244.0",
+      "archive_sha256": "47b807c72e1bac69382b3a6fb3dbe8ea4c0ed87ff5629b8685ae6b9a611028fe",
+      "files": 67,
+      "expanded_bytes": 1487280
+    },
+    {
+      "name": "web-sys",
+      "version": "0.3.85",
+      "archive_sha256": "312e32e551d92129218ea9a2452120f4aabc03529ef03e4d0d82fb2780608598",
+      "files": 1682,
+      "expanded_bytes": 10712163
+    },
+    {
+      "name": "web-time",
+      "version": "1.1.0",
+      "archive_sha256": "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb",
+      "files": 15,
+      "expanded_bytes": 65590
+    },
+    {
+      "name": "webpki-root-certs",
+      "version": "1.0.5",
+      "archive_sha256": "36a29fc0408b113f68cf32637857ab740edfafdf460c326cd2afaa2d84cc05dc",
+      "files": 9,
+      "expanded_bytes": 615621
+    },
+    {
+      "name": "webpki-roots",
+      "version": "1.0.5",
+      "archive_sha256": "12bed680863276c63889429bfd6cab3b99943659923822de1c8a39c49e4d722c",
+      "files": 12,
+      "expanded_bytes": 503775
+    },
+    {
+      "name": "weezl",
+      "version": "0.1.12",
+      "archive_sha256": "a28ac98ddc8b9274cb41bb4d9d4d5c425b6020c50c46f25559911905610b4a88",
+      "files": 25,
+      "expanded_bytes": 174901
+    },
+    {
+      "name": "widestring",
+      "version": "1.2.1",
+      "archive_sha256": "72069c3113ab32ab29e5584db3c6ec55d416895e60715417b5b883a357c3e471",
+      "files": 34,
+      "expanded_bytes": 596876
+    },
+    {
+      "name": "wildcard",
+      "version": "0.3.0",
+      "archive_sha256": "f9b0540e91e49de3817c314da0dd3bc518093ceacc6ea5327cb0e1eb073e5189",
+      "files": 10,
+      "expanded_bytes": 105768
+    },
+    {
+      "name": "wildmatch",
+      "version": "2.6.1",
+      "archive_sha256": "29333c3ea1ba8b17211763463ff24ee84e41c78224c16b001cd907e663a38c68",
+      "files": 13,
+      "expanded_bytes": 46257
+    },
+    {
+      "name": "winapi",
+      "version": "0.3.9",
+      "archive_sha256": "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419",
+      "files": 411,
+      "expanded_bytes": 6942552
+    },
+    {
+      "name": "winapi-i686-pc-windows-gnu",
+      "version": "0.4.0",
+      "archive_sha256": "ac3b87c63620426dd9b991e5ce0329eff545bccbbb34f3be09ff6fb6ab51b7b6",
+      "files": 1391,
+      "expanded_bytes": 50931525
+    },
+    {
+      "name": "winapi-util",
+      "version": "0.1.11",
+      "archive_sha256": "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22",
+      "files": 17,
+      "expanded_bytes": 45511
+    },
+    {
+      "name": "winapi-x86_64-pc-windows-gnu",
+      "version": "0.4.0",
+      "archive_sha256": "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f",
+      "files": 1420,
+      "expanded_bytes": 53158180
+    },
+    {
+      "name": "windows",
+      "version": "0.58.0",
+      "archive_sha256": "dd04d41d93c4992d421894c18c8b43496aa748dd4c081bac0dc93eb0489272b6",
+      "files": 1006,
+      "expanded_bytes": 122714256
+    },
+    {
+      "name": "windows-core",
+      "version": "0.58.0",
+      "archive_sha256": "6ba6d44ec8c2591c134257ce647b7ea6b20335bf6379a27dac5f1641fcf59f99",
+      "files": 41,
+      "expanded_bytes": 179630
+    },
+    {
+      "name": "windows-core",
+      "version": "0.62.2",
+      "archive_sha256": "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb",
+      "files": 42,
+      "expanded_bytes": 150018
+    },
+    {
+      "name": "windows-implement",
+      "version": "0.58.0",
+      "archive_sha256": "2bbd5b46c938e506ecbce286b6628a02171d56153ba733b6c741fc627ec9579b",
+      "files": 6,
+      "expanded_bytes": 37191
+    },
+    {
+      "name": "windows-implement",
+      "version": "0.60.2",
+      "archive_sha256": "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf",
+      "files": 10,
+      "expanded_bytes": 55405
+    },
+    {
+      "name": "windows-interface",
+      "version": "0.58.0",
+      "archive_sha256": "053c4c462dc91d3b1504c6fe5a726dd15e216ba718e84a0e46a88fbe5ded3515",
+      "files": 6,
+      "expanded_bytes": 41138
+    },
+    {
+      "name": "windows-interface",
+      "version": "0.59.3",
+      "archive_sha256": "3f316c4a2570ba26bbec722032c4099d8c8bc095efccdc15688708623367e358",
+      "files": 8,
+      "expanded_bytes": 42568
+    },
+    {
+      "name": "windows-link",
+      "version": "0.2.1",
+      "archive_sha256": "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5",
+      "files": 8,
+      "expanded_bytes": 16196
+    },
+    {
+      "name": "windows-registry",
+      "version": "0.6.1",
+      "archive_sha256": "02752bf7fbdcce7f2a27a742f798510f3e5ad88dbe84871e5168e2120c3d5720",
+      "files": 18,
+      "expanded_bytes": 50615
+    },
+    {
+      "name": "windows-result",
+      "version": "0.2.0",
+      "archive_sha256": "1d1043d8214f791817bab27572aaa8af63732e11bf84aa21a45a78d6c317ae0e",
+      "files": 14,
+      "expanded_bytes": 40565
+    },
+    {
+      "name": "windows-result",
+      "version": "0.4.1",
+      "archive_sha256": "7781fa89eaf60850ac3d2da7af8e5242a5ea78d1a11c49bf2910bb5a73853eb5",
+      "files": 16,
+      "expanded_bytes": 42638
+    },
+    {
+      "name": "windows-strings",
+      "version": "0.1.0",
+      "archive_sha256": "4cd9b125c486025df0eabcb585e62173c6c9eddcec5d117d3b6e8c30e2ee4d10",
+      "files": 20,
+      "expanded_bytes": 54097
+    },
+    {
+      "name": "windows-strings",
+      "version": "0.5.1",
+      "archive_sha256": "7837d08f69c77cf6b07689544538e017c1bfcf57e34b4c0ff58e6c2cd3b37091",
+      "files": 21,
+      "expanded_bytes": 54332
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.48.0",
+      "archive_sha256": "677d2418bec65e3338edb076e806bc1ec15693c5d0104683f2efe857f61056a9",
+      "files": 287,
+      "expanded_bytes": 30219616
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.52.0",
+      "archive_sha256": "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d",
+      "files": 241,
+      "expanded_bytes": 21534186
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.59.0",
+      "archive_sha256": "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b",
+      "files": 252,
+      "expanded_bytes": 17151104
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.60.2",
+      "archive_sha256": "f2f500e4d28234f72040990ec9d39e3a6b950f9f22d3dba18416c35882612bcb",
+      "files": 257,
+      "expanded_bytes": 18245935
+    },
+    {
+      "name": "windows-sys",
+      "version": "0.61.2",
+      "archive_sha256": "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc",
+      "files": 257,
+      "expanded_bytes": 18183406
+    },
+    {
+      "name": "windows-targets",
+      "version": "0.48.5",
+      "archive_sha256": "9a2fa6e2155d7247be68c096456083145c183cbbbc2764150dda45a87197940c",
+      "files": 7,
+      "expanded_bytes": 20293
+    },
+    {
+      "name": "windows-targets",
+      "version": "0.52.6",
+      "archive_sha256": "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973",
+      "files": 7,
+      "expanded_bytes": 18989
+    },
+    {
+      "name": "windows-targets",
+      "version": "0.53.5",
+      "archive_sha256": "4945f9f551b88e0d65f3db0bc25c33b8acea4d9e41163edf90dcd0b19f9069f3",
+      "files": 8,
+      "expanded_bytes": 20634
+    },
+    {
+      "name": "windows_aarch64_gnullvm",
+      "version": "0.48.5",
+      "archive_sha256": "2b38e32f0abccf9987a4e3079dfb67dcd799fb61361e53e2882c3cbaf0d905d8",
+      "files": 8,
+      "expanded_bytes": 3728894
+    },
+    {
+      "name": "windows_aarch64_gnullvm",
+      "version": "0.52.6",
+      "archive_sha256": "32a4622180e7a0ec044bb555404c800bc9fd9ec262ec147edd5989ccd0c02cd3",
+      "files": 8,
+      "expanded_bytes": 3892192
+    },
+    {
+      "name": "windows_aarch64_gnullvm",
+      "version": "0.53.1",
+      "archive_sha256": "a9d8416fa8b42f5c947f8482c43e7d89e73a173cead56d044f6a56104a6d1b53",
+      "files": 10,
+      "expanded_bytes": 5092283
+    },
+    {
+      "name": "windows_aarch64_msvc",
+      "version": "0.48.5",
+      "archive_sha256": "dc35310971f3b2dbbf3f0690a219f40e2d9afcf64f9ab7cc1be722937c26b4bc",
+      "files": 8,
+      "expanded_bytes": 5005450
+    },
+    {
+      "name": "windows_aarch64_msvc",
+      "version": "0.52.6",
+      "archive_sha256": "09ec2a7bb152e2252b53fa7803150007879548bc709c039df7627cabbd05d469",
+      "files": 8,
+      "expanded_bytes": 5225004
+    },
+    {
+      "name": "windows_aarch64_msvc",
+      "version": "0.53.1",
+      "archive_sha256": "b9d782e804c2f632e395708e99a94275910eb9100b2114651e04744e9b125006",
+      "files": 10,
+      "expanded_bytes": 5235988
+    },
+    {
+      "name": "windows_i686_gnu",
+      "version": "0.48.5",
+      "archive_sha256": "a75915e7def60c94dcef72200b9a8e58e5091744960da64ec734a6c6e9b3743e",
+      "files": 8,
+      "expanded_bytes": 12646998
+    },
+    {
+      "name": "windows_i686_gnu",
+      "version": "0.52.6",
+      "archive_sha256": "8e9b5ad5ab802e97eb8e295ac6720e509ee4c243f69d781394014ebfe8bbfa0b",
+      "files": 8,
+      "expanded_bytes": 13219086
+    },
+    {
+      "name": "windows_i686_gnu",
+      "version": "0.53.1",
+      "archive_sha256": "960e6da069d81e09becb0ca57a65220ddff016ff2d6af6a223cf372a506593a3",
+      "files": 10,
+      "expanded_bytes": 13236936
+    },
+    {
+      "name": "windows_i686_gnullvm",
+      "version": "0.52.6",
+      "archive_sha256": "0eee52d38c090b3caa76c563b86c3a4bd71ef1a819287c19d586d7334ae8ed66",
+      "files": 8,
+      "expanded_bytes": 4099732
+    },
+    {
+      "name": "windows_i686_gnullvm",
+      "version": "0.53.1",
+      "archive_sha256": "fa7359d10048f68ab8b09fa71c3daccfb0e9b559aed648a8f95469c27057180c",
+      "files": 10,
+      "expanded_bytes": 5440298
+    },
+    {
+      "name": "windows_i686_msvc",
+      "version": "0.48.5",
+      "archive_sha256": "8f55c233f70c4b27f66c523580f78f1004e8b5a8b659e05a4eb49d4166cca406",
+      "files": 8,
+      "expanded_bytes": 5337389
+    },
+    {
+      "name": "windows_i686_msvc",
+      "version": "0.52.6",
+      "archive_sha256": "240948bc05c5e7c6dabba28bf89d89ffce3e303022809e73deaefe4f6ec56c66",
+      "files": 8,
+      "expanded_bytes": 5572854
+    },
+    {
+      "name": "windows_i686_msvc",
+      "version": "0.53.1",
+      "archive_sha256": "1e7ac75179f18232fe9c285163565a57ef8d3c89254a30685b57d83a38d326c2",
+      "files": 10,
+      "expanded_bytes": 5584003
+    },
+    {
+      "name": "windows_x86_64_gnu",
+      "version": "0.48.5",
+      "archive_sha256": "53d40abd2583d23e4718fddf1ebec84dbff8381c07cae67ff7768bbf19c6718e",
+      "files": 8,
+      "expanded_bytes": 12159796
+    },
+    {
+      "name": "windows_x86_64_gnu",
+      "version": "0.52.6",
+      "archive_sha256": "147a5c80aabfbf0c7d901cb5895d1de30ef2907eb21fbbab29ca94c5b08b1a78",
+      "files": 8,
+      "expanded_bytes": 12709794
+    },
+    {
+      "name": "windows_x86_64_gnu",
+      "version": "0.53.1",
+      "archive_sha256": "9c3842cdd74a865a8066ab39c8a7a473c0778a3f29370b5fd6b4b9aa7df4a499",
+      "files": 10,
+      "expanded_bytes": 12727322
+    },
+    {
+      "name": "windows_x86_64_gnullvm",
+      "version": "0.48.5",
+      "archive_sha256": "0b7b52767868a23d5bab768e390dc5f5c55825b6d30b86c844ff2dc7414044cc",
+      "files": 8,
+      "expanded_bytes": 3728890
+    },
+    {
+      "name": "windows_x86_64_gnullvm",
+      "version": "0.52.6",
+      "archive_sha256": "24d5b23dc417412679681396f2b49f3de8c1473deb516bd34410872eff51ed0d",
+      "files": 8,
+      "expanded_bytes": 3892188
+    },
+    {
+      "name": "windows_x86_64_gnullvm",
+      "version": "0.53.1",
+      "archive_sha256": "0ffa179e2d07eee8ad8f57493436566c7cc30ac536a3379fdf008f47f6bb7ae1",
+      "files": 10,
+      "expanded_bytes": 5092278
+    },
+    {
+      "name": "windows_x86_64_msvc",
+      "version": "0.48.5",
+      "archive_sha256": "ed94fce61571a4006852b7389a063ab983c02eb1bb37b47f8272ce92d06d9538",
+      "files": 8,
+      "expanded_bytes": 5005445
+    },
+    {
+      "name": "windows_x86_64_msvc",
+      "version": "0.52.6",
+      "archive_sha256": "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec",
+      "files": 8,
+      "expanded_bytes": 5225000
+    },
+    {
+      "name": "windows_x86_64_msvc",
+      "version": "0.53.1",
+      "archive_sha256": "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650",
+      "files": 10,
+      "expanded_bytes": 5235983
+    },
+    {
+      "name": "winnow",
+      "version": "0.7.14",
+      "archive_sha256": "5a5364e9d77fcdeeaa6062ced926ee3381faa2ee02d3eb83a5c27a8825540829",
+      "files": 104,
+      "expanded_bytes": 1311242
+    },
+    {
+      "name": "winnow",
+      "version": "1.0.4",
+      "archive_sha256": "23b97319f7b8343df12cc98938e5c3eb436064524c8d2b4e30a1d3a36eecdf81",
+      "files": 107,
+      "expanded_bytes": 1343593
+    },
+    {
+      "name": "winreg",
+      "version": "0.10.1",
+      "archive_sha256": "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d",
+      "files": 28,
+      "expanded_bytes": 124599
+    },
+    {
+      "name": "winreg",
+      "version": "0.50.0",
+      "archive_sha256": "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1",
+      "files": 34,
+      "expanded_bytes": 140963
+    },
+    {
+      "name": "wiremock",
+      "version": "0.6.5",
+      "archive_sha256": "08db1edfb05d9b3c1542e521aea074442088292f00b5f28e435c714a98f85031",
+      "files": 34,
+      "expanded_bytes": 266762
+    },
+    {
+      "name": "wit-bindgen",
+      "version": "0.51.0",
+      "archive_sha256": "d7249219f66ced02969388cf2bb044a09756a083d0fab1e566056b04d9fbcaa5",
+      "files": 38,
+      "expanded_bytes": 272753
+    },
+    {
+      "name": "wit-bindgen-core",
+      "version": "0.51.0",
+      "archive_sha256": "ea61de684c3ea68cb082b7a88508a8b27fcc8b797d738bfc99a82facf1d752dc",
+      "files": 14,
+      "expanded_bytes": 168725
+    },
+    {
+      "name": "wit-bindgen-rust",
+      "version": "0.51.0",
+      "archive_sha256": "b7c566e0f4b284dd6561c786d9cb0142da491f46a9fbed79ea69cdad5db17f21",
+      "files": 15,
+      "expanded_bytes": 267893
+    },
+    {
+      "name": "wit-bindgen-rust-macro",
+      "version": "0.51.0",
+      "archive_sha256": "0c0f9bfd77e6a48eccf51359e3ae77140a7f50b1e2ebfe62422d8afdaffab17a",
+      "files": 9,
+      "expanded_bytes": 58243
+    },
+    {
+      "name": "wit-component",
+      "version": "0.244.0",
+      "archive_sha256": "9d66ea20e9553b30172b5e831994e35fbde2d165325bec84fc43dbf6f4eb9cb2",
+      "files": 776,
+      "expanded_bytes": 1525747
+    },
+    {
+      "name": "wit-parser",
+      "version": "0.244.0",
+      "archive_sha256": "ecc8ac4bc1dc3381b7f59c34f00b67e18f910c2c0f50015669dde7def656a736",
+      "files": 517,
+      "expanded_bytes": 846969
+    },
+    {
+      "name": "writeable",
+      "version": "0.6.2",
+      "archive_sha256": "9edde0db4769d2dc68579893f2306b26c6ecfbe0ef499b013d731b7b9247e0b9",
+      "files": 19,
+      "expanded_bytes": 104851
+    },
+    {
+      "name": "x509-parser",
+      "version": "0.18.1",
+      "archive_sha256": "d43b0f71ce057da06bc0851b23ee24f3f86190b07203dd8f567d0b706a185202",
+      "files": 74,
+      "expanded_bytes": 384800
+    },
+    {
+      "name": "yansi",
+      "version": "1.0.1",
+      "archive_sha256": "cfe53a6657fd280eaa890a3bc59152892ffa3e30101319d168b781ed6529b049",
+      "files": 23,
+      "expanded_bytes": 166597
+    },
+    {
+      "name": "yasna",
+      "version": "0.6.0",
+      "archive_sha256": "b5f6765e852b9b4dc8e2a76843e4d64d1cea8e79bcde0b6901aea8e7c7f08282",
+      "files": 20,
+      "expanded_bytes": 266097
+    },
+    {
+      "name": "yoke",
+      "version": "0.8.2",
+      "archive_sha256": "abe8c5fda708d9ca3df187cae8bfb9ceda00dd96231bed36e445a1a48e66f9ca",
+      "files": 18,
+      "expanded_bytes": 145289
+    },
+    {
+      "name": "yoke-derive",
+      "version": "0.8.2",
+      "archive_sha256": "de844c262c8848816172cef550288e7dc6c7b7814b4ee56b3e1553f275f1858e",
+      "files": 10,
+      "expanded_bytes": 61541
+    },
+    {
+      "name": "zerocopy",
+      "version": "0.8.37",
+      "archive_sha256": "7456cf00f0685ad319c5b1693f291a650eaf345e941d082fc4e03df8a03996ac",
+      "files": 358,
+      "expanded_bytes": 1501497
+    },
+    {
+      "name": "zerocopy-derive",
+      "version": "0.8.37",
+      "archive_sha256": "1328722bbf2115db7e19d69ebcc15e795719e2d66b60827c6a69a117365e37a0",
+      "files": 130,
+      "expanded_bytes": 996119
+    },
+    {
+      "name": "zerofrom",
+      "version": "0.1.6",
+      "archive_sha256": "50cc42e0333e05660c3587f3bf9d0478688e15d870fab3346451ce7f8c9fbea5",
+      "files": 9,
+      "expanded_bytes": 15755
+    },
+    {
+      "name": "zerofrom-derive",
+      "version": "0.1.6",
+      "archive_sha256": "d71e5d6e06ab090c67b5e44993ec16b72dcbaabc526db883a360057678b48502",
+      "files": 9,
+      "expanded_bytes": 25594
+    },
+    {
+      "name": "zeroize",
+      "version": "1.8.2",
+      "archive_sha256": "b97154e67e32c85465826e8bcc1c59429aaaf107c1e4a9e53c8d8ccd5eff88d0",
+      "files": 13,
+      "expanded_bytes": 69954
+    },
+    {
+      "name": "zeroize_derive",
+      "version": "1.4.3",
+      "archive_sha256": "85a5b4158499876c763cb03bc4e49185d3cccbabb15b33c627f7884f43db852e",
+      "files": 9,
+      "expanded_bytes": 46228
+    },
+    {
+      "name": "zerotrie",
+      "version": "0.2.4",
+      "archive_sha256": "0f9152d31db0792fa83f70fb2f83148effb5c1f5b8c7686c3459e361d9bc20bf",
+      "files": 39,
+      "expanded_bytes": 411471
+    },
+    {
+      "name": "zerovec",
+      "version": "0.11.6",
+      "archive_sha256": "90f911cbc359ab6af17377d242225f4d75119aec87ea711a880987b18cd7b239",
+      "files": 67,
+      "expanded_bytes": 626379
+    },
+    {
+      "name": "zerovec-derive",
+      "version": "0.11.3",
+      "archive_sha256": "625dc425cab0dca6dc3c3319506e6593dcb08a9f387ea3b284dbd52a92c40555",
+      "files": 15,
+      "expanded_bytes": 94983
+    },
+    {
+      "name": "zlib-rs",
+      "version": "0.5.5",
+      "archive_sha256": "40990edd51aae2c2b6907af74ffb635029d5788228222c4bb811e9351c0caad3",
+      "files": 50,
+      "expanded_bytes": 736161
+    },
+    {
+      "name": "zmij",
+      "version": "1.0.19",
+      "archive_sha256": "3ff05f8caa9038894637571ae6b9e29466c1f4f829d26c9b28f869a29cbe3445",
+      "files": 18,
+      "expanded_bytes": 84033
+    },
+    {
+      "name": "zstd",
+      "version": "0.13.3",
+      "archive_sha256": "e91ee311a569c327171651566e07972200e76fcfe2242a4fa446149a3881c08a",
+      "files": 35,
+      "expanded_bytes": 128631
+    },
+    {
+      "name": "zstd-safe",
+      "version": "7.2.4",
+      "archive_sha256": "8f49c4d5f0abb602a93fb8736af2a4f4dd9512e36f7f570d66e65ff867ed3b9d",
+      "files": 15,
+      "expanded_bytes": 134679
+    },
+    {
+      "name": "zstd-sys",
+      "version": "2.0.16+zstd.1.5.7",
+      "archive_sha256": "91e19ebc2adc8f83e43039e79776e3fda8ca919132d68a1fed6a5faca2683748",
+      "files": 122,
+      "expanded_bytes": 3613953
+    },
+    {
+      "name": "zune-core",
+      "version": "0.4.12",
+      "archive_sha256": "3f423a2c17029964870cfaabb1f13dfab7d092a62a29a89264f4d36990ca414a",
+      "files": 18,
+      "expanded_bytes": 76660
+    },
+    {
+      "name": "zune-core",
+      "version": "0.5.1",
+      "archive_sha256": "cb8a0807f7c01457d0379ba880ba6322660448ddebc890ce29bb64da71fb40f9",
+      "files": 27,
+      "expanded_bytes": 111796
+    },
+    {
+      "name": "zune-jpeg",
+      "version": "0.4.21",
+      "archive_sha256": "29ce2c8a9384ad323cf564b67da86e21d3cfdff87908bc1223ed5c99bc792713",
+      "files": 33,
+      "expanded_bytes": 278833
+    },
+    {
+      "name": "zune-jpeg",
+      "version": "0.5.12",
+      "archive_sha256": "410e9ecef634c709e3831c2cfdb8d9c32164fae1c67496d5b68fff728eec37fe",
+      "files": 39,
+      "expanded_bytes": 361529
+    }
+  ],
+  "completed_utc": "2026-09-28T11:54:46.493621+00:00",
+  "build_passed": false,
+  "P-02": "not_claimed"
+}

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+    "--version"
+  ],
+  "cwd": "C:\\",
+  "started_utc": "2026-09-28T11:35:46.012918+00:00",
+  "elapsed_seconds": 0.01320990000385791,
+  "exit_code": 0,
+  "stdout": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-version.stdout.txt",
+  "stderr": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-version.stderr.txt",
+  "stdout_sha256": "c10ec31b8c6e6e2693cf65fc1971b41edbc3da1ae7db6f9f3f36c4823f8dcab5",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

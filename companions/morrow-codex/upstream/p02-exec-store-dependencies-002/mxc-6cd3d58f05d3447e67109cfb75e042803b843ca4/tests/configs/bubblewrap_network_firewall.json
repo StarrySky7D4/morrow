@@ -1,0 +1,14 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-Bubblewrap-Network-Firewall",
+  "containment": "bubblewrap",
+  "process": {
+    "commandLine": "bash -c 'set -u; echo SANDBOX_NETNS=$(readlink /proc/self/ns/net); echo LEGACY_FIREWALL_OK'"
+  },
+  "network": {
+    "defaultPolicy": "block",
+    "enforcementMode": "firewall",
+    "allowedHosts": ["api.github.com"],
+    "blockedHosts": ["evil.example.com"]
+  }
+}

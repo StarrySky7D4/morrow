@@ -1,0 +1,19 @@
+{
+  "package": "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0",
+  "files": {
+    ".cargo_vcs_info.json": "0148ce95d26945f71b8224980666009a11b0f4fe06b2546880952f69efb9e7e0",
+    "Cargo.lock": "5d4024506fa898fb0ad364881e0b59053ad4b59065f70075761bcfe8237e0d9a",
+    "Cargo.toml": "eb5a67515f8b9799965bbd0816ec60dfe0a6ee63d6c064955a9dcdc0e5d9d146",
+    "Cargo.toml.orig": "9a3e0e6e9933ad1c5d79d90c37c8a8bfcf96dc75edd1426f8bed7e1f5e2618ec",
+    "CHANGELOG.md": "f31d20df99f2ce6ae53960dc6f98ef177f19ff170956ea448bb3aae45e52f2fe",
+    "LICENSE": "4c2dafff9370c57598f847969a8240b901226315bac3aff066955ce922361bbf",
+    "README.md": "20592905bdb427d246904b423cc9a2a36a9e3666426198a9990f8a2578a5588b",
+    "rust.capnp": "ed7b127608eb766b8392cebca5660a591bb103bb1859c6a8603886dcb3ad0c3f",
+    "src/capnpc-rust-bootstrap.rs": "b50dd208679b9e13aa8c4403e346a0000df58accdc639a8eabc0472c2f03afa8",
+    "src/capnpc-rust.rs": "3df3122617128c99afde3765b5308f5f48502059188fbe0113d74681cb5ce26a",
+    "src/codegen.rs": "9d9c400de1a924ddf0c792eda22590912f99658195946f979895eb0a79b0eef7",
+    "src/codegen_types.rs": "145ed31c69ea0ebc44ade31089ee243b97bc576a44ccfa5fe17a39fd2437fe76",
+    "src/lib.rs": "ab09cc1e75f1a9fa28c6eb1d2ede3bcf857db76f636c042cee94b9cfaebbf5b8",
+    "src/pointer_constants.rs": "da67d5cb3b84d73a2da08be9bb6b6bd6aeaf11e466614074bbc0a082be35eeaa"
+  }
+}

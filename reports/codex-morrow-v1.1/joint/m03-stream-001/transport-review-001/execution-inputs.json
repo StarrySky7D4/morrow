@@ -1,0 +1,24 @@
+{
+  "runner_sha256": "757b6a3a3100baf5294b0f745991118f7a629357588ceaac1e9c5bdcd1cf3ee4",
+  "exe_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+  "test_names": [
+    "first_chunk_precedes_server_eof_and_permit_survives_head_and_eof",
+    "original_deadline_expires_while_waiting_for_demand_and_does_not_renew_at_head",
+    "cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand",
+    "response_limit_streaming_unknown_length_and_small_delivery_chunks",
+    "live_guard_revocation_is_checked_even_without_consumer_demand",
+    "dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt"
+  ],
+  "environment": {
+    "SystemRoot": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:\\Windows\\system32\\cmd.exe",
+    "TEMP": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\tmp",
+    "TMP": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\tmp",
+    "USERPROFILE": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\profile",
+    "APPDATA": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\profile\\roaming",
+    "LOCALAPPDATA": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\profile\\local",
+    "PATH": "C:\\Windows\\System32"
+  },
+  "build": false
+}

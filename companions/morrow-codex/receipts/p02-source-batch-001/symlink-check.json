@@ -1,0 +1,5 @@
+{
+  "source_batch": "p02-source-batch-001",
+  "relative_symlink_supported": true,
+  "target": "target.txt"
+}

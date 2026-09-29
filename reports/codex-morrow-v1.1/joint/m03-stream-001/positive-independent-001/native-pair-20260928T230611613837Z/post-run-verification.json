@@ -1,0 +1,29 @@
+{
+  "status": "independent_positive_failed_terminal_error_pollution_no_retry",
+  "original_result_sha256": "da034db36d9f6dbb61ffe183baef3b61fd8ea06ec878d2733a6cb229a2bb6881",
+  "original_result_preserved": true,
+  "command_kinds": [
+    "approve",
+    "approve_http",
+    "claim",
+    "inspect_http"
+  ],
+  "post_count": 1,
+  "request_body_bytes": 22025,
+  "independent_request_digest": "a582c341876be1fa1ee215a300fb4696ffc2f8b07b237567fda7b6d1b29daea1",
+  "observed_body_hash_matches_core_approved_and_server": true,
+  "response_offsets": 281,
+  "parser": 267,
+  "drain": 14,
+  "terminal_error_code": 19,
+  "delta_before_eof_margin_ns": 30727400,
+  "host_pid": 14560,
+  "guest_held_pid": 8360,
+  "both_os_exits": 0,
+  "fixture_joined": true,
+  "owner_released_from_persisted_host_inspect": true,
+  "guest_close_and_final_control_ok": true,
+  "post_run_read_only_verification": true,
+  "runtime_count": 1,
+  "overall_pass": false
+}

@@ -1,0 +1,21 @@
+[package]
+name = "wxc_test_proxy"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "wxc-test-proxy"
+path = "src/main.rs"
+
+[dependencies]
+tokio.workspace = true
+hyper = { version = "1", features = ["server", "client", "http1"] }
+hyper-util = { version = "0.1", features = ["tokio"] }
+http-body-util = "0.1"
+bytes = "1"
+clap.workspace = true
+windows.workspace = true
+
+[build-dependencies]
+mxc_build_common.workspace = true

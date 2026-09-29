@@ -1,0 +1,15 @@
+# Core network branch qualification
+
+This executable enters the actual pinned Core ModelClientSession `stream`, `prewarm_websocket`, `preconnect_websocket` and `new_session` methods. It neither creates an alternative agent loop nor substitutes a standalone transport-trait demo for those calls.
+
+The explicit ModelClient backend override covers the shared HTTP construction helper and WebSocket connection helper. HTTP execute and stream both dispatch to the selected backend and cannot fall back to concrete networking after errors. The six cases exercise stream; Realtime/unary execute callers are not exercised. The default HttpClientFactory itself is not replaced. Its unavailable network policy is only a refusal backstop, not an account/privacy guarantee.
+
+The runner starts a new process with an OS/build environment allowlist and isolated profile, Cargo home and temporary directory. Before calling ModelClient::new, the bridge checks that OPENAI_API_KEY, CODEX_API_KEY and CODEX_REFRESH_TOKEN_URL_OVERRIDE are absent. The fixture also requires every provider auth/environment credential field to be empty, requires_openai_auth=false, retries=0, no attestation or request contributors, and disabled inference traces. No telemetry exporter is initialized. Header recording refuses credential headers before logging their values.
+
+Cases cover direct HTTP refusal, ordinary WebSocket refusal without fallback, prewarm refusal, stream426 natural fallback plus a new session on the same ModelClient remaining HTTP-only, prewarm426 setup-only fallback, and the independent preconnect426 setup-only fallback. The bridge only calls real public Core methods and observes their public state; it never writes disable_websockets or directly calls fallback helpers.
+
+All data/error fixtures are local. A synthetic426 is an injected error, not a server handshake or a host003 status receipt. No ResponseStream, WebSocket connection or successful model response is manufactured. Setup Ok is a Core control-flow result without network success. HTTP capture includes exact prepared request bytes and SHA-256; WebSocket capture occurs before downstream API header merging/authentication/upgrade and therefore is not final wire evidence.
+
+Use `receipts/p02-core-network-003/run_probe.py` with the current source patch receipt and SHA-256. Only an explicit lock stage can change this independent lock. Build/run are locked, offline and use Rust1.95. Failed attempts remain in fresh run directories. New source and output directories do not carry the previous execution patch forward. Prior17/35/129 bound inputs are verified before and after each stage.
+
+Only the qualification bridge is feature-gated. The backend API and routing modifications are not feature-gated and are not wired into production session startup. M-03 network semantics and M-08 credential/authority/recovery contracts remain missing; host003 is unchanged and is not linked as a successful adapter. Successful HTTP/SSE/WS, established connection cache/reconnect, auth recovery, proxy/TLS/redirects, Realtime/unary, actual host IPC, OS isolation, product builds and the full agent loop remain unverified.

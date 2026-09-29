@@ -1,0 +1,7 @@
+# Provenance information for the generated isolation_session_bindings crate.
+# Updated manually after regenerating the bindings; verified by the bindings crate's build.rs.
+
+[tool]
+windows_bindgen_version = "0.62.1"
+target_windows_crate = "0.62"
+generated_date = "2026-08-14"

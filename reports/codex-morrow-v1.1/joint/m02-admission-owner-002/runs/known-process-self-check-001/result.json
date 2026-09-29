@@ -1,0 +1,19 @@
+{
+  "status": "read_only_observer_self_check_passed",
+  "snapshot": {
+    "pid": 2068,
+    "image_path": "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "image_file_sha256": "3adbbf2af609e206e3ca18cd55fc7c4b52f5c8bb8218dd99fd5a9e50d7a193cd",
+    "creation_filetime_100ns": 134351002663921322,
+    "first_observed_monotonic_ns": 166782741596700,
+    "observed_monotonic_ns": 166782742104900,
+    "handle_signaled": false,
+    "exit_code": null,
+    "pid_source": "reviewer self process only",
+    "OS_parent_independently_observed": false,
+    "scope": "held explicit PID handle; no machine enumeration, no image attestation, no output EOF proof"
+  },
+  "observer_sha256": "3281183046e0b5bca490a54fb7a5179ec79dc662036dac77e2885bc053450298",
+  "host_client_runtime_cases": 0,
+  "product_pass_credit": 0
+}

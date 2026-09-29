@@ -1,0 +1,19 @@
+{
+  "status": "failed",
+  "run": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T222837439738Z",
+  "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-002\\20260928T222837439738Z",
+  "candidate_manifest_sha256": "4c8a584d020b3fcf30c1a5d974771fe38f912182242cc2826d4ed69448728bf0",
+  "error": "OSError(22, 'Invalid argument')",
+  "host_os_exit": 2,
+  "host_lifetime": {
+    "pid": 13576,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 8000,
+      "session": 3373148247497888253
+    },
+    "owner_release_verified": false
+  },
+  "inputs_unchanged": true
+}

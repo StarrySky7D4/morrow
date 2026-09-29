@@ -1,0 +1,25 @@
+{
+  "status": "interface_pre_review_only",
+  "runtime_executed": false,
+  "schema_frozen": false,
+  "cases": [
+    {"id":"S01","status":"not_run","purpose":"Prepare plus real prepared bytes is proposal only; explicit operator approval before single Commit","evidence":"proposal and approval bindings, original deadline, server zero connections/POST before approval; changed input and expiry denied"},
+    {"id":"S02","status":"not_run","purpose":"real Core first delta before HTTP EOF","evidence":"server first delta barrier released only by actual Core OutputTextDelta; parser byte chunk boundaries, raw frame decode, server body and request digest equality"},
+    {"id":"S03","status":"not_run","purpose":"Completed before HTTP EOF and parser detach ownership","evidence":"real parser detach/queued Completed race, original lease bounded drain, user cancel priority, late EOF/overlimit/expiry classified separately"},
+    {"id":"S04","status":"not_run","purpose":"true OS pending data write plus independent Cancel/Inspect","evidence":"specific bounded pipe and credit geometry, actual pending IO rather than queue wait, control timings, cancel/effect fence generation, partial frame close and worker join"},
+    {"id":"S05","status":"not_run","purpose":"absolute credit and buffer ownership","evidence":"separate network/write/receive/parser/drain/ACK offsets, duplicate/future/cross-session ACK, parser detached unACKed tail, slow byte consumer versus slow Core consumer"},
+    {"id":"S06","status":"not_run","purpose":"no POST retry or fallback","evidence":"real 400/302/401/426/429/503 and post-receive disconnect; single server request; redirect target zero; repeated Commit/new connection no redispatch"},
+    {"id":"S07","status":"not_run","purpose":"durable intent independent of parser and IPC outcome","evidence":"Prepared/Unknown/Observed original Store records and complete material hashes; parser error with full HTTP vs Completed with broken drain; Unknown restart Inspect only"},
+    {"id":"S08","status":"not_run","purpose":"frozen parser incomplete semantics","evidence":"interrupted incomplete yields upstream Completed end_turn false for valid structure; other reasons error; no rewritten parser or synthetic success"},
+    {"id":"S09","status":"not_run","purpose":"original deadline/revoke and release","evidence":"approval/Read/ACK/drain never renew; cancel acknowledged distinct from pending effects; network worker join/data close/child exit/stdout EOF/stderr EOF independently labelled"},
+    {"id":"S10","status":"not_run","purpose":"input limits, identity and frozen inputs","evidence":"32KiB request/64KiB response/8KiB 32-header proposal limits; authenticated data pipe known PID/nonce; no credentials or public endpoint; exact ready input manifests and old frozen hashes"}
+  ],
+  "product_pass_credit": 0,
+  "original_acceptance_not_run": 84,
+  "M02":"partial",
+  "G0":"blocked",
+  "P02":"blocked",
+  "J00":"blocked",
+  "G1":"not_passed",
+  "product_graphs":"0/2"
+}

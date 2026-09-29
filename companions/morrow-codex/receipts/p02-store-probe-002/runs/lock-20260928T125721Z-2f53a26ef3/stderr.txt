@@ -1,0 +1,12 @@
+error: failed to get `nucleo` as a dependency of package `codex-file-search v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\file-search)`
+    ... which satisfies path dependency `codex-file-search` (locked to 0.0.0) of package `codex-rollout v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\codex-work\codex-rs\rollout)`
+    ... which satisfies path dependency `codex-rollout` (locked to 0.0.0) of package `morrow-codex-p02-store-probe v0.0.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\p02-store-probe-002)`
+
+Caused by:
+  failed to load source for dependency `nucleo`
+
+Caused by:
+  unable to update https://github.com/helix-editor/nucleo.git?rev=4253de9faabb4e5c6d81d946a5e35a90f87347ee#4253de9f
+
+Caused by:
+  can't checkout from 'https://github.com/helix-editor/nucleo.git': you are in the offline mode (--offline)

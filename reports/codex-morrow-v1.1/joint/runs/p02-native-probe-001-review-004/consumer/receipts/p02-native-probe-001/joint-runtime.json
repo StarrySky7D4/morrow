@@ -1,0 +1,175 @@
+{
+  "G0": "not_claimed",
+  "P-02": "not_complete",
+  "cases": [
+    {
+      "assertions": [
+        [
+          "upstream_error_preserves_named_sentinel",
+          true
+        ],
+        [
+          "one_original_stream_request_no_retry",
+          true
+        ],
+        [
+          "nonstream_entry_never_used",
+          true
+        ],
+        [
+          "actual_prepared_body_matches_fixed_request",
+          true
+        ],
+        [
+          "endpoint_set_sse_and_json_headers",
+          true
+        ],
+        [
+          "expected_host_exchange_count",
+          true
+        ],
+        [
+          "no_commit_attempt",
+          true
+        ],
+        [
+          "actual_open_frame_binds_upstream_prepared_body",
+          true
+        ]
+      ],
+      "evidence": {
+        "commit_attempts": 0,
+        "host_exchange_calls": 1,
+        "host_frames": [
+          {
+            "attempt_id": "p02-disconnected-attempt",
+            "frame_sha256": "ec055ee734a28655bc2024b9fab1e3d1674bc7e06787b5cca1df064aa81ea1ae",
+            "instance_epoch": 1,
+            "kind": "Stream.Open",
+            "request_body_length": 241,
+            "request_body_sha256": "e8a1ef22ef30a6c5a3ddb41be40e737a25adc091fdc87abf49dba5cea0075950",
+            "request_id": 1,
+            "session_id": "p02-disconnected-session"
+          }
+        ],
+        "open_attempts": 1,
+        "requests": [
+          {
+            "headers": [
+              [
+                "accept",
+                "text/event-stream"
+              ],
+              [
+                "content-type",
+                "application/json"
+              ]
+            ],
+            "method": "POST",
+            "prepared_body_json": {
+              "include": [],
+              "input": [],
+              "instructions": "Offline callsite interception fixture. No model request may be sent.",
+              "model": "morrow-qualification-only",
+              "parallel_tool_calls": false,
+              "reasoning": null,
+              "store": false,
+              "stream": true,
+              "tool_choice": "none"
+            },
+            "prepared_body_length": 241,
+            "prepared_body_sha256": "e8a1ef22ef30a6c5a3ddb41be40e737a25adc091fdc87abf49dba5cea0075950",
+            "url": "https://morrow-offline-fixture.invalid/v1/responses"
+          }
+        ],
+        "stream_calls": 1,
+        "unexpected_execute_calls": 0
+      },
+      "name": "host_disconnected_before_open",
+      "status": "passed_callsite_refusal",
+      "upstream_returned_error": "network error: MORROW_P02_HOST_DISCONNECTED_BEFORE_OPEN; fixture_transport_error=Invalid"
+    },
+    {
+      "assertions": [
+        [
+          "upstream_error_preserves_named_sentinel",
+          true
+        ],
+        [
+          "one_original_stream_request_no_retry",
+          true
+        ],
+        [
+          "nonstream_entry_never_used",
+          true
+        ],
+        [
+          "actual_prepared_body_matches_fixed_request",
+          true
+        ],
+        [
+          "endpoint_set_sse_and_json_headers",
+          true
+        ],
+        [
+          "expected_host_exchange_count",
+          true
+        ],
+        [
+          "no_commit_attempt",
+          true
+        ]
+      ],
+      "evidence": {
+        "commit_attempts": 0,
+        "host_exchange_calls": 0,
+        "host_frames": [],
+        "open_attempts": 0,
+        "requests": [
+          {
+            "headers": [
+              [
+                "accept",
+                "text/event-stream"
+              ],
+              [
+                "content-type",
+                "application/json"
+              ]
+            ],
+            "method": "POST",
+            "prepared_body_json": {
+              "include": [],
+              "input": [],
+              "instructions": "Offline callsite interception fixture. No model request may be sent.",
+              "model": "morrow-qualification-only",
+              "parallel_tool_calls": false,
+              "reasoning": null,
+              "store": false,
+              "stream": true,
+              "tool_choice": "none"
+            },
+            "prepared_body_length": 241,
+            "prepared_body_sha256": "e8a1ef22ef30a6c5a3ddb41be40e737a25adc091fdc87abf49dba5cea0075950",
+            "url": "https://unapproved-fixture.invalid/v1/responses"
+          }
+        ],
+        "stream_calls": 1,
+        "unexpected_execute_calls": 0
+      },
+      "name": "unapproved_destination_rejected",
+      "status": "passed_callsite_refusal",
+      "upstream_returned_error": "request build error: MORROW_P02_DESTINATION_OR_METHOD_DENIED"
+    }
+  ],
+  "host_kit_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "limits": [
+    "Disconnected in-process host fixture only; no actual host connection",
+    "No successful StreamResponse, HTTP metadata, SSE parser, login or model request",
+    "No ModelClient/Core loop, exec/store replacement or complete network-bypass qualification",
+    "No OS-level network monitor; this harness constructs no ReqwestTransport, socket or network client"
+  ],
+  "real_entry": "codex_api::ResponsesClient::stream_request -> EndpointSession::stream_encoded_json_with -> HttpTransport::stream",
+  "status": "passed_limited_net_callsite_probe",
+  "upstream_commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61"
+}

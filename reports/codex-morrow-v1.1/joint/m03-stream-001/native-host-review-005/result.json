@@ -1,0 +1,13 @@
+{
+  "status": "host005_targeted_source_review_no_new_blocker",
+  "manifest_sha256": "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+  "exe_sha256": "9b2a2412ce9fe617729757b8be7eddb34a84718ad64aa507f2bfdc9de926d6af",
+  "pins_checked": 50,
+  "producer_tests_passed": 3,
+  "source_test_build_pins_agree": true,
+  "independent_test_or_build": false,
+  "http_or_protocol_guest_run": false,
+  "completed_at_cancel_real_os_race_tested": false,
+  "partial_write_fault_qualified": false,
+  "whole_B_qualified": false
+}

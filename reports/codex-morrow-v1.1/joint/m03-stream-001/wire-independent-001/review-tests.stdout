@@ -1,0 +1,24 @@
+
+running 7 tests
+test actual_maximum_payload_and_raw_unknown_version_enums_union_reserved ... maximum payload=32768 full_frame=32772
+ok
+test credit_four_classes_overflow_and_offset_geometry ... frame maximum-credit bytes=356 sha256=2085cf63580dff7be9c990d06043e49bada9b375a74a6f881d0c7d49f73e6218
+frame peer-ack-before-os-observation bytes=404 sha256=29d0093f3414c6a81c59853c742204b9d21cbac8766a6baf8504b6c102cf7605
+ok
+test independent_consumption_of_all_sealed_vectors ... sealed vectors valid=24 invalid=2
+ok
+test independent_python_hash_preimage_and_approved_limit_are_distinct ... frame tightened-approved-limit bytes=524 sha256=dc68617ab01be937b7772b03315a25f1b18045fec08f55d2c99b96c1cbda72d2
+ok
+test maximum_reachable_metadata_headers_chunks_and_one_over_limits ... frame max-prepare-structural-not-http-policy bytes=11468 sha256=10111c9f9908775f0dcf0e5ae83e7ae96c42c9ab65387791853eb14c049bd4f2
+frame max-head bytes=9476 sha256=b67bb50ecb7345ddb7025b9b696ef9e0321622f98f9b88bff6d1bd2e7b386df5
+frame max-request-chunk bytes=8764 sha256=6c79867a9ea60d5c08d8c1f55d72589cca546496abf7b070b44a4aceaf43c9b0
+frame max-response-chunk bytes=8764 sha256=f445393f13827bceb76cf244bd4da1e91dd0733fd853b37c15fdee008d8eb964
+ok
+test orthogonal_observed_error_and_request_cleanup_without_own_exit ... frame request-closed-guest-still-alive bytes=404 sha256=634ff73a01cd6efac09181e5933b7e53bbe45714e4f6229c2b390140a06b812e
+frame request-closed-cancelled-unknown bytes=404 sha256=4deaf8e1393db391c0886b0427d8a5bdc4fc04e205aa6e4a7902622fa8b98c94
+ok
+test structural_codec_never_promises_direction_or_live_authority ... direction/state/generation/echo checks intentionally belong to driver
+ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

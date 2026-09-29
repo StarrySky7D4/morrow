@@ -1,0 +1,26 @@
+[
+  {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v2\\Cargo.toml",
+    "expected": "369ecbe71eae1bee45c5c3f591544d3ebf011dba243d50c19c57e165d13130ad",
+    "actual": "369ecbe71eae1bee45c5c3f591544d3ebf011dba243d50c19c57e165d13130ad",
+    "match": true
+  },
+  {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v2\\native_session_wire.json",
+    "expected": "40d87f6a5dc07c134faef67a2767429531a292f4e85f22f3c53eb6296b63001a",
+    "actual": "40d87f6a5dc07c134faef67a2767429531a292f4e85f22f3c53eb6296b63001a",
+    "match": true
+  },
+  {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v2\\README.md",
+    "expected": "b79ea7700d1bd83525b33f97e113e9f2ea98648ca697dc854b8225a7d1f8ed3f",
+    "actual": "b79ea7700d1bd83525b33f97e113e9f2ea98648ca697dc854b8225a7d1f8ed3f",
+    "match": true
+  },
+  {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v2\\src\\lib.rs",
+    "expected": "713ecfe76733d74d8ee38b7f5dcdfb1dd2510839ce1dcbb3c53072ff68a11e82",
+    "actual": "713ecfe76733d74d8ee38b7f5dcdfb1dd2510839ce1dcbb3c53072ff68a11e82",
+    "match": true
+  }
+]

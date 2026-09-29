@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "attempted_files": 1241,
+  "success_count": 1219,
+  "failures": [
+    {
+      "path": "docs/release-notes/v3.11.1-zh.md",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/release-notes/v3.11.1-zh.md",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "docs/guides/codex-kimi-routing-guide-ja.md",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/guides/codex-kimi-routing-guide-ja.md",
+      "error": "URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>"
+    },
+    {
+      "path": "docs/images/codex-claude-routing/02-claude-codex-provider-form.png",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/images/codex-claude-routing/02-claude-codex-provider-form.png",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "docs/images/codex-deepseek-routing/02-deepseek-codex-routing-form.png",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/images/codex-deepseek-routing/02-deepseek-codex-routing-form.png",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "docs/release-notes/v3.16.0-en.md",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/release-notes/v3.16.0-en.md",
+      "error": "URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>"
+    },
+    {
+      "path": "docs/user-manual/en/1-getting-started/1.1-introduction.md",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/user-manual/en/1-getting-started/1.1-introduction.md",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "docs/release-notes/v3.8.0-zh.md",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/release-notes/v3.8.0-zh.md",
+      "error": "URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>"
+    },
+    {
+      "path": "docs/user-manual/assets/image-20260108004946288.png",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/docs/user-manual/assets/image-20260108004946288.png",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "src-tauri/src/proxy/providers/codex.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/providers/codex.rs",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src-tauri/icons/tray/macos/statusTemplate.png",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/icons/tray/macos/statusTemplate.png",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "src-tauri/src/services/provider/pi.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/services/provider/pi.rs",
+      "error": "ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+    },
+    {
+      "path": "src-tauri/src/panic_hook.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/panic_hook.rs",
+      "error": "ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+    },
+    {
+      "path": "src-tauri/src/session_manager/providers/claude.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/session_manager/providers/claude.rs",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src-tauri/wix/per-user-main.wxs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/wix/per-user-main.wxs",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src/components/UpdateBadge.tsx",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/components/UpdateBadge.tsx",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src-tauri/src/services/session_usage_pi.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/services/session_usage_pi.rs",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "src-tauri/src/services/s3.rs",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/services/s3.rs",
+      "error": "TimeoutError: The read operation timed out"
+    },
+    {
+      "path": "src/components/skills/SkillCard.tsx",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/components/skills/SkillCard.tsx",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src/components/providers/forms/hooks/useOpenclawFormState.ts",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/components/providers/forms/hooks/useOpenclawFormState.ts",
+      "error": "ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+    },
+    {
+      "path": "src/icons/extracted/qiniu.png",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/icons/extracted/qiniu.png",
+      "error": "URLError: <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。>"
+    },
+    {
+      "path": "src/utils/grokBuildConfig.test.ts",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/utils/grokBuildConfig.test.ts",
+      "error": "ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。"
+    },
+    {
+      "path": "src/lib/version.test.ts",
+      "url": "https://raw.githubusercontent.com/farion1231/cc-switch/846de29c13ac4d65f164db8c15dd5fd58e29f972/src/lib/version.test.ts",
+      "error": "URLError: <urlopen error _ssl.c:1063: The handshake operation timed out>"
+    }
+  ],
+  "ended_at": "2026-09-28T12:15:30.778655+00:00"
+}

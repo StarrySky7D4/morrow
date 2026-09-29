@@ -1,0 +1,8 @@
+data: {"type":"response.created","response":{"id":"resp_m03"}}
+
+data: {"type":"response.output_text.delta","delta":"M03 synthetic delta"}
+
+data: {"type":"response.completed","response":{"id":"resp_m03","usage":{"input_tokens":1,"output_tokens":1,"total_tokens":2}}}
+
+: drain tail
+

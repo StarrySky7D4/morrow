@@ -1,0 +1,13 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "isolation-session-exit42",
+  "containment": "isolation_session",
+  "network": {
+    "defaultPolicy": "allow",
+    "allowLocalNetwork": true
+  },
+  "process": {
+    "commandLine": "exit 42",
+    "timeout": 30000
+  }
+}

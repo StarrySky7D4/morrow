@@ -1,0 +1,1568 @@
+--- qualification/m03-fixture-001/Cargo.lock
++++ qualification/m03-fixture-002/Cargo.lock
+@@ -7150,7 +7150,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.2"
++version = "0.1.3"
+ dependencies = [
+  "bytes",
+  "codex-api",
+--- qualification/m03-fixture-001/Cargo.toml
++++ qualification/m03-fixture-002/Cargo.toml
+@@ -3,7 +3,7 @@
+ 
+ [package]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.2"
++version = "0.1.3"
+ edition = "2024"
+ publish = false
+ 
+--- qualification/m03-fixture-001/src/driver.rs
++++ qualification/m03-fixture-002/src/driver.rs
+@@ -97,18 +97,46 @@
+ #[derive(Clone, Debug, Default)]
+ pub struct CancellationSignal {
+     token: CancellationToken,
+-    first_reason: Arc<Mutex<Option<CancelReason>>>,
++    gate: Arc<Mutex<DeliveryGate>>,
++}
++#[derive(Debug, Default)]
++struct DeliveryGate {
++    first_reason: Option<CancelReason>,
++    paused: bool,
++}
++#[derive(Clone, Debug, Serialize)]
++pub struct CancelTransition {
++    pub cancel_gate_before: bool,
++    pub cancel_gate_after: bool,
++    pub first_cancel_reason_before: Option<CancelReason>,
++    pub first_cancel_reason_after: Option<CancelReason>,
++    pub delivery_paused_before: bool,
++    pub host_control_closed_gate: bool,
+ }
+ impl CancellationSignal {
+     pub fn cancel(&self, reason: CancelReason) {
+-        let mut first = self.first_reason.lock().unwrap();
+-        if first.is_none() {
+-            *first = Some(reason)
++        self.cancel_observed(reason);
++    }
++    pub fn cancel_observed(&self, reason: CancelReason) -> CancelTransition {
++        let mut gate = self.gate.lock().unwrap();
++        let before = gate.first_reason;
++        gate.first_reason.get_or_insert(reason);
++        self.token.cancel();
++        CancelTransition {
++            cancel_gate_before: before.is_some(),
++            cancel_gate_after: true,
++            first_cancel_reason_before: before,
++            first_cancel_reason_after: gate.first_reason,
++            delivery_paused_before: gate.paused,
++            host_control_closed_gate: before.is_none() && reason == CancelReason::HostCancelled,
+         }
+-        self.token.cancel();
++    }
++    /// Monotonic fence only: never grants work, resumes delivery, or sets a reason.
++    pub fn pause_delivery(&self) {
++        self.gate.lock().unwrap().paused = true;
+     }
+     pub fn reason(&self) -> Option<CancelReason> {
+-        *self.first_reason.lock().unwrap()
++        self.gate.lock().unwrap().first_reason
+     }
+     pub fn token(&self) -> CancellationToken {
+         self.token.clone()
+@@ -120,11 +148,25 @@
+         self.token.cancelled().await
+     }
+     pub fn with_live<T>(&self, publish: impl FnOnce() -> T) -> Option<T> {
+-        let first = self.first_reason.lock().unwrap();
+-        if first.is_some() {
+-            None
++        self.try_delivery(publish).ok().flatten()
++    }
++    /// Err returns ownership of the original closure/event/permit while paused.
++    pub fn try_delivery<T, F: FnOnce() -> T>(&self, publish: F) -> Result<Option<T>, F> {
++        let gate = self.gate.lock().unwrap();
++        if gate.first_reason.is_some() {
++            Ok(None)
++        } else if gate.paused {
++            Err(publish)
+         } else {
+-            Some(publish())
++            Ok(Some(publish()))
++        }
++    }
++    pub fn is_paused(&self) -> bool {
++        self.gate.lock().unwrap().paused
++    }
++    pub async fn resolve_pause(&self) {
++        if self.is_paused() {
++            self.cancelled().await;
+         }
+     }
+ }
+--- qualification/m03-fixture-001/src/network.rs
++++ qualification/m03-fixture-002/src/network.rs
+@@ -132,6 +132,28 @@
+         }
+         self.cancellation.with_live(publish)
+     }
++    /// Retain the actual event/permit across a pause. No locks cross this await.
++    pub async fn deliver_when_resolved<T>(&self, publish: impl FnOnce() -> T) -> Option<T> {
++        if Instant::now() >= self.deadline {
++            self.cancel(CancelReason::Deadline);
++            return None;
++        }
++        match self.cancellation.try_delivery(publish) {
++            Ok(value) => value,
++            Err(held) => {
++                self.resolve_delivery_pause().await;
++                // The pause is terminal-only. Never execute held after it.
++                drop(held);
++                None
++            }
++        }
++    }
++    pub async fn resolve_delivery_pause(&self) {
++        tokio::select! { biased;
++            _ = self.cancellation.resolve_pause() => {},
++            _ = tokio::time::sleep_until(self.deadline) => self.cancel(CancelReason::Deadline),
++        }
++    }
+     pub fn observe_core_completion(&self, end_turn: Option<bool>) {
+         self.audit.lock().unwrap().core_completion = Some(CoreCompletion { end_turn });
+     }
+@@ -306,10 +328,15 @@
+             }
+             match op.read_next(op.max_chunk).await {
+                 Ok(Some(bytes)) => {
+-                    op.parser_yielded
+-                        .fetch_add(bytes.len() as u64, Ordering::AcqRel);
+-                    op.note("actual_parser_input_chunk", &bytes);
+-                    Some((Ok(bytes), (op, false)))
++                    let delivered = op
++                        .deliver_when_resolved(|| {
++                            op.parser_yielded
++                                .fetch_add(bytes.len() as u64, Ordering::AcqRel);
++                            op.note("actual_parser_input_chunk", &bytes);
++                            bytes
++                        })
++                        .await;
++                    delivered.map(|bytes| (Ok(bytes), (op, false)))
+                 }
+                 Ok(None) => None,
+                 Err(error) => {
+@@ -456,6 +483,89 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    #[tokio::test]
++    async fn paused_gate_retains_received_event_and_reserved_permit_until_host_cancel() {
++        let op = Operation::new(
++            Arc::new(WireNotReady),
++            RequestKey(1),
++            "http://127.0.0.1:12345/v1",
++            Instant::now() + Duration::from_secs(1),
++            1024,
++        )
++        .unwrap();
++        let signal = op.cancellation_signal();
++        let (tx, mut rx) = tokio::sync::mpsc::channel(1);
++        tx.send("actual queued local event").await.unwrap();
++        let event = rx.recv().await.unwrap();
++        let permit = tx.reserve().await.unwrap();
++        signal.pause_delivery();
++        let mut consumer = Box::pin(op.deliver_when_resolved(|| event));
++        let mut producer =
++            Box::pin(op.deliver_when_resolved(|| permit.send("reserved local event")));
++        assert!(futures::poll!(&mut consumer).is_pending());
++        assert!(futures::poll!(&mut producer).is_pending());
++        assert!(
++            tx.try_reserve().is_err(),
++            "original permit must remain held"
++        );
++        assert_eq!(signal.reason(), None);
++        assert!(!signal.is_cancelled());
++        let cause = signal.cancel_observed(CancelReason::HostCancelled);
++        assert!(
++            !cause.cancel_gate_before && cause.cancel_gate_after && cause.host_control_closed_gate
++        );
++        assert!(cause.delivery_paused_before);
++        assert!(consumer.await.is_none());
++        assert!(producer.await.is_none());
++        assert!(rx.try_recv().is_err());
++        assert!(tx.try_reserve().is_ok());
++        assert_eq!(op.first_cancel_reason(), Some(CancelReason::HostCancelled));
++    }
++    #[tokio::test]
++    async fn pause_between_future_creation_and_gate_poll_does_not_publish_or_set_reason() {
++        let op = Operation::new(
++            Arc::new(WireNotReady),
++            RequestKey(1),
++            "http://127.0.0.1:12345/v1",
++            Instant::now() + Duration::from_secs(1),
++            1024,
++        )
++        .unwrap();
++        let signal = op.cancellation_signal();
++        let published = AtomicBool::new(false);
++        let future = op.deliver_when_resolved(|| published.store(true, Ordering::SeqCst));
++        signal.pause_delivery();
++        let mut future = Box::pin(future);
++        assert!(futures::poll!(&mut future).is_pending());
++        assert_eq!(signal.reason(), None);
++        signal.cancel(CancelReason::NativeFailure);
++        let cause = signal.cancel_observed(CancelReason::HostCancelled);
++        assert!(!cause.host_control_closed_gate);
++        assert_eq!(
++            cause.first_cancel_reason_after,
++            Some(CancelReason::NativeFailure)
++        );
++        assert!(future.await.is_none());
++        assert!(!published.load(Ordering::SeqCst));
++    }
++    #[tokio::test]
++    async fn unresolved_pause_cannot_extend_original_operation_deadline() {
++        let op = Operation::new(
++            Arc::new(WireNotReady),
++            RequestKey(1),
++            "http://127.0.0.1:12345/v1",
++            Instant::now() + Duration::from_millis(20),
++            1024,
++        )
++        .unwrap();
++        op.cancellation_signal().pause_delivery();
++        assert!(
++            op.deliver_when_resolved(|| panic!("paused publish"))
++                .await
++                .is_none()
++        );
++        assert_eq!(op.first_cancel_reason(), Some(CancelReason::Deadline));
++    }
+     #[test]
+     fn ambiguous_or_compressed_sse_head_is_rejected() {
+         let mut headers = http::HeaderMap::new();
+--- qualification/m03-fixture-001/src/request_task.rs
++++ qualification/m03-fixture-002/src/request_task.rs
+@@ -90,7 +90,7 @@
+                 }
+                 let id=event.fixture_id;
+                 // The original final delivery gate stays decisive after hold.
+-                let delivered=self.operation.deliver_if_live(||event.value);
++                let delivered=self.operation.deliver_when_resolved(||event.value).await;
+                 if let (Some(fixture),Some(id))=(&self.fixture,id.as_ref().filter(|id|id.delta_ordinal==1)) {
+                     if delivered.is_none() {fixture.suppressed(id,false,token.is_cancelled());}
+                     else {fixture.fail("held Core event delivered after fixture release");}
+@@ -278,6 +278,7 @@
+     let mut stream = match result {
+         Ok(stream) => stream,
+         Err(error) => {
++            op.resolve_delivery_pause().await;
+             op.cancel(CancelReason::CoreError);
+             return (
+                 CoreTerminal::Failed(bounded_error(error.to_string())),
+@@ -289,6 +290,7 @@
+     let mut count = 0;
+     let mut delta_ordinal = 0u64;
+     loop {
++        op.resolve_delivery_pause().await;
+         let next = tokio::select! { biased;
+             _ = token.cancelled() => return cancelled(&op, count),
+             _ = tokio::time::sleep_until(op.deadline()) => return expired(&op, count),
+@@ -297,6 +299,7 @@
+         let event = match next {
+             Some(Ok(event)) => event,
+             Some(Err(error)) => {
++                op.resolve_delivery_pause().await;
+                 op.cancel(CancelReason::CoreError);
+                 return (
+                     CoreTerminal::Failed(bounded_error(error.to_string())),
+@@ -305,6 +308,7 @@
+                 );
+             }
+             None => {
++                op.resolve_delivery_pause().await;
+                 op.cancel(CancelReason::CoreError);
+                 return (
+                     CoreTerminal::Failed("Core EOF without Completed".into()),
+@@ -364,12 +368,14 @@
+                 op.cancel(CancelReason::NativeFailure);
+             }
+         }
+-        let sent = op.deliver_if_live(|| {
+-            permit.send(QueuedEvent {
+-                value: Ok(event),
+-                fixture_id: fixture_id.clone(),
++        let sent = op
++            .deliver_when_resolved(|| {
++                permit.send(QueuedEvent {
++                    value: Ok(event),
++                    fixture_id: fixture_id.clone(),
++                })
+             })
+-        });
++            .await;
+         if sent.is_none() {
+             if let (Some(fixture), Some(id)) = (
+                 &config.fixture,
+--- native/m03-fixture-001/Cargo.lock
++++ native/m03-fixture-002/Cargo.lock
+@@ -7174,7 +7174,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.2"
++version = "0.1.3"
+ dependencies = [
+  "bytes",
+  "codex-api",
+@@ -7197,7 +7197,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-native-http-client"
+-version = "0.4.0"
++version = "0.4.1"
+ dependencies = [
+  "bytes",
+  "codex-core",
+--- native/m03-fixture-001/Cargo.toml
++++ native/m03-fixture-002/Cargo.toml
+@@ -3,12 +3,12 @@
+ 
+ [package]
+ name = "morrow-codex-native-http-client"
+-version = "0.4.0"
++version = "0.4.1"
+ edition = "2024"
+ publish = false
+ 
+ [dependencies]
+-morrow-codex-m03-stream = { path = "../../qualification/m03-fixture-001" }
++morrow-codex-m03-stream = { path = "../../qualification/m03-fixture-002" }
+ morrow-native-http-stream-wire = { path = "../../upstream/m03-stream-001/wire-kit-001/source" }
+ morrow-native-pipe-win = { path = "../../upstream/m03-stream-001/pipe-kit-001/source" }
+ codex-core = { path = "../../upstream/p02-integration-004/codex-work/codex-rs/core", features = ["morrow-p02-restricted-qualification"] }
+--- native/m03-fixture-001/src/main.rs
++++ native/m03-fixture-002/src/main.rs
+@@ -185,6 +185,7 @@
+             "close_result":close,"final_control_result":final_control,"result_snapshot":"after_close_observation",
+             "control_end_result":control_end,"close_observation":close_observation,
+             "fixture_observation":fixture_observation,"fixture_writer_joined":fixture_writer_joined,
++            "data_end_observation":session.data_end_observation(),
+             "control_threads_joined":control_threads_joined,"control_threads":session.control_thread_observations(),
+             "whole_session_release":"external_operator_only"});
+         serde_json::to_writer_pretty(&mut result,&report).map_err(|_|"result serialization")?;
+--- native/m03-fixture-001/src/session.rs
++++ native/m03-fixture-002/src/session.rs
+@@ -15,6 +15,12 @@
+ use tokio::sync::Notify;
+ 
+ pub(crate) struct State {
++    pub disconnect_deadline: Option<Instant>,
++    pub disconnect_explained: bool,
++    pub disconnect_frame_index: Option<usize>,
++    pub disconnect_io_index: Option<usize>,
++    pub disconnect_wait_ns: Option<u64>,
++    pub host_cancel_transition: Option<CancelTransition>,
+     pub fixture: Option<Arc<Fixture>>,
+     pub admission: Admission,
+     pub outbound: VecDeque<(wire::Kind, wire::Payload)>,
+@@ -41,6 +47,8 @@
+     pub cancel_written: bool,
+     pub credit_dirty: bool,
+     pub last_credit: Option<wire::Credit>,
++    pub credit_requests: BTreeMap<u64, wire::Credit>,
++    pub credit_acked: Option<wire::Credit>,
+     pub closed: Option<wire::Progress>,
+     pub control_eof: bool,
+     pub control_stream_ended: bool,
+@@ -59,6 +67,531 @@
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    fn revoked_frame(session: &Session) -> wire::Frame {
++        let mut frame = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        frame.kind = wire::Kind::HttpTerminal;
++        frame.sequence = 0;
++        frame.revocation_generation = 2;
++        let mut p = terminal_progress();
++        p.intent = wire::IntentPhase::Unknown;
++        p.network = wire::NetworkPhase::Cancelled;
++        p.owner = wire::OwnerPhase::Revoked;
++        p.http_eof = false;
++        p.response_material_stored = false;
++        p.request_closed = false;
++        p.error_code = 19;
++        p.revoke_persisted = true;
++        p.revoke_applied = true;
++        frame.payload = wire::Payload::Progress(p);
++        frame
++    }
++    #[tokio::test]
++    async fn boundary_disconnect_waits_for_valid_revoke_without_local_first_reason() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let signal = CancellationSignal::default();
++        session
++            .bind_cancellation(RequestKey(1), signal.clone())
++            .unwrap();
++        let started = Instant::now();
++        session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .begin_disconnect(started);
++        assert!(!signal.is_cancelled());
++        assert!(signal.is_paused());
++        assert_eq!(signal.reason(), None);
++        let mut read = Box::pin(session.read(RequestKey(1), 0, 1024));
++        assert!(
++            tokio::time::timeout(Duration::from_millis(10), &mut read)
++                .await
++                .is_err()
++        );
++        assert_eq!(signal.reason(), None);
++        let frame = revoked_frame(&session);
++        session.shared.handle_control(frame.clone());
++        {
++            let s = session.shared.state.lock().unwrap();
++            assert!(s.disconnect_status(Instant::now()).unwrap());
++            assert_eq!(s.fatal, Some(BridgeError::Unknown));
++            let t = s.host_cancel_transition.as_ref().unwrap();
++            assert!(
++                t.host_control_closed_gate
++                    && !t.cancel_gate_before
++                    && t.cancel_gate_after
++                    && t.delivery_paused_before
++            );
++            assert_eq!(
++                t.first_cancel_reason_after,
++                Some(CancelReason::HostCancelled)
++            );
++        }
++        assert_eq!(signal.reason(), Some(CancelReason::HostCancelled));
++        assert!(read.await.is_err());
++        let mut closed = frame;
++        closed.kind = wire::Kind::RequestClosed;
++        if let wire::Payload::Progress(p) = &mut closed.payload {
++            p.request_closed = true;
++        }
++        session.shared.handle_control(closed);
++        let s = session.shared.state.lock().unwrap();
++        assert!(s.closed.is_some());
++        assert!(
++            !s.host_cancel_transition
++                .as_ref()
++                .unwrap()
++                .host_control_closed_gate
++        );
++        assert!(s.disconnect_status(Instant::now()).unwrap());
++    }
++    #[test]
++    fn pending_disconnect_is_fixed_bounded_and_local_cancel_or_gen1_close_cannot_explain_it() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let original = session.deadline();
++        let now = Instant::now();
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            s.begin_disconnect(now);
++            assert_eq!(
++                s.disconnect_deadline,
++                Some(original.min(now + Duration::from_millis(500)))
++            );
++            s.begin_disconnect(now + Duration::from_millis(100));
++            assert_eq!(
++                s.disconnect_deadline,
++                Some(original.min(now + Duration::from_millis(500)))
++            );
++            s.cancel_for(CancelReason::User);
++            assert!(!s.disconnect_status(now).unwrap());
++        }
++        let mut frame = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        frame.kind = wire::Kind::RequestClosed;
++        frame.sequence = 0;
++        frame.payload = wire::Payload::Progress(terminal_progress());
++        session.shared.handle_control(frame);
++        let mut s = session.shared.state.lock().unwrap();
++        assert!(!s.disconnect_status(now).unwrap());
++        let reason = s
++            .disconnect_status(now + Duration::from_millis(501))
++            .unwrap_err();
++        s.fail(BridgeError::Protocol(reason));
++        assert_eq!(
++            s.fatal,
++            Some(BridgeError::Protocol(
++                "data disconnect control explanation timeout"
++            ))
++        );
++    }
++    #[test]
++    fn pending_disconnect_is_capped_by_original_authority_and_late_revoke_never_repairs_timeout() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            let original = s.admission.deadline();
++            s.begin_disconnect(original - Duration::from_millis(10));
++            assert_eq!(s.disconnect_deadline, Some(original));
++        }
++        let late = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        late.shared
++            .state
++            .lock()
++            .unwrap()
++            .begin_disconnect(Instant::now() - Duration::from_secs(1));
++        late.shared.handle_control(revoked_frame(&late));
++        let s = late.shared.state.lock().unwrap();
++        assert!(!s.disconnect_explained);
++        assert_eq!(
++            s.fatal,
++            Some(BridgeError::Protocol(
++                "data disconnect control explanation timeout"
++            ))
++        );
++        assert_eq!(s.cancel_reason, Some(CancelReason::NativeFailure));
++    }
++    #[test]
++    fn bad_tuple_then_valid_revoke_cannot_explain_disconnect_or_clear_control_failure() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .begin_disconnect(Instant::now());
++        let mut bad = revoked_frame(&session);
++        bad.session += 1;
++        session.shared.handle_control(bad);
++        session.shared.handle_control(revoked_frame(&session));
++        let s = session.shared.state.lock().unwrap();
++        assert!(!s.disconnect_explained);
++        assert!(s.control_failure.is_some());
++        assert!(matches!(s.fatal, Some(BridgeError::Protocol(_))));
++        assert!(s.disconnect_status(Instant::now()).is_err());
++    }
++    #[test]
++    fn selected_effect_commands_rejected_by_pause_leave_no_sequence_hole_or_ghost_request() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let mut s = session.shared.state.lock().unwrap();
++        s.begin_disconnect(Instant::now());
++        assert!(
++            s.admit_control_write(wire::Kind::HttpCommit, wire::Payload::None)
++                .unwrap()
++                .is_none()
++        );
++        let credit = wire::Credit {
++            consumed_offset: 0,
++            parser_yielded_bytes: 0,
++            drain_discarded_bytes: 0,
++            error_consumed_bytes: 0,
++            cancel_discarded_bytes: 0,
++            window_bytes: 16384,
++            max_chunk_bytes: 1024,
++        };
++        assert!(
++            s.admit_control_write(wire::Kind::HttpCredit, wire::Payload::Credit(credit))
++                .unwrap()
++                .is_none()
++        );
++        assert_eq!(s.requests.len(), 0);
++        let cancel = s
++            .admit_control_write(wire::Kind::HttpCancel, wire::Payload::None)
++            .unwrap()
++            .unwrap();
++        let close = s
++            .admit_control_write(wire::Kind::Close, wire::Payload::None)
++            .unwrap()
++            .unwrap();
++        assert_eq!(cancel.sequence, 2);
++        assert_eq!(close.sequence, 3);
++        assert_eq!(s.requests.len(), 2);
++        assert_eq!(s.disconnect_frame_index, Some(0));
++        assert!(
++            s.frame_events
++                .iter()
++                .filter(|f| f.lane == "guest_control_write_admitted")
++                .all(|f| f.delivery_paused
++                    && f.kind != "HttpCommit"
++                    && f.credit_window_bytes.unwrap_or(0) == 0)
++        );
++    }
++    #[test]
++    fn pause_blocks_positive_credit_but_real_host_cancel_settles_original_consumption_with_zero_window()
++     {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            let mut delivery = Delivery::new(65536, 1024).unwrap();
++            delivery.received(0, Bytes::from_static(b"abc")).unwrap();
++            assert!(matches!(delivery.take(0, 3).unwrap(), Available::Bytes(_)));
++            delivery
++                .consumed(ConsumptionProgress {
++                    consumed_offset: 3,
++                    parser_yielded_bytes: 3,
++                    drain_discarded_bytes: 0,
++                    error_body_consumed_bytes: 0,
++                })
++                .unwrap();
++            s.delivery = Some(delivery);
++            s.credit_dirty = true;
++            s.begin_disconnect(Instant::now());
++            assert!(s.take_credit_command().unwrap().is_none());
++            assert!(s.requests.is_empty());
++        }
++        session.shared.handle_control(revoked_frame(&session));
++        let mut s = session.shared.state.lock().unwrap();
++        assert!(s.credit_dirty);
++        let (kind, payload) = s.take_credit_command().unwrap().unwrap();
++        if let wire::Payload::Credit(c) = &payload {
++            assert_eq!(c.window_bytes, 0);
++            assert_eq!(c.consumed_offset, 3);
++            assert_eq!(c.parser_yielded_bytes, 3);
++            assert_eq!(c.cancel_discarded_bytes, 0);
++            assert_eq!(c.drain_discarded_bytes, 0);
++            assert_eq!(c.error_consumed_bytes, 0);
++        } else {
++            panic!("expected real credit");
++        }
++        let ack = s.admit_control_write(kind, payload).unwrap().unwrap();
++        let close = s
++            .admit_control_write(wire::Kind::Close, wire::Payload::None)
++            .unwrap()
++            .unwrap();
++        assert_eq!(ack.sequence, 2);
++        assert_eq!(close.sequence, 3);
++    }
++    fn settlement_session(consumed: u64) -> (Arc<Session>, wire::Frame) {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            let mut delivery = Delivery::new(65536, 1024).unwrap();
++            delivery.received(0, Bytes::from_static(b"abcde")).unwrap();
++            let _ = delivery.take(0, 5).unwrap();
++            delivery
++                .consumed(ConsumptionProgress {
++                    consumed_offset: consumed,
++                    parser_yielded_bytes: consumed,
++                    drain_discarded_bytes: 0,
++                    error_body_consumed_bytes: 0,
++                })
++                .unwrap();
++            s.delivery = Some(delivery);
++            s.credit_dirty = true;
++            s.head = Some(wire::Head {
++                status: 200,
++                headers: vec![],
++                remote_address: "127.0.0.1:12345".into(),
++            });
++            s.begin_disconnect(Instant::now());
++        }
++        let mut closed = revoked_frame(&session);
++        closed.kind = wire::Kind::RequestClosed;
++        if let wire::Payload::Progress(p) = &mut closed.payload {
++            p.received_offset = 5;
++            p.reserved_offset = 5;
++            p.issued_offset = 5;
++            p.os_completed_offset = 5;
++            p.request_closed = true;
++        }
++        session.shared.handle_control(closed.clone());
++        session.shared.state.lock().unwrap().io_result = Some(Ok(()));
++        *session.io_thread.lock().unwrap() = Some(std::thread::spawn(|| Ok(())));
++        (session, closed)
++    }
++    fn settlement_ack(mut closed: wire::Frame, seq: u64, consumed: u64) -> wire::Frame {
++        closed.kind = wire::Kind::CreditState;
++        closed.sequence = seq;
++        closed.code = 0;
++        if let wire::Payload::Progress(p) = &mut closed.payload {
++            p.peer_consumed_offset = consumed;
++            p.parser_yielded_bytes = consumed;
++        }
++        closed
++    }
++    #[tokio::test]
++    async fn early_request_closed_and_queued_close_wait_for_matching_final_credit_ack() {
++        let (session, closed) = settlement_session(5);
++        let credit = {
++            let mut s = session.shared.state.lock().unwrap();
++            s.queue(wire::Kind::Close, wire::Payload::None).unwrap();
++            let (kind, payload) = s.take_settlement_or_outbound().unwrap().unwrap();
++            assert_eq!(kind, wire::Kind::HttpCredit);
++            let credit = s.admit_control_write(kind, payload).unwrap().unwrap();
++            assert!(s.take_settlement_or_outbound().unwrap().is_none());
++            assert_eq!(s.outbound.len(), 1);
++            assert!(s.cleanup_progress().unwrap().is_none());
++            credit
++        };
++        assert!(
++            tokio::time::timeout(Duration::from_millis(10), session.cleanup(RequestKey(1)))
++                .await
++                .is_err()
++        );
++        assert!(session.shared.state.lock().unwrap().io_joined);
++        session
++            .shared
++            .handle_control(settlement_ack(closed, credit.sequence, 5));
++        let receipt = tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++            .await
++            .unwrap()
++            .unwrap();
++        assert_eq!(receipt.acknowledged_offset, 5);
++        let mut s = session.shared.state.lock().unwrap();
++        assert_eq!(
++            s.closed.as_ref().unwrap().peer_consumed_offset,
++            0,
++            "early closed fact remains intact"
++        );
++        let (kind, payload) = s.take_settlement_or_outbound().unwrap().unwrap();
++        assert_eq!(kind, wire::Kind::Close);
++        assert_eq!(
++            s.admit_control_write(kind, payload)
++                .unwrap()
++                .unwrap()
++                .sequence,
++            credit.sequence + 1
++        );
++    }
++    #[tokio::test]
++    async fn incorrect_credit_ack_never_confirms_cleanup_or_erases_sticky_failure() {
++        let (session, closed) = settlement_session(5);
++        let credit = {
++            let mut s = session.shared.state.lock().unwrap();
++            let (kind, payload) = s.take_credit_command().unwrap().unwrap();
++            s.admit_control_write(kind, payload).unwrap().unwrap()
++        };
++        session
++            .shared
++            .handle_control(settlement_ack(closed, credit.sequence, 4));
++        let result = tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++            .await
++            .unwrap();
++        assert_eq!(result.unwrap_err(), BridgeError::CleanupUnconfirmed);
++        let s = session.shared.state.lock().unwrap();
++        assert!(s.io_joined);
++        assert!(s.credit_acked.is_none());
++        assert_eq!(
++            s.control_failure.as_ref().unwrap().error,
++            BridgeError::Protocol("credit ACK consumption mismatch")
++        );
++    }
++    #[tokio::test]
++    async fn late_subthreshold_classification_requires_new_zero_credit_and_old_ack_cannot_clear_dirty()
++     {
++        let (session, closed) = settlement_session(3);
++        let first = {
++            let mut s = session.shared.state.lock().unwrap();
++            let (kind, payload) = s.take_credit_command().unwrap().unwrap();
++            let frame = s.admit_control_write(kind, payload).unwrap().unwrap();
++            assert!(
++                s.take_credit_command().unwrap().is_none(),
++                "same in-flight credit is not resent"
++            );
++            s.delivery
++                .as_mut()
++                .unwrap()
++                .consumed(ConsumptionProgress {
++                    consumed_offset: 5,
++                    parser_yielded_bytes: 5,
++                    drain_discarded_bytes: 0,
++                    error_body_consumed_bytes: 0,
++                })
++                .unwrap();
++            s.credit_dirty = true;
++            frame
++        };
++        session
++            .shared
++            .handle_control(settlement_ack(closed.clone(), first.sequence, 3));
++        let second = {
++            let mut s = session.shared.state.lock().unwrap();
++            assert!(s.credit_dirty);
++            assert!(s.cleanup_progress().unwrap().is_none());
++            let (kind, payload) = s.take_credit_command().unwrap().unwrap();
++            if let wire::Payload::Credit(c) = &payload {
++                assert_eq!(c.consumed_offset, 5);
++                assert_eq!(c.cancel_discarded_bytes, 0);
++            }
++            s.admit_control_write(kind, payload).unwrap().unwrap()
++        };
++        assert_eq!(second.sequence, first.sequence + 1);
++        session
++            .shared
++            .handle_control(settlement_ack(closed, second.sequence, 5));
++        assert_eq!(
++            tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++                .await
++                .unwrap()
++                .unwrap()
++                .acknowledged_offset,
++            5
++        );
++    }
++    #[tokio::test]
++    async fn approved_pre_head_zero_consumption_revoke_needs_no_fictitious_credit_ack() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            s.delivery = Some(Delivery::new(65536, 1024).unwrap());
++            s.approved = Some(wire::Decision {
++                proposal_ref: vec![1; 32],
++                body_sha256: vec![2; 32],
++                request_sha256: vec![3; 32],
++                http_grant_ref: vec![4; 32],
++                endpoint_ref: vec![5; 32],
++                body_bytes: 0,
++                send_budget: 1,
++                response_limit_bytes: 65536,
++            });
++        }
++        let mut closed = revoked_frame(&session);
++        closed.kind = wire::Kind::RequestClosed;
++        if let wire::Payload::Progress(p) = &mut closed.payload {
++            p.request_closed = true;
++        }
++        session.shared.handle_control(closed);
++        session.shared.state.lock().unwrap().io_result = Some(Ok(()));
++        *session.io_thread.lock().unwrap() = Some(std::thread::spawn(|| Ok(())));
++        let receipt = tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++            .await
++            .unwrap()
++            .unwrap();
++        assert_eq!(receipt.acknowledged_offset, 0);
++        let mut s = session.shared.state.lock().unwrap();
++        assert!(s.io_joined);
++        assert!(!s.needs_settlement());
++        s.queue(wire::Kind::Close, wire::Payload::None).unwrap();
++        let (kind, payload) = s.take_settlement_or_outbound().unwrap().unwrap();
++        assert_eq!(kind, wire::Kind::Close);
++        assert_eq!(
++            s.admit_control_write(kind, payload)
++                .unwrap()
++                .unwrap()
++                .sequence,
++            2
++        );
++        assert!(s.credit_requests.is_empty());
++        assert!(s.last_credit.is_none());
++    }
++    #[tokio::test]
++    async fn errored_data_worker_is_actually_joined_and_original_failure_is_retained() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            s.fail(BridgeError::Protocol("original worker error"));
++            s.io_result = Some(Err("original worker error"));
++        }
++        *session.io_thread.lock().unwrap() =
++            Some(std::thread::spawn(|| Err("original worker error")));
++        let result = tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++            .await
++            .unwrap();
++        assert_eq!(result.unwrap_err(), BridgeError::CleanupUnconfirmed);
++        let s = session.shared.state.lock().unwrap();
++        assert!(s.io_joined);
++        assert_eq!(s.io_result, Some(Err("original worker error")));
++        assert_eq!(
++            s.fatal,
++            Some(BridgeError::Protocol("original worker error"))
++        );
++    }
++    #[tokio::test]
++    async fn live_data_thread_is_not_joined_or_reported_joined_on_cleanup_timeout() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let (tx, rx) = std::sync::mpsc::channel();
++        *session.io_thread.lock().unwrap() = Some(std::thread::spawn(move || {
++            rx.recv().unwrap();
++            Err("worker error")
++        }));
++        assert!(
++            tokio::time::timeout(Duration::from_millis(10), session.cleanup(RequestKey(1)))
++                .await
++                .is_err()
++        );
++        assert!(!session.shared.state.lock().unwrap().io_joined);
++        assert!(session.io_thread.lock().unwrap().is_some());
++        tx.send(()).unwrap();
++        assert!(
++            tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++                .await
++                .unwrap()
++                .is_err()
++        );
++        assert!(session.shared.state.lock().unwrap().io_joined);
++    }
+     #[tokio::test]
+     async fn control_handles_are_retained_until_finished_and_joined_inside_budget() {
+         let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
+@@ -487,6 +1020,8 @@
+     pub sequence: u64,
+     pub generation: u64,
+     pub code: u32,
++    pub delivery_paused: bool,
++    pub credit_window_bytes: Option<u64>,
+ }
+ #[derive(Clone, Debug, serde::Serialize)]
+ pub struct ControlFailureObservation {
+@@ -569,17 +1104,61 @@
+             sequence: frame.sequence,
+             generation: frame.revocation_generation,
+             code: frame.code,
++            delivery_paused: self.disconnect_deadline.is_some(),
++            credit_window_bytes: match &frame.payload {
++                wire::Payload::Credit(c) => Some(c.window_bytes as u64),
++                _ => None,
++            },
+         });
+     }
+     pub(crate) fn cancel(&mut self) {
+         self.cancel_for(CancelReason::HostCancelled);
++    }
++    pub(crate) fn begin_disconnect(&mut self, now: Instant) {
++        if self.disconnect_deadline.is_none() {
++            self.disconnect_deadline = Some(
++                self.admission
++                    .deadline()
++                    .min(now + Duration::from_millis(500)),
++            );
++            if let Some(signal) = &self.cancellation {
++                signal.pause_delivery();
++            }
++            self.disconnect_frame_index = Some(self.frame_events.len());
++            self.disconnect_io_index = Some(self.io_events.len());
++            self.disconnect_wait_ns = Some(
++                self.disconnect_deadline
++                    .unwrap()
++                    .saturating_duration_since(now)
++                    .as_nanos()
++                    .min(u64::MAX as u128) as u64,
++            );
++            self.outbound
++                .retain(|(k, _)| matches!(k, wire::Kind::Query | wire::Kind::Close));
++            self.credit_dirty = false;
++        }
++    }
++    pub(crate) fn disconnect_status(&self, now: Instant) -> Result<bool, &'static str> {
++        if self.control_failure.is_some() {
++            return Err("data disconnect with invalid control");
++        }
++        if self.disconnect_explained {
++            return Ok(true);
++        }
++        if self.disconnect_deadline.is_some_and(|d| now >= d) {
++            return Err("data disconnect control explanation timeout");
++        }
++        Ok(false)
+     }
+     pub(crate) fn cancel_for(&mut self, reason: CancelReason) {
+         if self.cancel_reason.is_none() {
+             self.cancel_reason = Some(reason)
+         }
+         if let Some(signal) = &self.cancellation {
+-            signal.cancel(self.cancel_reason.unwrap())
++            let transition = signal.cancel_observed(self.cancel_reason.unwrap());
++            if reason == CancelReason::HostCancelled && self.host_cancel_transition.is_none() {
++                self.host_cancel_transition = Some(transition);
++            }
+         }
+         self.admission.cancel();
+         self.cancel_requested = true;
+@@ -608,20 +1187,149 @@
+         kind: wire::Kind,
+         payload: wire::Payload,
+     ) -> Result<(), BridgeError> {
++        if self.disconnect_deadline.is_some()
++            && !matches!(
++                kind,
++                wire::Kind::Query | wire::Kind::Close | wire::Kind::HttpCancel
++            )
++        {
++            return Err(BridgeError::Cancelled);
++        }
+         if self.outbound.len() >= 8 {
+             return Err(BridgeError::Protocol("bounded control queue"));
+         }
+         self.outbound.push_back((kind, payload));
+         Ok(())
+     }
++    pub(crate) fn take_credit_command(
++        &mut self,
++    ) -> Result<Option<(wire::Kind, wire::Payload)>, BridgeError> {
++        let delivery = self
++            .delivery
++            .as_ref()
++            .ok_or(BridgeError::Protocol("credit without delivery"))?;
++        let credit = delivery.credit();
++        // Pause alone never reclassifies bytes. Real cancellation makes the
++        // existing zero-window consumption settlement eligible again.
++        if self.disconnect_deadline.is_some() && credit.window_bytes != 0 {
++            return Ok(None);
++        }
++        let due = self.last_credit.as_ref().is_none_or(|last| {
++            credit.window_bytes != last.window_bytes
++                || (credit.window_bytes == 0 && credit != *last)
++                || credit.consumed_offset.saturating_sub(last.consumed_offset) >= 8192
++                || ((delivery.final_offset() == Some(credit.consumed_offset)
++                    || delivery.at_limit())
++                    && credit != *last)
++        });
++        if !due {
++            return Ok(None);
++        }
++        self.credit_dirty = false;
++        self.last_credit = Some(credit.clone());
++        Ok(Some((
++            wire::Kind::HttpCredit,
++            wire::Payload::Credit(credit),
++        )))
++    }
++    fn needs_settlement(&self) -> bool {
++        self.cancel_requested
++            && self.delivery.as_ref().is_some_and(|d| {
++                self.head.is_some()
++                    || self.last_credit.is_some()
++                    || !self.credit_requests.is_empty()
++                    || self.credit_acked.is_some()
++                    || d.received_offset() != 0
++                    || d.delivered_offset() != 0
++                    || d.credit().consumed_offset != 0
++            })
++    }
++    fn settlement_confirmed(&self) -> bool {
++        !self.needs_settlement()
++            || self
++                .delivery
++                .as_ref()
++                .is_some_and(|d| self.credit_acked.as_ref() == Some(&d.credit()))
++    }
++    pub(crate) fn take_settlement_or_outbound(
++        &mut self,
++    ) -> Result<Option<(wire::Kind, wire::Payload)>, BridgeError> {
++        if self.cancel_requested && self.credit_dirty && self.head.is_some() {
++            if let Some(command) = self.take_credit_command()? {
++                return Ok(Some(command));
++            }
++        }
++        if self
++            .outbound
++            .front()
++            .is_some_and(|(k, _)| *k == wire::Kind::Close)
++            && !self.settlement_confirmed()
++        {
++            return Ok(None);
++        }
++        Ok(self.outbound.pop_front())
++    }
++    pub(crate) fn cleanup_progress(&self) -> Result<Option<wire::Progress>, BridgeError> {
++        let Some(mut closed) = self.closed.clone() else {
++            return Ok(None);
++        };
++        if self.control_failure.is_some() {
++            return Err(BridgeError::CleanupUnconfirmed);
++        }
++        if !self.settlement_confirmed() {
++            return Ok(None);
++        }
++        if self.needs_settlement()
++            && let Some(delivery) = &self.delivery
++        {
++            let latest = self
++                .progress
++                .as_ref()
++                .ok_or(BridgeError::CleanupUnconfirmed)?;
++            if !credit_matches_progress(&delivery.credit(), latest) {
++                return Err(BridgeError::CleanupUnconfirmed);
++            }
++            // Actual RequestClosed facts plus later validated cumulative ACK.
++            closed.peer_consumed_offset = latest.peer_consumed_offset;
++        }
++        Ok(Some(closed))
++    }
++    pub(crate) fn admit_control_write(
++        &mut self,
++        kind: wire::Kind,
++        payload: wire::Payload,
++    ) -> Result<Option<wire::Frame>, BridgeError> {
++        let cleanup = matches!(
++            kind,
++            wire::Kind::Query | wire::Kind::Close | wire::Kind::HttpCancel
++        ) || matches!(&payload, wire::Payload::Credit(c) if kind == wire::Kind::HttpCredit && c.window_bytes == 0);
++        if self.disconnect_deadline.is_some() && !cleanup {
++            return Ok(None);
++        }
++        // Final logical admission and sequence allocation share the state lock.
++        // This is not an OS-issue observation. No rollback or sequence holes.
++        let frame = self
++            .admission
++            .control(kind, payload)
++            .map_err(BridgeError::Protocol)?;
++        if let wire::Payload::Credit(credit) = &frame.payload {
++            self.credit_requests.insert(frame.sequence, credit.clone());
++        }
++        self.requests.insert(frame.sequence, kind);
++        self.record("guest_control_queued", &frame);
++        self.record("guest_control_write_admitted", &frame);
++        Ok(Some(frame))
++    }
+     pub(crate) fn accept_control(&mut self, frame: wire::Frame) -> Result<(), BridgeError> {
+         let request_kind = self.requests.get(&frame.sequence).copied();
++        let credit_request = self.credit_requests.get(&frame.sequence).cloned();
+         self.admission
+             .host_control(&frame)
+             .map_err(BridgeError::Protocol)?;
+         self.record("host_control", &frame);
+         if frame.sequence != 0 {
+             self.requests.remove(&frame.sequence);
++            self.credit_requests.remove(&frame.sequence);
+         }
+         if matches!(frame.kind, wire::Kind::Stop | wire::Kind::Denied) {
+             self.fail(if frame.code == 20 {
+@@ -718,6 +1426,17 @@
+                     if progress.received_offset > approved.response_limit_bytes as u64 {
+                         return Err(BridgeError::Protocol("host response cap"));
+                     }
++                }
++                if kind == wire::Kind::CreditState
++                    && frame.code == 0
++                    && request_kind == Some(wire::Kind::HttpCredit)
++                {
++                    let credit = credit_request
++                        .ok_or(BridgeError::Protocol("credit ACK without request"))?;
++                    if !credit_matches_progress(&credit, &progress) {
++                        return Err(BridgeError::Protocol("credit ACK consumption mismatch"));
++                    }
++                    self.credit_acked = Some(credit);
+                 }
+                 if kind == wire::Kind::State && frame.code == 0 {
+                     if request_kind == Some(wire::Kind::HttpPrepare) {
+@@ -812,6 +1531,14 @@
+     }
+ }
+ 
++fn credit_matches_progress(credit: &wire::Credit, progress: &wire::Progress) -> bool {
++    progress.peer_consumed_offset == credit.consumed_offset
++        && progress.parser_yielded_bytes == credit.parser_yielded_bytes
++        && progress.drain_discarded_bytes == credit.drain_discarded_bytes
++        && progress.error_consumed_bytes == credit.error_consumed_bytes
++        && progress.cancel_discarded_bytes == credit.cancel_discarded_bytes
++}
++
+ pub(crate) struct Shared {
+     pub state: Mutex<State>,
+     pub changed: Notify,
+@@ -825,6 +1552,16 @@
+         let received = serde_json::json!({"kind":format!("{:?}",frame.kind),"sequence":frame.sequence,
+             "generation":frame.revocation_generation,"code":frame.code});
+         let mut state = self.state.lock().unwrap();
++        state.host_cancel_transition = None;
++        if state
++            .disconnect_deadline
++            .is_some_and(|d| Instant::now() >= d)
++            && !state.disconnect_explained
++        {
++            state.fail(BridgeError::Protocol(
++                "data disconnect control explanation timeout",
++            ));
++        }
+         let accepted = match state.accept_control(frame) {
+             Ok(()) => true,
+             Err(error) => {
+@@ -832,6 +1569,16 @@
+                 false
+             }
+         };
++        if accepted
++            && revoked
++            && state.control_failure.is_none()
++            && state
++                .disconnect_deadline
++                .is_some_and(|d| Instant::now() < d)
++        {
++            state.disconnect_explained = true;
++        }
++        let transition = state.host_cancel_transition.clone();
+         let fixture = state.fixture.clone();
+         let gate_closed = state
+             .cancellation
+@@ -840,6 +1587,8 @@
+         drop(state);
+         if accepted && revoked {
+             if let Some(fixture) = fixture {
++                let mut received = received;
++                received["cancel_transition"] = serde_json::to_value(transition).unwrap();
+                 fixture.observe_revoke(received, gate_closed);
+             }
+         }
+@@ -913,6 +1662,12 @@
+                 changed: Notify::new(),
+                 work: Condvar::new(),
+                 state: Mutex::new(State {
++                    disconnect_deadline: None,
++                    disconnect_explained: false,
++                    disconnect_frame_index: None,
++                    disconnect_io_index: None,
++                    disconnect_wait_ns: None,
++                    host_cancel_transition: None,
+                     fixture: None,
+                     admission,
+                     outbound: VecDeque::from([(wire::Kind::Hello, wire::Payload::None)]),
+@@ -939,6 +1694,8 @@
+                     cancel_written: false,
+                     credit_dirty: false,
+                     last_credit: None,
++                    credit_requests: BTreeMap::new(),
++                    credit_acked: None,
+                     closed: None,
+                     control_eof: false,
+                     control_stream_ended: false,
+@@ -1023,7 +1780,9 @@
+                         return Err(BridgeError::Cancelled);
+                     }
+                 }
+-                if let Some(value) = inspect(&mut state)? {
++                if (allow_cleanup || state.disconnect_deadline.is_none())
++                    && let Some(value) = inspect(&mut state)?
++                {
+                     return Ok(value);
+                 }
+                 if allow_cleanup && state.control_eof && state.closed.is_none() {
+@@ -1040,6 +1799,14 @@
+     pub fn io_observations(&self) -> (Vec<IoObservation>, bool, bool) {
+         let s = self.shared.state.lock().unwrap();
+         (s.io_events.clone(), s.io_events_overflow, s.io_joined)
++    }
++    pub fn data_end_observation(&self) -> serde_json::Value {
++        let s = self.shared.state.lock().unwrap();
++        serde_json::json!({"pause_observed":s.disconnect_deadline.is_some(),
++            "control_explained":s.disconnect_explained,
++            "frames_index_at_pause":s.disconnect_frame_index,"io_index_at_pause":s.disconnect_io_index,
++            "fixed_wait_budget_ns":s.disconnect_wait_ns,"wait_cap_ms":500,
++            "authority_deadline_renewed":false,"delivery_resumed":false})
+     }
+     pub fn close(&self) -> Result<(), BridgeError> {
+         self.shared
+@@ -1133,6 +1900,9 @@
+         if let Some(reason) = state.cancel_reason {
+             signal.cancel(reason)
+         }
++        if state.disconnect_deadline.is_some() {
++            signal.pause_delivery();
++        }
+         state.cancellation = Some(signal);
+         Ok(())
+     }
+@@ -1143,10 +1913,12 @@
+     ) -> DriverFuture<'_, ProposalRef> {
+         Box::pin(async move {
+             self.key(key)?;
+-            self.wait(false, |state| Ok(state.data_bound.then_some(())))
+-                .await?;
+-            {
+-                let mut state = self.shared.state.lock().unwrap();
++            let mut request = Some(request);
++            self.wait(false, |state| {
++                if !state.data_bound {
++                    return Ok(None);
++                }
++                let request = request.take().ok_or(BridgeError::DuplicateRequest)?;
+                 if state.prepare.is_some() {
+                     return Err(BridgeError::DuplicateRequest);
+                 }
+@@ -1183,7 +1955,9 @@
+                 state.expected_request_hash = Some(hash);
+                 state.prepare = Some(p);
+                 state.body = Some(request.body);
+-            }
++                Ok(Some(()))
++            })
++            .await?;
+             self.shared.signal();
+             self.wait(false, |s| {
+                 Ok(s.proposal
+@@ -1222,8 +1996,7 @@
+     ) -> DriverFuture<'_, ResponseHead> {
+         Box::pin(async move {
+             self.key(key)?;
+-            {
+-                let mut s = self.shared.state.lock().unwrap();
++            self.wait(false, |s| {
+                 if s.commit_requested {
+                     return Err(BridgeError::DuplicateRequest);
+                 }
+@@ -1235,7 +2008,9 @@
+                 }
+                 s.commit_requested = true;
+                 s.queue(wire::Kind::HttpCommit, wire::Payload::Decision(decision))?;
+-            }
++                Ok(Some(()))
++            })
++            .await?;
+             self.shared.signal();
+             self.wait(false, |s| {
+                 let Some(head) = &s.head else { return Ok(None) };
+@@ -1308,40 +2083,36 @@
+     fn cleanup(&self, key: RequestKey) -> DriverFuture<'_, CleanupReceipt> {
+         Box::pin(async move {
+             self.key(key)?;
++            // Work outcome never skips the actual finished-only thread join.
++            loop {
++                let outcome = {
++                    let mut slot = self.io_thread.lock().unwrap();
++                    if slot.as_ref().is_some_and(|h| h.is_finished()) {
++                        Some(slot.take().unwrap().join())
++                    } else {
++                        None
++                    }
++                };
++                if let Some(outcome) = outcome {
++                    self.shared.state.lock().unwrap().io_joined = true;
++                    if !matches!(outcome, Ok(Ok(()))) {
++                        return Err(BridgeError::CleanupUnconfirmed);
++                    }
++                    break;
++                }
++                if self.shared.state.lock().unwrap().io_joined {
++                    break;
++                }
++                tokio::time::sleep(Duration::from_millis(2)).await;
++            }
+             let p = self
+                 .wait(true, |s| {
+                     if s.io_result.as_ref().is_some_and(|r| r.is_err()) {
+                         return Err(BridgeError::CleanupUnconfirmed);
+                     }
+-                    Ok(if s.io_result == Some(Ok(())) {
+-                        s.closed.clone()
+-                    } else {
+-                        None
+-                    })
++                    s.cleanup_progress()
+                 })
+                 .await?;
+-            // Do not block a Tokio worker on a live owned-I/O thread. is_finished
+-            // gates join; observation remains bounded by the Core cleanup timer.
+-            loop {
+-                let joined = {
+-                    let mut slot = self.io_thread.lock().unwrap();
+-                    if slot.as_ref().is_none_or(|h| h.is_finished()) {
+-                        if let Some(handle) = slot.take() {
+-                            if !matches!(handle.join(), Ok(Ok(()))) {
+-                                return Err(BridgeError::CleanupUnconfirmed);
+-                            }
+-                        }
+-                        true
+-                    } else {
+-                        false
+-                    }
+-                };
+-                if joined {
+-                    self.shared.state.lock().unwrap().io_joined = true;
+-                    break;
+-                }
+-                tokio::time::sleep(Duration::from_millis(2)).await;
+-            }
+             Ok(CleanupReceipt {
+                 network_eof: p.http_eof,
+                 durable_observed: p.intent == wire::IntentPhase::Observed,
+--- native/m03-fixture-001/src/workers.rs
++++ native/m03-fixture-002/src/workers.rs
+@@ -289,39 +289,15 @@
+                 if state.cancel_requested && !state.cancel_written && state.admission.welcomed() {
+                     state.cancel_written = true;
+                     Some((wire::Kind::HttpCancel, wire::Payload::None))
+-                } else if let Some(command) = state.outbound.pop_front() {
++                } else if let Some(command) = state.take_settlement_or_outbound()? {
+                     Some(command)
+                 } else if state.credit_dirty && state.head.is_some() {
+-                    let delivery = state
+-                        .delivery
+-                        .as_ref()
+-                        .ok_or(BridgeError::Protocol("credit without delivery"))?;
+-                    let credit = delivery.credit();
+-                    let due = state.last_credit.as_ref().is_none_or(|last| {
+-                        credit.window_bytes != last.window_bytes
+-                            || credit.consumed_offset.saturating_sub(last.consumed_offset) >= 8192
+-                            || ((delivery.final_offset() == Some(credit.consumed_offset)
+-                                || delivery.at_limit())
+-                                && credit != *last)
+-                    });
+-                    if due {
+-                        state.credit_dirty = false;
+-                        state.last_credit = Some(credit.clone());
+-                        Some((wire::Kind::HttpCredit, wire::Payload::Credit(credit)))
+-                    } else {
+-                        None
+-                    }
++                    state.take_credit_command()?
+                 } else {
+                     None
+                 };
+             if let Some((kind, payload)) = command {
+-                let frame = state
+-                    .admission
+-                    .control(kind, payload)
+-                    .map_err(BridgeError::Protocol)?;
+-                state.requests.insert(frame.sequence, kind);
+-                state.record("guest_control_queued", &frame);
+-                Some(frame)
++                state.admit_control_write(kind, payload)?
+             } else {
+                 let _ = shared
+                     .work
+@@ -349,6 +325,14 @@
+     }
+ }
+ 
++fn clean_disconnect(done: &morrow_native_pipe_win::Completed, framer: &Framer) -> bool {
++    done.transferred == 0
++        && done.bytes.is_empty()
++        && matches!(done.error, None | Some(109 | 232 | 233))
++        && framer.bytes.is_empty()
++        && framer.expected == 4
++}
++
+ struct Framer {
+     bytes: Vec<u8>,
+     expected: usize,
+@@ -401,6 +385,35 @@
+ #[cfg(test)]
+ mod pause_tests {
+     use super::*;
++    #[test]
++    fn provisional_disconnect_requires_zero_bytes_known_status_and_complete_frame() {
++        for error in [None, Some(109), Some(232), Some(233)] {
++            let mut done = morrow_native_pipe_win::Completed {
++                id: 9,
++                kind: IoKind::Read,
++                transferred: 0,
++                error,
++                bytes: vec![],
++            };
++            assert!(clean_disconnect(&done, &Framer::new()));
++            let mut partial = Framer::new();
++            partial.bytes.push(8);
++            assert!(!clean_disconnect(&done, &partial));
++            done.bytes.push(1);
++            assert!(!clean_disconnect(&done, &Framer::new()));
++            done.bytes.clear();
++            done.transferred = 1;
++            assert!(!clean_disconnect(&done, &Framer::new()));
++        }
++        let done = morrow_native_pipe_win::Completed {
++            id: 9,
++            kind: IoKind::Read,
++            transferred: 0,
++            error: Some(5),
++            bytes: vec![],
++        };
++        assert!(!clean_disconnect(&done, &Framer::new()));
++    }
+     #[test]
+     fn read_pause_requires_reaped_read_and_complete_frame_and_is_once_only() {
+         let mut paused = false;
+@@ -463,6 +476,20 @@
+             if fixture.as_ref().is_some_and(|f| f.failed()) {
+                 return Err("fixture evidence failure");
+             }
++            // No lane poll/issue or driver delivery while awaiting control.
++            // Existing operations are cancelled/reaped below only after the
++            // explanation or the fixed deadline; local cancel cannot explain it.
++            {
++                let s = shared.state.lock().unwrap();
++                if s.disconnect_deadline.is_some() {
++                    if s.disconnect_status(Instant::now())? {
++                        break;
++                    }
++                    drop(s);
++                    thread::sleep(Duration::from_millis(2));
++                    continue;
++                }
++            }
+             let (cancel, closed, deadline) = {
+                 let mut s = shared.state.lock().unwrap();
+                 if Instant::now() >= s.admission.deadline()
+@@ -479,8 +506,8 @@
+                 )
+             };
+             if cancel || closed {
+-                if closed && !cancel && !framer.bytes.is_empty() {
+-                    return Err("normal close with partial data frame");
++                if !framer.bytes.is_empty() {
++                    return Err("close with partial data frame");
+                 }
+                 break;
+             }
+@@ -522,20 +549,25 @@
+                         // Host closes its data lane before its RequestClosed
+                         // control notification. Retain that cross-lane race;
+                         // final HTTP/prefix facts must already justify closure.
+-                        let s = shared.state.lock().unwrap();
+-                        let disconnect = matches!(done.error, Some(109 | 232 | 233))
+-                            || (done.error.is_none() && done.transferred == 0);
++                        if !clean_disconnect(&done, &framer) {
++                            return Err("unexpected data EOF/error");
++                        }
++                        let mut s = shared.state.lock().unwrap();
+                         let expected = s.cancel_requested
+-                            || (disconnect
+-                                && framer.bytes.is_empty()
+-                                && (s.closed.is_some()
+-                                    || s.delivery.as_ref().is_some_and(|d| {
+-                                        d.final_offset() == Some(d.received_offset())
+-                                    })));
++                            || s.closed.is_some()
++                            || s.delivery
++                                .as_ref()
++                                .is_some_and(|d| d.final_offset() == Some(d.received_offset()));
+                         if expected {
+                             break;
+                         } else {
+-                            return Err("unexpected data EOF/error");
++                            if writing.is_some() || pipe.has_operation(IoKind::Write) {
++                                return Err("disconnect with unaccounted request write");
++                            }
++                            s.begin_disconnect(Instant::now());
++                            drop(s);
++                            shared.signal();
++                            continue;
+                         }
+                     }
+                     if let Some(frame) = framer.push(&done.bytes)? {
+@@ -569,7 +601,11 @@
+             }
+             if writing.is_none() {
+                 let mut s = shared.state.lock().unwrap();
+-                if s.data_bound && s.prepare_acked && !s.cancel_requested {
++                if s.data_bound
++                    && s.prepare_acked
++                    && !s.cancel_requested
++                    && s.disconnect_deadline.is_none()
++                {
+                     if let Some(body) = &s.body {
+                         if s.body_offset < body.len() {
+                             let start = s.body_offset;
+@@ -594,6 +630,7 @@
+             {
+                 let mut s = shared.state.lock().unwrap();
+                 if !s.cancel_requested
++                    && s.disconnect_deadline.is_none()
+                     && s.closed.is_none()
+                     && Instant::now() < s.admission.deadline()
+                 {

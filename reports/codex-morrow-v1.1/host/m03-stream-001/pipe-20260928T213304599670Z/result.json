@@ -1,0 +1,100 @@
+{
+  "status": "platform_producer_tests_passed_native_runtime_not_run",
+  "before": {
+    "native_pipe_win_001/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "native_pipe_win_001/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "native_pipe_win_001/src/lib.rs": "37d50f5edf3dfe33b82b2450b0656d33c1510164969e9840f2e7c30f7f7d6157",
+    "native_pipe_win_001/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "frozen_count": 2292,
+  "commands": [
+    {
+      "name": "fmt",
+      "args": [
+        "fmt",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.05930069999885745,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "compile",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--no-run",
+        "--message-format=json-render-diagnostics"
+      ],
+      "exit_code": 0,
+      "seconds": 0.7635174999886658,
+      "stdout_sha256": "81280ab8048520c48f6acca29938e0a4ae7694efa4ce54bed153e55a7738de31",
+      "stderr_sha256": "3a0054e48e647640ddcec6d78b1a401f33d04c9c340078456c7e675587415fcf"
+    },
+    {
+      "name": "tests",
+      "args": [
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_pipe_win_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-pipe",
+        "--",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.18346770000061952,
+      "stdout_sha256": "5081eb15be268b6322f9411d1b1657183d9c7c35bcf12a89b7a42d098fcc7271",
+      "stderr_sha256": "c1ae28b289cf87d4aa1c5250eee60a8c6f63ab1d6b66a396d8c8d91061c3663a"
+    }
+  ],
+  "environment_keys": [
+    "APPDATA",
+    "CARGO_HOME",
+    "CARGO_NET_OFFLINE",
+    "COMSPEC",
+    "INCLUDE",
+    "LIB",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "PROGRAMDATA",
+    "PROGRAMFILES",
+    "PROGRAMFILES(X86)",
+    "PROGRAMW6432",
+    "RUSTC",
+    "RUSTDOC",
+    "RUSTUP_AUTO_INSTALL",
+    "SYSTEMDRIVE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "after": {
+    "native_pipe_win_001/Cargo.lock": "63381d385a4175f489f5c1eb5ac58a537bc54fe97852b6dad1add71d765e3e80",
+    "native_pipe_win_001/Cargo.toml": "c81496a797f3b0829fb766eb6b24a397cd0bcc05ab58c6622b2a985dbd17ccd0",
+    "native_pipe_win_001/src/lib.rs": "37d50f5edf3dfe33b82b2450b0656d33c1510164969e9840f2e7c30f7f7d6157",
+    "native_pipe_win_001/tests/platform.rs": "afd4b0d927c7cd991660f4621e32355168259658b4bf48c0e37bd2d72d463cc3"
+  },
+  "frozen_unchanged": true,
+  "artifacts": {
+    "target/m03-stream-001-pipe/debug/deps/morrow_native_pipe_win-3ee4baeb43321fe4.exe": "7a2bb13734592d8c7134d84e4ed0af991c487c467ed68480f2772daf92505b31",
+    "target/m03-stream-001-pipe/debug/deps/platform-a95421a369e34f9f.exe": "95470ec1e229807f9cf82330eb9cdf552d9629a6178218a2f218c618db7eb303"
+  }
+}

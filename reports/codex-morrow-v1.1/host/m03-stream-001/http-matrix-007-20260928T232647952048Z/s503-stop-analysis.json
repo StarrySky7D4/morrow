@@ -1,0 +1,61 @@
+{
+  "status": "group_stopped_after_s503_unexpected_close_result",
+  "executed_cases": [
+    "s503"
+  ],
+  "not_run": [
+    "r307",
+    "exact",
+    "over"
+  ],
+  "post_count": 1,
+  "durable_phase": "Observed",
+  "core_terminal": {
+    "Failed": "unexpected status 503 Service Unavailable: synthetic 503, url: http://127.0.0.1:54003/v1/responses"
+  },
+  "guest_close_result": {
+    "Err": "Unknown"
+  },
+  "guest_final_control": {
+    "Err": "Unknown"
+  },
+  "actual_close_ack_received": true,
+  "host_close_ack_write_event": [
+    {
+      "at_us": 3121501,
+      "detail": {
+        "bytes": 412,
+        "sequence": 8
+      },
+      "event": "close_ack_written",
+      "ordinal": 59
+    }
+  ],
+  "failed_checks": [
+    "guest_matching_close_ack"
+  ],
+  "diagnosis_boundary": "Close ACK was written and received, but wait_close reports sticky Unknown after deliberate CoreError cancellation. Do not infer ACK loss or downgrade durable Observed. Need review of request-error vs final-control classification; locked expectations are unchanged.",
+  "static_pointer": "frozen plugin002 session.rs484-492 maps nonzero Progress.error_code to fail(BridgeError::Unknown)",
+  "cleanup": {
+    "pid": 1088,
+    "exit": 0,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 4684,
+      "session": 9507469184801675686
+    },
+    "owner_release_verified": true
+  },
+  "candidate_changes": false,
+  "rerun": false,
+  "evidence_sha256": {
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\locked-expectations.json": "44cc050fc2d6182312aff7a4c10c7bcc6d2253e7e1705224985dd14ca3bdaa02",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\result.json": "6c984b622c7048e08802127513a074f591ebb3d84ec9de4da55c02bc7cf67f81",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\s503\\result.json": "7bc177db5f614a9a5b5727a18786d323f17c269fe8ecc0121bb05937e247cbbc",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\s503\\retained-final.json": "82fd2100b13d805758b376142d4bf78a50e46eaf0fac871ab2ee99ca179d6be6",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\s503\\server-events.json": "96207388312e6625141e4d5ca2f463a43a06a5fe8a299d15c0b14a2ce9e8bb93",
+    "reports\\codex-morrow-v1.1\\host\\m03-stream-001\\http-matrix-007-20260928T232647952048Z\\s503\\evidence-manifest.json": "17953579a8e5cf68738740f1c23fc5a001136b9e4ff73c8782650c43c94dcffe",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-007\\20260928T232647952048Z\\s503\\result.json": "72474ff8d6028bd1004b39a4f0758aff7cc222303b41e15f3791be5f9be13dd8"
+  }
+}

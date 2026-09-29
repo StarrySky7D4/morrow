@@ -1,0 +1,2 @@
+   Compiling morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\host-kit-003)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.78s

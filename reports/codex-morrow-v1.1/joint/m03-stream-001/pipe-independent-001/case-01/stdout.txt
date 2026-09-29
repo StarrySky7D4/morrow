@@ -1,0 +1,9 @@
+
+running 1 test
+test connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive ... actual_dacl_matches_current_sid_and_system=true protected=true allow_aces=2 inherited_handle=false
+buffers inbound=1024 outbound=1024
+connect_id=1 actual_cancel_completion=995
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s
+

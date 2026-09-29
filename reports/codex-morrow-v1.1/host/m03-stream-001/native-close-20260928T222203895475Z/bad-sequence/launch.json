@@ -1,0 +1,34 @@
+{
+  "args": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-close-20260928T222203895475Z\\candidate\\morrow-native-stream-host.exe",
+    "serve",
+    "--profile",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-close-20260928T222203895475Z\\bad-sequence\\profile",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-close-20260928T222203895475Z\\candidate\\morrow-native-close-peer.exe",
+    "--sha256",
+    "00ab39d0b681dbc15c96342da03a2c612d806178a1c1b6a20cdbe2656003fa78",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-close-20260928T222203895475Z\\bad-sequence\\cwd",
+    "--plugin-id",
+    "close-fixture",
+    "--role",
+    "test",
+    "--operation",
+    "close-test",
+    "--http-origin",
+    "http://127.0.0.1:1",
+    "--close-ms",
+    "1000",
+    "--client-arg",
+    "bad-sequence",
+    "--client-arg",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-close-20260928T222203895475Z\\bad-sequence\\peer.json"
+  ],
+  "environment": {
+    "SYSTEMROOT": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:\\Windows\\system32\\cmd.exe",
+    "LOCALAPPDATA": "C:\\Users\\Administrator\\AppData\\Local"
+  }
+}

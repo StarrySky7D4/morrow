@@ -1,0 +1,162 @@
+{
+  "reviewed_at_utc": "2026-09-28T22:09:14.665377+00:00",
+  "plugin_root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex",
+  "checks": [
+    {
+      "path": "native/m03-stream-001/Cargo.lock",
+      "expected_sha256": "ac75ba5b6e90d350144f310b05c274a6a78bc46bfa58f3b4f85349ea795f646d",
+      "actual_sha256": "ac75ba5b6e90d350144f310b05c274a6a78bc46bfa58f3b4f85349ea795f646d"
+    },
+    {
+      "path": "native/m03-stream-001/Cargo.toml",
+      "expected_sha256": "33feb18d9989a0f185494c1357d7e02472c80dd840c6edfbd1e2f970d8479a05",
+      "actual_sha256": "33feb18d9989a0f185494c1357d7e02472c80dd840c6edfbd1e2f970d8479a05"
+    },
+    {
+      "path": "native/m03-stream-001/README.md",
+      "expected_sha256": "968521038d594c965be5dd3817c843ba61b3971f2b3c587a39ad8faeb1fb59f9",
+      "actual_sha256": "968521038d594c965be5dd3817c843ba61b3971f2b3c587a39ad8faeb1fb59f9"
+    },
+    {
+      "path": "native/m03-stream-001/src/admission.rs",
+      "expected_sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "actual_sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40"
+    },
+    {
+      "path": "native/m03-stream-001/src/delivery.rs",
+      "expected_sha256": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "actual_sha256": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e"
+    },
+    {
+      "path": "native/m03-stream-001/src/lib.rs",
+      "expected_sha256": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+      "actual_sha256": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f"
+    },
+    {
+      "path": "native/m03-stream-001/src/main.rs",
+      "expected_sha256": "3d7c5905794facd2a068db8eb78789131db80dcc0b912fa43db5e156809d3942",
+      "actual_sha256": "3d7c5905794facd2a068db8eb78789131db80dcc0b912fa43db5e156809d3942"
+    },
+    {
+      "path": "native/m03-stream-001/src/session.rs",
+      "expected_sha256": "85f613c0fe1c244ab80f2ac61b8ea22637b769d6820604ac9a4668018cb5a2d0",
+      "actual_sha256": "85f613c0fe1c244ab80f2ac61b8ea22637b769d6820604ac9a4668018cb5a2d0"
+    },
+    {
+      "path": "native/m03-stream-001/src/workers.rs",
+      "expected_sha256": "16a893d10b555c8de249b0daff954c67be81415d90a69003094a76552f328c3d",
+      "actual_sha256": "16a893d10b555c8de249b0daff954c67be81415d90a69003094a76552f328c3d"
+    },
+    {
+      "path": "out/m03-native-001/candidates/native-001/morrow-codex-native-http-client.exe",
+      "expected_sha256": "b3dcb18ba3d516ffb80b3c395061b434548611a53157146059593edff8562dbd",
+      "actual_sha256": "b3dcb18ba3d516ffb80b3c395061b434548611a53157146059593edff8562dbd"
+    },
+    {
+      "path": "qualification/m03-stream-001/Cargo.lock",
+      "expected_sha256": "d477c145640f1f20c2e53653a5dba898ec4f30303df229a7538091d21294fdf7",
+      "actual_sha256": "d477c145640f1f20c2e53653a5dba898ec4f30303df229a7538091d21294fdf7"
+    },
+    {
+      "path": "qualification/m03-stream-001/Cargo.toml",
+      "expected_sha256": "f84640ce88bbec5079759923af7ad8a5a289cdffa9d3d6e710d93da2124167af",
+      "actual_sha256": "f84640ce88bbec5079759923af7ad8a5a289cdffa9d3d6e710d93da2124167af"
+    },
+    {
+      "path": "qualification/m03-stream-001/README.md",
+      "expected_sha256": "f504bdf0d1bebdd2012560e0cbe878e8e42c9c86921a292a4910de0868da0835",
+      "actual_sha256": "f504bdf0d1bebdd2012560e0cbe878e8e42c9c86921a292a4910de0868da0835"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/driver.rs",
+      "expected_sha256": "3be8529ce8ef5f95f55ba90e1cf0ce834d2588686872731ab66c2505043a34e7",
+      "actual_sha256": "3be8529ce8ef5f95f55ba90e1cf0ce834d2588686872731ab66c2505043a34e7"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/lib.rs",
+      "expected_sha256": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+      "actual_sha256": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/limits.rs",
+      "expected_sha256": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "actual_sha256": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/main.rs",
+      "expected_sha256": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+      "actual_sha256": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/network.rs",
+      "expected_sha256": "88ad1418c942eeec182717c65eef49bdbd33f72e4ed6411dd30a02bb271bff07",
+      "actual_sha256": "88ad1418c942eeec182717c65eef49bdbd33f72e4ed6411dd30a02bb271bff07"
+    },
+    {
+      "path": "qualification/m03-stream-001/src/request_task.rs",
+      "expected_sha256": "cb13919f12d2922fe9e2b8e8b080bb0d2552abd4af11346d0b36d1bac8278d96",
+      "actual_sha256": "cb13919f12d2922fe9e2b8e8b080bb0d2552abd4af11346d0b36d1bac8278d96"
+    },
+    {
+      "path": "receipts/m03-stream-001/build_native.py",
+      "expected_sha256": "c431819c05571966f24744b298fd55ef8098d33f24ae6b4379c1ac6caa08bcc0",
+      "actual_sha256": "c431819c05571966f24744b298fd55ef8098d33f24ae6b4379c1ac6caa08bcc0"
+    },
+    {
+      "path": "receipts/m03-stream-001/freeze_native.py",
+      "expected_sha256": "2297b251be1618f094037f80658f55b83fdd2a2bfcac94a191d6d798e1dcafac",
+      "actual_sha256": "2297b251be1618f094037f80658f55b83fdd2a2bfcac94a191d6d798e1dcafac"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-candidate-001.json",
+      "expected_sha256": "7d2dc5319e4adeda829c8c80579fc09f56b84ba68eb6d746fbc9f6700b5514e1",
+      "actual_sha256": "7d2dc5319e4adeda829c8c80579fc09f56b84ba68eb6d746fbc9f6700b5514e1"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/result.json",
+      "expected_sha256": "c7ea4575bf218b1842162bbf3df6151e4bec618fe8c96890bdee69a6ae785129",
+      "actual_sha256": "c7ea4575bf218b1842162bbf3df6151e4bec618fe8c96890bdee69a6ae785129"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/stderr.txt",
+      "expected_sha256": "af9017a26c5942cb1680fa7a78ad09c7657d7f8a71969595c5ee557a820eac1f",
+      "actual_sha256": "af9017a26c5942cb1680fa7a78ad09c7657d7f8a71969595c5ee557a820eac1f"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/stdout.txt",
+      "expected_sha256": "dbdcff909ec0f2bfb6e3bae83ab0e8f2ca4d5622c64407c37bcb156f6d782652",
+      "actual_sha256": "dbdcff909ec0f2bfb6e3bae83ab0e8f2ca4d5622c64407c37bcb156f6d782652"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/result.json",
+      "expected_sha256": "9f0d533af0c3cf8dbd684f6d79c2c4d9336394a07f64f471eee2fc7b48d0ea41",
+      "actual_sha256": "9f0d533af0c3cf8dbd684f6d79c2c4d9336394a07f64f471eee2fc7b48d0ea41"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/stderr.txt",
+      "expected_sha256": "78db0ca51dd72ce7aeed1bea5673bd92820ea2f5e951ca54f999235f53d007f0",
+      "actual_sha256": "78db0ca51dd72ce7aeed1bea5673bd92820ea2f5e951ca54f999235f53d007f0"
+    },
+    {
+      "path": "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/stdout.txt",
+      "expected_sha256": "7398eff46ff04ed7f0af8827b23d745b774e13f17e39347cadde1d3b9da9733f",
+      "actual_sha256": "7398eff46ff04ed7f0af8827b23d745b774e13f17e39347cadde1d3b9da9733f"
+    },
+    {
+      "path": "receipts/m03-stream-001/pipe-intake-001.json",
+      "expected_sha256": "8b9d4a800616b709afaad897e0f7b38626ae28531eb771825e4342cf80ea6019",
+      "actual_sha256": "8b9d4a800616b709afaad897e0f7b38626ae28531eb771825e4342cf80ea6019"
+    },
+    {
+      "path": "receipts/m03-stream-001/pre-wire-candidate-001.json",
+      "expected_sha256": "1c0f9a109bd90df4bd7f909387f55b6d7ce87902ba02a68a75e695824a354d57",
+      "actual_sha256": "1c0f9a109bd90df4bd7f909387f55b6d7ce87902ba02a68a75e695824a354d57"
+    },
+    {
+      "path": "receipts/m03-stream-001/wire-intake-001.json",
+      "expected_sha256": "0699caf2bb4ee290402e1738b9dbabf02fadc73e90db6fd45592d4e5e23b9137",
+      "actual_sha256": "0699caf2bb4ee290402e1738b9dbabf02fadc73e90db6fd45592d4e5e23b9137"
+    }
+  ],
+  "all_match": true
+}

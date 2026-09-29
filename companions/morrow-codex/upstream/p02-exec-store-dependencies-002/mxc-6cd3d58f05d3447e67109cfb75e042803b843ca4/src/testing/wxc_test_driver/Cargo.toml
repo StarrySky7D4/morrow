@@ -1,0 +1,17 @@
+[package]
+name = "wxc_test_driver"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "wxc-test-driver"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+serde_json.workspace = true
+
+[build-dependencies]
+mxc_build_common.workspace = true
+

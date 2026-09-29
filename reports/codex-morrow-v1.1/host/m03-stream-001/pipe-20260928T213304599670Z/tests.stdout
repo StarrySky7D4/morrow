@@ -1,0 +1,26 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 5 tests
+test actual_child_pid_duplex_bytes_and_client_disconnect_are_observed ... child_pid=13440 client_disconnect=109 actual_child_exit=true stdout_eof=true
+ok
+test connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive ... actual_dacl_matches_current_sid_and_system=true protected=true allow_aces=2 inherited_handle=false
+buffers inbound=1024 outbound=1024
+connect_id=1 actual_cancel_completion=995
+ok
+test helper ... ok
+test server_disconnect_completes_client_read_without_false_success ... server_endpoint_closed client_read_error=109
+ok
+test stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work ... child_pid=10816 requested_write=8192 buffers=BufferInfo { inbound: 1024, outbound: 1024, flags: 9, max_instances: 1 } write_id=2 read_id=3 stable_incomplete_samples=3 spacing_ms=25 control_ack=true read_write_cancel_completion=995
+ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

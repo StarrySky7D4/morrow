@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-codex-native-http-client"
+version = "0.4.1"
+edition = "2024"
+publish = false
+
+[dependencies]
+morrow-codex-m03-stream = { path = "../../qualification/m03-fixture-002" }
+morrow-native-http-stream-wire = { path = "../../upstream/m03-stream-001/wire-kit-001/source" }
+morrow-native-pipe-win = { path = "../../upstream/m03-stream-001/pipe-kit-001/source" }
+codex-core = { path = "../../upstream/p02-integration-004/codex-work/codex-rs/core", features = ["morrow-p02-restricted-qualification"] }
+bytes = "=1.12.1"
+http = "=1.4.0"
+serde = { version = "=1.0.228", features = ["derive"] }
+serde_json = "=1.0.149"
+sha2 = "=0.10.9"
+tokio = { version = "=1.52.3", features = ["rt", "sync", "time", "macros"] }
+
+[patch.crates-io]
+tokio-tungstenite = { path = "../../out/p02-exec-store-002/build-forks/tokio-tungstenite" }
+tungstenite = { path = "../../out/p02-exec-store-002/build-forks/tungstenite" }
+[patch."https://github.com/dzbarsky/rules_rust"]
+runfiles = { path = "../../out/p02-exec-store-002/build-forks/runfiles" }
+[patch."https://github.com/helix-editor/nucleo.git"]
+nucleo = { path = "../../upstream/p02-exec-store-dependencies-002/nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee" }
+nucleo-matcher = { path = "../../upstream/p02-exec-store-dependencies-002/nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee/matcher" }
+[patch."https://github.com/microsoft/mxc"]
+appcontainer_common = { path = "../../upstream/p02-exec-store-dependencies-002/mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4/src/backends/appcontainer/common" }
+learning_mode_windows = { path = "../../upstream/p02-exec-store-dependencies-002/mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4/src/backends/learning_mode/windows" }
+wxc_common = { path = "../../upstream/p02-exec-store-dependencies-002/mxc-6cd3d58f05d3447e67109cfb75e042803b843ca4/src/core/wxc_common" }

@@ -1,0 +1,31 @@
+--- producer/Cargo.toml
++++ consumer/Cargo.toml
+@@ -12,9 +12,9 @@
+ path = "src/main.rs"
+ 
+ [dependencies]
+-codex-api = { path = "../../upstream/p02-source-batch-001/codex-source/codex-rs/codex-api" }
+-codex-client = { path = "../../upstream/p02-source-batch-001/codex-source/codex-rs/codex-client" }
+-morrow-agent-host-contract = { path = "../../sdk/host-kit-003-copy", default-features = false }
++codex-api = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-source-batch-001/codex-source/codex-rs/codex-api" }
++codex-client = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-source-batch-001/codex-source/codex-rs/codex-client" }
++morrow-agent-host-contract = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/sdk/host-kit-003-copy", default-features = false }
+ http = "=1.4.0"
+ serde = { version = "=1.0.228", features = ["derive"] }
+ serde_json = "=1.0.149"
+@@ -27,11 +27,11 @@
+ # patch is excluded: it is
+ # absent even from this probe's conservative codex-api lock dependency graph.
+ [patch.crates-io]
+-tokio-tungstenite = { path = "../../out/p02-native-probe-001/build-forks/tokio-tungstenite" }
+-tungstenite = { path = "../../out/p02-native-probe-001/build-forks/tungstenite" }
++tokio-tungstenite = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/build-forks/tokio-tungstenite" }
++tungstenite = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/build-forks/tungstenite" }
+ 
+ [patch."ssh://git@github.com/openai-oss-forks/tungstenite-rs.git"]
+-tungstenite = { path = "../../out/p02-native-probe-001/build-forks/tungstenite" }
++tungstenite = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/build-forks/tungstenite" }
+ 
+ [patch."https://github.com/dzbarsky/rules_rust"]
+-runfiles = { path = "../../out/p02-native-probe-001/build-forks/runfiles" }
++runfiles = { path = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/build-forks/runfiles" }

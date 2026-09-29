@@ -1,0 +1,21 @@
+{
+  "runner_sha256": "7219a8984c1191f5aa74083e37618b754fd6f4b33740025c962a91a299c508a6",
+  "test_names": [
+    "connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive",
+    "actual_child_pid_duplex_bytes_and_client_disconnect_are_observed",
+    "stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work",
+    "server_disconnect_completes_client_read_without_false_success"
+  ],
+  "environment": {
+    "SystemRoot": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:\\Windows\\system32\\cmd.exe",
+    "USERPROFILE": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\profile",
+    "APPDATA": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\profile\\roaming",
+    "LOCALAPPDATA": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\profile\\local",
+    "TEMP": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\tmp",
+    "TMP": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\tmp",
+    "PATH": "C:\\Windows\\System32"
+  },
+  "exe_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467"
+}

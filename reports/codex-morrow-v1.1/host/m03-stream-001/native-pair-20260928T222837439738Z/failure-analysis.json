@@ -1,0 +1,85 @@
+{
+  "status": "failed_before_Hello_no_HTTP_request",
+  "original_result_preserved": true,
+  "host_final_found_in_retained_reader_rows": true,
+  "host_exit_code": 2,
+  "guest_exit_code": 2,
+  "http_posts": 0,
+  "http_intent": "Absent",
+  "http_worker_started": false,
+  "core_delta_before_eof": false,
+  "response_observed": false,
+  "owner_released_by_authority_final": true,
+  "exit_observed": true,
+  "stdout_eof": true,
+  "stderr_eof": true,
+  "request_closed_cleanup_only": true,
+  "data_closed": true,
+  "timing_events": [
+    {
+      "at_us": 1910969,
+      "detail": {
+        "arch": "x86_64",
+        "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+        "config_sha256": "fbb3c0aa3b124a1d7adcbfc95cf41ffefd19811df0c358e3b555a8683446940b",
+        "epoch": 1,
+        "path_image_race_closed": false,
+        "pid": 8000,
+        "platform": "windows",
+        "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+      },
+      "event": "spawn",
+      "ordinal": 0
+    },
+    {
+      "at_us": 2507868,
+      "detail": {
+        "reason": 23
+      },
+      "event": "session_close_reason",
+      "ordinal": 3
+    },
+    {
+      "at_us": 2539293,
+      "detail": true,
+      "event": "data_worker_joined",
+      "ordinal": 8
+    },
+    {
+      "at_us": 2819200,
+      "detail": true,
+      "event": "stdout_eof",
+      "ordinal": 9
+    },
+    {
+      "at_us": 2819207,
+      "detail": {
+        "bytes": 78
+      },
+      "event": "stderr_eof",
+      "ordinal": 10
+    },
+    {
+      "at_us": 2820472,
+      "detail": {
+        "business_success": false,
+        "code": 2
+      },
+      "event": "exit",
+      "ordinal": 11
+    }
+  ],
+  "diagnosis": "Original deadline handshake_ms=2500 elapsed before Hello. Host spawn observation ~1.91 s after admission; close reason23 ~2.508 s. Per-phase hashing/startup costs not independently timed. No grant renewal, send or retry.",
+  "harness_limit": "inspect_http loop can write after host final/exit; OSError22 surfaced instead of startup reason and original summary did not consume final already retained by reader. This supplement extracts existing evidence only.",
+  "proposed_next_step": "New separately authorized batch with explicit longer handshake within unchanged original 10000ms TTL; new harness final/exit detection and stdin cleanup. No new run authorized by this report.",
+  "evidence_sha256": {
+    "host-rows.json": "f7fc0e9e8b4cbc0995477e1be8ec953c9029a82d3eac36234d113d81de781b6c",
+    "host.stderr": "6333a0b173b3cf5add42f82b32c96d739410918ad9787fb88ccec9ca96e0e52e",
+    "init.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "init.stdout": "7aabac07983ba92b9f1304a2b7275a73b9bf95623897414be2a5af2807345b69",
+    "launch.json": "04926a776d65deb6e80adc0a9829b87321fe2c85a5a821240d407bd853b41ba1",
+    "operator-commands.json": "59541564a595e4534539a873e4fbde940b50f362bfad20abe2eb174e182c3308",
+    "result.json": "86517a51600ca71c6c0e582d2a8313220e4e336977d10a8ffb5b34d828ecd0fb",
+    "server-events.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  }
+}

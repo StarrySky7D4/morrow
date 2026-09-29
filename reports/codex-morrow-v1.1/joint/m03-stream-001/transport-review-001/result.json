@@ -1,0 +1,176 @@
+{
+  "status": "independent_fixed_transport_tests_passed",
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "name": "first_chunk_precedes_server_eof_and_permit_survives_head_and_eof",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "first_chunk_precedes_server_eof_and_permit_survives_head_and_eof",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 12956,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036453222892,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 2085759500,
+      "stdout_sha256": "6de480766f432d7489e544889470466a5c320385a3baa96eacce830e75025cbf",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "original_deadline_expires_while_waiting_for_demand_and_does_not_renew_at_head",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "original_deadline_expires_while_waiting_for_demand_and_does_not_renew_at_head",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 20544,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036474030055,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 273749100,
+      "stdout_sha256": "5fb289505b8710005b340f25db1c3c2de5df129cafeda7179684af7081c09e9d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 6976,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036476787666,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 107926900,
+      "stdout_sha256": "f660c14497a0acc900845d4e49f09b0dc2ceed9c08e8ab0fe559167eafde6a50",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "response_limit_streaming_unknown_length_and_small_delivery_chunks",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "response_limit_streaming_unknown_length_and_small_delivery_chunks",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 18324,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036478013322,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 26620500,
+      "stdout_sha256": "fb888018b7ed0ab00920976d22b68dfd7651a495847fa53e80f66432d10b0afe",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "live_guard_revocation_is_checked_even_without_consumer_demand",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "live_guard_revocation_is_checked_even_without_consumer_demand",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 19112,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036478264853,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 16327500,
+      "stdout_sha256": "6a7d63108dd4106e3b7bcdccc66b8ba0e8ba5f46d895ca6bbc357f9c71fabea8",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "name": "dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt",
+      "args": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "--exact",
+        "dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 12676,
+        "image_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\transport-review-001\\stream-454c3e399a964f0e.exe",
+        "image_sha256": "47886ab6739357522b8fb2c4da78f1b0d091822048a65861ae755518e6104d54",
+        "creation_filetime": 134351036478436339,
+        "method": "held Popen handle, QueryFullProcessImageNameW, GetProcessTimes"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 232077800,
+      "stdout_sha256": "05b1a1cc704b4b4eec57c41f61f55e520dbbd25b62db6997af094aeefbfca945",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    }
+  ],
+  "verified_inputs_before_after": [
+    2311,
+    2311
+  ],
+  "old_inputs_unchanged": 2267,
+  "provenance_originals": 5,
+  "inherited_tests_only_package_rename": true,
+  "patch_independently_reconstructed": true,
+  "new_lock_registry_packages": 143,
+  "registry_packages_added_vs_old_lock": [
+    "cc@1.4.7",
+    "cfg-if@1.0.5",
+    "cpufeatures@0.3.1",
+    "find-msvc-tools@0.1.13",
+    "smallvec@1.16.1",
+    "syn@3.0.6",
+    "unicode-ident@1.0.26"
+  ],
+  "registry_checksums_changed": [],
+  "changed_after_failed_attempt": [
+    "network_node_stream_001/tests/stream.rs"
+  ],
+  "binary_binding": "source/lock pre-post hashes plus producer cargo compile/run log and receipt artifact hashes; no independent build or compiler JSON artifact graph",
+  "independent_build": false,
+  "old_policy_tests_executed": false,
+  "limits": [
+    "transport tests only",
+    "producer-authored fixtures independently executed, no external packet observer",
+    "no native IPC/Core/SSE/OS pending/TLS/public network qualification"
+  ],
+  "product_pass_credit": 0
+}

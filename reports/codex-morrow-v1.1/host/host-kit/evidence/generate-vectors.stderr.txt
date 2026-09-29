@@ -1,0 +1,2 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s
+     Running `C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\build\agent-host-g0-kit-target\debug\examples\vectors.exe --output C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\host\host-kit\vectors`

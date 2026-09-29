@@ -1,0 +1,79 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Entry point for the unofficial (PR/CI validation) MXC build. Runs on pushes
+# to `main` and on PRs via the unsigned 1ES PipelineTemplate, delegating the
+# stage list to `1ES.Build.Stages.yml`.
+#
+# The `main` push trigger populates the Azure Pipelines target-dir and
+# CARGO_HOME cache scopes for the default branch so PR builds can read them
+# as a fallback; without it, every PR runs a cold cargo compile.
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    exclude:
+    - 'docs/**'
+    - 'tests/examples/**'
+    - '.github/ISSUE_TEMPLATE/**'
+    - '.github/PULL_REQUEST_TEMPLATE.md'
+    - '.github/copilot-instructions.md'
+    - '.github/instructions/**'
+    - '**/*.md'
+    - '.editorconfig'
+
+name: $(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - user/*
+  # Skip the pipeline for docs-only / non-shipping changes. Keep this list
+  # in sync with the `trigger:` exclusions above.
+  paths:
+    exclude:
+    - 'docs/**'
+    - 'tests/examples/**'
+    - '.github/ISSUE_TEMPLATE/**'
+    - '.github/PULL_REQUEST_TEMPLATE.md'
+    - '.github/copilot-instructions.md'
+    - '.github/instructions/**'
+    - '**/*.md'
+    - '.editorconfig'
+
+resources:
+  repositories:
+  - repository: 1ESPipelineTemplates
+    type: git
+    name: 1ESPipelineTemplates/1ESPipelineTemplates
+    ref: refs/tags/release
+
+parameters:
+  - name: debug
+    displayName: Enable debug output for SDK tests
+    type: boolean
+    default: false
+
+variables:
+  - name: NEXTEST_NO_TESTS
+    value: pass
+
+extends:
+  template: v1/1ES.Unofficial.PipelineTemplate.yml@1ESPipelineTemplates
+  parameters:
+    pool:
+      name: Azure-Pipelines-1ESPT-ExDShared
+      image: windows-2022
+      os: windows
+
+    customBuildTags:
+    - ES365AIMigrationTooling
+
+    stages:
+    - template: templates/1ES.Build.Stages.yml@self
+      parameters:
+        isOfficialBuild: false
+        debug: ${{ parameters.debug }}

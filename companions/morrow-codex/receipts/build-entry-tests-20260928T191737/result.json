@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "command": "python tests/test_build_plan.py",
+  "exit_code": 0,
+  "captured_at": "2026-09-28T19:17:38.7498708+08:00",
+  "tool_sha256": "688f2ca3ce3cf6025f34dd79edb770df099c37172431a5eebb6da62a3a7c2bd3",
+  "contract_sha256": "8e162a50a059ee2108608c57786de5af8441207aefe528e36053477e44398c92",
+  "test_sha256": "d06a80527f995c3eb7930993ac146164de1def2ed6107d7ff26d8be38b5136fa",
+  "qualification": "build entry failure paths only; not G0 or 84 product acceptance",
+  "output": "test-output.txt"
+}

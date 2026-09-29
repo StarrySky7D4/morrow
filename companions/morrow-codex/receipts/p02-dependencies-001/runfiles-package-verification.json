@@ -1,0 +1,80 @@
+{
+  "status": "complete_package_subset_verified",
+  "original_repository": "dzbarsky/rules_rust",
+  "redirected_repository": "hermeticbuild/rules_rust",
+  "commit": "b56cbaa8465e74127f1ea216f813cd377295ad81",
+  "root_tree_sha1": "726348c42f1b030fc3e6e7eb0e80a5a18f331159",
+  "rust_tree_sha1": "61812282dad9cdf2dd6c604ef525d4f48437851f",
+  "package_tree_sha1": "342aa196478568ccc273831235baf01a6dffb2f0",
+  "source_root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package",
+  "cargo_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-dependencies-001\\rules_rust-b56cbaa8465e74127f1ea216f813cd377295ad81-runfiles-package\\rust\\runfiles\\Cargo.toml",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/BUILD.bazel",
+      "path": "rust/runfiles/BUILD.bazel",
+      "expected_blob": "695fa918f99cc349119f181f5468c1d514d6d680",
+      "status": "verified",
+      "size": 380,
+      "git_mode": "100644",
+      "git_blob_sha1": "695fa918f99cc349119f181f5468c1d514d6d680",
+      "sha256": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/Cargo.lock",
+      "path": "rust/runfiles/Cargo.lock",
+      "expected_blob": "3db66fb68380ba57c9d0d33bf3d77ecf9c8eff51",
+      "status": "verified",
+      "size": 152,
+      "git_mode": "100644",
+      "git_blob_sha1": "3db66fb68380ba57c9d0d33bf3d77ecf9c8eff51",
+      "sha256": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/Cargo.toml",
+      "path": "rust/runfiles/Cargo.toml",
+      "expected_blob": "dde46286abb79589370afd63d416d376495d3d21",
+      "status": "verified",
+      "size": 251,
+      "git_mode": "100644",
+      "git_blob_sha1": "dde46286abb79589370afd63d416d376495d3d21",
+      "sha256": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/data/sample.txt",
+      "path": "rust/runfiles/data/sample.txt",
+      "expected_blob": "398ec97d8a49b4c36ce0f45b1a7435ba53c1eefa",
+      "status": "verified",
+      "size": 13,
+      "git_mode": "100644",
+      "git_blob_sha1": "398ec97d8a49b4c36ce0f45b1a7435ba53c1eefa",
+      "sha256": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/runfiles.rs",
+      "path": "rust/runfiles/runfiles.rs",
+      "expected_blob": "3dbcd7977412b180af598c692c4a641816305331",
+      "status": "verified",
+      "size": 30494,
+      "git_mode": "100644",
+      "git_blob_sha1": "3dbcd7977412b180af598c692c4a641816305331",
+      "sha256": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/LICENSE.txt",
+      "path": "LICENSE.txt",
+      "expected_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "status": "verified",
+      "size": 11358,
+      "git_mode": "100644",
+      "git_blob_sha1": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    }
+  ],
+  "scope": "Complete rust/runfiles directory plus repository LICENSE.txt; not complete rules_rust repository",
+  "validation": "Root, rust, runfiles and nested data Git tree hashes reconstructed and bound to fixed commit; each selected raw file matches exact Git blob SHA1 and has SHA256",
+  "limits": [
+    "No compiler/Cargo/runtime execution",
+    "Source references must still be reviewed for package-external includes",
+    "No existing lock/probe/upstream originals changed"
+  ]
+}

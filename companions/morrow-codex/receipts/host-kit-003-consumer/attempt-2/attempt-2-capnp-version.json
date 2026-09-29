@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "--version"
+  ],
+  "cwd": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\sdk\\host-kit-003-copy",
+  "started_utc": "2026-09-28T11:37:01.300062+00:00",
+  "elapsed_seconds": 0.0067851000057999045,
+  "exit_code": 0,
+  "stdout": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\attempt-2-capnp-version.stdout.txt",
+  "stderr": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\attempt-2-capnp-version.stderr.txt",
+  "stdout_sha256": "77cc33aab99d8361ca95cb4cca3896505d9e7172451342a6ecebfbb7c8b8d418",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

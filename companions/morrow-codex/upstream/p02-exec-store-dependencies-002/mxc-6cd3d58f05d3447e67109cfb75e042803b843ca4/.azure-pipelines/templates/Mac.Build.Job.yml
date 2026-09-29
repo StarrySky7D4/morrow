@@ -1,0 +1,179 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# Builds mxc-exec-mac (the macOS sandbox executor) on an ARM64 macOS
+# Microsoft-hosted agent and publishes the binary as a pipeline artifact.
+
+parameters:
+- name: triplet
+  type: string
+  default: aarch64-apple-darwin
+- name: isOfficialBuild
+  type: boolean
+  default: false
+- name: ESRPInfo
+  type: object
+  default: {}
+
+jobs:
+- job: 'build_arm64_MAC'
+  displayName: 'Build (arm64 MAC)'
+  timeoutInMinutes: 120
+
+  pool:
+    name: Azure Pipelines
+    # macOS-14-arm64 (and later) images are Apple Silicon (arm64). macOS-latest
+    # currently still points to an x86_64 image, which cannot execute the
+    # cross-compiled aarch64 test binaries.
+    vmImage: macOS-15-arm64
+    os: macOS
+
+  variables:
+    CARGO_TARGET_DIR: $(Agent.TempDirectory)/target
+    targetTriple: ${{ parameters.triplet }}
+    targetTripleDir: $(CARGO_TARGET_DIR)/$(targetTriple)/release
+    outputDirectory: $(Build.SourcesDirectory)/out
+    artifactBaseName: mxc-binaries-$(targetTriple)
+    workingDirectory: $(Build.SourcesDirectory)/src
+    configTomlPath: $(Build.SourcesDirectory)/.cargo/config.toml
+
+  ${{ if eq(parameters.isOfficialBuild, true) }}:
+    templateContext:
+      rust:
+        rustToolchain:
+          toolchainFeed: https://microsoft.pkgs.visualstudio.com/Dart/_packaging/Mxc-Azure-Feed/nuget/v3/index.json
+          version: 'ms-prod-1.93'
+          additionalTargets: $(targetTriple)
+        workingDirectory: $(workingDirectory)
+        authenticateOptions:
+          configFile: $(configTomlPath)
+        installOptions:
+          configFile: $(configTomlPath)
+        cacheOptions:
+          enabled: true
+          enableTargetCache: true
+        setupOptions:
+          setupPython: true
+          pythonArtifactFeeds: Dart/Mxc-Azure-Feed
+
+  steps:
+    - checkout: self
+
+    - ${{ if eq(parameters.isOfficialBuild, true) }}:
+      - template: Rust.Build.Steps.Official.yml@self
+        parameters:
+          targetTriple: $(targetTriple)
+          workingDirectory: $(workingDirectory)
+          # macOS-only crate set; the rest of the workspace has Windows-only
+          # crates that do not compile on macOS. unix_test_proxy backs
+          # network.proxy.builtinTestServer and ships next to mxc-exec-mac.
+          cargoPackages: mxc_darwin,seatbelt_common,wxc_common,unix_test_proxy
+
+    - ${{ else }}:
+      - template: Rust.Build.Steps.Unofficial.yml@self
+        parameters:
+          targetTriple: $(targetTriple)
+          workingDirectory: $(workingDirectory)
+          cargoArgs: -p mxc_darwin -p seatbelt_common -p wxc_common -p unix_test_proxy
+
+    # --- macOS Code Signing + Notarization (official builds only) ---
+    # ESRP handles the full signing flow using Microsoft's Developer ID
+    # certificate (CP-401337-Apple). No local cert or codesign needed.
+    #
+    # ESRP's Mac signing requires a .zip (or .dmg) input — raw Mach-O
+    # binaries are rejected. We zip before signing and unzip afterward. Both
+    # the executor and the testing-only unix-test-proxy are signed together.
+    #
+    # Flow: (1) zip → (2) ESRP sign (hardened runtime) → (3) ESRP notarize → (4) unzip
+    # Stapling is impossible for standalone Mach-O binaries (Apple limitation);
+    # Gatekeeper checks the notarization ticket online instead.
+    - script: |
+        cd "$(targetTripleDir)"
+        zip mxc-exec-mac.zip mxc-exec-mac unix-test-proxy
+      displayName: 'Zip binaries for ESRP signing'
+      condition: and(succeeded(), eq(${{ parameters.isOfficialBuild }}, true))
+
+    - task: EsrpCodeSigning@5
+      displayName: 'Sign macOS binary (ESRP)'
+      condition: and(succeeded(), eq(${{ parameters.isOfficialBuild }}, true))
+      inputs:
+        ConnectedServiceName: ${{ parameters.ESRPInfo.serviceName }}
+        AppRegistrationClientId: ${{ parameters.ESRPInfo.clientId }}
+        AppRegistrationTenantId: ${{ parameters.ESRPInfo.tenantId }}
+        AuthAKVName: ${{ parameters.ESRPInfo.azureKeyVaultName }}
+        AuthCertName: ${{ parameters.ESRPInfo.authCertName }}
+        AuthSignCertName: ${{ parameters.ESRPInfo.signCertName }}
+        FolderPath: $(targetTripleDir)
+        Pattern: mxc-exec-mac.zip
+        UseMinimatch: true
+        signConfigType: 'inlineSignParams'
+        inlineOperation: >-
+          [
+            {
+              "KeyCode": "CP-401337-Apple",
+              "OperationCode": "MacAppDeveloperSign",
+              "Parameters": {
+                "Hardening": "--options=runtime"
+              },
+              "ToolName": "sign",
+              "ToolVersion": "1.0"
+            }
+          ]
+
+    - task: EsrpCodeSigning@5
+      displayName: 'Notarize macOS binary (ESRP)'
+      condition: and(succeeded(), eq(${{ parameters.isOfficialBuild }}, true))
+      inputs:
+        ConnectedServiceName: ${{ parameters.ESRPInfo.serviceName }}
+        AppRegistrationClientId: ${{ parameters.ESRPInfo.clientId }}
+        AppRegistrationTenantId: ${{ parameters.ESRPInfo.tenantId }}
+        AuthAKVName: ${{ parameters.ESRPInfo.azureKeyVaultName }}
+        AuthCertName: ${{ parameters.ESRPInfo.authCertName }}
+        AuthSignCertName: ${{ parameters.ESRPInfo.signCertName }}
+        FolderPath: $(targetTripleDir)
+        Pattern: mxc-exec-mac.zip
+        UseMinimatch: true
+        signConfigType: 'inlineSignParams'
+        inlineOperation: >-
+          [
+            {
+              "KeyCode": "CP-401337-Apple",
+              "OperationCode": "MacAppNotarize",
+              "Parameters": {
+                "BundleId": "com.microsoft.mxc"
+              },
+              "ToolName": "sign",
+              "ToolVersion": "1.0"
+            }
+          ]
+
+    - script: |
+        cd "$(targetTripleDir)"
+        unzip -o mxc-exec-mac.zip
+        rm mxc-exec-mac.zip
+      displayName: 'Unzip signed binaries'
+      condition: and(succeeded(), eq(${{ parameters.isOfficialBuild }}, true))
+
+    - task: CopyFiles@2
+      displayName: Copy binaries
+      inputs:
+        sourceFolder: $(targetTripleDir)
+        contents: |
+          mxc-exec-mac
+          unix-test-proxy
+        targetFolder: $(outputDirectory)/$(targetTriple)
+
+    # Copy the .dSYM bundle into a sibling `symbols/` subdir, mirroring the
+    # Windows/Linux pattern (see Rust.Build.Job.yml for the BinSkim rationale).
+    - task: CopyFiles@2
+      displayName: Copy dSYM bundle
+      inputs:
+        sourceFolder: $(targetTripleDir)
+        contents: 'mxc-exec-mac.dSYM/**'
+        targetFolder: $(outputDirectory)/$(targetTriple)/symbols
+
+    - task: 1ES.PublishPipelineArtifact@1
+      displayName: Publish
+      inputs:
+        path: '$(outputDirectory)/$(targetTriple)'
+        artifactName: $(artifactBaseName)

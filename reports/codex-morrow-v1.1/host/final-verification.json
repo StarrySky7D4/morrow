@@ -1,0 +1,88 @@
+{
+  "status": "passed",
+  "qualification_only": true,
+  "commands": [
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "preflight",
+        "--baseline",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m00-inputs.json",
+        "--receipt",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\final-preflight.json"
+      ],
+      "exit_code": 0,
+      "expected_exit_zero": true,
+      "stdout": "{\"head\": \"88557916aabf2e10619b1022110035178498898a\", \"branch\": \"codex/io-safety-refactor\", \"legacy_inputs_verified\": 178, \"baseline_sha256\": \"391d252a7a9bbc8ef7d76222ed5a043b4a267b61fe3ba7c4ca4088eefb43d5e7\", \"toolchain\": {\"rustc\": \"rustc 1.95.0 (59807616e 2026-04-14)\", \"cargo\": \"cargo 1.95.0 (f2d3ce0bd 2026-03-21)\", \"capnp\": \"Cap'n Proto version 1.4.0\"}}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "verify-kit",
+        "--input",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-003"
+      ],
+      "exit_code": 0,
+      "expected_exit_zero": true,
+      "stdout": "{\"status\": \"verified\", \"file_count\": 180, \"manifest_sha256\": \"5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01\", \"schema_sha256\": \"da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f\", \"qualification_only\": true}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "export-sdk",
+        "--baseline",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m00-inputs.json",
+        "--output",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-003",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\build\\agent-host-g0-kit-target"
+      ],
+      "exit_code": 1,
+      "expected_exit_zero": false,
+      "stdout": "",
+      "stderr": "FAIL: output already exists; choose a new directory (no old artifact reuse)\n"
+    },
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "export-sdk",
+        "--baseline",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\missing-input.json",
+        "--output",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\should-not-exist-missing",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\build\\agent-host-g0-kit-target"
+      ],
+      "exit_code": 1,
+      "expected_exit_zero": false,
+      "stdout": "",
+      "stderr": "FAIL: [Errno 2] No such file or directory: 'C:\\\\Users\\\\Administrator\\\\Desktop\\\\CodeXProjext\\\\morrow\\\\build\\\\io-safety-refactor\\\\reports\\\\codex-morrow-v1.1\\\\host\\\\missing-input.json'\n"
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--exit-code",
+        "--",
+        "core",
+        "plugin_runtime",
+        "network_node",
+        "workbench_host",
+        "sdk",
+        "lib",
+        "packages"
+      ],
+      "exit_code": 0,
+      "expected_exit_zero": true,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "kit_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01"
+}

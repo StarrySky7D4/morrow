@@ -1,0 +1,46 @@
+{
+  "status": "same_source_and_compiled_features_verified",
+  "metadata": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-integration-004\\runs\\lock-20260928T140550Z-796669af92\\stdout.txt",
+  "metadata_sha256": "85e3a00d4006e96c9f5abf9626a5c204a94a998cbfc046027b87447cbe3b953d",
+  "build": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-integration-004\\runs\\build-20260928T141112Z-cab3c0ded0\\result.json",
+  "build_sha256": "b1ba8c3273b9863ec0a8b92be5e57f4f10fd657dfe715de62ac40760e8415d49",
+  "source_root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs",
+  "packages": {
+    "codex-core": {
+      "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/core#codex-core@0.0.0",
+      "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\Cargo.toml",
+      "compiler_features": [
+        "morrow-p02-network-qualification",
+        "morrow-p02-qualification",
+        "morrow-p02-restricted-qualification"
+      ]
+    },
+    "codex-thread-store": {
+      "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/thread-store#codex-thread-store@0.0.0",
+      "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\thread-store\\Cargo.toml",
+      "compiler_features": [
+        "morrow-p02-restricted-qualification"
+      ]
+    },
+    "codex-exec-server": {
+      "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/exec-server#codex-exec-server@0.0.0",
+      "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\exec-server\\Cargo.toml",
+      "compiler_features": []
+    },
+    "codex-protocol": {
+      "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/protocol#codex-protocol@0.0.0",
+      "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\protocol\\Cargo.toml",
+      "compiler_features": []
+    },
+    "codex-rollout": {
+      "package_id": "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/upstream/p02-integration-004/codex-work/codex-rs/rollout#codex-rollout@0.0.0",
+      "manifest_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\rollout\\Cargo.toml",
+      "compiler_features": []
+    }
+  },
+  "compiler_artifact_unique_packages": 905,
+  "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-integration-004\\target\\x86_64-pc-windows-msvc\\debug\\p02-integration-probe.exe",
+  "executable_sha256": "0592d5e69bfe7fe1c6a5ecdcb86eb3e6f6ce703e4a4f80a66c409146e4bfb682",
+  "default_product_build": "not_run; defaults retained in source only",
+  "runtime_authorization": "not_established_by_feature"
+}

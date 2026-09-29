@@ -1,0 +1,156 @@
+{
+  "producer_cases_reviewed": [
+    {
+      "mode": "normal",
+      "host_exit": 0,
+      "peer_pid_from_producer_receipt": 19404,
+      "peer_exit": 0,
+      "ack_received": true,
+      "owner_released": true,
+      "http_worker_started": false,
+      "request_closed_at_final": false,
+      "events": [
+        {
+          "at_us": 125488,
+          "detail": {
+            "sequence": 2
+          },
+          "event": "close_ack_pending",
+          "ordinal": 10
+        },
+        {
+          "at_us": 125785,
+          "detail": {
+            "bytes": 396,
+            "sequence": 2
+          },
+          "event": "close_ack_written",
+          "ordinal": 13
+        },
+        {
+          "at_us": 127717,
+          "detail": true,
+          "event": "stdout_eof",
+          "ordinal": 16
+        },
+        {
+          "at_us": 127721,
+          "detail": {
+            "bytes": 0
+          },
+          "event": "stderr_eof",
+          "ordinal": 17
+        },
+        {
+          "at_us": 127941,
+          "detail": {
+            "business_success": false,
+            "code": 0
+          },
+          "event": "exit",
+          "ordinal": 18
+        }
+      ]
+    },
+    {
+      "mode": "bad-sequence",
+      "host_exit": 2,
+      "peer_pid_from_producer_receipt": 2036,
+      "peer_exit": 0,
+      "ack_received": false,
+      "owner_released": true,
+      "http_worker_started": false,
+      "request_closed_at_final": false,
+      "events": [
+        {
+          "at_us": 122387,
+          "detail": true,
+          "event": "stdout_eof",
+          "ordinal": 12
+        },
+        {
+          "at_us": 122539,
+          "detail": {
+            "bytes": 0
+          },
+          "event": "stderr_eof",
+          "ordinal": 13
+        },
+        {
+          "at_us": 122748,
+          "detail": {
+            "business_success": false,
+            "code": 0
+          },
+          "event": "exit",
+          "ordinal": 14
+        }
+      ]
+    },
+    {
+      "mode": "post-close-bytes",
+      "host_exit": 2,
+      "peer_pid_from_producer_receipt": 18744,
+      "peer_exit": 0,
+      "ack_received": true,
+      "owner_released": true,
+      "http_worker_started": false,
+      "request_closed_at_final": false,
+      "events": [
+        {
+          "at_us": 118047,
+          "detail": {
+            "sequence": 2
+          },
+          "event": "close_ack_pending",
+          "ordinal": 11
+        },
+        {
+          "at_us": 118371,
+          "detail": {
+            "bytes": 396,
+            "sequence": 2
+          },
+          "event": "close_ack_written",
+          "ordinal": 14
+        },
+        {
+          "at_us": 118452,
+          "detail": {
+            "bytes": 1,
+            "reason": "unexpected guest bytes after Close"
+          },
+          "event": "close_ack_failed",
+          "ordinal": 15
+        },
+        {
+          "at_us": 120452,
+          "detail": true,
+          "event": "stdout_eof",
+          "ordinal": 16
+        },
+        {
+          "at_us": 120628,
+          "detail": {
+            "bytes": 0
+          },
+          "event": "stderr_eof",
+          "ordinal": 17
+        },
+        {
+          "at_us": 120832,
+          "detail": {
+            "business_success": false,
+            "code": 0
+          },
+          "event": "exit",
+          "ordinal": 18
+        }
+      ]
+    }
+  ],
+  "joint_runtime_invoked": false,
+  "source_difference_between_test_and_fixed": [
+    "README.md"
+  ]
+}

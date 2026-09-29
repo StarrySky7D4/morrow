@@ -1,0 +1,62 @@
+{
+  "status": "compiled_real_core_entry_pre_wire_local_unit_passed",
+  "input_sha256": {
+    "qualification/m03-stream-001/Cargo.lock": "d477c145640f1f20c2e53653a5dba898ec4f30303df229a7538091d21294fdf7",
+    "qualification/m03-stream-001/Cargo.toml": "f84640ce88bbec5079759923af7ad8a5a289cdffa9d3d6e710d93da2124167af",
+    "qualification/m03-stream-001/README.md": "f504bdf0d1bebdd2012560e0cbe878e8e42c9c86921a292a4910de0868da0835",
+    "qualification/m03-stream-001/src/driver.rs": "3be8529ce8ef5f95f55ba90e1cf0ce834d2588686872731ab66c2505043a34e7",
+    "qualification/m03-stream-001/src/lib.rs": "6f1b625f6106f385e023ccf60d9c05fd8e5ec1b24a35511867364c0bee8e04de",
+    "qualification/m03-stream-001/src/limits.rs": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+    "qualification/m03-stream-001/src/main.rs": "363b87d7279f2010468bc913adcc0c7425ed2dc1c2260b558c4927c25d703d97",
+    "qualification/m03-stream-001/src/network.rs": "88ad1418c942eeec182717c65eef49bdbd33f72e4ed6411dd30a02bb271bff07",
+    "qualification/m03-stream-001/src/request_task.rs": "cb13919f12d2922fe9e2b8e8b080bb0d2552abd4af11346d0b36d1bac8278d96",
+    "receipts/m03-stream-001/freeze_pre_wire.py": "02e97c75cf6594fef6eb9c9400eaa2e23e279e318a2b39d5f8c67dd4490ad93d",
+    "receipts/m03-stream-001/build_candidate.py": "6fe9a2c388791cbbc4d84a355524d706b0cec7eec252d329bf285438ed3430e7",
+    "receipts/m03-stream-001/integration-supplement-002.md": "c785007320f8d3c0439b6f757cecd607964028cd846d9e66206340141c49aae2",
+    "receipts/m03-stream-001/runs/build-20260928T212905Z-e12a3afe/result.json": "fe688529482a95716a8c45f411dbcfc462048e6ca384ac9e74f75621c4d705c0",
+    "receipts/m03-stream-001/runs/build-20260928T212905Z-e12a3afe/stderr.txt": "646d8a3a3f9dc4e4d1e1b8bcde56f8cb425c9d375e35bb72bfe9ee5f825ba489",
+    "receipts/m03-stream-001/runs/build-20260928T212905Z-e12a3afe/stdout.txt": "811a08b7e174f9828865674eb0fb8dd9c15d3b42ba0cb0b6212107722857b500",
+    "receipts/m03-stream-001/runs/test-20260928T212937Z-9717237f/result.json": "c69d863ff02b0ac0625c8082683ae0a96e5385da5c3344674296f8c9ed24dc41",
+    "receipts/m03-stream-001/runs/test-20260928T212937Z-9717237f/stderr.txt": "12ae5a337922714d7b4d9fef677897d1ed3c5ee09dc3c2961e9e9958f9bee8bd",
+    "receipts/m03-stream-001/runs/test-20260928T212937Z-9717237f/stdout.txt": "a00f4236b4a3982f09d3517d2289f28e2ff1a6789b45f8eeb528b24df1955c0d",
+    "out/m03-stream-001/candidates/pre-wire-001/libmorrow_codex_m03_stream.rlib": "b0dbd6e2985cbc8df4a143ef6b06ebd7baac1efd8a47c126ba08412ce09fa39f",
+    "out/m03-stream-001/candidates/pre-wire-001/morrow-codex-m03-stream.exe": "5619e8f2ebf15cb8bbe9c65344886f719da8edd9b7ac2d3c4a1eb80f8ad674a6"
+  },
+  "artifacts": [
+    {
+      "compiler_reported_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\libmorrow_codex_m03_stream.rlib",
+      "sealed_path": "out/m03-stream-001/candidates/pre-wire-001/libmorrow_codex_m03_stream.rlib",
+      "sha256": "b0dbd6e2985cbc8df4a143ef6b06ebd7baac1efd8a47c126ba08412ce09fa39f",
+      "bytes": 1856052,
+      "kind": [
+        "lib"
+      ]
+    },
+    {
+      "compiler_reported_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-codex-m03-stream.exe",
+      "sealed_path": "out/m03-stream-001/candidates/pre-wire-001/morrow-codex-m03-stream.exe",
+      "sha256": "5619e8f2ebf15cb8bbe9c65344886f719da8edd9b7ac2d3c4a1eb80f8ad674a6",
+      "bytes": 152064,
+      "kind": [
+        "bin"
+      ]
+    }
+  ],
+  "local_unit_tests_passed": 3,
+  "real_core_entry": "library request_task::start -> ModelClient -> session.stream -> upstream Responses/SSE",
+  "cli_entry": "WireNotReady; does not invoke Core or HTTP",
+  "build_receipt": "receipts/m03-stream-001/runs/build-20260928T212905Z-e12a3afe/result.json",
+  "test_receipt": "receipts/m03-stream-001/runs/test-20260928T212937Z-9717237f/result.json",
+  "native_driver_implemented": false,
+  "core_http_runtime_invoked": false,
+  "actual_sse_events_verified": false,
+  "product_success_claimed": false,
+  "old_refusal_suite_rerun": false,
+  "frozen_source": "qualification/m03-stream-001; implement native driver in a new crate",
+  "limits": "32KiB request;64KiB or tighter approved response;8KiB/32 headers;4KiB error;8KiB max chunk",
+  "failed_preparation_runs_preserved": [
+    "lock-20260928T211556Z-74502337",
+    "lock-20260928T211631Z-e2b3c755",
+    "lock-20260928T211734Z-daafecfc"
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "captured_at": "2026-09-28T11:12:08.131010+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.14.5 (tags/v3.14.5:5607950, May 10 2026, 10:43:50) [MSC v.1944 64 bit (AMD64)]",
+  "workspace": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+  "head": "88557916aabf2e10619b1022110035178498898a",
+  "branch": "codex/io-safety-refactor",
+  "worktree_status": "?? contracts/\n?? reports/codex-morrow-v1.1/\n",
+  "plan_files": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\01_Morrow侧扩充实施路径.md",
+      "expected": "d775f93afd7b104d7a7dae30d470f2812d286ad95ee4f8c28c860f0e5379a20b",
+      "actual": "d775f93afd7b104d7a7dae30d470f2812d286ad95ee4f8c28c860f0e5379a20b",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\02_插件侧编码构建路径.md",
+      "expected": "459081253458013a6c171fa9128d30bb80fa5b9e31d9a5f985c2ce317fb78781",
+      "actual": "459081253458013a6c171fa9128d30bb80fa5b9e31d9a5f985c2ce317fb78781",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+      "expected": "1008086b6a7184dc9cb3b534d4bc29a5b54b8a37cb07c4fbab1849bb312cc1e8",
+      "actual": "1008086b6a7184dc9cb3b534d4bc29a5b54b8a37cb07c4fbab1849bb312cc1e8",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.docx",
+      "expected": "d90658b5b4da5e3638d15b6e15dac8242002c1eca8ca5ae5e9c52d45e356b942",
+      "actual": "d90658b5b4da5e3638d15b6e15dac8242002c1eca8ca5ae5e9c52d45e356b942",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.md",
+      "expected": "152d1e6869cfad204a10903733c09f31a41342617e181139be98701de8524ecb",
+      "actual": "152d1e6869cfad204a10903733c09f31a41342617e181139be98701de8524ecb",
+      "match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\README.md",
+      "expected": "c12604cb31b3e443b33d5cf08210416ab1af312155cbd41802fb7ecd7d90a4ab",
+      "actual": "c12604cb31b3e443b33d5cf08210416ab1af312155cbd41802fb7ecd7d90a4ab",
+      "match": true
+    }
+  ],
+  "frozen_boundary_files": [
+    {
+      "path": "sdk/rust/contracts/content.proto",
+      "baseline_blob_sha256": "8493c9194c760bad05d480a82a676098e002513eac2166418410c274ec957ff4",
+      "disk_sha256": "7aaafdd3ad608bc1875961d40bfd3e4cc67f5d374d227eed983ed13a18a849c2",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/dependency_call.capnp",
+      "baseline_blob_sha256": "8dd7821caed15769c80dee950ac71fbdb3aa1106a37f411d88ec4d3a37952cb8",
+      "disk_sha256": "ad2b7fc1e3871a38974f7949b612a5e4418b2fe56e115a05521ca5f41e060ebd",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/io.capnp",
+      "baseline_blob_sha256": "78e87b3f7b7a2df7675937f3bea84d5b33399cd4559d560c7d4ab7f4da4bccf5",
+      "disk_sha256": "148b8417b0a6713e4c70e2627e3fb044a9dd43db43b2e13d840da41b78052073",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/mutation.capnp",
+      "baseline_blob_sha256": "f8143ed0ea177e4600841f9f64b598ba2c6c774df83646b76ebb44653b8d6c9f",
+      "disk_sha256": "f8143ed0ea177e4600841f9f64b598ba2c6c774df83646b76ebb44653b8d6c9f",
+      "exact_disk_matches_blob": true,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/runtime.capnp",
+      "baseline_blob_sha256": "18f584f69472373bab33a6c47dcfda874477e36e0a52c32b3af1fe4fbb748855",
+      "disk_sha256": "c5e069bc913799688a3c4f05ae1ea6487dc125a98569138ca92580d134a398e3",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/service.capnp",
+      "baseline_blob_sha256": "a7dd4a67934af84b6c3792b3e2131597fb6078fe9c95316e4c5c66ad0cc836d2",
+      "disk_sha256": "1ee24c80f1aa810580f73ba535a7c50c6c70f2f418f12431e99d9accd391830e",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/service_resources.capnp",
+      "baseline_blob_sha256": "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842",
+      "disk_sha256": "a862d1db15febe082278a0766d1635077a428d1188b3416500f882a1206b1a08",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/task-version.txt",
+      "baseline_blob_sha256": "1121cfccd5913f0a63fec40a6ffd44ea64f9dc135c66634ba001d10bcf4302a2",
+      "disk_sha256": "24ba1e99dc06b19351323aae0d7370243d586475a634b7f6ff7927fbc72cfaed",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/task.capnp",
+      "baseline_blob_sha256": "6de9310cc2d81f4718a1a62e92d80b18326f8701313dccbd1e8dde2cc2791b0b",
+      "disk_sha256": "19edbd6c84396f0e1bb78b81e54317e154bf5992677919c76d2d8ec8766e0faf",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/ui-version.txt",
+      "baseline_blob_sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+      "disk_sha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/ui.capnp",
+      "baseline_blob_sha256": "253f074420307ce737b61f8669d553b3ed7a825132f2ce449900a1d9b372bda6",
+      "disk_sha256": "f0813767ddcea6b8fb26a5b983adb2edc8425235494833db5ecae23d803da77b",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/contracts/version.txt",
+      "baseline_blob_sha256": "10159baf262b43a92d95db59dae1f72c645127301661e0a3ce4e38b295a97c58",
+      "disk_sha256": "9b6dd0f55d1cea37555db317f53a0631f694bd46df8018cc2aeed3d9e2f32f5f",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "workbench_host/schemas/host.capnp",
+      "baseline_blob_sha256": "578b2f580d7a32d27427cc1a6bdc156bbf803efeb6022c6af65c1414f7455f44",
+      "disk_sha256": "f108865ae427cc4ee76eb486c5fe9fd0efc8cd3872b14d30f0d00fd3f5b7aa07",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "sdk/rust/src/protocol.rs",
+      "baseline_blob_sha256": "89545f93276f2128f81681cc3ff5895f46a83301668c05b9a55fa38175a9431b",
+      "disk_sha256": "14d7e29395585ae5ef1a7f860fe873c6aa6cff9678b47622a5c473fb10a7a03e",
+      "exact_disk_matches_blob": false,
+      "git_normalized_unchanged": true
+    },
+    {
+      "path": "core/src/plugin_package.rs",
+      "baseline_blob_sha256": "e330787a1e11828650175e1a32a88a1e28cae49546c2b46d29468b76fcc4b881",
+      "disk_sha256": "e330787a1e11828650175e1a32a88a1e28cae49546c2b46d29468b76fcc4b881",
+      "exact_disk_matches_blob": true,
+      "git_normalized_unchanged": true
+    }
+  ],
+  "baseline_limit": "Frozen files checked for byte/source identity only; old guest runtime compatibility not executed."
+}

@@ -1,0 +1,336 @@
+[
+  {
+    "observed_at_ns": 164286144681400,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 20365,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+          "config_sha256": "6dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 15936,
+          "platform": "windows",
+          "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286145171300,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 20613,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000009f0f6280269f994a01000000000000000100000000000000403e0000000000008b0f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+        },
+        "event": "frame_sent",
+        "ordinal": 1
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160040800,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30887,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000009f0f6280269f994a01000000000000000100000000000000403e0000000000008b0f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b4794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+        },
+        "event": "frame_received",
+        "ordinal": 2
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160119500,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30921,
+        "detail": {
+          "code": 17,
+          "sequence": 1
+        },
+        "event": "request_denied",
+        "ordinal": 3
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160204100,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30928,
+        "detail": {
+          "generation": 2,
+          "reason": 17
+        },
+        "event": "revoked",
+        "ordinal": 4
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160286600,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30932,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 5
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160363700,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30934,
+        "detail": {
+          "reason": 17
+        },
+        "event": "stop_requested",
+        "ordinal": 6
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160666100,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 30977,
+        "detail": {
+          "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000009f0f6280269f994a01000000000000000200000000000000403e000011000000810f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+        },
+        "event": "frame_sent",
+        "ordinal": 7
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160736800,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 31957,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 8
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160838700,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 32030,
+        "detail": {
+          "bytes": 0,
+          "chunks": 0,
+          "omitted_chunk_details": 0
+        },
+        "event": "stderr_eof",
+        "ordinal": 9
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160919300,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 32225,
+        "detail": {
+          "business_success": false,
+          "code": 0
+        },
+        "event": "exit",
+        "ordinal": 10
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286160989300,
+    "event": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 32241,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 11
+      },
+      "pid": 15936,
+      "session": 5375502617954881439
+    }
+  },
+  {
+    "observed_at_ns": 164286162411800,
+    "event": {
+      "event": "final",
+      "session_outcome": "rejected_or_disconnected",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 20365,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+              "config_sha256": "6dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 15936,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 20613,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000009f0f6280269f994a01000000000000000100000000000000403e0000000000008b0f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 30887,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000009f0f6280269f994a01000000000000000100000000000000403e0000000000008b0f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b4794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 30921,
+            "detail": {
+              "code": 17,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 3
+          },
+          {
+            "at_us": 30928,
+            "detail": {
+              "generation": 2,
+              "reason": 17
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 30932,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 30934,
+            "detail": {
+              "reason": 17
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 30977,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000009f0f6280269f994a01000000000000000200000000000000403e000011000000810f0000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100009f0f6280269f994ab05aaca9a280ba783ce3c7f09b27adf576fd043da53b8a32fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c064971508786dee9af183632bbbdcf0c3140978f601097f9e993126a597c2dbce0589ffca27"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 31957,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 32030,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 32225,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 32241,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 15936,
+        "session": 5375502617954881439,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    }
+  }
+]

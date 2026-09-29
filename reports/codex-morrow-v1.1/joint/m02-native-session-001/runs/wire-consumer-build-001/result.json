@@ -1,0 +1,39 @@
+{
+  "scope": "independent_new_wire_consumer_only",
+  "real_host_client_ipc": false,
+  "product_pass_credit": 0,
+  "commands": [
+    {
+      "name": "lock",
+      "argv": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.97.1-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "generate-lockfile",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr_sha256": "ce789fb4a14fbd93590dd525b98161b7254d4e410f2680d5acdcf5a291cb25b0"
+    },
+    {
+      "name": "build",
+      "argv": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.97.1-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "build",
+        "--offline",
+        "--locked",
+        "--message-format=json"
+      ],
+      "exit_code": 101,
+      "stdout_sha256": "b628163b3bf9a7bf5f287362371ad84bd1313f3682d0e1005007ae146e923192",
+      "stderr_sha256": "0679e14cf783211c1560e26549b9c838696c8ef8ca1ee69aa49c80bbfb94e599"
+    }
+  ],
+  "compiler": {
+    "cargo": "ddfbad20b31b918d3439d070945ec59bbfe037a6ec0ab5b584459e69c8b37d1b",
+    "rustc": "cf79cfd77b0a144c56a0a6af6bf10bcdf095a73718cd4bf2b9d4fe2d2cbded55"
+  },
+  "status": "failed",
+  "exit_code": 1,
+  "error": "RuntimeError",
+  "message": "build failed"
+}

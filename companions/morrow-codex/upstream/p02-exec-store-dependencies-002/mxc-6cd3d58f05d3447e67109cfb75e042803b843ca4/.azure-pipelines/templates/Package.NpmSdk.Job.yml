@@ -1,0 +1,125 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: isOfficialBuild
+  type: boolean
+  default: false
+- name: targets
+  type: object
+  default:
+    - artifact: wxc-binaries-x86_64-pc-windows-msvc
+      sdkArch: x64
+    - artifact: wxc-binaries-aarch64-pc-windows-msvc
+      sdkArch: arm64
+    - artifact: lxc-binaries-x86_64-unknown-linux-gnu
+      sdkArch: x64
+    - artifact: lxc-binaries-aarch64-unknown-linux-gnu
+      sdkArch: arm64
+- name: ESRPInfo
+  type: object
+  default: {}
+
+jobs:
+- job: package_npm_sdk
+  displayName: Package Npm Sdk
+  pool:
+    name: Azure-Pipelines-1ESPT-ExDShared
+    image: ubuntu-latest
+    os: linux
+  variables:
+    outputDirectory: $(Build.SourcesDirectory)/out
+    sdkDirectory: $(Build.SourcesDirectory)/sdk/node
+    artifactBaseName: mxc-npm-sdk-package
+    # Cache npm package downloads across runs to avoid re-fetching every dependency
+    # tarball from the Azure Artifacts feed on each pipeline invocation.
+    npm_config_cache: $(Pipeline.Workspace)/.npm
+
+  steps:
+    - checkout: self
+
+    # The post-job SBOM generator inspects the Rust workspace. Configure Cargo
+    # for the appropriate mirror so network isolation does not send it to crates.io.
+    - ${{ if eq(parameters.isOfficialBuild, true) }}:
+      - template: Cargo.Setup.Private.yml@self
+    - ${{ else }}:
+      - template: Cargo.Setup.Public.yml@self
+
+    - task: UseNode@1
+      displayName: Use Node.js 20
+      inputs:
+        version: '20.x'
+
+    - task: Cache@2
+      displayName: Cache npm
+      inputs:
+        key: 'npm | "$(Agent.OS)" | sdk/node/package-lock.json'
+        restoreKeys: |
+          npm | "$(Agent.OS)"
+        path: $(npm_config_cache)
+
+    # Download all artifacts dynamically
+    - ${{ each target in parameters.targets }}:
+      - task: DownloadPipelineArtifact@2
+        displayName: Download ${{ target.artifact }}
+        inputs:
+          artifact: ${{ target.artifact }}
+          path: $(sdkDirectory)/bin/${{ target.sdkArch }}
+
+    # Pipeline artifact downloads strip Unix execute permissions.
+    # Restore +x on Linux and macOS binaries so the tarball preserves them.
+    - script: chmod +x $(sdkDirectory)/bin/*/lxc-exec
+      displayName: Restore execute permission on lxc-exec
+
+    - script: |
+        set -euo pipefail
+        find $(sdkDirectory)/bin -name unix-test-proxy -exec chmod +x {} +
+      displayName: Restore execute permission on unix-test-proxy
+
+    # Drop symbol files from the npm package — symbols ship separately.
+    - script: rm -rf $(sdkDirectory)/bin/*/symbols
+      displayName: Strip symbols/ from npm package
+
+    - script: |
+        set -euo pipefail
+        find $(sdkDirectory)/bin -name mxc-exec-mac -exec chmod +x {} +
+      displayName: Restore execute permission on mxc-exec-mac
+
+    # Copy .npmrc to the SDK directory so Azure artifacts feed is used for npm install.
+    - task: CopyFiles@2
+      displayName: Copy .npmrc to SDK
+      inputs:
+        SourceFolder: '$(Build.SourcesDirectory)/.azure-pipelines/.npm'
+        Contents: '.npmrc'
+        TargetFolder: '$(sdkDirectory)'
+
+    - task: NpmAuthenticate@0
+      displayName: NPM Authenticate
+      inputs:
+        workingFile: '$(sdkDirectory)/.npmrc'
+
+    - script: npm ci
+      workingDirectory: $(sdkDirectory)
+      displayName: npm ci
+
+    - script: npm run build
+      workingDirectory: $(sdkDirectory)
+      displayName: npm run build
+
+    - script: npm pack
+      workingDirectory: $(sdkDirectory)
+      displayName: npm pack
+
+    - task: CopyFiles@2
+      displayName: Copy npm package
+      inputs:
+        sourceFolder: $(sdkDirectory)
+        contents: |
+          *.tgz
+        targetFolder: '$(outputDirectory)/packages'
+
+    - task: 1ES.PublishPipelineArtifact@1
+      displayName: Upload SDK as pipeline artifact
+      inputs:
+        path: '$(outputDirectory)/packages'
+        artifactName: $(artifactBaseName)

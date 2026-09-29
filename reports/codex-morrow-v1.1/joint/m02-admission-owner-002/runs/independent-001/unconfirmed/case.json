@@ -1,0 +1,14 @@
+{
+  "case": "unconfirmed",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "holder_pid": 9272,
+    "second_host_rejected": {
+      "action": "claim",
+      "error": "owner busy or unavailable: StorageBusy",
+      "event": "operator_result",
+      "ok": false
+    },
+    "fresh_after_full_release": "b83b76572cdf96c221e15f88000c97513d5dc7f86549c161ec0b88a5db8c3c5f"
+  }
+}

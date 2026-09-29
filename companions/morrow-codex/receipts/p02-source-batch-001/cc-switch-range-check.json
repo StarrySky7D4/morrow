@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "source": "cc-switch",
+  "url": "https://codeload.github.com/farion1231/cc-switch/tar.gz/846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "requested_range": "bytes=12845056-12845056",
+  "if_range": "\"f577db22c75c457912f059a664c1c13ef5c0e4056c78d271a9705addb4d6bfcd\"",
+  "started_at": "2026-09-28T11:57:05.577784+00:00",
+  "maximum_body_read_bytes": 1,
+  "http_status": 200,
+  "headers": {
+    "ETag": "\"f577db22c75c457912f059a664c1c13ef5c0e4056c78d271a9705addb4d6bfcd\""
+  },
+  "resume_supported": false,
+  "probe_bytes_read": 0,
+  "ended_at": "2026-09-28T11:57:06.526992+00:00"
+}

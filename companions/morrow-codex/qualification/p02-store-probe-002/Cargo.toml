@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-codex-p02-store-probe"
+version = "0.0.1"
+edition = "2024"
+publish = false
+
+[[bin]]
+name = "p02-store-probe"
+path = "src/main.rs"
+
+[dependencies]
+codex-thread-store = { path = "../../upstream/p02-exec-store-002/codex-work/codex-rs/thread-store" }
+codex-protocol = { path = "../../upstream/p02-exec-store-002/codex-work/codex-rs/protocol" }
+codex-rollout = { path = "../../upstream/p02-exec-store-002/codex-work/codex-rs/rollout" }
+morrow-agent-host-contract = { path = "../../upstream/p02-exec-store-002/host-kit-003", features = ["qualification"] }
+serde_json = "=1.0.149"
+tokio = { version = "=1.52.3", features = ["rt"] }
+
+[patch.crates-io]
+tokio-tungstenite = { path = "../../out/p02-exec-store-002/build-forks/tokio-tungstenite" }
+tungstenite = { path = "../../out/p02-exec-store-002/build-forks/tungstenite" }
+
+[patch."https://github.com/dzbarsky/rules_rust"]
+runfiles = { path = "../../out/p02-exec-store-002/build-forks/runfiles" }
+
+[patch."https://github.com/helix-editor/nucleo.git"]
+nucleo = { path = "../../upstream/p02-exec-store-dependencies-002/nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee" }
+nucleo-matcher = { path = "../../upstream/p02-exec-store-dependencies-002/nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee/matcher" }

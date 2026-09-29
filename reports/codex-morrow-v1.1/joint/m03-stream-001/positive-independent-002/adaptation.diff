@@ -1,0 +1,57 @@
+--- C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\m03-stream-001\positive-independent-001\joint_positive_once.py
++++ C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\reports\codex-morrow-v1.1\joint\m03-stream-001\positive-independent-002\joint_positive_once.py
+@@ -28,16 +28,16 @@
+     return {'wait_signaled':waited==0,'wait_result':int(waited),'exit_code':code.value}
+ 
+ def main():
+-    if sys.argv[1:] != ['--authorized-single-joint-run']:raise RuntimeError('one authorized independent host003/plugin002 positive only')
++    if sys.argv[1:] != ['--authorized-single-joint-run']:raise RuntimeError('one authorized independent host004/plugin002 positive only')
+     stamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+     run=BASE/('native-pair-'+stamp);run.mkdir()
+-    evidence=PLUGIN/'out/m03-joint-001'/'positive-independent-001'/stamp;evidence.mkdir(parents=True)
++    evidence=PLUGIN/'out/m03-joint-001'/'positive-independent-002'/stamp;evidence.mkdir(parents=True)
+     profile=run/'profile';profile.mkdir();cwd=run/'guest-cwd';cwd.mkdir()
+     candidate=run/'candidate';candidate.mkdir();host=candidate/'morrow-native-stream-host.exe'
+-    shutil.copy2(HOST_BASE/'native-host-candidate-003/morrow-native-stream-host.exe',host)
+-    host_manifest=HOST_BASE/'native-host-candidate-003/manifest.json'
+-    assert sha(host_manifest)=='564b58185f5d022fb630fcdfb15367fc358937df23db6a31be1d31ae84e4aa37'
+-    hm=json.loads(host_manifest.read_text());assert sha(host)==hm['executable_sha256']=='3341dbbe55c271cecfe2c69261374c1623c4ce65c2f96be3bad16b134aff5e65'
++    shutil.copy2(HOST_BASE/'native-host-candidate-004/morrow-native-stream-host.exe',host)
++    host_manifest=HOST_BASE/'native-host-candidate-004/manifest.json'
++    assert sha(host_manifest)=='a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2'
++    hm=json.loads(host_manifest.read_text());assert sha(host)==hm['executable_sha256']=='c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224'
+     for p,h in hm['source_files'].items():assert sha(host_manifest.parent/'source'/p)==h,p
+     inputs={str(p.relative_to(ROOT)).replace('\\','/'):sha(p) for p in sorted((host_manifest.parent/'source').rglob('*')) if p.is_file()}
+     for source in ['network_node_stream_001','contracts/experimental/agent_host_v3_http_stream','native_pipe_win_001']:
+@@ -47,7 +47,7 @@
+     pm=json.loads(manifest.read_text());guest=pathlib.Path(pm['executable'])
+     assert sha(guest)==pm['executable_sha256']=='f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e'
+     for p,h in pm['input_sha256'].items(): assert sha(PLUGIN/p)==h,p
+-    frozen={'host_sha256':sha(host),'host_manifest_sha256':sha(host_manifest),'source_sha256':inputs,'plugin_manifest_sha256':sha(manifest),'plugin_executable_sha256':sha(guest),'harness_sha256':sha(pathlib.Path(__file__)),'harness_revision':'joint positive-independent-001 adapted from pair004; held guest handle, structured delta gate, full byte/closure assertions: explicit handshake 6000ms within original 10000ms; final/exit-aware commands and root cause preservation; fresh grant/profile/op; no retry', 'handshake_ms':6000, 'original_ttl_ms':10000,'no_post_retry':True}
++    frozen={'host_sha256':sha(host),'host_manifest_sha256':sha(host_manifest),'source_sha256':inputs,'plugin_manifest_sha256':sha(manifest),'plugin_executable_sha256':sha(guest),'harness_sha256':sha(pathlib.Path(__file__)),'harness_revision':'joint positive-independent-002 adapted from pair004; held guest handle, structured delta gate, full byte/closure assertions: explicit handshake 6000ms within original 10000ms; final/exit-aware commands and root cause preservation; fresh grant/profile/op; no retry', 'handshake_ms':6000, 'original_ttl_ms':10000,'no_post_retry':True}
+     dump(candidate/'manifest.json',frozen)
+     start=time.monotonic_ns();server_rows=[];approved_body=None;request_count=0;request_lock=threading.Lock()
+     def mark(event,**kw):server_rows.append({'at_ns':time.monotonic_ns()-start,'event':event,**kw})
+@@ -100,7 +100,7 @@
+     try:
+         init=subprocess.run([str(host),'init','--profile',str(profile),'--slot','m03-slot'],env=env,cwd=ROOT,capture_output=True,timeout=10)
+         (run/'init.stdout').write_bytes(init.stdout);(run/'init.stderr').write_bytes(init.stderr);assert init.returncode==0,init.stderr
+-        operation='m03-joint-positive-'+stamp
++        operation='m03-joint-positive002-'+stamp
+         args=[str(host),'serve','--profile',str(profile),'--client',str(guest),'--sha256',sha(guest),'--work-dir',str(cwd),'--plugin-id','morrow-codex','--role','synthetic-http','--operation',operation,'--http-origin',f'http://127.0.0.1:{port}','--ttl-ms','10000','--handshake-ms','6000','--close-ms','1000']
+         for v in ['--fixture-base',f'http://127.0.0.1:{port}/v1','--evidence-dir',str(evidence),'--max-chunk','1024']:args+=['--client-arg',v]
+         dump(run/'launch.json',{'args':args,'env':env})
+@@ -210,6 +210,13 @@
+         result['guest_files_sha256']={name:sha(evidence/name) for name in ['result.json','core-events.jsonl']}
+         result['byte_accounting']={'total':n,'parser':267,'drain':14,'cancel_discard':0,'error_consume':0,'all_offsets_equal':True}
+         result['guest_final_control_ok']=True;result['actual_core_events']=len(core_events)
++        cancels=[e for e in final['snapshot']['events'] if e['event']=='http_cancel_applied']
++        assert len(cancels)==1 and cancels[0]['detail']['source']==2 and cancels[0]['detail']['code']==25 and cancels[0]['detail']['requested_code']==25
++        assert cancels[0]['detail']['progress']['error_code']==0
++        assert not any(e['event']=='control_ack' and isinstance(e['detail'],dict) and e['detail'].get('action')=='revoke' for e in final['snapshot']['events'])
++        assert not any(row['value'].get('event')=='authority_observation' and row['value']['observation']['event']=='external_revocation_applied' for row in rows)
++        result['first_durable_revocation']={'source':2,'reason':25,'applications':1,'false_external_revoke':False}
++
+         result['status']='single_positive_core_http_pair_passed_not_full_m03'
+     except Exception as e:result['error']=repr(e)
+     finally:

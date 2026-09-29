@@ -1,0 +1,36 @@
+{
+  "status": "pure_only_no_process_socket_or_http",
+  "script_sha256": "29b576099ac0c525b53ef9939aa3e775229f9322bfccbf0bff05af29660e8dcf",
+  "cases": [
+    "core-revoke",
+    "data-pending"
+  ],
+  "fixed_fixture_ready": false,
+  "post_count": 0,
+  "runtime_tested": false,
+  "checks": [
+    "fixed-spec limits",
+    "qualified same-operation chain",
+    "cancel probe completed rejected",
+    "insufficient samples rejected",
+    "short sample interval rejected",
+    "wrong reap issue rejected",
+    "four cross-batch marker mutations rejected",
+    "valid marker accepted",
+    "B suppression before or after gate marker accepted with original gate/permit proof",
+    "six negative core suppression mutations rejected; A order remains strict",
+    "both delivery-pause orders accepted only with actual host cancel transition",
+    "missing transition and six causal mutations rejected",
+    "control-first and EOF-first accepted; pre-pause admitted completion allowed",
+    "eight pause-boundary violations rejected including new Commit/positive credit/OS issue"
+  ],
+  "causality_rejected_fields": [
+    "cancel_gate_before",
+    "cancel_gate_after",
+    "first_cancel_reason_before",
+    "first_cancel_reason_after",
+    "host_control_closed_gate",
+    "delivery_paused_before"
+  ],
+  "synthetic_marker_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\barriers-011-pure-markers-20260929T013057079466Z"
+}

@@ -1,0 +1,49 @@
+{
+  "status": "exact_public_dependency_preparation",
+  "scope": "Conservative codex-core plus codex-thread-store Cargo.lock graph, including dev/optional/all-target edges; not resolved native closure",
+  "started_utc": "2026-09-28T12:48:40.617085+00:00",
+  "finished_utc": "2026-09-28T12:49:02.300233+00:00",
+  "entry_sha256": "40fc251ea180c3ed49f361082d6977102c8ffcfaf8b3085436fe046ae36b1896",
+  "inventory_sha256": "0507b288a48db2682982496d43098c24d35d8ae5eb49ec680ce3cc331216e8e3",
+  "deadline_seconds": 900,
+  "concurrency": 8,
+  "personal_configuration_or_credentials_read": false,
+  "downloaded": 3,
+  "failed": 0,
+  "attempts": [
+    {
+      "name": "age",
+      "version": "0.11.2",
+      "url": "https://static.crates.io/crates/age/age-0.11.2.crate",
+      "expected_sha256": "bf640be7658959746f1f0f2faab798f6098a9436a8e18e148d18bc9875e13c4b",
+      "started_utc": "2026-09-28T12:48:40.617540+00:00",
+      "bytes": 1533099,
+      "actual_sha256": "bf640be7658959746f1f0f2faab798f6098a9436a8e18e148d18bc9875e13c4b",
+      "status": "downloaded_checksum_verified",
+      "finished_utc": "2026-09-28T12:48:42.384140+00:00"
+    },
+    {
+      "name": "async-io",
+      "version": "2.6.0",
+      "url": "https://static.crates.io/crates/async-io/async-io-2.6.0.crate",
+      "expected_sha256": "456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc",
+      "started_utc": "2026-09-28T12:48:40.618028+00:00",
+      "bytes": 51062,
+      "actual_sha256": "456b8a8feb6f42d237746d4b3e9a178494627745c3c56c6ea55d92ba50d026fc",
+      "status": "downloaded_checksum_verified",
+      "finished_utc": "2026-09-28T12:49:02.299461+00:00"
+    },
+    {
+      "name": "oauth2",
+      "version": "5.0.0",
+      "url": "https://static.crates.io/crates/oauth2/oauth2-5.0.0.crate",
+      "expected_sha256": "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d",
+      "started_utc": "2026-09-28T12:48:40.618318+00:00",
+      "bytes": 91364,
+      "actual_sha256": "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d",
+      "status": "downloaded_checksum_verified",
+      "finished_utc": "2026-09-28T12:48:41.348341+00:00"
+    }
+  ],
+  "build_passed": false
+}

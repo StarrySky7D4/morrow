@@ -1,0 +1,43 @@
+syntax = "proto3";
+package morrow.native_admission.v1;
+// Host-local persistence only; not a guest IPC or restorable live authority.
+message Profile {
+  uint32 version = 1;
+  string identity = 2;
+  string slot = 3;
+  bytes core_identity_sha256 = 4;
+  string lock_namespace = 5;
+  string canonical_root = 6; // profile copies/relocations are not restorable owner domains
+}
+message Approval {
+  uint32 version = 1;
+  string id = 2;
+  string issuer = 3;
+  string profile = 4;
+  string slot = 5;
+  string plugin_id = 6;
+  string role = 7;
+  string operation = 8;
+  bytes artifact_sha256 = 9;
+  bytes config_sha256 = 10;
+  bytes schema_sha256 = 11;
+  uint64 generation = 12;
+  uint64 capabilities = 13;
+  uint64 lifetime_ms = 14;
+  uint64 approved_unix_ms = 15; // diagnostics only; never renews Instant deadline
+  uint32 state = 16; // 1 approved,2 consumed,3 revoked,4 expired
+}
+message Owner {
+  uint32 version = 1;
+  string grant_id = 2;
+  string issuer = 3;
+  uint64 generation = 4;
+  string phase = 5;
+  uint32 child_pid = 6;
+  uint64 session = 7;
+  uint64 epoch = 8;
+  bool exit_observed = 9;
+  bool stdout_eof = 10;
+  bool stderr_eof = 11;
+  bytes snapshot_sha256 = 12;
+}

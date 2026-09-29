@@ -1,0 +1,13 @@
+( major = 1,
+  revision = 1,
+  schemaDigest = "\332\n\307\244.K\017j\354\f\373\335#X\317\206h\213\b\350bba\206\273\235\344\221O5Z\177",
+  requestId = 1,
+  sessionId = "fixture-session",
+  instanceEpoch = 1,
+  nativeSession = (
+    hello = (
+      pluginId = "fixture.plugin",
+      packageDigest = "\035X\220~d\314\202\200\214\302/5%\355\356\306\247?\301R\035k\225\033$\263;\001\366\207\332\304",
+      artifactDigest = "\334\322!g\363\253\226[\367\240\177\322\335jm\332U3W\274\030\020\004\2355\315\"0&\313 \245",
+      platform = "fixture-no-os",
+      accountEpoch = 1 ) ) )

@@ -1,0 +1,10 @@
+{
+  "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/rust/runfiles/BUILD.bazel",
+  "path": "rust/runfiles/BUILD.bazel",
+  "expected_blob": "695fa918f99cc349119f181f5468c1d514d6d680",
+  "status": "verified",
+  "size": 380,
+  "git_mode": "100644",
+  "git_blob_sha1": "695fa918f99cc349119f181f5468c1d514d6d680",
+  "sha256": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916"
+}

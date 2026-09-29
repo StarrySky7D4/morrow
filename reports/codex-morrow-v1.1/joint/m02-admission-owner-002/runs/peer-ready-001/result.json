@@ -1,0 +1,31 @@
+{
+  "status": "verified_read_only_ready_peer",
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m02-admission-owner-002\\candidate-001.json",
+  "manifest_sha256": "8851b4b05d3f1fe5ffec21bcfe8eeaf67f35b55573e9e95a12b45a25f8e396b5",
+  "peer_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-admission-owner-002\\candidates\\replay-peer-001\\morrow-session-replay-peer.exe",
+  "peer_sha256": "3a12d44cfc19aaacc1a5b2f73bd4c3e516e16879b305165e39bda94a1f5f7bf6",
+  "input_count": 83,
+  "previous_input_count": 731,
+  "deduplicated_pins": 758,
+  "actual_compiler_package_ids": [
+    "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/native/m02-admission-owner-002#morrow-session-replay-peer@0.1.0",
+    "path+file:///C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/native/m02-native-session-001/vendor/capnp-kit-001/wire#morrow-native-session-wire@0.2.0-experimental.2",
+    "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+    "registry+https://github.com/rust-lang/crates.io-index#capnp@0.24.1",
+    "registry+https://github.com/rust-lang/crates.io-index#capnpc@0.24.0",
+    "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5",
+    "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+    "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+    "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+    "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+    "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+    "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+    "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5"
+  ],
+  "source_audit": "capture chain, exact historical send_bytes, bounded observation delay, same exe hidden holder with explicit PID record, no approval API",
+  "ACL_tool_scope": "plugin fixed tool reviewed but not executed by joint; new joint-scoped equivalent required",
+  "independent_build": false,
+  "independent_runtime": false,
+  "product_pass_credit": 0,
+  "reviewer_sha256": "c6563fdd1ed29c3c76bbe45b9d34f942f5c1c3f03ddd3c822bf9c25a299795c6"
+}

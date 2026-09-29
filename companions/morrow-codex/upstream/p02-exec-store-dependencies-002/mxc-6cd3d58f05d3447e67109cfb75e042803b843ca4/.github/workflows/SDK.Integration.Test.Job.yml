@@ -1,0 +1,212 @@
+name: SDK Integration Tests
+
+on:
+  workflow_call:
+
+jobs:
+  sdk-integration-tests:
+    name: SDK Integration Tests (${{ matrix.os_label }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os_label: windows
+            runner: windows-latest
+          - os_label: linux
+            runner: ubuntu-latest
+          - os_label: macos
+            runner: macos-26
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        working-directory: sdk/node/tests/integration
+    env:
+      MXC_SKIP_OS_BUILD_DEPENDENT_TESTS: '1'
+      # Skip network-dependent LXC tests on GHA. Capability probe
+      # 27576588204 confirmed lxc-net.service + lxcbr0 + dnsmasq come up
+      # cleanly on every supported runner, but the alpine download
+      # template's eth0 stays IPv4-less inside the test window (only an
+      # IPv6 link-local address is configured), so DHCP-dependent DNS
+      # lookups fail. The non-network LXC paths (create/start/attach/
+      # mount/exit-code/multi-command) all pass and ship LXC backend
+      # coverage on GHA. ADO sets the same env var in
+      # `.azure-pipelines/templates/SDK.Integration.Test.Job.yml`.
+      MXC_SKIP_LXC_NETWORK_TESTS: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: sdk/node/tests/integration/package-lock.json
+
+      - name: Download SDK package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: npm-packages
+          path: sdk-pkg
+
+      - name: Install dependencies + SDK from artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          SDK_TGZ=$(ls ../../../../sdk-pkg/*.tgz | head -n1)
+          npm install "$SDK_TGZ"
+
+      - name: npm run build
+        run: npm run build
+
+      - name: Refresh Linux package indexes
+        if: matrix.os_label == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            if sudo apt-get -o Acquire::Retries=3 update; then
+              exit 0
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              echo "::error::Failed to refresh Linux package indexes after $attempt attempts"
+              exit 1
+            fi
+
+            echo "::warning::Package index refresh failed; retrying"
+            sleep $((attempt * 5))
+          done
+
+      - name: Install bubblewrap + LXC stack (Linux only, cached)
+        if: matrix.os_label == 'linux'
+        continue-on-error: true
+        uses: awalsh128/cache-apt-pkgs-action@553a35bb8ebd9fcabcb1c9451aa4c98e1b4ca8a9 # v1.6.3
+        with:
+          # Installs the LXC + Bubblewrap substrate the SDK integration
+          # tests need. Capability probe 27576588204 confirmed these
+          # packages install cleanly on ubuntu-latest, ubuntu-22.04, and
+          # ubuntu-24.04-arm and that lxc-net.service brings up the
+          # lxcbr0 bridge with dnsmasq serving DHCP on 10.0.3.0/24, so
+          # the long-standing "classic LXC is unreliable on GHA
+          # ubuntu-latest" assumption no longer holds for the non-network
+          # LXC paths (create/start/attach/mount/exit-code).
+          # The network-dependent LXC tests stay gated by
+          # MXC_SKIP_LXC_NETWORK_TESTS=1 (see the job-level env block)
+          # because the alpine download template's eth0 doesn't pick up
+          # a DHCP lease within the test window on these runners.
+          # The ADO equivalent
+          # (.azure-pipelines/templates/SDK.Integration.Test.Job.yml)
+          # installs a similar but narrower set and sets the same skip
+          # env var for the same reason (compounded by 1ES Hosted Pool
+          # egress filtering).
+          packages: bubblewrap lxc lxc-utils dnsmasq-base iptables bridge-utils
+          version: 1.4
+
+      - name: Verify or repair Linux containment dependencies
+        if: matrix.os_label == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          packages=(
+            bubblewrap
+            lxc
+            lxc-utils
+            dnsmasq-base
+            iptables
+            bridge-utils
+          )
+
+          required_commands=(
+            bwrap
+            lxc-start
+            lxc-create
+            dnsmasq
+            iptables
+            brctl
+          )
+
+          missing_commands=()
+          for command in "${required_commands[@]}"; do
+            if ! command -v "$command" >/dev/null 2>&1; then
+              missing_commands+=("$command")
+            fi
+          done
+
+          if [ "${#missing_commands[@]}" -ne 0 ]; then
+            echo "::warning::Cached dependency installation was incomplete; missing commands: ${missing_commands[*]}"
+
+            # Runner images can have package indexes that reference versions
+            # already removed from the Ubuntu mirrors. Refresh and retry the
+            # complete install so a transient 404 cannot leave a green setup
+            # step with no containment packages installed.
+            for attempt in 1 2 3; do
+              if sudo apt-get -o Acquire::Retries=3 update &&
+                sudo env DEBIAN_FRONTEND=noninteractive \
+                  apt-get -o Acquire::Retries=3 install -y "${packages[@]}"; then
+                break
+              fi
+
+              if [ "$attempt" -eq 3 ]; then
+                echo "::error::Failed to install Linux containment dependencies after $attempt attempts"
+                exit 1
+              fi
+
+              echo "::warning::Dependency installation failed; refreshing package indexes and retrying"
+              sleep $((attempt * 5))
+            done
+          else
+            echo "Linux containment dependencies restored successfully from cache"
+          fi
+
+          for command in "${required_commands[@]}"; do
+            command -v "$command"
+          done
+
+      - name: Start LXC services (cache restore skips postinst hooks)
+        if: matrix.os_label == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # cache-apt-pkgs-action restores package files but does not
+          # re-run postinst hooks on cache hit, so AppArmor profiles
+          # (lxc-container-default) and the lxc-net bridge service may
+          # not be active. Load/start them explicitly so lxc-start
+          # doesn't abort with an AppArmor denial.
+          sudo apparmor_parser -rT /etc/apparmor.d/lxc-containers
+          sudo systemctl daemon-reload
+          sudo systemctl start lxc-net
+          sudo systemctl is-active --quiet lxc-net
+
+      # A bridged veth reaches the LXC firewall chain only while br_netfilter
+      # delivers bridged packets to iptables, and the backend refuses to
+      # report success for a policy it cannot enforce.
+      - name: Enable bridge netfilter
+        if: matrix.os_label == 'linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo modprobe br_netfilter
+          sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+          sudo sysctl -w net.bridge.bridge-nf-call-ip6tables=1
+
+      - name: Restore execute permission on mxc-exec-mac
+        if: matrix.os_label == 'macos'
+        shell: bash
+        run: |
+          set -euo pipefail
+          BIN=$(find node_modules/@microsoft/mxc-sdk/bin -name mxc-exec-mac -print -quit)
+          if [ -n "$BIN" ]; then chmod +x "$BIN"; else echo "mxc-exec-mac not found" && exit 1; fi
+
+      # Linux needs root for Bubblewrap unprivileged-userns paths; `sudo -E`
+      # preserves the env vars above.
+      - name: npm test
+        shell: bash
+        run: |
+          if [ "${{ matrix.os_label }}" = "linux" ]; then
+            sudo -E npm test
+          else
+            npm test
+          fi

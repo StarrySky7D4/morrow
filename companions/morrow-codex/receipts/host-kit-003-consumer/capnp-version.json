@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\capnp-bin\\capnp.exe",
+    "--version"
+  ],
+  "cwd": "C:\\",
+  "started_utc": "2026-09-28T11:35:46.027120+00:00",
+  "elapsed_seconds": 0.014842899981886148,
+  "exit_code": 1,
+  "stdout": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\capnp-version.stdout.txt",
+  "stderr": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\capnp-version.stderr.txt",
+  "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderr_sha256": "a71b06edb63c4764c97a8159161e7121828b9b7d30139c6b17d10908d408ca88"
+}

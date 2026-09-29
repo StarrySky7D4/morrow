@@ -1,0 +1,67 @@
+[
+  {
+    "name": "block-buffer-0.10.4",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\block-buffer-0.10.4.crate",
+    "sha256": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
+  },
+  {
+    "name": "capnp-0.24.1",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1.crate",
+    "sha256": "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67"
+  },
+  {
+    "name": "capnpc-0.24.0",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0.crate",
+    "sha256": "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0"
+  },
+  {
+    "name": "cfg-if-1.0.5",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5.crate",
+    "sha256": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+  },
+  {
+    "name": "cpufeatures-0.2.17",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\cpufeatures-0.2.17.crate",
+    "sha256": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+  },
+  {
+    "name": "crypto-common-0.1.7",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\crypto-common-0.1.7.crate",
+    "sha256": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
+  },
+  {
+    "name": "digest-0.10.7",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\digest-0.10.7.crate",
+    "sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
+  },
+  {
+    "name": "embedded-io-0.7.1",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\embedded-io-0.7.1.crate",
+    "sha256": "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7"
+  },
+  {
+    "name": "generic-array-0.14.7",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\generic-array-0.14.7.crate",
+    "sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+  },
+  {
+    "name": "libc-0.2.189",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\libc-0.2.189.crate",
+    "sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+  },
+  {
+    "name": "sha2-0.10.9",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\sha2-0.10.9.crate",
+    "sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
+  },
+  {
+    "name": "typenum-1.20.1",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\typenum-1.20.1.crate",
+    "sha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
+  },
+  {
+    "name": "version_check-0.9.5",
+    "archive": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\127.0.0.1-08258ac42642837b\\version_check-0.9.5.crate",
+    "sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+  }
+]

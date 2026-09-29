@@ -1,0 +1,4 @@
+   Compiling morrow-native-session-wire v0.2.0-experimental.2 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\contracts\experimental\agent_host_v2_capnp)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.87s
+     Running unittests src\lib.rs (target\m02-native-session-001-wire\debug\deps\morrow_native_session_wire-e0666a0ef396b17a.exe)
+   Doc-tests morrow_native_session_wire

@@ -1,0 +1,9 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-WindowsSandbox-Hello-World",
+  "containment": "windows_sandbox",
+  "process": {
+    "commandLine": "echo Hello from Windows Sandbox! && echo Script executed successfully in sandbox isolation",
+    "timeout": 60000
+  }
+}

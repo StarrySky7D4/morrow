@@ -1,0 +1,7 @@
+
+running 2 tests
+test tests::fragmented_boundary_accepts_then_poisoned_overflow_cannot_resume ... ok
+test tests::zero_budget_cannot_accept_nonempty_input_or_renew_deadline ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

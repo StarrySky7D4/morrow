@@ -1,0 +1,10 @@
+{
+  "url": "https://raw.githubusercontent.com/hermeticbuild/rules_rust/b56cbaa8465e74127f1ea216f813cd377295ad81/LICENSE.txt",
+  "path": "LICENSE.txt",
+  "expected_blob": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+  "status": "verified",
+  "size": 11358,
+  "git_mode": "100644",
+  "git_blob_sha1": "d645695673349e3947e8e5ae42332d0ac3164cd7",
+  "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+}

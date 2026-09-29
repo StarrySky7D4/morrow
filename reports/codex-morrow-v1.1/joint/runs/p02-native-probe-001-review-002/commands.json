@@ -1,0 +1,32 @@
+[
+  {
+    "stage": "rustc",
+    "argv": [
+      "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+      "-vV"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "cargo",
+    "argv": [
+      "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+      "--version"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "metadata",
+    "argv": [
+      "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+      "metadata",
+      "--locked",
+      "--offline",
+      "--format-version",
+      "1",
+      "--manifest-path",
+      "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-002\\consumer\\qualification\\p02-native-probe-001\\Cargo.toml"
+    ],
+    "exit_code": 0
+  }
+]

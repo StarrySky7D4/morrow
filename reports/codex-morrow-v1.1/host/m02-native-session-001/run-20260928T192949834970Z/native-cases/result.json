@@ -1,0 +1,3048 @@
+{
+  "case_count": 18,
+  "cases": [
+    {
+      "case": "normal",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 19378,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 4192,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 19965,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000726848ae4395b1cb010000000000000001000000000000006010000000000000b0090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 56696,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000726848ae4395b1cb010000000000000001000000000000006010000000000000b0090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 56730,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 56778,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000726848ae4395b1cb0100000000000000010000000000000060100000020000008b090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 56997,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000726848ae4395b1cb010000000000000001000000000000006010000000000000b0090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_received",
+            "ordinal": 5
+          },
+          {
+            "at_us": 57030,
+            "detail": {
+              "generation": 1,
+              "sequence": 2
+            },
+            "event": "state_read",
+            "ordinal": 6
+          },
+          {
+            "at_us": 57114,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000726848ae4395b1cb0100000000000000010000000000000060100000020000008a090000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 57315,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100070000000300000000000000726848ae4395b1cb010000000000000001000000000000006010000000000000b0090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_received",
+            "ordinal": 8
+          },
+          {
+            "at_us": 57359,
+            "detail": {
+              "generation": 2,
+              "reason": 25
+            },
+            "event": "revoked",
+            "ordinal": 9
+          },
+          {
+            "at_us": 57366,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 10
+          },
+          {
+            "at_us": 57368,
+            "detail": {
+              "reason": 25
+            },
+            "event": "stop_requested",
+            "ordinal": 11
+          },
+          {
+            "at_us": 57456,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000726848ae4395b1cb0100000000000000020000000000000060100000190000008a090000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000726848ae4395b1cb87ca9f835267a40fc2dcebfcf6f2d95749e5a0a104122ac8fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f7566fdd1189697916d52654866f379a7f7a071845d0d5f2221f223b5a636343f"
+            },
+            "event": "frame_sent",
+            "ordinal": 12
+          },
+          {
+            "at_us": 59276,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 13
+          },
+          {
+            "at_us": 59345,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 14
+          },
+          {
+            "at_us": 59364,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 15
+          },
+          {
+            "at_us": 59397,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 16
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 4192,
+        "session": 14677676778496485490,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "wrong-epoch",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 23046,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "9a611e721a24ed6729e39ad33e20d4f6b9b26cd808c2fe3c69f720701de19b6d",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 9844,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 23277,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000007acd31c73b15e51a010000000000000001000000000000007426000000000000ac090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007acd31c73b15e51aff184a5a046872cf62365d487a09df94ef12a09b6f5e087ffa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f9a611e721a24ed6729e39ad33e20d4f6b9b26cd808c2fe3c69f720701de19b6d"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 35039,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000007acd31c73b15e51a020000000000000001000000000000007426000000000000ac090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007acd31c73b15e51aff184a5a046872cf62365d487a09df94ef12a09b6f5e087ffa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f9a611e721a24ed6729e39ad33e20d4f6b9b26cd808c2fe3c69f720701de19b6d"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 35072,
+            "detail": {
+              "code": 17,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 3
+          },
+          {
+            "at_us": 35080,
+            "detail": {
+              "generation": 2,
+              "reason": 17
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 35083,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 35084,
+            "detail": {
+              "reason": 17
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 35128,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000007acd31c73b15e51a010000000000000002000000000000007426000011000000a0090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007acd31c73b15e51aff184a5a046872cf62365d487a09df94ef12a09b6f5e087ffa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f9a611e721a24ed6729e39ad33e20d4f6b9b26cd808c2fe3c69f720701de19b6d"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 35952,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 35966,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 36293,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 36305,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 9844,
+        "session": 1937978561142050170,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "wrong-hash",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15941,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "07978954f443bf3f20697c851c2fa873adc914ece9ca012da673024d002aee43",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 19612,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 16156,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000d8400e73d96a45c4010000000000000001000000000000009c4c000000000000b3090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d8400e73d96a45c4f78e43e3360051e4bbe591074771b938a6b8416b58cf236efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f07978954f443bf3f20697c851c2fa873adc914ece9ca012da673024d002aee43"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 25202,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000d8400e73d96a45c4010000000000000001000000000000009c4c000000000000b3090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d8400e73d96a45c4f78e43e3360051e4bbe591074771b938a6b8416b58cf236efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645098a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f07978954f443bf3f20697c851c2fa873adc914ece9ca012da673024d002aee43"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 25236,
+            "detail": {
+              "code": 17,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 3
+          },
+          {
+            "at_us": 25243,
+            "detail": {
+              "generation": 2,
+              "reason": 17
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 25246,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 25248,
+            "detail": {
+              "reason": 17
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 25305,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000d8400e73d96a45c4010000000000000002000000000000009c4c000011000000aa090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d8400e73d96a45c4f78e43e3360051e4bbe591074771b938a6b8416b58cf236efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f07978954f443bf3f20697c851c2fa873adc914ece9ca012da673024d002aee43"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 26083,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 26094,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 26630,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 26643,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 19612,
+        "session": 14142827686997672152,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "nonzero-code",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15946,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "c8e54c76a3732697bd4d1da4cd70dd8111b9561d43398548bd17be5a6ef0181f",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 26932,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 16136,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000003d83b732375e93a6010000000000000001000000000000003469000000000000b3090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100003d83b732375e93a6f569f5810186d52ad1936ffb4ed1c533ee2a0e83aef32cccfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fc8e54c76a3732697bd4d1da4cd70dd8111b9561d43398548bd17be5a6ef0181f"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 25236,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000003d83b732375e93a6010000000000000001000000000000003469000001000000b3090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100003d83b732375e93a6f569f5810186d52ad1936ffb4ed1c533ee2a0e83aef32cccfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fc8e54c76a3732697bd4d1da4cd70dd8111b9561d43398548bd17be5a6ef0181f"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 25262,
+            "detail": {
+              "code": 17,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 3
+          },
+          {
+            "at_us": 25268,
+            "detail": {
+              "generation": 2,
+              "reason": 17
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 25271,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 25272,
+            "detail": {
+              "reason": 17
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 25318,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000003d83b732375e93a6010000000000000002000000000000003469000011000000aa090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100003d83b732375e93a6f569f5810186d52ad1936ffb4ed1c533ee2a0e83aef32cccfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fc8e54c76a3732697bd4d1da4cd70dd8111b9561d43398548bd17be5a6ef0181f"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 26073,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 26085,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 26372,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 26383,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 26932,
+        "session": 12003041023039603517,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "malformed",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15603,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "8d61330faf6e43f8793f5b67797b15ce76732c67a9e668e32c491d6f7d4c687b",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 27292,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 15776,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000000317be11be729dbc010000000000000001000000000000009c6a000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100000317be11be729dbc412c973e10e2af70d87ae3ab6071a823765c79e1e5bcf79cfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f8d61330faf6e43f8793f5b67797b15ce76732c67a9e668e32c491d6f7d4c687b"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 24200,
+            "detail": {
+              "raw_hex": "0001000000000000ffffffffffffffff0a000400020001000100000001000000000000000317be11be729dbc010000000000000001000000000000009c6a000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100000317be11be729dbc412c973e10e2af70d87ae3ab6071a823765c79e1e5bcf79cfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f8d61330faf6e43f8793f5b67797b15ce76732c67a9e668e32c491d6f7d4c687b"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 24213,
+            "detail": {
+              "generation": 2,
+              "reason": 16
+            },
+            "event": "revoked",
+            "ordinal": 3
+          },
+          {
+            "at_us": 24216,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 4
+          },
+          {
+            "at_us": 24218,
+            "detail": {
+              "reason": 16
+            },
+            "event": "stop_requested",
+            "ordinal": 5
+          },
+          {
+            "at_us": 24266,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000000317be11be729dbc010000000000000002000000000000009c6a000010000000ab090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100000317be11be729dbc412c973e10e2af70d87ae3ab6071a823765c79e1e5bcf79cfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f8d61330faf6e43f8793f5b67797b15ce76732c67a9e668e32c491d6f7d4c687b"
+            },
+            "event": "frame_sent",
+            "ordinal": 6
+          },
+          {
+            "at_us": 25029,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 7
+          },
+          {
+            "at_us": 25039,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 25303,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 9
+          },
+          {
+            "at_us": 25313,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 10
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 27292,
+        "session": 13591145411141048067,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "duplicate-hello",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15794,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 25696,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 15961,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000004d31b1604772c5ea010000000000000001000000000000006064000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100004d31b1604772c5ea0fea3958e8261412c1ede55205acfac5f07053eec2a2e629fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 24296,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000004d31b1604772c5ea010000000000000001000000000000006064000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100004d31b1604772c5ea0fea3958e8261412c1ede55205acfac5f07053eec2a2e629fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 24315,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 24401,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000200000001000000000000004d31b1604772c5ea010000000000000001000000000000006064000002000000ab090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100004d31b1604772c5ea0fea3958e8261412c1ede55205acfac5f07053eec2a2e629fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 24578,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000004d31b1604772c5ea010000000000000001000000000000006064000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100004d31b1604772c5ea0fea3958e8261412c1ede55205acfac5f07053eec2a2e629fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94"
+            },
+            "event": "frame_received",
+            "ordinal": 5
+          },
+          {
+            "at_us": 24598,
+            "detail": {
+              "code": 18,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 6
+          },
+          {
+            "at_us": 24604,
+            "detail": {
+              "generation": 2,
+              "reason": 18
+            },
+            "event": "revoked",
+            "ordinal": 7
+          },
+          {
+            "at_us": 24606,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 8
+          },
+          {
+            "at_us": 24608,
+            "detail": {
+              "reason": 18
+            },
+            "event": "stop_requested",
+            "ordinal": 9
+          },
+          {
+            "at_us": 24653,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000004d31b1604772c5ea010000000000000002000000000000006064000012000000ab090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100004d31b1604772c5ea0fea3958e8261412c1ede55205acfac5f07053eec2a2e629fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f35b1d78152cfb0221e7ca058c261498010e883fb1304c3816f0c4d08e49dcc94"
+            },
+            "event": "frame_sent",
+            "ordinal": 10
+          },
+          {
+            "at_us": 25393,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 11
+          },
+          {
+            "at_us": 25400,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 12
+          },
+          {
+            "at_us": 25693,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 13
+          },
+          {
+            "at_us": 25703,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 14
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 25696,
+        "session": 16917053226177605965,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "oversize",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15934,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "b2a9c626fc51ea20095692a314ca123b66ab785c833f3dbc965e4e3b66b21598",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 15416,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 16100,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a0004000200010000000000000000000000000072993b5cab3bc8b101000000000000000100000000000000383c000000000000b4090000000000004000000000000000010000000000000000000000000000000d0000000201000019000000020100002500000002010000310000000201000072993b5cab3bc8b17db9ca3dc63b58a33ce66026ef0cfc494b491eca31f32aa0fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb2a9c626fc51ea20095692a314ca123b66ab785c833f3dbc965e4e3b66b21598"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 24268,
+            "detail": {
+              "raw_hex": "00100000"
+            },
+            "event": "malformed_prefix",
+            "ordinal": 2
+          },
+          {
+            "at_us": 24278,
+            "detail": {
+              "complete": false,
+              "expected_total": 4,
+              "raw_hex": "00100000"
+            },
+            "event": "frame_received_partial",
+            "ordinal": 3
+          },
+          {
+            "at_us": 24285,
+            "detail": {
+              "generation": 2,
+              "reason": 16
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 24289,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 24290,
+            "detail": {
+              "reason": 16
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 24347,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a0004000200010006000000000000000000000072993b5cab3bc8b101000000000000000200000000000000383c000010000000ab090000000000004000000000000000010000000000000000000000000000000d0000000201000019000000020100002500000002010000310000000201000072993b5cab3bc8b17db9ca3dc63b58a33ce66026ef0cfc494b491eca31f32aa0fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb2a9c626fc51ea20095692a314ca123b66ab785c833f3dbc965e4e3b66b21598"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 131435,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 8
+          },
+          {
+            "at_us": 131952,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 131961,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 10
+          },
+          {
+            "at_us": 132253,
+            "detail": {
+              "business_success": false,
+              "code": 1
+            },
+            "event": "exit",
+            "ordinal": 11
+          },
+          {
+            "at_us": 132271,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 12
+          }
+        ],
+        "exit_code": 1,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 15416,
+        "session": 12810554747228232050,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "partial",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15732,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "d128d532efe8f3d7eeeae5afa5f341e536badb5f2fd5d2d9064e09382da36047",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 25180,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 15907,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000000a422e96e960fac6010000000000000001000000000000005c62000000000000b4090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100000a422e96e960fac6fee5dfbfce8a814402b8714264f651393d477bf4564db859fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fd128d532efe8f3d7eeeae5afa5f341e536badb5f2fd5d2d9064e09382da36047"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 225866,
+            "detail": {
+              "complete": false,
+              "expected_total": 4,
+              "raw_hex": "3001"
+            },
+            "event": "frame_received_partial",
+            "ordinal": 2
+          },
+          {
+            "at_us": 225879,
+            "detail": {
+              "generation": 2,
+              "reason": 16
+            },
+            "event": "revoked",
+            "ordinal": 3
+          },
+          {
+            "at_us": 225882,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 4
+          },
+          {
+            "at_us": 225885,
+            "detail": {
+              "reason": 16
+            },
+            "event": "stop_requested",
+            "ordinal": 5
+          },
+          {
+            "at_us": 225950,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000000a422e96e960fac6010000000000000002000000000000005c62000010000000e2080000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100000a422e96e960fac6fee5dfbfce8a814402b8714264f651393d477bf4564db859fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fd128d532efe8f3d7eeeae5afa5f341e536badb5f2fd5d2d9064e09382da36047"
+            },
+            "event": "frame_sent",
+            "ordinal": 6
+          },
+          {
+            "at_us": 336258,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 7
+          },
+          {
+            "at_us": 336975,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 336987,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 337350,
+            "detail": {
+              "business_success": false,
+              "code": 1
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 337364,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 1,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 25180,
+        "session": 14337878920050655754,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "silent",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15645,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "a694e9b9e9573336d89f157abb6a004829a5159064756cf2624cffb8781236fe",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 12776,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 15879,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000631607220b14cfa701000000000000000100000000000000e831000000000000b4090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000631607220b14cfa7b9b80d5e2c195e285cdccd8a4d5ee0e3ce156c34f97d777efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa694e9b9e9573336d89f157abb6a004829a5159064756cf2624cffb8781236fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 713565,
+            "detail": {
+              "generation": 2,
+              "reason": 23
+            },
+            "event": "revoked",
+            "ordinal": 2
+          },
+          {
+            "at_us": 713576,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 713577,
+            "detail": {
+              "reason": 23
+            },
+            "event": "stop_requested",
+            "ordinal": 4
+          },
+          {
+            "at_us": 713655,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000631607220b14cfa701000000000000000200000000000000e831000017000000fa060000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000631607220b14cfa7b9b80d5e2c195e285cdccd8a4d5ee0e3ce156c34f97d777efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa694e9b9e9573336d89f157abb6a004829a5159064756cf2624cffb8781236fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 5
+          },
+          {
+            "at_us": 821955,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 823669,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 7
+          },
+          {
+            "at_us": 823712,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 824649,
+            "detail": {
+              "business_success": false,
+              "code": 1
+            },
+            "event": "exit",
+            "ordinal": 9
+          },
+          {
+            "at_us": 824683,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 10
+          }
+        ],
+        "exit_code": 1,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 12776,
+        "session": 12091905562561156707,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "disconnect",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 14645,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "5fa5afa69a19edb3b77605051d9089dc37ef7b05f8e0bd735a375482ddf019e3",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 16544,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 14834,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000d57c0277400139c701000000000000000100000000000000a040000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d57c0277400139c773057f7fc0b7df2893f38eeabba8c36ea30db0ae24786145fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f5fa5afa69a19edb3b77605051d9089dc37ef7b05f8e0bd735a375482ddf019e3"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 23241,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000d57c0277400139c701000000000000000100000000000000a040000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d57c0277400139c773057f7fc0b7df2893f38eeabba8c36ea30db0ae24786145fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f5fa5afa69a19edb3b77605051d9089dc37ef7b05f8e0bd735a375482ddf019e3"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 23255,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 23302,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000d57c0277400139c701000000000000000100000000000000a040000002000000ac090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d57c0277400139c773057f7fc0b7df2893f38eeabba8c36ea30db0ae24786145fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f5fa5afa69a19edb3b77605051d9089dc37ef7b05f8e0bd735a375482ddf019e3"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 24080,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 5
+          },
+          {
+            "at_us": 24086,
+            "detail": {
+              "generation": 2,
+              "reason": 24
+            },
+            "event": "revoked",
+            "ordinal": 6
+          },
+          {
+            "at_us": 24090,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 7
+          },
+          {
+            "at_us": 24092,
+            "detail": {
+              "reason": 24
+            },
+            "event": "stop_requested",
+            "ordinal": 8
+          },
+          {
+            "at_us": 24141,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000d57c0277400139c701000000000000000200000000000000a040000018000000ab090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d57c0277400139c773057f7fc0b7df2893f38eeabba8c36ea30db0ae24786145fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f5fa5afa69a19edb3b77605051d9089dc37ef7b05f8e0bd735a375482ddf019e3"
+            },
+            "event": "frame_sent",
+            "ordinal": 9
+          },
+          {
+            "at_us": 24163,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 10
+          },
+          {
+            "at_us": 24350,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 11
+          },
+          {
+            "at_us": 24361,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 12
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 16544,
+        "session": 14355506663606353109,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "runtime_expiry_forced_exit",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 14466,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "db1f4fad5d932abdb49251738120272943e9ef3d59db214cc62e2a3a212d3d33",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 15956,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 14635,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000d9b0f0ab9a4872fc01000000000000000100000000000000543e000000000000b9000000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d9b0f0ab9a4872fc708a96190bcdfe71d1c24956581c7cc458e183ce731e1541fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdb1f4fad5d932abdb49251738120272943e9ef3d59db214cc62e2a3a212d3d33"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 22315,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000d9b0f0ab9a4872fc01000000000000000100000000000000543e000000000000b9000000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d9b0f0ab9a4872fc708a96190bcdfe71d1c24956581c7cc458e183ce731e1541fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdb1f4fad5d932abdb49251738120272943e9ef3d59db214cc62e2a3a212d3d33"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 22330,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 22376,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000d9b0f0ab9a4872fc01000000000000000100000000000000543e000002000000b1000000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d9b0f0ab9a4872fc708a96190bcdfe71d1c24956581c7cc458e183ce731e1541fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdb1f4fad5d932abdb49251738120272943e9ef3d59db214cc62e2a3a212d3d33"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 211399,
+            "detail": {
+              "generation": 2,
+              "reason": 20
+            },
+            "event": "revoked",
+            "ordinal": 5
+          },
+          {
+            "at_us": 211428,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 6
+          },
+          {
+            "at_us": 211434,
+            "detail": {
+              "reason": 20
+            },
+            "event": "stop_requested",
+            "ordinal": 7
+          },
+          {
+            "at_us": 211651,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000d9b0f0ab9a4872fc01000000000000000200000000000000543e00001400000000000000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000d9b0f0ab9a4872fc708a96190bcdfe71d1c24956581c7cc458e183ce731e1541fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdb1f4fad5d932abdb49251738120272943e9ef3d59db214cc62e2a3a212d3d33"
+            },
+            "event": "frame_sent",
+            "ordinal": 8
+          },
+          {
+            "at_us": 320941,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 9
+          },
+          {
+            "at_us": 322280,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 10
+          },
+          {
+            "at_us": 322320,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 11
+          },
+          {
+            "at_us": 323350,
+            "detail": {
+              "business_success": false,
+              "code": 1
+            },
+            "event": "exit",
+            "ordinal": 12
+          },
+          {
+            "at_us": 323390,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 13
+          }
+        ],
+        "exit_code": 1,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 15956,
+        "session": 18190681674049695961,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "online_revoke_and_retry_no_renewal",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 14589,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "b6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 14088,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 14773,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 23355,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 23373,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 23421,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000b639b9c424a39eda010000000000000001000000000000000837000002000000a4020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 23511,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 5
+          },
+          {
+            "at_us": 23529,
+            "detail": {
+              "generation": 1,
+              "sequence": 2
+            },
+            "event": "state_read",
+            "ordinal": 6
+          },
+          {
+            "at_us": 23569,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000b639b9c424a39eda010000000000000001000000000000000837000002000000a4020000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 36949,
+            "detail": {
+              "generation": 2,
+              "reason": 19
+            },
+            "event": "revoked",
+            "ordinal": 8
+          },
+          {
+            "at_us": 36958,
+            "detail": "Revoked",
+            "event": "phase",
+            "ordinal": 9
+          },
+          {
+            "at_us": 36961,
+            "detail": {
+              "action": "revoke",
+              "generation": 2
+            },
+            "event": "control_ack",
+            "ordinal": 10
+          },
+          {
+            "at_us": 104289,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000300000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 11
+          },
+          {
+            "at_us": 104373,
+            "detail": {
+              "code": 19,
+              "sequence": 3
+            },
+            "event": "request_denied",
+            "ordinal": 12
+          },
+          {
+            "at_us": 104541,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000300000000000000b639b9c424a39eda01000000000000000200000000000000083700001300000053020000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 13
+          },
+          {
+            "at_us": 116083,
+            "detail": "Revoked",
+            "event": "phase",
+            "ordinal": 14
+          },
+          {
+            "at_us": 116130,
+            "detail": {
+              "action": "revoke",
+              "generation": 2
+            },
+            "event": "control_ack",
+            "ordinal": 15
+          },
+          {
+            "at_us": 185699,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000400000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 16
+          },
+          {
+            "at_us": 185822,
+            "detail": {
+              "code": 19,
+              "sequence": 4
+            },
+            "event": "request_denied",
+            "ordinal": 17
+          },
+          {
+            "at_us": 186024,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000400000000000000b639b9c424a39eda01000000000000000200000000000000083700001300000002020000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 18
+          },
+          {
+            "at_us": 267229,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000500000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 19
+          },
+          {
+            "at_us": 267324,
+            "detail": {
+              "code": 19,
+              "sequence": 5
+            },
+            "event": "request_denied",
+            "ordinal": 20
+          },
+          {
+            "at_us": 267526,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000500000000000000b639b9c424a39eda010000000000000002000000000000000837000013000000b0010000000000003d00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 21
+          },
+          {
+            "at_us": 348821,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000600000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 22
+          },
+          {
+            "at_us": 348927,
+            "detail": {
+              "code": 19,
+              "sequence": 6
+            },
+            "event": "request_denied",
+            "ordinal": 23
+          },
+          {
+            "at_us": 349190,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000600000000000000b639b9c424a39eda0100000000000000020000000000000008370000130000005f010000000000003c00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 24
+          },
+          {
+            "at_us": 429863,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000700000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 25
+          },
+          {
+            "at_us": 429930,
+            "detail": {
+              "code": 19,
+              "sequence": 7
+            },
+            "event": "request_denied",
+            "ordinal": 26
+          },
+          {
+            "at_us": 430062,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000700000000000000b639b9c424a39eda0100000000000000020000000000000008370000130000000e010000000000003b00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 27
+          },
+          {
+            "at_us": 510840,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000800000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 28
+          },
+          {
+            "at_us": 510933,
+            "detail": {
+              "code": 19,
+              "sequence": 8
+            },
+            "event": "request_denied",
+            "ordinal": 29
+          },
+          {
+            "at_us": 511349,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000800000000000000b639b9c424a39eda010000000000000002000000000000000837000013000000bd000000000000003a00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 30
+          },
+          {
+            "at_us": 592285,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000900000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 31
+          },
+          {
+            "at_us": 592396,
+            "detail": {
+              "code": 19,
+              "sequence": 9
+            },
+            "event": "request_denied",
+            "ordinal": 32
+          },
+          {
+            "at_us": 592595,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000900000000000000b639b9c424a39eda0100000000000000020000000000000008370000130000006b000000000000003900000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 33
+          },
+          {
+            "at_us": 673318,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000a00000000000000b639b9c424a39eda010000000000000001000000000000000837000000000000ad020000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_received",
+            "ordinal": 34
+          },
+          {
+            "at_us": 673395,
+            "detail": {
+              "code": 19,
+              "sequence": 10
+            },
+            "event": "request_denied",
+            "ordinal": 35
+          },
+          {
+            "at_us": 673520,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100050000000a00000000000000b639b9c424a39eda0100000000000000020000000000000008370000130000001a000000000000003800000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 36
+          },
+          {
+            "at_us": 707033,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 37
+          },
+          {
+            "at_us": 707048,
+            "detail": {
+              "reason": 20
+            },
+            "event": "stop_requested",
+            "ordinal": 38
+          },
+          {
+            "at_us": 707300,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000b639b9c424a39eda01000000000000000200000000000000083700001400000000000000000000003700000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b639b9c424a39edad90f21d8cf01062771f773cf3a832d29c9b89d23566727cbfa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fb6fcfc432eb001bdc71bfa480d119690732e57ba37dba3d95314b39556b4abb0"
+            },
+            "event": "frame_sent",
+            "ordinal": 39
+          },
+          {
+            "at_us": 757532,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 40
+          },
+          {
+            "at_us": 757624,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 41
+          },
+          {
+            "at_us": 758466,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 42
+          },
+          {
+            "at_us": 758496,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 43
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 14088,
+        "session": 15753207924903197110,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "control_with_nonreading_peer",
+      "control_ack_ms": 0,
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 14568,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "a5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 19956,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 14714,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 23359,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 23375,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 23426,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ac090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 23548,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 5
+          },
+          {
+            "at_us": 23567,
+            "detail": {
+              "generation": 1,
+              "sequence": 2
+            },
+            "event": "state_read",
+            "ordinal": 6
+          },
+          {
+            "at_us": 23657,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ac090000000000003f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 23754,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000300000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 8
+          },
+          {
+            "at_us": 23763,
+            "detail": {
+              "generation": 1,
+              "sequence": 3
+            },
+            "event": "state_read",
+            "ordinal": 9
+          },
+          {
+            "at_us": 23802,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000300000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ac090000000000003e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 10
+          },
+          {
+            "at_us": 23896,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000400000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 11
+          },
+          {
+            "at_us": 23914,
+            "detail": {
+              "generation": 1,
+              "sequence": 4
+            },
+            "event": "state_read",
+            "ordinal": 12
+          },
+          {
+            "at_us": 23954,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000400000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ac090000000000003d00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 13
+          },
+          {
+            "at_us": 24064,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000500000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 14
+          },
+          {
+            "at_us": 24083,
+            "detail": {
+              "generation": 1,
+              "sequence": 5
+            },
+            "event": "state_read",
+            "ordinal": 15
+          },
+          {
+            "at_us": 24124,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000500000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003c00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 16
+          },
+          {
+            "at_us": 24218,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000600000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 17
+          },
+          {
+            "at_us": 24231,
+            "detail": {
+              "generation": 1,
+              "sequence": 6
+            },
+            "event": "state_read",
+            "ordinal": 18
+          },
+          {
+            "at_us": 24269,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000600000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003b00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 19
+          },
+          {
+            "at_us": 24362,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000700000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 20
+          },
+          {
+            "at_us": 24370,
+            "detail": {
+              "generation": 1,
+              "sequence": 7
+            },
+            "event": "state_read",
+            "ordinal": 21
+          },
+          {
+            "at_us": 24407,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000700000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003a00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 22
+          },
+          {
+            "at_us": 24497,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000800000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 23
+          },
+          {
+            "at_us": 24507,
+            "detail": {
+              "generation": 1,
+              "sequence": 8
+            },
+            "event": "state_read",
+            "ordinal": 24
+          },
+          {
+            "at_us": 24544,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000800000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003900000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 25
+          },
+          {
+            "at_us": 24652,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000900000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 26
+          },
+          {
+            "at_us": 24669,
+            "detail": {
+              "generation": 1,
+              "sequence": 9
+            },
+            "event": "state_read",
+            "ordinal": 27
+          },
+          {
+            "at_us": 24710,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000900000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003800000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 28
+          },
+          {
+            "at_us": 24805,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000a00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 29
+          },
+          {
+            "at_us": 24814,
+            "detail": {
+              "generation": 1,
+              "sequence": 10
+            },
+            "event": "state_read",
+            "ordinal": 30
+          },
+          {
+            "at_us": 24852,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000a00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003700000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 31
+          },
+          {
+            "at_us": 24966,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000b00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 32
+          },
+          {
+            "at_us": 24986,
+            "detail": {
+              "generation": 1,
+              "sequence": 11
+            },
+            "event": "state_read",
+            "ordinal": 33
+          },
+          {
+            "at_us": 25029,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000b00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000ab090000000000003600000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 34
+          },
+          {
+            "at_us": 25122,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000c00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 35
+          },
+          {
+            "at_us": 25132,
+            "detail": {
+              "generation": 1,
+              "sequence": 12
+            },
+            "event": "state_read",
+            "ordinal": 36
+          },
+          {
+            "at_us": 25169,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000c00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003500000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 37
+          },
+          {
+            "at_us": 25264,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000d00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 38
+          },
+          {
+            "at_us": 25271,
+            "detail": {
+              "generation": 1,
+              "sequence": 13
+            },
+            "event": "state_read",
+            "ordinal": 39
+          },
+          {
+            "at_us": 25308,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000d00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003400000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 40
+          },
+          {
+            "at_us": 25399,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000e00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 41
+          },
+          {
+            "at_us": 25407,
+            "detail": {
+              "generation": 1,
+              "sequence": 14
+            },
+            "event": "state_read",
+            "ordinal": 42
+          },
+          {
+            "at_us": 25445,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000e00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003300000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 43
+          },
+          {
+            "at_us": 25535,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000f00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 44
+          },
+          {
+            "at_us": 25542,
+            "detail": {
+              "generation": 1,
+              "sequence": 15
+            },
+            "event": "state_read",
+            "ordinal": 45
+          },
+          {
+            "at_us": 25579,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000f00000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 46
+          },
+          {
+            "at_us": 25666,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001000000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 47
+          },
+          {
+            "at_us": 25673,
+            "detail": {
+              "generation": 1,
+              "sequence": 16
+            },
+            "event": "state_read",
+            "ordinal": 48
+          },
+          {
+            "at_us": 25710,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001000000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003100000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 49
+          },
+          {
+            "at_us": 25799,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001100000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 50
+          },
+          {
+            "at_us": 25806,
+            "detail": {
+              "generation": 1,
+              "sequence": 17
+            },
+            "event": "state_read",
+            "ordinal": 51
+          },
+          {
+            "at_us": 25894,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001100000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000003000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 52
+          },
+          {
+            "at_us": 25981,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001200000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 53
+          },
+          {
+            "at_us": 25988,
+            "detail": {
+              "generation": 1,
+              "sequence": 18
+            },
+            "event": "state_read",
+            "ordinal": 54
+          },
+          {
+            "at_us": 26026,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001200000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000aa090000000000002f00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 55
+          },
+          {
+            "at_us": 26113,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001300000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 56
+          },
+          {
+            "at_us": 26120,
+            "detail": {
+              "generation": 1,
+              "sequence": 19
+            },
+            "event": "state_read",
+            "ordinal": 57
+          },
+          {
+            "at_us": 26157,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001300000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000a9090000000000002e00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 58
+          },
+          {
+            "at_us": 26246,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001400000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 59
+          },
+          {
+            "at_us": 26253,
+            "detail": {
+              "generation": 1,
+              "sequence": 20
+            },
+            "event": "state_read",
+            "ordinal": 60
+          },
+          {
+            "at_us": 26290,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001400000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000a9090000000000002d00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 61
+          },
+          {
+            "at_us": 26375,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001500000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 62
+          },
+          {
+            "at_us": 26382,
+            "detail": {
+              "generation": 1,
+              "sequence": 21
+            },
+            "event": "state_read",
+            "ordinal": 63
+          },
+          {
+            "at_us": 26419,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001500000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000a9090000000000002c00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 64
+          },
+          {
+            "at_us": 26541,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000001600000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000000000000b5090000000000004000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_received",
+            "ordinal": 65
+          },
+          {
+            "at_us": 26549,
+            "detail": {
+              "generation": 1,
+              "sequence": 22
+            },
+            "event": "state_read",
+            "ordinal": 66
+          },
+          {
+            "at_us": 26590,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000001600000000000000b49438ef99fa6b0301000000000000000100000000000000f44d000002000000a9090000000000002b00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 67
+          },
+          {
+            "at_us": 26600,
+            "detail": {
+              "generation": 2,
+              "reason": 19
+            },
+            "event": "revoked",
+            "ordinal": 68
+          },
+          {
+            "at_us": 26602,
+            "detail": "Revoked",
+            "event": "phase",
+            "ordinal": 69
+          },
+          {
+            "at_us": 26604,
+            "detail": {
+              "action": "revoke",
+              "generation": 2
+            },
+            "event": "control_ack",
+            "ordinal": 70
+          },
+          {
+            "at_us": 26621,
+            "detail": {
+              "action": "stop"
+            },
+            "event": "control_ack",
+            "ordinal": 71
+          },
+          {
+            "at_us": 26625,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 72
+          },
+          {
+            "at_us": 26627,
+            "detail": {
+              "reason": 25
+            },
+            "event": "stop_requested",
+            "ordinal": 73
+          },
+          {
+            "at_us": 26692,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000b49438ef99fa6b0301000000000000000200000000000000f44d000019000000a9090000000000002b00000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000b49438ef99fa6b036ec86bcc07920eb0a695d9fd6fd9fceb67bfab70f6b87807fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fa5321af3e973743ba44fe4baf884964c9c5d9e676c8386d9bbb77c5130d3d7fe"
+            },
+            "event": "frame_sent",
+            "ordinal": 74
+          },
+          {
+            "at_us": 130458,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 75
+          },
+          {
+            "at_us": 132115,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 76
+          },
+          {
+            "at_us": 132160,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 77
+          },
+          {
+            "at_us": 133288,
+            "detail": {
+              "business_success": false,
+              "code": 1
+            },
+            "event": "exit",
+            "ordinal": 78
+          },
+          {
+            "at_us": 133336,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 79
+          }
+        ],
+        "exit_code": 1,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 19956,
+        "session": 246566143672226996,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "exit_before_output_close_retains_owner",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 17519,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 13984,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 17704,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000000000000b2090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 25970,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000000000000b2090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 25986,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 26029,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000200000001000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000002000000aa090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 28212,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 5
+          },
+          {
+            "at_us": 28222,
+            "detail": {
+              "generation": 2,
+              "reason": 24
+            },
+            "event": "revoked",
+            "ordinal": 6
+          },
+          {
+            "at_us": 28224,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 7
+          },
+          {
+            "at_us": 28226,
+            "detail": {
+              "reason": 24
+            },
+            "event": "stop_requested",
+            "ordinal": 8
+          },
+          {
+            "at_us": 28280,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000007e34cfd79f0e05f001000000000000000200000000000000a036000018000000a7090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 9
+          },
+          {
+            "at_us": 129950,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 10
+          },
+          {
+            "at_us": 238566,
+            "detail": "ClosingUnconfirmed",
+            "event": "phase",
+            "ordinal": 11
+          },
+          {
+            "at_us": 238577,
+            "detail": true,
+            "event": "owner_retained",
+            "ordinal": 12
+          },
+          {
+            "at_us": 1237026,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 13
+          },
+          {
+            "at_us": 1237064,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 14
+          },
+          {
+            "at_us": 1237094,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 15
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 13984,
+        "session": 17295246023669527678,
+        "stderr_eof": true,
+        "stdout_eof": true
+      },
+      "unconfirmed": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 17519,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 13984,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 17704,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000000000000000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000000000000b2090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 25970,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000100000001000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000000000000b2090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 25986,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 26029,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000200000001000000000000007e34cfd79f0e05f001000000000000000100000000000000a036000002000000aa090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 28212,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 5
+          },
+          {
+            "at_us": 28222,
+            "detail": {
+              "generation": 2,
+              "reason": 24
+            },
+            "event": "revoked",
+            "ordinal": 6
+          },
+          {
+            "at_us": 28224,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 7
+          },
+          {
+            "at_us": 28226,
+            "detail": {
+              "reason": 24
+            },
+            "event": "stop_requested",
+            "ordinal": 8
+          },
+          {
+            "at_us": 28280,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a000400020001000600000000000000000000007e34cfd79f0e05f001000000000000000200000000000000a036000018000000a7090000000000004000000000000000010000000000000000000000000000000d000000020100001900000002010000250000000201000031000000020100007e34cfd79f0e05f072aced3bd50a679971097191b6329637b80c31f8d137a08efa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f179be97292b7578e3c8ae455d2c2463c4443c1ab1a7704f9d8f798e6957957bd"
+            },
+            "event": "frame_sent",
+            "ordinal": 9
+          },
+          {
+            "at_us": 129950,
+            "detail": {
+              "error": null,
+              "ok": true
+            },
+            "event": "kill_requested",
+            "ordinal": 10
+          },
+          {
+            "at_us": 238566,
+            "detail": "ClosingUnconfirmed",
+            "event": "phase",
+            "ordinal": 11
+          },
+          {
+            "at_us": 238577,
+            "detail": true,
+            "event": "owner_retained",
+            "ordinal": 12
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": true,
+        "phase": "ClosingUnconfirmed",
+        "pid": 13984,
+        "session": 17295246023669527678,
+        "stderr_eof": false,
+        "stdout_eof": false
+      }
+    },
+    {
+      "case": "same_slot_new_epoch_rejects_old_epoch",
+      "snapshot": {
+        "epoch": 2,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 15577,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "f317a6603d6ac4a3e14d52fe36b17e7f576c2bcf7e49fe8fb10fc4c89046f4e4",
+              "epoch": 2,
+              "path_image_race_closed": false,
+              "pid": 2732,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 15783,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a0004000200010000000000000000000000000005026ab4bda1ef4402000000000000000100000000000000ac0a000000000000b4090000000000004000000000000000010000000000000000000000000000000d0000000201000019000000020100002500000002010000310000000201000005026ab4bda1ef44bbf9f46101108a1cb6ac9fee91f01e08a065808b04a6f882fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367ff317a6603d6ac4a3e14d52fe36b17e7f576c2bcf7e49fe8fb10fc4c89046f4e4"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 24022,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a0004000200010001000000010000000000000005026ab4bda1ef4401000000000000000100000000000000ac0a000000000000b4090000000000004000000000000000010000000000000000000000000000000d0000000201000019000000020100002500000002010000310000000201000005026ab4bda1ef44bbf9f46101108a1cb6ac9fee91f01e08a065808b04a6f882fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367ff317a6603d6ac4a3e14d52fe36b17e7f576c2bcf7e49fe8fb10fc4c89046f4e4"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 24044,
+            "detail": {
+              "code": 17,
+              "sequence": 1
+            },
+            "event": "request_denied",
+            "ordinal": 3
+          },
+          {
+            "at_us": 24051,
+            "detail": {
+              "generation": 2,
+              "reason": 17
+            },
+            "event": "revoked",
+            "ordinal": 4
+          },
+          {
+            "at_us": 24053,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 5
+          },
+          {
+            "at_us": 24055,
+            "detail": {
+              "reason": 17
+            },
+            "event": "stop_requested",
+            "ordinal": 6
+          },
+          {
+            "at_us": 24099,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a0004000200010006000000000000000000000005026ab4bda1ef4402000000000000000200000000000000ac0a000011000000ab090000000000004000000000000000010000000000000000000000000000000d0000000201000019000000020100002500000002010000310000000201000005026ab4bda1ef44bbf9f46101108a1cb6ac9fee91f01e08a065808b04a6f882fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367ff317a6603d6ac4a3e14d52fe36b17e7f576c2bcf7e49fe8fb10fc4c89046f4e4"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 24780,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 8
+          },
+          {
+            "at_us": 24787,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 9
+          },
+          {
+            "at_us": 25071,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 10
+          },
+          {
+            "at_us": 25082,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 11
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 2732,
+        "session": 4967366750160683525,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "cumulative_request_quota",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 14472,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+              "config_sha256": "dcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 11524,
+              "platform": "windows",
+              "schema_sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 14683,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100000000000000000000000000c9746490baa7fe2701000000000000000100000000000000042d000000000000b5090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 22223,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100010000000100000000000000c9746490baa7fe2701000000000000000100000000000000042d000000000000b5090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_received",
+            "ordinal": 2
+          },
+          {
+            "at_us": 22239,
+            "detail": "Active",
+            "event": "phase",
+            "ordinal": 3
+          },
+          {
+            "at_us": 22282,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100020000000100000000000000c9746490baa7fe2701000000000000000100000000000000042d000002000000ad090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_sent",
+            "ordinal": 4
+          },
+          {
+            "at_us": 22360,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000200000000000000c9746490baa7fe2701000000000000000100000000000000042d000000000000b5090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_received",
+            "ordinal": 5
+          },
+          {
+            "at_us": 22368,
+            "detail": {
+              "generation": 1,
+              "sequence": 2
+            },
+            "event": "state_read",
+            "ordinal": 6
+          },
+          {
+            "at_us": 22402,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000200000000000000c9746490baa7fe2701000000000000000100000000000000042d000002000000ad090000000000000100000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_sent",
+            "ordinal": 7
+          },
+          {
+            "at_us": 22475,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000300000000000000c9746490baa7fe2701000000000000000100000000000000042d000000000000b5090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_received",
+            "ordinal": 8
+          },
+          {
+            "at_us": 22483,
+            "detail": {
+              "generation": 1,
+              "sequence": 3
+            },
+            "event": "state_read",
+            "ordinal": 9
+          },
+          {
+            "at_us": 22516,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100040000000300000000000000c9746490baa7fe2701000000000000000100000000000000042d000002000000ad090000000000000000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_sent",
+            "ordinal": 10
+          },
+          {
+            "at_us": 22582,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100030000000400000000000000c9746490baa7fe2701000000000000000100000000000000042d000000000000b5090000000000000200000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_received",
+            "ordinal": 11
+          },
+          {
+            "at_us": 22589,
+            "detail": {
+              "generation": 2,
+              "reason": 21
+            },
+            "event": "revoked",
+            "ordinal": 12
+          },
+          {
+            "at_us": 22592,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 13
+          },
+          {
+            "at_us": 22593,
+            "detail": {
+              "reason": 21
+            },
+            "event": "stop_requested",
+            "ordinal": 14
+          },
+          {
+            "at_us": 22629,
+            "detail": {
+              "raw_hex": "00010000000000001f000000000000000a00040002000100060000000000000000000000c9746490baa7fe2701000000000000000200000000000000042d000015000000ad090000000000000000000000000000010000000000000000000000000000000d00000002010000190000000201000025000000020100003100000002010000c9746490baa7fe27af228caaa458bc17091acae6b7dd5e51d6a4389dbb881dc4fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa645099a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367fdcf137a24f3ecac10033e5429b140a5364665fdcbd916f3bd0c259c452e8b2da"
+            },
+            "event": "frame_sent",
+            "ordinal": 15
+          },
+          {
+            "at_us": 23293,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 16
+          },
+          {
+            "at_us": 23301,
+            "detail": {
+              "bytes": 0,
+              "chunks": 0,
+              "omitted_chunk_details": 0
+            },
+            "event": "stderr_eof",
+            "ordinal": 17
+          },
+          {
+            "at_us": 23556,
+            "detail": {
+              "business_success": false,
+              "code": 0
+            },
+            "event": "exit",
+            "ordinal": 18
+          },
+          {
+            "at_us": 23566,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 19
+          }
+        ],
+        "exit_code": 0,
+        "exit_observed": true,
+        "generation": 2,
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 11524,
+        "session": 2881925231291954377,
+        "stderr_eof": true,
+        "stdout_eof": true
+      }
+    },
+    {
+      "case": "first_admission_deadline",
+      "error": "admission expired before spawn"
+    },
+    {
+      "case": "trusted_artifact_mismatch",
+      "error": "artifact digest mismatch"
+    }
+  ],
+  "not_claimed": [
+    "production approval UI",
+    "trusted install/image race closure",
+    "OS isolation",
+    "business success",
+    "M02 complete"
+  ],
+  "status": "passed_real_local_control_slice"
+}

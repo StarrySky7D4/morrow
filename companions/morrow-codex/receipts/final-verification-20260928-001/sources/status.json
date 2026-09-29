@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "run_id": "20260928T113015.784198Z-0f2653e7af19",
+  "started_utc": "20260928T113015.784198Z",
+  "entry_sha256": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+  "stage": "preflight",
+  "scope": "sources",
+  "status": "blocked",
+  "checks": [
+    {
+      "source": {
+        "id": "codex",
+        "kind": "partial_snapshot",
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\reference\\codex",
+        "url": "https://github.com/openai/codex",
+        "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+        "files_manifest_sha256": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6",
+        "complete": false,
+        "files_verified": 209,
+        "git_blobs_verified": 209,
+        "dirty": "unavailable_without_complete_original",
+        "qualification": "partial_snapshot_only",
+        "licenses": [
+          {
+            "path": "LICENSE",
+            "sha256": "d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc"
+          },
+          {
+            "path": "NOTICE",
+            "sha256": "9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915"
+          }
+        ]
+      }
+    },
+    {
+      "source": {
+        "id": "cc-switch",
+        "kind": "partial_snapshot",
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\reference\\cc-switch",
+        "url": "https://github.com/farion1231/cc-switch",
+        "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+        "files_manifest_sha256": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd",
+        "complete": false,
+        "files_verified": 13,
+        "git_blobs_verified": 13,
+        "dirty": "unavailable_without_complete_original",
+        "qualification": "partial_snapshot_only",
+        "licenses": [
+          {
+            "path": "LICENSE",
+            "sha256": "912b6a597d10c43b40a0909349ed95b052b17efb6502b4898e1b35dafb896755"
+          }
+        ]
+      }
+    }
+  ],
+  "artifacts": [],
+  "gates": {
+    "P-00": "not_claimed",
+    "G0": "not_claimed"
+  },
+  "network_used": false,
+  "locks_updated": false,
+  "old_dist_reused": false,
+  "output_dir": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\sources",
+  "contract_sha256": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+  "source_lock_sha256": "a92a49bea924d836edc3fbb3fad2cf4ff2859ea5be34e2b9f56eb4da7c4605e7",
+  "error": {
+    "code": "source_incomplete",
+    "message": "Partial source snapshots were verified; complete pinned upstream sources are still missing"
+  },
+  "exit_code": 2,
+  "finished_utc": "2026-09-28T11:30:15.994332+00:00"
+}

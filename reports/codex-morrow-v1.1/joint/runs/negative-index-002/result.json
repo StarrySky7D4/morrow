@@ -1,0 +1,109 @@
+{
+  "captured_at": "2026-09-28T11:15:03.347632+00:00",
+  "command": "self-test",
+  "checker_sha256": "0755d92e60047ad039fe43f674a0065673591de49a619d6165d0893b8b42384a",
+  "counts": {
+    "work_packages": 31,
+    "gates": 7,
+    "acceptance": 84,
+    "base48": 48,
+    "added36": 36
+  },
+  "integrity_status": "verified",
+  "issues": [],
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0,
+  "exit_code": 0,
+  "scope": "catalogue/reference/source identity only; not product acceptance",
+  "snapshot": "snapshot.json",
+  "negative_self_tests": [
+    {
+      "name": "missing work package",
+      "passed": true,
+      "observed_issues": [
+        "31 work package IDs mismatch/duplicate"
+      ]
+    },
+    {
+      "name": "duplicate acceptance ID",
+      "passed": true,
+      "observed_issues": [
+        "84 original acceptance IDs mismatch/duplicate"
+      ]
+    },
+    {
+      "name": "unknown dependency",
+      "passed": true,
+      "observed_issues": [
+        "M-00: derived catalogue fields differ from source/parser",
+        "M-00: unknown dependencies"
+      ]
+    },
+    {
+      "name": "stale source reference",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: derived catalogue fields differ from source/parser",
+        "NX-01: stale source reference"
+      ]
+    },
+    {
+      "name": "verified without evidence",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: verified without evidence"
+      ]
+    },
+    {
+      "name": "dependency cycle",
+      "passed": true,
+      "observed_issues": [
+        "M-00: derived catalogue fields differ from source/parser",
+        "work dependency cycle: M-00 -> M-01 -> M-00"
+      ]
+    },
+    {
+      "name": "false G0 closure",
+      "passed": true,
+      "observed_issues": [
+        "G0: verified without evidence",
+        "G0: verified with incomplete explicit dependency"
+      ]
+    },
+    {
+      "name": "stale evidence digest",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: stale evidence digest"
+      ]
+    },
+    {
+      "name": "catalogue evidence masquerades as product",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: non-product evidence cannot qualify scenario"
+      ]
+    },
+    {
+      "name": "altered scenario semantics",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: derived catalogue fields differ from source/parser"
+      ]
+    },
+    {
+      "name": "wrong base or added group",
+      "passed": true,
+      "observed_issues": [
+        "NX-01: derived catalogue fields differ from source/parser"
+      ]
+    },
+    {
+      "name": "deleted P-02 dependencies",
+      "passed": true,
+      "observed_issues": [
+        "P-02: derived catalogue fields differ from source/parser"
+      ]
+    }
+  ]
+}

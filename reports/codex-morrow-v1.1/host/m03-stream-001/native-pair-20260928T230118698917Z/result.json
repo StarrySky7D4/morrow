@@ -1,0 +1,138 @@
+{
+  "status": "single_positive_core_http_pair_passed_not_full_m03",
+  "run": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-pair-20260928T230118698917Z",
+  "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-004\\20260928T230118698917Z",
+  "candidate_manifest_sha256": "f5cfe370873b048d82fe15bd2c6ecb88408778aef9758d8fe8e511adad1787a5",
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "timing": {
+    "complete_proposal_observed_at_ns": 3524053200,
+    "host_events_original_approval_clock": [
+      {
+        "at_us": 2065840,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+          "config_sha256": "1a94d895b7cd02433842de7ce4ad7d77684ab350a5c78c5668533ac6b697226b",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 23656,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      {
+        "at_us": 3197533,
+        "detail": {
+          "body_bytes": 22025,
+          "request_sha256": "162757dd2f3d9bbd5ed297d33bf245858c1702bab12191ed31f18334e7c37c47"
+        },
+        "event": "proposal_complete",
+        "ordinal": 26
+      },
+      {
+        "at_us": 3213678,
+        "detail": {
+          "grant_ref": "5e74cf66fc317dba0a79db0d76c0b59bc44783556cd9c5eaeb67343923990bd7",
+          "request_sha256": "162757dd2f3d9bbd5ed297d33bf245858c1702bab12191ed31f18334e7c37c47",
+          "response_limit": 65536
+        },
+        "event": "http_approved",
+        "ordinal": 28
+      },
+      {
+        "at_us": 3242968,
+        "detail": {
+          "intent": "Unknown",
+          "ordinal": 2,
+          "server_received_proven": false
+        },
+        "event": "send_fence",
+        "ordinal": 31
+      },
+      {
+        "at_us": 3348693,
+        "detail": {
+          "reason": 25
+        },
+        "event": "session_close_reason",
+        "ordinal": 53
+      },
+      {
+        "at_us": 3365969,
+        "detail": {
+          "bytes": 412,
+          "sequence": 6
+        },
+        "event": "close_ack_written",
+        "ordinal": 58
+      },
+      {
+        "at_us": 3380138,
+        "detail": {
+          "business_success": false,
+          "code": 0
+        },
+        "event": "exit",
+        "ordinal": 61
+      }
+    ]
+  },
+  "host_exit_code": 0,
+  "progress": {
+    "cancel_discarded_bytes": 0,
+    "child_exited": true,
+    "connect_reaped": true,
+    "data_closed": true,
+    "drain_discarded_bytes": 14,
+    "error_code": 0,
+    "error_consumed_bytes": 0,
+    "http_eof": true,
+    "http_status": 200,
+    "intent": "Observed",
+    "issued_offset": 281,
+    "last_write_ordinal": 5,
+    "network": "Eof",
+    "os_completed_offset": 281,
+    "owner": "Released",
+    "owner_released": true,
+    "parser_yielded_bytes": 267,
+    "peer_consumed_offset": 281,
+    "read_reaped": true,
+    "received_offset": 281,
+    "request_closed": true,
+    "reserved_offset": 281,
+    "response_material_stored": true,
+    "revoke_applied": true,
+    "revoke_persisted": true,
+    "stderr_eof": true,
+    "stdout_eof": true,
+    "worker_joined": true,
+    "worker_started": true,
+    "write_reaped": true
+  },
+  "root_close_reasons": [
+    {
+      "at_us": 3348693,
+      "detail": {
+        "reason": 25
+      },
+      "event": "session_close_reason",
+      "ordinal": 53
+    }
+  ],
+  "host_os_exit": 0,
+  "host_lifetime": {
+    "pid": 1604,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 23656,
+      "session": 14016383726888219518
+    },
+    "owner_release_verified": true
+  },
+  "inputs_unchanged": true
+}

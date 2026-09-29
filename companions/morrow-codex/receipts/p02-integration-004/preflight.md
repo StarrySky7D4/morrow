@@ -1,0 +1,11 @@
+# P02 integration 004 — plan before implementation
+
+Scope: new fixed-source working copy under morrow-codex; merge reviewed 002 exec and 003 Core network patches, with the real LiveThread adapter in one qualification executable, one Cargo.lock, one build and one input manifest. Prior batches and host kit 003 remain frozen. No production wiring, commits, remote publication or real provider calls.
+
+Use an explicit compile-time restricted-qualification feature, propagated to the thread-store crate. In that build, selected original caller boundaries reject default execution/network/storage paths before effects; normal builds retain their original defaults. Build-wide restriction avoids a per-task flag disappearing across Tokio contexts. This is a bounded qualification policy, not production authority or OS isolation.
+
+Targeted evidence: original prepared exec dispatcher with injected backend and with missing/default environment; independent Core execute_exec_request refusal; real Core HTTP/WS session paths with injected and missing backends, including a new session/context; real LiveThread adapter and refusal of creation before Git metadata collection and LocalThreadStore resume before state DB access. Record exact refusal errors/call counts and actual Arc/Drop ownership cleanup; no invented process handles, durable commits, HTTP responses, successful writer release, or failure replay.
+
+Risks and limits: constructors and paths outside selected boundaries can still touch OS resources; direct LocalThreadStore methods, other subprocess/network clients and full agent loop remain unqualified. The missing HTTP redirect policy from 003 remains a production contract gap; refusal-only traffic cannot establish authorization/header/TLS semantics. Host kit 003 has no process execution/PTY/IO contract (M-06/M-02), production persistence/metadata transaction/release (M-04), or full HTTP/WS (M-03) and credential/recovery (M-08) contracts. No replacement wire schema will be introduced. Static search is an inventory, never isolation proof.
+
+G0/P02/J00 remain blocked; native/Wasm product graphs 0/2 and 84 product cases not_run. Qualification build feature and direct executable tests do not establish production/Bazel/full upstream suite/device proof. Deliver only this reviewable slice, then request joint review before further work.

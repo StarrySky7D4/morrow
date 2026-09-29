@@ -1,0 +1,10 @@
+
+running 5 tests
+test supervisor::revocation_interleaving_tests::external_commit_then_close_uses_durable_19_not_callers_25 ... ok
+test supervisor::revocation_interleaving_tests::owner_close_then_late_operator_preserves_first_result_and_ack_snapshot ... ok
+test supervisor::revocation_interleaving_tests::owner_commit_before_generation_publish_does_not_trigger_external_poll ... ok
+test supervisor::revocation_interleaving_tests::true_external_commit_is_applied_by_real_poll_path ... ok
+test supervisor::revocation_interleaving_tests::unknown_incomplete_or_nonrevoked_provenance_fails_closed ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 8 filtered out; finished in 3.89s
+

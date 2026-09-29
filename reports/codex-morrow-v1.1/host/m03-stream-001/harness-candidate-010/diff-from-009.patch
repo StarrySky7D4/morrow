@@ -1,0 +1,99 @@
+--- harness009
++++ harness010
+@@ -104,6 +104,28 @@
+     if thread.is_alive(): return False
+     thread.join(0)
+     return True
++
++def core_suppression_checks(qualified, suppressed, reserved_suppressed, gate, core_events):
++    """Marker enqueue order is not the cancellation gate's linearization order.
++
++    A is released by this harness only after gate marker receipt. B can awaken
++    on the actual cancellation signal before the router enqueues that marker.
++    Host source1/application and guest received/gate evidence remain mandatory
++    separate checks in run(); none is inferred from these synthetic timings.
++    """
++    held=qualified['held'];reserved=qualified['reserved']
++    return {
++        'A_same_event': suppressed['detail']['event']==held['detail']['event'],
++        'A_after_release_precondition_marker': suppressed['ordinal']>gate['ordinal'],
++        'A_original_gate_rejected': suppressed['detail']['gate_closed'] is True,
++        'B_same_event': reserved_suppressed['detail']['event']==reserved['detail']['event'],
++        'B_reserved_before_suppression': reserved_suppressed['ordinal']>reserved['ordinal'],
++        'B_original_gate_rejected': reserved_suppressed['detail']['gate_closed'] is True,
++        'B_original_permit_released': reserved_suppressed['detail']['permit_released'] is True,
++        'targets_absent_from_business_output': all(
++            not any(e['kind']=='actual_core_output_text_delta' and e['sha256']==target['sha256'] for e in core_events)
++            for target in (held['detail']['event'],reserved['detail']['event'])),
++    }
+ 
+ class OwnedServer(http.server.ThreadingHTTPServer):
+     daemon_threads=False
+@@ -173,8 +195,8 @@
+ 
+ def run(mode):
+     host_exe,guest_exe=verify(mode)
+-    batch_stamp=stamp();run=BASE/f'revoke-009-{mode}-{batch_stamp}';run.mkdir()
+-    evidence=PLUGIN/'out/m03-host-revoke-009'/batch_stamp;evidence.mkdir(parents=True)
++    batch_stamp=stamp();run=BASE/f'revoke-010-{mode}-{batch_stamp}';run.mkdir()
++    evidence=PLUGIN/'out/m03-host-revoke-010'/batch_stamp;evidence.mkdir(parents=True)
+     spec=fixture_spec(mode,secrets.token_hex(32));dump(evidence/'fixture-spec.json',spec);spec_sha=sha(evidence/'fixture-spec.json')
+     operation='m03-'+mode+'-'+batch_stamp
+     profile=run/'profile';cwd=run/'cwd';profile.mkdir();cwd.mkdir()
+@@ -301,14 +323,10 @@
+         core_events=[json.loads(line)['event'] for line in (evidence/'core-events.jsonl').read_text().splitlines()]
+         if mode=='core-revoke':
+             suppressed=markers.one('core_event_suppressed');reserved_suppressed=markers.one('core_reserved_suppressed')
+-            assert suppressed['detail']['event']==qualified['held']['detail']['event']
+-            assert reserved_suppressed['detail']['event']==qualified['reserved']['detail']['event']
+-            assert suppressed['ordinal']>markers.one('gate_closed')['ordinal']
+-            assert suppressed['detail']['gate_closed'] is True and reserved_suppressed['detail']['gate_closed'] is True and reserved_suppressed['detail']['permit_released'] is True
+-            assert reserved_suppressed['ordinal']>markers.one('gate_closed')['ordinal']
+-            for target in (qualified['held']['detail']['event'],qualified['reserved']['detail']['event']):
+-                assert target['kind']=='OutputTextDelta'
+-                assert not any(e['kind']=='actual_core_output_text_delta' and e['sha256']==target['sha256'] for e in core_events), 'target event escaped business delivery'
++            core_checks=core_suppression_checks(qualified,suppressed,reserved_suppressed,markers.one('gate_closed'),core_events)
++            assert all(core_checks.values()),core_checks
++            result['core_suppression_checks']=core_checks
++            result['B_suppression_marker_preceded_gate_marker']=reserved_suppressed['ordinal']<markers.one('gate_closed')['ordinal']
+         else:
+             terminal=pending_observations(events,True);assert terminal and terminal['id']==qualified['id'] and terminal['issue_ordinal']==qualified['issue_ordinal']
+             assert p['peer_consumed_offset']==0 and p['parser_yielded_bytes']==0
+@@ -364,7 +382,7 @@
+     except AssertionError:pass
+     else:raise AssertionError('reap from another issue accepted')
+     # File-only synthetic marker tests: no socket/process/real fixture.
+-    directory=BASE/('barriers-009-pure-markers-'+stamp());directory.mkdir()
++    directory=BASE/('barriers-010-pure-markers-'+stamp());directory.mkdir()
+     s=fixture_spec('core-revoke','a'*64);identity={'synthetic':True}
+     good={'identity':identity,'mode':s['mode'],'nonce':s['nonce'],'spec_sha256':'b'*64,'ordinal':1,'kind':'core_event_held','detail':{}}
+     for index,(key,bad) in enumerate((('nonce','c'*64),('spec_sha256','c'*64),('mode','data-pending'),('identity',{'synthetic':False}))):
+@@ -374,8 +392,26 @@
+         else:raise AssertionError('cross-batch marker accepted '+key)
+     child=directory/'valid';child.mkdir();(child/s['events_file']).write_text(json.dumps(good)+'\n')
+     assert Markers(child,s,'b'*64,identity).one('core_event_held')==good
+-    receipt={'status':'pure_only_no_process_socket_or_http','script_sha256':sha(pathlib.Path(__file__)),'cases':list(HOSTS),'fixed_fixture_ready':bool(PLUGIN_MANIFEST_SHA),'post_count':0,'runtime_tested':False,'checks':['fixed-spec limits','qualified same-operation chain','cancel probe completed rejected','insufficient samples rejected','short sample interval rejected','wrong reap issue rejected','four cross-batch marker mutations rejected','valid marker accepted'],'synthetic_marker_evidence':str(directory)}
+-    out=BASE/('barriers-009-pure-'+stamp()+'.json');dump(out,receipt);print(json.dumps({'receipt':str(out),**receipt}))
++    # Legitimate B wakeup precedes the asynchronous gate marker, while A is
++    # released afterwards. These are synthetic classifier inputs, not runtime.
++    a={'sha256':'a'*64};b={'sha256':'b'*64}
++    qualified={'held':{'detail':{'event':a},'ordinal':2},'reserved':{'detail':{'event':b},'ordinal':3}}
++    suppressed={'detail':{'event':a,'gate_closed':True},'ordinal':8}
++    reserved_suppressed={'detail':{'event':b,'gate_closed':True,'permit_released':True},'ordinal':4}
++    gate={'ordinal':6}
++    assert all(core_suppression_checks(qualified,suppressed,reserved_suppressed,gate,[]).values())
++    later=copy.deepcopy(reserved_suppressed);later['ordinal']=7
++    assert all(core_suppression_checks(qualified,suppressed,later,gate,[]).values())
++    for key,value in (('event',a),('gate_closed',False),('permit_released',False)):
++        bad=copy.deepcopy(reserved_suppressed);bad['detail'][key]=value
++        assert not all(core_suppression_checks(qualified,suppressed,bad,gate,[]).values())
++    bad=copy.deepcopy(reserved_suppressed);bad['ordinal']=2
++    assert not all(core_suppression_checks(qualified,suppressed,bad,gate,[]).values())
++    bad_a=copy.deepcopy(suppressed);bad_a['ordinal']=5
++    assert not all(core_suppression_checks(qualified,bad_a,reserved_suppressed,gate,[]).values())
++    assert not all(core_suppression_checks(qualified,suppressed,reserved_suppressed,gate,[{'kind':'actual_core_output_text_delta','sha256':b['sha256']}]).values())
++    receipt={'status':'pure_only_no_process_socket_or_http','script_sha256':sha(pathlib.Path(__file__)),'cases':list(HOSTS),'fixed_fixture_ready':bool(PLUGIN_MANIFEST_SHA),'post_count':0,'runtime_tested':False,'checks':['fixed-spec limits','qualified same-operation chain','cancel probe completed rejected','insufficient samples rejected','short sample interval rejected','wrong reap issue rejected','four cross-batch marker mutations rejected','valid marker accepted','B suppression before or after gate marker accepted with original gate/permit proof','six negative core suppression mutations rejected; A order remains strict'],'synthetic_marker_evidence':str(directory)}
++    out=BASE/('barriers-010-pure-'+stamp()+'.json');dump(out,receipt);print(json.dumps({'receipt':str(out),**receipt}))
+ 
+ if __name__=='__main__':
+     if sys.argv[1:]==['--check']:pure_check()

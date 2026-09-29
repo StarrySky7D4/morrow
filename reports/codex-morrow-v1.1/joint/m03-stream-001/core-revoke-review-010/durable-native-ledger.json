@@ -1,0 +1,21 @@
+{
+  "db_sha256": "e1fec3f0976f7f7a616fe580d1e71289b00dcc5f0b478094c8803fe2b46db674",
+  "immutable_read_only": true,
+  "database_unchanged": true,
+  "version": 4,
+  "owner_phase": "Released",
+  "pid": 15456,
+  "session": 16864094044687674934,
+  "epoch": 1,
+  "exit_and_dual_eof": true,
+  "parent_state": 3,
+  "revocation_source": 1,
+  "revocation_reason": 19,
+  "original_ttl_ms": 10000,
+  "http_state": 3,
+  "send_budget": 1,
+  "response_limit": 65536,
+  "request_sha256": "25a46b018cefa53b73b42b21ba82be3cebf5561f31d304515757f5582ae9bccd",
+  "body_sha256": "be78c7d9b55484594578dcbc77432c4527b920a49788cd95451e9c14bc338295",
+  "scope": "native owner and approval records only; Core coordination payload not decoded"
+}

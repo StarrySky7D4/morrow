@@ -1,0 +1,11 @@
+{
+  "repository": "microsoft/mxc",
+  "commit": "6cd3d58f05d3447e67109cfb75e042803b843ca4",
+  "url": "https://codeload.github.com/microsoft/mxc/tar.gz/6cd3d58f05d3447e67109cfb75e042803b843ca4",
+  "attempt": 1,
+  "started_unix": 1790600067.3968456,
+  "network": "stdlib urllib direct HTTPS, ProxyHandler({}), no Git/Cargo invocation",
+  "status": "failed_preserved",
+  "error": "IncompleteRead: IncompleteRead(425984 bytes read)",
+  "elapsed_seconds": 27.809
+}

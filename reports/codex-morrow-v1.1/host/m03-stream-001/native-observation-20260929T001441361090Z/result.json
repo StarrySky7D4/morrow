@@ -1,0 +1,64 @@
+{
+  "status": "new_pipe_observation_tests_passed_no_child_or_http",
+  "before": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "native_session_stream_001/schemas/native_admission.proto": "cbb397037a06baaa33c1b2c5773109fb0466108e3b3d38070099c63362496903",
+    "native_session_stream_001/src/authority.rs": "09ae9f1ca088d2c470f2dff4aa90e2b304849237752b290eacb11602f67a6971",
+    "native_session_stream_001/src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "native_session_stream_001/src/http_authority.rs": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc",
+    "native_session_stream_001/src/http_authority_tests.rs": "dd3d6beea24e87528b1dc1afb22e26203752f125eab9b529df9be70feced6a6f",
+    "native_session_stream_001/src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "native_session_stream_001/src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "native_session_stream_001/src/pipe_driver.rs": "e9528e9793d9645549dc5f054f29076024fe23e72ce9b6ba370f37e89611b6fe",
+    "native_session_stream_001/src/pipe_observation_tests.rs": "68b51f6d3ccb2090ad104c7222caad0b4dfc0544ebd43c64e11219ea2d94d4e6",
+    "native_session_stream_001/src/revocation_interleaving_tests.rs": "93d6a747230d61b084323d3452faece0a12f6b19f65372a1f117bb403a5afb4d",
+    "native_session_stream_001/src/supervisor.rs": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0"
+  },
+  "frozen_count": 2297,
+  "commands": [
+    {
+      "args": [
+        "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+        "test",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\Cargo.toml",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\target\\m03-stream-001-native",
+        "--lib",
+        "pipe_driver::observation_tests",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "seconds": 2.398489699990023,
+      "stdout_sha256": "13104db7f86167da545b0b4e5624b942c6e83798a8f160fb80353e3053f515ae",
+      "stderr_sha256": "70fba43cdef68d3344ac72632d889eb210cc579f78d71a569b84022f5f02a6fb"
+    }
+  ],
+  "after": {
+    "native_session_stream_001/build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "native_session_stream_001/Cargo.lock": "fa8ef5b09bfefa04e62e77e18f3cf727cbf0c5ae8143e7aea1946858b8a5624b",
+    "native_session_stream_001/Cargo.toml": "88cdf680d02dcdc7c18ae8af75f99aefd6672923bacab4cbce3d48a9b5e03ad6",
+    "native_session_stream_001/provenance/origin.json": "01d938ec7363f67d9cb7b1971586223802f4419e0d70dfe1f1f2643c75abe352",
+    "native_session_stream_001/README.md": "4c438002db270ae089abe8a56caae82352a03550d1c72c5cff58a1d31efad781",
+    "native_session_stream_001/schemas/native_admission.proto": "cbb397037a06baaa33c1b2c5773109fb0466108e3b3d38070099c63362496903",
+    "native_session_stream_001/src/authority.rs": "09ae9f1ca088d2c470f2dff4aa90e2b304849237752b290eacb11602f67a6971",
+    "native_session_stream_001/src/bin/morrow-native-close-peer.rs": "f0550c67e26e073322025e6bd4226413112ffc7b7fc831c0117296ff538bf0af",
+    "native_session_stream_001/src/http_authority.rs": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc",
+    "native_session_stream_001/src/http_authority_tests.rs": "dd3d6beea24e87528b1dc1afb22e26203752f125eab9b529df9be70feced6a6f",
+    "native_session_stream_001/src/lib.rs": "17d064083511f1f59ae2609328743f170c6450ce6529460eeada2d40d7e3238f",
+    "native_session_stream_001/src/main.rs": "d59264f8e2760efff6693b811ba9293ccffc7c47d43c4e2395df50b4f401a4a5",
+    "native_session_stream_001/src/pipe_driver.rs": "e9528e9793d9645549dc5f054f29076024fe23e72ce9b6ba370f37e89611b6fe",
+    "native_session_stream_001/src/pipe_observation_tests.rs": "68b51f6d3ccb2090ad104c7222caad0b4dfc0544ebd43c64e11219ea2d94d4e6",
+    "native_session_stream_001/src/revocation_interleaving_tests.rs": "93d6a747230d61b084323d3452faece0a12f6b19f65372a1f117bb403a5afb4d",
+    "native_session_stream_001/src/supervisor.rs": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0"
+  },
+  "frozen_unchanged": true
+}

@@ -1,0 +1,42 @@
+{
+  "status": "failed",
+  "independent_compilation": false,
+  "independent_execution": true,
+  "P02": "blocked",
+  "J00": "blocked",
+  "G0": "blocked",
+  "product_graphs": "0/2",
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "read_only_evidence": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+    "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862"
+  },
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-integration-004\\target\\x86_64-pc-windows-msvc\\debug\\p02-integration-probe.exe",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\runtime.json"
+  ],
+  "exe_sha256": "0592d5e69bfe7fe1c6a5ecdcb86eb3e6f6ce703e4a4f80a66c409146e4bfb682",
+  "environment_keys": [
+    "APPDATA",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_TERMINAL_PROMPT",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "environment_values_enumerated": false,
+  "profile": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\profile",
+  "temporary": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\tmp"
+}

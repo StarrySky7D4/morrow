@@ -1,0 +1,19 @@
+{
+  "status": "targeted_review_no_new_blocker_runtime_unverified",
+  "candidate_manifest_sha256": "54f4c6cd38e1968d1dbc54d26b8bf40460ee660498f8590c7f44c10fe04396c5",
+  "executable_sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+  "candidate_pins_verified": 32,
+  "previous_pins_verified": 31,
+  "qualification_reused_pins": 9,
+  "producer_tests_passed": 16,
+  "new_tests": 7,
+  "compiler_package_ids": 907,
+  "aggregate_methods_unchanged": true,
+  "independent_build": false,
+  "tests_rerun": false,
+  "http_requests_started": 0,
+  "os_runtime_invoked": false,
+  "old_s503_regraded": false,
+  "whole_session_release_verified": false,
+  "product_success_claimed": false
+}

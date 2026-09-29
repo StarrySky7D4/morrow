@@ -1,0 +1,15 @@
+{
+  "scope": "original catalogue and source identity only",
+  "counts": {
+    "work_packages": 31,
+    "gates": 7,
+    "acceptance": 84
+  },
+  "issues": [],
+  "g0_status": "blocked",
+  "acceptance_not_run": 84,
+  "product_scenarios_verified": 0,
+  "exit_code": 2,
+  "frozen_checker_sha256": "0755d92e60047ad039fe43f674a0065673591de49a619d6165d0893b8b42384a",
+  "wrapper_sha256": "f87ed702602d10ff7351d83ca1a7ea128a52984fd879b5fa2e7b6aae8f4f673a"
+}

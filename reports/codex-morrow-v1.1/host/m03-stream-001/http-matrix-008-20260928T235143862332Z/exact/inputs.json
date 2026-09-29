@@ -1,0 +1,14 @@
+{
+  "host": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-004\\morrow-native-stream-host.exe",
+  "host_sha256": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224",
+  "host_manifest_sha256": "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2",
+  "guest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-003\\candidates\\native-003\\morrow-codex-native-http-client.exe",
+  "guest_sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+  "plugin_manifest_sha256": "54f4c6cd38e1968d1dbc54d26b8bf40460ee660498f8590c7f44c10fe04396c5",
+  "script_sha256": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+  "response_sha256": "bdef3ed2170ced39669228dd9cbc3d6495d365e91412212dbaad53b27dd071ba",
+  "response_bytes": 65536,
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "automatic_retry": false
+}

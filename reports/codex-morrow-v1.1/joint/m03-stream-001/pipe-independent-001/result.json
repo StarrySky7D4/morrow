@@ -1,0 +1,121 @@
+{
+  "status": "independent_fixed_platform_tests_passed",
+  "substantive_passed": 4,
+  "substantive_total": 4,
+  "helper_entries_counted_as_tests": 0,
+  "results": [
+    {
+      "test": "connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive",
+      "argv": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "--exact",
+        "connect_pending_cancel_is_actually_reaped_and_first_instance_is_exclusive",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 19892,
+        "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+        "creation_filetime": 134351051241125728,
+        "source": "held exact Popen process handle"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 18512000,
+      "passed": true,
+      "stdout_sha256": "9a327b5c498e99719ea456dc2226343bf15f644fc042791ffbb5aa07ceba544d",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_pids_reported_by_fixed_test": []
+    },
+    {
+      "test": "actual_child_pid_duplex_bytes_and_client_disconnect_are_observed",
+      "argv": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "--exact",
+        "actual_child_pid_duplex_bytes_and_client_disconnect_are_observed",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 21300,
+        "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+        "creation_filetime": 134351051241303008,
+        "source": "held exact Popen process handle"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 25631000,
+      "passed": true,
+      "stdout_sha256": "87908c9d60a73637c0d1dddeda4db5dbd21f571659937e40d449eac91c128325",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_pids_reported_by_fixed_test": [
+        12008
+      ]
+    },
+    {
+      "test": "stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work",
+      "argv": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "--exact",
+        "stopped_reader_causes_sustained_os_write_pending_while_control_and_cancellation_work",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 4132,
+        "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+        "creation_filetime": 134351051241571080,
+        "source": "held exact Popen process handle"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 80059400,
+      "passed": true,
+      "stdout_sha256": "3be49b8b437c2ce022fc3afe8775a9d4def2e10a917090ca1a87be005ea05ada",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_pids_reported_by_fixed_test": [
+        16900
+      ]
+    },
+    {
+      "test": "server_disconnect_completes_client_read_without_false_success",
+      "argv": [
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "--exact",
+        "server_disconnect_completes_client_read_without_false_success",
+        "--nocapture",
+        "--test-threads=1"
+      ],
+      "process": {
+        "pid": 1144,
+        "image": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\pipe-independent-001\\platform-a95421a369e34f9f.exe",
+        "image_sha256": "c51ba2c7de38ba636a78560d7277ceeff879dd428626195c4fe9ac3249a40467",
+        "creation_filetime": 134351051242383951,
+        "source": "held exact Popen process handle"
+      },
+      "exit_code": 0,
+      "timed_out": false,
+      "elapsed_ns": 24191400,
+      "passed": true,
+      "stdout_sha256": "3d3d9367fafe736c1f3a0b6d70438923e74115275cf84313d994fcc852741d33",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "helper_pids_reported_by_fixed_test": []
+    }
+  ],
+  "verified_input_count": 23,
+  "independent_build": false,
+  "binding": "producer actual compiler-artifact JSON plus source/lock pre-post and artifact hash, independent copied-exe execution",
+  "producer_frozen_count_not_independently_rehashed": 2292,
+  "limitations": [
+    "fixed producer fixtures independently executed",
+    "outer witness held only four top-level process handles; helper PID/completion from fixed tests",
+    "not native credit or Core/HTTP/SSE",
+    "no unexpected API fault injection",
+    "control response observed during pending, no <=500ms ACK measurement",
+    "no full host-death/process-tree or same-user adversary isolation"
+  ],
+  "product_pass_credit": 0
+}

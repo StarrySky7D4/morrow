@@ -1,0 +1,1024 @@
+{
+  "captured_at": "2026-09-28T11:14:03.945861+00:00",
+  "status": "verified",
+  "scope": "M-00 baseline handoff input integrity and old SDK original identity; not guest runtime or M-01 backend qualification",
+  "input_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m00-inputs.json",
+    "sha256": "391d252a7a9bbc8ef7d76222ed5a043b4a267b61fe3ba7c4ca4088eefb43d5e7"
+  },
+  "legacy_inputs": 178,
+  "plan_inputs_including_checksum_file": 7,
+  "input_results": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\audit\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\audit\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core-web\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core-web\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\attachment.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\audit.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\content.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\dependency_call.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\evidence_storage.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\file_content.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\file_content_receipt.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\file_effect.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\file_mutation.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\io.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\io_evidence.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\io_intent.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\io_manifest.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\mutation.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\outbound_authority.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\plugin_package.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\plugin_registry.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\read_archive.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\read_capture.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\read_journal.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\record_transaction.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\runtime.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\service.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\service_authority.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\service_config.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\service_record.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\service_resources.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\shared_object.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\shared_transfer.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\task.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\task_evidence.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\tls_identity.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\transaction.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\schemas\\ui.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\src\\plugin_package.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\demos\\plugin_stage_windows\\plugins\\rust\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\demos\\plugin_stage_windows\\plugins\\rust\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\network_node\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\network_node\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\network_node\\src\\client.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugin_runtime\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugin_runtime\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugin_runtime\\src\\io_binding.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugin_runtime\\src\\io_execution.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\http_forward\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\http_forward\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\mid_autumn\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\mid_autumn\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\workbench\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\plugins\\workbench\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1.sha256",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\SHA256SUMS",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\SOURCE_SHA256SUMS",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-dependency.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-dependency.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-task.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-task.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-transform.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-transform.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-ui.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\c-ui.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\content.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\dependency_call.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\runtime.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\task-version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\task.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\ui-version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\ui.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\contracts\\version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-dependency.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-dependency.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-task.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-task.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-transform.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-transform.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-ui.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\cpp-ui.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\provenance.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-dependency.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-dependency.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-provider.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-provider.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-task.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-task.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-transform.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-transform.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-ui.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\guest-v1-rc1\\rust-ui.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1.sha256",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\SHA256SUMS",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\SOURCE_SHA256SUMS",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\c-io.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\c-io.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\c-service.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\c-service.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\contracts\\io.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\contracts\\service.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\contracts\\service_resources.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\cpp-io.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\cpp-io.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\cpp-service.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\cpp-service.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\provenance.json",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\rust-io.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\rust-io.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\rust-service.mplugin",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\compat\\transport-v1-rc1\\rust-service.wasm",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-chain-provider\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-chain-provider\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-dependency-caller\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-dependency-caller\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-graph-middle\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-graph-middle\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-io\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-io\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-mutation\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-mutation\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-rename\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-rename\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-service-http\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-service-http\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-service\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-service\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-task\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-task\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-transform\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-transform\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-ui\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\examples\\rust-ui\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\build.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\content.proto",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\dependency_call.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\io.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\mutation.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\runtime.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\service.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\service_resources.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\task-version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\task.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\ui-version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\ui.capnp",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\contracts\\version.txt",
+      "match": true,
+      "size_match": true,
+      "lf_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\rust\\src\\protocol.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\.gitattributes",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\absent-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\attachment-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\attachment-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\committed-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\content-committed-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\content-create-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\content-edit-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\content-read-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\content-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\denied-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\query-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\rename-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\renamed-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\summary-reply.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\fixtures\\summary-request.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\ui_fixtures\\document.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\sdk\\tests\\ui_fixtures\\event.capnp",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\research\\protobuf_probe\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\research\\protobuf_probe\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\sync_plugin_sdk_contracts.py",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\verify_plugin_sdk_baseline.py",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\workbench_host\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\workbench_host\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\workbench_host\\src\\protocol.rs",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\workbench_host\\tests\\fixtures\\service-outbound\\Cargo.lock",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\workbench_host\\tests\\fixtures\\service-outbound\\Cargo.toml",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\01_Morrow侧扩充实施路径.md",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\02_插件侧编码构建路径.md",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\03_契约交接与验收.md",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.docx",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\Codex_Morrow_Plugin_Project_Plan_v1.1_2026-09-28.md",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\README.md",
+      "match": true,
+      "size_match": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\Codex_Morrow_Plan_v1.1\\SHA256SUMS.txt",
+      "match": true,
+      "size_match": true
+    }
+  ],
+  "checks": [
+    {
+      "command": [
+        "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\verify_plugin_sdk_baseline.py"
+      ],
+      "source_sha256": "8fdccfc870423964b60237d4f963de37b361a5b57012a285d791588013cc1f18",
+      "exit_code": 0,
+      "stdout": "PASS: 36 pinned files, 13 original Wasm/package pairs. No guest build or repack performed.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+        "-B",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\tool\\sync_plugin_sdk_contracts.py",
+        "--check"
+      ],
+      "source_sha256": "1d27bf6555a543d454ec4d2b7edcaf7302a70e490d5116769ca51898acfbd1c4",
+      "exit_code": 0,
+      "stdout": "Verified guest SDK contracts.\n",
+      "stderr": ""
+    }
+  ],
+  "failures": [],
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0
+}

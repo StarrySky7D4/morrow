@@ -1,0 +1,10 @@
+{
+  "files": {
+    "BUILD.bazel": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916",
+    "Cargo.lock": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7",
+    "Cargo.toml": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+    "data/sample.txt": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4",
+    "runfiles.rs": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591"
+  },
+  "package": null
+}

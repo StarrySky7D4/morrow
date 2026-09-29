@@ -1,0 +1,6 @@
+
+running 1 test
+test cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 5 filtered out; finished in 0.09s
+

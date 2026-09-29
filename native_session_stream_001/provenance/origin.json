@@ -1,0 +1,14 @@
+{
+  "source": "native_session_owner_002",
+  "files": {
+    "build.rs": "a2d2d3692f34f2e84eb6a4a18c916e33db32ddb4b33e894532914ee53581d6b6",
+    "Cargo.lock": "d50d020c8a9b738eb5d67479743bf23bb3cccbc1e568eec3da5393cbf700b026",
+    "Cargo.toml": "d2b73821d298960dfb8500a825359364e1234e92864b5bc4ba38e01167c19d30",
+    "README.md": "33bb681cf60910b6120c16424bf214322af2ae65dd9ac2a62e7459035937711c",
+    "schemas/native_admission.proto": "670ea1e7bad7d363cd4dd62221ee0d939ca7d9b4b7e5c576814d64f1d10f75b2",
+    "src/authority.rs": "8e1eaf06b658975ecb7bf06c96e98ede71ea3b92a2647d9ef16883ae37e44a50",
+    "src/lib.rs": "ff4bcb2cea6bbb0c9d466d1896a274c2f420c036df409b02bd1de3f7161bd4b2",
+    "src/main.rs": "57d3f172bcb123f87621725b9ff9eb8aa584ef3ccde72d961c3379d5eab490c8"
+  },
+  "status": "work in progress; old inputs unchanged"
+}

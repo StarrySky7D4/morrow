@@ -1,0 +1,19 @@
+{
+  "original": {
+    "rust/runfiles/BUILD.bazel": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916",
+    "rust/runfiles/Cargo.lock": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7",
+    "rust/runfiles/Cargo.toml": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+    "rust/runfiles/data/sample.txt": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4",
+    "rust/runfiles/runfiles.rs": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591",
+    "LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  "copy": {
+    "LICENSE.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "rust/runfiles/.cargo-checksum.json": "25f4ffb15ef8210135ad76212ee46d050704e1e189af9cff38f8a811130c57e1",
+    "rust/runfiles/BUILD.bazel": "5d2c613859759c263fd59aec59adc4fd84e463e0c322e9ca9794811d42c84916",
+    "rust/runfiles/Cargo.lock": "91a09719a5caa86bb8e5a4a439381cc718abdd3a64ea643621f749dc4772b2c7",
+    "rust/runfiles/Cargo.toml": "b38b96101d25e690fe4c1c9681b69434075d660bc51bd062982771b4b8da7084",
+    "rust/runfiles/data/sample.txt": "192fa9af4cbae863b56f40dfc6d76f4f7626cbb861e690e5d1f280edd46d24e4",
+    "rust/runfiles/runfiles.rs": "c69621b4dd7eb15899b7b3dae117d765e8473ca4a6b957ec35d5d2f3a366e591"
+  }
+}

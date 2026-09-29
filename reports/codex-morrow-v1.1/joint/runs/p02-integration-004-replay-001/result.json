@@ -1,0 +1,89 @@
+{
+  "status": "verified_limited",
+  "independent_compilation": false,
+  "independent_execution": true,
+  "P02": "blocked",
+  "J00": "blocked",
+  "G0": "blocked",
+  "product_graphs": "0/2",
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "read_only_evidence": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-readonly-001\\result.json",
+    "sha256": "5ec25f684f5fa448aec95f32a053d0993b70c7437d36c913f7fd0be788b15862"
+  },
+  "argv": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-integration-004\\target\\x86_64-pc-windows-msvc\\debug\\p02-integration-probe.exe",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\runtime.json"
+  ],
+  "exe_sha256": "0592d5e69bfe7fe1c6a5ecdcb86eb3e6f6ce703e4a4f80a66c409146e4bfb682",
+  "environment_keys": [
+    "APPDATA",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_TERMINAL_PROMPT",
+    "HOME",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "PATHEXT",
+    "PROCESSOR_ARCHITECTURE",
+    "SYSTEMROOT",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "environment_values_enumerated": false,
+  "profile": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\profile",
+  "temporary": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-integration-004-replay-001\\tmp",
+  "exit_code": 0,
+  "cases": 24,
+  "counted_assertions": 109,
+  "input_count": 1245,
+  "frozen_inputs_unchanged": true,
+  "runtime_sha256": "0addd149df4e4ea15cacd1968589601fd1e8bbe81c6ab58b3afdb94dd533cee9",
+  "producer_runtime_sha256": "8c8c681c597a86e993c7252ba60048bb5f445d6ccc1f1deea700051c97643f35",
+  "runtime_bytes_equal": false,
+  "semantic_equal": true,
+  "HTTP_bodies_rehashed": [
+    {
+      "case": "three_seams_shared_lifetime",
+      "bytes": 22025,
+      "sha256": "014fca2b0c9e0e24dde717b7e1e915471ad78e788b433b93f8c05ca6f32d662b"
+    },
+    {
+      "case": "http_direct",
+      "bytes": 22025,
+      "sha256": "afc3487a5ba1d5f56155cba540791588bf70a7d7c0e272e83d92eae9186333cc"
+    },
+    {
+      "case": "stream_426_natural_fallback_and_next_session",
+      "bytes": 22025,
+      "sha256": "a4a665a9a4c10dcdf8d21b41f88dbd7ba29edeaf4a4867fbebb564f6eba07094"
+    },
+    {
+      "case": "stream_426_natural_fallback_and_next_session",
+      "bytes": 22025,
+      "sha256": "f4ee5267906c1b03cba53ee3b15242e5eb7337f5e1f3ecba61d66e6661764f78"
+    },
+    {
+      "case": "prewarm_426_natural_fallback_then_stream",
+      "bytes": 22025,
+      "sha256": "bc4742690be564a414a0c6e43b24ea3a3f3507e52b58f8bfe6aa275c827d51f9"
+    },
+    {
+      "case": "preconnect_426_natural_fallback_then_stream",
+      "bytes": 22025,
+      "sha256": "9eaabd8d62f4902c89d67605f1c9b30088287eb12a409c0628791d66515028b1"
+    }
+  ],
+  "fixture_store_directory_absent": true,
+  "owner_release_only": true,
+  "host_writer_release_verified": false,
+  "OS_monitoring": false,
+  "normal_product_build": "not_run",
+  "comparison": "Raw HTTP lengths/hashes and exec params digests independently checked before normalizing JSON object order, UUID process handles and dependent proposal hashes; dynamic proposal wire not independently decoded."
+}

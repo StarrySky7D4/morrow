@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "batch": "p02-source-batch-001",
+  "repository": "https://github.com/farion1231/cc-switch.git",
+  "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "isolated_git_config": true,
+  "steps": [
+    {
+      "command_argv": [
+        "git",
+        "-c",
+        "init.templateDir=",
+        "-c",
+        "init.defaultBranch=source",
+        "init",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\cc-switch"
+      ],
+      "cwd": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex",
+      "started_at": "2026-09-28T11:38:26.085842+00:00",
+      "ended_at": "2026-09-28T11:38:26.109184+00:00",
+      "exit_code": 0,
+      "stdout": "receipts\\p02-source-batch-001\\cc-switch-git-0.stdout.txt",
+      "stderr": "receipts\\p02-source-batch-001\\cc-switch-git-0.stderr.txt"
+    },
+    {
+      "command_argv": [
+        "git",
+        "-c",
+        "credential.helper=",
+        "-c",
+        "core.askpass=",
+        "-c",
+        "http.version=HTTP/1.1",
+        "-c",
+        "http.sslBackend=openssl",
+        "-c",
+        "http.lowSpeedLimit=1",
+        "-c",
+        "http.lowSpeedTime=120",
+        "-c",
+        "core.autocrlf=false",
+        "-c",
+        "core.longpaths=true",
+        "-c",
+        "core.symlinks=false",
+        "-C",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-source-batch-001\\cc-switch",
+        "fetch",
+        "--no-tags",
+        "--depth",
+        "1",
+        "https://github.com/farion1231/cc-switch.git",
+        "846de29c13ac4d65f164db8c15dd5fd58e29f972"
+      ],
+      "cwd": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex",
+      "started_at": "2026-09-28T11:38:26.109675+00:00",
+      "ended_at": "2026-09-28T11:39:29.797240+00:00",
+      "exit_code": 128,
+      "stdout": "receipts\\p02-source-batch-001\\cc-switch-git-1.stdout.txt",
+      "stderr": "receipts\\p02-source-batch-001\\cc-switch-git-1.stderr.txt"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "status": "source_prepared_not_compiled",
+  "scope": "real fixed upstream ResponsesClient stream_request network seam refusal only",
+  "upstream_commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "upstream_expected_path": "upstream/p02-source-batch-001/codex-source/codex-rs",
+  "host_kit_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01",
+  "implementation": "qualification/p02-native-probe-001",
+  "build_owner": "coordinating root agent",
+  "pending": [
+    "Complete pinned upstream source verification",
+    "Isolated exact registry and git dependency preparation",
+    "Separate probe Cargo.lock",
+    "Rust compilation and actual probe execution",
+    "Independent code review"
+  ],
+  "P-02": "not_complete",
+  "G0": "not_claimed"
+}

@@ -1,0 +1,38 @@
+{
+  "scope": "frozen_source_build_and_identity_only",
+  "independent_runtime": false,
+  "product_pass_credit": 0,
+  "reviewer_sha256": "cbd6ee224619e646858a0484dd333440e00cbbc615cb6bea444d09a7a135d362",
+  "runtime_manifest_sha256": "178044ee85d0f1c15e0168e8fcf6b728b5105ac5b2c63b8d2134b16b49a23be9",
+  "status": "verified_read_only",
+  "exit_code": 0,
+  "identity_count": 328,
+  "runtime_files": 10,
+  "host_build_inputs": 228,
+  "producer_evidence_files": 24,
+  "host_compiler_artifact_packages": 97,
+  "host_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\runtime-kit-001\\bin\\morrow-native-session-host.exe",
+  "host_sha256": "12ddcb1acc95a151aa52541d93c13756f50174d9f996a155ece4e0e8d7642e21",
+  "client_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-001\\candidates\\client-001\\morrow-session-client.exe",
+  "client_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "peer_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m02-native-session-adversary-002\\candidates\\peer-002\\morrow-native-session-adversary.exe",
+  "peer_sha256": "b5794c09973f304d70298290f7ceb29a1d3af27dba08920b87d3c06497150878",
+  "peer_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m02-native-session-adversary-002\\candidate-002.json",
+  "peer_manifest_sha256": "afc3f57c1c430d61f88d22ecbe71c170254f6dc47477d67054aff4fde8e1ef42",
+  "source_review": [
+    "shared core HostPolicy activation/ready/revocation/stop/retire; no child-created admission",
+    "first authorize Instant predates hashing/spawn; exact allowlisted environment captured and hashed then reused",
+    "private piped actual Child PID; initial binding and code/kind/sequence checked separately",
+    "bounded control queue8 prioritized over timer/data; one input frame and pending response",
+    "timer branch refreshes Instant; release requires exit_observed and both EOF",
+    "stderr details16 plus totals and event_overflow; no silent completeness assertion",
+    "dedicated std control reader prevents Tokio stdin runtime shutdown wait",
+    "ordinary client has no fault mode; peer002 only fixed own-exe descendant1500ms and watchdog10s"
+  ],
+  "limits": [
+    "Production approval UI, cross-process owner registry, crash recovery absent",
+    "Hash-to-image-load race and OS/descendant containment not closed",
+    "Partial write cancellation and blocked operator stdout not dynamically verified",
+    "In-process no-replacement and delayed admission tests currently producer evidence only"
+  ]
+}

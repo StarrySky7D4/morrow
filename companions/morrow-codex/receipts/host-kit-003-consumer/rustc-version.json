@@ -1,0 +1,14 @@
+{
+  "command": [
+    "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+    "-vV"
+  ],
+  "cwd": "C:\\",
+  "started_utc": "2026-09-28T11:35:45.990044+00:00",
+  "elapsed_seconds": 0.02188610000303015,
+  "exit_code": 0,
+  "stdout": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\rustc-version.stdout.txt",
+  "stderr": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\rustc-version.stderr.txt",
+  "stdout_sha256": "185aa337caf524a621d7b1ce7b21a4d6f92f3ea592d009e481fea0e00e0d0434",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

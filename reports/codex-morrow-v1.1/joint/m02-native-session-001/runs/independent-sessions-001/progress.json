@@ -1,0 +1,116 @@
+[
+  {
+    "case": "normal",
+    "host_exit": 0,
+    "child_exit": 0,
+    "expected_host_exit": 0,
+    "expected_child_exit": 0,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\normal\\result.json",
+    "observation_sha256": "177e5b12bb2a007927d0494cba9abcd9e2c284b55d1a541ebd2f276b30174846",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "revoke",
+    "host_exit": 0,
+    "child_exit": 19,
+    "expected_host_exit": 0,
+    "expected_child_exit": 19,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\revoke\\result.json",
+    "observation_sha256": "2c89c9d465dcfc16362b64676f24ecdc7376bbfa51325dc0573046999ceb29fb",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "stop",
+    "host_exit": 0,
+    "child_exit": 0,
+    "expected_host_exit": 0,
+    "expected_child_exit": 0,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\stop\\result.json",
+    "observation_sha256": "36027d8be50d23be6f0a8598af5687c64216bcdcc17d8203ea94530bafb5f034",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "expiry",
+    "host_exit": 2,
+    "child_exit": 20,
+    "expected_host_exit": 2,
+    "expected_child_exit": 20,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\expiry\\result.json",
+    "observation_sha256": "d9804e26b12498d78b44ccf97bd243883ca92ca1f2559f8bcda60687229d6b1d",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "wrong-artifact",
+    "host_exit": 2,
+    "child_exit": 0,
+    "expected_host_exit": 2,
+    "expected_child_exit": 0,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\wrong-artifact\\result.json",
+    "observation_sha256": "fabe913502bc407d8c4a38d6e9e17a0acbcf0177b1fe8ff5250fef599407b85f",
+    "observer_failures": [
+      "child_OS_observation_unavailable:ProcessLookupError"
+    ],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "modified-epoch",
+    "host_exit": 2,
+    "child_exit": 0,
+    "expected_host_exit": 2,
+    "expected_child_exit": 0,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\modified-epoch\\result.json",
+    "observation_sha256": "db8a2de453a0e67db022b205f50777944adfb7f9ef43ef22ae4335132013eb34",
+    "observer_failures": [
+      "child_OS_observation_unavailable:PermissionError"
+    ],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "no-hello",
+    "host_exit": 2,
+    "child_exit": 1,
+    "expected_host_exit": 2,
+    "expected_child_exit": null,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\no-hello\\result.json",
+    "observation_sha256": "c517ce21396ceb7d8eb64e7bfd06cc7d5013b667b6e927a3da81197146f8dab3",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "partial-frame",
+    "host_exit": 2,
+    "child_exit": 1,
+    "expected_host_exit": 2,
+    "expected_child_exit": null,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\partial-frame\\result.json",
+    "observation_sha256": "2c1842b343588aa88ca6cb77655746ba04e44722c0bfa2cfab172f3a70aad2e1",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "ignore-stop",
+    "host_exit": 0,
+    "child_exit": 1,
+    "expected_host_exit": 0,
+    "expected_child_exit": null,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\ignore-stop\\result.json",
+    "observation_sha256": "b79d4925e5ad1354fcc0344141e64730a9e8ddc2c6f8742bb0130353bff35eb6",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  },
+  {
+    "case": "hold-output",
+    "host_exit": 0,
+    "child_exit": 0,
+    "expected_host_exit": 0,
+    "expected_child_exit": 0,
+    "observations": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m02-native-session-001\\runs\\independent-sessions-001\\hold-output\\result.json",
+    "observation_sha256": "18d5620db41f5f91e86e1c84931d523376d0d857579126d1b9090c22525958b8",
+    "observer_failures": [],
+    "exit_expectations_match": true
+  }
+]

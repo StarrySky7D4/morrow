@@ -1,0 +1,20 @@
+{
+  "db_sha256": "cba09fea137249194d192dd5a8594f112351bc3ebd537e3656828d9695b4b107",
+  "immutable_read_only": true,
+  "database_unchanged": true,
+  "owner": "Released",
+  "pid": 12212,
+  "session": 11601825647018375088,
+  "epoch": 1,
+  "exit_and_dual_eof": true,
+  "parent_state": 3,
+  "source": 1,
+  "reason": 19,
+  "ttl_ms": 10000,
+  "http_state": 3,
+  "send_budget": 1,
+  "response_limit": 65536,
+  "request_sha256": "79e9c2a2beaf319a42ae9b3440ceba867724326973fa13766759b17e04958cb2",
+  "body_sha256": "7cfb211b7067601d1210a4369d1e86af01556c1e6d68ff4e4a5e1cc9a8b09848",
+  "core_coordination_payload_decoded": false
+}

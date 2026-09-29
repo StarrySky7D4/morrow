@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "codex-rs/codex-api/src/common.rs",
+      "git_blob_sha1": "8d0d929ad09a8299213c5b7552d9e2fca37eb7d5",
+      "sha256": "1b01d4b2d7784c67e302b38d5b44aaa5ff733d8b575fb776cc4e2902ccb3a14c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-api/src/common.rs"
+    },
+    {
+      "path": "codex-rs/codex-api/src/sse/responses.rs",
+      "git_blob_sha1": "c01b13f1fe63d5065babac0d96cf1d74e4a4dbb4",
+      "sha256": "6c7b6e9d121c03658954b759d5febf71667f673a9647bcd41f674fa7ecd63f65",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-api/src/sse/responses.rs"
+    },
+    {
+      "path": "codex-rs/codex-client/src/provider.rs",
+      "git_blob_sha1": "9feb92fb2cb1d5d759aea0ecdf9ee2ff6b55578b",
+      "sha256": "5e85192349aa611f3f6a8b5ebac2e73d0841dda5caf8c875382da7d9f3a4079c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-client/src/provider.rs"
+    },
+    {
+      "path": "codex-rs/codex-client/src/retry.rs",
+      "git_blob_sha1": "b10fa50794de347b73a76c83d0b6b36e055a7842",
+      "sha256": "4e61c0e5e5037866706863c32780748ec82e114160ec759a582621de0aad4c06",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-client/src/retry.rs"
+    },
+    {
+      "path": "codex-rs/http-client/src/error.rs",
+      "git_blob_sha1": "181a213b144a064c59e3ad7708cfbfd10d81d032",
+      "sha256": "2d1b153d1f9e89504bb5847b0b06b290c0d05de7a29b8309d82064b4c14d9309",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/http-client/src/error.rs"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "status": "verified",
+  "kit_files": 180,
+  "authority_source_files": 12,
+  "kit_unchanged_across_independent_build": true,
+  "kit_prebuild_evidence": "../p02-native-probe-001-review-003/kit-copy-during-build.json",
+  "compiler_artifact_package_ids": 476,
+  "build_script_messages": 60,
+  "build_script_unique_packages": 54,
+  "toolchain": "Rust/Cargo 1.95.0 x86_64-pc-windows-msvc",
+  "old_tests_repeated": false,
+  "relocation": {
+    "original_manifest_sha256": "5d543cba59604c836118a92303ee1912ec2e0effc39e1a831a870384353cebb9",
+    "consumer_manifest_sha256": "4d578d700f24b269c998d39deb18f6ef577d054e8b8f3358611651cd4cd019ad",
+    "source_bytes_equal": true,
+    "lock_bytes_equal": true,
+    "resolved_graph_semantically_equal": true,
+    "graph_normalization": "Only consumer root location, node ordering and duplicate identical dep_kinds entries normalized; producer tungstenite repeats 10 identical dependency-kind records. Package IDs, dependencies, targets and features otherwise exact."
+  },
+  "executable_difference_limit": "Consumer CARGO_MANIFEST_DIR/output guard and build paths differ; executable byte reproducibility is not claimed.",
+  "build_output_scope": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\t-p02-004",
+  "kit_manifest_sha256": "5555751ab1cf590d68e9610dae396677b79422999ec61b7c3d3d7183e8ed4a01"
+}

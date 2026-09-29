@@ -1,0 +1,60 @@
+{
+  "status": "guard_source_order_verified",
+  "checks": [
+    {
+      "file": "core/src/unified_exec/process_manager.rs",
+      "file_sha256": "a97c62c227838b4484df6fa481dc0cbe8e24bc3e5d5de590403ca17fea473b4f",
+      "guard_line": 1324,
+      "effect_line": 1327,
+      "source_order_only": true
+    },
+    {
+      "file": "core/src/exec.rs",
+      "file_sha256": "64a49bf6424ba44e5dbfcd5155fe0b5f2e9c8c5a5efc420815dbde9e9bbf8e2e",
+      "guard_line": 452,
+      "effect_line": 455,
+      "source_order_only": true
+    },
+    {
+      "file": "core/src/client.rs",
+      "file_sha256": "31e7696bc36b366384fb4d6bb098affd844d66b17d55d73838d58293fdaf808b",
+      "guard_line": 1197,
+      "effect_line": 1208,
+      "source_order_only": true
+    },
+    {
+      "file": "core/src/client.rs",
+      "file_sha256": "31e7696bc36b366384fb4d6bb098affd844d66b17d55d73838d58293fdaf808b",
+      "guard_line": 1266,
+      "effect_line": 1269,
+      "source_order_only": true
+    },
+    {
+      "file": "thread-store/src/live_thread.rs",
+      "file_sha256": "fbfa20dc8593e04aa89ab9326648fecde1498ecd96b2287e9af2a9e225059eb1",
+      "guard_line": 144,
+      "effect_line": 147,
+      "source_order_only": true
+    },
+    {
+      "file": "thread-store/src/live_thread.rs",
+      "file_sha256": "fbfa20dc8593e04aa89ab9326648fecde1498ecd96b2287e9af2a9e225059eb1",
+      "guard_line": 197,
+      "effect_line": 204,
+      "source_order_only": true
+    }
+  ],
+  "host_preflight": [
+    {
+      "original": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\p02-integration-004-preflight-review.md",
+      "copy": "receipts/p02-integration-004/host-p02-integration-004-preflight-review.md",
+      "sha256": "1b84f357742784084f57b9877dadd4bd100cd8563c25f6eb90476f710ff43974"
+    },
+    {
+      "original": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\p02-integration-004-preflight-inputs.json",
+      "copy": "receipts/p02-integration-004/host-p02-integration-004-preflight-inputs.json",
+      "sha256": "4c9dddb8c0bdfae9c29fab50bbb0870bf6e98053c5d12191070fb328f004ecec"
+    }
+  ],
+  "limits": "No OS tracing. Dynamic guard errors and callback counts live in separate runtime receipt."
+}

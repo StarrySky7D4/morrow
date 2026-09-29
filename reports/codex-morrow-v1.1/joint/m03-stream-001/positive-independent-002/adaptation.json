@@ -1,0 +1,16 @@
+{
+  "prior_independent_script": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\m03-stream-001\\positive-independent-001\\joint_positive_once.py",
+  "prior_script_sha256": "c9fe3424a3ddc2259a62233f1745732bbfa1f868281561692072e437c0350185",
+  "new_script_sha256": "76fa0cd8b77dfb0aad6dd4baf621cc6c94cbc284d5a3e8c92c1e1bef23467ea5",
+  "changes": [
+    "fixed host004 path and hashes",
+    "new batch/profile/cwd/operation/grant and authorized guest output",
+    "retain exact positive byte/terminal/OS checks",
+    "require one owner25 application and no false external revoke"
+  ],
+  "prior_failed_batch_untouched": true,
+  "run_limit": 1,
+  "automatic_retry": false,
+  "ttl_ms": 10000,
+  "handshake_ms": 6000
+}

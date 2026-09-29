@@ -1,0 +1,18 @@
+{
+  "status": "transport_producer_ready_for_review",
+  "manifest": "reports/codex-morrow-v1.1/host/m03-stream-001/transport-kit-001/manifest.json",
+  "manifest_sha256": "c19503dbb991377fd7df1a66618ab4a19c7a8658fc7e78529349ac5bce16abec",
+  "producer_receipt": "reports/codex-morrow-v1.1/host/m03-stream-001/transport-20260928T210834849150Z/result.json",
+  "producer_receipt_sha256": "0c4b74cc41dc39455869d5e8003eca336728a44c52b9b8ec9247cd8f21a28db2",
+  "tests_passed": 16,
+  "old_inputs_unchanged": 2267,
+  "prior_failure": "First run passed 15/16; drop test incorrectly required closed-port Windows connection to finish inside 1s. Fixed test uses a separate100ms deadline to distinguish admitted Timeout/Transport from permit Limit. Prior evidence retained.",
+  "limitations": [
+    "native data pipe / actual OS Pending",
+    "real Core/SSE",
+    "independent joint transport review",
+    "TLS runtime",
+    "public DNS/network",
+    "product gates"
+  ]
+}

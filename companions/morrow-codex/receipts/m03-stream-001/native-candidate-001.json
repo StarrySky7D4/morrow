@@ -1,0 +1,103 @@
+{
+  "status": "fixed_native_core_candidate_compiled_ready_for_host_integration_review",
+  "input_sha256": {
+    "native/m03-stream-001/Cargo.lock": "ac75ba5b6e90d350144f310b05c274a6a78bc46bfa58f3b4f85349ea795f646d",
+    "native/m03-stream-001/Cargo.toml": "33feb18d9989a0f185494c1357d7e02472c80dd840c6edfbd1e2f970d8479a05",
+    "native/m03-stream-001/README.md": "968521038d594c965be5dd3817c843ba61b3971f2b3c587a39ad8faeb1fb59f9",
+    "native/m03-stream-001/src/admission.rs": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+    "native/m03-stream-001/src/delivery.rs": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+    "native/m03-stream-001/src/lib.rs": "db0600801316546554ced3faec320a0c0b34c505b4625b975d3eebf5128a1e3f",
+    "native/m03-stream-001/src/main.rs": "3d7c5905794facd2a068db8eb78789131db80dcc0b912fa43db5e156809d3942",
+    "native/m03-stream-001/src/session.rs": "85f613c0fe1c244ab80f2ac61b8ea22637b769d6820604ac9a4668018cb5a2d0",
+    "native/m03-stream-001/src/workers.rs": "16a893d10b555c8de249b0daff954c67be81415d90a69003094a76552f328c3d",
+    "receipts/m03-stream-001/build_native.py": "c431819c05571966f24744b298fd55ef8098d33f24ae6b4379c1ac6caa08bcc0",
+    "receipts/m03-stream-001/freeze_native.py": "2297b251be1618f094037f80658f55b83fdd2a2bfcac94a191d6d798e1dcafac",
+    "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/result.json": "c7ea4575bf218b1842162bbf3df6151e4bec618fe8c96890bdee69a6ae785129",
+    "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/stderr.txt": "af9017a26c5942cb1680fa7a78ad09c7657d7f8a71969595c5ee557a820eac1f",
+    "receipts/m03-stream-001/native-runs/build-20260928T215752Z-49e69f5e/stdout.txt": "dbdcff909ec0f2bfb6e3bae83ab0e8f2ca4d5622c64407c37bcb156f6d782652",
+    "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/result.json": "9f0d533af0c3cf8dbd684f6d79c2c4d9336394a07f64f471eee2fc7b48d0ea41",
+    "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/stderr.txt": "78db0ca51dd72ce7aeed1bea5673bd92820ea2f5e951ca54f999235f53d007f0",
+    "receipts/m03-stream-001/native-runs/test-20260928T215835Z-936ce7f2/stdout.txt": "7398eff46ff04ed7f0af8827b23d745b774e13f17e39347cadde1d3b9da9733f",
+    "out/m03-native-001/candidates/native-001/morrow-codex-native-http-client.exe": "b3dcb18ba3d516ffb80b3c395061b434548611a53157146059593edff8562dbd"
+  },
+  "dependency_receipt_sha256": {
+    "pre-wire-candidate-001.json": "1c0f9a109bd90df4bd7f909387f55b6d7ce87902ba02a68a75e695824a354d57",
+    "wire-intake-001.json": "0699caf2bb4ee290402e1738b9dbabf02fadc73e90db6fd45592d4e5e23b9137",
+    "pipe-intake-001.json": "8b9d4a800616b709afaad897e0f7b38626ae28531eb771825e4342cf80ea6019"
+  },
+  "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-native-001\\candidates\\native-001\\morrow-codex-native-http-client.exe",
+  "executable_sha256": "b3dcb18ba3d516ffb80b3c395061b434548611a53157146059593edff8562dbd",
+  "executable_bytes": 65629696,
+  "compiler_reported_original_executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-stream-001\\target\\x86_64-pc-windows-msvc\\debug\\morrow-codex-native-http-client.exe",
+  "actual_core_entry": "main::run -> request_task::start -> real ModelClient session.stream -> upstream Responses/SSE through NativeHttpSession",
+  "host_schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+  "generated_rust_sha256": "071955f822b2eab7a803ad2f8d6da50dde4d7371e1c1ef79009b272a4eb842c3",
+  "generated_matches_host": true,
+  "compiler_artifact_unique_package_ids": 907,
+  "lock_packages": 1119,
+  "lock_added_identities": [
+    [
+      "capnp",
+      "0.24.1",
+      "registry+https://github.com/rust-lang/crates.io-index",
+      "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67"
+    ],
+    [
+      "capnpc",
+      "0.24.0",
+      "registry+https://github.com/rust-lang/crates.io-index",
+      "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0"
+    ],
+    [
+      "embedded-io",
+      "0.7.1",
+      "registry+https://github.com/rust-lang/crates.io-index",
+      "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7"
+    ],
+    [
+      "morrow-codex-native-http-client",
+      "0.3.0",
+      null,
+      null
+    ],
+    [
+      "morrow-native-http-stream-wire",
+      "0.3.0-experimental.1",
+      null,
+      null
+    ],
+    [
+      "morrow-native-pipe-win",
+      "0.1.0",
+      null,
+      null
+    ]
+  ],
+  "local_tests_passed": 6,
+  "native_host_runtime_invoked": false,
+  "actual_core_http_run_verified": false,
+  "product_success_claimed": false,
+  "whole_session_release_verified": false,
+  "cli": [
+    "--morrow-native-http-v3",
+    "--fixture-base",
+    "http://127.0.0.1:PORT/v1",
+    "--evidence-dir",
+    "ABSOLUTE_NEW_BATCH_DIRECTORY_UNDER_PLUGIN_OUT",
+    "--max-chunk",
+    "1024"
+  ],
+  "outputs": [
+    "core-events.jsonl",
+    "result.json"
+  ],
+  "host_pairing": "HttpPrepare must receive direct State before data RequestChunk; Head remote_address is actual SocketAddr; final ACK precedes normal RequestClosed; Close then actual child exit is observed externally",
+  "first_delta_gate": "trusted harness reads a flushed actual_core_output_text_delta record; guest never writes fixture control",
+  "evidence_limits": [
+    "six tests are local state/async ownership, not HTTP/Core invocation",
+    "Started.pending is not sustained OS pending",
+    "RequestClosed and local data thread join are not owner release",
+    "same-user isolation/process-tree cleanup not claimed"
+  ],
+  "prior_failed_build": "native-runs/build-20260928T214921Z-8d73e7bf/result.json; MutexGuard Send lifetime fixed; failure retained"
+}

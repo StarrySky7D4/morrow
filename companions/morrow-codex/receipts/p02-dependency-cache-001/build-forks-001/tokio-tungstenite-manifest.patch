@@ -1,0 +1,12 @@
+--- fixed-upstream/tokio-tungstenite/Cargo.toml
++++ qualification-build-forks/tokio-tungstenite/Cargo.toml
+@@ -35,8 +35,7 @@
+ tokio = { version = "1.0.0", default-features = false, features = ["io-util"] }
+ 
+ [dependencies.tungstenite]
+-git = "https://github.com/openai-oss-forks/tungstenite-rs"
+-rev = "4fffad30fe373adbdcffab9545e9e9bf4f2fc19f"
++path = "../tungstenite"
+ default-features = false
+ 
+ [dependencies.native-tls-crate]

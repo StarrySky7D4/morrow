@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "sdk/python/examples/08_local_image_and_text/sync.py",
+      "mode": "100644",
+      "size": 921,
+      "git_blob_sha1": "ee80a181ffa1a19c00cc227b74d12ded4456cf67",
+      "sha256": "5a9cd32e0402528d0ccf6bca3bc691986c1df6e7c5ebc1d7dcf3f19dfedc410a",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "third_party/v8/llvm_libc.BUILD.bazel",
+      "mode": "100644",
+      "size": 388,
+      "git_blob_sha1": "9774f5692b9e4880aeaba7030b0f8db645d316d4",
+      "sha256": "15158ca2fcc1db8412fd64e47706f4af267ec01b82053dc5bba1b1627f7861ad",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    },
+    {
+      "path": "third_party/voice/assemble_package.py",
+      "mode": "100644",
+      "size": 7008,
+      "git_blob_sha1": "a8077d4c5f41dd4a538b1f05ea273606b900c1a6",
+      "sha256": "13d28ac2d7ddd897e27501ea4147bb2ac8988cd67172affa429c9dc3941e7e8b",
+      "provenance": "fixed_commit_github_connector_base64_with_independent_blob_check"
+    }
+  ],
+  "success_count": 3
+}

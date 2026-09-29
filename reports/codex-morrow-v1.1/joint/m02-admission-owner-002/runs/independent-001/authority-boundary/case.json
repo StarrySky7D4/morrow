@@ -1,0 +1,10 @@
+{
+  "case": "authority-boundary",
+  "status": "executed_pending_semantic_review",
+  "facts": {
+    "grant_id": "eddfe77a3ccfdf50149df7089edb80bc51108fe3089d93b8ec5c7e72ad0693cf",
+    "guest_style_approved_rejected": true,
+    "no_known_spawn": true,
+    "revoked_before_claim": true
+  }
+}

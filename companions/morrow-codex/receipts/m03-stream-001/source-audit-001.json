@@ -1,0 +1,289 @@
+{
+  "status": "design_only_readonly_source_verified_no_build_no_runtime",
+  "fixed_upstream_commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "fixed_integration_handoff_sha256": "513b1cfbf4b19b32c247b06810430ae29b1e1b779078b9761100a86c7a8d1751",
+  "fixed_integration_inputs_verified": 83,
+  "baseline_manifest_sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7",
+  "sealed_patch_manifest_sha256": "c776765cb99e22c03a725a2dca7ac11835166c24db1aeb8a8f510228e90243dc",
+  "inspected_files": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\Cargo.toml",
+      "sha256": "8603e339295d4e243e588b5a3a39cc049b730866eb3d71f49b85f8b4da721b43",
+      "bytes": 6523,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/Cargo.toml"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\lib.rs",
+      "sha256": "38907e1a5b39de57681d50b0f5eed5f0bf962a304cc5cf9f864959578e7d00de",
+      "bytes": 8899,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/lib.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\client.rs",
+      "sha256": "31e7696bc36b366384fb4d6bb098affd844d66b17d55d73838d58293fdaf808b",
+      "bytes": 120598,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/client.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\client_common.rs",
+      "sha256": "0125e520f71798e6c31a1d0147934c0d90288ab9cc4bfce6e8374ac587f2b43a",
+      "bytes": 4820,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/client_common.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\morrow_network.rs",
+      "sha256": "001a8d720dbeaf41f0ebd79ab3cc8b70c222b7a2d5d735cb4affc9fb63f586d9",
+      "bytes": 2241,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/morrow_network.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\morrow_network_qualification.rs",
+      "sha256": "16152239c162d77cb6ab820468071f52b1705e2751bc44625a23a1a1f925a553",
+      "bytes": 8440,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/morrow_network_qualification.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\test_support.rs",
+      "sha256": "002e3e560504a3e97db67130bd0a363e1e1e6a61a58a34fe28c73e18521b5731",
+      "bytes": 9014,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/test_support.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\responses_metadata.rs",
+      "sha256": "17821e5baed960026bc9b54f0af5085883c9c057647631fcd4d0070fdb3827bd",
+      "bytes": 24943,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/core/src/responses_metadata.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\endpoint\\responses.rs",
+      "sha256": "4f2fff3da4ca3ca9fcfa40ada8e98a0229af296094e03febb4d823f32ef932c8",
+      "bytes": 4961,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/endpoint/responses.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\endpoint\\session.rs",
+      "sha256": "355cc0f030ab32d21b3e6fcce569a15a59958fecdda85423bf05642497bdb1eb",
+      "bytes": 4446,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/endpoint/session.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\sse\\responses.rs",
+      "sha256": "6c7b6e9d121c03658954b759d5febf71667f673a9647bcd41f674fa7ecd63f65",
+      "bytes": 69716,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/sse/responses.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\common.rs",
+      "sha256": "1b01d4b2d7784c67e302b38d5b44aaa5ff733d8b575fb776cc4e2902ccb3a14c",
+      "bytes": 14017,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/common.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\telemetry.rs",
+      "sha256": "25524333a8131297e0fd04c5b869417b53e9f704377febb64be70d01df8ffdb9",
+      "bytes": 2712,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/telemetry.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\provider.rs",
+      "sha256": "d2dc59b0872b40d60eaed12322e14490f582c03ca92347f1b0cbdd1842744154",
+      "bytes": 1942,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/provider.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\requests\\headers.rs",
+      "sha256": "98c9579a8f17327fda1792ffbf22e8d09241fdc79620c37b699d94cd9637cd47",
+      "bytes": 1444,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/src/requests/headers.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\tests\\sse_end_to_end.rs",
+      "sha256": "abcfb77a4d973dcc929a6a7bc95964412721ce5a0d8d467b240aa43c55a34fde",
+      "bytes": 5799,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-api/tests/sse_end_to_end.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\http-client\\src\\transport.rs",
+      "sha256": "88aa391e6893205336b3412b065600bd717da8d80d59c1c7dd094d19bee666b6",
+      "bytes": 11251,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/http-client/src/transport.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\http-client\\src\\request.rs",
+      "sha256": "e909859af99adabad04daf3663ff77fae736e7587870a3dc3545c7d5f3ffe4a1",
+      "bytes": 11131,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/http-client/src/request.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\http-client\\src\\error.rs",
+      "sha256": "2d1b153d1f9e89504bb5847b0b06b290c0d05de7a29b8309d82064b4c14d9309",
+      "bytes": 1550,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/http-client/src/error.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-client\\src\\retry.rs",
+      "sha256": "4e61c0e5e5037866706863c32780748ec82e114160ec759a582621de0aad4c06",
+      "bytes": 3840,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-client/src/retry.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-client\\src\\provider.rs",
+      "sha256": "5e85192349aa611f3f6a8b5ebac2e73d0841dda5caf8c875382da7d9f3a4079c",
+      "bytes": 2945,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/codex-client/src/provider.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\model-provider-info\\src\\lib.rs",
+      "sha256": "078d1fd5e5c36d04d6405569b5a2ad50c17fb47a5a08501346754068d3e0b0c1",
+      "bytes": 30932,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/model-provider-info/src/lib.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\model-provider\\src\\provider.rs",
+      "sha256": "605262f70a18b4fc4499fe44a726c599fe95bd7b65adc8121f124751b93b0cd9",
+      "bytes": 55280,
+      "provenance": "fixed upstream baseline plus sealed integration004 patch",
+      "source_relative_path": "codex-rs/model-provider/src/provider.rs"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-exec-store-002\\vendor\\eventsource-stream-0.2.3\\src\\utf8_stream.rs",
+      "sha256": "258999764ac23fa12f46a3ad13d70e617a866bcddbbda44d807ecc03d1efb885",
+      "bytes": 5304,
+      "provenance": "eventsource-stream0.2.3 pinned vendor checksum"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-exec-store-002\\vendor\\eventsource-stream-0.2.3\\src\\event_stream.rs",
+      "sha256": "bfb0ba0783728fa39ea74239436a82845b1cf472c42af9f2bd7310708182e497",
+      "bytes": 17241,
+      "provenance": "eventsource-stream0.2.3 pinned vendor checksum"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-exec-store-002\\vendor\\eventsource-stream-0.2.3\\src\\parser.rs",
+      "sha256": "22af276bb081f433e897aaf923ad66dbd51eaf468e156956707914465b8fdd3f",
+      "bytes": 3127,
+      "provenance": "eventsource-stream0.2.3 pinned vendor checksum"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-exec-store-002\\vendor\\eventsource-stream-0.2.3\\src\\traits.rs",
+      "sha256": "9ad6cbbc3797df9421bdec0f22f4c74c1be8aec39f951eea3da17b867225a988",
+      "bytes": 449,
+      "provenance": "eventsource-stream0.2.3 pinned vendor checksum"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\p02-exec-store-002\\vendor\\eventsource-stream-0.2.3\\Cargo.toml",
+      "sha256": "b3a669f64604f19acae611ec2e7b1abb70560d920d23dab003e5090d023a8d83",
+      "bytes": 1655,
+      "provenance": "eventsource-stream0.2.3 pinned vendor checksum"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\p02-integration-004\\Cargo.toml",
+      "sha256": "ae2340aee9c0f99989737764a02bbffb5f64ad88f3ba83e6590a5513fbf49274",
+      "bytes": 2689,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\p02-integration-004\\Cargo.lock",
+      "sha256": "9b9ec31cfe28a0703109742e9a9511b8dd337c1c64bf1ee6e7bf6fc5c068a438",
+      "bytes": 297802,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\p02-integration-004\\src\\network.rs",
+      "sha256": "7e61e33f24eac3c5f0fd125a1df4669a24b84bd3be66a2f3e75c0de281c725d1",
+      "bytes": 10153,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\src\\client.rs",
+      "sha256": "fcec786bce130605e96c8d4ee4c1c7d4da358dab05d847ac3d328af1cf2bd035",
+      "bytes": 12227,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\src\\process_io.rs",
+      "sha256": "3131480bcb93a8b30eec1f64f32b1fd197e4052ed39472681966b7acb9cfb0fc",
+      "bytes": 8409,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\src\\framing.rs",
+      "sha256": "d04f36fcad16099e496bff7e8666c57c4dec67f96f217c389935af999fa116ad",
+      "bytes": 4006,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\src\\lib.rs",
+      "sha256": "dd4d26c2e03d026dc0edc6e339f1df42a569876fa1542877e07fa4795aeae1f0",
+      "bytes": 2710,
+      "provenance": "current read-only fixed qualification/native source"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m02-native-session-001\\vendor\\capnp-kit-001\\wire\\native_session.capnp",
+      "sha256": "fa419bc52779e160985bf55da8ef05b7ed5f1603ebf2350d412473775ffa6450",
+      "bytes": 2460,
+      "provenance": "current read-only fixed qualification/native source"
+    }
+  ],
+  "host_proposal": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\IMPLEMENTATION-PROPOSAL-001.md",
+  "host_proposal_sha256": "957b58bc8e321849a85996d806e1cda8e669bd0109ffd19fb2d4d33de0df713f",
+  "documents_sha256": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-001\\integration-design-001.md": "f23b8e8a2b747c966ff24b81e29a3a7d34cf9e31d0145ff6d5ea283bda9b51d7",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-001\\integration-supplement-001.md": "b0ff63e549684911aafcca7228bad8f034218bc3e29ea7206e88939414e554ff"
+  },
+  "actual_prior_request": {
+    "receipt": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\p02-integration-004\\runtime-20260928T141315Z-6ee6091f3e.json",
+    "receipt_sha256": "8c8c681c597a86e993c7252ba60048bb5f445d6ccc1f1deea700051c97643f35",
+    "case": "http_direct",
+    "body_bytes": 22025,
+    "body_sha256": "de3dc0d590e17b7aa6e1a584fdf3740f3b7b7911bd3d3796b3b84ab669bf8e3a",
+    "header_names": [
+      "accept",
+      "content-type",
+      "originator",
+      "session-id",
+      "thread-id",
+      "x-client-request-id",
+      "x-codex-turn-metadata",
+      "x-codex-window-id"
+    ],
+    "not_a_new_request_or_M03_run": true
+  },
+  "reuse": {
+    "frozen_integration_source_as_readonly_dependency": true,
+    "real_Core_public_success_entry_possible": true,
+    "old_refusal_probe_valid_success_entry": false,
+    "ordinary_client001_executable_supports_HTTP": false,
+    "native_control_principles_reusable": true,
+    "new_host_authoritative_wire_required": true
+  },
+  "limits": [
+    "Design does not prove compilation or runtime of the new integration",
+    "Only selected baseline/parser sources rehashed, not all8697 upstream files",
+    "No M03 network request or M02 rerun",
+    "No production authentication/UI/full agent loop integration",
+    "Original design numerical draft superseded by supplement001",
+    "No schema/runtime changes or commit/push/release"
+  ]
+}

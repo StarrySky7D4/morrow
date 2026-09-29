@@ -1,0 +1,19 @@
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 4 tests
+test raw_request_hash_preserves_key_order_headers_and_identity_without_json_reencoding ... ok
+test orthogonal_eof_observed_cancel_and_worker_owner_status_remain_expressible ... ok
+test bounds_union_and_false_completion_are_rejected ... ok
+test all_kinds_roundtrip_and_truncation_trailing_lengths_fail ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

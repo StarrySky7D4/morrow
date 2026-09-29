@@ -1,0 +1,7 @@
+
+running 1 test
+test actual_child_pid_duplex_bytes_and_client_disconnect_are_observed ... child_pid=12008 client_disconnect=109 actual_child_exit=true stdout_eof=true
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.01s
+

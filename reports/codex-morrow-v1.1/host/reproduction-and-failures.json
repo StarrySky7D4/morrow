@@ -1,0 +1,85 @@
+{
+  "status": "passed",
+  "qualification_only": true,
+  "reproduced_files": 40,
+  "identical": true,
+  "commands": [
+    {
+      "command": [
+        "cargo",
+        "run",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002\\Cargo.toml",
+        "--features",
+        "qualification",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\build\\agent-host-g0-kit-target",
+        "--example",
+        "vectors",
+        "--",
+        "--output",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\vector-repro-001"
+      ],
+      "exit_code": 0,
+      "expectation": "success",
+      "stdout": "Generated 19 request/reply vectors plus unknown-version rejection\n",
+      "stderr": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s\n     Running `build\\agent-host-g0-kit-target\\debug\\examples\\vectors.exe --output C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\vector-repro-001`\n"
+    },
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "verify-kit",
+        "--input",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002"
+      ],
+      "exit_code": 0,
+      "expectation": "success",
+      "stdout": "{\"status\": \"verified\", \"file_count\": 180, \"manifest_sha256\": \"bb02d3e4b0ac1efd3195b1036bdb00669036d1124733060cde3b2d279576f464\", \"schema_sha256\": \"da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f\", \"qualification_only\": true}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "tool/agent_host_build.py",
+        "export-sdk",
+        "--baseline",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m00-inputs.json",
+        "--output",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\build\\agent-host-g0-kit-target"
+      ],
+      "exit_code": 1,
+      "expectation": "reject existing output",
+      "stdout": "",
+      "stderr": "FAIL: output already exists; choose a new directory (no old artifact reuse)\n"
+    },
+    {
+      "command": [
+        "cargo",
+        "run",
+        "--locked",
+        "--offline",
+        "--manifest-path",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002\\Cargo.toml",
+        "--features",
+        "qualification",
+        "--target-dir",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\build\\agent-host-g0-kit-target",
+        "--example",
+        "vectors",
+        "--",
+        "--output",
+        "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\vector-repro-001"
+      ],
+      "exit_code": 1,
+      "expectation": "reject existing output",
+      "stdout": "",
+      "stderr": "    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.02s\n     Running `build\\agent-host-g0-kit-target\\debug\\examples\\vectors.exe --output C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\vector-repro-001`\nError: Os { code: 183, kind: AlreadyExists, message: \"当文件已存在时，无法创建该文件。\" }\nerror: process didn't exit successfully: `build\\agent-host-g0-kit-target\\debug\\examples\\vectors.exe --output C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\vector-repro-001` (exit code: 1)\n"
+    }
+  ],
+  "kit_manifest_sha256": "bb02d3e4b0ac1efd3195b1036bdb00669036d1124733060cde3b2d279576f464"
+}

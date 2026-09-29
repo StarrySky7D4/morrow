@@ -1,0 +1,195 @@
+{
+  "lock_sha256": "aba83bdb6c9d8df55a3204bc0ca3c584af8b8a6890c45ad5d7746ac7b9e1fc5f",
+  "package_count": 13,
+  "files": [
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\block-buffer-0.10.4.crate",
+      "sha256": "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71",
+      "package": "block-buffer",
+      "version": "0.10.4"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\bl\\oc\\block-buffer",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\bl\\oc\\block-buffer",
+      "sha256": "01c56856aa2b0252ce0d90752ec2c0106edff7db2c1bdf35d60244762fd18419",
+      "package": "block-buffer",
+      "version": "0.10.4"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnp-0.24.1.crate",
+      "sha256": "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67",
+      "package": "capnp",
+      "version": "0.24.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ca\\pn\\capnp",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ca\\pn\\capnp",
+      "sha256": "d87f0e107f25fc6f872dfaa6cbdf95d5cbbabbcc436e3b78dd5118f46dd7ef37",
+      "package": "capnp",
+      "version": "0.24.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\capnpc-0.24.0.crate",
+      "sha256": "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0",
+      "package": "capnpc",
+      "version": "0.24.0"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ca\\pn\\capnpc",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ca\\pn\\capnpc",
+      "sha256": "88fe6105a41a63f0935a61edc7e6fe2fd3ad03bc00e42d0b848acaf06179b5c3",
+      "package": "capnpc",
+      "version": "0.24.0"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\cfg-if-1.0.5.crate",
+      "sha256": "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600",
+      "package": "cfg-if",
+      "version": "1.0.5"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cf\\g-\\cfg-if",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cf\\g-\\cfg-if",
+      "sha256": "8f6eaea0f7fc5f6848486cbdf55738698871d39e9120c4c1c68fe5c964696d7d",
+      "package": "cfg-if",
+      "version": "1.0.5"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\cpufeatures-0.2.17.crate",
+      "sha256": "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280",
+      "package": "cpufeatures",
+      "version": "0.2.17"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cp\\uf\\cpufeatures",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cp\\uf\\cpufeatures",
+      "sha256": "dd29f42e05ee3cf258f4ecf10c43c47625306fbb3f041106ac48cf33d02b1435",
+      "package": "cpufeatures",
+      "version": "0.2.17"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\crypto-common-0.1.7.crate",
+      "sha256": "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a",
+      "package": "crypto-common",
+      "version": "0.1.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cr\\yp\\crypto-common",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\cr\\yp\\crypto-common",
+      "sha256": "888aa37a81634f87ae790d68b432c51f0c88a238fc08a760171958e263daef2f",
+      "package": "crypto-common",
+      "version": "0.1.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\digest-0.10.7.crate",
+      "sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292",
+      "package": "digest",
+      "version": "0.10.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\di\\ge\\digest",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\di\\ge\\digest",
+      "sha256": "4a9f0a9b47df415003371f47ed05c5a48bab33e642a3476e8ad1d4124178cfa3",
+      "package": "digest",
+      "version": "0.10.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\embedded-io-0.7.1.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\embedded-io-0.7.1.crate",
+      "sha256": "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7",
+      "package": "embedded-io",
+      "version": "0.7.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\em\\be\\embedded-io",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\em\\be\\embedded-io",
+      "sha256": "f2d61603b481f5d451040907d168a87b20ce4b714d50acea1d3980675071dbde",
+      "package": "embedded-io",
+      "version": "0.7.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\generic-array-0.14.7.crate",
+      "sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a",
+      "package": "generic-array",
+      "version": "0.14.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ge\\ne\\generic-array",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ge\\ne\\generic-array",
+      "sha256": "ca57d9fc384febb27edb69462550ed8e38f8e11d2c074260759055af41affcb4",
+      "package": "generic-array",
+      "version": "0.14.7"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\libc-0.2.189.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\libc-0.2.189.crate",
+      "sha256": "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2",
+      "package": "libc",
+      "version": "0.2.189"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\li\\bc\\libc",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\li\\bc\\libc",
+      "sha256": "24166d96fa629d76441640a11ed23f1c690b1d8223dec8bccf36603116f61faa",
+      "package": "libc",
+      "version": "0.2.189"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\sha2-0.10.9.crate",
+      "sha256": "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283",
+      "package": "sha2",
+      "version": "0.10.9"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\sh\\a2\\sha2",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\sh\\a2\\sha2",
+      "sha256": "267d7e974971d33790232ae905c481d424ab7ade021e631236bb5363f0849a7f",
+      "package": "sha2",
+      "version": "0.10.9"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\typenum-1.20.1.crate",
+      "sha256": "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20",
+      "package": "typenum",
+      "version": "1.20.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ty\\pe\\typenum",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ty\\pe\\typenum",
+      "sha256": "0aa39a82563fb4c1959ea3ce514ada50075c436f0ed5f6edcdabb90e995f7f18",
+      "package": "typenum",
+      "version": "1.20.1"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5.crate",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\cache\\index.crates.io-1949cf8c6b5b557f\\version_check-0.9.5.crate",
+      "sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a",
+      "package": "version_check",
+      "version": "0.9.5"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ve\\rs\\version_check",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\.cache\\ve\\rs\\version_check",
+      "sha256": "3b59bb407ec049518d98a4baee28599d2724767aad5c95c1b2f25ef511008a3d",
+      "package": "version_check",
+      "version": "0.9.5"
+    },
+    {
+      "source": "C:\\Users\\Administrator\\.cargo\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\config.json",
+      "copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\host-kit-003-consumer\\cargo-home\\registry\\index\\index.crates.io-1949cf8c6b5b557f\\config.json",
+      "sha256": "5b943a2c6f7eb743f7308aba07bdbb47d9ae44aafecd832d7f15df186afbafb3",
+      "kind": "public_index_config"
+    }
+  ],
+  "personal_cargo_config_or_credentials_read": false
+}

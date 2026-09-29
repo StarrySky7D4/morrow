@@ -1,0 +1,44 @@
+{
+  "host_sha256": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224",
+  "guest_sha256": "f59665f639f3f6f9157111e4811cccc32569ec47cc63850fe936c13dddd5d32e",
+  "script_sha256": "61630da204ff8d94378b1133a7813e06897437af4d07834e43e00b9530c82c0f",
+  "case_order": [
+    "s503",
+    "r307",
+    "exact",
+    "over"
+  ],
+  "handshake_ms": 6000,
+  "original_ttl_ms": 10000,
+  "all_cases": [
+    "one original POST",
+    "no redirect sink hit",
+    "host exit0",
+    "actual child exit and dual EOF",
+    "durable ownerReleased",
+    "RequestClosed and both worker joins",
+    "matching Close ACK",
+    "no evidence overflow"
+  ],
+  "s503_r307": [
+    "Core Failed, guest exit2",
+    "complete response retains Observed/material/EOF",
+    "all response offsets match error body",
+    "error body classification without parser output"
+  ],
+  "exact": [
+    "actual inspected cap offsets before EOF release",
+    "pre-EOF not Observed/material/RequestClosed",
+    "Core Completed, drain Ok, finalcontrol Ok, guest exit0",
+    "after real EOF Observed with error0"
+  ],
+  "over": [
+    "same exact cap gate then one extra byte",
+    "preserve earlier Core Completed, drain Err, guest exit2",
+    "Unknown with quota observation; no HTTP EOF/material/Observed",
+    "extra byte not delivered"
+  ],
+  "terminal_poll_observation": "not instrumented; source/state inference only",
+  "automatic_retry": false,
+  "on_unexpected_failure": "preserve evidence and stop remaining cases"
+}

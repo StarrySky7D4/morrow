@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "cases": [
+    {
+      "mode": "normal",
+      "passed": true,
+      "host_exit": 0,
+      "peer_exit": 0,
+      "ack_received": true,
+      "owner_released": true,
+      "no_http_worker": true
+    }
+  ],
+  "inputs_unchanged": true,
+  "scope": "one strict Welcome code0/sequence1 and Close positive process case only; no HTTP/Core/plugin execution; old negative/API/component suites not rerun"
+}

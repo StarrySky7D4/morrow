@@ -1,0 +1,21 @@
+( major = 1,
+  revision = 1,
+  schemaDigest = "\332\n\307\244.K\017j\354\f\373\335#X\317\206h\213\b\350bba\206\273\235\344\221O5Z\177",
+  requestId = 2,
+  sessionId = "fixture-session",
+  instanceEpoch = 1,
+  stream = (
+    attemptId = "attempt-1",
+    open = (
+      destination = (
+        namespace = "fixture",
+        id = "destination",
+        revision = 9007199254740993,
+        byteLength = 0,
+        sha256 = "\351\327=Ln\206c\323\207\277\366Y\203Z\311\022\326\016\303Y\254\004`\212\317}=4\211\032\340\320" ),
+      requestBytes = 3,
+      requestDigest = "\272x\026\277\217\001\317\352AA@\336]\256\"#\260\003a\243\226\027z\234\264\020\377a\362\000\025\255",
+      deadline = (
+        domain = monotonicMillis,
+        clockId = "fixture-clock",
+        value = 1000 ) ) ) )

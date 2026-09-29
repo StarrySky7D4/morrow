@@ -1,0 +1,10 @@
+{
+  "args": [
+    "capnp",
+    "decode",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002\\agent_host.capnp",
+    "Frame"
+  ],
+  "cwd": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002",
+  "exit_code": 0
+}

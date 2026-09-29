@@ -1,0 +1,6 @@
+   Compiling morrow-network-node-stream v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\network_node_stream_001)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.97s
+     Running unittests src\lib.rs (target\m03-stream-001-transport\debug\deps\morrow_network_node_stream-bbd05013264a86b1.exe)
+     Running tests\client.rs (target\m03-stream-001-transport\debug\deps\client-6a3d265e996980bd.exe)
+     Running tests\stream.rs (target\m03-stream-001-transport\debug\deps\stream-454c3e399a964f0e.exe)
+   Doc-tests morrow_network_node_stream

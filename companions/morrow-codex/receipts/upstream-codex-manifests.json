@@ -1,0 +1,887 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "codex-rs/agent-graph-store/Cargo.toml",
+      "git_blob_sha1": "1bb5ed2699fb0d986efb8740286775d76e76db92",
+      "sha256": "6d13bbf262fa180b318e43ff1295a7db31f4939bc5f174c1fc1f63c46b2ea568",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/agent-graph-store/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/agent-identity/Cargo.toml",
+      "git_blob_sha1": "36d5eb41fd694a9eb283cbd6af4bc0977fa36c80",
+      "sha256": "6abd72371d8289b9a216491aee14eef2dde7627e42bf3dc4c4aa05979c0901b8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/agent-identity/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/agent-roles/Cargo.toml",
+      "git_blob_sha1": "85fa40ce0863ec79c4e0ade1b8be92201be33d43",
+      "sha256": "3af8b9b54fb46748eccf7ffa346d3ab6151e3d340840d52b0cdbf5bc4b748882",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/agent-roles/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/analytics/Cargo.toml",
+      "git_blob_sha1": "26d84441d9a4da8bbfa9af5a4d226978341d5778",
+      "sha256": "f5b5fca588cd4b70304bd252d348edbe76757dc9760148b52e9b48dff32a46c7",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/analytics/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ansi-escape/Cargo.toml",
+      "git_blob_sha1": "edb5b6e514cc2d36596a5dce7e9f6963cc2def8d",
+      "sha256": "39fa775403ba399e193eb9e986dbc98bc519db77f20052fdf5668f7ae075a860",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ansi-escape/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server/Cargo.toml",
+      "git_blob_sha1": "ad0a5fbab36268a3e85baa3ff2c2069ea6fb8a91",
+      "sha256": "0463b85d8a5094427c5beb52ff637d1ec6205b1d4ac1e42f81275d526df12aaf",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-client/Cargo.toml",
+      "git_blob_sha1": "daa6ef661f00486af405e764705a60bdcf7b1036",
+      "sha256": "74fd9123b3697f600e1913c2665c4f235ca1c9999756b109361de41636e288c7",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-daemon/Cargo.toml",
+      "git_blob_sha1": "48e94a078265c2658baf4381941dedebb432b028",
+      "sha256": "f5606315c7fcfdd7fb071b4461429a75ee8e2dcdfa568e85bd1eb1415602abec",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-daemon/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-protocol/Cargo.toml",
+      "git_blob_sha1": "2122f79ba5f6014c7b79ae86a0013076ab7a753f",
+      "sha256": "eed16bab0bada46556378b378820cc51c73f09db677802e9de14c652ef13b92d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-protocol/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-protocol-noop-macros/Cargo.toml",
+      "git_blob_sha1": "93a24b070beffa187ab27f331e35cdcefe21c4b8",
+      "sha256": "86cca540f740f40a7dd58b1d2d62f518517b54c14915c0f3f2171df9223c0226",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-protocol-noop-macros/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-test-client/Cargo.toml",
+      "git_blob_sha1": "901afb70d00f16e004913c764337d92afc82808b",
+      "sha256": "1929e157ff492633b4dd806ef5627e1c53ccf9241e72dd73944ff5f489483080",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-test-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server-transport/Cargo.toml",
+      "git_blob_sha1": "f78bfebe55d4920081a35999859a70f0212034d0",
+      "sha256": "bfa7635164e851f166b7e12b07f890802ce8e1dee2fdd36eada21e9cf8f79237",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server-transport/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/app-server/tests/common/Cargo.toml",
+      "git_blob_sha1": "8efd1763c84ed2d1d2b93e5c8f96b7bb44745819",
+      "sha256": "bdf6850d84b5a089ddca7fa26d5d6b79c844b768d1933c4c3087fc9d53c8d6c0",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/app-server/tests/common/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/apply-patch/Cargo.toml",
+      "git_blob_sha1": "8e1d7f651f47a76de2a6ed6226aa2ec1a55cf5d6",
+      "sha256": "388b18e13d8e3f8aa419e30385e33fe58748b2bd972df32eb66aa1484ab3d54a",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/apply-patch/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/arg0/Cargo.toml",
+      "git_blob_sha1": "b6d4c2d404ece5b3030ead85f888fa8a29538c48",
+      "sha256": "2e8868bd7755fe0abf3365b01b448000d17761c159ad8ab6a92c655decd312fe",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/arg0/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/async-utils/Cargo.toml",
+      "git_blob_sha1": "eee5fb73b8874e65d58953b347cd933336610593",
+      "sha256": "880a0c8ea54a30e1db09db6398a01706ad501c834ba32eecd37b7ac3de8dcf4f",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/async-utils/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/attachment-store/Cargo.toml",
+      "git_blob_sha1": "dd66412fa1621fbe762140498e9149a3676cace0",
+      "sha256": "740aa9e40fb205501ace3b6176c96e76a4737952fc47f2f07a456842225ae018",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/attachment-store/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/aws-auth/Cargo.toml",
+      "git_blob_sha1": "f9b5e7139a1dcffb97daab6f8e1c8712cd69473f",
+      "sha256": "b42bbe49eea0f86ba859b05db8d3d948b5c493122cd607dcc8630412279cf8da",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/aws-auth/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/backend-client/Cargo.toml",
+      "git_blob_sha1": "8a8948a9a219740e09e9e5399a4e8730e633d33d",
+      "sha256": "3f536d6194f6e2221e10ec9ca11b7d1c5bdc89b71cb0ef35b28c6f6d7aa153ac",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/backend-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/build-info/Cargo.toml",
+      "git_blob_sha1": "bd9bb036dc36a5ab65e67b9911441859297d1536",
+      "sha256": "492f56d0347f602e21786b2f432bd10aeba5266d9cac0fc83e639cbbb16c06da",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/build-info/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/chatgpt/Cargo.toml",
+      "git_blob_sha1": "04b9cb7df6786401aa2c2cbad225cc40a26d277d",
+      "sha256": "ed8da55f97753db776cbcc798e5deb68bc8da3089fa376004be29f0d8a579435",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/chatgpt/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/cloud-config/Cargo.toml",
+      "git_blob_sha1": "48ab0d870c3765bab7863d62cfdf6971707ad640",
+      "sha256": "f653c97e72c417f3beb0dd0dbcfa613a539ab206d3004e3c236ec0b419043b1c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/cloud-config/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/cloud-tasks-client/Cargo.toml",
+      "git_blob_sha1": "8efd78cb22d0b6458e9ec9138f0df03590f75d75",
+      "sha256": "713fe5694a802106a72bdb245ed973ce80dd1bd977abfde5f308a14bf3180028",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/cloud-tasks-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/cloud-tasks-mock-client/Cargo.toml",
+      "git_blob_sha1": "b249b654e02f36360389a12ccc14bffb787b9726",
+      "sha256": "c00ebb5e69c81d6d15793069773c1a84a521cc4d71a2a27b06854c71557f24d4",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/cloud-tasks-mock-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/code-mode/Cargo.toml",
+      "git_blob_sha1": "b6c0edf251f2d9a569d7e37739664b4478757cc1",
+      "sha256": "2646402e31d512209a03e1568ae81b5b5d85405f7f762d8aa169b3f0ac14959b",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/code-mode/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/code-mode-protocol/Cargo.toml",
+      "git_blob_sha1": "cad10b47ebf4e577d9d9278703424f266ba6cc71",
+      "sha256": "2ac9af96867f5babb423d9865e1e1277329e6e1fb10a069d0cb9e380beef2b70",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/code-mode-protocol/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/code-mode-runtime/Cargo.toml",
+      "git_blob_sha1": "5a4d9e1d0930806689a04bc5857b177656bd775b",
+      "sha256": "593ded78596279c8e6ce85f2d9708d549c44b3fe693cbbab9341aeb57e3ea923",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/code-mode-runtime/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/codex-api/Cargo.toml",
+      "git_blob_sha1": "82bec69218844915b5e986fc17d473966466e888",
+      "sha256": "41fa3554b49fcfa0bfe7473e20fc41bff9a672bb3fc3da9aa4c1f3835c7e1266",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-api/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/codex-client/Cargo.toml",
+      "git_blob_sha1": "9ffe57d95f8c9c0cc51b215666969f3082bc4aa5",
+      "sha256": "76e3da92b54ed0c96b14be755fe8d072559d2a9ac6f11e82c1979487edb55b25",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/codex-experimental-api-macros/Cargo.toml",
+      "git_blob_sha1": "2e148a21d782b2ca20f5c81fc4ea896523d4d80d",
+      "sha256": "b8fcf3a548dfb052195e49969073aa22d8a2e0948d46732598cbeaaf9826f10b",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-experimental-api-macros/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/codex-home/Cargo.toml",
+      "git_blob_sha1": "068ec55b4e274c002dc37e3584e96a2c9ab1f7c7",
+      "sha256": "6c80a87eaad697efc4dc24f5eca9e7268dd8de29d2f84bc8982af3f89733c92b",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-home/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/codex-mcp/Cargo.toml",
+      "git_blob_sha1": "d989cf8b9c3ccff324aa86d829427bf6f5252e8b",
+      "sha256": "eeec98bce70e10462c99b324958f4c8b48212a575c76d74115b10035ae5f298a",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/codex-mcp/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/collaboration-mode-templates/Cargo.toml",
+      "git_blob_sha1": "2c17b1fd2ad989bda8a38e80dee1c5380f887c03",
+      "sha256": "52aa162c5ba6085b0eead685bd21a15043150789fcd08000465c95db0044fef4",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/collaboration-mode-templates/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/config/Cargo.toml",
+      "git_blob_sha1": "9be1fb4f4732201289737fbabd388ff72167d6dd",
+      "sha256": "9f1aebe46b78cf1fb2c47b9a9c61bbccd2b8076ce9274fc81d8ae17e7c8dc232",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/config/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/connectors/Cargo.toml",
+      "git_blob_sha1": "ac3ce9241c2d6f4deb3ac09ced64087fd51b29b3",
+      "sha256": "20515657b4ab715652a6be25d3b2ff408f36d8b53e0d1dddc1ea014910f95ea0",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/connectors/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/context-fragments/Cargo.toml",
+      "git_blob_sha1": "74ecc5f209889b9aee2065c921004ec5b2cbf587",
+      "sha256": "e03ff3b43b8eb2763a545cb88e4ffe09c05a10873112c17263c4a7133041bb0f",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/context-fragments/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/core/Cargo.toml",
+      "git_blob_sha1": "693fbd7b78d2b62889528b8eef560d2e708554ee",
+      "sha256": "d745357079c9163f69cd60295f46962c342c80a9cbf11d42afd5b4941df1a6d3",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/core-api/Cargo.toml",
+      "git_blob_sha1": "b82d5ee4802d68b29f574bc8ebee1334cf751caa",
+      "sha256": "64d89566ae6c63d3dbd6c655fe9f5277dd93765330611be3f05ebf09e15dd015",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core-api/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/core-plugin-common/Cargo.toml",
+      "git_blob_sha1": "654faa8af18541b95f23a45183566e4c892bf904",
+      "sha256": "d68f45e18a957624d9a22d18c206b22976887b2c06d27b1ae3036850ca0a0424",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core-plugin-common/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/core-plugins/Cargo.toml",
+      "git_blob_sha1": "af58b8e9e8aa59f721274c0a57bd909615c8d4dc",
+      "sha256": "90dc9794c6a5119d6dc2af7a367a7aad8b75774b19f21fb3181d6cfeed5717a6",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core-plugins/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/core/tests/common/Cargo.toml",
+      "git_blob_sha1": "5644a06e0a1e7f5962c7e9e1bb7e8a5225630777",
+      "sha256": "8befa624d00c33ca9a7bb8ed077d503265ccd7e625d9d4f06e9cd5cac483223e",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/core/tests/common/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/diagnostics/Cargo.toml",
+      "git_blob_sha1": "2eb2125a102e121ed5a51d8dad3013c7cc258cf0",
+      "sha256": "11974d3cc33cfe81cc15a3def4cdaace9eae05d4ac3b22af0af2e35e12ef6d66",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/diagnostics/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/exec/Cargo.toml",
+      "git_blob_sha1": "42a75a05320223b99a21fc15a4380b6492f36728",
+      "sha256": "742151da541baf94826cdad699952e9c6f1da426615745f32134e32521caa471",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/exec/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/exec-server/Cargo.toml",
+      "git_blob_sha1": "fd9928db363b8400eb37ac7c8cb4d2fb0e9de1f0",
+      "sha256": "a409f86e607b090ab27b6032dd1f0f9f2f4d6b57112e850b0b6be0a30e4162da",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/exec-server/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/exec-server-protocol/Cargo.toml",
+      "git_blob_sha1": "62841ed97314b9bb1fca10b2ba2b68ad12f73e6e",
+      "sha256": "e8243f99de3f35c31107c562ef16e472211ebe27e16234e37b23651a59a5079e",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/exec-server-protocol/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/exec-server/tests/support/Cargo.toml",
+      "git_blob_sha1": "073d4e341141ea59286b5563b4b6af1930d7ca51",
+      "sha256": "9bec1539cc8fc173c4691863ca16386b3b0f683402160219bea89d2ef0db9048",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/exec-server/tests/support/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/execpolicy/Cargo.toml",
+      "git_blob_sha1": "42040222336513132da0b6a274bcd3fc80589f99",
+      "sha256": "a30850d1134be2b9a37a15d383d1cf7a3df72c81c3a4b970bcfac8bf15528e94",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/execpolicy/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/agent/Cargo.toml",
+      "git_blob_sha1": "6c3f10a43319a122e2da129e31ba34aa4f1df49a",
+      "sha256": "684fe7c7a41900dd8c394b6cee6d1fcfd206a44c661811f356c846dcc07d51db",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/agent/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/agent-message-board/Cargo.toml",
+      "git_blob_sha1": "f522893f599b3f766331315719e7be15c11437f2",
+      "sha256": "314735cda3a3b9e8ad8b2aceb7496b37991ae749ef15fdba0b84dbb84e833eaf",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/agent-message-board/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/connectors/Cargo.toml",
+      "git_blob_sha1": "1aead727731475bc9590ac90efb37c2ae7adef64",
+      "sha256": "d0dd96da7c42189b2e5a3c6976a54b565b02441bd2f4979652e3192b30b279a8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/connectors/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/extension-api/Cargo.toml",
+      "git_blob_sha1": "4b487226eb7deb0a44ad5d9ae16e53f90fd7ec8e",
+      "sha256": "fc9696d53a84326f578afc6cfa1084d083026dcfceb631df1db59f85cbf3b6ce",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/extension-api/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/git-attribution/Cargo.toml",
+      "git_blob_sha1": "e96d0dbcd577bcc0645f3f6175bbe31429f87159",
+      "sha256": "15e8f2143ff99c657b40045c9b0609dd93f89b55cc37a95039b9aed89f5e6687",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/git-attribution/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/goal/Cargo.toml",
+      "git_blob_sha1": "3939da1ab7f1c2e13c1263190abf91b17108fb7c",
+      "sha256": "e03430bf9732d45b9aaebe6969d4a90e63daf348107f4b74bf227dfb38e33454",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/goal/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/guardian-reviewer/Cargo.toml",
+      "git_blob_sha1": "6c7b9cd55b642b19303193df0c8cbbc5d49ce613",
+      "sha256": "1eed62189d9f282ff45b464cdb505916951c95ece9eefff46c0b4eda08416717",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/guardian-reviewer/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/guardian-v2/Cargo.toml",
+      "git_blob_sha1": "02e69106b5988a848852525fdccb887a2910c5e9",
+      "sha256": "498eccfb5c6a3d21578fb6de83351b8391771b81287a430be6b925363b100ef7",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/guardian-v2/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/history-notes/Cargo.toml",
+      "git_blob_sha1": "df2f272945b956dfcd3c9f9af8e74ceb2060d6cc",
+      "sha256": "1ef6280b0fd4c6a1cb9e6bda55212fdd8368359f1192a9a5855c87b2a6cdb368",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/history-notes/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/image-generation/Cargo.toml",
+      "git_blob_sha1": "4b6155730645092549a69e2f46b926407091c78d",
+      "sha256": "aa8a6fec46b64f183014df9f6f410ab47c2d453714c543e8163089d572af7555",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/image-generation/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/items/Cargo.toml",
+      "git_blob_sha1": "4d58b29bc7004171361e4828e1dda712815ad8d1",
+      "sha256": "bbb3630e5a2dd711a1ff6d118e095a062606afaa5ca970316d668114d45d7df5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/items/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/mcp/Cargo.toml",
+      "git_blob_sha1": "5185f6cab12c5b692dc558d15443b4934ea165ff",
+      "sha256": "e60c59addd49727ad528724025c2a647e3ff8e38d88c0d6befcc62bae6263862",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/mcp/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/memories/Cargo.toml",
+      "git_blob_sha1": "9111571fa40c4a37f4a3937a172796e806a18bc7",
+      "sha256": "b53ffe9567465a01a696bb0de03bcc9c3fcaa0052a0aab794143a025c778526c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/memories/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/queue/Cargo.toml",
+      "git_blob_sha1": "4b5e5d04f4cf6bb414305a3badffda7038014e43",
+      "sha256": "d7553e62f33e7cf4feb38f5f21b5e0c628773584340479dfa8155fca8886639e",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/queue/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/skills/Cargo.toml",
+      "git_blob_sha1": "2891a1a5db7467674c32d1057bfbe2e769efa920",
+      "sha256": "063185fdcc4597cd47a20d7d726d2e91aeedc30e13de8bdc43fb1944c32368a6",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/skills/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ext/web-search/Cargo.toml",
+      "git_blob_sha1": "a464b56beadec898c998c6ae6fdcae3ee01a8df4",
+      "sha256": "b74df62ad7dd3159d96f68b3be17c8804cfc4ec280fbbfd9df06ab4326cfe9e4",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ext/web-search/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/external-agent-migration/Cargo.toml",
+      "git_blob_sha1": "5da3625c4da4a04ebdab4b549fcf4881a8989e6b",
+      "sha256": "1c69a91e9df522d46902c89444afd4a478f2b38d6d62cf3056142bef3220621c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/external-agent-migration/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/features/Cargo.toml",
+      "git_blob_sha1": "edc96b64ae7a6f313dd65dde18b1710451f188a2",
+      "sha256": "e3741eb42bc33d7c100d26dbd5f98dd691adf132f11267e6992dcd4b3534d7ae",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/features/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/feedback/Cargo.toml",
+      "git_blob_sha1": "2fab1dd906c9b38d7fee598e07662e0bb8a0d430",
+      "sha256": "46898039515037022fa96ef6621bf6b824466287adeba74508a9fa0bd8c287c4",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/feedback/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/file-search/Cargo.toml",
+      "git_blob_sha1": "e235898982f6eba908c5c0751eae91a5b25cdb1a",
+      "sha256": "ac012c6347e727e2a7a9cb927eec9fe4ece2c17a38474f7efa0563d3adbc98d4",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/file-search/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/file-system/Cargo.toml",
+      "git_blob_sha1": "382eacb43d3353b2046806f91ba0f976866c9282",
+      "sha256": "158866b3e775b98e57d73003f46143c07fde852d70d8d2014aae41e5c94de8ab",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/file-system/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/file-watcher/Cargo.toml",
+      "git_blob_sha1": "781698794773a3b4b16205573510d296acce5f8a",
+      "sha256": "901925f6f2141e4f9e70e4ad1850bab4f26826a232b3dbca7a15666716b8a535",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/file-watcher/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/git-utils/Cargo.toml",
+      "git_blob_sha1": "a0bd7872854cffa38dd559805a1dea2d06db85ae",
+      "sha256": "1b812bba7cc7dfa5339ab3ddb5e499e35fcafe42a6489e1e7a43208b291a816d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/git-utils/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/guardian-context/Cargo.toml",
+      "git_blob_sha1": "617d3c4454eb6455ec49bd9a9dfb309b529075ec",
+      "sha256": "6b52d813206446463c7aa8f01dc1616d1be917ae0d35edc6b712430874947b37",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/guardian-context/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/history/Cargo.toml",
+      "git_blob_sha1": "bd938d2c2ea45333b8f040f41399674a28e54644",
+      "sha256": "1efeca5a9781224b2682eb98ce880f0d1ed9ee614ff2d9a906195458924c0a89",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/history/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/hooks/Cargo.toml",
+      "git_blob_sha1": "cb234830aa95d1081fe1cde50b6303ddd9449293",
+      "sha256": "fa869d62a87ec1f3e65a6f062079f2c6e44800946448484a67579efc972ed5a0",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/hooks/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/http-client/Cargo.toml",
+      "git_blob_sha1": "d59c2e78f7703650176d7c62bc57d679b047b181",
+      "sha256": "5447af15cbf30ba615fa16d6094ffb13bef4b0d48ccab74ddb62204c5e8f4e53",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/http-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/install-context/Cargo.toml",
+      "git_blob_sha1": "ee84ad2962acf57a698e399b38dbc0a03c51bd11",
+      "sha256": "f3889e33551bedcf564069d27568c5f1ea01e9e696cf122e4b8f99a7292fbff8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/install-context/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/keyring-store/Cargo.toml",
+      "git_blob_sha1": "7a2f1e15bdc3c79b0d74866c3e8d371d13fa9193",
+      "sha256": "6a6a49f225ecefe5b2d5c85e7b667001113363a4b75e4c30427c8e17adff1dc6",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/keyring-store/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/linux-sandbox/Cargo.toml",
+      "git_blob_sha1": "17b3fa14b1de83b29a688d688eb504a693791055",
+      "sha256": "9e0f2aabd5e0b529f8af9cd39c0116b356662ab1aa8950525b6820581ac59e11",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/linux-sandbox/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/lmstudio/Cargo.toml",
+      "git_blob_sha1": "e84bcfed51c3683e87ea7ae2e0a7809aade43a76",
+      "sha256": "f90889e3a31ae28b860e6a86da3d1fb9941f5b2232f82d42e178a777432cac48",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/lmstudio/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/login/Cargo.toml",
+      "git_blob_sha1": "2971dec6c1a81cb80379477333371bba6e8fbece",
+      "sha256": "0c762d109c77508556e0d61badaba96a9e9a43ddd5dc1273113d2a8684e76593",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/login/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/memories/read/Cargo.toml",
+      "git_blob_sha1": "2c0c5f2c954ceb8b986057bdd929badca4ecd64d",
+      "sha256": "e51d8384f3a844f0687b9ea4864e19286b3fec7edfee69bd365cd02fd42886b5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/memories/read/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/memories/write/Cargo.toml",
+      "git_blob_sha1": "bf031a6a164f5a098757efdb6c791d9e2705ca50",
+      "sha256": "2ce09ca433559076a62b478f42c5a820a531c79811834bc2084b48e12f1276c1",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/memories/write/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/mermaid/Cargo.toml",
+      "git_blob_sha1": "b01437b433d7b8960d775041a9a59b0e9da24ee7",
+      "sha256": "ceab314f8c1be29d0483813175f304e7114fb40442a66dbc2f3235a770432f67",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/mermaid/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/message-history/Cargo.toml",
+      "git_blob_sha1": "176b9579097499b050e24823217eec93502c004b",
+      "sha256": "adb2d2b3f7c7a6068b87deb69cb2dcd4afcbe45ad86e9b0a41bc4b5dce724722",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/message-history/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/model-provider/Cargo.toml",
+      "git_blob_sha1": "ecdcaa4b3e634e3e197b696f7a843878307647c0",
+      "sha256": "35869f1bc6337ee754fbca4fcd8b81ab9db62e6fe9b0235fee16373ab0edba9c",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/model-provider/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/model-provider-info/Cargo.toml",
+      "git_blob_sha1": "e6a740d25ddfc26edffa23a32e6b8f9123eef982",
+      "sha256": "026e69af570a3758282196acbd142a47984539e6dd9610d2977225adf52debe7",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/model-provider-info/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/models-manager/Cargo.toml",
+      "git_blob_sha1": "159f75023431e3bd579fac871ccda63d9ab8ccd2",
+      "sha256": "843d1a014174611f14256305ba2fcdcb1a0e150620a8a513bd20a4bef5648847",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/models-manager/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/mxc-sandbox/Cargo.toml",
+      "git_blob_sha1": "0518fa7976dc694747ccef8d6418843c71395205",
+      "sha256": "4b63c247c7fe0429016aff95a605aae46ebf978f12a165f8174122cf4b92cd23",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/mxc-sandbox/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/network-proxy/Cargo.toml",
+      "git_blob_sha1": "bda42616020c4bf1ec094ccd8abf2800154f60cd",
+      "sha256": "34b4dc543a8264fe69096db686ff1c8d205624182148c8860f02d01e86153a48",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/network-proxy/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/ollama/Cargo.toml",
+      "git_blob_sha1": "29c0852092c0ebdb9846f50f91384e4720f15d71",
+      "sha256": "4acd659c88671e6be1ce2be7b2920977c221461245b198c81c195197789ce2eb",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/ollama/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/otel/Cargo.toml",
+      "git_blob_sha1": "3197eaa846bc1e072f34ce60066383114570a451",
+      "sha256": "02b7e6d1e204279c6aef6aef6d2c653ad69483ba138efb2ad536b686b67661ff",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/otel/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/otel-trace-websocket/Cargo.toml",
+      "git_blob_sha1": "538666ec72de29f79eff181ed5fb34e6066af4b6",
+      "sha256": "61b323decc2b50de473480971f498a580e3c89574530743bef685f33febde7bf",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/otel-trace-websocket/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/plugin/Cargo.toml",
+      "git_blob_sha1": "462fb5e1891c4033c84dc115268c6f8a5d2f62e8",
+      "sha256": "1032b4bf35e2a8426d07840a371f09a48bc568cac97292b4a29dfeac6838a088",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/plugin/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/process-hardening/Cargo.toml",
+      "git_blob_sha1": "60a5729ff57a961dd9ccc145f8ae7171fe0b3176",
+      "sha256": "93c8131ae5485a66d16cff10dd254bf56bd49fd33235399cd5f59ccf0d75396d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/process-hardening/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/prompts/Cargo.toml",
+      "git_blob_sha1": "7f0b492a4339b88ef20baf07d7f432f92c4f22bb",
+      "sha256": "922d79c1dcdfec2ab5c2698c01cc3c0f59a08d4e72f839765bef7d1aaa3b8fb5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/prompts/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/protocol/Cargo.toml",
+      "git_blob_sha1": "0ca5117c8cafd422f3d305539148109b0b358b95",
+      "sha256": "37a4347e2bb6975deddd3de4f470a7572f70f89bea709abaa4cd346246334af1",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/protocol/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/realtime-webrtc/Cargo.toml",
+      "git_blob_sha1": "2d1b3b422f5b2da12353f42b09dbfa002d322757",
+      "sha256": "173d05a7519d2e5bc4230362f87bc2ee5b4dc59da15ab0f270e820d52a3f83f5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/realtime-webrtc/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/response-debug-context/Cargo.toml",
+      "git_blob_sha1": "fcdb6c9630c4d04da55b9c64318e4c111afce441",
+      "sha256": "a6075edb089d3c6ab4588c5cf17604e15827821d67320508344e0af5a9c49070",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/response-debug-context/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/responses-api-proxy/Cargo.toml",
+      "git_blob_sha1": "05d638843f64eacad298a79011798f3a2ef924f7",
+      "sha256": "b1d9acb9187527fd7dad5110f0a0e3755a728e8f79f67969304cd8777cfab305",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/responses-api-proxy/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/rmcp-client/Cargo.toml",
+      "git_blob_sha1": "c661aa0ed8f38d7c37ed386c50b898f748524de4",
+      "sha256": "b495c45bfa7017f67faa3c7f0781a8e2ab9a9f4fcf66273055877a04740c1f29",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/rmcp-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/rollout/Cargo.toml",
+      "git_blob_sha1": "1bb4b54f146488e737a3d5bdaeef9dc1510d0b03",
+      "sha256": "f01de658fcc48810495562069af132c828625bd8e6fa2b2c897c410c7b36b657",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/rollout/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/rollout-trace/Cargo.toml",
+      "git_blob_sha1": "b368c9acc5ffc3a0ba3a27ae7ea1ab48e38baa31",
+      "sha256": "1945dfdbca622a193f680d98cc0a733eec58510e9d3bc3a6efe0e3db153f4c62",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/rollout-trace/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/sandboxing/Cargo.toml",
+      "git_blob_sha1": "14549e19af8e8bd431ae7966d74c6a980d3b203e",
+      "sha256": "d5ccb10f965177886729f4cb8e9d6f489f01e0b21e6ce1889dcbca6a59e55655",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/sandboxing/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/secrets/Cargo.toml",
+      "git_blob_sha1": "2a294ee39134e0a4d4160ed7b422d5fe3c2ba6da",
+      "sha256": "99d0a0c6bb4972d0ee5336949870ce0b2bc4b05c22bfe34f47edfb3655602150",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/secrets/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/shell-command/Cargo.toml",
+      "git_blob_sha1": "999295ec314a37a523f65bd050e8b95453cc7c77",
+      "sha256": "6967abe322f82037b6c57f3e6bbe6425030c4ed0a388915527a59dea7317b856",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/shell-command/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/shell-escalation/Cargo.toml",
+      "git_blob_sha1": "92ae8b033f3c38edb1609e6347084be6dd9fdc47",
+      "sha256": "154cd9240a02ee6c9075d5ab9543ff98a54768babb91d00e190c590ad3237dc2",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/shell-escalation/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/skills/Cargo.toml",
+      "git_blob_sha1": "7342975aaea0e3ecc61da41f145674cd154a12c9",
+      "sha256": "099f2da853fa6853df18b7923ccd55b6bd1374af7741fd6156ec84b7765ae086",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/skills/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/state/Cargo.toml",
+      "git_blob_sha1": "c6c2215fb46ac10f3124344c6b1a02bdf5e60c71",
+      "sha256": "d4b46c8386a47a8a03e68d5aa4c4ad545d9b04fcec19c08b0c998f4b52ef3c0e",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/state/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/stdio-to-uds/Cargo.toml",
+      "git_blob_sha1": "6b5c037d755d4dc8006424aa836b29036cea8185",
+      "sha256": "86bc7744cb3455915a0dca21bdf9b95b1f446c03eee70dccda8ade7497ee1510",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/stdio-to-uds/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/tcp-tunnel/Cargo.toml",
+      "git_blob_sha1": "617ed7e0670f2ad945e9796cd5bd61ab0fb237a6",
+      "sha256": "28342e9cc76b554fde97237814d2ac1d46fa45cb39d280a7a23aecb23c4751ff",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/tcp-tunnel/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/terminal-detection/Cargo.toml",
+      "git_blob_sha1": "9b1bf3a51663289c68b61f566201df8d05e385cf",
+      "sha256": "d6afc64a36ea33610d0fb4506f9b9fe809105ccde228bfa41c8ed24497dc4546",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/terminal-detection/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/test-binary-support/Cargo.toml",
+      "git_blob_sha1": "12d995b9720b942daf802ce30c2976b3f36e7371",
+      "sha256": "72707d0f0238886c11269f3a9bf28fab63107120c13477e4e34b798add3dc9c5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/test-binary-support/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/thread-store/Cargo.toml",
+      "git_blob_sha1": "31e16dd72a9523bbb1c9b3eea00dc5377037e2e2",
+      "sha256": "2abe7eb1f6e1a5c48a7364b2453296840ad27f911b43f9c9601f353a72227853",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/thread-store/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/tools/Cargo.toml",
+      "git_blob_sha1": "f47815537ffdd381161130ac0c26bc8d1fd30868",
+      "sha256": "6b26eb5105a94c2d52637514b26bb5a9627ef784d482647016287c04d0177ba5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/tools/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/tui/Cargo.toml",
+      "git_blob_sha1": "9d61157c421220bd70852e72ce59b89a79a025be",
+      "sha256": "89240b8f9298fd15022e20756d8407af8b78c8fa19d04ad46120bd9d7c62baa1",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/tui/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/uds/Cargo.toml",
+      "git_blob_sha1": "a1f199ed465ac2a50378ff0657572bcc0f5619af",
+      "sha256": "89f1757d90316f8db00ba947131e96548b0e448a1b860e9cf53eb775383d3c09",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/uds/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/user-verification/Cargo.toml",
+      "git_blob_sha1": "fe4d5298f0484de68d9e417e47206f5be74fc729",
+      "sha256": "fe1b79e40821aa32e765ef9a3e49cba3d75178058fc2b0260ae0877a2e3d7cb6",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/user-verification/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/absolute-path/Cargo.toml",
+      "git_blob_sha1": "7c5b4840d15d81deed1d1ea30c0b269d399772bc",
+      "sha256": "ad98dc1a75333700db00f6bde0685ce7a3e0f5558b0520e7a09e9bbcc6576736",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/absolute-path/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/approval-presets/Cargo.toml",
+      "git_blob_sha1": "6efd2c482b4386b505a15d96bf60504050633e61",
+      "sha256": "a8a1723c8fc4fef9815fa02f426b1bee8b1e16f43e9382b5fb878c9a603cdaff",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/approval-presets/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/audio/Cargo.toml",
+      "git_blob_sha1": "90540228a6bf5608329d2f2773225271229b9813",
+      "sha256": "a8bd5661a23ac093df6f9a307dc9e440201e7bf7995044dbfc632869f62914c0",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/audio/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/cache/Cargo.toml",
+      "git_blob_sha1": "3c120c032e8d595a7675f0474ab6d91b0b52a59e",
+      "sha256": "79bf902f30726d663ca11ab7dad4bcd617de94b36baaeb33016d188ec06ebe89",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/cache/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/cargo-bin/Cargo.toml",
+      "git_blob_sha1": "a56e5758306799cc5962eaf57e8ad3a26b73033f",
+      "sha256": "eecb409357a98472df8a81d9fd1a25902b967433f4df3403cf213f07e68f8786",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/cargo-bin/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/cli/Cargo.toml",
+      "git_blob_sha1": "9d330c5ce6badd0d15e6c401cd777fb3d13c8d08",
+      "sha256": "144258eae359f1b20753dcedff9d8c60a5947e261cec4ad97514b1daf1b35ca8",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/cli/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/elapsed/Cargo.toml",
+      "git_blob_sha1": "7ba5e6ae6614fddadaa1ba1e1f8299ffc251d78f",
+      "sha256": "998e972175e47355bcc0f14b326e5c71955bd670a12ab3200890d9168855ff40",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/elapsed/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/fuzzy-match/Cargo.toml",
+      "git_blob_sha1": "704386e74f6924a016c30bfbaa6447b093f70be0",
+      "sha256": "d233d52afa20bbf405df269a31a76aeb7fe45de5e6e6bcc872dd331668996fbb",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/fuzzy-match/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/git-discovery/Cargo.toml",
+      "git_blob_sha1": "bb5345f9b2ef9b55111c9512546151e16f45c09f",
+      "sha256": "79bb0d98647a830492dda425dca98b6a5f89a62841db9824a339502dbcd2cb51",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/git-discovery/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/home-dir/Cargo.toml",
+      "git_blob_sha1": "2d2de0230e38004d562b8ab5546888cd5da74851",
+      "sha256": "9b81719e70c693dc156d90fb43a8d71b328e650ef566816b7bcc8014c4bd8e50",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/home-dir/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/image/Cargo.toml",
+      "git_blob_sha1": "3ac43b6df0dfad7087ec566af71df90104244cb7",
+      "sha256": "2f84e8c60810db1ec6ae392715d130117b27f6e3b94be089790a1a85221be9bd",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/image/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/json-to-toml/Cargo.toml",
+      "git_blob_sha1": "57a28696c8fc2148525480511551b256b35d8b02",
+      "sha256": "aa9e8d0262bbc8e021f32488083d6d003a83c2bca10186da2d2b17f764bb77f9",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/json-to-toml/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/oss/Cargo.toml",
+      "git_blob_sha1": "78cc0cb2f8ed60f3d4b8a3bb007b348d700024ac",
+      "sha256": "204e3ba8509541c37b2088dd6c8e596286f502a8990d2655e861c6babcac9b19",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/oss/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/output-truncation/Cargo.toml",
+      "git_blob_sha1": "17176c9f5643b3a4f1d5a678a25076094cb7441d",
+      "sha256": "f6687530aec9b4c6db64237ab845ffc9ea4a5156c9b5dd1557ae6b1c35e5cd31",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/output-truncation/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/path-uri/Cargo.toml",
+      "git_blob_sha1": "5bb6328139c7fe2f7759e7edf34be0de9e2f0371",
+      "sha256": "d45031c71d6dbcf8c7770ce1feebabbc2f3224841c5eb770d9e2dc70d19d9d20",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/path-uri/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/path-utils/Cargo.toml",
+      "git_blob_sha1": "6757b3f69cc4518573694548c75fefa34211af20",
+      "sha256": "4a622efd82b2b9d7925785a88c1dd795c8a010cf2b6fe0a5fb8ae7b04e182699",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/path-utils/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/plugins/Cargo.toml",
+      "git_blob_sha1": "1a4576d59d0fcf04a54236f57976e42683c266a6",
+      "sha256": "2aa0eb685dc9595b71c33740108080bea0f448e3439afee76c75e0701d275a28",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/plugins/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/pty/Cargo.toml",
+      "git_blob_sha1": "d235d6995f0dff446cefba7c6f410dd3ce43aaaa",
+      "sha256": "f90c44bb515b08bd9699103132a2636518905d5a9adfec1248f2c0f7404ca5a7",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/pty/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/redacted-string/Cargo.toml",
+      "git_blob_sha1": "39f60d8eb109312fba4b052e69649b1c9382a1a4",
+      "sha256": "b4db650414f5dff6c4823eeb5e05be5adb9bbf6bfaf87c5763a475379528d81d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/redacted-string/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/rustls-provider/Cargo.toml",
+      "git_blob_sha1": "af79eff69252fc01244e2ae721b5a263c1d2fc4c",
+      "sha256": "21fda73b6ea661f3626372e94b16bce766c5278e6c695c92fc490274d4582f33",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/rustls-provider/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/sandbox-summary/Cargo.toml",
+      "git_blob_sha1": "413b64214bd132c7dfbe4625dc5d110c38d974cc",
+      "sha256": "f8ee68013858432e2ff468e643345db592988e5482c59998d724deb0311dd58e",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/sandbox-summary/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/sleep-inhibitor/Cargo.toml",
+      "git_blob_sha1": "f2abb6df2110e7f3de215cb34a0cd627c0345649",
+      "sha256": "6ff5b93c06e9721e935e5e7798de9c799e41139fdc042f50d1501bebff14235f",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/sleep-inhibitor/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/stream-parser/Cargo.toml",
+      "git_blob_sha1": "6eb5fb9a8747b95cb3dbd113f4ebfcda53b8fed5",
+      "sha256": "d48dda6b4337f17002ae1698fa9a0aeb38df8fd6f35193980396f722afe09fe5",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/stream-parser/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/string/Cargo.toml",
+      "git_blob_sha1": "8710cffe4697ae4cce6e97d6bac35566db426672",
+      "sha256": "3d4f0131321ca76f08410c8a3278d1d2373c8a43118fafa5add9bd8fbb8672ff",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/string/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/utils/template/Cargo.toml",
+      "git_blob_sha1": "f24caec190455f3ac685004fc1f6e474ee8f8ed9",
+      "sha256": "5785b0365d1f99f5d719c8d6b16586fcaadedc373f4342c92aa28a52eb778368",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/utils/template/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/v8-poc/Cargo.toml",
+      "git_blob_sha1": "9615ab977f9dfdb35467d1eadaf0bc6dfa641625",
+      "sha256": "e98d307ee1683087debb02cf5fba46cc1a23177a25cd6b03f74f1539239312c9",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/v8-poc/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/websocket-auth/Cargo.toml",
+      "git_blob_sha1": "038b161237d596e4e2480089ccdab4bcf6e2c58a",
+      "sha256": "899992915b3b1d746389d3c7c5e7a284ea2af9bf819b8544013d9c29f04e708d",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/websocket-auth/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/websocket-client/Cargo.toml",
+      "git_blob_sha1": "19baf9842b591c6aba15d5253f124a737d0d1cdf",
+      "sha256": "7575122d37c47bbb011945d68541422dc0122ab7be1374c9bc9c78ec56a74231",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/websocket-client/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/windows-sandbox-rs/Cargo.toml",
+      "git_blob_sha1": "b182ed8c9ecddd1729477ebdcb819c598214d717",
+      "sha256": "04455d3957b1f34ece5488c7be75c23b51cb589f5d38d247654554358c792eca",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/windows-sandbox-rs/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/workload-identity/Cargo.toml",
+      "git_blob_sha1": "b64177282accbb1975aa7adbe2411ace4da52662",
+      "sha256": "347f3a72058b81058498c83529b69d01a1055384ce6021112038193853a0d0fb",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/workload-identity/Cargo.toml"
+    },
+    {
+      "path": "codex-rs/worktree/Cargo.toml",
+      "git_blob_sha1": "648c5d10798b7600e5a37c257f07128e9353dfc1",
+      "sha256": "7930f78f75649c3da59ac4e1c6e548320d7ed9e5d071adc22e915a76077df128",
+      "url": "https://github.com/openai/codex/blob/44fe510ce3ee61c8ef623adcbf89b901c73ddd61/codex-rs/worktree/Cargo.toml"
+    }
+  ]
+}

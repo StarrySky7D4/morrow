@@ -1,0 +1,3 @@
+error: multiple workspace roots found in the same workspace:
+  C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m02-native-session-001
+  C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m02-native-session-001\vendor\capnp-kit-001\wire

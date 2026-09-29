@@ -1,0 +1,8 @@
+{
+  "original_manifest_sha256": "5d543cba59604c836118a92303ee1912ec2e0effc39e1a831a870384353cebb9",
+  "consumer_manifest_sha256": "4d578d700f24b269c998d39deb18f6ef577d054e8b8f3358611651cd4cd019ad",
+  "source_bytes_equal": true,
+  "lock_bytes_equal": true,
+  "resolved_graph_semantically_equal": true,
+  "graph_normalization": "Only consumer root location, node ordering and duplicate identical dep_kinds entries normalized; producer tungstenite repeats 10 identical dependency-kind records. Package IDs, dependencies, targets and features otherwise exact."
+}

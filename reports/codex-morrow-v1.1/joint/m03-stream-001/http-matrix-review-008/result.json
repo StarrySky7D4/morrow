@@ -1,0 +1,173 @@
+{
+  "status": "four_producer_cases_independently_reviewed_no_blocker",
+  "cases": [
+    {
+      "case": "s503",
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Failed": "unexpected status 503 Service Unavailable: synthetic 503, url: http://127.0.0.1:60866/v1/responses"
+      },
+      "drain": null,
+      "http_status": 503,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 19,
+      "offsets": {
+        "received_offset": 59,
+        "reserved_offset": 59,
+        "issued_offset": 59,
+        "os_completed_offset": 59,
+        "peer_consumed_offset": 59
+      },
+      "close_ack": {
+        "attempt": 1,
+        "child_pid": 7852,
+        "code": 0,
+        "epoch": 1,
+        "generation": 2,
+        "sequence": 8,
+        "session": 9025641894186469126
+      },
+      "host_ack_bytes": 412,
+      "control_clean": true,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "request_body_bytes": 22025,
+      "request_sha256": "f2b548c83a33841fba793ba7c8a9ddfe0bcd74c588e6eb40bfd97cf5cea531fe",
+      "raw_owner_released": true
+    },
+    {
+      "case": "r307",
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Failed": "unexpected status 307 Temporary Redirect: synthetic 307, url: http://127.0.0.1:60876/v1/responses"
+      },
+      "drain": null,
+      "http_status": 307,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 19,
+      "offsets": {
+        "received_offset": 59,
+        "reserved_offset": 59,
+        "issued_offset": 59,
+        "os_completed_offset": 59,
+        "peer_consumed_offset": 59
+      },
+      "close_ack": {
+        "attempt": 1,
+        "child_pid": 26584,
+        "code": 0,
+        "epoch": 1,
+        "generation": 2,
+        "sequence": 8,
+        "session": 7382782958738230178
+      },
+      "host_ack_bytes": 412,
+      "control_clean": true,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "request_body_bytes": 22025,
+      "request_sha256": "78bc5d2f8f04f504776b8096c07653fa3d4549eb6c9b9c9127c1a82a79431c89",
+      "raw_owner_released": true
+    },
+    {
+      "case": "exact",
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Completed": {
+          "end_turn": null
+        }
+      },
+      "drain": {
+        "Ok": null
+      },
+      "http_status": 200,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 0,
+      "offsets": {
+        "received_offset": 65536,
+        "reserved_offset": 65536,
+        "issued_offset": 65536,
+        "os_completed_offset": 65536,
+        "peer_consumed_offset": 65536
+      },
+      "close_ack": {
+        "attempt": 1,
+        "child_pid": 23256,
+        "code": 0,
+        "epoch": 1,
+        "generation": 2,
+        "sequence": 14,
+        "session": 2162583991941859999
+      },
+      "host_ack_bytes": 412,
+      "control_clean": true,
+      "host_exit": 0,
+      "guest_exit": 0,
+      "request_body_bytes": 22025,
+      "request_sha256": "d2d0a51a731acef29ca99fbf476f378c01235404740e0212a501336b7384729c",
+      "raw_owner_released": true,
+      "gate_at_ns": 4102659200,
+      "tail_effect_at_ns": 4114206200,
+      "gate_to_tail_ms": 11.547
+    },
+    {
+      "case": "over",
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Completed": {
+          "end_turn": null
+        }
+      },
+      "drain": {
+        "Err": "Cancelled"
+      },
+      "http_status": 200,
+      "intent": "Unknown",
+      "http_eof": false,
+      "material": false,
+      "error_code": 21,
+      "offsets": {
+        "received_offset": 65536,
+        "reserved_offset": 65536,
+        "issued_offset": 65536,
+        "os_completed_offset": 65536,
+        "peer_consumed_offset": 65536
+      },
+      "close_ack": {
+        "attempt": 1,
+        "child_pid": 4944,
+        "code": 0,
+        "epoch": 1,
+        "generation": 2,
+        "sequence": 16,
+        "session": 15454145183831974990
+      },
+      "host_ack_bytes": 412,
+      "control_clean": true,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "request_body_bytes": 22025,
+      "request_sha256": "d9de252a9dcc2d7919c9373bb8f34b5be34eb7aa8532d9f1340434883496b657",
+      "raw_owner_released": true,
+      "gate_at_ns": 3961721500,
+      "tail_effect_at_ns": 3969972700,
+      "gate_to_tail_ms": 8.2512
+    }
+  ],
+  "producer_checks": 124,
+  "independent_runtime_runs": 0,
+  "old007_unchanged_failed": true,
+  "terminal_poll_directly_measured": false,
+  "os_control_threads_joined_proven": false,
+  "product_gate_upgraded": false
+}

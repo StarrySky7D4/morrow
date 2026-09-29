@@ -1,0 +1,1 @@
+Attempt 001 before creating output directory: Windows default gbk failed decoding UTF-8 Git commit metadata (UnicodeDecodeError at byte 0x94, position 1076). Corrected all metadata reads to explicit UTF-8. No source files were created or overwritten by this attempt.

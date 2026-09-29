@@ -1,0 +1,8 @@
+[source.crates-io]
+replace-with = "qualification-pinned-vendor"
+
+[source.qualification-pinned-vendor]
+directory = "C:/Users/Administrator/Desktop/CodeXProjext/morrow-codex/out/p02-native-probe-001/vendor"
+
+[net]
+offline = true

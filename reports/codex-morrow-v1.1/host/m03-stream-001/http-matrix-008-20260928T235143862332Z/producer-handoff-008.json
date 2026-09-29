@@ -1,0 +1,141 @@
+{
+  "status": "four_authorized_cases_passed_once",
+  "result_sha256": "be1d8addf1275ee32c49a17c6a891b5d7e7aeea75fe8c5d3062a314e9e30d548",
+  "script_sha256": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+  "host_sha256": "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224",
+  "plugin_sha256": "bcfde17f4237bf72c1c55991c42a2656349ea7586527cd7557895fc12dc4c365",
+  "plugin_pins_verified_before_and_after": 32,
+  "case_results": [
+    {
+      "case": "s503",
+      "checks_passed": 30,
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Failed": "unexpected status 503 Service Unavailable: synthetic 503, url: http://127.0.0.1:60866/v1/responses"
+      },
+      "transport_drain": null,
+      "http_status": 503,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 19,
+      "bytes": 59,
+      "parser_yielded": 0,
+      "drain_discarded": 0,
+      "error_consumed": 59,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "control_clean": true,
+      "owner_released": true
+    },
+    {
+      "case": "r307",
+      "checks_passed": 30,
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Failed": "unexpected status 307 Temporary Redirect: synthetic 307, url: http://127.0.0.1:60876/v1/responses"
+      },
+      "transport_drain": null,
+      "http_status": 307,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 19,
+      "bytes": 59,
+      "parser_yielded": 0,
+      "drain_discarded": 0,
+      "error_consumed": 59,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "control_clean": true,
+      "owner_released": true
+    },
+    {
+      "case": "exact",
+      "checks_passed": 32,
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Completed": {
+          "end_turn": null
+        }
+      },
+      "transport_drain": {
+        "Ok": null
+      },
+      "http_status": 200,
+      "intent": "Observed",
+      "http_eof": true,
+      "material": true,
+      "error_code": 0,
+      "bytes": 65536,
+      "parser_yielded": 1024,
+      "drain_discarded": 64512,
+      "error_consumed": 0,
+      "host_exit": 0,
+      "guest_exit": 0,
+      "control_clean": true,
+      "owner_released": true
+    },
+    {
+      "case": "over",
+      "checks_passed": 32,
+      "post_count": 1,
+      "sink_count": 0,
+      "core_terminal": {
+        "Completed": {
+          "end_turn": null
+        }
+      },
+      "transport_drain": {
+        "Err": "Cancelled"
+      },
+      "http_status": 200,
+      "intent": "Unknown",
+      "http_eof": false,
+      "material": false,
+      "error_code": 21,
+      "bytes": 65536,
+      "parser_yielded": 1024,
+      "drain_discarded": 64512,
+      "error_consumed": 0,
+      "host_exit": 0,
+      "guest_exit": 2,
+      "control_clean": true,
+      "owner_released": true
+    }
+  ],
+  "evidence_manifest_verification": {
+    "s503": {
+      "local_files": 15,
+      "plugin_files": 2,
+      "manifest_sha256": "1b73a2138f51525f3b9c93c1c03cc09b5becb7a155a45627c6fd7d7419d3e42a"
+    },
+    "r307": {
+      "local_files": 15,
+      "plugin_files": 2,
+      "manifest_sha256": "3630ab2bc61dc42a733f808a45aaa5df5516d984d2034fbf400246c9cc83b155"
+    },
+    "exact": {
+      "local_files": 17,
+      "plugin_files": 2,
+      "manifest_sha256": "dc27a7232282a6e9a99a7f887775519fe576b60c5b282b645d8aa5f20524eace"
+    },
+    "over": {
+      "local_files": 17,
+      "plugin_files": 2,
+      "manifest_sha256": "0bfac57cf5919bbd266c88e9a44e27e3642128105a103cd04194ad8a9a7d9914"
+    }
+  },
+  "old_007_still_failed": true,
+  "automatic_retry": false,
+  "limits": [
+    "producer four-case localhost runtime only; independent joint review pending",
+    "terminal read poll not directly instrumented; source/state inference only",
+    "control stream ended is router observation, not OS thread join",
+    "durable Released checked from host final authority state; no independent raw ledger decode in this batch",
+    "not full M03 or product qualification; no gates upgraded"
+  ]
+}

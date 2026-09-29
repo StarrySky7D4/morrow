@@ -1,0 +1,39 @@
+{
+  "captured_at": "2026-09-28T11:28:38.252063+00:00",
+  "status": "failed",
+  "scope": "M-01 four-family experimental Rust qualification kit only; not full M-01, real transport/store/OS isolation, P-02 or G0",
+  "kit_manifest": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\host-kit-002\\manifest.json",
+    "sha256": "bb02d3e4b0ac1efd3195b1036bdb00669036d1124733060cde3b2d279576f464"
+  },
+  "schema_sha256": "da0ac7a42e4b0f6aec0cfbdd2358cf86688b08e862626186bb9de4914f355a7f",
+  "reviewer_sha256": "1a90e4f1a00faa26814c34948b3c1c152640744d7bfc5423f6c8119587f980dd",
+  "checks": [
+    {
+      "name": "ready_manifest_authority_inventory",
+      "status": "verified",
+      "files": 180,
+      "source_files": 12
+    },
+    {
+      "name": "independent_vector_decode_and_semantic_expectations",
+      "status": "verified",
+      "pairs": 19,
+      "directions": 38,
+      "rejection_vectors": 1
+    },
+    {
+      "name": "consumer_compile_tests_default_build_and_vector_reproduction",
+      "status": "verified",
+      "tests": 13,
+      "ignored": 0,
+      "reproduced_vector_files": 40
+    }
+  ],
+  "failures": [
+    "entry mismatch: C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v1\\tests\\qualification.rs"
+  ],
+  "commands": "commands.json",
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0
+}

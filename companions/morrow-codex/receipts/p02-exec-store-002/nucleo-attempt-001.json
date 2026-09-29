@@ -1,0 +1,11 @@
+{
+  "repository": "helix-editor/nucleo",
+  "commit": "4253de9faabb4e5c6d81d946a5e35a90f87347ee",
+  "url": "https://codeload.github.com/helix-editor/nucleo/tar.gz/4253de9faabb4e5c6d81d946a5e35a90f87347ee",
+  "attempt": 1,
+  "started_unix": 1790600067.3972178,
+  "network": "stdlib urllib direct HTTPS, ProxyHandler({}), no Git/Cargo invocation",
+  "status": "failed_preserved",
+  "error": "AssertionError: Unsupported tree type: {'path': 'matcher/LICENSE', 'mode': '120000', 'type': 'blob', 'sha': 'ea5b60640b01f74e295037aa8a6b7d4ea278a739', 'size': 10, 'url': 'https://api.github.com/repos/helix-editor/nucleo/git/blobs/ea5b60640b01f74e295037aa8a6b7d4ea278a739'}",
+  "elapsed_seconds": 2.069
+}

@@ -1,0 +1,47 @@
+{
+  "status": "readonly_selected_inputs_only_no_runtime",
+  "date": "2026-09-29",
+  "inputs": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\IMPLEMENTATION-PROPOSAL-001.md",
+      "sha256": "957b58bc8e321849a85996d806e1cda8e669bd0109ffd19fb2d4d33de0df713f",
+      "bytes": 19154
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-001\\integration-design-001.md",
+      "sha256": "f23b8e8a2b747c966ff24b81e29a3a7d34cf9e31d0145ff6d5ea283bda9b51d7",
+      "bytes": 16329
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-001\\integration-supplement-001.md",
+      "sha256": "b0ff63e549684911aafcca7228bad8f034218bc3e29ea7206e88939414e554ff",
+      "bytes": 13130
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-001\\source-audit-001.json",
+      "sha256": "3f39258459462ef5ce7f745d2e6466a4d5929159270111daf3eb8c53e00f7e3f",
+      "bytes": 17134
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\codex-api\\src\\sse\\responses.rs",
+      "sha256": "6c7b6e9d121c03658954b759d5febf71667f673a9647bcd41f674fa7ecd63f65",
+      "bytes": 69716
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-integration-004\\codex-work\\codex-rs\\core\\src\\client_common.rs",
+      "sha256": "0125e520f71798e6c31a1d0147934c0d90288ab9cc4bfce6e8374ac587f2b43a",
+      "bytes": 4820
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\core\\src\\store\\io_intent.rs",
+      "sha256": "9294b225d17b1998975fd8b7b975f277d2a0822ccc73badc9e97995401f0e297",
+      "bytes": 26721
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\network_node\\src\\client.rs",
+      "sha256": "f5e6d7458867de39ee810f8f86974e5535853cc27d1a4184037ff27ee1f69895",
+      "bytes": 14180
+    }
+  ],
+  "no_full_dependency_graph_verification": true
+}

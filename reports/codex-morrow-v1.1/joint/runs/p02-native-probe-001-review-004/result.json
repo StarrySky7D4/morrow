@@ -1,0 +1,144 @@
+{
+  "status": "verified_limited",
+  "scope": "complete fixed source identities and limited Windows refusal probe",
+  "P02": "blocked",
+  "G0": "blocked",
+  "product_graphs_built": 0,
+  "product_acceptance_verified": 0,
+  "product_acceptance_not_run": 84,
+  "sources": [
+    {
+      "id": "codex",
+      "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+      "files": 8697,
+      "bytes": 86130187,
+      "root_tree": "3b868fad63be6ac5db91402b579fab37f587d7d5",
+      "trees": 985
+    },
+    {
+      "id": "cc-switch",
+      "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+      "files": 1322,
+      "bytes": 48415580,
+      "root_tree": "e373c27485681c074ddab7d4f085ee9a6667b891",
+      "trees": 133
+    }
+  ],
+  "forks": [
+    {
+      "name": "tokio-tungstenite",
+      "files": 34,
+      "changed_files": [
+        "Cargo.toml"
+      ],
+      "original_root_tree": "a17959271ba2e9b397586e2022ddbd876b68de44"
+    },
+    {
+      "name": "tungstenite",
+      "files": 888,
+      "changed_files": [],
+      "original_root_tree": "5b612114e9fdbdfb92194b69c05742313ba117d0"
+    },
+    {
+      "name": "runfiles",
+      "files": 5,
+      "changed_files": [],
+      "original_root_tree": "342aa196478568ccc273831235baf01a6dffb2f0"
+    }
+  ],
+  "graph": {
+    "resolved_packages": 598,
+    "registry_packages": 577,
+    "local_packages": 21,
+    "registry_unchanged_from_codex": 574,
+    "kit_additions": [
+      [
+        "capnp",
+        "0.24.1",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "3fe67a3f89b693d2163cf3d94129125463ac5913e1c4322f2db905aa631d3c67"
+      ],
+      [
+        "capnpc",
+        "0.24.0",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "1b61282080d865d4d8eb5fd5368c3fe47c024db922c926f311404b364d01ebd0"
+      ],
+      [
+        "embedded-io",
+        "0.7.1",
+        "registry+https://github.com/rust-lang/crates.io-index",
+        "9eb1aa714776b75c7e67e1da744b81a129b3ff919c8712b5e1b32252c1f07cc7"
+      ]
+    ]
+  },
+  "independent_consumer": {
+    "executable": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\t-p02-004\\x86_64-pc-windows-msvc\\debug\\p02-native-probe.exe",
+    "exe_sha256": "cfcae4f0cfb44a7ae8ff77535a05a31b6835ef00cb44bd66a0c1be3b82283cad",
+    "producer_exe_sha256": "e0f5d6da9587cc3722b98701c52bd23474e935e302bd77b41f4796521aa5c9ca",
+    "runtime_receipt": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\consumer\\receipts\\p02-native-probe-001\\joint-runtime.json",
+    "runtime_sha256": "209e3ea22459138afaef1d3f08e7c7d93d541bd06ad7a82fb49f0266262e75c8",
+    "runtime_equal_to_producer": true,
+    "cases": 2,
+    "assertions": 15,
+    "commands": [
+      {
+        "stage": "rustc",
+        "argv": [
+          "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\rustc.exe",
+          "-vV"
+        ],
+        "exit_code": 0
+      },
+      {
+        "stage": "cargo",
+        "argv": [
+          "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+          "--version"
+        ],
+        "exit_code": 0
+      },
+      {
+        "stage": "metadata",
+        "argv": [
+          "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+          "metadata",
+          "--locked",
+          "--offline",
+          "--format-version",
+          "1",
+          "--manifest-path",
+          "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\consumer\\qualification\\p02-native-probe-001\\Cargo.toml"
+        ],
+        "exit_code": 0
+      },
+      {
+        "stage": "build",
+        "argv": [
+          "C:\\Users\\Administrator\\.rustup\\toolchains\\1.95.0-x86_64-pc-windows-msvc\\bin\\cargo.exe",
+          "build",
+          "--locked",
+          "--offline",
+          "--message-format=json-render-diagnostics",
+          "--manifest-path",
+          "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\consumer\\qualification\\p02-native-probe-001\\Cargo.toml",
+          "--target",
+          "x86_64-pc-windows-msvc",
+          "--bin",
+          "p02-native-probe"
+        ],
+        "exit_code": 0
+      },
+      {
+        "stage": "runtime",
+        "argv": [
+          "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\t-p02-004\\x86_64-pc-windows-msvc\\debug\\p02-native-probe.exe",
+          "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\joint\\runs\\p02-native-probe-001-review-004\\consumer\\receipts\\p02-native-probe-001\\joint-runtime.json"
+        ],
+        "exit_code": 0
+      }
+    ]
+  },
+  "original_inputs_unchanged": true,
+  "source_download_block_resolved": true
+}

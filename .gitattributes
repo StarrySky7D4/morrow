@@ -13,3 +13,17 @@
 
 # Theme descriptor is embedded verbatim in the immutable Wasm package.
 /plugins/mid_autumn/theme.json text eol=lf
+
+# M03 qualification inputs and companion snapshot are bound by byte hashes.
+/companions/morrow-codex/** -text
+/contracts/experimental/** -text
+/native_pipe_win_001/** -text
+/native_session/** -text
+/native_session_owner_002/** -text
+/native_session_stream_001/** -text
+/network_node_stream_001/** -text
+/reports/codex-morrow-v1.1/** -text
+/tool/m02_* -text
+/tool/m03_* -text
+/tool/agent_host_build.py -text
+/tool/tests/test_agent_host_build.py -text

@@ -1,0 +1,7 @@
+# M03 fixture adapter 001 (synthetic controlled batches only)
+
+Copied from frozen qualification002 into this separate crate (version 0.1.2). The upstream Core source and existing qualification/native candidates remain unchanged. Real ModelClient/Responses/SSE construction, original deadline, eight-event consumer queue, limits and cancellation gate are preserved.
+
+The only Core-consumer seam wraps each actual typed OutputTextDelta with an ID (stream ordinal, delta ordinal, byte length and SHA256). Delta A is queued normally, then held after actual recv and before the original final deliver_if_live gate. Delta B holds its actual reserved permit before the original producer gate. A waits for the bounded, identity-bound release after host revocation; B wakes on the real Operation cancellation token. Each original gate decides delivery; the fixture never fabricates a runtime ResponseEvent. The local regression uses synthetic events and explicitly does not prove actual Core/HTTP behavior.
+
+fixture.rs supplies strict spec binding, bounded nonblocking evidence and a single-purpose release. Slow filesystem IO belongs to its owned evidence thread, outside native/cancellation locks. Failed/full evidence is a fixture failure, not authority or a reason to skip cleanup. Evidence thread completion is polled and then joined inside the caller's unchanged closing budget. See receipts/m03-fixture-001/fixture-interface.md for the exact harness schema and boundaries.

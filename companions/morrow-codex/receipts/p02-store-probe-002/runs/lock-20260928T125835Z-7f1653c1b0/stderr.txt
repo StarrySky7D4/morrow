@@ -1,0 +1,14 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+     Locking 8 packages to latest compatible versions
+      Adding capnp v0.24.1
+      Adding capnpc v0.24.0
+      Adding embedded-io v0.7.1
+      Adding morrow-agent-host-contract v0.1.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-002\host-kit-003)
+      Adding nucleo v0.5.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee)
+      Adding nucleo-matcher v0.3.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher)
+      Adding tokio-tungstenite v0.28.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tokio-tungstenite)
+      Adding tungstenite v0.27.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\tungstenite)

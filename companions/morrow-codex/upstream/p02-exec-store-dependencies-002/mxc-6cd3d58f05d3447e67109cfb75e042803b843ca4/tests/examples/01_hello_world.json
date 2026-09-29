@@ -1,0 +1,8 @@
+{
+  "version": "0.6.0-alpha",
+  "containerId": "CLI-HelloWorld",
+  "containment": "processcontainer",
+  "process": {
+    "commandLine": "python -c \"import sys; print('Hello from MXC!'); print(f'Python version: {sys.version}'); print('Script executed successfully in process container')\""
+  }
+}

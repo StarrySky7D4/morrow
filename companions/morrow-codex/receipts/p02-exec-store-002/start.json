@@ -1,0 +1,8 @@
+{
+  "status": "new_batch_started_frozen_prior_inputs_verified",
+  "frozen_handoffs": {
+    "receipts/handoff.json": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+    "receipts/p02-native-probe-001/handoff.json": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020"
+  },
+  "scope": "Actual upstream exec/store callsite interception and explicit refusal; no full-loop or OS-isolation claim"
+}

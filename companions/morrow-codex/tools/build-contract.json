@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "qualification": "G0_first_slice_only",
+  "stages": {
+    "preflight": {
+      "implemented": true,
+      "outputs": [
+        "status.json"
+      ]
+    },
+    "generate": {
+      "implemented": false,
+      "requires": [
+        "reviewed_host_kit",
+        "generators"
+      ]
+    },
+    "deps": {
+      "implemented": false,
+      "requires": [
+        "approved_fixed_dependency_preparation"
+      ]
+    },
+    "test": {
+      "implemented": false,
+      "requires": [
+        "implemented_test_suites"
+      ]
+    },
+    "build": {
+      "implemented": false,
+      "requires": [
+        "native_or_wasm_graph"
+      ]
+    },
+    "inspect": {
+      "implemented": false,
+      "requires": [
+        "current_run_artifact_index"
+      ]
+    },
+    "pack": {
+      "implemented": false,
+      "requires": [
+        "host_package_validator",
+        "current_run_artifacts"
+      ]
+    },
+    "bundle": {
+      "implemented": false,
+      "requires": [
+        "host_bundle_validator",
+        "current_run_members"
+      ]
+    },
+    "qualify": {
+      "implemented": false,
+      "requires": [
+        "verified_host",
+        "qualification_suites"
+      ]
+    },
+    "release-plan": {
+      "implemented": false,
+      "requires": [
+        "qualified_final_artifacts"
+      ]
+    }
+  },
+  "toolchain_lock": {
+    "path": "toolchain.lock.json",
+    "sha256": "198d99f8536ab32e5afa2e5d8eb865fda42de619571b54c7bedc2e0c14ab482a"
+  },
+  "graphs": {
+    "native": {
+      "status": "not_implemented",
+      "manifest": null,
+      "lock": null,
+      "target": "x86_64-pc-windows-msvc",
+      "target_dir": "out/target/native",
+      "reason": "P-01 closure and reviewed host-kit must precede a real native graph."
+    },
+    "wasm": {
+      "status": "not_implemented",
+      "manifest": null,
+      "lock": null,
+      "target": "wasm32-unknown-unknown",
+      "target_dir": "out/target/wasm",
+      "reason": "Portable source slice has not been implemented; no placeholder crates."
+    }
+  },
+  "output_policy": {
+    "fresh_directory_required": true,
+    "allowed_root": "repository",
+    "reuse_dist": false,
+    "network": false,
+    "lock_updates": false,
+    "account_access": false
+  }
+}

@@ -1,0 +1,16 @@
+error: failed to get `tungstenite` as a dependency of package `tokio-tungstenite v0.28.0 (https://github.com/openai-oss-forks/tokio-tungstenite?rev=0e5b2d73aa18dd9f0a50ee9ff199d5aef7594186#0e5b2d73)`
+    ... which satisfies dependency `tokio-tungstenite = "^0.28.0"` of package `codex-api v0.0.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-source-batch-001\codex-source\codex-rs\codex-api)`
+    ... which satisfies path dependency `codex-api` (locked to 0.0.0) of package `morrow-codex-p02-native-probe v0.0.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\qualification\p02-native-probe-001)`
+
+Caused by:
+  failed to load source for dependency `tungstenite`
+
+Caused by:
+  unable to update https://github.com/openai-oss-forks/tungstenite-rs?rev=4fffad30fe373adbdcffab9545e9e9bf4f2fc19f
+
+Caused by:
+  the source morrow-p02-fixed-tungstenite requires a lock file to be present first before it can be
+  used against vendored source code
+
+  remove the source replacement configuration, generate a lock file, and then
+  restore the source replacement configuration to continue the build

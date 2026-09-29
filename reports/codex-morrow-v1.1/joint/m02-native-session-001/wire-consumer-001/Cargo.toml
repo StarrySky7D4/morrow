@@ -1,0 +1,10 @@
+[workspace]
+resolver = "2"
+[package]
+name = "joint-m02-wire-consumer"
+version = "0.0.0"
+edition = "2024"
+publish = false
+[dependencies]
+morrow-native-session-wire = { path = "../runs/wire-consumer-build-001/wire" }
+capnp = "=0.24.1"

@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+exclude = ["vendor/capnp-kit-001/wire"]
+
+[package]
+name = "morrow-native-session-client"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "morrow-session-client"
+path = "src/main.rs"
+
+[dependencies]
+morrow-native-session-wire = { path = "vendor/capnp-kit-001/wire" }

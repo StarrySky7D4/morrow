@@ -1,0 +1,24 @@
+{
+  "status": "failed",
+  "mode": "core-revoke",
+  "automatic_retry": false,
+  "error": "AssertionError({'close_written_and_acked': True, 'control_boundary_eof_observed': True, 'control_router_end_observed': True, 'independent_control_failure_absent': True, 'control_protocol_clean': True, 'control_end_result_ok_separately': True, 'matching_ack_identity': True, 'matching_ack_sequence': True, 'guest_identity_matches_batch': True, 'host_guest_terminal_progress_agrees': True, 'host_guest_cleanup_agrees': False, 'expected_aggregate_error_retained': False, 'expected_native_error_reason': True})",
+  "host_reader_joined": true,
+  "host_exit": 0,
+  "reader_errors": [],
+  "fixture_threads": [
+    {
+      "thread": "fixture-accept",
+      "joined": true
+    },
+    {
+      "thread": "fixture-handler",
+      "joined": true
+    },
+    {
+      "thread": "original_cleanup_budget",
+      "joined": true
+    }
+  ],
+  "post_count": 1
+}

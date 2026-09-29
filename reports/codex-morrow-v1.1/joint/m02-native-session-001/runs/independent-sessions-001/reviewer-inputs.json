@@ -1,0 +1,8 @@
+{
+  "run_independent_sessions.py": "433be82fd4ae9bc55b9d0b4fb2fe055e71eca375c84c8d4fb6c4ac4ba3c2e140",
+  "observe_session.py": "54200c03119c182aba803350762ed26f755b363bb72b6652b565f9fedbc71f19",
+  "process_witness.py": "be6dc77212ee742722a0c44bbe896fb49394be0b0109bb55350c260b19519a19",
+  "watch_owned_processes.py": "0bf8a60b0b5d00241b3c839c594bb3db0b2f142bfe81111306248897afa206e3",
+  "runtime_decode.py": "3bafa4215e20142efc37cbe3a9e553af3350d556573c1dee8ade69413042f666",
+  "review_capnp_kit.py": "9b9c360fc7cd0d7f014976d4bf92f6dcc31e85f6cf70df683c03dd47fb484b99"
+}

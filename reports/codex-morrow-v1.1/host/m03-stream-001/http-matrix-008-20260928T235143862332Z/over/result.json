@@ -1,0 +1,174 @@
+{
+  "case": "over",
+  "status": "passed",
+  "plugin_evidence": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-host-matrix-008\\20260928T235143862332Z\\over",
+  "terminal_poll": "not directly instrumented; source/state inference only",
+  "checks": {
+    "exactly_one_post": true,
+    "no_redirect_sink_hits": true,
+    "server_fixture_no_error": true,
+    "host_control_exit_0": true,
+    "guest_expected_exit": true,
+    "real_child_exit_and_dual_eof": true,
+    "durable_owner_released": true,
+    "request_and_native_workers_closed": true,
+    "guest_data_worker_joined": true,
+    "close_written_and_acked": true,
+    "control_boundary_eof_observed": true,
+    "control_router_end_observed": true,
+    "independent_control_failure_absent": true,
+    "control_protocol_clean": true,
+    "control_end_result_ok_separately": true,
+    "matching_ack_identity": true,
+    "matching_ack_sequence": true,
+    "guest_identity_matches_batch": true,
+    "host_guest_terminal_progress_agrees": true,
+    "host_guest_cleanup_agrees": true,
+    "expected_aggregate_error_retained": true,
+    "expected_native_error_reason": true,
+    "no_evidence_overflow": true,
+    "http_status_preserved": true,
+    "classification_sum": true,
+    "actual_pre_eof_snapshot": true,
+    "core_completed_before_tail_outcome": true,
+    "over_cap_unknown_not_observed": true,
+    "quota_error_observed": true,
+    "cap_offsets_preserved_no_extra_delivery": true,
+    "extra_byte_written_by_server": true,
+    "transport_drain_failed": true
+  },
+  "dimensions": {
+    "core_terminal": {
+      "Completed": {
+        "end_turn": null
+      }
+    },
+    "transport_drain": {
+      "Err": "Cancelled"
+    },
+    "guest_cleanup": {
+      "Ok": {
+        "acknowledged_offset": 65536,
+        "data_channel_closed": true,
+        "data_connect_reaped": true,
+        "data_read_reaped": true,
+        "data_write_reaped": true,
+        "delivered_offset": 65536,
+        "durable_observed": false,
+        "network_eof": false,
+        "network_worker_exited": true,
+        "network_worker_started": true,
+        "received_offset": 65536,
+        "request_closed": true,
+        "session_release": null
+      }
+    },
+    "guest_close": {
+      "Err": "Unknown"
+    },
+    "guest_final_control": {
+      "Err": "Unknown"
+    },
+    "close_observation": {
+      "aggregate_error": "Unknown",
+      "close_acked": true,
+      "close_written": true,
+      "control_eof": true,
+      "control_protocol_clean": true,
+      "control_stream_ended": true,
+      "final_progress": {
+        "cancel_discarded_bytes": 0,
+        "child_exited": false,
+        "connect_reaped": true,
+        "data_closed": true,
+        "drain_discarded_bytes": 64512,
+        "error_code": 21,
+        "error_consumed_bytes": 0,
+        "http_eof": false,
+        "http_status": 200,
+        "intent": "Unknown",
+        "issued_offset": 65536,
+        "last_write_ordinal": 67,
+        "network": "Failed",
+        "os_completed_offset": 65536,
+        "owner": "Closing",
+        "owner_released": false,
+        "parser_yielded_bytes": 1024,
+        "peer_consumed_offset": 65536,
+        "read_reaped": true,
+        "received_offset": 65536,
+        "request_closed": true,
+        "reserved_offset": 65536,
+        "response_material_stored": false,
+        "revoke_applied": true,
+        "revoke_persisted": true,
+        "stderr_eof": false,
+        "stdout_eof": false,
+        "worker_joined": true,
+        "worker_started": true,
+        "write_reaped": true
+      },
+      "matching_ack": {
+        "attempt": 1,
+        "child_pid": 4944,
+        "code": 0,
+        "epoch": 1,
+        "generation": 2,
+        "sequence": 16,
+        "session": 15454145183831974990
+      },
+      "sticky_control_failure": null
+    },
+    "control_end_result": {
+      "Ok": null
+    },
+    "http_and_native": {
+      "cancel_discarded_bytes": 0,
+      "child_exited": true,
+      "connect_reaped": true,
+      "data_closed": true,
+      "drain_discarded_bytes": 64512,
+      "error_code": 21,
+      "error_consumed_bytes": 0,
+      "http_eof": false,
+      "http_status": 200,
+      "intent": "Unknown",
+      "issued_offset": 65536,
+      "last_write_ordinal": 67,
+      "network": "Failed",
+      "os_completed_offset": 65536,
+      "owner": "Released",
+      "owner_released": true,
+      "parser_yielded_bytes": 1024,
+      "peer_consumed_offset": 65536,
+      "read_reaped": true,
+      "received_offset": 65536,
+      "request_closed": true,
+      "reserved_offset": 65536,
+      "response_material_stored": false,
+      "revoke_applied": true,
+      "revoke_persisted": true,
+      "stderr_eof": true,
+      "stdout_eof": true,
+      "worker_joined": true,
+      "worker_started": true,
+      "write_reaped": true
+    },
+    "host_exit": 0,
+    "guest_exit": 2
+  },
+  "host_lifetime": {
+    "pid": 14632,
+    "exit": 0,
+    "status": "os_exit_observed",
+    "child_identity": {
+      "epoch": 1,
+      "pid": 4944,
+      "session": 15454145183831974990
+    },
+    "owner_release_verified": true
+  },
+  "post_count": 1,
+  "sink_count": 0,
+  "fixed_artifacts_unchanged": true
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "run_id": "20260928T113015.678136Z-9d9449d4196e",
+  "started_utc": "20260928T113015.678136Z",
+  "entry_sha256": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+  "stage": "preflight",
+  "scope": "baseline",
+  "status": "passed_scoped_checks",
+  "checks": [
+    {
+      "baseline": {
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor",
+        "commit": "88557916aabf2e10619b1022110035178498898a",
+        "branch": "codex/io-safety-refactor",
+        "status": "candidate_only",
+        "m00_delivery_verified": false
+      }
+    }
+  ],
+  "artifacts": [],
+  "gates": {
+    "P-00": "not_claimed",
+    "G0": "not_claimed"
+  },
+  "network_used": false,
+  "locks_updated": false,
+  "old_dist_reused": false,
+  "output_dir": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\baseline",
+  "contract_sha256": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+  "source_lock_sha256": "a92a49bea924d836edc3fbb3fad2cf4ff2859ea5be34e2b9f56eb4da7c4605e7",
+  "qualification_limit": "Scoped input checks only; P-00/M-00/G0 not completed",
+  "exit_code": 0,
+  "finished_utc": "2026-09-28T11:30:15.718457+00:00"
+}

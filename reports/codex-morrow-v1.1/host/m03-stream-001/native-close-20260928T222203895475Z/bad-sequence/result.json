@@ -1,0 +1,9 @@
+{
+  "mode": "bad-sequence",
+  "passed": true,
+  "host_exit": 2,
+  "peer_exit": 0,
+  "ack_received": false,
+  "owner_released": true,
+  "no_http_worker": true
+}

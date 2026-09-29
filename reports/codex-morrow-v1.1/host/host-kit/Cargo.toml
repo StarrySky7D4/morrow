@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+
+[package]
+name = "morrow-agent-host-contract"
+version = "0.1.0-experimental.1"
+edition = "2024"
+publish = false
+license = "AGPL-3.0-only"
+
+[dependencies]
+capnp = "=0.24.1"
+sha2 = "=0.10.9"
+
+[build-dependencies]
+capnpc = "=0.24.0"
+sha2 = "=0.10.9"
+
+[features]
+default = []
+qualification = []
+
+[[example]]
+name = "vectors"
+required-features = ["qualification"]

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "repository": "farion1231/cc-switch",
+  "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "retrieval": "GitHub read-only fetch_file, base64 exact bytes",
+  "files": [
+    {
+      "path": "src-tauri/src/proxy/providers/transform_codex_chat.rs",
+      "git_blob_sha1": "80eaa7271b777ffe76e7484ec344aaf95f436a84",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/providers/transform_codex_chat.rs"
+    },
+    {
+      "path": "src-tauri/src/proxy/providers/streaming_codex_chat.rs",
+      "git_blob_sha1": "0db3728da7c03cb25cb473073f1592fb7333465f",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/providers/streaming_codex_chat.rs"
+    },
+    {
+      "path": "src-tauri/Cargo.toml",
+      "git_blob_sha1": "3e1e2fd1f7a0d944cb7e66ee0f91c411ce45ebea",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/Cargo.toml"
+    },
+    {
+      "path": "LICENSE",
+      "git_blob_sha1": "d84c4f73112a9019312a332c1d04218ab1c03be7",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/LICENSE"
+    }
+  ]
+}

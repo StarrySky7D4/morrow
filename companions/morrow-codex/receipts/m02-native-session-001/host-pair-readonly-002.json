@@ -1,0 +1,62 @@
+{
+  "status": "host_producer_pair_reviewed_not_independent_replay",
+  "source": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m02-native-session-001\\pair-20260928T193003821828Z\\result.json",
+  "source_sha256": "8041af58823981004e2a88a41e726d003ff7769fcc277022474cc67c7f169dc6",
+  "client_manifest_sha256": "9448e8167737df2ec706999c66a13ce4ce400e2cbcf5aceace1c30a8361058ee",
+  "client_inputs_unchanged": 56,
+  "cases": [
+    {
+      "name": "normal",
+      "host_pid": 24328,
+      "child_pid": 4712,
+      "host_exit": 0,
+      "child_exit": 0,
+      "phase": "Released",
+      "generation": 2,
+      "exit_observed": true,
+      "stdout_eof": true,
+      "stderr_eof": true,
+      "owner_retained": false,
+      "state_reads": 2,
+      "control_stdin_open_until_host_exit": true,
+      "events": 22
+    },
+    {
+      "name": "revoke",
+      "host_pid": 23088,
+      "child_pid": 11456,
+      "host_exit": 0,
+      "child_exit": 19,
+      "phase": "Released",
+      "generation": 2,
+      "exit_observed": true,
+      "stdout_eof": true,
+      "stderr_eof": true,
+      "owner_retained": false,
+      "state_reads": 1,
+      "control_stdin_open_until_host_exit": true,
+      "events": 23
+    },
+    {
+      "name": "stop",
+      "host_pid": 16912,
+      "child_pid": 5844,
+      "host_exit": 0,
+      "child_exit": 0,
+      "phase": "Released",
+      "generation": 2,
+      "exit_observed": true,
+      "stdout_eof": true,
+      "stderr_eof": true,
+      "owner_retained": false,
+      "state_reads": 1,
+      "control_stdin_open_until_host_exit": true,
+      "events": 19
+    }
+  ],
+  "limits": [
+    "Real host-produced observations reviewed; no independent process launch by this checker",
+    "Joint separately observes OS process handles and decodes raw frames",
+    "Exit0 not business success; no M02/product/OS isolation completion"
+  ]
+}

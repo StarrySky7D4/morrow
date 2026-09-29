@@ -1,0 +1,165 @@
+{
+  "captured_at": "2026-09-28T11:34:53.924865+00:00",
+  "status": "verified",
+  "scope": "P-00 entry receipt and P-01 partial-source static-audit handoff consistency only; neither full work-package exit nor P-02 execution",
+  "handoff": {
+    "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\handoff.json",
+    "sha256": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4"
+  },
+  "checks": [
+    {
+      "name": "ready_inputs_and_43_plus_12_receipts",
+      "status": "verified",
+      "frozen_inputs": 17,
+      "test_count": 43,
+      "cli_count": 12,
+      "mode": "producer execution receipts independently read/hashed, not re-executed"
+    },
+    {
+      "name": "exact_partial_source_membership_and_dual_hashes",
+      "status": "verified",
+      "sources": [
+        {
+          "id": "codex",
+          "commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+          "kind": "partial_snapshot",
+          "files": 209,
+          "files_manifest_sha256": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6"
+        },
+        {
+          "id": "cc-switch",
+          "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+          "kind": "partial_snapshot",
+          "files": 13,
+          "files_manifest_sha256": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd"
+        }
+      ],
+      "limit": "producer-reported fixed blob identity, not independent remote retrieval or complete commit tree"
+    },
+    {
+      "name": "source_closure_reports_and_two_graph_boundaries",
+      "status": "verified",
+      "product_graphs_implemented": 0,
+      "product_graphs_planned": 2,
+      "limit": "manifest/static closure only; no feature/target-resolved product graph or source-build qualification"
+    },
+    {
+      "name": "inputs_still_frozen_and_unimplemented_gates_retained",
+      "status": "verified"
+    }
+  ],
+  "observed_inputs": {
+    "tools/build_plan.py": "a702ddccb791648e4197bcf9178fd67f6f5a3e059c2bc76b95a454ada58cb19c",
+    "tests/test_build_plan.py": "775cac93752ce932367e25611040644cd5832e795d2aca0705d195d09eae2cae",
+    "tools/build-contract.json": "3cbf391ca68dcba69ca4165762d3430f490e77aa6b596c8b58cff3c8784ff060",
+    "sources.lock.json": "a92a49bea924d836edc3fbb3fad2cf4ff2859ea5be34e2b9f56eb4da7c4605e7",
+    "toolchain.lock.json": "198d99f8536ab32e5afa2e5d8eb865fda42de619571b54c7bedc2e0c14ab482a",
+    "rust-toolchain.toml": "28ba63ba51f7635afd6b0663f2613a1037ab602a039a889e991b1164b84d4714",
+    "receipts/upstream-inventory.json": "6fa9ebdebf3ec271f7c1f9c38f1e4c4790d2ecdebfa800856acf1855372ec285",
+    "receipts/upstream-codex-tree.json": "2a077ea54add95239ead38d22fa8474dd66756df54c261b34e85f091808828c6",
+    "receipts/upstream-cc-switch-tree.json": "ba0b9b1171cc4eeff82942be8d111a48a5150ccdbb4147570b557a13d8118fcd",
+    "receipts/upstream-codex-dependency-closure.json": "34b4d76c8e73ae5255014b302380647002c4926eb0ffe3ce1f7c165b8468416b",
+    "receipts/upstream-cc-switch-dependency-closure.json": "3d863817586496d4fd36a6db3fb4429400db8c801774963aa86fd5188ad11af1",
+    "receipts/upstream-side-effect-candidates.json": "1290fe707ca47c6477dd40a5e55c49b90175c24b53b91f38e2673828a8d10bfc",
+    "docs/upstream-audit.md": "43e815011d74f9c504a283cfaa94d00fb4fd0c7b56a859e6449fee3ce7a84279",
+    "docs/cc-switch-review.md": "06c0a35d1ebb049e8320ab21aef3e603800ef20b12ae44d039c4b3d0f260da72",
+    "docs/build-entry.md": "559efafa10324c7603fa30d012d6fdbb0491152ce840743173462935638462b9",
+    "docs/implementation-status.md": "d889c37c3819bcc5ddfec015ba22e235ace7727b4ab7c827b7f3ec13f35e487f",
+    "README.md": "6078addd62c80eb1bcf4036da0229c3e4a66080e96b9c5c8a97d757d9672f6ca",
+    "receipts/final-verification-20260928-001/tests.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "receipts/final-verification-20260928-001/tests.stderr.txt": "e31fd91789c5cf8b9341ccf63104f85c8b42ed037c0ca836d10b015926b246b2"
+  },
+  "cli_receipts": [
+    {
+      "name": "baseline",
+      "exit_code": 0,
+      "error": null,
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\baseline\\status.json",
+      "sha256": "a6096a219e9e32074e25e8ea11ca63f7932f9f78d9c96b89722e0dedb4811057"
+    },
+    {
+      "name": "sources",
+      "exit_code": 2,
+      "error": "source_incomplete",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\sources\\status.json",
+      "sha256": "f1ac0c199a4db98c90bd42b1a9f7470ca7a3ef4879090e0f76d801f741487ce4"
+    },
+    {
+      "name": "full",
+      "exit_code": 2,
+      "error": "source_incomplete",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\full\\status.json",
+      "sha256": "92812df9b026851d29c1df13584482e5fc466d314c0288be237a5d3a816771b8"
+    },
+    {
+      "name": "generate",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\generate\\status.json",
+      "sha256": "fa6495f617d176ee7f34461268ea93fb040ddba361da3798c7d3004651a65b2a"
+    },
+    {
+      "name": "deps",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\deps\\status.json",
+      "sha256": "6ae578c458620a9cc5a1d2c75ede7eb1a4c9e739a75cfc4812d94fb0a4ccd3e8"
+    },
+    {
+      "name": "test",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\test\\status.json",
+      "sha256": "bf2cabcbd9e1f8ee207ead15ba468182abc9c194971252f297feda1951428dc7"
+    },
+    {
+      "name": "build",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\build\\status.json",
+      "sha256": "0ae69309712dba5c05e3c64842cbd6f36545b6b6fe469bde2ccdea2e80672709"
+    },
+    {
+      "name": "inspect",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\inspect\\status.json",
+      "sha256": "8945f6c1241d0dbe9e77f19cdcc9a27da0ac476b6456a18bb4d7be8ac6644bc9"
+    },
+    {
+      "name": "pack",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\pack\\status.json",
+      "sha256": "afd1630874743f486348f324ca14af9880d3622ade7b2c25817459f11d912937"
+    },
+    {
+      "name": "bundle",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\bundle\\status.json",
+      "sha256": "2a5dd8b11d22888eb652e1bd96f891012393018a06335f541eed5ac010d9aefd"
+    },
+    {
+      "name": "qualify",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\qualify\\status.json",
+      "sha256": "c3f8cbe7fdfa6d0fcae4dee21c28c1fc363e2279c8a987c29f31ab02122b08ca"
+    },
+    {
+      "name": "release-plan",
+      "exit_code": 2,
+      "error": "not_implemented",
+      "receipt_path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\final-verification-20260928-001\\release-plan\\status.json",
+      "sha256": "a39ea5465044713bce9db788f7db82d369a1e50b52f54fe1ff10ccee1f8448e4"
+    }
+  ],
+  "source_file_counts": {
+    "codex": 209,
+    "cc-switch": 13
+  },
+  "failures": [],
+  "g0_status": "blocked",
+  "product_scenarios_verified": 0
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "repository": "farion1231/cc-switch",
+  "commit": "846de29c13ac4d65f164db8c15dd5fd58e29f972",
+  "files": [
+    {
+      "path": "src-tauri/src/proxy/providers/codex_chat_common.rs",
+      "git_blob_sha1": "7c7ab4bc48145070b9e6a01adeaeb781c3a9f31b",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/providers/codex_chat_common.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/proxy/providers/codex_responses_sse.rs",
+      "git_blob_sha1": "d347e8a498af92738e09a0e0ba4be38ef1fb64b3",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/providers/codex_responses_sse.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/proxy/json_canonical.rs",
+      "git_blob_sha1": "258a4fc57b46ff78778240dc1f57298eb0687922",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/json_canonical.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/proxy/sse.rs",
+      "git_blob_sha1": "e62b42650057cfb6c32371d2f78d0379d641497f",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/sse.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/proxy/tool_media.rs",
+      "git_blob_sha1": "6c8634ba8a575a251b5bbe00c03d4c7d5916e6b9",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/tool_media.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/proxy/error.rs",
+      "git_blob_sha1": "8e0a67f28d616610452806def311828e8227a5c3",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/proxy/error.rs",
+      "local_blob_verified": true
+    },
+    {
+      "path": "src-tauri/src/provider.rs",
+      "git_blob_sha1": "1a24c9b7f2919159d80baef016be598ad795e158",
+      "url": "https://github.com/farion1231/cc-switch/blob/846de29c13ac4d65f164db8c15dd5fd58e29f972/src-tauri/src/provider.rs",
+      "local_blob_verified": true
+    }
+  ]
+}

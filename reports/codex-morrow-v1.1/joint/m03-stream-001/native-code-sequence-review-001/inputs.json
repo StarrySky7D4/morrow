@@ -1,0 +1,11 @@
+{
+  "checked_at_utc": "2026-09-28T22:58:06.106057+00:00",
+  "sha256": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-002\\manifest.json": "12b20faeee5e3bd352d8ee204ba7d2d155a9b416e5f8fa3edbf922bf5367a021",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-stream-002\\native-candidate-002.json": "20135ba780b86a344eeb396fd8d8f0ba85ee3600f79308140380c3fc94fbf561",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-host-candidate-002\\source\\src\\supervisor.rs": "a1d8d065664e7aab7a694fbc9f6b2d4b30c29fbddc206d8edd70ca2cd8506b97",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\admission.rs": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-stream-002\\src\\session.rs": "dce507a390f45091b5c0ee440c0a2e96503716fcc26e79254ce8faee63e41742"
+  },
+  "all_match": true
+}

@@ -1,0 +1,24 @@
+{
+  "status": "fresh_fixed_source_copy_verified",
+  "frozen_handoffs": {
+    "receipts/handoff.json": {
+      "sha256": "995cfa721bae3b94a494a0ee88e9e76f9e29afeec71ee6481c9ac756446d3ca4",
+      "input_count": 17
+    },
+    "receipts/p02-native-probe-001/handoff.json": {
+      "sha256": "1fc5833e632bb3afab827a9ca3519418ab7afdf34c6e50e6cafa59ecce707020",
+      "input_count": 35
+    },
+    "receipts/p02-exec-store-002/handoff.json": {
+      "sha256": "d3c19e26c5c04461eed188ff1d84518add5d8af711c3dfc78e6e49ad8312cd76",
+      "input_count": 129
+    }
+  },
+  "fixed_commit": "44fe510ce3ee61c8ef623adcbf89b901c73ddd61",
+  "source_manifest_sha256": "577253fb4cacc1bc292fb46db725d713c51368228ebb7ae620a65b397c5df2b7",
+  "source_files": 8697,
+  "working_copy": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\p02-core-network-003\\codex-work",
+  "batch002_exec_patch_carried_forward": false,
+  "dependencies": "Read-only exact verified mxc/nucleo/forks/vendor from batch002; new Cargo home and target output",
+  "preflight_sha256": "8762917b3dddb80b3d0f120ae173ee7042a90e0d4af66efdaa391c9029bdb180"
+}

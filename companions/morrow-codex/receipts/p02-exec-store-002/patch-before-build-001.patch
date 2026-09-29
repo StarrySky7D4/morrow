@@ -1,0 +1,163 @@
+--- a/codex-rs/core/Cargo.toml
++++ b/codex-rs/core/Cargo.toml
+@@ -174,3 +174,6 @@
+ [package.metadata.cargo-shear]
+ ignored = ["openssl-sys"]
+ ignored-paths = ["tests/remote_env_windows/*.rs"]
++
++[features]
++morrow-p02-qualification = []
+--- a/codex-rs/core/src/lib.rs
++++ b/codex-rs/core/src/lib.rs
+@@ -134,6 +134,8 @@
+ mod stream_events_utils;
+ pub mod test_support;
+ mod unified_exec;
++#[cfg(feature = "morrow-p02-qualification")]
++pub mod morrow_p02_qualification;
+ pub mod windows_sandbox;
+ #[cfg(windows)]
+ mod windows_system_config;
+--- a/codex-rs/core/src/unified_exec/process_manager.rs
++++ b/codex-rs/core/src/unified_exec/process_manager.rs
+@@ -1319,7 +1319,10 @@
+     ) -> Result<UnifiedExecProcess, UnifiedExecError> {
+         let inherited_fds = spawn_lifecycle.inherited_fds();
+ 
+-        if environment.is_remote() || request.exec_server_shell_snapshot.is_some() {
++        if environment.has_injected_capabilities()
++            || environment.is_remote()
++            || request.exec_server_shell_snapshot.is_some()
++        {
+             if !inherited_fds.is_empty() {
+                 return Err(UnifiedExecError::create_process(
+                     "remote exec-server does not support inherited file descriptors".to_string(),
+--- a/codex-rs/exec-server/src/environment.rs
++++ b/codex-rs/exec-server/src/environment.rs
+@@ -665,6 +665,7 @@
+ /// paths used by filesystem helpers.
+ #[derive(Clone)]
+ pub struct Environment {
++    injected_backend: Option<InjectedBackend>,
+     remote_client: Option<LazyRemoteExecServerClient>,
+     ready_info: Arc<ArcSwapOption<EnvironmentReadyInfo>>,
+     // No sender means an ordinary environment. A provisioned environment retains a sender whose
+@@ -678,10 +679,15 @@
+     local_runtime_paths: Option<ExecServerRuntimeOptions>,
+ }
+ 
++/// Marks caller-owned capabilities; unified exec must not choose its local spawn branch.
++#[derive(Clone)]
++struct InjectedBackend;
++
+ impl Environment {
+     /// Builds a test-only local environment without configured sandbox helper paths.
+     pub fn default_for_tests() -> Self {
+         Self {
++            injected_backend: None,
+             remote_client: None,
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+@@ -704,6 +710,31 @@
+ }
+ 
+ impl Environment {
++    /// Supplies every capability explicitly, without constructing local or remote defaults.
++    /// This is a routing boundary, not an OS isolation or durable capability guarantee.
++    pub fn with_injected_capabilities(
++        exec_backend: Arc<dyn ExecBackend>,
++        filesystem: Arc<dyn ExecutorFileSystem>,
++        http_client: Arc<dyn HttpClient>,
++    ) -> Self {
++        Self {
++            injected_backend: Some(InjectedBackend),
++            remote_client: None,
++            ready_info: Arc::new(ArcSwapOption::empty()),
++            provisioning_status_tx: None,
++            startup_task: Arc::new(Mutex::new(None)),
++            exec_backend,
++            filesystem,
++            http_client,
++            local_runtime_paths: None,
++        }
++    }
++
++    /// Whether unified exec must use the injected backend even for a local-shaped request.
++    pub fn has_injected_capabilities(&self) -> bool {
++        self.injected_backend.is_some()
++    }
++
+     /// Builds an environment using the caller's effective outbound HTTP policy.
+     pub fn create(
+         exec_server_url: Option<String>,
+@@ -761,6 +792,7 @@
+         http_client_factory: HttpClientFactory,
+     ) -> Self {
+         Self {
++            injected_backend: None,
+             remote_client: None,
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+@@ -794,6 +826,7 @@
+             Arc::new(RemoteFileSystem::new(client.clone()));
+ 
+         Self {
++            injected_backend: None,
+             remote_client: Some(client.clone()),
+             ready_info: Arc::new(ArcSwapOption::empty()),
+             provisioning_status_tx: None,
+--- /dev/null
++++ b/codex-rs/core/src/morrow_p02_qualification.rs
+@@ -0,0 +1,52 @@
++//! Bounded bridge into the original unified-exec dispatcher; no synthetic loop.
++use crate::exec::{ExecCapturePolicy, ExecExpiration};
++use crate::sandboxing::ExecRequest;
++use crate::unified_exec::{NoopSpawnLifecycle, UnifiedExecProcessManager};
++use codex_protocol::config_types::{WindowsSandboxLevel, WindowsSandboxProxySettingsMode};
++use codex_protocol::models::PermissionProfile;
++use codex_sandboxing::SandboxType;
++use codex_utils_absolute_path::AbsolutePathBuf;
++use std::collections::HashMap;
++
++/// Exercises one actual prepared-request dispatch. Callers must supply a refusing backend.
++/// A returned error proves only this call's propagation, never global spawn isolation.
++pub async fn dispatch_refusal_probe(
++    environment: &codex_exec_server::Environment,
++    tty: bool,
++) -> Result<(), String> {
++    if !environment.has_injected_capabilities() {
++        return Err("qualification requires explicitly injected capabilities".into());
++    }
++    let request = ExecRequest::new(
++        vec![
++            "morrow-qualification-never-launch".into(),
++            "fixture-argument".into(),
++        ],
++        AbsolutePathBuf::try_from(r"C:\morrow-qualification-nonexistent")
++            .map_err(|error| error.to_string())?,
++        HashMap::new(),
++        /*network*/ None,
++        /*network_environment_id*/ None,
++        ExecExpiration::DefaultTimeout,
++        ExecCapturePolicy::ShellTool,
++        SandboxType::None,
++        vec![],
++        WindowsSandboxLevel::Disabled,
++        PermissionProfile::read_only(),
++        /*arg0*/ None,
++    );
++    UnifiedExecProcessManager::default()
++        .open_session_with_prepared_exec_env(
++            /*process_id*/ 2,
++            &request,
++            /*tool_ctx*/ None,
++            WindowsSandboxProxySettingsMode::Preserve,
++            /*network_policy_decider*/ None,
++            tty,
++            Box::new(NoopSpawnLifecycle),
++            environment,
++        )
++        .await
++        .map(|_| ())
++        .map_err(|error| error.to_string())
++}

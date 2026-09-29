@@ -1,0 +1,229 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling windows-link v0.2.1
+   Compiling cfg-if v1.0.5
+   Compiling smallvec v1.16.1
+   Compiling bytes v1.12.1
+   Compiling stable_deref_trait v1.2.1
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.13
+   Compiling windows-sys v0.61.2
+   Compiling typenum v1.20.1
+   Compiling anyhow v1.0.104
+   Compiling pin-project-lite v0.2.17
+   Compiling either v1.18.0
+   Compiling parking_lot_core v0.9.12
+   Compiling scopeguard v1.2.0
+   Compiling futures-core v0.3.34
+   Compiling lock_api v0.4.14
+   Compiling itertools v0.14.0
+   Compiling itoa v1.0.18
+   Compiling cc v1.4.7
+   Compiling zeroize v1.9.0
+   Compiling parking_lot v0.12.5
+   Compiling writeable v0.6.4
+   Compiling once_cell v1.21.4
+   Compiling litemap v0.8.3
+   Compiling utf8_iter v1.0.4
+   Compiling syn v2.0.119
+   Compiling syn v3.0.6
+   Compiling icu_normalizer_data v2.3.0
+   Compiling icu_properties_data v2.3.0
+   Compiling version_check v0.9.5
+   Compiling http v1.5.0
+   Compiling hashbrown v0.17.1
+   Compiling equivalent v1.0.2
+   Compiling regex-syntax v0.8.11
+   Compiling generic-array v0.14.7
+   Compiling fastrand v2.5.0
+   Compiling slab v0.4.12
+   Compiling prettyplease v0.2.37
+   Compiling log v0.4.34
+   Compiling percent-encoding v2.3.2
+   Compiling futures-task v0.3.34
+   Compiling ring v0.17.14
+   Compiling foldhash v0.1.5
+   Compiling subtle v2.6.1
+   Compiling http-body v1.1.0
+   Compiling hashbrown v0.15.5
+   Compiling indexmap v2.14.2
+   Compiling mio v1.2.2
+   Compiling socket2 v0.6.5
+   Compiling regex-automata v0.4.18
+   Compiling hybrid-array v0.4.15
+   Compiling rustls-pki-types v1.15.1
+   Compiling getrandom v0.2.17
+   Compiling capnp v0.24.1
+   Compiling serde_core v1.0.228
+   Compiling untrusted v0.9.0
+   Compiling fixedbitset v0.5.7
+   Compiling httparse v1.10.1
+   Compiling tempfile v3.27.0
+   Compiling petgraph v0.8.3
+   Compiling protoc-bin-vendored-linux-x86_64 v3.2.0
+   Compiling protoc-bin-vendored-win32 v3.2.0
+   Compiling semver v1.0.28
+   Compiling heck v0.5.0
+   Compiling libc v0.2.189
+   Compiling protoc-bin-vendored-macos-x86_64 v3.2.0
+   Compiling multimap v0.10.1
+   Compiling protoc-bin-vendored-linux-s390_64 v3.2.0
+   Compiling tower-service v0.3.3
+   Compiling protoc-bin-vendored-linux-ppcle_64 v3.2.0
+   Compiling try-lock v0.2.5
+   Compiling protoc-bin-vendored-macos-aarch_64 v3.2.0
+   Compiling protoc-bin-vendored-linux-aarch_64 v3.2.0
+   Compiling protoc-bin-vendored-linux-x86_32 v3.2.0
+   Compiling regex v1.13.1
+   Compiling rustls v0.23.43
+   Compiling capnpc v0.24.0
+   Compiling protoc-bin-vendored v3.2.0
+   Compiling synstructure v0.13.2
+   Compiling rustls-webpki v0.103.15
+   Compiling want v0.3.1
+   Compiling rustc_version v0.4.1
+   Compiling crypto-common v0.2.2
+   Compiling block-buffer v0.12.1
+   Compiling form_urlencoded v1.2.2
+   Compiling tracing-core v0.1.36
+   Compiling futures-channel v0.3.33
+   Compiling serde v1.0.228
+   Compiling zerovec-derive v0.11.6
+   Compiling displaydoc v0.2.7
+   Compiling tokio-macros v2.7.2
+   Compiling pkg-config v0.3.34
+   Compiling atomic-waker v1.1.2
+   Compiling vcpkg v0.2.15
+   Compiling bitflags v2.13.2
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling prost-derive v0.14.4
+   Compiling futures-macro v0.3.33
+   Compiling tokio v1.53.1
+   Compiling serde_derive v1.0.228
+   Compiling tracing v0.1.44
+   Compiling digest v0.11.3
+   Compiling libsqlite3-sys v0.38.2
+   Compiling curve25519-dalek v5.0.0
+   Compiling futures-util v0.3.33
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling sync_wrapper v1.0.2
+   Compiling cpufeatures v0.3.1
+   Compiling foldhash v0.2.0
+   Compiling zerofrom v0.1.8
+   Compiling tower-layer v0.3.3
+   Compiling ipnet v2.12.1
+   Compiling yoke v0.8.3
+   Compiling base64 v0.22.1
+   Compiling getrandom v0.4.3
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling digest v0.10.7
+   Compiling prost v0.14.4
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling prost-types v0.14.4
+   Compiling icu_locale_core v2.3.0
+   Compiling icu_collections v2.3.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling webpki-roots v1.0.9
+   Compiling icu_provider v2.3.1
+   Compiling prost-build v0.14.4
+   Compiling futures-sink v0.3.33
+   Compiling zmij v1.0.23
+   Compiling icu_properties v2.3.0
+   Compiling icu_normalizer v2.3.0
+   Compiling signature v3.0.0
+   Compiling ryu v1.0.23
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling ed25519 v3.0.0
+   Compiling hashlink v0.12.2
+   Compiling hyper v1.11.0
+   Compiling tower v0.5.3
+   Compiling tokio-rustls v0.26.4
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling morrow-core v0.1.9-test.50 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\core)
+   Compiling serde_urlencoded v0.7.1
+   Compiling url v2.5.8
+   Compiling tokio-util v0.7.19
+   Compiling hyper-util v0.1.20
+   Compiling sha2 v0.11.0
+   Compiling morrow-native-http-stream-wire v0.3.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\contracts\experimental\agent_host_v3_http_stream)
+   Compiling tower-http v0.6.11
+   Compiling http-body-util v0.1.4
+   Compiling fallible-streaming-iterator v0.1.9
+   Compiling serde_json v1.0.151
+   Compiling fallible-iterator v0.3.0
+   Compiling ed25519-dalek v3.0.0
+   Compiling prost-reflect v0.16.5
+   Compiling morrow-native-session-stream v0.3.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\native_session_stream_001)
+   Compiling hyper-rustls v0.27.9
+   Compiling rusqlite v0.40.2
+   Compiling reqwest v0.12.28
+   Compiling memchr v2.8.3
+   Compiling lz4_flex v0.14.0
+warning: unnecessary parentheses around `if` condition
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\contracts\experimental\agent_host_v3_http_stream\src\rules.rs:134:20
+    |
+134 |                 if (d.body_bytes as usize > MAX_BODY
+    |                    ^
+135 |                     || d.response_limit_bytes == 0
+136 |                     || d.response_limit_bytes as usize > MAX_RESPONSE)
+    |                                                                      ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+134 ~                 if d.body_bytes as usize > MAX_BODY
+135 |                     || d.response_limit_bytes == 0
+136 ~                     || d.response_limit_bytes as usize > MAX_RESPONSE 
+    |
+
+   Compiling morrow-native-pipe-win v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\native_pipe_win_001)
+   Compiling morrow-network-node-stream v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\network_node_stream_001)
+warning: `morrow-native-http-stream-wire` (lib) generated 1 warning (run `cargo fix --lib -p morrow-native-http-stream-wire` to apply 1 suggestion)
+warning: unused import: `InstancePhase`
+ --> src\lib.rs:5:52
+  |
+5 | use morrow_core::lifecycle::{HostPolicy, Instance, InstancePhase};
+  |                                                    ^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Snapshot`
+ --> src\supervisor.rs:2:41
+  |
+2 |     Admission, Control, Result, Shared, Snapshot,
+  |                                         ^^^^^^^^
+
+warning: unused imports: `AsyncReadExt`, `AsyncWriteExt`, `Child`, and `time::Instant as TokioInstant`
+  --> src\lib.rs:20:10
+   |
+20 |     io::{AsyncReadExt, AsyncWriteExt},
+   |          ^^^^^^^^^^^^  ^^^^^^^^^^^^^
+21 |     process::{Child, Command},
+   |               ^^^^^
+22 |     sync::{mpsc, oneshot},
+23 |     time::Instant as TokioInstant,
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused imports: `Frame` and `Kind`
+  --> src\lib.rs:25:12
+   |
+25 | use wire::{Frame, Kind};
+   |            ^^^^^  ^^^^
+
+warning: function `issue` is never used
+  --> src\pipe_driver.rs:59:15
+   |
+59 | pub(crate) fn issue<T>(gate: &Gate, action: impl FnOnce() -> Result<T>) -> Result<(u64, T)> {
+   |               ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `morrow-native-session-stream` (lib) generated 5 warnings (run `cargo fix --lib -p morrow-native-session-stream` to apply 4 suggestions)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 30.49s

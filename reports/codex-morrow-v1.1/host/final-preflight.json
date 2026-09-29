@@ -1,0 +1,11 @@
+{
+  "head": "88557916aabf2e10619b1022110035178498898a",
+  "branch": "codex/io-safety-refactor",
+  "legacy_inputs_verified": 178,
+  "baseline_sha256": "391d252a7a9bbc8ef7d76222ed5a043b4a267b61fe3ba7c4ca4088eefb43d5e7",
+  "toolchain": {
+    "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+    "cargo": "cargo 1.95.0 (f2d3ce0bd 2026-03-21)",
+    "capnp": "Cap'n Proto version 1.4.0"
+  }
+}

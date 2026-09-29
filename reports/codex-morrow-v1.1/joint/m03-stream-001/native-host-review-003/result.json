@@ -1,0 +1,10 @@
+{
+  "status": "welcome_delta_addressed_producer_positive_reviewed",
+  "file_checks": 40,
+  "producer_positive_cases": 1,
+  "joint_runtime_invoked": false,
+  "peer_pid_from_producer": 1888,
+  "host_exit": 0,
+  "peer_exit": 0,
+  "http_worker": false
+}

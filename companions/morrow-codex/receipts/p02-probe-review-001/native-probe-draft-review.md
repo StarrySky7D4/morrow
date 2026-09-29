@@ -1,0 +1,14 @@
+# P02 native net probe: independent static review
+
+Result: no unresolved material blocker found in the reviewed draft. This is source/API review only; compilation and execution remain required. The exact reviewed digests are in `native-probe-draft-review.json`.
+
+- `qualification/p02-native-probe-001/src/main.rs:286` calls the original public `ResponsesClient::stream_request`; the transport trait is not invoked directly as a substitute for upstream dispatch. The fixed upstream `responses.rs:83,135-150` and `session.rs:133-148` bind that call to request preparation and the injected concrete `HttpTransport::stream`.
+- Expected request bytes are valid for this exact source: upstream `EncodedJsonBody::encode` directly calls `serde_json::to_vec`; it does not reorder a converted JSON object. Compression is None, and `prepare_body_for_send` returns the already-prepared bytes.
+- The explicit `Stream.Open` can pass kit-003 `encode`: kit `frame` sets major/revision/schema, IDs and epoch are nonzero/valid, the stream discriminant and deadline domain are valid. `encode` at kit `lib.rs:108-111` runs `decode`, and `exchange_checked:247-253` decodes again before calling `Transport::exchange`.
+- Premature encoding/validation failure cannot falsely pass the reviewed receipt: it requires exactly one host exchange (`main.rs:328`) and the actually decoded Open frame/body digest/correlation (`main.rs:335`). A named sentinel alone is insufficient and is not the only assertion.
+- The disconnected fixture returns an explicit local error, not successful HTTP/SSE data. Its fixture-only `Invalid` maps to a named upstream error. `max_attempts=1` with all retry switches false is additionally checked by the observed stream count. The unapproved destination case requires no host exchange. Both cases require zero commit attempts.
+- Receipt uses a new file directly within its designated receipt directory; personal authentication is not consulted; sensitive request headers are rejected before recording. No Reqwest transport, socket, Codex core loop, model request, or kit fake-host feature is constructed by this harness.
+
+The draft's crossterm patch is unused by the audited 17-path codex-api closure and may be removed from this independent root with that scope recorded. Preserve both exact WebSocket forks and the upstream tungstenite SSH-source mapping. Root owns dependency selection, isolated lock generation and compilation; this review did not change the probe or any upstream file.
+
+Limits: this does not establish successful host IPC, HTTP metadata or SSE behavior, network syscall monitoring, ModelClient/Core injection, all network bypass closure, real exec/store routing, production isolation, P02 completion, or G0. A passing Cargo metadata query is not a build, and a build is not a passing runtime receipt. Any later source changes require review against their new digests.

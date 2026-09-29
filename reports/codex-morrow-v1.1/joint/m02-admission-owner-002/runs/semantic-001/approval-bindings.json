@@ -1,0 +1,142 @@
+[
+  {
+    "host": "authority-boundary/host",
+    "grant_id": "eddfe77a3ccfdf50149df7089edb80bc51108fe3089d93b8ec5c7e72ad0693cf",
+    "generation": 1,
+    "config_sha256": "86e1cc30fb4e8e3e3eac1e4d6102cf4f9dda35b96403dac1603fc0ccc0bc53f1",
+    "matched": true
+  },
+  {
+    "host": "first-deadline/host",
+    "grant_id": "a8f5eb2429192e96c81c16f590c4ef912f91a8882cc33f670e58330a5c039311",
+    "generation": 1,
+    "config_sha256": "a36b74cebfc49e5918d01d8cdb77a1b6ca7ececcb617efef7883b90875093de9",
+    "matched": true
+  },
+  {
+    "host": "fixed-context/host",
+    "grant_id": "57b7232dc99e6d06ac326235c223b14dcfab4b7a8f8658842171d622b28bf0e7",
+    "generation": 1,
+    "config_sha256": "eba34cecc19abc313bd77329f4ddefe706cba0b9f66f90ed8e431eaa5f34e5b8",
+    "matched": true
+  },
+  {
+    "host": "fixed-context/host",
+    "grant_id": "e1c8698d2dd7f037e112aa46d9196d1c6b2924cc18351f31db9f0949dd80dc4a",
+    "generation": 2,
+    "config_sha256": "ca463ffc5834f45d5ac99917dd9312596697dbcb18fbd2e2087b579b494bc0c8",
+    "matched": true
+  },
+  {
+    "host": "fixed-context/host",
+    "grant_id": "d84de0e9374ec42f6bfe25912f90d78e167075476db6bf32aaa4a69134673634",
+    "generation": 3,
+    "config_sha256": "505d4451cf8d6f0eb08a2c44e693b33d196277c5388a5531d5785fc29904d589",
+    "matched": true
+  },
+  {
+    "host": "two-hosts/a",
+    "grant_id": "fa8aafea656bce5f8480e1950b0761af4b644bb2725f5f979e4e2288ddcbdd43",
+    "generation": 1,
+    "config_sha256": "1fc0eb75d0db699715669e5f7dba46a0e6361dea51001175a1cc42c566ebd580",
+    "matched": true
+  },
+  {
+    "host": "two-hosts/a",
+    "grant_id": "5a9120836b7be3bdd24448c35edd4b9a17ca3f12bc44e86c6bf85c66fccf3039",
+    "generation": 3,
+    "config_sha256": "3f530b8cbf6bbc0e44a7d882e30d9bac92700365d4bfcbfd7d5687f56a0b0fef",
+    "matched": true
+  },
+  {
+    "host": "two-hosts/b",
+    "grant_id": "dafb41b5eeb41fa6c9b4b0e97a01005f8bdb0b27e7236dca9fbeb17a3f25e90d",
+    "generation": 2,
+    "config_sha256": "28625e1a1b3664fa85f61056222cf21e614043fea2774df19e531af706b92f37",
+    "matched": true
+  },
+  {
+    "host": "external-revoke/owner",
+    "grant_id": "2fa6d789368f8b0da0a27a1fbb6f126dae0159ab26074ec069b665cb2b376d37",
+    "generation": 1,
+    "config_sha256": "1516cd7e4ff26f899cd46ba28e86d982a08660ce5b508e5256b4295559fb3fd2",
+    "matched": true
+  },
+  {
+    "host": "historical-replay/capture",
+    "grant_id": "817dd385a02d9ee1b06f045e141ec30a19f997a3d9020ea6ae062e280fb61a46",
+    "generation": 1,
+    "config_sha256": "9e9811a939c26998291ce382e2a573711373352b9f666c9d94600a1e1a4686fb",
+    "matched": true
+  },
+  {
+    "host": "historical-replay/replay-hello",
+    "grant_id": "d19558bc42d4eff59204c3ee8aec04b27035d0e3591d4b67476d690362866069",
+    "generation": 2,
+    "config_sha256": "6c1fc2efaaac3f66b1f8200f30f2e2f826b99ea9a6afe8181d1075b9f0d4f739",
+    "matched": true
+  },
+  {
+    "host": "historical-replay/replay-query",
+    "grant_id": "94de4baf8f7063817d19e8466f5ae4cbb32cacf396da227a2f954b17655bb84b",
+    "generation": 3,
+    "config_sha256": "fa8f6faa427b849337a92f53d83cfe19241ffe0ac36c86e5659a0afcf5729328",
+    "matched": true
+  },
+  {
+    "host": "unconfirmed/contender",
+    "grant_id": "b865f86e8d3b8b6c1ba999bde3d4217acb89187f173e3988f97304f56a57ba3e",
+    "generation": 2,
+    "config_sha256": "51df9f8bb2cb38d0a03c7a320f53445a97276b5f44c36ca781595feaa4faf336",
+    "matched": true
+  },
+  {
+    "host": "unconfirmed/contender",
+    "grant_id": "b83b76572cdf96c221e15f88000c97513d5dc7f86549c161ec0b88a5db8c3c5f",
+    "generation": 3,
+    "config_sha256": "42569438f2e2cb2daaad28da0ce2d72a01773a24b4e60c6d3d54b722235d1e5e",
+    "matched": true
+  },
+  {
+    "host": "unconfirmed/owner",
+    "grant_id": "edf5166aa270ac5115ba204c5f0251aff390f24cfed793e7a191fb00e927a24b",
+    "generation": 1,
+    "config_sha256": "7ca81c9ce479b5db544632aad66b039665bd04f5c50d5e25b13876578d2f9ac1",
+    "matched": true
+  },
+  {
+    "host": "crash-child-alive/contender",
+    "grant_id": "6aaf2a4f2854dea2791b8090c9bcf7b1d837f8b7662f29bb2a4d747fa7debe67",
+    "generation": 2,
+    "config_sha256": "bf87eda6ca9f36cc0b22b1cb885b14f8ad094649168c57ad78b299decd5a8c9c",
+    "matched": true
+  },
+  {
+    "host": "crash-child-alive/owner",
+    "grant_id": "f182d2942c7b16d64411318de37ed1ffdacbc3ac920bb049a0de61447bbdb96d",
+    "generation": 1,
+    "config_sha256": "250dca33a601a2b2f9f6e552d110e7e8b4b180c073ce9c014b6808d58fa4a5a5",
+    "matched": true
+  },
+  {
+    "host": "artifact-drift/host",
+    "grant_id": "56233b761910d26c2b10acbb72e0df590f821fa434e25f4d29a588ae89454b79",
+    "generation": 1,
+    "config_sha256": "10d1425d58ddcbe879496240b73f6353940c6459e98e9c2d06812c1e31adf4b0",
+    "matched": true
+  },
+  {
+    "host": "old-issuer/original",
+    "grant_id": "bae135168896ed46e712a29c38c4f144cba99b8cb970b0bc41e52681443b39b1",
+    "generation": 1,
+    "config_sha256": "c1f1cec290387fecc6f26b7fe3dc8088ad515c75946d1d331f9c108c4b82a82e",
+    "matched": true
+  },
+  {
+    "host": "old-issuer/replacement",
+    "grant_id": "826e64e40d0c41861f0f9e153a42a22d9e31deae49528b2b8ef1a56c34b9c3d8",
+    "generation": 2,
+    "config_sha256": "7836952a66d1ada28eb3b1351e4f23c76c331b9f6b942055588e3aee624a7244",
+    "matched": true
+  }
+]

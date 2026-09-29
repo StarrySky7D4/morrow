@@ -1,0 +1,38 @@
+{
+  "args": [
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-welcome-20260928T225819377451Z\\candidate\\morrow-native-stream-host.exe",
+    "serve",
+    "--profile",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-welcome-20260928T225819377451Z\\normal\\profile",
+    "--client",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-welcome-20260928T225819377451Z\\candidate\\morrow-native-close-peer.exe",
+    "--sha256",
+    "2152e8115aedabbe5656cd4fb5e83f5700568d0217e0827c31798ae0fbec4342",
+    "--work-dir",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-welcome-20260928T225819377451Z\\normal\\cwd",
+    "--plugin-id",
+    "close-fixture",
+    "--role",
+    "test",
+    "--operation",
+    "close-test",
+    "--http-origin",
+    "http://127.0.0.1:1",
+    "--handshake-ms",
+    "6000",
+    "--ttl-ms",
+    "10000",
+    "--close-ms",
+    "1000",
+    "--client-arg",
+    "normal",
+    "--client-arg",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-stream-001\\native-welcome-20260928T225819377451Z\\normal\\peer.json"
+  ],
+  "environment": {
+    "SYSTEMROOT": "C:\\Windows",
+    "WINDIR": "C:\\Windows",
+    "COMSPEC": "C:\\Windows\\system32\\cmd.exe",
+    "LOCALAPPDATA": "C:\\Users\\Administrator\\AppData\\Local"
+  }
+}

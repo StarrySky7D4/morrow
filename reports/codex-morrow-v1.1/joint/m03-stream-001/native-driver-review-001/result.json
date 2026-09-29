@@ -1,0 +1,13 @@
+{
+  "status": "static_review_two_findings",
+  "runtime_reproduction": false,
+  "host_invoked": false,
+  "build_or_tests_run": false,
+  "input_checks": 31,
+  "all_inputs_match": true,
+  "findings": [
+    "F1_host_cancel_not_propagated_to_business_event_consumer",
+    "F2_late_control_fatal_ignored_by_close_success"
+  ],
+  "m03_full_matrix": "not_run"
+}

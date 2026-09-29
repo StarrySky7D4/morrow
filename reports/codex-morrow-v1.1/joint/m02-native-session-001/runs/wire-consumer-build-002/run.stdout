@@ -1,0 +1,9 @@
+positive_vectors_and_roundtrips=8
+provided_negative_vectors=3
+all_truncations=260 boundary_prefixes=7
+version_reserved_and_digest_length_rejections=7
+second_message_rejected=1
+unknown_enum_rejected=1
+u64_preserved=3
+oversized_segment_declaration_rejected=1
+limited_wire_consumer_passed=true real_ipc=false depth_threshold_exercised=false

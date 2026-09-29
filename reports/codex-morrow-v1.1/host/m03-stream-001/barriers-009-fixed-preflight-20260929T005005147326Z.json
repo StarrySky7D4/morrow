@@ -1,0 +1,34 @@
+{
+  "status": "fixed_inputs_and_read_only_local_trace_replay_passed",
+  "script_sha256": "d6fe5f4f999dffbd5c52631d29770a1d227f8c94c894063598b55ce6296a6272",
+  "frozen_helper_sha256": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1",
+  "hosts": {
+    "core-revoke": [
+      "004",
+      "a1c46e448450f1066177e8f51f655f202757517f1cdb83451e7545ac68bbf6f2",
+      "c9c043c3104573146da1fe2a12a1f009a0a9b71ceb517f8bb6fffca1a4045224"
+    ],
+    "data-pending": [
+      "005",
+      "395521127ff99358702e57cc13604808eb885ff740b79e02341bb70465d8cb15",
+      "9b2a2412ce9fe617729757b8be7eddb34a84718ad64aa507f2bfdc9de926d6af"
+    ]
+  },
+  "plugin_manifest_sha256": "06a90c8d1adb8f09d13e83e177d55a4728792f2214000954c296728962c5b689",
+  "plugin_executable_sha256": "515ed83d1b27d45df5d4cdcc18c41244b5b6ac930528452cc45a64fe0ada89ad",
+  "plugin_pins_verified": 55,
+  "spec_exactly_matches_example": true,
+  "replay_source_sha256": "13104db7f86167da545b0b4e5624b942c6e83798a8f160fb80353e3053f515ae",
+  "replay": [
+    {
+      "samples": 1,
+      "qualified": false
+    },
+    {
+      "samples": 3,
+      "qualified": true
+    }
+  ],
+  "http_post_count": 0,
+  "runtime_launched": false
+}

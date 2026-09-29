@@ -1,0 +1,23 @@
+
+running 18 tests
+test admission::tests::original_generation_cleanup_is_allowed_without_renewing_work ... ok
+test admission::tests::stable_identity_does_not_allow_replayed_or_wrong_direction_control ... ok
+test delivery::tests::early_control_eof_waits_for_contiguous_data_and_survives_detached_waiter ... ok
+test delivery::tests::exact_limit_is_not_eof_and_cancel_never_relabels_unacked_parser_bytes ... ok
+test delivery::tests::late_cancel_bytes_only_extend_a_fully_classified_prefix ... ok
+test session::tests::ack_does_not_end_observation_before_trailing_bad_frame_and_eof ... ok
+test session::tests::bad_control_after_request_closed_then_valid_close_ack_stays_failed ... ok
+test session::tests::cancellation_before_core_binding_is_replayed_without_a_lost_wakeup ... ok
+test session::tests::cancelled_transport_keeps_unknown_but_close_and_clean_eof_are_observable ... ok
+test session::tests::control_handles_are_retained_until_finished_and_joined_inside_budget ... ok
+test session::tests::control_io_unknown_is_separate_from_existing_transport_unknown ... ok
+test session::tests::decoded_host_stop_denial_and_revoke_synchronously_close_core_event_gate ... ok
+test session::tests::dropping_pending_read_wait_does_not_lose_session_owned_chunk ... ok
+test session::tests::malformed_control_after_request_closed_and_ack_is_never_normal_eof ... ok
+test session::tests::transport_unknown_cannot_hide_later_bad_sequence_before_valid_close_ack ... ok
+test workers::control_read_tests::boundary_read_io_error_is_not_eof_even_if_error_enum_is_unknown ... ok
+test workers::control_read_tests::only_frame_boundary_eof_is_normal_and_trailing_failures_keep_their_source ... ok
+test workers::pause_tests::read_pause_requires_reaped_read_and_complete_frame_and_is_once_only ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+

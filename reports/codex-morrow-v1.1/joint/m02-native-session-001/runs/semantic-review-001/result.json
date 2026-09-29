@@ -1,0 +1,1500 @@
+{
+  "status": "limited_semantic_checks_passed",
+  "checks": [
+    {
+      "check": "1812_original_runtime_inputs_still_frozen",
+      "passed": true
+    },
+    {
+      "check": "unified_plugin_handoff_identity",
+      "passed": true
+    },
+    {
+      "check": "unified_handoff_all_current_hashes",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:run_independent_sessions.py",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:observe_session.py",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:process_witness.py",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:watch_owned_processes.py",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:runtime_decode.py",
+      "passed": true
+    },
+    {
+      "check": "reviewer_frozen:review_capnp_kit.py",
+      "passed": true
+    },
+    {
+      "check": "normal:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "normal:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "normal:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "normal:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "normal:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "normal:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "normal:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "normal:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "normal:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "normal:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "normal:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "normal:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "normal:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "normal:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "normal:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "normal:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "normal:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "normal:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "normal:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "normal:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "normal:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame5_strict_request",
+      "passed": true
+    },
+    {
+      "check": "normal:frame6_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame6_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "normal:frame6_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "normal:frame7_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame7_strict_request",
+      "passed": true
+    },
+    {
+      "check": "normal:frame8_immutable",
+      "passed": true
+    },
+    {
+      "check": "normal:frame8_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "normal:frame8_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "normal:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "normal:two_real_queries",
+      "passed": true
+    },
+    {
+      "check": "normal:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "revoke:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "revoke:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "revoke:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "revoke:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "revoke:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "revoke:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "revoke:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "revoke:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "revoke:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "revoke:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "revoke:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "revoke:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame5_strict_request",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame6_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame6_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame6_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame7_immutable",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame7_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "revoke:frame7_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "revoke:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "revoke:post_ack_query_denied_no_state",
+      "passed": true
+    },
+    {
+      "check": "revoke:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "stop:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "stop:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "stop:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "stop:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "stop:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "stop:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "stop:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "stop:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "stop:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "stop:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "stop:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "stop:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "stop:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "stop:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "stop:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "stop:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "stop:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "stop:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "stop:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "stop:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "stop:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "stop:frame5_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "stop:frame5_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "stop:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "stop:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "expiry:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "expiry:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "expiry:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "expiry:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "expiry:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "expiry:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "expiry:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "expiry:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "expiry:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "expiry:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "expiry:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "expiry:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame5_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame6_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame6_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame6_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame7_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame7_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame8_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame8_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame8_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame9_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame9_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame10_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame10_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame10_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame11_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame11_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame12_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame12_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame12_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame13_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame13_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame14_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame14_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame14_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame15_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame15_strict_request",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame16_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame16_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame16_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame17_immutable",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame17_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "expiry:frame17_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "expiry:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "expiry:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "expiry:queries_do_not_renew_700ms_TTL",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame1_exact_mutation",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "wrong-artifact:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame1_exact_mutation",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "modified-epoch:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "no-hello:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "no-hello:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "no-hello:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "no-hello:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "no-hello:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "no-hello:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "no-hello:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "no-hello:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "no-hello:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "no-hello:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "no-hello:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame1_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "no-hello:frame1_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "no-hello:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "no-hello:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame1_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:frame1_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "partial-frame:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame5_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:frame5_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "ignore-stop:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frozen_observation",
+      "passed": true
+    },
+    {
+      "check": "hold-output:expected_exit",
+      "passed": true
+    },
+    {
+      "check": "hold-output:host_OS_exit",
+      "passed": true
+    },
+    {
+      "check": "hold-output:no_forced_cleanup_or_unexplained_observer_failure",
+      "passed": true
+    },
+    {
+      "check": "hold-output:controller_stdin_did_not_hold_host_open",
+      "passed": true
+    },
+    {
+      "check": "hold-output:host_output_drained_without_gap",
+      "passed": true
+    },
+    {
+      "check": "hold-output:final_release_three_facts",
+      "passed": true
+    },
+    {
+      "check": "hold-output:release_after_exit_and_two_EOF",
+      "passed": true
+    },
+    {
+      "check": "hold-output:all_raw_frames_accounted",
+      "passed": true
+    },
+    {
+      "check": "hold-output:fresh_Capnp_decode_matches_saved",
+      "passed": true
+    },
+    {
+      "check": "hold-output:challenge_actual_binding",
+      "passed": true
+    },
+    {
+      "check": "hold-output:independent_config_digest_reconstruction",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame0_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame0_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame0_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame1_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame1_strict_request",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame2_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame2_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame2_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame3_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame3_strict_request",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame4_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame4_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame4_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame5_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame5_strict_request",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame6_immutable",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame6_monotonic_response",
+      "passed": true
+    },
+    {
+      "check": "hold-output:frame6_response_sequence",
+      "passed": true
+    },
+    {
+      "check": "hold-output:child_OS_actual_identity_exit",
+      "passed": true
+    },
+    {
+      "check": "hold-output:correct_revocation_reason",
+      "passed": true
+    },
+    {
+      "check": "hold-output:real_holder_and_unconfirmed_until_EOF",
+      "passed": true
+    },
+    {
+      "check": "unified_handoff_unchanged_during_review",
+      "passed": true
+    }
+  ],
+  "check_count": 322,
+  "failed": [],
+  "cases": [
+    {
+      "case": "normal",
+      "host_pid": 27048,
+      "child_pid": 14980,
+      "host_exit": 0,
+      "child_exit": 0,
+      "independent_child_OS": true,
+      "frames": 9,
+      "states": 2,
+      "times_us": {
+        "exit": 248685,
+        "stdout_eof": 248382,
+        "stderr_eof": 248393,
+        "revoked": 247277,
+        "released": 248710
+      },
+      "watcher_exclusion_records": 16,
+      "observation_sha256": "177e5b12bb2a007927d0494cba9abcd9e2c284b55d1a541ebd2f276b30174846"
+    },
+    {
+      "case": "revoke",
+      "host_pid": 21336,
+      "child_pid": 12760,
+      "host_exit": 0,
+      "child_exit": 19,
+      "independent_child_OS": true,
+      "frames": 8,
+      "states": 1,
+      "times_us": {
+        "exit": 257433,
+        "stdout_eof": 257029,
+        "stderr_eof": 257120,
+        "revoked": 131387,
+        "released": 257453
+      },
+      "watcher_exclusion_records": 16,
+      "observation_sha256": "2c89c9d465dcfc16362b64676f24ecdc7376bbfa51325dc0573046999ceb29fb"
+    },
+    {
+      "case": "stop",
+      "host_pid": 19864,
+      "child_pid": 20176,
+      "host_exit": 0,
+      "child_exit": 0,
+      "independent_child_OS": true,
+      "frames": 6,
+      "states": 1,
+      "times_us": {
+        "exit": 125419,
+        "stdout_eof": 125069,
+        "stderr_eof": 125079,
+        "revoked": 124014,
+        "released": 125436
+      },
+      "watcher_exclusion_records": 7,
+      "observation_sha256": "36027d8be50d23be6f0a8598af5687c64216bcdcc17d8203ea94530bafb5f034"
+    },
+    {
+      "case": "expiry",
+      "host_pid": 10596,
+      "child_pid": 24980,
+      "host_exit": 2,
+      "child_exit": 20,
+      "independent_child_OS": true,
+      "frames": 18,
+      "states": 7,
+      "times_us": {
+        "exit": 711825,
+        "stdout_eof": 711088,
+        "stderr_eof": 711139,
+        "revoked": 709460,
+        "released": 711845
+      },
+      "watcher_exclusion_records": 46,
+      "observation_sha256": "d9804e26b12498d78b44ccf97bd243883ca92ca1f2559f8bcda60687229d6b1d"
+    },
+    {
+      "case": "wrong-artifact",
+      "host_pid": 11972,
+      "child_pid": 15936,
+      "host_exit": 2,
+      "child_exit": 0,
+      "independent_child_OS": false,
+      "frames": 3,
+      "states": 0,
+      "times_us": {
+        "exit": 32225,
+        "stdout_eof": 31957,
+        "stderr_eof": 32030,
+        "revoked": 30928,
+        "released": 32241
+      },
+      "watcher_exclusion_records": 3,
+      "observation_sha256": "fabe913502bc407d8c4a38d6e9e17a0acbcf0177b1fe8ff5250fef599407b85f"
+    },
+    {
+      "case": "modified-epoch",
+      "host_pid": 17216,
+      "child_pid": 8384,
+      "host_exit": 2,
+      "child_exit": 0,
+      "independent_child_OS": false,
+      "frames": 3,
+      "states": 0,
+      "times_us": {
+        "exit": 29066,
+        "stdout_eof": 28763,
+        "stderr_eof": 28774,
+        "revoked": 27888,
+        "released": 29086
+      },
+      "watcher_exclusion_records": 2,
+      "observation_sha256": "db8a2de453a0e67db022b205f50777944adfb7f9ef43ef22ae4335132013eb34"
+    },
+    {
+      "case": "no-hello",
+      "host_pid": 20896,
+      "child_pid": 14944,
+      "host_exit": 2,
+      "child_exit": 1,
+      "independent_child_OS": true,
+      "frames": 2,
+      "states": 0,
+      "times_us": {
+        "exit": 455090,
+        "stdout_eof": 454707,
+        "stderr_eof": 454718,
+        "revoked": 250972,
+        "released": 455133
+      },
+      "watcher_exclusion_records": 29,
+      "observation_sha256": "c517ce21396ceb7d8eb64e7bfd06cc7d5013b667b6e927a3da81197146f8dab3"
+    },
+    {
+      "case": "partial-frame",
+      "host_pid": 22792,
+      "child_pid": 3464,
+      "host_exit": 2,
+      "child_exit": 1,
+      "independent_child_OS": true,
+      "frames": 2,
+      "states": 0,
+      "times_us": {
+        "exit": 382317,
+        "stdout_eof": 382037,
+        "stderr_eof": 382048,
+        "revoked": 178891,
+        "released": 382337
+      },
+      "watcher_exclusion_records": 24,
+      "observation_sha256": "2c1842b343588aa88ca6cb77655746ba04e44722c0bfa2cfab172f3a70aad2e1"
+    },
+    {
+      "case": "ignore-stop",
+      "host_pid": 12068,
+      "child_pid": 19708,
+      "host_exit": 0,
+      "child_exit": 1,
+      "independent_child_OS": true,
+      "frames": 6,
+      "states": 1,
+      "times_us": {
+        "exit": 325682,
+        "stdout_eof": 325069,
+        "stderr_eof": 325085,
+        "revoked": 112250,
+        "released": 325736
+      },
+      "watcher_exclusion_records": 20,
+      "observation_sha256": "b79d4925e5ad1354fcc0344141e64730a9e8ddc2c6f8742bb0130353bff35eb6"
+    },
+    {
+      "case": "hold-output",
+      "host_pid": 18784,
+      "child_pid": 17140,
+      "host_exit": 0,
+      "child_exit": 0,
+      "independent_child_OS": true,
+      "frames": 7,
+      "states": 1,
+      "times_us": {
+        "exit": 30418,
+        "stdout_eof": 1542517,
+        "stderr_eof": 1542552,
+        "revoked": 27759,
+        "released": 1542614
+      },
+      "watcher_exclusion_records": 98,
+      "observation_sha256": "18d5620db41f5f91e86e1c84931d523376d0d857579126d1b9090c22525958b8"
+    }
+  ],
+  "frame_count": 64,
+  "independent_child_OS_cases": 8,
+  "unified_handoff_sha256": "2ec516c150da95bf592b07353fe6c8b75917884f39e92c99675880cd10a9d682",
+  "unified_plugin_inputs": 151,
+  "unified_external_inputs": 263,
+  "late_manifest_scope": "unified handoff checked before and after semantic review; original 1812 identities checked before/after actual execution; newly enumerated inputs have no retroactive execution precheck",
+  "config_environment_scope": "digest reconstructed using current unchanged allowlisted OS values; values not retained",
+  "watcher_limit": "excluded candidates lack PID/details; not a complete descendant inventory or containment proof",
+  "product_pass_credit": 0,
+  "M02_complete": false,
+  "G0_passed": false,
+  "G1_passed": false,
+  "validator_sha256": "83db99950211b227d720175a6c23596251727d8161279d909f53af05b9f5640d"
+}

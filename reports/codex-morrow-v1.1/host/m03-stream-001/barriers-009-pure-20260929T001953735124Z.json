@@ -1,0 +1,11 @@
+{
+  "status": "pure_only_no_process_socket_or_http",
+  "script_sha256": "47e221a4681e8eb9a4c1e2b6777d280fab0275760a8a6be0e4ceaf0d6c8621d0",
+  "cases": [
+    "core-revoke",
+    "data-pending"
+  ],
+  "fixed_fixture_ready": false,
+  "post_count": 0,
+  "runtime_tested": false
+}

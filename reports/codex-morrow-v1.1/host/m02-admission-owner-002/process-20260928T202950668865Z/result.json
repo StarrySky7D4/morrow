@@ -1,0 +1,75 @@
+{
+  "status": "passed_real_multi_host_authority_owner_slice",
+  "host_sha256": "59b1427cb8c50ebbc50184411bb9520f8114253e8c114d83c170c8e6015b04b5",
+  "ordinary_client_sha256": "068122a87c1bbfe6cbac42686aa7e9abb2c520b54075de47c1d5bb0da6eb525b",
+  "fixture_sha256": "99a2790ab2e5b6f9ccd195df1f7a35a41780aa298424aa156423ed0a5794367f",
+  "cases": [
+    {
+      "case": "two_initializer_processes",
+      "passed": true,
+      "exit_codes": [
+        0,
+        2
+      ]
+    },
+    {
+      "case": "two_hosts_same_slot_live_reject",
+      "passed": true,
+      "winner_pid": 25004,
+      "child_pid": 19076,
+      "loser_pid": 5844
+    },
+    {
+      "case": "release_allows_new_grant_generation",
+      "passed": true,
+      "first_epoch": 2,
+      "new_epoch": 3,
+      "new_id": "5c45f4cb2bc08a48eacd65e4140a393a9b240cc67d98142593e09d031d701976"
+    },
+    {
+      "case": "delayed_claim_original_expiry",
+      "passed": true
+    },
+    {
+      "case": "revoked_old_grant_new_explicit_identity",
+      "passed": true,
+      "old": "c2a4b16293d45a307aa7c1ad2630f32334d37b856076f464af43ef1c17e8eee7",
+      "new": "0b39b59d31483fa317aa483f9780d4fce5d989dbf253737a70d35a1f86100b06"
+    },
+    {
+      "case": "historical_grant_new_issuer_rejected",
+      "passed": true
+    },
+    {
+      "case": "approved_data_flag_has_no_authority",
+      "passed": true
+    },
+    {
+      "case": "external_revoke_persisted_then_runtime_applied",
+      "passed": true,
+      "child_exit": 19
+    },
+    {
+      "case": "closing_unconfirmed_blocks_second_host",
+      "passed": true,
+      "child_pid": 19212
+    },
+    {
+      "case": "host_crash_live_child_no_takeover_and_no_auto_recovery",
+      "passed": true,
+      "host_pid": 12880,
+      "child_pid": 25968,
+      "child_alive_after_host_kill": true
+    },
+    {
+      "case": "two_process_claim_revoke_race",
+      "passed": true,
+      "claim_accepted": false,
+      "revoke_persisted": true
+    },
+    {
+      "case": "copied_profile_rejected",
+      "passed": true
+    }
+  ]
+}

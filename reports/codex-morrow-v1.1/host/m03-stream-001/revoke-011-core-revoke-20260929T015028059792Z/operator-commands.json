@@ -1,0 +1,743 @@
+[
+  {
+    "before_write_ns": 186744611230400,
+    "after_flush_ns": 186744611255100,
+    "value": {
+      "action": "approve"
+    }
+  },
+  {
+    "before_write_ns": 186745593862600,
+    "after_flush_ns": 186745593926400,
+    "value": {
+      "action": "claim",
+      "grant_id": "ca283fd42cbdaadf06c2d6b7d18d875d5d540312b1efb317f7ab7018a6860099"
+    }
+  },
+  {
+    "before_write_ns": 186746623320400,
+    "after_flush_ns": 186746623340600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746634067300,
+    "after_flush_ns": 186746634087400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746644652000,
+    "after_flush_ns": 186746644673400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746655383400,
+    "after_flush_ns": 186746655404200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746665752300,
+    "after_flush_ns": 186746665774200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746676271100,
+    "after_flush_ns": 186746676301400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746687020100,
+    "after_flush_ns": 186746687044700,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746697419900,
+    "after_flush_ns": 186746697439500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746708143600,
+    "after_flush_ns": 186746708205900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746719267600,
+    "after_flush_ns": 186746719287300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746729689000,
+    "after_flush_ns": 186746729716900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746740107900,
+    "after_flush_ns": 186746740128100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746750342800,
+    "after_flush_ns": 186746750379200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746761039700,
+    "after_flush_ns": 186746761062600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746771477200,
+    "after_flush_ns": 186746771495400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746781737700,
+    "after_flush_ns": 186746781753300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746792485900,
+    "after_flush_ns": 186746792510800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746803097400,
+    "after_flush_ns": 186746803120300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746813614300,
+    "after_flush_ns": 186746813635400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746824190200,
+    "after_flush_ns": 186746824217200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746835049700,
+    "after_flush_ns": 186746835070500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746845726200,
+    "after_flush_ns": 186746845744900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746856404100,
+    "after_flush_ns": 186746856426600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746866943500,
+    "after_flush_ns": 186746866964300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746877244700,
+    "after_flush_ns": 186746877263200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746887928600,
+    "after_flush_ns": 186746887951800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746898542800,
+    "after_flush_ns": 186746898562600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746909247300,
+    "after_flush_ns": 186746909263300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746919772000,
+    "after_flush_ns": 186746919796100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746930468400,
+    "after_flush_ns": 186746930493100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746940756800,
+    "after_flush_ns": 186746940775900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746951014600,
+    "after_flush_ns": 186746951037100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746961453700,
+    "after_flush_ns": 186746961471100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746971810800,
+    "after_flush_ns": 186746971855600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746982534400,
+    "after_flush_ns": 186746982560000,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186746992858600,
+    "after_flush_ns": 186746992881500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747003228800,
+    "after_flush_ns": 186747003244400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747013727500,
+    "after_flush_ns": 186747013744400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747024368600,
+    "after_flush_ns": 186747024390500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747034626000,
+    "after_flush_ns": 186747034643500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747045261900,
+    "after_flush_ns": 186747045280400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747055875100,
+    "after_flush_ns": 186747055897900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747066189000,
+    "after_flush_ns": 186747066210200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747077046300,
+    "after_flush_ns": 186747077065100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747087618000,
+    "after_flush_ns": 186747087642200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747097972700,
+    "after_flush_ns": 186747097992600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747108723700,
+    "after_flush_ns": 186747108740600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747119053700,
+    "after_flush_ns": 186747119129100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747129709500,
+    "after_flush_ns": 186747129743400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747140552500,
+    "after_flush_ns": 186747140581200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747151075900,
+    "after_flush_ns": 186747151098300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747161584200,
+    "after_flush_ns": 186747161605300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747171898900,
+    "after_flush_ns": 186747171912500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747182366900,
+    "after_flush_ns": 186747182398000,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747192895100,
+    "after_flush_ns": 186747192922800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747203351500,
+    "after_flush_ns": 186747203374400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747214016300,
+    "after_flush_ns": 186747214048600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747224823400,
+    "after_flush_ns": 186747224853900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747235553000,
+    "after_flush_ns": 186747235569400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747246310800,
+    "after_flush_ns": 186747246326800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747257105700,
+    "after_flush_ns": 186747257137200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747267580600,
+    "after_flush_ns": 186747267611800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747278447100,
+    "after_flush_ns": 186747278473500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747289595000,
+    "after_flush_ns": 186747289618200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747299989700,
+    "after_flush_ns": 186747300009900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747310527100,
+    "after_flush_ns": 186747310546700,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747320923000,
+    "after_flush_ns": 186747320948800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747331268500,
+    "after_flush_ns": 186747331291500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747342065500,
+    "after_flush_ns": 186747342081300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747352703800,
+    "after_flush_ns": 186747352727300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747363533200,
+    "after_flush_ns": 186747363555200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747374329100,
+    "after_flush_ns": 186747374347600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747385063000,
+    "after_flush_ns": 186747385195900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747396045200,
+    "after_flush_ns": 186747396074400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747406480800,
+    "after_flush_ns": 186747406504000,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747416879000,
+    "after_flush_ns": 186747416898400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747427148900,
+    "after_flush_ns": 186747427186300,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747437498800,
+    "after_flush_ns": 186747437516500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747448220300,
+    "after_flush_ns": 186747448244000,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747458569900,
+    "after_flush_ns": 186747458595200,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747469320700,
+    "after_flush_ns": 186747469334100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747479787100,
+    "after_flush_ns": 186747479804100,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747490131600,
+    "after_flush_ns": 186747490153900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747500581800,
+    "after_flush_ns": 186747500601500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747511125300,
+    "after_flush_ns": 186747511160400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747521505600,
+    "after_flush_ns": 186747521536700,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747533783200,
+    "after_flush_ns": 186747533801900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747544776900,
+    "after_flush_ns": 186747544803800,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747555487100,
+    "after_flush_ns": 186747555519600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747565999300,
+    "after_flush_ns": 186747566053400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747576780700,
+    "after_flush_ns": 186747576806900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747587418800,
+    "after_flush_ns": 186747587444700,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747598020600,
+    "after_flush_ns": 186747598045500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747608755800,
+    "after_flush_ns": 186747608779600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747619373600,
+    "after_flush_ns": 186747619395400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747630238500,
+    "after_flush_ns": 186747630264900,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747641008700,
+    "after_flush_ns": 186747641045400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747651592600,
+    "after_flush_ns": 186747651619400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747662454400,
+    "after_flush_ns": 186747662494500,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747674049300,
+    "after_flush_ns": 186747674078700,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 186747676389800,
+    "after_flush_ns": 186747676406900,
+    "value": {
+      "action": "inspect",
+      "grant_id": "ca283fd42cbdaadf06c2d6b7d18d875d5d540312b1efb317f7ab7018a6860099"
+    }
+  },
+  {
+    "before_write_ns": 186747677025300,
+    "after_flush_ns": 186747677043900,
+    "value": {
+      "action": "approve_http",
+      "proposal_ref": "8086b56a002bde4227dcc927103d483943749f5871f835b74659e39f24d80368",
+      "expected_hash": "79e9c2a2beaf319a42ae9b3440ceba867724326973fa13766759b17e04958cb2",
+      "response_limit": 65536
+    }
+  },
+  {
+    "before_write_ns": 186747750053800,
+    "after_flush_ns": 186747750074300,
+    "value": {
+      "action": "revoke",
+      "grant_id": "ca283fd42cbdaadf06c2d6b7d18d875d5d540312b1efb317f7ab7018a6860099"
+    }
+  }
+]
