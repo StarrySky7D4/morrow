@@ -4,13 +4,13 @@
 
 Deja un poco de espacio para las ideas de mañana.
 
-Morrow (明隙) es un espacio de trabajo local basado en tarjetas que evoluciona hacia una arquitectura de plugins multiplataforma. Antes se llamaba daemon; el paquete es `morrow_studio`. En Windows, Flutter proporciona la interfaz y un anfitrión Rust con plugins Wasm aislados ejecuta la lógica. Web y Android mantienen la implementación anterior; el sistema de plugins aún no está validado en todas las plataformas.
+Morrow (明隙) es un espacio de trabajo local basado en tarjetas que evoluciona hacia una arquitectura de plugins multiplataforma. Antes se llamaba daemon; el paquete es `morrow_studio`. En Windows, Flutter proporciona la interfaz y un anfitrión Rust con plugins Wasm aislados ejecuta la lógica. Web ejecuta Rust/Wasm localmente en el navegador; Android aún conserva la ruta anterior. La equivalencia completa del producto y los plugins entre plataformas sigue sin validarse.
 
 ## Descarga y compatibilidad
 
-Versión actual: **0.1.9-test.55+59**, una **versión preliminar de prueba para Windows x64**, no estable. Descarga el ZIP de Windows, el ZIP del código fuente correspondiente y la lista SHA-256. Extrae todo y ejecuta `morrow_studio.exe`; conserva las DLL, el anfitrión, `data`, `plugins` y las licencias.
+Versión actual: **0.1.9-test.56+60**, una **versión preliminar de prueba para Windows x64**, no estable. Descarga el ZIP de Windows, el ZIP del código fuente correspondiente y la lista SHA-256. Extrae todo y ejecuta `morrow_studio.exe`; conserva las DLL, el anfitrión, `data`, `plugins` y las licencias.
 
-[Descargar test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Versión compatible test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[Descargar test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Versión compatible test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` es la última versión de prueba `0.1.x` compatible con los tipos de datos originales. Las posteriores avanzan en la reescritura y pueden introducir incompatibilidades. `0.2.0` llegará tras estabilizar y validar la arquitectura y el modelo de datos. Los datos de test.1 no se importan ni sobrescriben automáticamente. Antes de actualizar, guarda la biblioteca y su archivo de protección original. La protección está vinculada al usuario de Windows; copiar solo la base de datos no permite migrarla entre cuentas.
 
@@ -24,6 +24,10 @@ Versión actual: **0.1.9-test.55+59**, una **versión preliminar de prueba para 
 - Protección en Windows: almacenamiento unificado en Rust, sellado de registros de auditoría, instantáneas, copia y recuperación de la identidad original, y uso simultáneo limitado de una misma identidad.
 
 ## Optimización y validación
+
+test.56 añade acciones contextuales, orden y arrastre de tarjetas, edición individual de tips y plugins de tema independientes. Mejora el diseño de columnas, la actualización de filtros y el cierre. Siguen pendientes el guardado automático completo y la equivalencia entre plataformas.
+
+### Cambios anteriores de test.55
 
 test.55 añade siete estilos visuales y ajuste de profundidad, mejora las animaciones de los controles y la separación entre componentes, corrige el guardado de ajustes y la aplicación de fuentes, mejora el cierre seguro en segundo plano y sienta las bases de la recuperación de borradores. El guardado automático de la interfaz principal aún no está terminado.
 
@@ -65,7 +69,7 @@ El SDK completo aún no está congelado. Se han conectado solicitudes HTTP/HTTPS
 
 ## Documentación
 
-- [Notas de versión y validación](../../reports/0.1.9-test.55-release.md)
+- [Notas de versión y validación](../../reports/0.1.9-test.56-release.md)
 - [Tablero de desarrollo](../../docs/DEVELOPMENT_BOARD.md)
 - [Hoja de ruta de arquitectura](../../docs/FUTURE_ROADMAP.md)
 - [Migración de funciones y límites](../../docs/TEST1_RUST_PARITY.md)
