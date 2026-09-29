@@ -4,13 +4,13 @@
 
 Lass etwas Raum für die Ideen von morgen.
 
-Morrow (明隙) ist ein lokaler, kartenbasierter Arbeitsbereich für Ideen und entwickelt sich zu einer plattformübergreifenden Plugin-Architektur. Der frühere Name lautet daemon, der Paketname `morrow_studio`. Unter Windows stellt Flutter die Oberfläche bereit; ein Rust-Host und isolierte Wasm-Plugins führen die Arbeitsbereichslogik aus. Web und Android verwenden vorerst die frühere Implementierung. Das Plugin-System ist noch nicht auf allen Plattformen abgenommen.
+Morrow (明隙) ist ein lokaler, kartenbasierter Arbeitsbereich für Ideen und entwickelt sich zu einer plattformübergreifenden Plugin-Architektur. Der frühere Name lautet daemon, der Paketname `morrow_studio`. Unter Windows stellt Flutter die Oberfläche bereit; ein Rust-Host und isolierte Wasm-Plugins führen die Arbeitsbereichslogik aus. Web führt Rust/Wasm lokal im Browser aus; Android nutzt weiterhin den früheren Pfad. Die vollständige Plugin- und Produktgleichheit aller Plattformen ist noch nicht abgenommen.
 
 ## Download und Kompatibilität
 
-Aktuelle Version: **0.1.9-test.55+59**, eine **Windows-x64-Testvorschau**, keine stabile Veröffentlichung. Lade das Windows-ZIP, das zugehörige Quellcode-ZIP und die SHA-256-Liste herunter. Entpacke alles und starte `morrow_studio.exe`; sämtliche DLLs, Host, `data`, `plugins` und Lizenzdateien müssen erhalten bleiben.
+Aktuelle Version: **0.1.9-test.56+60**, eine **Windows-x64-Testvorschau**, keine stabile Veröffentlichung. Lade das Windows-ZIP, das zugehörige Quellcode-ZIP und die SHA-256-Liste herunter. Entpacke alles und starte `morrow_studio.exe`; sämtliche DLLs, Host, `data`, `plugins` und Lizenzdateien müssen erhalten bleiben.
 
-[test.55 herunterladen](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Kompatible Testversion test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[test.56 herunterladen](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Kompatible Testversion test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` ist die letzte `0.1.x`-Testversion, die mit den ursprünglichen Datentypen kompatibel ist. Spätere Testversionen begleiten die Neuentwicklung und können inkompatible Änderungen enthalten. `0.2.0` folgt nach Stabilisierung und Abnahme von Architektur und Datenmodell. Daten aus test.1 werden nicht automatisch importiert oder überschrieben. Sichere Bibliothek und ursprüngliche Schutzdatei vor dem Update. Der Schutz ist an den Windows-Benutzer gebunden; die Datenbank allein reicht für einen Kontowechsel nicht aus.
 
@@ -24,6 +24,10 @@ Aktuelle Version: **0.1.9-test.55+59**, eine **Windows-x64-Testvorschau**, keine
 - Schutz unter Windows: einheitliche Rust-Speicherung, versiegelte Audit-Aufzeichnungen, Bibliothekssnapshots, Sicherung und Wiederherstellung der ursprünglichen Identität sowie begrenzte gleichzeitige Nutzung derselben Identität.
 
 ## Optimierung und Prüfung
+
+test.56 ergänzt Kontextaktionen, Kartensortierung und Ziehen, die Bearbeitung einzelner Tipps und eigenständige Themen-Plugins. Das Kachel-Layout, gefilterte Aktualisierungen und das Beenden wurden verbessert. Vollständiges automatisches Speichern und die Plattformgleichheit bleiben offen.
+
+### Frühere Änderungen von test.55
 
 test.55 ergänzt sieben Darstellungsstile und eine Tiefenregelung, verbessert Animationen der Bedienelemente und Abstände zwischen Komponenten, behebt Fehler beim Speichern von Einstellungen und Anwenden von Schriftarten, verbessert das sichere Beenden im Hintergrund und legt die Grundlage für die Wiederherstellung von Entwürfen. Automatisches Speichern in der regulären Oberfläche ist noch nicht fertig.
 
@@ -65,7 +69,7 @@ Das vollständige SDK ist noch nicht eingefroren. Verwaltete HTTP/HTTPS-Anfragen
 
 ## Dokumentation
 
-- [Versionshinweise und Prüfungen](../../reports/0.1.9-test.55-release.md)
+- [Versionshinweise und Prüfungen](../../reports/0.1.9-test.56-release.md)
 - [Entwicklungsboard](../../docs/DEVELOPMENT_BOARD.md)
 - [Architekturplanung](../../docs/FUTURE_ROADMAP.md)
 - [Funktionsmigration und Kapazitätsgrenzen](../../docs/TEST1_RUST_PARITY.md)
