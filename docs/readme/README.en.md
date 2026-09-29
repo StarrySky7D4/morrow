@@ -4,13 +4,13 @@
 
 Leave a little room for tomorrow’s ideas.
 
-Morrow (明隙) is a local-first, card-based workspace for ideas, evolving toward a cross-platform plugin architecture. Formerly daemon, its code package is `morrow_studio`. Windows uses Flutter for the interface and a Rust host with sandboxed Wasm plugins for workbench logic. Web and Android still use the earlier implementation; the plugin system is not yet qualified across platforms.
+Morrow (明隙) is a local-first, card-based workspace for ideas, evolving toward a cross-platform plugin architecture. Formerly daemon, its code package is `morrow_studio`. Windows uses Flutter for the interface and a Rust host with sandboxed Wasm plugins for workbench logic. Web runs Rust/Wasm locally in the browser; Android still uses the earlier path. Full plugin and product parity across platforms remains unqualified.
 
 ## Download and compatibility
 
-Current version: **0.1.9-test.55+59**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
+Current version: **0.1.9-test.56+60**, a **Windows x64 testing preview**, not a stable release. Download the Windows ZIP, corresponding source ZIP and SHA-256 list. Extract the entire archive and run `morrow_studio.exe`; keep all DLLs, the host, `data`, `plugins` and license files.
 
-[Download test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [Compatible test.1 preview](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[Download test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [Compatible test.1 preview](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` is the last `0.1.x` preview compatible with the original data types. Later test releases advance a rewrite and may introduce breaking changes. `0.2.0` follows architecture and data-model stabilization and acceptance. Old test.1 data is not imported or overwritten automatically. Back up the library and its original protection file before upgrading. Protection is bound to the Windows user; copying the database alone does not migrate it between accounts.
 
@@ -24,6 +24,10 @@ Current version: **0.1.9-test.55+59**, a **Windows x64 testing preview**, not a 
 - Windows content protection: unified Rust storage, sealed audit records, library snapshots, original-identity backup and recovery, and limits on concurrent use of the same identity.
 
 ## This update and validation
+
+test.56 adds context actions, card ordering and dragging, per-item tips editing, and standalone theme plugins. It improves masonry layout, filtered updates, and shutdown. This Windows preview is not a stable release; full autosave and cross-platform parity remain open.
+
+### Historical test.55 update
 
 test.55 adds seven appearance styles and depth adjustment, improves control animations and spacing between components, fixes settings persistence and font application, improves safe background shutdown, and provides the groundwork for draft recovery. Autosave in the main UI is still unfinished.
 
@@ -65,7 +69,7 @@ The complete SDK is not frozen. Managed HTTP/HTTPS requests, limited API service
 
 ## Documentation
 
-- [Release notes and validation](../../reports/0.1.9-test.55-release.md)
+- [Release notes and validation](../../reports/0.1.9-test.56-release.md)
 - [Development board and next tasks](../../docs/DEVELOPMENT_BOARD.md)
 - [Architecture roadmap](../../docs/FUTURE_ROADMAP.md)
 - [Feature migration and capacity limits](../../docs/TEST1_RUST_PARITY.md)
