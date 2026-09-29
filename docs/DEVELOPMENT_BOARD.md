@@ -1,5 +1,7 @@
 # 后续编码看板
 
+2026-09-29 主线快照：当前源码版本 `0.1.9-test.56+60`，Windows [test.56 测试预览](../reports/0.1.9-test.56-release.md) 已发布；本文件下列 test.55 与更早条目为历史验收，不应作为当前版本入口。Web [同进度工作表](WEB_PARITY.md) 记录最新浏览器 CI 失败及未闭合的平台对齐项。文件 IO 与 M03 研发在未合并的 `codex/io-safety-refactor`、`codex/m03-stream-revocation-backpressure` 分支；主线未获得这些分支的完整产品资格。正式 UI 自动保存、旧资料迁移/恢复、完整 SDK 和跨平台验收继续开放。
+
 2026-09-24 [源码同步与插件系统状态](PLUGIN_SYSTEM_STATUS.md)：归档下列两轮三语言 IO SDK、真实网络及项目工具增量；主线与开发分支同步，不创建 Release、不变更版本或旧兼容原件。最新完成范围和七类开放工作以此状态页为准，下面“未推送”保留各轮报告完成时的历史状态。
 
 2026-09-24 [三语言 IO SDK 真实 HTTP](../reports/plugin-io-network-sdk-2026-09-24.md)：Rust／C／C++ guest 经受管 worker 与 TCP 验证七种方法、二进制／重复参数头、凭据注入和 429、发送前拒绝、断线 Unknown 不重发及同库重开保留。29 项既有 HTTP 与四项三语言专项、严格 Clippy 和前置 IO／旧插件门槛通过；新增 IO 项目模板、显式能力/预算输出，31 项工具及九项打包 CLI 用例通过，三个生成 HTTP 原包以工作台 forward profile 再次通过真实网络专项；公网服务商、入站服务 SDK、流式与完整跨进程恢复仍开放。未推送发布。
