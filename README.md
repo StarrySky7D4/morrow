@@ -10,7 +10,7 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 ## 开发支线状态（2026-09-29）
 
-本分支 `codex/m03-stream-revocation-backpressure` 基于 `codex/io-safety-refactor` 的文件 IO 增量，保存 M02 原生会话与 M03 撤权／系统背压限定资格候选；这些改动尚未合并至 `main`，也未生成新的应用 Release。A010 原失败保留，A011 与 B011 各完成一次生产方运行及独立只读复核；完整 M03、OS 部分写入故障、产品 G0、跨平台和 SDK 冻结仍未完成。详见 [本分支状态](docs/DEVELOPMENT_BRANCH_STATUS.md)和 [M03 交付检查点](reports/codex-morrow-v1.1/delivery-2026-09-29.md)。
+本分支 `codex/m03-stream-revocation-backpressure` 基于 `codex/io-safety-refactor` 的文件读取与创建／删除、三语言 Guest 和 Windows 本地预览增量，另保存 M02 原生会话及 M03 撤权／系统背压的限定资格候选。这些改动尚未合并至 `main`，本地预览 ZIP 也不是新的公开 Release。A010 原失败保留；A011 与 B011 各完成一次生产方运行及独立只读复核。系统选择器人工验收、修复后的新成品、完整 M03、OS 部分写入故障、产品 G0、跨平台和 SDK 冻结仍未完成。详见 [本分支状态](docs/DEVELOPMENT_BRANCH_STATUS.md)和 [M03 交付检查点](reports/codex-morrow-v1.1/delivery-2026-09-29.md)。
 
 ## 下载与兼容性
 
@@ -71,7 +71,7 @@ flutter build web --no-web-resources-cdn
 
 目标架构为 Flutter／Dart 界面、可移植 Rust 核心及可替换插件执行后端。运行期边界采用固定契约；持久化与自有交换采用 Protobuf＋LZ4。C／C++／Rust SDK 与声明式插件 UI 正在推进，暂不支持 TS／JS 插件，也不要求动态 Dart 插件。
 
-完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；主线源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证；对应的 2026-09-24 状态页记录的是当时未更新 test.55 Release 的源码增量，不能用它推断 test.56 成品的逐项资格。入站服务 SDK、跨重启 Unknown 完整核对、完整文件系统、认证／流式网络与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
+完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；主线源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。此开发分支继续实现有界文件读取、创建／删除与 Guest 审批／恢复路径，相关限定证据见[本分支状态](docs/DEVELOPMENT_BRANCH_STATUS.md)；它们尚未进入公开 test.56 包。入站服务 SDK、条件 Replace、系统选择器人工验收、完整文件系统、认证／流式网络、跨重启核对与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
 
 ## 文档
 
