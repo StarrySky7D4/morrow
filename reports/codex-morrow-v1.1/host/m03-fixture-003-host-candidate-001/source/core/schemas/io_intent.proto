@@ -1,0 +1,34 @@
+syntax = "proto3";
+package morrow.io_intent.v1;
+// Host historical facts, never a live resource grant or permission to dispatch.
+// Original secrets/bytes belong in separately protected evidence, not this record.
+message Record {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes package_sha256 = 4;
+  uint32 capability = 5;
+  bytes protocol_sha256 = 6;
+  bytes request_sha256 = 7;
+  bytes approval_sha256 = 8;
+  bytes target_sha256 = 9;
+  uint64 request_bytes = 10;
+  uint64 response_limit = 11;
+  uint64 revision = 12;
+  bytes previous_sha256 = 13;
+  Phase phase = 14;
+  bytes observation_sha256 = 15;
+  ObservationSource observation_source = 16;
+}
+enum Phase {
+  INVALID_PHASE = 0;
+  PREPARED = 1;
+  OUTCOME_UNKNOWN = 2;
+  OBSERVED = 3;
+  CANCELLED_BEFORE_DISPATCH = 4;
+}
+enum ObservationSource {
+  NO_OBSERVATION = 0;
+  ORIGINAL_RESPONSE = 1;
+  RECONCILIATION = 2;
+}

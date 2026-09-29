@@ -1,0 +1,38 @@
+[
+  {
+    "before_write_ns": 257569612469000,
+    "after_flush_ns": 257569612490900,
+    "value": {
+      "action": "approve"
+    }
+  },
+  {
+    "before_write_ns": 257570635245800,
+    "after_flush_ns": 257570635308400,
+    "value": {
+      "action": "claim",
+      "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975"
+    }
+  },
+  {
+    "before_write_ns": 257571636904700,
+    "after_flush_ns": 257571636928400,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 257571647801100,
+    "after_flush_ns": 257571647828600,
+    "value": {
+      "action": "inspect_http"
+    }
+  },
+  {
+    "before_write_ns": 257571658620900,
+    "after_flush_ns": 257571658649500,
+    "value": {
+      "action": "inspect_http"
+    }
+  }
+]

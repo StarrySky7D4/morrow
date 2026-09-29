@@ -1,0 +1,14 @@
+test_candidate_drift_rejects_before_socket_or_process (test_m03_passive_fault.EvidenceTests.test_candidate_drift_rejects_before_socket_or_process) ... ok
+test_clock_and_first_cause_are_not_rewritten (test_m03_passive_fault.EvidenceTests.test_clock_and_first_cause_are_not_rewritten) ... ok
+test_deadline_sample_uses_only_original_host_domain (test_m03_passive_fault.EvidenceTests.test_deadline_sample_uses_only_original_host_domain) ... ok
+test_foreign_identity_nonce_and_duplicate_ordinals_rejected (test_m03_passive_fault.EvidenceTests.test_foreign_identity_nonce_and_duplicate_ordinals_rejected) ... ok
+test_fragment_substitution_cannot_use_a_matching_summary_hash (test_m03_passive_fault.EvidenceTests.test_fragment_substitution_cannot_use_a_matching_summary_hash) ... ok
+test_incomplete_record_never_becomes_close_witness (test_m03_passive_fault.EvidenceTests.test_incomplete_record_never_becomes_close_witness) ... ok
+test_partial_read_chain_is_accumulation_not_one_twelve_byte_read (test_m03_passive_fault.EvidenceTests.test_partial_read_chain_is_accumulation_not_one_twelve_byte_read) ... ok
+test_rewrite_even_equivalent_json_is_rejected (test_m03_passive_fault.EvidenceTests.test_rewrite_even_equivalent_json_is_rejected) ... ok
+test_target_and_prefix_mismatch_rejected (test_m03_passive_fault.EvidenceTests.test_target_and_prefix_mismatch_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.021s
+
+OK

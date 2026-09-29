@@ -1,0 +1,31 @@
+{
+  "status": "preflight_design_review_complete_pending_frozen_implementation",
+  "scenarios": [
+    "authority-deadline",
+    "network-abort",
+    "pipe-partial-close"
+  ],
+  "input_snapshots": 13,
+  "proposal_artifacts_verified": 5,
+  "pure_synthetic_checks": 31,
+  "requested_design_alignment": [
+    "Content-Length8192/consumed-witness/no-early-ACK",
+    "cumulative-read-IO-replay",
+    "separate-clock-domains/actual-owner-close",
+    "full-real-frame-raw-hex/no-original-completion"
+  ],
+  "remaining_final_review": [
+    "H1 exact original Instant sampling",
+    "H2 actual sole-owner close/reap and config binding",
+    "default-feature rejection and typed channel",
+    "003 observer/diagnostic source behavior",
+    "frozen005 mechanical causality and real runtime batches"
+  ],
+  "http_requests": 0,
+  "builds": 0,
+  "runtime_tests": 0,
+  "implementation005_reviewed": false,
+  "candidate_approved": false,
+  "overall_M03_gate_upgraded": false,
+  "sdk_frozen": false
+}

@@ -1,5 +1,15 @@
 # 最新开发支线状态
 
+2026-09-30 [暂停同步检查点](../reports/codex-morrow-v1.1/m03-pause-checkpoint-2026-09-30.md)：按用户要求暂停开发，三协作会话空闲。network-abort 单次本机运行观察通过；authority-deadline 已启动批次收尾为 unconfirmed（guest evidence writer join 未确认、缺 Close/ACK），原证据保留；pipe-partial-close 未启动，真实运行后独立复核未进行。fixture003源码和回执已逐字节归档到companions；仅同步当前开发分支与 Drive 单个ZIP，不合并主线、不发Release。SDK未冻结。
+
+2026-09-30 [M03 被动故障实现](../reports/codex-morrow-v1.1/m03-passive-fault-005-2026-09-30.md)：fixture003、宿主H1/H2及运行入口已实现；当前runner003保留001／002原审查阻塞及快照，13项纯检查通过。宿主default／feature构建与52次定向调用、guest Core15/native35通过；三个HTTP故障场景尚未运行，正在冻结实现复核。SDK未冻结，未提交／推送／发布。
+
+2026-09-30 [M03 当前宿主生命周期复验](../reports/codex-morrow-v1.1/m03-lifecycle-004-2026-09-30.md)：新增期限触发和 peer 断开同进程 pipe 测试，Windows probe 15/15、当前原生库 28/28；新固定宿主与冻结 real Core fixture 对撤权/OS 背压各运行 1 次本机 POST，生产方均通过，独立只读整链复核已限定通过。首次证据路径拒绝（0 POST）保留失败。原期限自然到达、网络/残帧断开的完整被动 fixture003 在设计中，SDK 未冻结；未推送／发布。
+
+2026-09-30 [Drive 合入与 Windows 复核](../reports/codex-morrow-v1.1/drive-review-2026-09-30.md)：接入 partial-write-003 和插件打包前一致性检查；本机网络 21 项、纯写状态 8 项、Windows probe 13 项、原生库 26 项及 SDK 工具 62 项通过，原生二进制重新构建成功。上述集合有重叠，不能相加；仍未覆盖真正非零部分 OS completion 故障、完整 Core/child/HTTP 竞态、产品 G0 和跨平台。SDK 未冻结，本轮未推送／发布。
+
+当前工作区基于远端文档检查点 `21f84aaebca31c8ef8d3bdfb3b9788f2a4cffb54`。下文保留 2026-09-29 历史基线，最新验证和后续顺序以上述报告为准。
+
 更新：2026-09-29。分支：`codex/m03-stream-revocation-backpressure`；M03 源码检查点 `c8074fef4d4849e4130f54f1b5bd1e6bf7c78494`。后续仅修改文档，未重新运行产品、M03 或 CI 测试。
 
 ## 与主线及发布的关系

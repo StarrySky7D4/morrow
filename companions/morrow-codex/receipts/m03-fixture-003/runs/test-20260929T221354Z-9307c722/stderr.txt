@@ -1,0 +1,123 @@
+warning: patch `runfiles v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\p02-exec-store-002\build-forks\runfiles)` was not used in the crate graph
+help: Check that the patched package version and available features are compatible
+      with the dependency requirements. If the patch has a different version from
+      what is locked in the Cargo.lock file, run `cargo update` to use the new
+      version. This may also occur with an optional dependency that is not enabled.
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher\src\utf32_str.rs:338:18
+    |
+338 |     pub fn slice(&self, range: impl RangeBounds<usize>) -> Utf32Str {
+    |                  ^^^^^ the lifetime is elided here         ^^^^^^^^ the same lifetime is hidden here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+    = note: `#[warn(mismatched_lifetime_syntaxes)]` on by default
+help: use `'_` for type paths
+    |
+338 |     pub fn slice(&self, range: impl RangeBounds<usize>) -> Utf32Str<'_> {
+    |                                                                    ++++
+
+warning: hiding a lifetime that's elided elsewhere is confusing
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\matcher\src\utf32_str.rs:358:22
+    |
+358 |     pub fn slice_u32(&self, range: impl RangeBounds<u32>) -> Utf32Str {
+    |                      ^^^^^ the lifetime is elided here       ^^^^^^^^ the same lifetime is hidden here
+    |
+    = help: the same lifetime is referred to in inconsistent ways, making the signature confusing
+help: use `'_` for type paths
+    |
+358 |     pub fn slice_u32(&self, range: impl RangeBounds<u32>) -> Utf32Str<'_> {
+    |                                                                      ++++
+
+warning: `nucleo-matcher` (lib) generated 2 warnings (run `cargo fix --lib -p nucleo-matcher` to apply 2 suggestions)
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\worker.rs:38:17
+   |
+38 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                 ^                      ^
+   |
+   = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+   |
+38 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+38 +     notify: Arc<dyn Fn() + Sync + Send >,
+   |
+
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\worker.rs:62:21
+   |
+62 |         notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                     ^                      ^
+   |
+help: remove these parentheses
+   |
+62 -         notify: Arc<(dyn Fn() + Sync + Send)>,
+62 +         notify: Arc<dyn Fn() + Sync + Send >,
+   |
+
+warning: unnecessary parentheses around type
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:61:17
+   |
+61 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+   |                 ^                      ^
+   |
+help: remove these parentheses
+   |
+61 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+61 +     notify: Arc<dyn Fn() + Sync + Send>,
+   |
+
+warning: unnecessary parentheses around type
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:286:17
+    |
+286 |     notify: Arc<(dyn Fn() + Sync + Send)>,
+    |                 ^                      ^
+    |
+help: remove these parentheses
+    |
+286 -     notify: Arc<(dyn Fn() + Sync + Send)>,
+286 +     notify: Arc<dyn Fn() + Sync + Send>,
+    |
+
+warning: unnecessary parentheses around type
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-exec-store-dependencies-002\nucleo-4253de9faabb4e5c6d81d946a5e35a90f87347ee\src\lib.rs:311:21
+    |
+311 |         notify: Arc<(dyn Fn() + Sync + Send)>,
+    |                     ^                      ^
+    |
+help: remove these parentheses
+    |
+311 -         notify: Arc<(dyn Fn() + Sync + Send)>,
+311 +         notify: Arc<dyn Fn() + Sync + Send>,
+    |
+
+warning: `nucleo` (lib) generated 5 warnings (run `cargo fix --lib -p nucleo` to apply 5 suggestions)
+warning: unused import: `crate::tools::context::ToolCallSource`
+  --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\p02-integration-004\codex-work\codex-rs\core\src\tools\registry.rs:16:5
+   |
+16 | use crate::tools::context::ToolCallSource;
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: `codex-core` (lib) generated 1 warning (run `cargo fix --lib -p codex-core` to apply 1 suggestion)
+warning: unnecessary parentheses around `if` condition
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\upstream\m03-stream-001\wire-kit-001\source\src\rules.rs:134:20
+    |
+134 |                 if (d.body_bytes as usize > MAX_BODY
+    |                    ^
+135 |                     || d.response_limit_bytes == 0
+136 |                     || d.response_limit_bytes as usize > MAX_RESPONSE)
+    |                                                                      ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+134 ~                 if d.body_bytes as usize > MAX_BODY
+135 |                     || d.response_limit_bytes == 0
+136 ~                     || d.response_limit_bytes as usize > MAX_RESPONSE 
+    |
+
+warning: `morrow-native-http-stream-wire` (lib) generated 1 warning (run `cargo fix --lib -p morrow-native-http-stream-wire` to apply 1 suggestion)
+   Compiling morrow-codex-native-http-client v0.4.2 (C:\Users\Administrator\Desktop\CodeXProjext\morrow-codex\native\m03-fixture-003)
+    Finished `test` profile [unoptimized] target(s) in 7.49s
+     Running unittests src\lib.rs (Users\Administrator\Desktop\CodeXProjext\morrow-codex\out\m03-stream-001\target\x86_64-pc-windows-msvc\debug\deps\morrow_codex_native_http_client-1247053224dd0244.exe)

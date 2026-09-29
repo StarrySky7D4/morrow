@@ -1,0 +1,22 @@
+{
+  "review_date": "2026-09-30 Asia/Shanghai",
+  "input_sha256": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\admission.rs": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\session.rs": "0db7e61184227d558efe7ebc28809ecb13870062545a08e35d0b349d7a906c96",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\workers.rs": "f4d67053ca8e8f0aaf53095517419130ad3212ee1a38aa6572715e6ae2248d14",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\delivery.rs": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\main.rs": "c86ab95aad618db4ed124289815b27f0ef14367910c909cc61246bda664082f3",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-fixture-002\\src\\fixture.rs": "81068e8383fef97efedc1f527152b32848258032a76651d30bfacf0bd971baf9",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-fixture-002\\src\\driver.rs": "7b4eeaa96461c2c0df8546901f0b5233379317ac54d8626e2125c018ef2c1ef6",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\qualification\\m03-fixture-002\\src\\network.rs": "f741e3f29be39d373fcfdbf5a362dd72b477302009c8bd773f6113f734cb7f05",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\src\\supervisor.rs": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\src\\pipe_driver.rs": "341a1cbdb200003a2ed6ce5958f39b625aeaf09cfdff3d899637db80219189ca",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\native_session_stream_001\\src\\write_state.rs": "661bcf7a07d760c9bd9a50a375fa7123392bf345639becef5d7e1b48bfbaace4",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\contracts\\experimental\\agent_host_v3_http_stream\\native_http.capnp": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\upstream\\m03-stream-001\\wire-kit-001\\source\\native_http.capnp": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+  },
+  "artifact_sha256": {
+    "review.md": "047ac1b0064147d16a8c7d498a1682653854c7182726999ba5c0e30f068ad530",
+    "result.json": "ca11fe93bc3387262ba5f78ad36a4994b4a6c9b4663ae46e7e37ee135e8ee9df"
+  }
+}

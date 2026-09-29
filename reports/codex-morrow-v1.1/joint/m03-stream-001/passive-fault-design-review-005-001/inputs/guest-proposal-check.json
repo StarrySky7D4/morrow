@@ -1,0 +1,31 @@
+{
+  "status": "design_artifacts_checked_no_implementation",
+  "checked_utc": "2026-09-29T21:49:00.346375+00:00",
+  "checks": {
+    "examples_parse": true,
+    "three_scenario_exact_fields_and_fixed_bounds": true,
+    "each_example_under_4096_bytes": true,
+    "document_links_and_utf8": true,
+    "initial_19_input_hashes_unchanged": true,
+    "selected_fixture002_pins_match": true,
+    "frozen_wire_host_guest_equal": true
+  },
+  "scope": {
+    "new_directory_only": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001",
+    "implementation_written": false,
+    "host_modified": false,
+    "old_fixture_or_harness_or_schema_modified": false,
+    "builds_run": 0,
+    "runtime_tests_run": 0,
+    "http_requests": 0,
+    "git_commits_created": 0,
+    "product_accepted": false
+  },
+  "not_verified": [
+    "003 implementation",
+    "host H1/H2 interface agreement",
+    "new harness",
+    "runtime fault causality",
+    "actual cleanup/join in new scenarios"
+  ]
+}

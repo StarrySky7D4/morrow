@@ -1,0 +1,45 @@
+--- frozen002
+
++++ frozen003
+
+@@ -70,15 +70,35 @@
+
+         files = {p.relative_to(run_dir).as_posix(): sha(p) for p in sorted(run_dir.rglob("*")) if p.is_file()}
+         guest_files = {str(p): sha(p) for p in sorted(evidence.rglob("*")) if p.is_file()}
+         files["result.json"] = hashlib.sha256(json_bytes(result)).hexdigest()
+-        dump(run_dir / "evidence-manifest.json", {"files": files, "guest_files": guest_files})
+-        dump(run_dir / "result.json", result)
++        # A post-write/flush/close error must occur before expected bytes become
++        # the public result. Keep pending bytes as forensic evidence on failure.
++        pending_manifest = run_dir / "evidence-manifest.pending.json"
++        pending_result = run_dir / "result.pending.json"
++        dump(pending_manifest, {"files": files, "guest_files": guest_files})
++        dump(pending_result, result)
++        pending_manifest.rename(run_dir / "evidence-manifest.json")
++        pending_result.rename(run_dir / "result.json")
+         return True
+     except Exception as failure:
+         result["evidence_seal_error"] = repr(failure)
+         if result["qualification_result"] != "failed":
+             result["qualification_result"] = "unconfirmed"
+-        if not (run_dir / "result.json").exists():
+-            dump(run_dir / "result.json", result)
++        # A failure marker takes precedence over any apparent bundle. Publish
++        # the failure without calling the same failed dump operation again.
++        failure_record = run_dir / "seal-failure.json"
++        with failure_record.open("xb") as stream:
++            stream.write(json_bytes({"status": "unconfirmed", "qualification_valid": False,
++                                     "error": repr(failure), "publication_failed": True}))
++        published = run_dir / "result.json"
++        if published.exists():
++            with (run_dir / "result.rejected.json").open("xb") as stream:
++                stream.write(published.read_bytes())
++        replacement = run_dir / "result.failure.json"
++        assert replacement.parent.resolve() == published.parent.resolve() == run_dir.resolve()
++        with replacement.open("xb") as stream:
++            stream.write(json_bytes(result))
++            stream.flush(); os.fsync(stream.fileno())
++        os.replace(replacement, published)
+         return False
+ 
+ 

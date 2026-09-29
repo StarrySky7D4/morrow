@@ -1,0 +1,12 @@
+{
+  "status": "failed_development_test_attempt",
+  "test_count": 11,
+  "errors": 1,
+  "error": "NameError: name 'domain' is not defined",
+  "test": "test_hash_failure_before_evidence_seal_never_publishes_expected",
+  "cause": "The patch inserted new test methods before the old deadline test's final four lines, leaving those lines in the seal test.",
+  "fix": "Restore the four deadline checks to test_deadline_sample_uses_only_original_host_domain; retain the seal failure assertion.",
+  "source": "Original unittest tool output, not a reconstructed successful run",
+  "http_requests": 0,
+  "previous_frozen_runner_modified": false
+}

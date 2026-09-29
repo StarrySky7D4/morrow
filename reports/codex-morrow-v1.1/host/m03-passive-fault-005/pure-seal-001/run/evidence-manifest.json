@@ -1,0 +1,9 @@
+{
+  "files": {
+    "input.txt": "7056777cb356928dccba2d7d0f6b7cab7b9587e6cb8fa96f2493fa8c02a70ccc",
+    "result.json": "4d46c69ee8e94e774e0227e043590147890ed8a292d035f3e4f5341461ffa499"
+  },
+  "guest_files": {
+    "reports\\codex-morrow-v1.1\\host\\m03-passive-fault-005\\pure-seal-001\\guest\\raw.txt": "c6138831a9dbf505eefad9968ec21fa1ac330af1720f0d001891bdf52480afc0"
+  }
+}

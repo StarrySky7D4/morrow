@@ -1,0 +1,25 @@
+{
+  "scope": "candidate002 plus two existing A/B producer runs; reviewer no runtime",
+  "files": {
+    "candidate-inputs.json": "b5cf2ec6bf2b4e44854c091d5e303a07319f33a82d4c2e0659803c6a1cfa809f",
+    "candidate-result.json": "bf174dca5a305f7315336cf3877d219a71184d205a8d8fff63344a7089d701f7",
+    "core-revoke/all-decoded-control.json": "5b2fbc4257f8bd3cd38836f3424069804c63034d18cd664eeed9e081e6e3f29f",
+    "core-revoke/decoded-control.json": "5b2fbc4257f8bd3cd38836f3424069804c63034d18cd664eeed9e081e6e3f29f",
+    "core-revoke/durable-native-ledger.json": "1baa768d48e0a733e1a78ec7945c40708230631ce881d59e7069c87234fc2ae8",
+    "core-revoke/inputs.json": "2bd7f30c9b34fd660de5f46fc1095eafebc1e24bc1eeb2ef0303288ca7fb77e5",
+    "core-revoke/result.json": "db110b990eb1ff9d2787f1f7a506063f01e75cb308a34385f104a701e4145b63",
+    "core-revoke/review_evidence.py": "849525f4439a1ded5b9cc3cdac6f2984efbd9553746e7b10855603deb79cbf84",
+    "data-pending/all-decoded-control.json": "363a8ca7181a632d77cc59b920bb81d12059fd4a8135109f7a80e6d079d64a49",
+    "data-pending/decoded-terminal-control.json": "a58b8380c9e047a4a8c252ae9763c062aa9e8a2ef3c8b18b40f9cb0946ea9ad0",
+    "data-pending/durable-native-ledger.json": "456de8a14ab7c9c73ed1e0212353ff27774698cc8924fca458dee2ed0a1c9d86",
+    "data-pending/inputs.json": "11ca7e0153bb151d8cdf6202da5abcce9f5cca0d159bfede362c2db439c51933",
+    "data-pending/pending-chain.json": "00c81b7934cacaf9277f1d808ed04a5ab25456125b6b4a96741c6e93e0d7f856",
+    "data-pending/result.json": "319fbd38d31a80aec8ea7c8bc3967300e25bdbe1e9f4596423166abdde645d5a",
+    "data-pending/review_evidence.py": "c61aef7c6c9e438bdd3f54f6546541915d8819e6df0ccd99aa4bfcfa726fe73c",
+    "result.json": "ecfa0ee4344e8c46a09149b7e68b0c8abdee1aa1d2bf9638e8a830be5a5d8cf5",
+    "review.md": "ee2c195eb220866451c5e2fee21ccdb1630028561df2123723e6bdff3510310c",
+    "verify_candidate.py": "0ee42f688bf9308780fe84af77349179a7c1a357e3696b2a9546675a0af870fb",
+    "verify_wire.py": "2bfe44995f15f33f8ebd136797c225ca20609da17fe0570db86f4624a6ade532",
+    "wire-settlement.json": "73109a8d38e921a8bf49d4da303af216e67e3f1af6e0b638b2b945dcbef72ded"
+  }
+}

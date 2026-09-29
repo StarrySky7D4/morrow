@@ -1,0 +1,35 @@
+{
+  "status": "lifecycle004_candidate002_producer_run_independently_reviewed_pass",
+  "post_count": 1,
+  "request_bytes": 22025,
+  "write_operation": {
+    "id": 12,
+    "issue_ordinal": 3,
+    "body_end": 1024,
+    "frame_offset": 0,
+    "requested_bytes": 1364,
+    "initial_pending": true
+  },
+  "three_incomplete_samples": true,
+  "sample_gaps_ms": [
+    26.23,
+    25.3732
+  ],
+  "cancel_probe_incomplete": true,
+  "actual_reap_error": 995,
+  "actual_reap_bytes": 0,
+  "read_issue_count": 2,
+  "parser_and_peer_consumed": 0,
+  "host_ack_upper_bound_ms": 15.2742,
+  "cleanup_ok": true,
+  "actual_data_join": true,
+  "control_and_other_joins": true,
+  "control_clean": true,
+  "host_exit": 0,
+  "guest_exit": 2,
+  "durable_owner_released": true,
+  "independent_http_runs": 0,
+  "retries": 0,
+  "new_fault_scenarios_run": false,
+  "product_gate_upgrade": false
+}

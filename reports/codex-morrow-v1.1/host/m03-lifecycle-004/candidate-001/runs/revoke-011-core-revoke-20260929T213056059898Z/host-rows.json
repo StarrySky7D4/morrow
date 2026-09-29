@@ -1,0 +1,913 @@
+[
+  {
+    "line_received_ns": 257569612391100,
+    "parsed_ns": 257569612423400,
+    "value": {
+      "approval_required": true,
+      "artifact_sha256": "b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc",
+      "event": "proposal",
+      "host_pid": 3988,
+      "operation": "m03-core-revoke-20260929T213056059898Z",
+      "plugin_id": "morrow-codex",
+      "production_cli_authenticated": false,
+      "role": "synthetic-http",
+      "slot": "revoke-slot"
+    }
+  },
+  {
+    "line_received_ns": 257570635130000,
+    "parsed_ns": 257570635190300,
+    "value": {
+      "action": "approve",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257570635278900,
+    "parsed_ns": 257570635294600,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 1022839,
+        "detail": {
+          "config_sha256": "358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e52139",
+          "generation": 1,
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "operation": "m03-core-revoke-20260929T213056059898Z",
+          "plugin_id": "morrow-codex",
+          "role": "synthetic-http",
+          "ttl_ms": 10000
+        },
+        "event": "authorize_created"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571636829500,
+    "parsed_ns": 257571636853600,
+    "value": {
+      "action": "claim",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "epoch": 1,
+        "pid": 14692,
+        "session": 5087641038815130253
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571637227000,
+    "parsed_ns": 257571637241700,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 1034689,
+        "detail": {
+          "generation": 1,
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975"
+        },
+        "event": "claim_committed"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571637280800,
+    "parsed_ns": 257571637293500,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2024395,
+        "detail": {
+          "epoch": 1,
+          "generation": 1,
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "pid": 14692,
+          "session": 5087641038815130253
+        },
+        "event": "owner_registered"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571637385700,
+    "parsed_ns": 257571637408100,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2007066,
+        "detail": {
+          "arch": "x86_64",
+          "artifact_sha256": "b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc",
+          "config_sha256": "358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e52139",
+          "epoch": 1,
+          "path_image_race_closed": false,
+          "pid": 14692,
+          "platform": "windows",
+          "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+        },
+        "event": "spawn",
+        "ordinal": 0
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571637464300,
+    "parsed_ns": 257571637480400,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2007764,
+        "detail": {
+          "raw_hex": "400100000000000027000000000000000b000600030001000000000000000000000000008d7246bf91ee9a46010000000000000001000000000000006439000000000000381f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d000000020100003900000002010000450000003201000000000000000000008d7246bf91ee9a461578ebe8d7faff5f559c5e2850dab8a43f7b6728d1bababc8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e521396d30332d636f72652d7265766f6b652d3230323630393239543231333035363035393839385a0000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 1
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571637517100,
+    "parsed_ns": 257571637524100,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2010002,
+        "detail": {
+          "dacl_sha256": "d31f829edec290dbb3710f75760fcc9cd34382683850676f83c312dff3d44054",
+          "inbound": 1024,
+          "noninherited": true,
+          "outbound": 1024
+        },
+        "event": "data_created",
+        "ordinal": 2
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571637626700,
+    "parsed_ns": 257571637644800,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571648079800,
+    "parsed_ns": 257571648108400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": false,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 0,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Preparing",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": false,
+          "revoke_persisted": false,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": false
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571649750400,
+    "parsed_ns": 257571649789700,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2036885,
+        "detail": true,
+        "event": "stdout_eof",
+        "ordinal": 3
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571649809300,
+    "parsed_ns": 257571649819000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2036888,
+        "detail": {
+          "reason": 24
+        },
+        "event": "session_close_reason",
+        "ordinal": 4
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571676552000,
+    "parsed_ns": 257571676574200,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2064277,
+        "detail": {
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "phase": "Closing"
+        },
+        "event": "owner_phase"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571676731400,
+    "parsed_ns": 257571676757600,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2045868,
+        "detail": {
+          "code": 24,
+          "progress": {
+            "cancel_discarded_bytes": 0,
+            "child_exited": false,
+            "connect_reaped": false,
+            "data_closed": false,
+            "drain_discarded_bytes": 0,
+            "error_code": 24,
+            "error_consumed_bytes": 0,
+            "http_eof": false,
+            "http_status": 0,
+            "intent": "Absent",
+            "issued_offset": 0,
+            "last_write_ordinal": 0,
+            "network": "Idle",
+            "os_completed_offset": 0,
+            "owner": "Preparing",
+            "owner_released": false,
+            "parser_yielded_bytes": 0,
+            "peer_consumed_offset": 0,
+            "read_reaped": false,
+            "received_offset": 0,
+            "request_closed": false,
+            "reserved_offset": 0,
+            "response_material_stored": false,
+            "revoke_applied": true,
+            "revoke_persisted": true,
+            "stderr_eof": false,
+            "stdout_eof": true,
+            "worker_joined": false,
+            "worker_started": false,
+            "write_reaped": false
+          },
+          "requested_code": 24,
+          "source": 2
+        },
+        "event": "http_cancel_applied",
+        "ordinal": 5
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571676797000,
+    "parsed_ns": 257571676836100,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2045979,
+        "detail": "Closing",
+        "event": "phase",
+        "ordinal": 6
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571676892300,
+    "parsed_ns": 257571676905100,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046061,
+        "detail": {
+          "after_ns": 38399700,
+          "before_ns": 38399700,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": null,
+          "outcome": {
+            "gate_or_deadline": true
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_request_observed"
+        },
+        "event": "pipe_owner_observation",
+        "ordinal": 7
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571676979800,
+    "parsed_ns": 257571676986900,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046070,
+        "detail": {
+          "after_ns": 38422600,
+          "before_ns": 38399700,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": null,
+          "outcome": {
+            "kind": "no_operation"
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_probe"
+        },
+        "event": "pipe_owner_observation",
+        "ordinal": 8
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677051100,
+    "parsed_ns": 257571677061200,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046077,
+        "detail": {
+          "after_ns": 38436600,
+          "before_ns": 38427200,
+          "clock": "std::time::Instant",
+          "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+          "duration_unit": "ns",
+          "duration_units_per_second": 1000000000,
+          "operation": null,
+          "outcome": {
+            "completion_claimed": false
+          },
+          "resolution": "not_measured",
+          "stage": "cancel_requested"
+        },
+        "event": "pipe_owner_observation",
+        "ordinal": 9
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677120000,
+    "parsed_ns": 257571677125300,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046255,
+        "detail": {
+          "raw_hex": "400100000000000027000000000000000b000600030001000600000000000000000000008d7246bf91ee9a46010000000000000002000000000000006439000018000000121f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d000000020100003900000002010000450000003201000000000000000000008d7246bf91ee9a461578ebe8d7faff5f559c5e2850dab8a43f7b6728d1bababc8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e521396d30332d636f72652d7265766f6b652d3230323630393239543231333035363035393839385a0000"
+        },
+        "event": "control_frame_sent",
+        "ordinal": 10
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677198300,
+    "parsed_ns": 257571677216000,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046280,
+        "detail": {
+          "business_success": false,
+          "code": 2
+        },
+        "event": "exit",
+        "ordinal": 11
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677243900,
+    "parsed_ns": 257571677256600,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2046286,
+        "detail": {
+          "bytes": 74
+        },
+        "event": "stderr_eof",
+        "ordinal": 12
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677301400,
+    "parsed_ns": 257571677309500,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2056819,
+        "detail": {
+          "bytes": 0,
+          "error": 995,
+          "id": 1,
+          "kind": "Connect"
+        },
+        "event": "data_operation_reaped",
+        "ordinal": 13
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677363800,
+    "parsed_ns": 257571677369700,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2056840,
+        "detail": true,
+        "event": "data_worker_joined",
+        "ordinal": 14
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677419700,
+    "parsed_ns": 257571677425300,
+    "value": {
+      "epoch": 1,
+      "event": "host_observation",
+      "observation": {
+        "at_us": 2056981,
+        "detail": "Released",
+        "event": "phase",
+        "ordinal": 15
+      },
+      "pid": 14692,
+      "session": 5087641038815130253
+    }
+  },
+  {
+    "line_received_ns": 257571677570200,
+    "parsed_ns": 257571677588400,
+    "value": {
+      "action": "inspect_http",
+      "event": "operator_result",
+      "ok": true,
+      "result": {
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": true,
+          "connect_reaped": true,
+          "data_closed": true,
+          "drain_discarded_bytes": 0,
+          "error_code": 24,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 0,
+          "intent": "Absent",
+          "issued_offset": 0,
+          "last_write_ordinal": 0,
+          "network": "Idle",
+          "os_completed_offset": 0,
+          "owner": "Released",
+          "owner_released": true,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": true,
+          "received_offset": 0,
+          "request_closed": false,
+          "reserved_offset": 0,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": true,
+          "stdout_eof": true,
+          "worker_joined": false,
+          "worker_started": false,
+          "write_reaped": true
+        },
+        "proposal": null
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571685014800,
+    "parsed_ns": 257571685030300,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2072261,
+        "detail": {
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "phase": "Released"
+        },
+        "event": "owner_phase"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571685116300,
+    "parsed_ns": 257571685129800,
+    "value": {
+      "event": "authority_observation",
+      "observation": {
+        "at_us": 2072748,
+        "detail": {
+          "generation": 1,
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "pid": 14692
+        },
+        "event": "released"
+      }
+    }
+  },
+  {
+    "line_received_ns": 257571685733700,
+    "parsed_ns": 257571685790700,
+    "value": {
+      "event": "final",
+      "snapshot": {
+        "epoch": 1,
+        "event_overflow": 0,
+        "events": [
+          {
+            "at_us": 2007066,
+            "detail": {
+              "arch": "x86_64",
+              "artifact_sha256": "b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc",
+              "config_sha256": "358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e52139",
+              "epoch": 1,
+              "path_image_race_closed": false,
+              "pid": 14692,
+              "platform": "windows",
+              "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864"
+            },
+            "event": "spawn",
+            "ordinal": 0
+          },
+          {
+            "at_us": 2007764,
+            "detail": {
+              "raw_hex": "400100000000000027000000000000000b000600030001000000000000000000000000008d7246bf91ee9a46010000000000000001000000000000006439000000000000381f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d000000020100003900000002010000450000003201000000000000000000008d7246bf91ee9a461578ebe8d7faff5f559c5e2850dab8a43f7b6728d1bababc8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e521396d30332d636f72652d7265766f6b652d3230323630393239543231333035363035393839385a0000"
+            },
+            "event": "control_frame_sent",
+            "ordinal": 1
+          },
+          {
+            "at_us": 2010002,
+            "detail": {
+              "dacl_sha256": "d31f829edec290dbb3710f75760fcc9cd34382683850676f83c312dff3d44054",
+              "inbound": 1024,
+              "noninherited": true,
+              "outbound": 1024
+            },
+            "event": "data_created",
+            "ordinal": 2
+          },
+          {
+            "at_us": 2036885,
+            "detail": true,
+            "event": "stdout_eof",
+            "ordinal": 3
+          },
+          {
+            "at_us": 2036888,
+            "detail": {
+              "reason": 24
+            },
+            "event": "session_close_reason",
+            "ordinal": 4
+          },
+          {
+            "at_us": 2045868,
+            "detail": {
+              "code": 24,
+              "progress": {
+                "cancel_discarded_bytes": 0,
+                "child_exited": false,
+                "connect_reaped": false,
+                "data_closed": false,
+                "drain_discarded_bytes": 0,
+                "error_code": 24,
+                "error_consumed_bytes": 0,
+                "http_eof": false,
+                "http_status": 0,
+                "intent": "Absent",
+                "issued_offset": 0,
+                "last_write_ordinal": 0,
+                "network": "Idle",
+                "os_completed_offset": 0,
+                "owner": "Preparing",
+                "owner_released": false,
+                "parser_yielded_bytes": 0,
+                "peer_consumed_offset": 0,
+                "read_reaped": false,
+                "received_offset": 0,
+                "request_closed": false,
+                "reserved_offset": 0,
+                "response_material_stored": false,
+                "revoke_applied": true,
+                "revoke_persisted": true,
+                "stderr_eof": false,
+                "stdout_eof": true,
+                "worker_joined": false,
+                "worker_started": false,
+                "write_reaped": false
+              },
+              "requested_code": 24,
+              "source": 2
+            },
+            "event": "http_cancel_applied",
+            "ordinal": 5
+          },
+          {
+            "at_us": 2045979,
+            "detail": "Closing",
+            "event": "phase",
+            "ordinal": 6
+          },
+          {
+            "at_us": 2046061,
+            "detail": {
+              "after_ns": 38399700,
+              "before_ns": 38399700,
+              "clock": "std::time::Instant",
+              "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+              "duration_unit": "ns",
+              "duration_units_per_second": 1000000000,
+              "operation": null,
+              "outcome": {
+                "gate_or_deadline": true
+              },
+              "resolution": "not_measured",
+              "stage": "cancel_request_observed"
+            },
+            "event": "pipe_owner_observation",
+            "ordinal": 7
+          },
+          {
+            "at_us": 2046070,
+            "detail": {
+              "after_ns": 38422600,
+              "before_ns": 38399700,
+              "clock": "std::time::Instant",
+              "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+              "duration_unit": "ns",
+              "duration_units_per_second": 1000000000,
+              "operation": null,
+              "outcome": {
+                "kind": "no_operation"
+              },
+              "resolution": "not_measured",
+              "stage": "cancel_probe"
+            },
+            "event": "pipe_owner_observation",
+            "ordinal": 8
+          },
+          {
+            "at_us": 2046077,
+            "detail": {
+              "after_ns": 38436600,
+              "before_ns": 38427200,
+              "clock": "std::time::Instant",
+              "clock_domain": "\\\\.\\pipe\\morrow-m03-8b9af3e700eaeb31d82e14350b63c752fa8b3fa1861615423c31222d56e84e79:pipe-owner",
+              "duration_unit": "ns",
+              "duration_units_per_second": 1000000000,
+              "operation": null,
+              "outcome": {
+                "completion_claimed": false
+              },
+              "resolution": "not_measured",
+              "stage": "cancel_requested"
+            },
+            "event": "pipe_owner_observation",
+            "ordinal": 9
+          },
+          {
+            "at_us": 2046255,
+            "detail": {
+              "raw_hex": "400100000000000027000000000000000b000600030001000600000000000000000000008d7246bf91ee9a46010000000000000002000000000000006439000018000000121f0000000000008000000000000000030000000000000000000000000000000100000000000000150000000201000021000000020100002d000000020100003900000002010000450000003201000000000000000000008d7246bf91ee9a461578ebe8d7faff5f559c5e2850dab8a43f7b6728d1bababc8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864b895a7d78cd6c3c3641e502ad63b167cf5b78bdfaab75bfde079710efb0a08bc358b46964d8087ac2b98872b5de91da691df575632a9160f0e67f230c6e521396d30332d636f72652d7265766f6b652d3230323630393239543231333035363035393839385a0000"
+            },
+            "event": "control_frame_sent",
+            "ordinal": 10
+          },
+          {
+            "at_us": 2046280,
+            "detail": {
+              "business_success": false,
+              "code": 2
+            },
+            "event": "exit",
+            "ordinal": 11
+          },
+          {
+            "at_us": 2046286,
+            "detail": {
+              "bytes": 74
+            },
+            "event": "stderr_eof",
+            "ordinal": 12
+          },
+          {
+            "at_us": 2056819,
+            "detail": {
+              "bytes": 0,
+              "error": 995,
+              "id": 1,
+              "kind": "Connect"
+            },
+            "event": "data_operation_reaped",
+            "ordinal": 13
+          },
+          {
+            "at_us": 2056840,
+            "detail": true,
+            "event": "data_worker_joined",
+            "ordinal": 14
+          },
+          {
+            "at_us": 2056981,
+            "detail": "Released",
+            "event": "phase",
+            "ordinal": 15
+          }
+        ],
+        "exit_code": 2,
+        "exit_observed": true,
+        "generation": 2,
+        "http": {
+          "progress": {
+            "cancel_discarded_bytes": 0,
+            "child_exited": true,
+            "connect_reaped": true,
+            "data_closed": true,
+            "drain_discarded_bytes": 0,
+            "error_code": 24,
+            "error_consumed_bytes": 0,
+            "http_eof": false,
+            "http_status": 0,
+            "intent": "Absent",
+            "issued_offset": 0,
+            "last_write_ordinal": 0,
+            "network": "Idle",
+            "os_completed_offset": 0,
+            "owner": "Released",
+            "owner_released": true,
+            "parser_yielded_bytes": 0,
+            "peer_consumed_offset": 0,
+            "read_reaped": true,
+            "received_offset": 0,
+            "request_closed": false,
+            "reserved_offset": 0,
+            "response_material_stored": false,
+            "revoke_applied": true,
+            "revoke_persisted": true,
+            "stderr_eof": true,
+            "stdout_eof": true,
+            "worker_joined": false,
+            "worker_started": false,
+            "write_reaped": true
+          },
+          "proposal": null
+        },
+        "owner_retained": false,
+        "phase": "Released",
+        "pid": 14692,
+        "session": 5087641038815130253,
+        "stderr_eof": true,
+        "stdout_eof": true
+      },
+      "state": {
+        "failed_closed": false,
+        "grant": null,
+        "owner": {
+          "automatic_takeover": false,
+          "epoch": 1,
+          "exit_observed": true,
+          "generation": 1,
+          "grant_id": "ff8378e8fbebb95df1cc6b491e1c814b25194b44a555e724d3a3dbf13ae1d975",
+          "locally_observed": true,
+          "owner_retained": false,
+          "phase": "Released",
+          "pid": 14692,
+          "session": 5087641038815130253,
+          "stderr_eof": true,
+          "stdout_eof": true
+        },
+        "profile_id": "b4f2999031dc66a012887160252987014305949d75f59b0f23f938e4735338f2",
+        "slot": "revoke-slot"
+      }
+    }
+  }
+]

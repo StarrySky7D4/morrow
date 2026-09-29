@@ -1,0 +1,13 @@
+
+running 8 tests
+test tests::aborted_operation_with_reported_bytes_is_not_a_complete_frame ... ok
+test tests::successful_completion_at_cancel_keeps_the_actual_complete_fact_once ... ok
+test tests::multiple_partial_completions_finish_only_the_whole_original_frame ... ok
+test tests::cancelled_partial_tail_is_never_reissued_or_reported_complete ... ok
+test tests::unexpected_abort_and_wrong_requested_length_are_errors ... ok
+test tests::zero_oversized_and_overflow_lengths_fail_closed ... ok
+test tests::wrong_or_reused_operation_cannot_advance_offset ... ok
+test tests::failure_after_confirmed_prefix_preserves_only_that_prefix ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,76 @@
+{
+  "id": 12,
+  "issue_ordinal": 3,
+  "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+  "samples": [
+    {
+      "after_ns": 1189561300,
+      "before_ns": 1189560700,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 1,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    },
+    {
+      "after_ns": 1215791500,
+      "before_ns": 1215791300,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 2,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    },
+    {
+      "after_ns": 1241164900,
+      "before_ns": 1241164700,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    }
+  ]
+}

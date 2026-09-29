@@ -1,0 +1,234 @@
+{
+  "status": "synthetic_reference_predicates_exercised_only",
+  "checks": 31,
+  "cases": [
+    {
+      "case": "natural-expiry",
+      "accepted": true,
+      "checks": {
+        "single_bound_original_deadline": true,
+        "same_host_domain": true,
+        "actual_challenge_sample": true,
+        "real_head_and_consumption": true,
+        "first_natural_expiry": true,
+        "server_not_the_trigger": true,
+        "no_success_relabel": true
+      }
+    },
+    {
+      "case": "short-length-fin",
+      "accepted": true,
+      "checks": {
+        "unfinished_fixed_length": true,
+        "real_consumption_before_close": true,
+        "same_owned_connection": true,
+        "actual_transport_before_expiry": true,
+        "first_transport_reason": true,
+        "no_success_relabel": true
+      }
+    },
+    {
+      "case": "pipe-cut-cumulative-4+8",
+      "accepted": true,
+      "checks": {
+        "real_original_body_frame": true,
+        "exact_prefix": true,
+        "actual_single_prefix_completion": true,
+        "cumulative_guest_reads": true,
+        "witness_causally_closes_owner": true,
+        "no_original_completion_or_tail": true,
+        "partial_failure_preserved": true
+      }
+    },
+    {
+      "case": "expiry-rearmed",
+      "accepted": false,
+      "rejected_predicates": [
+        "single_bound_original_deadline"
+      ]
+    },
+    {
+      "case": "expiry-before-original-D",
+      "accepted": false,
+      "rejected_predicates": [
+        "first_natural_expiry"
+      ]
+    },
+    {
+      "case": "expiry-first19-not-overwritten",
+      "accepted": false,
+      "rejected_predicates": [
+        "first_natural_expiry"
+      ]
+    },
+    {
+      "case": "expiry-cross-domain",
+      "accepted": false,
+      "rejected_predicates": [
+        "same_host_domain"
+      ]
+    },
+    {
+      "case": "expiry-early-server-close",
+      "accepted": false,
+      "rejected_predicates": [
+        "server_not_the_trigger"
+      ]
+    },
+    {
+      "case": "expiry-manual-revoke",
+      "accepted": false,
+      "rejected_predicates": [
+        "first_natural_expiry"
+      ]
+    },
+    {
+      "case": "expiry-challenge-rounding-mismatch",
+      "accepted": false,
+      "rejected_predicates": [
+        "actual_challenge_sample"
+      ]
+    },
+    {
+      "case": "fin-marker-before-real-consumption",
+      "accepted": false,
+      "rejected_predicates": [
+        "real_consumption_before_close"
+      ]
+    },
+    {
+      "case": "fin-expiry-wins",
+      "accepted": false,
+      "rejected_predicates": [
+        "actual_transport_before_expiry"
+      ]
+    },
+    {
+      "case": "fin-close-wrong-connection",
+      "accepted": false,
+      "rejected_predicates": [
+        "same_owned_connection"
+      ]
+    },
+    {
+      "case": "fin-rst-unapproved",
+      "accepted": false,
+      "rejected_predicates": [
+        "same_owned_connection"
+      ]
+    },
+    {
+      "case": "fin-ordinary-eof-is-not-transport",
+      "accepted": false,
+      "rejected_predicates": [
+        "actual_transport_before_expiry",
+        "no_success_relabel"
+      ]
+    },
+    {
+      "case": "fin-observed-material",
+      "accepted": false,
+      "rejected_predicates": [
+        "no_success_relabel"
+      ]
+    },
+    {
+      "case": "cut-operator-ack-only",
+      "accepted": false,
+      "rejected_predicates": [
+        "witness_causally_closes_owner"
+      ]
+    },
+    {
+      "case": "cut-short-success8-not12",
+      "accepted": false,
+      "rejected_predicates": [
+        "actual_single_prefix_completion"
+      ]
+    },
+    {
+      "case": "cut-late-owner-close",
+      "accepted": false,
+      "rejected_predicates": [
+        "witness_causally_closes_owner"
+      ]
+    },
+    {
+      "case": "cut-false-original-completion",
+      "accepted": false,
+      "rejected_predicates": [
+        "no_original_completion_or_tail"
+      ]
+    },
+    {
+      "case": "cut-tail-reissued",
+      "accepted": false,
+      "rejected_predicates": [
+        "no_original_completion_or_tail"
+      ]
+    },
+    {
+      "case": "cut-12-wire-bytes-as-http",
+      "accepted": false,
+      "rejected_predicates": [
+        "no_original_completion_or_tail"
+      ]
+    },
+    {
+      "case": "cut-partial-timeout-wins",
+      "accepted": false,
+      "rejected_predicates": [
+        "partial_failure_preserved"
+      ]
+    },
+    {
+      "case": "cut-data-error-hidden-by-unknown",
+      "accepted": false,
+      "rejected_predicates": [
+        "partial_failure_preserved"
+      ]
+    },
+    {
+      "case": "cut-marker-not-real-IO",
+      "accepted": false,
+      "rejected_predicates": [
+        "cumulative_guest_reads"
+      ]
+    },
+    {
+      "case": "cut-wrong-last-read-id",
+      "accepted": false,
+      "rejected_predicates": [
+        "cumulative_guest_reads"
+      ]
+    },
+    {
+      "case": "cut-cross-domain-close",
+      "accepted": false,
+      "rejected_predicates": [
+        "witness_causally_closes_owner"
+      ]
+    },
+    {
+      "case": "expiry-missing-settlement-is-separate-from-resource-proof",
+      "accepted": true
+    },
+    {
+      "case": "resource-missing-guest-join",
+      "accepted": false
+    },
+    {
+      "case": "observer-incomplete",
+      "accepted": false
+    },
+    {
+      "case": "identity-preserves-uint64-and-rejects-float",
+      "accepted": true
+    }
+  ],
+  "implementation_harness005_reviewed": false,
+  "runtime_tests": 0,
+  "http_requests": 0,
+  "candidate_approved": false,
+  "product_accepted": false
+}

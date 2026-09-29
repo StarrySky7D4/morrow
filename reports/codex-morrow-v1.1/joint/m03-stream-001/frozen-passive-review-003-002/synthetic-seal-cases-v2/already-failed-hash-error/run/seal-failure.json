@@ -1,0 +1,6 @@
+{
+  "status": "unconfirmed",
+  "qualification_valid": false,
+  "error": "OSError('synthetic unreadable evidence')",
+  "publication_failed": true
+}

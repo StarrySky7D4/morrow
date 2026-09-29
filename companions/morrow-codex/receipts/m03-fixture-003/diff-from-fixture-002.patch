@@ -1,0 +1,2387 @@
+--- qualification/m03-fixture-002/Cargo.lock
++++ qualification/m03-fixture-003/Cargo.lock
+@@ -7150,7 +7150,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.3"
++version = "0.1.4"
+ dependencies = [
+  "bytes",
+  "codex-api",
+--- qualification/m03-fixture-002/Cargo.toml
++++ qualification/m03-fixture-003/Cargo.toml
+@@ -3,7 +3,7 @@
+ 
+ [package]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.3"
++version = "0.1.4"
+ edition = "2024"
+ publish = false
+ 
+--- qualification/m03-fixture-002/src/driver.rs
++++ qualification/m03-fixture-003/src/driver.rs
+@@ -103,6 +103,10 @@
+ struct DeliveryGate {
+     first_reason: Option<CancelReason>,
+     paused: bool,
++    observations: Vec<CancelObservation>,
++    observed_keys: Vec<(CancelReason, &'static str)>,
++    observation_ordinal: u64,
++    observations_overflow: bool,
+ }
+ #[derive(Clone, Debug, Serialize)]
+ pub struct CancelTransition {
+@@ -113,23 +117,61 @@
+     pub delivery_paused_before: bool,
+     pub host_control_closed_gate: bool,
+ }
++#[derive(Clone, Debug, Serialize)]
++pub struct CancelObservation {
++    pub observation_ordinal: u64,
++    pub stage: &'static str,
++    pub requested_reason: CancelReason,
++    pub transition: CancelTransition,
++}
+ impl CancellationSignal {
+     pub fn cancel(&self, reason: CancelReason) {
+-        self.cancel_observed(reason);
++        self.cancel_observed_at(reason, "operation_cancel");
+     }
+     pub fn cancel_observed(&self, reason: CancelReason) -> CancelTransition {
++        self.cancel_observed_at(reason, "native_state_cancel")
++    }
++    pub fn cancel_observed_at(
++        &self,
++        reason: CancelReason,
++        stage: &'static str,
++    ) -> CancelTransition {
+         let mut gate = self.gate.lock().unwrap();
+         let before = gate.first_reason;
+         gate.first_reason.get_or_insert(reason);
+         self.token.cancel();
+-        CancelTransition {
++        let transition = CancelTransition {
+             cancel_gate_before: before.is_some(),
+             cancel_gate_after: true,
+             first_cancel_reason_before: before,
+             first_cancel_reason_after: gate.first_reason,
+             delivery_paused_before: gate.paused,
+             host_control_closed_gate: before.is_none() && reason == CancelReason::HostCancelled,
++        };
++        if !gate.observed_keys.contains(&(reason, stage)) {
++            if gate.observed_keys.len() < 128 {
++                gate.observed_keys.push((reason, stage));
++                gate.observation_ordinal += 1;
++                let ordinal = gate.observation_ordinal;
++                gate.observations.push(CancelObservation {
++                    observation_ordinal: ordinal,
++                    stage,
++                    requested_reason: reason,
++                    transition: transition.clone(),
++                });
++            } else {
++                gate.observations_overflow = true;
++            }
+         }
++        transition
++    }
++    /// Snapshots only under the original latch lock; caller emits outside native/gate locks.
++    pub fn take_observations(&self) -> (Vec<CancelObservation>, bool) {
++        let mut gate = self.gate.lock().unwrap();
++        (
++            std::mem::take(&mut gate.observations),
++            gate.observations_overflow,
++        )
+     }
+     /// Monotonic fence only: never grants work, resumes delivery, or sets a reason.
+     pub fn pause_delivery(&self) {
+--- qualification/m03-fixture-002/src/fixture.rs
++++ qualification/m03-fixture-003/src/fixture.rs
+@@ -1,12 +1,12 @@
+-//! Synthetic-fixture-only barriers and bounded evidence. This is not authority.
+-//! No filesystem I/O occurs in an Operation cancellation gate or native lock.
++//! Passive fixture diagnostics only. No barrier, release, authority or fake event.
+ use serde::{Deserialize, Serialize};
+ use serde_json::{Value, json};
+ use sha2::{Digest, Sha256};
+ use std::{
++    collections::BTreeSet,
+     fs::{File, OpenOptions},
+     io::{Read, Write},
+-    path::{Path, PathBuf},
++    path::Path,
+     sync::{
+         Arc, Mutex,
+         atomic::{AtomicBool, AtomicU64, Ordering},
+@@ -20,14 +20,21 @@
+ #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
+ #[serde(rename_all = "kebab-case")]
+ pub enum Mode {
+-    CoreRevoke,
+-    DataPending,
++    PassiveObserve,
++}
++#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
++#[serde(rename_all = "kebab-case")]
++pub enum Scenario {
++    AuthorityDeadline,
++    NetworkAbort,
++    PipePartialClose,
+ }
+ #[derive(Clone, Debug, Deserialize, Serialize)]
+ #[serde(deny_unknown_fields)]
+ pub struct Spec {
+     pub version: u32,
+     pub mode: Mode,
++    pub scenario: Scenario,
+     pub nonce: String,
+     pub request_limit: usize,
+     pub response_limit: usize,
+@@ -35,11 +42,19 @@
+     pub credit_limit: usize,
+     pub pipe_buffer: usize,
+     pub max_chunk: usize,
+-    pub min_pending_samples: usize,
+-    pub min_sample_interval_ms: u64,
+-    pub revoke_ack_limit_ms: u64,
++    pub deadline_policy: String,
+     pub events_file: String,
+-    pub release_file: String,
++    pub evidence_queue_capacity: usize,
++    pub evidence_record_limit: usize,
++    pub evidence_record_limit_bytes: usize,
++    pub evidence_file_limit_bytes: usize,
++    #[serde(deserialize_with = "required_nullable_usize")]
++    pub pipe_prefix_bytes: Option<usize>,
++}
++fn required_nullable_usize<'de, D: serde::Deserializer<'de>>(
++    d: D,
++) -> Result<Option<usize>, D::Error> {
++    Option::<usize>::deserialize(d)
+ }
+ fn hex64(s: &str) -> bool {
+     s.len() == 64
+@@ -48,21 +63,29 @@
+ }
+ impl Spec {
+     pub fn validate(&self) -> Result<(), &'static str> {
+-        if self.version != 1
++        if self.version != 2
+             || !hex64(&self.nonce)
++            || self.nonce == "0".repeat(64)
+             || self.request_limit != 32768
+             || self.response_limit != 65536
+             || self.consumer_events != 8
+             || self.credit_limit != 16384
+             || self.pipe_buffer != 1024
+             || self.max_chunk != 1024
+-            || self.min_pending_samples != 3
+-            || self.min_sample_interval_ms != 25
+-            || self.revoke_ack_limit_ms != 500
++            || self.deadline_policy != "retain-original"
+             || self.events_file != "fixture-events.jsonl"
+-            || self.release_file != "release-consumer.json"
++            || self.evidence_queue_capacity != 128
++            || self.evidence_record_limit != 128
++            || self.evidence_record_limit_bytes != 8192
++            || self.evidence_file_limit_bytes != 1048576
++            || self.pipe_prefix_bytes
++                != if self.scenario == Scenario::PipePartialClose {
++                    Some(12)
++                } else {
++                    None
++                }
+         {
+-            return Err("fixture spec outside fixed bounds");
++            return Err("passive fixture spec outside fixed bounds");
+         }
+         Ok(())
+     }
+@@ -96,28 +119,21 @@
+             kind: "OutputTextDelta".into(),
+         }
+     }
+-}
+-#[derive(Deserialize)]
+-#[serde(deny_unknown_fields)]
+-struct Release {
+-    version: u32,
+-    mode: Mode,
+-    nonce: String,
+-    spec_sha256: String,
+-    identity: Identity,
+-    stage: String,
+-    event: CoreEventId,
++    pub fn other(stream_ordinal: u64, delta_ordinal: u64, kind: &str) -> Self {
++        Self {
++            stream_ordinal,
++            delta_ordinal,
++            bytes: 0,
++            sha256: format!("{:x}", Sha256::digest([])),
++            kind: kind.into(),
++        }
++    }
+ }
+ struct State {
+     identity: Option<Identity>,
+     ordinal: u64,
+-    held: Option<CoreEventId>,
+-    release_seen: bool,
+-    queued_a: bool,
+-    reserved_b: bool,
+-    suppressed_a: bool,
+-    suppressed_b: bool,
+-    paused: bool,
++    observed: BTreeSet<&'static str>,
++    authority: Option<Value>,
+ }
+ struct Inner {
+     spec: Spec,
+@@ -126,8 +142,6 @@
+     state: Mutex<State>,
+     failure: Mutex<Option<&'static str>>,
+     failed: CancellationToken,
+-    released: CancellationToken,
+-    gate_closed: AtomicBool,
+     stop: AtomicBool,
+     written: AtomicU64,
+     read_issues: AtomicU64,
+@@ -138,46 +152,11 @@
+         self.failure.lock().unwrap().get_or_insert(reason);
+         self.failed.cancel();
+     }
+-    fn release(&self, bytes: &[u8]) -> Result<(), &'static str> {
+-        let r: Release =
+-            serde_json::from_slice(bytes).map_err(|_| "invalid fixture release JSON")?;
+-        let mut s = self.state.lock().unwrap();
+-        if s.release_seen
+-            || !self.gate_closed.load(Ordering::Acquire)
+-            || !s.queued_a
+-            || !s.reserved_b
+-            || r.version != 1
+-            || r.mode != Mode::CoreRevoke
+-            || self.spec.mode != r.mode
+-            || r.nonce != self.spec.nonce
+-            || r.spec_sha256 != self.spec_sha256
+-            || s.identity.as_ref() != Some(&r.identity)
+-            || s.held.as_ref() != Some(&r.event)
+-            || r.stage != "release-consumer"
+-        {
+-            return Err("premature, stale or mismatched fixture release");
+-        }
+-        s.release_seen = true;
+-        self.released.cancel();
+-        Ok(())
+-    }
+ }
+ pub struct Fixture {
+     inner: Arc<Inner>,
+     tx: mpsc::SyncSender<Value>,
+     writer: Mutex<Option<JoinHandle<()>>>,
+-}
+-impl Drop for Fixture {
+-    fn drop(&mut self) {
+-        self.inner.stop.store(true, Ordering::Release);
+-    }
+-}
+-impl std::fmt::Debug for Fixture {
+-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+-        f.debug_struct("BoundFixture")
+-            .field("mode", &self.inner.spec.mode)
+-            .finish_non_exhaustive()
+-    }
+ }
+ fn bounded_read(path: &Path, max: u64) -> Result<Vec<u8>, &'static str> {
+     let metadata = std::fs::symlink_metadata(path).map_err(|_| "fixture file metadata")?;
+@@ -213,26 +192,14 @@
+         }
+         let spec: Spec = serde_json::from_slice(&bytes).map_err(|_| "fixture spec JSON")?;
+         spec.validate()?;
+-        let release = directory.join(&spec.release_file);
+-        if release
+-            .try_exists()
+-            .map_err(|_| "fixture release existence")?
+-        {
+-            return Err("preexisting fixture release");
+-        }
+         let file = OpenOptions::new()
+             .write(true)
+             .create_new(true)
+             .open(directory.join(&spec.events_file))
+             .map_err(|_| "create fixture evidence")?;
+-        Self::with_writer(spec, expected_sha.into(), file, release)
+-    }
+-    fn with_writer(
+-        spec: Spec,
+-        digest: String,
+-        file: File,
+-        release: PathBuf,
+-    ) -> Result<Arc<Self>, &'static str> {
++        Self::with_writer(spec, expected_sha.into(), file)
++    }
++    fn with_writer(spec: Spec, digest: String, file: File) -> Result<Arc<Self>, &'static str> {
+         let inner = Arc::new(Inner {
+             spec,
+             spec_sha256: digest,
+@@ -240,18 +207,11 @@
+             state: Mutex::new(State {
+                 identity: None,
+                 ordinal: 0,
+-                held: None,
+-                release_seen: false,
+-                queued_a: false,
+-                reserved_b: false,
+-                suppressed_a: false,
+-                suppressed_b: false,
+-                paused: false,
++                observed: BTreeSet::new(),
++                authority: None,
+             }),
+             failure: Mutex::new(None),
+             failed: CancellationToken::new(),
+-            released: CancellationToken::new(),
+-            gate_closed: AtomicBool::new(false),
+             stop: AtomicBool::new(false),
+             written: AtomicU64::new(0),
+             read_issues: AtomicU64::new(0),
+@@ -260,8 +220,8 @@
+         let (tx, rx) = mpsc::sync_channel(128);
+         let owned = inner.clone();
+         let writer = thread::Builder::new()
+-            .name("m03-fixture-evidence".into())
+-            .spawn(move || evidence_owner(owned, rx, file, release))
++            .name("m03-passive-evidence".into())
++            .spawn(move || evidence_owner(owned, rx, file))
+             .map_err(|_| "fixture evidence thread")?;
+         Ok(Arc::new(Self {
+             inner,
+@@ -274,11 +234,52 @@
+         if s.identity.is_some() {
+             return Err("fixture identity already bound");
+         }
++        if identity.session == 0
++            || identity.epoch == 0
++            || identity.child_pid == 0
++            || identity.attempt == 0
++            || !hex64(&identity.operation_id_sha256)
++            || !hex64(&identity.host_execution_config_sha256)
++        {
++            return Err("fixture identity bounds");
++        }
+         s.identity = Some(identity);
+         Ok(())
+     }
+-    pub fn mode(&self) -> Mode {
+-        self.inner.spec.mode.clone()
++    pub fn bind_authority(
++        &self,
++        first_read: Instant,
++        deadline: Instant,
++        remaining_ms: u64,
++    ) -> Result<(), &'static str> {
++        let first = first_read
++            .checked_duration_since(self.inner.origin)
++            .ok_or("authority read clock origin")?;
++        let expiry = deadline
++            .checked_duration_since(self.inner.origin)
++            .ok_or("authority deadline clock origin")?;
++        let detail = json!({"initial_remaining_ms":remaining_ms,"clock_domain":"guest-fixture-monotonic",
++            "first_read_offset_ns":u64::try_from(first.as_nanos()).map_err(|_|"read offset overflow")?,
++            "original_deadline_offset_ns":u64::try_from(expiry.as_nanos()).map_err(|_|"deadline offset overflow")?,
++            "deadline_recomputed_after_binding":false});
++        {
++            let mut s = self.inner.state.lock().unwrap();
++            if s.authority.is_some() {
++                return Err("fixture authority already bound");
++            }
++            s.authority = Some(detail.clone());
++        }
++        self.emit_once("authority_bound", detail);
++        Ok(())
++    }
++    pub fn authority_observation(&self) -> Value {
++        self.inner
++            .state
++            .lock()
++            .unwrap()
++            .authority
++            .clone()
++            .unwrap_or(Value::Null)
+     }
+     pub fn failed(&self) -> bool {
+         self.inner.failed.is_cancelled()
+@@ -287,87 +288,47 @@
+         self.inner.fail(reason)
+     }
+     pub fn emit(&self, kind: &'static str, detail: Value) {
+-        let queued = {
+-            let mut s = self.inner.state.lock().unwrap();
+-            if s.identity.is_none() {
+-                drop(s);
+-                self.fail("unbound fixture record");
+-                return;
+-            }
+-            s.ordinal += 1;
+-            let record = json!({"identity":s.identity,"mode":self.inner.spec.mode,"nonce":self.inner.spec.nonce,
+-                "spec_sha256":self.inner.spec_sha256,"ordinal":s.ordinal,"elapsed_ns":self.inner.origin.elapsed().as_nanos(),
+-                "clock_domain":"guest-fixture-monotonic","kind":kind,"detail":detail});
+-            // Preserve ordinal order across producers without any blocking send.
+-            !self.inner.stop.load(Ordering::Acquire) && self.tx.try_send(record).is_ok()
+-        };
+-        // Called only outside cancellation/native locks. Never wait for disk.
+-        if !queued {
+-            self.fail("fixture evidence queue unavailable");
+-        }
+-    }
+-    pub fn queued(&self, event: &CoreEventId) {
+-        if event.delta_ordinal == 1 {
+-            self.inner.state.lock().unwrap().queued_a = true;
+-        }
+-        self.emit("core_event_queued", json!({"event":event}));
+-    }
+-    pub async fn hold_consumer(&self, event: &CoreEventId, deadline: tokio::time::Instant) -> bool {
+-        {
+-            self.inner.state.lock().unwrap().held = Some(event.clone());
+-        }
+-        self.emit("core_event_held", json!({"event":event}));
+-        tokio::select! { biased;
+-            _=self.inner.failed.cancelled()=>false,
+-            _=tokio::time::sleep_until(deadline)=>{self.fail("consumer barrier original deadline");false},
+-            _=self.inner.released.cancelled()=>true,
+-        }
+-    }
+-    pub async fn hold_reserved(
+-        &self,
+-        event: &CoreEventId,
+-        token: CancellationToken,
+-        deadline: tokio::time::Instant,
+-    ) -> bool {
+-        {
+-            self.inner.state.lock().unwrap().reserved_b = true;
+-        }
+-        self.emit("core_event_reserved", json!({"event":event}));
+-        tokio::select! {biased;
+-            _=self.inner.failed.cancelled()=>false,
+-            _=tokio::time::sleep_until(deadline)=>{self.fail("reserved barrier original deadline");false},
+-            _=token.cancelled()=>true,
+-        }
+-    }
+-    pub fn suppressed(&self, event: &CoreEventId, reserved: bool, gate_closed: bool) {
+-        if !gate_closed {
+-            self.fail("suppression without cancellation gate");
+-        }
+-        {
+-            let mut s = self.inner.state.lock().unwrap();
+-            if reserved {
+-                s.suppressed_b = true;
+-            } else {
+-                s.suppressed_a = true;
+-            }
+-        }
+-        self.emit(
+-            if reserved {
+-                "core_reserved_suppressed"
+-            } else {
+-                "core_event_suppressed"
+-            },
+-            json!({"event":event,"gate_closed":gate_closed,"permit_released":reserved}),
+-        );
+-    }
+-    pub fn observe_revoke(&self, received: Value, gate_closed: bool) {
+-        if self.inner.gate_closed.load(Ordering::Acquire) {
+-            return;
+-        }
+-        self.emit("host_revoke_received", received);
++        self.emit_impl(kind, detail, false)
++    }
++    pub fn emit_once(&self, kind: &'static str, detail: Value) {
++        self.emit_impl(kind, detail, true)
++    }
++    fn emit_impl(&self, kind: &'static str, detail: Value, once: bool) {
++        let mut s = self.inner.state.lock().unwrap();
++        if once && s.observed.contains(kind) {
++            return;
++        }
++        if self.inner.stop.load(Ordering::Acquire) {
++            self.fail("marker after evidence stop");
++            return;
++        }
++        if s.identity.is_none() {
++            self.fail("unbound fixture record");
++            return;
++        }
++        if s.ordinal >= 128 {
++            self.fail("fixture total record limit");
++            return;
++        }
++        let ordinal = s.ordinal + 1;
++        let record = json!({"identity":s.identity,"mode":self.inner.spec.mode,"scenario":self.inner.spec.scenario,
++            "nonce":self.inner.spec.nonce,"spec_sha256":self.inner.spec_sha256,"ordinal":ordinal,
++            "elapsed_ns":self.inner.origin.elapsed().as_nanos(),"clock_domain":"guest-fixture-monotonic","kind":kind,"detail":detail});
++        if serde_json::to_vec(&record).map_or(true, |b| b.len() > 8192) {
++            self.fail("fixture record byte limit");
++            return;
++        }
++        if self.tx.try_send(record).is_err() {
++            self.fail("fixture evidence queue overflow/disconnected");
++            return;
++        }
++        s.ordinal = ordinal;
++        s.observed.insert(kind);
++    }
++    pub fn observe_revoke(&self, detail: Value, gate_closed: bool) {
++        self.emit("host_revoke_received", detail);
+         if gate_closed {
+-            self.inner.gate_closed.store(true, Ordering::Release);
+-            self.emit(
++            self.emit_once(
+                 "gate_closed",
+                 json!({"read_issue_count":self.inner.read_issues.load(Ordering::Acquire)}),
+             );
+@@ -376,15 +337,8 @@
+     pub fn read_issued(&self, count: u64) {
+         self.inner.read_issues.store(count, Ordering::Release);
+     }
+-    pub fn pause_reader(&self, last_read_id: u64, count: u64) {
+-        self.inner.state.lock().unwrap().paused = true;
+-        self.emit(
+-            "data_read_paused",
+-            json!({"last_read_id":last_read_id,"read_issue_count":count,
+-            "framer_bytes":0,"framer_expected":4,"read_operation_present":false}),
+-        );
+-    }
+     pub fn request_stop(&self) {
++        let _s = self.inner.state.lock().unwrap();
+         self.inner.stop.store(true, Ordering::Release);
+     }
+     pub async fn join_until(&self, deadline: tokio::time::Instant) -> bool {
+@@ -406,47 +360,40 @@
+                     return self.inner.writer_joined.load(Ordering::Acquire);
+                 }
+             }
+-            if tokio::time::Instant::now() >= deadline {
+-                return false;
+-            }
+             tokio::time::sleep(Duration::from_millis(2)).await;
+         }
+     }
+     pub fn snapshot(&self) -> Value {
+         let s = self.inner.state.lock().unwrap();
+-        let evidence_ok = !self.failed() && self.inner.written.load(Ordering::Acquire) == s.ordinal;
+-        let stages = match self.inner.spec.mode {
+-            Mode::CoreRevoke => {
+-                s.queued_a
+-                    && s.held.is_some()
+-                    && s.reserved_b
+-                    && s.release_seen
+-                    && s.suppressed_a
+-                    && s.suppressed_b
+-            }
+-            Mode::DataPending => s.paused,
+-        };
+-        json!({"mode":self.inner.spec.mode,"spec_sha256":self.inner.spec_sha256,"nonce":self.inner.spec.nonce,
+-            "failure":*self.inner.failure.lock().unwrap(),"enqueued_records":s.ordinal,"written_records":self.inner.written.load(Ordering::Acquire),
+-            "evidence_complete":evidence_ok,"stages_complete":stages,"gate_closed":self.inner.gate_closed.load(Ordering::Acquire),
+-            "read_issue_count":self.inner.read_issues.load(Ordering::Acquire),"writer_joined":self.inner.writer_joined.load(Ordering::Acquire),
+-            "runtime_qualified":false})
+-    }
+-}
+-#[cfg(test)]
+-#[path = "fixture_tests.rs"]
+-pub(crate) mod tests;
+-
+-fn evidence_owner(inner: Arc<Inner>, rx: mpsc::Receiver<Value>, mut file: File, release: PathBuf) {
+-    let mut release_read = false;
++        let written = self.inner.written.load(Ordering::Acquire);
++        json!({"mode":self.inner.spec.mode,"scenario":self.inner.spec.scenario,"nonce":self.inner.spec.nonce,
++            "spec_sha256":self.inner.spec_sha256,"failure":*self.inner.failure.lock().unwrap(),
++            "enqueued_records":s.ordinal,"written_records":written,"evidence_complete":!self.failed()&&written==s.ordinal,
++            "observed_stages":s.observed,"read_issue_count":self.inner.read_issues.load(Ordering::Acquire),
++            "writer_joined":self.inner.writer_joined.load(Ordering::Acquire),"runtime_qualified":false,"product_accepted":false})
++    }
++}
++fn evidence_owner(inner: Arc<Inner>, rx: mpsc::Receiver<Value>, mut file: File) {
++    let mut written_bytes = 0usize;
+     loop {
+         match rx.recv_timeout(Duration::from_millis(5)) {
+             Ok(record) => {
+-                if serde_json::to_writer(&mut file, &record).is_err()
+-                    || file.write_all(b"\n").and_then(|_| file.flush()).is_err()
+-                {
++                let mut bytes = match serde_json::to_vec(&record) {
++                    Ok(b) => b,
++                    Err(_) => {
++                        inner.fail("fixture record serialization");
++                        continue;
++                    }
++                };
++                bytes.push(b'\n');
++                if written_bytes.saturating_add(bytes.len()) > 1048576 {
++                    inner.fail("fixture file byte limit");
++                    continue;
++                }
++                if file.write_all(&bytes).and_then(|_| file.flush()).is_err() {
+                     inner.fail("fixture evidence write");
+                 } else {
++                    written_bytes += bytes.len();
+                     inner.written.fetch_add(1, Ordering::Release);
+                 }
+             }
+@@ -457,18 +404,8 @@
+                 }
+             }
+         }
+-        if !release_read && !inner.stop.load(Ordering::Acquire) {
+-            match release.try_exists() {
+-                Ok(true) => {
+-                    release_read = true;
+-                    match bounded_read(&release, 2048).and_then(|b| inner.release(&b)) {
+-                        Ok(()) => {}
+-                        Err(e) => inner.fail(e),
+-                    }
+-                }
+-                Ok(false) => {}
+-                Err(_) => inner.fail("fixture release existence"),
+-            }
+-        }
+-    }
+-}
++    }
++}
++#[cfg(test)]
++#[path = "fixture_tests.rs"]
++pub(crate) mod tests;
+--- qualification/m03-fixture-002/src/fixture_tests.rs
++++ qualification/m03-fixture-003/src/fixture_tests.rs
+@@ -1,18 +1,151 @@
+-//! Local fixtures only; none of these tests invoke a Core model or HTTP.
++//! Synthetic local tests only. No native executable, Core model or HTTP launched.
+ use super::*;
+-#[tokio::test]
+-async fn failed_disk_write_remains_failure_while_owner_can_stop_and_join() {
++use crate::driver::{CancelReason, CancellationSignal};
++use std::path::PathBuf;
++static NEXT: AtomicU64 = AtomicU64::new(0);
++pub(crate) fn spec() -> Spec {
++    Spec {
++        version: 2,
++        mode: Mode::PassiveObserve,
++        scenario: Scenario::NetworkAbort,
++        nonce: "a".repeat(64),
++        request_limit: 32768,
++        response_limit: 65536,
++        consumer_events: 8,
++        credit_limit: 16384,
++        pipe_buffer: 1024,
++        max_chunk: 1024,
++        deadline_policy: "retain-original".into(),
++        events_file: "fixture-events.jsonl".into(),
++        evidence_queue_capacity: 128,
++        evidence_record_limit: 128,
++        evidence_record_limit_bytes: 8192,
++        evidence_file_limit_bytes: 1048576,
++        pipe_prefix_bytes: None,
++    }
++}
++pub(crate) fn fixture() -> (Arc<Fixture>, PathBuf) {
++    let stamp = std::time::SystemTime::now()
++        .duration_since(std::time::UNIX_EPOCH)
++        .unwrap()
++        .as_nanos();
++    let root = std::env::temp_dir().join(format!(
++        "m03-fixture003-local-{stamp}-{}",
++        NEXT.fetch_add(1, Ordering::Relaxed)
++    ));
++    std::fs::create_dir(&root).unwrap();
++    let bytes = serde_json::to_vec(&spec()).unwrap();
++    std::fs::write(root.join("fixture-spec.json"), &bytes).unwrap();
++    let f = Fixture::open(&root, &format!("{:x}", Sha256::digest(&bytes))).unwrap();
++    f.bind(Identity {
++        session: 9,
++        epoch: 1,
++        child_pid: std::process::id(),
++        attempt: 1,
++        operation_id_sha256: "b".repeat(64),
++        host_execution_config_sha256: "c".repeat(64),
++    })
++    .unwrap();
++    (f, root)
++}
++#[test]
++fn strict_v2_spec_rejects_old_modes_unknown_fields_missing_null_and_widened_bounds() {
++    let value = serde_json::to_value(spec()).unwrap();
++    for scenario in [
++        Scenario::AuthorityDeadline,
++        Scenario::NetworkAbort,
++        Scenario::PipePartialClose,
++    ] {
++        let mut s = spec();
++        s.scenario = scenario;
++        s.pipe_prefix_bytes = if s.scenario == Scenario::PipePartialClose {
++            Some(12)
++        } else {
++            None
++        };
++        s.validate().unwrap();
++    }
++    for (key, bad) in [
++        ("version", json!(1)),
++        ("mode", json!("core-revoke")),
++        ("mode", json!("data-pending")),
++        ("scenario", json!("unknown")),
++        ("nonce", json!("0".repeat(64))),
++        ("nonce", json!("A".repeat(64))),
++        ("request_limit", json!(65536)),
++        ("response_limit", json!(131072)),
++        ("consumer_events", json!(9)),
++        ("credit_limit", json!(32768)),
++        ("pipe_buffer", json!(2048)),
++        ("max_chunk", json!(2048)),
++        ("deadline_policy", json!("renew")),
++        ("events_file", json!("../events")),
++        ("evidence_queue_capacity", json!(129)),
++        ("evidence_record_limit", json!(129)),
++        ("evidence_record_limit_bytes", json!(8193)),
++        ("evidence_file_limit_bytes", json!(1048577)),
++        ("pipe_prefix_bytes", json!(12)),
++        ("release_file", json!("release-consumer.json")),
++    ] {
++        let mut v = value.clone();
++        v[key] = bad;
++        assert!(
++            match serde_json::from_value::<Spec>(v) {
++                Err(_) => true,
++                Ok(s) => s.validate().is_err(),
++            },
++            "accepted {key}"
++        );
++    }
++    for key in value.as_object().unwrap().keys() {
++        let mut v = value.clone();
++        v.as_object_mut().unwrap().remove(key);
++        assert!(
++            serde_json::from_value::<Spec>(v).is_err(),
++            "missing required {key}"
++        );
++    }
++}
++#[tokio::test]
++async fn exact_byte_digest_duplicate_binding_and_evidence_replay_are_rejected() {
++    let (f, root) = fixture();
++    assert!(Fixture::open(&root, &"f".repeat(64)).is_err());
++    let bytes = std::fs::read(root.join("fixture-spec.json")).unwrap();
++    assert!(Fixture::open(&root, &format!("{:x}", Sha256::digest(&bytes))).is_err());
++    let identity = f.inner.state.lock().unwrap().identity.clone().unwrap();
++    assert!(f.bind(identity).is_err());
++    let first = Instant::now();
++    let expiry = first + Duration::from_secs(1);
++    f.bind_authority(first, expiry, 1000).unwrap();
++    let initial = f.authority_observation();
++    assert!(
++        f.bind_authority(first, expiry + Duration::from_secs(10), 11000)
++            .is_err()
++    );
++    assert_eq!(f.authority_observation(), initial);
++    assert_eq!(
++        initial["original_deadline_offset_ns"].as_u64().unwrap()
++            - initial["first_read_offset_ns"].as_u64().unwrap(),
++        1_000_000_000
++    );
++    f.request_stop();
++    assert!(
++        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++            .await
++    );
++}
++#[tokio::test]
++async fn failed_disk_write_retains_failure_but_owned_writer_can_really_join() {
+     let (f, root) = fixture();
+     let bad = Fixture::with_writer(
+         spec(),
+         "d".repeat(64),
+         File::open(root.join("fixture-spec.json")).unwrap(),
+-        root.join("absent-release.json"),
+     )
+     .unwrap();
+     bad.bind(f.inner.state.lock().unwrap().identity.clone().unwrap())
+         .unwrap();
+-    bad.emit("local_write_failure", json!({}));
++    bad.emit("local", json!({}));
+     tokio::time::timeout(Duration::from_secs(1), bad.inner.failed.cancelled())
+         .await
+         .unwrap();
+@@ -22,14 +155,15 @@
+             .await
+     );
+     assert_eq!(bad.snapshot()["evidence_complete"], false);
+-    f.request_stop();
+-    assert!(
+-        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
+-            .await
+-    );
+-}
+-#[tokio::test]
+-async fn concurrent_marker_producers_preserve_sequence_without_disk_under_gate() {
++    assert_eq!(bad.snapshot()["writer_joined"], true);
++    f.request_stop();
++    assert!(
++        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++            .await
++    );
++}
++#[tokio::test]
++async fn concurrent_markers_are_bound_ordered_and_once_observations_do_not_hold() {
+     let (f, root) = fixture();
+     let mut producers = Vec::new();
+     for _ in 0..2 {
+@@ -40,169 +174,110 @@
+             }
+         }));
+     }
+-    for producer in producers {
+-        while !producer.is_finished() {
++    for h in producers {
++        while !h.is_finished() {
+             tokio::time::sleep(Duration::from_millis(1)).await;
+         }
+-        producer.join().unwrap();
+-    }
++        h.join().unwrap();
++    }
++    f.emit_once("local_once", json!({"first":true}));
++    f.emit_once("local_once", json!({"first":false}));
+     f.request_stop();
+     assert!(
+         f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
+             .await
+     );
+     let text = std::fs::read_to_string(root.join("fixture-events.jsonl")).unwrap();
+-    assert_eq!(text.lines().count(), 20);
+-    for (index, line) in text.lines().enumerate() {
+-        assert_eq!(
+-            serde_json::from_str::<Value>(line).unwrap()["ordinal"],
+-            (index + 1) as u64
+-        );
++    assert_eq!(text.lines().count(), 21);
++    for (i, line) in text.lines().enumerate() {
++        let v: Value = serde_json::from_str(line).unwrap();
++        assert_eq!(v["ordinal"], (i + 1) as u64);
++        assert_eq!(v["scenario"], "network-abort");
++        assert_eq!(v["identity"]["session"], 9);
+     }
+     assert_eq!(f.snapshot()["evidence_complete"], true);
+-}
+-static NEXT: AtomicU64 = AtomicU64::new(0);
+-fn spec() -> Spec {
+-    Spec {
+-        version: 1,
+-        mode: Mode::CoreRevoke,
+-        nonce: "a".repeat(64),
+-        request_limit: 32768,
+-        response_limit: 65536,
+-        consumer_events: 8,
+-        credit_limit: 16384,
+-        pipe_buffer: 1024,
+-        max_chunk: 1024,
+-        min_pending_samples: 3,
+-        min_sample_interval_ms: 25,
+-        revoke_ack_limit_ms: 500,
+-        events_file: "fixture-events.jsonl".into(),
+-        release_file: "release-consumer.json".into(),
+-    }
+-}
+-pub(crate) fn fixture() -> (Arc<Fixture>, PathBuf) {
+-    let stamp = std::time::SystemTime::now()
+-        .duration_since(std::time::UNIX_EPOCH)
+-        .unwrap()
+-        .as_nanos();
+-    let root = std::env::temp_dir().join(format!(
+-        "m03-fixture-local-{stamp}-{}",
+-        NEXT.fetch_add(1, Ordering::Relaxed)
+-    ));
+-    std::fs::create_dir(&root).unwrap();
+-    let bytes = serde_json::to_vec(&spec()).unwrap();
+-    std::fs::write(root.join("fixture-spec.json"), &bytes).unwrap();
+-    let fixture = Fixture::open(&root, &format!("{:x}", Sha256::digest(&bytes))).unwrap();
+-    fixture
+-        .bind(Identity {
+-            session: 9,
+-            epoch: 1,
+-            child_pid: std::process::id(),
+-            attempt: 1,
+-            operation_id_sha256: "b".repeat(64),
+-            host_execution_config_sha256: "c".repeat(64),
+-        })
+-        .unwrap();
+-    (fixture, root)
+-}
+-fn release_value(fixture: &Fixture, event: &CoreEventId) -> Value {
+-    json!({"version":1,"mode":"core-revoke","nonce":fixture.inner.spec.nonce,
+-        "spec_sha256":fixture.inner.spec_sha256,"identity":fixture.inner.state.lock().unwrap().identity,
+-        "stage":"release-consumer","event":event})
+-}
+-pub(crate) fn release(fixture: &Fixture, event: &CoreEventId) -> Result<(), &'static str> {
+-    fixture
+-        .inner
+-        .release(&serde_json::to_vec(&release_value(fixture, event)).unwrap())
+-}
+-#[test]
+-fn strict_spec_rejects_wider_limits_and_unknown_controls() {
+-    let mut s = spec();
+-    s.validate().unwrap();
+-    s.credit_limit = 32768;
+-    assert!(s.validate().is_err());
+-    let mut value = serde_json::to_value(spec()).unwrap();
+-    value["execute_command"] = json!("not permitted");
+-    assert!(serde_json::from_value::<Spec>(value).is_err());
+-    let mut s = spec();
+-    s.release_file = "../release.json".into();
+-    assert!(s.validate().is_err());
+-}
+-#[tokio::test]
+-async fn release_requires_same_event_and_identity_after_gate_close_and_is_once_only() {
+-    let (f, _) = fixture();
+-    let id = CoreEventId::delta(1, 1, "local test only");
+-    assert!(release(&f, &id).is_err());
+-    {
+-        let mut s = f.inner.state.lock().unwrap();
+-        s.held = Some(id.clone());
+-        s.queued_a = true;
+-        s.reserved_b = true;
+-    }
+-    f.inner.gate_closed.store(true, Ordering::Release);
+-    let mut wrong = release_value(&f, &id);
+-    wrong["identity"]["attempt"] = json!(2);
+-    assert!(
+-        f.inner
+-            .release(&serde_json::to_vec(&wrong).unwrap())
+-            .is_err()
+-    );
+-    assert!(release(&f, &CoreEventId::delta(2, 1, "other event")).is_err());
+-    release(&f, &id).unwrap();
+-    assert!(release(&f, &id).is_err());
+-    f.request_stop();
+-    assert!(
+-        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
+-            .await
+-    );
+-}
+-#[tokio::test]
+-async fn full_evidence_queue_fails_nonblocking_and_join_wait_is_bounded() {
+-    let (f, _) = fixture();
+-    assert!(!f.join_until(tokio::time::Instant::now()).await);
++    assert!(f.snapshot().get("stages_complete").is_none());
++}
++#[tokio::test]
++async fn overflow_and_record_limits_fail_without_blocking_or_clean_receipt() {
++    let (f, _) = fixture();
+     let (tx, _rx) = mpsc::sync_channel(1);
+     let blocked = Fixture {
+         inner: f.inner.clone(),
+         tx,
+         writer: Mutex::new(None),
+     };
+-    blocked.emit("local_first", json!({}));
+-    blocked.emit("local_overflow", json!({}));
++    blocked.emit("first", json!({}));
++    blocked.emit("overflow", json!({}));
+     assert!(blocked.failed());
++    assert_eq!(blocked.snapshot()["enqueued_records"], 1);
+     assert_eq!(blocked.snapshot()["evidence_complete"], false);
+     f.request_stop();
+     assert!(
+         f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
+             .await
+     );
+-}
+-#[tokio::test]
+-async fn disk_records_flush_and_atomic_release_reaches_waiter_without_gate_lock() {
+-    let (f, root) = fixture();
+-    let id = CoreEventId::delta(1, 1, "local fixture disk test");
+-    f.queued(&id);
+-    {
+-        let mut s = f.inner.state.lock().unwrap();
+-        s.held = Some(id.clone());
+-        s.reserved_b = true;
+-    }
+-    f.observe_revoke(json!({"local_test":true}), true);
+-    let r = release_value(&f, &id);
+-    std::fs::write(root.join("release.tmp"), serde_json::to_vec(&r).unwrap()).unwrap();
+-    std::fs::rename(root.join("release.tmp"), root.join("release-consumer.json")).unwrap();
+-    tokio::time::timeout(Duration::from_secs(1), f.inner.released.cancelled())
+-        .await
+-        .unwrap();
+-    f.request_stop();
+-    assert!(
+-        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
+-            .await
+-    );
+-    assert_eq!(f.snapshot()["evidence_complete"], true);
+-    let lines = std::fs::read_to_string(root.join("fixture-events.jsonl")).unwrap();
+-    assert_eq!(lines.lines().count(), 3);
+-    for line in lines.lines() {
+-        let v: Value = serde_json::from_str(line).unwrap();
+-        assert_eq!(v["identity"]["session"], 9);
+-    }
+-}
++    let (f, _) = fixture();
++    f.emit("too_large", json!({"data":"x".repeat(8192)}));
++    assert!(f.failed());
++    assert_eq!(f.snapshot()["enqueued_records"], 0);
++    f.request_stop();
++    assert!(
++        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++            .await
++    );
++    let (f, _) = fixture();
++    for _ in 0..128 {
++        f.emit("limit", json!({}));
++    }
++    f.emit("over_limit", json!({}));
++    assert!(f.failed());
++    f.request_stop();
++    assert!(
++        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++            .await
++    );
++    assert_eq!(f.snapshot()["enqueued_records"], 128);
++    assert_eq!(f.snapshot()["written_records"], 128);
++}
++#[tokio::test]
++async fn an_expired_shared_deadline_retains_the_writer_handle_until_actual_join() {
++    let (f, _) = fixture();
++    f.request_stop();
++    assert!(!f.join_until(tokio::time::Instant::now()).await);
++    assert!(f.writer.lock().unwrap().is_some());
++    assert_eq!(f.snapshot()["writer_joined"], false);
++    // Local test teardown, not a runtime budget extension or an authority grant.
++    assert!(
++        f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++            .await
++    );
++}
++#[test]
++fn cancellation_observation_keeps_actual_first_reason_for_deadline_host_and_protocol_orders() {
++    for (first, second) in [
++        (CancelReason::Deadline, CancelReason::HostCancelled),
++        (CancelReason::HostCancelled, CancelReason::Deadline),
++        (CancelReason::NativeFailure, CancelReason::HostCancelled),
++        (CancelReason::HostCancelled, CancelReason::NativeFailure),
++    ] {
++        let signal = CancellationSignal::default();
++        signal.cancel(first);
++        signal.cancel_observed_at(second, "native_control");
++        let (records, overflow) = signal.take_observations();
++        assert!(!overflow);
++        assert_eq!(records.len(), 2);
++        assert_eq!(signal.reason(), Some(first));
++        assert!(!records[0].transition.cancel_gate_before);
++        assert_eq!(records[0].transition.first_cancel_reason_after, Some(first));
++        assert_eq!(
++            records[1].transition.first_cancel_reason_before,
++            Some(first)
++        );
++        assert_eq!(records[1].transition.first_cancel_reason_after, Some(first));
++        assert!(!records[1].transition.host_control_closed_gate);
++        assert!(!signal.is_paused());
++        assert_eq!(records[0].observation_ordinal, 1);
++        assert_eq!(records[1].observation_ordinal, 2);
++    }
++}
+--- qualification/m03-fixture-002/src/request_task.rs
++++ qualification/m03-fixture-003/src/request_task.rs
+@@ -2,7 +2,7 @@
+ //! preserves typed events including Completed(end_turn=false).
+ use crate::{
+     driver::*,
+-    fixture::{CoreEventId, Fixture, Mode},
++    fixture::{CoreEventId, Fixture},
+     limits,
+     network::{Audit, HostModelNetworkBackend, Operation},
+ };
+@@ -81,19 +81,12 @@
+             },
+             event = self.events.recv() => {
+                 let event=event?;
+-                let target=event.fixture_id.as_ref().filter(|id|id.delta_ordinal==1);
+-                if let (Some(fixture),Some(id))=(&self.fixture,target) {
+-                    if !fixture.hold_consumer(id,self.operation.deadline()).await {
+-                        self.operation.cancel(CancelReason::NativeFailure);
+-                        return None;
+-                    }
+-                }
+                 let id=event.fixture_id;
+-                // The original final delivery gate stays decisive after hold.
++                // Observation never holds the value. Only the original final gate decides.
+                 let delivered=self.operation.deliver_when_resolved(||event.value).await;
+-                if let (Some(fixture),Some(id))=(&self.fixture,id.as_ref().filter(|id|id.delta_ordinal==1)) {
+-                    if delivered.is_none() {fixture.suppressed(id,false,token.is_cancelled());}
+-                    else {fixture.fail("held Core event delivered after fixture release");}
++                if let (Some(fixture),Some(id))=(&self.fixture,&id) {
++                    fixture.emit(if delivered.is_some(){"core_event_delivered"}else{"core_event_suppressed"},
++                        json!({"event":id,"gate_cancelled":token.is_cancelled()}));
+                 }
+                 delivered
+             },
+@@ -318,20 +311,24 @@
+             }
+         };
+         count += 1;
+-        let fixture_id = if config
+-            .fixture
+-            .as_ref()
+-            .is_some_and(|f| f.mode() == Mode::CoreRevoke)
+-        {
+-            if let ResponseEvent::OutputTextDelta(text) = &event {
++        let fixture_id = config.fixture.as_ref().map(|fixture| {
++            let id = if let ResponseEvent::OutputTextDelta(text) = &event {
+                 delta_ordinal += 1;
+-                Some(CoreEventId::delta(count as u64, delta_ordinal, text))
++                CoreEventId::delta(count as u64, delta_ordinal, text)
+             } else {
+-                None
+-            }
+-        } else {
+-            None
+-        };
++                CoreEventId::other(
++                    count as u64,
++                    delta_ordinal,
++                    if matches!(&event, ResponseEvent::Completed { .. }) {
++                        "Completed"
++                    } else {
++                        "Other"
++                    },
++                )
++            };
++            fixture.emit("core_event_observed", json!({"event":id}));
++            id
++        });
+         let completed = match &event {
+             ResponseEvent::Completed { end_turn, .. } => Some(*end_turn),
+             _ => None,
+@@ -357,17 +354,6 @@
+             op.cancel(CancelReason::OwnerDropped);
+             return (CoreTerminal::Cancelled, count, None);
+         };
+-        if let (Some(fixture), Some(id)) = (
+-            &config.fixture,
+-            fixture_id.as_ref().filter(|id| id.delta_ordinal == 2),
+-        ) {
+-            if !fixture
+-                .hold_reserved(id, token.clone(), op.deadline())
+-                .await
+-            {
+-                op.cancel(CancelReason::NativeFailure);
+-            }
+-        }
+         let sent = op
+             .deliver_when_resolved(|| {
+                 permit.send(QueuedEvent {
+@@ -377,16 +363,13 @@
+             })
+             .await;
+         if sent.is_none() {
+-            if let (Some(fixture), Some(id)) = (
+-                &config.fixture,
+-                fixture_id.as_ref().filter(|id| id.delta_ordinal == 2),
+-            ) {
+-                fixture.suppressed(id, true, token.is_cancelled());
++            if let (Some(fixture), Some(id)) = (&config.fixture, &fixture_id) {
++                fixture.emit(
++                    "core_event_suppressed",
++                    json!({"event":id,"stage":"producer","gate_cancelled":token.is_cancelled()}),
++                );
+             }
+             return cancelled(&op, count);
+-        }
+-        if let (Some(fixture), Some(id)) = (&config.fixture, &fixture_id) {
+-            fixture.queued(id);
+         }
+         if let Some(end_turn) = completed {
+             // API SSE parser may already have dropped its ByteStream, or may do
+@@ -421,9 +404,10 @@
+ mod tests {
+     use super::*;
+     #[tokio::test]
+-    async fn held_received_event_and_reserved_event_use_original_gates_after_cancel() {
+-        // Synthetic local regression only, not actual ModelClient provenance.
+-        let (fixture, _) = crate::fixture::tests::fixture();
++    async fn passive_observer_delivers_without_release_and_original_cancel_still_suppresses() {
++        // Synthetic local typed events; not ModelClient/HTTP provenance.
++        let (fixture, root) = crate::fixture::tests::fixture();
++        std::fs::write(root.join("release-consumer.json"), b"irrelevant file").unwrap();
+         let deadline = Instant::now() + std::time::Duration::from_secs(2);
+         let operation = Operation::new(
+             Arc::new(WireNotReady),
+@@ -434,17 +418,7 @@
+         )
+         .unwrap();
+         let (sender, events) = mpsc::channel(8);
+-        let a = CoreEventId::delta(1, 1, "local A");
+-        let b = CoreEventId::delta(2, 2, "local B");
+-        sender
+-            .send(QueuedEvent {
+-                value: Ok(ResponseEvent::OutputTextDelta("local A".into())),
+-                fixture_id: Some(a.clone()),
+-            })
+-            .await
+-            .unwrap();
+-        fixture.queued(&a);
+-        let (completion_tx, completion) = oneshot::channel();
++        let (_tx, completion) = oneshot::channel();
+         let mut task = RequestTask {
+             operation: operation.clone(),
+             events,
+@@ -452,41 +426,48 @@
+             completion: Some(completion),
+             finished: true,
+         };
+-        let mut consumer = Box::pin(task.next_event());
+-        assert!(futures::poll!(consumer.as_mut()).is_pending());
+-        let permit = sender.reserve().await.unwrap();
+-        let mut reserved = Box::pin(fixture.hold_reserved(&b, operation.token(), deadline));
+-        assert!(futures::poll!(reserved.as_mut()).is_pending());
++        sender
++            .send(QueuedEvent {
++                value: Ok(ResponseEvent::OutputTextDelta("local A".into())),
++                fixture_id: Some(CoreEventId::delta(1, 1, "local A")),
++            })
++            .await
++            .unwrap();
++        let event = tokio::time::timeout(std::time::Duration::from_millis(50), task.next_event())
++            .await
++            .unwrap();
++        assert!(matches!(event,Some(Ok(ResponseEvent::OutputTextDelta(s))) if s=="local A"));
++        assert!(!operation.cancellation_signal().is_paused());
++        sender
++            .send(QueuedEvent {
++                value: Ok(ResponseEvent::OutputTextDelta("local B".into())),
++                fixture_id: Some(CoreEventId::delta(2, 2, "local B")),
++            })
++            .await
++            .unwrap();
+         operation
+             .cancellation_signal()
+             .cancel(CancelReason::HostCancelled);
+-        fixture.observe_revoke(serde_json::json!({"local_test":true}), true);
+-        assert!(reserved.await);
+-        assert!(
+-            operation
+-                .deliver_if_live(|| permit.send(QueuedEvent {
+-                    value: Ok(ResponseEvent::OutputTextDelta("local B".into())),
+-                    fixture_id: Some(b.clone())
+-                }))
+-                .is_none()
+-        );
+-        fixture.suppressed(&b, true, operation.token().is_cancelled());
+-        crate::fixture::tests::release(&fixture, &a).unwrap();
+-        assert!(consumer.await.is_none());
+-        assert_eq!(
+-            sender.capacity(),
+-            8,
+-            "permit and held A released without publication"
+-        );
++        assert!(task.next_event().await.is_none());
+         assert_eq!(
+             operation.first_cancel_reason(),
+             Some(CancelReason::HostCancelled)
+         );
+         fixture.request_stop();
+         assert!(fixture.join_until(deadline).await);
+-        assert_eq!(fixture.snapshot()["stages_complete"], true);
++        let text = std::fs::read_to_string(root.join("fixture-events.jsonl")).unwrap();
++        let records: Vec<serde_json::Value> = text
++            .lines()
++            .map(|l| serde_json::from_str(l).unwrap())
++            .collect();
++        assert_eq!(
++            records
++                .iter()
++                .filter(|r| r["kind"] == "core_event_delivered")
++                .count(),
++            1
++        );
+         assert_eq!(fixture.snapshot()["evidence_complete"], true);
+-        drop(completion_tx);
+     }
+     #[tokio::test]
+     async fn host_latch_suppresses_queued_and_reserved_late_events_without_network_read() {
+--- native/m03-fixture-002/Cargo.lock
++++ native/m03-fixture-003/Cargo.lock
+@@ -7174,7 +7174,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-m03-stream"
+-version = "0.1.3"
++version = "0.1.4"
+ dependencies = [
+  "bytes",
+  "codex-api",
+@@ -7197,7 +7197,7 @@
+ 
+ [[package]]
+ name = "morrow-codex-native-http-client"
+-version = "0.4.1"
++version = "0.4.2"
+ dependencies = [
+  "bytes",
+  "codex-core",
+--- native/m03-fixture-002/Cargo.toml
++++ native/m03-fixture-003/Cargo.toml
+@@ -3,12 +3,12 @@
+ 
+ [package]
+ name = "morrow-codex-native-http-client"
+-version = "0.4.1"
++version = "0.4.2"
+ edition = "2024"
+ publish = false
+ 
+ [dependencies]
+-morrow-codex-m03-stream = { path = "../../qualification/m03-fixture-002" }
++morrow-codex-m03-stream = { path = "../../qualification/m03-fixture-003" }
+ morrow-native-http-stream-wire = { path = "../../upstream/m03-stream-001/wire-kit-001/source" }
+ morrow-native-pipe-win = { path = "../../upstream/m03-stream-001/pipe-kit-001/source" }
+ codex-core = { path = "../../upstream/p02-integration-004/codex-work/codex-rs/core", features = ["morrow-p02-restricted-qualification"] }
+--- native/m03-fixture-002/src/admission.rs
++++ native/m03-fixture-003/src/admission.rs
+@@ -11,6 +11,7 @@
+ pub struct Admission {
+     initial: Frame,
+     deadline: Instant,
++    first_read_started: Instant,
+     control_next: u64,
+     data_next: u64,
+     host_data_next: u64,
+@@ -49,6 +50,7 @@
+             host_remaining_ms: challenge.remaining_ms,
+             initial: challenge,
+             deadline,
++            first_read_started,
+             control_next: 1,
+             data_next: 1,
+             host_data_next: 1,
+@@ -60,6 +62,9 @@
+     }
+     pub fn initial(&self) -> &Frame {
+         &self.initial
++    }
++    pub fn first_read_started(&self) -> Instant {
++        self.first_read_started
+     }
+     pub fn deadline(&self) -> Instant {
+         self.deadline
+--- native/m03-fixture-002/src/main.rs
++++ native/m03-fixture-003/src/main.rs
+@@ -30,14 +30,16 @@
+     let mut base = None;
+     let mut evidence = None;
+     let mut max_chunk = None;
+-    let mut fixture_spec_sha256=None;
++    let mut fixture_spec_sha256 = None;
+     let mut index = 1;
+     while index < args.len() {
+         let value = args.get(index + 1).ok_or("missing option value")?;
+         match args[index].as_str() {
+             "--fixture-base" if base.is_none() => base = Some(value.clone()),
+             "--evidence-dir" if evidence.is_none() => evidence = Some(PathBuf::from(value)),
+-            "--fixture-spec-sha256" if fixture_spec_sha256.is_none()=>fixture_spec_sha256=Some(value.clone()),
++            "--fixture-spec-sha256" if fixture_spec_sha256.is_none() => {
++                fixture_spec_sha256 = Some(value.clone())
++            }
+             "--max-chunk" if max_chunk.is_none() => {
+                 max_chunk = Some(value.parse::<usize>().map_err(|_| "chunk integer")?)
+             }
+@@ -77,7 +79,7 @@
+         base,
+         evidence: canonical,
+         max_chunk,
+-        fixture_spec_sha256:fixture_spec_sha256.ok_or("fixture spec digest required")?,
++        fixture_spec_sha256: fixture_spec_sha256.ok_or("fixture spec digest required")?,
+     })
+ }
+ fn artifact() -> Result<[u8; 32], String> {
+@@ -114,7 +116,8 @@
+ }
+ fn run() -> Result<(), String> {
+     let options = options()?;
+-    let fixture=Fixture::open(&options.evidence,&options.fixture_spec_sha256).map_err(str::to_owned)?;
++    let fixture =
++        Fixture::open(&options.evidence, &options.fixture_spec_sha256).map_err(str::to_owned)?;
+     let mut events = OpenOptions::new()
+         .create_new(true)
+         .write(true)
+@@ -127,7 +130,12 @@
+         .map_err(|_| "create new result evidence")?;
+     let actual_artifact = artifact()?;
+     let session = ControlReader::start()
+-        .admit(actual_artifact, options.max_chunk, RequestKey(1),fixture.clone())
++        .admit(
++            actual_artifact,
++            options.max_chunk,
++            RequestKey(1),
++            fixture.clone(),
++        )
+         .map_err(|e| e.to_string())?;
+     let runtime = tokio::runtime::Builder::new_current_thread()
+         .enable_all()
+@@ -167,11 +175,11 @@
+             Err(_)=>Err(morrow_codex_m03_stream::driver::BridgeError::CleanupUnconfirmed),
+         };
+         let control_threads_joined=session.join_control_until(close_deadline).await;
++        session.flush_observations();
+         fixture.request_stop();
+         let fixture_writer_joined=fixture.join_until(close_deadline).await;
+         let fixture_observation=fixture.snapshot();
+-        let fixture_evidence_ok=fixture_observation["evidence_complete"]==true
+-            &&fixture_observation["stages_complete"]==true&&fixture_observation["gate_closed"]==true;
++        let fixture_evidence_ok=fixture_observation["evidence_complete"]==true;
+         let close_observation=session.close_observation();
+         let control_protocol_clean=close_observation.control_protocol_clean;
+         let final_control=session.final_control_status();
+@@ -186,6 +194,7 @@
+             "control_end_result":control_end,"close_observation":close_observation,
+             "fixture_observation":fixture_observation,"fixture_writer_joined":fixture_writer_joined,
+             "data_end_observation":session.data_end_observation(),
++            "authority_observation":fixture.authority_observation(),"data_worker_observation":session.data_worker_observation(),
+             "control_threads_joined":control_threads_joined,"control_threads":session.control_thread_observations(),
+             "whole_session_release":"external_operator_only"});
+         serde_json::to_writer_pretty(&mut result,&report).map_err(|_|"result serialization")?;
+--- native/m03-fixture-002/src/session.rs
++++ native/m03-fixture-003/src/session.rs
+@@ -14,6 +14,17 @@
+ };
+ use tokio::sync::Notify;
+ 
++#[derive(Clone, Debug, serde::Serialize)]
++pub struct DataFailureObservation {
++    pub stage: &'static str,
++    pub error: &'static str,
++    pub io_index: Option<usize>,
++    pub read_id: Option<u64>,
++    pub os_error: Option<u32>,
++    pub buffered_bytes: Option<usize>,
++    pub expected_frame_bytes: Option<usize>,
++    pub prefix_sha256: Option<String>,
++}
+ pub(crate) struct State {
+     pub disconnect_deadline: Option<Instant>,
+     pub disconnect_explained: bool,
+@@ -56,6 +67,9 @@
+     pub close_acked: bool,
+     pub close_ack: Option<CloseAckObservation>,
+     pub max_chunk: usize,
++    pub first_data_failure: Option<DataFailureObservation>,
++    pub last_body_io_index: Option<usize>,
++    pub last_body_frame_index: Option<usize>,
+     pub io_result: Option<std::result::Result<(), &'static str>>,
+     pub io_joined: bool,
+     pub io_events: Vec<IoObservation>,
+@@ -1155,7 +1169,14 @@
+             self.cancel_reason = Some(reason)
+         }
+         if let Some(signal) = &self.cancellation {
+-            let transition = signal.cancel_observed(self.cancel_reason.unwrap());
++            let transition = signal.cancel_observed_at(
++                self.cancel_reason.unwrap(),
++                match reason {
++                    CancelReason::HostCancelled => "native_host_cancel",
++                    CancelReason::Deadline => "native_deadline",
++                    _ => "native_state_cancel",
++                },
++            );
+             if reason == CancelReason::HostCancelled && self.host_cancel_transition.is_none() {
+                 self.host_cancel_transition = Some(transition);
+             }
+@@ -1270,12 +1291,14 @@
+         Ok(self.outbound.pop_front())
+     }
+     pub(crate) fn cleanup_progress(&self) -> Result<Option<wire::Progress>, BridgeError> {
++        // A failed/ended control lane cannot supply a trustworthy late RequestClosed.
++        // Keep this failure independent of whether a resource receipt ever arrived.
++        if self.control_failure.is_some() {
++            return Err(BridgeError::CleanupUnconfirmed);
++        }
+         let Some(mut closed) = self.closed.clone() else {
+             return Ok(None);
+         };
+-        if self.control_failure.is_some() {
+-            return Err(BridgeError::CleanupUnconfirmed);
+-        }
+         if !self.settlement_confirmed() {
+             return Ok(None);
+         }
+@@ -1551,6 +1574,17 @@
+                 || matches!(frame.kind, wire::Kind::Stop | wire::Kind::Denied));
+         let received = serde_json::json!({"kind":format!("{:?}",frame.kind),"sequence":frame.sequence,
+             "generation":frame.revocation_generation,"code":frame.code});
++        let head = if let wire::Payload::Head(head) = &frame.payload {
++            if frame.kind == wire::Kind::ResponseHead {
++                Some(
++                    serde_json::json!({"kind":"ResponseHead","sequence":frame.sequence,"generation":frame.revocation_generation,"status":head.status}),
++                )
++            } else {
++                None
++            }
++        } else {
++            None
++        };
+         let mut state = self.state.lock().unwrap();
+         state.host_cancel_transition = None;
+         if state
+@@ -1562,6 +1596,7 @@
+                 "data disconnect control explanation timeout",
+             ));
+         }
++        let frames_before = state.frame_events.len();
+         let accepted = match state.accept_control(frame) {
+             Ok(()) => true,
+             Err(error) => {
+@@ -1578,6 +1613,12 @@
+         {
+             state.disconnect_explained = true;
+         }
++        let head_frame_index =
++            if accepted && head.is_some() && state.frame_events.len() > frames_before {
++                Some(frames_before)
++            } else {
++                None
++            };
+         let transition = state.host_cancel_transition.clone();
+         let fixture = state.fixture.clone();
+         let gate_closed = state
+@@ -1585,6 +1626,10 @@
+             .as_ref()
+             .is_some_and(|s| s.token().is_cancelled());
+         drop(state);
++        if let (Some(mut head), Some(index), Some(fixture)) = (head, head_frame_index, &fixture) {
++            head["frames_index"] = serde_json::json!(index);
++            fixture.emit_once("response_head_accepted", head);
++        }
+         if accepted && revoked {
+             if let Some(fixture) = fixture {
+                 let mut received = received;
+@@ -1594,7 +1639,34 @@
+         }
+         self.signal();
+     }
++    pub fn flush_cancel_observations(&self) {
++        // signal is also used under State; try_lock avoids reacquiring that lock.
++        let binding = self
++            .state
++            .try_lock()
++            .ok()
++            .and_then(|s| Some((s.fixture.clone()?, s.cancellation.clone()?)));
++        if let Some((fixture, signal)) = binding {
++            let (records, overflow) = signal.take_observations();
++            if overflow {
++                fixture.fail("cancellation observation overflow");
++            }
++            for record in records {
++                fixture.emit(
++                    "cancellation_transition",
++                    serde_json::to_value(record).unwrap(),
++                );
++            }
++        }
++    }
++    pub fn record_data_failure(&self, failure: DataFailureObservation) {
++        let mut s = self.state.lock().unwrap();
++        if s.first_data_failure.is_none() {
++            s.first_data_failure = Some(failure);
++        }
++    }
+     pub fn signal(&self) {
++        self.flush_cancel_observations();
+         self.changed.notify_waiters();
+         self.work.notify_all();
+     }
+@@ -1703,6 +1775,9 @@
+                     close_acked: false,
+                     close_ack: None,
+                     max_chunk,
++                    first_data_failure: None,
++                    last_body_io_index: None,
++                    last_body_frame_index: None,
+                     io_result: None,
+                     io_joined: false,
+                     io_events: Vec::new(),
+@@ -1712,6 +1787,19 @@
+                 }),
+             }),
+         })
++    }
++    pub fn flush_observations(&self) {
++        self.shared.flush_cancel_observations();
++    }
++    pub fn data_worker_observation(&self) -> serde_json::Value {
++        let (result, failure, joined) = {
++            let s = self.shared.state.lock().unwrap();
++            (s.io_result, s.first_data_failure.clone(), s.io_joined)
++        };
++        let slot = self.io_thread.lock().unwrap();
++        let finished = slot.as_ref().map_or(joined, |h| h.is_finished());
++        serde_json::json!({"result":result.map(|r|match r {Ok(())=>serde_json::json!({"ok":true,"error":null}),Err(e)=>serde_json::json!({"ok":false,"error":e})}),
++            "first_data_failure":failure,"finished":finished,"joined":joined,"handle_retained":slot.is_some()})
+     }
+     pub fn deadline(&self) -> Instant {
+         self.shared.state.lock().unwrap().admission.deadline()
+@@ -2062,7 +2150,7 @@
+         progress: ConsumptionProgress,
+     ) -> Result<(), BridgeError> {
+         self.key(key)?;
+-        {
++        let (fixture, detail) = {
+             let mut s = self.shared.state.lock().unwrap();
+             s.delivery
+                 .as_mut()
+@@ -2070,6 +2158,23 @@
+                 .consumed(progress)
+                 .map_err(BridgeError::Protocol)?;
+             s.credit_dirty = true;
++            let current = s.delivery.as_ref().unwrap().credit();
++            let seq = s
++                .credit_requests
++                .iter()
++                .find(|(_, c)| **c == current)
++                .map(|(seq, _)| *seq);
++            (
++                s.fixture.clone(),
++                serde_json::json!({"consumed_offset":progress.consumed_offset,"parser_yielded_bytes":progress.parser_yielded_bytes,
++                "drain_discarded_bytes":progress.drain_discarded_bytes,"error_body_consumed_bytes":progress.error_body_consumed_bytes,
++                "credit_sequence":seq,"io_index":s.last_body_io_index,"body_frame_index":s.last_body_frame_index}),
++            )
++        };
++        if progress.parser_yielded_bytes > 0 {
++            if let Some(fixture) = fixture {
++                fixture.emit_once("parser_progress_observed", detail);
++            }
+         }
+         self.shared.signal();
+         Ok(())
+--- native/m03-fixture-002/src/workers.rs
++++ native/m03-fixture-003/src/workers.rs
+@@ -2,12 +2,13 @@
+ //! No async task or control dispatch owns its blocking cleanup operation.
+ use crate::{
+     admission::Admission,
+-    session::{ControlFailureObservation, IoObservation, Session, Shared},
++    session::{ControlFailureObservation, DataFailureObservation, IoObservation, Session, Shared},
+ };
+ use morrow_codex_m03_stream::driver::{BridgeError, RequestKey};
+-use morrow_codex_m03_stream::fixture::{Fixture, Identity, Mode};
++use morrow_codex_m03_stream::fixture::{Fixture, Identity};
+ use morrow_native_http_stream_wire as wire;
+ use morrow_native_pipe_win::{Kind as IoKind, Pipe};
++use sha2::{Digest, Sha256};
+ use std::{
+     io::{Read, Write},
+     sync::{Arc, Mutex, mpsc},
+@@ -177,6 +178,13 @@
+                 host_execution_config_sha256: identity.host_execution_config_sha256,
+             })
+             .map_err(BridgeError::Protocol)?;
++        fixture
++            .bind_authority(
++                self.started,
++                session.deadline(),
++                identity.original_remaining_ms,
++            )
++            .map_err(BridgeError::Protocol)?;
+         session.shared.state.lock().unwrap().fixture = Some(fixture);
+         session
+             .control_threads
+@@ -263,6 +271,7 @@
+             .name("m03-owned-pipe".into())
+             .spawn(move || {
+                 let result = data_owner(&data);
++                if let Err(error)=result {record_owner_failure(&data,"worker_other",error,None,None,None,None);}
+                 {
+                     let mut s = data.state.lock().unwrap();
+                     s.io_result = Some(result);
+@@ -270,6 +279,8 @@
+                         s.fail(BridgeError::CleanupUnconfirmed)
+                     }
+                 }
++                let (fixture,failure)={let s=data.state.lock().unwrap();(s.fixture.clone(),s.first_data_failure.clone())};
++                if let Some(fixture)=fixture {fixture.emit_once("data_worker_finished",serde_json::json!({"result":match result {Ok(())=>serde_json::json!({"ok":true,"error":null}),Err(e)=>serde_json::json!({"ok":false,"error":e})},"first_data_failure":failure}));}
+                 data.signal();
+                 result
+             })
+@@ -333,10 +344,18 @@
+         && framer.expected == 4
+ }
+ 
++#[derive(Clone, Debug, serde::Serialize)]
++struct ReadFragment {
++    io_index: usize,
++    read_id: u64,
++    transferred_bytes: usize,
++    bytes_hex: String,
++}
+ struct Framer {
+     bytes: Vec<u8>,
+     expected: usize,
+     started: Option<Instant>,
++    read_fragments: Option<Vec<ReadFragment>>,
+ }
+ impl Framer {
+     fn new() -> Self {
+@@ -344,7 +363,37 @@
+             bytes: Vec::new(),
+             expected: 4,
+             started: None,
+-        }
++            read_fragments: Some(Vec::new()),
++        }
++    }
++    fn push_read(
++        &mut self,
++        done: &morrow_native_pipe_win::Completed,
++        io_index: Option<usize>,
++    ) -> Result<Option<wire::Frame>, &'static str> {
++        // Diagnostic prefix only: never retain arbitrary body bytes or invent completion facts.
++        if done.kind != IoKind::Read
++            || done.error.is_some()
++            || done.transferred == 0
++            || done.transferred != done.bytes.len()
++            || self.bytes.len().saturating_add(done.bytes.len()) > 12
++            || io_index.is_none()
++        {
++            self.read_fragments = None;
++        }
++        if let (Some(fragments), Some(index)) = (&mut self.read_fragments, io_index) {
++            if fragments.len() < 12 {
++                fragments.push(ReadFragment {
++                    io_index: index,
++                    read_id: done.id,
++                    transferred_bytes: done.transferred,
++                    bytes_hex: wire::hex(&done.bytes),
++                });
++            } else {
++                self.read_fragments = None;
++            }
++        }
++        self.push(&done.bytes)
+     }
+     fn needed(&self) -> usize {
+         self.expected - self.bytes.len()
+@@ -368,18 +417,6 @@
+             Ok(None)
+         }
+     }
+-}
+-
+-fn pause_at_read_boundary(
+-    paused: &mut bool,
+-    framer: &Framer,
+-    has_read: bool,
+-) -> Result<(), &'static str> {
+-    if *paused || !framer.bytes.is_empty() || framer.expected != 4 || has_read {
+-        return Err("fixture pause not at clean read boundary");
+-    }
+-    *paused = true;
+-    Ok(())
+ }
+ 
+ #[cfg(test)]
+@@ -414,33 +451,10 @@
+         };
+         assert!(!clean_disconnect(&done, &Framer::new()));
+     }
+-    #[test]
+-    fn read_pause_requires_reaped_read_and_complete_frame_and_is_once_only() {
+-        let mut paused = false;
+-        let mut framer = Framer::new();
+-        assert!(pause_at_read_boundary(&mut paused, &framer, true).is_err());
+-        assert!(!paused);
+-        framer.bytes.push(8);
+-        assert!(pause_at_read_boundary(&mut paused, &framer, false).is_err());
+-        assert!(!paused);
+-        let frame = crate::admission::tests::admitted()
+-            .initial()
+-            .clone()
+-            .encode()
+-            .unwrap();
+-        let mut framer = Framer::new();
+-        assert!(framer.push(&frame[..4]).unwrap().is_none());
+-        assert!(pause_at_read_boundary(&mut paused, &framer, false).is_err());
+-        assert!(framer.push(&frame[4..]).unwrap().is_some());
+-        pause_at_read_boundary(&mut paused, &framer, false).unwrap();
+-        assert!(paused);
+-        assert!(pause_at_read_boundary(&mut paused, &framer, false).is_err());
+-    }
+ }
+ 
+ fn data_owner(shared: &Arc<Shared>) -> Result<(), &'static str> {
+     let fixture = shared.state.lock().unwrap().fixture.clone();
+-    let mut read_paused = false;
+     let mut read_issue_count = 0u64;
+     let channel = loop {
+         let state = shared.state.lock().unwrap();
+@@ -471,6 +485,10 @@
+     };
+     let mut writing = Some((bind, 0usize));
+     let mut framer = Framer::new();
++    let mut stage = "worker_other";
++    let mut last_io_index = None;
++    let mut last_read_id = None;
++    let mut last_os_error = None;
+     let result = (|| {
+         loop {
+             if fixture.as_ref().is_some_and(|f| f.failed()) {
+@@ -505,6 +523,7 @@
+                     s.admission.deadline(),
+                 )
+             };
++            stage = "framer";
+             if cancel || closed {
+                 if !framer.bytes.is_empty() {
+                     return Err("close with partial data frame");
+@@ -520,12 +539,16 @@
+             if Instant::now() >= deadline {
+                 return Err("original data deadline");
+             }
++            stage = "write_completion";
++            last_io_index = None;
++            last_os_error = None;
+             if pipe.has_operation(IoKind::Write) {
+                 if let Some(done) = pipe
+                     .poll(IoKind::Write)
+                     .map_err(|_| "write completion unconfirmed")?
+                 {
+-                    observe_completion(shared, &done);
++                    last_io_index = observe_completion(shared, &done);
++                    last_os_error = done.error;
+                     if done.error.is_some() || done.transferred == 0 {
+                         return Err("data write completion error");
+                     }
+@@ -539,13 +562,22 @@
+                     }
+                 }
+             }
++            stage = "read_completion";
++            last_io_index = None;
++            last_os_error = None;
++            last_read_id = None;
+             if pipe.has_operation(IoKind::Read) {
+                 if let Some(done) = pipe
+                     .poll(IoKind::Read)
+                     .map_err(|_| "read completion unconfirmed")?
+                 {
+-                    observe_completion(shared, &done);
++                    last_io_index = observe_completion(shared, &done);
++                    last_read_id = Some(done.id);
++                    last_os_error = done.error;
+                     if done.error.is_some() || done.transferred == 0 {
++                        if let Some(fixture) = &fixture {
++                            fixture.emit_once("data_end_observed",serde_json::json!({"read_id":done.id,"io_index":last_io_index,"os_error":done.error,"transferred_bytes":done.transferred,"buffered_bytes":framer.bytes.len(),"expected_frame_bytes":framer.expected,"complete_boundary":framer.bytes.is_empty()&&framer.expected==4}));
++                        }
+                         // Host closes its data lane before its RequestClosed
+                         // control notification. Retain that cross-lane race;
+                         // final HTTP/prefix facts must already justify closure.
+@@ -570,35 +602,45 @@
+                             continue;
+                         }
+                     }
+-                    if let Some(frame) = framer.push(&done.bytes)? {
+-                        let data_bound = frame.kind == wire::Kind::DataBound;
+-                        shared
+-                            .state
+-                            .lock()
+-                            .unwrap()
+-                            .accept_data(frame)
+-                            .map_err(|_| "host data protocol")?;
++                    stage = "framer";
++                    if let Some(frame) = framer.push_read(&done, last_io_index)? {
++                        let body = frame.kind == wire::Kind::BodyChunk;
++                        stage = "protocol_accept";
++                        {
++                            let mut state = shared.state.lock().unwrap();
++                            let frames_before = state.frame_events.len();
++                            state.accept_data(frame).map_err(|_| "host data protocol")?;
++                            if body {
++                                state.last_body_io_index = last_io_index;
++                                state.last_body_frame_index =
++                                    if state.frame_events.len() > frames_before {
++                                        Some(frames_before)
++                                    } else {
++                                        None
++                                    };
++                            }
++                        }
+                         shared.signal();
+-                        // This owner alone can issue/poll Read. A complete frame
+-                        // has reset Framer; the just-polled Read was reaped.
+-                        if data_bound
+-                            && fixture
+-                                .as_ref()
+-                                .is_some_and(|f| f.mode() == Mode::DataPending)
+-                        {
+-                            pause_at_read_boundary(
+-                                &mut read_paused,
+-                                &framer,
+-                                pipe.has_operation(IoKind::Read),
+-                            )?;
+-                            fixture
+-                                .as_ref()
+-                                .unwrap()
+-                                .pause_reader(done.id, read_issue_count);
+-                        }
+-                    }
+-                }
+-            }
++                    } else if framer.bytes.len() == 12
++                        && framer.expected > 12
++                        && shared.state.lock().unwrap().data_bound
++                    {
++                        if let Some(fixture) = &fixture {
++                            if let (Some(index), Some(fragments)) =
++                                (last_io_index, &framer.read_fragments)
++                            {
++                                fixture.emit_once("data_partial_frame_observed",serde_json::json!({"read_id":done.id,"read_issue_count":read_issue_count,"transferred_bytes":done.transferred,"buffered_bytes":12,"declared_payload_bytes":framer.expected-4,"expected_frame_bytes":framer.expected,"prefix_sha256":format!("{:x}",Sha256::digest(&framer.bytes)),"prefix_hex":wire::hex(&framer.bytes),"read_fragments":fragments,"io_index":index}));
++                            } else {
++                                fixture.fail("partial-frame IO observation overflow");
++                            }
++                        }
++                    }
++                }
++            }
++            stage = "worker_other";
++            last_io_index = None;
++            last_os_error = None;
++            last_read_id = None;
+             if writing.is_none() {
+                 let mut s = shared.state.lock().unwrap();
+                 if s.data_bound
+@@ -645,10 +687,7 @@
+                     // Poll above may just have enqueued the second chunk.
+                     // Recompute room now, never reuse a pre-poll capacity value.
+                     let can_read = s.delivery.as_ref().is_none_or(|d| d.can_issue_read());
+-                    if !read_paused
+-                        && !pipe.has_operation(IoKind::Read)
+-                        && (can_read || !framer.bytes.is_empty())
+-                    {
++                    if !pipe.has_operation(IoKind::Read) && (can_read || !framer.bytes.is_empty()) {
+                         let started = pipe
+                             .begin_read(framer.needed())
+                             .map_err(|_| "begin data read")?;
+@@ -668,6 +707,19 @@
+     // Preserve each completion before attempting the next one. An unexpected
+     // poll error never turns partial recovery into successful RequestClosed.
+     if let Err(reason) = result {
++        record_owner_failure(
++            shared,
++            stage,
++            reason,
++            Some(&framer),
++            last_io_index,
++            if matches!(stage, "framer" | "read_completion" | "protocol_accept") {
++                last_read_id
++            } else {
++                None
++            },
++            last_os_error,
++        );
+         shared.fail(BridgeError::Protocol(reason));
+     }
+     let cancel = pipe.cancel_all().map_err(|_| "CancelIoEx request failed");
+@@ -701,6 +753,17 @@
+     // This drop is on the owning thread, after known operation recovery. If
+     // recovery errored, the shared platform's safe retention rules still apply.
+     drop(pipe);
++    if let Err(reason) = cancel.and(reaped) {
++        record_owner_failure(
++            shared,
++            "cancel_reap",
++            reason,
++            Some(&framer),
++            None,
++            None,
++            None,
++        );
++    }
+     result.and(cancel).and(reaped)
+ }
+ fn start_event(start: &morrow_native_pipe_win::Started) -> IoObservation {
+@@ -713,8 +776,10 @@
+         error: None,
+     }
+ }
+-fn observe_completion(shared: &Shared, done: &morrow_native_pipe_win::Completed) {
+-    shared.state.lock().unwrap().io_event(IoObservation {
++fn observe_completion(shared: &Shared, done: &morrow_native_pipe_win::Completed) -> Option<usize> {
++    let mut s = shared.state.lock().unwrap();
++    let index = s.io_events.len();
++    s.io_event(IoObservation {
+         action: "os_completion",
+         id: done.id,
+         kind: format!("{:?}", done.kind),
+@@ -722,4 +787,363 @@
+         pending: false,
+         error: done.error,
+     });
+-}
++    if s.io_events.len() > index {
++        Some(index)
++    } else {
++        None
++    }
++}
++fn record_owner_failure(
++    shared: &Shared,
++    stage: &'static str,
++    error: &'static str,
++    framer: Option<&Framer>,
++    io_index: Option<usize>,
++    read_id: Option<u64>,
++    os_error: Option<u32>,
++) {
++    shared.record_data_failure(DataFailureObservation {
++        stage,
++        error,
++        io_index,
++        read_id,
++        os_error,
++        buffered_bytes: framer.map(|f| f.bytes.len()),
++        expected_frame_bytes: framer.map(|f| f.expected),
++        prefix_sha256: framer
++            .filter(|f| !f.bytes.is_empty())
++            .map(|f| format!("{:x}", Sha256::digest(&f.bytes))),
++    });
++}
++
++#[cfg(test)]
++mod passive_tests {
++    use super::*;
++    use bytes::Bytes;
++    use morrow_codex_m03_stream::driver::{CancelReason, CancellationSignal, NativeHttpSession};
++    use morrow_codex_m03_stream::fixture::Spec;
++    fn fixture(session: &Session) -> Arc<Fixture> {
++        let root = std::env::temp_dir().join(format!(
++            "m03-fixture003-native-{}",
++            std::time::SystemTime::now()
++                .duration_since(std::time::UNIX_EPOCH)
++                .unwrap()
++                .as_nanos()
++        ));
++        std::fs::create_dir(&root).unwrap();
++        let examples: serde_json::Value = serde_json::from_str(include_str!(
++            "../../../receipts/m03-fixture-003-design-001/scenario-specs.example.json"
++        ))
++        .unwrap();
++        let mut spec: Spec =
++            serde_json::from_value(examples["pipe-partial-close"].clone()).unwrap();
++        spec.nonce = "a".repeat(64);
++        let bytes = serde_json::to_vec(&spec).unwrap();
++        std::fs::write(root.join("fixture-spec.json"), &bytes).unwrap();
++        let f = Fixture::open(&root, &format!("{:x}", Sha256::digest(&bytes))).unwrap();
++        let id = session.identity();
++        f.bind(Identity {
++            session: id.session,
++            epoch: id.epoch,
++            child_pid: id.child_pid,
++            attempt: id.attempt,
++            operation_id_sha256: id.operation_id_sha256,
++            host_execution_config_sha256: id.host_execution_config_sha256,
++        })
++        .unwrap();
++        f
++    }
++    #[tokio::test]
++    async fn partial_frame_protocol_error_is_independent_of_first_unknown_and_actual_failed_worker_join()
++     {
++        // Synthetic wire/completion facts, plus a real local owned thread. No pipe/HTTP pair.
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let signal = CancellationSignal::default();
++        session
++            .bind_cancellation(RequestKey(1), signal.clone())
++            .unwrap();
++        session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .cancel_for(CancelReason::HostCancelled);
++        session.shared.fail(BridgeError::Unknown);
++        let mut frame = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        frame.kind = wire::Kind::BodyChunk;
++        frame.sequence = 2;
++        frame.payload = wire::Payload::Chunk(wire::Chunk {
++            offset: 0,
++            bytes: vec![9; 16],
++        });
++        let bytes = frame.encode().unwrap();
++        let mut framer = Framer::new();
++        let first = morrow_native_pipe_win::Completed {
++            id: 5,
++            kind: IoKind::Read,
++            transferred: 4,
++            error: None,
++            bytes: bytes[..4].to_vec(),
++        };
++        let second = morrow_native_pipe_win::Completed {
++            id: 6,
++            kind: IoKind::Read,
++            transferred: 8,
++            error: None,
++            bytes: bytes[4..12].to_vec(),
++        };
++        let first_index = observe_completion(&session.shared, &first);
++        assert!(framer.push_read(&first, first_index).unwrap().is_none());
++        let second_index = observe_completion(&session.shared, &second);
++        assert!(framer.push_read(&second, second_index).unwrap().is_none());
++        let fragments = framer.read_fragments.as_ref().unwrap();
++        assert_eq!(fragments.len(), 2);
++        assert_eq!(fragments[0].io_index, 0);
++        assert_eq!(fragments[0].read_id, 5);
++        assert_eq!(fragments[0].transferred_bytes, 4);
++        assert_eq!(fragments[1].io_index, 1);
++        assert_eq!(fragments[1].read_id, 6);
++        assert_eq!(fragments[1].transferred_bytes, 8);
++        assert_eq!(
++            format!("{}{}", fragments[0].bytes_hex, fragments[1].bytes_hex),
++            wire::hex(&bytes[..12])
++        );
++        let eof = morrow_native_pipe_win::Completed {
++            id: 7,
++            kind: IoKind::Read,
++            transferred: 0,
++            error: Some(109),
++            bytes: vec![],
++        };
++        assert!(!clean_disconnect(&eof, &framer));
++        let index = observe_completion(&session.shared, &eof);
++        record_owner_failure(
++            &session.shared,
++            "read_completion",
++            "unexpected data EOF/error",
++            Some(&framer),
++            index,
++            Some(7),
++            Some(109),
++        );
++        session
++            .shared
++            .fail(BridgeError::Protocol("unexpected data EOF/error"));
++        let (tx, rx) = mpsc::channel();
++        *session.io_thread.lock().unwrap() = Some(thread::spawn(move || {
++            rx.recv().unwrap();
++            Err("unexpected data EOF/error")
++        }));
++        session.shared.state.lock().unwrap().io_result = Some(Err("unexpected data EOF/error"));
++        let before = session.data_worker_observation();
++        assert_eq!(before["result"]["ok"], false);
++        assert_eq!(before["finished"], false);
++        assert_eq!(before["joined"], false);
++        assert_eq!(before["handle_retained"], true);
++        tx.send(()).unwrap();
++        assert_eq!(
++            tokio::time::timeout(Duration::from_secs(1), session.cleanup(RequestKey(1)))
++                .await
++                .unwrap()
++                .unwrap_err(),
++            BridgeError::CleanupUnconfirmed
++        );
++        let after = session.data_worker_observation();
++        assert_eq!(after["finished"], true);
++        assert_eq!(after["joined"], true);
++        assert_eq!(after["handle_retained"], false);
++        assert_eq!(after["first_data_failure"]["buffered_bytes"], 12);
++        assert_eq!(after["first_data_failure"]["os_error"], 109);
++        assert_eq!(after["first_data_failure"]["io_index"], 2);
++        assert_eq!(after["first_data_failure"]["read_id"], 7);
++        assert_eq!(signal.reason(), Some(CancelReason::HostCancelled));
++        assert_eq!(
++            session.shared.state.lock().unwrap().fatal,
++            Some(BridgeError::Unknown)
++        );
++    }
++    #[tokio::test]
++    async fn parser_observation_keeps_actual_body_io_reference_without_forcing_small_credit() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let f = fixture(&session);
++        {
++            let mut s = session.shared.state.lock().unwrap();
++            let mut d = crate::delivery::Delivery::new(65536, 1024).unwrap();
++            d.received(0, Bytes::from_static(b"abc")).unwrap();
++            d.take(0, 3).unwrap();
++            s.delivery = Some(d);
++            s.last_body_io_index = Some(9);
++            s.last_body_frame_index = Some(4);
++            s.fixture = Some(f.clone());
++        }
++        session
++            .acknowledge(
++                RequestKey(1),
++                morrow_codex_m03_stream::driver::ConsumptionProgress {
++                    consumed_offset: 3,
++                    parser_yielded_bytes: 3,
++                    drain_discarded_bytes: 0,
++                    error_body_consumed_bytes: 0,
++                },
++            )
++            .unwrap();
++        assert!(
++            session
++                .shared
++                .state
++                .lock()
++                .unwrap()
++                .credit_requests
++                .is_empty()
++        );
++        f.request_stop();
++        assert!(
++            f.join_until(tokio::time::Instant::now() + Duration::from_secs(1))
++                .await
++        );
++        assert_eq!(f.snapshot()["evidence_complete"], true);
++        assert_eq!(f.snapshot()["enqueued_records"], 1);
++        // The observer queues a marker only. It does not dispatch a credit or create an ACK.
++    }
++    #[tokio::test]
++    async fn control_and_evidence_join_share_one_500ms_deadline_without_renewal() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let f = fixture(&session);
++        for name in ["control_reader", "control_router", "control_writer"] {
++            session.control_threads.lock().unwrap().push((
++                name,
++                Some(thread::spawn(|| thread::sleep(Duration::from_millis(600)))),
++                false,
++            ));
++        }
++        let deadline = tokio::time::Instant::now() + Duration::from_millis(500);
++        assert!(!session.join_control_until(deadline).await);
++        f.request_stop();
++        assert!(!f.join_until(deadline).await);
++        assert_eq!(f.snapshot()["writer_joined"], false);
++        assert!(
++            session
++                .control_thread_observations()
++                .as_array()
++                .unwrap()
++                .iter()
++                .any(|o| o["handle_retained"] == true)
++        );
++        // Explicit local teardown after the observation failed, not runtime permission renewal.
++        let teardown = tokio::time::Instant::now() + Duration::from_secs(1);
++        assert!(session.join_control_until(teardown).await);
++        assert!(f.join_until(teardown).await);
++    }
++    #[tokio::test]
++    async fn actual_control_end_after_stop20_fails_cleanup_without_waiting_for_missing_request_closed()
++     {
++        // Synthetic validated control/EOF observations; actual local data handle join.
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let signal = CancellationSignal::default();
++        session
++            .bind_cancellation(RequestKey(1), signal.clone())
++            .unwrap();
++        let mut stop = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        stop.kind = wire::Kind::Stop;
++        stop.sequence = 0;
++        stop.code = 20;
++        stop.revocation_generation = 2;
++        stop.payload = wire::Payload::None;
++        session.shared.handle_control(stop);
++        assert_eq!(signal.reason(), Some(CancelReason::Deadline));
++        session.shared.finish_control(true, None);
++        assert!(session.shared.state.lock().unwrap().closed.is_none());
++        *session.io_thread.lock().unwrap() = Some(thread::spawn(|| Ok(())));
++        session.shared.state.lock().unwrap().io_result = Some(Ok(()));
++        let result =
++            tokio::time::timeout(Duration::from_millis(100), session.cleanup(RequestKey(1)))
++                .await
++                .unwrap();
++        assert_eq!(result.unwrap_err(), BridgeError::CleanupUnconfirmed);
++        assert_eq!(session.data_worker_observation()["joined"], true);
++        assert_eq!(signal.reason(), Some(CancelReason::Deadline));
++        assert!(
++            session
++                .shared
++                .state
++                .lock()
++                .unwrap()
++                .control_failure
++                .is_some()
++        );
++    }
++    #[test]
++    fn bounded_read_fragment_chain_discards_after_twelve_bytes_and_resets_at_full_frame() {
++        let session = Session::new(crate::admission::tests::admitted(), 1024, RequestKey(1));
++        let mut frame = session
++            .shared
++            .state
++            .lock()
++            .unwrap()
++            .admission
++            .initial()
++            .clone();
++        frame.kind = wire::Kind::BodyChunk;
++        frame.sequence = 2;
++        frame.payload = wire::Payload::Chunk(wire::Chunk {
++            offset: 0,
++            bytes: vec![9; 16],
++        });
++        let bytes = frame.encode().unwrap();
++        let mut framer = Framer::new();
++        for (i, byte) in bytes.iter().enumerate() {
++            let done = morrow_native_pipe_win::Completed {
++                id: (i + 1) as u64,
++                kind: IoKind::Read,
++                transferred: 1,
++                error: None,
++                bytes: vec![*byte],
++            };
++            let frame = framer.push_read(&done, Some(i)).unwrap();
++            if i < 12 {
++                assert_eq!(framer.read_fragments.as_ref().unwrap().len(), i + 1);
++            } else if i + 1 < bytes.len() {
++                assert!(framer.read_fragments.is_none());
++            } else {
++                assert!(frame.is_some());
++                assert_eq!(framer.bytes.len(), 0);
++                assert!(framer.read_fragments.as_ref().unwrap().is_empty());
++            }
++        }
++        let done = morrow_native_pipe_win::Completed {
++            id: 99,
++            kind: IoKind::Read,
++            transferred: 4,
++            error: None,
++            bytes: bytes[..4].to_vec(),
++        };
++        assert!(framer.push_read(&done, Some(100)).unwrap().is_none());
++        let fragment = &framer.read_fragments.as_ref().unwrap()[0];
++        assert_eq!(fragment.read_id, 99);
++        assert_eq!(fragment.io_index, 100);
++        // Missing actual IO reference discards the chain instead of inventing an index.
++        let done = morrow_native_pipe_win::Completed {
++            id: 100,
++            kind: IoKind::Read,
++            transferred: 8,
++            error: None,
++            bytes: bytes[4..12].to_vec(),
++        };
++        assert!(framer.push_read(&done, None).unwrap().is_none());
++        assert!(framer.read_fragments.is_none());
++    }
++}

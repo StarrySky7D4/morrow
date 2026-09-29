@@ -1,0 +1,17 @@
+{
+  "scope": "wrong candidate pin must stop before helper import/process/socket launch",
+  "exit_code": 1,
+  "expected_rejection": true,
+  "candidate_tree_unchanged": true,
+  "command": [
+    "C:\\Users\\Administrator\\AppData\\Local\\Python\\bin\\python.exe",
+    "tool/m03_lifecycle_004.py",
+    "--case",
+    "core-revoke",
+    "--manifest",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\manifest.json",
+    "--manifest-sha256",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "log_sha256": "26e9ecc905222ab01a04cd1c609c5d8ac2d11f319e01784d05a1441149f3fd37"
+}

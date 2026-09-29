@@ -25,5 +25,12 @@
 /reports/codex-morrow-v1.1/** -text
 /tool/m02_* -text
 /tool/m03_* -text
+/tool/tests/test_m03_* -text
 /tool/agent_host_build.py -text
 /tool/tests/test_agent_host_build.py -text
+
+# Service resources use exact schema bytes for SDK/host compatibility.
+/core/schemas/service_resources.capnp text eol=lf
+/sdk/rust/contracts/service_resources.capnp text eol=lf
+# Qualification receipts bind these probe sources byte for byte.
+/tool/qualification/m03-pipe-driver-check/** -text

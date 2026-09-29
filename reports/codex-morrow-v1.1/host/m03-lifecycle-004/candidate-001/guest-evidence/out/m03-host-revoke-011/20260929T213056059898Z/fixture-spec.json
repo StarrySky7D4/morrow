@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "mode": "core-revoke",
+  "nonce": "384fa9835adc12566e257b1cb441dd5a91ece9a0a4cbb007489acc17192288dd",
+  "request_limit": 32768,
+  "response_limit": 65536,
+  "consumer_events": 8,
+  "credit_limit": 16384,
+  "pipe_buffer": 1024,
+  "max_chunk": 1024,
+  "min_pending_samples": 3,
+  "min_sample_interval_ms": 25,
+  "revoke_ack_limit_ms": 500,
+  "events_file": "fixture-events.jsonl",
+  "release_file": "release-consumer.json"
+}

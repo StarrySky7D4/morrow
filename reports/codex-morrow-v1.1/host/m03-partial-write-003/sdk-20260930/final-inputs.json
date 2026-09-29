@@ -1,0 +1,11 @@
+{
+  "scope": "final input hashes, not a before/after runtime receipt",
+  "sha256": {
+    "tool/morrow_plugin.py": "d1bfbe7b8d0f6d5757fed0c23f7cc2644bdcb4c049c31166c4fca13637617466",
+    "tool/tests/test_plugin_project_sdk_lock.py": "4ceb0e48d06f25827968c6bc7cfc4e30d5641f23878e644a8d77dc9f5c48a66d",
+    "tool/plugin_sdk_lock.py": "a0c3070e45c19740591bf344d585a6198640276a3717c759f6673e58028311c5",
+    ".gitattributes": "e1f6b1f0e4d8279cab337b7b66679a22938463f40af8551107dd43ef326f3268",
+    "core/schemas/service_resources.capnp": "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842",
+    "sdk/rust/contracts/service_resources.capnp": "5e50bd682470d49197da70afc49f37cc4d64eb0d3e60efdd0ee32b6ba6292842"
+  }
+}

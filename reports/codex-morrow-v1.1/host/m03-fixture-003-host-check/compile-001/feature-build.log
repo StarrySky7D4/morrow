@@ -1,0 +1,64 @@
+   Compiling morrow-native-session-stream v0.3.0-experimental.1 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\native_session_stream_001)
+warning: unnecessary parentheses around `if` condition
+   --> C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\contracts\experimental\agent_host_v3_http_stream\src\rules.rs:134:20
+    |
+134 |                 if (d.body_bytes as usize > MAX_BODY
+    |                    ^
+135 |                     || d.response_limit_bytes == 0
+136 |                     || d.response_limit_bytes as usize > MAX_RESPONSE)
+    |                                                                      ^
+    |
+    = note: `#[warn(unused_parens)]` (part of `#[warn(unused)]`) on by default
+help: remove these parentheses
+    |
+134 ~                 if d.body_bytes as usize > MAX_BODY
+135 |                     || d.response_limit_bytes == 0
+136 ~                     || d.response_limit_bytes as usize > MAX_RESPONSE 
+    |
+
+warning: `morrow-native-http-stream-wire` (lib) generated 1 warning (run `cargo fix --lib -p morrow-native-http-stream-wire` to apply 1 suggestion)
+error[E0308]: mismatched types
+  --> src\qualification_pipe.rs:61:21
+   |
+61 |             attempt:initial.attempt, operation_id_sha256:wire::hex(&wire::digest(&initial.operation_id)),
+   |                     ^^^^^^^^^^^^^^^ expected `u32`, found `u64`
+
+error[E0308]: mismatched types
+   --> src\qualification_pipe.rs:100:80
+    |
+100 |             || frame.child_pid != bound.identity.child_pid || frame.attempt != bound.identity.attempt
+    |                                                                                ^^^^^^^^^^^^^^^^^^^^^^ expected `u64`, found `u32`
+
+error[E0277]: can't compare `u64` with `u32`
+   --> src\qualification_pipe.rs:100:77
+    |
+100 |             || frame.child_pid != bound.identity.child_pid || frame.attempt != bound.identity.attempt
+    |                                                                             ^^ no implementation for `u64 == u32`
+    |
+    = help: the trait `PartialEq<u32>` is not implemented for `u64`
+help: the following other types implement trait `PartialEq<Rhs>`
+   --> /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library\core\src\cmp.rs:1876:12
+    |
+    = note: `u64` implements `PartialEq`
+   ::: /rustc/59807616e1fa2540724bfbac14d7976d7e4a3860/library\core\src\cmp.rs:1900:5
+    |
+    = note: in this macro invocation
+    |
+   ::: C:\Users\Administrator\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\serde_json-1.0.151\src\value\partial_eq.rs:76:13
+    |
+ 76 |               impl PartialEq<Value> for $ty {
+    |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `u64` implements `PartialEq<serde_json::Value>`
+...
+ 97 | / partialeq_numeric! {
+ 98 | |     eq_i64[i8 i16 i32 i64 isize]
+ 99 | |     eq_u64[u8 u16 u32 u64 usize]
+100 | |     eq_f32[f32]
+101 | |     eq_f64[f64]
+102 | |     eq_bool[bool]
+103 | | }
+    | |_- in this macro invocation
+    = note: this error originates in the macro `partial_eq_impl` which comes from the expansion of the macro `partialeq_numeric` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+Some errors have detailed explanations: E0277, E0308.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `morrow-native-session-stream` (lib) due to 3 previous errors

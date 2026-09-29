@@ -1,0 +1,7 @@
+{
+  "qualification_result": "expected_fault_observed",
+  "scope": "synthetic file seal only; no fault case or HTTP",
+  "http_requests": 0,
+  "product_success_claimed": false,
+  "sdk_frozen": false
+}

@@ -1,5 +1,7 @@
 # 插件网络与文件接口设计
 
+2026-09-30 状态校正：本文主体保留早期设计，不能作为当前能力清单。受管文件读取、HTTP／服务和 Windows Create／Delete 已有分项实现及限定验收；条件 Replace、完整 FileList／WebSocket、跨平台和 SDK 冻结仍未完成。最新范围见 [插件状态](PLUGIN_SYSTEM_STATUS.md)及[开发支线状态](DEVELOPMENT_BRANCH_STATUS.md)。
+
 2026-09-15 排期修订：正式出站与入站授权、当前实例绑定、持久意图及 Unknown 核对由 [ROAD-07](ROADMAP_UPDATE_2026-09-15.md) 统一承接；复用已有原生传输，完整 NET／NODE 范围不变。对方无去重／查询接口时必须保留不确定结果与人工核对，不能承诺自动确认或安全重发。
 
 状态：test.50 后续实施设计，2026-09-14。**本文件不表示网络、文件系统授权或 IO 重放已经实现。** 第一方实现默认 AGPL-3.0-only；第三方 SDK 使用规则沿用既有许可文件。本设计及其后续补充不表示已修改运行契约、数据库或冻结包。
@@ -29,15 +31,15 @@
 | `workbench_host/src/plugin_catalog.rs` | 第三方包导入、启用、独立零对象 grant 转换和表单 | 可信选择文件／网络目标、显示实际授权范围、启动 IO 任务；不能默认给所有已启用插件 IO |
 | `sdk/rust/src/{wasm,ffi}.rs`、`sdk/c/include`、`sdk/cpp/include` | 三语言固定字节契约、受控 Wasm transport、所有权和释放边界 | 独立 IO codec、transport、C ABI 与 C++ RAII；暂不新增 TS／JS 插件 SDK |
 
-`Runner` 目前只有 `morrow_v1.exchange`、`morrow_task_v1.read_input/complete`、可选 `morrow_dependency_v1.call`；不提供 WASI 文件或网络。现有取消检查发生在执行／导入边界，纯循环受 fuel 限制，fuel **不能中断任意阻塞的宿主回调**。因此不能直接在现有 `Exchange` 闭包里增加无界同步 HTTP 客户端。
+早期基础 `Runner` 的导入包括 `morrow_v1.exchange`、`morrow_task_v1.read_input/complete`、可选 `morrow_dependency_v1.call`；后续已增加专用受管 IO 入口，仍不提供任意 WASI 文件或网络。现有取消检查发生在执行／导入边界，纯循环受 fuel 限制，fuel **不能中断任意阻塞的宿主回调**。因此不能直接在现有 `Exchange` 闭包里增加无界同步 HTTP 客户端。
 
 ## 2. 契约与兼容策略
 
-已新增实验 `core/schemas/io.capnp`，构建时检查 schema，并由 `core/src/plugin_package/io.rs` 提供 IO 版本 1 及精确摘要。包要求 `io-v1`，guest ABI 仍为 2。运行期 codec／`core/src/io.rs` 尚未实现；该 IO 扩展尚未冻结，未来契约变化必须显式更新版本／摘要，不能重编旧候选掩盖不兼容。保持 runtime **7**、task **3**、UI **1**、dependency **1** 的原 schema、摘要、解码与路由不变，保持 `sdk/compat/guest-v1-rc1` 所有原件不变。新宿主对原包默认 IO 权限为空；旧宿主遇到 `io-v1` 明确拒绝。
+已新增实验 `core/schemas/io.capnp`，构建时检查 schema，并由 `core/src/plugin_package/io.rs` 提供 IO 版本 1 及精确摘要。包要求 `io-v1`，guest ABI 仍为 2。运行期 codec／`core/src/io.rs` 后续已经实现并被专用受管 IO 入口使用；该 IO 扩展尚未冻结，未来契约变化必须显式更新版本／摘要，不能重编旧候选掩盖不兼容。保持 runtime **7**、task **3**、UI **1**、dependency **1** 的原 schema、摘要、解码与路由不变，保持 `sdk/compat/guest-v1-rc1` 所有原件不变。新宿主对原包默认 IO 权限为空；旧宿主遇到 `io-v1` 明确拒绝。
 
 包元数据建议追加独立 `IoDeclaration`（预编译 PB，例如 `io_manifest.proto`，由 Manifest 新字段承载），包括 schema 版本／摘要、申请的 IO 类别、具有外部效果的 handler 名及预算。不能复用现有七种 `Capability` 的数值。保留旧 Manifest 的读取和原件编码；扩展主加载器不修改冻结目录里的历史 schema 副本。Registry 新版本存 IO 批准子集，与包选择及依赖锁同一次 CAS 提交；旧 v1 迁移为空 IO 批准，不恢复任何运行期引用。
 
-已实现声明类别：FileRead、FileList、FileCreate、FileReplace、FileDelete、HttpRequest、HttpListen、HttpPublish、CredentialUse、WebSocketConnect，具体数值见 io_manifest.proto。列举不由 read 推导，replace 不等于 create，delete 不由写权限隐含；出站、监听、发布和凭据使用分开批准。方法、目标与路径约束由后续资源授权收紧，不能从 HttpRequest 得到任意 URL 或凭据。识别类别并保存批准仅证明声明兼容；全部 IO 执行入口当前仍不可用，不将批准上限当作具体对象授权。
+已实现声明类别：FileRead、FileList、FileCreate、FileReplace、FileDelete、HttpRequest、HttpListen、HttpPublish、CredentialUse、WebSocketConnect，具体数值见 io_manifest.proto。列举不由 read 推导，replace 不等于 create，delete 不由写权限隐含；出站、监听、发布和凭据使用分开批准。方法、目标与路径约束由后续资源授权收紧，不能从 HttpRequest 得到任意 URL 或凭据。识别类别并保存批准仅证明声明兼容；后续已实现部分受管 IO 执行入口，但声明类别不等于所有后端已可用，也不能将批准上限当作具体对象授权。
 
 IO 运行期请求包含 version、schemaSha256、callId、resourceRef／jobRef、operation union；响应绑定**实际请求原帧** SHA、callId、稳定状态码、有界载荷及 EOF。宿主从实际连接确定调用者，不相信包 ID 或请求自报实例。引用由宿主随机生成，绑定 host、连接代次、包摘要、对象类别、权限、期限、预算；猜中引用值也不能跨连接调用。持久化只保留历史引用说明，不把它重新当有效授权。
 
@@ -58,7 +60,7 @@ IO 运行期请求包含 version、schemaSha256、callId、resourceRef／jobRef�
 
 ## 3. 宿主与 SDK API 草案
 
-以下 Manager／Pool 绑定入口已实现；IoBroker、Runner IO 执行与 Pool::run_io_task 仍是建议签名。`IoBinding`、`SelectedFile`、`AuthorizedEndpoint`、`ResourceRef`、`JobRef` 均不提供 guest 构造宿主授权的方法。
+以下为早期 API 草案；Manager／Pool、IoBroker 与 Runner 的部分受管 IO 已实现，实际签名和范围以当前源码及专项报告为准。`IoBinding`、`SelectedFile`、`AuthorizedEndpoint`、`ResourceRef`、`JobRef` 均不提供 guest 构造宿主授权的方法。
 
 ```rust
 // 可信本地；校验当前 Manager 选择与批准，绑定真实 Host/Connection/撤权信号。

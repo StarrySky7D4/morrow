@@ -1,0 +1,18 @@
+{
+  "files": {
+    "host-rows.json": "cc00a0b4be5f1f01e91663b0bf563bb9eec53068fb376d94effe272f7a4a727d",
+    "host.stderr": "6333a0b173b3cf5add42f82b32c96d739410918ad9787fb88ccec9ca96e0e52e",
+    "init.json": "d8b7c972e7b09e82898d6241f39d219ae381da199c52c340f9e7567216dede7a",
+    "launch.json": "2eacd5f177b593fc14996cbe4f7a4b325aa19e229bc0210c61142e9067b2d57c",
+    "locked-expectations.json": "284e9a3922f00ea9aba1e613bdf3afa34db93a12fd89e0f5ff44be602a251abd",
+    "operator-commands.json": "2e255d747b8e7d1ced5645556c4150419c4c60a1e096ba0e6b2682e4d2e1e945",
+    "profile/coordination.sqlite": "ec4d821a46ec9779915b24976661a38e11ccadf7fe9840b381f9c0afbdd3b39f",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "9b018a28c83f29d0b9c7d6975960b3bc8a1e52a381028b28f2924c03a2bb5de8",
+    "result.json": "2d01efa63f11a671814e7e8df3d5d5b8d80f248317b594afaed6bb781803dee1",
+    "server-events.json": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+  },
+  "plugin_files": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-001\\guest-evidence\\out\\m03-host-revoke-011\\20260929T213056059898Z\\fixture-spec.json": "88731ebe713e38334469ec22e0c7a3d595878190de5694b1af01a961004837c6"
+  }
+}

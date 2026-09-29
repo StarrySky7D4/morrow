@@ -1,0 +1,216 @@
+{
+  "status": "runner003_incremental_limited_ready_for_authorized_runtime",
+  "manifest_sha256": "d3ab74809a7bb56472e9999a8b5280e7962c94cb8df2d69d7e912dab0ff20e53",
+  "runner_sha256": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0",
+  "source_files": {
+    "tool/m03_passive_fault_005.py": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0",
+    "tool/tests/test_m03_passive_fault.py": "fe437f0f3fa418b2d34b3b526e742ce7c6e863418556947dacc068bb4a592655",
+    "tool/m03_passive_fault_freeze_005.py": "087d793c7f8e19ed4cbf5a66592fe08607843113da4df5ca92826cf39b214ab5"
+  },
+  "only_changed_runner_function": [
+    "seal_result"
+  ],
+  "host_current_and_snapshot_sources": 270,
+  "guest_current_inputs": 78,
+  "producer_pure_tests": 13,
+  "independent_pure_cases": {
+    "success": {
+      "seal_return": true,
+      "result": {
+        "qualification_result": "expected_fault_observed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown"
+      },
+      "exit_code": 0,
+      "files": {
+        "evidence-manifest.json": "887a0c2c52c51dd224fd9e897731fddfacfd8f5fc1d8fde4284b447d408596f6",
+        "result.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0"
+      }
+    },
+    "hash-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic unreadable evidence')"
+      },
+      "exit_code": 1,
+      "files": {
+        "result.json": "5320b89c37cdb3f401b126b2b061553933df192baa0b3287d460cead041839ad",
+        "seal-failure.json": "85b5ccfde2c596105006add440f44da2c71bc55ee73a525948aa46f08a32029b"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic unreadable evidence')",
+        "publication_failed": true
+      }
+    },
+    "manifest-postwrite-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic write-close error after bytes exist')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.pending.json": "bd373a93a5c55327880254d8d800082facde4960f18234a76af7f9e85d99fe2c",
+        "result.json": "e1c6a51618d62e8f51fe7475bfd6bcb893654082abb6a46a7c50807cd1729f38",
+        "seal-failure.json": "d1ccc7837c9002c6d7df90ca370ac0de7f42d44dabf8316fc5726b19d6b838d6"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic write-close error after bytes exist')",
+        "publication_failed": true
+      }
+    },
+    "result-postwrite-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic write-close error after bytes exist')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.pending.json": "105fe21e4377757b8ef7d3f7e144a8eb1fe779da8f9bd1cccdffa018f6ecea70",
+        "result.json": "e1c6a51618d62e8f51fe7475bfd6bcb893654082abb6a46a7c50807cd1729f38",
+        "result.pending.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0",
+        "seal-failure.json": "d1ccc7837c9002c6d7df90ca370ac0de7f42d44dabf8316fc5726b19d6b838d6"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic write-close error after bytes exist')",
+        "publication_failed": true
+      }
+    },
+    "manifest-prerename-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic rename refused')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.pending.json": "c54bf906ec6dfb6f1a78c4b37bfb378972316a4f7b528b7a650dee575182b273",
+        "result.json": "2b76402ffe71a4ad6ed0d14295c77e7d630297cad36ebcde579a67ee865e691e",
+        "result.pending.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0",
+        "seal-failure.json": "8b971bf37aef7c19b436cd20ae5ae9166e568d79ce09114c779f71659fc7e878"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic rename refused')",
+        "publication_failed": true
+      }
+    },
+    "manifest-postrename-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic error after actual rename')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.json": "4fc9cfa418e2205ad6e4099c836434e40c032e30ee0d50aaf97d2c7c823816aa",
+        "result.json": "85a838e0d34c235885c4ecf874db117a589ff2345d70e56ead3ec118144e055d",
+        "result.pending.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0",
+        "seal-failure.json": "a4e26b7415326137cedbab9a9c73a93a43e996a9ab38cbe1d5f21b6564fbbecb"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic error after actual rename')",
+        "publication_failed": true
+      }
+    },
+    "result-prerename-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic rename refused')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.json": "84e3dc6c6965455c3a1be66a3b0eb32283b56a1a0fde2093d44850a5c38093ac",
+        "result.json": "2b76402ffe71a4ad6ed0d14295c77e7d630297cad36ebcde579a67ee865e691e",
+        "result.pending.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0",
+        "seal-failure.json": "8b971bf37aef7c19b436cd20ae5ae9166e568d79ce09114c779f71659fc7e878"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic rename refused')",
+        "publication_failed": true
+      }
+    },
+    "result-postrename-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic error after actual rename')"
+      },
+      "exit_code": 1,
+      "files": {
+        "evidence-manifest.json": "5e146592f4e8baa605225621ef1c9951c5ecde8f91307babd9039d1e1099928e",
+        "result.json": "85a838e0d34c235885c4ecf874db117a589ff2345d70e56ead3ec118144e055d",
+        "result.rejected.json": "5edeb059f48d50afebe94076ef825148c865e3c74fe7039d2d27c8ee94ab52d0",
+        "seal-failure.json": "a4e26b7415326137cedbab9a9c73a93a43e996a9ab38cbe1d5f21b6564fbbecb"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic error after actual rename')",
+        "publication_failed": true
+      }
+    },
+    "already-failed-hash-error": {
+      "seal_return": false,
+      "result": {
+        "qualification_result": "failed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "actual_error_retained": "partial frame Unknown",
+        "evidence_seal_error": "OSError('synthetic unreadable evidence')"
+      },
+      "exit_code": 1,
+      "files": {
+        "result.json": "ea9e2900c161bb3188c16780d4f725805a8e203f99d90959cfc6e981bc018958",
+        "seal-failure.json": "85b5ccfde2c596105006add440f44da2c71bc55ee73a525948aa46f08a32029b"
+      },
+      "failure_marker": {
+        "status": "unconfirmed",
+        "qualification_valid": false,
+        "error": "OSError('synthetic unreadable evidence')",
+        "publication_failed": true
+      }
+    }
+  },
+  "development_injection_attempt_preserved": "synthetic-seal-cases: local test closure selected the final filename instead of pending; repaired test in v2, not a producer defect",
+  "http_requests": 0,
+  "host_guest_launched": false,
+  "sdk_frozen": false,
+  "product_accepted": false
+}

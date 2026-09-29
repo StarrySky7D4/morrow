@@ -1,0 +1,21 @@
+syntax = "proto3";
+package morrow.file_content_receipt.v1;
+
+// A historical observation of retained file bytes, never an authorization or
+// proof that an external filesystem change was committed.
+message Receipt {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes content_sha256 = 5;
+  bytes content_container_sha256 = 6;
+  uint64 content_length = 7;
+  Source source = 8;
+}
+
+enum Source {
+  SOURCE_UNSPECIFIED = 0;
+  LIVE_STAGING = 1;
+  LEGACY_IMPORT = 2;
+}

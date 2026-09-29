@@ -601,17 +601,38 @@ def package_arguments(config):
 
 def pack_project(args):
     loaded = project(args.path)
-    root, config, _ = loaded
+    root, config, _, sdk_root, lock = preflight_project(args, loaded)
+    # Pin SDK selection and lock before compilation, not after it. A concurrent
+    # explicit re-lock must not qualify an artifact built against earlier inputs.
     # Always require a successful build in this invocation. Never pick a previous module/package by mtime.
     module = compile_project(args, loaded)
     if project(args.path)[1] != config:
         raise ToolError("project metadata changed during build; run pack again")
+    # The package tools are separate processes. Keep a receipt for the inputs
+    # they are about to consume, then recheck it before publishing a candidate.
+    module_bytes = module.read_bytes()
+    module_digest = hashlib.sha256(module_bytes).digest()
+    _, _, _, built_sdk, built_lock = preflight_project(args)
+    if built_sdk != sdk_root or built_lock != lock:
+        raise sdk_lock.SdkLockError("SDK selection or lock changed during build; candidate was not qualified")
     build = child(root, "build", output=True)
     with tempfile.TemporaryDirectory(prefix="package-", dir=build) as temporary:
+        frozen_module = Path(temporary) / "module.wasm"
+        with frozen_module.open("xb") as stream:
+            stream.write(module_bytes)
         candidate = Path(temporary) / "candidate.mplugin"
         plugin = config["plugin"]
-        print(host_tool("plugin_package", ["pack-v2", module, candidate, plugin["id"], plugin["version"], *package_arguments(config)], args), end="")
+        print(host_tool("plugin_package", ["pack-v2", frozen_module, candidate, plugin["id"], plugin["version"], *package_arguments(config)], args), end="")
         print(host_tool("plugin_check", ["check", candidate], args), end="")
+        current_root, current_config, _, current_sdk, current_lock = preflight_project(args)
+        if current_root != root or current_config != config or current_sdk != sdk_root:
+            raise ToolError("project metadata or SDK selection changed during packaging; run pack again")
+        if current_lock != lock:
+            raise sdk_lock.SdkLockError("SDK lock changed during packaging; candidate was not qualified")
+        if hashlib.sha256(frozen_module.read_bytes()).digest() != module_digest:
+            raise ToolError("Wasm packaging snapshot changed; run pack again")
+        if hashlib.sha256(module.read_bytes()).digest() != module_digest:
+            raise ToolError("Wasm module changed during packaging; run pack again")
         data = candidate.read_bytes(); digest = hashlib.sha256(data).hexdigest()
         destination = child(root, "dist", output=True)
         print(host_tool("plugin_package", ["install", candidate, destination], args), end="")

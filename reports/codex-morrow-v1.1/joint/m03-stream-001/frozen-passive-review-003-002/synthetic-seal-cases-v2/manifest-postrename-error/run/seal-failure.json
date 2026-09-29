@@ -1,0 +1,6 @@
+{
+  "status": "unconfirmed",
+  "qualification_valid": false,
+  "error": "OSError('synthetic error after actual rename')",
+  "publication_failed": true
+}

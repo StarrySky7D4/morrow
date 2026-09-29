@@ -1,0 +1,33 @@
+{
+  "kind": "joint-frozen-passive-implementation-review-003-001",
+  "http_requests": 0,
+  "files": {
+    "guest-manifest.json": "b810526cfac7c0123fa3d8ce27e59f15724abec5888891ac104aef2192f38106",
+    "host-build-receipt.json": "6ebc568a91d6f2fcf9a76cbca0e16ff7b7d234bed5fdd2a721e4d91046793fb1",
+    "host-cli-receipt.json": "910d75af52af08d85aaed508e6ede0235c6d82e997b4229d2adf1fa0694ca6a4",
+    "host-manifest.json": "82de408a5f2307c8c592202de59cafc5e4fa874d42d2d3cf85d279f58a2a5696",
+    "input-verification.json": "a4bdbb269aacaaf0b605d214c447e1e29cac6ae5004b29c0f69ec463f15135e5",
+    "local-pipe-evidence.json": "2075be1290f1114b2abf2de4568ab7233b550b50d6578d5da990823c80066a69",
+    "local-pipe-frame-decoded.json": "361af188a3e26a9b779fa9061ba89dc520b3668e0cc590cb2d3a275947a5f9ab",
+    "m03-fixture-003-host-interface-002.md": "b8c4e304fe75e8358a7803090c8ab7fe28592dfbef449acb22efd8093443c50a",
+    "m03-fixture-003-host-ready-001.md": "8e2790a18ed35f355cb3c7be2f1d02005b39affbf32bff1b14ac2e58070d59a6",
+    "receipt-checks.json": "6a624accf97d408fb3fa34b2a8e7a3dcbe3a07066964b889f325825ce39aaa51",
+    "result.json": "a054523055994869919472a1e12cc8801cf7e0ba2465adb360425cc1aa7c5f55",
+    "review.md": "ad5708102a6a241604eb65fa51e858aaaf84f6c14cf03f76fe41b83f8b385c71",
+    "runner-002-manifest.json": "60e2687cd895c3639dccc7d544f420c84e508b3ec0e7f590ba0f33fbaac985ed",
+    "runner-002-pure-seal-cases/hash-failure/guest/synthetic.json": "ca2cef5d003b5c2e8cc2ec6519af9db00ee07533cd72ba925164cf9fdbbb5882",
+    "runner-002-pure-seal-cases/hash-failure/run/result.json": "6eec6033eacbc029516897b3239fa54d25b83f7f63d7f7d3729aae0f3131893a",
+    "runner-002-pure-seal-cases/result-write-close-failure/guest/synthetic.json": "ca2cef5d003b5c2e8cc2ec6519af9db00ee07533cd72ba925164cf9fdbbb5882",
+    "runner-002-pure-seal-cases/result-write-close-failure/run/evidence-manifest.json": "311e85d7f9c3b231e0ae39be8abd57419819ef5196e9b10e9ad5ee2316108f67",
+    "runner-002-pure-seal-cases/result-write-close-failure/run/result.json": "897a3a7a47e14a1f12724d1e8222f776ba741a8a1e6f2b38134fc0ebe0c980a9",
+    "runner-002-pure-seal-cases/success/guest/synthetic.json": "ca2cef5d003b5c2e8cc2ec6519af9db00ee07533cd72ba925164cf9fdbbb5882",
+    "runner-002-pure-seal-cases/success/run/evidence-manifest.json": "0e212963249307fdb94a8ab188dd5d5931f8a0d840d47c23b15b991900268f8c",
+    "runner-002-pure-seal-cases/success/run/result.json": "897a3a7a47e14a1f12724d1e8222f776ba741a8a1e6f2b38134fc0ebe0c980a9",
+    "runner-002-review.json": "3d1ea4512067512534d60ec83dd62fa7d06c9684f738fe9b16db0d1862b36258",
+    "runner-blocker-reproductions.json": "3bfa4f1d72904a6ee6b2157aae25d16212f179cd0571f1c26b62e136255e89cd",
+    "runner-manifest.json": "2efb2778a5adb1b26d841681711692a579a8e5ccc49133f9e4e8fa5782818dc8",
+    "verify_audit.py": "54a2ac3fc136904808d1cf760795c843e478bc7db7cb55cdd352767b5851ad00",
+    "verify_runner_002.py": "25c2080f7c1766a4f2885e7fbbd7e5b95d52eccea81a2b01ac57c41a9be12ba5"
+  },
+  "input_status": "host270/guest78 unchanged; runner001/002 frozen snapshots retained"
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+package test.future;
+message Card {
+  uint32 schema_version = 1;
+  string id = 2;
+  string type_id = 3;
+  uint32 format_version = 4;
+  uint64 revision = 5;
+  string title = 6;
+  bytes body = 7;
+  Preview preview = 10;
+  enum Status { UNSET = 0; KNOWN = 1; }
+  Status status = 100;
+  oneof future_body { bytes rich_document = 101; string formula = 102; }
+}
+message Preview {
+  string plain_text = 1;
+  string image_blob_id = 2;
+  bytes future_metadata = 100;
+}

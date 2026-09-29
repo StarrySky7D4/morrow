@@ -1,0 +1,143 @@
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling stable_deref_trait v1.2.1
+   Compiling smallvec v1.16.1
+   Compiling cfg-if v1.0.5
+   Compiling windows-link v0.2.1
+   Compiling parking_lot_core v0.9.12
+   Compiling pin-project-lite v0.2.17
+   Compiling bytes v1.12.1
+   Compiling windows-sys v0.61.2
+   Compiling scopeguard v1.2.0
+   Compiling futures-core v0.3.34
+   Compiling find-msvc-tools v0.1.13
+   Compiling shlex v2.0.1
+   Compiling lock_api v0.4.14
+   Compiling itoa v1.0.18
+   Compiling litemap v0.8.3
+   Compiling writeable v0.6.4
+   Compiling icu_normalizer_data v2.3.0
+   Compiling icu_properties_data v2.3.0
+   Compiling utf8_iter v1.0.4
+   Compiling parking_lot v0.12.5
+   Compiling cc v1.4.7
+   Compiling once_cell v1.21.4
+   Compiling slab v0.4.12
+   Compiling percent-encoding v2.3.2
+   Compiling zeroize v1.9.0
+   Compiling http v1.5.0
+   Compiling futures-task v0.3.34
+   Compiling rustls-pki-types v1.15.1
+   Compiling getrandom v0.2.17
+   Compiling untrusted v0.9.0
+   Compiling httparse v1.10.1
+   Compiling libc v0.2.189
+   Compiling serde_core v1.0.229
+   Compiling syn v2.0.119
+   Compiling syn v3.0.6
+   Compiling tower-service v0.3.3
+   Compiling http-body v1.1.0
+   Compiling rustls v0.23.43
+   Compiling try-lock v0.2.5
+   Compiling want v0.3.1
+   Compiling form_urlencoded v1.2.2
+   Compiling tracing-core v0.1.36
+   Compiling futures-channel v0.3.33
+   Compiling subtle v2.6.1
+   Compiling serde v1.0.229
+   Compiling atomic-waker v1.1.2
+   Compiling tracing v0.1.44
+   Compiling sync_wrapper v1.0.2
+   Compiling base64 v0.22.1
+   Compiling tower-layer v0.3.3
+   Compiling ring v0.17.14
+   Compiling ipnet v2.12.1
+   Compiling webpki-roots v1.0.9
+   Compiling ryu v1.0.23
+   Compiling bitflags v2.13.2
+   Compiling futures-sink v0.3.33
+   Compiling http-body-util v0.1.4
+   Compiling mio v1.2.2
+   Compiling socket2 v0.6.5
+   Compiling log v0.4.34
+   Compiling serde_urlencoded v0.7.1
+   Compiling synstructure v0.13.2
+   Compiling zerovec-derive v0.11.6
+   Compiling displaydoc v0.2.7
+   Compiling tokio-macros v2.7.2
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling futures-macro v0.3.33
+   Compiling tokio v1.53.1
+   Compiling futures-util v0.3.33
+   Compiling zerofrom v0.1.8
+   Compiling yoke v0.8.3
+   Compiling rustls-webpki v0.103.15
+   Compiling zerovec v0.11.8
+   Compiling zerotrie v0.2.5
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling icu_collections v2.3.0
+   Compiling icu_locale_core v2.3.0
+   Compiling icu_provider v2.3.1
+   Compiling icu_normalizer v2.3.0
+   Compiling icu_properties v2.3.0
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling url v2.5.8
+   Compiling hyper v1.11.0
+   Compiling tower v0.5.3
+   Compiling tokio-util v0.7.19
+   Compiling tokio-rustls v0.26.4
+   Compiling tower-http v0.6.11
+   Compiling hyper-util v0.1.20
+   Compiling hyper-rustls v0.27.9
+   Compiling reqwest v0.12.28
+   Compiling morrow-network-node-stream v0.1.0 (C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\network_node_stream_001)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 16.68s
+     Running unittests src\lib.rs (target\m03-partial-write-003\debug\deps\morrow_network_node_stream-bbd05013264a86b1.exe)
+
+running 5 tests
+test stream::delivery_tests::queued_chunk_is_not_delivered_after_cancel ... ok
+test stream::delivery_tests::cancellation_during_pending_wait_is_checked_before_delivery ... ok
+test stream::delivery_tests::live_delivery_and_previously_observed_eof_are_preserved ... ok
+test stream::delivery_tests::queued_chunk_is_not_delivered_after_original_deadline ... ok
+test stream::delivery_tests::queued_chunk_rechecks_guard_and_revocation_is_sticky ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\client.rs (target\m03-partial-write-003\debug\deps\client-6a3d265e996980bd.exe)
+
+running 10 tests
+test origin_policy_is_exact_and_local_http_is_loopback_only ... ok
+test unapproved_origin_method_and_sensitive_framing_fail_before_connect ... ok
+test default_dns_policy_rejects_localhost_even_for_https_before_network_io ... ok
+test redirect_is_returned_without_contacting_second_origin ... ok
+test raw_response_preserves_obs_text_while_text_api_remains_strict ... ok
+test request_and_response_budgets_cover_known_and_streaming_lengths ... ok
+test http_error_status_is_a_response_not_transport_failure ... ok
+test all_approved_methods_preserve_body_and_duplicate_headers ... ok
+test connection_closed_without_response_does_not_retry_or_leak_diagnostic ... ok
+test cancellation_timeout_and_concurrency_are_bounded_and_release_permits ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.10s
+
+     Running tests\stream.rs (target\m03-partial-write-003\debug\deps\stream-454c3e399a964f0e.exe)
+
+running 6 tests
+test live_guard_revocation_is_checked_even_without_consumer_demand ... ok
+test response_limit_streaming_unknown_length_and_small_delivery_chunks ... ok
+test cancel_pending_body_read_and_cancelled_next_future_do_not_lose_demand ... ok
+test dropping_head_future_and_lease_cancels_owned_worker_without_false_join_receipt ... ok
+test original_deadline_expires_while_waiting_for_demand_and_does_not_renew_at_head ... ok
+test first_chunk_precedes_server_eof_and_permit_survives_head_and_eof ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06s
+
+   Doc-tests morrow_network_node_stream
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

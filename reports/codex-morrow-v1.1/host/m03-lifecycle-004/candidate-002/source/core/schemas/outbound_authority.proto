@@ -1,0 +1,40 @@
+syntax = "proto3";
+package morrow.outbound_authority.v1;
+// Host-owned outbound HTTP approval data. Does not restore a live IO grant.
+message Record {
+  uint32 schema_version = 1;
+  bytes reference = 2;
+  uint64 revision = 3;
+  uint64 created_ms = 4;
+  uint64 expires_ms = 5;
+  bool disabled = 6;
+  oneof kind {
+    Credential credential = 7;
+    Endpoint endpoint = 8;
+  }
+}
+message Credential {
+  string provider = 1;
+  bytes ciphertext = 2;
+}
+enum Profile {
+  PROFILE_UNSPECIFIED = 0;
+  PROFILE_PUBLIC_HTTPS = 1;
+  PROFILE_LOOPBACK_HTTP = 2;
+  PROFILE_LOOPBACK_HTTPS = 3;
+}
+message Endpoint {
+  string package_id = 1;
+  bytes package_sha256 = 2;
+  string origin = 3;
+  Profile profile = 4;
+  repeated string methods = 5;
+  bytes credential_reference = 6;
+  bytes root_certificate = 7;
+  uint64 max_request_bytes = 8;
+  uint64 max_response_bytes = 9;
+  uint64 max_header_bytes = 10;
+  uint32 max_concurrent = 11;
+  uint64 timeout_ms = 12;
+  uint64 max_frame_bytes = 13;
+}

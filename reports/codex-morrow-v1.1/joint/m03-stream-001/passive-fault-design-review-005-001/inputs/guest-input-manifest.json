@@ -1,0 +1,164 @@
+{
+  "status": "proposal_inputs_only",
+  "first_capture_utc": "2026-09-29T21:40:55.674711+00:00",
+  "verified_utc": "2026-09-29T21:49:00.346375+00:00",
+  "roots": {
+    "plugin": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex",
+    "host-read-only": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor"
+  },
+  "inputs": [
+    {
+      "scope": "plugin",
+      "path": "receipts/m03-fixture-002/native-candidate-fixture-002.json",
+      "bytes": 14244,
+      "sha256": "6a8d4d07aab156d72f5fce73dea7750f8b5424707dae84595182ff7f55c211a5",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "receipts/m03-fixture-002/fixture-interface.md",
+      "bytes": 2908,
+      "sha256": "9e81cd42d234e556d0665a851022ee07796f0e3d4966a5de022067441ad3cb4e",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "receipts/m03-fixture-001/fixture-interface.md",
+      "bytes": 6512,
+      "sha256": "4853569274892ca0a1c26f9204f7c324dbbc6509c687e59814ba1126b1f15064",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "receipts/m03-continuation-review-001/review.md",
+      "bytes": 4039,
+      "sha256": "047ac1b0064147d16a8c7d498a1682653854c7182726999ba5c0e30f068ad530",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "native/m03-fixture-002/src/main.rs",
+      "bytes": 10539,
+      "sha256": "c86ab95aad618db4ed124289815b27f0ef14367910c909cc61246bda664082f3",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "native/m03-fixture-002/src/admission.rs",
+      "bytes": 13781,
+      "sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "native/m03-fixture-002/src/session.rs",
+      "bytes": 86211,
+      "sha256": "0db7e61184227d558efe7ebc28809ecb13870062545a08e35d0b349d7a906c96",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "native/m03-fixture-002/src/workers.rs",
+      "bytes": 29319,
+      "sha256": "f4d67053ca8e8f0aaf53095517419130ad3212ee1a38aa6572715e6ae2248d14",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "qualification/m03-fixture-002/src/fixture.rs",
+      "bytes": 16617,
+      "sha256": "81068e8383fef97efedc1f527152b32848258032a76651d30bfacf0bd971baf9",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "qualification/m03-fixture-002/src/request_task.rs",
+      "bytes": 22779,
+      "sha256": "d6a15eea3fe2e1c9a91f072c0609caa17bf273004dba95f122c2a0bc3f28bbf8",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "qualification/m03-fixture-002/src/limits.rs",
+      "bytes": 872,
+      "sha256": "aa6ae58e61fb7c62038fd6d7c5c1eec1b6af0998d6e4711bfd8342f98376f5e9",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "upstream/m03-stream-001/wire-kit-001/source/native_http.capnp",
+      "bytes": 3672,
+      "sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "native_session_stream_001/src/pipe_driver.rs",
+      "bytes": 20255,
+      "sha256": "341a1cbdb200003a2ed6ce5958f39b625aeaf09cfdff3d899637db80219189ca",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "native_session_stream_001/src/supervisor.rs",
+      "bytes": 46095,
+      "sha256": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "native_session_stream_001/src/http_authority.rs",
+      "bytes": 20378,
+      "sha256": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "native_session_stream_001/src/write_state.rs",
+      "bytes": 6880,
+      "sha256": "661bcf7a07d760c9bd9a50a375fa7123392bf345639becef5d7e1b48bfbaace4",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "network_node_stream_001/src/stream.rs",
+      "bytes": 12350,
+      "sha256": "2ccc6ac200871aca66f3634854a18d4dc62da038ad5a7b931901caf6c040a083",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "contracts/experimental/agent_host_v3_http_stream/native_http.capnp",
+      "bytes": 3672,
+      "sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "host-read-only",
+      "path": "tool/m03_revoke_barriers_011.py",
+      "bytes": 40293,
+      "sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+      "stable_across_proposal_write": true
+    },
+    {
+      "scope": "plugin",
+      "path": "native/m03-fixture-002/src/delivery.rs",
+      "bytes": 7779,
+      "sha256": "c2e2dc4b19407bdff9d0c8c457fa8221850fb1d9fbe0569139dc6914f7e0c82e",
+      "stable_across_proposal_write": null,
+      "note": "Additional credit/delivery source read during proposal review; not part of initial 19-file capture"
+    }
+  ],
+  "frozen_fixture002_matching_selected_inputs": [
+    "receipts/m03-fixture-002/fixture-interface.md",
+    "native/m03-fixture-002/src/main.rs",
+    "native/m03-fixture-002/src/admission.rs",
+    "native/m03-fixture-002/src/session.rs",
+    "native/m03-fixture-002/src/workers.rs",
+    "qualification/m03-fixture-002/src/fixture.rs",
+    "qualification/m03-fixture-002/src/request_task.rs",
+    "qualification/m03-fixture-002/src/limits.rs",
+    "native/m03-fixture-002/src/delivery.rs"
+  ],
+  "scope_limit": "Selected inputs only; no recursive historical receipt/binary audit"
+}

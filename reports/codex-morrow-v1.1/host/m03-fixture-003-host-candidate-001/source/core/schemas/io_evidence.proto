@@ -1,0 +1,15 @@
+syntax = "proto3";
+package morrow.io_evidence.v1;
+// Fixed protected IO originals. Historical material, never a live dispatch
+// permit, credential store, or proof of remote success.
+message Material {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  uint32 kind = 4;
+  bytes request_sha256 = 5;
+  bytes payload_sha256 = 6;
+  uint64 payload_bytes = 7;
+  bytes payload = 8;
+}
+enum Kind { INVALID_KIND = 0; REQUEST = 1; RESPONSE = 2; }

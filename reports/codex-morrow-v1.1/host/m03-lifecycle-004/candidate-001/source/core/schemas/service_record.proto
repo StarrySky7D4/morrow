@@ -1,0 +1,14 @@
+syntax = "proto3";
+package morrow.service_record.v1;
+// Historical inbound service request, not authentication or a resend permit.
+// Raw idempotency keys are deliberately absent. Retention expiry never erases
+// operation identity or authorizes repeating a previously dispatched operation.
+message RequestRecord {
+  uint32 schema_version = 1;
+  bytes namespace = 2;
+  bytes key_sha256 = 3;
+  uint64 created_ms = 4;
+  uint64 expires_ms = 5;
+  uint64 retention_ms = 6;
+  bytes request_frame = 7;
+}

@@ -1,0 +1,100 @@
+{
+  "status": "candidate002_and_two_producer_runs_independently_reviewed_pass",
+  "candidate": {
+    "status": "saved_candidate_bindings_verified",
+    "manifest_sha256": "fa206f562d30b59686fcb7abfad7ff84467a0b7659f7a32db343cd782f4c2a13",
+    "host_exe_sha256": "4661e2051da9770f9d040f386b3e7f26b3878670c274791244da0ce28bad756a",
+    "current_and_snapshot_source_count": 263,
+    "before_after_sources_equal": true,
+    "producer_library_tests": 28,
+    "reviewer_builds_or_tests": 0,
+    "runtime_cases_bound": [
+      {
+        "mode": "core-revoke",
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\runs\\revoke-011-core-revoke-20260929T213241184115Z",
+        "binding_sha256": "cc6a3b06d2051d7c97b60f8c50d73091bf2fec4da52db441efc7ff54fea95267"
+      },
+      {
+        "mode": "data-pending",
+        "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\runs\\revoke-011-data-pending-20260929T213307996034Z",
+        "binding_sha256": "fd8cb501f4c3d993f87ace3c14bc61ba5343c3a3a5c10e27825b16b621d32fd9"
+      }
+    ],
+    "old_candidate001_still_failed": true,
+    "old_candidate001_post_count": 0,
+    "candidate001_002_changed_sources": [
+      "tool/m03_lifecycle_004.py"
+    ],
+    "fixed_helpers_and_fixture_unchanged": true,
+    "original_deadline_chain_qualified": false,
+    "nonzero_short_completion_qualified": false,
+    "product_gate_upgrade": false,
+    "sdk_frozen": false
+  },
+  "A": {
+    "status": "lifecycle004_candidate002_producer_run_independently_reviewed_pass",
+    "post_count": 1,
+    "request_bytes": 22025,
+    "response_bytes": 197,
+    "host_ack_upper_bound_ms": 15.3024,
+    "first_reason": "HostCancelled",
+    "data_first_pause": true,
+    "original_targets_suppressed": true,
+    "zero_credit_ack_before_close": true,
+    "cleanup_acknowledged_offset": 197,
+    "guest_data_joined": true,
+    "control_clean": true,
+    "aggregate": "Unknown",
+    "host_exit": 0,
+    "guest_exit": 2,
+    "durable_owner_released": true,
+    "independent_http_runs": 0,
+    "B_run": false,
+    "old_A010_still_failed": true,
+    "product_gate_upgrade": false
+  },
+  "B": {
+    "status": "lifecycle004_candidate002_producer_run_independently_reviewed_pass",
+    "post_count": 1,
+    "request_bytes": 22025,
+    "write_operation": {
+      "id": 12,
+      "issue_ordinal": 3,
+      "body_end": 1024,
+      "frame_offset": 0,
+      "requested_bytes": 1364,
+      "initial_pending": true
+    },
+    "three_incomplete_samples": true,
+    "sample_gaps_ms": [
+      26.23,
+      25.3732
+    ],
+    "cancel_probe_incomplete": true,
+    "actual_reap_error": 995,
+    "actual_reap_bytes": 0,
+    "read_issue_count": 2,
+    "parser_and_peer_consumed": 0,
+    "host_ack_upper_bound_ms": 15.2742,
+    "cleanup_ok": true,
+    "actual_data_join": true,
+    "control_and_other_joins": true,
+    "control_clean": true,
+    "host_exit": 0,
+    "guest_exit": 2,
+    "durable_owner_released": true,
+    "independent_http_runs": 0,
+    "retries": 0,
+    "new_fault_scenarios_run": false,
+    "product_gate_upgrade": false
+  },
+  "control_frames_decoded_per_case": {
+    "core-revoke": 21,
+    "data-pending": 21
+  },
+  "independent_runtime_or_http_runs": 0,
+  "old_candidate001_still_failed": true,
+  "old_A010_still_failed": true,
+  "overall_M03_gate_upgraded": false,
+  "sdk_frozen": false
+}

@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\tool\m03_lifecycle_004.py", line 193, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\tool\m03_lifecycle_004.py", line 189, in main
+    return execute(args.manifest, args.manifest_sha256, args.case)
+  File "C:\Users\Administrator\Desktop\CodeXProjext\morrow\build\io-safety-refactor\tool\m03_lifecycle_004.py", line 131, in execute
+    assert sha(manifest_path) == expected_hash, "candidate manifest drift"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: candidate manifest drift

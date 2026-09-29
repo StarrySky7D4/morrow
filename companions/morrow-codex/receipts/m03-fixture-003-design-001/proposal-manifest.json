@@ -1,0 +1,37 @@
+{
+  "status": "fixture003_design_proposal_only",
+  "created_utc": "2026-09-29T21:49:00.346375+00:00",
+  "root": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001",
+  "artifacts": [
+    {
+      "path": "design.md",
+      "bytes": 13503,
+      "sha256": "ff2d44c5b9e46b6181a34acd21c2ca032bb15820c824d429e4269460713956e4"
+    },
+    {
+      "path": "interfaces.md",
+      "bytes": 11897,
+      "sha256": "24a37ab335c8ec770be55a33f763ad5a31addca80918a9200caf2ee3188e52ae"
+    },
+    {
+      "path": "scenario-specs.example.json",
+      "bytes": 1866,
+      "sha256": "783b30b0d511b6769c9e748fe3a49ee1405591455c4198cc978a530ef7513a49"
+    },
+    {
+      "path": "input-manifest.json",
+      "bytes": 6104,
+      "sha256": "0d93244e879508211e923e3381c130173664e51a31b8a2a1df71fe6e72785874"
+    },
+    {
+      "path": "proposal-check.json",
+      "bytes": 1014,
+      "sha256": "02b7415ff5b6cf8cadb4a6ccdb86b689418b9aa4c085a56907bac393ccbc80bf"
+    }
+  ],
+  "self_hash_excluded": true,
+  "fixture002_manifest_sha256": "6a8d4d07aab156d72f5fce73dea7750f8b5424707dae84595182ff7f55c211a5",
+  "wire_schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+  "runtime_qualified": false,
+  "product_accepted": false
+}

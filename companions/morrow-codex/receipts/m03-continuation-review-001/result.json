@@ -1,0 +1,53 @@
+{
+  "status": "plugin_source_compatibility_review_complete",
+  "reviewed_source_count": 13,
+  "schema_matches_frozen_guest": true,
+  "guest_source_companion_comparisons": [
+    {
+      "path": "native/m03-fixture-002/src/admission.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "native/m03-fixture-002/src/session.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "native/m03-fixture-002/src/workers.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "native/m03-fixture-002/src/delivery.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "native/m03-fixture-002/src/main.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "qualification/m03-fixture-002/src/fixture.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "qualification/m03-fixture-002/src/driver.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    },
+    {
+      "path": "qualification/m03-fixture-002/src/network.rs",
+      "active_host_copy_exists": true,
+      "active_host_copy_matches": true
+    }
+  ],
+  "runtime_qualified": false,
+  "new_tests_run": false,
+  "http_run": false,
+  "frozen_fixture002_modified": false,
+  "old_batches_regraded": false,
+  "remaining": "current-host full runtime and separate fault qualification; no SDK freeze"
+}

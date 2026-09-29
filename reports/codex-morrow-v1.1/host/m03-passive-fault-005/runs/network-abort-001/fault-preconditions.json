@@ -1,0 +1,114 @@
+{
+  "delivered": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "event": {
+        "bytes": 14,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "fcf08bf70ee21a9724db4131d417dd99ab62bedc2e2286e0d2d4e19bfac735ca",
+        "stream_ordinal": 3
+      },
+      "gate_cancelled": false
+    },
+    "elapsed_ns": 1149731700,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 20328,
+      "epoch": 1,
+      "host_execution_config_sha256": "68982cf934e8737ccdb0db1c89ceb76a8b825fcc177aec923d621116c03fac13",
+      "operation_id_sha256": "a3ee8a642c6cf725c5182b2b6cf3c98c06da72020b376d6e929d021754b71a47",
+      "session": 6840780699725674207
+    },
+    "kind": "core_event_delivered",
+    "mode": "passive-observe",
+    "nonce": "4dcc2c102b898567aca2982d6ab8b5d11d8fd94a2bf14be87d08c501691e0f0f",
+    "ordinal": 9,
+    "scenario": "network-abort",
+    "spec_sha256": "adeeb22f4570e11f296b6db81244b7e85d64380ed0ae5e1296cb06d8b76d0fb3"
+  },
+  "head": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "frames_index": 20,
+      "generation": 1,
+      "kind": "ResponseHead",
+      "sequence": 0,
+      "status": 200
+    },
+    "elapsed_ns": 1113662100,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 20328,
+      "epoch": 1,
+      "host_execution_config_sha256": "68982cf934e8737ccdb0db1c89ceb76a8b825fcc177aec923d621116c03fac13",
+      "operation_id_sha256": "a3ee8a642c6cf725c5182b2b6cf3c98c06da72020b376d6e929d021754b71a47",
+      "session": 6840780699725674207
+    },
+    "kind": "response_head_accepted",
+    "mode": "passive-observe",
+    "nonce": "4dcc2c102b898567aca2982d6ab8b5d11d8fd94a2bf14be87d08c501691e0f0f",
+    "ordinal": 2,
+    "scenario": "network-abort",
+    "spec_sha256": "adeeb22f4570e11f296b6db81244b7e85d64380ed0ae5e1296cb06d8b76d0fb3"
+  },
+  "parser": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "body_frame_index": 25,
+      "consumed_offset": 138,
+      "credit_sequence": null,
+      "drain_discarded_bytes": 0,
+      "error_body_consumed_bytes": 0,
+      "io_index": 15,
+      "parser_yielded_bytes": 138
+    },
+    "elapsed_ns": 1149330600,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 20328,
+      "epoch": 1,
+      "host_execution_config_sha256": "68982cf934e8737ccdb0db1c89ceb76a8b825fcc177aec923d621116c03fac13",
+      "operation_id_sha256": "a3ee8a642c6cf725c5182b2b6cf3c98c06da72020b376d6e929d021754b71a47",
+      "session": 6840780699725674207
+    },
+    "kind": "parser_progress_observed",
+    "mode": "passive-observe",
+    "nonce": "4dcc2c102b898567aca2982d6ab8b5d11d8fd94a2bf14be87d08c501691e0f0f",
+    "ordinal": 5,
+    "scenario": "network-abort",
+    "spec_sha256": "adeeb22f4570e11f296b6db81244b7e85d64380ed0ae5e1296cb06d8b76d0fb3"
+  },
+  "host_progress": {
+    "cancel_discarded_bytes": 0,
+    "child_exited": false,
+    "connect_reaped": true,
+    "data_closed": false,
+    "drain_discarded_bytes": 0,
+    "error_code": 0,
+    "error_consumed_bytes": 0,
+    "http_eof": false,
+    "http_status": 200,
+    "intent": "Unknown",
+    "issued_offset": 0,
+    "last_write_ordinal": 1,
+    "network": "Streaming",
+    "os_completed_offset": 0,
+    "owner": "Active",
+    "owner_released": false,
+    "parser_yielded_bytes": 0,
+    "peer_consumed_offset": 0,
+    "read_reaped": false,
+    "received_offset": 138,
+    "request_closed": false,
+    "reserved_offset": 138,
+    "response_material_stored": false,
+    "revoke_applied": false,
+    "revoke_persisted": false,
+    "stderr_eof": false,
+    "stdout_eof": false,
+    "worker_joined": false,
+    "worker_started": true,
+    "write_reaped": false
+  }
+}

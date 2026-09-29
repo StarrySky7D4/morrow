@@ -1,0 +1,30 @@
+[
+  {
+    "command": [
+      "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-fixture-003-host-candidate-001\\default\\morrow-native-stream-host.exe",
+      "serve",
+      "--qualification-pipe-plan",
+      "{\"version\":1,\"scenario\":\"pipe-partial-close\",\"nonce\":\"abababababababababababababababababababababababababababababababab\",\"fixture_spec_sha256\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"target\":\"first-response-body-chunk\",\"prefix_bytes\":12,\"close_trigger\":\"matched-passive-partial-frame-witness\"}"
+    ],
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "native owner host: unknown option\n",
+    "expected_rejection_verified": true,
+    "features": []
+  },
+  {
+    "command": [
+      "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-fixture-003-host-candidate-001\\feature\\morrow-native-stream-host.exe",
+      "init",
+      "--qualification-pipe-plan",
+      "{\"version\":1,\"scenario\":\"pipe-partial-close\",\"nonce\":\"abababababababababababababababababababababababababababababababab\",\"fixture_spec_sha256\":\"cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd\",\"target\":\"first-response-body-chunk\",\"prefix_bytes\":12,\"close_trigger\":\"matched-passive-partial-frame-witness\"}"
+    ],
+    "exit_code": 2,
+    "stdout": "",
+    "stderr": "native owner host: qualification pipe plan requires serve mode\n",
+    "expected_rejection_verified": true,
+    "features": [
+      "qualification-pipe-fault"
+    ]
+  }
+]

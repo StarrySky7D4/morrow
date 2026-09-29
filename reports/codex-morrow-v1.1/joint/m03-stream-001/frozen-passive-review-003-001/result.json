@@ -1,0 +1,30 @@
+{
+  "status": "host_guest_local_source_review_limited_ready_runner002_seal_blocked",
+  "http_requests": 0,
+  "host_guest_launches": 0,
+  "cargo_tests_rerun": 0,
+  "producer_originals_modified": false,
+  "initial_pin_entries": 643,
+  "final_host_source_current_and_snapshot_pins": 270,
+  "final_guest_input_pins": 78,
+  "frozen_runner_sources_verified_each": 3,
+  "host_local_test_invocations": 52,
+  "guest_core_local_tests": 15,
+  "guest_native_local_tests": 35,
+  "host_local_pipe_log_and_offline_decode_verified": true,
+  "runner001_blockers": [
+    "postqualification_pin_error_can_retain_expected",
+    "physical_close_after_original_D_still_accepted"
+  ],
+  "runner002_fixes_verified": [
+    "generic_exception_failed_and_postpins_before_expected",
+    "actual_close_after_original_D_unreached"
+  ],
+  "runner002_remaining_blocker": "postwrite_flush_close_error_can_leave_published_expected_result",
+  "pre_handoff_G2_trust": "pinned guest producer diagnostics and compact marker projection; full IO/frames array checks only postrun; marker hash is not authentication",
+  "runtime_qualified": false,
+  "sdk_frozen": false,
+  "product_accepted": false,
+  "old_batches_regraded": false,
+  "next_step": "new runner candidate; incremental readonly audit before authorized coordinator runtime"
+}

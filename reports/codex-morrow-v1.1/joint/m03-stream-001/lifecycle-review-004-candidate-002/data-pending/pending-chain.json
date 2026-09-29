@@ -1,0 +1,212 @@
+{
+  "operation": {
+    "id": 12,
+    "issue_ordinal": 3,
+    "body_end": 1024,
+    "frame_offset": 0,
+    "requested_bytes": 1364,
+    "initial_pending": true
+  },
+  "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+  "sample_gaps_ms": [
+    26.23,
+    25.3732
+  ],
+  "records": [
+    {
+      "after_ns": 1163108800,
+      "before_ns": 1163092000,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 0,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "io_pending",
+        "win32_error": 997
+      },
+      "resolution": "not_measured",
+      "stage": "write_issue"
+    },
+    {
+      "after_ns": 1189561300,
+      "before_ns": 1189560700,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 1,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    },
+    {
+      "after_ns": 1215791500,
+      "before_ns": 1215791300,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 2,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    },
+    {
+      "after_ns": 1241164900,
+      "before_ns": 1241164700,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "incomplete_sample"
+    },
+    {
+      "after_ns": 1271953000,
+      "before_ns": 1271953000,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "gate_or_deadline": true
+      },
+      "resolution": "not_measured",
+      "stage": "cancel_request_observed"
+    },
+    {
+      "after_ns": 1272008900,
+      "before_ns": 1272008400,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "kind": "incomplete",
+        "win32_error": 996
+      },
+      "resolution": "not_measured",
+      "stage": "cancel_probe"
+    },
+    {
+      "after_ns": 1272033500,
+      "before_ns": 1272023500,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "completion_claimed": false
+      },
+      "resolution": "not_measured",
+      "stage": "cancel_requested"
+    },
+    {
+      "after_ns": 1273475300,
+      "before_ns": 1273471900,
+      "clock": "std::time::Instant",
+      "clock_domain": "\\\\.\\pipe\\morrow-m03-737003733f93de0096c15e0dbd61d38ee148a684be30c66b2813670f31d1221f:pipe-owner",
+      "duration_unit": "ns",
+      "duration_units_per_second": 1000000000,
+      "operation": {
+        "body_end": 1024,
+        "frame_offset": 0,
+        "id": 12,
+        "incomplete_samples": 3,
+        "initial_pending": true,
+        "issue_ordinal": 3,
+        "requested_bytes": 1364
+      },
+      "outcome": {
+        "bytes": 0,
+        "error": 995,
+        "id": 12,
+        "kind": "completed"
+      },
+      "resolution": "not_measured",
+      "stage": "write_reaped"
+    }
+  ],
+  "actual_write_reap": {
+    "at_us": 3244127,
+    "detail": {
+      "bytes": 0,
+      "error": 995,
+      "id": 12,
+      "kind": "Write"
+    },
+    "event": "data_operation_reaped",
+    "ordinal": 55
+  }
+}

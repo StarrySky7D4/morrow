@@ -1,0 +1,31 @@
+{
+  "scope": "extracted frozen AST pure functions/exception body only; no run() import or call, no producer launch/network",
+  "runner_sha256": "836ba0339b53d6a018cb7dbf146ed8d5995a166e6c0257d0601587fbe7c38d32",
+  "post_qualification_exception": {
+    "source_lines": [
+      647,
+      648
+    ],
+    "start_status": "expected_fault_observed",
+    "injected_error": "synthetic post-qualification pin drift",
+    "after_generic_handler": {
+      "qualification_result": "expected_fault_observed",
+      "error": "AssertionError('synthetic post-qualification pin drift')"
+    },
+    "defect_reproduced": true
+  },
+  "late_physical_close": {
+    "source_lines": [
+      265,
+      304
+    ],
+    "base": "existing real local-pipe records plus plan-bound event",
+    "mutation": "only closed before_ns/after_ns moved beyond original D",
+    "gate_sample_ns": 23953700,
+    "original_deadline_ns": 4999418900,
+    "closed_before_after_ns": 4999418901,
+    "still_accepted": true,
+    "defect_reproduced": true
+  },
+  "http_requests": 0
+}

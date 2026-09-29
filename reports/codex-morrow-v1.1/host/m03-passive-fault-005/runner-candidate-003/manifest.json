@@ -1,0 +1,18 @@
+{
+  "runner_sha256": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0",
+  "source_files": {
+    "tool/m03_passive_fault_005.py": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0",
+    "tool/tests/test_m03_passive_fault.py": "fe437f0f3fa418b2d34b3b526e742ce7c6e863418556947dacc068bb4a592655",
+    "tool/m03_passive_fault_freeze_005.py": "087d793c7f8e19ed4cbf5a66592fe08607843113da4df5ca92826cf39b214ab5"
+  },
+  "host_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-fixture-003-host-candidate-001\\manifest.json",
+  "host_manifest_sha256": "82de408a5f2307c8c592202de59cafc5e4fa874d42d2d3cf85d279f58a2a5696",
+  "guest_manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003\\native-candidate-fixture-003.json",
+  "guest_manifest_sha256": "b810526cfac7c0123fa3d8ce27e59f15724abec5888891ac104aef2192f38106",
+  "pure_check_sha256": "4b7771f01dcdcbe65dd8ce06b060f12b7cf1edeb9940bf1b496a6e864937b44e",
+  "helper_sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+  "offline_decoder_sha256": "c41ed4ec9c9d8ed6f3334fd9a8186d7196d890db2bd540bb15ed5cec8b49ef34",
+  "schema_sha256": "8da8f1455200696d8884949f415aae4edd70cee6b583889bba7906c7730cc864",
+  "http_cases_run": [],
+  "sdk_frozen": false
+}

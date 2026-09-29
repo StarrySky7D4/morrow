@@ -1,0 +1,80 @@
+{
+  "queued": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "a778104ab881e35af592407ca330380f5ef08d41327e723ed9f01cfb71f8dd42",
+        "stream_ordinal": 3
+      }
+    },
+    "elapsed_ns": 1159890900,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 19816,
+      "epoch": 1,
+      "host_execution_config_sha256": "d37cc9a3b83cf249ff1b175a2e2f195de2593c5eda8cd6922a90c6f5cbcc5ecc",
+      "operation_id_sha256": "6bd6ee04c023a1a8f8f4f08a89755eae917113cac3047cac3e7d78c0bc33aa45",
+      "session": 14363750692603973175
+    },
+    "kind": "core_event_queued",
+    "mode": "core-revoke",
+    "nonce": "2b678092687041aba3b46268246cdf4490fd384aa56e6cee395886190836f43a",
+    "ordinal": 1,
+    "spec_sha256": "5273303029ebac0eced568d18de2dfc8d69531212fba00045920f86487776451"
+  },
+  "held": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 1,
+        "kind": "OutputTextDelta",
+        "sha256": "a778104ab881e35af592407ca330380f5ef08d41327e723ed9f01cfb71f8dd42",
+        "stream_ordinal": 3
+      }
+    },
+    "elapsed_ns": 1160195700,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 19816,
+      "epoch": 1,
+      "host_execution_config_sha256": "d37cc9a3b83cf249ff1b175a2e2f195de2593c5eda8cd6922a90c6f5cbcc5ecc",
+      "operation_id_sha256": "6bd6ee04c023a1a8f8f4f08a89755eae917113cac3047cac3e7d78c0bc33aa45",
+      "session": 14363750692603973175
+    },
+    "kind": "core_event_held",
+    "mode": "core-revoke",
+    "nonce": "2b678092687041aba3b46268246cdf4490fd384aa56e6cee395886190836f43a",
+    "ordinal": 3,
+    "spec_sha256": "5273303029ebac0eced568d18de2dfc8d69531212fba00045920f86487776451"
+  },
+  "reserved": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "event": {
+        "bytes": 9,
+        "delta_ordinal": 2,
+        "kind": "OutputTextDelta",
+        "sha256": "a1f2bc28d32cfadebf9946832195d2290face13cce9d5ce0c35df29876e2a402",
+        "stream_ordinal": 4
+      }
+    },
+    "elapsed_ns": 1159931900,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 19816,
+      "epoch": 1,
+      "host_execution_config_sha256": "d37cc9a3b83cf249ff1b175a2e2f195de2593c5eda8cd6922a90c6f5cbcc5ecc",
+      "operation_id_sha256": "6bd6ee04c023a1a8f8f4f08a89755eae917113cac3047cac3e7d78c0bc33aa45",
+      "session": 14363750692603973175
+    },
+    "kind": "core_event_reserved",
+    "mode": "core-revoke",
+    "nonce": "2b678092687041aba3b46268246cdf4490fd384aa56e6cee395886190836f43a",
+    "ordinal": 2,
+    "spec_sha256": "5273303029ebac0eced568d18de2dfc8d69531212fba00045920f86487776451"
+  }
+}

@@ -1,0 +1,25 @@
+syntax = "proto3";
+package morrow.record_transaction.v1;
+// Kind: 1 Workspace, 2 ViewPlacement, 3 Draft. Zero is invalid.
+message Command {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  uint32 kind = 3;
+  string object_id = 4;
+  uint64 expected_revision = 5; // zero only for creation
+  oneof action { bytes create = 6; Patch patch = 7; }
+}
+message Patch {
+  optional string title = 1;
+  optional bytes body = 2;
+  optional sint64 order_key = 3;
+  optional bool collapsed = 4;
+  optional uint32 width_units = 5;
+}
+message Commit {
+  uint32 schema_version = 1;
+  bytes command = 2;
+  bytes command_sha256 = 3;
+  bytes result = 4; // exact resulting record, never a summary projection
+  bytes result_sha256 = 5;
+}

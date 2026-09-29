@@ -1,0 +1,37 @@
+syntax = "proto3";
+package morrow.service_config.v1;
+// Host-local desired configuration. It restores no live authority. References
+// identify separately protected host records, never bearer tokens or secrets.
+message Configuration {
+  uint32 schema_version = 1;
+  string id = 2;
+  uint64 revision = 3;
+  bytes namespace = 4;
+  uint64 retention_ms = 5;
+  string service = 6;
+  string handler = 7;
+  bytes package_sha256 = 8;
+  bool disabled = 9;
+  repeated Principal principals = 10;
+  repeated bytes approval_references = 11;
+}
+message Principal {
+  string id = 1;
+  bytes authentication_reference = 2;
+  repeated ContentScope content_scopes = 3;
+}
+message ContentScope {
+  ContentKind kind = 1;
+  string card_id = 2;
+  string attachment_id = 3;
+}
+enum ContentKind {
+  CONTENT_KIND_UNSPECIFIED = 0;
+  CONTENT_KIND_RENAME = 1;
+  CONTENT_KIND_READ_SUMMARY = 2;
+  CONTENT_KIND_QUERY_OPERATION = 3;
+  CONTENT_KIND_READ_ATTACHMENT = 4;
+  CONTENT_KIND_CREATE_CONTENT = 5;
+  CONTENT_KIND_EDIT_CONTENT = 6;
+  CONTENT_KIND_READ_CONTENT = 7;
+}

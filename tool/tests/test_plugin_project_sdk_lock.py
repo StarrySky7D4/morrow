@@ -1,5 +1,6 @@
 """SDK pins detect implementation drift without compilers or network access."""
 import contextlib
+import hashlib
 import io
 import os
 from pathlib import Path
@@ -231,6 +232,131 @@ class SdkLockTests(unittest.TestCase):
                 self.assertFalse((self.project / "dist").exists())
             source.write_bytes(original)
             lock_path.write_bytes(pin)
+
+    def test_pack_rechecks_inputs_after_candidate_preparation_before_install(self):
+        module = self.project / "build/plugin.wasm"
+        module.parent.mkdir()
+        module.write_bytes(b"\0asm\1\0\0\0")
+        metadata = self.project / "plugin.toml"
+        sdk_source = self.sdk / "c/src/morrow_plugin_sdk.c"
+        originals = {path: path.read_bytes() for path in (module, metadata, sdk_source)}
+        changes = {
+            "module": (module, b"\0asm\1\0\0\0changed", "Wasm module changed"),
+            "metadata": (metadata, originals[metadata].replace(b'version = "1.0.0"', b'version = "1.0.1"'), "metadata or SDK selection changed"),
+            "sdk": (sdk_source, originals[sdk_source] + b"\n/* changed after build */\n", "SDK source drift"),
+        }
+        for name, (path, replacement, expected) in changes.items():
+            def package_tool(example, arguments, _args):
+                if arguments[0] == "pack-v2":
+                    Path(arguments[2]).write_bytes(b"candidate")
+                elif arguments[0] == "check":
+                    path.write_bytes(replacement)
+                else:
+                    self.fail("install must not run after packaging input drift")
+                return ""
+
+            with self.subTest(change=name), mock.patch.object(tool, "compile_project", return_value=module), \
+                 mock.patch.object(tool, "host_tool", side_effect=package_tool) as host:
+                with contextlib.redirect_stdout(io.StringIO()), self.assertRaisesRegex((tool.ToolError, lock.SdkLockError), expected):
+                    tool.pack_project(self.args)
+                self.assertEqual([call.args[1][0] for call in host.call_args_list], ["pack-v2", "check"])
+                self.assertFalse((self.project / "dist").exists())
+            path.write_bytes(originals[path])
+
+    def test_pack_rejects_explicit_relock_during_build_before_packager(self):
+        module = self.project / "build/plugin.wasm"
+        source = self.sdk / "c/src/morrow_plugin_sdk.c"
+
+        def build(_args, _loaded):
+            module.parent.mkdir()
+            module.write_bytes(b"\0asm\1\0\0\0")
+            source.write_bytes(source.read_bytes() + b"\n/* concurrent SDK update */\n")
+            lock.write(self.project, self.sdk, update=True)
+            return module
+
+        with mock.patch.object(tool, "compile_project", side_effect=build), \
+             mock.patch.object(tool, "host_tool") as host, \
+             self.assertRaisesRegex(lock.SdkLockError, "lock changed during build"):
+            tool.pack_project(self.args)
+        host.assert_not_called()
+        self.assertFalse((self.project / "dist").exists())
+
+    def test_pack_installs_unchanged_prepared_candidate(self):
+        module = self.project / "build/plugin.wasm"
+        module.parent.mkdir()
+        module.write_bytes(b"\0asm\1\0\0\0")
+        candidate_bytes = b"prepared candidate"
+        digest = hashlib.sha256(candidate_bytes).hexdigest()
+
+        def package_tool(_example, arguments, _args):
+            if arguments[0] == "pack-v2":
+                self.assertNotEqual(Path(arguments[1]), module)
+                self.assertEqual(Path(arguments[1]).read_bytes(), module.read_bytes())
+                Path(arguments[2]).write_bytes(candidate_bytes)
+            elif arguments[0] == "install":
+                destination = Path(arguments[2])
+                destination.mkdir()
+                (destination / (digest + ".mplugin")).write_bytes(candidate_bytes)
+            return ""
+
+        with mock.patch.object(tool, "compile_project", return_value=module), \
+             mock.patch.object(tool, "host_tool", side_effect=package_tool) as host, \
+             contextlib.redirect_stdout(io.StringIO()):
+            published = tool.pack_project(self.args)
+        self.assertEqual(published, self.project / "dist" / (digest + ".mplugin"))
+        self.assertEqual(published.read_bytes(), candidate_bytes)
+        self.assertEqual([call.args[1][0] for call in host.call_args_list], ["pack-v2", "check", "install"])
+
+    def test_pack_uses_frozen_module_and_rejects_live_module_change_during_packager(self):
+        module = self.project / "build/plugin.wasm"
+        module.parent.mkdir()
+        original = b"\0asm\1\0\0\0"
+        module.write_bytes(original)
+
+        def package_tool(_example, arguments, _args):
+            if arguments[0] == "pack-v2":
+                frozen = Path(arguments[1])
+                self.assertNotEqual(frozen, module)
+                self.assertEqual(frozen.read_bytes(), original)
+                module.write_bytes(original + b"changed during pack")
+                self.assertEqual(frozen.read_bytes(), original)
+                Path(arguments[2]).write_bytes(b"candidate from frozen module")
+            elif arguments[0] == "install":
+                self.fail("changed live module must not be published")
+            return ""
+
+        with mock.patch.object(tool, "compile_project", return_value=module), \
+             mock.patch.object(tool, "host_tool", side_effect=package_tool) as host, \
+             contextlib.redirect_stdout(io.StringIO()), \
+             self.assertRaisesRegex(tool.ToolError, "Wasm module changed during packaging"):
+            tool.pack_project(self.args)
+        self.assertEqual([call.args[1][0] for call in host.call_args_list], ["pack-v2", "check"])
+        self.assertFalse((self.project / "dist").exists())
+
+    def test_pack_rejects_snapshot_change_before_install(self):
+        module = self.project / "build/plugin.wasm"
+        module.parent.mkdir()
+        module.write_bytes(b"\0asm\1\0\0\0")
+        snapshot = None
+
+        def package_tool(_example, arguments, _args):
+            nonlocal snapshot
+            if arguments[0] == "pack-v2":
+                snapshot = Path(arguments[1])
+                Path(arguments[2]).write_bytes(b"candidate")
+            elif arguments[0] == "check":
+                snapshot.write_bytes(b"\0asm\1\0\0\0changed")
+            else:
+                self.fail("changed snapshot must not be published")
+            return ""
+
+        with mock.patch.object(tool, "compile_project", return_value=module), \
+             mock.patch.object(tool, "host_tool", side_effect=package_tool) as host, \
+             contextlib.redirect_stdout(io.StringIO()), \
+             self.assertRaisesRegex(tool.ToolError, "Wasm packaging snapshot changed"):
+            tool.pack_project(self.args)
+        self.assertEqual([call.args[1][0] for call in host.call_args_list], ["pack-v2", "check"])
+        self.assertFalse((self.project / "dist").exists())
 
 
 if __name__ == "__main__":

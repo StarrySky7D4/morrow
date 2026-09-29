@@ -1,0 +1,286 @@
+--- network_node/src/client.rs
++++ network_node_stream_001/src/client.rs
+@@ -1,6 +1,6 @@
+ //! Trusted native outbound HTTP. No plugin approval or reusable guest capability is created here.
+-use crate::{Error, HttpRequest, HttpResponse, Limits, RawHttpResponse, Result};
+-use futures_util::StreamExt;
++use crate::stream::{ResponseHead, SendContext, StreamLease};
++use crate::{Error, HttpRequest, HttpResponse, Limits, RawHttpRequest, RawHttpResponse, Result};
+ use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
+ use std::{
+     collections::BTreeSet,
+@@ -17,6 +17,7 @@
+ 
+ /// Exact origin and method allowlist, chosen by a trusted host. This is not a guest grant.
+ /// Deliberately no Debug: origins may name private services.
++#[derive(Clone)]
+ pub struct EndpointPolicy {
+     origin: Url,
+     methods: BTreeSet<String>,
+@@ -83,6 +84,7 @@
+     }
+ }
+ 
++#[derive(Clone)]
+ pub struct Client {
+     policy: EndpointPolicy,
+     limits: Limits,
+@@ -155,9 +157,54 @@
+         request: HttpRequest,
+         cancel: CancellationToken,
+     ) -> Result<RawHttpResponse> {
+-        if cancel.is_cancelled() {
+-            return Err(Error::Cancelled);
+-        }
++        let context =
++            SendContext::trusted(tokio::time::Instant::now() + self.limits.timeout, cancel);
++        self.collect(request.into(), context).await
++    }
++    /// Trusted transport only: the caller must perform its durable dispatch claim first.
++    /// The parent deadline is absolute and is never renewed at head/body boundaries.
++    pub async fn send_stream(
++        &self,
++        request: RawHttpRequest,
++        mut context: SendContext,
++    ) -> Result<StreamLease> {
++        context.cap_deadline(tokio::time::Instant::now() + self.limits.timeout);
++        context.check()?;
++        let (target, headers) = self.validate_request(&request)?;
++        let permit = self
++            .concurrent
++            .clone()
++            .try_acquire_owned()
++            .map_err(|_| Error::Limit)?;
++        crate::stream::start(self.clone(), target, request, headers, context, permit).await
++    }
++    /// Collection uses exactly the streaming validation/connector/body path.
++    pub async fn collect(
++        &self,
++        request: RawHttpRequest,
++        context: SendContext,
++    ) -> Result<RawHttpResponse> {
++        let mut lease = self.send_stream(request, context).await?;
++        let mut body = Vec::new();
++        loop {
++            match lease.next_chunk().await {
++                Ok(Some(chunk)) => body.extend_from_slice(&chunk),
++                Ok(None) => break,
++                Err(error) => {
++                    let _ = lease.cancel_and_wait().await;
++                    return Err(error);
++                }
++            }
++        }
++        let head = lease.head().clone();
++        lease.finish().await.outcome?;
++        Ok(RawHttpResponse {
++            status: head.status,
++            headers: head.headers,
++            body,
++        })
++    }
++    fn validate_request(&self, request: &RawHttpRequest) -> Result<(Url, HeaderMap)> {
+         let target = parse_target(&request.target)?;
+         if target.origin() != self.policy.origin.origin()
+             || !self.policy.methods.contains(&request.method)
+@@ -192,29 +239,22 @@
+             ) {
+                 return Err(Error::Denied);
+             }
+-            let value = HeaderValue::from_str(value).map_err(|_| Error::Invalid)?;
++            let value = HeaderValue::from_bytes(value).map_err(|_| Error::Invalid)?;
+             headers.append(name, value);
+         }
+-        let _permit = self
+-            .concurrent
+-            .clone()
+-            .try_acquire_owned()
+-            .map_err(|_| Error::Limit)?;
+-        tokio::select! {
+-            biased;
+-            _ = cancel.cancelled() => Err(Error::Cancelled),
+-            result = tokio::time::timeout(self.limits.timeout, self.execute(target, request, headers)) => {
+-                if cancel.is_cancelled() { return Err(Error::Cancelled); }
+-                result.map_err(|_| Error::Timeout)?
+-            }
+-        }
+-    }
+-    async fn execute(
++        Ok((target, headers))
++    }
++    pub(crate) fn response_limit(&self) -> usize {
++        self.limits.max_response_bytes
++    }
++    pub(crate) async fn execute_head(
+         &self,
+         target: Url,
+-        request: HttpRequest,
++        request: RawHttpRequest,
+         headers: HeaderMap,
+-    ) -> Result<RawHttpResponse> {
++        context: &SendContext,
++    ) -> Result<(ResponseHead, reqwest::Response)> {
++        context.check()?;
+         let host = target.host_str().ok_or(Error::Invalid)?;
+         let port = target.port_or_known_default().ok_or(Error::Invalid)?;
+         let mut addresses = Vec::new();
+@@ -242,6 +282,7 @@
+         {
+             return Err(Error::Denied);
+         }
++        context.check()?;
+         // A fresh connector is pinned to this verified answer set. No proxy, redirect,
+         // pooled connection from another request, or transparent retry may resolve elsewhere.
+         let mut builder = reqwest::Client::builder()
+@@ -260,6 +301,7 @@
+         let method =
+             reqwest::Method::from_bytes(request.method.as_bytes()).map_err(|_| Error::Invalid)?;
+         let is_head = method == reqwest::Method::HEAD;
++        context.check()?;
+         let response = client
+             .request(method, target)
+             .headers(headers)
+@@ -267,6 +309,7 @@
+             .send()
+             .await
+             .map_err(|_| Error::Transport)?;
++        context.check()?;
+         // Defense in depth only; pre-connect pinning above is the destination control.
+         if !response
+             .remote_addr()
+@@ -292,24 +335,12 @@
+             }
+             output_headers.push((name.as_str().to_owned(), value.as_bytes().to_vec()));
+         }
+-        let mut stream = response.bytes_stream();
+-        let mut body = Vec::new();
+-        while let Some(chunk) = stream.next().await {
+-            let chunk = chunk.map_err(|_| Error::Transport)?;
+-            if body
+-                .len()
+-                .checked_add(chunk.len())
+-                .is_none_or(|n| n > self.limits.max_response_bytes)
+-            {
+-                return Err(Error::Limit);
+-            }
+-            body.extend_from_slice(&chunk);
+-        }
+-        Ok(RawHttpResponse {
++        let head = ResponseHead {
+             status,
+             headers: output_headers,
+-            body,
+-        })
++            remote_addr: response.remote_addr().ok_or(Error::Denied)?,
++        };
++        Ok((head, response))
+     }
+ }
+ fn header_cost(current: usize, name: usize, value: usize) -> Result<usize> {
+--- network_node/src/lib.rs
++++ network_node_stream_001/src/lib.rs
+@@ -1,21 +1,11 @@
+ #![forbid(unsafe_code)]
+-//! Experimental trusted native HTTP client and API node transport.
++//! Versioned experimental trusted outbound HTTP stream transport.
+ //! The optional managed adapter binds explicit host-selected HTTP resources to
+ //! original plugin authority; the transport alone never grants guest networking.
+ use std::time::Duration;
+ 
+ pub mod client;
+-#[cfg(feature = "plugin-adapter")]
+-pub mod managed_http;
+-#[cfg(feature = "plugin-adapter")]
+-pub mod managed_service;
+-#[cfg(feature = "plugin-adapter")]
+-pub mod plugin;
+-pub mod server;
+-#[cfg(feature = "plugin-adapter")]
+-pub mod stored_http;
+-#[cfg(feature = "plugin-adapter")]
+-pub mod service_outbound;
++pub mod stream;
+ 
+ // Deliberately no Debug: headers and bodies can contain credentials or user content.
+ #[derive(Clone, PartialEq, Eq)]
+@@ -94,3 +84,26 @@
+ }
+ impl std::error::Error for Error {}
+ pub type Result<T> = std::result::Result<T, Error>;
++
++/// Raw prepared request: preserves legal non-UTF-8 header values and duplicate entries.
++#[derive(Clone, PartialEq, Eq)]
++pub struct RawHttpRequest {
++    pub method: String,
++    pub target: String,
++    pub headers: Vec<(String, Vec<u8>)>,
++    pub body: Vec<u8>,
++}
++impl From<HttpRequest> for RawHttpRequest {
++    fn from(r: HttpRequest) -> Self {
++        Self {
++            method: r.method,
++            target: r.target,
++            headers: r
++                .headers
++                .into_iter()
++                .map(|(n, v)| (n, v.into_bytes()))
++                .collect(),
++            body: r.body,
++        }
++    }
++}
+--- network_node/Cargo.toml
++++ network_node_stream_001/Cargo.toml
+@@ -2,40 +2,19 @@
+ resolver = "2"
+ 
+ [package]
+-name = "morrow-network-node"
+-version = "0.1.9-test.51"
++name = "morrow-network-node-stream"
++version = "0.1.0"
+ edition = "2024"
+ publish = false
+ license = "AGPL-3.0-only"
+ 
+ [dependencies]
+-axum = "=0.8.9"
+ reqwest = { version = "=0.12.28", default-features = false, features = ["rustls-tls", "stream"] }
+ tokio = { version = "=1.53.1", features = ["full"] }
+ tokio-util = { version = "=0.7.19", features = ["rt"] }
+ url = "=2.5.8"
+-http = "=1.5.0"
+ futures-util = "=0.3.33"
+-sha2 = "=0.10.9"
+-zeroize = "=1.9.0"
++bytes = "=1.12.1"
+ rustls = { version = "=0.23.43", default-features = false, features = ["ring", "std", "tls12"] }
+-tokio-rustls = { version = "=0.26.4", default-features = false, features = ["ring", "tls12"] }
+-
+-morrow-plugin-runtime = { path = "../plugin_runtime", features = ["packages"], optional = true }
+-morrow-core = { path = "../core", optional = true }
+-
+-[features]
+-plugin-adapter = ["dep:morrow-plugin-runtime", "dep:morrow-core", "dep:morrow-audit"]
+ 
+ [dev-dependencies]
+-wat = "=1.239.0"
+-rcgen = "=0.13.2"
+-tempfile = "=3.27.0"
+-
+-[[bin]]
+-name = "morrow-api-node"
+-path = "src/main.rs"
+-required-features = ["plugin-adapter"]
+-
+-[target.'cfg(target_os = "windows")'.dependencies]
+-morrow-audit = { path = "../audit", optional = true }
+--- network_node/tests/client.rs
++++ network_node_stream_001/tests/client.rs
+@@ -1,4 +1,4 @@
+-use morrow_network_node::{
++use morrow_network_node_stream::{
+     Error, HttpRequest, Limits,
+     client::{Client, EndpointPolicy},
+ };

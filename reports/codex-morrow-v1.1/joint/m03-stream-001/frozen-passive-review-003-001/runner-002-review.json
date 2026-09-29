@@ -1,0 +1,62 @@
+{
+  "scope": "pure extracted AST; only synthetic local files",
+  "manifest_sha256": "60e2687cd895c3639dccc7d544f420c84e508b3ec0e7f590ba0f33fbaac985ed",
+  "runner_sha256": "c3da0a4ae3214488979eb6156f521a8fb93102126dc03794949820d67272fcf5",
+  "producer_pure_tests": 11,
+  "late_pin_failure_fixed": true,
+  "generic_exception_failure_latched": true,
+  "late_physical_close_target_unreached": true,
+  "seal_cases": {
+    "success": {
+      "seal_return": true,
+      "in_memory_result": {
+        "qualification_result": "expected_fault_observed",
+        "synthetic_only": true,
+        "first_reason": 19
+      },
+      "published_result": {
+        "qualification_result": "expected_fault_observed",
+        "synthetic_only": true,
+        "first_reason": 19
+      },
+      "exit_code": 0,
+      "manifest_exists": true
+    },
+    "hash-failure": {
+      "seal_return": false,
+      "in_memory_result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "evidence_seal_error": "OSError('synthetic unreadable evidence')"
+      },
+      "published_result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "evidence_seal_error": "OSError('synthetic unreadable evidence')"
+      },
+      "exit_code": 1,
+      "manifest_exists": false
+    },
+    "result-write-close-failure": {
+      "seal_return": false,
+      "in_memory_result": {
+        "qualification_result": "unconfirmed",
+        "synthetic_only": true,
+        "first_reason": 19,
+        "evidence_seal_error": "OSError('synthetic close/flush failure after result bytes written')"
+      },
+      "published_result": {
+        "qualification_result": "expected_fault_observed",
+        "synthetic_only": true,
+        "first_reason": 19
+      },
+      "exit_code": 1,
+      "manifest_exists": true
+    }
+  },
+  "remaining_blocker": "write/close error after result bytes exist leaves a published expected result, despite memory unconfirmed and exit 1",
+  "http_requests": 0,
+  "host_guest_launched": false
+}

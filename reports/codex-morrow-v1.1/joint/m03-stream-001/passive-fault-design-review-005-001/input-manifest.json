@@ -1,0 +1,86 @@
+{
+  "captured_utc": "2026-09-29T22:06:17.987275+00:00",
+  "scope": "design plus previously fixed baseline only; no unfrozen005 implementation read",
+  "proposal_artifacts_verified": 5,
+  "historical19_inputs_rescanned": false,
+  "inputs": [
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-fixture-003-host-interface-001.md",
+      "snapshot": "inputs/host-interface-001.md",
+      "bytes": 5276,
+      "sha256": "c1451cb7d2982f20b60343f642c6ea328c47745cbe3b2fc65daefc47fb273fff"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-fixture-003-host-seams-design-2026-09-30.md",
+      "snapshot": "inputs/host-seams-design.md",
+      "bytes": 20519,
+      "sha256": "a00059af20a6c1150ab8a0fe19217a86739a98aeb8df163306a7da4966535879"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\design.md",
+      "snapshot": "inputs/guest-design.md",
+      "bytes": 13503,
+      "sha256": "ff2d44c5b9e46b6181a34acd21c2ca032bb15820c824d429e4269460713956e4"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\interfaces.md",
+      "snapshot": "inputs/guest-interfaces.md",
+      "bytes": 11897,
+      "sha256": "24a37ab335c8ec770be55a33f763ad5a31addca80918a9200caf2ee3188e52ae"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\scenario-specs.example.json",
+      "snapshot": "inputs/guest-specs.json",
+      "bytes": 1866,
+      "sha256": "783b30b0d511b6769c9e748fe3a49ee1405591455c4198cc978a530ef7513a49"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\proposal-manifest.json",
+      "snapshot": "inputs/guest-proposal-manifest.json",
+      "bytes": 1282,
+      "sha256": "c0d512e9be804f18eccceeacae96349ac56dc0d50a10b932104b1b1222fea3ef"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\proposal-check.json",
+      "snapshot": "inputs/guest-proposal-check.json",
+      "bytes": 1014,
+      "sha256": "02b7415ff5b6cf8cadb4a6ccdb86b689418b9aa4c085a56907bac393ccbc80bf"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\receipts\\m03-fixture-003-design-001\\input-manifest.json",
+      "snapshot": "inputs/guest-input-manifest.json",
+      "bytes": 6104,
+      "sha256": "0d93244e879508211e923e3381c130173664e51a31b8a2a1df71fe6e72785874"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\source\\native_session_stream_001\\src\\supervisor.rs",
+      "snapshot": "inputs/baseline-supervisor.rs",
+      "bytes": 46095,
+      "sha256": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\source\\native_session_stream_001\\src\\http_authority.rs",
+      "snapshot": "inputs/baseline-http-authority.rs",
+      "bytes": 20378,
+      "sha256": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\workers.rs",
+      "snapshot": "inputs/baseline-guest-workers.rs",
+      "bytes": 29319,
+      "sha256": "f4d67053ca8e8f0aaf53095517419130ad3212ee1a38aa6572715e6ae2248d14"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\admission.rs",
+      "snapshot": "inputs/baseline-guest-admission.rs",
+      "bytes": 13781,
+      "sha256": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\native\\m03-fixture-002\\src\\session.rs",
+      "snapshot": "inputs/baseline-guest-session.rs",
+      "bytes": 86211,
+      "sha256": "0db7e61184227d558efe7ebc28809ecb13870062545a08e35d0b349d7a906c96"
+    }
+  ]
+}

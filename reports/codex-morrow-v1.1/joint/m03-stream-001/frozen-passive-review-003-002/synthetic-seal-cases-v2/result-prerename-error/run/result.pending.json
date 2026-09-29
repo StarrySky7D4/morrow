@@ -1,0 +1,6 @@
+{
+  "qualification_result": "expected_fault_observed",
+  "synthetic_only": true,
+  "first_reason": 19,
+  "actual_error_retained": "partial frame Unknown"
+}

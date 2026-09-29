@@ -1,0 +1,35 @@
+syntax = "proto3";
+package morrow.service_authority.v1;
+// Explicit host approval data. This is not a live grant or an auto-start permit.
+// Authentication retains only a SHA-256 verifier, never the raw bearer token.
+message Record {
+  uint32 schema_version = 1;
+  bytes reference = 2;
+  uint64 revision = 3;
+  uint64 created_ms = 4;
+  uint64 expires_ms = 5;
+  bool disabled = 6;
+  oneof kind {
+    Authentication authentication = 7;
+    Publication publication = 8;
+  }
+}
+message Authentication {
+  string principal_id = 1;
+  bytes token_sha256 = 2;
+}
+message Publication {
+  string config_id = 1;
+  bytes config_sha256 = 2;
+  string listen_address = 3;
+  bool tls_required = 4;
+  string method = 5;
+  string path = 6;
+  string query_path = 7;
+}
+
+// Persistent logical database identity; not a secret or an authorization token.
+message StoreIdentity {
+  uint32 schema_version = 1;
+  bytes store_id = 2;
+}

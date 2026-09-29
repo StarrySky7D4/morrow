@@ -1,0 +1,609 @@
+use super::*;
+#[test]
+fn service_profile_pins_existing_schema_and_never_implies_a_run_grant() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--service",
+            "--io-capability",
+            "http-listen",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+    );
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    let declaration = p.manifest().io_declaration.as_ref().unwrap();
+    assert_eq!(
+        declaration.service_schema_sha256,
+        morrow_core::service::schema_digest()
+    );
+    assert!(declaration.service_run.is_none());
+    assert_eq!(p.manifest().required_features, vec![io::FEATURE]);
+    assert!(output.contains("service-schema-sha256="));
+    assert!(output.contains("no listener or run grant"));
+}
+#[test]
+fn incomplete_or_implicit_service_profiles_do_not_publish() {
+    for flags in [
+        vec!["--service"],
+        vec!["--service", "--service"],
+        vec![
+            "--io-capability",
+            "http-listen",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-listen",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-publish",
+            "--io-handler",
+            "service.echo",
+        ],
+        vec![
+            "--service",
+            "--io-capability",
+            "http-request",
+            "--io-handler",
+            "service.echo",
+        ],
+    ] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &flags);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+}
+fn setup(command: &str) -> (tempfile::TempDir, Vec<String>) {
+    let dir = tempfile::tempdir().unwrap();
+    let module = dir.path().join("module.wasm");
+    // An offline container fixture, intentionally not a claim of executable guest ABI.
+    std::fs::write(&module, b"\0asm\x01\0\0\0").unwrap();
+    let output = dir.path().join(if command == "pack-v2-catalog" {
+        "catalog"
+    } else {
+        "package.mplugin"
+    });
+    let args = vec![
+        command.into(),
+        module.to_str().unwrap().into(),
+        output.to_str().unwrap().into(),
+        "org.example.fixture".into(),
+        "1.2.3-test.1".into(),
+    ];
+    (dir, args)
+}
+fn add(args: &mut Vec<String>, values: &[&str]) {
+    args.extend(values.iter().map(|v| (*v).into()));
+}
+fn execute(args: &[String]) -> String {
+    let mut out = vec![];
+    run(args, &mut out).unwrap();
+    String::from_utf8(out).unwrap()
+}
+#[test]
+fn seven_capabilities_and_task_defaults_are_roundtripped() {
+    let (_dir, mut args) = setup("pack-v2");
+    for cap in [
+        "rename",
+        "summary",
+        "operation",
+        "attachment",
+        "create-content",
+        "edit-content",
+        "read-content",
+    ] {
+        add(&mut args, &["--capability", cap]);
+    }
+    add(&mut args, &["--name", "Developer fixture"]);
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert_eq!(p.capabilities().len(), 7);
+    assert_eq!(p.manifest().guest_abi_version, 2);
+    assert_eq!(p.manifest().display_name, "Developer fixture");
+    assert!(p.manifest().transform_handlers.is_empty());
+    assert!(p.manifest().required_features.is_empty());
+    let published = output
+        .lines()
+        .next()
+        .unwrap()
+        .strip_prefix("published ")
+        .unwrap();
+    assert!(Path::new(published).is_absolute());
+    assert_eq!(
+        Path::new(published),
+        Path::new(&args[2]).canonicalize().unwrap()
+    );
+    assert!(output.contains("authorization"));
+}
+#[test]
+fn handlers_capabilities_dependencies_and_budgets_keep_exact_range() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--name",
+            "Combined",
+            "--capability",
+            "read-content",
+            "--handler",
+            "bytes.one",
+            "bytes",
+            "bytes",
+            "65536",
+            "65536",
+            "--handler",
+            "bytes.two",
+            "bytes",
+            "text.utf8",
+            "0",
+            "32",
+            "--dependency",
+            "required-slot",
+            "bytes.reverse",
+            "bytes",
+            "bytes",
+            ">=1.0, <2.0",
+            "required",
+            "--dependency",
+            "optional-slot",
+            "bytes.other",
+            "bytes",
+            "text.utf8",
+            "^1.2.3",
+            "optional",
+            "--dependency-calls",
+            "--fuel",
+            "100000000",
+            "--memory-bytes",
+            "67108864",
+            "--host-calls",
+            "1024",
+        ],
+    );
+    execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    let m = p.manifest();
+    assert_eq!(p.capabilities().len(), 1);
+    assert_eq!(m.transform_handlers.len(), 2);
+    assert_eq!(m.dependencies.len(), 2);
+    assert_eq!(m.dependencies[0].provider_version, ">=1.0, <2.0");
+    assert!(!m.dependencies[0].optional);
+    assert!(m.dependencies[1].optional);
+    assert_eq!(
+        m.required_features,
+        vec![
+            "transform-handlers-v1",
+            "dependencies-v1",
+            "dependency-calls-v1"
+        ]
+    );
+    assert_eq!(
+        m.dependency_schema_sha256,
+        morrow_core::dependency_call::schema_digest()
+    );
+    let b = m.budget.as_ref().unwrap();
+    assert_eq!(
+        (b.fuel, b.memory_bytes, b.host_calls),
+        (100000000, 67108864, 1024)
+    );
+    let text = execute(&["inspect".into(), args[2].clone()]);
+    for expected in [
+        "name=\"Combined\"",
+        "dependency=required-slot",
+        "version=\">=1.0, <2.0\"",
+        "optional",
+        "fuel=100000000",
+        "dependency-schema-sha256=",
+    ] {
+        assert!(text.contains(expected), "{text}");
+    }
+}
+#[test]
+fn task_dependency_without_dynamic_call_feature_is_valid() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--dependency",
+            "slot",
+            "bytes.reverse",
+            "bytes",
+            "bytes",
+            "*",
+            "required",
+        ],
+    );
+    execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert_eq!(p.manifest().required_features, vec!["dependencies-v1"]);
+    assert!(p.manifest().dependency_schema_sha256.is_empty());
+}
+#[test]
+fn io_declaration_is_explicit_bounded_and_visible_without_grants() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--io-capability",
+            "file-read",
+            "--io-capability",
+            "http-request",
+            "--io-handler",
+            "io.request",
+        ],
+    );
+    let output = execute(&args);
+    let package = catalog::read_file(Path::new(&args[2])).unwrap();
+    let manifest = package.manifest();
+    assert_eq!(manifest.guest_abi_version, 2);
+    assert_eq!(manifest.required_features, vec![io::FEATURE]);
+    assert!(package.capabilities().is_empty());
+    assert_eq!(
+        package.io_capabilities(),
+        &std::collections::BTreeSet::from([IoCapability::FileRead, IoCapability::HttpRequest])
+    );
+    let declaration = manifest.io_declaration.as_ref().unwrap();
+    assert_eq!(declaration.io_schema_sha256, io::schema_digest());
+    assert_eq!(declaration.handlers, ["io.request"]);
+    let budget = declaration.budget.as_ref().unwrap();
+    assert_eq!(
+        (
+            budget.max_resources,
+            budget.max_jobs,
+            budget.max_bytes,
+            budget.max_job_bytes
+        ),
+        (2, 1, 1024 * 1024, 1024 * 1024)
+    );
+    for text in [output, execute(&["inspect".into(), args[2].clone()])] {
+        for expected in [
+            "io-schema-sha256=",
+            "io-capabilities=",
+            "io-handlers=",
+            "io-budget resources=2",
+            "no grants",
+        ] {
+            assert!(text.contains(expected), "{text}");
+        }
+    }
+}
+#[test]
+fn invalid_io_cli_declarations_fail_before_publishing() {
+    let cases: &[(&[&str], &str)] = &[
+        (
+            &[
+                "--io-capability",
+                "file-unknown",
+                "--io-handler",
+                "io.request",
+            ],
+            "unknown IO capability",
+        ),
+        (&["--io-capability", "file-read"], "requires both"),
+        (&["--io-handler", "io.request"], "requires both"),
+        (
+            &[
+                "--io-capability",
+                "credential-use",
+                "--io-handler",
+                "io.request",
+            ],
+            "requires http-request",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+            ],
+            "duplicate IO capability",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--io-handler",
+                "io.request",
+            ],
+            "duplicate IO handler",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--handler",
+                "io.request",
+                "bytes",
+                "bytes",
+                "1",
+                "1",
+            ],
+            "cannot be mixed",
+        ),
+        (
+            &[
+                "--io-capability",
+                "file-read",
+                "--io-handler",
+                "io.request",
+                "--capability",
+                "read-content",
+            ],
+            "cannot be mixed",
+        ),
+    ];
+    for (extra, expected) in cases {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, extra);
+        let error = run(&args, &mut vec![]).unwrap_err().to_string();
+        assert!(error.contains(expected), "{extra:?}: {error}");
+        assert!(!Path::new(&args[2]).exists());
+    }
+}
+#[test]
+fn malformed_options_leave_no_output_or_catalog() {
+    let cases: [(&[&str], &str); 16] = [
+        (&["--unknown"], "unknown option"),
+        (&["--name"], "requires VALUE"),
+        (&["--name", "a", "--name", "b"], "duplicate single-value"),
+        (&["--fuel", "1", "--fuel", "2"], "duplicate single-value"),
+        (
+            &["--dependency-calls", "--dependency-calls"],
+            "duplicate single-value",
+        ),
+        (&["--capability", "rename-card"], "unknown capability"),
+        (&["--fuel", "-1"], "unsigned integer"),
+        (&["--fuel", "18446744073709551616"], "unsigned integer"),
+        (&["--fuel", "0"], "expects 1..=100000000"),
+        (&["--memory-bytes", "65537"], "multiple of 65536"),
+        (&["--host-calls", "1025"], "expects 0..=1024"),
+        (
+            &["--handler", "x", "bytes", "bytes", "65537", "0"],
+            "MAX_INPUT",
+        ),
+        (
+            &["--handler", "x", "bytes", "bytes", "0"],
+            "requires MAX_OUTPUT",
+        ),
+        (
+            &["--dependency", "slot", "h", "bytes", "bytes", "^1", "maybe"],
+            "required|optional",
+        ),
+        (
+            &["--dependency", "slot", "h", "bytes", "bytes", "^1"],
+            "requires required|optional",
+        ),
+        (&["--dependency-calls"], "requires at least one --handler"),
+    ];
+    for command in ["pack-v2", "pack-v2-catalog"] {
+        for (extra, expected) in cases {
+            let (dir, mut args) = setup(command);
+            add(&mut args, extra);
+            let error = run(&args, &mut vec![]).unwrap_err().to_string();
+            assert!(error.contains(expected), "{extra:?}: {error}");
+            assert!(!Path::new(&args[2]).exists());
+            assert_eq!(std::fs::read_dir(dir.path()).unwrap().count(), 1);
+        }
+    }
+}
+#[test]
+fn package_validation_failures_never_publish() {
+    for extra in [
+        vec![
+            "--dependency",
+            "slot",
+            "h",
+            "bytes",
+            "bytes",
+            "not-semver",
+            "required",
+        ],
+        vec!["--capability", "rename", "--capability", "rename"],
+        vec![
+            "--handler",
+            "h",
+            "bytes",
+            "bytes",
+            "0",
+            "0",
+            "--handler",
+            "h",
+            "bytes",
+            "bytes",
+            "0",
+            "0",
+        ],
+        vec!["--name", ""],
+    ] {
+        let (dir, mut args) = setup("pack-v2-catalog");
+        add(&mut args, &extra);
+        assert!(run(&args, &mut vec![]).is_err());
+        assert!(!Path::new(&args[2]).exists());
+        assert_eq!(std::fs::read_dir(dir.path()).unwrap().count(), 1);
+    }
+    let (_dir, args) = setup("pack-v2");
+    std::fs::write(&args[1], b"not wasm").unwrap();
+    assert!(
+        run(&args, &mut vec![])
+            .unwrap_err()
+            .to_string()
+            .contains("wasm module header")
+    );
+    assert!(!Path::new(&args[2]).exists());
+}
+#[test]
+fn catalog_retries_are_idempotent_and_corrupt_existing_archive_is_not_overwritten() {
+    let (_dir, args) = setup("pack-v2-catalog");
+    let first = execute(&args);
+    assert_eq!(execute(&args), first);
+    let path = PathBuf::from(
+        first
+            .lines()
+            .next()
+            .unwrap()
+            .strip_prefix("published ")
+            .unwrap(),
+    );
+    let p = catalog::read_file(&path).unwrap();
+    assert_eq!(
+        path.file_name().unwrap(),
+        format!("{}.mplugin", hex(&p.digest())).as_str()
+    );
+    assert_eq!(std::fs::read_dir(&args[2]).unwrap().count(), 1);
+    std::fs::write(&path, b"corrupt existing package").unwrap();
+    assert!(run(&args, &mut vec![]).is_err());
+    assert_eq!(std::fs::read(&path).unwrap(), b"corrupt existing package");
+    assert_eq!(std::fs::read_dir(&args[2]).unwrap().count(), 1);
+}
+#[test]
+fn legacy_modes_install_and_explicit_file_no_clobber_remain_compatible() {
+    for (command, spec, abi) in [
+        ("pack", "rename,summary,operation,attachment", 1),
+        ("pack-task", "create-content,edit-content,read-content", 2),
+        ("pack-transform", "h,bytes,bytes,64,64", 2),
+    ] {
+        let (dir, mut args) = setup(command);
+        args.push(spec.into());
+        execute(&args);
+        let p = catalog::read_file(Path::new(&args[2])).unwrap();
+        assert_eq!(p.manifest().guest_abi_version, abi);
+        let original = std::fs::read(&args[2]).unwrap();
+        assert!(run(&args, &mut vec![]).is_err());
+        assert_eq!(std::fs::read(&args[2]).unwrap(), original);
+        let catalog = dir.path().join("installed");
+        let output = execute(&[
+            "install".into(),
+            args[2].clone(),
+            catalog.to_str().unwrap().into(),
+        ]);
+        assert!(output.starts_with("installed "));
+        assert_eq!(
+            Catalog::open(&catalog)
+                .unwrap()
+                .load(p.digest())
+                .unwrap()
+                .archive(),
+            p.archive()
+        );
+    }
+}
+
+#[test]
+fn explicit_service_run_retains_short_job_limits_and_has_finite_cumulative_budget() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-run", "3600000", "1000000", "67108864"]);
+    let output = execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    let d = p.manifest().io_declaration.as_ref().unwrap();
+    let run = d.service_run.as_ref().unwrap();
+    assert_eq!(run.max_duration_ms, io::MAX_SERVICE_RUN_DURATION_MS);
+    assert_eq!(run.budget.as_ref().unwrap().max_jobs, io::MAX_SERVICE_RUN_JOBS);
+    let b = d.budget.as_ref().unwrap();
+    assert_eq!((b.max_jobs, b.max_job_bytes, b.max_duration_ms), (1, 1024*1024, 30_000));
+    assert_eq!(b.max_bytes, io::MAX_BYTES);
+    assert!(p.manifest().required_features.iter().any(|f| f == io::SERVICE_RUN_BUDGET_FEATURE));
+    assert!(output.contains("cumulative, not refundable"));
+}
+#[test]
+fn invalid_run_options_never_publish() {
+    for values in [vec!["0", "1", "1"], vec!["3600001", "1", "1"], vec!["1", "0", "1"], vec!["1", "1000001", "1"], vec!["1", "1", "0"], vec!["1", "1", "67108865"], vec!["60000"], vec!["-1", "1", "1"]] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-run"]);
+        add(&mut args, &values);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service-run", "60000", "1", "1"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+}
+
+#[test]
+fn resource_discovery_requires_explicit_service_and_outbound_declarations() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--service", "--io-capability", "http-listen", "--io-capability", "http-publish", "--io-handler", "service.echo", "--service-resources"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+    add(&mut args, &["--io-capability", "http-request"]);
+    execute(&args);
+    let p = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert!(p.manifest().required_features.iter().any(|f| f == morrow_core::service_resources::FEATURE));
+    assert_eq!(p.io_capabilities().len(), 3);
+}
+
+#[test]
+fn explicit_io_resource_budget_is_bounded_and_defaults_remain_two() {
+    for count in [None, Some("1"), Some("4"), Some("8")] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--io-capability", "http-request", "--io-handler", "io.request"]);
+        if let Some(count) = count { add(&mut args, &["--io-resources", count]); }
+        execute(&args);
+        let p = catalog::read_file(Path::new(&args[2])).unwrap();
+        let budget = p.manifest().io_declaration.as_ref().unwrap().budget.as_ref().unwrap();
+        assert_eq!(budget.max_resources, count.unwrap_or("2").parse::<u32>().unwrap());
+        assert_eq!((budget.max_jobs, budget.max_job_bytes), (1, 1024*1024));
+    }
+    for extra in [vec!["--io-resources", "0"], vec!["--io-resources", "9"], vec!["--io-resources", "-1"], vec!["--io-resources", "4", "--io-resources", "4"], vec!["--io-resources"]] {
+        let (_dir, mut args) = setup("pack-v2");
+        add(&mut args, &["--io-capability", "http-request", "--io-handler", "io.request"]);
+        add(&mut args, &extra);
+        assert!(run(&args, &mut Vec::new()).is_err());
+        assert!(!Path::new(&args[2]).exists());
+    }
+    let (_dir, mut args) = setup("pack-v2");
+    add(&mut args, &["--io-resources", "4"]);
+    assert!(run(&args, &mut Vec::new()).is_err());
+    assert!(!Path::new(&args[2]).exists());
+}
+
+#[test]
+fn mutation_profiles_pack_explicit_scopes_without_content_or_service_grants() {
+    let (_dir, mut args) = setup("pack-v2");
+    add(
+        &mut args,
+        &[
+            "--io-capability", "file-create",
+            "--io-capability", "file-replace",
+            "--io-capability", "file-delete",
+            "--io-handler", "mutation.unused",
+            "--io-resources", "8",
+        ],
+    );
+    let output = execute(&args);
+    let package = catalog::read_file(Path::new(&args[2])).unwrap();
+    assert_eq!(
+        package.io_capabilities(),
+        &BTreeSet::from([
+            IoCapability::FileCreate,
+            IoCapability::FileReplace,
+            IoCapability::FileDelete,
+        ]),
+    );
+    assert!(package.manifest().requested_capabilities.is_empty());
+    let declaration = package.manifest().io_declaration.as_ref().unwrap();
+    assert!(declaration.service_run.is_none());
+    assert!(declaration.service_schema_sha256.is_empty());
+    assert!(output.contains("declarations only; no grants"));
+}

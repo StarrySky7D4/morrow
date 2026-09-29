@@ -1,0 +1,6 @@
+{
+  "qualification_result": "unconfirmed",
+  "synthetic_only": true,
+  "first_reason": 19,
+  "evidence_seal_error": "OSError('synthetic unreadable evidence')"
+}

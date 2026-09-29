@@ -1,0 +1,23 @@
+{
+  "scope": "design and pure synthetic checks only; pending frozen implementations",
+  "files": {
+    "input-manifest.json": "0b53a59c2b383911a7b829c16d1d7001f2c965d91b1623ac8ac6ddb33baa03bf",
+    "inputs/baseline-guest-admission.rs": "b477a424c839364f95fe85725df3f52c87b0c1f6fe27b610cd57f2aede486e40",
+    "inputs/baseline-guest-session.rs": "0db7e61184227d558efe7ebc28809ecb13870062545a08e35d0b349d7a906c96",
+    "inputs/baseline-guest-workers.rs": "f4d67053ca8e8f0aaf53095517419130ad3212ee1a38aa6572715e6ae2248d14",
+    "inputs/baseline-http-authority.rs": "6b2bc0f8eb1bad59d1d7d79b59ed71b01fa97db2aebdc2489e53429ff3f533dc",
+    "inputs/baseline-supervisor.rs": "66ab9c38b83fb8d5b8b62afc32cc1032c93704b0a88f8219538dbb3af6924ad0",
+    "inputs/guest-design.md": "ff2d44c5b9e46b6181a34acd21c2ca032bb15820c824d429e4269460713956e4",
+    "inputs/guest-input-manifest.json": "0d93244e879508211e923e3381c130173664e51a31b8a2a1df71fe6e72785874",
+    "inputs/guest-interfaces.md": "24a37ab335c8ec770be55a33f763ad5a31addca80918a9200caf2ee3188e52ae",
+    "inputs/guest-proposal-check.json": "02b7415ff5b6cf8cadb4a6ccdb86b689418b9aa4c085a56907bac393ccbc80bf",
+    "inputs/guest-proposal-manifest.json": "c0d512e9be804f18eccceeacae96349ac56dc0d50a10b932104b1b1222fea3ef",
+    "inputs/guest-specs.json": "783b30b0d511b6769c9e748fe3a49ee1405591455c4198cc978a530ef7513a49",
+    "inputs/host-interface-001.md": "c1451cb7d2982f20b60343f642c6ea328c47745cbe3b2fc65daefc47fb273fff",
+    "inputs/host-seams-design.md": "a00059af20a6c1150ab8a0fe19217a86739a98aeb8df163306a7da4966535879",
+    "predicate_reference.py": "8110a7b87c7ab8d94142e78dfc6443e99d43f936813889f63f5416bb297004c6",
+    "pure-check.json": "eef4f11e1e689ca648f9a1b2c401c489538637537bbe52d3f607ab83be26ca86",
+    "result.json": "9759773fda765e1758cbe726ee5713bae97a8055c06ad6f30b99d72a220aa66a",
+    "review.md": "b3d4db67bde5a05f2ed5690972e71e2616ef2967cd14be62eaa5c8ebc1e0c065"
+  }
+}

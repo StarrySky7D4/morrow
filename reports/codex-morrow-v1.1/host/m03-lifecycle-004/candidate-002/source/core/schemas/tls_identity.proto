@@ -1,0 +1,13 @@
+syntax = "proto3";
+package morrow.tls_identity.v1;
+// Host-owned protected identity. Loading does not grant permission to listen.
+message Record {
+  uint32 schema_version = 1;
+  bytes store_id = 2;
+  bytes reference = 3;
+  uint64 revision = 4;
+  bool disabled = 5;
+  bytes certificate_sha256 = 6;
+  string provider = 7;
+  bytes ciphertext = 8;
+}

@@ -1,0 +1,9 @@
+{
+  "status": "pure_file_seal_passed",
+  "scope": "synthetic files only",
+  "root_files": 2,
+  "guest_files": 1,
+  "http_requests": 0,
+  "host_or_guest_launched": false,
+  "runner_sha256": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0"
+}

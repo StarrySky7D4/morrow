@@ -1,0 +1,24 @@
+{
+  "files": {
+    "approval.json": "05dd36ce707ed4ba78190534d490bc1b38a156869e3af2dd5098dbe441280033",
+    "decoded-wire.json": "299ae5ad0b8390dcc90ee96d0b684e9b830ec6533699d6b7e1ee1badb4740fb8",
+    "expectations.json": "e4e8da24acad04aa6cf2a695213e0af67d19bab4daba35257bc16d6e8ee7a94a",
+    "fault-preconditions.json": "88c57339ed106ff3f2ae72266c2cd7e9cd7640255dfb58965eee4dc37a8e99a7",
+    "host-rows.json": "88ce84142dd827fc6dd04ec8687bcbc6f96d2397156ba17ca35f98b559ecf600",
+    "host.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "init.json": "d6586174dfc04bf966cce7360f11d6ec4521d48a85c4448a94a0913215e9334c",
+    "launch.json": "32f02d93aab57dac18af1f4e34babe5a3f24d4c70c9309b47eba98d6034503fd",
+    "operator-commands.json": "410824e19683e718be88d48b13d6ff140c870eb32e42c88216accf7f2484e418",
+    "profile/coordination.sqlite": "b89c8ef7e752cec10e8f6dda55d270244efe1380de0efb8ca0b99b563a88426a",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "68c21fdcab791bf8f15b486cfbaf53f95aa965b2193641c4e496bc431f40809b",
+    "server-events.json": "50e1a193c26ee4db0c26db34c70387c2d1f71da14dd68e99f731478b11eb3600",
+    "result.json": "3c59c6a8f44cf1bc3f833ac6f573ac55677db08ccb64e4ffcb5e858f218ae475"
+  },
+  "guest_files": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T224857946907Z\\core-events.jsonl": "cd34135106d3a01c0f349416ae3ca82cb77fa8050c8ea1e3607eda98f5226f80",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T224857946907Z\\fixture-events.jsonl": "3c51fc9f93891a0fb16144c9e13fd5f7846e0288337d718c17a0e8716b04fa3e",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T224857946907Z\\fixture-spec.json": "adeeb22f4570e11f296b6db81244b7e85d64380ed0ae5e1296cb06d8b76d0fb3",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T224857946907Z\\result.json": "fd7dce4fea025ec8560619f134b2533ac4938ff946f3b57b4f42f72289e9194e"
+  }
+}

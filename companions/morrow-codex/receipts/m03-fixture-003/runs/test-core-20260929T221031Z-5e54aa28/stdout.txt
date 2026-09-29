@@ -1,0 +1,20 @@
+
+running 15 tests
+test fixture::tests::an_expired_shared_deadline_retains_the_writer_handle_until_actual_join ... ok
+test fixture::tests::cancellation_observation_keeps_actual_first_reason_for_deadline_host_and_protocol_orders ... ok
+test fixture::tests::concurrent_markers_are_bound_ordered_and_once_observations_do_not_hold ... ok
+test fixture::tests::exact_byte_digest_duplicate_binding_and_evidence_replay_are_rejected ... ok
+test fixture::tests::failed_disk_write_retains_failure_but_owned_writer_can_really_join ... ok
+test fixture::tests::overflow_and_record_limits_fail_without_blocking_or_clean_receipt ... ok
+test fixture::tests::strict_v2_spec_rejects_old_modes_unknown_fields_missing_null_and_widened_bounds ... ok
+test network::tests::ambiguous_or_compressed_sse_head_is_rejected ... ok
+test network::tests::pause_between_future_creation_and_gate_poll_does_not_publish_or_set_reason ... ok
+test network::tests::paused_gate_retains_received_event_and_reserved_permit_until_host_cancel ... ok
+test network::tests::unresolved_pause_cannot_extend_original_operation_deadline ... ok
+test request_task::tests::cancelled_cleanup_wait_can_resume_same_receipt ... ok
+test request_task::tests::host_latch_suppresses_queued_and_reserved_late_events_without_network_read ... ok
+test request_task::tests::passive_observer_delivers_without_release_and_original_cancel_still_suppresses ... ok
+test request_task::tests::user_cancel_suppresses_queued_events_and_preserves_observed_completion ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s
+

@@ -1,0 +1,23 @@
+{
+  "files": {
+    "approval.json": "7bac46e2172bff6485b92ed5e6bd9be44b198cff2bc24db026050cd1becdab85",
+    "expectations.json": "d9f192b40b304ca79cc5e60318cbda764f7d1c0ea13be8c1c171fc77969a6878",
+    "fault-preconditions.json": "4f66da7997999dc6a36e9a662e1932e70cc58b55df76a64a1c483da4a1a6e0ac",
+    "host-rows.json": "62b9a31bd602bd09ccfd82ab9a5e8307c2d1691a55c84ffdd94f1ca60d4fc638",
+    "host.stderr": "6333a0b173b3cf5add42f82b32c96d739410918ad9787fb88ccec9ca96e0e52e",
+    "init.json": "d6586174dfc04bf966cce7360f11d6ec4521d48a85c4448a94a0913215e9334c",
+    "launch.json": "c1730ccb55161baf7e16ff9eb094d0fcce40afcf171d372919f9e9516db7c6d6",
+    "operator-commands.json": "be8a3fb6c8ccdcf48770bf213fe39fd11ced09c17721b782c925fb202a84a4ca",
+    "profile/coordination.sqlite": "8ed072195f653fd8633e069e4105a1e43538c6d2a073e5ed5573964b4ac04851",
+    "profile/init.guard": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "profile/native-admissions.sqlite": "abf816686f50f94966f7c02fd37353a0c34f536e45d898d460b4b0cc088fe975",
+    "server-events.json": "39c816566238a9e3721f95e2ead2a1d9141bf1e02fd4d55d75fe16746f18cbfe",
+    "result.json": "90ac88cf017a2c7e646bd1771b0b4739465f4e263c8d1d0891b7375588075a85"
+  },
+  "guest_files": {
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T225411115052Z\\core-events.jsonl": "3b58818943b1a4cd095ec9fe847188fb3c316ab3222624586074e6d8f92e536a",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T225411115052Z\\fixture-events.jsonl": "94fd6a3e725de418a9589846aef5202dd68118932883b6dc228e0cf1a5e6952b",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T225411115052Z\\fixture-spec.json": "a4ee697164a3150216a8160e27ce5fb4c6076b70141ea8212ccba428781baff4",
+    "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow-codex\\out\\m03-passive-005\\20260929T225411115052Z\\result.json": "e4e0802a3b5824894395ab35f4c5f14adc2b5eee8cb13fe2c9dd4f4294d46c88"
+  }
+}

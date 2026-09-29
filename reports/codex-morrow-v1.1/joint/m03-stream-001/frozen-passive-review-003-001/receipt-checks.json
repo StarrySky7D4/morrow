@@ -1,0 +1,18 @@
+{
+  "host_source_before_after_entries": 270,
+  "host_commands": 11,
+  "host_test_invocations": 52,
+  "host_cli_rejections": 2,
+  "guest_receipt_inputs_each": 21,
+  "guest_log_digests": 6,
+  "guest_tests": {
+    "core_tests": 15,
+    "native_tests": 35
+  },
+  "guest_compiler_unique_packages": 907,
+  "guest_native_test_matches_build": true,
+  "guest_core_source_subset_matches_build": true,
+  "guest_executable_matches_nonfresh_compiler_artifact": true,
+  "http_requests": 0,
+  "producer_runtime_launched": false
+}

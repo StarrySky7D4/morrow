@@ -1,0 +1,14 @@
+{
+  "manifest": "C:\\Users\\Administrator\\Desktop\\CodeXProjext\\morrow\\build\\io-safety-refactor\\reports\\codex-morrow-v1.1\\host\\m03-lifecycle-004\\candidate-002\\manifest.json",
+  "manifest_sha256": "fa206f562d30b59686fcb7abfad7ff84467a0b7659f7a32db343cd782f4c2a13",
+  "runner_sha256": "22122402be6fc6f970849eb106aedf1fee5f7963b5410781b2056ff85dc37db8",
+  "helper_sha256": {
+    "tool/m03_revoke_barriers_011.py": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e",
+    "tool/m03_http_matrix_008.py": "9deef213e4ea7765395fbaf5a0aede45b7cdfc7ff2d75faca662782fa3af39e1"
+  },
+  "mode": "core-revoke",
+  "exit_code": 0,
+  "automatic_retry": false,
+  "new_host_full_chain_case": true,
+  "sdk_freeze_credit": false
+}

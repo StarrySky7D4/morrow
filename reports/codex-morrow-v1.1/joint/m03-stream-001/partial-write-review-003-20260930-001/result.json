@@ -1,0 +1,18 @@
+{
+  "status": "passed_with_scope_limits",
+  "reviewed_utc": "2026-09-29T21:32:52.768073+00:00",
+  "review_mode": "saved evidence and source reads only",
+  "source_hashes_verified": 42,
+  "producer_probe_tests": 15,
+  "new_cases_reviewed": [
+    "deadline",
+    "peer_disconnect"
+  ],
+  "post_count_by_reviewer": 0,
+  "runtime_by_reviewer": false,
+  "original_authority_deadline_qualified": false,
+  "nonzero_short_success_completion_qualified": false,
+  "full_host_fault_chain_qualified": false,
+  "product_G0": "not_run",
+  "sdk_frozen": false
+}

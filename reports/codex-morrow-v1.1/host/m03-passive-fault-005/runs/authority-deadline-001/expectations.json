@@ -1,0 +1,16 @@
+{
+  "case": "authority-deadline",
+  "one_post_only": true,
+  "automatic_retry": false,
+  "original_ttl_ms": 10000,
+  "server_declared_body_bytes": 8192,
+  "server_sent_prefix_sha256": "d2399715b5c82351daccb2b12c23f2a8cddc5b0e6ded4f4f77c9434c4fed6b64",
+  "http_eof": false,
+  "response_material_stored": false,
+  "intent": "Unknown",
+  "qualification_scope": "fault observation and real resource release, not business success",
+  "host_manifest_sha256": "82de408a5f2307c8c592202de59cafc5e4fa874d42d2d3cf85d279f58a2a5696",
+  "guest_manifest_sha256": "b810526cfac7c0123fa3d8ce27e59f15724abec5888891ac104aef2192f38106",
+  "runner_sha256": "ceb557e0a5b7da29b9c69b96949358356a7854dd5f3f5f2388934d2b75566cb0",
+  "helper_sha256": "641dece216bda441067123b288ae62565deb79478cdb951d307bdb04c2dc536e"
+}

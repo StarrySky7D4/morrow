@@ -1,0 +1,98 @@
+{
+  "harness_observed_ns": 257677930554100,
+  "host_applied": [
+    {
+      "at_us": 3174371,
+      "detail": {
+        "code": 19,
+        "progress": {
+          "cancel_discarded_bytes": 0,
+          "child_exited": false,
+          "connect_reaped": true,
+          "data_closed": false,
+          "drain_discarded_bytes": 0,
+          "error_code": 19,
+          "error_consumed_bytes": 0,
+          "http_eof": false,
+          "http_status": 200,
+          "intent": "Unknown",
+          "issued_offset": 197,
+          "last_write_ordinal": 3,
+          "network": "Cancelled",
+          "os_completed_offset": 197,
+          "owner": "Active",
+          "owner_released": false,
+          "parser_yielded_bytes": 0,
+          "peer_consumed_offset": 0,
+          "read_reaped": false,
+          "received_offset": 197,
+          "request_closed": false,
+          "reserved_offset": 197,
+          "response_material_stored": false,
+          "revoke_applied": true,
+          "revoke_persisted": true,
+          "stderr_eof": false,
+          "stdout_eof": false,
+          "worker_joined": false,
+          "worker_started": true,
+          "write_reaped": true
+        },
+        "requested_code": 19,
+        "source": 1
+      },
+      "event": "http_cancel_applied",
+      "ordinal": 45
+    }
+  ],
+  "guest_revoke": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "cancel_transition": {
+        "cancel_gate_after": true,
+        "cancel_gate_before": false,
+        "delivery_paused_before": true,
+        "first_cancel_reason_after": "HostCancelled",
+        "first_cancel_reason_before": null,
+        "host_control_closed_gate": true
+      },
+      "code": 0,
+      "generation": 2,
+      "kind": "HttpTerminal",
+      "sequence": 0
+    },
+    "elapsed_ns": 1178951400,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 19816,
+      "epoch": 1,
+      "host_execution_config_sha256": "d37cc9a3b83cf249ff1b175a2e2f195de2593c5eda8cd6922a90c6f5cbcc5ecc",
+      "operation_id_sha256": "6bd6ee04c023a1a8f8f4f08a89755eae917113cac3047cac3e7d78c0bc33aa45",
+      "session": 14363750692603973175
+    },
+    "kind": "host_revoke_received",
+    "mode": "core-revoke",
+    "nonce": "2b678092687041aba3b46268246cdf4490fd384aa56e6cee395886190836f43a",
+    "ordinal": 4,
+    "spec_sha256": "5273303029ebac0eced568d18de2dfc8d69531212fba00045920f86487776451"
+  },
+  "guest_gate": {
+    "clock_domain": "guest-fixture-monotonic",
+    "detail": {
+      "read_issue_count": 5
+    },
+    "elapsed_ns": 1178977400,
+    "identity": {
+      "attempt": 1,
+      "child_pid": 19816,
+      "epoch": 1,
+      "host_execution_config_sha256": "d37cc9a3b83cf249ff1b175a2e2f195de2593c5eda8cd6922a90c6f5cbcc5ecc",
+      "operation_id_sha256": "6bd6ee04c023a1a8f8f4f08a89755eae917113cac3047cac3e7d78c0bc33aa45",
+      "session": 14363750692603973175
+    },
+    "kind": "gate_closed",
+    "mode": "core-revoke",
+    "nonce": "2b678092687041aba3b46268246cdf4490fd384aa56e6cee395886190836f43a",
+    "ordinal": 5,
+    "spec_sha256": "5273303029ebac0eced568d18de2dfc8d69531212fba00045920f86487776451"
+  }
+}

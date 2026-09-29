@@ -1,0 +1,7 @@
+{
+  "qualification_result": "unconfirmed",
+  "synthetic_only": true,
+  "first_reason": 19,
+  "actual_error_retained": "partial frame Unknown",
+  "evidence_seal_error": "OSError('synthetic write-close error after bytes exist')"
+}

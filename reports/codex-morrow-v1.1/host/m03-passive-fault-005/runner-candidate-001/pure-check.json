@@ -1,0 +1,28 @@
+{
+  "exit_code": 0,
+  "command": [
+    "C:\\Users\\Administrator\\AppData\\Local\\Python\\pythoncore-3.14-64\\python.exe",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tool/tests",
+    "-p",
+    "test_m03_passive_fault.py",
+    "-v"
+  ],
+  "inputs_before": {
+    "tool/m03_passive_fault_005.py": "836ba0339b53d6a018cb7dbf146ed8d5995a166e6c0257d0601587fbe7c38d32",
+    "tool/tests/test_m03_passive_fault.py": "f797af185f20aebce9a8c25b40df9d0e97f94b5b58355c59faa8cf66d220a81d",
+    "tool/m03_passive_fault_freeze_005.py": "087d793c7f8e19ed4cbf5a66592fe08607843113da4df5ca92826cf39b214ab5"
+  },
+  "inputs_after": {
+    "tool/m03_passive_fault_005.py": "836ba0339b53d6a018cb7dbf146ed8d5995a166e6c0257d0601587fbe7c38d32",
+    "tool/tests/test_m03_passive_fault.py": "f797af185f20aebce9a8c25b40df9d0e97f94b5b58355c59faa8cf66d220a81d",
+    "tool/m03_passive_fault_freeze_005.py": "087d793c7f8e19ed4cbf5a66592fe08607843113da4df5ca92826cf39b214ab5"
+  },
+  "source_unchanged": true,
+  "log_sha256": "3ee727ac990d6834fb744442cb3833c063625a47041cf2eec1ae3292eed96fd9",
+  "http_requests": 0,
+  "host_launched": false
+}

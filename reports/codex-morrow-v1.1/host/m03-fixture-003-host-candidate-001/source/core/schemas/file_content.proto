@@ -1,0 +1,12 @@
+syntax = "proto3";
+package morrow.file_content.v1;
+
+// Immutable bytes retained for a file mutation; not a path or authorization.
+message FileContent {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes content_sha256 = 5;
+  bytes content = 6;
+}

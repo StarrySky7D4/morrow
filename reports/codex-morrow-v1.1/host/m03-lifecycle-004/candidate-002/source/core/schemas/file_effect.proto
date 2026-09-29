@@ -1,0 +1,58 @@
+syntax = "proto3";
+package morrow.file_effect.v1;
+
+// A bounded observation of one FileDelete effect. It is not an authorization.
+message DeleteOutcome {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes target_reference = 5;
+  bytes expected_identity = 6;
+  Result result = 7;
+  uint32 os_error_code = 8;
+}
+
+enum Result {
+  RESULT_UNSPECIFIED = 0;
+  DELETED = 1;
+  OS_REJECTED = 2;
+}
+
+// A bounded observation of one FileCreate effect. It is not an authorization.
+message CreateOutcome {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes target_reference = 5;
+  bytes content_sha256 = 6;
+  uint64 content_length = 7;
+  CreateResult result = 8;
+  uint32 os_error_code = 9;
+}
+
+enum CreateResult {
+  CREATE_RESULT_UNSPECIFIED = 0;
+  CREATED = 1;
+  CREATE_OS_REJECTED = 2;
+}
+// A bounded observation of one FileReplace effect. It is not an authorization.
+message ReplaceOutcome {
+  uint32 schema_version = 1;
+  string operation_id = 2;
+  string subject = 3;
+  bytes request_sha256 = 4;
+  bytes target_reference = 5;
+  bytes expected_identity = 6;
+  bytes content_sha256 = 7;
+  uint64 content_length = 8;
+  ReplaceResult result = 9;
+  uint32 os_error_code = 10;
+}
+
+enum ReplaceResult {
+  REPLACE_RESULT_UNSPECIFIED = 0;
+  REPLACED = 1;
+  REPLACE_OS_REJECTED = 2;
+}
