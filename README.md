@@ -6,13 +6,13 @@
 
 Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全平台插件架构演进。项目原名 daemon，代码包名为 `morrow_studio`。Windows 当前由 Flutter 提供界面、Rust 宿主与受限 Wasm 插件处理工作台业务；Web 在浏览器本地运行 Rust/Wasm，Android 暂保留旧路径。完整平台功能对齐仍在进行。
 
-[打开 Web 预览](https://starrysky7d4.github.io/morrow/)：无需安装，工作区和附件原件保存在设备的浏览器存储中。已验证 Chrome 和 Windows Edge 的保存、刷新恢复与附件下载；完整功能边界见 [Web 进度表](docs/WEB_PARITY.md)，发布方式见 [部署说明](docs/WEB_DEPLOYMENT.md)。
+[打开 Web 预览](https://starrysky7d4.github.io/morrow/)：无需安装，工作区和附件原件保存在设备的浏览器存储中。已验证 Chrome 和 Windows Edge 的保存、刷新恢复与附件下载；完整功能边界与最新构建验收状态见 [Web 进度表](docs/WEB_PARITY.md)，发布方式见 [部署说明](docs/WEB_DEPLOYMENT.md)。
 
 ## 下载与兼容性
 
-当前版本：**0.1.9-test.55+59**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
+当前版本：**0.1.9-test.56+60**，桌面安装包提供 **Windows x64 测试预览版**，不是稳定版。下载 Windows ZIP、对应源码 ZIP 和 SHA-256 清单；完整解压后运行 `morrow_studio.exe`，保留所有 DLL、宿主、`data`、`plugins` 与许可文件。
 
-[下载 test.55](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[下载 test.56](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [test.1 兼容测试版](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1` 是 `0.1.x` 最后一个兼容原有数据类型的测试版。后续 test 版本推进重写，可能包含破坏性变更；架构与数据模型锚定并完成验收后发布 `0.2.0`。旧 test.1 数据不会自动导入或覆盖。升级前备份内容库与原保护文件；保护文件绑定 Windows 用户，仅复制数据库不能完成跨账户迁移。
 
@@ -27,7 +27,11 @@ Morrow（明隙）是本地优先、卡片化的灵感工作台，正在向全�
 
 ## 本版优化与验证
 
-test.55 新增七种外观风格与深度调节，完善控件动画和组件间距；修复设置保存与字体应用，改进安全后台关闭，并提供草稿恢复基础。正式界面的自动保存尚未完成。
+test.56 增加卡片、小组件、任务与音乐列表的右键操作、卡片排序与拖拽、tips 逐条编辑及独立主题插件；修复宽屏瀑布流重排、筛选原位更新与安全关闭。发布记录包含 60 项 Flutter 回归、4 项原生集成及 17 项 Windows 实机布局回归。正式界面的完整自动保存尚未完成，详见 [test.56 发布说明](reports/0.1.9-test.56-release.md)。
+
+### test.55 历史优化与验证
+
+test.55 新增七种外观风格与深度调节，完善控件动画和组件间距；修复设置保存与字体应用，改进安全后台关闭，并提供草稿恢复基础。
 
 ### test.54 历史优化与验证
 
@@ -63,11 +67,11 @@ flutter build web --no-web-resources-cdn
 
 目标架构为 Flutter／Dart 界面、可移植 Rust 核心及可替换插件执行后端。运行期边界采用固定契约；持久化与自有交换采用 Protobuf＋LZ4。C／C++／Rust SDK 与声明式插件 UI 正在推进，暂不支持 TS／JS 插件，也不要求动态 Dart 插件。
 
-完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；test.55 后的源码新增 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证。入站服务 SDK、跨重启 Unknown 完整核对、完整文件系统、认证／流式网络与跨平台资格仍待完成。本次仅同步源码，不更新 Release；下载的 test.55 包不含这轮 SDK 增量。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
+完整 SDK 尚未冻结。已接入受管 HTTP／HTTPS 请求、有限 API 服务节点与 TLS 身份管理；主线源码包含 C／C++／Rust 实验 IO SDK、项目模板和原包真实 HTTP 验证；对应的 2026-09-24 状态页记录的是当时未更新 test.55 Release 的源码增量，不能用它推断 test.56 成品的逐项资格。入站服务 SDK、跨重启 Unknown 完整核对、完整文件系统、认证／流式网络与跨平台资格仍待完成。详见 [插件系统当前状态](docs/PLUGIN_SYSTEM_STATUS.md)。开库仍扫描全量历史；完整读取／计算流水线、历史分层与自动清理尚未实现。
 
 ## 文档
 
-- [本版发布说明与验证](reports/0.1.9-test.55-release.md)
+- [本版发布说明与验证](reports/0.1.9-test.56-release.md)
 - [开发看板与后续任务](docs/DEVELOPMENT_BOARD.md)
 - [未来架构路线](docs/FUTURE_ROADMAP.md)
 - [功能迁移与容量边界](docs/TEST1_RUST_PARITY.md)
