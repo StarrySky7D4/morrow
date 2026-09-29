@@ -24,6 +24,6 @@ A011、B011 的只读复核不是第二次 HTTP 运行，A010 不因后续通过
 
 `companions/morrow-codex` 是独立仓库的源码快照，保留受约束的上游输入和许可证，不是已安装的生产插件。Git 未包含大型生成二进制、数据库与压缩证据；配套 Drive 备份及还原清单由[交付记录](../reports/codex-morrow-v1.1/delivery-2026-09-29.md)指向。恢复到不同机器后应重新验证，不得把旧机器回执改写成新运行记录。
 
-最新主线 Web Actions 在 `ccdf89b` 的孤儿数据 fixture 导航出现 `net::ERR_ABORTED`，后续场景跳过；这不是 M03 的验收结果。见[分支 Web 表](WEB_PARITY.md)和[运行 36115685547](https://github.com/StarrySky7D4/morrow/actions/runs/36115685547)。
+2026-09-25 的主线 Web Actions 在 `ccdf89b` 的孤儿数据 fixture 导航出现 `net::ERR_ABORTED`，后续场景跳过；这不是 M03 的验收结果。见[分支 Web 表](WEB_PARITY.md)和[运行 36115685547](https://github.com/StarrySky7D4/morrow/actions/runs/36115685547)。
 
 下一步先设计并验证 M03 的 OS 部分写入故障与取消临界完成竞态，再补并发、资源回收、同用户隔离、崩溃后 owner 核对、产品 G0 与跨平台。文件变更路径则需以当前分支最新专项为基线，完成系统选择器/人工审批和修复后的成品复验；各范围分开记录真实运行、只读复核与发行资格。
