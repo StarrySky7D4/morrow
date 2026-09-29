@@ -4,13 +4,13 @@
 
 내일의 아이디어를 위한 작은 여백.
 
-Morrow(明隙)는 카드를 중심으로 아이디어를 정리하는 로컬 우선 작업 공간이며, 모든 플랫폼을 위한 플러그인 구조로 발전하고 있습니다. 이전 이름은 daemon, 코드 패키지 이름은 `morrow_studio`입니다. Windows에서는 Flutter가 화면을, Rust 호스트와 격리된 Wasm 플러그인이 작업 로직을 담당합니다. Web과 Android는 기존 구현을 사용하며, 모든 플랫폼의 플러그인 검증은 아직 완료되지 않았습니다.
+Morrow(明隙)는 카드를 중심으로 아이디어를 정리하는 로컬 우선 작업 공간이며, 모든 플랫폼을 위한 플러그인 구조로 발전하고 있습니다. 이전 이름은 daemon, 코드 패키지 이름은 `morrow_studio`입니다. Windows에서는 Flutter가 화면을, Rust 호스트와 격리된 Wasm 플러그인이 작업 로직을 담당합니다. Web은 브라우저에서 Rust/Wasm을 로컬로 실행합니다. Android는 기존 경로를 유지하며, 플랫폼 전반의 제품 및 플러그인 기능 동등성은 아직 검증되지 않았습니다.
 
 ## 다운로드와 호환성
 
-현재 버전은 **0.1.9-test.55+59**이며, **Windows x64 테스트 미리 보기**로 안정 버전이 아닙니다. Windows ZIP, 해당 소스 ZIP, SHA-256 목록을 다운로드하세요. 전체 압축을 풀고 `morrow_studio.exe`를 실행하며, DLL, 호스트, `data`, `plugins`, 라이선스 파일을 모두 유지하세요.
+현재 버전은 **0.1.9-test.56+60**이며, **Windows x64 테스트 미리 보기**로 안정 버전이 아닙니다. Windows ZIP, 해당 소스 ZIP, SHA-256 목록을 다운로드하세요. 전체 압축을 풀고 `morrow_studio.exe`를 실행하며, DLL, 호스트, `data`, `plugins`, 라이선스 파일을 모두 유지하세요.
 
-[test.55 다운로드](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.55) · [호환 테스트 버전 test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
+[test.56 다운로드](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.56) · [호환 테스트 버전 test.1](https://github.com/StarrySky7D4/morrow/releases/tag/v0.1.9-test.1)
 
 `test.1`은 기존 데이터 형식과 호환되는 마지막 `0.1.x` 테스트 버전입니다. 이후 test 버전은 재작성을 진행하므로 호환성을 깨는 변경이 있을 수 있습니다. 아키텍처와 데이터 모델을 확정하고 검증한 뒤 `0.2.0`을 출시합니다. test.1 데이터는 자동으로 가져오거나 덮어쓰지 않습니다. 업그레이드 전에 라이브러리와 원본 보호 파일을 백업하세요. 보호는 Windows 사용자에 연결되므로 데이터베이스 복사만으로 다른 계정으로 이전할 수 없습니다.
 
@@ -24,6 +24,10 @@ Morrow(明隙)는 카드를 중심으로 아이디어를 정리하는 로컬 우
 - Windows 데이터 보호: Rust의 통합 저장, 감사 기록 봉인, 라이브러리 스냅샷, 원래 식별 정보의 백업과 복구, 같은 식별 정보의 동시 사용 제한.
 
 ## 이번 최적화와 검증
+
+test.56에는 우클릭 동작, 카드 정렬과 드래그, tips 항목별 편집, 독립 테마 플러그인이 추가되었습니다. 목록 배치, 필터 결과 갱신, 종료 절차도 개선되었습니다. 정식 UI의 완전한 자동 저장과 플랫폼 간 기능 동등성은 아직 완료되지 않았습니다.
+
+### 이전 test.55 변경 사항
 
 test.55에는 일곱 가지 화면 스타일과 깊이 조절이 추가되고, 컨트롤 애니메이션과 구성 요소 간 간격이 개선되었습니다. 설정 저장과 글꼴 적용 문제를 수정하고, 안전한 백그라운드 종료를 개선했으며, 초안 복구의 기반을 마련했습니다. 정식 UI의 자동 저장은 아직 완료되지 않았습니다.
 
@@ -65,7 +69,7 @@ flutter build web --no-web-resources-cdn
 
 ## 문서
 
-- [릴리스 설명과 검증](../../reports/0.1.9-test.55-release.md)
+- [릴리스 설명과 검증](../../reports/0.1.9-test.56-release.md)
 - [개발 보드와 다음 과제](../../docs/DEVELOPMENT_BOARD.md)
 - [아키텍처 로드맵](../../docs/FUTURE_ROADMAP.md)
 - [기능 이전과 용량 제한](../../docs/TEST1_RUST_PARITY.md)
